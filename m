@@ -2,91 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EACBC7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 08:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED31DC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 08:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232858AbjFLIdM (ORCPT
+        id S233269AbjFLIkn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:33:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
+        Mon, 12 Jun 2023 04:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233269AbjFLIcx (ORCPT
+        with ESMTP id S233668AbjFLIkW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:32:53 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41AF8268D;
-        Mon, 12 Jun 2023 01:32:16 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f620583bc2so4575237e87.1;
-        Mon, 12 Jun 2023 01:32:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686558734; x=1689150734;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=E60FWaLGWhSk1lYB85C9hG8InWWvSwGswhbesGiABvc=;
-        b=NtFxM7ibrmXxONBzTg21VcSflgvrTuxHCTN21mA4jvwigZe2gh/Mu+DLIQeUbwIfzF
-         5qJJ2/S76xDE8TrWFwtLvkbnEyzJJUKbebChD2vJubwIRN+rhLxjDf8co3IQpkLDI7pC
-         24Zpt/6YBPqybCd2WFqaTIclt7i7WOvksmsVZnuH5VZs7gAtFrLOHIjINq61iR2fex7B
-         J7X/nvuILbjbJQeeFSS9+5fzUBkX2AhSSGQocXHu3n6fRaLEAOXXySPpjag7G4OnabpA
-         AQxo7tfdLo7ZrXw9f8NodVhCr20YxaIBVvJ3ga5lIKFX1NBxH0F/Vb4vSrMzP3Zi7Ff/
-         IGjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686558734; x=1689150734;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E60FWaLGWhSk1lYB85C9hG8InWWvSwGswhbesGiABvc=;
-        b=js+Cv4CZjIevzFm1ZsJmn9N8MZUP89I1CQLLNl/8P9VUctP8SgEzI3+g2dFMWkUzV4
-         iBuhxMSx85WsB+JugCnWbmiDEDLzDcseFrG3hQ3AnNjq8QSgPm9JFTR1w+yuSOjkzUqy
-         ZVVAf2P+Enj9yaOIaiSIkA5MUl+alVPOOmnRu98yUe0SPKuluq+jlhTMI2c0Em39jgh0
-         G9L32GsZpKjOE+uwU0LtxAklASG33khgtZ8etOULysrMeF0c2uUHbJYAOLhMdQEb4si2
-         4PjeJFvkqBtlM5LQe/U1K0svl/rgKKjJ1SW5QgrqsSYRJhlxaM3LuPAwf3NJyW2aH2t7
-         gXSw==
-X-Gm-Message-State: AC+VfDyEUHPXL5mjiuzd4dH4LVf7WaD5j8hor6TgTCfDoZplquE2ndGL
-        QiJ5b1+0xf/o8nOLrYoZvxML2qbF4J8=
-X-Google-Smtp-Source: ACHHUZ71H3crGnpkWjeeb58pft9EXczqpM+3QXT+WO0i7gMfbKZyIzbalMx4lEJ7KeUzIXqNbWXuEQ==
-X-Received: by 2002:a05:6512:54a:b0:4f4:ba0d:3bbf with SMTP id h10-20020a056512054a00b004f4ba0d3bbfmr3467112lfl.60.1686558734015;
-        Mon, 12 Jun 2023 01:32:14 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.gmail.com with ESMTPSA id m11-20020a5d6a0b000000b0030b5d203e7esm11744229wru.97.2023.06.12.01.32.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 01:32:13 -0700 (PDT)
-Message-ID: <6486d80d.5d0a0220.bb6d6.3cbd@mx.google.com>
-X-Google-Original-Message-ID: <ZIXwj/bvFbcDcWZj@Ansuel-xps.>
-Date:   Sun, 11 Jun 2023 18:04:31 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-XXX] net: dsa: qca8k: uninitialized variable in
- hw_control_get()
-References: <5dff3719-f827-45b6-a0d3-a00efed1099b@moroto.mountain>
+        Mon, 12 Jun 2023 04:40:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8422CA8;
+        Mon, 12 Jun 2023 01:40:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D74C612DB;
+        Mon, 12 Jun 2023 08:40:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FBBBC433D2;
+        Mon, 12 Jun 2023 08:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686559220;
+        bh=89ak23KuxmgNnQPMFU5iJGei6tr8rWqGIYeuVSAnKaE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ZnQruuSUgodDxarX9ASl68F8uSE0iYW7oMPfGpckfoJebKCuVX5D29GxTyS+Mw1A+
+         HvMa0COqzmqAbFnUOOORtzdVczT2TtTKE+QXa/qQb8avxuGGhjCBhvWfF5sl1iPaxO
+         +q3tJ/AB4xWP3k17uB6JBvI43KLXxxXlF9L5tRjFuvfN7ZFL5nSn3dMM0a335b6xFu
+         qiVLKEriqkBqMYpPSZK54r/jrPKjRXHUCYcD/44QFMYKCZkFWTQ1RmMQlmtDqZRrG0
+         oECqJ8DSjLcF0+5SIqjlt15IGcgDBA9w4UAlmM+ITclcc3EnGj4fpf3yPd2M7Umll1
+         2do/wT5/JHeNQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4D788E29F37;
+        Mon, 12 Jun 2023 08:40:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dff3719-f827-45b6-a0d3-a00efed1099b@moroto.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2 net] sctp: handle invalid error codes without calling
+ BUG()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168655922031.2912.11244679238666177727.git-patchwork-notify@kernel.org>
+Date:   Mon, 12 Jun 2023 08:40:20 +0000
+References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
+In-Reply-To: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     marcelo.leitner@gmail.com, lucien.xin@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 10:20:55AM +0300, Dan Carpenter wrote:
-> The caller, netdev_trig_activate(), passes an uninitialized value for
-> *rules.  This function sets bits to one but it doesn't zero out any
-> bits so there is a potential for uninitialized data to be used.
-> Zero out the *rules at the start of the function.
+Hello:
+
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Fri, 9 Jun 2023 14:04:43 +0300 you wrote:
+> The sctp_sf_eat_auth() function is supposed to return enum sctp_disposition
+> values but if the call to sctp_ulpevent_make_authkey() fails, it returns
+> -ENOMEM.
 > 
-> Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This results in calling BUG() inside the sctp_side_effects() function.
+> Calling BUG() is an over reaction and not helpful.  Call WARN_ON_ONCE()
+> instead.
+> 
+> [...]
 
-Thanks for the fix but I wonder if this should be better fixed in
-netdev_trig_activate? By setting the mode as 0 directly there?
+Here is the summary with links:
+  - [1/2,net] sctp: handle invalid error codes without calling BUG()
+    https://git.kernel.org/netdev/net/c/a0067dfcd941
+  - [2/2,net] sctp: fix an error code in sctp_sf_eat_auth()
+    https://git.kernel.org/netdev/net/c/75e6def3b267
 
-I assume other dev implementing the get ops would do the same mistake.
-
+You are awesome, thank you!
 -- 
-	Ansuel
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
