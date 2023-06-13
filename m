@@ -2,92 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827DEEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 20:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5E7C00528
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 22:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233482AbjFMUag (ORCPT
+        id S233095AbjFMW1V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 16:30:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39262 "EHLO
+        Tue, 13 Jun 2023 18:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbjFMUaf (ORCPT
+        with ESMTP id S232568AbjFMW1S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 16:30:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F1E135
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 13:30:33 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 9AerqraEQonlZ9Aerq7ZeS; Tue, 13 Jun 2023 22:30:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686688231;
-        bh=gWx9lNWZs+VxigmD+IrP8JxF8ho5EBghnkwdwYGkl54=;
-        h=From:To:Cc:Subject:Date;
-        b=UC+22lxX0DOrviCCQcjxhM7OOu7QPNPXEZWdw363cJ/ooNvnlqq4QRmir2o8DCaM9
-         d1H6AhbBRhZN0inpeqmFy+E8zMrUwDwKm2BagID2B0fTywz9jOlhB0HzJ75RMh6gx2
-         LBs1ezgO25PKQzyo31mtp0wqGdbiaNQxKmwn1A3us4E6ZV2V7B2QiAYkSKyhMpABV6
-         ijQfljeLEOmI7ZM4AGYeeKYN5PD65eLjjY/CAbAuq5Bn/ySPftmZQwjrGDFlS8gFbL
-         Nt/oLacGbpS6l6rNV+mSFV/8q0Y3n37XAd1U04unVn2mul/37yJxjVqF+mpRtF5ezH
-         V140+EjLYbtNg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 13 Jun 2023 22:30:31 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Holzheu <holzheu@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-s390@vger.kernel.org
-Subject: [PATCH] s390/crash: Use the correct type for memory allocation
-Date:   Tue, 13 Jun 2023 22:30:28 +0200
-Message-Id: <0756118c9058338f3040edb91971d0bfd100027b.1686688212.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 13 Jun 2023 18:27:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2005D10F3;
+        Tue, 13 Jun 2023 15:27:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8921863B9D;
+        Tue, 13 Jun 2023 22:27:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E25C4339A;
+        Tue, 13 Jun 2023 22:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686695234;
+        bh=QMK158R85EvKTpTuTcTE6JdEPQApDbgpQhg7LC7O+VU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LBBdvMlHs7URpe86CB0808sOUzWRTmdb3zbaWk16NRXD+AvSfCxQsodDeZFBMe2XI
+         S0c+1CtQaPwQVwy6IJw46SyjqvWpLXeETwBN7v0G5PaJbUvWGFKawVFe6bP/IuwtSB
+         qVfahLBlUGPtnaeNE+rKI2KAe9QBdiIrBnsOuERjiTTdcw+T5K5ylFYUtG2/AGH+Om
+         8THdU8HemgIFQc1XYZfyTiUcy8NaQgES3RLQY7im+NEcqznen5YEW9PN2GvdwiehmW
+         t88lFpJayzI3D4GTZ4sc8ppDSXhO4LmNhw1M17e51wN5SCsy06k/4ZeJpPfrwnEWHj
+         QWVFZqh2n3RWA==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: Fix a IS_ERR() vs NULL bug in probe
+Date:   Tue, 13 Jun 2023 15:30:12 -0700
+Message-Id: <168669542894.1315701.12985204586909393008.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <ZH7sgpLAN23bCz9v@moroto>
+References: <ZH7sgpLAN23bCz9v@moroto>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-get_elfcorehdr_size() returns a size_t, so there is no real point to
-store it in a u32.
+On Tue, 6 Jun 2023 11:21:22 +0300, Dan Carpenter wrote:
+> The devm_ioremap() function returns NULL on error, it never returns
+> error pointers.
+> 
+> 
 
-Turn 'alloc_size' into a size_t.
+Applied, thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Not sure if 'alloc_size' can overflow in real life application, but using
-the correct type looks harmless.
+[1/1] soc: qcom: Fix a IS_ERR() vs NULL bug in probe
+      commit: 3aed112953b1877ede66ae77afa4e5a5024be7cb
 
-Should it be a real fix, either:
-Fixes: 8cce437fbb5c ("s390/kdump: Fix elfcorehdr size calculation")
-or
-Fixes: 60a0c68df263 ("[S390] kdump backend code")
----
- arch/s390/kernel/crash_dump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
-index 8a617be28bb4..7af69948b290 100644
---- a/arch/s390/kernel/crash_dump.c
-+++ b/arch/s390/kernel/crash_dump.c
-@@ -568,9 +568,9 @@ static size_t get_elfcorehdr_size(int mem_chunk_cnt)
- int elfcorehdr_alloc(unsigned long long *addr, unsigned long long *size)
- {
- 	Elf64_Phdr *phdr_notes, *phdr_loads;
-+	size_t alloc_size;
- 	int mem_chunk_cnt;
- 	void *ptr, *hdr;
--	u32 alloc_size;
- 	u64 hdr_off;
- 
- 	/* If we are not in kdump or zfcp/nvme dump mode return */
+Best regards,
 -- 
-2.34.1
-
+Bjorn Andersson <andersson@kernel.org>
