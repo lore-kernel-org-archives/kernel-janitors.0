@@ -2,101 +2,128 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A55C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 06:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B24BDC88CB2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 08:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239128AbjFMGrN (ORCPT
+        id S241764AbjFMItc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 02:47:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
+        Tue, 13 Jun 2023 04:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237927AbjFMGrK (ORCPT
+        with ESMTP id S241693AbjFMIt3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 02:47:10 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1386B1BC3
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 23:47:00 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f78a32266bso52585845e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 23:47:00 -0700 (PDT)
+        Tue, 13 Jun 2023 04:49:29 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00B8CA
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 01:49:27 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f8d2bfec3bso1631305e9.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 01:49:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686638819; x=1689230819;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1686646166; x=1689238166;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=02cZUxsOqGfZ8lXmchHjzAFGxYbEcf/VDvBL7ckHl/M=;
-        b=hKm0C1CuMJaIu2eNk6rIDpUz1RWQ/iGh9mP7XAV/Qht00URUaHpXipQXWiXvxvxQ10
-         jc1Hm2Ewm9nsGigWSZ4P7mjQNRH606pxCpTGwkHFQ9+1tCEge7+8nUmnl5Sd9Ra7r7xq
-         YpVPe/OPAIkKEfcWGUR4VPYS5D4pf6kB5g0Bwtgz831JXhToLyyfY6fDsQUPzaZTY0Pm
-         PDYGSEk/qV3XPF97oPZUD3EDOmpUbIYpjU0dnXiIhtTPpOZeMiNqgUnSVoddTRAhk+rM
-         bBEuW4yf1lm/ZMz0yb4IfOLXRCQUzhdt1aYcM0aEMVDEkFIyZ+rYrFk+E93zjGRehG+3
-         sr+A==
+        bh=a0I2pNeOiPYcUgKjv6OV6+sPS7erJxX4fRSV8gqz1fw=;
+        b=JVPJNR2G9K5SB+ZbY//2raud+kEc/EIAVOrsIkSCHCmc2c4Oc6QBLqmbAJj6j3hweh
+         dXw485acl4adLieocy3FOyHxXRAgmSs7fYxE/6DLnxURl8KbWfJgNdJokpDwb9gmRuxE
+         8vi0l5DYkgzMbZHMjWiPGqZIJmixY2tpz+wUZMgxmoVIYjGHIIHg9N2A/8pft+GbW14+
+         tD3UKjvjxMKY11ZJl1oYQqi7rrIoQvusSCgRULOOcpSZjoFmQoP3c7ZshW17QdSs9XKA
+         gJTHWOERR1npxo0rAFS+CBJ5UZbvkh0Ami8TVlfy6pYx70reg/k1ctOhT9JFkPDRYK5R
+         TSHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686638819; x=1689230819;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1686646166; x=1689238166;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=02cZUxsOqGfZ8lXmchHjzAFGxYbEcf/VDvBL7ckHl/M=;
-        b=MwU2K9ihRWg9oKXwzKWMqHB3ImLZP9+W5M4SANl6tlzZh/72w6WjQ69jqfvTQSs8n1
-         y/ySfYAsLSjslnPsa7+U9YBORWkgmj9x7zKaeniuobyo0CrI7T7fgrAiMWwecSDBnMGz
-         IHW3Z6GAIo7MoP29qIPfmA9MiFBkoQ2K3i7tUwgHkfWhYLs+5IZPkRY2QJf9Ut3l/TBO
-         CIqEm12HLbWqGlXd1Di208Pku+LRMbTMi/SUY7g/EKClp7V8ftxPJxLzIrA8l9A+ryj+
-         tRBom/cIv92GOWHpXBtT3t4RNGPX1GGwv4q/DLUx0U/iVgHExKi7tq55fD5aC1+izKl5
-         qKzg==
-X-Gm-Message-State: AC+VfDwNP+OIzZUuHrwdmvf15opMuWc3APJRhmHMaUAHBiBSN7DsZ2WM
-        qlpjPU51p5YCuEYeVpe+su/0XFU+g9gYXjvAgWs=
-X-Google-Smtp-Source: ACHHUZ7jLXGNINNFmi15PwujwvIU2N90t+1cq56bMQ/WiVjOp1HKtrySJyLsof5kHSHuUy2YkGQ3YA==
-X-Received: by 2002:a7b:c349:0:b0:3f7:408e:b89b with SMTP id l9-20020a7bc349000000b003f7408eb89bmr9070856wmj.33.1686638819250;
-        Mon, 12 Jun 2023 23:46:59 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05600c228b00b003f7361ca753sm13326057wmf.24.2023.06.12.23.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 23:46:57 -0700 (PDT)
-Date:   Tue, 13 Jun 2023 09:46:53 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 led] leds: trigger: netdev: uninitialized variable in
- netdev_trig_activate()
-Message-ID: <6fbb3819-a348-4cc3-a1d0-951ca1c380d6@moroto.mountain>
+        bh=a0I2pNeOiPYcUgKjv6OV6+sPS7erJxX4fRSV8gqz1fw=;
+        b=Xq/yR5ZbgETGxpDLFBwrdI+we0jkMQKwCQ9MG/4k7p2dDcAq0pOR4lNPkzBbYL0T6u
+         hpYSZWgetefbweWxuosm3OY98rfAccir52dRev2XdG6BmqpgAEI+snqaFVIfJJ5xIqnU
+         +YkrxEU5qgXTBlTDY/21m7xhzXswKUnKrlAnp2mzBwyR9+fcVVWNUaftWL9kwvYCwVUx
+         4GvBdrjRbSptAa15ohZWVP/+24eXCvNaTtaemDOWGa9t1tn7WwptnxBbSZHVKkIqucS6
+         OrC0NUqTjDQx2FWgwRgmKkJ6KN7ePatFt9V8hKQ9WQ+Vq6U4iXNFePu814UDHC6o6Utf
+         GR4A==
+X-Gm-Message-State: AC+VfDyUXdtZ9MX2tLiBoTayb55+BFmO9xApvVhQ/YqjCMOn+1S8wDNa
+        xtZhXTn7X93Vyf/sq4SkKwNCYg==
+X-Google-Smtp-Source: ACHHUZ42xf9bgppziC+evXWZEQ23sTzyp1CSrHHwD55tNkhkvnVJMtZkpVFyXvbIV1n6bLMqRSDXhg==
+X-Received: by 2002:a7b:c7d8:0:b0:3f6:1474:905 with SMTP id z24-20020a7bc7d8000000b003f614740905mr9375762wmk.29.1686646165959;
+        Tue, 13 Jun 2023 01:49:25 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:b5a8:28ff:af00:a97f? ([2a05:6e02:1041:c10:b5a8:28ff:af00:a97f])
+        by smtp.googlemail.com with ESMTPSA id z15-20020a7bc7cf000000b003f6129d2e30sm13796467wmk.1.2023.06.13.01.49.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jun 2023 01:49:25 -0700 (PDT)
+Message-ID: <ad78c18e-13dd-fca3-1aff-5b8e68a91c90@linaro.org>
+Date:   Tue, 13 Jun 2023 10:49:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2] thermal/drivers/sun8i: Fix some error handling paths
+ in sun8i_ths_probe()
+Content-Language: en-US
+To:     =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+References: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
+ <ucnnixemxbpkjlbyenboydicslozt5jpyjjfbd4gjk4oye52et@fgyd3zqdqsh2>
+ <u7mmywm63bm5q4zlsbnooeplscn4rrd3qnslkfq2xnquxgnkkd@n3tsnrutmfjp>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <u7mmywm63bm5q4zlsbnooeplscn4rrd3qnslkfq2xnquxgnkkd@n3tsnrutmfjp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The qca8k_cled_hw_control_get() function which implements ->hw_control_get
-sets the appropriate bits but does not clear them.  This leads to an
-uninitialized variable bug.  Fix this by setting mode to zero at the
-start.
+On 15/05/2023 14:33, Ondřej Jirman wrote:
+> Hi Maxime,
+> 
+> On Mon, May 15, 2023 at 01:54:41PM +0200, Maxime Ripard wrote:
+>> Hi,
+>>
+>> On Sun, May 14, 2023 at 08:46:05PM +0200, Christophe JAILLET wrote:
+>>> Should an error occur after calling sun8i_ths_resource_init() in the probe
+>>> function, some resources need to be released, as already done in the
+>>> .remove() function.
+>>>
+>>> Switch to the devm_clk_get_enabled() helper and add a new devm_action to
+>>> turn sun8i_ths_resource_init() into a fully managed function.
+>>>
+>>> Move the place where reset_control_deassert() is called so that the
+>>> recommended order of reset release/clock enable steps is kept.
+>>> A64 manual states that:
+>>>
+>>> 	3.3.6.4. Gating and reset
+>>>
+>>> 	Make sure that the reset signal has been released before the release of
+>>> 	module clock gating;
+>>>
+>>> This fixes the issue and removes some LoC at the same time.
+>>
+>> It should really be three different patches:
+>>   - One to fix the resource release, that can be backported to stable
+>>     releases
+>>   - One to switch to devm_clk_get_enabled
+>>   - and one to change the order of clock enable vs reset deassertion
+> 
+> The order was correct before this patch. I don't think an incorrect order
+> should be intorduced, even if temporarily between two patches.
 
-Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: In the original patch I fixed qca8k_cled_hw_control_get() instead
-so that patch went to netdev instead of to the led subsystem.
-https://lore.kernel.org/all/5dff3719-f827-45b6-a0d3-a00efed1099b@moroto.mountain/
-Fixing it here is a more reliable way to do it.
+Maxime ?
 
- drivers/leds/trigger/ledtrig-netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index b0a6f2749552..2311dae7f070 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -445,7 +445,7 @@ static void netdev_trig_work(struct work_struct *work)
- static int netdev_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct led_netdev_data *trigger_data;
--	unsigned long mode;
-+	unsigned long mode = 0;
- 	struct device *dev;
- 	int rc;
- 
 -- 
-2.39.2
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
