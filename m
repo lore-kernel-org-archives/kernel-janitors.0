@@ -2,72 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DB9C7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 12:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C77EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 15:33:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242040AbjFMMQY (ORCPT
+        id S241194AbjFMPdw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 08:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56610 "EHLO
+        Tue, 13 Jun 2023 11:33:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234823AbjFMMQY (ORCPT
+        with ESMTP id S239278AbjFMPdu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 08:16:24 -0400
-Received: from out-28.mta1.migadu.com (out-28.mta1.migadu.com [95.215.58.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A89E5
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 05:16:22 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1686658580;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KSAEPk899fFIeec6HHaSoIZTwAJnWOrWf2em/FZAvE0=;
-        b=ClpOLb+zqfw4RK3yxKIxW5y1+8cGDnRq77JdHFXZuP3cMEqwRLlSS+TD55Fnp8uHKO0zkK
-        gRfVUhBm3yzUkAuRvhqxS4H8NRfaF0dWXFJXi5vwwvitbTX7xVyxpMAMXZpg2IbXmZvZZI
-        xwShBVMuIUYeDtAj2xOcehf123cu2Z8=
-From:   Oliver Upton <oliver.upton@linux.dev>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Cc:     Oliver Upton <oliver.upton@linux.dev>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        kernel-janitors@vger.kernel.org, kvmarm@lists.linux.dev,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] KVM: arm64: timers: Fix resource leaks in kvm_timer_hyp_init()
-Date:   Tue, 13 Jun 2023 12:16:01 +0000
-Message-ID: <168665854177.2681974.14382421414038699730.b4-ty@linux.dev>
-In-Reply-To: <72fffc35-7669-40b1-9d14-113c43269cf3@kili.mountain>
-References: <72fffc35-7669-40b1-9d14-113c43269cf3@kili.mountain>
+        Tue, 13 Jun 2023 11:33:50 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B8FF1BF5;
+        Tue, 13 Jun 2023 08:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686670417; x=1718206417;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OJLCl5j2fnbCKOJmS3WpzNGl7C0daKs5FfuZDCveZmM=;
+  b=MjrEHrQ+g/xQmR6JzqoN/KV6rXsM/+nbLDItiWtu69TXKmcqIQUuBDVs
+   lb5HALNoHl0rfJz6lYsPN6J+LA6Jh57g2RQbZA84UaxL6JCdbqnIV5CxB
+   AQI29D/o+B1rxt7gu2rarAp9NI8YMrtRAEdOJmUMa0pKak8Z/MkGbYxZG
+   WBobKHARtd0whiYrZZBUaBPaoRfADBledSP3tKzeJJPrjMC/uxNXHCaXU
+   I28XTT2QOuQ/di0y8I6IdnoFwMvE8wJgUO2Fq8YacLbS/6NoJb/ReeLeR
+   nv3ppNvgSBDWPSLUs6nYgr+hIxstwUJjzAONA1f5T9Ebr0RauXiffHBNJ
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="386769296"
+X-IronPort-AV: E=Sophos;i="6.00,240,1681196400"; 
+   d="scan'208";a="386769296"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2023 08:33:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="711704575"
+X-IronPort-AV: E=Sophos;i="6.00,240,1681196400"; 
+   d="scan'208";a="711704575"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga002.jf.intel.com with ESMTP; 13 Jun 2023 08:33:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1q961U-003UJI-1P;
+        Tue, 13 Jun 2023 18:33:32 +0300
+Date:   Tue, 13 Jun 2023 18:33:32 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] pinctrl: Relax user input size in pinmux_select()
+Message-ID: <ZIiMTGaUNMKQCkfC@smile.fi.intel.com>
+References: <20230604131215.78847-2-andriy.shevchenko@linux.intel.com>
+ <24d8898b-1e3b-8180-e96b-a3296de178a9@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24d8898b-1e3b-8180-e96b-a3296de178a9@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 13 Jun 2023 09:43:39 +0300, Dan Carpenter wrote:
-> Smatch detected this bug:
->     arch/arm64/kvm/arch_timer.c:1425 kvm_timer_hyp_init()
->     warn: missing unwind goto?
+On Tue, Jun 13, 2023 at 04:38:17PM +0200, Markus Elfring wrote:
+> > This is debugfs and there is no much sense to strict the user from
+> > sending as much data as they can. The memdup_user_nul() will anyway
+> > fail if there is not enough memory.
+> >
+> > Relax the user input size by removing an artificial limitaion.
 > 
-> There are two resources to be freed the vtimer and ptimer.  The
-> line that Smatch complains about should free the vtimer first
-> before returning and then after that cleanup code should free
-> the ptimer.
-> 
-> [...]
+> How are the chances to avoid typos also in such a change description?
 
-Applied to kvmarm/next, thanks!
+Almost 0. This is now part of the non-rebased branch. It can be fixed
+if and only if
+- something really wrong happened before this patch in the tree and has
+  to be fixed, and
+- maintainer will remember to fix the typo.
 
-[1/1] KVM: arm64: timers: Fix resource leaks in kvm_timer_hyp_init()
-      https://git.kernel.org/kvmarm/kvmarm/c/21e87daece5a
+-- 
+With Best Regards,
+Andy Shevchenko
 
---
-Best,
-Oliver
+
