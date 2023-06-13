@@ -2,130 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49B4EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 17:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EDFEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 18:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237642AbjFMRP5 (ORCPT
+        id S235491AbjFMSSO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 13:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46310 "EHLO
+        Tue, 13 Jun 2023 14:18:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237576AbjFMRPz (ORCPT
+        with ESMTP id S230498AbjFMSSM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 13:15:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8765E10FE
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 10:15:50 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 97cKqpd5hx5Vb97cKqvfRE; Tue, 13 Jun 2023 19:15:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686676542;
-        bh=nJwk0bnAQ0Xv6sG4ivedyKkZihPzSwcBd5Y0QPp0N8Q=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=MVyQ422go+DjjzMaDCYxv4dYV00tNMyAXp4VRoC/u+vRBDxhF+r1NEVXlvPeaj/G1
-         XPSj8iTmg8nxd5idXgfiqg6JZVHpk5RTaUP4LxVOK/IZwbhwMnQfAZS0jhdD4pWjC9
-         cVL/de62rrH4bsDt84FJLrm8k95o8VmS/v4Pyf5unBP2Gj00S1+n5TqYCCRKY95uNM
-         tWaQYID9AN+jWNhvsMRiPF2lb3RKXwTyFlDcXOPYgDmyoEVrFlieyzA+cBWyDHPGLK
-         vreUmFehIue4Nx7PF08o4Fk2E4nLcvvXSN+ZT6q+qjLsM1/KfHEtR3ib8LYjRPbOil
-         6q+UQea0BNfGA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 13 Jun 2023 19:15:42 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <34b714b6-cb49-1a34-58f5-8b5ef0da2714@wanadoo.fr>
-Date:   Tue, 13 Jun 2023 19:15:40 +0200
+        Tue, 13 Jun 2023 14:18:12 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBA019A
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 11:18:11 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-bd790f26791so83529276.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 11:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686680291; x=1689272291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L3jeE7DVQL64/LAB0gEQ9aqldA64x4ArcQNWljKfFuo=;
+        b=N9QOc3XQA+yTi24Iik91xssvIngenc6CeXLc050E5jJ8bxjxCGCB0d0NYgyixiqXjQ
+         ZYkJjJAbX7djbP7DjNsdZFykL6Y291MLKoG86b0WyhxMEDVj7l6y0CyU6DSSW6VtQRRE
+         a8cMZjgJgOyvGvfqN5WhHnkFgm1j+PkESZSErFspwfY8Q5jLciZrqDHp6Xsfhr1WLrqO
+         O+RxfCFISy0qDCybu2afEro3HDy2+o9sOflLUsLdaOxUmxq4fAvbgzY4ZntKDUo+NSka
+         /MfJ6GMKQDoLY+KIzRNm0SGvIklG5E6KY3oz874rOJok/6DvrVNcjExgINf7Z0TiJycF
+         fTjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686680291; x=1689272291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L3jeE7DVQL64/LAB0gEQ9aqldA64x4ArcQNWljKfFuo=;
+        b=J+WIGHbN3dSkuU18kjTe0rgxcf5RLururTKYKPInJ6iTxXST1TLMcLmn7w3FSwADwt
+         v/v+Az04HlUBv6R8/BIMgrjLhXKbk9A9mXlnd2qj0uFHRwjFldn/cMIYnjJF2rGaixbB
+         A0pujFDkm+26eJgeQ2M0ZVDikl/jlOS2siYzajm1JYspoSAQGEgZqWcpHe+YGFzrlGS9
+         aHmV5yKjZ7ogWkAy9SKQZZy2zzs8GyPI+SGXwpmR2X6lRlCBPSk1Z5NQqQq3MYYDL+RO
+         m+lXybNY2VWrnLtKm+8ZcDE37zIVxpJLKkyymwhxOz1mtYea2a9BWFu9trUX6RrcPjDA
+         kefw==
+X-Gm-Message-State: AC+VfDzhJYl2QoXaRs4jUMk36YoOuNIT2hLBGBEcDZUZPOfgOBgYVWkY
+        49L50FNTdUJGJCMAJcwZS2KQVMfJqJa0J3tUReWMig==
+X-Google-Smtp-Source: ACHHUZ5G5FB19PgvEirbHYRzs9fEquyZsRcFyH6tJsNMJ+2W1QyRyp+YzqBDfGDlfE5K76MTRccXsXNPjDkNhDdH4uI=
+X-Received: by 2002:a25:da8e:0:b0:bab:badc:41c6 with SMTP id
+ n136-20020a25da8e000000b00babbadc41c6mr2079962ybf.24.1686680290957; Tue, 13
+ Jun 2023 11:18:10 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] media: v4l2-core: Fix a potential resource leak in
- v4l2_fwnode_parse_link()
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-References: <2ddd10ec9e009bbb85518355f1e09e1ecd349925.1685340968.git.christophe.jaillet@wanadoo.fr>
- <ZIhLDh567eWqY5vk@kekkonen.localdomain>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZIhLDh567eWqY5vk@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20230604131215.78847-2-andriy.shevchenko@linux.intel.com> <24d8898b-1e3b-8180-e96b-a3296de178a9@web.de>
+In-Reply-To: <24d8898b-1e3b-8180-e96b-a3296de178a9@web.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 13 Jun 2023 20:17:59 +0200
+Message-ID: <CACRpkdbE8RArEZUnRw_wpHHJh8BgUXGkN+kWkdrpk+aNrUVUdQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: Relax user input size in pinmux_select()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 13/06/2023 à 12:55, Sakari Ailus a écrit :
-> Hi Christophe,
-> 
-> On Mon, May 29, 2023 at 08:17:18AM +0200, Christophe JAILLET wrote:
->> 'fwnode is known to be NULL, at this point, so fwnode_handle_put() is a
->> no-op.
->>
->> Release the reference taken from a previous fwnode_graph_get_port_parent()
->> call instead.
->>
->> Fixes: ca50c197bd96 ("[media] v4l: fwnode: Support generic fwnode for parsing standardised properties")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> /!\  THIS PATCH IS SPECULATIVE  /!\
->>           review with care
->> ---
->>   drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
->> index 049c2f2001ea..b7dd467c53fd 100644
->> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
->> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
->> @@ -571,7 +571,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *fwnode,
->>   
->>   	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
->>   	if (!fwnode) {
->> -		fwnode_handle_put(fwnode);
->> +		fwnode_handle_put(link->local_node);
-> 
-> link->local_node also needs to be non-NULL for the successful case. The
-> condition should take that into account. Could you send v2 with that?
-> 
->>   		return -ENOLINK;
->>   	}
->>   
-> 
+On Tue, Jun 13, 2023 at 4:38=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+> > This is debugfs and there is no much sense to strict the user from
+> > sending as much data as they can. The memdup_user_nul() will anyway
+> > fail if there is not enough memory.
+> >
+> > Relax the user input size by removing an artificial limitaion.
+>
+> How are the chances to avoid typos also in such a change description?
 
-Hi,
-something like below?
+I don't care much about typos, and when a patch is coming from Andy
+it's certainly not a blocker for anything since his patches are
+of high technical value.
 
-@@ -568,19 +568,25 @@ int v4l2_fwnode_parse_link(struct fwnode_handle 
-*fwnode,
-  	link->local_id = fwep.id;
-  	link->local_port = fwep.port;
-  	link->local_node = fwnode_graph_get_port_parent(fwnode);
-+	if (!link->local_node)
-+		return -ENOLINK;
-
-  	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
--	if (!fwnode) {
--		fwnode_handle_put(fwnode);
--		return -ENOLINK;
--	}
-+	if (!fwnode)
-+		goto err_put_local_node;
-
-  	fwnode_graph_parse_endpoint(fwnode, &fwep);
-  	link->remote_id = fwep.id;
-  	link->remote_port = fwep.port;
-  	link->remote_node = fwnode_graph_get_port_parent(fwnode);
-+	if (!link->remote_node)
-+		goto err_put_local_node;
-
-  	return 0;
-+
-+err_put_local_node:
-+	fwnode_handle_put(link->local_node);
-+	return -ENOLINK;
-  }
-  EXPORT_SYMBOL_GPL(v4l2_fwnode_parse_link);
-
-
-CJ
+Yours,
+Linus Walleij
