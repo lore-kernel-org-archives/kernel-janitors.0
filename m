@@ -2,137 +2,158 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78137C88CB4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 09:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80121C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 09:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241887AbjFMJSI (ORCPT
+        id S238745AbjFMJ14 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 05:18:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
+        Tue, 13 Jun 2023 05:27:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241902AbjFMJSA (ORCPT
+        with ESMTP id S237934AbjFMJ1y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 05:18:00 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B6719A8
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 02:17:50 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f8cec6641bso3099065e9.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 02:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686647868; x=1689239868;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DcUX4fDs7iSlQ+LnL3iJyOLoCOfttwzDzADNkHi9/UQ=;
-        b=wE7DBOHqnnNYn0JdlNZUMAi/IfQEQdPUAEbjSX8isNwHRmldZ6YyaKSsgn3OMuDejJ
-         8sW04YcS18wT7UKNqDklWAHGQh87GS+qy4ckHY+X1Cecc0cbPgW5LdMM4kOLHes19lU/
-         bOnTd//CbkKIH3PtJkIDj+Z6BqFplONDOXCcY4dnjYrP/sas6jvJJXID1kRSulqzx+a9
-         JVRzLcfB1fb5nr41OQAOJ8jVs+suQ8AgtMIw2A/f1ejS8QqCDdl8BfLQUIQw0IKamERh
-         milN0sjKNKnosNuU4flCo2TB8C9znO4syyBO1HE5+z24kMvOSxRHjsmxCsltrqlMIhSV
-         ssBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686647868; x=1689239868;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DcUX4fDs7iSlQ+LnL3iJyOLoCOfttwzDzADNkHi9/UQ=;
-        b=Yg1esITHzijbCi7+puDbjOPbfuwU+u06o7UyL1v9MMKvFsQOpPJa045dDxLTeJ+Vka
-         CGy9DSf6W8nhPn9f5kDxWCa0FhSBvuJi2JRUEsDqgKzBXohGVtFmti60SQ5pSJeywsh9
-         5JTkYG6yiq3sONYSOgMyaewJEHBDUkHrlt8r2IuY++NPyepNhuVV9+9nbxnHWykxin++
-         eAJNSRv3EBPB8YJT2Zu9zrOMbP0b1PtW+rF1tjsy3R1NXO3PK1aM3eAJHewyY2iPpiv/
-         8HXLmsOOakFB5MY6qKXgejOIr1ZaKtFqcMxoYmiDgJMjlzKfRGAF0MKjxfhOhFeNGt7O
-         amAA==
-X-Gm-Message-State: AC+VfDzDCov5JlMMkbeq5iPZQcP9naptrcGUgzaR3LqS9aJTsUp0SIO7
-        A8yu4kFy2OXle2q82s2pC/iLMQ==
-X-Google-Smtp-Source: ACHHUZ7PRirIG4e4ODfmZ78TSJJS4MY/py9QOzKFtnX3RLZe7Upxx7koRp4/SWWhSVvtEj7n/D1VUw==
-X-Received: by 2002:a7b:c394:0:b0:3f8:f5d:52ee with SMTP id s20-20020a7bc394000000b003f80f5d52eemr6890301wmj.23.1686647868566;
-        Tue, 13 Jun 2023 02:17:48 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:b5a8:28ff:af00:a97f? ([2a05:6e02:1041:c10:b5a8:28ff:af00:a97f])
-        by smtp.googlemail.com with ESMTPSA id q25-20020a7bce99000000b003f17848673fsm13769141wmj.27.2023.06.13.02.17.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 02:17:48 -0700 (PDT)
-Message-ID: <3613a4fb-5c68-4316-0983-7bfeb5755041@linaro.org>
-Date:   Tue, 13 Jun 2023 11:17:47 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] thermal/drivers/sun8i: Fix some error handling paths
- in sun8i_ths_probe()
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-References: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
- <ucnnixemxbpkjlbyenboydicslozt5jpyjjfbd4gjk4oye52et@fgyd3zqdqsh2>
- <u7mmywm63bm5q4zlsbnooeplscn4rrd3qnslkfq2xnquxgnkkd@n3tsnrutmfjp>
- <ad78c18e-13dd-fca3-1aff-5b8e68a91c90@linaro.org>
- <4j74jv53tdf4n6txibl6xjh63dzzjr3ku3uoxhv3rzodthqbqy@25eho3f7wh6y>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <4j74jv53tdf4n6txibl6xjh63dzzjr3ku3uoxhv3rzodthqbqy@25eho3f7wh6y>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Tue, 13 Jun 2023 05:27:54 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2070.outbound.protection.outlook.com [40.107.7.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C2618E;
+        Tue, 13 Jun 2023 02:27:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cOZuDBSIE6q4A65r134QWYEHv699s2CeRDieIv80pLO7fEp46IRG3nZlUcWjeibOEsWZOlMRIRPPFB24LCayyu9jQSALZkEDwOBaupBazjBQ4j/3FMj8+4C0GYkxD7SHqwzX5cjYtHstzQrmsSILNsFneIRasBFQiX61IR8ecLMMSuB6yQ70FjekZ6sN9t1bx/GmmR7bIN7ZOY67iE2XB4JGlua/hEdRgxEam3n6HVMYywMbzb41v5bYj2MINYHVQYKQfe+y/7rx6If8Rhef6yTFmEGt9/wulfXRPrUXtAmeQDJ19bTNf8pr4HtJUwMO/yhCvZUryozqy3OUY8nUAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Drhumk5NG0tHEkQj/BK9TJ5wxaeKWnHGmtUFArwvzE=;
+ b=Y9wVekjg9/XxRgxa3bHNxsh8msbRPpwKVkqGCkSOBHw3ZoeJHIey4HkkB0oDfxv/Azfxt63N3/sec9G5t7nOZGVf/aqv60TqGsL954A/74Vtj2d9Hn+7ADEE8za76HuHaTpe/4xhWpYhPLkcnAkrV5+gK/SLEWS4rf9s9rWiMO4xn5zy/Gb1nck9iomnX5gAPnVmR6XdrebY9NJIfPX4pTVZCIOWNS07KgqoTgAgeGMRQZFZvXvWaj0LHKRgxjrP4BvKTTiHVwN6f6l5P/z/5h1gw1wFze4aVRbjm+r8bSdmAOW1Vzezt4IsEvlSwtGhnlMW1mjeCwAeQQA1ADhcAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7Drhumk5NG0tHEkQj/BK9TJ5wxaeKWnHGmtUFArwvzE=;
+ b=XXreqbllldyKXRGb2kgIegEsQZzQdVZJNdfJ1TO7um5W1RWsPz5VTGVrJqy2Ca5N0Z/PqA4HZH+BgW+/FOVxm5S5Em1IMZGnROi6MrEjaoOEMx6v+TDE+f38bZDaw2Xv+d0X/vrOwqXHPrbg6R0GSmF4r6QvCB38JJ/DQUPR3oKNBSyf8UWkK5C4agOROAFToBAo85TAfK7G5I6zyo5xiXLR3BtEZ+LAOkXxtnQCTmgmj24hlKjbxpKN539Vhh9EvlNcTi2LWKLZXU4cdhK1eGLuGeCx7w/Io0OX84uHLclHZhv1l4BfRey0r9CZhWadQnZ7x8pa7Ud1N57b0dIx5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3439.eurprd04.prod.outlook.com (2603:10a6:803:4::13)
+ by AS8PR04MB7653.eurprd04.prod.outlook.com (2603:10a6:20b:299::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.29; Tue, 13 Jun
+ 2023 09:27:50 +0000
+Received: from VI1PR0402MB3439.eurprd04.prod.outlook.com
+ ([fe80::7840:68b7:3d49:6bf7]) by VI1PR0402MB3439.eurprd04.prod.outlook.com
+ ([fe80::7840:68b7:3d49:6bf7%4]) with mapi id 15.20.6455.045; Tue, 13 Jun 2023
+ 09:27:50 +0000
+Date:   Tue, 13 Jun 2023 17:27:43 +0800
+From:   Chester Lin <clin@suse.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, s32@nxp.com,
+        linux-gpio@vger.kernel.org, opensource.kernel@vivo.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lu Hongfei <luhongfei@vivo.com>,
+        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH] pinctrl: nxp: Adjust error predicates for improved
+ exception handling in s32_dt_node_to_map()?
+Message-ID: <ZIg2j025xV7E6yI8@linux-8mug>
+References: <20230606070201.14249-1-luhongfei@vivo.com>
+ <fca44dcf-e632-fed6-aee9-03a5b0c6b1d9@web.de>
+ <ZIgPl0UShltd0VEe@linux-8mug>
+ <b6c1500b-c901-00c7-e1be-1fa0088972a3@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b6c1500b-c901-00c7-e1be-1fa0088972a3@web.de>
+X-ClientProxiedBy: FR0P281CA0148.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:96::9) To VI1PR0402MB3439.eurprd04.prod.outlook.com
+ (2603:10a6:803:4::13)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3439:EE_|AS8PR04MB7653:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63184f15-e080-4cb5-9c78-08db6bf074d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xkwmEIwAI76f5r6dsbUluuZQeG1JLtqe+FDwEgO+AqOOoj0e8zUvgzfXsOGJHiy0g8W2JQMR2G+pb6tUvP79NR0RJUojIKHE8uApy27jB7Qwvmhb48qwrgVw4JK6WLomugb6d2OSc7aI7Rc2tS7/Nw3C4osYnKabOVFla1/u014zyvIvhnvEr5qbLCdbaQEk7CppYo25WM4T5XFRSvX79FDfzQsm5pNP/OE17EAZDxXYnevRkzBn6Sy86taJvfIMFUb1E2nQhoRS0i9GXCXpN+/1jQqVzdn4xvY/CWd7xmT6C41gC3wd38JORWzfWgCOE3zll7gv8dOSEU0CMyrDKpZ2DyXdupBHUGSvdBjzdD2X3rVrZaHm9L2S+J+QxuZuNgUkdSgE8TlT2oO5xsiirnubj9vYWTdQfzCZn3e/ZaBiZHNdpqSsC/MUy6JVu+mrkc/le6K0ao/JxhhwOeVhRHczLUpJVv4XSbvKrS9Kw4fWFgI92UOqQpfL3Y8rpt5BIzu8kvmciSFogQsCs4wr/q/HKKJKzyy8la2PVr9+Cetyek4PUtNnEug8rIfUiNi3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3439.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(396003)(376002)(136003)(366004)(346002)(451199021)(86362001)(66556008)(4326008)(6916009)(478600001)(54906003)(6666004)(66476007)(66946007)(316002)(6486002)(8936002)(41300700001)(5660300002)(2906002)(4744005)(33716001)(8676002)(38100700002)(9686003)(6512007)(6506007)(26005)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UlNGeTh2RDRWY1phRm5BaVc3UHV4bTh6RC9Cc0Y2M29RaDVRelBJUlFxZnQz?=
+ =?utf-8?B?NXFYWXFGanE1VmJkYzRudVpWM0JxVE1WRXBLRmxhWWZlVUc4TnlDWU5FVmEy?=
+ =?utf-8?B?UlhjTFBHU3RTQnNSVXZqYTVxRVVUZGV4U1k3TU1HZE11d0lpSTU4TGFnckhD?=
+ =?utf-8?B?V3MwZmREVjkwUHBqbytJSWtWUUtOcW5lR1ZFdVZxS1lKUk9jaERnUGpoQlFN?=
+ =?utf-8?B?NGZxMnN3YUoyTklCYXR0TUFCT0ZPandNSXdzSkVQeldaeTYwUU9FcVc1VFVL?=
+ =?utf-8?B?bm1ETTV4MlpLYTlESm1xMVlXQXljSW8zekNmNnZMbnIzK0EzeVpVOEFLc2pk?=
+ =?utf-8?B?Y1FiblFIM2s3YUcyK1NHZFJyY2RWK3BselJNTEV2K3lGdWozQzlMRzJlYkJL?=
+ =?utf-8?B?YWZ1RUhzNzRaQWVzU2ExU3J1WmlpZ3VIREhuczhCdWJJUk1TVXk4RThBcy9o?=
+ =?utf-8?B?YzZrem03S1FTZHVlTkpSZHNxOXEwWHU1YVg1cFFXTEZlTUtWaUd2YVpzUW9s?=
+ =?utf-8?B?MXduZUtnRVNkZHpvWENNWFFFOENLckZsWkdsNVVjejNsRFhneTdDSlJzOTZs?=
+ =?utf-8?B?VmJQb0tOM1NRUWZZaDhaYjR4T0IyTWpaWkFib3pRT3BXMlVvOXpMOVl3R2JJ?=
+ =?utf-8?B?dSs5R0xIR25BSCtOVHlSM3VkYlErNnZBUVhxMVZmekZXN0dqK2V2ZnZ4NUU4?=
+ =?utf-8?B?TStCNm9Qd3Riang5b0xkcEhDL1VTUDRXVDR2VjNWSmZ6Y3V1Qm9UVEhyR2xh?=
+ =?utf-8?B?eDhHN1FaQzlWWU1zRjFpZ0ttSXBwcnJiRENFVmw3WCtPUVlGNTJQYzV3WWpO?=
+ =?utf-8?B?Ymg5eElVM3Y5UW8rSW1rZ2xlTzZMcGE5OGJQY0wwa0RQQzMzV0tBNEdoeHh4?=
+ =?utf-8?B?U3dNSmJDOWxvK3RPbWEyaktsK1JqTWNaWGFmSVFaRUUyMlphbnlFQkJBeWhW?=
+ =?utf-8?B?VlY3ME9uendIcWFkaTUzWUhPeTlMTWpNSTNlZFZPaUFRSU8zZXI4TDdLTTg0?=
+ =?utf-8?B?aXpyakdpSGY4dTRhREl0WW41VlBuYnRJTzFkUUxZVElTbHVhak1rRm0zN0dY?=
+ =?utf-8?B?UWVPQWRheEFvUnh3M2d1ZzEzQU1Va2FnWGlXcjJwcW9ISWRaak5DTjZ6dHpp?=
+ =?utf-8?B?b2lvZ3UycFUxb0FzV3FLd1hCd3NYL1h1VE5oUm5obzlrc3VNcnZHdFpXNkNw?=
+ =?utf-8?B?UTk0dm5ab0FMSzlscmhsR04zRnAwN2drNXU2YjVZbEJZK3J4SUxNWGpLV2hT?=
+ =?utf-8?B?aWsvQ21rN3YwQnhKOGxad0M1bFhOeWxjMlVvUk1PcVJPSStReGxrenBFcnpM?=
+ =?utf-8?B?L0VOcXZpQVVwNmo0b0RUY1hVZDZ2cnB6RHRoWDJycGFDb0xjbEdqNzUzTU9m?=
+ =?utf-8?B?UlZad1J3NmVsemlCSXRVYnMvZ3VaRk9PajNUcmNaVGZMSk1iL0VMNGtaaFJR?=
+ =?utf-8?B?RjMyZ0xnNFc5Z2VCYUdHVXJQVFo0eW8yMXJFY2hqd29XVjROakFYckdLeGdW?=
+ =?utf-8?B?VFNOUUVlT2pwc2xpV1R6ejZDMjVLb3hwSnVTMFVKSDdxaXpaT0VVQy9aaGNB?=
+ =?utf-8?B?WjQ0N0MzVWxScUd4SW9KSXB4VU5GblIxZmtqRzVIQnRaWXl0bUlyWHdLaTRG?=
+ =?utf-8?B?K1NxTVU3VmE2YWNqQ0Jlei8ySUlPbDNic3NuaWE1aktNSlVWcVY5SmpNU0hD?=
+ =?utf-8?B?SXkzcU91aHoxc0s2T3gzcDlzZTJGS2k0a1hubUtuOVgraW50Nk15NjBqZGJX?=
+ =?utf-8?B?enZzblg1QmlOTHlFc3I0aUEzcCs5QkRSZVZUcHlOYUlaVHNBOStkMnVkTXV1?=
+ =?utf-8?B?TU92dXFkL2tMV01jeFR1d1FwQ1F4VDlsaFliRlAvVVByRU1hT01lOVJBK015?=
+ =?utf-8?B?ckJUcVdVdEI2RVE3em1OdFFjOXhJSFFMeVN1by9BOXh2Z3dSaHVDYTFEeU5x?=
+ =?utf-8?B?bk9McVlrMDh2Mlo3SVpuVHdhQ1piOXdWOEtwdklhRzQ0dmtpOWs5MnRTcTRy?=
+ =?utf-8?B?NDFQU0N6dlEzbWlvUzRIbVdCcVRVejVmZDd6eFB3OHVJRHlvOW5ZcGlzenBN?=
+ =?utf-8?B?RE1hcUU5K3c1SE5HRGJjblRrSS9IN0RTbFZNZ3Y3Y2g3V3l5QWNKMHhGWXM2?=
+ =?utf-8?Q?6NBs=3D?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63184f15-e080-4cb5-9c78-08db6bf074d5
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3439.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2023 09:27:50.1334
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T2xrPE277iKMAq+Ts+S86BJn/+xy3mZHGjeeIU1icgAbM0MdBkT20PTrRm11CePd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7653
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 13/06/2023 11:16, Maxime Ripard wrote:
-> On Tue, Jun 13, 2023 at 10:49:24AM +0200, Daniel Lezcano wrote:
->> On 15/05/2023 14:33, Ondřej Jirman wrote:
->>> Hi Maxime,
->>>
->>> On Mon, May 15, 2023 at 01:54:41PM +0200, Maxime Ripard wrote:
->>>> Hi,
->>>>
->>>> On Sun, May 14, 2023 at 08:46:05PM +0200, Christophe JAILLET wrote:
->>>>> Should an error occur after calling sun8i_ths_resource_init() in the probe
->>>>> function, some resources need to be released, as already done in the
->>>>> .remove() function.
->>>>>
->>>>> Switch to the devm_clk_get_enabled() helper and add a new devm_action to
->>>>> turn sun8i_ths_resource_init() into a fully managed function.
->>>>>
->>>>> Move the place where reset_control_deassert() is called so that the
->>>>> recommended order of reset release/clock enable steps is kept.
->>>>> A64 manual states that:
->>>>>
->>>>> 	3.3.6.4. Gating and reset
->>>>>
->>>>> 	Make sure that the reset signal has been released before the release of
->>>>> 	module clock gating;
->>>>>
->>>>> This fixes the issue and removes some LoC at the same time.
->>>>
->>>> It should really be three different patches:
->>>>    - One to fix the resource release, that can be backported to stable
->>>>      releases
->>>>    - One to switch to devm_clk_get_enabled
->>>>    - and one to change the order of clock enable vs reset deassertion
->>>
->>> The order was correct before this patch. I don't think an incorrect order
->>> should be intorduced, even if temporarily between two patches.
->>
->> Maxime ?
+On Tue, Jun 13, 2023 at 11:15:22AM +0200, Markus Elfring wrote:
+> >>> Ensure child node references are decremented properly in the error path.
+> >> …
+> >>> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
+> >>> @@ -279,8 +279,10 @@ static int s32_dt_node_to_map(struct pinctrl_dev *pctldev,
+> >>>  		ret = s32_dt_group_node_to_map(pctldev, np, map,
+> >>>  					       &reserved_maps, num_maps,
+> >>>  					       np_config->name);
+> >>> -		if (ret < 0)
+> >>> +		if (ret < 0) {
+> >>> +			of_node_put(np);
+> >>>  			break;
+> >>> +		}
+> >>>  	}
+> >>>
+> >>>  	if (ret)
+> >>
+> >> May the same error predicate be applied at two places here?
+> >>
+> >
+> > I think these two error predicates can be combined together in another patch.
 > 
-> I agree with Ondřej
+> Are you going to reduce such error predicates so that exception handling
+> can be improved another bit?
+> 
+Yes, I am. There will be a patch to improve these error predicates. Thanks for
+your suggestion.
 
-Thanks, I applied the patch
+Regards,
+Chester
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> Regards,
+> Markus
