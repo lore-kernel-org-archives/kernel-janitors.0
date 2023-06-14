@@ -2,94 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5F3EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 06:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3707FEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 06:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243195AbjFNGbs (ORCPT
+        id S243256AbjFNGhQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 02:31:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44630 "EHLO
+        Wed, 14 Jun 2023 02:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234327AbjFNGbH (ORCPT
+        with ESMTP id S243115AbjFNGgv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 02:31:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6F0199
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 23:30:37 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9K1Z-000538-PW; Wed, 14 Jun 2023 08:30:33 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9K1Y-007IEA-JX; Wed, 14 Jun 2023 08:30:32 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9K1X-00E7Wt-VI; Wed, 14 Jun 2023 08:30:31 +0200
-Date:   Wed, 14 Jun 2023 08:30:31 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: ab8500: Fix error code in probe()
-Message-ID: <20230614063031.xnqubkav3ej4fipu@pengutronix.de>
-References: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
+        Wed, 14 Jun 2023 02:36:51 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2B01BF6
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 23:36:41 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f8d65ecdb8so3542705e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 23:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686724600; x=1689316600;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8xH+3TukFsIv3cdPHfSub9T49BJL/AeGC9ZLa4qaj34=;
+        b=PMBq1D3LMmdg6odh7ZoEkJF+YdTnIB8hyFqtgJg/FGlUQpZpPJe6slbk2Vilp402QB
+         Rzww5X33CUxTIYWiDI/g3t0pfa8b7lfdykg4d52xqWD125rnLNMG8QK38/KD8f1fwHKC
+         PmDV2fGk7MhANYkHsrzalzKK4PgZlOeiIqh8BdOF1dIY/e+p75C7lvQfN3N7xpZgqdkf
+         LzzzKUUW5t0ky4TehnX2Jq3J9PXA39NfCF9wKT01mNYCLkeJawTC+CjbbbLbe2uA2W0N
+         dPO+pHcJGany/oCGQXSW29fdp1EhpU+TZe1AID1SVIe0LyLff9U2QHbGKjDRARHeiicv
+         hpbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686724600; x=1689316600;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8xH+3TukFsIv3cdPHfSub9T49BJL/AeGC9ZLa4qaj34=;
+        b=d6NPxVkLuEGPi9jSlSHa5wYSnID4YqnFwZbiyq8MrNmO46w6yKK2W8n9SoPiz2lRvi
+         /v5aJgIXnIjYQRlvWb8ZWZOPFdT7f7RZE6HzBQnzVSIh4BNlKwY79BGEhNVisWcWED5H
+         u1Tq60StKC4YOrONkGUqTPuvYse7Nln6aCwjZBZrO9oVmrnG55uZ2pIbAzZNpI4Kx0OP
+         z/Wqp8UBD7xYT7a1ov1tkkY2KdyrXO5wwpldw3ntssk8SwRAkz7D8KbIqUWuax/4QavS
+         iSWLxta2hnSNI38+m6L/ZT9lusbvpZmLg/K12fMHjaB5CCB7tj7Zm+GMtmYOm9fdr6JI
+         R2TQ==
+X-Gm-Message-State: AC+VfDwppBuQOX95zj78JB6AyC9DbsVazvMYXuCxQHj8VIxgMLGHWMET
+        cQiUpr6+o+E20xQMPQ0iUOz9Zw==
+X-Google-Smtp-Source: ACHHUZ70+/9T5WjSsqxROpoPJdQZzZvygIJZzvEM/9TvClD2GFsby0lpQO4nP9sS8fLnIuZbn4avcg==
+X-Received: by 2002:a5d:5109:0:b0:30e:57f2:9f0 with SMTP id s9-20020a5d5109000000b0030e57f209f0mr9768759wrt.39.1686724600314;
+        Tue, 13 Jun 2023 23:36:40 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b10-20020adfe30a000000b00300aee6c9cesm17317190wrj.20.2023.06.13.23.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jun 2023 23:36:38 -0700 (PDT)
+Date:   Wed, 14 Jun 2023 09:36:33 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] serial: core: fix -EPROBE_DEFER handling in init
+Message-ID: <18318adb-ab2c-4dcc-9f96-498a13d16b80@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xhvrojtvxwtepzik"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The -EPROBE_DEFER error path in serial_base_device_init() is a bit
+awkward.  Before the call to device_initialize(dev) then we need to
+manually release all the device resources.  And after the call then we
+need to call put_device() to release the resources.  Doing either one
+wrong will result in a leak or a use after free.
 
---xhvrojtvxwtepzik
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So let's wait to return -EPROBE_DEFER until after the call to
+device_initialize(dev) so that way callers do not have to handle
+-EPROBE_DEFER as a special case.  Now callers can just use put_device()
+for clean up.
 
-Hello Dan,
+The second issue with the -EPROBE_DEFER path is that deferring is not
+supposed to be a fatal error, but instead it's normal part of the
+init process and the kernel recovers from it automatically.  That means
+we should not print an error message but just a debug message on this
+path.
 
-On Mon, May 22, 2023 at 02:07:42PM +0300, Dan Carpenter wrote:
-> This code accidentally return positive EINVAL instead of negative
-> -EINVAL.
->=20
-> Fixes: eb41f334589d ("pwm: ab8500: Fix register offset calculation to not=
- depend on probe order")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 539914240a01 ("serial: core: Fix probing serial_base_bus devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/tty/serial/serial_base_bus.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
+index 9de9f6fa6481..6ff59c89d867 100644
+--- a/drivers/tty/serial/serial_base_bus.c
++++ b/drivers/tty/serial/serial_base_bus.c
+@@ -50,17 +50,17 @@ static int serial_base_device_init(struct uart_port *port,
+ 				   void (*release)(struct device *dev),
+ 				   int id)
+ {
+-	if (!serial_base_initialized) {
+-		dev_err(port->dev, "uart_add_one_port() called before arch_initcall()?\n");
+-		return -EPROBE_DEFER;
+-	}
+-
+ 	device_initialize(dev);
+ 	dev->type = type;
+ 	dev->parent = parent_dev;
+ 	dev->bus = &serial_base_bus_type;
+ 	dev->release = release;
+ 
++	if (!serial_base_initialized) {
++		dev_dbg(port->dev, "uart_add_one_port() called before arch_initcall()?\n");
++		return -EPROBE_DEFER;
++	}
++
+ 	return dev_set_name(dev, "%s.%s.%d", type->name, dev_name(port->dev), id);
+ }
+ 
+-- 
+2.39.2
 
-Thanks!
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---xhvrojtvxwtepzik
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSJXocACgkQj4D7WH0S
-/k7aFQf+JJiCIVoazwQd13E22L0JneINkceZegeyTadrVnAA9PWDDl5Cg/cOD4Pe
-gVyC/9jcsFi/SLaz88o3FcYxYRl6yaYdN92fLcFEutLkky7VseSX3PZvTgRQ8C5i
-WwzULwDagtPMhq6zO7MNSjza8gypB2Qhamih0oPF3LL1rCbs0Fv0JTa5hEXKf1i/
-n9cRsMWfLvoJfXzAyjYdUpD5KoXtnwumYilzKZQp0P57caMGHcg4L480+chgvPGl
-2npMte3WbphRo/D1EBUdItKyA1Xd29+0WLE7QGcxQHT88e9ShNKsDPqEs/sLP8Mz
-T1ZlKBrn4lCreLYvNHdbA3P6XZqbyg==
-=HaEo
------END PGP SIGNATURE-----
-
---xhvrojtvxwtepzik--
