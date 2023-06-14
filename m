@@ -2,107 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BFDEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 13:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834FDC001B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 13:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244817AbjFNNUP (ORCPT
+        id S245166AbjFNNtg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 09:20:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
+        Wed, 14 Jun 2023 09:49:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244934AbjFNNTt (ORCPT
+        with ESMTP id S245200AbjFNNtR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:19:49 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200FB191
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:19:48 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f8d61cb36cso7054515e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686748786; x=1689340786;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTawR0BST9G8lotfidO6LQNYRUso7ZDIUXpuUcCHtQE=;
-        b=BkNqnKVPVix70BOCgXe1QS8U2bYh+Edg1fvfVenwQ/Ri1EdnqryOIy0ZDW8e4tRjGZ
-         gKywT15Z86R6zMxsROch7kSZqBpTDmKV60o3lgC8wmvibvywkcPd2gST+lF9rS6+E8Z/
-         BzqjJ2VW/T4Mx5qRRXO2O7UjR4O/jT6wfJTgqZbg72kZCLTRN/G7JPNaq9R8hN/xNMB6
-         HWw3AE9CYtxy9ebFDvEmT6Kg4WhNlB/Qc24OigcLyAAbvLLJOLyTD26ZrrvMgFaVCi+Z
-         we0Cf+dolYNcSkqDdd6FasfuwA0+Sok2MdB4LIaRjktDqg/HwbfHxywwfLxOeC23JCql
-         0N2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686748786; x=1689340786;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PTawR0BST9G8lotfidO6LQNYRUso7ZDIUXpuUcCHtQE=;
-        b=kQY5fsV4BMq1VfubdID6BlXfuxN1GCGqBP2Il6oC4scr+xsce02y5DNT4jTP1OHXbM
-         q0DAob7mqLe5qieYVHW5imAQyIucxcfv/YenUUi9s0juD4O6quI2FsQqs5o7p776I5PS
-         DLW672g0/UnZxQGmx3+OLVYEzQ1B0ej8v/kogf/SJDqQUAGa1GUUeO1WBpeTa9AJHcJr
-         TM9znVCre4/Zen3JQXxRCFIP6PZagQeWM7U3MBjXLF0s/i5CRi+H4WeGi5aHZuDU47FW
-         rrVaFBdnnMkEadnl/kxeg74M7LO7t2fKs2owD8hwvlW8BPRFK7t3abwrHqZZMkj2mNIp
-         r98A==
-X-Gm-Message-State: AC+VfDx6vbBcTj9GQ+uq9MTlixtKueXMUUQ8NSuqCGK8Lsytzxdk48VA
-        wJx+WylzmzSog36ttwrEvXH5uQ==
-X-Google-Smtp-Source: ACHHUZ4DeIGubCRzWcvMeuPt39igLK19RrM/aDbDy7aAEaqAAwy/j8foX3lY71X1d6U5MvbZfo2OWA==
-X-Received: by 2002:a05:600c:287:b0:3f6:766:f76f with SMTP id 7-20020a05600c028700b003f60766f76fmr11311559wmk.36.1686748786546;
-        Wed, 14 Jun 2023 06:19:46 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z21-20020a1c4c15000000b003f80622bb65sm16430946wmf.12.2023.06.14.06.19.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 06:19:45 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 16:19:41 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Yunfei Dong <yunfei.dong@mediatek.com>
-Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 4/4] media: mediatek: vcodec: Improve an error message
-Message-ID: <0cdeeee4-3bd7-4bd5-88a1-c5ecf7f6a1f8@moroto.mountain>
+        Wed, 14 Jun 2023 09:49:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99762682;
+        Wed, 14 Jun 2023 06:49:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 62D8E63F20;
+        Wed, 14 Jun 2023 13:49:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83FBDC433C8;
+        Wed, 14 Jun 2023 13:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686750555;
+        bh=K8wYi/yoT8s5R17p76hSh/ZFx53ah7YMr+dtJL5G/tY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M6Wqw5L7F/ncfbdX1K+o3SbPkqW1ek6AgMM1Ytm8D3IPkaskthW9jMz3WmIERLjzx
+         Wm7Waze4XDGkMBUU/Y5nQZhhTM4BZmy6F20S6x+60wVxUpWXJOMd/D5ESCatMsUbeg
+         mcmrUb1Mlu8PY5Xi0T5HL7Ve3s+E+WWTOuQdNYcDG4bJYUH5zWV0yyQ0vDaAm+G79M
+         6rmhzR3FHZXp3eM6ph22wmR2UyyAKaymh1fmWcWqUlmAeQEJLbZKiT3kMap5Jct2fY
+         ZOqY5+OXaWS7JPdYD4OgX3Rkz7mHlhPMMir1CF3fM9vghCiduD5ISHQyg239U++BF/
+         XY8IZbYJ94t6A==
+Date:   Wed, 14 Jun 2023 14:49:09 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 net-next resend] leds: trigger: netdev: uninitialized
+ variable in netdev_trig_activate()
+Message-ID: <20230614134909.GT3635807@google.com>
+References: <ZIlmX/ClDXwxQncL@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ca491aaa-cfc4-4a84-b7fc-b64f3adc6550@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZIlmX/ClDXwxQncL@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is intended to print the error code but there is a typo so it
-prints IS_ERR() instead of PTR_ERR().
+On Wed, 14 Jun 2023, Dan Carpenter wrote:
 
-Fixes: 77f3b023f452 ("media: mediatek: vcodec: Add debugfs interface to get debug information")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-This driver has quite a bit of code to handle the case where DEBUG_FS is
-turned off.  It's a bit over engineered.  With debugfs you're normally
-just supposed to call the functions and ignore the errors.
+> The qca8k_cled_hw_control_get() function which implements ->hw_control_get
+> sets the appropriate bits but does not clear them.  This leads to an
+> uninitialized variable bug.  Fix this by setting mode to zero at the
+> start.
+> 
+> Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+> Resending because this actually goes through net-next and not the led
+> subsystem.
+> 
+> v2: In the original patch I fixed qca8k_cled_hw_control_get() instead
+> so that patch went to netdev instead of to the led subsystem.
+> https://lore.kernel.org/all/5dff3719-f827-45b6-a0d3-a00efed1099b@moroto.mountain/
+> Fixing it here is a more reliable way to do it.
+> 
+>  drivers/leds/trigger/ledtrig-netdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-But it's also harmless to do it this way.
+Acked-by: Lee Jones <lee@kernel.org>
 
- drivers/media/platform/mediatek/vcodec/mtk_vcodec_dbgfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_dbgfs.c b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_dbgfs.c
-index 2ebf68d33d57..6957105492ae 100644
---- a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_dbgfs.c
-+++ b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_dbgfs.c
-@@ -185,8 +185,8 @@ void mtk_vcodec_dbgfs_init(struct mtk_vcodec_dev *vcodec_dev, bool is_encode)
- 	else
- 		vcodec_dev->dbgfs.vcodec_root = debugfs_create_dir("vcodec-dec", NULL);
- 	if (IS_ERR(vcodec_dev->dbgfs.vcodec_root))
--		dev_err(&vcodec_dev->plat_dev->dev, "create vcodec dir err:%d\n",
--			IS_ERR(vcodec_dev->dbgfs.vcodec_root));
-+		dev_err(&vcodec_dev->plat_dev->dev, "create vcodec dir err:%ld\n",
-+			PTR_ERR(vcodec_dev->dbgfs.vcodec_root));
- 
- 	vcodec_root = vcodec_dev->dbgfs.vcodec_root;
- 	debugfs_create_x32("mtk_v4l2_dbg_level", 0644, vcodec_root, &mtk_v4l2_dbg_level);
 -- 
-2.39.2
-
+Lee Jones [李琼斯]
