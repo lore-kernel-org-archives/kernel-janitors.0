@@ -2,129 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EEDEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 14:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA36EB64D8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 15:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245339AbjFNODW (ORCPT
+        id S236224AbjFNP30 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 10:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35028 "EHLO
+        Wed, 14 Jun 2023 11:29:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236460AbjFNODV (ORCPT
+        with ESMTP id S233272AbjFNP3Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 10:03:21 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1069A11B;
-        Wed, 14 Jun 2023 07:03:19 -0700 (PDT)
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35EDl23P024367;
-        Wed, 14 Jun 2023 14:03:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=OnsMMHXkvX8tGPGJ7tBI0Qgi9uEaNmsJ+nUopfNucjs=;
- b=ieRAbxmco0mUYWcwfA8nJqrppnPTPWfJsI1XHQaPFQJpWvlp1JcrqeYuj9M78fngWOGk
- tsTKsDicL55FdG+CYiS60eNYYHhWZPaQI+UF7YKL8DWxpMOp7bpzNncKzA/PzPUnsMFH
- bbRLQYEWhsrBFa9RQYDcCy1xhJ2QJ5CyX2Pa0EwkkjcYbDEC7AqtA8rNgRb4QLjcqrGg
- JjXtV5nGUpInCuMBL9kgDrFmABsSnAOyLxZvFa3C/x4p79y/shv2eJ0me/wPvCONjq8w
- P/clDwSYbBm/bGM5T7kP6rFk+JzEACZM1wGVeFU7DNMNvghRrursIrUc0aHbS0VcUTm4 Ww== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7er2rgy7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 14:03:19 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35EDnDWx000646;
-        Wed, 14 Jun 2023 14:03:18 GMT
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r7er2rgx9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 14:03:18 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 35E75l3W018586;
-        Wed, 14 Jun 2023 14:03:16 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma03fra.de.ibm.com (PPS) with ESMTPS id 3r4gt525re-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 14:03:16 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 35EE3BI215794882
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Jun 2023 14:03:12 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D531720043;
-        Wed, 14 Jun 2023 14:03:11 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69D9F2004B;
-        Wed, 14 Jun 2023 14:03:11 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Wed, 14 Jun 2023 14:03:11 +0000 (GMT)
-Date:   Wed, 14 Jun 2023 16:03:10 +0200
-From:   Alexander Gordeev <agordeev@linux.ibm.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Holzheu <holzheu@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390/crash: Use the correct type for memory allocation
-Message-ID: <ZInInjGr6rufpC7u@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <0756118c9058338f3040edb91971d0bfd100027b.1686688212.git.christophe.jaillet@wanadoo.fr>
+        Wed, 14 Jun 2023 11:29:25 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938FFC3;
+        Wed, 14 Jun 2023 08:29:24 -0700 (PDT)
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:c623::7a9])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nicolas)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id ECEB36606F4F;
+        Wed, 14 Jun 2023 16:29:21 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686756563;
+        bh=EwpPaawJ0jLzVbGU6lbdNpBxv2dOVOqXbVeRLYmJrpM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SS6KFpNSUEQ21ypiewsTyRCcfKPYRTd9j+btkiu7fW2ZEtoPv3+Sw4tE3U1N4roxu
+         qknkA2tBaWdP/oRSaW4//b5aNlUCIF33YpyaYA2RarM3YrjN+vDjyc5WRP9sRop13M
+         vPo/8FIsNQbviU5npo5wU5WNZAN2kAmc6XsOKOmjY9IS0KzXwXjTm3ZdO2v61UpbCK
+         30J0OAnLOfZsNh8ha5BfnWBRMgnGtGHEvDAZPCx/k1mtDEuqfetVFw5H81X47zEY4Q
+         wTQ4BaPR11ZCqq5FdYXJMmHB9kLIbUF8B+aQoZvBm90HQYEUAWO+4CrbnmnUSyM/sT
+         erLZ8gjFCDSgw==
+Message-ID: <f4a218653814461f02b462ba34cf92682da26bc2.camel@collabora.com>
+Subject: Re: [PATCH 2/4] media: mediatek: vcodec: fix resource leaks in
+ vdec_msg_queue_init()
+From:   Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Yunfei Dong <yunfei.dong@mediatek.com>
+Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Date:   Wed, 14 Jun 2023 11:29:13 -0400
+In-Reply-To: <b8948d9a-65bc-4f3f-aa90-60addd064819@moroto.mountain>
+References: <b8948d9a-65bc-4f3f-aa90-60addd064819@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0756118c9058338f3040edb91971d0bfd100027b.1686688212.git.christophe.jaillet@wanadoo.fr>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: q5ZpC26Pi0OavYJIFNQPjMjBps9eyRuQ
-X-Proofpoint-ORIG-GUID: 4GofJmK3YyjIn6Y2zsBtgP0JP9dQgLxA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-14_09,2023-06-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- priorityscore=1501 mlxlogscore=999 adultscore=0 phishscore=0 spamscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306140118
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 10:30:28PM +0200, Christophe JAILLET wrote:
-> get_elfcorehdr_size() returns a size_t, so there is no real point to
-> store it in a u32.
-> 
-> Turn 'alloc_size' into a size_t.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure if 'alloc_size' can overflow in real life application, but using
-> the correct type looks harmless.
-> 
-> Should it be a real fix, either:
-> Fixes: 8cce437fbb5c ("s390/kdump: Fix elfcorehdr size calculation")
-> or
-> Fixes: 60a0c68df263 ("[S390] kdump backend code")
-> ---
->  arch/s390/kernel/crash_dump.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
-> index 8a617be28bb4..7af69948b290 100644
-> --- a/arch/s390/kernel/crash_dump.c
-> +++ b/arch/s390/kernel/crash_dump.c
-> @@ -568,9 +568,9 @@ static size_t get_elfcorehdr_size(int mem_chunk_cnt)
->  int elfcorehdr_alloc(unsigned long long *addr, unsigned long long *size)
->  {
->  	Elf64_Phdr *phdr_notes, *phdr_loads;
-> +	size_t alloc_size;
->  	int mem_chunk_cnt;
->  	void *ptr, *hdr;
-> -	u32 alloc_size;
->  	u64 hdr_off;
->  
->  	/* If we are not in kdump or zfcp/nvme dump mode return */
+Hi,
 
-Applied, thanks!
+Le mercredi 14 juin 2023 =C3=A0 16:06 +0300, Dan Carpenter a =C3=A9crit=C2=
+=A0:
+> If we encounter any error in the vdec_msg_queue_init() then we need
+> to set "msg_queue->wdma_addr.size =3D 0;".  Normally, this is done
+> inside the vdec_msg_queue_deinit() function.  However, if the
+> first call to allocate &msg_queue->wdma_addr fails, then the
+> vdec_msg_queue_deinit() function is a no-op.  For that situation, just
+> set the size to zero explicitly and return.
+>=20
+> There were two other error paths which did not clean up before returning.
+> Change those error paths to goto mem_alloc_err.
+>=20
+> Fixes: b199fe46f35c ("media: mtk-vcodec: Add msg queue feature for lat an=
+d core architecture")
+> Fixes: 2f5d0aef37c6 ("media: mediatek: vcodec: support stateless AV1 deco=
+der")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+This change looks good to me, thanks again for your work.
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> ---
+>  drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c b/dr=
+ivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+> index 92ac82eb444e..be25d56712d8 100644
+> --- a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+> +++ b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+> @@ -307,6 +307,7 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg_qu=
+eue,
+>  	err =3D mtk_vcodec_mem_alloc(ctx, &msg_queue->wdma_addr);
+>  	if (err) {
+>  		mtk_v4l2_err("failed to allocate wdma_addr buf");
+> +		msg_queue->wdma_addr.size =3D 0;
+>  		return -ENOMEM;
+>  	}
+>  	msg_queue->wdma_rptr_addr =3D msg_queue->wdma_addr.dma_addr;
+> @@ -338,14 +339,14 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg_=
+queue,
+>  			err =3D mtk_vcodec_mem_alloc(ctx, &lat_buf->rd_mv_addr);
+>  			if (err) {
+>  				mtk_v4l2_err("failed to allocate rd_mv_addr buf[%d]", i);
+> -				return -ENOMEM;
+> +				goto mem_alloc_err;
+>  			}
+> =20
+>  			lat_buf->tile_addr.size =3D VDEC_LAT_TILE_SZ;
+>  			err =3D mtk_vcodec_mem_alloc(ctx, &lat_buf->tile_addr);
+>  			if (err) {
+>  				mtk_v4l2_err("failed to allocate tile_addr buf[%d]", i);
+> -				return -ENOMEM;
+> +				goto mem_alloc_err;
+>  			}
+>  		}
+> =20
+
