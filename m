@@ -2,63 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E024FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 13:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30419EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 13:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244151AbjFNNCO (ORCPT
+        id S244819AbjFNNFt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 09:02:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55848 "EHLO
+        Wed, 14 Jun 2023 09:05:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244078AbjFNNCM (ORCPT
+        with ESMTP id S244398AbjFNNFr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:02:12 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB23B5
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:02:11 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f8d0d68530so7857335e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:02:10 -0700 (PDT)
+        Wed, 14 Jun 2023 09:05:47 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF911BC5
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:05:46 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f764e92931so1172750e87.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 06:05:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686747729; x=1689339729;
+        d=linaro.org; s=google; t=1686747945; x=1689339945;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7T3D+U9Tv7RD5rlwhyON4ZX6lWyCUG2JeI56Mpz4QY=;
-        b=fiOcD3GIvmcxkkhumrwmL1Dx/vREL2TWO+wMhUCmVU2LjhZCa3T51wDWX8jSoB0yme
-         /G9uDrfhR7hiVi0+dKt8qhukzdlZtaLikPRJ9nriGS0PJjtL3AD0Z1uhSjQNvCF5TCmh
-         AXs8C/I/4CWWqLho94Vty4qntxnOjK/G7NdtyuQBrjD3/eO0X6+IlMO70aTfzX2Gh/v3
-         NCaDHeThx+px5y9rBIgVyOSxFUF8wUkz3/0rbcEAj6cTQtUcleUv1KCwdGvdlQ3CJnOu
-         38NLJQdfEgjNG5wobQVD8puPeoDH9HwpMIftbM5Sc14w0B0OKrM7mF17RV1WhXSU+JAI
-         oJpA==
+        bh=NpXYhh0i7/zZRYDxH3cRSLHICiT4WhBUrDQHv8jv/TY=;
+        b=qlUG9/5FtENTa5fXIoKa0+kkYpdwqZlddkMKUS1eMk41OvnM03aOFTCm8C12VYu5UF
+         e3hdlRmjofPpUDkqUnJoe3KTrF43HT36YctkAS5moAW4GK4EAZIWaH/xWK6dYf0DMJoq
+         8BT/1YsT9/x4o6Nd0e9MsFT0pOUS4BU8BD8NyJrA4gG7wnkZPCwVW4z+LMt25x6Zp4ey
+         ir0pUSpEHtIe4inXE5FyrgmbF8QrCzTiwjqzaWv+S6yCUJ0v/Ni6JfwZ96wMrmGJjGLM
+         NWfSDV5SWfs9Y+taaKVh01aIaeu8WVmgxIdOlEEvjfKk3GzMJVjbWg2BKZ8mnJRBY3Jj
+         BgZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686747729; x=1689339729;
+        d=1e100.net; s=20221208; t=1686747945; x=1689339945;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7T3D+U9Tv7RD5rlwhyON4ZX6lWyCUG2JeI56Mpz4QY=;
-        b=Ofc2vn5AG1hZnHbukJ2ketVCC7rz+NPyZ/hMnyoWLG+xecx4l8bgD/3rn5XtdPuQhL
-         swVp53ufOjq3sXTa1oUBTnXsUdj11MnMo3dZeuMtQjlicCKOmhcDyK/K2tF+eWmc46dp
-         06mnXv9ScxE7UjBXk88CViSqMnsPcEdGwMEa8z1KI083dpV2FTOgT7vbkVl8LOLoOHZd
-         Cf01NnJVRKR/8IeEudoBkLuwHRDsW/X4v6bj9bSh0zZKgeYiCxoVXizZokbyI68bIgA2
-         bmkDtJAy9JYqm7ARDC2ByYHNReDz5Xdyx6PED7bAsMxMlxBMnLNhz9uDYBeyiOQn5HqT
-         NPig==
-X-Gm-Message-State: AC+VfDwR/vkjmUf56z/YJh3uUQs/0G7/eJh+WSGBvuPeMW9LXE/RnZfl
-        g6JPgAxRjr4jSDIXP/USDgoLKw==
-X-Google-Smtp-Source: ACHHUZ6V6uwFBRhwQLKnYQL5hBOnhcEekAqbA/gVaO6DLEIlckv+ePm7LR9zaCegdOFXynCOex+zzQ==
-X-Received: by 2002:a1c:6a18:0:b0:3f7:e34d:33c4 with SMTP id f24-20020a1c6a18000000b003f7e34d33c4mr11481733wmc.10.1686747729569;
-        Wed, 14 Jun 2023 06:02:09 -0700 (PDT)
+        bh=NpXYhh0i7/zZRYDxH3cRSLHICiT4WhBUrDQHv8jv/TY=;
+        b=Ph3yAY9XhbagL++g4PuZIo8qa1cyKqiJ9xsbArY6VoHrXgIgV/Z5LcmQJbYw77fsI0
+         VN5GV6RuuocCmGa/lKrt5pjr/FKnucOp6uZIh5cfLZKl/KgBcF1mgArODnqMFINfBFvc
+         joWTCiluI/ihpoeZczVBp/cthQGN2RUkbK5X6W+AJfmuPYc+nXYH/H3UbUO4BBwkKFFK
+         yFkyBGJbaiHVIQWKDhVT31h8Vqc/h12yUkvM5i1CqjP4cef5fZvBKYpReqwp2ndNZTZd
+         NiG3mbNxH4pSQcMGZVhrh7CmXmlE5A2vXxTqfltJhoJF01J4FSO7QWMURdDiZV3UxIsT
+         hzog==
+X-Gm-Message-State: AC+VfDwC7xWuBSKKoia2pvfyrmWirHNkeCimPLpq//rmOyttij0NJ/wX
+        PIhigN6WygFHL754XEafSY7fFA==
+X-Google-Smtp-Source: ACHHUZ6K+MrBRSgvgD8L8TQx8zMgyRcFs1eYiYo6kMrefG96FrjoHSgnXbgGKRKIz+4j3Lk5P2pGIw==
+X-Received: by 2002:a19:5045:0:b0:4f6:8156:f6e with SMTP id z5-20020a195045000000b004f681560f6emr5956110lfj.53.1686747944779;
+        Wed, 14 Jun 2023 06:05:44 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y22-20020a7bcd96000000b003f7f2a1484csm17493492wmj.5.2023.06.14.06.02.07
+        by smtp.gmail.com with ESMTPSA id z15-20020a7bc7cf000000b003f6129d2e30sm17543647wmk.1.2023.06.14.06.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 06:02:08 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 16:02:04 +0300
+        Wed, 14 Jun 2023 06:05:43 -0700 (PDT)
+Date:   Wed, 14 Jun 2023 16:05:39 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jon Tourville <jontourville@me.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] apparmor: use passed in gfp flags in aa_alloc_null()
-Message-ID: <bf35a5d2-db9f-47cb-a2f0-ea23e407f36d@moroto.mountain>
+To:     Yunfei Dong <yunfei.dong@mediatek.com>
+Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/4] media: mediatek: vcodec: fix potential double free
+Message-ID: <ca491aaa-cfc4-4a84-b7fc-b64f3adc6550@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,35 +71,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-These allocations should use the gfp flags from the caller instead of
-GFP_KERNEL.  But from what I can see, all the callers pass in GFP_KERNEL
-so this does not affect runtime.
+The "lat_buf->private_data" needs to be set to NULL to prevent a
+double free.  How this would happen is if vdec_msg_queue_init() failed
+twice in a row and on the second time it failed earlier than on the
+first time.
 
-Fixes: e31dd6e412f7 ("apparmor: fix: kzalloc perms tables for shared dfas")
+The vdec_msg_queue_init() function has a loop which does:
+	for (i = 0; i < NUM_BUFFER_COUNT; i++) {
+
+Each iteration initializes one element in the msg_queue->lat_buf[] array
+and then the clean up function vdec_msg_queue_deinit() frees each
+element of the msg_queue->lat_buf[] array.  This clean up code relies
+on the assumption that every element is either initialized or zeroed.
+Leaving a freed pointer which is non-zero breaks the assumption.
+
+Fixes: b199fe46f35c ("media: mtk-vcodec: Add msg queue feature for lat and core architecture")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- security/apparmor/policy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index b38f7b2a5e1d..715fe1b66d12 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -589,12 +589,12 @@ struct aa_profile *aa_alloc_null(struct aa_profile *parent, const char *name,
- 	profile->label.flags |= FLAG_NULL;
- 	rules = list_first_entry(&profile->rules, typeof(*rules), list);
- 	rules->file.dfa = aa_get_dfa(nulldfa);
--	rules->file.perms = kcalloc(2, sizeof(struct aa_perms), GFP_KERNEL);
-+	rules->file.perms = kcalloc(2, sizeof(struct aa_perms), gfp);
- 	if (!rules->file.perms)
- 		goto fail;
- 	rules->file.size = 2;
- 	rules->policy.dfa = aa_get_dfa(nulldfa);
--	rules->policy.perms = kcalloc(2, sizeof(struct aa_perms), GFP_KERNEL);
-+	rules->policy.perms = kcalloc(2, sizeof(struct aa_perms), gfp);
- 	if (!rules->policy.perms)
- 		goto fail;
- 	rules->policy.size = 2;
+diff --git a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+index f555341ae708..92ac82eb444e 100644
+--- a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
++++ b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+@@ -231,6 +231,7 @@ void vdec_msg_queue_deinit(struct vdec_msg_queue *msg_queue,
+ 			mtk_vcodec_mem_free(ctx, mem);
+ 
+ 		kfree(lat_buf->private_data);
++		lat_buf->private_data = NULL;
+ 	}
+ 
+ 	cancel_work_sync(&msg_queue->core_work);
 -- 
 2.39.2
 
