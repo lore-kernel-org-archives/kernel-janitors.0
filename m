@@ -2,126 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3A0EB64DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 16:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D153EB64D8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 18:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232564AbjFNQQB (ORCPT
+        id S234092AbjFNSbO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 12:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35258 "EHLO
+        Wed, 14 Jun 2023 14:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbjFNQP7 (ORCPT
+        with ESMTP id S232415AbjFNSbN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 12:15:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C671FFF;
-        Wed, 14 Jun 2023 09:15:58 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35EFGRid006379;
-        Wed, 14 Jun 2023 16:15:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=qcppdkim1;
- bh=Cxu80qYLWBN6CGaM9a2GrYS5uFWXPH5qjpPWb0qWyWk=;
- b=ComPqdflkC/tVcHLZshoOE+t0MDAkUSB+Nrh452o3CNQZq0+kTtKh1sQbRTNomQJGmQ/
- 2RX/rs7l0AzlutwIdE8oAwjdOeQpACV0J3sTtKG9+aDtGcPoZOrMmpGaZiskMVFiau6K
- 9llkGNjNhr0WoTl4DAhvS/Tv/R+Cy6/8VJf19jWfL2om5zWtkgh9dschObIvQcKEfMtS
- 5KhFiJGq0hoVkZrCwxnScghXuDN+YkMTHSeHR25XpP4aHvCL0xLwslgZGEWwSOouU4r+
- F6YyONm5POqxLNSs7TbPYrNCJpWyVxRLtmabhIjnizgVVUYDBc31jJYVhZjolpD65wKO qA== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r7fae89n8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 16:15:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35EGFkIZ030883
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 16:15:46 GMT
-Received: from jhugo-lnx.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 14 Jun 2023 09:15:45 -0700
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-To:     <quic_carlv@quicinc.com>, <quic_pkanojiy@quicinc.com>,
-        <christian.koenig@amd.com>, <sukrut.bellary@linux.com>,
-        <sumit.semwal@linaro.org>
-CC:     <ogabbay@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-media@vger.kernel.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>
-Subject: [PATCH] accel/qaic: Call DRM helper function to destroy prime GEM
-Date:   Wed, 14 Jun 2023 10:15:28 -0600
-Message-ID: <20230614161528.11710-1-quic_jhugo@quicinc.com>
-X-Mailer: git-send-email 2.40.1
+        Wed, 14 Jun 2023 14:31:13 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98582122
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 11:31:10 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 9VGsqBvw5uHEf9VGtqP6SV; Wed, 14 Jun 2023 20:31:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686767468;
+        bh=reNbQlvt6iwnJUAjcJkxGRJU4vzmBikzkd2pe0kBB0M=;
+        h=From:To:Cc:Subject:Date;
+        b=mQgaw/wMo3xhmP22Js9wU/i1RrWxxozS6T6PLcb3um4wW0aVihOiiRViAdIjQkeK2
+         GC5PYs8tcrQdD5kbmW0JlRUKSMi11pr59L3/C4dbfIhz0YYCvb1IX7pRvoA2XhTEFJ
+         jhkIyDEVD8749HDeD3z1r9BlOF3zrPmoE30TA7JtQG3bH7/+QxGQurB1Ys/gjZIDhG
+         diF2/2Jj+nlkGLNpkqjdty+bTWd8+53LKlrQlyoDMbJExn67WyXanFf1Vhxto9V/Ae
+         R8w9Fq9diwxUW1ilUH684bOBvmT8xLtIrW4Hpy1CaLYfZyQrrTz+LCNwBF78b/wLgq
+         IJENaW26ufWRA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 14 Jun 2023 20:31:08 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-media@vger.kernel.org
+Subject: [PATCH v2] media: v4l2-core: Fix a potential resource leak in v4l2_fwnode_parse_link()
+Date:   Wed, 14 Jun 2023 20:31:05 +0200
+Message-Id: <773118ad2c2b56f136e10466997eaaa911e6a422.1686767431.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _TxUpOz9a1M8vH5LZlHsuEqnI2pQAC2f
-X-Proofpoint-GUID: _TxUpOz9a1M8vH5LZlHsuEqnI2pQAC2f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-14_11,2023-06-14_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306140142
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+If fwnode_graph_get_remote_endpoint() fails, 'fwnode' is known to be NULL,
+so fwnode_handle_put() is a no-op.
 
-smatch warning:
-	drivers/accel/qaic/qaic_data.c:620 qaic_free_object() error:
-		dereferencing freed memory 'obj->import_attach'
+Release the reference taken from a previous fwnode_graph_get_port_parent()
+call instead.
 
-obj->import_attach is detached and freed using dma_buf_detach().
-But used after free to decrease the dmabuf ref count using
-dma_buf_put().
+Also handle fwnode_graph_get_port_parent() failures.
 
-drm_prime_gem_destroy() handles this issue and performs the proper clean
-up instead of open coding it in the driver.
+In order to fix these issues, add an error handling path to the function
+and the needed gotos.
 
-Fixes: ff13be830333 ("accel/qaic: Add datapath")
-Reported-by: Sukrut Bellary <sukrut.bellary@linux.com>
-Closes: https://lore.kernel.org/all/20230610021200.377452-1-sukrut.bellary@linux.com/
-Suggested-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
-Reviewed-by: Carl Vanderlip <quic_carlv@quicinc.com>
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Fixes: ca50c197bd96 ("[media] v4l: fwnode: Support generic fwnode for parsing standardised properties")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/accel/qaic/qaic_data.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: - Handle fwnode_graph_get_port_parent() errors   [Sakari Ailus <sakari.ailus@linux.intel.com>]
+    - Rephrase the commit log
 
-diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-index e42c1f9ffff8..e9a1cb779b30 100644
---- a/drivers/accel/qaic/qaic_data.c
-+++ b/drivers/accel/qaic/qaic_data.c
-@@ -23,6 +23,7 @@
- #include <linux/wait.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem.h>
-+#include <drm/drm_prime.h>
- #include <drm/drm_print.h>
- #include <uapi/drm/qaic_accel.h>
+v1: https://lore.kernel.org/all/2ddd10ec9e009bbb85518355f1e09e1ecd349925.1685340968.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 049c2f2001ea..4fa9225aa3d9 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -568,19 +568,29 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *fwnode,
+ 	link->local_id = fwep.id;
+ 	link->local_port = fwep.port;
+ 	link->local_node = fwnode_graph_get_port_parent(fwnode);
++	if (!link->local_node)
++		return -ENOLINK;
  
-@@ -616,8 +617,7 @@ static void qaic_free_object(struct drm_gem_object *obj)
+ 	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
+-	if (!fwnode) {
+-		fwnode_handle_put(fwnode);
+-		return -ENOLINK;
+-	}
++	if (!fwnode)
++		goto err_put_local_node;
  
- 	if (obj->import_attach) {
- 		/* DMABUF/PRIME Path */
--		dma_buf_detach(obj->import_attach->dmabuf, obj->import_attach);
--		dma_buf_put(obj->import_attach->dmabuf);
-+		drm_prime_gem_destroy(obj, NULL);
- 	} else {
- 		/* Private buffer allocation path */
- 		qaic_free_sgt(bo->sgt);
+ 	fwnode_graph_parse_endpoint(fwnode, &fwep);
+ 	link->remote_id = fwep.id;
+ 	link->remote_port = fwep.port;
+ 	link->remote_node = fwnode_graph_get_port_parent(fwnode);
++	if (!link->remote_node)
++		goto err_put_remote_endpoint;
+ 
+ 	return 0;
++
++err_put_remote_endpoint:
++	fwnode_handle_put(fwnode);
++
++err_put_local_node:
++	fwnode_handle_put(link->local_node);
++
++	return -ENOLINK;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_fwnode_parse_link);
+ 
 -- 
-2.40.1
+2.34.1
 
