@@ -2,92 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B73EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 06:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7643FEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 06:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241535AbjFNGpp (ORCPT
+        id S242742AbjFNGqN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 02:45:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52198 "EHLO
+        Wed, 14 Jun 2023 02:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234452AbjFNGpn (ORCPT
+        with ESMTP id S242599AbjFNGqJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 02:45:43 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CC6E41
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 23:45:42 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-30e4eec95c8so5910651f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Jun 2023 23:45:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686725140; x=1689317140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lfDvPUG1HGmVrnIjGIO4jjRv0+fBzXaClOHkCNskUs=;
-        b=LCgI1DfnigANtGLRfWnBEpO2Lr4T328f8G202AHZmy8wbM+vZGL7gwrD78SsfhjWgY
-         PErdRquiUaEkd7ZbsZVEKysxPqik6ZHwB9hAQEuF8EgPAWlQpVfzQTe4KTxGAnv4eDEP
-         XOGLzIqfNvLEsuCXkC9sDhdQkoqLUA3fczTUEYUDGBsLggcRG5SJYSR0eQlwE4xpoEJ2
-         OMQ7AmeN4ze0lIt4NSI/uyRTcJzSDka2hcIthWJ8YdQN1mRmolYDNx8IHJMtH0Srz2pa
-         wxRY3mxLzlV30h1OkY9mddW1oVQkiRzmPgfl/nSlDo3Sat1l0wcIOaRXbqi8RNOD/zjR
-         1Bpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686725140; x=1689317140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1lfDvPUG1HGmVrnIjGIO4jjRv0+fBzXaClOHkCNskUs=;
-        b=UqJ9Q2iJ+P7d01b1cZN9KVupCF5SR0NYZBtcm6jIwn5WOkEoNNLNViXl+FCwHBrGuA
-         bZZD5N5NfKRTMCqagP2XO/IByutKwD1Gmlc72MzyM/dKDBMO+ClXsGqyCCHKR0nGU1DY
-         A8V8RL1geWVK12YaJHgVW2bB9eurF6XI1VE0QTSc3R+ZgoJ+ZouwFzo7RYwP2aaPjyRJ
-         XnJhjZL5zMnQ+QDy7AzaLQeHnL3IbQy3YBoRFZTvy05Ujx/sV/jSzEeiPGzuzXRHxbeg
-         rVy8c1KxXS61ZQKiox8p3wNniziHkwW9C2N9g88t1KXbVZ6KcvU2EnviDBQjPpG+uooV
-         cVJA==
-X-Gm-Message-State: AC+VfDx/blXQw5hzpeVsTPwo7bEtLSaGa7lFXr5zQJBuScz61TmtxGKl
-        ghdn//7EsV7l21gQy4n9J9gdJeuM0eIYDKYAoFc=
-X-Google-Smtp-Source: ACHHUZ4qHR3JqF2bnGdLqUXi9q675N2orXuLyu6Exs7MBCEJIgNs3IpVU3S3lsQHQKlsDAr3O4YXDA==
-X-Received: by 2002:a5d:4c4f:0:b0:306:2e62:8d2e with SMTP id n15-20020a5d4c4f000000b003062e628d2emr9645446wrt.1.1686725140565;
-        Tue, 13 Jun 2023 23:45:40 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id b14-20020a056000054e00b0030c2e3c7fb3sm17060054wrf.101.2023.06.13.23.45.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jun 2023 23:45:38 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 09:45:34 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2 led] leds: trigger: netdev: uninitialized variable in
- netdev_trig_activate()
-Message-ID: <40653e66-4cca-4c6f-9d0f-e70b3824389e@kadam.mountain>
-References: <6fbb3819-a348-4cc3-a1d0-951ca1c380d6@moroto.mountain>
- <83344fe7-6d95-44d8-8ce7-13409c7a8d87@lunn.ch>
+        Wed, 14 Jun 2023 02:46:09 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C6BF11A3;
+        Tue, 13 Jun 2023 23:46:08 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id F0B048027;
+        Wed, 14 Jun 2023 06:46:07 +0000 (UTC)
+Date:   Wed, 14 Jun 2023 09:46:06 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: core: fix -EPROBE_DEFER handling in init
+Message-ID: <20230614064606.GH56720@atomide.com>
+References: <18318adb-ab2c-4dcc-9f96-498a13d16b80@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83344fe7-6d95-44d8-8ce7-13409c7a8d87@lunn.ch>
+In-Reply-To: <18318adb-ab2c-4dcc-9f96-498a13d16b80@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 02:51:59AM +0200, Andrew Lunn wrote:
-> I think his actually needs to be merged via netdev.  e0256648c831
-> ("net: dsa: qca8k: implement hw_control ops") is in net-next/main.  I
-> don't see it in leds/master, leds/for-leds-next. Also, git blame shows
-> mode was added by 0316cc5629d1 ("leds: trigger: netdev: init mode if
-> hw control already active") which also appears only to be in
-> net-next/main.
+* Dan Carpenter <dan.carpenter@linaro.org> [230614 06:36]:
+> The -EPROBE_DEFER error path in serial_base_device_init() is a bit
+> awkward.  Before the call to device_initialize(dev) then we need to
+> manually release all the device resources.  And after the call then we
+> need to call put_device() to release the resources.  Doing either one
+> wrong will result in a leak or a use after free.
 > 
-> A lot of these LED patches were merged via netdev because they are
-> cross subsystem.
+> So let's wait to return -EPROBE_DEFER until after the call to
+> device_initialize(dev) so that way callers do not have to handle
+> -EPROBE_DEFER as a special case.  Now callers can just use put_device()
+> for clean up.
+> 
+> The second issue with the -EPROBE_DEFER path is that deferring is not
+> supposed to be a fatal error, but instead it's normal part of the
+> init process and the kernel recovers from it automatically.  That means
+> we should not print an error message but just a debug message on this
+> path.
+> 
+> Fixes: 539914240a01 ("serial: core: Fix probing serial_base_bus devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Ok.  Thanks, Andrew.
+Thanks for fixing these issues:
 
-In that case, let me resend.  I just used get_maintainer.pl and it
-didn't add the necessary CC list.  Plus the netdev scripts won't run if
-you don't have the correct subject...
-
-regards,
-dan carpenter
-
+Reviewed-by: Tony Lindgren <tony@atomide.com>
