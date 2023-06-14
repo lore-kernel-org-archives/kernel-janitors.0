@@ -2,68 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5E7C00528
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jun 2023 22:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA377EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 00:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbjFMW1V (ORCPT
+        id S234100AbjFNAwI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jun 2023 18:27:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
+        Tue, 13 Jun 2023 20:52:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbjFMW1S (ORCPT
+        with ESMTP id S229955AbjFNAwG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jun 2023 18:27:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2005D10F3;
-        Tue, 13 Jun 2023 15:27:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8921863B9D;
-        Tue, 13 Jun 2023 22:27:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E25C4339A;
-        Tue, 13 Jun 2023 22:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686695234;
-        bh=QMK158R85EvKTpTuTcTE6JdEPQApDbgpQhg7LC7O+VU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LBBdvMlHs7URpe86CB0808sOUzWRTmdb3zbaWk16NRXD+AvSfCxQsodDeZFBMe2XI
-         S0c+1CtQaPwQVwy6IJw46SyjqvWpLXeETwBN7v0G5PaJbUvWGFKawVFe6bP/IuwtSB
-         qVfahLBlUGPtnaeNE+rKI2KAe9QBdiIrBnsOuERjiTTdcw+T5K5ylFYUtG2/AGH+Om
-         8THdU8HemgIFQc1XYZfyTiUcy8NaQgES3RLQY7im+NEcqznen5YEW9PN2GvdwiehmW
-         t88lFpJayzI3D4GTZ4sc8ppDSXhO4LmNhw1M17e51wN5SCsy06k/4ZeJpPfrwnEWHj
-         QWVFZqh2n3RWA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: Fix a IS_ERR() vs NULL bug in probe
-Date:   Tue, 13 Jun 2023 15:30:12 -0700
-Message-Id: <168669542894.1315701.12985204586909393008.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <ZH7sgpLAN23bCz9v@moroto>
-References: <ZH7sgpLAN23bCz9v@moroto>
+        Tue, 13 Jun 2023 20:52:06 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11AF198D;
+        Tue, 13 Jun 2023 17:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=m81/mtRzPNxBmTZ8Ug6NdeknJttcACMBx0HZCk1Hkgo=; b=p5G2THXg3xa8nntRnhKlwoMbZX
+        Mv87KPbErYJueTmkXbxD2FGYcxY+G6PXZnN4rjSu3CkN1ZU6qV1Wtv6jyPaiVRSP4ipqR5WioPwWG
+        DoLsSpkorqejlBT8+UlvdrZ5MlNkO/9W/wBJjG/NhSfUYNGkG6Cx73q/PwXNZsQ4bivc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1q9Ejv-00Fsaa-5j; Wed, 14 Jun 2023 02:51:59 +0200
+Date:   Wed, 14 Jun 2023 02:51:59 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 led] leds: trigger: netdev: uninitialized variable in
+ netdev_trig_activate()
+Message-ID: <83344fe7-6d95-44d8-8ce7-13409c7a8d87@lunn.ch>
+References: <6fbb3819-a348-4cc3-a1d0-951ca1c380d6@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fbb3819-a348-4cc3-a1d0-951ca1c380d6@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 6 Jun 2023 11:21:22 +0300, Dan Carpenter wrote:
-> The devm_ioremap() function returns NULL on error, it never returns
-> error pointers.
+On Tue, Jun 13, 2023 at 09:46:53AM +0300, Dan Carpenter wrote:
+> The qca8k_cled_hw_control_get() function which implements ->hw_control_get
+> sets the appropriate bits but does not clear them.  This leads to an
+> uninitialized variable bug.  Fix this by setting mode to zero at the
+> start.
 > 
-> 
+> Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: In the original patch I fixed qca8k_cled_hw_control_get() instead
+> so that patch went to netdev instead of to the led subsystem.
 
-Applied, thanks!
+I think his actually needs to be merged via netdev.  e0256648c831
+("net: dsa: qca8k: implement hw_control ops") is in net-next/main.  I
+don't see it in leds/master, leds/for-leds-next. Also, git blame shows
+mode was added by 0316cc5629d1 ("leds: trigger: netdev: init mode if
+hw control already active") which also appears only to be in
+net-next/main.
 
-[1/1] soc: qcom: Fix a IS_ERR() vs NULL bug in probe
-      commit: 3aed112953b1877ede66ae77afa4e5a5024be7cb
+A lot of these LED patches were merged via netdev because they are
+cross subsystem.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
