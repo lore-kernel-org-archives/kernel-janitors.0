@@ -2,150 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4501EEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 08:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2CCEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 08:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242260AbjFNIAU (ORCPT
+        id S243549AbjFNImW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 04:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
+        Wed, 14 Jun 2023 04:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243686AbjFNIAH (ORCPT
+        with ESMTP id S243003AbjFNImV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 04:00:07 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E22E310DA;
-        Wed, 14 Jun 2023 01:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686729606; x=1718265606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=N5PcozdZTKgBDrB77IRIFRCU71kv0AKvj26OTZxaeyk=;
-  b=imGRppSBosES1bvHsOeZpsk2ILplEMr+yWtFMZ9F6Z7HYsYE765i+EYV
-   eOMoNJf6Lj07AknAQcZ/hnAciST71aDp9VTYONJxbL48wVK0JtBZwIsix
-   VSil+VYNwwmMefQdQ1fJHkrduKV+2BrfDvOWK95rfTpBQvN4m0/AsBUzy
-   0abjsdyMHZkgZCnnjGbtqJJoY3qSA7MGQlPJp5Mo/TOYrZwse/UNtB+S8
-   9l0xhO0kA/+p5CCYFXjp7Oxz4x0AAG8B8XJ4rLxms+6EHfxH/fxU3//Q7
-   TCD4l21fMtaozx6oYZVr0VylSsmqz8mTczvNk9epo5Bg8PecyeanvlYE2
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="348210181"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="348210181"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 01:00:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="715098845"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="715098845"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 01:00:03 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-        by kekkonen.fi.intel.com (Postfix) with ESMTP id E360711F826;
-        Wed, 14 Jun 2023 11:00:00 +0300 (EEST)
-Date:   Wed, 14 Jun 2023 08:00:00 +0000
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-core: Fix a potential resource leak in
- v4l2_fwnode_parse_link()
-Message-ID: <ZIlzgEZCTHmoMm8c@kekkonen.localdomain>
-References: <2ddd10ec9e009bbb85518355f1e09e1ecd349925.1685340968.git.christophe.jaillet@wanadoo.fr>
- <ZIhLDh567eWqY5vk@kekkonen.localdomain>
- <34b714b6-cb49-1a34-58f5-8b5ef0da2714@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <34b714b6-cb49-1a34-58f5-8b5ef0da2714@wanadoo.fr>
+        Wed, 14 Jun 2023 04:42:21 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C33E1BC6;
+        Wed, 14 Jun 2023 01:42:20 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-97467e06511so75995266b.2;
+        Wed, 14 Jun 2023 01:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686732138; x=1689324138;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=opM3iGVAspr9kRraTUg2dpdsl+wTsC8aJ5I0FXPKrxw=;
+        b=Wk16ZydFOesluSaK1ZqoT7KG3Fhc9htRTlxyRk8zkhykFxIghx/+7qZ1xLgdjxioMl
+         LEVJniNwvxFsDjV7gtJm4TGphBPptwMGFh3Gx0XjBeG7E6NAD2fWvYjj3XLj+aOTw5kA
+         pw3IRYRBltLxeRvXwUZeHOLJTQv030SaUZX1npNTxwHv2qjj4eBonmg1z2IyhlmKhpiv
+         uGcfMRv5fiPhhlQblMHQciZkZ22QPAptosBU8gWsq62vAZg+9ZKqIO/9wYOqgrWk3g/a
+         imnKZSvZY0A3r0NwqyPj37gCjsYv0vQKa32yh2e2w2Teufs4J5yMwP/XY9u4pWnwpnfS
+         KEmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686732138; x=1689324138;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=opM3iGVAspr9kRraTUg2dpdsl+wTsC8aJ5I0FXPKrxw=;
+        b=UKXYC0i2zPDJtu0BsmQD7kzG+uwQSyT3bcdEG2xo9vxTkqNk92dLmLLzGTcks6cHbl
+         X+Lhzv8BAtO1+Sk38Yg1PD9Y7o7mNJZGIqjMh0+AW1ZV5wPC4mIYsyA/lCpkPc+0uyBq
+         MqmfmHsHhOxWKHrjdKaYXAYV9zNAAFAaQoOLM7HtV26ibonexy8T1oWZTo3XAfHtbyDX
+         0lCW0k5DZKO4XuJMP914loQf6juhVrtYUlcr+nIUPJc+UAZbIGFT84PNC5VVFeLFulsN
+         BS1Q/NLj2n47gDAdHCtbLk1ydf/ZQYimUwkLLElo8xjyIupomXIlwkYxgUTYy+SsikAt
+         EIXQ==
+X-Gm-Message-State: AC+VfDxCrwjOgPe5HWra3DYcqKUDtr3GotlQXICvJ6CYWxHPxBdhfQVh
+        CaHkB/NEkhzCzsPjAAYsc3A=
+X-Google-Smtp-Source: ACHHUZ7ya47oM5/J7tl94dZdyLzklENOnczzEO6zvU9K1dvMu+8hLctghYF1M6GLPCAEacPna04cBQ==
+X-Received: by 2002:a17:907:3ea1:b0:96f:be1e:bf1d with SMTP id hs33-20020a1709073ea100b0096fbe1ebf1dmr14432692ejc.69.1686732138321;
+        Wed, 14 Jun 2023 01:42:18 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:fd81:17b5:3295:3921])
+        by smtp.gmail.com with ESMTPSA id g8-20020a170906348800b00977cfa6ff46sm7685042ejb.103.2023.06.14.01.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 01:42:17 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        linux-amlogic@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair pattern in ARM/Amlogic Meson SoC CLOCK FRAMEWORK
+Date:   Wed, 14 Jun 2023 10:42:12 +0200
+Message-Id: <20230614084212.1359-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Commit e6c6ddb397e2 ("dt-bindings: clock: meson: add A1 PLL clock
+controller bindings") adds a file entry with pattern
+"include/dt-bindings/clock/a1*" to the ARM/Amlogic Meson SoC CLOCK
+FRAMEWORK section. However, all header files added in the patch series to
+add Amlogic A1 clock controller drivers carry the prefix "amlogic,a1", and
+there are not header files matching "a1*".
 
-On Tue, Jun 13, 2023 at 07:15:40PM +0200, Christophe JAILLET wrote:
-> Le 13/06/2023 à 12:55, Sakari Ailus a écrit :
-> > Hi Christophe,
-> > 
-> > On Mon, May 29, 2023 at 08:17:18AM +0200, Christophe JAILLET wrote:
-> > > 'fwnode is known to be NULL, at this point, so fwnode_handle_put() is a
-> > > no-op.
-> > > 
-> > > Release the reference taken from a previous fwnode_graph_get_port_parent()
-> > > call instead.
-> > > 
-> > > Fixes: ca50c197bd96 ("[media] v4l: fwnode: Support generic fwnode for parsing standardised properties")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > /!\  THIS PATCH IS SPECULATIVE  /!\
-> > >           review with care
-> > > ---
-> > >   drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > index 049c2f2001ea..b7dd467c53fd 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > @@ -571,7 +571,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *fwnode,
-> > >   	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
-> > >   	if (!fwnode) {
-> > > -		fwnode_handle_put(fwnode);
-> > > +		fwnode_handle_put(link->local_node);
-> > 
-> > link->local_node also needs to be non-NULL for the successful case. The
-> > condition should take that into account. Could you send v2 with that?
-> > 
-> > >   		return -ENOLINK;
-> > >   	}
-> > 
-> 
-> Hi,
-> something like below?
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Ah, remote_node must be non-NULL, too, indeed. It was surprisingly broken.
+Adjust the pattern of this file entry to match the headers actually added.
 
-> 
-> @@ -568,19 +568,25 @@ int v4l2_fwnode_parse_link(struct fwnode_handle
-> *fwnode,
->  	link->local_id = fwep.id;
->  	link->local_port = fwep.port;
->  	link->local_node = fwnode_graph_get_port_parent(fwnode);
-> +	if (!link->local_node)
-> +		return -ENOLINK;
-> 
->  	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
-> -	if (!fwnode) {
-> -		fwnode_handle_put(fwnode);
-> -		return -ENOLINK;
-> -	}
-> +	if (!fwnode)
-> +		goto err_put_local_node;
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On error, fwnode needs to be put from this onwards, too.
-
-But you can use a single label: fwnode_handle_put() is NULL-safe.
-
-> 
->  	fwnode_graph_parse_endpoint(fwnode, &fwep);
->  	link->remote_id = fwep.id;
->  	link->remote_port = fwep.port;
->  	link->remote_node = fwnode_graph_get_port_parent(fwnode);
-> +	if (!link->remote_node)
-> +		goto err_put_local_node;
-> 
->  	return 0;
-> +
-> +err_put_local_node:
-> +	fwnode_handle_put(link->local_node);
-> +	return -ENOLINK;
->  }
->  EXPORT_SYMBOL_GPL(v4l2_fwnode_parse_link);
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 08c7efe271c3..08f7c69c67c4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1887,7 +1887,7 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/amlogic*
+ F:	drivers/clk/meson/
+-F:	include/dt-bindings/clock/a1*
++F:	include/dt-bindings/clock/amlogic,a1*
+ F:	include/dt-bindings/clock/gxbb*
+ F:	include/dt-bindings/clock/meson*
+ 
 -- 
-Kind regards,
+2.17.1
 
-Sakari Ailus
