@@ -2,88 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157ABEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 06:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E901EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 06:44:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243854AbjFOGfM (ORCPT
+        id S244227AbjFOGoA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jun 2023 02:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
+        Thu, 15 Jun 2023 02:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243849AbjFOGee (ORCPT
+        with ESMTP id S244127AbjFOGnT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jun 2023 02:34:34 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696E72945
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:33:52 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-57023c9be80so9169047b3.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686810822; x=1689402822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VZ8sWmOrvIq8waWFLXgCuASTZeEJ+zlwoDAZjDpRLXY=;
-        b=sZwOdz+HYW1RyLBwJv5FpAqZ/3fHatoK9ha9qk0QYWSnb/RPSEgnPBWDxKpnO14Rku
-         c4u7D/jlOGpcdFumrjwUHL6wMD5ELePVg1QTvKB1QlW9Z08bX2REnMA2QxzE178q+0bk
-         Cy03GwkjOF0SFnkcfzJdV13dkMeilNTc/L1wuarWkI6v6gwHNRdAGi0knEDVltg41UHM
-         ObudbUHWQn1x1MQMTY8lYuAhkTknkgJDIENtkwnhNUg/Q9Si+/r9cBBp3XGOKRQJay3b
-         j5lzMtZ0+u3slEv+kHtyR9x2hbhZFegeMUet7Npik9wzwYwiA3irAwktA3K7+D9ZBUDX
-         Z+VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686810822; x=1689402822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VZ8sWmOrvIq8waWFLXgCuASTZeEJ+zlwoDAZjDpRLXY=;
-        b=XJYgHREsBiWcrpHOS2OrwDbPh+6mkMlqZskixCG3pGm482XfduGLhmOPCK1Jx0OVLi
-         HBIXrSNQKjkrOJvOT8sdgpqfsRfJE3LBs37jPWV6vAdkP3D4A0cYvlLKbChnptbmvxmo
-         QyLg6r6eYcrwvzgvM3xRMkxQL9C1mYvWcY0705EHsECxvMzcwHbOVG39/jb7duxI3V7W
-         QIETN8BTgILirk+b6eTp2Lb8g0YDSXXeTjGj06wA8NNqKk2m3xEroSmBoWkHczfrjim+
-         AnAukLUlox1lOZgupQiIyBzVwQNZkR9iOXmIT5HM4qlsYtbsE3sQplEWv1p6BMg/h5cC
-         tQFQ==
-X-Gm-Message-State: AC+VfDzhFFgt1UaiVlOmJT+O0z37hvAl4s6wLgxuMsOAdoBgqGKSLiD5
-        3IXEmVmIAhEKVdAhQ7EKaojiaO2YBdpniIhn4ALPUg==
-X-Google-Smtp-Source: ACHHUZ6rMue4kNIamOiSY5UQYrDzI0yab9xvTCydCT7af7qsnesG+N6ZKe4g43aMAhhOI33yTrAKykH99CcrspzzhTU=
-X-Received: by 2002:a25:504b:0:b0:bd4:e6d6:2b8e with SMTP id
- e72-20020a25504b000000b00bd4e6d62b8emr3891532ybb.50.1686810822546; Wed, 14
- Jun 2023 23:33:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <fe7ef901-9571-4c6e-a40e-449046efe2c6@moroto.mountain>
-In-Reply-To: <fe7ef901-9571-4c6e-a40e-449046efe2c6@moroto.mountain>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Jun 2023 08:33:31 +0200
-Message-ID: <CACRpkdYTcLKBq2s8_kBoM1PtzqNxxwK3wWZp6ORiY__pEkBgtQ@mail.gmail.com>
-Subject: Re: [PATCH] mtd: otp: clean up on error in mtd_otp_nvmem_add()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 15 Jun 2023 02:43:19 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB44926A8;
+        Wed, 14 Jun 2023 23:41:54 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 59FCC1F381;
+        Thu, 15 Jun 2023 06:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686811313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ft/zj4ilzEumTWLpEQ07nLe+sIIdIKTeXHm4HA2N188=;
+        b=17hpmG/Maa7k+KgeOcBx2Qx6wOPTd9n9rIMnpJNKnxLDW00TA6tw8GbwgCDwMxvj79LO/T
+        tHobk0dCZEbtSR1g7jLCIFiJFSWvmW30QMYq38dqqB/qmz0Yo7adaLr/V/pAWNivyKVp9M
+        75q7VDLJ2KLfDZ1WZu4LJR7Lm7ntpbo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686811313;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ft/zj4ilzEumTWLpEQ07nLe+sIIdIKTeXHm4HA2N188=;
+        b=sZitHZ+ZzbnztOhMC8NH8z4v1JHREWOq2w+ssNFnk6QfFeJFf8rdYCt0+VgX31Y9Jph5IF
+        PvUh+e1jO3DriiCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1B68B13467;
+        Thu, 15 Jun 2023 06:41:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /rG8BbGyimS9eAAAMHmgww
+        (envelope-from <tiwai@suse.de>); Thu, 15 Jun 2023 06:41:53 +0000
+Date:   Thu, 15 Jun 2023 08:41:52 +0200
+Message-ID: <87r0qd8bwv.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Su Hui <suhui@nfschina.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>, maciej.szmigiero@oracle.com,
+        yangyingliang@huawei.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: ac97: Fix possible NULL dereference in snd_ac97_mixer
+In-Reply-To: <20230615021732.1972194-1-suhui@nfschina.com>
+References: <20230615021732.1972194-1-suhui@nfschina.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 8:09=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Thu, 15 Jun 2023 04:17:32 +0200,
+Su Hui wrote:
+> 
+> smatch error:
+> sound/pci/ac97/ac97_codec.c:2354 snd_ac97_mixer() error:
+> we previously assumed 'rac97' could be null (see line 2072)
+> 
+> remove redundant assignment, return error if rac97 is NULL.
+> 
+> Fixes: da3cec35dd3c ("ALSA: Kill snd_assert() in sound/pci/*")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-> Smatch complains that these error paths are missing cleanup:
->
->     drivers/mtd/mtdcore.c:983 mtd_otp_nvmem_add()
->     warn: missing unwind goto?
->
-> This needs to call nvmem_unregister(mtd->otp_user_nvmem) before
-> returning.
->
-> Fixes: 3b270fac8443 ("mtd: otp: Put factory OTP/NVRAM into the entropy po=
-ol")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Thanks, applied.
 
-Ooops my bad.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
-Linus Walleij
+Takashi
