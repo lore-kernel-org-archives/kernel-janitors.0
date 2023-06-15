@@ -2,90 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D30EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 14:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2465CEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 15:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239846AbjFOOlS (ORCPT
+        id S241765AbjFOPMT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jun 2023 10:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57786 "EHLO
+        Thu, 15 Jun 2023 11:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345101AbjFOOlC (ORCPT
+        with ESMTP id S1344812AbjFOPMN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jun 2023 10:41:02 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7932952;
-        Thu, 15 Jun 2023 07:40:56 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f8d5262dc8so7039385e9.0;
-        Thu, 15 Jun 2023 07:40:56 -0700 (PDT)
+        Thu, 15 Jun 2023 11:12:13 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B22A2D40
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Jun 2023 08:12:10 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f7378a75c0so19341865e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Jun 2023 08:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686840055; x=1689432055;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Usc6x/BqXUwuzZHQ2o4g2n/2VrbmycWMBR5m/TRW5nE=;
-        b=V7nisqTclY6JQNhLF0D6wWbOY4hdbKdpYasOoeefJ+2Ve5775k+I6S6TZQIbYtmjdC
-         m1KiVz4IfuBQ53VkJiYo1NDJoEY9oOcLxMghcwvU89ucFxk57AhJy9+Q8EfjFKBPFl1P
-         xJA5aL/wM6ah+KZ/RLTyhuF/5NP6I3NYXSEiquH4oNFAuv6lgto202fe9oVdm1VI8PXU
-         r718meptj3IfkJk07IJvfJ2nRS1QlNmECMsRCr513PI4p7q0wt5oggslRjAlUuJDuy0O
-         LcAcwBb5On/cRotKINO1i2pQuqqN17z8N3fjLCRJJRzEmKAqaYDIh3yb54G610yDGs9+
-         AJ5A==
+        d=linaro.org; s=google; t=1686841929; x=1689433929;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZ87BWNtcPkV4Gczivg6cLrPcAb7LiiC1vsS1lqxHKE=;
+        b=bEJEQmLPNS6jv1pDiwq9Swd5neLMqJKvqBKPHRhrtuQFrygutLLqbGVNaHRw05DNEa
+         l9sUxm3zITfUTim6c6mfRW3aDciMwjdkgGrMy7GEiQuxjsinCZljWM79htVcpuDdqIOO
+         WWXJTvLwvistu8A312DH5sd2Gyk1Ox8cY59d1/5bcFlt3ladr3JauT3MLrao3AiG0CLJ
+         8UQZOPX6IhmHNWAOn6OIHmQKHt8gftlk1QjLkY3Af/Uo7UmaE/XzsmfmIp0etGLJtqMd
+         W9O6zqApzPUjLe3Z4KEU7sdEO03f8LLk3fagtKHbDZnKBQ5gLHuBcrUImn3khxWTZzWL
+         GyIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686840055; x=1689432055;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Usc6x/BqXUwuzZHQ2o4g2n/2VrbmycWMBR5m/TRW5nE=;
-        b=ec4zAYCbkOeo1ivVvlxGn2gOLsDXS2i+zsFB65id6WnckCzwPUYw8Dedztle97YqJG
-         xLrrABYV6Zrn7zsL+s235x0yM+1Je6QgevFKeP32nY4JqngjCgwp83GxTJWQD7hPBADw
-         /VtJGX4nnBwhboGAY+0zGjUk9VSjWhHnirXwZXHeMFHBs27Gy1ictYpyyD0ALM0MOM+p
-         w7RXPjZHvCeQXz3/+sFZimBj+ORDg/snPWubqU6+pSym+v957Fs1ic+JMkdDrwvPBAdi
-         CThMaA9yEFg7aqiweBX7b0CKEuzn8oOn+14l41qjjI50YWtxEHBxk+34mnCLfuCv6EIs
-         UGOw==
-X-Gm-Message-State: AC+VfDxxw4w6AwKtehpCJPHoYtg+m39IcYsKjg/K/3XJVIkP3ow35yXO
-        lxzdihl6EUiUF8Q6P8j6B9I=
-X-Google-Smtp-Source: ACHHUZ66E+Hx47+uO19xLpQ6m4shXXkkbZs1ZEIZ+3orsfrg2y2nhbnULL/HeCrMbqRpdDaT7xweow==
-X-Received: by 2002:a05:600c:4e87:b0:3f7:ec1d:21b3 with SMTP id f7-20020a05600c4e8700b003f7ec1d21b3mr4620285wmq.5.1686840054425;
-        Thu, 15 Jun 2023 07:40:54 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t25-20020a1c7719000000b003f7eeec829asm20709865wmi.10.2023.06.15.07.40.53
+        d=1e100.net; s=20221208; t=1686841929; x=1689433929;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nZ87BWNtcPkV4Gczivg6cLrPcAb7LiiC1vsS1lqxHKE=;
+        b=NcB6An0yqDHrnQ6lkWGozHKAFmILwbEh2QPyH3Q9GRVKqYE4zQGjX3cLQsdVErlJaY
+         aDV0vwoB0owCbs9RkyDM/W/HVaO4wonr9AuTZPLQF2r2j+iu4TWllbsd4sDvvC4Nbr+g
+         aHRvhCAFoMpsJacxqYC2ChbZ4XdwTkpDwSywJCw7xP0We2GDp93XwpIZP5aBMB7+b0UZ
+         1sEHGhwE5nOc7nATYni+7q7S2/94O/hCpH+Vr5W59lKLA9W6DYCzQ8M/wEZwJw/RmxTx
+         EJcjUsvKS8Ip7ySxSUQVPiFm3hSGg3q7khajhzXkIbHUg0YT7saHYFq+yVtdJGNnKIhV
+         9Y+w==
+X-Gm-Message-State: AC+VfDwSYF8Yw/ounPzljNz9wGtID9UpvzjWigDQnsxFdL9ZyrbESfeE
+        boUu/N19sP4t7GE6iDsUAPXADw==
+X-Google-Smtp-Source: ACHHUZ5B65DF9SMw60tWVyffZ3UXoFkEt7gq3lAqCTZijt/HrXFu6D2r++Kqq74iar8TLy2Twe1c+Q==
+X-Received: by 2002:a1c:7713:0:b0:3f6:2a6:e2c with SMTP id t19-20020a1c7713000000b003f602a60e2cmr13461411wmi.9.1686841928922;
+        Thu, 15 Jun 2023 08:12:08 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t25-20020a1c7719000000b003f7eeec829asm20792006wmi.10.2023.06.15.08.12.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 07:40:53 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Pawel Laszczak <pawell@cadence.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: cdns2: Fix spelling mistake in a trace message "Wakupe" -> "Wakeup"
-Date:   Thu, 15 Jun 2023 15:40:52 +0100
-Message-Id: <20230615144052.2254528-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 15 Jun 2023 08:12:07 -0700 (PDT)
+Date:   Thu, 15 Jun 2023 18:12:03 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>, tools@linux.kernel.org,
+        kernel-janitors@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Dan Carpenter <error27@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, smatch@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] spi: spi-geni-qcom: correctly handle -EPROBE_DEFER from
+ dma_request_chan()
+Message-ID: <b82b8041-7bc5-433c-98bc-4ac6fcf5ae9d@kadam.mountain>
+References: <20230615-topic-sm8550-upstream-fix-spi-geni-qcom-probe-v1-1-6da9bf2db4a4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230615-topic-sm8550-upstream-fix-spi-geni-qcom-probe-v1-1-6da9bf2db4a4@linaro.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a trace message. Fix it.
+Added the kernel-janitors mailing list to the CC.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/usb/gadget/udc/cdns2/cdns2-debug.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Jun 15, 2023 at 11:23:17AM +0200, Neil Armstrong wrote:
+> Now spi_geni_grab_gpi_chan() errors are correctly reported, the
+> -EPROBE_DEFER error should be returned from probe in case the
+> GPI dma driver is built as module and/or not probed yet.
+> 
+> Fixes: b59c122484ec ("spi: spi-geni-qcom: Add support for GPI dma")
+> Fixes: 6532582c353f ("spi: spi-geni-qcom: fix error handling in spi_geni_grab_gpi_chan()")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-debug.h b/drivers/usb/gadget/udc/cdns2/cdns2-debug.h
-index fd22ae949008..be9ae0d28a40 100644
---- a/drivers/usb/gadget/udc/cdns2/cdns2-debug.h
-+++ b/drivers/usb/gadget/udc/cdns2/cdns2-debug.h
-@@ -36,7 +36,7 @@ static inline const char *cdns2_decode_usb_irq(char *str, size_t size,
- 	ret += snprintf(str + ret, size - ret, ", EXT: 0x%02x - ", ext_irq);
- 
- 	if (ext_irq & EXTIRQ_WAKEUP)
--		ret += snprintf(str + ret, size - ret, "Wakupe ");
-+		ret += snprintf(str + ret, size - ret, "Wakeup ");
- 	if (ext_irq & EXTIRQ_VBUSFAULT_FALL)
- 		ret += snprintf(str + ret, size - ret, "VBUS_FALL ");
- 	if (ext_irq & EXTIRQ_VBUSFAULT_RISE)
--- 
-2.39.2
+In olden days the kernel janitors list used to have a TODO list of
+random tasks that a newbie could take on.  People loved the idea of a
+TODO list but no one ever maintained it so in practice it was useless
+after the first year.  I've create a new KTODO tag so we can
+automatically create KTODO lists.  The idea is you write a one line
+summary that starts with KTODO and the subsystem prefix like so:
+
+KTODO: static analysis: Ensure that -EPROBE_DEFER is always propogated
+
+Then people can use lei[1] to search for the tag and get the latest
+TODO list.  Here is the command to search for all the KTODO items added
+in the last six months.
+
+lei q https://lore.kernel.org/all/ -o ~/Mail/KTODO --dedupe=mid 'KTODO AND rt:6.month.ago..'
+
+The KTODO entry should have a short summary.  People can download thread
+for more context if they want.  Here is the short summary:
+
+The -EPROBE_DEFER error code is special and needs to propogated to the
+callers.  If you have code like:
+
+	err = returns_eprobe_defer();
+	if (err)
+		return -EINVAL;
+
+Then that is a bug because it's returning -EINVAL instead return err;
+Use static analysis to prevent this.
+
+regards,
+dan carpenter
+
+[1] https://lpc.events/event/11/contributions/983/attachments/759/1421/Doing%20more%20with%20lore%20and%20b4.pdf
 
