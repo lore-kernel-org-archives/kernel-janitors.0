@@ -2,107 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5270EB64D8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jun 2023 20:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A05FEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 00:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234921AbjFNU0M (ORCPT
+        id S235533AbjFOAXB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jun 2023 16:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        Wed, 14 Jun 2023 20:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232357AbjFNU0K (ORCPT
+        with ESMTP id S232081AbjFOAW7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jun 2023 16:26:10 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEDFC2116
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 13:26:08 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 9X49qJzAr4jPd9X49qRAft; Wed, 14 Jun 2023 22:26:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686774366;
-        bh=K4LJUPD0skruLm7yHJrG7KQ6uvH9CtyWKlTfipvO1Lo=;
-        h=From:To:Cc:Subject:Date;
-        b=DdQVwEyCPQeNkV3XKl0QQvAdK7pKxp0g2BdKAipl5f/cV9Ov+swXrvCVzI50H+pV2
-         DUhTKxRleH6bMIrcb+6tfEZ9ysf0AR0ISujujQzZB1WVic0MmkhdrNlNRghvAwQdi7
-         42hYdVK6aCx7ilKuRy9H/uX/dgMAGqyv7nyHO2Kv/WP+Vz2ed5T65SWqq+iW8oNgqT
-         ig8Mr7jORjkQDRSCDspHH/RSX3Qa9xdPD4XpXhPcFkCPnzARJHyCWPI7c4FbD/ocfp
-         bTnzCIeO2tzMLgkgwl7Y9HnQxQ2BlAO6hO0/SzfXhBRFKksSpwTW5mCpkQyJgkLURd
-         np/nhoI2Vi4Iw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 14 Jun 2023 22:26:06 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-iio@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7192: Simplify using devm_clk_get_optional_enabled()
-Date:   Wed, 14 Jun 2023 22:26:04 +0200
-Message-Id: <7dbe973905f1fdae5d2f5ae5a3b01dd1d6a9925b.1686774340.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 14 Jun 2023 20:22:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD192683;
+        Wed, 14 Jun 2023 17:22:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC4F461177;
+        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7EBC433C8;
+        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686788577;
+        bh=JC6c+WD8LLTd7NEVpZnlLgwkDa+RKjFs3gZCsKb3OYQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=laB2QZ0vqyJVwjmYgT52FQQd867SlZRhlOaxgDFx2TbW9r52J1oL13myKbyZOUEem
+         3GKY4EPd6t9kZfxmVXg2sY0YjbepU+wE7/brfqHvrcbN77JBUSsv1GT8L9+ij/iP59
+         lq8ptQaoIKTmvDT7tmhpUYJTWVrvTPxtXZ++BYomD1LIk5uIHZTjVBLxinvYbUEG6p
+         BZAEll8gJpgSRANQfd5RxIgh6q07KJ1ruBZJLy+DUHCg1T4vFt0r0jqzRkGlYzWzyA
+         i+OWLIqvelF7/ROg5rBGECAxjXpDiKQKpffF8pX0HND22/m4Fenc0mIgbwUW6SjRU9
+         cJ+lp66VP8Gcw==
+Message-ID: <b0a8bd528d5fea056e48a1cc9cbf019c.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
+References: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
+Subject: Re: [PATCH] clk: clocking-wizard: Fix Oops in clk_wzrd_register_divider()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Date:   Wed, 14 Jun 2023 17:22:55 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If st->mclk is not NULL, then st->clock_sel is either AD7192_CLK_EXT_MCLK2
-or AD7192_CLK_EXT_MCLK1_2.
+Quoting Dan Carpenter (2023-05-11 10:01:20)
+> Smatch detected this potential error pointer dereference
+> clk_wzrd_register_divider().  If devm_clk_hw_register() fails then
+> it sets "hw" to an error pointer and then dereferences it on the
+> next line.  Return the error directly instead.
+>=20
+> Fixes: 5a853722eb32 ("staging: clocking-wizard: Add support for dynamic r=
+econfiguration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-So devm_clk_get_optional_enabled() can be used instead of hand writing it.
-This saves some line of code.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/adc/ad7192.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-index 8685e0b58a83..5dcb257ad754 100644
---- a/drivers/iio/adc/ad7192.c
-+++ b/drivers/iio/adc/ad7192.c
-@@ -972,11 +972,6 @@ static void ad7192_reg_disable(void *reg)
- 	regulator_disable(reg);
- }
- 
--static void ad7192_clk_disable(void *clk)
--{
--	clk_disable_unprepare(clk);
--}
--
- static int ad7192_probe(struct spi_device *spi)
- {
- 	struct ad7192_state *st;
-@@ -1044,7 +1039,7 @@ static int ad7192_probe(struct spi_device *spi)
- 
- 	st->fclk = AD7192_INT_FREQ_MHZ;
- 
--	st->mclk = devm_clk_get_optional(&spi->dev, "mclk");
-+	st->mclk = devm_clk_get_optional_enabled(&spi->dev, "mclk");
- 	if (IS_ERR(st->mclk))
- 		return PTR_ERR(st->mclk);
- 
-@@ -1052,15 +1047,6 @@ static int ad7192_probe(struct spi_device *spi)
- 
- 	if (st->clock_sel == AD7192_CLK_EXT_MCLK1_2 ||
- 	    st->clock_sel == AD7192_CLK_EXT_MCLK2) {
--		ret = clk_prepare_enable(st->mclk);
--		if (ret < 0)
--			return ret;
--
--		ret = devm_add_action_or_reset(&spi->dev, ad7192_clk_disable,
--					       st->mclk);
--		if (ret)
--			return ret;
--
- 		st->fclk = clk_get_rate(st->mclk);
- 		if (!ad7192_valid_external_frequency(st->fclk)) {
- 			dev_err(&spi->dev,
--- 
-2.34.1
-
+Applied to clk-next
