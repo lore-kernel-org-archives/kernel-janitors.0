@@ -2,107 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F0CEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 06:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157ABEB64DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jun 2023 06:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237966AbjFOGJf (ORCPT
+        id S243854AbjFOGfM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jun 2023 02:09:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39236 "EHLO
+        Thu, 15 Jun 2023 02:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243275AbjFOGJc (ORCPT
+        with ESMTP id S243849AbjFOGee (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jun 2023 02:09:32 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C01BA7
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:09:31 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f76a223ca5so1851685e87.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:09:31 -0700 (PDT)
+        Thu, 15 Jun 2023 02:34:34 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696E72945
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:33:52 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-57023c9be80so9169047b3.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Jun 2023 23:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686809369; x=1689401369;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=26mSNpaphFv3eMUK08mrfdveKcRFHGUm7SxBgwM7wKQ=;
-        b=Woo960oRlKIg2EO9OFoNW7FesqkkGf9xBhoIYZDNjt1dJxBNHuZnK+VLc/9VAKtIbB
-         MIFaaMQOJpbzRMvEKHC8M53sfUbr9V0GugVDxrsUf61dadkbPdYrsY4ryYsgisavXLuq
-         GVCLSVUM7A8owEn+P3cNKJj/Dp5sjsgSLfU2JQigNbfupI/XDJs7DPziKKeCBLhpnBc1
-         CQ6v+/OkzDVhboP/zhMjbogBp4fx1V/gYUe6dH1X7A2ak718xx8C3vBT5lcK44FFh03C
-         uB+wxQX+54xJXZHF6Gab1BN3VOHE9pRtlSwZutloZC9Yf15XqURADZgY/MMgfEyD57xV
-         zrYw==
+        d=linaro.org; s=google; t=1686810822; x=1689402822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZ8sWmOrvIq8waWFLXgCuASTZeEJ+zlwoDAZjDpRLXY=;
+        b=sZwOdz+HYW1RyLBwJv5FpAqZ/3fHatoK9ha9qk0QYWSnb/RPSEgnPBWDxKpnO14Rku
+         c4u7D/jlOGpcdFumrjwUHL6wMD5ELePVg1QTvKB1QlW9Z08bX2REnMA2QxzE178q+0bk
+         Cy03GwkjOF0SFnkcfzJdV13dkMeilNTc/L1wuarWkI6v6gwHNRdAGi0knEDVltg41UHM
+         ObudbUHWQn1x1MQMTY8lYuAhkTknkgJDIENtkwnhNUg/Q9Si+/r9cBBp3XGOKRQJay3b
+         j5lzMtZ0+u3slEv+kHtyR9x2hbhZFegeMUet7Npik9wzwYwiA3irAwktA3K7+D9ZBUDX
+         Z+VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686809369; x=1689401369;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=26mSNpaphFv3eMUK08mrfdveKcRFHGUm7SxBgwM7wKQ=;
-        b=Op7oD2Y98AYlQ09aFnX+VY6CeyofJLZqsI9ay6Fd21c8vcN5n4htudiumYz6O3IRML
-         EC/9AzjufXv8zcZnzzWxwcXhL/EIOeV+ute3jomyscCVQyRcyJ9lxGcsNbDR+OGe0/h6
-         Kg0yN4oP0nDTcR3HovTq3Q89y22A7AsS6WI9VeDNB7sBwn0qfUCx01JuH4SBllTstGUN
-         e47PL1PF2MXPwsNUsq1lV2WbMQvoYbKMA3+tVMlcSBob/DS9joWT5vp0OcpXElsuBM5P
-         MV2EyBltAhPXujjDArpotGhKluc9vsoy73zJR704G4o8YvS66Dr7m4DnNF9zW/t1/13T
-         kAJA==
-X-Gm-Message-State: AC+VfDwTl/Utyigd12wsCmcDpMgh/jlj54oa5SLuIKho7/4K4/zkhaB+
-        zNH/wvxMVCCtypjmG1G1O4AMww==
-X-Google-Smtp-Source: ACHHUZ5Shvz56GbCkrxmqunekg700y5QlXwXfz9Y+4BHSqVNQbdVIZx5EZrklFNOx9V5YkOPwD3XDQ==
-X-Received: by 2002:a05:6512:329c:b0:4f1:3ca4:926f with SMTP id p28-20020a056512329c00b004f13ca4926fmr9429156lfe.21.1686809369499;
-        Wed, 14 Jun 2023 23:09:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u26-20020a05600c00da00b003eddc6aa5fasm19463608wmm.39.2023.06.14.23.09.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 23:09:27 -0700 (PDT)
-Date:   Thu, 15 Jun 2023 09:09:20 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
+        d=1e100.net; s=20221208; t=1686810822; x=1689402822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VZ8sWmOrvIq8waWFLXgCuASTZeEJ+zlwoDAZjDpRLXY=;
+        b=XJYgHREsBiWcrpHOS2OrwDbPh+6mkMlqZskixCG3pGm482XfduGLhmOPCK1Jx0OVLi
+         HBIXrSNQKjkrOJvOT8sdgpqfsRfJE3LBs37jPWV6vAdkP3D4A0cYvlLKbChnptbmvxmo
+         QyLg6r6eYcrwvzgvM3xRMkxQL9C1mYvWcY0705EHsECxvMzcwHbOVG39/jb7duxI3V7W
+         QIETN8BTgILirk+b6eTp2Lb8g0YDSXXeTjGj06wA8NNqKk2m3xEroSmBoWkHczfrjim+
+         AnAukLUlox1lOZgupQiIyBzVwQNZkR9iOXmIT5HM4qlsYtbsE3sQplEWv1p6BMg/h5cC
+         tQFQ==
+X-Gm-Message-State: AC+VfDzhFFgt1UaiVlOmJT+O0z37hvAl4s6wLgxuMsOAdoBgqGKSLiD5
+        3IXEmVmIAhEKVdAhQ7EKaojiaO2YBdpniIhn4ALPUg==
+X-Google-Smtp-Source: ACHHUZ6rMue4kNIamOiSY5UQYrDzI0yab9xvTCydCT7af7qsnesG+N6ZKe4g43aMAhhOI33yTrAKykH99CcrspzzhTU=
+X-Received: by 2002:a25:504b:0:b0:bd4:e6d6:2b8e with SMTP id
+ e72-20020a25504b000000b00bd4e6d62b8emr3891532ybb.50.1686810822546; Wed, 14
+ Jun 2023 23:33:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <fe7ef901-9571-4c6e-a40e-449046efe2c6@moroto.mountain>
+In-Reply-To: <fe7ef901-9571-4c6e-a40e-449046efe2c6@moroto.mountain>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Jun 2023 08:33:31 +0200
+Message-ID: <CACRpkdYTcLKBq2s8_kBoM1PtzqNxxwK3wWZp6ORiY__pEkBgtQ@mail.gmail.com>
+Subject: Re: [PATCH] mtd: otp: clean up on error in mtd_otp_nvmem_add()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
 Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         "Jason A. Donenfeld" <Jason@zx2c4.com>,
         linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mtd: otp: clean up on error in mtd_otp_nvmem_add()
-Message-ID: <fe7ef901-9571-4c6e-a40e-449046efe2c6@moroto.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch complains that these error paths are missing cleanup:
+On Thu, Jun 15, 2023 at 8:09=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 
-    drivers/mtd/mtdcore.c:983 mtd_otp_nvmem_add()
-    warn: missing unwind goto?
+> Smatch complains that these error paths are missing cleanup:
+>
+>     drivers/mtd/mtdcore.c:983 mtd_otp_nvmem_add()
+>     warn: missing unwind goto?
+>
+> This needs to call nvmem_unregister(mtd->otp_user_nvmem) before
+> returning.
+>
+> Fixes: 3b270fac8443 ("mtd: otp: Put factory OTP/NVRAM into the entropy po=
+ol")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-This needs to call nvmem_unregister(mtd->otp_user_nvmem) before
-returning.
+Ooops my bad.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Fixes: 3b270fac8443 ("mtd: otp: Put factory OTP/NVRAM into the entropy pool")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/mtd/mtdcore.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index abf4cb58a8ab..ab77f8f858f0 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -975,12 +975,14 @@ static int mtd_otp_nvmem_add(struct mtd_info *mtd)
- 			void *otp;
- 
- 			otp = kmalloc(size, GFP_KERNEL);
--			if (!otp)
--				return -ENOMEM;
-+			if (!otp) {
-+				err = -ENOMEM;
-+				goto err;
-+			}
- 			err = mtd_nvmem_fact_otp_reg_read(mtd, 0, otp, size);
- 			if (err < 0) {
- 				kfree(otp);
--				return err;
-+				goto err;
- 			}
- 			add_device_randomness(otp, err);
- 			kfree(otp);
--- 
-2.39.2
-
+Yours,
+Linus Walleij
