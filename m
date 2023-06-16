@@ -2,121 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EFCEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 14:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1B3EB64D8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 16:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344396AbjFPOuf (ORCPT
+        id S1345602AbjFPQpe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jun 2023 10:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53350 "EHLO
+        Fri, 16 Jun 2023 12:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbjFPOue (ORCPT
+        with ESMTP id S230327AbjFPQpd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jun 2023 10:50:34 -0400
-Received: from sonata.ens-lyon.org (domu-toccata.ens-lyon.fr [140.77.166.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E64F30E7;
-        Fri, 16 Jun 2023 07:50:32 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by sonata.ens-lyon.org (Postfix) with ESMTP id 2D6EE20135;
-        Fri, 16 Jun 2023 16:50:30 +0200 (CEST)
-Received: from sonata.ens-lyon.org ([127.0.0.1])
-        by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id h_zPkR2w8rQC; Fri, 16 Jun 2023 16:50:30 +0200 (CEST)
-Received: from begin (nat-inria-interne-52-gw-01-bso.bordeaux.inria.fr [194.199.1.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by sonata.ens-lyon.org (Postfix) with ESMTPSA id 80AA220107;
-        Fri, 16 Jun 2023 16:50:29 +0200 (CEST)
-Received: from samy by begin with local (Exim 4.96)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1qAAmS-006jR9-2M;
-        Fri, 16 Jun 2023 16:50:28 +0200
-Date:   Fri, 16 Jun 2023 16:50:28 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, speakup@linux-speakup.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] accessibility: speakup: remove linux/version.h
-Message-ID: <20230616145028.7rzrbqfj7wmoenj6@begin>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, speakup@linux-speakup.org,
-        linux-kernel@vger.kernel.org
-References: <20230303125152.2030241-1-usama.anjum@collabora.com>
- <fb6121fc-101f-0779-b752-ac8202eb761e@collabora.com>
+        Fri, 16 Jun 2023 12:45:33 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C778530E7;
+        Fri, 16 Jun 2023 09:45:31 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f738f579ceso7586495e9.3;
+        Fri, 16 Jun 2023 09:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686933930; x=1689525930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8V8q96OOXdGau1TedNc2n90X++sVPNRGGXHlrWVRBEc=;
+        b=i3YMB8s2sNQ/jSgkkXlqbo+NkETRLlYYZq8OJPUg/h6JEYLiHckfl+M5nU05AA2FP1
+         TxtgdKZFXZCunRpwjNko8IUzbadarz/MJ3c4G708uD+fCH9FSFs8vzIQxLlnUK5Ms2cy
+         wKO3A5nUaIsLqZ9ngVRW7CBjH9wcNaFJZS5yOQIp+A7djGgdbQywRdGodzqSz5PtZlvM
+         wz5b05QrhLY4gSTRRmqPbe/3+d7k1t07arE2z/IDDao/Fy83b6ongXoT3IpP19QRuaqG
+         6tg3rvtYbImek8pFfA1WZRyQ6Yv0V3d23594qpbGUomRV9Hn0tBg+a8d7ayNOZQYM+Zz
+         pMSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686933930; x=1689525930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8V8q96OOXdGau1TedNc2n90X++sVPNRGGXHlrWVRBEc=;
+        b=RoT6Jijehm6nhpvp/I4BkvhOeofqxCWXxl4xvca3UHt0W+VEcG/vvvObMgnYBi/S8X
+         YmlK3giXvXvi5yvt67OalpVolX6v/fyvh2+YJAqML4fAW2PLPBZ06oMzpw14SW4gucZN
+         pE2i+uewNUdCiAn9M0Xv5mn/inLPcMxr50Eev6Xon5/buNYFHzAzEFyYDp9jaRH+1R/p
+         wWa8NkxSkmyUj1tCyFM/X1RzS35mIhxwnKIb8vM4r74psxsyc4kG2R8O6Znejqc3t9y1
+         SFS4IKW0ugNXxXPreyYN6wt6o2lAkUDCKX7Zn0hqZ2yVQY1E8/1uabQer1yE+yNrJtuR
+         +uuQ==
+X-Gm-Message-State: AC+VfDwqSh841ztRj2wrxeoQWdDp8cijQLFTzqPStpnWo6pIH0MwSPMA
+        d4V28wj09jRhk9mH2uKrB/4=
+X-Google-Smtp-Source: ACHHUZ64k1pdHed8InLXt7Gttw1k3psGS3dQa/8W2hpx8V25//2s5Z4b05o/W2he1wB3HtDeJYgqeQ==
+X-Received: by 2002:a05:600c:290:b0:3f7:33da:f218 with SMTP id 16-20020a05600c029000b003f733daf218mr2068916wmk.35.1686933929885;
+        Fri, 16 Jun 2023 09:45:29 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q13-20020a1ce90d000000b003f8e4b22bc2sm2630817wmc.44.2023.06.16.09.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jun 2023 09:45:29 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drbd: remove redundant assignment to variable owords
+Date:   Fri, 16 Jun 2023 17:45:28 +0100
+Message-Id: <20230616164528.2342460-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb6121fc-101f-0779-b752-ac8202eb761e@collabora.com>
-Organization: I am not organized
-User-Agent: NeoMutt/20170609 (1.8.3)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Muhammad Usama Anjum, le ven. 16 juin 2023 17:53:12 +0500, a ecrit:
-> Soft reminder.
+The variable owords is being assigned a value that is never
+read, the exit path via label out returns before owords is ever
+used again. The assignment is redundant and can be removed.
 
-It somehow hadn't appeared in my inbox.
+Cleans up clang scan build warning:
+drivers/block/drbd/drbd_bitmap.c:654:3: warning: Value stored to 'owords' is never read [deadcode.DeadStores]
 
-> On 3/3/23 5:51 PM, Muhammad Usama Anjum wrote:
-> > make versioncheck reports the following:
-> > ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
-> > ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
-> > 
-> > So remove linux/version.h from both of these files.
-> > 
-> > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-
-Thanks!
-
-> > ---
-> >  drivers/accessibility/speakup/genmap.c      | 1 -
-> >  drivers/accessibility/speakup/makemapdata.c | 1 -
-> >  2 files changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
-> > index 0125000e00d9..0882bab10fb8 100644
-> > --- a/drivers/accessibility/speakup/genmap.c
-> > +++ b/drivers/accessibility/speakup/genmap.c
-> > @@ -10,7 +10,6 @@
-> >  #include <stdio.h>
-> >  #include <libgen.h>
-> >  #include <string.h>
-> > -#include <linux/version.h>
-> >  #include <ctype.h>
-> >  #include "utils.h"
-> >  
-> > diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
-> > index d7d41bb9b05f..55e4ef8a93dc 100644
-> > --- a/drivers/accessibility/speakup/makemapdata.c
-> > +++ b/drivers/accessibility/speakup/makemapdata.c
-> > @@ -10,7 +10,6 @@
-> >  #include <stdio.h>
-> >  #include <libgen.h>
-> >  #include <string.h>
-> > -#include <linux/version.h>
-> >  #include <ctype.h>
-> >  #include "utils.h"
-> >  
-> 
-> -- 
-> BR,
-> Muhammad Usama Anjum
-> 
-
--- 
-Samuel
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Pour une évaluation indépendante, transparente et rigoureuse !
-Je soutiens la Commission d'Évaluation de l'Inria.
+ drivers/block/drbd/drbd_bitmap.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
+index 85ca000a0564..897bf211e985 100644
+--- a/drivers/block/drbd/drbd_bitmap.c
++++ b/drivers/block/drbd/drbd_bitmap.c
+@@ -651,7 +651,6 @@ int drbd_bm_resize(struct drbd_device *device, sector_t capacity, int set_new_bi
+ 		spin_lock_irq(&b->bm_lock);
+ 		opages = b->bm_pages;
+ 		onpages = b->bm_number_of_pages;
+-		owords = b->bm_words;
+ 		b->bm_pages = NULL;
+ 		b->bm_number_of_pages =
+ 		b->bm_set   =
+-- 
+2.39.2
+
