@@ -2,93 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0CBEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 11:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2217DEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 12:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234871AbjFPLSQ (ORCPT
+        id S1345460AbjFPMxZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jun 2023 07:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
+        Fri, 16 Jun 2023 08:53:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345335AbjFPLSP (ORCPT
+        with ESMTP id S1345433AbjFPMxX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jun 2023 07:18:15 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AD62130
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Jun 2023 04:18:12 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f8d5262dc8so5021995e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Jun 2023 04:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686914291; x=1689506291;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rzzz9+MQDy1v7mf6h8LKh2I0EdtZCpgt3033bmxFLt4=;
-        b=xO9S4qPH++KwL3bqmpqNIouOhxbgRJ6SxHNQK/ye2vn8zyZyyVWE0A8Fp12TPe5UEm
-         auhGwcNjhXlWmq7Z/IdqpdZbQkKk8Dml+ZcRR44APMB4R0kI3zvQIXbdbpPDxieV8yy3
-         YUN8nNjIG63V6OC1046j6gB2kYhjfS3Yi4uV54gq2eRTC7+ihj6Ja8OPu3PIWiKMjPjH
-         G5wW5UmtxjC9eoDQvYkHUMmCLvuG6T8Ls2v1sidokHKLWLLYphoIclz567/lbDY8nQgm
-         MC1xP36ucCdyTuIXwAZbqlb6aX3l8SyGtYlvJdvuYY239/r5sjTXPcmnRUVtUw6qLzH9
-         u1Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686914291; x=1689506291;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rzzz9+MQDy1v7mf6h8LKh2I0EdtZCpgt3033bmxFLt4=;
-        b=bthDUy481WPJjC+pIUrrZiChtTDfYwFe8D0ViA7UbseiWKQfCu/bawE+QCnmb1zpqo
-         Wyoxl2uMNrvQq00qjYmkcAP7EO3/A1l6ZJN+5GTxEY3+tLcKh9Adkm5Vec4RzQPTXRtR
-         g+9SZ8PHf7xqnkFYUbbhvcf6Yx6NMti4iPNGxPTzGUCaLaomJ27a9Wcn+q2WJM7iRdPc
-         dIQ12kenHfKjxzjGhBpuDJ/EfLYws/hC+0VpekEYAyv/NoiGjbCnwPBCJugcx7y8aM6p
-         EPFLsNX0y7m86uHYlU0RwZm6NRkF2UnJpgiPAdA8mUOoRfmSWGZ7I6Y1ruJ9L4sPF/Lj
-         9xQA==
-X-Gm-Message-State: AC+VfDwT83/Z37y4Ho8zaJ4K+TLxxl0VqIvkdlZhAvo4MemR6VCRbAWM
-        XaTZUxtff2Xbp5Dzszc9kPfTrg==
-X-Google-Smtp-Source: ACHHUZ4dQlbHeAuRZeLC4Y8OzZsImTHLTf2rFlPkoywMcf0wXUYdWyJ5nI7ueJAs67y7U7OWDEJTlg==
-X-Received: by 2002:a05:600c:329d:b0:3f6:eae:7417 with SMTP id t29-20020a05600c329d00b003f60eae7417mr6554134wmp.1.1686914291372;
-        Fri, 16 Jun 2023 04:18:11 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n16-20020a7bc5d0000000b003f739a8bcc8sm1917075wmk.19.2023.06.16.04.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 04:18:09 -0700 (PDT)
-Date:   Fri, 16 Jun 2023 14:18:03 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>, tools@linux.kernel.org,
-        kernel-janitors@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Dan Carpenter <error27@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, smatch@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] spi: spi-geni-qcom: correctly handle -EPROBE_DEFER from
- dma_request_chan()
-Message-ID: <7466cb8d-85d9-4583-af2c-3616209e97e3@moroto.mountain>
-References: <20230615-topic-sm8550-upstream-fix-spi-geni-qcom-probe-v1-1-6da9bf2db4a4@linaro.org>
- <b82b8041-7bc5-433c-98bc-4ac6fcf5ae9d@kadam.mountain>
+        Fri, 16 Jun 2023 08:53:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B566A35A4;
+        Fri, 16 Jun 2023 05:53:21 -0700 (PDT)
+Received: from [192.168.10.55] (unknown [119.155.33.163])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 673C46606F7F;
+        Fri, 16 Jun 2023 13:53:16 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686919999;
+        bh=GD0IQ3bhv9H+r+p7Yfv5LbZuqKXlGbz71alNC7YkYMc=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=isDh7gwjFWlLuMygCaXLjfhXMuk28dQ13Khrla1nAYTWsNPuMBt08xbpnc1OBYaeF
+         7gYKqCu4C8W7pMY5U3tKimX4bnp6slSokcjUXNS4cOktrmTuJQUOEoAdfGFAXwDwAl
+         fYQVj7qY++aIii7qr3EAQ6Hj95U4oZ2q21VSExxSxTW4iFMZHdrXmKWnDuy5gmHTVm
+         0s8UvD33C9+v+DHB7dgYJ685iVXaLS0y1YAjcoi/F9SLPq8YjbfiCzwxfuCcWMH2R7
+         PcjyuwMC9oJ2CuetUlPr2N6VumasNqj+OcEan6AG5tRR5qVgv3/qUbWgrEzZaBYg10
+         NdAOrNx+pAQwA==
+Message-ID: <fb6121fc-101f-0779-b752-ac8202eb761e@collabora.com>
+Date:   Fri, 16 Jun 2023 17:53:12 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b82b8041-7bc5-433c-98bc-4ac6fcf5ae9d@kadam.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        speakup@linux-speakup.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] accessibility: speakup: remove linux/version.h
+Content-Language: en-US
+To:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>
+References: <20230303125152.2030241-1-usama.anjum@collabora.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20230303125152.2030241-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 06:12:03PM +0300, Dan Carpenter wrote:
-> Here is the command to search for all the KTODO items added
-> in the last six months.
+Soft reminder.
+
+On 3/3/23 5:51 PM, Muhammad Usama Anjum wrote:
+> make versioncheck reports the following:
+> ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
+> ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
 > 
-> lei q https://lore.kernel.org/all/ -o ~/Mail/KTODO --dedupe=mid 'KTODO AND rt:6.month.ago..'
+> So remove linux/version.h from both of these files.
 > 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/accessibility/speakup/genmap.c      | 1 -
+>  drivers/accessibility/speakup/makemapdata.c | 1 -
+>  2 files changed, 2 deletions(-)
+> 
+> diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
+> index 0125000e00d9..0882bab10fb8 100644
+> --- a/drivers/accessibility/speakup/genmap.c
+> +++ b/drivers/accessibility/speakup/genmap.c
+> @@ -10,7 +10,6 @@
+>  #include <stdio.h>
+>  #include <libgen.h>
+>  #include <string.h>
+> -#include <linux/version.h>
+>  #include <ctype.h>
+>  #include "utils.h"
+>  
+> diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
+> index d7d41bb9b05f..55e4ef8a93dc 100644
+> --- a/drivers/accessibility/speakup/makemapdata.c
+> +++ b/drivers/accessibility/speakup/makemapdata.c
+> @@ -10,7 +10,6 @@
+>  #include <stdio.h>
+>  #include <libgen.h>
+>  #include <string.h>
+> -#include <linux/version.h>
+>  #include <ctype.h>
+>  #include "utils.h"
+>  
 
-I guess you need the -I option here.  I'm not sure what -I does.  I had
-thought it might mean case insensitive search but that's not it.
-
-lei q -I https://lore.kernel.org/all/ -o ~/Mail/KTODO --dedupe=mid 'KTODO AND rt:6.month.ago..'
-
-Then grep ^KTODO ~/Mail/KTODO -R and cat the filename you want.
-
-regards,
-dan carpenter
-
+-- 
+BR,
+Muhammad Usama Anjum
