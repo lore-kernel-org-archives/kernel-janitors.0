@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1B3EB64D8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 16:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80537EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jun 2023 17:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345602AbjFPQpe (ORCPT
+        id S1345815AbjFPRHf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jun 2023 12:45:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        Fri, 16 Jun 2023 13:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230327AbjFPQpd (ORCPT
+        with ESMTP id S229912AbjFPRHe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jun 2023 12:45:33 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C778530E7;
-        Fri, 16 Jun 2023 09:45:31 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f738f579ceso7586495e9.3;
-        Fri, 16 Jun 2023 09:45:31 -0700 (PDT)
+        Fri, 16 Jun 2023 13:07:34 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5549B5;
+        Fri, 16 Jun 2023 10:07:33 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f8fcaa31c7so3764445e9.3;
+        Fri, 16 Jun 2023 10:07:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686933930; x=1689525930;
+        d=gmail.com; s=20221208; t=1686935252; x=1689527252;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8V8q96OOXdGau1TedNc2n90X++sVPNRGGXHlrWVRBEc=;
-        b=i3YMB8s2sNQ/jSgkkXlqbo+NkETRLlYYZq8OJPUg/h6JEYLiHckfl+M5nU05AA2FP1
-         TxtgdKZFXZCunRpwjNko8IUzbadarz/MJ3c4G708uD+fCH9FSFs8vzIQxLlnUK5Ms2cy
-         wKO3A5nUaIsLqZ9ngVRW7CBjH9wcNaFJZS5yOQIp+A7djGgdbQywRdGodzqSz5PtZlvM
-         wz5b05QrhLY4gSTRRmqPbe/3+d7k1t07arE2z/IDDao/Fy83b6ongXoT3IpP19QRuaqG
-         6tg3rvtYbImek8pFfA1WZRyQ6Yv0V3d23594qpbGUomRV9Hn0tBg+a8d7ayNOZQYM+Zz
-         pMSw==
+        bh=KOyi1uZXbfS1mI0xtKCRw9/llyElWj9SgCwJLwNUQQw=;
+        b=l0qC/sZ3zGBtTdAmUHs33/HYMu2KRwoOg+5n+OYYoY/S3fO179g/teTeai5O6DC0sm
+         t9mTTMY90WgR4Gf1aXMhXZgEgnVEzXSN6d1YuI1xdOzxw0VeHOAevtlKXDo8tdiQhIhI
+         f04+EKQd4DWBcG3v6D1w1dEOmPkS9SvL5t2/Yi3HPJUEV5ze7HgaoDQZQNDCvNZ/x4Ma
+         KKjCgYiNTMUYVb1CZAM1ih9mgJCAdWIPteEf+h6BXLQtahr7m0qhT2ocMYiN+NBHlOnS
+         akJXFT8j6u9v7wovHIuMRfUQgmNpRU9Cie1NEdb44WHfW4eYde8kJ3a2EZ6RV6xj6BJ6
+         diIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686933930; x=1689525930;
+        d=1e100.net; s=20221208; t=1686935252; x=1689527252;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8V8q96OOXdGau1TedNc2n90X++sVPNRGGXHlrWVRBEc=;
-        b=RoT6Jijehm6nhpvp/I4BkvhOeofqxCWXxl4xvca3UHt0W+VEcG/vvvObMgnYBi/S8X
-         YmlK3giXvXvi5yvt67OalpVolX6v/fyvh2+YJAqML4fAW2PLPBZ06oMzpw14SW4gucZN
-         pE2i+uewNUdCiAn9M0Xv5mn/inLPcMxr50Eev6Xon5/buNYFHzAzEFyYDp9jaRH+1R/p
-         wWa8NkxSkmyUj1tCyFM/X1RzS35mIhxwnKIb8vM4r74psxsyc4kG2R8O6Znejqc3t9y1
-         SFS4IKW0ugNXxXPreyYN6wt6o2lAkUDCKX7Zn0hqZ2yVQY1E8/1uabQer1yE+yNrJtuR
-         +uuQ==
-X-Gm-Message-State: AC+VfDwqSh841ztRj2wrxeoQWdDp8cijQLFTzqPStpnWo6pIH0MwSPMA
-        d4V28wj09jRhk9mH2uKrB/4=
-X-Google-Smtp-Source: ACHHUZ64k1pdHed8InLXt7Gttw1k3psGS3dQa/8W2hpx8V25//2s5Z4b05o/W2he1wB3HtDeJYgqeQ==
-X-Received: by 2002:a05:600c:290:b0:3f7:33da:f218 with SMTP id 16-20020a05600c029000b003f733daf218mr2068916wmk.35.1686933929885;
-        Fri, 16 Jun 2023 09:45:29 -0700 (PDT)
+        bh=KOyi1uZXbfS1mI0xtKCRw9/llyElWj9SgCwJLwNUQQw=;
+        b=Avw4JFpTkN5MroqYorBHzv0J2M40JmkI5vlVPJxvUA33x1EmuxElXSFm3bRZeNQYMw
+         Nq19f309Zf/3X36hZyAvRYZPZCgEC74CqO3gQ2UppBMagdGTGnBwgTPgYXbCNYA52JXS
+         1bc4TkclQSrSPUekPiD3CsNpJwKmE3Zyi66hwzFXVRb0mZkB2glW3EU+PbdCkZc4QvV2
+         HVLv16uk8Wnu73qlbvgskgw72kBXEItai3BzDU8xY/6i6aq350B27kOcl+HWsvrGuvdl
+         t4lrVdGCw4Q6roMxeEFem6uN/TWsff0P6KAMjhj3BHLHdVK8cWJJFDbfj8tIuB2Ayv8G
+         qrag==
+X-Gm-Message-State: AC+VfDx9vnILLPU8Bhq8g8OCEpIZMMk99KtrqQjS2N9pt6NF1zQQIUev
+        bUcbkJ9AoZdT2dHSxeR1m+w=
+X-Google-Smtp-Source: ACHHUZ4An+9O4ztbGuPRvwFpgFafnFx9+qA+nzyQdD6ycg1Wum1uQEIvMbJ/Js+C2xbg9090RCZJJQ==
+X-Received: by 2002:a7b:c7ce:0:b0:3f7:e80b:bfc with SMTP id z14-20020a7bc7ce000000b003f7e80b0bfcmr2415918wmk.30.1686935251990;
+        Fri, 16 Jun 2023 10:07:31 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q13-20020a1ce90d000000b003f8e4b22bc2sm2630817wmc.44.2023.06.16.09.45.29
+        by smtp.gmail.com with ESMTPSA id 21-20020a05600c029500b003f8d80ecc4bsm2705383wmk.34.2023.06.16.10.07.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 09:45:29 -0700 (PDT)
+        Fri, 16 Jun 2023 10:07:31 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drbd: remove redundant assignment to variable owords
-Date:   Fri, 16 Jun 2023 17:45:28 +0100
-Message-Id: <20230616164528.2342460-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] tpm: remove redundant variable len
+Date:   Fri, 16 Jun 2023 18:07:30 +0100
+Message-Id: <20230616170730.2343540-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,30 +66,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable owords is being assigned a value that is never
-read, the exit path via label out returns before owords is ever
-used again. The assignment is redundant and can be removed.
+Variable len is being accumulated but the value is never read. It is
+redundant and can be removed. Cleans up clang scan build warning:
 
-Cleans up clang scan build warning:
-drivers/block/drbd/drbd_bitmap.c:654:3: warning: Value stored to 'owords' is never read [deadcode.DeadStores]
+drivers/char/tpm/eventlog/tpm1.c:276:2: warning: Value stored to 'len' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/block/drbd/drbd_bitmap.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/char/tpm/eventlog/tpm1.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
-index 85ca000a0564..897bf211e985 100644
---- a/drivers/block/drbd/drbd_bitmap.c
-+++ b/drivers/block/drbd/drbd_bitmap.c
-@@ -651,7 +651,6 @@ int drbd_bm_resize(struct drbd_device *device, sector_t capacity, int set_new_bi
- 		spin_lock_irq(&b->bm_lock);
- 		opages = b->bm_pages;
- 		onpages = b->bm_number_of_pages;
--		owords = b->bm_words;
- 		b->bm_pages = NULL;
- 		b->bm_number_of_pages =
- 		b->bm_set   =
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 8aa9057601d6..12ee42a31c71 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -251,7 +251,6 @@ static int tpm1_binary_bios_measurements_show(struct seq_file *m, void *v)
+ 
+ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ {
+-	int len = 0;
+ 	char *eventname;
+ 	struct tcpa_event *event = v;
+ 	unsigned char *event_entry =
+@@ -273,7 +272,7 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 	/* 3rd: event type identifier */
+ 	seq_printf(m, " %02x", do_endian_conversion(event->event_type));
+ 
+-	len += get_event_name(eventname, event, event_entry);
++	get_event_name(eventname, event, event_entry);
+ 
+ 	/* 4th: eventname <= max + \'0' delimiter */
+ 	seq_printf(m, " %s\n", eventname);
 -- 
 2.39.2
 
