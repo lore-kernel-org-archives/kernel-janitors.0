@@ -2,151 +2,171 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18ADEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jun 2023 18:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E824FEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jun 2023 18:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234690AbjFQSNa (ORCPT
+        id S234202AbjFQSrn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Jun 2023 14:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42260 "EHLO
+        Sat, 17 Jun 2023 14:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232009AbjFQSN3 (ORCPT
+        with ESMTP id S229663AbjFQSrm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Jun 2023 14:13:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751E819A9;
-        Sat, 17 Jun 2023 11:13:22 -0700 (PDT)
+        Sat, 17 Jun 2023 14:47:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369C01BC9;
+        Sat, 17 Jun 2023 11:47:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F25BF60A3B;
-        Sat, 17 Jun 2023 18:13:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFBFC433C8;
-        Sat, 17 Jun 2023 18:13:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C789D60E05;
+        Sat, 17 Jun 2023 18:47:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63158C433C8;
+        Sat, 17 Jun 2023 18:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687025601;
-        bh=UGG46jiJltF4eBXxd+Frn0KIaS5+JrvBeE/ODzryDZ8=;
+        s=k20201202; t=1687027660;
+        bh=m0CQFBoYmUiRYDj55FI2nrcjYhtS/rh2V9Ro9GwQUSU=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ISOmvQ0qwpprpyoMLHwavw1cvuhHjL6ohJNxxsO/lDZFvmwLNt8+b5XA/baClpmdu
-         HsTAO/QMHpWrBCvsTAeqBNcyJCGEG05D9md7JvsCKDmkzwl+0nxCkPCCfdxvmLAxoY
-         rZHX4jXMp1w2hzh369MMr0/WCFJHDTRE+nxLGi8lrv+Rv4ODTaxSQGNIyH5xzwZmUv
-         v9NNnYZfVHQX5SQY7UWP9qWQhta5CtraSrNTO8KFi4ht32adTvlj4r0hg8zZtsUSVw
-         f0ltRuCQZJSnc4FzRWsM+49AQqLKCya8voI004sH+F77oVSVDmH54oDn+T6CN/49VC
-         TJx2tvTqejZWg==
-Date:   Sat, 17 Jun 2023 19:13:14 +0100
+        b=Y+5WsWZ+tPPpk1b+nStghKGv5I70f21sSWd9w6XAoBbBoMJcjHFZqQI7hi58NVCHj
+         55pNuWpX39FmC1XmKFSe19HBs4x+n33x8mAjeAbhiXLOZihF5w07OVkTM0H4Og/uWH
+         SAJ+URz7FgGqFAIFEq+L6HBUEpKl8GrLywFqxQfJgxeMZE5yCv3e5o44Os3KBFnjzK
+         WKFHYJL71/ntYnY7WYVVKUa1vuhpfbURdO6rBJVmMLvmZ3VAH78vo8rnbaIvIdoXfS
+         ywLDq9Juss7QT9QKax8g4aGuu6reX06sre5zqmbLQCa2y23ToEV0eLaUBPF4ppnBpF
+         UA5rs0U9jb2Iw==
+Date:   Sat, 17 Jun 2023 19:47:34 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7192: Simplify using
- devm_clk_get_optional_enabled()
-Message-ID: <20230617191314.05f12740@jic23-huawei>
-In-Reply-To: <55a46a8cffef60758f0136f389909e307fa1ade4.camel@gmail.com>
-References: <7dbe973905f1fdae5d2f5ae5a3b01dd1d6a9925b.1686774340.git.christophe.jaillet@wanadoo.fr>
-        <55a46a8cffef60758f0136f389909e307fa1ade4.camel@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: st_sensors: Remove some redundant includes
+Message-ID: <20230617194734.5dad2f06@jic23-huawei>
+In-Reply-To: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
+References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 15 Jun 2023 14:12:57 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Mon, 12 Jun 2023 22:13:36 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> On Wed, 2023-06-14 at 22:26 +0200, Christophe JAILLET wrote:
-> > If st->mclk is not NULL, then st->clock_sel is either AD7192_CLK_EXT_MC=
-LK2
-> > or AD7192_CLK_EXT_MCLK1_2.
-> >=20
-> > So devm_clk_get_optional_enabled() can be used instead of hand writing =
-it.
-> > This saves some line of code.
-> >=20
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > --- =20
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-Applied to the togreg branch of iio.git but as we are approaching the merge
-window I'll be rebasing that on 6.5-rc1 when available.
-In meantime pushed out as testing to let 0-day poke at it.
+> st_sensors_(i2c|spi).h already include st_sensors.h, so there is no need
+> to include it explicitly.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks,
+Mostly we try to avoid implicit includes that might not be around
+for ever as it makes changing internals of headers have messy side effects.
+In this particular case I'd argue that the _spi.h and _i2c.h should
+not be including st_sensors.h rather than the other way around.
+
+There is nothing in those headers that uses anything from
+st_sensors.h
+
+They should probably use forward definitions of
+struct iio_dev and struct spi_device etc to avoid need to include
+anything at all.
 
 Jonathan
+ 
 
->=20
-> > =C2=A0drivers/iio/adc/ad7192.c | 16 +---------------
-> > =C2=A01 file changed, 1 insertion(+), 15 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-> > index 8685e0b58a83..5dcb257ad754 100644
-> > --- a/drivers/iio/adc/ad7192.c
-> > +++ b/drivers/iio/adc/ad7192.c
-> > @@ -972,11 +972,6 @@ static void ad7192_reg_disable(void *reg)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator_disable(reg);
-> > =C2=A0}
-> > =C2=A0
-> > -static void ad7192_clk_disable(void *clk)
-> > -{
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk_disable_unprepare(clk);
-> > -}
-> > -
-> > =C2=A0static int ad7192_probe(struct spi_device *spi)
-> > =C2=A0{
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct ad7192_state *st;
-> > @@ -1044,7 +1039,7 @@ static int ad7192_probe(struct spi_device *spi)
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0st->fclk =3D AD7192_INT=
-_FREQ_MHZ;
-> > =C2=A0
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0st->mclk =3D devm_clk_get_op=
-tional(&spi->dev, "mclk");
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0st->mclk =3D devm_clk_get_op=
-tional_enabled(&spi->dev, "mclk");
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(st->mclk))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return PTR_ERR(st->mclk);
-> > =C2=A0
-> > @@ -1052,15 +1047,6 @@ static int ad7192_probe(struct spi_device *spi)
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (st->clock_sel =3D=
-=3D AD7192_CLK_EXT_MCLK1_2 ||
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->=
-clock_sel =3D=3D AD7192_CLK_EXT_MCLK2) {
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0ret =3D clk_prepare_enable(st->mclk);
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (ret < 0)
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=
- ret;
-> > -
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0ret =3D devm_add_action_or_reset(&spi->dev, ad7192_clk=
-_disable,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->mclk);
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (ret)
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=
- ret;
-> > -
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0st->fclk =3D clk_get_rate(st->mclk);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ad7192_valid_external_frequency(st->fclk)) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-dev_err(&spi->dev, =20
->=20
+
+> ---
+>  drivers/iio/accel/st_accel_spi.c       | 1 -
+>  drivers/iio/gyro/st_gyro_i2c.c         | 1 -
+>  drivers/iio/gyro/st_gyro_spi.c         | 1 -
+>  drivers/iio/magnetometer/st_magn_i2c.c | 1 -
+>  drivers/iio/magnetometer/st_magn_spi.c | 1 -
+>  drivers/iio/pressure/st_pressure_i2c.c | 1 -
+>  drivers/iio/pressure/st_pressure_spi.c | 1 -
+>  7 files changed, 7 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/st_accel_spi.c b/drivers/iio/accel/st_accel_spi.c
+> index f72a24f45322..ae5bf3b47209 100644
+> --- a/drivers/iio/accel/st_accel_spi.c
+> +++ b/drivers/iio/accel/st_accel_spi.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/spi/spi.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_spi.h>
+>  #include "st_accel.h"
+>  
+> diff --git a/drivers/iio/gyro/st_gyro_i2c.c b/drivers/iio/gyro/st_gyro_i2c.c
+> index 5a10a3556ab0..ceebd246100c 100644
+> --- a/drivers/iio/gyro/st_gyro_i2c.c
+> +++ b/drivers/iio/gyro/st_gyro_i2c.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/i2c.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_i2c.h>
+>  #include "st_gyro.h"
+>  
+> diff --git a/drivers/iio/gyro/st_gyro_spi.c b/drivers/iio/gyro/st_gyro_spi.c
+> index 22aaabe48e4a..afdb8dffd72d 100644
+> --- a/drivers/iio/gyro/st_gyro_spi.c
+> +++ b/drivers/iio/gyro/st_gyro_spi.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/spi/spi.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_spi.h>
+>  #include "st_gyro.h"
+>  
+> diff --git a/drivers/iio/magnetometer/st_magn_i2c.c b/drivers/iio/magnetometer/st_magn_i2c.c
+> index 950826dd20bf..b9221794cf00 100644
+> --- a/drivers/iio/magnetometer/st_magn_i2c.c
+> +++ b/drivers/iio/magnetometer/st_magn_i2c.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/i2c.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_i2c.h>
+>  #include "st_magn.h"
+>  
+> diff --git a/drivers/iio/magnetometer/st_magn_spi.c b/drivers/iio/magnetometer/st_magn_spi.c
+> index f203e1f87eec..5540500ba9fa 100644
+> --- a/drivers/iio/magnetometer/st_magn_spi.c
+> +++ b/drivers/iio/magnetometer/st_magn_spi.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/spi/spi.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_spi.h>
+>  #include "st_magn.h"
+>  
+> diff --git a/drivers/iio/pressure/st_pressure_i2c.c b/drivers/iio/pressure/st_pressure_i2c.c
+> index 5101552e3f38..8ba0d1212401 100644
+> --- a/drivers/iio/pressure/st_pressure_i2c.c
+> +++ b/drivers/iio/pressure/st_pressure_i2c.c
+> @@ -14,7 +14,6 @@
+>  #include <linux/i2c.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_i2c.h>
+>  #include "st_pressure.h"
+>  
+> diff --git a/drivers/iio/pressure/st_pressure_spi.c b/drivers/iio/pressure/st_pressure_spi.c
+> index 25cca5ad7c55..ffa1970a5aeb 100644
+> --- a/drivers/iio/pressure/st_pressure_spi.c
+> +++ b/drivers/iio/pressure/st_pressure_spi.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/spi/spi.h>
+>  #include <linux/iio/iio.h>
+>  
+> -#include <linux/iio/common/st_sensors.h>
+>  #include <linux/iio/common/st_sensors_spi.h>
+>  #include "st_pressure.h"
+>  
 
