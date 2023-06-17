@@ -2,46 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1151BEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jun 2023 10:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E33EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jun 2023 10:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345853AbjFQKBa (ORCPT
+        id S231877AbjFQKpB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Jun 2023 06:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50302 "EHLO
+        Sat, 17 Jun 2023 06:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235663AbjFQKB1 (ORCPT
+        with ESMTP id S235451AbjFQKnZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Jun 2023 06:01:27 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720EB1736
-        for <kernel-janitors@vger.kernel.org>; Sat, 17 Jun 2023 03:01:26 -0700 (PDT)
+        Sat, 17 Jun 2023 06:43:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCD210C8
+        for <kernel-janitors@vger.kernel.org>; Sat, 17 Jun 2023 03:43:23 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id ASkFqraCDtjdEASkFq3cXf; Sat, 17 Jun 2023 12:01:24 +0200
+        id ATOnqRvYtW2GfATOnqWHgB; Sat, 17 Jun 2023 12:43:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686996084;
-        bh=My7bkAqqo/A13fUh68OM/EOPED/a4hAqbxm3emWVh6Q=;
+        s=t20230301; t=1686998601;
+        bh=dKDAfxkXlHVsJUzF+jDhXkw3h2hy4fQcOsDAMiH6vY4=;
         h=From:To:Cc:Subject:Date;
-        b=txjyvPXyxY/c9L2a3sslO8/y2dVdUo/Maev0q63jXxrWeTnEotTvqnOB+hnzs9set
-         fIjxlB9PRvwKXeqbXuxjFSX69EJFleDEuxwA/mHDXsWjXJHDrRtmSedffM7NNv8kzW
-         tfKXqkHYGkLbbI0sRP2J/Z0k/0d2yDkcsGcm941fwJjKkoV/N8Id4F2zvXRoTOmO0l
-         7UO8sbA6JEb/hZGpOCUwtOOZfepR/F/GugdCQZDNCvc1yca8hQJ98i25GMA5UCJRdi
-         0Fq4IyRtWlWh37spsyOuybl7/0CoUX76XjhbXBOZ9z0DlfDD2XFQHkZRCL2gC7qSFl
-         Nd+eokj8R0ObA==
+        b=N/+2G7ro0cOieiYfSGRu4oOD4rzio+1S+cwLFwFObllOAg8gR9n3DI6lSql7Ys5yO
+         bDXtmMNOuAnwGZLvBScxHFBcFKktnUhVoBqWBMyyVJ43QAWohlcMcEuz0E1nS7ajAI
+         rbtw+vf3nqzq9Y8YAOTzCF3kFZlKtIASBcXAyNQEGtNysmwhHZcz8KyrfX8NbrOvmg
+         /f0GsPsJPxW7DygrYPTAyZ+399BQdlioSgCEMqvAaZIBQB783lHDJaOrLgEHc4D8WA
+         nygElOWOyjkpM5Mi6QzVPrRra6cZ2iSmDm95azheQieqVvlXHGqh0Uqyu1F4VsTEwj
+         X5oa76s2Az5YA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 17 Jun 2023 12:01:24 +0200
+X-ME-Date: Sat, 17 Jun 2023 12:43:21 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Johan Hovold <johan@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] gnss: ubx: Use devm_regulator_get_enable_optional()
-Date:   Sat, 17 Jun 2023 12:01:22 +0200
-Message-Id: <c398861197e9d5e28fa2420089abd9c3adb61a87.1686996063.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] mfd: stmpe: Fix a corner case in stmpe_probe()
+Date:   Sat, 17 Jun 2023 12:43:16 +0200
+Message-Id: <8de3aaf297931d655b9ad6aed548f4de8b85425a.1686998575.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,77 +52,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_regulator_get_enable_optional() instead of hand writing it. It
-saves some line of code.
+In stmpe_probe(), if some regulator_enable() calls fail, probing continues
+and there is only a dev_warn().
 
+So, if stmpe_probe() is called the regulator may not be enabled. It is
+cleaner to test it before calling regulator_disable() in the remove
+function.
+
+Fixes: 9c9e321455fb ("mfd: stmpe: add optional regulators")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Note that regulator_disable() is now called after gnss_serial_free() in
-the error handling path of the probe and in the remove function, but it
-looks harmless to me.
----
- drivers/gnss/ubx.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ drivers/mfd/stmpe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index c951be202ca2..0ad2a10fc9a2 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -17,7 +17,6 @@
- #include "serial.h"
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index a92301dfc712..9c3cf58457a7 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -1485,9 +1485,9 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
  
- struct ubx_data {
--	struct regulator *v_bckp;
- 	struct regulator *vcc;
- };
- 
-@@ -87,30 +86,16 @@ static int ubx_probe(struct serdev_device *serdev)
- 		goto err_free_gserial;
- 	}
- 
--	data->v_bckp = devm_regulator_get_optional(&serdev->dev, "v-bckp");
--	if (IS_ERR(data->v_bckp)) {
--		ret = PTR_ERR(data->v_bckp);
--		if (ret == -ENODEV)
--			data->v_bckp = NULL;
--		else
--			goto err_free_gserial;
--	}
--
--	if (data->v_bckp) {
--		ret = regulator_enable(data->v_bckp);
--		if (ret)
--			goto err_free_gserial;
--	}
-+	ret = devm_regulator_get_enable_optional(&serdev->dev, "v-bckp");
-+	if (ret)
-+		goto err_free_gserial;
- 
- 	ret = gnss_serial_register(gserial);
- 	if (ret)
--		goto err_disable_v_bckp;
-+		goto err_free_gserial;
- 
- 	return 0;
- 
--err_disable_v_bckp:
--	if (data->v_bckp)
--		regulator_disable(data->v_bckp);
- err_free_gserial:
- 	gnss_serial_free(gserial);
- 
-@@ -120,11 +105,8 @@ static int ubx_probe(struct serdev_device *serdev)
- static void ubx_remove(struct serdev_device *serdev)
+ void stmpe_remove(struct stmpe *stmpe)
  {
- 	struct gnss_serial *gserial = serdev_device_get_drvdata(serdev);
--	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
+-	if (!IS_ERR(stmpe->vio))
++	if (!IS_ERR(stmpe->vio) && regulator_is_enabled(stmpe->vio))
+ 		regulator_disable(stmpe->vio);
+-	if (!IS_ERR(stmpe->vcc))
++	if (!IS_ERR(stmpe->vcc) && regulator_is_enabled(stmpe->vcc))
+ 		regulator_disable(stmpe->vcc);
  
- 	gnss_serial_deregister(gserial);
--	if (data->v_bckp)
--		regulator_disable(data->v_bckp);
- 	gnss_serial_free(gserial);
- }
- 
+ 	__stmpe_disable(stmpe, STMPE_BLOCK_ADC);
 -- 
 2.34.1
 
