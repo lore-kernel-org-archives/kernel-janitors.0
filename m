@@ -2,50 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC379EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 09:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7477EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 10:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbjFRJqx (ORCPT
+        id S229573AbjFRKQu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Jun 2023 05:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44572 "EHLO
+        Sun, 18 Jun 2023 06:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjFRJqv (ORCPT
+        with ESMTP id S229529AbjFRKQt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Jun 2023 05:46:51 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80E718B
-        for <kernel-janitors@vger.kernel.org>; Sun, 18 Jun 2023 02:46:50 -0700 (PDT)
+        Sun, 18 Jun 2023 06:16:49 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4D9F0
+        for <kernel-janitors@vger.kernel.org>; Sun, 18 Jun 2023 03:16:47 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id AozfqabYVEYhqAozfqlrwt; Sun, 18 Jun 2023 11:46:49 +0200
+        id ApScqyYPQhQKVApScqcNqL; Sun, 18 Jun 2023 12:16:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687081609;
-        bh=McAeXz2J4UO1BECLY75Q24ChR053II0UqATm+dnPZxw=;
+        s=t20230301; t=1687083404;
+        bh=DSknnbdi6ETR4gXl9xkSuTonkqso7NbmO9NcHs49YUM=;
         h=From:To:Cc:Subject:Date;
-        b=q67rMZnTDuv5OjLYdkOvp6ilJo6+ksdle57v4Zxzt272ZA4hRFtvynP0Ahhm2BKjp
-         TRac47I8b6MwG85Lh25bHHwhWyECgazWwVDhqkilAFsspTUL3IfDCd9RNZQ4Fkt+6C
-         OBVTMJnS3Vy4CGh+s7lbzC59py2LUrshOiGqL/VL50qmvQ6HuSLUaVOxwZ9kXfxr4A
-         3rnm68FSGkOhi/xF263vENFM0Pc+ERxijNH0XPAgN9+vwF6EcYqMcyJD7987/B9LqY
-         +aWlIWBlE5UUx8WZaxSD5H9A+qCE4NqpsA76hl3X/SQT3H9lFjDBkRuZiIleVWEtR5
-         86mGZAHzlCuXQ==
+        b=oUN9wnGrAcXdub/3VYK2AdRcF/0yznYc5OEJ/3kjtVQlGrOA/H1dqj7zFj7ehR5RK
+         5bg6ZqB62JhYgTEVsuSv4iUSpSD3znp7a3L8BAFHhfZ/Gai78XX4LklQRZ15pBmYct
+         XLupCOx4xWMyzxqosNKnPHmZ+bDtMtOt4+wqG3k109/31LmqYoioF+d+oRZBLULoMp
+         jD3FbBVm6WuT6zL2Mn9B1/f7rAO6vt27wMSaVc8d39w9sw4REIyiB0zFnE9UrfB2ey
+         Dx09kEEC4DeLn9MUTX2NX1gb5+o5JYLh8xo8814zzjl8qKlMJ/IFh2PUkuCjOcl2zc
+         nhfjEZYWhhXFg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Jun 2023 11:46:49 +0200
+X-ME-Date: Sun, 18 Jun 2023 12:16:44 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
+To:     Paul Moore <paul@paul-moore.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev
-Subject: [PATCH net-next] mptcp: Reorder fields in 'struct mptcp_pm_add_entry'
-Date:   Sun, 18 Jun 2023 11:46:46 +0200
-Message-Id: <e47b71de54fd3e580544be56fc1bb2985c77b0f4.1687081558.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH net-next] netlabel: Reorder fields in 'struct netlbl_domaddr6_map'
+Date:   Sun, 18 Jun 2023 12:16:41 +0200
+Message-Id: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,8 +53,8 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct mptcp_pm_add_entry'
-from 136 to 128 bytes.
+On x86_64, this shrinks the size of 'struct netlbl_domaddr6_map'
+from 72 to 64 bytes.
 
 It saves a few bytes of memory and is more cache-line friendly.
 
@@ -65,60 +64,62 @@ Using pahole
 
 Before:
 ======
-struct mptcp_pm_add_entry {
-	struct list_head           list;                 /*     0    16 */
-	struct mptcp_addr_info     addr;                 /*    16    12 */
+struct netlbl_dom_map {
+	char *                     domain;               /*     0     8 */
+	u16                        family;               /*     8     2 */
+
+	/* XXX 6 bytes hole, try to pack */
+
+	struct netlbl_dommap_def   def;                  /*    16    16 */
+	u32                        valid;                /*    32     4 */
 
 	/* XXX 4 bytes hole, try to pack */
 
-	struct timer_list          add_timer;            /*    32    88 */
-	/* --- cacheline 1 boundary (64 bytes) was 56 bytes ago --- */
-	struct mptcp_sock *        sock;                 /*   120     8 */
-	/* --- cacheline 2 boundary (128 bytes) --- */
-	u8                         retrans_times;        /*   128     1 */
+	struct list_head           list;                 /*    40    16 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*    56    16 */
 
-	/* size: 136, cachelines: 3, members: 5 */
-	/* sum members: 125, holes: 1, sum holes: 4 */
-	/* padding: 7 */
+	/* size: 72, cachelines: 2, members: 6 */
+	/* sum members: 62, holes: 2, sum holes: 10 */
+	/* forced alignments: 1 */
 	/* last cacheline: 8 bytes */
-};
+} __attribute__((__aligned__(8)));
 
 
 After:
 =====
-struct mptcp_pm_add_entry {
-	struct list_head           list;                 /*     0    16 */
-	struct mptcp_addr_info     addr;                 /*    16    12 */
-	u8                         retrans_times;        /*    28     1 */
+struct netlbl_dom_map {
+	char *                     domain;               /*     0     8 */
+	struct netlbl_dommap_def   def;                  /*     8    16 */
+	u16                        family;               /*    24     2 */
 
-	/* XXX 3 bytes hole, try to pack */
+	/* XXX 2 bytes hole, try to pack */
 
-	struct timer_list          add_timer;            /*    32    88 */
-	/* --- cacheline 1 boundary (64 bytes) was 56 bytes ago --- */
-	struct mptcp_sock *        sock;                 /*   120     8 */
+	u32                        valid;                /*    28     4 */
+	struct list_head           list;                 /*    32    16 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*    48    16 */
 
-	/* size: 128, cachelines: 2, members: 5 */
-	/* sum members: 125, holes: 1, sum holes: 3 */
-};
+	/* size: 64, cachelines: 1, members: 6 */
+	/* sum members: 62, holes: 1, sum holes: 2 */
+	/* forced alignments: 1 */
+} __attribute__((__aligned__(8)));
 ---
- net/mptcp/pm_netlink.c | 2 +-
+ net/netlabel/netlabel_domainhash.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index a12a87b780f6..a56718ffdd02 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -25,9 +25,9 @@ static int pm_nl_pernet_id;
- struct mptcp_pm_add_entry {
- 	struct list_head	list;
- 	struct mptcp_addr_info	addr;
-+	u8			retrans_times;
- 	struct timer_list	add_timer;
- 	struct mptcp_sock	*sock;
--	u8			retrans_times;
- };
+diff --git a/net/netlabel/netlabel_domainhash.h b/net/netlabel/netlabel_domainhash.h
+index 9f80972ae39b..7eaa35fdd9bd 100644
+--- a/net/netlabel/netlabel_domainhash.h
++++ b/net/netlabel/netlabel_domainhash.h
+@@ -57,8 +57,8 @@ struct netlbl_domaddr6_map {
  
- struct pm_nl_pernet {
+ struct netlbl_dom_map {
+ 	char *domain;
+-	u16 family;
+ 	struct netlbl_dommap_def def;
++	u16 family;
+ 
+ 	u32 valid;
+ 	struct list_head list;
 -- 
 2.34.1
 
