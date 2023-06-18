@@ -2,85 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E78BEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 16:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E4EB64D8
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 16:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbjFRQZZ (ORCPT
+        id S229585AbjFRQkW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Jun 2023 12:25:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
+        Sun, 18 Jun 2023 12:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjFRQZU (ORCPT
+        with ESMTP id S229588AbjFRQkV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Jun 2023 12:25:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA55E60
-        for <kernel-janitors@vger.kernel.org>; Sun, 18 Jun 2023 09:25:18 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id AvD8qePgkuHEfAvDDqbYZc; Sun, 18 Jun 2023 18:25:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687105511;
-        bh=7JePpIbtyIw6zKN1IPxyCEDxfHQDsi/Aj9GfQW/K8Hs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=rqOcEbLeGaNm5DlAC1yLgV2X2Zkc6lGAsqydI1b2ap8LJYmxiW2kVWhBsx+8u5aIp
-         CPikmmCcAmjwA3zNxfMGbmor4ZYzux0QI8truRwPu9S/tioU59HzNq9Fm2IOReYE2n
-         gdaQESUSYTrgpx+jwCBreZbE+E6IiUa/QyWMsNBbAKgrczbHV7y/518k0A9PL4Pbpz
-         jmZ2+iRp705D3hlP2hxY1nl5JyWcIDMy9q7o48kEGI9mlhYkA9uaTpiYczdmC/cZNs
-         SypS8oOGEjk/q5J+xbI3yeSst6nyjDcYszpbw05CzkSAomqLZOeE8Gpu4HcoHW+NT8
-         9jw5tM5qR73Uw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Jun 2023 18:25:11 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pci@vger.kernel.org
-Subject: [PATCH 2/2] PCI: Change the type of 'rom_attr_enabled' in 'struct pci_dev'
-Date:   Sun, 18 Jun 2023 18:24:55 +0200
-Message-Id: <d7a34ad369336db73145c3efbade895e792a0ad3.1687105455.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <407b17c3e56764ef2c558898d4ff4c6c04b2d757.1687105455.git.christophe.jaillet@wanadoo.fr>
-References: <407b17c3e56764ef2c558898d4ff4c6c04b2d757.1687105455.git.christophe.jaillet@wanadoo.fr>
+        Sun, 18 Jun 2023 12:40:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68198E4D;
+        Sun, 18 Jun 2023 09:40:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0573A61177;
+        Sun, 18 Jun 2023 16:40:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58EA9C433CC;
+        Sun, 18 Jun 2023 16:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687106419;
+        bh=D//mGu6mGIbJ0KVnNbXE+63kbF//AIUOltdoKTGLfeQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=LjWZu0SBwT1NwvatZb0A8+RxP1x/lyysoGVs11N+mdGzylwwVMPCRi0JI58qd4bv9
+         EZ/LXpFLTcEJK1qyIe+THhtUayWw1j97cwdCcW5DwksUe51v9DFY+CILLi4tMkvbY1
+         PCddjyc8ZEyVs12oVCTWz/qyFJR+3gcllYv8C5suaLvZz6zeVXtubnlgQfVjUnU83N
+         YFnfVxUIoDKdDmv7HrBOaPBu4vR6O2otwbAhMfzu+jukuxsdAMjNZdS45UyU7/r/gf
+         jucQAIfjj0KnQLT9GKSJCY2pZq/uKCTXR+lw7FpjL7XQcW12+JXmFZd4p+gJdok4wh
+         IimH5Jd71SAXg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 45776C395C7;
+        Sun, 18 Jun 2023 16:40:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: phy: at803x: Use
+ devm_regulator_get_enable_optional()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168710641928.5271.4893587679808456480.git-patchwork-notify@kernel.org>
+Date:   Sun, 18 Jun 2023 16:40:19 +0000
+References: <f5fdf1a50bb164b4f59409d3a70a2689515d59c9.1687011839.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f5fdf1a50bb164b4f59409d3a70a2689515d59c9.1687011839.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, lgirdwood@gmail.com, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Make 'rom_attr_enabled' a single bit in a bitfield and move it close to an
-existing bitfield so that they can be merged.
+Hello:
 
-This field is only used in 'drivers/pci/pci-sysfs.c' to store 0 or 1.
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-On x86_64, this shrinks the size of 'struct pci_dev' by 8 bytes.
-This goes from 3560 to 3552.
+On Sat, 17 Jun 2023 16:24:37 +0200 you wrote:
+> Use devm_regulator_get_enable_optional() instead of hand writing it. It
+> saves some line of code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
+> 
+> [...]
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/linux/pci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here is the summary with links:
+  - [net-next] net: phy: at803x: Use devm_regulator_get_enable_optional()
+    https://git.kernel.org/netdev/net-next/c/988e8d90b3dc
 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 106754757279..0ff7500772e6 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -464,12 +464,12 @@ struct pci_dev {
- 	unsigned int	no_vf_scan:1;		/* Don't scan for VFs after IOV enablement */
- 	unsigned int	no_command_memory:1;	/* No PCI_COMMAND_MEMORY */
- 	unsigned int	rom_bar_overlap:1;	/* ROM BAR disable broken */
-+	unsigned int	rom_attr_enabled:1;	/* Display of ROM attribute enabled? */
- 	pci_dev_flags_t dev_flags;
- 	atomic_t	enable_cnt;	/* pci_enable_device has been called */
- 
- 	u32		saved_config_space[16]; /* Config space saved at suspend time */
- 	struct hlist_head saved_cap_space;
--	int		rom_attr_enabled;	/* Display of ROM attribute enabled? */
- 	struct bin_attribute *res_attr[DEVICE_COUNT_RESOURCE]; /* sysfs file for resources */
- 	struct bin_attribute *res_attr_wc[DEVICE_COUNT_RESOURCE]; /* sysfs file for WC mapping of resources */
- 
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
