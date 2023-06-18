@@ -2,49 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7477EEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 10:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE102EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jun 2023 16:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229573AbjFRKQu (ORCPT
+        id S229519AbjFRQZT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Jun 2023 06:16:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
+        Sun, 18 Jun 2023 12:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbjFRKQt (ORCPT
+        with ESMTP id S229481AbjFRQZS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Jun 2023 06:16:49 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4D9F0
-        for <kernel-janitors@vger.kernel.org>; Sun, 18 Jun 2023 03:16:47 -0700 (PDT)
+        Sun, 18 Jun 2023 12:25:18 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFDA1AB
+        for <kernel-janitors@vger.kernel.org>; Sun, 18 Jun 2023 09:25:14 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id ApScqyYPQhQKVApScqcNqL; Sun, 18 Jun 2023 12:16:44 +0200
+        id AvD8qePgkuHEfAvD8qbYZF; Sun, 18 Jun 2023 18:25:06 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687083404;
-        bh=DSknnbdi6ETR4gXl9xkSuTonkqso7NbmO9NcHs49YUM=;
+        s=t20230301; t=1687105506;
+        bh=vduJtJTiTmHUwJwzG9QCoqetEOnDC2NYSydhpCqW9gc=;
         h=From:To:Cc:Subject:Date;
-        b=oUN9wnGrAcXdub/3VYK2AdRcF/0yznYc5OEJ/3kjtVQlGrOA/H1dqj7zFj7ehR5RK
-         5bg6ZqB62JhYgTEVsuSv4iUSpSD3znp7a3L8BAFHhfZ/Gai78XX4LklQRZ15pBmYct
-         XLupCOx4xWMyzxqosNKnPHmZ+bDtMtOt4+wqG3k109/31LmqYoioF+d+oRZBLULoMp
-         jD3FbBVm6WuT6zL2Mn9B1/f7rAO6vt27wMSaVc8d39w9sw4REIyiB0zFnE9UrfB2ey
-         Dx09kEEC4DeLn9MUTX2NX1gb5+o5JYLh8xo8814zzjl8qKlMJ/IFh2PUkuCjOcl2zc
-         nhfjEZYWhhXFg==
+        b=NPPoVt207fx+2FC33z2MVoeTxXkm9k09DcOPbGD0D3RkNi0f+UxKLDl6X3pYb3hDW
+         SZxE7eyw7r2GUPDUo+9AoERBYNQ7WuMoFJ0jCx9mDdhZmdT3N/GNIkfSZwstPePhoz
+         g8m3bN07KQGcQlye+6qAHKAUFVd7ako43Ic98m3GPo+vDi/O0YdsmzrYSFU2+Uhxpk
+         NECioTiGEm9WvXLNxdKE65oNpUSXJ4osn0O6kLxcrSdhE6xT3gQGUFytANaQQLVaM8
+         lbzN0hy//t4GqnI54KtGjhHld/wBy21owR9yEMv8FY4DLlQyMnOKye61FwsMz2A+l0
+         dV4rj+Gf0qUpg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Jun 2023 12:16:44 +0200
+X-ME-Date: Sun, 18 Jun 2023 18:25:06 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH net-next] netlabel: Reorder fields in 'struct netlbl_domaddr6_map'
-Date:   Sun, 18 Jun 2023 12:16:41 +0200
-Message-Id: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
+        linux-pci@vger.kernel.org
+Subject: [PATCH 1/2] PCI: Reorder some fields in 'struct pci_dev'
+Date:   Sun, 18 Jun 2023 18:24:54 +0200
+Message-Id: <407b17c3e56764ef2c558898d4ff4c6c04b2d757.1687105455.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,74 +48,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct netlbl_domaddr6_map'
-from 72 to 64 bytes.
+Group some bitfield variables to reduce hole.
+On x86_64, this shrinks the size of 'struct pci_dev' by 16 bytes when
+compiled with 'allmodconfig'. This goes from 3576 to 3560.
 
-It saves a few bytes of memory and is more cache-line friendly.
+The move related to CONFIG_PCIEASPM depends on the config. But it gives
+the opportunity to merge to bitfields.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Using pahole
+ include/linux/pci.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Before:
-======
-struct netlbl_dom_map {
-	char *                     domain;               /*     0     8 */
-	u16                        family;               /*     8     2 */
-
-	/* XXX 6 bytes hole, try to pack */
-
-	struct netlbl_dommap_def   def;                  /*    16    16 */
-	u32                        valid;                /*    32     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	struct list_head           list;                 /*    40    16 */
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*    56    16 */
-
-	/* size: 72, cachelines: 2, members: 6 */
-	/* sum members: 62, holes: 2, sum holes: 10 */
-	/* forced alignments: 1 */
-	/* last cacheline: 8 bytes */
-} __attribute__((__aligned__(8)));
-
-
-After:
-=====
-struct netlbl_dom_map {
-	char *                     domain;               /*     0     8 */
-	struct netlbl_dommap_def   def;                  /*     8    16 */
-	u16                        family;               /*    24     2 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        valid;                /*    28     4 */
-	struct list_head           list;                 /*    32    16 */
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*    48    16 */
-
-	/* size: 64, cachelines: 1, members: 6 */
-	/* sum members: 62, holes: 1, sum holes: 2 */
-	/* forced alignments: 1 */
-} __attribute__((__aligned__(8)));
----
- net/netlabel/netlabel_domainhash.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlabel/netlabel_domainhash.h b/net/netlabel/netlabel_domainhash.h
-index 9f80972ae39b..7eaa35fdd9bd 100644
---- a/net/netlabel/netlabel_domainhash.h
-+++ b/net/netlabel/netlabel_domainhash.h
-@@ -57,8 +57,8 @@ struct netlbl_domaddr6_map {
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index c69a2cc1f412..106754757279 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -366,8 +366,8 @@ struct pci_dev {
+ 	pci_power_t	current_state;	/* Current operating state. In ACPI,
+ 					   this is D0-D3, D0 being fully
+ 					   functional, and D3 being off. */
+-	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
+ 	u8		pm_cap;		/* PM capability offset */
++	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
+ 	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+ 					   can be generated */
+ 	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
+@@ -392,9 +392,9 @@ struct pci_dev {
  
- struct netlbl_dom_map {
- 	char *domain;
--	u16 family;
- 	struct netlbl_dommap_def def;
-+	u16 family;
- 
- 	u32 valid;
- 	struct list_head list;
+ #ifdef CONFIG_PCIEASPM
+ 	struct pcie_link_state	*link_state;	/* ASPM link state */
++	u16		l1ss;		/* L1SS Capability pointer */
+ 	unsigned int	ltr_path:1;	/* Latency Tolerance Reporting
+ 					   supported from root to here */
+-	u16		l1ss;		/* L1SS Capability pointer */
+ #endif
+ 	unsigned int	pasid_no_tlp:1;		/* PASID works without TLP Prefix */
+ 	unsigned int	eetlp_prefix_path:1;	/* End-to-End TLP Prefix */
 -- 
 2.34.1
 
