@@ -2,109 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBECEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 07:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F86DEB64DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 08:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbjFSHtl (ORCPT
+        id S230293AbjFSIcJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 03:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
+        Mon, 19 Jun 2023 04:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjFSHtk (ORCPT
+        with ESMTP id S229513AbjFSIcI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 03:49:40 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 087B0C0;
-        Mon, 19 Jun 2023 00:49:37 -0700 (PDT)
-Received: from loongson.cn (unknown [10.180.13.22])
-        by gateway (Coremail) with SMTP id _____8DxAOmQCJBkr8gGAA--.12251S3;
-        Mon, 19 Jun 2023 15:49:36 +0800 (CST)
-Received: from [10.180.13.22] (unknown [10.180.13.22])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Ax6OSPCJBk5P8fAA--.24411S3;
-        Mon, 19 Jun 2023 15:49:35 +0800 (CST)
-Message-ID: <ae880c97-e38d-0f01-f349-a427ab4afd41@loongson.cn>
-Date:   Mon, 19 Jun 2023 15:49:12 +0800
+        Mon, 19 Jun 2023 04:32:08 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09297E4
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 01:32:07 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f9002a1a39so16147785e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 01:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687163525; x=1689755525;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKgLxFNe6Vqer27h+wDKJ38s4aUcdV6KAPk/ux2OGzM=;
+        b=isa+VCyPRBW3qNrZPJExkSh+lO23Q8qPTzQ5U8b6qLj0CqlJi+dNX7oXhQHcTgN7+0
+         0WKkQUalhafgEitjWIhmDhWX2KG8SXN4S1bXpXytq9ibpi94NP5k3Cvrw79HRRnbzInJ
+         t4k1u+sEfFCPdRFmH0JZ6N4bWl19s3SOT/g5GVDa5t/eDDWDlV7oQfxfdnIEdgtkKaks
+         zSJvhsxgNDsRmo+fPXIQuFr6VqBE6pokBVHZr086RXQQA5P88+OBqRFJiPaHvYRvyXrY
+         KHjeLvlMdjmi2jeqbxL1aQf2VukxyV+IeBxCCnUYeZTJCK9b48Qf9zpF0l9JgYj2sPI2
+         Er/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687163525; x=1689755525;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pKgLxFNe6Vqer27h+wDKJ38s4aUcdV6KAPk/ux2OGzM=;
+        b=Nu1xvjYsXfo5xZjSzLVni8/0n5MNX72CZOufj3HNbtXJeQ+thZiB4H4zJ8EbJ9h+Jx
+         Tjb8m1ABWLJOLKbAw8bJW2ZcpwaDTRnUp2zWeNxMeep0FrUuoi8unBorG0UDfkfJcLGe
+         1Ac1nTqp10eeknYsdYRAyz4SgjKXBFg07G5qmbpNBHjiy/FIdov1e1Cg7pzR+0eAYIFO
+         OnsfDyvrOKMd9TsyX2s8lD3oTELxrlK7KPBjiGaLWuHhzexBSHPm/EiGhs7wgkQ3lEG6
+         NhsCxYddo8WdD08p+Tj26wnJED4LJn51YlqLST88M/4oQdrtDsYU7VMmxrCeZsn82eov
+         TVbg==
+X-Gm-Message-State: AC+VfDy2z0nUmYVxDzAJwal+YsvljdP5xBBSXGuhyHEZv9bVzBKCY+kg
+        N9UTeo8eTzTfTd3LBS8Phjn6+w==
+X-Google-Smtp-Source: ACHHUZ5dfrlTzQZaKtkSsJqn5n2OOWZI5AIm3s7kGaM1LXA0sGsO4oPrV7FqHvnbGydobk6ik4WaBA==
+X-Received: by 2002:a1c:e914:0:b0:3f8:facf:7626 with SMTP id q20-20020a1ce914000000b003f8facf7626mr5530793wmc.20.1687163525549;
+        Mon, 19 Jun 2023 01:32:05 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z25-20020a7bc7d9000000b003f8fac0ad4bsm8634301wmk.17.2023.06.19.01.32.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jun 2023 01:32:04 -0700 (PDT)
+Date:   Mon, 19 Jun 2023 11:32:01 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Fei Shao <fshao@chromium.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: clk: Fix memory leak in devm_clk_notifier_register()
+Message-ID: <56998d04-7f09-4982-b0f1-20ef917aa524@kadam.mountain>
+References: <20230617160901.1.I2b151cdf7a72d9e3ecc7ab2ff38409ebe6d65d6b@changeid>
+ <71168ceb-8273-4067-d0e0-c6c219d4618e@web.de>
+ <CAC=S1ngN=TFQa0Y4FoSCOTUs8HRi4NEP1OwY8WccUEUMG_UDeQ@mail.gmail.com>
+ <8366a35f-bc2c-4aee-b2bb-5fc9b2a7072b@kadam.mountain>
+ <ea5c0b0b-7aa5-d4eb-def9-fa279d69cd44@web.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v4 1/3] ASoC: Add support for Loongson I2S controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        broonie@kernel.org, lgirdwood@gmail.com
-Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        loongarch@lists.linux.dev, loongson-kernel@lists.loongnix.cn,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Dan Carpenter <error27@gmail.com>,
-        kernel-janitors@vger.kernel.org
-References: <20230615122718.3412942-1-mengyingkun@loongson.cn>
- <cf2f3bc9-3141-8d7b-b57d-73eac70a21d2@oracle.com>
- <6901166d-387f-24de-6ffd-1c8eea724718@oracle.com>
- <325dd825-6fa5-0ebc-4b7e-7acf2d2840e4@loongson.cn>
- <bd4da934-72b7-67f3-0c9c-c18d3af16e7d@linaro.org>
-Content-Language: en-US
-From:   Yingkun Meng <mengyingkun@loongson.cn>
-In-Reply-To: <bd4da934-72b7-67f3-0c9c-c18d3af16e7d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Ax6OSPCJBk5P8fAA--.24411S3
-X-CM-SenderInfo: 5phqw55lqjy33q6o00pqjv00gofq/1tbiAQAHDGSO9AIDRgAHsU
-X-Coremail-Antispam: 1Uk129KBj9xXoW7JrW5Ww15CrWUJF13Ar1rZrc_yoWkGFg_Xw
-        4q9wn8XFyUJay5Jrs7Kr9FvFyDXr13trn8Jw4rZF1UXwnrJF95Wr15Gwn3JrZrGrWUGr1U
-        Xrn8Wa43u3WUWosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-        cSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-        vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-        xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
-        6r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-        1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-        rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14
-        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
-        MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUU
-        UU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea5c0b0b-7aa5-d4eb-def9-fa279d69cd44@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, Jun 19, 2023 at 09:42:37AM +0200, Markus Elfring wrote:
+> > He doesn't have a very accurate perspective
+> > of what is important and what is not important.
+> 
+> I offered various hints for desirable change possibilities.
+> The change acceptance might evolve in more constructive ways, doesn't it?
 
-On 2023/6/19 15:00, Krzysztof Kozlowski wrote:
-> On 19/06/2023 03:45, Yingkun Meng wrote:
->>>>> +    tx_data->irq = fwnode_irq_get_byname(fwnode, "tx");
->>>> Smatch detects that tx_data->irq and rx_data->irq are of type
->>>> u32(unsigned) so they can never be negative.
->>>>
->>>>> +    if (tx_data->irq < 0) {
->>>>               ^^^^^^^^ This can never be true.
->>>>
->>>> Should irq be of type 'int' instead?
->>>>
->>>>> +        dev_err(&pdev->dev, "dma tx irq invalid\n");
->>>>> +        return tx_data->irq;
->>>>> +    }
->>>>> +
->>>>> +    rx_data->irq = fwnode_irq_get_byname(fwnode, "rx");
->>>>> +    if (rx_data->irq < 0) {
->>>>               ^^^ Same problem here.
->>>>
->>>> Should irq
->>> Should 'irq' be of type int instead?
->>>
->>> As fwnode_irq_get_byname() returns a integer.
->>>
->> Yes, you are right. I will add a patch to fix the type of 'irq' to int.
-> Run smatch and sparse on your code before posting. It would find such
-> trivial mistakes.
+No, I'm sorry, it's not constructive at all.  You're just creating noise
+when we should be looking at if the patch is correct and how we can
+improve our QC infrastructure to prevent bugs like this in the future.
 
-Thanks, got it.
-
-Thanks,
-Yingkun
-
->
-> Best regards,
-> Krzysztof
-
+regards,
+dan carpenter
