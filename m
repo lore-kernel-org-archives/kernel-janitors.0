@@ -2,196 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC3EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 11:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E80EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 11:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231673AbjFSL1g (ORCPT
+        id S229754AbjFSLog (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 07:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        Mon, 19 Jun 2023 07:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbjFSL1e (ORCPT
+        with ESMTP id S229637AbjFSLoe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 07:27:34 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26CCB10F;
-        Mon, 19 Jun 2023 04:27:32 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35J9n5pk004103;
-        Mon, 19 Jun 2023 11:27:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=zbRXVZjBArIyJ1JXlcq0bwlGxMtlun5LgR+jmi1/F9k=;
- b=HZE930h7OuchaUWUGi8cEzehsQSYWhFbatqhwHbv4dNPOa+aGh/pDPMS2v4aSgl0Z2lG
- tW7QbDF8nu1bmSI/VVTz2F3Mm+axxBDYrol5bngvUdnLmRyF/OZ4OmOzclMoxC/uoQO/
- HE30G6a5RELRxlqR52NOCCBb5GDIyPencuRnBA9XPJM42RCRVk8kQtF5j5/DIgpmRjjq
- ETMCcF0dbRWfmYkbWBChQhmtVsT17wz5VWfRjwVR1KFuYMYvxJGS//R+V1L6cleEvOlu
- yssOdJgayNHGcMvMqZPRQV9vbPX5vSFBnbBarvQQxGES0R9Wfc3ApF0bU1qwLRLs7071 HQ== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3r94vcjjfk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Jun 2023 11:27:14 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 35JB2H1v038756;
-        Mon, 19 Jun 2023 11:27:13 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3r9393ad52-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Jun 2023 11:27:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m0p25yQmJcX8X1eVrpXSBedZaFIXESr2W0ZyzGBVXj+Sz46uOo4GpFBV+s8As/EXVKEF4t3rq11OFjgmuXXXAoAneMm1gfGpTNvcKba3/hFSlesFKP9BYi6v6bxvhJJJ9RIDNEKcMXJ8A9il5hx2x/5lkZoovhTlJarZwaIut/Ni7uPtFIK/3NLYQn6JqBY+dzpRjHD/SI+niIx9nEZ7ttPFO+MfJ04YmXK2lTx+wWERvlWxxUEUx88q/rCTZ1Xk8k3c0cx64zMglpr1m2U73ji4XjF8/k9jdILDmpHFVF12sSK9sI/+9tGEbD+ISYyuXN9q3cgL88p0I1XwvTvDbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zbRXVZjBArIyJ1JXlcq0bwlGxMtlun5LgR+jmi1/F9k=;
- b=gys5aFESBYh8cHKGFzVMPMP8tCrNm02+tl0tXDyxYkLPN2SKxbQTef+1qyYCkAxmCQXrelU0UVtcpI3JH13FQp+m/3B5v/hUc5h85Gi6u55W/iGy/9fnkO60dO7/nFrD5A9AQjCi2kUDAu4KaK+PYFBv9NHWUcyZifzMVbZ+DnBkRNzsEXmBi/TrrH7QyPhAawxcou5ftbQrkgJAoDUuAlpolaayZkThCgJCVxlX6dAyO8bbFODFnBBdO6oOlGrSKmWy/8Q2LUOGPry/NuTcK5iU9rWOLSDtVPUFj8dBpPIIPieGfuPNEe7zDUztgrR6xgxTF33DqK9RXBf+jUW+vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Mon, 19 Jun 2023 07:44:34 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA7F2123
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 04:44:18 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f8f3786f20so40102685e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 04:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zbRXVZjBArIyJ1JXlcq0bwlGxMtlun5LgR+jmi1/F9k=;
- b=WixY329n8rrDy1PICFiIzJhd87+EtzfbKCnXKAQ9HB2CZNltItzfUI/4iQ0vUHEg106aTaI5lJozb3NVgbu3Yu4pa4epjPTGgGxvAnEl6u38EIIXufvLluQ1tJoLX6FmCiG8iDTtvEoudUQQw5Pa2usIQJiY7oMNj2YG7/RIcK0=
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
- by BLAPR10MB4883.namprd10.prod.outlook.com (2603:10b6:208:334::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.37; Mon, 19 Jun
- 2023 11:27:07 +0000
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::9bee:4705:4313:2532]) by PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::9bee:4705:4313:2532%4]) with mapi id 15.20.6500.036; Mon, 19 Jun 2023
- 11:27:13 +0000
-Message-ID: <c363779a-6ce2-57c6-6e4a-4618e383bd08@oracle.com>
-Date:   Mon, 19 Jun 2023 16:57:01 +0530
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.5.1
-Subject: Re: [PATCH v4 1/3] ASoC: Add support for Loongson I2S controller
-Content-Language: en-US
-To:     Mark Brown <broonie@kernel.org>
-Cc:     YingKun Meng <mengyingkun@loongson.cn>, lgirdwood@gmail.com,
-        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, loongarch@lists.linux.dev,
-        loongson-kernel@lists.loongnix.cn,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Dan Carpenter <error27@gmail.com>,
-        kernel-janitors@vger.kernel.org
-References: <20230615122718.3412942-1-mengyingkun@loongson.cn>
- <cf2f3bc9-3141-8d7b-b57d-73eac70a21d2@oracle.com>
- <ad4722ec-0fa2-4bb2-879b-47bcbd96bb0d@sirena.org.uk>
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <ad4722ec-0fa2-4bb2-879b-47bcbd96bb0d@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0001.apcprd02.prod.outlook.com
- (2603:1096:4:194::10) To PH8PR10MB6290.namprd10.prod.outlook.com
- (2603:10b6:510:1c1::7)
+        d=linaro.org; s=google; t=1687175057; x=1689767057;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rsF1D8uyZq3uz3se7ElNK4DRXiJnMX09Y1q0xDnG/I=;
+        b=LgTzAeD5xJ/jI/z+vqGmfz/9JscizKDPM4gCSd1aAXab5AH1RWD4/R8OTaRrEfMmIZ
+         ZBw7Eph2Heqgw2nUbVV1UzQcPZFDTbzfpHgifoP4WEmBRxmjU/p3HF/eN2kmXYbRapTh
+         098Pl0fh00mOX0ZqYrEVp9U/6jEJYV4/JvHGPqLtzlEoWtDw4+ZrMtSDIjdmN8pQi0mh
+         kWo3mAcDuNmXvFJyUE6CDWNp4Gwsbs7N6IIsR1+QpdIf9ZhfAFRuiIEqbWva5NmqelBI
+         kVU+2Pb4U5bVDQaGc6y231OH63JMOchGJeNO40ZF8iAVjAXe8Zi4aMhmGfmEKu+ui4eK
+         QrUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687175057; x=1689767057;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1rsF1D8uyZq3uz3se7ElNK4DRXiJnMX09Y1q0xDnG/I=;
+        b=goJmvOYRqbga+4EMKApehksB0pECIsAiM78iSCtZEDq/iokXhWNQrm5y5tlYZmW5Kr
+         5RKJ9ynTF7C6mEn86RJ4bOgW4F0CbhZCJrFiVnnm6w74w9isdbT6PDe2YSd0lh7MbX+M
+         yjENfk4WSL9WyPfu2rt4J+dAZb3UEUrOuN/HRewjiL6v4wLzt6ccf/8ZNDYZWNli5nuV
+         AXz+Yun46u3+ghI2tZuc0lDDlAbHyASj5EuN+0LpnPfKC9hB+Gj5NNtEN+FsjxnYQRYK
+         /ZZiRnXn6DQqQo4j99Su0s4ARfmDX7uhYwGHINMzleh1uVg8fHNKHK0atQtLt6UeC7/s
+         7XfQ==
+X-Gm-Message-State: AC+VfDzoX60ezECvQZuPZpy3G4krM1rM7Zkj7Vk30cT9PfOqUbk6xvAY
+        qoDZbWo5h9JK1e0OjU6irWIVYA==
+X-Google-Smtp-Source: ACHHUZ5P5+CcXudwLHPDYOGouGXNUeoeG018v7vRJs/TWfPYoTGdlqszoXA2UM/AaSddfuK/JRpLoA==
+X-Received: by 2002:a5d:468d:0:b0:30f:be1f:8711 with SMTP id u13-20020a5d468d000000b0030fbe1f8711mr9289289wrq.63.1687175057159;
+        Mon, 19 Jun 2023 04:44:17 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id i1-20020adffc01000000b0030aee3da084sm31263683wrr.49.2023.06.19.04.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jun 2023 04:44:15 -0700 (PDT)
+Date:   Mon, 19 Jun 2023 14:44:11 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jiri Slaby <jirislaby@kernel.org>
+Cc:     Elen Song <elen.song@atmel.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@atmel.com>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: atmel: don't enable IRQs prematurely
+Message-ID: <c0c661bb-2584-46cd-9c72-8f1d9ccbaee4@kadam.mountain>
+References: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
+ <d87d9f00-8d85-6220-43d3-51ef8e793193@kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|BLAPR10MB4883:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34de6c27-8566-4964-e3ae-08db70b820c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Jf9ojm+pbJ38JgiHYUUphmKVIl8qZvaBOYFdqf4doXDFGZXOzWVbZxpA3KUdvW6bNcibi+TX+GcGXVaT0zHaFAjrpgM0g5RWm7aNIsFqr+zVlVrHMSEovN7bMcCFYexhHAwVfgHsdrmPQb0n7nykSm3OBViU+at9caTJ5uowbWNSSPQUYwJ+skto3SHbH+9BVVXL547aKA1f+tW5jHjM4IwhdxwPVlBck9QU63h7HDWhKz+NDi68B2vUSDTtABqiZiRUxx9oJcUpbMQhqPtuDZX7sClgalQyj++Xs4cCFO1EipUc26hMqWN87AtWgXjxIaHmCSX9hNDhn/DmAl0jhTLUnQ6dZubhIfRvC7wjVMZ/WhsIj4gqLzfbPaq+KqWjxGl8ukortMcaLq162Y9AayDihyXqL6E0A/FlB94thZqHwhOGNxiDTmeCJU0JQrQhNQJSrHrdGFMDVl19l5diGDeyKTu/hG/C8KTb6ZXfe2vHW0mp5upZ1R7Z3ZMMVVED4Kpr5JfCA5ts6KWr0OsMHsUlt+IkzFroXnEMGRecyATm8NYj9AY9MEGxCr5feC4+Dlzr8Ar8EZHEA3mEKblLusY/aEskehLd3pHDtC9rxYcxWaF7I55yPKuhmpADJBK46uheUduQ62vI2eyn3VXHzg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(346002)(366004)(39860400002)(396003)(451199021)(7416002)(31696002)(86362001)(41300700001)(8676002)(8936002)(5660300002)(66556008)(66476007)(66946007)(316002)(6916009)(31686004)(2616005)(38100700002)(83380400001)(186003)(36756003)(26005)(6512007)(6486002)(6666004)(6506007)(53546011)(4326008)(478600001)(54906003)(4744005)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c3RHUkM0T2M3TmJ1V0drY1g2dXhFek5RaFR0Tm9xRHJ6MzFFTmtZUEY4WjRJ?=
- =?utf-8?B?c1M5RENVZFB3SkJNMmNrdVorVVVuZ2FsUkRrWjdERWZHY0VXcDFieUJ0aVlk?=
- =?utf-8?B?ZmdaNHdPSy92MXExbVpmR3FKZnBvQ09GMFhybjlKYmZheCtjRTNHaEFiZWRT?=
- =?utf-8?B?Z0grZHBqbEE0dUc3dURQaUZITzZTVTlkVGNRZ0lpRldDZTNoWVYraUxlbGdX?=
- =?utf-8?B?d3lPd1FTbUFlQlFwVXRFRm5veDQwTDRjREtqNVR6RHRKL0U1bUdDQTdnd1dz?=
- =?utf-8?B?Q3hvZmNnTDBnVzA3YTZ4L0lqTzZEYVprTGNkVmEvTldwZGo2c2x3dlpnNlc4?=
- =?utf-8?B?RzRmb1ludGp3a2haUTR2RHNZNWpLUHJqVHpCRjBxbitNM3hTS0J2bjdTLzln?=
- =?utf-8?B?a095ZVZtMG9QUzNuTG5SY0FQVjNMLzBNc3dPTU5CZTZPNVVCQ2ZwYmRwbU1I?=
- =?utf-8?B?QUxvSFo0VHpwQTh3ZWg3R2x2SFd2UHVIM292WE9OMk1FanhiZ3pXenIxZkEv?=
- =?utf-8?B?R1hPbDFUUEpJQkxRTElTTXFxVXVOYmtpWEFlTTJOOGx1K0J6V0xOWmxUNk5J?=
- =?utf-8?B?ekdRVS85SE5GQ21JTWdtVjlJT28vd0JwT0Y4SlpVVDZmTnBMSVdJV3ZkS1RI?=
- =?utf-8?B?dS9lUlUyK3NLbDBBVGYvVmNXMEZCdm53cTZveFNsbmJ1cmc1bGJHL2lncTJB?=
- =?utf-8?B?Yk9nRDhHY2JETmJkcERhZ3l6bzBWNlpieGowOW1oTUxka281bVd1ZEJGSVRP?=
- =?utf-8?B?MFJYbExzMnF2NjNJd1gvVjZXSXNUWjdKWldJUjI0UmdWMm1KY2tlb2lGSExW?=
- =?utf-8?B?V2NaTGpORzlEakZ1Z3p0Z09KcVpiNVhYaTI3djVEWGtwSFNGRWFrb1ZkNjFD?=
- =?utf-8?B?WjhQMlRSU1R1VjNQQmdBVHhQaFZuRTVtV2JMYklwMGgyZVFmem1leU1hSHQz?=
- =?utf-8?B?UTFDSmZEd3VaSlBUSGZPTjdyVlZYT1VHeWFNblFYbS9MQVoxUGFsM3JCQlQv?=
- =?utf-8?B?OThFWTE3eGk2UXBmeW5DNXEvTUYyNWlwUTd0bTJTakJUbmovU3NTUHVnRjJK?=
- =?utf-8?B?Q21zYXgzVDFkaTRUVGpHeThpZjFiY0VvMllraU4zeGxsZHV0VGFJZlMyVUI4?=
- =?utf-8?B?WGJBa2hYZ2hNYW5KYUZHUGRMdTkxdG1rQi9TNllBdlRjbW5QbTc3OXg4VURs?=
- =?utf-8?B?dUxDeFpsV3UyZ29RMWRWN2czREc5WCtmNjlXaWthS0dIeXBxdjNSM0I2ajVQ?=
- =?utf-8?B?T3QwWVBkVGZ2WU5CTU1IeW81bW9jbXhSS09aTHBOeTVzYXA4djRXelpRSzE1?=
- =?utf-8?B?cEM5MkcycHVrL3R1Tm5ZZWZNcG90ZWRUTmRveTBsRWZrRHJtVkNFYzBneUd2?=
- =?utf-8?B?UEhQU1RBNEJSZUIzVi9OblllSU9EUlJOZUpwVGlEaHhkUE41aXN4YkJnNnI0?=
- =?utf-8?B?SStmK2I4VG5PWVR2aUMwV2RHYW1lQXZxR29ZUjBNNXpScG1MNDM1VWNuREFO?=
- =?utf-8?B?dmY0eFI1T1gwV3F4akhoeUtURUhINkxOc2lrSE94bzlLUUg4VEdqK082dmp0?=
- =?utf-8?B?R05LMlQyaGgyRkhmMjZsVDRsNGlRRDNPa1NZTEh0d0NRSXJndlNPU3owZnp1?=
- =?utf-8?B?RFFZM21xVDhuZUlVRkhmUnFLdEVCMm1RRzdoQllFRkg3UEJSV2MzWGZtZ3Vi?=
- =?utf-8?B?N05pTy9jQS9LNlNtSW5QUVlMTnhrblQ5bys2R1lUY1JMK3BGbXBWWEwyUHlI?=
- =?utf-8?B?aEs4b2ZkWitYT0pPcHA2aHFHTlpGb1lWU00vVng3Y0lPcTl3QnExNzZ6cmR5?=
- =?utf-8?B?ZTI5dEFSWHM2SjF6L1hpdjRkalBGSGEzWUczdUlNaTZSTUNVendPVWV2R3I3?=
- =?utf-8?B?cW9VeWlRakVOaHFKQ0xDeHR2SWQzbUVkWHluYU5DZVFuZkRJTWU2OXQ1dFlq?=
- =?utf-8?B?bmdQQnBvWVhJUy83NjJJZUpqYVlIa01mZmVYODRyV2tjRWZGZnR1YkxkYWtO?=
- =?utf-8?B?YU5WdEdueHQzeDRsYTdZNU1sVElHdzdTaG8zcFdSaHRTTUdTc2hISFBaN0Zm?=
- =?utf-8?B?Mmlkd0hNK1lnd0cvVGVoeHl3UXZwRU1VVG9CWFdLVG9oNEo1bHQvdElybGV0?=
- =?utf-8?B?RVJLNUZ0YXVwWFdzQUo5S2grVkpzVEVSMkhkNEVlWUMwYy9qejlwZS9nTlJV?=
- =?utf-8?Q?dCfJLjXPtu0+/YuVOJ6LJwo=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?OVBvWXJkUWJLUzBjQ3RGR0VIY2ZKVGZVQmRJSHdRa0t4S2RuaURybkcrL0l5?=
- =?utf-8?B?NXR4L2dKV3FqRzN4ZGgvZWlOeldaV0xlQUpZNDE4VmExckVYa1Z1QnVzYjk3?=
- =?utf-8?B?ck05Q29pOUQ2ckNYQS9IcTBUSzBhM29sT09vUk5pR3FwNXQ3OWtTNUxzcTds?=
- =?utf-8?B?akNFUEpnV1dPSUhSQlVndnJ6Sk1MVWZiY1FIZndsUThLOVJCMWdtTU1XRjlp?=
- =?utf-8?B?dE0yUHhpZXdTeU8zdWhyaU5GNExLdDQ2SzNxYWlnNnVtSXNyaS9IbjEzWWEr?=
- =?utf-8?B?QThRQmVqM3NsQ3l5cWhhelR5QjM2cm5nWnljY0tsc3ljK3pvdVhMek4yZFZt?=
- =?utf-8?B?M21MN2JScWM4OUZEL0UweDgxV3d5TWxUZVhiOXd4Y04rLzQyc1hFQ0VIbEhC?=
- =?utf-8?B?STdoQWFIVEV5bFh4aW9yYTdrMHcxUzJxMnhIMmgwVUdSYXlSU3VDeHNmY0d0?=
- =?utf-8?B?ekRsQlZqNTh6a3NrREV3WGF1U1ZEU2ZwU1d0T0VNZmFQREtRbWtYQ2dmUW9Q?=
- =?utf-8?B?aFVFUU1Ybkw4bG9lN1FDckJtMjlCN2dmcTBGeE0wUnhJSDZIT2lRWDJJeGh6?=
- =?utf-8?B?ZkhhTEl5NHlVRDZwNmkyRDhUbnYybVRseTBWUU8zc3Z4b1BnaWp5dHVOU3VT?=
- =?utf-8?B?RkxqT2tzdm9Ubm5yR01yVzRCcVpqRWFLQUt4SE5TS0NaSmcyV0M5d1NNYXND?=
- =?utf-8?B?M09jRjBSSnI1eTJqZmZ2dm03UWp6N0lYamx1eUU1WVRyTW9zdEhnTEJRNVFK?=
- =?utf-8?B?cXVlZlhyVnEzMjlNVTRxYi91L2lZQ1N5aEdxYzlEZXVTRTM4SjdnRHB5RWNi?=
- =?utf-8?B?K2szSUpFTWEySUJ1dDJ6R0laK09McTJtdGExU3d0MC9WN2U1QU5YRm5iNmV4?=
- =?utf-8?B?UFF0cnlSMm5FUGhrSjZ3Tk1NcnRQSDZYelVtd3Ewc0hxM1JFUVFQbVhpekxW?=
- =?utf-8?B?YlpBT3dTbWpBZ3Bia242cHJWeGRzWE11NXB5Z0g4djVVMEVTUmJFamRoazl1?=
- =?utf-8?B?VERVWXFxZ24vOUdDZUVVNXBCd1FCT0pvYjFqMy9uMkdOV3FMSkpDMTN0eGpO?=
- =?utf-8?B?YlJIR0tsN1FxdVFKUkwvdnZDNnpLVUtRdkY5QTRKWkxwcGVVVHdURUpRZHpz?=
- =?utf-8?B?eWErbFRDOHJWalprS1E3akk4Y09oSXlrL1hiRHRJazVwREpSc3VCQ0ZmOTda?=
- =?utf-8?B?MjlZVllPRXAySDB6dzJNalJITWJ3b3hoMnNKSkVNRzZXY2tnUEJFMm9hczNq?=
- =?utf-8?B?dEYvblI5T3RTR1dLdlNnbVA4R3dpeWhBYXliTUtWazV4QVF2dlp4bVN5N0V4?=
- =?utf-8?B?SDVZNWFDdTNId3c2bEdIYkZQUHM1ZmZNdGt4b0N6WVZDV08waFpjVVV2Y2lZ?=
- =?utf-8?B?K25QRGNTaWIycGc9PQ==?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34de6c27-8566-4964-e3ae-08db70b820c6
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2023 11:27:13.0401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XjYJ1zyrjcZNxamXFnYz4GdIJHpAYYPJ9bgcNu0PVo0GEAuzy1PKgEZQQEqQii8IoqqO+xO74F7SOisN2A9mD54psiWOy7+wjjkI3unbCeBNKSv9yK/kazxp7fXq1XZH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4883
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-19_08,2023-06-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
- adultscore=0 mlxscore=0 mlxlogscore=962 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306190103
-X-Proofpoint-GUID: UaEDTebOJwK4EPFBCYczAL87is19K-Ah
-X-Proofpoint-ORIG-GUID: UaEDTebOJwK4EPFBCYczAL87is19K-Ah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d87d9f00-8d85-6220-43d3-51ef8e793193@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Mark,
+On Mon, Jun 19, 2023 at 01:01:49PM +0200, Jiri Slaby wrote:
+> On 19. 06. 23, 11:45, Dan Carpenter wrote:
+> > The atmel_complete_tx_dma() function disables IRQs at the start
+> > of the function by calling spin_lock_irqsave(&port->lock, flags);
+> > There is no need to disable them a second time using the
+> > spin_lock_irq() function and, in fact, doing so is a bug because
+> > it will enable IRQs prematurely when we call spin_unlock_irq().
+> > 
+> > Just use spin_lock/unlock() instead without disabling or enabling
+> > IRQs.
+> > 
+> > Fixes: 08f738be88bb ("serial: at91: add tx dma support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   drivers/tty/serial/atmel_serial.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> > index 6e9192f122aa..3467a875641a 100644
+> > --- a/drivers/tty/serial/atmel_serial.c
+> > +++ b/drivers/tty/serial/atmel_serial.c
+> > @@ -868,11 +868,11 @@ static void atmel_complete_tx_dma(void *arg)
+> >   		dmaengine_terminate_all(chan);
+> >   	uart_xmit_advance(port, atmel_port->tx_len);
+> > -	spin_lock_irq(&atmel_port->lock_tx);
+> > +	spin_lock(&atmel_port->lock_tx);
+> >   	async_tx_ack(atmel_port->desc_tx);
+> >   	atmel_port->cookie_tx = -EINVAL;
+> >   	atmel_port->desc_tx = NULL;
+> > -	spin_unlock_irq(&atmel_port->lock_tx);
+> > +	spin_unlock(&atmel_port->lock_tx);
+> 
+> Hmm, can you ensure the DMA engine code calls this with irqs disabled? If
+> so, you should document it in the commit log. If not, you shyuld use
+> _irqsave() variant.
+> 
+> thanks,
 
-On 19/06/23 4:50 pm, Mark Brown wrote:
-> Please delete unneeded context from mails when replying.  Doing this
-> makes it much easier to find your reply in the message, helping ensure
-> it won't be missed by people scrolling through the irrelevant quoted
-> material.
+Hi Jiri,
 
-Thanks for the suggestion. Will take care of this from next time.
+I feel like we are miscommunicating but I don't know how to improve my
+commit message...  The function itself disables IRQs at the start using
+_irqsave().  I have left that as-is.
 
-Regards,
-Harshit
+regards,
+dan carpenter
+
+
