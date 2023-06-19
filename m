@@ -2,108 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B276AEB64DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 18:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13B2EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 20:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbjFSSUO (ORCPT
+        id S231223AbjFSUCo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 14:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
+        Mon, 19 Jun 2023 16:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232310AbjFSSUM (ORCPT
+        with ESMTP id S231193AbjFSUCn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 14:20:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C31AF
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 11:20:11 -0700 (PDT)
+        Mon, 19 Jun 2023 16:02:43 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1998E137
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 13:02:40 -0700 (PDT)
 Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id BJU0qoYbZd5eyBJU0qfXGy; Mon, 19 Jun 2023 20:20:09 +0200
+        id BL5BqWzxKmdEOBL5BqHfBw; Mon, 19 Jun 2023 22:02:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687198809;
-        bh=B/5FlROG/rPtzenJfdhoEzxZ2T0c2ssP3WxBw8vESxo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=Pcjw461124GvHKxG5bilxvynrtkMKBkffxsU3Wl2J5YDmJfcUIDzAhVK7LkO6KVMh
-         tWFn572qgb1PKTfxHNdHC4954DTdzodhANTteaM58M2aCrOINi1nlgpmTZX9Vpownt
-         AqFr6zvMdCnwV22bEn+koqORjAoSFyh/PfI9UXIBTqV0h7EUGYzqY9BNtV6ePPI8SY
-         xy7IsgKWWyZS6ca8WLPH4Ep6rqKMfBcT2bYV+uFusHAXkedG6bt3enSF2iMbMs+X4e
-         wR8SR8vOal3363fSlqiZ8U9/+S6gmSPHIkc7ndp1sk7cUR47hGoX8QfjRMAfxj0tt+
-         PE52QRzb4DZxQ==
+        s=t20230301; t=1687204958;
+        bh=PzDgVMn+LmcGBIIXFua1hVukKNuDSYIsbjDAaxt9dhc=;
+        h=Date:From:Subject:To:Cc:References:In-Reply-To;
+        b=I1k8bpOtDwz716MkF0tblqY0cSymhT3qR5dKWd7cinRXpYRRPcqfp36B9KTjr6D/1
+         BsLjLlsUV2oys7LQlAV2Y1BAU1faBNdMqhZGL6PJqMwYNE2fmzJeXCbI3p0pvMxKGq
+         +dK138ZhXz1p/JNiVbSQbksEprTvHs9nsxjZLDI5x9dkNmPxKjgiDnsTLvndINYTB1
+         44B7a03/cgr8GqwH1vV4pYZQRARwIGPNHdgwHYridTpU2vnTzhIDWW4uXiAijjlZJ3
+         QlfoL35dHUta1HDhVmAEhUpyuCcLTawePoZIE7v9936SAvd3ICSFtnCzHBOruUqDmu
+         93gAWjf5fH90A==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Jun 2023 20:20:09 +0200
+X-ME-Date: Mon, 19 Jun 2023 22:02:38 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <ba1a74ba-e91a-bf12-2d4e-7157e4519478@wanadoo.fr>
-Date:   Mon, 19 Jun 2023 20:20:08 +0200
+Message-ID: <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
+Date:   Mon, 19 Jun 2023 22:02:37 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH] HID: Reorder fields in 'struct hid_field'
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-References: <a804f2e91bc32cc5e17e012ed90972415606db4e.1687075665.git.christophe.jaillet@wanadoo.fr>
- <d6026b7f-dc07-4d0c-9805-cc61d6b9a4b8@kadam.mountain>
-Content-Language: fr
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d6026b7f-dc07-4d0c-9805-cc61d6b9a4b8@kadam.mountain>
+Subject: Re: [PATCH 2/2] iio: st_sensors: Remove some redundant includes in
+ st_sensors.h
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
+ <bd7fa0b07c85172ecba384e239cb0ecf0780766a.1686600780.git.christophe.jaillet@wanadoo.fr>
+ <20230617194911.7963bd6d@jic23-huawei>
+X-Mozilla-News-Host: news://news.gmane.io
+Content-Language: fr, en-US
+In-Reply-To: <20230617194911.7963bd6d@jic23-huawei>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 19/06/2023 à 07:18, Dan Carpenter a écrit :
-> On Sun, Jun 18, 2023 at 10:08:07AM +0200, Christophe JAILLET wrote:
->> diff --git a/include/linux/hid.h b/include/linux/hid.h
->> index 39e21e3815ad..5be5e671c263 100644
->> --- a/include/linux/hid.h
->> +++ b/include/linux/hid.h
->> @@ -480,9 +480,9 @@ struct hid_field {
->>   	__s32     physical_maximum;
->>   	__s32     unit_exponent;
->>   	unsigned  unit;
->> -	bool      ignored;		/* this field is ignored in this event */
->>   	struct hid_report *report;	/* associated report */
->>   	unsigned index;			/* index into report->field[] */
->> +	bool      ignored;		/* this field is ignored in this event */
->>   	/* hidinput data */
->>   	struct hid_input *hidinput;	/* associated input structure */
->>   	__u16 dpad;			/* dpad input code */
+Le 17/06/2023 à 20:49, Jonathan Cameron a écrit :
+> On Mon, 12 Jun 2023 22:13:37 +0200
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 > 
-> You could move the dpad next to the ignored to save another 4 bytes.
-> I think it is still grouped logically that way but I don't really know
-> what dpad is so I might be wrong.
+>> There is no need to include i2c.h and spi/spi.h in st_sensors.h.
+>> Should it be needed, st_sensors_(i2c|spi).h should be used.
+> Agreed these should be dropped from here.
 > 
->    	struct hid_report *report;	/* associated report */
->    	unsigned index;			/* index into report->field[] */
-> 	bool      ignored;		/* this field is ignored in this event */
->   	/* hidinput data */
->    	__u16 dpad;			/* dpad input code */
->    	struct hid_input *hidinput;	/* associated input structure */
+> But I don't agree with statement that i2c.h and spi/spi.h should
+> be gotten implicitly from st_sensors_i2c.h / st_sensors_spi.h
+> If they are needed the should be included directly in the files
+> where they are needed.
 > 
-> regards,
-> dan carpenter
-> 
-> 
+> Jonathan
 
-In fact, not really,
-It would fill a hole better, but would generate some padding at the end 
-of the struct:
+Another option I thought about was to:
+    - keep the includes in st_sensors.h
 
-	bool                       ignored;              /*   108     1 */
+    - move function declaration in st_sensors.h
+int st_sensors_spi_configure(struct iio_dev *indio_dev,
+			     struct spi_device *spi);
+and
+int st_sensors_i2c_configure(struct iio_dev *indio_dev,
+			     struct i2c_client *client);
 
-	/* XXX 1 byte hole, try to pack */
+    - remove st_sensors_spi.h and st_sensors_i2c.h
 
-	__u16                      dpad;                 /*   110     2 */
-	struct hid_input *         hidinput;             /*   112     8 */
-	unsigned int               slot_idx;             /*   120     4 */
+At least, it would simplify things a remove 2 mostly useless .h file.
 
-	/* size: 128, cachelines: 2, members: 25 */
-	/* sum members: 119, holes: 2, sum holes: 5 */
-	/* padding: 4 */
-};
+It would not give the benefit of removing some include for files that do 
+not require spi.h or i2c.h, but as these includes are already there, it 
+wouldn't make things worst :)
+
+What do you think of this approach?
 
 CJ
+
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Based on one of my script, this reduces the number of included files from
+>> 573 files to 515 files when compiling drivers/iio/accel/st_accel_buffer.c
+>> ---
+>>   include/linux/iio/common/st_sensors.h | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
+>> index 607c3a89a647..a1d3d57d6d6e 100644
+>> --- a/include/linux/iio/common/st_sensors.h
+>> +++ b/include/linux/iio/common/st_sensors.h
+>> @@ -10,8 +10,6 @@
+>>   #ifndef ST_SENSORS_H
+>>   #define ST_SENSORS_H
+>>   
+>> -#include <linux/i2c.h>
+>> -#include <linux/spi/spi.h>
+>>   #include <linux/irqreturn.h>
+>>   #include <linux/iio/iio.h>
+>>   #include <linux/iio/trigger.h>
+> 
+> 
+
