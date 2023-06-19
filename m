@@ -2,197 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A477EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 06:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF67EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 07:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjFSGMH (ORCPT
+        id S230072AbjFSHAl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 02:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38006 "EHLO
+        Mon, 19 Jun 2023 03:00:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjFSGMF (ORCPT
+        with ESMTP id S229456AbjFSHAj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 02:12:05 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDFD983;
-        Sun, 18 Jun 2023 23:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1687155119; x=1687759919; i=deller@gmx.de;
- bh=qXHv99deYLTD2kNmmjlNL7L1IAyhuZLLm9e6QxYmVUo=;
- h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
- b=dz7QnozsNW1O3khG9qJJBLjQ8zB0r9dYCwVTd6ibDY76A53Y6F0MhJ48alK/0rppaKyczXk
- 8IsDmLmbnzMyJAs6KJMaqFPJnK/owrOJJYtjbDser3PuAQvPJ9GtMyVoYc3pwZKG/L+0TYh3t
- Gy8K0m2uwBAYE9uCwzpy7p1KAoWX6zWRl+z4GD+azrXcZ5/IGDi/Zcu96yuc2ETqcevpkf4kF
- D3KXna8W3jknUdrG0d2AFSxN4LJKpyCeZnJ9I8Y4n42mLMKsKT0qZLUmE4b/glkIBXd4ciIyW
- 7PQIPZFRxkrxGLl6N63IE9eZYOGx4y7T780oEvj1ca9nCRc0ox4w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.144.204]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MKsj7-1qP65y1Jnh-00LGQ4; Mon, 19
- Jun 2023 08:11:59 +0200
-Message-ID: <b110f9e9-f654-6a43-fa23-ea461d0bb405@gmx.de>
-Date:   Mon, 19 Jun 2023 08:11:58 +0200
+        Mon, 19 Jun 2023 03:00:39 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FE11A4
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 00:00:38 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-988c30a540aso58726666b.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 00:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687158037; x=1689750037;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lMrqhOmlYjr3CsiKOPMApGZVFUdNvXXzMH8RRQR9SBo=;
+        b=gRNXmtBtp53/JI1qbjCmW/EGDGt/iMPRvcxCm+fL38zqAjrb8riGH6SdDR8ZFXh8+s
+         +g9KmmTgErl4NyhYnvAJ226EPktiSPSNPH7DgA7kF3zHw/4mYC/6TQzgP1Xg8FLKtkkD
+         CmIj6nnjemehAP5fQhc26wYEzk+3X+5wS5D2qokJe4LU4XJ9go+craozn7QkmOur458L
+         pKkVcsO2B6m7Ojk8m+pldwODYC9bdtqPhe1Q1AzT7Pn6IMCqvQxTlD9wONR3f/NJh755
+         YyYBEAbG3xw+wjm+Vr1yFatM+lXblh+gTB4hbpQwVDZMtEo0guLFiV35VtZczPcmNRi5
+         zO8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687158037; x=1689750037;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMrqhOmlYjr3CsiKOPMApGZVFUdNvXXzMH8RRQR9SBo=;
+        b=dyC2hxdsTMrwz/93qCupY14hOLnOIX68GWm8QfdnPcoLjtvGZr3TVjGHe+pLzg9IWO
+         NZIO4PIWynsJtbNSwljtPsVnLUca8SRhtoOyGOsexYQmr51Q1IJxoDXfJofPwVhIf1Fv
+         lvcDul8y1Jhl+S6bE3QPM63V9Rbrs2D5LoOhSufT1jlJ4z/eTw1B8h6f0yCEz0Gl4lFc
+         YZq5Cq0VCPzLOsFZ3iKVuCHMQt5JsS8r6KzJP/8Ks4r0+3n0KaxNI9XM479zsTYnI/j9
+         0zZXr83H1TkhKsmUin5gvi4opg3MyMd8l9sSCzzLY+s13NtxkkLgsrMzvB4l/GQg+SYX
+         dK4Q==
+X-Gm-Message-State: AC+VfDyj3irRqq5X3mnSZyHQx/Stl5CdKTdJGftjwNTMb9jqMNeb+ioa
+        cnxOG1BWyaGyDfnyHErpmfs0bQ==
+X-Google-Smtp-Source: ACHHUZ6AlPAXtrfg+1lhoD+C0v75gcko1YN92wwqTA01JUafHGUycqGUdXE3+R8QqBTqZqCD1FCjBg==
+X-Received: by 2002:a17:907:7243:b0:986:3783:2949 with SMTP id ds3-20020a170907724300b0098637832949mr8506222ejc.52.1687158036982;
+        Mon, 19 Jun 2023 00:00:36 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id n25-20020a05640206d900b0051a594b4eb2sm1103917edy.60.2023.06.19.00.00.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jun 2023 00:00:36 -0700 (PDT)
+Message-ID: <bd4da934-72b7-67f3-0c9c-c18d3af16e7d@linaro.org>
+Date:   Mon, 19 Jun 2023 09:00:34 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] video/hdmi: Reorder fields in 'struct hdmi_avi_infoframe'
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v4 1/3] ASoC: Add support for Loongson I2S controller
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f5745aeab896f8d4622ff4c3cd0475d9be6bafd8.1687121400.git.christophe.jaillet@wanadoo.fr>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <f5745aeab896f8d4622ff4c3cd0475d9be6bafd8.1687121400.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:THrzSc5kYreNWwNp0T/jefNTCwcF33SLXJ+j9b2pW45wVFGRWgL
- hNdphyJpdlFurvY8hcX4BZEg37Ds/QIMUKY+Hxfd2DVbelBjaFS6F3DtYNBkddEA/kLlj91
- P4Zs/Wu/2qCH5tLvNCMM+Rc3kejbIOSIMohJO6sqcHyve8f+MrWtraPkv/H+Dr7miirMlQ2
- Czm+a1ET/s0IzU+uMfpHQ==
-UI-OutboundReport: notjunk:1;M01:P0:yOoWD3U3y0Q=;PT/Ri5PRJRd8WF6+tc3vfJyQFgG
- zecaWq3Yve88tWuqFi8piFjjE0RBwnZWQS5ymAJV/9FIbwLFrzoU3Zl/GLq1hyqJNKiF+MdAk
- 8ADoHeqYe2D/LtP+EPOJbQdGUkMumMSVj5pRb/rGSMpZRocDa0zpVtUHNM8iGrs2pasGWAysv
- 6QJ12e00x85HcWSZE8mCCtJ+t8J72Wo4X/OWHQuFQp0lge36SahvaJopbos1ABK5o5bU4hs6U
- U3/amuoJzM6kNpdXo6iOnKFJxIseG0LTpvO1+MjuCbOMOvS8LUSTLRY8eYmG4tIwiyD0Lw/Jx
- Er38oWAi0fhCRQhZbvp+cdDsvNL7xcmV2uGXmvLieus8LKNHyT6fq3C6TcRc/aLpYa4hh6Zhl
- fa85g33Y+w8J/baLdtcioiTrjkxn0GM9+VgYrL3pC4dVLxp9HRWm6yzBK92+mlwSKSZdOip7e
- WTBpEooqv4dONkfMP0jkAM/bvQ+qUEUFdhOcafH2Imfgz2hYMSW1U1VpX/zKMFfMWAgfYrY/j
- QL6w83Pa74rg9/Zg6Yd+8jlSsrmr7gEFaRbtw9oxQ+N9D4tIuVYGJx68mJYNecSRC7NHN2DR4
- TMKeMv30lGIjvnHm9bHrfB7la7PKjMTPXxzac4w/7clDbBtF2+fWnlpa9CKMNy6csK6m/k8Ox
- LLcaiJdC6zRqkBEv9meKtE64GMYqD2Q8z+pIHh7HGBpqW0CywficHn+g1FSBM++HWMKxjzBHw
- 0S0zumQ7BZymJk9UgE3Z145Y1fYL5nemT2rLY3bKbyWVu+wHj8kv9U4JczXDMrAwFS9QKrKEw
- z3LVr28gJIUbgmp7NotnUYWxTFHHSJLoPE4PAF6my8XjT5dldFRNkgO1lgd4GaIpssoCrYoci
- npQpxvDL+B0LV+BIciUOAzPvewzXuZBdn+fpdX7Mno/K5HtLKk5s32rNCWxGo/norDxgijeW2
- 4GTvkQ==
+To:     Yingkun Meng <mengyingkun@loongson.cn>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        broonie@kernel.org, lgirdwood@gmail.com
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        loongarch@lists.linux.dev, loongson-kernel@lists.loongnix.cn,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Dan Carpenter <error27@gmail.com>,
+        kernel-janitors@vger.kernel.org
+References: <20230615122718.3412942-1-mengyingkun@loongson.cn>
+ <cf2f3bc9-3141-8d7b-b57d-73eac70a21d2@oracle.com>
+ <6901166d-387f-24de-6ffd-1c8eea724718@oracle.com>
+ <325dd825-6fa5-0ebc-4b7e-7acf2d2840e4@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <325dd825-6fa5-0ebc-4b7e-7acf2d2840e4@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/18/23 22:52, Christophe JAILLET wrote:
-> Group some variables based on their sizes to reduce hole and avoid paddi=
-ng.
-> On x86_64, this shrinks the size of 'struct hdmi_avi_infoframe'
-> from 68 to 60 bytes.
->
-> It saves a few bytes of memory and is more cache-line friendly.
->
-> This also reduces the union hdmi_infoframe the same way.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 19/06/2023 03:45, Yingkun Meng wrote:
+>>>> +    tx_data->irq = fwnode_irq_get_byname(fwnode, "tx");
+>>>
+>>> Smatch detects that tx_data->irq and rx_data->irq are of type 
+>>> u32(unsigned) so they can never be negative.
+>>>
+>>>> +    if (tx_data->irq < 0) {
+>>>              ^^^^^^^^ This can never be true.
+>>>
+>>> Should irq be of type 'int' instead?
+>>>
+>>>> +        dev_err(&pdev->dev, "dma tx irq invalid\n");
+>>>> +        return tx_data->irq;
+>>>> +    }
+>>>> +
+>>>> +    rx_data->irq = fwnode_irq_get_byname(fwnode, "rx");
+>>>> +    if (rx_data->irq < 0) {
+>>>              ^^^ Same problem here.
+>>>
+>>> Should irq
+>>
+>> Should 'irq' be of type int instead?
+>>
+>> As fwnode_irq_get_byname() returns a integer.
+>>
+> Yes, you are right. I will add a patch to fix the type of 'irq' to int.
 
-applied.
+Run smatch and sparse on your code before posting. It would find such
+trivial mistakes.
 
-Thanks!
-Helge
-
-
-> ---
-> Using pahole
->
-> Before:
-> =3D=3D=3D=3D=3D=3D
-> struct hdmi_avi_infoframe {
-> 	enum hdmi_infoframe_type   type;                 /*     0     4 */
-> 	unsigned char              version;              /*     4     1 */
-> 	unsigned char              length;               /*     5     1 */
->
-> 	/* XXX 2 bytes hole, try to pack */
->
-> 	enum hdmi_colorspace       colorspace;           /*     8     4 */
-> 	enum hdmi_scan_mode        scan_mode;            /*    12     4 */
-> 	enum hdmi_colorimetry      colorimetry;          /*    16     4 */
-> 	enum hdmi_picture_aspect   picture_aspect;       /*    20     4 */
-> 	enum hdmi_active_aspect    active_aspect;        /*    24     4 */
-> 	bool                       itc;                  /*    28     1 */
->
-> 	/* XXX 3 bytes hole, try to pack */
->
-> 	enum hdmi_extended_colorimetry extended_colorimetry; /*    32     4 */
-> 	enum hdmi_quantization_range quantization_range; /*    36     4 */
-> 	enum hdmi_nups             nups;                 /*    40     4 */
-> 	unsigned char              video_code;           /*    44     1 */
->
-> 	/* XXX 3 bytes hole, try to pack */
->
-> 	enum hdmi_ycc_quantization_range ycc_quantization_range; /*    48     4=
- */
-> 	enum hdmi_content_type     content_type;         /*    52     4 */
-> 	unsigned char              pixel_repeat;         /*    56     1 */
->
-> 	/* XXX 1 byte hole, try to pack */
->
-> 	short unsigned int         top_bar;              /*    58     2 */
-> 	short unsigned int         bottom_bar;           /*    60     2 */
-> 	short unsigned int         left_bar;             /*    62     2 */
-> 	/* --- cacheline 1 boundary (64 bytes) --- */
-> 	short unsigned int         right_bar;            /*    64     2 */
->
-> 	/* size: 68, cachelines: 2, members: 20 */
-> 	/* sum members: 57, holes: 4, sum holes: 9 */
-> 	/* padding: 2 */
-> 	/* last cacheline: 4 bytes */
-> };
->
->
-> After:
-> =3D=3D=3D=3D=3D
-> struct hdmi_avi_infoframe {
-> 	enum hdmi_infoframe_type   type;                 /*     0     4 */
-> 	unsigned char              version;              /*     4     1 */
-> 	unsigned char              length;               /*     5     1 */
-> 	bool                       itc;                  /*     6     1 */
-> 	unsigned char              pixel_repeat;         /*     7     1 */
-> 	enum hdmi_colorspace       colorspace;           /*     8     4 */
-> 	enum hdmi_scan_mode        scan_mode;            /*    12     4 */
-> 	enum hdmi_colorimetry      colorimetry;          /*    16     4 */
-> 	enum hdmi_picture_aspect   picture_aspect;       /*    20     4 */
-> 	enum hdmi_active_aspect    active_aspect;        /*    24     4 */
-> 	enum hdmi_extended_colorimetry extended_colorimetry; /*    28     4 */
-> 	enum hdmi_quantization_range quantization_range; /*    32     4 */
-> 	enum hdmi_nups             nups;                 /*    36     4 */
-> 	unsigned char              video_code;           /*    40     1 */
->
-> 	/* XXX 3 bytes hole, try to pack */
->
-> 	enum hdmi_ycc_quantization_range ycc_quantization_range; /*    44     4=
- */
-> 	enum hdmi_content_type     content_type;         /*    48     4 */
-> 	short unsigned int         top_bar;              /*    52     2 */
-> 	short unsigned int         bottom_bar;           /*    54     2 */
-> 	short unsigned int         left_bar;             /*    56     2 */
-> 	short unsigned int         right_bar;            /*    58     2 */
->
-> 	/* size: 60, cachelines: 1, members: 20 */
-> 	/* sum members: 57, holes: 1, sum holes: 3 */
-> 	/* last cacheline: 60 bytes */
-> };
-> ---
->   include/linux/hdmi.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/hdmi.h b/include/linux/hdmi.h
-> index 2f4dcc8d060e..3bb87bf6bc65 100644
-> --- a/include/linux/hdmi.h
-> +++ b/include/linux/hdmi.h
-> @@ -170,19 +170,19 @@ struct hdmi_avi_infoframe {
->   	enum hdmi_infoframe_type type;
->   	unsigned char version;
->   	unsigned char length;
-> +	bool itc;
-> +	unsigned char pixel_repeat;
->   	enum hdmi_colorspace colorspace;
->   	enum hdmi_scan_mode scan_mode;
->   	enum hdmi_colorimetry colorimetry;
->   	enum hdmi_picture_aspect picture_aspect;
->   	enum hdmi_active_aspect active_aspect;
-> -	bool itc;
->   	enum hdmi_extended_colorimetry extended_colorimetry;
->   	enum hdmi_quantization_range quantization_range;
->   	enum hdmi_nups nups;
->   	unsigned char video_code;
->   	enum hdmi_ycc_quantization_range ycc_quantization_range;
->   	enum hdmi_content_type content_type;
-> -	unsigned char pixel_repeat;
->   	unsigned short top_bar;
->   	unsigned short bottom_bar;
->   	unsigned short left_bar;
+Best regards,
+Krzysztof
 
