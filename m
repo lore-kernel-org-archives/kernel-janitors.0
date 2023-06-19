@@ -2,106 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184C5EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 11:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51960EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 11:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231916AbjFSLD0 (ORCPT
+        id S229848AbjFSLPC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 07:03:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
+        Mon, 19 Jun 2023 07:15:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232544AbjFSLC5 (ORCPT
+        with ESMTP id S231322AbjFSLO7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 07:02:57 -0400
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2053F1BC1;
-        Mon, 19 Jun 2023 04:01:53 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2b466066950so30229921fa.2;
-        Mon, 19 Jun 2023 04:01:53 -0700 (PDT)
+        Mon, 19 Jun 2023 07:14:59 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2E894
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 04:14:57 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9829b12b80fso521180266b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 04:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tessares.net; s=google; t=1687173296; x=1689765296;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YYO+FdD02HoQtON3gY3N67r0LjDnfpgEGatkCF/SPuM=;
+        b=vmBfiw9NB0m0oRyziSLMIbgVVuWC8KucOqqtglZqMCYjfwBwb2yaY8khBcq+6D8OBR
+         MdPMNQKT2L+9alij30NUHbXFPbCgPhaOcYTe0dFD1vf53SG7W+UgBXUVpTUGPLrZwpIj
+         ZM4pKV5YC9OgEb/tF4xUDQR+/JwLPY1t7Y+hlyVIhFACLYP2/ETBzG08uoas7Qp6cIJ+
+         oKFyiCKC6LhRt3sLbAlB9WHiaPGGCCq4lWfJ+cRmqQVSp5Xb0pU24CfJ8s03Uq5+iBJ9
+         w1RtVzQV8cm7xeYE6XGLIk0koOuLmAft1JsU4eCKmu65Pjiumyd5DVaTrBG5CZv8EWCB
+         mrHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687172512; x=1689764512;
+        d=1e100.net; s=20221208; t=1687173296; x=1689765296;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5ub7CNbo9A5jA0TlUemxCQlR/gijVVIGHXtI5ZYrlk=;
-        b=W0HztdJCCxW8+D4NSORvHOrGKgPat5fy4+38ZxujNc8z9noQy1yDdpEmPXse+o9Jip
-         q///4RbVg+qrF7JsynDzxZa/P4lPzAB8JMfCCGiVLZ38AYV2TpQR1FEu3lCMO8cEqko+
-         vqTCmWm4Dqzn0g2n6lM1LI0oKkbcwLSIvacu4xq6KWV/B6H2yMPDTAQI3UrKi8EZZ+fQ
-         Z+rEpyM9YyYyDJ6e+QBrpz/1s8xDs99YayLlhgtWsx28Qne77ihlA7NUNO6IEj0zgD1j
-         1x0sqsWkDeWRbJrMhN877hoFWPJEiCiaWuLDrH/EXeP+n+UUeS1KjZat27Cz3LYrFzAu
-         rEEQ==
-X-Gm-Message-State: AC+VfDwbkjpImiBKgaYq/7xkUYxXX582gyLCtGQQOMlGkTOzWIr9qtDk
-        93vzfjkBDBmCQUua+dKdC20=
-X-Google-Smtp-Source: ACHHUZ5fV1xxnrpgJhc20iKQcKzbgGqeO0Vt6hQnWYNhq/Oc2LkvQjCfCO/zFKhvzadDgMqPRpHoRw==
-X-Received: by 2002:a2e:8008:0:b0:2aa:41a1:cd70 with SMTP id j8-20020a2e8008000000b002aa41a1cd70mr5797686ljg.3.1687172511461;
-        Mon, 19 Jun 2023 04:01:51 -0700 (PDT)
-Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id bn14-20020a170906c0ce00b0095807ab4b57sm14751512ejb.178.2023.06.19.04.01.50
+        bh=YYO+FdD02HoQtON3gY3N67r0LjDnfpgEGatkCF/SPuM=;
+        b=PxlVqk0SdBSCN+li0DJpLNcKcC1SR02feUoweiiNFt7g2BsAG8wANNpJjmVHfkPg2m
+         tAHi1TZM+qWqDY/IkSwuNmAo1NHtCmSIYdRARq5OeFP5wqvKArGiVIsL0Onia+WPffjP
+         0TrpOWCO7w+dG6dhJsd2VYyT6byCkCjKULOmm6WzeuBKa7z1udu6VJEnZ3U1SC1ilnpA
+         vTvPKxccyTQ/iHDNAgbOho7Ih4HosjcIfPNgBb7LLiezXeTyiKxnsAYapUM48E8e++sF
+         TI4G5BjHq88ZVuLZP7rPjn26C1PGrOVJ2YKsow5liF25cBsZr0Oe2SQbU+FhbMsnYIH8
+         /H8w==
+X-Gm-Message-State: AC+VfDwHzvDxCQUbywUwuvSQ+xkqTidfeeQNbXExeMC4piFS9JxImQQ+
+        coa5G592q18PQa1DCWdj5t0AkTUmaRsEkl7CQLcfhA==
+X-Google-Smtp-Source: ACHHUZ6KrZgsHnmsIkFvEKH2MSdqPB9TyfdERyrH3BK4EWJ+r0jnQQb3AE+Pg2hladpawECOYZvXWg==
+X-Received: by 2002:a17:907:7f13:b0:988:74eb:b6d8 with SMTP id qf19-20020a1709077f1300b0098874ebb6d8mr3266923ejc.51.1687173296058;
+        Mon, 19 Jun 2023 04:14:56 -0700 (PDT)
+Received: from [10.44.2.5] ([81.246.10.41])
+        by smtp.gmail.com with ESMTPSA id v12-20020a170906338c00b009887a671017sm2111636eja.179.2023.06.19.04.14.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jun 2023 04:01:50 -0700 (PDT)
-Message-ID: <d87d9f00-8d85-6220-43d3-51ef8e793193@kernel.org>
-Date:   Mon, 19 Jun 2023 13:01:49 +0200
+        Mon, 19 Jun 2023 04:14:55 -0700 (PDT)
+Message-ID: <7472fb6b-5884-586c-0965-b3bef83109f3@tessares.net>
+Date:   Mon, 19 Jun 2023 13:14:55 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH] serial: atmel: don't enable IRQs prematurely
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Elen Song <elen.song@atmel.com>
-Cc:     Richard Genoud <richard.genoud@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@atmel.com>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net-next] mptcp: Reorder fields in 'struct
+ mptcp_pm_add_entry'
+Content-Language: en-GB
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev
+References: <e47b71de54fd3e580544be56fc1bb2985c77b0f4.1687081558.git.christophe.jaillet@wanadoo.fr>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+In-Reply-To: <e47b71de54fd3e580544be56fc1bb2985c77b0f4.1687081558.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 19. 06. 23, 11:45, Dan Carpenter wrote:
-> The atmel_complete_tx_dma() function disables IRQs at the start
-> of the function by calling spin_lock_irqsave(&port->lock, flags);
-> There is no need to disable them a second time using the
-> spin_lock_irq() function and, in fact, doing so is a bug because
-> it will enable IRQs prematurely when we call spin_unlock_irq().
-> 
-> Just use spin_lock/unlock() instead without disabling or enabling
-> IRQs.
-> 
-> Fixes: 08f738be88bb ("serial: at91: add tx dma support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/tty/serial/atmel_serial.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> index 6e9192f122aa..3467a875641a 100644
-> --- a/drivers/tty/serial/atmel_serial.c
-> +++ b/drivers/tty/serial/atmel_serial.c
-> @@ -868,11 +868,11 @@ static void atmel_complete_tx_dma(void *arg)
->   		dmaengine_terminate_all(chan);
->   	uart_xmit_advance(port, atmel_port->tx_len);
->   
-> -	spin_lock_irq(&atmel_port->lock_tx);
-> +	spin_lock(&atmel_port->lock_tx);
->   	async_tx_ack(atmel_port->desc_tx);
->   	atmel_port->cookie_tx = -EINVAL;
->   	atmel_port->desc_tx = NULL;
-> -	spin_unlock_irq(&atmel_port->lock_tx);
-> +	spin_unlock(&atmel_port->lock_tx);
+Hi Christophe,
 
-Hmm, can you ensure the DMA engine code calls this with irqs disabled? 
-If so, you should document it in the commit log. If not, you shyuld use 
-_irqsave() variant.
+On 18/06/2023 11:46, Christophe JAILLET wrote:
+> Group some variables based on their sizes to reduce hole and avoid padding.
+> On x86_64, this shrinks the size of 'struct mptcp_pm_add_entry'
+> from 136 to 128 bytes.
+> 
+> It saves a few bytes of memory and is more cache-line friendly.
 
-thanks,
+Good catch and thank you for having shared this patch, it looks good to me!
+
+Reviewed-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+
+Cheers,
+Matt
 -- 
-js
-suse labs
-
+Tessares | Belgium | Hybrid Access Solutions
+www.tessares.net
