@@ -2,120 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13B2EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 20:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B7DEB64DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 22:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbjFSUCo (ORCPT
+        id S229914AbjFSW3Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 16:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
+        Mon, 19 Jun 2023 18:29:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbjFSUCn (ORCPT
+        with ESMTP id S229453AbjFSW3O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 16:02:43 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1998E137
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 13:02:40 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id BL5BqWzxKmdEOBL5BqHfBw; Mon, 19 Jun 2023 22:02:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687204958;
-        bh=PzDgVMn+LmcGBIIXFua1hVukKNuDSYIsbjDAaxt9dhc=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To;
-        b=I1k8bpOtDwz716MkF0tblqY0cSymhT3qR5dKWd7cinRXpYRRPcqfp36B9KTjr6D/1
-         BsLjLlsUV2oys7LQlAV2Y1BAU1faBNdMqhZGL6PJqMwYNE2fmzJeXCbI3p0pvMxKGq
-         +dK138ZhXz1p/JNiVbSQbksEprTvHs9nsxjZLDI5x9dkNmPxKjgiDnsTLvndINYTB1
-         44B7a03/cgr8GqwH1vV4pYZQRARwIGPNHdgwHYridTpU2vnTzhIDWW4uXiAijjlZJ3
-         QlfoL35dHUta1HDhVmAEhUpyuCcLTawePoZIE7v9936SAvd3ICSFtnCzHBOruUqDmu
-         93gAWjf5fH90A==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Jun 2023 22:02:38 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
-Date:   Mon, 19 Jun 2023 22:02:37 +0200
+        Mon, 19 Jun 2023 18:29:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E239E103
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 15:29:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5856C60E84
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 22:29:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAB6C433C8;
+        Mon, 19 Jun 2023 22:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687213751;
+        bh=7FENT0fR9g/IHtG2MyCKYjPXZXSY5zPJGkenGVwXz+Y=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ZqiVl1cRjY0IQLWbUGh5Xv1/mvoE3MtEMY7NPT9hqwUNg9teIML4fUlFY2nEoReTE
+         4a6GNmPWf7ZdRZM2qGIqPqyQ3m1Y4VHMCx95bxl7h4cAFL4wtsjrB5cvHfQ13OIFVW
+         lCw2tfDiH8O7tGXVNohBs0eM3AE9RKO82Cfyz7i1l6mYU9S4IM+W3mefmBdC30bD2L
+         bvJOAbhnFayYUgKlMxkmpeTz/mSwqgB3SP58cUeFzntIQo6Qej+sU+GK7xOOO5GOPf
+         K6eKOhq0eOFpHMlOdNdZrsWX1gEC/TbzhpBUH/ymvwcJvUI23REYiUsnwNIfYGzhTS
+         qUy/zGSQje0aw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Yingkun Meng <mengyingkun@loongson.cn>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <fb14815d-2f9a-4b42-b193-cec61e7417ca@moroto.mountain>
+References: <fb14815d-2f9a-4b42-b193-cec61e7417ca@moroto.mountain>
+Subject: Re: [PATCH] ASoC: loongson: fix error codes in
+ loongson_card_parse_acpi()
+Message-Id: <168721375010.200161.14528592449735607386.b4-ty@kernel.org>
+Date:   Mon, 19 Jun 2023 23:29:10 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 2/2] iio: st_sensors: Remove some redundant includes in
- st_sensors.h
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
- <bd7fa0b07c85172ecba384e239cb0ecf0780766a.1686600780.git.christophe.jaillet@wanadoo.fr>
- <20230617194911.7963bd6d@jic23-huawei>
-X-Mozilla-News-Host: news://news.gmane.io
-Content-Language: fr, en-US
-In-Reply-To: <20230617194911.7963bd6d@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/06/2023 à 20:49, Jonathan Cameron a écrit :
-> On Mon, 12 Jun 2023 22:13:37 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
->> There is no need to include i2c.h and spi/spi.h in st_sensors.h.
->> Should it be needed, st_sensors_(i2c|spi).h should be used.
-> Agreed these should be dropped from here.
-> 
-> But I don't agree with statement that i2c.h and spi/spi.h should
-> be gotten implicitly from st_sensors_i2c.h / st_sensors_spi.h
-> If they are needed the should be included directly in the files
-> where they are needed.
-> 
-> Jonathan
-
-Another option I thought about was to:
-    - keep the includes in st_sensors.h
-
-    - move function declaration in st_sensors.h
-int st_sensors_spi_configure(struct iio_dev *indio_dev,
-			     struct spi_device *spi);
-and
-int st_sensors_i2c_configure(struct iio_dev *indio_dev,
-			     struct i2c_client *client);
-
-    - remove st_sensors_spi.h and st_sensors_i2c.h
-
-At least, it would simplify things a remove 2 mostly useless .h file.
-
-It would not give the benefit of removing some include for files that do 
-not require spi.h or i2c.h, but as these includes are already there, it 
-wouldn't make things worst :)
-
-What do you think of this approach?
-
-CJ
-
-> 
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Based on one of my script, this reduces the number of included files from
->> 573 files to 515 files when compiling drivers/iio/accel/st_accel_buffer.c
->> ---
->>   include/linux/iio/common/st_sensors.h | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
->> index 607c3a89a647..a1d3d57d6d6e 100644
->> --- a/include/linux/iio/common/st_sensors.h
->> +++ b/include/linux/iio/common/st_sensors.h
->> @@ -10,8 +10,6 @@
->>   #ifndef ST_SENSORS_H
->>   #define ST_SENSORS_H
->>   
->> -#include <linux/i2c.h>
->> -#include <linux/spi/spi.h>
->>   #include <linux/irqreturn.h>
->>   #include <linux/iio/iio.h>
->>   #include <linux/iio/trigger.h>
+On Mon, 19 Jun 2023 12:46:21 +0300, Dan Carpenter wrote:
+> The acpi_node_get_property_reference() function returns kernel error
+> codes and not ACPI error codes.  So, although it does not affect the
+> compiled code, using the ACPI_FAILURE() macro is wrong.  Secondly,
+> if the is_acpi_device_node() function returns false, then we should
+> return -ENOENT instead of returning success.
 > 
 > 
+> [...]
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: loongson: fix error codes in loongson_card_parse_acpi()
+      commit: 8fba13f02c85b90deeba65a398f55d4b43a79595
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
