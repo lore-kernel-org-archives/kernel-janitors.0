@@ -2,88 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54797EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 07:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBECEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 07:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjFSHD5 (ORCPT
+        id S229808AbjFSHtl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 03:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
+        Mon, 19 Jun 2023 03:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbjFSHDz (ORCPT
+        with ESMTP id S229453AbjFSHtk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 03:03:55 -0400
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8DB1AC
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 00:03:54 -0700 (PDT)
-Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-62ff0e0c5d7so25356506d6.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 00:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687158233; x=1689750233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BD0zn/dSyiVOCfeRhW5pho39c7q1GjuHdqlvtRu3jqA=;
-        b=w4OcGG8A5Rf7WvGLN3b/lJAnbJKCrQcuVZ9HTVX1BoKvXZl63+knpSsidCVk+bAO1i
-         5eOAf+3sb668V+j+R9iN/1TxwaELDHBt/ESvwlbzhwQhLRQmbZm3tTNu11Sf6zJNMCjY
-         Wmo3TgS5PgYk/ZCoxlSRpeot3Nos+Fbt6MHa14ANmnz+e3dOKL9DakjoLcoxtddNSW4h
-         hq6yUQz7Yk/vc9g+ExAq6w9fkPodchDJ7sbLR7E487oJ6jkgupN1gP19cav7BEtdcAiq
-         3moQ8x9iT0ZzEAGHX4wuhdoGHogAfBMy2gkaGniCdeztBFZxXqP+x/locdRxtRdHT64m
-         hy3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687158233; x=1689750233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BD0zn/dSyiVOCfeRhW5pho39c7q1GjuHdqlvtRu3jqA=;
-        b=S4ZP9UgD+uhhXZ4tMO7yQ0z/xqzB6H05a/ZvweqJpTx4Mt57dZ8+UTpaGAwFnnok1h
-         QzcIOHgrdKsErO6uE+om1/4+Mg4MLaIlF2+zAeO6e0k8JRkhkMxHoy8YzO/qZOY3aHwr
-         I2yTt919yv4x2UVybJx/8KW7xrLwmWaiV9rKW9xVYHy69JuIToRt79DFa2HJ6uqr6+7C
-         lDDFulNiYqghTGLGFssvByJFcAMFjRMvSv3sUtHw3DR+g7VRHVxWY6bJeVG2QK5IR2Z1
-         ZkaGbE38BMjz59zOGKUJA3NPYNuQNzRZ7+A8gZbiggcvYP0e+M9BafgaqI0uakycx1wj
-         uCIg==
-X-Gm-Message-State: AC+VfDx+NRwdpRNOZmUU975Cn+a5eBwZS1VDYe8j8TocAymygOT9wzIZ
-        kY/4dBzGLz3sujwgR3iYqvdnJcjKrS15YPVuscAB8Q==
-X-Google-Smtp-Source: ACHHUZ6/AZutpaAxoSSJ5rEGLJl9sCW2hxbTF0gVbt9G2whH+uajcSBro+NPrPGt1FnuvTRrnLqoZbICzlzKJ4qZMrw=
-X-Received: by 2002:a05:6214:764:b0:62d:f68a:ee2d with SMTP id
- f4-20020a056214076400b0062df68aee2dmr9751586qvz.29.1687158233535; Mon, 19 Jun
- 2023 00:03:53 -0700 (PDT)
+        Mon, 19 Jun 2023 03:49:40 -0400
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 087B0C0;
+        Mon, 19 Jun 2023 00:49:37 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.22])
+        by gateway (Coremail) with SMTP id _____8DxAOmQCJBkr8gGAA--.12251S3;
+        Mon, 19 Jun 2023 15:49:36 +0800 (CST)
+Received: from [10.180.13.22] (unknown [10.180.13.22])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Ax6OSPCJBk5P8fAA--.24411S3;
+        Mon, 19 Jun 2023 15:49:35 +0800 (CST)
+Message-ID: <ae880c97-e38d-0f01-f349-a427ab4afd41@loongson.cn>
+Date:   Mon, 19 Jun 2023 15:49:12 +0800
 MIME-Version: 1.0
-References: <8de3aaf297931d655b9ad6aed548f4de8b85425a.1686998575.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8de3aaf297931d655b9ad6aed548f4de8b85425a.1686998575.git.christophe.jaillet@wanadoo.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Jun 2023 09:03:42 +0200
-Message-ID: <CACRpkdZFQxRyRzxi9E9mtJA_VHKW_k0=hzMnJNGH5RFqsBSZPQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: stmpe: Fix a corner case in stmpe_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Lee Jones <lee@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v4 1/3] ASoC: Add support for Loongson I2S controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        broonie@kernel.org, lgirdwood@gmail.com
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        loongarch@lists.linux.dev, loongson-kernel@lists.loongnix.cn,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Dan Carpenter <error27@gmail.com>,
+        kernel-janitors@vger.kernel.org
+References: <20230615122718.3412942-1-mengyingkun@loongson.cn>
+ <cf2f3bc9-3141-8d7b-b57d-73eac70a21d2@oracle.com>
+ <6901166d-387f-24de-6ffd-1c8eea724718@oracle.com>
+ <325dd825-6fa5-0ebc-4b7e-7acf2d2840e4@loongson.cn>
+ <bd4da934-72b7-67f3-0c9c-c18d3af16e7d@linaro.org>
+Content-Language: en-US
+From:   Yingkun Meng <mengyingkun@loongson.cn>
+In-Reply-To: <bd4da934-72b7-67f3-0c9c-c18d3af16e7d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8Ax6OSPCJBk5P8fAA--.24411S3
+X-CM-SenderInfo: 5phqw55lqjy33q6o00pqjv00gofq/1tbiAQAHDGSO9AIDRgAHsU
+X-Coremail-Antispam: 1Uk129KBj9xXoW7JrW5Ww15CrWUJF13Ar1rZrc_yoWkGFg_Xw
+        4q9wn8XFyUJay5Jrs7Kr9FvFyDXr13trn8Jw4rZF1UXwnrJF95Wr15Gwn3JrZrGrWUGr1U
+        Xrn8Wa43u3WUWosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+        cSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+        vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+        6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+        xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+        6r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+        1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
+        rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14
+        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+        MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUU
+        UU=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 12:43=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
 
-> In stmpe_probe(), if some regulator_enable() calls fail, probing continue=
-s
-> and there is only a dev_warn().
+On 2023/6/19 15:00, Krzysztof Kozlowski wrote:
+> On 19/06/2023 03:45, Yingkun Meng wrote:
+>>>>> +    tx_data->irq = fwnode_irq_get_byname(fwnode, "tx");
+>>>> Smatch detects that tx_data->irq and rx_data->irq are of type
+>>>> u32(unsigned) so they can never be negative.
+>>>>
+>>>>> +    if (tx_data->irq < 0) {
+>>>>               ^^^^^^^^ This can never be true.
+>>>>
+>>>> Should irq be of type 'int' instead?
+>>>>
+>>>>> +        dev_err(&pdev->dev, "dma tx irq invalid\n");
+>>>>> +        return tx_data->irq;
+>>>>> +    }
+>>>>> +
+>>>>> +    rx_data->irq = fwnode_irq_get_byname(fwnode, "rx");
+>>>>> +    if (rx_data->irq < 0) {
+>>>>               ^^^ Same problem here.
+>>>>
+>>>> Should irq
+>>> Should 'irq' be of type int instead?
+>>>
+>>> As fwnode_irq_get_byname() returns a integer.
+>>>
+>> Yes, you are right. I will add a patch to fix the type of 'irq' to int.
+> Run smatch and sparse on your code before posting. It would find such
+> trivial mistakes.
+
+Thanks, got it.
+
+Thanks,
+Yingkun
+
 >
-> So, if stmpe_probe() is called the regulator may not be enabled. It is
-> cleaner to test it before calling regulator_disable() in the remove
-> function.
->
-> Fixes: 9c9e321455fb ("mfd: stmpe: add optional regulators")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Best regards,
+> Krzysztof
 
-Looks correct!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
