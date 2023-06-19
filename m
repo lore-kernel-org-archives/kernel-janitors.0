@@ -2,66 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F77EEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 09:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0713DEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 09:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231244AbjFSJpe (ORCPT
+        id S231635AbjFSJqa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 05:45:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35458 "EHLO
+        Mon, 19 Jun 2023 05:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbjFSJpb (ORCPT
+        with ESMTP id S229453AbjFSJq3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 05:45:31 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0BD137
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 02:45:24 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f64fb05a8aso4204409e87.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 02:45:24 -0700 (PDT)
+        Mon, 19 Jun 2023 05:46:29 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D6583
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 02:46:28 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f904dcc1e2so21076805e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 02:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687167922; x=1689759922;
+        d=linaro.org; s=google; t=1687167986; x=1689759986;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3lOpQQ0uvTWgPqy3NfFpsxoyopGZCSNNgUhalRviPMo=;
-        b=Kk+QBVI7yTg74fnBrF7IkaShnYdyhhgUWKaQuSqM02qfCIfPGmcKgTm3BPWYTvPkZx
-         pTfT2WbuSrVHbOymL2SAdviQSj5ESxfCVBBiEYwpjMQ2ysE148PohBLIi1zkIx6xCsbm
-         NTCYivjNTEyd3BI+HgBLv0HuHXqEFyEhsgfhfnDNvkhsZ29Hxp3K6KxSQanCoxG1tcc5
-         jv45Mno/+m5QKxa2wJHJSpAba+NKB60PQjJ2MtBWmLXS3moACvI/WQwl5mt9DsAYCPTo
-         gHALTsAGPFtD5iKvLW+WUIdEQp01iGtPX06qJcbidyYZyUiCLo+XfOFC9JbEVshgR4pZ
-         JsWQ==
+        bh=6M9Rv0KlgnxeJQrvA7IK6DuAaqKWzv6g00dkXzmNXDc=;
+        b=fcSQc1deD1URFXbdWlSSIfn7u8lDlCzInRP/xq+zdBDEC1M3eHxfZ0OBAYT8Jw9R6P
+         0uLNQyifA7TLRfdUWgSVKQPi/QoX8aL2FOrhrua5lgdeIxL8iEHI17Ymw7+JGMd8nFss
+         xkuswJfc4FC//LUVQ0zNelxKy9Otqb0pDcELj5kiMXzQXteACI5CXzLg9L55VeHZgBP0
+         P6vhI75TAYS2d/lysUMP9eMaSZTny2lHju6axCMdjBtq9ZkObyKB2LEW259Nj7aSvz+g
+         gJ574nJMEEDUeoKXo/jXNVxgZuUTDWIFDP8lkFkoZ6FcEZaAu4LB1RrAJ9n/RQYa6UVD
+         qj8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687167922; x=1689759922;
+        d=1e100.net; s=20221208; t=1687167986; x=1689759986;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3lOpQQ0uvTWgPqy3NfFpsxoyopGZCSNNgUhalRviPMo=;
-        b=EEZv/SgPJYucjX3F0lp7YM1tui52zEPZEEf3lPHHU847HVM8Vf877SQro/v1upKJpe
-         ItjM++1rhlzxNP/UrNh8kmoBafibKKzzmcIQK+/CSlMi0H/LOg3JNGV2fQFOJ9FaMzkv
-         GG+yj663sw5JA/x7UcbpfZGZ9uXldjS75R97OHX54Y6EpGm5xifLzLJ1/bsN8l8/qPct
-         x1WNbSfZk0M9ufmYAbAWGgEQeiufqd4ggnjW7c53NHotqifu4Ssb+f/SW9J7lohVFrPD
-         0mhFk4PNwC8J0l42pt5jD7xIva/CZVkw+NRMGCQvIUaJaa6Pz6WJDb2o0IAOwKEB6QNh
-         oDBg==
-X-Gm-Message-State: AC+VfDwb9eEhPw09LAPGGxMI/kxgC/iYr2r3M1fd4EYglTXKu9dCB7UM
-        tcvglJgLhO/KEJrsPdVUmR1gAQ==
-X-Google-Smtp-Source: ACHHUZ5jSXfwChpHxsmYJaI2b4+nyll3e5wFqnVJMUlgcrfp2CP0jhwUV9PhBQ5RcAiCfixTsO9H0w==
-X-Received: by 2002:ac2:5b05:0:b0:4f8:424a:6804 with SMTP id v5-20020ac25b05000000b004f8424a6804mr5541064lfn.28.1687167922197;
-        Mon, 19 Jun 2023 02:45:22 -0700 (PDT)
+        bh=6M9Rv0KlgnxeJQrvA7IK6DuAaqKWzv6g00dkXzmNXDc=;
+        b=IWJ+58CUzNjKoiX63JfJYJHGJ0p889QnKEceKTBujm4qtBR1bmpiFL01NAfvYuL3Ct
+         HvFReGOoWVtOSNbiSUcJwJ/j840dLkLAjRjPmlryoxnUuTETd+VBYrzdebWviH9VPWO5
+         y3BD266jh8441P2nJUVZHuaUYY4xqtsnQ7+kK7Pjip8uK8WJPsTaP5+9qAnbfQk6f4R3
+         6yT0IqFMB8BhIkTElAijhwWMpgBGOBwOaRdLW/6Vy1fuIMhqyVn+tDuU/GSOa7M2GYZ1
+         14GvSv/7bx5S1qRjqDkxAqpYIxg6yVakTEf0cE9s6+kFEdCtLcIH8wlrD88nIW5ZXbGT
+         2hpQ==
+X-Gm-Message-State: AC+VfDw/au/dgzHoQUDqBKNLw7rXbDMNX3txqxqnq3/5w7l1yyiGr6tT
+        fVRFCojhrHaNgQw0mESvyvXgbQ==
+X-Google-Smtp-Source: ACHHUZ5NQJ8ggkO7cpuJuj6BsZIKvkW1PIxL0Dka2zvsKVvBrN+Is6Kmtk9wWAGEt+IbtA9DktOfFw==
+X-Received: by 2002:a1c:7211:0:b0:3f9:206:c3a6 with SMTP id n17-20020a1c7211000000b003f90206c3a6mr5152307wmc.20.1687167986646;
+        Mon, 19 Jun 2023 02:46:26 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o25-20020a1c7519000000b003f427687ba7sm10170599wmc.41.2023.06.19.02.45.20
+        by smtp.gmail.com with ESMTPSA id w19-20020a1cf613000000b003f8c5ceeb77sm10125244wmc.21.2023.06.19.02.46.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jun 2023 02:45:20 -0700 (PDT)
-Date:   Mon, 19 Jun 2023 12:45:17 +0300
+        Mon, 19 Jun 2023 02:46:25 -0700 (PDT)
+Date:   Mon, 19 Jun 2023 12:46:21 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Elen Song <elen.song@atmel.com>
-Cc:     Richard Genoud <richard.genoud@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@atmel.com>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: atmel: don't enable IRQs prematurely
-Message-ID: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
+To:     Yingkun Meng <mengyingkun@loongson.cn>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] ASoC: loongson: fix error codes in loongson_card_parse_acpi()
+Message-ID: <fb14815d-2f9a-4b42-b193-cec61e7417ca@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,39 +67,46 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The atmel_complete_tx_dma() function disables IRQs at the start
-of the function by calling spin_lock_irqsave(&port->lock, flags);
-There is no need to disable them a second time using the
-spin_lock_irq() function and, in fact, doing so is a bug because
-it will enable IRQs prematurely when we call spin_unlock_irq().
+The acpi_node_get_property_reference() function returns kernel error
+codes and not ACPI error codes.  So, although it does not affect the
+compiled code, using the ACPI_FAILURE() macro is wrong.  Secondly,
+if the is_acpi_device_node() function returns false, then we should
+return -ENOENT instead of returning success.
 
-Just use spin_lock/unlock() instead without disabling or enabling
-IRQs.
-
-Fixes: 08f738be88bb ("serial: at91: add tx dma support")
+Fixes: d24028606e76 ("ASoC: loongson: Add Loongson ASoC Sound Card Support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/tty/serial/atmel_serial.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/loongson/loongson_card.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 6e9192f122aa..3467a875641a 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -868,11 +868,11 @@ static void atmel_complete_tx_dma(void *arg)
- 		dmaengine_terminate_all(chan);
- 	uart_xmit_advance(port, atmel_port->tx_len);
- 
--	spin_lock_irq(&atmel_port->lock_tx);
-+	spin_lock(&atmel_port->lock_tx);
- 	async_tx_ack(atmel_port->desc_tx);
- 	atmel_port->cookie_tx = -EINVAL;
- 	atmel_port->desc_tx = NULL;
--	spin_unlock_irq(&atmel_port->lock_tx);
-+	spin_unlock(&atmel_port->lock_tx);
- 
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
+diff --git a/sound/soc/loongson/loongson_card.c b/sound/soc/loongson/loongson_card.c
+index 965eaf4e9109..08df05cb4328 100644
+--- a/sound/soc/loongson/loongson_card.c
++++ b/sound/soc/loongson/loongson_card.c
+@@ -81,9 +81,9 @@ static int loongson_card_parse_acpi(struct loongson_card_data *data)
+ 	/* fixup platform name based on reference node */
+ 	memset(&args, 0, sizeof(args));
+ 	ret = acpi_node_get_property_reference(fwnode, "cpu", 0, &args);
+-	if (ACPI_FAILURE(ret) || !is_acpi_device_node(args.fwnode)) {
++	if (ret || !is_acpi_device_node(args.fwnode)) {
+ 		dev_err(card->dev, "No matching phy in ACPI table\n");
+-		return ret;
++		return ret ?: -ENOENT;
+ 	}
+ 	adev = to_acpi_device_node(args.fwnode);
+ 	phy_dev = acpi_get_first_physical_node(adev);
+@@ -95,9 +95,9 @@ static int loongson_card_parse_acpi(struct loongson_card_data *data)
+ 	/* fixup codec name based on reference node */
+ 	memset(&args, 0, sizeof(args));
+ 	ret = acpi_node_get_property_reference(fwnode, "codec", 0, &args);
+-	if (ACPI_FAILURE(ret) || !is_acpi_device_node(args.fwnode)) {
++	if (ret || !is_acpi_device_node(args.fwnode)) {
+ 		dev_err(card->dev, "No matching phy in ACPI table\n");
+-		return ret;
++		return ret ?: -ENOENT;
+ 	}
+ 	adev = to_acpi_device_node(args.fwnode);
+ 	snprintf(codec_name, sizeof(codec_name), "i2c-%s", acpi_dev_name(adev));
 -- 
 2.39.2
 
