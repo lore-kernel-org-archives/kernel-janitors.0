@@ -2,96 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA58EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 18:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B276AEB64DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 18:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232220AbjFSSIw (ORCPT
+        id S232319AbjFSSUO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 14:08:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
+        Mon, 19 Jun 2023 14:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbjFSSIu (ORCPT
+        with ESMTP id S232310AbjFSSUM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 14:08:50 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7576E4D
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 11:08:45 -0700 (PDT)
+        Mon, 19 Jun 2023 14:20:12 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C31AF
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Jun 2023 11:20:11 -0700 (PDT)
 Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id BJIsqZyYl2I9nBJIsq55fS; Mon, 19 Jun 2023 20:08:40 +0200
+        id BJU0qoYbZd5eyBJU0qfXGy; Mon, 19 Jun 2023 20:20:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687198120;
-        bh=Wx1ETBPrfZZVrxxt24FvjkAxC9Gt56NgyV700P1vzmk=;
+        s=t20230301; t=1687198809;
+        bh=B/5FlROG/rPtzenJfdhoEzxZ2T0c2ssP3WxBw8vESxo=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=aJvD697bFSvOXhI7gVn7ySiizq9VhYJ8/bcvjQhj6M/j47SVwIfZsOvhrUiSZncHc
-         lMPrrmczuoCUo4jKMIhrcB2MONWjI6lncvMK3TvohySRKeK9arszdNON0uH8fYIP0l
-         zbbvXwCLosHjwETZzsiqUhz0LvW9iMFna6X/KluIUVFr5qHJoRr3UWVn0TXcpK6emU
-         Wt3HMSaEF/1EL6bCU9X+hfMuuPhfbflNkfHUhZNyjBIl9hvd0KxUUZ8vKXQcmiYWaD
-         fKUo4Y3uCp2AKhqv8dMSrh2cZxRvhbGJNHCPoOAwvMaVYTaDfGdzB9YZBPFHs9L2py
-         8xIAA9TV9dxwA==
+        b=Pcjw461124GvHKxG5bilxvynrtkMKBkffxsU3Wl2J5YDmJfcUIDzAhVK7LkO6KVMh
+         tWFn572qgb1PKTfxHNdHC4954DTdzodhANTteaM58M2aCrOINi1nlgpmTZX9Vpownt
+         AqFr6zvMdCnwV22bEn+koqORjAoSFyh/PfI9UXIBTqV0h7EUGYzqY9BNtV6ePPI8SY
+         xy7IsgKWWyZS6ca8WLPH4Ep6rqKMfBcT2bYV+uFusHAXkedG6bt3enSF2iMbMs+X4e
+         wR8SR8vOal3363fSlqiZ8U9/+S6gmSPHIkc7ndp1sk7cUR47hGoX8QfjRMAfxj0tt+
+         PE52QRzb4DZxQ==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Jun 2023 20:08:40 +0200
+X-ME-Date: Mon, 19 Jun 2023 20:20:09 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <e74dedeb-8fb0-8abf-5b14-1aae8e1462d2@wanadoo.fr>
-Date:   Mon, 19 Jun 2023 20:08:38 +0200
+Message-ID: <ba1a74ba-e91a-bf12-2d4e-7157e4519478@wanadoo.fr>
+Date:   Mon, 19 Jun 2023 20:20:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH] nvmet: Reorder fields in 'struct nvmet_ns'
-Content-Language: fr, en-US
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-References: <aea924d31f2bd2f740b1ccc6f462905bd6cab763.1682624855.git.christophe.jaillet@wanadoo.fr>
- <ba5df67e-534d-6f79-6277-80c755ca7e94@nvidia.com>
- <3decbaf1-250b-9b73-70fd-4cb9a204c452@kernel.dk>
- <00537d0c-159c-a802-6ed8-209109a69660@nvidia.com>
+Subject: Re: [PATCH] HID: Reorder fields in 'struct hid_field'
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+References: <a804f2e91bc32cc5e17e012ed90972415606db4e.1687075665.git.christophe.jaillet@wanadoo.fr>
+ <d6026b7f-dc07-4d0c-9805-cc61d6b9a4b8@kadam.mountain>
+Content-Language: fr
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <00537d0c-159c-a802-6ed8-209109a69660@nvidia.com>
+In-Reply-To: <d6026b7f-dc07-4d0c-9805-cc61d6b9a4b8@kadam.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 28/04/2023 à 01:07, Chaitanya Kulkarni a écrit :
-> On 4/27/23 16:01, Jens Axboe wrote:
->> On 4/27/23 4:59?PM, Chaitanya Kulkarni wrote:
->>> On 4/27/23 12:47, Christophe JAILLET wrote:
->>>> Group some variables based on their sizes to reduce holes.
->>>> On x86_64, this shrinks the size of 'struct nvmet_ns' from 520 to 512
->>>> bytes.
->>>>
->>> Although this looks good, we at least need to document what
->>> happens on other arch(s) which are not mentioned in the
->>> commit log ? is there a possibility that someone might come
->>> up with the contradictory data in future for the arch(s) which
->>> arch that are not mentioned here ?
->> The change is certainly not going to make things _worse_ for any arch,
->> so I think that's somewhat of a pointless exercise and an unreasonable
->> ask for something that makes sense on 64-bit arm/x86 and saves half the
->> space.
->>
+Le 19/06/2023 à 07:18, Dan Carpenter a écrit :
+> On Sun, Jun 18, 2023 at 10:08:07AM +0200, Christophe JAILLET wrote:
+>> diff --git a/include/linux/hid.h b/include/linux/hid.h
+>> index 39e21e3815ad..5be5e671c263 100644
+>> --- a/include/linux/hid.h
+>> +++ b/include/linux/hid.h
+>> @@ -480,9 +480,9 @@ struct hid_field {
+>>   	__s32     physical_maximum;
+>>   	__s32     unit_exponent;
+>>   	unsigned  unit;
+>> -	bool      ignored;		/* this field is ignored in this event */
+>>   	struct hid_report *report;	/* associated report */
+>>   	unsigned index;			/* index into report->field[] */
+>> +	bool      ignored;		/* this field is ignored in this event */
+>>   	/* hidinput data */
+>>   	struct hid_input *hidinput;	/* associated input structure */
+>>   	__u16 dpad;			/* dpad input code */
 > 
-> disregard my comment, looks good...
+> You could move the dpad next to the ignored to save another 4 bytes.
+> I think it is still grouped logically that way but I don't really know
+> what dpad is so I might be wrong.
 > 
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
+>    	struct hid_report *report;	/* associated report */
+>    	unsigned index;			/* index into report->field[] */
+> 	bool      ignored;		/* this field is ignored in this event */
+>   	/* hidinput data */
+>    	__u16 dpad;			/* dpad input code */
+>    	struct hid_input *hidinput;	/* associated input structure */
 > 
-> -ck
+> regards,
+> dan carpenter
 > 
 > 
 
-Hi,
+In fact, not really,
+It would fill a hole better, but would generate some padding at the end 
+of the struct:
 
+	bool                       ignored;              /*   108     1 */
 
-All my other nvmet patches have reached -next today, but this one seems 
-to be missing.
+	/* XXX 1 byte hole, try to pack */
 
-So this is a gentle reminder, in case it got lost somewhere.
+	__u16                      dpad;                 /*   110     2 */
+	struct hid_input *         hidinput;             /*   112     8 */
+	unsigned int               slot_idx;             /*   120     4 */
+
+	/* size: 128, cachelines: 2, members: 25 */
+	/* sum members: 119, holes: 2, sum holes: 5 */
+	/* padding: 4 */
+};
 
 CJ
