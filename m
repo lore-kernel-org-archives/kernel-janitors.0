@@ -2,68 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9DBEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 10:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184C5EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jun 2023 11:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbjFSKUz (ORCPT
+        id S231916AbjFSLD0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jun 2023 06:20:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        Mon, 19 Jun 2023 07:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbjFSKUw (ORCPT
+        with ESMTP id S232544AbjFSLC5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jun 2023 06:20:52 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B568798;
-        Mon, 19 Jun 2023 03:20:51 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E78626606F53;
-        Mon, 19 Jun 2023 11:20:49 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687170050;
-        bh=0SQkYnJ5OZn2pySciArIeOgIhxM+yYD/1GtLehRZoEk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=UcQTpcYm7Hq1FLbRzf1Pv5v/E5WaglkluO4lHCyeroKGwQ2rJKV5KvysEnQDUqO6M
-         YNqE7r6WK5Q7W9pkYOVrrdxEbWQxS6uvokhIGMu+CZxRPWnXkS6aFgFffWcGZ80vfn
-         vi8H7RVCgNqf6LDcAs8DPFPf32Zra6XVq4wxLhQixXja4SiNDy9gLoB9u9cS4XyHMy
-         TlRx5VQnztss5NlSNMuRobSFaI+1MwgEm5DUB9Dlq19SGP20mf7P98mSRkDtDpZM21
-         fkT1iNGV01UnzFd0X5cOiQdgydikYQ9QDmbT2crInUkJAfGKT6XH9PAvPywr3b3apq
-         4Q1ciVVSkD8rA==
-Message-ID: <ef11f724-5bd1-1ae3-906d-cd9407f242ab@collabora.com>
-Date:   Mon, 19 Jun 2023 12:20:47 +0200
+        Mon, 19 Jun 2023 07:02:57 -0400
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2053F1BC1;
+        Mon, 19 Jun 2023 04:01:53 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2b466066950so30229921fa.2;
+        Mon, 19 Jun 2023 04:01:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687172512; x=1689764512;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5ub7CNbo9A5jA0TlUemxCQlR/gijVVIGHXtI5ZYrlk=;
+        b=W0HztdJCCxW8+D4NSORvHOrGKgPat5fy4+38ZxujNc8z9noQy1yDdpEmPXse+o9Jip
+         q///4RbVg+qrF7JsynDzxZa/P4lPzAB8JMfCCGiVLZ38AYV2TpQR1FEu3lCMO8cEqko+
+         vqTCmWm4Dqzn0g2n6lM1LI0oKkbcwLSIvacu4xq6KWV/B6H2yMPDTAQI3UrKi8EZZ+fQ
+         Z+rEpyM9YyYyDJ6e+QBrpz/1s8xDs99YayLlhgtWsx28Qne77ihlA7NUNO6IEj0zgD1j
+         1x0sqsWkDeWRbJrMhN877hoFWPJEiCiaWuLDrH/EXeP+n+UUeS1KjZat27Cz3LYrFzAu
+         rEEQ==
+X-Gm-Message-State: AC+VfDwbkjpImiBKgaYq/7xkUYxXX582gyLCtGQQOMlGkTOzWIr9qtDk
+        93vzfjkBDBmCQUua+dKdC20=
+X-Google-Smtp-Source: ACHHUZ5fV1xxnrpgJhc20iKQcKzbgGqeO0Vt6hQnWYNhq/Oc2LkvQjCfCO/zFKhvzadDgMqPRpHoRw==
+X-Received: by 2002:a2e:8008:0:b0:2aa:41a1:cd70 with SMTP id j8-20020a2e8008000000b002aa41a1cd70mr5797686ljg.3.1687172511461;
+        Mon, 19 Jun 2023 04:01:51 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id bn14-20020a170906c0ce00b0095807ab4b57sm14751512ejb.178.2023.06.19.04.01.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jun 2023 04:01:50 -0700 (PDT)
+Message-ID: <d87d9f00-8d85-6220-43d3-51ef8e793193@kernel.org>
+Date:   Mon, 19 Jun 2023 13:01:49 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH] gnss: Use devm_regulator_get_enable_optional()
+Subject: Re: [PATCH] serial: atmel: don't enable IRQs prematurely
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Johan Hovold <johan@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <62effa7aa1a2023a77709e6416c57d9cb79a5ccc.1686995765.git.christophe.jaillet@wanadoo.fr>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <62effa7aa1a2023a77709e6416c57d9cb79a5ccc.1686995765.git.christophe.jaillet@wanadoo.fr>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Elen Song <elen.song@atmel.com>
+Cc:     Richard Genoud <richard.genoud@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@atmel.com>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 17/06/23 11:57, Christophe JAILLET ha scritto:
-> Use devm_regulator_get_enable_optional() instead of hand writing it. It
-> saves some line of code.
+On 19. 06. 23, 11:45, Dan Carpenter wrote:
+> The atmel_complete_tx_dma() function disables IRQs at the start
+> of the function by calling spin_lock_irqsave(&port->lock, flags);
+> There is no need to disable them a second time using the
+> spin_lock_irq() function and, in fact, doing so is a bug because
+> it will enable IRQs prematurely when we call spin_unlock_irq().
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Just use spin_lock/unlock() instead without disabling or enabling
+> IRQs.
+> 
+> Fixes: 08f738be88bb ("serial: at91: add tx dma support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/tty/serial/atmel_serial.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> index 6e9192f122aa..3467a875641a 100644
+> --- a/drivers/tty/serial/atmel_serial.c
+> +++ b/drivers/tty/serial/atmel_serial.c
+> @@ -868,11 +868,11 @@ static void atmel_complete_tx_dma(void *arg)
+>   		dmaengine_terminate_all(chan);
+>   	uart_xmit_advance(port, atmel_port->tx_len);
+>   
+> -	spin_lock_irq(&atmel_port->lock_tx);
+> +	spin_lock(&atmel_port->lock_tx);
+>   	async_tx_ack(atmel_port->desc_tx);
+>   	atmel_port->cookie_tx = -EINVAL;
+>   	atmel_port->desc_tx = NULL;
+> -	spin_unlock_irq(&atmel_port->lock_tx);
+> +	spin_unlock(&atmel_port->lock_tx);
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hmm, can you ensure the DMA engine code calls this with irqs disabled? 
+If so, you should document it in the commit log. If not, you shyuld use 
+_irqsave() variant.
 
+thanks,
+-- 
+js
+suse labs
 
