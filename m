@@ -2,91 +2,233 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 783ABEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 17:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED876EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 17:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjFTR3d (ORCPT
+        id S230220AbjFTRpd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 13:29:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
+        Tue, 20 Jun 2023 13:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231142AbjFTR3a (ORCPT
+        with ESMTP id S230182AbjFTRpc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 13:29:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CB71995;
-        Tue, 20 Jun 2023 10:29:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 68D4F61316;
-        Tue, 20 Jun 2023 17:29:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40909C433C0;
-        Tue, 20 Jun 2023 17:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687282154;
-        bh=lioq7mex040QABLYI2qsir/2Ee7Vlv3H1GUQrVC7a1g=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=AX/ucCzosrfmmUjihrXZ3Jg0wYzmj2LxqptcCPX9l82bXdhFy6lLM7RPLJ7vUYD0W
-         weIh5TYKkap/EMk/jiLL/wVvS1mlSVRXs8/5gBOw5Ou6iU28ZPwuPQd1I+0FQw9ait
-         CX1dpjYuKqhtXbQKqWbZdX2k8pnLfEE1wWKDL8z4L7EWF2Yj3NlSrz/KYGgRuoDvyB
-         sW9AHehm8X0F55BpKVlJVI4TCSKOYX8pFfnPJgQg21AfqOKccmMSCKxbeyivcHPW6A
-         P+84JtUO7wpckJpq0adzFYcO5aLQXGthq4hAu+J5ZxHuDX2bHt6lte70lnOfcoY2Db
-         mjkybMX9H1Iig==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shenghao Ding <13916275206@139.com>,
-        alsa-devel@alsa-project.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230620095620.2522058-1-colin.i.king@gmail.com>
-References: <20230620095620.2522058-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: tas2781: Fix spelling mistake
- "calibraiton" -> "calibration"
-Message-Id: <168728215296.92979.15498830214406273531.b4-ty@kernel.org>
-Date:   Tue, 20 Jun 2023 18:29:12 +0100
+        Tue, 20 Jun 2023 13:45:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 490101717
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 10:45:31 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id BfPwqBhhGRr8lBfPxqaN3y; Tue, 20 Jun 2023 19:45:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1687283129;
+        bh=2/+waEnWzeXtMJOt/78trIu5ZlSU+NbBWG4rUb/r93w=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=PEXJmsHVM3HsE5eoiGCxiZusIAoa9bGMvrAaQlxRo11qisIgoLn3uYvyOowc3PL7E
+         UuSKuaL8Kfa5Gp03Dq6qLKeLqcBwnq27wyv+a/9Iq7rHtT5bMeVKS5+cOTJHzs4XQv
+         oGfQ7COcU9u2e16RCPixnJedOPVxnBEO1i+Aw4BxIrYP049kT8hFYwjQnAZeR4ABBK
+         TOENup196BhnkA+0M54AYCg08IFgkyi77fjIq5xSALfJioevaHxL19gRVGvWSldjdh
+         AVSamY5b7h4Il3CS4BE6kqtbXmu/Hb4nkW0NtbLjs1FhsyUQk+CaIane+4+2NG92AC
+         V7bhMzTNyoc+g==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 20 Jun 2023 19:45:29 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <6f7a5ee4-7ebf-2973-de3f-b72af631f52a@wanadoo.fr>
+Date:   Tue, 20 Jun 2023 19:45:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-c6835
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net-next] net: phy: at803x: Use
+ devm_regulator_get_enable_optional()
+Content-Language: fr, en-US
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <f5fdf1a50bb164b4f59409d3a70a2689515d59c9.1687011839.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f5fdf1a50bb164b4f59409d3a70a2689515d59c9.1687011839.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Jun 2023 10:56:20 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err message. Fix it. Also fix
-> grammar and add space between last word and (%d)".
+Le 17/06/2023 à 16:24, Christophe JAILLET a écrit :
+> Use devm_regulator_get_enable_optional() instead of hand writing it. It
+> saves some line of code.
 > 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
 > 
+> If my reading is correct, regulator_disable() is still called in the same
+> order, should an error occur or the driver be removed.
+> ---
+>   drivers/net/phy/at803x.c | 44 +++++++---------------------------------
+>   1 file changed, 7 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
+> index 656136628ffd..c1f307d90518 100644
+> --- a/drivers/net/phy/at803x.c
+> +++ b/drivers/net/phy/at803x.c
+> @@ -304,7 +304,6 @@ struct at803x_priv {
+>   	bool is_1000basex;
+>   	struct regulator_dev *vddio_rdev;
+>   	struct regulator_dev *vddh_rdev;
+> -	struct regulator *vddio;
+>   	u64 stats[ARRAY_SIZE(at803x_hw_stats)];
+>   };
+>   
+> @@ -824,11 +823,11 @@ static int at803x_parse_dt(struct phy_device *phydev)
+>   		if (ret < 0)
+>   			return ret;
+>   
+> -		priv->vddio = devm_regulator_get_optional(&phydev->mdio.dev,
+> -							  "vddio");
+> -		if (IS_ERR(priv->vddio)) {
 
-Applied to
+Hi,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+my patch is not broken by itself, but the existing code looks spurious.
 
-Thanks!
+If the optional regulator is not found, then -ENODEV is returned, 
+at803x_parse_dt() will return this error and the probe will fail.
 
-[1/1] ASoC: tas2781: Fix spelling mistake "calibraiton" -> "calibration"
-      commit: 0a08778126284481c300336f1ba3d7b1906851a5
+It looks that the test should be more subtle.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+I can send a follow up patch, unless there is a better way to fix the 
+pre-existing issue.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+See [1] for a more detailed explanation.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+CJ
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+[1]: https://lore.kernel.org/all/ZJFqCQ8bbBoX3l1g@hovoldconsulting.com/
 
-Thanks,
-Mark
+> +		ret = devm_regulator_get_enable_optional(&phydev->mdio.dev,
+> +							 "vddio");
+> +		if (ret) {
+>   			phydev_err(phydev, "failed to get VDDIO regulator\n");
+> -			return PTR_ERR(priv->vddio);
+> +			return ret;
+>   		}
+>   
+>   		/* Only AR8031/8033 support 1000Base-X for SFP modules */
+> @@ -856,12 +855,6 @@ static int at803x_probe(struct phy_device *phydev)
+>   	if (ret)
+>   		return ret;
+>   
+> -	if (priv->vddio) {
+> -		ret = regulator_enable(priv->vddio);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> -
+>   	if (phydev->drv->phy_id == ATH8031_PHY_ID) {
+>   		int ccr = phy_read(phydev, AT803X_REG_CHIP_CONFIG);
+>   		int mode_cfg;
+> @@ -869,10 +862,8 @@ static int at803x_probe(struct phy_device *phydev)
+>   			.wolopts = 0,
+>   		};
+>   
+> -		if (ccr < 0) {
+> -			ret = ccr;
+> -			goto err;
+> -		}
+> +		if (ccr < 0)
+> +			return ccr;
+>   		mode_cfg = ccr & AT803X_MODE_CFG_MASK;
+>   
+>   		switch (mode_cfg) {
+> @@ -890,25 +881,11 @@ static int at803x_probe(struct phy_device *phydev)
+>   		ret = at803x_set_wol(phydev, &wol);
+>   		if (ret < 0) {
+>   			phydev_err(phydev, "failed to disable WOL on probe: %d\n", ret);
+> -			goto err;
+> +			return ret;
+>   		}
+>   	}
+>   
+>   	return 0;
+> -
+> -err:
+> -	if (priv->vddio)
+> -		regulator_disable(priv->vddio);
+> -
+> -	return ret;
+> -}
+> -
+> -static void at803x_remove(struct phy_device *phydev)
+> -{
+> -	struct at803x_priv *priv = phydev->priv;
+> -
+> -	if (priv->vddio)
+> -		regulator_disable(priv->vddio);
+>   }
+>   
+>   static int at803x_get_features(struct phy_device *phydev)
+> @@ -2021,7 +1998,6 @@ static struct phy_driver at803x_driver[] = {
+>   	.name			= "Qualcomm Atheros AR8035",
+>   	.flags			= PHY_POLL_CABLE_TEST,
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.config_aneg		= at803x_config_aneg,
+>   	.config_init		= at803x_config_init,
+>   	.soft_reset		= genphy_soft_reset,
+> @@ -2043,7 +2019,6 @@ static struct phy_driver at803x_driver[] = {
+>   	.name			= "Qualcomm Atheros AR8030",
+>   	.phy_id_mask		= AT8030_PHY_ID_MASK,
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.config_init		= at803x_config_init,
+>   	.link_change_notify	= at803x_link_change_notify,
+>   	.set_wol		= at803x_set_wol,
+> @@ -2059,7 +2034,6 @@ static struct phy_driver at803x_driver[] = {
+>   	.name			= "Qualcomm Atheros AR8031/AR8033",
+>   	.flags			= PHY_POLL_CABLE_TEST,
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.config_init		= at803x_config_init,
+>   	.config_aneg		= at803x_config_aneg,
+>   	.soft_reset		= genphy_soft_reset,
+> @@ -2082,7 +2056,6 @@ static struct phy_driver at803x_driver[] = {
+>   	PHY_ID_MATCH_EXACT(ATH8032_PHY_ID),
+>   	.name			= "Qualcomm Atheros AR8032",
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.flags			= PHY_POLL_CABLE_TEST,
+>   	.config_init		= at803x_config_init,
+>   	.link_change_notify	= at803x_link_change_notify,
+> @@ -2100,7 +2073,6 @@ static struct phy_driver at803x_driver[] = {
+>   	PHY_ID_MATCH_EXACT(ATH9331_PHY_ID),
+>   	.name			= "Qualcomm Atheros AR9331 built-in PHY",
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.suspend		= at803x_suspend,
+>   	.resume			= at803x_resume,
+>   	.flags			= PHY_POLL_CABLE_TEST,
+> @@ -2117,7 +2089,6 @@ static struct phy_driver at803x_driver[] = {
+>   	PHY_ID_MATCH_EXACT(QCA9561_PHY_ID),
+>   	.name			= "Qualcomm Atheros QCA9561 built-in PHY",
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.suspend		= at803x_suspend,
+>   	.resume			= at803x_resume,
+>   	.flags			= PHY_POLL_CABLE_TEST,
+> @@ -2183,7 +2154,6 @@ static struct phy_driver at803x_driver[] = {
+>   	.name			= "Qualcomm QCA8081",
+>   	.flags			= PHY_POLL_CABLE_TEST,
+>   	.probe			= at803x_probe,
+> -	.remove			= at803x_remove,
+>   	.config_intr		= at803x_config_intr,
+>   	.handle_interrupt	= at803x_handle_interrupt,
+>   	.get_tunable		= at803x_get_tunable,
 
