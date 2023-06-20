@@ -2,97 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9344EEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E87EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbjFTIz7 (ORCPT
+        id S231489AbjFTI5v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 04:55:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54570 "EHLO
+        Tue, 20 Jun 2023 04:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjFTIz7 (ORCPT
+        with ESMTP id S229522AbjFTI5u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 04:55:59 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 84F9110DB;
-        Tue, 20 Jun 2023 01:55:56 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 09F1760C12808;
-        Tue, 20 Jun 2023 16:55:44 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch
-Cc:     dan.carpenter@linaro.org, Jane.Jian@amd.com, Likun.Gao@amd.com,
-        David.Francis@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-Subject: [PATCH] =?UTF-8?q?drm/amd/amdgpu:=20Use=20=E2=80=9C=5F=5Fpacked?= =?UTF-8?q?=E2=80=9C=20instead=20of=20"pragma=20pack()"?=
-Date:   Tue, 20 Jun 2023 16:55:43 +0800
-Message-Id: <20230620085543.576733-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 20 Jun 2023 04:57:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1070CC2;
+        Tue, 20 Jun 2023 01:57:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E7FD61085;
+        Tue, 20 Jun 2023 08:57:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F082CC433C8;
+        Tue, 20 Jun 2023 08:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687251466;
+        bh=0qe/Z9LyLuIqgETnC5j202kEcOTwTRbAceQ/gOZTaj8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KfXkHyYRsB97X7DlcdLp5cqmuulW2nfNX0qgaermKjC3C6AtLqQBLifBqC5OGfXtX
+         A04R9cAzLJNZPJ6Xwb3WuaV4C6J+21FuiSP9KYmWVVTmSshM/brAqwr2M+TJXCL4/g
+         jE2PbUjW/hh7lf99xstkTSaB9kwzOvs1eFZDODA37iGAN0TQ0t9WItyLMBZ6WsgMET
+         l2ByxAVA4k5h7YU3N4h1wDfy74HQt/rVttqUIGCoEmyEy8J+PwJk9JKimTECwGAnlM
+         aQBHhCCb3Jiy0+ukFECxIKdbysTXCx6MykHud2OpNTUEWq/wXzm9fL0t5StKdH8Svt
+         seIpk3bWrUtPg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1qBXBJ-0007Xj-6f; Tue, 20 Jun 2023 10:57:45 +0200
+Date:   Tue, 20 Jun 2023 10:57:45 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] gnss: Use devm_regulator_get_enable_optional()
+Message-ID: <ZJFqCQ8bbBoX3l1g@hovoldconsulting.com>
+References: <62effa7aa1a2023a77709e6416c57d9cb79a5ccc.1686995765.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62effa7aa1a2023a77709e6416c57d9cb79a5ccc.1686995765.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-use "__packed" is clearer amd better than “pragma pack()”.
+On Sat, Jun 17, 2023 at 11:57:09AM +0200, Christophe JAILLET wrote:
+> Use devm_regulator_get_enable_optional() instead of hand writing it. It
+> saves some line of code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Note that regulator_disable() is now called after gnss_serial_free() in
+> the error handling path of the probe and in the remove function, but it
+> looks harmless to me.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
-As Dan Carpenter mentioned:
-'"Mark the associated types properly packed individually, rather than
-use the disgusting "pragma pack()" that should never be used."
-https://lore.kernel.org/linux-sparse/CAHk-=wi7jGZ+bVbt-UfXOkpEQdHzF3Z2HBjkGdjh8q4dvPPGWQ@mail.gmail.com/'
-use "__packed" is better.
-the previous wrong patch's address:
-https://lore.kernel.org/kernel-janitors/c12c4031-52fb-25a2-b411-e668eb9baaa2@tom.com/T/#t
- drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Yeah, that bit should be fine.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-index 24d42d24e6a0..025adc950026 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-@@ -83,8 +83,6 @@ enum amd_sriov_ucode_engine_id {
- 	AMD_SRIOV_UCODE_ID__MAX
- };
- 
--#pragma pack(push, 1) // PF2VF / VF2PF data areas are byte packed
--
- union amd_sriov_msg_feature_flags {
- 	struct {
- 		uint32_t error_log_collect : 1;
-@@ -210,7 +208,7 @@ struct amd_sriov_msg_pf2vf_info {
- 	uint32_t pcie_atomic_ops_support_flags;
- 	/* reserved */
- 	uint32_t reserved[256 - AMD_SRIOV_MSG_PF2VF_INFO_FILLED_SIZE];
--};
-+} __packed;
- 
- struct amd_sriov_msg_vf2pf_info_header {
- 	/* the total structure size in byte */
-@@ -263,7 +261,7 @@ struct amd_sriov_msg_vf2pf_info {
- 	struct {
- 		uint8_t id;
- 		uint32_t version;
--	} ucode_info[AMD_SRIOV_MSG_RESERVE_UCODE];
-+	} __packed ucode_info[AMD_SRIOV_MSG_RESERVE_UCODE];
- 	uint64_t dummy_page_addr;
- 
- 	/* reserved */
-@@ -301,8 +299,6 @@ enum amd_sriov_gpu_init_data_version {
- 	GPU_INIT_DATA_READY_V1 = 1,
- };
- 
--#pragma pack(pop) // Restore previous packing option
--
- /* checksum function between host and guest */
- unsigned int amd_sriov_msg_checksum(void *obj, unsigned long obj_size, unsigned int key,
- 				    unsigned int checksum);
--- 
-2.30.2
+> ---
+>  drivers/gnss/mtk.c | 26 ++++----------------------
+>  1 file changed, 4 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gnss/mtk.c b/drivers/gnss/mtk.c
+> index c62b1211f4fe..d3d31295d4e0 100644
+> --- a/drivers/gnss/mtk.c
+> +++ b/drivers/gnss/mtk.c
+> @@ -17,7 +17,6 @@
+>  #include "serial.h"
+>  
+>  struct mtk_data {
+> -	struct regulator *vbackup;
+>  	struct regulator *vcc;
+>  };
+>  
+> @@ -87,30 +86,16 @@ static int mtk_probe(struct serdev_device *serdev)
+>  		goto err_free_gserial;
+>  	}
+>  
+> -	data->vbackup = devm_regulator_get_optional(&serdev->dev, "vbackup");
+> -	if (IS_ERR(data->vbackup)) {
+> -		ret = PTR_ERR(data->vbackup);
+> -		if (ret == -ENODEV)
+> -			data->vbackup = NULL;
+> -		else
+> -			goto err_free_gserial;
+> -	}
+> -
+> -	if (data->vbackup) {
+> -		ret = regulator_enable(data->vbackup);
+> -		if (ret)
+> -			goto err_free_gserial;
+> -	}
+> +	ret = devm_regulator_get_enable_optional(&serdev->dev, "vbackup");
+> +	if (ret)
+> +		goto err_free_gserial;
 
+But this breaks the driver as the new helper still returns -ENODEV when
+the optional is resource is not present.
+
+Wolfram already suggested using this new helper here:
+
+	https://lore.kernel.org/lkml/20230523064310.3005-3-wsa+renesas@sang-engineering.com
+
+and also got the error handling right even if that patch will require a
+respin for other reasons.
+
+As I mentioned in my reply to Wolfram, I'm generally sceptical of
+helpers like this one, but in this case where there are no dependencies
+on other resources I guess it's ok.
+
+Johan
