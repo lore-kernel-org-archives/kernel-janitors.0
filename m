@@ -2,149 +2,213 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20577EB64D8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 11:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E856FEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 11:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232596AbjFTLPl (ORCPT
+        id S232771AbjFTLp2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 07:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49312 "EHLO
+        Tue, 20 Jun 2023 07:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbjFTLPj (ORCPT
+        with ESMTP id S232758AbjFTLpZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 07:15:39 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5AFF10E4
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 04:15:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NQ8bcoQRDXtKNH6+cP7esSu8O93R9JSMei87dNh/44RtMuD9+dYroFTfmSWv/1XSuPYP/IPW8uf9r9PhkMzAJ16obrQCeO1JM5V7WuQ618a3fuT5awl5o0n98hcZGKUjmd9iIrrFTpO8DGzLU0ajP3mhkxSWLihCqNeNlQ8Y7CsrS0yYInQGOCLn3qYlZXGxo4cdNdtQuizlzQvVukoumh2UkROm3e+dOozKOcpORURSETZ6VU4NqsjfcT8mHR+o2M/9UI1CTcxImJjoNyLCODfxyz5R4S+pX76cRZsv/SJjT4bV8d4WbOzTK/HWaG+tQPhuZdOkHi5FUAkccr7AKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MvXI4qZpsfNgTgLBZ1GeO7np3QICIDt0g4hhhOslUDo=;
- b=ej9x4G7zQXSDHnJPoX+cOHcsXq8XBL83Kp0TMsUw4QcnzYhHaXus1z19/++WYZD5iiaxzp4iT0SV2lsyMmeYu+2i27s6tco1/SjAw3Hg2q5RsM94OpKHDRNEBfTyvedGlL3jTzPVjDfy3mAUMCSBknrhoGSLkmZUWAe3gb7snjqBB5TqpbYHojxoRH3cLUZYxmAkmv8L0KOprL2ozG/THTH4poCjqdnFkdPPQSmt0mtmyLpLr7qPlz/IqD8MBV/RsuvjYJzNQ9AeB+mBU3/9lz+9UTB8E2g5uLnPwc6UwunGpy9bxhRMzClBfp0lqi7NRhzskIpXTpnCXc+R8qS8ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MvXI4qZpsfNgTgLBZ1GeO7np3QICIDt0g4hhhOslUDo=;
- b=pFU4wfrvsMC05AYhpKZ4OI3/nAyqdNCsk7QrsPTjsZhVTW2z65+VhwgchHzwuHYsCqz2WaiiCa1rKp7uCBxvS9IsQ8+nWOnukLJTcTD4CYkvDjFH6BnBbrJ0GJXS8+vXIERw/xvdt3IYxkgloSFl1CVmabbnyRs7ubuALsLhSvWrntgzH30R/Hm8+Yoxhf9iEFClDhCXdyCFmEm+cbj25BOFyH7xxYha7JXzm8oJURp1xqNSDXzeoEjwn36JJO6Z03q04IyEGC9XzOlW1aRMm59sn5dS/5fzdAllAgE1/WhY2TIM2JU7MG4uG83L92T+jO0gZOixi9j9Id5ijTLcfQ==
-Received: from DS7PR07CA0019.namprd07.prod.outlook.com (2603:10b6:5:3af::7) by
- CH0PR12MB5204.namprd12.prod.outlook.com (2603:10b6:610:bb::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.37; Tue, 20 Jun 2023 11:15:34 +0000
-Received: from DM6NAM11FT099.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3af:cafe::59) by DS7PR07CA0019.outlook.office365.com
- (2603:10b6:5:3af::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21 via Frontend
- Transport; Tue, 20 Jun 2023 11:15:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT099.mail.protection.outlook.com (10.13.172.241) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.37 via Frontend Transport; Tue, 20 Jun 2023 11:15:34 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 20 Jun 2023
- 04:15:17 -0700
-Received: from [10.80.22.31] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 20 Jun
- 2023 04:15:16 -0700
-Message-ID: <2db43607-e9b1-06a8-dcaf-faa7a485aee7@nvidia.com>
-Date:   Tue, 20 Jun 2023 14:15:14 +0300
+        Tue, 20 Jun 2023 07:45:25 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356721718
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 04:45:20 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f9b258f3d8so16390125e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 04:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687261518; x=1689853518;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f7Veyn7bHZIc7TorEJ71+JnPGoCZU4BjMXACeWHsZJw=;
+        b=XSZA8onI7yQ2t2Zh0wp5rmgmYEpnYCEcsC8N1wOLRvApXKHT4dgzmWdxiaMIoGiDgq
+         rcgDRAbDLZu2c8cMP3Y9EySweyWgwVPybpO11dFKk6z9yhs2tVebn/mBVKO46fG4wkqs
+         117zbXui1O9TdXHvf1vU2fJdtCCiUH8+rrZEZVWNPiwTBjgXavmFwjTvdrKGTZVFpNpB
+         E9Cg3ftsnf873PueIfko4iry4CJgApFY9zthO17GujBcTU4eZjm05stCccdxJeqff/lR
+         xB63C1OrQgIcOm6w18uBB7ah6Fee1wvQao9UOq3zUQ3rvk1Zy6aBEB3xFiy48Bp+R2hK
+         zPCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687261518; x=1689853518;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7Veyn7bHZIc7TorEJ71+JnPGoCZU4BjMXACeWHsZJw=;
+        b=hHoYOwB+2aMyWMY6XCqmRpGhd+GLfWFdxGIQumSbBVjt8DyQr/31WRdNs0o3rvv5mI
+         IRd+NJSf+gY3/A3xSE3/hqNkJEvJ/D/9j2ZuMyzacSICZVv/hiQcPqFZQoqb5TtWOK9d
+         uYFNzKmDxm5nrMxKG26hXQeXE43fhBQVrhllVfcG/eu/AIfNgbTSyLXGehcuR1WQQufp
+         HRctVMf+DQIa8CQ7KYJobzlpdzP38kepdZfeQYeokkfOkQBGoWLvbaSMWQHM92dSrp2Y
+         c253iSY+Sfa94nOyMZmH+WaL2PYWU+Ma8gp/Km8Qjb1T4wqjc8ki+kOXJfRDuEaKAFYh
+         26mw==
+X-Gm-Message-State: AC+VfDy6UJGzEUZcOw7nYJMV/2Th9/sWEz6df9l/KnkwMuJXkFb0jwi6
+        LiiLKqngAmmK4uS5CRKoVGL1Lw==
+X-Google-Smtp-Source: ACHHUZ6NYDtqz2yBB903nkiTivamo6xZRwkr3WFywYd8OFhAHSJQgGxmZENm8F1plpUjDz5C5k+mig==
+X-Received: by 2002:a1c:7203:0:b0:3f6:774:fdc with SMTP id n3-20020a1c7203000000b003f607740fdcmr11087298wmc.18.1687261518608;
+        Tue, 20 Jun 2023 04:45:18 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id r7-20020adfce87000000b0030af54c5f33sm1789675wrn.113.2023.06.20.04.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 04:45:16 -0700 (PDT)
+Date:   Tue, 20 Jun 2023 14:45:12 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Thorsten Leemhuis <linux@leemhuis.info>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Tom Gall <tom.gall@linaro.org>, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] checkpatch: check for missing Fixes tags
+Message-ID: <ce2d9aa7-b1e6-402e-8471-ad52a321c008@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [bug report] net/mlx5: Move esw multiport devlink param to
- eswitch code
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     <kernel-janitors@vger.kernel.org>
-References: <dcf9c2cd-25d1-48b2-bdec-3d57de6da81e@moroto.mountain>
-Content-Language: en-US
-From:   Shay Drory <shayd@nvidia.com>
-In-Reply-To: <dcf9c2cd-25d1-48b2-bdec-3d57de6da81e@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT099:EE_|CH0PR12MB5204:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46f7372d-42ab-4a2b-8415-08db717faae5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jEX2OCP3oHB9ODqoFE65n/cz0WKo6QYR2fgkudzqoAcxbODxFWt2wmKPjwC7Tgy42b5sI7AFPn4Fcd9iWpLJO2G6WyLd67s/2ur7fUuWwV4q2I+41IIed7l/hhmPez0pjIR3ecXzZj354z42F0XhXEcpG/N6pxdSmbIXiOsdiqXlBug7STwLQ66PSmPMLjDWuBKMLRz7Adoz7nF9WUKuvR+r/4cAkFaS+LCTVExiYGFUMIqdKuoqAHtw+T4UI2WjQltZFMm4wQbCVc7wpsTdO2SvWdpRV5J2uPlUNouJEH1vOAc8zMp8RH6loc45z1+bzNwsNWDHGpmC1TOdsr+DzJ5JCIjVGB5UTdv6Pvi1fDiq2N5eh6mWKo5O/rDNmhBwBepzKZFvdTSF3gsnjuuylO7igaAg7IlfhDbJkVayQ8S9cPamHEWoQHm5pbfrYKefk9KgxHgVhK2t/nhZNs78PzpupHgK63p0WQOo+O3VkPcecEi1Rlssnl2xPWkHyoDAPly09xPrkcTpEmSLC8Z7p/6bSdSCpk82HJMqY/a41lNXctyIZjF1kNqqQtxVd76glm5s15oBkre2ojhSde6H/kUmIIN+OqV/lVwAyNb7pBrUQuWkSedMyTeYTtw0yFd7BhH3Xnrbn1P+/G+HpuEDjwt+EscgTVY6ZNxZKwhUJDipuOfEQwG85QC1NQZxRakkHYmldLMWYT4I1XQzK7Qw+8Ug6D0i471hpPBaiV1a/3CH+GUWIkPDCizq8zo9oKCkbmLaIeISl3X4Q/UFuxukgQ==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(39860400002)(136003)(346002)(451199021)(46966006)(40470700004)(36840700001)(31686004)(82310400005)(356005)(53546011)(26005)(16526019)(5660300002)(7636003)(8676002)(8936002)(82740400003)(186003)(478600001)(16576012)(36756003)(316002)(41300700001)(2906002)(70586007)(70206006)(4326008)(6916009)(86362001)(31696002)(40480700001)(2616005)(47076005)(36860700001)(40460700003)(83380400001)(426003)(336012)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2023 11:15:34.3604
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46f7372d-42ab-4a2b-8415-08db717faae5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT099.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5204
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I have a candidate fix, under internal review
+This check looks for common words that probably indicate a patch
+is a fix.  For now the regex is:
 
-On 14/06/2023 16:00, Dan Carpenter wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hello Shay Drory,
->
-> The patch 3f90840305e2: "net/mlx5: Move esw multiport devlink param
-> to eswitch code" from May 17, 2023, leads to the following Smatch
-> static checker warning:
->
->          drivers/net/ethernet/mellanox/mlx5/core/eswitch.c:1848 mlx5_eswitch_cleanup()
->          error: dereferencing freed memory 'esw'
->
-> drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
->      1828 void mlx5_eswitch_cleanup(struct mlx5_eswitch *esw)
->      1829 {
->      1830         if (!esw)
->      1831                 return;
->      1832
->      1833         esw_info(esw->dev, "cleanup\n");
->      1834
->      1835         esw->dev->priv.eswitch = NULL;
->      1836         destroy_workqueue(esw->work_queue);
->      1837         WARN_ON(refcount_read(&esw->qos.refcnt));
->      1838         mutex_destroy(&esw->state_lock);
->      1839         WARN_ON(!xa_empty(&esw->offloads.vhca_map));
->      1840         xa_destroy(&esw->offloads.vhca_map);
->      1841         ida_destroy(&esw->offloads.vport_metadata_ida);
->      1842         mlx5e_mod_hdr_tbl_destroy(&esw->offloads.mod_hdr);
->      1843         mutex_destroy(&esw->offloads.encap_tbl_lock);
->      1844         mutex_destroy(&esw->offloads.decap_tbl_lock);
->      1845         esw_offloads_cleanup(esw);
->      1846         mlx5_esw_vports_cleanup(esw);
->      1847         kfree(esw);
->                         ^^^
-> Free.
->
-> --> 1848         devl_params_unregister(priv_to_devlink(esw->dev), mlx5_eswitch_params,
->                                                          ^^^^^^^^
-> Use after free.
->
->      1849                                ARRAY_SIZE(mlx5_eswitch_params));
->      1850 }
->
-> regards,
-> dan carpenter
+	(?:BUG: KASAN|Call Trace:|stable\@|syzkaller)
+
+Why are stable patches encouraged to have a fixes tag?  Some people mark
+their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+still a good idea.  For example, the Fixes tag helps in review.  It
+helps people to not cherry-pick buggy patches without also
+cherry-picking the fix.
+
+Also if a bug affects the 5.7 kernel some people will round it up to
+5.10+ because 5.7 is not supported on kernel.org.  It's possible the Bad
+Binder bug was caused by this sort of gap where companies outside of
+kernel.org are supporting different kernels from kernel.org.
+
+Should it be counted as a Fix when a patch just silences harmless
+WARN_ON() stack trace.  Yes.  Definitely.
+
+Is silencing compiler warnings a fix?  It seems unfair to the original
+authors, but we use -Werror now, and warnings break the build so let's
+just add Fixes tags.  I tell people that silencing static checker
+warnings is not a fix but the rules on this vary by subsystem.
+
+Is fixing a minor LTP issue (Linux Test Project) a fix?  Probably?  It's
+hard to know what to do if the LTP test has technically always been
+broken.
+
+One clear false positive from this check is when someone updated their
+debug output and included before and after Call Traces.  Or when crashes
+are introduced deliberately for testing.  In those cases, you should
+just ignore checkpatch.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: I fixed the formatting issues Joe pointed out.  I also silenced the
+warning if the commit was a Revert because revert patches already
+include the hash.
+
+I tested adding Closes: and regression to the regexp, but in the end I
+left them out.  They both find some missing tags but they end up adding
+false positives.  The problem with "regression" is that people say "this
+doesn't cause a regression".  Closes: finds a lot of harmless static
+checker warnings.
+
+We're, no doubt, going to fine tune the regex in the future.  I ran this
+on the most recent 2000 patches and the results are good.  I'm also
+thinking about how to create a Fixes-tag-bot which searches lore for
+missing tags.
+
+ scripts/checkpatch.pl | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 7bfa4d39d17f..e059df623dea 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -28,6 +28,7 @@ my %verbose_messages = ();
+ my %verbose_emitted = ();
+ my $tree = 1;
+ my $chk_signoff = 1;
++my $chk_fixes_tag = 1;
+ my $chk_patch = 1;
+ my $tst_only;
+ my $emacs = 0;
+@@ -86,6 +87,7 @@ Options:
+   -v, --verbose              verbose mode
+   --no-tree                  run without a kernel tree
+   --no-signoff               do not check for 'Signed-off-by' line
++  --no-fixes-tag             do not check for 'Fixes:' tag
+   --patch                    treat FILE as patchfile (default)
+   --emacs                    emacs compile window format
+   --terse                    one line per report
+@@ -293,6 +295,7 @@ GetOptions(
+ 	'v|verbose!'	=> \$verbose,
+ 	'tree!'		=> \$tree,
+ 	'signoff!'	=> \$chk_signoff,
++	'fixes-tag!'	=> \$chk_fixes_tag,
+ 	'patch!'	=> \$chk_patch,
+ 	'emacs!'	=> \$emacs,
+ 	'terse!'	=> \$terse,
+@@ -1254,6 +1257,7 @@ sub git_commit_info {
+ }
+ 
+ $chk_signoff = 0 if ($file);
++$chk_fixes_tag = 0 if ($file);
+ 
+ my @rawlines = ();
+ my @lines = ();
+@@ -2633,6 +2637,9 @@ sub process {
+ 
+ 	our $clean = 1;
+ 	my $signoff = 0;
++	my $fixes_tag = 0;
++	my $is_revert = 0;
++	my $needs_fixes_tag = 0;
+ 	my $author = '';
+ 	my $authorsignoff = 0;
+ 	my $author_sob = '';
+@@ -3186,6 +3193,16 @@ sub process {
+ 			}
+ 		}
+ 
++# These indicate a bug fix
++		if (!$in_header_lines && !$is_patch &&
++			$line =~ /^This reverts commit/) {
++			$is_revert = 1;
++		}
++
++		if (!$in_header_lines && !$is_patch &&
++			$line =~ /\b(?:BUG: KASAN|Call Trace:|stable\@|syzkaller)/) {
++			$needs_fixes_tag = 1;
++		}
+ 
+ # Check Fixes: styles is correct
+ 		if (!$in_header_lines &&
+@@ -3198,6 +3215,7 @@ sub process {
+ 			my $id_length = 1;
+ 			my $id_case = 1;
+ 			my $title_has_quotes = 0;
++			$fixes_tag = 1;
+ 
+ 			if ($line =~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {
+ 				my $tag = $1;
+@@ -7636,6 +7654,12 @@ sub process {
+ 		ERROR("NOT_UNIFIED_DIFF",
+ 		      "Does not appear to be a unified-diff format patch\n");
+ 	}
++	if ($is_patch && $has_commit_log && $chk_fixes_tag) {
++		if ($needs_fixes_tag && !$is_revert && !$fixes_tag) {
++			WARN("MISSING_FIXES_TAG",
++			     "This looks like a fix but there is no Fixes: tag\n");
++		}
++	}
+ 	if ($is_patch && $has_commit_log && $chk_signoff) {
+ 		if ($signoff == 0) {
+ 			ERROR("MISSING_SIGN_OFF",
+-- 
+2.39.2
+
