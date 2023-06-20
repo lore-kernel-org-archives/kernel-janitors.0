@@ -2,99 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A2DEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 07:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BE3EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:06:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231578AbjFTH6X (ORCPT
+        id S231700AbjFTIGw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 03:58:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52448 "EHLO
+        Tue, 20 Jun 2023 04:06:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbjFTH55 (ORCPT
+        with ESMTP id S231712AbjFTIGn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 03:57:57 -0400
-Received: from smtp.tom.com (smtprz25.163.net [106.38.219.110])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF9E41B4
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 00:57:30 -0700 (PDT)
-Received: from my-app02.tom.com (my-app02.tom.com [127.0.0.1])
-        by freemail02.tom.com (Postfix) with ESMTP id B6292B00CBF
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 15:57:28 +0800 (CST)
-Received: from my-app02.tom.com (HELO smtp.tom.com) ([127.0.0.1])
-          by my-app02 (TOM SMTP Server) with SMTP ID 626210571
-          for <kernel-janitors@vger.kernel.org>;
-          Tue, 20 Jun 2023 15:57:28 +0800 (CST)
-Received: from antispam1.tom.com (unknown [172.25.16.55])
-        by freemail02.tom.com (Postfix) with ESMTP id A9E99B00D40
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 15:57:28 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tom.com; s=201807;
-        t=1687247848; bh=fe2gbNBOimrCNd/Vj8kpZhrYgncj1cjN6H+eAQuu4MY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Xlg98piG1s6bLBhNbXo7UBieV60r1wHPRuUNk7mBSncadT5C1LDiUEt+ERH1ZlZ4v
-         sPBIdHPT0N4B0m3KavXQL9d7eRznnDDxDo2eEhstuuP6RvFTmWddN7DkXKh/qh7UxE
-         Lcn6leovUXh2QV5XP9BoY42LSK3PSJ+rsDl1C8IU=
-Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
-        by antispam1.tom.com (Postfix) with ESMTP id A975CD41AF9
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 15:57:26 +0800 (CST)
-X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
-Received: from antispam1.tom.com ([127.0.0.1])
-        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id edLD0vxO6jtJ for <kernel-janitors@vger.kernel.org>;
-        Tue, 20 Jun 2023 15:57:25 +0800 (CST)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by antispam1.tom.com (Postfix) with ESMTPA id D096BD4140C;
-        Tue, 20 Jun 2023 15:57:22 +0800 (CST)
-Message-ID: <c12c4031-52fb-25a2-b411-e668eb9baaa2@tom.com>
-Date:   Tue, 20 Jun 2023 15:57:22 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] drm/amd/amdgpu: Properly tune the size of struct
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Su Hui <suhui@nfschina.com>
-Cc:     alexander.deucher@amd.com, airlied@gmail.com, Xinhui.Pan@amd.com,
-        daniel@ffwll.ch, David.Francis@amd.com, Jane.Jian@amd.com,
-        Bokun.Zhang@amd.com, monk.liu@amd.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Tue, 20 Jun 2023 04:06:43 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2543E68
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 01:06:41 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f9b1a117caso15795255e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 01:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687248400; x=1689840400;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dpAf75Epa+861D9oY47tt3qyQ5zTBW5nFqUpj0OqmkY=;
+        b=NoKTco0j3qXXxRS4tA6dTQdBwGyaAIqG8priYh8yO7q/N5QHL7J4gihRXmYSgneAv9
+         OB8Rzi9P2DzQDHw4wmh3vIqHiteD8ebBbrIb99MAYl0uEKDG4PyYYjm4tMJgPAjEJdX1
+         HJgG4gqMXxUFkE1caDD3JpznsxPWCBvPYXXH0LzbM4IdvCmIBNi+2rH7cEKCz1Go8b1I
+         V5nt2C0tOeCRH1TknlOGg8pu4SDFB34+d4Shnce48xVYdZsp4OgUBj2rwno43qSZ+h8P
+         9K3KkOyQWFXYd1StonSOUuhZZhTE1ofk/TajhZIKP4peVK5H1d7NW5Ah+/sbBNda4a7k
+         s1cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687248400; x=1689840400;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpAf75Epa+861D9oY47tt3qyQ5zTBW5nFqUpj0OqmkY=;
+        b=AkIhGCKTInDQIo0nXAFPt92NQs5EY2+D81tTOiyEgh6MOMdwqADOKXQLOtbQ5xNfVP
+         oVP6rRI2L92vk6e75u0c/wrXY8xlIPtlKi+ZrNUqPCj2XXGMH+vqTVkoFi+m+PBMOdpj
+         fLXD8nMQPJTGSFklw8nnQZd8VLcZwMGjefCxMCm9+14uF1/jh4dvETl+u8gK1d1cbpoJ
+         gYzDOJ/JuhJ6pz+XXTxwrfd7J0pB53jyj2DlxL4F0IklaGdnVJE3AIwL7atRCKRtNjcE
+         /eb1c5NR7dytJcYxRagjAm2m4zqKap1X3PQgAY50glV6ci3kCBYWsZeQDPN+TY7rz9kG
+         7KfA==
+X-Gm-Message-State: AC+VfDzacGepShmV0/4N77AhlWAxBSxSPrOPLG9UU+CTLniAqmelUyNg
+        Igt3YCPTh+QZpMSqh+6AQc0m0F1M4WkzQMkdzHc=
+X-Google-Smtp-Source: ACHHUZ7Iq5zLnkiPfQeKWzTl+u5DgpbsE0Nx3NaaeVH1Se7g4hl0Y4B42OMwGaUHOncBRff/bAZe9w==
+X-Received: by 2002:a1c:4c14:0:b0:3f9:b0c2:9ff7 with SMTP id z20-20020a1c4c14000000b003f9b0c29ff7mr3182486wmf.30.1687248400328;
+        Tue, 20 Jun 2023 01:06:40 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k9-20020a7bc409000000b003f9b24cf881sm4093945wmi.16.2023.06.20.01.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 01:06:38 -0700 (PDT)
+Date:   Tue, 20 Jun 2023 11:06:34 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Ivan Orlov <ivan.orlov0322@gmail.com>,
+        Immad Mir <mirimmad17@gmail.com>
+Cc:     WANG Xuerui <kernel@xen0n.name>,
+        Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20230620045919.492128-1-suhui@nfschina.com>
- <da6c860f-0ef0-44e4-8b58-0f4d55c1b8bd@kadam.mountain>
-From:   Longsuhui <Jack_sun@tom.com>
-In-Reply-To: <da6c860f-0ef0-44e4-8b58-0f4d55c1b8bd@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] LoongArch: Delete debugfs checking
+Message-ID: <7627f2b9-2287-46d2-b461-d33aa69931a8@moroto.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/6/20 15:37, Dan Carpenter wrote:
-> On Tue, Jun 20, 2023 at 12:59:19PM +0800, Su Hui wrote:
->> Smatch error:
->>      gpu/drm/amd/amdgpu/amdgv_sriovmsg.h:316:49: error:
->>      static assertion failed: "amd_sriov_msg_pf2vf_info must be 1 KB"
->>      static assertion failed: "amd_sriov_msg_vf2pf_info must be 1 KB"
->>
-> I doubt that moving the struct members around is safe.  This looks like
-> it's in a very specific order.  So I don't think this patch is correct.
->
-> The reason for this false positive this code uses a #pragma to pack the
-> struct.
->
-> #pragma pack(push, 1) // PF2VF / VF2PF data areas are byte packed
+Debugfs functions are not supposed to be checked for errors.  This
+is sort of unusual but it is described in the comments for the
+debugfs_create_dir() function.  Also debugfs_create_dir() can never
+return NULL.
 
-Oh, Sorry, I didn't see this code.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+I spotted this code because I was looking at patches which were sent
+to stable but without a Fixes tag.  The correct way of checking for
+error pointers is not IS_ERR_OR_NULL(), it's IS_ERR().  When a function
+returns both error pointers and NULL, the NULL should be treated as a
+special kind of success.  Please see my blog for more details.
 
-This patch is error, and sorry for the noise.
+https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
 
-> Sparse does not support this and Smatch uses Sparse as a parser.  The
-> main reason why Sparse doesn't support this pragma is because Linus
-> thinks it's gross.  You probably didn't even see the #pragma did you?
-> And anything you can't see is unreadable by definition.
->
-> "Mark the associated types properly packed individually, rather than
-> use the disgusting "pragma pack()" that should never be used."
->
-> https://lore.kernel.org/linux-sparse/CAHk-=wi7jGZ+bVbt-UfXOkpEQdHzF3Z2HBjkGdjh8q4dvPPGWQ@mail.gmail.com/
->
-> regards,
-> dan carpenter
+I have not included a Fixes tag here, because it's not really a bug fix,
+it's just a clean up.
+
+ arch/loongarch/kernel/unaligned.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/loongarch/kernel/unaligned.c b/arch/loongarch/kernel/unaligned.c
+index 85fae3d2d71a..3abf163dda05 100644
+--- a/arch/loongarch/kernel/unaligned.c
++++ b/arch/loongarch/kernel/unaligned.c
+@@ -485,8 +485,6 @@ static int __init debugfs_unaligned(void)
+ 	struct dentry *d;
+ 
+ 	d = debugfs_create_dir("loongarch", NULL);
+-	if (IS_ERR_OR_NULL(d))
+-		return -ENOMEM;
+ 
+ 	debugfs_create_u32("unaligned_instructions_user",
+ 				S_IRUGO, d, &unaligned_instructions_user);
+-- 
+2.39.2
+
