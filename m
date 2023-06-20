@@ -2,104 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BE3EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9344EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231700AbjFTIGw (ORCPT
+        id S230526AbjFTIz7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 04:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
+        Tue, 20 Jun 2023 04:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231712AbjFTIGn (ORCPT
+        with ESMTP id S229522AbjFTIz7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 04:06:43 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2543E68
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 01:06:41 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f9b1a117caso15795255e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Jun 2023 01:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687248400; x=1689840400;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dpAf75Epa+861D9oY47tt3qyQ5zTBW5nFqUpj0OqmkY=;
-        b=NoKTco0j3qXXxRS4tA6dTQdBwGyaAIqG8priYh8yO7q/N5QHL7J4gihRXmYSgneAv9
-         OB8Rzi9P2DzQDHw4wmh3vIqHiteD8ebBbrIb99MAYl0uEKDG4PyYYjm4tMJgPAjEJdX1
-         HJgG4gqMXxUFkE1caDD3JpznsxPWCBvPYXXH0LzbM4IdvCmIBNi+2rH7cEKCz1Go8b1I
-         V5nt2C0tOeCRH1TknlOGg8pu4SDFB34+d4Shnce48xVYdZsp4OgUBj2rwno43qSZ+h8P
-         9K3KkOyQWFXYd1StonSOUuhZZhTE1ofk/TajhZIKP4peVK5H1d7NW5Ah+/sbBNda4a7k
-         s1cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687248400; x=1689840400;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dpAf75Epa+861D9oY47tt3qyQ5zTBW5nFqUpj0OqmkY=;
-        b=AkIhGCKTInDQIo0nXAFPt92NQs5EY2+D81tTOiyEgh6MOMdwqADOKXQLOtbQ5xNfVP
-         oVP6rRI2L92vk6e75u0c/wrXY8xlIPtlKi+ZrNUqPCj2XXGMH+vqTVkoFi+m+PBMOdpj
-         fLXD8nMQPJTGSFklw8nnQZd8VLcZwMGjefCxMCm9+14uF1/jh4dvETl+u8gK1d1cbpoJ
-         gYzDOJ/JuhJ6pz+XXTxwrfd7J0pB53jyj2DlxL4F0IklaGdnVJE3AIwL7atRCKRtNjcE
-         /eb1c5NR7dytJcYxRagjAm2m4zqKap1X3PQgAY50glV6ci3kCBYWsZeQDPN+TY7rz9kG
-         7KfA==
-X-Gm-Message-State: AC+VfDzacGepShmV0/4N77AhlWAxBSxSPrOPLG9UU+CTLniAqmelUyNg
-        Igt3YCPTh+QZpMSqh+6AQc0m0F1M4WkzQMkdzHc=
-X-Google-Smtp-Source: ACHHUZ7Iq5zLnkiPfQeKWzTl+u5DgpbsE0Nx3NaaeVH1Se7g4hl0Y4B42OMwGaUHOncBRff/bAZe9w==
-X-Received: by 2002:a1c:4c14:0:b0:3f9:b0c2:9ff7 with SMTP id z20-20020a1c4c14000000b003f9b0c29ff7mr3182486wmf.30.1687248400328;
-        Tue, 20 Jun 2023 01:06:40 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k9-20020a7bc409000000b003f9b24cf881sm4093945wmi.16.2023.06.20.01.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jun 2023 01:06:38 -0700 (PDT)
-Date:   Tue, 20 Jun 2023 11:06:34 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Ivan Orlov <ivan.orlov0322@gmail.com>,
-        Immad Mir <mirimmad17@gmail.com>
-Cc:     WANG Xuerui <kernel@xen0n.name>,
-        Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] LoongArch: Delete debugfs checking
-Message-ID: <7627f2b9-2287-46d2-b461-d33aa69931a8@moroto.mountain>
+        Tue, 20 Jun 2023 04:55:59 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 84F9110DB;
+        Tue, 20 Jun 2023 01:55:56 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 09F1760C12808;
+        Tue, 20 Jun 2023 16:55:44 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch
+Cc:     dan.carpenter@linaro.org, Jane.Jian@amd.com, Likun.Gao@amd.com,
+        David.Francis@amd.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: [PATCH] =?UTF-8?q?drm/amd/amdgpu:=20Use=20=E2=80=9C=5F=5Fpacked?= =?UTF-8?q?=E2=80=9C=20instead=20of=20"pragma=20pack()"?=
+Date:   Tue, 20 Jun 2023 16:55:43 +0800
+Message-Id: <20230620085543.576733-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Debugfs functions are not supposed to be checked for errors.  This
-is sort of unusual but it is described in the comments for the
-debugfs_create_dir() function.  Also debugfs_create_dir() can never
-return NULL.
+use "__packed" is clearer amd better than “pragma pack()”.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-I spotted this code because I was looking at patches which were sent
-to stable but without a Fixes tag.  The correct way of checking for
-error pointers is not IS_ERR_OR_NULL(), it's IS_ERR().  When a function
-returns both error pointers and NULL, the NULL should be treated as a
-special kind of success.  Please see my blog for more details.
+As Dan Carpenter mentioned:
+'"Mark the associated types properly packed individually, rather than
+use the disgusting "pragma pack()" that should never be used."
+https://lore.kernel.org/linux-sparse/CAHk-=wi7jGZ+bVbt-UfXOkpEQdHzF3Z2HBjkGdjh8q4dvPPGWQ@mail.gmail.com/'
+use "__packed" is better.
+the previous wrong patch's address:
+https://lore.kernel.org/kernel-janitors/c12c4031-52fb-25a2-b411-e668eb9baaa2@tom.com/T/#t
+ drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
-
-I have not included a Fixes tag here, because it's not really a bug fix,
-it's just a clean up.
-
- arch/loongarch/kernel/unaligned.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/loongarch/kernel/unaligned.c b/arch/loongarch/kernel/unaligned.c
-index 85fae3d2d71a..3abf163dda05 100644
---- a/arch/loongarch/kernel/unaligned.c
-+++ b/arch/loongarch/kernel/unaligned.c
-@@ -485,8 +485,6 @@ static int __init debugfs_unaligned(void)
- 	struct dentry *d;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
+index 24d42d24e6a0..025adc950026 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
+@@ -83,8 +83,6 @@ enum amd_sriov_ucode_engine_id {
+ 	AMD_SRIOV_UCODE_ID__MAX
+ };
  
- 	d = debugfs_create_dir("loongarch", NULL);
--	if (IS_ERR_OR_NULL(d))
--		return -ENOMEM;
+-#pragma pack(push, 1) // PF2VF / VF2PF data areas are byte packed
+-
+ union amd_sriov_msg_feature_flags {
+ 	struct {
+ 		uint32_t error_log_collect : 1;
+@@ -210,7 +208,7 @@ struct amd_sriov_msg_pf2vf_info {
+ 	uint32_t pcie_atomic_ops_support_flags;
+ 	/* reserved */
+ 	uint32_t reserved[256 - AMD_SRIOV_MSG_PF2VF_INFO_FILLED_SIZE];
+-};
++} __packed;
  
- 	debugfs_create_u32("unaligned_instructions_user",
- 				S_IRUGO, d, &unaligned_instructions_user);
+ struct amd_sriov_msg_vf2pf_info_header {
+ 	/* the total structure size in byte */
+@@ -263,7 +261,7 @@ struct amd_sriov_msg_vf2pf_info {
+ 	struct {
+ 		uint8_t id;
+ 		uint32_t version;
+-	} ucode_info[AMD_SRIOV_MSG_RESERVE_UCODE];
++	} __packed ucode_info[AMD_SRIOV_MSG_RESERVE_UCODE];
+ 	uint64_t dummy_page_addr;
+ 
+ 	/* reserved */
+@@ -301,8 +299,6 @@ enum amd_sriov_gpu_init_data_version {
+ 	GPU_INIT_DATA_READY_V1 = 1,
+ };
+ 
+-#pragma pack(pop) // Restore previous packing option
+-
+ /* checksum function between host and guest */
+ unsigned int amd_sriov_msg_checksum(void *obj, unsigned long obj_size, unsigned int key,
+ 				    unsigned int checksum);
 -- 
-2.39.2
+2.30.2
 
