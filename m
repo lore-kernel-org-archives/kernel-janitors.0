@@ -2,84 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960B1EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 08:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56A7EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jun 2023 10:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231731AbjFTI7J (ORCPT
+        id S232505AbjFTJ7u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 04:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56264 "EHLO
+        Tue, 20 Jun 2023 05:59:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229976AbjFTI7I (ORCPT
+        with ESMTP id S232518AbjFTJ7L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 04:59:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A65C2;
-        Tue, 20 Jun 2023 01:59:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 84E2A60F78;
-        Tue, 20 Jun 2023 08:59:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DB1C433C9;
-        Tue, 20 Jun 2023 08:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687251546;
-        bh=Q76e9KS89JkCi6z+8bBTIgdM00Yu5UYDLIbWK9nqQPs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z6aKi3mthlK9NFT+ZqMLhFez1ZEp6G+H7Jp8AV9W/lFmmhergRz7pcpTe8jQFT2yR
-         Y0PBzxyV8JCNKRkwXh7Sgsrkh941eFOS9njY9/pt6erg3VE0XdmNI6uEd4FaOo80Ge
-         9L69BjrWaQ6ECE2nVSeS2WrShZh8YzFbVHuTTcf0CVXwaNeXDrMxYMP6qnW/jH6m4z
-         xpiBG+CWPVRuEvHZTis8HNBliy6y4XKJeXkCG4kBQS5qG0+ugBlFfUdkYOsvZVoErQ
-         t1GfkPM0rCQ4YOJD+QjyCnY7ASe/NMhVyR0C/T5qbh0Eo88sinBic0FyTOjyBXr8hF
-         wY3DYmctOZe6w==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1qBXCc-0007YJ-Rr; Tue, 20 Jun 2023 10:59:06 +0200
-Date:   Tue, 20 Jun 2023 10:59:06 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gnss: ubx: Use devm_regulator_get_enable_optional()
-Message-ID: <ZJFqWuKgoQfH7PMP@hovoldconsulting.com>
-References: <c398861197e9d5e28fa2420089abd9c3adb61a87.1686996063.git.christophe.jaillet@wanadoo.fr>
+        Tue, 20 Jun 2023 05:59:11 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF4E619AC;
+        Tue, 20 Jun 2023 02:56:23 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3112f256941so2509825f8f.1;
+        Tue, 20 Jun 2023 02:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687254982; x=1689846982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nzfSnFwwgUKGBxhz4K3sxN6CVZIzUqaHD5LMCxLNTs=;
+        b=nQZMj+0R5+KtxAXE0ZEN5ZZdFles83qKs8iX+fsg0noiCxN6QmGAD6ma8fz06kMDaR
+         XQNjrEiFt3dtK1/l3kNeazgIIK42SDIEKr96LHiUIxWZJjIQv5V4iY0IFAPENO16ZAQo
+         FVOmaLdV5jFqjVz2hHie1anPFYgc9EzCMcN5WBFl7npcHDdF8GgLkMWKtKS+z9mCnwz0
+         30VCojhkx80O0xpnXMG/JSkVIK4hnts0+yZU8+9hBov0VwbMe0E5jJgKRiAPVvRP/MIO
+         2XDGBf5iVoPFE2jvS7WVxE8nPGRuMj/xvjWkIAB9QfPodQnO0ivRf/ouX7DLff1t4/EX
+         /ZMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687254982; x=1689846982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2nzfSnFwwgUKGBxhz4K3sxN6CVZIzUqaHD5LMCxLNTs=;
+        b=d8JCC38dOHkwSs81sBmdxf7rRWYOAFwj1Oa61wU6cqTDO4AMHxGjCo2hcvwazSvgeH
+         hv2ofQrOv3+R9Lj7CupyLpY1fwsnZRE/zpt+lpXxFIQgAixYjeXMUcVvhgQ27aD/MDvu
+         IhuvxjWKEtJppEq+jAnr0wNlN7CICGgVNw8+QodEtELjZKxslt8T+mno3ecRzRSl7IP2
+         i4Fl3B0SmOy/9+BUOQCdDdKumNEjMYAvdQ4Ws1VZOwP36KatrsDNpR0vxhAHIC8glA6P
+         nrA4DAHOQOVEND+JmaDJ8wEPMiMYpOuaZc7uznUuL5XnphUNIvWlxPuRXp2JsXqHmr11
+         iakw==
+X-Gm-Message-State: AC+VfDxU2ZbxpkDXomBkif1CLW/mTgdVo1SZioMe39GDKLiyJhH4uyx3
+        2QEt+ZuW1HevaW/WeUbL6t/hyyBxXeHGCw==
+X-Google-Smtp-Source: ACHHUZ57QTB7wxq1J7LAwX05NJAArS4vx/ZblH3A3rVBL1H9ewMMGIwbkkwag/Q5ylBcYjKIpX35/g==
+X-Received: by 2002:adf:e7c2:0:b0:30f:c764:189a with SMTP id e2-20020adfe7c2000000b0030fc764189amr7427650wrn.39.1687254982152;
+        Tue, 20 Jun 2023 02:56:22 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i11-20020adffdcb000000b002fda1b12a0bsm1659046wrs.2.2023.06.20.02.56.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 02:56:21 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shenghao Ding <13916275206@139.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: tas2781: Fix spelling mistake "calibraiton" -> "calibration"
+Date:   Tue, 20 Jun 2023 10:56:20 +0100
+Message-Id: <20230620095620.2522058-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c398861197e9d5e28fa2420089abd9c3adb61a87.1686996063.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 12:01:22PM +0200, Christophe JAILLET wrote:
-> Use devm_regulator_get_enable_optional() instead of hand writing it. It
-> saves some line of code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+There is a spelling mistake in a dev_err message. Fix it. Also fix
+grammar and add space between last word and (%d)".
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/tas2781-fmwlib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index 432b19ccec8c..cbf0aef2c001 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -1863,7 +1863,7 @@ static int fw_parse_calibration_data(struct tasdevice_priv *tas_priv,
  
-> -	data->v_bckp = devm_regulator_get_optional(&serdev->dev, "v-bckp");
-> -	if (IS_ERR(data->v_bckp)) {
-> -		ret = PTR_ERR(data->v_bckp);
-> -		if (ret == -ENODEV)
-> -			data->v_bckp = NULL;
-> -		else
-> -			goto err_free_gserial;
-> -	}
-> -
-> -	if (data->v_bckp) {
-> -		ret = regulator_enable(data->v_bckp);
-> -		if (ret)
-> -			goto err_free_gserial;
-> -	}
-> +	ret = devm_regulator_get_enable_optional(&serdev->dev, "v-bckp");
-> +	if (ret)
-> +		goto err_free_gserial;
+ 	if (tas_fmw->nr_calibrations != 1) {
+ 		dev_err(tas_priv->dev,
+-			"%s: only support one calibraiton(%d)!\n",
++			"%s: only supports one calibration (%d)!\n",
+ 			__func__, tas_fmw->nr_calibrations);
+ 		goto out;
+ 	}
+-- 
+2.39.2
 
-Same here, this breaks the driver as -ENODEV is returned when the
-optional resource is not present.
-
-Johan
