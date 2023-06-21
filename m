@@ -2,56 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60007EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 03:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F83EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 03:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbjFUDk1 (ORCPT
+        id S230032AbjFUDk3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jun 2023 23:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39722 "EHLO
+        Tue, 20 Jun 2023 23:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjFUDkZ (ORCPT
+        with ESMTP id S229894AbjFUDkY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jun 2023 23:40:25 -0400
+        Tue, 20 Jun 2023 23:40:24 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E36198;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3A0418C;
         Tue, 20 Jun 2023 20:40:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 65AA96146F;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4420D6146B;
         Wed, 21 Jun 2023 03:40:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 994FFC433B9;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 60F3BC43397;
         Wed, 21 Jun 2023 03:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1687318822;
-        bh=NK1N2aQMpnuBCeeEnGrxPS114YRM2rtVU1C+C0MyWMI=;
+        bh=cHs6l9Wn/trqdIO7Zr4Fcl4039VfY2j7Men0yugCZeE=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=USB49LZglltl0GBj1jtG1wQOiJygPIBl1eJGs8Sh9+kyI4+A23UomTo2iaS7iHMzp
-         kUGTV3vgPaYOUnfXSWF+jHoQlQl/CdUtj/4I4BESKNhCTxgjLo8To7EDKS/p0Vg+Cv
-         DG/R85eIFZcID7kKcCQ89G8f51vlt9j6RU5KpwHffo+0jU2z93FXsAJdYCNaFwv19o
-         lh1zVUwbxqCuxzeZDvtVrUy3q5IoOQBXMHXm3ngcA3ejinWUk4mhaRh59spFGJVsMs
-         TUOE7rUCcVKL61ttX06Xft1ADN/2j9g3Z9vA/5NJG+HWC34fobHgeROD9PX8q6AX6j
-         iGmTUjHxAukuQ==
+        b=HF6mOMwqZ2gY6bVO7ezyp68CC2wQ/qhiqRzVwiGcoqm34vx84Yl8eys8BQ5Fxr80A
+         Y77PKy1/YWCzD306jd/HuY8W7FzyUlv291JoMV4vfbh7npiSDVe9JsQW78hxUyjKXJ
+         De4oEeIdbZMpQ9IBEBIgycIpfFPezv4GBh68pnXsC1RXBzFXE5xBEP4O6+VXLpFeX4
+         6Jlvpf2/JlqGRheHGqJwqmWBtHWLMecM83p50T03vTiR1NUqBhtd/jOYf2rlfBCu1J
+         2G0E5K/C95kQr7YnvK7lNk3FEW6LJ9Yk1zJCoAGC9KHa+gHb5yanTNnJFm367F6MX9
+         P4ktl7g7SVOFg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 53821E2A038;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 333F5E2A036;
         Wed, 21 Jun 2023 03:40:22 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] netlabel: Reorder fields in 'struct
- netlbl_domaddr6_map'
+Subject: Re: [PATCH net-next] mctp: Reorder fields in 'struct mctp_route'
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168731882233.8371.7677968388605573961.git-patchwork-notify@kernel.org>
+Message-Id: <168731882220.8371.6776678967932751934.git-patchwork-notify@kernel.org>
 Date:   Wed, 21 Jun 2023 03:40:22 +0000
-References: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aa109847260e51e174c823b6d1441f75be370f01.1687083361.git.christophe.jaillet@wanadoo.fr>
+References: <393ad1a5aef0aa28d839eeb3d7477da0e0eeb0b0.1687080803.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <393ad1a5aef0aa28d839eeb3d7477da0e0eeb0b0.1687080803.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     paul@paul-moore.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Cc:     jk@codeconstruct.com.au, matt@codeconstruct.com.au,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -61,9 +60,9 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun, 18 Jun 2023 12:16:41 +0200 you wrote:
+On Sun, 18 Jun 2023 11:33:55 +0200 you wrote:
 > Group some variables based on their sizes to reduce hole and avoid padding.
-> On x86_64, this shrinks the size of 'struct netlbl_domaddr6_map'
+> On x86_64, this shrinks the size of 'struct mctp_route'
 > from 72 to 64 bytes.
 > 
 > It saves a few bytes of memory and is more cache-line friendly.
@@ -73,8 +72,8 @@ On Sun, 18 Jun 2023 12:16:41 +0200 you wrote:
 > [...]
 
 Here is the summary with links:
-  - [net-next] netlabel: Reorder fields in 'struct netlbl_domaddr6_map'
-    https://git.kernel.org/netdev/net-next/c/f0d952646bcf
+  - [net-next] mctp: Reorder fields in 'struct mctp_route'
+    https://git.kernel.org/netdev/net-next/c/066768b7305b
 
 You are awesome, thank you!
 -- 
