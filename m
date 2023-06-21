@@ -2,119 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA8DEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 13:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D757EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 14:01:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231787AbjFUN2p (ORCPT
+        id S232779AbjFUOB3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jun 2023 09:28:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        Wed, 21 Jun 2023 10:01:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbjFUN2n (ORCPT
+        with ESMTP id S232476AbjFUOBD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jun 2023 09:28:43 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB4E198D;
-        Wed, 21 Jun 2023 06:28:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 226A11FE70;
-        Wed, 21 Jun 2023 13:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687354120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kjdJelqDTVhJUB/xjRe3YFSz+MZjkGpTSPWW+f3VVfc=;
-        b=VT7erQCIx5B9U482i18hc1ZfkKVW5obeo78ahGlb6a59CHtH8U1LW82pxwZbTip6OD1Gt6
-        sC2KmiSWjoL6ARe4oO3vYd8l2tVpbcFIDWUSc22Y3+femt7NA3QfN6rNqYREqJuF63W/JR
-        Tqm+WnHIP1ge31S2kNosLapdStp5nfg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687354120;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kjdJelqDTVhJUB/xjRe3YFSz+MZjkGpTSPWW+f3VVfc=;
-        b=e/dOLJvQtsColjPEN4nfhF32U0kiM6zDcysERVE6H/veBdnsWn0VH7/G3pND2UbiZh0kBj
-        WURBZsifNDv5h1Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 14CC3134B1;
-        Wed, 21 Jun 2023 13:28:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YMMHBQj7kmSmaAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 21 Jun 2023 13:28:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A2190A075D; Wed, 21 Jun 2023 15:28:39 +0200 (CEST)
-Date:   Wed, 21 Jun 2023 15:28:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fsdax: remove redundant variable 'error'
-Message-ID: <20230621132839.rvu2pvhcizhbzmyf@quack3>
-References: <20230621130256.2676126-1-colin.i.king@gmail.com>
+        Wed, 21 Jun 2023 10:01:03 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38561BF1;
+        Wed, 21 Jun 2023 07:00:58 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f8fe9dc27aso45838415e9.3;
+        Wed, 21 Jun 2023 07:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687356057; x=1689948057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0TQPSS7a9Jk8gsZ9aLEqJ9x+mgzVCzVi1FpIGNdrBw=;
+        b=ZY+A+AK+0hrEqCQD5smhWHxGBgM513DkVqUqEYh8CTkbDkfBqlijxtada3pe1oO6RU
+         qAnRJTWbOw7A82AmMVkjSnGgvX4adfXs8QGiXJrf6X7elEipSkUouVQM6KxJnfJaRw+8
+         vdbu4y6FXWx7It3diymV26tO8gGqKRoKSSoMTKckwFi82e0p3wvuaMs8aGQchu5XJApv
+         QkZrVCkbKpxYOjOFUwzBkcJUPPHlM8kE7qx8DZKyA5a6EVkt5cdvnNqjMdW4F9A2c0YB
+         cR94RYWH0IbE/c70GB4u4tsRVhXZX3L3HbV4cX8rncCg6FMQcXkp4KO/kfrnykD+lcBw
+         f4pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687356057; x=1689948057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e0TQPSS7a9Jk8gsZ9aLEqJ9x+mgzVCzVi1FpIGNdrBw=;
+        b=EMLmnNOykIzH40j0JFdOmpmPlrnVyMp1JddyM1zX0xCXrJ/A+T84PO+OnDPkD3Svpk
+         n/u2C/2ARy95f2AGPm5A9bvRqGVG0MjFfMRYPb5yN+oafB/0IJzLTm8IfHaRgXzhjL7t
+         6lMrf5++Jn1SzPAyd/YZ6kIWbxt/yMgIIVDvVMoBfFcJqjEsHm1pYhI9HfCoI5qFfTdJ
+         U1dHqir0jK5G7fRAtO/gfeJcaHBdObiIi/QruGAN6imk+rcvXH34lUwxGYbAqo+Xwzr7
+         5lFESThKITTGHpXXQCFsoUBqci85KUqHW2fCumR/yhzEMcC0LNEVDp2jZalDkGZHzdxm
+         Gdnw==
+X-Gm-Message-State: AC+VfDyg2vKw1f1UVE+EVRc7VK7ZLI2FfLqv67IMjuhtVwQ1cJYLrsJA
+        v6JqjSml5dIfAJFIX1oDOA95RrTb8tS4ZQ==
+X-Google-Smtp-Source: ACHHUZ6USQ+jPF1zdYOcOD+fTnKNaYk6s6ff02iOn4dDuGOymqK21PvMoHXjGTGWe7LJlza2cc3yvw==
+X-Received: by 2002:a05:600c:2158:b0:3f9:aaa:37e7 with SMTP id v24-20020a05600c215800b003f90aaa37e7mr7285270wml.0.1687356056879;
+        Wed, 21 Jun 2023 07:00:56 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id u15-20020a05600c210f00b003f18b942338sm5118938wml.3.2023.06.21.07.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 07:00:56 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] hpfs: remove redundant variable r
+Date:   Wed, 21 Jun 2023 15:00:55 +0100
+Message-Id: <20230621140055.2679143-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621130256.2676126-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed 21-06-23 14:02:56, Colin Ian King wrote:
-> The variable 'error' is being assigned a value that is never read,
-> the assignment and the variable and redundant and can be removed.
-> Cleans up clang scan build warning:
-> 
-> fs/dax.c:1880:10: warning: Although the value stored to 'error' is
-> used in the enclosing expression, the value is never actually read
-> from 'error' [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Variable r is being assigned a value that is not being read, the
+assignment and the variable are redundant and can be removed. It
+is also useful to remove r as it's a confusing shadow of another
+variable r declared in a higher scope. Cleans up clang scan build
+warning:
 
-Yeah, good spotting. Feel free to add:
+fs/hpfs/namei.c:560:8: warning: Although the value stored to 'r'
+is used in the enclosing expression, the value is never actually
+read from 'r' [deadcode.DeadStores]
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/hpfs/namei.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-								Honza
-
-> ---
->  fs/dax.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 2ababb89918d..cb36c6746fc4 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1830,7 +1830,6 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	vm_fault_t ret = VM_FAULT_FALLBACK;
->  	pgoff_t max_pgoff;
->  	void *entry;
-> -	int error;
->  
->  	if (vmf->flags & FAULT_FLAG_WRITE)
->  		iter.flags |= IOMAP_WRITE;
-> @@ -1877,7 +1876,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	}
->  
->  	iter.pos = (loff_t)xas.xa_index << PAGE_SHIFT;
-> -	while ((error = iomap_iter(&iter, ops)) > 0) {
-> +	while (iomap_iter(&iter, ops) > 0) {
->  		if (iomap_length(&iter) < PMD_SIZE)
->  			continue; /* actually breaks out of the loop */
->  
-> -- 
-> 2.39.2
-> 
+diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
+index 69fb40b2c99a..d892a6f74431 100644
+--- a/fs/hpfs/namei.c
++++ b/fs/hpfs/namei.c
+@@ -556,8 +556,7 @@ static int hpfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	de.hidden = new_name[0] == '.';
+ 
+ 	if (new_inode) {
+-		int r;
+-		if ((r = hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1)) != 2) {
++		if (hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1) != 2) {
+ 			if ((nde = map_dirent(new_dir, hpfs_i(new_dir)->i_dno, new_name, new_len, NULL, &qbh1))) {
+ 				clear_nlink(new_inode);
+ 				copy_de(nde, &de);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.2
+
