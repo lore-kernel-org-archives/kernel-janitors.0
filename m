@@ -2,104 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A703EB64D8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 07:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903E4EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 08:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbjFUHWt (ORCPT
+        id S229564AbjFUITj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jun 2023 03:22:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        Wed, 21 Jun 2023 04:19:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231252AbjFUHWp (ORCPT
+        with ESMTP id S231359AbjFUITd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jun 2023 03:22:45 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33895183
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jun 2023 00:22:44 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f9b258f3d8so25133205e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jun 2023 00:22:44 -0700 (PDT)
+        Wed, 21 Jun 2023 04:19:33 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A116C1710;
+        Wed, 21 Jun 2023 01:19:31 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3111cb3dda1so6478064f8f.0;
+        Wed, 21 Jun 2023 01:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687332162; x=1689924162;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vz2evvxynfo3GpNLQFS4FwB3difDSTskdd0+liW6jTE=;
-        b=DWjFbl9ja+2c9aIXWX3Oh9IqIpBzGQDkRm4zFFdPNcFa8siG6zB+EGrWIJ/7OTxOU+
-         hfshTn5wArKKPiOka5N5SqyErZkho7Wb/PY27cS4+26IdiqLBQxEYGb9JeRkQ5rwuUr5
-         POi1K2WtPHVwn0DTPek3aPCkF7gNV131a0W/3dAk54eHga883QzJZXegEasc2AaI1UII
-         5Sd/Pzl8LWtTfPUNK2eYTxRuq+SXEji6uQBRILIAA8MiX6MTTjQKLfRdrzEyLf0sVRA3
-         pNaGgYBwQmIfmIzeYo2PLV2zf1syWNu9FD5Q/V1vUne4VspEv2ud3hntSbFrnvLGWy01
-         h+oQ==
+        d=gmail.com; s=20221208; t=1687335570; x=1689927570;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sEBXGDM0wjJ/zM8cN1Vi9lb6f9acCG4RqU8UZ86rmj4=;
+        b=DTyci+4wUuLtfGbgE84wRwhEvOziU1Wao2FJmFloY6rnODeSkLN5XpfMkCmEia3T45
+         Huz4875RZiZXk6xlpTQL5pZ/IjiavW3OcKqBBxK9pNIFlMs1X0Cc5HInru0s8XVOC8Da
+         QjBKMmmen2d04TAX+/XA+k3toFdYiOGJ2csXHNd/gB8MdAilb0ZkM/AhoUwfFoUIhP1G
+         K/d5HY8WbOyKmSiS9WzMOdkUZ4rQUMaUXHPPSDGqUlZlPz90VslKGMpDZbkW0DcgZ2JJ
+         wcorw47MEUvhxNOy0BM/iTY4SvIt/yC+5LfZcf5a90LMm7zvqX6xqegMMab8MZZtbpDa
+         h+SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687332162; x=1689924162;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vz2evvxynfo3GpNLQFS4FwB3difDSTskdd0+liW6jTE=;
-        b=C5gftw9uf1rAhTO45wT/qii1sMm78NrwrxPmoDF3kjsjvFEzZWqVl76q/33og+Y0PD
-         3pHIcNVnQWa9OqsZGfKh6FqEiLzQeIA2LLxtsfmwT6ff9R7uddoJBp2o+AwPJxmv5FhD
-         8E0YfAvOWwPUKfqkk84yBSXO7J8fB7TfSph2ZnMf3NnpmsKlHL25J1iiJpx/Qr4mu0ku
-         EJvEA5Qltv9TtK4SlVaqOmvVi+YmpNzaEcoKlYuRj2pTFj0eadTLn5b670BIejr//geS
-         BanriSttlq1fM4aXcNeD9U7phos6tx97V+ZRMXzL0Doy4ilx9XeL3YUpXZbIn5rLZPm4
-         hgsQ==
-X-Gm-Message-State: AC+VfDyyPyGtJxehm7wk4+I+oEBDanTS1bSY892NC8hxS1eabhkWaJ0J
-        qTh6R/Am1pKmYr9JshIc97Og7w==
-X-Google-Smtp-Source: ACHHUZ53ONPx1oNStMjM74vkhEhb3eMLUz1J+VK37q5osvP2XR/IJPwufysddaekoV0Ufnicb76YQg==
-X-Received: by 2002:a1c:cc07:0:b0:3f7:c92:57a0 with SMTP id h7-20020a1ccc07000000b003f70c9257a0mr13018372wmb.14.1687332162699;
-        Wed, 21 Jun 2023 00:22:42 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y10-20020a5d4aca000000b0030ae6432504sm3687548wrs.38.2023.06.21.00.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jun 2023 00:22:41 -0700 (PDT)
-Date:   Wed, 21 Jun 2023 10:22:38 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH 5/5] accel/qaic: Fix a leak in map_user_pages()
-Message-ID: <d04e5fc2-7b2b-4fb1-a9d7-17b55ecb9986@moroto.mountain>
+        d=1e100.net; s=20221208; t=1687335570; x=1689927570;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sEBXGDM0wjJ/zM8cN1Vi9lb6f9acCG4RqU8UZ86rmj4=;
+        b=F7u1b6AGoGmco/Bo09J6jy73zYrGxuCfmR5awHCWSRHrSOplXbFZnWD6ZNs1JeprzJ
+         3JIt86onSdpdPwNB/7W+4ZZwI4K5kYpcPIrfv7Q6a54GKAtCsK2l0V1ia9Hng83MKP6w
+         YalFC5+HQ79Bk2F7L4frbhAA+0luhaeobwWlSLrFI8abMBgaCgbjbFHYG82/c4+jMgD5
+         FuPAmj+oIvevoDmtZcRMknD47PAzSxcLqk/IMckWHpqcpqSpAANd8KOTRq+4TDmycaqi
+         MUT4CD2pZH/zMDNduwfHShgsdHq0kQIr3Kg4Ic6BZ5++Lo8aGUrdufF3ewOuF4L4sL/O
+         snsA==
+X-Gm-Message-State: AC+VfDxmmcpeDU01+0FNcfxQHQ+CvMLW2RL8B5KnuKrwrDSutIZWL8G4
+        pEh5ZDed1exOpGSMyqGn0c0=
+X-Google-Smtp-Source: ACHHUZ5M7BXTEHiWE9RuAyvQEp+84nCPb4jokhVEDDaF7XfuotRquJtFamXQJlG0K906hxelDMnyVA==
+X-Received: by 2002:a5d:4bc1:0:b0:310:ee6d:aa64 with SMTP id l1-20020a5d4bc1000000b00310ee6daa64mr13443808wrt.11.1687335569832;
+        Wed, 21 Jun 2023 01:19:29 -0700 (PDT)
+Received: from [192.168.2.41] ([46.227.18.67])
+        by smtp.gmail.com with ESMTPSA id f4-20020a5d58e4000000b00311299df211sm3814367wrd.77.2023.06.21.01.19.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Jun 2023 01:19:29 -0700 (PDT)
+Message-ID: <c1133b79-d106-197d-640b-09c2024393ea@gmail.com>
+Date:   Wed, 21 Jun 2023 10:19:28 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] serial: atmel: don't enable IRQs prematurely
+Content-Language: fr
+To:     Jiri Slaby <jirislaby@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Elen Song <elen.song@atmel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@atmel.com>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <cb7c39a9-c004-4673-92e1-be4e34b85368@moroto.mountain>
+ <d87d9f00-8d85-6220-43d3-51ef8e793193@kernel.org>
+ <c0c661bb-2584-46cd-9c72-8f1d9ccbaee4@kadam.mountain>
+ <0be8c2ad-499a-4cf1-af98-920af542c5b9@kadam.mountain>
+ <0876fda2-80ca-20f9-397d-6990e3f40e98@kernel.org>
+From:   Richard Genoud <richard.genoud@gmail.com>
+In-Reply-To: <0876fda2-80ca-20f9-397d-6990e3f40e98@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If get_user_pages_fast() allocates some pages but not as many as we
-wanted, then the current code leaks those pages.  Call put_page() on
-the pages before returning.
+Le 20/06/2023 à 06:50, Jiri Slaby a écrit :
+> On 19. 06. 23, 13:47, Dan Carpenter wrote:
+>> On Mon, Jun 19, 2023 at 02:44:11PM +0300, Dan Carpenter wrote:
+>>> On Mon, Jun 19, 2023 at 01:01:49PM +0200, Jiri Slaby wrote:
+>>>> On 19. 06. 23, 11:45, Dan Carpenter wrote:
+>>>>> The atmel_complete_tx_dma() function disables IRQs at the start
+>>>>> of the function by calling spin_lock_irqsave(&port->lock, flags);
+>>>>> There is no need to disable them a second time using the
+>>>>> spin_lock_irq() function and, in fact, doing so is a bug because
+>>>>> it will enable IRQs prematurely when we call spin_unlock_irq().
+>>>>>
+>>>>> Just use spin_lock/unlock() instead without disabling or enabling
+>>>>> IRQs.
+>>
+>> Maybe I should add a "a second time".
+>>
+>> "Just use spin_lock/unlock() instead without disabling or enabling
+>> IRQs a second time."
+> 
+> No, I'm just stupid and I apparently fail to understand written text at
+> times.
+> 
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> 
+> thanks,
+Acked-by: Richard Genoud <richard.genoud@gmail.com>
 
-Fixes: 129776ac2e38 ("accel/qaic: Add control path")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/accel/qaic/qaic_control.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
-index 03932197f1ac..7c3f9009617f 100644
---- a/drivers/accel/qaic/qaic_control.c
-+++ b/drivers/accel/qaic/qaic_control.c
-@@ -424,9 +424,12 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
- 	}
- 
- 	ret = get_user_pages_fast(xfer_start_addr, nr_pages, 0, page_list);
--	if (ret < 0 || ret != nr_pages) {
--		ret = -EFAULT;
-+	if (ret < 0)
- 		goto free_page_list;
-+	if (ret != nr_pages) {
-+		nr_pages = ret;
-+		ret = -EFAULT;
-+		goto put_pages;
- 	}
- 
- 	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
--- 
-2.39.2
-
+Thanks !
