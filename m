@@ -2,78 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C27EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 06:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F029EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 07:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbjFUG3R (ORCPT
+        id S231273AbjFUHVX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jun 2023 02:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58756 "EHLO
+        Wed, 21 Jun 2023 03:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjFUG3K (ORCPT
+        with ESMTP id S231271AbjFUHVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jun 2023 02:29:10 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id DB1A8E60;
-        Tue, 20 Jun 2023 23:29:08 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id DEA7D602A0301;
-        Wed, 21 Jun 2023 14:28:45 +0800 (CST)
-Message-ID: <af2db7e9-5fd4-2120-8308-99b58f9ad1a6@nfschina.com>
-Date:   Wed, 21 Jun 2023 14:28:44 +0800
+        Wed, 21 Jun 2023 03:21:21 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0920183
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jun 2023 00:21:19 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-311394406d0so3117617f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Jun 2023 00:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687332078; x=1689924078;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O8Qxh2dT/vwmYCb8MwuNXPbVaEQPUFjJDHObAtD1Tv0=;
+        b=ZfXGWQRSl4/XvBX3iv+Rh/4qYvqpdCuRzYsg8C2NverEOCaCnpi3ecSOWQ0UoImMUl
+         Gu1kywphP0el0ZT7nUq6CEIBna70laq8q3Ry+fnYkaDngMs7rJstJCWwUdMvbjpDvXH5
+         e9MnKB0KebdorG5JwPVJXu40zDYi8xtBhdhLNDpCSpG97++FXB5zq9XQ6/RCcRTos4LM
+         ANiy3a0CE1hvSFqDBCvcga0xjEya9vc6XXdSvGKaIz+aZzlX50BhKtZoAbJvMpcYl/2T
+         Ht/Fk2fWo6jIbHV4TFToiz7RE7tKYKkenPYnY+qERubDNhdObSJNsm5gRcIwOC2DsAdR
+         Z80A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687332078; x=1689924078;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O8Qxh2dT/vwmYCb8MwuNXPbVaEQPUFjJDHObAtD1Tv0=;
+        b=fn4YwmIYhFl8MXgNXoZvxum9jO5rdTUdt/ZPJ7afyM5OZGa4qSubND1DxVqOQtts4X
+         BYfB5WyTnQkQ8d6KmCrV3o31pZltWBl8Gqd8Q/M05Tuv9Ls+6AgAVJ1aMktvlKkWkSkb
+         zZ0rYdjzR47Gu01IZyqm5drl5TDPn9TCyMFv7au0/TLApGdSCrhiCMqJBkjuTa8vnYvx
+         1R56qlR3a73tvJ1twOhmNYwTs5j+Zfh2xr6PySJesMzh8g4gbqVOGBTGidB0yxe+8Vom
+         bxXYE4P43HMVBCB0GsL7GFISq01cO9Kx6ZbFYnjHIAKiNgZfrAwx2Lx8EcaJRcFqOlf6
+         MOGA==
+X-Gm-Message-State: AC+VfDzuFKejEWHj0Ca61s5w/bxjmWVUOXyV1t3zHD2L4Wupsn5TgPM5
+        +3o8555oTDQ0YOk0aMsOQSn92Q==
+X-Google-Smtp-Source: ACHHUZ6XpM6zbQ+qRrWux2KVECElKBl33INbEX4v/GZyD4Exilk6QiXFk7yV4s2Fau3BgEusHee8EA==
+X-Received: by 2002:a5d:5960:0:b0:30f:c56c:b5b0 with SMTP id e32-20020a5d5960000000b0030fc56cb5b0mr10339083wri.4.1687332078132;
+        Wed, 21 Jun 2023 00:21:18 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d2-20020adff842000000b00312793cc763sm3735043wrq.15.2023.06.21.00.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 00:21:16 -0700 (PDT)
+Date:   Wed, 21 Jun 2023 10:21:12 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 0/5] accel/qaic: Improve bounds checking in encode/decode
+Message-ID: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZHJtL2FtZC9hbWRncHU6IFVzZSDigJxfX3BhY2tl?=
- =?UTF-8?B?ZOKAnCBpbnN0ZWFkIG9mICJwcmFnbWEgcGFjaygpIg==?=
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        oe-kbuild@lists.linux.dev, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-        daniel@ffwll.ch
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev, Jane.Jian@amd.com,
-        David.Francis@amd.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, Likun.Gao@amd.com
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <34ae0f86-c32b-4d5a-be56-0654dba0f908@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/6/21 14:11, Dan Carpenter wrote:
-> When there was a #pragma then Sparse just turned off.  The Sparse
-> warnings are places where people forgot to put the __user in their casts
-> or didn't annotate endianness correctly.  It's not a "bug" to forget
-> to annotate endianness or user pointers.  That's how we used to do it
-> prior to 2003.  But these days it feels strange and dangerous to see
-> these sorts of warnings.
-Got it. And it is really strange when I first saw these warnings.
-Thanks for your explanation!
+(I think this is the first cover letter I have ever written).
 
-Su Hui
+These patches are based on review and not from testing.
 
->
-> Smatch also disabled some uninitialized variable checks.  These are
-> mostly false positives where we have a loop:
->
-> 	int r;
->
-> 	while (something) {
-> 		r = frob();
-> 	}
->
-> 	return r;
->
-> Smatch complains that we don't necessarily enter the loop.  I think
-> I'm going to disable this type of "enter the loop" warning when you
-> don't have the cross function database available.  That will silence
-> these for the kbuild bot.
->
-> regards,
-> dan carpenter
->
+I found it quite complicated to track the buffer sizes.  What happens
+is the qaic_manage() gets a buffer user_msg->data[] which has
+user_msg->len bytes.  The qaic_manage() calls qaic_manage_msg_xfer()
+which encodes the user's message.
+
+Then we get a response and we decode the response back into
+user_msg->data[], but we don't check that it is overflowed.  We instead
+copy seem to check against msg_hdr_len (which would prevent a read
+overflow).  At the end user_msg->len gets set to the number of bytes
+that we copied to the buffer.
+
+I'm coming to this code brand new, it's the first time I have seen it.
+So I don't really understand.  There is an element of trust in
+msg_hdr_len but then at other times we check it for integer overflows
+which indicates deep distrust.
+
+What I'm saying is that there may be more issues in this code.  But also
+that I don't really understand it so please review carefully.
+
+The patch that I'm least sure of is 4/5:
+
+[PATCH 4/5] accel/qaic: move and expand integer overflow checks for
+ map_user_pages()
+
+regards,
+dan carpenter
