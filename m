@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F52EEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 08:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61249EB64DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 09:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjFVITE (ORCPT
+        id S231283AbjFVJxA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jun 2023 04:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
+        Thu, 22 Jun 2023 05:53:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229828AbjFVIS7 (ORCPT
+        with ESMTP id S231262AbjFVJwn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jun 2023 04:18:59 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A3D2137;
-        Thu, 22 Jun 2023 01:18:24 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f900cd3f96so57711005e9.2;
-        Thu, 22 Jun 2023 01:18:24 -0700 (PDT)
+        Thu, 22 Jun 2023 05:52:43 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32CF2705;
+        Thu, 22 Jun 2023 02:46:46 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31121494630so7952908f8f.3;
+        Thu, 22 Jun 2023 02:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687421900; x=1690013900;
+        d=gmail.com; s=20221208; t=1687427205; x=1690019205;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NS1xFrJX+6qQ1UwuwL9AKus1/EqzRZr8t+BiNUW5wqs=;
-        b=eNROBa+nMhlNdHc5aqnSWxtIYlaf62BFhUpz3BgduwicT5nT/o7qgZbb9ZmQjexO7y
-         u/ohXuwkI+0nJayvgLe7ECvtIsciAgZtCa8tg03D4U6R7iv1mR2rEyiEyiC6OuZdV8Qj
-         8/BdVOR6wex1mt6PZCFd1zhJhWc40aH06z6Hk0GuunE/sDtZYhUuA1tlUrs+AaBNn/SZ
-         KOBPp3YV3wB1ieZMi9hKdLOYSRhYnIlNkry4+s+2sdA4he7xI+qtIYwsDOPIrMPHkxDF
-         Kff0V9ZmLdLeYRTR/hsrjaMThmNzDVwV8yYb2rGQ4f9LPlCsHry03XCAK10mGFZ2R93G
-         IQtw==
+        bh=aHpyFabujAR7xCKXJiA903bm7LVteFnni+c1+YvwBHU=;
+        b=Dn+yG8E1DKOoiUlaavLuNEu+TIGc9uNEThriGRqffLiuDOUcOSKDHwPN0Vg3vVepej
+         wlWaREY/PEiSZuCwFcuC3adG7M7X14j6dm+yz12gb7wj9QovHmSiY/U0DAfJWHz1bzw7
+         SZSDesZbVavI6+ExE70y2niQi+3t9ddGh+jpcSDrykKA2MxoEds2EIVjpTEkD+qmkWrm
+         mKI7RL0EIAdXL4H2iL8OIhfAB2m9XwEB5DzJ6xf9fIsTV4XCFjv/P8WMawgVm7g6cXs9
+         WeNkpPPQkYIyAMOPhtVyOv8WnErrlsElOVynL7NTmtr/YYqypjUB7QirJC4PzM/TodQ1
+         0spA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687421900; x=1690013900;
+        d=1e100.net; s=20221208; t=1687427205; x=1690019205;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NS1xFrJX+6qQ1UwuwL9AKus1/EqzRZr8t+BiNUW5wqs=;
-        b=HaThwW/4srncxR9vM/qdMeTrtJq+JvMf4UK3UrKPjvKjdvH9ZYKYmwj3fIhcg/0W+G
-         U7+KA0StJcnCWLNJPjMWzCAFQs/n3Iu4TZaeNs327lvRcAVGCdEZ0y7ysAy/R24rqopV
-         RveY4put+gkPuzbtzZhbupsBWsWLxnMl8N6bvCLTDxFweB7c+zpK4dG/BsDXZgqpiWNk
-         8MMW8F8hSQwyYaAVqDUYTO7t8taroP+Ju4n1PSGfZVBRY88Q5TNsNfhT2b5iRvabrmC3
-         dzVcVQn958qASK7wQeiHGJbzYGH1V9vjNCsTal5Vj08EtDW8RxUHGLy/E3ob/c92GYNp
-         zcgA==
-X-Gm-Message-State: AC+VfDyNwHQykgQoMXVzrTDpliGSWwt03xxA4GFaZkUf0ntnbgLSuOXK
-        cItc4L4bml+s81w3MaqIOD8=
-X-Google-Smtp-Source: ACHHUZ5+FBm2KfU23mMZ4FDV7sk8nRgjM/SFUAQ00XEqSzuD7JL6vOn+KT5MEHgIiaW6Ze1ngPFWHA==
-X-Received: by 2002:a7b:cbcd:0:b0:3fa:74bf:f028 with SMTP id n13-20020a7bcbcd000000b003fa74bff028mr486383wmi.0.1687421899802;
-        Thu, 22 Jun 2023 01:18:19 -0700 (PDT)
+        bh=aHpyFabujAR7xCKXJiA903bm7LVteFnni+c1+YvwBHU=;
+        b=k5c9r22Xsv/54Muv38I5saR9iB5K96eAWGZ2/VarYzhOmT1tWlw2/d+Eq+pMtzQioD
+         F4arbJyJE8bPmEH86ZZ7tfLt4OP05eLWWKLtbR10W9ZFEj6+5GCIuReFN5KWk1VWDxH8
+         1USUIXt7oGvEYTBxvXOJrbnefMfpcBbAvM7m8Kl7suxcvVVrJu57Qus1ah7SsbHEbVEZ
+         0/KY8D5unyHv5k6SWwOd4CqTq2IgqLhmSIBawSG4S6moVzbPGb0boZIPZekkooj6PwGK
+         Sh+b1jZKlOf3Lvd4xmfr7b0dQ31T4YherS0YwtZeDDf5gHle7tpzn+T5egwY+lJFPsZh
+         n5kw==
+X-Gm-Message-State: AC+VfDxiO23MLCW8mVjYya/lZQkX2setpOTS2MVIay7/wm4btehACOZX
+        zqJeYZq+6GNjUNHGOKE5vc36xUqbFC2/jA==
+X-Google-Smtp-Source: ACHHUZ4WVcsofhVfB3fHYglrZh6vPocrM3myf2coC3e6xUlfhj83msUrJhYUulr33m1XuYImow6kwA==
+X-Received: by 2002:a7b:cbd8:0:b0:3fa:781a:3d07 with SMTP id n24-20020a7bcbd8000000b003fa781a3d07mr135318wmi.35.1687426444609;
+        Thu, 22 Jun 2023 02:34:04 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 9-20020a05600c240900b003f93c450657sm6974330wmp.38.2023.06.22.01.18.18
+        by smtp.gmail.com with ESMTPSA id u16-20020a7bc050000000b003f080b2f9f4sm18276548wmc.27.2023.06.22.02.34.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 01:18:19 -0700 (PDT)
+        Thu, 22 Jun 2023 02:34:04 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
+To:     "Darrick J . Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] pipe: remove redundant initialization of pointer buf
-Date:   Thu, 22 Jun 2023 09:18:18 +0100
-Message-Id: <20230622081818.2795019-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] xfs: remove redundant initializations of pointers drop_leaf and save_leaf
+Date:   Thu, 22 Jun 2023 10:34:03 +0100
+Message-Id: <20230622093403.2829382-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,31 +65,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer buf is being initialized with a value that is never
-read. Buf is being re-assigned later on, the initialization is
-redundant and can be removed. Cleans up clang scan build warning:
+Pointers drop_leaf and save_leaf are initialized with values that are never
+read, they are being re-assigned later on just before they are used. Remove
+the redundant early initializations and keep the later assignments at the
+point where they are used. Cleans up two clang scan build warnings:
 
-fs/pipe.c:492:24: warning: Value stored to 'buf' during its
-initialization is never read [deadcode.DeadStores]
+fs/xfs/libxfs/xfs_attr_leaf.c:2288:29: warning: Value stored to 'drop_leaf'
+during its initialization is never read [deadcode.DeadStores]
+fs/xfs/libxfs/xfs_attr_leaf.c:2289:29: warning: Value stored to 'save_leaf'
+during its initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/libxfs/xfs_attr_leaf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 2d88f73f585a..71b6b0545e0f 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -489,7 +489,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		head = pipe->head;
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
--			struct pipe_buffer *buf = &pipe->bufs[head & mask];
-+			struct pipe_buffer *buf;
- 			struct page *page = pipe->tmp_page;
- 			int copied;
- 
+diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
+index beee51ad75ce..3091d40a1eb6 100644
+--- a/fs/xfs/libxfs/xfs_attr_leaf.c
++++ b/fs/xfs/libxfs/xfs_attr_leaf.c
+@@ -2285,8 +2285,8 @@ xfs_attr3_leaf_unbalance(
+ 	struct xfs_da_state_blk	*drop_blk,
+ 	struct xfs_da_state_blk	*save_blk)
+ {
+-	struct xfs_attr_leafblock *drop_leaf = drop_blk->bp->b_addr;
+-	struct xfs_attr_leafblock *save_leaf = save_blk->bp->b_addr;
++	struct xfs_attr_leafblock *drop_leaf;
++	struct xfs_attr_leafblock *save_leaf;
+ 	struct xfs_attr3_icleaf_hdr drophdr;
+ 	struct xfs_attr3_icleaf_hdr savehdr;
+ 	struct xfs_attr_leaf_entry *entry;
 -- 
 2.39.2
 
