@@ -2,112 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1585EEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 10:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE9AEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 10:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbjFVKX1 (ORCPT
+        id S230305AbjFVK1m (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jun 2023 06:23:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
+        Thu, 22 Jun 2023 06:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbjFVKXH (ORCPT
+        with ESMTP id S229504AbjFVK1k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jun 2023 06:23:07 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 804151BE5
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Jun 2023 03:22:28 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f8775126d3so5149112e87.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Jun 2023 03:22:28 -0700 (PDT)
+        Thu, 22 Jun 2023 06:27:40 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21F5D3;
+        Thu, 22 Jun 2023 03:27:39 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f9c532f9e3so15950755e9.1;
+        Thu, 22 Jun 2023 03:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687429347; x=1690021347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kPKiuyN9lTn2LkZFVM0hiwkDKLitkiUuOZ5BrxWQ9JM=;
-        b=VbQI4QlQql6NTE3CK6vOzMgaeeV7NW1krLgdhMVTPHSFmkonfA/KWeFi64sy9yRSa9
-         WUaGbnhaJ1RSUyZbQ2fZaaQBxPsEHVBSn9bjIXwHdA/f9BjSo/kML4xI3dbZcthIQtqr
-         7pqCPWZygL5QDOgRU1IIkSEkKC7Qbn+0UgZ2QTfk67U46C75l54cqTGL+u5jg8ZUVB0A
-         AJ/azt9aI29oJrmWdHehsC6VmNOcEDkG9fvISBCYWgDuM+J9dqh+J6NNi9LBeycA4tWo
-         BNVBPvExzXZ4K4CVLWh8QtSI2EJbdqL0UHN2RD+e4FepanCbNps4zG+rYlUK5GRBtBh2
-         w/3Q==
+        d=gmail.com; s=20221208; t=1687429658; x=1690021658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNBLuqw9En2G21h+WbiEp4rYwK/zPxLAjR8JVifNIMU=;
+        b=Gm9kFmFGSjUIWl+mD1+q9YGb2KNmJsxCR97+KEn+BXYSYhNLLHcK8INUrfhmHfH3Rg
+         tLboBrH00ryT8rMmIrLFgCL8u8mPN8yvpb5yK2rE+BS/D3HDa10flbU7V0hMadCuz+LY
+         86hfggpQ7CofYNlniE3OEaDQ13txw8rqII71kvNN+EQl5ewAVeX1xiDLLAQ6DKfeMcYX
+         cG8q7305iU9EzNby0MHEdDIKX+rglW+nQlbQzjcaa3LJQ0oj2C2TRAvXjntk3X0Z+F4R
+         M9qvfeKXdYsdBUCWccJ4Emfhnw1RjmZkfJRXxrA4I4/AW6KDyI2Gh5D6f9AenFlwQrsI
+         XZEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687429347; x=1690021347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kPKiuyN9lTn2LkZFVM0hiwkDKLitkiUuOZ5BrxWQ9JM=;
-        b=C8ludrFZ26pVx6Qfz/jpRNAEL+bLd+wdSi9AzfBCNXr+EGyZO4by9y7+P+4HiKaXoC
-         9OKXLQnejd4whIuXu2lTJ7C8+8Kgq1PYYb35KpYklo4TuKXbXINmOTnaW1EXZMHOv02A
-         41Lyxo1fhngzZUrr+xQJAhA17WZwVkYzl4FMbmk1QIdYQH9TnCQ5TY8/BawD+sRCz+7w
-         7ETB235lBXUSYSLgkijDrIWMR3eKM+FXtDoSHwt+rQeWDwbpAHm7hMpca3+NusezRkYz
-         zzsn1+3Jsof1mnIXsXyT/ANKLKj7rmlALfY6pCUPYjnQgDXxxiSNLaKp6uca2bpBM8aM
-         Xuqw==
-X-Gm-Message-State: AC+VfDwWpMYWisre6k6X/1N5O1zvpN++eYmh5GuoPuq1w3it7uRbciEC
-        WAQJTKlj283Xt0FFahqaE5EfPg==
-X-Google-Smtp-Source: ACHHUZ76DdJUUP3DxprlEuqhHV0dMUceghkOayHt/bFjamB18quiILV7W/OOPRCuhZnD96eCgMJnzw==
-X-Received: by 2002:a19:8c18:0:b0:4f4:fdb4:c76d with SMTP id o24-20020a198c18000000b004f4fdb4c76dmr12121954lfd.47.1687429346736;
-        Thu, 22 Jun 2023 03:22:26 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s10-20020a5d69ca000000b003047ea78b42sm6652592wrw.43.2023.06.22.03.22.23
+        d=1e100.net; s=20221208; t=1687429658; x=1690021658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HNBLuqw9En2G21h+WbiEp4rYwK/zPxLAjR8JVifNIMU=;
+        b=cocVO/oB/NfRy5Y0m9gldHyI18KCoNM960S/XZG3WZw//AqecIt9Nk0ftdwhN7ioxA
+         d/EvjzYkqWTEZ9sku/K1CrVVqcQ4IuIJ7LKIAEHySp8MVCrBE0+n2/fMVnmcPCydk4Ve
+         R9ENRx+BqcMC2vn4TyOuqPhfyPH3gkuqJ7G+L+5aYY5hz3cgtD3/LQkQyhTK2FnCFlAO
+         gzyc3csRlXgOLduaiQkC4NMsEJhTr33daBKvSRUfe1l/3xM6mTYEoVTGphWyKFJCljj4
+         EIFVq9ImPdJzw62/i0vz4+7aqBHtPbpszH8oCEmD8/4XmsCpfzlWUbHOTV9eY8jyD+o0
+         99xA==
+X-Gm-Message-State: AC+VfDw8RVSXO6BPazs42xgtExBGE4b38ksP+HTBeibrOPn1dGGyvapv
+        vh+Kzv7ZvTpgS+FullhgJVM=
+X-Google-Smtp-Source: ACHHUZ6WOZ9956VMYMFA7ZWmAzrRmUqxfnLfKFFLp8sK1aAZazFPzHyA/4NZFbclQzz8mZoSS/0DDg==
+X-Received: by 2002:a05:600c:3794:b0:3f9:b30f:455f with SMTP id o20-20020a05600c379400b003f9b30f455fmr7658754wmr.9.1687429658218;
+        Thu, 22 Jun 2023 03:27:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l17-20020a05600012d100b002c71b4d476asm6640003wrx.106.2023.06.22.03.27.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 03:22:24 -0700 (PDT)
-Date:   Thu, 22 Jun 2023 13:22:21 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, smatch@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
-Subject: Re: [PATCH 0/5] accel/qaic: Improve bounds checking in encode/decode
-Message-ID: <780f7135-cd3c-4c3f-802e-4aa0e7ec3413@kadam.mountain>
-References: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
- <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
+        Thu, 22 Jun 2023 03:27:37 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ocfs2: remove redundant assignment to variable bit_off
+Date:   Thu, 22 Jun 2023 11:27:36 +0100
+Message-Id: <20230622102736.2831126-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 08:53:41PM -0600, Jeffrey Hugo wrote:
-> On 6/21/2023 1:21 AM, Dan Carpenter wrote:
-> > (I think this is the first cover letter I have ever written).
-> > 
-> > These patches are based on review and not from testing.
-> 
-> Thank you for your review.  I look forward to reading your patches and
-> learning from them.
-> 
-> Did you use any kind of tooling?  If there is something we can add to our
-> flow to bring up the quality, I would like to consider it.
+Variable bit_off is being assigned a value that is never read, it is
+being re-assigned a new value in the following while loop. Remove the
+assignment. Cleans up clang scan build warning:
 
-I started reviewing this code because of an unpublished Smatch warning:
+fs/ocfs2/localalloc.c:976:18: warning: Although the value stored to
+'bit_off' is used in the enclosing expression, the value is never
+actually read from 'bit_off' [deadcode.DeadStores]
 
-drivers/accel/qaic/qaic_control.c:379 encode_passthrough() warn: check that subtract can't underflow 'in_trans->hdr.len - 8' '0-3999968'
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ocfs2/localalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The warning message means that Smatch thinks in_trans->hdr.len can be
-controlled by the user and is in the 0-3999968.  But from review it's
-in increments of 8.  "0,8,16...3999968".
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index c4426d12a2ad..c803c10dd97e 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -973,7 +973,7 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+ 	la_start_blk = ocfs2_clusters_to_blocks(osb->sb,
+ 						le32_to_cpu(la->la_bm_off));
+ 	bitmap = la->la_bitmap;
+-	start = count = bit_off = 0;
++	start = count = 0;
+ 	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
+ 
+ 	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start))
+-- 
+2.39.2
 
-The other subtract underflow warnings are false positives except maybe
-cx231xx_bulk_copy()?  The put_cmsg() and the bpf warnings are definitely
-false positives.
-
-drivers/accel/qaic/qaic_control.c:379 encode_passthrough() warn: check that subtract can't underflow 'in_trans->hdr.len - 8' '0-3999968'
-drivers/media/usb/cx231xx/cx231xx-417.c:1355 cx231xx_bulk_copy() warn: check that subtract can't underflow 'buffer_size - 3' '0-4000000'
-drivers/net/ethernet/microchip/sparx5/sparx5_packet.c:153 sparx5_xtr_grp() warn: check that subtract can't underflow 'byte_cnt - 4' '0'
-drivers/net/ethernet/packetengines/hamachi.c:1504 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
-drivers/net/ethernet/packetengines/hamachi.c:1506 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
-drivers/net/ethernet/packetengines/hamachi.c:1520 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
-fs/ubifs/debug.c:334 ubifs_dump_node() warn: check that subtract can't underflow 'safe_len - 24' 's32min-(-1),25-2147483646'
-fs/ubifs/debug.c:512 ubifs_dump_node() warn: check that subtract can't underflow 'safe_len - 48' 's32min-s32max'
-kernel/bpf/bpf_iter.c:479 bpf_iter_link_fill_link_info() warn: check that subtract can't underflow 'ulen - 1' '0-1010101'
-kernel/bpf/btf.c:7274 btf_get_info_by_fd() warn: check that subtract can't underflow 'uname_len - 1' '0-55'
-kernel/bpf/syscall.c:3268 bpf_raw_tp_link_fill_link_info() warn: check that subtract can't underflow 'ulen - 1' '0-1010101'
-net/compat.c:273 put_cmsg_compat() warn: check that subtract can't underflow 'cmlen - 12' 's32min-s32max'
-net/core/scm.c:249 put_cmsg() warn: check that subtract can't underflow 'cmlen - 16' 's32min-s32max'
-
-regards,
-dan carpenter
