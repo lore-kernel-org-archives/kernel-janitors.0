@@ -2,99 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61249EB64DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 09:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1585EEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 10:23:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbjFVJxA (ORCPT
+        id S231634AbjFVKX1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jun 2023 05:53:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51106 "EHLO
+        Thu, 22 Jun 2023 06:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbjFVJwn (ORCPT
+        with ESMTP id S231504AbjFVKXH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:52:43 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32CF2705;
-        Thu, 22 Jun 2023 02:46:46 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31121494630so7952908f8f.3;
-        Thu, 22 Jun 2023 02:46:46 -0700 (PDT)
+        Thu, 22 Jun 2023 06:23:07 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 804151BE5
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Jun 2023 03:22:28 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f8775126d3so5149112e87.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Jun 2023 03:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687427205; x=1690019205;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHpyFabujAR7xCKXJiA903bm7LVteFnni+c1+YvwBHU=;
-        b=Dn+yG8E1DKOoiUlaavLuNEu+TIGc9uNEThriGRqffLiuDOUcOSKDHwPN0Vg3vVepej
-         wlWaREY/PEiSZuCwFcuC3adG7M7X14j6dm+yz12gb7wj9QovHmSiY/U0DAfJWHz1bzw7
-         SZSDesZbVavI6+ExE70y2niQi+3t9ddGh+jpcSDrykKA2MxoEds2EIVjpTEkD+qmkWrm
-         mKI7RL0EIAdXL4H2iL8OIhfAB2m9XwEB5DzJ6xf9fIsTV4XCFjv/P8WMawgVm7g6cXs9
-         WeNkpPPQkYIyAMOPhtVyOv8WnErrlsElOVynL7NTmtr/YYqypjUB7QirJC4PzM/TodQ1
-         0spA==
+        d=linaro.org; s=google; t=1687429347; x=1690021347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kPKiuyN9lTn2LkZFVM0hiwkDKLitkiUuOZ5BrxWQ9JM=;
+        b=VbQI4QlQql6NTE3CK6vOzMgaeeV7NW1krLgdhMVTPHSFmkonfA/KWeFi64sy9yRSa9
+         WUaGbnhaJ1RSUyZbQ2fZaaQBxPsEHVBSn9bjIXwHdA/f9BjSo/kML4xI3dbZcthIQtqr
+         7pqCPWZygL5QDOgRU1IIkSEkKC7Qbn+0UgZ2QTfk67U46C75l54cqTGL+u5jg8ZUVB0A
+         AJ/azt9aI29oJrmWdHehsC6VmNOcEDkG9fvISBCYWgDuM+J9dqh+J6NNi9LBeycA4tWo
+         BNVBPvExzXZ4K4CVLWh8QtSI2EJbdqL0UHN2RD+e4FepanCbNps4zG+rYlUK5GRBtBh2
+         w/3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687427205; x=1690019205;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aHpyFabujAR7xCKXJiA903bm7LVteFnni+c1+YvwBHU=;
-        b=k5c9r22Xsv/54Muv38I5saR9iB5K96eAWGZ2/VarYzhOmT1tWlw2/d+Eq+pMtzQioD
-         F4arbJyJE8bPmEH86ZZ7tfLt4OP05eLWWKLtbR10W9ZFEj6+5GCIuReFN5KWk1VWDxH8
-         1USUIXt7oGvEYTBxvXOJrbnefMfpcBbAvM7m8Kl7suxcvVVrJu57Qus1ah7SsbHEbVEZ
-         0/KY8D5unyHv5k6SWwOd4CqTq2IgqLhmSIBawSG4S6moVzbPGb0boZIPZekkooj6PwGK
-         Sh+b1jZKlOf3Lvd4xmfr7b0dQ31T4YherS0YwtZeDDf5gHle7tpzn+T5egwY+lJFPsZh
-         n5kw==
-X-Gm-Message-State: AC+VfDxiO23MLCW8mVjYya/lZQkX2setpOTS2MVIay7/wm4btehACOZX
-        zqJeYZq+6GNjUNHGOKE5vc36xUqbFC2/jA==
-X-Google-Smtp-Source: ACHHUZ4WVcsofhVfB3fHYglrZh6vPocrM3myf2coC3e6xUlfhj83msUrJhYUulr33m1XuYImow6kwA==
-X-Received: by 2002:a7b:cbd8:0:b0:3fa:781a:3d07 with SMTP id n24-20020a7bcbd8000000b003fa781a3d07mr135318wmi.35.1687426444609;
-        Thu, 22 Jun 2023 02:34:04 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id u16-20020a7bc050000000b003f080b2f9f4sm18276548wmc.27.2023.06.22.02.34.03
+        d=1e100.net; s=20221208; t=1687429347; x=1690021347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kPKiuyN9lTn2LkZFVM0hiwkDKLitkiUuOZ5BrxWQ9JM=;
+        b=C8ludrFZ26pVx6Qfz/jpRNAEL+bLd+wdSi9AzfBCNXr+EGyZO4by9y7+P+4HiKaXoC
+         9OKXLQnejd4whIuXu2lTJ7C8+8Kgq1PYYb35KpYklo4TuKXbXINmOTnaW1EXZMHOv02A
+         41Lyxo1fhngzZUrr+xQJAhA17WZwVkYzl4FMbmk1QIdYQH9TnCQ5TY8/BawD+sRCz+7w
+         7ETB235lBXUSYSLgkijDrIWMR3eKM+FXtDoSHwt+rQeWDwbpAHm7hMpca3+NusezRkYz
+         zzsn1+3Jsof1mnIXsXyT/ANKLKj7rmlALfY6pCUPYjnQgDXxxiSNLaKp6uca2bpBM8aM
+         Xuqw==
+X-Gm-Message-State: AC+VfDwWpMYWisre6k6X/1N5O1zvpN++eYmh5GuoPuq1w3it7uRbciEC
+        WAQJTKlj283Xt0FFahqaE5EfPg==
+X-Google-Smtp-Source: ACHHUZ76DdJUUP3DxprlEuqhHV0dMUceghkOayHt/bFjamB18quiILV7W/OOPRCuhZnD96eCgMJnzw==
+X-Received: by 2002:a19:8c18:0:b0:4f4:fdb4:c76d with SMTP id o24-20020a198c18000000b004f4fdb4c76dmr12121954lfd.47.1687429346736;
+        Thu, 22 Jun 2023 03:22:26 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id s10-20020a5d69ca000000b003047ea78b42sm6652592wrw.43.2023.06.22.03.22.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 02:34:04 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] xfs: remove redundant initializations of pointers drop_leaf and save_leaf
-Date:   Thu, 22 Jun 2023 10:34:03 +0100
-Message-Id: <20230622093403.2829382-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 22 Jun 2023 03:22:24 -0700 (PDT)
+Date:   Thu, 22 Jun 2023 13:22:21 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, smatch@vger.kernel.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+Subject: Re: [PATCH 0/5] accel/qaic: Improve bounds checking in encode/decode
+Message-ID: <780f7135-cd3c-4c3f-802e-4aa0e7ec3413@kadam.mountain>
+References: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
+ <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointers drop_leaf and save_leaf are initialized with values that are never
-read, they are being re-assigned later on just before they are used. Remove
-the redundant early initializations and keep the later assignments at the
-point where they are used. Cleans up two clang scan build warnings:
+On Wed, Jun 21, 2023 at 08:53:41PM -0600, Jeffrey Hugo wrote:
+> On 6/21/2023 1:21 AM, Dan Carpenter wrote:
+> > (I think this is the first cover letter I have ever written).
+> > 
+> > These patches are based on review and not from testing.
+> 
+> Thank you for your review.  I look forward to reading your patches and
+> learning from them.
+> 
+> Did you use any kind of tooling?  If there is something we can add to our
+> flow to bring up the quality, I would like to consider it.
 
-fs/xfs/libxfs/xfs_attr_leaf.c:2288:29: warning: Value stored to 'drop_leaf'
-during its initialization is never read [deadcode.DeadStores]
-fs/xfs/libxfs/xfs_attr_leaf.c:2289:29: warning: Value stored to 'save_leaf'
-during its initialization is never read [deadcode.DeadStores]
+I started reviewing this code because of an unpublished Smatch warning:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/xfs/libxfs/xfs_attr_leaf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+drivers/accel/qaic/qaic_control.c:379 encode_passthrough() warn: check that subtract can't underflow 'in_trans->hdr.len - 8' '0-3999968'
 
-diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
-index beee51ad75ce..3091d40a1eb6 100644
---- a/fs/xfs/libxfs/xfs_attr_leaf.c
-+++ b/fs/xfs/libxfs/xfs_attr_leaf.c
-@@ -2285,8 +2285,8 @@ xfs_attr3_leaf_unbalance(
- 	struct xfs_da_state_blk	*drop_blk,
- 	struct xfs_da_state_blk	*save_blk)
- {
--	struct xfs_attr_leafblock *drop_leaf = drop_blk->bp->b_addr;
--	struct xfs_attr_leafblock *save_leaf = save_blk->bp->b_addr;
-+	struct xfs_attr_leafblock *drop_leaf;
-+	struct xfs_attr_leafblock *save_leaf;
- 	struct xfs_attr3_icleaf_hdr drophdr;
- 	struct xfs_attr3_icleaf_hdr savehdr;
- 	struct xfs_attr_leaf_entry *entry;
--- 
-2.39.2
+The warning message means that Smatch thinks in_trans->hdr.len can be
+controlled by the user and is in the 0-3999968.  But from review it's
+in increments of 8.  "0,8,16...3999968".
 
+The other subtract underflow warnings are false positives except maybe
+cx231xx_bulk_copy()?  The put_cmsg() and the bpf warnings are definitely
+false positives.
+
+drivers/accel/qaic/qaic_control.c:379 encode_passthrough() warn: check that subtract can't underflow 'in_trans->hdr.len - 8' '0-3999968'
+drivers/media/usb/cx231xx/cx231xx-417.c:1355 cx231xx_bulk_copy() warn: check that subtract can't underflow 'buffer_size - 3' '0-4000000'
+drivers/net/ethernet/microchip/sparx5/sparx5_packet.c:153 sparx5_xtr_grp() warn: check that subtract can't underflow 'byte_cnt - 4' '0'
+drivers/net/ethernet/packetengines/hamachi.c:1504 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
+drivers/net/ethernet/packetengines/hamachi.c:1506 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
+drivers/net/ethernet/packetengines/hamachi.c:1520 hamachi_rx() warn: check that subtract can't underflow '(frame_status & 2047) - 4' '0-2047'
+fs/ubifs/debug.c:334 ubifs_dump_node() warn: check that subtract can't underflow 'safe_len - 24' 's32min-(-1),25-2147483646'
+fs/ubifs/debug.c:512 ubifs_dump_node() warn: check that subtract can't underflow 'safe_len - 48' 's32min-s32max'
+kernel/bpf/bpf_iter.c:479 bpf_iter_link_fill_link_info() warn: check that subtract can't underflow 'ulen - 1' '0-1010101'
+kernel/bpf/btf.c:7274 btf_get_info_by_fd() warn: check that subtract can't underflow 'uname_len - 1' '0-55'
+kernel/bpf/syscall.c:3268 bpf_raw_tp_link_fill_link_info() warn: check that subtract can't underflow 'ulen - 1' '0-1010101'
+net/compat.c:273 put_cmsg_compat() warn: check that subtract can't underflow 'cmlen - 12' 's32min-s32max'
+net/core/scm.c:249 put_cmsg() warn: check that subtract can't underflow 'cmlen - 16' 's32min-s32max'
+
+regards,
+dan carpenter
