@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178FCEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 07:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F52EEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 08:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbjFVHyh (ORCPT
+        id S229934AbjFVITE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jun 2023 03:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53740 "EHLO
+        Thu, 22 Jun 2023 04:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjFVHyf (ORCPT
+        with ESMTP id S229828AbjFVIS7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jun 2023 03:54:35 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8011F185;
-        Thu, 22 Jun 2023 00:54:34 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f122ff663eso9407844e87.2;
-        Thu, 22 Jun 2023 00:54:34 -0700 (PDT)
+        Thu, 22 Jun 2023 04:18:59 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A3D2137;
+        Thu, 22 Jun 2023 01:18:24 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f900cd3f96so57711005e9.2;
+        Thu, 22 Jun 2023 01:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687420473; x=1690012473;
+        d=gmail.com; s=20221208; t=1687421900; x=1690013900;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eie20f3ss91sUplEeIPYPp60+FBbWFR7xGUasT7bn5c=;
-        b=qU/htB9JCiIHSUq3832RTd4+lIgZfeF8QP6ZVgo8g2sL/eKmb9cmuAqZbJRiKehPHI
-         UycnuBYxKb4jQ+BQkGlV27c/8esqag2xF5U+5Nb9P2YLNwR1Zyfv4Cr4pyC0rCmCc4bJ
-         6XpkL4bMJYgZraUYCKsb5YjhIGv645+/ksLNnhMoBj1+C2IjBwNm2c6SaLV4qrks3JxU
-         xKJ/0U6r0HzQwHuZpV4sTS5T/reiQcPZvxgKp9LKr7ro13w/UHfSG85idp805/PIApIR
-         dNYTRsyw6yo8UFGEclCjQD6qG0HZk3TQB4vzdZzLpp2j2aBnPWNwZTLDMM+tOgGAhYOv
-         HTjg==
+        bh=NS1xFrJX+6qQ1UwuwL9AKus1/EqzRZr8t+BiNUW5wqs=;
+        b=eNROBa+nMhlNdHc5aqnSWxtIYlaf62BFhUpz3BgduwicT5nT/o7qgZbb9ZmQjexO7y
+         u/ohXuwkI+0nJayvgLe7ECvtIsciAgZtCa8tg03D4U6R7iv1mR2rEyiEyiC6OuZdV8Qj
+         8/BdVOR6wex1mt6PZCFd1zhJhWc40aH06z6Hk0GuunE/sDtZYhUuA1tlUrs+AaBNn/SZ
+         KOBPp3YV3wB1ieZMi9hKdLOYSRhYnIlNkry4+s+2sdA4he7xI+qtIYwsDOPIrMPHkxDF
+         Kff0V9ZmLdLeYRTR/hsrjaMThmNzDVwV8yYb2rGQ4f9LPlCsHry03XCAK10mGFZ2R93G
+         IQtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687420473; x=1690012473;
+        d=1e100.net; s=20221208; t=1687421900; x=1690013900;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Eie20f3ss91sUplEeIPYPp60+FBbWFR7xGUasT7bn5c=;
-        b=mADkof7/TJ8GMJB495//UfgHvPsfZ+gIl+3BjFwHQiDUJP26z5D6aNCCJclO3yzZib
-         oMR7/iGGSOmAet+fGGHzqFCFxZoAf34RdV9RC+lYsUfXQzHkrpr9i59xwwRbNBoisM0R
-         2MLdAeXhmT4i1AYoT9JnzM3/cRWQtMAlUEK5rUbDaM49uLudwR+iJtHNT4AWlc3awuX7
-         AHM6TePZCYNyP+tNZAaapMCyXT2DisnAokDDDBn/KRKF+a8j4X/mtPJmiBlYfXHLNuva
-         8oT7KDDIcXrTU63YhtZFj24p+z90ZyS8nKHqOjhHLQCQro694QL0sRxgDWTBRjdcPB2M
-         nF9Q==
-X-Gm-Message-State: AC+VfDwvjhHNcqF6EMdo7Q0wliltQWpqxr/4T9qoR5WiatIAXtwm1maW
-        0T4PvU5k1inw6fCayQJCmhg=
-X-Google-Smtp-Source: ACHHUZ5V7PFqhRZ/OooYKSnOyIwbW2Sb1pABO0QSB8jezdhTlqu529QtFTTjTxqbWUqUscCxwLjHbw==
-X-Received: by 2002:ac2:4d84:0:b0:4f8:5ede:d457 with SMTP id g4-20020ac24d84000000b004f85eded457mr7913343lfe.55.1687420472453;
-        Thu, 22 Jun 2023 00:54:32 -0700 (PDT)
+        bh=NS1xFrJX+6qQ1UwuwL9AKus1/EqzRZr8t+BiNUW5wqs=;
+        b=HaThwW/4srncxR9vM/qdMeTrtJq+JvMf4UK3UrKPjvKjdvH9ZYKYmwj3fIhcg/0W+G
+         U7+KA0StJcnCWLNJPjMWzCAFQs/n3Iu4TZaeNs327lvRcAVGCdEZ0y7ysAy/R24rqopV
+         RveY4put+gkPuzbtzZhbupsBWsWLxnMl8N6bvCLTDxFweB7c+zpK4dG/BsDXZgqpiWNk
+         8MMW8F8hSQwyYaAVqDUYTO7t8taroP+Ju4n1PSGfZVBRY88Q5TNsNfhT2b5iRvabrmC3
+         dzVcVQn958qASK7wQeiHGJbzYGH1V9vjNCsTal5Vj08EtDW8RxUHGLy/E3ob/c92GYNp
+         zcgA==
+X-Gm-Message-State: AC+VfDyNwHQykgQoMXVzrTDpliGSWwt03xxA4GFaZkUf0ntnbgLSuOXK
+        cItc4L4bml+s81w3MaqIOD8=
+X-Google-Smtp-Source: ACHHUZ5+FBm2KfU23mMZ4FDV7sk8nRgjM/SFUAQ00XEqSzuD7JL6vOn+KT5MEHgIiaW6Ze1ngPFWHA==
+X-Received: by 2002:a7b:cbcd:0:b0:3fa:74bf:f028 with SMTP id n13-20020a7bcbcd000000b003fa74bff028mr486383wmi.0.1687421899802;
+        Thu, 22 Jun 2023 01:18:19 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z12-20020a05600c114c00b003f9b4330880sm6985723wmz.29.2023.06.22.00.54.30
+        by smtp.gmail.com with ESMTPSA id 9-20020a05600c240900b003f93c450657sm6974330wmp.38.2023.06.22.01.18.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 00:54:31 -0700 (PDT)
+        Thu, 22 Jun 2023 01:18:19 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: remove redundant initialization of variables leaf and slot
-Date:   Thu, 22 Jun 2023 08:54:30 +0100
-Message-Id: <20230622075430.2794134-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] pipe: remove redundant initialization of pointer buf
+Date:   Thu, 22 Jun 2023 09:18:18 +0100
+Message-Id: <20230622081818.2795019-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,36 +65,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variables leaf and slot are initialized when declared but the values
-assigned to them are never read as they are being re-assigned later on.
-The initializations are redundant and can be removed. Cleans up clang
-scan build warings:
+The pointer buf is being initialized with a value that is never
+read. Buf is being re-assigned later on, the initialization is
+redundant and can be removed. Cleans up clang scan build warning:
 
-fs/btrfs/tree-log.c:6797:25: warning: Value stored to 'leaf' during its
-initialization is never read [deadcode.DeadStores]
-fs/btrfs/tree-log.c:6798:7: warning: Value stored to 'slot' during its
+fs/pipe.c:492:24: warning: Value stored to 'buf' during its
 initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/btrfs/tree-log.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/pipe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 365a1cc0a3c3..8ad7e7e38d18 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -6794,8 +6794,8 @@ static int log_new_ancestors(struct btrfs_trans_handle *trans,
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 2d88f73f585a..71b6b0545e0f 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -489,7 +489,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		head = pipe->head;
+ 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
+ 			unsigned int mask = pipe->ring_size - 1;
+-			struct pipe_buffer *buf = &pipe->bufs[head & mask];
++			struct pipe_buffer *buf;
+ 			struct page *page = pipe->tmp_page;
+ 			int copied;
  
- 	while (true) {
- 		struct btrfs_fs_info *fs_info = root->fs_info;
--		struct extent_buffer *leaf = path->nodes[0];
--		int slot = path->slots[0];
-+		struct extent_buffer *leaf;
-+		int slot;
- 		struct btrfs_key search_key;
- 		struct inode *inode;
- 		u64 ino;
 -- 
 2.39.2
 
