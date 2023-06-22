@@ -2,137 +2,130 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 946C0EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jun 2023 19:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A00CEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 02:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231950AbjFUTEs (ORCPT
+        id S229765AbjFVCxw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jun 2023 15:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46634 "EHLO
+        Wed, 21 Jun 2023 22:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbjFUTEn (ORCPT
+        with ESMTP id S229504AbjFVCxv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jun 2023 15:04:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443211FC8;
-        Wed, 21 Jun 2023 12:04:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC6ED616A6;
-        Wed, 21 Jun 2023 19:04:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C959C433C8;
-        Wed, 21 Jun 2023 19:04:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687374259;
-        bh=XX+xnkHYFw12qk3N6BO1yCAkmNYCz3srtgwHCLCbmwk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=eoFhaja6StbjSzE51WfycuLc9VD3vd5yWqvsqfE9HX6PWJT1yzcX3K7pxsoKkV2jK
-         CSMDtiixzcKkB/W+RI3qooJz0Mj5OZPwcoQKeJRqbmzzkNB0TJlJBnQpM9cYVT/8mB
-         YCK866m0pKzbc6edkIvDABbN7i/mScrCT3o1PlDLHxTjCfvwqSOjcYesOzS0rv+ZFx
-         3dC6I3p4hMKaiY4E+sM3nzVYWT4lAlB372WdBdO9cjm3QvHKW/VfpC/gzIp9EeZOd4
-         uALZBH/U2IqGeiS0mX0ePl+5ix2qw9puLKYxvEu1rYC222AzD0jij5Qi0DExuivjU6
-         75+N/n6hRqn8Q==
-Message-ID: <03b904b3c5981676dce8a5ad9a3e3b8d9ae80ded.camel@kernel.org>
-Subject: Re: [PATCH][next] nfsd: remove redundant assignments to variable len
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        linux-nfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 21 Jun 2023 15:04:17 -0400
-In-Reply-To: <20230621145205.2682584-1-colin.i.king@gmail.com>
-References: <20230621145205.2682584-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        Wed, 21 Jun 2023 22:53:51 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4662C6;
+        Wed, 21 Jun 2023 19:53:49 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35M2aBNT007094;
+        Thu, 22 Jun 2023 02:53:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ldYepX8jKIyJFGSxDPjdZyCIZll72alhZGIxLxkAGN0=;
+ b=Iszjj0wbM6up4z2W3al4IScBR8Ogpl54vi0EZxwnJK7MaHtUa3xTQ4D+GE6LZ2BziDfp
+ KHK8CNaPJ/MdhtQaMPvIIzBTS0dDvXQ7ocKhQq9GLRhfdwKzDfbhM9Nzd1VXDx3HNoai
+ f2lhd7jZq5rdWcLIzCxK8mJozlzM1aZO7pXK+N2o3fxrlAVYEI4YoTl+MeQvBKpg1kNG
+ qmrKk0aKfDXlocqQtOtqx6EjTwMetzh+wZ6WAD3Xddal6dUDNqQl/accMh8oikTOBcGs
+ cWIBL6i97QLlP2HW3byta+Jp9o3VLu+jMwh0TJYQ28lDQA3s8JhWA28GKK7CUOzlO1WX CQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rbvr1j8hn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jun 2023 02:53:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35M2rgMo024703
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jun 2023 02:53:42 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 21 Jun
+ 2023 19:53:41 -0700
+Message-ID: <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
+Date:   Wed, 21 Jun 2023 20:53:41 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 0/5] accel/qaic: Improve bounds checking in encode/decode
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7dnmcz4J2lFzqWFWEc99eA77B2y3-OI8
+X-Proofpoint-ORIG-GUID: 7dnmcz4J2lFzqWFWEc99eA77B2y3-OI8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-21_14,2023-06-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ mlxlogscore=864 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306220021
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2023-06-21 at 15:52 +0100, Colin Ian King wrote:
-> There are a few assignments to variable len where the value is not
-> being read and so the assignments are redundant and can be removed.
-> In one case, the variable len can be removed completely. Cleans up
-> 4 clang scan warnings of the form:
->=20
-> fs/nfsd/export.c:100:7: warning: Although the value stored to 'len'
-> is used in the enclosing expression, the value is never actually
-> read from 'len' [deadcode.DeadStores]
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  fs/nfsd/export.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
->=20
-> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> index ae85257b4238..11a0eaa2f914 100644
-> --- a/fs/nfsd/export.c
-> +++ b/fs/nfsd/export.c
-> @@ -97,7 +97,7 @@ static int expkey_parse(struct cache_detail *cd, char *=
-mesg, int mlen)
->  		goto out;
-> =20
->  	err =3D -EINVAL;
-> -	if ((len=3Dqword_get(&mesg, buf, PAGE_SIZE)) <=3D 0)
-> +	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
->  		goto out;
-> =20
->  	err =3D -ENOENT;
-> @@ -107,7 +107,7 @@ static int expkey_parse(struct cache_detail *cd, char=
- *mesg, int mlen)
->  	dprintk("found domain %s\n", buf);
-> =20
->  	err =3D -EINVAL;
-> -	if ((len=3Dqword_get(&mesg, buf, PAGE_SIZE)) <=3D 0)
-> +	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
->  		goto out;
->  	fsidtype =3D simple_strtoul(buf, &ep, 10);
->  	if (*ep)
-> @@ -593,7 +593,6 @@ static int svc_export_parse(struct cache_detail *cd, =
-char *mesg, int mlen)
->  {
->  	/* client path expiry [flags anonuid anongid fsid] */
->  	char *buf;
-> -	int len;
->  	int err;
->  	struct auth_domain *dom =3D NULL;
->  	struct svc_export exp =3D {}, *expp;
-> @@ -609,8 +608,7 @@ static int svc_export_parse(struct cache_detail *cd, =
-char *mesg, int mlen)
-> =20
->  	/* client */
->  	err =3D -EINVAL;
-> -	len =3D qword_get(&mesg, buf, PAGE_SIZE);
-> -	if (len <=3D 0)
-> +	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
->  		goto out;
-> =20
->  	err =3D -ENOENT;
-> @@ -620,7 +618,7 @@ static int svc_export_parse(struct cache_detail *cd, =
-char *mesg, int mlen)
-> =20
->  	/* path */
->  	err =3D -EINVAL;
-> -	if ((len =3D qword_get(&mesg, buf, PAGE_SIZE)) <=3D 0)
-> +	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
->  		goto out1;
-> =20
->  	err =3D kern_path(buf, 0, &exp.ex_path);
-> @@ -665,7 +663,7 @@ static int svc_export_parse(struct cache_detail *cd, =
-char *mesg, int mlen)
->  			goto out3;
->  		exp.ex_fsid =3D an_int;
-> =20
-> -		while ((len =3D qword_get(&mesg, buf, PAGE_SIZE)) > 0) {
-> +		while (qword_get(&mesg, buf, PAGE_SIZE) > 0) {
->  			if (strcmp(buf, "fsloc") =3D=3D 0)
->  				err =3D fsloc_parse(&mesg, buf, &exp.ex_fslocs);
->  			else if (strcmp(buf, "uuid") =3D=3D 0)
+On 6/21/2023 1:21 AM, Dan Carpenter wrote:
+> (I think this is the first cover letter I have ever written).
+> 
+> These patches are based on review and not from testing.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Thank you for your review.  I look forward to reading your patches and 
+learning from them.
+
+Did you use any kind of tooling?  If there is something we can add to 
+our flow to bring up the quality, I would like to consider it.
+
+Tooling or no, the control path is not a trivial part of the driver to 
+dip your toes in, and it seems like you really dug deep.  I find that 
+impressive.
+
+> I found it quite complicated to track the buffer sizes.  What happens
+> is the qaic_manage() gets a buffer user_msg->data[] which has
+> user_msg->len bytes.  The qaic_manage() calls qaic_manage_msg_xfer()
+> which encodes the user's message.
+> 
+> Then we get a response and we decode the response back into
+> user_msg->data[], but we don't check that it is overflowed.  We instead
+> copy seem to check against msg_hdr_len (which would prevent a read
+> overflow).  At the end user_msg->len gets set to the number of bytes
+> that we copied to the buffer.
+> 
+> I'm coming to this code brand new, it's the first time I have seen it.
+> So I don't really understand.  There is an element of trust in
+> msg_hdr_len but then at other times we check it for integer overflows
+> which indicates deep distrust.
+
+Overall, we are taking a message from userspace and transforming it into 
+something the firmware on the device can consume.  Then we get a 
+response back from the firmware, and transform that back into something 
+userspace can consume.  From the driver perspective, neither the 
+firmware nor userspace is really trusted.  msg_hdr_len is something that 
+the driver calculates and maintains, but is updated with untrusted values.
+
+I can see where that could be confusing.  I look forward to looking at 
+what you've found, and hopefully making the code better.
+
+> What I'm saying is that there may be more issues in this code.  But also
+> that I don't really understand it so please review carefully.
+> 
+> The patch that I'm least sure of is 4/5:
+> 
+> [PATCH 4/5] accel/qaic: move and expand integer overflow checks for
+>   map_user_pages()
+> 
+> regards,
+> dan carpenter
+
