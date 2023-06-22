@@ -2,130 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A00CEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 02:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178FCEB64D8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 07:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjFVCxw (ORCPT
+        id S230218AbjFVHyh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jun 2023 22:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45106 "EHLO
+        Thu, 22 Jun 2023 03:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjFVCxv (ORCPT
+        with ESMTP id S229513AbjFVHyf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jun 2023 22:53:51 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4662C6;
-        Wed, 21 Jun 2023 19:53:49 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35M2aBNT007094;
-        Thu, 22 Jun 2023 02:53:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=ldYepX8jKIyJFGSxDPjdZyCIZll72alhZGIxLxkAGN0=;
- b=Iszjj0wbM6up4z2W3al4IScBR8Ogpl54vi0EZxwnJK7MaHtUa3xTQ4D+GE6LZ2BziDfp
- KHK8CNaPJ/MdhtQaMPvIIzBTS0dDvXQ7ocKhQq9GLRhfdwKzDfbhM9Nzd1VXDx3HNoai
- f2lhd7jZq5rdWcLIzCxK8mJozlzM1aZO7pXK+N2o3fxrlAVYEI4YoTl+MeQvBKpg1kNG
- qmrKk0aKfDXlocqQtOtqx6EjTwMetzh+wZ6WAD3Xddal6dUDNqQl/accMh8oikTOBcGs
- cWIBL6i97QLlP2HW3byta+Jp9o3VLu+jMwh0TJYQ28lDQA3s8JhWA28GKK7CUOzlO1WX CQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rbvr1j8hn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jun 2023 02:53:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35M2rgMo024703
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jun 2023 02:53:42 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 21 Jun
- 2023 19:53:41 -0700
-Message-ID: <26a1858f-d428-a2ac-9ddd-115ba2d8becc@quicinc.com>
-Date:   Wed, 21 Jun 2023 20:53:41 -0600
+        Thu, 22 Jun 2023 03:54:35 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8011F185;
+        Thu, 22 Jun 2023 00:54:34 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f122ff663eso9407844e87.2;
+        Thu, 22 Jun 2023 00:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687420473; x=1690012473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eie20f3ss91sUplEeIPYPp60+FBbWFR7xGUasT7bn5c=;
+        b=qU/htB9JCiIHSUq3832RTd4+lIgZfeF8QP6ZVgo8g2sL/eKmb9cmuAqZbJRiKehPHI
+         UycnuBYxKb4jQ+BQkGlV27c/8esqag2xF5U+5Nb9P2YLNwR1Zyfv4Cr4pyC0rCmCc4bJ
+         6XpkL4bMJYgZraUYCKsb5YjhIGv645+/ksLNnhMoBj1+C2IjBwNm2c6SaLV4qrks3JxU
+         xKJ/0U6r0HzQwHuZpV4sTS5T/reiQcPZvxgKp9LKr7ro13w/UHfSG85idp805/PIApIR
+         dNYTRsyw6yo8UFGEclCjQD6qG0HZk3TQB4vzdZzLpp2j2aBnPWNwZTLDMM+tOgGAhYOv
+         HTjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687420473; x=1690012473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eie20f3ss91sUplEeIPYPp60+FBbWFR7xGUasT7bn5c=;
+        b=mADkof7/TJ8GMJB495//UfgHvPsfZ+gIl+3BjFwHQiDUJP26z5D6aNCCJclO3yzZib
+         oMR7/iGGSOmAet+fGGHzqFCFxZoAf34RdV9RC+lYsUfXQzHkrpr9i59xwwRbNBoisM0R
+         2MLdAeXhmT4i1AYoT9JnzM3/cRWQtMAlUEK5rUbDaM49uLudwR+iJtHNT4AWlc3awuX7
+         AHM6TePZCYNyP+tNZAaapMCyXT2DisnAokDDDBn/KRKF+a8j4X/mtPJmiBlYfXHLNuva
+         8oT7KDDIcXrTU63YhtZFj24p+z90ZyS8nKHqOjhHLQCQro694QL0sRxgDWTBRjdcPB2M
+         nF9Q==
+X-Gm-Message-State: AC+VfDwvjhHNcqF6EMdo7Q0wliltQWpqxr/4T9qoR5WiatIAXtwm1maW
+        0T4PvU5k1inw6fCayQJCmhg=
+X-Google-Smtp-Source: ACHHUZ5V7PFqhRZ/OooYKSnOyIwbW2Sb1pABO0QSB8jezdhTlqu529QtFTTjTxqbWUqUscCxwLjHbw==
+X-Received: by 2002:ac2:4d84:0:b0:4f8:5ede:d457 with SMTP id g4-20020ac24d84000000b004f85eded457mr7913343lfe.55.1687420472453;
+        Thu, 22 Jun 2023 00:54:32 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z12-20020a05600c114c00b003f9b4330880sm6985723wmz.29.2023.06.22.00.54.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jun 2023 00:54:31 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: remove redundant initialization of variables leaf and slot
+Date:   Thu, 22 Jun 2023 08:54:30 +0100
+Message-Id: <20230622075430.2794134-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 0/5] accel/qaic: Improve bounds checking in encode/decode
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <af83549b-ccb4-4a8d-b036-9359eba9d39f@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7dnmcz4J2lFzqWFWEc99eA77B2y3-OI8
-X-Proofpoint-ORIG-GUID: 7dnmcz4J2lFzqWFWEc99eA77B2y3-OI8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-21_14,2023-06-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxlogscore=864 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306220021
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/21/2023 1:21 AM, Dan Carpenter wrote:
-> (I think this is the first cover letter I have ever written).
-> 
-> These patches are based on review and not from testing.
+The variables leaf and slot are initialized when declared but the values
+assigned to them are never read as they are being re-assigned later on.
+The initializations are redundant and can be removed. Cleans up clang
+scan build warings:
 
-Thank you for your review.  I look forward to reading your patches and 
-learning from them.
+fs/btrfs/tree-log.c:6797:25: warning: Value stored to 'leaf' during its
+initialization is never read [deadcode.DeadStores]
+fs/btrfs/tree-log.c:6798:7: warning: Value stored to 'slot' during its
+initialization is never read [deadcode.DeadStores]
 
-Did you use any kind of tooling?  If there is something we can add to 
-our flow to bring up the quality, I would like to consider it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/tree-log.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tooling or no, the control path is not a trivial part of the driver to 
-dip your toes in, and it seems like you really dug deep.  I find that 
-impressive.
-
-> I found it quite complicated to track the buffer sizes.  What happens
-> is the qaic_manage() gets a buffer user_msg->data[] which has
-> user_msg->len bytes.  The qaic_manage() calls qaic_manage_msg_xfer()
-> which encodes the user's message.
-> 
-> Then we get a response and we decode the response back into
-> user_msg->data[], but we don't check that it is overflowed.  We instead
-> copy seem to check against msg_hdr_len (which would prevent a read
-> overflow).  At the end user_msg->len gets set to the number of bytes
-> that we copied to the buffer.
-> 
-> I'm coming to this code brand new, it's the first time I have seen it.
-> So I don't really understand.  There is an element of trust in
-> msg_hdr_len but then at other times we check it for integer overflows
-> which indicates deep distrust.
-
-Overall, we are taking a message from userspace and transforming it into 
-something the firmware on the device can consume.  Then we get a 
-response back from the firmware, and transform that back into something 
-userspace can consume.  From the driver perspective, neither the 
-firmware nor userspace is really trusted.  msg_hdr_len is something that 
-the driver calculates and maintains, but is updated with untrusted values.
-
-I can see where that could be confusing.  I look forward to looking at 
-what you've found, and hopefully making the code better.
-
-> What I'm saying is that there may be more issues in this code.  But also
-> that I don't really understand it so please review carefully.
-> 
-> The patch that I'm least sure of is 4/5:
-> 
-> [PATCH 4/5] accel/qaic: move and expand integer overflow checks for
->   map_user_pages()
-> 
-> regards,
-> dan carpenter
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 365a1cc0a3c3..8ad7e7e38d18 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -6794,8 +6794,8 @@ static int log_new_ancestors(struct btrfs_trans_handle *trans,
+ 
+ 	while (true) {
+ 		struct btrfs_fs_info *fs_info = root->fs_info;
+-		struct extent_buffer *leaf = path->nodes[0];
+-		int slot = path->slots[0];
++		struct extent_buffer *leaf;
++		int slot;
+ 		struct btrfs_key search_key;
+ 		struct inode *inode;
+ 		u64 ino;
+-- 
+2.39.2
 
