@@ -2,96 +2,160 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE9AEB64D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 10:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFFFEB64DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jun 2023 11:24:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjFVK1m (ORCPT
+        id S230105AbjFVLYT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jun 2023 06:27:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44702 "EHLO
+        Thu, 22 Jun 2023 07:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjFVK1k (ORCPT
+        with ESMTP id S229628AbjFVLYR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jun 2023 06:27:40 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21F5D3;
-        Thu, 22 Jun 2023 03:27:39 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f9c532f9e3so15950755e9.1;
-        Thu, 22 Jun 2023 03:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687429658; x=1690021658;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNBLuqw9En2G21h+WbiEp4rYwK/zPxLAjR8JVifNIMU=;
-        b=Gm9kFmFGSjUIWl+mD1+q9YGb2KNmJsxCR97+KEn+BXYSYhNLLHcK8INUrfhmHfH3Rg
-         tLboBrH00ryT8rMmIrLFgCL8u8mPN8yvpb5yK2rE+BS/D3HDa10flbU7V0hMadCuz+LY
-         86hfggpQ7CofYNlniE3OEaDQ13txw8rqII71kvNN+EQl5ewAVeX1xiDLLAQ6DKfeMcYX
-         cG8q7305iU9EzNby0MHEdDIKX+rglW+nQlbQzjcaa3LJQ0oj2C2TRAvXjntk3X0Z+F4R
-         M9qvfeKXdYsdBUCWccJ4Emfhnw1RjmZkfJRXxrA4I4/AW6KDyI2Gh5D6f9AenFlwQrsI
-         XZEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687429658; x=1690021658;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HNBLuqw9En2G21h+WbiEp4rYwK/zPxLAjR8JVifNIMU=;
-        b=cocVO/oB/NfRy5Y0m9gldHyI18KCoNM960S/XZG3WZw//AqecIt9Nk0ftdwhN7ioxA
-         d/EvjzYkqWTEZ9sku/K1CrVVqcQ4IuIJ7LKIAEHySp8MVCrBE0+n2/fMVnmcPCydk4Ve
-         R9ENRx+BqcMC2vn4TyOuqPhfyPH3gkuqJ7G+L+5aYY5hz3cgtD3/LQkQyhTK2FnCFlAO
-         gzyc3csRlXgOLduaiQkC4NMsEJhTr33daBKvSRUfe1l/3xM6mTYEoVTGphWyKFJCljj4
-         EIFVq9ImPdJzw62/i0vz4+7aqBHtPbpszH8oCEmD8/4XmsCpfzlWUbHOTV9eY8jyD+o0
-         99xA==
-X-Gm-Message-State: AC+VfDw8RVSXO6BPazs42xgtExBGE4b38ksP+HTBeibrOPn1dGGyvapv
-        vh+Kzv7ZvTpgS+FullhgJVM=
-X-Google-Smtp-Source: ACHHUZ6WOZ9956VMYMFA7ZWmAzrRmUqxfnLfKFFLp8sK1aAZazFPzHyA/4NZFbclQzz8mZoSS/0DDg==
-X-Received: by 2002:a05:600c:3794:b0:3f9:b30f:455f with SMTP id o20-20020a05600c379400b003f9b30f455fmr7658754wmr.9.1687429658218;
-        Thu, 22 Jun 2023 03:27:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l17-20020a05600012d100b002c71b4d476asm6640003wrx.106.2023.06.22.03.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 03:27:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        ocfs2-devel@oss.oracle.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ocfs2: remove redundant assignment to variable bit_off
-Date:   Thu, 22 Jun 2023 11:27:36 +0100
-Message-Id: <20230622102736.2831126-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 22 Jun 2023 07:24:17 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE48A10C1;
+        Thu, 22 Jun 2023 04:24:15 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35M5gofj002379;
+        Thu, 22 Jun 2023 11:24:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=SgvYUEg4wWIl9XdzdYhSXdwnPQL38BSZhqGnsqa/o4c=;
+ b=aV6X9m+zqRqFPzDCz7Huxt67Omj6gUb1D/6mH3tRxNePHuKWjFBMItuQwFzdQY9LeJoN
+ QHoOXwBw891PJB0hpZv/c1k8EcfhuH/o7ZAYVG5mmSwtH2xKADdx17d7KnMx5+V/yDmY
+ uujvuCFWOV5TAewADYeL7cJ3R93b03QMGd/xGTJfJLGFREa+loi/tWH49IgAGlgy813+
+ +Q6I58O/h1rR2XWjqQKo5XrVPlZfBIoafYUUemRcCiQvx0O49oclydkze/idiva02y4D
+ TLdVcKLtHjxdvjRisPcIRzJO8c1tCDH6nvUfU+egvIkSx5aGIFDbY9tA8hNdzoM+YPAp MQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rbykdjush-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jun 2023 11:24:10 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35MBO8uM004953
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jun 2023 11:24:08 GMT
+Received: from [10.79.212.194] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 22 Jun
+ 2023 04:24:05 -0700
+Message-ID: <95ed2c6b-df33-a252-8eba-3cb848c5c40b@quicinc.com>
+Date:   Thu, 22 Jun 2023 16:54:03 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/5] accel/qaic: tighten bounds checking in
+ encode_message()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <8dc35a68-7257-41ac-9057-7c89b9ad6e18@moroto.mountain>
+Content-Language: en-US
+From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+In-Reply-To: <8dc35a68-7257-41ac-9057-7c89b9ad6e18@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zCiBuYaZXBwd9gjT-P01LsSqgasUJbcq
+X-Proofpoint-GUID: zCiBuYaZXBwd9gjT-P01LsSqgasUJbcq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-22_08,2023-06-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306220095
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable bit_off is being assigned a value that is never read, it is
-being re-assigned a new value in the following while loop. Remove the
-assignment. Cleans up clang scan build warning:
 
-fs/ocfs2/localalloc.c:976:18: warning: Although the value stored to
-'bit_off' is used in the enclosing expression, the value is never
-actually read from 'bit_off' [deadcode.DeadStores]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ocfs2/localalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 6/21/2023 12:51 PM, Dan Carpenter wrote:
+> There are several issues in this code.  The check at the start of the
+> loop:
+> 
+> 	if (user_len >= user_msg->len) {
+> 
+> This check does not ensure that we have enough space for the trans_hdr
+> (8 bytes).  Instead the check needs to be:
+> 
+> 	if (user_len >= user_msg->len - sizeof(*trans_hdr)) {
+> 
+> That subtraction is done as an unsigned long we want to avoid
+> negatives.  Add a lower bound to the start of the function.
+> 
+> 	if (user_msg->len < sizeof(*trans_hdr))
+> 
+> There is a second integer underflow which can happen if
+> trans_hdr->len is zero inside the encode_passthrough() function.
+> 
+> 	memcpy(out_trans->data, in_trans->data, in_trans->hdr.len - sizeof(in_trans->hdr));
+> 
+> Instead of adding a check to encode_passthrough() it's better to check
+> in this central place.  Add that check:
+> 
+> 	if (trans_hdr->len < sizeof(trans_hdr)
+> 
+> The final concern is that the "user_len + trans_hdr->len" might have an
+> integer overflow bug.  Use size_add() to prevent that.
+> 
+> -	if (user_len + trans_hdr->len > user_msg->len) {
+> +	if (size_add(user_len, trans_hdr->len) > user_msg->len) {
+> 
+> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This is based on code review and not tested.
+> 
+>   drivers/accel/qaic/qaic_control.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
+> index 5c57f7b4494e..a51b1594dcfa 100644
+> --- a/drivers/accel/qaic/qaic_control.c
+> +++ b/drivers/accel/qaic/qaic_control.c
+> @@ -748,7 +748,8 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+>   	int ret;
+>   	int i;
+>   
+> -	if (!user_msg->count) {
+> +	if (!user_msg->count ||
+> +	    user_msg->len < sizeof(*trans_hdr)) {
+Can we have something like this here
+user_msg->len < sizeof(*trans_hdr) * user_msg->count, no?
+>   		ret = -EINVAL;
+>   		goto out;
+>   	}
+> @@ -765,12 +766,13 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+>   	}
+>   
+>   	for (i = 0; i < user_msg->count; ++i) {
+> -		if (user_len >= user_msg->len) {
+> +		if (user_len >= user_msg->len - sizeof(*trans_hdr)) {
+Do you think it is more readable if we have something like this
+user_len + sizeof(*trans_hdr) >= user_msg->len
+>   			ret = -EINVAL;
+>   			break;
+>   		}
+>   		trans_hdr = (struct qaic_manage_trans_hdr *)(user_msg->data + user_len);
+> -		if (user_len + trans_hdr->len > user_msg->len) {
+> +		if (trans_hdr->len < sizeof(trans_hdr) ||
+> +		    size_add(user_len, trans_hdr->len) > user_msg->len) {
+>   			ret = -EINVAL;
+>   			break;
+>   		}
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index c4426d12a2ad..c803c10dd97e 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -973,7 +973,7 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
- 	la_start_blk = ocfs2_clusters_to_blocks(osb->sb,
- 						le32_to_cpu(la->la_bm_off));
- 	bitmap = la->la_bitmap;
--	start = count = bit_off = 0;
-+	start = count = 0;
- 	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
- 
- 	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start))
--- 
-2.39.2
-
+Hey Dan, Thank you for going through qaic driver. You patches are very 
+much appreciated. This is good work.
