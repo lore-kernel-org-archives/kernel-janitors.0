@@ -2,44 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCB3EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AF8EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232898AbjFWVUI (ORCPT
+        id S232630AbjFWVU5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 17:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50376 "EHLO
+        Fri, 23 Jun 2023 17:20:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233011AbjFWVTv (ORCPT
+        with ESMTP id S232609AbjFWVUi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 17:19:51 -0400
+        Fri, 23 Jun 2023 17:20:38 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B1B2949;
-        Fri, 23 Jun 2023 14:18:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30BAC2D46;
+        Fri, 23 Jun 2023 14:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8o1B2LX7Hh8TNSfFwUWyg0VffJUQJIzGAe2D6u+TlYM=;
-  b=W3acjQz81RgrW6TdUMeb4r5oVbvfBcJvglLvPyOomZw/Gz8zv3C2ybyt
-   AQ/zZDn6VqQdCUL//CFztcf75hpwVKw2+UgTxjLTK+AnY3+yTDXwXfmru
-   sa5l3mQ45KeFeCJR8op6gb0OOs7TVWJiQ+Tivrh+kEULUahwlkii+ThaU
+  bh=GCWo4PVrP3ZeFd8PIff442f3VLqG/AMKNMFkIT9T6cA=;
+  b=K02CyeC0TxO7IAr7a3O+52eMgvms+F1/AvW0vYiFyEyImYoyQe3rBgJa
+   TpAOj/W+1u1Yyv5zigBnWDQbMKc4dofND330WeFJkbKNYeeW9PRFvUD6F
+   JG+WW/GS1N7xtJpu/yozutxXj7AYxLY+aNccGkg1oAWTQTtopCJ72nAgU
    E=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,153,1684792800"; 
-   d="scan'208";a="59686163"
+   d="scan'208";a="59686167"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:10 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:11 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Cheng Xu <chengyou@linux.alibaba.com>
+To:     Shannon Nelson <shannon.nelson@amd.com>
 Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        Kai Shen <kaishen@linux.alibaba.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        Brett Creeley <brett.creeley@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 05/26] RDMA/erdma: use array_size
-Date:   Fri, 23 Jun 2023 23:14:36 +0200
-Message-Id: <20230623211457.102544-6-Julia.Lawall@inria.fr>
+Subject: [PATCH 09/26] pds_core: use array_size
+Date:   Fri, 23 Jun 2023 23:14:40 +0200
+Message-Id: <20230623211457.102544-10-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230623211457.102544-1-Julia.Lawall@inria.fr>
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
@@ -73,22 +75,29 @@ The changes were done using the following Coccinelle semantic patch:
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/infiniband/hw/erdma/erdma_verbs.c |    4 ++--
+ drivers/net/ethernet/amd/pds_core/core.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/erdma/erdma_verbs.c b/drivers/infiniband/hw/erdma/erdma_verbs.c
-index 83e1b0d55977..c49160f6ff27 100644
---- a/drivers/infiniband/hw/erdma/erdma_verbs.c
-+++ b/drivers/infiniband/hw/erdma/erdma_verbs.c
-@@ -462,8 +462,8 @@ static int init_kernel_qp(struct erdma_dev *dev, struct erdma_qp *qp,
- 		dev->func_bar + (ERDMA_SDB_SHARED_PAGE_INDEX << PAGE_SHIFT);
- 	kqp->hw_rq_db = dev->func_bar + ERDMA_BAR_RQDB_SPACE_OFFSET;
+diff --git a/drivers/net/ethernet/amd/pds_core/core.c b/drivers/net/ethernet/amd/pds_core/core.c
+index 483a070d96fa..d87f45a1ee2f 100644
+--- a/drivers/net/ethernet/amd/pds_core/core.c
++++ b/drivers/net/ethernet/amd/pds_core/core.c
+@@ -196,7 +196,7 @@ int pdsc_qcq_alloc(struct pdsc *pdsc, unsigned int type, unsigned int index,
+ 	dma_addr_t q_base_pa;
+ 	int err;
  
--	kqp->swr_tbl = vmalloc(qp->attrs.sq_size * sizeof(u64));
--	kqp->rwr_tbl = vmalloc(qp->attrs.rq_size * sizeof(u64));
-+	kqp->swr_tbl = vmalloc(array_size(qp->attrs.sq_size, sizeof(u64)));
-+	kqp->rwr_tbl = vmalloc(array_size(qp->attrs.rq_size, sizeof(u64)));
- 	if (!kqp->swr_tbl || !kqp->rwr_tbl)
+-	qcq->q.info = vzalloc(num_descs * sizeof(*qcq->q.info));
++	qcq->q.info = vzalloc(array_size(num_descs, sizeof(*qcq->q.info)));
+ 	if (!qcq->q.info) {
+ 		err = -ENOMEM;
  		goto err_out;
+@@ -219,7 +219,7 @@ int pdsc_qcq_alloc(struct pdsc *pdsc, unsigned int type, unsigned int index,
+ 	if (err)
+ 		goto err_out_free_q_info;
  
+-	qcq->cq.info = vzalloc(num_descs * sizeof(*qcq->cq.info));
++	qcq->cq.info = vzalloc(array_size(num_descs, sizeof(*qcq->cq.info)));
+ 	if (!qcq->cq.info) {
+ 		err = -ENOMEM;
+ 		goto err_out_free_irq;
 
