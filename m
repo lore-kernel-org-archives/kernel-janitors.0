@@ -2,67 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058E9C001DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 14:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C73C0015E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 14:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232274AbjFWOvv (ORCPT
+        id S232296AbjFWOvy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44796 "EHLO
+        Fri, 23 Jun 2023 10:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232263AbjFWOvu (ORCPT
+        with ESMTP id S231684AbjFWOvw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:51:50 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2AB5E42;
-        Fri, 23 Jun 2023 07:51:49 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3094910b150so801258f8f.0;
-        Fri, 23 Jun 2023 07:51:49 -0700 (PDT)
+        Fri, 23 Jun 2023 10:51:52 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17C213E;
+        Fri, 23 Jun 2023 07:51:51 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f918922954so8209665e9.2;
+        Fri, 23 Jun 2023 07:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687531908; x=1690123908;
+        d=gmail.com; s=20221208; t=1687531910; x=1690123910;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PCBNoxP4YRkkVqNHoMdn3r7AEJ8awnU7MdKG7PvTSLY=;
-        b=k7G4V2p2vjirSRWFhmCabdHIBO1ZySHwtJ1VeyemWWYdCw1IMquS51z2TtVIy2IJA1
-         jZQjxfdYLJ1mVxXcxSnHWtzzVke5yzwTINIiqBszQxLnYGXFPRi8PTjftl0kLb8DNF1y
-         6hPoXXp/bmBodE7Jj39sT2rdttUNtPvsB55ifzGh+u8X+Wy+c4YnmajvSwpQCUjhb79j
-         xoHXGKrxYlIjrX0pap0S1FJB6uRXO0xnt4iwZ0AnKt46NjohNfnN34qHx/hRXEwMv8CW
-         Fj/ZktgTG6HGtfiYrrdi31sgFdPb9iAtxDSlcoGf6ZjUqCdnNUu2vp1mdFbBMVMZIX4Z
-         cQbw==
+        bh=DsCs8LsHMP5hE51uFL5gb7cWLq1UmneDrAfiny814jA=;
+        b=o6/Iz3hStvmRMnHiNqCa0sS8vR5Z0zJ64Rt1pPsuREaHUr4QgBDYqi09KqiwX3wWez
+         tF5nR+dGxqpe7wEDzqrDA/UYvGUYZ+2AD+IwlkMR0BN1v+pPvd/P147AnKzHQgNEqMGy
+         oO/Jhiy9W+kl+YX2+q4N7GSaWnAceUuExtq4hI95MTLLZF/B5Bysw0av3YednZsjmUcf
+         K7IpqsXmosh6A2kATmnc6NZlVO7i5Zb+bNlbVxlToB7l3kLg9RINFtPnaTkfEsYw1yrW
+         yOYtbnBye2CaAnoZD9TKll9+oTsUUN+F0NMqTIkWC1DpemLYofc0xhqkwYl7v9KFIqcx
+         0vfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687531908; x=1690123908;
+        d=1e100.net; s=20221208; t=1687531910; x=1690123910;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PCBNoxP4YRkkVqNHoMdn3r7AEJ8awnU7MdKG7PvTSLY=;
-        b=bPJoA8ukyK8Ulkfjnw912HvFXIEUlBhGKrsHVcAab3KcuOvW4dROEDI9T1d36m+ueg
-         YG87dSjP4EK7A5Z0BWDyF3J2Mq4m/Y2BpTEZluD+Vklc8WxQfWxVo7L91qJzOKsG6sVa
-         Ahbq4Oaq7VEetbOj1fK2XQz8S6K9MBhQpuzOCw91p//9eA7xQx+kHXh0r1kmLrs1M8Lh
-         8WB2zsVUSvQrUSI54AE7WvU/UXFtLsNgzaqyMDW+pT3ZTdRoScyBGrTk/UyvG+oGLn04
-         JAuFpDfDkK6XqURW0cc92uVQSCd4JCxgsL7Sbjlkjv1oJYsXkRnxzNRkLgqAaB390qu8
-         y9zw==
-X-Gm-Message-State: AC+VfDxm0JrxE3Vg7Vp+ddIMw26dxMXX53R6VCQYUvjyKOOBgjntLbb7
-        W3V5RAHjZ9w7HWB9uyWAGX0=
-X-Google-Smtp-Source: ACHHUZ4RznTaUJsQG4MeWbsn9cfoWhsr9y6msDWfd0fBuzV+5soImwV6+HxOhnpXxlLR0872tAunQQ==
-X-Received: by 2002:adf:e447:0:b0:307:88ff:ea26 with SMTP id t7-20020adfe447000000b0030788ffea26mr17985099wrm.25.1687531908030;
-        Fri, 23 Jun 2023 07:51:48 -0700 (PDT)
+        bh=DsCs8LsHMP5hE51uFL5gb7cWLq1UmneDrAfiny814jA=;
+        b=aneT/oFmMG7HQCfwcNB1ClMT2UY7qdnK/LVHdfkU5Z8sP3gaV0ZMvZz6JXatgdEt5O
+         sm4GWwdSXLXfuO/QZ3zUBR7GOexLQ6HGSx7opqUHkHpEOtnl4Ur7V3eaip8Vpc4AWsiI
+         PlIVAJoPgjlQDF3TguLQ+edL8VHlkG3n4cseH4Sz5fkoSCATgiR0BVo1DFh3TSicM+zT
+         sAIcJNWKc8GaU7fxinZ4aYKEhPXJZMki8K9+4XvrKoO7zffwD00//c81/AF0RcOaoG5I
+         V1+Km1yEPAG+09qAap0aIXWBPC/OLUDPMO7Yk0DypTWmt5hQXJpCHiZhAHTKwqbME9F1
+         2LIA==
+X-Gm-Message-State: AC+VfDyN9qVmAlYxQ2NlwFVPrfc0csIpm1HaI48jgIGI30X77qEzfZ5o
+        PkYfcXWPx3hHZRzYlyic0Ec=
+X-Google-Smtp-Source: ACHHUZ70gFtH4lcp2jQS4FQ6zI/OQIsGhu95c6lzI/2L3tCt8GN0oZACXbXS+XHz+ObxQsvHVen9rw==
+X-Received: by 2002:a1c:f609:0:b0:3f9:bf0f:1ceb with SMTP id w9-20020a1cf609000000b003f9bf0f1cebmr6203753wmc.37.1687531910075;
+        Fri, 23 Jun 2023 07:51:50 -0700 (PDT)
 Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p7-20020adff207000000b00307acec258esm9828986wro.3.2023.06.23.07.51.47
+        by smtp.gmail.com with ESMTPSA id v6-20020a1cf706000000b003f17848673fsm2577365wmh.27.2023.06.23.07.51.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 07:51:47 -0700 (PDT)
+        Fri, 23 Jun 2023 07:51:49 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] pwm: clk: Use the devm_clk_get_prepared() helper function
-Date:   Fri, 23 Jun 2023 16:51:31 +0200
-Message-ID: <168753171948.1191890.9936900987085626404.b4-ty@gmail.com>
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: ab8500: Fix error code in probe()
+Date:   Fri, 23 Jun 2023 16:51:33 +0200
+Message-ID: <168753171969.1191890.2777194498557168545.b4-ty@gmail.com>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <9281571825c365c1591fcf31527d45ec576c19b4.1681635694.git.christophe.jaillet@wanadoo.fr>
-References: <9281571825c365c1591fcf31527d45ec576c19b4.1681635694.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
+References: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,16 +71,16 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-On Sun, 16 Apr 2023 11:02:13 +0200, Christophe JAILLET wrote:
-> Use the devm_clk_get_prepared() helper function instead of hand-writing it.
-> It saves some line of codes.
+On Mon, 22 May 2023 14:07:42 +0300, Dan Carpenter wrote:
+> This code accidentally return positive EINVAL instead of negative
+> -EINVAL.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] pwm: clk: Use the devm_clk_get_prepared() helper function
-      commit: 2b8e30b1bd500df67554f1c183caf333de82f8d2
+[1/1] pwm: ab8500: Fix error code in probe()
+      commit: cdcffafc4d845cc0c6392cba168c7a942734cce7
 
 Best regards,
 -- 
