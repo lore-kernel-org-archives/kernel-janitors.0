@@ -2,86 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C73C0015E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 14:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8638EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 17:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbjFWOvy (ORCPT
+        id S230516AbjFWRtv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
+        Fri, 23 Jun 2023 13:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231684AbjFWOvw (ORCPT
+        with ESMTP id S229541AbjFWRtt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:51:52 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17C213E;
-        Fri, 23 Jun 2023 07:51:51 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f918922954so8209665e9.2;
-        Fri, 23 Jun 2023 07:51:51 -0700 (PDT)
+        Fri, 23 Jun 2023 13:49:49 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE252133
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Jun 2023 10:49:49 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-4007b5bafceso19521cf.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Jun 2023 10:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687531910; x=1690123910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1687542588; x=1690134588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DsCs8LsHMP5hE51uFL5gb7cWLq1UmneDrAfiny814jA=;
-        b=o6/Iz3hStvmRMnHiNqCa0sS8vR5Z0zJ64Rt1pPsuREaHUr4QgBDYqi09KqiwX3wWez
-         tF5nR+dGxqpe7wEDzqrDA/UYvGUYZ+2AD+IwlkMR0BN1v+pPvd/P147AnKzHQgNEqMGy
-         oO/Jhiy9W+kl+YX2+q4N7GSaWnAceUuExtq4hI95MTLLZF/B5Bysw0av3YednZsjmUcf
-         K7IpqsXmosh6A2kATmnc6NZlVO7i5Zb+bNlbVxlToB7l3kLg9RINFtPnaTkfEsYw1yrW
-         yOYtbnBye2CaAnoZD9TKll9+oTsUUN+F0NMqTIkWC1DpemLYofc0xhqkwYl7v9KFIqcx
-         0vfA==
+        bh=r04BHlizhRZLGJ1YZnjcXjNiI+FB4SYaUpufMSPzSIE=;
+        b=Gcp3kwGQyU3wA/vQ7aCv7MRv0XTVapDae5NZtzgFVedTbdrcJUaJz/bZdQC/JTySlY
+         /WyOUT9NJOrfv6gibmSVPo+2sU7pFYNem1RtsBEtbpUja0NfbYrbFnVQsHq5XJrVLoyp
+         KcmkPbP3C8RCXpxCu1M2SUHkVDSaUsIPqn99FEPpxTnorn4/s0wYGsgvE+8YyzNCS4Y8
+         gTrG7ySEQHxqD5roj6JWDnnMwej3hqCstHziPKOP82pbctAuqupXqp3O+iZqCzDJJCF6
+         b+NcF4197s9B1ZxKzE7+nH7vJn3UyytaLhzEa1xGdB0r+1AIZq1bQ6glV5swngbEosUu
+         fEJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687531910; x=1690123910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1687542588; x=1690134588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DsCs8LsHMP5hE51uFL5gb7cWLq1UmneDrAfiny814jA=;
-        b=aneT/oFmMG7HQCfwcNB1ClMT2UY7qdnK/LVHdfkU5Z8sP3gaV0ZMvZz6JXatgdEt5O
-         sm4GWwdSXLXfuO/QZ3zUBR7GOexLQ6HGSx7opqUHkHpEOtnl4Ur7V3eaip8Vpc4AWsiI
-         PlIVAJoPgjlQDF3TguLQ+edL8VHlkG3n4cseH4Sz5fkoSCATgiR0BVo1DFh3TSicM+zT
-         sAIcJNWKc8GaU7fxinZ4aYKEhPXJZMki8K9+4XvrKoO7zffwD00//c81/AF0RcOaoG5I
-         V1+Km1yEPAG+09qAap0aIXWBPC/OLUDPMO7Yk0DypTWmt5hQXJpCHiZhAHTKwqbME9F1
-         2LIA==
-X-Gm-Message-State: AC+VfDyN9qVmAlYxQ2NlwFVPrfc0csIpm1HaI48jgIGI30X77qEzfZ5o
-        PkYfcXWPx3hHZRzYlyic0Ec=
-X-Google-Smtp-Source: ACHHUZ70gFtH4lcp2jQS4FQ6zI/OQIsGhu95c6lzI/2L3tCt8GN0oZACXbXS+XHz+ObxQsvHVen9rw==
-X-Received: by 2002:a1c:f609:0:b0:3f9:bf0f:1ceb with SMTP id w9-20020a1cf609000000b003f9bf0f1cebmr6203753wmc.37.1687531910075;
-        Fri, 23 Jun 2023 07:51:50 -0700 (PDT)
-Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v6-20020a1cf706000000b003f17848673fsm2577365wmh.27.2023.06.23.07.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 07:51:49 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: ab8500: Fix error code in probe()
-Date:   Fri, 23 Jun 2023 16:51:33 +0200
-Message-ID: <168753171969.1191890.2777194498557168545.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
-References: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
+        bh=r04BHlizhRZLGJ1YZnjcXjNiI+FB4SYaUpufMSPzSIE=;
+        b=ezpofEXpO+1sdikdtockwT59fxHudvLGyivzqPyvmva16Pd/hIZ1O3Sk6GuZNMGoEy
+         zuvYPPqkspuznCQDXV7ru/vLjYBObKtccEYZ/v9A4DUBmI+rE6sh6KU4cKDEPpOohRRJ
+         JghQK6jZDv2yJRwLh+0EPEAvVJ7pRLbwFWWj+Nfz+DfQuBcPZYbXpmRhIAyAwlk7WpB2
+         upiQTp6vhg4m3tHT7nEKJXDQeSGyV7fHH+jWMEdD9cZ8dLR3ARzlgc5LCVBRiOu/RKvF
+         hecbZ9rblqDwWpvv7Jouj+6GS/HAts4Pjj9SJszl9eb9C/BJnd4rfAv5bD6Yr7mwevJP
+         8W4A==
+X-Gm-Message-State: AC+VfDyACIVKIeToaR2mUgT/Qi8GWOCGqALuJ+k8HXtFLBRuIf9kJVWS
+        9x64FfTx8aPAJrtJhxnXdy8QtvFOUQ10mZBCLoMp+XPBJ7hAIXhniaA=
+X-Google-Smtp-Source: ACHHUZ6m/vWb35pDLix63PiACTwBXg9BkP9Fk2MLVjV9iOth64o30KyhWZFkO7nM6JqfHIAfxUoZnjZzPMfCx0PFqn8=
+X-Received: by 2002:a05:622a:18a4:b0:3f8:99c1:52a1 with SMTP id
+ v36-20020a05622a18a400b003f899c152a1mr191040qtc.10.1687542588054; Fri, 23 Jun
+ 2023 10:49:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230623043107.4077510-1-irogers@google.com> <64741e8e-e81a-afb9-9ce3-9c2d6baab44a@web.de>
+In-Reply-To: <64741e8e-e81a-afb9-9ce3-9c2d6baab44a@web.de>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 23 Jun 2023 10:49:36 -0700
+Message-ID: <CAP-5=fVwhiGJEqTST2bfX8cUALpnTxELSHrvKtyJEPjqQjOacQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf unwind: Fix map reference counts
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ivan Babrou <ivan@cloudflare.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Jun 23, 2023 at 9:18=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > v2. Add missing map__put when dso is missing.
+> > ---
+>
+> Please omit such version information from the change suggestion.
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.4-rc7#n698
 
-On Mon, 22 May 2023 14:07:42 +0300, Dan Carpenter wrote:
-> This code accidentally return positive EINVAL instead of negative
-> -EINVAL.
-> 
-> 
+ah, tldr. Will correct in the future.
 
-Applied, thanks!
+>
+> How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
 
-[1/1] pwm: ab8500: Fix error code in probe()
-      commit: cdcffafc4d845cc0c6392cba168c7a942734cce7
+In general we've not been adding Fixes as there is a danger a backport
+will introduce a use-after-free.
 
-Best regards,
--- 
-Thierry Reding <thierry.reding@gmail.com>
+Thanks,
+Ian
+
+> Regards,
+> Markus
