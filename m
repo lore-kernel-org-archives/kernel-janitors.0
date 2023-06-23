@@ -2,42 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0BBEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0876EEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232890AbjFWVRC (ORCPT
+        id S232440AbjFWVS7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 17:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
+        Fri, 23 Jun 2023 17:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232885AbjFWVQk (ORCPT
+        with ESMTP id S229673AbjFWVSb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 17:16:40 -0400
+        Fri, 23 Jun 2023 17:18:31 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0FB30DE;
-        Fri, 23 Jun 2023 14:15:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82ED294E;
+        Fri, 23 Jun 2023 14:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=zjTOkHzHNJN2JwbbSn0B3jYr0f7hFN0oZZoh6lbquOQ=;
-  b=FPVhggARCWGLgx/uc1XplQBbZp4QfJ3ScSLfue5dgqmPlrnQ4BiqzZpN
-   IQ21XgRjNNOHEfdPKTVuJdURuqERB5NCaGfeDpyZ+YpyMYSfpq+KUPiuU
-   +vQ3rGawBQbmwNRu052NXLgEaJzd/RusbfLOqx+1C3Tv2tUHQBsR4S4Tk
-   g=;
+  bh=6uQt9cKBk2Sag9c2YWWjAaGPZs3k3Hvob+itlodbJvE=;
+  b=uUeK7v84Q78fePqXn2J06hqIJHU44vOesDD7hu1wYYvYAjqJ0J/cmLDe
+   UQgoZjPb5/RNMRv/6e8PHGv3hzro41BQHfbx/RndVD2XB7GRo04sYh6fK
+   tpHpLxNHWHvUskJqhO23GItuTkGYflimreyRkgYm+KNieGnnWye4tIA+W
+   c=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,153,1684792800"; 
-   d="scan'208";a="59686190"
+   d="scan'208";a="59686160"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:15 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:10 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Ian Abbott <abbotti@mev.co.uk>
+To:     Veerasenareddy Burru <vburru@marvell.com>
 Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Abhijit Ayarekar <aayarekar@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 26/26] comedi: use array_size
-Date:   Fri, 23 Jun 2023 23:14:57 +0200
-Message-Id: <20230623211457.102544-27-Julia.Lawall@inria.fr>
+Subject: [PATCH 02/26] octeon_ep: use array_size
+Date:   Fri, 23 Jun 2023 23:14:33 +0200
+Message-Id: <20230623211457.102544-3-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230623211457.102544-1-Julia.Lawall@inria.fr>
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
@@ -53,20 +57,17 @@ The changes were done using the following Coccinelle semantic patch:
 
 // <smpl>
 @@
-    size_t e1,e2;
-    expression COUNT;
-    identifier alloc = {vmalloc,vzalloc,kvmalloc,kvzalloc};
+    expression E1, E2;
+    constant C1, C2;
+    identifier alloc = {vmalloc,vzalloc};
 @@
-
+    
 (
-      alloc(
--           (e1) * (e2)
-+           array_size(e1, e2)
-      ,...)
+      alloc(C1 * C2,...)
 |
       alloc(
--           (e1) * (COUNT)
-+           array_size(COUNT, e1)
+-           (E1) * (E2)
++           array_size(E1, E2)
       ,...)
 )
 // </smpl>
@@ -74,29 +75,20 @@ The changes were done using the following Coccinelle semantic patch:
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/comedi/comedi_buf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/octeon_ep/octep_rx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
-index 393966c09740..32ad3e6e1ce8 100644
---- a/drivers/comedi/comedi_buf.c
-+++ b/drivers/comedi/comedi_buf.c
-@@ -89,7 +89,7 @@ comedi_buf_map_alloc(struct comedi_device *dev, enum dma_data_direction dma_dir,
- 		bm->dma_hw_dev = get_device(dev->hw_dev);
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+index 392d9b0da0d7..185b7e50ee77 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+@@ -158,7 +158,7 @@ static int octep_setup_oq(struct octep_device *oct, int q_no)
+ 		goto desc_dma_alloc_err;
  	}
  
--	bm->page_list = vzalloc(sizeof(*buf) * n_pages);
-+	bm->page_list = vzalloc(array_size(n_pages, sizeof(*buf)));
- 	if (!bm->page_list)
- 		goto err;
- 
-@@ -169,7 +169,7 @@ static void __comedi_buf_alloc(struct comedi_device *dev,
- 		buf = &bm->page_list[0];
- 		async->prealloc_buf = buf->virt_addr;
- 	} else {
--		pages = vmalloc(sizeof(struct page *) * n_pages);
-+		pages = vmalloc(array_size(n_pages, sizeof(struct page *)));
- 		if (!pages)
- 			return;
- 
+-	oq->buff_info = vzalloc(oq->max_count * OCTEP_OQ_RECVBUF_SIZE);
++	oq->buff_info = vzalloc(array_size(oq->max_count, OCTEP_OQ_RECVBUF_SIZE));
+ 	if (unlikely(!oq->buff_info)) {
+ 		dev_err(&oct->pdev->dev,
+ 			"Failed to allocate buffer info for OQ-%d\n", q_no);
 
