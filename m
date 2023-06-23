@@ -2,57 +2,58 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCC3EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 17:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D340EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 18:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232245AbjFWR6g convert rfc822-to-8bit (ORCPT
+        id S232386AbjFWSAy convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 13:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
+        Fri, 23 Jun 2023 14:00:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbjFWR6e (ORCPT
+        with ESMTP id S231888AbjFWSAw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 13:58:34 -0400
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916B4E41;
-        Fri, 23 Jun 2023 10:58:33 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-bc379e4c1cbso887235276.2;
-        Fri, 23 Jun 2023 10:58:33 -0700 (PDT)
+        Fri, 23 Jun 2023 14:00:52 -0400
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5621D2710;
+        Fri, 23 Jun 2023 11:00:42 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-bfe97b3752bso790063276.1;
+        Fri, 23 Jun 2023 11:00:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687543113; x=1690135113;
+        d=1e100.net; s=20221208; t=1687543241; x=1690135241;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qBzWx4UIP8k3qiURWXrDdOAf2Oukk+lJsXvIVWYni3k=;
-        b=VSycp+twxyna8h3LWId1hkfZPmCUnB+8IXQKqYKNn1DpgXyeUiBKw10lUKc3usSiNc
-         zrSr+U1qoZEAzYXyeuMpWJVGArMhZZkPgAv0YKF9S1CR3tTeEoO5DREpxns21HJ8j5ld
-         0CAE6T77OzGLTu1NXOQsDKDeyfE+AyUfg+FFa7p5GsgfdGQd9BBoXYxdn6oE2JJmkgzh
-         XycsZlUOf/9s6MYryMBrkv+nGKoRhgKau6Aw8h16+CCrkklQpULjtuk2BsjbANriUKf4
-         5i24nQe+G902v7hR45nijft5Xz/lb6Xra1Upy7Og69jN1DNOLOOnapUqkdL5PvuDx2nd
-         6eAg==
-X-Gm-Message-State: AC+VfDw7aP5C7uLbzfhCgsYgEHz0ER6+DFjicttXPukMkELatvapECz5
-        n4XMY3BSC8pyYW4tVDCFkD4o/DSUeqnJjB15i4c=
-X-Google-Smtp-Source: ACHHUZ7GVZBmFpy86YmhHMYaDsAsMGzRFcnXpRJNCx9ZOyu2mKEaVaYTFg7tchZISWMggug9v3tLjSG0OMcFuGWPvy4=
-X-Received: by 2002:a05:6902:c5:b0:bd7:6810:6646 with SMTP id
- i5-20020a05690200c500b00bd768106646mr19448702ybs.44.1687543112757; Fri, 23
- Jun 2023 10:58:32 -0700 (PDT)
+        bh=wZbee8Wrt4IHu56BKlWH9qLpUr7swFliaPouDguQe8A=;
+        b=Ac4rAUn1KBRPZG+KGv5vJjnU98oyScav49dhu59mNDw8Q/zri41NmTys521IgBIte+
+         9gopcy5m3lAY1XA1NyPNkLfidWRdkRdHRsL9zjFx0bV/XZeU1dpMyB4/Ck8ZYiQ0ydsV
+         RTLHi+6YyErv7rhGtlScw3Z/cELVhxFM+veqDX79Juk4xyb1tIpjeVXuKGh2UjkhAJPl
+         7Zc52VpzdOsJ5yXGqe+jd3EZLzOqCCVB7z3QTy6HHAqI7iwNFo3dC17dvtokyDjda3/u
+         VaY2xweVRh0wx/8HSJxTET2pyhVesFQgrR5R7ZntlIfro9heMxZsUoThGUcy2tEL/NvR
+         6NpQ==
+X-Gm-Message-State: AC+VfDweVz4zq/YKQwmKLJSxmdfnpNhEcoVcMU9Kl3fY9ExjDDdLwTxI
+        h1wXEEwPVfTwMETFpm3NWsP2na34iRqPJA9X5ls=
+X-Google-Smtp-Source: ACHHUZ41z34vizvwiSSfkU+v+p7VGIx6uqBh25Dli5GXlHanAkugPcDGZHJ3hDPKtDzbEpU9+CllDsLjAFqnYRebGF8=
+X-Received: by 2002:a25:fc28:0:b0:bac:ff9d:dc63 with SMTP id
+ v40-20020a25fc28000000b00bacff9ddc63mr18167897ybd.9.1687543241330; Fri, 23
+ Jun 2023 11:00:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230623043107.4077510-1-irogers@google.com> <64741e8e-e81a-afb9-9ce3-9c2d6baab44a@web.de>
- <CAP-5=fVwhiGJEqTST2bfX8cUALpnTxELSHrvKtyJEPjqQjOacQ@mail.gmail.com>
-In-Reply-To: <CAP-5=fVwhiGJEqTST2bfX8cUALpnTxELSHrvKtyJEPjqQjOacQ@mail.gmail.com>
+References: <20230622101809.2431897-1-james.clark@arm.com> <2b1cec46-52a9-21f1-bfcd-fbb4298f072a@web.de>
+In-Reply-To: <2b1cec46-52a9-21f1-bfcd-fbb4298f072a@web.de>
 From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Fri, 23 Jun 2023 10:58:21 -0700
-Message-ID: <CAM9d7cjVumJRV_hGnh1o-gn_NZGx0mnO7Fj2AyOWpkknBWT9Cg@mail.gmail.com>
-Subject: Re: [PATCH v2] perf unwind: Fix map reference counts
-To:     Ian Rogers <irogers@google.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Date:   Fri, 23 Jun 2023 11:00:30 -0700
+Message-ID: <CAM9d7ciTZGuoT=D2i+uYG8mcNdFVnYi-Rvue5sbDZAyb24eRrA@mail.gmail.com>
+Subject: Re: [PATCH] perf tests: Fix test_arm_callgraph_fp variable expansion
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     James Clark <james.clark@arm.com>,
+        linux-perf-users@vger.kernel.org, spoorts2@in.ibm.com,
+        kernel-janitors@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Ian Rogers <irogers@google.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kajol Jain <kjain@linux.ibm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Peter Zijlstra <peterz@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
@@ -62,33 +63,19 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello,
-
-On Fri, Jun 23, 2023 at 10:49 AM Ian Rogers <irogers@google.com> wrote:
+On Fri, Jun 23, 2023 at 9:56 AM Markus Elfring <Markus.Elfring@web.de> wrote:
 >
-> On Fri, Jun 23, 2023 at 9:18 AM Markus Elfring <Markus.Elfring@web.de> wrote:
-> >
-> > > v2. Add missing map__put when dso is missing.
-> > > ---
-> >
-> > Please omit such version information from the change suggestion.
-> >
-> > See also:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4-rc7#n698
+> …
+> > At the same time silence the shellcheck warning for that line and fix
+> > two more shellcheck errors at the end of the script.
 >
-> ah, tldr. Will correct in the future.
+> Does such a wording really fit to the known requirement “Solve only one problem per patch.”?
 
-Thanks for taking a look at this.  I moved it above the tag lines
-this time.
-
->
-> >
-> > How do you think about to add the tag “Fixes”?
->
-> In general we've not been adding Fixes as there is a danger a backport
-> will introduce a use-after-free.
-
-Right, this change depends on other changes.  Simply cherry-picking
-this will result in unmatched ref count IIUC.
+Maybe not, but I think it still falls into the shellcheck category.
+I don't mind having those trivial fixes together.
 
 Applied to perf-tools-next, thanks!
+
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4-rc7#n81
