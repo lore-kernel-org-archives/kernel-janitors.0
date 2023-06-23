@@ -2,43 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F095EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5154FEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 21:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232308AbjFWVPQ (ORCPT
+        id S232709AbjFWVPU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 17:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
+        Fri, 23 Jun 2023 17:15:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231802AbjFWVPO (ORCPT
+        with ESMTP id S232276AbjFWVPQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 17:15:14 -0400
+        Fri, 23 Jun 2023 17:15:16 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54677E65;
-        Fri, 23 Jun 2023 14:15:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4215C10F2;
+        Fri, 23 Jun 2023 14:15:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=P1v6BJpujkRR/XkZZ2TcSC10Ee0xBDh3V/U/H44vDYA=;
-  b=bZVjS8wAqRR6iyNa9gnoxPEfrIs2w7LvzRNlQSyygW9EHkgELuwGdiCI
-   Y4w81WWcTQErSQ9Y2Mw6GBxoIfzicPKsH4u6eQxEzmdmBcgWgeGnZciAb
-   ArLbVrFlB+O8EJ8HQdjVyipEMZiXaQ6itAc4jEyAgyCT/aRqz/x7K2K5a
-   E=;
+  bh=v1C6X9Yx4yVXOAdKb8gSIcJ1cJexwLFD0Mhp8hyTXpM=;
+  b=ibGdS6fGsGhc/uttTGaoiJpbUVLv1dQE53RQlyqWPi8I8jYsjA4QPhsG
+   69vuLyA1lvbPNf9DFQ9xV+59969GQRIT64vAPf+BtV5VoJBI5MAp5KGAg
+   4j/AIfruYXqvPQ99dB1Q5fqTn+WPSuJXNvhdtCBICTm1jBC06qptZY2WA
+   c=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,153,1684792800"; 
-   d="scan'208";a="59686161"
+   d="scan'208";a="59686164"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:10 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
+To:     Sumit Semwal <sumit.semwal@linaro.org>
 Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/26] drm/gud: use array_size
-Date:   Fri, 23 Jun 2023 23:14:34 +0200
-Message-Id: <20230623211457.102544-4-Julia.Lawall@inria.fr>
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 06/26] dma-buf: system_heap: use array_size
+Date:   Fri, 23 Jun 2023 23:14:37 +0200
+Message-Id: <20230623211457.102544-7-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230623211457.102544-1-Julia.Lawall@inria.fr>
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
@@ -54,17 +59,20 @@ The changes were done using the following Coccinelle semantic patch:
 
 // <smpl>
 @@
-    expression E1, E2;
-    constant C1, C2;
-    identifier alloc = {vmalloc,vzalloc};
+    size_t e1,e2;
+    expression COUNT;
+    identifier alloc = {vmalloc,vzalloc,kvmalloc,kvzalloc};
 @@
-    
+
 (
-      alloc(C1 * C2,...)
+      alloc(
+-           (e1) * (e2)
++           array_size(e1, e2)
+      ,...)
 |
       alloc(
--           (E1) * (E2)
-+           array_size(E1, E2)
+-           (e1) * (COUNT)
++           array_size(COUNT, e1)
       ,...)
 )
 // </smpl>
@@ -72,20 +80,20 @@ The changes were done using the following Coccinelle semantic patch:
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/gpu/drm/gud/gud_pipe.c |    2 +-
+ drivers/dma-buf/heaps/system_heap.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
-index dc16a92625d4..34df847bd829 100644
---- a/drivers/gpu/drm/gud/gud_pipe.c
-+++ b/drivers/gpu/drm/gud/gud_pipe.c
-@@ -390,7 +390,7 @@ static int gud_fb_queue_damage(struct gud_device *gdrm, struct drm_framebuffer *
- 	mutex_lock(&gdrm->damage_lock);
- 
- 	if (!gdrm->shadow_buf) {
--		gdrm->shadow_buf = vzalloc(fb->pitches[0] * fb->height);
-+		gdrm->shadow_buf = vzalloc(array_size(fb->pitches[0], fb->height));
- 		if (!gdrm->shadow_buf) {
- 			mutex_unlock(&gdrm->damage_lock);
- 			return -ENOMEM;
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index ee7059399e9c..fb7867599874 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -221,7 +221,7 @@ static void *system_heap_do_vmap(struct system_heap_buffer *buffer)
+ {
+ 	struct sg_table *table = &buffer->sg_table;
+ 	int npages = PAGE_ALIGN(buffer->len) / PAGE_SIZE;
+-	struct page **pages = vmalloc(sizeof(struct page *) * npages);
++	struct page **pages = vmalloc(array_size(npages, sizeof(struct page *)));
+ 	struct page **tmp = pages;
+ 	struct sg_page_iter piter;
+ 	void *vaddr;
 
