@@ -2,74 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6601FEB64D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 08:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1DDC0015E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jun 2023 09:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbjFWIDq (ORCPT
+        id S231245AbjFWJjP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jun 2023 04:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        Fri, 23 Jun 2023 05:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbjFWIDp (ORCPT
+        with ESMTP id S229686AbjFWJjN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jun 2023 04:03:45 -0400
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6931BE2;
-        Fri, 23 Jun 2023 01:03:43 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VllSQm1_1687507418;
-Received: from 30.121.25.227(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VllSQm1_1687507418)
-          by smtp.aliyun-inc.com;
-          Fri, 23 Jun 2023 16:03:39 +0800
-Message-ID: <6f0dfe19-426a-19cd-05f2-7184377b4862@linux.alibaba.com>
-Date:   Fri, 23 Jun 2023 16:03:38 +0800
+        Fri, 23 Jun 2023 05:39:13 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B190BC;
+        Fri, 23 Jun 2023 02:39:11 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 3C9DE1F390;
+        Fri, 23 Jun 2023 09:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1687513150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=72hbvKej1iXoVScVh7pfvmvxDYNuBXrKbZOOD3LpqvM=;
+        b=BUFHwB9m4AvYTKbcwVSYeNGVx2dHZGDCOEZu9463i+fjqB3WE9eQW4++gKxIhVi6CT2uk7
+        CwagT2aVubyAVyXUaOe/RgErIU5juCWmuLHiQMM21ZN123QRrInYPoqRd+laE3gUNMyQ6r
+        /VUJHHdszYjktsEstnSOh1FaEpPw8rA=
+Received: from suse.cz (pmladek.udp.ovpn2.prg.suse.de [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 09C982C141;
+        Fri, 23 Jun 2023 09:39:09 +0000 (UTC)
+Date:   Fri, 23 Jun 2023 11:39:06 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog/hardlockup: fix typo in config
+ HARDLOCKUP_DETECTOR_PREFER_BUDDY
+Message-ID: <ZJVoOm7NXG8OjQwV@alley>
+References: <20230623040717.8645-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.2
-Subject: Re: [PATCH][next] ocfs2: remove redundant assignment to variable
- bit_off
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
-        akpm <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230622102736.2831126-1-colin.i.king@gmail.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20230622102736.2831126-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230623040717.8645-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 6/22/23 6:27 PM, Colin Ian King wrote:
-> Variable bit_off is being assigned a value that is never read, it is
-> being re-assigned a new value in the following while loop. Remove the
-> assignment. Cleans up clang scan build warning:
+On Fri 2023-06-23 06:07:17, Lukas Bulwahn wrote:
+> Commit a5fcc2367e22 ("watchdog/hardlockup: make HAVE_NMI_WATCHDOG
+> sparc64-specific") accidentially introduces a typo in one of the config
+> dependencies of HARDLOCKUP_DETECTOR_PREFER_BUDDY.
 > 
-> fs/ocfs2/localalloc.c:976:18: warning: Although the value stored to
-> 'bit_off' is used in the enclosing expression, the value is never
-> actually read from 'bit_off' [deadcode.DeadStores]
+> Fix this accidental typo.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: a5fcc2367e22 ("watchdog/hardlockup: make HAVE_NMI_WATCHDOG sparc64-specific")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/localalloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-> index c4426d12a2ad..c803c10dd97e 100644
-> --- a/fs/ocfs2/localalloc.c
-> +++ b/fs/ocfs2/localalloc.c
-> @@ -973,7 +973,7 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
->  	la_start_blk = ocfs2_clusters_to_blocks(osb->sb,
->  						le32_to_cpu(la->la_bm_off));
->  	bitmap = la->la_bitmap;
-> -	start = count = bit_off = 0;
-> +	start = count = 0;
->  	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
->  
->  	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start))
+Thanks for catching this!
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
