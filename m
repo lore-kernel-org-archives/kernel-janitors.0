@@ -2,112 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0BCEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 16:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5DAEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 22:28:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjFXQGU (ORCPT
+        id S229541AbjFXW2a (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Jun 2023 12:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56988 "EHLO
+        Sat, 24 Jun 2023 18:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjFXQGT (ORCPT
+        with ESMTP id S229481AbjFXW23 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Jun 2023 12:06:19 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858F4E5E;
-        Sat, 24 Jun 2023 09:06:17 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35OFwvSD003729;
-        Sat, 24 Jun 2023 16:06:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AHeKVxN60rAVGoJtIK+ThHIv61dgUGDzkTmgkYmzxzg=;
- b=fjgH+Q42vxty8HRmoAIjsGPTcq5OagzOo/eCsSFEDX/LlGaPftUTaq5hoB+UKiyOMspk
- CTa009BojN/HvMitavybhCyzkwWq1YfL6yJ8W2bfkznHCmgTrxdrmt7Llx4LM//b/pai
- S6LgwOS0bE3wjGRVo8YGK1V7nrVizqbgIQvcdDL0YOYU6ei4/Yww4CIbRMwBuSht1IT3
- +clhVC0uWuDBenUDEW2dKMZMwHL3RsthNDFQ74J3n9AkXQOxAqAIsZ86FRBsBxWb9j3G
- LwlEZzEJThBdFO9njaU3r8L7MgD/UHfrhqvwehJnbrOkS+hpfQNfEH7qvkz1zdZONvIt qA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rdssdgpcy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 24 Jun 2023 16:06:09 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35OG68rA025297
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 24 Jun 2023 16:06:08 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sat, 24 Jun
- 2023 09:06:08 -0700
-Message-ID: <2f1d4e18-f377-74c1-59fc-da422d4e99ee@quicinc.com>
-Date:   Sat, 24 Jun 2023 10:06:07 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 10/26] bus: mhi: host: use array_size
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-CC:     Julia Lawall <julia.lawall@inria.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+        Sat, 24 Jun 2023 18:28:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C072710D8;
+        Sat, 24 Jun 2023 15:28:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C75160A71;
+        Sat, 24 Jun 2023 22:28:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF96C433C0;
+        Sat, 24 Jun 2023 22:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687645707;
+        bh=Xr9seD7Mt0PFVk1QOrKGfmugFEuY6PJhYDOWIjAJ3WA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FDUqIVyjZ3Cfh7ExAtZpIjceASv+BaEVlPCa8QEJ4bwPEW+jTqHQZEhfONR2MUwc3
+         5Mp0gKdkLj4yYQLd4HON2qkF41Gafrrox+E8wFnOW/o5l/4AJbOUNJWX33+EWfgGPg
+         IMlt1eu3C19cBzoreFP44pgNG2aoeP1nlScOiTGit6W6FmW3c+wdZg8Z/Irg/2VY/z
+         Va3h1a652baAJCbUVekzBE2STG4luQM/yDQ6HLorqhIp8fbo+xUhdkDX4AMjOZ5DwS
+         gkOJ3WQc57aXgpkdEaF2BUlXnavrG1sH82rKexDKVDH4aTA6K8cg+7HxoqVa2B0Lza
+         4jV57LkHmGFlQ==
+Date:   Sat, 24 Jun 2023 15:28:26 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Veerasenareddy Burru <vburru@marvell.com>, keescook@chromium.org,
+        kernel-janitors@vger.kernel.org,
+        Abhijit Ayarekar <aayarekar@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/26] octeon_ep: use array_size
+Message-ID: <20230624152826.10e3789b@kernel.org>
+In-Reply-To: <20230623211457.102544-3-Julia.Lawall@inria.fr>
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
- <20230623211457.102544-11-Julia.Lawall@inria.fr>
- <3b4ff79b-93b4-cf56-1488-113905b3981d@quicinc.com>
- <alpine.DEB.2.22.394.2306232340510.3129@hadrien>
- <58cb3bf6-5ffd-194b-1455-4e5bb045fc34@quicinc.com>
- <202306231639.68955384A@keescook>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <202306231639.68955384A@keescook>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        <20230623211457.102544-3-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FVd_FYpvNMuEqE3Jw1BkvypnTVJkbW7m
-X-Proofpoint-ORIG-GUID: FVd_FYpvNMuEqE3Jw1BkvypnTVJkbW7m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-24_11,2023-06-22_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- phishscore=0 suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 spamscore=0
- mlxlogscore=749 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306240152
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/23/2023 5:45 PM, Kees Cook wrote:
-> On Fri, Jun 23, 2023 at 04:09:46PM -0600, Jeffrey Hugo wrote:
->> Kees, would you please chime in and educate me here?  I feel like I'm
->> missing something important here.
-> 
-> The array_size() family will saturate at SIZE_MAX (rather than potentially
-> wrapping around). No allocator can fulfil a 18446744073709551615 byte
-> (18 exabyte) allocation. :) So the NULL return value will (hopefully)
-> trigger an error path.
-> 
+On Fri, 23 Jun 2023 23:14:33 +0200 Julia Lawall wrote:
+> -	oq->buff_info = vzalloc(oq->max_count * OCTEP_OQ_RECVBUF_SIZE);
+> +	oq->buff_info = vzalloc(array_size(oq->max_count, OCTEP_OQ_RECVBUF_SIZE));
 
-Fair enough, that handles the 64-bit usecase.  I'm guessing the 
-assumption is that on a 32-bit usecase where size_t is ~4GB, there won't 
-actually be 4GB to allocate and things will also fail.  So far, so good.
-
-What about a 32-bit system with something like ARM's LPAE (Large 
-Physical Address Extension) where the host is 32-bit, and so size_t 
-would be ~4GB (as far as I can tell) but phys_addr_t is larger than 
-that, and so we can have/access more than 4GB of resources?  Lets see, 
-ignoring that its a 13 year old feature and probably not in circulation 
-anymore, probably still can't satisfy a 4GB allocation since you'd need 
-to map all of it to address it, and part of the address space is surely 
-reserved for other things.
-
-Ok, I think I'm convinced.  I'm going to sleep on it, but I suspect all 
-will still be good early next week.
-
-Thank you for the explanation.
-
--Jeff
+vcalloc seems to exist, is there a reason array_size() is preferred?
+-- 
+pw-bot: cr
