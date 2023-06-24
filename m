@@ -2,145 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A766AEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 15:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0BCEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 16:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233237AbjFXPtE (ORCPT
+        id S231277AbjFXQGU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Jun 2023 11:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52700 "EHLO
+        Sat, 24 Jun 2023 12:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233240AbjFXPtB (ORCPT
+        with ESMTP id S229485AbjFXQGT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Jun 2023 11:49:01 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2115.outbound.protection.outlook.com [40.107.94.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 233451BE7;
-        Sat, 24 Jun 2023 08:48:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ichZ2Bgz5mA5E/4YnKiF1hMkcDy1v7mDodxR/T3TWRlBJddL3XteA0zUjYNkq6jD6LrKVcST2NnvhC6PHRUsBVKmHygci14d7ldmWR2MbuOsC/bXdxEo1GtKolOXLikCssbF+7kwm4EDTnJg863WRZnKeYlzuqG4rn1sOqUeKVNDcH0c6H2aHQIdWkCSdjt+d4jtqOiDK+D1wAYvDiiLILQfrcw0Vz9erckWBLveIniRfo2ztkPGK5J/p639SLoDMXXkPl0g7ox3301LeadFwdQ5BefJ6APfVFG60qI3J4h6rd6Eo7D+Bx5wVCo5L/aUUEbrYZ+LpZJKIuCIKn/xoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TBjTc5QsatARqQrPxSzd81NbGM+8JpLVJ6k/nLpDd9w=;
- b=WRRYfJNVXJkEGWzYmUqhioweUWkmwMlgsdoOrqvW+gicLU6+99KHGoNrRJNrmk1qU6PJ/iu/YadcB00Wq0cLHTzpqnlsLQFfQcD69sX73nZeRwSWaJz40jwtKR1GLHsMRgnimV/Pd387PUO9ymatxtgICuX4zm2IR859qYp2MjhaIrgUU9my6+KT+O7RIP6DIgxDn86S8lqihXaqM+B4xj4NvEZ2x7ChQwjr6ZfwcJQHst3f/3HMrcBrcSRMXk5nVbJGYTk7CYShUNF53xllkIZwdIJtDNCBhJguxNtAeDu24zke98aotPx0gFmg43s+5vnbb6DjW49yFh4g1yjPXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TBjTc5QsatARqQrPxSzd81NbGM+8JpLVJ6k/nLpDd9w=;
- b=ci67b+OR2emKChvjHs3gDf8Lxt3hbnvJ0E3+EqxaW3fdiHKf8civsbnQwWQvrSQaZu0gRKqT3H7jeflZr/yW8j9Lad16Zv4a6K7h+L3j/c3P88ziOiVaOrWUgOV4gGIl68KzGm/m5vmFh5RZPMFRGYbnejtdZs+DNnbxhPSkPL0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by SA1PR13MB4895.namprd13.prod.outlook.com (2603:10b6:806:188::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Sat, 24 Jun
- 2023 15:48:45 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e%5]) with mapi id 15.20.6521.023; Sat, 24 Jun 2023
- 15:48:45 +0000
-Date:   Sat, 24 Jun 2023 17:48:38 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>, keescook@chromium.org,
-        kernel-janitors@vger.kernel.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 22/26] net: mana: use array_size
-Message-ID: <ZJcQVj/ZUABoNlKk@corigine.com>
-References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
- <20230623211457.102544-23-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230623211457.102544-23-Julia.Lawall@inria.fr>
-X-ClientProxiedBy: AS4PR10CA0027.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d8::17) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Sat, 24 Jun 2023 12:06:19 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858F4E5E;
+        Sat, 24 Jun 2023 09:06:17 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35OFwvSD003729;
+        Sat, 24 Jun 2023 16:06:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=AHeKVxN60rAVGoJtIK+ThHIv61dgUGDzkTmgkYmzxzg=;
+ b=fjgH+Q42vxty8HRmoAIjsGPTcq5OagzOo/eCsSFEDX/LlGaPftUTaq5hoB+UKiyOMspk
+ CTa009BojN/HvMitavybhCyzkwWq1YfL6yJ8W2bfkznHCmgTrxdrmt7Llx4LM//b/pai
+ S6LgwOS0bE3wjGRVo8YGK1V7nrVizqbgIQvcdDL0YOYU6ei4/Yww4CIbRMwBuSht1IT3
+ +clhVC0uWuDBenUDEW2dKMZMwHL3RsthNDFQ74J3n9AkXQOxAqAIsZ86FRBsBxWb9j3G
+ LwlEZzEJThBdFO9njaU3r8L7MgD/UHfrhqvwehJnbrOkS+hpfQNfEH7qvkz1zdZONvIt qA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rdssdgpcy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 24 Jun 2023 16:06:09 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35OG68rA025297
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 24 Jun 2023 16:06:08 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sat, 24 Jun
+ 2023 09:06:08 -0700
+Message-ID: <2f1d4e18-f377-74c1-59fc-da422d4e99ee@quicinc.com>
+Date:   Sat, 24 Jun 2023 10:06:07 -0600
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SA1PR13MB4895:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c4116a0-edf3-47a3-0e16-08db74ca7e25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xQxfGGcawbbKqmrRCQR8wTBasKrPMhKtwsysFksWjahZm+8NXIGurQEmCXkeVuT6ojBUOV9Hfdfl2W/BwoCNHBVtUe26MwPrGDPbvSCL9QmDS86MQnpQqCvpWWdz/xcoAoBCM3fDO692JefNQk6Eo6Z171NgUgnRDDjkO/pw5epti3jhD05WBXXTA7uNP+/Q0Bqnj0O7ZvwM3ElVwuEfRN6lD/iDXGinv9Om5ZaqEOQh0/z8vwJ+plIR1tIz/Bp+MledU2XwyD9gb9MHzLDzk+PR6qD8wW8IDS5YQQLsDrBfGU8HIC5zRxlbvlbpy8fOoMrOxlnkULr4eVuQnLFf5wyQ4pfiUQQogzr2mTXC5QAw1Eu8/XsU8g2YiiUS3nJa5o44fNB2jFPvGIRSmGq1FkqQCz0VTzrUY8D7MBs8g6CdqZWVmCyxp/9HLuBoycsBPFNqy0cIaU+S9eigBWu22s6Exh8mjwXg9uNs7FBkpArQQIE5Rsu8ewHWKyjBylIKWeHQyp4Y34vp2gOtvlRZi2n7dpUJz/bN8PjDVwKK4QYi76Zvpt2gsd/zQHr/JF6+jYF57QmbFxcHOAMSQ1YMxZsWeF1qtFryTuGRv72OU0o=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(366004)(376002)(39830400003)(136003)(451199021)(36756003)(5660300002)(44832011)(7416002)(41300700001)(316002)(86362001)(66476007)(6916009)(8936002)(8676002)(66556008)(4326008)(38100700002)(66946007)(6486002)(6512007)(6506007)(4744005)(2906002)(186003)(478600001)(54906003)(6666004)(2616005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xNt0t71DEzKPBslV993ZAaEARLUh0hL6Rb8U5q7jc6RBc5E91y2BEPyzBuei?=
- =?us-ascii?Q?Xdzi2S8pMFBLGj9IZvq1rfCehLbpQnPG/jiCl/4OqcG803C3UNXQUjYG7FvE?=
- =?us-ascii?Q?R4uPcFGjpygkS3d1oUBvH/yatsxY3tzqeK5Qj9xx/AD4r+MtXUeUMPvu6Isv?=
- =?us-ascii?Q?GLSL8li/wyhnAey42XaXpOReQBQ/8WprD9MUQ91vNBsiu0zq/OSb9ppIkEIt?=
- =?us-ascii?Q?wgcvZ+1qP2K5k+mls7P07S9oY5Qndte5yUHSYG9tg44hYAjeGinWqhUxwgSM?=
- =?us-ascii?Q?rJ4V418SZ43Z7i1+yDpUIKEPu2U9k7/Rx7qr9PSDRCUmwJ8lWPq2U11Po9hA?=
- =?us-ascii?Q?hgl+H9wz+0z3SizyUML1v2JCJrrTI4NXdCQZq7FRT4g/123gDptq6w1BiEJH?=
- =?us-ascii?Q?lgpN6vnyGFHM1F4stjfqP2VWociL5z/wyxERZT+qREr2ni2ocqazIahrr8sb?=
- =?us-ascii?Q?X9MWBmOMSGh6KnvhuMiHFvG/jnzWJCqApivSSlgoomKVdIuf8F1h8w2fvknq?=
- =?us-ascii?Q?QtDL8YlmZV5500j8LnlzzS/jRVP+hTDmZYtUVg1AItWw/ND+UnE+8Lqxjxhj?=
- =?us-ascii?Q?FtFsTe1Rx27+3lWrbstlitzPgAeGEIUh76YJV/tcTGQ/h7PyFf1ux7oNSLZy?=
- =?us-ascii?Q?//IGUNl+wAe0DqaqL4gm7MhCy/V1eqTUmfD9YNcyPN764JXojFDUhCbQkpn/?=
- =?us-ascii?Q?P6YKEry9JEW6dD3RUVt9vT1L644xvSn6PnslcmnZUPt0pCAQZnl7xaXzuRhR?=
- =?us-ascii?Q?bX9+KG36mH9aJv6tF+Tk3QR3D7Eg/aPBmuOuD3PwZsT+F4GMvgJQ6Namt8fU?=
- =?us-ascii?Q?NlEc86PE/8lDOjA2xt6WVexj1vL2swvLp7t4rsspG69YfG+ZhDtSJ8wv5kPS?=
- =?us-ascii?Q?0z0Y6XPM3Exn9QBfe+H/qPHA9q7iGAVVIHiVPwGMitsW1CNCqBxss/iof6Wj?=
- =?us-ascii?Q?fNGa4E3sVypa/KZH4jsCYJZuCxciMOsrQZATIJwxvV8yDqew56239NOeeiYw?=
- =?us-ascii?Q?fHBBcbHhLsNUEoGPlcLeppgz7QbZK+IRR2j0DPpgbEfcjcW8VAPOAxTkMsCf?=
- =?us-ascii?Q?3a4kZBKggKfOpfaEkY/ejDSSrBEzcYJWiJApM0Dfihu8qauv15oKXcx3sRZL?=
- =?us-ascii?Q?WsAixy2CnqtneLkCeXvnm2RfWPxaANbfDeJzQZVf73Dbv4j2OOubOSQdkHmq?=
- =?us-ascii?Q?4eacPwIfpYl1Ig6Sl53DMfozDkBK6+pTGloWPO7V4Hre+8IyYFMnzwx69pj5?=
- =?us-ascii?Q?5OcuoiyVH5KAg5AZLC4ZGZEYFdUfVai7gDmmV3U88slvaH8Zs3FCSO9N8Vpg?=
- =?us-ascii?Q?Ty1+7RrE5rcz+MMVV74gREvH10AkrMrNV/1dwWlT7lH7jQy2vfJYTRNSVloF?=
- =?us-ascii?Q?hWmSMYe7b876sz4bXG5AVzSRzK9PAFzy9a5xta/MFiIGzvs+CcqfkFQ+K8De?=
- =?us-ascii?Q?7x7UJ5nE0YZU+Rx4zz1vdQcJmrxjZNuCIt0MDYcy8wCq4Og/HwLTrShCqR2w?=
- =?us-ascii?Q?tsQuvosjqORVCEBEDmIRVBid8BQvnMV4+AVvi0ifFvu9/XCJOPpg95nCXfJm?=
- =?us-ascii?Q?qxuiZCeXq+8bIZ0vqvrzrI1YhtAUJ7NIKiT43dRjZIJQCzPJISWaxEk7WRc5?=
- =?us-ascii?Q?tYNPfQK+oiLPEG+1a2c7lLni3i9P+Qrslr17s/i6rZmN2d1qabdgxZwMz1ic?=
- =?us-ascii?Q?CJDY5A=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c4116a0-edf3-47a3-0e16-08db74ca7e25
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2023 15:48:45.3497
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eWBz5dTUafkeGv12YzP+k5SfhfyrJaAzFvpEuhMuf+DImuo/CfzoSIZAgZcqCYdxFAnmxaJR5JIyTtikppqIc1ufEuUud/VqHf2JRM9NV08=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR13MB4895
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 10/26] bus: mhi: host: use array_size
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>
+CC:     Julia Lawall <julia.lawall@inria.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <mhi@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+ <20230623211457.102544-11-Julia.Lawall@inria.fr>
+ <3b4ff79b-93b4-cf56-1488-113905b3981d@quicinc.com>
+ <alpine.DEB.2.22.394.2306232340510.3129@hadrien>
+ <58cb3bf6-5ffd-194b-1455-4e5bb045fc34@quicinc.com>
+ <202306231639.68955384A@keescook>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <202306231639.68955384A@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FVd_FYpvNMuEqE3Jw1BkvypnTVJkbW7m
+X-Proofpoint-ORIG-GUID: FVd_FYpvNMuEqE3Jw1BkvypnTVJkbW7m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-24_11,2023-06-22_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=749 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306240152
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 23, 2023 at 11:14:53PM +0200, Julia Lawall wrote:
-> Use array_size to protect against multiplication overflows.
+On 6/23/2023 5:45 PM, Kees Cook wrote:
+> On Fri, Jun 23, 2023 at 04:09:46PM -0600, Jeffrey Hugo wrote:
+>> Kees, would you please chime in and educate me here?  I feel like I'm
+>> missing something important here.
 > 
-> The changes were done using the following Coccinelle semantic patch:
+> The array_size() family will saturate at SIZE_MAX (rather than potentially
+> wrapping around). No allocator can fulfil a 18446744073709551615 byte
+> (18 exabyte) allocation. :) So the NULL return value will (hopefully)
+> trigger an error path.
 > 
-> // <smpl>
-> @@
->     expression E1, E2;
->     constant C1, C2;
->     identifier alloc = {vmalloc,vzalloc};
-> @@
->     
-> (
->       alloc(C1 * C2,...)
-> |
->       alloc(
-> -           (E1) * (E2)
-> +           array_size(E1, E2)
->       ,...)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Fair enough, that handles the 64-bit usecase.  I'm guessing the 
+assumption is that on a 32-bit usecase where size_t is ~4GB, there won't 
+actually be 4GB to allocate and things will also fail.  So far, so good.
 
+What about a 32-bit system with something like ARM's LPAE (Large 
+Physical Address Extension) where the host is 32-bit, and so size_t 
+would be ~4GB (as far as I can tell) but phys_addr_t is larger than 
+that, and so we can have/access more than 4GB of resources?  Lets see, 
+ignoring that its a 13 year old feature and probably not in circulation 
+anymore, probably still can't satisfy a 4GB allocation since you'd need 
+to map all of it to address it, and part of the address space is surely 
+reserved for other things.
+
+Ok, I think I'm convinced.  I'm going to sleep on it, but I suspect all 
+will still be good early next week.
+
+Thank you for the explanation.
+
+-Jeff
