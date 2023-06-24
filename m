@@ -2,109 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE584EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 05:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05056C0015E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 08:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230256AbjFXFfL (ORCPT
+        id S232638AbjFXIIY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Jun 2023 01:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56144 "EHLO
+        Sat, 24 Jun 2023 04:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjFXFfJ (ORCPT
+        with ESMTP id S231834AbjFXIIX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Jun 2023 01:35:09 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC1DC2
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Jun 2023 22:35:07 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f86840c45dso808e87.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Jun 2023 22:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687584906; x=1690176906;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=unxnCCJRCGrLNc6DK9W9SYp6CzMnpymgA+tJ26E5z4c=;
-        b=zoPKyonEhRanEEwlo+h8+8Z8VRfqp1l6ONyly/Jeg40dr4nnrFRY0rCyCuX8t+B/6I
-         OV/oMJ7VBNL1xEANXaDAm/XgPA7U/DCxttNq13cr3tIy78k9Dm1UmAtXUY0f+ib3OF1/
-         zUw5knm1BQr3x5/PP+gFeYXjNTCapZhVJz33Sn6Ux+EbifEnlp9BclirjVvHertYZoSN
-         PMU+M3ydOHl9qk4ZKQsmJ04nIrOWjZ1Aa8tU+/NdHMkpT9XBJChYmgWzR91z9YODjqEZ
-         vxE+9cEeVlUgXxmD+iUcFBzwV80cyQs7/UJqyLRPBf4YN03MDRAkACIRIgAJbSOVjP8x
-         L5ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687584906; x=1690176906;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=unxnCCJRCGrLNc6DK9W9SYp6CzMnpymgA+tJ26E5z4c=;
-        b=UCEyNB4nsoyHRmio5lwxU1xVWnCn7CfpF1JkauzywSoXejwv6hjn9LGFg1++PP9LhI
-         0sWL2XZg+hgGBtaRMhFfcIReOO9pJ/OavOPb2V4sPi/rhHRLfTTNzMTRmn/2LYq3txaM
-         Cz8N/oeh2ySIFSgjNRf/s15zX9CJgIxnu3S4xi6i3yKBlN4uVZiKnQrhoOmzYG06HTsi
-         21ig/gVlr0AVOXVDqBegf+xmwdXwi6s8S+CGzSn4CvSOkE0jrc2hk6pdFuTyhrEINdla
-         VAGx+0Lcia3w1IIWmZXJKEg2vIr9G7/yQ9oTgVqVFzRnPyH4iHjfi6Ey/ju/lgIHv0mF
-         T6lQ==
-X-Gm-Message-State: AC+VfDzhxtD3VssQacJlZ1wJBqu4u3thvUx7Xs6VNt4ok64KESLa1b7e
-        ISwrVNyWDyCVEW4uv6ZRkSnQcw02RVFNLw2w6oT5AYSIIodlif6nLmQ=
-X-Google-Smtp-Source: ACHHUZ4ojDUlNlceCFt6jQy142S4bZfLuwkTRRSpILzz1gubQeWsasHU6g2lTN35oFzz28Lu0C/XMPqy4fQcg/S4zIo=
-X-Received: by 2002:ac2:43d5:0:b0:4f7:5f7d:2f9b with SMTP id
- u21-20020ac243d5000000b004f75f7d2f9bmr12852lfl.1.1687584905392; Fri, 23 Jun
- 2023 22:35:05 -0700 (PDT)
+        Sat, 24 Jun 2023 04:08:23 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56DBBDC;
+        Sat, 24 Jun 2023 01:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1687594095; x=1688198895; i=deller@gmx.de;
+ bh=nV3CTyxNKPTPooCvqcC4CRaJBTriP3iL6heU9HaLMsk=;
+ h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=WEND6irihw3+hXVTVzVRCtDU6tDJ9hPbciyqs75FgtbyRqGH3K2kBeb0ngWAak/YLiCruqG
+ 3chkD/b1oSHz1pnxe0UhMIdnhtU32g+Zsjiuo05hJ4h3X2jkZKWd4pMm6pr5m7Yju+tQtAeYq
+ EH1WW8dp7uCijj7T2gHUwb029m15dhuoDgoInJ+3SzQswAOaqvpNqbUjlb2gyuzmpGVAqS755
+ dz0jXPu5CkW1S1Hi0DKU8gbpHWIhLZM84ATshOTLpLqqT5h6FB1RgMI5aZUKosGMHkgzVBBdb
+ 8N1f1ola9udpPt+hSoAleFGxHSah31B6qQezb8NF1HvsYdRB2YTA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([94.134.156.152]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRTRH-1qPQd93pht-00NNmj; Sat, 24
+ Jun 2023 10:08:15 +0200
+Message-ID: <4570ff59-8f31-b218-7c21-0a69eb9130f3@gmx.de>
+Date:   Sat, 24 Jun 2023 10:08:14 +0200
 MIME-Version: 1.0
-References: <20230623211457.102544-1-Julia.Lawall@inria.fr> <20230623211457.102544-18-Julia.Lawall@inria.fr>
-In-Reply-To: <20230623211457.102544-18-Julia.Lawall@inria.fr>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 24 Jun 2023 07:34:52 +0200
-Message-ID: <CACT4Y+ayUeSpdmkec3pCna1kVSd1QTgBYLAb3zNJJ-7wcDHGdQ@mail.gmail.com>
-Subject: Re: [PATCH 17/26] kcov: use array_size
-To:     Julia.Lawall@inria.fr
-Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] MAINTAINERS: adjust entry in VIA UNICHROME(PRO)/CHROME9
+ FRAMEBUFFER DRIVER
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230623040736.9026-1-lukas.bulwahn@gmail.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20230623040736.9026-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sdgtWdVp7ip4/4ayIBB1vUFupzXQG/VWEONZNgCv661G2u7SWyo
+ 2fHSGlayiRWr/Pz7IZnIpC94+PobtToPkpGjUSj2YFJmi5kJB1tqS8Cf4oVDdi72MC5Rv67
+ dsWrfcCdDqO8V5gyoZWqNPKgAlQnOrc/wnwKyMMcCtDRMJWrLPYrdFaqMXdsHL750B9ArS1
+ YWGP1tsJqwXKxJJOTSwkQ==
+UI-OutboundReport: notjunk:1;M01:P0:PYeCmMABKKI=;z6O1tiq+JqUujWJ+qFqTF8l+vsN
+ M2rVfKqx94bc4Mpq4LGO37g3bCi2ZctqOl5cs+uIJZOoeawuCulUxGWCnAVyC5gxx9u4i5Yme
+ XaomuDRTwvM46beTVb5NCbnkpNQ+mv4uZKJLxGxx2mh7V+RU/DCjT2DLu8612JjtWk4fOvaXW
+ eRLdfl56WmNiMrjLVbekqV9qvOuIAr0uEeRBYbOsovSBMYcc33TFmt8D/bewFeDbo3raEFzfc
+ Ndr+1r82vHSJpBZLALAsKQpErerQrLJYEbDVk3q5BDYPdRKxKo3CV1J1aglbHj5BoqJKk2Lbb
+ lye1tCsdimB3hnkrpqMBrsZFl2anzH8XKECNxOqTtcnvVyBkNL2L+O46HfKjO90tLHK8Xq4NB
+ 6SRea2Y+NfQvRlN7Xq4ZT3lXZ9jOi2FifkgI44nJ0DwdURwf4i8U7CG2lrJl2cpmIWk8fqSlR
+ fIQ5GvmPX/tlGaKK404qkQrlpRkXrpS2ez4IyP/n6Q/9MnKXHt4fGCSqzbMLKqUX+hvnz1xKR
+ Tp50v6EeW7fdApM0hsUGAIvDGJ9XIqZ51crchbhDG5d886L102q6bj563zk/90z5jiqGAlJYu
+ 5pkjO3ltq3V2u7Ff0r/4AplrETTzRF7koBC0FMZm23spgjJcXI9aoxaauBy1iSZCW/YOsmfLm
+ m969E7UR0AwfdoRJhw/q4OorflltI/YgmEYedOdc+uPsz8oaTlkCJY4OzqQ6pELAKGqn68/9h
+ u4iDbGejirxAk3WkopHgUI3Ox7ZCr4pesIDisMxKtLRqI3ROBGDcbNIaKpJDoZvqbBLSDYgZ4
+ jWguu9MRZPMpDOroSmKFwB0/yc23s81jBqIqw05Y4o8XEGgZAJhytxWpxNwZrjhLXYeuuX9iI
+ BmYg6eLCUdG0zlgtcqesbibcW14SOr4YeTH6t50C4s0Il50XcnS3qHcxjD4dzXEHHTNhyYRw1
+ fIw9y+HH/Dl6yiEAcO1Z+N8FvY8=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Jun 2023 at 23:15, Julia Lawall <Julia.Lawall@inria.fr> wrote:
+On 6/23/23 06:07, Lukas Bulwahn wrote:
+> Commit d4313a68ec91 ("fbdev/media: Use GPIO descriptors for VIA GPIO")
+> moves via-gpio.h from include/linux to drivers/video/fbdev/via, but miss=
+es
+> to adjust the file entry for the VIA UNICHROME(PRO)/CHROME9 FRAMEBUFFER
+> DRIVER section.
 >
-> Use array_size to protect against multiplication overflows.
+> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains abou=
+t a
+> broken reference.
 >
-> The changes were done using the following Coccinelle semantic patch:
+> Remove the file entry in VIA UNICHROME(PRO)/CHROME9 FRAMEBUFFER DRIVER, =
+as
+> the new location of the header is already covered by the file entry
+> drivers/video/fbdev/via/.
 >
-> // <smpl>
-> @@
->     expression E1, E2;
->     constant C1, C2;
->     identifier alloc = {vmalloc,vzalloc};
-> @@
->
-> (
->       alloc(C1 * C2,...)
-> |
->       alloc(
-> -           (E1) * (E2)
-> +           array_size(E1, E2)
->       ,...)
-> )
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Added the Fixes tag and applied.
+
+Thanks!
+Helge
 
 > ---
->  kernel/kcov.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   MAINTAINERS | 1 -
+>   1 file changed, 1 deletion(-)
 >
-> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> index 84c717337df0..631444760644 100644
-> --- a/kernel/kcov.c
-> +++ b/kernel/kcov.c
-> @@ -900,7 +900,7 @@ void kcov_remote_start(u64 handle)
->         /* Can only happen when in_task(). */
->         if (!area) {
->                 local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
-> -               area = vmalloc(size * sizeof(unsigned long));
-> +               area = vmalloc(array_size(size, sizeof(unsigned long)));
->                 if (!area) {
->                         kcov_put(kcov);
->                         return;
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 88954a1c0017..e12ac544aa9d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22415,7 +22415,6 @@ L:	linux-fbdev@vger.kernel.org
+>   S:	Maintained
+>   F:	drivers/video/fbdev/via/
+>   F:	include/linux/via-core.h
+> -F:	include/linux/via-gpio.h
+>   F:	include/linux/via_i2c.h
 >
+>   VIA VELOCITY NETWORK DRIVER
+
