@@ -2,111 +2,144 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05056C0015E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 08:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A1BEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 15:47:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232638AbjFXIIY (ORCPT
+        id S233151AbjFXPrE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Jun 2023 04:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59078 "EHLO
+        Sat, 24 Jun 2023 11:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231834AbjFXIIX (ORCPT
+        with ESMTP id S229565AbjFXPrC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Jun 2023 04:08:23 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56DBBDC;
-        Sat, 24 Jun 2023 01:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1687594095; x=1688198895; i=deller@gmx.de;
- bh=nV3CTyxNKPTPooCvqcC4CRaJBTriP3iL6heU9HaLMsk=;
- h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
- b=WEND6irihw3+hXVTVzVRCtDU6tDJ9hPbciyqs75FgtbyRqGH3K2kBeb0ngWAak/YLiCruqG
- 3chkD/b1oSHz1pnxe0UhMIdnhtU32g+Zsjiuo05hJ4h3X2jkZKWd4pMm6pr5m7Yju+tQtAeYq
- EH1WW8dp7uCijj7T2gHUwb029m15dhuoDgoInJ+3SzQswAOaqvpNqbUjlb2gyuzmpGVAqS755
- dz0jXPu5CkW1S1Hi0DKU8gbpHWIhLZM84ATshOTLpLqqT5h6FB1RgMI5aZUKosGMHkgzVBBdb
- 8N1f1ola9udpPt+hSoAleFGxHSah31B6qQezb8NF1HvsYdRB2YTA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.156.152]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRTRH-1qPQd93pht-00NNmj; Sat, 24
- Jun 2023 10:08:15 +0200
-Message-ID: <4570ff59-8f31-b218-7c21-0a69eb9130f3@gmx.de>
-Date:   Sat, 24 Jun 2023 10:08:14 +0200
+        Sat, 24 Jun 2023 11:47:02 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2124.outbound.protection.outlook.com [40.107.243.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D62BB0;
+        Sat, 24 Jun 2023 08:46:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MdhTUr92TivpJZ9/piS9IwnJiunMgAW2jlk6semB8KXEhJKOQQKTAVxG0/2g7VU+YkeN/EKRSptpVvShBRcBs3f/x+PyflpMqq1N+CVzh6qlGQY+D3Kk1BuHp2eDdxkgSZO4/Zj+wAmtgc6GYLCN+jmY7EcOcrRovBkYmwle/Hc/e18fTtLtzf1JCMyG1aim8G7D+L2SkMiod534kHnAdbdzhsoPP764I/m1pRt9e0u1BZGy88Mq9NPoEABGAN7Z+gJeiPZU6Cd2F/vbR9fhpudx+EWr/69YhCgbQR4+2gy7yl7EdkecA38UqSd2r1KmDwZFl/AAXgSPxc68kV6fjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8F/tHgI3/AWjCd125+JeIcKSyRkZaV3VRlrm5w/I1CE=;
+ b=RUmLHtgckMNs/b1JjcVrciWmmsnN5zkfVJKDfc+5uDugdzjCL4E0qd0ArK6/JPzmfASbX653rahd20N7puFsLT/5yDm0/z5NYQqm787ZotG1vgGa0C5PEZwYA8r38x/JTqGuNbUSiGRaVKmS+Wd1uTEr45G9ZzDqXaWTzd5j11zh5DFXx6emKlwqxDB5HvHmGGImeqAjZCjDvf38jWkPu3HiMcgs8NN9bEQi43qsgKcHSCiwgRbkW8lygUXnfNwpZNSdUmYyuhBCe6NyOss3UgG8O2zLOvlKOXvnJbXyflBMHzZHa4SEQqyxXs0G3jW3yqe8tbQLvaR94S5EZLviFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8F/tHgI3/AWjCd125+JeIcKSyRkZaV3VRlrm5w/I1CE=;
+ b=c31CYG5I1sGoIeq6Q1A8MR9JhOGxOiNnBRNJ1Ca5cjXwo72yeM3El7BFZaEWrl5Z+mo6b5UtX9cAT8H53s3Duzztquvh3hZTePfiBt6uCB+rFxrA5hfLr6SFYgYGC+8GxLCjLXMVCNulp8hhkrLurkctutbSqZEUgG41zJusBeg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by PH0PR13MB4875.namprd13.prod.outlook.com (2603:10b6:510:92::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.24; Sat, 24 Jun
+ 2023 15:46:54 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::eb8f:e482:76e0:fe6e]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::eb8f:e482:76e0:fe6e%5]) with mapi id 15.20.6521.023; Sat, 24 Jun 2023
+ 15:46:53 +0000
+Date:   Sat, 24 Jun 2023 17:46:46 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Veerasenareddy Burru <vburru@marvell.com>, keescook@chromium.org,
+        kernel-janitors@vger.kernel.org,
+        Abhijit Ayarekar <aayarekar@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/26] octeon_ep: use array_size
+Message-ID: <ZJcP5orP0eidH2re@corigine.com>
+References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+ <20230623211457.102544-3-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230623211457.102544-3-Julia.Lawall@inria.fr>
+X-ClientProxiedBy: AS4P192CA0047.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:658::19) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] MAINTAINERS: adjust entry in VIA UNICHROME(PRO)/CHROME9
- FRAMEBUFFER DRIVER
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230623040736.9026-1-lukas.bulwahn@gmail.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20230623040736.9026-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sdgtWdVp7ip4/4ayIBB1vUFupzXQG/VWEONZNgCv661G2u7SWyo
- 2fHSGlayiRWr/Pz7IZnIpC94+PobtToPkpGjUSj2YFJmi5kJB1tqS8Cf4oVDdi72MC5Rv67
- dsWrfcCdDqO8V5gyoZWqNPKgAlQnOrc/wnwKyMMcCtDRMJWrLPYrdFaqMXdsHL750B9ArS1
- YWGP1tsJqwXKxJJOTSwkQ==
-UI-OutboundReport: notjunk:1;M01:P0:PYeCmMABKKI=;z6O1tiq+JqUujWJ+qFqTF8l+vsN
- M2rVfKqx94bc4Mpq4LGO37g3bCi2ZctqOl5cs+uIJZOoeawuCulUxGWCnAVyC5gxx9u4i5Yme
- XaomuDRTwvM46beTVb5NCbnkpNQ+mv4uZKJLxGxx2mh7V+RU/DCjT2DLu8612JjtWk4fOvaXW
- eRLdfl56WmNiMrjLVbekqV9qvOuIAr0uEeRBYbOsovSBMYcc33TFmt8D/bewFeDbo3raEFzfc
- Ndr+1r82vHSJpBZLALAsKQpErerQrLJYEbDVk3q5BDYPdRKxKo3CV1J1aglbHj5BoqJKk2Lbb
- lye1tCsdimB3hnkrpqMBrsZFl2anzH8XKECNxOqTtcnvVyBkNL2L+O46HfKjO90tLHK8Xq4NB
- 6SRea2Y+NfQvRlN7Xq4ZT3lXZ9jOi2FifkgI44nJ0DwdURwf4i8U7CG2lrJl2cpmIWk8fqSlR
- fIQ5GvmPX/tlGaKK404qkQrlpRkXrpS2ez4IyP/n6Q/9MnKXHt4fGCSqzbMLKqUX+hvnz1xKR
- Tp50v6EeW7fdApM0hsUGAIvDGJ9XIqZ51crchbhDG5d886L102q6bj563zk/90z5jiqGAlJYu
- 5pkjO3ltq3V2u7Ff0r/4AplrETTzRF7koBC0FMZm23spgjJcXI9aoxaauBy1iSZCW/YOsmfLm
- m969E7UR0AwfdoRJhw/q4OorflltI/YgmEYedOdc+uPsz8oaTlkCJY4OzqQ6pELAKGqn68/9h
- u4iDbGejirxAk3WkopHgUI3Ox7ZCr4pesIDisMxKtLRqI3ROBGDcbNIaKpJDoZvqbBLSDYgZ4
- jWguu9MRZPMpDOroSmKFwB0/yc23s81jBqIqw05Y4o8XEGgZAJhytxWpxNwZrjhLXYeuuX9iI
- BmYg6eLCUdG0zlgtcqesbibcW14SOr4YeTH6t50C4s0Il50XcnS3qHcxjD4dzXEHHTNhyYRw1
- fIw9y+HH/Dl6yiEAcO1Z+N8FvY8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|PH0PR13MB4875:EE_
+X-MS-Office365-Filtering-Correlation-Id: c20e0ddd-412a-4002-8c10-08db74ca3b61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ojyHAwVLlYsGdneuznbVvgYsGkvcSyE1H5D3nckkOsZC4YrZT3MpUkeUwYz4tm3qEGYD7crjrLDESOFPKLOwI4p4iTqhtvqTl/NgWPdpa7j3ZAEeiGijJpN2Qnxt+6XR8+LBprU6S/L91YGHuqNoZM9FVm5azJcBNoIvT3sPgM2qOFNDKPHfH0FCcaTTVYDAMZ/RfU2OPpKNm9Y+UUHouCDrPfjUvgJFJZdOySWo/Y4pCPmzoDmkM1D1s8chtOORmukWwdFAgZcZgvsbCabM/xpL8HvCzZXZXtLPHkMOG8ypLfH2fFH1TiaXZNHNUvjHckrOGgQ7CYBj6nATTE2mjRRch54C6VBTkHZZL75HRztsgkGL5m22h3hEe7rb1UbzXV7uaxVbFAA2dgdjUgLwSIL3WMueRJqMhoAtcqelGGBdMf7N1IMJM0CC3yW8yHbEhhiMLJy7RfnQgsL4Xx5voaypsdIadVC0QdfWgouWuq6el75iihwstTS7JjYGdHnJTiDqyiWY40LoWc2J/PxdGzwuBh6AIel/pMzmbs/SxRi1uC1LAuY4icFLB9uCw58TUBDAJg0LeAZF1pdS4Xtc9tQ2fpwCXiixDml/vzLn2Ik=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39830400003)(376002)(396003)(346002)(366004)(136003)(451199021)(2906002)(4744005)(186003)(38100700002)(2616005)(6512007)(6506007)(44832011)(5660300002)(41300700001)(66476007)(66556008)(66946007)(8936002)(316002)(7416002)(36756003)(8676002)(6666004)(54906003)(6486002)(86362001)(4326008)(478600001)(6916009);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZF5Sk+wrKEqrY+1t/FWmJcBK+3lR1WtuhHlFnEPBQxdAQLgiRO12J+psOC1p?=
+ =?us-ascii?Q?iVWVskZ3Mc8BBwT0RxGoZlPvq3We/oMEkw4+C3G/TAEMvOIK+uQ+AROf3Q6Z?=
+ =?us-ascii?Q?uamxkY/xAEB6qZcxqEML6vOLYlgsX+KYq0i4g2+eO+wwbasv/itJ1GZvPXzy?=
+ =?us-ascii?Q?7SlON5AvGVNhoHZ20slyfucTS/OA1DDeYo1GI+gImesuGbdCS//p/ZSJirmf?=
+ =?us-ascii?Q?txEc1Aud4rrbcszhLNL9twwI0XC1df9JFackL2iOhcqjGpiUf0G1Wj8Nq9Jv?=
+ =?us-ascii?Q?J3U4Dw784jPDREan6R3YRtoZgF/6LMQX/JmusmTF6H8BFtVtG7VimMxPzP6G?=
+ =?us-ascii?Q?DpAHiWpKPKKBa2JcrzLWTFK1zGnWqo166akbHWMeDnWzrW5sHDnQ5LVSzW8d?=
+ =?us-ascii?Q?d/GaQiojdCazrxmJtFzqIRQeE7HtrbRRoBkjFZGpVBZ9V57AlhlHW7VilO1l?=
+ =?us-ascii?Q?oX2DJoQQ0xJQJnMnXst//s7MfBalU0dhT7mg0UvisnnduTgSvgCeBKn1GLdR?=
+ =?us-ascii?Q?8MA1jln5iS3UFbA9ggaE3ylG8ZONYTSvkFlgFG4luPbFvHqZDuq5BOrzy4KL?=
+ =?us-ascii?Q?mGGm7jWPn1GjJjFor/489Q2gvXpODM2SkQjY6qvQOnR3QGccIbSp9n8VrPjM?=
+ =?us-ascii?Q?kLY5fCc9Wozd9Muk/8on8QRkNfV0Wwfua5zk9pXEwTLz3yH/lc9DFxwFCvMz?=
+ =?us-ascii?Q?0R6T2a/zq5hq4Kfc4M/hAe3dkmOzVhAys6iNyz1n5KIRcRfuKEV7w4tX3HdD?=
+ =?us-ascii?Q?AhQDbRxmdCjrawTkQbh9F8P+mQTI23VOrKHoXT44viY3o5IAX6zMmwzdoNHF?=
+ =?us-ascii?Q?QO6IPAl1hEOtHA8q7YwEM20AVcPx5fSdPsSHEH12APRU0Jl/Fb15LlWyquCZ?=
+ =?us-ascii?Q?zXrJStEQ3tfa4nmwmowN7OtkWKnlXcQ1G/aNlW9Sr0PjaeLcqvtYY/kFNrbU?=
+ =?us-ascii?Q?BRgSLrAEBburlwp9tCWOzPQmop0+O21f1JFEd2YRzhgZv0FWVSpr7IbE4041?=
+ =?us-ascii?Q?sXfs79nLHigUSIUvI9GOUkzy5yt/P70sC5JAuYk3hJgnOMeCdq/dX/Sq2K91?=
+ =?us-ascii?Q?emaXxuhhF1m5QJMArgFmwvKA3jOgQkMbEc1D9HRGrjCwkMTm+KFFpROxpIx/?=
+ =?us-ascii?Q?4yjXxFs9M5XWavu5+P7gRdR7zGApT+efFkwd+SPf2uJyYKSaXMgcrl2tlm9z?=
+ =?us-ascii?Q?lsp9bzjOZelvXBGqU8RCP4UCeeLF4LMho+PggmMBmXJcpKkT8UtMvJ5JkGUP?=
+ =?us-ascii?Q?cFX4PDvd6+giaA6lhUT9mjoGglj7yfxaExC0bnZVyqZxNb+xgkMKEFhdCYCo?=
+ =?us-ascii?Q?XKh2IDVmgxsggMMoWrEcHrpICP/veohnLFbodUlorm5RftnPxIUCqPUHEOAa?=
+ =?us-ascii?Q?x3Gp1g8e/jJekntdiYzK6iKm28LdZ5r/soEu40vec0kT+Zlr0FbCcVKTiLnx?=
+ =?us-ascii?Q?3AX/lvZ9GgMs9WIcQlMy11G6+f1p0OE9ACb2yxYuz6MKs3Omc1YprQC6PQrD?=
+ =?us-ascii?Q?fWQxtjMud1yPGFV1Fw6Qz8J5STLs+9F+PZWpcCzraqXTH5mH9s/oI23fmfdm?=
+ =?us-ascii?Q?4k65JADH1uxBB3RQSvQ+tL3rC2XgQ1mW/AzWX/NJDpS4HbhqomC1oS7B+EBx?=
+ =?us-ascii?Q?78eI3K2i2XqrDhEdvWbBHnp9uO5O5I8n1hYM51HBa0uu1CoovJSD75mBqBlh?=
+ =?us-ascii?Q?fc60WQ=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c20e0ddd-412a-4002-8c10-08db74ca3b61
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2023 15:46:53.3628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EAeKAN3Eq8cgkJ6GBHcnpsAUk+9NlrrSD5t2z632RFBL0pfE6VXlZa5FsmobSj34U2znTNLGIW8H9jRZ40HtBsrOzWco4voPXRe1EiR5wtU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB4875
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/23/23 06:07, Lukas Bulwahn wrote:
-> Commit d4313a68ec91 ("fbdev/media: Use GPIO descriptors for VIA GPIO")
-> moves via-gpio.h from include/linux to drivers/video/fbdev/via, but miss=
-es
-> to adjust the file entry for the VIA UNICHROME(PRO)/CHROME9 FRAMEBUFFER
-> DRIVER section.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains abou=
-t a
-> broken reference.
->
-> Remove the file entry in VIA UNICHROME(PRO)/CHROME9 FRAMEBUFFER DRIVER, =
-as
-> the new location of the header is already covered by the file entry
-> drivers/video/fbdev/via/.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Fri, Jun 23, 2023 at 11:14:33PM +0200, Julia Lawall wrote:
+> Use array_size to protect against multiplication overflows.
+> 
+> The changes were done using the following Coccinelle semantic patch:
+> 
+> // <smpl>
+> @@
+>     expression E1, E2;
+>     constant C1, C2;
+>     identifier alloc = {vmalloc,vzalloc};
+> @@
+>     
+> (
+>       alloc(C1 * C2,...)
+> |
+>       alloc(
+> -           (E1) * (E2)
+> +           array_size(E1, E2)
+>       ,...)
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Added the Fixes tag and applied.
-
-Thanks!
-Helge
-
-> ---
->   MAINTAINERS | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 88954a1c0017..e12ac544aa9d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22415,7 +22415,6 @@ L:	linux-fbdev@vger.kernel.org
->   S:	Maintained
->   F:	drivers/video/fbdev/via/
->   F:	include/linux/via-core.h
-> -F:	include/linux/via-gpio.h
->   F:	include/linux/via_i2c.h
->
->   VIA VELOCITY NETWORK DRIVER
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
