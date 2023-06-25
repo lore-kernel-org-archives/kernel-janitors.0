@@ -2,64 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5DAEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Jun 2023 22:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E034DEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 01:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjFXW2a (ORCPT
+        id S230224AbjFYBkC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Jun 2023 18:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        Sat, 24 Jun 2023 21:40:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjFXW23 (ORCPT
+        with ESMTP id S229473AbjFYBkB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Jun 2023 18:28:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C072710D8;
-        Sat, 24 Jun 2023 15:28:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C75160A71;
-        Sat, 24 Jun 2023 22:28:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF96C433C0;
-        Sat, 24 Jun 2023 22:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687645707;
-        bh=Xr9seD7Mt0PFVk1QOrKGfmugFEuY6PJhYDOWIjAJ3WA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FDUqIVyjZ3Cfh7ExAtZpIjceASv+BaEVlPCa8QEJ4bwPEW+jTqHQZEhfONR2MUwc3
-         5Mp0gKdkLj4yYQLd4HON2qkF41Gafrrox+E8wFnOW/o5l/4AJbOUNJWX33+EWfgGPg
-         IMlt1eu3C19cBzoreFP44pgNG2aoeP1nlScOiTGit6W6FmW3c+wdZg8Z/Irg/2VY/z
-         Va3h1a652baAJCbUVekzBE2STG4luQM/yDQ6HLorqhIp8fbo+xUhdkDX4AMjOZ5DwS
-         gkOJ3WQc57aXgpkdEaF2BUlXnavrG1sH82rKexDKVDH4aTA6K8cg+7HxoqVa2B0Lza
-         4jV57LkHmGFlQ==
-Date:   Sat, 24 Jun 2023 15:28:26 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
+        Sat, 24 Jun 2023 21:40:01 -0400
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56AE8A8;
+        Sat, 24 Jun 2023 18:40:00 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VlqRN2W_1687657195;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VlqRN2W_1687657195)
+          by smtp.aliyun-inc.com;
+          Sun, 25 Jun 2023 09:39:56 +0800
+Message-ID: <1687657188.5529833-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH 08/26] virtio-mem: use array_size
+Date:   Sun, 25 Jun 2023 09:39:48 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Veerasenareddy Burru <vburru@marvell.com>, keescook@chromium.org,
-        kernel-janitors@vger.kernel.org,
-        Abhijit Ayarekar <aayarekar@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/26] octeon_ep: use array_size
-Message-ID: <20230624152826.10e3789b@kernel.org>
-In-Reply-To: <20230623211457.102544-3-Julia.Lawall@inria.fr>
+Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
-        <20230623211457.102544-3-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <20230623211457.102544-9-Julia.Lawall@inria.fr>
+In-Reply-To: <20230623211457.102544-9-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Jun 2023 23:14:33 +0200 Julia Lawall wrote:
-> -	oq->buff_info = vzalloc(oq->max_count * OCTEP_OQ_RECVBUF_SIZE);
-> +	oq->buff_info = vzalloc(array_size(oq->max_count, OCTEP_OQ_RECVBUF_SIZE));
+On Fri, 23 Jun 2023 23:14:39 +0200, Julia Lawall <Julia.Lawall@inria.fr> wrote:
+> Use array_size to protect against multiplication overflows.
+>
+> The changes were done using the following Coccinelle semantic patch:
+>
+> // <smpl>
+> @@
+>     expression E1, E2;
+>     constant C1, C2;
+>     identifier alloc = {vmalloc,vzalloc};
+> @@
+>
+> (
+>       alloc(C1 * C2,...)
+> |
+>       alloc(
+> -           (E1) * (E2)
+> +           array_size(E1, E2)
+>       ,...)
+> )
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-vcalloc seems to exist, is there a reason array_size() is preferred?
--- 
-pw-bot: cr
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
+>
+> ---
+>  drivers/virtio/virtio_mem.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
+> index 835f6cc2fb66..a4dfe7aab288 100644
+> --- a/drivers/virtio/virtio_mem.c
+> +++ b/drivers/virtio/virtio_mem.c
+> @@ -399,7 +399,7 @@ static int virtio_mem_bbm_bb_states_prepare_next_bb(struct virtio_mem *vm)
+>  	if (vm->bbm.bb_states && old_pages == new_pages)
+>  		return 0;
+>
+> -	new_array = vzalloc(new_pages * PAGE_SIZE);
+> +	new_array = vzalloc(array_size(new_pages, PAGE_SIZE));
+>  	if (!new_array)
+>  		return -ENOMEM;
+>
+> @@ -465,7 +465,7 @@ static int virtio_mem_sbm_mb_states_prepare_next_mb(struct virtio_mem *vm)
+>  	if (vm->sbm.mb_states && old_pages == new_pages)
+>  		return 0;
+>
+> -	new_array = vzalloc(new_pages * PAGE_SIZE);
+> +	new_array = vzalloc(array_size(new_pages, PAGE_SIZE));
+>  	if (!new_array)
+>  		return -ENOMEM;
+>
+> @@ -588,7 +588,7 @@ static int virtio_mem_sbm_sb_states_prepare_next_mb(struct virtio_mem *vm)
+>  	if (vm->sbm.sb_states && old_pages == new_pages)
+>  		return 0;
+>
+> -	new_bitmap = vzalloc(new_pages * PAGE_SIZE);
+> +	new_bitmap = vzalloc(array_size(new_pages, PAGE_SIZE));
+>  	if (!new_bitmap)
+>  		return -ENOMEM;
+>
+>
