@@ -2,120 +2,143 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9D3EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 05:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D17EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 14:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbjFYFBg (ORCPT
+        id S229823AbjFYOUO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jun 2023 01:01:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59790 "EHLO
+        Sun, 25 Jun 2023 10:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbjFYFBe (ORCPT
+        with ESMTP id S229509AbjFYOUM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jun 2023 01:01:34 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21FA7E65;
-        Sat, 24 Jun 2023 22:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687669292; x=1719205292;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=KdNqYETF+XtrRZPtYEeWQrXvPosc/lvpXCnD1OhovGE=;
-  b=bjMCC3WHIr+FKqpfH9nmBK773oj0q8pXmBQk2+iCQFu/+n2AHPXrrGRt
-   NR6f35aIhM+8vcdkgWVHn4LV02BiLk9dBflaCRF+mM3MsrjTypwcV5SWO
-   vj96Aqsq/XXdOkSthwV+pCudyV/a692XogUI+cfcCTW0YFUrK+viUVgfM
-   x/ZscTeGA7iqXCXBFjDsPrXPMrXJgnvj5Eluf8067ie5MCmBvfyvS0GjY
-   uzSXH20spzR8PjOlfCksGluUZZCfVR107q5ARL2z5V4+4N3v2jMqR2gL0
-   fjw8r05TruBnzU7Qu9fUtFPYrCK7pWj6W/5w/aePaoxAgiM8g3IiCNtoP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10751"; a="427015420"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="427015420"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2023 22:01:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10751"; a="693087965"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="693087965"
-Received: from ipu5-build.bj.intel.com (HELO [10.238.232.139]) ([10.238.232.139])
-  by orsmga006.jf.intel.com with ESMTP; 24 Jun 2023 22:01:24 -0700
-Subject: Re: [PATCH 23/26] media: staging: imgu: use array_size
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
- <20230623211457.102544-24-Julia.Lawall@inria.fr>
-From:   Bingbu Cao <bingbu.cao@linux.intel.com>
-Message-ID: <778fdf52-9e87-cacd-94a3-cd42554587c5@linux.intel.com>
-Date:   Sun, 25 Jun 2023 12:59:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 25 Jun 2023 10:20:12 -0400
+X-Greylist: delayed 420 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 25 Jun 2023 07:20:11 PDT
+Received: from mail.horus.com (mail.horus.com [78.46.148.228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60F61B1
+        for <kernel-janitors@vger.kernel.org>; Sun, 25 Jun 2023 07:20:11 -0700 (PDT)
+Received: from [192.168.1.22] (193-81-115-8.adsl.highway.telekom.at [193.81.115.8])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by mail.horus.com (Postfix) with ESMTPSA id E77DE640B4;
+        Sun, 25 Jun 2023 16:13:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horus.com;
+        s=20180324; t=1687702389;
+        bh=7qJlAOheByQuos5Kt2MzKqpl7IodNTD/r1Gg6wvW1f4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jX1M9Kbq91C7ABFAHT2oWf+t0lV7BHptwiDILsSo5U/HLtYiT186oci1gZ/8BTA+Y
+         ov/uJ7/Ob06iCt6yw40TB22lzIH9O9jtGqTZN1Drs15HJMbqGSiqo3nAIPqLmZSdCX
+         eTwRjPyW/+Kv5ln7eG6LwWGCCPON6gNDec1/ypb4=
+Received: by camel3.lan (Postfix, from userid 1000)
+        id 20C345401CD; Sun, 25 Jun 2023 16:13:08 +0200 (CEST)
+Date:   Sun, 25 Jun 2023 16:13:08 +0200
+From:   Matthias Reichl <hias@horus.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        Dom Cobley <popcornmix@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: pcm: fix ELD constraints for (E)AC3, DTS(-HD) and
+ MLP formats
+Message-ID: <ZJhLdE7oXAvIi1Yi@camel3.lan>
+Mail-Followup-To: Matthias Reichl <hias@horus.com>,
+        Markus Elfring <Markus.Elfring@web.de>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20230624165216.5719-1-hias@horus.com>
+ <08b8fa18-9520-2959-a6c9-6ea6132d9b46@web.de>
 MIME-Version: 1.0
-In-Reply-To: <20230623211457.102544-24-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08b8fa18-9520-2959-a6c9-6ea6132d9b46@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Julia,
+On Sun, Jun 25, 2023 at 02:10:21PM +0200, Markus Elfring wrote:
+> …
+> > This patch fixes the constraints for the common AC3 and DTS formats,
+> …
+> 
+> Please add an imperative change suggestion.
 
-Thanks for your patch.
+I assumed the motivation was pretty clear from the paragraph above which you
+snipped off:
 
-On 6/24/23 5:14 AM, Julia Lawall wrote:
-> Use array_size to protect against multiplication overflows.
-> 
-> The changes were done using the following Coccinelle semantic patch:
-> 
-> // <smpl>
-> @@
->     expression E1, E2;
->     constant C1, C2;
->     identifier alloc = {vmalloc,vzalloc};
-> @@
->     
-> (
->       alloc(C1 * C2,...)
-> |
->       alloc(
-> -           (E1) * (E2)
-> +           array_size(E1, E2)
->       ,...)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/staging/media/ipu3/ipu3-mmu.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/ipu3/ipu3-mmu.c b/drivers/staging/media/ipu3/ipu3-mmu.c
-> index cb9bf5fb29a5..9c4adb815c94 100644
-> --- a/drivers/staging/media/ipu3/ipu3-mmu.c
-> +++ b/drivers/staging/media/ipu3/ipu3-mmu.c
-> @@ -464,7 +464,7 @@ struct imgu_mmu_info *imgu_mmu_init(struct device *parent, void __iomem *base)
->  	 * Allocate the array of L2PT CPU pointers, initialized to zero,
->  	 * which means the dummy L2PT allocated above.
->  	 */
-> -	mmu->l2pts = vzalloc(IPU3_PT_PTES * sizeof(*mmu->l2pts));
-> +	mmu->l2pts = vzalloc(array_size(IPU3_PT_PTES, sizeof(*mmu->l2pts)));
->  	if (!mmu->l2pts)
->  		goto fail_l2pt;
->  
+> The SADs of compressed formats contain the channel and sample rate
+> info of the audio data inside the compressed stream, but when
+> building constraints we must use the rates and channels used to
+> transport the compressed streams.
 >
+> eg 48kHz 6ch EAC3 needs to be transmitted as a 2ch 192kHz stream.
 
-Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+The previous implementation added constraints that could be both too broad
+and incomplete at the same time, leading to the audio device accepting
+channel/rate combinations that are not supported by the sink while rejecting
+combinations that are required to transmit the compressed bitstream.
 
+Typical impact on users is eg "Dolby TrueHD passthrough does not work".
 
--- 
-Best regards,
-Bingbu Cao
+Consider this EDID audio block of a 2020 Sony TV which rejected Dolby TrueHD
+passthrough:
+
+    Linear PCM:
+      Max channels: 6
+      Supported sample rates (kHz): 192 176.4 96 88.2 48 44.1 32
+      Supported sample sizes (bits): 24 20 16
+    AC-3:
+      Max channels: 6
+      Supported sample rates (kHz): 48 44.1 32
+      Maximum bit rate: 640 kb/s
+    DTS:
+      Max channels: 6
+      Supported sample rates (kHz): 48 44.1 32
+      Maximum bit rate: 1504 kb/s
+    Enhanced AC-3 (DD+):
+      Max channels: 8
+      Supported sample rates (kHz): 48 44.1
+      Supports Joint Object Coding
+    MAT (MLP):
+      Max channels: 8
+      Supported sample rates (kHz): 48
+      Supports Dolby TrueHD, object audio PCM and channel-based PCM
+      Hash calculation not required for object audio PCM or channel-based PCM
+
+The old implementation didn't add the 192kHz / 8ch combination that's required
+to transport the MLP TrueHD bitstream, so opening the device in 8ch 192kHz mode
+failed.
+
+> How do you think about to add the tag “Fixes”?
+
+I've thought about that but decided against it as adding exact constraints
+has the chance of breaking existing applications that accidentally relied on
+the (incorrect) previous behaviour of adding rather broad constraints.
+
+Consider the following EDID of a 2009 Sony TV:
+
+    Linear PCM:
+      Max channels: 2
+      Supported sample rates (kHz): 48 44.1 32
+      Supported sample sizes (bits): 24 20 16
+    AC-3:
+      Max channels: 6
+      Supported sample rates (kHz): 48 44.1 32
+      Maximum bit rate: 640 kb/s
+    Enhanced AC-3 (DD+):
+      Max channels: 6
+      Supported sample rates (kHz): 48 44.1 32
+
+The old implementation would have constraints that allowed up to 6ch output at
+32/44.1/48kHz while the correct setup would be to only allow max 2ch output
+(both AC3 and EAC3 bitstreams are transmitted in 2ch mode).
+
+So you could successfully output eg 6ch audio (which the sink likely wouldn't accept
+and/or only output the first 2 channels) before but now this will get rejected.
+
+so long,
+
+Hias
