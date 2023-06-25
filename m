@@ -2,73 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9700EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 20:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86249EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 20:14:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjFYUMh (ORCPT
+        id S229868AbjFYUO6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jun 2023 16:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56120 "EHLO
+        Sun, 25 Jun 2023 16:14:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjFYUMg (ORCPT
+        with ESMTP id S229673AbjFYUO4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jun 2023 16:12:36 -0400
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9F4712B
-        for <kernel-janitors@vger.kernel.org>; Sun, 25 Jun 2023 13:12:34 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
+        Sun, 25 Jun 2023 16:14:56 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F3112B
+        for <kernel-janitors@vger.kernel.org>; Sun, 25 Jun 2023 13:14:54 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id DW63qPPnMbrosDW63qNCVb; Sun, 25 Jun 2023 22:12:32 +0200
+        id DW8Hql8IdYSjeDW8Hq54KJ; Sun, 25 Jun 2023 22:14:52 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1687723952;
-        bh=HTnGWUbgPOu9tTPS83pukflv+YYfBRc11HYbCi9ouX0=;
-        h=From:To:Cc:Subject:Date;
-        b=b2ShBgjQ6v15WHD9DHvM6hSighEpWGOflB5hZdnpEp1Wo7tww95BuoosSTZtrdpM0
-         eaSTuK04y7HdYQxEwtA1uf3oEVA7PiF1JwRMQzpX0t5VYOv7qP0TQurFcLQFDs2PuE
-         zEOpWxESgG4U8CxdXQ7FZYp7IpP04kL7R/CPvTKXnxZpuJA3Itm1bcEyH27vH4Mhot
-         xEcMPVfpCwTdJRH9qors2SpIM0MGgWsFnC7/KkyfSHGQBlOjJjhgmfM4tS1t6fSqaz
-         oxWAeyJsM0FhaS/uTLde2F/rxfCQaU2GD6oPgNv4tIRJc4biNsxDPHSKAiE9m8Mld4
-         ECjYMjYlyzB4Q==
-X-ME-Helo: pop-os.home
+        s=t20230301; t=1687724092;
+        bh=99Zy3Wa/tHoUx/okcXBe0djEuGdAxqRHAp5/pcQcgbo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=ahA6Jg46mNlm/+eOaIE9unvhul6T3L5VFkMdRe5rS4cSJcS9ViXR0/zBB6icUDT8Z
+         bnEIAEGfz3VM6yCSNk5++YjQkVSikNbppFRqdIPaTKJMnOQJEXmwe+/u8YOf9q77oX
+         DQFcysCT9RrzsMdyLElAL7FBifDdFyNUW6qtGTJkjZfdkzb3nmSlGZRA/W6+ANl8Tk
+         JI2zCHBJexBlikkTwL3aMdu/z1DnkFosVv7yw56UtUDttQ7DAgusUVLET8PHqBinEn
+         7jzdgAqRysNCCIUJhUlvOim9Biv2RoLk4bq/lsbpNHPSZyh1J97aBriOQq00ONPf0x
+         HSbwl7ZDPb3KQ==
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 Jun 2023 22:12:32 +0200
+X-ME-Date: Sun, 25 Jun 2023 22:14:52 +0200
 X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH] docs: deprecated.rst: Update an example
-Date:   Sun, 25 Jun 2023 22:12:24 +0200
-Message-Id: <3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <beb409e3-0c13-b817-dfa3-15792a341130@wanadoo.fr>
+Date:   Sun, 25 Jun 2023 22:14:49 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 02/26] octeon_ep: use array_size
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Veerasenareddy Burru <vburru@marvell.com>, keescook@chromium.org,
+        kernel-janitors@vger.kernel.org,
+        Abhijit Ayarekar <aayarekar@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net
+References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+ <20230623211457.102544-3-Julia.Lawall@inria.fr>
+ <20230624152826.10e3789b@kernel.org>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230624152826.10e3789b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-vmalloc() has a 2-factor form. It is vmalloc_array().
-So use another function as an example.
+Le 25/06/2023 à 00:28, Jakub Kicinski a écrit :
+> On Fri, 23 Jun 2023 23:14:33 +0200 Julia Lawall wrote:
+>> -	oq->buff_info = vzalloc(oq->max_count * OCTEP_OQ_RECVBUF_SIZE);
+>> +	oq->buff_info = vzalloc(array_size(oq->max_count, OCTEP_OQ_RECVBUF_SIZE));
+> 
+> vcalloc seems to exist, is there a reason array_size() is preferred?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- Documentation/process/deprecated.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-index f91b8441f2ef..1f7f3e6c9cda 100644
---- a/Documentation/process/deprecated.rst
-+++ b/Documentation/process/deprecated.rst
-@@ -77,7 +77,7 @@ kzalloc() can be replaced with kcalloc().
- If no 2-factor form is available, the saturate-on-overflow helpers should
- be used::
- 
--	bar = vmalloc(array_size(count, size));
-+	bar = dma_alloc_coherent(dev, array_size(count, size), &dma, GFP_KERNEL);
- 
- Another common case to avoid is calculating the size of a structure with
- a trailing array of others structures, as in::
--- 
-2.34.1
+just for your information, I've just sent [1].
+
+CJ
+
+[1]: 
+https://lore.kernel.org/all/3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr/
 
