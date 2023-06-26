@@ -2,67 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDECEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 08:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EE9EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 08:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbjFZI3T (ORCPT
+        id S230055AbjFZIfl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jun 2023 04:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33596 "EHLO
+        Mon, 26 Jun 2023 04:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjFZI3R (ORCPT
+        with ESMTP id S229731AbjFZIfk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jun 2023 04:29:17 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCFEDA;
-        Mon, 26 Jun 2023 01:29:16 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fa23c3e618so44047605e9.0;
-        Mon, 26 Jun 2023 01:29:16 -0700 (PDT)
+        Mon, 26 Jun 2023 04:35:40 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196181A1;
+        Mon, 26 Jun 2023 01:35:39 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f6283d0d84so3919092e87.1;
+        Mon, 26 Jun 2023 01:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687768155; x=1690360155;
+        d=gmail.com; s=20221208; t=1687768537; x=1690360537;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GfxAu6sW5+q7WfzXLeH1/VjEmYM6LrxvH/FzoskmAzQ=;
-        b=o+Nplp0WDmZyHFlCdALUokQhCZyn4cHkrDBC4N5dkwytAvWfq3hHP7zo7+K89pZPmX
-         6fBp26uue0TIf6Dmm7LLzadBd1m6JFy8UBZr42lzbmvC1RRtzYEU4t6Uu7Q3iSV/edMo
-         /Z6Zw7X2o16yPqI8r8Zf8BpxBXdrL1kLqKXj1O0dRLGsE7VLXvbRRMeUhlqekBF2hsYr
-         82HxRtA1jDtMyTr42dDVtShKfbpbRFepYv2CN15mw49//Ukg6186q2f8VpgwwuMKHX1o
-         cNDZ44W+Zb5muGOlfcTvNijTMbo3Nvfu4RfCSJ9db+OX59miZ47j6j7PfSBTFRMJAFIn
-         CvHA==
+        bh=9MrkiBWSdaWnAC9L6QYTchQNu8YBLbIyeAdR6NesYXo=;
+        b=A1D2/vWRDY0gMh6FvrQ/M1SacXwWHuWn5MtFitZFegdbFsD7Z05rQUNRB+Wf2F+rEO
+         chpNmQJrFda+TvtWyxrvyveWbrTzqZhqxA3a1S85tOdOFK+3A9okAvp9gJNr5KwV9P6g
+         nx4GpH/k+9sHrbqIyiXTkeTMAiqex/A+fqNo2v5F7VlPnERnHoiqgLI6VB3WRUs9OyJ1
+         /u+fQMqLcMTNAl1aaVqh67pBNEtS191lzZRSdWFlwkTRaYZ9TduEIKnRj7sP5wM5dBVn
+         WHWhcZFdB0vWykQYBMe62vezSjo4BCTMKiU6b4zUUJMIg48tkNjIXr9fakDk/35KD7Ts
+         Cgvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687768155; x=1690360155;
+        d=1e100.net; s=20221208; t=1687768537; x=1690360537;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GfxAu6sW5+q7WfzXLeH1/VjEmYM6LrxvH/FzoskmAzQ=;
-        b=a/xqIhLaqy/U9W30ix55b3mpvSC+aADSGlig0sgxMkyKgz6CjwJG2/xKy0NtSIqAd0
-         28AtXi02/zl2vBFPBp9ClDqaMskoZNbrX0e+tKUwNu+pps+tn98iAxIpCmBv8T5YvlTs
-         M2EZf5yPeyV/oPDp0KhZKW1CmUxDLdK+eFreHG/rZhy7dYFbaOCqk2cWrXAb4FugmY/3
-         QCHe3/2MBIsDr8L7fh/T2cso42uKwSUQ2fQ9bD0wKYPpG/9fbU7IUlQ2Ov1u5SlvIaER
-         GtTFePYcHM7OfWUSBAw6FiKk4WIyjv63z1ZEpwR/g4cY0qU/TCYFqSZPnkFYVVa3HKYm
-         QILg==
-X-Gm-Message-State: AC+VfDwcViHLIGHcduiYc0jpGO250PQGa+CFEVCzIpcarniDFYzvw/d4
-        EK9rIAk6UmD5l6azvw7NBHQ=
-X-Google-Smtp-Source: ACHHUZ7AR1J5W6NerK45Q0I6VwTfH0YXK4Ltix6kj7QS9wNQa4hFWKq1sMSHkujMGbfcV99bS7h4xg==
-X-Received: by 2002:a7b:cc8d:0:b0:3fa:9890:8016 with SMTP id p13-20020a7bcc8d000000b003fa98908016mr1053413wma.2.1687768154860;
-        Mon, 26 Jun 2023 01:29:14 -0700 (PDT)
+        bh=9MrkiBWSdaWnAC9L6QYTchQNu8YBLbIyeAdR6NesYXo=;
+        b=l596NYOErtI8PmO6XkDh5loRr+dxO0AoIbUj/4VG0tPN0C1PHTs//X2mDwg5LXWVoo
+         QtsdEor1u54VXbhf/hT4SxEkSD5Tadp2gGyYrtojirpYpQjKtIx2n8YZQO8BhpyC0EDU
+         E9S8uwROykxZ9Je/8Nc8cqizI5Q0oBFpO1yjDYMVlFMvkuPulVk30TSaZCft+X1j4B8m
+         Ai8YCA7nRlQH/4a0DhIDsDUur7QGHkFjMn0rkcKR6RzJ+989Fci0OGEqKzyromu4o1sE
+         UJXydTqchcEZ04pWJfUbUi55LOmPdicbVYMyRG2c8dCGSoSDDm/oPRCPcoLVGBq8ys1y
+         oJrg==
+X-Gm-Message-State: AC+VfDw02PclytRzOyG1lBRjbcVe+/JTBY0nSVrDnHptjsA8fkDDsYYC
+        05GAWCpLEHiT0dUqBzL0Xok=
+X-Google-Smtp-Source: ACHHUZ7otToh0hZinYK6A1vqz6otwhOcWbjMm0WVFh/Ap36znKkk8PbS+LM0n63exa5Agz6TvLTO6w==
+X-Received: by 2002:a05:6512:3414:b0:4f9:cd02:4af1 with SMTP id i20-20020a056512341400b004f9cd024af1mr2777347lfr.34.1687768536987;
+        Mon, 26 Jun 2023 01:35:36 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m14-20020a7bca4e000000b003fa786b5195sm6896249wml.42.2023.06.26.01.29.13
+        by smtp.gmail.com with ESMTPSA id f4-20020a0560001b0400b00307a86a4bcesm6667577wrz.35.2023.06.26.01.35.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 01:29:14 -0700 (PDT)
+        Mon, 26 Jun 2023 01:35:36 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Gustavo Sousa <gustavo.sousa@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/mtl: Fix spelling mistake "initate" -> "initiate"
-Date:   Mon, 26 Jun 2023 09:29:13 +0100
-Message-Id: <20230626082913.53089-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] RDMA/bnxt_re: Fix spelling mistake "priviledged" -> "privileged"
+Date:   Mon, 26 Jun 2023 09:35:35 +0100
+Message-Id: <20230626083535.53303-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -71,26 +66,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a drm_dbg_kms message. Fix it.
+There is a spelling mistake in a comment and in a dev_err error message.
+Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/i915/display/intel_pmdemand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_pmdemand.c b/drivers/gpu/drm/i915/display/intel_pmdemand.c
-index f7608d363634..f59e1e962e3d 100644
---- a/drivers/gpu/drm/i915/display/intel_pmdemand.c
-+++ b/drivers/gpu/drm/i915/display/intel_pmdemand.c
-@@ -555,7 +555,7 @@ intel_pmdemand_program_params(struct drm_i915_private *i915,
- 		goto unlock;
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+index 1c6c6c0bcf52..5fd8f7c90bb0 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -726,7 +726,7 @@ int bnxt_qplib_alloc_dpi(struct bnxt_qplib_res *res,
  
- 	drm_dbg_kms(&i915->drm,
--		    "initate pmdemand request values: (0x%x 0x%x)\n",
-+		    "initiate pmdemand request values: (0x%x 0x%x)\n",
- 		    mod_reg1, mod_reg2);
+ 	switch (type) {
+ 	case BNXT_QPLIB_DPI_TYPE_KERNEL:
+-		/* priviledged dbr was already mapped just initialize it. */
++		/* privileged dbr was already mapped just initialize it. */
+ 		dpi->umdbr = dpit->ucreg.bar_base +
+ 			     dpit->ucreg.offset + bit_num * PAGE_SIZE;
+ 		dpi->dbr = dpit->priv_db;
+@@ -932,7 +932,7 @@ int bnxt_qplib_map_db_bar(struct bnxt_qplib_res *res)
+ 	}
+ 	ucreg->bar_reg = ioremap(ucreg->bar_base, ucreg->len);
+ 	if (!ucreg->bar_reg) {
+-		dev_err(&res->pdev->dev, "priviledged dpi map failed!");
++		dev_err(&res->pdev->dev, "privileged dpi map failed!");
+ 		return -ENOMEM;
+ 	}
  
- 	intel_de_rmw(i915, XELPDP_INITIATE_PMDEMAND_REQUEST(1), 0,
 -- 
 2.39.2
 
