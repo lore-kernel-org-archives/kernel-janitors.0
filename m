@@ -2,96 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2610C0015E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 00:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC42EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 01:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbjFZA4s (ORCPT
+        id S229648AbjFZB2P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jun 2023 20:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48246 "EHLO
+        Sun, 25 Jun 2023 21:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjFZA4r (ORCPT
+        with ESMTP id S229572AbjFZB2O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jun 2023 20:56:47 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837B48E;
-        Sun, 25 Jun 2023 17:56:45 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.169])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Qq8Yj4GXsz4f4HYw;
-        Mon, 26 Jun 2023 08:56:41 +0800 (CST)
-Received: from [10.67.110.48] (unknown [10.67.110.48])
-        by APP3 (Coremail) with SMTP id _Ch0CgDHrQtI4phkuS+ALg--.18069S2;
-        Mon, 26 Jun 2023 08:56:42 +0800 (CST)
-Message-ID: <71bd6de4-2cde-54eb-5720-3665d421d8ea@huaweicloud.com>
-Date:   Mon, 26 Jun 2023 08:56:40 +0800
+        Sun, 25 Jun 2023 21:28:14 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D47194;
+        Sun, 25 Jun 2023 18:28:11 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id 5614622812f47-3a1ba074dadso1076881b6e.1;
+        Sun, 25 Jun 2023 18:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687742891; x=1690334891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3KZNMyDXB/fy5OKIT9JHt+RgpT4vpVpO98zJF2YAzk0=;
+        b=KBXKSMEvvc1sS0bTW7N9oqVp1u3NdVhbyxc+5nsvOVGQ1cvj+gMtXQukb1ZrvASdOd
+         neeDFwOHMGSTtvMe5hgB6h1lNMLZk2DtvF7mR71gxD5GJUUwUpI5iEXg595HWVZ+7F/0
+         s7Gwgzj0NmBUvbxsRGNnDJXbggxdI9aj0aGg10rbfgtU49ZRvtvSsWfcN+k/kryw7TF0
+         Vw8Zzf9s8hFBxxlvUv3E/XfuiQrekNr62n9fJoUJicTcBeaNSLRs+2STUQ+gGWVFM8f7
+         9GsM24SxZHXa7t+Eqh2MDy+zSDY7nXx1HGABBeuOBbemzLWn8eIL9hbId2aE5wDpnGxH
+         X6mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687742891; x=1690334891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3KZNMyDXB/fy5OKIT9JHt+RgpT4vpVpO98zJF2YAzk0=;
+        b=K+vUV22D1KLc7Djvkh8PaGg7EW9n2dWzcPa+fRyoWfN16bsZ4RRTOhPaDYBLZIBBsO
+         ERa69h2iiYfcJ4g61dHn6tOfSrnKs88bnrFnHJ8DF1Vi/MPBvJeDREtTjxGLDzpyNxRD
+         TXc2mHkBOG5m1SFe3Q+s1YIqcenycofXC2usqnJ9/B1thxd76poSYG1k+H0WPBh8ubCl
+         mnWloViFVDSDoSMJtUJFD84YxbzzqfTHLaqIFQMCvuCUcg+T8NmQslSxz161HZQOLXVk
+         DMRchPXrKggJB10ooDTyb8nyLMKF2XId/iCQ9MIgJAkdN/aN1qfL+8Ow71UQD25u8Qww
+         1nuQ==
+X-Gm-Message-State: AC+VfDw5Vb7R/qukJGn8WnqGDu/iTyPZteFlPC0TgmswN9kAvlAKc+kX
+        wE7cP6O0XZLn3ccLcL1DuVjS1Q3rXgwN9KApYirIuBqD
+X-Google-Smtp-Source: ACHHUZ7I1eYXh7yUSMkGZU/5hN3SoNfxGTarJARtmwKUb7YRrYzLwK2EKNtcr4Xzq0HJMxRDVZJ80V6v03BgamutDzQ=
+X-Received: by 2002:a05:6808:13c1:b0:3a0:58f9:e982 with SMTP id
+ d1-20020a05680813c100b003a058f9e982mr12732237oiw.27.1687742891144; Sun, 25
+ Jun 2023 18:28:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 0/1] Randomized slab caches for kmalloc()
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>, linux-mm@kvack.org,
-        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
-        Alexander Lobakin <aleksander.lobakin@intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        "Serge E . Hallyn" <serge@hallyn.com>, Tejun Heo <tj@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-References: <20230616111843.3677378-1-gongruiqi@huaweicloud.com>
- <570d788b-d7f3-64ab-97e1-4e847aef1321@web.de>
-From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-In-Reply-To: <570d788b-d7f3-64ab-97e1-4e847aef1321@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _Ch0CgDHrQtI4phkuS+ALg--.18069S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYI7kC6x804xWl14x267AKxVWrJVCq3wAF
-        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-        wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-        x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-        64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-        1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-        nIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+References: <20230624133808.621805-1-jcmvbkbc@gmail.com> <562ff26d-df78-c1cb-6a34-b9a97efdc43e@web.de>
+In-Reply-To: <562ff26d-df78-c1cb-6a34-b9a97efdc43e@web.de>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Sun, 25 Jun 2023 18:27:59 -0700
+Message-ID: <CAMo8Bf+KeW8Gx22ddHjco2vJh1zanRaiHDvi0Jk0-rUpMX0kkg@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: dump userspace code around the exception PC
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, Chris Zankel <chris@zankel.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Marcus,
 
-On 2023/06/23 16:30, Markus Elfring wrote:
->> I adapted the v2 patch to …
-> 
-> I suggest to omit the cover letter for a single patch.
-> 
-> Will any patch series evolve for your proposed changes?
-> 
+On Sun, Jun 25, 2023 at 9:36=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > In the absence of other debug facilities dumping user code around the
+> > unhandled exception address may help debugging the issue.
+>
+> Please choose an imperative change suggestion.
 
-Usually I wouldn't made a cover letter for a single patch, while this
-case is an exception because I need a place to hold the additional
-explanation about its transformation from RFC patch to formal patch.
+The change itself is so small that it's fully described in the
+subject, and I believe
+that that description is imperative. This part is the rationale. From
+my experience
+I cannot guarantee that dumping user code will help, but sometimes it
+does, hence
+the 'may help'.
+Please let me know if you have better wording.
 
-> Regards,
-> Markus
-
+--=20
+Thanks.
+-- Max
