@@ -2,82 +2,131 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369A5EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 14:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAB1EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 16:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjFZOyD (ORCPT
+        id S230416AbjFZQDA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jun 2023 10:54:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
+        Mon, 26 Jun 2023 12:03:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbjFZOyD (ORCPT
+        with ESMTP id S229635AbjFZQC7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jun 2023 10:54:03 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD24B6;
-        Mon, 26 Jun 2023 07:53:57 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35QCNRhk001883;
-        Mon, 26 Jun 2023 14:53:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=BSUbfCrq2+nGrSMhQpMYHP3v9+gG7yJKXdUKqO8e7Ng=;
- b=JadsTGV/BiUu4Nljgv+fUkDAknevucj0wJgaCa3bKUFAqxaF5A4uo/XtieFq8Vf6k4dD
- Nhz+eVgoZ0gG6ZOjDGrJeXIf1/gK8hh/NRDNb60y8fHuXGfulkdSs7b1Ti24EVNLvgH5
- uF2Lj8qt2IMrmwnHxd4ZXWV5cVOF+lJ4Bm6VLOaigyoUrDDcW5zKM/41u2VYqWtG1iiJ
- NpsMbav+kCbCPqYrKrwoSa1xrqoZtfDY0iI1S62BMTpPZ3zS+trZLM9Bw6wcxGofCSxM
- ijNZfQY4YG5i9j9vBpm1xShPYQTAx4ueN/Nt3wv4WjOgAVye7WNsI2XqFG0q7VJG/cm3 Iw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rdqgdcdjg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 26 Jun 2023 14:53:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35QErgT7014660
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 26 Jun 2023 14:53:42 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 26 Jun
- 2023 07:53:41 -0700
-Message-ID: <84cf60eb-355a-ac13-4b9d-2ca054da5ef5@quicinc.com>
-Date:   Mon, 26 Jun 2023 08:53:40 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 10/26] bus: mhi: host: use array_size
+        Mon, 26 Jun 2023 12:02:59 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA8310F3;
+        Mon, 26 Jun 2023 09:02:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=elV8FMaCVmXObABSZg3C7Nng6ob9faniLaGs48SfdAnREXk5ypWC/qOCwoUuWRcZKAyHrFIPOg9c7LXXfJ1zWgEUqaTPb3/sAZbq+ERayaIuyTXe/R4FbedahdaI/HvwXEAIcPfTttJOBoR7CnoZobOrwgEbkATB1OBTbzvAtNQMHan1gCsjIlCU3tpjqB2ki6lAgu7zXNjM3Rc/AK++GiouFSMjAnTSnpvZGiNnShmSZGBUvBDXrIcRSbnEBr9BHHrTmMzFk2GaVfVOiAK8MdztpvrJr/kWrSafJse+gFyIQiK7BvSH6xJ3oFnxm91hm02eOyo+Qq9dmDfnJ9NepQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dyTGUo36PlSMm7EmWdPNAayfSkwPeFI5+TKN66D1v7Y=;
+ b=PoKlm1yVLacreRwCQbaXU0WmiUiNARTbvNqBsPUZwJTVzZgtZZ7D8jL2cDo9e4U9Drksb0qx2DWXiQ3ic19VBWrs4w+fNkrzb0EE9Kq9Z1ho29ZpdV5nax0QpT96xCMLpP4SN/hX9p0Kg7Zj+xpejddptkGhb9CiiRdpbqnsTYi6r0LvPXOnJvgn6b2d7nm6fIGvmLTSToI7p8/8MNu9RqogOUjznlQABNv5wDMKI7eV4640+kPNjHX8MEAoveH1w7QHm9A5IIUBNMAzjGObpPv1Vu53cnQU+ULDWIpomn9fCuPxm4awP8Uz9c0hQcAZYpTwS9KBVkh4PRbqsYk1Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dyTGUo36PlSMm7EmWdPNAayfSkwPeFI5+TKN66D1v7Y=;
+ b=DooTlrvFHIhVS9ITwQI10jK93sKYpPVYnwh80zxeHTESefuhJ7FiD83/+27A0hOrQO0qwDJuRBFtbKN99srmC0+ZZQz28Eyyg36Jzf0NyCI72fjDJi4YL1QdD8Ci1jbSNki8pncJl0qFr4nXLDkdyhbeCLbeTJiuv0//p/F42dg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
+ MN0PR12MB5980.namprd12.prod.outlook.com (2603:10b6:208:37f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21; Mon, 26 Jun
+ 2023 16:02:34 +0000
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::818a:c10c:ce4b:b3d6]) by DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::818a:c10c:ce4b:b3d6%4]) with mapi id 15.20.6521.023; Mon, 26 Jun 2023
+ 16:02:34 +0000
+Message-ID: <cd1d3939-d5a5-2d30-ffbb-cedab71a4536@amd.com>
+Date:   Mon, 26 Jun 2023 09:02:30 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.11.2
+Subject: Re: [PATCH 09/26] pds_core: use array_size
 Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>
-CC:     <keescook@chromium.org>, <kernel-janitors@vger.kernel.org>,
-        <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
+        Brett Creeley <brett.creeley@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
- <20230623211457.102544-11-Julia.Lawall@inria.fr>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20230623211457.102544-11-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20230623211457.102544-10-Julia.Lawall@inria.fr>
+From:   Shannon Nelson <shannon.nelson@amd.com>
+In-Reply-To: <20230623211457.102544-10-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 23kCUTdkNTdh5JJk2_qkhgJovsiQzF35
-X-Proofpoint-GUID: 23kCUTdkNTdh5JJk2_qkhgJovsiQzF35
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-26_09,2023-06-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=617 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306260121
+X-ClientProxiedBy: SJ0PR03CA0037.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::12) To DS0PR12MB6583.namprd12.prod.outlook.com
+ (2603:10b6:8:d1::12)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|MN0PR12MB5980:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba2648a2-15b2-4899-3c6f-08db765ec132
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uBM0fE68Nxa8pJ9y4PXOMj1doARkD8pXgehHVCDoJmo9ps3kxO9usPFz3Bif2gsqK423CXbz4yFeH63313+QlNszSN2WCIg8ItxQB7lOqQrlwiupn6CeGbkXJ+syUDNYPEpz8JTC/12/fD/9P1IHCJTSjPd65B0+EDwkOoZds3P/TmBwaWsoR+FsX8FQ9TjdEsJBe3ZMjl4bcbaMg/XxfkJHIhjjaW7MPnLLezMGDFiTUuST85ZoZhDv1Fz0FUvfmPrXPw8EM7TOFL/6NuJt6nJn67p7fTyNauIS0JVvHatS5/iKMJuUo/HfHeU1SiGm/xmF7hDcDfjyuAF6CjpnwLb3672k6U36P6lBdX6AsU/BKOU3SBZjpHNl9SpPrIINqIcS+fDzpRiylPgnPfH/04OnOXx738SQsxmwEozNBKzRHuCsHb28nkaRFQ6xGR2TpHRmcqEXjVSGZ5NAXyCJ/u9xFseCCS4b4NO5Ac7/6gfkNk+9PNIEnLUWf0hu7MsUdEBarDJXvl2Paqg4KOjtRbeNPt51xULaUKxYc1Sr3iN5LXY8+yrFLnm0HXJqZ9Wfvxvdl6hEB+OBI7ZeG5GeFLNeKorcOYL7IkWYewHmAFuM0t0d+gpYc3BFcHbiQDj3zP8GRgPkPfS0vDZ+wk1zGA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(451199021)(31686004)(36756003)(5660300002)(44832011)(41300700001)(316002)(86362001)(66476007)(6916009)(8936002)(8676002)(66556008)(38100700002)(4326008)(31696002)(66946007)(6486002)(478600001)(26005)(6506007)(2906002)(53546011)(6512007)(186003)(6666004)(83380400001)(2616005)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UU1IRFlzK3JDWTMwU1ppZFZNRCtsalEralpHdHlmV3dTWUxiQ2VMSnpoN1hZ?=
+ =?utf-8?B?Rm1tQXA0SXN4V1BXa3RpUzhWWkpNUlZGNy9FU05EY09uL0RlY2xhcjR6YW5h?=
+ =?utf-8?B?VHdRdm1jU0ozNEgvTEJhVVpZSTY0ejd1ZmszbHVqN2hzcjBGR0xLalRCSWln?=
+ =?utf-8?B?UHkrdFRQcnl3U01hbjcyckl0akZwTmdRcWJxUkVQdXY2UkxBek93VGM3cVNW?=
+ =?utf-8?B?K3JFOXk5WXB4REVQUmQ2bkx1RWoxVEhmSm00SFVySjRGVjdza2ZLV2REUEFG?=
+ =?utf-8?B?NkhTVktZTitDUmR0NXlLcllZVlVpdFAreXIxdHpwZUh6MUxnUFRYdW5CVW1P?=
+ =?utf-8?B?Q0JJUU9NRW40SVNPR3QyNzBPQnNJOVlMOWllMHNJVThoYWRiT25tZnBqeHF4?=
+ =?utf-8?B?K1M5aHB5NXR1VDIrQVNJUjhjVzdtc24rRFBZekNRVW9ZbER1RndDODRVSURR?=
+ =?utf-8?B?MzdyU2tDa2tldVZsZmkzenYzRmZLZjVFZzNIelQ5d25wd0lvL2hRdWdSbFpG?=
+ =?utf-8?B?am9sdTRPd3VZMHJXTUVWdVB2Sk5JTXd2cS9xQ04xWFhCU3lrbEFyT2JVVCsr?=
+ =?utf-8?B?SjdVbGlLQ2FUOXRtejg5WUgyR0lsUlRtK1hTcDNDSm1WaXp5bGxaUDdVOXo3?=
+ =?utf-8?B?c0pkMzI2RDYvdmJxRHdydmNqanJDMExNdmttRWxUTTRCZFcvSzU0TGJLeTNE?=
+ =?utf-8?B?WitlL1dHMHp6R3pkS0ZGQjlkbnk4Wm5uZlgyeXhXTEcvL0FobXY4byttLzNu?=
+ =?utf-8?B?MnBKSllHVDBYcnk4N0UvbVlQbzNsUEpqQlNaaDhwUm51dm16K04zVUFVazRZ?=
+ =?utf-8?B?aTJvNjB2ajhDVkpKTDI0Z2RJRUNvYmRKTVMzNTZIS041bC9Oc0VoVWV4U0lI?=
+ =?utf-8?B?YzJua1hrNlZXSHpVK1dHT3crU2J5T0hpN3RCR1d2aHhDRUdrYVd6VHpaSE85?=
+ =?utf-8?B?bUk3L0NzNEpTSFU4NlVFbEg5NEF5dXlDRXd0aStDRG9PVkRVRXhCUk4zTDFh?=
+ =?utf-8?B?N2VTS2NmOHlZc0dxSldVbjZzUytWQWVQWHUzakZRY1Z6U0pEc0oyRDFwYVM3?=
+ =?utf-8?B?VmUydkNRWmkxKzhYTmcvVHZXcDBMN2FwK3dXVTJxYm0xWVc1dWkrVEVxbjhI?=
+ =?utf-8?B?SXBQV1NzOHBQN3dCNDBOSFlDV0RNTXBSWkZGT1BvNkxkT2JFRmp4cjVlWnZW?=
+ =?utf-8?B?ZjA3TkErVFVQT2ZxSzVGekNIRVVyeFBYeW5mR1ZkMTI4QlRvR3RWT1paZEVu?=
+ =?utf-8?B?c2VWcU0vVEp2ai9ML1NpbEdDYlVjL1Q3T2k3cER6UDlHNjBrcXVmLzdlekd6?=
+ =?utf-8?B?RW4vc3JtOEw5Ym40TUo4cGUrMkxvcFdnQXp3WS9PVTEyMUl3TWRKZHo4YUdm?=
+ =?utf-8?B?OGZ5WFdiYTVjSHY1cGRhQWNVK01Eb0F4QStPd1NSMVdmL202REtVazBNbmNk?=
+ =?utf-8?B?bVkyZlhua0REVjQ0RUVBZWNidGhxTC92Sm5rQ1RlVFZ5c25IeTlOWUY0U0x3?=
+ =?utf-8?B?VkdreEs2dTRucVEvZm5oV0JCeG03dncxdEVBZk1IaHhBeHdIV2xVSkZaME5Q?=
+ =?utf-8?B?blFpRmUvdkpnVWZndGhXMUFVdGJPdkN1VWhERi9aOXNub090ZUJYUUdpNHU4?=
+ =?utf-8?B?VUc2ekRKanN6Z1NUSmFQbk51VzBLVk1EaW12ekQ2T0FFQlVKc3BHcVFkSlNN?=
+ =?utf-8?B?NnExYVBaY2xLRTJra0pNR3FPaTg4Z21oMHdCYkVmUEJsSzBHMm5ZQmxjbVg0?=
+ =?utf-8?B?VXRRQ3Azc3l6ajJ3MXVSWHRHbE92d0NQdFlQcHhWYTlacXRRVTBBMmU4UXhh?=
+ =?utf-8?B?VW9aMDJQV25XOHg5MWtENjJDOHMwMlBEMXc3NHVubDBLME0rd0lDUDVDVU9V?=
+ =?utf-8?B?SitpSEJnUXBGQzJEelJKY0M3U1pWREFPYkhmS01FQWlLNzVFbXJQbWV1S29o?=
+ =?utf-8?B?RVpqSjV2Wm8zakozaEx1YXpYWUdXMm9TenJPL1pxeENuZy9vNjdkcnBubzUr?=
+ =?utf-8?B?dnlYSlRXWTE5VDRUUFA2bHVMWkZuaFgrbEl1NTZqOFAzZkFuSUtNZWJ4Z3Ro?=
+ =?utf-8?B?RkdrcE5FUDRycUxjU1MybEQrQmNLSXQ3SHZGN3hKaG5Fc2oxNk4rWVNxcTZY?=
+ =?utf-8?Q?8SMEF69zkfRgd5FR3zYT/adgk?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba2648a2-15b2-4899-3c6f-08db765ec132
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2023 16:02:34.4932
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A8h6QnUtu3QhRubCQXyKVa5PWhxWCJNfEgPTnREHycUD76rqkIJDwCmaSA6TLN7LePtv6O90BwwldxzJgrNC5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5980
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/23/2023 3:14 PM, Julia Lawall wrote:
+On 6/23/23 2:14 PM, Julia Lawall wrote:
+> 
 > Use array_size to protect against multiplication overflows.
 > 
 > The changes were done using the following Coccinelle semantic patch:
@@ -88,7 +137,7 @@ On 6/23/2023 3:14 PM, Julia Lawall wrote:
 >      constant C1, C2;
 >      identifier alloc = {vmalloc,vzalloc};
 > @@
->      
+> 
 > (
 >        alloc(C1 * C2,...)
 > |
@@ -100,7 +149,35 @@ On 6/23/2023 3:14 PM, Julia Lawall wrote:
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Tested-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Thanks,
+Acked-by: Shannon Nelson <shannon.nelson@amd.com>
+
+> 
+> ---
+>   drivers/net/ethernet/amd/pds_core/core.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/amd/pds_core/core.c b/drivers/net/ethernet/amd/pds_core/core.c
+> index 483a070d96fa..d87f45a1ee2f 100644
+> --- a/drivers/net/ethernet/amd/pds_core/core.c
+> +++ b/drivers/net/ethernet/amd/pds_core/core.c
+> @@ -196,7 +196,7 @@ int pdsc_qcq_alloc(struct pdsc *pdsc, unsigned int type, unsigned int index,
+>          dma_addr_t q_base_pa;
+>          int err;
+> 
+> -       qcq->q.info = vzalloc(num_descs * sizeof(*qcq->q.info));
+> +       qcq->q.info = vzalloc(array_size(num_descs, sizeof(*qcq->q.info)));
+>          if (!qcq->q.info) {
+>                  err = -ENOMEM;
+>                  goto err_out;
+> @@ -219,7 +219,7 @@ int pdsc_qcq_alloc(struct pdsc *pdsc, unsigned int type, unsigned int index,
+>          if (err)
+>                  goto err_out_free_q_info;
+> 
+> -       qcq->cq.info = vzalloc(num_descs * sizeof(*qcq->cq.info));
+> +       qcq->cq.info = vzalloc(array_size(num_descs, sizeof(*qcq->cq.info)));
+>          if (!qcq->cq.info) {
+>                  err = -ENOMEM;
+>                  goto err_out_free_irq;
+> 
