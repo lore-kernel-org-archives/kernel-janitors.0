@@ -2,131 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEE8C001DD
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 09:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C0EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 10:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbjFZJ2U (ORCPT
+        id S229749AbjFZK6V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jun 2023 05:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38082 "EHLO
+        Mon, 26 Jun 2023 06:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjFZJ1e (ORCPT
+        with ESMTP id S230164AbjFZK6S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jun 2023 05:27:34 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5918F10D2;
-        Mon, 26 Jun 2023 02:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687771624; x=1719307624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3mrrnJPN3WRzZuBY5/ppMAonnkB4EuW+qZ/uzbwNfrI=;
-  b=fv37mNFvpp7shfOgfpjPPvv7Wo+AFgI0SHoxGP7AlxmieaYdht0+K5h1
-   31ULoi76jKVnEkW4NYMcBtKU+iOGvZo5Fu6loahuRxwJM+LqTbTxFkaqK
-   WtpBkbW2j+583rmu7weP0ocwb1z9uONRhS27+aqxqvMCJonfB9a9CF707
-   yt3HcsMSyVbnBsEJWs1I4lWHD7GQQt5MMW8dkMTR1gq9Lj4ofAPfcOrZ9
-   I0CoGTv5304hJo43KK7UwJdJdi6qBraSu6sGpfg38DfA3Dyd8LCghiyOF
-   WyTpVp/gUTPvk20TqdoHfOP9q7bRnFCDRE3fXCEriTSNPUuO+6GmyZJ+d
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="424892817"
-X-IronPort-AV: E=Sophos;i="6.01,159,1684825200"; 
-   d="scan'208";a="424892817"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2023 02:27:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="962712374"
-X-IronPort-AV: E=Sophos;i="6.01,159,1684825200"; 
-   d="scan'208";a="962712374"
-Received: from csteeb-mobl2.ger.corp.intel.com (HELO intel.com) ([10.251.217.4])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2023 02:26:59 -0700
-Date:   Mon, 26 Jun 2023 11:26:55 +0200
-From:   Andi Shyti <andi.shyti@linux.intel.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Zhenyu Wang <zhenyuw@linux.intel.com>, keescook@chromium.org,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 16/26] drm/i915/gvt: use array_size
-Message-ID: <ZJlZ3421Whev/LkX@ashyti-mobl2.lan>
-References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
- <20230623211457.102544-17-Julia.Lawall@inria.fr>
+        Mon, 26 Jun 2023 06:58:18 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAA610EA
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 03:58:11 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-313e34ab99fso2318593f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 03:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687777090; x=1690369090;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8wTFFYlEacnCLuLIvI9hxugao/WlAGmt8S0+ic9iMMM=;
+        b=HgHm+mJEpvZ08t2fUwrsbQn7G1TAQPnOtjTod7u2J6zZWokbC1xHXBHQfgb/K3Ngio
+         J30pnq4MAgl9hB/gMbnkwGGiIXRDEmR8PMUjeeU5wVSiAJ3akho8u62RrEIYPuxWTLkD
+         HYouB/n1GN55i/CdVd/gTK0FK+i7nFT409vJdlt3/qf33AbNHwup4+3jbF+zmCK+6Nwn
+         OdGEtJahMRpM/9VRFomCUmJ+3KRu9GrC9WTbWqr+moE+yxyz91YZXKt6UKsNKMvQWlki
+         JA7z80ciYtgH2KvY67MQNgUKxlwPlnydgCtrctLNtMXf2qJQyn78djfym5/3othlRqzm
+         ExJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687777090; x=1690369090;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8wTFFYlEacnCLuLIvI9hxugao/WlAGmt8S0+ic9iMMM=;
+        b=ljbNQfWTHWytjBaipF2yPwY/LZ3p7Nt6vtikzAaF9A5tQA9P52Hxq//wsxlXAh3hnJ
+         Zy/6rXHOFVjj9W/BkaSdxbmYV2p8z3Y6ncvq3sIBfxYttPMCxUlffdQLDOIHpivyHcox
+         j6C17SkxNZD0Q+6Fco174f0MpYgAIJPHOvck/aPl7G8YjB51OnAk06Xe21HU/1tAAzdS
+         bRa6l7uIk3Zdhz4ZD3PIsrD+WmqnXuXrJ4UJM2l9CqBsFnqPh6FNTUl6qC6CBenQk2mS
+         EwnqoQZsFhj6Vza4U/RtisOBJUFdhcEBVBcDdJIwECwgUuXMLoe0YvRXUd4B9iD+yc34
+         zo+A==
+X-Gm-Message-State: AC+VfDzI5ikb2mnqJ1OSICbYhKD/N2U2QsnZuvlvRumLIq2gSc45Vzb7
+        m38jXOQmE0adETCRmFS6LjyD2mKzclJLUEAJc1Y=
+X-Google-Smtp-Source: ACHHUZ6+fJxWIb0t51vTNh6sIbcojiplFlynzACmCi59wKuqFvI+vy7PihZPoYSE4aMX2eFgChCdnw==
+X-Received: by 2002:adf:dd88:0:b0:30a:dd15:bb69 with SMTP id x8-20020adfdd88000000b0030add15bb69mr20166780wrl.18.1687777089934;
+        Mon, 26 Jun 2023 03:58:09 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f4-20020a0560001b0400b00307a86a4bcesm7057546wrz.35.2023.06.26.03.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 03:58:08 -0700 (PDT)
+Date:   Mon, 26 Jun 2023 13:58:03 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Nilesh Javali <njavali@marvell.com>
+Cc:     GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-scsi@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] scsi: qla2xxx: silence a static checker warning
+Message-ID: <4aa0485e-766f-4b02-8d5d-c6781ea8f511@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230623211457.102544-17-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Smatch and Clang both complain that LOGIN_TEMPLATE_SIZE is more than
+sizeof(ha->plogi_els_payld.fl_csp).
 
-On Fri, Jun 23, 2023 at 11:14:47PM +0200, Julia Lawall wrote:
-> Use array_size to protect against multiplication overflows.
-> 
-> The changes were done using the following Coccinelle semantic patch:
-> 
-> // <smpl>
-> @@
->     expression E1, E2;
->     constant C1, C2;
->     identifier alloc = {vmalloc,vzalloc};
-> @@
->     
-> (
->       alloc(C1 * C2,...)
-> |
->       alloc(
-> -           (E1) * (E2)
-> +           array_size(E1, E2)
->       ,...)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/gpu/drm/i915/gvt/gtt.c |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gtt.c
-> index 4ec85308379a..df52385ad436 100644
-> --- a/drivers/gpu/drm/i915/gvt/gtt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
-> @@ -1969,14 +1969,16 @@ static struct intel_vgpu_mm *intel_vgpu_create_ggtt_mm(struct intel_vgpu *vgpu)
->  		return ERR_PTR(-ENOMEM);
->  	}
->  
-> -	mm->ggtt_mm.host_ggtt_aperture = vzalloc((vgpu_aperture_sz(vgpu) >> PAGE_SHIFT) * sizeof(u64));
-> +	mm->ggtt_mm.host_ggtt_aperture =
-> +		vzalloc(array_size(vgpu_aperture_sz(vgpu) >> PAGE_SHIFT, sizeof(u64)));
->  	if (!mm->ggtt_mm.host_ggtt_aperture) {
->  		vfree(mm->ggtt_mm.virtual_ggtt);
->  		vgpu_free_mm(mm);
->  		return ERR_PTR(-ENOMEM);
->  	}
->  
-> -	mm->ggtt_mm.host_ggtt_hidden = vzalloc((vgpu_hidden_sz(vgpu) >> PAGE_SHIFT) * sizeof(u64));
-> +	mm->ggtt_mm.host_ggtt_hidden =
-> +		vzalloc(array_size(vgpu_hidden_sz(vgpu) >> PAGE_SHIFT, sizeof(u64)));
+Smatch warning:
+    drivers/scsi/qla2xxx/qla_iocb.c:3075 qla24xx_els_dcmd2_iocb()
+    warn: '&ha->plogi_els_payld.fl_csp' sometimes too small '16' size = 112
 
-thanks for this patch, but I see an issue here. array_size()
-truncates the allocation to SIZE_MAX, and I'm OK with it.
+Clang warning:
+    include/linux/fortify-string.h:592:4: error: call to
+    '__read_overflow2_field' declared with 'warning' attribute: detected
+    read beyond size of field (2nd parameter); maybe use struct_group()?
+    [-Werror,-Wattribute-warning]
+                        __read_overflow2_field(q_size_field, size);
 
-The problem is that no error is notified and the user doesn't
-know that a truncation has happened. So that if we save from an
-overflow here, we might encur to an unwanted access later when we
-would start using the array for the size we think is allocated.
+When I was reading this code I assumed the "- 4" meant that we were
+skipping the last 4 bytes but actually it turned out that we are
+skipping the first four bytes.
 
-kmalloc_array(), for example, returns NULL of there is a
-multiplication overflow and I think that's a better behaviour,
-although more drastic.
+I have re-written it remove the magic numbers, be more clear and
+silence the static checker warnings.
 
-Andi
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/scsi/qla2xxx/qla_def.h  | 1 -
+ drivers/scsi/qla2xxx/qla_iocb.c | 3 ++-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
->  	if (!mm->ggtt_mm.host_ggtt_hidden) {
->  		vfree(mm->ggtt_mm.host_ggtt_aperture);
->  		vfree(mm->ggtt_mm.virtual_ggtt);
+diff --git a/drivers/scsi/qla2xxx/qla_def.h b/drivers/scsi/qla2xxx/qla_def.h
+index d44c4d37b50b..4ae38305c15a 100644
+--- a/drivers/scsi/qla2xxx/qla_def.h
++++ b/drivers/scsi/qla2xxx/qla_def.h
+@@ -4462,7 +4462,6 @@ struct qla_hw_data {
+ 
+ 	/* n2n */
+ 	struct fc_els_flogi plogi_els_payld;
+-#define LOGIN_TEMPLATE_SIZE (sizeof(struct fc_els_flogi) - 4)
+ 
+ 	void            *swl;
+ 
+diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
+index a1675f056a5c..9c70c4e973ee 100644
+--- a/drivers/scsi/qla2xxx/qla_iocb.c
++++ b/drivers/scsi/qla2xxx/qla_iocb.c
+@@ -3073,7 +3073,8 @@ qla24xx_els_dcmd2_iocb(scsi_qla_host_t *vha, int els_opcode,
+ 	memset(ptr, 0, sizeof(struct els_plogi_payload));
+ 	memset(resp_ptr, 0, sizeof(struct els_plogi_payload));
+ 	memcpy(elsio->u.els_plogi.els_plogi_pyld->data,
+-	    &ha->plogi_els_payld.fl_csp, LOGIN_TEMPLATE_SIZE);
++	       (void *)&ha->plogi_els_payld + offsetof(struct fc_els_flogi, fl_csp),
++	       sizeof(ha->plogi_els_payld) - offsetof(struct fc_els_flogi, fl_csp));
+ 
+ 	elsio->u.els_plogi.els_cmd = els_opcode;
+ 	elsio->u.els_plogi.els_plogi_pyld->opcode = els_opcode;
+-- 
+2.39.2
+
