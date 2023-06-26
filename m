@@ -2,78 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467B7C001B0
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jun 2023 22:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2610C0015E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 00:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjFYWxw (ORCPT
+        id S230045AbjFZA4s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jun 2023 18:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56792 "EHLO
+        Sun, 25 Jun 2023 20:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjFYWxv (ORCPT
+        with ESMTP id S229452AbjFZA4r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jun 2023 18:53:51 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4821BD;
-        Sun, 25 Jun 2023 15:53:49 -0700 (PDT)
-X-GND-Sasl: alexandre.belloni@bootlin.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1687733627;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=91V4pnakccT6+XFMU742bsmDiavjEOdvbvLU0XTwQvY=;
-        b=mwbT4VbuJXwBXS211JxOKc+gcDdr7KpmLiuB9yAcnozdk4LJm8YfPueIezl8j9V6fhuJlG
-        DOeOdoZpqWMVLAsiUKPDO88tkkPgiY5AZ5QfIPXAhs8w2ltkPxBIJnSIT8vpohbrYCS4bO
-        zum7y6IfHKudaK9UyuYX/2Esb1tCIhu/jkqo/ozjJDgeq+LRY4xsPdCRj2WyZh1s8MyTlp
-        MRRDXYZfWHppKUkIjdKlOtqOLXdtufg/Hk+OLsDU34wr6Ux9qT9K4TS7FNSPTZEH5JZh1R
-        oYAYdv/4XX4Pwhhk3jvL2VcGiiJFUcu+nQreHXmEfESnMmJNZaIAWr63jAwJ4w==
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-X-GND-Sasl: alexandre.belloni@bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D980FF802;
-        Sun, 25 Jun 2023 22:53:45 +0000 (UTC)
-Date:   Mon, 26 Jun 2023 00:53:44 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Patrice Chotard <patrice.chotard@foss.st.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Lee Jones <lee@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtc: st-lpc: Release some resources in
- st_rtc_probe() in case of error
-Message-ID: <168773360575.108774.14111248625147359235.b4-ty@bootlin.com>
-References: <866af6adbc7454a7b4505eb6c28fbdc86ccff39e.1686251455.git.christophe.jaillet@wanadoo.fr>
+        Sun, 25 Jun 2023 20:56:47 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837B48E;
+        Sun, 25 Jun 2023 17:56:45 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.169])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Qq8Yj4GXsz4f4HYw;
+        Mon, 26 Jun 2023 08:56:41 +0800 (CST)
+Received: from [10.67.110.48] (unknown [10.67.110.48])
+        by APP3 (Coremail) with SMTP id _Ch0CgDHrQtI4phkuS+ALg--.18069S2;
+        Mon, 26 Jun 2023 08:56:42 +0800 (CST)
+Message-ID: <71bd6de4-2cde-54eb-5720-3665d421d8ea@huaweicloud.com>
+Date:   Mon, 26 Jun 2023 08:56:40 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <866af6adbc7454a7b4505eb6c28fbdc86ccff39e.1686251455.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 0/1] Randomized slab caches for kmalloc()
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
+        Alexander Lobakin <aleksander.lobakin@intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        "Serge E . Hallyn" <serge@hallyn.com>, Tejun Heo <tj@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+References: <20230616111843.3677378-1-gongruiqi@huaweicloud.com>
+ <570d788b-d7f3-64ab-97e1-4e847aef1321@web.de>
+From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
+In-Reply-To: <570d788b-d7f3-64ab-97e1-4e847aef1321@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: _Ch0CgDHrQtI4phkuS+ALg--.18069S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYI7kC6x804xWl14x267AKxVWrJVCq3wAF
+        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+        wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+        x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+        64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+        1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+        nIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-On Thu, 08 Jun 2023 21:11:42 +0200, Christophe JAILLET wrote:
-> If an error occurs after clk_get(), the corresponding resources should be
-> released.
+On 2023/06/23 16:30, Markus Elfring wrote:
+>> I adapted the v2 patch to …
 > 
-> Use devm_clk_get() to fix it.
+> I suggest to omit the cover letter for a single patch.
 > 
+> Will any patch series evolve for your proposed changes?
 > 
 
-Applied, thanks!
+Usually I wouldn't made a cover letter for a single patch, while this
+case is an exception because I need a place to hold the additional
+explanation about its transformation from RFC patch to formal patch.
 
-[1/2] rtc: st-lpc: Release some resources in st_rtc_probe() in case of error
-      commit: 06c6e1b01d9261f03629cefd1f3553503291e6cf
-[2/2] rtc: st-lpc: Simplify clk handling in st_rtc_probe()
-      commit: 0e6f36cca1bd3f5257315b55d9f31519ea4cc059
+> Regards,
+> Markus
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
