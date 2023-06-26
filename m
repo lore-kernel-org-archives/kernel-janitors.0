@@ -2,75 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD9AEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 08:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDECEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 08:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjFZIJa (ORCPT
+        id S229947AbjFZI3T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jun 2023 04:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        Mon, 26 Jun 2023 04:29:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbjFZIJ3 (ORCPT
+        with ESMTP id S229482AbjFZI3R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jun 2023 04:09:29 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4500F1BB;
-        Mon, 26 Jun 2023 01:09:28 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 111332F4;
-        Mon, 26 Jun 2023 01:10:12 -0700 (PDT)
-Received: from [192.168.1.100] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F7D93F73F;
-        Mon, 26 Jun 2023 01:09:25 -0700 (PDT)
-Message-ID: <0050f8d2-a4cd-2b84-77ad-6fa93bb14b16@arm.com>
-Date:   Mon, 26 Jun 2023 09:09:23 +0100
+        Mon, 26 Jun 2023 04:29:17 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCFEDA;
+        Mon, 26 Jun 2023 01:29:16 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fa23c3e618so44047605e9.0;
+        Mon, 26 Jun 2023 01:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687768155; x=1690360155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GfxAu6sW5+q7WfzXLeH1/VjEmYM6LrxvH/FzoskmAzQ=;
+        b=o+Nplp0WDmZyHFlCdALUokQhCZyn4cHkrDBC4N5dkwytAvWfq3hHP7zo7+K89pZPmX
+         6fBp26uue0TIf6Dmm7LLzadBd1m6JFy8UBZr42lzbmvC1RRtzYEU4t6Uu7Q3iSV/edMo
+         /Z6Zw7X2o16yPqI8r8Zf8BpxBXdrL1kLqKXj1O0dRLGsE7VLXvbRRMeUhlqekBF2hsYr
+         82HxRtA1jDtMyTr42dDVtShKfbpbRFepYv2CN15mw49//Ukg6186q2f8VpgwwuMKHX1o
+         cNDZ44W+Zb5muGOlfcTvNijTMbo3Nvfu4RfCSJ9db+OX59miZ47j6j7PfSBTFRMJAFIn
+         CvHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687768155; x=1690360155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GfxAu6sW5+q7WfzXLeH1/VjEmYM6LrxvH/FzoskmAzQ=;
+        b=a/xqIhLaqy/U9W30ix55b3mpvSC+aADSGlig0sgxMkyKgz6CjwJG2/xKy0NtSIqAd0
+         28AtXi02/zl2vBFPBp9ClDqaMskoZNbrX0e+tKUwNu+pps+tn98iAxIpCmBv8T5YvlTs
+         M2EZf5yPeyV/oPDp0KhZKW1CmUxDLdK+eFreHG/rZhy7dYFbaOCqk2cWrXAb4FugmY/3
+         QCHe3/2MBIsDr8L7fh/T2cso42uKwSUQ2fQ9bD0wKYPpG/9fbU7IUlQ2Ov1u5SlvIaER
+         GtTFePYcHM7OfWUSBAw6FiKk4WIyjv63z1ZEpwR/g4cY0qU/TCYFqSZPnkFYVVa3HKYm
+         QILg==
+X-Gm-Message-State: AC+VfDwcViHLIGHcduiYc0jpGO250PQGa+CFEVCzIpcarniDFYzvw/d4
+        EK9rIAk6UmD5l6azvw7NBHQ=
+X-Google-Smtp-Source: ACHHUZ7AR1J5W6NerK45Q0I6VwTfH0YXK4Ltix6kj7QS9wNQa4hFWKq1sMSHkujMGbfcV99bS7h4xg==
+X-Received: by 2002:a7b:cc8d:0:b0:3fa:9890:8016 with SMTP id p13-20020a7bcc8d000000b003fa98908016mr1053413wma.2.1687768154860;
+        Mon, 26 Jun 2023 01:29:14 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m14-20020a7bca4e000000b003fa786b5195sm6896249wml.42.2023.06.26.01.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 01:29:14 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Gustavo Sousa <gustavo.sousa@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915/mtl: Fix spelling mistake "initate" -> "initiate"
+Date:   Mon, 26 Jun 2023 09:29:13 +0100
+Message-Id: <20230626082913.53089-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] perf tests: Fix test_arm_callgraph_fp variable expansion
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
-        linux-perf-users@vger.kernel.org, spoorts2@in.ibm.com,
-        kernel-janitors@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Ian Rogers <irogers@google.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20230622101809.2431897-1-james.clark@arm.com>
- <2b1cec46-52a9-21f1-bfcd-fbb4298f072a@web.de>
-Content-Language: en-US
-From:   James Clark <james.clark@arm.com>
-In-Reply-To: <2b1cec46-52a9-21f1-bfcd-fbb4298f072a@web.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is a spelling mistake in a drm_dbg_kms message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/display/intel_pmdemand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 23/06/2023 17:56, Markus Elfring wrote:
-> …
->> At the same time silence the shellcheck warning for that line and fix
->> two more shellcheck errors at the end of the script.
-> 
-> Does such a wording really fit to the known requirement “Solve only one problem per patch.”?
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4-rc7#n81
-> 
-> 
-> Regards,
-> Markus
+diff --git a/drivers/gpu/drm/i915/display/intel_pmdemand.c b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+index f7608d363634..f59e1e962e3d 100644
+--- a/drivers/gpu/drm/i915/display/intel_pmdemand.c
++++ b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+@@ -555,7 +555,7 @@ intel_pmdemand_program_params(struct drm_i915_private *i915,
+ 		goto unlock;
+ 
+ 	drm_dbg_kms(&i915->drm,
+-		    "initate pmdemand request values: (0x%x 0x%x)\n",
++		    "initiate pmdemand request values: (0x%x 0x%x)\n",
+ 		    mod_reg1, mod_reg2);
+ 
+ 	intel_de_rmw(i915, XELPDP_INITIATE_PMDEMAND_REQUEST(1), 0,
+-- 
+2.39.2
 
-I think so, it fixes all the shellcheck errors that were claimed to be
-fixed and introduced by the referenced fix.
-
-To be honest I would have rather just reverted the original change
-completely because it was obviously never tested.
