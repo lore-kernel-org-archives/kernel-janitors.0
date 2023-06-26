@@ -2,100 +2,131 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EE9EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 08:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEE8C001DD
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jun 2023 09:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbjFZIfl (ORCPT
+        id S230376AbjFZJ2U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jun 2023 04:35:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36596 "EHLO
+        Mon, 26 Jun 2023 05:28:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbjFZIfk (ORCPT
+        with ESMTP id S230096AbjFZJ1e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jun 2023 04:35:40 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196181A1;
-        Mon, 26 Jun 2023 01:35:39 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f6283d0d84so3919092e87.1;
-        Mon, 26 Jun 2023 01:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687768537; x=1690360537;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9MrkiBWSdaWnAC9L6QYTchQNu8YBLbIyeAdR6NesYXo=;
-        b=A1D2/vWRDY0gMh6FvrQ/M1SacXwWHuWn5MtFitZFegdbFsD7Z05rQUNRB+Wf2F+rEO
-         chpNmQJrFda+TvtWyxrvyveWbrTzqZhqxA3a1S85tOdOFK+3A9okAvp9gJNr5KwV9P6g
-         nx4GpH/k+9sHrbqIyiXTkeTMAiqex/A+fqNo2v5F7VlPnERnHoiqgLI6VB3WRUs9OyJ1
-         /u+fQMqLcMTNAl1aaVqh67pBNEtS191lzZRSdWFlwkTRaYZ9TduEIKnRj7sP5wM5dBVn
-         WHWhcZFdB0vWykQYBMe62vezSjo4BCTMKiU6b4zUUJMIg48tkNjIXr9fakDk/35KD7Ts
-         Cgvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687768537; x=1690360537;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9MrkiBWSdaWnAC9L6QYTchQNu8YBLbIyeAdR6NesYXo=;
-        b=l596NYOErtI8PmO6XkDh5loRr+dxO0AoIbUj/4VG0tPN0C1PHTs//X2mDwg5LXWVoo
-         QtsdEor1u54VXbhf/hT4SxEkSD5Tadp2gGyYrtojirpYpQjKtIx2n8YZQO8BhpyC0EDU
-         E9S8uwROykxZ9Je/8Nc8cqizI5Q0oBFpO1yjDYMVlFMvkuPulVk30TSaZCft+X1j4B8m
-         Ai8YCA7nRlQH/4a0DhIDsDUur7QGHkFjMn0rkcKR6RzJ+989Fci0OGEqKzyromu4o1sE
-         UJXydTqchcEZ04pWJfUbUi55LOmPdicbVYMyRG2c8dCGSoSDDm/oPRCPcoLVGBq8ys1y
-         oJrg==
-X-Gm-Message-State: AC+VfDw02PclytRzOyG1lBRjbcVe+/JTBY0nSVrDnHptjsA8fkDDsYYC
-        05GAWCpLEHiT0dUqBzL0Xok=
-X-Google-Smtp-Source: ACHHUZ7otToh0hZinYK6A1vqz6otwhOcWbjMm0WVFh/Ap36znKkk8PbS+LM0n63exa5Agz6TvLTO6w==
-X-Received: by 2002:a05:6512:3414:b0:4f9:cd02:4af1 with SMTP id i20-20020a056512341400b004f9cd024af1mr2777347lfr.34.1687768536987;
-        Mon, 26 Jun 2023 01:35:36 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f4-20020a0560001b0400b00307a86a4bcesm6667577wrz.35.2023.06.26.01.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 01:35:36 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/bnxt_re: Fix spelling mistake "priviledged" -> "privileged"
-Date:   Mon, 26 Jun 2023 09:35:35 +0100
-Message-Id: <20230626083535.53303-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 26 Jun 2023 05:27:34 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5918F10D2;
+        Mon, 26 Jun 2023 02:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1687771624; x=1719307624;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3mrrnJPN3WRzZuBY5/ppMAonnkB4EuW+qZ/uzbwNfrI=;
+  b=fv37mNFvpp7shfOgfpjPPvv7Wo+AFgI0SHoxGP7AlxmieaYdht0+K5h1
+   31ULoi76jKVnEkW4NYMcBtKU+iOGvZo5Fu6loahuRxwJM+LqTbTxFkaqK
+   WtpBkbW2j+583rmu7weP0ocwb1z9uONRhS27+aqxqvMCJonfB9a9CF707
+   yt3HcsMSyVbnBsEJWs1I4lWHD7GQQt5MMW8dkMTR1gq9Lj4ofAPfcOrZ9
+   I0CoGTv5304hJo43KK7UwJdJdi6qBraSu6sGpfg38DfA3Dyd8LCghiyOF
+   WyTpVp/gUTPvk20TqdoHfOP9q7bRnFCDRE3fXCEriTSNPUuO+6GmyZJ+d
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="424892817"
+X-IronPort-AV: E=Sophos;i="6.01,159,1684825200"; 
+   d="scan'208";a="424892817"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2023 02:27:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="962712374"
+X-IronPort-AV: E=Sophos;i="6.01,159,1684825200"; 
+   d="scan'208";a="962712374"
+Received: from csteeb-mobl2.ger.corp.intel.com (HELO intel.com) ([10.251.217.4])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2023 02:26:59 -0700
+Date:   Mon, 26 Jun 2023 11:26:55 +0200
+From:   Andi Shyti <andi.shyti@linux.intel.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Zhenyu Wang <zhenyuw@linux.intel.com>, keescook@chromium.org,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 16/26] drm/i915/gvt: use array_size
+Message-ID: <ZJlZ3421Whev/LkX@ashyti-mobl2.lan>
+References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+ <20230623211457.102544-17-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230623211457.102544-17-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a comment and in a dev_err error message.
-Fix them.
+Hi Julia,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/infiniband/hw/bnxt_re/qplib_res.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Jun 23, 2023 at 11:14:47PM +0200, Julia Lawall wrote:
+> Use array_size to protect against multiplication overflows.
+> 
+> The changes were done using the following Coccinelle semantic patch:
+> 
+> // <smpl>
+> @@
+>     expression E1, E2;
+>     constant C1, C2;
+>     identifier alloc = {vmalloc,vzalloc};
+> @@
+>     
+> (
+>       alloc(C1 * C2,...)
+> |
+>       alloc(
+> -           (E1) * (E2)
+> +           array_size(E1, E2)
+>       ,...)
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/gpu/drm/i915/gvt/gtt.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gtt.c
+> index 4ec85308379a..df52385ad436 100644
+> --- a/drivers/gpu/drm/i915/gvt/gtt.c
+> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
+> @@ -1969,14 +1969,16 @@ static struct intel_vgpu_mm *intel_vgpu_create_ggtt_mm(struct intel_vgpu *vgpu)
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> -	mm->ggtt_mm.host_ggtt_aperture = vzalloc((vgpu_aperture_sz(vgpu) >> PAGE_SHIFT) * sizeof(u64));
+> +	mm->ggtt_mm.host_ggtt_aperture =
+> +		vzalloc(array_size(vgpu_aperture_sz(vgpu) >> PAGE_SHIFT, sizeof(u64)));
+>  	if (!mm->ggtt_mm.host_ggtt_aperture) {
+>  		vfree(mm->ggtt_mm.virtual_ggtt);
+>  		vgpu_free_mm(mm);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> -	mm->ggtt_mm.host_ggtt_hidden = vzalloc((vgpu_hidden_sz(vgpu) >> PAGE_SHIFT) * sizeof(u64));
+> +	mm->ggtt_mm.host_ggtt_hidden =
+> +		vzalloc(array_size(vgpu_hidden_sz(vgpu) >> PAGE_SHIFT, sizeof(u64)));
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-index 1c6c6c0bcf52..5fd8f7c90bb0 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-@@ -726,7 +726,7 @@ int bnxt_qplib_alloc_dpi(struct bnxt_qplib_res *res,
- 
- 	switch (type) {
- 	case BNXT_QPLIB_DPI_TYPE_KERNEL:
--		/* priviledged dbr was already mapped just initialize it. */
-+		/* privileged dbr was already mapped just initialize it. */
- 		dpi->umdbr = dpit->ucreg.bar_base +
- 			     dpit->ucreg.offset + bit_num * PAGE_SIZE;
- 		dpi->dbr = dpit->priv_db;
-@@ -932,7 +932,7 @@ int bnxt_qplib_map_db_bar(struct bnxt_qplib_res *res)
- 	}
- 	ucreg->bar_reg = ioremap(ucreg->bar_base, ucreg->len);
- 	if (!ucreg->bar_reg) {
--		dev_err(&res->pdev->dev, "priviledged dpi map failed!");
-+		dev_err(&res->pdev->dev, "privileged dpi map failed!");
- 		return -ENOMEM;
- 	}
- 
--- 
-2.39.2
+thanks for this patch, but I see an issue here. array_size()
+truncates the allocation to SIZE_MAX, and I'm OK with it.
 
+The problem is that no error is notified and the user doesn't
+know that a truncation has happened. So that if we save from an
+overflow here, we might encur to an unwanted access later when we
+would start using the array for the size we think is allocated.
+
+kmalloc_array(), for example, returns NULL of there is a
+multiplication overflow and I think that's a better behaviour,
+although more drastic.
+
+Andi
+
+>  	if (!mm->ggtt_mm.host_ggtt_hidden) {
+>  		vfree(mm->ggtt_mm.host_ggtt_aperture);
+>  		vfree(mm->ggtt_mm.virtual_ggtt);
