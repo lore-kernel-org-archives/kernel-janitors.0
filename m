@@ -2,46 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDA9C001B0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556B6EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232210AbjF0Oqu (ORCPT
+        id S232214AbjF0Oqy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:46:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43808 "EHLO
+        Tue, 27 Jun 2023 10:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231989AbjF0Op5 (ORCPT
+        with ESMTP id S231992AbjF0Op5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Tue, 27 Jun 2023 10:45:57 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94BC72D69;
-        Tue, 27 Jun 2023 07:45:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 391013593;
+        Tue, 27 Jun 2023 07:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=fwBApC6jUrjlR2TIvGLbzPMAAmAGjDhOLjgURNPzPzY=;
-  b=BHgadewrKiM5wnoPnQZAWH8o6p5BCcSHwzkn5yYPbk0N0IP7/9sSeR7N
-   sqE5B+1PHNUwj6GGrZBBO0y0feNdNGhOCNhIeNH3u8ZyMFbrOUfyOJO54
-   B0p1GvJMIraCE0QjixXzsjSnRtyRFnT16pIhfE20xApj+YjoQ+3KwB0vz
-   c=;
+  bh=1fuBHkuVCLvBAw8MSaPz0+UJaQZjfgmRVP18IwyNeDQ=;
+  b=OThXz5HOfGeTx9GD1nvtvqYG/QJvKBhAtvHz62cnidSYuUWImbYlLedV
+   QyDiCsD4jvF4TDB040IrOhHB/CSeZG4H1P4v4+Zu6HW/zl+fwnSIwGIYT
+   nJ93hxVqPqxEW9Mu1JxrZeFxmha8G4U9oBr7c2HOjcOaDb2Po5/neaAlT
+   Y=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,162,1684792800"; 
-   d="scan'208";a="114936344"
+   d="scan'208";a="114936346"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 16:43:53 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
         christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 21/24] x86/sgx: use vmalloc_array and vcalloc
-Date:   Tue, 27 Jun 2023 16:43:36 +0200
-Message-Id: <20230627144339.144478-22-Julia.Lawall@inria.fr>
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 23/24] vduse: use vmalloc_array and vcalloc
+Date:   Tue, 27 Jun 2023 16:43:38 +0200
+Message-Id: <20230627144339.144478-24-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
 References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
@@ -83,7 +82,7 @@ let rename alloc =
 |
       alloc(C1 * C2)
 |
-      alloc((sizeof(t)) * (COUNT), ...)
+      alloc((sizeof(t)) * (COUNT))
 |
 -     alloc((e1) * (e2))
 +     realloc(e1, e2)
@@ -101,21 +100,24 @@ Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 ---
 v2: Use vmalloc_array and vcalloc instead of array_size.
 This also leaves a multiplication of a constant by a sizeof
-as is.  Two patches are thus dropped from the series.
+as is.  The position of this patch in the series changed
+accordingly.
 
- arch/x86/kernel/cpu/sgx/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vdpa/vdpa_user/iova_domain.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -628,7 +628,7 @@ static bool __init sgx_setup_epc_section
- 	if (!section->virt_addr)
- 		return false;
+diff -u -p a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+--- a/drivers/vdpa/vdpa_user/iova_domain.c
++++ b/drivers/vdpa/vdpa_user/iova_domain.c
+@@ -571,8 +571,8 @@ vduse_domain_create(unsigned long iova_l
  
--	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
-+	section->pages = vmalloc_array(nr_pages, sizeof(struct sgx_epc_page));
- 	if (!section->pages) {
- 		memunmap(section->virt_addr);
- 		return false;
+ 	domain->iova_limit = iova_limit;
+ 	domain->bounce_size = PAGE_ALIGN(bounce_size);
+-	domain->bounce_maps = vzalloc(bounce_pfns *
+-				sizeof(struct vduse_bounce_map));
++	domain->bounce_maps = vcalloc(bounce_pfns,
++				      sizeof(struct vduse_bounce_map));
+ 	if (!domain->bounce_maps)
+ 		goto err_map;
+ 
 
