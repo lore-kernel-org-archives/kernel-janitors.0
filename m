@@ -2,152 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC94EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 18:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A422EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 23:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbjF0Swm (ORCPT
+        id S230059AbjF0XgT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 14:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
+        Tue, 27 Jun 2023 19:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjF0Swl (ORCPT
+        with ESMTP id S229544AbjF0XgS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:52:41 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4432D19A9
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 11:52:40 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id d75a77b69052e-4007b5bafceso46641cf.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 11:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687891959; x=1690483959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XanXoDlHYuqu7WYlucQ21J3KG2JUv31j1KTL+YaYRcw=;
-        b=tPrpWdnP56AC15CdynAtlLaMhZcoMrwTEd/uWTCfR3x6ZSk2aQs18un036H4Ui91Mz
-         yipTpkAWSSEw3sBbMhjNPTFYagOc2smOlg8be0RQW47nzZtgo+C5Ptfe55oDSxjaSkX0
-         idJ5n7fJQSXQxasfFIWbg2LKCscxSP6nA95ZRZt6P+sFiMDn6Y+k3aHiI3giIk0UJOI+
-         RsBiyEWPVmLE1yxdaMJ8gPZHKUeeMrjGJJGfIo73hE1hVi5UIcHUAG/2LgLNnAze8rTB
-         /iF1/wOik0/z5RMYKefbcBecyhdwgNOoRGVNJZZZCrdwIR3VXSMUnaseQ55GbmLr05Td
-         l7VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687891959; x=1690483959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XanXoDlHYuqu7WYlucQ21J3KG2JUv31j1KTL+YaYRcw=;
-        b=PmtNVcjREaDrT14vn90Ta9Xsfd0J6VwFRd2vG/KOoEGnWeylGpybClS4wmCE//FDBY
-         dyGev9HKTmDuOq1+PPEWDA3FQ0uWHZN8e3KrTynjMqfCa6JKEf+edtvX/rXqi+xXRt/A
-         x07hr+e6awIoWho4KJvBWNlRq069ArMHl8A7gl23MdNi8a2MaF9G9N1lSYLnYfKcQV1+
-         aUeQbZ1flLXbxsO77RAe4qeDzDncPnmXkmJK/hdP28jAHAooFgUPPAi/CjNaFj/+gPNh
-         7X5vCRgSzFiYSb1NEP1yTfanMM78ifMxJUwSegGFUVhGf4NTJ+i9HkuU0ZnVq1rAc4HH
-         YAqQ==
-X-Gm-Message-State: AC+VfDzglES9mqn/anYPQS2JJLN0T3MGH7CiXJ+m1Ddmz8OXsgMwlxaI
-        X5FPScgXBsO5lp12SVRSBs2jlU7WG+MQ2gvjF4SV
-X-Google-Smtp-Source: ACHHUZ5dfRe4sjCsi1avwvjKJ8EPuqVzC75vPw7U/LlRFR2FRvQRAfeRSfejLqd26KQk3zITWlc71jc5mXyGnWmKbCs=
-X-Received: by 2002:ac8:5905:0:b0:3f8:5b2:aef0 with SMTP id
- 5-20020ac85905000000b003f805b2aef0mr19156qty.24.1687891959197; Tue, 27 Jun
- 2023 11:52:39 -0700 (PDT)
+        Tue, 27 Jun 2023 19:36:18 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D9B1BE6;
+        Tue, 27 Jun 2023 16:36:16 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 352B13200914;
+        Tue, 27 Jun 2023 19:36:13 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 27 Jun 2023 19:36:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=cc:cc:content-type:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1687908972; x=
+        1687995372; bh=FAAyEM8Ly5PWnExbNv7ubvTfVH0QtKdzbHqCX13GAzg=; b=l
+        IlERPxvSpe39YUYHZnaOyWLv1s1k8zsvCBIJF5U+QY9ypB1nulA4rrRQznySXi9F
+        qdfWJsAvTgN6t0BvaYOzWOPPbmOWInG6rQvjz488L0nnC2x9zmtU2NQavD4tEi2i
+        Rb3uIGfNd9kGO5CtI//igdkti4n8ZIHZbtXi2z0oaQuRIkHYBb5eGoX9HgC/dZ8Y
+        QpnY8+I2yTJifPxmw5d/SbUMMaOQmV8lFKvjbsnyVKTFl74QsP5wxBbq62i+Ur/v
+        4wAngpX7Nd1j6bGiyNQIR7fij1u6yIwZXEjKvwBrTUgEOLRGwY4UolhxhEVS43Ph
+        D2ZEFbnX0IZFnM8mRZlXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687908972; x=1687995372; bh=FAAyEM8Ly5PWn
+        ExbNv7ubvTfVH0QtKdzbHqCX13GAzg=; b=K+Nxy0YOe7J0ueBKr1pqqeW2UurQ0
+        PN5DErctn5r4iiJoC+crmjrkbSPxmy5Tvi3f1W34dfOqKGhrMFqmxaT0z5FYZKoJ
+        lv/yqnPkn2C1KoSnqzTHfMF0LdEeGwdPy5kTZ1lnfe0Fn6iV9WOTKaMzABuYhv5k
+        pVWkoHZbzUwpSZVU57bLiqh9lwEMcBBGT9hxGf4HKX/cfRyYOFwi675NjoSh11J/
+        0ciYiwS4TO5tlCw4nOhSFm++NK/ITSoDOJ1m7am3/UR0f4bna6Bilp3o9PcWelfz
+        R6oY61zRJ4lcg+bdGBU81UZI266qAo71CM5Tm9R5+yc+PD3WSEeQlcc+Q==
+X-ME-Sender: <xms:bHKbZFL80QjAugbZ5EXFs64HpbxZ8FWkYBOpHeirjvWJxdrsZI3U3A>
+    <xme:bHKbZBI3qGle7beVPqY9-zmFwpnFOEhpKbBRxQqGr-otcPMkxyO6lkVIuoMmAUDJO
+    yGHqFFrOB29QKCMYlI>
+X-ME-Received: <xmr:bHKbZNv2EXYyk_-3ER_W5GFYTFLqS_PtpA0q5amYEg0yPlMzMyW36S_-_8I447f7j9QolvfzjmElHN1CHp7YF0i30QLByTwUSZs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtddugddvgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
+    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
+    hpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieei
+    tedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:bHKbZGZJNiqFsXFwYPdeo91acXo6ieaA_nfP6S_l3gCi5vnkaPMBWw>
+    <xmx:bHKbZMaoWhl6zy0G8GQa_1yECBsCFh0-0glVW375saVkrlgCcHQkuQ>
+    <xmx:bHKbZKBcqgqSvureY-vlQ4CjXN8FPgb15p7YnissYGbkOl4EhxGR8w>
+    <xmx:bHKbZLxd7odaSe15pixMn6AKZDz_pdu-QhKYxrfGavYkQfKLHgw8oA>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 Jun 2023 19:36:09 -0400 (EDT)
+Date:   Wed, 28 Jun 2023 08:36:04 +0900
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ALSA: oxfw: make read-only const array models
+ static
+Message-ID: <20230627233604.GA278863@workstation.local>
+Mail-Followup-To: Colin Ian King <colin.i.king@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230627113253.700065-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr> <20230627144339.144478-7-Julia.Lawall@inria.fr>
-In-Reply-To: <20230627144339.144478-7-Julia.Lawall@inria.fr>
-From:   John Stultz <jstultz@google.com>
-Date:   Tue, 27 Jun 2023 11:52:27 -0700
-Message-ID: <CANDhNCrPHJjDwGLMY_p8Z21bCnBvTzQmztYqRykTBD9t-+mbcQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/24] dma-buf: system_heap: use vmalloc_array and vcalloc
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        kernel-janitors@vger.kernel.org, keescook@chromium.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230627113253.700065-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 7:44=E2=80=AFAM Julia Lawall <Julia.Lawall@inria.fr=
-> wrote:
->
-> Use vmalloc_array and vcalloc to protect against
-> multiplication overflows.
->
-> The changes were done using the following Coccinelle
-> semantic patch:
->
-> // <smpl>
-> @initialize:ocaml@
-> @@
->
-> let rename alloc =3D
->   match alloc with
->     "vmalloc" -> "vmalloc_array"
->   | "vzalloc" -> "vcalloc"
->   | _ -> failwith "unknown"
->
-> @@
->     size_t e1,e2;
->     constant C1, C2;
->     expression E1, E2, COUNT, x1, x2, x3;
->     typedef u8;
->     typedef __u8;
->     type t =3D {u8,__u8,char,unsigned char};
->     identifier alloc =3D {vmalloc,vzalloc};
->     fresh identifier realloc =3D script:ocaml(alloc) { rename alloc };
-> @@
->
-> (
->       alloc(x1*x2*x3)
-> |
->       alloc(C1 * C2)
-> |
->       alloc((sizeof(t)) * (COUNT), ...)
-> |
-> -     alloc((e1) * (e2))
-> +     realloc(e1, e2)
-> |
-> -     alloc((e1) * (COUNT))
-> +     realloc(COUNT, e1)
-> |
-> -     alloc((E1) * (E2))
-> +     realloc(E1, E2)
-> )
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
+Hi,
+
+On Tue, Jun 27, 2023 at 12:32:53PM +0100, Colin Ian King wrote:
+> Don't populate the const array on the stack, instead make it static.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> v2: Use vmalloc_array and vcalloc instead of array_size.
-> This also leaves a multiplication of a constant by a sizeof
-> as is.  Two patches are thus dropped from the series.
->
->  drivers/dma-buf/heaps/system_heap.c |    2 +-
+>  sound/firewire/oxfw/oxfw.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff -u -p a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/=
-system_heap.c
-> --- a/drivers/dma-buf/heaps/system_heap.c
-> +++ b/drivers/dma-buf/heaps/system_heap.c
-> @@ -221,7 +221,7 @@ static void *system_heap_do_vmap(struct
+> 
+> diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
+> index 9523479fa94a..63d40f1a914f 100644
+> --- a/sound/firewire/oxfw/oxfw.c
+> +++ b/sound/firewire/oxfw/oxfw.c
+> @@ -44,7 +44,7 @@ struct compat_info {
+>  
+>  static bool detect_loud_models(struct fw_unit *unit)
 >  {
->         struct sg_table *table =3D &buffer->sg_table;
->         int npages =3D PAGE_ALIGN(buffer->len) / PAGE_SIZE;
-> -       struct page **pages =3D vmalloc(sizeof(struct page *) * npages);
-> +       struct page **pages =3D vmalloc_array(npages, sizeof(struct page =
-*));
->         struct page **tmp =3D pages;
->         struct sg_page_iter piter;
->         void *vaddr;
+> -	const char *const models[] = {
+> +	static const char *const models[] = {
+>  		"Onyxi",
+>  		"Onyx-i",
+>  		"Onyx 1640i",
+> -- 
+> 2.39.2
+ 
+Indeed. It is preferable.
 
-Seems reasonable. Thanks for sending this out!
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-Acked-by: John Stultz <jstultz@google.com>
+I found that ALSA fireface driver includes the similar issue. I'll send a
+patch to fix it later.
 
-thanks
--john
+
+Thanks
+
+Takashi Sakamoto
