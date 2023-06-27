@@ -2,98 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E210EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D625CC001DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjF0OBw (ORCPT
+        id S231811AbjF0OjS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50718 "EHLO
+        Tue, 27 Jun 2023 10:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjF0OBt (ORCPT
+        with ESMTP id S231918AbjF0Oi5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:01:49 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58DA1718;
-        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-313e34ab99fso3775259f8f.1;
-        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
+        Tue, 27 Jun 2023 10:38:57 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B553C07;
+        Tue, 27 Jun 2023 07:38:23 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-98e25fa6f5bso468411566b.3;
+        Tue, 27 Jun 2023 07:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687874507; x=1690466507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
-        b=rz40dLBeIyXIxQR9OjydRBjFPSIrm8NsTyXSUaNc2WqObEgL9sgbVKGBFZ8D0CBuS1
-         RRIjbhMHUHc1FeFMNd3V8vIKQEsMn11zkGzS17SexLp+6vggrOnUxkMRGMAVISM/3+bN
-         JxOM7SN/n8VzoVZSa/PFdXDYf5AllrRjoUNN7XsG4EVJ8gTkB3fHx2CEjKCzXDjpDLYs
-         xnefsaBrS58olv7UMlX5BhzRRnXTzpsUnbeWn/Qh9n8vTvol+TahrvNaLP6c1LxQHB48
-         vBgPqHEEg2lgNHTi8reWG4hGRvJC9Lwz7ZETwPJPnvtYXHb5+MTfwRBd0zqg0pKP8BTo
-         aXdw==
+        d=gmail.com; s=20221208; t=1687876701; x=1690468701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aycEXc1p8AecpgCVFe3SN1Ps1KLQUbHdHOvGWse/Ca4=;
+        b=jaXJB/YU3JQz39KDQb+QDAKFdsmnrticA9rtbWy1ykxlRnJIevC3j1hKmX/0MXVoJg
+         w8jKqiTx/y9VWXNo0RJK0TTbnTi+K67/HN2VTh7KHWkPnGQEfyVpXole7nMsnq9KjbdU
+         GNfMDg+30KGrk9ZG/1UvMhYx20ICRMS0AAYEUTAkoRSst1k7LoXzQD/0L2Mwvdp2379C
+         9Muz3hE2k134stWl1rFqKDHWVHUbta01qqTOZNiG0/KdvW/8J6F83ImxVyahIfkbFR4+
+         1IDF/pq7mHSbbSGFCBjfbVDLBkWqS+TO2qIz6/IRHUNtSzGJL0jvOsy4E/pKGoM6RguG
+         b7ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687874507; x=1690466507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
-        b=BQr35zMrExNrfPXeZqujJhJZtZQon8YDOFD/Gd099oZfCPvxm38J8yrCQ2vOi2tW/7
-         D1IHo4gvROmf43v0stRScoquFCw0heEd+fe2L4dlUGLNbfZD9mDhvMiq+v0k8auf5NRo
-         lDQTXjNm1jK2MT6ssNgxmmM6t4Sj4iy35fvRx+ThSQZ3mAKydxC+VHH6jO21gAS1tlXa
-         fRwVuQdXXOqZ1QQhciCjnvaHDiXsf7YPu6WLWnO4ZDfbMpKNYkch9pe8M4A9h0qnFEja
-         nhf29BFiQxgaXmLQ4Am7pP/0K0ib4X2VLtpSwpA1Jcv5YukdINTlK+5QdgAlAFQSL4SH
-         AbOg==
-X-Gm-Message-State: AC+VfDxyJfNHqB7hCivOFa9HRZywx28KJdCGJp9V9clcSK+osRlwCeVW
-        z7xGTbBlEVhd/k+RKxUH7gk=
-X-Google-Smtp-Source: ACHHUZ7UQAUjF7ILXHovRzkVTKMyTkmk0UxBvDmZXSNKj1sJhniuMIVpC8dYcEz3H7MffUKlhcX+qA==
-X-Received: by 2002:a5d:4fd2:0:b0:313:f0e3:2fdc with SMTP id h18-20020a5d4fd2000000b00313f0e32fdcmr4803225wrw.2.1687874506931;
-        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h10-20020a5d504a000000b00313e8dc7facsm8734663wrt.116.2023.06.27.07.01.45
+        d=1e100.net; s=20221208; t=1687876701; x=1690468701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aycEXc1p8AecpgCVFe3SN1Ps1KLQUbHdHOvGWse/Ca4=;
+        b=lSFl+keIJRKLNlxxvi/IYSQgC5RyZdzlBeGLlGveVECxWk9ydnk6rTtT9yFB+z2oPG
+         wBI6htaCD4DykRIJm1GIrkkoKkPTGPO+VwW/3RXJpSsdLBFm8oz1d9HAcgnv10khL7Dy
+         jUXu2od7fPUAoSanaU9NIw8q04iRI4WgoljXQJWY7gTUkZuwOrrbin914328fD8kX/ki
+         IAVkCtjDTRJq7ujsSiXSkWJNlT19fg7lPGnLFWtcxD3ycTz5hmVxDsTgerM53hEGUcO/
+         QCY71+zUAlwAJHClEKtvOWuiPpQKIbgTOd8d5ynTUiCYxme3ajAjmFkOmE9iI/MS76qY
+         OxQg==
+X-Gm-Message-State: AC+VfDxSNYTNpqrDRaDun+Vf/z7Glm8KJUrW4yQTkQSNf9/5XrUSGkDC
+        uHwbsNUi1r8C3YrFz0LbAJcounQB7fvEJi8+
+X-Google-Smtp-Source: ACHHUZ50qYhprpbhs8hRwJ1pExP9hgcQpDJ1t3RmUD8qchv2Au4jmHRBJUCn5fqkbiSdOan16EquKQ==
+X-Received: by 2002:a17:907:7293:b0:988:d841:7f8d with SMTP id dt19-20020a170907729300b00988d8417f8dmr21453302ejc.71.1687876700555;
+        Tue, 27 Jun 2023 07:38:20 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation ([193.85.242.128])
+        by smtp.gmail.com with ESMTPSA id b21-20020a170906491500b009828dac8425sm4590406ejq.105.2023.06.27.07.38.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: lmk04832: clkout: make read-only const arrays static
-Date:   Tue, 27 Jun 2023 15:01:45 +0100
-Message-Id: <20230627140145.729609-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 27 Jun 2023 07:38:20 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 16:38:18 +0200
+From:   Tommaso Merciai <tomm.merciai@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: bt8xx: make read-only arrays static
+Message-ID: <ZJr0WvhFfCILwbeP@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20230627134851.728487-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230627134851.728487-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the arrays on the stack, instead make them static.
+Hi Colin,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/clk-lmk04832.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Jun 27, 2023 at 02:48:51PM +0100, Colin Ian King wrote:
+> Don't populate the arrays on the stack, instead make them static const.
+> Also add spaces between values to clean up checkpatch style warnings.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/media/pci/bt8xx/dvb-bt8xx.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> index 4cb890b949c3..df83b59a618d 100644
+> --- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> +++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> @@ -190,11 +190,15 @@ static int cx24108_tuner_set_params(struct dvb_frontend *fe)
+>  	u32 freq = c->frequency;
+>  	int i, a, n, pump;
+>  	u32 band, pll;
+> -	u32 osci[]={950000,1019000,1075000,1178000,1296000,1432000,
+> -		1576000,1718000,1856000,2036000,2150000};
+> -	u32 bandsel[]={0,0x00020000,0x00040000,0x00100800,0x00101000,
+> +	static const u32 osci[] = {
+> +		950000, 1019000, 1075000, 1178000, 1296000, 1432000,
+> +		1576000, 1718000, 1856000, 2036000, 2150000
+> +	};
+> +	static const u32 bandsel[] = {
+> +		0, 0x00020000, 0x00040000, 0x00100800, 0x00101000,
+>  		0x00102000,0x00104000,0x00108000,0x00110000,
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index e22ac93e0c2f..21b425d8a1b7 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -369,7 +369,7 @@ static unsigned long lmk04832_vco_recalc_rate(struct clk_hw *hw,
- 					      unsigned long prate)
- {
- 	struct lmk04832 *lmk = container_of(hw, struct lmk04832, vco);
--	const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
-+	static const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
- 	unsigned int pll2_n, p, pll2_r;
- 	unsigned int pll2_misc;
- 	unsigned long vco_rate;
-@@ -631,7 +631,7 @@ static int lmk04832_register_vco(struct lmk04832 *lmk)
- 
- static int lmk04832_clkout_set_ddly(struct lmk04832 *lmk, int id)
- {
--	const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
-+	static const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
- 	unsigned int sclkx_y_ddly = 10;
- 	unsigned int dclkx_y_ddly;
- 	unsigned int dclkx_y_div;
--- 
-2.39.2
+Are you not missing space also here?
 
+> -		0x00120000,0x00140000};
+> +		0x00120000, 0x00140000
+> +	};
+>  
+>  	#define XTAL 1011100 /* Hz, really 1.0111 MHz and a /10 prescaler */
+>  	dprintk("cx24108 debug: entering SetTunerFreq, freq=%d\n", freq);
+> -- 
+> 2.39.2
+> 
+
+Regards,
+Tommaso
