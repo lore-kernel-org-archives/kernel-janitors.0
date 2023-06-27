@@ -2,98 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A794EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 05:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0346AEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 05:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjF0Fcr (ORCPT
+        id S229788AbjF0Fm2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 01:32:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
+        Tue, 27 Jun 2023 01:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjF0Fcq (ORCPT
+        with ESMTP id S229689AbjF0FmU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 01:32:46 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41115173B
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 22:32:44 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fa94ea1caaso16626065e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 22:32:44 -0700 (PDT)
+        Tue, 27 Jun 2023 01:42:20 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D6D10FE
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 22:42:18 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3094910b150so4925841f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 22:42:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687843962; x=1690435962;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ooF2+9s/dYxk4t4QZ6dr9+cLdLfWELP5XjTCQq5ybIM=;
-        b=iPNim+rvo2A1bn4dMUpbF1e0wz6EHmQxUGg3fxS/+RmnfHG3J5BVlUWPudJHtH2vP8
-         YjqFyw/UGGt17s8u9TU6IQq+4HFYI8r7SpVepLLM6d6YG52UjNvRTbzcVS2qqSO/bvoO
-         kIzZ7bdb6MFPTOU2pgG3yd7iuvPxsPb6+zzjYIpoRDyrASAGY+jKEVnnnOzw76GM0/ch
-         Dtjy7JhZd8qqO/3fS5uJ3uDAxkmyI/nNc7aOg12onfRM6yluoX3USBNrkmwxUsGEaLxU
-         b9/6zfoWKBsZMdvTrB3nXg8UNo7575e2HYb4IY2h9B47hfUhESpgAA6/DmUh/Ti7xu6Y
-         rahg==
+        d=linaro.org; s=google; t=1687844537; x=1690436537;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ulR4ivQIhJ1l/oBTs/p+pGMIWg2ZKFF2T+fQE8UqO7Q=;
+        b=AXLCkaknqRPTLvSNzKOecb3LAe7Gqzwk9Y08eXY/CQm2tKL39Ot/35C2r5m2KRBsDE
+         utNTFY3htod9Fc2TwFkiwm5KOfxobqxVuxlsxsnhQgtXPSJ4oUUau8hdtQu290dZD7Sz
+         V1x76o+ZQ2duyz8gfmt7JaKTzLdDRzhL6hnSFyxX168Fx/6IWS8adntNhrWsMAB4zSIH
+         55mgxJF7CUiRmYlGPNdsMusXDXSSkIu/6IosNeAkkF5gNUPQhTQPrmtSNqkmfBlshlXb
+         VELZV5Dl8SuXFD7giRJ1ywVFg2OTC6Y4/dKVfVRtcXhOBF1NG5RfjmmIhxiqpkuXb3qo
+         dG4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687843962; x=1690435962;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ooF2+9s/dYxk4t4QZ6dr9+cLdLfWELP5XjTCQq5ybIM=;
-        b=VAH30hymhSFO9exVEhO5OtZs4fVMg+Vh4r5Wo5itsB2I2C87zoQyllkRFQr3u8HB4A
-         WHw8R/0/fXb61PuzVfj4nsO4sQbsHzoYG4da2mZ+dOb1osYBrHmq8TdzHzXNNilYm1Ns
-         3anq2CtZgkwq5BcugE1+uA2KMtZO3n9VZpMGIAg9KgU7lwaiIN0njEbpAGG7PHmG5Zin
-         sc8KZbyv6NBzJgKD3nlcP5/t8KwpKjRXugoHW9xzelgQeFeE0fIMhBbiWr42y6iqchvZ
-         J0Tch1B+yZkrsdg7IQCYdO6N1z5PVtifUhDm5wvin3NKisOj/Vs+Q2vE1+x/P+qXm4sT
-         EuFQ==
-X-Gm-Message-State: AC+VfDy8oggGmbziQnqku5BgtfxEyJwEU3qETmv2608vllXrt4ov241S
-        Vz0edc6BrG/OEf0dXUaL0JI8CA==
-X-Google-Smtp-Source: ACHHUZ7/KMGanhWpS4V6XigbARqv+ptaFhhnRebXUfv/XgANDJmcyk+nRrK/8gABHNSsbrCfv0MRJg==
-X-Received: by 2002:a05:600c:3657:b0:3f6:8ba:6ea2 with SMTP id y23-20020a05600c365700b003f608ba6ea2mr28557361wmq.15.1687843962270;
-        Mon, 26 Jun 2023 22:32:42 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687844537; x=1690436537;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ulR4ivQIhJ1l/oBTs/p+pGMIWg2ZKFF2T+fQE8UqO7Q=;
+        b=cKJ8Xvdf6UiPs9v8/K0OQl8U/mCD+7SazkcwtmBkdzLzHsS5/2/4EltvCoPaSIowzk
+         Vgc2Yx5oheCr5kFkNptn8eXHS/qmzhq+W162oeo/G9k9UjG3/jDgPRbG4ut7czZHpC2O
+         +nzU9gEuANiWbbZ132wTwRfosM81EUICkGg82uEVd0xS1J+Ge3wTug3ABudpNUtfVJCR
+         06h3L4chygQpL0v+QwoLQFUzrBJcNXQVdPGM8klw5I5Pj094+sozYBjN5oCSV9d28B+l
+         gIQ/jk16qqhvOeBqTLqBukhXTBjre4WCGKizYngPcrlOk3Z3ByOUBJPBrAp7Je5Jk9S6
+         1iUA==
+X-Gm-Message-State: AC+VfDyPDiKyJ1Wvq6ymq8v6ZQoCXl6WXIZF91zTREr5D4vOFNsYWYWD
+        QRi1tXIVXhGAo2GYFhbHrOmUMA==
+X-Google-Smtp-Source: ACHHUZ7Zp5+uRz6d5ee0l1lmoea0gtR6KnNww7WDkTx4AKpOp2uVH4UYxGbkQ7iXjjiQIyIVBhgc7g==
+X-Received: by 2002:adf:ffce:0:b0:30a:ec3b:58d8 with SMTP id x14-20020adfffce000000b0030aec3b58d8mr25394627wrs.3.1687844536934;
+        Mon, 26 Jun 2023 22:42:16 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id x26-20020a1c7c1a000000b003fa740ef99esm9405573wmc.45.2023.06.26.22.32.38
+        by smtp.gmail.com with ESMTPSA id u12-20020adfdd4c000000b0030903d44dbcsm9275843wrm.33.2023.06.26.22.42.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 22:32:39 -0700 (PDT)
-Date:   Tue, 27 Jun 2023 08:32:36 +0300
+        Mon, 26 Jun 2023 22:42:14 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 08:42:10 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH v2] perf unwind: Fix map reference counts
-Message-ID: <a9732501-3eff-4b94-a9b2-53e5e5e5be1d@kadam.mountain>
-References: <20230623043107.4077510-1-irogers@google.com>
- <64741e8e-e81a-afb9-9ce3-9c2d6baab44a@web.de>
- <CAP-5=fVwhiGJEqTST2bfX8cUALpnTxELSHrvKtyJEPjqQjOacQ@mail.gmail.com>
- <35569055-0873-4d5d-8c9c-78c818e9aa26@moroto.mountain>
- <CAP-5=fWDnLDox3apMmvXmzVurFA=+sj7SEOOD7_2fam2VrGokA@mail.gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Cc:     Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] soundwire: amd: Fix a check for errors in probe()
+Message-ID: <9863b2bf-0de2-4bf8-8f09-fe24dc5c63ff@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAP-5=fWDnLDox3apMmvXmzVurFA=+sj7SEOOD7_2fam2VrGokA@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Ah, great.  Thanks, Ian.
+This code has two problems:
+1) The devm_ioremap() function returns NULL, not error pointers.
+2) It's checking the wrong variable.  ->mmio instead of ->acp_mmio.
 
-The Reference Count Checking page is good information.  There is a bunch
-of interest in doing better QC so this stuff is good to know.
+Fixes: a673a8dfc214 ("soundwire: amd: Add support for AMD Manager driver")
+Suggested-by: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: Change the variable.  My original fix would have prevented the
+driver from loading so many thanks to Vijendar for pointing that out.
 
-So in this case, it's probably difficult to assign a Fixes tag and that's
-fine.  Whatever.  But I'm not a huge fan of the "Leave off the Fixes tag"
-approach to preventing backports.  There should be a better system for
-that.  Maybe there should be a tag for that?  Or possibly that's too
-complicated...  I'm not sure.
+ drivers/soundwire/amd_manager.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway, let's leave it for now.  If it's really a problem then we'll run
-into it again later and we can think about it at that point.
+diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+index 08aeb7ed00e1..3a99f6dcdfaf 100644
+--- a/drivers/soundwire/amd_manager.c
++++ b/drivers/soundwire/amd_manager.c
+@@ -910,9 +910,9 @@ static int amd_sdw_manager_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	amd_manager->acp_mmio = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(amd_manager->mmio)) {
++	if (!amd_manager->acp_mmio) {
+ 		dev_err(dev, "mmio not found\n");
+-		return PTR_ERR(amd_manager->mmio);
++		return -ENOMEM;
+ 	}
+ 	amd_manager->instance = pdata->instance;
+ 	amd_manager->mmio = amd_manager->acp_mmio +
+-- 
+2.39.2
 
-regards,
-dan carpenter
