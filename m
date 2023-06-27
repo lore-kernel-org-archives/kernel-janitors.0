@@ -2,124 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C2DEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 12:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA21EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 13:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbjF0M4R (ORCPT
+        id S230003AbjF0Nda (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 08:56:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
+        Tue, 27 Jun 2023 09:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbjF0M4Q (ORCPT
+        with ESMTP id S229482AbjF0Nd2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 08:56:16 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBED26BA;
-        Tue, 27 Jun 2023 05:56:15 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fa7512e599so55157345e9.2;
-        Tue, 27 Jun 2023 05:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687870574; x=1690462574;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CmpeFe/W7bct0on6Cvz9lgbR3MqPfbzft85pRxf6ro=;
-        b=g4OCr0xCnqtOLwIff9cOjbimo678mSohP7uVU+SD3EwzZ17aTKL42gv2ikphvZsson
-         5g6ylW6ZyahqPBuFpa+opBxL8HbO9AgV52ftmztGHHX4jfHHjuxpiwu6zmnQ7IEZ9DwF
-         4ZF+Yx+ozMUfGWsl57m0KyXjmbFERhb4/PW8Xktz3dQMg4/hnxcY/iUi7bpMxRJPa4Yu
-         XkIpxBjyIygPv/ik0WZhzZTW24DFy14gP9TkOXvLR1eu5aArTsAy0SeD5Po0PtPKpFuc
-         wJ//VE+td7ipEXQyL67jvpywdnqquB7g/8lDcFxWhrU/wnxZHyAKkHnAkYyNyQ74Z/cY
-         K4XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687870574; x=1690462574;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0CmpeFe/W7bct0on6Cvz9lgbR3MqPfbzft85pRxf6ro=;
-        b=RREWShUzvQh8876NqqIzDdmQeHA9dfxUAwcRC65DAfbD/qUJC4PiopD1FTsh2Otlrp
-         P666M4PhwpEgdDb9XH2wEiPMJy4FSBHizagB4aHLW4Kt4ibojM4QkjpkcM2i0L2Naw8q
-         CVlY6PZXF15vjUvdkVPeHJwOLYtxQS6EPfd/awU8kdynQ35KkW8MtxbAhmaOvoD7IPH3
-         xglb/Z3JbQE0qICmFPtj0CKGD+LvmBkgyrr1CyjOU8g6JAVCu+D529qMjMt1sy9HYA9S
-         WT5uvatrvCQFkvfdE1nFQlRJYnf5H64Znzf6xbL6dz2HCSy/NHResbE42yOOU84bFLc/
-         yLPA==
-X-Gm-Message-State: AC+VfDwUfOv07y0hpoxcHMos47297h/9DlKGRbIRmz4loJLjxwvKZD3s
-        ql6UAPHRBe5h1LSBbGZsxyoYubN0uyC8sg==
-X-Google-Smtp-Source: ACHHUZ7zKsWmfe9syFfOnBXnGTnLWMSLV/h5hNjDh/rD9v8tbqRWdWWlu+EGK0726d1L4A3TSdoh6A==
-X-Received: by 2002:a1c:7705:0:b0:3fa:c3e8:901a with SMTP id t5-20020a1c7705000000b003fac3e8901amr3249818wmi.25.1687870574209;
-        Tue, 27 Jun 2023 05:56:14 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x9-20020a05600c21c900b003fb41491670sm3321616wmj.24.2023.06.27.05.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 05:56:13 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] PCI: ibmphp: make read-only arrays static
-Date:   Tue, 27 Jun 2023 13:56:12 +0100
-Message-Id: <20230627125612.724764-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 27 Jun 2023 09:33:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705BB2D53;
+        Tue, 27 Jun 2023 06:33:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 02FE5611A1;
+        Tue, 27 Jun 2023 13:33:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80EABC433C0;
+        Tue, 27 Jun 2023 13:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687872806;
+        bh=hU/bbFYDxlazJtaG0Aky+dV6lWTbtVrya1pQRCRiTcs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lRCpUOcgDLM5IsK6PYe4oGTEfki9RNeEaJeti5s+B+D2DmBrQJG24uumr+Qu+xnq9
+         NK6l4xpK09ScsXXxHQcm90Lqhi3L42FzaduuBHdCCOQ+haTaZcJP0wjd7ZjTiXBhsm
+         Ybk9lkD8iWS9I3dH7WNi5wSyCSIVDzIcoqLgdfBeKBc2Kc/cJ5jO4XMF7BEAjIXqmq
+         AIFPUm90kBWNf2B9XwWoZcHaSDC0rxHoAWpuyTa5LUCM7mNXRNbeFkcAjRNuinVUuR
+         GMHVF+CmP8uEM7h1VoHpPQQro3bzpyAoKg9EpHhP6SpOVdTygQwFQ9oPXHr5mpcsOm
+         B9uKvsSZic8CA==
+Date:   Tue, 27 Jun 2023 15:33:22 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: sun6i-p2wi: Fix an error message in probe()
+Message-ID: <20230627133322.szotkthwsfwgkdby@intel.intel>
+References: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
+ <20230627115920.c4ms65vgrbiyekc6@intel.intel>
+ <7c6db53c-427d-4ba5-80b7-a069ab9322a0@kadam.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c6db53c-427d-4ba5-80b7-a069ab9322a0@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the arrays on the stack, instead make them static const.
+Hi Dan,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/pci/hotplug/ibmphp_pci.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On Tue, Jun 27, 2023 at 03:08:53PM +0300, Dan Carpenter wrote:
+> On Tue, Jun 27, 2023 at 01:59:20PM +0200, Andi Shyti wrote:
+> > Hi Dan,
+> > 
+> > On Tue, Jun 27, 2023 at 10:12:36AM +0300, Dan Carpenter wrote:
+> > > The "ret" variable is uninitialized.  It was the "p2wi->rstc" variable
+> > > that was intended.  We can also use the %pe string format to print the
+> > > error code name instead of just the number.
+> > > 
+> > > Fixes: 75ff8a340a81 ("i2c: sun6i-p2wi: Use devm_clk_get_enabled()")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > >  drivers/i2c/busses/i2c-sun6i-p2wi.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> > > index ad8270cdbd3e..fa6020dced59 100644
+> > > --- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> > > +++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> > > @@ -250,7 +250,8 @@ static int p2wi_probe(struct platform_device *pdev)
+> > >  
+> > >  	p2wi->rstc = devm_reset_control_get_exclusive(dev, NULL);
+> > >  	if (IS_ERR(p2wi->rstc)) {
+> > > -		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
+> > > +		dev_err(dev, "failed to retrieve reset controller: %pe\n",
+> > > +			p2wi->rstc);
+> > 
+> > Yes, good catch! Thanks! But I think we want to print the error
+> > value here, so I think it should be:
+> > 
+> > -		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
+> > +		dev_err(dev, "failed to retrieve reset controller: %d\n",
+> > +			PTR_ERR(p2wi->rstc));
+> > 
+> 
+> The %pe which I changed it to is a cool new thing that prints:
+> 
+> 	failed to retrieve reset controller: -EINVAL\n
 
-diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
-index 754c3f23282e..50038e5f9ca4 100644
---- a/drivers/pci/hotplug/ibmphp_pci.c
-+++ b/drivers/pci/hotplug/ibmphp_pci.c
-@@ -329,7 +329,7 @@ int ibmphp_configure_card(struct pci_func *func, u8 slotno)
- static int configure_device(struct pci_func *func)
- {
- 	u32 bar[6];
--	u32 address[] = {
-+	static const u32 address[] = {
- 		PCI_BASE_ADDRESS_0,
- 		PCI_BASE_ADDRESS_1,
- 		PCI_BASE_ADDRESS_2,
-@@ -564,7 +564,7 @@ static int configure_bridge(struct pci_func **func_passed, u8 slotno)
- 	struct resource_node *pfmem = NULL;
- 	struct resource_node *bus_pfmem[2] = {NULL, NULL};
- 	struct bus_node *bus;
--	u32 address[] = {
-+	static const u32 address[] = {
- 		PCI_BASE_ADDRESS_0,
- 		PCI_BASE_ADDRESS_1,
- 		0
-@@ -1053,7 +1053,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
- 	int howmany = 0;	/*this is to see if there are any devices behind the bridge */
- 
- 	u32 bar[6], class;
--	u32 address[] = {
-+	static const u32 address[] = {
- 		PCI_BASE_ADDRESS_0,
- 		PCI_BASE_ADDRESS_1,
- 		PCI_BASE_ADDRESS_2,
-@@ -1182,7 +1182,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
- static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
- {
- 	u32 start_address;
--	u32 address[] = {
-+	static const u32 address[] = {
- 		PCI_BASE_ADDRESS_0,
- 		PCI_BASE_ADDRESS_1,
- 		PCI_BASE_ADDRESS_2,
-@@ -1310,7 +1310,7 @@ static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
- 	struct resource_node *mem = NULL;
- 	struct resource_node *pfmem = NULL;
- 	struct bus_node *bus;
--	u32 address[] = {
-+	static const u32 address[] = {
- 		PCI_BASE_ADDRESS_0,
- 		PCI_BASE_ADDRESS_1,
- 		0
--- 
-2.39.2
+oh... that's right! Sorry, I didn't know about it! Then,
+definitely:
 
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
+
+> We should create a similar %e printk format that works for ints instead
+> of error pointers.  But instead of that you have people who cast error
+> codes to pointers just to get the %pe functionality.  And other people
+> who make suggestions (this is the catagory that I'm in) but are too lazy
+> to do the actual work.
+
+Ahaha... that's right! It's indeed a nice feature to have. Let me
+see if I manage to scratch a few hours out of my time.
+
+Andi
