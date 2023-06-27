@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F722EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 13:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E210EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231284AbjF0NtL (ORCPT
+        id S230167AbjF0OBw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 09:49:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
+        Tue, 27 Jun 2023 10:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231224AbjF0Ns5 (ORCPT
+        with ESMTP id S229608AbjF0OBt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 09:48:57 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63532D62;
-        Tue, 27 Jun 2023 06:48:54 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fb10fd9ad3so19196705e9.0;
-        Tue, 27 Jun 2023 06:48:54 -0700 (PDT)
+        Tue, 27 Jun 2023 10:01:49 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58DA1718;
+        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-313e34ab99fso3775259f8f.1;
+        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687873733; x=1690465733;
+        d=gmail.com; s=20221208; t=1687874507; x=1690466507;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqpiHtecb9C65DHHvOJv3B2wwux1crTE1Hic8Ce6/L4=;
-        b=V2k9AFsCpd5fPtYvki3IdaGAOVQns/84yXy0EQeQzkz6JcR24ZH3XwM4wIxeOiAJC7
-         uE5CBB9ZKEH5BK8ZveSilQdZQ9oXYBnQHU4ooZsW+dSBTN6mDkdEyiryDLF98GI1Sil6
-         Z9UByBBzbUwcKGLHjuI2KZPff7tEfnSsFYnyATIXzJFeVeieV+zLvDjddz2N4a2yR5hk
-         yCCLuWkE64kI/gsLW5GE1qYUHlFKqECaY0+xoIg1ihWgfYXAjlGQlEjh4aN4USg1y+HS
-         /7GLOJGN+JXCU32Ug6xNlRgQ3l6FqKwMIcFvXWyFnTmmnJVxTTnpnY9MlNekpwNOoE7N
-         qMoQ==
+        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
+        b=rz40dLBeIyXIxQR9OjydRBjFPSIrm8NsTyXSUaNc2WqObEgL9sgbVKGBFZ8D0CBuS1
+         RRIjbhMHUHc1FeFMNd3V8vIKQEsMn11zkGzS17SexLp+6vggrOnUxkMRGMAVISM/3+bN
+         JxOM7SN/n8VzoVZSa/PFdXDYf5AllrRjoUNN7XsG4EVJ8gTkB3fHx2CEjKCzXDjpDLYs
+         xnefsaBrS58olv7UMlX5BhzRRnXTzpsUnbeWn/Qh9n8vTvol+TahrvNaLP6c1LxQHB48
+         vBgPqHEEg2lgNHTi8reWG4hGRvJC9Lwz7ZETwPJPnvtYXHb5+MTfwRBd0zqg0pKP8BTo
+         aXdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687873733; x=1690465733;
+        d=1e100.net; s=20221208; t=1687874507; x=1690466507;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JqpiHtecb9C65DHHvOJv3B2wwux1crTE1Hic8Ce6/L4=;
-        b=EI6qUUL5KXPAlgs4eUVgoRaa8yvOmk9LqfhnsyEH9bbRhW7JjXtdGtaxlF3T5Uagqk
-         BkOH/a21jE2FNpwLcZJB32UqEgLlYOC7yFWLhsiqSnFdp0pioFmTwC64l7dQXZa4o+yV
-         QJa4BLHbaSqohnasDunovd6UBBSemGgzHZS05UYFAi8yNExj0OOnoBIa+SBQYchi8ff2
-         UeytIRRO734Lt5rI88QOFGTDh8KoHqSb7w9hbSR9S0XoyPxSBmuGz31l9DuheTi29Lcz
-         3VhVJGBCbn4h8fXrRvnhwwn1PfqY0si8EIY6xeYmpvISjScpCwOVfuHvqd8Urzs+HRjo
-         v8iA==
-X-Gm-Message-State: AC+VfDx5NZw2olHKI+G1k3lR7K1s1kc2Joy6sIcrcIeAbRg9Pugg0V/x
-        86mmIC1oNVHbYLzXO8SHim4=
-X-Google-Smtp-Source: ACHHUZ7ObcIX3NdFQkDirjNljZfgfmkV0MHKzii8w+mAA8/EbhgJ2dv7kapt7PF6IQ/IvCkxgLb1Fg==
-X-Received: by 2002:a05:600c:2152:b0:3f9:a6f3:8a53 with SMTP id v18-20020a05600c215200b003f9a6f38a53mr20815220wml.20.1687873733154;
-        Tue, 27 Jun 2023 06:48:53 -0700 (PDT)
+        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
+        b=BQr35zMrExNrfPXeZqujJhJZtZQon8YDOFD/Gd099oZfCPvxm38J8yrCQ2vOi2tW/7
+         D1IHo4gvROmf43v0stRScoquFCw0heEd+fe2L4dlUGLNbfZD9mDhvMiq+v0k8auf5NRo
+         lDQTXjNm1jK2MT6ssNgxmmM6t4Sj4iy35fvRx+ThSQZ3mAKydxC+VHH6jO21gAS1tlXa
+         fRwVuQdXXOqZ1QQhciCjnvaHDiXsf7YPu6WLWnO4ZDfbMpKNYkch9pe8M4A9h0qnFEja
+         nhf29BFiQxgaXmLQ4Am7pP/0K0ib4X2VLtpSwpA1Jcv5YukdINTlK+5QdgAlAFQSL4SH
+         AbOg==
+X-Gm-Message-State: AC+VfDxyJfNHqB7hCivOFa9HRZywx28KJdCGJp9V9clcSK+osRlwCeVW
+        z7xGTbBlEVhd/k+RKxUH7gk=
+X-Google-Smtp-Source: ACHHUZ7UQAUjF7ILXHovRzkVTKMyTkmk0UxBvDmZXSNKj1sJhniuMIVpC8dYcEz3H7MffUKlhcX+qA==
+X-Received: by 2002:a5d:4fd2:0:b0:313:f0e3:2fdc with SMTP id h18-20020a5d4fd2000000b00313f0e32fdcmr4803225wrw.2.1687874506931;
+        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v2-20020a5d6102000000b003127a21e986sm10345778wrt.104.2023.06.27.06.48.51
+        by smtp.gmail.com with ESMTPSA id h10-20020a5d504a000000b00313e8dc7facsm8734663wrt.116.2023.06.27.07.01.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 06:48:52 -0700 (PDT)
+        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: bt8xx: make read-only arrays static
-Date:   Tue, 27 Jun 2023 14:48:51 +0100
-Message-Id: <20230627134851.728487-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] clk: lmk04832: clkout: make read-only const arrays static
+Date:   Tue, 27 Jun 2023 15:01:45 +0100
+Message-Id: <20230627140145.729609-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,38 +65,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the arrays on the stack, instead make them static const.
-Also add spaces between values to clean up checkpatch style warnings.
+Don't populate the arrays on the stack, instead make them static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/pci/bt8xx/dvb-bt8xx.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/clk-lmk04832.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
-index 4cb890b949c3..df83b59a618d 100644
---- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
-+++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
-@@ -190,11 +190,15 @@ static int cx24108_tuner_set_params(struct dvb_frontend *fe)
- 	u32 freq = c->frequency;
- 	int i, a, n, pump;
- 	u32 band, pll;
--	u32 osci[]={950000,1019000,1075000,1178000,1296000,1432000,
--		1576000,1718000,1856000,2036000,2150000};
--	u32 bandsel[]={0,0x00020000,0x00040000,0x00100800,0x00101000,
-+	static const u32 osci[] = {
-+		950000, 1019000, 1075000, 1178000, 1296000, 1432000,
-+		1576000, 1718000, 1856000, 2036000, 2150000
-+	};
-+	static const u32 bandsel[] = {
-+		0, 0x00020000, 0x00040000, 0x00100800, 0x00101000,
- 		0x00102000,0x00104000,0x00108000,0x00110000,
--		0x00120000,0x00140000};
-+		0x00120000, 0x00140000
-+	};
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index e22ac93e0c2f..21b425d8a1b7 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -369,7 +369,7 @@ static unsigned long lmk04832_vco_recalc_rate(struct clk_hw *hw,
+ 					      unsigned long prate)
+ {
+ 	struct lmk04832 *lmk = container_of(hw, struct lmk04832, vco);
+-	const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
++	static const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
+ 	unsigned int pll2_n, p, pll2_r;
+ 	unsigned int pll2_misc;
+ 	unsigned long vco_rate;
+@@ -631,7 +631,7 @@ static int lmk04832_register_vco(struct lmk04832 *lmk)
  
- 	#define XTAL 1011100 /* Hz, really 1.0111 MHz and a /10 prescaler */
- 	dprintk("cx24108 debug: entering SetTunerFreq, freq=%d\n", freq);
+ static int lmk04832_clkout_set_ddly(struct lmk04832 *lmk, int id)
+ {
+-	const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
++	static const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
+ 	unsigned int sclkx_y_ddly = 10;
+ 	unsigned int dclkx_y_ddly;
+ 	unsigned int dclkx_y_div;
 -- 
 2.39.2
 
