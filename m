@@ -2,130 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB5CEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F2BEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232281AbjF0OwF (ORCPT
+        id S232063AbjF0O4A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:52:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49334 "EHLO
+        Tue, 27 Jun 2023 10:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231993AbjF0Ovs (ORCPT
+        with ESMTP id S232702AbjF0Ozg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:51:48 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBA04C1B;
-        Tue, 27 Jun 2023 07:49:27 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35RDVfNM000853;
-        Tue, 27 Jun 2023 14:48:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=hFqgsytwO7YkPhtAzxumxYOYePgrq4GqYMK6wBUKkqU=;
- b=GwQacHVqAsyMaBPm0rNrGOAnrndoR4OvsstRvd51fRXGEXVv9lAEq7VmBdhhzGQs7q7U
- Rlh2aQn2gTBH0N2iJE88Z8hIi3QEJW30Vep+ODOlj6LjThQSSR2nSzIy1vtQQgBls1Mi
- istsCrrnotnMiIVEmvyHVJfYyMVmkVktLv4bgqEwR/5d3lZfAgMYLHOC+gafP0F1+g2/
- Q1WfJsDJ6VDk8OLmup3txDq4/gV7G6tpMXq0OOCoUOl0VLtBUCsLLEXnFdUETTFBPibC
- YBHO46JDDEze6RuFfdtkO1iv0dwMJjnWE74KXRQio2t2GI8Fh8KErI7v64mn99Lyyk3A Jg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rfc02aqqw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 14:48:33 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35REmW27011345
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 14:48:32 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 27 Jun
- 2023 07:48:31 -0700
-Message-ID: <dd87f23b-d559-f544-c9bc-69ee592c17e8@quicinc.com>
-Date:   Tue, 27 Jun 2023 08:48:30 -0600
+        Tue, 27 Jun 2023 10:55:36 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E7746BB;
+        Tue, 27 Jun 2023 07:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1687877677; x=1719413677;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ORxtrwZnKG+2aBbgd1b8Fxhy++nynEKa06ObBqJZo3M=;
+  b=LqLu1hMKgBdFar0/G8rs0rtesw/ytQ29s7I8vlDAv9asJuDJLaUY+Nz5
+   0xachyEwAzuNLnl98RsIayWdswX9tLxeoYlh+dtTWJ4QziS3N76meeML2
+   LXFB7lOas6f0IxLrXVhfp51f+K73Or3MHJcUKZ+7xUwzUfjYry0SDH3WC
+   dsVQzZEm9TBs+JLletYVGVg6dI3zBGvBFwTJ9u7mnZcFn4zZVSku38tUg
+   yxPTB6ab//7nz8y7nUxwqV2M1/meG8B7OH9xj+QGib0gKDiMA6TUMLjh+
+   DNP9NqcxA8jSen87w7ucZmRp24c3kVjQb+zbiIyFl4xjStp2LcGpzGtXM
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="341179393"
+X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
+   d="scan'208";a="341179393"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 07:54:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="746249144"
+X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
+   d="scan'208";a="746249144"
+Received: from btalbott-mobl.amr.corp.intel.com (HELO [10.212.238.85]) ([10.212.238.85])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 07:54:36 -0700
+Message-ID: <004bc553-4dca-070b-c203-adcb50d4112d@intel.com>
+Date:   Tue, 27 Jun 2023 07:54:36 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v2 10/24] bus: mhi: host: use vmalloc_array and vcalloc
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 21/24] x86/sgx: use vmalloc_array and vcalloc
 Content-Language: en-US
 To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>
-CC:     <kernel-janitors@vger.kernel.org>, <keescook@chromium.org>,
-        <christophe.jaillet@wanadoo.fr>, <kuba@kernel.org>,
-        <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
+        christophe.jaillet@wanadoo.fr, kuba@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
- <20230627144339.144478-11-Julia.Lawall@inria.fr>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20230627144339.144478-11-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20230627144339.144478-22-Julia.Lawall@inria.fr>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20230627144339.144478-22-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aLe5CmSgeSsnVXgSXq5v5pCSDBN7aPz5
-X-Proofpoint-GUID: aLe5CmSgeSsnVXgSXq5v5pCSDBN7aPz5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-27_09,2023-06-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=746
- spamscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0
- phishscore=0 bulkscore=0 clxscore=1011 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306270137
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/27/2023 8:43 AM, Julia Lawall wrote:
+On 6/27/23 07:43, Julia Lawall wrote:
 > Use vmalloc_array and vcalloc to protect against
 > multiplication overflows.
-> 
-> The changes were done using the following Coccinelle
-> semantic patch:
-> 
-> // <smpl>
-> @initialize:ocaml@
-> @@
-> 
-> let rename alloc =
->    match alloc with
->      "vmalloc" -> "vmalloc_array"
->    | "vzalloc" -> "vcalloc"
->    | _ -> failwith "unknown"
-> 
-> @@
->      size_t e1,e2;
->      constant C1, C2;
->      expression E1, E2, COUNT, x1, x2, x3;
->      typedef u8;
->      typedef __u8;
->      type t = {u8,__u8,char,unsigned char};
->      identifier alloc = {vmalloc,vzalloc};
->      fresh identifier realloc = script:ocaml(alloc) { rename alloc };
-> @@
-> 
-> (
->        alloc(x1*x2*x3)
-> |
->        alloc(C1 * C2)
-> |
->        alloc((sizeof(t)) * (COUNT), ...)
-> |
-> -     alloc((e1) * (e2))
-> +     realloc(e1, e2)
-> |
-> -     alloc((e1) * (COUNT))
-> +     realloc(COUNT, e1)
-> |
-> -     alloc((E1) * (E2))
-> +     realloc(E1, E2)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
+...
+> diff -u -p a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -628,7 +628,7 @@ static bool __init sgx_setup_epc_section
+>  	if (!section->virt_addr)
+>  		return false;
+>  
+> -	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
+> +	section->pages = vmalloc_array(nr_pages, sizeof(struct sgx_epc_page));
+>  	if (!section->pages) {
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+I'm not sure that changelog matches the code.
 
+'nr_pages' here is an 'unsigned long' and The sizeof()==32.  In
+practice, the multiplication can be done with a shift, and the ulong is
+a *LONG* way from overflowing.
+
+I'll accept that, as a general rule, vmalloc_array() is the preferred
+form.  It's totally possible that someone could copy and paste the
+nr_foo*sizeof(struct bar) code over to a place where nr_foo is a more
+troublesome type.
+
+But, if that's the true motivation, could we please say that in the
+changelog?  As it stands, it's a bit silly to be talking about
+multiplication overflows, unless I'm missing something totally obvious.
