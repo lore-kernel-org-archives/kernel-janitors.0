@@ -2,79 +2,132 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB26EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 15:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62830EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 15:14:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbjF0PIn (ORCPT
+        id S232262AbjF0POl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 11:08:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35946 "EHLO
+        Tue, 27 Jun 2023 11:14:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbjF0PIm (ORCPT
+        with ESMTP id S232067AbjF0POg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 11:08:42 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF4C10CC;
-        Tue, 27 Jun 2023 08:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687878521; x=1719414521;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IA11Aco+T/x16l6i98pdxr6nAnpI3sTZ+UOpKHDDBJQ=;
-  b=R8MofxyQ5xqpl+kpl6KBCo1UcWyJWH1iT5VP8FG3gPeXJFDIFo2PxV9e
-   a3gAR+1eI3nbXUe8LWhYlvmP/YbDtoRX7supqro3fWKC+0tLvX6kILeVk
-   jSBUHmKWZySu50lcVaZaqYAXa6jswOhJUTWbbubi6eKd/QkjHsjcloZQ1
-   P+EoFO1wKur/lSOxhYK2Eoztk3m1Y6x4O6tKHahbqvygvKpSlkQpFE3Ko
-   X2PIDablPmQCJGOTMH00Q/js82Io6ycdbtNhwVyW9xLh+TRt8e4Anpfey
-   Vo8q8605nqn7SXSX4Pixu8GLE6LWMpzZwkFs2nTJWxUjjvfakxBLOO5mC
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="364144632"
-X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
-   d="scan'208";a="364144632"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 08:06:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="840717944"
-X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
-   d="scan'208";a="840717944"
-Received: from btalbott-mobl.amr.corp.intel.com (HELO [10.212.238.85]) ([10.212.238.85])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 08:06:12 -0700
-Message-ID: <487cc70c-9cb1-2b00-acb3-a1410c8be7c0@intel.com>
-Date:   Tue, 27 Jun 2023 08:06:12 -0700
+        Tue, 27 Jun 2023 11:14:36 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF87B2D59;
+        Tue, 27 Jun 2023 08:14:32 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-988a076a7d3so680456266b.3;
+        Tue, 27 Jun 2023 08:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687878871; x=1690470871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oToC9jwkuaZE3Mgp12dfXgGs+LHa6pnKPaY9hlvQGdQ=;
+        b=PSagK0wduJse94dOVuw/z0v5acVYUJuPR6bAmC7AteLruWD78teA0hy8F1pVKtZ1/f
+         5rcEQ4FAXRues1K1Q/Ujw1Ox6DQe+oFV0bkP866fXjr8iqaHQskYSWCA8s7oY12sNAm2
+         DFbx5ZtYKluXq/CU+8f8bWhu++oG69oE3vEAwBJyqICjrPI4zDZ+Vb2zkndEkVETKs54
+         JqTnQzm/+v5IevepzSW/k3EkCg7ynw+RAB4VjI024hWaNfokXH1LDh3i3ZacnyV0O102
+         n1VfYolJDvW8HGmWzF3nsOz6ar9yhlhzXzmXgxGzY5J64gD/nXZF21QB2ZiV6gLbgz7l
+         7uyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687878871; x=1690470871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oToC9jwkuaZE3Mgp12dfXgGs+LHa6pnKPaY9hlvQGdQ=;
+        b=hXSdnjdWoSIx1otaUn1mSEZUf1hBcwytGZiO5dP1pDNxASV3gY0v5JjIODim3su1kH
+         CgTcGP7BW1T6/VWOh9cnAr2mNWHTgVcT7lQDhIwuvCLDmf1RFUS3rb6mUfcXsoZIyz5w
+         8ljCMeXhIrDypJTeJ1ZyWvHmQdiAnpBvO4wNMgVLlOUA9uz1M5m6BfwGnkaOqlu+Yphe
+         Z+Vx6SiWf/3zM6UBOl2HKGrM8sKrH0VlIOxqlb54EWnzQ84YORFmxc5Qpj/So7ZkraeW
+         JHycGe/IsUiZu+T5CTQZNwAbs1DCteB5VzGH5VTa9CZvN7gdH2pFU5YFGc8ESncaWEJz
+         uAng==
+X-Gm-Message-State: AC+VfDx0rcGyEACMk5Ui1QeV2Eh6slFFVGecwP7frmvCbxd9suLzhf0O
+        IAxvvXi3xE/7FJMwouEQBfs=
+X-Google-Smtp-Source: ACHHUZ7WfhgwC7HCWL5CUPkJUS3shDwSxfhcYpEM1mWhnqALUI4ud+xgNKjBQcPVCoDzpZ1mKi1HeA==
+X-Received: by 2002:a17:907:3e16:b0:978:a186:464f with SMTP id hp22-20020a1709073e1600b00978a186464fmr32048698ejc.39.1687878871105;
+        Tue, 27 Jun 2023 08:14:31 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation ([193.85.242.128])
+        by smtp.gmail.com with ESMTPSA id z18-20020a1709067e5200b0096f7500502csm4630685ejr.199.2023.06.27.08.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 08:14:30 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 17:14:29 +0200
+From:   Tommaso Merciai <tomm.merciai@gmail.com>
+To:     "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: bt8xx: make read-only arrays static
+Message-ID: <ZJr81Tg285kr4oEs@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20230627134851.728487-1-colin.i.king@gmail.com>
+ <ZJr0WvhFfCILwbeP@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <2b17acc9-44c3-acf6-0674-04a43aa742e0@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 21/24] x86/sgx: use vmalloc_array and vcalloc
-Content-Language: en-US
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        kernel-janitors@vger.kernel.org, keescook@chromium.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
- <20230627144339.144478-22-Julia.Lawall@inria.fr>
- <004bc553-4dca-070b-c203-adcb50d4112d@intel.com>
- <896979d6-7365-e75-52fe-ad929e3e8620@inria.fr>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <896979d6-7365-e75-52fe-ad929e3e8620@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b17acc9-44c3-acf6-0674-04a43aa742e0@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/27/23 08:01, Julia Lawall wrote:
-> If it is certain that no overflow is possible, then perhaps it is fine to
-> drop the patch? 
+Hi Coli,
 
-It's impossible in practice in this case because the code is 64-bit only
-and uses an 'unsigned long'.  But, like I said, I can see that same
-vmalloc() being copied-and-pasted or moved to a 32-bit system and
-theoretically causing problems in rare scenarios.
+On Tue, Jun 27, 2023 at 04:04:38PM +0100, Colin King (gmail) wrote:
+> On 27/06/2023 15:38, Tommaso Merciai wrote:
+> > Hi Colin,
+> > 
+> > On Tue, Jun 27, 2023 at 02:48:51PM +0100, Colin Ian King wrote:
+> > > Don't populate the arrays on the stack, instead make them static const.
+> > > Also add spaces between values to clean up checkpatch style warnings.
+> > > 
+> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > > ---
+> > >   drivers/media/pci/bt8xx/dvb-bt8xx.c | 12 ++++++++----
+> > >   1 file changed, 8 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> > > index 4cb890b949c3..df83b59a618d 100644
+> > > --- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> > > +++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+> > > @@ -190,11 +190,15 @@ static int cx24108_tuner_set_params(struct dvb_frontend *fe)
+> > >   	u32 freq = c->frequency;
+> > >   	int i, a, n, pump;
+> > >   	u32 band, pll;
+> > > -	u32 osci[]={950000,1019000,1075000,1178000,1296000,1432000,
+> > > -		1576000,1718000,1856000,2036000,2150000};
+> > > -	u32 bandsel[]={0,0x00020000,0x00040000,0x00100800,0x00101000,
+> > > +	static const u32 osci[] = {
+> > > +		950000, 1019000, 1075000, 1178000, 1296000, 1432000,
+> > > +		1576000, 1718000, 1856000, 2036000, 2150000
+> > > +	};
+> > > +	static const u32 bandsel[] = {
+> > > +		0, 0x00020000, 0x00040000, 0x00100800, 0x00101000,
+> > >   		0x00102000,0x00104000,0x00108000,0x00110000,
++			0x00102000, 0x00104000, 0x00108000, 0x00110000,
 
-I'd probably just drop this patch.
+ERROR: space required after that ',' (ctx:VxV)
+#199: FILE: drivers/media/pci/bt8xx/dvb-bt8xx.c:199:
++		0x00102000,0x00104000,0x00108000,0x00110000,
+
+I'm wrong?
+
+Regards,
+Tommaso
+
+> > 
+> > Are you not missing space also here?
+> 
+> I can't see the space you are referring to.
+> 
+> > 
+> > > -		0x00120000,0x00140000};
+> > > +		0x00120000, 0x00140000
+> > > +	};
+> > >   	#define XTAL 1011100 /* Hz, really 1.0111 MHz and a /10 prescaler */
+> > >   	dprintk("cx24108 debug: entering SetTunerFreq, freq=%d\n", freq);
+> > > -- 
+> > > 2.39.2
+> > > 
+> > 
+> > Regards,
+> > Tommaso
+> 
