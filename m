@@ -2,45 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556B6EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7473EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232214AbjF0Oqy (ORCPT
+        id S232017AbjF0Oqz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:46:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43810 "EHLO
+        Tue, 27 Jun 2023 10:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231992AbjF0Op5 (ORCPT
+        with ESMTP id S231993AbjF0Op6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:45:57 -0400
+        Tue, 27 Jun 2023 10:45:58 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 391013593;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02EF30E5;
         Tue, 27 Jun 2023 07:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1fuBHkuVCLvBAw8MSaPz0+UJaQZjfgmRVP18IwyNeDQ=;
-  b=OThXz5HOfGeTx9GD1nvtvqYG/QJvKBhAtvHz62cnidSYuUWImbYlLedV
-   QyDiCsD4jvF4TDB040IrOhHB/CSeZG4H1P4v4+Zu6HW/zl+fwnSIwGIYT
-   nJ93hxVqPqxEW9Mu1JxrZeFxmha8G4U9oBr7c2HOjcOaDb2Po5/neaAlT
-   Y=;
+  bh=Z82TQ5gJtsAQsS8pQEGxb7cmdrfE0splW6XwEm1/6wU=;
+  b=iHdVPjsdGYPUTWXu4Ea7YwNhgAHax/50Ctdon4mH6O9Lm0GAA6tq10Hq
+   qpugFsfftNxOqg1ePJ9wS48K0v0nTQ2yH8JsF6EyFw8CUraY+BkP6Lr0a
+   8faRDg0zoYpPt6Zw8zxx/r+fj+B0Y/oAEVT8RP7qie5okcXB+89hhiW//
+   E=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,162,1684792800"; 
-   d="scan'208";a="114936346"
+   d="scan'208";a="114936347"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 16:43:53 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nilesh Javali <njavali@marvell.com>
 Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
         christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/24] vduse: use vmalloc_array and vcalloc
-Date:   Tue, 27 Jun 2023 16:43:38 +0200
-Message-Id: <20230627144339.144478-24-Julia.Lawall@inria.fr>
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 24/24] scsi: qla2xxx: use vmalloc_array and vcalloc
+Date:   Tue, 27 Jun 2023 16:43:39 +0200
+Message-Id: <20230627144339.144478-25-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
 References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
@@ -82,7 +82,7 @@ let rename alloc =
 |
       alloc(C1 * C2)
 |
-      alloc((sizeof(t)) * (COUNT))
+      alloc((sizeof(t)) * (COUNT), ...)
 |
 -     alloc((e1) * (e2))
 +     realloc(e1, e2)
@@ -100,24 +100,30 @@ Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 ---
 v2: Use vmalloc_array and vcalloc instead of array_size.
 This also leaves a multiplication of a constant by a sizeof
-as is.  The position of this patch in the series changed
-accordingly.
+as is.  Two patches are thus dropped from the series.
 
- drivers/vdpa/vdpa_user/iova_domain.c |    4 ++--
+ drivers/scsi/qla2xxx/qla_init.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
---- a/drivers/vdpa/vdpa_user/iova_domain.c
-+++ b/drivers/vdpa/vdpa_user/iova_domain.c
-@@ -571,8 +571,8 @@ vduse_domain_create(unsigned long iova_l
- 
- 	domain->iova_limit = iova_limit;
- 	domain->bounce_size = PAGE_ALIGN(bounce_size);
--	domain->bounce_maps = vzalloc(bounce_pfns *
--				sizeof(struct vduse_bounce_map));
-+	domain->bounce_maps = vcalloc(bounce_pfns,
-+				      sizeof(struct vduse_bounce_map));
- 	if (!domain->bounce_maps)
- 		goto err_map;
- 
+diff -u -p a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -8434,7 +8434,7 @@ qla24xx_load_risc_flash(scsi_qla_host_t
+ 		ql_dbg(ql_dbg_init, vha, 0x0163,
+ 		    "-> fwdt%u template allocate template %#x words...\n",
+ 		    j, risc_size);
+-		fwdt->template = vmalloc(risc_size * sizeof(*dcode));
++		fwdt->template = vmalloc_array(risc_size, sizeof(*dcode));
+ 		if (!fwdt->template) {
+ 			ql_log(ql_log_warn, vha, 0x0164,
+ 			    "-> fwdt%u failed allocate template.\n", j);
+@@ -8689,7 +8689,7 @@ qla24xx_load_risc_blob(scsi_qla_host_t *
+ 		ql_dbg(ql_dbg_init, vha, 0x0173,
+ 		    "-> fwdt%u template allocate template %#x words...\n",
+ 		    j, risc_size);
+-		fwdt->template = vmalloc(risc_size * sizeof(*dcode));
++		fwdt->template = vmalloc_array(risc_size, sizeof(*dcode));
+ 		if (!fwdt->template) {
+ 			ql_log(ql_log_warn, vha, 0x0174,
+ 			    "-> fwdt%u failed allocate template.\n", j);
 
