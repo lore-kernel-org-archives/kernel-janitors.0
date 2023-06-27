@@ -2,119 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE0EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 12:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE6AEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 12:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231851AbjF0MJL (ORCPT
+        id S229656AbjF0MRO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 08:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34730 "EHLO
+        Tue, 27 Jun 2023 08:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231842AbjF0MJI (ORCPT
+        with ESMTP id S229468AbjF0MRM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 08:09:08 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F22B2733
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 05:09:01 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3112c11fdc9so3916016f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 05:09:01 -0700 (PDT)
+        Tue, 27 Jun 2023 08:17:12 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C741BE7;
+        Tue, 27 Jun 2023 05:17:10 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so6194691e87.2;
+        Tue, 27 Jun 2023 05:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687867739; x=1690459739;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XjTuTNgKEBvunVd9fAUm7Ppy6mfbSYWQcxqzB1Eo12w=;
-        b=jMET+zhwnS5q6F2CeWL/ZvUUXDxRCD3KIZroZ3mxJHNSTe+pVHeJRDOfbPh/630Aot
-         LOUAHMqjtu3E4Fh2Yoo/r8tatlVx6RP9Waczk9zetDUKGYgMybsikZfJXk8RtbHcaTVS
-         OrpAQ/hULa697u9j25R98sPaSRghRYBcpag4DKF7O5A+4f5g7K4+2eeFvSyZjEWJMcHy
-         cEwewaTPhh4epk8JRB70mg4CTANx+XtlF8iZ4lvBht/Fdo7ToGIeRIJCfgHwo8EKNvg4
-         RAScDKlNtoCmNueMswgykjbNZUBOOYFfWhrqaheSCJAwebY2PpxoBaJX1eZoqBVJ0KeV
-         8V5Q==
+        d=gmail.com; s=20221208; t=1687868229; x=1690460229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zw0XO0K/YJZaGpOs6ScnOWaE2Vp0kSyIA1FOyq+ley8=;
+        b=Y4ZPTg47KBLzs+cPPRkoB4QEQJogOjJOdJjCAiLhGsqferI0CkZhck89KuGf/qZK8m
+         cNG79iYsCpGh0vUfoB1GfwwePp2dBEDo5S6JuiBMe/6lFyJbRGHCQ2453o4AMhZdaxoh
+         zciAkf+nZLm0WQYQYHqenxg3BBIiolRGNJvo/hWrPvw1G3LZnIwCoSQhstGxhC7wWoYO
+         OMQDJAeMLg4K6a+41nFCSWvQVgrXcJxe/w0XgAp9B5YqFkb5PSVqGvg4kdHi/+c2H1Rl
+         6id7Y9bLkRlvGKrNwhweQaiusg7KVIpmU12Fh/+hjFVrQXIDpL2mXonMgkpmfyBtATqM
+         3JMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687867739; x=1690459739;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XjTuTNgKEBvunVd9fAUm7Ppy6mfbSYWQcxqzB1Eo12w=;
-        b=BSvyuPkCsuFZmJAUGChkjKYaSQDPxkGkrsR6a/PYDILAYVyoH6PCB2VWCprBc+Nwml
-         JNf78b+S9oCZm484RG6he1Bfn+rf84OCzPefOjUKT3Be/8jqdaS373590ijFpdtV4wxW
-         uQCErt/tNB1DfLE5kgjHTMXqU+J34GTtpNbuaO3gu1iNsNRN6g4Jm1yeEMSEnhGs5j6+
-         FHDszZglSuQSqS15rI2c6qO81SLHnhRHHk7k4GfINOnNM89M89bxaZStcXXpr+HmCpqU
-         nAsnTEf+DbeZoqZipL2pjEIXr5Dkr0yEzV+YvtAlPZgkwDjNFg7eg+iLZOTE1pK4OPRb
-         dPTA==
-X-Gm-Message-State: AC+VfDz3Y7e7Yjnoku0siu6VIeRu9COP/jrC9yT6WHcMD2bPkLPbKafb
-        X+zFSEjWc2WYi/K3GSvwPgk9wA==
-X-Google-Smtp-Source: ACHHUZ4pCkteu52b9BlAo/HYL/OWS4u9cyn26HsksoVqBbTka5mDErRReBs9tDBbMMGxmHreePz3xg==
-X-Received: by 2002:a05:6000:118f:b0:309:4620:e155 with SMTP id g15-20020a056000118f00b003094620e155mr10664973wrx.49.1687867739301;
-        Tue, 27 Jun 2023 05:08:59 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v10-20020a5d590a000000b0030631a599a0sm10218526wrd.24.2023.06.27.05.08.55
+        d=1e100.net; s=20221208; t=1687868229; x=1690460229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zw0XO0K/YJZaGpOs6ScnOWaE2Vp0kSyIA1FOyq+ley8=;
+        b=dj6upq1M448AKv10Z/A+EFHbm9P2McPvbUOCqD/51JLI+a7HpnL07i5C8E6MM5tiAN
+         PYioXfEwXS6PC+Y7NkhUBf5wh+FJLUCfZ97GowuN+bemMG/Cqb2GR4CptcD5TaNSLBba
+         XA5zIarAjrWU+aw/wdIdeWMdfQd1BZLtbjHTzwZT33Mf0TiatEa3JKEl0yBighsNo/IR
+         s62ktiUzrChp0me/STanU/mvfSm8d4xlSg24mgnAzhPxyabPesfi5F4TJx7aHR7YaAcp
+         /2q5ONE47+wjyp3i0AyXGg4uTIPhHklP/02Fgdx9EFAP2NfVjqNo7Z5wmNqvtR5r5tYE
+         rwJA==
+X-Gm-Message-State: AC+VfDyOgDfv3GUljXMJgUJjBmKhLjBE4GTiyKRXjP3e5osOXj/FImWh
+        eU//QFf0aL/IKk7lq35jtHN5lJo6//M=
+X-Google-Smtp-Source: ACHHUZ4AZlBP0GXgHdZROjji+plUNPA9EpkAsuHPth/8ra4buZBwQysFftdpJP81W+FGiOrbApH5Lg==
+X-Received: by 2002:a19:505d:0:b0:4f8:5ede:d447 with SMTP id z29-20020a19505d000000b004f85eded447mr15585676lfj.28.1687868228732;
+        Tue, 27 Jun 2023 05:17:08 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id c1-20020a056000104100b003140039f318sm1504556wrx.69.2023.06.27.05.17.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 05:08:56 -0700 (PDT)
-Date:   Tue, 27 Jun 2023 15:08:53 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: sun6i-p2wi: Fix an error message in probe()
-Message-ID: <7c6db53c-427d-4ba5-80b7-a069ab9322a0@kadam.mountain>
-References: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
- <20230627115920.c4ms65vgrbiyekc6@intel.intel>
+        Tue, 27 Jun 2023 05:17:07 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] power: supply: bd99954: make read-only array sub_status_reg
+Date:   Tue, 27 Jun 2023 13:17:07 +0100
+Message-Id: <20230627121707.722021-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627115920.c4ms65vgrbiyekc6@intel.intel>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 01:59:20PM +0200, Andi Shyti wrote:
-> Hi Dan,
-> 
-> On Tue, Jun 27, 2023 at 10:12:36AM +0300, Dan Carpenter wrote:
-> > The "ret" variable is uninitialized.  It was the "p2wi->rstc" variable
-> > that was intended.  We can also use the %pe string format to print the
-> > error code name instead of just the number.
-> > 
-> > Fixes: 75ff8a340a81 ("i2c: sun6i-p2wi: Use devm_clk_get_enabled()")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/i2c/busses/i2c-sun6i-p2wi.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c-sun6i-p2wi.c
-> > index ad8270cdbd3e..fa6020dced59 100644
-> > --- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
-> > +++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
-> > @@ -250,7 +250,8 @@ static int p2wi_probe(struct platform_device *pdev)
-> >  
-> >  	p2wi->rstc = devm_reset_control_get_exclusive(dev, NULL);
-> >  	if (IS_ERR(p2wi->rstc)) {
-> > -		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
-> > +		dev_err(dev, "failed to retrieve reset controller: %pe\n",
-> > +			p2wi->rstc);
-> 
-> Yes, good catch! Thanks! But I think we want to print the error
-> value here, so I think it should be:
-> 
-> -		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
-> +		dev_err(dev, "failed to retrieve reset controller: %d\n",
-> +			PTR_ERR(p2wi->rstc));
-> 
+Don't populate the read-only array on the stack, instead make it
+static const.
 
-The %pe which I changed it to is a cool new thing that prints:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/power/supply/bd99954-charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	failed to retrieve reset controller: -EINVAL\n
-
-We should create a similar %e printk format that works for ints instead
-of error pointers.  But instead of that you have people who cast error
-codes to pointers just to get the %pe functionality.  And other people
-who make suggestions (this is the catagory that I'm in) but are too lazy
-to do the actual work.
-
-regards,
-dan carpenter
+diff --git a/drivers/power/supply/bd99954-charger.c b/drivers/power/supply/bd99954-charger.c
+index 086dcf4033c1..1ed1d9f99fb3 100644
+--- a/drivers/power/supply/bd99954-charger.c
++++ b/drivers/power/supply/bd99954-charger.c
+@@ -536,7 +536,7 @@ static irqreturn_t bd9995x_irq_handler_thread(int irq, void *private)
+ 
+ 	for_each_set_bit(i, &tmp, 7) {
+ 		int sub_status, sub_mask;
+-		int sub_status_reg[] = {
++		static const int sub_status_reg[] = {
+ 			INT1_STATUS, INT2_STATUS, INT3_STATUS, INT4_STATUS,
+ 			INT5_STATUS, INT6_STATUS, INT7_STATUS,
+ 		};
+-- 
+2.39.2
 
