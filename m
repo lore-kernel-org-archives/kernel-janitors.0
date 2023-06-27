@@ -2,90 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B6DEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 11:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B93CEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 11:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbjF0LdA (ORCPT
+        id S231670AbjF0L7f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 07:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
+        Tue, 27 Jun 2023 07:59:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbjF0Lc6 (ORCPT
+        with ESMTP id S231669AbjF0L7b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 07:32:58 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C2326B8;
-        Tue, 27 Jun 2023 04:32:57 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b69a48368fso40301541fa.0;
-        Tue, 27 Jun 2023 04:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687865575; x=1690457575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=latEXESOogZnUPOdUSC1WbprrLaf0ZKBvwN2Fizyc0w=;
-        b=SVXDWSDmBzVoIu4D2vclVwhFmmc6g4IsDJlpskbMT9qU4+qYosbHhFmFJydwkLbol+
-         RykW0MvYUyQf4xD/X3hWvkAYKmUHqQ61pqu7IBpYvuImZB7j+/wdvVhi/nAJxqhKMo3y
-         ZEw/DEhiGCQJTsfjR6O+7kLo+2A5us3qkp4OKDLpzeZcgALr0gJcCvaUrGFhjE6xL5b7
-         alHUUHavuGQRs0HgelnEkBUZQFFekVrkG0Hpa+rUTp3UOoQbYTZ2iZMexMRA3a1hlo2D
-         CXeGXUoUXHuN9Gug694Ev0pMoLj3/T0XTlYie3CGC+pw7Sj10FjBb9xXBaimwkgy6Txv
-         5r4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687865575; x=1690457575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=latEXESOogZnUPOdUSC1WbprrLaf0ZKBvwN2Fizyc0w=;
-        b=MMcW1ZDVCDhZIWutzlJ1PKDSpFXbBsY5BBsmQ7mdOiPrL4bYDQ/4MjGWH4ZFyv9gM+
-         Rus/mGXjYDqEUpe/PYTv+5Vw4LG461+c5WluK04EWnCbS6LW6t2xFRfCUtRyDtCA/Ki+
-         ZteaXgosLrSSvD844IFWKhiWUuCrzHsE2pYR/mGKv0P95FRbevbnWRsMecUB2yjbaFVB
-         R4ZJGwImoIAeg7V07fUbXHtlQ8DbginEA8M8Dp4xrMnwRNsGJJc5tDR9lQcVOqBFkd0x
-         LehmSH6cLzHJ9dECgx/KM+b9A3a6FJJ50f34OrMKNApH/OTMtAWpisy1n1YzSgXWlv3b
-         q9CQ==
-X-Gm-Message-State: AC+VfDyShe/TdA6/3e6fIi33bDIdX3EcMD7pRuwYRw3nvezIBX90rc2T
-        pCB5aSjvmYO38xbqe1DeKkE=
-X-Google-Smtp-Source: ACHHUZ4+fT4OuXpoIilYTnkrqDKpDJyrPtrc9BdzgajLJRgmaHKRTRVwrIPAKVjVZJaxUcf9rhkRxQ==
-X-Received: by 2002:a19:6d0c:0:b0:4f8:4245:ed57 with SMTP id i12-20020a196d0c000000b004f84245ed57mr19871536lfc.35.1687865575347;
-        Tue, 27 Jun 2023 04:32:55 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f10-20020a7bcd0a000000b003fa99969e61sm4868605wmj.45.2023.06.27.04.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 04:32:54 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: oxfw: make read-only const array models static
-Date:   Tue, 27 Jun 2023 12:32:53 +0100
-Message-Id: <20230627113253.700065-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 27 Jun 2023 07:59:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70F47171A;
+        Tue, 27 Jun 2023 04:59:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 065C361197;
+        Tue, 27 Jun 2023 11:59:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C68C433C8;
+        Tue, 27 Jun 2023 11:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687867164;
+        bh=OMH79suvV90YGL/6hCh1wogF4ewTEowNOGyXoNxRihs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n1vprvjajWvHh2Q9wrPdei22SiZ0xoAlXqJXE+YES9kzBAIg7VI2Fl8iz4Ay00fEd
+         RzFkALzAVVcgMPsDUddXn45o1Xt71kYRIsRPJcJznH8ECJhPw2L7VZM3dpIZViNas/
+         FjnS0SFvuJvU0TPHhkem19iKqIQhH4Oy4qxgdXdwxiC/m+Z+QRRLThw3tLskHLTuCU
+         hKsNK+aXyN9IGTOdKLJueM2FTHm9cQX4LTTLZB+JnU8+dz66n4i6PGoyIe0xmG+AFR
+         8xIgI2ddjPuedG9sE2RyO3GKKKTURJOgIHe4Bpu4qNdJNginaQDl+Sh2iP81BCwZDD
+         z0OYwpx5dFrSw==
+Date:   Tue, 27 Jun 2023 13:59:20 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: sun6i-p2wi: Fix an error message in probe()
+Message-ID: <20230627115920.c4ms65vgrbiyekc6@intel.intel>
+References: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const array on the stack, instead make it static.
+Hi Dan,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/firewire/oxfw/oxfw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jun 27, 2023 at 10:12:36AM +0300, Dan Carpenter wrote:
+> The "ret" variable is uninitialized.  It was the "p2wi->rstc" variable
+> that was intended.  We can also use the %pe string format to print the
+> error code name instead of just the number.
+> 
+> Fixes: 75ff8a340a81 ("i2c: sun6i-p2wi: Use devm_clk_get_enabled()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-sun6i-p2wi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> index ad8270cdbd3e..fa6020dced59 100644
+> --- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> +++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> @@ -250,7 +250,8 @@ static int p2wi_probe(struct platform_device *pdev)
+>  
+>  	p2wi->rstc = devm_reset_control_get_exclusive(dev, NULL);
+>  	if (IS_ERR(p2wi->rstc)) {
+> -		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
+> +		dev_err(dev, "failed to retrieve reset controller: %pe\n",
+> +			p2wi->rstc);
 
-diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-index 9523479fa94a..63d40f1a914f 100644
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -44,7 +44,7 @@ struct compat_info {
- 
- static bool detect_loud_models(struct fw_unit *unit)
- {
--	const char *const models[] = {
-+	static const char *const models[] = {
- 		"Onyxi",
- 		"Onyx-i",
- 		"Onyx 1640i",
--- 
-2.39.2
+Yes, good catch! Thanks! But I think we want to print the error
+value here, so I think it should be:
 
+-		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
++		dev_err(dev, "failed to retrieve reset controller: %d\n",
++			PTR_ERR(p2wi->rstc));
+
+Andi
+
+>  		return PTR_ERR(p2wi->rstc);
+>  	}
+>  
+> -- 
+> 2.39.2
+> 
