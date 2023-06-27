@@ -2,123 +2,135 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A205AEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 04:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B69EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 04:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbjF0ENm (ORCPT
+        id S230489AbjF0EnU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 00:13:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54598 "EHLO
+        Tue, 27 Jun 2023 00:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbjF0ENk (ORCPT
+        with ESMTP id S230465AbjF0EmV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 00:13:40 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BEE10FC;
-        Mon, 26 Jun 2023 21:13:39 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35QMjDNN029311;
-        Tue, 27 Jun 2023 04:13:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=qE1HJ292s3PXvLRoSr2Nw3hL8I7+kggKD9BrBYerbDA=;
- b=a5t50CXV4q8mIIpAJq12aaDS/qBcZvmjsY+27MVXUsvUPmreAXKZ5Gu40e0RceaWryoP
- 6jUsKdSxVQ6o9vqZF8AAyCptj/QH330OLUNFvGLsb0iEQg0anIe+AkQqNLQgHiJ00vVl
- w6UDOrr7AFQzr6Ave5R9AnWibIJfNwnFYKmSXFMGXXnCf5wdYEIQZB0umN4Ae46UqhDH
- Mumx9Ekv08CvodsXBk+deCrb1YA3kgAZ2LhVXTgdRFHIguMJ3Ri1MJPKMcgQNe62yO34
- Nf0EPxwh44p4LHMlgY89Wq5qlLiYEK3Huv7JRo8F+K2i2YOI3R3E7O5c7rs392GbuUx5 4g== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3rds1u3yvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Jun 2023 04:13:22 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 35R1DS8U026348;
-        Tue, 27 Jun 2023 04:13:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3rdpxaehdq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Jun 2023 04:13:21 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35R4DLTQ009154;
-        Tue, 27 Jun 2023 04:13:21 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3rdpxaeh80-1;
-        Tue, 27 Jun 2023 04:13:21 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     harshit.m.mogalapalli@oracle.com, error27@gmail.com,
-        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Adam Skladowski <a39.skl@gmail.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH next] drm/msm/a5xx: Fix a NULL dereference bug in a5xx_gpu_init()
-Date:   Mon, 26 Jun 2023 21:12:35 -0700
-Message-ID: <20230627041250.3899791-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.41.0
+        Tue, 27 Jun 2023 00:42:21 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D7E26A9;
+        Mon, 26 Jun 2023 21:39:35 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id d75a77b69052e-3fde9739e20so36206741cf.2;
+        Mon, 26 Jun 2023 21:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687840774; x=1690432774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KHjpNQzC+Q2IL4RRpRsi47zUXLa6D+m3AFuxLIltpF8=;
+        b=CnVTrczLMg8QFVCBFHPfMRjMxrIASRqOLsER1JxRAinp3ld7kL0lTsyegx9oceTyIj
+         iY664TOITPnCHmFw6goWhzR5plg5jKQ+q9z/c1zXzwFXCUFrrP6cZCsmpuKW/sw0ZDLw
+         zGj6VCzhF1zSagoJevB/51wWSv8XS/doEm6uRdG+xUVLkjEu61kF0BTljM0yT8tAMwW1
+         IXmISC8Xmj/Lgo7BGtpFSSc8X0kEa6HJwXkvDw+3PBCB/np3l8uVxD8RpwY64Ftk1/wQ
+         hXczvr1GgfS0K4vPMwyPiP74dXrtxUCIU9ROIL98qIcj2zpq3gl+br3YGdYFHcoLlyCH
+         jP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687840774; x=1690432774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KHjpNQzC+Q2IL4RRpRsi47zUXLa6D+m3AFuxLIltpF8=;
+        b=LYBtP4kPy1g1yyEx2MwM54VBkiluN79XlJCPE4b/C9W3YXe7Qhb+cCKvdbakprlf3d
+         ttDQ3x3t4rI7KZw17RYokZsdi9BS/C+9zXq4vAyKCLUENCXSZSXLbmM7hxqnCETizu39
+         Q2SAKp1cbmJa+nC8qHbfU+DSbBmS5U6Q7B6xlP+P8FPunNMMhPeN1jAB8BCzRH6/Xk6V
+         WaBMdv+41QTJ7HwXGpBmr+DcgqHKncRJIg3P0zwVl+rbFrUrOtbtyD+z+xAuzZCJqQfS
+         tIBTmzzio3gNy62jJOzZcwud3mIw0qZo4yJ9nbG+uyOilwVOfPHAZAxAuEqUIXaLt4zE
+         nBow==
+X-Gm-Message-State: AC+VfDw+S6T/4CdgyahroWGbODYLx9UOSrb2kvohm0MyKjl4+2pzazwa
+        4rZPHvILzY7W7hzONSznK+4oqTvlLnWYROOauOhSXSbO
+X-Google-Smtp-Source: ACHHUZ4GSlYEvU37ypfSllsBQwmEC/ZFbZttxU6BLxrKovFxHaP/9/t4wZHgV/0Su67X8dWbNZUnSbB48eH8jYBha8o=
+X-Received: by 2002:ac8:7f87:0:b0:3ff:21f1:93f with SMTP id
+ z7-20020ac87f87000000b003ff21f1093fmr21972608qtj.7.1687840774037; Mon, 26 Jun
+ 2023 21:39:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-27_01,2023-06-26_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306270039
-X-Proofpoint-GUID: yfOpun_fnhTicgyspkhXL1luRak9scc_
-X-Proofpoint-ORIG-GUID: yfOpun_fnhTicgyspkhXL1luRak9scc_
-To:     unlisted-recipients:; (no To-header on input)
+References: <72b05526-4dda-430a-b4ca-2ee4f26f2185@moroto.mountain>
+In-Reply-To: <72b05526-4dda-430a-b4ca-2ee4f26f2185@moroto.mountain>
+From:   Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Date:   Tue, 27 Jun 2023 07:39:17 +0300
+Message-ID: <CAPpZLN4ACVRrDXofO9jNQznEuF+CK6KNbCCz=5t93kMzESbZGg@mail.gmail.com>
+Subject: Re: [RFC] tracing: Cleanup the correct ep in enable_trace_eprobe()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch complains:
-	drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1753
-	a5xx_gpu_init() warn: variable dereferenced before
-	check 'pdev' (see line 1746)
+On Mon, Jun 26, 2023 at 4:35=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> If enable_eprobe() function fails, then we call  disable_eprobe() on the
+> "ep" that failed.  That doesn't feel right.  Shouldn't we
+> call disable_eprobe() on the previous "ep" instead?  Or even better on
+> all the previous eps (but I don't know how to do that)...
 
-When no device is defined, dereferencing pdev is a NULL dereference.
-Fix this by dereferencing pdev to get the config post the NULL check.
+Hi Dan,
+There is no need to disable the eprobes which are already successfully
+registered to the given trace probe, as they will be disabled using
+the normal logic. The failed epropbe is not registered there, that's
+why it must be disabled explicitly.  Thanks for digging into that
+code!
 
-Fixes: 736a93273656 ("drm/msm/a5xx: really check for A510 in a5xx_gpu_init")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis, only compile tested.
----
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> This patch is not tested at all.  I'm mostly sending it as a kind of
+> bug report.  If this patch is correct or the fix is simple enough for
+> an absolute moron to fix it then I can probably do that.  But if it's
+> something I'm too stupid to handle then could you just give me reported
+> by credit?  (That is the solution I really would prefer).
+>
+> Fixes: 7491e2c44278 ("tracing: Add a probe that attaches to trace events"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  kernel/trace/trace_eprobe.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+> index b5181d690b4d..29de54347b8c 100644
+> --- a/kernel/trace/trace_eprobe.c
+> +++ b/kernel/trace/trace_eprobe.c
+> @@ -640,8 +640,8 @@ static int disable_eprobe(struct trace_eprobe *ep,
+>  static int enable_trace_eprobe(struct trace_event_call *call,
+>                                struct trace_event_file *file)
+>  {
+> +       struct trace_eprobe *ep, *prev =3D NULL;
+>         struct trace_probe *pos, *tp;
+> -       struct trace_eprobe *ep;
+>         bool enabled;
+>         int ret =3D 0;
+>
+> @@ -666,13 +666,13 @@ static int enable_trace_eprobe(struct trace_event_c=
+all *call,
+>                 ret =3D enable_eprobe(ep, file);
+>                 if (ret)
+>                         break;
+> -               enabled =3D true;
+> +               prev =3D ep;
+>         }
+>
+>         if (ret) {
+>                 /* Failed to enable one of them. Roll back all */
+> -               if (enabled)
+> -                       disable_eprobe(ep, file->tr);
+> +               if (prev)
+> +                       disable_eprobe(prev, file->tr);
+>                 if (file)
+>                         trace_probe_remove_file(tp, file);
+>                 else
+> --
+> 2.39.2
+>
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index a99310b68793..adaf8f8e7f2d 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -1743,7 +1743,7 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
- {
- 	struct msm_drm_private *priv = dev->dev_private;
- 	struct platform_device *pdev = priv->gpu_pdev;
--	struct adreno_platform_config *config = pdev->dev.platform_data;
-+	struct adreno_platform_config *config;
- 	struct a5xx_gpu *a5xx_gpu = NULL;
- 	struct adreno_gpu *adreno_gpu;
- 	struct msm_gpu *gpu;
-@@ -1755,6 +1755,8 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
- 		return ERR_PTR(-ENXIO);
- 	}
- 
-+	config = pdev->dev.platform_data;
-+
- 	a5xx_gpu = kzalloc(sizeof(*a5xx_gpu), GFP_KERNEL);
- 	if (!a5xx_gpu)
- 		return ERR_PTR(-ENOMEM);
--- 
-2.39.3
 
+--=20
+Tzvetomir (Ceco) Stoyanov
+VMware Open Source Technology Center
