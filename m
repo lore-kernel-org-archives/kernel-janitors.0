@@ -2,43 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEF7EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 678F8C001B1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbjF0Oqs (ORCPT
+        id S231996AbjF0Oqx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43238 "EHLO
+        Tue, 27 Jun 2023 10:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231986AbjF0Op4 (ORCPT
+        with ESMTP id S231990AbjF0Op6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:45:56 -0400
+        Tue, 27 Jun 2023 10:45:58 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A5F41A2;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1548835A6;
         Tue, 27 Jun 2023 07:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=VbQwbhgrDYedmuD3Y7RCVQ57pP4c57YQ3unyPj5Q6N4=;
-  b=nMz70TxR38nwlO049zqy5wzxY7CBD7tWCsU5Sn6Y6MlVDUptwIcjVDE5
-   p6BL4QWGL3Ag4tQzyaC7hjRzFtGLZRTZymYhHQTTx2ihXgi3j+8n0iMOR
-   bFTgYsROCO8yKBSy3R85gXtUQz94fVgblUf+B/eGNjmAxR9FgkimEm8r1
-   c=;
+  bh=rUzmkjTakIf1l5Hdr1TLtSGZWZezFJIK9Clkpx3VPN4=;
+  b=YU2muZyAimuOaNCN/40I/rQBJ4UKO7cZzX4Ns4xfMNxcNtf60stG8vLV
+   OUQT7SM9PQDqEiNQb+GJRV7tsNdaMhbSut5FfSyOzxaZDsiUfbnN8/yiX
+   zL2fR+ESjZuSBV6CTlVOC54xtEJBTZW28IAqKnqEDsce1t7x/6m+mZ0e+
+   k=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,162,1684792800"; 
-   d="scan'208";a="114936343"
+   d="scan'208";a="114936345"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 16:43:52 +0200
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 16:43:53 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Ian Abbott <abbotti@mev.co.uk>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>
 Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
         christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 20/24] comedi: use vmalloc_array and vcalloc
-Date:   Tue, 27 Jun 2023 16:43:35 +0200
-Message-Id: <20230627144339.144478-21-Julia.Lawall@inria.fr>
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, linux-hyperv@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 22/24] net: mana: use vmalloc_array and vcalloc
+Date:   Tue, 27 Jun 2023 16:43:37 +0200
+Message-Id: <20230627144339.144478-23-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
 References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
@@ -80,7 +84,7 @@ let rename alloc =
 |
       alloc(C1 * C2)
 |
-      alloc((sizeof(t)) * (COUNT))
+      alloc((sizeof(t)) * (COUNT), ...)
 |
 -     alloc((e1) * (e2))
 +     realloc(e1, e2)
@@ -98,31 +102,21 @@ Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 ---
 v2: Use vmalloc_array and vcalloc instead of array_size.
 This also leaves a multiplication of a constant by a sizeof
-as is.  The position of this patch in the series changed
-accordingly.
+as is.  Two patches are thus dropped from the series.
 
- drivers/comedi/comedi_buf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/microsoft/mana/hw_channel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
---- a/drivers/comedi/comedi_buf.c
-+++ b/drivers/comedi/comedi_buf.c
-@@ -89,7 +89,7 @@ comedi_buf_map_alloc(struct comedi_devic
- 		bm->dma_hw_dev = get_device(dev->hw_dev);
- 	}
+diff -u -p a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+--- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
++++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+@@ -627,7 +627,7 @@ static int mana_hwc_establish_channel(st
+ 	if (WARN_ON(cq->id >= gc->max_num_cqs))
+ 		return -EPROTO;
  
--	bm->page_list = vzalloc(sizeof(*buf) * n_pages);
-+	bm->page_list = vcalloc(n_pages, sizeof(*buf));
- 	if (!bm->page_list)
- 		goto err;
- 
-@@ -169,7 +169,7 @@ static void __comedi_buf_alloc(struct co
- 		buf = &bm->page_list[0];
- 		async->prealloc_buf = buf->virt_addr;
- 	} else {
--		pages = vmalloc(sizeof(struct page *) * n_pages);
-+		pages = vmalloc_array(n_pages, sizeof(struct page *));
- 		if (!pages)
- 			return;
+-	gc->cq_table = vzalloc(gc->max_num_cqs * sizeof(struct gdma_queue *));
++	gc->cq_table = vcalloc(gc->max_num_cqs, sizeof(struct gdma_queue *));
+ 	if (!gc->cq_table)
+ 		return -ENOMEM;
  
 
