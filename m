@@ -2,44 +2,41 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AB0EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB517EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 14:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231888AbjF0Op2 (ORCPT
+        id S231923AbjF0Op3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
+        Tue, 27 Jun 2023 10:45:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232169AbjF0OpF (ORCPT
+        with ESMTP id S231684AbjF0Oop (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:45:05 -0400
+        Tue, 27 Jun 2023 10:44:45 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9313B2D69;
-        Tue, 27 Jun 2023 07:44:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7654F12C;
+        Tue, 27 Jun 2023 07:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=e/q9GJUjVjbhzGKibBqdfdyRa1uJDPYc59CeSzfnNk0=;
-  b=LFjLqDcUJOS8QiGxmMwTJ1y4Iep+0HGsVtpDuCawBY5+SQrzARKEYY+e
-   LpJ/2nlUx2u6cO9WYFeUn5ZI5IackFgqx7NrkFGfOUSrq5MH+vXpPKEWq
-   4rRq0ltEIc/oqu2mZbmlmaagNsebxFirot+mQAJKsleackI83o/NMh+pZ
+  bh=cW6FsUc372OgjCXWGlVTOpJDBn/sKhwbAV7MvUlsfDU=;
+  b=jWt7EReJ5kDtaESX69GV8d4liYZONaNjYK6YwdVqiDhOrR+UO9w9kKRo
+   +ywuVIwSPjmV/l3kagzTPaaXWEA08ystOtiHsidk5aXckj/9gzF9Rpoj3
+   I1ITEQ51Rbp6KM/FiTv0VHqRI8yNXSJ9Lc78ZzS16NIIda7XjaWrQUZT3
    A=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.01,162,1684792800"; 
-   d="scan'208";a="114936320"
+   d="scan'208";a="114936318"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 16:43:51 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/24] drm/gud: use vmalloc_array and vcalloc
-Date:   Tue, 27 Jun 2023 16:43:18 +0200
-Message-Id: <20230627144339.144478-4-Julia.Lawall@inria.fr>
+        christophe.jaillet@wanadoo.fr, kuba@kernel.org
+Subject: [PATCH v2 01/24] lib/test_vmalloc.c: use vmalloc_array and vcalloc
+Date:   Tue, 27 Jun 2023 16:43:16 +0200
+Message-Id: <20230627144339.144478-2-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
 References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
@@ -101,19 +98,43 @@ v2: Use vmalloc_array and vcalloc instead of array_size.
 This also leaves a multiplication of a constant by a sizeof
 as is.  Two patches are thus dropped from the series.
 
- drivers/gpu/drm/gud/gud_pipe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_vmalloc.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff -u -p a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
---- a/drivers/gpu/drm/gud/gud_pipe.c
-+++ b/drivers/gpu/drm/gud/gud_pipe.c
-@@ -390,7 +390,7 @@ static int gud_fb_queue_damage(struct gu
- 	mutex_lock(&gdrm->damage_lock);
+diff -u -p a/lib/test_vmalloc.c b/lib/test_vmalloc.c
+--- a/lib/test_vmalloc.c
++++ b/lib/test_vmalloc.c
+@@ -156,7 +156,7 @@ static int random_size_alloc_test(void)
  
- 	if (!gdrm->shadow_buf) {
--		gdrm->shadow_buf = vzalloc(fb->pitches[0] * fb->height);
-+		gdrm->shadow_buf = vcalloc(fb->pitches[0], fb->height);
- 		if (!gdrm->shadow_buf) {
- 			mutex_unlock(&gdrm->damage_lock);
- 			return -ENOMEM;
+ 	for (i = 0; i < test_loop_count; i++) {
+ 		n = get_random_u32_inclusive(1, 100);
+-		p = vmalloc(n * PAGE_SIZE);
++		p = vmalloc_array(n, PAGE_SIZE);
+ 
+ 		if (!p)
+ 			return -1;
+@@ -221,11 +221,11 @@ static int full_fit_alloc_test(void)
+ 	junk_length = fls(num_online_cpus());
+ 	junk_length *= (32 * 1024 * 1024 / PAGE_SIZE);
+ 
+-	ptr = vmalloc(sizeof(void *) * junk_length);
++	ptr = vmalloc_array(junk_length, sizeof(void *));
+ 	if (!ptr)
+ 		return rv;
+ 
+-	junk_ptr = vmalloc(sizeof(void *) * junk_length);
++	junk_ptr = vmalloc_array(junk_length, sizeof(void *));
+ 	if (!junk_ptr) {
+ 		vfree(ptr);
+ 		return rv;
+@@ -271,7 +271,8 @@ static int fix_size_alloc_test(void)
+ 		if (use_huge)
+ 			ptr = vmalloc_huge((nr_pages > 0 ? nr_pages:1) * PAGE_SIZE, GFP_KERNEL);
+ 		else
+-			ptr = vmalloc((nr_pages > 0 ? nr_pages:1) * PAGE_SIZE);
++			ptr = vmalloc_array(nr_pages > 0 ? nr_pages : 1,
++					    PAGE_SIZE);
+ 
+ 		if (!ptr)
+ 			return -1;
 
