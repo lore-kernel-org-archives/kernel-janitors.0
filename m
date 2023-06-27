@@ -2,92 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF0BEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 12:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C2DEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 12:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbjF0Mik (ORCPT
+        id S229841AbjF0M4R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 08:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44344 "EHLO
+        Tue, 27 Jun 2023 08:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbjF0Mij (ORCPT
+        with ESMTP id S229740AbjF0M4Q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 08:38:39 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C330DD;
-        Tue, 27 Jun 2023 05:38:38 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-98bcc533490so539492666b.0;
-        Tue, 27 Jun 2023 05:38:38 -0700 (PDT)
+        Tue, 27 Jun 2023 08:56:16 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBED26BA;
+        Tue, 27 Jun 2023 05:56:15 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fa7512e599so55157345e9.2;
+        Tue, 27 Jun 2023 05:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687869517; x=1690461517;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OGrEp5Q39HZGQ82JmPmmh2H94aW0HaIcywyFDbjcurE=;
-        b=NOB+ERmjStBCqjkPlUmP0vwjHclGmaLXnqNDFHvHmtpwUsypiY0Dtg72njUZPar5fx
-         CMvsdYa1RXWaHtmHE7/6LS64Hc7BlWnUNxZ6QfZiOQEw5+J61NdWupYFNjah6fJ7KpbR
-         D+O8KhKUI1jxIrmJyXi1VJ46pPvlWBiDBxQTvq5fXQLreeb5Vm4A+qaLpd8YJ89U3Txg
-         8IvQKsRZWyFKZyh2vCzBgo8DhCBTHAK25K1WtFERxDQdKYOnv2gKjFHSsp3ndc7tB0nR
-         lPuNnof4ooUQ+36toCZHblt3mVHO1b/juwSFn4mVBx4he9scyvzUYeZqP0xL8VX2Sn1l
-         Btcg==
+        d=gmail.com; s=20221208; t=1687870574; x=1690462574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0CmpeFe/W7bct0on6Cvz9lgbR3MqPfbzft85pRxf6ro=;
+        b=g4OCr0xCnqtOLwIff9cOjbimo678mSohP7uVU+SD3EwzZ17aTKL42gv2ikphvZsson
+         5g6ylW6ZyahqPBuFpa+opBxL8HbO9AgV52ftmztGHHX4jfHHjuxpiwu6zmnQ7IEZ9DwF
+         4ZF+Yx+ozMUfGWsl57m0KyXjmbFERhb4/PW8Xktz3dQMg4/hnxcY/iUi7bpMxRJPa4Yu
+         XkIpxBjyIygPv/ik0WZhzZTW24DFy14gP9TkOXvLR1eu5aArTsAy0SeD5Po0PtPKpFuc
+         wJ//VE+td7ipEXQyL67jvpywdnqquB7g/8lDcFxWhrU/wnxZHyAKkHnAkYyNyQ74Z/cY
+         K4XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687869517; x=1690461517;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGrEp5Q39HZGQ82JmPmmh2H94aW0HaIcywyFDbjcurE=;
-        b=MwOmoqeGHqa4pd++TTaFa6UOfHO0ZltDgwQ7m/uCmMa0llvaDUBztEU6dbp1xG1zhs
-         8JAsB86KavtD3exn9gtH39XmMHoAaNnWaOm41tM/jnVi9B3Ve/REQZ+EEkuuD5cZXn0i
-         BL/nPjraMXOhatHo1gMImRt+v1ZKtiZAKSJTve4ai1MQ67NBRmZ85WfOj0lwqp0EHKQD
-         XDLWTOfvNXj+D2zc/XDrYAPPFH2OPhdpHQU/dvdp4LVJvjzimXtvzx5ZDakwtp480dgs
-         vo/byhJuKNqb3JW1AjwVCjLI0zOoZGYk36+iCzaBnJIKpD6dae1Bq/ee7ctTm9J+2UZY
-         MfBw==
-X-Gm-Message-State: AC+VfDy2RmjNtfVKTyYwO2+7hkozG0UPWRMePel892bozmmOjb/MMgj3
-        /Dt85w42xfCOqSL2HnJXtrATCssR5E0+Qg==
-X-Google-Smtp-Source: ACHHUZ5PyNyzI/RcofGx13FdqXcShZMBIm55egb8GztHqoIAr75k6TPoNEICmVO1Te79u4XXd8uENA==
-X-Received: by 2002:a17:907:3e0a:b0:974:1ef1:81ad with SMTP id hp10-20020a1709073e0a00b009741ef181admr30559593ejc.4.1687869516574;
-        Tue, 27 Jun 2023 05:38:36 -0700 (PDT)
-Received: from [192.168.148.233] ([193.85.242.128])
-        by smtp.gmail.com with ESMTPSA id a3-20020a17090682c300b00992025654c4sm1083297ejy.182.2023.06.27.05.38.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 05:38:36 -0700 (PDT)
-Message-ID: <94dca2c3-e5fc-c4bc-a945-31ebb728e353@gmail.com>
-Date:   Tue, 27 Jun 2023 15:38:35 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH][next] power: supply: bd99954: make read-only array
- sub_status_reg
-Content-Language: en-US, en-GB
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+        d=1e100.net; s=20221208; t=1687870574; x=1690462574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0CmpeFe/W7bct0on6Cvz9lgbR3MqPfbzft85pRxf6ro=;
+        b=RREWShUzvQh8876NqqIzDdmQeHA9dfxUAwcRC65DAfbD/qUJC4PiopD1FTsh2Otlrp
+         P666M4PhwpEgdDb9XH2wEiPMJy4FSBHizagB4aHLW4Kt4ibojM4QkjpkcM2i0L2Naw8q
+         CVlY6PZXF15vjUvdkVPeHJwOLYtxQS6EPfd/awU8kdynQ35KkW8MtxbAhmaOvoD7IPH3
+         xglb/Z3JbQE0qICmFPtj0CKGD+LvmBkgyrr1CyjOU8g6JAVCu+D529qMjMt1sy9HYA9S
+         WT5uvatrvCQFkvfdE1nFQlRJYnf5H64Znzf6xbL6dz2HCSy/NHResbE42yOOU84bFLc/
+         yLPA==
+X-Gm-Message-State: AC+VfDwUfOv07y0hpoxcHMos47297h/9DlKGRbIRmz4loJLjxwvKZD3s
+        ql6UAPHRBe5h1LSBbGZsxyoYubN0uyC8sg==
+X-Google-Smtp-Source: ACHHUZ7zKsWmfe9syFfOnBXnGTnLWMSLV/h5hNjDh/rD9v8tbqRWdWWlu+EGK0726d1L4A3TSdoh6A==
+X-Received: by 2002:a1c:7705:0:b0:3fa:c3e8:901a with SMTP id t5-20020a1c7705000000b003fac3e8901amr3249818wmi.25.1687870574209;
+        Tue, 27 Jun 2023 05:56:14 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id x9-20020a05600c21c900b003fb41491670sm3321616wmj.24.2023.06.27.05.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 05:56:13 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230627121707.722021-1-colin.i.king@gmail.com>
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20230627121707.722021-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH][next] PCI: ibmphp: make read-only arrays static
+Date:   Tue, 27 Jun 2023 13:56:12 +0100
+Message-Id: <20230627125612.724764-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/27/23 15:17, Colin Ian King wrote:
-> Don't populate the read-only array on the stack, instead make it
-> static const.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Don't populate the arrays on the stack, instead make them static const.
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pci/hotplug/ibmphp_pci.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks!
-
-Yours,
--- Matti
-
+diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
+index 754c3f23282e..50038e5f9ca4 100644
+--- a/drivers/pci/hotplug/ibmphp_pci.c
++++ b/drivers/pci/hotplug/ibmphp_pci.c
+@@ -329,7 +329,7 @@ int ibmphp_configure_card(struct pci_func *func, u8 slotno)
+ static int configure_device(struct pci_func *func)
+ {
+ 	u32 bar[6];
+-	u32 address[] = {
++	static const u32 address[] = {
+ 		PCI_BASE_ADDRESS_0,
+ 		PCI_BASE_ADDRESS_1,
+ 		PCI_BASE_ADDRESS_2,
+@@ -564,7 +564,7 @@ static int configure_bridge(struct pci_func **func_passed, u8 slotno)
+ 	struct resource_node *pfmem = NULL;
+ 	struct resource_node *bus_pfmem[2] = {NULL, NULL};
+ 	struct bus_node *bus;
+-	u32 address[] = {
++	static const u32 address[] = {
+ 		PCI_BASE_ADDRESS_0,
+ 		PCI_BASE_ADDRESS_1,
+ 		0
+@@ -1053,7 +1053,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
+ 	int howmany = 0;	/*this is to see if there are any devices behind the bridge */
+ 
+ 	u32 bar[6], class;
+-	u32 address[] = {
++	static const u32 address[] = {
+ 		PCI_BASE_ADDRESS_0,
+ 		PCI_BASE_ADDRESS_1,
+ 		PCI_BASE_ADDRESS_2,
+@@ -1182,7 +1182,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
+ static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
+ {
+ 	u32 start_address;
+-	u32 address[] = {
++	static const u32 address[] = {
+ 		PCI_BASE_ADDRESS_0,
+ 		PCI_BASE_ADDRESS_1,
+ 		PCI_BASE_ADDRESS_2,
+@@ -1310,7 +1310,7 @@ static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
+ 	struct resource_node *mem = NULL;
+ 	struct resource_node *pfmem = NULL;
+ 	struct bus_node *bus;
+-	u32 address[] = {
++	static const u32 address[] = {
+ 		PCI_BASE_ADDRESS_0,
+ 		PCI_BASE_ADDRESS_1,
+ 		0
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+2.39.2
 
