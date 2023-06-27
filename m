@@ -2,104 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992D4C001E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 16:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22750EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 17:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232314AbjF0Qk1 (ORCPT
+        id S230220AbjF0RBR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 12:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
+        Tue, 27 Jun 2023 13:01:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbjF0Qk0 (ORCPT
+        with ESMTP id S230131AbjF0RBO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:40:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1DDEF4;
-        Tue, 27 Jun 2023 09:40:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59458611EB;
-        Tue, 27 Jun 2023 16:40:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D8F0C433C9;
-        Tue, 27 Jun 2023 16:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687884023;
-        bh=Mddr9IEnVSSEtvey/EPFRhLi4YnxlTkalZzmHZ6bmJ8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=XGRGiORnH0FmaQ+kclMjYIsE8aiZt7Gs4g5WBNw+zT0ASSus8daZkKZirfbcgaoBv
-         HsuO0nskJhLaiZxylU7zlINMijGNLl9q7WEg/ms3Lh/IrCmjj2LVp6pXCXh1uqP4W3
-         kOcx2VCa4pIOSzcMTF35giAc72J/A42BnFN7K4h/MvLUE7JXaOanngW1cFFib+5J4v
-         8N2ABirViOcrN32FYcrvP15sAv/TezaSVGJHU9rgp1d1sCUFbyUbMRRUsWjqDMoEYN
-         HlJlhL0V9YgQDqvmqEWLdtvBli6Q5b70JaJ8QNh8cP8DiB/xBCXlUB+GXHpoI+1ee3
-         oj4CRUwtvenNQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7B046C64458;
-        Tue, 27 Jun 2023 16:40:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 27 Jun 2023 13:01:14 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C5F10D5;
+        Tue, 27 Jun 2023 10:01:13 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fb10fd9ad3so21953935e9.0;
+        Tue, 27 Jun 2023 10:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687885272; x=1690477272;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+uGhz1ZekJEDv+o6yXgK9sgLmec5ROnru0Fe+zZ8aiQ=;
+        b=G/E9S1pC+gegYTlgEBMtA32SF9TYtq5yBgLX2e+59/iC0jrdp2iyi9Vmvu/qUMPNRg
+         f1ExwlIa2JlBUOkTeAQk0Zfoh9L4yohYuqRKWgb6XePBAe8BlL6v5JvDitiQC86YHCjp
+         YPqf7s75eBkYneBNzezTK7nvu0QN5VCXM35l40G3c6gstpSMPD0hIbWRY+DYmaYQa8zI
+         UtEAVY9XGaDVlt6IkYGPDObGZrVpHDaoDPPzHJsRbnB9erQeg5oUVsk5IPGDqOXqHNw3
+         GecKX2tfkk3Kea5e+ig5iIJKu766iLLOKiJQjSeRhFyRdkBjLZ1j7v5yFXo8Z8UUPnL/
+         h6sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687885272; x=1690477272;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+uGhz1ZekJEDv+o6yXgK9sgLmec5ROnru0Fe+zZ8aiQ=;
+        b=ZjptA0fK68AZC0a75wELezgeE3cD1mabgpstInmyknkyTjFktoVf6OOFdi6PhW+ruZ
+         zCFEi6OM4TEQ+5d7+s6IfCpz2i9TJWnnDTaCj2B/hmC3o3K4+4/5hXr8VPLdrtvNFRAt
+         AB61N+NXzMmp/eHQXuOOIoYCGKU1R43R/7a0VfmRsykf6SU+NP1lFLuJvwRZl6MkjKUV
+         /XdJsVZJ43Ng1eQCFMv9dVldEw+0Ky8bNmfA+xPoG9B4fGtGjaBFSPVZotB44i1pUZla
+         LHLRrOJPj7lAq2F9L7hc2n7ceOi6jruV7TWbp2SZnY6Bxy+r2TBTCdPqkvpPOLXRdhlH
+         q0+Q==
+X-Gm-Message-State: AC+VfDyV1ZFy1vjuoDuXN/rq0vSbZAtTqxT5R3pn2abUYkhIKR/x0JJR
+        kjyoJqanipyEnxf7XFLGX1E=
+X-Google-Smtp-Source: ACHHUZ7iuGNPU4+nlFFvwSQAqwhKvN3i5/0Ig+a69Bfy4AwbsJqAACXIJ+M2KAZSYia7jl+vER3V7Q==
+X-Received: by 2002:adf:f9d0:0:b0:314:824:3788 with SMTP id w16-20020adff9d0000000b0031408243788mr89599wrr.27.1687885271693;
+        Tue, 27 Jun 2023 10:01:11 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f13-20020a5d50cd000000b0030647d1f34bsm11074801wrt.1.2023.06.27.10.01.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 10:01:10 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/edid: make read-only const array static
+Date:   Tue, 27 Jun 2023 18:01:09 +0100
+Message-Id: <20230627170109.751829-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 00/24] use vmalloc_array and vcalloc
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168788402349.21860.17350888958370358926.git-patchwork-notify@kernel.org>
-Date:   Tue, 27 Jun 2023 16:40:23 +0000
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     linux-hyperv@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        keescook@chromium.org, christophe.jaillet@wanadoo.fr,
-        kuba@kernel.org, kasan-dev@googlegroups.com, andreyknvl@gmail.com,
-        dvyukov@google.com, iommu@lists.linux.dev,
-        linux-tegra@vger.kernel.org, robin.murphy@arm.com,
-        vdumpa@nvidia.com, virtualization@lists.linux-foundation.org,
-        xuanzhuo@linux.alibaba.com, linux-scsi@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        jstultz@google.com, Brian.Starkey@arm.com, labbott@redhat.com,
-        lmark@codeaurora.org, benjamin.gaignard@collabora.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, shailend@google.com,
-        linux-rdma@vger.kernel.org, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dave.hansen@linux.intel.com,
-        hpa@zytor.com, linux-sgx@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Don't populate the const array on the stack, instead make it static.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/drm_edid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, 27 Jun 2023 16:43:15 +0200 you wrote:
-> The functions vmalloc_array and vcalloc were introduced in
-> 
-> commit a8749a35c399 ("mm: vmalloc: introduce array allocation functions")
-> 
-> but are not used much yet.  This series introduces uses of
-> these functions, to protect against multiplication overflows.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2,02/24] octeon_ep: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/32d462a5c3e5
-  - [v2,04/24] gve: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/a13de901e8d5
-  - [v2,09/24] pds_core: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/906a76cc7645
-  - [v2,11/24] ionic: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/f712c8297e0a
-  - [v2,18/24] net: enetc: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/fa87c54693ae
-  - [v2,22/24] net: mana: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/e9c74f8b8a31
-
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index e0dbd9140726..39b13417b749 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -3962,7 +3962,7 @@ static int drm_cvt_modes(struct drm_connector *connector,
+ 	struct drm_display_mode *newmode;
+ 	struct drm_device *dev = connector->dev;
+ 	const struct cvt_timing *cvt;
+-	const int rates[] = { 60, 85, 75, 60, 50 };
++	static const int rates[] = { 60, 85, 75, 60, 50 };
+ 	const u8 empty[3] = { 0, 0, 0 };
+ 
+ 	for (i = 0; i < 4; i++) {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
