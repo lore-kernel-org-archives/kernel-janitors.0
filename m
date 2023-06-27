@@ -2,110 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A37FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 06:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED39EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 07:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbjF0GPD (ORCPT
+        id S230073AbjF0HMv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 02:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
+        Tue, 27 Jun 2023 03:12:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbjF0GPA (ORCPT
+        with ESMTP id S229715AbjF0HMu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 02:15:00 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F59B10DA
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 23:14:59 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f9bece8e19so63721515e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Jun 2023 23:14:59 -0700 (PDT)
+        Tue, 27 Jun 2023 03:12:50 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7E81BE4
+        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 00:12:45 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fa96fd7a01so22404475e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 27 Jun 2023 00:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687846497; x=1690438497;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VHlKtlmPgyjqS986fc2zdJSD+esonOp/AIyWxyN5l1o=;
-        b=WYYQz/bPplsPqU3DeZIeOnb2Xo81iaxLANnfTGKMQhaxh/f6hgP7BAmiMn+8VDd3Y+
-         dejEPPrwyVSrDrVax13p7frJW508dsjA/+O8MUw85sczaCiTI8X5ortgaLG/oqwkLQKj
-         Hna0jO7+UaBx/hi0OM4TexEdWcNIOLV/jhUul6AUg3TAHOi8HJ4JjCzaTJML/VLxcM1X
-         NXZQgNsFBC1FybaOIpYIDXhxtd2unjCntcBFi9ECX49WWDU9vuujJIDgsJLoTuoS6myB
-         34UuTm+le/jyZXbutLL9NnHEChb3LG9KdZdqm1kIKGDGaUHVZBf2sLvEzL1csz+VPgYO
-         HZqw==
+        d=linaro.org; s=google; t=1687849964; x=1690441964;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ggLDGiLASKXjzv41vxcGuD0v2D3Md+XuVsA8ytWFhq0=;
+        b=dD4ZR8xlf80OKvytf3PyeqgCLIP4CC6nIl+F8NYd6+cYEP0lEu/52Z6/BbBpzFzQ7m
+         kY79A8AAUUBHKPrTwJEhmZudI6xu/p9bD3xdm+15HsaR2cTMJb5r/F2pHv/dTx7kzlR4
+         zMHTz/bOflFXKVJm8OFQyuNY/5c50dM4wZhj7FG2mLHEno+033CgjqA8hTiNHnN1DO64
+         zfri5fOXOpUFe8O0cBSU8yU1iG32UVPh5HkZc4vB0w7kWUAwwQ+gNKWvIZm0Vz0DuMId
+         sWLg5fvMxzRUrvq8jS+dHVivz/ZpZTgBKNrNtkVtTxzM3abYlLkHziG4433gMo9x9q1w
+         dGiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687846497; x=1690438497;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1687849964; x=1690441964;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHlKtlmPgyjqS986fc2zdJSD+esonOp/AIyWxyN5l1o=;
-        b=JOm+7Bh+Wnba77UTOTpUyUml4SXADPt6oyA3MSKM8grYAHn0vEnzxLcYUU6IKHfsh/
-         n/mDIb8aM+dXG/FjcdijyfUxczixNYzHYtHsASLQ11sGK9CmTeB/8vndi5ElveioPC5U
-         ngLz1XJUl3wVBfKaq3OmELrq+C+RdwmkHISMhoyneVApP/AkBYpTZTTGs1GkeF1a+sVK
-         6vpmAtOtxL/d/ULxwAvI7BAyLSob/2wIseJZYWhnMH54KR5vXeOtzDwb7oADc/Ep63f1
-         aoTmHmeAZHFYSlwCNOS2LuEWwN37xsRB8fgT/6cH0lgr901RTyQCcOSsFxmAUTXyM9Po
-         BPDQ==
-X-Gm-Message-State: AC+VfDyr2H0cZ8lVKkIov5Ly3SnC21V1Y/loJXtkC+BlSLaYe8X068qd
-        WW9p1b871LJcgRq+lxrzi4iU6w==
-X-Google-Smtp-Source: ACHHUZ4Hau+zrVHaLTx/1I0GQLyePIEGyq3qbz6eW2P9G1juJuspLRx2PdBqMY5bk1GdQksQMKdIyQ==
-X-Received: by 2002:a05:600c:28e:b0:3fa:8aed:d57f with SMTP id 14-20020a05600c028e00b003fa8aedd57fmr7467202wmk.24.1687846497533;
-        Mon, 26 Jun 2023 23:14:57 -0700 (PDT)
+        bh=ggLDGiLASKXjzv41vxcGuD0v2D3Md+XuVsA8ytWFhq0=;
+        b=ae5HJM+M1ACFWeaNorc4c6yxj1vLLBGmobTO4EjpUKVwNGdktJl0Ssbql61Z5eFari
+         3cvadNWpCeHIzmbaKbo4x9eT05DI7DiNMpIKXv6sYmnBuuKs07U+l2AAV0tvj9CYt354
+         X3mBKzFlBADlb2QnA81zDnYneQcx/7iVtCoe9vtzygghTz2YYhJlKE41DZ1XYIIQm+QP
+         cg0Pw7Fmti3YPkXJ2em5tSvmOVqOLPXpkho9z/Lqi/efyGXmLtKinK+7/GpwO0n683lC
+         Z8IMXtSjCIAGdD1Ri+sbjCrp89yP8PmedWac24vBMiuEP4YhdutxiKDlrPtnQ1VNcaZt
+         9MGw==
+X-Gm-Message-State: AC+VfDwIhUMpQzJ6fvuicYOlG6IH4NZEiJ5m7wfUATgxIvxs0NXXEMLy
+        2AZbZfRWbovuTlAxyGwJne+ZzA==
+X-Google-Smtp-Source: ACHHUZ4xx+0rg/Ks+yJHZbTzNzYTWyjpHzcQcOs1x9M64X7tq8jGOULoEd3lGMvz94HJaCLUkFZMUA==
+X-Received: by 2002:a05:600c:2247:b0:3fb:a266:3a34 with SMTP id a7-20020a05600c224700b003fba2663a34mr897038wmm.12.1687849963890;
+        Tue, 27 Jun 2023 00:12:43 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l21-20020a1c7915000000b003f605566610sm12500939wme.13.2023.06.26.23.14.55
+        by smtp.gmail.com with ESMTPSA id q9-20020a056000136900b0030f9c3219aasm9464956wrz.47.2023.06.27.00.12.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 23:14:55 -0700 (PDT)
-Date:   Tue, 27 Jun 2023 09:14:53 +0300
+        Tue, 27 Jun 2023 00:12:42 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 10:12:36 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Demi Marie Obenour <demi@invisiblethingslab.com>,
-        dm-devel@redhat.com, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>
-Subject: Re: [PATCH v2 2/4] dm ioctl: Allow userspace to provide expected
- diskseq
-Message-ID: <ab9f1618-5dde-4c70-a88e-c65f33abdb73@kadam.mountain>
-References: <20230624230950.2272-3-demi@invisiblethingslab.com>
- <3241078c-2318-fe1b-33cc-7c33db71b1a6@web.de>
- <ZJh73z2CsgHEJ4iv@itl-email>
- <e42e8115-6f75-447e-9955-ca4ad43ed406@kadam.mountain>
- <1c1cd489-6d59-00ed-a1f5-497ca532c08d@web.de>
+To:     Andi Shyti <andi.shyti@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] i2c: sun6i-p2wi: Fix an error message in probe()
+Message-ID: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c1cd489-6d59-00ed-a1f5-497ca532c08d@web.de>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 06:20:14PM +0200, Markus Elfring wrote:
-> > …, stop bothering people about trivial nonsense. …
-> 
-> See also another bit of background information once more:
-> [PATCH v2] certs/extract-cert: Fix checkpatch issues
-> 2023-06-09
-> https://lore.kernel.org/kernel-janitors/c464c4ee-038c-47bf-857a-b11a89680e82@kadam.mountain/
-> https://lkml.org/lkml/2023/6/9/879
+The "ret" variable is uninitialized.  It was the "p2wi->rstc" variable
+that was intended.  We can also use the %pe string format to print the
+error code name instead of just the number.
 
-Markus, it's not about imperative tense.  It's about you wasting
-people's time.
+Fixes: 75ff8a340a81 ("i2c: sun6i-p2wi: Use devm_clk_get_enabled()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/i2c/busses/i2c-sun6i-p2wi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Read the subject again.  "Allow userspace to provide expected diskseq".
-That is imperative tense.  I have not pointed it out to you because it
-just doesn't matter at all.  If it's in imperative tense or if it's not
-in imperative tense, it doesn't matter.
+diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+index ad8270cdbd3e..fa6020dced59 100644
+--- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
++++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+@@ -250,7 +250,8 @@ static int p2wi_probe(struct platform_device *pdev)
+ 
+ 	p2wi->rstc = devm_reset_control_get_exclusive(dev, NULL);
+ 	if (IS_ERR(p2wi->rstc)) {
+-		dev_err(dev, "failed to retrieve reset controller: %d\n", ret);
++		dev_err(dev, "failed to retrieve reset controller: %pe\n",
++			p2wi->rstc);
+ 		return PTR_ERR(p2wi->rstc);
+ 	}
+ 
+-- 
+2.39.2
 
-You're sending out a lot of messages and quite a few times it looks like
-your targeting newbies.  One new developer sent me an email privately
-who was over the top grateful when I told him he could ignore you.  The
-guy was like, "I was so puzzled, because it's my first patch and I
-didn't know how to respond."  This was an experienced programmer who we
-want, but he was new to the kernel community so he didn't know if we had
-bizarre rules or whatever.
-
-I've looked through your patches that have recently been merged.  Some
-of those maintainers know that you are banned and that your patches are
-not getting any review from the mailing list.  We are really trying to
-be nice and to work around your situation.  But don't start bothering
-newbies who don't know what the situation is.
-
-regards,
-dan carpenter
