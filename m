@@ -2,125 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A422EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jun 2023 23:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39703C001B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 02:43:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjF0XgT (ORCPT
+        id S231163AbjF1Cni (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 19:36:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45684 "EHLO
+        Tue, 27 Jun 2023 22:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjF0XgS (ORCPT
+        with ESMTP id S229488AbjF1Cnh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 19:36:18 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D9B1BE6;
-        Tue, 27 Jun 2023 16:36:16 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 352B13200914;
-        Tue, 27 Jun 2023 19:36:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 27 Jun 2023 19:36:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=cc:cc:content-type:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1687908972; x=
-        1687995372; bh=FAAyEM8Ly5PWnExbNv7ubvTfVH0QtKdzbHqCX13GAzg=; b=l
-        IlERPxvSpe39YUYHZnaOyWLv1s1k8zsvCBIJF5U+QY9ypB1nulA4rrRQznySXi9F
-        qdfWJsAvTgN6t0BvaYOzWOPPbmOWInG6rQvjz488L0nnC2x9zmtU2NQavD4tEi2i
-        Rb3uIGfNd9kGO5CtI//igdkti4n8ZIHZbtXi2z0oaQuRIkHYBb5eGoX9HgC/dZ8Y
-        QpnY8+I2yTJifPxmw5d/SbUMMaOQmV8lFKvjbsnyVKTFl74QsP5wxBbq62i+Ur/v
-        4wAngpX7Nd1j6bGiyNQIR7fij1u6yIwZXEjKvwBrTUgEOLRGwY4UolhxhEVS43Ph
-        D2ZEFbnX0IZFnM8mRZlXg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1687908972; x=1687995372; bh=FAAyEM8Ly5PWn
-        ExbNv7ubvTfVH0QtKdzbHqCX13GAzg=; b=K+Nxy0YOe7J0ueBKr1pqqeW2UurQ0
-        PN5DErctn5r4iiJoC+crmjrkbSPxmy5Tvi3f1W34dfOqKGhrMFqmxaT0z5FYZKoJ
-        lv/yqnPkn2C1KoSnqzTHfMF0LdEeGwdPy5kTZ1lnfe0Fn6iV9WOTKaMzABuYhv5k
-        pVWkoHZbzUwpSZVU57bLiqh9lwEMcBBGT9hxGf4HKX/cfRyYOFwi675NjoSh11J/
-        0ciYiwS4TO5tlCw4nOhSFm++NK/ITSoDOJ1m7am3/UR0f4bna6Bilp3o9PcWelfz
-        R6oY61zRJ4lcg+bdGBU81UZI266qAo71CM5Tm9R5+yc+PD3WSEeQlcc+Q==
-X-ME-Sender: <xms:bHKbZFL80QjAugbZ5EXFs64HpbxZ8FWkYBOpHeirjvWJxdrsZI3U3A>
-    <xme:bHKbZBI3qGle7beVPqY9-zmFwpnFOEhpKbBRxQqGr-otcPMkxyO6lkVIuoMmAUDJO
-    yGHqFFrOB29QKCMYlI>
-X-ME-Received: <xmr:bHKbZNv2EXYyk_-3ER_W5GFYTFLqS_PtpA0q5amYEg0yPlMzMyW36S_-_8I447f7j9QolvfzjmElHN1CHp7YF0i30QLByTwUSZs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtddugddvgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
-    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
-    hpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieei
-    tedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:bHKbZGZJNiqFsXFwYPdeo91acXo6ieaA_nfP6S_l3gCi5vnkaPMBWw>
-    <xmx:bHKbZMaoWhl6zy0G8GQa_1yECBsCFh0-0glVW375saVkrlgCcHQkuQ>
-    <xmx:bHKbZKBcqgqSvureY-vlQ4CjXN8FPgb15p7YnissYGbkOl4EhxGR8w>
-    <xmx:bHKbZLxd7odaSe15pixMn6AKZDz_pdu-QhKYxrfGavYkQfKLHgw8oA>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 27 Jun 2023 19:36:09 -0400 (EDT)
-Date:   Wed, 28 Jun 2023 08:36:04 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ALSA: oxfw: make read-only const array models
- static
-Message-ID: <20230627233604.GA278863@workstation.local>
-Mail-Followup-To: Colin Ian King <colin.i.king@gmail.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230627113253.700065-1-colin.i.king@gmail.com>
+        Tue, 27 Jun 2023 22:43:37 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id C40B42950;
+        Tue, 27 Jun 2023 19:43:35 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id D81EF6032EB52;
+        Wed, 28 Jun 2023 10:42:44 +0800 (CST)
+X-MD-Sfrom: yunchuan@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   wuych <yunchuan@nfschina.com>
+To:     andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, irusskikh@marvell.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, steve.glendinning@shawell.net,
+        iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
+        quan@os.amperecomputing.com, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, mostrows@earthlink.net, xeb@mail.ru,
+        qiang.zhao@nxp.com
+Cc:     yangyingliang@huawei.com, yunchuan@nfschina.com,
+        linux@rempel-privat.de, ansuelsmth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linuxppc-dev@lists.ozlabs.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next 00/10] Remove unnecessary (void*) conversions
+Date:   Wed, 28 Jun 2023 10:41:21 +0800
+Message-Id: <20230628024121.1439149-1-yunchuan@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627113253.700065-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Remove (void*) conversions under "drivers/net" directory.
+According to the suggestion[1] of Jakub Kicinski, send these patches
+in series of 10. 
 
-On Tue, Jun 27, 2023 at 12:32:53PM +0100, Colin Ian King wrote:
-> Don't populate the const array on the stack, instead make it static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  sound/firewire/oxfw/oxfw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-> index 9523479fa94a..63d40f1a914f 100644
-> --- a/sound/firewire/oxfw/oxfw.c
-> +++ b/sound/firewire/oxfw/oxfw.c
-> @@ -44,7 +44,7 @@ struct compat_info {
->  
->  static bool detect_loud_models(struct fw_unit *unit)
->  {
-> -	const char *const models[] = {
-> +	static const char *const models[] = {
->  		"Onyxi",
->  		"Onyx-i",
->  		"Onyx 1640i",
-> -- 
-> 2.39.2
- 
-Indeed. It is preferable.
+wuych (10):
+  net: dsa: ar9331: remove unnecessary (void*) conversions
+  net: dsa: qca8k: remove unnecessary (void*) conversions
+  atlantic:hw_atl2:hw_atl2_utils_fw: Remove unnecessary (void*)
+    conversions
+  ice: Remove unnecessary (void*) conversions
+  ethernet: smsc: remove unnecessary (void*) conversions
+  net: hns: Remove unnecessary (void*) conversions
+  net: hns3: remove unnecessary (void*) conversions
+  net: mdio: Remove unnecessary (void*) conversions
+  net: ppp: remove unnecessary (void*) conversions
+  net: wan: Remove unnecessary (void*) conversions
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+ drivers/net/dsa/qca/ar9331.c                     | 16 ++++++++--------
+ drivers/net/dsa/qca/qca8k-8xxx.c                 |  2 +-
+ drivers/net/dsa/qca/qca8k-common.c               |  6 +++---
+ .../aquantia/atlantic/hw_atl2/hw_atl2_utils_fw.c |  2 +-
+ .../net/ethernet/hisilicon/hns3/hns3_ethtool.c   |  2 +-
+ drivers/net/ethernet/hisilicon/hns_mdio.c        | 10 +++++-----
+ drivers/net/ethernet/intel/ice/ice_main.c        |  4 ++--
+ drivers/net/ethernet/smsc/smsc911x.c             |  4 ++--
+ drivers/net/ethernet/smsc/smsc9420.c             |  4 ++--
+ drivers/net/mdio/mdio-xgene.c                    |  8 ++++----
+ drivers/net/ppp/pppoe.c                          |  4 ++--
+ drivers/net/ppp/pptp.c                           |  4 ++--
+ drivers/net/wan/fsl_ucc_hdlc.c                   |  2 +-
+ 13 files changed, 34 insertions(+), 34 deletions(-)
 
-I found that ALSA fireface driver includes the similar issue. I'll send a
-patch to fix it later.
+[1] https://lore.kernel.org/all/20230518194627.4f9a6b04@kernel.org/
+-- 
+2.30.2
 
-
-Thanks
-
-Takashi Sakamoto
