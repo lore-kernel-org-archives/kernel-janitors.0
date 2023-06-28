@@ -2,119 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D41EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 10:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A92FFEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 11:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbjF1KRh (ORCPT
+        id S231425AbjF1LDV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jun 2023 06:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
+        Wed, 28 Jun 2023 07:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232155AbjF1KM3 (ORCPT
+        with ESMTP id S231465AbjF1LDF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jun 2023 06:12:29 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E96430EF;
-        Wed, 28 Jun 2023 03:11:15 -0700 (PDT)
-Received: from [192.168.10.54] (unknown [182.179.162.32])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C54CC66070ED;
-        Wed, 28 Jun 2023 11:11:11 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687947073;
-        bh=+hTAKw1NKwWF7O6O7zjctXoD72Rg+Gz5knAUIDDxoFc=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=oTMnRGxrMGrmYTix1SqIX4oqkQWQff16z2kQ64Rlu/paG9F9ttgibiSNNCAWLLj+i
-         KrXQPyt+XBJaT12F+RnX/fCbv9E5q2ZgYiTD2/lwKfFE7LFbXZ/JCc/5vJn/XLspnD
-         SfgW18FaBFnERz4hhXJjs7i8sHHSL6DGbQPNkxrZUWuUGrQw1PKHGIS8FlE5VZr2o4
-         hOPx9Kpi+S++hQdH9lQsfbdAaTWUZMz6J1evvNuQkxX/rxIlEa3cP7ynCbDGX4IMhC
-         CleiARiS3tQsV9dCsj5iNQ3wR8rU1QADCfscthyejt0u2VIqJ+xfUPMa5OW9AOVwkB
-         N3JrafTlZojxw==
-Message-ID: <ab74f8a3-03a5-723e-7fa7-fa09f5bb5170@collabora.com>
-Date:   Wed, 28 Jun 2023 15:11:07 +0500
+        Wed, 28 Jun 2023 07:03:05 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F241FCD;
+        Wed, 28 Jun 2023 04:03:04 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-4021451a4a4so17251251cf.0;
+        Wed, 28 Jun 2023 04:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687950183; x=1690542183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rSIgXt+L+8jbFTtsKzhBTuecaRWvbcSpFDcoTapWtC8=;
+        b=pfmFPl4KAvd9rLO0RT54Jcl/Ifd8PlgcMtH9hVFPH0HBCqNLqocpAz6iuDxzrmRvC3
+         c43NI6cNIBjwBo8nWl4joctHJLzWRYk20uKh7DF3Yh4PQ2vSyJXMatrPbwjhIs4/cRMk
+         BwSz2WO/tLc/uuGeEpfNA/I7iyI9khWPXhJjjJHxhMqdBHKYaGSh6dBc7c0ypj9DKtk7
+         E+LmKWT0/ZlkdJEEdHdSoetYlVZNCCKIvI4QcDoGac1ExVBoefvmRc/k+jM69i8Y+QBy
+         dgd2qCS3V9sLQii+Nm58huaZOAhHmOUtacAVQr7XaASX6R6/17nHUXq9YKPpM85vj0+R
+         gcGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687950183; x=1690542183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rSIgXt+L+8jbFTtsKzhBTuecaRWvbcSpFDcoTapWtC8=;
+        b=ZyLYNileW2siesw+dm/YIBm1oOn/GQR95cNBP5eNV21t0j760cr+VnsxlPH96o++Lh
+         3HBmbj2KOHTYCKktDpIAwAIFtCJQPPU4wxSYU2/BLMbKp6lJwARAECofDsEj+cn+j3ry
+         WYxO4Fv8xZa79z8xudsh4mUUMciOkiyEVKF1ugtLWvfC3MbCdBfPjPnNTAdPSqP3vl3K
+         5/wngQ3IML0/OweAuZoClWw3JuC16e7gavVPYlziMxYKKlsvBOaG2BLBS6mNO3PNfKpZ
+         +1RYPhfAqqnsInn9eQ0RUCXErsz3uDUTt/T3PM9O0qxjAxvALadt241HUS1C40EQmB72
+         JbBg==
+X-Gm-Message-State: AC+VfDzzfwuS1FEcezFhPHNtSkr7bMEcoyguC62su9eBjhHYKNnXOZsd
+        hBPsjhb7jU4oInVGtvSkFYzj/JLOYppJYlN3lsk=
+X-Google-Smtp-Source: ACHHUZ7UfzFTKJq9y/a0p/EgPPwFgD/boO+5mAHdZbUciSgygzNf60TvwAOuEF2bxhke76Fs2ez08EaQzyIDk38iDCA=
+X-Received: by 2002:a05:622a:1454:b0:403:27e8:8842 with SMTP id
+ v20-20020a05622a145400b0040327e88842mr583192qtx.10.1687950183212; Wed, 28 Jun
+ 2023 04:03:03 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH] accessibility: speakup: remove linux/version.h
-Content-Language: en-US
-To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, speakup@linux-speakup.org,
-        linux-kernel@vger.kernel.org
-References: <20230303125152.2030241-1-usama.anjum@collabora.com>
- <fb6121fc-101f-0779-b752-ac8202eb761e@collabora.com>
- <20230616145028.7rzrbqfj7wmoenj6@begin>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20230616145028.7rzrbqfj7wmoenj6@begin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <72b05526-4dda-430a-b4ca-2ee4f26f2185@moroto.mountain>
+ <CAPpZLN4ACVRrDXofO9jNQznEuF+CK6KNbCCz=5t93kMzESbZGg@mail.gmail.com> <d1397f75-1091-42e1-8038-b6844757de79@kadam.mountain>
+In-Reply-To: <d1397f75-1091-42e1-8038-b6844757de79@kadam.mountain>
+From:   Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Date:   Wed, 28 Jun 2023 14:02:47 +0300
+Message-ID: <CAPpZLN4vNW8TJDwd+JeBD1YjdoPT6eoLj18kq5xbqsgcizCwoQ@mail.gmail.com>
+Subject: Re: [RFC] tracing: Cleanup the correct ep in enable_trace_eprobe()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/16/23 7:50 PM, Samuel Thibault wrote:
-> Muhammad Usama Anjum, le ven. 16 juin 2023 17:53:12 +0500, a ecrit:
->> Soft reminder.
-> 
-> It somehow hadn't appeared in my inbox.
-This patch hasn't been accepted yet.
+On Tue, Jun 27, 2023 at 8:21=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> On Tue, Jun 27, 2023 at 07:39:17AM +0300, Tzvetomir Stoyanov wrote:
+> > On Mon, Jun 26, 2023 at 4:35=E2=80=AFPM Dan Carpenter <dan.carpenter@li=
+naro.org> wrote:
+> > >
+> > > If enable_eprobe() function fails, then we call  disable_eprobe() on =
+the
+> > > "ep" that failed.  That doesn't feel right.  Shouldn't we
+> > > call disable_eprobe() on the previous "ep" instead?  Or even better o=
+n
+> > > all the previous eps (but I don't know how to do that)...
+> >
+> > Hi Dan,
+> > There is no need to disable the eprobes which are already successfully
+> > registered to the given trace probe, as they will be disabled using
+> > the normal logic. The failed epropbe is not registered there, that's
+> > why it must be disabled explicitly.  Thanks for digging into that
+> > code!
+>
+> Okay, but if the loop fails on the first iteration then it won't disable
+> the first ep.  Is that an issue?
+>
 
-> 
->> On 3/3/23 5:51 PM, Muhammad Usama Anjum wrote:
->>> make versioncheck reports the following:
->>> ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
->>> ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
->>>
->>> So remove linux/version.h from both of these files.
->>>
->>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> 
-> Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-> 
-> Thanks!
-> 
->>> ---
->>>  drivers/accessibility/speakup/genmap.c      | 1 -
->>>  drivers/accessibility/speakup/makemapdata.c | 1 -
->>>  2 files changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
->>> index 0125000e00d9..0882bab10fb8 100644
->>> --- a/drivers/accessibility/speakup/genmap.c
->>> +++ b/drivers/accessibility/speakup/genmap.c
->>> @@ -10,7 +10,6 @@
->>>  #include <stdio.h>
->>>  #include <libgen.h>
->>>  #include <string.h>
->>> -#include <linux/version.h>
->>>  #include <ctype.h>
->>>  #include "utils.h"
->>>  
->>> diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
->>> index d7d41bb9b05f..55e4ef8a93dc 100644
->>> --- a/drivers/accessibility/speakup/makemapdata.c
->>> +++ b/drivers/accessibility/speakup/makemapdata.c
->>> @@ -10,7 +10,6 @@
->>>  #include <stdio.h>
->>>  #include <libgen.h>
->>>  #include <string.h>
->>> -#include <linux/version.h>
->>>  #include <ctype.h>
->>>  #include "utils.h"
->>>  
->>
->> -- 
->> BR,
->> Muhammad Usama Anjum
->>
-> 
+I looked at the code again, you are right - there is a problem.
+Indeed, that clean-up logic looks totally wrong, all eporbes must be
+disabled. I'll submit a patch. Thanks Dan.
 
--- 
-BR,
-Muhammad Usama Anjum
+> regards,
+> dan carpenter
+>
+
+
+--=20
+Tzvetomir (Ceco) Stoyanov
+VMware Open Source Technology Center
