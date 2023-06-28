@@ -2,104 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92FFEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 11:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7E0EB64D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 12:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231425AbjF1LDV (ORCPT
+        id S230456AbjF1M3b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jun 2023 07:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32962 "EHLO
+        Wed, 28 Jun 2023 08:29:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231465AbjF1LDF (ORCPT
+        with ESMTP id S230409AbjF1M3a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jun 2023 07:03:05 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F241FCD;
-        Wed, 28 Jun 2023 04:03:04 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-4021451a4a4so17251251cf.0;
-        Wed, 28 Jun 2023 04:03:04 -0700 (PDT)
+        Wed, 28 Jun 2023 08:29:30 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5392111
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 05:29:29 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-313f3cd6bb4so3049342f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 05:29:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687950183; x=1690542183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rSIgXt+L+8jbFTtsKzhBTuecaRWvbcSpFDcoTapWtC8=;
-        b=pfmFPl4KAvd9rLO0RT54Jcl/Ifd8PlgcMtH9hVFPH0HBCqNLqocpAz6iuDxzrmRvC3
-         c43NI6cNIBjwBo8nWl4joctHJLzWRYk20uKh7DF3Yh4PQ2vSyJXMatrPbwjhIs4/cRMk
-         BwSz2WO/tLc/uuGeEpfNA/I7iyI9khWPXhJjjJHxhMqdBHKYaGSh6dBc7c0ypj9DKtk7
-         E+LmKWT0/ZlkdJEEdHdSoetYlVZNCCKIvI4QcDoGac1ExVBoefvmRc/k+jM69i8Y+QBy
-         dgd2qCS3V9sLQii+Nm58huaZOAhHmOUtacAVQr7XaASX6R6/17nHUXq9YKPpM85vj0+R
-         gcGA==
+        d=rivosinc-com.20221208.gappssmtp.com; s=20221208; t=1687955367; x=1690547367;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=y+/73Hn30Z9/qFlAesgRRh1yqPTxLtGthW/sft72KEE=;
+        b=biTFYwLWFXgAh7bC73xZA1eta3vNuT/uPCAiX3RUNlQIesyL3vayeQoPILYKyl40tz
+         +9FZgJhBKE/rS1cQzR3+ZINCITlLUe/3+gMwcQyfDSrNtjPUAU5TmSNfChyxswx1K470
+         LmJaEHQY1JzBTMjwd/JOnmDr0IpODglPqCmHxRan+XS8WufyMlY/940g43KyTUXrimPZ
+         meLgvWj63vCyxwHMICaM21gOo4ERn2pM4ibk1vQ32sFTuhi1SLY4gzWs341IJ8hafhpv
+         jDDeR5URGQNClyuLnr5utfsDLye0WuQX1y01qz98tz8t/V4g5FpiXvgiESfX+9YHwgpQ
+         KDYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687950183; x=1690542183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rSIgXt+L+8jbFTtsKzhBTuecaRWvbcSpFDcoTapWtC8=;
-        b=ZyLYNileW2siesw+dm/YIBm1oOn/GQR95cNBP5eNV21t0j760cr+VnsxlPH96o++Lh
-         3HBmbj2KOHTYCKktDpIAwAIFtCJQPPU4wxSYU2/BLMbKp6lJwARAECofDsEj+cn+j3ry
-         WYxO4Fv8xZa79z8xudsh4mUUMciOkiyEVKF1ugtLWvfC3MbCdBfPjPnNTAdPSqP3vl3K
-         5/wngQ3IML0/OweAuZoClWw3JuC16e7gavVPYlziMxYKKlsvBOaG2BLBS6mNO3PNfKpZ
-         +1RYPhfAqqnsInn9eQ0RUCXErsz3uDUTt/T3PM9O0qxjAxvALadt241HUS1C40EQmB72
-         JbBg==
-X-Gm-Message-State: AC+VfDzzfwuS1FEcezFhPHNtSkr7bMEcoyguC62su9eBjhHYKNnXOZsd
-        hBPsjhb7jU4oInVGtvSkFYzj/JLOYppJYlN3lsk=
-X-Google-Smtp-Source: ACHHUZ7UfzFTKJq9y/a0p/EgPPwFgD/boO+5mAHdZbUciSgygzNf60TvwAOuEF2bxhke76Fs2ez08EaQzyIDk38iDCA=
-X-Received: by 2002:a05:622a:1454:b0:403:27e8:8842 with SMTP id
- v20-20020a05622a145400b0040327e88842mr583192qtx.10.1687950183212; Wed, 28 Jun
- 2023 04:03:03 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687955367; x=1690547367;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+/73Hn30Z9/qFlAesgRRh1yqPTxLtGthW/sft72KEE=;
+        b=ivEv26Nq94idrh1jTVSfw5uqEXPbHrUC0lI2udHHccPXw1yeNgXdiPE7tDUfR5W2qT
+         BCy50CNclIF9Yi5Lif2QRXhu9VOwROyGgFCXS3G1DSrZlWOGp4BGanw8PV1qVlqOAc1B
+         9+V4Z8VvhvDnCWDA6+GVcyjlz4vLAA4IpccnkUZ5jqZKels64LIUZgmPfLs8Wzc5rV6h
+         VxY9OVN3MuE0RUFfT32QkbuXdYaV+QoUO3B9QmU+n11ukO63BN664fWrbIXNiewv1WXj
+         rU4nnkY5lMXRzR3AQqb0RMhOjzZpuL9khlOM9HLInn1ZSZUpwUCenqvRVWlhyO0kzMUd
+         SZGA==
+X-Gm-Message-State: AC+VfDyWxl2DJq3RLTR7Cvbow/jRznyBGEYUZt0mkMGA1CrFQVktVLav
+        EI9vaNKPgXkDFx0FmeA3fXsXUQ==
+X-Google-Smtp-Source: ACHHUZ7Py18273KjWJU/FbRcTvns9S7wOmxcd7KNdChxScd1mSJl7GXIZLWx+YoWuBYMA8dTprdbGQ==
+X-Received: by 2002:a05:6000:1292:b0:313:f7da:2b7e with SMTP id f18-20020a056000129200b00313f7da2b7emr5491984wrx.20.1687955367689;
+        Wed, 28 Jun 2023 05:29:27 -0700 (PDT)
+Received: from vermeer ([2a01:cb1d:81a9:dd00:b570:b34c:ffd4:c805])
+        by smtp.gmail.com with ESMTPSA id u14-20020adfdb8e000000b003112ab916cdsm13382663wri.73.2023.06.28.05.29.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 05:29:27 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 14:29:25 +0200
+From:   Samuel Ortiz <sameo@rivosinc.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Hongren Zheng <i@zenithal.me>, linux-riscv@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Jiatai He <jiatai2021@iscas.ac.cn>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux@rivosinc.com,
+        Andrew Jones <ajones@ventanamicro.com>,
+        Anup Patel <apatel@ventanamicro.com>,
+        Atish Patra <atishp@rivosinc.com>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Evan Green <evan@rivosinc.com>, Guo Ren <guoren@kernel.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko.stuebner@vrull.eu>,
+        Stefan O'Rear <sorear@fastmail.com>
+Subject: Re: [PATCH 1/3] RISC-V: add Bitmanip/Scalar Crypto parsing from DT
+Message-ID: <ZJwnpTieyeWvEkJ5@vermeer>
+References: <20230627143747.1599218-2-sameo@rivosinc.com>
+ <97a7d701-3b48-252e-6d78-ef3d0e7f8f03@web.de>
 MIME-Version: 1.0
-References: <72b05526-4dda-430a-b4ca-2ee4f26f2185@moroto.mountain>
- <CAPpZLN4ACVRrDXofO9jNQznEuF+CK6KNbCCz=5t93kMzESbZGg@mail.gmail.com> <d1397f75-1091-42e1-8038-b6844757de79@kadam.mountain>
-In-Reply-To: <d1397f75-1091-42e1-8038-b6844757de79@kadam.mountain>
-From:   Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Date:   Wed, 28 Jun 2023 14:02:47 +0300
-Message-ID: <CAPpZLN4vNW8TJDwd+JeBD1YjdoPT6eoLj18kq5xbqsgcizCwoQ@mail.gmail.com>
-Subject: Re: [RFC] tracing: Cleanup the correct ep in enable_trace_eprobe()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97a7d701-3b48-252e-6d78-ef3d0e7f8f03@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 8:21=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> On Tue, Jun 27, 2023 at 07:39:17AM +0300, Tzvetomir Stoyanov wrote:
-> > On Mon, Jun 26, 2023 at 4:35=E2=80=AFPM Dan Carpenter <dan.carpenter@li=
-naro.org> wrote:
-> > >
-> > > If enable_eprobe() function fails, then we call  disable_eprobe() on =
-the
-> > > "ep" that failed.  That doesn't feel right.  Shouldn't we
-> > > call disable_eprobe() on the previous "ep" instead?  Or even better o=
-n
-> > > all the previous eps (but I don't know how to do that)...
-> >
-> > Hi Dan,
-> > There is no need to disable the eprobes which are already successfully
-> > registered to the given trace probe, as they will be disabled using
-> > the normal logic. The failed epropbe is not registered there, that's
-> > why it must be disabled explicitly.  Thanks for digging into that
-> > code!
->
-> Okay, but if the loop fails on the first iteration then it won't disable
-> the first ep.  Is that an issue?
->
+On Wed, Jun 28, 2023 at 01:21:01PM +0200, Markus Elfring wrote:
+> …
+> > This patch also changes the logical id of
+> …
+> 
+> Does such a wording really fit to the known requirement “Solve only one problem per patch.”?
 
-I looked at the code again, you are right - there is a problem.
-Indeed, that clean-up logic looks totally wrong, all eporbes must be
-disabled. I'll submit a patch. Thanks Dan.
+That comment is inaccurate anyways. I removed it from v2 of the patch
+set.
 
-> regards,
-> dan carpenter
->
+Cheers,
+Samuel.
 
 
---=20
-Tzvetomir (Ceco) Stoyanov
-VMware Open Source Technology Center
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4#n81
+> 
+> 
+> Please choose an imperative change suggestion.
+> 
+> Regards,
+> Markus
