@@ -2,112 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277C5EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 10:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D41EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 10:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbjF1KGO (ORCPT
+        id S229865AbjF1KRh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jun 2023 06:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
+        Wed, 28 Jun 2023 06:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234096AbjF1J41 (ORCPT
+        with ESMTP id S232155AbjF1KM3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jun 2023 05:56:27 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E87435AE;
-        Wed, 28 Jun 2023 02:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pfjacbNuUwNkrWAeX5Ew7Qz/kZoiz3IcmwDj95RMCcU=; b=tXJSifE16qh8I4CRy5NBp/XIYX
-        2GwwbwIoEpaBUvWf/xRX5/W2QDGoOfYvCt/iARxSA8EKGG4Cnjy+Kr3tr5BcMDzZLjw1vi9IDV46y
-        1ao7vzotqEPWi12kqEQRipNiimnRZ4u5m/BEDyTlKFXbfH9vXutfJQKiva3H3fJD+51ucfpS4TO8D
-        jubHGiI/FFT6xo57D9ufPAQeuNkD7XKAnNAMYW4dAgmNp13AboEGdJv0TJt1h8osmD+sQhjAao6q7
-        zwcZA+WIdrahy/4QkavoMuu01xZgh6XeA9Hgt4daBaEV15xnGX2Pg6RKcNiIstSUHvCg3UbzqliS0
-        QGitV93A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33168)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.96)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1qERoy-00071a-19;
-        Wed, 28 Jun 2023 10:50:44 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1qERov-0006eS-Aj; Wed, 28 Jun 2023 10:50:41 +0100
-Date:   Wed, 28 Jun 2023 10:50:41 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next 08/10] net: mdio: Remove unnecessary (void*)
- conversions
-Message-ID: <ZJwCcWgi0d6kEepI@shell.armlinux.org.uk>
-References: <20230628024517.1440644-1-yunchuan@nfschina.com>
+        Wed, 28 Jun 2023 06:12:29 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E96430EF;
+        Wed, 28 Jun 2023 03:11:15 -0700 (PDT)
+Received: from [192.168.10.54] (unknown [182.179.162.32])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C54CC66070ED;
+        Wed, 28 Jun 2023 11:11:11 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687947073;
+        bh=+hTAKw1NKwWF7O6O7zjctXoD72Rg+Gz5knAUIDDxoFc=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=oTMnRGxrMGrmYTix1SqIX4oqkQWQff16z2kQ64Rlu/paG9F9ttgibiSNNCAWLLj+i
+         KrXQPyt+XBJaT12F+RnX/fCbv9E5q2ZgYiTD2/lwKfFE7LFbXZ/JCc/5vJn/XLspnD
+         SfgW18FaBFnERz4hhXJjs7i8sHHSL6DGbQPNkxrZUWuUGrQw1PKHGIS8FlE5VZr2o4
+         hOPx9Kpi+S++hQdH9lQsfbdAaTWUZMz6J1evvNuQkxX/rxIlEa3cP7ynCbDGX4IMhC
+         CleiARiS3tQsV9dCsj5iNQ3wR8rU1QADCfscthyejt0u2VIqJ+xfUPMa5OW9AOVwkB
+         N3JrafTlZojxw==
+Message-ID: <ab74f8a3-03a5-723e-7fa7-fa09f5bb5170@collabora.com>
+Date:   Wed, 28 Jun 2023 15:11:07 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230628024517.1440644-1-yunchuan@nfschina.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: Re: [PATCH] accessibility: speakup: remove linux/version.h
+Content-Language: en-US
+To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, speakup@linux-speakup.org,
+        linux-kernel@vger.kernel.org
+References: <20230303125152.2030241-1-usama.anjum@collabora.com>
+ <fb6121fc-101f-0779-b752-ac8202eb761e@collabora.com>
+ <20230616145028.7rzrbqfj7wmoenj6@begin>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20230616145028.7rzrbqfj7wmoenj6@begin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+On 6/16/23 7:50 PM, Samuel Thibault wrote:
+> Muhammad Usama Anjum, le ven. 16 juin 2023 17:53:12 +0500, a ecrit:
+>> Soft reminder.
+> 
+> It somehow hadn't appeared in my inbox.
+This patch hasn't been accepted yet.
 
-I think you missed one case:
-
-        if (mdio_id == XGENE_MDIO_RGMII) {
-                mdio_bus->read = xgene_mdio_rgmii_read;
-                mdio_bus->write = xgene_mdio_rgmii_write;
-                mdio_bus->priv = (void __force *)pdata;
-
-This cast using __force is also not required.
-
-On Wed, Jun 28, 2023 at 10:45:17AM +0800, wuych wrote:
-> @@ -211,7 +211,7 @@ static void xgene_enet_wr_mdio_csr(void __iomem *base_addr,
->  static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
->  				int reg, u16 data)
->  {
-> -	void __iomem *addr = (void __iomem *)bus->priv;
-> +	void __iomem *addr = bus->priv;
->  	int timeout = 100;
->  	u32 status, val;
->  
-> @@ -234,7 +234,7 @@ static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
->  
->  static int xgene_xfi_mdio_read(struct mii_bus *bus, int phy_id, int reg)
->  {
-> -	void __iomem *addr = (void __iomem *)bus->priv;
-> +	void __iomem *addr = bus->priv;
->  	u32 data, status, val;
->  	int timeout = 100;
-
-These probably cause Sparse to warn whether or not the cast is there.
-
-Given that in this case, bus->priv is initialised via:
-
-                mdio_bus->priv = (void __force *)pdata->mdio_csr_addr;
-
-I think the simple thing is to _always_ initialise mdio_bus->priv
-to point at pdata, and have xgene_xfi_mdio_*() always do:
-
-	struct xgene_mdio_pdata *pdata = bus->priv;
-	void __iomem *addr = pdata->mdio_csr_addr;
-
-The extra access will be dwarfed by the time taken to perform the
-access.
-
-This change should be made with a separate patch and not combined with
-the patch removing the casts in xgene_mdio_rgmii_*().
-
-Thanks.
+> 
+>> On 3/3/23 5:51 PM, Muhammad Usama Anjum wrote:
+>>> make versioncheck reports the following:
+>>> ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
+>>> ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
+>>>
+>>> So remove linux/version.h from both of these files.
+>>>
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> 
+> Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> 
+> Thanks!
+> 
+>>> ---
+>>>  drivers/accessibility/speakup/genmap.c      | 1 -
+>>>  drivers/accessibility/speakup/makemapdata.c | 1 -
+>>>  2 files changed, 2 deletions(-)
+>>>
+>>> diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
+>>> index 0125000e00d9..0882bab10fb8 100644
+>>> --- a/drivers/accessibility/speakup/genmap.c
+>>> +++ b/drivers/accessibility/speakup/genmap.c
+>>> @@ -10,7 +10,6 @@
+>>>  #include <stdio.h>
+>>>  #include <libgen.h>
+>>>  #include <string.h>
+>>> -#include <linux/version.h>
+>>>  #include <ctype.h>
+>>>  #include "utils.h"
+>>>  
+>>> diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
+>>> index d7d41bb9b05f..55e4ef8a93dc 100644
+>>> --- a/drivers/accessibility/speakup/makemapdata.c
+>>> +++ b/drivers/accessibility/speakup/makemapdata.c
+>>> @@ -10,7 +10,6 @@
+>>>  #include <stdio.h>
+>>>  #include <libgen.h>
+>>>  #include <string.h>
+>>> -#include <linux/version.h>
+>>>  #include <ctype.h>
+>>>  #include "utils.h"
+>>>  
+>>
+>> -- 
+>> BR,
+>> Muhammad Usama Anjum
+>>
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+BR,
+Muhammad Usama Anjum
