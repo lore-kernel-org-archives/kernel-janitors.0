@@ -2,33 +2,34 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30B8EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 02:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C5CEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 02:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbjF1CpT (ORCPT
+        id S231494AbjF1Cp3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 22:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
+        Tue, 27 Jun 2023 22:45:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231374AbjF1CpH (ORCPT
+        with ESMTP id S229934AbjF1CpL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 22:45:07 -0400
+        Tue, 27 Jun 2023 22:45:11 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 5457B2951;
-        Tue, 27 Jun 2023 19:44:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id B46872D77;
+        Tue, 27 Jun 2023 19:45:06 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 612A2604D937E;
-        Wed, 28 Jun 2023 10:44:55 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 92234604D937E;
+        Wed, 28 Jun 2023 10:45:03 +0800 (CST)
 X-MD-Sfrom: yunchuan@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   wuych <yunchuan@nfschina.com>
-To:     steve.glendinning@shawell.net, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+To:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org, wuych <yunchuan@nfschina.com>
-Subject: [PATCH net-next 05/10] ethernet: smsc: remove unnecessary (void*) conversions
-Date:   Wed, 28 Jun 2023 10:44:47 +0800
-Message-Id: <20230628024447.1440310-1-yunchuan@nfschina.com>
+Subject: [PATCH net-next 06/10] net: hns: Remove unnecessary (void*) conversions
+Date:   Wed, 28 Jun 2023 10:45:01 +0800
+Message-Id: <20230628024501.1440419-1-yunchuan@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,54 +41,58 @@ Pointer variables of void * type do not require type cast.
 
 Signed-off-by: wuych <yunchuan@nfschina.com>
 ---
- drivers/net/ethernet/smsc/smsc911x.c | 4 ++--
- drivers/net/ethernet/smsc/smsc9420.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns_mdio.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-index 174dc8908b72..c362bff3cb83 100644
---- a/drivers/net/ethernet/smsc/smsc911x.c
-+++ b/drivers/net/ethernet/smsc/smsc911x.c
-@@ -552,7 +552,7 @@ static void smsc911x_mac_write(struct smsc911x_data *pdata,
- /* Get a phy register */
- static int smsc911x_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
+diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
+index 9232caaf0bdc..409a89d80220 100644
+--- a/drivers/net/ethernet/hisilicon/hns_mdio.c
++++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
+@@ -217,7 +217,7 @@ static void hns_mdio_cmd_write(struct hns_mdio_device *mdio_dev,
+ static int hns_mdio_write_c22(struct mii_bus *bus,
+ 			      int phy_id, int regnum, u16 data)
  {
--	struct smsc911x_data *pdata = (struct smsc911x_data *)bus->priv;
-+	struct smsc911x_data *pdata = bus->priv;
- 	unsigned long flags;
- 	unsigned int addr;
- 	int i, reg;
-@@ -591,7 +591,7 @@ static int smsc911x_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
- static int smsc911x_mii_write(struct mii_bus *bus, int phyaddr, int regidx,
- 			   u16 val)
+-	struct hns_mdio_device *mdio_dev = (struct hns_mdio_device *)bus->priv;
++	struct hns_mdio_device *mdio_dev = bus->priv;
+ 	u16 reg = (u16)(regnum & 0xffff);
+ 	u16 cmd_reg_cfg;
+ 	int ret;
+@@ -259,7 +259,7 @@ static int hns_mdio_write_c22(struct mii_bus *bus,
+ static int hns_mdio_write_c45(struct mii_bus *bus, int phy_id, int devad,
+ 			      int regnum, u16 data)
  {
--	struct smsc911x_data *pdata = (struct smsc911x_data *)bus->priv;
-+	struct smsc911x_data *pdata = bus->priv;
- 	unsigned long flags;
- 	unsigned int addr;
- 	int i, reg;
-diff --git a/drivers/net/ethernet/smsc/smsc9420.c b/drivers/net/ethernet/smsc/smsc9420.c
-index 71fbb358bb7d..3b26f1d86beb 100644
---- a/drivers/net/ethernet/smsc/smsc9420.c
-+++ b/drivers/net/ethernet/smsc/smsc9420.c
-@@ -102,7 +102,7 @@ static inline void smsc9420_pci_flush_write(struct smsc9420_pdata *pd)
+-	struct hns_mdio_device *mdio_dev = (struct hns_mdio_device *)bus->priv;
++	struct hns_mdio_device *mdio_dev = bus->priv;
+ 	u16 reg = (u16)(regnum & 0xffff);
+ 	u16 cmd_reg_cfg;
+ 	int ret;
+@@ -312,7 +312,7 @@ static int hns_mdio_write_c45(struct mii_bus *bus, int phy_id, int devad,
+  */
+ static int hns_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
+ {
+-	struct hns_mdio_device *mdio_dev = (struct hns_mdio_device *)bus->priv;
++	struct hns_mdio_device *mdio_dev = bus->priv;
+ 	u16 reg = (u16)(regnum & 0xffff);
+ 	u16 reg_val;
+ 	int ret;
+@@ -363,7 +363,7 @@ static int hns_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
+ static int hns_mdio_read_c45(struct mii_bus *bus, int phy_id, int devad,
+ 			     int regnum)
+ {
+-	struct hns_mdio_device *mdio_dev = (struct hns_mdio_device *)bus->priv;
++	struct hns_mdio_device *mdio_dev = bus->priv;
+ 	u16 reg = (u16)(regnum & 0xffff);
+ 	u16 reg_val;
+ 	int ret;
+@@ -424,7 +424,7 @@ static int hns_mdio_read_c45(struct mii_bus *bus, int phy_id, int devad,
+  */
+ static int hns_mdio_reset(struct mii_bus *bus)
+ {
+-	struct hns_mdio_device *mdio_dev = (struct hns_mdio_device *)bus->priv;
++	struct hns_mdio_device *mdio_dev = bus->priv;
+ 	const struct hns_mdio_sc_reg *sc_reg;
+ 	int ret;
  
- static int smsc9420_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
- {
--	struct smsc9420_pdata *pd = (struct smsc9420_pdata *)bus->priv;
-+	struct smsc9420_pdata *pd = bus->priv;
- 	unsigned long flags;
- 	u32 addr;
- 	int i, reg = -EIO;
-@@ -140,7 +140,7 @@ static int smsc9420_mii_read(struct mii_bus *bus, int phyaddr, int regidx)
- static int smsc9420_mii_write(struct mii_bus *bus, int phyaddr, int regidx,
- 			   u16 val)
- {
--	struct smsc9420_pdata *pd = (struct smsc9420_pdata *)bus->priv;
-+	struct smsc9420_pdata *pd = bus->priv;
- 	unsigned long flags;
- 	u32 addr;
- 	int i, reg = -EIO;
 -- 
 2.30.2
 
