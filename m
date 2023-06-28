@@ -2,35 +2,35 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3DAEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 02:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F5EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jun 2023 02:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbjF1CoQ (ORCPT
+        id S231254AbjF1CoU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jun 2023 22:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43434 "EHLO
+        Tue, 27 Jun 2023 22:44:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231252AbjF1CoJ (ORCPT
+        with ESMTP id S231270AbjF1CoR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jun 2023 22:44:09 -0400
+        Tue, 27 Jun 2023 22:44:17 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id BAE392D53;
-        Tue, 27 Jun 2023 19:43:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 8CF7726B3;
+        Tue, 27 Jun 2023 19:44:15 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 0F39E6032EB52;
-        Wed, 28 Jun 2023 10:43:52 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 513456032EB52;
+        Wed, 28 Jun 2023 10:44:11 +0800 (CST)
 X-MD-Sfrom: yunchuan@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   wuych <yunchuan@nfschina.com>
 To:     andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
         davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, linux@armlinux.org.uk
-Cc:     yangyingliang@huawei.com, yunchuan@nfschina.com,
-        linux@rempel-privat.de, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next 01/10] net: dsa: ar9331: remove unnecessary (void*) conversions
-Date:   Wed, 28 Jun 2023 10:43:50 +0800
-Message-Id: <20230628024350.1439849-1-yunchuan@nfschina.com>
+        pabeni@redhat.com
+Cc:     ansuelsmth@gmail.com, yunchuan@nfschina.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next 02/10] net: dsa: qca8k: remove unnecessary (void*) conversions
+Date:   Wed, 28 Jun 2023 10:44:09 +0800
+Message-Id: <20230628024409.1440022-1-yunchuan@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,85 +42,54 @@ Pointer variables of void * type do not require type cast.
 
 Signed-off-by: wuych <yunchuan@nfschina.com>
 ---
- drivers/net/dsa/qca/ar9331.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/dsa/qca/qca8k-8xxx.c   | 2 +-
+ drivers/net/dsa/qca/qca8k-common.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/qca/ar9331.c b/drivers/net/dsa/qca/ar9331.c
-index e7b98b864fa1..b2bf78ac485e 100644
---- a/drivers/net/dsa/qca/ar9331.c
-+++ b/drivers/net/dsa/qca/ar9331.c
-@@ -391,7 +391,7 @@ static int ar9331_sw_mbus_init(struct ar9331_sw_priv *priv)
- 
- static int ar9331_sw_setup_port(struct dsa_switch *ds, int port)
+diff --git a/drivers/net/dsa/qca/qca8k-8xxx.c b/drivers/net/dsa/qca/qca8k-8xxx.c
+index 6d5ac7588a69..dee7b6579916 100644
+--- a/drivers/net/dsa/qca/qca8k-8xxx.c
++++ b/drivers/net/dsa/qca/qca8k-8xxx.c
+@@ -1756,7 +1756,7 @@ static int qca8k_connect_tag_protocol(struct dsa_switch *ds,
+ static int
+ qca8k_setup(struct dsa_switch *ds)
  {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct regmap *regmap = priv->regmap;
- 	u32 port_mask, port_ctrl, val;
- 	int ret;
-@@ -439,7 +439,7 @@ static int ar9331_sw_setup_port(struct dsa_switch *ds, int port)
+-	struct qca8k_priv *priv = (struct qca8k_priv *)ds->priv;
++	struct qca8k_priv *priv = ds->priv;
+ 	int cpu_port, ret, i;
+ 	u32 mask;
  
- static int ar9331_sw_setup(struct dsa_switch *ds)
+diff --git a/drivers/net/dsa/qca/qca8k-common.c b/drivers/net/dsa/qca/qca8k-common.c
+index 96773e432558..8c2dc0e48ff4 100644
+--- a/drivers/net/dsa/qca/qca8k-common.c
++++ b/drivers/net/dsa/qca/qca8k-common.c
+@@ -760,7 +760,7 @@ int qca8k_port_fdb_add(struct dsa_switch *ds, int port,
+ 		       const unsigned char *addr, u16 vid,
+ 		       struct dsa_db db)
  {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct regmap *regmap = priv->regmap;
- 	int ret, i;
+-	struct qca8k_priv *priv = (struct qca8k_priv *)ds->priv;
++	struct qca8k_priv *priv = ds->priv;
+ 	u16 port_mask = BIT(port);
  
-@@ -484,7 +484,7 @@ static int ar9331_sw_setup(struct dsa_switch *ds)
+ 	return qca8k_port_fdb_insert(priv, addr, port_mask, vid);
+@@ -770,7 +770,7 @@ int qca8k_port_fdb_del(struct dsa_switch *ds, int port,
+ 		       const unsigned char *addr, u16 vid,
+ 		       struct dsa_db db)
+ {
+-	struct qca8k_priv *priv = (struct qca8k_priv *)ds->priv;
++	struct qca8k_priv *priv = ds->priv;
+ 	u16 port_mask = BIT(port);
  
- static void ar9331_sw_port_disable(struct dsa_switch *ds, int port)
+ 	if (!vid)
+@@ -782,7 +782,7 @@ int qca8k_port_fdb_del(struct dsa_switch *ds, int port,
+ int qca8k_port_fdb_dump(struct dsa_switch *ds, int port,
+ 			dsa_fdb_dump_cb_t *cb, void *data)
  {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct regmap *regmap = priv->regmap;
- 	int ret;
- 
-@@ -527,7 +527,7 @@ static void ar9331_sw_phylink_mac_config(struct dsa_switch *ds, int port,
- 					 unsigned int mode,
- 					 const struct phylink_link_state *state)
- {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct regmap *regmap = priv->regmap;
- 	int ret;
- 
-@@ -542,7 +542,7 @@ static void ar9331_sw_phylink_mac_link_down(struct dsa_switch *ds, int port,
- 					    unsigned int mode,
- 					    phy_interface_t interface)
- {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct ar9331_sw_port *p = &priv->port[port];
- 	struct regmap *regmap = priv->regmap;
- 	int ret;
-@@ -562,7 +562,7 @@ static void ar9331_sw_phylink_mac_link_up(struct dsa_switch *ds, int port,
- 					  int speed, int duplex,
- 					  bool tx_pause, bool rx_pause)
- {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct ar9331_sw_port *p = &priv->port[port];
- 	struct regmap *regmap = priv->regmap;
- 	u32 val;
-@@ -665,7 +665,7 @@ static void ar9331_do_stats_poll(struct work_struct *work)
- static void ar9331_get_stats64(struct dsa_switch *ds, int port,
- 			       struct rtnl_link_stats64 *s)
- {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct ar9331_sw_port *p = &priv->port[port];
- 
- 	spin_lock(&p->stats_lock);
-@@ -676,7 +676,7 @@ static void ar9331_get_stats64(struct dsa_switch *ds, int port,
- static void ar9331_get_pause_stats(struct dsa_switch *ds, int port,
- 				   struct ethtool_pause_stats *pause_stats)
- {
--	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
-+	struct ar9331_sw_priv *priv = ds->priv;
- 	struct ar9331_sw_port *p = &priv->port[port];
- 
- 	spin_lock(&p->stats_lock);
+-	struct qca8k_priv *priv = (struct qca8k_priv *)ds->priv;
++	struct qca8k_priv *priv = ds->priv;
+ 	struct qca8k_fdb _fdb = { 0 };
+ 	int cnt = QCA8K_NUM_FDB_RECORDS;
+ 	bool is_static;
 -- 
 2.30.2
 
