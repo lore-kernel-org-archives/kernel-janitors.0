@@ -2,77 +2,50 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA49CEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 02:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4ADEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 04:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbjF2CK4 (ORCPT
+        id S231127AbjF2E6X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jun 2023 22:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
+        Thu, 29 Jun 2023 00:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjF2CKz (ORCPT
+        with ESMTP id S229487AbjF2E6V (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jun 2023 22:10:55 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 6ADF61FEB;
-        Wed, 28 Jun 2023 19:10:53 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 23C4C604D34EE;
-        Thu, 29 Jun 2023 10:10:39 +0800 (CST)
-Message-ID: <72784932-8390-4f82-fbaa-5086804025df@nfschina.com>
-Date:   Thu, 29 Jun 2023 10:10:38 +0800
+        Thu, 29 Jun 2023 00:58:21 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD52171E;
+        Wed, 28 Jun 2023 21:58:10 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id D5CEF67373; Thu, 29 Jun 2023 06:58:06 +0200 (CEST)
+Date:   Thu, 29 Jun 2023 06:58:06 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Chengming Zhou <zhouchengming@bytedance.com>,
+        linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chengming Zhou <chengming.zhou@linux.dev>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH v3 3/3] blk-mq: fix start_time_ns and alloc_time_ns for
+ pre-allocated rq
+Message-ID: <20230629045806.GA16513@lst.de>
+References: <20230628124546.1056698-4-chengming.zhou@linux.dev> <1bf88665-f779-7d45-1d5f-1af05aeb0882@web.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH net-next 00/10] Remove unnecessary (void*) conversions
-Content-Language: en-US
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Hao Lan <lanhao@huawei.com>, f.fainelli@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, irusskikh@marvell.com,
-        yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        steve.glendinning@shawell.net, iyappan@os.amperecomputing.com,
-        keyur@os.amperecomputing.com, quan@os.amperecomputing.com,
-        hkallweit1@gmail.com, linux@armlinux.org.uk,
-        mostrows@earthlink.net, xeb@mail.ru, qiang.zhao@nxp.com,
-        yangyingliang@huawei.com, linux@rempel-privat.de,
-        ansuelsmth@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: yunchuan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   yunchuan <yunchuan@nfschina.com>
-In-Reply-To: <ecd70c28-1629-4b6c-96fc-a0b8f8713a04@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1bf88665-f779-7d45-1d5f-1af05aeb0882@web.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/6/28 22:39, Andrew Lunn wrote:
-> On Wed, Jun 28, 2023 at 04:37:43PM +0200, Andrew Lunn wrote:
->>> Hi, Hao Lan,
->>>
->>> Sorry for that, I just compiled these patches in the mainline branch.
->>> I know now, it's also necessary to compile patches in net and net-next
->>> branch.
->>> Thanks for your reply!
->> net-next is also closed at the moment due to the merge window. Please
->> wait two weeks before reposting, by which time net-next will be open
->> again.
+On Wed, Jun 28, 2023 at 08:56:30PM +0200, Markus Elfring wrote:
+> …
+> > This patch fix it by setting alloc_time_ns and start_time_ns to now
+> …
+> 
+> Please choose another imperative change suggestion.
 
-Hi, Andrew Lunn,
-
-Understand, and thanks for your reminding!
-
-> Your email threading also seems to be broken, there is no
-> threading. That might cause pathworks an issue.
-Sometimes it doesn't work, but I also receive email from email list.
-So I can read your email from email list although something is broken.
-Thanks again！
-
-wuych
-
->
-> 	Andrew
+Please stop bothering our contributors.
