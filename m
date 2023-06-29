@@ -2,103 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AFEEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 05:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FB1EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 06:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbjF2Fvz (ORCPT
+        id S231778AbjF2GHw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jun 2023 01:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        Thu, 29 Jun 2023 02:07:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbjF2FvI (ORCPT
+        with ESMTP id S231392AbjF2GHt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jun 2023 01:51:08 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 434682D4A
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 22:51:03 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-313e1c27476so185979f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 22:51:03 -0700 (PDT)
+        Thu, 29 Jun 2023 02:07:49 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 766F010CF
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 23:07:48 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fa96fd7a04so3145045e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jun 2023 23:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688017862; x=1690609862;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=peZonunRaJ95r6T1skx2hyGoFsSu6wDgzOW9qrfM4Kc=;
-        b=tgfy8qGSD65HWBeWSIUrq2wWBy9Vd26n+4f51LYynMfXR3xx01skrGd0sgmMs9OpTA
-         cDfcerpQwY09qL8vel86+NmxTEhQm3d7DtER7CT5WcpLGRGcWN4tn6MU+ZAPaOy5EGMt
-         9ONOUxTd0gHb4ERi6CPsC0jpfU6kqDRFQ/VbLOZJpmY/DHvICxEkLpC5RzneK7k7+bAs
-         +5P3tk4Bk0OmQUYahxXdYCKj+cg1pSHaWjtPI7661o5+BEAMmXdiPABIbXPe8IcwZ37r
-         nsFbf99Gk5ZwMYha6mtBhmDaM4auoL9kE8but4ai5jRteblHx2prqqfj8oZ6nV1zQtTz
-         APoA==
+        d=linaro.org; s=google; t=1688018867; x=1690610867;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hG3V7UdPm5Kx6bSNwhJkUGt/frQZQdVDwYSF5CCPhOs=;
+        b=oFlsMhLdmAZDFyCYw7GjD0CzcCyDOUI0irAyfJddX18adJpjjovaWyBIfUTGw1BjSb
+         D9Zt1gaZtKVA9KPlkukNJ02Bw2yggDIbD0mPncbBgy9BO1TRL6ZtCvvVN9/VBnSQrWHr
+         F5kcKkPRmmrR+6fAZ4pfnmfcdTTwNErSblZ7CAzSW6O5QWygJhv4k+m3lACwaNEaiMYC
+         6vtQtsmtHF5vG9pXW9BfEiPBC61Z6zG8IZxwrfvVc/RapmyW+uE7XSdYDfRt2g/P0GaA
+         IVENPXy6MkAynbgJxkSNmC6uSB53ZUsRIWy6acERQ0M0rzYH1h3pfu8gKK7KC2a++tJS
+         9Z+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688017862; x=1690609862;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=peZonunRaJ95r6T1skx2hyGoFsSu6wDgzOW9qrfM4Kc=;
-        b=QmnB88HUHjjnAb0KY/clnN5lJMediW9VxxZGCg+5mk+ynKqVqW8kdRKy2HXO3Kq9fA
-         qk6CjODECdJb1h3mxjC4FyGtJzlqNoiX1BhL81T2Xmh8ylfhxDn6SiVt1XJPUy68H05g
-         WPF9lDzu9t84oZysE2QHGsdPMoqL3BRpy5M/pnvozpEr5sndDmDLJlgiO/EeNThMZcyV
-         Ltr3cPvbpi5XAAh6lW0o7xRimfUYmfCXsIYtWT7Z/81jPAjfPaL3Eh9cXIy6mZhSRMdU
-         6KCWo5B0I7REC1T9oFSeclsgeJA8EkHkUllH7MAMLy0b1+NARuy3G2FVydVD3HExdFNs
-         t6nA==
-X-Gm-Message-State: AC+VfDx9JNWTS9w+/6wPkyH0TRrIOcvaP6dMdvamPiAvz/DSwatAEkum
-        hMBbMq/aF73THazuhvcLHmyTSA==
-X-Google-Smtp-Source: ACHHUZ46bnTv4fp7Jqwr00dopnJCmcDpYeZN2PzIZLASW0OP/E6OKDKyB66Uq90f9l+06/VSKbnd8w==
-X-Received: by 2002:adf:fd51:0:b0:313:eeb0:224c with SMTP id h17-20020adffd51000000b00313eeb0224cmr3055104wrs.28.1688017861739;
-        Wed, 28 Jun 2023 22:51:01 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688018867; x=1690610867;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hG3V7UdPm5Kx6bSNwhJkUGt/frQZQdVDwYSF5CCPhOs=;
+        b=XfZA7hTWOaugHfaQhdDA+1y2FyjJunmpASJGJfli1jo1I9Ix+mwsF3d8HpuFI2qGY8
+         EosBm1OPnA9SDswYkWCnET+sfC/a04t0cEfKxy4UIycx+3UaK4zPV5dSO4c4uC79AStk
+         noBAUyHAx6MT5u0rWSi7DfWF9t6QFMBTvE7wkIfGD7QXQVcmqZIjfFwGHbJdobzvp/WH
+         gNOcwZq7ESPO2HjbF/xVJxl/Dn4SGVtWeHiFiKl3+itB4mNhuzUoE7NaZlTejkOYtH6Q
+         zP/BxCJcDl1Q/0D+1eezRNigIrjj0EYHfAdzskU38NE5vNRohkhfJQA29pv6zpVzGBKV
+         2vUA==
+X-Gm-Message-State: AC+VfDz8ki/3kH6wVvkz1/B+RhkfXCcX/vgk5G14EnOZQgSRZqWeKP7I
+        JyiMG/oYbFRuqYCnzQbfGr+FwQ==
+X-Google-Smtp-Source: ACHHUZ57eBtEr6beoWpiAiXBCbHcdZD0/cDn16RcjQcG19bArgstaa4FKxBKB56H8b9dXR3+8OI6tQ==
+X-Received: by 2002:a7b:c406:0:b0:3fb:b6f3:e528 with SMTP id k6-20020a7bc406000000b003fbb6f3e528mr925313wmi.25.1688018866842;
+        Wed, 28 Jun 2023 23:07:46 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z16-20020a5d4d10000000b00313eeca9f4asm11425249wrt.14.2023.06.28.22.50.59
+        by smtp.gmail.com with ESMTPSA id hn10-20020a05600ca38a00b003fba586100fsm6597743wmb.6.2023.06.28.23.07.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 22:50:59 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 08:50:57 +0300
+        Wed, 28 Jun 2023 23:07:45 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 09:07:37 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     yunchuan <yunchuan@nfschina.com>
-Cc:     "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next 08/10] net: mdio: Remove unnecessary (void*)
- conversions
-Message-ID: <3fda1d81-e350-42e9-8fec-6f107ae75932@kadam.mountain>
-References: <ZJwCcWgi0d6kEepI@shell.armlinux.org.uk>
- <325f00e3-1dfd-f77b-9795-6f89e44c0417@nfschina.com>
+To:     Guy Levi <guyle@mellanox.com>
+Cc:     Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] RDMA/mlx4: Make check for invalid flags stricter
+Message-ID: <233ed975-982d-422a-b498-410f71d8a101@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <325f00e3-1dfd-f77b-9795-6f89e44c0417@nfschina.com>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 29, 2023 at 09:59:56AM +0800, yunchuan wrote:
-> On 2023/6/28 17:50, Russell King (Oracle) wrote:
-> > On Wed, Jun 28, 2023 at 10:45:17AM +0800, wuych wrote:
-> > > @@ -211,7 +211,7 @@ static void xgene_enet_wr_mdio_csr(void __iomem *base_addr,
-> > >   static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
-> > >   				int reg, u16 data)
-> > >   {
-> > > -	void __iomem *addr = (void __iomem *)bus->priv;
-> > > +	void __iomem *addr = bus->priv;
-> > >   	int timeout = 100;
-> > >   	u32 status, val;
-> > > @@ -234,7 +234,7 @@ static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
-> > >   static int xgene_xfi_mdio_read(struct mii_bus *bus, int phy_id, int reg)
-> > >   {
-> > > -	void __iomem *addr = (void __iomem *)bus->priv;
-> > > +	void __iomem *addr = bus->priv;
-> > >   	u32 data, status, val;
-> > >   	int timeout = 100;
-> > These probably cause Sparse to warn whether or not the cast is there.
-> 
-> Hi, Russell King,
-> 
-> I didn't notice this Sparse warning.
-> Should I remove this cast although it cause Sparse warning?
+This code is trying to ensure that only the flags specified in the list
+are allowed.  The problem is that ucmd->rx_hash_fields_mask is a u64 and
+the flags are an enum which is treated as a u32 in this context.  That
+means the test doesn't check whether the highest 32 bits are zero.
 
-No.  Don't introduce new Sparse warnings.
+Fixes: 4d02ebd9bbbd ("IB/mlx4: Fix RSS hash fields restrictions")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+The MLX4_IB_RX_HASH_INNER value is declared as
+"MLX4_IB_RX_HASH_INNER           = 1ULL << 31," which suggests that it
+should be type ULL but that doesn't work.  It will still be basically a
+u32.  (Enum types are weird).
 
-regards,
-dan carpenter
+ drivers/infiniband/hw/mlx4/qp.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 456656617c33..9d08aa99f3cb 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -565,15 +565,15 @@ static int set_qp_rss(struct mlx4_ib_dev *dev, struct mlx4_ib_rss *rss_ctx,
+ 		return (-EOPNOTSUPP);
+ 	}
+ 
+-	if (ucmd->rx_hash_fields_mask & ~(MLX4_IB_RX_HASH_SRC_IPV4	|
+-					  MLX4_IB_RX_HASH_DST_IPV4	|
+-					  MLX4_IB_RX_HASH_SRC_IPV6	|
+-					  MLX4_IB_RX_HASH_DST_IPV6	|
+-					  MLX4_IB_RX_HASH_SRC_PORT_TCP	|
+-					  MLX4_IB_RX_HASH_DST_PORT_TCP	|
+-					  MLX4_IB_RX_HASH_SRC_PORT_UDP	|
+-					  MLX4_IB_RX_HASH_DST_PORT_UDP  |
+-					  MLX4_IB_RX_HASH_INNER)) {
++	if (ucmd->rx_hash_fields_mask & ~(u64)(MLX4_IB_RX_HASH_SRC_IPV4	|
++					       MLX4_IB_RX_HASH_DST_IPV4	|
++					       MLX4_IB_RX_HASH_SRC_IPV6	|
++					       MLX4_IB_RX_HASH_DST_IPV6	|
++					       MLX4_IB_RX_HASH_SRC_PORT_TCP |
++					       MLX4_IB_RX_HASH_DST_PORT_TCP |
++					       MLX4_IB_RX_HASH_SRC_PORT_UDP |
++					       MLX4_IB_RX_HASH_DST_PORT_UDP |
++					       MLX4_IB_RX_HASH_INNER)) {
+ 		pr_debug("RX Hash fields_mask has unsupported mask (0x%llx)\n",
+ 			 ucmd->rx_hash_fields_mask);
+ 		return (-EOPNOTSUPP);
+-- 
+2.39.2
 
