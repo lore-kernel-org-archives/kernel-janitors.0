@@ -2,80 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C96EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 06:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654ADEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jun 2023 07:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbjF2GTm (ORCPT
+        id S232297AbjF2HfR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jun 2023 02:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38772 "EHLO
+        Thu, 29 Jun 2023 03:35:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbjF2GTk (ORCPT
+        with ESMTP id S231430AbjF2Hek (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jun 2023 02:19:40 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id E891310B;
-        Wed, 28 Jun 2023 23:19:38 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 2908D60562F6B;
-        Thu, 29 Jun 2023 14:19:34 +0800 (CST)
-Message-ID: <05d56f16-a4fd-10ca-22af-3bc1c6395335@nfschina.com>
-Date:   Thu, 29 Jun 2023 14:19:33 +0800
+        Thu, 29 Jun 2023 03:34:40 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DBBFE58;
+        Thu, 29 Jun 2023 00:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1688024079; x=1719560079;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/axrSWOdtVz/Ckd0cZbOJm+/YGfdBtp+s+fpBkWAL+M=;
+  b=KoUp4AERObC8dxqV0BgNgGgyeSBE0QSqfXdwyzAKGjUdthoUTRo1xlUR
+   XZs8iienuP3RNCLaebwZxtR6rGZJkMSTuzYNKBU5aYyteF2wKz2pXvEQP
+   SoOgQj7FgDwsmd+tdm2s/OUqf5n8zZR7O/Nkg8UeRHJJ17gyRYtuN51Wo
+   3bxaNXybVzhAXPecuOJxTw+rQdfahYkuBVYBjz79VW725l3bXagqjBszK
+   27Gz4Q+zT8l1sHMQE95VIeb1KfrbGe2n+RZlDGpvfPgDQtYraAfJmh2uE
+   b7cCs0Q5+DSsQIQ4HkKcw6z1spxQtSF6e0MXMNffO9eiTixu1EupJ5mE8
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="364592006"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="364592006"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2023 00:34:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="720472979"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="720472979"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2023 00:34:36 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+        by kekkonen.fi.intel.com (Postfix) with SMTP id E0FA01207EB;
+        Thu, 29 Jun 2023 10:34:33 +0300 (EEST)
+Date:   Thu, 29 Jun 2023 07:34:33 +0000
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 23/26] media: staging: imgu: use array_size
+Message-ID: <ZJ00CUwiH6DBtape@kekkonen.localdomain>
+References: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+ <20230623211457.102544-24-Julia.Lawall@inria.fr>
+ <alpine.DEB.2.22.394.2306271933480.3150@hadrien>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH net-next 08/10] net: mdio: Remove unnecessary (void*)
- conversions
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: yunchuan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   yunchuan <yunchuan@nfschina.com>
-In-Reply-To: <3fda1d81-e350-42e9-8fec-6f107ae75932@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.22.394.2306271933480.3150@hadrien>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Julia, Bingbu,
 
-On 2023/6/29 13:50, Dan Carpenter wrote:
-> On Thu, Jun 29, 2023 at 09:59:56AM +0800, yunchuan wrote:
->> On 2023/6/28 17:50, Russell King (Oracle) wrote:
->>> On Wed, Jun 28, 2023 at 10:45:17AM +0800, wuych wrote:
->>>> @@ -211,7 +211,7 @@ static void xgene_enet_wr_mdio_csr(void __iomem *base_addr,
->>>>    static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
->>>>    				int reg, u16 data)
->>>>    {
->>>> -	void __iomem *addr = (void __iomem *)bus->priv;
->>>> +	void __iomem *addr = bus->priv;
->>>>    	int timeout = 100;
->>>>    	u32 status, val;
->>>> @@ -234,7 +234,7 @@ static int xgene_xfi_mdio_write(struct mii_bus *bus, int phy_id,
->>>>    static int xgene_xfi_mdio_read(struct mii_bus *bus, int phy_id, int reg)
->>>>    {
->>>> -	void __iomem *addr = (void __iomem *)bus->priv;
->>>> +	void __iomem *addr = bus->priv;
->>>>    	u32 data, status, val;
->>>>    	int timeout = 100;
->>> These probably cause Sparse to warn whether or not the cast is there.
->> Hi, Russell King,
->>
->> I didn't notice this Sparse warning.
->> Should I remove this cast although it cause Sparse warning?
-> No.  Don't introduce new Sparse warnings.
+On Tue, Jun 27, 2023 at 07:35:47PM +0200, Julia Lawall wrote:
+> 
+> 
+> On Fri, 23 Jun 2023, Julia Lawall wrote:
+> 
+> > Use array_size to protect against multiplication overflows.
+> >
+> > The changes were done using the following Coccinelle semantic patch:
+> >
+> > // <smpl>
+> > @@
+> >     expression E1, E2;
+> >     constant C1, C2;
+> >     identifier alloc = {vmalloc,vzalloc};
+> > @@
+> >
+> > (
+> >       alloc(C1 * C2,...)
+> > |
+> >       alloc(
+> > -           (E1) * (E2)
+> > +           array_size(E1, E2)
+> >       ,...)
+> > )
+> > // </smpl>
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > ---
+> >  drivers/staging/media/ipu3/ipu3-mmu.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/media/ipu3/ipu3-mmu.c b/drivers/staging/media/ipu3/ipu3-mmu.c
+> > index cb9bf5fb29a5..9c4adb815c94 100644
+> > --- a/drivers/staging/media/ipu3/ipu3-mmu.c
+> > +++ b/drivers/staging/media/ipu3/ipu3-mmu.c
+> > @@ -464,7 +464,7 @@ struct imgu_mmu_info *imgu_mmu_init(struct device *parent, void __iomem *base)
+> >  	 * Allocate the array of L2PT CPU pointers, initialized to zero,
+> >  	 * which means the dummy L2PT allocated above.
+> >  	 */
+> > -	mmu->l2pts = vzalloc(IPU3_PT_PTES * sizeof(*mmu->l2pts));
+> > +	mmu->l2pts = vzalloc(array_size(IPU3_PT_PTES, sizeof(*mmu->l2pts)));
+> >  	if (!mmu->l2pts)
+> >  		goto fail_l2pt;
+> 
+> I think that this patch can be dropped.  Since it is a multiplcation of
+> two constants, if there is an overflow, I guess the compiler would detect
+> it?
 
-Got it, thanks for your answer!
+Indeed. vcalloc() would be perhaps nicer but the original isn't wrong
+either.
 
-wuych
+-- 
+Kind regards,
 
->
-> regards,
-> dan carpenter
->
+Sakari Ailus
