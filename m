@@ -2,104 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40541EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 11:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBF4EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 12:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232420AbjF3Ldn (ORCPT
+        id S232993AbjF3MNn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 07:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
+        Fri, 30 Jun 2023 08:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbjF3Ldl (ORCPT
+        with ESMTP id S232808AbjF3MNd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 07:33:41 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81A41FC1;
-        Fri, 30 Jun 2023 04:33:40 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso2811586e87.0;
-        Fri, 30 Jun 2023 04:33:40 -0700 (PDT)
+        Fri, 30 Jun 2023 08:13:33 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FEBAE72
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 05:13:31 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fb8574a3a1so2873846e87.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 05:13:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688124819; x=1690716819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7oDpGX7SadvHF0PBwxOvdE+kg9NeeEeLYzE8RLSZxyI=;
-        b=hNT+Q7klvxC/zjyhFtOH0PasSSR5T6dWL85jB02f0h/XRjrZqI40h82c6/TTdZbEVx
-         KNGw68S934TwE6OBBed4Xul2/X1DEeh5W64AuxiLmSV4wHxfJv9zXLlzJpzqM9VcXhT+
-         CJcx4QzGOK1isSlEuNMU8KyabdqrELfwXStJZgnSNC+M/IalpfwHySGws+FkIpjiRJfn
-         F20vvs0svavEcAqfiDVXAfJwYTF2FDX60X0zOq7zrKjN3Cd3Y4Ysw+wzQRJFTDbWsG1J
-         OSblJNQt7ZKgMvmtrRl0/vS4mb8HtNbhxQAPzMnJHUwXFYxdxfaoUQySUNlArZDHYVZu
-         upiQ==
+        d=linaro.org; s=google; t=1688127210; x=1690719210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7twfZotfcVAo8HDyHViXvS6PUSJNCPNn24nmZO5Ouw=;
+        b=WNjV4Mw1Fod95iFm7lO7tuiDyjHZVX5fSVy8qc2hsOVo6QATOdhnEO0wjDFo8fEv58
+         Ei9zrNHj18XKP7LXlxwQ+1XqpY0K2F8XErKC1AHd1WeMkvXGVQWCQVVnqCanLZ6QK6+e
+         euafEWSaCiW0qgFrPtnWtkccmdBxKVpuPAqPKvb7xQ2XCpIcx4fkkgspECdBswmhgXfZ
+         fmJz1pWMA1MSPBRPF1y9w666DPVyrHjF1e3iFycOuUAvxWKailmDyIp2eR+nftJvObQR
+         i4WU3SDi+BA2NzrRV+NATwPhKSyvcVAVeV2tAurURMf8ECNr77RWy2WYJh72yqgTn/kt
+         fmXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688124819; x=1690716819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7oDpGX7SadvHF0PBwxOvdE+kg9NeeEeLYzE8RLSZxyI=;
-        b=VW+FAO0m9Q+Md+NtTjbspn1xGoP10bGb6sdiXE6EmqlKB2fwQX5BP20JWY0A/L0qfR
-         cCRwBdGF+eCZGbbh7SxteizYgEBpXyB07n8wI4HerJaG0ivP9UbgVlsdhWMPQIB/oeO8
-         aO9A0XC/e2cGgTofB0B6oANbXeb7hc4D873E5u+S3IAseQ9TCsH8VXQLKh+FPAEwj2KN
-         anjJuNzP3pTFOUzdQTEZCQvujJCe8qDla3l3uy4K+i/FL45ut5eynzTAA1spIBqjfGnr
-         HqK5NnNSfB3rkJ65bwrgMZp4uv1+fih529I0s8++z+eI3yYjwbGQxIHsDIseNjVWTpMi
-         Qfwg==
-X-Gm-Message-State: ABy/qLYC8Nu+/QLYEtbFMs6qaU5zR58Fo83Yquedfr02IJgGBq/KzBwh
-        jA/+ZHfojoB3qq2+G5dC6J8=
-X-Google-Smtp-Source: APBJJlFxTsPYthU3KN/Dq8lE2AoDRMrc2DPuPaIbkbwqbwp4wgN6PIImE0WFHCi56FDqlGDnBSgCqQ==
-X-Received: by 2002:a05:6512:3592:b0:4fb:9f93:365e with SMTP id m18-20020a056512359200b004fb9f93365emr1828727lfr.41.1688124818526;
-        Fri, 30 Jun 2023 04:33:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z24-20020a05600c221800b003fa96fe2bd9sm13772194wml.22.2023.06.30.04.33.37
+        d=1e100.net; s=20221208; t=1688127210; x=1690719210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I7twfZotfcVAo8HDyHViXvS6PUSJNCPNn24nmZO5Ouw=;
+        b=NtNN+Xcs9AKl5g7Mq/4uaMmVwLnl0XvPIhaqkZI0KBGlnyp7mFNWzUorYhSJgMlZ/M
+         nJD669H8zPAO6gjV2Bb6bkIU61SdaYPFa/4idp5cHAGHJ2eWLGNtM6eRBzs7Ostodw1M
+         4mCjwC2CSg35tiWCECkJX+CetV3vpWcETyX2mzYjjJZLPumLY2aH2w8LaLnqFrV75SnX
+         dR8r6oqKqUgShAv2Hi+qJN5ZDoefInbuIZbg1Bpr2oBrkUGyWm4suQ2TrzGQoD0RVe62
+         r0nsypyrBhBiXxFzNGyY6WpwJI5lm4vlecLzN3Wz8XQKAkMtLgSsP14DhawyrZJ5Xtc+
+         gFFQ==
+X-Gm-Message-State: ABy/qLYn9+C1JnWfIw1t6asoWbW6YWgS4X0AK5mH8Xw1rUJdu85RQOZ2
+        460hLjVNajtrzxfg/1RrlWFI8g==
+X-Google-Smtp-Source: APBJJlGHAhFmWKRIdbg7zEy5w4+o+FvHdIq/YMx829mO5Tmp54dmAHDACR1wM+u0dNEGS2XhmkhKyg==
+X-Received: by 2002:a05:6512:3e26:b0:4fb:780c:fce9 with SMTP id i38-20020a0565123e2600b004fb780cfce9mr2527865lfv.58.1688127209799;
+        Fri, 30 Jun 2023 05:13:29 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id p20-20020a1c7414000000b003fa973e6612sm13742006wmc.44.2023.06.30.05.13.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 04:33:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] smb: client: remove redundant pointer 'server'
-Date:   Fri, 30 Jun 2023 12:33:37 +0100
-Message-Id: <20230630113337.123257-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 30 Jun 2023 05:13:28 -0700 (PDT)
+Date:   Fri, 30 Jun 2023 15:13:24 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Dmitry Antipov <dmantipov@yandex.ru>
+Cc:     Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-nfs@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] SUNRPC: clean up integer overflow check
+Message-ID: <ac54a100-9e7f-47bf-a415-ca3784c08b1e@kadam.mountain>
+References: <2390fdc8-13fa-4456-ab67-44f0744db412@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2390fdc8-13fa-4456-ab67-44f0744db412@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer 'server' is assigned but never read, the pointer is
-redundant and can be removed. Cleans up clang scan build warning:
+We were kind of having a discussion about static checkers earlier...
 
-fs/smb/client/dfs.c:217:3: warning: Value stored to 'server' is
-never read [deadcode.DeadStores]
+The point of static checkers is to find code that doesn't behave as the
+authors intended.  It can be tricky to determine what is intentional or
+not.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/smb/client/dfs.c | 2 --
- 1 file changed, 2 deletions(-)
+If you have a condition which can never be true then that's fairly
+suspicious.  Why would we write a condition like that?  But you have to
+look at the context.
 
-diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
-index 26d14dd0482e..1403a2d1ab17 100644
---- a/fs/smb/client/dfs.c
-+++ b/fs/smb/client/dfs.c
-@@ -143,7 +143,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *mnt_ctx)
- 	struct smb3_fs_context *ctx = mnt_ctx->fs_ctx;
- 	char *ref_path = NULL, *full_path = NULL;
- 	struct dfs_cache_tgt_iterator *tit;
--	struct TCP_Server_Info *server;
- 	struct cifs_tcon *tcon;
- 	char *origin_fullpath = NULL;
- 	char sep = CIFS_DIR_SEP(cifs_sb);
-@@ -214,7 +213,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *mnt_ctx)
- 	} while (rc == -EREMOTE);
- 
- 	if (!rc) {
--		server = mnt_ctx->server;
- 		tcon = mnt_ctx->tcon;
- 
- 		spin_lock(&tcon->tc_lock);
--- 
-2.39.2
+	if (!p) {
 
+Maybe that's part of a macro and even though "p" can't be NULL here, it
+can be NULL in other places.  So we can't warning about bogus NULL
+checks if they are inside a macro.  There is a valid reason to check.
+
+With NULL checks, people add a lot of unnecessary NULL checks just out
+of caution.  So even though the NULL checks are unnecessary, they aren't
+harmful.  You only want to warn about them if there is something else to
+make them suspicious.  For example, the if the pointer is an error
+pointer but you're checking for NULL then probably that's not
+intentional.  Or people think that list_for_each() loops exit with the
+iterator set to NULL but that's not how it works so those checks should
+trigger a warning.
+
+Maybe we have a condition "if (unsigned_val < 0", and that's very
+suspicious, but maybe the context is:
+
+	if (unsigned_val < 0 || unsigned_val > 10)
+
+In that context we can see what the intention was, and that condition
+will clamp the value regardless of the type of unsigned_val so it works
+as intended.  It's not a bug.  The static checker should not warn about
+that.
+
+Another impossible condition could look like:
+
+	if (x & SOMETHING_ZERO) {
+
+Quite often the SOMETHING_ZERO is because it depends on the .config.  So
+in Smatch what I do is I make a list of macros which can be zero or not
+depending on the .config.  In a lot of cases, what was intended was:
+
+	if (x & (1 << SOMETHING_ZERO)) {
+
+That's a useful warning, but you have to create that list of allowed
+defines otherwise it generates too many false positives.
+
+So here we have:
+
+	if (u32_val > SOMETHING) {
+
+The condition is impossible when the code is compiled on a 64-bit
+system, but a human reading the code can see that it is an integer
+overflow check and Smatch can see that too.  I haven't looked at Clang
+or GCC internals to see how hard it would be to fix them.  Maybe it's
+really hard to fix?
+
+With static checkers we have to accept the checker is going to get it
+wrong some times.  The checker is going to warn about code that works
+as intended and it's going to miss over 97% of bugs.  But hopefully
+it generates enough warnings to be worth the time it takes and the
+number of false positives is small enough so you can keep up.
+
+regards,
+dan carpenter
