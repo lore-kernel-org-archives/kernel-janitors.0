@@ -2,59 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028A4EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 17:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C51DEB64D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 17:34:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232926AbjF3RQm (ORCPT
+        id S232880AbjF3Ren (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 13:16:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36986 "EHLO
+        Fri, 30 Jun 2023 13:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232917AbjF3RQg (ORCPT
+        with ESMTP id S232939AbjF3ReY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 13:16:36 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DA73A9E
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:16:34 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id d75a77b69052e-401f4408955so13791cf.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:16:34 -0700 (PDT)
+        Fri, 30 Jun 2023 13:34:24 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7A249C5
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:33:49 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-401d1d967beso23001cf.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688145394; x=1690737394;
+        d=google.com; s=20221208; t=1688146422; x=1690738422;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cHJRhOeYdjZGJtK0kiELfpJOpqjlUoQdA4uo5jTiZng=;
-        b=tOTGvjcjXsPjf2kpF4cHDyeCHK9ePpk88UqY/w/MiSd9yS9PKXDjrtNmUABRNyN/v2
-         BngxrK9UzFWDamrZwzqQOKChngOCgN5qGex4zu2IQOdBCker/AkoB/L1q/VAi6/dc4gW
-         bkjxm7s8I1GTgbnkJwdmlOcPrYCz8hOVOLLT+MZLuRaHpsc5tp5jp85iIf7UeKRaitye
-         5iYXhKgX23/Fa0dTZA8u6aTdN+Gdk7rbCp+ZOtEqpecBf83K5xuynaRU16nCNdx0+CbZ
-         jszTQV/Q1KDVEsSxpHST0kVodPMAzCsNMpjwuQQHLrZAKkRPbIv/7gGuwgysElhjfkfS
-         vRxA==
+        bh=ncRHJ/UjJWTzqrYWhnAQ1Z9WL/dnndbkb23KvFYFj98=;
+        b=13KZgM3bZReYnp+zOtCRTMwq6znHdRzyNpuw2EhU6x6AQh/Fijhf2oEQUsl4Yp56j7
+         g7H9t/Rhkxb+wiC85UNdsnTRJ2UMs+3WirehMCQO5un7lXy4PQZsvqvdp1d696RbtO1d
+         v08UtmF2JugycqatrqL8deE/ZbUZlTL/OZmDgF3iUVqg27fv8cM9OpOKgx3eap0JId6B
+         0XV+UdR48exs/vgI1mP66mgQQ6ICA1FxzRGozGzyyo7ZEsipPffmn2koTfb+pAKfHYst
+         ysyrNrM5NpZgPAmvEa+oS74M+gXicqCXywZAcqRRCeYtx4MfoYMS20UkW9geSEHJbm6g
+         rheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688145394; x=1690737394;
+        d=1e100.net; s=20221208; t=1688146422; x=1690738422;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cHJRhOeYdjZGJtK0kiELfpJOpqjlUoQdA4uo5jTiZng=;
-        b=SDz4BlBSF0n7+t1flo/GPfNjd2a4Lzh5Z+tXh7JgEWLvEBlc22DMYpN8HCLQ9rqoaU
-         PjTuRu9ukiOtR7Sh+1ylOnDR/IQANmHnTDS/fFOqtT8MKegbtV+ztQM87vosM637RglO
-         nMx2YVIDH+Pmi/T1jsAEkPuft0H9yH2M7UiQk9xoQri+KXFihnVkgaZRqYy/e+l8TVdJ
-         7tINdq1IauDjo1elY94EU/WQiMLeHJ24OAGFHC1rh1hE+f2oLt+a8Tlo27EwOpuf0p7F
-         Mu4WL0XCkU4P6qEUgw5EsKjJEnKUoSQ3m4eAsRhaedBVYX+LTIzjIEYx99HsKlBcwmfa
-         uPFQ==
-X-Gm-Message-State: AC+VfDxCi+unX79WnPWOHTCW4hZ3O3KsEiis7QyyFW5ntvYbXh4sF6US
-        6F/Gkl+az9z0gpVU+rOarL2AL/wHWsMkxr0jEAHfFQ==
-X-Google-Smtp-Source: ACHHUZ5EIkHjSZ+sBqsk0o0f0HnhEV8nIj03CJE4DHEpGgn+INV+q28RDEvFbo7jIBrPpTNKPbpR3as1EqH0XNQ4gDI=
-X-Received: by 2002:ac8:5bc5:0:b0:3f9:f877:1129 with SMTP id
- b5-20020ac85bc5000000b003f9f8771129mr806787qtb.29.1688145393558; Fri, 30 Jun
- 2023 10:16:33 -0700 (PDT)
+        bh=ncRHJ/UjJWTzqrYWhnAQ1Z9WL/dnndbkb23KvFYFj98=;
+        b=OpsThTNBOrKMivz/iYFoTU9NoMgZPvR7jmaYl9mRIfiLuLNkZRMSiIEG3BO0D93GWu
+         fsRY6U6u039Xd3eVcW7NVDgt8QcZYm3tZwu8XxHS0Mj0u1eABaC0PrR4KFWAI6CEiV3l
+         eA+RCWmAzbfRiVNRsn5KitZI+73OiM2VyD6khkd/EqtrRQ40QoLT9P2APbtJ/YWdUJKa
+         SqWAYeKi3dZ2WG19Si5SzK9PT9up3vWZxU0Ijn7OR1aWjrxNkoy6LrKGDeQs31n3JyrJ
+         LmiXx49kAgDxNzkk/JLUo337pri11HSp3ObAMmqsBSnpxFDHrW8S3J3uCmN9wyo3vOC0
+         1AQg==
+X-Gm-Message-State: ABy/qLZrsFwmNXxzho1TYY33vqJ0zJuoHiiK7u1+NPcRB2tA2z28OTui
+        EDUSuja1M8ULFqS4q7OwQ/Mlz9h8jOQGrDNo+zAL1Q==
+X-Google-Smtp-Source: APBJJlFblHu7nuYcdkIa70v0NVLCYtL+USy8nv1lip1niNa3ugQEr7gvuJTaaG87EHBpbYmr/6JI0Muoa3EKO3w9IjU=
+X-Received: by 2002:ac8:5a05:0:b0:3f9:a73b:57bb with SMTP id
+ n5-20020ac85a05000000b003f9a73b57bbmr8915qta.4.1688146422404; Fri, 30 Jun
+ 2023 10:33:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230627181030.95608-2-irogers@google.com> <8dab7522-31de-2137-7474-991885932308@web.de>
- <CAP-5=fVxTYpiXgxDKX1q7ELoAPnAisajWcNOhAp19TZDwnA0oA@mail.gmail.com> <59e92b31-cd78-5c0c-ef87-f0d824cd20f7@web.de>
-In-Reply-To: <59e92b31-cd78-5c0c-ef87-f0d824cd20f7@web.de>
+ <CAP-5=fVxTYpiXgxDKX1q7ELoAPnAisajWcNOhAp19TZDwnA0oA@mail.gmail.com>
+ <59e92b31-cd78-5c0c-ef87-f0d824cd20f7@web.de> <CAP-5=fX8-2USHn8M4KPfwLz3=AG9kc8=9KdjayMsRexZ87R_EA@mail.gmail.com>
+ <44d77ec3-9a19-cfd5-4bba-4a23d0cd526b@web.de>
+In-Reply-To: <44d77ec3-9a19-cfd5-4bba-4a23d0cd526b@web.de>
 From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 30 Jun 2023 10:16:22 -0700
-Message-ID: <CAP-5=fX8-2USHn8M4KPfwLz3=AG9kc8=9KdjayMsRexZ87R_EA@mail.gmail.com>
+Date:   Fri, 30 Jun 2023 10:33:31 -0700
+Message-ID: <CAP-5=fXjXBSFVDYXw6fXUf35hLDMqS-C4DRC4LWXUcsMNP6gdw@mail.gmail.com>
 Subject: Re: [v2 01/13] perf parse-events: Remove unused PE_PMU_EVENT_FAKE token
 To:     Markus Elfring <Markus.Elfring@web.de>
 Cc:     linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
@@ -74,27 +76,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 10:15=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
+On Fri, Jun 30, 2023 at 10:23=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
 .de> wrote:
 >
-> >>> Removed by commit 70c90e4a6b2f ("perf parse-events: Avoid scanning
-> >>> PMUs before parsing").
+> >>>>> Removed by commit 70c90e4a6b2f ("perf parse-events: Avoid scanning
+> >>>>> PMUs before parsing").
+> >>>>
+> >>>> Will the chances ever grow to add another imperative change suggesti=
+on?
+> >>>>
+> >>>> See also:
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/Documentation/process/submitting-patches.rst?h=3Dv6.4#n94
+> >>>
+> >>>
+> >>> Sorry, I can't parse this.
 > >>
-> >> Will the chances ever grow to add another imperative change suggestion=
-?
-> >>
-> >> See also:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.4#n94
+> >> Can you take the requirement =E2=80=9CDescribe your changes in imperat=
+ive mood=E2=80=9D
+> >> into account for any more descriptions?
 > >
-> >
-> > Sorry, I can't parse this.
+> > Yep, still doesn't parse.
 >
-> Can you take the requirement =E2=80=9CDescribe your changes in imperative=
- mood=E2=80=9D
-> into account for any more descriptions?
+> Does this feedback really indicate that you stumble still on understandin=
+g difficulties
+> for the linked development documentation?
+>
+> Can the mentioned patch review concern be adjusted with wording alternati=
+ves
+> for improved commit messages?
 
-Yep, still doesn't parse.
+Sorry, checked with a colleague and kernel contributor, we don't know
+what is being requested here, "imperative mood" makes no sense, as
+such I don't have a fix for what you're requesting.
 
 Thanks,
 Ian
