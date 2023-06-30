@@ -2,118 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C887EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 09:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40541EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 11:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232400AbjF3JrF (ORCPT
+        id S232420AbjF3Ldn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 05:47:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44910 "EHLO
+        Fri, 30 Jun 2023 07:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231961AbjF3JrD (ORCPT
+        with ESMTP id S229957AbjF3Ldl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 05:47:03 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 455D7130
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 02:47:02 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fb4146e8fcso14947095e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 02:47:02 -0700 (PDT)
+        Fri, 30 Jun 2023 07:33:41 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81A41FC1;
+        Fri, 30 Jun 2023 04:33:40 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso2811586e87.0;
+        Fri, 30 Jun 2023 04:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688118421; x=1690710421;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GclBgXm9Q3XbGCOTf6wDEXPVGEyfn5qEyPiaLKc6uYM=;
-        b=iROPQ3uyJUbR73/EmgO0lq8jkRTRpaKxc9hXMOAfFJ6YSLlWACsaSPgz4BOsX/XyBm
-         wifYby5SEIu+SProcw2R39cSI9PU9BKgmJux76CtYbtmLr3V2ia28uWftCJgqkBwXUJ0
-         A1z0qE46cVI9UGK7hSe+Hm0mJDmZv4CxMGaNL+2mLEZGI7TX9I8zVOZVEO9Ih7HA+A91
-         ulycw9uLpfM6MdQxkriibHCINZzd/lAPc1szOulfozPdr6kWOeTYQd4yaMWLlU+IkvXi
-         vKjOcFP+ZR3UUhNnJ3Us79yWg40DfN4vSBTZYdUvTIN0gw/QHhkXchXziIlBgCOfVaRN
-         iziw==
+        d=gmail.com; s=20221208; t=1688124819; x=1690716819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7oDpGX7SadvHF0PBwxOvdE+kg9NeeEeLYzE8RLSZxyI=;
+        b=hNT+Q7klvxC/zjyhFtOH0PasSSR5T6dWL85jB02f0h/XRjrZqI40h82c6/TTdZbEVx
+         KNGw68S934TwE6OBBed4Xul2/X1DEeh5W64AuxiLmSV4wHxfJv9zXLlzJpzqM9VcXhT+
+         CJcx4QzGOK1isSlEuNMU8KyabdqrELfwXStJZgnSNC+M/IalpfwHySGws+FkIpjiRJfn
+         F20vvs0svavEcAqfiDVXAfJwYTF2FDX60X0zOq7zrKjN3Cd3Y4Ysw+wzQRJFTDbWsG1J
+         OSblJNQt7ZKgMvmtrRl0/vS4mb8HtNbhxQAPzMnJHUwXFYxdxfaoUQySUNlArZDHYVZu
+         upiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688118421; x=1690710421;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GclBgXm9Q3XbGCOTf6wDEXPVGEyfn5qEyPiaLKc6uYM=;
-        b=L75cb6KKVX5pSbRMkPbCxEt6GVB42zPKShh06HUa35cyTJkgHoKoNgnlIU2mkRtnYh
-         2HAs1a4tlFvny/ABcezoG0Is7dn+vUv3ahkvoKOw0hbA0a6bJ9eF3vHDzofY6yNDPLeq
-         L886AnAUEjCMOXVQPEY5IiFuMAInagm8gK0Ziiw+iCYh2eJr4CkH6DPMawT0vFu4OWGu
-         8Vikqqx4fmUhOEJmCfMmWHcqagP+m+kGwayTdtCcaU5JV5RH1dl2uTC0X3yjA7eABmhT
-         DwRQiNxoyDdITih7ECTbqIGsIhTDZIRouhbjEsIkV4Pn1kBVtlcFf7rsg/xN7V9ddG2P
-         NLkQ==
-X-Gm-Message-State: AC+VfDy4CYTkStgBHwzHll9QQCKvCF9KMc/9Ce7aMGo2qOwogS8P1OS1
-        uYL3zZ/4EACKUHP47bw3Z4gYnQ==
-X-Google-Smtp-Source: ACHHUZ5ZhQr9vrR7J5QnqBkd72WjZ2AWUvoM0O8d2CRpMrfzaYrD2py75FQQRIBDIuytsk2U5d/Cww==
-X-Received: by 2002:a05:600c:3552:b0:3fa:94ea:583c with SMTP id i18-20020a05600c355200b003fa94ea583cmr7336415wmq.8.1688118420757;
-        Fri, 30 Jun 2023 02:47:00 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u6-20020a05600c210600b003fafe32c8f6sm12264726wml.10.2023.06.30.02.46.57
+        d=1e100.net; s=20221208; t=1688124819; x=1690716819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7oDpGX7SadvHF0PBwxOvdE+kg9NeeEeLYzE8RLSZxyI=;
+        b=VW+FAO0m9Q+Md+NtTjbspn1xGoP10bGb6sdiXE6EmqlKB2fwQX5BP20JWY0A/L0qfR
+         cCRwBdGF+eCZGbbh7SxteizYgEBpXyB07n8wI4HerJaG0ivP9UbgVlsdhWMPQIB/oeO8
+         aO9A0XC/e2cGgTofB0B6oANbXeb7hc4D873E5u+S3IAseQ9TCsH8VXQLKh+FPAEwj2KN
+         anjJuNzP3pTFOUzdQTEZCQvujJCe8qDla3l3uy4K+i/FL45ut5eynzTAA1spIBqjfGnr
+         HqK5NnNSfB3rkJ65bwrgMZp4uv1+fih529I0s8++z+eI3yYjwbGQxIHsDIseNjVWTpMi
+         Qfwg==
+X-Gm-Message-State: ABy/qLYC8Nu+/QLYEtbFMs6qaU5zR58Fo83Yquedfr02IJgGBq/KzBwh
+        jA/+ZHfojoB3qq2+G5dC6J8=
+X-Google-Smtp-Source: APBJJlFxTsPYthU3KN/Dq8lE2AoDRMrc2DPuPaIbkbwqbwp4wgN6PIImE0WFHCi56FDqlGDnBSgCqQ==
+X-Received: by 2002:a05:6512:3592:b0:4fb:9f93:365e with SMTP id m18-20020a056512359200b004fb9f93365emr1828727lfr.41.1688124818526;
+        Fri, 30 Jun 2023 04:33:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z24-20020a05600c221800b003fa96fe2bd9sm13772194wml.22.2023.06.30.04.33.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 02:46:58 -0700 (PDT)
-Date:   Fri, 30 Jun 2023 12:46:53 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Dmitry Antipov <dmantipov@yandex.ru>
-Cc:     Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-nfs@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] SUNRPC: clean up integer overflow check
-Message-ID: <2390fdc8-13fa-4456-ab67-44f0744db412@moroto.mountain>
+        Fri, 30 Jun 2023 04:33:37 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] smb: client: remove redundant pointer 'server'
+Date:   Fri, 30 Jun 2023 12:33:37 +0100
+Message-Id: <20230630113337.123257-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This integer overflow check works as intended but Clang and GCC and warn
-about it when compiling with W=1.
+The pointer 'server' is assigned but never read, the pointer is
+redundant and can be removed. Cleans up clang scan build warning:
 
-    include/linux/sunrpc/xdr.h:539:17: error: comparison is always false
-    due to limited range of data type [-Werror=type-limits]
+fs/smb/client/dfs.c:217:3: warning: Value stored to 'server' is
+never read [deadcode.DeadStores]
 
-Use size_mul() to prevent the integer overflow.  It silences the warning
-and it's cleaner as well.
-
-Reported-by: Dmitry Antipov <dmantipov@yandex.ru>
-Closes: https://lore.kernel.org/all/20230601143332.255312-1-dmantipov@yandex.ru/
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Btw, since the Clang developers are automatically CC'd, here is how I
-silenced this type of false positive in Smatch:
+ fs/smb/client/dfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-1) Check that longs are 64 bit.
-2) Check that the right hand side has a SIZE_MAX.  SIZE_MAX is defined
-   as -1UL so you want both the type and the value to match.
-3) Then on the other the other side, check that the type is uint.
-
-I'm looking at this code now in Smatch and it's kind of ugly, and also
-there are some other places where I need to apply the same logic...
-
- include/linux/sunrpc/xdr.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-index f89ec4b5ea16..dbf7620a2853 100644
---- a/include/linux/sunrpc/xdr.h
-+++ b/include/linux/sunrpc/xdr.h
-@@ -775,9 +775,7 @@ xdr_stream_decode_uint32_array(struct xdr_stream *xdr,
+diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
+index 26d14dd0482e..1403a2d1ab17 100644
+--- a/fs/smb/client/dfs.c
++++ b/fs/smb/client/dfs.c
+@@ -143,7 +143,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *mnt_ctx)
+ 	struct smb3_fs_context *ctx = mnt_ctx->fs_ctx;
+ 	char *ref_path = NULL, *full_path = NULL;
+ 	struct dfs_cache_tgt_iterator *tit;
+-	struct TCP_Server_Info *server;
+ 	struct cifs_tcon *tcon;
+ 	char *origin_fullpath = NULL;
+ 	char sep = CIFS_DIR_SEP(cifs_sb);
+@@ -214,7 +213,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *mnt_ctx)
+ 	} while (rc == -EREMOTE);
  
- 	if (unlikely(xdr_stream_decode_u32(xdr, &len) < 0))
- 		return -EBADMSG;
--	if (len > SIZE_MAX / sizeof(*p))
--		return -EBADMSG;
--	p = xdr_inline_decode(xdr, len * sizeof(*p));
-+	p = xdr_inline_decode(xdr, size_mul(len, sizeof(*p)));
- 	if (unlikely(!p))
- 		return -EBADMSG;
- 	if (array == NULL)
+ 	if (!rc) {
+-		server = mnt_ctx->server;
+ 		tcon = mnt_ctx->tcon;
+ 
+ 		spin_lock(&tcon->tc_lock);
 -- 
 2.39.2
 
