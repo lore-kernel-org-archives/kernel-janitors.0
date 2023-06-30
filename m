@@ -2,109 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C62EB64D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 12:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB46C001B0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 15:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232152AbjF3MhI (ORCPT
+        id S232246AbjF3PTa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 08:37:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34384 "EHLO
+        Fri, 30 Jun 2023 11:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbjF3MhF (ORCPT
+        with ESMTP id S230308AbjF3PTE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 08:37:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE66B35AF;
-        Fri, 30 Jun 2023 05:37:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AC686175D;
-        Fri, 30 Jun 2023 12:37:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 825D7C433CB;
-        Fri, 30 Jun 2023 12:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688128621;
-        bh=c350ESZGWpi7StoatukQWJZpbWswxl0Lt+3NLEC0n8Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GQnTAbH9m1Nm0opSpMsyUQmgxS+lNoRn2rkuO1TfNmBB7BIglLEnijj3A9Pvvi3FD
-         o8CMN2OQiRqp95xDdwU8ZNFf9m96P0ykNxJ/WWa8fZAJS7KXlLhPzD/ZAb6Z8V2HeD
-         BCkt3DKp3bu3mRCjCJbyMvrzxGO3BCKdph3CCe8wpQiOcrP2tyMn8IeJxc2kNNhcbR
-         fymGCa2WPN3TOe/FdGkc7OmEdt9dnVLHBxYZueOydzTjSnavlRovr7M3jRjtZm7TlL
-         MQ4aO2IQju4ywPK6PMqPqrhvBvdZV0llfWG+3mmO3zDVWjwf6RN+bL8oqOJy//RTKI
-         RT/MIj2+zadQQ==
-Message-ID: <1529de75f7a35e7847c292705c936cdb4649be39.camel@kernel.org>
-Subject: Re: [PATCH] SUNRPC: clean up integer overflow check
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Dmitry Antipov <dmantipov@yandex.ru>
-Cc:     Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-nfs@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Date:   Fri, 30 Jun 2023 08:36:59 -0400
-In-Reply-To: <2390fdc8-13fa-4456-ab67-44f0744db412@moroto.mountain>
-References: <2390fdc8-13fa-4456-ab67-44f0744db412@moroto.mountain>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        Fri, 30 Jun 2023 11:19:04 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74CAC3C1E
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 08:19:02 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id d75a77b69052e-401f4408955so251181cf.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 08:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688138341; x=1690730341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7y85+CsbEknGYolZq9ltwi/sLY28N+60rkHxxiN/96I=;
+        b=aqlpp13fau6b/AMECgbtGX07mxMGSbx3NyWZWBzftVHNCu3uE+q78Vtq39Xt4+8IZx
+         MY60D4oQIZPyEVwjOQPEVaJafMR80yvvUf6UiETAdxuBuqpUkqPHBkVDP3csWAj/nbri
+         nwNxjXQl+VNWTqnkjebhwCJFPEQyWD0VTt6b1myZeq8g2FD1p4JjY+5Bt4tfS8XSRo6E
+         ycBIFdW6u3BH5D3z/DXNEbhJ8zCDFr+0+SfmyS4xuIdmFLN6WB4v/GgrHsKkR2+S9KAi
+         8LbeX1AT3eNYq1uyb1ix+EunI7NpPUUNaU5r5hr+QIKw52FHwnkuw0ELBgiqqAFvpIxg
+         rWvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688138341; x=1690730341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7y85+CsbEknGYolZq9ltwi/sLY28N+60rkHxxiN/96I=;
+        b=S3Ys07+WQ58bD/pf8dopmnBC3/odMLbkY3DgfiUqs83Bhjshiq4WT1rpdUvptet9XK
+         6rdLk1rHTWHCfXd94mbFWYPNUoKbKCH0WDef4wgbIapH6OY6SYkA4JUPnSCcHJnaALdE
+         HB+a4x6VPGw3o9FWmXHEPPuuud0N5X3XQQbLG9fiAtPoC+rGL0zhRFK72ilBYX+HHPeE
+         yrxw0z9hcI1E0v38AjJ1ACGAiVc7xb2uip3v7WhQhKq5qcPCv1N6gQ67djW6/1Y0wqgT
+         TfRf8dHgGT1mq4wT/4Rbv0GvuTpULr84dTDimo46xVq0EG5q3usWQi//qveytBtC1nKN
+         iBGA==
+X-Gm-Message-State: AC+VfDw4C0sHwb6clQ1ijlvG+EmU2cP4xvDLxgMgYqrhW3tw86ehW299
+        dNbr1sVm/qXYXJgWpEvOh6LWi/QA7WZcB8ZW0PaiCw==
+X-Google-Smtp-Source: ACHHUZ7GoyWKFwgMIOb5nMpnMqBXPwzzWjgKhNo/zhlInr9v0vOCULYLICY2l91NepNXZAFa4macgqfs35shWJDihQ8=
+X-Received: by 2002:a05:622a:110f:b0:3ef:302c:319e with SMTP id
+ e15-20020a05622a110f00b003ef302c319emr832038qty.8.1688138340945; Fri, 30 Jun
+ 2023 08:19:00 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230630080029.15614-1-colin.i.king@gmail.com>
+In-Reply-To: <20230630080029.15614-1-colin.i.king@gmail.com>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 30 Jun 2023 08:18:49 -0700
+Message-ID: <CAP-5=fUX_ktsmrrVGr9kwa3-C_4=yobTFgm5L+TpFNt8UZMZGg@mail.gmail.com>
+Subject: Re: [PATCH][next] perf/benchmark: Fix spelling mistake "synchronious"
+ -> "synchronous"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2023-06-30 at 12:46 +0300, Dan Carpenter wrote:
-> This integer overflow check works as intended but Clang and GCC and warn
-> about it when compiling with W=3D1.
->=20
->     include/linux/sunrpc/xdr.h:539:17: error: comparison is always false
->     due to limited range of data type [-Werror=3Dtype-limits]
->=20
-> Use size_mul() to prevent the integer overflow.  It silences the warning
-> and it's cleaner as well.
->=20
-> Reported-by: Dmitry Antipov <dmantipov@yandex.ru>
-> Closes: https://lore.kernel.org/all/20230601143332.255312-1-dmantipov@yan=
-dex.ru/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Fri, Jun 30, 2023 at 1:00=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in an option description. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Acked-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
 > ---
-> Btw, since the Clang developers are automatically CC'd, here is how I
-> silenced this type of false positive in Smatch:
->=20
-> 1) Check that longs are 64 bit.
-> 2) Check that the right hand side has a SIZE_MAX.  SIZE_MAX is defined
->    as -1UL so you want both the type and the value to match.
-> 3) Then on the other the other side, check that the type is uint.
->=20
-> I'm looking at this code now in Smatch and it's kind of ugly, and also
-> there are some other places where I need to apply the same logic...
->=20
->  include/linux/sunrpc/xdr.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-> index f89ec4b5ea16..dbf7620a2853 100644
-> --- a/include/linux/sunrpc/xdr.h
-> +++ b/include/linux/sunrpc/xdr.h
-> @@ -775,9 +775,7 @@ xdr_stream_decode_uint32_array(struct xdr_stream *xdr=
-,
-> =20
->  	if (unlikely(xdr_stream_decode_u32(xdr, &len) < 0))
->  		return -EBADMSG;
-> -	if (len > SIZE_MAX / sizeof(*p))
-> -		return -EBADMSG;
-> -	p =3D xdr_inline_decode(xdr, len * sizeof(*p));
-> +	p =3D xdr_inline_decode(xdr, size_mul(len, sizeof(*p)));
->  	if (unlikely(!p))
->  		return -EBADMSG;
->  	if (array =3D=3D NULL)
-
-
-Acked-by: Jeff Layton <jlayton@kernel.org>
+>  tools/perf/bench/sched-seccomp-notify.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/bench/sched-seccomp-notify.c b/tools/perf/bench/s=
+ched-seccomp-notify.c
+> index eac4ef60090f..2e8205c61141 100644
+> --- a/tools/perf/bench/sched-seccomp-notify.c
+> +++ b/tools/perf/bench/sched-seccomp-notify.c
+> @@ -33,7 +33,7 @@ static bool sync_mode;
+>  static const struct option options[] =3D {
+>         OPT_U64('l', "loop",    &loops,         "Specify number of loops"=
+),
+>         OPT_BOOLEAN('s', "sync-mode", &sync_mode,
+> -                   "Enable the synchronious mode for seccomp notificatio=
+ns"),
+> +                   "Enable the synchronous mode for seccomp notification=
+s"),
+>         OPT_END()
+>  };
+>
+> --
+> 2.39.2
+>
