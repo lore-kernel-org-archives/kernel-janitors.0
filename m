@@ -2,109 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82061C001B3
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 16:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C267BEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 17:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232608AbjF3QzI (ORCPT
+        id S232569AbjF3RFq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 12:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53030 "EHLO
+        Fri, 30 Jun 2023 13:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232680AbjF3QzD (ORCPT
+        with ESMTP id S233140AbjF3RFg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 12:55:03 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2672E3C01;
-        Fri, 30 Jun 2023 09:55:02 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fbc54cab6fso12779325e9.0;
-        Fri, 30 Jun 2023 09:55:02 -0700 (PDT)
+        Fri, 30 Jun 2023 13:05:36 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2B735B6
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:05:34 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id d75a77b69052e-40345bf4875so14121cf.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 10:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688144100; x=1690736100;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rJgY0QGGp/jeN+32+rMb8429ffAnAZpXa/Aa5nGjjw=;
-        b=NN+EDZhIb/QahO+GwDV+Bh3Ur/kDh7XL+jRw3POa/LTKwAFFIeRkmVicJBuIMOmo68
-         /mtCSmvcnNdkJx5vdpcxnLKveyiBQdIQzZ/5ZfMWfPd7hk4eYJeffP3DFYl18egBQ8OH
-         skXA2SNHTslB19UfVxGYdrW/HxeUc1nXhIy6jUD2MLdwae8nIo4XNMz4hnKn7vhx6PR0
-         G4B+VqL0i7dnzudhWFVyi0Je+uVgpB5QEXFDWJQcWwWEaEGOc81eBShxd25hqeKJwf0G
-         +3cLE4QfTUHo7X3J97ZFWrYEN8c9gxWWsalKjSsyAKIj1J5+Ve6T3h76lEZaNIInJ/Qh
-         7NTA==
+        d=google.com; s=20221208; t=1688144734; x=1690736734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3D1NO22NTJu1MOBGY7tF3xo48poE1uDp3veIeBVnBlI=;
+        b=GYacckAkcPnWUplTlaekkOtdSFaf+lNU/SG0cw+5dp7yjaMMg9+c4+ymm4dQCO38Dz
+         PdeHc8X6R5JAfcDF9pEpC+6ajTif3DHmMt3oQ1pnGmB4z6t4fZVtcvQDOywzhYQjNY4N
+         ZrsLZi88nhs+AOGpef+VHTEBPVP+iJGc7S8ob7082O/VQlMOcC/mPJNjmHtq7Uxhg12+
+         y1/8ti9u6rVypzIy6UFRV8AuNWz4nuRxB/b4IEi4uWs6Sj6ETn2sFI+QWnZNX9r+PsIY
+         BgyRUFrSoyM296nO3MvEJ1qKgV7N6SlOdXyMnqVHJ9ROIGBfM5BXuc6Z2zFdnGTqm3As
+         OZZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688144100; x=1690736100;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1rJgY0QGGp/jeN+32+rMb8429ffAnAZpXa/Aa5nGjjw=;
-        b=iSPvEb+d/MBONB95tN0fs9IDHdygrIP5p+0fOLMuKcF9m8Q8IB9X5AvFo/BgrC/bPH
-         fDzVb7nMVoDvPnHVzTsUiyCMXyrtpD6AXUIwDzSjW4RPRXZVoDOg7lrDkHf5TNI71tj0
-         BHIde9gJpDXsGWmxlxCCE5diKiHzQB361s85MNwMNnta2OPpafxaNOMYrU+fD1sKCPpR
-         lRJQUhfc5vkrp0m3LCbZHP/2xKor5Cl7Iyht9eReZkvu5hU0qqf4rlpqqOr69hLwYilK
-         cEeBe9tfl54HTbc696EBALkKiPLPDvjAfAE0Ruu6bfbcLYQK4CejQohMc3Qln4ysRSml
-         hxtw==
-X-Gm-Message-State: AC+VfDyXr/QMR4Oq1hhAOEK108qYcZKyXacwvCVagnQQZR0BaTqcORxb
-        Kl4bYjYr3XW7UkpTPSehMNg=
-X-Google-Smtp-Source: ACHHUZ7aIM94BF0G4f11uD0SLm5O59jr1gtTRZLm2Tgqeu4EipZ92uYR+88wxPIzJVPpa1VJyjvO+A==
-X-Received: by 2002:a1c:f70a:0:b0:3fb:c060:8b3d with SMTP id v10-20020a1cf70a000000b003fbc0608b3dmr2482477wmh.40.1688144100416;
-        Fri, 30 Jun 2023 09:55:00 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z10-20020a7bc7ca000000b003f8f8fc3c32sm19554577wmk.31.2023.06.30.09.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 09:54:59 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] ext2: remove redundant assignment to variable desc and variable best_desc
-Date:   Fri, 30 Jun 2023 17:54:58 +0100
-Message-Id: <20230630165458.166238-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20221208; t=1688144734; x=1690736734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3D1NO22NTJu1MOBGY7tF3xo48poE1uDp3veIeBVnBlI=;
+        b=EsVD1E9+tufj1lH3MFNa5LHIHTaDvz83XQ5RTxT+TvvVFp7KcwHptMYHqC9HQWoD+V
+         q36OuyCO7TU4qumk4srsA+jmbGBaX0ajn7aWj7vE4P5QKZVqB9Kj/X3wVI52N2lbQJfw
+         wIw3omQe7lPOYgG1vUFR623AgV9zJ5wmxN9mq07ixjPcTa2BwoCudLGRlbYPd+9fG7hX
+         37boDTWT7HZ+TS1sbWtingSMjn/ocB5xuoyc7I2L7RbV/xCvxHc0H3qs8ubkeXj4cZvc
+         QwmZxGAs++jGJeQsNiTSIHZ7Ounv+BEnGIA8fKHQAmBSBjQvbCf/FjCOiVYGFAFMMULj
+         Xj9g==
+X-Gm-Message-State: ABy/qLYkVG3sfqrNjBL3g3UfgfFElUad+bRUWAfVg6x3dn6NEp3z6xN/
+        PHK88pJqaxDfPDSnNY8wALpiUOC8DZv+dGsashijhg==
+X-Google-Smtp-Source: APBJJlGFZH6uDfeEmQHjFg3l+Gr3kdJYkA2pz6Pf7n9i4u6wu+eAR+6jecdfSxzaXV6WzHsdQukovl+kgImmO77aQTU=
+X-Received: by 2002:a05:622a:208:b0:3f7:ff4a:eae5 with SMTP id
+ b8-20020a05622a020800b003f7ff4aeae5mr3290qtx.12.1688144733661; Fri, 30 Jun
+ 2023 10:05:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230627181030.95608-2-irogers@google.com> <8dab7522-31de-2137-7474-991885932308@web.de>
+In-Reply-To: <8dab7522-31de-2137-7474-991885932308@web.de>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 30 Jun 2023 10:05:22 -0700
+Message-ID: <CAP-5=fVxTYpiXgxDKX1q7ELoAPnAisajWcNOhAp19TZDwnA0oA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/13] perf parse-events: Remove unused
+ PE_PMU_EVENT_FAKE token
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable desc is being assigned a value that is never read, the exit
-via label found immeditely returns with no access to desc. The
-assignment is redundant and can be removed. Also remove variable best_desc
-since this is not used. Cleans up clang scan muild warning:
+On Fri, Jun 30, 2023 at 9:35=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > Removed by commit 70c90e4a6b2f ("perf parse-events: Avoid scanning
+> > PMUs before parsing").
+>
+> Will the chances ever grow to add another imperative change suggestion?
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.4#n94
 
-fs/ext2/ialloc.c:297:4: warning: Value stored to 'desc' is never
-read [deadcode.DeadStores]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+Sorry, I can't parse this.
 
-V2: Also remove best_desc. Kudos to Dan Carpenter for spottin this extra
-    janitorial cleanup.
+Thanks,
+Ian
 
----
- fs/ext2/ialloc.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
-index a4e1d7a9c544..34cd5dc1da23 100644
---- a/fs/ext2/ialloc.c
-+++ b/fs/ext2/ialloc.c
-@@ -273,7 +273,6 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent)
- 
- 	if ((parent == d_inode(sb->s_root)) ||
- 	    (EXT2_I(parent)->i_flags & EXT2_TOPDIR_FL)) {
--		struct ext2_group_desc *best_desc = NULL;
- 		int best_ndir = inodes_per_group;
- 		int best_group = -1;
- 
-@@ -291,10 +290,8 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent)
- 				continue;
- 			best_group = group;
- 			best_ndir = le16_to_cpu(desc->bg_used_dirs_count);
--			best_desc = desc;
- 		}
- 		if (best_group >= 0) {
--			desc = best_desc;
- 			group = best_group;
- 			goto found;
- 		}
--- 
-2.39.2
-
+> Regards,
+> Markus
