@@ -2,117 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D12EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 05:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9247EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 09:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbjGAFYL (ORCPT
+        id S229787AbjGAJc3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Jul 2023 01:24:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
+        Sat, 1 Jul 2023 05:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjGAFYF (ORCPT
+        with ESMTP id S229452AbjGAJc1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Jul 2023 01:24:05 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAF94204;
-        Fri, 30 Jun 2023 22:24:04 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b5c231c23aso42708831fa.0;
-        Fri, 30 Jun 2023 22:24:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688189042; x=1690781042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UWSfT3e2CdHXT3PPccjwI1PvUkLEKr2RqsUNIeb0KVU=;
-        b=dv4BNmhKurSjr4SFlv7PvcW3oxS+o5nRZ0A8lZkOheALgd3YqDXfLTZeSoDO3TwBO4
-         HeowMn4na6OlBLRtOwoXYQ9LpIT6ZY/iOzYi2Nn5U0IkAUbGVj/fVT6eU9tM/XYiM68U
-         7+00JLc0mja0wzB2ItiXGm0kOMLiyTqLhi6UXs6Eb24uspVLE18y8n8X7jtCqxmDPO9W
-         uzMm8WlrJxeJguV4qoXVRw6siOUYOkaKFRN5cXEPz8JN/lUMzKzHr2Lj68wXrp1YJTr7
-         rtSrycUqnjmq5hSVc8EzFqhtwWoFfNri+c0UhLgeHAPcxIa1AhcDfjVDdAB8acEuPM8+
-         CWcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688189042; x=1690781042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UWSfT3e2CdHXT3PPccjwI1PvUkLEKr2RqsUNIeb0KVU=;
-        b=KgJI3wBoEri1AT0CBoYlk7V+J2zH/956Cce5ZQ9C19cBkR6bLMxS/8ALQq3JP3+mGE
-         fOUY3c3iP+kAdMuPvp2wpP054tOOj+/U/C/MFK09ETEjnYL5E3z39GigQWkzcxiDUqq1
-         Dy4db4jHYUZzKIloGLHkT0fg7ydYBQAEgmwVbJ7MzRIqeYRVWRPSinsaFlqnT6T2fXoU
-         QSodpBfEkArtdyB2SA57J3sZLkRKaQkIFYBwxWBusYGWOMMiLiVeIJNARydSmRczOrr3
-         uKjpfib8sbvR+mOOz4lpDKMBKhank+BHpx3Ymk0kGd9oO0cbXFx++a+r7scMe4LK815I
-         WGGQ==
-X-Gm-Message-State: ABy/qLZllEm2bXdc3hosbrIFJlTm3xH7wKjEFuY6417sUBzAEaxKypEH
-        rEm8kgIdrEk2OWPubgmYSCZNmqcHU5dr+oBKI2E=
-X-Google-Smtp-Source: APBJJlGmNEZoTcJGC2KNmbJoTnMMgs2JN1FJjXl5qHsHC2/aeL9kSCLBqESKoi5FjagfbSLqnN3Yag9zoRE0fvq0Xs8=
-X-Received: by 2002:a2e:88c8:0:b0:2b6:ca1d:ee88 with SMTP id
- a8-20020a2e88c8000000b002b6ca1dee88mr3354057ljk.12.1688189042086; Fri, 30 Jun
- 2023 22:24:02 -0700 (PDT)
+        Sat, 1 Jul 2023 05:32:27 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2692A1986;
+        Sat,  1 Jul 2023 02:32:25 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 51D2F5C01F0;
+        Sat,  1 Jul 2023 05:32:21 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 01 Jul 2023 05:32:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1688203941; x=1688290341; bh=lo7eYR8ewIKPv+UuAUfwcsCCKFsoq+XFb7w
+        PN/jBldM=; b=h4Rc3qxcgBTX1r3XjUg/VaRzeDGQL422vacBaXvkil0mmfMlFcU
+        doz3VXok+jLucgiVAyJ4gr/mUpDNCo2+27rT4QKRDapTAA9nw7pWztd2kKV/O52+
+        jW5FqWuxmrzVlFJTK6VjWV33YdImO+dft1ZZ1SoZm1UfPNcNvxPCVBpsHsQ7o++d
+        s7KNPa2uY3Gt6wa0gjcOSX+hWEQRgSUot37uAGkpR3vGNwkE4zhC0fyWo8NpYaD+
+        5hLwN1Y0GiokMRDoU9gqLLA87KsYBbACqXgOq3ZcuzB/BZ5Cs+wIYY8JDO/o160O
+        FRyqQTeJye9kL2/XTN8M0GMS/CACdsJfDWQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1688203941; x=1688290341; bh=lo7eYR8ewIKPv+UuAUfwcsCCKFsoq+XFb7w
+        PN/jBldM=; b=eryE3u+SGeIXh10nR3DkZnWVW6JDEfqfKMYKMzhJVflLxhLuzdc
+        M9bvaUdVJEo7BwZS2vEdMRYacu1/j2luy5JmNl5XJWVMYw2dYi1wUEGcS0nHdMen
+        S1+m+FORfR75bcG0ODDTEK29HvuXQJDk6Ij9VlCcKx97beeRZwDUssMBkzHjBv6y
+        pUFpB2tdmfdr5Oaqtqd4mOUqLRe3GIRV0c3SHLPdo5dO/e9Jev+qHc5REpUVMmVf
+        eGwhsjEmj6ydyaJKwgp5tjL/FoYaLMCJkjM+4u2NaQgbXAHkbTM0KkfoEqMi/RyU
+        c7m8UcXqSOLmXWK75dUxq3o4RykoudlQuUw==
+X-ME-Sender: <xms:pPKfZBnfs4vfQH7YX-l5n0Q_7ss_x5JQOktIFdN7vj_k9LivIlAVrw>
+    <xme:pPKfZM2PCLcx0rbTJfb2SM_oHgFqMjG-2OkESJSy3zQhW8D5tjl3Ate---0xEzhmE
+    VTkBtXvA4ugEw>
+X-ME-Received: <xmr:pPKfZHrAM-7jEyENli0LMMK355sUKb88kBYB2OiYJ52CLZeaE9_UhGe-7e7NIv_Hq_fKR2YYuryKGS_T92aP0iaEpkby8BtOXrVL4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtdekgddugecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgfekff
+    eifeeiveekleetjedvtedvtdeludfgvdfhteejjeeiudeltdefffefvdeinecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:pPKfZBn8UWy0KtAD3Co1QF8q1bmQpU_4-w0WINauD6Eb8LsDs5QkYQ>
+    <xmx:pPKfZP2QthhSFy1Vrck8zciQ-qhe_Ol-X2zMr3-pUdsfiJS3Y0bbxQ>
+    <xmx:pPKfZAumIRzkX72xZ42fKi8-zD2KM7k41AlE70RBTHPkH4ZSXGTgSQ>
+    <xmx:pfKfZODN8HKq36sH5v_24e4YtqPk6QEM2RcEArW2hv0fMX6ihLNSLw>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 1 Jul 2023 05:32:19 -0400 (EDT)
+Date:   Sat, 1 Jul 2023 11:32:12 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v2 13/13] perf parse-events: Remove ABORT_ON
+Message-ID: <2023070106-unified-gone-f9d6@gregkh>
+References: <20230627181030.95608-14-irogers@google.com>
+ <ea39aaf0-0314-1780-c1cd-7c3661fa3e7c@web.de>
+ <CAP-5=fX+kdRujgNAq8SVkkNwgnB383r38+AEmvon1k01R4X=kg@mail.gmail.com>
+ <a3517306-7804-f5cf-6182-ef63b6054647@web.de>
+ <CAP-5=fUEa150DYWte2u6M8sejxXXqec_L8GEhVbppJHHq8N5PA@mail.gmail.com>
+ <4672c6f8-ef0d-6a36-49be-145629c2eade@web.de>
 MIME-Version: 1.0
-References: <20230630113337.123257-1-colin.i.king@gmail.com>
-In-Reply-To: <20230630113337.123257-1-colin.i.king@gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 1 Jul 2023 00:23:50 -0500
-Message-ID: <CAH2r5mvkWeMO-AoPEpDbeKy8_K5hz3nJL3-BPh+w4Dow0qoOkg@mail.gmail.com>
-Subject: Re: [PATCH][next] smb: client: remove redundant pointer 'server'
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4672c6f8-ef0d-6a36-49be-145629c2eade@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+On Sat, Jul 01, 2023 at 11:00:15AM +0200, Markus Elfring wrote:
+> >> Will it become helpful to split the proposed patch into smaller update steps?
+> >
+> > This is kind of why the series is 13 patches long, I'm not seeing why
+> > you think the following stats qualify as "long":
+> 
+> It seems that we came along different expectations for a desirable change granularity.
+> Intentions influence how known “code problems” can be adjusted (also for this update step).
+> 
+> How should following change ideas be handled then?
+> 
+> 1. Deletion of the macro “ABORT_ON”
+> 
+> 2. Addition of a comment for a special check
+> 
+> 3. Introduction of another error message for one failure mode
+> 
+> 
+> Would you like to adjust the change description another bit?
 
-On Fri, Jun 30, 2023 at 6:35=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> The pointer 'server' is assigned but never read, the pointer is
-> redundant and can be removed. Cleans up clang scan build warning:
->
-> fs/smb/client/dfs.c:217:3: warning: Value stored to 'server' is
-> never read [deadcode.DeadStores]
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  fs/smb/client/dfs.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
-> index 26d14dd0482e..1403a2d1ab17 100644
-> --- a/fs/smb/client/dfs.c
-> +++ b/fs/smb/client/dfs.c
-> @@ -143,7 +143,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *m=
-nt_ctx)
->         struct smb3_fs_context *ctx =3D mnt_ctx->fs_ctx;
->         char *ref_path =3D NULL, *full_path =3D NULL;
->         struct dfs_cache_tgt_iterator *tit;
-> -       struct TCP_Server_Info *server;
->         struct cifs_tcon *tcon;
->         char *origin_fullpath =3D NULL;
->         char sep =3D CIFS_DIR_SEP(cifs_sb);
-> @@ -214,7 +213,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *m=
-nt_ctx)
->         } while (rc =3D=3D -EREMOTE);
->
->         if (!rc) {
-> -               server =3D mnt_ctx->server;
->                 tcon =3D mnt_ctx->tcon;
->
->                 spin_lock(&tcon->tc_lock);
-> --
-> 2.39.2
->
-
-
---=20
-Thanks,
-
-Steve
+Please no, it's fine.
