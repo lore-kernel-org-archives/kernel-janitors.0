@@ -2,93 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B570FEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 13:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D17EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 15:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbjGANuM (ORCPT
+        id S229886AbjGAPAv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Jul 2023 09:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56582 "EHLO
+        Sat, 1 Jul 2023 11:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjGANuK (ORCPT
+        with ESMTP id S229531AbjGAPAu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Jul 2023 09:50:10 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13EF33C0B
-        for <kernel-janitors@vger.kernel.org>; Sat,  1 Jul 2023 06:50:06 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-579e5d54e68so3729387b3.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Jul 2023 06:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688219405; x=1690811405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezm+NjXf2KCPvjh2cUYvqoi17u9GLDDqaRcVx1XsiHA=;
-        b=R2rNfLLxRrVBYKsSHAcBwKJVDcAhDgmgfawivAKqzoPyyh2oD0EyQ45LpLCPIoMLeH
-         J4P+p6OajPIe2EFxKpAqtnr+h0e3D3yCCc2lNMll43/f+fHtX352P2NH0M0lmhn4Xiqy
-         6qkJAhx14uUNv1QCv/Um85MT4x6fVvwpLHXbXo75ddeokFl/QInQ31DbPTsTi4jW0V+g
-         uWsQSm0eerjNioH7ecPxv3lWqAqbdFRfya2z9oDS65B7K2PHW4SxVYJYy+ZJcMqUVOtk
-         s+UVgHc69oUSNVJw4LUmrQOTloB1H1J/kYj1n3/9CbwmMayMkjlGqeegWoGtC6gPlbWr
-         SSRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688219405; x=1690811405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezm+NjXf2KCPvjh2cUYvqoi17u9GLDDqaRcVx1XsiHA=;
-        b=NH0iLpo+6RPZM/Nb7TbeQzb+2Ow0g9zQQDSxaBwAcQJbvoGH+3pn+bWoTsQTcSRdzr
-         NmSL4PSnoLgNBt7yq/nYNWuLA3tUpHZBuIWjGNtQKHMHziaPsXMVMi9ZAygPs4qsDVDE
-         qSvUQE6VsE5xO+3tNl4s8zGNBtl/gtofXGP0rSaraASALmKJ8tvKlIxMNABS4NLm7TxN
-         DoWY+R559Maf4Yy0oaIZrfYaqoTOTr1NTPRbGf6YMnKQHw5rLRycFaCZtZPvgSaULwtO
-         FjNEtTwHU3T+hdBR89gBnt6MFGsMCktA0L3aO/EBMROAw016E2a9Q+eXk1V/p5MOujXu
-         J8fg==
-X-Gm-Message-State: ABy/qLZwS7uXSMJChKLEn2Lcx6M/ZvJgorO5wBLYKC2JaGFHfYTnEQu+
-        r/mzxYB3alTg1ZEs+70y86aF1DbqLX85e0imMnoMng==
-X-Google-Smtp-Source: APBJJlGXw6gZAbhK4kl28Jt3+uNyGtz1CZs/V06D3OBlIubL8fMEUnFM2hCVt33G8WUHmy8s370jcIDCaHOXRR/TDpc=
-X-Received: by 2002:a81:83cc:0:b0:576:c543:2a5f with SMTP id
- t195-20020a8183cc000000b00576c5432a5fmr5543264ywf.4.1688219405263; Sat, 01
- Jul 2023 06:50:05 -0700 (PDT)
+        Sat, 1 Jul 2023 11:00:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4617A35B3;
+        Sat,  1 Jul 2023 08:00:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA37160AB3;
+        Sat,  1 Jul 2023 15:00:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA57FC433C7;
+        Sat,  1 Jul 2023 15:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1688223649;
+        bh=+CATQ94X96pEsyvLLOgVuj1lXomvGeVeEj/5+G0He70=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IugKfnLCUmen9tyhpHqp7khuvKjnd4QiZTBtTs6YmpQA7x/ibTk6VaY4+nC6wiqYQ
+         ehoa2e0ol6Lyt/ame8kyPwlJzjF9gk4aD65wv3JlAY5qtAyYsOcR9hwvZicds7VymN
+         vgW00+0+EuaM+ZFzPGpWgIlIT2UTayLbAZ1WHjy8=
+Date:   Sat, 1 Jul 2023 17:00:46 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Franziska =?iso-8859-1?Q?N=E4pelt?= 
+        <franziska.naepelt@googlemail.com>, linux-staging@lists.linux.dev,
+        kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Emily Peri <eperi1024@gmail.com>,
+        Guo Zihua <guozihua@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Kang Minchul <tegongkang@gmail.com>,
+        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+        Veerendranath Jakkam <quic_vjakkam@quicinc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] staging: rtl8723bs: Fix space issues
+Message-ID: <2023070123-unburned-worsening-0713@gregkh>
+References: <20230701102538.5359-1-franziska.naepelt@googlemail.com>
+ <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de>
 MIME-Version: 1.0
-References: <62ae6810d41e0429ebaadfac8a95409f4bc72456.1688160163.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <62ae6810d41e0429ebaadfac8a95409f4bc72456.1688160163.git.christophe.jaillet@wanadoo.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 1 Jul 2023 15:49:54 +0200
-Message-ID: <CACRpkdYu4KWx4cgt1PFniduJb5kRmnKs84k+7xVdo3dDY=TqbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: busses: i2c-nomadik: Remove a useless call in the
- remove function
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     wsa@kernel.org, Andi Shyti <andi.shyti@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 11:23=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Sat, Jul 01, 2023 at 04:43:09PM +0200, Markus Elfring wrote:
+> You should not put only your own email address into the field “To”.
+> Please reconsider the distribution of addresses between message header fields once more.
 
-> Since commit a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of
-> git://git.pengutronix.de/git/wsa/linux"), there is no more
-> request_mem_region() call in this driver.
->
-> So remove the release_mem_region() call from the remove function which is
-> likely a left over.
->
-> There is no details in the above commit log, but at its end we can read:
->    Conflicts:
->            drivers/i2c/busses/i2c-nomadik.c
->
-> This may explain why this call has been left here.
->
-> Fixes: a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of git://git.p=
-engutronix.de/git/wsa/linux
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: synch with latest -next
+Please do not comment on staging driver changes anymore, it is not
+helpful to anyone involved.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+greg k-h
