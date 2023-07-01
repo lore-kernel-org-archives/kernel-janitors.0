@@ -2,96 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9774FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 17:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805D1C001B0
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 23:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjGAR5s convert rfc822-to-8bit (ORCPT
+        id S229709AbjGAXCr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Jul 2023 13:57:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36430 "EHLO
+        Sat, 1 Jul 2023 19:02:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjGAR5r (ORCPT
+        with ESMTP id S229698AbjGAXCr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Jul 2023 13:57:47 -0400
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD584E60;
-        Sat,  1 Jul 2023 10:57:45 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-c4e4c258ba9so163170276.1;
-        Sat, 01 Jul 2023 10:57:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688234265; x=1690826265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I16kxq3liK2Om7mdHj2gKyKxAgwn/RzkolhoHDHOk8g=;
-        b=TWVRdLj6o/pm7Ix9OmNdsJO8oN+rE1CJwj730IA81FEo2sibq8/EHtlPjzc0pK+oSv
-         v+SxlhdygAN8QnIGUXxK2XHmeo77OzBOHApk/zGtfpegXYpJ+MUo/7LeppcDgPIBqIx+
-         g39ug85rjFZx27eQmr2HQFFuZHacn9MADtnLGyNB43ENpXAsii26NCk4R34zkEoP8FFr
-         IXeB75T5iwkcFblckWaEVd52Gy+Q0ZPPb4IZddk6T6/cX7HPUiAMRgWKkoxGNjJmiGfS
-         ITxs/HsW6Van545Ap7DX1e7L3DANcVM6JJlqkXxDzABw5QcKChLvdMWq0Y6SOlgozztE
-         7ddQ==
-X-Gm-Message-State: ABy/qLYuZTyEXvT7xO4ADHNGveVdRiD2e/d8mDVGM07lqimCzTDJOSuj
-        ksFkRzuUt7StQPSiMrbiTERRl2+rKBasrd3Phb5tZPU+
-X-Google-Smtp-Source: APBJJlGdfSHaala4PPlYpMlKxHR3rnesWu7dB72jd7aIfzNXs6BgWLCLSLYQazAgxc6Y3rcGz1J1Ds6VQ4IyHQBHPlM=
-X-Received: by 2002:a25:278a:0:b0:c1b:d362:4b49 with SMTP id
- n132-20020a25278a000000b00c1bd3624b49mr5421036ybn.50.1688234264743; Sat, 01
- Jul 2023 10:57:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230630080029.15614-1-colin.i.king@gmail.com>
-In-Reply-To: <20230630080029.15614-1-colin.i.king@gmail.com>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sat, 1 Jul 2023 10:57:33 -0700
-Message-ID: <CAM9d7ch8GcZUXVEtPGh2QW8-_aiObq7ybU_7gY7LMcjRfOFvxw@mail.gmail.com>
-Subject: Re: [PATCH][next] perf/benchmark: Fix spelling mistake "synchronious"
- -> "synchronous"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Sat, 1 Jul 2023 19:02:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E928710E3;
+        Sat,  1 Jul 2023 16:02:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FFDF60A27;
+        Sat,  1 Jul 2023 23:02:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 902C5C433C8;
+        Sat,  1 Jul 2023 23:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688252562;
+        bh=yccHqhjr7BL9VhxQ6G166svesIU9QMlzmZX0aqCUFYU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jLvKx7IrBu3AyZC8V428hnMalARD48STUlQXI8L8Oamiz7VIaPxjPkOzgANZDAKWi
+         yH79pI0jzGncCE518AgLSYFjipY/EnD55sSq7+3G0gmACPqw2yLOVK+TdKxvjO/WZI
+         20UHTClllzoxnO6yrWx8Q2Nc4LjBGKP/cUEK/nlfMT0sbrd2Vt0P+R7l29jP/Y0lzJ
+         Ai3tVR7CVmjjZwoc9uz5GYhuH8Ubi5WIG/JkARMWuIP9bbABAhdYNpk2kZmUuGXV/o
+         1xEbQIY7BtQl3X6s6GuaPCDy0qsoDDpAtcWKMhDY6CCpAUFYZcC+I6xGxRBXH+p2c0
+         DxGXEgopK2ocg==
+Date:   Sun, 2 Jul 2023 08:02:38 +0900
+From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tracing/probes: Delete dead code in
+ trace_eprobe_tp_update_arg()
+Message-Id: <20230702080238.1379c4fe777bf22e5b146af5@kernel.org>
+In-Reply-To: <f657e0c7-46c3-4e8f-a472-35ec98229660@moroto.mountain>
+References: <f657e0c7-46c3-4e8f-a472-35ec98229660@moroto.mountain>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello,
+On Mon, 26 Jun 2023 16:35:06 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-On Fri, Jun 30, 2023 at 1:00 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a spelling mistake in an option description. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> This code was recently refactored and now the "ret" variable is always
+> zero.  Delete the check for non-zero.
+> 
+
+Good catch!
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  tools/perf/bench/sched-seccomp-notify.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This code was changed in 1b8b0cd754cd (tracing/probes: Move event
+> parameter fetching code to common parser)
 
-Hmm.. strange.  I cannot see the bench/sched-seccomp-notify.c.
-Which tree are you based?
+OK, this will be picked to the 6.5 fix.
 
-Thanks,
-Namhyung
+Thank you!
 
-
->
-> diff --git a/tools/perf/bench/sched-seccomp-notify.c b/tools/perf/bench/sched-seccomp-notify.c
-> index eac4ef60090f..2e8205c61141 100644
-> --- a/tools/perf/bench/sched-seccomp-notify.c
-> +++ b/tools/perf/bench/sched-seccomp-notify.c
-> @@ -33,7 +33,7 @@ static bool sync_mode;
->  static const struct option options[] = {
->         OPT_U64('l', "loop",    &loops,         "Specify number of loops"),
->         OPT_BOOLEAN('s', "sync-mode", &sync_mode,
-> -                   "Enable the synchronious mode for seccomp notifications"),
-> +                   "Enable the synchronous mode for seccomp notifications"),
->         OPT_END()
->  };
->
-> --
+> 
+>  kernel/trace/trace_eprobe.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+> index cb0077ba2b49..b5181d690b4d 100644
+> --- a/kernel/trace/trace_eprobe.c
+> +++ b/kernel/trace/trace_eprobe.c
+> @@ -797,10 +797,7 @@ static int trace_eprobe_tp_update_arg(struct trace_eprobe *ep, const char *argv[
+>  		return ret;
+>  
+>  	/* Handle symbols "@" */
+> -	if (!ret)
+> -		ret = traceprobe_update_arg(&ep->tp.args[i]);
+> -
+> -	return ret;
+> +	return traceprobe_update_arg(&ep->tp.args[i]);
+>  }
+>  
+>  static int trace_eprobe_parse_filter(struct trace_eprobe *ep, int argc, const char *argv[])
+> -- 
 > 2.39.2
->
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
