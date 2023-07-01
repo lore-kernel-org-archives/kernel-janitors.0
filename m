@@ -2,104 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4772EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jun 2023 21:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D12EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jul 2023 05:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbjF3VX4 (ORCPT
+        id S229601AbjGAFYL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jun 2023 17:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35794 "EHLO
+        Sat, 1 Jul 2023 01:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjF3VXy (ORCPT
+        with ESMTP id S229456AbjGAFYF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jun 2023 17:23:54 -0400
-Received: from smtp.smtpout.orange.fr (unknown [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7D42680
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jun 2023 14:23:50 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id FLaWqFE741lRhFLaWqu2BO; Fri, 30 Jun 2023 23:23:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688160215;
-        bh=kMcJl7rvulaYPvsNlfWsI9/je8sVJ9jmEHBC5pxujxE=;
-        h=From:To:Cc:Subject:Date;
-        b=O8ML1LNRtqOBAXG4IUAARTGOG4bbWqctKdJCWvjnoFtNnYF4JIikMW/veVPXHlGtN
-         qENoZRqlrMJekwDGxR9X+hXSz/LOJesjZxS44YRA7UBb3ongN/YFK/GY1OX4BhW5pT
-         fgEq+VWs1lCN0cQhuLgxHyEx20Pid8ftLkEsYy2kLPrjyG8QP1b7+BV4AFkQAX0eph
-         EJuPNUgLuePv0w3ezdcIJsxqF5hHlzDK7P+vgeVRIvcqleA9NrcNk6ozzKdhLlSwqt
-         vrcgtjVBDBTY1K1kEOWMYouMC4xdNSq6sAAaKxHHJ6M8vhZgWHT0E9Y63evhoOAtJo
-         kWP44ZYBRSDFg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Jun 2023 23:23:35 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     wsa@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Subject: [PATCH v2] i2c: busses: i2c-nomadik: Remove a useless call in the remove function
-Date:   Fri, 30 Jun 2023 23:23:28 +0200
-Message-Id: <62ae6810d41e0429ebaadfac8a95409f4bc72456.1688160163.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 1 Jul 2023 01:24:05 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAF94204;
+        Fri, 30 Jun 2023 22:24:04 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b5c231c23aso42708831fa.0;
+        Fri, 30 Jun 2023 22:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688189042; x=1690781042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UWSfT3e2CdHXT3PPccjwI1PvUkLEKr2RqsUNIeb0KVU=;
+        b=dv4BNmhKurSjr4SFlv7PvcW3oxS+o5nRZ0A8lZkOheALgd3YqDXfLTZeSoDO3TwBO4
+         HeowMn4na6OlBLRtOwoXYQ9LpIT6ZY/iOzYi2Nn5U0IkAUbGVj/fVT6eU9tM/XYiM68U
+         7+00JLc0mja0wzB2ItiXGm0kOMLiyTqLhi6UXs6Eb24uspVLE18y8n8X7jtCqxmDPO9W
+         uzMm8WlrJxeJguV4qoXVRw6siOUYOkaKFRN5cXEPz8JN/lUMzKzHr2Lj68wXrp1YJTr7
+         rtSrycUqnjmq5hSVc8EzFqhtwWoFfNri+c0UhLgeHAPcxIa1AhcDfjVDdAB8acEuPM8+
+         CWcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688189042; x=1690781042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UWSfT3e2CdHXT3PPccjwI1PvUkLEKr2RqsUNIeb0KVU=;
+        b=KgJI3wBoEri1AT0CBoYlk7V+J2zH/956Cce5ZQ9C19cBkR6bLMxS/8ALQq3JP3+mGE
+         fOUY3c3iP+kAdMuPvp2wpP054tOOj+/U/C/MFK09ETEjnYL5E3z39GigQWkzcxiDUqq1
+         Dy4db4jHYUZzKIloGLHkT0fg7ydYBQAEgmwVbJ7MzRIqeYRVWRPSinsaFlqnT6T2fXoU
+         QSodpBfEkArtdyB2SA57J3sZLkRKaQkIFYBwxWBusYGWOMMiLiVeIJNARydSmRczOrr3
+         uKjpfib8sbvR+mOOz4lpDKMBKhank+BHpx3Ymk0kGd9oO0cbXFx++a+r7scMe4LK815I
+         WGGQ==
+X-Gm-Message-State: ABy/qLZllEm2bXdc3hosbrIFJlTm3xH7wKjEFuY6417sUBzAEaxKypEH
+        rEm8kgIdrEk2OWPubgmYSCZNmqcHU5dr+oBKI2E=
+X-Google-Smtp-Source: APBJJlGmNEZoTcJGC2KNmbJoTnMMgs2JN1FJjXl5qHsHC2/aeL9kSCLBqESKoi5FjagfbSLqnN3Yag9zoRE0fvq0Xs8=
+X-Received: by 2002:a2e:88c8:0:b0:2b6:ca1d:ee88 with SMTP id
+ a8-20020a2e88c8000000b002b6ca1dee88mr3354057ljk.12.1688189042086; Fri, 30 Jun
+ 2023 22:24:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230630113337.123257-1-colin.i.king@gmail.com>
+In-Reply-To: <20230630113337.123257-1-colin.i.king@gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 1 Jul 2023 00:23:50 -0500
+Message-ID: <CAH2r5mvkWeMO-AoPEpDbeKy8_K5hz3nJL3-BPh+w4Dow0qoOkg@mail.gmail.com>
+Subject: Re: [PATCH][next] smb: client: remove redundant pointer 'server'
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Since commit a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of
-git://git.pengutronix.de/git/wsa/linux"), there is no more
-request_mem_region() call in this driver.
+merged into cifs-2.6.git for-next
 
-So remove the release_mem_region() call from the remove function which is
-likely a left over.
+On Fri, Jun 30, 2023 at 6:35=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> The pointer 'server' is assigned but never read, the pointer is
+> redundant and can be removed. Cleans up clang scan build warning:
+>
+> fs/smb/client/dfs.c:217:3: warning: Value stored to 'server' is
+> never read [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/smb/client/dfs.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
+> index 26d14dd0482e..1403a2d1ab17 100644
+> --- a/fs/smb/client/dfs.c
+> +++ b/fs/smb/client/dfs.c
+> @@ -143,7 +143,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *m=
+nt_ctx)
+>         struct smb3_fs_context *ctx =3D mnt_ctx->fs_ctx;
+>         char *ref_path =3D NULL, *full_path =3D NULL;
+>         struct dfs_cache_tgt_iterator *tit;
+> -       struct TCP_Server_Info *server;
+>         struct cifs_tcon *tcon;
+>         char *origin_fullpath =3D NULL;
+>         char sep =3D CIFS_DIR_SEP(cifs_sb);
+> @@ -214,7 +213,6 @@ static int __dfs_mount_share(struct cifs_mount_ctx *m=
+nt_ctx)
+>         } while (rc =3D=3D -EREMOTE);
+>
+>         if (!rc) {
+> -               server =3D mnt_ctx->server;
+>                 tcon =3D mnt_ctx->tcon;
+>
+>                 spin_lock(&tcon->tc_lock);
+> --
+> 2.39.2
+>
 
-There is no details in the above commit log, but at its end we can read:
-   Conflicts:
-	   drivers/i2c/busses/i2c-nomadik.c
 
-This may explain why this call has been left here.
+--=20
+Thanks,
 
-Fixes: a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of git://git.pengutronix.de/git/wsa/linux
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: synch with latest -next
-
-v1: https://lore.kernel.org/all/4f4c2c5c20b61c4bb28cb3e9ab4640534dd2adec.1629530169.git.christophe.jaillet@wanadoo.fr/
-
-
-/!\ /!\ /!\ /!\ /!\ /!\
-  This patch is completely speculative and without details about commit
-  a410963ba4c0 it's hard to be sure of the intent.
-/!\ /!\ /!\ /!\ /!\ /!\
-
-All I can say is that it looks logical to me and that it compiles!
----
- drivers/i2c/busses/i2c-nomadik.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
-index 1e5fd23ef45c..212f412f1c74 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -1038,7 +1038,6 @@ static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
- 
- static void nmk_i2c_remove(struct amba_device *adev)
- {
--	struct resource *res = &adev->res;
- 	struct nmk_i2c_dev *dev = amba_get_drvdata(adev);
- 
- 	i2c_del_adapter(&dev->adap);
-@@ -1047,7 +1046,6 @@ static void nmk_i2c_remove(struct amba_device *adev)
- 	clear_all_interrupts(dev);
- 	/* disable the controller */
- 	i2c_clr_bit(dev->virtbase + I2C_CR, I2C_CR_PE);
--	release_mem_region(res->start, resource_size(res));
- }
- 
- static struct i2c_vendor_data vendor_stn8815 = {
--- 
-2.34.1
-
+Steve
