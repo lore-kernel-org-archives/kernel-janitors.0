@@ -2,125 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA989EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jul 2023 10:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED950EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jul 2023 19:17:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjGBKbn convert rfc822-to-8bit (ORCPT
+        id S230367AbjGBTRc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Jul 2023 06:31:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50080 "EHLO
+        Sun, 2 Jul 2023 15:17:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjGBKbm (ORCPT
+        with ESMTP id S230328AbjGBTR3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Jul 2023 06:31:42 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924821B0;
-        Sun,  2 Jul 2023 03:31:41 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Qv4z21BGgz67M3D;
-        Sun,  2 Jul 2023 18:28:46 +0800 (CST)
-Received: from localhost (10.48.51.211) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sun, 2 Jul
- 2023 11:31:37 +0100
-Date:   Sun, 2 Jul 2023 18:31:33 +0800
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 2/2] iio: st_sensors: Remove some redundant includes in
- st_sensors.h
-Message-ID: <20230702183133.00007c8d@Huawei.com>
-In-Reply-To: <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
-References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
-        <bd7fa0b07c85172ecba384e239cb0ecf0780766a.1686600780.git.christophe.jaillet@wanadoo.fr>
-        <20230617194911.7963bd6d@jic23-huawei>
-        <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+        Sun, 2 Jul 2023 15:17:29 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0199D9;
+        Sun,  2 Jul 2023 12:17:13 -0700 (PDT)
+Message-ID: <0c02e976-0da6-8ed8-4546-4df7af4ebed5@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1688325430;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bcRkV1JsdAB+1QeSMkNj7SU4PliDC9ED89IW5fPJQLc=;
+        b=cln18HT5XkWRzeQ6oUlGUJ234pgfk+6U1z7i3GWmYV4eQjqUZO5sz7JD65DQOEF2CqnmtE
+        94waio+VxYSc7kjlSBpPuvetqEbMPgKALT6NNIV4i7W9jSBtEuQJuyfJgQf+FVpCkh73ul
+        tCYh94u++ADCaAq7m02N5/rLTFXIRVZAmxOtx8JY/6VlVJyE5cBp/dzaO0kBT+Dx1Nh9B8
+        DoHsN2oCZEvwAsE3e4dAOmFScSXdRUCsepnCQMGMIWuvrxLliba4C9L33C1bXBtCjYVRZm
+        O3RmpbtJ6dc5fKbVSjZznDRbQirmlIDGxU8kBz6w0olg8fWZZiiEUk9jWtx53w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1688325430;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bcRkV1JsdAB+1QeSMkNj7SU4PliDC9ED89IW5fPJQLc=;
+        b=6ZF0sry1dcNvmgR8l0d/9AAjahUM5CPICbkZrcc9y8f2C+AoKOyoPfBmA4IY4encveZXmZ
+        PZa+03/IJp4zUQAw==
+Date:   Sun, 2 Jul 2023 21:17:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.48.51.211]
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Aravindhan Gunasekaran <aravindhan.gunasekaran@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Mallikarjuna Chilakala <mallikarjuna.chilakala@intel.com>,
+        Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Tan Tee Min <tee.min.tan@linux.intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20230619100858.116286-2-florian.kauer@linutronix.de>
+ <36b57ea5-baff-f964-3088-e1b186532cfe@web.de>
+Content-Language: en-US
+From:   Florian Kauer <florian.kauer@linutronix.de>
+Subject: Re: [PATCH net v2 1/6] igc: Rename qbv_enable to
+ taprio_offload_enable
+In-Reply-To: <36b57ea5-baff-f964-3088-e1b186532cfe@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 19 Jun 2023 22:02:37 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Hi Markus,
 
-> Le 17/06/2023 à 20:49, Jonathan Cameron a écrit :
-> > On Mon, 12 Jun 2023 22:13:37 +0200
-> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> >   
-> >> There is no need to include i2c.h and spi/spi.h in st_sensors.h.
-> >> Should it be needed, st_sensors_(i2c|spi).h should be used.  
-> > Agreed these should be dropped from here.
-> > 
-> > But I don't agree with statement that i2c.h and spi/spi.h should
-> > be gotten implicitly from st_sensors_i2c.h / st_sensors_spi.h
-> > If they are needed the should be included directly in the files
-> > where they are needed.
-> > 
-> > Jonathan  
+On 02.07.23 18:55, Markus Elfring wrote:
+>> The rename should reduce this confusion.
 > 
-> Another option I thought about was to:
->     - keep the includes in st_sensors.h
+> Would the wording â€œReduce this confusion by renaming a variable at three placesâ€
+> be more appropriate for a subsequent change description?
 > 
->     - move function declaration in st_sensors.h
-> int st_sensors_spi_configure(struct iio_dev *indio_dev,
-> 			     struct spi_device *spi);
-> and
-> int st_sensors_i2c_configure(struct iio_dev *indio_dev,
-> 			     struct i2c_client *client);
-> 
->     - remove st_sensors_spi.h and st_sensors_i2c.h
-> 
-> At least, it would simplify things a remove 2 mostly useless .h file.
-> 
-> It would not give the benefit of removing some include for files that do 
-> not require spi.h or i2c.h, but as these includes are already there, it 
-> wouldn't make things worst :)
-> 
-> What do you think of this approach?
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4#n94
 
-Gut feeling is not worth bothering...  Having separate _i2c.h and _spi.h
-seems fine to me.  I'm fine with this patch, just not the description.
-
-Jonathan
+Thanks for pointing that out (also in your other mail for this series).
+I will be more careful regarding the use of imperative mood.
 
 > 
-> CJ
+>>                                          Since it is a pure
+>> rename, it has no impact on functionality.
+>>
+>> Fixes: e17090eb2494 ("igc: allow BaseTime 0 enrollment for Qbv")
 > 
-> >   
-> >>
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >> Based on one of my script, this reduces the number of included files from
-> >> 573 files to 515 files when compiling drivers/iio/accel/st_accel_buffer.c
-> >> ---
-> >>   include/linux/iio/common/st_sensors.h | 2 --
-> >>   1 file changed, 2 deletions(-)
-> >>
-> >> diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
-> >> index 607c3a89a647..a1d3d57d6d6e 100644
-> >> --- a/include/linux/iio/common/st_sensors.h
-> >> +++ b/include/linux/iio/common/st_sensors.h
-> >> @@ -10,8 +10,6 @@
-> >>   #ifndef ST_SENSORS_H
-> >>   #define ST_SENSORS_H
-> >>   
-> >> -#include <linux/i2c.h>
-> >> -#include <linux/spi/spi.h>
-> >>   #include <linux/irqreturn.h>
-> >>   #include <linux/iio/iio.h>
-> >>   #include <linux/iio/trigger.h>  
-> > 
-> >   
-> 
+> How does such information fit together?
 
+The referenced commit introduced an issue into the kernel by
+introducing a variable that does not exactly describe its actual purpose.
+It is not only a cosmetic change, but in my view this confusion
+was related to other issues (see the other patches). So, it seemed to be worth
+fixing alongside with the other fixes, even if it does not directly impact
+functionality if it is applied or not (until someone else comes along,
+also gets confused and introduces another bug...).
+
+Thanks,
+Florian
