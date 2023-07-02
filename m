@@ -2,164 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ACEEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jul 2023 08:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA989EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jul 2023 10:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjGBICA (ORCPT
+        id S229806AbjGBKbn convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Jul 2023 04:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
+        Sun, 2 Jul 2023 06:31:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbjGBIB5 (ORCPT
+        with ESMTP id S229554AbjGBKbm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Jul 2023 04:01:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AF9B10F0;
-        Sun,  2 Jul 2023 01:01:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F3BC60B61;
-        Sun,  2 Jul 2023 08:01:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024EEC433C9;
-        Sun,  2 Jul 2023 08:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688284912;
-        bh=AGKqBcZVtUqtvMJ8Dh1+gcTfNZM2gdiklSmLMXwux7I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Xjk0DMbLF2rO0mvw36w3NspsZoHzJxg1ZXKVygmiDr7KmRnYY3yam0NxSCStS2ujI
-         N4CH0bnMzAljQPJWG0cn54Jr72J/w0Oqfjm4GsMxuE3yLV7xRT4ZoGQCKZu+Z3bDyq
-         CUwPm9o2UqDTXXZIqdE5cVDyE+bFqb++4EAuoC/07yKb4za7Ef/2n39TC4FXRMPKih
-         6paXYKTbQkzc4do2iuNOu7HQkJ8yYFalmFhKCt5TXBphJw9xntLvTRLecDzg6IMNsC
-         OBQGrRBlwbZasDO/DXj7OqYZQ85hX8YJ0HK+4TIE+coip4dpM05UTCE9OMIyyzGgK3
-         zZZL6EAUCAhng==
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-c4d1b491095so888527276.0;
-        Sun, 02 Jul 2023 01:01:51 -0700 (PDT)
-X-Gm-Message-State: ABy/qLYYCyAdQRDChV1Ny2EoUbuVdTfM82PImAIdyI8ThAEMiSxuaUzJ
-        Le/tRoQ7VWJ37zkAvUe554mxSf4GdkuRK1Y7UUM=
-X-Google-Smtp-Source: APBJJlG4lzrHr5iy8DcyCDkqnYXfI6vr0OVREPdey5QbxLbrrL8xS3Y8SB3wQ09H+WYqmrGTTSOxoFpm+TOui/fO7vs=
-X-Received: by 2002:a25:c504:0:b0:c01:dcdd:ed50 with SMTP id
- v4-20020a25c504000000b00c01dcdded50mr7607295ybe.14.1688284911003; Sun, 02 Jul
- 2023 01:01:51 -0700 (PDT)
+        Sun, 2 Jul 2023 06:31:42 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924821B0;
+        Sun,  2 Jul 2023 03:31:41 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Qv4z21BGgz67M3D;
+        Sun,  2 Jul 2023 18:28:46 +0800 (CST)
+Received: from localhost (10.48.51.211) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sun, 2 Jul
+ 2023 11:31:37 +0100
+Date:   Sun, 2 Jul 2023 18:31:33 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH 2/2] iio: st_sensors: Remove some redundant includes in
+ st_sensors.h
+Message-ID: <20230702183133.00007c8d@Huawei.com>
+In-Reply-To: <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
+References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
+        <bd7fa0b07c85172ecba384e239cb0ecf0780766a.1686600780.git.christophe.jaillet@wanadoo.fr>
+        <20230617194911.7963bd6d@jic23-huawei>
+        <1d367f33-3ed2-63d0-093a-7d1f561cca10@wanadoo.fr>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr> <20230627144339.144478-16-Julia.Lawall@inria.fr>
-In-Reply-To: <20230627144339.144478-16-Julia.Lawall@inria.fr>
-From:   Oded Gabbay <ogabbay@kernel.org>
-Date:   Sun, 2 Jul 2023 11:01:24 +0300
-X-Gmail-Original-Message-ID: <CAFCwf13PXmSODKeNSPOyAH08QA-ovNzW5PEgFLMtg8AVAMD0GA@mail.gmail.com>
-Message-ID: <CAFCwf13PXmSODKeNSPOyAH08QA-ovNzW5PEgFLMtg8AVAMD0GA@mail.gmail.com>
-Subject: Re: [PATCH v2 15/24] habanalabs: use vmalloc_array and vcalloc
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.48.51.211]
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 5:44=E2=80=AFPM Julia Lawall <Julia.Lawall@inria.fr=
-> wrote:
->
-> Use vmalloc_array and vcalloc to protect against
-> multiplication overflows.
->
-> The changes were done using the following Coccinelle
-> semantic patch:
->
-> // <smpl>
-> @initialize:ocaml@
-> @@
->
-> let rename alloc =3D
->   match alloc with
->     "vmalloc" -> "vmalloc_array"
->   | "vzalloc" -> "vcalloc"
->   | _ -> failwith "unknown"
->
-> @@
->     size_t e1,e2;
->     constant C1, C2;
->     expression E1, E2, COUNT, x1, x2, x3;
->     typedef u8;
->     typedef __u8;
->     type t =3D {u8,__u8,char,unsigned char};
->     identifier alloc =3D {vmalloc,vzalloc};
->     fresh identifier realloc =3D script:ocaml(alloc) { rename alloc };
-> @@
->
-> (
->       alloc(x1*x2*x3)
-> |
->       alloc(C1 * C2)
-> |
->       alloc((sizeof(t)) * (COUNT), ...)
-> |
-> -     alloc((e1) * (e2))
-> +     realloc(e1, e2)
-> |
-> -     alloc((e1) * (COUNT))
-> +     realloc(COUNT, e1)
-> |
-> -     alloc((E1) * (E2))
-> +     realloc(E1, E2)
-> )
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
-> ---
-> v2: Use vmalloc_array and vcalloc instead of array_size.
-> This also leaves a multiplication of a constant by a sizeof
-> as is.  Two patches are thus dropped from the series.
->
->  drivers/accel/habanalabs/common/device.c     |    3 ++-
->  drivers/accel/habanalabs/common/state_dump.c |    7 ++++---
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff -u -p a/drivers/accel/habanalabs/common/device.c b/drivers/accel/hab=
-analabs/common/device.c
-> --- a/drivers/accel/habanalabs/common/device.c
-> +++ b/drivers/accel/habanalabs/common/device.c
-> @@ -2594,7 +2594,8 @@ static void hl_capture_user_mappings(str
->          */
->         vfree(pgf_info->user_mappings);
->         pgf_info->user_mappings =3D
-> -                       vzalloc(pgf_info->num_of_user_mappings * sizeof(s=
-truct hl_user_mapping));
-> +                       vcalloc(pgf_info->num_of_user_mappings,
-> +                               sizeof(struct hl_user_mapping));
->         if (!pgf_info->user_mappings) {
->                 pgf_info->num_of_user_mappings =3D 0;
->                 goto finish;
-> diff -u -p a/drivers/accel/habanalabs/common/state_dump.c b/drivers/accel=
-/habanalabs/common/state_dump.c
-> --- a/drivers/accel/habanalabs/common/state_dump.c
-> +++ b/drivers/accel/habanalabs/common/state_dump.c
-> @@ -272,7 +272,8 @@ static u32 *hl_state_dump_read_sync_obje
->         base_addr =3D sds->props[SP_SYNC_OBJ_BASE_ADDR] +
->                         sds->props[SP_NEXT_SYNC_OBJ_ADDR] * index;
->
-> -       sync_objects =3D vmalloc(sds->props[SP_SYNC_OBJ_AMOUNT] * sizeof(=
-u32));
-> +       sync_objects =3D vmalloc_array(sds->props[SP_SYNC_OBJ_AMOUNT],
-> +                                    sizeof(u32));
->         if (!sync_objects)
->                 return NULL;
->
-> @@ -453,8 +454,8 @@ hl_state_dump_alloc_read_sm_block_monito
->         s64 base_addr; /* Base addr can be negative */
->         int i;
->
-> -       monitors =3D vmalloc(sds->props[SP_MONITORS_AMOUNT] *
-> -                          sizeof(struct hl_mon_state_dump));
-> +       monitors =3D vmalloc_array(sds->props[SP_MONITORS_AMOUNT],
-> +                                sizeof(struct hl_mon_state_dump));
->         if (!monitors)
->                 return NULL;
->
->
+On Mon, 19 Jun 2023 22:02:37 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+> Le 17/06/2023 à 20:49, Jonathan Cameron a écrit :
+> > On Mon, 12 Jun 2023 22:13:37 +0200
+> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> >   
+> >> There is no need to include i2c.h and spi/spi.h in st_sensors.h.
+> >> Should it be needed, st_sensors_(i2c|spi).h should be used.  
+> > Agreed these should be dropped from here.
+> > 
+> > But I don't agree with statement that i2c.h and spi/spi.h should
+> > be gotten implicitly from st_sensors_i2c.h / st_sensors_spi.h
+> > If they are needed the should be included directly in the files
+> > where they are needed.
+> > 
+> > Jonathan  
+> 
+> Another option I thought about was to:
+>     - keep the includes in st_sensors.h
+> 
+>     - move function declaration in st_sensors.h
+> int st_sensors_spi_configure(struct iio_dev *indio_dev,
+> 			     struct spi_device *spi);
+> and
+> int st_sensors_i2c_configure(struct iio_dev *indio_dev,
+> 			     struct i2c_client *client);
+> 
+>     - remove st_sensors_spi.h and st_sensors_i2c.h
+> 
+> At least, it would simplify things a remove 2 mostly useless .h file.
+> 
+> It would not give the benefit of removing some include for files that do 
+> not require spi.h or i2c.h, but as these includes are already there, it 
+> wouldn't make things worst :)
+> 
+> What do you think of this approach?
+
+Gut feeling is not worth bothering...  Having separate _i2c.h and _spi.h
+seems fine to me.  I'm fine with this patch, just not the description.
+
+Jonathan
+
+> 
+> CJ
+> 
+> >   
+> >>
+> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >> ---
+> >> Based on one of my script, this reduces the number of included files from
+> >> 573 files to 515 files when compiling drivers/iio/accel/st_accel_buffer.c
+> >> ---
+> >>   include/linux/iio/common/st_sensors.h | 2 --
+> >>   1 file changed, 2 deletions(-)
+> >>
+> >> diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
+> >> index 607c3a89a647..a1d3d57d6d6e 100644
+> >> --- a/include/linux/iio/common/st_sensors.h
+> >> +++ b/include/linux/iio/common/st_sensors.h
+> >> @@ -10,8 +10,6 @@
+> >>   #ifndef ST_SENSORS_H
+> >>   #define ST_SENSORS_H
+> >>   
+> >> -#include <linux/i2c.h>
+> >> -#include <linux/spi/spi.h>
+> >>   #include <linux/irqreturn.h>
+> >>   #include <linux/iio/iio.h>
+> >>   #include <linux/iio/trigger.h>  
+> > 
+> >   
+> 
+
