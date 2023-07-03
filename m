@@ -2,96 +2,118 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF32EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 12:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B10EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 14:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbjGCMyy (ORCPT
+        id S230162AbjGCORN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 08:54:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
+        Mon, 3 Jul 2023 10:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230162AbjGCMyx (ORCPT
+        with ESMTP id S229764AbjGCORM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 08:54:53 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F9DE62
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 05:54:49 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fb73ba3b5dso6982244e87.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 05:54:49 -0700 (PDT)
+        Mon, 3 Jul 2023 10:17:12 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9148E54
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 07:17:10 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3141140f51bso6037935f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 07:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688388887; x=1690980887;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5vg9Foed0fGCLC6fQJ5romEdNjTvzK0Z22HuX4YlC8=;
-        b=ygKIo91z1/P+BIySSrpClLc3H42+uNOqyHBDRliREHJmsL3Y+/JwFDNhG/9agp16Go
-         MBXAMfk6WX796GJagY8JIeBITY611anmlMZl6gyu5/YOYOCDfqrLSVikHnmnZQsyYZCd
-         9jWJsuoEPQ7eVjVdhyR2s+qsN3dIG/e8YsSh6TXlYI+Tm5UP3C7eVr4TC5s50Ghr1kbU
-         V86G3M+NNER1+P4sulAH06zpVroor+hu5b5kBgmhJy5xcr6QjM9wLqKJ1eg3NUchXXsy
-         o/Gk3akM2S7yRuUlAwucRhezb4zesIGfsJioOc4IJXBno7VBJi9rrBbBpigQEX/89VHf
-         +oWw==
+        d=linaro.org; s=google; t=1688393829; x=1690985829;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NS8aCa+Lk9ooIVJLC50sm9OfUoCHiG9VauOiFjSke5I=;
+        b=Dz7mnBydwopgtG5BvWhnn6YG9PDY/D9J7KxzrFPVZJ4igHsL8gj+e8B+0RKgzdiuy5
+         3gk3lnDKzewXPImLL74MoeBaTauKZUZKo96oLK/RSU7qPMiDdIe51lApoYZ4/TkTNAza
+         TeOBAMwIu9T9ACoDZQGmKgIqchNfCQ0bFDBNTcwepwyOfRnIIZCgS3wNsFDafeFE7HKx
+         rTLQ5eNEV+3WwsdjUtdbtumC1Qv7XiaX4Hoa1tzSNCyJtGuu12MFkk47fgYfZB2oDLBI
+         ld5RlWMBII6YN8QmgGVa/XPVldJaehURhv3c84W2zvM/H2R9n5hk2RqEmb8kUe8UgbUh
+         Lc7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688388887; x=1690980887;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v5vg9Foed0fGCLC6fQJ5romEdNjTvzK0Z22HuX4YlC8=;
-        b=SzSJ/IgfIfXVE54hHDcn+DIpcj3HOkRjjV3Ar9gU1E0xxiwM3geNlWnvVY07qpCABP
-         +GQutG9usIR5GYFIb+KTJXWB4UPIi6SNvjvEYA/8g8D8Iw4ZH69VT0yRhMjtJxy1vQBd
-         tN8IDieYW9z46MA0ta3opmIld09ZsFlefgLgVGnlA2BMLNr8qC82zPzAL/1FLddy81Cp
-         N3uYXEBJ1QQoGLI1BtViOUEM9efBdM8iRmKVXtyqWAx3UJPga31v3vjUWIRxIVjFUQOR
-         cEiUwvb8BaxVLBDyEHE3PBphApbdsLp6PGZeXIhe4ynoe37LR7FZasbotKmx2xyj7HSi
-         wrrQ==
-X-Gm-Message-State: ABy/qLa633kikxQqnrbzpOkVbvB3OKgGSkHhyr07XyHDRExqIIx0CWkg
-        xtKZwDpMsi/A8CSU5dat50duvA==
-X-Google-Smtp-Source: APBJJlHM1frPemlXRN9IjBwImUu2ICaLNU9ZsDkBq1O2R5IQ80yEgdN0B+79v6mSaJM1VkkZNzRCjA==
-X-Received: by 2002:a05:6512:33c9:b0:4f8:7325:bcd4 with SMTP id d9-20020a05651233c900b004f87325bcd4mr7993114lfg.0.1688388887459;
-        Mon, 03 Jul 2023 05:54:47 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688393829; x=1690985829;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NS8aCa+Lk9ooIVJLC50sm9OfUoCHiG9VauOiFjSke5I=;
+        b=Mfq7zRER3FfTfbNcbyYuoBHMr39v3kRRvBCwLukDqRxDSg8+eHovDGBnWcl8NzfuPz
+         E0o79GXhTTHgyiZyFqAs5U8/2p5Pf8puAG3iCwzQ+42XwIu/RGwzBh/WTGEUXsjAEpcF
+         zS1rDCLo+Ei1SGbblLVW5IP++gAPHQEaLjEqlw+ThKcQy8IxRBHpihl1M0zJFn67fgTl
+         hkJKPZMCMn4dDqDHYhAzt939Vbcg6FmBV+ik9sl6dH9ra3dRhJ2dqVBbGH9GMejlsKI/
+         lLpbjsDXyEmuHb7+ZjLjCEvp9ozlwoq0T3TvJxmRNJ80XbOXkgJmBmrdcIYjLP2pWx9n
+         D8wQ==
+X-Gm-Message-State: ABy/qLbpg5rkyQXpxB9iiIzHhs37iDnrkUAEsiRvCkly7/L6C5gqDRNV
+        KYSntVrvNINiw42lIBdTsnofc8uJYZ6tCkCGQ0Y=
+X-Google-Smtp-Source: APBJJlEHMDhiRmKyjSnGkgATubU4gmdibSh3K5idL3pcNGvtZkcd2PD4WINUw9CHRRCGA5SEfYkQPw==
+X-Received: by 2002:adf:fcc5:0:b0:314:1b9b:6e1a with SMTP id f5-20020adffcc5000000b003141b9b6e1amr9941313wrs.62.1688393829298;
+        Mon, 03 Jul 2023 07:17:09 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q20-20020a1cf314000000b003f90b9b2c31sm30179834wmq.28.2023.07.03.05.54.44
+        by smtp.gmail.com with ESMTPSA id u2-20020adfdd42000000b00314326c91e2sm4463454wrm.28.2023.07.03.07.17.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 05:54:45 -0700 (PDT)
-Date:   Mon, 3 Jul 2023 15:54:42 +0300
+        Mon, 03 Jul 2023 07:17:07 -0700 (PDT)
+Date:   Mon, 3 Jul 2023 17:17:03 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     wsa@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: busses: i2c-nomadik: Remove a useless call in
- the remove function
-Message-ID: <885ee9fa-f56c-4e21-b648-866dd4e1dc0f@kadam.mountain>
-References: <62ae6810d41e0429ebaadfac8a95409f4bc72456.1688160163.git.christophe.jaillet@wanadoo.fr>
+To:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>
+Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ath9k: use struct_group() to silence static checker warning
+Message-ID: <6de44cd9-a9a0-4b76-a9b5-a3c37b97f9aa@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <62ae6810d41e0429ebaadfac8a95409f4bc72456.1688160163.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 11:23:28PM +0200, Christophe JAILLET wrote:
-> Since commit a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of
-> git://git.pengutronix.de/git/wsa/linux"), there is no more
-> request_mem_region() call in this driver.
-> 
-> So remove the release_mem_region() call from the remove function which is
-> likely a left over.
-> 
-> There is no details in the above commit log, but at its end we can read:
->    Conflicts:
-> 	   drivers/i2c/busses/i2c-nomadik.c
-> 
-> This may explain why this call has been left here.
-> 
-> Fixes: a410963ba4c0 ("Merge branch 'i2c-embedded/for-next' of git://git.pengutronix.de/git/wsa/linux
+We are deliberately copying both ba_high and ba_low so use a struct
+group to make that clear.  Otherwise static checkers like Smatch and
+Clang complain that we are copying beyond the end of the ba_low struct
+member.
 
-The reason why you're so confused about this Merge commit is because
-it's completely unrelated to the bug.  :P  It should be:
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/wireless/ath/ath9k/mac.h  | 6 ++++--
+ drivers/net/wireless/ath/ath9k/xmit.c | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Fixes: 235602146ec9 (i2c-nomadik: turn the platform driver to an amba driver)
-
-When you look at that commit, you'll see that your patch is correct.
-
-regards,
-dan carpenter
+diff --git a/drivers/net/wireless/ath/ath9k/mac.h b/drivers/net/wireless/ath/ath9k/mac.h
+index af44b33814dd..f03d792732da 100644
+--- a/drivers/net/wireless/ath/ath9k/mac.h
++++ b/drivers/net/wireless/ath/ath9k/mac.h
+@@ -115,8 +115,10 @@ struct ath_tx_status {
+ 	u8 qid;
+ 	u16 desc_id;
+ 	u8 tid;
+-	u32 ba_low;
+-	u32 ba_high;
++	struct_group(ba,
++		u32 ba_low;
++		u32 ba_high;
++	);
+ 	u32 evm0;
+ 	u32 evm1;
+ 	u32 evm2;
+diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
+index f6f2ab7a63ff..42058368e637 100644
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -468,7 +468,7 @@ static void ath_tx_count_frames(struct ath_softc *sc, struct ath_buf *bf,
+ 	isaggr = bf_isaggr(bf);
+ 	if (isaggr) {
+ 		seq_st = ts->ts_seqnum;
+-		memcpy(ba, &ts->ba_low, WME_BA_BMP_SIZE >> 3);
++		memcpy(ba, &ts->ba, WME_BA_BMP_SIZE >> 3);
+ 	}
+ 
+ 	while (bf) {
+@@ -551,7 +551,7 @@ static void ath_tx_complete_aggr(struct ath_softc *sc, struct ath_txq *txq,
+ 	if (isaggr && txok) {
+ 		if (ts->ts_flags & ATH9K_TX_BA) {
+ 			seq_st = ts->ts_seqnum;
+-			memcpy(ba, &ts->ba_low, WME_BA_BMP_SIZE >> 3);
++			memcpy(ba, &ts->ba, WME_BA_BMP_SIZE >> 3);
+ 		} else {
+ 			/*
+ 			 * AR5416 can become deaf/mute when BA
+-- 
+2.39.2
 
