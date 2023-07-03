@@ -2,158 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8D4EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 12:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FB7EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 12:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbjGCMXt (ORCPT
+        id S231135AbjGCMdV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 08:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
+        Mon, 3 Jul 2023 08:33:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbjGCMXs (ORCPT
+        with ESMTP id S229608AbjGCMdS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 08:23:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8954A109;
-        Mon,  3 Jul 2023 05:23:47 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3301D1FE04;
-        Mon,  3 Jul 2023 12:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688387026; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cEwdhD/n1Nx72ImgbdEIvjpn3giyL22vCP3qre0aSDM=;
-        b=TT/5vfmH7AUufSolN0r/Da0EBIfjSiWOwvMTHDucQOG9vvZx6ZXWw/zI+y0DlfYAJCsR9B
-        RJnS2Y8qfWd1io52UDJTDYyh8WAh4nIACklnH5vhryXrT9PsNgBde68m8Ekoz2joHkCCUo
-        I6g/JaXoh8dCnaqOC9OKXz9yNO0rWPY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688387026;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cEwdhD/n1Nx72ImgbdEIvjpn3giyL22vCP3qre0aSDM=;
-        b=8rdsKNzS7jGs4THcL976LmDl/VcsZEfS9aShgTT4hQ+MxYv5YG9Xmt833VwvIqQD4Do9wY
-        EpVGCmEHUd1RDrDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F38FA138FC;
-        Mon,  3 Jul 2023 12:23:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EoHeOdG9omS5dAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 03 Jul 2023 12:23:45 +0000
-Message-ID: <81c65106-cabf-1f44-fdd2-6c716ab2ba32@suse.de>
-Date:   Mon, 3 Jul 2023 14:23:45 +0200
+        Mon, 3 Jul 2023 08:33:18 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 586C5E7B
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 05:33:14 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fbc5d5746cso46747405e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 05:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688387592; x=1690979592;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WbjEyULWL6/37XI6VUIi//alYOhlAuf930FnaIS9WkQ=;
+        b=OUxAtw5vSPsFxjmXURwGnoN2J9+YjAKe+myiBJmUf9l0ArJy0G5g74/S0IkE0OqvQ7
+         pD3Me+8JLQi0mSjPinYFJpzJU+EiElGiWtPALJ2jj91h3K+rUiyc8iqEg4d8NbQ/NxCE
+         X5cierhPILETAWsjP4J/5WiFJtFMc9N9BNtCyCqYCKL1f5zf3wjX1oPHVOCdyLxmcGdH
+         dMHm5pmnS2sZd4jBI3j6uEKRwwA4Pkbe+iHByS7xQtxPNzAp/N+FSh8+0T39g66XDsfF
+         YdZdHvrHd6+OX2QHWXKwtLkGBu/8bvL0DuQn3GBPPe073iCBv2WY/0I4hO9f4DQdaXZp
+         5yUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688387592; x=1690979592;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WbjEyULWL6/37XI6VUIi//alYOhlAuf930FnaIS9WkQ=;
+        b=P/YtjPvglqlcOIYyDUrhn5TrTc0BSUPUFTnqL0GjnibuYLwOyS9Zdf5mW/U1TRL9DM
+         laOd5SB2dF4WTUjyydIhOJ3+CWC11K7mj1aHd3QKFVG/k/zrY2Yh7zCoQAum/b6iqzQB
+         W1xIv/rJDLGDhZqBOhN7jc0UeXtMsVr6Bkry8U5NLdBh6wuT0bVSh24L5reMPQJ9YynK
+         oZXhRMO0cXOJygexMf7UfSvmVqGMQK42Qn4vNt2UZByUgH7+Rf+rdRPFknRfEUXEkGRk
+         BXHkGLe2SJLB2A3yjQKiPXFGqjtb9W1IbZ5wtZO73qPL6CRcT/nDF9eozZOYV5ud1et0
+         9Pmg==
+X-Gm-Message-State: AC+VfDw69V4Y/p7xbHNN8hYUea+/3q3ajOL14LtjluGmL9eBMFMgpVp9
+        qQ6Z+w1QKjVis/diSd7ZBvUCxA==
+X-Google-Smtp-Source: ACHHUZ7x89Bw12PK6ySMqwr1DwZdq07oQA0z5Yq+UF7a9FlNp4DufpI7dYWuyaOsbjCMBT/mu1QxUg==
+X-Received: by 2002:a1c:6a07:0:b0:3fa:934c:8356 with SMTP id f7-20020a1c6a07000000b003fa934c8356mr9295695wmc.10.1688387592343;
+        Mon, 03 Jul 2023 05:33:12 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id da16-20020a056000197000b0031274a184d5sm25641129wrb.109.2023.07.03.05.33.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jul 2023 05:33:10 -0700 (PDT)
+Date:   Mon, 3 Jul 2023 15:33:08 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     "Lee, Kah Jing" <kah.jing.lee@intel.com>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        "Yuslaimi, Alif Zakuan" <alif.zakuan.yuslaimi@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 0/1] Enable UBIFS support
+Message-ID: <52af3309-2324-444b-99fa-a267509ea4d4@kadam.mountain>
+References: <20230703063309.1342330-1-kah.jing.lee@intel.com>
+ <066c9c1b-68f3-8f4c-0e34-e31963b45690@web.de>
+ <PH0PR11MB567352E337F1C0D099195E3DCB29A@PH0PR11MB5673.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 03/24] drm/gud: use vmalloc_array and vcalloc
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
- <20230627144339.144478-4-Julia.Lawall@inria.fr>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20230627144339.144478-4-Julia.Lawall@inria.fr>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------095I0EuT7U9cVQFoiTUQRAmv"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH0PR11MB567352E337F1C0D099195E3DCB29A@PH0PR11MB5673.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------095I0EuT7U9cVQFoiTUQRAmv
-Content-Type: multipart/mixed; boundary="------------57yg0V02n09MrsJfOg0ySq0p";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Julia Lawall <Julia.Lawall@inria.fr>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?=
- <noralf@tronnes.org>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- christophe.jaillet@wanadoo.fr, kuba@kernel.org
-Message-ID: <81c65106-cabf-1f44-fdd2-6c716ab2ba32@suse.de>
-Subject: Re: [PATCH v2 03/24] drm/gud: use vmalloc_array and vcalloc
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
- <20230627144339.144478-4-Julia.Lawall@inria.fr>
-In-Reply-To: <20230627144339.144478-4-Julia.Lawall@inria.fr>
+On Mon, Jul 03, 2023 at 07:45:12AM +0000, Lee, Kah Jing wrote:
+> > > The patch is to update the qspi mtd partition range for UBIFS on
+> > > socfpga platform - Agilex and Stratix10 boards.
+> > 
+> > Why do you find a cover letter relevant for a single patch?
+> > 
+> Will drop the cover letter since only send for single patch. 
+> Thanks. 
 
---------------57yg0V02n09MrsJfOg0ySq0p
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Markus is banned from the mailing lists.  Just ignore him.
 
-DQoNCkFtIDI3LjA2LjIzIHVtIDE2OjQzIHNjaHJpZWIgSnVsaWEgTGF3YWxsOg0KPiBVc2Ug
-dm1hbGxvY19hcnJheSBhbmQgdmNhbGxvYyB0byBwcm90ZWN0IGFnYWluc3QNCj4gbXVsdGlw
-bGljYXRpb24gb3ZlcmZsb3dzLg0KPiANCj4gVGhlIGNoYW5nZXMgd2VyZSBkb25lIHVzaW5n
-IHRoZSBmb2xsb3dpbmcgQ29jY2luZWxsZQ0KPiBzZW1hbnRpYyBwYXRjaDoNCj4gDQo+IC8v
-IDxzbXBsPg0KPiBAaW5pdGlhbGl6ZTpvY2FtbEANCj4gQEANCj4gDQo+IGxldCByZW5hbWUg
-YWxsb2MgPQ0KPiAgICBtYXRjaCBhbGxvYyB3aXRoDQo+ICAgICAgInZtYWxsb2MiIC0+ICJ2
-bWFsbG9jX2FycmF5Ig0KPiAgICB8ICJ2emFsbG9jIiAtPiAidmNhbGxvYyINCj4gICAgfCBf
-IC0+IGZhaWx3aXRoICJ1bmtub3duIg0KPiANCj4gQEANCj4gICAgICBzaXplX3QgZTEsZTI7
-DQo+ICAgICAgY29uc3RhbnQgQzEsIEMyOw0KPiAgICAgIGV4cHJlc3Npb24gRTEsIEUyLCBD
-T1VOVCwgeDEsIHgyLCB4MzsNCj4gICAgICB0eXBlZGVmIHU4Ow0KPiAgICAgIHR5cGVkZWYg
-X191ODsNCj4gICAgICB0eXBlIHQgPSB7dTgsX191OCxjaGFyLHVuc2lnbmVkIGNoYXJ9Ow0K
-PiAgICAgIGlkZW50aWZpZXIgYWxsb2MgPSB7dm1hbGxvYyx2emFsbG9jfTsNCj4gICAgICBm
-cmVzaCBpZGVudGlmaWVyIHJlYWxsb2MgPSBzY3JpcHQ6b2NhbWwoYWxsb2MpIHsgcmVuYW1l
-IGFsbG9jIH07DQo+IEBADQo+IA0KPiAoDQo+ICAgICAgICBhbGxvYyh4MSp4Mip4MykNCj4g
-fA0KPiAgICAgICAgYWxsb2MoQzEgKiBDMikNCj4gfA0KPiAgICAgICAgYWxsb2MoKHNpemVv
-Zih0KSkgKiAoQ09VTlQpLCAuLi4pDQo+IHwNCj4gLSAgICAgYWxsb2MoKGUxKSAqIChlMikp
-DQo+ICsgICAgIHJlYWxsb2MoZTEsIGUyKQ0KPiB8DQo+IC0gICAgIGFsbG9jKChlMSkgKiAo
-Q09VTlQpKQ0KPiArICAgICByZWFsbG9jKENPVU5ULCBlMSkNCj4gfA0KPiAtICAgICBhbGxv
-YygoRTEpICogKEUyKSkNCj4gKyAgICAgcmVhbGxvYyhFMSwgRTIpDQo+ICkNCj4gLy8gPC9z
-bXBsPg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdhbGxA
-aW5yaWEuZnI+DQoNClJldmlld2VkLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1h
-bm5Ac3VzZS5kZT4NCg0KPiANCj4gLS0tDQo+IHYyOiBVc2Ugdm1hbGxvY19hcnJheSBhbmQg
-dmNhbGxvYyBpbnN0ZWFkIG9mIGFycmF5X3NpemUuDQo+IFRoaXMgYWxzbyBsZWF2ZXMgYSBt
-dWx0aXBsaWNhdGlvbiBvZiBhIGNvbnN0YW50IGJ5IGEgc2l6ZW9mDQo+IGFzIGlzLiAgVHdv
-IHBhdGNoZXMgYXJlIHRodXMgZHJvcHBlZCBmcm9tIHRoZSBzZXJpZXMuDQo+IA0KPiAgIGRy
-aXZlcnMvZ3B1L2RybS9ndWQvZ3VkX3BpcGUuYyB8ICAgIDIgKy0NCj4gICAxIGZpbGUgY2hh
-bmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLXUgLXAg
-YS9kcml2ZXJzL2dwdS9kcm0vZ3VkL2d1ZF9waXBlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZ3Vk
-L2d1ZF9waXBlLmMNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2d1ZC9ndWRfcGlwZS5jDQo+
-ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ndWQvZ3VkX3BpcGUuYw0KPiBAQCAtMzkwLDcgKzM5
-MCw3IEBAIHN0YXRpYyBpbnQgZ3VkX2ZiX3F1ZXVlX2RhbWFnZShzdHJ1Y3QgZ3UNCj4gICAJ
-bXV0ZXhfbG9jaygmZ2RybS0+ZGFtYWdlX2xvY2spOw0KPiAgIA0KPiAgIAlpZiAoIWdkcm0t
-PnNoYWRvd19idWYpIHsNCj4gLQkJZ2RybS0+c2hhZG93X2J1ZiA9IHZ6YWxsb2MoZmItPnBp
-dGNoZXNbMF0gKiBmYi0+aGVpZ2h0KTsNCj4gKwkJZ2RybS0+c2hhZG93X2J1ZiA9IHZjYWxs
-b2MoZmItPnBpdGNoZXNbMF0sIGZiLT5oZWlnaHQpOw0KPiAgIAkJaWYgKCFnZHJtLT5zaGFk
-b3dfYnVmKSB7DQo+ICAgCQkJbXV0ZXhfdW5sb2NrKCZnZHJtLT5kYW1hZ2VfbG9jayk7DQo+
-ICAgCQkJcmV0dXJuIC1FTk9NRU07DQo+IA0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpH
-cmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJt
-YW55IEdtYkgNCkZyYW5rZW5zdHJhc3NlIDE0NiwgOTA0NjEgTnVlcm5iZXJnLCBHZXJtYW55
-DQpHRjogSXZvIFRvdGV2LCBBbmRyZXcgTXllcnMsIEFuZHJldyBNY0RvbmFsZCwgQm91ZGll
-biBNb2VybWFuDQpIUkIgMzY4MDkgKEFHIE51ZXJuYmVyZykNCg==
+You are absolutely allowed to send cover letters for a single patch if
+you want to.  Or you can drop it if you want to.  It doesn't matter
+either way.
 
---------------57yg0V02n09MrsJfOg0ySq0p--
+regards,
+dan carpenter
 
---------------095I0EuT7U9cVQFoiTUQRAmv
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmSivdEFAwAAAAAACgkQlh/E3EQov+Cb
-ug/+Lqmo8Vy3nHNfsOi8C6S16t6VbjNlBN8Y/3h0Fy2jBxvnu90znhH20dlZfDv4jpeXxU/8eTn7
-ZDfZFjoWvkr4rM9xw/zsCmDDllKk8+HukOyK+ApnW5dG9tRnIB9dgHGK0az/Lpb7VShyRRW2CSjs
-bAjqfKvSEBIbxzVCszdrQT0etgnrC6hqfTZrjJ5lVNUzql0JVwMOjOVYzXCun28dyPiye0FM6L8W
-bbFPQbNZ2gIfFAkMNpAwdBoYLOWQBIScyBVpdhK6mnjDYoJJBPgL0eg4/VPx8LSB9Vj/LH38SSlS
-cKxmDe2H8ctmBIZgd2p3TBshtVVnWtlnO//cA1Jomo6t/dEMOgTVXB4lUCnPSVlqa6p52kASBRxt
-AsnqXGGUFLt6u3hjDg4mps/QG5H/KvVKZCHhTxQw/KmBMC7vKFVROiaLC3cyoMS1aPw9X2PJNH4r
-8QqeDTYCLHvc6BnUt0XEBCIgyZYV4JjAf/O3szGx5Tf6YkP1eTeeyJCfRPbdZnZLSGvDoHGx0YRi
-TRHNEYzDuX5zpHk4SMw3CzXW9xXfH2QgN2dKhIHg+OXDUAV9sc86xLsj+H2HS0vyYx9QQm7fhe5S
-7EDdpQCwE7QVHeSGfNBf/sWCuHtKaxfZ7EBw/d5ZXy+omsEzTdQwTaDe47f9ZZUop+l6D5hf9a2n
-lAc=
-=E9kM
------END PGP SIGNATURE-----
-
---------------095I0EuT7U9cVQFoiTUQRAmv--
