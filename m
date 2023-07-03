@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B10EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 14:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC973EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 14:17:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjGCORN (ORCPT
+        id S230380AbjGCOR0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
+        Mon, 3 Jul 2023 10:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbjGCORM (ORCPT
+        with ESMTP id S230391AbjGCORY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 10:17:12 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9148E54
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 07:17:10 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3141140f51bso6037935f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 07:17:10 -0700 (PDT)
+        Mon, 3 Jul 2023 10:17:24 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCBFE73
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 07:17:22 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbc77e76abso40788135e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 07:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688393829; x=1690985829;
+        d=linaro.org; s=google; t=1688393841; x=1690985841;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NS8aCa+Lk9ooIVJLC50sm9OfUoCHiG9VauOiFjSke5I=;
-        b=Dz7mnBydwopgtG5BvWhnn6YG9PDY/D9J7KxzrFPVZJ4igHsL8gj+e8B+0RKgzdiuy5
-         3gk3lnDKzewXPImLL74MoeBaTauKZUZKo96oLK/RSU7qPMiDdIe51lApoYZ4/TkTNAza
-         TeOBAMwIu9T9ACoDZQGmKgIqchNfCQ0bFDBNTcwepwyOfRnIIZCgS3wNsFDafeFE7HKx
-         rTLQ5eNEV+3WwsdjUtdbtumC1Qv7XiaX4Hoa1tzSNCyJtGuu12MFkk47fgYfZB2oDLBI
-         ld5RlWMBII6YN8QmgGVa/XPVldJaehURhv3c84W2zvM/H2R9n5hk2RqEmb8kUe8UgbUh
-         Lc7Q==
+        bh=AKyS+fyTgns6uqGiHeNZDD4/FshXCuvqba4EjpsGTtY=;
+        b=x14za32iAGSU72hi1D5KXDHjfL8SqI9J+qV8qY9mu6PkcaT9mH4lovneS7Fwmoil8f
+         sFHaGAMR2uc7y/Vu8C3b8kPtEyj+YkOVL0VK6zsu/QB/+WdYzjrrLsMh1iu98Z9FvDTX
+         0tk7x6sslXBLnOXVVqRwYsLvUGBDUWIdG6Ai3+hct6z0o0+iJJtcVpJmijqqnBr1l7/W
+         aL6oUjyhmItLkLQV5js7msI37l5W+QphaFOIKUO9UELCX6nmnBk2+7vi26Q/TySDB1Y1
+         z8K6Br0jvHut3iF+7uUiPuXzstgG585vGssQ5g852ME+ko//oki/52iiYKukWcX9m8va
+         iHxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688393829; x=1690985829;
+        d=1e100.net; s=20221208; t=1688393841; x=1690985841;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NS8aCa+Lk9ooIVJLC50sm9OfUoCHiG9VauOiFjSke5I=;
-        b=Mfq7zRER3FfTfbNcbyYuoBHMr39v3kRRvBCwLukDqRxDSg8+eHovDGBnWcl8NzfuPz
-         E0o79GXhTTHgyiZyFqAs5U8/2p5Pf8puAG3iCwzQ+42XwIu/RGwzBh/WTGEUXsjAEpcF
-         zS1rDCLo+Ei1SGbblLVW5IP++gAPHQEaLjEqlw+ThKcQy8IxRBHpihl1M0zJFn67fgTl
-         hkJKPZMCMn4dDqDHYhAzt939Vbcg6FmBV+ik9sl6dH9ra3dRhJ2dqVBbGH9GMejlsKI/
-         lLpbjsDXyEmuHb7+ZjLjCEvp9ozlwoq0T3TvJxmRNJ80XbOXkgJmBmrdcIYjLP2pWx9n
-         D8wQ==
-X-Gm-Message-State: ABy/qLbpg5rkyQXpxB9iiIzHhs37iDnrkUAEsiRvCkly7/L6C5gqDRNV
-        KYSntVrvNINiw42lIBdTsnofc8uJYZ6tCkCGQ0Y=
-X-Google-Smtp-Source: APBJJlEHMDhiRmKyjSnGkgATubU4gmdibSh3K5idL3pcNGvtZkcd2PD4WINUw9CHRRCGA5SEfYkQPw==
-X-Received: by 2002:adf:fcc5:0:b0:314:1b9b:6e1a with SMTP id f5-20020adffcc5000000b003141b9b6e1amr9941313wrs.62.1688393829298;
-        Mon, 03 Jul 2023 07:17:09 -0700 (PDT)
+        bh=AKyS+fyTgns6uqGiHeNZDD4/FshXCuvqba4EjpsGTtY=;
+        b=hguhmfnzH4VqxSMRbWUWl3FpwJHuB6mTc4eyOyD5NVx5K3voIwp58G9VzReppvnsqU
+         A0n2/yeTzayMsaAJPDRYEtejDBz8vZw676h/YxU7hIFogSjSHqmGHcC8z4ySgp0uMKc5
+         YBgmjURQgua/rGqiWQMAaQFVPYrYTTyTfXptEfipWgrgMZR8ty24KysRRGm+rNvbrrA8
+         2xTU4GSxHskaaXzOzcqu1fSGXu1kBjZIwYVzqjJIpP0h7HT2dmmiGnvA1q2ovXk5hqIT
+         DU6odQdS/PfKiaHNAnPDQbLhjGUHDdD1p2IEy0QJydziZO4gUVqnCS8BWnKyqTsJGxUl
+         LsIg==
+X-Gm-Message-State: AC+VfDzbCCE5gyk0m+iSG36VvNqOvJQcuq4KJP7x6bqOXRZjLn1WJ90S
+        hJcKpz6HZy1X+IPF5/7SRYbzTfP6ONBr8sgDvC0=
+X-Google-Smtp-Source: ACHHUZ51bcnZSYbL+6aHx0mx/k5JuWDgoFQDl/mLBxn4uIbEWmjNWVmLYFYWS1otY9KHCdcX9M7FVg==
+X-Received: by 2002:a1c:7219:0:b0:3fa:d160:fc6d with SMTP id n25-20020a1c7219000000b003fad160fc6dmr8313002wmc.30.1688393841164;
+        Mon, 03 Jul 2023 07:17:21 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u2-20020adfdd42000000b00314326c91e2sm4463454wrm.28.2023.07.03.07.17.06
+        by smtp.gmail.com with ESMTPSA id f12-20020a7bc8cc000000b003fbbe41fd78sm11807753wml.10.2023.07.03.07.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 07:17:07 -0700 (PDT)
-Date:   Mon, 3 Jul 2023 17:17:03 +0300
+        Mon, 03 Jul 2023 07:17:19 -0700 (PDT)
+Date:   Mon, 3 Jul 2023 17:17:16 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>
-Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ath9k: use struct_group() to silence static checker warning
-Message-ID: <6de44cd9-a9a0-4b76-a9b5-a3c37b97f9aa@moroto.mountain>
+To:     Hilda Wu <hildawu@realtek.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Alex Lu <alex_lu@realsil.com.cn>,
+        Simon Horman <simon.horman@corigine.com>,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] Bluetooth: msft: Fix error code in
+ msft_cancel_address_filter_sync()
+Message-ID: <be155fef-7758-41b2-a6e8-8f7e253ff452@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,56 +69,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We are deliberately copying both ba_high and ba_low so use a struct
-group to make that clear.  Otherwise static checkers like Smatch and
-Clang complain that we are copying beyond the end of the ba_low struct
-member.
+Return negative -EIO instead of positive EIO.
 
+Fixes: 926df8962f3f ("Bluetooth: msft: Extended monitor tracking by address filter")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/wireless/ath/ath9k/mac.h  | 6 ++++--
- drivers/net/wireless/ath/ath9k/xmit.c | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ net/bluetooth/msft.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/mac.h b/drivers/net/wireless/ath/ath9k/mac.h
-index af44b33814dd..f03d792732da 100644
---- a/drivers/net/wireless/ath/ath9k/mac.h
-+++ b/drivers/net/wireless/ath/ath9k/mac.h
-@@ -115,8 +115,10 @@ struct ath_tx_status {
- 	u8 qid;
- 	u16 desc_id;
- 	u8 tid;
--	u32 ba_low;
--	u32 ba_high;
-+	struct_group(ba,
-+		u32 ba_low;
-+		u32 ba_high;
-+	);
- 	u32 evm0;
- 	u32 evm1;
- 	u32 evm2;
-diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
-index f6f2ab7a63ff..42058368e637 100644
---- a/drivers/net/wireless/ath/ath9k/xmit.c
-+++ b/drivers/net/wireless/ath/ath9k/xmit.c
-@@ -468,7 +468,7 @@ static void ath_tx_count_frames(struct ath_softc *sc, struct ath_buf *bf,
- 	isaggr = bf_isaggr(bf);
- 	if (isaggr) {
- 		seq_st = ts->ts_seqnum;
--		memcpy(ba, &ts->ba_low, WME_BA_BMP_SIZE >> 3);
-+		memcpy(ba, &ts->ba, WME_BA_BMP_SIZE >> 3);
+diff --git a/net/bluetooth/msft.c b/net/bluetooth/msft.c
+index b80a2162a5c3..abbafa6194ca 100644
+--- a/net/bluetooth/msft.c
++++ b/net/bluetooth/msft.c
+@@ -743,7 +743,7 @@ static int msft_cancel_address_filter_sync(struct hci_dev *hdev, void *data)
+ 	if (IS_ERR_OR_NULL(skb)) {
+ 		bt_dev_err(hdev, "MSFT: Failed to cancel address (%pMR) filter",
+ 			   &address_filter->bdaddr);
+-		err = EIO;
++		err = -EIO;
+ 		goto done;
  	}
- 
- 	while (bf) {
-@@ -551,7 +551,7 @@ static void ath_tx_complete_aggr(struct ath_softc *sc, struct ath_txq *txq,
- 	if (isaggr && txok) {
- 		if (ts->ts_flags & ATH9K_TX_BA) {
- 			seq_st = ts->ts_seqnum;
--			memcpy(ba, &ts->ba_low, WME_BA_BMP_SIZE >> 3);
-+			memcpy(ba, &ts->ba, WME_BA_BMP_SIZE >> 3);
- 		} else {
- 			/*
- 			 * AR5416 can become deaf/mute when BA
+ 	kfree_skb(skb);
 -- 
 2.39.2
 
