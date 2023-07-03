@@ -2,103 +2,57 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E20BC001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 17:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD306C001B3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 17:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbjGCRLm (ORCPT
+        id S230391AbjGCRou (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 13:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
+        Mon, 3 Jul 2023 13:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbjGCRLl (ORCPT
+        with ESMTP id S230316AbjGCRoe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 13:11:41 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90402E3;
-        Mon,  3 Jul 2023 10:11:40 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1b03fb998c8so4602219fac.3;
-        Mon, 03 Jul 2023 10:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688404300; x=1690996300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kr9Z+jCllCPo2TEYaCvE923MwG2oQxSBRUlumqGiOe0=;
-        b=mc3vghlEgnyFSk7D/jcCzO1QYJfy+2euI1l4LO1kbhRa4eL0G6ATMGOIHPLt8GD0jx
-         zRQKc5SeLq+nxXCqR1dT16rQ2tv5IBKfzaf19Oun31eJ0gpYwWFq4U3+EEUkopkrmMXQ
-         lgfetNCzYXf54MlXaz9PQBGph+wF6oPowkOccv70aUjWyk+PBj9pwgz38X/IlIu24qkW
-         j1MWVKyn0h0w5sAOxevm5sRjcKHd1OGHQ6nendorq5p7peQY0w+YMjof4BhFvo0Y2xrM
-         eCf+Ak49M7VAWhauwX9EVTNeUgSXUqcY6m9DCpMZUfemv+qtTnTG0XHv0UPn+QJnjxwg
-         hr2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688404300; x=1690996300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kr9Z+jCllCPo2TEYaCvE923MwG2oQxSBRUlumqGiOe0=;
-        b=HUs5s5kITgL0fCujWISjtVhrfX/vMUdkup8cv4MFBRVNlEcFSSfQ+k3fAoFMyhB1W3
-         Kr6f1G2e990n9W2vqX5WRRiHrkX9N6CV/GskQ31WrY63xYuBc0ypepD7cy5bPa7mKWpe
-         vG63k+hMQldwn7/ZnzjLFVcBNlkV0TPzQLCd3ds0YOqLD1FEHDoWdGjpbbuFNOOfA2Lp
-         VH145t+mzbD32qIe08J0O/1k7gcE86/MS5v4Xnnj4/bZEtH9EIMfkueH6zQLUhJ17+lL
-         Bxr3ZDpRiwe1Voyx52DeT3ln0QOoX/0eKsLTKXR9XkrgCLxiKiw6MO2atOnR8tGvnFjT
-         S8yQ==
-X-Gm-Message-State: ABy/qLasz0zGzvG2OJqOcPjLeAqBmw8+hNVLxKPraGiz7oMu5SI03uMZ
-        Zs/E2mL2O9E7C+nq9KNx35/ohL2A3r1NKW+DcFWN1TNGZfM=
-X-Google-Smtp-Source: APBJJlGEUk7iZHT3ezXIJ+HAfuI51ogHZ6tS108CpDDo0YFCiXk0x8jA4twCBfPnwekP5IQeIzEClEKqljHuEuypaUk=
-X-Received: by 2002:a05:6870:1495:b0:1b3:84a4:630d with SMTP id
- k21-20020a056870149500b001b384a4630dmr6215525oab.40.1688404299874; Mon, 03
- Jul 2023 10:11:39 -0700 (PDT)
+        Mon, 3 Jul 2023 13:44:34 -0400
+X-Greylist: delayed 532 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Jul 2023 10:44:30 PDT
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A6ECE;
+        Mon,  3 Jul 2023 10:44:30 -0700 (PDT)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+        t=1688405733; bh=+R0Hb8zEZ0NJS2NS5jrb/LeWDYsJVs4ywi0TBqg82Gs=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=kTU6zVN02QEDyU5Xjv81z4BnAazEhg5v+ovvGVtkQlW8kZ87ZAmJuUZWPrlCCui6R
+         OxF+Cu1eigXybXgLuDM7co+BweFLm/k7jRog+lCa1qcetwcpu1BRa/IWo8YHbGm0iw
+         z/TnXacPUIoSvulHuySwTcFMFQIDUMYgqejSob10gWCDeNWveSfsbYSrxKlrgAYDng
+         HYyrOZgaCAiHfschOC+0mRRUvSbBe1/Vhws4E/0jXov8IK1YWWZelXFqZYyjsUumWl
+         XWYCfKfmrsRKrJwtMNgIlglyNdyR55bNtTYfFkpRDCrVNfrIDdajnE71W6Lil8eiHT
+         JFFxheprwclWw==
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ath9k: use struct_group() to silence static checker
+ warning
+In-Reply-To: <6de44cd9-a9a0-4b76-a9b5-a3c37b97f9aa@moroto.mountain>
+References: <6de44cd9-a9a0-4b76-a9b5-a3c37b97f9aa@moroto.mountain>
+Date:   Mon, 03 Jul 2023 19:35:33 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <877crgdhju.fsf@toke.dk>
 MIME-Version: 1.0
-References: <CAMo8Bf+rgAnzMF732rzNgWbnmijFbr1yd5aCiY1Hcf4qdpj6FQ@mail.gmail.com>
- <8ea68c1e-fffc-6443-d2a7-d540f9b5bb16@web.de>
-In-Reply-To: <8ea68c1e-fffc-6443-d2a7-d540f9b5bb16@web.de>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Mon, 3 Jul 2023 10:11:28 -0700
-Message-ID: <CAMo8Bf+ABwfqfi2hnyCdwooiogN7JMvq_tS0ZDYkytkYZ5gE9w@mail.gmail.com>
-Subject: Re: [PATCH] xtensa: ISS: fix etherdev leak in error return path
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Minjie Du <duminjie@vivo.com>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com,
-        11162212@vivo.com, Chris Zankel <chris@zankel.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Yang Yingliang <yangyingliang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 3, 2023 at 9:02=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> > > We fixed a bug where the variable dev
-> > > was not freed before return.
-> =E2=80=A6
-> > >  arch/xtensa/platforms/iss/network.c | 1 +
-> =E2=80=A6
-> > Applied to my xtensa tree with the following commit message:
-> >
-> >    xtensa: ISS: fix etherdev leak in error return path
-> >
-> >    iss_net_configure frees etherdev in all error return paths except on=
-e
-> >    where register_netdevice fails. Add missing free_netdev to that path=
-.
->
-> * Did you add the tag =E2=80=9CFixes=E2=80=9D because of the completed re=
-source cleanup
->   for the implementation of the function =E2=80=9Ciss_net_configure=E2=80=
-=9D?
->
-> * How do you think about to replace any statements by the source code
->   =E2=80=9Cgoto err_free_netdev;=E2=80=9D here?
+Dan Carpenter <dan.carpenter@linaro.org> writes:
 
-I've scrapped that patch and committed the other one instead. See
+> We are deliberately copying both ba_high and ba_low so use a struct
+> group to make that clear.  Otherwise static checkers like Smatch and
+> Clang complain that we are copying beyond the end of the ba_low struct
+> member.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-https://lore.kernel.org/lkml/CAMo8BfKe1nR+UP1WiUWFX0E7GSEfHsF8bZapsUYu3NFTn=
-A8_AQ@mail.gmail.com/
-https://lore.kernel.org/lkml/20230703170335.1340104-1-jcmvbkbc@gmail.com/
+Thanks for the fix; however, an identical patch is already queued, here:
+https://patchwork.kernel.org/project/linux-wireless/patch/20230620080855.396851-2-dmantipov@yandex.ru/
 
---=20
-Thanks.
--- Max
+-Toke
