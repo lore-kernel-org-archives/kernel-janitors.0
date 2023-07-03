@@ -2,102 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED950EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jul 2023 19:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EC8C0015E
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 05:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbjGBTRc (ORCPT
+        id S229971AbjGCFeg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Jul 2023 15:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
+        Mon, 3 Jul 2023 01:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230328AbjGBTR3 (ORCPT
+        with ESMTP id S229950AbjGCFef (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Jul 2023 15:17:29 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0199D9;
-        Sun,  2 Jul 2023 12:17:13 -0700 (PDT)
-Message-ID: <0c02e976-0da6-8ed8-4546-4df7af4ebed5@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1688325430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bcRkV1JsdAB+1QeSMkNj7SU4PliDC9ED89IW5fPJQLc=;
-        b=cln18HT5XkWRzeQ6oUlGUJ234pgfk+6U1z7i3GWmYV4eQjqUZO5sz7JD65DQOEF2CqnmtE
-        94waio+VxYSc7kjlSBpPuvetqEbMPgKALT6NNIV4i7W9jSBtEuQJuyfJgQf+FVpCkh73ul
-        tCYh94u++ADCaAq7m02N5/rLTFXIRVZAmxOtx8JY/6VlVJyE5cBp/dzaO0kBT+Dx1Nh9B8
-        DoHsN2oCZEvwAsE3e4dAOmFScSXdRUCsepnCQMGMIWuvrxLliba4C9L33C1bXBtCjYVRZm
-        O3RmpbtJ6dc5fKbVSjZznDRbQirmlIDGxU8kBz6w0olg8fWZZiiEUk9jWtx53w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1688325430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bcRkV1JsdAB+1QeSMkNj7SU4PliDC9ED89IW5fPJQLc=;
-        b=6ZF0sry1dcNvmgR8l0d/9AAjahUM5CPICbkZrcc9y8f2C+AoKOyoPfBmA4IY4encveZXmZ
-        PZa+03/IJp4zUQAw==
-Date:   Sun, 2 Jul 2023 21:17:01 +0200
+        Mon, 3 Jul 2023 01:34:35 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F8A180;
+        Sun,  2 Jul 2023 22:34:34 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QvZP50w9Cz4wxq;
+        Mon,  3 Jul 2023 15:34:33 +1000 (AEST)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230608095849.1147969-1-colin.i.king@gmail.com>
+References: <20230608095849.1147969-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] powerpc/powernv/sriov: perform null check on iov before dereferencing iov
+Message-Id: <168836201891.50010.6948846603017935484.b4-ty@ellerman.id.au>
+Date:   Mon, 03 Jul 2023 15:26:58 +1000
 MIME-Version: 1.0
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Aravindhan Gunasekaran <aravindhan.gunasekaran@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Mallikarjuna Chilakala <mallikarjuna.chilakala@intel.com>,
-        Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Tan Tee Min <tee.min.tan@linux.intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <20230619100858.116286-2-florian.kauer@linutronix.de>
- <36b57ea5-baff-f964-3088-e1b186532cfe@web.de>
-Content-Language: en-US
-From:   Florian Kauer <florian.kauer@linutronix.de>
-Subject: Re: [PATCH net v2 1/6] igc: Rename qbv_enable to
- taprio_offload_enable
-In-Reply-To: <36b57ea5-baff-f964-3088-e1b186532cfe@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Markus,
-
-On 02.07.23 18:55, Markus Elfring wrote:
->> The rename should reduce this confusion.
+On Thu, 08 Jun 2023 10:58:49 +0100, Colin Ian King wrote:
+> Currently pointer iov is being dereferenced before the null check of iov
+> which can lead to null pointer dereference errors. Fix this by moving the
+> iov null check before the dereferencing.
 > 
-> Would the wording “Reduce this confusion by renaming a variable at three places”
-> be more appropriate for a subsequent change description?
+> Detected using cppcheck static analysis:
+> linux/arch/powerpc/platforms/powernv/pci-sriov.c:597:12: warning: Either
+> the condition '!iov' is redundant or there is possible null pointer
+> dereference: iov. [nullPointerRedundantCheck]
+>  num_vfs = iov->num_vfs;
+>            ^
 > 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4#n94
+> [...]
 
-Thanks for pointing that out (also in your other mail for this series).
-I will be more careful regarding the use of imperative mood.
+Applied to powerpc/next.
 
-> 
->>                                          Since it is a pure
->> rename, it has no impact on functionality.
->>
->> Fixes: e17090eb2494 ("igc: allow BaseTime 0 enrollment for Qbv")
-> 
-> How does such information fit together?
+[1/1] powerpc/powernv/sriov: perform null check on iov before dereferencing iov
+      https://git.kernel.org/powerpc/c/f4f913c980bc6abe0ccfe88fe3909c125afe4a2d
 
-The referenced commit introduced an issue into the kernel by
-introducing a variable that does not exactly describe its actual purpose.
-It is not only a cosmetic change, but in my view this confusion
-was related to other issues (see the other patches). So, it seemed to be worth
-fixing alongside with the other fixes, even if it does not directly impact
-functionality if it is applied or not (until someone else comes along,
-also gets confused and introduces another bug...).
-
-Thanks,
-Florian
+cheers
