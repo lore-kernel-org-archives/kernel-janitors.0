@@ -2,98 +2,158 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F202AEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 11:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8D4EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 12:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229958AbjGCLeu (ORCPT
+        id S230351AbjGCMXt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 07:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50068 "EHLO
+        Mon, 3 Jul 2023 08:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbjGCLes (ORCPT
+        with ESMTP id S229783AbjGCMXs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 07:34:48 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8008C6
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 04:34:47 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51da8a744c4so4835315a12.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 04:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688384086; x=1690976086;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=op6mQcm4JLOM9l+53MHx6V+IW+ZpBdMwi+OgBoLHHDo=;
-        b=nJbw3EYLLN9fys3o29MLFKjTRT6T/eF0xMNckBtLtj0f7pGU38o2tN0P8IgWMQjO96
-         wV9R2G6BHzYrDE5GPXw2omslyV1dG/NmJ6I6iXXq3TNUKWCbfm7G83wgD/P3rNiT8cxV
-         7g1+C1MxFH7h5WyrO0Bi3lZgWvfgrim/Qt6em+N57+0dXf53t9TavEMxMH5Sdk8bVsu2
-         TZHUxYuxHK8qdu7XmcWmSbVVaCub1vFm74IKzR0G6dgdHd7E2Uimx/wzqpKhoORm+pQq
-         Y1253oIa20ZL4bUVlVpOMqETvC6OqPwxY13kZp/NAY3fSQJpI6lLjdLuDmO4Z67F4avV
-         wAhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688384086; x=1690976086;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=op6mQcm4JLOM9l+53MHx6V+IW+ZpBdMwi+OgBoLHHDo=;
-        b=Thbj+G84O98msnLEpgyQwaF7SpTKkWjKRLuR105eped6zctUKPOF5lLL2LysFE5nOk
-         7RZ6sbyAIuiKNWpq6fubhYA0gjFDzLaS4e9CRq5T1yd07EMIW2scjZZdNa3sBYrle89+
-         xq799HWaBn4DbZKLPj1P+Zwxx9TxWMM+9QiHWaGUbhxP5LNP9ces42GqKMhM0aVOkgDG
-         yXuESi/QR1Qb/glRGed5yYZ9uaLhkDah3Q006Bmf7Zio5PGzVIEB7EAx0M3P5QyRBw5x
-         DIfWjLzEsmkjwZKThQc+aCmsItLzZxs0+Hn+QnSp5OgKiG4czMPFPEQ9K8JBwwN/uEU3
-         tAqA==
-X-Gm-Message-State: ABy/qLZdgT711Vp4sH75vzJgnw3+D8m/HaCZqb/KaQ+g+7v6+PzgwUPN
-        f1/9EZkdrrhreLFdlNVIyatrgQ==
-X-Google-Smtp-Source: APBJJlHw9F2VP9lgn05Vy8TBj3boa7p7E1HJ5XSqFNGTAcjnHaRVlL+3f5SWyYttgPyY6M6OCPUkLw==
-X-Received: by 2002:aa7:d98e:0:b0:518:721e:f594 with SMTP id u14-20020aa7d98e000000b00518721ef594mr7409699eds.37.1688384086239;
-        Mon, 03 Jul 2023 04:34:46 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id d25-20020a50fb19000000b0051ddfb4385asm5229702edq.45.2023.07.03.04.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 04:34:45 -0700 (PDT)
-Message-ID: <19a9fcdb-7ac9-c84f-56cc-940fe3548798@linaro.org>
-Date:   Mon, 3 Jul 2023 13:34:43 +0200
+        Mon, 3 Jul 2023 08:23:48 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8954A109;
+        Mon,  3 Jul 2023 05:23:47 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 3301D1FE04;
+        Mon,  3 Jul 2023 12:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1688387026; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cEwdhD/n1Nx72ImgbdEIvjpn3giyL22vCP3qre0aSDM=;
+        b=TT/5vfmH7AUufSolN0r/Da0EBIfjSiWOwvMTHDucQOG9vvZx6ZXWw/zI+y0DlfYAJCsR9B
+        RJnS2Y8qfWd1io52UDJTDYyh8WAh4nIACklnH5vhryXrT9PsNgBde68m8Ekoz2joHkCCUo
+        I6g/JaXoh8dCnaqOC9OKXz9yNO0rWPY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1688387026;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cEwdhD/n1Nx72ImgbdEIvjpn3giyL22vCP3qre0aSDM=;
+        b=8rdsKNzS7jGs4THcL976LmDl/VcsZEfS9aShgTT4hQ+MxYv5YG9Xmt833VwvIqQD4Do9wY
+        EpVGCmEHUd1RDrDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F38FA138FC;
+        Mon,  3 Jul 2023 12:23:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id EoHeOdG9omS5dAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 03 Jul 2023 12:23:45 +0000
+Message-ID: <81c65106-cabf-1f44-fdd2-6c716ab2ba32@suse.de>
+Date:   Mon, 3 Jul 2023 14:23:45 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v4] arm64: dts: agilex/stratix10: Updated QSPI Flash
- layout for UBIFS
-To:     Conor.Dooley@microchip.com, Markus.Elfring@web.de,
-        alif.zakuan.yuslaimi@intel.com, kah.jing.lee@intel.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        catalin.marinas@arm.com, conor+dt@kernel.org, dinguyen@kernel.org,
-        robh+dt@kernel.org, will@kernel.org
-References: <20230703083626.1347969-1-kah.jing.lee@intel.com>
- <59da2f49-706f-0a08-df14-71ad0326da83@web.de>
- <a786b6b9-3923-0138-5738-dc20e14aa0f3@microchip.com>
+Subject: Re: [PATCH v2 03/24] drm/gud: use vmalloc_array and vcalloc
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a786b6b9-3923-0138-5738-dc20e14aa0f3@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        christophe.jaillet@wanadoo.fr, kuba@kernel.org
+References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
+ <20230627144339.144478-4-Julia.Lawall@inria.fr>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20230627144339.144478-4-Julia.Lawall@inria.fr>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------095I0EuT7U9cVQFoiTUQRAmv"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 03/07/2023 11:08, Conor.Dooley@microchip.com wrote:
-> On 03/07/2023 10:00, Markus Elfring wrote:
-> 
->> …
->>> ---
->>> V4->V3: Drop cover letter & remove unnecessary marker line
->>> V3->V2: Update commit messages
->> …
->>
->> * Do you find the arrow notation helpful for the version identification?
->>
->> * How do you think about to avoid duplicate data in the version history?
->>
->> * Would an other listing style become nicer for the “patch changelog”?
-> 
-> This is a complete waste of contributor time. Please stop.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------095I0EuT7U9cVQFoiTUQRAmv
+Content-Type: multipart/mixed; boundary="------------57yg0V02n09MrsJfOg0ySq0p";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Julia Lawall <Julia.Lawall@inria.fr>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?=
+ <noralf@tronnes.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ christophe.jaillet@wanadoo.fr, kuba@kernel.org
+Message-ID: <81c65106-cabf-1f44-fdd2-6c716ab2ba32@suse.de>
+Subject: Re: [PATCH v2 03/24] drm/gud: use vmalloc_array and vcalloc
+References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
+ <20230627144339.144478-4-Julia.Lawall@inria.fr>
+In-Reply-To: <20230627144339.144478-4-Julia.Lawall@inria.fr>
 
-Markus is banned from the LKML. Just ignore the comments.
+--------------57yg0V02n09MrsJfOg0ySq0p
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Best regards,
-Krzysztof
+DQoNCkFtIDI3LjA2LjIzIHVtIDE2OjQzIHNjaHJpZWIgSnVsaWEgTGF3YWxsOg0KPiBVc2Ug
+dm1hbGxvY19hcnJheSBhbmQgdmNhbGxvYyB0byBwcm90ZWN0IGFnYWluc3QNCj4gbXVsdGlw
+bGljYXRpb24gb3ZlcmZsb3dzLg0KPiANCj4gVGhlIGNoYW5nZXMgd2VyZSBkb25lIHVzaW5n
+IHRoZSBmb2xsb3dpbmcgQ29jY2luZWxsZQ0KPiBzZW1hbnRpYyBwYXRjaDoNCj4gDQo+IC8v
+IDxzbXBsPg0KPiBAaW5pdGlhbGl6ZTpvY2FtbEANCj4gQEANCj4gDQo+IGxldCByZW5hbWUg
+YWxsb2MgPQ0KPiAgICBtYXRjaCBhbGxvYyB3aXRoDQo+ICAgICAgInZtYWxsb2MiIC0+ICJ2
+bWFsbG9jX2FycmF5Ig0KPiAgICB8ICJ2emFsbG9jIiAtPiAidmNhbGxvYyINCj4gICAgfCBf
+IC0+IGZhaWx3aXRoICJ1bmtub3duIg0KPiANCj4gQEANCj4gICAgICBzaXplX3QgZTEsZTI7
+DQo+ICAgICAgY29uc3RhbnQgQzEsIEMyOw0KPiAgICAgIGV4cHJlc3Npb24gRTEsIEUyLCBD
+T1VOVCwgeDEsIHgyLCB4MzsNCj4gICAgICB0eXBlZGVmIHU4Ow0KPiAgICAgIHR5cGVkZWYg
+X191ODsNCj4gICAgICB0eXBlIHQgPSB7dTgsX191OCxjaGFyLHVuc2lnbmVkIGNoYXJ9Ow0K
+PiAgICAgIGlkZW50aWZpZXIgYWxsb2MgPSB7dm1hbGxvYyx2emFsbG9jfTsNCj4gICAgICBm
+cmVzaCBpZGVudGlmaWVyIHJlYWxsb2MgPSBzY3JpcHQ6b2NhbWwoYWxsb2MpIHsgcmVuYW1l
+IGFsbG9jIH07DQo+IEBADQo+IA0KPiAoDQo+ICAgICAgICBhbGxvYyh4MSp4Mip4MykNCj4g
+fA0KPiAgICAgICAgYWxsb2MoQzEgKiBDMikNCj4gfA0KPiAgICAgICAgYWxsb2MoKHNpemVv
+Zih0KSkgKiAoQ09VTlQpLCAuLi4pDQo+IHwNCj4gLSAgICAgYWxsb2MoKGUxKSAqIChlMikp
+DQo+ICsgICAgIHJlYWxsb2MoZTEsIGUyKQ0KPiB8DQo+IC0gICAgIGFsbG9jKChlMSkgKiAo
+Q09VTlQpKQ0KPiArICAgICByZWFsbG9jKENPVU5ULCBlMSkNCj4gfA0KPiAtICAgICBhbGxv
+YygoRTEpICogKEUyKSkNCj4gKyAgICAgcmVhbGxvYyhFMSwgRTIpDQo+ICkNCj4gLy8gPC9z
+bXBsPg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdhbGxA
+aW5yaWEuZnI+DQoNClJldmlld2VkLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1h
+bm5Ac3VzZS5kZT4NCg0KPiANCj4gLS0tDQo+IHYyOiBVc2Ugdm1hbGxvY19hcnJheSBhbmQg
+dmNhbGxvYyBpbnN0ZWFkIG9mIGFycmF5X3NpemUuDQo+IFRoaXMgYWxzbyBsZWF2ZXMgYSBt
+dWx0aXBsaWNhdGlvbiBvZiBhIGNvbnN0YW50IGJ5IGEgc2l6ZW9mDQo+IGFzIGlzLiAgVHdv
+IHBhdGNoZXMgYXJlIHRodXMgZHJvcHBlZCBmcm9tIHRoZSBzZXJpZXMuDQo+IA0KPiAgIGRy
+aXZlcnMvZ3B1L2RybS9ndWQvZ3VkX3BpcGUuYyB8ICAgIDIgKy0NCj4gICAxIGZpbGUgY2hh
+bmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLXUgLXAg
+YS9kcml2ZXJzL2dwdS9kcm0vZ3VkL2d1ZF9waXBlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZ3Vk
+L2d1ZF9waXBlLmMNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2d1ZC9ndWRfcGlwZS5jDQo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ndWQvZ3VkX3BpcGUuYw0KPiBAQCAtMzkwLDcgKzM5
+MCw3IEBAIHN0YXRpYyBpbnQgZ3VkX2ZiX3F1ZXVlX2RhbWFnZShzdHJ1Y3QgZ3UNCj4gICAJ
+bXV0ZXhfbG9jaygmZ2RybS0+ZGFtYWdlX2xvY2spOw0KPiAgIA0KPiAgIAlpZiAoIWdkcm0t
+PnNoYWRvd19idWYpIHsNCj4gLQkJZ2RybS0+c2hhZG93X2J1ZiA9IHZ6YWxsb2MoZmItPnBp
+dGNoZXNbMF0gKiBmYi0+aGVpZ2h0KTsNCj4gKwkJZ2RybS0+c2hhZG93X2J1ZiA9IHZjYWxs
+b2MoZmItPnBpdGNoZXNbMF0sIGZiLT5oZWlnaHQpOw0KPiAgIAkJaWYgKCFnZHJtLT5zaGFk
+b3dfYnVmKSB7DQo+ICAgCQkJbXV0ZXhfdW5sb2NrKCZnZHJtLT5kYW1hZ2VfbG9jayk7DQo+
+ICAgCQkJcmV0dXJuIC1FTk9NRU07DQo+IA0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpH
+cmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJt
+YW55IEdtYkgNCkZyYW5rZW5zdHJhc3NlIDE0NiwgOTA0NjEgTnVlcm5iZXJnLCBHZXJtYW55
+DQpHRjogSXZvIFRvdGV2LCBBbmRyZXcgTXllcnMsIEFuZHJldyBNY0RvbmFsZCwgQm91ZGll
+biBNb2VybWFuDQpIUkIgMzY4MDkgKEFHIE51ZXJuYmVyZykNCg==
 
+--------------57yg0V02n09MrsJfOg0ySq0p--
+
+--------------095I0EuT7U9cVQFoiTUQRAmv
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmSivdEFAwAAAAAACgkQlh/E3EQov+Cb
+ug/+Lqmo8Vy3nHNfsOi8C6S16t6VbjNlBN8Y/3h0Fy2jBxvnu90znhH20dlZfDv4jpeXxU/8eTn7
+ZDfZFjoWvkr4rM9xw/zsCmDDllKk8+HukOyK+ApnW5dG9tRnIB9dgHGK0az/Lpb7VShyRRW2CSjs
+bAjqfKvSEBIbxzVCszdrQT0etgnrC6hqfTZrjJ5lVNUzql0JVwMOjOVYzXCun28dyPiye0FM6L8W
+bbFPQbNZ2gIfFAkMNpAwdBoYLOWQBIScyBVpdhK6mnjDYoJJBPgL0eg4/VPx8LSB9Vj/LH38SSlS
+cKxmDe2H8ctmBIZgd2p3TBshtVVnWtlnO//cA1Jomo6t/dEMOgTVXB4lUCnPSVlqa6p52kASBRxt
+AsnqXGGUFLt6u3hjDg4mps/QG5H/KvVKZCHhTxQw/KmBMC7vKFVROiaLC3cyoMS1aPw9X2PJNH4r
+8QqeDTYCLHvc6BnUt0XEBCIgyZYV4JjAf/O3szGx5Tf6YkP1eTeeyJCfRPbdZnZLSGvDoHGx0YRi
+TRHNEYzDuX5zpHk4SMw3CzXW9xXfH2QgN2dKhIHg+OXDUAV9sc86xLsj+H2HS0vyYx9QQm7fhe5S
+7EDdpQCwE7QVHeSGfNBf/sWCuHtKaxfZ7EBw/d5ZXy+omsEzTdQwTaDe47f9ZZUop+l6D5hf9a2n
+lAc=
+=E9kM
+-----END PGP SIGNATURE-----
+
+--------------095I0EuT7U9cVQFoiTUQRAmv--
