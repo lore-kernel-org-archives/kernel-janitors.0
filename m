@@ -2,65 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC10C001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 14:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B977AEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 14:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbjGCORy (ORCPT
+        id S230128AbjGCOSQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46428 "EHLO
+        Mon, 3 Jul 2023 10:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjGCORx (ORCPT
+        with ESMTP id S229719AbjGCOSQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 10:17:53 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33207E5F
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 07:17:52 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-313fb7f0f80so4989374f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 07:17:52 -0700 (PDT)
+        Mon, 3 Jul 2023 10:18:16 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8BAE5E
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 07:18:14 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-313fb7f0f80so4989880f8f.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 07:18:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688393870; x=1690985870;
+        d=linaro.org; s=google; t=1688393893; x=1690985893;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UTlCyTZXo+b+onVAuuCqLFFIg0VR0QnZHvj+HALD0/4=;
-        b=reQ/K4887bs6S4mnAfRPRNQkwgE+H+XF5H7ZAQ4m/dHTk/PBuGZmGaCV/O9LdUDA3C
-         5MzWr4MJReXvaX/YFEH0k3fIgPFWMZJElrp7V0PHgWmH9bBg0juG6G7sD1JX4ef0UqCI
-         wfH1jTCaz+HikHasy3P4pxiaLwW+V6PR5MHaaQfZGCODlDDH/ttRR+F7gCyiUfR03mCv
-         byznfdUuMvYNXZ+bbKAV/tKahux7a/tyktjuvCTr56K9/jDD0dlSkLiljVXbY6siQlso
-         t/50lycpzANpGuhLlUyWw0LovAFTidAwflC+pE1/BfOruSBZR8uhbnvN6Mzjgiga+RpI
-         2rcg==
+        bh=k7CiJPEXfB/mPmolwvUH6t7dx6TKSOIIJmAn9VAkdqw=;
+        b=BT3omfXSB3tnc4/9PQPsSKSw7cx/qjf/1NXY1wt3Q4TvbbFW5ekgxa0mQcUZPMjfeV
+         nM8RiwzvvoyJ8YKGKT5FlbFzg6VWUe1ppRtzVXStYS92HDR9bLci298+IUiKjgbWycmj
+         357oGZdMtDCWBYAB3AC5EYdouPZuszAUAOjyrrzu4g4lQyE137pUUFAat5oP7luo0Ffd
+         jeAu+K0XLk+mez5brGbWDwfh7yPI0sxUcG5bCkgcHR9FchvUxSe8xNCRVHoDfY3ZvY60
+         eDIevhPL5HNFOTVeUEmDvudJGjbpjklwSJ4RYoBNeujQKVpYijBpMHecavNIWLClwfUB
+         qzoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688393870; x=1690985870;
+        d=1e100.net; s=20221208; t=1688393893; x=1690985893;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UTlCyTZXo+b+onVAuuCqLFFIg0VR0QnZHvj+HALD0/4=;
-        b=DPLqwghpA6pEWt18p6SAJ3uJ3m4CRZ005AwevXHSFktb5uGCHal/2AwcWuACRlZ9Ne
-         Ne3Oy24hvAOM5d54lrLN89GsTkFKm8JnM5PharsA68jCerivFOOmL38t42zoiPtkf2bq
-         bT32pSjE5cmR8MPCX8GaJ3BBkCVnxpLxc/F3CS64f2Hq1crRLBoHJVcmHktZmnWSPm1j
-         pa+/+KD6jUyBz8GtAhuZ8Oh5ixZzu5C9SMlxLBimmfyVdcLubWLrhYm45vXfeMu9Nty+
-         bLAUlpYTfJEt7mqdm8ZwgB1u9pmgUzI2/sNgiAUY3yIjd5qjwPGaXVtC4dNevfYIP55z
-         opQA==
-X-Gm-Message-State: ABy/qLZjKpJy0pJHo/Qm0dZz8uwvYVLsRhj2jDrq4JlMJcop4l8OfgUK
-        Tk7qCWF22oxs5MHjJ6fzgWL+yQ==
-X-Google-Smtp-Source: APBJJlFNDvE++efnK4/wCVBh9an2cyzkP7M2lnGk1BHoOdVrnxAO1pGnB2XpvdAfI4ivEdqKfioILQ==
-X-Received: by 2002:adf:f504:0:b0:30f:be04:5b5e with SMTP id q4-20020adff504000000b0030fbe045b5emr7875625wro.37.1688393870728;
-        Mon, 03 Jul 2023 07:17:50 -0700 (PDT)
+        bh=k7CiJPEXfB/mPmolwvUH6t7dx6TKSOIIJmAn9VAkdqw=;
+        b=H/4BSoDho0yj2VSktnYZjKQbevCN9uaQahASczGiOGCFmm+gA8bOyd5d+pHowmAcjK
+         2b294B4gL7sQPtwZxXRjKok/ytvTIPsd5W7Tce1JKp5MMJenC7m46/7Af2cFjEvDKe7e
+         W1uFt2DYawZjY4TnOWcXF95FkLRkQwLEoKDMrbVsT/av5dGirzdKxQXWX4EmSm3lP+0M
+         U2tJ3TymrBpXMUYecmpzzNvDmPmJWq5pldvvLg7Am12cCpdHt+zJLgaW4h5Md2ghC1rC
+         TWZXsI704+hpv/x7+gOYDVtShjtHvekuKR/lY8guo6SkkGPot1ob6dSbkZnJ4nRyJgIp
+         J7NA==
+X-Gm-Message-State: ABy/qLZ5q/rL4u8ySY9aHV4AlgbSXmgiz7RCYG82hgdROnX0kNPW7MpD
+        IyYqpv2DFQk+VjkLBbFZzGyIrQ==
+X-Google-Smtp-Source: APBJJlEfnqKOoSS2ucE8MaIOcLJR/x7mdTN0VM771Waqqjt25CgAaEUgofxqr6Xluv6cSjS6uVAUEA==
+X-Received: by 2002:a5d:4f86:0:b0:30f:c42e:3299 with SMTP id d6-20020a5d4f86000000b0030fc42e3299mr7758185wru.60.1688393892860;
+        Mon, 03 Jul 2023 07:18:12 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u2-20020adfdd42000000b00314326c91e2sm4465022wrm.28.2023.07.03.07.17.48
+        by smtp.gmail.com with ESMTPSA id q10-20020adfdfca000000b003141e629cb6sm9813243wrn.101.2023.07.03.07.18.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 07:17:49 -0700 (PDT)
-Date:   Mon, 3 Jul 2023 17:17:45 +0300
+        Mon, 03 Jul 2023 07:18:11 -0700 (PDT)
+Date:   Mon, 3 Jul 2023 17:18:08 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Vishal Verma <vishal.l.verma@intel.com>
-Cc:     Alison Schofield <alison.schofield@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ben Widawsky <bwidawsk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cxl/mem: Fix a double shift bug
-Message-ID: <a11b0c78-4717-4f4e-90be-f47f300d607c@moroto.mountain>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] KEYS: asymmetric: Fix error codes
+Message-ID: <c5e34c6a-da1e-4585-98c4-14701b0e093e@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,31 +65,79 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The CXL_FW_CANCEL macro is used with set/test_bit() so it should be a
-bit number and not the shifted value.  The original code is the
-equivalent of using BIT(BIT(0)) so it's 0x2 instead of 0x1.  This has
-no effect on runtime because it's done consistently and nothing else
-was using the 0x2 bit.
+These error paths should return the appropriate error codes instead of
+returning success.
 
-Fixes: 9521875bbe00 ("cxl: add a firmware update mechanism using the sysfs firmware loader")
+Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface without scatterlists")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/cxl/cxlmem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/asymmetric_keys/public_key.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-index 79e99c873ca2..499113328586 100644
---- a/drivers/cxl/cxlmem.h
-+++ b/drivers/cxl/cxlmem.h
-@@ -323,7 +323,7 @@ struct cxl_mbox_activate_fw {
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index e787598cb3f7..773e159dbbcb 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -185,8 +185,10 @@ static int software_key_query(const struct kernel_pkey_params *params,
  
- /* FW state bits */
- #define CXL_FW_STATE_BITS		32
--#define CXL_FW_CANCEL		BIT(0)
-+#define CXL_FW_CANCEL			0
+ 	if (issig) {
+ 		sig = crypto_alloc_sig(alg_name, 0, 0);
+-		if (IS_ERR(sig))
++		if (IS_ERR(sig)) {
++			ret = PTR_ERR(sig);
+ 			goto error_free_key;
++		}
  
- /**
-  * struct cxl_fw_state - Firmware upload / activation state
+ 		if (pkey->key_is_private)
+ 			ret = crypto_sig_set_privkey(sig, key, pkey->keylen);
+@@ -208,8 +210,10 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 		}
+ 	} else {
+ 		tfm = crypto_alloc_akcipher(alg_name, 0, 0);
+-		if (IS_ERR(tfm))
++		if (IS_ERR(tfm)) {
++			ret = PTR_ERR(tfm);
+ 			goto error_free_key;
++		}
+ 
+ 		if (pkey->key_is_private)
+ 			ret = crypto_akcipher_set_priv_key(tfm, key, pkey->keylen);
+@@ -300,8 +304,10 @@ static int software_key_eds_op(struct kernel_pkey_params *params,
+ 
+ 	if (issig) {
+ 		sig = crypto_alloc_sig(alg_name, 0, 0);
+-		if (IS_ERR(sig))
++		if (IS_ERR(sig)) {
++			ret = PTR_ERR(sig);
+ 			goto error_free_key;
++		}
+ 
+ 		if (pkey->key_is_private)
+ 			ret = crypto_sig_set_privkey(sig, key, pkey->keylen);
+@@ -313,8 +319,10 @@ static int software_key_eds_op(struct kernel_pkey_params *params,
+ 		ksz = crypto_sig_maxsize(sig);
+ 	} else {
+ 		tfm = crypto_alloc_akcipher(alg_name, 0, 0);
+-		if (IS_ERR(tfm))
++		if (IS_ERR(tfm)) {
++			ret = PTR_ERR(tfm);
+ 			goto error_free_key;
++		}
+ 
+ 		if (pkey->key_is_private)
+ 			ret = crypto_akcipher_set_priv_key(tfm, key, pkey->keylen);
+@@ -411,8 +419,10 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 
+ 	key = kmalloc(pkey->keylen + sizeof(u32) * 2 + pkey->paramlen,
+ 		      GFP_KERNEL);
+-	if (!key)
++	if (!key) {
++		ret = -ENOMEM;
+ 		goto error_free_tfm;
++	}
+ 
+ 	memcpy(key, pkey->key, pkey->keylen);
+ 	ptr = key + pkey->keylen;
 -- 
 2.39.2
 
