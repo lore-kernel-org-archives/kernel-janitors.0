@@ -2,122 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3B2C001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 17:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E20BC001B0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jul 2023 17:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbjGCRGv (ORCPT
+        id S229853AbjGCRLm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 13:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        Mon, 3 Jul 2023 13:11:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjGCRGu (ORCPT
+        with ESMTP id S229804AbjGCRLl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 13:06:50 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2072.outbound.protection.outlook.com [40.107.220.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E367E3;
-        Mon,  3 Jul 2023 10:06:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dt+EBWB+TmfG27LTYDFw7Gh86DJqooIXATjrKMta+rZbGwZcQyIaDfbS2maCcvDA1M36Lta66VBEmuo1ksH4bRXF0RAOWsxKjPzgwKvXO7bSM3NFVJTxJM6D1J17IO/VTqf1/xyzykHZEFoA6oSGR1pLg9s20QhVRfNRWOZ5p2Q8o5q27+bVCZ6JFC4LFgqO+b/o3nYw7+QNwEYmLpFf9qX3KQ0oe7qJpcYCYbhhejuQML6zIMqCJVcEcr3MDeUoLroCYgtzUb5wCuGTlq077cKY/EovM7U1rQ4MMnow/zIiy3SNZx4thYXFeTkqeuA3OsYRnT9U26RzcN64b1CJaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7qNH9EsmIubunpcLs9wI/Ce7XnQM7kdVXjyeXUzDY+0=;
- b=NpGmwX44Y4FPy3TOyKojFkU2qLs/46UMTtZ8dlMtAp7id6zYaSjUXzqhVTs8o0NkIhvLn8zizh2lLL85QleWmCzNd2cwWS1opJsM1glwv+bmo7N7zwOCJPsNk8Y72mhWbLgHtHh2k3a/dBDz7pJzUR5IeHKX/AMjsx22uY2vA2yEOmYvBb2AXCznnuXRRVLQsplbd6ZreFskbWz6Af3/N9yqBq96ZoVP2vfjU6OCwEWQ8vxvNz3INJICL7k41RJgOye7A0BM2l6huhkEaiwJomx3oeh/Y/wSeTVq2QazeZhIoYxA4sjkfrnAxScAzpmNaKFaOb76im5h/T3Z0vHmLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7qNH9EsmIubunpcLs9wI/Ce7XnQM7kdVXjyeXUzDY+0=;
- b=MjkGV/haxsaAXnlOHlJOx6DaoTcOPyAci69A40WmEGPlvGDF2VK4z5jNGI8VP61mno0XezVQXN534vaFRKUhoy0XutQ22qS6I2CzIeiUxLvr9K54zUlaHRnbf3SvsiHlsqBgxqKZXiJlzdgbndX95YI9ULYSSROjP8UZYPQBFEgAOaH/YEDNsfccl5oSrz7jsHlNmeLzabOr4znPKgvjAaC1M5QoGXhc8R44lO4g08YU14FdhZag/f4KUDkdAgzCyQtlkoX4fs2Niu/oBHp0THVlxU6A5IlpxlmOAE1HKwYs2gcBdjaVAO1PKJckhl683enezoRZheoF4l0g3uU2Hw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6179.namprd12.prod.outlook.com (2603:10b6:930:24::22)
- by PH7PR12MB7793.namprd12.prod.outlook.com (2603:10b6:510:270::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Mon, 3 Jul
- 2023 17:06:46 +0000
-Received: from CY5PR12MB6179.namprd12.prod.outlook.com
- ([fe80::66d8:40d2:14ed:7697]) by CY5PR12MB6179.namprd12.prod.outlook.com
- ([fe80::66d8:40d2:14ed:7697%5]) with mapi id 15.20.6500.045; Mon, 3 Jul 2023
- 17:06:46 +0000
-Date:   Mon, 3 Jul 2023 20:06:40 +0300
-From:   Ido Schimmel <idosch@nvidia.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Petr Machata <petrm@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Danielle Ratson <danieller@nvidia.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] mlxsw: spectrum_router: Fix an IS_ERR() vs NULL check
-Message-ID: <ZKMAIGKBsFZ9v114@shredder>
-References: <16334acc-dc95-45be-bc12-53b2a60d9a59@moroto.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <16334acc-dc95-45be-bc12-53b2a60d9a59@moroto.mountain>
-X-ClientProxiedBy: LO4P123CA0183.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a4::8) To CY5PR12MB6179.namprd12.prod.outlook.com
- (2603:10b6:930:24::22)
+        Mon, 3 Jul 2023 13:11:41 -0400
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90402E3;
+        Mon,  3 Jul 2023 10:11:40 -0700 (PDT)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1b03fb998c8so4602219fac.3;
+        Mon, 03 Jul 2023 10:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688404300; x=1690996300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kr9Z+jCllCPo2TEYaCvE923MwG2oQxSBRUlumqGiOe0=;
+        b=mc3vghlEgnyFSk7D/jcCzO1QYJfy+2euI1l4LO1kbhRa4eL0G6ATMGOIHPLt8GD0jx
+         zRQKc5SeLq+nxXCqR1dT16rQ2tv5IBKfzaf19Oun31eJ0gpYwWFq4U3+EEUkopkrmMXQ
+         lgfetNCzYXf54MlXaz9PQBGph+wF6oPowkOccv70aUjWyk+PBj9pwgz38X/IlIu24qkW
+         j1MWVKyn0h0w5sAOxevm5sRjcKHd1OGHQ6nendorq5p7peQY0w+YMjof4BhFvo0Y2xrM
+         eCf+Ak49M7VAWhauwX9EVTNeUgSXUqcY6m9DCpMZUfemv+qtTnTG0XHv0UPn+QJnjxwg
+         hr2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688404300; x=1690996300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kr9Z+jCllCPo2TEYaCvE923MwG2oQxSBRUlumqGiOe0=;
+        b=HUs5s5kITgL0fCujWISjtVhrfX/vMUdkup8cv4MFBRVNlEcFSSfQ+k3fAoFMyhB1W3
+         Kr6f1G2e990n9W2vqX5WRRiHrkX9N6CV/GskQ31WrY63xYuBc0ypepD7cy5bPa7mKWpe
+         vG63k+hMQldwn7/ZnzjLFVcBNlkV0TPzQLCd3ds0YOqLD1FEHDoWdGjpbbuFNOOfA2Lp
+         VH145t+mzbD32qIe08J0O/1k7gcE86/MS5v4Xnnj4/bZEtH9EIMfkueH6zQLUhJ17+lL
+         Bxr3ZDpRiwe1Voyx52DeT3ln0QOoX/0eKsLTKXR9XkrgCLxiKiw6MO2atOnR8tGvnFjT
+         S8yQ==
+X-Gm-Message-State: ABy/qLasz0zGzvG2OJqOcPjLeAqBmw8+hNVLxKPraGiz7oMu5SI03uMZ
+        Zs/E2mL2O9E7C+nq9KNx35/ohL2A3r1NKW+DcFWN1TNGZfM=
+X-Google-Smtp-Source: APBJJlGEUk7iZHT3ezXIJ+HAfuI51ogHZ6tS108CpDDo0YFCiXk0x8jA4twCBfPnwekP5IQeIzEClEKqljHuEuypaUk=
+X-Received: by 2002:a05:6870:1495:b0:1b3:84a4:630d with SMTP id
+ k21-20020a056870149500b001b384a4630dmr6215525oab.40.1688404299874; Mon, 03
+ Jul 2023 10:11:39 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6179:EE_|PH7PR12MB7793:EE_
-X-MS-Office365-Filtering-Correlation-Id: b28c62c5-86fe-42e3-51e2-08db7be7e1fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ln3dBIVk6f1A/cUozYHhbaUnKD1yIK2LyobkAlj4ElCrvbxcXSvZU/nVzDehaOysLbGi5OkX3nCGKJdUYaXxw0jL70rZoMOmpvcIuu8pmdceGC/vbifYDtyh08q4kl/m8GvJvnm5XAe/UjfLAc+721+tUxS76iNSnJ21w3BjcsJlfD+zSoGlqKR9Gg8sbfl8OLrRemsWBFcVJd/lovM3+B/N83SjMGl8EqN+K7n8HUlPgIG2BNiC95QqfZaHrt+BoFnBqxrc/OI3o8FQKZ//FwHX3Lww4WdoT23vkHo2gDiuQ9ybUuEacnFITPdlxzf4e19lilz0Gwgbct7Y6yWXVFccN6Ky7S8S0lTxejy0S5zKuCOgfdZTtHQzv6pol4tBev6Xe+bNLHnMIaZhguWm5Pjh7AE6FwUN8AKuN+Sy+mMXoCkifzzurm+n6QvERghZnR/9JwmJiLMIUqimIKHlnQ99hsXeRKvT0eaMyUwhP4W7JTWV0Hif8hdwGmfomSIWDNbd61zSP+ZXWEt8m/AYjgJz4A2Nn/RWJkVQ6o37oGr6LgpfMCiPjvkQsggtWVAD
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(4636009)(346002)(396003)(39860400002)(376002)(366004)(136003)(451199021)(54906003)(9686003)(26005)(6512007)(186003)(8936002)(86362001)(8676002)(6666004)(2906002)(6486002)(4744005)(5660300002)(41300700001)(478600001)(38100700002)(66556008)(6506007)(66476007)(6916009)(66946007)(4326008)(33716001)(316002)(66574015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jOBxIy4w7+bB42xS9JPRqkXlJv/ipu/xEhJ58GNF52nGJsJXBGXl8xIbwhsb?=
- =?us-ascii?Q?JYw7bGtAx9HmbBDrmMnurR77RBxTugoifDLig4e90woK26G3Ommr/28qgLHH?=
- =?us-ascii?Q?4wJTdQEe65af6wlvvyE/jMg314+0EKJsUzUl1L5jgFBrgQndNN7QLNj4OD8L?=
- =?us-ascii?Q?snEdCKWQ9PTbz9NQFxFYAaeX+RSQL4+Wd/S6Qv9unFRSGw94wW+qtz8+qK7n?=
- =?us-ascii?Q?7gQuWSpKh30xNHFCjVJRDbKRJDb/rVwFwqary+gstZ4F6YZEDdvLhuhPJDQI?=
- =?us-ascii?Q?fDExAhiY1vyVVRG7wlTKufPw46oUBO5XJlqcn3LNEMc2E/fuPKhu6DUxwOE7?=
- =?us-ascii?Q?r3dHJdiCnibcX7vLqeFmDBRgu9Rp58CtFDQWiz/FX6+i1Fy2h3FjY1rpw/Sg?=
- =?us-ascii?Q?QMNFCReCe2bc8U8J9anYndCbL0SbgLB/GtwP9SYJRNX0UKsfBlJSES/EyQ3Y?=
- =?us-ascii?Q?AydLbo5rVhddyQC4ukAFxcAa589asAjvII9jGQkmOks4CklM7GUdrsW9llbn?=
- =?us-ascii?Q?xcpctTbD53CC5dBydnc6vEVZQbwIpYZX0w6EbHdCN9A9DP+XSVxuTFCLYrsl?=
- =?us-ascii?Q?W6LnwH8sB6sIQ83TWfM+kSnhaz/Vy/o/qWvl9LoERuvGSAILGoFhIL/dAw33?=
- =?us-ascii?Q?KS05cSRAqebu/WQSOi6vPY7eQh0I3sY0LmvQEs04HlnQFCGJHRut6ylQfCBn?=
- =?us-ascii?Q?4jDJ8wu54TyzTBV7VOKhM+zsGYkPX5OwbT6K5qgDPMBQ43tAl6CiduHWldaC?=
- =?us-ascii?Q?uKPmRZoptrXN+g0UUautj2b++8KnwOsXL5Q8zFNBcYHn3podS2HBV+hxCh80?=
- =?us-ascii?Q?tA2P8Hn6phwtRNrSsgYiB+hm9Qz/tppnmdsc6DH4+JVI33IIGd3iGMIyy99O?=
- =?us-ascii?Q?5XLbnde8TP92WAzQ+aJLKdHCkBskh7xKbBCmQKptBFuoCuY01NmotSw6oOiZ?=
- =?us-ascii?Q?RyJIIym5JI9WzY3rz1v9z3FHKZEJCcHTOQl2StwUfOzOI1H13WPeaSNFFT7s?=
- =?us-ascii?Q?U6g3MjRPLasPKk+IxdyWOX8X5SCgIWLbAAPTiWMTrCSVpPOvIQkqbd+qZSmj?=
- =?us-ascii?Q?n0TbvD1232nXYtDaKEIx51OROgGObNM0FKkB+8Ceu5YrYfsn8Hrl0wplvuDb?=
- =?us-ascii?Q?VWA/0hfp4dlwZR778HabJW4lkCOvbvb27NDOsNanFp/6lkvNxewjpwhBZsJu?=
- =?us-ascii?Q?Q2A1k0JSfw0xTW2mNJcv4/YZolV73QjUu91/QDQJFDpv0OSxgYoKaf7kSXGX?=
- =?us-ascii?Q?eS/Onnw06XOfHsPYD4w6wFDc5JZEaTO6wgaAZ7c9HJLjOdYasN6dXkFgIbNE?=
- =?us-ascii?Q?z5IM6/rYCpFBIhMBPV3TcdQdQLcaiqbBobO+mmlPQWsVJJ1YEvIyvswIre0x?=
- =?us-ascii?Q?9pWyS3AqUeYHnAUOx0iGpzWrkJ51QkXffS1Ep0TXf/Jr065yFKqpdGWUV6N7?=
- =?us-ascii?Q?mGtiHV1ToA6Rf5YGsnx+hogxs6H/tap86ZGvfUtSRKVFCzABoLztDNh/6B4C?=
- =?us-ascii?Q?fbEryXiBj42KERwMOfZJgCrrl5lta0OhuNSh6iqjyBDt6iLLHgkoxt6Ao1WW?=
- =?us-ascii?Q?3+NpOBVSMlT9gwHlW45UVAqxn4kS+xP0IQECGfx2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b28c62c5-86fe-42e3-51e2-08db7be7e1fc
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2023 17:06:46.3189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ISU+eV9azDlzIvD/SUJ8uKm9otVRFezwkT97D/hNDDYVi+Z7XlTJJZr0WsOq0eLUqkLj+LUaNLWITGYH2CAKqA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7793
+References: <CAMo8Bf+rgAnzMF732rzNgWbnmijFbr1yd5aCiY1Hcf4qdpj6FQ@mail.gmail.com>
+ <8ea68c1e-fffc-6443-d2a7-d540f9b5bb16@web.de>
+In-Reply-To: <8ea68c1e-fffc-6443-d2a7-d540f9b5bb16@web.de>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Mon, 3 Jul 2023 10:11:28 -0700
+Message-ID: <CAMo8Bf+ABwfqfi2hnyCdwooiogN7JMvq_tS0ZDYkytkYZ5gE9w@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: ISS: fix etherdev leak in error return path
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Minjie Du <duminjie@vivo.com>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com,
+        11162212@vivo.com, Chris Zankel <chris@zankel.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 03, 2023 at 06:24:52PM +0300, Dan Carpenter wrote:
-> The mlxsw_sp_crif_alloc() function returns NULL on error.  It doesn't
-> return error pointers.  Fix the check.
-> 
-> Fixes: 78126cfd5dc9 ("mlxsw: spectrum_router: Maintain CRIF for fallback loopback RIF")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Jul 3, 2023 at 9:02=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> > > We fixed a bug where the variable dev
+> > > was not freed before return.
+> =E2=80=A6
+> > >  arch/xtensa/platforms/iss/network.c | 1 +
+> =E2=80=A6
+> > Applied to my xtensa tree with the following commit message:
+> >
+> >    xtensa: ISS: fix etherdev leak in error return path
+> >
+> >    iss_net_configure frees etherdev in all error return paths except on=
+e
+> >    where register_netdevice fails. Add missing free_netdev to that path=
+.
+>
+> * Did you add the tag =E2=80=9CFixes=E2=80=9D because of the completed re=
+source cleanup
+>   for the implementation of the function =E2=80=9Ciss_net_configure=E2=80=
+=9D?
+>
+> * How do you think about to replace any statements by the source code
+>   =E2=80=9Cgoto err_free_netdev;=E2=80=9D here?
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+I've scrapped that patch and committed the other one instead. See
+
+https://lore.kernel.org/lkml/CAMo8BfKe1nR+UP1WiUWFX0E7GSEfHsF8bZapsUYu3NFTn=
+A8_AQ@mail.gmail.com/
+https://lore.kernel.org/lkml/20230703170335.1340104-1-jcmvbkbc@gmail.com/
+
+--=20
+Thanks.
+-- Max
