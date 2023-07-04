@@ -2,119 +2,156 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A864EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 08:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD59EEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 09:48:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231218AbjGDI7f (ORCPT
+        id S230243AbjGDJsl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Jul 2023 04:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
+        Tue, 4 Jul 2023 05:48:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231364AbjGDI7d (ORCPT
+        with ESMTP id S229662AbjGDJsk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Jul 2023 04:59:33 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D78991B2
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 01:59:28 -0700 (PDT)
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7A0003F133
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 08:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1688461166;
-        bh=Iq6cKg1bVkNflRBjs/XMRCMTTeQAcRlxHohCnato/0M=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=Og59A6FR7WX+ExOgJk+Csg97OvZpD6vpAahxqfbs2FpSiFv2A6xbREWeON6ZewV/2
-         xOXY0Fea5NrvVVWrA2M332H/TObizVYvN1gKidJyoR3waKu0BRwVTJ6Jk6/MXdoH8F
-         p+QQDhjh5OuUCUlUMBwo1fqqmV2BIm/LyCGyYOICJPnsgv0W7aLmRDpL8P+BPpFbRd
-         khCsct6kltqDR6iMpxs+6Ju04hdx8mg53olmZbWPVo+5Mwnxes26ArlieEgplvv4s9
-         NFZYq1rkGXT/O6UQlw4QvfhyCNzxwde0QAqH56Fsxtb686QNPaGcNlo4NV1EhufSyh
-         dKwVMUrtr7GOg==
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-67106f598b1so4820556b3a.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jul 2023 01:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688461164; x=1691053164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iq6cKg1bVkNflRBjs/XMRCMTTeQAcRlxHohCnato/0M=;
-        b=Kdy43jnR6MugZT40K40RPZDBZrMjKX2sAiZc2FuRcClVIZOD9SjziqYR+QoDR24WNd
-         iTpYEwdXgxwUIWFqJZ4QBhlxT7xA7BsDrGOw9jdWuwcdgRe+vTQIXy7QaPLxhDSfCrdV
-         xABaZrkswaBYPjzNclKUpmhmpMu5hyhwGMTgC4UQ6q862UWwU0YOZ2pZdGdxJKJAyUYT
-         y9JB9zN3v/2vWMFknxT6NJEpwm6ofsMKaSsDb0AGC0UkPxpoZG/YlVk1tAowMcJwTIaL
-         wYPFkBjIJmuHHGBZgW+Riru5vLyax7F3z6VplzuDx5u2M3011NQmKF2veo7YrZWpRr3X
-         Q4Jw==
-X-Gm-Message-State: ABy/qLZAkWZlPAZ3Ewk6aT7j/aqQoSQySTUYKOps6tcLF+MXlbKvegrG
-        t8DVRSzEzTxLtloJxJi6VYoLnyewbmaUPy3bf0ViA0MN+bs3vDbe+nNicucas8FAl+g8APiLB98
-        7wJ6iwLqFDm8Bd+9HiX45a+BmeslQkd5lkbiu/chBvY5W6VxaqXTujbmkf5gY8g==
-X-Received: by 2002:a05:6a00:c8c:b0:67d:ccbc:5e81 with SMTP id a12-20020a056a000c8c00b0067dccbc5e81mr13255043pfv.4.1688461164102;
-        Tue, 04 Jul 2023 01:59:24 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEA4BMzE4N8gwue1FHSWScEaB/ukcJ0jLDn6CFHKEFH69V6wIcnboq78jkqkyl7LecvUNNmcVKK25UHVuk3664=
-X-Received: by 2002:a05:6a00:c8c:b0:67d:ccbc:5e81 with SMTP id
- a12-20020a056a000c8c00b0067dccbc5e81mr13255036pfv.4.1688461163739; Tue, 04
- Jul 2023 01:59:23 -0700 (PDT)
+        Tue, 4 Jul 2023 05:48:40 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E847FB5;
+        Tue,  4 Jul 2023 02:48:38 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3646tegw016317;
+        Tue, 4 Jul 2023 09:48:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=kaIoEgXQSLvNdWP2temQuhEV+SjQM9OvqCBa6vyMnIw=;
+ b=AFJpJThmciJsZrMAXer6Pm2JMR6uNUnViN/vTsFdqvQb/GZYIjHFmmEdeBYGpLU8d1C/
+ NUc6Gbs/q++i9rXOgxA3gvowE2Urtx4Oc9Nmmn8Gg6/Pqy97ffGWtwhiLKTkEcN4VvIR
+ jbTLKgGEvOQKSV/+QdZTx4YQQbniwars9eLpvIkzJC90ubFnSvwzQTFZ35ZIq7vNCTbT
+ mUiKL8eeuZMSdGsY3vxg9a2CcdVR9Nc+f9lvrD34/YHONbf55OpWsA0zAp9Vj1GrgPp4
+ cpY7JdSHI03owKcqWwp+P/0qCdUirpVnR5sUubkQIt6RVqod3XHiHN1uW4znRsMBDgZ1 CA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rksyctqp8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Jul 2023 09:48:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3649mWNQ027033
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 4 Jul 2023 09:48:32 GMT
+Received: from [10.50.61.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.7; Tue, 4 Jul 2023
+ 02:48:29 -0700
+Message-ID: <eadc6f73-0fbf-80a0-cd1f-84f7fd51f6d7@quicinc.com>
+Date:   Tue, 4 Jul 2023 15:18:26 +0530
 MIME-Version: 1.0
-References: <20230703162509.77828-1-koba.ko@canonical.com> <4ec2b7d2-11a5-6ab6-087a-175ed31faca4@web.de>
- <SJ1PR11MB60839A0FC6B5E79E3E5A7997FC29A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <CAJB-X+X+09-m57JcZcb-_9dKUG3CtAbLXxGTEg7R0bB8pyJx9Q@mail.gmail.com>
- <CAJB-X+XVO29wVxVezjFrgCyXigqEJxAzb0K0wueXNto5K_x2tA@mail.gmail.com>
- <9c27530e-21f9-15ce-5116-5af5b0c25f53@web.de> <CAJB-X+VjjxLi60k-6VNcypMB8EomJ0uYpDdfwpJ1dHPWRG7Vxg@mail.gmail.com>
- <706f49e8-d536-651a-2f19-394518633b53@web.de>
-In-Reply-To: <706f49e8-d536-651a-2f19-394518633b53@web.de>
-From:   Koba Ko <koba.ko@canonical.com>
-Date:   Tue, 4 Jul 2023 16:59:12 +0800
-Message-ID: <CAJB-X+Wv6yeJLhWogopd5HyJADwLqSdmhfrh_P+-P02SEOACQQ@mail.gmail.com>
-Subject: Re: [v2/v3] EDAC/i10nm: shift exponent is negative
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 1/5] accel/qaic: tighten bounds checking in
+ encode_message()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Carl Vanderlip <quic_carlv@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <8dc35a68-7257-41ac-9057-7c89b9ad6e18@moroto.mountain>
+ <1d79cddc-0afb-08c2-8aac-8f3b7761d210@quicinc.com>
+ <fb5f0a0c-c46f-4eec-bfcc-50b4be44c0a7@kadam.mountain>
+Content-Language: en-US
+From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+In-Reply-To: <fb5f0a0c-c46f-4eec-bfcc-50b4be44c0a7@kadam.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JugXe-HSqS3SWQtnIGt8bEj-dC1RkrL2
+X-Proofpoint-ORIG-GUID: JugXe-HSqS3SWQtnIGt8bEj-dC1RkrL2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-04_05,2023-06-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1015 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307040080
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 4, 2023 at 4:50=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> > @Markus and all,
-> > please review it, thanks
-> >
-> > Subject: [PATCH][V3] EDAC/i10nm: Fix an inappropriate shift exponen
->
-> * Combined prefixes would be nicer.
-Do you mean, [PATCH V3]?
-> * Please avoid a typo here.
 
-=3D> exponent
 
->
-> > when get rows, cols and ranks, A special value combination could not
-> > be handled so far.
->
-> It seems that you stumble still on wording difficulties.
+On 7/4/2023 2:08 PM, Dan Carpenter wrote:
+> On Tue, Jul 04, 2023 at 11:57:51AM +0530, Pranjal Ramajor Asha Kanojiya wrote:
+>>> diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
+>>> index 5c57f7b4494e..a51b1594dcfa 100644
+>>> --- a/drivers/accel/qaic/qaic_control.c
+>>> +++ b/drivers/accel/qaic/qaic_control.c
+>>> @@ -748,7 +748,8 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+>>>    	int ret;
+>>>    	int i;
+>>> -	if (!user_msg->count) {
+>>> +	if (!user_msg->count ||
+>>> +	    user_msg->len < sizeof(*trans_hdr)) {
+>>>    		ret = -EINVAL;
+>>>    		goto out;
+>>>    	}
+>>> @@ -765,12 +766,13 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+>>>    	}
+>>>    	for (i = 0; i < user_msg->count; ++i) {
+>>> -		if (user_len >= user_msg->len) {
+>>> +		if (user_len >= user_msg->len - sizeof(*trans_hdr)) {
+>> If I understand correctly this check is added to verify if we are left with
+>> trans_hdr size of data. In that case '>' comparison operator should be used.
+> 
+> That was there in the original code and I thought about changing it but
+> I don't like changing things which aren't necessary and == is also
+> invalid so I decided to leave it.
+> 
+I see, I understand your concern about not changing unnecessary things 
+but '>=' is incorrect for reason mentioned above. We need to change that 
+to '>'
+>>
+>>>    			ret = -EINVAL;
+>>>    			break;
+>>>    		}
+>>>    		trans_hdr = (struct qaic_manage_trans_hdr *)(user_msg->data + user_len);
+>>> -		if (user_len + trans_hdr->len > user_msg->len) {
+>>> +		if (trans_hdr->len < sizeof(trans_hdr) ||
+>>> +		    size_add(user_len, trans_hdr->len) > user_msg->len) {
+> 
+> If we change to > then the == will be caught by this check.  So it
+> doesn't affect runtime either way.
+> 
+I fail to see that.
 
-remove the previous sentence,
-A special value combination could not be handled so far.
+Lets run an example:
+user_len is 0
+user_msg->len is 8
+sizeof(*trans_hdr) is 8
+trans_hdr->len is 8
 
->
-> > Fixes: 4ec656bdf43a13 (EDAC, skx_edac: Add EDAC driver for Skylake)
->
-> You overlooked somehow to use double quotes here.
+Above instance is correct and should be processed without error.
 
-must be
-Fixes: 4ec656bdf43a13 ("EDAC, skx_edac: Add EDAC driver for Skylake")
+So user_len > user_msg->len - sizeof(*trans_hdr) translates to
+(0 > 8 - 8)
+(0 > 0)
+false (No error)
+.
+.
+.
+trans_hdr->len < sizeof(trans_hdr) ||
+size_add(user_len, trans_hdr->len) > user_msg->len, translates to
+8 < 8 || size_add(0, 8) > 8
+false || 8 > 8
+false || false
+false (No error)
 
-> Please provide the next version of a proper patch.
->
-> Regards,
-> Markus
+Am I missing anything?
+
+> regards,
+> dan carpenter
+> 
