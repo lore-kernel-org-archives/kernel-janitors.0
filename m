@@ -2,199 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CD6EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 08:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E65EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 08:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231390AbjGDIRY (ORCPT
+        id S231805AbjGDIi4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Jul 2023 04:17:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45260 "EHLO
+        Tue, 4 Jul 2023 04:38:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbjGDIRW (ORCPT
+        with ESMTP id S231344AbjGDIiZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Jul 2023 04:17:22 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D1BE4F
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 01:17:20 -0700 (PDT)
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6BFA73F1CB
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 08:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1688458639;
-        bh=plwS1E5LG/PQJYulZxtADBBk2LmEp7YgNkT8yG1tzEQ=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=Wtcg/8IMmyA5HnxtKJoNoiG6p2iRYJNr833s+VP0wDBrofcEArWGcXzHJGPjyoxgm
-         l/dEGDKxs6QhyQQ4vTl3UkElVcbYW/5d7Ylvr8vvyiG+foi0J4H3aCy3kzGQjG5JNE
-         I7wY7A+lBRDQmmhXykO1mV2mJ6D9yXQntLsKUWXfkBrswdRAuagjJn2Tya2LV7FSIH
-         sxazJxi7cclKvdkv4WYYC4PL3qKTjO02ZOm2MRcmcyIcn9vDywRWOzS5MC5TB3pHYx
-         T4S5/pY6J+zCErh89eQ+/hWua/5YxCzKUWjiJ36935Yg7hLv970xBwcRCzjvBrOcy7
-         +nsiziA/4+42w==
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-53f6e19f814so5876941a12.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jul 2023 01:17:19 -0700 (PDT)
+        Tue, 4 Jul 2023 04:38:25 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4016C138
+        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 01:38:24 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fbd33a57dcso32644795e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jul 2023 01:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688459902; x=1691051902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w0V57ruCKT8g2KRYl0872Ggc1PX88R6CmL+ReT3+2E4=;
+        b=KuahYV1kenec4FVH+QBP0nW573m7azVy/U+M4uh/82HcqTd/trNzBoKgYdN5fuSU+G
+         YnBgOYzF3iW4e5JN5b+S1DhNYgy377h+Wv5X4d1dtUcjhlv59ttycBNm65DPWVggUgAv
+         L1lSgB/kAxfFM/EknQEj+uB/V48Tl6Pds9yHBGblTCYw0C8wiUrzevSM1uNWvhGSGbAW
+         3s5QftmSU4xelg85k1isrCKW3DX/lO4QsO/qjUUgH5zUyaAomLdjMgmQxVA02+4bHN9m
+         WjD5JEZI47QESaCd5kwvISRtXyv4dtgS5+sL+IekaTCZ9O7ZMLzPYG8PxPgaMOn1/x/6
+         cQTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688458638; x=1691050638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=plwS1E5LG/PQJYulZxtADBBk2LmEp7YgNkT8yG1tzEQ=;
-        b=a8FZVDCGfWh5ifMQldhGsxprl4+NKabM86ZnoCq7xvvaPG0LyvPHKP7YUe67ITbOTG
-         w0A9MIBWdOpkK4RiqSS4Kt6Wlfd7HsqTr0qvU1/froVsHN1PQulLd6mcjfrpRfTUJP97
-         sRIFTUGBnkG7DbnMFoNFmL9D1M2wD8Lt/WelmH03tBzpm97ZBwivpZjm67IfkMpk2vX7
-         86IpIlHclr2iZNzTJZ0Uo0AMM4dm4AEHcv0kMhe1T2wp+gVbr/5IkeauiHGgRe5h4JIr
-         JK+5kjHziUBTrWHmZS0Npg7hoUmKOjKhO3vQJfC07lwmm2mCS3hFE9bm5tTcKKI6RrJf
-         81Dw==
-X-Gm-Message-State: AC+VfDxOpq6Tn17advwx3M/AHY3OxlsaF7tcJA/rb7J/2q/Vmoq9NVbJ
-        trXF445TJ7zYuE9h5rJjpjgSRvoap+bbNtz5TGp8XRLcNUr07r/bsUTnYwiSKsECZuPrZPNphCB
-        JCVOj8iSYDm7djoDA4PJIHeFGjXIsKniDKYu9uFbpDmoHUZxZftsccPvEEJQcAw==
-X-Received: by 2002:a05:6a21:78a3:b0:12b:93d4:4964 with SMTP id bf35-20020a056a2178a300b0012b93d44964mr14049177pzc.30.1688458637808;
-        Tue, 04 Jul 2023 01:17:17 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7Ln0TaYhLIluFosHxn/CXxOt1wk4fpmNSvx1J0RXkoKu8qkKGFM4jH+Diyfth3iF9U5T72YxH49DbwfGkJmeI=
-X-Received: by 2002:a05:6a21:78a3:b0:12b:93d4:4964 with SMTP id
- bf35-20020a056a2178a300b0012b93d44964mr14049168pzc.30.1688458637488; Tue, 04
- Jul 2023 01:17:17 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688459902; x=1691051902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w0V57ruCKT8g2KRYl0872Ggc1PX88R6CmL+ReT3+2E4=;
+        b=idqiD2LNq3mcYVMb7BJtd/VwidSgCR77z3Nwu7/exwSZBsDNyEBybAeHii1FM+BO2l
+         mAdheKw/rB0BdL92Xc6d/6Q0z1wUqjZHPgpYi6WR0yUqAfxnChoj740ZncxgGlX+t3A8
+         5YYUEsg3ekzOCISq7/io1lSV5XHe/lvfUumhWhGWqZ30QFUoADlrJJq62+lkbSZ5Lchs
+         0qR0a1dqGu0SCP2PvxSbczwhfIhPlahtZ1wPEmDKuYwJwRPPC2H9QzRAgqrwr6EYQ4XQ
+         /a0VDEseOI6zITpvKhotPRxA/2lAA8FpLQjSTGcFMQTqJZk4VgzbLhyQOdGr1vPK1qR/
+         c7kA==
+X-Gm-Message-State: AC+VfDwqSj1uknjQLVIZRJNHDnfU0sUpB9MCKK5EClvyfin+kTKYe8TB
+        MljKw7TPGKIbx5dbhR0vOqXpQQ==
+X-Google-Smtp-Source: ACHHUZ4CtBHTSIgBrWtDhVrUr9H6mVr1KJO7Mgb9kq8KYJhSeCz39PgYzNfD0ZElomNA3TYakMGWlg==
+X-Received: by 2002:a7b:cc87:0:b0:3fb:a917:b769 with SMTP id p7-20020a7bcc87000000b003fba917b769mr11141017wma.21.1688459902605;
+        Tue, 04 Jul 2023 01:38:22 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id 4-20020a05600c228400b003fbc216b137sm13093446wmf.3.2023.07.04.01.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jul 2023 01:38:20 -0700 (PDT)
+Date:   Tue, 4 Jul 2023 11:38:17 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+Cc:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Carl Vanderlip <quic_carlv@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/5] accel/qaic: tighten bounds checking in
+ encode_message()
+Message-ID: <fb5f0a0c-c46f-4eec-bfcc-50b4be44c0a7@kadam.mountain>
+References: <8dc35a68-7257-41ac-9057-7c89b9ad6e18@moroto.mountain>
+ <1d79cddc-0afb-08c2-8aac-8f3b7761d210@quicinc.com>
 MIME-Version: 1.0
-References: <20230703162509.77828-1-koba.ko@canonical.com> <4ec2b7d2-11a5-6ab6-087a-175ed31faca4@web.de>
- <SJ1PR11MB60839A0FC6B5E79E3E5A7997FC29A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <CAJB-X+X+09-m57JcZcb-_9dKUG3CtAbLXxGTEg7R0bB8pyJx9Q@mail.gmail.com>
- <CAJB-X+XVO29wVxVezjFrgCyXigqEJxAzb0K0wueXNto5K_x2tA@mail.gmail.com> <9c27530e-21f9-15ce-5116-5af5b0c25f53@web.de>
-In-Reply-To: <9c27530e-21f9-15ce-5116-5af5b0c25f53@web.de>
-From:   Koba Ko <koba.ko@canonical.com>
-Date:   Tue, 4 Jul 2023 16:17:06 +0800
-Message-ID: <CAJB-X+VjjxLi60k-6VNcypMB8EomJ0uYpDdfwpJ1dHPWRG7Vxg@mail.gmail.com>
-Subject: Re: [PATCH v2] EDAC/i10nm: shift exponent is negative
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d79cddc-0afb-08c2-8aac-8f3b7761d210@quicinc.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-@Markus and all,
-please review it, thanks
+On Tue, Jul 04, 2023 at 11:57:51AM +0530, Pranjal Ramajor Asha Kanojiya wrote:
+> > diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
+> > index 5c57f7b4494e..a51b1594dcfa 100644
+> > --- a/drivers/accel/qaic/qaic_control.c
+> > +++ b/drivers/accel/qaic/qaic_control.c
+> > @@ -748,7 +748,8 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+> >   	int ret;
+> >   	int i;
+> > -	if (!user_msg->count) {
+> > +	if (!user_msg->count ||
+> > +	    user_msg->len < sizeof(*trans_hdr)) {
+> >   		ret = -EINVAL;
+> >   		goto out;
+> >   	}
+> > @@ -765,12 +766,13 @@ static int encode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
+> >   	}
+> >   	for (i = 0; i < user_msg->count; ++i) {
+> > -		if (user_len >= user_msg->len) {
+> > +		if (user_len >= user_msg->len - sizeof(*trans_hdr)) {
+> If I understand correctly this check is added to verify if we are left with
+> trans_hdr size of data. In that case '>' comparison operator should be used.
 
-Subject: [PATCH][V3] EDAC/i10nm: Fix an inappropriate shift exponen
+That was there in the original code and I thought about changing it but
+I don't like changing things which aren't necessary and == is also
+invalid so I decided to leave it.
 
-A surprising value was determined after a read failure from a DIMM.
+> 
+> >   			ret = -EINVAL;
+> >   			break;
+> >   		}
+> >   		trans_hdr = (struct qaic_manage_trans_hdr *)(user_msg->data + user_len);
+> > -		if (user_len + trans_hdr->len > user_msg->len) {
+> > +		if (trans_hdr->len < sizeof(trans_hdr) ||
+> > +		    size_add(user_len, trans_hdr->len) > user_msg->len) {
 
-Software analyses pointed a data processing issue out.
-`UBSAN: shift-out-of-bounds in drivers/edac/skx_common.c:369:16
- shift exponent -66 is negative`
+If we change to > then the == will be caught by this check.  So it
+doesn't affect runtime either way.
 
-when get rows, cols and ranks, A special value combination could not
-be handled so far.
+regards,
+dan carpenter
 
-Check if an invalid value was detected by a call of the function
-=E2=80=9Cskx_get_dimm_attr=E2=80=9D.
-* Print a corresponding error message in this case.
-* Return zero then directly from the function =E2=80=9Cskx_get_dimm_info=E2=
-=80=9D.
-
-Fixes: 4ec656bdf43a13 (EDAC, skx_edac: Add EDAC driver for Skylake)
-Signed-off-by: Koba Ko <koba.ko@canonical.com>
----
-V3: simplify and polish the summary and add `Fixes:`
-V2: make error-print explicitly
-
-Thanks
-Koba Ko
-
-On Tue, Jul 4, 2023 at 3:16=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> > As per suggestions, i modified V3.
-> > could you please take a look
-> >
-> > Subject: [PATCH][V3] EDAC/i10nm: shift exponent is negative
->
-> Would you like to put the text =E2=80=9C[PATCH v4] EDAC/i10nm: Fix an ina=
-ppropriate shift exponent=E2=80=9D
-> into a subsequent patch?
->
-> I would find further wording variants nicer.
->
->
-> > Because failed to read from DIMM, get the negative value for shift
-> > operation.
->
-> A surprising value was determined after a read failure from a DIMM.
->
->
-> =E2=80=A6
-> > UBSAN complains this error
->
-> Software analyses pointed a data processing issue out.
->
->
-> > `UBSAN: shift-out-of-bounds in drivers/edac/skx_common.c:369:16
-> >  shift exponent -66 is negative`
-> >
-> > when get rows, cols and ranks, the returned error value doesn't be
-> > handled.
->
-> A special value combination could not be handled so far.
->
->
-> > check the return value is EINVAL, if yes, directly return 0 and
-> > show error message explicitly.
->
-> Check if an invalid value was detected by a call of the function =E2=80=
-=9Cskx_get_dimm_attr=E2=80=9D.
->
-> * Print a corresponding error message in this case.
->
-> * Return zero then directly from the function =E2=80=9Cskx_get_dimm_info=
-=E2=80=9D.
->
->
-> =E2=80=A6
-> @@ -351,6 +351,8 @@ int skx_get_dimm_info(u32 mtr, u32 mcmtr, u32 amap, s=
-truct dimm_info *dimm,
->         ranks =3D numrank(mtr);
->         rows =3D numrow(mtr);
->         cols =3D imc->hbm_mc ? 6 : numcol(mtr);
-> +       if (ranks =3D=3D -EINVAL || rows =3D=3D -EINVAL || cols =3D=3D -E=
-INVAL)
-> +               return 0;
-> =E2=80=A6
->
->
-> Can it be nicer to perform a check for such an error code directly
-> after each variable assignment?
-> (May this condition check be split?)
->
->
-> > Fixes: 4ec656bdf43a13) EDAC, skx_edac: Add EDAC driver for Skylake
->
-> Please properly apply parentheses and double quotes for this tag.
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.4#n145
->
->
-> > V2 -> V3: simplify the summary and add 'Fixes:'
-> > V1 -> V2: make error-print explicitly
->
-> How do you think about to use more succinct version identifiers
-> for such descriptions?
->
-> V4:
-> =E2=80=A6
->
-> V3:
-> =E2=80=A6
->
->
-> Regards,
-> Markus
