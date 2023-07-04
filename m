@@ -2,67 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F934EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 01:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA12EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jul 2023 02:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbjGDBu7 (ORCPT
+        id S229546AbjGDCUh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jul 2023 21:50:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50474 "EHLO
+        Mon, 3 Jul 2023 22:20:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229897AbjGDBu4 (ORCPT
+        with ESMTP id S229450AbjGDCUh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jul 2023 21:50:56 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 350E0E4E
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 18:50:55 -0700 (PDT)
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+        Mon, 3 Jul 2023 22:20:37 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA427E59
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jul 2023 19:20:35 -0700 (PDT)
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B2CDD3F850
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 01:50:53 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2A30A3F0F7
+        for <kernel-janitors@vger.kernel.org>; Tue,  4 Jul 2023 02:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1688435453;
-        bh=xRjzAE0n5uIgT1izeqo8Qt3qb3EDeNKGoRxIM7nbkoA=;
+        s=20210705; t=1688437234;
+        bh=gPUh1UKYRUTDUZfqtjt41zw9iPe9y1sFpRCgNtjp5pI=;
         h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
          To:Cc:Content-Type;
-        b=Oe2WdZGUqr/nME0jy0M8S/y8JKtCBbQZ5uicp53Utf/iTUo0iZDzQP55QeAsqSYex
-         z3ZDga1tAwvSoh0IkNbev5yE2VRoqyg6EM9FePkBXjbkCPZB0fyMIgiR4wAGXIsFat
-         0JD3hAkRX4l8czCpbX8DZoklzxxsJAqSKgeHy6IZLk4q9aPSNEgYAd37Cd8zhKuNBx
-         qPZO7gfjkO7j6Hmvm7rZz5MeJUrvywrQPv6sylmul4LR/6HrwRvvoyki3hXMdQR5GS
-         8qfuyXbpFEpcGvRo3jlSJI/s2h8ZAR0s+OlhV2ufxT52BNQip673U1bgqec7xseLQa
-         cu9jQidgfR/7g==
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-67c2f6fb908so5142252b3a.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 18:50:53 -0700 (PDT)
+        b=Hk8GMq/Gec5cKyswDxPGNjRhqiy6pNzJFdd6Mxs1VK3roAYzE2eLdLI72xoBkmesZ
+         0cR4qY9k74Hl0hnunHWCGVqWPWIhCJg15SpPJ/kdFDmdhl3aiBxfQ5AfxUsWTv168/
+         tLLCYoDuKJa9MasqKEnyCIHKpnijkIqkLfFJl8KAUXIIExQHe7BCrzwWc3F74y8BJ8
+         aNyWTLkigcPMRBl0C+eCQJdr7731mhWkheGaLFErcpU3Es7p4LZsMtoaz2mQu/XLi+
+         JWcEhcc7kx9a6jTcEf1kVd9N7uV+vUgHJ6f4kVO1wzjKSM0NFfBE/MCJfd1H9EiyfW
+         ecXszi9yXDyrg==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9877da14901so355133666b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jul 2023 19:20:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688435446; x=1691027446;
+        d=1e100.net; s=20221208; t=1688437234; x=1691029234;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xRjzAE0n5uIgT1izeqo8Qt3qb3EDeNKGoRxIM7nbkoA=;
-        b=KfDsAvKaEpsM0oudg5ajLDUrjkRn03klpWD52D+iRGrbC+XBC2VyOSd6aGTtRtKPJl
-         rGEQGm1P3AFUhuSN74kfW3cJe69pIykZ7qqvrTGNeajNiDiDhDs/evI1CBocPptoiyos
-         4GgSCWwfGdiwOlICDpbkjMGy1ZWTN3Ugslo0rZsqsJYeBvCL+ozjSwrOlBHLX5sjspJ+
-         fgUJPsJKK/1w8BbqeM9ST/j+zH/AzSgvABG1W4k4Ry+VhXq1PpMFNOA0/IvGOp/oEzyo
-         KIBU9L9bONTBi4cP7KhlVIJniUkx3bwvQIPavxi6QgYIQ3L2Z8T8tUD2auYzNS0NXvuX
-         Q5eA==
-X-Gm-Message-State: ABy/qLaqnqFX6lqVzekdoedTPpfig/5jn2v4I4/80j3rwKI7NKOuFG2f
-        UFgPgQ+CCo28z3+uuxK6COyp7oEvRhtgxpoZ+6cib2QktbaxcKH1KFLkabjZmXln0QPUX0N+Lcc
-        hLcSuTTHjiXYJnck1Rb9lojzK/t5sgXrAu5AQFL5vObD+4HdIpjI79WUEjAVuiQ==
-X-Received: by 2002:a05:6a00:c91:b0:657:f26e:b01a with SMTP id a17-20020a056a000c9100b00657f26eb01amr12396885pfv.26.1688435446043;
-        Mon, 03 Jul 2023 18:50:46 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHX437TWfJBK7YTXwsR6fw6ywkRfC1jA00N3tmzfj+k09vE6RLFcxGk2IJ0KTcV5UzDvOiDWYCDWDyp3EUiYP8=
-X-Received: by 2002:a05:6a00:c91:b0:657:f26e:b01a with SMTP id
- a17-20020a056a000c9100b00657f26eb01amr12396872pfv.26.1688435445547; Mon, 03
- Jul 2023 18:50:45 -0700 (PDT)
+        bh=gPUh1UKYRUTDUZfqtjt41zw9iPe9y1sFpRCgNtjp5pI=;
+        b=b1ti0Q1BKGhfGdxcyHwm8B9ngwYLTdpKxhpHveCozRLf+oMRqQJcxvJhgviaLRawLZ
+         vv96qTO6x93qQKCnMpcgfWZeyO8EXosuWgWM2kLQJ3cEmKMcTGAw1sIm0G0I89IvMVrA
+         2VBK0tmJ6cnEeFYEJ4NhoBCgkQVsr89wsoS44HalGPSUhcBVqmXAGsPUf8ZTGDPz5Y3g
+         QUeNIVsc0A06sPlrnsuQdXI1g9ZGApl0l6yCMvb88mWqUtWTAouJGjBv3YWUT8PvVAUy
+         gwOL4KpIIEEWwGqM4N7CjlVPQRpXRVRB83t6RegZedoahpfFIbmYneNLns7jITE59eWA
+         jbXA==
+X-Gm-Message-State: ABy/qLbN2cb/hFA9z6QmcttlrLjtFMgWVlSqv8mNQu7pZgXI61cFjkTi
+        YzhU4HJvPOnSncJsF6fqZn5PY9G4DxbCjXroT+8bzP7FJPjXWZkrVU3WpwqdklXqsfEqFoAL+8V
+        j2NjW1idVi9GlTrTDGN7r2yiSWuKyCHmENHHnQCviS0yK/76wNvEduypqxuB1MQ==
+X-Received: by 2002:a17:907:9850:b0:993:3556:b7ed with SMTP id jj16-20020a170907985000b009933556b7edmr5359543ejc.6.1688437233881;
+        Mon, 03 Jul 2023 19:20:33 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFfr+4nSObV9okaYd8nc1mjdTLkRmk1774yuvQp5tR7ZGFYw29tiQlOXSBPPnbWZ8jRWJg5yiQCcEgEHmT8oiA=
+X-Received: by 2002:a17:907:9850:b0:993:3556:b7ed with SMTP id
+ jj16-20020a170907985000b009933556b7edmr5359526ejc.6.1688437233447; Mon, 03
+ Jul 2023 19:20:33 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230703162509.77828-1-koba.ko@canonical.com> <4ec2b7d2-11a5-6ab6-087a-175ed31faca4@web.de>
  <SJ1PR11MB60839A0FC6B5E79E3E5A7997FC29A@SJ1PR11MB6083.namprd11.prod.outlook.com>
 In-Reply-To: <SJ1PR11MB60839A0FC6B5E79E3E5A7997FC29A@SJ1PR11MB6083.namprd11.prod.outlook.com>
 From:   Koba Ko <koba.ko@canonical.com>
-Date:   Tue, 4 Jul 2023 09:50:33 +0800
-Message-ID: <CAJB-X+UB+eYoYOOVH2bqnnVEJcLrxaj5A7-zyfgBM7hOf4y8zw@mail.gmail.com>
+Date:   Tue, 4 Jul 2023 10:20:20 +0800
+Message-ID: <CAJB-X+X+09-m57JcZcb-_9dKUG3CtAbLXxGTEg7R0bB8pyJx9Q@mail.gmail.com>
 Subject: Re: [PATCH v2] EDAC/i10nm: shift exponent is negative
 To:     "Luck, Tony" <tony.luck@intel.com>
 Cc:     Markus Elfring <Markus.Elfring@web.de>,
@@ -120,6 +120,12 @@ e
 > 88a242c98740 ("EDAC, skx_common: Separate common code out from skx_edac")
 > but that obviously just refactored code, so you should dig back more into
 > the history.
+There are two parts,
+1. @get_dimm_attr, edac_dbg was added since e235dd43d8b0f0
+2. get num of ranks, rows and cols, 4ec656bdf43a13
+
+Should I add all of them prefixes with "Fixes"?
+
 >
 > > > V2: make error-print explicitly
 > > > ---
@@ -131,48 +137,5 @@ e
 /Documentation/process/submitting-patches.rst?h=3Dv6.4#n686
 >
 > That's an excellent resource.
-
-Thanks for your advices and I will modify.
-here's part of dmesg enabled EDAC_DEBUG
-~~~
-[    4.032332] EDAC DEBUG: skx_register_mci: MC#1: mci =3D 00000000799db99e
-[    4.032334] EDAC DEBUG: i10nm_get_dimm_config: dimmmtr 0xffffffff
-mcddrtcfg 0xffffffff (mc1 ch0 dimm0)
-[    4.032335] EDAC DEBUG: skx_get_dimm_attr: bad ranks =3D 3 (raw=3D0xffff=
-ffff)
-[    4.032337] EDAC DEBUG: skx_get_dimm_attr: bad rows =3D 7 (raw=3D0xfffff=
-fff)
-[    4.032338] EDAC DEBUG: skx_get_dimm_attr: bad cols =3D 3 (raw=3D0xfffff=
-fff)
-[    4.032339] EDAC DEBUG: i10nm_get_dimm_config: dimmmtr 0xffffffff
-mcddrtcfg 0xffffffff (mc1 ch0 dimm1)
-[    4.032340] EDAC DEBUG: skx_get_dimm_attr: bad ranks =3D 3 (raw=3D0xffff=
-ffff)
-[    4.032341] EDAC DEBUG: skx_get_dimm_attr: bad rows =3D 7 (raw=3D0xfffff=
-fff)
-[    4.032341] EDAC DEBUG: skx_get_dimm_attr: bad cols =3D 3 (raw=3D0xfffff=
-fff)
-[    4.032343] EDAC DEBUG: i10nm_get_dimm_config: dimmmtr 0xffffffff
-mcddrtcfg 0xffffffff (mc1 ch1 dimm0)
-[    4.032344] EDAC DEBUG: skx_get_dimm_attr: bad ranks =3D 3 (raw=3D0xffff=
-ffff)
-[    4.032345] EDAC DEBUG: skx_get_dimm_attr: bad rows =3D 7 (raw=3D0xfffff=
-fff)
-[    4.032346] EDAC DEBUG: skx_get_dimm_attr: bad cols =3D 3 (raw=3D0xfffff=
-fff)
-[    4.032347] EDAC DEBUG: i10nm_get_dimm_config: dimmmtr 0xffffffff
-mcddrtcfg 0xffffffff (mc1 ch1 dimm1)
-[    4.032348] EDAC DEBUG: skx_get_dimm_attr: bad ranks =3D 3 (raw=3D0xffff=
-ffff)
-[    4.032349] EDAC DEBUG: skx_get_dimm_attr: bad rows =3D 7 (raw=3D0xfffff=
-fff)
-[    4.032349] EDAC DEBUG: skx_get_dimm_attr: bad cols =3D 3 (raw=3D0xfffff=
-fff)
-~~~
-
-I shared the whole dmesg through g-drive.
-https://drive.google.com/file/d/1epnDZNezGiJsK1eT4UNOi8_igcBSXtiF/view?usp=
-=3Dsharing
-
 >
 > -Tony
