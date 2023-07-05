@@ -2,122 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9921FEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jul 2023 07:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094C6EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jul 2023 08:45:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbjGEHkv (ORCPT
+        id S231608AbjGEIpV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jul 2023 03:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
+        Wed, 5 Jul 2023 04:45:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbjGEHku (ORCPT
+        with ESMTP id S231593AbjGEIpU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jul 2023 03:40:50 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20728.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::728])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3ADE41;
-        Wed,  5 Jul 2023 00:40:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aZWYsl5tZzLJDr7NxsaEHeK6rBId0GNMhU+46oaFNatWYLhnMCwRvb8IEZZhV8YYACuZkSzPsLT6Bx7MEnX4zuggfKqTpuEEbfCRe7IIzLSRrUMvMqZedSRstVwVxtwJAylGL0kwuxwWSB+z2MOe4A+j2EjGLXQbhvSspmYEPIi8tGOeM9NvwnyTXKnjFdva2DUSBFwOk+KPnJZThrUT9TU9H/anzNMMZOsNQ/wvnc/yHmirfuMsnkCbd8nCx/dvuarfjgV8kehRIaB8wSXMzA8q/yaA1hNxmXKuxZUfDBdjVIozbmvqje7zQJ9B8ai15do1Hw0XBj7Zn67dPhPPkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ndG8I1dEgxLKRzPAqFQJKtGwh9cytzriU4U7AGSaHEg=;
- b=Y5gv6mMw7DB7Ikj3xrl5G14v+zfIl7Oc4b8uqcRBraPzZzEdsG2ETioj8Eymo7MhRHXNc3dRjtVubckdVJnz+w0gXqbp1cx2rKwVoSDMaRsIguvuRw140rUnMANhZrDvke9/Zyp7TVRL/7xvPMysidzYXPf2DaAvlqmHBoRcGm3HHp6nILSUMF2pWUsyhhPGRaT0wsE7I3jD2CUVpHCiO5Z+1gFOeIPaLhAj9HiuB9ro0dVoWmZRAwCEwwVYBYCh6FUcKZbwpRt1XyD3t6A3GdW3f4PAXqHCZIKe/MVjFP1UUNwXkzF1Sd2gvsfkNl23fIULdUADfSw3M1+Bk2W+6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ndG8I1dEgxLKRzPAqFQJKtGwh9cytzriU4U7AGSaHEg=;
- b=TApghh5YmR7hg4WMjwscjxh30/aiCqAPQ4nhTuypcGTXnkufRlatOKjar2B3RoBDI3xRrctUSdiGXmdADtKFXiaiiD3iStUf6nDtMA0rrB/FPKf/tDZsXCFDaZw3A50siW/4i9u2XxcDVdg0rrVZ5qmsTtBg97qV+o+GRPFQSoo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by DS0PR13MB6175.namprd13.prod.outlook.com (2603:10b6:8:125::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.25; Wed, 5 Jul
- 2023 07:40:45 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e%5]) with mapi id 15.20.6565.016; Wed, 5 Jul 2023
- 07:40:44 +0000
-Date:   Wed, 5 Jul 2023 08:40:37 +0100
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Hilda Wu <hildawu@realtek.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Alex Lu <alex_lu@realsil.com.cn>,
-        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: msft: Fix error code in
- msft_cancel_address_filter_sync()
-Message-ID: <ZKUedXk6uTLqDff4@corigine.com>
-References: <be155fef-7758-41b2-a6e8-8f7e253ff452@moroto.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be155fef-7758-41b2-a6e8-8f7e253ff452@moroto.mountain>
-X-ClientProxiedBy: LO4P265CA0165.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::8) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Wed, 5 Jul 2023 04:45:20 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59DE171A
+        for <kernel-janitors@vger.kernel.org>; Wed,  5 Jul 2023 01:45:18 -0700 (PDT)
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3EABF3F205
+        for <kernel-janitors@vger.kernel.org>; Wed,  5 Jul 2023 08:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1688546716;
+        bh=EhBgbfMMNPfoW5bol7yuNsWA9PiXcWNElnIKvGjgKG4=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=gye5jX4EwjuJyOzwxlzqIhCMrjsMtXJNwBcJkGV4JrT2MYNlh/0lfpDMYkoXxqU3Y
+         AsI1AuKBsx8CNdEUrjtylaPq3NO+1OSQk4nD8j5xb93XFZ29IThFFH14O09Yh3MDjy
+         VnX+iXtJDAsA8pfQjZLUIBQ2AScHzogUaB0noHBY7Wky1yV9ErsofX7UFcqzyMYsOZ
+         dLci+n/10o7rBWdCnLTBca26RTgTN7N2o8BA66RUPZ6vMkSLq8mGY4Bcxt4Lp8G/Ne
+         8m0HNsuuUI5aOum56qFsLhIWiSBcG12VDGbLWZ4cfsY/cm0Ot0qLoQFnxKY8enSUFj
+         TRfVfH3ieY9Aw==
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-666ecb21f16so8578522b3a.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 05 Jul 2023 01:45:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688546714; x=1691138714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EhBgbfMMNPfoW5bol7yuNsWA9PiXcWNElnIKvGjgKG4=;
+        b=mFJJtqv4IydATYGpsGZNwpbLskXKWOx66eRPIqWHc+92lqVZMjunQ62FjBX8oNzfdj
+         tC7U0SvhuWUejnvK5PBmBWdn0yU9dFhQSXClF0x+QvdjBD70lI9mgE1kwVxTnXPaOi84
+         mI6bccWM4WOruc/8LzKHAmW2TT9kDSoK+QiBzdNJNhxzqFhE5r9QwFfCqyio+jt+05hz
+         pk2UXzpebnreqJKSqgSlQYY4SbRNdKQ/FPHS2LR2pgvLyR45eKlEis5fBDm9uZYKHKjv
+         quSJDdZ0YPaYKry8FsO+T5F86DZmRUjIDMklIEKwmI7Fm41hQ2U5F6vPH7MdCOh5gBgi
+         SrfA==
+X-Gm-Message-State: ABy/qLa1v5mBwa4DonoojUFFEN+hSaGR1vbblXtCPNHy/UjVKITgYm/K
+        QLvrQqETkWXno/sREdB8uLrF0AYoNYCVRJqqkxxgr+Lhgt8jklG8aIgXpXHcX1ofXWY8XgoIHUF
+        E0G97oylDlUzowCDRunSNrtuOOy+roTTUN/vYubf+PUw6t6vxssXrkb4Rfgmy4HB2fvDlw9OE
+X-Received: by 2002:a62:17d1:0:b0:666:8cbb:6e02 with SMTP id 200-20020a6217d1000000b006668cbb6e02mr16496632pfx.8.1688546713833;
+        Wed, 05 Jul 2023 01:45:13 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGPsN2XwaB28oN7la+m6ycw2aZ7zvlnCnXD23EYRBZizfqasNPWxPXnC+DaWSeSWxpwIbpeArLp0ZNI+pR8rbc=
+X-Received: by 2002:a62:17d1:0:b0:666:8cbb:6e02 with SMTP id
+ 200-20020a6217d1000000b006668cbb6e02mr16496613pfx.8.1688546713250; Wed, 05
+ Jul 2023 01:45:13 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|DS0PR13MB6175:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9f1faca-3dfd-4e34-0a08-08db7d2b23d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cN0dwnbT2Uz50KY5WM19J6xh9yOOaRaxj4K6+XlKXC1fpx870U16nm1gPNfTy1PJTnP7E/REK4TPe5hmHQG1ZtFw//bLmEBdBqLOwgZv+ZQdvQAxxQp844U9NASRuQA6bLu2+8sZzhqvv/T39LiIlwB7EtWSe5kkLcjicGNT/xCHNuWOKXeMO7ZmCA1IcGV85C1po2EWS6amA9FL55NfUah6o7+lCNRc1nJmSFsOFQZQrJaVL5foRv99mfmf3cqmgHRdA8PQRsO4QuhlftcwVTjvec+fIIExKHHgMVjtRq6U4CCgqcvdhX8lznZP0itsmZiCEycQN/QKk+ezTljhC/KNyAhufyIazG+Cf1SyfkpzjRO+9VhfBbxXYU7oGISbOCfJ3oaRi7IZ7YSgfcfxavuvGOaeRIAP/6AyNFeOzl5m84HVidP548wDn27ccR/zMAEGQX5prvDt39cZXeFwSd12FwE0MzsfN+ibP4u48JZlsBMJ52dXvseR0GSHhIO3IUaD+hrp1pd3QCmZrcYiy7pZwZ+ojJ8CIZbB2JsBCiqRYAOzHo5lfigb/5ALD9qeXxMc24TFy2iklQ0+J67hyDViyrQkwG1ad+nAdUTB7XU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39840400004)(396003)(136003)(346002)(376002)(451199021)(6512007)(186003)(26005)(38100700002)(6506007)(2616005)(6486002)(5660300002)(8936002)(8676002)(6666004)(478600001)(54906003)(44832011)(86362001)(316002)(66946007)(4744005)(66476007)(2906002)(66556008)(41300700001)(36756003)(4326008)(6916009);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uRzB3T/9tuXo/e7yKd/lwBPXrLnjTpbL6zvc2HFJnjaPpgt7BBnp1j7FFPH2?=
- =?us-ascii?Q?HqqRXKFlsaUPCqZRGNTWpM9tWYFMLm0EgZ8tJAqOtmtn9/1hwSBEuhupnW1I?=
- =?us-ascii?Q?e4sW7sF9LFlrW7VGiJ2vMrMxgHwFUXIh5BR9rPaI5Rqpw6+RNZVoFKVvS8HN?=
- =?us-ascii?Q?3iMZBUPZ3g3b0nivnO/ZQJg7SlUCni7kQ+lNvWKqpmqCFiKEjwGmElOlwoj1?=
- =?us-ascii?Q?24U2G5qWkFfKUZySDlO+t7vnsQ4juZcLPI1u6eyVay02M8bXrRILMz3zcZCm?=
- =?us-ascii?Q?ltisc1B5qF1XhL5+08Yh6sEVMXWnLZ6BAI6vPyn11fL+WQ2tE+HGW0VVn4Cw?=
- =?us-ascii?Q?a0Dg5mpd58GRNYg0x/TC9badOJtPcKZNMg6suzPLiYn2vY2hhMWebvlbf6LV?=
- =?us-ascii?Q?FQSfTDMdvYwrWv+Fy0hEsl3u3lR3QIA43p7x3xQ0jIGuK4ODZ67JGsaXJ7Hz?=
- =?us-ascii?Q?Za4zZOCaIDnilJ4jOL28IhRr/A5E3rT+JflTdftfER7YY0jPiga5uNd5IfZX?=
- =?us-ascii?Q?qWDxJhg3iyVLwnm3Kd80sP7FnduuQl1MOn9NNFJpnAfKSt5yZk094bbzoNXk?=
- =?us-ascii?Q?p/FL9aUGA70q7bbL6ybCRMe1fBul/U5LEuuvnngu0HvE49lJ+JlxKauCXtRn?=
- =?us-ascii?Q?DjAvQs9xyzvXYLA46Riu85U3bdM/XDJZcMj5gcSc0tn+KC5frFw5DxCBK7k/?=
- =?us-ascii?Q?6naAZuJUgdp8wJlxLnXiIqz7QmbH4JGE1ZexU2ZnAERHp7GW50AfvrUCDGeL?=
- =?us-ascii?Q?iSZBTNtZIIZnlBTFUPca5n3MT6NqyvAJD08DK1ROeVqbZEsQmwsdf4G6Zv9K?=
- =?us-ascii?Q?timnEDQ2IlPTFY/YrebvoHREY1351VzeDFOUoryKMJnolu1WMJtrz7TiOPjc?=
- =?us-ascii?Q?aRDX05w6mXC7xIButxOYPtfGtWoFEwPw2cxZWHBwVvwa1zpsRNW7zcoop4Vr?=
- =?us-ascii?Q?dIdm4WKuJ5PHvmJLSTyQYZllCB+FicETR7yH000qVqd2LvHQwCsKTgoLrGOr?=
- =?us-ascii?Q?rAQ4fmBTXe2eiSEAHvbedBuXL+Kr1JY4vHjKfG+T93IBkcRxnXskHegIome0?=
- =?us-ascii?Q?/ZS9LyjuSHsmaLWHjb/+hinAkE/7DvhE9jykX2do7J03oCoIMxkEJ8rt4bRM?=
- =?us-ascii?Q?83zcMjBmgwxv2Uam2T5wyxU1jknQ2kxpyoQZj1alb/1DwbtcJazCxsR/R2p7?=
- =?us-ascii?Q?kaile6pZ7+oEvWjSpFyoEwz3J2RDNJuy8lp4JpBBzpBzZPM5XEnbXdBEKdax?=
- =?us-ascii?Q?gk0ItEQViFMH40/Tws+UYVWqJ6iUhIY4QzWIl/cEv5FmB0ZsNH4UWH6xDMGx?=
- =?us-ascii?Q?jRhX2Bsfd5JPNyFeu75iF/vFUwXUtknlk1bGorOkOXCUbPEtIkC3jlzlf1tm?=
- =?us-ascii?Q?gWlUhjlWIk1b1Jkww0AjoVk8dH8zsBpNx1QoSTsLFU2IUzViecjdHPfQUrn9?=
- =?us-ascii?Q?yxBmMJ97i5rJ0NeMxfM4aH1Ogc2g9UJK0I29rAcW6MNW1fU8G0EUx4x/mt35?=
- =?us-ascii?Q?0d8/ny3YYp2GKEWFm01KJaY3tYpm9majt5vJXQam9p/dX00s7FDM8VW662dU?=
- =?us-ascii?Q?TwNPwBacCoSyc2ppGfNfR4kZsjvKnibD90z5uUbX8ljTzeUpbcQMd1XxJJcg?=
- =?us-ascii?Q?fQ=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9f1faca-3dfd-4e34-0a08-08db7d2b23d0
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2023 07:40:44.2642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8OmtY6W1ohHW4fNwsE7+XxicTAFZkTUX9d189vUGty45IcdxaV4FTY0skxPP85/wyIcXsKGR5vIrS7IQs/vFqvE428IzLgwAyn5j9Jp/D9U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR13MB6175
+References: <20230703162509.77828-1-koba.ko@canonical.com> <4ec2b7d2-11a5-6ab6-087a-175ed31faca4@web.de>
+ <SJ1PR11MB60839A0FC6B5E79E3E5A7997FC29A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <CAJB-X+UB+eYoYOOVH2bqnnVEJcLrxaj5A7-zyfgBM7hOf4y8zw@mail.gmail.com> <SJ1PR11MB608383A5841E4AE8D3A64B79FC2FA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <SJ1PR11MB608383A5841E4AE8D3A64B79FC2FA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From:   Koba Ko <koba.ko@canonical.com>
+Date:   Wed, 5 Jul 2023 16:45:01 +0800
+Message-ID: <CAJB-X+VFYyTiQ7yhX=Z8-Q4QW-GMsGXMuEWxLjuoZ1aDB98qXg@mail.gmail.com>
+Subject: Re: [PATCH v2] EDAC/i10nm: shift exponent is negative
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 03, 2023 at 05:17:16PM +0300, Dan Carpenter wrote:
-> Return negative -EIO instead of positive EIO.
-> 
-> Fixes: 926df8962f3f ("Bluetooth: msft: Extended monitor tracking by address filter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+On Wed, Jul 5, 2023 at 12:08=E2=80=AFPM Luck, Tony <tony.luck@intel.com> wr=
+ote:
+>
+> > I shared the whole dmesg through g-drive.
+> > https://drive.google.com/file/d/1epnDZNezGiJsK1eT4UNOi8_igcBSXtiF/view?=
+usp=3Dsharing
+>
+> The EDAC driver was OK for MC#0, but then failed for the other memory con=
+trollers.
+>
+> Can you send some more information about your system. Output from the
+> following commands:
+>
+> # head /proc/cpuinfo
+>
+> # dmidecode -t 17
+>
+> # lspci
+please check through this url,
+https://drive.google.com/drive/folders/199k3BX6IipNYCDfuMGy8W26ZtYRDIYZr?us=
+p=3Dsharing
+>
+> Thanks
+>
+> -Tony
