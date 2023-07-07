@@ -2,89 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED62C0015E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 19:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69EBEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 20:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232820AbjGGT3p (ORCPT
+        id S232301AbjGGUCa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jul 2023 15:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58364 "EHLO
+        Fri, 7 Jul 2023 16:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233061AbjGGT1n (ORCPT
+        with ESMTP id S229600AbjGGUC3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jul 2023 15:27:43 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0B526BE;
-        Fri,  7 Jul 2023 12:25:40 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 367HeNOt016276;
-        Fri, 7 Jul 2023 19:24:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=iBeFKc94SpYiLDchrjSwg3dQW+HvM0CWKOPWx91gaBs=;
- b=J2Lw08HBa6mCH1/kpE2Q4RFuKOTlYFKMa+BKXpfNOMLWS3A11we5V2P/P+Uk+aoG8Bbm
- NGr2uv6XKoxlJCC/zYCpo3gX/TeUR6GGsIdaPr58Wjg4L6cJ9nVslpupVdDFfKR39xA4
- jeSNVheFVfvCdlOieP/mjNRxorqIooL5+gI2aULen2CQuD6lDDeTg5l9lsfamp7IKd6G
- g+ajFRBA5glsjZV/nm6YeuXqOXQa1KRGVlT/6zgppHsiHAYIukKp+6ppeRIu1n53PKWE
- 52Fc8n2wglt4oocTtiz3fih5b26e9uuxENEPNxfaoi4vM3yPsefellMUhvh1W2PyI3C5 cg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rp71yafx3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Jul 2023 19:24:48 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 367JOl9i030556
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Jul 2023 19:24:47 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 7 Jul
- 2023 12:24:46 -0700
-Message-ID: <849e621c-956c-c482-08de-ce73b7859d49@quicinc.com>
-Date:   Fri, 7 Jul 2023 13:24:45 -0600
+        Fri, 7 Jul 2023 16:02:29 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D3E1FE1
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 13:02:27 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id Hrepqf0QVSMckHreqqzs8D; Fri, 07 Jul 2023 22:02:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1688760145;
+        bh=fdKSf2lM13oDsLK578xn0Ae9iOX668fZDk7OB3TOWx4=;
+        h=From:To:Cc:Subject:Date;
+        b=XYD2xtwVmBx+xOTyy2rhnu6ACkAE1O3RSjhOyHW1qZ9OuA7E3ToFTeZ53Vh5TlMcM
+         dAA1i/a7xiDws6Xje5Pba2ppcxmouxrJR5iFGjCA5qxCDAJQamyLeEgjKaXJ5hK4iZ
+         MYtvxhBufhZN9jSxrFD8wJCSlaJzBFNV6ppkdRGrNp21si0Dh1BhZbbleey2VuJmjA
+         R2pOo7sCPtCGdsvUOdB+32wxFN9OZb60j2NV0VQ2wOoni/UJbAC8ghiR0xYxMWyUms
+         IIAJ7Wxy8ZvEuXqwBIgAcSw1LaZ044og0m0/mmX+/9/whNsZwhbPPYJkm08GZ0pEZ0
+         3Uzbu5PN7+ghQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 07 Jul 2023 22:02:25 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: starfive: Simplify .determine_rate()
+Date:   Fri,  7 Jul 2023 22:02:18 +0200
+Message-Id: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 5/5] accel/qaic: Fix a leak in map_user_pages()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        "Jacek Lawrynowicz" <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <d04e5fc2-7b2b-4fb1-a9d7-17b55ecb9986@moroto.mountain>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <d04e5fc2-7b2b-4fb1-a9d7-17b55ecb9986@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: T7wttOLaVhDPALKqRK7W0czavjdS2PQl
-X-Proofpoint-ORIG-GUID: T7wttOLaVhDPALKqRK7W0czavjdS2PQl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-07_12,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- bulkscore=0 mlxlogscore=727 clxscore=1015 malwarescore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2307070178
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/21/2023 1:22 AM, Dan Carpenter wrote:
-> If get_user_pages_fast() allocates some pages but not as many as we
-> wanted, then the current code leaks those pages.  Call put_page() on
-> the pages before returning.
-> 
-> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+jh71x0_clk_mux_determine_rate() is the same as __clk_mux_determine_rate(),
+so use the latter to save some LoC.
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/starfive/clk-starfive-jh71x0.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+index b372083d11c3..aebc99264a0b 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.c
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+@@ -174,12 +174,6 @@ static int jh71x0_clk_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
+-static int jh71x0_clk_mux_determine_rate(struct clk_hw *hw,
+-					 struct clk_rate_request *req)
+-{
+-	return clk_mux_determine_rate_flags(hw, req, 0);
+-}
+-
+ static int jh71x0_clk_get_phase(struct clk_hw *hw)
+ {
+ 	struct jh71x0_clk *clk = jh71x0_clk_from(hw);
+@@ -261,7 +255,7 @@ static const struct clk_ops jh71x0_clk_gdiv_ops = {
+ };
+ 
+ static const struct clk_ops jh71x0_clk_mux_ops = {
+-	.determine_rate = jh71x0_clk_mux_determine_rate,
++	.determine_rate = __clk_mux_determine_rate,
+ 	.set_parent = jh71x0_clk_set_parent,
+ 	.get_parent = jh71x0_clk_get_parent,
+ 	.debug_init = jh71x0_clk_debug_init,
+@@ -271,7 +265,7 @@ static const struct clk_ops jh71x0_clk_gmux_ops = {
+ 	.enable = jh71x0_clk_enable,
+ 	.disable = jh71x0_clk_disable,
+ 	.is_enabled = jh71x0_clk_is_enabled,
+-	.determine_rate = jh71x0_clk_mux_determine_rate,
++	.determine_rate = __clk_mux_determine_rate,
+ 	.set_parent = jh71x0_clk_set_parent,
+ 	.get_parent = jh71x0_clk_get_parent,
+ 	.debug_init = jh71x0_clk_debug_init,
+-- 
+2.34.1
+
