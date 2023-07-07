@@ -2,75 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D509AEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 06:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96123EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 07:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbjGGGCD (ORCPT
+        id S230415AbjGGHRd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jul 2023 02:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57430 "EHLO
+        Fri, 7 Jul 2023 03:17:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjGGGCC (ORCPT
+        with ESMTP id S229661AbjGGHRc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jul 2023 02:02:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E331FC7
-        for <kernel-janitors@vger.kernel.org>; Thu,  6 Jul 2023 23:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688709677;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RW78yBHBVifbb508B+Nr2a052QJ90AYozIpUCk7W+5k=;
-        b=h/pPUifHA8YNjYuQK9/zWHXrUBZNMXAX2/2iAOfqQBS4Wdwgq/DFbVxjTheXTo9iFlqHLf
-        pAxpmGXcRiYWM/32m9VJYWFNw2s20qqHzLkBSVW7mkfvxhGYNzp/YuwhdUmfHjgrKXEEUZ
-        aQg8vX2zhdsbIhaelrKjipgf29yQKdo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-62-L8ycMmuaOm6Y_LdlEWrHkA-1; Fri, 07 Jul 2023 02:01:11 -0400
-X-MC-Unique: L8ycMmuaOm6Y_LdlEWrHkA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F6E7803B25;
-        Fri,  7 Jul 2023 06:01:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B2F484087C6B;
-        Fri,  7 Jul 2023 06:01:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <c5e34c6a-da1e-4585-98c4-14701b0e093e@moroto.mountain>
-References: <c5e34c6a-da1e-4585-98c4-14701b0e093e@moroto.mountain>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KEYS: asymmetric: Fix error codes
+        Fri, 7 Jul 2023 03:17:32 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F6D1FCE
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 00:17:30 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-31441bc0092so1463028f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jul 2023 00:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688714249; x=1691306249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpiunWH0TGWOiDXNc+28X9o/pnnF1RJUOQGrH8xZP3Y=;
+        b=NdXzzH6heIdj9gyk+DA+JgVniBoWYUzhU9TzlHI0wvj5X7NrSIfTwZ+eaTuASySwye
+         g4SD7s8KURAdKXuc0TY9vlgHUS+gx1NkWBsz9KP6z8eMirbLn9r4bRTw84vmDLYACuQs
+         z3eKV3qBQa5ynVNjE3zOVp4MSfhGJvyUyodm9xKVctm9YYLxkqxcJjtzBMJXzdga+znN
+         b3w1VBbs4c5UvpjYpte6msYz7GNyLP/MVTdGyJ9kA+e00sE3XohUk+l4I2DNYuZFjhwX
+         hM1xd+5RU4n1hx0hNhORTSWFXVls7w5oNCx+PRWZrJHrkOF8LBkxKQddQjw2Oahh4Ddt
+         HAug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688714249; x=1691306249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cpiunWH0TGWOiDXNc+28X9o/pnnF1RJUOQGrH8xZP3Y=;
+        b=EQT9+IjVLBQ+60GOQP8cR0XBZh8cHzsnB2xkG7eQ5e9RV3eOYfqWksaaLa9QjMfeoc
+         oXZwajCwCjoeWyIZu34oX0pDp8+vq5i0+hUELEz0EOTl5aSYWEtMVaf7ofbti3sTo6H4
+         OCDLk9FQfYLrCeFQQ9uxH65A6oukNWvvbPdX1KROz4lWg2SYL2mXwQq9nQk+WTbysdHr
+         LVxrHHoW2iR5rTVJITa9avKPdp2CrAoSKcnD5R1AXKzxNHbOgs/0vbP4X5oN1Pt9sMc/
+         CEDps2tq3P/0wNs7TtDEZagps+ipkSNjdXIEwrtNLof4WQu8Jw0eQNODywCWi1LR7Z3C
+         NFrQ==
+X-Gm-Message-State: ABy/qLawIFCDDGD8480OogTnXkbJYPPtzroLqlRgbz+3TgrLa7scjN+n
+        93nDDPpANwMfDCmRTCKFpSDuVw==
+X-Google-Smtp-Source: APBJJlHkni5uAtR65zxArYeN/0LK3zJBSDsUEDED74EZFi2KX7f4yl+A4hv8S3q/jiBH0vu6KAFijA==
+X-Received: by 2002:a5d:4809:0:b0:314:3ad6:2327 with SMTP id l9-20020a5d4809000000b003143ad62327mr3061651wrq.12.1688714249152;
+        Fri, 07 Jul 2023 00:17:29 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id g14-20020a5d554e000000b003143cdc5949sm3743300wrw.9.2023.07.07.00.17.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jul 2023 00:17:26 -0700 (PDT)
+Date:   Fri, 7 Jul 2023 10:17:23 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/sva: fix signedness bug in iommu_sva_alloc_pasid()
+Message-ID: <5e474464-34ee-414a-8eb3-b11e74540b14@kadam.mountain>
+References: <6b32095d-7491-4ebb-a850-12e96209eaaf@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2210839.1688709669.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 07 Jul 2023 07:01:09 +0100
-Message-ID: <2210840.1688709669@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b32095d-7491-4ebb-a850-12e96209eaaf@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Ping!
 
-> These error paths should return the appropriate error codes instead of
-> returning success.
-> =
+regards,
+dan carpenter
 
-> Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface without=
- scatterlists")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: David Howells <dhowells@redhat.com>
-
+On Thu, Apr 06, 2023 at 11:55:31AM +0300, Dan Carpenter wrote:
+> The ida_alloc_range() function returns negative error codes on error.
+> On success it returns values in the min to max range (inclusive).  It
+> never returns more then INT_MAX even if "max" is higher.  It never
+> returns values in the 0 to (min - 1) range.
+> 
+> The bug is that "min" is an unsigned int so negative error codes will
+> be promoted to high positive values errors treated as success.
+> 
+> Fixes: 1a14bf0fc7ed ("iommu/sva: Use GFP_KERNEL for pasid allocation")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/iommu/iommu-sva.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
+> index c4ab3c457fbc..6e4f1ba1c148 100644
+> --- a/drivers/iommu/iommu-sva.c
+> +++ b/drivers/iommu/iommu-sva.c
+> @@ -33,8 +33,9 @@ static int iommu_sva_alloc_pasid(struct mm_struct *mm, ioasid_t min, ioasid_t ma
+>  	}
+>  
+>  	ret = ida_alloc_range(&iommu_global_pasid_ida, min, max, GFP_KERNEL);
+> -	if (ret < min)
+> +	if (ret < 0)
+>  		goto out;
+> +
+>  	mm->pasid = ret;
+>  	ret = 0;
+>  out:
+> -- 
+> 2.39.1
