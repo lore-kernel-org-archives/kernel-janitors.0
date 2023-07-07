@@ -2,89 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B61BEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 20:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73314EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 20:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232483AbjGGUC6 (ORCPT
+        id S232036AbjGGUDZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jul 2023 16:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
+        Fri, 7 Jul 2023 16:03:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232604AbjGGUCy (ORCPT
+        with ESMTP id S229515AbjGGUDY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jul 2023 16:02:54 -0400
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912A51FEE
-        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 13:02:53 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id HrfFqvZhDbalEHrfFq3piE; Fri, 07 Jul 2023 22:02:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688760171;
-        bh=WHBxp/DNnVvolpj0sacEs6o3uNv+OMzOoI0vJ6ekVxw=;
-        h=From:To:Cc:Subject:Date;
-        b=pfhl6ISeEJ4F6M+X25JNYSbHnXQA1ZqdfIrYrYIdUtT+YmcU6iCxvqx1J5lqkTdLq
-         jgFMrnXO+fMHqbbV2Hi/kfTMODwxqc28ZVo4HbJDTtguHsW/hObCTsmmp/mtfTLDUK
-         ZYzvpTTJywpWaycwzPTuUP4thj4G1odrAYTmjjQndkxyPMpMCMyw2WRvdVJgsx0HdN
-         8wcYYedcqQ4X0G996VmhE6QV4HlmJ9Sp8aH79cLrm18ecSWyTd6qYEgQGi0FfM3WBp
-         ZXan13RNN/W+Ayj/28/74p6V2vK6FfaVBZC/N57znawc5LQe1iaSw+q5z91QdplPN2
-         lxv2Ng7w9G2jw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 Jul 2023 22:02:51 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: imx: clk-gpr-mux: Simplify .determine_rate()
-Date:   Fri,  7 Jul 2023 22:02:48 +0200
-Message-Id: <ac8bd50c41b84f244bb0ec94e8aed25c513c9037.1688760152.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 7 Jul 2023 16:03:24 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8651FFE;
+        Fri,  7 Jul 2023 13:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=4l5M7cRNcF+51B7hcbH/mOb7nfZ7595fttU8Ngirums=; b=lKyf77A8SIucnXsLvV29lCMVga
+        +erHL0kpoq4uhvTYj9AKs+sTDZmUM7FRO3/fgRsAjEFFib+nqLUb/Bkc94md5J6M/cCwUu+nSsc7C
+        bk/RFwD1w9mSySvf1E3e3LHQH36JzRI5EgiDsxDcr8TMACm2KFjoQfMlybx5oWGHJb5ZWFAHrir4m
+        MuLONcaTgZoHH4fnQ3Lb7a31FtMZX+7DYZsV6GkbS9VAXfoBq29Wl0E1NoG1+Beaa3QDLf9yfW/Hn
+        Nc/yby9d/7GnwsjGTFAgIbbhhGUC91oZVm91KFDKF9NYyM8K9NzqCt8Djp6zotUBFU8Y7hwHSo5G4
+        /0SCLz3w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qHrfe-00CJpB-Rp; Fri, 07 Jul 2023 20:03:14 +0000
+Date:   Fri, 7 Jul 2023 21:03:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Greg Thelen <gthelen@google.com>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michel Lespinasse <michel@lespinasse.org>,
+        Pasha Tatashin <tatashin@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        Punit Agrawal <punit.agrawal@bytedance.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 1/2] mm: lock a vma before stack expansion
+Message-ID: <ZKhvgm6geUvLPQKk@casper.infradead.org>
+References: <20230707043211.3682710-1-surenb@google.com>
+ <e26c40f7-0329-c223-2544-503c64123f5a@web.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e26c40f7-0329-c223-2544-503c64123f5a@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-imx_clk_gpr_mux_determine_rate() is the same as __clk_mux_determine_rate(),
-so use the latter to save some LoC.
+On Fri, Jul 07, 2023 at 10:00:42PM +0200, Markus Elfring wrote:
+> …
+> > write-locked to prevent page faults into the VMA being expanded. Add
+> > the necessary locking.
+> 
+> 1. Would it a bit nicer to put the second sentence on a separate line
+>    in such a change description?
+> 
+> 2. I noticed that you put the address “stable@vger.kernel.org”
+>    into the message field “Cc”.
+>    Would you like to specify such a hint as a tag?
+> 
+>    See also:
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4#n264
+> 
+> 3. How do you think about to add the tag “Fixes”?
+> 
+> 4. Will a cover letter become helpful also for the presented small patch series?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/imx/clk-gpr-mux.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-gpr-mux.c b/drivers/clk/imx/clk-gpr-mux.c
-index 0b5a97698b47..0e14b61cba84 100644
---- a/drivers/clk/imx/clk-gpr-mux.c
-+++ b/drivers/clk/imx/clk-gpr-mux.c
-@@ -65,16 +65,10 @@ static int imx_clk_gpr_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return regmap_update_bits(priv->regmap, priv->reg, priv->mask, val);
- }
- 
--static int imx_clk_gpr_mux_determine_rate(struct clk_hw *hw,
--					 struct clk_rate_request *req)
--{
--	return clk_mux_determine_rate_flags(hw, req, 0);
--}
--
- static const struct clk_ops imx_clk_gpr_mux_ops = {
- 	.get_parent = imx_clk_gpr_mux_get_parent,
- 	.set_parent = imx_clk_gpr_mux_set_parent,
--	.determine_rate = imx_clk_gpr_mux_determine_rate,
-+	.determine_rate = __clk_mux_determine_rate,
- };
- 
- struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
--- 
-2.34.1
-
+Markus, your nitpicking is not useful.  Please stop.
