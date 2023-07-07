@@ -2,88 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2C1C001B0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 20:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32117C001B0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jul 2023 20:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232523AbjGGUGg (ORCPT
+        id S232566AbjGGUIo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jul 2023 16:06:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41826 "EHLO
+        Fri, 7 Jul 2023 16:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232036AbjGGUGf (ORCPT
+        with ESMTP id S232406AbjGGUIn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jul 2023 16:06:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E81BFE
-        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 13:06:33 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id HrioqFRE4feeSHrioqfk6G; Fri, 07 Jul 2023 22:06:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688760391;
-        bh=NNP4iq0IL2DpVEo7mW+DHCzkYdUL71H8TAMN9x7jU5Y=;
-        h=From:To:Cc:Subject:Date;
-        b=qxKDn1rd6aRJntv6HEybP95UQQBUkoBRs3iYH63Tb/bqRsbmkhMY3DuIs7ihp/fYV
-         LReyOPV1nl4Fos2uTIwXc6P9DwQ+mFRa9IsfNGY+kY3Cbitk+1LSNZZxph7mP6VKkG
-         0Yt1IxbEPqIJZ76+naNI55mNwrGeJl25YfnKnoRf0JUQ03dER75D/FX2SMwmBUGwth
-         WKcEKGP13mHGDmgU/u5b/VZwxljnKm8KSLgwGuObCniun8L/i2RH/pfl7cpUXyfyH/
-         NKkLfi/PwjaNge1f0Yf7mspm3yBMfmdJc++fI7JzLlztxb/ThdE4xsZx32CNH09Nrh
-         8w9dwD5L4hKYA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 Jul 2023 22:06:31 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: renesas: rzg2l: Simplify .determine_rate()
-Date:   Fri,  7 Jul 2023 22:06:27 +0200
-Message-Id: <fed02e0325275df84e2d76f8c481e40e7023cbd9.1688760372.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 7 Jul 2023 16:08:43 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3923EDD
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 13:08:41 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-c5f98fc4237so2477857276.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jul 2023 13:08:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688760520; x=1691352520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CmHd/859/Bit4qucqZpPNnDSCbdMa8IL8SYbSrObhB0=;
+        b=4ZKOTCpj9xlgCXUEm8oB9fxPpMW4zNUE/1LcyAtNiug/QRRgWh4T+Iz1KBomOIRU/O
+         M6flWXHwnMBjPzj/2Uhhz2BIwVcH4eJN4AS6rSurgWMTk6aqExtdp/Vwvw6lZUOSSKMd
+         UWnwE/qXxMW3g1yX3ibp50dDsfQj47wFKl/hMbbgxSLKsQcdSld0N5W5ZOSmzKSrfaI8
+         lwYnzShPbga+2kujDZyJFveO/ePYfePz9w00ezFjkODhap/rSDvQlJ7n7lpVqMplkOYm
+         I6Ok4eNQwtFh4A0Gv9HtCPUtZDhVOqV0ESqXMSOooohHHVjJdixj+5LZ8YGeI5aj53K/
+         m2Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688760520; x=1691352520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CmHd/859/Bit4qucqZpPNnDSCbdMa8IL8SYbSrObhB0=;
+        b=cyEEN7pLpI5CO5FJ/eo6QeF4TpGuqf9vuvScXilYGP+AIpQS6xTe32o/WeTWney2VH
+         K89r5lJqK1olsa0szXHnDNrOMZwJypbLdS1WXd0Hh0Cu2ZlwoDBR90wfDOvpTkGlI3My
+         vSZwr3BS5B/tUDj/vUnwRopfsEIQDouIXhHUqbS8jYaLnXXR4kbW2bITiSdl6yjoukuC
+         JTHbVQE8FsAp3e6C/oxYsM55/TjMkSojwI/rja16t+advl7auxqP1LymDBjl2Hxzucvg
+         ISEcOg6XALapHYFHQ1Hef1komJtP0xvY0gUchEDXriMwTMWummMZwBAS8Jb0eHQ7eLkl
+         DX6g==
+X-Gm-Message-State: ABy/qLYj7H77u3Un60yV8O/UNSCA+VKyCU6xughkYIEc55rdBU9venH0
+        bF2XPuPVNbU8ZeGoej452GIZTCPCRyOLH4m2hs5cyw==
+X-Google-Smtp-Source: APBJJlHLv8Tex0uCUJHNjt+PuWIzMenl4+5t76ArY9ljMJ8iMAkKtjBzDY5gKdUODpN4btNpDpQYQPxjx59FzqHs4ac=
+X-Received: by 2002:a25:641:0:b0:bcb:c3d6:2b1d with SMTP id
+ 62-20020a250641000000b00bcbc3d62b1dmr5298177ybg.34.1688760520258; Fri, 07 Jul
+ 2023 13:08:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230707043211.3682710-1-surenb@google.com> <e26c40f7-0329-c223-2544-503c64123f5a@web.de>
+ <ZKhvgm6geUvLPQKk@casper.infradead.org>
+In-Reply-To: <ZKhvgm6geUvLPQKk@casper.infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 7 Jul 2023 20:08:29 +0000
+Message-ID: <CAJuCfpFj_OWi=SRgUp=f3MAhb988fZL46oWKpL1jM15i91x5Yw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: lock a vma before stack expansion
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Markus Elfring <Markus.Elfring@web.de>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Greg Thelen <gthelen@google.com>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michel Lespinasse <michel@lespinasse.org>,
+        Pasha Tatashin <tatashin@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        Punit Agrawal <punit.agrawal@bytedance.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-rzg2l_cpg_sd_clk_mux_determine_rate() is the same as
-__clk_mux_determine_rate_closest(), so use the latter to save some LoC.
+On Fri, Jul 7, 2023 at 8:03=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Fri, Jul 07, 2023 at 10:00:42PM +0200, Markus Elfring wrote:
+> > =E2=80=A6
+> > > write-locked to prevent page faults into the VMA being expanded. Add
+> > > the necessary locking.
+> >
+> > 1. Would it a bit nicer to put the second sentence on a separate line
+> >    in such a change description?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/renesas/rzg2l-cpg.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Maybe. Will do if there is a need to post a v2.
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index bc623515ad84..255920c064d9 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -182,12 +182,6 @@ rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
- 	return clk_hw->clk;
- }
- 
--static int rzg2l_cpg_sd_clk_mux_determine_rate(struct clk_hw *hw,
--					       struct clk_rate_request *req)
--{
--	return clk_mux_determine_rate_flags(hw, req, CLK_MUX_ROUND_CLOSEST);
--}
--
- static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct sd_hw_data *hwdata = to_sd_hw_data(hw);
-@@ -250,7 +244,7 @@ static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
- }
- 
- static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
--	.determine_rate = rzg2l_cpg_sd_clk_mux_determine_rate,
-+	.determine_rate = __clk_mux_determine_rate_closest,
- 	.set_parent	= rzg2l_cpg_sd_clk_mux_set_parent,
- 	.get_parent	= rzg2l_cpg_sd_clk_mux_get_parent,
- };
--- 
-2.34.1
+> >
+> > 2. I noticed that you put the address =E2=80=9Cstable@vger.kernel.org=
+=E2=80=9D
+> >    into the message field =E2=80=9CCc=E2=80=9D.
+> >    Would you like to specify such a hint as a tag?
+> >
+> >    See also:
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/Documentation/process/submitting-patches.rst?h=3Dv6.4#n264
 
+Yeah, I always forget that :(
+
+> >
+> > 3. How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
+
+I thought about it but was not sure which patch I should list under
+such tag because the rules for stack expansion changed recently.
+
+> >
+> > 4. Will a cover letter become helpful also for the presented small patc=
+h series?
+
+Not much to say other than "add some missing locking" :)
+
+>
+> Markus, your nitpicking is not useful.  Please stop.
+
+I'll fix the nits, at least the ones I can, if there is a need for v2.
