@@ -2,46 +2,52 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43363EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 05:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADFBEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 06:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229969AbjGHFwj (ORCPT
+        id S231245AbjGHGF6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Jul 2023 01:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48732 "EHLO
+        Sat, 8 Jul 2023 02:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjGHFwi (ORCPT
+        with ESMTP id S229496AbjGHGF4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Jul 2023 01:52:38 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D96A7
-        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 22:52:36 -0700 (PDT)
+        Sat, 8 Jul 2023 02:05:56 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC00911B
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 23:05:55 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id I0rxqTlyvRB5SI0rxquFMX; Sat, 08 Jul 2023 07:52:34 +0200
+        id I14oqFw01JGUmI14oqAyUU; Sat, 08 Jul 2023 08:05:53 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688795554;
-        bh=EGyCQ+d+OCqRwxDpLY5KNbRs5E578htE1W8st+IJ468=;
+        s=t20230301; t=1688796353;
+        bh=3Y7Axqsz6Qm1534LmlCmTjhnVQQHJy6kg1MSVPN3Gt0=;
         h=From:To:Cc:Subject:Date;
-        b=Dui6EM4NFd593PWVsaO0qpmZ9aFC5da/oWzPekGtAcOsAuhiR0ldfmxWXbDN9oQ8O
-         WKT15IGBP4I8q7bYNfiCn9ro0y1zyKrY2gQu4dHQmtq1izRrYuHIu8PGmmMRq4lN9M
-         1FlydBmKeggC44TLVoUj5Tl2PSA5x4/tlp54ruLRdDpvg6FDdnfj/O+S9kZHxpUg5Q
-         XtqVuez2vfFnllirHeczZeVwubOkiDhzr/wBzzvjaTg1v7AuYTFA/GXTDfa1sDKf8i
-         PI+EiChH+RP9KNqqie1j+vlcQKP1gAl3S8UcixzTwIkWCvvtXiUC1Lsn+iayRMQ7Ml
-         8+Qqxy2uJS+Bg==
+        b=SmvEgK+EfvyIN44j7N+plKiYs52wGa/xK2upe/vDIpQXl1KiHLHSCLtCmKzNzznOV
+         JjwZezf4U/QdH2PBUWeHoN5fagBWQoH9Htx1FlHUPLlAOaq3KFaSks9XUEhKk8ltXm
+         Aq588PLl587hszhfw5iWkBuHXii106k2busbmNT5lMcOGl0cxuqm6L545ABCqOtouo
+         RQMjn1WC6Bsa9iJccZ3H71tWI2Fh3MwY8E6X/dqsUEGqrHJyLjY2IJuyL+b1rJu718
+         d8dr0Qb51usE5Ueo9jDRXUMjbCqVJOln6Js8LOzirpFEreqf3m0S3LAHo/QoC9Lw1V
+         9iMInGwQtD9PQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Jul 2023 07:52:34 +0200
+X-ME-Date: Sat, 08 Jul 2023 08:05:53 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH] hwmon: lan966x: Use the devm_clk_get_enabled() helper function
-Date:   Sat,  8 Jul 2023 07:52:31 +0200
-Message-Id: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v3] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
+Date:   Sat,  8 Jul 2023 08:05:35 +0200
+Message-Id: <208a15ce4e01973daf039ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,60 +55,75 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use the devm_clk_get_enabled() helper function instead of hand-writing it.
-It saves some line of codes.
+The devm_clk_get_enabled() helper:
+   - calls devm_clk_get()
+   - calls clk_prepare_enable() and registers what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
+
+This simplifies the code and avoids the need of a dedicated function used
+with devm_add_action_or_reset().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
 ---
- drivers/hwmon/lan966x-hwmon.c | 24 +-----------------------
- 1 file changed, 1 insertion(+), 23 deletions(-)
+Change in v3:
+  - Rebase with latest -next
 
-diff --git a/drivers/hwmon/lan966x-hwmon.c b/drivers/hwmon/lan966x-hwmon.c
-index f8658359a098..7247c03e4f44 100644
---- a/drivers/hwmon/lan966x-hwmon.c
-+++ b/drivers/hwmon/lan966x-hwmon.c
-@@ -334,24 +334,6 @@ static struct regmap *lan966x_init_regmap(struct platform_device *pdev,
- 	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_config);
+Change in v2:
+  - Convert to dev_err_probe()    [Andrzej Hajda]
+  - Update the error message    [Andrzej Hajda]
+  - Add R-b tag    [Andrzej Hajda]
+https://lore.kernel.org/all/208546ce4e01973da1eb9ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr/
+
+v1:
+https://lore.kernel.org/all/4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/gpu/drm/bridge/tc358767.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 2a58eb271f70..99f3d5ca7257 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -2215,13 +2215,6 @@ static int tc_probe_bridge_endpoint(struct tc_data *tc)
+ 	return -EINVAL;
  }
  
--static void lan966x_clk_disable(void *data)
+-static void tc_clk_disable(void *data)
 -{
--	struct lan966x_hwmon *hwmon = data;
+-	struct clk *refclk = data;
 -
--	clk_disable_unprepare(hwmon->clk);
+-	clk_disable_unprepare(refclk);
 -}
 -
--static int lan966x_clk_enable(struct device *dev, struct lan966x_hwmon *hwmon)
--{
--	int ret;
+ static int tc_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -2238,20 +2231,10 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (ret)
+ 		return ret;
+ 
+-	tc->refclk = devm_clk_get(dev, "ref");
+-	if (IS_ERR(tc->refclk)) {
+-		ret = PTR_ERR(tc->refclk);
+-		dev_err(dev, "Failed to get refclk: %d\n", ret);
+-		return ret;
+-	}
 -
--	ret = clk_prepare_enable(hwmon->clk);
+-	ret = clk_prepare_enable(tc->refclk);
 -	if (ret)
 -		return ret;
 -
--	return devm_add_action_or_reset(dev, lan966x_clk_disable, hwmon);
--}
--
- static int lan966x_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -363,15 +345,11 @@ static int lan966x_hwmon_probe(struct platform_device *pdev)
- 	if (!hwmon)
- 		return -ENOMEM;
- 
--	hwmon->clk = devm_clk_get(dev, NULL);
-+	hwmon->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(hwmon->clk))
- 		return dev_err_probe(dev, PTR_ERR(hwmon->clk),
- 				     "failed to get clock\n");
- 
--	ret = lan966x_clk_enable(dev, hwmon);
+-	ret = devm_add_action_or_reset(dev, tc_clk_disable, tc->refclk);
 -	if (ret)
--		return dev_err_probe(dev, ret, "failed to enable clock\n");
--
- 	hwmon->clk_rate = clk_get_rate(hwmon->clk);
+-		return ret;
++	tc->refclk = devm_clk_get_enabled(dev, "ref");
++	if (IS_ERR(tc->refclk))
++		return dev_err_probe(dev, PTR_ERR(tc->refclk),
++				     "Failed to get and enable the ref clk\n");
  
- 	hwmon->regmap_pvt = lan966x_init_regmap(pdev, "pvt");
+ 	/* tRSTW = 100 cycles , at 13 MHz that is ~7.69 us */
+ 	usleep_range(10, 15);
 -- 
 2.34.1
 
