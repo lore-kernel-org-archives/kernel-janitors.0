@@ -2,99 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBDBEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 05:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43363EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 05:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjGHFGW (ORCPT
+        id S229969AbjGHFwj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Jul 2023 01:06:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
+        Sat, 8 Jul 2023 01:52:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjGHFGV (ORCPT
+        with ESMTP id S229462AbjGHFwi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Jul 2023 01:06:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFC38E;
-        Fri,  7 Jul 2023 22:06:19 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3685391D020626;
-        Sat, 8 Jul 2023 05:06:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=ih2L8O3sAuVewyL8Xtb1p4OvDu4fjKOPnt0XPOKayMk=;
- b=ncOQpiEx1Tasxn6I4vrMAlYP9s70ktx/Wdt0kCmv3BysCYk+mLNn7lak/Yk0aWB/BR+g
- FaVyHRv8jj1PfreAf2RuWDx/xT00Bx6oAyrWsvhX/ITg+ZyJ7D2IYhUIn1qHHlGoEQN8
- lBRXnN5wnFpDEiL7lJXE3Ba/BQv1YEbdfiIGKcDY24ibpiMXKLwsrvpPZitizDfe6rcd
- JwtNStxH75FLVRL8YFlAPDSeY4qQ3j8kTYzHX/nVeWOmYkJLQajCQ35Gozg/lXvKlTrS
- 8HbvakhYsDTYXSsf1B4rgFeLnYS8xAwkHR1odR4VnWxD6J0QYKquWwVn8QSgg4JY7a4m bQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rpy4rr46e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 08 Jul 2023 05:06:10 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 368569Qk001615
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 8 Jul 2023 05:06:09 GMT
-Received: from [10.50.31.106] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 7 Jul
- 2023 22:06:06 -0700
-Message-ID: <1d43bc35-1342-0863-069c-252352f8ae6b@quicinc.com>
-Date:   Sat, 8 Jul 2023 10:36:03 +0530
+        Sat, 8 Jul 2023 01:52:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D96A7
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 22:52:36 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id I0rxqTlyvRB5SI0rxquFMX; Sat, 08 Jul 2023 07:52:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1688795554;
+        bh=EGyCQ+d+OCqRwxDpLY5KNbRs5E578htE1W8st+IJ468=;
+        h=From:To:Cc:Subject:Date;
+        b=Dui6EM4NFd593PWVsaO0qpmZ9aFC5da/oWzPekGtAcOsAuhiR0ldfmxWXbDN9oQ8O
+         WKT15IGBP4I8q7bYNfiCn9ro0y1zyKrY2gQu4dHQmtq1izRrYuHIu8PGmmMRq4lN9M
+         1FlydBmKeggC44TLVoUj5Tl2PSA5x4/tlp54ruLRdDpvg6FDdnfj/O+S9kZHxpUg5Q
+         XtqVuez2vfFnllirHeczZeVwubOkiDhzr/wBzzvjaTg1v7AuYTFA/GXTDfa1sDKf8i
+         PI+EiChH+RP9KNqqie1j+vlcQKP1gAl3S8UcixzTwIkWCvvtXiUC1Lsn+iayRMQ7Ml
+         8+Qqxy2uJS+Bg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 08 Jul 2023 07:52:34 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: lan966x: Use the devm_clk_get_enabled() helper function
+Date:   Sat,  8 Jul 2023 07:52:31 +0200
+Message-Id: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 3/5] accel/qaic: Add consistent integer overflow checks
-Content-Language: en-US
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <a914d7ed-f7ef-45b5-9bca-dcc014b700eb@moroto.mountain>
- <09c6589c-2af2-f06a-a2a2-a0658ad31de4@quicinc.com>
-From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
-In-Reply-To: <09c6589c-2af2-f06a-a2a2-a0658ad31de4@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: K8p9jd-xWFWxGc3jW3D3g4kmOKif3HRL
-X-Proofpoint-GUID: K8p9jd-xWFWxGc3jW3D3g4kmOKif3HRL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-08_02,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 impostorscore=0 adultscore=0 mlxlogscore=895 spamscore=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2307080045
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Use the devm_clk_get_enabled() helper function instead of hand-writing it.
+It saves some line of codes.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/lan966x-hwmon.c | 24 +-----------------------
+ 1 file changed, 1 insertion(+), 23 deletions(-)
 
-On 7/8/2023 12:21 AM, Jeffrey Hugo wrote:
-> On 6/21/2023 1:22 AM, Dan Carpenter wrote:
->> The encode_dma() function has integer overflow checks.  The
->> encode_passthrough(), encode_activate() and encode_status() functions
->> did not.  I added integer overflow checking everywhere.  I also
->> updated the integer overflow checking in encode_dma() to use size_add()
->> so everything is consistent.
->>
->> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+diff --git a/drivers/hwmon/lan966x-hwmon.c b/drivers/hwmon/lan966x-hwmon.c
+index f8658359a098..7247c03e4f44 100644
+--- a/drivers/hwmon/lan966x-hwmon.c
++++ b/drivers/hwmon/lan966x-hwmon.c
+@@ -334,24 +334,6 @@ static struct regmap *lan966x_init_regmap(struct platform_device *pdev,
+ 	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_config);
+ }
+ 
+-static void lan966x_clk_disable(void *data)
+-{
+-	struct lan966x_hwmon *hwmon = data;
+-
+-	clk_disable_unprepare(hwmon->clk);
+-}
+-
+-static int lan966x_clk_enable(struct device *dev, struct lan966x_hwmon *hwmon)
+-{
+-	int ret;
+-
+-	ret = clk_prepare_enable(hwmon->clk);
+-	if (ret)
+-		return ret;
+-
+-	return devm_add_action_or_reset(dev, lan966x_clk_disable, hwmon);
+-}
+-
+ static int lan966x_hwmon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -363,15 +345,11 @@ static int lan966x_hwmon_probe(struct platform_device *pdev)
+ 	if (!hwmon)
+ 		return -ENOMEM;
+ 
+-	hwmon->clk = devm_clk_get(dev, NULL);
++	hwmon->clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(hwmon->clk))
+ 		return dev_err_probe(dev, PTR_ERR(hwmon->clk),
+ 				     "failed to get clock\n");
+ 
+-	ret = lan966x_clk_enable(dev, hwmon);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "failed to enable clock\n");
+-
+ 	hwmon->clk_rate = clk_get_rate(hwmon->clk);
+ 
+ 	hwmon->regmap_pvt = lan966x_init_regmap(pdev, "pvt");
+-- 
+2.34.1
 
-Looks good to me. Just the #include <overflow.h> as Jeff suggested.
-
-Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
