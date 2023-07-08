@@ -2,128 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADFBEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 06:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8211FEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 06:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231245AbjGHGF6 (ORCPT
+        id S230098AbjGHGS0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Jul 2023 02:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50464 "EHLO
+        Sat, 8 Jul 2023 02:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjGHGF4 (ORCPT
+        with ESMTP id S229658AbjGHGSY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Jul 2023 02:05:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC00911B
-        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 23:05:55 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id I14oqFw01JGUmI14oqAyUU; Sat, 08 Jul 2023 08:05:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688796353;
-        bh=3Y7Axqsz6Qm1534LmlCmTjhnVQQHJy6kg1MSVPN3Gt0=;
-        h=From:To:Cc:Subject:Date;
-        b=SmvEgK+EfvyIN44j7N+plKiYs52wGa/xK2upe/vDIpQXl1KiHLHSCLtCmKzNzznOV
-         JjwZezf4U/QdH2PBUWeHoN5fagBWQoH9Htx1FlHUPLlAOaq3KFaSks9XUEhKk8ltXm
-         Aq588PLl587hszhfw5iWkBuHXii106k2busbmNT5lMcOGl0cxuqm6L545ABCqOtouo
-         RQMjn1WC6Bsa9iJccZ3H71tWI2Fh3MwY8E6X/dqsUEGqrHJyLjY2IJuyL+b1rJu718
-         d8dr0Qb51usE5Ueo9jDRXUMjbCqVJOln6Js8LOzirpFEreqf3m0S3LAHo/QoC9Lw1V
-         9iMInGwQtD9PQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Jul 2023 08:05:53 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v3] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
-Date:   Sat,  8 Jul 2023 08:05:35 +0200
-Message-Id: <208a15ce4e01973daf039ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 8 Jul 2023 02:18:24 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52C91FD7
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 Jul 2023 23:18:23 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-579ef51428eso34666107b3.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jul 2023 23:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688797103; x=1691389103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+MAxk2PgUZVgl0dal721qm8ALQS71HLK1RtEb8u+Uwo=;
+        b=cqyYfDxLdjqJtLxZvV2GbMizhmrYthTgcuhRwhBgYix/yKS0ibfzGvoJRBMohHf1CU
+         D4lflKWn7pSexpHeftC0T1/XOT3aiEyOsA1O3sr0GIVqSZ//yR6dw4pAzp3/Z6Xakxy4
+         vJWHlVelLKCKW71lwRU8+VRQA0YOVGyNyNY1D6ytfKXU2NefWlzXpTLPgZHte2JgjtpK
+         wOcHmIFBYW2j2yRIMoclCzweTy2z4eWaWU6OPw16559dwTqsRYwV9l+pwsFZ+z2hbgZO
+         zGuJ60uSWUm9zc9+Zl5v+qXcOdVaNZbmCBpgt4zzqgoMpPvzb8S71wdDUG9EqYYpGu5x
+         w7lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688797103; x=1691389103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+MAxk2PgUZVgl0dal721qm8ALQS71HLK1RtEb8u+Uwo=;
+        b=JwE49qDZQYVk8EYO7aUhTOHUQn0SPt1XQfKYV7nIG1yC442jzZymj1JoDDY9Eyb4Uy
+         b+wVuOhrLXXcd7UTlGSYL29UqoQyt/GrqyD8TALWmhNxelAASOA7ZHvS4qq92tuY4fsj
+         5vaqJ1sdVbxxjNwdvzgdZsUUO7gPqmKhIOaqKVOlTP4zPOWENyKsC//jbDXLAxiTD7hi
+         KvITWOkvCsI3tpQhSrD1qTHEH/IlxSov8+k1DW5pLwAOutEz2O6RqAaRP0d4thgflewT
+         JkZUGtgGL4nBfUoP6GFeFyCV498QBns3mQwM6wh7XxsE7iEXWrUt/P4cWLo14dbtmTvF
+         YpHA==
+X-Gm-Message-State: ABy/qLaSm+AcwUli+AFhaLooad7xXdx32Bux2zMI+5D9HB3cIYwhLvO+
+        y5JvtKslvOqUH0vMrZJhuPXvDYnKphtK+TvkIdKjhA==
+X-Google-Smtp-Source: APBJJlFPq7Gtkf1gegzIupdC1wtY0Z5UlJDkgN+ZBldyqD1P0gGQGWfsqFjAKdHb/f9sYflKNoiN4sM3WnrlT93J3nM=
+X-Received: by 2002:a0d:e884:0:b0:56f:ff55:2b7d with SMTP id
+ r126-20020a0de884000000b0056fff552b7dmr9312228ywe.17.1688797102896; Fri, 07
+ Jul 2023 23:18:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230707043211.3682710-1-surenb@google.com> <e26c40f7-0329-c223-2544-503c64123f5a@web.de>
+ <ZKhvgm6geUvLPQKk@casper.infradead.org> <CAJuCfpFj_OWi=SRgUp=f3MAhb988fZL46oWKpL1jM15i91x5Yw@mail.gmail.com>
+ <b16b3a2c-4b91-de56-66b8-2f69cca6bb00@web.de>
+In-Reply-To: <b16b3a2c-4b91-de56-66b8-2f69cca6bb00@web.de>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 7 Jul 2023 23:18:11 -0700
+Message-ID: <CAJuCfpEX8tXMKd7BKu7JOxhSfgeVnaerJ2db6PqfrScG5cUwig@mail.gmail.com>
+Subject: Re: [1/2] mm: lock a vma before stack expansion
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Greg Thelen <gthelen@google.com>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michel Lespinasse <michel@lespinasse.org>,
+        Pasha Tatashin <tatashin@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        Punit Agrawal <punit.agrawal@bytedance.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_clk_get_enabled() helper:
-   - calls devm_clk_get()
-   - calls clk_prepare_enable() and registers what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
+On Fri, Jul 7, 2023 at 10:55=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> =E2=80=A6
+> >> Markus, your nitpicking is not useful.  Please stop.
+> >
+> > I'll fix the nits, at least the ones I can, if there is a need for v2.
+>
+> Thanks for such a constructive feedback.
+>
+> Would you like to take any further information better into account
+> for subsequent patch variants?
 
-This simplifies the code and avoids the need of a dedicated function used
-with devm_add_action_or_reset().
+All feedback is appreciated. The comments you provided so far seem to
+be nice-to-haves but not critical enough to post a new version of the
+patch IMHO. If something more substantial is found that requires a new
+version then I'll address your feedback there as well.
+Thanks,
+Suren.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
----
-Change in v3:
-  - Rebase with latest -next
-
-Change in v2:
-  - Convert to dev_err_probe()    [Andrzej Hajda]
-  - Update the error message    [Andrzej Hajda]
-  - Add R-b tag    [Andrzej Hajda]
-https://lore.kernel.org/all/208546ce4e01973da1eb9ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr/
-
-v1:
-https://lore.kernel.org/all/4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr/
----
- drivers/gpu/drm/bridge/tc358767.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 2a58eb271f70..99f3d5ca7257 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -2215,13 +2215,6 @@ static int tc_probe_bridge_endpoint(struct tc_data *tc)
- 	return -EINVAL;
- }
- 
--static void tc_clk_disable(void *data)
--{
--	struct clk *refclk = data;
--
--	clk_disable_unprepare(refclk);
--}
--
- static int tc_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -2238,20 +2231,10 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	if (ret)
- 		return ret;
- 
--	tc->refclk = devm_clk_get(dev, "ref");
--	if (IS_ERR(tc->refclk)) {
--		ret = PTR_ERR(tc->refclk);
--		dev_err(dev, "Failed to get refclk: %d\n", ret);
--		return ret;
--	}
--
--	ret = clk_prepare_enable(tc->refclk);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(dev, tc_clk_disable, tc->refclk);
--	if (ret)
--		return ret;
-+	tc->refclk = devm_clk_get_enabled(dev, "ref");
-+	if (IS_ERR(tc->refclk))
-+		return dev_err_probe(dev, PTR_ERR(tc->refclk),
-+				     "Failed to get and enable the ref clk\n");
- 
- 	/* tRSTW = 100 cycles , at 13 MHz that is ~7.69 us */
- 	usleep_range(10, 15);
--- 
-2.34.1
-
+>
+> Regards,
+> Markus
