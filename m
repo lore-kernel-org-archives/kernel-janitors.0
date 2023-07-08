@@ -2,78 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC25AEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 00:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF289EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jul 2023 04:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbjGHAEP (ORCPT
+        id S231280AbjGHEoZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jul 2023 20:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
+        Sat, 8 Jul 2023 00:44:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232698AbjGHAEO (ORCPT
+        with ESMTP id S229515AbjGHEoY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jul 2023 20:04:14 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6CC2130;
-        Fri,  7 Jul 2023 17:04:13 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1b8b318c5cfso16598735ad.1;
-        Fri, 07 Jul 2023 17:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688774652; x=1691366652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ztQCxeXoo5kQn8PZtji0Y2HWvCLcFtr33w03kp0/pcU=;
-        b=bWy5ZXuE2LJFeEB75Djpfv5aKY9zBdR+6+kVzokxYHQKsXGtdjHMND58jLk7b4EBsA
-         yzBgg7DLBzc36CsLP2Q6BEDRNeSYU+JylHvt+fAkjp0so/IgExLF9ljvIansMlW2+1nK
-         pm5BqLKmTAx99ygWpHvgpA4w1WCUgooVplHiKr4LDi5kSp2cNS7RmPmYVSBs6BzdwZCc
-         jCR4IsTpy1qifXG+Scxi4v2CvXNtUfwrkBf3T1QuvTUYdb84hyiz/7KyM+tc9ZDBxr/a
-         VV8qvj4M27O2bWpjSWOXPWBjQWPYEQrHnOVjyqK/jzOyqBUaCm1KkQrqUHV5OvgMLeLA
-         +AvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688774652; x=1691366652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztQCxeXoo5kQn8PZtji0Y2HWvCLcFtr33w03kp0/pcU=;
-        b=E0UcZAgPDaWahLC2a58zFN0Uah+c4LofE/Q8mm7kUIKdmCj+hGe4qGBePDrfqdnYrE
-         H6PtWiaI9Kkt3w08Hc85tcuPH3iFQDWeziggwd9J9DLH3S8gcVa8IGDFoHOuWR590Vsi
-         ezUecuCaoEH0sEXbHWwQPveWvnCBZ4XlnyPuEWiyM19Ptq77dPGzMAjrb07jJNy4itUB
-         AWR1d2pdyAB/lBGuLWLNNWR389Bs1bfs9YdMFtqeRt+qzVjzMzFsi8OHgJ2IlqUyEaca
-         Ig9akckoRThvffwhK0SW0uvIyiSageTLd74nAwz1f+t8zQX6RbC4oD6uHlI4x+mvqkgs
-         Qxmw==
-X-Gm-Message-State: ABy/qLZ9B7DrS7NNyLYqtIqCZNrpKzl3x1wLNKVAB4dVC3F5yWZVrYrT
-        fHOAswXtUJ0iuGUA3ojldGU=
-X-Google-Smtp-Source: APBJJlHSaoSuzGF1gnYxKelHVlYkL7IjsQpxui71O9OFVIw1A7CIFX88Xw2dH0O9qBxd+uHLJyyTfQ==
-X-Received: by 2002:a17:902:8bcb:b0:1b8:94f4:3e0 with SMTP id r11-20020a1709028bcb00b001b894f403e0mr6064083plo.14.1688774652594;
-        Fri, 07 Jul 2023 17:04:12 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:38de:2bd4:8f55:60cd])
-        by smtp.gmail.com with ESMTPSA id p8-20020a170902e74800b001adf6b21c77sm3785270plf.107.2023.07.07.17.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 17:04:12 -0700 (PDT)
-Date:   Fri, 7 Jul 2023 17:04:09 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Michael Hennerich <michael.hennerich@analog.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: adp5588-keys - Use devm_regulator_get_enable()
-Message-ID: <ZKin+ZxMgZnAtsq0@google.com>
-References: <af343b5b0d740cc9f8863264c30e3da4215721d7.1686985911.git.christophe.jaillet@wanadoo.fr>
+        Sat, 8 Jul 2023 00:44:24 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2504C1FE7;
+        Fri,  7 Jul 2023 21:44:23 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3684dLxu012290;
+        Sat, 8 Jul 2023 04:44:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=tVIAgFGK4lVMUAiCJ2lvzhu9Vc4syLxBdPtpoxw/260=;
+ b=V9s0LdX4XiU4X4u0khs93p+8CqdtY1pjylupmI7BvPg0Alv98cwODQn96ciYN36mL+Rg
+ jlG8pkgOwW/vTA4JbdvHafJ+SnJRZErexj4AZbqsx/JylbaUv2tYKaC3dXNVSnLdgv6m
+ qdf74paUSB1IofAcDBfrYx124Spr5ngkSDQYU+3uA6vR7OuTJxA4kCz6Xpqx+db6qPG2
+ +T8ash1c4NlwB9h5rBT9da6FbWTLyvv6R4uvLc0GI0F0JJShFJaAw+AMcRZGNeG1qH7a
+ mDK8rJwEcoMFgg6A5O9xMzPiFo01JkZlDR3DsRd8qeUWaMMI1tcmky8H+vGCA56S0Ex/ 4w== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rpyw1r299-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 08 Jul 2023 04:44:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3684iEVT006765
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 8 Jul 2023 04:44:14 GMT
+Received: from [10.50.31.106] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 7 Jul
+ 2023 21:44:10 -0700
+Message-ID: <b9114d9b-11f9-df2a-261e-05dc7db9c9f5@quicinc.com>
+Date:   Sat, 8 Jul 2023 10:14:07 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af343b5b0d740cc9f8863264c30e3da4215721d7.1686985911.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 5/5] accel/qaic: Fix a leak in map_user_pages()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <d04e5fc2-7b2b-4fb1-a9d7-17b55ecb9986@moroto.mountain>
+From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+In-Reply-To: <d04e5fc2-7b2b-4fb1-a9d7-17b55ecb9986@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c2GEzYOHuwGC_dL9vH0_atFoj4ZxSIV1
+X-Proofpoint-ORIG-GUID: c2GEzYOHuwGC_dL9vH0_atFoj4ZxSIV1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-08_02,2023-07-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1015 lowpriorityscore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307080041
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 09:12:03AM +0200, Christophe JAILLET wrote:
-> Use devm_regulator_get_enable() instead of hand writing it. It saves some
-> line of code.
+
+
+On 6/21/2023 12:52 PM, Dan Carpenter wrote:
+> If get_user_pages_fast() allocates some pages but not as many as we
+> wanted, then the current code leaks those pages.  Call put_page() on
+> the pages before returning.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/accel/qaic/qaic_control.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
+> index 03932197f1ac..7c3f9009617f 100644
+> --- a/drivers/accel/qaic/qaic_control.c
+> +++ b/drivers/accel/qaic/qaic_control.c
+> @@ -424,9 +424,12 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
+>   	}
+>   
+>   	ret = get_user_pages_fast(xfer_start_addr, nr_pages, 0, page_list);
+> -	if (ret < 0 || ret != nr_pages) {
+> -		ret = -EFAULT;
+> +	if (ret < 0)
+>   		goto free_page_list;
+> +	if (ret != nr_pages) {
+> +		nr_pages = ret;
+> +		ret = -EFAULT;
+> +		goto put_pages;
+>   	}
+>   
+>   	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
 
-Applied, thank you.
+Thank you for catching this :)
 
--- 
-Dmitry
+Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
