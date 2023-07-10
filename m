@@ -2,94 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06155EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 05:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15093EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 06:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbjGJFyr (ORCPT
+        id S230326AbjGJGIh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 01:54:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
+        Mon, 10 Jul 2023 02:08:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbjGJFyq (ORCPT
+        with ESMTP id S229701AbjGJGIg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 01:54:46 -0400
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FFAFF9
-        for <kernel-janitors@vger.kernel.org>; Sun,  9 Jul 2023 22:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1688968480;
-        bh=xTvL2e6wK/GytVnhPpEJaEjWTVzGVbzLIg6DXCg+z60=;
-        h=Subject:From:In-Reply-To:Date:Cc:References:To;
-        b=afon7JIs/qDQFU8XZ4c2Ac8bSmvvlOCfukwXbHHypjjhNXOyQKNSMMUtlnkFkjZyI
-         D+6GSwnvNuaNKEYLnr6e4S4RuhH+FXK5apKJStFEP//s+W7BmIaO4wVuyyN1GxsA7R
-         vBdRmTx+GXsK2R4X4cIkcMTxfFBEBTogJwXYuYdQ=
-Received: from smtpclient.apple ([240e:6b1:c0:120::b])
-        by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
-        id A51BB0C9; Mon, 10 Jul 2023 13:41:17 +0800
-X-QQ-mid: xmsmtpt1688967677tr407q0zf
-Message-ID: <tencent_BB4124566E846A2FB6ECC0F63C5A15BE5009@qq.com>
-X-QQ-XMAILINFO: M0msBj/q2J/mf9gFfHhbU6RzGy6V0ipaK3fxvRF8YcN2FLrRemnAU6zZD6Ph7G
-         qPj+awM0q9VUD8jNFc6VQQJP91IzHZXYMXmeEWjmDsIcL7TEDbc5YhwUKkiyIfRF13O4e3O0LGfo
-         FowAEwoHrBD6RQizdfLkSKCOpL3t+kAEviQB3GuiMp65a7Kfc/sdKOEnCFi9f1R3MVvBUkDAUtmL
-         9X6EDQ5a23LkZlw2eML8xsnzyjK7UKhonil2zQRuE3rRQPB1QKHtDHI/9TBwc48GUYUEcaAx9QCW
-         qvADUxrxEiTzl3kkiEhElKYnYKsDq1dVQCZIuvuQE2Upmm0xHkk7uBFE4/i4cobyiTDk/eW8PfOH
-         dkYpQJqffa42tXTgYeXedC0lHZsGwUa2Y8Ale6SXo7YzVKZqKAM4oMJV0ff6grzKZNAGgn8TU+zj
-         tYd+wxbNcq62/pph7jV8xS6zCTUTFaHPaKPP1LyvKviyWitSvxP4p5cCASIsh/XEZm0C6LwHsIPI
-         kli8t0/U0sCDQ/ZMh5b+W0OIiqCan2+9Y3ZhKUH2edbHwt5yK+BnL0L7sq+U4mudRx1zu7Pe/g0d
-         nYsw22CX4hVdLljHWQ5mMNQTBvgvWgj/eklPSXEFhnjIe0mkHmRBMMJOhpMmFb6GwhDV4dxiyBFJ
-         yBQ6MO2TQs76od7MotNzxpGbgpADcjqaHU5ICQz3i5wPuhVzd4aqDEjJO91/w5BeSSgehJCRJ6h2
-         w5tAAw3WFGDhEYzOsLCM0JM6/gLMALmQ+YSlFb3wTKPl5ApPD1ZEd/Y5jfktUOFVZr19I5bOe6Gt
-         9V5KOeQOaPUgcns2pcnYSfI8nziVQT6vUUdch0FApzjSQtbjyPjSgkxnItboR2gPapY5jqpgfnhk
-         9jelCszPXYZkb1/LI/PtRv81N13PTh1Q0LzNRVdUTj4+nlpL+9adsDL6cvHqzb7oPMWnaiC8v2SA
-         3PLa9R17XaPLpXr7Xmp9nMmEMJJ8zAu19G18H1XnRNL0T9et0vI1N07+q9r5ep
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
-Subject: Re: staging: ks7010: potential buffer overflow in
- ks_wlan_set_encode_ext()
-From:   Zhang Shurong <zhang_shurong@foxmail.com>
-In-Reply-To: <e24f9c2c-1163-631a-f8c0-b6dcb445a858@web.de>
-Date:   Mon, 10 Jul 2023 13:41:07 +0800
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <error27@gmail.com>,
-        Xu Panda <xu.panda@zte.com.cn>
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <BA41CA41-19D6-48ED-89CC-B7A575DC0040@foxmail.com>
-References: <tencent_5153B668C0283CAA15AA518325346E026A09@qq.com>
- <2a41ca22-a0eb-df38-be43-7175e1230bd0@web.de>
- <2023070919-monetary-sleet-2f5c@gregkh>
- <e24f9c2c-1163-631a-f8c0-b6dcb445a858@web.de>
+        Mon, 10 Jul 2023 02:08:36 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC71EFB;
+        Sun,  9 Jul 2023 23:08:35 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f122ff663eso6240678e87.2;
+        Sun, 09 Jul 2023 23:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688969314; x=1691561314;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from:sender
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NXia2U3SWywM/hgPSo6QNGfwgRNgV0ikhWDqRGHWyow=;
+        b=HKCxpGZnD2pgMSzpbNh8IquC6IK/Cs60+egpUYi+JkMiQE9ZL8uUawtO1FhUHTMCTM
+         kh/aR1gWDTUL77+cCgzKpna3F8uDKnXrALx7Gixrv8jOxSHZM5fnFTkjKUSWhgSuV7WG
+         CSbct344kxPAt2xJQdMUeiSgfmKGF4Y4htpY09KOD3bOBLnkZuQE+wPweeb4YpwgCd+k
+         w1SvQxA9hSXmf++bwvxDlIhJ2wg3Gx87uVLVT0TwSBytOZWc2NNyMQ2/HUChfWKmWaMI
+         w1VSv8JEfoPf4Hc8XCaJ4c/XVG6xG8pb9iijIUFuFteBnhN9vKjRNiv0E7EtrOCViET5
+         nZIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688969314; x=1691561314;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from:sender
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NXia2U3SWywM/hgPSo6QNGfwgRNgV0ikhWDqRGHWyow=;
+        b=YXpa5mub5uUIWHyXTZxgeEEaRe5Oa4apmTU16HR1oj0C3fA6iRG31LbmMP5VyrLxS6
+         8hGeJYvSQ5LWx8YgGggsNB/kn7XoE1YZ6Ikd2T0qXgYbHyF17zuKOXUt6jaieNzI/B1L
+         9p+xtyslICroCIgglsX6hp/h6+Jp4qE9hdcTw8UBsPX3xZFP2W7Xy0L1iyfhiGbIK2gW
+         ID/Co7wIR4FNq1O5Z2ogc4cnK7/wqm0teJxYWJTh3fuqmzS08n7RzM0RSn1+eexatimZ
+         Irr5GyVCqatbBStZzNJ8VjOUKxRZwSjlx+4XenC5PPwxRvgnAx3UatILAgEnTjv39c99
+         QYvw==
+X-Gm-Message-State: ABy/qLamoGsNx6rBWdxhmiicxUq25fXdWKUeS2KPslzoDW/dCCndCPqg
+        HwIpdJVlvBs5yebS2QZDJDZlbK/ISqN05bPwPys=
+X-Google-Smtp-Source: APBJJlE8XIYfjCdCDXPrHG6nw7Sgw5sSnfiFWvlGRkezdt73Fjqia4/P0t1EsaNJnFEs91knAXPndHjlDk95M+E/dNc=
+X-Received: by 2002:a05:6512:3d8e:b0:4f8:7568:e948 with SMTP id
+ k14-20020a0565123d8e00b004f87568e948mr10523457lfv.51.1688969313700; Sun, 09
+ Jul 2023 23:08:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <tencent_54C2A2746A83BA29EE92248CE9683F0C6509@qq.com> <f7fab4fc-a8db-d2f7-52e9-3522f7c298b8@web.de>
+In-Reply-To: <f7fab4fc-a8db-d2f7-52e9-3522f7c298b8@web.de>
+Sender: cl1ntlov3@gmail.com
+X-Google-Sender-Delegation: cl1ntlov3@gmail.com
+From:   linke li <lilinke99@gmail.com>
+Date:   Mon, 10 Jul 2023 14:08:22 +0800
+X-Google-Sender-Auth: Y3flxkSIwAbIAD5U_PVxyV6si1E
+Message-ID: <CAKdjhyAtxk21YR-wxZn5Ga_+3HuHfxuJX7_czLBw8tuJFmXgsg@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: Fix undefined behavior in PAGE_MASK calculation
 To:     Markus Elfring <Markus.Elfring@web.de>
-X-Mailer: Apple Mail (2.3731.600.7)
+Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linke Li <lilinke99@foxmail.com>,
+        =?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+> How do you think about a wording variant like the following?
 
-> 2023=E5=B9=B47=E6=9C=8810=E6=97=A5 03:56=EF=BC=8CMarkus Elfring =
-<Markus.Elfring@web.de> =E5=86=99=E9=81=93=EF=BC=9A
->=20
->>>> The "exc->key_len" is a u16 that comes from the user.  If it's over
->>>> IW_ENCODING_TOKEN_MAX (64) that could lead to memory corruption.
->>>=20
->>> Please choose an imperative change suggestion.
->>=20
->> Please stop reviewing staging patches, it is not helpful for anyone.
->=20
-> It seems that further contributors need to become more aware about
-> (and finally adhere to) requirements from the Linux development =
-documentation.
->=20
-> Regards,
-> Markus
+What you said is exactly what I want to express.
 
-I'm guilty of my incorrect patch format. And do I need to write another
-patch to fix this format issue?
+> Would you like to add the tag =E2=80=9CFixes=E2=80=9D?
 
-Best regards
-Shurong
+I agree with that.
 
+Thank you for your feedback and suggestion.
