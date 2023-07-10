@@ -2,87 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83B8EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 05:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06155EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 05:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbjGJFrL (ORCPT
+        id S229736AbjGJFyr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 01:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48814 "EHLO
+        Mon, 10 Jul 2023 01:54:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbjGJFrK (ORCPT
+        with ESMTP id S229553AbjGJFyq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 01:47:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D245F1;
-        Sun,  9 Jul 2023 22:47:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C629460E05;
-        Mon, 10 Jul 2023 05:47:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5146C433C8;
-        Mon, 10 Jul 2023 05:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1688968027;
-        bh=d8K4eM0jKwdKQA1s85MdlK6toxYLzAe2+LGYszPYOvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xxzPFNL9Xda0x+ebbSA6bXOUrCEBExZFFL3vWt/RQLkRX5SFmhMDakVNgm/CX3Apl
-         o+H6SD3aHGnknNqFaOV2GqU8LL5p4VhxIUQiFCp1wmrKhSLVJjvkk0kyK0LHdNs/+n
-         D1e0nTwQAj6OOYG3dpZ5jaB1mxoO8Z8flSVd9xZU=
-Date:   Mon, 10 Jul 2023 07:47:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Zhang Shurong <zhang_shurong@foxmail.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        Mon, 10 Jul 2023 01:54:46 -0400
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FFAFF9
+        for <kernel-janitors@vger.kernel.org>; Sun,  9 Jul 2023 22:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1688968480;
+        bh=xTvL2e6wK/GytVnhPpEJaEjWTVzGVbzLIg6DXCg+z60=;
+        h=Subject:From:In-Reply-To:Date:Cc:References:To;
+        b=afon7JIs/qDQFU8XZ4c2Ac8bSmvvlOCfukwXbHHypjjhNXOyQKNSMMUtlnkFkjZyI
+         D+6GSwnvNuaNKEYLnr6e4S4RuhH+FXK5apKJStFEP//s+W7BmIaO4wVuyyN1GxsA7R
+         vBdRmTx+GXsK2R4X4cIkcMTxfFBEBTogJwXYuYdQ=
+Received: from smtpclient.apple ([240e:6b1:c0:120::b])
+        by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+        id A51BB0C9; Mon, 10 Jul 2023 13:41:17 +0800
+X-QQ-mid: xmsmtpt1688967677tr407q0zf
+Message-ID: <tencent_BB4124566E846A2FB6ECC0F63C5A15BE5009@qq.com>
+X-QQ-XMAILINFO: M0msBj/q2J/mf9gFfHhbU6RzGy6V0ipaK3fxvRF8YcN2FLrRemnAU6zZD6Ph7G
+         qPj+awM0q9VUD8jNFc6VQQJP91IzHZXYMXmeEWjmDsIcL7TEDbc5YhwUKkiyIfRF13O4e3O0LGfo
+         FowAEwoHrBD6RQizdfLkSKCOpL3t+kAEviQB3GuiMp65a7Kfc/sdKOEnCFi9f1R3MVvBUkDAUtmL
+         9X6EDQ5a23LkZlw2eML8xsnzyjK7UKhonil2zQRuE3rRQPB1QKHtDHI/9TBwc48GUYUEcaAx9QCW
+         qvADUxrxEiTzl3kkiEhElKYnYKsDq1dVQCZIuvuQE2Upmm0xHkk7uBFE4/i4cobyiTDk/eW8PfOH
+         dkYpQJqffa42tXTgYeXedC0lHZsGwUa2Y8Ale6SXo7YzVKZqKAM4oMJV0ff6grzKZNAGgn8TU+zj
+         tYd+wxbNcq62/pph7jV8xS6zCTUTFaHPaKPP1LyvKviyWitSvxP4p5cCASIsh/XEZm0C6LwHsIPI
+         kli8t0/U0sCDQ/ZMh5b+W0OIiqCan2+9Y3ZhKUH2edbHwt5yK+BnL0L7sq+U4mudRx1zu7Pe/g0d
+         nYsw22CX4hVdLljHWQ5mMNQTBvgvWgj/eklPSXEFhnjIe0mkHmRBMMJOhpMmFb6GwhDV4dxiyBFJ
+         yBQ6MO2TQs76od7MotNzxpGbgpADcjqaHU5ICQz3i5wPuhVzd4aqDEjJO91/w5BeSSgehJCRJ6h2
+         w5tAAw3WFGDhEYzOsLCM0JM6/gLMALmQ+YSlFb3wTKPl5ApPD1ZEd/Y5jfktUOFVZr19I5bOe6Gt
+         9V5KOeQOaPUgcns2pcnYSfI8nziVQT6vUUdch0FApzjSQtbjyPjSgkxnItboR2gPapY5jqpgfnhk
+         9jelCszPXYZkb1/LI/PtRv81N13PTh1Q0LzNRVdUTj4+nlpL+9adsDL6cvHqzb7oPMWnaiC8v2SA
+         3PLa9R17XaPLpXr7Xmp9nMmEMJJ8zAu19G18H1XnRNL0T9et0vI1N07+q9r5ep
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
+Subject: Re: staging: ks7010: potential buffer overflow in
+ ks_wlan_set_encode_ext()
+From:   Zhang Shurong <zhang_shurong@foxmail.com>
+In-Reply-To: <e24f9c2c-1163-631a-f8c0-b6dcb445a858@web.de>
+Date:   Mon, 10 Jul 2023 13:41:07 +0800
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
         Dan Carpenter <error27@gmail.com>,
         Xu Panda <xu.panda@zte.com.cn>
-Subject: Re: staging: ks7010: potential buffer overflow in
- ks_wlan_set_encode_ext()
-Message-ID: <2023071056-amused-yam-5e29@gregkh>
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <BA41CA41-19D6-48ED-89CC-B7A575DC0040@foxmail.com>
 References: <tencent_5153B668C0283CAA15AA518325346E026A09@qq.com>
  <2a41ca22-a0eb-df38-be43-7175e1230bd0@web.de>
  <2023070919-monetary-sleet-2f5c@gregkh>
  <e24f9c2c-1163-631a-f8c0-b6dcb445a858@web.de>
- <tencent_BB4124566E846A2FB6ECC0F63C5A15BE5009@qq.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tencent_BB4124566E846A2FB6ECC0F63C5A15BE5009@qq.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+X-Mailer: Apple Mail (2.3731.600.7)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 01:41:07PM +0800, Zhang Shurong wrote:
-> Hi Markus,
-> 
-> > 2023年7月10日 03:56，Markus Elfring <Markus.Elfring@web.de> 写道：
-> > 
-> >>>> The "exc->key_len" is a u16 that comes from the user.  If it's over
-> >>>> IW_ENCODING_TOKEN_MAX (64) that could lead to memory corruption.
-> >>> 
-> >>> Please choose an imperative change suggestion.
-> >> 
-> >> Please stop reviewing staging patches, it is not helpful for anyone.
-> > 
-> > It seems that further contributors need to become more aware about
-> > (and finally adhere to) requirements from the Linux development documentation.
-> > 
-> > Regards,
-> > Markus
-> 
-> I'm guilty of my incorrect patch format. And do I need to write another
-> patch to fix this format issue?
+Hi Markus,
 
-One of the hardest things in kernel development is learning what
-reviews, and what reviewers, should be ignored.  This is one of them :)
+> 2023=E5=B9=B47=E6=9C=8810=E6=97=A5 03:56=EF=BC=8CMarkus Elfring =
+<Markus.Elfring@web.de> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+>>>> The "exc->key_len" is a u16 that comes from the user.  If it's over
+>>>> IW_ENCODING_TOKEN_MAX (64) that could lead to memory corruption.
+>>>=20
+>>> Please choose an imperative change suggestion.
+>>=20
+>> Please stop reviewing staging patches, it is not helpful for anyone.
+>=20
+> It seems that further contributors need to become more aware about
+> (and finally adhere to) requirements from the Linux development =
+documentation.
+>=20
+> Regards,
+> Markus
 
-No need to change the patch yet, let me get to this change this week and
-I'll let you know.
+I'm guilty of my incorrect patch format. And do I need to write another
+patch to fix this format issue?
 
-thanks,
+Best regards
+Shurong
 
-greg k-h
