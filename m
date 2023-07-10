@@ -2,65 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAB2EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 13:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3FDEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 16:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbjGJNaT (ORCPT
+        id S229948AbjGJQet (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 09:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
+        Mon, 10 Jul 2023 12:34:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229870AbjGJNaS (ORCPT
+        with ESMTP id S229732AbjGJQes (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:30:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF26C4;
-        Mon, 10 Jul 2023 06:30:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C5C760F55;
-        Mon, 10 Jul 2023 13:30:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA40C433C8;
-        Mon, 10 Jul 2023 13:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1688995816;
-        bh=fPtGNhRYmqCZsKEXFsgJHykQ1nGWwBfMuEqwsNgrA84=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dAAJFvFQF+uiP+FZRTMnYWv0aXjbbxP1TjpAEmH6i+JurN44KV2i2U2sfidXaqdQe
-         dbkrQSlpg3JESpaUsgtxNhAXe3kBMeXCq4wzP4vqOYR4JvjEpGtPajfUrkVrTG8n+K
-         JBTo+fAC7vGlUgL7/a5a2QQDTnYMllItKdKK7NQM=
-Date:   Mon, 10 Jul 2023 15:30:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>
-Subject: Re: [PATCH 2/2] serial: sprd: Fix DMA buffer leak issue
-Message-ID: <2023071047-dragster-shortly-981a@gregkh>
-References: <20230710080348.4137875-2-chunyan.zhang@unisoc.com>
- <69d56da8-9530-e729-d527-89879d2bab06@web.de>
+        Mon, 10 Jul 2023 12:34:48 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7DCC0;
+        Mon, 10 Jul 2023 09:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=jLGZ8Kt5cT2lpnt9z22M2igMnkaIHF8gwZa/YIMfnqM=; b=z2G0+8/GJfV/RuF2lZu7GATCK4
+        wsXBdaF4/3pPUB5Nyp+xNiYERioTgNDxfkSML5BjoZGDbndl5UpmdyepkYpVVN41wC/CEmLQaWSqv
+        9iPHY5Os1WStwXUKOwkoM6bweMfJ5F8Z6IpqdRJXdKjNKGsGZDFEeRCqMJKusLJ16LRM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1qItqK-000xlL-WE; Mon, 10 Jul 2023 18:34:33 +0200
+Date:   Mon, 10 Jul 2023 18:34:32 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Su Hui <suhui@nfschina.com>
+Cc:     qiang.zhao@nxp.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, wuych <yunchuan@nfschina.com>
+Subject: Re: [PATCH net-next v2 01/10] net: wan: Remove unnecessary (void*)
+ conversions
+Message-ID: <23e98085-8f07-4ee2-8487-8e3b439b69f4@lunn.ch>
+References: <20230710063933.172926-1-suhui@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69d56da8-9530-e729-d527-89879d2bab06@web.de>
+In-Reply-To: <20230710063933.172926-1-suhui@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 01:36:07PM +0200, Markus Elfring wrote:
-> > Release DMA buffer when _probe() returns fail to avoid memory leak.
+On Mon, Jul 10, 2023 at 02:39:33PM +0800, Su Hui wrote:
+> From: wuych <yunchuan@nfschina.com>
 > 
-> I would appreciate if this change description can be improved another bit.
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: wuych <yunchuan@nfschina.com>
+> ---
+>  drivers/net/wan/fsl_ucc_hdlc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+> index 47c2ad7a3e42..73c73d8f4bb2 100644
+> --- a/drivers/net/wan/fsl_ucc_hdlc.c
+> +++ b/drivers/net/wan/fsl_ucc_hdlc.c
+> @@ -350,11 +350,11 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
+>  static netdev_tx_t ucc_hdlc_tx(struct sk_buff *skb, struct net_device *dev)
+>  {
+>  	hdlc_device *hdlc = dev_to_hdlc(dev);
+> -	struct ucc_hdlc_private *priv = (struct ucc_hdlc_private *)hdlc->priv;
+> -	struct qe_bd *bd;
+> -	u16 bd_status;
+> +	struct ucc_hdlc_private *priv = hdlc->priv;
+>  	unsigned long flags;
+>  	__be16 *proto_head;
+> +	struct qe_bd *bd;
+> +	u16 bd_status;
 
-Again, I would appreciate it if you do not provide reviews for any
-kernel subsystems in which I am a maintainer of.
+When dealing with existing broken reverse Christmas tree, please don't
+make it worse with a change. But actually fixing it should be in a
+different patch.
 
-Please stop, it is not helpful at all.
+We want patches to be obviously correct. By removing the cast and
+moving variables around, it is less obvious it is correct, than having
+two patches.
 
-greg k-h
+       Andrew
