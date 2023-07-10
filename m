@@ -2,59 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B6AEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 12:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAB2EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 13:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjGJM53 (ORCPT
+        id S230214AbjGJNaT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 08:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
+        Mon, 10 Jul 2023 09:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjGJM52 (ORCPT
+        with ESMTP id S229870AbjGJNaS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 08:57:28 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74601C9;
-        Mon, 10 Jul 2023 05:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=zAdUESlNk5fFxjFObCoWuKOncSdiHBjIW11z46iYlUQ=; b=MlZ/IxeUDjRMI8Hmp0hS3O0/if
-        5A6uW01bp3rm2WTPzunre62vYGvFIPy7rDdCVekv/OTACVC+3/bR9mXhbA/i0dgn57PHybIpj1i/I
-        upo+EDf/YmF+9815vCHsUgjIpUq1JDGy/I2UeEYPw5l6Tvuv9IsIK2/4PAfUgTmGuUto=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qIqRu-000wmi-9n; Mon, 10 Jul 2023 14:57:06 +0200
-Date:   Mon, 10 Jul 2023 14:57:06 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        wuych <yunchuan@nfschina.com>
-Subject: Re: [PATCH net-next v2 08/10] net: mdio: Remove unnecessary (void*)
- conversions
-Message-ID: <d9133c35-7817-499e-ad6d-2d19ceb6492a@lunn.ch>
-References: <20230710064127.173818-1-suhui@nfschina.com>
+        Mon, 10 Jul 2023 09:30:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF26C4;
+        Mon, 10 Jul 2023 06:30:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C5C760F55;
+        Mon, 10 Jul 2023 13:30:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA40C433C8;
+        Mon, 10 Jul 2023 13:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1688995816;
+        bh=fPtGNhRYmqCZsKEXFsgJHykQ1nGWwBfMuEqwsNgrA84=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dAAJFvFQF+uiP+FZRTMnYWv0aXjbbxP1TjpAEmH6i+JurN44KV2i2U2sfidXaqdQe
+         dbkrQSlpg3JESpaUsgtxNhAXe3kBMeXCq4wzP4vqOYR4JvjEpGtPajfUrkVrTG8n+K
+         JBTo+fAC7vGlUgL7/a5a2QQDTnYMllItKdKK7NQM=
+Date:   Mon, 10 Jul 2023 15:30:13 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>
+Subject: Re: [PATCH 2/2] serial: sprd: Fix DMA buffer leak issue
+Message-ID: <2023071047-dragster-shortly-981a@gregkh>
+References: <20230710080348.4137875-2-chunyan.zhang@unisoc.com>
+ <69d56da8-9530-e729-d527-89879d2bab06@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230710064127.173818-1-suhui@nfschina.com>
+In-Reply-To: <69d56da8-9530-e729-d527-89879d2bab06@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 02:41:27PM +0800, Su Hui wrote:
-> From: wuych <yunchuan@nfschina.com>
+On Mon, Jul 10, 2023 at 01:36:07PM +0200, Markus Elfring wrote:
+> > Release DMA buffer when _probe() returns fail to avoid memory leak.
 > 
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: wuych <yunchuan@nfschina.com>
+> I would appreciate if this change description can be improved another bit.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Again, I would appreciate it if you do not provide reviews for any
+kernel subsystems in which I am a maintainer of.
 
-    Andrew
+Please stop, it is not helpful at all.
+
+greg k-h
