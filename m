@@ -2,41 +2,57 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A695EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 09:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC90EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 09:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230144AbjGJJ1a (ORCPT
+        id S232836AbjGJJgJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 05:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49090 "EHLO
+        Mon, 10 Jul 2023 05:36:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbjGJJ13 (ORCPT
+        with ESMTP id S232750AbjGJJfn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 05:27:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E770D12A
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 02:27:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A4DE60F07
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 09:27:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C24B0C433C8;
-        Mon, 10 Jul 2023 09:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688981239;
-        bh=xQNyVFBC31HkCbg/+SQYGUZhLM9dwcWPYmxf69oDP8M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VecK7Lek/Euqbbg2A15GsoEFrpymgNkEIJxBZHG8Pb1ltdGIP790hc+tCbdRYeIWk
-         z38ERn2nQ4b+qOURPPFIH/tBvD0ekqKYWQMW4vF0qa5x1slIG6MirzMawcwE583Ddi
-         peex8cW7iMoxzPEYvT5Ja4rbgK8Zd8e4WJTn9CyzUvgm8XOstNWORn+weGIpp5Ravj
-         njfSesVSpVyDV5buGaxRtmB1i6dKQ3NUHlZOFN3YLtPvPK/lYtyve9AQ7v+g1qKUR/
-         nbRkkAM6pxjeTDe1tI877rnoFdcdCIFWpG799hmqT9wJItK2+pdmZjOW2HAGqiu1/V
-         MKOyQlPrYWl4w==
-Date:   Mon, 10 Jul 2023 10:27:14 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
+        Mon, 10 Jul 2023 05:35:43 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A16E7F
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 02:34:26 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fc0aecf15bso16130105e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 02:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688981665; x=1691573665;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIkNJXrfeAXdU6LyOguKwi2Z7Ylg4KQ+PIrj1Vet5Bo=;
+        b=H3ctb6FEJbcH3zCNxTLZj1KJckXm68BTXHywjITt6N1wHwTBE8YWA1jawWv/shu6S+
+         NT9PuJTCLHSZ4+vWYdacAZi8xWpKhSNR8nxOlO+M2pf2ndY3OfkVMglR65alBcDFssaO
+         BEphrGjmuuhmHMpbP7I0ke1YXQZ8GXHGaGUbbLyiyq4JwAjp64FWvYlsYzBAt5/85FO2
+         eeYh0ME0af5rcPK4EYeLLIurICOtTgmFHS/I7PlZXjSTsjf+nC4OCIlW6b+YMkppuWAZ
+         gBxa7E/hHhC+3QCBrJdM1z26wCirTkBIL15YTp5yX2ICtrjgCIXCLGEKgbtbThZ2uxp5
+         lgCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688981665; x=1691573665;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DIkNJXrfeAXdU6LyOguKwi2Z7Ylg4KQ+PIrj1Vet5Bo=;
+        b=M8Zgz4ts7nl5Zsvw7J5VkApWWzfODCypHxpyJ9ne1jRJeookchLghcLe9hBaayFV6n
+         p6g3PUcSy/OqhNm7AkU7oaW+QRuMpJnMPKUFdjpPAUk3z34Nh2CmOsqM9pb3JDftRlLr
+         3lGYLeUAzl6mHtle3+qZDAa2kFJxqe7CcHD2HhezDcd/XMmdCKy/MpaIdOiyeNIEf/pq
+         YK3kjld8Fu3vHz2KAewQ1WX2hPwAeblKCS4Tkc/1gQwg0u9oW3DaNdk3+MHsaV0i35UL
+         6M8rDZxvyuW25zLSfv2BkSo6rE9mJYmBCUTC6Vrd6aY+VtfG63gFDBl3l/03mAjd5n5G
+         iusQ==
+X-Gm-Message-State: ABy/qLb+hjHrxzqvVFfCuBzWs8NoVRO1n1EYSTKH7X0k2KhuYy9K14uC
+        F5khoBaoWbTLa0gmAC5nrSt7Iw==
+X-Google-Smtp-Source: APBJJlHfQ+vP9gLJf9Y0ooi1WF/rziyDZkixdQqDwNlNcdLXuvSUKme2SFNVFWekSyhEZEVhq2Wjhw==
+X-Received: by 2002:a1c:e902:0:b0:3fb:1b78:38d2 with SMTP id q2-20020a1ce902000000b003fb1b7838d2mr12750353wmc.4.1688981665022;
+        Mon, 10 Jul 2023 02:34:25 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l20-20020a7bc354000000b003fbb8c7c799sm9840084wmj.30.2023.07.10.02.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 02:34:22 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 12:34:19 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Will Deacon <will@kernel.org>, joro@8bytes.org
 Cc:     Dan Carpenter <error27@gmail.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -45,54 +61,31 @@ Cc:     Dan Carpenter <error27@gmail.com>,
         Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev,
         kernel-janitors@vger.kernel.org, joro@8bytes.org
 Subject: Re: [PATCH] iommu/sva: fix signedness bug in iommu_sva_alloc_pasid()
-Message-ID: <20230710092713.GA32673@willie-the-truck>
+Message-ID: <5574a5bc-e108-4206-b189-03ec79bc08ec@kadam.mountain>
 References: <6b32095d-7491-4ebb-a850-12e96209eaaf@kili.mountain>
  <5e474464-34ee-414a-8eb3-b11e74540b14@kadam.mountain>
+ <20230710092713.GA32673@willie-the-truck>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e474464-34ee-414a-8eb3-b11e74540b14@kadam.mountain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20230710092713.GA32673@willie-the-truck>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 07, 2023 at 10:17:23AM +0300, Dan Carpenter wrote:
-> Ping!
+On Mon, Jul 10, 2023 at 10:27:14AM +0100, Will Deacon wrote:
+> On Fri, Jul 07, 2023 at 10:17:23AM +0300, Dan Carpenter wrote:
+> > Ping!
+> 
+> Ah, Joerg isn't on CC. Fixing that now...
+> 
 
-Ah, Joerg isn't on CC. Fixing that now...
+Sorry!  I use a script to send patches and for a while if the patch had
+a Fixes tag then my script would remove the top name listed from
+get_maintainer.pl.  Doh!
 
-Will
+I should probably resend this?
 
-> On Thu, Apr 06, 2023 at 11:55:31AM +0300, Dan Carpenter wrote:
-> > The ida_alloc_range() function returns negative error codes on error.
-> > On success it returns values in the min to max range (inclusive).  It
-> > never returns more then INT_MAX even if "max" is higher.  It never
-> > returns values in the 0 to (min - 1) range.
-> > 
-> > The bug is that "min" is an unsigned int so negative error codes will
-> > be promoted to high positive values errors treated as success.
-> > 
-> > Fixes: 1a14bf0fc7ed ("iommu/sva: Use GFP_KERNEL for pasid allocation")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  drivers/iommu/iommu-sva.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
-> > index c4ab3c457fbc..6e4f1ba1c148 100644
-> > --- a/drivers/iommu/iommu-sva.c
-> > +++ b/drivers/iommu/iommu-sva.c
-> > @@ -33,8 +33,9 @@ static int iommu_sva_alloc_pasid(struct mm_struct *mm, ioasid_t min, ioasid_t ma
-> >  	}
-> >  
-> >  	ret = ida_alloc_range(&iommu_global_pasid_ida, min, max, GFP_KERNEL);
-> > -	if (ret < min)
-> > +	if (ret < 0)
-> >  		goto out;
-> > +
-> >  	mm->pasid = ret;
-> >  	ret = 0;
-> >  out:
-> > -- 
-> > 2.39.1
+regards,
+dan carpenter
+
