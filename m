@@ -2,43 +2,34 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CA8EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 06:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56545EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 06:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbjGJGjY (ORCPT
+        id S230231AbjGJGjm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 02:39:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        Mon, 10 Jul 2023 02:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjGJGjX (ORCPT
+        with ESMTP id S230103AbjGJGjl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 02:39:23 -0400
+        Mon, 10 Jul 2023 02:39:41 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 5184E137;
-        Sun,  9 Jul 2023 23:39:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 5FC0B137;
+        Sun,  9 Jul 2023 23:39:39 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 95B15602A11D5;
-        Mon, 10 Jul 2023 14:38:41 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 8BB4E602A8713;
+        Mon, 10 Jul 2023 14:39:36 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-To:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        irusskikh@marvell.com, rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, yisen.zhuang@huawei.com,
-        salil.mehta@huawei.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, steve.glendinning@shawell.net,
-        iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, mostrows@earthlink.net, xeb@mail.ru,
-        qiang.zhao@nxp.com
-Cc:     uttenthaler@ems-wuensche.com, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linuxppc-dev@lists.ozlabs.org,
-        kernel-janitors@vger.kernel.org, wuych <yunchuan@nfschina.com>
-Subject: [PATCH net-next v2 00/10] Remove unnecessary (void*) conversions
-Date:   Mon, 10 Jul 2023 14:38:28 +0800
-Message-Id: <20230710063828.172593-1-suhui@nfschina.com>
+To:     qiang.zhao@nxp.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        wuych <yunchuan@nfschina.com>
+Subject: [PATCH net-next v2 01/10] net: wan: Remove unnecessary (void*) conversions
+Date:   Mon, 10 Jul 2023 14:39:33 +0800
+Message-Id: <20230710063933.172926-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,41 +39,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: wuych <yunchuan@nfschina.com>
 
-Changes in v2:
-	move declarations to be reverse xmas tree.
-	compile it in net and net-next branch.
-	remove some error patches in v1.
+Pointer variables of void * type do not require type cast.
 
-PATCH v1 link:
-https://lore.kernel.org/all/20230628024121.1439149-1-yunchuan@nfschina.com/
+Signed-off-by: wuych <yunchuan@nfschina.com>
+---
+ drivers/net/wan/fsl_ucc_hdlc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-wuych (10):
-  net: wan: Remove unnecessary (void*) conversions
-  net: atlantic: Remove unnecessary (void*) conversions
-  net: ppp: Remove unnecessary (void*) conversions
-  net: hns3: remove unnecessary (void*) conversions
-  net: hns: Remove unnecessary (void*) conversions
-  ice: remove unnecessary (void*) conversions
-  ethernet: smsc: remove unnecessary (void*) conversions
-  net: mdio: Remove unnecessary (void*) conversions
-  can: ems_pci: Remove unnecessary (void*) conversions
-  net: bna: Remove unnecessary (void*) conversions
-
- drivers/net/can/sja1000/ems_pci.c             |  6 +++---
- .../aquantia/atlantic/hw_atl2/hw_atl2.c       | 12 ++++++------
- .../atlantic/hw_atl2/hw_atl2_utils_fw.c       |  2 +-
- drivers/net/ethernet/brocade/bna/bnad.c       | 19 +++++++++----------
- .../ethernet/hisilicon/hns3/hns3_ethtool.c    |  2 +-
- drivers/net/ethernet/hisilicon/hns_mdio.c     | 10 +++++-----
- drivers/net/ethernet/intel/ice/ice_main.c     |  4 ++--
- drivers/net/ethernet/smsc/smsc911x.c          |  4 ++--
- drivers/net/ethernet/smsc/smsc9420.c          |  4 ++--
- drivers/net/mdio/mdio-xgene.c                 |  4 ++--
- drivers/net/ppp/pppoe.c                       |  4 ++--
- drivers/net/ppp/pptp.c                        |  4 ++--
- drivers/net/wan/fsl_ucc_hdlc.c                |  6 +++---
- 13 files changed, 40 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 47c2ad7a3e42..73c73d8f4bb2 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -350,11 +350,11 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
+ static netdev_tx_t ucc_hdlc_tx(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	hdlc_device *hdlc = dev_to_hdlc(dev);
+-	struct ucc_hdlc_private *priv = (struct ucc_hdlc_private *)hdlc->priv;
+-	struct qe_bd *bd;
+-	u16 bd_status;
++	struct ucc_hdlc_private *priv = hdlc->priv;
+ 	unsigned long flags;
+ 	__be16 *proto_head;
++	struct qe_bd *bd;
++	u16 bd_status;
+ 
+ 	switch (dev->type) {
+ 	case ARPHRD_RAWHDLC:
 -- 
 2.30.2
 
