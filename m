@@ -2,79 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15093EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 06:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B051FEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 06:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbjGJGIh (ORCPT
+        id S230384AbjGJGKp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 02:08:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
+        Mon, 10 Jul 2023 02:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbjGJGIg (ORCPT
+        with ESMTP id S230368AbjGJGKo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 02:08:36 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC71EFB;
-        Sun,  9 Jul 2023 23:08:35 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f122ff663eso6240678e87.2;
-        Sun, 09 Jul 2023 23:08:35 -0700 (PDT)
+        Mon, 10 Jul 2023 02:10:44 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F7D129;
+        Sun,  9 Jul 2023 23:10:42 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-98e39784a85so1025211366b.1;
+        Sun, 09 Jul 2023 23:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688969314; x=1691561314;
+        d=gmail.com; s=20221208; t=1688969440; x=1691561440;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from:sender
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NXia2U3SWywM/hgPSo6QNGfwgRNgV0ikhWDqRGHWyow=;
-        b=HKCxpGZnD2pgMSzpbNh8IquC6IK/Cs60+egpUYi+JkMiQE9ZL8uUawtO1FhUHTMCTM
-         kh/aR1gWDTUL77+cCgzKpna3F8uDKnXrALx7Gixrv8jOxSHZM5fnFTkjKUSWhgSuV7WG
-         CSbct344kxPAt2xJQdMUeiSgfmKGF4Y4htpY09KOD3bOBLnkZuQE+wPweeb4YpwgCd+k
-         w1SvQxA9hSXmf++bwvxDlIhJ2wg3Gx87uVLVT0TwSBytOZWc2NNyMQ2/HUChfWKmWaMI
-         w1VSv8JEfoPf4Hc8XCaJ4c/XVG6xG8pb9iijIUFuFteBnhN9vKjRNiv0E7EtrOCViET5
-         nZIQ==
+        bh=oLTUVpDUrCdQ0Mh9V452LJhSttkDbQuVjJuiw5M94EM=;
+        b=rrqf0vLe63238HBXYxc9MbUtq9PE0OwcLwvS83zt0Ua72s9Yox1nlmtiMqXhVloXWB
+         qNGJ+0vSZiHf/VEeI7LsepUphkiF7JdKVpk9/UZl3a91apK3ocDgLolYXMwTFWzy81lN
+         kpi9h2Uev82N5eIe9Mrg7l6sBjne/Q7R4u53wRM2JTs07iofv4lt+CZc7Ct3K/K2Vwlv
+         gsLIWL0cMJftioj5TzPnMH7WkF/zg8O/Mvuir65/dR4mUEFFScFtjMBs5voN5ISCIlVN
+         5WehgfVtIL7rrh494c+4J8ICjbGJ34Pq7m0tymrfF7CaGX76IoQFT8eV9OZQCkZIu5rQ
+         ylQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688969314; x=1691561314;
+        d=1e100.net; s=20221208; t=1688969440; x=1691561440;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from:sender
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NXia2U3SWywM/hgPSo6QNGfwgRNgV0ikhWDqRGHWyow=;
-        b=YXpa5mub5uUIWHyXTZxgeEEaRe5Oa4apmTU16HR1oj0C3fA6iRG31LbmMP5VyrLxS6
-         8hGeJYvSQ5LWx8YgGggsNB/kn7XoE1YZ6Ikd2T0qXgYbHyF17zuKOXUt6jaieNzI/B1L
-         9p+xtyslICroCIgglsX6hp/h6+Jp4qE9hdcTw8UBsPX3xZFP2W7Xy0L1iyfhiGbIK2gW
-         ID/Co7wIR4FNq1O5Z2ogc4cnK7/wqm0teJxYWJTh3fuqmzS08n7RzM0RSn1+eexatimZ
-         Irr5GyVCqatbBStZzNJ8VjOUKxRZwSjlx+4XenC5PPwxRvgnAx3UatILAgEnTjv39c99
-         QYvw==
-X-Gm-Message-State: ABy/qLamoGsNx6rBWdxhmiicxUq25fXdWKUeS2KPslzoDW/dCCndCPqg
-        HwIpdJVlvBs5yebS2QZDJDZlbK/ISqN05bPwPys=
-X-Google-Smtp-Source: APBJJlE8XIYfjCdCDXPrHG6nw7Sgw5sSnfiFWvlGRkezdt73Fjqia4/P0t1EsaNJnFEs91knAXPndHjlDk95M+E/dNc=
-X-Received: by 2002:a05:6512:3d8e:b0:4f8:7568:e948 with SMTP id
- k14-20020a0565123d8e00b004f87568e948mr10523457lfv.51.1688969313700; Sun, 09
- Jul 2023 23:08:33 -0700 (PDT)
+        bh=oLTUVpDUrCdQ0Mh9V452LJhSttkDbQuVjJuiw5M94EM=;
+        b=Cj+BkWgNkOXTaa12m9wDBN6gCJa5Pst2XL6qZCP2m/MZgCc5unrOEdhlQcPWW2e0WO
+         9Uug4HE9bbWdmo/ob9fC+V3xjy9aUpHqmjflSkHApfEkIipb4OfrZ4o0/TpC1oN9vG4U
+         ZaNDkX3oCAdCiaCL0h+RzalUA+qPurGBdVKtsdDAj1ai8qP7BQr2rtnR+IdE8grU6eq2
+         aZurtzEvxkBd7BCoKeFvvhw5yWrUaJeLzYbArhEkwKLf6BQfx85r2fgqbaurL12nFMYX
+         EZ9+Do2JnZ1GNqgeni20e4VupDami0HRoqb5MWBbxvlhJYJb9sLDvNP0UzF48gt/ggTO
+         ZWRw==
+X-Gm-Message-State: ABy/qLZEuugP9jXa3+9RasaQYpIbR4ictoWxXIXGkY2Vr1Loyk72VT6p
+        RAOywHTo0ORwjPcLFEic7GdpYmz3f0RgIkFIHvo=
+X-Google-Smtp-Source: APBJJlG8WySmNViWhWLOy/pzqrFUtn6w3LYifEj/AYQ5vGB3qAzzF9DLE0yHc2K5DJABsZjmg7oSnuFlKl7y1jcjo78=
+X-Received: by 2002:a17:907:da9:b0:992:74e0:6f76 with SMTP id
+ go41-20020a1709070da900b0099274e06f76mr18128543ejc.4.1688969440668; Sun, 09
+ Jul 2023 23:10:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <tencent_54C2A2746A83BA29EE92248CE9683F0C6509@qq.com> <f7fab4fc-a8db-d2f7-52e9-3522f7c298b8@web.de>
-In-Reply-To: <f7fab4fc-a8db-d2f7-52e9-3522f7c298b8@web.de>
+References: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com> <63c6f039-4b33-cdfc-1e49-fc9fc35d513e@web.de>
+In-Reply-To: <63c6f039-4b33-cdfc-1e49-fc9fc35d513e@web.de>
 Sender: cl1ntlov3@gmail.com
 X-Google-Sender-Delegation: cl1ntlov3@gmail.com
 From:   linke li <lilinke99@gmail.com>
-Date:   Mon, 10 Jul 2023 14:08:22 +0800
-X-Google-Sender-Auth: Y3flxkSIwAbIAD5U_PVxyV6si1E
-Message-ID: <CAKdjhyAtxk21YR-wxZn5Ga_+3HuHfxuJX7_czLBw8tuJFmXgsg@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: Fix undefined behavior in PAGE_MASK calculation
+Date:   Mon, 10 Jul 2023 14:10:29 +0800
+X-Google-Sender-Auth: pHqwLt7ft6InGgiUU7y9kioNch0
+Message-ID: <CAKdjhyD8U4vd=DhNqkZvCFiNnH=47e7=HdrWHe1YRuTxx6NspA@mail.gmail.com>
+Subject: Re: [PATCH] isofs: fix undefined behavior in iso_date()
 To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
         Linke Li <lilinke99@foxmail.com>,
-        =?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> How do you think about a wording variant like the following?
+Dear Markus,
 
-What you said is exactly what I want to express.
+Thank you for your valuable feedback, I apologize for my typo in the
+description.
 
-> Would you like to add the tag =E2=80=9CFixes=E2=80=9D?
+> How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
 
 I agree with that.
-
-Thank you for your feedback and suggestion.
