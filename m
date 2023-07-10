@@ -2,90 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC90EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 09:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6181FEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 09:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232836AbjGJJgJ (ORCPT
+        id S230478AbjGJJwO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 05:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55082 "EHLO
+        Mon, 10 Jul 2023 05:52:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232750AbjGJJfn (ORCPT
+        with ESMTP id S229897AbjGJJvk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 05:35:43 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A16E7F
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 02:34:26 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fc0aecf15bso16130105e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 02:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688981665; x=1691573665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIkNJXrfeAXdU6LyOguKwi2Z7Ylg4KQ+PIrj1Vet5Bo=;
-        b=H3ctb6FEJbcH3zCNxTLZj1KJckXm68BTXHywjITt6N1wHwTBE8YWA1jawWv/shu6S+
-         NT9PuJTCLHSZ4+vWYdacAZi8xWpKhSNR8nxOlO+M2pf2ndY3OfkVMglR65alBcDFssaO
-         BEphrGjmuuhmHMpbP7I0ke1YXQZ8GXHGaGUbbLyiyq4JwAjp64FWvYlsYzBAt5/85FO2
-         eeYh0ME0af5rcPK4EYeLLIurICOtTgmFHS/I7PlZXjSTsjf+nC4OCIlW6b+YMkppuWAZ
-         gBxa7E/hHhC+3QCBrJdM1z26wCirTkBIL15YTp5yX2ICtrjgCIXCLGEKgbtbThZ2uxp5
-         lgCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688981665; x=1691573665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DIkNJXrfeAXdU6LyOguKwi2Z7Ylg4KQ+PIrj1Vet5Bo=;
-        b=M8Zgz4ts7nl5Zsvw7J5VkApWWzfODCypHxpyJ9ne1jRJeookchLghcLe9hBaayFV6n
-         p6g3PUcSy/OqhNm7AkU7oaW+QRuMpJnMPKUFdjpPAUk3z34Nh2CmOsqM9pb3JDftRlLr
-         3lGYLeUAzl6mHtle3+qZDAa2kFJxqe7CcHD2HhezDcd/XMmdCKy/MpaIdOiyeNIEf/pq
-         YK3kjld8Fu3vHz2KAewQ1WX2hPwAeblKCS4Tkc/1gQwg0u9oW3DaNdk3+MHsaV0i35UL
-         6M8rDZxvyuW25zLSfv2BkSo6rE9mJYmBCUTC6Vrd6aY+VtfG63gFDBl3l/03mAjd5n5G
-         iusQ==
-X-Gm-Message-State: ABy/qLb+hjHrxzqvVFfCuBzWs8NoVRO1n1EYSTKH7X0k2KhuYy9K14uC
-        F5khoBaoWbTLa0gmAC5nrSt7Iw==
-X-Google-Smtp-Source: APBJJlHfQ+vP9gLJf9Y0ooi1WF/rziyDZkixdQqDwNlNcdLXuvSUKme2SFNVFWekSyhEZEVhq2Wjhw==
-X-Received: by 2002:a1c:e902:0:b0:3fb:1b78:38d2 with SMTP id q2-20020a1ce902000000b003fb1b7838d2mr12750353wmc.4.1688981665022;
-        Mon, 10 Jul 2023 02:34:25 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l20-20020a7bc354000000b003fbb8c7c799sm9840084wmj.30.2023.07.10.02.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 02:34:22 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 12:34:19 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Will Deacon <will@kernel.org>, joro@8bytes.org
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, joro@8bytes.org
-Subject: Re: [PATCH] iommu/sva: fix signedness bug in iommu_sva_alloc_pasid()
-Message-ID: <5574a5bc-e108-4206-b189-03ec79bc08ec@kadam.mountain>
-References: <6b32095d-7491-4ebb-a850-12e96209eaaf@kili.mountain>
- <5e474464-34ee-414a-8eb3-b11e74540b14@kadam.mountain>
- <20230710092713.GA32673@willie-the-truck>
+        Mon, 10 Jul 2023 05:51:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D07B183;
+        Mon, 10 Jul 2023 02:48:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DEB6760F35;
+        Mon, 10 Jul 2023 09:48:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEB5C433C8;
+        Mon, 10 Jul 2023 09:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688982489;
+        bh=PnEAbXpDkS/2DQfknA13T3c/Xhi5kSmvuGgopFlpfSs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hMyjk8BPbQPAZeekXCM9QGCSkOmYufC5Kz4eRl+JqNXld+HVoT3vIQmV6gQegS3xc
+         Xf90C5kC8Z9/BPfe67aoRDY5IJSC4rMMsDrrpZH0+sRIo4TzLNu/km+NAXS/BNYy8d
+         ah6ZlZqnmK8rnmjM/IRNEN0MFD1123nEhzbDEFmJT6fBRM7Mgx4DfD+x1/t1+Dw6Nn
+         8SjYXvpvMGtGT8n5+59votu043HaMFg/0P3ibfuq8IW+gTpsUDWu7ruvzunGs882Dt
+         X7yY29/50WXR9C31E3zE8/sQFtZCq6tpcip9paUnZSF2WrZT3Gp5mmDu48HnO4w2pY
+         nf5qH2vuO95yg==
+From:   Robert Foss <rfoss@kernel.org>
+To:     Jonas Karlman <jonas@kwiboo.se>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Robert Foss <rfoss@kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
+Date:   Mon, 10 Jul 2023 11:48:01 +0200
+Message-ID: <168898247567.1224956.8670900854330995667.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <208a15ce4e01973daf039ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
+References: <208a15ce4e01973daf039ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230710092713.GA32673@willie-the-truck>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 10:27:14AM +0100, Will Deacon wrote:
-> On Fri, Jul 07, 2023 at 10:17:23AM +0300, Dan Carpenter wrote:
-> > Ping!
+On Sat, 8 Jul 2023 08:05:35 +0200, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>    - calls devm_clk_get()
+>    - calls clk_prepare_enable() and registers what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> Ah, Joerg isn't on CC. Fixing that now...
+> This simplifies the code and avoids the need of a dedicated function used
+> with devm_add_action_or_reset().
 > 
+> [...]
 
-Sorry!  I use a script to send patches and for a while if the patch had
-a Fixes tag then my script would remove the top name listed from
-get_maintainer.pl.  Doh!
+Applied, thanks!
 
-I should probably resend this?
+[1/1] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=70d3c92d852f
 
-regards,
-dan carpenter
+
+
+Rob
 
