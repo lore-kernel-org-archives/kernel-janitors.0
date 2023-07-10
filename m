@@ -2,73 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211FFEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 10:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67AEC001DE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 12:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232312AbjGJKZP (ORCPT
+        id S232016AbjGJMrn convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 06:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37638 "EHLO
+        Mon, 10 Jul 2023 08:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231920AbjGJKZO (ORCPT
+        with ESMTP id S229668AbjGJMrl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 06:25:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C27095
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 03:25:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E54FB60F96
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 10:25:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235FBC433C8;
-        Mon, 10 Jul 2023 10:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688984712;
-        bh=8wbTdNkehE98Ctimhl7nOewzsLGVvoA8c+GqiH1ZOE0=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=iXl9Eo6SSYgH/eoyMB8fQr2XK36z/x0kVrQoG0lLfPMq4Cq2yaOBoYJZDKOouKCh4
-         Th5NHzsbFXHwpkAiqmUe3tqLsosQ/JXuG9J4JyHvEMD+7AqcA1BCXi4L4Dod/Of97y
-         YVvqOyixLfaW9ipq+55G58aF0PKUA+J5zBRbOj9A2+poIPhv78PboITZx4EFXiJcoQ
-         ytr9DI4SpwIN9SVA5fNNOOciZU5IuyZVQBs3ymqU41csMMGYtUFI+jt7Y/NVmAgOLK
-         pkAIP4/QGeeq97MOPxblc8QlYCH/w+UethpuLGdyc+u/JPUMNTubblqlinnacnkOjW
-         v814xFgVJEo7A==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     "Mukunda,Vijendar" <vijendar.mukunda@amd.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <9863b2bf-0de2-4bf8-8f09-fe24dc5c63ff@moroto.mountain>
-References: <9863b2bf-0de2-4bf8-8f09-fe24dc5c63ff@moroto.mountain>
-Subject: Re: [PATCH v2] soundwire: amd: Fix a check for errors in probe()
-Message-Id: <168898470975.164858.364870274805965240.b4-ty@kernel.org>
-Date:   Mon, 10 Jul 2023 15:55:09 +0530
+        Mon, 10 Jul 2023 08:47:41 -0400
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C705A7;
+        Mon, 10 Jul 2023 05:47:41 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-579ef51428eso57428297b3.2;
+        Mon, 10 Jul 2023 05:47:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688993260; x=1691585260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aSqp8QS3Eas+YBinZHpl7xLqipq/Ys4jkKB7+on99uc=;
+        b=fxM/j3YItc11qUJ7maKZuEaELNkTsnoHa4Kx1sQ9A4RZxw7eMvQ63UOdKY/jaSo2wd
+         pwmaP5OnX/imw+tea+6YLCd+2fWW+ZXWMieaCufykgXd/dZKWqC3YQhx670itBsWItz7
+         1iTxAgeFn5uMIIlyjBvKH204VHTynBocGntkzO/plgzYTHz6B1E3410HIyjrkYPGZWGv
+         oJCywH/rUdlkDsT3udfFZrSKiHZyfxn+tkU6i0nrxkWkPlfAwn8MzolUAu8PNiNaNx78
+         v4VHhxMDS+w7sOq13DQd6eG/juF6uSy4V6mZzetJLXfDY+ozuGfyACn6lTCL/yS1pzAw
+         c9Xw==
+X-Gm-Message-State: ABy/qLaAwpPgPFjrZKW3P0wz/oOwF840u26TmmImJ9Ji8RkoOPpTeSIl
+        A4/xXlikWrj1XDLo7h/bVaJlK1Ho1/jxYg==
+X-Google-Smtp-Source: APBJJlHDGRj66C6PwIDG66DppX4uHDDOki7uehMoF5Nz2C/ZkP8ilWkPSH14uymypmT/VgUcB1RiEA==
+X-Received: by 2002:a0d:d9c9:0:b0:56f:eaef:9d40 with SMTP id b192-20020a0dd9c9000000b0056feaef9d40mr13320419ywe.46.1688993260092;
+        Mon, 10 Jul 2023 05:47:40 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id u63-20020a816042000000b0054c0f3fd3ddsm3072618ywb.30.2023.07.10.05.47.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jul 2023 05:47:39 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-579ef51428eso57427907b3.2;
+        Mon, 10 Jul 2023 05:47:39 -0700 (PDT)
+X-Received: by 2002:a5b:98e:0:b0:c49:95fd:6361 with SMTP id
+ c14-20020a5b098e000000b00c4995fd6361mr12951040ybq.0.1688993259725; Mon, 10
+ Jul 2023 05:47:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+References: <fed02e0325275df84e2d76f8c481e40e7023cbd9.1688760372.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <fed02e0325275df84e2d76f8c481e40e7023cbd9.1688760372.git.christophe.jaillet@wanadoo.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 10 Jul 2023 14:47:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXO-f6KP1WCwwyy6Jy5eZpZ4LfFEV6y14dyrVYRp5QRMg@mail.gmail.com>
+Message-ID: <CAMuHMdXO-f6KP1WCwwyy6Jy5eZpZ4LfFEV6y14dyrVYRp5QRMg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Simplify .determine_rate()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Jul 7, 2023 at 10:06 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> rzg2l_cpg_sd_clk_mux_determine_rate() is the same as
+> __clk_mux_determine_rate_closest(), so use the latter to save some LoC.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 27 Jun 2023 08:42:10 +0300, Dan Carpenter wrote:
-> This code has two problems:
-> 1) The devm_ioremap() function returns NULL, not error pointers.
-> 2) It's checking the wrong variable.  ->mmio instead of ->acp_mmio.
-> 
-> 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.6.
 
-Applied, thanks!
+Gr{oetje,eeting}s,
 
-[1/1] soundwire: amd: Fix a check for errors in probe()
-      commit: a06d6088cfd49b63a2759910f2328ba28d6a342d
+                        Geert
 
-Best regards,
 -- 
-~Vinod
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
