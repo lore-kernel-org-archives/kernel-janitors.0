@@ -2,49 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2743CEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 14:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3579EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 15:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233730AbjGKOY5 (ORCPT
+        id S232937AbjGKPsi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 10:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60262 "EHLO
+        Tue, 11 Jul 2023 11:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233760AbjGKOYk (ORCPT
+        with ESMTP id S232784AbjGKPsh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 10:24:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B4DBC;
-        Tue, 11 Jul 2023 07:24:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CDAE761426;
-        Tue, 11 Jul 2023 14:23:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0FEC433C8;
-        Tue, 11 Jul 2023 14:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1689085408;
-        bh=y0D8bkf1or402NLl3uVF2AePZpVnhF+paDS0zFSxMIo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YwQyjOn/X9YN5dTU+kbB6ABx98v8Rjj48CHgtatJH113b7zuj1wvMKEBDKjFNrySM
-         Pab87/nXRfGv1JQpuZthb4j3ReqwlayaWWpRGw0pusvpEy7FSJl5fhMUTpydIeJwCg
-         LaJ3HUkPJ58G5UIcvLfo9lBgN+JUGpRB3xlMEEUw=
-Date:   Tue, 11 Jul 2023 16:23:25 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Tue, 11 Jul 2023 11:48:37 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1AAF0
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 08:48:36 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1b8baa836a5so43359105ad.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 08:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1689090516; x=1691682516;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gMRM+V8aFzozPK+1eStZnFAVQQXz06JbYH2PUPwSbRc=;
+        b=KyZIEX2efN9dTSaXYjPypC19rP5SGSxCiwirikn2xdKQ9obqcwBQtmxC9XWu5v+2Sh
+         8t1iCuWeL9CE6V4nenudNsyCktdqubs6qUoegGOs+nN0+Dj8/anyyDkWa/2hDOFqOgRt
+         cuMdyVgDds2JHO6nVXNOUZDb+NSXB0uijCqzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689090516; x=1691682516;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gMRM+V8aFzozPK+1eStZnFAVQQXz06JbYH2PUPwSbRc=;
+        b=hhVL00otFubrJESowa8yegj/GaqReKVOFtnz364Y91dtvRFSzSyyZGaxjwyVM5WUzY
+         rJGaf4a5yy8MHWMJq1nC6GCjCs1BEBlO9jIcnvGHfJFq3m61i+jY/o+SOc7FBpNxNnpu
+         VIsa5XPUoUsFLlhs054FV9rad3fHDb9hpmIyWBAbtDUXjyKulvW9map4RyI+Omc46Mv6
+         59cdgYxpM3tlO1tx2msnvPJgsy+vm9frqUry/LllS1C2HIA50WLX444Qp74a1dNUR1L9
+         cxkN30nSu5xYZAHEFkYZcBu8hfrWnh3U3zd+zK6t62JOzn+5uGcXUg4wnHPmqsfjuels
+         lZtA==
+X-Gm-Message-State: ABy/qLYGq3+A8GVR9oKj+0baE6XL746NCII5Wqx+zmrPX/y2C/bunr1j
+        /e0ZfTEK/mIy7yACJH9jE15aGQ==
+X-Google-Smtp-Source: APBJJlFW+i8logIK1uoMz5/q5X4xKTTQaFRkN6PBPOYxC0yirJfLOQLBYPK/dD4D0oz3RT8WnLvPPg==
+X-Received: by 2002:a17:902:f94e:b0:1b0:6038:2982 with SMTP id kx14-20020a170902f94e00b001b060382982mr14614382plb.41.1689090516040;
+        Tue, 11 Jul 2023 08:48:36 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id o13-20020a170902c50d00b001b03b7f8adfsm2087574plx.246.2023.07.11.08.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jul 2023 08:48:35 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 08:48:34 -0700
+From:   Kees Cook <keescook@chromium.org>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
 Cc:     Thorsten Leemhuis <linux@leemhuis.info>,
         Andy Whitcroft <apw@canonical.com>,
         Joe Perches <joe@perches.com>,
         Dwaipayan Ray <dwaipayanray1@gmail.com>,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>,
         Tom Gall <tom.gall@linaro.org>, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH v4] checkpatch: check for missing Fixes tags
-Message-ID: <2023071117-partition-escargot-9667@gregkh>
+Message-ID: <202307110848.E0389C3004@keescook>
 References: <f3ac6084-8def-4b57-9e6e-0497555e2784@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -90,4 +106,7 @@ On Tue, Jul 11, 2023 at 04:48:14PM +0300, Dan Carpenter wrote:
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
