@@ -2,48 +2,50 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70F6C001DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 16:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AA5C001DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 16:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233044AbjGKQnz (ORCPT
+        id S230313AbjGKQpd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 12:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42770 "EHLO
+        Tue, 11 Jul 2023 12:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbjGKQno (ORCPT
+        with ESMTP id S232633AbjGKQpJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 12:43:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37D11720;
-        Tue, 11 Jul 2023 09:43:40 -0700 (PDT)
+        Tue, 11 Jul 2023 12:45:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBC81BCF;
+        Tue, 11 Jul 2023 09:44:24 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB29761573;
-        Tue, 11 Jul 2023 16:43:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EE0C433CA;
-        Tue, 11 Jul 2023 16:43:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A26C961529;
+        Tue, 11 Jul 2023 16:44:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D62C433C7;
+        Tue, 11 Jul 2023 16:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689093819;
-        bh=qCQfbWuEbn8NQE2Rqzc90YvoPipey3ZK3V271DT1K90=;
+        s=k20201202; t=1689093860;
+        bh=YhF5GzSKrUG4ROyVWWcSwsr0BD/RChWImwQTdkInk7c=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=qAGflg0sVxxJwEwb/comoW6zMh/uuMfweLKnpMoeMM+KVH5jIuoZrVP7/lF11Ldv6
-         50NGEn4TBKrtl9ng9TQAAhqQGP6znx/268YQ3+1DJ8lsTKoHGHqm+PA2SRP/aMkoBp
-         23gxuQNmezWRwUsSYZ/g7NzmURRRrE0Q/aQFcvLG4vyeqEzUbn97TTdwW5BLXrioo+
-         33HvVaLwS9k/ONiVair7MJPZJ1fw62kCmebvPxel3Ghd+faV8r8HiVDoVApMSBADDp
-         NsXJWW10GMTtpCzZomsJf9c5Eiy6g+N8n+hKY+10Y9mvbba5IeWzjYkvm3/FxXAWGa
-         5Wii86KT2wJ+g==
+        b=cOtip5VViTf+z6hsUqeFUVpJ5sWkeLyYll2lsN93z/HWdOhv6jvtBSCpJ2oT0B3RT
+         MHHbbIJyx9zWjmugNhgmzKeTZQUS5C/af/hi+1JjTnMATE4ZAowdRdxlc1gJq0fDVG
+         Dyg/Cdi6G+8gZj+XnlqGhWPBgsKodzU8UK28s0NZFsJ+bRRvnNYE8CARlg/XeGoVcd
+         UZs1IQDFc2bueEskj8+Dm0qE0hyOdcBEognZSVNQ/ezPzUcqzxmPNtOjPWH2FPLRw8
+         7VrNFk+rzhDVQPrmxseZWxLI4OrMWNiJ9GgVuk/CxCejhnON0qzmpmLrVQox6Rw6EB
+         Nj/nYIQFp5oeA==
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <f55d914407c900828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
-References: <f55d914407c900828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] dmaengine: mcf-edma: Fix a potential un-allocated
- memory access
-Message-Id: <168909381758.208562.7750426998388871956.b4-ty@kernel.org>
-Date:   Tue, 11 Jul 2023 22:13:37 +0530
+To:     Fenghua Yu <fenghua.yu@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        dmaengine@vger.kernel.org
+In-Reply-To: <f44be04317387f8936d31d5470963541615f30ef.1685283065.git.christophe.jaillet@wanadoo.fr>
+References: <f44be04317387f8936d31d5470963541615f30ef.1685283065.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] dmaengine: idxd: No need to clear memory after a
+ dma_alloc_coherent() call
+Message-Id: <168909385770.208679.11182902269794530948.b4-ty@kernel.org>
+Date:   Tue, 11 Jul 2023 22:14:17 +0530
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -53,22 +55,16 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-On Sat, 27 May 2023 09:36:31 +0200, Christophe JAILLET wrote:
-> When 'mcf_edma' is allocated, some space is allocated for a
-> flexible array at the end of the struct. 'chans' item are allocated, that is
-> to say 'pdata->dma_channels'.
+On Sun, 28 May 2023 16:11:54 +0200, Christophe JAILLET wrote:
+> dma_alloc_coherent() already clear the allocated memory, there is no need
+> to explicitly call memset().
 > 
-> Then, this number of item is stored in 'mcf_edma->n_chans'.
 > 
-> A few lines later, if 'mcf_edma->n_chans' is 0, then a default value of 64
-> is set.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] dmaengine: mcf-edma: Fix a potential un-allocated memory access
-      commit: ad5808c58ddceeab43dc68cc10d99f56d143facd
+[1/1] dmaengine: idxd: No need to clear memory after a dma_alloc_coherent() call
+      commit: 61e2cd90681e91ee8202d22e5ca25b1100557fc4
 
 Best regards,
 -- 
