@@ -2,91 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504FCEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 07:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA055EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 07:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbjGKHdX (ORCPT
+        id S230236AbjGKHhA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 03:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48810 "EHLO
+        Tue, 11 Jul 2023 03:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjGKHdW (ORCPT
+        with ESMTP id S229626AbjGKHg7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 03:33:22 -0400
-X-Greylist: delayed 340 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 11 Jul 2023 00:33:21 PDT
-Received: from mail02.habana.ai (habanamailrelay02.habana.ai [62.90.112.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BEB31A4;
-        Tue, 11 Jul 2023 00:33:21 -0700 (PDT)
-Received: internal info suppressed
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
-        t=1689060181; bh=3MrvxpCCrw8Dk6+D34BZWEiOrubZ8Sj3J6bsLwQbQEo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iRRYm4VDIoP4/u0D4ntRKOXRZZXAtVbVOzqPnAjK4ljtgewDr4d+lgFfuQn/Gb0AA
-         pMvuU48aSI1qisCiadjTAL8AbY2gx8Q8Ag6BPP7Cisrw/mnMjuD3Tc7WPQYG01oGxQ
-         3vRLlpFcbOir9SJKspwVriLCi2awztx/7SIplIRmxeNDPK2P8neerZoxNk1s0z1q2/
-         2VfdexXo+CL5uhnyoRrgcCJJmpMjKQ2ov62Y3FY8pLLUnIv2fFQB9O9+O3sHIOJiCd
-         RF2zHQBK6Y+OY/OBkU5Z3TJ7iVO+2Fp8U/pGuseJtyEft9RMwsqDNSJooRoKVnZlHD
-         F0SGdvyfsvr4g==
-Received: from dhirschfeld-vm-u22.habana-labs.com (localhost [127.0.0.1])
-        by dhirschfeld-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with SMTP id 36B7N7nH960621;
-        Tue, 11 Jul 2023 10:23:08 +0300
-Date:   Tue, 11 Jul 2023 10:23:07 +0300
-From:   Dafna Hirschfeld <dhirschfeld@habana.ai>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Tue, 11 Jul 2023 03:36:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C59133
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 00:36:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED1A561356
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 07:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D294CC433C7;
+        Tue, 11 Jul 2023 07:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689061017;
+        bh=sp9FUz7vFWMOXim7BOi9FhfXePdR8iwcHRlNLjmbrE0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=o+KWj9bXmQa6HfWyip5V0qnUuXxShVLYk5hJdPLFMtnIUrLDrJNGA3OoPRiDgXTo3
+         8FLQU5yRGDau/XKm0ZH75oQzVIYnmb3fo19Gl5s3xGoxgEXTHVDYPrzPLuUSt/q+9Q
+         e/iSLt9vgfmnvBblKjaVQWM3iSHxXvTYglKEHMwglEsiW0ZdNudN+fAts5ARukzu2E
+         RYWhdZxjxt5mGhE00CK34425ADah9caNJ1RVpLS3DC08xZz9lARxQ629iUtCs7LuE5
+         2mjaY0lCjRz2MqsjDCdwolr2zwa/evxOVdRKjdU1X/cC/LKG/NN4Q7yVsTPtc27QHI
+         SjiMhH5BwXtFQ==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Bo-Chen Chen <rex-bc.chen@mediatek.com>,
+        Guillaume Ranquet <granquet@baylibre.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 5/5 v3] accel/qaic: Fix a leak in map_user_pages()
-Message-ID: <jhqia5lmifb6nsnmnxv3lf4x5irhpgkg6rx6oisuyjqwe4djd7@zvi5oyq65jeo>
-References: <ZKzx5nA6Z/0yhBJj@moroto>
- <8666cc78-3e15-435e-9c4e-15502ac75bcd@moroto.mountain>
+In-Reply-To: <3c699e00-2883-40d9-92c3-0da1dc38fdd4@moroto.mountain>
+References: <3c699e00-2883-40d9-92c3-0da1dc38fdd4@moroto.mountain>
+Subject: Re: [PATCH] phy: phy-mtk-dp: Fix an error code in probe()
+Message-Id: <168906101241.188690.9773925204562641483.b4-ty@kernel.org>
+Date:   Tue, 11 Jul 2023 13:06:52 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8666cc78-3e15-435e-9c4e-15502ac75bcd@moroto.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 11.07.2023 09:13, Dan Carpenter wrote:
->If get_user_pages_fast() allocates some pages but not as many as we
->wanted, then the current code leaks those pages.  Call put_page() on
->the pages before returning.
->
->Fixes: 129776ac2e38 ("accel/qaic: Add control path")
->Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Dafna Hirschfeld <dhirschfeld@habana.ai>
+On Tue, 11 Jul 2023 09:13:25 +0300, Dan Carpenter wrote:
+> Negative -EINVAL was intended instead of positive EINVAL.
+> 
+> 
 
->---
->no change
->
-> drivers/accel/qaic/qaic_control.c | 7 +++++--
-> 1 file changed, 5 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
->index d5ce36cb351f..9a6f80f31c65 100644
->--- a/drivers/accel/qaic/qaic_control.c
->+++ b/drivers/accel/qaic/qaic_control.c
->@@ -425,9 +425,12 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
-> 	}
->
-> 	ret = get_user_pages_fast(xfer_start_addr, nr_pages, 0, page_list);
->-	if (ret < 0 || ret != nr_pages) {
->-		ret = -EFAULT;
->+	if (ret < 0)
-> 		goto free_page_list;
->+	if (ret != nr_pages) {
->+		nr_pages = ret;
->+		ret = -EFAULT;
->+		goto put_pages;
-> 	}
->
-> 	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
->-- 
->2.39.2
->
+Applied, thanks!
+
+[1/1] phy: phy-mtk-dp: Fix an error code in probe()
+      commit: 03966c3950d36d6b671158be3794eb7211434faa
+
+Best regards,
+-- 
+~Vinod
+
+
