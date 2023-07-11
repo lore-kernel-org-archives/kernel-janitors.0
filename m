@@ -2,96 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46426EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 00:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02461EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 01:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjGKA0d (ORCPT
+        id S230254AbjGKBNx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 20:26:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36448 "EHLO
+        Mon, 10 Jul 2023 21:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjGKA0c (ORCPT
+        with ESMTP id S229548AbjGKBNw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 20:26:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32735FB;
-        Mon, 10 Jul 2023 17:26:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A90F8612A4;
-        Tue, 11 Jul 2023 00:26:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E615C433C9;
-        Tue, 11 Jul 2023 00:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689035190;
-        bh=lVrofRqiJZB0YCzZdm1yhUomL1wJDgSyd4Dqv2IN7uY=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=Zzk5WNDrd+OKZA4Oy4dFF3EaoRZ0C27ag8ozEM2+AH6eodYs1L5wJMZ22Bh6Yp2pc
-         SFkDAv84AYDuu8JHXV56u28E54iTQhbS8gCAbHGVF0ayrPBrHaRl1ZVkC5qknoA4F/
-         8fTkOJ8ZhtL7JCtf5vFzoNFvl7f+Nn86f7x2HPpIzOCCbjVpqz1I7G65SFg3QDNEkV
-         9pyZNr1dulrvyyBzfWZ3rT+EMZaD543IvXLMUXIQglH0MxSObAbEBAyTtOQscapuS0
-         5M0zEOz5yzgheP/kKYDq710jYhUgqNxWVtLx7AHthsyJpmFJckIGnxrVhCmqD7CWOQ
-         CG6xnTANVba+Q==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 11 Jul 2023 03:26:26 +0300
-Message-Id: <CTYX04LNR79S.H0RECMGHF1BM@suppilovahvero>
-Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] tpm: remove redundant variable len
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Colin Ian King" <colin.i.king@gmail.com>,
-        "Peter Huewe" <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230616170730.2343540-1-colin.i.king@gmail.com>
-In-Reply-To: <20230616170730.2343540-1-colin.i.king@gmail.com>
+        Mon, 10 Jul 2023 21:13:52 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id D2AC995;
+        Mon, 10 Jul 2023 18:13:50 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id EFE6C602AC886;
+        Tue, 11 Jul 2023 09:13:31 +0800 (CST)
+Message-ID: <5ed0fff8-52dd-4059-797b-4275d54ae86b@nfschina.com>
+Date:   Tue, 11 Jul 2023 09:13:31 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH net-next v2 01/10] net: wan: Remove unnecessary (void*)
+ conversions
+Content-Language: en-US
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     qiang.zhao@nxp.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>
+X-MD-Sfrom: yunchuan@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   yunchuan <yunchuan@nfschina.com>
+In-Reply-To: <23e98085-8f07-4ee2-8487-8e3b439b69f4@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri Jun 16, 2023 at 8:07 PM EEST, Colin Ian King wrote:
-> Variable len is being accumulated but the value is never read. It is
-> redundant and can be removed. Cleans up clang scan build warning:
+On 2023/7/11 00:34, Andrew Lunn wrote:
+> On Mon, Jul 10, 2023 at 02:39:33PM +0800, Su Hui wrote:
+>> From: wuych <yunchuan@nfschina.com>
+>>
+>> Pointer variables of void * type do not require type cast.
+>>
+>> Signed-off-by: wuych <yunchuan@nfschina.com>
+>> ---
+>>   drivers/net/wan/fsl_ucc_hdlc.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+>> index 47c2ad7a3e42..73c73d8f4bb2 100644
+>> --- a/drivers/net/wan/fsl_ucc_hdlc.c
+>> +++ b/drivers/net/wan/fsl_ucc_hdlc.c
+>> @@ -350,11 +350,11 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
+>>   static netdev_tx_t ucc_hdlc_tx(struct sk_buff *skb, struct net_device *dev)
+>>   {
+>>   	hdlc_device *hdlc = dev_to_hdlc(dev);
+>> -	struct ucc_hdlc_private *priv = (struct ucc_hdlc_private *)hdlc->priv;
+>> -	struct qe_bd *bd;
+>> -	u16 bd_status;
+>> +	struct ucc_hdlc_private *priv = hdlc->priv;
+>>   	unsigned long flags;
+>>   	__be16 *proto_head;
+>> +	struct qe_bd *bd;
+>> +	u16 bd_status;
+> When dealing with existing broken reverse Christmas tree, please don't
+> make it worse with a change. But actually fixing it should be in a
+> different patch.
 >
-> drivers/char/tpm/eventlog/tpm1.c:276:2: warning: Value stored to 'len' is=
- never read [deadcode.DeadStores]
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/char/tpm/eventlog/tpm1.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog=
-/tpm1.c
-> index 8aa9057601d6..12ee42a31c71 100644
-> --- a/drivers/char/tpm/eventlog/tpm1.c
-> +++ b/drivers/char/tpm/eventlog/tpm1.c
-> @@ -251,7 +251,6 @@ static int tpm1_binary_bios_measurements_show(struct =
-seq_file *m, void *v)
-> =20
->  static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v=
-)
->  {
-> -	int len =3D 0;
->  	char *eventname;
->  	struct tcpa_event *event =3D v;
->  	unsigned char *event_entry =3D
-> @@ -273,7 +272,7 @@ static int tpm1_ascii_bios_measurements_show(struct s=
-eq_file *m, void *v)
->  	/* 3rd: event type identifier */
->  	seq_printf(m, " %02x", do_endian_conversion(event->event_type));
-> =20
-> -	len +=3D get_event_name(eventname, event, event_entry);
-> +	get_event_name(eventname, event, event_entry);
-> =20
->  	/* 4th: eventname <=3D max + \'0' delimiter */
->  	seq_printf(m, " %s\n", eventname);
-> --=20
-> 2.39.2
+> We want patches to be obviously correct. By removing the cast and
+> moving variables around, it is less obvious it is correct, than having
+> two patches.
+Got it, thanks.
+I will resend the v3 later  which remove the change of reverse Christmas 
+tree.
+So sorry for this!
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Wu Yunchuan
 
-BR, Jarkko
+>
+>         Andrew
