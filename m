@@ -2,151 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDFEEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jul 2023 23:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46426EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 00:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjGJXMa (ORCPT
+        id S230121AbjGKA0d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 19:12:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
+        Mon, 10 Jul 2023 20:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjGJXM2 (ORCPT
+        with ESMTP id S229517AbjGKA0c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 19:12:28 -0400
+        Mon, 10 Jul 2023 20:26:32 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E76A9E;
-        Mon, 10 Jul 2023 16:12:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32735FB;
+        Mon, 10 Jul 2023 17:26:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A62186125D;
-        Mon, 10 Jul 2023 23:12:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 387CFC433C7;
-        Mon, 10 Jul 2023 23:12:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A90F8612A4;
+        Tue, 11 Jul 2023 00:26:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E615C433C9;
+        Tue, 11 Jul 2023 00:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689030747;
-        bh=TqDfGgNHSTTzI5sd0eAtZM0sWcjxBlg0CVLYm4iFf8U=;
+        s=k20201202; t=1689035190;
+        bh=lVrofRqiJZB0YCzZdm1yhUomL1wJDgSyd4Dqv2IN7uY=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=KVcFMhMlF7PPgmu6JP1s/kT9fttyTEXt6rjASIAMXAB0uv7Q2O8L3BlOPwLQZt08Z
-         eMntK1q8Zssq5d53SdZGt9hjNS4mqw41J3SN3lu5I4J7BIQj11JhmznRpqDnKg+8Q+
-         O6HoTRG66BGUqKX5NQjTGZXlSrB7SMZ/xVoK8ksqLwzmAeieErncopvDrmbFst/dMH
-         yy+erZ0aPH8hVq23t9MIXoc9MMQ6G3mAvWe0rmy+3RMvbGYnlf6dGMA2Zad9iRDjqL
-         Ga2jLJlVC16bnvdksVH1CiSDrg9L9qCF+TH2J42FJgmZMZj3F6jzrf301XtVBajH5w
-         qwEvwRiwmOQMw==
+        b=Zzk5WNDrd+OKZA4Oy4dFF3EaoRZ0C27ag8ozEM2+AH6eodYs1L5wJMZ22Bh6Yp2pc
+         SFkDAv84AYDuu8JHXV56u28E54iTQhbS8gCAbHGVF0ayrPBrHaRl1ZVkC5qknoA4F/
+         8fTkOJ8ZhtL7JCtf5vFzoNFvl7f+Nn86f7x2HPpIzOCCbjVpqz1I7G65SFg3QDNEkV
+         9pyZNr1dulrvyyBzfWZ3rT+EMZaD543IvXLMUXIQglH0MxSObAbEBAyTtOQscapuS0
+         5M0zEOz5yzgheP/kKYDq710jYhUgqNxWVtLx7AHthsyJpmFJckIGnxrVhCmqD7CWOQ
+         CG6xnTANVba+Q==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 11 Jul 2023 02:12:22 +0300
-Message-Id: <CTYVFFFI0SE9.2QXXQPRJW3AA3@suppilovahvero>
-Cc:     "David Howells" <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: asymmetric: Fix error codes
+Date:   Tue, 11 Jul 2023 03:26:26 +0300
+Message-Id: <CTYX04LNR79S.H0RECMGHF1BM@suppilovahvero>
+Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] tpm: remove redundant variable len
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Dan Carpenter" <dan.carpenter@linaro.org>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>
+To:     "Colin Ian King" <colin.i.king@gmail.com>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>
 X-Mailer: aerc 0.14.0
-References: <c5e34c6a-da1e-4585-98c4-14701b0e093e@moroto.mountain>
- <CTYVE0G0D53P.Y8A7V3C9BW9O@suppilovahvero>
-In-Reply-To: <CTYVE0G0D53P.Y8A7V3C9BW9O@suppilovahvero>
+References: <20230616170730.2343540-1-colin.i.king@gmail.com>
+In-Reply-To: <20230616170730.2343540-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue Jul 11, 2023 at 2:10 AM EEST, Jarkko Sakkinen wrote:
-> On Mon Jul 3, 2023 at 5:18 PM EEST, Dan Carpenter wrote:
-> > These error paths should return the appropriate error codes instead of
-> > returning success.
-> >
-> > Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface withou=
-t scatterlists")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  crypto/asymmetric_keys/public_key.c | 20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_ke=
-ys/public_key.c
-> > index e787598cb3f7..773e159dbbcb 100644
-> > --- a/crypto/asymmetric_keys/public_key.c
-> > +++ b/crypto/asymmetric_keys/public_key.c
-> > @@ -185,8 +185,10 @@ static int software_key_query(const struct kernel_=
-pkey_params *params,
-> > =20
-> >  	if (issig) {
-> >  		sig =3D crypto_alloc_sig(alg_name, 0, 0);
-> > -		if (IS_ERR(sig))
-> > +		if (IS_ERR(sig)) {
-> > +			ret =3D PTR_ERR(sig);
-> >  			goto error_free_key;
-> > +		}
-> > =20
-> >  		if (pkey->key_is_private)
-> >  			ret =3D crypto_sig_set_privkey(sig, key, pkey->keylen);
-> > @@ -208,8 +210,10 @@ static int software_key_query(const struct kernel_=
-pkey_params *params,
-> >  		}
-> >  	} else {
-> >  		tfm =3D crypto_alloc_akcipher(alg_name, 0, 0);
-> > -		if (IS_ERR(tfm))
-> > +		if (IS_ERR(tfm)) {
-> > +			ret =3D PTR_ERR(tfm);
-> >  			goto error_free_key;
-> > +		}
-> > =20
-> >  		if (pkey->key_is_private)
-> >  			ret =3D crypto_akcipher_set_priv_key(tfm, key, pkey->keylen);
-> > @@ -300,8 +304,10 @@ static int software_key_eds_op(struct kernel_pkey_=
-params *params,
-> > =20
-> >  	if (issig) {
-> >  		sig =3D crypto_alloc_sig(alg_name, 0, 0);
-> > -		if (IS_ERR(sig))
-> > +		if (IS_ERR(sig)) {
-> > +			ret =3D PTR_ERR(sig);
-> >  			goto error_free_key;
-> > +		}
-> > =20
-> >  		if (pkey->key_is_private)
-> >  			ret =3D crypto_sig_set_privkey(sig, key, pkey->keylen);
-> > @@ -313,8 +319,10 @@ static int software_key_eds_op(struct kernel_pkey_=
-params *params,
-> >  		ksz =3D crypto_sig_maxsize(sig);
-> >  	} else {
-> >  		tfm =3D crypto_alloc_akcipher(alg_name, 0, 0);
-> > -		if (IS_ERR(tfm))
-> > +		if (IS_ERR(tfm)) {
-> > +			ret =3D PTR_ERR(tfm);
-> >  			goto error_free_key;
-> > +		}
-> > =20
-> >  		if (pkey->key_is_private)
-> >  			ret =3D crypto_akcipher_set_priv_key(tfm, key, pkey->keylen);
-> > @@ -411,8 +419,10 @@ int public_key_verify_signature(const struct publi=
-c_key *pkey,
-> > =20
-> >  	key =3D kmalloc(pkey->keylen + sizeof(u32) * 2 + pkey->paramlen,
-> >  		      GFP_KERNEL);
-> > -	if (!key)
-> > +	if (!key) {
-> > +		ret =3D -ENOMEM;
-> >  		goto error_free_tfm;
-> > +	}
-> > =20
-> >  	memcpy(key, pkey->key, pkey->keylen);
-> >  	ptr =3D key + pkey->keylen;
-> > --=20
-> > 2.39.2
+On Fri Jun 16, 2023 at 8:07 PM EEST, Colin Ian King wrote:
+> Variable len is being accumulated but the value is never read. It is
+> redundant and can be removed. Cleans up clang scan build warning:
 >
-> I'll pick this as I'm late with 6.5 PR.
+> drivers/char/tpm/eventlog/tpm1.c:276:2: warning: Value stored to 'len' is=
+ never read [deadcode.DeadStores]
 >
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/char/tpm/eventlog/tpm1.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog=
+/tpm1.c
+> index 8aa9057601d6..12ee42a31c71 100644
+> --- a/drivers/char/tpm/eventlog/tpm1.c
+> +++ b/drivers/char/tpm/eventlog/tpm1.c
+> @@ -251,7 +251,6 @@ static int tpm1_binary_bios_measurements_show(struct =
+seq_file *m, void *v)
+> =20
+>  static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v=
+)
+>  {
+> -	int len =3D 0;
+>  	char *eventname;
+>  	struct tcpa_event *event =3D v;
+>  	unsigned char *event_entry =3D
+> @@ -273,7 +272,7 @@ static int tpm1_ascii_bios_measurements_show(struct s=
+eq_file *m, void *v)
+>  	/* 3rd: event type identifier */
+>  	seq_printf(m, " %02x", do_endian_conversion(event->event_type));
+> =20
+> -	len +=3D get_event_name(eventname, event, event_entry);
+> +	get_event_name(eventname, event, event_entry);
+> =20
+>  	/* 4th: eventname <=3D max + \'0' delimiter */
+>  	seq_printf(m, " %s\n", eventname);
+> --=20
+> 2.39.2
 
-Causes merge conflicts with my tree:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
