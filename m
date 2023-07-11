@@ -2,55 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6B7C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 08:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB24EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 08:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbjGKIVD (ORCPT
+        id S230058AbjGKIVK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 04:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
+        Tue, 11 Jul 2023 04:21:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230038AbjGKIVC (ORCPT
+        with ESMTP id S229573AbjGKIVJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 04:21:02 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE60E6C
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 01:21:00 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fc04692e20so38643385e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 01:21:00 -0700 (PDT)
+        Tue, 11 Jul 2023 04:21:09 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A96E79
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 01:21:06 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3141fa31c2bso5453603f8f.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 01:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689063658; x=1691655658;
+        d=linaro.org; s=google; t=1689063665; x=1691655665;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fquwLHvnamolS/A4KcwEUnoJp9w0O66643f28CD8jzM=;
-        b=mzv8741rgqYmjOsoiNDIW6+1xXPxKOF3DQEErDqsmEh0HZc8TRpBiT6mRk+EFiykz+
-         m2YaIFcSQwkc/hQJzEcFYX3HKm0c+3WYFRjTRx9zmwlpLMT9Ouhab7DCbeY1xEXqttW4
-         Rk5esQWuwVWH8MmsN9PwYR3zDbvzJQvrDFuPZO0JU+gsQD+0ZsCn4pjD7BZqwIlRhV0j
-         Qnh+wZ/FPjKcdpSRBYHBShqJzZJd4PV4KGMMQ0vFzc3Ua/zC1KL2qD/O65VQSpOCRpgt
-         hM2auTr4qr3lFt6jiupoGHy6HTUxXGi7hV+hdp9b9fCIK9Glj5HRyN6rGHoh3Lc3MXfR
-         MNgg==
+        bh=p96yGLmqdrf7EnICZmRF6+JxSLRO9iWhLvWVcOetAfo=;
+        b=NoUPMC6dZeoMa8/E+BW4bns/yzCS0r1fbf8fMVW/3pn/55f1coshgfIRntvLgKepPU
+         UmXlRW5EmUaoEYdNzZ6Mrr6jQ9ST+5BL/E7VQ2BFvT0KDdAsuddaRd04URW1dGUtPi/m
+         3IUZbKyCpU9VgMlfrTIojA5vupDmWzb/bAXOGiqesyAIUmanavE1BBAEBI8QlEm1UvrS
+         Ng3XRi6SIGi/glvJojiwZT5u3EkzxpdHlbnXCPiYUHmSwKlx/M6Yrmw16nI1QXuGHXUc
+         /upYTptuHBRUBpKAmfRpRsXNQ8xyaTRqam+j5RXAZoBisa4pHtu978I6q8ppvnCgTNeb
+         1arQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689063658; x=1691655658;
+        d=1e100.net; s=20221208; t=1689063665; x=1691655665;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fquwLHvnamolS/A4KcwEUnoJp9w0O66643f28CD8jzM=;
-        b=T6fiwxStuLew5N7HwDeyW+N4OXdBz2Wbv9/Jv5hPmeTrpJc4qd7ikA4sMgqj0WaF6k
-         l4die/Ev85aL/x6xY54qY1ZV0VvG6TjtHC0KhGtLC8/o98EkOhbvbP+6Bp3LftdFTPpG
-         NVCGQi7sZCLdtw6n9u3aMQDT0COwxHiiaebBxqkINxy4XNiCA7Mg7/TEPFJ6UtIwOL/S
-         cGie5MfL8rfrQVRTuoQB0w7CDN4lsBVbvr2gsNq6g6bl0OdXUraJTYiJhoKzoGl/9GSx
-         J8jarerSJ1SIgRuExuRo5EsSPkoYpOFiZDdPoKW/NDgaB21mzNl6qxOb83pR2tRnPrNK
-         Kf7A==
-X-Gm-Message-State: ABy/qLYDB7vY9Lh4d06neHi6/y58DHnO+0IK426f18vPHUvPRt81G7oc
-        7tCDYifpL4VsW6nUG1x4EgnH0g==
-X-Google-Smtp-Source: APBJJlGFbfN8PFu6vBwaUFRibZsOZ+dedhaxMwqSHVuvWYjJ3E+fa9D5Z0fCd2jvkBGnSvz80HAmdg==
-X-Received: by 2002:a05:600c:21d0:b0:3f9:b17a:cb61 with SMTP id x16-20020a05600c21d000b003f9b17acb61mr12798362wmj.13.1689063658783;
-        Tue, 11 Jul 2023 01:20:58 -0700 (PDT)
+        bh=p96yGLmqdrf7EnICZmRF6+JxSLRO9iWhLvWVcOetAfo=;
+        b=WsZWTYxyJDI7Z0z9dVmleC3Ez+iGBCFPPesNXdVQSkXdqlphlMNNclDZ+wQlMxAGcn
+         Es97IEDl5ZI4fctTyAiDdb0GxlWrMptTZ3zJCoWWr2SEjBO8pRocZcFYCiQ0I7KUpDPe
+         ZyCfDA0TXW3z2aBHulDlb0jRqbC0Wduhr7gfw+gYduGLHlMClwOqQIgZ6BvU0o9vNFfa
+         PzcBrDi25IPQ9h80INAPLJPkqFkxbUt5NPMli58XU6YO167MknSRQioTyIwewmUw7TV9
+         B+oGxuT3G/P6OIPn1z728MosGZ8dgdDEXHxjdrVUk6OCLye5hfWnqBLA+x9N6Li/QV+J
+         qDxA==
+X-Gm-Message-State: ABy/qLaavKpIMsH5I8ONmscA/wmi9PXnAjSZYXvDFNyK14RN7GvKiWsY
+        1I8y70nU7/9zyXS9fmJV9aeq85qii7CfSJSJqI8=
+X-Google-Smtp-Source: APBJJlE9i4XhHmQv1pBhQZUzsFzcV9eFjlSxljOGejA2W9oGWgdxxGZyfxWGUnUD4oZvCT2ekuvWAg==
+X-Received: by 2002:a05:6000:1290:b0:315:a91c:1a8c with SMTP id f16-20020a056000129000b00315a91c1a8cmr169842wrx.22.1689063664992;
+        Tue, 11 Jul 2023 01:21:04 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n22-20020a7bcbd6000000b003fbb618f7adsm1811798wmi.15.2023.07.11.01.20.57
+        by smtp.gmail.com with ESMTPSA id q10-20020adff50a000000b003144bfbd0b3sm1576580wro.37.2023.07.11.01.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 01:20:57 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 11:20:54 +0300
+        Tue, 11 Jul 2023 01:21:04 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 11:21:00 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
 Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
@@ -60,9 +60,8 @@ Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
         Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/5 v4] accel/qaic: tighten bounds checking in
- decode_message()
-Message-ID: <ZK0Q5nbLyDO7kJa+@moroto>
+Subject: [PATCH 3/5 v4] accel/qaic: Add consistent integer overflow checks
+Message-ID: <ZK0Q7IsPkj6WSCcL@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -71,71 +70,67 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Copy the bounds checking from encode_message() to decode_message().
-
-This patch addresses the following concerns.  Ensure that there is
-enough space for at least one header so that we don't have a negative
-size later.
-
-	if (msg_hdr_len < sizeof(*trans_hdr))
-
-Ensure that we have enough space to read the next header from the
-msg->data.
-
-	if (msg_len > msg_hdr_len - sizeof(*trans_hdr))
-		return -EINVAL;
-
-Check that the trans_hdr->len is not below the minimum size:
-
-	if (hdr_len < sizeof(*trans_hdr))
-
-This minimum check ensures that we don't corrupt memory in
-decode_passthrough() when we do.
-
-	memcpy(out_trans->data, in_trans->data, len - sizeof(in_trans->hdr));
-
-And finally, use size_add() to prevent an integer overflow:
-
-	if (size_add(msg_len, hdr_len) > msg_hdr_len)
+The encode_dma() function has integer overflow checks.  The
+encode_passthrough(), encode_activate() and encode_status() functions
+did not.  I added integer overflow checking everywhere.  I also
+updated the integer overflow checking in encode_dma() to use size_add()
+so everything is consistent.
 
 Fixes: 129776ac2e38 ("accel/qaic: Add control path")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-v2: Fix the >= vs > bug in "if (msg_len > msg_hdr_len - sizeof(*trans_hdr))"
----
- drivers/accel/qaic/qaic_control.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+v2: no change
+
+ drivers/accel/qaic/qaic_control.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
-index 2fdd5959c52f..752b67aff777 100644
+index 752b67aff777..23680f5f1902 100644
 --- a/drivers/accel/qaic/qaic_control.c
 +++ b/drivers/accel/qaic/qaic_control.c
-@@ -956,15 +956,23 @@ static int decode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
- 	int ret;
- 	int i;
- 
--	if (msg_hdr_len > QAIC_MANAGE_MAX_MSG_LENGTH)
-+	if (msg_hdr_len < sizeof(*trans_hdr) ||
-+	    msg_hdr_len > QAIC_MANAGE_MAX_MSG_LENGTH)
+@@ -367,7 +367,7 @@ static int encode_passthrough(struct qaic_device *qdev, void *trans, struct wrap
+ 	if (in_trans->hdr.len % 8 != 0)
  		return -EINVAL;
  
- 	user_msg->len = 0;
- 	user_msg->count = le32_to_cpu(msg->hdr.count);
+-	if (msg_hdr_len + in_trans->hdr.len > QAIC_MANAGE_EXT_MSG_LENGTH)
++	if (size_add(msg_hdr_len, in_trans->hdr.len) > QAIC_MANAGE_EXT_MSG_LENGTH)
+ 		return -ENOSPC;
  
- 	for (i = 0; i < user_msg->count; ++i) {
-+		u32 hdr_len;
-+
-+		if (msg_len > msg_hdr_len - sizeof(*trans_hdr))
-+			return -EINVAL;
-+
- 		trans_hdr = (struct wire_trans_hdr *)(msg->data + msg_len);
--		if (msg_len + le32_to_cpu(trans_hdr->len) > msg_hdr_len)
-+		hdr_len = le32_to_cpu(trans_hdr->len);
-+		if (hdr_len < sizeof(*trans_hdr) ||
-+		    size_add(msg_len, hdr_len) > msg_hdr_len)
- 			return -EINVAL;
+ 	trans_wrapper = add_wrapper(wrappers,
+@@ -558,12 +558,10 @@ static int encode_dma(struct qaic_device *qdev, void *trans, struct wrapper_list
+ 	msg = &wrapper->msg;
+ 	msg_hdr_len = le32_to_cpu(msg->hdr.len);
  
- 		switch (le32_to_cpu(trans_hdr->type)) {
+-	if (msg_hdr_len > (UINT_MAX - QAIC_MANAGE_EXT_MSG_LENGTH))
+-		return -EINVAL;
+-
+ 	/* There should be enough space to hold at least one ASP entry. */
+-	if (msg_hdr_len + sizeof(*out_trans) + sizeof(struct wire_addr_size_pair) >
+-	    QAIC_MANAGE_EXT_MSG_LENGTH)
++	if (size_add(msg_hdr_len,
++		     sizeof(*out_trans) + sizeof(struct wire_addr_size_pair)) >
++		     QAIC_MANAGE_EXT_MSG_LENGTH)
+ 		return -ENOMEM;
+ 
+ 	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
+@@ -635,7 +633,7 @@ static int encode_activate(struct qaic_device *qdev, void *trans, struct wrapper
+ 	msg = &wrapper->msg;
+ 	msg_hdr_len = le32_to_cpu(msg->hdr.len);
+ 
+-	if (msg_hdr_len + sizeof(*out_trans) > QAIC_MANAGE_MAX_MSG_LENGTH)
++	if (size_add(msg_hdr_len, sizeof(*out_trans)) > QAIC_MANAGE_MAX_MSG_LENGTH)
+ 		return -ENOSPC;
+ 
+ 	if (!in_trans->queue_size)
+@@ -719,7 +717,7 @@ static int encode_status(struct qaic_device *qdev, void *trans, struct wrapper_l
+ 	msg = &wrapper->msg;
+ 	msg_hdr_len = le32_to_cpu(msg->hdr.len);
+ 
+-	if (msg_hdr_len + in_trans->hdr.len > QAIC_MANAGE_MAX_MSG_LENGTH)
++	if (size_add(msg_hdr_len, in_trans->hdr.len) > QAIC_MANAGE_MAX_MSG_LENGTH)
+ 		return -ENOSPC;
+ 
+ 	trans_wrapper = add_wrapper(wrappers, sizeof(*trans_wrapper));
 -- 
 2.39.2
 
