@@ -2,82 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2A3C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 11:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72254EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 12:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230053AbjGKLN2 (ORCPT
+        id S230419AbjGKMmV convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 07:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
+        Tue, 11 Jul 2023 08:42:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjGKLN1 (ORCPT
+        with ESMTP id S229983AbjGKMmU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 07:13:27 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7116D98
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 04:13:26 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fbc5d5746cso63184845e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 04:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689074005; x=1691666005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dLCSxIig1E6lDTEDhD9ibzAe8m3WEahllr3ouLgYn1c=;
-        b=nzLVIA+PTb3SSi7DlWsGUsWL0rkRaezLG67wZ9+BrJp3AN5vFhk9E0dU6Vk52JEQKR
-         2vLUlE/D2AteRhGj4dkHYehNCRxLhFq+LUlYcCZRPHvbm7eEpmU7fLT2U9Csc3sEues6
-         t05grkaVvaeeg8n1TVm5MNd9z8nH1MAqcyU2CaWLXISalkxxjV7Xe5gxUKR9QmNOlkk+
-         h+XoqvVHH6LnqoYvxTnbG9LNgn0+TDx0w9g8VedeMKOc+HEFDuU9xw36PM00it1+SSCA
-         n5zaeQuoXryACKo6BTsqMOjcASK3ca8qDzOvq31ASaP592CcVNBYtvPlMOA4eKVY6img
-         jBuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689074005; x=1691666005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dLCSxIig1E6lDTEDhD9ibzAe8m3WEahllr3ouLgYn1c=;
-        b=AN++WU0JZpolyqQ4NcQl7s51E0LCFBHAHe0GwQRxPEVJlccV72gte06XWakfy0aW3X
-         nRqyXmB9qOH3znpOkKqs1cSpWSEN4bBjf0z6oAKm7/feWBXw+ePmD+QFISjC9uSwUkch
-         sPJImhA1bYNtRXOTxs5TrFd7jH4T8PvprQ8q4LKahlm8BKMihCjIZdeHUVbynuY4WVAy
-         GaoltyEOgZh2rBF8jUGLUrNUG/Lqz1YuqBS0rdptv79oh9ledhYvD/RYkADIBD/LtjQw
-         x1J4F1/DOGci2G6sGldyBxjGnLyuhdKhrYn8w7Jpmh0zui60Okn+hNvRbfxZ42DAQhIL
-         VPXg==
-X-Gm-Message-State: ABy/qLbZR2Iisqieh4qfiGf/De9YyYzzG7QDAL3urxZBOdlskd86Zbf/
-        XfeJ22FxotbEMIErWJffG8HZDg==
-X-Google-Smtp-Source: APBJJlHUs43WSGSKNzoDZD3KQlU5rLMuF/7dsLdNmMbgfPJIjEa2I2xQi/A5h+V8aI33ZuQwpwX8Uw==
-X-Received: by 2002:a1c:f706:0:b0:3fb:b637:22a7 with SMTP id v6-20020a1cf706000000b003fbb63722a7mr16506974wmh.4.1689074004968;
-        Tue, 11 Jul 2023 04:13:24 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a19-20020a05600c225300b003fbb0c01d4bsm2259571wmm.16.2023.07.11.04.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 04:13:23 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 14:13:19 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     airlied@redhat.com, kraxel@redhat.com, gurchetansingh@chromium.org,
-        olvaffe@gmail.com, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/virtio: remove some redundant code
-Message-ID: <7f67ed65-647a-44d7-a262-d3f1f48d90b9@kadam.mountain>
-References: <20230711090030.692551-1-suhui@nfschina.com>
+        Tue, 11 Jul 2023 08:42:20 -0400
+X-Greylist: delayed 601 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 11 Jul 2023 05:42:19 PDT
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4331B0;
+        Tue, 11 Jul 2023 05:42:19 -0700 (PDT)
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay04.hostedemail.com (Postfix) with ESMTP id 089D61A0244;
+        Tue, 11 Jul 2023 12:31:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id 078BD2000E;
+        Tue, 11 Jul 2023 12:31:14 +0000 (UTC)
+Message-ID: <07bfc0b4676d07274acdcdf38752f73573938382.camel@perches.com>
+Subject: Re: [PATCH v3] checkpatch: check for missing Fixes tags
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Thorsten Leemhuis <linux@leemhuis.info>,
+        Andy Whitcroft <apw@canonical.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Tom Gall <tom.gall@linaro.org>, kernel-janitors@vger.kernel.org
+Date:   Tue, 11 Jul 2023 05:31:14 -0700
+In-Reply-To: <756970eb-6204-415a-a997-d67a14ba6584@moroto.mountain>
+References: <756970eb-6204-415a-a997-d67a14ba6584@moroto.mountain>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230711090030.692551-1-suhui@nfschina.com>
+X-Rspamd-Queue-Id: 078BD2000E
+X-Stat-Signature: bntx7nnfjs8pgkaxre5rphbiyjb1h1rx
+X-Rspamd-Server: rspamout01
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19x2gh+vWixMU+NLw21/2xbr+6SUctP47I=
+X-HE-Tag: 1689078674-258117
+X-HE-Meta: U2FsdGVkX19WJVhw/iKSXETy0xJZnvCDQiiGHuoBIfwUnZePzCs0/u1bKh+ihRC5iT82hWN6003xPJD/GV85un13yIrw8x0IJAEu0kVmlrqqztUPVGG7SNvieWp/7DzKrgukrQXPKhBeFCaPPk6gA+r6wnwR+wfyTJpI5LwaGdJmOuLu/Vr2RZQC281UzdEyZR1JUTkf93hvyMEWehnAiZrfMQ55zmK50YwbvfyP2igwlXPchYSQjV/fsFg3v8PV6GeZJ4s+Ll/s6oCv77sEtHf3wHlBlHs4LoBMObbJn/aTZs33NUGxEnd5YIl0hxRoOOdD7/sxmgdH7r68JFH/XUdnffQlpM0wN4wG7C9zxLck8PJ61ozqkY086aq0vQxphc7fRZFZWZ2iG4DHQIYvOAIYQ/t00tpvMr5iBw85BelsGVPxSlG+cbrQEPHoYK3s
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 05:00:31PM +0800, Su Hui wrote:
-> virtio_gpu_get_vbuf always be successful,
-> so remove the error judgment.
+On Tue, 2023-07-11 at 10:44 +0300, Dan Carpenter wrote:
+> This check looks for common words that probably indicate a patch
+> is a fix.  For now the regex is:
 > 
+> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
+> 
+> Why are stable patches encouraged to have a fixes tag?  Some people mark
+> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+> still a good idea.  For example, the Fixes tag helps in review.  It
+> helps people to not cherry-pick buggy patches without also
+> cherry-picking the fix.
+> 
+> Also if a bug affects the 5.7 kernel some people will round it up to
+> 5.10+ because 5.7 is not supported on kernel.org.  It's possible the Bad
+> Binder bug was caused by this sort of gap where companies outside of
+> kernel.org are supporting different kernels from kernel.org.
+> 
+> Should it be counted as a Fix when a patch just silences harmless
+> WARN_ON() stack trace.  Yes.  Definitely.
+> 
+> Is silencing compiler warnings a fix?  It seems unfair to the original
+> authors, but we use -Werror now, and warnings break the build so let's
+> just add Fixes tags.  I tell people that silencing static checker
+> warnings is not a fix but the rules on this vary by subsystem.
+> 
+> Is fixing a minor LTP issue (Linux Test Project) a fix?  Probably?  It's
+> hard to know what to do if the LTP test has technically always been
+> broken.
+> 
+> One clear false positive from this check is when someone updated their
+> debug output and included before and after Call Traces.  Or when crashes
+> are introduced deliberately for testing.  In those cases, you should
+> just ignore checkpatch.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v3: Add UBSAN to the regex as Kees suggested.
+> 
+> v2: I fixed the formatting issues Joe pointed out.
 
-No, just ignore the static checker false positive in this case.  The
-intent of the code is clear that if it did have an error it should
-return an error pointer.
+But just added another.
 
-regards,
-dan carpenter
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -3186,6 +3193,16 @@ sub process {
+>  			}
+>  		}
+>  
+> +# These indicate a bug fix
+> +		if (!$in_header_lines && !$is_patch &&
+> +			$line =~ /^This reverts commit/) {
+> +			$is_revert = 1;
+> +		}
+> +
+> +		if (!$in_header_lines && !$is_patch &&
+> +			$line =~ /(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/) {
+
+align to open parenthesis please
 
