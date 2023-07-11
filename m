@@ -2,90 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76878EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 02:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B10C001DE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 06:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbjGKC6q (ORCPT
+        id S230237AbjGKGGB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jul 2023 22:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45714 "EHLO
+        Tue, 11 Jul 2023 02:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbjGKC6p (ORCPT
+        with ESMTP id S229931AbjGKGGA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jul 2023 22:58:45 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE96FB;
-        Mon, 10 Jul 2023 19:58:44 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-51e5672d580so2791358a12.2;
-        Mon, 10 Jul 2023 19:58:44 -0700 (PDT)
+        Tue, 11 Jul 2023 02:06:00 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91003E8
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:05:59 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-314313f127fso5462172f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689044323; x=1691636323;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnYEIRHhki4Z3XM7hs+JBMiBd6mstq8jdoxe7LOSGFQ=;
-        b=VekpqBoZS2Qca14fLYlmvzRoWQTI3Nq4Lm5SJY+hPouul3WcRhRXPRcosC2fsCLxcW
-         dHToZzSgyjGW+0wG6WeYhWm+fTq7ie5KLIewI3Z1ogRZNoJb2PqftG56+zYBesXTpCyf
-         hnuNE88llhmEKFkLy4/SGIaaEwfW9a0FAaluNHcJ56aOM7pxPsbEuo7VWPZ+9T/Snxyu
-         sfXq7lPM0dELlLV3HCtXzkD0JUGL4wM3TpMgzkbTGgLUZxIO52miWXymDw1f5yRcMdlB
-         RD1QIOujuM7lPOfjHthpXX+ttPi0wjISBqV2Lim650CQQTLQYlsLZVp2TTT+tig6gU0x
-         Q6Rg==
+        d=linaro.org; s=google; t=1689055558; x=1691647558;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aesAxzayxM+SEzglJ/Ypflh+S53bG0sURfwQo/p3I3U=;
+        b=t2Yr+QWSR/YsSFFbia2YGAW7i8T8cWbZ/PRnB7BOcF91pQBS1Pv4nH0lk1C4uN5zNP
+         q8pxUAMP/bKvbPykAlCZ+oyTKVG8/fXcT1fgemVTvp2NSJSS1nUxSNNdIZjuEiTqTrZq
+         +9448VhPoeUmKcQ/lyxrNpUZH80KVThUiOPLs5gXk+/sILsgj+CFfQayWEzCs76AQ+ST
+         b4gIzo9zbw6BuQurVJzvqcltiICv2ZDNDpFafKXClPQ3QDeLWbtatdys0U5XKTFC9Lnp
+         8sQUWAhNd1XS6nxFpIlRIX/ENya9QRZD6LoIWrihNstyeRBO/TkhJWy2awk4qy3g8Ku3
+         3tIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689044323; x=1691636323;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rnYEIRHhki4Z3XM7hs+JBMiBd6mstq8jdoxe7LOSGFQ=;
-        b=HDiPhg7bS7hlKmOnexPFsZSOdBbH9UClZEt6oUweBKPJ6MJ9EkC5YbRt/ordAPM7pC
-         JDQXrCb3zI0eNg3HS4Km2+VpTmNekNyBupoG9FCo51COaTbviMDUE1yVDk84934l0Y9z
-         OjLCkC1D1LUoDf7JnVbapRQuc1odeRvcCRi1MQL5pxDq4WmF4EVr7Cm1ywxRe1epGFiI
-         K2JmxgjYN8zpnxVWFqMzF7KpbH96uVF1rKYx9ADTPwkm+bB4yGMsNQyFoIu/4kHPwxjD
-         MU7P1IZWaRO4G9PIBMrAsjbg6hwPGbelWtrb+ULwASz/Vg1gNLKv7ptSNV9Weli4ZL0M
-         R9xQ==
-X-Gm-Message-State: ABy/qLZ6cffyoMhcl1ih0E7aKMi3Qu/1HPn5umMUCjr6GM5v4zlSXkdj
-        EI6PFjvLJoRuHnLaMDhOEO+gXhQFhx2cnsmlsAU=
-X-Google-Smtp-Source: APBJJlFKkdSihijox66hoIkTD9lkC3ZDgUccwc32wqaOfQzfWm+6KthANN4nducSyEVv/L2Epkdf3f9yfNM1vy5yxvU=
-X-Received: by 2002:aa7:d6ce:0:b0:51e:1a47:3e3a with SMTP id
- x14-20020aa7d6ce000000b0051e1a473e3amr14094578edr.18.1689044322647; Mon, 10
- Jul 2023 19:58:42 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689055558; x=1691647558;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aesAxzayxM+SEzglJ/Ypflh+S53bG0sURfwQo/p3I3U=;
+        b=IWBwLZg6+Z1ZKnUGhlvhLzNBA2lVQTDf3KmKI4ENhpqq+LHFL2Cl0ibD9vS4DE5VGb
+         s8XntLcS3PlKXJdAP+TMCWGI1CteyMnyvBqxN/J+A7Npf7RNPP1ID0cj3idnXqsFF1GL
+         A3lBTHVS1E57xam0KCbLj3bqMJBbZbN35X+d9jdgulLXOANMKewroTVEVGG/pq6yJ8m9
+         L+l7yM31Yqb9/R9YlDgZAIWHmsTFiz4UDPC1+tEs/UYkm6fPGeJMpYC2ydZ62KE5v2Yv
+         oEYOILNRQngwP/0zQk6ifKYTPTO0H1PCgQrWQGQ1Xl+L+aXeDzPQSGza/VgkA6/pREvL
+         rkEw==
+X-Gm-Message-State: ABy/qLYaOF/U6Ss1XyJ0MiAjlsQ5gRrbvov3X0WlFhybORDy5cJkBzVS
+        XrI+s9ay10I52MRsu9U1Q4tCRg==
+X-Google-Smtp-Source: APBJJlFfvQKMGo1BcUF/1jUzDWo/C/kzCrN7OGJnmLUAWv27PZ4FeGr3LtF0Y+Pi9vx5yglpnCDqMQ==
+X-Received: by 2002:a5d:56cd:0:b0:314:1a2e:1af5 with SMTP id m13-20020a5d56cd000000b003141a2e1af5mr13831401wrw.25.1689055558077;
+        Mon, 10 Jul 2023 23:05:58 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b16-20020a5d5510000000b0031417b0d338sm1247851wrv.87.2023.07.10.23.05.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 23:05:56 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 09:05:51 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 0/5 v2] accel/qaic: Improve bounds checking in encode/decode
+Message-ID: <ZKzxP8iX8Op0lYvh@moroto>
 MIME-Version: 1.0
-References: <20230710080348.4137875-2-chunyan.zhang@unisoc.com> <69d56da8-9530-e729-d527-89879d2bab06@web.de>
-In-Reply-To: <69d56da8-9530-e729-d527-89879d2bab06@web.de>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Tue, 11 Jul 2023 10:58:05 +0800
-Message-ID: <CAAfSe-sQ2xeSUCwsWW2OJn7t9a9YUsE00O20BLvah1JnV7yP8Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] serial: sprd: Fix DMA buffer leak issue
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 10 Jul 2023 at 19:36, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > Release DMA buffer when _probe() returns fail to avoid memory leak.
->
-> I would appreciate if this change description can be improved another bit.
->
+Fixed two things in v2:  Include the <linux/overflow.h> file.  Change
+the >= in encode and decode to >.
 
-I will try my best.
-
->
-> Will a cover letter become helpful also for the presented small patch series?
-
-These two patches are all fixes and describe the details in each,
-that's why I didn't write a cover letter which I don't think can
-provide more useful information.
-
-Thanks for your review,
-Chunyan
-
->
-> Regards,
-> Markus
+regards,
+dan carpenter
