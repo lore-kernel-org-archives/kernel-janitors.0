@@ -2,141 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D15EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 06:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D887C001DF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 06:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231241AbjGKGMm (ORCPT
+        id S231269AbjGKGNH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 02:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47252 "EHLO
+        Tue, 11 Jul 2023 02:13:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231238AbjGKGMk (ORCPT
+        with ESMTP id S231260AbjGKGNF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 02:12:40 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E369710C3
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:12:31 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3110ab7110aso5793592f8f.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:12:31 -0700 (PDT)
+        Tue, 11 Jul 2023 02:13:05 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E1EE5
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:13:04 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fbc6ab5ff5so55045495e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jul 2023 23:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689055950; x=1691647950;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fquwLHvnamolS/A4KcwEUnoJp9w0O66643f28CD8jzM=;
-        b=sMpy+qNXUFtfigmL9AzcaoyDWkla9E9TgYPBF1HcFX0x6kRxImxDj48GyEGBUGJeKf
-         Mk2FccxLKV8ZK3Cou/q6smdzJ354cf1gdgkvHy+ZxENrO47PcU1oRIpIFI/E4ohMewL6
-         LEMRLQhoXjb+xKpqfXdYjdGEh5ydqWkFXkz+tYkaKyGNUAVFFe4wQO9vK4ZCtjp89ARq
-         uJGXURkZojKww1IA/M7nRbGkQENGCMBMYcqbVBJOgVujSq7MUCMyUrnzty8Tc2nWiDlP
-         Zm2uvntQG9rDx4AB18kknvyDM3hJiETyqw3MjQHO/BkrwQs7r8rDMCgnRC0ECChFMFpY
-         y4DQ==
+        d=linaro.org; s=google; t=1689055982; x=1691647982;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JxKFYbOeCPJfNoXrqBvsNS7aUlyz8/ToZjQNETQXPms=;
+        b=FV97CtS+b2ivv2YRoRawAvvKMw4aLDa7Rm7BXE7rE3Rx9oKkP0hKVpGnlanhx9W4Md
+         UNeGoquhfb66TgF0NvxLwG3gU1FDIa0WerFojuDRIocUcjdhpj1vTd0fPWnlilKDfdSY
+         /di9GEWJlzXRPiTucNo2ocij0y/7vgoWuSqI1HAFtC7y5NqX/awQYh/ttw+QyI256Kz9
+         1CqUVF0EdRS2WUj/HgHJ706fE8dFJPrrVSDb1OoNeQzRIxkFDn86T4JLJ372TGBBeXaa
+         nNfik6T6DJ80R9Tx0TlnbzsIk2rVCMI0Apym+bBILOB4qR9VZZerFRyqa5+ZLbw9WmH9
+         bi9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689055950; x=1691647950;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fquwLHvnamolS/A4KcwEUnoJp9w0O66643f28CD8jzM=;
-        b=K7Lz37cEGXMJumlDzlTb4xGjygdZOzgJlkTelAYQ+9cfTx3YL8VTjFDityukXlZn3V
-         s/tkxd35IpyNg6rxQKegOe7dOmQXpncjuxd0DAiX8AVO8J3qQBFI+vYi673uYE4zIPx5
-         kwYIj+y3rWebR6FdS3okeVM67dSwKXOUAP9Nxb+zjGU2yw5E0/ptHRSd4NRlw/HxUhIS
-         pE9WHv5ZzwauYGGxxUw1i334hHbUwJRIXUa8ctPVqWER5JEorkO+t+Dt1M5FWNvVIhre
-         kCTd9wWqH1fMugnRL9rFb16fZnbCnRT+6m03jTkD5Jo/jSkqH0Lo7mg70wNfUegeLEMy
-         074A==
-X-Gm-Message-State: ABy/qLa9ykjD9oc8ltU/rx0iKlTiadVBMOzqQ0r8nj5GFEaGIz4UT057
-        qX8qaZ96wjVHGzkvTk9xFzEmPw==
-X-Google-Smtp-Source: APBJJlFt8xMwwWVS69uneKXK4DbRZLW2rpSt/tuLs183DCd2Z2Grn9+FDVz/F64jGW2g8uWnPvPYAQ==
-X-Received: by 2002:a5d:6451:0:b0:315:9047:a482 with SMTP id d17-20020a5d6451000000b003159047a482mr8454354wrw.48.1689055950161;
-        Mon, 10 Jul 2023 23:12:30 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689055982; x=1691647982;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JxKFYbOeCPJfNoXrqBvsNS7aUlyz8/ToZjQNETQXPms=;
+        b=FNfwGtjyoV1/8WAUis1AkmkzBvBWgxLOObMZL8SCCjhTkeU35wEQVYurnAByk1CR2J
+         SNj3ZfYw6TVkGMK7DntN9/HbMRgrbjnjAhlYtnp0AGFEsBW/hXfK9Cx8y/GcF53FOsNg
+         l2u1MUn1OfrT0RosXyRpu/Np+kB0FZnUrVys5zdUohlhw6HiFhSbwiSXkgFZXrrMXneZ
+         SGigdIneWwERw3iOSDvgl2eUlUycJqq73q2txGKa/LvU9QIwGr5hEcmVrS1kQCbZ3HHT
+         sJ/a+3roLNO3eLri4vepAySs0KRoM4QkhSkomc1AJyUx7E2jtaV8CAMG5k5pYgyoEMUG
+         OPRg==
+X-Gm-Message-State: ABy/qLYPIaiKt31rmY4hRFwhBDNBbZgKD0nzkAhGqbrCt+o6dkRttWDN
+        Lw88xW6qFefNAR9UibRrpLbsZQ==
+X-Google-Smtp-Source: APBJJlFf+n6TNNYgruOps7eyqyNXpCn3snxsTrK5DfRFZuDu9k9jIoV4xxu6En2qffZVVMji6acx6g==
+X-Received: by 2002:a1c:ed07:0:b0:3fb:d68d:4c6f with SMTP id l7-20020a1ced07000000b003fbd68d4c6fmr15023175wmh.14.1689055982600;
+        Mon, 10 Jul 2023 23:13:02 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a15-20020a5d508f000000b0031437299fafsm1292822wrt.34.2023.07.10.23.12.28
+        by smtp.gmail.com with ESMTPSA id k6-20020a05600c0b4600b003fc00702f65sm10890231wmr.46.2023.07.10.23.13.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 23:12:29 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 09:12:25 +0300
+        Mon, 10 Jul 2023 23:13:01 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 09:12:58 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
 Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
         Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
         Oded Gabbay <ogabbay@kernel.org>,
         Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/5 v3] accel/qaic: tighten bounds checking in
- decode_message()
-Message-ID: <7b5d7d2e-a1da-410e-bb23-b17831f48cea@moroto.mountain>
+Subject: [PATCH 4/5 v3] accel/qaic: move and expand integer overflow checks
+ for map_user_pages()
+Message-ID: <2efbbfb0-ca61-49eb-9347-04d8d00f87e1@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZKzx5nA6Z/0yhBJj@moroto>
 X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Copy the bounds checking from encode_message() to decode_message().
+The integer overflow checking for find_and_map_user_pages() was done in
+encode_dma().  Presumably this was to do it before the allocation.  But
+it's not super important that the failure path is a fast path and it
+hurts readability to put the check so far from the where the variable is
+used.
 
-This patch addresses the following concerns.  Ensure that there is
-enough space for at least one header so that we don't have a negative
-size later.
-
-	if (msg_hdr_len < sizeof(*trans_hdr))
-
-Ensure that we have enough space to read the next header from the
-msg->data.
-
-	if (msg_len > msg_hdr_len - sizeof(*trans_hdr))
-		return -EINVAL;
-
-Check that the trans_hdr->len is not below the minimum size:
-
-	if (hdr_len < sizeof(*trans_hdr))
-
-This minimum check ensures that we don't corrupt memory in
-decode_passthrough() when we do.
-
-	memcpy(out_trans->data, in_trans->data, len - sizeof(in_trans->hdr));
-
-And finally, use size_add() to prevent an integer overflow:
-
-	if (size_add(msg_len, hdr_len) > msg_hdr_len)
+Move the check to find_and_map_user_pages() instead and add some more
+additional potential integer overflow checks.
 
 Fixes: 129776ac2e38 ("accel/qaic: Add control path")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-v2: Fix the >= vs > bug in "if (msg_len > msg_hdr_len - sizeof(*trans_hdr))"
----
- drivers/accel/qaic/qaic_control.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+no change
+
+ drivers/accel/qaic/qaic_control.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
-index 2fdd5959c52f..752b67aff777 100644
+index 23680f5f1902..d5ce36cb351f 100644
 --- a/drivers/accel/qaic/qaic_control.c
 +++ b/drivers/accel/qaic/qaic_control.c
-@@ -956,15 +956,23 @@ static int decode_message(struct qaic_device *qdev, struct manage_msg *user_msg,
- 	int ret;
- 	int i;
+@@ -402,6 +402,12 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
  
--	if (msg_hdr_len > QAIC_MANAGE_MAX_MSG_LENGTH)
-+	if (msg_hdr_len < sizeof(*trans_hdr) ||
-+	    msg_hdr_len > QAIC_MANAGE_MAX_MSG_LENGTH)
- 		return -EINVAL;
+ 	xfer_start_addr = in_trans->addr + resources->xferred_dma_size;
  
- 	user_msg->len = 0;
- 	user_msg->count = le32_to_cpu(msg->hdr.count);
- 
- 	for (i = 0; i < user_msg->count; ++i) {
-+		u32 hdr_len;
++	if (in_trans->size == 0 ||
++	    in_trans->addr + in_trans->size < in_trans->addr ||
++	    in_trans->addr + resources->xferred_dma_size < in_trans->addr ||
++	    in_trans->size + offset_in_page(xfer_start_addr) < resources->xferred_dma_size)
++		return -EINVAL;
 +
-+		if (msg_len > msg_hdr_len - sizeof(*trans_hdr))
-+			return -EINVAL;
-+
- 		trans_hdr = (struct wire_trans_hdr *)(msg->data + msg_len);
--		if (msg_len + le32_to_cpu(trans_hdr->len) > msg_hdr_len)
-+		hdr_len = le32_to_cpu(trans_hdr->len);
-+		if (hdr_len < sizeof(*trans_hdr) ||
-+		    size_add(msg_len, hdr_len) > msg_hdr_len)
- 			return -EINVAL;
+ 	need_pages = DIV_ROUND_UP(in_trans->size + offset_in_page(xfer_start_addr) -
+ 				  resources->xferred_dma_size, PAGE_SIZE);
  
- 		switch (le32_to_cpu(trans_hdr->type)) {
+@@ -564,9 +570,6 @@ static int encode_dma(struct qaic_device *qdev, void *trans, struct wrapper_list
+ 		     QAIC_MANAGE_EXT_MSG_LENGTH)
+ 		return -ENOMEM;
+ 
+-	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
+-		return -EINVAL;
+-
+ 	xfer = kmalloc(sizeof(*xfer), GFP_KERNEL);
+ 	if (!xfer)
+ 		return -ENOMEM;
 -- 
 2.39.2
 
