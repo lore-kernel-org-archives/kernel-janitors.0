@@ -2,32 +2,58 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72254EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 12:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C45DEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 13:48:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbjGKMmV convert rfc822-to-8bit (ORCPT
+        id S233085AbjGKNs0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 08:42:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
+        Tue, 11 Jul 2023 09:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229983AbjGKMmU (ORCPT
+        with ESMTP id S233032AbjGKNsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 08:42:20 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 11 Jul 2023 05:42:19 PDT
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4331B0;
-        Tue, 11 Jul 2023 05:42:19 -0700 (PDT)
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay04.hostedemail.com (Postfix) with ESMTP id 089D61A0244;
-        Tue, 11 Jul 2023 12:31:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id 078BD2000E;
-        Tue, 11 Jul 2023 12:31:14 +0000 (UTC)
-Message-ID: <07bfc0b4676d07274acdcdf38752f73573938382.camel@perches.com>
-Subject: Re: [PATCH v3] checkpatch: check for missing Fixes tags
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Thorsten Leemhuis <linux@leemhuis.info>,
+        Tue, 11 Jul 2023 09:48:25 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC6110EB
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 06:48:22 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so9046091e87.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 06:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689083301; x=1691675301;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O5EedEwkl5J8ikSWamj8/bT29Jk0x5y+zOZZoU4f4Fs=;
+        b=X4aw4pWp3bfHrehMtc03Qwq7ayblhgLn7BoJzIWch64Uz9DD4QXpy92GyaFvkms9+c
+         eNxWauaYk4GO53S6FCUbLRgqV/dz9D9V879VWcq5E7UGANpMQP200Fgp9gm2hKu3Lw15
+         ogi/2fNZC+h1RleI6oj8drgggYxvgq10nR+hZr36oRW1YyGKEduWWWlQjfk/eExIMTbZ
+         EBGhGzjorF9TbKSLLllhztiBQQAqTcC/nwyWxkdus3QXSfPrfm4SUTqNra75tkMMWk1r
+         kLXWlmdddeg+RljApkXVdkeyiTv4lwOL4Xl+g8ppMsC5MyVIasxM3d8deLNatLs+iGEd
+         WZMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689083301; x=1691675301;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O5EedEwkl5J8ikSWamj8/bT29Jk0x5y+zOZZoU4f4Fs=;
+        b=i50XbVehcqcZx9bcOjEAcMPhN7Ji5txJ4nHomxgtrXupI/U1jNLmRyqkhPkmfWd2oe
+         WbD8++DRdsaCjFV9eqg2qCS6LLPigNCZofw4JgFYyd99cSrtb9I7FtDAuQI3NLy5O4ZA
+         raZonnnSXGzmt5opdUByNtlHNRS4BI/4ciowCei1VRTZE2Au4gpyd5cYN7368P6zkYgL
+         Dgc55PkyNyyboct0ZsQeGSqKjxo5WQTzOrjnfAwT9mGGgB0vEyR9loqeF9dNRQNu3l6Y
+         ULnAgXFgQTolm8R0Z6QONESO9DDZmNzwFHYeDBVjeQStwL59gpWuOKnhMnTcAcSAubps
+         Fikw==
+X-Gm-Message-State: ABy/qLb5DuIVCePjkpfOhLSSUR9AM/s+yixBl5VR6IEQw/VIbW75evsE
+        HSvTXWEdfQZrAJT8/KWIogqgtQ==
+X-Google-Smtp-Source: APBJJlFHx8lUGT2+uQzWVA3tc2jJSPEyOlEbpeAeElkyPsI6KTbhcDTkUgXSXPZ3LV+KX8TKCzMC3A==
+X-Received: by 2002:a19:3814:0:b0:4fb:8fde:f60d with SMTP id f20-20020a193814000000b004fb8fdef60dmr11486483lfa.22.1689083300953;
+        Tue, 11 Jul 2023 06:48:20 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t11-20020a7bc3cb000000b003fc04eb92cbsm2569797wmj.44.2023.07.11.06.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jul 2023 06:48:18 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 16:48:14 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Thorsten Leemhuis <linux@leemhuis.info>,
         Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
         Dwaipayan Ray <dwaipayanray1@gmail.com>,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>,
         linux-kernel@vger.kernel.org
@@ -36,80 +62,144 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>,
         Tom Gall <tom.gall@linaro.org>, kernel-janitors@vger.kernel.org
-Date:   Tue, 11 Jul 2023 05:31:14 -0700
-In-Reply-To: <756970eb-6204-415a-a997-d67a14ba6584@moroto.mountain>
-References: <756970eb-6204-415a-a997-d67a14ba6584@moroto.mountain>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+Subject: [PATCH v4] checkpatch: check for missing Fixes tags
+Message-ID: <f3ac6084-8def-4b57-9e6e-0497555e2784@moroto.mountain>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 078BD2000E
-X-Stat-Signature: bntx7nnfjs8pgkaxre5rphbiyjb1h1rx
-X-Rspamd-Server: rspamout01
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19x2gh+vWixMU+NLw21/2xbr+6SUctP47I=
-X-HE-Tag: 1689078674-258117
-X-HE-Meta: U2FsdGVkX19WJVhw/iKSXETy0xJZnvCDQiiGHuoBIfwUnZePzCs0/u1bKh+ihRC5iT82hWN6003xPJD/GV85un13yIrw8x0IJAEu0kVmlrqqztUPVGG7SNvieWp/7DzKrgukrQXPKhBeFCaPPk6gA+r6wnwR+wfyTJpI5LwaGdJmOuLu/Vr2RZQC281UzdEyZR1JUTkf93hvyMEWehnAiZrfMQ55zmK50YwbvfyP2igwlXPchYSQjV/fsFg3v8PV6GeZJ4s+Ll/s6oCv77sEtHf3wHlBlHs4LoBMObbJn/aTZs33NUGxEnd5YIl0hxRoOOdD7/sxmgdH7r68JFH/XUdnffQlpM0wN4wG7C9zxLck8PJ61ozqkY086aq0vQxphc7fRZFZWZ2iG4DHQIYvOAIYQ/t00tpvMr5iBw85BelsGVPxSlG+cbrQEPHoYK3s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2023-07-11 at 10:44 +0300, Dan Carpenter wrote:
-> This check looks for common words that probably indicate a patch
-> is a fix.  For now the regex is:
-> 
-> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
-> 
-> Why are stable patches encouraged to have a fixes tag?  Some people mark
-> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
-> still a good idea.  For example, the Fixes tag helps in review.  It
-> helps people to not cherry-pick buggy patches without also
-> cherry-picking the fix.
-> 
-> Also if a bug affects the 5.7 kernel some people will round it up to
-> 5.10+ because 5.7 is not supported on kernel.org.  It's possible the Bad
-> Binder bug was caused by this sort of gap where companies outside of
-> kernel.org are supporting different kernels from kernel.org.
-> 
-> Should it be counted as a Fix when a patch just silences harmless
-> WARN_ON() stack trace.  Yes.  Definitely.
-> 
-> Is silencing compiler warnings a fix?  It seems unfair to the original
-> authors, but we use -Werror now, and warnings break the build so let's
-> just add Fixes tags.  I tell people that silencing static checker
-> warnings is not a fix but the rules on this vary by subsystem.
-> 
-> Is fixing a minor LTP issue (Linux Test Project) a fix?  Probably?  It's
-> hard to know what to do if the LTP test has technically always been
-> broken.
-> 
-> One clear false positive from this check is when someone updated their
-> debug output and included before and after Call Traces.  Or when crashes
-> are introduced deliberately for testing.  In those cases, you should
-> just ignore checkpatch.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v3: Add UBSAN to the regex as Kees suggested.
-> 
-> v2: I fixed the formatting issues Joe pointed out.
+This check looks for common words that probably indicate a patch
+is a fix.  For now the regex is:
 
-But just added another.
+	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3186,6 +3193,16 @@ sub process {
->  			}
->  		}
->  
-> +# These indicate a bug fix
-> +		if (!$in_header_lines && !$is_patch &&
-> +			$line =~ /^This reverts commit/) {
-> +			$is_revert = 1;
-> +		}
-> +
-> +		if (!$in_header_lines && !$is_patch &&
-> +			$line =~ /(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/) {
+Why are stable patches encouraged to have a fixes tag?  Some people mark
+their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+still a good idea.  For example, the Fixes tag helps in review.  It
+helps people to not cherry-pick buggy patches without also
+cherry-picking the fix.
 
-align to open parenthesis please
+Also if a bug affects the 5.7 kernel some people will round it up to
+5.10+ because 5.7 is not supported on kernel.org.  It's possible the Bad
+Binder bug was caused by this sort of gap where companies outside of
+kernel.org are supporting different kernels from kernel.org.
+
+Should it be counted as a Fix when a patch just silences harmless
+WARN_ON() stack trace.  Yes.  Definitely.
+
+Is silencing compiler warnings a fix?  It seems unfair to the original
+authors, but we use -Werror now, and warnings break the build so let's
+just add Fixes tags.  I tell people that silencing static checker
+warnings is not a fix but the rules on this vary by subsystem.
+
+Is fixing a minor LTP issue (Linux Test Project) a fix?  Probably?  It's
+hard to know what to do if the LTP test has technically always been
+broken.
+
+One clear false positive from this check is when someone updated their
+debug output and included before and after Call Traces.  Or when crashes
+are introduced deliberately for testing.  In those cases, you should
+just ignore checkpatch.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v4: Fix another formatting issue.
+v3: Add UBSAN to the regex as Kees suggested.
+v2: I fixed the formatting issues Joe pointed out.  I also silenced the
+    warning if the commit was a Revert because revert patches already
+    include the hash.
+
+ scripts/checkpatch.pl | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 880fde13d9b8..ac617a976dcf 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -28,6 +28,7 @@ my %verbose_messages = ();
+ my %verbose_emitted = ();
+ my $tree = 1;
+ my $chk_signoff = 1;
++my $chk_fixes_tag = 1;
+ my $chk_patch = 1;
+ my $tst_only;
+ my $emacs = 0;
+@@ -86,6 +87,7 @@ Options:
+   -v, --verbose              verbose mode
+   --no-tree                  run without a kernel tree
+   --no-signoff               do not check for 'Signed-off-by' line
++  --no-fixes-tag             do not check for 'Fixes:' tag
+   --patch                    treat FILE as patchfile (default)
+   --emacs                    emacs compile window format
+   --terse                    one line per report
+@@ -293,6 +295,7 @@ GetOptions(
+ 	'v|verbose!'	=> \$verbose,
+ 	'tree!'		=> \$tree,
+ 	'signoff!'	=> \$chk_signoff,
++	'fixes-tag!'	=> \$chk_fixes_tag,
+ 	'patch!'	=> \$chk_patch,
+ 	'emacs!'	=> \$emacs,
+ 	'terse!'	=> \$terse,
+@@ -1254,6 +1257,7 @@ sub git_commit_info {
+ }
+ 
+ $chk_signoff = 0 if ($file);
++$chk_fixes_tag = 0 if ($file);
+ 
+ my @rawlines = ();
+ my @lines = ();
+@@ -2633,6 +2637,9 @@ sub process {
+ 
+ 	our $clean = 1;
+ 	my $signoff = 0;
++	my $fixes_tag = 0;
++	my $is_revert = 0;
++	my $needs_fixes_tag = 0;
+ 	my $author = '';
+ 	my $authorsignoff = 0;
+ 	my $author_sob = '';
+@@ -3186,6 +3193,16 @@ sub process {
+ 			}
+ 		}
+ 
++# These indicate a bug fix
++		if (!$in_header_lines && !$is_patch &&
++			$line =~ /^This reverts commit/) {
++			$is_revert = 1;
++		}
++
++		if (!$in_header_lines && !$is_patch &&
++		    $line =~ /(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/) {
++			$needs_fixes_tag = 1;
++		}
+ 
+ # Check Fixes: styles is correct
+ 		if (!$in_header_lines &&
+@@ -3198,6 +3215,7 @@ sub process {
+ 			my $id_length = 1;
+ 			my $id_case = 1;
+ 			my $title_has_quotes = 0;
++			$fixes_tag = 1;
+ 
+ 			if ($line =~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {
+ 				my $tag = $1;
+@@ -7636,6 +7654,12 @@ sub process {
+ 		ERROR("NOT_UNIFIED_DIFF",
+ 		      "Does not appear to be a unified-diff format patch\n");
+ 	}
++	if ($is_patch && $has_commit_log && $chk_fixes_tag) {
++		if ($needs_fixes_tag && !$is_revert && !$fixes_tag) {
++			WARN("MISSING_FIXES_TAG",
++			     "This looks like a fix but there is no Fixes: tag\n");
++		}
++	}
+ 	if ($is_patch && $has_commit_log && $chk_signoff) {
+ 		if ($signoff == 0) {
+ 			ERROR("MISSING_SIGN_OFF",
+-- 
+2.39.2
 
