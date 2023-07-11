@@ -2,101 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41155C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 09:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E46EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 09:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjGKJLK (ORCPT
+        id S232026AbjGKJZZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 05:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
+        Tue, 11 Jul 2023 05:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbjGKJLJ (ORCPT
+        with ESMTP id S231501AbjGKJZD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 05:11:09 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D149093;
-        Tue, 11 Jul 2023 02:11:08 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-992e22c09edso632931266b.2;
-        Tue, 11 Jul 2023 02:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689066667; x=1691658667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bioKri3FQ7BeFO8IqI3ZyTSAGeYyZhMTZ6J/K92HGIk=;
-        b=JrXZcwnd5VUv8aJGqdLl/X4EGBrtF8Silkcm4Tcb3Rd2vXTKqfQLiIyg5tOSRHqzHt
-         ghmf1iN49bet1t7qMIQ2smKBHkb9NmWHrwCpLqJ9IQag+j3t9IuPTN/N+FkKvMvEIZ2r
-         1luhtQDSCQGm4eUjDox36GBq5ISwsGIxTMFr+ykCrXuuIYJja83mDZWp2zXax26BPB5d
-         zz0Rut2/v9ixn1WlD7FycYMvGxqNiYBlg26eFfCEiZldSuEa+vBh+EUoMtez4kxXLSzY
-         NiRn5s6vm0MCmtnYmd/LSaA2++S2StZkK7O2yWsB06gRDNw+uK4b6b3FK7ijnLoGfYhd
-         Enhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689066667; x=1691658667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bioKri3FQ7BeFO8IqI3ZyTSAGeYyZhMTZ6J/K92HGIk=;
-        b=CS+8r1m0Gia7/b7NS2RBmJyJarNtYWoqCboFXhGbC28i55A6eHpnh5hno0UND9ZoV+
-         +Wy95dZO6mwK0UMXSnMil4z84M19EqvXS412wClz61tclafme4m0vwTo4nSefisl8ZUS
-         ClrJs+hSOwQcrVSXPl714sLB3G9+1KtWoZUUiFNK7N4DIJDtQvCuIzDOjjrEVS+NeNrr
-         XiiHokVq7HPZ8sxshIFXmp0Z1979XvX9ElWPsrSnEg1aknFRXu5VDL82MVyuNXA5Tikd
-         dSwmPOIcdFlwDN1lrrOneIJaqe5Bxhm68wJp1sR1iYnjY050ttsdGTJEdQd5rifg0xhY
-         o3oQ==
-X-Gm-Message-State: ABy/qLZ6YMal2i8rvS7EHenz1aUFhXbuWArAoBXBNUlvcMR2cMarOqtA
-        ApzSRERn1zDY8N2063a0vL+EobNtmg1AeexHClU=
-X-Google-Smtp-Source: APBJJlEvNuzxCogxlN5fdUm0lDfNCY5Dedbo7XssM41cv2Alx0x6Th28VZDmPQPr74DtYlS9E7VjEcr+f1TA6YV80Xc=
-X-Received: by 2002:a17:906:d965:b0:98e:1c4b:10bb with SMTP id
- rp5-20020a170906d96500b0098e1c4b10bbmr15300197ejb.35.1689066667179; Tue, 11
- Jul 2023 02:11:07 -0700 (PDT)
+        Tue, 11 Jul 2023 05:25:03 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 6C57F1BD2;
+        Tue, 11 Jul 2023 02:20:52 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id BFBE76062ABFD;
+        Tue, 11 Jul 2023 17:20:29 +0800 (CST)
+Message-ID: <c9b37dac-7f13-210b-23f7-57ece0f7d1c6@nfschina.com>
+Date:   Tue, 11 Jul 2023 17:20:28 +0800
 MIME-Version: 1.0
-References: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
-In-Reply-To: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 11 Jul 2023 12:10:31 +0300
-Message-ID: <CAHp75VeOGs8zyJpq_ZFQtm+yuS9HKev+o-=xkdmaROPD7KEu-w@mail.gmail.com>
-Subject: Re: [PATCH] leds: pwm: Fix error code in led_pwm_create_fwnode()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [Intel-wired-lan] [PATCH net-next v2 00/10] Remove unnecessary
+ (void*) conversions
+Content-Language: en-US
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        irusskikh@marvell.com, rmody@marvell.com, skalluru@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, steve.glendinning@shawell.net,
+        iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
+        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, mostrows@earthlink.net, xeb@mail.ru,
+        qiang.zhao@nxp.com, uttenthaler@ems-wuensche.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linuxppc-dev@lists.ozlabs.org
+X-MD-Sfrom: yunchuan@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   yunchuan <yunchuan@nfschina.com>
+In-Reply-To: <f1f9002c-ccc3-a2de-e4f5-d8fa1f8734e3@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 9:13=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On 2023/7/11 16:53, Paul Menzel wrote:
+> Dear Su,
 >
-> Negative -EINVAL was intended, not positive EINVAL.  Fix it.
+>
+> Thank you for your patch.
+>
+> Am 10.07.23 um 08:38 schrieb Su Hui:
+>> From: wuych <yunchuan@nfschina.com>
+>
+> Can you please write the full name correctly? Maybe Yun Chuan?
+>
+>     git config --global user.name "Yun Chuan"
+>     git commit --amend --author="Yun Chuan <yunchuan@nfschina.com>"
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Thanks!
+Dear Paul Menzel,
 
-> Fixes: 95138e01275e ("leds: pwm: Make error handling more robust")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/leds/leds-pwm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index 29194cc382af..87c199242f3c 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -146,7 +146,7 @@ static int led_pwm_create_fwnode(struct device *dev, =
-struct led_pwm_priv *priv)
->                         led.name =3D to_of_node(fwnode)->name;
->
->                 if (!led.name) {
-> -                       ret =3D EINVAL;
-> +                       ret =3D -EINVAL;
->                         goto err_child_out;
->                 }
->
-> --
-> 2.39.2
->
+Thanks for your reminder!
+I have already changed this  to my full name "Wu Yunchuan".
+Should I resend all these patches to change the author name?
+> I only got the cover letter by the way.
+> s
+Maybe the network met some problems.
+I will send this patchset to you separately.
 
+Wu Yunchuan
 
---=20
-With Best Regards,
-Andy Shevchenko
+>
+> Kind regards,
+>
+> Paul
+>
