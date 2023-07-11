@@ -2,117 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05453C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 09:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41155C0015E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 09:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbjGKJDR (ORCPT
+        id S230131AbjGKJLK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 05:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
+        Tue, 11 Jul 2023 05:11:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232054AbjGKJDL (ORCPT
+        with ESMTP id S230073AbjGKJLJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 05:03:11 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6194C93;
-        Tue, 11 Jul 2023 02:03:10 -0700 (PDT)
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 476B661E5FE03;
-        Tue, 11 Jul 2023 11:01:25 +0200 (CEST)
-Message-ID: <237f5cac-5696-93ea-1ab4-f5da4ea790a9@molgen.mpg.de>
-Date:   Tue, 11 Jul 2023 11:01:24 +0200
+        Tue, 11 Jul 2023 05:11:09 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D149093;
+        Tue, 11 Jul 2023 02:11:08 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-992e22c09edso632931266b.2;
+        Tue, 11 Jul 2023 02:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689066667; x=1691658667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bioKri3FQ7BeFO8IqI3ZyTSAGeYyZhMTZ6J/K92HGIk=;
+        b=JrXZcwnd5VUv8aJGqdLl/X4EGBrtF8Silkcm4Tcb3Rd2vXTKqfQLiIyg5tOSRHqzHt
+         ghmf1iN49bet1t7qMIQ2smKBHkb9NmWHrwCpLqJ9IQag+j3t9IuPTN/N+FkKvMvEIZ2r
+         1luhtQDSCQGm4eUjDox36GBq5ISwsGIxTMFr+ykCrXuuIYJja83mDZWp2zXax26BPB5d
+         zz0Rut2/v9ixn1WlD7FycYMvGxqNiYBlg26eFfCEiZldSuEa+vBh+EUoMtez4kxXLSzY
+         NiRn5s6vm0MCmtnYmd/LSaA2++S2StZkK7O2yWsB06gRDNw+uK4b6b3FK7ijnLoGfYhd
+         Enhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689066667; x=1691658667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bioKri3FQ7BeFO8IqI3ZyTSAGeYyZhMTZ6J/K92HGIk=;
+        b=CS+8r1m0Gia7/b7NS2RBmJyJarNtYWoqCboFXhGbC28i55A6eHpnh5hno0UND9ZoV+
+         +Wy95dZO6mwK0UMXSnMil4z84M19EqvXS412wClz61tclafme4m0vwTo4nSefisl8ZUS
+         ClrJs+hSOwQcrVSXPl714sLB3G9+1KtWoZUUiFNK7N4DIJDtQvCuIzDOjjrEVS+NeNrr
+         XiiHokVq7HPZ8sxshIFXmp0Z1979XvX9ElWPsrSnEg1aknFRXu5VDL82MVyuNXA5Tikd
+         dSwmPOIcdFlwDN1lrrOneIJaqe5Bxhm68wJp1sR1iYnjY050ttsdGTJEdQd5rifg0xhY
+         o3oQ==
+X-Gm-Message-State: ABy/qLZ6YMal2i8rvS7EHenz1aUFhXbuWArAoBXBNUlvcMR2cMarOqtA
+        ApzSRERn1zDY8N2063a0vL+EobNtmg1AeexHClU=
+X-Google-Smtp-Source: APBJJlEvNuzxCogxlN5fdUm0lDfNCY5Dedbo7XssM41cv2Alx0x6Th28VZDmPQPr74DtYlS9E7VjEcr+f1TA6YV80Xc=
+X-Received: by 2002:a17:906:d965:b0:98e:1c4b:10bb with SMTP id
+ rp5-20020a170906d96500b0098e1c4b10bbmr15300197ejb.35.1689066667179; Tue, 11
+ Jul 2023 02:11:07 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [Intel-wired-lan] [PATCH net-next v2 00/10] Remove unnecessary
- (void*) conversions
-Content-Language: en-US
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     andrew@lunn.ch, irusskikh@marvell.com,
-        kernel-janitors@vger.kernel.org, jesse.brandeburg@intel.com,
-        edumazet@google.com, iyappan@os.amperecomputing.com,
-        anthony.l.nguyen@intel.com, quan@os.amperecomputing.com,
-        qiang.zhao@nxp.com, linux@armlinux.org.uk, xeb@mail.ru,
-        intel-wired-lan@lists.osuosl.org, kuba@kernel.org,
-        pabeni@redhat.com, yisen.zhuang@huawei.com, wg@grandegger.com,
-        steve.glendinning@shawell.net, keyur@os.amperecomputing.com,
-        linux-can@vger.kernel.org, mkl@pengutronix.de,
-        salil.mehta@huawei.com, GR-Linux-NIC-Dev@marvell.com,
-        uttenthaler@ems-wuensche.com, rmody@marvell.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, yunchuan@nfschina.com,
-        linuxppc-dev@lists.ozlabs.org, skalluru@marvell.com,
-        hkallweit1@gmail.com
-References: <20230710063828.172593-1-suhui@nfschina.com>
- <f1f9002c-ccc3-a2de-e4f5-d8fa1f8734e3@molgen.mpg.de>
-In-Reply-To: <f1f9002c-ccc3-a2de-e4f5-d8fa1f8734e3@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
+In-Reply-To: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 11 Jul 2023 12:10:31 +0300
+Message-ID: <CAHp75VeOGs8zyJpq_ZFQtm+yuS9HKev+o-=xkdmaROPD7KEu-w@mail.gmail.com>
+Subject: Re: [PATCH] leds: pwm: Fix error code in led_pwm_create_fwnode()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[Cc: Remove mostrows@earthlink.net (550 5.5.1 Recipient rejected - 
-ELNK001_403 -)]
+On Tue, Jul 11, 2023 at 9:13=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Negative -EINVAL was intended, not positive EINVAL.  Fix it.
 
-Am 11.07.23 um 10:53 schrieb Paul Menzel:
-> Dear Su,
-> 
-> 
-> Thank you for your patch.
-> 
-> Am 10.07.23 um 08:38 schrieb Su Hui:
->> From: wuych <yunchuan@nfschina.com>
-> 
-> Can you please write the full name correctly? Maybe Yun Chuan?
-> 
->      git config --global user.name "Yun Chuan"
->      git commit --amend --author="Yun Chuan <yunchuan@nfschina.com>"
-> 
-> I only got the cover letter by the way.
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
->> Changes in v2:
->>     move declarations to be reverse xmas tree.
->>     compile it in net and net-next branch.
->>     remove some error patches in v1.
->>
->> PATCH v1 link:
->> https://lore.kernel.org/all/20230628024121.1439149-1-yunchuan@nfschina.com/
->>
->> wuych (10):
->>    net: wan: Remove unnecessary (void*) conversions
->>    net: atlantic: Remove unnecessary (void*) conversions
->>    net: ppp: Remove unnecessary (void*) conversions
->>    net: hns3: remove unnecessary (void*) conversions
->>    net: hns: Remove unnecessary (void*) conversions
->>    ice: remove unnecessary (void*) conversions
->>    ethernet: smsc: remove unnecessary (void*) conversions
->>    net: mdio: Remove unnecessary (void*) conversions
->>    can: ems_pci: Remove unnecessary (void*) conversions
->>    net: bna: Remove unnecessary (void*) conversions
->>
->>   drivers/net/can/sja1000/ems_pci.c             |  6 +++---
->>   .../aquantia/atlantic/hw_atl2/hw_atl2.c       | 12 ++++++------
->>   .../atlantic/hw_atl2/hw_atl2_utils_fw.c       |  2 +-
->>   drivers/net/ethernet/brocade/bna/bnad.c       | 19 +++++++++----------
->>   .../ethernet/hisilicon/hns3/hns3_ethtool.c    |  2 +-
->>   drivers/net/ethernet/hisilicon/hns_mdio.c     | 10 +++++-----
->>   drivers/net/ethernet/intel/ice/ice_main.c     |  4 ++--
->>   drivers/net/ethernet/smsc/smsc911x.c          |  4 ++--
->>   drivers/net/ethernet/smsc/smsc9420.c          |  4 ++--
->>   drivers/net/mdio/mdio-xgene.c                 |  4 ++--
->>   drivers/net/ppp/pppoe.c                       |  4 ++--
->>   drivers/net/ppp/pptp.c                        |  4 ++--
->>   drivers/net/wan/fsl_ucc_hdlc.c                |  6 +++---
->>   13 files changed, 40 insertions(+), 41 deletions(-)
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Thanks!
+
+> Fixes: 95138e01275e ("leds: pwm: Make error handling more robust")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/leds/leds-pwm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 29194cc382af..87c199242f3c 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -146,7 +146,7 @@ static int led_pwm_create_fwnode(struct device *dev, =
+struct led_pwm_priv *priv)
+>                         led.name =3D to_of_node(fwnode)->name;
+>
+>                 if (!led.name) {
+> -                       ret =3D EINVAL;
+> +                       ret =3D -EINVAL;
+>                         goto err_child_out;
+>                 }
+>
+> --
+> 2.39.2
+>
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
