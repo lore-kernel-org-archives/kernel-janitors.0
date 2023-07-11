@@ -2,121 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD931EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 16:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACEAEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 17:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231555AbjGKQqR (ORCPT
+        id S231509AbjGKRdk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 12:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43044 "EHLO
+        Tue, 11 Jul 2023 13:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232504AbjGKQpx (ORCPT
+        with ESMTP id S230419AbjGKRdj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 12:45:53 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF1A110CB
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jul 2023 09:45:03 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id JGTcq56F0nT3LJGTdqAYmw; Tue, 11 Jul 2023 18:44:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689093878;
-        bh=6W5NPMxAm6lUBSA+tofYioXnHuavxBdyj7tIJCVWBDg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=jSsfs6Al0SzL4B24SF7Cz1+iYxRlmMNO61eyQS56UCRt9wwE7zalBZgedAFs/woZi
-         5LiCnuH7OvVHQzRXtF1Q0UFZWVekh+zaE0yqmJxEK3mDtdhV72kwr0EtsQ//boPYGO
-         zq6t0LospEKd0q+1pAeFY76l7c5WrdARDZnW/XK61c4bHVW3Ls9ksHvtzk8KFKCZ9E
-         Y7Qv9VRemzr79ya6nvif75Wf29bSWPPIe/EezAOGMV5jYnBCNWDDyivxXbIXHb0A+A
-         gWKkG+0wkprmNWJs8w72ah0ri675o+BT5iIKtGoDxsnCivovlC5hrIRBjFBikdVmRz
-         /xz0huZg9+lBw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 11 Jul 2023 18:44:38 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <95bd5686-1ed9-63ef-e91f-30aa54c09cd6@wanadoo.fr>
-Date:   Tue, 11 Jul 2023 18:44:36 +0200
+        Tue, 11 Jul 2023 13:33:39 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF462133;
+        Tue, 11 Jul 2023 10:33:38 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36BHOVtn013908;
+        Tue, 11 Jul 2023 17:33:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=z7T5oV2DSUOFNxiqNqHYOl+TjOXCp7JIjpEtX1OTqqc=;
+ b=FQX9VR/ND/opMw9sn20u3e/ScqmCrG22fLoySjY/Al8wGnez0DSnx3tokepGIdT+VI4S
+ uc0j7iw3aBplIL59iKQXuDKCv+lvTvQlE0xxGy7SfbG9lRh4gUsNWt/SQwJuwlLZ2VNV
+ sI8vYg0UOw3QksKZhCHU2lL1WpDNRVw0tgeDNqaVn/MXA+oUHIAz6Z4ylFZy/xfeH3Ss
+ j6rZmrLny7ehN06GJit9AIS3bqonbafAmqPg57ybD4sqByXMc5PLD0T55gKfycF7N0eb
+ 8k84OrV/9iX20aA0BgVWqHH+w7yCu++2y1URmeZZJSz8JYsies8rj9/HitugzGV2hYJe Gg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rsben80u3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jul 2023 17:33:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36BHXWl6001819
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jul 2023 17:33:32 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 11 Jul
+ 2023 10:33:31 -0700
+Message-ID: <0919d2f7-dbb3-2e8b-adb7-f836b21e6482@quicinc.com>
+Date:   Tue, 11 Jul 2023 11:33:25 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling path
- in mox_get_board_info()
-Content-Language: fr, en-US
-To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
- <20230217122108.4a93667f@dellmb>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230217122108.4a93667f@dellmb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 0/5 v4] accel/qaic: Improve bounds checking in
+ encode/decode
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <6e935c70-5bd2-4808-bdd9-d664f892b0b5@moroto.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <6e935c70-5bd2-4808-bdd9-d664f892b0b5@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ex0lXBaBMBx5IRz3bO-EgbtPMoALOYQx
+X-Proofpoint-ORIG-GUID: ex0lXBaBMBx5IRz3bO-EgbtPMoALOYQx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-11_10,2023-07-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=528
+ malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307110157
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/02/2023 à 12:21, Marek Behún a écrit :
-> On Wed, 15 Feb 2023 10:30:02 +0100
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On 7/11/2023 2:20 AM, Dan Carpenter wrote:
+> Fixed in v4: Send the correct [PATCH 1/5] patch.
 > 
->> wait_for_completion_timeout() returns 0 if timed out, and positive (at
->> least 1, or number of jiffies left till timeout) if completed.
->>
->> In case of timeout, return -ETIMEDOUT.
->>
->> Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
->>
->> v2:
->>     - Fix some other wait_for_completion_timeout() calls
->>
->> ---
->>   drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
->> index 6ea5789a89e2..d6fc37ba897d 100644
->> --- a/drivers/firmware/turris-mox-rwtm.c
->> +++ b/drivers/firmware/turris-mox-rwtm.c
->> @@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
->>   		return ret;
->>   
->>   	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
->> -	if (ret < 0)
->> -		return ret;
->> +	if (ret == 0)
->> +		return -ETIMEDOUT;
->>   
->>   	ret = mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
->>   	if (ret == -ENODATA) {
->> @@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
->>   		return ret;
->>   
->>   	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
->> -	if (ret < 0)
->> -		return ret;
->> +	if (ret == 0)
->> +		return -ETIMEDOUT;
->>   
->>   	ret = mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
->>   	if (ret == -ENODATA) {
->> @@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwtm *rwtm)
->>   		return ret;
->>   
->>   	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
->> -	if (ret < 0)
->> -		return ret;
->> +	if (ret == 0)
->> +		return -ETIMEDOUT;
->>   
->>   	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
->>   }
+> Fixed in v3: Redo messed up threading
 > 
-> Reviewed-by: Marek Behún <kabel@kernel.org>
+> Fixed two things in v2:  Include the <linux/overflow.h> file.  Change
+> the >= in encode and decode to >.
 > 
+> regards,
+> dan carpenter
 
-Hi,
-polite reminder.
+Did you intentionally drop tags from previous versions?
 
-CJ
+For 1-3, 5
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+
+Looks like 3,5 are reviewed by Pranjal and also good. I see 5 is also 
+reviewed by Dafna.  Expect those to be merged.  1,2 need a review from 
+Pranjal, but I expect all is good and will be merged.
+
+I did not see feedback on my question for 4.  Would like your feedback 
+before queuing that one up.
+
+Overall, thanks for your work.  I think we are pretty close to wrapping 
+this up.
+
+-Jeff
