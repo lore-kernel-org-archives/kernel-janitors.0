@@ -2,120 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC762EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 15:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871A4C001DE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 15:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233777AbjGLPlW (ORCPT
+        id S233482AbjGLPxq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 11:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
+        Wed, 12 Jul 2023 11:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233784AbjGLPlU (ORCPT
+        with ESMTP id S231592AbjGLPxp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 11:41:20 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65C171BE8;
-        Wed, 12 Jul 2023 08:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1689176471; x=1689781271; i=deller@gmx.de;
- bh=zq79MRO+i5G9UPifz9mJl9vnVEcX8oaeEPaIBJmbcYU=;
- h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
- b=GqgASp9f/TiJrqE+U0Mr5/GR1CVPM2LydwrYAMsft69JsVV4ZBdqpqOrd9h0GUJkZBr76BX
- vVsRO9MMdcYw5od8BDsnw/rxyy/KJq/AjN/q1tkbap9tIT9F3yBm3Y3I5IQvg8/EOPTAvzmf/
- +1+JIh4+dtJgFfWqm3Zooc6nj5cU6KT0Df6dUNo3zLu2Qq7vjWjfdeT6b/+t/b4vK6RJBYtE/
- KnHiq4HNtutaujrroAUrLj5PPGTPEkX2Pl+tCFy0e9yRlCeAjDPnAM1PozdLYGmQbNVLoruuA
- xtzPU7r2adY2FL5zEdV+3MlTgwBKcJTsehkKTUssBNfi4dZedjGA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.144.114]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEV3C-1qCVUj3H8U-00Fxxz; Wed, 12
- Jul 2023 17:41:11 +0200
-Message-ID: <fb040564-eccd-0ef7-ff73-df3f3d20533f@gmx.de>
-Date:   Wed, 12 Jul 2023 17:41:11 +0200
+        Wed, 12 Jul 2023 11:53:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE1FFB;
+        Wed, 12 Jul 2023 08:53:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4920A618A8;
+        Wed, 12 Jul 2023 15:53:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7A1CC433C7;
+        Wed, 12 Jul 2023 15:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689177223;
+        bh=6i7Y4lQ5kM2O35VpIsKle6TMvXVfixvr1cKHxKvRKXs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HyLMdkVD4F7rnG2PftNw8LtDgCj9djEt4RoA062Zm0ylTmA3goW8U2wX7ja3mzPYk
+         x2suxPH2oKbc9FXrdM7o9Q225rzsjREDDcF9oP14pODw9qeXDHZSwP3nbq2JnTgp3D
+         TloY6w4lO3SCQB7jvcoome1CHVtDSkrapIGdcibHPlqaIFgFhBGg7IvBIAlAbK5bH9
+         qwuC6d7JlmunWaN9Qn+61xy5oo9ycoLvWdFc4gfB3aYlTxr4ZPtF5erYBPzCX7oZJ/
+         YsSvs8nCBvDP25GSOs8Ye5v63fmXY/36lpvEe/+qWJb+rs4Zn0e7HldvRrG0ntzE21
+         UVO5/V6ByRLpg==
+Date:   Wed, 12 Jul 2023 16:53:38 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Ivan Orlov <ivan.orlov0322@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Shuah Khan <shuah@kernel.org>,
+        alsa-devel@alsa-project.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] selftests: ALSA: Fix fclose on an already fclosed
+ file pointer
+Message-ID: <03293bcf-7193-488f-9897-5d96790db55d@sirena.org.uk>
+References: <20230712140122.457206-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH][next] video: fbdev: kyro: make some const read-only
- arrays static
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230712145702.460690-1-colin.i.king@gmail.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20230712145702.460690-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mQ/cfZnJ29UYE4XxJE0HeQ0bntrNcIgEtlcy7t/pFl2MOSTxQZm
- dy4UsPXflxXm3Jn8cvoGst8Pwt0xpM3KwQ2+oCGPrSQlAPj+OsSWO/4nrxQQj9UbOaZItI1
- UyShhqdgtpLxb/V4MC+xtDe5PGRfmuunjK3+a8VYQTZpT3YogMX7A13nLUOCg3s/Hz+DC/0
- ATP+sPlLEflBFNAsZj16w==
-UI-OutboundReport: notjunk:1;M01:P0:0/poKF7wRdI=;+nmGHnHVTQbY8QRsP5e83JpfUBQ
- kWc3ht9X1T0oq0tvPI3IDgh3ZoRstzyi0dYBLxnXEh0iZBYx5/J594Dm7elZYQbEwtRdRv3vP
- Q2hbORsR2ZXpk63cepj1wGtYAvCvSAR9GDHqkM4gBtVQ2NxDmWXqjLM6Yg4s/1n5xDShfQrpF
- fYdCllVnX6ddftk7aQlKMaE5RDygmTLtWfbRjlIgp9PjMjXTJpxW+bg8WjvQzZhp8isVxl+X/
- q5v/+OcrljUUBqqRJixctoWIJ3AQYDn1uPQUqDEHVEHNahVygoMaVyuT2oBW2tOXd13ck/WnK
- lblgjMcdm1jKiiLCg1Bh2wQNuVClC/5dnVVjHPACtLvKoRr0wr4ySCtllmciid5j1sm5ojMWO
- UQk7LH/j1JDsd+smo5ifu5j0ts2ZiXs1nrb8IVxBR6ywmNd0OwbvgGvD82vc2x5njJ5T0oRAI
- 9bicvWzUIqiE5add4PubYPr+SG5LCfgnniqnhpiiJCb7baW0hM00nRVku67P2iD4oFUNLqhtV
- Wazf2DZG9sVcQhhVvjhuJkAeIKPbZXI8csvz/H5Vltiy7YxNiQqhQc5fVaoEScyEjdHeW6UXQ
- vVdQO2qZWjlicFTOIy6OKutSOqFOf4rnLnLpKN7e/KrDEjjNVyJiGqUriObD0ZMIEiRAFCT1l
- 7bRhIrmhAhI4SMskaRaPMbnbUsAwr00+SzMxfHjJrRQaSizTgThz7LHM9XkwjHlfj10WA08po
- JV2KTpI1hZ3Cw5GmX8IajNQy4C3KWIQB4xxI51WXd0eKnz4fOyYRzhfY9lIdIKNsMxkrPqGJI
- FyFArIOJAf2kQhCHn9nrQuV7z2RjWIdBPI72brCqzNViPIzjEc5KValqzYgL6ngVNWdNlWgys
- GzsBvTbppGX/4vVDm2jympGMNqXr8HZW/fsNm3jM8LaQVBja90PKmCHqq/OaC6lGJyWYxlIDm
- 49GilA==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wVNsGP+PGG+ocxCF"
+Content-Disposition: inline
+In-Reply-To: <20230712140122.457206-1-colin.i.king@gmail.com>
+X-Cookie: Dammit Jim, I'm an actor, not a doctor.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/12/23 16:57, Colin Ian King wrote:
-> Don't populate the const read-only arrays on the stack but instead
-> make them static const. Also makes the object code a little smaller.
 
-Looks good, but you can optimze even further...
+--wVNsGP+PGG+ocxCF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/video/fbdev/kyro/STG4000InitDevice.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/video/fbdev/kyro/STG4000InitDevice.c b/drivers/vide=
-o/fbdev/kyro/STG4000InitDevice.c
-> index edfa0a04854d..bf1ee3addbd0 100644
-> --- a/drivers/video/fbdev/kyro/STG4000InitDevice.c
-> +++ b/drivers/video/fbdev/kyro/STG4000InitDevice.c
-> @@ -83,11 +83,11 @@ volatile u32 i,count=3D0; \
->   static u32 InitSDRAMRegisters(volatile STG4000REG __iomem *pSTGReg,
->   			      u32 dwSubSysID, u32 dwRevID)
->   {
-> -	u32 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 };
-> -	u32 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, 0x8732 };
-> -	u32 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, 0xa7d2 };
-> -	u32 adwSDRAMRsh[] =3D { 36, 39, 40 };
-> -	u32 adwChipSpeed[] =3D { 110, 120, 125 };> +	static const u32 adwSDRAM=
-ArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 };
+On Wed, Jul 12, 2023 at 03:01:22PM +0100, Colin Ian King wrote:
+> In the case where a sysfs file cannot be opened the error return path
+> fcloses file pointer fpl, however, fpl has already been closed in the
+> previous stanza. Fix the double fclose by removing it.
 
-Make this u8 instead of u32 (saves 5*3 =3D 15 bytes):
-+	static const u8 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 };
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-> +	static const u32 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, =
-0x8732 };
+--wVNsGP+PGG+ocxCF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-u16
+-----BEGIN PGP SIGNATURE-----
 
-> +	static const u32 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, =
-0xa7d2 };
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmSuzIEACgkQJNaLcl1U
+h9BkeQf+PybKLN8z4YJie7BNQAYU4xABABxmQKw35R+xYMirTAbNdSteSQV3JRql
+i2Z6aQ2e3HTAgx3tXQ4bgpNQrL4Lcz48rJAfMda0RBKReuIz1LfTW3d9ZoUIU0Lb
+qYpvkL0Vjf0au1c1nRU6n6eb2ahu7VlJHgChwdB6ueOpBTKLbfpucVvt+dy3X5hJ
+MbhkO/cs8jcOvyuzHZB6EjPHcPq1vr2zukAsTzmM0xZ5yxGFhewHpS+tPg7RjGwt
+iC+4rv6dD85ZakRYIO5hYkdQhzIy9pOiuvE82+FGyaLSjnPOlwNAO444OHsWtiQ5
+2CIxOWF/BIbsTJt+m2zSXOWZ3X8Mhw==
+=spEy
+-----END PGP SIGNATURE-----
 
-u16
-
-> +	static const u32 adwSDRAMRsh[] =3D { 36, 39, 40 };
-
-u8
-
-> +	static const u32 adwChipSpeed[] =3D { 110, 120, 125 };
-
-u8...
-
-Can you change that (test compile) and resend?
-
-Helge
+--wVNsGP+PGG+ocxCF--
