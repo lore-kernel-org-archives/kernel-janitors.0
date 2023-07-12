@@ -2,91 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B0EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 20:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25147EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 21:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232427AbjGLUmY (ORCPT
+        id S232274AbjGLVAX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 16:42:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55878 "EHLO
+        Wed, 12 Jul 2023 17:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231858AbjGLUmX (ORCPT
+        with ESMTP id S231916AbjGLVAW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 16:42:23 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59735A2
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 13:42:22 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id JgfAqVIqQFZ5SJgfBq4nYd; Wed, 12 Jul 2023 22:42:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689194540;
-        bh=v9j0m2cKfHRT+pm9joHgv4l8r7uaiOqt0NGOeHOYA8M=;
-        h=From:To:Cc:Subject:Date;
-        b=sa5XFfPaI2fZWc9fzGFbfzFz57NPBZt7bmu3cVXQNTnJ0tOv812lXxhxWpzLXRB6Z
-         +GZyzSaUURGY6jEncLTqqkyI+Y+At6p3l2z/i8/PJp4icbGp5D6jVNv9vgmb2NNjM/
-         it/DMR3K7AH20nBNYGqsYV0IEVFLALMopwSANLhFydgpkFA6RcoIOsjZn98lj6+hMa
-         Owo2Wb9j6LcpcqBlbeRsfvo2ZsPGvHp+bf1p2HDRxruSAR87CqcQFMNBnURb+2p1Bj
-         rRp/hJRJymKNul+fSK75UYrM8zqGLtI8rdX7qGlfakx1QaIorIzFrXmbQ3ZAP1d73o
-         TqTiDX+rMQNtw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 12 Jul 2023 22:42:20 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     keescook@chromium.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH] soc: qcom: smem: Use struct_size()
-Date:   Wed, 12 Jul 2023 22:42:15 +0200
-Message-Id: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 12 Jul 2023 17:00:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92FE41BF2
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 14:00:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1DA1761921
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 21:00:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7DD65C433CA;
+        Wed, 12 Jul 2023 21:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689195620;
+        bh=Nz6wZZXVaJA/3DPRWckZYPO4S5CYZoHG6/2wBW8UXk0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=omhUYudrdh/IUqeZ/Pe+jpOXQi9REV3sbt6ANi+ZxgmwgIPG5152UWDBFxdKeOh8l
+         6kbVFkqJztPnCpLYMdCQ1weczBYaM6LTIbW7PnJWW2SWA9FeXdxyaFZPGtVRx46Ar3
+         n0yjNjipp/knwubM2HSFsHurSnt5krgtY1SfKd/OoIYqR1cuyC4dJ9E7SLiOjgANpe
+         kKdk9b0qHMkZ1nDlXYJRwDFCM78E3YzJJYI1QLVi1CZ7VhHLcmh/ayumLLAveL2cLr
+         eBgAWQvV2/Op2vFT7FFDPmBRmF5+uwc0OLrePqKV/A1yVVFoNV0jW4sGHDGG1OopEF
+         Z9X8ppeu97hWQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 613FBC04E32;
+        Wed, 12 Jul 2023 21:00:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] devlink: uninitialized data in
+ nsim_dev_trap_fa_cookie_write()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168919562039.4783.10687758800247909993.git-patchwork-notify@kernel.org>
+Date:   Wed, 12 Jul 2023 21:00:20 +0000
+References: <7c1f950b-3a7d-4252-82a6-876e53078ef7@moroto.mountain>
+In-Reply-To: <7c1f950b-3a7d-4252-82a6-876e53078ef7@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     jiri@resnulli.us, kuba@kernel.org, davem@davemloft.net,
+        edumazet@google.com, pabeni@redhat.com, idosch@mellanox.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand-writing it, when allocating a structure
-with a flex array.
+Hello:
 
-This is less verbose.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It will also be helpful if the __counted_by() annotation is added with a
-Coccinelle script such as:
-   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/counted_by&id=adc5b3cb48a049563dc673f348eab7b6beba8a9b
----
- drivers/soc/qcom/smem.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+On Tue, 11 Jul 2023 11:52:26 +0300 you wrote:
+> The simple_write_to_buffer() function is designed to handle partial
+> writes.  It returns negatives on error, otherwise it returns the number
+> of bytes that were able to be copied.  This code doesn't check the
+> return properly.  We only know that the first byte is written, the rest
+> of the buffer might be uninitialized.
+> 
+> There is no need to use the simple_write_to_buffer() function.
+> Partial writes are prohibited by the "if (*ppos != 0)" check at the
+> start of the function.  Just use memdup_user() and copy the whole
+> buffer.
+> 
+> [...]
 
-diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index b0d59e815c3b..776096b2e965 100644
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -1059,7 +1059,6 @@ static int qcom_smem_probe(struct platform_device *pdev)
- 	struct reserved_mem *rmem;
- 	struct qcom_smem *smem;
- 	unsigned long flags;
--	size_t array_size;
- 	int num_regions;
- 	int hwlock_id;
- 	u32 version;
-@@ -1071,8 +1070,8 @@ static int qcom_smem_probe(struct platform_device *pdev)
- 	if (of_property_present(pdev->dev.of_node, "qcom,rpm-msg-ram"))
- 		num_regions++;
- 
--	array_size = num_regions * sizeof(struct smem_region);
--	smem = devm_kzalloc(&pdev->dev, sizeof(*smem) + array_size, GFP_KERNEL);
-+	smem = devm_kzalloc(&pdev->dev, struct_size(smem, regions, num_regions),
-+			    GFP_KERNEL);
- 	if (!smem)
- 		return -ENOMEM;
- 
+Here is the summary with links:
+  - [net] devlink: uninitialized data in nsim_dev_trap_fa_cookie_write()
+    https://git.kernel.org/netdev/net/c/f72207a5c0db
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
