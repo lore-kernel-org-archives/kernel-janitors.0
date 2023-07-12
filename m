@@ -2,111 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51952C0015E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 18:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BC0C001B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 19:11:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231908AbjGLSjw (ORCPT
+        id S232394AbjGLTLj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 14:39:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43240 "EHLO
+        Wed, 12 Jul 2023 15:11:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjGLSjv (ORCPT
+        with ESMTP id S230434AbjGLTLh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 14:39:51 -0400
-Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58EF1BF3;
-        Wed, 12 Jul 2023 11:39:50 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 1D624141954;
-        Wed, 12 Jul 2023 18:39:50 +0000 (UTC)
-Received: from pdx1-sub0-mail-a292.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 45649141E19;
-        Wed, 12 Jul 2023 18:39:49 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1689187189; a=rsa-sha256;
-        cv=none;
-        b=trG4d6vyE3kUlspIIUBkYvsYwltryL2JzaXBCSPbXehCdwQis66BskbUs/P0EDYFsw9HLZ
-        PYV5WxJWUQyA9V42aqUly+y8/uzbDGuv0wNLtp+7/j1zUEtt0A/XI+o9j2HkNzX+KyEQZV
-        aJKXZ0VGbpoD2bnPnkmlMCi1YO3/fAYl1MFHItXQCnLPx/NF5vrz6endVizfxsZQ6AAiyG
-        ZIoqK5qACInmjXq977l4LVxCNjvbW4IXsBZAIIeRSV/WF9UiS0cS+D+0HEAE7i5cojMoAu
-        0m7jIXmZU4LuWq2onvghZ8I7dpV1SzJweGa1YQiwvA9CwHmQLH5iUsFChEqB1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1689187189;
+        Wed, 12 Jul 2023 15:11:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DF91FC1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 12:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689189051;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=f7+FobEjTOe2hEYFGOUooYlEshnkxlyBXA1c/2RM/iM=;
-        b=1sYuA9JGNE+TIvYvUH0IEcKjisIWUg40XknNG1gCnhESzUv2j0S3ax+aGz70PXgGJK9d/r
-        cL3OTV7ciZLuOe2wxe74rGqL8fRijq2etYNbpoelyREMg40BYxLht/kHSf1TUcdBPtpSpc
-        1K4QB32VlSROvMJurianQOntN/WcMUJrwUaEV04+tQ/tBgcJKeG+vCzerIrV41pu5j5mlr
-        W2A9NJhzrf4J0Jq0n2dsgMCSDMiYdTiord7qmo2/0kiltDDvC79J35jOBrQ9dDQekPdtWc
-        QG04iEV2xuTEpujK5JT5j2G4RqIikAHvhtBCJiKVY6kI2kyzmPqH7EhHsuDe0g==
-ARC-Authentication-Results: i=1;
-        rspamd-7d9c4d5c9b-kprkf;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Belong-Invention: 4729f678329cebc6_1689187189628_3115873377
-X-MC-Loop-Signature: 1689187189628:356198624
-X-MC-Ingress-Time: 1689187189628
-Received: from pdx1-sub0-mail-a292.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.103.24.120 (trex/6.9.1);
-        Wed, 12 Jul 2023 18:39:49 +0000
-Received: from offworld (unknown [104.36.30.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dave@stgolabs.net)
-        by pdx1-sub0-mail-a292.dreamhost.com (Postfix) with ESMTPSA id 4R1RP024zjz7j;
-        Wed, 12 Jul 2023 11:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-        s=dreamhost; t=1689187189;
-        bh=f7+FobEjTOe2hEYFGOUooYlEshnkxlyBXA1c/2RM/iM=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=eDoydnw3ZL6ST7+0xpO4f1iyAru+ClO8cmKG8uuAZjqudiB/GZyWP+yiVSD/QuEnz
-         A9hbAdSfQriC0AVGgEAjcMRHgjKi/no7A+oIQy0PyhlDaslRoHqjlOFnNao8MgOqQW
-         RuzrwJfDJGw5W1D2E4K8Iz0WdKkw2Q9iF2jShpi6pm/bMR2ZXrA12Gv8lNFC/npMh7
-         5cuTwQBMbuvwGjAVN8JvizvgWRUBZCa00p03fzU3rH7wxULCHlsxyaNl+v6JpYgOSc
-         KszzxxT5VLfBGVL5WpHR+rFAXwxQae9seaU6Bpor+8Ji1oPUxwTbVmgBYEETJ3Xc4O
-         aQ9RxNHOAYbtg==
-Date:   Wed, 12 Jul 2023 11:03:23 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Vishal Verma <vishal.l.verma@intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ben Widawsky <bwidawsk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cxl/mem: Fix a double shift bug
-Message-ID: <ljlzer7ao37l77ljmuhb7x7wpdl45a75xxins63wlg6n2hfuae@54gsbuo4qlcw>
-References: <a11b0c78-4717-4f4e-90be-f47f300d607c@moroto.mountain>
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q45SoRMuLgunlP8L7mZ4yYklFc9J8ZjnlV0HAlFrluA=;
+        b=FvtSAKP/W0rluk3vy56TimDf2Qni7XOh5q48UldEydX5Cf/BmsggFGMCY94SDKEUgy7A9+
+        CGZPlRXNPT2KZhG5Euz9vPA7VWt9c2uq/A+V+nvmyfw2pZGUEPok7CsHfAvPFm7ZXhgsFQ
+        It1bsnMe8emNIf1fKPi3N26ENukUBPg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-636-q1-FsmTKPCmEw93BxwKA-A-1; Wed, 12 Jul 2023 15:10:50 -0400
+X-MC-Unique: q1-FsmTKPCmEw93BxwKA-A-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3f5df65fa35so45605655e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 12:10:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689189049; x=1691781049;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q45SoRMuLgunlP8L7mZ4yYklFc9J8ZjnlV0HAlFrluA=;
+        b=dbGRWR9bKp3k9kVFuXevIUaWb1W7kMunOXwYCdhl9gu/ksRydZHQDwKRCZI3/IWxpk
+         c9vvlvMPn+jBFd4/GVinxzOT3G5hNZdHzCDr5e943PPOicLvM7nD1JSZkPrGKCEZTNpp
+         XzQRDOx6Sq3BT2+GFwSnfexEyR9DgYdbP+to4VKE4ba1vyKDKyRXix7wT8CBbzvcIFzM
+         KWsAoZhSRR0O1TosscYIb3W3eDPKHKrPrDn3vtpvRDX3UZc4si9DnMwFHOtkjaT7wZSC
+         DUG0nwTj8eINP9iN0/2Lcwm8hSnqFO4EhfYT1gJNll5KxcugZ8cZ/1IXjvZL4b+drl/o
+         u0wg==
+X-Gm-Message-State: ABy/qLZH1q4lj2G11cPDMBJ9LdV3SyvxxL5sPKiOwg6C0i31cnUL7MYm
+        23KPxgXhXHbgHcf8s0VOjZqpGsS8Sw1KlqygPMEg5t6krxEWY5zfwo05JOC44FchQ1jg4TIfDHa
+        ld63rrEr8kdbKXYW2TW3yPaVE/+rg
+X-Received: by 2002:a7b:c019:0:b0:3fb:a62d:1992 with SMTP id c25-20020a7bc019000000b003fba62d1992mr16262194wmb.0.1689189049322;
+        Wed, 12 Jul 2023 12:10:49 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlG7+RfJW8rL+kAwaM2CugjDDuPQVV8Tbi86e3qb2YFzqDwqbvHOu/X6/+h7PYfnyGjOw9KBjA==
+X-Received: by 2002:a7b:c019:0:b0:3fb:a62d:1992 with SMTP id c25-20020a7bc019000000b003fba62d1992mr16262181wmb.0.1689189048992;
+        Wed, 12 Jul 2023 12:10:48 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:3700:3eea:ace6:5bde:4478? (p200300cbc70737003eeaace65bde4478.dip0.t-ipconnect.de. [2003:cb:c707:3700:3eea:ace6:5bde:4478])
+        by smtp.gmail.com with ESMTPSA id o29-20020a05600c511d00b003fa9a00d74csm409177wms.3.2023.07.12.12.10.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jul 2023 12:10:48 -0700 (PDT)
+Message-ID: <60f2ef09-53b2-6bf8-9cd0-3b639ac7b765@redhat.com>
+Date:   Wed, 12 Jul 2023 21:10:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <a11b0c78-4717-4f4e-90be-f47f300d607c@moroto.mountain>
-User-Agent: NeoMutt/20230517
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH][next] selftests/mm: mkdirty: Fix incorrect position of
+ #endif
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230712134648.456349-1-colin.i.king@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230712134648.456349-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 03 Jul 2023, Dan Carpenter wrote:
+On 12.07.23 15:46, Colin Ian King wrote:
+> The #endif is the wrong side of a } causing a build failure when
+> __NR_userfaultfd is not defined. Fix this by moving the #end to
+> enclose the }
+> 
+> Fixes: 9eac40fc0cc7 ("selftests/mm: mkdirty: test behavior of (pte|pmd)_mkdirty on VMAs without write permissions")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   tools/testing/selftests/mm/mkdirty.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mm/mkdirty.c b/tools/testing/selftests/mm/mkdirty.c
+> index 6d71d972997b..301abb99e027 100644
+> --- a/tools/testing/selftests/mm/mkdirty.c
+> +++ b/tools/testing/selftests/mm/mkdirty.c
+> @@ -321,8 +321,8 @@ static void test_uffdio_copy(void)
+>   munmap:
+>   	munmap(dst, pagesize);
+>   	free(src);
+> -#endif /* __NR_userfaultfd */
+>   }
+> +#endif /* __NR_userfaultfd */
+>   
+>   int main(void)
+>   {
 
->The CXL_FW_CANCEL macro is used with set/test_bit() so it should be a
->bit number and not the shifted value.  The original code is the
->equivalent of using BIT(BIT(0)) so it's 0x2 instead of 0x1.  This has
->no effect on runtime because it's done consistently and nothing else
->was using the 0x2 bit.
->
->Fixes: 9521875bbe00 ("cxl: add a firmware update mechanism using the sysfs firmware loader")
->Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Ouch, thanks!
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
+
