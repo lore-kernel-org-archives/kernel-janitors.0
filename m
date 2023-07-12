@@ -2,83 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF69EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 21:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEBEEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 21:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232047AbjGLVKd (ORCPT
+        id S231901AbjGLVxu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 17:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
+        Wed, 12 Jul 2023 17:53:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbjGLVKb (ORCPT
+        with ESMTP id S231828AbjGLVxt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 17:10:31 -0400
+        Wed, 12 Jul 2023 17:53:49 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F7AE1FD2;
-        Wed, 12 Jul 2023 14:10:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4171BD7;
+        Wed, 12 Jul 2023 14:53:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B094D61948;
-        Wed, 12 Jul 2023 21:10:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 13700C433C8;
-        Wed, 12 Jul 2023 21:10:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2343D6195B;
+        Wed, 12 Jul 2023 21:53:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B34C433C7;
+        Wed, 12 Jul 2023 21:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689196225;
-        bh=pnILiufobU/rJ+Z0/NTDzLS7q4G7kDmRf8YJsF2aebQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=fRB7cg+aXjkRRk5O5DXiWb1yf4WvqPqulJDZdR4N9lR1D1ZDUmTSp/44lqq/G7zAN
-         WmQ3BnJvj5xgIbvbpihHI7qlHoqCEGcwvE29piDoCBnC/QyFVvVvvo3+qUeHwRsIsS
-         PnBVeCwg6RaUQeWcj8rFHB3pRGzyjyf0QDz2T0mWx1bzsU/aLNzSP25jvoNTMjPPdC
-         0Jx5t/dadr+HicCMBXxYhDYkxFSYYQyv6oxUSwJuxGE+XKyTj+jwYftbHoXWwANTcm
-         Ck9gwtLNYcfrP66mDPiUf7cTvwkuoMnPD/u8gbTs32+Mkq5wwgplXZ+3ov9k8xGDQg
-         kA/diKzP/GHbg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F06D1E52508;
-        Wed, 12 Jul 2023 21:10:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1689198827;
+        bh=XfEZtO4x5pjTuWKJqkqcrnOAGl6wGqZ56Buai05O87A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ipQ2BPsWUsa9nMxff1MAQ6B8bIQA8PB00XqDByBmKQ5HGOsBlJqqaSDXlT6Uh7YGT
+         1TSbAxMLeza6WAbg3kWPnr1QkbiqKPvs/XDJMvJggalKjt+EIFyOKGoW9NJmH+3kFb
+         JucEatgNQCZASh/XaQl6HWVWqCIR8XRB/u/PS4X3yGZKBDvrAMjOo0oEZ19CWGPqhb
+         9dY5hKMPcizQw1ilto6LBfYUr/Rw8uRoBGSwJijIMQCq3CSKdsa46PCDeDFibrBIQ9
+         XgmYonnDN6ePwJKOwq0ajGY+rvQcMCmBa3OevzMFxFgKPikuhvpSgFochQQSWVhYWk
+         OHbINZjOSx68Q==
+Date:   Wed, 12 Jul 2023 23:53:43 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Minjie Du <duminjie@vivo.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, opensource.kernel@vivo.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [v2] i2c: busses: fix parameter check in
+ i2c_gpio_fault_injector_init()
+Message-ID: <20230712215343.57yhhk5kajtsfaax@intel.intel>
+References: <20230712150219.pla7unac7e7azwti@intel.intel>
+ <1e809b1e-16ec-3e2c-1ced-f50a78811131@web.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3] Bluetooth: hci_debugfs: Use kstrtobool() instead of
- strtobool()
-From:   patchwork-bot+bluetooth@kernel.org
-Message-Id: <168919622398.11357.7686000886124475699.git-patchwork-notify@kernel.org>
-Date:   Wed, 12 Jul 2023 21:10:23 +0000
-References: <58247d1b8105739f0371030a93fb28ea3dbedc57.1673687451.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <58247d1b8105739f0371030a93fb28ea3dbedc57.1673687451.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     akpm@linux-foundation.org, marcel@holtmann.org,
-        johan.hedberg@gmail.com, luiz.dentz@gmail.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org
+In-Reply-To: <1e809b1e-16ec-3e2c-1ced-f50a78811131@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi Markus,
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Tue, 11 Jul 2023 19:41:10 +0200 you wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+On Wed, Jul 12, 2023 at 08:30:11PM +0200, Markus Elfring wrote:
+> > > v1-v2:
+> > > Fix judge typo.
+> >
+> > Please next time add the changelog after the "---" section.
+> >
+> > You will also need:
+> >
+> > Fixes: 14911c6f48ec ("i2c: gpio: add fault injector")
+> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Cc: <stable@vger.kernel.org> # v4.16+
+> >
+> > Said that:
+> >
+> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 > 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
+> * How appropriate is your presentation of this tag “in advance”?
+ 
+1. These are all things that can be fixed before pushing the
+   patch. I Wouldn't feel like asking to resend for a Fixes tag
+   and few minor adjustments in the commit log, because:
+
+   1a. it's spam in the mailing list
+   1b. it annoys the person who sent the fix and demotivates him
+       to send more fixes
+
+   but more important:
+
+   1c. I learned that tools like b4 are able to take the Fixes:
+       tag even afterwards. I had this same discussion just
+       today[*].
+
+2. This is quite a common practice in other communities. However,
+   with Wolfram we agreed that I wouldn't r-b "in advance" after
+   asking minor fixes in the patch (but not in the commit log).
+
+> * Would you like to take another look at the properties for
+>   the reviewer's statement of oversight?
 > 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n542
 > 
-> [...]
+> 
+> Would a subject like “[PATCH v3] i2c: gpio: Fix an error check in i2c_gpio_fault_injector_init()”
+> be more appropriate?
 
-Here is the summary with links:
-  - [v3] Bluetooth: hci_debugfs: Use kstrtobool() instead of strtobool()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/34ffc92ed051
+Every community has its own rules. I met both the approaches,
+that's why I wouldn't be so strict. I'm sure Minjie will be able
+to fix those mistakes in the future.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Said that... Minjie, do you mind sending a v3 with the commit log
+fixed and all the proper tags and make everyone happy? :)
 
+Andi
 
+[*] https://lore.kernel.org/all/32ca3740-901c-47f2-81ab-c51e8751eefe@sirena.org.uk/
