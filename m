@@ -2,114 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEBEEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 21:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BE0EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 22:40:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbjGLVxu (ORCPT
+        id S232478AbjGLWkk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 17:53:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53514 "EHLO
+        Wed, 12 Jul 2023 18:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231828AbjGLVxt (ORCPT
+        with ESMTP id S232477AbjGLWkj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 17:53:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4171BD7;
-        Wed, 12 Jul 2023 14:53:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2343D6195B;
-        Wed, 12 Jul 2023 21:53:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B34C433C7;
-        Wed, 12 Jul 2023 21:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689198827;
-        bh=XfEZtO4x5pjTuWKJqkqcrnOAGl6wGqZ56Buai05O87A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ipQ2BPsWUsa9nMxff1MAQ6B8bIQA8PB00XqDByBmKQ5HGOsBlJqqaSDXlT6Uh7YGT
-         1TSbAxMLeza6WAbg3kWPnr1QkbiqKPvs/XDJMvJggalKjt+EIFyOKGoW9NJmH+3kFb
-         JucEatgNQCZASh/XaQl6HWVWqCIR8XRB/u/PS4X3yGZKBDvrAMjOo0oEZ19CWGPqhb
-         9dY5hKMPcizQw1ilto6LBfYUr/Rw8uRoBGSwJijIMQCq3CSKdsa46PCDeDFibrBIQ9
-         XgmYonnDN6ePwJKOwq0ajGY+rvQcMCmBa3OevzMFxFgKPikuhvpSgFochQQSWVhYWk
-         OHbINZjOSx68Q==
-Date:   Wed, 12 Jul 2023 23:53:43 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Minjie Du <duminjie@vivo.com>, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, opensource.kernel@vivo.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [v2] i2c: busses: fix parameter check in
- i2c_gpio_fault_injector_init()
-Message-ID: <20230712215343.57yhhk5kajtsfaax@intel.intel>
-References: <20230712150219.pla7unac7e7azwti@intel.intel>
- <1e809b1e-16ec-3e2c-1ced-f50a78811131@web.de>
+        Wed, 12 Jul 2023 18:40:39 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984A51FDB
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b8a8154f9cso165835ad.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1689201635; x=1691793635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W74OVpeHRuNiX8pMSZJwMLioV1gL07KE3H1a2Sb6peY=;
+        b=QgNyeryYTTACVv5xzPnNBA4fBv8uhd7VsaVJyHLSkvwtHQ661hFCyV66BZ6tioghkS
+         IiSrAN7DKiJZGemA6V8wlUMgmctAMNrRpVUKhk/5Lv33vAAYGSUdGM69pCLaNnlbNOXh
+         8XefLt2O2fzoj5+Y6R5Z6VGjlTW+vbMv4QtDQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689201635; x=1691793635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W74OVpeHRuNiX8pMSZJwMLioV1gL07KE3H1a2Sb6peY=;
+        b=awSGEupUML0/xs4NypKa0zMfbVHR8Y8sqGQdBMaMlBikJTCUMcX0dgdI1K053UAo2K
+         wwI+avZE/Nz9Hfsp1qrVBWSam1gebnbZG/IYu68Oo/ASxbTeMLoCNUL8UlYcUrJ3g5de
+         fBVUPq4PEUCPvS82oU9HPMYsXYE/n29Y1wuI/oq7seOcJqQvDklFdMzCC/hN2KVGKRrU
+         Z0MLW9bwz1IJrVwYEpVEh+DK6vxk4Oxtz5fi0IOwhoWAZX304knELjxEx/ZjrpraPge2
+         lNj316X+WqaEQlxOyLghkGdDh29fD+8/QnW5mbddUKHAVXU8ZORTNXZJw1s2oHnx/uSC
+         zoPw==
+X-Gm-Message-State: ABy/qLZUR2dlA3fC2dEljw82QPddUzLNLiA2025VktUu7QnWYkmNehlA
+        lJSh3SSPSQ/q09WKfRbdwiqsSXHfc+CH0m2+6ew=
+X-Google-Smtp-Source: APBJJlHjYHPAqP5SmPN3RIOl52xjZOYYkXRgyg60M7GK47U7g8k/67db5mDhdwbCY4s7DI8euJG7fA==
+X-Received: by 2002:a17:902:ea03:b0:1b9:d38d:efb1 with SMTP id s3-20020a170902ea0300b001b9d38defb1mr196238plg.8.1689201635138;
+        Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d14-20020a170903230e00b001b864add154sm4475679plh.154.2023.07.12.15.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jul 2023 15:40:34 -0700 (PDT)
+Date:   Wed, 12 Jul 2023 15:40:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: smem: Use struct_size()
+Message-ID: <202307121540.F8EBBCA1D3@keescook>
+References: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1e809b1e-16ec-3e2c-1ced-f50a78811131@web.de>
+In-Reply-To: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Markus,
-
-On Wed, Jul 12, 2023 at 08:30:11PM +0200, Markus Elfring wrote:
-> > > v1-v2:
-> > > Fix judge typo.
-> >
-> > Please next time add the changelog after the "---" section.
-> >
-> > You will also need:
-> >
-> > Fixes: 14911c6f48ec ("i2c: gpio: add fault injector")
-> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Cc: <stable@vger.kernel.org> # v4.16+
-> >
-> > Said that:
-> >
-> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+On Wed, Jul 12, 2023 at 10:42:15PM +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand-writing it, when allocating a structure
+> with a flex array.
 > 
-> * How appropriate is your presentation of this tag “in advance”?
- 
-1. These are all things that can be fixed before pushing the
-   patch. I Wouldn't feel like asking to resend for a Fixes tag
-   and few minor adjustments in the commit log, because:
-
-   1a. it's spam in the mailing list
-   1b. it annoys the person who sent the fix and demotivates him
-       to send more fixes
-
-   but more important:
-
-   1c. I learned that tools like b4 are able to take the Fixes:
-       tag even afterwards. I had this same discussion just
-       today[*].
-
-2. This is quite a common practice in other communities. However,
-   with Wolfram we agreed that I wouldn't r-b "in advance" after
-   asking minor fixes in the patch (but not in the commit log).
-
-> * Would you like to take another look at the properties for
->   the reviewer's statement of oversight?
+> This is less verbose.
 > 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n542
-> 
-> 
-> Would a subject like “[PATCH v3] i2c: gpio: Fix an error check in i2c_gpio_fault_injector_init()”
-> be more appropriate?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Every community has its own rules. I met both the approaches,
-that's why I wouldn't be so strict. I'm sure Minjie will be able
-to fix those mistakes in the future.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Said that... Minjie, do you mind sending a v3 with the commit log
-fixed and all the proper tags and make everyone happy? :)
-
-Andi
-
-[*] https://lore.kernel.org/all/32ca3740-901c-47f2-81ab-c51e8751eefe@sirena.org.uk/
+-- 
+Kees Cook
