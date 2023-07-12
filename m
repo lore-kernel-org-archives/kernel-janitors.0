@@ -2,70 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC8CEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 12:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67589C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 13:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232260AbjGLMmA (ORCPT
+        id S233190AbjGLNqz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 08:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55522 "EHLO
+        Wed, 12 Jul 2023 09:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231544AbjGLMl7 (ORCPT
+        with ESMTP id S233130AbjGLNqw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 08:41:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB84CF;
-        Wed, 12 Jul 2023 05:41:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BF2BA6177D;
-        Wed, 12 Jul 2023 12:41:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35E1C433C8;
-        Wed, 12 Jul 2023 12:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689165718;
-        bh=LzSLOQN09xVDxQZyds7MxZIoCJV+XPjKAmqqKtdzcS4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=ncHoRwj/+wA5OmxuyjYuJoF8Nm13wbsgW/fvlET/ozEwo7sszhC2jzqy/Xm8/qF9e
-         pqrUtZU/83Udr4RJCYLViaW+PmV0tq5rJK2HAm/1D4JRRZANboLwrpaVGugklYX9D7
-         L9oSNL2umkAKzeUS9BbvYYjITL9UqwQKPH9MbZqzVCfvhN6NMGP8VGC36p3gx/Doao
-         DkuO4XkZNMjaC5jWIm3U2BIMiidzP15L7Y/06UbnifL7IjVMhpiux5CyTw3MMczmS4
-         +dybUWCbpDBDAdIuowBR9HvbjnAwtAOJ6ZORIlT6kcdc593kYSIktt/KPwKFYP4lLJ
-         QnYGcwp+gGiNg==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Guy Levi <guyle@mellanox.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <233ed975-982d-422a-b498-410f71d8a101@moroto.mountain>
-References: <233ed975-982d-422a-b498-410f71d8a101@moroto.mountain>
-Subject: Re: [PATCH] RDMA/mlx4: Make check for invalid flags stricter
-Message-Id: <168916571433.1229078.6037889096840333145.b4-ty@kernel.org>
-Date:   Wed, 12 Jul 2023 15:41:54 +0300
+        Wed, 12 Jul 2023 09:46:52 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71DC219BC;
+        Wed, 12 Jul 2023 06:46:51 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3141c3a7547so7217345f8f.2;
+        Wed, 12 Jul 2023 06:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689169610; x=1691761610;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GrULn3erFwU+XaUY+RvPSd25FEdfChxFqzk38hJNgVA=;
+        b=cRRpQ8cUsltI+oRXJ2bAVSmeDXGxx/qCxmtsM0YPOqLSbJeeVsyHmq0fMP/AIg0358
+         HYxONQolujXyBBMUMPwlXQbZ07TxJJiHDmO5H89Z3urLiI3YnToMGd+BEOMvgGhoE9gk
+         3im4y2XLqKIpdAmvDgfqOnfg6fuZ/MQev3d/w8Q81xm+lHaUOzGShTo+4NA8CJACnc8N
+         x7EfRc6ahzTyX9YLXXrWf2wACaTv/N1mb2mBPzv3hhoabGe6J7318kYkNc3qDo678Kbt
+         fOon06R2RGR9QyqoHk+yOu7w+MqFMqMhSx1asAeBbU9wsmlXzFuyIwOGFXe4blEu8Zh4
+         TVnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689169610; x=1691761610;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GrULn3erFwU+XaUY+RvPSd25FEdfChxFqzk38hJNgVA=;
+        b=CSXUxj7oagQ4EkijBuehXWIa3Q64H/Txpxkl4VA3ZdA3uwjcJSd8+mlmwVKUxR5lWT
+         AtcvLp+xIheTOGmxDm/2yCvnRvNuHcQ1jTqyoFpsCOvfndoGBp3Jy94XBoPNjcJp0F/D
+         uc25ip/MeYRpEVHFcYpt2i+RPLWNjxBJYc/ZT3g5BUq8o3drnQgxYwxKKkdrslymrYzt
+         jGLKxEX/QVyYNuwfHOCKfv5ev1saAMtHuTyhdjOvJOHCbNx5PuQJpKktdY+RHmu6TrJj
+         85uEU/9pO2mWDY/q65bh5sMKeDatar6yFDInqWRTzT6PvbYinVFZSm6n5QFcOP0odo/w
+         ls6Q==
+X-Gm-Message-State: ABy/qLYChgCgHFPgfT5TQkj6XvRe64y+iZF1geg7G6bMFRpa4BbYbx9v
+        jbHQQg6LuLBxXllCWr35QNM=
+X-Google-Smtp-Source: APBJJlFZICy2vhMZpUxSaUh1uacPscbsSMw0Z2O/QOnBWI+UPLZ2HtVR5p0wQLU9wYLiQlW4YtiJPQ==
+X-Received: by 2002:adf:e0c7:0:b0:313:f862:6e3e with SMTP id m7-20020adfe0c7000000b00313f8626e3emr18227576wri.40.1689169609614;
+        Wed, 12 Jul 2023 06:46:49 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id y18-20020adffa52000000b00313f031876esm5161583wrr.43.2023.07.12.06.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jul 2023 06:46:49 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/mm: mkdirty: Fix incorrect position of #endif
+Date:   Wed, 12 Jul 2023 14:46:48 +0100
+Message-Id: <20230712134648.456349-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-a055d
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The #endif is the wrong side of a } causing a build failure when
+__NR_userfaultfd is not defined. Fix this by moving the #end to
+enclose the }
 
-On Thu, 29 Jun 2023 09:07:37 +0300, Dan Carpenter wrote:
-> This code is trying to ensure that only the flags specified in the list
-> are allowed.  The problem is that ucmd->rx_hash_fields_mask is a u64 and
-> the flags are an enum which is treated as a u32 in this context.  That
-> means the test doesn't check whether the highest 32 bits are zero.
-> 
-> 
+Fixes: 9eac40fc0cc7 ("selftests/mm: mkdirty: test behavior of (pte|pmd)_mkdirty on VMAs without write permissions")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/mm/mkdirty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] RDMA/mlx4: Make check for invalid flags stricter
-      https://git.kernel.org/rdma/rdma/c/d64b1ee12a1680
-
-Best regards,
+diff --git a/tools/testing/selftests/mm/mkdirty.c b/tools/testing/selftests/mm/mkdirty.c
+index 6d71d972997b..301abb99e027 100644
+--- a/tools/testing/selftests/mm/mkdirty.c
++++ b/tools/testing/selftests/mm/mkdirty.c
+@@ -321,8 +321,8 @@ static void test_uffdio_copy(void)
+ munmap:
+ 	munmap(dst, pagesize);
+ 	free(src);
+-#endif /* __NR_userfaultfd */
+ }
++#endif /* __NR_userfaultfd */
+ 
+ int main(void)
+ {
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.39.2
+
