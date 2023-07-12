@@ -2,132 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7330EB64D9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 11:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC8CEB64D9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 12:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233210AbjGLLRA (ORCPT
+        id S232260AbjGLMmA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 07:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46124 "EHLO
+        Wed, 12 Jul 2023 08:42:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233116AbjGLLQj (ORCPT
+        with ESMTP id S231544AbjGLMl7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 07:16:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93D6A1BE3;
-        Wed, 12 Jul 2023 04:16:35 -0700 (PDT)
+        Wed, 12 Jul 2023 08:41:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB84CF;
+        Wed, 12 Jul 2023 05:41:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A173F61779;
-        Wed, 12 Jul 2023 11:16:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13848C433CA;
-        Wed, 12 Jul 2023 11:16:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BF2BA6177D;
+        Wed, 12 Jul 2023 12:41:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35E1C433C8;
+        Wed, 12 Jul 2023 12:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689160594;
-        bh=z8wYXBpvPqezW8+Aq12OFGkmP7PrH5hpc2JqCK5G+Jw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p4rcN99w7Je7qXSskRXrngQQtbuPRJ8HBrbc3/nEma0tiACwf2Qfgf1zeDn7c2eBw
-         QOfzb+we6L80q1bWA7symXmUz8lqO2a8HkOVo8po7xdC1cnrRmL+CIk6MFndtXklv/
-         pIJ/LQ0pzwM81pQ3wOKtK/c64fkMM4P5u1mJ4CNWdCD/pJDbW2WfAOmdNCMCznvE7I
-         5pULZlOqgiLSPwIz9gczv0ztU05BvHpQeVnrXwtKHnVB4LHMRXaIqiYEDrxOmREEW1
-         ZduUu2KS0YJI328fXM/YU6xXsoEFHKpP7RYNW01yODzcj1p7Gjgqi/Jr7hTByLHYzb
-         wyt17TGArCQQQ==
-Date:   Wed, 12 Jul 2023 13:16:29 +0200
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     =?UTF-8?B?R3LDqWdvcnk=?= Clement <gregory.clement@bootlin.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling
- path in mox_get_board_info()
-Message-ID: <20230712131629.3161d6c9@thinkpad>
-In-Reply-To: <95bd5686-1ed9-63ef-e91f-30aa54c09cd6@wanadoo.fr>
-References: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
-        <20230217122108.4a93667f@dellmb>
-        <95bd5686-1ed9-63ef-e91f-30aa54c09cd6@wanadoo.fr>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+        s=k20201202; t=1689165718;
+        bh=LzSLOQN09xVDxQZyds7MxZIoCJV+XPjKAmqqKtdzcS4=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ncHoRwj/+wA5OmxuyjYuJoF8Nm13wbsgW/fvlET/ozEwo7sszhC2jzqy/Xm8/qF9e
+         pqrUtZU/83Udr4RJCYLViaW+PmV0tq5rJK2HAm/1D4JRRZANboLwrpaVGugklYX9D7
+         L9oSNL2umkAKzeUS9BbvYYjITL9UqwQKPH9MbZqzVCfvhN6NMGP8VGC36p3gx/Doao
+         DkuO4XkZNMjaC5jWIm3U2BIMiidzP15L7Y/06UbnifL7IjVMhpiux5CyTw3MMczmS4
+         +dybUWCbpDBDAdIuowBR9HvbjnAwtAOJ6ZORIlT6kcdc593kYSIktt/KPwKFYP4lLJ
+         QnYGcwp+gGiNg==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Guy Levi <guyle@mellanox.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <233ed975-982d-422a-b498-410f71d8a101@moroto.mountain>
+References: <233ed975-982d-422a-b498-410f71d8a101@moroto.mountain>
+Subject: Re: [PATCH] RDMA/mlx4: Make check for invalid flags stricter
+Message-Id: <168916571433.1229078.6037889096840333145.b4-ty@kernel.org>
+Date:   Wed, 12 Jul 2023 15:41:54 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-a055d
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Gregory, could you take this patch via mvebu?
 
-On Tue, 11 Jul 2023 18:44:36 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Thu, 29 Jun 2023 09:07:37 +0300, Dan Carpenter wrote:
+> This code is trying to ensure that only the flags specified in the list
+> are allowed.  The problem is that ucmd->rx_hash_fields_mask is a u64 and
+> the flags are an enum which is treated as a u32 in this context.  That
+> means the test doesn't check whether the highest 32 bits are zero.
+> 
+> 
 
-> Le 17/02/2023 =C3=A0 12:21, Marek Beh=C3=BAn a =C3=A9crit=C2=A0:
-> > On Wed, 15 Feb 2023 10:30:02 +0100
-> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> >  =20
-> >> wait_for_completion_timeout() returns 0 if timed out, and positive (at
-> >> least 1, or number of jiffies left till timeout) if completed.
-> >>
-> >> In case of timeout, return -ETIMEDOUT.
-> >>
-> >> Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >> Compile tested only.
-> >>
-> >> v2:
-> >>     - Fix some other wait_for_completion_timeout() calls
-> >>
-> >> ---
-> >>   drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
-> >>   1 file changed, 6 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/tur=
-ris-mox-rwtm.c
-> >> index 6ea5789a89e2..d6fc37ba897d 100644
-> >> --- a/drivers/firmware/turris-mox-rwtm.c
-> >> +++ b/drivers/firmware/turris-mox-rwtm.c
-> >> @@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwt=
-m)
-> >>   		return ret;
-> >>  =20
-> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
-> >> -	if (ret < 0)
-> >> -		return ret;
-> >> +	if (ret =3D=3D 0)
-> >> +		return -ETIMEDOUT;
-> >>  =20
-> >>   	ret =3D mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
-> >>   	if (ret =3D=3D -ENODATA) {
-> >> @@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwt=
-m)
-> >>   		return ret;
-> >>  =20
-> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
-> >> -	if (ret < 0)
-> >> -		return ret;
-> >> +	if (ret =3D=3D 0)
-> >> +		return -ETIMEDOUT;
-> >>  =20
-> >>   	ret =3D mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
-> >>   	if (ret =3D=3D -ENODATA) {
-> >> @@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwt=
-m *rwtm)
-> >>   		return ret;
-> >>  =20
-> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
-> >> -	if (ret < 0)
-> >> -		return ret;
-> >> +	if (ret =3D=3D 0)
-> >> +		return -ETIMEDOUT;
-> >>  =20
-> >>   	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
-> >>   } =20
-> >=20
-> > Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
-> >  =20
->=20
-> Hi,
-> polite reminder.
->=20
-> CJ
+Applied, thanks!
 
+[1/1] RDMA/mlx4: Make check for invalid flags stricter
+      https://git.kernel.org/rdma/rdma/c/d64b1ee12a1680
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
