@@ -2,132 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D96CEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 16:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51952C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 18:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233145AbjGLQsb (ORCPT
+        id S231908AbjGLSjw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 12:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47506 "EHLO
+        Wed, 12 Jul 2023 14:39:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231856AbjGLQs3 (ORCPT
+        with ESMTP id S229512AbjGLSjv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 12:48:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A60911B;
-        Wed, 12 Jul 2023 09:48:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Wed, 12 Jul 2023 14:39:51 -0400
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58EF1BF3;
+        Wed, 12 Jul 2023 11:39:50 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 1D624141954;
+        Wed, 12 Jul 2023 18:39:50 +0000 (UTC)
+Received: from pdx1-sub0-mail-a292.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 45649141E19;
+        Wed, 12 Jul 2023 18:39:49 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1689187189; a=rsa-sha256;
+        cv=none;
+        b=trG4d6vyE3kUlspIIUBkYvsYwltryL2JzaXBCSPbXehCdwQis66BskbUs/P0EDYFsw9HLZ
+        PYV5WxJWUQyA9V42aqUly+y8/uzbDGuv0wNLtp+7/j1zUEtt0A/XI+o9j2HkNzX+KyEQZV
+        aJKXZ0VGbpoD2bnPnkmlMCi1YO3/fAYl1MFHItXQCnLPx/NF5vrz6endVizfxsZQ6AAiyG
+        ZIoqK5qACInmjXq977l4LVxCNjvbW4IXsBZAIIeRSV/WF9UiS0cS+D+0HEAE7i5cojMoAu
+        0m7jIXmZU4LuWq2onvghZ8I7dpV1SzJweGa1YQiwvA9CwHmQLH5iUsFChEqB1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1689187189;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=f7+FobEjTOe2hEYFGOUooYlEshnkxlyBXA1c/2RM/iM=;
+        b=1sYuA9JGNE+TIvYvUH0IEcKjisIWUg40XknNG1gCnhESzUv2j0S3ax+aGz70PXgGJK9d/r
+        cL3OTV7ciZLuOe2wxe74rGqL8fRijq2etYNbpoelyREMg40BYxLht/kHSf1TUcdBPtpSpc
+        1K4QB32VlSROvMJurianQOntN/WcMUJrwUaEV04+tQ/tBgcJKeG+vCzerIrV41pu5j5mlr
+        W2A9NJhzrf4J0Jq0n2dsgMCSDMiYdTiord7qmo2/0kiltDDvC79J35jOBrQ9dDQekPdtWc
+        QG04iEV2xuTEpujK5JT5j2G4RqIikAHvhtBCJiKVY6kI2kyzmPqH7EhHsuDe0g==
+ARC-Authentication-Results: i=1;
+        rspamd-7d9c4d5c9b-kprkf;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Belong-Invention: 4729f678329cebc6_1689187189628_3115873377
+X-MC-Loop-Signature: 1689187189628:356198624
+X-MC-Ingress-Time: 1689187189628
+Received: from pdx1-sub0-mail-a292.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.103.24.120 (trex/6.9.1);
+        Wed, 12 Jul 2023 18:39:49 +0000
+Received: from offworld (unknown [104.36.30.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CCFF261840;
-        Wed, 12 Jul 2023 16:48:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B313C433C7;
-        Wed, 12 Jul 2023 16:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689180508;
-        bh=o6U7TLywD6o6bw0C8hco3IaGeUAK/X3uTG4BfimyOw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hKPjgVgPEt4Z0UuY32DiQo5EZZsQewZg0ex5V++8LjiLQqAv7nnItXU3bP9xHhXyB
-         BmIGahJTCSRJIu33d6hBfPnmNHA9qc+gxll+2eCYX8ZlEo6K7ASKUgCbXRQBI5NHHG
-         hPmdIRwgIlMkt3TXEqf6c4I1la8QuwqnyI42Ztrjd/qgveLlUU8zEFjBe6Xug7cMrZ
-         shplwewsHWF6yONfHv2DJe+AqrM52oehtHOpSX2E+58Wk5e5y4RwhmBgDh17dNJTHf
-         ZG6UVic7HXF5Yg6junDUCzoynXjmBr799qoVKf1aNjCSHWLJD2DR7H9Xi5vn0n4zw3
-         ImIcrNSoI/qfQ==
-Date:   Wed, 12 Jul 2023 22:18:15 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, keescook@chromium.org,
-        christophe.jaillet@wanadoo.fr, kuba@kernel.org,
-        mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/24] bus: mhi: host: use vmalloc_array and vcalloc
-Message-ID: <20230712164815.GI102757@thinkpad>
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
- <20230627144339.144478-11-Julia.Lawall@inria.fr>
+        (Authenticated sender: dave@stgolabs.net)
+        by pdx1-sub0-mail-a292.dreamhost.com (Postfix) with ESMTPSA id 4R1RP024zjz7j;
+        Wed, 12 Jul 2023 11:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+        s=dreamhost; t=1689187189;
+        bh=f7+FobEjTOe2hEYFGOUooYlEshnkxlyBXA1c/2RM/iM=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=eDoydnw3ZL6ST7+0xpO4f1iyAru+ClO8cmKG8uuAZjqudiB/GZyWP+yiVSD/QuEnz
+         A9hbAdSfQriC0AVGgEAjcMRHgjKi/no7A+oIQy0PyhlDaslRoHqjlOFnNao8MgOqQW
+         RuzrwJfDJGw5W1D2E4K8Iz0WdKkw2Q9iF2jShpi6pm/bMR2ZXrA12Gv8lNFC/npMh7
+         5cuTwQBMbuvwGjAVN8JvizvgWRUBZCa00p03fzU3rH7wxULCHlsxyaNl+v6JpYgOSc
+         KszzxxT5VLfBGVL5WpHR+rFAXwxQae9seaU6Bpor+8Ji1oPUxwTbVmgBYEETJ3Xc4O
+         aQ9RxNHOAYbtg==
+Date:   Wed, 12 Jul 2023 11:03:23 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ben Widawsky <bwidawsk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cxl/mem: Fix a double shift bug
+Message-ID: <ljlzer7ao37l77ljmuhb7x7wpdl45a75xxins63wlg6n2hfuae@54gsbuo4qlcw>
+References: <a11b0c78-4717-4f4e-90be-f47f300d607c@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230627144339.144478-11-Julia.Lawall@inria.fr>
+In-Reply-To: <a11b0c78-4717-4f4e-90be-f47f300d607c@moroto.mountain>
+User-Agent: NeoMutt/20230517
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 04:43:25PM +0200, Julia Lawall wrote:
-> Use vmalloc_array and vcalloc to protect against
-> multiplication overflows.
-> 
-> The changes were done using the following Coccinelle
-> semantic patch:
-> 
-> // <smpl>
-> @initialize:ocaml@
-> @@
-> 
-> let rename alloc =
->   match alloc with
->     "vmalloc" -> "vmalloc_array"
->   | "vzalloc" -> "vcalloc"
->   | _ -> failwith "unknown"
-> 
-> @@
->     size_t e1,e2;
->     constant C1, C2;
->     expression E1, E2, COUNT, x1, x2, x3;
->     typedef u8;
->     typedef __u8;
->     type t = {u8,__u8,char,unsigned char};
->     identifier alloc = {vmalloc,vzalloc};
->     fresh identifier realloc = script:ocaml(alloc) { rename alloc };
-> @@
-> 
-> (
->       alloc(x1*x2*x3)
-> |
->       alloc(C1 * C2)
-> |
->       alloc((sizeof(t)) * (COUNT), ...)
-> |
-> -     alloc((e1) * (e2))
-> +     realloc(e1, e2)
-> |
-> -     alloc((e1) * (COUNT))
-> +     realloc(COUNT, e1)
-> |
-> -     alloc((E1) * (E2))
-> +     realloc(E1, E2)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Mon, 03 Jul 2023, Dan Carpenter wrote:
 
-Applied to mhi-next!
+>The CXL_FW_CANCEL macro is used with set/test_bit() so it should be a
+>bit number and not the shifted value.  The original code is the
+>equivalent of using BIT(BIT(0)) so it's 0x2 instead of 0x1.  This has
+>no effect on runtime because it's done consistently and nothing else
+>was using the 0x2 bit.
+>
+>Fixes: 9521875bbe00 ("cxl: add a firmware update mechanism using the sysfs firmware loader")
+>Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-- Mani
-
-> 
-> ---
-> v2: Use vmalloc_array and vcalloc instead of array_size.
-> This also leaves a multiplication of a constant by a sizeof
-> as is.  Two patches are thus dropped from the series.
-> 
->  drivers/bus/mhi/host/init.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-> --- a/drivers/bus/mhi/host/init.c
-> +++ b/drivers/bus/mhi/host/init.c
-> @@ -759,7 +759,7 @@ static int parse_ch_cfg(struct mhi_contr
->  	 * so to avoid any memory possible allocation failures, vzalloc is
->  	 * used here
->  	 */
-> -	mhi_cntrl->mhi_chan = vzalloc(mhi_cntrl->max_chan *
-> +	mhi_cntrl->mhi_chan = vcalloc(mhi_cntrl->max_chan,
->  				      sizeof(*mhi_cntrl->mhi_chan));
->  	if (!mhi_cntrl->mhi_chan)
->  		return -ENOMEM;
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
