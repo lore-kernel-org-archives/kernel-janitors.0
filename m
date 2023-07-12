@@ -2,77 +2,132 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7FAEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 10:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7330EB64D9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 11:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232091AbjGLKPV (ORCPT
+        id S233210AbjGLLRA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 06:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
+        Wed, 12 Jul 2023 07:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232890AbjGLKPS (ORCPT
+        with ESMTP id S233116AbjGLLQj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 06:15:18 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 2174E19A6;
-        Wed, 12 Jul 2023 03:15:14 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id BE9606076583E;
-        Wed, 12 Jul 2023 18:15:09 +0800 (CST)
-Message-ID: <5194f82f-12d6-05aa-33b7-69c88923e455@nfschina.com>
-Date:   Wed, 12 Jul 2023 18:15:09 +0800
+        Wed, 12 Jul 2023 07:16:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93D6A1BE3;
+        Wed, 12 Jul 2023 04:16:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A173F61779;
+        Wed, 12 Jul 2023 11:16:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13848C433CA;
+        Wed, 12 Jul 2023 11:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689160594;
+        bh=z8wYXBpvPqezW8+Aq12OFGkmP7PrH5hpc2JqCK5G+Jw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=p4rcN99w7Je7qXSskRXrngQQtbuPRJ8HBrbc3/nEma0tiACwf2Qfgf1zeDn7c2eBw
+         QOfzb+we6L80q1bWA7symXmUz8lqO2a8HkOVo8po7xdC1cnrRmL+CIk6MFndtXklv/
+         pIJ/LQ0pzwM81pQ3wOKtK/c64fkMM4P5u1mJ4CNWdCD/pJDbW2WfAOmdNCMCznvE7I
+         5pULZlOqgiLSPwIz9gczv0ztU05BvHpQeVnrXwtKHnVB4LHMRXaIqiYEDrxOmREEW1
+         ZduUu2KS0YJI328fXM/YU6xXsoEFHKpP7RYNW01yODzcj1p7Gjgqi/Jr7hTByLHYzb
+         wyt17TGArCQQQ==
+Date:   Wed, 12 Jul 2023 13:16:29 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     =?UTF-8?B?R3LDqWdvcnk=?= Clement <gregory.clement@bootlin.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling
+ path in mox_get_board_info()
+Message-ID: <20230712131629.3161d6c9@thinkpad>
+In-Reply-To: <95bd5686-1ed9-63ef-e91f-30aa54c09cd6@wanadoo.fr>
+References: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
+        <20230217122108.4a93667f@dellmb>
+        <95bd5686-1ed9-63ef-e91f-30aa54c09cd6@wanadoo.fr>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] drm/virtio: remove some redundant code
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     airlied@redhat.com, kraxel@redhat.com, gurchetansingh@chromium.org,
-        olvaffe@gmail.com, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <b82057bf-3126-4721-87f5-79ca3682cee4@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/7/12 14:36, Dan Carpenter wrote:
+Gregory, could you take this patch via mvebu?
 
-> On Wed, Jul 12, 2023 at 09:18:42AM +0800, Su Hui wrote:
->> On 2023/7/11 19:13, Dan Carpenter wrote:
->>> On Tue, Jul 11, 2023 at 05:00:31PM +0800, Su Hui wrote:
->>>> virtio_gpu_get_vbuf always be successful,
->>>> so remove the error judgment.
->>>>
->>> No, just ignore the static checker false positive in this case.  The
->>> intent of the code is clear that if it did have an error it should
->>> return an error pointer.
->> Hi, Dan,
->>
->> Function "virtio_gpu_get_vbuf" call "kmem_cache_zalloc (vgdev->vbufs,
->> GFP_KERNEL | __GFP_NOFAIL)" to
->> allocate memory. Adding the " __GFP_NOFAIL”flag make sure it won't fail. And
->> "virtio_gpu_get_vbuf" never
->> return an error code, so I think this is not a false positive.
-> We all see this and agree.
->
-> However the check for if (IS_ERR()) is written deliberately because we
-> might change the code to return error pointers in the future.  Static
-> checkers are looking for code that does something unintentional but in
-> this case the code was written that way deliberately.
-Got it ,  I shouldn't remove it because the check may be useful in the 
-future.
-Thanks for your explanation.
+On Tue, 11 Jul 2023 18:44:36 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Su Hui
+> Le 17/02/2023 =C3=A0 12:21, Marek Beh=C3=BAn a =C3=A9crit=C2=A0:
+> > On Wed, 15 Feb 2023 10:30:02 +0100
+> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> >  =20
+> >> wait_for_completion_timeout() returns 0 if timed out, and positive (at
+> >> least 1, or number of jiffies left till timeout) if completed.
+> >>
+> >> In case of timeout, return -ETIMEDOUT.
+> >>
+> >> Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
+> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >> ---
+> >> Compile tested only.
+> >>
+> >> v2:
+> >>     - Fix some other wait_for_completion_timeout() calls
+> >>
+> >> ---
+> >>   drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
+> >>   1 file changed, 6 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/tur=
+ris-mox-rwtm.c
+> >> index 6ea5789a89e2..d6fc37ba897d 100644
+> >> --- a/drivers/firmware/turris-mox-rwtm.c
+> >> +++ b/drivers/firmware/turris-mox-rwtm.c
+> >> @@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwt=
+m)
+> >>   		return ret;
+> >>  =20
+> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> >> -	if (ret < 0)
+> >> -		return ret;
+> >> +	if (ret =3D=3D 0)
+> >> +		return -ETIMEDOUT;
+> >>  =20
+> >>   	ret =3D mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
+> >>   	if (ret =3D=3D -ENODATA) {
+> >> @@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwt=
+m)
+> >>   		return ret;
+> >>  =20
+> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> >> -	if (ret < 0)
+> >> -		return ret;
+> >> +	if (ret =3D=3D 0)
+> >> +		return -ETIMEDOUT;
+> >>  =20
+> >>   	ret =3D mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
+> >>   	if (ret =3D=3D -ENODATA) {
+> >> @@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwt=
+m *rwtm)
+> >>   		return ret;
+> >>  =20
+> >>   	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> >> -	if (ret < 0)
+> >> -		return ret;
+> >> +	if (ret =3D=3D 0)
+> >> +		return -ETIMEDOUT;
+> >>  =20
+> >>   	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
+> >>   } =20
+> >=20
+> > Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
+> >  =20
+>=20
+> Hi,
+> polite reminder.
+>=20
+> CJ
 
->
-> regards,
-> dan carpenter
->
