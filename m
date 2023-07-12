@@ -2,78 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69385C001DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jul 2023 23:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBF1EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 01:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230437AbjGKX2N (ORCPT
+        id S230150AbjGLBSu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jul 2023 19:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
+        Tue, 11 Jul 2023 21:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229972AbjGKX2M (ORCPT
+        with ESMTP id S229945AbjGLBSt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jul 2023 19:28:12 -0400
-Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B791110CF;
-        Tue, 11 Jul 2023 16:28:10 -0700 (PDT)
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1qJMlp-001BwJ-5w; Wed, 12 Jul 2023 09:27:50 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Wed, 12 Jul 2023 09:27:42 +1000
-Date:   Wed, 12 Jul 2023 09:27:42 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KEYS: asymmetric: Fix error codes
-Message-ID: <ZK3lbns1A/kEOrcM@gondor.apana.org.au>
-References: <c5e34c6a-da1e-4585-98c4-14701b0e093e@moroto.mountain>
- <CTYVE0G0D53P.Y8A7V3C9BW9O@suppilovahvero>
- <CTYVFFFI0SE9.2QXXQPRJW3AA3@suppilovahvero>
- <15340a35-2400-43dd-9f50-fcbcb3c4986d@kadam.mountain>
- <93959358dc48d45b98aa598feae7307fa32c00d0.camel@kernel.org>
+        Tue, 11 Jul 2023 21:18:49 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 542B195;
+        Tue, 11 Jul 2023 18:18:46 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 734DC605D3D97;
+        Wed, 12 Jul 2023 09:18:43 +0800 (CST)
+Message-ID: <0561b89b-42a8-35bf-feaa-e5feb4ec3cd5@nfschina.com>
+Date:   Wed, 12 Jul 2023 09:18:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93959358dc48d45b98aa598feae7307fa32c00d0.camel@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] drm/virtio: remove some redundant code
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     airlied@redhat.com, kraxel@redhat.com, gurchetansingh@chromium.org,
+        olvaffe@gmail.com, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <7f67ed65-647a-44d7-a262-d3f1f48d90b9@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 12:51:45AM +0300, Jarkko Sakkinen wrote:
-> On Tue, 2023-07-11 at 11:40 +0300, Dan Carpenter wrote:
-> > On Tue, Jul 11, 2023 at 02:12:22AM +0300, Jarkko Sakkinen wrote:
-> > > > > Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface without scatterlists")
-> > 
-> > [ snip ]
-> > 
-> > > > 
-> > > > I'll pick this as I'm late with 6.5 PR.
-> > > > 
-> > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > 
-> > > Causes merge conflicts with my tree:
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/
-> > 
-> > Your master branch doesn't include the "Use new crypto interface" commit
-> > so it doesn't have the bug.
-> > 
-> > (I'm just testing against linux-next and I don't know how the crypto
-> > trees work).
-> > 
-> > regards,
-> > dan carpenter
-> 
-> It is unfortunately based on Linus' tree :-/
+On 2023/7/11 19:13, Dan Carpenter wrote:
+> On Tue, Jul 11, 2023 at 05:00:31PM +0800, Su Hui wrote:
+>> virtio_gpu_get_vbuf always be successful,
+>> so remove the error judgment.
+>>
+> No, just ignore the static checker false positive in this case.  The
+> intent of the code is clear that if it did have an error it should
+> return an error pointer.
 
-Both this fix and the pathces it depends on have gone through
-the crypto tree and is now merged upstream.
+Hi, Dan,
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Function "virtio_gpu_get_vbuf" call "kmem_cache_zalloc (vgdev->vbufs, 
+GFP_KERNEL | __GFP_NOFAIL)" to
+allocate memory. Adding the " __GFP_NOFAIL”flag make sure it won't fail. 
+And "virtio_gpu_get_vbuf" never
+return an error code, so I think this is not a false positive.
+
+Su Hui
+
+>
+> regards,
+> dan carpenter
+>
