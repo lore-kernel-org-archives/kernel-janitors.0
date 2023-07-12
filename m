@@ -2,98 +2,118 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DCAEB64D9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 14:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C4CC001DF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 14:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233462AbjGLOBq (ORCPT
+        id S231827AbjGLOWW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 10:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41104 "EHLO
+        Wed, 12 Jul 2023 10:22:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233349AbjGLOBg (ORCPT
+        with ESMTP id S230159AbjGLOWU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 10:01:36 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD9F19BE;
-        Wed, 12 Jul 2023 07:01:26 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbf1b82dc7so71733595e9.2;
-        Wed, 12 Jul 2023 07:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689170484; x=1691762484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fe/Z+3ZtV+7rEEbA5ujf7MvOol2TwmyPnYuPdYc8Nwg=;
-        b=UiX61zfF22NdJKf458JphAbi6m+mWH28KarzHGFtUyEVhXabazOSNAkurpgz5quMnl
-         izUUZNQJJXMbmbtgB1bl4o9YSib/GV5m5jD54AQmzsi5Xz4NAoCrHjqthsSde3sidZXT
-         Bk6xEDMjY+ny22PFJzjXXmkcS02rSo8B0wnA6YRoiFdR1UXtiNOIA/kC3XBjeEzryjFx
-         /bUmYpKgnQGso1HekqStoMn2S9aWHyFNPb4Q4/m8TeqdfdH7hLJKw3qLiSr4ttzspj/9
-         0H+9IQgjST/1GgGohMsheteYm26A2XZaSiuSjO29zVVmE8ETfPKF9NBS+6f6ROGS59Wx
-         AoqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689170484; x=1691762484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fe/Z+3ZtV+7rEEbA5ujf7MvOol2TwmyPnYuPdYc8Nwg=;
-        b=c/r7ywFU5/fmxYACKQTB4Kq7PrNguHegJ72k3ZfORWmVrg/7RZT09gqyjoPZ2lYL/Y
-         75J/WwlOtEUR6aWeiVZf0iHkkKZSFpWnXQdK+u/fhCDhmf4TQgq0pPK0GXrFp3EPZDAd
-         v4Vbverz0mDLGHERqL22BVZ64hqE7mKvpRbHc1Z+vV1g/zXuQtmE7bHWfMgTGu/WLi+u
-         PMh4mfn1102XNHnLFRo+AwUSvJfaOamkTnUx23uUzELVRAB0fXWRQ9hiGkBlgKmDmwfS
-         5qMvHoAjA4RU0dI7CZRI17CKIzB4/uy2S/Qh02dCrbSNJaKGNsr3slfgDgPniiPprtOX
-         V3ZA==
-X-Gm-Message-State: ABy/qLbXdwm6C5FO9TKrm3RsW6eYMzhY0xPM1cY4B5H3jD81m23Y2OZv
-        b/nHid/L+KPIIVg2hvKnp+o=
-X-Google-Smtp-Source: APBJJlEPYGZqRWNC5D4AwhzPhHaPUZb4AP4spv2VYPHTJyc6HbPStnjhWinQ0WTnopg5Pgu40RTwoQ==
-X-Received: by 2002:a7b:c451:0:b0:3fb:b4fc:be62 with SMTP id l17-20020a7bc451000000b003fbb4fcbe62mr17218287wmi.17.1689170484340;
-        Wed, 12 Jul 2023 07:01:24 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h6-20020a05600c314600b003fa9a00d74csm2318867wmo.3.2023.07.12.07.01.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 07:01:23 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Ivan Orlov <ivan.orlov0322@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Shuah Khan <shuah@kernel.org>,
-        alsa-devel@alsa-project.org, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: ALSA: Fix fclose on an already fclosed file pointer
-Date:   Wed, 12 Jul 2023 15:01:22 +0100
-Message-Id: <20230712140122.457206-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Wed, 12 Jul 2023 10:22:20 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0015121;
+        Wed, 12 Jul 2023 07:22:18 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36CBiVoI014762;
+        Wed, 12 Jul 2023 14:22:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=uiOvXvWQsK7oGSOD73zC5c9T7/tY9kGTmrNQPmH8feU=;
+ b=hCZ2BgHBDaeBkGSFtin84VkTwZlKP4xKMHxW5kzddp62+G9TeeOzVTTc2svmNhtGHHrO
+ sp+Ty9btk4BkiX2QZtr7EPLpZiz4+HtdykF4NlkYrqn4o3dzbSNCkM3o73c8zAq+vn68
+ Wnf3aaB2iOJsJdRYynrqhgSDGCaVjbrO6nuMkd03Wmn+R2+0eXdm4hksC0BQB4ww47Q8
+ zJtj14zjoA5Oa/cEC1g7afJ4Z6r916cmaBZGbTSf8L8MZ8uN0l9ni5Djr7U0wAC9cREg
+ GR2hFjQegryARlKxkRylLiwXcbCGw/KeuBNmk6n6oOcbEAfi0VkDTgIfJ2YQVcOZFepw Uw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rsf87hpqe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 12 Jul 2023 14:22:14 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36CEMDpR031005
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 12 Jul 2023 14:22:13 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 12 Jul
+ 2023 07:22:12 -0700
+Message-ID: <c3f1bd05-3594-71b9-39ec-7d4b53a2d2e7@quicinc.com>
+Date:   Wed, 12 Jul 2023 08:22:11 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 0/5 v4] accel/qaic: Improve bounds checking in
+ encode/decode
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <6e935c70-5bd2-4808-bdd9-d664f892b0b5@moroto.mountain>
+ <0919d2f7-dbb3-2e8b-adb7-f836b21e6482@quicinc.com>
+ <9af2a1c9-a59a-4f7e-a195-82cf5cbd68c9@kadam.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <9af2a1c9-a59a-4f7e-a195-82cf5cbd68c9@kadam.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JnFiaDbBI0YaJtQ2B0jeY0MzS0LEaFAE
+X-Proofpoint-ORIG-GUID: JnFiaDbBI0YaJtQ2B0jeY0MzS0LEaFAE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-12_09,2023-07-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=786 malwarescore=0
+ adultscore=0 clxscore=1015 priorityscore=1501 bulkscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307120129
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the case where a sysfs file cannot be opened the error return path
-fcloses file pointer fpl, however, fpl has already been closed in the
-previous stanza. Fix the double fclose by removing it.
+On 7/12/2023 12:30 AM, Dan Carpenter wrote:
+> On Tue, Jul 11, 2023 at 11:33:25AM -0600, Jeffrey Hugo wrote:
+>> On 7/11/2023 2:20 AM, Dan Carpenter wrote:
+>>> Fixed in v4: Send the correct [PATCH 1/5] patch.
+>>>
+>>> Fixed in v3: Redo messed up threading
+>>>
+>>> Fixed two things in v2:  Include the <linux/overflow.h> file.  Change
+>>> the >= in encode and decode to >.
+>>>
+>>> regards,
+>>> dan carpenter
+>>
+>> Did you intentionally drop tags from previous versions?
+> 
+> Sorry, I kept messing up the resends.
+> 
+>>
+>> For 1-3, 5
+>> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+>>
+>> Looks like 3,5 are reviewed by Pranjal and also good. I see 5 is also
+>> reviewed by Dafna.  Expect those to be merged.  1,2 need a review from
+>> Pranjal, but I expect all is good and will be merged.
+>>
+>> I did not see feedback on my question for 4.  Would like your feedback
+>> before queuing that one up.
+>>
+> 
+> Sorry, again.  Yeah.  I think you're right.  Could we queue the rest and
+> I will resend 4 separately?  I know it's a headache.  If not it's fine,
+> I can resend them all.
 
-Fixes: 10b98a4db11a ("selftests: ALSA: Add test for the 'pcmtest' driver")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/alsa/test-pcmtest-driver.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+These all seem independent enough that I don't see splitting out 4 as a 
+problem.
 
-diff --git a/tools/testing/selftests/alsa/test-pcmtest-driver.c b/tools/testing/selftests/alsa/test-pcmtest-driver.c
-index 71931b240a83..357adc722cba 100644
---- a/tools/testing/selftests/alsa/test-pcmtest-driver.c
-+++ b/tools/testing/selftests/alsa/test-pcmtest-driver.c
-@@ -47,10 +47,8 @@ static int read_patterns(void)
- 
- 		sprintf(pf, "/sys/kernel/debug/pcmtest/fill_pattern%d", i);
- 		fp = fopen(pf, "r");
--		if (!fp) {
--			fclose(fpl);
-+		if (!fp)
- 			return -1;
--		}
- 		fread(patterns[i].buf, 1, patterns[i].len, fp);
- 		fclose(fp);
- 	}
--- 
-2.39.2
-
+-Jeff
