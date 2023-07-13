@@ -2,87 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB56C001B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 15:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1DDC001DE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 16:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235076AbjGMPzW (ORCPT
+        id S235076AbjGMQYY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
+        Thu, 13 Jul 2023 12:24:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231167AbjGMPzW (ORCPT
+        with ESMTP id S229682AbjGMQYX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:55:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2AE1BEB
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jul 2023 08:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689263681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=OpGloaBWnj5MoBWfiTNEz+6FTbZvx0Cg+d8CD3SV6Uo=;
-        b=KkNCobE88cjzl/XPi4Qm5aBzusCd4IYuPy4RkZSqLBVxlduZT2oP5X4zqT3+RKNHTLYwvC
-        oU5IDaYYHF2SF88FpQsBBJ7TC3giCvSO7XYQLcGElgFebQ+KCSz6ra+IzPOHj2Sko1zlkz
-        qiWzyzeKaHz6ef+f4psy+KNgskyo5JE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-12-SNd6AOccMHm6qbNBjoSbpg-1; Thu, 13 Jul 2023 11:54:39 -0400
-X-MC-Unique: SNd6AOccMHm6qbNBjoSbpg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 13 Jul 2023 12:24:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEEDBE65;
+        Thu, 13 Jul 2023 09:24:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2191983FC20;
-        Thu, 13 Jul 2023 15:54:39 +0000 (UTC)
-Received: from firesoul.localdomain (unknown [10.45.242.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E1CD940C2063;
-        Thu, 13 Jul 2023 15:54:38 +0000 (UTC)
-Received: from [192.168.42.3] (localhost [IPv6:::1])
-        by firesoul.localdomain (Postfix) with ESMTP id EB02F307372E8;
-        Thu, 13 Jul 2023 17:54:37 +0200 (CEST)
-Subject: [PATCH net-next] gve: trivial spell fix Recive to Receive
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     kernel-janitors@vger.kernel.org
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org
-Date:   Thu, 13 Jul 2023 17:54:37 +0200
-Message-ID: <168926364598.10492.9222703767497099182.stgit@firesoul>
-User-Agent: StGit/1.4
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 82F0C61A5E;
+        Thu, 13 Jul 2023 16:24:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11C0C433C8;
+        Thu, 13 Jul 2023 16:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689265461;
+        bh=AZtkSlN6HOFWqWpaw/7rUZ2iYgSQ7gyCFHv5rfl8mdg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=esZu5r4uC08yeLmBddbgsRaBbAqZTAPh5xHgLceETYHVhFqeOZzClIDGta83yxedB
+         BhdMpCh/LPjpfo+7+8FfmKArb6rVILE0zfIB15Nt8bJua/s4X9RqSHjyCB7ch73iB9
+         JxcuWN5D1TzIxw4ymvz6bNG71C6bdempvNTIYT7PGZbXbeGiSFhXjkJgdiIg+GW817
+         Mp1FrZocZ3kH41zEq8XOZK1VulDS6wSseTw8O7Xe+bs5c1koagoKBe/a++lZyA+Wii
+         Tb0K3zhZCzByYbPoe0Ov/puWM363mj2Iwh+Jkrs3nCYbvmt6/3dG8qWpKBLSwPXter
+         2yOuoxbb11fxg==
+Date:   Thu, 13 Jul 2023 11:24:19 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: Reorder some fields in 'struct pci_dev'
+Message-ID: <20230713162419.GA321515@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <407b17c3e56764ef2c558898d4ff4c6c04b2d757.1687105455.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Spotted this trivial spell mistake while casually reading
-the google GVE driver code.
+On Sun, Jun 18, 2023 at 06:24:54PM +0200, Christophe JAILLET wrote:
+> Group some bitfield variables to reduce hole.
+> On x86_64, this shrinks the size of 'struct pci_dev' by 16 bytes when
+> compiled with 'allmodconfig'. This goes from 3576 to 3560.
+> 
+> The move related to CONFIG_PCIEASPM depends on the config. But it gives
+> the opportunity to merge to bitfields.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
- drivers/net/ethernet/google/gve/gve_desc.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Both patches applies to pci/misc for v6.6, thanks!
 
-Yes, I know net-next is closed, but perhaps kernel-janitors
-will pick this up for later?
-
-diff --git a/drivers/net/ethernet/google/gve/gve_desc.h b/drivers/net/ethernet/google/gve/gve_desc.h
-index f4ae9e19b844..c2874cdcf40c 100644
---- a/drivers/net/ethernet/google/gve/gve_desc.h
-+++ b/drivers/net/ethernet/google/gve/gve_desc.h
-@@ -105,10 +105,10 @@ union gve_rx_data_slot {
- 	__be64 addr;
- };
- 
--/* GVE Recive Packet Descriptor Seq No */
-+/* GVE Receive Packet Descriptor Seq No */
- #define GVE_SEQNO(x) (be16_to_cpu(x) & 0x7)
- 
--/* GVE Recive Packet Descriptor Flags */
-+/* GVE Receive Packet Descriptor Flags */
- #define GVE_RXFLG(x)	cpu_to_be16(1 << (3 + (x)))
- #define	GVE_RXF_FRAG		GVE_RXFLG(3)	/* IP Fragment			*/
- #define	GVE_RXF_IPV4		GVE_RXFLG(4)	/* IPv4				*/
-
-
+> ---
+>  include/linux/pci.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index c69a2cc1f412..106754757279 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -366,8 +366,8 @@ struct pci_dev {
+>  	pci_power_t	current_state;	/* Current operating state. In ACPI,
+>  					   this is D0-D3, D0 being fully
+>  					   functional, and D3 being off. */
+> -	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
+>  	u8		pm_cap;		/* PM capability offset */
+> +	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
+>  	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+>  					   can be generated */
+>  	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
+> @@ -392,9 +392,9 @@ struct pci_dev {
+>  
+>  #ifdef CONFIG_PCIEASPM
+>  	struct pcie_link_state	*link_state;	/* ASPM link state */
+> +	u16		l1ss;		/* L1SS Capability pointer */
+>  	unsigned int	ltr_path:1;	/* Latency Tolerance Reporting
+>  					   supported from root to here */
+> -	u16		l1ss;		/* L1SS Capability pointer */
+>  #endif
+>  	unsigned int	pasid_no_tlp:1;		/* PASID works without TLP Prefix */
+>  	unsigned int	eetlp_prefix_path:1;	/* End-to-End TLP Prefix */
+> -- 
+> 2.34.1
+> 
