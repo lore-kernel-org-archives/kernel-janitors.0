@@ -2,67 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73774C001DD
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 14:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB56C001B0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 15:55:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbjGMOzh (ORCPT
+        id S235076AbjGMPzW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Jul 2023 10:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60040 "EHLO
+        Thu, 13 Jul 2023 11:55:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbjGMOz3 (ORCPT
+        with ESMTP id S231167AbjGMPzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Jul 2023 10:55:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728DA2706;
-        Thu, 13 Jul 2023 07:55:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Thu, 13 Jul 2023 11:55:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2AE1BEB
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jul 2023 08:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689263681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=OpGloaBWnj5MoBWfiTNEz+6FTbZvx0Cg+d8CD3SV6Uo=;
+        b=KkNCobE88cjzl/XPi4Qm5aBzusCd4IYuPy4RkZSqLBVxlduZT2oP5X4zqT3+RKNHTLYwvC
+        oU5IDaYYHF2SF88FpQsBBJ7TC3giCvSO7XYQLcGElgFebQ+KCSz6ra+IzPOHj2Sko1zlkz
+        qiWzyzeKaHz6ef+f4psy+KNgskyo5JE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-12-SNd6AOccMHm6qbNBjoSbpg-1; Thu, 13 Jul 2023 11:54:39 -0400
+X-MC-Unique: SNd6AOccMHm6qbNBjoSbpg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1004261849;
-        Thu, 13 Jul 2023 14:55:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D23C433C7;
-        Thu, 13 Jul 2023 14:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689260127;
-        bh=/PNa8c5uB3xZJs1ZCxwrUtLQVeBxBkNDCyB4lZC6vmc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AgAjCNirzo8hjm7DTmauBTe1zhbhCqJJv5W5tmdHzv8w33g9KzEGY4v3RaiUj15E6
-         mX1KCgCCYf5kLkiMNd1tNZrgmcmXavs9koy2BY6c3xL3vnFkmX3Ikq4ecIaPYXUT0X
-         cuW3W4MJx924IwSudXmTNxqU18JSOoT1Qj8Ck5LDwQ5qJfei+LmMYhPNGwidYZAnCg
-         lhtrESBjg3tjF+Yvkh5kt8DYJccQkTglyoUw8QrXJ+j4WZV9f+2YPtpSYBDKVtT703
-         8DqdNHGyslI9fL8MJp/LFAug2c9kjywUQcQjD5LJZehoIEmxEqQ74ZAB/oSbgdw5wU
-         S5cytmyQ1C2wQ==
-Date:   Thu, 13 Jul 2023 15:55:23 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] leds: pwm: Fix error code in led_pwm_create_fwnode()
-Message-ID: <20230713145523.GF10768@google.com>
-References: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2191983FC20;
+        Thu, 13 Jul 2023 15:54:39 +0000 (UTC)
+Received: from firesoul.localdomain (unknown [10.45.242.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1CD940C2063;
+        Thu, 13 Jul 2023 15:54:38 +0000 (UTC)
+Received: from [192.168.42.3] (localhost [IPv6:::1])
+        by firesoul.localdomain (Postfix) with ESMTP id EB02F307372E8;
+        Thu, 13 Jul 2023 17:54:37 +0200 (CEST)
+Subject: [PATCH net-next] gve: trivial spell fix Recive to Receive
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     kernel-janitors@vger.kernel.org
+Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org
+Date:   Thu, 13 Jul 2023 17:54:37 +0200
+Message-ID: <168926364598.10492.9222703767497099182.stgit@firesoul>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 11 Jul 2023, Dan Carpenter wrote:
+Spotted this trivial spell mistake while casually reading
+the google GVE driver code.
 
-> Negative -EINVAL was intended, not positive EINVAL.  Fix it.
-> 
-> Fixes: 95138e01275e ("leds: pwm: Make error handling more robust")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/leds/leds-pwm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+---
+ drivers/net/ethernet/google/gve/gve_desc.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks
+Yes, I know net-next is closed, but perhaps kernel-janitors
+will pick this up for later?
 
--- 
-Lee Jones [李琼斯]
+diff --git a/drivers/net/ethernet/google/gve/gve_desc.h b/drivers/net/ethernet/google/gve/gve_desc.h
+index f4ae9e19b844..c2874cdcf40c 100644
+--- a/drivers/net/ethernet/google/gve/gve_desc.h
++++ b/drivers/net/ethernet/google/gve/gve_desc.h
+@@ -105,10 +105,10 @@ union gve_rx_data_slot {
+ 	__be64 addr;
+ };
+ 
+-/* GVE Recive Packet Descriptor Seq No */
++/* GVE Receive Packet Descriptor Seq No */
+ #define GVE_SEQNO(x) (be16_to_cpu(x) & 0x7)
+ 
+-/* GVE Recive Packet Descriptor Flags */
++/* GVE Receive Packet Descriptor Flags */
+ #define GVE_RXFLG(x)	cpu_to_be16(1 << (3 + (x)))
+ #define	GVE_RXF_FRAG		GVE_RXFLG(3)	/* IP Fragment			*/
+ #define	GVE_RXF_IPV4		GVE_RXFLG(4)	/* IPv4				*/
+
+
