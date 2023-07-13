@@ -2,79 +2,166 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BE0EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jul 2023 22:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C00EEB64DD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 04:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232478AbjGLWkk (ORCPT
+        id S233653AbjGMEuV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jul 2023 18:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42382 "EHLO
+        Thu, 13 Jul 2023 00:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232477AbjGLWkj (ORCPT
+        with ESMTP id S231935AbjGMEuU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jul 2023 18:40:39 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984A51FDB
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b8a8154f9cso165835ad.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1689201635; x=1691793635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W74OVpeHRuNiX8pMSZJwMLioV1gL07KE3H1a2Sb6peY=;
-        b=QgNyeryYTTACVv5xzPnNBA4fBv8uhd7VsaVJyHLSkvwtHQ661hFCyV66BZ6tioghkS
-         IiSrAN7DKiJZGemA6V8wlUMgmctAMNrRpVUKhk/5Lv33vAAYGSUdGM69pCLaNnlbNOXh
-         8XefLt2O2fzoj5+Y6R5Z6VGjlTW+vbMv4QtDQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689201635; x=1691793635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W74OVpeHRuNiX8pMSZJwMLioV1gL07KE3H1a2Sb6peY=;
-        b=awSGEupUML0/xs4NypKa0zMfbVHR8Y8sqGQdBMaMlBikJTCUMcX0dgdI1K053UAo2K
-         wwI+avZE/Nz9Hfsp1qrVBWSam1gebnbZG/IYu68Oo/ASxbTeMLoCNUL8UlYcUrJ3g5de
-         fBVUPq4PEUCPvS82oU9HPMYsXYE/n29Y1wuI/oq7seOcJqQvDklFdMzCC/hN2KVGKRrU
-         Z0MLW9bwz1IJrVwYEpVEh+DK6vxk4Oxtz5fi0IOwhoWAZX304knELjxEx/ZjrpraPge2
-         lNj316X+WqaEQlxOyLghkGdDh29fD+8/QnW5mbddUKHAVXU8ZORTNXZJw1s2oHnx/uSC
-         zoPw==
-X-Gm-Message-State: ABy/qLZUR2dlA3fC2dEljw82QPddUzLNLiA2025VktUu7QnWYkmNehlA
-        lJSh3SSPSQ/q09WKfRbdwiqsSXHfc+CH0m2+6ew=
-X-Google-Smtp-Source: APBJJlHjYHPAqP5SmPN3RIOl52xjZOYYkXRgyg60M7GK47U7g8k/67db5mDhdwbCY4s7DI8euJG7fA==
-X-Received: by 2002:a17:902:ea03:b0:1b9:d38d:efb1 with SMTP id s3-20020a170902ea0300b001b9d38defb1mr196238plg.8.1689201635138;
-        Wed, 12 Jul 2023 15:40:35 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d14-20020a170903230e00b001b864add154sm4475679plh.154.2023.07.12.15.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 15:40:34 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 15:40:34 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: smem: Use struct_size()
-Message-ID: <202307121540.F8EBBCA1D3@keescook>
-References: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
+        Thu, 13 Jul 2023 00:50:20 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244532106
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jul 2023 21:50:15 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id JoHLqljqIGqNMJoHLqvxHU; Thu, 13 Jul 2023 06:50:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1689223813;
+        bh=OIO6SGvjdu5q95AKttYaweX2kv13SEJFYyGhl5Ix5MU=;
+        h=From:To:Cc:Subject:Date;
+        b=D6aJTxES5TE1G/CFp5XvTb2PZdxCaLGx3SH+sJG8S/01CDdGPONxOBpZdrpkunkVD
+         j2kIr5AYo6oMJzAvJbwvk0DJDXE5C+EsU9AyXbFAbOfHIvzC+MPVDTQkWPjZk04DIf
+         Gm7jJdIsKKaR58N13iaubLsUn4Drc61jYeOkFihkH7U5KF0FWVIuzjD/tmrTsy4cFM
+         8TbqmO9/Jc6cEhaSpSYy/ZeAbXfbzYKzK8ZLPHM8+MsxLZ1/5nOdK5s6cgYn+iMGao
+         OQU5UJ3u2F9WP4iraRqwd1vwuu+9Kp0ZAH2ct02IXzMDxCdlX1p+oXGFmKzkIitESW
+         8ecSApggwqb0Q==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 13 Jul 2023 06:50:13 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        nvdimm@lists.linux.dev
+Subject: [PATCH v3] nvdimm: Use kstrtobool() instead of strtobool()
+Date:   Thu, 13 Jul 2023 06:50:09 +0200
+Message-Id: <75a5ff07902e34fad9bc821b8c533d070c498537.1673686195.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 10:42:15PM +0200, Christophe JAILLET wrote:
-> Use struct_size() instead of hand-writing it, when allocating a structure
-> with a flex array.
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+strtobool() is the same as kstrtobool().
+However, the latter is more used within the kernel.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+the other function name.
 
+While at it, include the corresponding header file (<linux/kstrtox.h>)
+
+Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch was already sent as a part of a serie ([1]) that axed all usages
+of strtobool().
+Most of the patches have been merged in -next.
+
+I synch'ed with latest -next and re-send the remaining ones as individual
+patches.
+
+Even if R-b and told that it was applied for v6.3, it is still not in -next.
+This is the very last patch of the initial serie that remains un-applied.
+
+After it, strtobool() can be removed from linux/kstrtox.h.
+
+Changes in v3:
+  - synch with latest -next.
+  - Adding R-b tag
+  - Adding in cc: akpm@linux-foundation.org
+
+Changes in v2:
+  - synch with latest -next.
+  - https://lore.kernel.org/all/7565f107952e31fad2bc825b8c533df70c498537.1673686195.git.christophe.jaillet@wanadoo.fr/
+
+[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/nvdimm/namespace_devs.c | 3 ++-
+ drivers/nvdimm/pmem.c           | 3 ++-
+ drivers/nvdimm/region_devs.c    | 5 +++--
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index c60ec0b373c5..07177eadc56e 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2,6 +2,7 @@
+ /*
+  * Copyright(c) 2013-2015 Intel Corporation. All rights reserved.
+  */
++#include <linux/kstrtox.h>
+ #include <linux/module.h>
+ #include <linux/device.h>
+ #include <linux/sort.h>
+@@ -1338,7 +1339,7 @@ static ssize_t force_raw_store(struct device *dev,
+ 		struct device_attribute *attr, const char *buf, size_t len)
+ {
+ 	bool force_raw;
+-	int rc = strtobool(buf, &force_raw);
++	int rc = kstrtobool(buf, &force_raw);
+ 
+ 	if (rc)
+ 		return rc;
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 80ded5a2838a..f2a336c6d8c6 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -17,6 +17,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/badblocks.h>
+ #include <linux/memremap.h>
++#include <linux/kstrtox.h>
+ #include <linux/vmalloc.h>
+ #include <linux/blk-mq.h>
+ #include <linux/pfn_t.h>
+@@ -385,7 +386,7 @@ static ssize_t write_cache_store(struct device *dev,
+ 	bool write_cache;
+ 	int rc;
+ 
+-	rc = strtobool(buf, &write_cache);
++	rc = kstrtobool(buf, &write_cache);
+ 	if (rc)
+ 		return rc;
+ 	dax_write_cache(pmem->dax_dev, write_cache);
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index 83dbf398ea84..f5872de7ea5a 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -5,6 +5,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/memregion.h>
+ #include <linux/highmem.h>
++#include <linux/kstrtox.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/hash.h>
+@@ -275,7 +276,7 @@ static ssize_t deep_flush_store(struct device *dev, struct device_attribute *att
+ 		const char *buf, size_t len)
+ {
+ 	bool flush;
+-	int rc = strtobool(buf, &flush);
++	int rc = kstrtobool(buf, &flush);
+ 	struct nd_region *nd_region = to_nd_region(dev);
+ 
+ 	if (rc)
+@@ -530,7 +531,7 @@ static ssize_t read_only_store(struct device *dev,
+ 		struct device_attribute *attr, const char *buf, size_t len)
+ {
+ 	bool ro;
+-	int rc = strtobool(buf, &ro);
++	int rc = kstrtobool(buf, &ro);
+ 	struct nd_region *nd_region = to_nd_region(dev);
+ 
+ 	if (rc)
 -- 
-Kees Cook
+2.34.1
+
