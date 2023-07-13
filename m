@@ -2,76 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1495CC0015E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 09:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73774C001DD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 14:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232798AbjGMJyE (ORCPT
+        id S232132AbjGMOzh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Jul 2023 05:54:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38798 "EHLO
+        Thu, 13 Jul 2023 10:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234436AbjGMJxW (ORCPT
+        with ESMTP id S230020AbjGMOz3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Jul 2023 05:53:22 -0400
+        Thu, 13 Jul 2023 10:55:29 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ECCD2698;
-        Thu, 13 Jul 2023 02:53:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728DA2706;
+        Thu, 13 Jul 2023 07:55:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C7E261A08;
-        Thu, 13 Jul 2023 09:53:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8292DC433C7;
-        Thu, 13 Jul 2023 09:53:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1004261849;
+        Thu, 13 Jul 2023 14:55:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D23C433C7;
+        Thu, 13 Jul 2023 14:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689242000;
-        bh=klBkFqf3WWVIxTzQAmBLevppMzRmR9bTdaJ+8Xn2iA4=;
+        s=k20201202; t=1689260127;
+        bh=/PNa8c5uB3xZJs1ZCxwrUtLQVeBxBkNDCyB4lZC6vmc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kOTOwakPg1sK5nA1JPCkRLlEhOHqnewpcIZ0wcYDHn/G2AKECvt2Du9i/cz2g2QjZ
-         eq2C2uL8Lu5q8w65m4LxPt/yhXDcehreEPrYeTAaBMh7On7d2JRHggwPe2WENCAcpe
-         EoJWvlmYTAuBv3CcT9P7uwmzlYurgWx5tBYuNY/8EjDt8N+hqj47iPhBlIYy6fMoeU
-         Uo6aYXBKkUBgODDtmDNsGNLxVxXGvHla66CN0mLI5ireKCvwzRoHttqAWFD9Ogk4X8
-         n9uCSLPdZa9EyLuIBZnu9A5LLnWv1EtWNfLSLJqTbqFKJ21XJVFNoKf2IMvlo/hXp8
-         6Gf988mT7GD3w==
-Date:   Thu, 13 Jul 2023 11:53:10 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Minjie Du <duminjie@vivo.com>, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        opensource.kernel@vivo.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] i2c: busses: fix parameter check in
- i2c_gpio_fault_injector_init()
-Message-ID: <20230713095310.mafkoqrjwhm5r4mf@intel.intel>
-References: <20230713020517.614-1-duminjie@vivo.com>
- <d6d04803-0dc1-9565-23b4-740425066a01@web.de>
+        b=AgAjCNirzo8hjm7DTmauBTe1zhbhCqJJv5W5tmdHzv8w33g9KzEGY4v3RaiUj15E6
+         mX1KCgCCYf5kLkiMNd1tNZrgmcmXavs9koy2BY6c3xL3vnFkmX3Ikq4ecIaPYXUT0X
+         cuW3W4MJx924IwSudXmTNxqU18JSOoT1Qj8Ck5LDwQ5qJfei+LmMYhPNGwidYZAnCg
+         lhtrESBjg3tjF+Yvkh5kt8DYJccQkTglyoUw8QrXJ+j4WZV9f+2YPtpSYBDKVtT703
+         8DqdNHGyslI9fL8MJp/LFAug2c9kjywUQcQjD5LJZehoIEmxEqQ74ZAB/oSbgdw5wU
+         S5cytmyQ1C2wQ==
+Date:   Thu, 13 Jul 2023 15:55:23 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] leds: pwm: Fix error code in led_pwm_create_fwnode()
+Message-ID: <20230713145523.GF10768@google.com>
+References: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d6d04803-0dc1-9565-23b4-740425066a01@web.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a33b981a-b2c4-4dc2-b00a-626a090d2f11@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+On Tue, 11 Jul 2023, Dan Carpenter wrote:
 
-> > +++ b/drivers/i2c/busses/i2c-gpio.c
-> > @@ -265,7 +265,7 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
-> >  	 */
-> >  	if (!i2c_gpio_debug_dir) {
-> >  		i2c_gpio_debug_dir = debugfs_create_dir("i2c-fault-injector", NULL);
-> > -		if (!i2c_gpio_debug_dir)
-> > +		if (IS_ERR(i2c_gpio_debug_dir))
-> >  			return;
-> >  	}
+> Negative -EINVAL was intended, not positive EINVAL.  Fix it.
 > 
-> Will the development attention grow also for the exception handling
-> which is missing here so far?
+> Fixes: 95138e01275e ("leds: pwm: Make error handling more robust")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/leds/leds-pwm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Well, it depends why you need to handle the error return. I think
-it's not important if this fails... the only reason I would
-handle the error here is to print a warning in dmesg.
+Applied, thanks
 
-Thank you,
-Andi
+-- 
+Lee Jones [李琼斯]
