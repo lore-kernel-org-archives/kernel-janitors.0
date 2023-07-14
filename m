@@ -2,230 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A332C001DE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jul 2023 21:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB43EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 05:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbjGMVXN (ORCPT
+        id S234678AbjGNFak (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Jul 2023 17:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
+        Fri, 14 Jul 2023 01:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234217AbjGMVXH (ORCPT
+        with ESMTP id S234016AbjGNFaj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Jul 2023 17:23:07 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA4E2D60
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jul 2023 14:23:02 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-56942667393so9820987b3.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jul 2023 14:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689283381; x=1691875381;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEmAISENfYHTJKgnXdwIxtBUkx7mCSHbnBBJfH7pL2g=;
-        b=u8nkfY1vHs9c5gFN7pdsZSU9AwzMe55h9X7xE08rkWFz7RUmhLWm89CDqXfoZa8NCG
-         m3+0uhS/oEAsoU0SRFOX0kAbfRdmPz3r9Q6k9UhwOFWrg/JRJ2zhgW9y5OWIFctOdPKE
-         DiW8Mf2RWMcMXZaQsYq1B6lctQLt8zs9FeMNW9/VQtiHGFBHD5IxVBLvZjcErv+iI0KW
-         T+9xR57S//vKrTfbaV0cq2M3nm/6Dom3Wo9MQwOMFBYfnioisjaTtbYQYjFVZ82UpEM0
-         omFWgVpd2s4m4pVtieE/yFWVH/aqXbdXBy5vRlorJDXDwruNqsJ4zodjbin0FOOCS4eZ
-         ZzMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689283381; x=1691875381;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEmAISENfYHTJKgnXdwIxtBUkx7mCSHbnBBJfH7pL2g=;
-        b=d447SNi+ja2eECUmYmQAenZYqIo+tRMZCqs4+TuUYtbiWzjMmVEEEJKKsqEjrPOptD
-         ud2+c6sLO5sX9c644NC+hz/nEM3tTqe5IkvVNTxZ8+aIA0L0iLjpJfnziYhykGVRfmdy
-         Tj0LSp09YQ607O6NquwvC/YsSoiZdLjoRMuLNXVHwo0SA8vanSwsrr61Rsn3XfsBMH6x
-         j9chI3+W9R4/5rModqHP9H1qjhOCjzHYUPa/qxV2rNTfakNgJ5Apo1b0NnXVBL5QE3qg
-         hzYX5uAeFIVItKtoMdELvTtqR8v1mPFWgoJZ6rrQxPa52LtUD4KWJxq4/ssTojkFTtbL
-         EkgQ==
-X-Gm-Message-State: ABy/qLbgXXRPxtErNwCjj68XvWZly2hssSY13C4BrCwLwIaCVF1TrdkN
-        E9adpNs9izoNtlW7htCGXuy7rJcWO0A=
-X-Google-Smtp-Source: APBJJlE3/XVfrwiQqHAyGw253Fijs3SxSmSR4x7PtFKj69SSHPH+HO1wN9+aba7au/mGkC1/tN0tCNAkTSY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1741:b0:cb6:bcb4:5465 with SMTP id
- bz1-20020a056902174100b00cb6bcb45465mr7786ybb.12.1689283381565; Thu, 13 Jul
- 2023 14:23:01 -0700 (PDT)
-Date:   Thu, 13 Jul 2023 14:22:59 -0700
-In-Reply-To: <20230707084328.2563454-1-suhui@nfschina.com>
-Mime-Version: 1.0
-References: <20230707084328.2563454-1-suhui@nfschina.com>
-Message-ID: <ZLBrM+Dee9okUmvc@google.com>
-Subject: Re: [PATCH] KVM: VMX: Avoid noinstr warning
-From:   Sean Christopherson <seanjc@google.com>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 14 Jul 2023 01:30:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB01CE;
+        Thu, 13 Jul 2023 22:30:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B0A4A61BEC;
+        Fri, 14 Jul 2023 05:30:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76670C433C7;
+        Fri, 14 Jul 2023 05:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689312638;
+        bh=MrTOemuNAX14r32JWduG9a9ZjVgK0gkKejhuE4vOxV4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nnuwKDsJMy/HnQygJMmoEvrSlaNRUKJ9zudt9G+YXNu6vQGGjn+xqszdihWQfQnkX
+         tAg8kklUgf3wYZ5/7dUQ+mWnW8c8PxOfGJbAWIbld92Cu9OZZOsb4DT/0QnjOyiBc2
+         cwijOs6buqrVyD60uDzG1bhH/5871OG/dSIuOD2/eCmV4YElSodFmnStF+XxsBFla4
+         JfRcgZ2uLwjyTjzISbbWat5gtXlIHOpl6kIiWPVoruW/GvoTfhOA38+/mPf2MR//Oa
+         DR7mnX34M1zRBPLoYa4LqUlQ0dFMsejJAeY1ukMmjmvq71dsbedUOKyiBdyy8BUjQA
+         evhE3L+WP1GFw==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     keescook@chromium.org, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: smem: Use struct_size()
+Date:   Thu, 13 Jul 2023 22:33:54 -0700
+Message-ID: <168931284120.1538684.13992207018958031051.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
+References: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 07, 2023, Su Hui wrote:
-> vmlinux.o: warning: objtool: vmx_vcpu_enter_exit+0x2d8:
-> call to vmread_error_trampoline() leaves .noinstr.text section
+
+On Wed, 12 Jul 2023 22:42:15 +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand-writing it, when allocating a structure
+> with a flex array.
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  arch/x86/kvm/vmx/vmx_ops.h | 2 ++
->  1 file changed, 2 insertions(+)
+> This is less verbose.
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx_ops.h b/arch/x86/kvm/vmx/vmx_ops.h
-> index ce47dc265f89..54f86ce2ad60 100644
-> --- a/arch/x86/kvm/vmx/vmx_ops.h
-> +++ b/arch/x86/kvm/vmx/vmx_ops.h
-> @@ -112,6 +112,7 @@ static __always_inline unsigned long __vmcs_readl(unsigned long field)
->  
->  #else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
->  
-> +	instrumentation_begin();
->  	asm volatile("1: vmread %2, %1\n\t"
->  		     ".byte 0x3e\n\t" /* branch taken hint */
->  		     "ja 3f\n\t"
-> @@ -139,6 +140,7 @@ static __always_inline unsigned long __vmcs_readl(unsigned long field)
->  		     _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_ONE_REG, %1)
->  
->  		     : ASM_CALL_CONSTRAINT, "=&r"(value) : "r"(field) : "cc");
-> +	instrumentation_end();
+> 
 
-Tagging the entire thing as instrumentable is not correct, e.g. instrumentation
-isn't magically safe when doing VMREAD immediately after VM-Exit.  Enabling
-instrumentation for VM-Fail paths isn't exactly safe either, but odds are very
-good that the system has major issue if a VMX instruction (other than VMLAUNCH/VMRESUME)
-gets VM-Fail, in which case logging the error takes priority.
+Applied, thanks!
 
-Compile tested only, but I think the below is the least awful solution.  That will
-also allow the CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y case to use vmread_error() instead
-of open coding an equivalent (hence the "PATCH 1/2").
+[1/1] soc: qcom: smem: Use struct_size()
+      commit: cbdd13bfea785667f9c9df4c6ec46fc841ef6c4a
 
-I'll post patches after testing.
-
-Thanks!
-
-From: Sean Christopherson <seanjc@google.com>
-Date: Thu, 13 Jul 2023 13:45:35 -0700
-Subject: [PATCH 1/2] KVM: VMX: Make VMREAD error path play nice with noinstr
-
-Mark vmread_error_trampoline() as noinstr, and add a second trampoline
-for the CONFIG_CC_HAS_ASM_GOTO_OUTPUT=n case to enable instrumentation
-when handling VM-Fail on VMREAD.  VMREAD is used in various noinstr
-flows, e.g. immediately after VM-Exit, and objtool rightly complains that
-the call to the error trampoline leaves a no-instrumentation section
-without annotating that it's safe to do so.
-
-  vmlinux.o: warning: objtool: vmx_vcpu_enter_exit+0xc9:
-  call to vmread_error_trampoline() leaves .noinstr.text section
-
-Note, strictly speaking, enabling instrumentation in the VM-Fail path
-isn't exactly safe, but if VMREAD fails the kernel/system is likely hosed
-anyways, and logging that there is a fatal error is more important than
-*maybe* encountering slightly unsafe instrumentation.
-
-Reported-by: Su Hui <suhui@nfschina.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/vmenter.S |  8 ++++----
- arch/x86/kvm/vmx/vmx.c     | 18 ++++++++++++++----
- arch/x86/kvm/vmx/vmx_ops.h |  9 ++++++++-
- 3 files changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-index 07e927d4d099..be275a0410a8 100644
---- a/arch/x86/kvm/vmx/vmenter.S
-+++ b/arch/x86/kvm/vmx/vmenter.S
-@@ -303,10 +303,8 @@ SYM_FUNC_START(vmx_do_nmi_irqoff)
- 	VMX_DO_EVENT_IRQOFF call asm_exc_nmi_kvm_vmx
- SYM_FUNC_END(vmx_do_nmi_irqoff)
- 
--
--.section .text, "ax"
--
- #ifndef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-+
- /**
-  * vmread_error_trampoline - Trampoline from inline asm to vmread_error()
-  * @field:	VMCS field encoding that failed
-@@ -335,7 +333,7 @@ SYM_FUNC_START(vmread_error_trampoline)
- 	mov 3*WORD_SIZE(%_ASM_BP), %_ASM_ARG2
- 	mov 2*WORD_SIZE(%_ASM_BP), %_ASM_ARG1
- 
--	call vmread_error
-+	call vmread_error_trampoline2
- 
- 	/* Zero out @fault, which will be popped into the result register. */
- 	_ASM_MOV $0, 3*WORD_SIZE(%_ASM_BP)
-@@ -357,6 +355,8 @@ SYM_FUNC_START(vmread_error_trampoline)
- SYM_FUNC_END(vmread_error_trampoline)
- #endif
- 
-+.section .text, "ax"
-+
- SYM_FUNC_START(vmx_do_interrupt_irqoff)
- 	VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
- SYM_FUNC_END(vmx_do_interrupt_irqoff)
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 0ecf4be2c6af..d7cf35edda1b 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -441,13 +441,23 @@ do {					\
- 	pr_warn_ratelimited(fmt);	\
- } while (0)
- 
--void vmread_error(unsigned long field, bool fault)
-+noinline void vmread_error(unsigned long field)
- {
--	if (fault)
-+	vmx_insn_failed("vmread failed: field=%lx\n", field);
-+}
-+
-+#ifndef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-+noinstr void vmread_error_trampoline2(unsigned long field, bool fault)
-+{
-+	if (fault) {
- 		kvm_spurious_fault();
--	else
--		vmx_insn_failed("vmread failed: field=%lx\n", field);
-+	} else {
-+		instrumentation_begin();
-+		vmread_error(field);
-+		instrumentation_end();
-+	}
- }
-+#endif
- 
- noinline void vmwrite_error(unsigned long field, unsigned long value)
- {
-diff --git a/arch/x86/kvm/vmx/vmx_ops.h b/arch/x86/kvm/vmx/vmx_ops.h
-index ce47dc265f89..5fa74779a37a 100644
---- a/arch/x86/kvm/vmx/vmx_ops.h
-+++ b/arch/x86/kvm/vmx/vmx_ops.h
-@@ -10,7 +10,7 @@
- #include "vmcs.h"
- #include "../x86.h"
- 
--void vmread_error(unsigned long field, bool fault);
-+void vmread_error(unsigned long field);
- void vmwrite_error(unsigned long field, unsigned long value);
- void vmclear_error(struct vmcs *vmcs, u64 phys_addr);
- void vmptrld_error(struct vmcs *vmcs, u64 phys_addr);
-@@ -31,6 +31,13 @@ void invept_error(unsigned long ext, u64 eptp, gpa_t gpa);
-  * void vmread_error_trampoline(unsigned long field, bool fault);
-  */
- extern unsigned long vmread_error_trampoline;
-+
-+/*
-+ * The second VMREAD error trampoline, called from the assembly trampoline,
-+ * exists primarily to enable instrumentation for the VM-Fail path.
-+ */
-+void vmread_error_trampoline2(unsigned long field, bool fault);
-+
- #endif
- 
- static __always_inline void vmcs_check16(unsigned long field)
-
-base-commit: 255006adb3da71bb75c334453786df781b415f54
+Best regards,
 -- 
-
+Bjorn Andersson <andersson@kernel.org>
