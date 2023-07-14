@@ -2,79 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DDCEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 09:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208DDC0015E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 09:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235393AbjGNJaq (ORCPT
+        id S235406AbjGNJf1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jul 2023 05:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
+        Fri, 14 Jul 2023 05:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235825AbjGNJah (ORCPT
+        with ESMTP id S235459AbjGNJfS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jul 2023 05:30:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26BF35A7
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 02:30:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DFD561CCA
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 09:30:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FB7CC433C9;
-        Fri, 14 Jul 2023 09:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689327023;
-        bh=mVo5/EDqkTNsP+lUQZUcWTJmfP3T/nO3C4QAcsibzqU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=TBW3hIhPwBgznA4xxudRlO7wwcQkR0eZOTjrPL1RxUJqknU7rk3Iq773Pwumwvnry
-         Pjb0gslK8uM9ftmK2bl+RmQ1LYprytswrVX2PTRIoVYdClOhTu5VQniFasW9rzkkzT
-         gGyglX1j48SQYM6L3p5/Ju6YRSJWbvhYX6aKElsAHAcIaXCis/1mrnwJtcO2eAQdTR
-         A5aIIxabZNmBkmfE8pnW9YmLpKq5+Sp9z2G8a8+mEhODVpQ+ordg/kNJrDG0htrnpU
-         L7+OSFaSWfnJye7XcyXHRe0o3qUJD0YOhAp5jxw/MKKJ4dSRTeCIr+O48VaOAWB87S
-         NlymoBSdE9e1A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4C6ABF83708;
-        Fri, 14 Jul 2023 09:30:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Jul 2023 05:35:18 -0400
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03AB3AB5;
+        Fri, 14 Jul 2023 02:34:58 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2b703c900e3so25433421fa.1;
+        Fri, 14 Jul 2023 02:34:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689327268; x=1691919268;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=319xj+Bvw/t8XftWtBPIDtvZAknBgoYfRmK9iRu0nCQ=;
+        b=FmJNLsSxnyQGa2hlWCZvrYEg9Iz2Jku3fWJ9dOKYwugzlR1FqCv5g7MI7xjm7YRlYG
+         x9ssnFZg+/mMBsFIUUfRlpwQnvmSGfmXWDtd47k3CopnLGIUjEQ/fGqf69KmfwoaC4Qq
+         U59lPozyz2z3ruWIizP6nClpDH9aBaaerVIaVCPpoT7VOVohTpgPV+YbMVsEkW020lpE
+         TGZcQY5IjBUVaLWbSlMmRIUE+Y1V7PtHzkDWYYpFgTZ77DZKi234M0FmZNjY29dGKk/3
+         JJcUkxJOwB/osz72LBFhvDPhJTnBTvIpLBSKREei6hA8tH8oT9mMYzjrxc/43hDNHYLg
+         J/4g==
+X-Gm-Message-State: ABy/qLbMugWazh1+1b3qPie5L7JOv1K2VM5RozB48zSInKwAePkTt/a+
+        QenAjhLULcnPKuagN6cPlIYj6jWBP6/M3KOgKRxicmOX
+X-Google-Smtp-Source: APBJJlFwb+212L3SRkqSxOzBhBHdFw9JLFCb0RgcKAtKkzmn+t2CMOvyxqsGYYdgBti+gf8e1ghfWoUTZP/J1eq5uaQ=
+X-Received: by 2002:a2e:7a0e:0:b0:2b6:fa92:479e with SMTP id
+ v14-20020a2e7a0e000000b002b6fa92479emr3580876ljc.42.1689327267603; Fri, 14
+ Jul 2023 02:34:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] gve: trivial spell fix Recive to Receive
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168932702330.18845.16437279432945002152.git-patchwork-notify@kernel.org>
-Date:   Fri, 14 Jul 2023 09:30:23 +0000
-References: <168926364598.10492.9222703767497099182.stgit@firesoul>
-In-Reply-To: <168926364598.10492.9222703767497099182.stgit@firesoul>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+References: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Fri, 14 Jul 2023 11:34:14 +0200
+Message-ID: <CANBLGcz+9V9mWQM6Xt9_F_1q3GhCS0zNisrtYPa=SwNT+tGEyQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: starfive: Simplify .determine_rate()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Hal Feng <hal.feng@starfivetech.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Fri, 7 Jul 2023 at 22:02, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> jh71x0_clk_mux_determine_rate() is the same as __clk_mux_determine_rate(),
+> so use the latter to save some LoC.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Thanks!
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-On Thu, 13 Jul 2023 17:54:37 +0200 you wrote:
-> Spotted this trivial spell mistake while casually reading
-> the google GVE driver code.
-> 
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
 > ---
->  drivers/net/ethernet/google/gve/gve_desc.h |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] gve: trivial spell fix Recive to Receive
-    https://git.kernel.org/netdev/net-next/c/68af900072c1
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>  drivers/clk/starfive/clk-starfive-jh71x0.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> index b372083d11c3..aebc99264a0b 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> @@ -174,12 +174,6 @@ static int jh71x0_clk_set_parent(struct clk_hw *hw, u8 index)
+>         return 0;
+>  }
+>
+> -static int jh71x0_clk_mux_determine_rate(struct clk_hw *hw,
+> -                                        struct clk_rate_request *req)
+> -{
+> -       return clk_mux_determine_rate_flags(hw, req, 0);
+> -}
+> -
+>  static int jh71x0_clk_get_phase(struct clk_hw *hw)
+>  {
+>         struct jh71x0_clk *clk = jh71x0_clk_from(hw);
+> @@ -261,7 +255,7 @@ static const struct clk_ops jh71x0_clk_gdiv_ops = {
+>  };
+>
+>  static const struct clk_ops jh71x0_clk_mux_ops = {
+> -       .determine_rate = jh71x0_clk_mux_determine_rate,
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .set_parent = jh71x0_clk_set_parent,
+>         .get_parent = jh71x0_clk_get_parent,
+>         .debug_init = jh71x0_clk_debug_init,
+> @@ -271,7 +265,7 @@ static const struct clk_ops jh71x0_clk_gmux_ops = {
+>         .enable = jh71x0_clk_enable,
+>         .disable = jh71x0_clk_disable,
+>         .is_enabled = jh71x0_clk_is_enabled,
+> -       .determine_rate = jh71x0_clk_mux_determine_rate,
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .set_parent = jh71x0_clk_set_parent,
+>         .get_parent = jh71x0_clk_get_parent,
+>         .debug_init = jh71x0_clk_debug_init,
+> --
+> 2.34.1
+>
