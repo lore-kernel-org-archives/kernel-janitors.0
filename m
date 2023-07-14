@@ -2,96 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94025EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 16:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B49BC001DE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 19:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236273AbjGNQSK (ORCPT
+        id S236451AbjGNTgr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jul 2023 12:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48700 "EHLO
+        Fri, 14 Jul 2023 15:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235771AbjGNQSI (ORCPT
+        with ESMTP id S236245AbjGNTgq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jul 2023 12:18:08 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A279E2707;
-        Fri, 14 Jul 2023 09:18:07 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36ECxOS9021618;
-        Fri, 14 Jul 2023 16:17:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=e6r0TRgzqXyjI0fqkjeUdWf0X1fscclvLj1znvXwemE=;
- b=ADc2PSuMvGyk0xnbVrEkl5PCFzVNMMCzkWCeyc+ymNMBE7ttUW4YPTmWBdaT37wJLsDk
- ZJnF/0xlVaB1f5Iu7qAPKUGwyQTT5uhXwwskcRxkX5ge9/oTKqbp4QM23b9MAu/FfD8U
- t+5qPDZ1gykiqbfOxZkFTgrTlG0x22J8PNX4zChsBYpty2vM/7J2E7kQC+XGCaF/Wdtd
- DSuM118qm9RVCOR6c8VxjKMUOU1UdWgdEXDyBpPtRzFkzk4ymu8UNRemzQgymm9rX9j9
- Ari3LBeU+YGGinXRmM0weY/XU+/wE8terfgfHSdOYtJ8e7LcYQqB4nSjtSSdXC2Grfxq VQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rtpukt6sa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Jul 2023 16:17:42 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36EGHei5023085
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Jul 2023 16:17:40 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 14 Jul
- 2023 09:17:40 -0700
-Message-ID: <8482922f-ac4a-32ed-8900-cd5c6191e552@quicinc.com>
-Date:   Fri, 14 Jul 2023 10:17:39 -0600
+        Fri, 14 Jul 2023 15:36:46 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D7BE4F
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 12:36:46 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id BC87F5BF;
+        Fri, 14 Jul 2023 19:36:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BC87F5BF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1689363404; bh=Y6cx46rpyh4f4kwzVAMRkODbnECw1wEIsMHA+sJSiFk=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=rkhiCVGUzUcMHrD9BPxy+15/3RNrw4fFAeTTf5qCi2Tk89A1pkY8CVO1+U8PRPfuL
+         WYo09QA9gPZdFOFqftdtEqsT/pGIVs2RMtQpdqQl2jmh2OZzEcVRchviTCojJzU+p/
+         2c/a2rIkGjOAOgtWg6it4AsuygjqthETJ6r1UG+Qi3bsnDbYZLBIS1CSidlvi0231K
+         BigK+Z/XGzhE8CKF2NGFfjURfNonotxadSMwCSDbnJexDZiTKkDbYFkTs5TC8eUThk
+         abwSapIoq2P9gYohspDzVCpyD5dU7VR5I1MgtYOrJLoZbSczwAt2KD0VfPtswcJs9h
+         gBVb2XhGeiPxA==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        workflows@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: deprecated.rst: Update an example
+In-Reply-To: <3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr>
+References: <3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr>
+Date:   Fri, 14 Jul 2023 13:36:44 -0600
+Message-ID: <875y6mz3n7.fsf@meer.lwn.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 5/5 v4] accel/qaic: Fix a leak in map_user_pages()
-Content-Language: en-US
-To:     Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <ZK0Q+ZuONTsBG+1T@moroto>
- <f4c35b9b-68a2-1e9e-762a-b1001c495f01@quicinc.com>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <f4c35b9b-68a2-1e9e-762a-b1001c495f01@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: X3h7yO552nBI61ryV21eptswdh8imkLU
-X-Proofpoint-GUID: X3h7yO552nBI61ryV21eptswdh8imkLU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-14_07,2023-07-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- phishscore=0 suspectscore=0 mlxlogscore=763 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307140148
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/14/2023 5:47 AM, Pranjal Ramajor Asha Kanojiya wrote:
-> 
-> 
-> On 7/11/2023 1:51 PM, Dan Carpenter wrote:
->> If get_user_pages_fast() allocates some pages but not as many as we
->> wanted, then the current code leaks those pages.  Call put_page() on
->> the pages before returning.
->>
->> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-Pushed to drm-misc-fixes
+> vmalloc() has a 2-factor form. It is vmalloc_array().
+> So use another function as an example.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  Documentation/process/deprecated.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
--Jeff
+Applied, thanks.
+
+jon
