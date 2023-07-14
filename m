@@ -2,110 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE537EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 14:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D02AC001B0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 16:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235324AbjGNOId (ORCPT
+        id S235666AbjGNQCy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jul 2023 10:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
+        Fri, 14 Jul 2023 12:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233638AbjGNOIc (ORCPT
+        with ESMTP id S235396AbjGNQCw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jul 2023 10:08:32 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792091989
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 07:08:31 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbd33a57b6so19191065e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 07:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689343710; x=1691935710;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CCTxlwbQxhJI8AjrVEOUZWY0xdsbdlM7lzLUFvpZaOw=;
-        b=Epxzr3XL5e4l4EW5F1qcJuGwFaWaAKMyUrJ6o8b9279TiYT1DPkVw9n9VyrGKX81VP
-         4NMMaNt9bNTbaumv8RDjF4SPxWB2+OVYzGd+RorQnp4PSz0JVqwBsWY3ZvjV1c2+e319
-         wLcI3SUl86ka89+CZQup0ABsPjOAO3BJRaRldRraShuo9NTqY8nBZ/ZBHaRF7+z1INi6
-         wq20yT1l0CJRZ4zpVx8A6mE5Cuyo8AIK6EkYe+HlsLcefR5mfxjdPBn8R6+/HFAl+9O9
-         KaD9e7obgvyO8cfpJfNwZuHuaXeyPCsbPQUvAVrDq6g3PnESr2GoKBe0pqt233Ed2LLT
-         wIfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689343710; x=1691935710;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCTxlwbQxhJI8AjrVEOUZWY0xdsbdlM7lzLUFvpZaOw=;
-        b=Bj6TJgm8H/6iK5aWxVAUlflp5g5uUHowty0tyho6e36SSZY7ayz7858bXc0Zsls1eI
-         xLIOca5DirMAkfg1PhS6LFbsCRysR4TddZ2efuQmprdllbqOGArC6M9REbkXSbFbYUP+
-         18Wg3rKFpfvhJxlqoKbCJsD5KdUFUzm0zYwyS9XLbGgnntHSmY+D1B/JsCFoUbu0/1D/
-         DKmvkQsjbZk9KvJ4NfczqI3YX3E7zCNwpO/zDFUKZIi0R8BZzKebpKWOKd/PATQN+8Y+
-         JJOiiEoxW0JxcnXBJGH4TXA6LDfrZ/0RizrO4J1t5t8NCEFSm9Sc0/Vd1mtBWr572/hi
-         ZnJw==
-X-Gm-Message-State: ABy/qLYePZ2FccDN3nppV9fsZVKpxwovxGZvJ5FabJFjU8VHUCQMZqh9
-        GzlcjLqy5iwDev5pvaE6Piz7Ig==
-X-Google-Smtp-Source: APBJJlEpU6teBRxalbQaxqFA5Wcp9eZRMT6nz+si2nYovlnOj8Uco3YCmrFRlWeYn7N8iuMrMlbkbQ==
-X-Received: by 2002:adf:f106:0:b0:316:efb9:101d with SMTP id r6-20020adff106000000b00316efb9101dmr1848531wro.25.1689343709864;
-        Fri, 14 Jul 2023 07:08:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s14-20020adfea8e000000b00301a351a8d6sm11057698wrm.84.2023.07.14.07.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 07:08:27 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 17:08:24 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Serge Semin <fancer.lancer@gmail.com>, Wang Ming <machel@vivo.com>,
-        opensource.kernel@vivo.com, kernel-janitors@vger.kernel.org,
-        ntb@lists.linux.dev, Allen Hubbe <allenbh@gmail.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Jon Mason <jdmason@kudzu.us>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Minjie Du <duminjie@vivo.com>
-Subject: Re: [PATCH v3] ntb: Remove error checking for debugfs_create_dir()
-Message-ID: <5d0cd0e0-d92e-42d3-a6d9-ec9fc3229b7b@kadam.mountain>
-References: <ag2uziaj2mbsqryo6ss25w5s3ryenshoylraejtgp46gxce6hh@qcggqjnqheb5>
- <b5139e22-cf5e-e95c-fd33-7e1b9b4d665b@web.de>
+        Fri, 14 Jul 2023 12:02:52 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E65359F;
+        Fri, 14 Jul 2023 09:02:51 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36ECBGFn009535;
+        Fri, 14 Jul 2023 16:02:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ARDC8b208So03WCyLILljaM4pNxF9LTaUqV36KJV0QQ=;
+ b=kT/RRIZWUcAHvKjxhHRZUhci1G1qN8ICPfFySW/y5tTpPKNgudqC8r47HrOeYODGHPxP
+ ouKuLW7KoGSnubQwzXrLZv+RphHzuLTXgBLFZrdCU7FOtOYjvzVFoWIUMXL5/wxjwXAm
+ p2F33AbVt9TrjezN9IPn7ADQ/3MaDsaFEQ/lFyCf8orS18jOS4McU6RUVBLHEAlg77Vf
+ UcgDGiEL0pNYAzhviRXUGnf3NLmoalJ3zpEeig+Dp//VLQXwQirSKEMv3pg4RX8PFgYj
+ uXfsEDc4SdLs/BsJZS/kY3z6Ye7JtI9Aulnh02JrakXdMgT4UmU9JC9AgpTgKOtBjx6R Bg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rtpuht3ev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 16:02:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36EG2WAn024410
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 16:02:32 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 14 Jul
+ 2023 09:02:31 -0700
+Message-ID: <51f205ad-eceb-d664-272f-d80cba828f21@quicinc.com>
+Date:   Fri, 14 Jul 2023 10:02:28 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 1/5 v4] accel/qaic: tighten bounds checking in
+ encode_message()
+Content-Language: en-US
+To:     Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <9a0cb0c1-a974-4f10-bc8d-94437983639a@moroto.mountain>
+ <fdc49063-f90c-88d8-49bb-83f9da7c703a@quicinc.com>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <fdc49063-f90c-88d8-49bb-83f9da7c703a@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b5139e22-cf5e-e95c-fd33-7e1b9b4d665b@web.de>
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BZZOwy2uZOhHnZCYPG3Xtd_Or2hzX-5n
+X-Proofpoint-ORIG-GUID: BZZOwy2uZOhHnZCYPG3Xtd_Or2hzX-5n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-14_07,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 mlxlogscore=778 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307140146
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 02:44:11PM +0200, Markus Elfring wrote:
-> > > It is expected that most callers should _ignore_ the errors
-> > > return by debugfs_create_dir() in tool_setup_dbgfs()
-> …
-> > The patch itself is correct for sure:
-> > Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-> 
-> How does such information fit to the Linux development requirement
-> for imperative change descriptions?
-> 
-
-Markus, you already replied to this thread.
-
-Greg, HCH, Matthew Wilcox and Krzysztof Kozlowski have all asked you to
-stop.  Those are respected kernel maintainers.  You should listen to
-them.
-
-If you see a bug, that's useful.  But if you're just nitpicking the
-commit message, that's not useful.  We have explained this many times as
-clearly as we know how.
-
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n94
+On 7/14/2023 5:41 AM, Pranjal Ramajor Asha Kanojiya wrote:
 > 
 > 
-> How do you think about to add the tag “Fixes” because of the deletion
-> of an inappropriate error detection?
+> On 7/11/2023 1:50 PM, Dan Carpenter wrote:
+>> There are several issues in this code.  The check at the start of the
+>> loop:
+>>
+>>     if (user_len >= user_msg->len) {
+>>
+>> This check does not ensure that we have enough space for the trans_hdr
+>> (8 bytes).  Instead the check needs to be:
+>>
+>>     if (user_len > user_msg->len - sizeof(*trans_hdr)) {
+>>
+>> That subtraction is done as an unsigned long we want to avoid
+>> negatives.  Add a lower bound to the start of the function.
+>>
+>>     if (user_msg->len < sizeof(*trans_hdr))
+>>
+>> There is a second integer underflow which can happen if
+>> trans_hdr->len is zero inside the encode_passthrough() function.
+>>
+>>     memcpy(out_trans->data, in_trans->data, in_trans->hdr.len - 
+>> sizeof(in_trans->hdr));
+>>
+>> Instead of adding a check to encode_passthrough() it's better to check
+>> in this central place.  Add that check:
+>>
+>>     if (trans_hdr->len < sizeof(trans_hdr)
+>>
+>> The final concern is that the "user_len + trans_hdr->len" might have an
+>> integer overflow bug.  Use size_add() to prevent that.
+>>
+>> -    if (user_len + trans_hdr->len > user_msg->len) {
+>> +    if (size_add(user_len, trans_hdr->len) > user_msg->len) {
+>>
+>> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+> 
 
-No.  It's not a bug fix so a Fixes tag is innappropriate.
+Applied to drm-misc-fixes
 
-regards,
-dan carpenter
-
+-Jeff
