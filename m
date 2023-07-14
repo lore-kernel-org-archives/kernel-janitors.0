@@ -2,71 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB43EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 05:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2B4EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 05:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234678AbjGNFak (ORCPT
+        id S234788AbjGNFmE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jul 2023 01:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58770 "EHLO
+        Fri, 14 Jul 2023 01:42:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234016AbjGNFaj (ORCPT
+        with ESMTP id S229574AbjGNFmC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:30:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB01CE;
-        Thu, 13 Jul 2023 22:30:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B0A4A61BEC;
-        Fri, 14 Jul 2023 05:30:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76670C433C7;
-        Fri, 14 Jul 2023 05:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689312638;
-        bh=MrTOemuNAX14r32JWduG9a9ZjVgK0gkKejhuE4vOxV4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nnuwKDsJMy/HnQygJMmoEvrSlaNRUKJ9zudt9G+YXNu6vQGGjn+xqszdihWQfQnkX
-         tAg8kklUgf3wYZ5/7dUQ+mWnW8c8PxOfGJbAWIbld92Cu9OZZOsb4DT/0QnjOyiBc2
-         cwijOs6buqrVyD60uDzG1bhH/5871OG/dSIuOD2/eCmV4YElSodFmnStF+XxsBFla4
-         JfRcgZ2uLwjyTjzISbbWat5gtXlIHOpl6kIiWPVoruW/GvoTfhOA38+/mPf2MR//Oa
-         DR7mnX34M1zRBPLoYa4LqUlQ0dFMsejJAeY1ukMmjmvq71dsbedUOKyiBdyy8BUjQA
-         evhE3L+WP1GFw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     keescook@chromium.org, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: smem: Use struct_size()
-Date:   Thu, 13 Jul 2023 22:33:54 -0700
-Message-ID: <168931284120.1538684.13992207018958031051.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
-References: <f74328551cfab0262ba353f37d047ac74bf616e1.1689194490.git.christophe.jaillet@wanadoo.fr>
+        Fri, 14 Jul 2023 01:42:02 -0400
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 132DF211C;
+        Thu, 13 Jul 2023 22:41:58 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-98377c5d53eso211224666b.0;
+        Thu, 13 Jul 2023 22:41:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689313316; x=1691905316;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlZFb68wNBynoMUUWnbthgOtvqoVTjliLFFvPyquQvc=;
+        b=CFkh7R00Ixw1W5er527PSsd815EGyUiP/63Ymlo9qSSkkF72+EULXet3iTHIdpAOaG
+         QQQcbsn4+YMdS1VVJhi1Zn327yYJumPQlONN0xmxO6CF9OCj0nnDKVNczBRUDb6Mb6JB
+         ysOImWj+h8dW4CbvV0kufXiGy3j4sOnD9Jg74js8cVBkfU+PyvPHejXq0NG9p5EZyRYh
+         FQZM5e3vJN3h8iBRe0zdLytziZsYAdY8PNB++KML47NjA4BrIKmSsSTMZh/qMFBb04af
+         SZOyCAUaRwjH80ndwV7dZrBqHtsQyr6lWJN6JQOFu7KtsKur8i/J3Yn3p5KUdU0wFV8A
+         piEA==
+X-Gm-Message-State: ABy/qLai57EycDEnM9yeMCVzqmGxG9i71UO/phTAMebZkvr0qtZi/YMp
+        2vkrsdXpS4XZuXFb2FbBlIST/6NiBME=
+X-Google-Smtp-Source: APBJJlGQ0OGERa3wrZmlcwpl3P1BJmz5mDsbfmNWdhgV9dRm3nwGTNOsaO5U1B9SBhMRTeG0zEHICw==
+X-Received: by 2002:a17:906:20dd:b0:993:f11a:fe42 with SMTP id c29-20020a17090620dd00b00993f11afe42mr3538831ejc.6.1689313316059;
+        Thu, 13 Jul 2023 22:41:56 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id n11-20020a1709061d0b00b00982cfe1fe5dsm4902403ejh.65.2023.07.13.22.41.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jul 2023 22:41:55 -0700 (PDT)
+Message-ID: <1bc521b4-5425-38bf-9600-a6efe11a2549@kernel.org>
+Date:   Fri, 14 Jul 2023 07:41:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Minjie Du <duminjie@vivo.com>, opensource.kernel@vivo.com,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Kalle Valo <kvalo@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Nick Kossifidis <mickflemm@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20230713082433.11485-1-duminjie@vivo.com>
+ <288c6005-7d0b-3eb0-514d-e2ac09ae6b00@web.de>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v4] wifi: ath5k: remove parameter check in
+ ath5k_debug_init_device()
+In-Reply-To: <288c6005-7d0b-3eb0-514d-e2ac09ae6b00@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 13. 07. 23, 14:30, Markus Elfring wrote:
+> Please apply the subject “[PATCH v5] wifi: ath5k: Remove an error check in ath5k_debug_init_device()”.
 
-On Wed, 12 Jul 2023 22:42:15 +0200, Christophe JAILLET wrote:
-> Use struct_size() instead of hand-writing it, when allocating a structure
-> with a flex array.
-> 
-> This is less verbose.
-> 
-> 
+FWIW I personally prefer the European style: lowercase after colon. So I 
+would not suggest anyone to use one or the other.
 
-Applied, thanks!
-
-[1/1] soc: qcom: smem: Use struct_size()
-      commit: cbdd13bfea785667f9c9df4c6ec46fc841ef6c4a
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+js
+suse labs
+
