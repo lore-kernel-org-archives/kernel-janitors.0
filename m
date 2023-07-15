@@ -2,94 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D705EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 10:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323C6C0015E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 13:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbjGOKJc (ORCPT
+        id S230014AbjGON2a (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jul 2023 06:09:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
+        Sat, 15 Jul 2023 09:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbjGOKJc (ORCPT
+        with ESMTP id S229889AbjGON2a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jul 2023 06:09:32 -0400
-X-Greylist: delayed 425 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 15 Jul 2023 03:09:29 PDT
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A43273B
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Jul 2023 03:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1689415761;
-        bh=JpDCCEP/8aNDbjWStl7V/1DHXjS0bFNz+rqHDxrKpuk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=KDACJUWWf2p2hhewSdzdTZrnUUpv4VgeCBHB6QUUf0y5xOEdoRLSTXX2q6G6TXT0g
-         /Vbwv+AklZz63CzzY+hzN7+uA76I2xaVeEfxhBI/NrqFBUF95giQeTvImElXg182XP
-         ovBcA0pPf7CT7wK2oT/80zpQ941qzEavml8fp4cA=
-Received: from localhost.localdomain ([220.243.191.12])
-        by newxmesmtplogicsvrszc2-0.qq.com (NewEsmtp) with SMTP
-        id E0AA9045; Sat, 15 Jul 2023 17:56:10 +0800
-X-QQ-mid: xmsmtpt1689414970tnk2wq92o
-Message-ID: <tencent_283F851E543C098B9BC8DAA32D79B00A0F07@qq.com>
-X-QQ-XMAILINFO: N7xt/Xavkw6SPgp6fMF86Ya0b7fRfpshou9aHNkYNeG1Lo+iWmEXJqDEFpx8mn
-         R53G9Kqvzuxpp4AivDQQAkcq3WEnyYs161XP9+s9urcpHOeJugw1hxAtzEURchfp9Ok/vdljHukV
-         PRKGW3UHHKnAAQOnTuuwZCOs4iRIr7z0Gof+gdnd6w/ZWrZeTxpVraEbyzDBzExC+5B1T9WqORo+
-         7dFG6M9QyffDAmzFWZ74FRz0MUjZ4iinjBVj6q6aVq29taxGUHhfh4uCALPPaRzZpvgF6Xnuivad
-         c2ZF2f+Coo7UsvsMYllMNSp057dMyrfkbkhp7mRAMPQVB9TgsWNL0taZQmdbUrpcxbbwGJ8WHrpd
-         MULh4pKppfqaZgjYWFQ24wV+n2PsirV4wAmqMBT97rXQTUu+eTnZb8dYep1KnTqiazjJaNKh+6hl
-         RQl3bh9/CnF2Adb/U5ziSsd+LxT9BOkUcGTevMVoeJCw5bZ+QUS0oC0/BS1/d9eu6OPj1cptKt0X
-         +NUzcSD6YtNQljpGr9xgzoW68D6difgy7vJHYFFnhd0H5JjZWdVmDOScrcNaDdFVBlMJLa88LlCQ
-         iqnhi9v3pgd/nomO0vXRQ2M8LEXxATM2ytMgTh4EuxrWD/ZCmGuHqUE0WmwzLjMbexkRtEmVtUY6
-         3f5NOTwZy1z4iJ34OEE9xwJ9S7lSfAgrvSZ1LlBxulgvOdo25Sj+LJ7uG4Ki1togfTZUdN9osOp+
-         sxRraaBgHi+lQXTg2ZKDs+CeI4sRDyhCyrtyGfdR1ifsVi5Qe7pVdP+dj5TXJqp7rtcpeJxVtBRH
-         76q86plXVMOq/DpoBTuuDvr/UjILgGz62wLQlZgB1UTP90tkXwj4vjWtXhefZU5vWp8feAuwO81J
-         29H9NvnDvf8OUFPFhwAicuNa9hIe/MOLP5/OMKiZZs++ahGV3wKumdOdU0mqzrhHSNPMHsdgmcw3
-         A7UAj+M2KBpEls0OQkBVUpCzuCdJcI01iR9jkMY3alxG6ScR8eumxC7OYJjtAm
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From:   Zhang Shurong <zhang_shurong@foxmail.com>
-To:     linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Markus Elfring <Markus.Elfring@web.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] wifi: rtw89: debug: fix error code in
- rtw89_debug_priv_btc_manual_set
-Date:   Sat, 15 Jul 2023 17:56:10 +0800
-X-OQ-MSGID: <4849586.31r3eYUQgx@localhost.localdomain>
-In-Reply-To: <a97b0b0c-8141-5391-727a-aa29fedc016b@web.de>
-References: <tencent_7C09B91B925AF62D7CB0280F028563540807@qq.com>
- <a97b0b0c-8141-5391-727a-aa29fedc016b@web.de>
+        Sat, 15 Jul 2023 09:28:30 -0400
+X-Greylist: delayed 398 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 15 Jul 2023 06:28:26 PDT
+Received: from mfwd25.mailplug.co.kr (mfwd25.mailplug.co.kr [14.63.174.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD8426A4
+        for <kernel-janitors@vger.kernel.org>; Sat, 15 Jul 2023 06:28:26 -0700 (PDT)
+Received: (qmail 30699 invoked from network); 15 Jul 2023 22:21:44 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 22:20:44 +0900
+Received: (qmail 2918930 invoked from network); 15 Jul 2023 22:20:44 +0900
+Received: from unknown (HELO sslauth16) (lsahn@wewakecorp.com@211.253.39.90)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 22:20:44 +0900
+Message-ID: <ff0d7038-8a53-f183-fc3a-d69143e801a2@wewakecorp.com>
+Date:   Sat, 15 Jul 2023 22:20:43 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] fs: inode: return proper error code in bmap()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Leesoo Ahn <lsahn@ooseel.net>, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20230715082204.1598206-1-lsahn@wewakecorp.com>
+ <cca223c5-b512-3913-a796-fa15341927ff@web.de>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <cca223c5-b512-3913-a796-fa15341927ff@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-=E5=9C=A8 2023=E5=B9=B47=E6=9C=8815=E6=97=A5=E6=98=9F=E6=9C=9F=E5=85=AD CST=
- =E4=B8=8B=E5=8D=885:22:08=EF=BC=8CMarkus Elfring =E5=86=99=E9=81=93=EF=BC=
-=9A
-> > If there is a failure during kstrtobool_from_user()
-> > rtw89_debug_priv_btc_manual_set should return negative error code
-> > instead of returning the count driectly.
-> >=20
-> > Fix this bug by returning the correct error code.
->=20
-> How do you think about to use an other wording approach
-> (like the following) for an improved change description?
->=20
->=20
->   Return an error code instead of a count after a failed call
->   of the function =E2=80=9Ckstrtobool_from_user=E2=80=9D.
->   Omit the label =E2=80=9Cout=E2=80=9D with this source code correction.
->=20
->=20
-> Regards,
-> Markus
-Thanks for your kindness reply and advice and I will change my description
-in the next version.
+2023-07-15 오후 9:50에 Markus Elfring 이(가) 쓴 글:
+> 
+> * How do you think about to add the tag “Fixes”?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n591I think the description is enough, but still open to listen for that 
+from others.
 
-Regards,
-Shurong
+> 
+> * Would you like to avoid a checkpatch warning by the specification
+> of the tag “From” before your improved change description?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n499
+I use both emails and don't think that's a big deal. But if that 
+matters, I will post v3 for that or maintainers could sync up the email 
+of author by hands when they merge it.
 
-
-
+thank you for your opinion,
+Leesoo
