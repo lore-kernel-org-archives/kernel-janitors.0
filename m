@@ -2,64 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323C6C0015E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 13:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0938BC001DF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 16:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjGON2a (ORCPT
+        id S230077AbjGOQwz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jul 2023 09:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
+        Sat, 15 Jul 2023 12:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbjGON2a (ORCPT
+        with ESMTP id S229483AbjGOQwy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jul 2023 09:28:30 -0400
-X-Greylist: delayed 398 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 15 Jul 2023 06:28:26 PDT
-Received: from mfwd25.mailplug.co.kr (mfwd25.mailplug.co.kr [14.63.174.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD8426A4
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Jul 2023 06:28:26 -0700 (PDT)
-Received: (qmail 30699 invoked from network); 15 Jul 2023 22:21:44 +0900
-Received: from m41.mailplug.com (121.156.118.41)
-        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
-        15 Jul 2023 22:20:44 +0900
-Received: (qmail 2918930 invoked from network); 15 Jul 2023 22:20:44 +0900
-Received: from unknown (HELO sslauth16) (lsahn@wewakecorp.com@211.253.39.90)
-        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
-        15 Jul 2023 22:20:44 +0900
-Message-ID: <ff0d7038-8a53-f183-fc3a-d69143e801a2@wewakecorp.com>
-Date:   Sat, 15 Jul 2023 22:20:43 +0900
+        Sat, 15 Jul 2023 12:52:54 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35B5FD;
+        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b9d80e33fbso18874155ad.0;
+        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689439973; x=1692031973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zklUF3t+wgeuuJ5wKVxFMVZbSHxpuwzj+yAFx67meI4=;
+        b=UBkUcEL5Kch4QJK25VCJ/SbudlpqpohPaCDJsi3O/HCt7NHkaIxooPeezFlU4oy8PK
+         BbkjK80uunSYUS6msSHliQx8w6paWmphpR6PV2zEd9zAdj6cDvvRtonGoXt3KUQLpaVg
+         i1kM06AhZPilAFWuZ1HpssQ/fK4aHRCDWVV+yqriyV9RRUFimsO/menh3R8+F6JcA3wS
+         v7gAaQsrESkVBIYAkjYWzEAxhZ7fpuprJyAo5F26+YpEsNI0IOMKRT4gCGXDFtQwP6KR
+         TwtfUHLcks9WxAHCva+s8jtdVcL9+RA2Ywtk6j20QpJ/dYpsOjdbtw0Gbo1T3RzfszjN
+         JSTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689439973; x=1692031973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zklUF3t+wgeuuJ5wKVxFMVZbSHxpuwzj+yAFx67meI4=;
+        b=W2JMzV7nNKZEH6Pj9hpwbFTKjm1xz+QWSvfejTuLSyitDAZDQTmYu4JCdfQmDKzGV6
+         hsjOEIgF8tpFUECFY85JfeDX8WmxN/HRuOXPVZk1gd6DCCyLh6aGo0MsIMNCAuYj01eU
+         4KJr+LvWLJST8Y78uDt7sZHRGk+dtOUHYFbn8c34Q/LGBQT4jm6f0x2bC6IOxLm19Kix
+         wBtRt5C3JhTBzpF/LWNIc5EpHlPNkLxBZ5/RTXdKyO4dCBtOM5a/1EQCWukngiVD4Jre
+         WcbthtmdEv2I5h/o0Hn8YxHy6HNB/EtFM9lD3uwZMh9SDxssJFXWKRMEHN8zUXgOrjQy
+         VkLA==
+X-Gm-Message-State: ABy/qLa/MQQuW18S02G8r4hY53dWO5wEmQrm0No31wbJqhIYEgbmY6Ll
+        yg8+48syh3Wmo+sJnQbnL/ZznqDkcVU=
+X-Google-Smtp-Source: APBJJlHwf5iQVqpPUZk9nG/eSQNHZuhoh+emme0qVcomwtnLtu6YobsTJ0CFwzxFT8v7LmNdd4A3uw==
+X-Received: by 2002:a17:902:ea05:b0:1b8:9b17:f63d with SMTP id s5-20020a170902ea0500b001b89b17f63dmr8720295plg.23.1689439973371;
+        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id ik25-20020a170902ab1900b001b54a88e4a6sm9898642plb.51.2023.07.15.09.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jul 2023 09:52:52 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sat, 15 Jul 2023 09:52:52 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: lan966x: Use the devm_clk_get_enabled() helper
+ function
+Message-ID: <f4674073-d670-42cc-986d-cbee5d3afc40@roeck-us.net>
+References: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] fs: inode: return proper error code in bmap()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Leesoo Ahn <lsahn@ooseel.net>, linux-fsdevel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <20230715082204.1598206-1-lsahn@wewakecorp.com>
- <cca223c5-b512-3913-a796-fa15341927ff@web.de>
-From:   Leesoo Ahn <lsahn@wewakecorp.com>
-In-Reply-To: <cca223c5-b512-3913-a796-fa15341927ff@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2023-07-15 오후 9:50에 Markus Elfring 이(가) 쓴 글:
+On Sat, Jul 08, 2023 at 07:52:31AM +0200, Christophe JAILLET wrote:
+> Use the devm_clk_get_enabled() helper function instead of hand-writing it.
+> It saves some line of codes.
 > 
-> * How do you think about to add the tag “Fixes”?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n591I think the description is enough, but still open to listen for that 
-from others.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> 
-> * Would you like to avoid a checkpatch warning by the specification
-> of the tag “From” before your improved change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n499
-I use both emails and don't think that's a big deal. But if that 
-matters, I will post v3 for that or maintainers could sync up the email 
-of author by hands when they merge it.
+Applied.
 
-thank you for your opinion,
-Leesoo
+Thanks,
+Guenter
