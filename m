@@ -2,61 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B49BC001DE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jul 2023 19:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DC1EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 06:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236451AbjGNTgr (ORCPT
+        id S230199AbjGOG5k (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jul 2023 15:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
+        Sat, 15 Jul 2023 02:57:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236245AbjGNTgq (ORCPT
+        with ESMTP id S229530AbjGOG5j (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jul 2023 15:36:46 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D7BE4F
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 12:36:46 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id BC87F5BF;
-        Fri, 14 Jul 2023 19:36:44 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BC87F5BF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1689363404; bh=Y6cx46rpyh4f4kwzVAMRkODbnECw1wEIsMHA+sJSiFk=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=rkhiCVGUzUcMHrD9BPxy+15/3RNrw4fFAeTTf5qCi2Tk89A1pkY8CVO1+U8PRPfuL
-         WYo09QA9gPZdFOFqftdtEqsT/pGIVs2RMtQpdqQl2jmh2OZzEcVRchviTCojJzU+p/
-         2c/a2rIkGjOAOgtWg6it4AsuygjqthETJ6r1UG+Qi3bsnDbYZLBIS1CSidlvi0231K
-         BigK+Z/XGzhE8CKF2NGFfjURfNonotxadSMwCSDbnJexDZiTKkDbYFkTs5TC8eUThk
-         abwSapIoq2P9gYohspDzVCpyD5dU7VR5I1MgtYOrJLoZbSczwAt2KD0VfPtswcJs9h
-         gBVb2XhGeiPxA==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: deprecated.rst: Update an example
-In-Reply-To: <3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr>
-References: <3484e46180dd2cf05d993ff1a78b481bc2ad1f71.1687723931.git.christophe.jaillet@wanadoo.fr>
-Date:   Fri, 14 Jul 2023 13:36:44 -0600
-Message-ID: <875y6mz3n7.fsf@meer.lwn.net>
+        Sat, 15 Jul 2023 02:57:39 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 14 Jul 2023 23:57:37 PDT
+Received: from mfwd17.mailplug.co.kr (mfwd17.mailplug.co.kr [211.253.10.228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BA830E2
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jul 2023 23:57:36 -0700 (PDT)
+Received: (qmail 26068 invoked from network); 15 Jul 2023 15:50:54 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 15:49:54 +0900
+Received: (qmail 2310969 invoked from network); 15 Jul 2023 15:49:54 +0900
+Received: from unknown (HELO sslauth33) (lsahn@wewakecorp.com@211.252.87.40)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 15:49:54 +0900
+Message-ID: <ea5b21e4-78e6-8639-b62f-58100e2bc138@wewakecorp.com>
+Date:   Sat, 15 Jul 2023 15:49:54 +0900
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] fs: inode: return proper errno on bmap()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+References: <20230715060217.1469690-1-lsahn@wewakecorp.com>
+ <fa1386fb-04af-8037-2591-781f8723d564@web.de>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <fa1386fb-04af-8037-2591-781f8723d564@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-> vmalloc() has a 2-factor form. It is vmalloc_array().
-> So use another function as an example.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  Documentation/process/deprecated.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+2023-07-15 오후 3:39에 Markus Elfring 이(가) 쓴 글:
+>  > It better returns -EOPNOTSUPP instead of -EINVAL which has meaning of
+>  > the argument is an inappropriate value. It doesn't make sense in the
+>  > case of that a file system doesn't support bmap operation.
+>  >
+>  > -EINVAL could make confusion in the userspace perspective.
+> 
+> Are imperative change descriptions still preferred?
+> 
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n94
+> 
+> 
+> How do you think about to use a subject like “[PATCH v2] fs: inode:
+> Return proper error code in bmap()”?
+> 
+> 
+> Please reconsider also the distribution of addresses in recipient lists.
+> https://lore.kernel.org/lkml/20230715060217.1469690-1-lsahn@wewakecorp.com/
+> 
+> Regards,
+> Markus
 
-jon
+Thank you for the feedback.
+I will post v2 patch soon
+
+best regards,
+Leesoo
