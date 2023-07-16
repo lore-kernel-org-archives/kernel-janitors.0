@@ -2,80 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0938BC001DF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jul 2023 16:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD86EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jul 2023 18:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbjGOQwz (ORCPT
+        id S230107AbjGPStW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jul 2023 12:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
+        Sun, 16 Jul 2023 14:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjGOQwy (ORCPT
+        with ESMTP id S229471AbjGPStV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jul 2023 12:52:54 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35B5FD;
-        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b9d80e33fbso18874155ad.0;
-        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689439973; x=1692031973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zklUF3t+wgeuuJ5wKVxFMVZbSHxpuwzj+yAFx67meI4=;
-        b=UBkUcEL5Kch4QJK25VCJ/SbudlpqpohPaCDJsi3O/HCt7NHkaIxooPeezFlU4oy8PK
-         BbkjK80uunSYUS6msSHliQx8w6paWmphpR6PV2zEd9zAdj6cDvvRtonGoXt3KUQLpaVg
-         i1kM06AhZPilAFWuZ1HpssQ/fK4aHRCDWVV+yqriyV9RRUFimsO/menh3R8+F6JcA3wS
-         v7gAaQsrESkVBIYAkjYWzEAxhZ7fpuprJyAo5F26+YpEsNI0IOMKRT4gCGXDFtQwP6KR
-         TwtfUHLcks9WxAHCva+s8jtdVcL9+RA2Ywtk6j20QpJ/dYpsOjdbtw0Gbo1T3RzfszjN
-         JSTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689439973; x=1692031973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zklUF3t+wgeuuJ5wKVxFMVZbSHxpuwzj+yAFx67meI4=;
-        b=W2JMzV7nNKZEH6Pj9hpwbFTKjm1xz+QWSvfejTuLSyitDAZDQTmYu4JCdfQmDKzGV6
-         hsjOEIgF8tpFUECFY85JfeDX8WmxN/HRuOXPVZk1gd6DCCyLh6aGo0MsIMNCAuYj01eU
-         4KJr+LvWLJST8Y78uDt7sZHRGk+dtOUHYFbn8c34Q/LGBQT4jm6f0x2bC6IOxLm19Kix
-         wBtRt5C3JhTBzpF/LWNIc5EpHlPNkLxBZ5/RTXdKyO4dCBtOM5a/1EQCWukngiVD4Jre
-         WcbthtmdEv2I5h/o0Hn8YxHy6HNB/EtFM9lD3uwZMh9SDxssJFXWKRMEHN8zUXgOrjQy
-         VkLA==
-X-Gm-Message-State: ABy/qLa/MQQuW18S02G8r4hY53dWO5wEmQrm0No31wbJqhIYEgbmY6Ll
-        yg8+48syh3Wmo+sJnQbnL/ZznqDkcVU=
-X-Google-Smtp-Source: APBJJlHwf5iQVqpPUZk9nG/eSQNHZuhoh+emme0qVcomwtnLtu6YobsTJ0CFwzxFT8v7LmNdd4A3uw==
-X-Received: by 2002:a17:902:ea05:b0:1b8:9b17:f63d with SMTP id s5-20020a170902ea0500b001b89b17f63dmr8720295plg.23.1689439973371;
-        Sat, 15 Jul 2023 09:52:53 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id ik25-20020a170902ab1900b001b54a88e4a6sm9898642plb.51.2023.07.15.09.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jul 2023 09:52:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sat, 15 Jul 2023 09:52:52 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: lan966x: Use the devm_clk_get_enabled() helper
- function
-Message-ID: <f4674073-d670-42cc-986d-cbee5d3afc40@roeck-us.net>
-References: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
+        Sun, 16 Jul 2023 14:49:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FEA91B6
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Jul 2023 11:49:18 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id L6nlqoZFfmJSQL6nyqovEY; Sun, 16 Jul 2023 20:49:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1689533355;
+        bh=oXFfPn5WpEoNL6C6p4wE0Mawt3VwLpg29Dnt35c5y/Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=QwyYyRyRYJX9aBDwtDMwdqMBNfWwiY2IqxhldV2xxLfH3nywHnxtaUPSNYKA6SF6o
+         fQ4LAe9FVV5xXc/LpybW0+mu0ZWAba9ublz9vHPmaQLiUNfLNVPJ/+4N3NdnxzrHGB
+         MtkhexTxfkdM/9X4l/GzjKbLEo0ZNSyhYnxLmmT8+NsNuYKBfN9b3eLTr6fyYSmdRM
+         SDdc26oqLsUcTNKg/agP1MLmzkHgLSdTs9jH4gcguRJNYfyQhLJ4an119CKvvWBVCC
+         DwNIG8ZugG3uZdM355bmiruAr0Dw+zMPnnfpg+iG10pvu02bepEmZkA2NNtmpn/zi6
+         6Hhu9p5Uw5Yow==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 16 Jul 2023 20:49:15 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        ocfs2-devel@lists.linux.dev
+Subject: [PATCH 2/2] ocfs2: Use struct_size()
+Date:   Sun, 16 Jul 2023 20:48:57 +0200
+Message-Id: <9d99ea2090739f816d0dc0c4ebaa42b26fc48a9e.1689533270.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <c645911ffd2720fce5e344c17de642518cd0db52.1689533270.git.christophe.jaillet@wanadoo.fr>
+References: <c645911ffd2720fce5e344c17de642518cd0db52.1689533270.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25f2ab4c61d4fc48e8200f8754bb446f2b89ea89.1688795527.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jul 08, 2023 at 07:52:31AM +0200, Christophe JAILLET wrote:
-> Use the devm_clk_get_enabled() helper function instead of hand-writing it.
-> It saves some line of codes.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Use struct_size() instead of hand-writing it, when allocating a structure
+with a flex array.
 
-Applied.
+This is less verbose.
 
-Thanks,
-Guenter
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+It will also be helpful if the __counted_by() annotation is added with a
+Coccinelle script such as:
+   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/counted_by&id=adc5b3cb48a049563dc673f348eab7b6beba8a9b
+---
+ fs/ocfs2/journal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 2f7e70109020..4e779efe2a4e 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -114,9 +114,9 @@ int ocfs2_compute_replay_slots(struct ocfs2_super *osb)
+ 	if (osb->replay_map)
+ 		return 0;
+ 
+-	replay_map = kzalloc(sizeof(struct ocfs2_replay_map) +
+-			     (osb->max_slots * sizeof(char)), GFP_KERNEL);
+-
++	replay_map = kzalloc(struct_size(replay_map, rm_replay_slots,
++					 osb->max_slots),
++			     GFP_KERNEL);
+ 	if (!replay_map) {
+ 		mlog_errno(-ENOMEM);
+ 		return -ENOMEM;
+-- 
+2.34.1
+
