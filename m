@@ -2,86 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60F6EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 17:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E644FEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 18:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjGQRzQ (ORCPT
+        id S229630AbjGQSI2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 13:55:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59528 "EHLO
+        Mon, 17 Jul 2023 14:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjGQRzP (ORCPT
+        with ESMTP id S229449AbjGQSI1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 13:55:15 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858671B5
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 10:55:13 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id LSRBqStkanCoyLSRBquzGy; Mon, 17 Jul 2023 19:55:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689616511;
-        bh=Fpk05MGU6nNGzQRzekEDu8vSE/s3ApjtFu1sQjrmUCg=;
-        h=From:To:Cc:Subject:Date;
-        b=Hq9VMBESswxqmkPDQDZwqnoyp75phIcB8PgZ5YKAqBrPnSxhj1oMThwXh3liI5+aL
-         qaN069ATLkY7lVcTsRNKxp0nkHZXTQ7rRaA+3E7fqHcHjwVZdUzBa62tURVKrhmy/d
-         Z6w/NiFpMqC/N9zcwky+sG04NQdboEa12mmPN5PmYSpTyq16xMbalOVU9dEsPGbKku
-         XU+bIOYOzgs8ICIMcmMlzgbfC8FXPMUWUNtsOOvhWYo7pvSE63kKCqkn9l7HUaBEMj
-         bnfF+yQhvcwDVnFMl6LGK8HRbud6Bj6M98Ulp2kDz/x8NehWq0/9c0Wyo/NAlav1F9
-         wx3vHkrLbSGcQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Jul 2023 19:55:10 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Oleg Nesterov <oleg@redhat.com>,
+        Mon, 17 Jul 2023 14:08:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BDB58E;
+        Mon, 17 Jul 2023 11:08:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 97AC3611BF;
+        Mon, 17 Jul 2023 18:08:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675CDC433C7;
+        Mon, 17 Jul 2023 18:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689617306;
+        bh=UT9Gp/tMRg3RNCizwduBCQGhjAx6Wg7j44XwEdN/o8s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CsotMPwEhQEWEX27c6AhTe2UvFJoUAcn//oytO90CB57yV/IcO3YRCWBQapnJEvCi
+         7r8lGqiays1uhvk0OZSxSzkLcUuoLDzQvrMo5MsveGHQlP4mv3jhmles1X03HtVB55
+         CvJCWeWycTSx9tQzrvlFaHIw9naCXHEReXmxWy67rt6bYujcO1xqT6alBl0upqozrY
+         hLj1qTHyPiUs/RbkJnv50di6/hhtBi+0ENtf9rl18DDtbc2tdSWHfKl/VXkbgi+rkZ
+         p0+UK5wmjGNukuqDt5Ject6D+8pEa5kc3ci9NyQFBfe6WGZgtVstxU27X7La1k0R27
+         5vkr72xSCFjdQ==
+Date:   Mon, 17 Jul 2023 19:08:21 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64/ptrace: Fix an error handling path in sve_set_common()
-Date:   Mon, 17 Jul 2023 19:55:05 +0200
-Message-Id: <aa61301ed2dfd079b74b37f7fede5f179ac3087a.1689616473.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] arm64/ptrace: Fix an error handling path in
+ sve_set_common()
+Message-ID: <3f78a04c-bafe-4def-8eeb-734589fdaaa0@sirena.org.uk>
+References: <aa61301ed2dfd079b74b37f7fede5f179ac3087a.1689616473.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NPez/l1+KHinqP20"
+Content-Disposition: inline
+In-Reply-To: <aa61301ed2dfd079b74b37f7fede5f179ac3087a.1689616473.git.christophe.jaillet@wanadoo.fr>
+X-Cookie: Not a flying toy.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All error handling paths go to 'out', except this one. Be consistent and
-also branch to 'out' here.
 
-Fixes: e12310a0d30f ("arm64/sme: Implement ptrace support for streaming mode SVE registers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-/!\ Speculative /!\
+--NPez/l1+KHinqP20
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   This patch is based on analysis of the surrounding code and should be
-   reviewed with care !
+On Mon, Jul 17, 2023 at 07:55:05PM +0200, Christophe JAILLET wrote:
+> All error handling paths go to 'out', except this one. Be consistent and
+> also branch to 'out' here.
 
-   If the patch is wrong, maybe a comment in the code could explain why.
+This looks like a reasonable cleanup.
 
-/!\ Speculative /!\
----
- arch/arm64/kernel/ptrace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index d7f4f0d1ae12..9bc23f1b499e 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -884,7 +884,8 @@ static int sve_set_common(struct task_struct *target,
- 			break;
- 		default:
- 			WARN_ON_ONCE(1);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto out;
- 		}
- 
- 		/*
--- 
-2.34.1
+> Fixes: e12310a0d30f ("arm64/sme: Implement ptrace support for streaming mode SVE registers")
 
+>  		default:
+>  			WARN_ON_ONCE(1);
+> -			return -EINVAL;
+> +			ret = -EINVAL;
+> +			goto out;
+>  		}
+
+It's not exactly a fix though (probably not worth backporting for
+example, which tends to get keyed off the fixes tag) since something's
+incredibly confused if this code path ever gets executed, we're setting
+an unknown SVE vector type hence the WARN_ON() there.
+
+--NPez/l1+KHinqP20
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmS1g5QACgkQJNaLcl1U
+h9A8/Af+JXJu75jwI/gRy39NDWPw+FkhjHQRmj8kzHLuDTOiij8wPld/G/DbE7Hi
+xcZTeLirHTQRX38WBHssHbpyMh8PCsr9UPtmAGNY74WARmvFlNEli0FExVge0DIj
+fPeJ5ljgrq7u9DDF+p01HXAFogOdh4fx5sXRbnJJUdDe9ltAiE2O2guCAkro/p0K
+Da5c0LsGYzMqupJXernIg9rA8E/EVDKoFLweq3CHliRRlsDsSKQAdSffK1r50rW6
+r1brrHk7vtOIzlxzRq8AEIOGigxtj+tSwVyCjxsfcarq0JZRbm/CmnQis2dbX6TZ
+asCtZu1AqqePGzNtecVUS4FG/m6A7g==
+=i1qh
+-----END PGP SIGNATURE-----
+
+--NPez/l1+KHinqP20--
