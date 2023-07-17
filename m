@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908B3EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 09:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9440FEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 09:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbjGQJuQ (ORCPT
+        id S231232AbjGQJuq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 05:50:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52346 "EHLO
+        Mon, 17 Jul 2023 05:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbjGQJuO (ORCPT
+        with ESMTP id S231270AbjGQJul (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 05:50:14 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6EC13D
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:09 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3141c3a7547so4073442f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:09 -0700 (PDT)
+        Mon, 17 Jul 2023 05:50:41 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097B4A4
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:28 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-317009c0f9aso967547f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689587408; x=1692179408;
+        d=linaro.org; s=google; t=1689587426; x=1692179426;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UHlCYgjw3sGv5X4Rh41zT7Cz0UApml3bPiXbTYKgKB4=;
-        b=uZn+r1p4QIZuoah4Ce+XfaOMOBX6Cm212+xmfzaNY9nI8ClKQQPurJnYlgHvkb2plk
-         LkjcTRNlRA7v7NCsFrWp+bnH+BK8MPMzELnviSYlipTvbJqwcoLxFkYugBaiwDelsHlj
-         7CKb5gU9vlyhzAlf4EbGFTIu4SXAA322IHFEYLMfk4WM5TUEZ39i6mTf9tcxXZP7eg5E
-         socjfxUGHfJN0z0bTdDTit2Ckx7aMR0BvSQxK6FtRqERMajXK+hZQY3P8e4lR+qZObAc
-         WsI2v+K5GMGWY/CyiWrdquwtW5OzYiXDDAL4ewaAsu49fuGY7+dBFM2wllJy9xZdE7t+
-         g0Pw==
+        bh=e6AskIt6pGpEXyl/+af7zv317MVh1sWSoDRUXWvbhVc=;
+        b=Fw+1GwRvicM3Vt+T5hPWTv1I4io4vyJUrswB9HRPg+TMsLY4TzvDkTokRWKePd3UaX
+         ll0O8dcluZQntO0jzW3kSRzrorSK1V2f8SBVhVItDYextFguvdp3aqZP5IUsbOXcnfYw
+         C/bUs9iiz3HlppXECd6bK9yib6OQ8AbNx2QrdlK+TOb6h34snN+e/JyK2xB10AMHUKOr
+         GW2Qye/vaeGeQ1QsLAqJBvjmE+/tytsd1Pp6iqZYFf1mdBoi/RkgaHqvebLEEL28N22+
+         9pQDPNbG4hwEdFoiwyUGWzK9PHVSkEL8QhmeOV6G95SMcPGwTl1lFbAWFd2xx5vOmRde
+         UupA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689587408; x=1692179408;
+        d=1e100.net; s=20221208; t=1689587426; x=1692179426;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHlCYgjw3sGv5X4Rh41zT7Cz0UApml3bPiXbTYKgKB4=;
-        b=FBA9saGifb9UIEo5IKpkSYOBcYnACup8T3JPY+kMtn0gyrYggLFr9x4KPsbYGbOcDC
-         Fx4lBx8Ixe7fftCXtnHSA9yCko8+6kctzRpjoWUNZhq3EBExFaoR0vfl9LiNSfV+6mLm
-         lmSAnqFJTRKaULkw05pPYhF/m/GmhD/xdM7jL1+6zZANsNCDNPq2UnxzOqk4SLJzZeLw
-         la+6FmLf4Tbxnfv5QrHHbFI06Fp23aqkEw4E5NH6CUMJc0iyhj7NeoFWTNvF6Z0NYBav
-         sdnknTGm0Qaay2U7xD0T6LWOcejJ6pWR8/5NXpzM8xoJ23puE02s/Wlqq7NQQroM3AxJ
-         Nm4A==
-X-Gm-Message-State: ABy/qLZBpGSJ17IoLwc5JRO+bpJ2kN/+qK6vaRVQj7Hi0f9RfCuGwtlh
-        bGoB53cdOlquOjaYLkfw4N3qlw==
-X-Google-Smtp-Source: APBJJlEHj8jCF+PkdN/BQGzBoi07gP3rBR7YQ7C285CjbtyZLwYfRuqMJGOiSRTSk2SWV3gcvBoynA==
-X-Received: by 2002:adf:f044:0:b0:313:efed:9162 with SMTP id t4-20020adff044000000b00313efed9162mr8459155wro.59.1689587407918;
-        Mon, 17 Jul 2023 02:50:07 -0700 (PDT)
+        bh=e6AskIt6pGpEXyl/+af7zv317MVh1sWSoDRUXWvbhVc=;
+        b=Y8wLLS8JjWiWTRj/u0/GurqL9SEB8JX7RD7gT+tEC3+rUEG/eXMiYzWUIQDu9b2Sns
+         /nc71HlHzfAX1At5TE6FU+5kPoeEIGXHF7rIOKdHFSwXs5zSvXW4khx7y1uWqeQnse59
+         rskiq6C8mSWHyUz4lDny/u3zfcACrJP2yQx8qiHY3RkZI6I9eyGBygDVWBMV5cwfNIXf
+         /PQ9j8xQeNab3mRpdUTJtzwsLRpS408JNalQaOIHTUjEAgIwc1IcxLT6HCgTblILfIY0
+         erybkgs53xsOF3czTvyP0wivRvWj5P1zW/PsnRZXNJ98+j8CSq44lwKdX0xyUK7rH93l
+         /Trg==
+X-Gm-Message-State: ABy/qLZYACVfEsgSYylHBWp87cXZD7Fd3efveUVfm+wR1HyIUn7AJ7ab
+        T9aTuQWvw2ZMpSZ4z8bNNF8Zhw==
+X-Google-Smtp-Source: APBJJlFcO2hUeFTyIiGMBaQOOPJbTFdAWOHHOtL+x6pYTXFTzTLiIOmpOQir+k0qINWk2OhUsNUflQ==
+X-Received: by 2002:adf:f7d0:0:b0:313:f1c8:a963 with SMTP id a16-20020adff7d0000000b00313f1c8a963mr10656889wrq.2.1689587426286;
+        Mon, 17 Jul 2023 02:50:26 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r7-20020a5d6947000000b00313fd294d6csm19002391wrw.7.2023.07.17.02.50.05
+        by smtp.gmail.com with ESMTPSA id s15-20020adff80f000000b00313f9a0c521sm18777975wrp.107.2023.07.17.02.50.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 02:50:06 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 12:50:02 +0300
+        Mon, 17 Jul 2023 02:50:25 -0700 (PDT)
+Date:   Mon, 17 Jul 2023 12:50:20 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc:     linux1394-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] firewire: core: put GFP_ATOMIC back in fw_node_create()
-Message-ID: <e300faf3-ad5c-4702-a022-128c8c983e21@kili.mountain>
+Subject: [PATCH] firewire: core: revert GFP_ATOMIC changes
+Message-ID: <89fe5e6f-d6c3-42d6-bf86-3eb1f4193c1b@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,20 +64,48 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This was recently changed from GFP_ATOMIC to GFP_KERNEL, but it
-needs to be GFP_ATOMIC so change it back.  The problematic
-call tree is:
+This was recently changed from GFP_ATOMIC to GFP_KERNEL, but Smatch
+complains that GFP_ATOMIC is still required:
+
+drivers/firewire/core-topology.c:223 build_tree() warn: sleeping in atomic context
+
+The problematic call trees are:
 
 fw_core_handle_bus_reset() <- spin_lock_irqsave(&card->lock, flags);
 -> build_tree()
    -> fw_node_create() <- sleeping allocation
 
+fw_core_handle_bus_reset() <- spin_lock_irqsave(&card->lock, flags);
+-> update_tree()
+   -> fw_node_event()
+
+This second call tree is a bit complicated because we event is not
+FW_NODE_CREATED so we would have to hit a goto create; to hit the
+bug.
+
 Fixes: 06f45435d985 ("firewire: core: obsolete usage of GFP_ATOMIC at building node tree")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/firewire/core-topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From static analysis.  Smatch does not warn about fw_node_event()
+because event can't be FW_NODE_CREATED.
 
+ drivers/firewire/core-device.c   | 2 +-
+ drivers/firewire/core-topology.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
+index a3104e35412c..aa597cda0d88 100644
+--- a/drivers/firewire/core-device.c
++++ b/drivers/firewire/core-device.c
+@@ -1211,7 +1211,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
+ 		 * without actually having a link.
+ 		 */
+  create:
+-		device = kzalloc(sizeof(*device), GFP_KERNEL);
++		device = kzalloc(sizeof(*device), GFP_ATOMIC);
+ 		if (device == NULL)
+ 			break;
+ 
 diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
 index 88466b663482..f40c81534381 100644
 --- a/drivers/firewire/core-topology.c
