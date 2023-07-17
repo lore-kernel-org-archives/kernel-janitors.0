@@ -2,110 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE97C001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 22:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC14EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 23:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjGQWbS (ORCPT
+        id S230039AbjGQXfd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 18:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
+        Mon, 17 Jul 2023 19:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbjGQWbR (ORCPT
+        with ESMTP id S229919AbjGQXfb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 18:31:17 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F298121;
-        Mon, 17 Jul 2023 15:31:12 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id 5614622812f47-3a3790a0a48so3778953b6e.1;
-        Mon, 17 Jul 2023 15:31:12 -0700 (PDT)
+        Mon, 17 Jul 2023 19:35:31 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28BF410B;
+        Mon, 17 Jul 2023 16:34:38 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-992b66e5affso704174566b.3;
+        Mon, 17 Jul 2023 16:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689633071; x=1692225071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SHDp8nB7O1cUSk6u+dkygi1nw20zAJ2ZKhqLuBxI790=;
-        b=G5n13dJeXmTKv6yojdScom21ZyYUXIm+6JbNUjHBnCqk3Tjh9BDMM8zwsNi+zNqM1M
-         d3BXYtSzETH0Rd90iFhzBoVsQ9ItI+wukpzw87SPGkn1nqIGTpio+Im2KsmqpSwZoexV
-         SczTZWml4H1sSJA4fQMcn3BCyvyaPJMC/RJHFegzT3pvCZSl8TdQYKC4+iLc7kp/2sWe
-         yOYRxtM3Q+ZQTf3W1YqphCY/ogoETWQy1UOqPdWl/DNiKGHb8MekjHzleFExMpCSf4YL
-         T5lA7L1qVsU+YmDmdqL4rURyEbstAkvRzTmBdEpXSJ1C8NLzOaxDk1qoEcaG4XAl+nSw
-         kjjg==
+        d=gmail.com; s=20221208; t=1689636780; x=1692228780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XUDr0WJ36nzGg+x0m6xG86uy/+jSOmIe2ZQC2dKU+JY=;
+        b=R72h7HqH8exWkKdBGuHmTn/A6yXVCx/MQxMlWukO2c9mf0bQu7HeyztJLnYzun3qUI
+         CPubk0fYrugSrzwwHJa6WuMyVEv7jAqlCxZ6Ha1zyjPOInzg8uu+1Dg11qNhmpWUXCyy
+         FnKmOrzNTcdUIq6NzCnXXFgkMr3Cx4GageF7idZk2wz5rSEiqnlp6SyKLHKbHnjdYfU2
+         j6QMS3ugtyHUXlGvH983eK2DS4EQI62/d+0LTaiDWUNNdG/HxFi+5vh5RjedFNHVdryP
+         MnAaWvLpheISDoE0GquVbuPi7DNKbFnoE9TO2wkkaOCItUf5+59K6lQvRCNepNU27ktN
+         Em9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689633071; x=1692225071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SHDp8nB7O1cUSk6u+dkygi1nw20zAJ2ZKhqLuBxI790=;
-        b=iCwGp8qtxWBpj+NPWwxlV4bcFg6VsSY3EMxahkG+SwgG5yWpwX9iGmWI0nloSDoDsm
-         Juwg512PWILQqtRv9IR3Vw1EAdLlFeC+qCl4gQqDG7+XVvpl1G30dpK5dvUGdEdxP/Th
-         tqDM1DMRJiZKtaca9uiKztFMiqmbtAwkzM9z2bNkVFepWhyFqun3X+HtoE6y0yIzjHFV
-         Eo+jNAwfHpFQldUrwzgQqxZp4U0P9YpQzcLzRWITvYILkCBiXZC+6e7flfN5zsNL2/ki
-         vHRIC5+Vp/IaM300PY5n/mSTWguab36tm3COCG/z+6DqzXowkxQE/Tw1+wBLvUdiWaW3
-         QfdQ==
-X-Gm-Message-State: ABy/qLaaXiY991fs5fdcPn3asy5SWCQ2hpmqq4Ix9E1ZyWtSTUhtITga
-        Y7UXql0v1OUeMRYkR1pIYiw=
-X-Google-Smtp-Source: APBJJlFBdYyBQNo03MuUiEg0P4y5KzZsEf+U7+d/55pz5eYo/yLMgvdrot/jg88363nARNsMAPiFgg==
-X-Received: by 2002:a05:6808:1384:b0:3a4:1f76:bdfb with SMTP id c4-20020a056808138400b003a41f76bdfbmr15020079oiw.14.1689633071269;
-        Mon, 17 Jul 2023 15:31:11 -0700 (PDT)
-Received: from ?IPV6:2603:8081:140c:1a00:2f8:ff69:16db:1c31? (2603-8081-140c-1a00-02f8-ff69-16db-1c31.res6.spectrum.com. [2603:8081:140c:1a00:2f8:ff69:16db:1c31])
-        by smtp.gmail.com with ESMTPSA id a14-20020a056808128e00b003a44b425c18sm184398oiw.43.2023.07.17.15.31.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 15:31:10 -0700 (PDT)
-Message-ID: <b5880a47-aaa4-cb5e-e1f6-00f17695efe8@gmail.com>
-Date:   Mon, 17 Jul 2023 17:31:09 -0500
+        d=1e100.net; s=20221208; t=1689636780; x=1692228780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XUDr0WJ36nzGg+x0m6xG86uy/+jSOmIe2ZQC2dKU+JY=;
+        b=LyG0NPrH26ewEBaMEyiukPEArnD1SiHXozJBWucCWZmJsFMRJoLcv8Xjm8YucZfzNG
+         p9CF0nWCQd0v7gac5tA6si0/mOPFOIXnGNHsRxw8Jo3lbRpXHRDz0Njy7GPfkXOCHqnu
+         1ty++lg4hSxEVpiYPUAhQEI4ME5nvK5oq/M4tSswkVk3QluxmMKBYfi0YKP+ESXF1sie
+         7iP/A8NHGlT2c8vFdUnDZdOlQo/zTbbx8+8BE1niYnmHA+UPEJmx2se0x8rwiURNxEGY
+         2QalXAo5JWUcSK1Hst6VIEzITPIF8hgyGI3zddi60IFu80O1/lzlIlbT3/H/54ub3a4U
+         N+dg==
+X-Gm-Message-State: ABy/qLZfq20xUh2QketLE4xymAiSFvvjwYX9AMuPeoZ+Nu+DDq0E9QXW
+        zpvwUe72Olqu3KJ1qTHZkytMRwYJTDVKxparc/fhEPi9760=
+X-Google-Smtp-Source: APBJJlE1VufSgLLzwZ0wh5XIZlg806W1ISKFqvU35SLDRo3m8iBCXl2XRyjXOwehO1xfQV/AeH9gU+mb7fdtFJSw7xI=
+X-Received: by 2002:a05:651c:105b:b0:2b8:67ce:4ad7 with SMTP id
+ x27-20020a05651c105b00b002b867ce4ad7mr5740002ljm.6.1689636061093; Mon, 17 Jul
+ 2023 16:21:01 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Zhu Yanjun <zyjzyj2000@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
 References: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From:   Bob Pearson <rpearsonhpe@gmail.com>
 In-Reply-To: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Zhu Yanjun <zyjzyj2000@gmail.com>
+Date:   Tue, 18 Jul 2023 07:20:48 +0800
+Message-ID: <CAD=hENdpVxzE+Mvre7kdU-Z1Cr0z=6DFwhEh17-bNf-2Z0haJw@mail.gmail.com>
+Subject: Re: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Bob Pearson <rpearsonhpe@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/17/23 14:55, Christophe JAILLET wrote:
+On Tue, Jul 18, 2023 at 3:55=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
 > All errors go to the error handling path, except this one. Be consistent
 > and also branch to it.
-> 
+>
 > Fixes: 02ed253770fb ("RDMA/rxe: Introduce rxe access supported flags")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 > /!\ Speculative /!\
-> 
+>
 >    This patch is based on analysis of the surrounding code and should be
 >    reviewed with care !
-> 
+>
 > /!\ Speculative /!\
 > ---
 >  drivers/infiniband/sw/rxe/rxe_mw.c | 3 ++-
 >  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_mw.c b/drivers/infiniband/sw/rxe/rxe_mw.c
+>
+> diff --git a/drivers/infiniband/sw/rxe/rxe_mw.c b/drivers/infiniband/sw/r=
+xe/rxe_mw.c
 > index d8a43d87de93..d9312b5c9d20 100644
 > --- a/drivers/infiniband/sw/rxe/rxe_mw.c
 > +++ b/drivers/infiniband/sw/rxe/rxe_mw.c
-> @@ -199,7 +199,8 @@ int rxe_bind_mw(struct rxe_qp *qp, struct rxe_send_wqe *wqe)
->  
->  	if (access & ~RXE_ACCESS_SUPPORTED_MW) {
->  		rxe_err_mw(mw, "access %#x not supported", access);
-> -		return -EOPNOTSUPP;
-> +		ret = -EOPNOTSUPP;
-> +		goto err_drop_mr;
->  	}
->  
->  	spin_lock_bh(&mw->lock);
-Christophe,
-Good catch. Thanks. Probably should go to for-next.
-Bob
+> @@ -199,7 +199,8 @@ int rxe_bind_mw(struct rxe_qp *qp, struct rxe_send_wq=
+e *wqe)
+>
+>         if (access & ~RXE_ACCESS_SUPPORTED_MW) {
+>                 rxe_err_mw(mw, "access %#x not supported", access);
 
-Reviewed-by: Bob Pearson <rpearsonhpe@gmail.com>
+https://www.kernel.org/doc/Documentation/core-api/printk-formats.rst
+What is "%#x"? No such definition in the above link.
+Except that, I am fine with it.
+
+Acked-by: Zhu Yanjun <zyjzyj2000@gmail.com>
+Zhu Yanjun
+
+> -               return -EOPNOTSUPP;
+> +               ret =3D -EOPNOTSUPP;
+> +               goto err_drop_mr;
+>         }
+>
+>         spin_lock_bh(&mw->lock);
+> --
+> 2.34.1
+>
