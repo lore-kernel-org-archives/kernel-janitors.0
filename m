@@ -2,47 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23098C0015E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 19:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53691C0015E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 20:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjGQT4i (ORCPT
+        id S230237AbjGQUJa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 15:56:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47882 "EHLO
+        Mon, 17 Jul 2023 16:09:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbjGQT4f (ORCPT
+        with ESMTP id S229732AbjGQUJ3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 15:56:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06B71BE5
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 12:56:11 -0700 (PDT)
+        Mon, 17 Jul 2023 16:09:29 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DFEFB
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 13:09:27 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id LUK5qOYC7Bp2FLUK5qxFRQ; Mon, 17 Jul 2023 21:55:58 +0200
+        id LUX2q5vfabkI3LUX3qnKyX; Mon, 17 Jul 2023 22:09:26 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689623758;
-        bh=4YAwP+0IebCJzWu8q4z7IgX7pVQZaDGiqk8B5XyDXic=;
+        s=t20230301; t=1689624566;
+        bh=UEj0AXAxlyKrDR2T9dRAsXWpemXdwncxY2h++Qk+qQw=;
         h=From:To:Cc:Subject:Date;
-        b=KTDNknVSqCSWDbhFb//j0yR90QyYkfnGzthyyuJCcN+tsB/lv676W38cwOlukZoDd
-         AoWIg9nNYIsrUNZLD0rTTDay5ldWLQq1gubP0OsqXb9jP8XNLx6C8SQl6Om807RyW7
-         mcNoWXMAgVfGPzsM4dZ7FNMqd4BSdnbgou1RhmS+n5DtYqaWVFxOAPO5kZ1Cz2ITNS
-         NBzJZw01E5NIFRDIecCfZjCVxzIGmtihVhkO7JRwkxj5xpiBILUsartnvsH2rLFne4
-         TJfYrE52V7zU/rsFNn3rKASXw2KZmACcwAw0xivwyovqM+6pBwNAI7TgqKV2TA6/R3
-         gI1U+bt8JVmQA==
+        b=d5cNBpyckTzPUqzqnhq0Y8pnMXCGVib/3GQbOzMQQsYxZ3ZYKt+G4E2/m0JKWFX+e
+         qqDGQBU3SKWwxg6+fc7iAiwf/ujP3ncKaZh5EqZ0NlrQbWfy0k6ZMAHR2alnc/RV0O
+         BRWLayHoFfKe22+BCe+9ZH74Rp3Yb4VGTr//1QNai0xaOnpWocQub4BxIKf/4/XYQQ
+         aC6q05JzSPNLdSdhUaYi7DjgHHxT1Idu1MjlUL6CW1hWdXd95uygiX+S50KeqRHdcM
+         t5KbEAcOD6WglubNCuVqoWfi+MZ7NLw0gvaibiq0kYwspynZkdd5yCqTNi6bIdnZRC
+         sbthVNZOAmuLA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Jul 2023 21:55:58 +0200
+X-ME-Date: Mon, 17 Jul 2023 22:09:26 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Bob Pearson <rpearsonhpe@gmail.com>
+To:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
-Date:   Mon, 17 Jul 2023 21:55:56 +0200
-Message-Id: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] media: mediatek: vcodec: Fix an error handling path in vdec_msg_queue_init()
+Date:   Mon, 17 Jul 2023 22:09:19 +0200
+Message-Id: <efa0d4910998931a2ec9d933117fa71482d7b33a.1689624542.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,33 +61,35 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 All errors go to the error handling path, except this one. Be consistent
 and also branch to it.
 
-Fixes: 02ed253770fb ("RDMA/rxe: Introduce rxe access supported flags")
+Fixes: 2f5d0aef37c6 ("media: mediatek: vcodec: support stateless AV1 decoder")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-/!\ Speculative /!\
+ drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-   This patch is based on analysis of the surrounding code and should be
-   reviewed with care !
-
-/!\ Speculative /!\
----
- drivers/infiniband/sw/rxe/rxe_mw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/sw/rxe/rxe_mw.c b/drivers/infiniband/sw/rxe/rxe_mw.c
-index d8a43d87de93..d9312b5c9d20 100644
---- a/drivers/infiniband/sw/rxe/rxe_mw.c
-+++ b/drivers/infiniband/sw/rxe/rxe_mw.c
-@@ -199,7 +199,8 @@ int rxe_bind_mw(struct rxe_qp *qp, struct rxe_send_wqe *wqe)
+diff --git a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+index 04e6dc6cfa1d..c6cc2785e0e8 100644
+--- a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
++++ b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
+@@ -338,14 +338,16 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg_queue,
+ 			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->rd_mv_addr);
+ 			if (err) {
+ 				mtk_v4l2_err("failed to allocate rd_mv_addr buf[%d]", i);
+-				return -ENOMEM;
++				err = -ENOMEM;
++				goto mem_alloc_err;
+ 			}
  
- 	if (access & ~RXE_ACCESS_SUPPORTED_MW) {
- 		rxe_err_mw(mw, "access %#x not supported", access);
--		return -EOPNOTSUPP;
-+		ret = -EOPNOTSUPP;
-+		goto err_drop_mr;
- 	}
+ 			lat_buf->tile_addr.size = VDEC_LAT_TILE_SZ;
+ 			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->tile_addr);
+ 			if (err) {
+ 				mtk_v4l2_err("failed to allocate tile_addr buf[%d]", i);
+-				return -ENOMEM;
++				err = -ENOMEM;
++				goto mem_alloc_err;
+ 			}
+ 		}
  
- 	spin_lock_bh(&mw->lock);
 -- 
 2.34.1
 
