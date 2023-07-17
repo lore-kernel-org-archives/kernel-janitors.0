@@ -2,110 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83379EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 14:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580EFEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 15:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbjGQOxH (ORCPT
+        id S229798AbjGQPA5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 10:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37498 "EHLO
+        Mon, 17 Jul 2023 11:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjGQOxG (ORCPT
+        with ESMTP id S229762AbjGQPA4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 10:53:06 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EE410DC;
-        Mon, 17 Jul 2023 07:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689605582; x=1721141582;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PaYQUrnIAw10UGRh51Er0CiQIbO+1qEOK90eqGzlL3M=;
-  b=ktI/SBeSGFeViZ21yY4vkJ1kAny1rLi50XAeE5FPZ9vhc3IQXNmo4xWL
-   VWvHGSuNbns2VWNoParX1QHMV+PjTcOFy7+Nano3GOCKHJmx38NX78Vzr
-   5yrjxvCqX1Me5dNXLOGyvnNyXnNx2iLTa3Pt9dduFGS+evA/HLAZj57UF
-   7ngtF4jo1jX1k0l3NYZBENUmdXHsmNT0pjOKmsDfd0Rg5wLY4Yc4kfRxm
-   Fp59pyYH5UWmp/hbglycrIeVeGJLgUwFN+xF+VeEy3lgHTlhbLIoS/UTS
-   6U/H7Y63aWjMFDVgYk4GC5lHdiQUdM4Passq61Ftb2joVkMWQr77cwRcz
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="432120116"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="432120116"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 07:53:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="788686219"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="788686219"
-Received: from ahajda-mobl.ger.corp.intel.com (HELO [10.213.9.23]) ([10.213.9.23])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 07:52:55 -0700
-Message-ID: <0cae35ea-7635-383d-cae5-2051abbc6d64@intel.com>
-Date:   Mon, 17 Jul 2023 16:52:51 +0200
+        Mon, 17 Jul 2023 11:00:56 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FEE7E7F
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 08:00:55 -0700 (PDT)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1qLPiR-00087z-5n; Mon, 17 Jul 2023 17:00:47 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 05ECE1F3742;
+        Mon, 17 Jul 2023 15:00:45 +0000 (UTC)
+Date:   Mon, 17 Jul 2023 17:00:44 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Wu Yunchuan <yunchuan@nfschina.com>
+Cc:     wg@grandegger.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, uttenthaler@ems-wuensche.com,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next v4 8/9] can: ems_pci: Remove unnecessary (void*)
+ conversions
+Message-ID: <20230717-spiritual-fester-3a3545e016af-mkl@pengutronix.de>
+References: <20230717071800.144129-1-yunchuan@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.13.0
-Subject: Re: [PATCH] drm/i915/tv: avoid possible division by zero
-To:     Su Hui <suhui@nfschina.com>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        tvrtko.ursulin@linux.intel.com, airlied@gmail.com, daniel@ffwll.ch,
-        nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com
-Cc:     ville.syrjala@linux.intel.com, mripard@kernel.org,
-        ankit.k.nautiyal@intel.com, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-References: <20230717062209.124106-1-suhui@nfschina.com>
-Content-Language: en-US
-From:   Andrzej Hajda <andrzej.hajda@intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20230717062209.124106-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u2ajwgef3t33s6d4"
+Content-Disposition: inline
+In-Reply-To: <20230717071800.144129-1-yunchuan@nfschina.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+--u2ajwgef3t33s6d4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 17.07.2023 08:22, Su Hui wrote:
-> Clang warning: drivers/gpu/drm/i915/display/intel_tv.c:
-> line 991, column 22 Division by zero.
-> Assuming tv_mode->oversample=1 and (!tv_mode->progressive)=1,
-> then division by zero will happen.
->
-> Fixes: 1bba5543e4fe ("drm/i915: Fix TV encoder clock computation")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->   drivers/gpu/drm/i915/display/intel_tv.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_tv.c b/drivers/gpu/drm/i915/display/intel_tv.c
-> index 36b479b46b60..82b54af51f23 100644
-> --- a/drivers/gpu/drm/i915/display/intel_tv.c
-> +++ b/drivers/gpu/drm/i915/display/intel_tv.c
-> @@ -988,7 +988,8 @@ intel_tv_mode_to_mode(struct drm_display_mode *mode,
->   		      const struct tv_mode *tv_mode,
->   		      int clock)
->   {
-> -	mode->clock = clock / (tv_mode->oversample >> !tv_mode->progressive);
-> +	mode->clock = clock / (tv_mode->oversample != 1 ?
-> +			tv_mode->oversample >> !tv_mode->progressive : 1);
+On 17.07.2023 15:18:01, Wu Yunchuan wrote:
+> No need cast (void*) to (struct ems_pci_card *).
+>=20
+> Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
 
-Seems too smart to me, why not just:
-mode->clock = clock / tv_mode->oversample;
-if (!tv_mode->progressive)
-     mode->clock <<= 1;
-Or trying being smart:
-mode->clock = clock / tv_mode->oversample << !tv_mode->progressive;
+Applied to linux-can-next/testing.
 
-Btw in both cases there is assumption tv_mode->oversample != 0, I guess 
-it is true.
+Thanks,
+Marc
 
-Regards
-Andrzej
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
->   
->   	/*
->   	 * tv_mode horizontal timings:
+--u2ajwgef3t33s6d4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmS1V5kACgkQvlAcSiqK
+BOhN2wf+NQnJZgnGQ4H7tSalyx5onEl/yHFqTFFFAfwcGOlIYfl8yKKk9O0IXu9K
+nT0dgyEmvivzr5ioAiuA8QmYMeimymsD67Au+JakBNErPVLLpfcm4nn5NIuSzn0F
+ZKnfRiUtgX0+Nb97BhhpgmxFQMP//O/M2XAVqFGMEKsX/RtAl/sn4ykHDQYgv5TO
+eVYnZQFV2vX131nbGXvsIkKz6PaLe50oMa1pzc/z6/YX0SUZ5/yab4NJWHr8pEf6
+8zXh+vBvSBm3ouGEBpgrofDYsAyt2BU8pXVfBhegIxJP5cFcuI/5DmYnqOEdRTey
+MF2Jrp/U3wthnbn9IzIf1cBeYf7PKA==
+=d4dX
+-----END PGP SIGNATURE-----
+
+--u2ajwgef3t33s6d4--
