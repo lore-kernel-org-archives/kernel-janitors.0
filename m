@@ -2,60 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9440FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 09:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ECFC001DE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 10:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbjGQJuq (ORCPT
+        id S230516AbjGQKUm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 05:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
+        Mon, 17 Jul 2023 06:20:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbjGQJul (ORCPT
+        with ESMTP id S230469AbjGQKUl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 05:50:41 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097B4A4
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:28 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-317009c0f9aso967547f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 02:50:27 -0700 (PDT)
+        Mon, 17 Jul 2023 06:20:41 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 915F0E7F
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 03:20:39 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3141fa31c2bso3888698f8f.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 03:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689587426; x=1692179426;
+        d=linaro.org; s=google; t=1689589238; x=1692181238;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=e6AskIt6pGpEXyl/+af7zv317MVh1sWSoDRUXWvbhVc=;
-        b=Fw+1GwRvicM3Vt+T5hPWTv1I4io4vyJUrswB9HRPg+TMsLY4TzvDkTokRWKePd3UaX
-         ll0O8dcluZQntO0jzW3kSRzrorSK1V2f8SBVhVItDYextFguvdp3aqZP5IUsbOXcnfYw
-         C/bUs9iiz3HlppXECd6bK9yib6OQ8AbNx2QrdlK+TOb6h34snN+e/JyK2xB10AMHUKOr
-         GW2Qye/vaeGeQ1QsLAqJBvjmE+/tytsd1Pp6iqZYFf1mdBoi/RkgaHqvebLEEL28N22+
-         9pQDPNbG4hwEdFoiwyUGWzK9PHVSkEL8QhmeOV6G95SMcPGwTl1lFbAWFd2xx5vOmRde
-         UupA==
+        bh=2xjHSH6JPN242twkYagyCM3b4pHivNarK7/dz84nfUo=;
+        b=Ed1Oon/LLl1kLQVVPM35G/cpdQIIwld+034WiGpAV0AsAfXzNJo8HuzR9CLzKG301r
+         UYdu8sIIYGEyXT5fQwBCCielixfulMCbEyS+80ysDfxQdQKXjfoWKAOj0VihOBys0N+y
+         dH1qR7NQm3hzj0edg1q/47XDLQhlM8c3JhdyNmxQrzLvOs2vaa5Bd5LAwebjx1daqz1U
+         XI3HooTbSo5OPKOhBIDxO4hrbB4WFtEzFuxZL71yluEmyZl/deW8Tg8hLFW7kMJq5Ro3
+         2PqHyr4CQd8A3FPTSiSx9nHGs6YaaXtXgCWleiDHtH0Q4ZuvCgjLUXD9u8LSFJ4wpSAT
+         THzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689587426; x=1692179426;
+        d=1e100.net; s=20221208; t=1689589238; x=1692181238;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6AskIt6pGpEXyl/+af7zv317MVh1sWSoDRUXWvbhVc=;
-        b=Y8wLLS8JjWiWTRj/u0/GurqL9SEB8JX7RD7gT+tEC3+rUEG/eXMiYzWUIQDu9b2Sns
-         /nc71HlHzfAX1At5TE6FU+5kPoeEIGXHF7rIOKdHFSwXs5zSvXW4khx7y1uWqeQnse59
-         rskiq6C8mSWHyUz4lDny/u3zfcACrJP2yQx8qiHY3RkZI6I9eyGBygDVWBMV5cwfNIXf
-         /PQ9j8xQeNab3mRpdUTJtzwsLRpS408JNalQaOIHTUjEAgIwc1IcxLT6HCgTblILfIY0
-         erybkgs53xsOF3czTvyP0wivRvWj5P1zW/PsnRZXNJ98+j8CSq44lwKdX0xyUK7rH93l
-         /Trg==
-X-Gm-Message-State: ABy/qLZYACVfEsgSYylHBWp87cXZD7Fd3efveUVfm+wR1HyIUn7AJ7ab
-        T9aTuQWvw2ZMpSZ4z8bNNF8Zhw==
-X-Google-Smtp-Source: APBJJlFcO2hUeFTyIiGMBaQOOPJbTFdAWOHHOtL+x6pYTXFTzTLiIOmpOQir+k0qINWk2OhUsNUflQ==
-X-Received: by 2002:adf:f7d0:0:b0:313:f1c8:a963 with SMTP id a16-20020adff7d0000000b00313f1c8a963mr10656889wrq.2.1689587426286;
-        Mon, 17 Jul 2023 02:50:26 -0700 (PDT)
+        bh=2xjHSH6JPN242twkYagyCM3b4pHivNarK7/dz84nfUo=;
+        b=CLS51tHm8H94rocGNCZoGc8HZNG7QsGTmzSKx+293rrGj2vGjUTfZe012AVCIyZb6g
+         pq3qTwaiogFBqcfeVYCSWiKqapkY3PmGEr4X3aRMsKndAe57PoaEucgsuS64d+Z8462T
+         jhmP8QgkrQ+SqkZQ0md24PUcvwFjpJgoRkRMGx1ioumFDAT9MG1AEzb7G+KWeBSTBqkH
+         U6fhhLe38SVoUp9qT2ynxyf45fxYF4qapzIyoqx+OReLBy6dpnQwvMkjuqlfbj/eGys1
+         VFdEAm56xqDfNdP9h+JZ090eEosjsb/5rEy14S551hBIv745Lcl/FN9WZD7+JqFu5eE7
+         bz1w==
+X-Gm-Message-State: ABy/qLYPY3yeHZUtl6HM3NrdRwXcdXqyQArocKouXgITl8/XBxbZykk3
+        iw2mYFU/aOdWqySnibp2PurPgw==
+X-Google-Smtp-Source: APBJJlGYOxHZkuEqeOeiGNHqrFtQ9ewfMH5QDg09+Jjvucym7gtBd/zyQVew6hrbcd/86yVMl8OR6g==
+X-Received: by 2002:a5d:4b44:0:b0:313:edaa:2505 with SMTP id w4-20020a5d4b44000000b00313edaa2505mr10379451wrs.20.1689589237859;
+        Mon, 17 Jul 2023 03:20:37 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s15-20020adff80f000000b00313f9a0c521sm18777975wrp.107.2023.07.17.02.50.24
+        by smtp.gmail.com with ESMTPSA id a3-20020a5d5703000000b003143cb109d5sm18694615wrv.14.2023.07.17.03.20.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 02:50:25 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 12:50:20 +0300
+        Mon, 17 Jul 2023 03:20:35 -0700 (PDT)
+Date:   Mon, 17 Jul 2023 13:20:31 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] firewire: core: revert GFP_ATOMIC changes
-Message-ID: <89fe5e6f-d6c3-42d6-bf86-3eb1f4193c1b@kili.mountain>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_conn: clean up some casts
+Message-ID: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,61 +66,66 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This was recently changed from GFP_ATOMIC to GFP_KERNEL, but Smatch
-complains that GFP_ATOMIC is still required:
+The ERR_PTR/PTR_ERR() functions are only for error pointers.  They're
+not a generic way to cast pointers to int.
 
-drivers/firewire/core-topology.c:223 build_tree() warn: sleeping in atomic context
-
-The problematic call trees are:
-
-fw_core_handle_bus_reset() <- spin_lock_irqsave(&card->lock, flags);
--> build_tree()
-   -> fw_node_create() <- sleeping allocation
-
-fw_core_handle_bus_reset() <- spin_lock_irqsave(&card->lock, flags);
--> update_tree()
-   -> fw_node_event()
-
-This second call tree is a bit complicated because we event is not
-FW_NODE_CREATED so we would have to hit a goto create; to hit the
-bug.
-
-Fixes: 06f45435d985 ("firewire: core: obsolete usage of GFP_ATOMIC at building node tree")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-From static analysis.  Smatch does not warn about fw_node_event()
-because event can't be FW_NODE_CREATED.
+We should really create INT_PTR/PTR_INT() functions.  But this is a
+cleanup until someone creates those.
 
- drivers/firewire/core-device.c   | 2 +-
- drivers/firewire/core-topology.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/bluetooth/hci_conn.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index a3104e35412c..aa597cda0d88 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -1211,7 +1211,7 @@ void fw_node_event(struct fw_card *card, struct fw_node *node, int event)
- 		 * without actually having a link.
- 		 */
-  create:
--		device = kzalloc(sizeof(*device), GFP_KERNEL);
-+		device = kzalloc(sizeof(*device), GFP_ATOMIC);
- 		if (device == NULL)
- 			break;
+diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
+index cccc2b8b60a8..aea6fa12d954 100644
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -873,7 +873,7 @@ static void bis_cleanup(struct hci_conn *conn)
  
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index 88466b663482..f40c81534381 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -101,7 +101,7 @@ static struct fw_node *fw_node_create(u32 sid, int port_count, int color)
+ static int remove_cig_sync(struct hci_dev *hdev, void *data)
  {
- 	struct fw_node *node;
+-	u8 handle = PTR_ERR(data);
++	u8 handle = (unsigned long)data;
  
--	node = kzalloc(struct_size(node, ports, port_count), GFP_KERNEL);
-+	node = kzalloc(struct_size(node, ports, port_count), GFP_ATOMIC);
- 	if (node == NULL)
- 		return NULL;
+ 	return hci_le_remove_cig_sync(hdev, handle);
+ }
+@@ -882,7 +882,7 @@ static int hci_le_remove_cig(struct hci_dev *hdev, u8 handle)
+ {
+ 	bt_dev_dbg(hdev, "handle 0x%2.2x", handle);
  
+-	return hci_cmd_sync_queue(hdev, remove_cig_sync, ERR_PTR(handle), NULL);
++	return hci_cmd_sync_queue(hdev, remove_cig_sync, (void *)(unsigned long)handle, NULL);
+ }
+ 
+ static void find_cis(struct hci_conn *conn, void *data)
+@@ -1234,7 +1234,7 @@ void hci_conn_failed(struct hci_conn *conn, u8 status)
+ static void create_le_conn_complete(struct hci_dev *hdev, void *data, int err)
+ {
+ 	struct hci_conn *conn;
+-	u16 handle = PTR_ERR(data);
++	u16 handle = (unsigned long)data;
+ 
+ 	conn = hci_conn_hash_lookup_handle(hdev, handle);
+ 	if (!conn)
+@@ -1264,7 +1264,7 @@ static void create_le_conn_complete(struct hci_dev *hdev, void *data, int err)
+ static int hci_connect_le_sync(struct hci_dev *hdev, void *data)
+ {
+ 	struct hci_conn *conn;
+-	u16 handle = PTR_ERR(data);
++	u16 handle = (unsigned long)data;
+ 
+ 	conn = hci_conn_hash_lookup_handle(hdev, handle);
+ 	if (!conn)
+@@ -2854,7 +2854,7 @@ u32 hci_conn_get_phy(struct hci_conn *conn)
+ static int abort_conn_sync(struct hci_dev *hdev, void *data)
+ {
+ 	struct hci_conn *conn;
+-	u16 handle = PTR_ERR(data);
++	u16 handle = (unsigned long)data;
+ 
+ 	conn = hci_conn_hash_lookup_handle(hdev, handle);
+ 	if (!conn)
 -- 
 2.39.2
 
