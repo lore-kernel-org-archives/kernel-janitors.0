@@ -2,103 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2783BEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 18:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C69BEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 18:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231607AbjGQSQO (ORCPT
+        id S232158AbjGQS2d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 14:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47640 "EHLO
+        Mon, 17 Jul 2023 14:28:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbjGQSQN (ORCPT
+        with ESMTP id S230325AbjGQS1o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 14:16:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F031990
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 11:15:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0AE48611D8
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 18:14:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC103C433C9;
-        Mon, 17 Jul 2023 18:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689617695;
-        bh=OmMKDjWAGS0CdP7PK45ZzftVRbXmwhJuz0GNS0T+drM=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=vL3kOgoXcNqDwcsiB4NA1MXYnWRLMa2oZrr86MKOBFytI6r6L73O/YDOyRITDNQ0m
-         S0Lii6T7KprSe6hRT/AXA/tyYAw5S8Y6fjtZ1Ikk3kQ2gixv0qIDQUbuBqtNzgJJhy
-         fVuMqgNffOTO8XOtPOqEcfDFmmltxBqlByqLr8FuBI+ovuZ/VFnBBO9MXGsfXz2goD
-         mbAnj35sgywOib+DkXucQQYVu/2VJZTlfwb7l6/Mx8/VplihpDMxlc2FDP2waWomOl
-         UEeZDbjtHJNrYc/L0S51KA6Z3dbKPUtIaxXbLZ1+q70RfaaQ6t7nTfg7bMDAS2Gj2F
-         +U/tuEB2sEogQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <74148292-ce4d-4e01-a1a7-921e6767da14@moroto.mountain>
-References: <74148292-ce4d-4e01-a1a7-921e6767da14@moroto.mountain>
-Subject: Re: [PATCH] ASoC: SOF: ipc3-dtrace: uninitialized data in
- dfsentry_trace_filter_write()
-Message-Id: <168961769268.448315.12624204835673463699.b4-ty@kernel.org>
-Date:   Mon, 17 Jul 2023 19:14:52 +0100
+        Mon, 17 Jul 2023 14:27:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5929410FF
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 11:27:20 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id LSvbqI3jtF3kiLSvbqbtkE; Mon, 17 Jul 2023 20:26:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1689618396;
+        bh=kBD2e0F/GIE7mK1/X5V+wBc0M2ODYA/DNmvWog50OLg=;
+        h=From:To:Cc:Subject:Date;
+        b=c1l4uAXRziFcIhZT/t3Uw/UFXsl+TJwWix1ioOHeSFvIFZ6DvWr09QihTxIxMORD5
+         qiy2AkAG0rwxrD7bHwlK6v+QGRf5d926XyNIIXXXHhDXiewD38cEIdXOhNtdx3pSKK
+         KZAeM2NoF4FONJIcI6vMp7klOWKasReRg2alhAB68YcWU9vZoVxsZ6qTaGph2HaAjz
+         /J7fYhPtqYRm0853vRvKbGfrfrUEEJ1TC++bONStiH/XybNJoceTPF6vvRrYaFlvhV
+         G05HgPkR5sCzGXUMY9dY50jihldp77gvgYN7fMSdtKBOBvrdxMz4MWcYtddRYeFrXs
+         fIpjneF9msctw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 17 Jul 2023 20:26:36 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] driver core: Fix an error handling path in fw_devlink_create_devlink()
+Date:   Mon, 17 Jul 2023 20:26:30 +0200
+Message-Id: <858b140b276ceab52a84ce0d4f924b0c411560d1.1689618373.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 07 Jul 2023 14:25:23 +0300, Dan Carpenter wrote:
-> This doesn't check how many bytes the simple_write_to_buffer() writes to
-> the buffer.  The only thing that we know is that the first byte is
-> initialized and the last byte of the buffer is set to NUL.  However
-> the middle bytes could be uninitialized.
-> 
-> There is no need to use simple_write_to_buffer().  This code does not
-> support partial writes but instead passes "pos = 0" as the starting
-> offset regardless of what the user passed as "*ppos".  Just use the
-> copy_from_user() function and initialize the whole buffer.
-> 
-> [...]
+All error handling paths go to 'out', except this one. Be consistent and
+also branch to 'out' here.
 
-Applied to
+Fixes: 74c782cff77b ("driver core: fw_devlink: Handle suppliers that don't use driver core")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+/!\ Speculative /!\
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   This patch is based on analysis of the surrounding code and should be
+   reviewed with care !
 
-Thanks!
+   If the patch is wrong, maybe a comment in the code could explain why.
 
-[1/1] ASoC: SOF: ipc3-dtrace: uninitialized data in dfsentry_trace_filter_write()
-      commit: 469e2f28c2cbee2430058c1c9bb6d1675d7195fb
+/!\ Speculative /!\
+---
+ drivers/base/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 3dff5037943e..854c1fab742c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2107,7 +2107,8 @@ static int fw_devlink_create_devlink(struct device *con,
+ 	    fwnode_ancestor_init_without_drv(sup_handle)) {
+ 		dev_dbg(con, "Not linking %pfwf - might never become dev\n",
+ 			sup_handle);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	ret = -EAGAIN;
+-- 
+2.34.1
 
