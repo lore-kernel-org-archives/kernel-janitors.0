@@ -2,85 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AABEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 20:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE97C001B0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 22:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbjGQU7N (ORCPT
+        id S230092AbjGQWbS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 16:59:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46500 "EHLO
+        Mon, 17 Jul 2023 18:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjGQU7M (ORCPT
+        with ESMTP id S229872AbjGQWbR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 16:59:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FC2010C4
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 13:59:11 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id LVJCqUVoYFtSYLVJDqOY7F; Mon, 17 Jul 2023 22:59:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689627549;
-        bh=bBwLuFazUuxYCGfEXRFxeHu86Q9tYW1XepWJEFG929I=;
-        h=From:To:Cc:Subject:Date;
-        b=bBnCqgbyiMVdDcTfAiV13KWJ+nMAcHQ4A1fYFzfHrR4flM9hjIb/z63k1uiviOhM6
-         umJvYXgXrfHZkSoCPKg5b96aLoLFeJnhF2m0q2r9tg5sxWpQpkArXzd+nbUR79ALxV
-         ca1rahGgOJ3CdhL/0n4DLqs1o0UKGdWtc2luHACVxJWbQ3EBjRf0P7yIQXkTkv299I
-         ZY1ATpTB8B8WT86vU8Ne42vutpWSbRU+MhQKEXiCEGtX8sDyiYIouanqZ8yyT2SZBk
-         v3P3R36xMYJ8o4bLAu3iF9h9Vw6cJC/h84RxNyo842mIkyZQeN64qnQopMQni/22m7
-         /DmDBYCK0Fs4A==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Jul 2023 22:59:09 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jorge Lopez <jorge.lopez2@hp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86: hp-bioscfg: Fix another memory leaks in hp_populate_enumeration_elements_from_package()
-Date:   Mon, 17 Jul 2023 22:59:05 +0200
-Message-Id: <2a60147e2d555a77d348d1bdfec160bc936e1dc6.1689627531.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 17 Jul 2023 18:31:17 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F298121;
+        Mon, 17 Jul 2023 15:31:12 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id 5614622812f47-3a3790a0a48so3778953b6e.1;
+        Mon, 17 Jul 2023 15:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689633071; x=1692225071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SHDp8nB7O1cUSk6u+dkygi1nw20zAJ2ZKhqLuBxI790=;
+        b=G5n13dJeXmTKv6yojdScom21ZyYUXIm+6JbNUjHBnCqk3Tjh9BDMM8zwsNi+zNqM1M
+         d3BXYtSzETH0Rd90iFhzBoVsQ9ItI+wukpzw87SPGkn1nqIGTpio+Im2KsmqpSwZoexV
+         SczTZWml4H1sSJA4fQMcn3BCyvyaPJMC/RJHFegzT3pvCZSl8TdQYKC4+iLc7kp/2sWe
+         yOYRxtM3Q+ZQTf3W1YqphCY/ogoETWQy1UOqPdWl/DNiKGHb8MekjHzleFExMpCSf4YL
+         T5lA7L1qVsU+YmDmdqL4rURyEbstAkvRzTmBdEpXSJ1C8NLzOaxDk1qoEcaG4XAl+nSw
+         kjjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689633071; x=1692225071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHDp8nB7O1cUSk6u+dkygi1nw20zAJ2ZKhqLuBxI790=;
+        b=iCwGp8qtxWBpj+NPWwxlV4bcFg6VsSY3EMxahkG+SwgG5yWpwX9iGmWI0nloSDoDsm
+         Juwg512PWILQqtRv9IR3Vw1EAdLlFeC+qCl4gQqDG7+XVvpl1G30dpK5dvUGdEdxP/Th
+         tqDM1DMRJiZKtaca9uiKztFMiqmbtAwkzM9z2bNkVFepWhyFqun3X+HtoE6y0yIzjHFV
+         Eo+jNAwfHpFQldUrwzgQqxZp4U0P9YpQzcLzRWITvYILkCBiXZC+6e7flfN5zsNL2/ki
+         vHRIC5+Vp/IaM300PY5n/mSTWguab36tm3COCG/z+6DqzXowkxQE/Tw1+wBLvUdiWaW3
+         QfdQ==
+X-Gm-Message-State: ABy/qLaaXiY991fs5fdcPn3asy5SWCQ2hpmqq4Ix9E1ZyWtSTUhtITga
+        Y7UXql0v1OUeMRYkR1pIYiw=
+X-Google-Smtp-Source: APBJJlFBdYyBQNo03MuUiEg0P4y5KzZsEf+U7+d/55pz5eYo/yLMgvdrot/jg88363nARNsMAPiFgg==
+X-Received: by 2002:a05:6808:1384:b0:3a4:1f76:bdfb with SMTP id c4-20020a056808138400b003a41f76bdfbmr15020079oiw.14.1689633071269;
+        Mon, 17 Jul 2023 15:31:11 -0700 (PDT)
+Received: from ?IPV6:2603:8081:140c:1a00:2f8:ff69:16db:1c31? (2603-8081-140c-1a00-02f8-ff69-16db-1c31.res6.spectrum.com. [2603:8081:140c:1a00:2f8:ff69:16db:1c31])
+        by smtp.gmail.com with ESMTPSA id a14-20020a056808128e00b003a44b425c18sm184398oiw.43.2023.07.17.15.31.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jul 2023 15:31:10 -0700 (PDT)
+Message-ID: <b5880a47-aaa4-cb5e-e1f6-00f17695efe8@gmail.com>
+Date:   Mon, 17 Jul 2023 17:31:09 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Zhu Yanjun <zyjzyj2000@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+References: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From:   Bob Pearson <rpearsonhpe@gmail.com>
+In-Reply-To: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If the check that both expected and read object type match fails, some
-resource may still need to be released.
+On 7/17/23 14:55, Christophe JAILLET wrote:
+> All errors go to the error handling path, except this one. Be consistent
+> and also branch to it.
+> 
+> Fixes: 02ed253770fb ("RDMA/rxe: Introduce rxe access supported flags")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> /!\ Speculative /!\
+> 
+>    This patch is based on analysis of the surrounding code and should be
+>    reviewed with care !
+> 
+> /!\ Speculative /!\
+> ---
+>  drivers/infiniband/sw/rxe/rxe_mw.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_mw.c b/drivers/infiniband/sw/rxe/rxe_mw.c
+> index d8a43d87de93..d9312b5c9d20 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_mw.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_mw.c
+> @@ -199,7 +199,8 @@ int rxe_bind_mw(struct rxe_qp *qp, struct rxe_send_wqe *wqe)
+>  
+>  	if (access & ~RXE_ACCESS_SUPPORTED_MW) {
+>  		rxe_err_mw(mw, "access %#x not supported", access);
+> -		return -EOPNOTSUPP;
+> +		ret = -EOPNOTSUPP;
+> +		goto err_drop_mr;
+>  	}
+>  
+>  	spin_lock_bh(&mw->lock);
+Christophe,
+Good catch. Thanks. Probably should go to for-next.
+Bob
 
-Add the missing kfree().
-
-Fixes: 6b2770bfd6f9 ("platform/x86: hp-bioscfg: enum-attributes")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-/!\ Speculative /!\
-
-   This patch is based on analysis of the surrounding code and should be
-   reviewed with care !
-
-/!\ Speculative /!\
----
- drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c b/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
-index dd173020c747..8e615ccfc9b5 100644
---- a/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
-+++ b/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
-@@ -164,6 +164,7 @@ static int hp_populate_enumeration_elements_from_package(union acpi_object *enum
- 		if (expected_enum_types[eloc] != enum_obj[elem].type) {
- 			pr_err("Error expected type %d for elem %d, but got type %d instead\n",
- 			       expected_enum_types[eloc], elem, enum_obj[elem].type);
-+			kfree(str_value);
- 			return -EIO;
- 		}
- 
--- 
-2.34.1
-
+Reviewed-by: Bob Pearson <rpearsonhpe@gmail.com>
