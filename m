@@ -2,34 +2,35 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED90C001DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 03:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E75EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 03:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbjGQDNQ (ORCPT
+        id S231375AbjGQDNa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Jul 2023 23:13:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
+        Sun, 16 Jul 2023 23:13:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbjGQDMr (ORCPT
+        with ESMTP id S231441AbjGQDM5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Jul 2023 23:12:47 -0400
+        Sun, 16 Jul 2023 23:12:57 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 6CBCE18D;
-        Sun, 16 Jul 2023 20:12:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 37CCB172C;
+        Sun, 16 Jul 2023 20:12:39 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 03B58601858F5;
-        Mon, 17 Jul 2023 11:12:22 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 2987A601858F3;
+        Mon, 17 Jul 2023 11:12:30 +0800 (CST)
 X-MD-Sfrom: yunchuan@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Wu Yunchuan <yunchuan@nfschina.com>
-To:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+To:     rmody@marvell.com, skalluru@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
         edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc:     uttenthaler@ems-wuensche.com, yunchuan@nfschina.com,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next v3 8/9] can: ems_pci: Remove unnecessary (void*) conversions
-Date:   Mon, 17 Jul 2023 11:12:21 +0800
-Message-Id: <20230717031221.55073-1-yunchuan@nfschina.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Wu Yunchuan <yunchuan@nfschina.com>
+Subject: [PATCH net-next v3 9/9] net: bna: Remove unnecessary (void*) conversions
+Date:   Mon, 17 Jul 2023 11:12:29 +0800
+Message-Id: <20230717031229.55169-1-yunchuan@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,45 +38,73 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct ems_pci_card *).
+No need cast (void*) to (struct bnad_tx_info *) or
+(struct bnad_rx_info *).
 
 Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
-Acked-by: Marc Kleine-Budde<mkl@pengutronix.de>
 ---
- drivers/net/can/sja1000/ems_pci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/brocade/bna/bnad.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/can/sja1000/ems_pci.c b/drivers/net/can/sja1000/ems_pci.c
-index c56e27223e5f..ac86640998a8 100644
---- a/drivers/net/can/sja1000/ems_pci.c
-+++ b/drivers/net/can/sja1000/ems_pci.c
-@@ -148,7 +148,7 @@ static void ems_pci_v1_write_reg(const struct sja1000_priv *priv,
- 
- static void ems_pci_v1_post_irq(const struct sja1000_priv *priv)
+diff --git a/drivers/net/ethernet/brocade/bna/bnad.c b/drivers/net/ethernet/brocade/bna/bnad.c
+index d6d90f9722a7..31191b520b58 100644
+--- a/drivers/net/ethernet/brocade/bna/bnad.c
++++ b/drivers/net/ethernet/brocade/bna/bnad.c
+@@ -1037,8 +1037,7 @@ bnad_cb_ccb_destroy(struct bnad *bnad, struct bna_ccb *ccb)
+ static void
+ bnad_cb_tx_stall(struct bnad *bnad, struct bna_tx *tx)
  {
--	struct ems_pci_card *card = (struct ems_pci_card *)priv->priv;
-+	struct ems_pci_card *card = priv->priv;
- 
- 	/* reset int flag of pita */
- 	writel(PITA2_ICR_INT0_EN | PITA2_ICR_INT0,
-@@ -168,7 +168,7 @@ static void ems_pci_v2_write_reg(const struct sja1000_priv *priv,
- 
- static void ems_pci_v2_post_irq(const struct sja1000_priv *priv)
+-	struct bnad_tx_info *tx_info =
+-			(struct bnad_tx_info *)tx->priv;
++	struct bnad_tx_info *tx_info = tx->priv;
+ 	struct bna_tcb *tcb;
+ 	u32 txq_id;
+ 	int i;
+@@ -1056,7 +1055,7 @@ bnad_cb_tx_stall(struct bnad *bnad, struct bna_tx *tx)
+ static void
+ bnad_cb_tx_resume(struct bnad *bnad, struct bna_tx *tx)
  {
--	struct ems_pci_card *card = (struct ems_pci_card *)priv->priv;
-+	struct ems_pci_card *card = priv->priv;
- 
- 	writel(PLX_ICSR_ENA_CLR, card->conf_addr + PLX_ICSR);
- }
-@@ -186,7 +186,7 @@ static void ems_pci_v3_write_reg(const struct sja1000_priv *priv,
- 
- static void ems_pci_v3_post_irq(const struct sja1000_priv *priv)
+-	struct bnad_tx_info *tx_info = (struct bnad_tx_info *)tx->priv;
++	struct bnad_tx_info *tx_info = tx->priv;
+ 	struct bna_tcb *tcb;
+ 	u32 txq_id;
+ 	int i;
+@@ -1133,7 +1132,7 @@ bnad_tx_cleanup(struct delayed_work *work)
+ static void
+ bnad_cb_tx_cleanup(struct bnad *bnad, struct bna_tx *tx)
  {
--	struct ems_pci_card *card = (struct ems_pci_card *)priv->priv;
-+	struct ems_pci_card *card = priv->priv;
+-	struct bnad_tx_info *tx_info = (struct bnad_tx_info *)tx->priv;
++	struct bnad_tx_info *tx_info = tx->priv;
+ 	struct bna_tcb *tcb;
+ 	int i;
  
- 	writel(ASIX_LINTSR_INT0AC, card->conf_addr + ASIX_LINTSR);
- }
+@@ -1149,7 +1148,7 @@ bnad_cb_tx_cleanup(struct bnad *bnad, struct bna_tx *tx)
+ static void
+ bnad_cb_rx_stall(struct bnad *bnad, struct bna_rx *rx)
+ {
+-	struct bnad_rx_info *rx_info = (struct bnad_rx_info *)rx->priv;
++	struct bnad_rx_info *rx_info = rx->priv;
+ 	struct bna_ccb *ccb;
+ 	struct bnad_rx_ctrl *rx_ctrl;
+ 	int i;
+@@ -1208,7 +1207,7 @@ bnad_rx_cleanup(void *work)
+ static void
+ bnad_cb_rx_cleanup(struct bnad *bnad, struct bna_rx *rx)
+ {
+-	struct bnad_rx_info *rx_info = (struct bnad_rx_info *)rx->priv;
++	struct bnad_rx_info *rx_info = rx->priv;
+ 	struct bna_ccb *ccb;
+ 	struct bnad_rx_ctrl *rx_ctrl;
+ 	int i;
+@@ -1231,7 +1230,7 @@ bnad_cb_rx_cleanup(struct bnad *bnad, struct bna_rx *rx)
+ static void
+ bnad_cb_rx_post(struct bnad *bnad, struct bna_rx *rx)
+ {
+-	struct bnad_rx_info *rx_info = (struct bnad_rx_info *)rx->priv;
++	struct bnad_rx_info *rx_info = rx->priv;
+ 	struct bna_ccb *ccb;
+ 	struct bna_rcb *rcb;
+ 	struct bnad_rx_ctrl *rx_ctrl;
 -- 
 2.30.2
 
