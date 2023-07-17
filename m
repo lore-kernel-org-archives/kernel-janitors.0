@@ -2,55 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53691C0015E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 20:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB89C001DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 20:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbjGQUJa (ORCPT
+        id S230388AbjGQUxs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 16:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53602 "EHLO
+        Mon, 17 Jul 2023 16:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjGQUJ3 (ORCPT
+        with ESMTP id S231428AbjGQUxo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 16:09:29 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DFEFB
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 13:09:27 -0700 (PDT)
+        Mon, 17 Jul 2023 16:53:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7C7A4
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jul 2023 13:53:43 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id LUX2q5vfabkI3LUX3qnKyX; Mon, 17 Jul 2023 22:09:26 +0200
+        id LVDvqk82e2ts4LVDvqgmhS; Mon, 17 Jul 2023 22:53:41 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689624566;
-        bh=UEj0AXAxlyKrDR2T9dRAsXWpemXdwncxY2h++Qk+qQw=;
+        s=t20230301; t=1689627221;
+        bh=gH/CT643ZS5ZguiPFDy4NfnRiWDoPJy5TfU7apbBTY4=;
         h=From:To:Cc:Subject:Date;
-        b=d5cNBpyckTzPUqzqnhq0Y8pnMXCGVib/3GQbOzMQQsYxZ3ZYKt+G4E2/m0JKWFX+e
-         qqDGQBU3SKWwxg6+fc7iAiwf/ujP3ncKaZh5EqZ0NlrQbWfy0k6ZMAHR2alnc/RV0O
-         BRWLayHoFfKe22+BCe+9ZH74Rp3Yb4VGTr//1QNai0xaOnpWocQub4BxIKf/4/XYQQ
-         aC6q05JzSPNLdSdhUaYi7DjgHHxT1Idu1MjlUL6CW1hWdXd95uygiX+S50KeqRHdcM
-         t5KbEAcOD6WglubNCuVqoWfi+MZ7NLw0gvaibiq0kYwspynZkdd5yCqTNi6bIdnZRC
-         sbthVNZOAmuLA==
+        b=EUxW+eBqx0/fwJQ4mgi6TBoMfh2JIImC5lXvo4ECT562e2t/Pe25+tCgrwogyu7TW
+         34f6skb/GVFv9oRX95oCPkM0o2XzJilSzDsFzjB1pxM5q5vqzomhi3fAB8d11h4DZZ
+         pCrsK4Yfm2hSz5L8D6b8Jr7olrJgiBMFaG7u3OwMHbV6O6PJB8A20qLxtd1W3gb54U
+         HZ2WLgmx7vG9PuCOHL8HjbZA+ROG2YNwNWJ3W3vHS9FSaWu12UXGVvMhRKND0vNznj
+         swWYgfwcqIjMRk9ADNPg6mER/KqK0vCheGn94fEkkwiHqm/Bfi53yE+gW5QQarZhCa
+         TvcXmXOrFSYaw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Jul 2023 22:09:26 +0200
+X-ME-Date: Mon, 17 Jul 2023 22:53:41 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     Jorge Lopez <jorge.lopez2@hp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] media: mediatek: vcodec: Fix an error handling path in vdec_msg_queue_init()
-Date:   Mon, 17 Jul 2023 22:09:19 +0200
-Message-Id: <efa0d4910998931a2ec9d933117fa71482d7b33a.1689624542.git.christophe.jaillet@wanadoo.fr>
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86: hp-bioscfg: Fix some memory leaks in hp_populate_enumeration_elements_from_package()
+Date:   Mon, 17 Jul 2023 22:53:37 +0200
+Message-Id: <9770122e4e079dfa87d860ed86ba1a1237bcf944.1689627201.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,38 +51,55 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All errors go to the error handling path, except this one. Be consistent
-and also branch to it.
+In the loop in the ENUM_POSSIBLE_VALUES case, we allocate some memory that
+is never freed.
 
-Fixes: 2f5d0aef37c6 ("media: mediatek: vcodec: support stateless AV1 decoder")
+While at it, add some "str_value = NULL" to avoid some potential double
+free.
+
+Fixes: 6b2770bfd6f9 ("platform/x86: hp-bioscfg: enum-attributes")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+/!\ Speculative /!\
 
-diff --git a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-index 04e6dc6cfa1d..c6cc2785e0e8 100644
---- a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-+++ b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-@@ -338,14 +338,16 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg_queue,
- 			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->rd_mv_addr);
- 			if (err) {
- 				mtk_v4l2_err("failed to allocate rd_mv_addr buf[%d]", i);
--				return -ENOMEM;
-+				err = -ENOMEM;
-+				goto mem_alloc_err;
- 			}
+   This patch is based on analysis of the surrounding code and should be
+   reviewed with care !
+
+/!\ Speculative /!\
+---
+ drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c b/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
+index b1b241f0205a..dd173020c747 100644
+--- a/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
++++ b/drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c
+@@ -224,6 +224,7 @@ static int hp_populate_enumeration_elements_from_package(union acpi_object *enum
+ 					sizeof(enum_data->common.prerequisites[reqs]));
  
- 			lat_buf->tile_addr.size = VDEC_LAT_TILE_SZ;
- 			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->tile_addr);
- 			if (err) {
- 				mtk_v4l2_err("failed to allocate tile_addr buf[%d]", i);
--				return -ENOMEM;
-+				err = -ENOMEM;
-+				goto mem_alloc_err;
+ 				kfree(str_value);
++				str_value = NULL;
  			}
+ 			break;
+ 
+@@ -275,6 +276,9 @@ static int hp_populate_enumeration_elements_from_package(union acpi_object *enum
+ 					strscpy(enum_data->possible_values[pos_values],
+ 						str_value,
+ 						sizeof(enum_data->possible_values[pos_values]));
++
++				kfree(str_value);
++				str_value = NULL;
+ 			}
+ 			break;
+ 		default:
+@@ -283,6 +287,7 @@ static int hp_populate_enumeration_elements_from_package(union acpi_object *enum
  		}
  
+ 		kfree(str_value);
++		str_value = NULL;
+ 	}
+ 
+ exit_enumeration_package:
 -- 
 2.34.1
 
