@@ -2,118 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F56AEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 12:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61380EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 12:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbjGRMLc (ORCPT
+        id S231320AbjGRMaJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 08:11:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
+        Tue, 18 Jul 2023 08:30:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232372AbjGRMLG (ORCPT
+        with ESMTP id S229862AbjGRMaI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 08:11:06 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D471726;
-        Tue, 18 Jul 2023 05:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689682256; x=1721218256;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=g861e9x38BavCkoCdJAt5TnAFAkblB6XYSxbGTOkjLc=;
-  b=C0J9iJz5jOukZ/NJX4ZBN+vuCSuAp2uTOOQk3i1hcOy5CUOSHUQch8WO
-   +AlJNxEFfzRApdIPOOu2StxfV/p9VRYplpiKFnNvBum3hdYS8hUHzbQH1
-   7zOK8dUDNBPWtpnkuKsaHqmDvWcoUW04prY3LcBCM2AfxERHoA2T09fFm
-   Dg+YuCWXK7mRb+ILu2STxAzAR9iYlL6HzMYbVZ4PRUXjPhBf6EU/7Dxmp
-   rJs8TluLg7cSLNCKoKP8GI1dFSkS7N+0Bp0/SDEwlkLBPR0Uk0XtQRas8
-   Xhlf5ZyNXVxzzAUZr/kLvNdoy+CAS1LIMxYsMo6dwvDJKgCTEhr4b6Kp9
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="366230092"
-X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
-   d="scan'208";a="366230092"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 05:10:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="793605769"
-X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
-   d="scan'208";a="793605769"
-Received: from ahajda-mobl.ger.corp.intel.com (HELO [10.213.19.167]) ([10.213.19.167])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 05:10:48 -0700
-Message-ID: <e1dafe04-0375-08a0-dca0-707d68ea5bd5@intel.com>
-Date:   Tue, 18 Jul 2023 14:10:45 +0200
+        Tue, 18 Jul 2023 08:30:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F75FE77;
+        Tue, 18 Jul 2023 05:30:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 197FB6155F;
+        Tue, 18 Jul 2023 12:30:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00A15C433C7;
+        Tue, 18 Jul 2023 12:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689683406;
+        bh=XvvqG2enMF0C2I2unxaLi71CxARnltN4jedpBpQNdJc=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=bxd+GU+hxxU5VUmj0VX4eNVdEcnugMxLzAmQPAaL2OQI1IVMzyJMxLBIKvstyDDck
+         hpatCx3mpmiTHewIPooc2SlATNgEG7uKFORyw7243vEopHcd6HY1gv2kHoXH8Tx4zn
+         M0OnikmzNxTV1AfycaTTbcqL4AqFRSz6sA9HCa51rm+CSQWMZLEeGAYGlP+jwTvEkb
+         PC/ckbVWctRFNP8GxYi93ufBAJ0ijQaVtAiInJg3Tp0HBJk1BQ/HgobI6P7wQ383H9
+         umJcsmtvjQrSee5Xq96ORW5yWCM6aCmqWE+/D9r4iOfDw6BtVO/Nl5DTqt5qUA1cJ3
+         Sw+FmPMdPWAIg==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Bob Pearson <rpearsonhpe@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C43698d8a3ed4e720899eadac887427f73d7ec2eb=2E1689623?=
+ =?utf-8?q?735=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+References: =?utf-8?q?=3C43698d8a3ed4e720899eadac887427f73d7ec2eb=2E16896237?=
+ =?utf-8?q?35=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+Subject: Re: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
+Message-Id: <168968340262.290612.1449384061566774393.b4-ty@kernel.org>
+Date:   Tue, 18 Jul 2023 15:30:02 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.13.0
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Fix an error handling path in
- igt_write_huge()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <7a036b88671312ee9adc01c74ef5b3376f690b76.1689619758.git.christophe.jaillet@wanadoo.fr>
-From:   Andrzej Hajda <andrzej.hajda@intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <7a036b88671312ee9adc01c74ef5b3376f690b76.1689619758.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-a055d
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 17.07.2023 20:49, Christophe JAILLET wrote:
-> All error handling paths go to 'out', except this one. Be consistent and
-> also branch to 'out' here.
+
+On Mon, 17 Jul 2023 21:55:56 +0200, Christophe JAILLET wrote:
+> All errors go to the error handling path, except this one. Be consistent
+> and also branch to it.
 > 
-> Fixes: c10a652e239e ("drm/i915/selftests: Rework context handling in hugepages selftests")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-
-For me seems correct.
-
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
-
-Regards
-Andrzej
-
-
-> ---
-> /!\ Speculative /!\
 > 
->     This patch is based on analysis of the surrounding code and should be
->     reviewed with care !
-> 
->     If the patch is wrong, maybe a comment in the code could explain why.
-> 
-> /!\ Speculative /!\
-> ---
->   drivers/gpu/drm/i915/gem/selftests/huge_pages.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/selftests/huge_pages.c b/drivers/gpu/drm/i915/gem/selftests/huge_pages.c
-> index df6c9a84252c..6b9f6cf50bf6 100644
-> --- a/drivers/gpu/drm/i915/gem/selftests/huge_pages.c
-> +++ b/drivers/gpu/drm/i915/gem/selftests/huge_pages.c
-> @@ -1246,8 +1246,10 @@ static int igt_write_huge(struct drm_i915_private *i915,
->   	 * times in succession a possibility by enlarging the permutation array.
->   	 */
->   	order = i915_random_order(count * count, &prng);
-> -	if (!order)
-> -		return -ENOMEM;
-> +	if (!order) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
->   
->   	max_page_size = rounddown_pow_of_two(obj->mm.page_sizes.sg);
->   	max = div_u64(max - size, max_page_size);
 
+Applied, thanks!
+
+[1/1] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
+      https://git.kernel.org/rdma/rdma/c/5c719d7aef298e
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
