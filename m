@@ -2,90 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79946EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 15:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0F3C001DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 17:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbjGRPzL (ORCPT
+        id S230215AbjGRRhB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48806 "EHLO
+        Tue, 18 Jul 2023 13:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233629AbjGRPzK (ORCPT
+        with ESMTP id S231348AbjGRRhA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 11:55:10 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5C480E47
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 08:55:06 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8BxHOvYtbZkstYGAA--.12601S3;
-        Tue, 18 Jul 2023 23:55:04 +0800 (CST)
-Received: from [10.20.42.43] (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxF83YtbZkFHgzAA--.8545S3;
-        Tue, 18 Jul 2023 23:55:04 +0800 (CST)
-Message-ID: <9bb65e5b-6537-4f86-e604-9dc1b797ce62@loongson.cn>
-Date:   Tue, 18 Jul 2023 23:55:03 +0800
+        Tue, 18 Jul 2023 13:37:00 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C051A8
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 10:36:57 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id Lod3qCbotZWkDLod3qY9dM; Tue, 18 Jul 2023 19:36:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1689701815;
+        bh=lsbpuBE8VHQOk+U0aT8eLugmaMO5aLTU5RhBZUcQCX8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=mEo2o3dOjfpSc7tohZnxrCKfQQXNP+wPQNnWeSxlxysT4XHzZDYOFaoNEDfD6EgF7
+         ukEPqxO4BonkifqpWMW6vT9kpUGZjdYK9UrcvIRdpBMv7kwLnGaXbbD85MVoRfe2Lk
+         CWCWiL7WFr5kuomFPXCZqtTp8fV3YsoCMxmBKvmsOtkYRz4gpK0ikmKjUnl8Ldggpr
+         1D7ATER6Nuwouc0n+I6da0sj0UHZ+A0Xiw9vd3GtPXML/B4ZtsmbkL1+6w202PxEj5
+         qY1cKEn4BfLlP8+zBAklk56kyYvJEPXT2ztE16dR6kFcjmvkaLP/0onbPNgir7iZJy
+         TlXy+o4QsbEkg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 18 Jul 2023 19:36:55 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <8d98b544-6191-53ce-fcb7-07d932c40f82@wanadoo.fr>
+Date:   Tue, 18 Jul 2023 19:36:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] drm: loongson: Add a check for lsdc_bo_create() errors
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>, conduct@kernel.org
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <0da6859b-40cc-4b3e-b8b6-fed157517083@moroto.mountain>
- <c9ac14ee-7cfc-c10b-4a55-37049bbb4338@loongson.cn>
- <bbaa11a9-9984-40c1-bd63-adc8698d0185@kadam.mountain>
- <90d22f14-c912-42f0-bf33-eb4297fe9fa8@kadam.mountain>
-From:   suijingfeng <suijingfeng@loongson.cn>
-In-Reply-To: <90d22f14-c912-42f0-bf33-eb4297fe9fa8@kadam.mountain>
+Subject: Re: [PATCH] platform/x86: hp-bioscfg: Fix some memory leaks in
+ hp_populate_enumeration_elements_from_package()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Jorge Lopez <jorge.lopez2@hp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <9770122e4e079dfa87d860ed86ba1a1237bcf944.1689627201.git.christophe.jaillet@wanadoo.fr>
+ <81fd0ef0-e254-4a24-a88a-459b1d773354@kadam.mountain>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <81fd0ef0-e254-4a24-a88a-459b1d773354@kadam.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8CxF83YtbZkFHgzAA--.8545S3
-X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-        ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-        BjDU0xBIdaVrnRJUUUBlb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-        xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-        j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
-        AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
-        67AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44
-        I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2
-        jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0V
-        AS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCF54CYxVAaw2AFwI0_Jrv_JF1l4I8I3I0E
-        4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGw
-        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48J
-        MIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
-        IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2
-        z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1iSdDUUUUU==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Le 18/07/2023 à 09:55, Dan Carpenter a écrit :
+> On Mon, Jul 17, 2023 at 10:53:37PM +0200, Christophe JAILLET wrote:
+>> In the loop in the ENUM_POSSIBLE_VALUES case, we allocate some memory that
+>> is never freed.
+>>
+>> While at it, add some "str_value = NULL" to avoid some potential double
+>> free.
+>>
+>> Fixes: 6b2770bfd6f9 ("platform/x86: hp-bioscfg: enum-attributes")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> /!\ Speculative /!\
+>>
+>>     This patch is based on analysis of the surrounding code and should be
+>>     reviewed with care !
+>>
+>> /!\ Speculative /!\
+> 
+> I reported these bugs yesterday.
 
-On 2023/7/18 21:59, Dan Carpenter wrote:
-> People have suggested that I misread this and that "bare brain" means
-> through code review instead of testing.  In context that seems to make
-> sense.
->
-> Sorry.
+Ok, seen now...
+... but I don't read platform-driver-x86@vger.kernel.org :)
 
-Sorry for my broken English, that's really a misunderstanding.
+CJ
 
-> Anyway, the fixes tag is warranted.
-
-
-Okay, I'll accept this if no other experts object.
-
-To follow the convention of the DRM world,
-
-please rename the commit title by "drm/loongson: Add a check for 
-lsdc_bo_create() errors".
-
-
-Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
-
-
-With this small problem solved.
+> I don't think this is the correct fix.
+> I thought about making the str_value local to the for loop.  That's sort
+> of like what your patch does.  But I wasn't sure that was necessarily
+> correct either.
+> 
+> This code needs more testing as well.  It seems no one has called this
+> function.
+> 
+> Smatch complained about uninitialized variables as well.  I didn't
+> bother to report that yesterday but I may as well.
+> 
+> regards,
+> dan carpenter
+> 
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:188 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:191 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:194 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:197 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:200 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:239 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:242 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/string-attributes.c:245 hp_populate_string_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:192 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:195 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:198 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:201 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:204 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:238 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:242 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/order-list-attributes.c:262 hp_populate_ordered_list_elements_from_package() error: uninitialized symbol 'value_len'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:198 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:201 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:204 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:207 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:246 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:249 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:252 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/int-attributes.c:255 hp_populate_integer_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:180 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:183 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:186 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:189 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:192 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:231 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/enum-attributes.c:239 hp_populate_enumeration_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:279 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:282 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:285 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:288 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:291 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:324 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:327 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:330 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:333 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c:362 hp_populate_password_elements_from_package() error: uninitialized symbol 'int_value'.
+> 
 
