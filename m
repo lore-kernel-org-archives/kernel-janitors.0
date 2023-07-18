@@ -2,90 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC03EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 18:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6638AEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 18:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjGRSjr (ORCPT
+        id S230090AbjGRSqq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 14:39:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37312 "EHLO
+        Tue, 18 Jul 2023 14:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230323AbjGRSjq (ORCPT
+        with ESMTP id S229452AbjGRSqp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 14:39:46 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C53FD
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 11:39:44 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id LpbhqgTmDgEYrLpbhqs7UZ; Tue, 18 Jul 2023 20:39:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689705582;
-        bh=tdlBUHWUDeKcYw0WXmCHBGLh8IA7flKlmSo8k4y0V60=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=ZQcVTd5KpaeF4EOE+fysig0lBxjfUmgJO3PowpFkNTGclDydzH+tYki8gEi+Imi5u
-         GkIbpmer1NKaH9M0eWIT1ZN2NADE/n9oQfzomnZbCavOjN5nNUqy0UpIEHc5n8Q1vg
-         5fq4ctk6/ZQ2JbRENF82CDW+oSr+cPd+noFMKqSeCxM7jysC5pbssV5dXpesa3A5pi
-         2ILIlsUoiO61Bq59piNwXMNArZnQ/2s6sz4a4qynqKcYOe9d5BycztLKblt7MlhLcs
-         VN1maZ3TcEOlXqOEKaF6s1+J/Qm86/IMmb0MrsGAuuFsuVxP6EamKutSk9sms1MJXR
-         iAPTcIILmSPGg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 18 Jul 2023 20:39:42 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <60305a76-4e41-8e51-a394-dc55c0ba05da@wanadoo.fr>
-Date:   Tue, 18 Jul 2023 20:39:32 +0200
+        Tue, 18 Jul 2023 14:46:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF915B6
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 11:46:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CAF7616B0
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 18:46:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF2DC433C8;
+        Tue, 18 Jul 2023 18:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689706003;
+        bh=o8g9igO7U5+ASKWMumYFxd8ogyiTtgaFXyMt2CAqFb0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=pZtdSroc5i0nbRxE7ZPhKmZcU1akOWuR6t0vjk98XJkiCKMCh2T8//nZnCKOndriU
+         M2XnsHmgFgDNpXrWRsMt0ySNv0xwGiU9N41naHi9132KdboMEtUG5IZMUhQN80ROkC
+         H0Z1Ru6/pC7nrapZOr7rwXBG2o/KCG7mDIRTAjcO6y4vHwdyWHMUOYq0TlS+0gdjVP
+         ZFNWk36pYQyiMtua3dR5Xhr+WNLzMa77R0mnhHLbYCqT1rEyX0U+rrS9pjY7reKbIg
+         6f1D01ug266xEyRVD680nobrjkNDIgXJH5aZbWr+QT61nftgHk0OmyVHKJSYUsBTHw
+         Asn/G7jnDZpEw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Syed Saba Kareem <Syed.SabaKareem@amd.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <b0c5b0ca-68da-47e6-a8b0-e0714f0de119@moroto.mountain>
+References: <b0c5b0ca-68da-47e6-a8b0-e0714f0de119@moroto.mountain>
+Subject: Re: [PATCH] ASoC: amd: acp: delete unnecessary NULL check
+Message-Id: <168970600162.93966.9028166669589055047.b4-ty@kernel.org>
+Date:   Tue, 18 Jul 2023 19:46:41 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] media: mediatek: vcodec: Fix an error handling path in
- vdec_msg_queue_init()
-Content-Language: fr, en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <efa0d4910998931a2ec9d933117fa71482d7b33a.1689624542.git.christophe.jaillet@wanadoo.fr>
- <1dcd0fab-eee3-4693-a7d2-4a72baef5c97@kadam.mountain>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1dcd0fab-eee3-4693-a7d2-4a72baef5c97@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 18/07/2023 à 08:58, Dan Carpenter a écrit :
-> On Mon, Jul 17, 2023 at 10:09:19PM +0200, Christophe JAILLET wrote:
->> All errors go to the error handling path, except this one. Be consistent
->> and also branch to it.
->>
->> Fixes: 2f5d0aef37c6 ("media: mediatek: vcodec: support stateless AV1 decoder")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
-> 
-> I sent this one a month ago but it hasn't been applied.
-> 
-> https://lore.kernel.org/all/b8948d9a-65bc-4f3f-aa90-60addd064819@moroto.mountain/
-> 
-> regards,
-> dan carpenter
+On Tue, 18 Jul 2023 10:04:18 +0300, Dan Carpenter wrote:
+> The list iterator can't be NULL.  Delete the check and pull the code
+> in one tab.
 > 
 > 
 
-Hi Dan,
+Applied to
 
-your patch is better than mine.
-Less verbose and more complete.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-CJ
+Thanks!
+
+[1/1] ASoC: amd: acp: delete unnecessary NULL check
+      commit: c1325a2d5182f263f2edbc6e0c1e581e4c5d5a95
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
