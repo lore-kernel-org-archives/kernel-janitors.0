@@ -2,105 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D89DEB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 07:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DC1EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 07:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbjGRHGe (ORCPT
+        id S231603AbjGRHHA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 03:06:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
+        Tue, 18 Jul 2023 03:07:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229714AbjGRHGd (ORCPT
+        with ESMTP id S231589AbjGRHG7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 03:06:33 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C2CD1B6
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:06:32 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fbea147034so49593035e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689663990; x=1692255990;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nYEWW1rnYJ4+p9oyWKImYPOQZG79ilAZkGR7JuMrcw=;
-        b=pcgAsvi9wUNhcHiej3FU0UeGbe7JCQZCMbOxx5waqBCBWKJWyGxhvqsQYKcQpVCeDn
-         NomZymyke1mB5EMucg8AC8LJ9/WFloNEVsYyHa1DKCwQd6VDNmzkhtsLn4RWKGu6spyM
-         iPlAVlbUCuuHetVbNyxnclMedkJBUBwLZ3oyZesh4ZRWw4z1dnXE6ECDguQur0T2JAph
-         GsOjyhqY7cjmx8txtkdE5cBRAic7yjXCliRBqc2APopBCrfJalPevJGH9oU9iXt3KX9d
-         wLAe2t5tYSb+D0n7EYNv20xTfPz4g4R5W3okKftOYqyvJca69WfQPfTNb2HRg+Ct8Rgo
-         r3kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689663990; x=1692255990;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3nYEWW1rnYJ4+p9oyWKImYPOQZG79ilAZkGR7JuMrcw=;
-        b=S+Gh/Kim8drxV5W6BLNvroFoPelLKrvQR0yE8KQlL1HbM15TaOJdYjHm405QeSImYH
-         wZrLAhbcBb2dwznMAT1hpX/vi3UXwkTNHhaDx8FQFyZKCRkfjXUGMIADM/60zrb6MPo3
-         iCVzrutKxSUenUpYRGZVpISnLfKlVuARWeiHmJiHO9nk/1XyFp26TSEVFVcEtFCmuZiq
-         h1MHdCNV2VwgYSf91GdxI09TOpbfV1bQrwS6okVV3dGobhkypBBWOcGM5kBktoxiyVwg
-         weD7yKCmOSguoDzqiUs0xp0BzHKDzo9gPgqlwu4a6eBHgEnb/GWoRKmUg+Ahxr/QS30L
-         CYag==
-X-Gm-Message-State: ABy/qLbgHCJPl0eS8AB4n/QTXfwh3/7ZvQh2pYzUEpNoC2Hv3Y+MM5qY
-        +VYd1gl8rU8cZOT1adhCzlNgSHQjkdV9ofjSNY4=
-X-Google-Smtp-Source: APBJJlGOZE6KupIQ7yqcRQlXMRNIAssWNmqpglYqqUPh0NEQbt4ta+EhUaW7tpuNYDOlzNVxkg6IIA==
-X-Received: by 2002:a7b:ce98:0:b0:3fb:ffef:d058 with SMTP id q24-20020a7bce98000000b003fbffefd058mr1022654wmj.0.1689663990770;
-        Tue, 18 Jul 2023 00:06:30 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y4-20020a1c4b04000000b003fbc0a49b57sm1394794wma.6.2023.07.18.00.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 00:06:29 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 10:06:26 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jorge Lopez <jorge.lopez2@hp.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH 3/3] platform/x86: hp-bioscfg: fix error reporting in
- hp_add_other_attributes()
-Message-ID: <138641cc-52c0-41a5-8176-ad01c7e28c67@moroto.mountain>
+        Tue, 18 Jul 2023 03:06:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421031BE;
+        Tue, 18 Jul 2023 00:06:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C52DF60B79;
+        Tue, 18 Jul 2023 07:06:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0666EC433C9;
+        Tue, 18 Jul 2023 07:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689664017;
+        bh=ohiSxSV5BnWHAEeRIhDJnnbukX+huXSkLYSDq36RrHY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T06KZliokg+MgRtPfquZpRLUeRUf34v+Q0PnLs6dfTNnPFnDWGWwIOR+pRicRC1IT
+         pyXsegT0FwgxEBwe0HxigEc6ApM148oUDO3292rIKvlRYqDZNh6fCmEM8W+4PQ/HQp
+         CQyRNpvzSsdoz4Hkq8z7GwmwebxpgAF90tezqMFyLpU/ijUsSWgKPiGHlrElti817B
+         oHmvRsGiwqIjMCh86acEMz8xBr7ie1/bTHXoEwVWDZNY3pE0wg/l6nUI0HTC/6A8I/
+         EKGSLrezE3DbT07DxQ7J0PWyYH9lpiPMGnaga6HD47HoFxrDyQlrq70F5lJ4SkS6Yw
+         754L+MttNk6mg==
+Date:   Tue, 18 Jul 2023 15:06:42 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        kernel@collabora.com, kernel@pengutronix.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH] ARM64: dts: freescale: Fix VPU G2 clock
+Message-ID: <20230718070642.GP9559@dragon>
+References: <20230707094200.47119-1-benjamin.gaignard@collabora.com>
+ <16cbecde-3622-0525-f5f8-9198ac357c06@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ad0a6ad9-099b-40a4-ae91-b9dca622ff4e@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16cbecde-3622-0525-f5f8-9198ac357c06@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Return a negative error code instead of returning success.
+On Fri, Jul 07, 2023 at 12:08:34PM +0200, Markus Elfring wrote:
+> > Set VPU G2 clock to 300MHz like described in documentation.
+> > This fix pixels error …
+> 
+> Would you like to avoid typos in such a change description?
 
-Fixes: a34fc329b189 ("platform/x86: hp-bioscfg: bioscfg")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/platform/x86/hp/hp-bioscfg/bioscfg.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I assume you are suggesting s/fix/fixes?  I can fix it up when applying.
+Thanks!
 
-diff --git a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-index 32d9c36ca553..8c4f9e12f018 100644
---- a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-+++ b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-@@ -630,13 +630,18 @@ static int hp_add_other_attributes(int attr_type)
- 	switch (attr_type) {
- 	case HPWMI_SECURE_PLATFORM_TYPE:
- 		ret = hp_populate_secure_platform_data(attr_name_kobj);
-+		if (ret)
-+			goto err_other_attr_init;
- 		break;
- 
- 	case HPWMI_SURE_START_TYPE:
- 		ret = hp_populate_sure_start_data(attr_name_kobj);
-+		if (ret)
-+			goto err_other_attr_init;
- 		break;
- 
- 	default:
-+		ret = -EINVAL;
- 		goto err_other_attr_init;
- 	}
- 
--- 
-2.39.2
-
+Shawn
