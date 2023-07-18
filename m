@@ -2,149 +2,121 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9C1EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 19:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D99EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 21:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbjGRTbO (ORCPT
+        id S229611AbjGRVkN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 15:31:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
+        Tue, 18 Jul 2023 17:40:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjGRTbN (ORCPT
+        with ESMTP id S229709AbjGRVkM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 15:31:13 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC76198E;
-        Tue, 18 Jul 2023 12:31:12 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b6fdaf6eefso93029531fa.0;
-        Tue, 18 Jul 2023 12:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689708670; x=1692300670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iTrSAnnMNi3CJrN72jg6c2jFERcFPh+1lB6HHppzE2o=;
-        b=YstOd1W6X1vyeMfDJmOipRaiIKM3IzxuY+kVIN/FOQeM6+H/CIXHfev4VHYQDS7zaR
-         0kkXOJNSctTui42cWYPOOZUpWLOsizTbde2fZeUuqjApV9AYOBavHGPoqPjEihsrceJ9
-         MU3Z0Ghyv+GV5CnWqWUaOH6UijQkEiUHlOEkacpTf5roK4x3DanRGNJCVFPQ9fNmrMqK
-         X4PF/vBNHywJmm+QqMtWs9Y1kHdK5fNHP98DS6PeU48OWxFWe3UTfXSMGN9llTvi3cey
-         /1/1VQeRp1rh86mVF3atw9KlljWG1Yi6ZdEKQZmHZgtt/T4iHKVnul9V8byJrn+GPu4n
-         VglA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689708670; x=1692300670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iTrSAnnMNi3CJrN72jg6c2jFERcFPh+1lB6HHppzE2o=;
-        b=SFHhAqwEmoy63AGN3qkHJ1jfr7mYtHCwUFT+URt1EE6BpUkzWHtuRQizTnS/b14Oh8
-         bGXRnv0dYUl9aOPxauhLcmc+ARd6J5NfdmGaiVKyY4W4VcPwdXrgx1K1CET/EsuWhL5Z
-         aC3lmXmjwf2KCdfagYzKfV/0D1l3YRUbAygP8x87UHK4jezxkfTDRFEBPiLTO17LXp+y
-         pAMEFeHXBGhlkBAJexqHxPCJ68qzaPNKJBQe4ijpVLku4SO8lDecFNOcWYKFG6AIuyyJ
-         yzRy/eCcVWlbzquAULwKB6LOgO5rK4LWxrmSdqpMsP50ppjOsdRTBOHjmxL400KHK8HA
-         jifg==
-X-Gm-Message-State: ABy/qLYv4gx4IwIOjH74jfoCCqqI+O0lRYMIplKCVXoCgAqzywirTwpm
-        Bc3tb5dEk267RWDUhXvPrpZv1nDpmmFFd38UNCyDfkVq
-X-Google-Smtp-Source: APBJJlHI4rX84tOEoaXYW/2w4q01fgbrq4MG7euNNK4/ARs8hVqH6cIsj+6x6vLLQZutSVqnnyi3aTO0pVXh+qr52LY=
-X-Received: by 2002:a2e:b611:0:b0:2b7:2066:10e1 with SMTP id
- r17-20020a2eb611000000b002b7206610e1mr11095537ljn.0.1689708670027; Tue, 18
- Jul 2023 12:31:10 -0700 (PDT)
+        Tue, 18 Jul 2023 17:40:12 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5B6198C
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 14:40:11 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id LsQRqvLQEm389LsQRqb5o4; Tue, 18 Jul 2023 23:40:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1689716409;
+        bh=LyjzMXYuyWxw4amNKCCB8oKlHHFUSzGDu6JLZTk+Yvg=;
+        h=From:To:Cc:Subject:Date;
+        b=e0XBrvaag8BjFsVvA7S/ji74YYT8t9NJTOuIQvKemhdLTIoGO7wFkKE4X0Q/zCbtS
+         Qj3pxge5jplvnbWc7VE+t5mDaA7dEJgWnw2VCC6VSKpaR63EVDxI38ELROa4QzqRzR
+         XR1M1/sphqXX0Wi633UsCUcULod3L3iAGjNBO3/9nKe+gDO+QuR0KTKjOosJOXBKkO
+         GZSwky+XeN/cQt8bwfSOWZ6C92dDfU0goYmV+yFOkTE/5fV79SzMhHkGgUK/DtlN1l
+         2o9GEz2RypMa9qd3NHJiCo7kmzHeMWyJ2dw0k5brbQxscbgiLSPDtwhhfMQDVYZ5i4
+         AyvxO1yAKcgDQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 18 Jul 2023 23:40:09 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in nb7vpq904m_probe()
+Date:   Tue, 18 Jul 2023 23:40:05 +0200
+Message-Id: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
-In-Reply-To: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Tue, 18 Jul 2023 12:30:57 -0700
-Message-ID: <CABBYNZK5MfkOSVUBtWLOLt+H-BBdYrQbZv=rmYtn4WtDyvJopw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_conn: clean up some casts
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+In case of error in the nb7vpq904m_probe() probe function, some resources
+need to be freed, as already done in the remove function.
 
-On Mon, Jul 17, 2023 at 3:20=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The ERR_PTR/PTR_ERR() functions are only for error pointers.  They're
-> not a generic way to cast pointers to int.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> We should really create INT_PTR/PTR_INT() functions.  But this is a
-> cleanup until someone creates those.
+Add the missing error handling path and adjust code accordingly.
 
-Is there any reason you didn't create such macros? I mean we could
-have it local first, or perhaps we just do HANDLE_PTR/PTR_HANDLE to
-avoid any confusion.
+Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This changes the order with some devm_ allocated resources. I hope this is
+fine. At least it is consistent with the remove function.
+---
+ drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
->  net/bluetooth/hci_conn.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-> index cccc2b8b60a8..aea6fa12d954 100644
-> --- a/net/bluetooth/hci_conn.c
-> +++ b/net/bluetooth/hci_conn.c
-> @@ -873,7 +873,7 @@ static void bis_cleanup(struct hci_conn *conn)
->
->  static int remove_cig_sync(struct hci_dev *hdev, void *data)
->  {
-> -       u8 handle =3D PTR_ERR(data);
-> +       u8 handle =3D (unsigned long)data;
->
->         return hci_le_remove_cig_sync(hdev, handle);
->  }
-> @@ -882,7 +882,7 @@ static int hci_le_remove_cig(struct hci_dev *hdev, u8=
- handle)
->  {
->         bt_dev_dbg(hdev, "handle 0x%2.2x", handle);
->
-> -       return hci_cmd_sync_queue(hdev, remove_cig_sync, ERR_PTR(handle),=
- NULL);
-> +       return hci_cmd_sync_queue(hdev, remove_cig_sync, (void *)(unsigne=
-d long)handle, NULL);
->  }
->
->  static void find_cis(struct hci_conn *conn, void *data)
-> @@ -1234,7 +1234,7 @@ void hci_conn_failed(struct hci_conn *conn, u8 stat=
-us)
->  static void create_le_conn_complete(struct hci_dev *hdev, void *data, in=
-t err)
->  {
->         struct hci_conn *conn;
-> -       u16 handle =3D PTR_ERR(data);
-> +       u16 handle =3D (unsigned long)data;
->
->         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
->         if (!conn)
-> @@ -1264,7 +1264,7 @@ static void create_le_conn_complete(struct hci_dev =
-*hdev, void *data, int err)
->  static int hci_connect_le_sync(struct hci_dev *hdev, void *data)
->  {
->         struct hci_conn *conn;
-> -       u16 handle =3D PTR_ERR(data);
-> +       u16 handle =3D (unsigned long)data;
->
->         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
->         if (!conn)
-> @@ -2854,7 +2854,7 @@ u32 hci_conn_get_phy(struct hci_conn *conn)
->  static int abort_conn_sync(struct hci_dev *hdev, void *data)
->  {
->         struct hci_conn *conn;
-> -       u16 handle =3D PTR_ERR(data);
-> +       u16 handle =3D (unsigned long)data;
->
->         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
->         if (!conn)
-> --
-> 2.39.2
->
+diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
+index 80e580d50129..4d1122d95013 100644
+--- a/drivers/usb/typec/mux/nb7vpq904m.c
++++ b/drivers/usb/typec/mux/nb7vpq904m.c
+@@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+ 
+ 	ret = nb7vpq904m_register_bridge(nb7);
+ 	if (ret)
+-		return ret;
++		goto err_disable_gpio;
+ 
+ 	sw_desc.drvdata = nb7;
+ 	sw_desc.fwnode = dev->fwnode;
+ 	sw_desc.set = nb7vpq904m_sw_set;
+ 
+ 	nb7->sw = typec_switch_register(dev, &sw_desc);
+-	if (IS_ERR(nb7->sw))
+-		return dev_err_probe(dev, PTR_ERR(nb7->sw),
+-				     "Error registering typec switch\n");
++	if (IS_ERR(nb7->sw)) {
++		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
++				    "Error registering typec switch\n");
++		goto err_disable_gpio;
++	}
+ 
+ 	retimer_desc.drvdata = nb7;
+ 	retimer_desc.fwnode = dev->fwnode;
+@@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+ 
+ 	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
+ 	if (IS_ERR(nb7->retimer)) {
+-		typec_switch_unregister(nb7->sw);
+-		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
+-				     "Error registering typec retimer\n");
++		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
++				    "Error registering typec retimer\n");
++		goto err_switch_unregister;
+ 	}
+ 
+ 	return 0;
++
++err_switch_unregister:
++	typec_switch_unregister(nb7->sw);
++
++err_disable_gpio:
++	gpiod_set_value(nb7->enable_gpio, 0);
++	regulator_disable(nb7->vcc_supply);
++
++	return ret;
+ }
+ 
+ static void nb7vpq904m_remove(struct i2c_client *client)
+-- 
+2.34.1
 
-
---=20
-Luiz Augusto von Dentz
