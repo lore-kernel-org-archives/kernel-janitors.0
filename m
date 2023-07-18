@@ -2,88 +2,129 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E09EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 12:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB573EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 13:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231273AbjGRMf2 (ORCPT
+        id S232536AbjGRN1h (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 08:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
+        Tue, 18 Jul 2023 09:27:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbjGRMf1 (ORCPT
+        with ESMTP id S232559AbjGRN1e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 08:35:27 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00B63118
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 05:35:25 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8DxBfEMh7Zk8b4GAA--.17233S3;
-        Tue, 18 Jul 2023 20:35:24 +0800 (CST)
-Received: from [10.20.42.43] (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dx_yMCh7ZkykszAA--.35182S3;
-        Tue, 18 Jul 2023 20:35:23 +0800 (CST)
-Message-ID: <2d8ddf34-8d20-6cc4-b92a-8f0d7bf9ed09@loongson.cn>
-Date:   Tue, 18 Jul 2023 20:35:14 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] drm: loongson: Add a check for lsdc_bo_create() errors
-To:     Dan Carpenter <dan.carpenter@linaro.org>
+        Tue, 18 Jul 2023 09:27:34 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199D1124
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 06:27:33 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fba8e2aa52so59314735e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 06:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689686851; x=1692278851;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Y5ykKVFj8XRj1akWlI9kL56icXreWp0y3Oh8lxwnYUo=;
+        b=HAvzA8Kh6KU7bl55fFVekoyCC5Ill+dInNj/fArVx9xD4Ijq8+dSv/fFyv3qLaHu3Q
+         p5kPMVljBJX/PQIix7A1DIp+pOMP6Ch1/UbNPNFUnIKrPNUQHXsFIw2LnoKy9MkvG+vi
+         BALADdhrffpdXro+li7hwMSjKCafCHUVS3lGvaFpXd9Gn27UCS8yFLeV3ZFiXCHzWZVW
+         xj+/oXfTQGLbOijuIprw+avrNlY3u3Ma5gGvlNve54UvKBjcgUvxQb/MSpNywohDUmP5
+         u0EQwA7NJsy0/bgD4Jx7CvsJ5A5iKi5zlNKIUsqmGcQkNkl5dKifKXxl4oggrGaAhpPh
+         aWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689686851; x=1692278851;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5ykKVFj8XRj1akWlI9kL56icXreWp0y3Oh8lxwnYUo=;
+        b=SBUK3MBpbuljZEIOrxOMAmjQLFsd6IK6bXFth19ZvpuWMbBwaFnSaPhxBN4lEbsQLs
+         Qkpmo6WFV4cQQVuRNxAEI1Ab++uFjk+aojmeKL/LOUJjmxTe1np+I2h0v3NZU5ps4S0F
+         qXRQuTAb2v1wAsOcR5TxiRmIFNsAH4zTCnZfGO8rcu9HgiZje5gqx+R6lLYNy+lfWsNO
+         Jl95TjRhI4vVcE2SyDGBZohtf2aoNkG9dbBdA0E7vGA/jtQbNF7xU5uHNzvfWIuqrqGY
+         DR/7csKO20fmRakBXqkvQSd98Y2iXRO56UyvlhiEHcZ3xYBfX4puYHXeqbTfQWF7gK+5
+         mqGQ==
+X-Gm-Message-State: ABy/qLa137Bmz0IVVAP8Zq79UQA9b24kcnmr4mntcZo0Hor+bSAg9hbF
+        np0xk7AMkVxeVlxd5iGso8psEw==
+X-Google-Smtp-Source: APBJJlEix09qvK9nzkt0uYSg486fNum9sk0vRVjigln/Sfac5scnIuLZd4IB/OLlDHbgZqF8k333Rw==
+X-Received: by 2002:adf:ff84:0:b0:314:dc0:2fca with SMTP id j4-20020adfff84000000b003140dc02fcamr14060054wrr.29.1689686851489;
+        Tue, 18 Jul 2023 06:27:31 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z23-20020a1c4c17000000b003fbe791a0e8sm2180772wmf.0.2023.07.18.06.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 06:27:29 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 16:27:25 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     suijingfeng <suijingfeng@loongson.cn>, conduct@kernel.org
 Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: loongson: Add a check for lsdc_bo_create() errors
+Message-ID: <bbaa11a9-9984-40c1-bd63-adc8698d0185@kadam.mountain>
 References: <0da6859b-40cc-4b3e-b8b6-fed157517083@moroto.mountain>
-Content-Language: en-US
-From:   suijingfeng <suijingfeng@loongson.cn>
-In-Reply-To: <0da6859b-40cc-4b3e-b8b6-fed157517083@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8Dx_yMCh7ZkykszAA--.35182S3
-X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKFWkJrWkZrWfur4xJrykCrX_yoWfuFb_CF
-        1Syrn7Wr1UAF1UZw17Zrs2yFZIvr98XFsY9a1jyry8G3W3trn3AryfZr1xWF129F1SqFnx
-        AayvkF1Fy3ZakosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-        cSsGvfJTRUUUbSxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-        vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6F4UJVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-        Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
-        WrylYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-        1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-        JVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-        vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-        x2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-        xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E
-        14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2na9DUUUU
+ <c9ac14ee-7cfc-c10b-4a55-37049bbb4338@loongson.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c9ac14ee-7cfc-c10b-4a55-37049bbb4338@loongson.cn>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-"drm/loongson: Add a check for lsdc_bo_create() errors"
-  
+Basically everything in this email was wrong to a kind of shocking
+degree.  For example, ignoring kmalloc() failure is a bug so the fixes
+tag is definitely warranted.  But then you called me "bare brained"
+which seems like a personal attack so I'm going to report this as a code
+of conduct violation.
 
-On 2023/7/18 15:01, Dan Carpenter wrote:
-> The lsdc_bo_create() function can fail so add a check for that.
->
-> Fixes: f39db26c5428 ("drm: Add kms driver for loongson display controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/loongson/lsdc_ttm.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/loongson/lsdc_ttm.c b/drivers/gpu/drm/loongson/lsdc_ttm.c
-> index bb0c8fd43a75..bf79dc55afa4 100644
-> --- a/drivers/gpu/drm/loongson/lsdc_ttm.c
-> +++ b/drivers/gpu/drm/loongson/lsdc_ttm.c
-> @@ -496,6 +496,8 @@ struct lsdc_bo *lsdc_bo_create_kernel_pinned(struct drm_device *ddev,
->   	int ret;
->   
->   	lbo = lsdc_bo_create(ddev, domain, size, true, NULL, NULL);
-> +	if (IS_ERR(lbo))
-> +		return ERR_CAST(lbo);
->   
->   	ret = lsdc_bo_reserve(lbo);
->   	if (unlikely(ret)) {
+regards,
+dan carpenter
 
+On Tue, Jul 18, 2023 at 08:32:02PM +0800, suijingfeng wrote:
+> Hi,
+> 
+> 
+> Thanks for the patch.
+> 
+> 
+> The commit title generally should be 'drm/looongson: Add a check for
+> lsdc_bo_create() errors'
+> 
+> not 'drm: loongson: xxxx'
+> 
+> 
+> On 2023/7/18 15:01, Dan Carpenter wrote:
+> > The lsdc_bo_create() function can fail so add a check for that.
+> > 
+> > Fixes: f39db26c5428 ("drm: Add kms driver for loongson display controller")
+> 
+> Please drop this Fixes tag,  because you patch just add a error handling.
+> 
+> Yes,  the lsdc_bo_create() function can fail, but this is generally not
+> happen.
+> 
+> Even if the fail happened,  your patch is not fixing the root problem.
+> 
+> 
+> I know that you create this patch with the bare brain,
+> 
+> I would like hear more practical usage or bugs of this driver.
+> 
+> And mention more in the commit message is preferred.
+> 
+> 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   drivers/gpu/drm/loongson/lsdc_ttm.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/loongson/lsdc_ttm.c b/drivers/gpu/drm/loongson/lsdc_ttm.c
+> > index bb0c8fd43a75..bf79dc55afa4 100644
+> > --- a/drivers/gpu/drm/loongson/lsdc_ttm.c
+> > +++ b/drivers/gpu/drm/loongson/lsdc_ttm.c
+> > @@ -496,6 +496,8 @@ struct lsdc_bo *lsdc_bo_create_kernel_pinned(struct drm_device *ddev,
+> >   	int ret;
+> >   	lbo = lsdc_bo_create(ddev, domain, size, true, NULL, NULL);
+> > +	if (IS_ERR(lbo))
+> > +		return ERR_CAST(lbo);
+> >   	ret = lsdc_bo_reserve(lbo);
+> >   	if (unlikely(ret)) {
