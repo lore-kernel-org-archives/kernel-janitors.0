@@ -2,62 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED22EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 07:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5D1EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 07:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbjGRHDA (ORCPT
+        id S230308AbjGRHD5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 03:03:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59134 "EHLO
+        Tue, 18 Jul 2023 03:03:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbjGRHC5 (ORCPT
+        with ESMTP id S230095AbjGRHD4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 03:02:57 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB611B5
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:02:56 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so8723761e87.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:02:56 -0700 (PDT)
+        Tue, 18 Jul 2023 03:03:56 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6221B5
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:03:55 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fbc77e76abso48852465e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 00:03:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689663774; x=1692255774;
+        d=linaro.org; s=google; t=1689663834; x=1692255834;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bG4Gx1r967zeIAmFVh7HaIXrYyoqtUrm+PE+5CcrQ0Q=;
-        b=UV2a3zWVG67FpBgM02Vq235xIfJqY8fdHcFvwU2XaCuyHhmDXYXggsijJlpYJkoe+U
-         OO0cDn9Hdc5Sf3eKYlrf+JUt7gGvUMx6+WNusK4m5iZZFKxk2XJV3m6ZhTnsOWj1Mi8+
-         3cO31j+G1EePdCKDXBo6lF4LkedI0A87RzzqlFr0d6BlK3zR6RG2uIudH9OOMPnY6tO0
-         Di/+ahlfEp1s3RRaY4P8+xGtiROW6BPOmKXMIa/qe6DdfDftTMUjsGwVAeeXt9FZoN3Z
-         tNbIYbvwQC3i3QkY1+sV0XGzdgAfjelvrZ8PNiP89olPfeAXfRYOM//aF/Zr29QVCd3W
-         8dPQ==
+        bh=bKhUip0PnDfA0irAdbFiKaOHVjUbRVp4s07pXzgNeRM=;
+        b=IdoKdKMiMvD6TslkQXBIJ08QGkKo/w8prfMGKneCYH+NO5ZXbZ9ksBMV4URFvkdQS+
+         kUR+OZhnupRenFbuOMkbfcMOPFQzhLG/k5dFSSj6VrfHI4p1neG9eyNDHvwJpQrxemMy
+         jpz/C4bNm0aOFT/i5paPxrMP//mFdgXpkOYOX+dBb4/9f9TpFtEbJ/iSqyN2nxhAFqvW
+         SRk6LPJJlXsIU3TcyNja5lnOqwN/pAUP7DSr0RzztuzRZpdway2LVhUbyLmVcu4u/q+J
+         wdVsgu3YA0AeEy0XA+7gNZcZynRwqzkLdJkXZ/9FeeOhPNFg+eLg3jh1iPrL+FfEPMaz
+         SL9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689663774; x=1692255774;
+        d=1e100.net; s=20221208; t=1689663834; x=1692255834;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bG4Gx1r967zeIAmFVh7HaIXrYyoqtUrm+PE+5CcrQ0Q=;
-        b=VKZfaYpVkqCKMvDmhHw/F70mjRad7Iak4fj2s0VR3prtYl4fnnFwER+f82cSymU7bM
-         QUPSjBR18E+/5DAHzj1ovYEaUlM/++yzQtiEpZp34r45vvOOCezyfQ9r/9Zb7tTVHaX+
-         7hOaAKNF6eK1UO0kqIopMyiez0erMHqyS1LfWGYKZoGn/SUXmXVVGcNZVIf47qEsqr9/
-         9p5iDdqoR5yljMccpzzaccl+BN9NObaeCUt2se55BGEohxakQ1o2OzLR2Q3Esw3D0V2f
-         rFtGKJzd1hX4MLomvA9huwUR+myEKp44ifH0g1k0ZmZIyP2vRRXx/qVJE3tKRIJMT17E
-         CW8A==
-X-Gm-Message-State: ABy/qLZfQqY2syZKFp4q87+2lpeeyTVpbDGRFsB+oO19kg3OF85iDUP6
-        zo60PlRJDDBUSepirlK7fQbS8qep2i9lJr56gqE=
-X-Google-Smtp-Source: APBJJlEfO0vlpxHTle2tSQS6B5dc1OXhx+xoMrBGuDDfxGMmbx+fo7H8//sWJfifOYJa7dfGE5T6Bg==
-X-Received: by 2002:ac2:4559:0:b0:4f7:604f:f4c8 with SMTP id j25-20020ac24559000000b004f7604ff4c8mr966844lfm.18.1689663774421;
-        Tue, 18 Jul 2023 00:02:54 -0700 (PDT)
+        bh=bKhUip0PnDfA0irAdbFiKaOHVjUbRVp4s07pXzgNeRM=;
+        b=GHB8ZdNYLPp86Yg9FytnPKxoU+d6eXXDlHv1PaC3iUSZqtGrxdy51zMUi+BBa5DYJu
+         h3gWAhKNY9chxspeJyQC8I9187BRL8fEe3KtUOMZoUOdrzrfPooXs1pqvnEkYea3tJTA
+         euhxnoshcAu/8IFelTa/AYcr2kZfLwgSA7N74TugFGZLuflc+qaQPOZRsWq43iFqeFLd
+         dcKgaKk60tYVPoei69HDaBS4e53WZaZLFlifTRguVWLwkGp7ENScHBSzBeVFcXYopqPb
+         HlOn1Ftp+YBL7HQfdsxI4XQOBCuZFkU9P7jFovWvniOi/9nRxzMydZ9uCyOykzIXMFqI
+         3noQ==
+X-Gm-Message-State: ABy/qLYtYY/RGzulDQjLwxpddTetb7Z8HlkG9sYp5O6ZElPAS1i0O0Ro
+        zDcrSY6H5dIFUZTNVcSvDn3JIw==
+X-Google-Smtp-Source: APBJJlHfvHNEoZg8IkGxubThfVC+Ptja0xZZWZ7+R5eOiDUWfpCkd0ddPHNKcaxISr0g0kVD+rRX+A==
+X-Received: by 2002:a7b:c846:0:b0:3f8:fc2a:c7eb with SMTP id c6-20020a7bc846000000b003f8fc2ac7ebmr1014417wml.5.1689663833802;
+        Tue, 18 Jul 2023 00:03:53 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 2-20020a05600c248200b003faef96ee78sm9682608wms.33.2023.07.18.00.02.52
+        by smtp.gmail.com with ESMTPSA id 20-20020a05600c22d400b003fbc9d178a8sm9513810wmg.4.2023.07.18.00.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 00:02:53 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 10:02:49 +0300
+        Tue, 18 Jul 2023 00:03:52 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 10:03:49 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Minda Chen <minda.chen@starfivetech.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] phy: starfive: fix error code in probe
-Message-ID: <3cc81f2a-efd7-4ef7-ae6b-e38c91efe153@moroto.mountain>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chen Zhongjin <chenzhongjin@huawei.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] driver core: test_async: fix an error code
+Message-ID: <1e11ed19-e1f6-43d8-b352-474134b7c008@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,27 +66,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is using the wrong pointer, "phy->regs" vs "phy->phy".
+The test_platform_device_register_node() function should return error
+pointers instead of NULL.  That is what the callers are expecting.
 
-Fixes: 26cea0e28057 ("phy: starfive: Add JH7110 PCIE 2.0 PHY driver")
+Fixes: 57ea974fb871 ("driver core: Rewrite test_async_driver_probe to cover serialization and NUMA affinity")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/phy/starfive/phy-jh7110-pcie.c | 2 +-
+ drivers/base/test/test_async_driver_probe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/starfive/phy-jh7110-pcie.c b/drivers/phy/starfive/phy-jh7110-pcie.c
-index cbe79c1f59d3..734c8e007727 100644
---- a/drivers/phy/starfive/phy-jh7110-pcie.c
-+++ b/drivers/phy/starfive/phy-jh7110-pcie.c
-@@ -151,7 +151,7 @@ static int jh7110_pcie_phy_probe(struct platform_device *pdev)
+diff --git a/drivers/base/test/test_async_driver_probe.c b/drivers/base/test/test_async_driver_probe.c
+index 929410d0dd6f..3465800baa6c 100644
+--- a/drivers/base/test/test_async_driver_probe.c
++++ b/drivers/base/test/test_async_driver_probe.c
+@@ -84,7 +84,7 @@ test_platform_device_register_node(char *name, int id, int nid)
  
- 	phy->phy = devm_phy_create(dev, NULL, &jh7110_pcie_phy_ops);
- 	if (IS_ERR(phy->phy))
--		return dev_err_probe(dev, PTR_ERR(phy->regs),
-+		return dev_err_probe(dev, PTR_ERR(phy->phy),
- 				     "Failed to map phy base\n");
+ 	pdev = platform_device_alloc(name, id);
+ 	if (!pdev)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
  
- 	phy->sys_syscon =
+ 	if (nid != NUMA_NO_NODE)
+ 		set_dev_node(&pdev->dev, nid);
 -- 
 2.39.2
 
