@@ -2,121 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D99EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 21:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC06BEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 21:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjGRVkN (ORCPT
+        id S230381AbjGRVxg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:40:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52588 "EHLO
+        Tue, 18 Jul 2023 17:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbjGRVkM (ORCPT
+        with ESMTP id S229610AbjGRVxe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 17:40:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5B6198C
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 14:40:11 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id LsQRqvLQEm389LsQRqb5o4; Tue, 18 Jul 2023 23:40:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1689716409;
-        bh=LyjzMXYuyWxw4amNKCCB8oKlHHFUSzGDu6JLZTk+Yvg=;
-        h=From:To:Cc:Subject:Date;
-        b=e0XBrvaag8BjFsVvA7S/ji74YYT8t9NJTOuIQvKemhdLTIoGO7wFkKE4X0Q/zCbtS
-         Qj3pxge5jplvnbWc7VE+t5mDaA7dEJgWnw2VCC6VSKpaR63EVDxI38ELROa4QzqRzR
-         XR1M1/sphqXX0Wi633UsCUcULod3L3iAGjNBO3/9nKe+gDO+QuR0KTKjOosJOXBKkO
-         GZSwky+XeN/cQt8bwfSOWZ6C92dDfU0goYmV+yFOkTE/5fV79SzMhHkGgUK/DtlN1l
-         2o9GEz2RypMa9qd3NHJiCo7kmzHeMWyJ2dw0k5brbQxscbgiLSPDtwhhfMQDVYZ5i4
-         AyvxO1yAKcgDQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 18 Jul 2023 23:40:09 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in nb7vpq904m_probe()
-Date:   Tue, 18 Jul 2023 23:40:05 +0200
-Message-Id: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 18 Jul 2023 17:53:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6926198E;
+        Tue, 18 Jul 2023 14:53:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6335C611DC;
+        Tue, 18 Jul 2023 21:53:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C036C433C7;
+        Tue, 18 Jul 2023 21:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689717212;
+        bh=9GJl9BKrVBmnHdnk/r5SFl8lXAj76tW1SzBJ1JufEKQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=YAjBS1M031nA14Fa/+wmtGpYOPqBIh3RNDv+pn4g3wxGkaqCmBIZUbitjOcLMvebc
+         b4ieU90GREd6txCNYrbaJ/nbL6xYCCa5oBnh/mkSpaY1bls6aYVucKYaQjxgFY00SZ
+         ztXr+CFA6rddV09Y1bXytjQlNlMZIjvqhFe2uMqOnTf7sOnxA6koGVP+2sDTLvFGcZ
+         e3E31wYwmAE3JUeJueS6pr5NthXVr5UDJpBM1YSIRgUJw9aRsQbgeVRfbh0Riv/fnP
+         464PIjgFtQ7XgLNHw3LfgOJ2ELoTUPlwzVRVyYmd1SP+nSmghocSjx3b8q/a0hg3fp
+         fI3O+3klcMCNQ==
+Date:   Tue, 18 Jul 2023 16:53:30 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] PCI: ibmphp: make read-only arrays static
+Message-ID: <20230718215330.GA496036@bhelgaas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230627125612.724764-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error in the nb7vpq904m_probe() probe function, some resources
-need to be freed, as already done in the remove function.
+On Tue, Jun 27, 2023 at 01:56:12PM +0100, Colin Ian King wrote:
+> Don't populate the arrays on the stack, instead make them static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Add the missing error handling path and adjust code accordingly.
+Applied to pci/hotplug for v6.6, thanks!
 
-Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This changes the order with some devm_ allocated resources. I hope this is
-fine. At least it is consistent with the remove function.
----
- drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
-index 80e580d50129..4d1122d95013 100644
---- a/drivers/usb/typec/mux/nb7vpq904m.c
-+++ b/drivers/usb/typec/mux/nb7vpq904m.c
-@@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
- 
- 	ret = nb7vpq904m_register_bridge(nb7);
- 	if (ret)
--		return ret;
-+		goto err_disable_gpio;
- 
- 	sw_desc.drvdata = nb7;
- 	sw_desc.fwnode = dev->fwnode;
- 	sw_desc.set = nb7vpq904m_sw_set;
- 
- 	nb7->sw = typec_switch_register(dev, &sw_desc);
--	if (IS_ERR(nb7->sw))
--		return dev_err_probe(dev, PTR_ERR(nb7->sw),
--				     "Error registering typec switch\n");
-+	if (IS_ERR(nb7->sw)) {
-+		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
-+				    "Error registering typec switch\n");
-+		goto err_disable_gpio;
-+	}
- 
- 	retimer_desc.drvdata = nb7;
- 	retimer_desc.fwnode = dev->fwnode;
-@@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
- 
- 	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
- 	if (IS_ERR(nb7->retimer)) {
--		typec_switch_unregister(nb7->sw);
--		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
--				     "Error registering typec retimer\n");
-+		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
-+				    "Error registering typec retimer\n");
-+		goto err_switch_unregister;
- 	}
- 
- 	return 0;
-+
-+err_switch_unregister:
-+	typec_switch_unregister(nb7->sw);
-+
-+err_disable_gpio:
-+	gpiod_set_value(nb7->enable_gpio, 0);
-+	regulator_disable(nb7->vcc_supply);
-+
-+	return ret;
- }
- 
- static void nb7vpq904m_remove(struct i2c_client *client)
--- 
-2.34.1
-
+> ---
+>  drivers/pci/hotplug/ibmphp_pci.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
+> index 754c3f23282e..50038e5f9ca4 100644
+> --- a/drivers/pci/hotplug/ibmphp_pci.c
+> +++ b/drivers/pci/hotplug/ibmphp_pci.c
+> @@ -329,7 +329,7 @@ int ibmphp_configure_card(struct pci_func *func, u8 slotno)
+>  static int configure_device(struct pci_func *func)
+>  {
+>  	u32 bar[6];
+> -	u32 address[] = {
+> +	static const u32 address[] = {
+>  		PCI_BASE_ADDRESS_0,
+>  		PCI_BASE_ADDRESS_1,
+>  		PCI_BASE_ADDRESS_2,
+> @@ -564,7 +564,7 @@ static int configure_bridge(struct pci_func **func_passed, u8 slotno)
+>  	struct resource_node *pfmem = NULL;
+>  	struct resource_node *bus_pfmem[2] = {NULL, NULL};
+>  	struct bus_node *bus;
+> -	u32 address[] = {
+> +	static const u32 address[] = {
+>  		PCI_BASE_ADDRESS_0,
+>  		PCI_BASE_ADDRESS_1,
+>  		0
+> @@ -1053,7 +1053,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
+>  	int howmany = 0;	/*this is to see if there are any devices behind the bridge */
+>  
+>  	u32 bar[6], class;
+> -	u32 address[] = {
+> +	static const u32 address[] = {
+>  		PCI_BASE_ADDRESS_0,
+>  		PCI_BASE_ADDRESS_1,
+>  		PCI_BASE_ADDRESS_2,
+> @@ -1182,7 +1182,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
+>  static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
+>  {
+>  	u32 start_address;
+> -	u32 address[] = {
+> +	static const u32 address[] = {
+>  		PCI_BASE_ADDRESS_0,
+>  		PCI_BASE_ADDRESS_1,
+>  		PCI_BASE_ADDRESS_2,
+> @@ -1310,7 +1310,7 @@ static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
+>  	struct resource_node *mem = NULL;
+>  	struct resource_node *pfmem = NULL;
+>  	struct bus_node *bus;
+> -	u32 address[] = {
+> +	static const u32 address[] = {
+>  		PCI_BASE_ADDRESS_0,
+>  		PCI_BASE_ADDRESS_1,
+>  		0
+> -- 
+> 2.39.2
+> 
