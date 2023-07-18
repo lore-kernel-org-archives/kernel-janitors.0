@@ -2,103 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A755CEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 08:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36366EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 08:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232042AbjGRIwv (ORCPT
+        id S231911AbjGRI7J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 04:52:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36638 "EHLO
+        Tue, 18 Jul 2023 04:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbjGRIws (ORCPT
+        with ESMTP id S230285AbjGRI7H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 04:52:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1600EFA
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 01:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689670324;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5KOR8rz1HcIaKvEfrXa81rmXVE1uZtoJjHifNrWIaLY=;
-        b=VO+mU3uv0EaA6zXGtBwn69BrK3atslcjn4LP63WEP9gH68H2Hc1qrpuRaKS2n5080fz9td
-        jams7WfiqtijFlirGgp2qpQToGgMPSf5PwOxhrL4x/b1zgeQ78lJ3k15iB8AYHW281I8fV
-        /VGL4DXgtPSJDRV6XlCFpoSm+1iKd8w=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-567-U4qGGOISOCGh1A4YhIjwPg-1; Tue, 18 Jul 2023 04:52:03 -0400
-X-MC-Unique: U4qGGOISOCGh1A4YhIjwPg-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4032a3ad8c0so8327741cf.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 01:52:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689670322; x=1690275122;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5KOR8rz1HcIaKvEfrXa81rmXVE1uZtoJjHifNrWIaLY=;
-        b=PTgz6J85YYokb0STWabbR3I8rafwjNePZYPlQ6ShsV6xAyz2akAB7hrF28y/8Mq+1T
-         SdUY06PJa6+/Fumu30wD/LpXgQEBjWgr4UJixsgcrfDT1U93odP1+CS/7tJW6k3OhcO9
-         Vx88UdsQ3K1YrNx25wJ4M3X6sWsG8eu7x/ZJAGpyxk1H928yfupHr0BAazMONTgkDOn0
-         uGaxgWX3CTIJn+Hl7GD8rTfOfQvKn0PLIb28XUEhkXRtcPZ+b48NiXdBhqGNn/zarNxc
-         BOw0Do0ImQ8muopwCnW2V1XCkPSbh8vwWvjJcRocJF1ZIXiM82qd/IVEEt25Q1bZUpJt
-         gctA==
-X-Gm-Message-State: ABy/qLYIZIBCPAWJ+uM+LkFFWxOPbFqDsgtHNO/oVhv3PZ/4mtgi6JPZ
-        Gc5dnRVPwBRBuQFDdESCcBpo50eq1Zc+F+r9jVnqXxDKX6eh8q2GLMKXUi63Xs8O0TugxeuICek
-        wF3jDu+QezXpKThczdpH7jiMk0m/1
-X-Received: by 2002:a05:6214:29ca:b0:625:77a1:2a5f with SMTP id gh10-20020a05621429ca00b0062577a12a5fmr15751320qvb.5.1689670322548;
-        Tue, 18 Jul 2023 01:52:02 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGyNfUCGibD1hyFQuxDmLGTOedRmloVQAyvYLT0e0Z7YsxX73m1Q+O8jquOzWtrmPF93zyMiA==
-X-Received: by 2002:a05:6214:29ca:b0:625:77a1:2a5f with SMTP id gh10-20020a05621429ca00b0062577a12a5fmr15751310qvb.5.1689670322278;
-        Tue, 18 Jul 2023 01:52:02 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-226-170.dyn.eolo.it. [146.241.226.170])
-        by smtp.gmail.com with ESMTPSA id a24-20020a0cb358000000b0062dfdafa0b7sm564703qvf.136.2023.07.18.01.51.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 01:52:01 -0700 (PDT)
-Message-ID: <befe05762b714948ad1f71a5d038334100f84cd0.camel@redhat.com>
-Subject: Re: [PATCH net v3] net: thunder: bgx: Fix resource leaks in
- device_for_each_child_node() loops
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Wang Ming <machel@vivo.com>, opensource.kernel@vivo.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        David Daney <david.daney@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sunil Goutham <sgoutham@marvell.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Minjie Du <duminjie@vivo.com>
-Date:   Tue, 18 Jul 2023 10:51:58 +0200
-In-Reply-To: <be87c113-f975-9607-1f9d-5db304e0b1b9@web.de>
-References: <20230714100010.12035-1-machel@vivo.com>
-         <be87c113-f975-9607-1f9d-5db304e0b1b9@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Tue, 18 Jul 2023 04:59:07 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE131705;
+        Tue, 18 Jul 2023 01:59:03 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I7DvZC007782;
+        Tue, 18 Jul 2023 08:58:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=I4YvKVAWslmj3NSZw8/OO+TP7pVCUvJA9u3h5VipoFs=;
+ b=P6w4e6BdxiSTMD86PlFPeKGtPNAKSvyB4OIGtUZiCkn1UXl1vqxgjexcsqkEEN60z+6K
+ KamMMYocRLxNBMUphs5GviDrdJ6GALLN6ZtIE3udUs/cRf0m+HH5TG4wzcUWL6YPcA7t
+ sBvm8bqG2M7rcbBkNCEWEo4FCEANwB+kt+alZtqmJDXRIhFJC35Y+jxllnhHtcXXE9Pt
+ 19s+Kynx+8Qjb+Dq9AVj+UoGx8ZubdRXOMfvk8c3HfsmTXwoMqn/PSreSNJV738U/fAF
+ 6i714VZKYjo8Q7aqsVRKUUA8ZPQatVzFaC4iYY9uIFKrmXwXVjlCgq04wbJDdF00VbQU iw== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3run78ck1f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jul 2023 08:58:53 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36I8JiZ5038203;
+        Tue, 18 Jul 2023 08:58:52 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ruhw4sdpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jul 2023 08:58:52 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36I8wqcv000485;
+        Tue, 18 Jul 2023 08:58:52 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ruhw4sdp7-1;
+        Tue, 18 Jul 2023 08:58:52 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH next] media: i2c: fix error handling in ub960_rxport_add_serializer()
+Date:   Tue, 18 Jul 2023 01:58:46 -0700
+Message-ID: <20230718085846.3988564-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 phishscore=0
+ adultscore=0 spamscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307180081
+X-Proofpoint-ORIG-GUID: VxS-YW0pBrAOpdbSXyfINvVpZYq5PWlJ
+X-Proofpoint-GUID: VxS-YW0pBrAOpdbSXyfINvVpZYq5PWlJ
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2023-07-14 at 15:06 +0200, Markus Elfring wrote:
-> > The device_for_each_child_node() loop in bgx_init_of_phy()
-> > function should have fwnode_handle_put() before break which could
-> > avoid resource leaks. This patch could fix this bug.
->=20
-> Are imperative change descriptions still preferred?
+Smatch warns:
+ drivers/media/i2c/ds90ub960.c:1671 ub960_rxport_add_serializer():
+ err: 'rxport->ser.client' dereferencing possible ERR_PTR()
 
-Yes. The commit message should be re-phrased.
+i2c_new_client_device() returns error pointers on failure and in
+dev_dbg statement we are dereferencing error pointer which is a bug.
 
-More importantly, it looks like the relevant reference is already
-released by of_node_put() and the additional fwnode_handle_put() will
-cause a reference underflow.
+Fix this by using IS_ERR() which checks for error pointers.
 
-This patch does not look correct to me.
+Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Found with static analysis, only compile tested. Although in
+drivers/media i2c_client_has_driver() checks are present, IS_ERR() would
+probably be sufficient here.
+---
+ drivers/media/i2c/ds90ub960.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-
-Paolo
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index e101bcf2356a..88144e3ec183 100644
+--- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -1662,7 +1662,7 @@ static int ub960_rxport_add_serializer(struct ub960_data *priv, u8 nport)
+ 	ser_info.addr = rxport->ser.alias;
+ 	rxport->ser.client =
+ 		i2c_new_client_device(priv->client->adapter, &ser_info);
+-	if (!rxport->ser.client) {
++	if (IS_ERR(rxport->ser.client)) {
+ 		dev_err(dev, "rx%u: cannot add %s i2c device", nport,
+ 			ser_info.type);
+ 		return -EIO;
+-- 
+2.39.3
 
