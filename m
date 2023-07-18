@@ -2,91 +2,149 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6638AEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 18:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9C1EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 19:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbjGRSqq (ORCPT
+        id S229986AbjGRTbO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 14:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39798 "EHLO
+        Tue, 18 Jul 2023 15:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGRSqp (ORCPT
+        with ESMTP id S229437AbjGRTbN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 14:46:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF915B6
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 11:46:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CAF7616B0
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jul 2023 18:46:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF2DC433C8;
-        Tue, 18 Jul 2023 18:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689706003;
-        bh=o8g9igO7U5+ASKWMumYFxd8ogyiTtgaFXyMt2CAqFb0=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=pZtdSroc5i0nbRxE7ZPhKmZcU1akOWuR6t0vjk98XJkiCKMCh2T8//nZnCKOndriU
-         M2XnsHmgFgDNpXrWRsMt0ySNv0xwGiU9N41naHi9132KdboMEtUG5IZMUhQN80ROkC
-         H0Z1Ru6/pC7nrapZOr7rwXBG2o/KCG7mDIRTAjcO6y4vHwdyWHMUOYq0TlS+0gdjVP
-         ZFNWk36pYQyiMtua3dR5Xhr+WNLzMa77R0mnhHLbYCqT1rEyX0U+rrS9pjY7reKbIg
-         6f1D01ug266xEyRVD680nobrjkNDIgXJH5aZbWr+QT61nftgHk0OmyVHKJSYUsBTHw
-         Asn/G7jnDZpEw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Syed Saba Kareem <Syed.SabaKareem@amd.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <b0c5b0ca-68da-47e6-a8b0-e0714f0de119@moroto.mountain>
-References: <b0c5b0ca-68da-47e6-a8b0-e0714f0de119@moroto.mountain>
-Subject: Re: [PATCH] ASoC: amd: acp: delete unnecessary NULL check
-Message-Id: <168970600162.93966.9028166669589055047.b4-ty@kernel.org>
-Date:   Tue, 18 Jul 2023 19:46:41 +0100
+        Tue, 18 Jul 2023 15:31:13 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC76198E;
+        Tue, 18 Jul 2023 12:31:12 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b6fdaf6eefso93029531fa.0;
+        Tue, 18 Jul 2023 12:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689708670; x=1692300670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iTrSAnnMNi3CJrN72jg6c2jFERcFPh+1lB6HHppzE2o=;
+        b=YstOd1W6X1vyeMfDJmOipRaiIKM3IzxuY+kVIN/FOQeM6+H/CIXHfev4VHYQDS7zaR
+         0kkXOJNSctTui42cWYPOOZUpWLOsizTbde2fZeUuqjApV9AYOBavHGPoqPjEihsrceJ9
+         MU3Z0Ghyv+GV5CnWqWUaOH6UijQkEiUHlOEkacpTf5roK4x3DanRGNJCVFPQ9fNmrMqK
+         X4PF/vBNHywJmm+QqMtWs9Y1kHdK5fNHP98DS6PeU48OWxFWe3UTfXSMGN9llTvi3cey
+         /1/1VQeRp1rh86mVF3atw9KlljWG1Yi6ZdEKQZmHZgtt/T4iHKVnul9V8byJrn+GPu4n
+         VglA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689708670; x=1692300670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iTrSAnnMNi3CJrN72jg6c2jFERcFPh+1lB6HHppzE2o=;
+        b=SFHhAqwEmoy63AGN3qkHJ1jfr7mYtHCwUFT+URt1EE6BpUkzWHtuRQizTnS/b14Oh8
+         bGXRnv0dYUl9aOPxauhLcmc+ARd6J5NfdmGaiVKyY4W4VcPwdXrgx1K1CET/EsuWhL5Z
+         aC3lmXmjwf2KCdfagYzKfV/0D1l3YRUbAygP8x87UHK4jezxkfTDRFEBPiLTO17LXp+y
+         pAMEFeHXBGhlkBAJexqHxPCJ68qzaPNKJBQe4ijpVLku4SO8lDecFNOcWYKFG6AIuyyJ
+         yzRy/eCcVWlbzquAULwKB6LOgO5rK4LWxrmSdqpMsP50ppjOsdRTBOHjmxL400KHK8HA
+         jifg==
+X-Gm-Message-State: ABy/qLYv4gx4IwIOjH74jfoCCqqI+O0lRYMIplKCVXoCgAqzywirTwpm
+        Bc3tb5dEk267RWDUhXvPrpZv1nDpmmFFd38UNCyDfkVq
+X-Google-Smtp-Source: APBJJlHI4rX84tOEoaXYW/2w4q01fgbrq4MG7euNNK4/ARs8hVqH6cIsj+6x6vLLQZutSVqnnyi3aTO0pVXh+qr52LY=
+X-Received: by 2002:a2e:b611:0:b0:2b7:2066:10e1 with SMTP id
+ r17-20020a2eb611000000b002b7206610e1mr11095537ljn.0.1689708670027; Tue, 18
+ Jul 2023 12:31:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+References: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
+In-Reply-To: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
+From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date:   Tue, 18 Jul 2023 12:30:57 -0700
+Message-ID: <CABBYNZK5MfkOSVUBtWLOLt+H-BBdYrQbZv=rmYtn4WtDyvJopw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_conn: clean up some casts
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 18 Jul 2023 10:04:18 +0300, Dan Carpenter wrote:
-> The list iterator can't be NULL.  Delete the check and pull the code
-> in one tab.
-> 
-> 
+Hi Dan,
 
-Applied to
+On Mon, Jul 17, 2023 at 3:20=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The ERR_PTR/PTR_ERR() functions are only for error pointers.  They're
+> not a generic way to cast pointers to int.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> We should really create INT_PTR/PTR_INT() functions.  But this is a
+> cleanup until someone creates those.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Is there any reason you didn't create such macros? I mean we could
+have it local first, or perhaps we just do HANDLE_PTR/PTR_HANDLE to
+avoid any confusion.
 
-Thanks!
+>  net/bluetooth/hci_conn.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
+> index cccc2b8b60a8..aea6fa12d954 100644
+> --- a/net/bluetooth/hci_conn.c
+> +++ b/net/bluetooth/hci_conn.c
+> @@ -873,7 +873,7 @@ static void bis_cleanup(struct hci_conn *conn)
+>
+>  static int remove_cig_sync(struct hci_dev *hdev, void *data)
+>  {
+> -       u8 handle =3D PTR_ERR(data);
+> +       u8 handle =3D (unsigned long)data;
+>
+>         return hci_le_remove_cig_sync(hdev, handle);
+>  }
+> @@ -882,7 +882,7 @@ static int hci_le_remove_cig(struct hci_dev *hdev, u8=
+ handle)
+>  {
+>         bt_dev_dbg(hdev, "handle 0x%2.2x", handle);
+>
+> -       return hci_cmd_sync_queue(hdev, remove_cig_sync, ERR_PTR(handle),=
+ NULL);
+> +       return hci_cmd_sync_queue(hdev, remove_cig_sync, (void *)(unsigne=
+d long)handle, NULL);
+>  }
+>
+>  static void find_cis(struct hci_conn *conn, void *data)
+> @@ -1234,7 +1234,7 @@ void hci_conn_failed(struct hci_conn *conn, u8 stat=
+us)
+>  static void create_le_conn_complete(struct hci_dev *hdev, void *data, in=
+t err)
+>  {
+>         struct hci_conn *conn;
+> -       u16 handle =3D PTR_ERR(data);
+> +       u16 handle =3D (unsigned long)data;
+>
+>         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
+>         if (!conn)
+> @@ -1264,7 +1264,7 @@ static void create_le_conn_complete(struct hci_dev =
+*hdev, void *data, int err)
+>  static int hci_connect_le_sync(struct hci_dev *hdev, void *data)
+>  {
+>         struct hci_conn *conn;
+> -       u16 handle =3D PTR_ERR(data);
+> +       u16 handle =3D (unsigned long)data;
+>
+>         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
+>         if (!conn)
+> @@ -2854,7 +2854,7 @@ u32 hci_conn_get_phy(struct hci_conn *conn)
+>  static int abort_conn_sync(struct hci_dev *hdev, void *data)
+>  {
+>         struct hci_conn *conn;
+> -       u16 handle =3D PTR_ERR(data);
+> +       u16 handle =3D (unsigned long)data;
+>
+>         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
+>         if (!conn)
+> --
+> 2.39.2
+>
 
-[1/1] ASoC: amd: acp: delete unnecessary NULL check
-      commit: c1325a2d5182f263f2edbc6e0c1e581e4c5d5a95
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--=20
+Luiz Augusto von Dentz
