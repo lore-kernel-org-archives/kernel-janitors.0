@@ -2,113 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC14EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jul 2023 23:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB022EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 01:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbjGQXfd (ORCPT
+        id S229797AbjGRBNS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jul 2023 19:35:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50276 "EHLO
+        Mon, 17 Jul 2023 21:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbjGQXfb (ORCPT
+        with ESMTP id S229790AbjGRBNR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jul 2023 19:35:31 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28BF410B;
-        Mon, 17 Jul 2023 16:34:38 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-992b66e5affso704174566b.3;
-        Mon, 17 Jul 2023 16:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689636780; x=1692228780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XUDr0WJ36nzGg+x0m6xG86uy/+jSOmIe2ZQC2dKU+JY=;
-        b=R72h7HqH8exWkKdBGuHmTn/A6yXVCx/MQxMlWukO2c9mf0bQu7HeyztJLnYzun3qUI
-         CPubk0fYrugSrzwwHJa6WuMyVEv7jAqlCxZ6Ha1zyjPOInzg8uu+1Dg11qNhmpWUXCyy
-         FnKmOrzNTcdUIq6NzCnXXFgkMr3Cx4GageF7idZk2wz5rSEiqnlp6SyKLHKbHnjdYfU2
-         j6QMS3ugtyHUXlGvH983eK2DS4EQI62/d+0LTaiDWUNNdG/HxFi+5vh5RjedFNHVdryP
-         MnAaWvLpheISDoE0GquVbuPi7DNKbFnoE9TO2wkkaOCItUf5+59K6lQvRCNepNU27ktN
-         Em9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689636780; x=1692228780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XUDr0WJ36nzGg+x0m6xG86uy/+jSOmIe2ZQC2dKU+JY=;
-        b=LyG0NPrH26ewEBaMEyiukPEArnD1SiHXozJBWucCWZmJsFMRJoLcv8Xjm8YucZfzNG
-         p9CF0nWCQd0v7gac5tA6si0/mOPFOIXnGNHsRxw8Jo3lbRpXHRDz0Njy7GPfkXOCHqnu
-         1ty++lg4hSxEVpiYPUAhQEI4ME5nvK5oq/M4tSswkVk3QluxmMKBYfi0YKP+ESXF1sie
-         7iP/A8NHGlT2c8vFdUnDZdOlQo/zTbbx8+8BE1niYnmHA+UPEJmx2se0x8rwiURNxEGY
-         2QalXAo5JWUcSK1Hst6VIEzITPIF8hgyGI3zddi60IFu80O1/lzlIlbT3/H/54ub3a4U
-         N+dg==
-X-Gm-Message-State: ABy/qLZfq20xUh2QketLE4xymAiSFvvjwYX9AMuPeoZ+Nu+DDq0E9QXW
-        zpvwUe72Olqu3KJ1qTHZkytMRwYJTDVKxparc/fhEPi9760=
-X-Google-Smtp-Source: APBJJlE1VufSgLLzwZ0wh5XIZlg806W1ISKFqvU35SLDRo3m8iBCXl2XRyjXOwehO1xfQV/AeH9gU+mb7fdtFJSw7xI=
-X-Received: by 2002:a05:651c:105b:b0:2b8:67ce:4ad7 with SMTP id
- x27-20020a05651c105b00b002b867ce4ad7mr5740002ljm.6.1689636061093; Mon, 17 Jul
- 2023 16:21:01 -0700 (PDT)
+        Mon, 17 Jul 2023 21:13:17 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id D906BF0;
+        Mon, 17 Jul 2023 18:13:15 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id B112C6085E131;
+        Tue, 18 Jul 2023 09:13:11 +0800 (CST)
+Message-ID: <8a94e6dc-f664-84fa-32f7-7f45f22a410a@nfschina.com>
+Date:   Tue, 18 Jul 2023 09:13:11 +0800
 MIME-Version: 1.0
-References: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <43698d8a3ed4e720899eadac887427f73d7ec2eb.1689623735.git.christophe.jaillet@wanadoo.fr>
-From:   Zhu Yanjun <zyjzyj2000@gmail.com>
-Date:   Tue, 18 Jul 2023 07:20:48 +0800
-Message-ID: <CAD=hENdpVxzE+Mvre7kdU-Z1Cr0z=6DFwhEh17-bNf-2Z0haJw@mail.gmail.com>
-Subject: Re: [PATCH] RDMA/rxe: Fix an error handling path in rxe_bind_mw()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Bob Pearson <rpearsonhpe@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] drm/i915/tv: avoid possible division by zero
+Content-Language: en-US
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, tvrtko.ursulin@linux.intel.com,
+        airlied@gmail.com, daniel@ffwll.ch, nathan@kernel.org,
+        ndesaulniers@google.com, trix@redhat.com
+Cc:     ville.syrjala@linux.intel.com, mripard@kernel.org,
+        ankit.k.nautiyal@intel.com, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <0cae35ea-7635-383d-cae5-2051abbc6d64@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 3:55=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On 2023/7/17 22:52, Andrzej Hajda wrote:
 >
-> All errors go to the error handling path, except this one. Be consistent
-> and also branch to it.
 >
-> Fixes: 02ed253770fb ("RDMA/rxe: Introduce rxe access supported flags")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> /!\ Speculative /!\
+> On 17.07.2023 08:22, Su Hui wrote:
+>> Clang warning: drivers/gpu/drm/i915/display/intel_tv.c:
+>> line 991, column 22 Division by zero.
+>> Assuming tv_mode->oversample=1 and (!tv_mode->progressive)=1,
+>> then division by zero will happen.
+>>
+>> Fixes: 1bba5543e4fe ("drm/i915: Fix TV encoder clock computation")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/gpu/drm/i915/display/intel_tv.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/display/intel_tv.c 
+>> b/drivers/gpu/drm/i915/display/intel_tv.c
+>> index 36b479b46b60..82b54af51f23 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_tv.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_tv.c
+>> @@ -988,7 +988,8 @@ intel_tv_mode_to_mode(struct drm_display_mode *mode,
+>>                 const struct tv_mode *tv_mode,
+>>                 int clock)
+>>   {
+>> -    mode->clock = clock / (tv_mode->oversample >> 
+>> !tv_mode->progressive);
+>> +    mode->clock = clock / (tv_mode->oversample != 1 ?
+>> +            tv_mode->oversample >> !tv_mode->progressive : 1);
 >
->    This patch is based on analysis of the surrounding code and should be
->    reviewed with care !
->
-> /!\ Speculative /!\
-> ---
->  drivers/infiniband/sw/rxe/rxe_mw.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/infiniband/sw/rxe/rxe_mw.c b/drivers/infiniband/sw/r=
-xe/rxe_mw.c
-> index d8a43d87de93..d9312b5c9d20 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_mw.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_mw.c
-> @@ -199,7 +199,8 @@ int rxe_bind_mw(struct rxe_qp *qp, struct rxe_send_wq=
-e *wqe)
->
->         if (access & ~RXE_ACCESS_SUPPORTED_MW) {
->                 rxe_err_mw(mw, "access %#x not supported", access);
+> Seems too smart to me, why not just:
+> mode->clock = clock / tv_mode->oversample;
+> if (!tv_mode->progressive)
+>     mode->clock <<= 1;
+> Or trying being smart:
+> mode->clock = clock / tv_mode->oversample << !tv_mode->progressive;
 
-https://www.kernel.org/doc/Documentation/core-api/printk-formats.rst
-What is "%#x"? No such definition in the above link.
-Except that, I am fine with it.
+Hi,
 
-Acked-by: Zhu Yanjun <zyjzyj2000@gmail.com>
-Zhu Yanjun
+Yes, this is more readable and clear.
+Thanks four your advice. I will send v2 soon.
 
-> -               return -EOPNOTSUPP;
-> +               ret =3D -EOPNOTSUPP;
-> +               goto err_drop_mr;
->         }
+Su Hui
+
 >
->         spin_lock_bh(&mw->lock);
-> --
-> 2.34.1
+> Btw in both cases there is assumption tv_mode->oversample != 0, I 
+> guess it is true.
+>
+> Regards
+> Andrzej
+>
+>>         /*
+>>        * tv_mode horizontal timings:
 >
