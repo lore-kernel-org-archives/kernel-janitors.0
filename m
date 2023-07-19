@@ -2,64 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55897C001DE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 19:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDB8C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 21:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231195AbjGSTvF (ORCPT
+        id S229785AbjGSVOj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:51:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39910 "EHLO
+        Wed, 19 Jul 2023 17:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjGSTvE (ORCPT
+        with ESMTP id S229477AbjGSVOi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jul 2023 15:51:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6DCF1BCF;
-        Wed, 19 Jul 2023 12:51:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Wed, 19 Jul 2023 17:14:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4FE1FC0;
+        Wed, 19 Jul 2023 14:14:37 -0700 (PDT)
+Received: from mercury (unknown [185.209.196.239])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BC57617DA;
-        Wed, 19 Jul 2023 19:51:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A476EC433C8;
-        Wed, 19 Jul 2023 19:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689796262;
-        bh=+UIZJuew3LXED+YxrmGBHpLYD5/jx6ezttAhPttbvwY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XiSvgTN0j4HVfMmSRBCX1GBvawpDxYI4LbS4Sb+C3nCpL9PsaA/m236d792tFESJW
-         09QdKD47NY/1dtA54ykc70E9uROioQZ6GzO6pmr44Lmn1lbRzduBNfQp4Ut/b26X6c
-         MjCgc1nP6zXPs5+9DyyJzYZaCJMaGjYOayWDnxs3hmm1IPJSFtHHzKgN+/cfA4y7v5
-         fyKtaMeqkaKszGiCm9xb3I4GbbBpd6OkNh4qMN2xS8a69AD+Xu7EdFqJWO9rV/B8OO
-         xrsjU98XzM2PkvXBbw5z0dxOsLyeNhajz2fbfp9ItyEit0eCMQ7+PmyXGZeQ7Q3U60
-         XF7tMJJ2uSq6A==
-Message-ID: <959d395c63a60c4bff156b2f121811ad.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 22D196607078;
+        Wed, 19 Jul 2023 22:14:36 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689801276;
+        bh=JMyQEP3od9PZOBsKRjkFxXdi2lvzCZLQhxvRz72H9to=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HE5y3hiXQcOixAs3n0zNF4bMBfYzm7JL+CW6REiwSEjXA+TCJYdY556/PjXwAjAas
+         dvqagZ/hG87rcrHH2CryR7DO7T61NpsGvAPqRlfWuvgR92WNgxXYMYY6w9y71bfPOp
+         U/D+0uADFNZeyBNgwSXmFJNZwlTBxipeZFPqJHNZNTBpBFf6FxWzydIvTpJ7j5O3r4
+         ds8nnJjcfLTOGMJH99pQ3WDJF+RMUr3Mr5CVjdfmHQVXTaTvn7oLVTqU46dNNtLnUL
+         vNvyl3IMgXcE54P3Q7tBdfG7KFOd5DnqvCdECk9Q5zZX4wewX8SGTz53ngt6y8sX3U
+         mRucVyYZLXEjA==
+Received: by mercury (Postfix, from userid 1000)
+        id 655DC1061639; Wed, 19 Jul 2023 23:14:33 +0200 (CEST)
+Date:   Wed, 19 Jul 2023 23:14:33 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Colin Ian King <colin.i.king@gmail.com>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] power: supply: bd99954: make read-only array
+ sub_status_reg
+Message-ID: <20230719211433.cfqz3c5pki4xi6rl@mercury.elektranox.org>
+References: <20230627121707.722021-1-colin.i.king@gmail.com>
+ <94dca2c3-e5fc-c4bc-a945-31ebb728e353@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
-References: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: starfive: Simplify .determine_rate()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 19 Jul 2023 12:51:00 -0700
-User-Agent: alot/0.10
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ihp5cv6merpfazba"
+Content-Disposition: inline
+In-Reply-To: <94dca2c3-e5fc-c4bc-a945-31ebb728e353@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2023-07-07 13:02:18)
-> jh71x0_clk_mux_determine_rate() is the same as __clk_mux_determine_rate(),
-> so use the latter to save some LoC.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
 
-Applied to clk-next
+--ihp5cv6merpfazba
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, Jun 27, 2023 at 03:38:35PM +0300, Matti Vaittinen wrote:
+> On 6/27/23 15:17, Colin Ian King wrote:
+> > Don't populate the read-only array on the stack, instead make it
+> > static const.
+> >=20
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>=20
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Thanks, queued.
+
+-- Sebastian
+
+--ihp5cv6merpfazba
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmS4UjMACgkQ2O7X88g7
++ppYgg//dORO/aqPrYARCr7Yl2RBHeIbi5cvuQTT86ZWSiB2tTe4pxHibBXRXh5h
+rynWngtMqxgQUGGPawi6HiM/esBkp2Pvz6lwAhxCi2e6ZoXe7MO9+fcDRNZRrsKD
+LENS2c5yH+N8jgNg1ek8GJv17tjRW0z9X9SH2eCAG7fSikmmzbkm0Xrzu4kdtfNL
+ubUrb3GPOms1TJPxTbQO+EmzIEcUC7p2kU5U2T2IBy4SNcLY1Ts/TZ7gtQFMX3Ea
+Pj4MUUxRGnTFgfArqviaPNtSJ7hMmQBB0VTgcHRvBWY83tZuazi5a/DhaTZLwuYn
+HR9IwfUtHBlxwdc4aWaL9yEV5HONXMBkln59Z9l8v7StPRBjKUtZxQMtVnkwA872
+cF9i9TZMRfD6Q2ujY9nA7OWODLammkJYs2aAMcsI5oqGl9QxPNkea8YUOwHgpFEw
+9MR5oUqvqgA7HK0EgE6zvf7oW5OFCGQy5LflL44nl8JFHkgLChpFibOCvL6rZslg
+2xAvlsFT/YzKtTv+cNgXnfkZwrOeHjq6ue+JYD9ltwfbmljKEBPHyEVMsDtF6tps
+KJj096/+EmzvcI4bK6DaWqEg8KmHTcygYd6dCP77xHLKG9MQhyzbcCtOwPmJUfhe
+q7AP2asYFVIalrm3oAK1NZ8xtnZdv5ff8ocXFWfvrgTiBd35JeA=
+=f2XX
+-----END PGP SIGNATURE-----
+
+--ihp5cv6merpfazba--
