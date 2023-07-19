@@ -2,118 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95901EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 02:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE92EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 07:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229506AbjGSCNA (ORCPT
+        id S229703AbjGSHW5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 22:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48112 "EHLO
+        Wed, 19 Jul 2023 03:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjGSCM7 (ORCPT
+        with ESMTP id S229563AbjGSHW4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 22:12:59 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 926E2FC;
-        Tue, 18 Jul 2023 19:12:57 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id CD47B60484988;
-        Wed, 19 Jul 2023 10:12:47 +0800 (CST)
-Message-ID: <40db9ac5-84b7-dc98-786c-2e651404534b@nfschina.com>
-Date:   Wed, 19 Jul 2023 10:12:47 +0800
+        Wed, 19 Jul 2023 03:22:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE0B2113;
+        Wed, 19 Jul 2023 00:22:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC51160C89;
+        Wed, 19 Jul 2023 07:22:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0520BC433CB;
+        Wed, 19 Jul 2023 07:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689751348;
+        bh=v+KzWx3A540NW8aAgQGBA0OhgGvyrwyOdzXHhvq2quA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NHG0AIdGyV6plj0mYiDIUa1yfQ5R7aui2+xWEKeiQzUzb0dxb6CtzvOOZUtFUK94I
+         /HVFlu8bollcLb61dFxUa85WDSiDjERnKi1ERRX0y9/438ka1Q/IeHiRVb7VjqUoI3
+         5yyVH21Ou7O+MCquJtxgpf+7lz4qHbMVyayzg2aCqjbpI94Ikpuxv4jla7WwvnjaVp
+         plzW8C/0FqZaWEC0XX6N9vNvircV3o+ZxJIC9K5bHt/qfqW8MYwTJ56N+WpmdEjE/m
+         HMTpWhR5yxsd3ZVqKjf9Pm/zb8ZYfmlrLBm+qFASmOHzv7sZqXghzgmSbS2ZYCkzqq
+         Cess+QHAYBsjw==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-51e566b1774so8696607a12.1;
+        Wed, 19 Jul 2023 00:22:27 -0700 (PDT)
+X-Gm-Message-State: ABy/qLaaQFbU848g2ACF4wKf8XhC56MoOKtIJQbZW2xW+E4mL9EV5fOv
+        06MEt6hUloQTfjMvqK7j5SYbTBOE+CXyT9gICuo=
+X-Google-Smtp-Source: APBJJlGgFowu6dGDg4naL/LQVEuvtSanlod0S5HMByJDn7shqAJ5E7r/8oPECUcfYfFdSH/QCwseM85/5g1ZvbZFZ1c=
+X-Received: by 2002:a50:ef0c:0:b0:51d:d16f:7e52 with SMTP id
+ m12-20020a50ef0c000000b0051dd16f7e52mr1734736eds.29.1689751346283; Wed, 19
+ Jul 2023 00:22:26 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] drm/i915/tv: avoid possible division by zero
-Content-Language: en-US
-To:     Andrzej Hajda <andrzej.hajda@intel.com>
-Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, tvrtko.ursulin@linux.intel.com,
-        airlied@gmail.com, daniel@ffwll.ch, nathan@kernel.org,
-        ndesaulniers@google.com, trix@redhat.com,
-        ville.syrjala@linux.intel.com, mripard@kernel.org,
-        ankit.k.nautiyal@intel.com, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <3c7dfc18-539f-2b0c-0c77-48b89ef96560@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20230718153348.3340811-1-chenhuacai@loongson.cn> <261edc6c-e339-faeb-3045-bfe6604d1aef@web.de>
+In-Reply-To: <261edc6c-e339-faeb-3045-bfe6604d1aef@web.de>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Wed, 19 Jul 2023 15:22:13 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
+Message-ID: <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
+Subject: Re: [PATCH v5] LoongArch: Fix CONFIG_CMDLINE_EXTEND and
+ CONFIG_CMDLINE_BOOTLOADER handling
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Zhihong Dong <donmor3000@hotmail.com>, loongarch@lists.linux.dev,
+        loongson-kernel@lists.loongnix.cn, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Guo Ren <guoren@kernel.org>,
+        Huacai Chen <chenhuacai@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Xuefeng Li <lixuefeng@loongson.cn>,
+        Xuerui Wang <kernel@xen0n.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/7/18 19:28, Andrzej Hajda wrote:
-> On 18.07.2023 12:10, Su Hui wrote:
->> On 2023/7/18 13:39, Dan Carpenter wrote:
->>> On Mon, Jul 17, 2023 at 04:52:51PM +0200, Andrzej Hajda wrote:
->>>> On 17.07.2023 08:22, Su Hui wrote:
->>>>> Clang warning: drivers/gpu/drm/i915/display/intel_tv.c:
->>>>> line 991, column 22 Division by zero.
->>>>> Assuming tv_mode->oversample=1 and (!tv_mode->progressive)=1,
->>>>> then division by zero will happen.
->>>>>
->>>>> Fixes: 1bba5543e4fe ("drm/i915: Fix TV encoder clock computation")
->>>>> Signed-off-by: Su Hui <suhui@nfschina.com>
->>>>> ---
->>>>>    drivers/gpu/drm/i915/display/intel_tv.c | 3 ++-
->>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/i915/display/intel_tv.c 
->>>>> b/drivers/gpu/drm/i915/display/intel_tv.c
->>>>> index 36b479b46b60..82b54af51f23 100644
->>>>> --- a/drivers/gpu/drm/i915/display/intel_tv.c
->>>>> +++ b/drivers/gpu/drm/i915/display/intel_tv.c
->>>>> @@ -988,7 +988,8 @@ intel_tv_mode_to_mode(struct drm_display_mode 
->>>>> *mode,
->>>>>                  const struct tv_mode *tv_mode,
->>>>>                  int clock)
->>>>>    {
->>>>> -    mode->clock = clock / (tv_mode->oversample >> 
->>>>> !tv_mode->progressive);
->>>>> +    mode->clock = clock / (tv_mode->oversample != 1 ?
->>>>> +            tv_mode->oversample >> !tv_mode->progressive : 1);
->>>> Seems too smart to me, why not just:
->>>> mode->clock = clock / tv_mode->oversample;
->>>> if (!tv_mode->progressive)
->>>>      mode->clock <<= 1;
->>> This is nice.
->>
->> mode->clock = clock / tv_mode->oversample << !tv_mode->progressive;
->>
->> But I think this one is much better,  it has less code and run faster.
->> Should I resend v3 to add some explanation or follow Dan's advice?
+Hi, Markus,
+
+On Wed, Jul 19, 2023 at 2:51=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
-> Speed gain here is irrelevant here, and disputable.
+> >                                                   =E2=80=A6, so this pa=
+tch add
+> > some code to fix it.
 >
-> One thing which could be problematic is that we could loose the least 
-> significant bit in mode->clock,
-> in case non-progressive, but I am not sure if it really matters, as 
-> mode->clock is not precise value anyway.
-> Alternatively we could 1st shift, then divide, but in this case 
-> overflow can occur, at least in theory - I suspect there are no such 
-> big clocks (in kHz).
+> Would you like to avoid a typo here?
 >
-> Finally I would agree with Dan, readability is better with conditional.
+> Will any other imperative change description variant become more helpful?
+Thank you for pointing this out, but since Zhihong is the original
+author, I don't want to completely rewrite the commit message, so just
+fix the typo...
+
+Huacai
 >
-How about this one?
-
--       mode->clock = clock / (tv_mode->oversample >> !tv_mode->progressive);
-+       mode->clock = clock;
-+       if (tv_mode->oversample >> !tv_mode->progressive)
-+               mode->clock /= tv_mode->oversample >> 1;
-
-Prevent loss of accuracy and also make it more readable.
-If it's OK, I will send v3 patch.
-
-By the way, do we need to print some error messages or do some things  when
-"tv_mode->oversample << !tv_mode->progressive" is zero? I'm not sure about
-this.
-
-Su Hui
-
-> Regards
-> Andrzej
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.5-rc2#n94
+>
+> Regards,
+> Markus
