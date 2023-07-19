@@ -2,96 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF7DEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 10:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B60EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 12:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbjGSKlB (ORCPT
+        id S230029AbjGSMRl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jul 2023 06:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59106 "EHLO
+        Wed, 19 Jul 2023 08:17:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjGSKk7 (ORCPT
+        with ESMTP id S229542AbjGSMRk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jul 2023 06:40:59 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0CCCE5
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 03:40:57 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8Cx7+u4vbdkDj8HAA--.17689S3;
-        Wed, 19 Jul 2023 18:40:56 +0800 (CST)
-Received: from [10.20.42.43] (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx7yOvvbdk3qw0AA--.39459S3;
-        Wed, 19 Jul 2023 18:40:56 +0800 (CST)
-Message-ID: <29c44ca4-9e8c-5d50-7fdd-76e73eea3d23@loongson.cn>
-Date:   Wed, 19 Jul 2023 18:40:47 +0800
+        Wed, 19 Jul 2023 08:17:40 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7B7E5;
+        Wed, 19 Jul 2023 05:17:39 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fd0f000f91so2891145e9.2;
+        Wed, 19 Jul 2023 05:17:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689769057; x=1692361057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1aqMjhx36/qsRqmm9s0dXSO/evM4+sGU1PIfLMOXcEo=;
+        b=R+ari2l89cCalb3+6TZkzJrBv6676JTcoIFYBjnuSyoRhbOtNe57J7wuIX/N/bN0/n
+         jA5hAgiFpwFafDgfMQtqqPFMC8XVmiRPO6+3hIv7k2x/zjEJ4ggZPuEd/ZStDPEJ8iDU
+         s0YCUIYmWrJXQ0zBxhAMjD0cSzigF0Ctdn8dt31blo02nKpMroJ1gENziHfmDUfUIPcc
+         6Taa6GtOESUI0BIHUEqUHgNLC6y15zepWaXVJghJQuSEhws0Pw/2d1o0iQ3hgoAfFxrk
+         iOqUqWYtWz4eObFa6311R3wm8inHO/Br37UeuTHnrLSeYWtpB4erGHLfkb+e2qFjQaIo
+         0K9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689769057; x=1692361057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1aqMjhx36/qsRqmm9s0dXSO/evM4+sGU1PIfLMOXcEo=;
+        b=bsuOE4xX5sEaSJxfvf2/bjId0G7MVUzsBP6WoJbLe2x+gsF06JxLgVau92w8f8TXzM
+         fAFSuCfz+xG7m0RSviGQkm0krXNS+kyHhurxYgnOGuB4JVaF2rrYa2KBZOtibfBo+3OZ
+         nlxHo8mlGIVIhmrvnEIfIV2CINpEB1fitnQMKLI2JuIFBDgAmNiICzNdscbdoq+Yfc2W
+         oZO5OGOgZj0Hd30YzZb6Bf4kZzH9TvLFsQBxsIfZOC1Y45QAbyoTJx2OTryqb+OcHfhL
+         oO9kOddq0CxzjZWDVX4KU4DBaGqRlkV23AqzpkVc2eDHnlK/4X0htXp5fPTO1b0rRo3J
+         rVSw==
+X-Gm-Message-State: ABy/qLbYaS7ff8OhIXHFk1iVcwVlbiMCmtP89xaPAf+5Q2f/1MdMx25T
+        B5tPQw/gjmOYS01zPbNtZn0=
+X-Google-Smtp-Source: APBJJlEMLW8USslKCQ7vAH+PZY40i51w6PKWkoCFFKfn0x/Jz2zMTePXB+T9jCJhR2itd56/P09U9Q==
+X-Received: by 2002:adf:fcd2:0:b0:313:fdbb:422 with SMTP id f18-20020adffcd2000000b00313fdbb0422mr4421498wrs.43.1689769057336;
+        Wed, 19 Jul 2023 05:17:37 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l14-20020a1c790e000000b003fc3b03caa4sm1947785wme.0.2023.07.19.05.17.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jul 2023 05:17:36 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs: hfsplus: make extend error rate limited
+Date:   Wed, 19 Jul 2023 13:17:35 +0100
+Message-Id: <20230719121735.2831164-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] drm/loongson: Add a check for lsdc_bo_create() errors
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <ZLeijglIMPve2Iio@kadam>
-Content-Language: en-US
-From:   suijingfeng <suijingfeng@loongson.cn>
-In-Reply-To: <ZLeijglIMPve2Iio@kadam>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8Cx7yOvvbdk3qw0AA--.39459S3
-X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Gw4fKFy7Ww1xCF1rXw47Awc_yoWkZFg_CF
-        1IyrnrWw1UAF1kX3W7ArsIvFZIvrZ5ZFsY9a4jy3s5W3W3trn3AryFvrykXF17ZF1IgFnx
-        Aa1kCFyFyFn3CosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-        cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-        vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-        xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
-        6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-        1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-        JVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-        vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-        x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-        xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-        wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFa0PUUUUU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Extending a file where there is not enough free space can trigger
+frequent extend alloc file error messages and this can easily spam
+the kernel log. Make the error message rate limited.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/hfsplus/extents.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-This version is ok, I'll apply this patch within a few days.
-
-
-On 2023/7/19 16:45, Dan Carpenter wrote:
-> This code doesn't check for lsdc_bo_create() failure and it could lead
-> to a crash.  It can fail for a variety of reasons, but the most common
-> cause would be low memory.  Add a check.
->
-> Fixes: f39db26c5428 ("drm: Add kms driver for loongson display controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
-> ---
-> v2: change subject and re-word the commit message
->
->   drivers/gpu/drm/loongson/lsdc_ttm.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/loongson/lsdc_ttm.c b/drivers/gpu/drm/loongson/lsdc_ttm.c
-> index bb0c8fd43a75..bf79dc55afa4 100644
-> --- a/drivers/gpu/drm/loongson/lsdc_ttm.c
-> +++ b/drivers/gpu/drm/loongson/lsdc_ttm.c
-> @@ -496,6 +496,8 @@ struct lsdc_bo *lsdc_bo_create_kernel_pinned(struct drm_device *ddev,
->   	int ret;
->   
->   	lbo = lsdc_bo_create(ddev, domain, size, true, NULL, NULL);
-> +	if (IS_ERR(lbo))
-> +		return ERR_CAST(lbo);
->   
->   	ret = lsdc_bo_reserve(lbo);
->   	if (unlikely(ret)) {
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 7a542f3dbe50..3c572e44f2ad 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -448,9 +448,9 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
+ 	if (sbi->alloc_file->i_size * 8 <
+ 	    sbi->total_blocks - sbi->free_blocks + 8) {
+ 		/* extend alloc file */
+-		pr_err("extend alloc file! (%llu,%u,%u)\n",
+-		       sbi->alloc_file->i_size * 8,
+-		       sbi->total_blocks, sbi->free_blocks);
++		pr_err_ratelimited("extend alloc file! (%llu,%u,%u)\n",
++				   sbi->alloc_file->i_size * 8,
++				   sbi->total_blocks, sbi->free_blocks);
+ 		return -ENOSPC;
+ 	}
+ 
+-- 
+2.39.2
 
