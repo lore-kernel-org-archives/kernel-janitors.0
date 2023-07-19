@@ -2,90 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE92EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 07:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91A4C001DC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 08:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbjGSHW5 (ORCPT
+        id S230160AbjGSICK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55234 "EHLO
+        Wed, 19 Jul 2023 04:02:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjGSHW4 (ORCPT
+        with ESMTP id S230210AbjGSIB5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jul 2023 03:22:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE0B2113;
-        Wed, 19 Jul 2023 00:22:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC51160C89;
-        Wed, 19 Jul 2023 07:22:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0520BC433CB;
-        Wed, 19 Jul 2023 07:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689751348;
-        bh=v+KzWx3A540NW8aAgQGBA0OhgGvyrwyOdzXHhvq2quA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NHG0AIdGyV6plj0mYiDIUa1yfQ5R7aui2+xWEKeiQzUzb0dxb6CtzvOOZUtFUK94I
-         /HVFlu8bollcLb61dFxUa85WDSiDjERnKi1ERRX0y9/438ka1Q/IeHiRVb7VjqUoI3
-         5yyVH21Ou7O+MCquJtxgpf+7lz4qHbMVyayzg2aCqjbpI94Ikpuxv4jla7WwvnjaVp
-         plzW8C/0FqZaWEC0XX6N9vNvircV3o+ZxJIC9K5bHt/qfqW8MYwTJ56N+WpmdEjE/m
-         HMTpWhR5yxsd3ZVqKjf9Pm/zb8ZYfmlrLBm+qFASmOHzv7sZqXghzgmSbS2ZYCkzqq
-         Cess+QHAYBsjw==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-51e566b1774so8696607a12.1;
-        Wed, 19 Jul 2023 00:22:27 -0700 (PDT)
-X-Gm-Message-State: ABy/qLaaQFbU848g2ACF4wKf8XhC56MoOKtIJQbZW2xW+E4mL9EV5fOv
-        06MEt6hUloQTfjMvqK7j5SYbTBOE+CXyT9gICuo=
-X-Google-Smtp-Source: APBJJlGgFowu6dGDg4naL/LQVEuvtSanlod0S5HMByJDn7shqAJ5E7r/8oPECUcfYfFdSH/QCwseM85/5g1ZvbZFZ1c=
-X-Received: by 2002:a50:ef0c:0:b0:51d:d16f:7e52 with SMTP id
- m12-20020a50ef0c000000b0051dd16f7e52mr1734736eds.29.1689751346283; Wed, 19
- Jul 2023 00:22:26 -0700 (PDT)
+        Wed, 19 Jul 2023 04:01:57 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4ED61BE4
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 01:01:55 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3159d75606dso6300760f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 01:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689753713; x=1692345713;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UX6ZdyM5wEmrpik0psSyRcU5JjoiPAf9kF8mqF500wc=;
+        b=fRTysXfaetG2sRpxmcXhoCnfUYUJQpX2v9kigO3Ow3Ym7PV4HJgRVZPRxGGipWYNII
+         ij0vahFhRkjOpRklb6VrgUVM2Qn0HAOSMJ+CHdABKKNS6M4Oo7kYsLqVWXHTr20T+AY/
+         EpTqeAu2TaJPZA6V96kfWCkqauePTuJDojJ2fKwo9KQ0llo+DO71hJnUxh6vx1+bVTdZ
+         fqyZueCd4APPQ2sz0Pvvt2O304SeVOUO4UdPv267KPbOAlP+2UCFgpLOfzTD5Piv5Kly
+         qIIZtzbSQLSLpcGxhq990xYAtkZ62oIu83ZscZ1V+XgEWcKmwNuWJpZ/FMSD2dIP7Nbt
+         zXlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689753713; x=1692345713;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UX6ZdyM5wEmrpik0psSyRcU5JjoiPAf9kF8mqF500wc=;
+        b=R4EXharE/laj2cCC49k1loRDdJFz+XLiO1jPQhMINbzpIb9h6m0OjMIsdPwN9aM5lr
+         2eO5VsHeWJhRJzktTjVDTx21swQp0f43JnOKxRwoKMSlokCO0t1XL9uq/Roy0NHMdWLf
+         cceUE/qRqkBqnxa1S7B7LDICtKrJcRGTntvw4qy5bvMu3i38xUsV7NfA9ISc8A1xsdGh
+         YvE82rI1He5NDoPRsZ1L7jYkGiLF+UErCgPCOFFGaeMV9+TDuaPQH0vLNZVDg9kJxgsm
+         KyexDQGH5pzCVqtNxcVmvT1Nw4nFymKQZNrbhvQDDZWMGfCxQv7+3q0NdsNB55SF/qFl
+         rpgw==
+X-Gm-Message-State: ABy/qLbzEw9vV3DWzmmyvvdwiVvazw5x+BaX25KOI6ZScpn4J4WOJJOX
+        oL3ZgaoDqCJsqciFcRq2FuTWvA==
+X-Google-Smtp-Source: APBJJlG4+7m3F5TQkfxgng+M1KHTqM/pNFhvkgHWvvYQzFLuUECfGrZYt9qwv14oKUpbg9GMZfE6Tg==
+X-Received: by 2002:a5d:6212:0:b0:314:1a98:ebc0 with SMTP id y18-20020a5d6212000000b003141a98ebc0mr1378282wru.26.1689753713507;
+        Wed, 19 Jul 2023 01:01:53 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v12-20020adfedcc000000b00314315071bbsm4583287wro.38.2023.07.19.01.01.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jul 2023 01:01:52 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 11:01:49 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: hci_conn: clean up some casts
+Message-ID: <182a5159-3378-4d3b-8d05-bcb931cf450a@kadam.mountain>
+References: <5cbde2b4-69b5-4b25-a095-251c8347cb09@kili.mountain>
+ <CABBYNZK5MfkOSVUBtWLOLt+H-BBdYrQbZv=rmYtn4WtDyvJopw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230718153348.3340811-1-chenhuacai@loongson.cn> <261edc6c-e339-faeb-3045-bfe6604d1aef@web.de>
-In-Reply-To: <261edc6c-e339-faeb-3045-bfe6604d1aef@web.de>
-From:   Huacai Chen <chenhuacai@kernel.org>
-Date:   Wed, 19 Jul 2023 15:22:13 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
-Message-ID: <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
-Subject: Re: [PATCH v5] LoongArch: Fix CONFIG_CMDLINE_EXTEND and
- CONFIG_CMDLINE_BOOTLOADER handling
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Zhihong Dong <donmor3000@hotmail.com>, loongarch@lists.linux.dev,
-        loongson-kernel@lists.loongnix.cn, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, Guo Ren <guoren@kernel.org>,
-        Huacai Chen <chenhuacai@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>,
-        Xuerui Wang <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABBYNZK5MfkOSVUBtWLOLt+H-BBdYrQbZv=rmYtn4WtDyvJopw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi, Markus,
+On Tue, Jul 18, 2023 at 12:30:57PM -0700, Luiz Augusto von Dentz wrote:
+> Hi Dan,
+> 
+> On Mon, Jul 17, 2023 at 3:20 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The ERR_PTR/PTR_ERR() functions are only for error pointers.  They're
+> > not a generic way to cast pointers to int.
+> >
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > We should really create INT_PTR/PTR_INT() functions.  But this is a
+> > cleanup until someone creates those.
+> 
+> Is there any reason you didn't create such macros? I mean we could
+> have it local first, or perhaps we just do HANDLE_PTR/PTR_HANDLE to
+> avoid any confusion.
+> 
 
-On Wed, Jul 19, 2023 at 2:51=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> >                                                   =E2=80=A6, so this pa=
-tch add
-> > some code to fix it.
->
-> Would you like to avoid a typo here?
->
-> Will any other imperative change description variant become more helpful?
-Thank you for pointing this out, but since Zhihong is the original
-author, I don't want to completely rewrite the commit message, so just
-fix the typo...
+Yeah.  I can do that.
 
-Huacai
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.5-rc2#n94
->
-> Regards,
-> Markus
+regards,
+dan carpenter
+
