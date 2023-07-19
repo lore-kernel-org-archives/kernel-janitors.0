@@ -2,113 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC06BEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jul 2023 21:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E875C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 02:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230381AbjGRVxg (ORCPT
+        id S229502AbjGSCKk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:53:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
+        Tue, 18 Jul 2023 22:10:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGRVxe (ORCPT
+        with ESMTP id S229461AbjGSCKj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jul 2023 17:53:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6926198E;
-        Tue, 18 Jul 2023 14:53:33 -0700 (PDT)
+        Tue, 18 Jul 2023 22:10:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED5B1FD8;
+        Tue, 18 Jul 2023 19:10:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6335C611DC;
-        Tue, 18 Jul 2023 21:53:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C036C433C7;
-        Tue, 18 Jul 2023 21:53:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B5AE616D1;
+        Wed, 19 Jul 2023 02:10:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 70763C43391;
+        Wed, 19 Jul 2023 02:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689717212;
-        bh=9GJl9BKrVBmnHdnk/r5SFl8lXAj76tW1SzBJ1JufEKQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=YAjBS1M031nA14Fa/+wmtGpYOPqBIh3RNDv+pn4g3wxGkaqCmBIZUbitjOcLMvebc
-         b4ieU90GREd6txCNYrbaJ/nbL6xYCCa5oBnh/mkSpaY1bls6aYVucKYaQjxgFY00SZ
-         ztXr+CFA6rddV09Y1bXytjQlNlMZIjvqhFe2uMqOnTf7sOnxA6koGVP+2sDTLvFGcZ
-         e3E31wYwmAE3JUeJueS6pr5NthXVr5UDJpBM1YSIRgUJw9aRsQbgeVRfbh0Riv/fnP
-         464PIjgFtQ7XgLNHw3LfgOJ2ELoTUPlwzVRVyYmd1SP+nSmghocSjx3b8q/a0hg3fp
-         fI3O+3klcMCNQ==
-Date:   Tue, 18 Jul 2023 16:53:30 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: ibmphp: make read-only arrays static
-Message-ID: <20230718215330.GA496036@bhelgaas>
+        s=k20201202; t=1689732622;
+        bh=GZrsVklu6wW9LRIDBIigNtrV62SEsXbQ+xxiZOxft5s=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=FIb0s6XXYq/T55KzIt+Av0wBEgHCjwPJAodcts8fRWJ6J1jZQlNGPkMQ1tiKO550I
+         xFyhtK8xnKYn/XakGD5CBsTPo0I2nXhjALNanhNdzHENLOUM0ANe3usMv+BTjJtAEt
+         vtE0WTDDk5w7gifeqCH4SMDAZp5zfq3WiAu84Rh79RrX8vtSLpWdWR1LR1QkwgbGTa
+         pDNfcbZE/UuKWCwUcSnnP0eLPRh6sVJ+/wtlaKRyYke1BW3+M4+Xv0gxDOEU7rdu0W
+         GHWh9+Y6WPmZv8dy2n2CsUClZTnhEf85MNfMIVA1uq1IfW8hBv6HzjPO+JtpjWndbD
+         Q9KUAIcKtF3fQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 44377E22AE5;
+        Wed, 19 Jul 2023 02:10:22 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627125612.724764-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/9] Remove unnecessary (void*) conversions
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168973262227.24960.1211431370018888838.git-patchwork-notify@kernel.org>
+Date:   Wed, 19 Jul 2023 02:10:22 +0000
+References: <20230717030937.53818-1-yunchuan@nfschina.com>
+In-Reply-To: <20230717030937.53818-1-yunchuan@nfschina.com>
+To:     yunchuan <yunchuan@nfschina.com>
+Cc:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        irusskikh@marvell.com, rmody@marvell.com, skalluru@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, steve.glendinning@shawell.net,
+        iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
+        quan@os.amperecomputing.com, andrew@lunn.ch, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, mostrows@earthlink.net, xeb@mail.ru,
+        uttenthaler@ems-wuensche.com, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 01:56:12PM +0100, Colin Ian King wrote:
-> Don't populate the arrays on the stack, instead make them static const.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hello:
 
-Applied to pci/hotplug for v6.6, thanks!
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> ---
->  drivers/pci/hotplug/ibmphp_pci.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+On Mon, 17 Jul 2023 11:09:37 +0800 you wrote:
+> Remove (void*) conversions under "drivers/net" directory.
 > 
-> diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
-> index 754c3f23282e..50038e5f9ca4 100644
-> --- a/drivers/pci/hotplug/ibmphp_pci.c
-> +++ b/drivers/pci/hotplug/ibmphp_pci.c
-> @@ -329,7 +329,7 @@ int ibmphp_configure_card(struct pci_func *func, u8 slotno)
->  static int configure_device(struct pci_func *func)
->  {
->  	u32 bar[6];
-> -	u32 address[] = {
-> +	static const u32 address[] = {
->  		PCI_BASE_ADDRESS_0,
->  		PCI_BASE_ADDRESS_1,
->  		PCI_BASE_ADDRESS_2,
-> @@ -564,7 +564,7 @@ static int configure_bridge(struct pci_func **func_passed, u8 slotno)
->  	struct resource_node *pfmem = NULL;
->  	struct resource_node *bus_pfmem[2] = {NULL, NULL};
->  	struct bus_node *bus;
-> -	u32 address[] = {
-> +	static const u32 address[] = {
->  		PCI_BASE_ADDRESS_0,
->  		PCI_BASE_ADDRESS_1,
->  		0
-> @@ -1053,7 +1053,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
->  	int howmany = 0;	/*this is to see if there are any devices behind the bridge */
->  
->  	u32 bar[6], class;
-> -	u32 address[] = {
-> +	static const u32 address[] = {
->  		PCI_BASE_ADDRESS_0,
->  		PCI_BASE_ADDRESS_1,
->  		PCI_BASE_ADDRESS_2,
-> @@ -1182,7 +1182,7 @@ static struct res_needed *scan_behind_bridge(struct pci_func *func, u8 busno)
->  static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
->  {
->  	u32 start_address;
-> -	u32 address[] = {
-> +	static const u32 address[] = {
->  		PCI_BASE_ADDRESS_0,
->  		PCI_BASE_ADDRESS_1,
->  		PCI_BASE_ADDRESS_2,
-> @@ -1310,7 +1310,7 @@ static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
->  	struct resource_node *mem = NULL;
->  	struct resource_node *pfmem = NULL;
->  	struct bus_node *bus;
-> -	u32 address[] = {
-> +	static const u32 address[] = {
->  		PCI_BASE_ADDRESS_0,
->  		PCI_BASE_ADDRESS_1,
->  		0
-> -- 
-> 2.39.2
+> Changes in v3:
+> 	change the author name to my full name "Wu Yunchuan".
+> 	improve the commit message to be more clearly.
 > 
+> Changes in v2:
+>         move declarations to be reverse xmas tree.
+>         compile it in net and net-next branch.
+>         remove some error patches in v1.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v3,1/9] net: atlantic: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/f15fbe46f5ed
+  - [net-next,v3,2/9] net: ppp: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/89c04d6c49c3
+  - [net-next,v3,3/9] net: hns3: remove unnecessary (void*) conversions.
+    https://git.kernel.org/netdev/net-next/c/14fbcad00fe5
+  - [net-next,v3,4/9] net: hns: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/406eb9cf6f6f
+  - [net-next,v3,5/9] ice: remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/c59cc2679acc
+  - [net-next,v3,6/9] ethernet: smsc: remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/099090c6effc
+  - [net-next,v3,7/9] net: mdio: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/04115debedce
+  - [net-next,v3,8/9] can: ems_pci: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/9235e3bcc613
+  - [net-next,v3,9/9] net: bna: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/1d5123efdb91
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
