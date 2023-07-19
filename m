@@ -2,108 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE07C001B0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 10:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8CFEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 10:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230333AbjGSKSH (ORCPT
+        id S229692AbjGSKd7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jul 2023 06:18:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40564 "EHLO
+        Wed, 19 Jul 2023 06:33:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbjGSKSE (ORCPT
+        with ESMTP id S229638AbjGSKd6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jul 2023 06:18:04 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E761BEF
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 03:18:02 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3159d5e409dso406710f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 03:18:02 -0700 (PDT)
+        Wed, 19 Jul 2023 06:33:58 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF7A18D;
+        Wed, 19 Jul 2023 03:33:57 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbc63c2e84so67087965e9.3;
+        Wed, 19 Jul 2023 03:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689761881; x=1690366681;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d6uSqq8iwHxn9/tpT05qWIJPin2r3B4nv+yMTWooWZQ=;
-        b=SIOzxz0kITZK8LFNRze7JYjdZtc1YCSgzt3hjwJAeBkNjc+AvJSC1N7/zvWKNFT2fv
-         habMlKdbAGHy8hqKFFxFqyYlUrjOI6uRKLk+Ni/S2VBmCgF1LFsed+EYzwSdN5UFx91f
-         aezEQDv//EXlkk3QwhCTMiggeTDLMoMyewr9wQvN2WrVfUHviIG2KxRw8tZRLxtNVIiY
-         gP5B7vwTv7lxPkt2x42ee8/nZRvPZOh07ZkazAYYdBGTrQm1kl91YnKxjIZZ8Ms8YsBG
-         sqUJS0uFKrDKXDHslsHEwC29cDCuqfnJHZXVRKPkhxEOvPpVXdJehP3jJFd4a0GWRWwf
-         cLlA==
+        d=gmail.com; s=20221208; t=1689762836; x=1692354836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXj5YGAc3yTaYjQDt+pu+QsTbsvPJHMLueGYcTvQb+0=;
+        b=DjurqgxKYZebo4JylN2vIh/fMENaVlf3jotRX8Jg7yXtW/SC4/fmqteKIL5pUDwRT6
+         qUiuO9hCCAo7SZpXqJZT6QWZq3rQCFFm3GzgMJkWYYta4tF8BK+NExIKw3RHwNbzV0m4
+         aimjZNFIJBteaTAmumlMqFjcDuXPnqDCrRMRFhvKB9DuPSZm5PgGuqGL88ly5WXcSGZO
+         u2+zqv2maZfybRpyWkYBTHdEId0lrMrpeG4Hq2SMkCibTL1VcBaE/SMzkFVxZ3cmYEJB
+         BKdiLAYb4dt6xD2czd8Gd2uBS0tjfiTZSA2u+5SupPo2nhYUOmkBVvcnvkeKjbt1wX/M
+         T3XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689761881; x=1690366681;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6uSqq8iwHxn9/tpT05qWIJPin2r3B4nv+yMTWooWZQ=;
-        b=G6NRlpyhMi6a2BFZT6SeMI28tS3GxLVEUXNsDZeT5MsjMf1sZ4TeMMJhZXEG6QoUcj
-         cFB9DITHRgImU7H0+orTeWcr5ztUseNcMiC+B9pdFAbp+GZBOKlDZICWdJGChHl8OTLz
-         Wv9Bnz+pvPPKf12odPwJkZAoA/THD1nhBHIxjwC9sGDX9j3Gd7RgHRp45jWOrLiH2C7A
-         0aQMnNXqC/HYPhtC/0cR2UPSYlj5Q9i9+6QRSMSoXTpARIZX24wWDosv1e38BRfkvgWB
-         zOG1PSHrWAo/hU5mw8DRIvwUejG7Orwl7Vu+TrJma+8RWLdh2QeQNtPtDSvDZJHpN7YK
-         QVXg==
-X-Gm-Message-State: ABy/qLZ/DTTjdoydPtrQCxrXlETS+ZAaMHAzJ7r445T07p5nJ6Nb2+3U
-        /KPkQeNmGnL48/7sIaBQfQddJw==
-X-Google-Smtp-Source: APBJJlFM7viFvauoAMlySNo6VSSvtQdCoXkaiQxlJ4pgb0dZ2e8PBGcQhfI7IlseoQSuVvfamADMQg==
-X-Received: by 2002:adf:f082:0:b0:314:2c77:681b with SMTP id n2-20020adff082000000b003142c77681bmr1387870wro.30.1689761881437;
-        Wed, 19 Jul 2023 03:18:01 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d15-20020adff84f000000b00313f9085119sm4896291wrq.113.2023.07.19.03.17.59
+        d=1e100.net; s=20221208; t=1689762836; x=1692354836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VXj5YGAc3yTaYjQDt+pu+QsTbsvPJHMLueGYcTvQb+0=;
+        b=gv29pkW9+lno6YiJNecGHrsrNNfRSqBBnkNw0C6K+8KXV/sTWj829d175nmuGHIyE8
+         DOpiTV9zxkJG5230nYMkZjk2nuP4pqVj8R1HhG4PaPEZBwc2k8ZDDi8ILuSjO+LKf7Sl
+         uGNcdJj3RSn4eZsOGDtA1o7rMGcThol/qnq90FOvxFi2VcBY4XObE5lS/BU8cSJjs6iT
+         0pHW3JTOZS7/bkjcA+SxM4CymsIbTUCVndwqR/b8I3e9jaQYd7a+k0CCtwdhXoHV4Rne
+         9ifm3dN6XXyKN9HHuCj5yYrFOaxnt3aGn8Da+r890/SxChvQc/yuBHhJDk8jS2oTNBN/
+         jq4A==
+X-Gm-Message-State: ABy/qLbRS8fGIftUMZmhKqnkVFQu6SJS2FPQqdkSuXjjRYlCoElRB5W1
+        pZgjsbu+QygCHXUJCglq2zXP/r/7K6Q=
+X-Google-Smtp-Source: APBJJlHb7B53XS1NPP9Kuu6/r1UpBABC4NsUI/V+drBqZJGeIG7P364BxAeqpOf1IQHIWTiJs/QlSA==
+X-Received: by 2002:a05:600c:2150:b0:3fa:8fb1:50fe with SMTP id v16-20020a05600c215000b003fa8fb150femr1749513wml.15.1689762835416;
+        Wed, 19 Jul 2023 03:33:55 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g8-20020a7bc4c8000000b003fa8158135esm1377185wmk.11.2023.07.19.03.33.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 03:18:00 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 13:17:56 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/etnaviv: fix error code in event_alloc()
-Message-ID: <53fc5292-669a-4fca-8b99-e35a49da0b0f@moroto.mountain>
+        Wed, 19 Jul 2023 03:33:54 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mtdblock: make warning messages ratelimited
+Date:   Wed, 19 Jul 2023 11:33:54 +0100
+Message-Id: <20230719103354.2829366-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two "ret" variables declared in this function so setting
-"ret = -EBUSY;" sets the wrong one.  The function ends up returning an
-uninitialized variable.
+When exercising various dev interfaces with stress-ng the mtdblock drivers
+can be (ab)used to generate a lot of warning messages. Make these rate
+limited to reduce the kernel log from being spammed with the same messages.
 
-Fixes: f098f9b8042a ("drm/etnaviv: move runtime PM handling to events")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/mtdblock.c    | 2 +-
+ drivers/mtd/mtdblock_ro.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-index f54f12090685..0382cd91eebf 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -1158,18 +1158,18 @@ static int event_alloc(struct etnaviv_gpu *gpu, unsigned nr_events,
- 	int ret;
- 
- 	for (i = 0; i < nr_events; i++) {
--		unsigned long ret;
-+		unsigned long remaining;
- 
--		ret = wait_for_completion_timeout(&gpu->event_free, timeout);
-+		remaining = wait_for_completion_timeout(&gpu->event_free, timeout);
- 
--		if (!ret) {
-+		if (!remaining) {
- 			dev_err(gpu->dev, "wait_for_completion_timeout failed");
- 			ret = -EBUSY;
- 			goto out;
- 		}
- 
- 		acquired++;
--		timeout = ret;
-+		timeout = remaining;
+diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
+index fa476fb4dffb..9751416c2a91 100644
+--- a/drivers/mtd/mtdblock.c
++++ b/drivers/mtd/mtdblock.c
+@@ -262,7 +262,7 @@ static int mtdblock_open(struct mtd_blktrans_dev *mbd)
  	}
  
- 	spin_lock(&gpu->event_spinlock);
+ 	if (mtd_type_is_nand(mbd->mtd))
+-		pr_warn("%s: MTD device '%s' is NAND, please consider using UBI block devices instead.\n",
++		pr_warn_ratelimited("%s: MTD device '%s' is NAND, please consider using UBI block devices instead.\n",
+ 			mbd->tr->name, mbd->mtd->name);
+ 
+ 	/* OK, it's not open. Create cache info for it */
+diff --git a/drivers/mtd/mtdblock_ro.c b/drivers/mtd/mtdblock_ro.c
+index 66ffc9f1ead2..ef6299af60e4 100644
+--- a/drivers/mtd/mtdblock_ro.c
++++ b/drivers/mtd/mtdblock_ro.c
+@@ -49,7 +49,7 @@ static void mtdblock_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
+ 	dev->readonly = 1;
+ 
+ 	if (mtd_type_is_nand(mtd))
+-		pr_warn("%s: MTD device '%s' is NAND, please consider using UBI block devices instead.\n",
++		pr_warn_ratelimited("%s: MTD device '%s' is NAND, please consider using UBI block devices instead.\n",
+ 			tr->name, mtd->name);
+ 
+ 	if (add_mtd_blktrans_dev(dev))
 -- 
 2.39.2
 
