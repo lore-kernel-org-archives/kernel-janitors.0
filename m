@@ -2,97 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1339FEB64DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 10:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8F2C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jul 2023 10:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbjGSKgS (ORCPT
+        id S230313AbjGSKiX convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jul 2023 06:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55962 "EHLO
+        Wed, 19 Jul 2023 06:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjGSKgQ (ORCPT
+        with ESMTP id S231613AbjGSKiS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jul 2023 06:36:16 -0400
-Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8096BE0;
-        Wed, 19 Jul 2023 03:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
-        t=1689762558; bh=zzi5kjyS7aIx9/ym7iyyPL9XVFwQcOnol4QUS4SlqUw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=foB3/ueojPefseN2KuCfAWKwfBnt5yovt63TIp91f1fXhyps1dSO8lCmWRJNE7UAB
-         DkrBPZ62wGj0rusHYsgFtuq+lKLCna8xhWUMSsYxnU/lmsWxZINix9tXWFJ+g4pc5M
-         Z7Gz4wwrO0+65Fi61ht2j2QuN81cdb+UMlwUTckM=
-Received: from [100.100.34.13] (unknown [220.248.53.61])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id 3D4D46006F;
-        Wed, 19 Jul 2023 18:29:18 +0800 (CST)
-Message-ID: <f9e7fb54-a76e-a9b0-1b9c-8c9251f4af20@xen0n.name>
-Date:   Wed, 19 Jul 2023 18:29:17 +0800
+        Wed, 19 Jul 2023 06:38:18 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EF71BDC
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jul 2023 03:38:09 -0700 (PDT)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1qM4ZE-00082e-VV; Wed, 19 Jul 2023 12:38:01 +0200
+Message-ID: <94b5ccf8f10e51426bd410705ce1260d006f9b37.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/etnaviv: fix error code in event_alloc()
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Date:   Wed, 19 Jul 2023 12:37:59 +0200
+In-Reply-To: <53fc5292-669a-4fca-8b99-e35a49da0b0f@moroto.mountain>
+References: <53fc5292-669a-4fca-8b99-e35a49da0b0f@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.13.0
-Subject: Re: [PATCH v5] LoongArch: Fix CONFIG_CMDLINE_EXTEND and
- CONFIG_CMDLINE_BOOTLOADER handling
-Content-Language: en-US
-To:     Huacai Chen <chenhuacai@kernel.org>,
-        Markus Elfring <Markus.Elfring@web.de>
-Cc:     Zhihong Dong <donmor3000@hotmail.com>, loongarch@lists.linux.dev,
-        loongson-kernel@lists.loongnix.cn, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, Guo Ren <guoren@kernel.org>,
-        Huacai Chen <chenhuacai@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-References: <20230718153348.3340811-1-chenhuacai@loongson.cn>
- <261edc6c-e339-faeb-3045-bfe6604d1aef@web.de>
- <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
-From:   WANG Xuerui <kernel@xen0n.name>
-In-Reply-To: <CAAhV-H5nNMmYZQXvoog85cgMUd+gM2QMaG3cUhYk_iGzjB=B4Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/7/19 15:22, Huacai Chen wrote:
-> Hi, Markus,
+Hi Dan,
+
+Am Mittwoch, dem 19.07.2023 um 13:17 +0300 schrieb Dan Carpenter:
+> There are two "ret" variables declared in this function so setting
+> "ret = -EBUSY;" sets the wrong one.  The function ends up returning an
+> uninitialized variable.
 > 
-> On Wed, Jul 19, 2023 at 2:51 PM Markus Elfring <Markus.Elfring@web.de> wrote:
->>
->>>                                                    …, so this patch add
->>> some code to fix it.
->>
->> Would you like to avoid a typo here?
->>
->> Will any other imperative change description variant become more helpful?
-> Thank you for pointing this out, but since Zhihong is the original
-> author, I don't want to completely rewrite the commit message, so just
-> fix the typo...
+Thanks for the fix. Applied to the etnaviv/next branch where the
+offending commit sits right now.
 
-AFAICT the commit message is totally uninformative even if "an 
-imperative change description" were used. It basically:
+Regards,
+Lucas
 
-1. repeated the patch title,
-2. spent one sentence only for mentioning a function name without giving 
-any more information,
-3. mentioned why some change was not necessary due to some other 
-existing code, but not explicitly calling that part out, then
-4. finished with a sentence that boiled down to "we should do the 
-similar thing".
-
-My take:
-
- > Subject: Fix CMDLINE_EXTEND and CMDLINE_BOOTLOADER on non-FDT systems
- >
- > On FDT systems these command line processing are already taken care of
- > by early_init_dt_scan_chosen(). Add similar handling to the non-FDT
- > code path to allow these config options to work for non-FDT boxes too.
-
-Would this sound better?
-
--- 
-WANG "xen0n" Xuerui
-
-Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
+> Fixes: f098f9b8042a ("drm/etnaviv: move runtime PM handling to events")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index f54f12090685..0382cd91eebf 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -1158,18 +1158,18 @@ static int event_alloc(struct etnaviv_gpu *gpu, unsigned nr_events,
+>  	int ret;
+>  
+>  	for (i = 0; i < nr_events; i++) {
+> -		unsigned long ret;
+> +		unsigned long remaining;
+>  
+> -		ret = wait_for_completion_timeout(&gpu->event_free, timeout);
+> +		remaining = wait_for_completion_timeout(&gpu->event_free, timeout);
+>  
+> -		if (!ret) {
+> +		if (!remaining) {
+>  			dev_err(gpu->dev, "wait_for_completion_timeout failed");
+>  			ret = -EBUSY;
+>  			goto out;
+>  		}
+>  
+>  		acquired++;
+> -		timeout = ret;
+> +		timeout = remaining;
+>  	}
+>  
+>  	spin_lock(&gpu->event_spinlock);
 
