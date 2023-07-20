@@ -2,115 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2522FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 05:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90634EB64DA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 07:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjGTFsH (ORCPT
+        id S230348AbjGTHEU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Jul 2023 01:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
+        Thu, 20 Jul 2023 03:04:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbjGTFr6 (ORCPT
+        with ESMTP id S229604AbjGTHET (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Jul 2023 01:47:58 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0D12107;
-        Wed, 19 Jul 2023 22:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1689832054; x=1690436854; i=deller@gmx.de;
- bh=/Bb2ropaPWrZgW8ZarCptKpfd1MfwEElK6UW93fFvrc=;
- h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
- b=WfyOvBHsvY9wPrwfDgQSvcR4FNoPoxygbPyCmizEK7zYHfBCHX/ygNP5ii+/zr8SqJmPTrT
- JOLFlZc6HI08kvyVCfpmhaoKRhdWtpfS/Fo9GuGErc8L5r1UMduKTRMEVBumIt/Vg6j4ieS2E
- wZapufWu8DfwURV466h1TVVN8jmvbxX54Px+ScCnCV27KYse602BTCcFsa7I27f61ZiJjtCKT
- DXiYoNn76kvtDLys78yTqZAJPWvxu+SoMrfXxNPaSWp/IFY8WYjuu4UNe0cyND1OqzaOdtI2v
- 4aPK6wVIittGMHvvGB5tJahKTOFJPbxuz8jGKKCDJV8DNr9jp5dw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.153.9]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M4s0t-1qOI3G3xPb-001xhq; Thu, 20
- Jul 2023 07:47:34 +0200
-Message-ID: <898d9b03-bcaf-ec1b-2539-a290ab89aead@gmx.de>
-Date:   Thu, 20 Jul 2023 07:47:33 +0200
+        Thu, 20 Jul 2023 03:04:19 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55531B9
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jul 2023 00:04:18 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fd18b1d924so3086905e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jul 2023 00:04:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689836657; x=1690441457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9AlU95qM4t9xHPBYL7DWAvT1cUkDalZV3dRJmbFdb9U=;
+        b=dU+ORkJC8RNWsmM5SVA/u5VDWKga3el11dXhQWod28uKQxqV27WsfA/tglMuF8ytal
+         oR9rHhg8Ffr8qjFOlQqJ2TP9mDjnM8aHh1J5JZ0M85wyO4MFq/InWjdqlvlmOCXT18oi
+         QjpSMQRBEYEVQB6VKcMyoKiOj/fWRc9bltCj1as7WQq4ikJK1y9pA9lypkyLy0PS/V31
+         fqTMXHOhDDccm9U/ddyDmuiSNegiYxGBV02zlmpbfcFhi+ia8+CoZbqjukiyT21EcZhf
+         bHGNBBO2nLGsAxMvkqHDWb8OMWWqLsO9IvKBYvV6AmrR7RC1LKD/Z8ux8r9zTLpiZhoR
+         IGrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689836657; x=1690441457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9AlU95qM4t9xHPBYL7DWAvT1cUkDalZV3dRJmbFdb9U=;
+        b=W7LgG+IKgWT+LQCpaFOCUmEtUvztKPwHh5sghdaGm8fkDrIjPREUtgywawo1iWJQZQ
+         BTMKkGh5e9+xdTqh5wW1MakSN483JNlOcV/ZTv32KP7FSRGVUEKCc+PgEhnVdyUW1URb
+         sYaOf2MTK0uXTzB54dQ8Kx17z0hxboekR+NPYFIuLfee55MS2x4AbVH/5mQO7Mqnun9t
+         IG20HDKLhlfnLb2nh7hoQjAgKcMzGTV9bzWllqU/ENg+g4GkFEEILNhrqfJUZNCGzBVC
+         BEbVPpvBcd0sDjBufhsmNWU4D7cjAdQDHcpTSgudEZ1sbkU2QutcuuNNYtI7z84jWpr2
+         Yo1g==
+X-Gm-Message-State: ABy/qLYGoCVq3AMeqd1qEfe1wEEtJNqA+h6aRTsEVIu9GBlXFqfnVWqO
+        VcVwSEXzZwS+92uSaPEhrzsVqA==
+X-Google-Smtp-Source: APBJJlETKoi7x80wxBFFAxwsjGt5k10dYMeMuHD3TbDxOf+1dqUg2RtWoOiart0Ss3Mt2QyTH5e1AA==
+X-Received: by 2002:a7b:c390:0:b0:3fc:62c:8447 with SMTP id s16-20020a7bc390000000b003fc062c8447mr1061669wmj.9.1689836657174;
+        Thu, 20 Jul 2023 00:04:17 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a5-20020a05600c224500b003fbc9b9699dsm419216wmm.45.2023.07.20.00.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jul 2023 00:04:15 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 10:04:12 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: rawnand: fsl_upm: Fix an off-by one test in
+ fun_exec_op()
+Message-ID: <6f3c9139-cf68-4761-af06-462a72bda978@kadam.mountain>
+References: <cd01cba1c7eda58bdabaae174c78c067325803d2.1689803636.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH][next][V2] video: fbdev: kyro: make some const read-only
- arrays static and reduce type size
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230712161123.465713-1-colin.i.king@gmail.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20230712161123.465713-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:aHQQj7LTSb7/TMhWaW8kmCX5or1MajVcWBVOjVTCqa2/iVEBWWB
- ZKoTtFQLazh7naWbeUqu+3kSKVneApDxvdCjob6T2ZkVAWk4yVEVDvSrtvQGbrxcTyzCcq7
- nn02gWaOqeM4luhbwrEzbzDEndWlFclvegySS1HY8vo6zJFH2pAY/43g1Lfq15sefR5cIRP
- Df/Ym7zzOafhHBvXhEiqg==
-UI-OutboundReport: notjunk:1;M01:P0:p8ORew802gw=;Q0cPP/rJgzxAAwmn3zeRXwRrHBO
- iHJ8EDhhMnboXKsOHOO5IX7qBEqaeaPw2JgHheZLNnnlt/395oEvwTFWnwE+G3QNFYDvQtvYD
- wK/R0UymqG1hDcp/0jKRBExnZud948+HJyCuwEcSq1Dip8bK+gf84LWSA8rzxuH25ViNs1T1M
- iZWyJsFpDvKKCGWRpHIGwOwqSxcatvXdi94QOyvi5C2OSj7Uik5rIGRDj7BOi7v6SKiE/KJYg
- tcsA6KHM/zyrSSzMBo7Iw739uEgOWGrVHKIS/qmfVJAQYjCLQfiHJEOATk+5+PHoXOXLs4KG/
- RT9NZkYEARfA8pyGic5JCjtWOLdS2NkJqidBQs7hbCFSyDtiLweJgdVUhRiuGWI28RTpjuB3l
- RkMIW1+VIbOod4u1LNCVn9+jB9QbK0iFvhjAlXzvOjvGqu2nz1W7YmoogDMpke6+DmGPMuzsP
- ZMCyiqQphFBnpsgAkcqykuD19knHYQNwhvndp1TDqWekzTkHQod3K5ebmKFECvc7W5tu6A1UA
- IyM4f0KGH7ye2wDD6W/IwAvdmoseK44o36urmxX+wPIDP3h09qIHJY0QzwyrJImFq5RcX3Lgl
- 8X2ZmvSrNK+6UrafTXsi4ojfszOquBFFFrGEg9eIdxJvORY/EewqFwDtUAiyRfckM3tOZQYvz
- NFZK7zf8tOFkCode5eUBACfpCESUpeRHOmX3GOuuBqFdlQZPNT+lCoqgZD6AhiZ72PmkSXQb2
- /8VOjUXL8ELCvLHrhGJScPSokBlURw04zSBKwI0vMdB7pqkkLyjE97bAnN65zVVdqtxwnMwm0
- lF+RDCxHrwBnN9nnxgJ4z13W+EBPwFO4J0OH2lvbq0l1sHgNMEX5nRL5R+bj/eNpkZTmt34FQ
- HivdKnvZBciZ4kn/GopuIvzlkagfoJo4UotjuP5Jc7iAztUpXKQ4DBmguXpFmdyjBsZo9fYPF
- 11aYeA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd01cba1c7eda58bdabaae174c78c067325803d2.1689803636.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/12/23 18:11, Colin Ian King wrote:
-> Don't populate the const read-only arrays on the stack but instead
-> make them static const. Use smaller types to use less storage for
-> the arrays.  Also makes the object code a little smaller.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-applied.
-
-Thanks!
-Helge
-
+On Wed, Jul 19, 2023 at 11:55:01PM +0200, Christophe JAILLET wrote:
+> 'op-cs' is copied in 'fun->mchip_number' which is used to access the
+> 'mchip_offsets' and the 'rnb_gpio' arrays.
+> These arrays have NAND_MAX_CHIPS elements, so the index must be below this
+> limit.
+> 
+> Fix the sanity check in order to avoid the NAND_MAX_CHIPS value. This
+> would lead to out-of-bound accesses.
+> 
+> Fixes: 54309d657767 ("mtd: rawnand: fsl_upm: Implement exec_op()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->
-> V2: Use smaller int types, kudos to Helge Deller for suggesting this
->
-> ---
->   drivers/video/fbdev/kyro/STG4000InitDevice.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/video/fbdev/kyro/STG4000InitDevice.c b/drivers/vide=
-o/fbdev/kyro/STG4000InitDevice.c
-> index edfa0a04854d..79886a246638 100644
-> --- a/drivers/video/fbdev/kyro/STG4000InitDevice.c
-> +++ b/drivers/video/fbdev/kyro/STG4000InitDevice.c
-> @@ -83,11 +83,11 @@ volatile u32 i,count=3D0; \
->   static u32 InitSDRAMRegisters(volatile STG4000REG __iomem *pSTGReg,
->   			      u32 dwSubSysID, u32 dwRevID)
->   {
-> -	u32 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 };
-> -	u32 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, 0x8732 };
-> -	u32 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, 0xa7d2 };
-> -	u32 adwSDRAMRsh[] =3D { 36, 39, 40 };
-> -	u32 adwChipSpeed[] =3D { 110, 120, 125 };
-> +	static const u8 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 }=
-;
-> +	static const u16 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, =
-0x8732 };
-> +	static const u16 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, =
-0xa7d2 };
-> +	static const u8 adwSDRAMRsh[] =3D { 36, 39, 40 };
-> +	static const u8 adwChipSpeed[] =3D { 110, 120, 125 };
->   	u32 dwMemTypeIdx;
->   	u32 dwChipSpeedIdx;
->
 
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Good eye.  I'm assuming you did something like this:
+
+#!/bin/bash
+
+FILE=$1
+WORDS=$(cat $FILE | perl -ne 'if ($_ =~ /\[([\w_]+)\];/) { print "$1\n" }' | sort -u)
+for i in $WORDS ; do
+    grep -Hn " > $i" $FILE
+done
+
+regards,
+dan carpenter
