@@ -2,93 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA443EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 10:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E4BEB64DA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 12:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbjGTKsV (ORCPT
+        id S230339AbjGTMk1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Jul 2023 06:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47318 "EHLO
+        Thu, 20 Jul 2023 08:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbjGTKsV (ORCPT
+        with ESMTP id S229628AbjGTMk0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Jul 2023 06:48:21 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2C71726;
-        Thu, 20 Jul 2023 03:48:18 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fbf1b82d9cso4904175e9.2;
-        Thu, 20 Jul 2023 03:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689850097; x=1690454897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sz2Sq0S+RXTbDpe9ecyzrk2o3BfrHc1B7uV4sD294ak=;
-        b=loptYpAXNpFv0UzT4EsQ7SlIaYQ2/6hrwYsrM1Sv37QjPXVP/8jSQXbo2fVrM65g2A
-         xP8NDYXIM2oqX1KqnV92D5kQoQzFUgOdrPMQqkLCBElaCnLgPxkJAMW1t/Z1F3rIWDdj
-         /u0oTmwztDWwwhSxIvNdVr+OqiPuiDePJtFtLivNkw1BDh90ixVnbaq9R31M27+HUvdx
-         44AapSy4jete34LLVB4qSEMRZGPZtD1vTgdbYTkShl8DPKNI2piSJdlKnoPgqsy/Omfd
-         uEd65ZQqOpFvk0cN/oRBs9qUTaakYGpcTgsFMFxWmfczuxNazW34hHtizlTFk6CU7IjG
-         1E8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689850097; x=1690454897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sz2Sq0S+RXTbDpe9ecyzrk2o3BfrHc1B7uV4sD294ak=;
-        b=JsoXCdI75xU0kvM9b5KWsnAopMKbObaSUUAcGbzlbEWqFbAxcHfvMFcXxFmaTCBn8N
-         +Wj73moPC3Jkifg6QLoMMtMbnxeYLL8DsIWrDRk4t+dlY5WF+18Yns3ncszAySnpMba1
-         yJd4epQtBh5c6xsSmJ7ie2+kGkOjk5+oeGsTC7Nq1Log6Z4VvUC10JpNm31Y2p8H3TOX
-         3c5gC7c88STWIUkcFSE/AnBMJfb0Qq25L7AjEKsRdFH6AuWSi71fXtQGBoNHi/JOcj9d
-         keUcToSkj6XUeZEx/0X1k5b0YAO+pvCJQJjyj5sr8oQ6KuKELdyeB9jiEEyXmE/12J4Z
-         mabQ==
-X-Gm-Message-State: ABy/qLa+8UWYF3hU8GH1jarryEGEhbgnodriMJNeHhUt3PZtl8HLOxw6
-        8h+XaLjmXXA38B60bXGV3vM=
-X-Google-Smtp-Source: APBJJlFa2N27wsuW7LwOxH+2o4ECxN+x3FVslcpd52LhxX4ODZMoN3kZnKpZRv5TSJFEP1CssvKYQA==
-X-Received: by 2002:a05:600c:2150:b0:3fb:be07:5343 with SMTP id v16-20020a05600c215000b003fbbe075343mr4322704wml.27.1689850096684;
-        Thu, 20 Jul 2023 03:48:16 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p26-20020a7bcc9a000000b003fbc0a49b57sm893454wma.6.2023.07.20.03.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 03:48:15 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/xsk: Fix spelling mistake "querrying" -> "querying"
-Date:   Thu, 20 Jul 2023 11:48:15 +0100
-Message-Id: <20230720104815.123146-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 20 Jul 2023 08:40:26 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B91A2137;
+        Thu, 20 Jul 2023 05:40:22 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36K94mAl032672;
+        Thu, 20 Jul 2023 12:40:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=YysB9TeNdCNJSoyionbj0U3Aa3+Is2qgwJN5fXaFT7o=;
+ b=0r4hERFa9JOeC0djA4o3L1MelHdpe10X7rgpfz2Cp/43wHD8UrvlZENaK+P7+V5IPC9m
+ fVqPkwPRWUXN4FlVPwErwPYq+1pHIAfYUGNOGJpdGY1HrDgHG+gCJWmU0dK7xRYrAB/W
+ fa2tvlA2Z5hme+FD5YmNL+/sAskl7id/yBwVgfNpfYMO4GwBNGDjICX3jQuw3n0gcMdl
+ OTMOR8NU1A9/403yqBMLCuURLFDRy0tnUO63t+5ycWpI0oAUJqCo/u8TCGwv22S8RXNY
+ LRNswW5MtDc53KlQToFhuNH0C/fgicP3qV4rWM5I+pEyrG07hYBzmU/Bs2wDNDMiqFW4 aQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3run8a9p00-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jul 2023 12:40:09 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36KAf1ZC000777;
+        Thu, 20 Jul 2023 12:40:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ruhw8mnhf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jul 2023 12:40:08 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36KCe8f8017919;
+        Thu, 20 Jul 2023 12:40:08 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ruhw8mngn-1;
+        Thu, 20 Jul 2023 12:40:07 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Sui Jingfeng <suijingfeng@loongson.cn>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH next] drm/loongson: Fix error handling in lsdc_pixel_pll_setup()
+Date:   Thu, 20 Jul 2023 05:39:50 -0700
+Message-ID: <20230720123950.543082-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-20_06,2023-07-20_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 bulkscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307200106
+X-Proofpoint-ORIG-GUID: eG8Ucx40h9qnpY7ugnvGOs0VH_wx6f0Q
+X-Proofpoint-GUID: eG8Ucx40h9qnpY7ugnvGOs0VH_wx6f0Q
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+There are two problems in lsdc_pixel_pll_setup()
+1. If kzalloc() fails then call iounmap() to release the resources.
+2. Both kzalloc and ioremap doesnot return error pointers on failure, so
+   using IS_ERR_OR_NULL() checks is a bit confusing and not very right,
+   fix this by changing those to NULL checks instead.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: f39db26c5428 ("drm: Add kms driver for loongson display controller")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- tools/testing/selftests/bpf/xskxceiver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is found with static analysis with smacth and only compile tested.
+---
+ drivers/gpu/drm/loongson/lsdc_pixpll.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
-index 3ff436706640..2827f2d7cf30 100644
---- a/tools/testing/selftests/bpf/xskxceiver.c
-+++ b/tools/testing/selftests/bpf/xskxceiver.c
-@@ -2076,7 +2076,7 @@ static void init_iface(struct ifobject *ifobj, const char *dst_mac, const char *
+diff --git a/drivers/gpu/drm/loongson/lsdc_pixpll.c b/drivers/gpu/drm/loongson/lsdc_pixpll.c
+index 04c15b4697e2..2609a2256da4 100644
+--- a/drivers/gpu/drm/loongson/lsdc_pixpll.c
++++ b/drivers/gpu/drm/loongson/lsdc_pixpll.c
+@@ -120,12 +120,14 @@ static int lsdc_pixel_pll_setup(struct lsdc_pixpll * const this)
+ 	struct lsdc_pixpll_parms *pparms;
  
- 	err = bpf_xdp_query(ifobj->ifindex, XDP_FLAGS_DRV_MODE, &query_opts);
- 	if (err) {
--		ksft_print_msg("Error querrying XDP capabilities\n");
-+		ksft_print_msg("Error querying XDP capabilities\n");
- 		exit_with_error(-err);
- 	}
- 	if (query_opts.feature_flags & NETDEV_XDP_ACT_RX_SG)
+ 	this->mmio = ioremap(this->reg_base, this->reg_size);
+-	if (IS_ERR_OR_NULL(this->mmio))
++	if (!this->mmio)
+ 		return -ENOMEM;
+ 
+ 	pparms = kzalloc(sizeof(*pparms), GFP_KERNEL);
+-	if (IS_ERR_OR_NULL(pparms))
++	if (!pparms) {
++		iounmap(this->mmio);
+ 		return -ENOMEM;
++	}
+ 
+ 	pparms->ref_clock = LSDC_PLL_REF_CLK_KHZ;
+ 
 -- 
-2.39.2
+2.39.3
 
