@@ -2,197 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31744EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 04:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2522FEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 05:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjGTEdh (ORCPT
+        id S229604AbjGTFsH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Jul 2023 00:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58996 "EHLO
+        Thu, 20 Jul 2023 01:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjGTEde (ORCPT
+        with ESMTP id S229908AbjGTFr6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Jul 2023 00:33:34 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3157E1FE1;
-        Wed, 19 Jul 2023 21:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689827611; x=1721363611;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DJWn+RMwFiFyhOR08QumUDN0/Qdy1RU9hvkDM1qgRWo=;
-  b=Fdzx7VYDtr1tGxeIQMRjojA32JlYONYgdEZTpkWllp2Y+Y0QPg7hz/oA
-   2tCosgmtWHIFAJGzwSSptW293Oy7dPs5j4o2fucimVL4SnPc1QYpx5r94
-   LqMemwfRziYA5Q+2SV/61DoMJbwC6Wd46/C1DW4v+QrXbHLjZ/ajl5hZL
-   aXMt+PwIl2zT8TpXePNs8G2wY1zQ+V4nt3V1uBTqO9xbhJwUGAiqXrr1x
-   G6JIeRRkaoYaXV135HhOCPp1JrX2ersJqAo2gx1mzFxej/Fp24ZxqMJXu
-   NIVJ6oizrkDmchTu1hcLJKSv15wWDCO1yipmSnAtG0SmCr4w62RUrotT7
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="356593828"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="356593828"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2023 21:33:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="789645914"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="789645914"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmsmga008.fm.intel.com with ESMTP; 19 Jul 2023 21:33:30 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Wed, 19 Jul 2023 21:33:29 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Wed, 19 Jul 2023 21:33:29 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Wed, 19 Jul 2023 21:33:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fDU4VrE8uJo1XvrkyXJKgF9zxS8R9xmLBxVxZaIOooxXx3Q9+taX5zfVCaasQBZpQlTl6Pl9nbYprnA5qpkC5h198ZepK2aqwEqX4CoVGHgOpas0aEeMnxr1On1w9g7qpRORRGDV5zgNPbp1LjV9OwKjoNTJiEYZNJ5qq6S8DfVH4ouGoAuGsQpgBkELbvrk+2G1EqLko65Dd/e2HeWBP06LIzgJK7mPJqXpFva+G9P4QkaKtxvDC4GwZqNeYbqLIYHczx0E+qwuiDeUdL6G6G4/AiIxNcZ6cvQ5CKYhHoU36rG02eFj0j7Wh9JH3hPiqpINnZCRx2OZbfLAtqflwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JJ+al1VqHzhtzGFhVH4kohPejYK1OgWPWm5P5+kccRc=;
- b=GtLmPEkqIfUoaTjQXCZJLKb3qWlIp3Ie/ENWfhwtOeAHRFHAax0bHHSiYtGg/49Xc0G6Fh6rhrKEpApvmNtDfpc9AZImXLxMOSdhyJPL7a8CGJut84ff06MKzOsBUvSsqhl1u2sMp9p0vfjnW1IDm6todMnFOAKoloXMFdZfsLDd9tQri0FQ2DRPeU3z5Gh8TOE7clMZMSseezXrTMpx9cuoqmiCRuHxlxuQf4vFQO/lDjHX6Vn2ul+/+MfdxYt7IBtQOJHoc8En8Dr8uVhOOMkIpsZGc8ftCR3yr7ZIOpvq9kljKp5lBYpXEkY9EPpE8O/HGMWeXP0TfpUfFQmQGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- CY8PR11MB7012.namprd11.prod.outlook.com (2603:10b6:930:54::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6588.31; Thu, 20 Jul 2023 04:33:11 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::3382:a13a:ef37:f584]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::3382:a13a:ef37:f584%5]) with mapi id 15.20.6609.024; Thu, 20 Jul 2023
- 04:33:10 +0000
-From:   "Cao, Bingbu" <bingbu.cao@intel.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     "Kao, Arec" <arec.kao@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Yao, Hao" <hao.yao@intel.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] media: ov13b10: Fix some error checking in probe
-Thread-Topic: [PATCH] media: ov13b10: Fix some error checking in probe
-Thread-Index: AQHZuioW13hlBU6DQkO+UIJh8YArua/CCQdQ
-Date:   Thu, 20 Jul 2023 04:33:10 +0000
-Message-ID: <DM8PR11MB5653363F77D31A3E5F4C03B6993EA@DM8PR11MB5653.namprd11.prod.outlook.com>
-References: <b7ed2497-35d6-490e-b2a6-089f8099290a@moroto.mountain>
-In-Reply-To: <b7ed2497-35d6-490e-b2a6-089f8099290a@moroto.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5653:EE_|CY8PR11MB7012:EE_
-x-ms-office365-filtering-correlation-id: b2c123a2-1b15-4c03-0ac9-08db88da6c51
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oqDJOKcU+/l+Qwbno6xQADEj1CgQTF5QySu+/Y8gdRDiRRuCLW+OXI6sKFSk5SRRyR4/vf7HzPUyuX1W9uHUFpm5F8vi9QfdKTP9auB4JZwvKtrH1o8Wrb/dNX0YSygTMPeHdq5Wjwg44zKfNLwYxlbOYUTb71CUHEbEymiEQMCRf1rz0Nld4ZIcWCFhRwxJHZ9jkO5UAt1JexquDHXAISk2dxykgWE9OV1677DcADNbENepa2RJ++4UJb+pfcmO/hfcR7shVoEELMvMT7qS1v5C0w8LCjlASqDTDXvbmJN7+EWeGUfOXZ86v+Beoa/Z433808+C0Qm09j5yxpvGRMoZAuGmGasBD3mTfwmQlyI7anI3c1VY9t1VJ3ZmCFRXNa0nu2k86rHs4sONG80KrLxDStxuc0v4jAwQ8/RQKgNQTHHCgl5QJNM6b8G9pnpW2MVlC1rBdeCgDvxEw3Um7hOf2IW3rKH7XSdPJX8WO4Y1sggLTaSAudtD6Qig8jhR//TlZp/I2SNWmuEjmBmcm0zFlQFVqlKY/ASyLLmOwaMceYfBmk2EfVDVGYTbck1A6QlVpzvPXr28p/Y+tgp0PXa2+wgjHCKdFQJYc0jNx033bxPiVWIpcx0vUm2cou+hoDTueIHwehL5q0lasNOsdQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5653.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(39860400002)(396003)(136003)(376002)(84040400005)(451199021)(86362001)(2906002)(33656002)(38070700005)(55016003)(186003)(83380400001)(9686003)(6506007)(26005)(82960400001)(122000001)(7696005)(38100700002)(71200400001)(54906003)(66446008)(64756008)(478600001)(4326008)(66476007)(66556008)(5660300002)(316002)(76116006)(6916009)(66946007)(41300700001)(8936002)(8676002)(52536014)(8496004);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?iLeizg2FswmcaBhJ6kIUWQy2TrqlQ9bBFBab75wmEZ4V6jLs3fW/m1wsO9UC?=
- =?us-ascii?Q?NisMA8ROmqw0e5lyaCQWKMDRt0svEe9MQuG+A4Y1ANAy65nKugPhPdh7U1nC?=
- =?us-ascii?Q?ls2PmZMdUg0WUttjVRD7EbiOsdpqgxNFywC/ti4HBMZ0pXB6Etv7q0sZIz04?=
- =?us-ascii?Q?bysWpGbbQR+9NdJauqnM5VaY+5yJAX0Hqv1AFxwT6qxnYYLbOqO+OqMbYseI?=
- =?us-ascii?Q?AME/Z+farxuEWbQpxhapRLeognjKoAryjU980WQb/XxV+koBc56e7aPCm3G2?=
- =?us-ascii?Q?G55i7nYe7rl6GVk7k5esiFJYOrKQK7/BDOR85jpF211KJUEPpu9ia7c9n/cm?=
- =?us-ascii?Q?dMA8P30Tqe5ozo6EJeWZpDKUUa0OyxyXZTryP6/sNMj6dC8x5i04NKXn8ojK?=
- =?us-ascii?Q?d/06vAjQAD9BBu9y9L2k7Gw1CLCisZ3tHfB2ay+LXo7f/WJ3+54XHOlywPRM?=
- =?us-ascii?Q?5te0EdHT61ZlFXSF9MmOp8w0UFm1zak1YuHZogX76E7iu3pkrqxPPFYKvWkN?=
- =?us-ascii?Q?dPiSYFU/wAQ/rpXtvlCOuY20a+/IsO7m9ZoAG+t/r+GatQXNmRJvaiZjN8n5?=
- =?us-ascii?Q?lsyYgcpgpLsjxlaGcMVb7XgQ9xhSXg9NuBLSg8dhhsdKZKPXzISgN9T7SJe3?=
- =?us-ascii?Q?KpupV+QMJ7urWzjhRNvD2yZV4WpE4oFo3IOb1bg13ROZ64F9Ps2al/+GI4oI?=
- =?us-ascii?Q?fYVjG9qhZ+Fs8EYnLz6jOIcnx+lyPNB9aVorTU0ki+ba3hg44FOflccP7YiE?=
- =?us-ascii?Q?6U4l9tT5IzcX0le3B9o7OYKSXibGueh3UkbJDQD1wolf/i8rsqpouQcGHBv7?=
- =?us-ascii?Q?uzD84LFzS1Yi5mxqJwaCwky2yrCppK1e8THW+KivWBLiGV2NeiC7eSHk32ja?=
- =?us-ascii?Q?CXQ7YvOi60gF/Kd9WinYjsyaZmSy+DcB6M/qmR6r2HrJOwb0CgNKfGryIYID?=
- =?us-ascii?Q?H/YQeRVCsD/tSqxKq+Bts6VmPKbequln/Z4Hrfou7O7Gjh2sVlznCPsVGPyg?=
- =?us-ascii?Q?4tj1x6Eu52HANz2HY41Q9gKD7udQSAnNIvGeVcALsAC6DyS5XQKybKNADHNp?=
- =?us-ascii?Q?lbdM0kBts0S82LxsBBPiN8o9oekQI/Z4LLsSCR9I1HxrjkfARsG4i6m2pLYh?=
- =?us-ascii?Q?C8uJaHIrmMlmBgGHVTa3bQ3RevtpJQbSkmgOnxprDuhK+lZbmyOmthB/PHJW?=
- =?us-ascii?Q?euGmjN751a++WS7U2Ydu3KaE6G6NlO4Rtx/851TMy093PqLrNEKCVJ6NX1DM?=
- =?us-ascii?Q?JNyY88tAjmirkLxNP/BalP9C2EmJKj43pDM+1l15uh7SGd4NwrWakL8FcdHm?=
- =?us-ascii?Q?4XpFDrDilWlJwQx5VM6p/osqc8e2Ujglsomgq266vLmseCucBSMhjEl3tnLL?=
- =?us-ascii?Q?cqG1JHMYZCs8SowiX7gm65Asea6ZNeO7cTEpjFgDGTUmJYurTaie6ExoWYC9?=
- =?us-ascii?Q?2KZBkOIxIIk4UWEtRd0zTRXZLDGi5tbsx3g+e0u5L3J3jS53EMf8u0lDW2Pe?=
- =?us-ascii?Q?h9mpbyM6/bTTWVtdQAGfG8NvT6LWPn5UaP7XP1lFN3wZPJlO7Sy+ZiFGeAX8?=
- =?us-ascii?Q?IizaPqCJh96tHuQrzdHVEvLyvmd5CXRTWQT5Sfi+?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 20 Jul 2023 01:47:58 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0D12107;
+        Wed, 19 Jul 2023 22:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1689832054; x=1690436854; i=deller@gmx.de;
+ bh=/Bb2ropaPWrZgW8ZarCptKpfd1MfwEElK6UW93fFvrc=;
+ h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=WfyOvBHsvY9wPrwfDgQSvcR4FNoPoxygbPyCmizEK7zYHfBCHX/ygNP5ii+/zr8SqJmPTrT
+ JOLFlZc6HI08kvyVCfpmhaoKRhdWtpfS/Fo9GuGErc8L5r1UMduKTRMEVBumIt/Vg6j4ieS2E
+ wZapufWu8DfwURV466h1TVVN8jmvbxX54Px+ScCnCV27KYse602BTCcFsa7I27f61ZiJjtCKT
+ DXiYoNn76kvtDLys78yTqZAJPWvxu+SoMrfXxNPaSWp/IFY8WYjuu4UNe0cyND1OqzaOdtI2v
+ 4aPK6wVIittGMHvvGB5tJahKTOFJPbxuz8jGKKCDJV8DNr9jp5dw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([94.134.153.9]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M4s0t-1qOI3G3xPb-001xhq; Thu, 20
+ Jul 2023 07:47:34 +0200
+Message-ID: <898d9b03-bcaf-ec1b-2539-a290ab89aead@gmx.de>
+Date:   Thu, 20 Jul 2023 07:47:33 +0200
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2c123a2-1b15-4c03-0ac9-08db88da6c51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2023 04:33:10.4055
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: puJevpEbdjMMdhEobnjpZ6nXKaFPysVQuNaN6LHzBksaHqRlTrkgitjWQAE9+X6KkZRYI25v67cEGWrXLyHJEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7012
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH][next][V2] video: fbdev: kyro: make some const read-only
+ arrays static and reduce type size
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230712161123.465713-1-colin.i.king@gmail.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20230712161123.465713-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:aHQQj7LTSb7/TMhWaW8kmCX5or1MajVcWBVOjVTCqa2/iVEBWWB
+ ZKoTtFQLazh7naWbeUqu+3kSKVneApDxvdCjob6T2ZkVAWk4yVEVDvSrtvQGbrxcTyzCcq7
+ nn02gWaOqeM4luhbwrEzbzDEndWlFclvegySS1HY8vo6zJFH2pAY/43g1Lfq15sefR5cIRP
+ Df/Ym7zzOafhHBvXhEiqg==
+UI-OutboundReport: notjunk:1;M01:P0:p8ORew802gw=;Q0cPP/rJgzxAAwmn3zeRXwRrHBO
+ iHJ8EDhhMnboXKsOHOO5IX7qBEqaeaPw2JgHheZLNnnlt/395oEvwTFWnwE+G3QNFYDvQtvYD
+ wK/R0UymqG1hDcp/0jKRBExnZud948+HJyCuwEcSq1Dip8bK+gf84LWSA8rzxuH25ViNs1T1M
+ iZWyJsFpDvKKCGWRpHIGwOwqSxcatvXdi94QOyvi5C2OSj7Uik5rIGRDj7BOi7v6SKiE/KJYg
+ tcsA6KHM/zyrSSzMBo7Iw739uEgOWGrVHKIS/qmfVJAQYjCLQfiHJEOATk+5+PHoXOXLs4KG/
+ RT9NZkYEARfA8pyGic5JCjtWOLdS2NkJqidBQs7hbCFSyDtiLweJgdVUhRiuGWI28RTpjuB3l
+ RkMIW1+VIbOod4u1LNCVn9+jB9QbK0iFvhjAlXzvOjvGqu2nz1W7YmoogDMpke6+DmGPMuzsP
+ ZMCyiqQphFBnpsgAkcqykuD19knHYQNwhvndp1TDqWekzTkHQod3K5ebmKFECvc7W5tu6A1UA
+ IyM4f0KGH7ye2wDD6W/IwAvdmoseK44o36urmxX+wPIDP3h09qIHJY0QzwyrJImFq5RcX3Lgl
+ 8X2ZmvSrNK+6UrafTXsi4ojfszOquBFFFrGEg9eIdxJvORY/EewqFwDtUAiyRfckM3tOZQYvz
+ NFZK7zf8tOFkCode5eUBACfpCESUpeRHOmX3GOuuBqFdlQZPNT+lCoqgZD6AhiZ72PmkSXQb2
+ /8VOjUXL8ELCvLHrhGJScPSokBlURw04zSBKwI0vMdB7pqkkLyjE97bAnN65zVVdqtxwnMwm0
+ lF+RDCxHrwBnN9nnxgJ4z13W+EBPwFO4J0OH2lvbq0l1sHgNMEX5nRL5R+bj/eNpkZTmt34FQ
+ HivdKnvZBciZ4kn/GopuIvzlkagfoJo4UotjuP5Jc7iAztUpXKQ4DBmguXpFmdyjBsZo9fYPF
+ 11aYeA==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+On 7/12/23 18:11, Colin Ian King wrote:
+> Don't populate the const read-only arrays on the stack but instead
+> make them static const. Use smaller types to use less storage for
+> the arrays.  Also makes the object code a little smaller.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+applied.
 
 Thanks!
+Helge
 
-------------------------------------------------------------------------
-BRs, =20
-Bingbu Cao=20
-
->-----Original Message-----
->From: Dan Carpenter <dan.carpenter@linaro.org>
->Sent: Wednesday, July 19, 2023 6:16 PM
->To: Cao, Bingbu <bingbu.cao@intel.com>
->Cc: Kao, Arec <arec.kao@intel.com>; Sakari Ailus
-><sakari.ailus@linux.intel.com>; Mauro Carvalho Chehab <mchehab@kernel.org>=
+> ---
+>
+> V2: Use smaller int types, kudos to Helge Deller for suggesting this
+>
+> ---
+>   drivers/video/fbdev/kyro/STG4000InitDevice.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/video/fbdev/kyro/STG4000InitDevice.c b/drivers/vide=
+o/fbdev/kyro/STG4000InitDevice.c
+> index edfa0a04854d..79886a246638 100644
+> --- a/drivers/video/fbdev/kyro/STG4000InitDevice.c
+> +++ b/drivers/video/fbdev/kyro/STG4000InitDevice.c
+> @@ -83,11 +83,11 @@ volatile u32 i,count=3D0; \
+>   static u32 InitSDRAMRegisters(volatile STG4000REG __iomem *pSTGReg,
+>   			      u32 dwSubSysID, u32 dwRevID)
+>   {
+> -	u32 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 };
+> -	u32 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, 0x8732 };
+> -	u32 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, 0xa7d2 };
+> -	u32 adwSDRAMRsh[] =3D { 36, 39, 40 };
+> -	u32 adwChipSpeed[] =3D { 110, 120, 125 };
+> +	static const u8 adwSDRAMArgCfg0[] =3D { 0xa0, 0x80, 0xa0, 0xa0, 0xa0 }=
 ;
->Hans de Goede <hdegoede@redhat.com>; Yao, Hao <hao.yao@intel.com>; linux-
->media@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [PATCH] media: ov13b10: Fix some error checking in probe
+> +	static const u16 adwSDRAMCfg1[] =3D { 0x8732, 0x8732, 0xa732, 0xa732, =
+0x8732 };
+> +	static const u16 adwSDRAMCfg2[] =3D { 0x87d2, 0x87d2, 0xa7d2, 0x87d2, =
+0xa7d2 };
+> +	static const u8 adwSDRAMRsh[] =3D { 36, 39, 40 };
+> +	static const u8 adwChipSpeed[] =3D { 110, 120, 125 };
+>   	u32 dwMemTypeIdx;
+>   	u32 dwChipSpeedIdx;
 >
->The "ret =3D " assignment was missing, so ov13b10_power_on() is not checke=
-d
->for errors.  Add the assignment.
->
->Fixes: 6e28afd15228 ("media: ov13b10: add PM control support based on powe=
-r
->resources")
->Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->---
->Adding error handling always risky breaking the driver and I have not
->tested this patch.
->
-> drivers/media/i2c/ov13b10.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/media/i2c/ov13b10.c b/drivers/media/i2c/ov13b10.c
->index dbc642c5995b..8ebdb32dd3db 100644
->--- a/drivers/media/i2c/ov13b10.c
->+++ b/drivers/media/i2c/ov13b10.c
->@@ -1501,7 +1501,7 @@ static int ov13b10_probe(struct i2c_client *client)
->
-> 	full_power =3D acpi_dev_state_d0(&client->dev);
-> 	if (full_power) {
->-		ov13b10_power_on(&client->dev);
->+		ret =3D ov13b10_power_on(&client->dev);
-> 		if (ret) {
-> 			dev_err(&client->dev, "failed to power on\n");
-> 			return ret;
->--
->2.39.2
 
