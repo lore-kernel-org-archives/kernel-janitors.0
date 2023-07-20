@@ -2,99 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90634EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 07:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38B2EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Jul 2023 09:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbjGTHEU (ORCPT
+        id S230463AbjGTJrR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Jul 2023 03:04:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39074 "EHLO
+        Thu, 20 Jul 2023 05:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjGTHET (ORCPT
+        with ESMTP id S230243AbjGTJq5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Jul 2023 03:04:19 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55531B9
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jul 2023 00:04:18 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fd18b1d924so3086905e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jul 2023 00:04:18 -0700 (PDT)
+        Thu, 20 Jul 2023 05:46:57 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4AC46A6;
+        Thu, 20 Jul 2023 02:43:24 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fb77f21c63so867738e87.2;
+        Thu, 20 Jul 2023 02:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689836657; x=1690441457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9AlU95qM4t9xHPBYL7DWAvT1cUkDalZV3dRJmbFdb9U=;
-        b=dU+ORkJC8RNWsmM5SVA/u5VDWKga3el11dXhQWod28uKQxqV27WsfA/tglMuF8ytal
-         oR9rHhg8Ffr8qjFOlQqJ2TP9mDjnM8aHh1J5JZ0M85wyO4MFq/InWjdqlvlmOCXT18oi
-         QjpSMQRBEYEVQB6VKcMyoKiOj/fWRc9bltCj1as7WQq4ikJK1y9pA9lypkyLy0PS/V31
-         fqTMXHOhDDccm9U/ddyDmuiSNegiYxGBV02zlmpbfcFhi+ia8+CoZbqjukiyT21EcZhf
-         bHGNBBO2nLGsAxMvkqHDWb8OMWWqLsO9IvKBYvV6AmrR7RC1LKD/Z8ux8r9zTLpiZhoR
-         IGrg==
+        d=gmail.com; s=20221208; t=1689846203; x=1690451003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DhzN4qcCsXrBpHBz7GecFneSOqYVBbg2vRpxqza4atk=;
+        b=R0uk7n9H4QRbDY75AOIL55xFhZJc3quqJrlQe9yBxWnYtPe1vx4CrXdpDhxJQ4+Tv7
+         /Hf3XmBgoHeCA414NXsttQZs7TTyFA5yfEXLhZjB5QWETq+70O1Lp2w8aj4Six7yMRdk
+         /1b95eH9nKFrTzN2yBWUvPAAjMKCinMLZYFMyIgFocZVSolFcblbOF/oyc77A1x5T6Nc
+         HUmRLZ6dIuAs5m945/a8nJaBKeYQ0JxUu2C5ApryyPbEa1hOjUXShwt6pyDGovrMcsOi
+         8O5i/seeNAZb4AXacxCetyHr8sGzcgXChcRaYDbbEYsAGTeDW3c09j2MR3UGPNlBenP0
+         lJhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689836657; x=1690441457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9AlU95qM4t9xHPBYL7DWAvT1cUkDalZV3dRJmbFdb9U=;
-        b=W7LgG+IKgWT+LQCpaFOCUmEtUvztKPwHh5sghdaGm8fkDrIjPREUtgywawo1iWJQZQ
-         BTMKkGh5e9+xdTqh5wW1MakSN483JNlOcV/ZTv32KP7FSRGVUEKCc+PgEhnVdyUW1URb
-         sYaOf2MTK0uXTzB54dQ8Kx17z0hxboekR+NPYFIuLfee55MS2x4AbVH/5mQO7Mqnun9t
-         IG20HDKLhlfnLb2nh7hoQjAgKcMzGTV9bzWllqU/ENg+g4GkFEEILNhrqfJUZNCGzBVC
-         BEbVPpvBcd0sDjBufhsmNWU4D7cjAdQDHcpTSgudEZ1sbkU2QutcuuNNYtI7z84jWpr2
-         Yo1g==
-X-Gm-Message-State: ABy/qLYGoCVq3AMeqd1qEfe1wEEtJNqA+h6aRTsEVIu9GBlXFqfnVWqO
-        VcVwSEXzZwS+92uSaPEhrzsVqA==
-X-Google-Smtp-Source: APBJJlETKoi7x80wxBFFAxwsjGt5k10dYMeMuHD3TbDxOf+1dqUg2RtWoOiart0Ss3Mt2QyTH5e1AA==
-X-Received: by 2002:a7b:c390:0:b0:3fc:62c:8447 with SMTP id s16-20020a7bc390000000b003fc062c8447mr1061669wmj.9.1689836657174;
-        Thu, 20 Jul 2023 00:04:17 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a5-20020a05600c224500b003fbc9b9699dsm419216wmm.45.2023.07.20.00.04.14
+        d=1e100.net; s=20221208; t=1689846203; x=1690451003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DhzN4qcCsXrBpHBz7GecFneSOqYVBbg2vRpxqza4atk=;
+        b=LtWf2nHtE9q0ReFE8DsSDaerirnA5yCY2pSFKSELOdCVBoEui3+hSyYYTZQiSnyN7r
+         Hu7U/woY16n9ewpQz5lLePOpHOIKMB+RfJyc3fiQmfxyNJOTG3NLK+G/htNRJ1cJm/Wt
+         f0olEAuuFZ8yfr1GFrZ2ME9QgW+MqNqPWvF0yQpZkpw8DjeBAnM2lCBfJGphR0PFWJ5A
+         FTDK924xQcNpWGeZZvQ0qh67qwdGKTzQVgL0In4BALeNRZXjqDms8x4ES/A4Ed3r7oWK
+         Xes4qVDfYcMTVh0GkOGxqHE5PO2GwciCOQeFrWsJV8M57aKRvLMQhaOJmdcQJSY/hJjM
+         5C2Q==
+X-Gm-Message-State: ABy/qLYU+tcZfD6e5Q5CyFJo11H7eMoU6iCbQr4zh6535cYf+spDA+i7
+        +CDjf3nED7JPqRVFBt2B5gQ=
+X-Google-Smtp-Source: APBJJlFEX9pibdR1e+6fRVOrpfAnUm08G0crM+2MIHDpBWy+r0Xk0zxxXVd5dIwAGZICk/3NsxouOw==
+X-Received: by 2002:a19:6705:0:b0:4fb:780d:2a49 with SMTP id b5-20020a196705000000b004fb780d2a49mr1592371lfc.5.1689846202847;
+        Thu, 20 Jul 2023 02:43:22 -0700 (PDT)
+Received: from lukas-virtualBox.synapse.com ([94.42.83.62])
+        by smtp.gmail.com with ESMTPSA id t28-20020ac243bc000000b004fb8603f6e0sm122441lfl.12.2023.07.20.02.43.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 00:04:15 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 10:04:12 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mtd: rawnand: fsl_upm: Fix an off-by one test in
- fun_exec_op()
-Message-ID: <6f3c9139-cf68-4761-af06-462a72bda978@kadam.mountain>
-References: <cd01cba1c7eda58bdabaae174c78c067325803d2.1689803636.git.christophe.jaillet@wanadoo.fr>
+        Thu, 20 Jul 2023 02:43:22 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-afs@lists.infradead.org, linux-doc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] afs: Documentation: correct reference to CONFIG_AFS_FS
+Date:   Thu, 20 Jul 2023 11:43:01 +0200
+Message-Id: <20230720094301.9888-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd01cba1c7eda58bdabaae174c78c067325803d2.1689803636.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 19, 2023 at 11:55:01PM +0200, Christophe JAILLET wrote:
-> 'op-cs' is copied in 'fun->mchip_number' which is used to access the
-> 'mchip_offsets' and the 'rnb_gpio' arrays.
-> These arrays have NAND_MAX_CHIPS elements, so the index must be below this
-> limit.
-> 
-> Fix the sanity check in order to avoid the NAND_MAX_CHIPS value. This
-> would lead to out-of-bound accesses.
-> 
-> Fixes: 54309d657767 ("mtd: rawnand: fsl_upm: Implement exec_op()")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Commit 0795e7c031c4 ("[AFS]: Update the AFS fs documentation.") adds a new
+section listing the build configuration options that need to be enabled for
+the AFS file system.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+The documentation refers to CONFIG_AFS, but the option is called
+CONFIG_AFS_FS, since the beginning of Linux's git history.
 
-Good eye.  I'm assuming you did something like this:
+Refer to the config option with the correct name.
 
-#!/bin/bash
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ Documentation/filesystems/afs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-FILE=$1
-WORDS=$(cat $FILE | perl -ne 'if ($_ =~ /\[([\w_]+)\];/) { print "$1\n" }' | sort -u)
-for i in $WORDS ; do
-    grep -Hn " > $i" $FILE
-done
+diff --git a/Documentation/filesystems/afs.rst b/Documentation/filesystems/afs.rst
+index ca062a7f8ee2..f15ba388bbde 100644
+--- a/Documentation/filesystems/afs.rst
++++ b/Documentation/filesystems/afs.rst
+@@ -44,7 +44,7 @@ options::
+ 
+ 	CONFIG_AF_RXRPC		- The RxRPC protocol transport
+ 	CONFIG_RXKAD		- The RxRPC Kerberos security handler
+-	CONFIG_AFS		- The AFS filesystem
++	CONFIG_AFS_FS		- The AFS filesystem
+ 
+ Additionally, the following can be turned on to aid debugging::
+ 
+-- 
+2.34.1
 
-regards,
-dan carpenter
