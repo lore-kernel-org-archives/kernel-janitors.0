@@ -2,62 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11C4EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 14:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4254FEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 14:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbjGUO4I (ORCPT
+        id S231502AbjGUO4f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Jul 2023 10:56:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
+        Fri, 21 Jul 2023 10:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbjGUO4H (ORCPT
+        with ESMTP id S231415AbjGUO4b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Jul 2023 10:56:07 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1000E52
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:05 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fb4146e8ceso17447615e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:05 -0700 (PDT)
+        Fri, 21 Jul 2023 10:56:31 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08991722
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:26 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b74310566cso30617761fa.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689951364; x=1690556164;
+        d=linaro.org; s=google; t=1689951385; x=1690556185;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PdgB/8Mdj+WMRQMTY8Eob9XO/0oySgyQa+IdB3h1SB0=;
-        b=hyy0efKZNjmh8mtbP9yAWof3TUqkjzoDZJMEeE7M0L1Qd72y+7wm2fyN7RLez0blvJ
-         5gwjb6VibfFVsz5w6fLFXaGqRsJGs/7pQjMlVSC4Wb0MFarZyz1+DZZKtEHDN8JO7uLL
-         BXP2nygnRO9Mtfcd1RpWtq0OK+y9dMM/BEooFhEVvts+a7DjxOa4Z5vUSW5uVFA6xVSr
-         nCyNz25LdjAzwqkuuodpc1zrLNW7Dg+8eiqeCwvMJGPCsVh0v9oBOW4iKY8OHPCE0aLy
-         mKiEofN+1vhMtPY8VjKsY4oTmjnh8ANvhQyaY1PeqpAkrAoagH9XmWAuWM4mbGBWPNAO
-         DoNg==
+        bh=U4uPw584/Tdlq/aOQhdIYZ2NWWZUO8Cw8PlRqHsN9Fo=;
+        b=JyXtdWR89AuYMt8ebkpbk25d7ot90wKR+CGZh/1m+KMCbvze89anIZrvUjPBHvPZeb
+         4xr1L4z3DmX4K2a+5vd2Dmt2AHNVquvN6ej9C99KCBRussfyUuuqNAmuEKPyBx9jAl67
+         9LmQvARZTDhRVVq9/xskXgkDm1AanY4JEeWveP6iicOEwbZTfh79hM+I+ZdDu6N9hWm0
+         AadUtN8DhlZqXjGpCiI5F/gZAzMqHUx9G4PZrA6SInZOHc+lF82sH7jb6f6WBoplx5a3
+         6kWrFO6DioTqSOOwPeykZSXEkU/1vkq3Bravdqwbz4Y1ydxHfbu25tTP5SROv2QLSlmo
+         rqGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689951364; x=1690556164;
+        d=1e100.net; s=20221208; t=1689951385; x=1690556185;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PdgB/8Mdj+WMRQMTY8Eob9XO/0oySgyQa+IdB3h1SB0=;
-        b=Z9994bbtvfoUGvoBRVvj2u1x6r5h+7WQtwcHfCGJXXWtHUppBcss26o7aByZszjAF1
-         mI+ihmOSZvX8FNF96fVdLKIova5WwNQkNzt75V/EU9J9pWErsmIK/oulmJSeoXwMPiQd
-         djlUPySDVaJfxS6m73GjPnvbTOEsV9QgEeHPjXs3LSnigva6ebBe8NOhqwqPIvtvdWJC
-         I2vIYRCKsaceOctALwot6E+GMFmlf2XV7yJw8ZTBh3WSRBHyDga5n1uPijKpPq1GPvTF
-         kaaaJrIW6Yb8Bcllr4nciCglGzHEl8bufHX4R4Pjeuybx+oYxq0cro3DSO1jyij0GjWZ
-         7ZdQ==
-X-Gm-Message-State: ABy/qLZZQWgB0LbXfaSLIGE9XVAO4i5D2p8mieHgGXnQ0ucUHBMKRnk3
-        cairkohefKYq/eTWYcl1Eelm5w==
-X-Google-Smtp-Source: APBJJlHlQOwCswBArcGPCGQ9TMU8WVUrxCwe5fl8xM9nz3tmgKa2XxBuN+fT94mS2sz5g7pv6dEzfA==
-X-Received: by 2002:a05:600c:2158:b0:3fc:2dfb:3cd3 with SMTP id v24-20020a05600c215800b003fc2dfb3cd3mr1525256wml.41.1689951364259;
-        Fri, 21 Jul 2023 07:56:04 -0700 (PDT)
+        bh=U4uPw584/Tdlq/aOQhdIYZ2NWWZUO8Cw8PlRqHsN9Fo=;
+        b=V9seoRQhEcMilgx+NBWGU4WmBpFbxeN98lcL/QXTXk4uGcaU/8q9vtQmzlkThEyd2u
+         s9/t9nsWWmPUnP9xP9xghxTUMMm1vmy/OeZQ3pE1Wt5Bx1JLYVmYVbJKQqNS4i7OmHso
+         1eEG5n66Gdi3GxQFEFp82gm7TB5Q01QZv3Mf40dkGWCtFqvRPnx/n7JUrV29wKl57jba
+         Usdo92MM+Xc68y32yHpBJdLxmrC9DAKrZXhPbLDV/iZD6LJnMuaOQf+nq1uZNDRJHGJh
+         FdsXpaRaJsZj0sM6EMBCx3Ll1SVsfLx09kA4s2Vf+XvFdTG16+ghOpNscDkwBUjsT6h/
+         N1+g==
+X-Gm-Message-State: ABy/qLalPXt7bZ+149Vz6VURrWaXL2imlerK+sWgTVoe4Km/gumH9J+X
+        vzahu8vVd0OMCMS875AHvupmRw==
+X-Google-Smtp-Source: APBJJlFwVWEJ9HCYiiD4k+l7zWH5gfbXV1xm2Y6zHh5t+enoUzr93GJvhTbRarCClp80b1UNBFU3kA==
+X-Received: by 2002:a2e:a1cb:0:b0:2b7:842:a64c with SMTP id c11-20020a2ea1cb000000b002b70842a64cmr1673222ljm.5.1689951385241;
+        Fri, 21 Jul 2023 07:56:25 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i7-20020a05600c290700b003fbd597bccesm6174080wmd.41.2023.07.21.07.55.37
+        by smtp.gmail.com with ESMTPSA id q17-20020a7bce91000000b003f91e32b1ebsm6300279wmj.17.2023.07.21.07.56.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 07:55:45 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 17:55:33 +0300
+        Fri, 21 Jul 2023 07:56:20 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 17:55:49 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] regmap: rbtree: Use alloc_flags for memory allocations
-Message-ID: <58f12a07-5f4b-4a8f-ab84-0a42d1908cb9@moroto.mountain>
+To:     Wayne Lin <wayne.lin@amd.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Lyude Paul <lyude@redhat.com>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Fangzhi Zuo <Jerry.Zuo@amd.com>,
+        Hamza Mahfooz <hamza.mahfooz@amd.com>,
+        Alan Liu <haoping.liu@amd.com>, amd-gfx@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/display: Unlock on error path in
+ dm_handle_mst_sideband_msg_ready_event()
+Message-ID: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,91 +77,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The kunit tests discovered a sleeping in atomic bug.  The allocations
-in the regcache-rbtree code should use the map->alloc_flags instead of
-GFP_KERNEL.
+This error path needs to unlock the "aconnector->handle_mst_msg_ready"
+mutex before returning.
 
-[    5.005510] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:306
-[    5.005960] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 117, name: kunit_try_catch
-[    5.006219] preempt_count: 1, expected: 0
-[    5.006414] 1 lock held by kunit_try_catch/117:
-[    5.006590]  #0: 833b9010 (regmap_kunit:86:(config)->lock){....}-{2:2}, at: regmap_lock_spinlock+0x14/0x1c
-[    5.007493] irq event stamp: 162
-[    5.007627] hardirqs last  enabled at (161): [<80786738>] crng_make_state+0x1a0/0x294
-[    5.007871] hardirqs last disabled at (162): [<80c531ec>] _raw_spin_lock_irqsave+0x7c/0x80
-[    5.008119] softirqs last  enabled at (0): [<801110ac>] copy_process+0x810/0x2138
-[    5.008356] softirqs last disabled at (0): [<00000000>] 0x0
-[    5.008688] CPU: 0 PID: 117 Comm: kunit_try_catch Tainted: G                 N 6.4.4-rc3-g0e8d2fdfb188 #1
-[    5.009011] Hardware name: Generic DT based system
-[    5.009277]  unwind_backtrace from show_stack+0x18/0x1c
-[    5.009497]  show_stack from dump_stack_lvl+0x38/0x5c
-[    5.009676]  dump_stack_lvl from __might_resched+0x188/0x2d0
-[    5.009860]  __might_resched from __kmem_cache_alloc_node+0x1dc/0x25c
-[    5.010061]  __kmem_cache_alloc_node from kmalloc_trace+0x30/0xc8
-[    5.010254]  kmalloc_trace from regcache_rbtree_write+0x26c/0x468
-[    5.010446]  regcache_rbtree_write from _regmap_write+0x88/0x140
-[    5.010634]  _regmap_write from regmap_write+0x44/0x68
-[    5.010803]  regmap_write from basic_read_write+0x8c/0x270
-[    5.010980]  basic_read_write from kunit_try_run_case+0x48/0xa0
-
-Fixes: 28644c809f44 ("regmap: Add the rbtree cache support")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/all/ee59d128-413c-48ad-a3aa-d9d350c80042@roeck-us.net/
+Fixes: bb4fa525f327 ("drm/amd/display: Add polling method to handle MST reply packet")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-This patch is similar to what I sent earlier, but I changed
-regcache_rbtree_init() back to using GFP_KERNEL.
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/base/regmap/regcache-rbtree.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/base/regmap/regcache-rbtree.c b/drivers/base/regmap/regcache-rbtree.c
-index fabf87058d80..ae6b8788d5f3 100644
---- a/drivers/base/regmap/regcache-rbtree.c
-+++ b/drivers/base/regmap/regcache-rbtree.c
-@@ -277,7 +277,7 @@ static int regcache_rbtree_insert_to_block(struct regmap *map,
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 1abdec14344e..943959012d04 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -707,7 +707,7 @@ void dm_handle_mst_sideband_msg_ready_event(
  
- 	blk = krealloc(rbnode->block,
- 		       blklen * map->cache_word_size,
--		       GFP_KERNEL);
-+		       map->alloc_flags);
- 	if (!blk)
- 		return -ENOMEM;
+ 			if (retry == 3) {
+ 				DRM_ERROR("Failed to ack MST event.\n");
+-				return;
++				break;
+ 			}
  
-@@ -286,7 +286,7 @@ static int regcache_rbtree_insert_to_block(struct regmap *map,
- 	if (BITS_TO_LONGS(blklen) > BITS_TO_LONGS(rbnode->blklen)) {
- 		present = krealloc(rbnode->cache_present,
- 				   BITS_TO_LONGS(blklen) * sizeof(*present),
--				   GFP_KERNEL);
-+				   map->alloc_flags);
- 		if (!present)
- 			return -ENOMEM;
- 
-@@ -320,7 +320,7 @@ regcache_rbtree_node_alloc(struct regmap *map, unsigned int reg)
- 	const struct regmap_range *range;
- 	int i;
- 
--	rbnode = kzalloc(sizeof(*rbnode), GFP_KERNEL);
-+	rbnode = kzalloc(sizeof(*rbnode), map->alloc_flags);
- 	if (!rbnode)
- 		return NULL;
- 
-@@ -346,13 +346,13 @@ regcache_rbtree_node_alloc(struct regmap *map, unsigned int reg)
- 	}
- 
- 	rbnode->block = kmalloc_array(rbnode->blklen, map->cache_word_size,
--				      GFP_KERNEL);
-+				      map->alloc_flags);
- 	if (!rbnode->block)
- 		goto err_free;
- 
- 	rbnode->cache_present = kcalloc(BITS_TO_LONGS(rbnode->blklen),
- 					sizeof(*rbnode->cache_present),
--					GFP_KERNEL);
-+					map->alloc_flags);
- 	if (!rbnode->cache_present)
- 		goto err_free_block;
- 
+ 			drm_dp_mst_hpd_irq_send_new_request(&aconnector->mst_mgr);
 -- 
 2.39.2
 
