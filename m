@@ -2,98 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8505CC04FE2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 15:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25221EB64DC
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 15:48:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbjGUPJT (ORCPT
+        id S232237AbjGUPsB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Jul 2023 11:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44894 "EHLO
+        Fri, 21 Jul 2023 11:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231826AbjGUPJG (ORCPT
+        with ESMTP id S232278AbjGUPr6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Jul 2023 11:09:06 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436DC30C8;
-        Fri, 21 Jul 2023 08:09:05 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10778"; a="433276670"
-X-IronPort-AV: E=Sophos;i="6.01,222,1684825200"; 
-   d="scan'208";a="433276670"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2023 08:09:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10778"; a="814991639"
-X-IronPort-AV: E=Sophos;i="6.01,222,1684825200"; 
-   d="scan'208";a="814991639"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Jul 2023 08:09:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andy@kernel.org>)
-        id 1qMrkZ-009iAE-0s;
-        Fri, 21 Jul 2023 18:08:59 +0300
-Date:   Fri, 21 Jul 2023 18:08:59 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] lib/string_helpers: Use passed in GFP_ flags
-Message-ID: <ZLqfizx5Xi9fOF6z@smile.fi.intel.com>
-References: <df051844-0a73-4cf9-9719-a6001f1c9d5c@moroto.mountain>
+        Fri, 21 Jul 2023 11:47:58 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831D61BD
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 08:47:57 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3a38953c928so1470376b6e.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 08:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689954477; x=1690559277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=85BEVu4yQdhInWHjBPNn/bUdJhVBiL/B5hoGlXbtQnQ=;
+        b=UfU33fGHSy87HgdkmMlQAqg9vR7xlzd5Vcw+ZqIUVoOhV5ImK5apggHbgJ/etBauaU
+         ptl/07DxVUxNst/MyBPQz7NI55XahpK8pXEia7IqBFWm1Oqo9YcSUGQbziudnlIXRWDl
+         AKhgxvHZ09sB6i/rNb8++hvXuuAKD2KRP4T2U3hfXc3R7dzw253q1neb4J/2hlV9LloW
+         BixP+2CmYaKXqp0lseNCN1lSojUIiTkWD6rHfzBDxDFpAT0bnLbKqiOqre0LPdUzlkOA
+         rwToD6c4Jdrytl3eehvcdbnrZYs4dcXCinzdSHlIWvdA5ca1LTr9t1KA4KXc2PO9jUFF
+         v8+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689954477; x=1690559277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=85BEVu4yQdhInWHjBPNn/bUdJhVBiL/B5hoGlXbtQnQ=;
+        b=EaSOk0V5z7LTyEKZHQhTgC36qpp2zUHozhbGJjhpT/HI7ow9VkdskHmh4EjQpa9Osc
+         jqhijQ+Ssm6Fap057olNQ1ruEWoUAsQZ5KYzjRM+7LrtZ9m0PUN9+wTLwdvRKkRlkI+r
+         IDetf+MWUr6JoX2gnouHCxS1GLm8Q0aY/Z3Iz3N3lmvi3kop8oFVO1A1qKdc6awPPtfm
+         8KEJkLa7AQZziInKX3SuzCOm8mO0KT/+dTsH+eie9ldrR0kMrkuQybgpYbC9V8SsAaQJ
+         n0LEyxq0rIiL++0zO1tt99s6+ngdVd4ve4AA3aRdp4fdwVN4iksUn8UVO6Bc+Ik7dr3u
+         48Xg==
+X-Gm-Message-State: ABy/qLaEWqStD4CSsGyzhozeew+7hMn5rJHUw6/X6NNlN4yXC5XAvSFF
+        uSUnLO3moA3VPI0u3oh/cY7EQwZA+vAHKwN2ZR4u+neY
+X-Google-Smtp-Source: APBJJlE/RRfy/2JXiahuX+7/L9bWZm70AmvtHOV5SKdDHjS9uJ2Ijtsve26XT3f2xiOGU5p0ojQ03HpKbWXRlIhi4JE=
+X-Received: by 2002:a05:6808:14c9:b0:38e:a824:27d3 with SMTP id
+ f9-20020a05680814c900b0038ea82427d3mr3154456oiw.27.1689954476846; Fri, 21 Jul
+ 2023 08:47:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df051844-0a73-4cf9-9719-a6001f1c9d5c@moroto.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
+In-Reply-To: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 21 Jul 2023 11:47:45 -0400
+Message-ID: <CADnq5_Nnok5tPbcuVqTJX+t3u4mdTFFjiC60et=19O7=Rt5T+w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Unlock on error path in dm_handle_mst_sideband_msg_ready_event()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Wayne Lin <wayne.lin@amd.com>, Alan Liu <haoping.liu@amd.com>,
+        kernel-janitors@vger.kernel.org, Leo Li <sunpeng.li@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        amd-gfx@lists.freedesktop.org, Fangzhi Zuo <Jerry.Zuo@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Hamza Mahfooz <hamza.mahfooz@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 05:57:00PM +0300, Dan Carpenter wrote:
-> This patch doesn't affect runtime because all the callers pass GFP_KERNEL
-> as the allocation flags.  However, it should use the passed in "gfp" as
-> the allocation flags.
-
-Please, Cc Kees Cook as he stepped in as a maintainer of this in particular.
-
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
-> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+On Fri, Jul 21, 2023 at 10:57=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> This error path needs to unlock the "aconnector->handle_mst_msg_ready"
+> mutex before returning.
+>
+> Fixes: bb4fa525f327 ("drm/amd/display: Add polling method to handle MST r=
+eply packet")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Applied.  Thanks!
+
+Alex
+
 > ---
->  lib/string_helpers.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-> index d3b1dd718daf..be517c25737d 100644
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -668,7 +668,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
->  	char *buffer, *quoted;
->  	int i, res;
->  
-> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	buffer = kmalloc(PAGE_SIZE, gfp);
->  	if (!buffer)
->  		return NULL;
->  
-> @@ -704,7 +704,7 @@ char *kstrdup_quotable_file(struct file *file, gfp_t gfp)
->  		return kstrdup("<unknown>", gfp);
->  
->  	/* We add 11 spaces for ' (deleted)' to be appended */
-> -	temp = kmalloc(PATH_MAX + 11, GFP_KERNEL);
-> +	temp = kmalloc(PATH_MAX + 11, gfp);
->  	if (!temp)
->  		return kstrdup("<no_memory>", gfp);
->  
-> -- 
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
+b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> index 1abdec14344e..943959012d04 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> @@ -707,7 +707,7 @@ void dm_handle_mst_sideband_msg_ready_event(
+>
+>                         if (retry =3D=3D 3) {
+>                                 DRM_ERROR("Failed to ack MST event.\n");
+> -                               return;
+> +                               break;
+>                         }
+>
+>                         drm_dp_mst_hpd_irq_send_new_request(&aconnector->=
+mst_mgr);
+> --
 > 2.39.2
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>
