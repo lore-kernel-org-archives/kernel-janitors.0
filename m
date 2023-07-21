@@ -2,112 +2,164 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25221EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 15:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67D6EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 16:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232237AbjGUPsB (ORCPT
+        id S232434AbjGUQat (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Jul 2023 11:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48148 "EHLO
+        Fri, 21 Jul 2023 12:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232278AbjGUPr6 (ORCPT
+        with ESMTP id S229633AbjGUQac (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Jul 2023 11:47:58 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831D61BD
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 08:47:57 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3a38953c928so1470376b6e.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 08:47:57 -0700 (PDT)
+        Fri, 21 Jul 2023 12:30:32 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E895B4696;
+        Fri, 21 Jul 2023 09:28:34 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id e9e14a558f8ab-345f1e0abf9so10807355ab.3;
+        Fri, 21 Jul 2023 09:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689954477; x=1690559277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=85BEVu4yQdhInWHjBPNn/bUdJhVBiL/B5hoGlXbtQnQ=;
-        b=UfU33fGHSy87HgdkmMlQAqg9vR7xlzd5Vcw+ZqIUVoOhV5ImK5apggHbgJ/etBauaU
-         ptl/07DxVUxNst/MyBPQz7NI55XahpK8pXEia7IqBFWm1Oqo9YcSUGQbziudnlIXRWDl
-         AKhgxvHZ09sB6i/rNb8++hvXuuAKD2KRP4T2U3hfXc3R7dzw253q1neb4J/2hlV9LloW
-         BixP+2CmYaKXqp0lseNCN1lSojUIiTkWD6rHfzBDxDFpAT0bnLbKqiOqre0LPdUzlkOA
-         rwToD6c4Jdrytl3eehvcdbnrZYs4dcXCinzdSHlIWvdA5ca1LTr9t1KA4KXc2PO9jUFF
-         v8+Q==
+        d=gmail.com; s=20221208; t=1689956842; x=1690561642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S3AT9u4QYD/Wmgzx+LQ7tGvuXiSmv6bkSA1iGoHjJQg=;
+        b=fjH568Cn0Ae9taITeR/wmXP/KuAtqs93r4wHiEC6pwWin6wWHFPOXIw/PR+zggpgFU
+         jFKBIHSIIp3HsAT9zDFuUaJEDtLZ61t7kN8pI3gjRxE6jZtpCIVtF1nYAwjMIt4oBaqm
+         UpJOGMIl7+2/ppouWfwKTrdn2ijafiTZJ/Q1KkfFN9okCvhfuBm027ZuVSNqJAM6nHtv
+         PEmpFDNJqAHWd2Wf8TzM8uWtCMGIbKalXy7FFPd+asTpKa6nbdFhNlYHgabDEVBqrMIN
+         9ZnQAia5FnrGzd5rNZSQbHM8GrIbkCj+5Ee4R/wVfVf2HSwqcBNGiRhSPQMDifdBjTXU
+         Mteg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689954477; x=1690559277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689956842; x=1690561642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=85BEVu4yQdhInWHjBPNn/bUdJhVBiL/B5hoGlXbtQnQ=;
-        b=EaSOk0V5z7LTyEKZHQhTgC36qpp2zUHozhbGJjhpT/HI7ow9VkdskHmh4EjQpa9Osc
-         jqhijQ+Ssm6Fap057olNQ1ruEWoUAsQZ5KYzjRM+7LrtZ9m0PUN9+wTLwdvRKkRlkI+r
-         IDetf+MWUr6JoX2gnouHCxS1GLm8Q0aY/Z3Iz3N3lmvi3kop8oFVO1A1qKdc6awPPtfm
-         8KEJkLa7AQZziInKX3SuzCOm8mO0KT/+dTsH+eie9ldrR0kMrkuQybgpYbC9V8SsAaQJ
-         n0LEyxq0rIiL++0zO1tt99s6+ngdVd4ve4AA3aRdp4fdwVN4iksUn8UVO6Bc+Ik7dr3u
-         48Xg==
-X-Gm-Message-State: ABy/qLaEWqStD4CSsGyzhozeew+7hMn5rJHUw6/X6NNlN4yXC5XAvSFF
-        uSUnLO3moA3VPI0u3oh/cY7EQwZA+vAHKwN2ZR4u+neY
-X-Google-Smtp-Source: APBJJlE/RRfy/2JXiahuX+7/L9bWZm70AmvtHOV5SKdDHjS9uJ2Ijtsve26XT3f2xiOGU5p0ojQ03HpKbWXRlIhi4JE=
-X-Received: by 2002:a05:6808:14c9:b0:38e:a824:27d3 with SMTP id
- f9-20020a05680814c900b0038ea82427d3mr3154456oiw.27.1689954476846; Fri, 21 Jul
- 2023 08:47:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
-In-Reply-To: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 21 Jul 2023 11:47:45 -0400
-Message-ID: <CADnq5_Nnok5tPbcuVqTJX+t3u4mdTFFjiC60et=19O7=Rt5T+w@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Unlock on error path in dm_handle_mst_sideband_msg_ready_event()
+        bh=S3AT9u4QYD/Wmgzx+LQ7tGvuXiSmv6bkSA1iGoHjJQg=;
+        b=FG1CNtBO+7hs0e7mN6/NFWXaV7JbmZcHJUorqbwlA+QaG+wnrM9bT93mIaZflOV8zS
+         ugNU2j7yrUMJV0T+oW6EMTNZIb9OepWyZ1xfyYaHVsTW75TKbnYrJsnNJT9d5awFuTw6
+         UDT1RRaVdQ2Hzo2ZjvH2Qnsm27PfvyoK/ZCIJ7fbJFBYA0UMIrsgJlFkvbEAFlIjLceO
+         /4nryqAd5Hr4E6+yKooQXXp3oyuw8t4G15uNianHv330AJ+QrV1rWCVZZXyZw3fIAp2D
+         N9NL25/usTh4WX8Qg6StAviv7lxrQUPlgZcA5tGF8ofTwT+SMscDsfdQFIS6j6EFwhAH
+         5dvw==
+X-Gm-Message-State: ABy/qLZB1zIbqnWc1CnLcJtHo4HySdhfSWsBhzdr2x6LPpm9pDd5byue
+        0KmG6+q9Ou78M8x0IIZCMKs=
+X-Google-Smtp-Source: APBJJlHADgT0H57/m/leaU87Jo7QnmAE3rRRESunjxsKp1ybjsdfDtYMXEUUYSVjIiYJ9goc0GO2oQ==
+X-Received: by 2002:a92:c245:0:b0:348:7d72:48cf with SMTP id k5-20020a92c245000000b003487d7248cfmr520290ilo.17.1689956842190;
+        Fri, 21 Jul 2023 09:27:22 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l8-20020a922908000000b003460b697bc0sm1058482ilg.59.2023.07.21.09.27.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jul 2023 09:27:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 21 Jul 2023 09:27:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Wayne Lin <wayne.lin@amd.com>, Alan Liu <haoping.liu@amd.com>,
-        kernel-janitors@vger.kernel.org, Leo Li <sunpeng.li@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Qingqing Zhuo <qingqing.zhuo@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        amd-gfx@lists.freedesktop.org, Fangzhi Zuo <Jerry.Zuo@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Hamza Mahfooz <hamza.mahfooz@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] regmap: rbtree: Use alloc_flags for memory allocations
+Message-ID: <dbe99062-6e35-44b1-9e33-5ebc0fed9e6d@roeck-us.net>
+References: <58f12a07-5f4b-4a8f-ab84-0a42d1908cb9@moroto.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58f12a07-5f4b-4a8f-ab84-0a42d1908cb9@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 10:57=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> This error path needs to unlock the "aconnector->handle_mst_msg_ready"
-> mutex before returning.
->
-> Fixes: bb4fa525f327 ("drm/amd/display: Add polling method to handle MST r=
-eply packet")
+On Fri, Jul 21, 2023 at 05:55:33PM +0300, Dan Carpenter wrote:
+> The kunit tests discovered a sleeping in atomic bug.  The allocations
+> in the regcache-rbtree code should use the map->alloc_flags instead of
+> GFP_KERNEL.
+> 
+> [    5.005510] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:306
+> [    5.005960] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 117, name: kunit_try_catch
+> [    5.006219] preempt_count: 1, expected: 0
+> [    5.006414] 1 lock held by kunit_try_catch/117:
+> [    5.006590]  #0: 833b9010 (regmap_kunit:86:(config)->lock){....}-{2:2}, at: regmap_lock_spinlock+0x14/0x1c
+> [    5.007493] irq event stamp: 162
+> [    5.007627] hardirqs last  enabled at (161): [<80786738>] crng_make_state+0x1a0/0x294
+> [    5.007871] hardirqs last disabled at (162): [<80c531ec>] _raw_spin_lock_irqsave+0x7c/0x80
+> [    5.008119] softirqs last  enabled at (0): [<801110ac>] copy_process+0x810/0x2138
+> [    5.008356] softirqs last disabled at (0): [<00000000>] 0x0
+> [    5.008688] CPU: 0 PID: 117 Comm: kunit_try_catch Tainted: G                 N 6.4.4-rc3-g0e8d2fdfb188 #1
+> [    5.009011] Hardware name: Generic DT based system
+> [    5.009277]  unwind_backtrace from show_stack+0x18/0x1c
+> [    5.009497]  show_stack from dump_stack_lvl+0x38/0x5c
+> [    5.009676]  dump_stack_lvl from __might_resched+0x188/0x2d0
+> [    5.009860]  __might_resched from __kmem_cache_alloc_node+0x1dc/0x25c
+> [    5.010061]  __kmem_cache_alloc_node from kmalloc_trace+0x30/0xc8
+> [    5.010254]  kmalloc_trace from regcache_rbtree_write+0x26c/0x468
+> [    5.010446]  regcache_rbtree_write from _regmap_write+0x88/0x140
+> [    5.010634]  _regmap_write from regmap_write+0x44/0x68
+> [    5.010803]  regmap_write from basic_read_write+0x8c/0x270
+> [    5.010980]  basic_read_write from kunit_try_run_case+0x48/0xa0
+> 
+> Fixes: 28644c809f44 ("regmap: Add the rbtree cache support")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/all/ee59d128-413c-48ad-a3aa-d9d350c80042@roeck-us.net/
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied.  Thanks!
-
-Alex
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
-b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> index 1abdec14344e..943959012d04 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> @@ -707,7 +707,7 @@ void dm_handle_mst_sideband_msg_ready_event(
->
->                         if (retry =3D=3D 3) {
->                                 DRM_ERROR("Failed to ack MST event.\n");
-> -                               return;
-> +                               break;
->                         }
->
->                         drm_dp_mst_hpd_irq_send_new_request(&aconnector->=
-mst_mgr);
-> --
+> This patch is similar to what I sent earlier, but I changed
+> regcache_rbtree_init() back to using GFP_KERNEL.
+> 
+>  drivers/base/regmap/regcache-rbtree.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/base/regmap/regcache-rbtree.c b/drivers/base/regmap/regcache-rbtree.c
+> index fabf87058d80..ae6b8788d5f3 100644
+> --- a/drivers/base/regmap/regcache-rbtree.c
+> +++ b/drivers/base/regmap/regcache-rbtree.c
+> @@ -277,7 +277,7 @@ static int regcache_rbtree_insert_to_block(struct regmap *map,
+>  
+>  	blk = krealloc(rbnode->block,
+>  		       blklen * map->cache_word_size,
+> -		       GFP_KERNEL);
+> +		       map->alloc_flags);
+>  	if (!blk)
+>  		return -ENOMEM;
+>  
+> @@ -286,7 +286,7 @@ static int regcache_rbtree_insert_to_block(struct regmap *map,
+>  	if (BITS_TO_LONGS(blklen) > BITS_TO_LONGS(rbnode->blklen)) {
+>  		present = krealloc(rbnode->cache_present,
+>  				   BITS_TO_LONGS(blklen) * sizeof(*present),
+> -				   GFP_KERNEL);
+> +				   map->alloc_flags);
+>  		if (!present)
+>  			return -ENOMEM;
+>  
+> @@ -320,7 +320,7 @@ regcache_rbtree_node_alloc(struct regmap *map, unsigned int reg)
+>  	const struct regmap_range *range;
+>  	int i;
+>  
+> -	rbnode = kzalloc(sizeof(*rbnode), GFP_KERNEL);
+> +	rbnode = kzalloc(sizeof(*rbnode), map->alloc_flags);
+>  	if (!rbnode)
+>  		return NULL;
+>  
+> @@ -346,13 +346,13 @@ regcache_rbtree_node_alloc(struct regmap *map, unsigned int reg)
+>  	}
+>  
+>  	rbnode->block = kmalloc_array(rbnode->blklen, map->cache_word_size,
+> -				      GFP_KERNEL);
+> +				      map->alloc_flags);
+>  	if (!rbnode->block)
+>  		goto err_free;
+>  
+>  	rbnode->cache_present = kcalloc(BITS_TO_LONGS(rbnode->blklen),
+>  					sizeof(*rbnode->cache_present),
+> -					GFP_KERNEL);
+> +					map->alloc_flags);
+>  	if (!rbnode->cache_present)
+>  		goto err_free_block;
+>  
+> -- 
 > 2.39.2
->
+> 
