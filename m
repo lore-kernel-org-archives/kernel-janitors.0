@@ -2,73 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4254FEB64DC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 14:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3533CEB64DC
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jul 2023 14:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbjGUO4f (ORCPT
+        id S231293AbjGUO4q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Jul 2023 10:56:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
+        Fri, 21 Jul 2023 10:56:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231415AbjGUO4b (ORCPT
+        with ESMTP id S230158AbjGUO4p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Jul 2023 10:56:31 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08991722
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:26 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b74310566cso30617761fa.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:26 -0700 (PDT)
+        Fri, 21 Jul 2023 10:56:45 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7F430D2
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:40 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-315adee6ac8so1557554f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Jul 2023 07:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689951385; x=1690556185;
+        d=linaro.org; s=google; t=1689951399; x=1690556199;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=U4uPw584/Tdlq/aOQhdIYZ2NWWZUO8Cw8PlRqHsN9Fo=;
-        b=JyXtdWR89AuYMt8ebkpbk25d7ot90wKR+CGZh/1m+KMCbvze89anIZrvUjPBHvPZeb
-         4xr1L4z3DmX4K2a+5vd2Dmt2AHNVquvN6ej9C99KCBRussfyUuuqNAmuEKPyBx9jAl67
-         9LmQvARZTDhRVVq9/xskXgkDm1AanY4JEeWveP6iicOEwbZTfh79hM+I+ZdDu6N9hWm0
-         AadUtN8DhlZqXjGpCiI5F/gZAzMqHUx9G4PZrA6SInZOHc+lF82sH7jb6f6WBoplx5a3
-         6kWrFO6DioTqSOOwPeykZSXEkU/1vkq3Bravdqwbz4Y1ydxHfbu25tTP5SROv2QLSlmo
-         rqGw==
+        bh=In8T5OsGtRpxMtj85EqpIN0ZR1mnlPUN+P5ckad+btA=;
+        b=eKyfGFRUlNMWchE9XXYzqjbwM5uVsWWNUMm828Tvyd1V1mYv+1G2emJePZZDvMgrUD
+         y8K8S0XaXLLXCGJ5M49Za8Q876uTyDivqR5ZTeXs3il3jc2pZw0CfpbW/idiP5crMkzB
+         lajAelAx67AhHM0wqTgv1lcIngYlg5qHgpjhv98QyzUEICGp9fR+Tijst08Rpmhdgys6
+         xpXrsuVtsp9wNH8iTSqXDorcciPLoXW3UVSv9qNYtcAMUzWz++U/yvpyfhsErni8zP7S
+         /sj0deswOJp4zr91Pd3EOfzrIHQwgLp7qlmpa158ALT3nJTMkWiHIac1s3EtXc0qJHIn
+         i3TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689951385; x=1690556185;
+        d=1e100.net; s=20221208; t=1689951399; x=1690556199;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U4uPw584/Tdlq/aOQhdIYZ2NWWZUO8Cw8PlRqHsN9Fo=;
-        b=V9seoRQhEcMilgx+NBWGU4WmBpFbxeN98lcL/QXTXk4uGcaU/8q9vtQmzlkThEyd2u
-         s9/t9nsWWmPUnP9xP9xghxTUMMm1vmy/OeZQ3pE1Wt5Bx1JLYVmYVbJKQqNS4i7OmHso
-         1eEG5n66Gdi3GxQFEFp82gm7TB5Q01QZv3Mf40dkGWCtFqvRPnx/n7JUrV29wKl57jba
-         Usdo92MM+Xc68y32yHpBJdLxmrC9DAKrZXhPbLDV/iZD6LJnMuaOQf+nq1uZNDRJHGJh
-         FdsXpaRaJsZj0sM6EMBCx3Ll1SVsfLx09kA4s2Vf+XvFdTG16+ghOpNscDkwBUjsT6h/
-         N1+g==
-X-Gm-Message-State: ABy/qLalPXt7bZ+149Vz6VURrWaXL2imlerK+sWgTVoe4Km/gumH9J+X
-        vzahu8vVd0OMCMS875AHvupmRw==
-X-Google-Smtp-Source: APBJJlFwVWEJ9HCYiiD4k+l7zWH5gfbXV1xm2Y6zHh5t+enoUzr93GJvhTbRarCClp80b1UNBFU3kA==
-X-Received: by 2002:a2e:a1cb:0:b0:2b7:842:a64c with SMTP id c11-20020a2ea1cb000000b002b70842a64cmr1673222ljm.5.1689951385241;
-        Fri, 21 Jul 2023 07:56:25 -0700 (PDT)
+        bh=In8T5OsGtRpxMtj85EqpIN0ZR1mnlPUN+P5ckad+btA=;
+        b=L3+KlByYFcm8yKkhnF5eDU4s07yogtk+bsfce5ds8VaZ4BJJ1rZkm/tm2Y3nFQqL+I
+         rlZApjuf9Ds/d+1kgNvN5UhAFW8V0mQJnZdrjLmRySinA9f8DaMDH7n6eOq7CWP5pfer
+         gLtMp5NmmQrZf4/kj27w37RnAuVPR6ZsksStrR3ic1LHaXtL13JNiODGHENovsEvKQXI
+         sfabVBhhTEqzBW79OuLkqeTdRlg+Q8BVW4E5G37EHOzdwovd5HNQZljDQzz2Vt/YEobM
+         oCYsUKywhht0qLtFCaewfG18UeBVrnfdnLMNqvMR9IT/sUDjZrbvHE06JC3EHD5huyPI
+         K1Xg==
+X-Gm-Message-State: ABy/qLY5wd32W5YuIQW0q5+v3f+YTDBiVFf0S1OUngQ0cLl0fvwQ5gMo
+        UVboTjoPqbiBv1TGNKZHD9W3pQ==
+X-Google-Smtp-Source: APBJJlHEfwVc5QNwet+IfWzXMoxUEDrd837ZTLEG4fHbusmtYBoz0tijlh8MpDp7LrFCWhYG7LN21A==
+X-Received: by 2002:a05:6000:10d1:b0:314:38e4:259f with SMTP id b17-20020a05600010d100b0031438e4259fmr1666827wrx.37.1689951398706;
+        Fri, 21 Jul 2023 07:56:38 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q17-20020a7bce91000000b003f91e32b1ebsm6300279wmj.17.2023.07.21.07.56.15
+        by smtp.gmail.com with ESMTPSA id m9-20020a5d56c9000000b00313e2abfb8dsm4428241wrw.92.2023.07.21.07.56.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 07:56:20 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 17:55:49 +0300
+        Fri, 21 Jul 2023 07:56:36 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 17:56:17 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Wayne Lin <wayne.lin@amd.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+To:     Inki Dae <inki.dae@samsung.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Lyude Paul <lyude@redhat.com>,
-        Qingqing Zhuo <qingqing.zhuo@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Fangzhi Zuo <Jerry.Zuo@amd.com>,
-        Hamza Mahfooz <hamza.mahfooz@amd.com>,
-        Alan Liu <haoping.liu@amd.com>, amd-gfx@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/display: Unlock on error path in
- dm_handle_mst_sideband_msg_ready_event()
-Message-ID: <0a4b4a77-75e0-4a1f-a944-6ea5c75a2bb9@moroto.mountain>
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm: bridge: samsung-dsim: Clean up a call to request_irq()
+Message-ID: <1c921fe0-2758-44dd-85f3-2ef8eb6583bb@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -77,28 +73,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This error path needs to unlock the "aconnector->handle_mst_msg_ready"
-mutex before returning.
+This is calling request_threaded_irq() but the thread parameter is NULL
+so it's actually not a threaded irq.  Which is a bit misleading.  Call
+request_irq() instead.
 
-Fixes: bb4fa525f327 ("drm/amd/display: Add polling method to handle MST reply packet")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/samsung-dsim.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 1abdec14344e..943959012d04 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -707,7 +707,7 @@ void dm_handle_mst_sideband_msg_ready_event(
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index 9b7a00bafeaa..9d81dbbc6680 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1637,8 +1637,8 @@ static int samsung_dsim_register_te_irq(struct samsung_dsim *dsi, struct device
  
- 			if (retry == 3) {
- 				DRM_ERROR("Failed to ack MST event.\n");
--				return;
-+				break;
- 			}
+ 	te_gpio_irq = gpiod_to_irq(dsi->te_gpio);
  
- 			drm_dp_mst_hpd_irq_send_new_request(&aconnector->mst_mgr);
+-	ret = request_threaded_irq(te_gpio_irq, samsung_dsim_te_irq_handler, NULL,
+-				   IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN, "TE", dsi);
++	ret = request_irq(te_gpio_irq, samsung_dsim_te_irq_handler,
++			  IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN, "TE", dsi);
+ 	if (ret) {
+ 		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
+ 		gpiod_put(dsi->te_gpio);
 -- 
 2.39.2
 
