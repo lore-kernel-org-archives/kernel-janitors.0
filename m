@@ -2,45 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B03CC001B0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 20:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4A6C001DE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 20:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjGVU06 (ORCPT
+        id S229936AbjGVUmD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Jul 2023 16:26:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38852 "EHLO
+        Sat, 22 Jul 2023 16:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjGVU05 (ORCPT
+        with ESMTP id S229546AbjGVUmC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Jul 2023 16:26:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FD9E53
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 13:26:54 -0700 (PDT)
+        Sat, 22 Jul 2023 16:42:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA011713
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 13:42:00 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id NJBjqtestHI6nNJBjqoPCR; Sat, 22 Jul 2023 22:26:53 +0200
+        id NJQLqgycdZWkDNJQLqk8SS; Sat, 22 Jul 2023 22:41:59 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1690057613;
-        bh=/NfZHk2r0r5O3/cXEnU1+UoN/5FO53TePxKwYDuLCpA=;
+        s=t20230301; t=1690058519;
+        bh=bWA5n6DBMnr6LPqtlqyYrLqir8O7olbWs97Uom4gQgI=;
         h=From:To:Cc:Subject:Date;
-        b=PKe1cTqqVlcZfB/XOHKLcypj0NEfxBin5w2lxtP0qdd4RRKgRGSxn/m4HCEafiOkV
-         TUI6F7smKn+oyoepr6K6HVUqdlW/NEgK/AaehZR2ODes5kzkTSUhYlIoflc1pjEQu/
-         mhqu55prWGfKSkBv/caL88GXasi9SxAQPXloIq7RDUPgXv7dNIPzV8NpbtCjN/GJLW
-         lDa+uVb+19stEJXPiOl0oV9PVu2ce6MDSG0dkKTGVAfMAHIFG/enr10b3QvpoCMAwC
-         VyxXO398snf6NIaQhN+OLXknMzgVjSKnFmQQ1BWxV5QiMYMRB6heVSh/fxxL6vHJPz
-         tlt5G/3UEFAQg==
+        b=BmfgCTgHGZmPLZfgh6/5mQP4E2wdZaHbTRVBvvHjna2XPxdRTQunjAprimqsHjq//
+         28oQACOKrz7hn5tCjfbN6bemF83SmLS+ApR/p9MhTQ+YjNo2MwFYtUb0PN9kUhuiJf
+         inYIVqrF1IUwUyjIDKdUiEY6m+AXl/beuXy+2+yNAfRLxjcjC4YOMK9NhurBYWdaGx
+         tBlD8jhpaF1DjxIfGQ8zEVQJTfDOoWiIx2O0I2ov0MJWuvjLGrwFsRHwdXiYLw5jgX
+         CgIBt8suBeBH8XG66NmQWCneNIMeJNQk7l2gLZjYVM0D6rk/PwkQApOIS9+SvcUEyl
+         zNkh5nN/SX/lg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 Jul 2023 22:26:53 +0200
+X-ME-Date: Sat, 22 Jul 2023 22:41:59 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH] leds: ns2: Slightly simplify a memory allocation
-Date:   Sat, 22 Jul 2023 22:26:49 +0200
-Message-Id: <560b8f140c19a7da40f5e9540c3ef312969b0dc4.1690057595.git.christophe.jaillet@wanadoo.fr>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: renesas: rzg2l: Use devm_clk_get_enabled() helper
+Date:   Sat, 22 Jul 2023 22:41:56 +0200
+Message-Id: <a4a586337d692f0ca396b80d275ba634eb419593.1690058500.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,26 +49,75 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_kcalloc() instead of devm_kzalloc()+array_size().
+The devm_clk_get_enabled() helper:
+   - calls devm_clk_get()
+   - calls clk_prepare_enable() and registers what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
+
+This simplifies the code and avoids the need of a dedicated function used
+with devm_add_action_or_reset().
+
+While at it, use dev_err_probe() which filters -EPROBE_DEFER.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/leds-ns2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 30 ++++---------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 1677d66d8b0e..f3010c472bbd 100644
---- a/drivers/leds/leds-ns2.c
-+++ b/drivers/leds/leds-ns2.c
-@@ -247,7 +247,7 @@ static int ns2_led_probe(struct platform_device *pdev)
- 	if (!count)
- 		return -ENODEV;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 2f1a08210fd6..b2d05cfe5d8c 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1471,11 +1471,6 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
+ 	return 0;
+ }
  
--	leds = devm_kzalloc(dev, array_size(sizeof(*leds), count), GFP_KERNEL);
-+	leds = devm_kcalloc(dev, count, sizeof(*leds), GFP_KERNEL);
- 	if (!leds)
- 		return -ENOMEM;
+-static void rzg2l_pinctrl_clk_disable(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct rzg2l_pinctrl *pctrl;
+@@ -1501,33 +1496,16 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pctrl->base))
+ 		return PTR_ERR(pctrl->base);
  
+-	pctrl->clk = devm_clk_get(pctrl->dev, NULL);
+-	if (IS_ERR(pctrl->clk)) {
+-		ret = PTR_ERR(pctrl->clk);
+-		dev_err(pctrl->dev, "failed to get GPIO clk : %i\n", ret);
+-		return ret;
+-	}
++	pctrl->clk = devm_clk_get_enabled(pctrl->dev, NULL);
++	if (IS_ERR(pctrl->clk))
++		return dev_err_probe(pctrl->dev, PTR_ERR(pctrl->clk),
++				     "failed to get GPIO clk\n");
+ 
+ 	spin_lock_init(&pctrl->lock);
+ 	spin_lock_init(&pctrl->bitmap_lock);
+ 
+ 	platform_set_drvdata(pdev, pctrl);
+ 
+-	ret = clk_prepare_enable(pctrl->clk);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to enable GPIO clk: %i\n", ret);
+-		return ret;
+-	}
+-
+-	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_pinctrl_clk_disable,
+-				       pctrl->clk);
+-	if (ret) {
+-		dev_err(pctrl->dev,
+-			"failed to register GPIO clk disable action, %i\n",
+-			ret);
+-		return ret;
+-	}
+-
+ 	ret = rzg2l_pinctrl_register(pctrl);
+ 	if (ret)
+ 		return ret;
 -- 
 2.34.1
 
