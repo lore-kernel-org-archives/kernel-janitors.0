@@ -2,116 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D10EB64DA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 14:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9937C0015E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 15:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbjGVOyS (ORCPT
+        id S229779AbjGVP65 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Jul 2023 10:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40888 "EHLO
+        Sat, 22 Jul 2023 11:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGVOyR (ORCPT
+        with ESMTP id S229491AbjGVP6z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Jul 2023 10:54:17 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A0C1999
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 07:54:16 -0700 (PDT)
+        Sat, 22 Jul 2023 11:58:55 -0400
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BCD1FDC
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 08:58:50 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id NDziq9IyeeA2LNDzqqDHuw; Sat, 22 Jul 2023 16:54:15 +0200
+        id NF0FqBMdqoFSdNF0FqaSjc; Sat, 22 Jul 2023 17:58:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1690037655;
-        bh=2EYI+Z2hVmisU1YN5vrLq4/s1ceNP0kl8rsGq7obraQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=skGlKg56k8xYk51FfhL+hiU3BM3fmBiRZBr7bNAl/VyQW+DF7g3PK6bJVJnHmP4hy
-         T2v0H5X0K0mhNSijn+vO76Jrx0vEi7vJZ4j8me239gtzXLkRPqKlDjgsOyVtaAu7Jh
-         3bFucBrc7tpBru+NiFEkQINki5LMTzdYFsieVg4OudHPl6cyvR0FvfBIRUNEFzpz1i
-         XT19us1XmcGenwWJrUqaCxJebdjDRGxG+zljEzk1Y1gr7WOevYQBM06lvRtlu69tEF
-         7QdRGxznks0JjiYpqZdRieQJiCGQP2yZPw1Ch49gDKPPtx5Lv4skRb71vy1jdLwyrX
-         XQAMqWtkKaK/A==
+        s=t20230301; t=1690041524;
+        bh=7h7BXIi417HcJ7IVXgwp14lvQ+AKlv7jQenrpvVP09g=;
+        h=From:To:Cc:Subject:Date;
+        b=Inif3SLu+aoCjx+IQwQ8bAKNRAckAT1iVU7BanPLRxUxwWZsLpC7aoyXtMKoH/Vwy
+         cq/2OA/xgdpvLghZeidgSATaYfAj0zWhzd8R+HwoQx62WW2l08Z8W0Z4AHXwDnAA8z
+         7JhBU77Eb3GkIHabjaIdYnFDcfleWLcD9NMuDVz+0V/xaBwi/rAcTAGxHowPwLOU9C
+         K7f4J5QcvB7eDpO4q8OmrY0bIChH9mCrM4VNQyUlY+8Irm/U2QJGFqNr2GhcXU7juR
+         YMLJ2/XVkDMFuaC2omqfBoYEgJQKY9jr037SqSgDijIDi9Ak7ac+2wBfAri8ZHw36e
+         ogdxX4dc4I6PA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 Jul 2023 16:54:15 +0200
+X-ME-Date: Sat, 22 Jul 2023 17:58:44 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Gaurav Jain <gaurav.jain@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 2/2] crypto: caam - Remove messages related to memory allocation failure
-Date:   Sat, 22 Jul 2023 16:53:59 +0200
-Message-Id: <b8859de12248852f661cb051ffad79166e8dfa47.1690037578.git.christophe.jaillet@wanadoo.fr>
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: ep93xx: Use struct_size()
+Date:   Sat, 22 Jul 2023 17:58:40 +0200
+Message-Id: <36fa11d95b448b5f3f1677da41fe35b9e2751427.1690041500.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0fc02b533bd3c3422bec5856bc65bbb66ebf7b58.1690037578.git.christophe.jaillet@wanadoo.fr>
-References: <0fc02b533bd3c3422bec5856bc65bbb66ebf7b58.1690037578.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On memory allocation failure, the function calling stack is already logged.
-So there is no need to explicitly log an extra message.
+Use struct_size() instead of hand-writing it, when allocating a structure
+with a flex array.
 
-Remove them, ans simplify some code accordingly.
+This is less verbose, more robust and more informative.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/crypto/caam/caamhash.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+It will also be helpful if the __counted_by() annotation is added with a
+Coccinelle script such as:
+   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/counted_by&id=adc5b3cb48a049563dc673f348eab7b6beba8a9b
+---
+ drivers/dma/ep93xx_dma.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index 9e5924e24f2e..641c3afd59ca 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -368,10 +368,8 @@ static int hash_digest_key(struct caam_hash_ctx *ctx, u32 *keylen, u8 *key,
- 	int ret;
+diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
+index 5338a94f1a69..5c4a448a1254 100644
+--- a/drivers/dma/ep93xx_dma.c
++++ b/drivers/dma/ep93xx_dma.c
+@@ -1320,11 +1320,9 @@ static int __init ep93xx_dma_probe(struct platform_device *pdev)
+ 	struct ep93xx_dma_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct ep93xx_dma_engine *edma;
+ 	struct dma_device *dma_dev;
+-	size_t edma_size;
+ 	int ret, i;
  
- 	desc = kmalloc(CAAM_CMD_SZ * 8 + CAAM_PTR_SZ * 2, GFP_KERNEL);
--	if (!desc) {
--		dev_err(jrdev, "unable to allocate key input memory\n");
-+	if (!desc)
+-	edma_size = pdata->num_channels * sizeof(struct ep93xx_dma_chan);
+-	edma = kzalloc(sizeof(*edma) + edma_size, GFP_KERNEL);
++	edma = kzalloc(struct_size(edma, channels, pdata->num_channels), GFP_KERNEL);
+ 	if (!edma)
  		return -ENOMEM;
--	}
  
- 	init_job_desc(desc, 0);
- 
-@@ -702,18 +700,14 @@ static struct ahash_edesc *ahash_edesc_alloc(struct ahash_request *req,
- 					     int sg_num, u32 *sh_desc,
- 					     dma_addr_t sh_desc_dma)
- {
--	struct crypto_ahash *ahash = crypto_ahash_reqtfm(req);
--	struct caam_hash_ctx *ctx = crypto_ahash_ctx_dma(ahash);
- 	struct caam_hash_state *state = ahash_request_ctx_dma(req);
- 	gfp_t flags = (req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP) ?
- 		       GFP_KERNEL : GFP_ATOMIC;
- 	struct ahash_edesc *edesc;
- 
- 	edesc = kzalloc(struct_size(edesc, sec4_sg, sg_num), flags);
--	if (!edesc) {
--		dev_err(ctx->jrdev, "could not allocate extended descriptor\n");
-+	if (!edesc)
- 		return NULL;
--	}
- 
- 	state->edesc = edesc;
- 
-@@ -1908,10 +1902,8 @@ caam_hash_alloc(struct caam_hash_template *template,
- 	struct crypto_alg *alg;
- 
- 	t_alg = kzalloc(sizeof(*t_alg), GFP_KERNEL);
--	if (!t_alg) {
--		pr_err("failed to allocate t_alg\n");
-+	if (!t_alg)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	t_alg->ahash_alg = template->template_ahash;
- 	halg = &t_alg->ahash_alg;
 -- 
 2.34.1
 
