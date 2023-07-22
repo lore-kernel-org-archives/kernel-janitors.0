@@ -2,83 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9937C0015E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 15:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF19FC001B0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 16:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbjGVP65 (ORCPT
+        id S229782AbjGVQek (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Jul 2023 11:58:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50766 "EHLO
+        Sat, 22 Jul 2023 12:34:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjGVP6z (ORCPT
+        with ESMTP id S229468AbjGVQei (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Jul 2023 11:58:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BCD1FDC
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 08:58:50 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id NF0FqBMdqoFSdNF0FqaSjc; Sat, 22 Jul 2023 17:58:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1690041524;
-        bh=7h7BXIi417HcJ7IVXgwp14lvQ+AKlv7jQenrpvVP09g=;
-        h=From:To:Cc:Subject:Date;
-        b=Inif3SLu+aoCjx+IQwQ8bAKNRAckAT1iVU7BanPLRxUxwWZsLpC7aoyXtMKoH/Vwy
-         cq/2OA/xgdpvLghZeidgSATaYfAj0zWhzd8R+HwoQx62WW2l08Z8W0Z4AHXwDnAA8z
-         7JhBU77Eb3GkIHabjaIdYnFDcfleWLcD9NMuDVz+0V/xaBwi/rAcTAGxHowPwLOU9C
-         K7f4J5QcvB7eDpO4q8OmrY0bIChH9mCrM4VNQyUlY+8Irm/U2QJGFqNr2GhcXU7juR
-         YMLJ2/XVkDMFuaC2omqfBoYEgJQKY9jr037SqSgDijIDi9Ak7ac+2wBfAri8ZHw36e
-         ogdxX4dc4I6PA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 Jul 2023 17:58:44 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH] dmaengine: ep93xx: Use struct_size()
-Date:   Sat, 22 Jul 2023 17:58:40 +0200
-Message-Id: <36fa11d95b448b5f3f1677da41fe35b9e2751427.1690041500.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 22 Jul 2023 12:34:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57CE2704;
+        Sat, 22 Jul 2023 09:34:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 69AC960B9B;
+        Sat, 22 Jul 2023 16:34:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3DB3C433C8;
+        Sat, 22 Jul 2023 16:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690043676;
+        bh=Rjv82HPBqLpoIriZnJoOzq7od/Ud/TXCnVgSSt38dvo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tlb+0GZ7GsPDBJ1ohVXB7HNmpEulVpeA6M015YXENM0boPRImRcsWW5NmANK4km0o
+         CYqdfOuV5AfT8y/0pUecG1sVNoWd6s5xFYbwS2ct3UGwW8JBw1gTthKaNgmIfF/LHO
+         6xi3mnELlHxGf8leZHuGHhXaiswXaqpA29quHckIpROsvNGvSNSNKbd6mhtl0/XyEQ
+         OQRqQb/MXeDA9ERMJ2roLmqa7Frd7eSrYfgJcSbPueSUlM35krX55QX67RIaDS/b9a
+         gQhIo9MZYETXr41ejP3/kSOF0PHl5dqixnayYISvvKsK63txy8ESkxXzY87ez4xMV6
+         2i/tPdxBmAx7w==
+Date:   Sat, 22 Jul 2023 17:34:33 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: frequency: admv1013: propagate errors from
+ regulator_get_voltage()
+Message-ID: <20230722173433.2174734f@jic23-huawei>
+In-Reply-To: <ce75aac3-2aba-4435-8419-02e59fdd862b@moroto.mountain>
+References: <ce75aac3-2aba-4435-8419-02e59fdd862b@moroto.mountain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand-writing it, when allocating a structure
-with a flex array.
+On Tue, 18 Jul 2023 10:02:18 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-This is less verbose, more robust and more informative.
+> The regulator_get_voltage() function returns negative error codes.
+> This function saves it to an unsigned int and then does some range
+> checking and, since the error code falls outside the correct range,
+> it returns -EINVAL.
+> 
+> Beyond the messiness, this is bad because the regulator_get_voltage()
+> function can return -EPROBE_DEFER and it's important to propagate that
+> back properly so it can be handled.
+> 
+> Fixes: da35a7b526d9 ("iio: frequency: admv1013: add support for ADMV1013")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Applied to the fixes-togreg branch of iio.git and marked for stable.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It will also be helpful if the __counted_by() annotation is added with a
-Coccinelle script such as:
-   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/counted_by&id=adc5b3cb48a049563dc673f348eab7b6beba8a9b
----
- drivers/dma/ep93xx_dma.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks,
 
-diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-index 5338a94f1a69..5c4a448a1254 100644
---- a/drivers/dma/ep93xx_dma.c
-+++ b/drivers/dma/ep93xx_dma.c
-@@ -1320,11 +1320,9 @@ static int __init ep93xx_dma_probe(struct platform_device *pdev)
- 	struct ep93xx_dma_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct ep93xx_dma_engine *edma;
- 	struct dma_device *dma_dev;
--	size_t edma_size;
- 	int ret, i;
- 
--	edma_size = pdata->num_channels * sizeof(struct ep93xx_dma_chan);
--	edma = kzalloc(sizeof(*edma) + edma_size, GFP_KERNEL);
-+	edma = kzalloc(struct_size(edma, channels, pdata->num_channels), GFP_KERNEL);
- 	if (!edma)
- 		return -ENOMEM;
- 
--- 
-2.34.1
+Jonathan
+
+> ---
+>  drivers/iio/frequency/admv1013.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/frequency/admv1013.c b/drivers/iio/frequency/admv1013.c
+> index 9bf8337806fc..8c8e0bbfc99f 100644
+> --- a/drivers/iio/frequency/admv1013.c
+> +++ b/drivers/iio/frequency/admv1013.c
+> @@ -344,9 +344,12 @@ static int admv1013_update_quad_filters(struct admv1013_state *st)
+>  
+>  static int admv1013_update_mixer_vgate(struct admv1013_state *st)
+>  {
+> -	unsigned int vcm, mixer_vgate;
+> +	unsigned int mixer_vgate;
+> +	int vcm;
+>  
+>  	vcm = regulator_get_voltage(st->reg);
+> +	if (vcm < 0)
+> +		return vcm;
+>  
+>  	if (vcm < 1800000)
+>  		mixer_vgate = (2389 * vcm / 1000000 + 8100) / 100;
 
