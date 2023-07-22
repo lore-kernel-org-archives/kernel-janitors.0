@@ -2,47 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF74EB64DC
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 16:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A905C0015E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 20:07:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjGVQrc (ORCPT
+        id S229829AbjGVUHo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Jul 2023 12:47:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
+        Sat, 22 Jul 2023 16:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjGVQrb (ORCPT
+        with ESMTP id S229812AbjGVUHn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Jul 2023 12:47:31 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC272E7A
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 09:47:30 -0700 (PDT)
+        Sat, 22 Jul 2023 16:07:43 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03700211E
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 13:07:38 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id NFlNqftgEZWkDNFlOqjnql; Sat, 22 Jul 2023 18:47:29 +0200
+        id NIsyqCllLulAmNIszqCc5G; Sat, 22 Jul 2023 22:07:31 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1690044449;
-        bh=IQyaExm2W+hWmqxwBEcF/S4pavhj7DW1iV5TthHyYq0=;
+        s=t20230301; t=1690056451;
+        bh=7S4ycyHIMkZJiLKQzCPxeyh+eo13SBWOIVq3MxxljJ4=;
         h=From:To:Cc:Subject:Date;
-        b=bv6jFkyPyNTJAMS45ucOXR0aal1IV5W56+H6O/egzxKIDCJmW9IbSNtvYllo84heK
-         kKUxEWgD0UzOCdCp8ckbb5dtvYxgyLrPNbHN/QivomcO3XgGtKLmno54hYOQ6SXbbo
-         w/cK/Z9ZpGlRH0uTMjoRvlTwITZaW5ReuzffE6nwszpSH3t6Em6LY8D8IDhatmJi91
-         r7bTnzCQnRiq4+ct1gyt5lODJcKAHXe5B3YrSeHQVUnZ8gQlkqakffCDHc5qYRO4MM
-         +7Wk6XlzyjnH34PqzYxEgMsrG7lvf1uyLXp2cE+nDcOkDKwKSL3pPTH0wkLELackOL
-         K7t9XNqvKmegw==
+        b=H1cITbJGrQCdw/dC2WdazoyVY0mrYULO1Vall8mjmOZhUf2HpWZfD5DXrHO7Fn447
+         iY3GHjnyT2VmoVdqX5leLbMcYQnneDP9YXuVSUKXMTUtiqDNTKVMS5T7Ki5SK2BOmi
+         QRef6/MoHPpVKxzX+YnsLQdwSUYSUZ2FKJjF+2cn/z/VEHHKzXFzWMgX0gMqsrkdZ3
+         x403vWMINEMsctZ55M0vSjPQ7iDnes1FYWLJwL77q3Wuum82zXi94W+cvARrsWfGrJ
+         vAMGUCVychN9LGChTN1g0SOTA5QWooUmDW19fCFBSlB8ec//PDWhefBwKbFsNQBF4q
+         9D9y0+LtrieXQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 Jul 2023 18:47:29 +0200
+X-ME-Date: Sat, 22 Jul 2023 22:07:31 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH v2] IB/hfi1: Use struct_size()
-Date:   Sat, 22 Jul 2023 18:47:24 +0200
-Message-Id: <f4618a67d5ae0a30eb3f2b4558c8cc790feed79a.1690044376.git.christophe.jaillet@wanadoo.fr>
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] stm class: Use struct_size()
+Date:   Sat, 22 Jul 2023 22:07:26 +0200
+Message-Id: <d14d51f409c1e87fb87fa39869bdf7ce1b766120.1690056420.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,40 +61,23 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 It will also be helpful if the __counted_by() annotation is added with a
 Coccinelle script such as:
    https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/counted_by&id=adc5b3cb48a049563dc673f348eab7b6beba8a9b
-
-
-Change in v2: use struct_size() in another place just a few line below.
 ---
- drivers/infiniband/hw/hfi1/pio.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/hwtracing/stm/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/pio.c b/drivers/infiniband/hw/hfi1/pio.c
-index 62e7dc9bea7b..dfea53e0fdeb 100644
---- a/drivers/infiniband/hw/hfi1/pio.c
-+++ b/drivers/infiniband/hw/hfi1/pio.c
-@@ -1893,9 +1893,7 @@ int pio_map_init(struct hfi1_devdata *dd, u8 port, u8 num_vls, u8 *vl_scontexts)
- 			vl_scontexts[i] = sc_per_vl + (extra > 0 ? 1 : 0);
- 	}
- 	/* build new map */
--	newmap = kzalloc(sizeof(*newmap) +
--			 roundup_pow_of_two(num_vls) *
--			 sizeof(struct pio_map_elem *),
-+	newmap = kzalloc(struct_size(newmap, map, roundup_pow_of_two(num_vls)),
- 			 GFP_KERNEL);
- 	if (!newmap)
- 		goto bail;
-@@ -1910,9 +1908,8 @@ int pio_map_init(struct hfi1_devdata *dd, u8 port, u8 num_vls, u8 *vl_scontexts)
- 			int sz = roundup_pow_of_two(vl_scontexts[i]);
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 534fbefc7f6a..2195310ab81c 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -863,7 +863,7 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ 		return -EINVAL;
  
- 			/* only allocate once */
--			newmap->map[i] = kzalloc(sizeof(*newmap->map[i]) +
--						 sz * sizeof(struct
--							     send_context *),
-+			newmap->map[i] = kzalloc(struct_size(newmap->map[i],
-+							     ksc, sz),
- 						 GFP_KERNEL);
- 			if (!newmap->map[i])
- 				goto bail;
+ 	nmasters = stm_data->sw_end - stm_data->sw_start + 1;
+-	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
++	stm = vzalloc(struct_size(stm, masters, nmasters));
+ 	if (!stm)
+ 		return -ENOMEM;
+ 
 -- 
 2.34.1
 
