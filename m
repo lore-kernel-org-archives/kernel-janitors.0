@@ -2,95 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFCEC001B0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jul 2023 22:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430F6C001DF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jul 2023 06:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbjGVWaL (ORCPT
+        id S229688AbjGWGlm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Jul 2023 18:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
+        Sun, 23 Jul 2023 02:41:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGVWaK (ORCPT
+        with ESMTP id S229676AbjGWGll (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Jul 2023 18:30:10 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47CA810DC;
-        Sat, 22 Jul 2023 15:30:09 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id 46e09a7af769-6b9ec15e014so2606674a34.0;
-        Sat, 22 Jul 2023 15:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1690065008; x=1690669808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t5mJll+udYAOXh1dqyerngRmFpTg3nf1DZBJwkPP9FE=;
-        b=fmBlKEPNTll7Q+ApeducTu+N4D5OEnPiqEyE3puoZ/f1QD58JAZi3eDATZeNITi4jM
-         NfCgRpKG9YqZ7gTqit6ClJvIXxAk6p9bQG6pv0wRSvmMg6/61kNc8VHkifEP2v5aqsjg
-         cQIdaTdDbMnzV+GtdSdip8WB6G+CpgJTfTVWjkqkUBB14+1nLPcBTPuMMwj1Rqqyunzc
-         fJ/hBqVXc716JoOJbFu7BB3PgKyiN31fKUwHTqyLY87rTDz6TBhrrHyjVRBM5mxmqEA/
-         UdrAVEnebIlMeTFvBVz9eydtQ+K6ptB6xhScRnBOHxGTVfzldVCuZrLojZqa5elrCdlf
-         7+SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690065008; x=1690669808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t5mJll+udYAOXh1dqyerngRmFpTg3nf1DZBJwkPP9FE=;
-        b=Xf47bS03Oqmz2itgy4hcC0EYosjD0PM5VKWlNtJ0kn8yZm2IqKgx0Q7VyKtRD6c4CD
-         mfm8Tn6CNglFpRIHSHKkrrwBInUSPkQnR/YXsEtAYo8RawPGWvA87hkHd2ihWVK5sLBW
-         iJjS7eCSNUoM9eOTOqhS8BkUu6EZjunCs8gXuIB2iKedPegJoNBR4b2F2FLPF+6T5oeC
-         vIME15YNXBe5IOGTidJE9zHPl6yKKDdDQweQXt98VAMBwxVmwZUhsi80sOsgbMlsiXi3
-         /w3VL6M4uSviPfrnBbcM3T5yLPdENS6LkSxAlGLSxcisgfvidMMeeJeOhKf0dE93uj+J
-         ziyQ==
-X-Gm-Message-State: ABy/qLZP1FvFGD3CycklsjkMhLW+ufJKWcxduOGEV4BrGaB5/vJ9Xbdj
-        oKCZCaWWwJJzf5Ukx1Iig92R+tXL43Mmd1dhYbs=
-X-Google-Smtp-Source: APBJJlFCI6V1NvyiDmCqWK0vJJCL9x89CoMWJp9xHrtgspyjqNJyxayK/dkl5i6UuA6YH6Ew7ialEeiv9fv3vIHFAw0=
-X-Received: by 2002:a05:6358:6f0c:b0:134:61a5:7f05 with SMTP id
- r12-20020a0563586f0c00b0013461a57f05mr1831945rwn.10.1690065008440; Sat, 22
- Jul 2023 15:30:08 -0700 (PDT)
+        Sun, 23 Jul 2023 02:41:41 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D60310D3
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Jul 2023 23:41:40 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id NSmdq59F14DtINSmdqfFoy; Sun, 23 Jul 2023 08:41:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1690094498;
+        bh=Q7o0UQvRfkS/4+Mc6nSPTzH0IapT9/fEsaA6pwimGA0=;
+        h=From:To:Cc:Subject:Date;
+        b=N/o86135ANjyjKGmokuS7xBDhOlV15gvy89zRuss8Qpd7KKHc/I4AvMRy0vHpTNPP
+         CdHlSFsd+qtazyI5QGlhGEa7t2s+ezl1Wb0N6mE9oRHSoYuvUBlBdxTuuwctbFxR2A
+         9Zk5/e8z356kbKZSdmRnh2veOy8ewV5V48lDUyg0xuZHjeRIA/sxilDnSt8F7xqOnf
+         4DmDV+b4GJow+4SNILdEJP+Bla9fs59NxWl1NOK80l4LU2T6INRhrrsH+zD1gGPb4e
+         3J3PTblIWoQEMzg6a8hURf62+DuwkL5YE/vJoHpuj+ZKimoSeJBJVwoZCInRtvdcx7
+         t0prBJ/xef2wQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jul 2023 08:41:38 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+Subject: [PATCH] drm/msm: Slightly simplify memory allocation in submit_lookup_cmds()
+Date:   Sun, 23 Jul 2023 08:41:33 +0200
+Message-Id: <9861e8b1ce385a556e0c9c4533beee9c4a92809c.1690094459.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230701102538.5359-1-franziska.naepelt@googlemail.com>
- <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de> <2023070123-unburned-worsening-0713@gregkh>
-In-Reply-To: <2023070123-unburned-worsening-0713@gregkh>
-From:   =?UTF-8?Q?Franziska_N=C3=A4pelt?= 
-        <franziska.naepelt@googlemail.com>
-Date:   Sun, 23 Jul 2023 00:29:57 +0200
-Message-ID: <CAAUT3iNqwgtFJz2Q1bRN+MsSna26KC1FJc3jchu=8B09A2SkvQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] staging: rtl8723bs: Fix space issues
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Emily Peri <eperi1024@gmail.com>,
-        Guo Zihua <guozihua@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Kang Minchul <tegongkang@gmail.com>,
-        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-        Veerendranath Jakkam <quic_vjakkam@quicinc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Greg,
+If 'sz' is SIZE_MAX, kmalloc() will fail. So there is no need to explicitly
+check for an hypothetical overflow.
 
-Am Sa., 1. Juli 2023 um 17:00 Uhr schrieb Greg Kroah-Hartman
-<gregkh@linuxfoundation.org>:
->
-> On Sat, Jul 01, 2023 at 04:43:09PM +0200, Markus Elfring wrote:
-> > You should not put only your own email address into the field =E2=80=9C=
-To=E2=80=9D.
-> > Please reconsider the distribution of addresses between message header =
-fields once more.
->
-> Please do not comment on staging driver changes anymore, it is not
-> helpful to anyone involved.
->
-> greg k-h
+Remove the check to save a few lines of code.
 
-Am I supposed to adjust something here?
-As far as I understood, I can ignore the comments from Markus, correct?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/msm/msm_gem_submit.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Franziska
+diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+index 3f1aa4de3b87..6ca8f8cbb6e2 100644
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@ -211,11 +211,7 @@ static int submit_lookup_cmds(struct msm_gem_submit *submit,
+ 
+ 		sz = array_size(submit_cmd.nr_relocs,
+ 				sizeof(struct drm_msm_gem_submit_reloc));
+-		/* check for overflow: */
+-		if (sz == SIZE_MAX) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
++
+ 		submit->cmd[i].relocs = kmalloc(sz, GFP_KERNEL);
+ 		if (!submit->cmd[i].relocs) {
+ 			ret = -ENOMEM;
+-- 
+2.34.1
+
