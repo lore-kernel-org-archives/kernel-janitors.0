@@ -2,56 +2,56 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D28C001B0
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jul 2023 18:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86916C001B0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jul 2023 18:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbjGWSqs (ORCPT
+        id S229707AbjGWSzk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jul 2023 14:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
+        Sun, 23 Jul 2023 14:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjGWSqr (ORCPT
+        with ESMTP id S229456AbjGWSzj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jul 2023 14:46:47 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D0EEE40;
-        Sun, 23 Jul 2023 11:46:46 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52164adea19so4744991a12.1;
-        Sun, 23 Jul 2023 11:46:46 -0700 (PDT)
+        Sun, 23 Jul 2023 14:55:39 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2CA8DD;
+        Sun, 23 Jul 2023 11:55:38 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5221e487e08so1913046a12.0;
+        Sun, 23 Jul 2023 11:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690138004; x=1690742804;
+        d=gmail.com; s=20221208; t=1690138537; x=1690743337;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=fmZXbaN5NquAae8745spKCBaffvzV/zRnEjEc5Quq4I=;
-        b=ru3B0RWd9hf/RgSdTzmL/iBPaw2Obf0AUk5qaiS6zfKFDK9FAZOY7SvoBlHXPta9uQ
-         WCaW/oHt3CEmuOo87WpF1TAphnz3UPixeiIqE/Pm+KVW6Uo8tBPePecTV44SlQ5m6SFH
-         YqNwUrYoL0S0FYAc63rqSkUtsh/jSaKqcMvWbg6i6QzH81C/sa/legVmIBmGNjQD5o1l
-         q7RhN9OL8HUvyDE1um4KsaHAbqZe9PA422b+k9n2mQW3nU7GGLoHl5urMMqf/b/4/Mpr
-         jtyKrs1Y12Jhm841HlWVM81P1EAoGvmWpslOz2mY+Riy3gtnbEzG13GNGInZcjEdI92t
-         LVHg==
+        bh=LgmHA9TbwRKm5WlrTCRPPSgqddYKlkGXSvlysDZKcHc=;
+        b=Nawec058ivMeKyF/5+HaTYaWXtiMjw/ECiIC8QRW5dNm3P4MzJ+eXR0zUsSCSC6C1X
+         lIdxN0N1V7lOB4lSu6EprZ1q3OH6VDvHD3zxb3smMNVkEEcVtG01+3hacu+rmLb1QeN1
+         TBP1WwIDu4EdaNyZXv2/z/qfCN4vnvwUFLlzc7UKDWGsdW+dgKMqVNenwbs6emI4wagq
+         2Mu/kldXbvPf+3YXnVvitIZK/9B22fMwD1/PgLyPEMMDWdrj1+rGdjHoEHAgT21SatsB
+         /kh4BbtYoiJ0OJxjA5XTFLOhC55VUWYCwW2XDdZKZb/9V4tRDbINp37iShC9iR5kqfWb
+         PoJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690138004; x=1690742804;
+        d=1e100.net; s=20221208; t=1690138537; x=1690743337;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmZXbaN5NquAae8745spKCBaffvzV/zRnEjEc5Quq4I=;
-        b=UwnBeAyyZPgPY4zoww3M1pye7i8KIMB+M6J3OSwBHKKGC31FEG9EkNvjUosEgWC5l4
-         o1Q0SrSyJUDndAVf4mSKHnTphg6uJF+RzBPZirYcW3vZv4fw6NOipqk7kC8vsUEkFVrQ
-         EtyGAz36lM11d/7xG1xgqRtQ8GXLckLIQIE/zO3CzDts/LjmAaq3NIdwSp3IRkV/NpCc
-         MvFHzwnDjQxKrL/MHfkuvWZqQciliYpGD0YmDm253/h2cmrqLoaeUDNOhbqUp1AZUlgP
-         Al53HcBbcyG3bPYGgv2Yth6WzL+8g2yaX/JN25+TOAk6jngQwgmbxcJqtQKMJvS8EzQ0
-         svgw==
-X-Gm-Message-State: ABy/qLZ10FZ3nV5HIgHkqrfbUT8DI30gM8rwsGqM2nQDjWn+/Cl4tz2L
-        epetTBEz7HPSmBHkqmuIl6NmGCAYs5c=
-X-Google-Smtp-Source: APBJJlEAYtVO+sg5IJ3Myr6j3kWgDWPtart2U88b2r5eDIocLJICoc2+iDvefAKE35/qlXWg591e3w==
-X-Received: by 2002:aa7:d411:0:b0:522:21eb:fee5 with SMTP id z17-20020aa7d411000000b0052221ebfee5mr2225181edq.40.1690138004031;
-        Sun, 23 Jul 2023 11:46:44 -0700 (PDT)
+        bh=LgmHA9TbwRKm5WlrTCRPPSgqddYKlkGXSvlysDZKcHc=;
+        b=i+wA+6rmC63Vj8dai4yFkZOnXZHd2uu8XBhc9PLu6Wks0xBKcEIVIAk/8PV0fAUYIB
+         eKZ12iQpt0L6uysaZq9W9AniM2u3FxkQcVI4HVrkhxXlpQ+viJFOgBNZng41WZbRMaKb
+         ZRaTeNktsFnYOgMgIGuhbPj2tVmUGCniS4k0PFOcYEbYXqg+wCXX4MEXNe/9gr5LWdAh
+         lgZfPE1HaVYh6qJ0jbxYABp1Xm76PFSgY2IwGkO7t41SDZ9nB6Bozm/j2K9aGh+XhVEz
+         4oHU8t3PViBqZ5i9YlnaNk1rNXpLIdIUiJZyFP5XeMxpIwjGSi9LqPMrCKWOR5P8ml1d
+         UISQ==
+X-Gm-Message-State: ABy/qLbFYJdIZqbxfeStZR98VahVvnXpM9zWpbOID31Y+mEx2/JMREdS
+        Owdl6VisJso7UhF1iePOgMG1NvucWc0=
+X-Google-Smtp-Source: APBJJlF9Q7mtX/qbyq1JqHFzz3cfcw1odilg6aWAsNqqCaQxlIrlBXQkXv+L2eq1HaOtYDesgjhmLA==
+X-Received: by 2002:a17:907:7890:b0:994:1fc7:a7e6 with SMTP id ku16-20020a170907789000b009941fc7a7e6mr8463961ejc.4.1690138536563;
+        Sun, 23 Jul 2023 11:55:36 -0700 (PDT)
 Received: from nam-dell (ip-217-105-46-58.ip.prioritytelecom.net. [217.105.46.58])
-        by smtp.gmail.com with ESMTPSA id u24-20020a05640207d800b0051a53d7b160sm5134415edy.80.2023.07.23.11.46.42
+        by smtp.gmail.com with ESMTPSA id x14-20020a1709065ace00b00992e14af9b9sm5426349ejs.134.2023.07.23.11.55.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 11:46:43 -0700 (PDT)
-Date:   Sun, 23 Jul 2023 20:46:42 +0200
+        Sun, 23 Jul 2023 11:55:36 -0700 (PDT)
+Date:   Sun, 23 Jul 2023 20:55:35 +0200
 From:   Nam Cao <namcaov@gmail.com>
 To:     Franziska =?iso-8859-1?Q?N=E4pelt?= 
         <franziska.naepelt@googlemail.com>
@@ -67,50 +67,47 @@ Cc:     Markus Elfring <Markus.Elfring@web.de>,
         Veerendranath Jakkam <quic_vjakkam@quicinc.com>,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v4 1/3] staging: rtl8723bs: Fix space issues
-Message-ID: <ZL11kmTYFXMwrYww@nam-dell>
+Message-ID: <ZL13p4tSQAx6cx8E@nam-dell>
 References: <20230701102538.5359-1-franziska.naepelt@googlemail.com>
  <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de>
  <2023070123-unburned-worsening-0713@gregkh>
  <CAAUT3iNqwgtFJz2Q1bRN+MsSna26KC1FJc3jchu=8B09A2SkvQ@mail.gmail.com>
  <4b9fdaa7-bdcf-ef41-0d54-ba41520cde4c@web.de>
  <CAAUT3iPUaNRUyvqP1O97M0AmKri7Ghc06ku4TS6vcHQ=Sb4ycg@mail.gmail.com>
+ <ZL11kmTYFXMwrYww@nam-dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAUT3iPUaNRUyvqP1O97M0AmKri7Ghc06ku4TS6vcHQ=Sb4ycg@mail.gmail.com>
+In-Reply-To: <ZL11kmTYFXMwrYww@nam-dell>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 23, 2023 at 07:44:44PM +0200, Franziska Näpelt wrote:
-> Hi Markus,
+On Sun, Jul 23, 2023 at 08:46:42PM +0200, Nam Cao wrote:
+> On Sun, Jul 23, 2023 at 07:44:44PM +0200, Franziska Näpelt wrote:
+> > Hi Markus,
+> > 
+> > Am So., 23. Juli 2023 um 08:19 Uhr schrieb Markus Elfring
+> > <Markus.Elfring@web.de>:
+> > >
+> > > > Am I supposed to adjust something here?
+> > >
+> > > There are possibilities remaining to handle recurring communication difficulties
+> > > in more constructive ways for some hints.
+> > >
+> > >
+> > > > As far as I understood, I can ignore the comments from Markus, correct?
+> > >
+> > > Would the provided technical information be taken better into account
+> > > if it would be presented by any other contributors?
+> > 
+> > That's not my point, I appreciate feedback from anybody, absolutely no question
+> > on that. I'm just struggling to know what I'm supposed to do when the maintainer
+> > is saying somebody's comments are not helpful.
 > 
-> Am So., 23. Juli 2023 um 08:19 Uhr schrieb Markus Elfring
-> <Markus.Elfring@web.de>:
-> >
-> > > Am I supposed to adjust something here?
-> >
-> > There are possibilities remaining to handle recurring communication difficulties
-> > in more constructive ways for some hints.
-> >
-> >
-> > > As far as I understood, I can ignore the comments from Markus, correct?
-> >
-> > Would the provided technical information be taken better into account
-> > if it would be presented by any other contributors?
-> 
-> That's not my point, I appreciate feedback from anybody, absolutely no question
-> on that. I'm just struggling to know what I'm supposed to do when the maintainer
-> is saying somebody's comments are not helpful.
+> I would wait some more. Greg is probably just too busy to take your patches at
+> the moment.
 
-I would wait some more. Greg is probably just too busy to take your patches at
-the moment.
-
-Best regards,
-Nam
-
-> In another thread I was told I should mainly follow the maintainers comments in
-> case of different opinions.
-> 
-> Franziska
+Don't let that slows you down though, work on other patches in the mean time if
+you would like to.
