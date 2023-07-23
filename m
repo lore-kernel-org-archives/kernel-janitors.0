@@ -2,112 +2,129 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86916C001B0
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jul 2023 18:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00076C001DE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jul 2023 20:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbjGWSzk (ORCPT
+        id S229835AbjGWUZS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jul 2023 14:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42192 "EHLO
+        Sun, 23 Jul 2023 16:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjGWSzj (ORCPT
+        with ESMTP id S229749AbjGWUZR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jul 2023 14:55:39 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2CA8DD;
-        Sun, 23 Jul 2023 11:55:38 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5221e487e08so1913046a12.0;
-        Sun, 23 Jul 2023 11:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690138537; x=1690743337;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LgmHA9TbwRKm5WlrTCRPPSgqddYKlkGXSvlysDZKcHc=;
-        b=Nawec058ivMeKyF/5+HaTYaWXtiMjw/ECiIC8QRW5dNm3P4MzJ+eXR0zUsSCSC6C1X
-         lIdxN0N1V7lOB4lSu6EprZ1q3OH6VDvHD3zxb3smMNVkEEcVtG01+3hacu+rmLb1QeN1
-         TBP1WwIDu4EdaNyZXv2/z/qfCN4vnvwUFLlzc7UKDWGsdW+dgKMqVNenwbs6emI4wagq
-         2Mu/kldXbvPf+3YXnVvitIZK/9B22fMwD1/PgLyPEMMDWdrj1+rGdjHoEHAgT21SatsB
-         /kh4BbtYoiJ0OJxjA5XTFLOhC55VUWYCwW2XDdZKZb/9V4tRDbINp37iShC9iR5kqfWb
-         PoJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690138537; x=1690743337;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgmHA9TbwRKm5WlrTCRPPSgqddYKlkGXSvlysDZKcHc=;
-        b=i+wA+6rmC63Vj8dai4yFkZOnXZHd2uu8XBhc9PLu6Wks0xBKcEIVIAk/8PV0fAUYIB
-         eKZ12iQpt0L6uysaZq9W9AniM2u3FxkQcVI4HVrkhxXlpQ+viJFOgBNZng41WZbRMaKb
-         ZRaTeNktsFnYOgMgIGuhbPj2tVmUGCniS4k0PFOcYEbYXqg+wCXX4MEXNe/9gr5LWdAh
-         lgZfPE1HaVYh6qJ0jbxYABp1Xm76PFSgY2IwGkO7t41SDZ9nB6Bozm/j2K9aGh+XhVEz
-         4oHU8t3PViBqZ5i9YlnaNk1rNXpLIdIUiJZyFP5XeMxpIwjGSi9LqPMrCKWOR5P8ml1d
-         UISQ==
-X-Gm-Message-State: ABy/qLbFYJdIZqbxfeStZR98VahVvnXpM9zWpbOID31Y+mEx2/JMREdS
-        Owdl6VisJso7UhF1iePOgMG1NvucWc0=
-X-Google-Smtp-Source: APBJJlF9Q7mtX/qbyq1JqHFzz3cfcw1odilg6aWAsNqqCaQxlIrlBXQkXv+L2eq1HaOtYDesgjhmLA==
-X-Received: by 2002:a17:907:7890:b0:994:1fc7:a7e6 with SMTP id ku16-20020a170907789000b009941fc7a7e6mr8463961ejc.4.1690138536563;
-        Sun, 23 Jul 2023 11:55:36 -0700 (PDT)
-Received: from nam-dell (ip-217-105-46-58.ip.prioritytelecom.net. [217.105.46.58])
-        by smtp.gmail.com with ESMTPSA id x14-20020a1709065ace00b00992e14af9b9sm5426349ejs.134.2023.07.23.11.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 11:55:36 -0700 (PDT)
-Date:   Sun, 23 Jul 2023 20:55:35 +0200
-From:   Nam Cao <namcaov@gmail.com>
-To:     Franziska =?iso-8859-1?Q?N=E4pelt?= 
-        <franziska.naepelt@googlemail.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Emily Peri <eperi1024@gmail.com>,
-        Guo Zihua <guozihua@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Kang Minchul <tegongkang@gmail.com>,
-        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-        Veerendranath Jakkam <quic_vjakkam@quicinc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] staging: rtl8723bs: Fix space issues
-Message-ID: <ZL13p4tSQAx6cx8E@nam-dell>
-References: <20230701102538.5359-1-franziska.naepelt@googlemail.com>
- <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de>
- <2023070123-unburned-worsening-0713@gregkh>
- <CAAUT3iNqwgtFJz2Q1bRN+MsSna26KC1FJc3jchu=8B09A2SkvQ@mail.gmail.com>
- <4b9fdaa7-bdcf-ef41-0d54-ba41520cde4c@web.de>
- <CAAUT3iPUaNRUyvqP1O97M0AmKri7Ghc06ku4TS6vcHQ=Sb4ycg@mail.gmail.com>
- <ZL11kmTYFXMwrYww@nam-dell>
+        Sun, 23 Jul 2023 16:25:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECEC1BB
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Jul 2023 13:25:13 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id NfdYqBzmMQztPNfdZqOQPG; Sun, 23 Jul 2023 22:25:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1690143906;
+        bh=fiLQ1tlpJj1LRpew92AztLTpxiVgw4Le/tOPPNtRsXs=;
+        h=From:To:Cc:Subject:Date;
+        b=r7cvxUQ3Y3BP1WuBmUAe9nDSZNt/2yt0WBoq27TFMwsk1hYI94yjHvxVWlsxK+xGr
+         EBxucGGAT6oh9Eu/bkgvIbRgErkMx/6H1gQAJ/E+fq+L3fwSUYIxap5i1g2LSg0NVd
+         gXFgGExfH/LcPokz9R30TDg26K1bdeeEDWDtU8auwXAQ4iu3w68jkcco4ZpwmPerbr
+         pmy0kwj3AzXqmgERYN60g4QLRZ/8mt8UzcpbyUgO/MB0MIOQ7FFAPvE4KCwC7gsVzI
+         2hcVStpXgPQMJRmCwIID7v9ii/m2c2mh6zP2fTQCl6njBwcP9dG6fHnoIHVLs12ZvX
+         aAmqpcfBsLxOw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jul 2023 22:25:06 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Gregory Greenman <gregory.greenman@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-wireless@vger.kernel.org
+Subject: [PATCH wireless] wifi: iwlwifi: mvm: Fix a memory corruption issue
+Date:   Sun, 23 Jul 2023 22:24:59 +0200
+Message-Id: <23f0ec986ef1529055f4f93dcb3940a6cf8d9a94.1690143750.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZL11kmTYFXMwrYww@nam-dell>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 23, 2023 at 08:46:42PM +0200, Nam Cao wrote:
-> On Sun, Jul 23, 2023 at 07:44:44PM +0200, Franziska Näpelt wrote:
-> > Hi Markus,
-> > 
-> > Am So., 23. Juli 2023 um 08:19 Uhr schrieb Markus Elfring
-> > <Markus.Elfring@web.de>:
-> > >
-> > > > Am I supposed to adjust something here?
-> > >
-> > > There are possibilities remaining to handle recurring communication difficulties
-> > > in more constructive ways for some hints.
-> > >
-> > >
-> > > > As far as I understood, I can ignore the comments from Markus, correct?
-> > >
-> > > Would the provided technical information be taken better into account
-> > > if it would be presented by any other contributors?
-> > 
-> > That's not my point, I appreciate feedback from anybody, absolutely no question
-> > on that. I'm just struggling to know what I'm supposed to do when the maintainer
-> > is saying somebody's comments are not helpful.
-> 
-> I would wait some more. Greg is probably just too busy to take your patches at
-> the moment.
+A few lines above, space is kzalloc()'ed for:
+	sizeof(struct iwl_nvm_data) +
+	sizeof(struct ieee80211_channel) +
+	sizeof(struct ieee80211_rate)
 
-Don't let that slows you down though, work on other patches in the mean time if
-you would like to.
+'mvm->nvm_data' is a 'struct iwl_nvm_data', so it is fine.
+
+At the end of this structure, there is the 'channels' flex array.
+Each element is of type 'struct ieee80211_channel'.
+So only 1 element is allocated in this array.
+
+When doing:
+  mvm->nvm_data->bands[0].channels = mvm->nvm_data->channels;
+We point at the first element of the 'channels' flex array.
+So this is fine.
+
+However, when doing:
+  mvm->nvm_data->bands[0].bitrates =
+			(void *)((u8 *)mvm->nvm_data->channels + 1);
+because of the "(u8 *)" cast, we add only 1 to the address of the beginning
+of the flex array.
+
+It is likely that we want point at the 'struct ieee80211_rate' allocated
+just after.
+
+Remove the spurious casting so that the pointer arithmetic works as
+expected.
+
+Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've checked in the .s files, and :
+
+Before
+======
+# drivers/net/wireless/intel/iwlwifi/mvm/fw.c:801: 		mvm->nvm_data->bands[0].channels = mvm->nvm_data->channels;
+	leaq	1448(%r13), %rax	#, tmp248
+
+# drivers/net/wireless/intel/iwlwifi/mvm/fw.c:805: 			(void *)((u8 *)mvm->nvm_data->channels + 1);
+	leaq	1449(%r13), %rax	#, tmp252
+
+
+After:
+=====
+# drivers/net/wireless/intel/iwlwifi/mvm/fw.c:801: 		mvm->nvm_data->bands[0].channels = mvm->nvm_data->channels;
+	leaq	1448(%r13), %rax	#, tmp248
+
+# drivers/net/wireless/intel/iwlwifi/mvm/fw.c:805: 			(void *)(mvm->nvm_data->channels + 1);
+	leaq	1512(%r13), %rax	#, tmp252
+
+And on my system sizeof(struct ieee80211_channel) = 64
+
+/!\ This patch is only speculative and untested. /!\
+
+It is strange that a memory corruption issue has been un-noticed for more
+than 10 years.
+
+So review with care.
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index 1f5db65a088d..1d5ee4330f29 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -802,7 +802,7 @@ int iwl_run_init_mvm_ucode(struct iwl_mvm *mvm)
+ 		mvm->nvm_data->bands[0].n_channels = 1;
+ 		mvm->nvm_data->bands[0].n_bitrates = 1;
+ 		mvm->nvm_data->bands[0].bitrates =
+-			(void *)((u8 *)mvm->nvm_data->channels + 1);
++			(void *)(mvm->nvm_data->channels + 1);
+ 		mvm->nvm_data->bands[0].bitrates->hw_value = 10;
+ 	}
+ 
+-- 
+2.34.1
+
