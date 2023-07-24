@@ -2,104 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19871C0015E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 17:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC59FC001DF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 18:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjGXRfi (ORCPT
+        id S230021AbjGXSFa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jul 2023 13:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40614 "EHLO
+        Mon, 24 Jul 2023 14:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbjGXRfg (ORCPT
+        with ESMTP id S230323AbjGXSFY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jul 2023 13:35:36 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E202598;
-        Mon, 24 Jul 2023 10:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690220135; x=1721756135;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kwYTilEARt1N1V34eJr55Ya9rMistbgI1FoRnG+ZV2g=;
-  b=AXlVKEqODM+4JZm+HoB7TJLQStQGmiFgXI/BsVtOAwAIFsupFTCoBrrR
-   KfM5j6fiXwSoMdp79H5bW4MyB0MS8aqPMgxRYzDuK6QUrUPZH+Y+13Wc7
-   2fqOOVOYIVuUiSs3n4F0YEUB5fO/4PyQFSXIVmmteVPZ6rbGwuGavr+2G
-   D2rGCfhu6ebkFuLi65fzW0yaYloXXJBGjvIOIK0fvJJv+0/wgiKzqQByo
-   YUgEBpnOAAbHdLMMjbS6qHM+kvhH3A25cowk5vg6hcCt7Oy8sfPJKDiwJ
-   xGe/dGjwZyeQd2JRW4hVOkCHmNNBDEQeOctQQqjSehvIPGUOJRyXblGrJ
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="371107580"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="371107580"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 10:35:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="791042033"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="791042033"
-Received: from gionescu-mobl2.ger.corp.intel.com (HELO intel.com) ([10.252.34.175])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 10:35:31 -0700
-Date:   Mon, 24 Jul 2023 19:35:27 +0200
-From:   Andi Shyti <andi.shyti@linux.intel.com>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, tvrtko.ursulin@linux.intel.com,
-        airlied@gmail.com, daniel@ffwll.ch, nathan@kernel.org,
-        ndesaulniers@google.com, trix@redhat.com, andrzej.hajda@intel.com,
-        intel-gfx@lists.freedesktop.org, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, mripard@kernel.org
-Subject: Re: [Intel-gfx] [PATCH v2] drm/i915/tv: avoid possible division by
- zero
-Message-ID: <ZL62X3/CnsJcWWU4@ashyti-mobl2.lan>
-References: <20230718013216.495830-1-suhui@nfschina.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230718013216.495830-1-suhui@nfschina.com>
+        Mon, 24 Jul 2023 14:05:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566AE18D;
+        Mon, 24 Jul 2023 11:05:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D6FFC6136F;
+        Mon, 24 Jul 2023 18:05:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE987C433C7;
+        Mon, 24 Jul 2023 18:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1690221921;
+        bh=bo6Hth2LfD40LFq41IDucHbQY25BRVrqOLMhMDl2lFw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GJRf6ZpE5l5TpgA04FRFJpMyIWz551q/9hr3D3jWHa2yv4Vy1bJxgeU/wxtE6tkWB
+         JROBdPwcrrL1R0yUrnsmNUqRhoR0smqLDdDNXhf0OKgU/lkrkBxDa1e4FNyXYVhMuB
+         MV2oM9QK8st8i1Mn+vNpvQH242XM3t50teeDAQME=
+Date:   Mon, 24 Jul 2023 11:05:20 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kstrtox: Remove strtobool()
+Message-Id: <20230724110520.b250bc244908a40a53bf2da7@linux-foundation.org>
+In-Reply-To: <23d2ea6b90579207e87cc1bf64fc4eed1ed9f173.1689885328.git.christophe.jaillet@wanadoo.fr>
+References: <23d2ea6b90579207e87cc1bf64fc4eed1ed9f173.1689885328.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 09:32:17AM +0800, Su Hui wrote:
-> Clang warning: drivers/gpu/drm/i915/display/intel_tv.c:
-> line 991, column 22 Division by zero.
-> Assuming tv_mode->oversample=1 and (!tv_mode->progressive)=1,
-> then division by zero will happen.
-> 
-> Fixes: 1bba5543e4fe ("drm/i915: Fix TV encoder clock computation")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_tv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/display/intel_tv.c b/drivers/gpu/drm/i915/display/intel_tv.c
-> index 36b479b46b60..f59553f7c132 100644
-> --- a/drivers/gpu/drm/i915/display/intel_tv.c
-> +++ b/drivers/gpu/drm/i915/display/intel_tv.c
-> @@ -988,7 +988,7 @@ intel_tv_mode_to_mode(struct drm_display_mode *mode,
->  		      const struct tv_mode *tv_mode,
->  		      int clock)
->  {
-> -	mode->clock = clock / (tv_mode->oversample >> !tv_mode->progressive);
-> +	mode->clock = clock / tv_mode->oversample << !tv_mode->progressive;
+On Thu, 20 Jul 2023 22:40:35 +0200 Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-but this does not provide the same value. Try with:
+> The conversion from strtobool() to kstrtobool() is completed.
+> So strtobool() can now be removed.
 
-	8 / (2 >> 1)
+I still have some strtobool()s in mm.git, so I can't apply this. 
 
-and
+Probably nobody can apply this to their tree at this stage.  A resend
+after 6.6-rc1 would be the simplest approach.
 
-	8 / 2 << 1
-
-They are definitely different.
-
-The real check could be:
-
-	if (!(tv_mode->oversample >> 1))
-		return ...
-
-But first I would check if that's actually possible.
-
-Andi
