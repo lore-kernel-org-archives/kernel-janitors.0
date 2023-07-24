@@ -2,78 +2,118 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FD2C0015E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 16:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EAFC001DF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 17:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbjGXQoQ (ORCPT
+        id S231223AbjGXRTQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
+        Mon, 24 Jul 2023 13:19:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230162AbjGXQoP (ORCPT
+        with ESMTP id S229934AbjGXRTP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jul 2023 12:44:15 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5C6E4F;
-        Mon, 24 Jul 2023 09:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690217054; x=1721753054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lMaCEtlky6+G2Qml4d+2fh4hc1YJEldCNV0Yg/t8zMo=;
-  b=MUF9/S8xziIrwYRyjOhgwsBoRPTDzG1pX+onfQlfJi+xWmOEjmx9cK5m
-   UNP4JzrozE5LZSndxSnLkpwseVr5rDSrhtsqvpvsq93BPk2tOH6PcMwkR
-   SI6yKOU4oY8VAH3ACL5l5d4/sroot2UocpWZkZjh4XQ5AjV30ShzNJ8IC
-   TZsAJyhtuSR+aoWitfjSOMveuLMAhsjA/ByLnoTbWbrZI5KL+XOigGixD
-   WheTQnf+XKzZxBxl6sw39mGtZwMmwC87ir19s3v5Ni2UR8bf6lRav2aPJ
-   KIwQZ/2rbCHJorN2dBWhG2xwAs+WU/zyiEoXzLUK/B1AroVIM5p0eo0ww
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="370160610"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="370160610"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 09:44:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="791028212"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="791028212"
-Received: from gionescu-mobl2.ger.corp.intel.com (HELO intel.com) ([10.252.34.175])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 09:44:10 -0700
-Date:   Mon, 24 Jul 2023 18:44:07 +0200
-From:   Andi Shyti <andi.shyti@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Fix an error handling path in
- igt_write_huge()
-Message-ID: <ZL6qV615GmktUhMG@ashyti-mobl2.lan>
-References: <7a036b88671312ee9adc01c74ef5b3376f690b76.1689619758.git.christophe.jaillet@wanadoo.fr>
+        Mon, 24 Jul 2023 13:19:15 -0400
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE98310D3
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 10:19:13 -0700 (PDT)
+Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-635eb3a1d93so35748466d6.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 10:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690219153; x=1690823953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tHqlkjiN6F7mZHmC296PE6xQOoItN+fVKPLF3TUGTVI=;
+        b=HFHY127KcwxOhKq5Bri1cro15FAkNa5SlM1FnQX3pl0u+VO3Bn11Vc+BLFKQsIh0qd
+         4+3053sdoGd0VLrcSU+KtN0OCxZTjUqtSMCssDwasWUzfIoYX5+POQkWDxZt89M0kz96
+         zIlQG61pCNSEKCeryktg+GDMoz9NSSszsiF2CptitKlAcDo+RlBOaSbyxGsETMFf0wLt
+         qgzd9wtLBkB57uRY44bxZIabgouPeMWmBnOKge2XEc0potLBZTB7tXvdiO1T2+e+GZLy
+         wBX1Mr3RKUi1mWgq8JyelZglpRXG7M2gtWKKlZ3o9x/qjhS4NRFAyo7niZCQalU1EwRC
+         ch3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690219153; x=1690823953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tHqlkjiN6F7mZHmC296PE6xQOoItN+fVKPLF3TUGTVI=;
+        b=QIpwkUcTFC84cU6x39yWVxThin6Y6JK5bml1cPXVBkPITB6TaGptrC0msiVETqjwfw
+         LmuUeP14eujkoVJyPMHZRw3fW0uQDK8+DLY5cj6oGoPap2Mo5kxGnXHCshbV0YtmbG4w
+         RPPTJx9lqRgW9j8yeW6r18bUNHhrxBOnLzL/Igxq/4/4w52MQdFbSW/HkrxRXFmzhfjg
+         asV+ohZw9uW1Y+BYJ7c1VcWXAUSp9bv5kqwVWAdEoageU3LccGpYTlneH9RVrHVHyuta
+         ScyEYWzSasNfy+A6UZITXU7VK3Bw1DjqtnTxqjZ6F3J6M6lR2S6DbOa1i70k1Dv1JccO
+         qoOA==
+X-Gm-Message-State: ABy/qLa74NIvGHDXwM1fEhYl6Db5C6Co9TWWJjPUigAeIqMCyDRZ/bMn
+        QoVvzsGM8BhI7tslhrvdOctFoqVrcpskubI2W2u1jA==
+X-Google-Smtp-Source: APBJJlG0PzmZgMeYmmyxh6fQCtTCaFVli27ad8SwdfVceQNoqUOHJJbJZFe9iMSAnB6bk7i+ctom86Y91hMRQVsqDOs=
+X-Received: by 2002:a0c:fe0d:0:b0:63c:a22e:ddaf with SMTP id
+ x13-20020a0cfe0d000000b0063ca22eddafmr461068qvr.16.1690219152868; Mon, 24 Jul
+ 2023 10:19:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a036b88671312ee9adc01c74ef5b3376f690b76.1689619758.git.christophe.jaillet@wanadoo.fr>
+References: <20230724054538.163319-1-suhui@nfschina.com>
+In-Reply-To: <20230724054538.163319-1-suhui@nfschina.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 24 Jul 2023 10:19:02 -0700
+Message-ID: <CAKwvOdk-fdJr9TcgUnOhCiU0LvD2Qe_c+6YOe-c1k0Ukm+negA@mail.gmail.com>
+Subject: Re: [PATCH] ext4: mballoc: avoid garbage value from err
+To:     Su Hui <suhui@nfschina.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, nathan@kernel.org,
+        trix@redhat.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+On Sun, Jul 23, 2023 at 10:46=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
+>
+> clang warning: fs/ext4/mballoc.c, line 4178, column 6
+> Branch condition evaluates to a garbage value.
 
-> All error handling paths go to 'out', except this one. Be consistent and
-> also branch to 'out' here.
-> 
-> Fixes: c10a652e239e ("drm/i915/selftests: Rework context handling in hugepages selftests")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Specifically this is clang's static analysis; not the compiler itself.
 
-Pushed to drm-intel-gt-next.
+>
+> err is uninitialized and will be judged when it enters the
+> loop first time and the condition "!ext4_sb_block_valid()"
+> is true. Although this can't make problems now, it's better
+> to correct it.
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
+Hi Su,
+Thanks for the patch!  I see what the warning is getting at;
+
+If `len <=3D 0` then `err` is never initialized, then is used at line
+4178 (that is UB).
+
+Would you mind sending a v2 with the commit message updated to reflect
+the above points?  I'd be happy to sign-off on that.
+
+> ---
+>  fs/ext4/mballoc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 21b903fe546e..769000c970b0 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -4084,7 +4084,7 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_f=
+sblk_t block,
+>         struct ext4_sb_info *sbi =3D EXT4_SB(sb);
+>         ext4_group_t group;
+>         ext4_grpblk_t blkoff;
+> -       int i, err;
+> +       int i, err =3D 0;
+>         int already;
+>         unsigned int clen, clen_changed, thisgrp_len;
+>
+> --
+> 2.30.2
+>
+>
+
+
+--=20
 Thanks,
-Andi
+~Nick Desaulniers
