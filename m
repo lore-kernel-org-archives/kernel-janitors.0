@@ -2,105 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CF5C001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 08:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF12C001B0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 09:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbjGXIJC (ORCPT
+        id S232243AbjGXJWz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jul 2023 04:09:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45358 "EHLO
+        Mon, 24 Jul 2023 05:22:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbjGXII6 (ORCPT
+        with ESMTP id S229889AbjGXJWy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jul 2023 04:08:58 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A4E119
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 01:08:51 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fbd33a57ddso31183635e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 01:08:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690186129; x=1690790929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LpBqm+jOoJG0wfkhuGS0lLXKJysvSQDazVNFzfkOiJY=;
-        b=Ufz0zY6WkOuDS6QEqwHLOxV1T9LPiofO2WZsu/T5u57nyQeCg9eSnn3a6B8vagQDUq
-         c86AX0g07urNlx3AB+9QO8CcUQNLYomLJp8KZwC5ZEz456SImCFmNjw4u3Z1KIuM4DPK
-         fmr+uCKP1UoZg0pKyrooOAyDmszbWnXRnvHDdNtktKsQn+ncYUi364Fg7mL7ELG+aL0y
-         0EwOwqLrFQGLiQ2qzfYV+djadJbXe+aUHN3jIJ82yh8pahmW33mAGJDffNg20fcVfCzM
-         ZjBk++Z+cHJR+Svxm8kTcVXrVkEtZeLH6dTNZNNVmgIUjSNI8InJq0yj0Va3GZk6Y661
-         uKmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690186129; x=1690790929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpBqm+jOoJG0wfkhuGS0lLXKJysvSQDazVNFzfkOiJY=;
-        b=JAvAaEzvU3TugmhfzRzKOmRQ3Vjeo3K/z5to2HhGiLJvH3g4PLTN5IoZQ8uykJ4GYh
-         Cv+/xO+iaNA5WMwfuaegLIzM7qLZXm20ZaRdlnh4C4pkd5ofyMq3LDmk7a7gc01xHsl6
-         OKwr2F/peRMxq5t0Fie21YxwL2FXAyKA2JLGAWYFYChyAEIkHM+5b800Pj7rtJ/sb/2q
-         OaedBrSfruKDg7iSQQq7HhQcOEXeA9wwfvCJiXGXLffJP07qYQDRPD5MM7NFUobFNHpI
-         GLL7mw/0jjHQivcD6vMcqPgqXAyXgQU/osn90OF5sUDz5BK024hKvFp8dADQ677F25bE
-         P+ug==
-X-Gm-Message-State: ABy/qLZx0z44qY3ByA7BXMQudlnJOwa/uotWOBgrVuJ8UMHEBABrsGml
-        x6FZDYoxEP2Z8V9twJFnN+rDFg==
-X-Google-Smtp-Source: APBJJlGny1xjzIq1T4tv/TtTFc/KImmPGcvaRYEJwG6Pejg8EHR/9Ino5n3agxUq4I+07tcGg8Saog==
-X-Received: by 2002:a5d:680c:0:b0:317:2574:c2b1 with SMTP id w12-20020a5d680c000000b003172574c2b1mr6594879wru.30.1690186129526;
-        Mon, 24 Jul 2023 01:08:49 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m12-20020adff38c000000b003145559a691sm12079882wro.41.2023.07.24.01.08.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 01:08:49 -0700 (PDT)
-Date:   Mon, 24 Jul 2023 11:08:46 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] nfs/blocklayout: Use the passed in gfp flags
-Message-ID: <ZL4xjgy15cnLvG+U@kadam>
+        Mon, 24 Jul 2023 05:22:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6019E122;
+        Mon, 24 Jul 2023 02:22:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E79F461005;
+        Mon, 24 Jul 2023 09:22:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9505C433C8;
+        Mon, 24 Jul 2023 09:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1690190572;
+        bh=LnDt7R7jTXpWTe6bODtY9gDITIrapEEFQ0ZVh17zgK4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uztC49EA0tnh8I9TcWEVXOgl1OohWN/sr4mqjrDFUc2OTpprHSfvgFz1j3L4px6PB
+         OUJxuGokiM3RlFg4qq0dpTAklHWMDkzU7L6qZQXErg321siY+LDTI3Z0ssZvxU678J
+         1AArjGHr1FOhubynN7Gv5iHg7MYTjQNJG+WcbvuI=
+Date:   Mon, 24 Jul 2023 11:22:49 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Franziska =?iso-8859-1?Q?N=E4pelt?= 
+        <franziska.naepelt@googlemail.com>, linux-staging@lists.linux.dev,
+        kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Emily Peri <eperi1024@gmail.com>,
+        Guo Zihua <guozihua@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Kang Minchul <tegongkang@gmail.com>,
+        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+        Veerendranath Jakkam <quic_vjakkam@quicinc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v4 1/3] staging: rtl8723bs: Fix space issues
+Message-ID: <2023072440-dimple-slicer-3fd7@gregkh>
+References: <20230701102538.5359-1-franziska.naepelt@googlemail.com>
+ <5ad04b3a-7c77-cadb-13b4-509a086cf04d@web.de>
+ <2023070123-unburned-worsening-0713@gregkh>
+ <CAAUT3iNqwgtFJz2Q1bRN+MsSna26KC1FJc3jchu=8B09A2SkvQ@mail.gmail.com>
+ <4b9fdaa7-bdcf-ef41-0d54-ba41520cde4c@web.de>
+ <CAAUT3iPUaNRUyvqP1O97M0AmKri7Ghc06ku4TS6vcHQ=Sb4ycg@mail.gmail.com>
+ <67b16362-aace-28e3-6776-aefdeab0f183@web.de>
+ <2023072453-steam-scotch-bc17@gregkh>
+ <c6374bc6-2a56-23b0-6ef9-def092aaed4a@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <c6374bc6-2a56-23b0-6ef9-def092aaed4a@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This allocation should use the passed in GFP_ flags instead of
-GFP_KERNEL.  One places where this matters is in filelayout_pg_init_write()
-which uses GFP_NOFS as the allocation flags.
+On Mon, Jul 24, 2023 at 10:44:15AM +0200, Markus Elfring wrote:
+> > Everyone please note, Markus has been banned from most kernel mailing lists,
+> 
+> I hope that this ban can still be reconsidered.
 
-Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Update the commit message as pointed out by Christophe JAILLET.
-
- fs/nfs/blocklayout/dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
-index 70f5563a8e81..65cbb5607a5f 100644
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -404,7 +404,7 @@ bl_parse_concat(struct nfs_server *server, struct pnfs_block_dev *d,
- 	int ret, i;
- 
- 	d->children = kcalloc(v->concat.volumes_count,
--			sizeof(struct pnfs_block_dev), GFP_KERNEL);
-+			sizeof(struct pnfs_block_dev), gfp_mask);
- 	if (!d->children)
- 		return -ENOMEM;
- 
-@@ -433,7 +433,7 @@ bl_parse_stripe(struct nfs_server *server, struct pnfs_block_dev *d,
- 	int ret, i;
- 
- 	d->children = kcalloc(v->stripe.volumes_count,
--			sizeof(struct pnfs_block_dev), GFP_KERNEL);
-+			sizeof(struct pnfs_block_dev), gfp_mask);
- 	if (!d->children)
- 		return -ENOMEM;
- 
--- 
-2.39.2
+At this point in time, sorry, but no.
