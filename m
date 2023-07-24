@@ -2,118 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EAFC001DF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 17:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19871C0015E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jul 2023 17:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbjGXRTQ (ORCPT
+        id S229650AbjGXRfi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jul 2023 13:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
+        Mon, 24 Jul 2023 13:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbjGXRTP (ORCPT
+        with ESMTP id S229581AbjGXRfg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jul 2023 13:19:15 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE98310D3
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 10:19:13 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-635eb3a1d93so35748466d6.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 10:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690219153; x=1690823953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tHqlkjiN6F7mZHmC296PE6xQOoItN+fVKPLF3TUGTVI=;
-        b=HFHY127KcwxOhKq5Bri1cro15FAkNa5SlM1FnQX3pl0u+VO3Bn11Vc+BLFKQsIh0qd
-         4+3053sdoGd0VLrcSU+KtN0OCxZTjUqtSMCssDwasWUzfIoYX5+POQkWDxZt89M0kz96
-         zIlQG61pCNSEKCeryktg+GDMoz9NSSszsiF2CptitKlAcDo+RlBOaSbyxGsETMFf0wLt
-         qgzd9wtLBkB57uRY44bxZIabgouPeMWmBnOKge2XEc0potLBZTB7tXvdiO1T2+e+GZLy
-         wBX1Mr3RKUi1mWgq8JyelZglpRXG7M2gtWKKlZ3o9x/qjhS4NRFAyo7niZCQalU1EwRC
-         ch3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690219153; x=1690823953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tHqlkjiN6F7mZHmC296PE6xQOoItN+fVKPLF3TUGTVI=;
-        b=QIpwkUcTFC84cU6x39yWVxThin6Y6JK5bml1cPXVBkPITB6TaGptrC0msiVETqjwfw
-         LmuUeP14eujkoVJyPMHZRw3fW0uQDK8+DLY5cj6oGoPap2Mo5kxGnXHCshbV0YtmbG4w
-         RPPTJx9lqRgW9j8yeW6r18bUNHhrxBOnLzL/Igxq/4/4w52MQdFbSW/HkrxRXFmzhfjg
-         asV+ohZw9uW1Y+BYJ7c1VcWXAUSp9bv5kqwVWAdEoageU3LccGpYTlneH9RVrHVHyuta
-         ScyEYWzSasNfy+A6UZITXU7VK3Bw1DjqtnTxqjZ6F3J6M6lR2S6DbOa1i70k1Dv1JccO
-         qoOA==
-X-Gm-Message-State: ABy/qLa74NIvGHDXwM1fEhYl6Db5C6Co9TWWJjPUigAeIqMCyDRZ/bMn
-        QoVvzsGM8BhI7tslhrvdOctFoqVrcpskubI2W2u1jA==
-X-Google-Smtp-Source: APBJJlG0PzmZgMeYmmyxh6fQCtTCaFVli27ad8SwdfVceQNoqUOHJJbJZFe9iMSAnB6bk7i+ctom86Y91hMRQVsqDOs=
-X-Received: by 2002:a0c:fe0d:0:b0:63c:a22e:ddaf with SMTP id
- x13-20020a0cfe0d000000b0063ca22eddafmr461068qvr.16.1690219152868; Mon, 24 Jul
- 2023 10:19:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230724054538.163319-1-suhui@nfschina.com>
-In-Reply-To: <20230724054538.163319-1-suhui@nfschina.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Jul 2023 10:19:02 -0700
-Message-ID: <CAKwvOdk-fdJr9TcgUnOhCiU0LvD2Qe_c+6YOe-c1k0Ukm+negA@mail.gmail.com>
-Subject: Re: [PATCH] ext4: mballoc: avoid garbage value from err
+        Mon, 24 Jul 2023 13:35:36 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E202598;
+        Mon, 24 Jul 2023 10:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690220135; x=1721756135;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kwYTilEARt1N1V34eJr55Ya9rMistbgI1FoRnG+ZV2g=;
+  b=AXlVKEqODM+4JZm+HoB7TJLQStQGmiFgXI/BsVtOAwAIFsupFTCoBrrR
+   KfM5j6fiXwSoMdp79H5bW4MyB0MS8aqPMgxRYzDuK6QUrUPZH+Y+13Wc7
+   2fqOOVOYIVuUiSs3n4F0YEUB5fO/4PyQFSXIVmmteVPZ6rbGwuGavr+2G
+   D2rGCfhu6ebkFuLi65fzW0yaYloXXJBGjvIOIK0fvJJv+0/wgiKzqQByo
+   YUgEBpnOAAbHdLMMjbS6qHM+kvhH3A25cowk5vg6hcCt7Oy8sfPJKDiwJ
+   xGe/dGjwZyeQd2JRW4hVOkCHmNNBDEQeOctQQqjSehvIPGUOJRyXblGrJ
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="371107580"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="371107580"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 10:35:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="791042033"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="791042033"
+Received: from gionescu-mobl2.ger.corp.intel.com (HELO intel.com) ([10.252.34.175])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 10:35:31 -0700
+Date:   Mon, 24 Jul 2023 19:35:27 +0200
+From:   Andi Shyti <andi.shyti@linux.intel.com>
 To:     Su Hui <suhui@nfschina.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, nathan@kernel.org,
-        trix@redhat.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, tvrtko.ursulin@linux.intel.com,
+        airlied@gmail.com, daniel@ffwll.ch, nathan@kernel.org,
+        ndesaulniers@google.com, trix@redhat.com, andrzej.hajda@intel.com,
+        intel-gfx@lists.freedesktop.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, mripard@kernel.org
+Subject: Re: [Intel-gfx] [PATCH v2] drm/i915/tv: avoid possible division by
+ zero
+Message-ID: <ZL62X3/CnsJcWWU4@ashyti-mobl2.lan>
+References: <20230718013216.495830-1-suhui@nfschina.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718013216.495830-1-suhui@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 23, 2023 at 10:46=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
->
-> clang warning: fs/ext4/mballoc.c, line 4178, column 6
-> Branch condition evaluates to a garbage value.
-
-Specifically this is clang's static analysis; not the compiler itself.
-
->
-> err is uninitialized and will be judged when it enters the
-> loop first time and the condition "!ext4_sb_block_valid()"
-> is true. Although this can't make problems now, it's better
-> to correct it.
->
+On Tue, Jul 18, 2023 at 09:32:17AM +0800, Su Hui wrote:
+> Clang warning: drivers/gpu/drm/i915/display/intel_tv.c:
+> line 991, column 22 Division by zero.
+> Assuming tv_mode->oversample=1 and (!tv_mode->progressive)=1,
+> then division by zero will happen.
+> 
+> Fixes: 1bba5543e4fe ("drm/i915: Fix TV encoder clock computation")
 > Signed-off-by: Su Hui <suhui@nfschina.com>
-
-Hi Su,
-Thanks for the patch!  I see what the warning is getting at;
-
-If `len <=3D 0` then `err` is never initialized, then is used at line
-4178 (that is UB).
-
-Would you mind sending a v2 with the commit message updated to reflect
-the above points?  I'd be happy to sign-off on that.
-
 > ---
->  fs/ext4/mballoc.c | 2 +-
+>  drivers/gpu/drm/i915/display/intel_tv.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 21b903fe546e..769000c970b0 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -4084,7 +4084,7 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_f=
-sblk_t block,
->         struct ext4_sb_info *sbi =3D EXT4_SB(sb);
->         ext4_group_t group;
->         ext4_grpblk_t blkoff;
-> -       int i, err;
-> +       int i, err =3D 0;
->         int already;
->         unsigned int clen, clen_changed, thisgrp_len;
->
-> --
-> 2.30.2
->
->
+> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_tv.c b/drivers/gpu/drm/i915/display/intel_tv.c
+> index 36b479b46b60..f59553f7c132 100644
+> --- a/drivers/gpu/drm/i915/display/intel_tv.c
+> +++ b/drivers/gpu/drm/i915/display/intel_tv.c
+> @@ -988,7 +988,7 @@ intel_tv_mode_to_mode(struct drm_display_mode *mode,
+>  		      const struct tv_mode *tv_mode,
+>  		      int clock)
+>  {
+> -	mode->clock = clock / (tv_mode->oversample >> !tv_mode->progressive);
+> +	mode->clock = clock / tv_mode->oversample << !tv_mode->progressive;
 
+but this does not provide the same value. Try with:
 
---=20
-Thanks,
-~Nick Desaulniers
+	8 / (2 >> 1)
+
+and
+
+	8 / 2 << 1
+
+They are definitely different.
+
+The real check could be:
+
+	if (!(tv_mode->oversample >> 1))
+		return ...
+
+But first I would check if that's actually possible.
+
+Andi
