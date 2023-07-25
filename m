@@ -2,115 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70415C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 12:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47437C001E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 14:41:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231672AbjGYMtg (ORCPT
+        id S233277AbjGYOl0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 08:49:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33740 "EHLO
+        Tue, 25 Jul 2023 10:41:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjGYMtf (ORCPT
+        with ESMTP id S233171AbjGYOlY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 08:49:35 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4997FC4;
-        Tue, 25 Jul 2023 05:49:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CAEDD1F8D6;
-        Tue, 25 Jul 2023 12:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1690289372; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zfxaBQKu9pFIm/CSy+E7ZH0ZFKwSyMdTppqUuWuzZK0=;
-        b=ZMW4KhwS4YTYl+FNV2yCV2SSG41p47it3FrxFVbR/XWhq17vatqFq2tKkAhE/HsTr8QAnG
-        CapZET8Je9swPUfnQvwTg865CY5pfsHFaGYsTC5W+8v0DA96Z6457nsq5IlLkV1GgiKFZW
-        qWG+XwT/hlObMz9POHaegXsrQWHmyKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1690289372;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zfxaBQKu9pFIm/CSy+E7ZH0ZFKwSyMdTppqUuWuzZK0=;
-        b=jmc0w2TxfUsZ/vakyCbU30JoTCHxiH82j4PTfH38/9kRlQoZOgsX8U/VmK5C/w+VJFHuDP
-        O8wUkSf6Tjc8TLCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B1E0813342;
-        Tue, 25 Jul 2023 12:49:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id G63YINvEv2TbSwAAMHmgww
-        (envelope-from <colyli@suse.de>); Tue, 25 Jul 2023 12:49:31 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
-Subject: Re: [PATCH][next] bcache: remove redundant assignment to variable
- cur_idx
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20230725114637.37073-1-colin.i.king@gmail.com>
-Date:   Tue, 25 Jul 2023 20:49:19 +0800
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+        Tue, 25 Jul 2023 10:41:24 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8337199D
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Jul 2023 07:40:57 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52222562f1eso4389511a12.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Jul 2023 07:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google; t=1690296051; x=1690900851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IThHZKgOu2CI5lLaW4+dohujcbudp1VuPGinJk5/sjg=;
+        b=YycOgFH4zQyYEHbalkot5ZX4yBrIJRW7H0IyiNBqCjc4D8OlAEz+b4bIO59iZ49fRx
+         zXsyax8B84PncxwgOuAD/wa5ujUzvNlDDELrEwV0QP2mM/De2ayWTLG3zzwXIzsbf26B
+         t7ubBySeNUCXq+H8Dmcw5oqpgp3RwpGP1rIOw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690296051; x=1690900851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IThHZKgOu2CI5lLaW4+dohujcbudp1VuPGinJk5/sjg=;
+        b=Pl1exyNrqeD8mXxrvuZlfMnPQEokK+WZ8XgJVke4MHk4jAd5IghgE6qf52kydIXR/H
+         NNL3SCZLOIoCBDY0XumAw5Y6aXCC/+fM0uFFKDMbI4idYFc+VVsRoPykzgcIURTEmNae
+         GBIB3xuMng8KibzjdbcrwDi/Dcmyvvwnm345UvDjVAF/IUY/VfxK1FFU7sYNkSkTbH5W
+         9sxQ5KrytziFiU+d9SKXANy7I0RYojoCe8vRTfLD1vVWsX/pAGcB+pdJ/qoiI8qJT3hm
+         js/terzghgESFSlHlzgrzH9j2YsOGnlujzRBnv8q4ifeU/v+VzXWeVtTLv/wIj+qW5SP
+         73bQ==
+X-Gm-Message-State: ABy/qLbQK9UsTIsCMKSBk50naqYO7tzQBZdpJMZl9UrVK5ZD3+uE3t1l
+        LfAudjPuj9zjfZdkeTCksj3WbASJMyzBzczLkYey+A==
+X-Google-Smtp-Source: APBJJlF68pzIjDwAzPGMKcrhOEyk9TWf/oRIMQEj1J4deHdSxGb7fnpo7ceaea8lfJeFMZmiLVLVP2G2Gj0o1TJx2JU=
+X-Received: by 2002:a05:6402:10cb:b0:521:7ab6:b95d with SMTP id
+ p11-20020a05640210cb00b005217ab6b95dmr11439677edu.29.1690296051014; Tue, 25
+ Jul 2023 07:40:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <cdbbc9df16044b568448ed9cd828d406f0851bfb.1690255889.git.yan@cloudflare.com>
+ <9a5c27e4-a1a3-1fe5-a179-bfd0072e7c59@web.de>
+In-Reply-To: <9a5c27e4-a1a3-1fe5-a179-bfd0072e7c59@web.de>
+From:   Yan Zhai <yan@cloudflare.com>
+Date:   Tue, 25 Jul 2023 09:40:39 -0500
+Message-ID: <CAO3-PbokoLz8S8YhV_nNjq+Oq3P_SXqbj-TNJmrC56DV8KLb7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf 1/2] bpf: fix skb_do_redirect return values
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-team@cloudflare.com, bpf@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Hao Luo <haoluo@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Mykola Lysenko <mykolal@fb.com>,
+        Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jordan Griege <jgriege@cloudflare.com>,
+        Stanislav Fomichev <sdf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <DFEED6F9-45FE-48BA-BE50-51B780846DE3@suse.de>
-References: <20230725114637.37073-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-X-Mailer: Apple Mail (2.3731.600.7)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Jul 25, 2023 at 12:11=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>
+> >                                      =E2=80=A6 unexpected problems. Thi=
+s change
+> > converts the positive status code to proper error code.
+>
+> Please choose a corresponding imperative change suggestion.
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.5-rc3#n94
+>
+>
+> Did you provide sufficient justification for a possible addition of the t=
+ag =E2=80=9CFixes=E2=80=9D?
+>
+>
+> =E2=80=A6
+> > v2: code style change suggested by Stanislav Fomichev
+> > ---
+> >  net/core/filter.c | 12 +++++++++++-
+> =E2=80=A6
+>
+> How do you think about to replace this marker by a line break?
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.5-rc3#n711
+>
+> Regards,
+> Markus
 
+Hi Markus,
 
-> 2023=E5=B9=B47=E6=9C=8825=E6=97=A5 19:46=EF=BC=8CColin Ian King =
-<colin.i.king@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Variable cur_idx is being initialized with a value that is never read,
-> it is being re-assigned later in a while-loop. Remove the redundant
-> assignment. Cleans up clang scan build warning:
->=20
-> drivers/md/bcache/writeback.c:916:2: warning: Value stored to =
-'cur_idx'
-> is never read [deadcode.DeadStores]
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+   Thanks for the suggestions, those are what I could use more help with.
+   Will address these in the next version.
 
-Looks good to me. Thanks.
-
-Reviewed-by: Coly Li <colyli@suse.de>
-
-
-Coly Li
-
-> ---
-> drivers/md/bcache/writeback.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/md/bcache/writeback.c =
-b/drivers/md/bcache/writeback.c
-> index 24c049067f61..c3e872e0a6f2 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -913,7 +913,7 @@ static int bch_dirty_init_thread(void *arg)
-> int cur_idx, prev_idx, skip_nr;
->=20
-> k =3D p =3D NULL;
-> - cur_idx =3D prev_idx =3D 0;
-> + prev_idx =3D 0;
->=20
-> bch_btree_iter_init(&c->root->keys, &iter, NULL);
-> k =3D bch_btree_iter_next_filter(&iter, &c->root->keys, bch_ptr_bad);
-> --=20
-> 2.39.2
->=20
-
+Yan
