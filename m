@@ -2,60 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB87C04FDF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 09:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDE7C001E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 11:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232584AbjGYJAB (ORCPT
+        id S235087AbjGYLlN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 05:00:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
+        Tue, 25 Jul 2023 07:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbjGYI77 (ORCPT
+        with ESMTP id S234961AbjGYLkx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 04:59:59 -0400
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 33E9D131;
-        Tue, 25 Jul 2023 01:59:56 -0700 (PDT)
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-        id 1qODtS-0008Gt-00; Tue, 25 Jul 2023 10:59:46 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 6A349C01E6; Tue, 25 Jul 2023 10:48:03 +0200 (CEST)
-Date:   Tue, 25 Jul 2023 10:48:03 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     linke li <lilinke99@gmail.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>, linux-mips@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linke Li <lilinke99@foxmail.com>
-Subject: Re: [PATCH] MIPS: Fix undefined behavior in PAGE_MASK calculation
-Message-ID: <ZL+MQwq31kDcLI80@alpha.franken.de>
-References: <tencent_54C2A2746A83BA29EE92248CE9683F0C6509@qq.com>
- <f7fab4fc-a8db-d2f7-52e9-3522f7c298b8@web.de>
- <CAKdjhyAOfbsxthU38=vSPJ080YxQvbGpbc5pupbz1gUQ=USwrQ@mail.gmail.com>
+        Tue, 25 Jul 2023 07:40:53 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2904F3;
+        Tue, 25 Jul 2023 04:40:40 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d384so45099215e9.0;
+        Tue, 25 Jul 2023 04:40:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690285239; x=1690890039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIwK4vNakYsmHhWk3gPu9jeD67klp1zgcobWm0hLfMM=;
+        b=qzWmo+ENoePc/UCYjokwm8n28ajtGiHJ8cBotYdjFTxBLJ3ZyGwp4fhCr1uKAe0qgg
+         eCHqn/SNWsBHo1OO75pdizfTIc4oGRcS2hA1Nmc4UeW+MqGByA5PCewlnvGbjn89sxLs
+         1028IIY0p9O+5piV+G92YSigAUjgbbkKvVLoImuT+mIcTACzEL1rPKR+Mb2bREQ5VSno
+         pprqhzm8/IkUTHEitJwsR9QKc9aiSzDX6ADuw2GNbIaHLlNlgJIVRBcD4L+h8EnEHT1v
+         gFYo9UVtuoKT7YI2Yd9nHXrcBo3xrf0gpd701I0UozteYywqEJuyggJI07Dod8VFivHi
+         lOTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690285239; x=1690890039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oIwK4vNakYsmHhWk3gPu9jeD67klp1zgcobWm0hLfMM=;
+        b=DMrtKbJG0ZieEC742BOODrSL1TASnO6AdySL5iGHkzl+p+i8rkqB0KwFKi8yjxulKO
+         obKp5wmAMnugrcJtw86BDfXylKp62GtG66kZFNeLCb7n9hBOFMZP+YprNDFMUqjF3l8d
+         z0XBqjwZu0lpt1KSwWqrnEDC+lbd3pt2B72sKejL9EYMl7EFdtrbv3II80IjgQ2lySpA
+         JSuOanm/s4jDh5WArF6WFOC9tsT8wOo4N5S96FirZERr1GBsjPVHoXjupuveehLP6q8B
+         U/jDiUCyUEERGQtEFqkP4J+qqDGocxGeiMeWXhCXDWIBPrzQtbcnJxlEp0ndyKNtDKjQ
+         pBNA==
+X-Gm-Message-State: ABy/qLYxSfg8kBtSQDKV7HS5PF9JFcsOMuhogE0LPsL5jLS1l02VfRVZ
+        MfMXO3uOgnTtk+9/bOHUCnA=
+X-Google-Smtp-Source: APBJJlEHMeV1GT0gHESC09Zjy+axUc4imX5ZHprKSvGpdZB+jCUtQ1yHI/p8VsPGTg9IdOvMJtAw0g==
+X-Received: by 2002:a05:6000:4c:b0:313:e456:e64a with SMTP id k12-20020a056000004c00b00313e456e64amr8961163wrx.21.1690285238976;
+        Tue, 25 Jul 2023 04:40:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q3-20020adfea03000000b0031435c2600esm16177847wrm.79.2023.07.25.04.40.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 04:40:38 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] accel/qaic: remove redundant assignment to pointer pexec
+Date:   Tue, 25 Jul 2023 12:40:37 +0100
+Message-Id: <20230725114037.36806-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKdjhyAOfbsxthU38=vSPJ080YxQvbGpbc5pupbz1gUQ=USwrQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 02:02:00PM +0800, linke li wrote:
-> > How do you think about a wording variant like the following?
-> 
-> What you said is exactly what I want to express.
-> 
-> > Would you like to add the tag “Fixes”?
-> 
-> I agree with that.
-> 
-> Thank you for your feedback and suggestion.
+Pointer pexec is being assigned a value however it is never read. The
+assignment is redundant and can be removed.
 
-plesas resend with this changes.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/accel/qaic/qaic_data.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thomas.
-
+diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
+index e9a1cb779b30..8a6cb14f490e 100644
+--- a/drivers/accel/qaic/qaic_data.c
++++ b/drivers/accel/qaic/qaic_data.c
+@@ -1320,7 +1320,6 @@ static int __qaic_execute_bo_ioctl(struct drm_device *dev, void *data, struct dr
+ 	user_data = u64_to_user_ptr(args->data);
+ 
+ 	exec = kcalloc(args->hdr.count, size, GFP_KERNEL);
+-	pexec = (struct qaic_partial_execute_entry *)exec;
+ 	if (!exec)
+ 		return -ENOMEM;
+ 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.39.2
+
