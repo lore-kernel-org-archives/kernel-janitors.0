@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDE7C001E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 11:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36F6C0015E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 11:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235087AbjGYLlN (ORCPT
+        id S233149AbjGYLrR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 07:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46502 "EHLO
+        Tue, 25 Jul 2023 07:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234961AbjGYLkx (ORCPT
+        with ESMTP id S232381AbjGYLrK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 07:40:53 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2904F3;
-        Tue, 25 Jul 2023 04:40:40 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d384so45099215e9.0;
-        Tue, 25 Jul 2023 04:40:40 -0700 (PDT)
+        Tue, 25 Jul 2023 07:47:10 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6771FC1;
+        Tue, 25 Jul 2023 04:47:05 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fbc59de009so44468895e9.3;
+        Tue, 25 Jul 2023 04:47:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690285239; x=1690890039;
+        d=gmail.com; s=20221208; t=1690285599; x=1690890399;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIwK4vNakYsmHhWk3gPu9jeD67klp1zgcobWm0hLfMM=;
-        b=qzWmo+ENoePc/UCYjokwm8n28ajtGiHJ8cBotYdjFTxBLJ3ZyGwp4fhCr1uKAe0qgg
-         eCHqn/SNWsBHo1OO75pdizfTIc4oGRcS2hA1Nmc4UeW+MqGByA5PCewlnvGbjn89sxLs
-         1028IIY0p9O+5piV+G92YSigAUjgbbkKvVLoImuT+mIcTACzEL1rPKR+Mb2bREQ5VSno
-         pprqhzm8/IkUTHEitJwsR9QKc9aiSzDX6ADuw2GNbIaHLlNlgJIVRBcD4L+h8EnEHT1v
-         gFYo9UVtuoKT7YI2Yd9nHXrcBo3xrf0gpd701I0UozteYywqEJuyggJI07Dod8VFivHi
-         lOTg==
+        bh=tfoDAczWkqWWRUwBF5o54v6xQbgWHpFklc1bB+kH+ig=;
+        b=M0Ve7MGyX24qswOj3GfyU9Htshcip2MOt4w4zOUXEohr21RuozFXHQ7gkv9ifGpE3s
+         Kl+m28jykJ7WwKpr0pkNvrXrz9joS+B6KTta++wysbMd3B6Kte4bjKjXt9K5QaTyobDB
+         DkMW9yrJjOiJu4pLe/GHemMnflRx6uQExH3QjFhFHJtXktHF2Xu3H9kjNOFqnASCg4wH
+         ecH47TSLWyeV9TKkPXxp+i75LNnkiCthrEf8l+bzW47qLzPgpQbA9kUHaO5LhU0GhwBt
+         cvGJx08E2KoKKeBkDZJ+ulO2XXtZZGc2i7F9Y9EPc6LjN02+6t0Kwm7oj08lHXCyB0Wu
+         dPOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690285239; x=1690890039;
+        d=1e100.net; s=20221208; t=1690285599; x=1690890399;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oIwK4vNakYsmHhWk3gPu9jeD67klp1zgcobWm0hLfMM=;
-        b=DMrtKbJG0ZieEC742BOODrSL1TASnO6AdySL5iGHkzl+p+i8rkqB0KwFKi8yjxulKO
-         obKp5wmAMnugrcJtw86BDfXylKp62GtG66kZFNeLCb7n9hBOFMZP+YprNDFMUqjF3l8d
-         z0XBqjwZu0lpt1KSwWqrnEDC+lbd3pt2B72sKejL9EYMl7EFdtrbv3II80IjgQ2lySpA
-         JSuOanm/s4jDh5WArF6WFOC9tsT8wOo4N5S96FirZERr1GBsjPVHoXjupuveehLP6q8B
-         U/jDiUCyUEERGQtEFqkP4J+qqDGocxGeiMeWXhCXDWIBPrzQtbcnJxlEp0ndyKNtDKjQ
-         pBNA==
-X-Gm-Message-State: ABy/qLYxSfg8kBtSQDKV7HS5PF9JFcsOMuhogE0LPsL5jLS1l02VfRVZ
-        MfMXO3uOgnTtk+9/bOHUCnA=
-X-Google-Smtp-Source: APBJJlEHMeV1GT0gHESC09Zjy+axUc4imX5ZHprKSvGpdZB+jCUtQ1yHI/p8VsPGTg9IdOvMJtAw0g==
-X-Received: by 2002:a05:6000:4c:b0:313:e456:e64a with SMTP id k12-20020a056000004c00b00313e456e64amr8961163wrx.21.1690285238976;
-        Tue, 25 Jul 2023 04:40:38 -0700 (PDT)
+        bh=tfoDAczWkqWWRUwBF5o54v6xQbgWHpFklc1bB+kH+ig=;
+        b=MKaTKyz/s/zgH8WqUg5xIBM3xyio7nGtCDFYp6fFflzOFI1qaqUx/0vyQMfdtK+hTs
+         Q5SsxQH5nAKe9hXS9cfV/dant/et/EofYBrDXtrqhdmLM/Q3c6I5T6hd1g7zTiYpDK4/
+         QxnC+yI/SOE/lhWrIBEjz5x3tZWNPdrrfoxqo2OFDPPrPHL+uY4ahaGxk97j4/viZ2rm
+         qIRMiZ1GMZZo1XExqb+cdPZz5OgsyBV7KikYkbLL0yJ48fsTG3aNg4wuF5EZOWUXlBiy
+         RHo445f7+HShdtKH3iK9jFYzPq2UUmMAye53HgeV2/ukrBCzmSxMUgeDyzCMPAeOuJgu
+         zaZQ==
+X-Gm-Message-State: ABy/qLa1/86uV3roocM7YJ/oSw8iLEc6YrsbbQfl77/HEjwmfbW0MeuM
+        kAq7qQoLubg3qfi9D5dE2fU=
+X-Google-Smtp-Source: APBJJlH7l55syqPc/q9I+CLF3O9P+Qe3fTUMB1ZRoQ6ggjwmtVAeLs5yjY7DNOYNoN0/a7K5z0uHMA==
+X-Received: by 2002:a05:600c:364d:b0:3fb:e189:3532 with SMTP id y13-20020a05600c364d00b003fbe1893532mr8955649wmq.20.1690285598933;
+        Tue, 25 Jul 2023 04:46:38 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q3-20020adfea03000000b0031435c2600esm16177847wrm.79.2023.07.25.04.40.38
+        by smtp.gmail.com with ESMTPSA id u6-20020a05600c00c600b003fbb5142c4bsm15861526wmm.18.2023.07.25.04.46.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 04:40:38 -0700 (PDT)
+        Tue, 25 Jul 2023 04:46:38 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] accel/qaic: remove redundant assignment to pointer pexec
-Date:   Tue, 25 Jul 2023 12:40:37 +0100
-Message-Id: <20230725114037.36806-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] bcache: remove redundant assignment to variable cur_idx
+Date:   Tue, 25 Jul 2023 12:46:37 +0100
+Message-Id: <20230725114637.37073-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,26 +66,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer pexec is being assigned a value however it is never read. The
-assignment is redundant and can be removed.
+Variable cur_idx is being initialized with a value that is never read,
+it is being re-assigned later in a while-loop. Remove the redundant
+assignment. Cleans up clang scan build warning:
+
+drivers/md/bcache/writeback.c:916:2: warning: Value stored to 'cur_idx'
+is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/accel/qaic/qaic_data.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/md/bcache/writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-index e9a1cb779b30..8a6cb14f490e 100644
---- a/drivers/accel/qaic/qaic_data.c
-+++ b/drivers/accel/qaic/qaic_data.c
-@@ -1320,7 +1320,6 @@ static int __qaic_execute_bo_ioctl(struct drm_device *dev, void *data, struct dr
- 	user_data = u64_to_user_ptr(args->data);
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 24c049067f61..c3e872e0a6f2 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -913,7 +913,7 @@ static int bch_dirty_init_thread(void *arg)
+ 	int cur_idx, prev_idx, skip_nr;
  
- 	exec = kcalloc(args->hdr.count, size, GFP_KERNEL);
--	pexec = (struct qaic_partial_execute_entry *)exec;
- 	if (!exec)
- 		return -ENOMEM;
+ 	k = p = NULL;
+-	cur_idx = prev_idx = 0;
++	prev_idx = 0;
  
+ 	bch_btree_iter_init(&c->root->keys, &iter, NULL);
+ 	k = bch_btree_iter_next_filter(&iter, &c->root->keys, bch_ptr_bad);
 -- 
 2.39.2
 
