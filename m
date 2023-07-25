@@ -2,70 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 385DDC0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 04:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC082EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 05:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbjGYEeN (ORCPT
+        id S231478AbjGYFZH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 00:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59158 "EHLO
+        Tue, 25 Jul 2023 01:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbjGYEeM (ORCPT
+        with ESMTP id S229832AbjGYFZD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 00:34:12 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id EDC1BE64;
-        Mon, 24 Jul 2023 21:34:09 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id DCCA66032EB7E;
-        Tue, 25 Jul 2023 12:34:04 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, nathan@kernel.org,
-        ndesaulniers@google.com, trix@redhat.com
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        Su Hui <suhui@nfschina.com>
-Subject: [PATCH v2] ext4: mballoc: avoid garbage value from err
-Date:   Tue, 25 Jul 2023 12:33:11 +0800
-Message-Id: <20230725043310.1227621-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 25 Jul 2023 01:25:03 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57483A6
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 22:25:02 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fbc59de009so41371025e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 22:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690262701; x=1690867501;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H79WJ1tZZDGA2P/ZJGv/toXPeURCI3lAAaWA6i+7WCc=;
+        b=haLrXUc4DawVtAshdPyra7G+2ZK9BuBOpIhM1fU8nWBd13IGaY0Qj0WMXKOwB9geo2
+         zbZoQIKvVvtXJyofj526s8WWvsGNc59d63mc1+N3NuG8MJC/ykrY19sKBs/6crYXgUs5
+         cgUZYCBlzVSz/hPrrsK7G0uAl80BXQiWubw81dR2YKcovNZ78giuuS/i/KIcp/OnbYjJ
+         yQJCO5gHjOj6ZKDcAOHbEuCqOH6RBmE4jgfGn5WdPqJunL5IybDnIHq3Q65kKMoh5iBc
+         /T9HR2Ejs/C9mnwV8q7o1pSFcfLdtA/K86CfP6V4au+7OuctD26UG3GRwBtnszYPxygn
+         I7rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690262701; x=1690867501;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H79WJ1tZZDGA2P/ZJGv/toXPeURCI3lAAaWA6i+7WCc=;
+        b=iF9b2vTIJMpmd9E4ITLNSJfWCjKML/lKJqlr1s6Ue4we//mf270x0UFkQXTquIIyTT
+         lhRRn5PkWRzzOVVIAx7Xpb9AaXnbkRgL+rEAGEzneFl42AUX77wGANLjlnwHH6czciFf
+         csFv6z3MJynTIVG73hW4qRgDFKuP+FZV7C1I8zPCraUiFbuz7BHxtbcpAJeQPdMIsN4A
+         3idFyHUI5Q0bYHXJ1xzpX2EOMftfIbken7CHpgpi9EEdLjt1u5Q5sbcQuoIwRZV0OBXe
+         Aq0AmVD0u5HKgj5U5fiu1Uik7xbqn87fg54xvJZaTDrG1RHwk6x4e6tKsFzfC/IRV6RK
+         gq0A==
+X-Gm-Message-State: ABy/qLY7v2IJgvQ+03+fta1U2xJDU7oyjjIaTeD7u0LIMyo3bZUOYK/t
+        IhDs9ySNKcJ+TU5qTfOC/czL1NLd7CihxgWcXzY=
+X-Google-Smtp-Source: APBJJlGlk5/ue4ciZ9K0Lm551GtLicMS+kyem42WYzAa6gMALSP3J6b8ppTyop7YQiL+pWW5wx7Wwg==
+X-Received: by 2002:a5d:5956:0:b0:314:5376:f0d6 with SMTP id e22-20020a5d5956000000b003145376f0d6mr8020592wri.52.1690262700825;
+        Mon, 24 Jul 2023 22:25:00 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id r15-20020adff70f000000b003143ba62cf4sm14867520wrp.86.2023.07.24.22.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jul 2023 22:25:00 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 08:24:56 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     petrm@nvidia.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] mlxsw: spectrum_switchdev: Replay switchdev objects on
+ port join
+Message-ID: <049ee4a7-441c-4e76-8ca1-fb4ac1c3f389@moroto.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-clang's static analysis warning: fs/ext4/mballoc.c
-line 4178, column 6, Branch condition evaluates to a garbage value.
+Hello Petr Machata,
 
-err is uninitialized and will be judged when 'len <= 0' or
-it first enters the loop while the condition "!ext4_sb_block_valid()"
-is true. Although this can't make problems now, it's better to
-correct it.
+The patch ec4643ca3d98: "mlxsw: spectrum_switchdev: Replay switchdev
+objects on port join" from Jul 19, 2023 (linux-next), leads to the
+following Smatch static checker warning:
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
-v2:
- - modify commit message
+	drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:2679 mlxsw_sp_bridge_8021d_port_join()
+	error: we previously assumed 'mlxsw_sp_port_vlan->fid' could be null (see line 2664)
 
- fs/ext4/mballoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+    2642 static int
+    2643 mlxsw_sp_bridge_8021d_port_join(struct mlxsw_sp_bridge_device *bridge_device,
+    2644                                 struct mlxsw_sp_bridge_port *bridge_port,
+    2645                                 struct mlxsw_sp_port *mlxsw_sp_port,
+    2646                                 struct netlink_ext_ack *extack)
+    2647 {
+    2648         struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
+    2649         struct net_device *dev = bridge_port->dev;
+    2650         u16 vid;
+    2651         int err;
+    2652 
+    2653         vid = is_vlan_dev(dev) ? vlan_dev_vlan_id(dev) : MLXSW_SP_DEFAULT_VID;
+    2654         mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
+    2655         if (WARN_ON(!mlxsw_sp_port_vlan))
+    2656                 return -EINVAL;
+    2657 
+    2658         if (mlxsw_sp_port_is_br_member(mlxsw_sp_port, bridge_device->dev)) {
+    2659                 NL_SET_ERR_MSG_MOD(extack, "Can not bridge VLAN uppers of the same port");
+    2660                 return -EINVAL;
+    2661         }
+    2662 
+    2663         /* Port is no longer usable as a router interface */
+    2664         if (mlxsw_sp_port_vlan->fid)
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 21b903fe546e..769000c970b0 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -4084,7 +4084,7 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_fsblk_t block,
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_group_t group;
- 	ext4_grpblk_t blkoff;
--	int i, err;
-+	int i, err = 0;
- 	int already;
- 	unsigned int clen, clen_changed, thisgrp_len;
- 
--- 
-2.30.2
+This has a check for NULL.
 
+    2665                 mlxsw_sp_port_vlan_router_leave(mlxsw_sp_port_vlan);
+    2666 
+    2667         err = mlxsw_sp_port_vlan_bridge_join(mlxsw_sp_port_vlan, bridge_port,
+    2668                                              extack);
+
+Most of the time this would set ->fid but if mlxsw_sp_port_vlan->bridge_port
+then it wouldn't
+
+    2669         if (err)
+    2670                 return err;
+    2671 
+    2672         err = mlxsw_sp_bridge_port_replay(bridge_port, mlxsw_sp_port, extack);
+    2673         if (err)
+    2674                 goto err_replay;
+    2675 
+    2676         return 0;
+    2677 
+    2678 err_replay:
+--> 2679         mlxsw_sp_port_vlan_bridge_leave(mlxsw_sp_port_vlan);
+
+->fid dereferenced without being checked.
+
+    2680         return err;
+    2681 }
+
+regards,
+dan carpenter
