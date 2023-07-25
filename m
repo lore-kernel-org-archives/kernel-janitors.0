@@ -2,129 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7370AC04A6A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 07:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F04C04A94
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 08:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232836AbjGYHuT convert rfc822-to-8bit (ORCPT
+        id S229652AbjGYIXj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        Tue, 25 Jul 2023 04:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232837AbjGYHuP (ORCPT
+        with ESMTP id S230438AbjGYIXg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 03:50:15 -0400
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05FD918F;
-        Tue, 25 Jul 2023 00:50:12 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-d124309864dso1506544276.3;
-        Tue, 25 Jul 2023 00:50:11 -0700 (PDT)
+        Tue, 25 Jul 2023 04:23:36 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD1DB10D1
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Jul 2023 01:23:35 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3159d75606dso3845702f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Jul 2023 01:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690273414; x=1690878214;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3YuZbvg+OCFvU708D8FTuMOoHLfL1FWWTkGies6dD4=;
+        b=D5mUngfDo2XKTj+Uz9oI22nFW53r8sWy7Q+Neh3296NMM1y/QSgHNGBXEw9EbTG2TT
+         113et3GlxvlHdwFC170J53xGnpBn8ObwmMnWcq1vXXHYwnu8Fur69qKowjlFTBDDw0cZ
+         PywvuH1vfqW8PMhoiL5dUPMsQ0vWJgFyA8LmQOSvCIY1f8MA8BI7opkqHcj0MYISS7Ew
+         7Y9pxOM3IhFNgWpcMxElMWYf6COTnIGCMiz78b5GSjGwFg+FM6ePE00o8yCH9gCqnP2w
+         TFq4yc4vMv+JZR17EnKJv1gV25ZHtxkZpdTOwEpTOshUqwWhoKZU7+ndxXo3LOkQh5e6
+         N06g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690271411; x=1690876211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1690273414; x=1690878214;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EqNUObKtnWU7CrTgMoTHsyHzfdm6+8QmUNqv2A2543c=;
-        b=W25unTmO+RfycN1l8WT7ryXU9FBMgt7QOmIwLHM1iX69xrN9udUj/2TaLbbJqXBTRi
-         PJNgqYgQ76p9Iu3ygzYVoCl7hdEsCGBgG9u4R04ZWvUluliOKI3NhZNwfznVVmgJrMg3
-         0IeHjRhd9HfdX7tDDuHRaoMqlPe068WvI4S0T90rtjG9PyjrTW4E5Z9DCb90VA//mX88
-         4/UIO0iO+X3BHknO3LwiI+lEie2sWFl0NjQcwPoDvGlwdqAKZlu3h3+LyvKHbuZtZY7d
-         yG8vkLQTJgRRYfOqn48z2Py42wN4EtL0XhAmZOpGGJT68sofqv6gvMhyld4RemnfLSnM
-         g0QQ==
-X-Gm-Message-State: ABy/qLasU/fcRjrSLC9l5iUV7/7NIrLi69gd6mlaDiB8kqy/W3HFtBfz
-        XJfqJruz4wKDR4nP92hYC/U69D9lC+uvmQ==
-X-Google-Smtp-Source: APBJJlElEeLzNDkqVv5Ha6SmFKBNhkmPkkd9zzOFXmZaCX/hlW8q997P44WTi7zH3O0d0LBIVjpn2Q==
-X-Received: by 2002:a81:4602:0:b0:562:16d7:e6eb with SMTP id t2-20020a814602000000b0056216d7e6ebmr7561645ywa.40.1690271410776;
-        Tue, 25 Jul 2023 00:50:10 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id j187-20020a816ec4000000b0058038e6609csm3372000ywc.74.2023.07.25.00.50.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jul 2023 00:50:10 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-c5f98fc4237so4431004276.2;
-        Tue, 25 Jul 2023 00:50:10 -0700 (PDT)
-X-Received: by 2002:a25:dfc8:0:b0:d0d:cd30:3967 with SMTP id
- w191-20020a25dfc8000000b00d0dcd303967mr5769959ybg.51.1690271410365; Tue, 25
- Jul 2023 00:50:10 -0700 (PDT)
+        bh=f3YuZbvg+OCFvU708D8FTuMOoHLfL1FWWTkGies6dD4=;
+        b=VqcKTiXpU/LMzwefWmVT5wkquCvF4ssP9uZ28on234yOnyqrD3MYoESD75xBKbwy4Q
+         mEzFy5/9CbdqcFLbpQkS46iNgL0qG5gBrbM+q6q8nMfshboe5ndUbjDad+slc5j/tocx
+         usrgrpQBIdw9pAyjsnZWKTv4niS9iDmSBwJFp/nD0vdVZ6CPzz6s5yZmfjJXYL1t8LZi
+         pFiOZaUGLyNDq9DPns6OIOBBFDDqI7KhAJrgNvqqHeknK5AdKzaCUf36+vvXrE81fYN+
+         b/DWt8F8/psZ9YDMBVrgWxkm8oUgskgMYjOyNF/Q3X4KNHGPtlnhfKfLq3qG7bTefZCT
+         +sjw==
+X-Gm-Message-State: ABy/qLZP8QD/MEInyH7CjHVcCr5nPppDgsRynrEaFeyBAdbEyzurBZhy
+        dqvJvUMxnvY25l9zJLXzRxouxbsMHoSTz/zAoso=
+X-Google-Smtp-Source: APBJJlGzN2HplLtgv5Bdm/Cp2oTxtskZITNmsTRd7cf9Gf9BvTF2MGF8gF3zSDm4d3YkaRH1/OCCRA==
+X-Received: by 2002:adf:eed1:0:b0:315:9021:6dc3 with SMTP id a17-20020adfeed1000000b0031590216dc3mr8448722wrp.27.1690273414237;
+        Tue, 25 Jul 2023 01:23:34 -0700 (PDT)
+Received: from [127.0.1.1] ([82.78.74.213])
+        by smtp.gmail.com with ESMTPSA id q6-20020adff506000000b003141e629cb6sm15502308wro.101.2023.07.25.01.23.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 01:23:32 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <ac8bd50c41b84f244bb0ec94e8aed25c513c9037.1688760152.git.christophe.jaillet@wanadoo.fr>
+References: <ac8bd50c41b84f244bb0ec94e8aed25c513c9037.1688760152.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: imx: clk-gpr-mux: Simplify .determine_rate()
+Message-Id: <169027341205.2409621.151301055489452408.b4-ty@linaro.org>
+Date:   Tue, 25 Jul 2023 11:23:32 +0300
 MIME-Version: 1.0
-References: <a4a586337d692f0ca396b80d275ba634eb419593.1690058500.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a4a586337d692f0ca396b80d275ba634eb419593.1690058500.git.christophe.jaillet@wanadoo.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 25 Jul 2023 09:49:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW-Dp0TLixZMOcZfe9U05GKZY7S-wvNGCvzL=WVeZWeWw@mail.gmail.com>
-Message-ID: <CAMuHMdW-Dp0TLixZMOcZfe9U05GKZY7S-wvNGCvzL=WVeZWeWw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Use devm_clk_get_enabled() helper
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
 
-On Sat, Jul 22, 2023 at 10:42 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> The devm_clk_get_enabled() helper:
->    - calls devm_clk_get()
->    - calls clk_prepare_enable() and registers what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
->
-> This simplifies the code and avoids the need of a dedicated function used
-> with devm_add_action_or_reset().
->
-> While at it, use dev_err_probe() which filters -EPROBE_DEFER.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Fri, 07 Jul 2023 22:02:48 +0200, Christophe JAILLET wrote:
+> imx_clk_gpr_mux_determine_rate() is the same as __clk_mux_determine_rate(),
+> so use the latter to save some LoC.
+> 
+> 
 
-Thanks for your patch!
+Applied, thanks!
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -1471,11 +1471,6 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
->         return 0;
->  }
->
-> -static void rzg2l_pinctrl_clk_disable(void *data)
-> -{
-> -       clk_disable_unprepare(data);
-> -}
-> -
->  static int rzg2l_pinctrl_probe(struct platform_device *pdev)
->  {
->         struct rzg2l_pinctrl *pctrl;
-> @@ -1501,33 +1496,16 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
->         if (IS_ERR(pctrl->base))
->                 return PTR_ERR(pctrl->base);
->
-> -       pctrl->clk = devm_clk_get(pctrl->dev, NULL);
-> -       if (IS_ERR(pctrl->clk)) {
-> -               ret = PTR_ERR(pctrl->clk);
-> -               dev_err(pctrl->dev, "failed to get GPIO clk : %i\n", ret);
-> -               return ret;
-> -       }
-> +       pctrl->clk = devm_clk_get_enabled(pctrl->dev, NULL);
+[1/1] clk: imx: clk-gpr-mux: Simplify .determine_rate()
+      commit: 2deed4cda3b76bcb8be2533f5bd07803b1bfa452
 
-clk can become a local variable now.
-
-> +       if (IS_ERR(pctrl->clk))
-> +               return dev_err_probe(pctrl->dev, PTR_ERR(pctrl->clk),
-> +                                    "failed to get GPIO clk\n");
-
-failed to enable
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.6 with the above changes.
-No need to resend.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Abel Vesa <abel.vesa@linaro.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
