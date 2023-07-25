@@ -2,96 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFED8C41513
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 06:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08894C41513
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jul 2023 07:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231608AbjGYGvD (ORCPT
+        id S232658AbjGYHjR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 02:51:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58290 "EHLO
+        Tue, 25 Jul 2023 03:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjGYGvC (ORCPT
+        with ESMTP id S232659AbjGYHjA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 02:51:02 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55BEBD
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 23:51:00 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fbc244d384so42534855e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jul 2023 23:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690267859; x=1690872659;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/7YC6gNPnD4sPdY6yeSLuPXwpQ68htwMP3OyMhq17Qw=;
-        b=b5pyU0m3Xf8DtZUSpLNI5iWTtnR2JJRlLq1iYS83w/W8EiOdcfgsf/MSFvp9n/o4S9
-         vMNanaS/hwz7/UrzOHmHTHqTBK4DShBDSc7T3LAUyrbE2jiEmLnIaqLXIdWZAS9WTDsz
-         UbOmtmzeeHLVGMLImoDkHDD3uo4inDfHi4lrUSCaQXBB3C8TrHInXZVmsNx2rBYpml3K
-         DLoCy4g1woqdDNo6XY1CEAXBOtJLKlbS76jO/oUTRCIBQ577fXsMLwPUgmYLQ4Q253xH
-         2tTuRoKF5AIEqb0Bzm3t+MZ2n0hXFxCO85GsP0zGyEMyItTV1Qy34vGjCEN3+Fop/2Cs
-         8SAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690267859; x=1690872659;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/7YC6gNPnD4sPdY6yeSLuPXwpQ68htwMP3OyMhq17Qw=;
-        b=PURSNdh4QvgLPyu67nN8HcuiWmEBi9S5X30mhpL+hZ7fVUWJDxUwqofZO54RgHLG9W
-         u/tCcAJ+qu+iB6vs2hfwkYYctH0+P5CnA1WSKXeVfDtOQa9sMAU8nU0Awi/sN6NBHMSy
-         1mv9BzEnlNc1tap5SHkUcvKrbZdwQzsJTv//tZoIczmk+EWJdny7iYZwgsDmx40qJWlW
-         5nSr8CZQOdZYNb99kOEeM9kd/uk5WkPDVVdkki+N8/Iqxsb6VFpFa7a/80vb/cchptrJ
-         4buUTAuMC2wMX4kta+PuFJ+mhexxHLk1DWdUqxWjMhjYU7yQTac5WYEsHRAFsNaqFxoO
-         uX5g==
-X-Gm-Message-State: ABy/qLafV6F595Zf36XB3de8DuJXFO1OHQtRwX+dXJ+OJhOVsZo6DO+H
-        W4bwrWos9ZJZK6Bgizb/O/wSiA==
-X-Google-Smtp-Source: APBJJlHqNM99eb0ZHQXZM5f+65aTptDhOZEp2nsancdPfR1Rol7/vAlTqwOL6Py5w/39UVcsP6v7sA==
-X-Received: by 2002:adf:f591:0:b0:317:6efd:3a6b with SMTP id f17-20020adff591000000b003176efd3a6bmr199262wro.24.1690267859325;
-        Mon, 24 Jul 2023 23:50:59 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v1-20020a5d6781000000b0031434c08bb7sm15180817wru.105.2023.07.24.23.50.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 23:50:58 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 09:50:55 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Oleksij Rempel <linux@rempel-privat.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Tue, 25 Jul 2023 03:39:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7422F10C7
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Jul 2023 00:37:36 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOCat-0006PH-NY; Tue, 25 Jul 2023 09:36:31 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOCas-001wj7-JH; Tue, 25 Jul 2023 09:36:30 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOCar-007c0n-S5; Tue, 25 Jul 2023 09:36:29 +0200
+Date:   Tue, 25 Jul 2023 09:36:29 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Oleksij Rempel <linux@rempel-privat.de>,
         Andi Shyti <andi.shyti@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
+        kernel-janitors@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] i2c: imx: Clean up a call to request_irq()
-Message-ID: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: imx: Clean up a call to request_irq()
+Message-ID: <20230725073629.glwgv73guiqv2f7w@pengutronix.de>
+References: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s22cjwy7le2sfhm5"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is passing a NULL thread to request_threaded_irq().  So it's not
-really a threaded IRQ at all.  It's more readable to call request_irq()
-instead.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/i2c/busses/i2c-imx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--s22cjwy7le2sfhm5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index 65128a73e8a3..c0cac5bcfdd1 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -1506,8 +1506,7 @@ static int i2c_imx_probe(struct platform_device *pdev)
- 		goto rpm_disable;
- 
- 	/* Request IRQ */
--	ret = request_threaded_irq(irq, i2c_imx_isr, NULL, IRQF_SHARED,
--				   pdev->name, i2c_imx);
-+	ret = request_irq(irq, i2c_imx_isr, IRQF_SHARED, pdev->name, i2c_imx);
- 	if (ret) {
- 		dev_err(&pdev->dev, "can't claim irq %d\n", irq);
- 		goto rpm_disable;
--- 
-2.39.2
+Hello Dan,
 
+On Tue, Jul 25, 2023 at 09:50:55AM +0300, Dan Carpenter wrote:
+> This is passing a NULL thread to request_threaded_irq().  So it's not
+> really a threaded IRQ at all.  It's more readable to call request_irq()
+> instead.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 65128a73e8a3..c0cac5bcfdd1 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -1506,8 +1506,7 @@ static int i2c_imx_probe(struct platform_device *pd=
+ev)
+>  		goto rpm_disable;
+> =20
+>  	/* Request IRQ */
+> -	ret =3D request_threaded_irq(irq, i2c_imx_isr, NULL, IRQF_SHARED,
+> -				   pdev->name, i2c_imx);
+> +	ret =3D request_irq(irq, i2c_imx_isr, IRQF_SHARED, pdev->name, i2c_imx);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "can't claim irq %d\n", irq);
+>  		goto rpm_disable;
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+There are a few more drivers that could benefit from the same patch
+(i.e.=20
+	drivers/gpu/drm/bridge/samsung-dsim.c
+	drivers/iio/magnetometer/bmc150_magn.c
+	drivers/scsi/mpi3mr/mpi3mr_fw.c
+	drivers/spi/spi-fsl-dspi.c
+as of today's next).
+
+I assume you care for these, too?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--s22cjwy7le2sfhm5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmS/e3wACgkQj4D7WH0S
+/k7jawf9Fh31HX2ho78FVKyAnts8KfwkYL/GHmLhJLtd2ltsdkRLJIXFz5xuDnHV
+JV3tOk5PwJ29oQElzsWzdTYDmyz0T/QZTllvyNN0JnT6qDF2RYikHHRFCR0+AEUO
+gP2aSLgkhEUYYxjclrqzp2uthPe6KWDkn112B/f5cdd2gxFiIrxeMKVpQm3BQwKr
+Ck7o5siYDqSjBnKFKlVtrQQfhcB5Loo2egNX1BVWqkpvTet7TQ6Vy8Qqwv8sMqIs
+BHdMIdsRV728Qhb06wdsWWF4GaWSC3gz1GtDFq7yBA9kKnGxHCPTZbJlHvnWCuHR
+3R9POlfljaBx3GkzGkjoCZFyMLtQYw==
+=9CBn
+-----END PGP SIGNATURE-----
+
+--s22cjwy7le2sfhm5--
