@@ -2,104 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F39C41513
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 03:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2002C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 04:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjGZDAT (ORCPT
+        id S230154AbjGZEcS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jul 2023 23:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
+        Wed, 26 Jul 2023 00:32:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjGZDAS (ORCPT
+        with ESMTP id S229472AbjGZEcQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jul 2023 23:00:18 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604B5DD;
-        Tue, 25 Jul 2023 20:00:17 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36Q1wG3X004351;
-        Wed, 26 Jul 2023 03:00:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=TRhcpHmfH84VaKerw/NYkGhK9OkFCMUK2vCocw+fTt4=;
- b=dGqf1rD/mNg6+OJ018/3DphGELfN13IjwaKJRUi2pk6KC7PwBH4DO1HUJeNw9jVxbhay
- zusCKy6adMt11iXI+RlaJuS8bNWqpRc0vysBIRm4Os6mafPHaEv5XVBFI0Hk4TmgAKvR
- eapOFoQpF+ekJKoDLtk/h69jePS0Ac5On1+TstpbKD4i8CWjare6zO9egIS2Pr2xx8YS
- Kjbs8dAO/zSnk4OJ0Y1uz2NA1bcbTsUqxzx5WB5dhXlWirfxmkvXpZ+uz3ZGkXSCvTNr
- XKtGadC/rcfDwOiYrNwnQ43Okad832pCIgiC6Ndx/pT3W9e8lV/L4USfeGROJfxQzUQl ig== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s2gp1s9rw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jul 2023 03:00:12 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36Q30BZB016985
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jul 2023 03:00:11 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 25 Jul
- 2023 20:00:10 -0700
-Message-ID: <e457b416-3e63-0bae-0cd7-7788b43f30c1@quicinc.com>
-Date:   Tue, 25 Jul 2023 21:00:09 -0600
+        Wed, 26 Jul 2023 00:32:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5D6A0;
+        Tue, 25 Jul 2023 21:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uMDpXai9jnzcyG1+E1KFnjBJUtDKa0sU3l3aqJf5M+Q=; b=dGXA4NWGVTSoEmqk20tITHiyuE
+        lPYPO6433XZ4tnt3t48LsE+d/4VpNeS7oM84J6y+thfwX/XPYruwCi8vYRFHLt+GjDjCiHIw3MOf9
+        B21S3QCJnJSQVU4cmVrMA6Jwxia0nG8m3HOCU5rdRiQ6gG8soU8Qjqj6y1ihQKybMrEnsXy7uw3aa
+        oXjrcZqWY8VGbOpl7xebCsuPS5dZaIJp1WF6eVY2mca4sqyVVYH3Qi1HU8k9pMX8ZE1Qa7nutJJ21
+        vKLYSH4ku2imUu6ZYo8rdtqCTm83go7AEUCC1l8bmHLUIc2eqRqhsJg0vXj9KOvIgeUc85oxV/W6D
+        EOVARvtw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qOVr9-0069Nf-DF; Wed, 26 Jul 2023 04:10:35 +0000
+Date:   Wed, 26 Jul 2023 05:10:35 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] proc/vmcore: fix signedness bug in read_from_oldmem()
+Message-ID: <ZMCcu9KHh0uC2VFq@casper.infradead.org>
+References: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH][next] accel/qaic: remove redundant assignment to pointer
- pexec
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230725114037.36806-1-colin.i.king@gmail.com>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20230725114037.36806-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3MC3o76mhSwtPg4ThrG2kUqC93NvcWlF
-X-Proofpoint-ORIG-GUID: 3MC3o76mhSwtPg4ThrG2kUqC93NvcWlF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-25_14,2023-07-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 clxscore=1011 lowpriorityscore=0 bulkscore=0 phishscore=0
- malwarescore=0 spamscore=0 suspectscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307260024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/25/2023 5:40 AM, Colin Ian King wrote:
-> Pointer pexec is being assigned a value however it is never read. The
-> assignment is redundant and can be removed.
+On Tue, Jul 25, 2023 at 08:03:16PM +0300, Dan Carpenter wrote:
+> The bug is the error handling:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/accel/qaic/qaic_data.c | 1 -
->   1 file changed, 1 deletion(-)
+> 	if (tmp < nr_bytes) {
 > 
-> diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-> index e9a1cb779b30..8a6cb14f490e 100644
-> --- a/drivers/accel/qaic/qaic_data.c
-> +++ b/drivers/accel/qaic/qaic_data.c
-> @@ -1320,7 +1320,6 @@ static int __qaic_execute_bo_ioctl(struct drm_device *dev, void *data, struct dr
->   	user_data = u64_to_user_ptr(args->data);
->   
->   	exec = kcalloc(args->hdr.count, size, GFP_KERNEL);
-> -	pexec = (struct qaic_partial_execute_entry *)exec;
->   	if (!exec)
->   		return -ENOMEM;
->   
+> "tmp" can hold negative error codes but because "nr_bytes" is type
+> size_t the negative error codes are treated as very high positive
+> values (success).  Fix this by changing "nr_bytes" to type ssize_t.  The
+> "nr_bytes" variable is used to store values between 1 and PAGE_SIZE and
+> they can fit in ssize_t without any issue.
+> 
+> Fixes: 5d8de293c224 ("vmcore: convert copy_oldmem_page() to take an iov_iter")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-It does look like pexec is not used in this function after it was 
-refactored.  Shouldn't the declaration at the beginning of the function 
-also be removed?
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
