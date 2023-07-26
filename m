@@ -2,112 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A06CC001DE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 13:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31538C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 13:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbjGZNiO (ORCPT
+        id S233501AbjGZNpL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Jul 2023 09:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48512 "EHLO
+        Wed, 26 Jul 2023 09:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232483AbjGZNiM (ORCPT
+        with ESMTP id S231972AbjGZNpJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Jul 2023 09:38:12 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B480F118;
-        Wed, 26 Jul 2023 06:38:11 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36QCEbXL029223;
-        Wed, 26 Jul 2023 13:38:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=xr58Ttl/tZUIt/Rk6PYHYfdDG34LXOshnBUPuif6OfI=;
- b=NSuMPOS7BAsFYtk1ChGXugYPGq7CN+Qyk8bNuhD3EviojnhtvdirdiUohEN9MNcuCQ08
- hnZpdFc18kkQOqIbF/lQLXiv66c1Ih7xRtT1u+AHwajUOEftYHwAB47axL4pHbdE/DLL
- N9uRB4x46KftNGZA0kwJDJ1oiD9En6HYh3RahKtfXgO9ns+C0Y8HSduT4ikgLCiMNDh/
- yZdfixn2zLZlq37A39Z8rJQT0Om2rLpsVzo23lBM4tPQHwqg/jbeSujzvHqGwLzm7ZVS
- 0sS8RiC6j6bAcaIkmMxXiLiDLLNwof2ZrLbGzzW4j13IB2ayrLWkhsSQVE6Mnh2DGu3r qg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s2v4tgyvf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jul 2023 13:38:07 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36QDc6ZI003783
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jul 2023 13:38:06 GMT
-Received: from [10.50.21.246] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 26 Jul
- 2023 06:38:03 -0700
-Message-ID: <c0b314db-bd29-7211-2a70-667405eb5bd0@quicinc.com>
-Date:   Wed, 26 Jul 2023 19:08:00 +0530
+        Wed, 26 Jul 2023 09:45:09 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD8510F1
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 06:45:08 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fb4146e8fcso7487285e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 06:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690379107; x=1690983907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X+jNakEFn9/qqjzKn7/L12W7ZVHM0REFXJJ2LBBHm/A=;
+        b=BIS/JiSEFSOYQZGou5+nMQRArM5RskH/QvMHdJWTkiBXcXOAgNwvKiW/JV83QrMEWt
+         A/UywcbKi62gmHWcnZI8pgLNHf8ZEf/H1/UenaQ3SolJTi//Jp3dIW7SPvqzX1Bx4h19
+         6eYlVCGvvi/azEE9NUSQIip9rqwLXQBcU1z9LkIWrTUbLdSlzQB9G1EG6suUmGsdvrFq
+         8cjyuUmt44NqpjlACadFHrSh0pKuMXpewpomiIgxp81qteeopDEmb11iJClq4PVJHtEP
+         X49ViGDi8qE3Pdd99vhWgQxe4Cxh/ZC9n9OF+Drq0ax3SJYwsGiml/PgPxgjd1xSLgrH
+         uLOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690379107; x=1690983907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X+jNakEFn9/qqjzKn7/L12W7ZVHM0REFXJJ2LBBHm/A=;
+        b=FsmOOgMYA6DPzAVwTOU+FmeDLuITD9ZzH8qyZCgKtmna545aBtTg/91KFsY77VSzmB
+         McziNv8nwY45pPOkgtC8xrZ7SnHwdYOpPeRrU31i3EYlZA17fYmkO+MFx5O8NdkiR75C
+         po2tXudJ2FxO5BK1UBPDagZcnZiX2hg+gLfY0b1HWYrDgvU67gPln+2DXgQS/sH/7vPe
+         /G2kR5/0XfHMrHuEtzZMyiz+JIpSruQj6BfnIYf4Z1QXx2v6EfWo6OlJ4wRbmAIv8R9y
+         oZ5H5w42baLMRGfPOfDeZuu6+ZZwDEGE5TR8abLcKqmNy7bQe40hGxRCVFkd3snoCD3+
+         liMA==
+X-Gm-Message-State: ABy/qLZrTJwbnQUNFbk8Uki0oaM5eWqPbM6gbmLaKHeo6khr7PiUHcf4
+        AjVRFoV0cZuUfEaUACaXcO/p4g==
+X-Google-Smtp-Source: APBJJlEdRwll4HCrb/SrI25+SHD1gKHKIj224dpt2UqrDSHxNVeQQu//I0av4NRBnloADnXCvbdW3w==
+X-Received: by 2002:a7b:c40f:0:b0:3fb:f0b2:20eb with SMTP id k15-20020a7bc40f000000b003fbf0b220ebmr2109232wmi.1.1690379106266;
+        Wed, 26 Jul 2023 06:45:06 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l19-20020a1c7913000000b003fc07e17d4esm2071792wme.2.2023.07.26.06.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 06:45:05 -0700 (PDT)
+Date:   Wed, 26 Jul 2023 16:45:03 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Simon Horman <simon.horman@corigine.com>
+Cc:     Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, dccp@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] dccp: Allocate enough data in
+ ccid_get_builtin_ccids()
+Message-ID: <c962e03c-6091-483a-90f2-4db8afe5283a@kadam.mountain>
+References: <35ed2523-49ee-4e2b-b50d-38508f74f93f@moroto.mountain>
+ <ZMEX4VOYzz8IvRUQ@corigine.com>
+ <ZMEY9aPRSpiy+qie@corigine.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH][next] accel/qaic: remove redundant assignment to pointer
- pexec
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Carl Vanderlip <quic_carlv@quicinc.com>,
-        "Oded Gabbay" <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230725114037.36806-1-colin.i.king@gmail.com>
- <e457b416-3e63-0bae-0cd7-7788b43f30c1@quicinc.com>
-Content-Language: en-US
-From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
-In-Reply-To: <e457b416-3e63-0bae-0cd7-7788b43f30c1@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gNn-ja2ju0Xs11dqy647vzHtwKvYu086
-X-Proofpoint-GUID: gNn-ja2ju0Xs11dqy647vzHtwKvYu086
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-26_06,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 mlxscore=0 bulkscore=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
- phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2306200000 definitions=main-2307260120
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMEY9aPRSpiy+qie@corigine.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 7/26/2023 8:30 AM, Jeffrey Hugo wrote:
-> On 7/25/2023 5:40 AM, Colin Ian King wrote:
->> Pointer pexec is being assigned a value however it is never read. The
->> assignment is redundant and can be removed.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   drivers/accel/qaic/qaic_data.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/accel/qaic/qaic_data.c 
->> b/drivers/accel/qaic/qaic_data.c
->> index e9a1cb779b30..8a6cb14f490e 100644
->> --- a/drivers/accel/qaic/qaic_data.c
->> +++ b/drivers/accel/qaic/qaic_data.c
->> @@ -1320,7 +1320,6 @@ static int __qaic_execute_bo_ioctl(struct 
->> drm_device *dev, void *data, struct dr
->>       user_data = u64_to_user_ptr(args->data);
->>       exec = kcalloc(args->hdr.count, size, GFP_KERNEL);
->> -    pexec = (struct qaic_partial_execute_entry *)exec;
->>       if (!exec)
->>           return -ENOMEM;
+On Wed, Jul 26, 2023 at 03:00:37PM +0200, Simon Horman wrote:
+> On Wed, Jul 26, 2023 at 02:56:01PM +0200, Simon Horman wrote:
+> > On Wed, Jul 26, 2023 at 01:47:02PM +0300, Dan Carpenter wrote:
+> > > This is allocating the ARRAY_SIZE() instead of the number of bytes.  The
+> > > array size is 1 or 2 depending on the .config and it should allocate
+> > > 8 or 16 bytes instead.
+> > > 
+> > > Fixes: ddebc973c56b ("dccp: Lockless integration of CCID congestion-control plugins")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > 
+> > Reviewed-by: Simon Horman <simon.horman@corigine.com>
 > 
-> It does look like pexec is not used in this function after it was 
-> refactored.  Shouldn't the declaration at the beginning of the function 
-> also be removed?
+> Sorry, I was a bit hasty there.
+> 
+> > > --- a/net/dccp/ccid.c
+> > > +++ b/net/dccp/ccid.c
+> > > @@ -48,7 +48,8 @@ bool ccid_support_check(u8 const *ccid_array, u8 array_len)
+> > >   */
+> > >  int ccid_get_builtin_ccids(u8 **ccid_array, u8 *array_len)
+> > >  {
+> > > -       *ccid_array = kmalloc(ARRAY_SIZE(ccids), gfp_any());
+> > > +       *ccid_array = kmalloc_array(ARRAY_SIZE(ccids), sizeof(*ccid_array),
+> > > +                                   gfp_any());
+> 
+> The type of *ccid_array is u8.
+> But shouldn't this be something more like sizeof(struct ccid_operations)
+> or sizeof(ccids[0]) ?
 
-Yeah we should remove the declaration as well. Although it is used some 
-where to calculate its size i.e. sizeof(*pexec). We need to directly use 
-the type in sizeof() i.e. sizeof(struct qaic_partial_execute_entry).
+Aw crud.  Actually the code is fine isn't it.  I thought it was saving
+pointers but actually it's saving char.  *Embarrassing*.
+
+regards,
+dan carpenter
+
