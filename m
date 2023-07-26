@@ -2,96 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFCDC001B0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 16:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FDEC001DC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 19:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230312AbjGZQpa (ORCPT
+        id S231183AbjGZTQt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Jul 2023 12:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59682 "EHLO
+        Wed, 26 Jul 2023 15:16:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbjGZQp1 (ORCPT
+        with ESMTP id S229852AbjGZTQs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Jul 2023 12:45:27 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C8F02712;
-        Wed, 26 Jul 2023 09:45:26 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3174aac120aso3716153f8f.2;
-        Wed, 26 Jul 2023 09:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690389925; x=1690994725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyINUpaSQIyVJ5EZaqPGUzt+wHSb+xiB9GD+ZGRtpyo=;
-        b=ZIv6MvLgL/SspksBtDLx4z7qb77Gv29cz8ffslMueuLckTHAnIxd0aHL3dpeHfTEeJ
-         3MAkevbwQ5D5MnlkujwOdNBQZ//7VZW03LSVDJQjC+6v/5v7ZfVMG9piIUl49+N0MGtr
-         1pIObu8biaoH4+WfDUzXYsDVf6+Pzr+cNLfKh6K/p4Z6uFibUhLxzkOTUkPKm+v3Fr0q
-         A4dZjMwgWoP3D2jN9VzOyyQ4hkmstpPej3sCVVOCEZsH5m3ykEDu7ZsLzMo3hdQ0tuXU
-         oS6FzAoxT/tOw0CuQiZbQK7BMmFzrMcIaJdkBPDkjung++Qa9rFbaB3Jao7fgvlAJupL
-         91ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690389925; x=1690994725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RyINUpaSQIyVJ5EZaqPGUzt+wHSb+xiB9GD+ZGRtpyo=;
-        b=lhA0O7Xc8etDEmeKYh4Sl4eXYffLI4OcNHrnhyWriND6gajq7+asot9FFymOKXlg0x
-         sXfIcM6yMZmWsgtw+0Sk1cLhEnkwPtf9A5GtEWeHrZC0X3qeTzjYRZuOYAK5vCbSDPrP
-         IMaue/gVzyacGHzcOryAJaKpxctHETuAukQHt/FFp7hmwE9kT6P4B8E3LNt+id60lk5t
-         JslmFYE7lrUiqIGXRKJtvOjzvGgR1pM9jgo6CFYB3lV4ZMayE11WlU9j7ElRWmS4NbvV
-         TGeSW2zVDMv/SQUj8jD5wWC9jWtQMC1++uicS9XS7V5qfya2Cbty5mnrSoTGSa1vU3wU
-         yvWA==
-X-Gm-Message-State: ABy/qLb23gaBOk0eCtRl8kBv5NaAx9XuVnXw7OfmR0e0BtwX4DksvFoi
-        D7IysDilfkuUyKtG8clePZw=
-X-Google-Smtp-Source: APBJJlHVZ2wSIW+Wh2MzMPB0UbCn0yAmKqAxk1P/KDNshC1jdqCjWFnI7kHTaim05Oc3DvWD47lewA==
-X-Received: by 2002:a5d:4a0e:0:b0:317:60f0:41e7 with SMTP id m14-20020a5d4a0e000000b0031760f041e7mr1625695wrq.19.1690389924450;
-        Wed, 26 Jul 2023 09:45:24 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w16-20020adfec50000000b003143867d2ebsm20390617wrn.63.2023.07.26.09.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 09:45:23 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Wed, 26 Jul 2023 15:16:48 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A81C1FF0;
+        Wed, 26 Jul 2023 12:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1690398994; x=1691003794; i=linosanfilippo@gmx.de;
+ bh=XtJKEwl+cc1nQ+vurQl0d32oGbJP4QDV2yIvd7ZPqs0=;
+ h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=dplnZJIMnrIdh/gSEjhvNBNQsMptt4qN/OUF01q78qsYA0rW46BE/bLHokop0YWnVbjiPox
+ /XbRc1OZvJa4zZseDk0M4YHwD6jg47/zXs5rqQ0znSYx67LMh63d2ftK6o+zK7fNPQFoEON2X
+ YEdi9UlontscDa6heAa8E8/j4S3dLLWUzHI8r+oSfYroQNdiAVq09NCaw9nO9a1YY2PawCuMd
+ KOE6DqUT6PYS6w/zVbvY5Jiwf+a/fVFn70y8zHEOnMtlfuPkCwfWatLoSTRV9+VPIqzaIUAWx
+ oqKERFQWozTWA1tLK84m1/AB5gygPSymjVuv0pIUDT+L0RcYBuGw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.0.0.62] ([113.53.91.195]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MGz1f-1qcAGf1ZqN-00E2LQ; Wed, 26
+ Jul 2023 21:16:34 +0200
+Message-ID: <3f88771d-17df-fcf8-ef25-8813c6c754a9@gmx.de>
+Date:   Wed, 26 Jul 2023 21:16:30 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH][next] net: ethernet: slicoss: remove redundant increment
+ of pointer data
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: ethernet: slicoss: remove redundant increment of pointer data
-Date:   Wed, 26 Jul 2023 17:45:22 +0100
-Message-Id: <20230726164522.369206-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230726164522.369206-1-colin.i.king@gmail.com>
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+In-Reply-To: <20230726164522.369206-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AoC8OX8jnUVP4YKYXasQs7JkiMpGUGOGDMbE1u8ZVDQoJOJ17Bn
+ ilfbkpeYu+t3/Ck2FlxgjGaA0SiLOTLMD6TTGB/hShJUyEMUtJ7GAcmXOCOkd0rGxOcbb88
+ kcuOYYeyH2e8jcTgkn9Q5GJSu9P0U0Oruc+Nnq3XJkVFHlqkJOShhRgei3jTE8r2dUb+0q9
+ DAMgW5ugcqeOJUVKc7dpQ==
+UI-OutboundReport: notjunk:1;M01:P0:UOCVVL4dRLQ=;bNlu7v9O1dj5KH4akcoWPoKAb3+
+ gletTswkxhLgWgesVvdtVauYQiRsHwnsDU4VDxLLdHKD8KoFiG9a83xs/6tt5H7F1D6WrMAYZ
+ jvwqEdgdObMClNvlwO+5If/XuQg3Pyn1Iuv0LBZNO/C2oThIb4vNSQaOJ3cxeXvb2+AQagaYo
+ LyBMq/E703ohR3uldFVmmq59M+RkwtDmPYWSZELZxebiMGIawj8tBqoIiDXp1PG+jtcgxXI/J
+ vJoMzVXYU780i9etmHoy56G2SN7ijdsQtyQ/jWYnhiWGRpV+P/y5cT63Z6Y3BCSu3I/tLP5L2
+ 6UVGAkzJijF2MdEnp7oMwWiYOeTmFl1gt+4YElzIBSkAzLr/T/4jTAGj0lVbsBQFFJ+TWi7Pp
+ 3r0qlD5PoSFmwhpzr+6jPIL1SLvlUGmAP7bZJsWq7fnmbg/d9DEo1scsd05Re8wcIEgxnZ/Dl
+ xxNT2pMfCds5eU6oIkdfrxZibHks5f70rCQ4vP/Ngxb7GN91z5mzDSZHBHnyFbkyWWUR2u/bq
+ 6CoAmTk6VIBaKRhq0V9fJM6yXOFXcN4qtkiWkAIXJ9elJMpihdEOXSZD/MYHU7Y52rnhzJ15+
+ cII4uuM5MjgneY2y4ifx3VDj4PTBUFcLm8UYJJLcRd37bN7iBesgpiuBeGgRs8b7fn/vmb0VF
+ ROyv55KCW5Zmrr+go3ztNpWCTvWyYCyILPu/OmJOItXSdBa/7Zt3TA2S2ebpn3PzjCMkDU/Ya
+ ByLcXO22n3F2jW7RJMy8TrqCzHqm4Z6zShpFyk87VymoLXxdS5DWfddA3BBxF5SrLlftf8Wx/
+ eogtdhxk2goeDuDMlkQ7aNOdditbxAIrfNRitoTPe9wzM4gUPnvWTDbvmIak4Vi/Xrw+v6YDU
+ 0+8rSacfVgEmCiCDGBVG6DS3znyhrg+AzeI3kgYjuNPppnA3Umfsf3GwdtkjIfgCJAyMOTB4L
+ E+QgEXdQ2MQh3q15of04ps6cyR8=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer data is being incremented but this change to the pointer
-is not used afterwards. The increment is redundant and can be removed.
+Hi,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/alacritech/slicoss.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 26.07.23 18:45, Colin Ian King wrote:
+> The pointer data is being incremented but this change to the pointer
+> is not used afterwards. The increment is redundant and can be removed.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/alacritech/slicoss.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/eth=
+ernet/alacritech/slicoss.c
+> index a30d0f172986..78231c85234d 100644
+> --- a/drivers/net/ethernet/alacritech/slicoss.c
+> +++ b/drivers/net/ethernet/alacritech/slicoss.c
+> @@ -1520,10 +1520,8 @@ static void slic_get_ethtool_stats(struct net_dev=
+ice *dev,
+>
+>  static void slic_get_strings(struct net_device *dev, u32 stringset, u8 =
+*data)
+>  {
+> -	if (stringset =3D=3D ETH_SS_STATS) {
+> +	if (stringset =3D=3D ETH_SS_STATS)
+>  		memcpy(data, slic_stats_strings, sizeof(slic_stats_strings));
+> -		data +=3D sizeof(slic_stats_strings);
+> -	}
+>  }
+>
+>  static void slic_get_drvinfo(struct net_device *dev,
 
-diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
-index a30d0f172986..78231c85234d 100644
---- a/drivers/net/ethernet/alacritech/slicoss.c
-+++ b/drivers/net/ethernet/alacritech/slicoss.c
-@@ -1520,10 +1520,8 @@ static void slic_get_ethtool_stats(struct net_device *dev,
- 
- static void slic_get_strings(struct net_device *dev, u32 stringset, u8 *data)
- {
--	if (stringset == ETH_SS_STATS) {
-+	if (stringset == ETH_SS_STATS)
- 		memcpy(data, slic_stats_strings, sizeof(slic_stats_strings));
--		data += sizeof(slic_stats_strings);
--	}
- }
- 
- static void slic_get_drvinfo(struct net_device *dev,
--- 
-2.39.2
+FWIW
+Acked-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
 
+Best Regards,
+Lino
