@@ -2,95 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC94C0015E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 10:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C42C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 12:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233537AbjGZKrM (ORCPT
+        id S231929AbjGZM4N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Jul 2023 06:47:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37210 "EHLO
+        Wed, 26 Jul 2023 08:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231475AbjGZKrL (ORCPT
+        with ESMTP id S230229AbjGZM4M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Jul 2023 06:47:11 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E37C212F
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:47:08 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fc04692e20so65357585e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:47:08 -0700 (PDT)
+        Wed, 26 Jul 2023 08:56:12 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2135.outbound.protection.outlook.com [40.107.94.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B14B3DB;
+        Wed, 26 Jul 2023 05:56:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bDLpVFKzGZzZGQjCoR7qW4j8zYCV9cYfACxOANuc5hENK7sFixaarmhndAnReOH/KU0Ct31N20rfEvpVWt9zBrYJpL02yqpnA1FdMPooRbq/vi6sAu5MYPMSPVJ/FJe9nfUZCRodSsFTf1v81Ak+lvBimG5a5uPzqJjCztetZfl9nO6npLREm4nMQuAqGW5uEH8UXrNoSHi7+f85vPD1UxGd7U5hh/ziqsT/S3RP+BGXmD/lmyoUOamU/0yG/GQ3tJlCt2WzKxNFaPiw9rnph/WjHc6GpZVFZhsPYssA1wfXpjyUoSJN8XIJVH3ihViQOJitR7Q//uFGEWBsM8IYdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1qSNkdD970CPVl4w9gsVDOBW7bam6QIOQCQzYNZVte8=;
+ b=nmA5TQ0gp0UcYloutXwn/xXpx2+TFYpZtKxTRwxCWEyyJzyedSAl4g5tVqw5OBq5S43VUeHeNurOu8rQFQ4Sg6II2AzaRyFlTe/gTSh5y1Lqh4fXWiin0SYpoJUxIgflq75QTLG7812HoIn+m69N5KVHwdIFSaI/BFHkXJeKPZ+BvoKEpaQy5CA7Q7HwJ9QY/vA+7RtJ98Vx4i1OuwCxicGJz429cLDNNRMpr9XglrLme/W1blXm/8bPZitLyAj4WbvtV65c6GkTX56M6/AJINybSRHfYl2ygM2PWxKLYK8/qLsiYM/nO/GcKg5mrCTD+XvSLo3B3jxQ8H1NyxTjyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690368427; x=1690973227;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FPdomX7dp8TGU4MIOJN63VoiHSMVcog9K5D8a+5Yv00=;
-        b=F/K+3WcJUF0cJF24SmVrGpIDnoCnB1agb9ecevYPtDSHJXhTY0KwSLcwh44Z2MPb0V
-         7mCCNzUN4G9CKh22WnVS8Lj74mGPuGtlCClfh/tT+jieUa8s+NF2lVZpkAmgc/dbi+ro
-         x0YEEsXI72lSh4305HwUTjqB0qBJtG0L3aPGIP6xO//UCxvDl0pPerhAefRoUmdOLmlb
-         z6tp9acWjN/hMFIgZH3Hp0Cmqak/6Tlpv331Al30I3d3Gi338FcOOAlatB9nnOCmIuAT
-         GAVr87+hIIGrqYVRmY2ALWB0WfyyhAfXG2E9jySPaxOrrqLkWWwK6nx9v1iXkTB63Z2O
-         TOew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690368427; x=1690973227;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPdomX7dp8TGU4MIOJN63VoiHSMVcog9K5D8a+5Yv00=;
-        b=dpVsxjtKjyprk9xhRMlGab8MiMKoZ1Vy57S8bUCx69BTrIkOOhvJd19Rr9fI++R8zw
-         ta85ybgU3E1Q57QVvZoFHtmvHUVtLxGwxxQ4o9J55QOFKdTRj8S88/QT3wLB+/Tfn6hn
-         /zR9OXG1vxxg+MiIW7n/GdSTHAJpbN+5MfErOeEiT4RIbIukgF/3JdOjmfKCXj/erOT/
-         V36KOTNxT6KoDOcrIbNUYGCM00uKJIX123GUUMhdLAvFZkKdthFwta5SrsYVL4lKzOyQ
-         Oz6QgdN8+QThcUsTRTPXOKKYNiw34TdMyj02wXJilvtDRGIcdXKAFlbaYEuntn1bwH6F
-         H4MQ==
-X-Gm-Message-State: ABy/qLZt8HRDiD+uVS67aT7nasY57HDch90J70Nq/OrRBO5bRL64XG6n
-        iqMiZLeUkpGVKT/KMPkYt/JaLQ==
-X-Google-Smtp-Source: APBJJlEQzU/OChI2cfTtzLG73M1MUxSfhsDlw7ejnSoADvsiVZ5cfbJqWfp50XIZ2gZtpdV547+eTQ==
-X-Received: by 2002:a05:600c:294a:b0:3fc:5fa:e2a9 with SMTP id n10-20020a05600c294a00b003fc05fae2a9mr1102874wmd.41.1690368427054;
-        Wed, 26 Jul 2023 03:47:07 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u12-20020a7bcb0c000000b003fbc9b9699dsm1619645wmj.45.2023.07.26.03.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 03:47:06 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 13:47:02 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1qSNkdD970CPVl4w9gsVDOBW7bam6QIOQCQzYNZVte8=;
+ b=FVhhLP4MJUBVT/eB4JBXDh3W48HqGESIukKRqWMg9LYJdHT/3OhaVXKqUSQVkugCuYuT/ShLi2CCOOcvtWsARWd4qfg6B13zU4IP7KKpb8Ds4KuGDAVlXbwWeFpqXgwhniSy3WEjYvqYfle7//C/hYXEKRFxCi7rIaqoC1riHMU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by CH0PR13MB4633.namprd13.prod.outlook.com (2603:10b6:610:ca::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29; Wed, 26 Jul
+ 2023 12:56:07 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::fde7:9821:f2d9:101d]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::fde7:9821:f2d9:101d%7]) with mapi id 15.20.6609.032; Wed, 26 Jul 2023
+ 12:56:07 +0000
+Date:   Wed, 26 Jul 2023 14:56:01 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, dccp@vger.kernel.org,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] dccp: Allocate enough data in ccid_get_builtin_ccids()
-Message-ID: <35ed2523-49ee-4e2b-b50d-38508f74f93f@moroto.mountain>
-MIME-Version: 1.0
+Subject: Re: [PATCH net] dccp: Allocate enough data in
+ ccid_get_builtin_ccids()
+Message-ID: <ZMEX4VOYzz8IvRUQ@corigine.com>
+References: <35ed2523-49ee-4e2b-b50d-38508f74f93f@moroto.mountain>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <35ed2523-49ee-4e2b-b50d-38508f74f93f@moroto.mountain>
+X-ClientProxiedBy: AS4PR09CA0004.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5e0::10) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|CH0PR13MB4633:EE_
+X-MS-Office365-Filtering-Correlation-Id: 489db9e3-dc0e-44f6-7f1b-08db8dd7adc7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lt1R473Dw9FpnDSOOOw2/FpDFO98AcAmNeHrOViRUqjq0HHcIRhgy11Z398PTxn1F7e0dFKIdT5durCJib0TmHYgNG0JBjZy+AKqsJCOeYRLsNxPanPTYuGNCiVdnKNU+DCyiRD9EfwXA3n78scoc9ryTM46Xd7a7p65uzgoix1V5kNIxLIRwr/kJ9ta56xQOapf48djea63Ni0CZ2gewdEQh659F7hCcY7LJ/e+HAEJStZFqfTlk6727OwPbNIOg/s7WJNIQGe9yQ/gs/mKGJZvB8uRo8jBV9xocs092iC/ayzrP3RZ2p+d9ZW7NIvkOrkw3guw5dtfjZkHZUrEhTKsXYyM2IBUwGz0MQlBWH1hiMtv+UDXMD+/nmhQGHcesYnh/bD5n0iynqhM0hxnZqzAbTAd1IqarxlLV0x5IjRnYq9RvHYNqaHyg7f5Yh2rzMr+E85weD+veYT4n71+XhypeiYOoSCBQlQYIwWo8gB4e49mqopgPJBFzLxUcjPUwIYjX6M4fKI/SQ7yIMXPWPzRAA1VKHOzy31hgg+qeiq2pWNhv3LxWrJcNdtHVEQjxa1B14SN0mJJlQQM8H+omzb3nWvhOhIRGaodT7yetgM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(396003)(346002)(136003)(376002)(39850400004)(451199021)(4744005)(2906002)(41300700001)(316002)(44832011)(5660300002)(8676002)(8936002)(36756003)(86362001)(6512007)(6506007)(478600001)(6666004)(6486002)(83380400001)(186003)(2616005)(66946007)(6916009)(66476007)(66556008)(4326008)(38100700002)(54906003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VNHuYfoHjpgxxVChnEWUNDq9sHq6ajHTz2yO2bzwSbJ9E3+AAv55pwYABPcg?=
+ =?us-ascii?Q?T0kHu30YA9xEwvS3N1Eh8yeUXy1ZBgo3cnJVlngpeU5PPQYDUVitiis4kQPX?=
+ =?us-ascii?Q?5erS4xYNJ7AbX2wih1inzfkOdWTQJ4Fss86Zw7yX5kQgZYS5SYnazDPqGdKE?=
+ =?us-ascii?Q?p+0xMNZWd3x912RU+63zTK6KZoerqJMp8UucSqihrQm+tshZ2/MCxlwmpueL?=
+ =?us-ascii?Q?O8jwJYU3UKogDjuZk7np2bYyxmbYE3eQxkRG74XQVKT/gK4VdK+ZBpRCCSCH?=
+ =?us-ascii?Q?SJ6X5bJ+o50BwfUEKNRIklis6KqtmpMLTmOqB+VgyV6gBiX0swikfsQw+Ru2?=
+ =?us-ascii?Q?W2uwJ42ufmOIjg7pg6lhGt/TZW/XJUsU5MfjRwZ8XFlXuogCDo12irKpZIN8?=
+ =?us-ascii?Q?pQs07J7/8nXdLfxDqlvhCCr03aYIuHGQ4YFw1i9Le0n3/Hntht0Pl2upKQ7Q?=
+ =?us-ascii?Q?BW634iuaqpskBWKjBcAkcokLfrS4u4gnri2Vbc7R+/UGmuCfwBs6K1ockQAU?=
+ =?us-ascii?Q?2bcegiAmNTxHK60D9fSwUsZ8M/vNxyxfqK2rfJ47sALRV7iIpj8Ih62TJ3+G?=
+ =?us-ascii?Q?ggzEHkJlryFfZRNXdtgeXSekZs53TJieW/d8Pnt08rgWT243co7DOCZXAUDo?=
+ =?us-ascii?Q?ni10yBqjfbwXpYnGDyQ87WXtw3RtAq+syQhtWwAxNj56R+1NLQDcwfifijCl?=
+ =?us-ascii?Q?i8wJSINSE4SVciqwUAWD6H+sCggGZ7CP/9fN1dYULqdt8vGvr9phs4mbIxAn?=
+ =?us-ascii?Q?KtT4bQD53ewzlAqTOvdZqgIMkh8nim0AyATNm2mBPeqPbq7E6fFTXrla9LAd?=
+ =?us-ascii?Q?lMlI4FLC9bU95+ewtI3QUAGM5Ky05SLhf/yaIsyTYX7jAwFD/rOjmkaPqptP?=
+ =?us-ascii?Q?1OWA0Q83wrrbEM3pwXMiJi2Q2fi3otYi1tmZq+BJs8VtNWK4ERbkAAV8Fyri?=
+ =?us-ascii?Q?+IX89y/9PtJbHyqfJYIP/mNKnVbPHHSYgJsEMHamm5XyAh91fKsO7v52fpsR?=
+ =?us-ascii?Q?vOVYscs1acB+glTBMIhfpuNyapIY9bcVjN5pfmBK3GZMl8rEw3Jtson/xUKg?=
+ =?us-ascii?Q?rKh8XwhkfZnAIDORYimsFa8sB5aTstYRNVkwyS/3FnJ31XBEBmHAmJZAGMp3?=
+ =?us-ascii?Q?2lDBPmA5++VGwI6Vapp8AIMyyRMl+ZbnLKuYB95j6gaz09BJ1ov7dK27MD/A?=
+ =?us-ascii?Q?YH2WZhjunaf8eSS7TuI8w4630oCr7W723lK2GMnkSL3AlDS9pYsgcMXqUHX2?=
+ =?us-ascii?Q?hG2KMXlJt5H0nS9sneLhTWfplWMn6eNMOsocXPL7XPrCGGdr3VOWrParrIGZ?=
+ =?us-ascii?Q?3ozJ8/wFLoQ6J3FpbDv3ES9VSXFSVNR0BuNliTCWFrC7NAAvopQiLeCNu4Vh?=
+ =?us-ascii?Q?LYEP5fAOJCtdyp6yvW6qMZCZoXeUI4nQEndAwGPEZQvmapacir+wlwTvU5lh?=
+ =?us-ascii?Q?Sf0cdTvS7TcHpmsiX7J0bsm4ENNBh0difQ4z3j/h+EwIrLZyS88hTkUd8VqD?=
+ =?us-ascii?Q?K1kCzj0RIe9Ekrl1DwZzHJbycVotYJIwFhhTWidibCOTCAM8Ce4q1vPgVdLE?=
+ =?us-ascii?Q?cdJ5w7INGXyxIPlvRAnZR7eHhMf7XIEwVq6PwAPOTxPmMyyAziPk6vbf9lg2?=
+ =?us-ascii?Q?ZYJ12zv9k3ynfNOU2CGMK9RqmtWPV82Pgg7up9BCAPrMWRPUTpSTpz/LbLy5?=
+ =?us-ascii?Q?VcdGXQ=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 489db9e3-dc0e-44f6-7f1b-08db8dd7adc7
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 12:56:07.7705
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GEUzmeOCtLAQdG3nFsv9ZmtsrF1nWBy325dWSTEN8TnvoOHv5XLPSbhjBJmmia7j0LIIWtaQPWmtmYxMmrFhzHJu6ACXW/h4TF4Yv+i+UQ0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR13MB4633
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is allocating the ARRAY_SIZE() instead of the number of bytes.  The
-array size is 1 or 2 depending on the .config and it should allocate
-8 or 16 bytes instead.
+On Wed, Jul 26, 2023 at 01:47:02PM +0300, Dan Carpenter wrote:
+> This is allocating the ARRAY_SIZE() instead of the number of bytes.  The
+> array size is 1 or 2 depending on the .config and it should allocate
+> 8 or 16 bytes instead.
+> 
+> Fixes: ddebc973c56b ("dccp: Lockless integration of CCID congestion-control plugins")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: ddebc973c56b ("dccp: Lockless integration of CCID congestion-control plugins")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/dccp/ccid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/dccp/ccid.c b/net/dccp/ccid.c
-index 6beac5d348e2..9067958d3857 100644
---- a/net/dccp/ccid.c
-+++ b/net/dccp/ccid.c
-@@ -48,7 +48,8 @@ bool ccid_support_check(u8 const *ccid_array, u8 array_len)
-  */
- int ccid_get_builtin_ccids(u8 **ccid_array, u8 *array_len)
- {
--	*ccid_array = kmalloc(ARRAY_SIZE(ccids), gfp_any());
-+	*ccid_array = kmalloc_array(ARRAY_SIZE(ccids), sizeof(*ccid_array),
-+				    gfp_any());
- 	if (*ccid_array == NULL)
- 		return -ENOBUFS;
- 
--- 
-2.39.2
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
