@@ -2,132 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8883AC001DE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 10:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC94C0015E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Jul 2023 10:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbjGZKaQ (ORCPT
+        id S233537AbjGZKrM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Jul 2023 06:30:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56478 "EHLO
+        Wed, 26 Jul 2023 06:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232127AbjGZKaO (ORCPT
+        with ESMTP id S231475AbjGZKrL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Jul 2023 06:30:14 -0400
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE522129
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:30:12 -0700 (PDT)
-Received: by mail-vk1-xa2e.google.com with SMTP id 71dfb90a1353d-4864b490e2dso320478e0c.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:30:12 -0700 (PDT)
+        Wed, 26 Jul 2023 06:47:11 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E37C212F
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:47:08 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fc04692e20so65357585e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 03:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google; t=1690367411; x=1690972211;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CTp3lWOa4enqnnJtPatmpsbCOMEyt2QR5UoDl0egg08=;
-        b=U53wjrNbnX2OBR176Yur6xYn3E/JYdgMSR+16BeKehlz0f5fhbA4/Eg+atl6iREs1s
-         3hd1bGwS0oYOzjB09zMamrTE4lmrgLW5QinZEx0HkqXXHB6+U0DeoMK4QtsOMtoslD42
-         1m2x7JeviSkT+6a0DDmtk3352V5vC2zODwSo0=
+        d=linaro.org; s=google; t=1690368427; x=1690973227;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FPdomX7dp8TGU4MIOJN63VoiHSMVcog9K5D8a+5Yv00=;
+        b=F/K+3WcJUF0cJF24SmVrGpIDnoCnB1agb9ecevYPtDSHJXhTY0KwSLcwh44Z2MPb0V
+         7mCCNzUN4G9CKh22WnVS8Lj74mGPuGtlCClfh/tT+jieUa8s+NF2lVZpkAmgc/dbi+ro
+         x0YEEsXI72lSh4305HwUTjqB0qBJtG0L3aPGIP6xO//UCxvDl0pPerhAefRoUmdOLmlb
+         z6tp9acWjN/hMFIgZH3Hp0Cmqak/6Tlpv331Al30I3d3Gi338FcOOAlatB9nnOCmIuAT
+         GAVr87+hIIGrqYVRmY2ALWB0WfyyhAfXG2E9jySPaxOrrqLkWWwK6nx9v1iXkTB63Z2O
+         TOew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690367411; x=1690972211;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1690368427; x=1690973227;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTp3lWOa4enqnnJtPatmpsbCOMEyt2QR5UoDl0egg08=;
-        b=gkfhOn3yIK2wzNhCNQiXaShMXVXGtihR9bFqwasSHrCAK25Jc161cw/HJNrnYu5b8L
-         Ge9MHrcUjNqP663OfenOmeHlNVzVvGfSqt4EXisVAVpe5tUXMTkfgyxqBEvKfkrNhBcM
-         +o39NB/2dTrnWbUCDI5RyZlkgwNaM/OOTJCiQ8+CnAKyjF8aSkP0rZTPF7XAa4Ni4iWS
-         P2Kwc9Qmch5Gk4pr1F6nEpA8Ur9wh/+aRbkUPaGPnkq/ucCcqxUZVt7Woe8sV5JpCD4p
-         d7SCQ5+HYOLOK5dtyMQ7S4caUkprwjlr/eyggKGeZoVpXuzAQDXj9UE2x+EPXOy5x5mZ
-         M1dA==
-X-Gm-Message-State: ABy/qLaLuCRSoBKK8GtlKLI4IsJyFAD2Le1y20ICWbCNKiMS1+yEwpKx
-        FVJ6aVgkwE413rhieJ51lJUqMA==
-X-Google-Smtp-Source: APBJJlHQAi72WGV2GbGe8wvaVLOW245nW2auiZg9IEQZ6jnW7cUxgb+TrfgWpmozA/5rJdkpi3JzsQ==
-X-Received: by 2002:a1f:4ac4:0:b0:46e:7558:a45c with SMTP id x187-20020a1f4ac4000000b0046e7558a45cmr836922vka.8.1690367411455;
-        Wed, 26 Jul 2023 03:30:11 -0700 (PDT)
-Received: from debian.debian ([140.141.197.139])
-        by smtp.gmail.com with ESMTPSA id h9-20020a0cab09000000b0063019b482f8sm1479020qvb.85.2023.07.26.03.30.09
+        bh=FPdomX7dp8TGU4MIOJN63VoiHSMVcog9K5D8a+5Yv00=;
+        b=dpVsxjtKjyprk9xhRMlGab8MiMKoZ1Vy57S8bUCx69BTrIkOOhvJd19Rr9fI++R8zw
+         ta85ybgU3E1Q57QVvZoFHtmvHUVtLxGwxxQ4o9J55QOFKdTRj8S88/QT3wLB+/Tfn6hn
+         /zR9OXG1vxxg+MiIW7n/GdSTHAJpbN+5MfErOeEiT4RIbIukgF/3JdOjmfKCXj/erOT/
+         V36KOTNxT6KoDOcrIbNUYGCM00uKJIX123GUUMhdLAvFZkKdthFwta5SrsYVL4lKzOyQ
+         Oz6QgdN8+QThcUsTRTPXOKKYNiw34TdMyj02wXJilvtDRGIcdXKAFlbaYEuntn1bwH6F
+         H4MQ==
+X-Gm-Message-State: ABy/qLZt8HRDiD+uVS67aT7nasY57HDch90J70Nq/OrRBO5bRL64XG6n
+        iqMiZLeUkpGVKT/KMPkYt/JaLQ==
+X-Google-Smtp-Source: APBJJlEQzU/OChI2cfTtzLG73M1MUxSfhsDlw7ejnSoADvsiVZ5cfbJqWfp50XIZ2gZtpdV547+eTQ==
+X-Received: by 2002:a05:600c:294a:b0:3fc:5fa:e2a9 with SMTP id n10-20020a05600c294a00b003fc05fae2a9mr1102874wmd.41.1690368427054;
+        Wed, 26 Jul 2023 03:47:07 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id u12-20020a7bcb0c000000b003fbc9b9699dsm1619645wmj.45.2023.07.26.03.47.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 03:30:10 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 03:30:08 -0700
-From:   Yan Zhai <yan@cloudflare.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>,
+        Wed, 26 Jul 2023 03:47:06 -0700 (PDT)
+Date:   Wed, 26 Jul 2023 13:47:02 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Cc:     "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Hao Luo <haoluo@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jordan Griege <jgriege@cloudflare.com>,
-        KP Singh <kpsingh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Mykola Lysenko <mykolal@fb.com>,
-        Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Song Liu <song@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Yonghong Song <yhs@fb.com>, bpf@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, kernel-team@cloudflare.com,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v4 bpf 2/2] bpf: selftests: add lwt redirect regression
- test cases
-Message-ID: <ZMD1sFTW8SFiex+x@debian.debian>
-References: <cover.1690332693.git.yan@cloudflare.com>
- <9c4896b109a39c3fa088844addaa1737a84bbbb5.1690332693.git.yan@cloudflare.com>
- <3ec61192-c65c-62cc-d073-d6111b08e690@web.de>
- <CAO3-PbraNcfQnqHUG_992vssuA795RxtexYsMdEo=k9zp-XHog@mail.gmail.com>
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, dccp@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] dccp: Allocate enough data in ccid_get_builtin_ccids()
+Message-ID: <35ed2523-49ee-4e2b-b50d-38508f74f93f@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO3-PbraNcfQnqHUG_992vssuA795RxtexYsMdEo=k9zp-XHog@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Apologize for sending previous mail from a wrong app (not text mode).
-Resending to keep the mailing list thread consistent.
+This is allocating the ARRAY_SIZE() instead of the number of bytes.  The
+array size is 1 or 2 depending on the .config and it should allocate
+8 or 16 bytes instead.
 
-On Wed, Jul 26, 2023 at 3:10 AM Markus Elfring <Markus.Elfring@web.de>
-wrote:
->
-> > Tests BPF redirect at the lwt xmit hook to ensure error handling are
-> > safe, i.e. won't panic the kernel.
->
-> Are imperative change descriptions still preferred?
+Fixes: ddebc973c56b ("dccp: Lockless integration of CCID congestion-control plugins")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/dccp/ccid.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/net/dccp/ccid.c b/net/dccp/ccid.c
+index 6beac5d348e2..9067958d3857 100644
+--- a/net/dccp/ccid.c
++++ b/net/dccp/ccid.c
+@@ -48,7 +48,8 @@ bool ccid_support_check(u8 const *ccid_array, u8 array_len)
+  */
+ int ccid_get_builtin_ccids(u8 **ccid_array, u8 *array_len)
+ {
+-	*ccid_array = kmalloc(ARRAY_SIZE(ccids), gfp_any());
++	*ccid_array = kmalloc_array(ARRAY_SIZE(ccids), sizeof(*ccid_array),
++				    gfp_any());
+ 	if (*ccid_array == NULL)
+ 		return -ENOBUFS;
+ 
+-- 
+2.39.2
 
-Hi Markus,
-
-   I think you linked this to me yesterday that it should be described
-imperatively:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc3#n155
-
-
->
-> See also:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc3#n94
->
-
-I don’t follow the purpose of this reference. This points to user impact
-but this is a selftest, so I don’t see any user impact here. Or is there
-anything I missed?
-
-
->
-> Can remaining wording weaknesses be adjusted accordingly?
-
-
-I am not following this question . Can you be more specific or provide an
-example?
-
-Yan
-
-
->
-> Regards,
-> Markus
->
