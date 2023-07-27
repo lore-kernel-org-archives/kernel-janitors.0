@@ -2,94 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA00C0015E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 15:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC35FC0015E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 15:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234261AbjG0PBq (ORCPT
+        id S234460AbjG0PRj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Jul 2023 11:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
+        Thu, 27 Jul 2023 11:17:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233921AbjG0PBb (ORCPT
+        with ESMTP id S232667AbjG0PRi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Jul 2023 11:01:31 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19453A8D;
-        Thu, 27 Jul 2023 08:01:20 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3177f520802so650511f8f.1;
-        Thu, 27 Jul 2023 08:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690470079; x=1691074879;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvCF/eVSd9hmC6XYT4T1ezXatK3iLtpGtg715fOf/58=;
-        b=k/z3jAdPty8pr9RV96/kIt05tsIb/2SPKBH9mAzqzaRfV9MPcKGLKBafnlPqZSR39w
-         OEx99Gybqta70dIZrmZVYVmqe/xlIQMgtiwufYvjIhyFL+/wX74CkwpI7FlI27c0e49J
-         f+ZqfM7sbc4UpartBigQf0/+AQaj9Wt+/FI9zBWDzKLQqJM4b5c/QOyqUcIl7e+mHIei
-         M20V2oR9bBtjSPrl+ReDNM/Bgm8tLf40OJQiDhPnQ4hovaOileJKCxFq2fSJ4MGobcjI
-         jbZP0J+wpxWElP8XSyWkXeAE0Qmr0yidt4TXZbF9TpHjDTVRfM9wJKhlAhB8ZPhaIeEJ
-         t6cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690470079; x=1691074879;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvCF/eVSd9hmC6XYT4T1ezXatK3iLtpGtg715fOf/58=;
-        b=Uh70v7P9+s0mh5rREm7YbOU7xdCFSWIXQi2eIZpZppi4pBOJg8sygLqgJ/I7aWng20
-         s8E/OnbPkg12Gf/j1VRbcgaQ80fJx1uONHnM+Ch7yLkuOUGlpLCibXE0OzK+O/wf0EMB
-         zUPfHkj5z9z/HQyH41rUsH20/E+dekTiOxjpaywOtBnvzNnjQ9f1KVb2l+PJLTgwtvt0
-         7u3Vsp0+oW79j+8sR+4a7/f+TyuURoEQ+y3utY1Gmi37Kn4fuh50bNcPyP/OBagMe8oC
-         SYdIDy3twcZEepoNSSdZahKxTSyUKMR90nSjE9PaG2kxxvWTg1kjju/CGAdMwRnKlGg+
-         cv+w==
-X-Gm-Message-State: ABy/qLY6gpFlr63j3Hv87Ubn0YdFRfFGWzroGBbRps4DGNd8O5ZxeGNV
-        YQinTuWK/MpC+Zevl1w7knE=
-X-Google-Smtp-Source: APBJJlGU86bx5VqRAOWDKiY5phwY7+ucGmhvWfqzAJmocNr9VtQu4SXGlFXWERSQXKnGtxkMe5+ADw==
-X-Received: by 2002:a05:6000:108e:b0:313:e20c:b90b with SMTP id y14-20020a056000108e00b00313e20cb90bmr2071747wrw.26.1690470078949;
-        Thu, 27 Jul 2023 08:01:18 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d4-20020adfe884000000b003144b95e1ecsm2280938wrm.93.2023.07.27.08.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 08:01:18 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Daniel Bristot de Oliveira <bristot@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andreas Schwab <schwab@suse.de>,
-        linux-trace-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rtla: Fix uninitialized variable found
-Date:   Thu, 27 Jul 2023 16:01:17 +0100
-Message-Id: <20230727150117.627730-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 27 Jul 2023 11:17:38 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA4619A4;
+        Thu, 27 Jul 2023 08:17:36 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 92A40FF806;
+        Thu, 27 Jul 2023 15:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1690471054;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cHbaHQtfSw85aARKWOfMOyJNz803y9RsTzGIH1lyXFk=;
+        b=jXTAISrKKe3dhaln7MEYli7ghpFwp9K+yvsgPutbOyG2nK3AGrcdai6FGEkmEiFiF2CiPt
+        ZmkYOSewHY/YTILZ8cAeD2f2L6k5aKJ3xQwtkcTtUH1C3Yg4tfYkP60EwCUvUM+2X8tZyF
+        0mPl4XL7Ngn4Hg7pyeuGZJSjC1N3PNnV5SC8sM7XdQ0OTXLEXWZQUroZzpHiO7W8khG07n
+        wOVg+Ys20sa3i21vRCv06W1eQZkzoWtvcOmV9KR+u3fGCWqytpMkKxJ1qhPfnZtugl/mzU
+        4O0uetdzmI5JJi85Zf6Z4Tg47RpYPjMOacQWDiXql5OZENTcVMgdqVeN2VOKIg==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: rawnand: fsl_upm: Fix an off-by one test in fun_exec_op()
+Date:   Thu, 27 Jul 2023 17:17:31 +0200
+Message-Id: <20230727151731.586307-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <cd01cba1c7eda58bdabaae174c78c067325803d2.1689803636.git.christophe.jaillet@wanadoo.fr>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'c6abce60338aa2080973cd95be0aedad528bb41f'
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable found is not being initialized, in the case where the desired
-mount is not found the variable contains garbage. Fix this by initializing
-it to zero.
+On Wed, 2023-07-19 at 21:55:01 UTC, Christophe JAILLET wrote:
+> 'op-cs' is copied in 'fun->mchip_number' which is used to access the
+> 'mchip_offsets' and the 'rnb_gpio' arrays.
+> These arrays have NAND_MAX_CHIPS elements, so the index must be below this
+> limit.
+> 
+> Fix the sanity check in order to avoid the NAND_MAX_CHIPS value. This
+> would lead to out-of-bound accesses.
+> 
+> Fixes: 54309d657767 ("mtd: rawnand: fsl_upm: Implement exec_op()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: a957cbc02531 ("rtla: Add -C cgroup support")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/tracing/rtla/src/utils.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
-diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
-index 623a38908ed5..c769d7b3842c 100644
---- a/tools/tracing/rtla/src/utils.c
-+++ b/tools/tracing/rtla/src/utils.c
-@@ -538,7 +538,7 @@ static const int find_mount(const char *fs, char *mp, int sizeof_mp)
- {
- 	char mount_point[MAX_PATH];
- 	char type[100];
--	int found;
-+	int found = 0;
- 	FILE *fp;
- 
- 	fp = fopen("/proc/mounts", "r");
--- 
-2.39.2
-
+Miquel
