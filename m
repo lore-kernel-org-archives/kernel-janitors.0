@@ -2,94 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066A3C0015E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 17:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC619C41513
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 17:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232523AbjG0RPo (ORCPT
+        id S232319AbjG0RkU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Jul 2023 13:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46202 "EHLO
+        Thu, 27 Jul 2023 13:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232796AbjG0RPa (ORCPT
+        with ESMTP id S232172AbjG0RkM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:15:30 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E17135AB;
-        Thu, 27 Jul 2023 10:15:23 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so12869795e9.1;
-        Thu, 27 Jul 2023 10:15:22 -0700 (PDT)
+        Thu, 27 Jul 2023 13:40:12 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE9BD9;
+        Thu, 27 Jul 2023 10:40:11 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fc0aecf15bso13801255e9.1;
+        Thu, 27 Jul 2023 10:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690478121; x=1691082921;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ul81gbrbgkGKJ2+qFPiiqGnP9CzSuQLVLhrE7rAfXM=;
-        b=bE/jTuPbGDIJ5QQpYTdUKCr/g5ows59oesotT1Ng35PuTPYcSlO9SXTPRv+lRrG8tw
-         yHRIHc5Jw4StnWp49Bb1bhfF/mRr6mVTrMGO9qTQniFh+6ObS/W+nIrq5V6hMZKbiccY
-         pMiRLuZxmqnKHOl8y3FkafozWCqAsOutHw+DEiY7DIXnsteRXp9S7UzUlMjL/3avM/sA
-         i5Bx4NFTKe7xcS6u/PMkUQljRE0mtiW+N6cQDfDAROzFxNuQKhnnGJfuFY6NjgyZI0J9
-         pTiyCEinRo2UJvX/QveUqi0/KEE75uE0UJn2eUVSw5UIcO4Mdy+HHj9Zv5W+StL5m2ob
-         /DYQ==
+        d=gmail.com; s=20221208; t=1690479610; x=1691084410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vm0hSF63AJjNABtvNsjawRxsPZnGdoadnD63dXFyEDM=;
+        b=Ff2d1S0oErgHRpjDgvPd5pgl+pv8TT24oUFTO0FDFso5x+0BX2ZijGrgNwNXnCvzsI
+         QlPCFCav09nxJB7Ds9PGNv2IdfTTza8CVrqc7xb42bOputCRiSc6J1D2S0zgPRhvuruc
+         jSgKb6nM9koO5S2oZjCjKykH+qS4cdEqRWvZ4gRwNnOpuJF6roTm7VK+mxVBIJnvzTlH
+         3sLmtvCWB0+Muy1IL3jvx8lgfF21PIlLHeen/JO9RqNAeToeg1ypykVMvcft48sRrP1B
+         MJLFX6/kEI/MN+grpINzG/+1T2BNe9rySrR2MwbF7ltgAs9zfGKBIz5RR+313tSZQQQk
+         Jzjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690478121; x=1691082921;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ul81gbrbgkGKJ2+qFPiiqGnP9CzSuQLVLhrE7rAfXM=;
-        b=htcOD9lisGoQ08n388lZYeWdgIES54SRehblJZIp2VgloN75Nw1ccHGjIlBiV5eZ5Q
-         4yv3b9T6dJnuCRoZGHb6X+HBk3d+Z+7DjP2ulR/1MpgCuSMTuW/IlWn70qYzT6cZLxQa
-         MG+6HxcdHOsRxmw/155fyZoaJDGJrHS5ATacIAyvrSkuQujOy7iJkykT31PgjNHe8peM
-         LygAaD/tn1hT2o0rhXWOmOrFtGpVzeYIB7/VtjwjZX4WwoOllcY/f7PCn6CUmgOxzLbq
-         z6pighe/w9QWx38J9JC7z+PPM9v/+RAXANcfza6dWzIatZRNhx9l/JBnX0f9aa32+x93
-         zNcw==
-X-Gm-Message-State: ABy/qLZ0OofOngdFSu0r7yefwvRVokvQobRqJpUyuqaQoXbuhwZh6ojX
-        HEKbP+987pK1N2unbvLg5Jg=
-X-Google-Smtp-Source: APBJJlFfalNKGeBlyDEyCqk1kwpmohtze5EH9xcacpd1iXxviatja8R6TvIKwmchLUCoLZU6GSqTLg==
-X-Received: by 2002:a05:600c:241:b0:3f8:f6fe:26bf with SMTP id 1-20020a05600c024100b003f8f6fe26bfmr2061603wmj.12.1690478121131;
-        Thu, 27 Jul 2023 10:15:21 -0700 (PDT)
-Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id z15-20020a05600c114f00b003fbb5506e54sm2279020wmz.29.2023.07.27.10.15.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 10:15:20 -0700 (PDT)
-Message-ID: <64213517-099b-e5a7-6cf3-2f78fa59ee99@gmail.com>
-Date:   Thu, 27 Jul 2023 18:15:19 +0100
+        d=1e100.net; s=20221208; t=1690479610; x=1691084410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vm0hSF63AJjNABtvNsjawRxsPZnGdoadnD63dXFyEDM=;
+        b=lPxlSQeDjoQ/awmG2o4pPwY2hxL2C41pW4jTYBKbpWoIawUp9AU3oI/D96rffGdArN
+         3rGRgR2WcfV4HMOHEWGhocPmwu9Y+d1gowHw1RL+DJN79YDuW5pI8cNUPvf6wULv/M5q
+         5IdF7wyVtWVc7V76pzQZIZ+ypl3ObauCEqoP0sxeTDvDPTAdjjcH8XjAiuDAnSClGoMD
+         ZzXB2za4WVbu6ZyOiaw5PZq9pTqu319mAVvamM0wBhe+KVbnYby2mRqWHTzyefWguR5u
+         tUxWZwINJryHivtZU0DYUSBTHqxsVdT8PBL25vTTl9E+UQjeGWjaNeWYn7JeSgaj0FV2
+         olaw==
+X-Gm-Message-State: ABy/qLZ6z4OjstzKO0OJOh+1nJwezLdbQJk8HuITcZ+7jTIATEHDTjEN
+        fuf066YX1iG/jNiOZLWWn0EwpQh7qP79BQ==
+X-Google-Smtp-Source: APBJJlHc2w6sCUiG+DIW9ehHlUyBy4YgfHUYrF3BYticU2IXTL8gQsGe1A0YAEzh5iTKl8d1WM4Rwg==
+X-Received: by 2002:a05:600c:3789:b0:3fb:fa61:a4ea with SMTP id o9-20020a05600c378900b003fbfa61a4eamr2276514wmr.11.1690479609421;
+        Thu, 27 Jul 2023 10:40:09 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o12-20020a05600c378c00b003fc0062f0f8sm2400003wmr.9.2023.07.27.10.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jul 2023 10:40:08 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@suse.de>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] [media] go7007: Remove redundant if statement
+Date:   Thu, 27 Jul 2023 18:40:07 +0100
+Message-Id: <20230727174007.635572-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH next] net: ethernet: slicoss: remove redundant increment
- of pointer data
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <20230726164522.369206-1-colin.i.king@gmail.com>
- <662ebbd2-b780-167d-ce57-cde1af636399@web.de>
-From:   "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <662ebbd2-b780-167d-ce57-cde1af636399@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 26/07/2023 21:05, Markus Elfring wrote:
->> The pointer data is being incremented but this change to the pointer
->> is not used afterwards. The increment is redundant and can be removed.
-> 
-> Are imperative change descriptions still preferred?
+The if statement that compares msgs[i].len != 3 is always false because
+it is in a code block where msg[i].len is equal to 3. The check is
+redundant and can be removed.
 
-Hrm, I've used this style of commit message for a few thousand commits, 
-I hope it's still fine.
+As detected by cppcheck static analysis:
+drivers/media/usb/go7007/go7007-i2c.c:168:20: warning: Opposite inner
+'if' condition leads to a dead code block. [oppositeInnerCondition]
 
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc3#n94
-> 
-> Regards,
-> Markus
+Fixes: 866b8695d67e ("Staging: add the go7007 video driver")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/usb/go7007/go7007-i2c.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/media/usb/go7007/go7007-i2c.c b/drivers/media/usb/go7007/go7007-i2c.c
+index 38339dd2f83f..2880370e45c8 100644
+--- a/drivers/media/usb/go7007/go7007-i2c.c
++++ b/drivers/media/usb/go7007/go7007-i2c.c
+@@ -165,8 +165,6 @@ static int go7007_i2c_master_xfer(struct i2c_adapter *adapter,
+ 		} else if (msgs[i].len == 3) {
+ 			if (msgs[i].flags & I2C_M_RD)
+ 				return -EIO;
+-			if (msgs[i].len != 3)
+-				return -EIO;
+ 			if (go7007_i2c_xfer(go, msgs[i].addr, 0,
+ 					(msgs[i].buf[0] << 8) | msgs[i].buf[1],
+ 					0x01, &msgs[i].buf[2]) < 0)
+-- 
+2.39.2
 
