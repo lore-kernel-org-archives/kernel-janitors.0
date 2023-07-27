@@ -2,55 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BE3C001DE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 02:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EF6C41513
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 05:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbjG0CsJ convert rfc822-to-8bit (ORCPT
+        id S231599AbjG0FUZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Jul 2023 22:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51656 "EHLO
+        Thu, 27 Jul 2023 01:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjG0CsI (ORCPT
+        with ESMTP id S230110AbjG0FUX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Jul 2023 22:48:08 -0400
-X-Greylist: delayed 481 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 26 Jul 2023 19:48:07 PDT
-Received: from postman.megadata.net.id (postman.megadata.net.id [103.105.52.228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23855100
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jul 2023 19:48:06 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by postman.megadata.net.id (Postfix) with ESMTP id D12E0405A9C44
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Jul 2023 09:39:38 +0700 (WIB)
-Received: from postman.megadata.net.id ([127.0.0.1])
-        by localhost (postman.megadata.net.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 71_lj1OMxABC for <kernel-janitors@vger.kernel.org>;
-        Thu, 27 Jul 2023 09:39:38 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by postman.megadata.net.id (Postfix) with ESMTP id AD8C1405A9C49
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Jul 2023 09:39:38 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at megadata.net.id
-Received: from postman.megadata.net.id ([127.0.0.1])
-        by localhost (postman.megadata.net.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LW7XYiW1lj7d for <kernel-janitors@vger.kernel.org>;
-        Thu, 27 Jul 2023 09:39:38 +0700 (WIB)
-Received: from [93.95.27.74] (gateway [10.0.1.7])
-        by postman.megadata.net.id (Postfix) with ESMTPSA id 01546405A9C44
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Jul 2023 09:39:37 +0700 (WIB)
-Reply-To: Maurice.Ozark@hotmail.com
-From:   Maurice <mrharukikei@gmail.com>
-To:     kernel-janitors@vger.kernel.org
-Subject: Attention !!
-Date:   26 Jul 2023 19:40:00 -0700
-Message-ID: <20230726131907.3C5812F946E269C2@gmail.com>
+        Thu, 27 Jul 2023 01:20:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A6C26AE;
+        Wed, 26 Jul 2023 22:20:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 332B561D3D;
+        Thu, 27 Jul 2023 05:20:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8DD98C43395;
+        Thu, 27 Jul 2023 05:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690435221;
+        bh=dqWE7kL20TM0ajSkADbtWBdNsFCoPOpsIVvBxz80qaE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ZWm4nA0yKSaa/mrbdXqmvI1T+nTKrj0Tihv6EQSoAnwAX9yBjMcv8cOOyr3cqOIWW
+         c+syc6ZYWYXbWw642iAhbsMBe3icrPpw6Ujr3Xlh4lKV0sZBCDGjvfUA5f2CH7hKF+
+         guVK5pHfaC0Q8+n1FGnKQBvxA01oxTUg9/g0rjtIXzZdxWRFPGU2Pwz4wi9JO09Nlb
+         vP0asVVwx3WPmzRtTNJzRlLmp/qu3nlztD67uKCmI2aI9HTsXhWUQ7IKGR5iut33tq
+         bBcEZOXV0gd4yEMRKMp+swHfnN1iFUdLw4AIb96K0XTLNN1dHO69ty6mOCNKInv9Ym
+         rlpgjhQgajzYQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 75951C595D0;
+        Thu, 27 Jul 2023 05:20:21 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net/mlx4: clean up a type issue
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169043522147.2558.18006094227407431264.git-patchwork-notify@kernel.org>
+Date:   Thu, 27 Jul 2023 05:20:21 +0000
+References: <52d0814a-7287-4160-94b5-ac7939ac61c6@moroto.mountain>
+In-Reply-To: <52d0814a-7287-4160-94b5-ac7939ac61c6@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     tariqt@nvidia.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Attention,
-I am Maurice Ozark. I have emailed you earlier on, but without 
-any response I will wait to hear from you.
+Hello:
 
-Thank you.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 25 Jul 2023 08:39:47 +0300 you wrote:
+> These functions returns type bool, not pointers, so return false instead
+> of NULL.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Not a bug.  Targetting net-next.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net/mlx4: clean up a type issue
+    https://git.kernel.org/netdev/net-next/c/bc758ade6145
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
