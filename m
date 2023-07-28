@@ -2,98 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC619C41513
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Jul 2023 17:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FF4C001E0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jul 2023 08:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbjG0RkU (ORCPT
+        id S234585AbjG1IPD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Jul 2023 13:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37370 "EHLO
+        Fri, 28 Jul 2023 04:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232172AbjG0RkM (ORCPT
+        with ESMTP id S234572AbjG1IPC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:40:12 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE9BD9;
-        Thu, 27 Jul 2023 10:40:11 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fc0aecf15bso13801255e9.1;
-        Thu, 27 Jul 2023 10:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690479610; x=1691084410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vm0hSF63AJjNABtvNsjawRxsPZnGdoadnD63dXFyEDM=;
-        b=Ff2d1S0oErgHRpjDgvPd5pgl+pv8TT24oUFTO0FDFso5x+0BX2ZijGrgNwNXnCvzsI
-         QlPCFCav09nxJB7Ds9PGNv2IdfTTza8CVrqc7xb42bOputCRiSc6J1D2S0zgPRhvuruc
-         jSgKb6nM9koO5S2oZjCjKykH+qS4cdEqRWvZ4gRwNnOpuJF6roTm7VK+mxVBIJnvzTlH
-         3sLmtvCWB0+Muy1IL3jvx8lgfF21PIlLHeen/JO9RqNAeToeg1ypykVMvcft48sRrP1B
-         MJLFX6/kEI/MN+grpINzG/+1T2BNe9rySrR2MwbF7ltgAs9zfGKBIz5RR+313tSZQQQk
-         Jzjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690479610; x=1691084410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vm0hSF63AJjNABtvNsjawRxsPZnGdoadnD63dXFyEDM=;
-        b=lPxlSQeDjoQ/awmG2o4pPwY2hxL2C41pW4jTYBKbpWoIawUp9AU3oI/D96rffGdArN
-         3rGRgR2WcfV4HMOHEWGhocPmwu9Y+d1gowHw1RL+DJN79YDuW5pI8cNUPvf6wULv/M5q
-         5IdF7wyVtWVc7V76pzQZIZ+ypl3ObauCEqoP0sxeTDvDPTAdjjcH8XjAiuDAnSClGoMD
-         ZzXB2za4WVbu6ZyOiaw5PZq9pTqu319mAVvamM0wBhe+KVbnYby2mRqWHTzyefWguR5u
-         tUxWZwINJryHivtZU0DYUSBTHqxsVdT8PBL25vTTl9E+UQjeGWjaNeWYn7JeSgaj0FV2
-         olaw==
-X-Gm-Message-State: ABy/qLZ6z4OjstzKO0OJOh+1nJwezLdbQJk8HuITcZ+7jTIATEHDTjEN
-        fuf066YX1iG/jNiOZLWWn0EwpQh7qP79BQ==
-X-Google-Smtp-Source: APBJJlHc2w6sCUiG+DIW9ehHlUyBy4YgfHUYrF3BYticU2IXTL8gQsGe1A0YAEzh5iTKl8d1WM4Rwg==
-X-Received: by 2002:a05:600c:3789:b0:3fb:fa61:a4ea with SMTP id o9-20020a05600c378900b003fbfa61a4eamr2276514wmr.11.1690479609421;
-        Thu, 27 Jul 2023 10:40:09 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o12-20020a05600c378c00b003fc0062f0f8sm2400003wmr.9.2023.07.27.10.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 10:40:08 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@suse.de>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] [media] go7007: Remove redundant if statement
-Date:   Thu, 27 Jul 2023 18:40:07 +0100
-Message-Id: <20230727174007.635572-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 28 Jul 2023 04:15:02 -0400
+X-Greylist: delayed 485 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 28 Jul 2023 01:15:01 PDT
+Received: from mail.alsdel.com (mail.alsdel.com [135.125.191.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6115FE0
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Jul 2023 01:15:01 -0700 (PDT)
+Received: by mail.alsdel.com (Postfix, from userid 1002)
+        id 014F9487B8; Fri, 28 Jul 2023 08:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=alsdel.com; s=mail;
+        t=1690531550; bh=CAYDwZmm9N5ZiJT6ScYnRcZJNRz0YmzbvUPtJS3sV08=;
+        h=Date:From:To:Subject:From;
+        b=oo7+t9XXF2a8JZqDMA5cJFOqJyzoKmWfvClzdCUjJb0W6FtdjhIebxuze26vjt+nQ
+         IdTS4uERhvbSBDSjE0m+5L9g5RRnsbNp1PB/21J9VYefYqYzSZYrnLCsGLaRH42kjj
+         Ox0HsNGJzfm9DiMSoT+1ogDa/Jpea/2ouFNkhFLruRCojblmw//uQtnfAoBJlsFxYK
+         RJC2MXygmOGEGMDvL9i4wE1HOLKs25PZ7AiUvmS8aJm1lJhs0rL68FPreSqdaGaxAt
+         ki479UG9BuNNOKdRdWNo1L76jqtM3j+dMzrMJtZPNNGRjCGMkWN86tiPf/AB6cRT1A
+         VucKvEP4tWhGw==
+Received: by alsdel.com for <kernel-janitors@vger.kernel.org>; Fri, 28 Jul 2023 08:05:43 GMT
+Message-ID: <20230728064520-0.1.1h.7x9w.0.zo151mvmde@alsdel.com>
+Date:   Fri, 28 Jul 2023 08:05:43 GMT
+From:   "Marek Brzyski" <marek.brzyski@alsdel.com>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: =?UTF-8?Q?Magazyny_do_wynaj=C4=99cia_w_Twoim_regionie?=
+X-Mailer: mail.alsdel.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The if statement that compares msgs[i].len != 3 is always false because
-it is in a code block where msg[i].len is equal to 3. The check is
-redundant and can be removed.
+Dzie=C5=84 dobry,
 
-As detected by cppcheck static analysis:
-drivers/media/usb/go7007/go7007-i2c.c:168:20: warning: Opposite inner
-'if' condition leads to a dead code block. [oppositeInnerCondition]
+mamy dla Pa=C5=84stwa do zaoferowania wynajem powierzchni magazynowo-prod=
+ukcyjnej z dost=C4=99pnymi modu=C5=82ami od 3 500 mkw na konkurencyjnych =
+warunkach.
 
-Fixes: 866b8695d67e ("Staging: add the go7007 video driver")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/usb/go7007/go7007-i2c.c | 2 --
- 1 file changed, 2 deletions(-)
+Oddajemy najemcom do u=C5=BCytku park magazynowo-produkcyjny z wyj=C4=85t=
+kowo atrakcyjn=C4=85 lokalizacj=C4=85 (zar=C3=B3wno dla pracownik=C3=B3w,=
+ jak i Klient=C3=B3w) - przy g=C5=82=C3=B3wnych szlakach komunikacyjnych,=
+ z dogodnym dojazdem do dr=C3=B3g krajowych, odpowiedniej infrastruktury =
+oraz komunikacji miejskiej.
 
-diff --git a/drivers/media/usb/go7007/go7007-i2c.c b/drivers/media/usb/go7007/go7007-i2c.c
-index 38339dd2f83f..2880370e45c8 100644
---- a/drivers/media/usb/go7007/go7007-i2c.c
-+++ b/drivers/media/usb/go7007/go7007-i2c.c
-@@ -165,8 +165,6 @@ static int go7007_i2c_master_xfer(struct i2c_adapter *adapter,
- 		} else if (msgs[i].len == 3) {
- 			if (msgs[i].flags & I2C_M_RD)
- 				return -EIO;
--			if (msgs[i].len != 3)
--				return -EIO;
- 			if (go7007_i2c_xfer(go, msgs[i].addr, 0,
- 					(msgs[i].buf[0] << 8) | msgs[i].buf[1],
- 					0x01, &msgs[i].buf[2]) < 0)
--- 
-2.39.2
+Dzi=C4=99ki wykorzystaniu nowoczesnych standard=C3=B3w technicznych i pro=
+ ekologicznych mog=C4=85 Pa=C5=84stwo wygenerowa=C4=87 oszcz=C4=99dno=C5=9B=
+ci w zu=C5=BCyciu energii si=C4=99gaj=C4=85ce nawet kilkudziesi=C4=99ciu =
+procent.
 
+Chc=C4=85 Pa=C5=84stwo pozna=C4=87 dost=C4=99pne opcje?
+
+
+Pozdrawiam serdecznie
+Marek Brzyski
+Sales Manager
