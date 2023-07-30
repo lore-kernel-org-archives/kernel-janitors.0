@@ -2,70 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13365C001DE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jul 2023 07:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD400C001DE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jul 2023 07:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjG3HKz (ORCPT
+        id S229684AbjG3H45 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Jul 2023 03:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53362 "EHLO
+        Sun, 30 Jul 2023 03:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbjG3HKx (ORCPT
+        with ESMTP id S229505AbjG3H44 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Jul 2023 03:10:53 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13441FE0;
-        Sun, 30 Jul 2023 00:10:51 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3174aac120aso3230428f8f.2;
-        Sun, 30 Jul 2023 00:10:51 -0700 (PDT)
+        Sun, 30 Jul 2023 03:56:56 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17DF81710;
+        Sun, 30 Jul 2023 00:56:55 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-307d58b3efbso3116942f8f.0;
+        Sun, 30 Jul 2023 00:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690701050; x=1691305850;
+        d=gmail.com; s=20221208; t=1690703813; x=1691308613;
         h=content-transfer-encoding:mime-version:user-agent:message-id
          :in-reply-to:date:references:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=W+NY0+aVddXBDHRK3qT5EharoS+L/NL2W3fL10wSPAY=;
-        b=R4H6jzWsmXCfNh6MpHMpVXaZOLf7Q6oiwwG1Ey0kcBs/lr78DS65NX6rTySESBOmUx
-         7Yd2QqJpWvN/xrOz6UksOwXcoXGhZ5SxzeyEdPSSvfnVofLERmq1clCDurh83upWaxvc
-         RMCIwecEYbDFe3UWbXkzhG6rndUxLERzZLYdR283NUEipv8NvcrGllLPntPFq2fntsuC
-         gbsValCiDoA5Y459eqHMmzQD6SudC03+g8fpBGiQbY5GXSEFlh0SY81t6z+T9/eXH5t0
-         VCX7Ni3NEaXA3s9APeUaTIuQSg3AmFXZMxwPB6DcoPkltyCEHxSoyfejt1uEl7sX9aCy
-         Wc+Q==
+        bh=ljAWSPp6JJ09C5xCBdCnvI6g5oU9J+7I9JqocYaYKqA=;
+        b=Ymj/7uyGVQibhRQBLidaLFD+e7fjfaZr6exwNzLg2Irynk6KI26u9GsjADX/ScEdQc
+         6I8ApCWoDBd7urof4krmXzsS5CxaHgSu7GABVQ4u7W/YxGwEQO3EhqGyEZ57wuqTe6Y1
+         INVcL1Jm1i3aYxMxLS2wLAZD7lP4GAohauDD6hSgCIJxEl9N99Z74IFRxVSNs9McB1PK
+         1qkfYtoO4coYO/oJqYoV7+HbxE48wUxo2EhJnWoBKk1PbXy70Y1pGeJal5qTZvaYJ2TU
+         x+VTLN0GiQqp1/Jm6fgu5rbf4VL3Xz3O2dcbmmPf1+tALvpbfz62i2nvQlL+KwXTB+k0
+         EYQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690701050; x=1691305850;
+        d=1e100.net; s=20221208; t=1690703813; x=1691308613;
         h=content-transfer-encoding:mime-version:user-agent:message-id
          :in-reply-to:date:references:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=W+NY0+aVddXBDHRK3qT5EharoS+L/NL2W3fL10wSPAY=;
-        b=OzOvcNok8qxl8VpSj7N1n7yGCAkmFhHQkAb2O/DL/whNcrF+KtJrOGZ2mW14ZdtO27
-         DLEGITwlD31fneCThiSpgFb4Hz9LG5IJ+OGFpTq9bLJcAjU6z24Ur6j3LNtYbqIDg7vp
-         TxsiKFMu5tsX2+1EcG6JsoJ140X5+D5WW0hVFAf0bXLWIaDpDivoo3EwaaicrhX7IJuF
-         2TecKOHSbhP/FlMBaFTMhjdXCNJKc7OKYyK9K4mDEJcw+7d2f4Q9JEAq8YajmatGkl5K
-         3nyAT1mhm7bM/r5vQvDEnRzJ5p1pbHPITApBIK6k7qMnc8/5Y5Qp9zOz0iKgE19CQdHY
-         JdbQ==
-X-Gm-Message-State: ABy/qLbGV3AF0pTELPyfdtUiW52EYmf4kQbsa7ZcXHAK0iExGxJq8Tmu
-        t/27z5QIoSAcNT/kgmHLc9I=
-X-Google-Smtp-Source: APBJJlHwFDZQycIf2BZm5lmHW0tlntCTcmXEBB9Puo1NhJUwPNVgd0U6ESck881MpBiKRN21vRCHcg==
-X-Received: by 2002:adf:dd50:0:b0:314:1d53:f3aa with SMTP id u16-20020adfdd50000000b003141d53f3aamr4512393wrm.50.1690701049916;
-        Sun, 30 Jul 2023 00:10:49 -0700 (PDT)
+        bh=ljAWSPp6JJ09C5xCBdCnvI6g5oU9J+7I9JqocYaYKqA=;
+        b=JHg6s4V+chDKCO69SSd345tcBVTVvuHziiEN0Dd7ijSNLtHP/Y9Uhmr2C8gbiv+Hac
+         PQTwmaeYJpJujELhlvlt8dYUjI3yZdw0QkGLAPqbkez0ud8qSt1quD0Mt178IawvEmOe
+         J9OEKcOW0OwfmA7JX//tQ5nfURjwxDu4FivMKXxFejAECv55BI+4FyJWMFNkNLVD462q
+         FxIHJvlclNnPNPuz+3wm6LEgW1Z9MzrMUfeFAtPqOeAJmP4uDSro6NkwfEiJOhINNYYP
+         9hGGFmD9aowU2YQO3Inqi0WfIm3WsRuD9/2lnjG+KK2cdurlioBteh5hq57qn2AurZph
+         7pXg==
+X-Gm-Message-State: ABy/qLaE0Y1wVPdCUFPyemd9CGuUOLkZayM2VkSIdVjYkgNedqUbCku0
+        tV+G5tmHmE8UPZURD/vDOC4=
+X-Google-Smtp-Source: APBJJlGv0f6nuOou/FpZ5rQzl4uCcO+8Rgy/FaK67a0h0/nWVMmFqwBkHaupjAuBKvck+byxHIwGjg==
+X-Received: by 2002:adf:fd47:0:b0:317:2574:c2b1 with SMTP id h7-20020adffd47000000b003172574c2b1mr2432840wrs.30.1690703813369;
+        Sun, 30 Jul 2023 00:56:53 -0700 (PDT)
 Received: from torreasustufgamingpro (209.pool90-77-130.dynamic.orange.es. [90.77.130.209])
-        by smtp.gmail.com with ESMTPSA id l10-20020a5d410a000000b00317495f88fasm9218605wrp.112.2023.07.30.00.10.49
+        by smtp.gmail.com with ESMTPSA id l17-20020a5d6691000000b0031779e82414sm9342368wru.79.2023.07.30.00.56.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jul 2023 00:10:49 -0700 (PDT)
+        Sun, 30 Jul 2023 00:56:52 -0700 (PDT)
 From:   =?utf-8?Q?Oscar_Megia_L=C3=B3pez?= <megia.oscar@gmail.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Dan Carpenter <error27@gmail.com>
 Subject: Re: Contributing subsequent patch versions
 References: <877cqlmdpg.fsf@gmail.com>
         <8ef54195-4102-0c6c-e14d-efc9bc45cddc@web.de> <877cqk5zdt.fsf@gmail.com>
         <61a79836-3981-b6e0-cbbf-fe03507dbea4@web.de> <87tttnhohp.fsf@gmail.com>
-        <20230728195959.GB607743@mit.edu>
-Date:   Sun, 30 Jul 2023 09:10:48 +0200
-In-Reply-To: <20230728195959.GB607743@mit.edu> (Theodore Ts'o's message of
-        "Fri, 28 Jul 2023 15:59:59 -0400")
-Message-ID: <87pm49nabr.fsf@gmail.com>
+        <27a41740-9cdd-2adf-f3cc-1f9a2d9f2ed1@web.de>
+Date:   Sun, 30 Jul 2023 09:56:51 +0200
+In-Reply-To: <27a41740-9cdd-2adf-f3cc-1f9a2d9f2ed1@web.de> (Markus Elfring's
+        message of "Sat, 29 Jul 2023 07:34:47 +0200")
+Message-ID: <87leexn870.fsf@gmail.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -74,40 +73,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+Markus Elfring <Markus.Elfring@web.de> writes:
 
-> On Fri, Jul 28, 2023 at 08:36:50PM +0200, Oscar Megia L=C3=B3pez wrote:
->> I don't know correct steps to send patch's v2 as above instance. Sorry,
->> but I need step by step instructions, if not I think that I can make
->> mistakes and I don't want. Sorry, but my experience says that is very
->> easy make mistakes when I am newbie.
+>> Sorry, but my experience says that is very easy make mistakes
+>> when I am newbie.
 >
-> We all make mistakes; don't worry about it!  This includes myself,
-> which is why I often will run:
+> Which kind of errors would you like to produce if you would become
+> an =E2=80=9Cexpert=E2=80=9D (like a system tester) in additional areas?
 >
->       git format-patch -o /tmp/p -5
->
-> <then examine the patches in /tmp/p very carefully to make sure they make=
- sense>
->
-> before I run
->
->        git send-email /tmp/e --to linux-<subsystem>
->
-> where I have a bunch of aliases in ~/.mail_aliases, e.g.:
->
-...
+> Regards,
+> Markus
 
-Thank you very much Ted for your help and your time. I really appreciate
-it.
+I don't know, but what I've observed during my years working in IT is
+that I come up with tests that no one else does. This way I find bugs
+that no one else finds.
 
-I apologize for my doubts, but I've always been told that I'm
-different because I doubt everything. Sometimes is good and sometimes is
-not good.
+For example, I forked the project https://github.com/pixel/hexedit and
+tried to find errors. I found many, such as what happens if you try to
+load a very long filename, what happens if you try to load a very large
+file, etc. I fixed them all, but because maintaner didn't accept my
+first patch, I didn't carry on.
 
-In my experience, I believe that asking for help from someone who knows
-much more is the right way to act when you don't know how solve issue.
+If anyone is interested in me testing their patch, I would love to do
+it. Now I'm reading LINUX KERNEL DEBUGGING book (written by Kaiwan N
+Billimoria) and I'm on chapter about strace and some tools like lttng,
+so I can use these tools mentioned on book to test patches.
 
 --=20
-Regards
+Un saludo/Regards
 Oscar Megia L=C3=B3pez
