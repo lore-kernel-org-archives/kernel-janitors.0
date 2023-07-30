@@ -2,80 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 306B9EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jul 2023 23:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13365C001DE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jul 2023 07:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233545AbjG1XaY (ORCPT
+        id S229646AbjG3HKz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jul 2023 19:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38550 "EHLO
+        Sun, 30 Jul 2023 03:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231807AbjG1XaW (ORCPT
+        with ESMTP id S229613AbjG3HKx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jul 2023 19:30:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4233AB4;
-        Fri, 28 Jul 2023 16:30:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BD5062213;
-        Fri, 28 Jul 2023 23:30:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9497C433C9;
-        Fri, 28 Jul 2023 23:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690587020;
-        bh=FWGOuJNnxQ8LB9TJesHkFzsgcZFxtmGm/CpqXJd8ZKA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=jp97ag3wlFuxtpF5a4YX3rzTtqnUPDCRUsde2RyxeYUumvbkNFW1uDl2a7XgvHe+e
-         oL5bYqFQTSirdBl8usT3ZM0kOdZu//BSc5Y1QA8aBAorgFfbkzAyFBxBg3QsH5ziH+
-         LLGq8gtId+lh9KOisRVwk4B5zPoa96QBN3qUQJ/PP6p+Z4V6IfzVTAdnp6v+nt1xup
-         1MHz9wE1CNpfZowr05Q8pciIa5jyBbDPixUV/4XBEdHtA2uwC57mrE0Y8DWHyG9Clh
-         CL96fLSkTgvT67u9gYsljxyXnagAsbIv743S0i3VBIgxFoGoeOActgkMy0SjWsLvky
-         DwuAOG97vYrqw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AEB1BC4166F;
-        Fri, 28 Jul 2023 23:30:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 30 Jul 2023 03:10:53 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13441FE0;
+        Sun, 30 Jul 2023 00:10:51 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3174aac120aso3230428f8f.2;
+        Sun, 30 Jul 2023 00:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690701050; x=1691305850;
+        h=content-transfer-encoding:mime-version:user-agent:message-id
+         :in-reply-to:date:references:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W+NY0+aVddXBDHRK3qT5EharoS+L/NL2W3fL10wSPAY=;
+        b=R4H6jzWsmXCfNh6MpHMpVXaZOLf7Q6oiwwG1Ey0kcBs/lr78DS65NX6rTySESBOmUx
+         7Yd2QqJpWvN/xrOz6UksOwXcoXGhZ5SxzeyEdPSSvfnVofLERmq1clCDurh83upWaxvc
+         RMCIwecEYbDFe3UWbXkzhG6rndUxLERzZLYdR283NUEipv8NvcrGllLPntPFq2fntsuC
+         gbsValCiDoA5Y459eqHMmzQD6SudC03+g8fpBGiQbY5GXSEFlh0SY81t6z+T9/eXH5t0
+         VCX7Ni3NEaXA3s9APeUaTIuQSg3AmFXZMxwPB6DcoPkltyCEHxSoyfejt1uEl7sX9aCy
+         Wc+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690701050; x=1691305850;
+        h=content-transfer-encoding:mime-version:user-agent:message-id
+         :in-reply-to:date:references:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W+NY0+aVddXBDHRK3qT5EharoS+L/NL2W3fL10wSPAY=;
+        b=OzOvcNok8qxl8VpSj7N1n7yGCAkmFhHQkAb2O/DL/whNcrF+KtJrOGZ2mW14ZdtO27
+         DLEGITwlD31fneCThiSpgFb4Hz9LG5IJ+OGFpTq9bLJcAjU6z24Ur6j3LNtYbqIDg7vp
+         TxsiKFMu5tsX2+1EcG6JsoJ140X5+D5WW0hVFAf0bXLWIaDpDivoo3EwaaicrhX7IJuF
+         2TecKOHSbhP/FlMBaFTMhjdXCNJKc7OKYyK9K4mDEJcw+7d2f4Q9JEAq8YajmatGkl5K
+         3nyAT1mhm7bM/r5vQvDEnRzJ5p1pbHPITApBIK6k7qMnc8/5Y5Qp9zOz0iKgE19CQdHY
+         JdbQ==
+X-Gm-Message-State: ABy/qLbGV3AF0pTELPyfdtUiW52EYmf4kQbsa7ZcXHAK0iExGxJq8Tmu
+        t/27z5QIoSAcNT/kgmHLc9I=
+X-Google-Smtp-Source: APBJJlHwFDZQycIf2BZm5lmHW0tlntCTcmXEBB9Puo1NhJUwPNVgd0U6ESck881MpBiKRN21vRCHcg==
+X-Received: by 2002:adf:dd50:0:b0:314:1d53:f3aa with SMTP id u16-20020adfdd50000000b003141d53f3aamr4512393wrm.50.1690701049916;
+        Sun, 30 Jul 2023 00:10:49 -0700 (PDT)
+Received: from torreasustufgamingpro (209.pool90-77-130.dynamic.orange.es. [90.77.130.209])
+        by smtp.gmail.com with ESMTPSA id l10-20020a5d410a000000b00317495f88fasm9218605wrp.112.2023.07.30.00.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jul 2023 00:10:49 -0700 (PDT)
+From:   =?utf-8?Q?Oscar_Megia_L=C3=B3pez?= <megia.oscar@gmail.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <error27@gmail.com>
+Subject: Re: Contributing subsequent patch versions
+References: <877cqlmdpg.fsf@gmail.com>
+        <8ef54195-4102-0c6c-e14d-efc9bc45cddc@web.de> <877cqk5zdt.fsf@gmail.com>
+        <61a79836-3981-b6e0-cbbf-fe03507dbea4@web.de> <87tttnhohp.fsf@gmail.com>
+        <20230728195959.GB607743@mit.edu>
+Date:   Sun, 30 Jul 2023 09:10:48 +0200
+In-Reply-To: <20230728195959.GB607743@mit.edu> (Theodore Ts'o's message of
+        "Fri, 28 Jul 2023 15:59:59 -0400")
+Message-ID: <87pm49nabr.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: ethernet: slicoss: remove redundant increment of
- pointer data
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169058702071.6177.8877758938708395588.git-patchwork-notify@kernel.org>
-Date:   Fri, 28 Jul 2023 23:30:20 +0000
-References: <20230726164522.369206-1-colin.i.king@gmail.com>
-In-Reply-To: <20230726164522.369206-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     LinoSanfilippo@gmx.de, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+"Theodore Ts'o" <tytso@mit.edu> writes:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> On Fri, Jul 28, 2023 at 08:36:50PM +0200, Oscar Megia L=C3=B3pez wrote:
+>> I don't know correct steps to send patch's v2 as above instance. Sorry,
+>> but I need step by step instructions, if not I think that I can make
+>> mistakes and I don't want. Sorry, but my experience says that is very
+>> easy make mistakes when I am newbie.
+>
+> We all make mistakes; don't worry about it!  This includes myself,
+> which is why I often will run:
+>
+>       git format-patch -o /tmp/p -5
+>
+> <then examine the patches in /tmp/p very carefully to make sure they make=
+ sense>
+>
+> before I run
+>
+>        git send-email /tmp/e --to linux-<subsystem>
+>
+> where I have a bunch of aliases in ~/.mail_aliases, e.g.:
+>
+...
 
-On Wed, 26 Jul 2023 17:45:22 +0100 you wrote:
-> The pointer data is being incremented but this change to the pointer
-> is not used afterwards. The increment is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/alacritech/slicoss.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Thank you very much Ted for your help and your time. I really appreciate
+it.
 
-Here is the summary with links:
-  - [next] net: ethernet: slicoss: remove redundant increment of pointer data
-    https://git.kernel.org/netdev/net-next/c/3bdd85e2e350
+I apologize for my doubts, but I've always been told that I'm
+different because I doubt everything. Sometimes is good and sometimes is
+not good.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+In my experience, I believe that asking for help from someone who knows
+much more is the right way to act when you don't know how solve issue.
 
-
+--=20
+Regards
+Oscar Megia L=C3=B3pez
