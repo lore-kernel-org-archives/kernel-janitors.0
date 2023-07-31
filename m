@@ -2,136 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA11C001DC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 13:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDC8C001DF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 13:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232861AbjGaNQc (ORCPT
+        id S231536AbjGaNWd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 09:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54588 "EHLO
+        Mon, 31 Jul 2023 09:22:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbjGaNQ3 (ORCPT
+        with ESMTP id S229960AbjGaNWc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 09:16:29 -0400
-Received: from mgamail.intel.com (unknown [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69719E75;
-        Mon, 31 Jul 2023 06:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690809388; x=1722345388;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i2O+ffUC3QkRd8lfDmc9uuiKSy0hOGcWGfhz9xoZCAQ=;
-  b=LDJazHXwfy48TJMetdVS6zx+dom4vEeJ8sYkmrrPKS4BkXKTaYmA7NXI
-   U5CBf961taMnn8Yl3y66DWQuZsBqksKW+7yoFzlzkVVYoQvqSt3o6pWAd
-   RGDpMbGwm5wQEIz36ewLJCeIwczsmp4a5GW08ZVAjD92qvQXOCDm3eDip
-   UFQKY5u8yh9UVaPrV2i+N0Vm9UQDgOlBtfTiip1Lg8P3Kcv19g6WwayJJ
-   L94CzzQk/nwv0MpbQvi9nksFOdcACYcyn8udc52/O9BrzMAHPnuEdEazb
-   7/51rNhPkLWCN4NldIF+JvQK8UqmoxTFRsxVsyGPCbguXrbvoBI+CVH2e
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="366497449"
-X-IronPort-AV: E=Sophos;i="6.01,244,1684825200"; 
-   d="scan'208";a="366497449"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 06:16:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
-   d="scan'208";a="871671819"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 31 Jul 2023 06:16:27 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 31 Jul 2023 16:16:24 +0300
-Date:   Mon, 31 Jul 2023 16:16:24 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in
- nb7vpq904m_probe()
-Message-ID: <ZMe0KBvJIpagVOXD@kuha.fi.intel.com>
-References: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+        Mon, 31 Jul 2023 09:22:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF7A10DD;
+        Mon, 31 Jul 2023 06:22:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2957F61147;
+        Mon, 31 Jul 2023 13:22:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9AAC433C7;
+        Mon, 31 Jul 2023 13:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1690809750;
+        bh=WpJsh3fyEuGUo6PH6fN0EFyznVrVxs5GaJUXkqK1ArM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gcpEgFq/S32d3pUMyuyl/Kot/n40hCWR6RpeLyaKC5hCseKd0FZyXQ6XKJVSPdUYe
+         Ry+ctDKz7oRurSz3gR7+R6N4+4gf34rqN7zkBtuVetSuenkuKAltbYa4kkJ26LYITn
+         cAG3ZCVRWCfnSAB5MG+KhAtyHTtqYU+s4qBd/qqY=
+Date:   Mon, 31 Jul 2023 15:22:30 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Chengfeng Ye <dg573847474@gmail.com>,
+        kernel-janitors@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Russ Weight <russell.h.weight@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tty: synclink_gt: Fix potential deadlock on &info->lock
+Message-ID: <2023073123-poser-panhandle-1cb7@gregkh>
+References: <20230728123901.64225-1-dg573847474@gmail.com>
+ <a95e699c-c507-931e-92b0-7f63a5e3a9e1@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a95e699c-c507-931e-92b0-7f63a5e3a9e1@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 11:40:05PM +0200, Christophe JAILLET wrote:
-> In case of error in the nb7vpq904m_probe() probe function, some resources
-> need to be freed, as already done in the remove function.
-> 
-> Add the missing error handling path and adjust code accordingly.
-> 
-> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hi,
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-> ---
-> This changes the order with some devm_ allocated resources. I hope this is
-> fine. At least it is consistent with the remove function.
-> ---
->  drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
->  1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
-> index 80e580d50129..4d1122d95013 100644
-> --- a/drivers/usb/typec/mux/nb7vpq904m.c
-> +++ b/drivers/usb/typec/mux/nb7vpq904m.c
-> @@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
->  
->  	ret = nb7vpq904m_register_bridge(nb7);
->  	if (ret)
-> -		return ret;
-> +		goto err_disable_gpio;
->  
->  	sw_desc.drvdata = nb7;
->  	sw_desc.fwnode = dev->fwnode;
->  	sw_desc.set = nb7vpq904m_sw_set;
->  
->  	nb7->sw = typec_switch_register(dev, &sw_desc);
-> -	if (IS_ERR(nb7->sw))
-> -		return dev_err_probe(dev, PTR_ERR(nb7->sw),
-> -				     "Error registering typec switch\n");
-> +	if (IS_ERR(nb7->sw)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
-> +				    "Error registering typec switch\n");
-> +		goto err_disable_gpio;
-> +	}
->  
->  	retimer_desc.drvdata = nb7;
->  	retimer_desc.fwnode = dev->fwnode;
-> @@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
->  
->  	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
->  	if (IS_ERR(nb7->retimer)) {
-> -		typec_switch_unregister(nb7->sw);
-> -		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
-> -				     "Error registering typec retimer\n");
-> +		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
-> +				    "Error registering typec retimer\n");
-> +		goto err_switch_unregister;
->  	}
->  
->  	return 0;
-> +
-> +err_switch_unregister:
-> +	typec_switch_unregister(nb7->sw);
-> +
-> +err_disable_gpio:
-> +	gpiod_set_value(nb7->enable_gpio, 0);
-> +	regulator_disable(nb7->vcc_supply);
-> +
-> +	return ret;
->  }
->  
->  static void nb7vpq904m_remove(struct i2c_client *client)
-> -- 
-> 2.34.1
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
--- 
-heikki
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
