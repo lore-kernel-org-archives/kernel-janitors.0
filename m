@@ -2,100 +2,148 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85E1C001DF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 08:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82100C001DE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 08:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231826AbjGaIEO (ORCPT
+        id S231667AbjGaIlT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 04:04:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
+        Mon, 31 Jul 2023 04:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231726AbjGaIDm (ORCPT
+        with ESMTP id S231649AbjGaIko (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 04:03:42 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D643E41;
-        Mon, 31 Jul 2023 01:02:39 -0700 (PDT)
-Received: from dggpemm500008.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RDrH409JdzNmWN;
-        Mon, 31 Jul 2023 15:59:12 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500008.china.huawei.com (7.185.36.136) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 31 Jul 2023 16:02:36 +0800
-Received: from [10.174.178.174] (10.174.178.174) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 31 Jul 2023 16:02:36 +0800
-Subject: Re: [PATCH net] net: ll_temac: fix error checking of
- irq_of_parse_and_map()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Esben Haabendal <esben@geanix.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Harini Katakam <harini.katakam@amd.com>,
-        Haoyue Xu <xuhaoyue1@hisilicon.com>,
-        huangjunxian <huangjunxian6@hisilicon.com>,
-        Rob Herring <robh@kernel.org>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <3d0aef75-06e0-45a5-a2a6-2cc4738d4143@moroto.mountain>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <014b3bb1-4962-2e63-8211-1fdb0b4cfbf6@huawei.com>
-Date:   Mon, 31 Jul 2023 16:02:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 31 Jul 2023 04:40:44 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB4319AC
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 01:39:04 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fe20e7e5caso7859945e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 01:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690792738; x=1691397538;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8iu5cp8Y1GY0uNruSlKQJ5tGFR1JHk9Mos4NpUwA/wg=;
+        b=yZuwdwFmisXPSEluH2zX2tYetrzxIzHXt9nfphWuS3Rf5Lu8PgHpR7Qs8WYXv3VWFr
+         szsvlIuBbmmG26gM7Ig8uuqXbYTresYPNFI6yPhCcQ+Y3igG/69JB0BZvn5DTWAd6ZEl
+         PHzI/u0UNIJcHWOh9VAWUZHJAdzKhql0+6yEPoPqdG3OZh7zu0+qZliBxy/xdyPpgj6a
+         NviyD9nIPsiYeY5C7rJRYzw/L6tFxcbyl3QvZbTVBqDIud09m89s3KY7FZ357dlwJc/d
+         8LNMNMiQQ+RS1qb+ebVDqhabrperJaDIDJgkhGfSOSQ6LwDE7GD7uKjpZN23CG8trwqL
+         caGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690792738; x=1691397538;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8iu5cp8Y1GY0uNruSlKQJ5tGFR1JHk9Mos4NpUwA/wg=;
+        b=Em3VpJzG9/Bo8jI/DWHzg3HwwubWvVbROJWnPyZwHYDX8L+rJG4JEgkFu4M0Qqik7E
+         jzGqKvav8QdMKMiwbXDEjDyOYqbqwIE0ArKLWM5Mn15vUCjHdRxVxOXTmmcHXf1yvB2F
+         wEDUYiE8347XbER9aZLYeNf8TJ6t6o7tLql2PR5bdkFPudZlIaLN5WTb4mOG9ieR7y5l
+         P3XHuecae3ZmTUAHCO/rhjAhf5nG0+znGzMrLrwZUVDJ40msl0/zgZul2St7gFf89ueD
+         EOVoE9pLbNJ0sJ/0QY7vDX7pEZCAM7ZRX/Q6e00Jy8NSK3ycX2LyfL9bp64Y5foHBoHv
+         H7iA==
+X-Gm-Message-State: ABy/qLbdUrhccH7JODuBK93fj1ST97AYwe7kFY8mjATIJ5teKvpCjeIk
+        zM52eUXW5zNZGpwtevb6vavfQw==
+X-Google-Smtp-Source: APBJJlGe9+f3abgBiBGI/g3dK5e3z6k6mz+gPWGjUfyhIP1sP/oWUqrsh6ruhgXBgfkMGwgCW1OLrw==
+X-Received: by 2002:a1c:f70c:0:b0:3fc:80a:cf63 with SMTP id v12-20020a1cf70c000000b003fc080acf63mr7980848wmh.38.1690792737906;
+        Mon, 31 Jul 2023 01:38:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:14b8:9aa7:6bf0:256d? ([2a01:e0a:982:cbb0:14b8:9aa7:6bf0:256d])
+        by smtp.gmail.com with ESMTPSA id 9-20020a05600c020900b003fe1cb874afsm3963566wmi.18.2023.07.31.01.38.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Jul 2023 01:38:57 -0700 (PDT)
+Message-ID: <aee8b25a-217d-a63c-d2b9-3b7a9c4cd248@linaro.org>
+Date:   Mon, 31 Jul 2023 10:38:56 +0200
 MIME-Version: 1.0
-In-Reply-To: <3d0aef75-06e0-45a5-a2a6-2cc4738d4143@moroto.mountain>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in
+ nb7vpq904m_probe()
 Content-Language: en-US
-X-Originating-IP: [10.174.178.174]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-usb@vger.kernel.org
+References: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+Organization: Linaro Developer Services
+In-Reply-To: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Yang Yingliang <yangyingliang@huawei.com>
-
-On 2023/7/31 15:42, Dan Carpenter wrote:
-> Most kernel functions return negative error codes but some irq functions
-> return zero on error.  In this code irq_of_parse_and_map(), returns zero
-> and platform_get_irq() returns negative error codes.  We need to handle
-> both cases appropriately.
->
-> Fixes: 8425c41d1ef7 ("net: ll_temac: Extend support to non-device-tree platforms")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 18/07/2023 23:40, Christophe JAILLET wrote:
+> In case of error in the nb7vpq904m_probe() probe function, some resources
+> need to be freed, as already done in the remove function.
+> 
+> Add the missing error handling path and adjust code accordingly.
+> 
+> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/net/ethernet/xilinx/ll_temac_main.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-> index e0ac1bcd9925..49f303353ecb 100644
-> --- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-> +++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-> @@ -1567,12 +1567,16 @@ static int temac_probe(struct platform_device *pdev)
+> This changes the order with some devm_ allocated resources. I hope this is
+> fine. At least it is consistent with the remove function.
+> ---
+>   drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
+>   1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
+> index 80e580d50129..4d1122d95013 100644
+> --- a/drivers/usb/typec/mux/nb7vpq904m.c
+> +++ b/drivers/usb/typec/mux/nb7vpq904m.c
+> @@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>   
+>   	ret = nb7vpq904m_register_bridge(nb7);
+>   	if (ret)
+> -		return ret;
+> +		goto err_disable_gpio;
+>   
+>   	sw_desc.drvdata = nb7;
+>   	sw_desc.fwnode = dev->fwnode;
+>   	sw_desc.set = nb7vpq904m_sw_set;
+>   
+>   	nb7->sw = typec_switch_register(dev, &sw_desc);
+> -	if (IS_ERR(nb7->sw))
+> -		return dev_err_probe(dev, PTR_ERR(nb7->sw),
+> -				     "Error registering typec switch\n");
+> +	if (IS_ERR(nb7->sw)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
+> +				    "Error registering typec switch\n");
+> +		goto err_disable_gpio;
+> +	}
+>   
+>   	retimer_desc.drvdata = nb7;
+>   	retimer_desc.fwnode = dev->fwnode;
+> @@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>   
+>   	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
+>   	if (IS_ERR(nb7->retimer)) {
+> -		typec_switch_unregister(nb7->sw);
+> -		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
+> -				     "Error registering typec retimer\n");
+> +		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
+> +				    "Error registering typec retimer\n");
+> +		goto err_switch_unregister;
 >   	}
 >   
->   	/* Error handle returned DMA RX and TX interrupts */
-> -	if (lp->rx_irq < 0)
-> -		return dev_err_probe(&pdev->dev, lp->rx_irq,
-> +	if (lp->rx_irq <= 0) {
-> +		rc = lp->rx_irq ?: -EINVAL;
-> +		return dev_err_probe(&pdev->dev, rc,
->   				     "could not get DMA RX irq\n");
-> -	if (lp->tx_irq < 0)
-> -		return dev_err_probe(&pdev->dev, lp->tx_irq,
-> +	}
-> +	if (lp->tx_irq <= 0) {
-> +		rc = lp->tx_irq ?: -EINVAL;
-> +		return dev_err_probe(&pdev->dev, rc,
->   				     "could not get DMA TX irq\n");
-> +	}
+>   	return 0;
+> +
+> +err_switch_unregister:
+> +	typec_switch_unregister(nb7->sw);
+> +
+> +err_disable_gpio:
+> +	gpiod_set_value(nb7->enable_gpio, 0);
+> +	regulator_disable(nb7->vcc_supply);
+> +
+> +	return ret;
+>   }
 >   
->   	if (temac_np) {
->   		/* Retrieve the MAC address */
+>   static void nb7vpq904m_remove(struct i2c_client *client)
+
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
