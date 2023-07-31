@@ -2,97 +2,136 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C489C41513
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 13:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA11C001DC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 13:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232827AbjGaNOh (ORCPT
+        id S232861AbjGaNQc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 09:14:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53824 "EHLO
+        Mon, 31 Jul 2023 09:16:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbjGaNOg (ORCPT
+        with ESMTP id S229782AbjGaNQ3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 09:14:36 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C02AA0;
-        Mon, 31 Jul 2023 06:14:35 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c10ba30afso245142466b.1;
-        Mon, 31 Jul 2023 06:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690809273; x=1691414073;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I1VlZ1FwEo+/smO6cOUgXoQW9MZfUVONXgthA3NJ828=;
-        b=EwM3VRqbaIJyNpZqiBZplhqK9iWGmtBkCSy7OdmrSZM5VuBjB7eaVYRoiEkBfz5xbP
-         PdQeqy9Fx4MQG0Vc4TcDvYKMUvNYz9kTTAVdQSrR3MGgxLy8zy8OH8wHyEALgDS7RO1w
-         1pI5KVglMFzMGWRBzZYr/xy86g1HhCxqEWLCavV6OkX1LzDUO4WXS285idtgQNpF5H/n
-         2y68sR++9x9TZibjeLqZPZg17B0v36j1UWEFrLIyNv9HMhDfeWBuda7ZBZSf4VCHyhRQ
-         pEDCONn47xfO1SwbHRdv6UN1/EoVrMznwYjRun5wsJdB8XF2CZoXcNZg8qnPzgbkals2
-         dIlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690809273; x=1691414073;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I1VlZ1FwEo+/smO6cOUgXoQW9MZfUVONXgthA3NJ828=;
-        b=OX0HjroXG7u8G4GFFTvwNnH761qHa3YsFkTAkc6eQA09GJHoGG3/K2sgSe5m+dQU37
-         diOVMfaXnhhbonvTJsNuHJiJWL2zIYqV+HWfAdi2Ln2IRSYHeqvdMc14bOoglxeZNGxt
-         BOd1NmbNfObJST6OdRaQEEvMXb9QcdpPlwgDSfjJU7+qGML+jpWJWR5NqJOUF8FasK30
-         L6XDm1zrIb0JLRoWZnqELjAe33UayiuP2Oi86r+9/9g2wtdAyiDfyqi746DyoC/O1gAj
-         PI0yLpELFiEdVvUAoKWQptjgP5Xjsf8YiXgjQePAJEEgsgA9Zw94VVLR43x60KV3yI+s
-         UXyQ==
-X-Gm-Message-State: ABy/qLZsPNBTKDDD1b4tx6tlFi1Ep18xnmjW1Y95eT51Cr8zEvT5lchw
-        4sMFOT8Qg+6HJsMS320GGZ7OVZrJ6A4=
-X-Google-Smtp-Source: APBJJlH12RtSstaQpPAdCzTygHGsdlv8TeFotaptleVxfp/cUxqbFlhJT42SoJ4YLKX+ieORC0wTBA==
-X-Received: by 2002:a17:907:270d:b0:99b:c2ce:501c with SMTP id w13-20020a170907270d00b0099bc2ce501cmr7769945ejk.19.1690809273218;
-        Mon, 31 Jul 2023 06:14:33 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:c9d4:a174:b52d:4c33])
-        by smtp.gmail.com with ESMTPSA id qk29-20020a170906d9dd00b0098e34446464sm6112502ejb.25.2023.07.31.06.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 06:14:32 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: correct file entry in MEDIA DRIVERS FOR FREESCALE IMX7/8
-Date:   Mon, 31 Jul 2023 15:14:27 +0200
-Message-Id: <20230731131427.601-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 31 Jul 2023 09:16:29 -0400
+Received: from mgamail.intel.com (unknown [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69719E75;
+        Mon, 31 Jul 2023 06:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690809388; x=1722345388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i2O+ffUC3QkRd8lfDmc9uuiKSy0hOGcWGfhz9xoZCAQ=;
+  b=LDJazHXwfy48TJMetdVS6zx+dom4vEeJ8sYkmrrPKS4BkXKTaYmA7NXI
+   U5CBf961taMnn8Yl3y66DWQuZsBqksKW+7yoFzlzkVVYoQvqSt3o6pWAd
+   RGDpMbGwm5wQEIz36ewLJCeIwczsmp4a5GW08ZVAjD92qvQXOCDm3eDip
+   UFQKY5u8yh9UVaPrV2i+N0Vm9UQDgOlBtfTiip1Lg8P3Kcv19g6WwayJJ
+   L94CzzQk/nwv0MpbQvi9nksFOdcACYcyn8udc52/O9BrzMAHPnuEdEazb
+   7/51rNhPkLWCN4NldIF+JvQK8UqmoxTFRsxVsyGPCbguXrbvoBI+CVH2e
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="366497449"
+X-IronPort-AV: E=Sophos;i="6.01,244,1684825200"; 
+   d="scan'208";a="366497449"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 06:16:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="scan'208";a="871671819"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 31 Jul 2023 06:16:27 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 31 Jul 2023 16:16:24 +0300
+Date:   Mon, 31 Jul 2023 16:16:24 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in
+ nb7vpq904m_probe()
+Message-ID: <ZMe0KBvJIpagVOXD@kuha.fi.intel.com>
+References: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit cd063027c304 ("media: imx: Unstage the imx8mq-mipi-csi2 driver")
-adds a file entry for the driver code to MEDIA DRIVERS FOR FREESCALE
-IMX7/8, but misses the number '2' suffix in that entry. Hence,
-./scripts/get_maintainer.pl --self-test=patterns complains about a broken
-reference.
+On Tue, Jul 18, 2023 at 11:40:05PM +0200, Christophe JAILLET wrote:
+> In case of error in the nb7vpq904m_probe() probe function, some resources
+> need to be freed, as already done in the remove function.
+> 
+> Add the missing error handling path and adjust code accordingly.
+> 
+> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Correct the file entry in MEDIA DRIVERS FOR FREESCALE IMX7/8.
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+> This changes the order with some devm_ allocated resources. I hope this is
+> fine. At least it is consistent with the remove function.
+> ---
+>  drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
+> index 80e580d50129..4d1122d95013 100644
+> --- a/drivers/usb/typec/mux/nb7vpq904m.c
+> +++ b/drivers/usb/typec/mux/nb7vpq904m.c
+> @@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>  
+>  	ret = nb7vpq904m_register_bridge(nb7);
+>  	if (ret)
+> -		return ret;
+> +		goto err_disable_gpio;
+>  
+>  	sw_desc.drvdata = nb7;
+>  	sw_desc.fwnode = dev->fwnode;
+>  	sw_desc.set = nb7vpq904m_sw_set;
+>  
+>  	nb7->sw = typec_switch_register(dev, &sw_desc);
+> -	if (IS_ERR(nb7->sw))
+> -		return dev_err_probe(dev, PTR_ERR(nb7->sw),
+> -				     "Error registering typec switch\n");
+> +	if (IS_ERR(nb7->sw)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
+> +				    "Error registering typec switch\n");
+> +		goto err_disable_gpio;
+> +	}
+>  
+>  	retimer_desc.drvdata = nb7;
+>  	retimer_desc.fwnode = dev->fwnode;
+> @@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>  
+>  	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
+>  	if (IS_ERR(nb7->retimer)) {
+> -		typec_switch_unregister(nb7->sw);
+> -		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
+> -				     "Error registering typec retimer\n");
+> +		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
+> +				    "Error registering typec retimer\n");
+> +		goto err_switch_unregister;
+>  	}
+>  
+>  	return 0;
+> +
+> +err_switch_unregister:
+> +	typec_switch_unregister(nb7->sw);
+> +
+> +err_disable_gpio:
+> +	gpiod_set_value(nb7->enable_gpio, 0);
+> +	regulator_disable(nb7->vcc_supply);
+> +
+> +	return ret;
+>  }
+>  
+>  static void nb7vpq904m_remove(struct i2c_client *client)
+> -- 
+> 2.34.1
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 97db167eeaa7..5ba24f88a214 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13094,7 +13094,7 @@ F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
- F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
- F:	drivers/media/platform/nxp/imx-mipi-csis.c
- F:	drivers/media/platform/nxp/imx7-media-csi.c
--F:	drivers/media/platform/nxp/imx8mq-mipi-csi.c
-+F:	drivers/media/platform/nxp/imx8mq-mipi-csi2.c
- 
- MEDIA DRIVERS FOR HELENE
- M:	Abylay Ospan <aospan@netup.ru>
 -- 
-2.17.1
-
+heikki
