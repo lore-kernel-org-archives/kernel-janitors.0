@@ -2,107 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D69C001DF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 06:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA62C001DE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 07:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjGaGCF (ORCPT
+        id S231280AbjGaHmk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 02:02:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
+        Mon, 31 Jul 2023 03:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjGaGCE (ORCPT
+        with ESMTP id S230091AbjGaHmj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 02:02:04 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B59BF;
-        Sun, 30 Jul 2023 23:02:03 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id B18BA5C0108;
-        Mon, 31 Jul 2023 02:02:02 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 31 Jul 2023 02:02:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1690783322; x=1690869722; bh=sh
-        FjnfGoAytyshPf/JloNkqJqiuNTHMwi4VXx3Cfmkc=; b=TLKicy3o98eJU9lRlm
-        6rh+0FbGi/sZG2SspygPj6L6OSNoik5Wj9k8vOQg9S4DY67vHQsQemuhOREzSCpB
-        q6SHXmEye9XxA9ESyWVFJJUeMP0Of0e9tCsZgzeDGy890c0va1XB24Qtyf9NNEYI
-        BWOHZKrADqhk7W89MZG1iElZBoxZX3YjmHS6Nssr/E0e2pHRyT/n0yVDeUGFZ9+y
-        5rCYoBetKQkScCv75qQFja5ib7p0bQ1ZPTyNvcyubbF6YAngnM5W7R/ucogf6tF9
-        l/UEjvcfOr/b8jVh5MfTUVRnvuBztvpTiKYqHwkmdmKTyUsoVUlSh0FlhRQ1HVMN
-        GJ2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1690783322; x=1690869722; bh=shFjnfGoAytys
-        hPf/JloNkqJqiuNTHMwi4VXx3Cfmkc=; b=QBIYDec7e1TF0FA+X79c/dUryVYXw
-        cK+f6cEJp3Zam7XidYavRlMg3f6/Smtnw0wqSCz2GzvuaEC5kjA6rvseTaptaphI
-        d4OdN3kMCVbZfwxsW6L5tUtRWyAsBzI+U/9LWCguqlRWdKnfewWsHRsu5XsXeSK4
-        GBqhqZ05Wx1TBGcOkZbhwaCyD/Z8bQvXj6X/WO9RdYv4UzO+ZIeUwwgjyJ5cOLi+
-        HPHLpcjk4AAJvf7r5HThZbI2w80VOxC+KWNfxlu5nqwfCsDdLCBhmiccMKzPz9qT
-        MqONOlZYwyX9nhM/tigewVotgGp/brmx4z0AZpPgw826apcpkYQMDZkdw==
-X-ME-Sender: <xms:Wk7HZJ5-cJxAn29i5bFLwRuKDmUMhc84i5q99gdcJ5fTwompJrYYrg>
-    <xme:Wk7HZG75RbM980csNmRu0_6g9KqwqxuNHdM5EeWbyoJSGbZmoUJG3yLAcSiaSPbz4
-    9jxXAzCyZGpBA>
-X-ME-Received: <xmr:Wk7HZAdgrH-3a6-Atx0UY0o-ymB9Q3TJPVc0Pv-ISJYp6dfc9LdOP29xqYl->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrjedvgddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
-    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
-    hhrdgtohhm
-X-ME-Proxy: <xmx:Wk7HZCKZAhhF7W4ZWWW-N6J-jKZ10kd2VYLk4CHeylhMUSM2w-4jqw>
-    <xmx:Wk7HZNKDS3IHvIVG4wnKQQ_SmhfDrwqAjx9bIj_HbWg3-p63YyrKxA>
-    <xmx:Wk7HZLxoFKUN6b9BcXGRKNoxbU3a6lfn1apU2B0DdaeF1EJ06ZWeSA>
-    <xmx:Wk7HZFILGlc_JerTsYJQqiuSCzsc07ABGdoByGKfy1PM_NjK8f8oPg>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 31 Jul 2023 02:02:01 -0400 (EDT)
-Date:   Mon, 31 Jul 2023 08:01:58 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Atul Raut <rauji.raut@gmail.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Kalle Valo <kvalo@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Ming <machel@vivo.com>, opensource.kernel@vivo.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Minjie Du <duminjie@vivo.com>
-Subject: Re: [PATCH] ath6kl: Fix debugfs_create_dir error checking
-Message-ID: <2023073148-blurt-pulmonary-bd3f@gregkh>
-References: <20230731024542.27248-1-rauji.raut@gmail.com>
- <8b6229da-ca60-f352-f374-47f9b6d33862@web.de>
+        Mon, 31 Jul 2023 03:42:39 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D86D83
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 00:42:37 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fe1344b707so6585903e87.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 00:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690789356; x=1691394156;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r3g9PTR1d4q+jWB72BuFEuFidr0WoeWZpmTU/FdkTwA=;
+        b=KNowhtElgaLjVT8TTEugRwPkJ0OI56CCkuXHLR7mt6uZSiuOo2NiUU1oYIwDYIpygd
+         ZH1XQAOiVePnDgm43OUDVsnXjwl7sjbUvzMEQ3dKwJiq6AxJxWQ9OHGrbYCA3jJvnve2
+         8At4qTMVeP3O5/3FcbOE+NU9Z9RGi3rtQmmk+o67YvMpdqJh3jJkPm4jlmAiEUuW+9Ws
+         J2w+ScgGuqKqiu29qhT8d37FZNicZI8DAAi5fi7ioXvCdKW6He1jjfIZYPqdof5f2dNt
+         9nBSE8OxfRm06q1Ejon9BaUiESILdyX0EJUa1UtcF4oI7S3XmlUbgCeiFTfE0W84bvht
+         pWOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690789356; x=1691394156;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3g9PTR1d4q+jWB72BuFEuFidr0WoeWZpmTU/FdkTwA=;
+        b=byoBu8PWTJYF0viPmBn8uNKewcV1I0wnXC7ZFb1riokJGx91CrbGt2gRCiYjYqv+oI
+         ctsMkPzZJSM6C4l5I69oqaUfznDNurJTNsE5d/uJ+P77dkaNwigVH3vMYmsPPHOvgBjm
+         9r4YO1JrOZPzAiH51sgkiMwAxLP821fmJmj7aEKrnzY/05wkZSYeEGtsLS01+aypz0Lk
+         oNVute+Z8O0pI4mPa6mLveyLxMGfGcglES0aKd83jfmN3rg4Cxl4NQg1oXZdx0EWLcIp
+         AkrF7VfUSqT3nGe5Q7ryXFkbG7SX8cyE7okTcdtUm1LUwyPGh9VEgn0llb+mJJPmf5F0
+         Laqw==
+X-Gm-Message-State: ABy/qLYe6JCVto57i13F2zJho9Dn/+dTNTmzN74+evqannq1HaOboZ6A
+        aeNvgb4vxMO5brOC+/JzNB2yTg==
+X-Google-Smtp-Source: APBJJlEOznDYQySZio03F1hYTLcYmvIl22I1LNPpOKYqMFCdj/rqT30KnTt01opN3wkvhOuI5z2fqw==
+X-Received: by 2002:ac2:4e8b:0:b0:4fb:fe00:49c2 with SMTP id o11-20020ac24e8b000000b004fbfe0049c2mr4377205lfr.32.1690789355848;
+        Mon, 31 Jul 2023 00:42:35 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f17-20020adffcd1000000b00313f61889ecsm12211498wrs.66.2023.07.31.00.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jul 2023 00:42:35 -0700 (PDT)
+Date:   Mon, 31 Jul 2023 10:42:32 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Esben Haabendal <esben@geanix.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Harini Katakam <harini.katakam@amd.com>,
+        Haoyue Xu <xuhaoyue1@hisilicon.com>,
+        huangjunxian <huangjunxian6@hisilicon.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Rob Herring <robh@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: ll_temac: fix error checking of
+ irq_of_parse_and_map()
+Message-ID: <3d0aef75-06e0-45a5-a2a6-2cc4738d4143@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b6229da-ca60-f352-f374-47f9b6d33862@web.de>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Most kernel functions return negative error codes but some irq functions
+return zero on error.  In this code irq_of_parse_and_map(), returns zero
+and platform_get_irq() returns negative error codes.  We need to handle
+both cases appropriately.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Fixes: 8425c41d1ef7 ("net: ll_temac: Extend support to non-device-tree platforms")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index e0ac1bcd9925..49f303353ecb 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -1567,12 +1567,16 @@ static int temac_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Error handle returned DMA RX and TX interrupts */
+-	if (lp->rx_irq < 0)
+-		return dev_err_probe(&pdev->dev, lp->rx_irq,
++	if (lp->rx_irq <= 0) {
++		rc = lp->rx_irq ?: -EINVAL;
++		return dev_err_probe(&pdev->dev, rc,
+ 				     "could not get DMA RX irq\n");
+-	if (lp->tx_irq < 0)
+-		return dev_err_probe(&pdev->dev, lp->tx_irq,
++	}
++	if (lp->tx_irq <= 0) {
++		rc = lp->tx_irq ?: -EINVAL;
++		return dev_err_probe(&pdev->dev, rc,
+ 				     "could not get DMA TX irq\n");
++	}
+ 
+ 	if (temac_np) {
+ 		/* Retrieve the MAC address */
+-- 
+2.39.2
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
