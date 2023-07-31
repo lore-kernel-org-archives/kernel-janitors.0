@@ -2,80 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C34C001DE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 12:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C489C41513
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 13:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232476AbjGaM1Z (ORCPT
+        id S232827AbjGaNOh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 08:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
+        Mon, 31 Jul 2023 09:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbjGaM1Z (ORCPT
+        with ESMTP id S229815AbjGaNOg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 08:27:25 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245611724;
-        Mon, 31 Jul 2023 05:26:47 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-522bc9556f5so2457044a12.0;
-        Mon, 31 Jul 2023 05:26:47 -0700 (PDT)
+        Mon, 31 Jul 2023 09:14:36 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C02AA0;
+        Mon, 31 Jul 2023 06:14:35 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c10ba30afso245142466b.1;
+        Mon, 31 Jul 2023 06:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690806382; x=1691411182;
+        d=gmail.com; s=20221208; t=1690809273; x=1691414073;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gwhaajtiWbAK0+aLK2xFSMs0ohtyw35IKQkHVzwXE8Q=;
-        b=AnYWCg8THtmqrYKDgEWhGEj4akQmYhihbNAeSRam1/TdCJuZIrOA33P7Jf2F6GrsGQ
-         RNhF3NbcUuAV+mw5z72qcIr9tMx3Msi9enDZV8ESejhjQj586qF2OSf7kqXZrICPgiL5
-         hqOcCW/2NFdJNEVjq5Md1ZSlD2lOwgWEpusqqK+JfSQ3PmVwvlJEBorqjIgsDXU/6+oV
-         b2r247/jzsbfUkJ9WOLDPrka179JjM+r/to86iaD5+QOHYFN8jEVPVyBEa5sZbijb01f
-         XaJ+7ECaj24RGDvssOn8xZoGYJtn4swg7ArddeIlj8dhjKhoX1vNM+TBfJTpNMErWGE9
-         w33A==
+        bh=I1VlZ1FwEo+/smO6cOUgXoQW9MZfUVONXgthA3NJ828=;
+        b=EwM3VRqbaIJyNpZqiBZplhqK9iWGmtBkCSy7OdmrSZM5VuBjB7eaVYRoiEkBfz5xbP
+         PdQeqy9Fx4MQG0Vc4TcDvYKMUvNYz9kTTAVdQSrR3MGgxLy8zy8OH8wHyEALgDS7RO1w
+         1pI5KVglMFzMGWRBzZYr/xy86g1HhCxqEWLCavV6OkX1LzDUO4WXS285idtgQNpF5H/n
+         2y68sR++9x9TZibjeLqZPZg17B0v36j1UWEFrLIyNv9HMhDfeWBuda7ZBZSf4VCHyhRQ
+         pEDCONn47xfO1SwbHRdv6UN1/EoVrMznwYjRun5wsJdB8XF2CZoXcNZg8qnPzgbkals2
+         dIlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690806382; x=1691411182;
+        d=1e100.net; s=20221208; t=1690809273; x=1691414073;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gwhaajtiWbAK0+aLK2xFSMs0ohtyw35IKQkHVzwXE8Q=;
-        b=ZbBbhWBO56wHg4pr7Gu3+qZMZ2JUgz1LFJMN2hacoKc/BRUYTU9EmzlymbK4Ao28q8
-         GUiJz8UhpslS+Ooh1KkBSueYo6Fava9iMdRXfuk7dGKBFvmHWiUiKlHMDITPTZWa8jJA
-         UsbZm8/Fm7rIpkUL8DiSJjelOftereoJEUhj6HTqvLWAUkxIQHWZ5q7dOhCCZ/QPLqGa
-         4O3VmA7rf6lkO2xVaEYXUTmvZM5JQOI4EWBQeBA7P+8hS3lo0CAeMGuHy2sksNVczJCz
-         /7rRbhXwH2o0SlkbetTo56AJqoVHAwmbc3QCPRt3bCS9gy4VYyiboGSBF6brUi3LtgHo
-         dKXQ==
-X-Gm-Message-State: ABy/qLaSFcVrPv/mNh3+Pan9HVonE2mvD0ftEVYMAoBIpBxYwjS2ic6M
-        DBYV249d/ucUr9Axtmjo8Mg=
-X-Google-Smtp-Source: APBJJlFqh6O8ZhZZrVhxyzkGtfKV31CkB3xqadtfge9pqNyKNfX9Qj6+rE7GluS3HH43H8S7tBjmPA==
-X-Received: by 2002:aa7:dbd8:0:b0:522:3b6e:5f6a with SMTP id v24-20020aa7dbd8000000b005223b6e5f6amr8992130edt.29.1690806382404;
-        Mon, 31 Jul 2023 05:26:22 -0700 (PDT)
+        bh=I1VlZ1FwEo+/smO6cOUgXoQW9MZfUVONXgthA3NJ828=;
+        b=OX0HjroXG7u8G4GFFTvwNnH761qHa3YsFkTAkc6eQA09GJHoGG3/K2sgSe5m+dQU37
+         diOVMfaXnhhbonvTJsNuHJiJWL2zIYqV+HWfAdi2Ln2IRSYHeqvdMc14bOoglxeZNGxt
+         BOd1NmbNfObJST6OdRaQEEvMXb9QcdpPlwgDSfjJU7+qGML+jpWJWR5NqJOUF8FasK30
+         L6XDm1zrIb0JLRoWZnqELjAe33UayiuP2Oi86r+9/9g2wtdAyiDfyqi746DyoC/O1gAj
+         PI0yLpELFiEdVvUAoKWQptjgP5Xjsf8YiXgjQePAJEEgsgA9Zw94VVLR43x60KV3yI+s
+         UXyQ==
+X-Gm-Message-State: ABy/qLZsPNBTKDDD1b4tx6tlFi1Ep18xnmjW1Y95eT51Cr8zEvT5lchw
+        4sMFOT8Qg+6HJsMS320GGZ7OVZrJ6A4=
+X-Google-Smtp-Source: APBJJlH12RtSstaQpPAdCzTygHGsdlv8TeFotaptleVxfp/cUxqbFlhJT42SoJ4YLKX+ieORC0wTBA==
+X-Received: by 2002:a17:907:270d:b0:99b:c2ce:501c with SMTP id w13-20020a170907270d00b0099bc2ce501cmr7769945ejk.19.1690809273218;
+        Mon, 31 Jul 2023 06:14:33 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:c9d4:a174:b52d:4c33])
-        by smtp.gmail.com with ESMTPSA id y19-20020aa7ccd3000000b0051d9ee1c9d3sm5359982edt.84.2023.07.31.05.26.21
+        by smtp.gmail.com with ESMTPSA id qk29-20020a170906d9dd00b0098e34446464sm6112502ejb.25.2023.07.31.06.14.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 05:26:22 -0700 (PDT)
+        Mon, 31 Jul 2023 06:14:32 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Walker Chen <walker.chen@starfivetech.com>,
-        Changhuang Liang <changhuang.liang@starfivetech.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-pm@vger.kernel.org
+To:     Martin Kepplinger <martin.kepplinger@puri.sm>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in STARFIVE JH71XX PMU CONTROLLER DRIVER
-Date:   Mon, 31 Jul 2023 14:26:11 +0200
-Message-Id: <20230731122611.4309-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: correct file entry in MEDIA DRIVERS FOR FREESCALE IMX7/8
+Date:   Mon, 31 Jul 2023 15:14:27 +0200
+Message-Id: <20230731131427.601-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f3fb16291f48 ("soc: starfive: Move the power-domain driver to the
-genpd dir") moves:
+Commit cd063027c304 ("media: imx: Unstage the imx8mq-mipi-csi2 driver")
+adds a file entry for the driver code to MEDIA DRIVERS FOR FREESCALE
+IMX7/8, but misses the number '2' suffix in that entry. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
-  drivers/{soc/starfive/jh71xx_pmu.c => genpd/starfive/jh71xx-pmu.c}
-
-However, the update to the file entry in MAINTAINERS only addresses the
-move in directories, but misses the renaming from jh71xx_pmu.c to
-jh71xx-pmu.c. Hence, ./scripts/get_maintainer.pl --self-test=patterns
-complains about a broken reference.
-
-Adjust the file entry in STARFIVE JH71XX PMU CONTROLLER DRIVER.
+Correct the file entry in MEDIA DRIVERS FOR FREESCALE IMX7/8.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
@@ -83,18 +81,18 @@ Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 003b0461641a..7a20d6ab1d18 100644
+index 97db167eeaa7..5ba24f88a214 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20408,7 +20408,7 @@ M:	Walker Chen <walker.chen@starfivetech.com>
- M:	Changhuang Liang <changhuang.liang@starfivetech.com>
- S:	Supported
- F:	Documentation/devicetree/bindings/power/starfive*
--F:	drivers/genpd/starfive/jh71xx_pmu.c
-+F:	drivers/genpd/starfive/jh71xx-pmu.c
- F:	include/dt-bindings/power/starfive,jh7110-pmu.h
+@@ -13094,7 +13094,7 @@ F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
+ F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+ F:	drivers/media/platform/nxp/imx-mipi-csis.c
+ F:	drivers/media/platform/nxp/imx7-media-csi.c
+-F:	drivers/media/platform/nxp/imx8mq-mipi-csi.c
++F:	drivers/media/platform/nxp/imx8mq-mipi-csi2.c
  
- STARFIVE SOC DRIVERS
+ MEDIA DRIVERS FOR HELENE
+ M:	Abylay Ospan <aospan@netup.ru>
 -- 
 2.17.1
 
