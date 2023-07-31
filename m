@@ -2,148 +2,153 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82100C001DE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 08:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BE3C001DF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 10:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbjGaIlT (ORCPT
+        id S229626AbjGaK6t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 04:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52486 "EHLO
+        Mon, 31 Jul 2023 06:58:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231649AbjGaIko (ORCPT
+        with ESMTP id S232819AbjGaK6d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 04:40:44 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB4319AC
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 01:39:04 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fe20e7e5caso7859945e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 01:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690792738; x=1691397538;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iu5cp8Y1GY0uNruSlKQJ5tGFR1JHk9Mos4NpUwA/wg=;
-        b=yZuwdwFmisXPSEluH2zX2tYetrzxIzHXt9nfphWuS3Rf5Lu8PgHpR7Qs8WYXv3VWFr
-         szsvlIuBbmmG26gM7Ig8uuqXbYTresYPNFI6yPhCcQ+Y3igG/69JB0BZvn5DTWAd6ZEl
-         PHzI/u0UNIJcHWOh9VAWUZHJAdzKhql0+6yEPoPqdG3OZh7zu0+qZliBxy/xdyPpgj6a
-         NviyD9nIPsiYeY5C7rJRYzw/L6tFxcbyl3QvZbTVBqDIud09m89s3KY7FZ357dlwJc/d
-         8LNMNMiQQ+RS1qb+ebVDqhabrperJaDIDJgkhGfSOSQ6LwDE7GD7uKjpZN23CG8trwqL
-         caGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690792738; x=1691397538;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8iu5cp8Y1GY0uNruSlKQJ5tGFR1JHk9Mos4NpUwA/wg=;
-        b=Em3VpJzG9/Bo8jI/DWHzg3HwwubWvVbROJWnPyZwHYDX8L+rJG4JEgkFu4M0Qqik7E
-         jzGqKvav8QdMKMiwbXDEjDyOYqbqwIE0ArKLWM5Mn15vUCjHdRxVxOXTmmcHXf1yvB2F
-         wEDUYiE8347XbER9aZLYeNf8TJ6t6o7tLql2PR5bdkFPudZlIaLN5WTb4mOG9ieR7y5l
-         P3XHuecae3ZmTUAHCO/rhjAhf5nG0+znGzMrLrwZUVDJ40msl0/zgZul2St7gFf89ueD
-         EOVoE9pLbNJ0sJ/0QY7vDX7pEZCAM7ZRX/Q6e00Jy8NSK3ycX2LyfL9bp64Y5foHBoHv
-         H7iA==
-X-Gm-Message-State: ABy/qLbdUrhccH7JODuBK93fj1ST97AYwe7kFY8mjATIJ5teKvpCjeIk
-        zM52eUXW5zNZGpwtevb6vavfQw==
-X-Google-Smtp-Source: APBJJlGe9+f3abgBiBGI/g3dK5e3z6k6mz+gPWGjUfyhIP1sP/oWUqrsh6ruhgXBgfkMGwgCW1OLrw==
-X-Received: by 2002:a1c:f70c:0:b0:3fc:80a:cf63 with SMTP id v12-20020a1cf70c000000b003fc080acf63mr7980848wmh.38.1690792737906;
-        Mon, 31 Jul 2023 01:38:57 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:14b8:9aa7:6bf0:256d? ([2a01:e0a:982:cbb0:14b8:9aa7:6bf0:256d])
-        by smtp.gmail.com with ESMTPSA id 9-20020a05600c020900b003fe1cb874afsm3963566wmi.18.2023.07.31.01.38.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 01:38:57 -0700 (PDT)
-Message-ID: <aee8b25a-217d-a63c-d2b9-3b7a9c4cd248@linaro.org>
-Date:   Mon, 31 Jul 2023 10:38:56 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] usb: typec: nb7vpq904m: Add an error handling path in
- nb7vpq904m_probe()
+        Mon, 31 Jul 2023 06:58:33 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C546710D0;
+        Mon, 31 Jul 2023 03:57:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O4aNyO6NMve6sMt2IuYn/DVnczgPJCEikXQkrGHAcJ6mQEpZAYjUm5NMbnehymj89wVvOGvTzge20UBS4fUxrWriHYcuJhOjv8xbaRTLJYcOGNZb+A1LItUs+jiGoKDOxtqq35hotvHbUDsvkTXilvBOlntNTINLhZHDJIhfbmITgFHtcztJY/77ulmBwdEl7ZxLJ+heGCyF7dogMhrueWEJZ6HdwLFl/CdMM5wv/aSx0FJ8Ba8EhD+kv9xaQO+ZQX72k/duO2tObtMdVyz6MbQkiRgg4KRmUgBXwsM2P4AFdJMRzCoMNsAHQ/0RbiJHImaONzQwNSZ+PTfB79572A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TM8KNyYt98lV32zZI2ADB6ym0vK7VLBB4pmG21Li4I0=;
+ b=iKuAbo1mx2iSzYUlwQLujATjBAJU++PgMI/wvucDbPKF6880AZT8lZCDYz8ga9bkkIuN8CYfZZbvSOHajt+5b5UW6b9rlqoHKBzEFsqpvWB4MpaDa9IwS/65Vb8ZZLZlvMZwIJeES8OWwSBvnc/aTbDx9gPi5PmMRoPWsJlU40v4GpHQlCUcm5GBdCRU/d7MPgjHt7Bin8ASpmQIT4hIICPiu+6+C6RutGTC/LWBs7uJJeRTgtott8N8fR/PdmEc35IQrE7hA6EzcPVva9l8Muoo/3tsGhl6x6E4LEqcpQtp3LbzPiGeu1LCSu1z4JvrCAP2deZ3wKnSDa+wkUnyTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TM8KNyYt98lV32zZI2ADB6ym0vK7VLBB4pmG21Li4I0=;
+ b=48VpznQH0C7+C807j/oBmuWrjAnOPGFtIB2MC7hzIPPvcFp5MvC+7hj1QrnUcLCLVnncGKkJSa+XoMZkMZrTx55/x2pxyUAkcvPagZHKW0RY24TdI7dhYU3x5TzHHEfLD1MXOpbpOD6Zdu0P6McYNP2LWjul/9BNE6noF6rqass=
+Received: from BYAPR12MB4773.namprd12.prod.outlook.com (2603:10b6:a03:109::17)
+ by BL1PR12MB5852.namprd12.prod.outlook.com (2603:10b6:208:397::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.42; Mon, 31 Jul
+ 2023 10:57:32 +0000
+Received: from BYAPR12MB4773.namprd12.prod.outlook.com
+ ([fe80::f440:1885:f3ad:3a17]) by BYAPR12MB4773.namprd12.prod.outlook.com
+ ([fe80::f440:1885:f3ad:3a17%6]) with mapi id 15.20.6631.042; Mon, 31 Jul 2023
+ 10:57:32 +0000
+From:   "Katakam, Harini" <harini.katakam@amd.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Esben Haabendal <esben@geanix.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Simek, Michal" <michal.simek@amd.com>,
+        Haoyue Xu <xuhaoyue1@hisilicon.com>,
+        huangjunxian <huangjunxian6@hisilicon.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Rob Herring <robh@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH net] net: ll_temac: fix error checking of
+ irq_of_parse_and_map()
+Thread-Topic: [PATCH net] net: ll_temac: fix error checking of
+ irq_of_parse_and_map()
+Thread-Index: AQHZw4KW1H8QiE0b7EaAkjTGh0PxIa/TtE8A
+Date:   Mon, 31 Jul 2023 10:57:31 +0000
+Message-ID: <BYAPR12MB4773D13A8899C2F47CA66C049E05A@BYAPR12MB4773.namprd12.prod.outlook.com>
+References: <3d0aef75-06e0-45a5-a2a6-2cc4738d4143@moroto.mountain>
+In-Reply-To: <3d0aef75-06e0-45a5-a2a6-2cc4738d4143@moroto.mountain>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-usb@vger.kernel.org
-References: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
-Organization: Linaro Developer Services
-In-Reply-To: <9118954765821ea9f1179883602b4eca63e91749.1689716381.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB4773:EE_|BL1PR12MB5852:EE_
+x-ms-office365-filtering-correlation-id: e4cdacec-f9e2-4f0d-b0b6-08db91b4f0a6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aVKzfAvTsZGOE+x0ArZ+jXHwZ745Sq8465jgPWVWpnEdxRZqlCaF9OzblusSHabUkULZ1mKLiiLMk+E3vPRhEXt7E+SWbXX+C5OC7QJdkJ/s93dIJcLTJ0y1wc9WSnoH80uiBqtsP/gap7T3uaZ3dwTt38AS3ByEg3tQtTpnXA9LRLyxC8B8lExZua1A3Ttnw/Da8oQa/rcx7ThYCnRqJutOjaG/10lX9VbpHDQecbI+tG9tdnVl85x500KlxViL0rG3IoBKD56vR5euVFL6Fqy5vHecnteMGb0HrCyHfX7ja+LtKjUqZki0kkXyCTt9tRDxCZHqOsN/eLFxwZjZUvhn6CmTIDE7rZFw9iXYF7iwbhtwnYkcJj6YNb/+qsDM8UVG5L/3rEGHwQJMygAcfaK5MVy5GzYGHqU4BgYtRDnRTSLZchISNNeflWeyaCl8UT2el1G17zG/mnI8I8Dk2kg3hMpJE/RaRAJlitimhHn21i+d3eXgwMseyiGSRjq6ATENQZsiAMjpvfqbw/njOLYcoKcA1IcHi46nfyyhHP0BOuJeKXkrMjebTldVIWgtYDGmujGWIz4EGP1BAEboXMt8XkRCiv3FUiphk2eTugqbfIDc65idKJfOX8KwjXM9
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB4773.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(396003)(136003)(376002)(366004)(451199021)(41300700001)(5660300002)(66946007)(76116006)(8936002)(8676002)(55016003)(52536014)(54906003)(110136005)(4326008)(478600001)(64756008)(316002)(7416002)(66556008)(66476007)(2906002)(66446008)(4744005)(7696005)(9686003)(71200400001)(38100700002)(53546011)(6506007)(26005)(186003)(83380400001)(33656002)(38070700005)(122000001)(86362001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?seJp9Fd4UyZMH9/qLF+7xZ3S5sxqCFyXLSr617LBBLuC4pXGaArUY83LI5Bs?=
+ =?us-ascii?Q?V6yAIEhS27n4VaMVeatWpXufPTOTpyfjyT+JntELDn/kF3KRpV/TEZjGghl/?=
+ =?us-ascii?Q?bkKyrhffBG/D640ve5Fqs6DMectxIk68jlWMrqWKwqaid/mma7y9BNiaqqOW?=
+ =?us-ascii?Q?cxmrPgaG5Wm3nvnX0epsWLodwBL6DUw531KcRINcC5NlQfSHZCxo8bUWf0OY?=
+ =?us-ascii?Q?h7JXdBas4DR5rH7EIoJMECU3QvqV39pRNNtmET9UdKI5qivlyDsSuYWmbq9V?=
+ =?us-ascii?Q?+oHIhOUUdlcqA5DNaMfbt1aqYxFdGO7hdaqC+XbM3VUNyrQ5NNgyGDv3J3UX?=
+ =?us-ascii?Q?uwG9Zn7bNDHpgkb6aiHPbvxN9JE7ND66dLfMS/0jqwaBZiodPBkQPGMaJtzN?=
+ =?us-ascii?Q?pZJVqsdgKDR9LM+pIbW7lyVrwbZ5+9wH62pGV+HzDv2p4/VtvxsOTCshXRIF?=
+ =?us-ascii?Q?iSy0zrWU+pDdW9TNlquAi6Bd4gcWhJA5wg4mxLyNd3VUki5I6/Lx+ED1Yh/r?=
+ =?us-ascii?Q?M/3wyvvj/oIfTbgNrQLoi7boCS5twzNXfBZ43k5RpiRuvDVs1IxUyXyKH3pm?=
+ =?us-ascii?Q?Fuqq4TEs9i4rRUQTQQt7jDutuxfKhFqXhOd5eDwwdqPA3WRAH3W2S1oTkIBK?=
+ =?us-ascii?Q?xWulejdyOoXzJrR9aOyhVmVkx0Rp7jCwX01e9LgcTJ8ODPJBlhsmmIOLWHNv?=
+ =?us-ascii?Q?I7rmpxxZddgnVERtpJHsDnAXRGNWSzZ1F4jtkXFQFoT5Qf0tRQKNO3BdMUgg?=
+ =?us-ascii?Q?FWkoWh8NfNoG15mMYSEz85drlxWJ2j4MENnxwA8cffY0wjy1EcY+6XKf2nEj?=
+ =?us-ascii?Q?fVDkL3G4O1jsjeqCvjKg/F1RRC0KaVM2OZOqtYbIMG7WKh6gLjZgR/G0vNa/?=
+ =?us-ascii?Q?Xv6VF0S85sd5Tnc/6Bn3geYmwiNFjTWNCmcFP9fyqcJXQzwfImu9b8wCWfp7?=
+ =?us-ascii?Q?ZKELqfoPR6fgkY3EA1DtmGEbzGrfxnZMt5jKzEmqPulubYzpqphQSmX5Orof?=
+ =?us-ascii?Q?E3aFtX70kqY/Qv5UPQU4oBrT4t28nL8V1ryvOXpc47XMf2W5OX8CNXuhIIiX?=
+ =?us-ascii?Q?o0Q3eUSGn+VHIMNr9pcrOzniGtkJhoIh/na1bCD4ebeQkNyaVs57wW5iSB1Z?=
+ =?us-ascii?Q?FP8dsCna0oac+BAJglx4XdADChwdcpeu/NvpHAW9iNpHB2Tmy20qO7g71qjn?=
+ =?us-ascii?Q?yev1DRdlU3RdfVXFlXor61IXzulyE4B0irNiM7bLlq59vLIjHSG+pyA+sp3P?=
+ =?us-ascii?Q?t9zxlepjFN3LGqwE4wvB50rpgzYHeFdi0uxo/GRQbSs7dnI8vyXhjgMvX4Wj?=
+ =?us-ascii?Q?2esrcdQ/a5C7GT6YBr8xSDb0CHRW3yHcMSNRlNwWxZJscHQgM4dznYDOLJYC?=
+ =?us-ascii?Q?iXdAoi4SdctggJFprRe1XNgf0XmxRe2o4yPhYi4yThYLwtFTsHkljwAAQo5m?=
+ =?us-ascii?Q?G7X/C6zOfttzaXKuEDyeTXr//VY5AQajc8lQLsqfEjyFmUlMMAcpq2wb1e0E?=
+ =?us-ascii?Q?FOxk6B2rqFD44871przau67FaXYW+JAvpZC99eTCDmZYqtMbjB8NZNuPtnxi?=
+ =?us-ascii?Q?/Ctf+WrehxE0bT6eW8A=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB4773.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4cdacec-f9e2-4f0d-b0b6-08db91b4f0a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2023 10:57:32.0044
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kgGE9AX10Eqz6/MA540phv6acDeQJTqEWIuFp5fON9Wv+ZbWBE6/7BXGIfawnGL1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5852
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 18/07/2023 23:40, Christophe JAILLET wrote:
-> In case of error in the nb7vpq904m_probe() probe function, some resources
-> need to be freed, as already done in the remove function.
-> 
-> Add the missing error handling path and adjust code accordingly.
-> 
-> Fixes: 88d8f3ac9c67 ("usb: typec: add support for the nb7vpq904m Type-C Linear Redriver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This changes the order with some devm_ allocated resources. I hope this is
-> fine. At least it is consistent with the remove function.
-> ---
->   drivers/usb/typec/mux/nb7vpq904m.c | 25 ++++++++++++++++++-------
->   1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
-> index 80e580d50129..4d1122d95013 100644
-> --- a/drivers/usb/typec/mux/nb7vpq904m.c
-> +++ b/drivers/usb/typec/mux/nb7vpq904m.c
-> @@ -463,16 +463,18 @@ static int nb7vpq904m_probe(struct i2c_client *client)
->   
->   	ret = nb7vpq904m_register_bridge(nb7);
->   	if (ret)
-> -		return ret;
-> +		goto err_disable_gpio;
->   
->   	sw_desc.drvdata = nb7;
->   	sw_desc.fwnode = dev->fwnode;
->   	sw_desc.set = nb7vpq904m_sw_set;
->   
->   	nb7->sw = typec_switch_register(dev, &sw_desc);
-> -	if (IS_ERR(nb7->sw))
-> -		return dev_err_probe(dev, PTR_ERR(nb7->sw),
-> -				     "Error registering typec switch\n");
-> +	if (IS_ERR(nb7->sw)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(nb7->sw),
-> +				    "Error registering typec switch\n");
-> +		goto err_disable_gpio;
-> +	}
->   
->   	retimer_desc.drvdata = nb7;
->   	retimer_desc.fwnode = dev->fwnode;
-> @@ -480,12 +482,21 @@ static int nb7vpq904m_probe(struct i2c_client *client)
->   
->   	nb7->retimer = typec_retimer_register(dev, &retimer_desc);
->   	if (IS_ERR(nb7->retimer)) {
-> -		typec_switch_unregister(nb7->sw);
-> -		return dev_err_probe(dev, PTR_ERR(nb7->retimer),
-> -				     "Error registering typec retimer\n");
-> +		ret = dev_err_probe(dev, PTR_ERR(nb7->retimer),
-> +				    "Error registering typec retimer\n");
-> +		goto err_switch_unregister;
->   	}
->   
->   	return 0;
-> +
-> +err_switch_unregister:
-> +	typec_switch_unregister(nb7->sw);
-> +
-> +err_disable_gpio:
-> +	gpiod_set_value(nb7->enable_gpio, 0);
-> +	regulator_disable(nb7->vcc_supply);
-> +
-> +	return ret;
->   }
->   
->   static void nb7vpq904m_remove(struct i2c_client *client)
 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Monday, July 31, 2023 1:13 PM
+> To: Esben Haabendal <esben@geanix.com>
+> Cc: David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Simek, Michal <michal.simek@amd.com>; Katakam,
+> Harini <harini.katakam@amd.com>; Haoyue Xu <xuhaoyue1@hisilicon.com>;
+> huangjunxian <huangjunxian6@hisilicon.com>; Yang Yingliang
+> <yangyingliang@huawei.com>; Rob Herring <robh@kernel.org>;
+> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH net] net: ll_temac: fix error checking of
+> irq_of_parse_and_map()
+>=20
+> Most kernel functions return negative error codes but some irq functions
+> return zero on error.  In this code irq_of_parse_and_map(), returns zero
+> and platform_get_irq() returns negative error codes.  We need to handle
+> both cases appropriately.
+>=20
+> Fixes: 8425c41d1ef7 ("net: ll_temac: Extend support to non-device-tree
+> platforms")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Thanks,
+Reviewed-by: Harini Katakam <harini.katakam@amd.com>
+
+Regards,
+Harini
