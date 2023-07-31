@@ -2,98 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFAAC001DE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 14:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D3FC41513
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 14:11:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjGaOLS (ORCPT
+        id S229827AbjGaOLj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 10:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
+        Mon, 31 Jul 2023 10:11:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbjGaOLR (ORCPT
+        with ESMTP id S229637AbjGaOLh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 10:11:17 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0BFB8
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 07:11:16 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fe12baec61so21914335e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 07:11:16 -0700 (PDT)
+        Mon, 31 Jul 2023 10:11:37 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48DA8B3
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 07:11:36 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31758eb5db8so4788384f8f.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 07:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690812675; x=1691417475;
+        d=linaro.org; s=google; t=1690812695; x=1691417495;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ivUVtrsGAauHV5OjxrYDWaW4CGcUknQ07Ima3p8aKfs=;
-        b=wNVyPnSO1PwL2cYQkAKd6S38UtzB8Mx4C1mpMKDMcrPwQXQqSjqc8j1QuLnVGhQKml
-         z1Vr6lAKsv17SXsLSTab+M0BkDCcehRyKwi/J6oW2pP9wFWh/Rlx6cS89NOcd6iIQFtI
-         REHdDz4OsT1+J6HBWcXlvDSw6ned5ClsZHhjCTb2JqfgR13KKD1dMIndFRhyMnMJF5KZ
-         lcVZ7QMbU18qEZEALrOAzD9YU3a5iTQFSjTtyMQLMx23dDKMGI+luoJngtI2wBM/0saC
-         qHQ/jr2pL/aUL/uBIQ7wKD/Rxgqlykpz/z/loDDjV5U0yqBFiJQg0Q1fJE/LtCi/nGCv
-         OuBw==
+        bh=rC2zK4NcUsZC4+qZKQca2Iea5mRr2pKcQlzwUOf0h4o=;
+        b=uN2rKP6JXOza5oQxD0QvB77/Rt2ZeWgJkxwbUnFWoyZ1pl6Gth8Z0T712MBlkXPbl3
+         jTt/BAVeqUzRgD9k6KvBuvKHafMJwFEtDODH7DzquAuNlGLuC6XVHx9qxmFyzIUtIooD
+         8FabD1c5thv+OeagkQ/tGLfd/1ir9byp++uH8uuvCEIJ03+p80GDMQDULapZqoOAqKx/
+         GqLkwBQ6Ysd8SCFTZFqyUCrdQDN20zTMZtcE6ERaippdpeXYGfEa0h9ILxh2BAbkWmjS
+         CvB043qQyQ9tVk5pc6L4IYomRkAb9GmM0jpaO+OWLEHFD39zzccaGLlWZUkwfloMvro9
+         R4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690812675; x=1691417475;
+        d=1e100.net; s=20221208; t=1690812695; x=1691417495;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ivUVtrsGAauHV5OjxrYDWaW4CGcUknQ07Ima3p8aKfs=;
-        b=Gw1qBcB4TuEWqMWzDpkD7HHZHmkfN9jhok/Dt6b4joNkpv5Ce3U+ysaIQRcnLBw4tD
-         VTdei3qpHMPL6kGUhkRcxIt2LXEVMXZvoJPnUlK5KIPaSQVJ7vL1FvP3ZFjMortiusII
-         6h09EvrVbKZeTgjzQZPpaHgDy26cu4GQs0+M4sqDtbcxN8c5z+paP8a90olnO+Nn4SUE
-         sYPRp7ce9mbCFCSEsqPlbDUGz6uwGRX/jmo3iBuYZVG2Bd7TP9MVDyQ8CBT+7AlmNtzk
-         +OuRAiYAy/mFYLqC9wYBoi1efnQbgyt2yXzC0UW2xMZ5co0RGuFpuVBXlOlfk9crgsXR
-         JotQ==
-X-Gm-Message-State: ABy/qLY+Pu1jd4No7d3zsJ3UAEonJSdHlaBwGqXlGbtPKpiD6kHGHdih
-        W2iIfS2aGdJ/kX03q3iDNZrpFA==
-X-Google-Smtp-Source: APBJJlH+Tc4oYbwlTQGYanutl6YzRik+Doi25npj2e9UfWwBoMRZ5rMcBcVzTXvSRkuaZWC6FQE15Q==
-X-Received: by 2002:a7b:c3d6:0:b0:3fb:ef86:e30 with SMTP id t22-20020a7bc3d6000000b003fbef860e30mr68023wmj.10.1690812675165;
-        Mon, 31 Jul 2023 07:11:15 -0700 (PDT)
+        bh=rC2zK4NcUsZC4+qZKQca2Iea5mRr2pKcQlzwUOf0h4o=;
+        b=QV7+hc+6O6KF6xhN8mXyII3wt29SuE0ZUqLffb8ARC6dl2SMlTfEIb/yLk6G+16Xdx
+         i08JfDLAMT7PxVz0ISfM4qOKNbfkTnh6qGCTQ/zs+hDFbUOuLcbweMVq9qkXeTFZglqi
+         +l3QBJbHxRoFfObPa2ousMzs56MzpJId4ijoeexfJ9ihxeHBu19n3gO+iCNwqDeOdOHP
+         qKsxsVnRqs6b5nPqHsBtZKqNsRxJQjjUEWCBhQSfOiTIuuH1t/5sMz0cue0wUOuvdFsO
+         Whfr0kU1WuSSk9DzmOij52JE3kqc/yCR+U+Rjc/UM81EDwUJuvq+pKc55mVSaVnb5kS7
+         BXLg==
+X-Gm-Message-State: ABy/qLZsF0+5aYamI/Th7FY2OMYNOs6ORCsZdkqUUu/Cti0jXPENBHCc
+        qq6VdwcgsVhqd9hBk8eiKS1Q7466WJ54iM69ol8=
+X-Google-Smtp-Source: APBJJlGZd2QHUxkOChrPjXKCouJujAEsUhQ877e1v/ljOHUUWRAcsfif8AbU6BxLTvCFUH0zMpF3Sg==
+X-Received: by 2002:adf:e70d:0:b0:317:6704:72c with SMTP id c13-20020adfe70d000000b003176704072cmr6444080wrm.52.1690812694710;
+        Mon, 31 Jul 2023 07:11:34 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c3-20020a056000104300b003141e629cb6sm13061435wrx.101.2023.07.31.07.11.14
+        by smtp.gmail.com with ESMTPSA id d4-20020adfe884000000b003144b95e1ecsm13287752wrm.93.2023.07.31.07.11.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 07:11:14 -0700 (PDT)
-Date:   Mon, 31 Jul 2023 17:11:11 +0300
+        Mon, 31 Jul 2023 07:11:34 -0700 (PDT)
+Date:   Mon, 31 Jul 2023 17:11:31 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     huangfq.daxian@gmail.com
-Cc:     kernel-janitors@vger.kernel.org, Lee Jones <lee@kernel.org>
-Subject: [bug report] mfd: ezx-pcap: Replace mutex_lock with spin_lock
-Message-ID: <a4139c6b-3189-407c-ab5f-db591e135c1d@moroto.mountain>
+To:     Daniel Bristot de Oliveira <bristot@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Andreas Schwab <schwab@suse.de>,
+        linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] rtla: Uninitialized variable in find_mount()
+Message-ID: <53066ac3-523a-4db9-a636-9c99ef56c7c1@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Fuqian Huang,
+The "found" variable needs to be set to 0/false at the start.
 
-The patch b65dc4f6b339: "mfd: ezx-pcap: Replace mutex_lock with
-spin_lock" from Aug 13, 2019 (linux-next), leads to the following
-Smatch static checker warning:
+Fixes: a957cbc02531 ("rtla: Add -C cgroup support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ tools/tracing/rtla/src/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/mfd/ezx-pcap.c:102 ezx_pcap_read() warn: sleeping in atomic context
-drivers/mfd/ezx-pcap.c:102 ezx_pcap_read() warn: sleeping in IRQ context
+diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
+index 623a38908ed5..c769d7b3842c 100644
+--- a/tools/tracing/rtla/src/utils.c
++++ b/tools/tracing/rtla/src/utils.c
+@@ -538,7 +538,7 @@ static const int find_mount(const char *fs, char *mp, int sizeof_mp)
+ {
+ 	char mount_point[MAX_PATH];
+ 	char type[100];
+-	int found;
++	int found = 0;
+ 	FILE *fp;
+ 
+ 	fp = fopen("/proc/mounts", "r");
+-- 
+2.39.2
 
-drivers/mfd/ezx-pcap.c
-    93 int ezx_pcap_read(struct pcap_chip *pcap, u8 reg_num, u32 *value)
-    94 {
-    95         unsigned long flags;
-    96         int ret;
-    97 
-    98         spin_lock_irqsave(&pcap->io_lock, flags);
-               ^^^^^^^^^^^^^^^^^^
-Taking a spinlock.
-
-    99         *value = PCAP_REGISTER_READ_OP_BIT
-    100                 | (reg_num << PCAP_REGISTER_ADDRESS_SHIFT);
-    101 
---> 102         ret = ezx_pcap_putget(pcap, value);
-
-My static checker agrees with you that this is an IRQ function but the
-ezx_pcap_putget() function takes a mutex and we can't do that from an
-IRQ function.
-
-    103         spin_unlock_irqrestore(&pcap->io_lock, flags);
-    104 
-    105         return ret;
-    106 }
-
-regards,
-dan carpenter
