@@ -2,76 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC1FC001DE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 11:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C34C001DE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 12:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbjGaLtD (ORCPT
+        id S232476AbjGaM1Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 07:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50124 "EHLO
+        Mon, 31 Jul 2023 08:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231573AbjGaLtC (ORCPT
+        with ESMTP id S231532AbjGaM1Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 07:49:02 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BE410C;
-        Mon, 31 Jul 2023 04:49:01 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bf1f632b8so458485166b.1;
-        Mon, 31 Jul 2023 04:49:01 -0700 (PDT)
+        Mon, 31 Jul 2023 08:27:25 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245611724;
+        Mon, 31 Jul 2023 05:26:47 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-522bc9556f5so2457044a12.0;
+        Mon, 31 Jul 2023 05:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690804140; x=1691408940;
+        d=gmail.com; s=20221208; t=1690806382; x=1691411182;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k5s6A5U4bCqKX9zBuGy2auiAAIIEUq3nqLvJzYU+MjM=;
-        b=CZm/FDbhbT2gtRX0cyfSNirUX3IGYeFEjHSlmMNJNdM3Mjw+W2QUrKNgz7W+vyrKbF
-         sDbRyhw5IJ7uZxuVwZ+zo6vT9HQTskf31r5gtuQR09BW6KIcwftHuGtR767pXl8IINm5
-         VFycAGKxYXwiAv2WDsuCTAhkxJJcHtAhnpZMSfxAdk8VWsNuNmBrpNtzFe6CAGBN++mw
-         eCTwN+bHj1ihSPEakyB1pYQMjUUlmhTkR90fnpiiGiLF6pXdgN9eIgrzqGm+6gWd9oz2
-         QLw0vLxDz7pjyVvPdYbj/xDRrZit4fCt7fh9IhIqxn3ThV3lsaU25/rWXR1erELuBr7V
-         mf7g==
+        bh=gwhaajtiWbAK0+aLK2xFSMs0ohtyw35IKQkHVzwXE8Q=;
+        b=AnYWCg8THtmqrYKDgEWhGEj4akQmYhihbNAeSRam1/TdCJuZIrOA33P7Jf2F6GrsGQ
+         RNhF3NbcUuAV+mw5z72qcIr9tMx3Msi9enDZV8ESejhjQj586qF2OSf7kqXZrICPgiL5
+         hqOcCW/2NFdJNEVjq5Md1ZSlD2lOwgWEpusqqK+JfSQ3PmVwvlJEBorqjIgsDXU/6+oV
+         b2r247/jzsbfUkJ9WOLDPrka179JjM+r/to86iaD5+QOHYFN8jEVPVyBEa5sZbijb01f
+         XaJ+7ECaj24RGDvssOn8xZoGYJtn4swg7ArddeIlj8dhjKhoX1vNM+TBfJTpNMErWGE9
+         w33A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690804140; x=1691408940;
+        d=1e100.net; s=20221208; t=1690806382; x=1691411182;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k5s6A5U4bCqKX9zBuGy2auiAAIIEUq3nqLvJzYU+MjM=;
-        b=JfXQnN4MunyqY+8V5ckmu8U2I9mBEQyASg6mHKnPFqkzyFeor67qiV9u4wVAjQqUdC
-         KeSApTYfMqrP1Axl1luSlIhPPa1FZVqGszyztjFkcwuNskgjz9b8Iko+42tAu3AnRL3H
-         79kAIUUmYh4Th38CyDvZAbfKutMby51FhYLXJ7YukljOAOrCFVfaFKopwKmqDiK9VGGi
-         wHsivAydbeYau6xaPasCZDFpo+qV65LWB8u80698jaYppdmBeAeJs99Bm/30qNMOwwds
-         etzcO9VHxRLKw45QXgm6W3b+iaFXh4VUguzgpSW9gkvRu9RQR/OhZk+QT9QK2piUSkuA
-         eOzA==
-X-Gm-Message-State: ABy/qLZnImMboa6QEZsVAA5FE9VbDbb3RxbD8JfL/c/QHW8jn21VfTkw
-        IZe6pxv8GJE4KLzharks/m9IQFzG6/Q=
-X-Google-Smtp-Source: APBJJlEsLpE4SAtgI8XtELoIQrcSZV/UEognZflSa0wsKia9wLHj9xFS7H+FYXArdZykU1DH3gxFKA==
-X-Received: by 2002:a17:906:3192:b0:99b:66eb:2162 with SMTP id 18-20020a170906319200b0099b66eb2162mr6513637ejy.5.1690804139752;
-        Mon, 31 Jul 2023 04:48:59 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:7172:435e:e8bd:2cf])
-        by smtp.gmail.com with ESMTPSA id k13-20020a170906970d00b009893f268b92sm6063734ejx.28.2023.07.31.04.48.58
+        bh=gwhaajtiWbAK0+aLK2xFSMs0ohtyw35IKQkHVzwXE8Q=;
+        b=ZbBbhWBO56wHg4pr7Gu3+qZMZ2JUgz1LFJMN2hacoKc/BRUYTU9EmzlymbK4Ao28q8
+         GUiJz8UhpslS+Ooh1KkBSueYo6Fava9iMdRXfuk7dGKBFvmHWiUiKlHMDITPTZWa8jJA
+         UsbZm8/Fm7rIpkUL8DiSJjelOftereoJEUhj6HTqvLWAUkxIQHWZ5q7dOhCCZ/QPLqGa
+         4O3VmA7rf6lkO2xVaEYXUTmvZM5JQOI4EWBQeBA7P+8hS3lo0CAeMGuHy2sksNVczJCz
+         /7rRbhXwH2o0SlkbetTo56AJqoVHAwmbc3QCPRt3bCS9gy4VYyiboGSBF6brUi3LtgHo
+         dKXQ==
+X-Gm-Message-State: ABy/qLaSFcVrPv/mNh3+Pan9HVonE2mvD0ftEVYMAoBIpBxYwjS2ic6M
+        DBYV249d/ucUr9Axtmjo8Mg=
+X-Google-Smtp-Source: APBJJlFqh6O8ZhZZrVhxyzkGtfKV31CkB3xqadtfge9pqNyKNfX9Qj6+rE7GluS3HH43H8S7tBjmPA==
+X-Received: by 2002:aa7:dbd8:0:b0:522:3b6e:5f6a with SMTP id v24-20020aa7dbd8000000b005223b6e5f6amr8992130edt.29.1690806382404;
+        Mon, 31 Jul 2023 05:26:22 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:c9d4:a174:b52d:4c33])
+        by smtp.gmail.com with ESMTPSA id y19-20020aa7ccd3000000b0051d9ee1c9d3sm5359982edt.84.2023.07.31.05.26.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 04:48:59 -0700 (PDT)
+        Mon, 31 Jul 2023 05:26:22 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jack Zhu <jack.zhu@starfivetech.com>,
+To:     Walker Chen <walker.chen@starfivetech.com>,
         Changhuang Liang <changhuang.liang@starfivetech.com>,
-        Minda Chen <minda.chen@starfivetech.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: correct file entry in STARFIVE JH7110 DPHY RX DRIVER
-Date:   Mon, 31 Jul 2023 13:48:56 +0200
-Message-Id: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in STARFIVE JH71XX PMU CONTROLLER DRIVER
+Date:   Mon, 31 Jul 2023 14:26:11 +0200
+Message-Id: <20230731122611.4309-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support") adds the
-MAINTAINERS section STARFIVE JH7110 DPHY RX DRIVER referring to
-'phy-starfive-dphy-rx.c', but the file actually added in this commit is
-named 'phy-jh7110-dphy-rx.c'.
+Commit f3fb16291f48 ("soc: starfive: Move the power-domain driver to the
+genpd dir") moves:
 
-Correct the file entry in STARFIVE JH7110 DPHY RX DRIVER.
+  drivers/{soc/starfive/jh71xx_pmu.c => genpd/starfive/jh71xx-pmu.c}
+
+However, the update to the file entry in MAINTAINERS only addresses the
+move in directories, but misses the renaming from jh71xx_pmu.c to
+jh71xx-pmu.c. Hence, ./scripts/get_maintainer.pl --self-test=patterns
+complains about a broken reference.
+
+Adjust the file entry in STARFIVE JH71XX PMU CONTROLLER DRIVER.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
@@ -79,18 +83,18 @@ Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 733bcfa0209a..003b0461641a 100644
+index 003b0461641a..7a20d6ab1d18 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20345,7 +20345,7 @@ M:	Jack Zhu <jack.zhu@starfivetech.com>
+@@ -20408,7 +20408,7 @@ M:	Walker Chen <walker.chen@starfivetech.com>
  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
  S:	Supported
- F:	Documentation/devicetree/bindings/phy/starfive,jh7110-dphy-rx.yaml
--F:	drivers/phy/starfive/phy-starfive-dphy-rx.c
-+F:	drivers/phy/starfive/phy-jh7110-dphy-rx.c
+ F:	Documentation/devicetree/bindings/power/starfive*
+-F:	drivers/genpd/starfive/jh71xx_pmu.c
++F:	drivers/genpd/starfive/jh71xx-pmu.c
+ F:	include/dt-bindings/power/starfive,jh7110-pmu.h
  
- STARFIVE JH7110 MMC/SD/SDIO DRIVER
- M:	William Qiu <william.qiu@starfivetech.com>
+ STARFIVE SOC DRIVERS
 -- 
 2.17.1
 
