@@ -2,92 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 327E2C0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 10:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B9BC0015E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 14:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232003AbjHAK2x (ORCPT
+        id S234451AbjHAOGK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Aug 2023 06:28:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48582 "EHLO
+        Tue, 1 Aug 2023 10:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231220AbjHAK2w (ORCPT
+        with ESMTP id S234492AbjHAOFx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Aug 2023 06:28:52 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A92A1
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Aug 2023 03:28:50 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5222a38c0a0so8097736a12.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Aug 2023 03:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690885729; x=1691490529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3Ho+ZTYvFIHB9vt5ml0CuS5M4OvaLd2nOICNHPF+LE=;
-        b=AdbH+iyo3/ENto3SAGhYYdsLNkTJnrggHTQlC5FLAcw8q4SFljrDfQQa8xnUpde/Y3
-         2MTOdK65uduO8xMMa1yqFQx0ZGUtg8vPIM2Ey/ctMR1neOldx9ON4QQDzyHW9sMa7cPr
-         TzYVvBY2qZBRhF7GWxdQLrRkPJjAIuvR0nQaPDpNKW31T/20F/WZwoW4MjDnJkvNnPEr
-         RuVbnPzVDsFOXmxMXJU0DUQBA+03X18aWskTdw1/xyt5y74tMMych92a2qMhzdObLmZw
-         9z61NnOj0u2dKVrGZUJp5vLGJ36nVSIOhjQ+bvbcV36rkduyZvARJHMHcbOosAiN8WK4
-         2/mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690885729; x=1691490529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U3Ho+ZTYvFIHB9vt5ml0CuS5M4OvaLd2nOICNHPF+LE=;
-        b=dre3dmMtDMZSeh+D8B1HguWHdcZuLqczKYl5vG44N8abVlfCqTRLWpFOe1x1eYVYnU
-         jTph5EsMrg4ee/wvYUYOj3B5aDiRCxgBnb9LCfWLVlifjR7d/1YHP7lgq38xI/0vKUik
-         g9ZZBJn+zd/TEIIndAafgVj3WYd6GYAKzldI4GEe1ulbLuB1DJe20B23fzy51bAWlzKn
-         vHGxEmmbSpwKk+YY0XeSqQDoelny0+e+hCPipuWORurKQRp5lGOVks5lx42/PRSSZvXB
-         BAZjnmCnHPSuwul7Kdoj40T3pJ+p51RRK7boQhsyaMDHATql5+rwoz3ZWsnJZCajbQEw
-         60Tg==
-X-Gm-Message-State: ABy/qLaN2xZXi0zpRj5dMlSl/Llfnivx98YJb4reVz65PcS4hD6T3jNj
-        GYcgxGfoieW8y/xRtB4zyTrLaA==
-X-Google-Smtp-Source: APBJJlFn7BpsioeD1x657x2SSLgwnC4u8qjBSo6pmGhWoBdWzdxUgN5MpgtWQK8NmE9jUBXFhoPdQw==
-X-Received: by 2002:aa7:c14b:0:b0:522:27ea:58b with SMTP id r11-20020aa7c14b000000b0052227ea058bmr2067249edp.39.1690885728928;
-        Tue, 01 Aug 2023 03:28:48 -0700 (PDT)
-Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
-        by smtp.gmail.com with ESMTPSA id c16-20020aa7df10000000b00522bd24790asm3593876edy.58.2023.08.01.03.28.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Aug 2023 03:28:48 -0700 (PDT)
-Date:   Tue, 1 Aug 2023 13:28:37 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Lin Ma <linma@zju.edu.cn>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>,
-        Petr Machata <petrm@nvidia.com>,
-        Simon Horman <horms@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: net: dcb: Communication challenges for patch reviews?
-Message-ID: <a03f4f45-08c7-4b7d-8f9a-328dbfbe721c@kadam.mountain>
-References: <20230731045216.3779420-1-linma@zju.edu.cn>
- <fbda76a9-e1f3-d483-ab3d-3c904c54a5db@web.de>
- <3d159780.f2fb6.189aebb4a18.Coremail.linma@zju.edu.cn>
- <d29e7d32-1684-4400-9907-f2f69092466d@kadam.mountain>
- <ed7020cb-cee5-16af-55f1-f1adac08f1b6@web.de>
+        Tue, 1 Aug 2023 10:05:53 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671E53598;
+        Tue,  1 Aug 2023 07:05:27 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 371Cvufp010226;
+        Tue, 1 Aug 2023 14:05:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=8/KuE7ZebrUGAksmIDm85DsZ0E+iBDP8kfm3m+UuBnQ=;
+ b=MFBLuuUeCC7ra6yUso1HzBfXr5yHqupLIbNeGtK5UDPqVgmL+0Yhwn8DEQulIGluxXKL
+ JajWJL66Hd3nTZu6eYl7nb+q89tRcbWAtbbYkneaesCJiO5RIC9LOqn24bwWytI3cn+X
+ 11W9g+o6yvlhTcg1VLR70+nEv+fEQmsQFxDnek50hdlmvBojZ2O/ZwPoY7qvkOP53jXM
+ P/pxeX5ruatrt7KV/khprG55AVnCk6ROcFL1slE3uAchfF9yuCKG22wilbe+cJ3RtHS+
+ TX4fgXs9eKXBgv8Tz5PgS6iwvPXMrotvKIU8qprW9CHFIkEGAzP44ByCp1zX+/TVclTV xw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s72gqr4t5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Aug 2023 14:05:13 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 371E5CJR010200
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 1 Aug 2023 14:05:12 GMT
+Received: from [10.50.55.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 1 Aug
+ 2023 07:05:10 -0700
+Message-ID: <dc7fdd8a-b3c4-b931-61be-b9bc467c6a85@quicinc.com>
+Date:   Tue, 1 Aug 2023 19:35:06 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed7020cb-cee5-16af-55f1-f1adac08f1b6@web.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH][V2][next] accel/qaic: remove redundant pointer pexec
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Carl Vanderlip <quic_carlv@quicinc.com>,
+        "Oded Gabbay" <ogabbay@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230726140626.264952-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+In-Reply-To: <20230726140626.264952-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qriaiy6FdSCIUOE9KCRm590KugTW_szM
+X-Proofpoint-ORIG-GUID: qriaiy6FdSCIUOE9KCRm590KugTW_szM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-01_09,2023-08-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=624 adultscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308010128
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I'm not trying to be mean.  I don't go out looking for Markus's emails,
-but he often adds kernel-janitors to the CC list.  Kernel janitors is a
-vger list so he's banned but we still see the responses to his emails.
 
-In recent months probably seven maintainers have asked him over and over
-(maybe 20 times?) to stop with this nonsense.  So he knew he shouldn't
-have asked Lin Ma to redo the patch.
 
-regards,
-dan carpenter
+On 7/26/2023 7:36 PM, Colin Ian King wrote:
+> Pointer pexec is being assigned a value however it is never read. The
+> assignment is redundant and can be removed. Replace sizeof(*pexec)
+> with sizeof the type and remove the declaration of pointer pexec.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+
