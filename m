@@ -2,92 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C48C04E69
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 01:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7164DC001DE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 01:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231725AbjHABVo (ORCPT
+        id S231806AbjHABel (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 21:21:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33414 "EHLO
+        Mon, 31 Jul 2023 21:34:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231450AbjHABVn (ORCPT
+        with ESMTP id S229585AbjHABek (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 21:21:43 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CF01712;
-        Mon, 31 Jul 2023 18:21:40 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 7EE917FD3;
-        Tue,  1 Aug 2023 09:21:37 +0800 (CST)
-Received: from EXMBX062.cuchost.com (172.16.6.62) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 1 Aug
- 2023 09:21:37 +0800
-Received: from [192.168.125.107] (183.27.98.54) by EXMBX062.cuchost.com
- (172.16.6.62) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 1 Aug
- 2023 09:21:36 +0800
-Message-ID: <c03886ed-f39e-09c4-6435-7a0e63341da7@starfivetech.com>
-Date:   Tue, 1 Aug 2023 09:21:35 +0800
+        Mon, 31 Jul 2023 21:34:40 -0400
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 97184114;
+        Mon, 31 Jul 2023 18:34:38 -0700 (PDT)
+Received: from linma$zju.edu.cn ( [42.120.103.60] ) by
+ ajax-webmail-mail-app4 (Coremail) ; Tue, 1 Aug 2023 09:34:17 +0800
+ (GMT+08:00)
+X-Originating-IP: [42.120.103.60]
+Date:   Tue, 1 Aug 2023 09:34:17 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   "Lin Ma" <linma@zju.edu.cn>
+To:     "Markus Elfring" <Markus.Elfring@web.de>
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        "Alexander Duyck" <alexander.h.duyck@intel.com>,
+        "Daniel Machon" <daniel.machon@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Peter P Waskiewicz Jr" <peter.p.waskiewicz.jr@intel.com>,
+        "Petr Machata" <petrm@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: dcb: choose correct policy to parse
+ DCB_ATTR_BCN
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220622(41e5976f)
+ Copyright (c) 2002-2023 www.mailtech.cn
+ mispb-4df6dc2c-e274-4d1c-b502-72c5c3dfa9ce-zj.edu.cn
+In-Reply-To: <fbda76a9-e1f3-d483-ab3d-3c904c54a5db@web.de>
+References: <20230731045216.3779420-1-linma@zju.edu.cn>
+ <fbda76a9-e1f3-d483-ab3d-3c904c54a5db@web.de>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] MAINTAINERS: correct file entry in STARFIVE JH7110 DPHY
- RX DRIVER
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jack Zhu <jack.zhu@starfivetech.com>,
-        Minda Chen <minda.chen@starfivetech.com>,
-        "Vinod Koul" <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        <linux-phy@lists.infradead.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
-Content-Language: en-US
-From:   Changhuang Liang <changhuang.liang@starfivetech.com>
-In-Reply-To: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.98.54]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX062.cuchost.com
- (172.16.6.62)
-X-YovoleRuleAgent: yovoleflag
+Message-ID: <3d159780.f2fb6.189aebb4a18.Coremail.linma@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: cS_KCgB3fxcaYchkoKpqCg--.55514W
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/1tbiAwQNEmTHEHoQmQAMsU
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 2023/7/31 19:48, Lukas Bulwahn wrote:
-> Commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support") adds the
-> MAINTAINERS section STARFIVE JH7110 DPHY RX DRIVER referring to
-> 'phy-starfive-dphy-rx.c', but the file actually added in this commit is
-> named 'phy-jh7110-dphy-rx.c'.
-> 
-> Correct the file entry in STARFIVE JH7110 DPHY RX DRIVER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Thank you for your correcting.
-
-Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-
-Thanks,
-Changhuang
-
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 733bcfa0209a..003b0461641a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20345,7 +20345,7 @@ M:	Jack Zhu <jack.zhu@starfivetech.com>
->  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
->  S:	Supported
->  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-dphy-rx.yaml
-> -F:	drivers/phy/starfive/phy-starfive-dphy-rx.c
-> +F:	drivers/phy/starfive/phy-jh7110-dphy-rx.c
->  
->  STARFIVE JH7110 MMC/SD/SDIO DRIVER
->  M:	William Qiu <william.qiu@starfivetech.com>
+SGVsbG8gTWFya3VzLAoKPiAKPiDigKYKPiA+IFRoaXMgcGF0Y2ggdXNlIGNvcnJlY3QgZGNibmxf
+YmNuX25lc3QgcG9saWN5IHRvIHBhcnNlIHRoZQo+ID4gdGJbRENCX0FUVFJfQkNOXSBuZXN0ZWQg
+VExWLgo+IAo+IEFyZSBpbXBlcmF0aXZlIGNoYW5nZSBkZXNjcmlwdGlvbnMgc3RpbGwgcHJlZmVy
+cmVkPwo+IAo+IFNlZSBhbHNvOgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
+eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vz
+cy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2g9djYuNS1yYzMjbjk0Cj4gCj4gUmVnYXJkcywKPiBN
+YXJrdXMKClllYWgsIHRoYW5rcyBmb3IgcmVtaW5kaW5nIG1lLiBJIGhhdmVuJ3QgYmVlbiBwYXlp
+bmcgYXR0ZW50aW9uIHRvIHRoYXQgYW5kIEkgd2lsbCByZW1lbWJlciB0aGlzIGV2ZXIgc2luY2Uu
+IDpECgpSZWdhcmRzLApMaW4=
