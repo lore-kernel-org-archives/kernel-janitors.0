@@ -2,127 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA921C00528
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 15:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 008B6C41513
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 16:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234144AbjHAP5c (ORCPT
+        id S230236AbjHAQTM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Aug 2023 11:57:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38818 "EHLO
+        Tue, 1 Aug 2023 12:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232545AbjHAP5b (ORCPT
+        with ESMTP id S229537AbjHAQTL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Aug 2023 11:57:31 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FCD1999;
-        Tue,  1 Aug 2023 08:57:15 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id D192A5C00FB;
-        Tue,  1 Aug 2023 11:57:14 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 01 Aug 2023 11:57:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
-         h=cc:cc:content-transfer-encoding:content-type:date:date:from
-        :from:in-reply-to:message-id:mime-version:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1690905434; x=1690991834; bh=ty
-        2Jg2JcDl1vsDdHl2O0KnSHDnTuySWYs7sri+QdDRE=; b=y5QYxconx2yNgUnGRd
-        qWNidKlBBWnkxxusQK/EVP7tcJAM3buOWza73ay6fnKJOkRlTJ8l11qzJ4V7Vh00
-        leNF1jpqP5poLDtua3QXuquLJT6UoMRgAZY6H+3JVpP2IzCZFoPKSNWE6wSM6jHL
-        qVGuQyCnZOJ7zMAhUxsH5vhOxxT1CLyDFMNUuHYSHEqAu9Q6DxxZqlKIxdSRFaU+
-        WR2Fio8BFyD/5EKlRY3lh02+dEl9dHeTl2T5kDdPY8uBmfJyf7WE3Ov8hjbU0vys
-        20uFwB6N+eR7053yxMgHpYMxZs/AuB1q6XY1FQ+hCOILg1Pa8cSH8PdprOrpV/eE
-        pifQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1690905434; x=1690991834; bh=ty2Jg2JcDl1vs
-        DdHl2O0KnSHDnTuySWYs7sri+QdDRE=; b=wDKJzvE/xGU2KZr6wCLJO+4kaHY6p
-        DSbcMmzrZY7TL0h3Nc/ck3TO7+r110tKikjz53D1UddibQjMu/94Fq7DYHcTQoA2
-        2RwmC5BwBMpu8epWsWXDh8TscEVNmDYplsy1ea/+3QuOi1qmB6wEVR6yMZURdI+C
-        wRMLNlgvTLHmqBaLNEt/0E8vUnrjzGhZX+cdy1ODjlWOpYaeguZn7ZxujHNN2onw
-        Y8l0086PLuVKxfCexV9BEocxhb6OtMgvI0+iAE/U7i/Caglbibg5Hmrzt1mduNXh
-        /wts5At+5nRoa4wiGuM3CoRkMAKKXfWUrc/Y2oTA40wvkYeSaTWDU+qaw==
-X-ME-Sender: <xms:WivJZKgYxwr5F9B17UmCjlE4p1wCSYAVSG53Qv7aiEJ55LCpBJhReg>
-    <xme:WivJZLCLwimKmYOuIAwzzCw3pj-Nv4pUSEuJf7nH896Q0_OI13VmCAkQdAhTKikEm
-    15LlIOKl7nuyLAiDbE>
-X-ME-Received: <xmr:WivJZCHy9e520O9tApzExctx6ws2s6CagOA0bfX0Aju2jP5xP9SW9yFif1_j9BiIiIRWvoBNCxJ7q3QPH9c5pxtWs5c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrjeeigdelvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghvihguucft
-    vggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepvddvieefleeggfeftdejtdffheeuieffheejgefgffejveduueeugeetkeehjedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvse
-    gurghvihgurhgvrghvvghrrdgtohhm
-X-ME-Proxy: <xmx:WivJZDQqkc-JHd3fKMOf5eAc84fqCf5WzH80WzQXmkj5KaeN4-DoPw>
-    <xmx:WivJZHx07QhvDivyC949iSNWzYqTwhRS71WV3mbJYYIywklrrIhJig>
-    <xmx:WivJZB6d-I5L2eo7wPrkiKSPEFUJt4efNWk8BrycGOddlDZqP9dVKg>
-    <xmx:WivJZEhj7sGnr-0x6ollsFHxaV7srl2zeEFFfRIXma42svx_qZ3Kxg>
-Feedback-ID: i67e946c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Aug 2023 11:57:11 -0400 (EDT)
-From:   David Reaver <me@davidreaver.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        David Reaver <me@davidreaver.com>
-Subject: [PATCH] perf/x86/rapl: fix Using plain integer as NULL pointer warning
-Date:   Tue,  1 Aug 2023 08:56:51 -0700
-Message-ID: <20230801155651.108076-1-me@davidreaver.com>
-X-Mailer: git-send-email 2.41.0
+        Tue, 1 Aug 2023 12:19:11 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EE11BF9
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Aug 2023 09:19:07 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-63cef62a944so38371326d6.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Aug 2023 09:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690906746; x=1691511546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9bO4EMps/8stuDZiI8Gpdidb8h9+MIAhmvaNg3KYj1s=;
+        b=o4UnwJgpk8yeTzZUK1FZTs65eYsnacdGTDhjwzMy+DqQRhE2jTupyokcvRFqP1MKuo
+         qAu+yNtKzWXdHC5YGT3qGXgvBJ0yvodc24S05t5lVNoUZlrjld+c3ZYg84ALagFSl5E1
+         0e1IPmRVyqT2GVIRYdARMkHo0CkuvhYNhdAmnof9UiM53aClnQ1FS5ZSzeTK2gVSd53B
+         063XdvfBsZ51WyTLXABYzSrXYL1XyijHBazCJn4+IrTGw38FuZoFnqi2U6TZNyoEfv5r
+         ytN07iG/2nB0AbEtc586oI3xWMZoIT8TzfHqCOMBm0ZBpqNjIRXHSeGMlbbE1pfY9N/D
+         MP5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690906746; x=1691511546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9bO4EMps/8stuDZiI8Gpdidb8h9+MIAhmvaNg3KYj1s=;
+        b=jFmayiCDKP6+ySmfMe94s73xtsjZ/OdDBWmNdKeoNdTzwRjNPBW3zcXzPniT3yIwOX
+         xOy2fZso7MDd2JhLOO7Zw0i8J/qaBG08/2B0ZVfroPJYy87g7xb7E8BV5ck8K5XTYaed
+         XPdHHZUVDQPSyCvPfjyMMTUWdWs0fZ9PxxREQIwmNqL7/mbxYkbqJZkgYgckCEJDLGPV
+         Mc5L6/l2cZJxjLak76Wpvx3cONyo6f+Yb9ip6EKVQJUaQW72uJv0eHMEBuqljBX5pnYa
+         UPQay8VFQD3h/oUhbACNoxwF2Xa7pQLyNc4tDJOpRqqZQ6imnD8I23GJb26jKu0xQfmb
+         UqGQ==
+X-Gm-Message-State: ABy/qLaMKhyDEBY0jPQphGhiNBrlZx+m7+j6X3e6Aweej2K5xQHmIa/X
+        pK175pe0OuBp20IXg/NI8fYMVAqPBftV6vPDOHlqDQ==
+X-Google-Smtp-Source: APBJJlExjHsbEshbD/7fM07TlWTefBlG0GYpx+aMVrkgKVZzEhxPirjTfZFjF6Rla5/eWjDqzfKNP/t4CWrr7MCsFFs=
+X-Received: by 2002:ad4:5847:0:b0:635:fa7b:6c22 with SMTP id
+ de7-20020ad45847000000b00635fa7b6c22mr10424824qvb.55.1690906745972; Tue, 01
+ Aug 2023 09:19:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230725043310.1227621-1-suhui@nfschina.com>
+In-Reply-To: <20230725043310.1227621-1-suhui@nfschina.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 1 Aug 2023 09:18:55 -0700
+Message-ID: <CAKwvOdn2Qn219Ys6vyR0Xryi_32XTARBWsfmuc3zhdH8TLREWQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ext4: mballoc: avoid garbage value from err
+To:     Su Hui <suhui@nfschina.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, nathan@kernel.org,
+        trix@redhat.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Change 0 to NULL when initializing the test field of perf_msr structs to
-avoid the following sparse warnings:
+On Mon, Jul 24, 2023 at 9:34=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
+>
+> clang's static analysis warning: fs/ext4/mballoc.c
+> line 4178, column 6, Branch condition evaluates to a garbage value.
+>
+> err is uninitialized and will be judged when 'len <=3D 0' or
+> it first enters the loop while the condition "!ext4_sb_block_valid()"
+> is true. Although this can't make problems now, it's better to
+> correct it.
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-make C=2 arch/x86/events/rapl.o
+Thanks for the patch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-  CHECK   arch/x86/events/rapl.c
-...
-arch/x86/events/rapl.c:540:59: warning: Using plain integer as NULL pointer
-arch/x86/events/rapl.c:542:59: warning: Using plain integer as NULL pointer
-arch/x86/events/rapl.c:543:59: warning: Using plain integer as NULL pointer
-arch/x86/events/rapl.c:544:59: warning: Using plain integer as NULL pointer
+> ---
+> v2:
+>  - modify commit message
+>
+>  fs/ext4/mballoc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 21b903fe546e..769000c970b0 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -4084,7 +4084,7 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_f=
+sblk_t block,
+>         struct ext4_sb_info *sbi =3D EXT4_SB(sb);
+>         ext4_group_t group;
+>         ext4_grpblk_t blkoff;
+> -       int i, err;
+> +       int i, err =3D 0;
+>         int already;
+>         unsigned int clen, clen_changed, thisgrp_len;
+>
+> --
+> 2.30.2
+>
 
-Signed-off-by: David Reaver <me@davidreaver.com>
----
- arch/x86/events/rapl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index 52e6e7ed4f78..ae21bb2ff0ff 100644
---- a/arch/x86/events/rapl.c
-+++ b/arch/x86/events/rapl.c
-@@ -537,11 +537,11 @@ static struct perf_msr intel_rapl_spr_msrs[] = {
-  * - want to use same event codes across both architectures
-  */
- static struct perf_msr amd_rapl_msrs[] = {
--	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, 0, false, 0 },
-+	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, NULL, false, 0 },
- 	[PERF_RAPL_PKG]  = { MSR_AMD_PKG_ENERGY_STATUS,  &rapl_events_pkg_group,   test_msr, false, RAPL_MSR_MASK },
--	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   0, false, 0 },
--	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   0, false, 0 },
--	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  0, false, 0 },
-+	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   NULL, false, 0 },
-+	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   NULL, false, 0 },
-+	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
- };
- 
- static int rapl_cpu_offline(unsigned int cpu)
+--=20
+Thanks,
+~Nick Desaulniers
