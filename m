@@ -2,89 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B9BC0015E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 14:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA921C00528
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 15:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234451AbjHAOGK (ORCPT
+        id S234144AbjHAP5c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Aug 2023 10:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
+        Tue, 1 Aug 2023 11:57:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234492AbjHAOFx (ORCPT
+        with ESMTP id S232545AbjHAP5b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Aug 2023 10:05:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671E53598;
-        Tue,  1 Aug 2023 07:05:27 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 371Cvufp010226;
-        Tue, 1 Aug 2023 14:05:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=8/KuE7ZebrUGAksmIDm85DsZ0E+iBDP8kfm3m+UuBnQ=;
- b=MFBLuuUeCC7ra6yUso1HzBfXr5yHqupLIbNeGtK5UDPqVgmL+0Yhwn8DEQulIGluxXKL
- JajWJL66Hd3nTZu6eYl7nb+q89tRcbWAtbbYkneaesCJiO5RIC9LOqn24bwWytI3cn+X
- 11W9g+o6yvlhTcg1VLR70+nEv+fEQmsQFxDnek50hdlmvBojZ2O/ZwPoY7qvkOP53jXM
- P/pxeX5ruatrt7KV/khprG55AVnCk6ROcFL1slE3uAchfF9yuCKG22wilbe+cJ3RtHS+
- TX4fgXs9eKXBgv8Tz5PgS6iwvPXMrotvKIU8qprW9CHFIkEGAzP44ByCp1zX+/TVclTV xw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s72gqr4t5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Aug 2023 14:05:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 371E5CJR010200
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 1 Aug 2023 14:05:12 GMT
-Received: from [10.50.55.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 1 Aug
- 2023 07:05:10 -0700
-Message-ID: <dc7fdd8a-b3c4-b931-61be-b9bc467c6a85@quicinc.com>
-Date:   Tue, 1 Aug 2023 19:35:06 +0530
+        Tue, 1 Aug 2023 11:57:31 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FCD1999;
+        Tue,  1 Aug 2023 08:57:15 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id D192A5C00FB;
+        Tue,  1 Aug 2023 11:57:14 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 01 Aug 2023 11:57:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
+         h=cc:cc:content-transfer-encoding:content-type:date:date:from
+        :from:in-reply-to:message-id:mime-version:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1690905434; x=1690991834; bh=ty
+        2Jg2JcDl1vsDdHl2O0KnSHDnTuySWYs7sri+QdDRE=; b=y5QYxconx2yNgUnGRd
+        qWNidKlBBWnkxxusQK/EVP7tcJAM3buOWza73ay6fnKJOkRlTJ8l11qzJ4V7Vh00
+        leNF1jpqP5poLDtua3QXuquLJT6UoMRgAZY6H+3JVpP2IzCZFoPKSNWE6wSM6jHL
+        qVGuQyCnZOJ7zMAhUxsH5vhOxxT1CLyDFMNUuHYSHEqAu9Q6DxxZqlKIxdSRFaU+
+        WR2Fio8BFyD/5EKlRY3lh02+dEl9dHeTl2T5kDdPY8uBmfJyf7WE3Ov8hjbU0vys
+        20uFwB6N+eR7053yxMgHpYMxZs/AuB1q6XY1FQ+hCOILg1Pa8cSH8PdprOrpV/eE
+        pifQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1690905434; x=1690991834; bh=ty2Jg2JcDl1vs
+        DdHl2O0KnSHDnTuySWYs7sri+QdDRE=; b=wDKJzvE/xGU2KZr6wCLJO+4kaHY6p
+        DSbcMmzrZY7TL0h3Nc/ck3TO7+r110tKikjz53D1UddibQjMu/94Fq7DYHcTQoA2
+        2RwmC5BwBMpu8epWsWXDh8TscEVNmDYplsy1ea/+3QuOi1qmB6wEVR6yMZURdI+C
+        wRMLNlgvTLHmqBaLNEt/0E8vUnrjzGhZX+cdy1ODjlWOpYaeguZn7ZxujHNN2onw
+        Y8l0086PLuVKxfCexV9BEocxhb6OtMgvI0+iAE/U7i/Caglbibg5Hmrzt1mduNXh
+        /wts5At+5nRoa4wiGuM3CoRkMAKKXfWUrc/Y2oTA40wvkYeSaTWDU+qaw==
+X-ME-Sender: <xms:WivJZKgYxwr5F9B17UmCjlE4p1wCSYAVSG53Qv7aiEJ55LCpBJhReg>
+    <xme:WivJZLCLwimKmYOuIAwzzCw3pj-Nv4pUSEuJf7nH896Q0_OI13VmCAkQdAhTKikEm
+    15LlIOKl7nuyLAiDbE>
+X-ME-Received: <xmr:WivJZCHy9e520O9tApzExctx6ws2s6CagOA0bfX0Aju2jP5xP9SW9yFif1_j9BiIiIRWvoBNCxJ7q3QPH9c5pxtWs5c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrjeeigdelvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghvihguucft
+    vggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepvddvieefleeggfeftdejtdffheeuieffheejgefgffejveduueeugeetkeehjedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvse
+    gurghvihgurhgvrghvvghrrdgtohhm
+X-ME-Proxy: <xmx:WivJZDQqkc-JHd3fKMOf5eAc84fqCf5WzH80WzQXmkj5KaeN4-DoPw>
+    <xmx:WivJZHx07QhvDivyC949iSNWzYqTwhRS71WV3mbJYYIywklrrIhJig>
+    <xmx:WivJZB6d-I5L2eo7wPrkiKSPEFUJt4efNWk8BrycGOddlDZqP9dVKg>
+    <xmx:WivJZEhj7sGnr-0x6ollsFHxaV7srl2zeEFFfRIXma42svx_qZ3Kxg>
+Feedback-ID: i67e946c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Aug 2023 11:57:11 -0400 (EDT)
+From:   David Reaver <me@davidreaver.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        David Reaver <me@davidreaver.com>
+Subject: [PATCH] perf/x86/rapl: fix Using plain integer as NULL pointer warning
+Date:   Tue,  1 Aug 2023 08:56:51 -0700
+Message-ID: <20230801155651.108076-1-me@davidreaver.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH][V2][next] accel/qaic: remove redundant pointer pexec
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Carl Vanderlip <quic_carlv@quicinc.com>,
-        "Oded Gabbay" <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230726140626.264952-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
-In-Reply-To: <20230726140626.264952-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qriaiy6FdSCIUOE9KCRm590KugTW_szM
-X-Proofpoint-ORIG-GUID: qriaiy6FdSCIUOE9KCRm590KugTW_szM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-01_09,2023-08-01_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=624 adultscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2308010128
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Change 0 to NULL when initializing the test field of perf_msr structs to
+avoid the following sparse warnings:
 
+make C=2 arch/x86/events/rapl.o
 
-On 7/26/2023 7:36 PM, Colin Ian King wrote:
-> Pointer pexec is being assigned a value however it is never read. The
-> assignment is redundant and can be removed. Replace sizeof(*pexec)
-> with sizeof the type and remove the declaration of pointer pexec.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+  CHECK   arch/x86/events/rapl.c
+...
+arch/x86/events/rapl.c:540:59: warning: Using plain integer as NULL pointer
+arch/x86/events/rapl.c:542:59: warning: Using plain integer as NULL pointer
+arch/x86/events/rapl.c:543:59: warning: Using plain integer as NULL pointer
+arch/x86/events/rapl.c:544:59: warning: Using plain integer as NULL pointer
 
-Reviewed-by: Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
+Signed-off-by: David Reaver <me@davidreaver.com>
+---
+ arch/x86/events/rapl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index 52e6e7ed4f78..ae21bb2ff0ff 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -537,11 +537,11 @@ static struct perf_msr intel_rapl_spr_msrs[] = {
+  * - want to use same event codes across both architectures
+  */
+ static struct perf_msr amd_rapl_msrs[] = {
+-	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, 0, false, 0 },
++	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, NULL, false, 0 },
+ 	[PERF_RAPL_PKG]  = { MSR_AMD_PKG_ENERGY_STATUS,  &rapl_events_pkg_group,   test_msr, false, RAPL_MSR_MASK },
+-	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   0, false, 0 },
+-	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   0, false, 0 },
+-	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  0, false, 0 },
++	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   NULL, false, 0 },
++	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   NULL, false, 0 },
++	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
+ };
+ 
+ static int rapl_cpu_offline(unsigned int cpu)
