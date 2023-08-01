@@ -2,71 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861DAC001DE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jul 2023 18:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C48C04E69
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 01:21:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjGaSnj (ORCPT
+        id S231725AbjHABVo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jul 2023 14:43:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33920 "EHLO
+        Mon, 31 Jul 2023 21:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjGaSni (ORCPT
+        with ESMTP id S231450AbjHABVn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jul 2023 14:43:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9399E;
-        Mon, 31 Jul 2023 11:43:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F01D06126D;
-        Mon, 31 Jul 2023 18:43:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6493C433C8;
-        Mon, 31 Jul 2023 18:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690829016;
-        bh=bQ/n8sSgCr68cHiUeFkcrAzZyF3+4MF0xc9n3lQWFmg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GlBcUs+tj/rB8Kr4/aS1wQy0dxaXhr+MgaDlDb248BRZscPDFynVptF5gPBtzyNqZ
-         2mVsD3KicAODOKzLEiH1C25vd2JL1Ngffupjpp8LT73xAa9pAbIksbYNJ+1zlpBFov
-         6q1MDoWroeBTETSKEMgAGeae8hNfhWvcNCGiLJtISQkYt6u+XPlgTUZGPHbPk/atmD
-         U36KnntBxPdzJzO0bTiHZGmVbifwXeqxiwy29jK6JKcW8SaFuUI+GziyKaDm2y835Y
-         2hSKSIaKgM2xfxs6AwEH9WKsO9qoPSfAVacqhPMpi5aVwVCHRXoFgjz2XLEZCEHz06
-         OgvNN1V2kkbcg==
-Date:   Mon, 31 Jul 2023 12:43:33 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Mark O'Donovan <shiftee@posteo.net>,
-        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [1/2] nvme-auth: unlock mutex in one place only
-Message-ID: <ZMgA1SGzi+VnJ8xS@kbusch-mbp>
-References: <20230727134748.4163796-1-shiftee@posteo.net>
- <28d11fc5-743f-0810-8ab7-3fa2a3f98c65@web.de>
- <20230731135152.GA6016@lst.de>
- <d51771bc-32a6-7424-ba02-bcc8ab9bf3f8@web.de>
- <ZMf7BUH3ZD+GA7TA@kbusch-mbp>
- <f551a681-7893-b2a2-9565-8a4c1bd01e33@web.de>
+        Mon, 31 Jul 2023 21:21:43 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CF01712;
+        Mon, 31 Jul 2023 18:21:40 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 7EE917FD3;
+        Tue,  1 Aug 2023 09:21:37 +0800 (CST)
+Received: from EXMBX062.cuchost.com (172.16.6.62) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 1 Aug
+ 2023 09:21:37 +0800
+Received: from [192.168.125.107] (183.27.98.54) by EXMBX062.cuchost.com
+ (172.16.6.62) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 1 Aug
+ 2023 09:21:36 +0800
+Message-ID: <c03886ed-f39e-09c4-6435-7a0e63341da7@starfivetech.com>
+Date:   Tue, 1 Aug 2023 09:21:35 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f551a681-7893-b2a2-9565-8a4c1bd01e33@web.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] MAINTAINERS: correct file entry in STARFIVE JH7110 DPHY
+ RX DRIVER
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jack Zhu <jack.zhu@starfivetech.com>,
+        Minda Chen <minda.chen@starfivetech.com>,
+        "Vinod Koul" <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-phy@lists.infradead.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
+Content-Language: en-US
+From:   Changhuang Liang <changhuang.liang@starfivetech.com>
+In-Reply-To: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.98.54]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX062.cuchost.com
+ (172.16.6.62)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 08:37:12PM +0200, Markus Elfring wrote:
-> Does the concrete requirement for the usage of “imperative mood”
-> mean also that a reasonable subject would be insufficient alone
-> without a corresponding description (or “change log”)?
 
-The doc you linked to is a simple guide for people new to the process:
 
-  "This text is a collection of suggestions"
+On 2023/7/31 19:48, Lukas Bulwahn wrote:
+> Commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support") adds the
+> MAINTAINERS section STARFIVE JH7110 DPHY RX DRIVER referring to
+> 'phy-starfive-dphy-rx.c', but the file actually added in this commit is
+> named 'phy-jh7110-dphy-rx.c'.
+> 
+> Correct the file entry in STARFIVE JH7110 DPHY RX DRIVER.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-It doesn't claim to be a list of concrete requirements.
+Thank you for your correcting.
+
+Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+
+Thanks,
+Changhuang
+
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 733bcfa0209a..003b0461641a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20345,7 +20345,7 @@ M:	Jack Zhu <jack.zhu@starfivetech.com>
+>  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-dphy-rx.yaml
+> -F:	drivers/phy/starfive/phy-starfive-dphy-rx.c
+> +F:	drivers/phy/starfive/phy-jh7110-dphy-rx.c
+>  
+>  STARFIVE JH7110 MMC/SD/SDIO DRIVER
+>  M:	William Qiu <william.qiu@starfivetech.com>
