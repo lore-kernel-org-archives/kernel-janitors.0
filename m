@@ -2,97 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B26EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 05:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7D8EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Aug 2023 06:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbjHAFtH (ORCPT
+        id S231213AbjHAGB6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Aug 2023 01:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54028 "EHLO
+        Tue, 1 Aug 2023 02:01:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbjHAFtB (ORCPT
+        with ESMTP id S230096AbjHAGB5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Aug 2023 01:49:01 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6251BC8
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 22:48:48 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-31765aee31bso4692115f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jul 2023 22:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690868927; x=1691473727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Et0y0K2d+vVjwJdOfEnIsO7SeHd2XahanE6nhjTZtyw=;
-        b=ZGI+j/vdjy03FGaaR+xJmI0DMD0W/H7WW0lm3ZBYDDRezadMv0/SINLUbiIcwOtcVB
-         6rWtQ2cJvXxRZSulEQomaoyiqBzEnpaplbDFim591uXPwyf87YmFLWNt8bAd8yRX21DL
-         GPjKd1X6TmlAbHcj+cjT6rSO288MI/s1Ly9eRctTJkVrb4crvbJvy2HCXg0B9TwHFNog
-         exm46xW+eeXJaPHIok5LOyVhVurfSDya4DvT5rzGQTRfvdYmYkmfRftvjki7vmeyBJze
-         IB5E8F2VxjFjcTuEPg8Qfyk/2klnS8EVtHCoM+VIx9+1reKs06NNxqmEiizsalvFHGLR
-         NLEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690868927; x=1691473727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Et0y0K2d+vVjwJdOfEnIsO7SeHd2XahanE6nhjTZtyw=;
-        b=SxQtP01kcItngjAXuuJokivXfAoLjCfxZSSk3keFMX32d/sxAT9HI4O4KvF0MYSMc5
-         15xZKnUWvvMrvfC5YLOejj+3fqS0sCD4ewXON1+0wjkCpURYzvME2axd4zhd3RcEysM8
-         kcdi2CaEyU5IvEux4PpLThEBfPd0C9OFFrgClNRtjOJd6NxtvNEhrR4qPr+APYgkGbI/
-         sN7TShVci/dJp0EJIdmrwIZORSSIiaRXn7vtcKqb/upciVH5RIHvc9aFQZYCEMLlZsf5
-         +UudCivOfd57QJa1btYeJKmgZvxb6f7etyW2RWK6ICDfMnffyhq5skdx6JKiMk+3Qwnn
-         /L9w==
-X-Gm-Message-State: ABy/qLZey2NlfWpezrweqDJ55CtdxOi8hJbdaVVdZUp9wshbSgCOmdZf
-        6KrmLkEK0NQds2wyezNANXVs3w==
-X-Google-Smtp-Source: APBJJlHhGeuATSL7uKZn4NPYaNxFYSoHPGkAI7laRJP7KUIdZtITolb3PfjPpmxMeGEj/ExyQbcwog==
-X-Received: by 2002:a05:6000:1808:b0:313:f395:f5a3 with SMTP id m8-20020a056000180800b00313f395f5a3mr1408315wrh.38.1690868926808;
-        Mon, 31 Jul 2023 22:48:46 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j4-20020a5d6184000000b003142c85fbcdsm14984240wru.11.2023.07.31.22.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 22:48:46 -0700 (PDT)
-Date:   Tue, 1 Aug 2023 08:48:43 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     Tony Huang <tonyhuang.sunplus@gmail.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: Re: [PATCH next] mmc: sunplus: Fix error handling in
- spmmc_drv_probe()
-Message-ID: <042ff6f5-58d4-4e93-aa26-79411bf81c54@kadam.mountain>
-References: <20230801052321.1328225-1-harshit.m.mogalapalli@oracle.com>
+        Tue, 1 Aug 2023 02:01:57 -0400
+X-Greylist: delayed 16038 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 31 Jul 2023 23:01:54 PDT
+Received: from zg8tmtu5ljg5lje1ms4xmtka.icoremail.net (zg8tmtu5ljg5lje1ms4xmtka.icoremail.net [159.89.151.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 033F7E7D;
+        Mon, 31 Jul 2023 23:01:53 -0700 (PDT)
+Received: from linma$zju.edu.cn ( [42.120.103.60] ) by
+ ajax-webmail-mail-app4 (Coremail) ; Tue, 1 Aug 2023 14:01:16 +0800
+ (GMT+08:00)
+X-Originating-IP: [42.120.103.60]
+Date:   Tue, 1 Aug 2023 14:01:16 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   "Lin Ma" <linma@zju.edu.cn>
+To:     "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc:     "Markus Elfring" <Markus.Elfring@web.de>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        "Alexander Duyck" <alexander.h.duyck@intel.com>,
+        "Daniel Machon" <daniel.machon@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Peter P Waskiewicz Jr" <peter.p.waskiewicz.jr@intel.com>,
+        "Petr Machata" <petrm@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: dcb: choose correct policy to parse
+ DCB_ATTR_BCN
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220622(41e5976f)
+ Copyright (c) 2002-2023 www.mailtech.cn
+ mispb-4df6dc2c-e274-4d1c-b502-72c5c3dfa9ce-zj.edu.cn
+In-Reply-To: <d29e7d32-1684-4400-9907-f2f69092466d@kadam.mountain>
+References: <20230731045216.3779420-1-linma@zju.edu.cn>
+ <fbda76a9-e1f3-d483-ab3d-3c904c54a5db@web.de>
+ <3d159780.f2fb6.189aebb4a18.Coremail.linma@zju.edu.cn>
+ <d29e7d32-1684-4400-9907-f2f69092466d@kadam.mountain>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230801052321.1328225-1-harshit.m.mogalapalli@oracle.com>
+Message-ID: <5a361992.f3740.189afafbb36.Coremail.linma@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: cS_KCgBHjAmtn8hku11sCg--.56218W
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/1tbiAwUOEmTIYfoAqwAFsD
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 10:23:20PM -0700, Harshit Mogalapalli wrote:
-> There are few issues in spmmc_drv_probe():
-> 
-> 1. When mmc allocation fails, goto is a no-op.
-> 2. When mmc allocation succeeds, the error paths should use goto instead
->    of direct return.
-> 3. platform_get_irq() doesn't return zero, so '<' is sufficient.
-> 
-> Fix the above issues by adding goto instead of direct return, also
-> remove NULL check in 'probe_free_host' as we changed the goto to return
-> when mmc_alloc_host() fails.
-> 
-> Fixes: 4e268fed8b18 ("mmc: Add mmc driver for Sunplus SP7021")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/a3829ed3-d827-4b9d-827e-9cc24a3ec3bc@moroto.mountain/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-
-LGTM.
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+SGVsbG8gRGFuLAoKPiAKPiBTaW1vbiByZXZpZXdlZCB0aGUgcGF0Y2ggYWxyZWFkeS4gIERvbid0
+IGxpc3RlbiB0byBNYXJrdXMuICBIZSdzIGJhbm5lZAo+IGZyb20gdmdlci4KPiAKPiBodHRwczov
+L2xvcmUua2VybmVsLm9yZy9hbGwvMjAyMzA3MzEyMy1wb3Nlci1wYW5oYW5kbGUtMWNiN0BncmVn
+a2gvCj4gCj4gcmVnYXJkcywKPiBkYW4gY2FycGVudGVyCgpPb29vb3BzLCBJIG5ldmVyIHRob3Vn
+aHQgb2YgaXQgbGlrZSB0aGlzLiBJIHdpbGwgdGFrZSBub3RlIG9mIHRoYXQgOikuCgpUaGFua3MK
+TGlu
