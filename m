@@ -2,197 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EAEC41513
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Aug 2023 21:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5F5C001DE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 00:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233146AbjHBVkh (ORCPT
+        id S230163AbjHCA44 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Aug 2023 17:40:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42066 "EHLO
+        Wed, 2 Aug 2023 20:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233125AbjHBVkd (ORCPT
+        with ESMTP id S229875AbjHCA4z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Aug 2023 17:40:33 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66A4269A
-        for <kernel-janitors@vger.kernel.org>; Wed,  2 Aug 2023 14:40:29 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6b9c9944da8so313929a34.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Aug 2023 14:40:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691012429; x=1691617229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H+AS/eYgwiGocz0hRMqEzRe/0E7wSQPQ+cMSrzoRj80=;
-        b=JyZOHalDcREGIRUebxJEHeiwXJ6Et6CNw5fbFraZVOMPVaIyM9nO/X3CUPvSHkxdLT
-         rS71x3IqWf0P9Qm6ii3x+1j3X1l+Tc0zM4HxDnED4k5afgaXNiwFiIv4HMhoONjoeJ7q
-         V0WL0O8CaEQPvfe4/zSOrT1xTYOfLK3NwMRJWCbR7VABElDKeg5p0nsPmKdl8kB6tQ/u
-         RFPEb083Fh6dO/CNdzuhypFc9hQpxbBdLH3Y4c/c1XvmhYCf5+gDKniYOZWXLVeJrKxL
-         6gpKDCanfUJMnaOB8QEMiuqv0s1sUGeR29ViiIvsmrXf/26fXZDDhKVyZNGegOCWbwte
-         xHwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691012429; x=1691617229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H+AS/eYgwiGocz0hRMqEzRe/0E7wSQPQ+cMSrzoRj80=;
-        b=ftMFjyXduNAV1U6Pdv+8wN5nYn3x4bXw+YyifdhEJDF8ySCP0K09GwPzJtsDKzu9n0
-         Q9csnGnaX7AmPQKFNH/H/t2380CYkVjh9m/n+8KWXGYHe5DeZhZIlNxGwCgxB3RqSqlE
-         IMNr0mslFgu6zd09kecIokjx2gob9QOR2VKLgivAW78FcYzA+RzJyQINoirGwRrDEO8S
-         HBYML8bdQO2OAFDNTtx+95TXIcxOoH+tdZyQVNG23I7rLS014xdxO2/1ewmaRN5qfTKm
-         6y8Ew422IFxkP8HFvgxu/GT2BFSr4RXZDiT/xgBUjp37ePZKoVlWik+o+bviPFoZq2cL
-         +I1w==
-X-Gm-Message-State: ABy/qLYtkTfk5Ld8AcCyCPTUV6n7gMA1bu8qiW6WKH6UEeDNAMdkauMn
-        mfnyVzswV4Ps1yAQd1clZBpRItwtjX6UwDVfyEUT0A==
-X-Google-Smtp-Source: APBJJlFpo8nVaGFRVuT56BDjEKf8O23JElU7FcvApgZioYBFUBNDtxQczH22U7n95IT3rW7s29tffm7gNlVxtRvxtT8=
-X-Received: by 2002:a05:6358:711:b0:135:85ec:a092 with SMTP id
- e17-20020a056358071100b0013585eca092mr7354336rwj.26.1691012428979; Wed, 02
- Aug 2023 14:40:28 -0700 (PDT)
+        Wed, 2 Aug 2023 20:56:55 -0400
+X-Greylist: delayed 8398 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 02 Aug 2023 17:56:52 PDT
+Received: from 3.mo575.mail-out.ovh.net (3.mo575.mail-out.ovh.net [46.105.58.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90365211B
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Aug 2023 17:56:52 -0700 (PDT)
+Received: from director10.ghost.mail-out.ovh.net (unknown [10.109.156.220])
+        by mo575.mail-out.ovh.net (Postfix) with ESMTP id 95FF425E95
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Aug 2023 20:11:05 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-555xj (unknown [10.110.171.251])
+        by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id CBAFE1FDB3;
+        Wed,  2 Aug 2023 20:11:04 +0000 (UTC)
+Received: from etezian.org ([37.59.142.98])
+        by ghost-submission-6684bf9d7b-555xj with ESMTPSA
+        id RP0MLFi4ymTqZgAAEZsMJw
+        (envelope-from <andi@etezian.org>); Wed, 02 Aug 2023 20:11:04 +0000
+Authentication-Results: garm.ovh; auth=pass (GARM-98R00295aec8e1-6d36-45b6-8f41-9395daf0ec5f,
+                    0C641BB37B7CC30D107EA61C426C60CA54BC1A77) smtp.auth=andi@etezian.org
+X-OVh-ClientIp: 178.238.172.51
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Oleksij Rempel <linux@rempel-privat.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Andi Shyti <andi.shyti@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: imx: Clean up a call to request_irq()
+Date:   Wed,  2 Aug 2023 22:10:32 +0200
+Message-Id: <169100562784.1919254.4818687788219395410.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
+References: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
 MIME-Version: 1.0
-References: <20230802080544.3239967-1-suhui@nfschina.com> <531df8ee-ba09-49df-8201-4221df5853c6@kadam.mountain>
-In-Reply-To: <531df8ee-ba09-49df-8201-4221df5853c6@kadam.mountain>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 2 Aug 2023 14:40:18 -0700
-Message-ID: <CAKwvOdnRwmxGuEidZ=OWxSX60D6ry0Rb__DjSayga6um35Jsrg@mail.gmail.com>
-Subject: Re: [PATCH] fs: lockd: avoid possible wrong NULL parameter
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Su Hui <suhui@nfschina.com>, chuck.lever@oracle.com,
-        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        nathan@kernel.org, trix@redhat.com, bfields@fieldses.org,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 13283648577026919035
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedviedrkedtgdeglecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomheptehnughiucfuhhihthhiuceorghnughirdhshhihthhisehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepveevieffieefgfefuddvteelffeuhfelffejteejuddvveekveehvdejgeefteevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpudejkedrvdefkedrudejvddrhedupdefjedrheelrddugedvrdelkeenucevlhhushhtvghrufhiiigvpeefnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoegrnhguihesvghtvgiiihgrnhdrohhrgheqpdhnsggprhgtphhtthhopedupdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheejhedpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 2, 2023 at 3:25=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Wed, Aug 02, 2023 at 04:05:45PM +0800, Su Hui wrote:
-> > clang's static analysis warning: fs/lockd/mon.c: line 293, column 2:
-> > Null pointer passed as 2nd argument to memory copy function.
-> >
-> > Assuming 'hostname' is NULL and calling 'nsm_create_handle()', this wil=
-l
-> > pass NULL as 2nd argument to memory copy function 'memcpy()'. So return
-> > NULL if 'hostname' is invalid.
-> >
-> > Fixes: 77a3ef33e2de ("NSM: More clean up of nsm_get_handle()")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > ---
-> >  fs/lockd/mon.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/lockd/mon.c b/fs/lockd/mon.c
-> > index 1d9488cf0534..eebab013e063 100644
-> > --- a/fs/lockd/mon.c
-> > +++ b/fs/lockd/mon.c
-> > @@ -358,6 +358,9 @@ struct nsm_handle *nsm_get_handle(const struct net =
-*net,
-> >
-> >       spin_unlock(&nsm_lock);
-> >
-> > +     if (!hostname)
-> > +             return NULL;
-> > +
-> >       new =3D nsm_create_handle(sap, salen, hostname, hostname_len);
->
-> It's weird that this bug is from 2008 and we haven't found it in
-> testing.  Presumably if hostname is NULL then hostname_len would be zero
-> and in that case, it's not actually a bug.  It's allowed in the kernel
-> to memcpy zero bytes from a NULL pointer.
->
->         memcpy(dst, NULL, 0);
->
-> Outside the kernel it's not allowed though.
+Hi
 
-I wonder what kind of implications that has on the compilers ability
-to optimize libcalls to memcpy for targets that don't use
-`-ffreestanding`. Hmm...
+On Tue, 25 Jul 2023 09:50:55 +0300, Dan Carpenter wrote:
+> This is passing a NULL thread to request_threaded_irq().  So it's not
+> really a threaded IRQ at all.  It's more readable to call request_irq()
+> instead.
+> 
+> 
 
-Though let's see what the C standard says, since that's what compilers
-target, rather than consider specifics of glibc.
+Applied to i2c/andi-for-next on
 
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf
->> The memcpy function copies n characters from the object pointed to by s2=
- into the
->> object pointed to by s1. If copying takes place between objects that ove=
-rlap, the behavior
->> is undefined.
+https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
 
-So no mention about what assumptions can be made about source or
-destination being NULL.
+Please note that this patch may still undergo further evaluation
+and the final decision will be made in collaboration with
+Wolfram.
 
-I noticed that the function in question already has a guard:
-322   if (hostname && memchr(hostname, '/', hostname_len) !=3D NULL) {
+Thank you,
+Andi
 
-Which implies that hostname COULD be NULL.
-
-Should this perhaps simply be rewritten as:
-
-if (!hostname)
-  return NULL;
-if (memchr(...) !=3D NULL)
-  ...
-
-Rather than bury yet another guard for the same check further down in
-the function? Check once and bail early.
-
->
-> I noticed a related bug which Smatch doesn't find, because of how Smatch
-> handles the dprintk macro.
->
-> fs/lockd/host.c
-> truct nlm_host *nlmclnt_lookup_host(const struct sockaddr *sap,
->    217                                       const size_t salen,
->    218                                       const unsigned short protoco=
-l,
->    219                                       const u32 version,
->    220                                       const char *hostname,
->    221                                       int noresvport,
->    222                                       struct net *net,
->    223                                       const struct cred *cred)
->    224  {
->    225          struct nlm_lookup_host_info ni =3D {
->    226                  .server         =3D 0,
->    227                  .sap            =3D sap,
->    228                  .salen          =3D salen,
->    229                  .protocol       =3D protocol,
->    230                  .version        =3D version,
->    231                  .hostname       =3D hostname,
->    232                  .hostname_len   =3D strlen(hostname),
->                                                  ^^^^^^^^
-> Dereferenced
->
->    233                  .noresvport     =3D noresvport,
->    234                  .net            =3D net,
->    235                  .cred           =3D cred,
->    236          };
->    237          struct hlist_head *chain;
->    238          struct nlm_host *host;
->    239          struct nsm_handle *nsm =3D NULL;
->    240          struct lockd_net *ln =3D net_generic(net, lockd_net_id);
->    241
->    242          dprintk("lockd: %s(host=3D'%s', vers=3D%u, proto=3D%s)\n"=
-, __func__,
->    243                          (hostname ? hostname : "<none>"), version=
-,
->                                  ^^^^^^^^
-> Checked too late.
->
->    244                          (protocol =3D=3D IPPROTO_UDP ? "udp" : "t=
-cp"));
->    245
->
-> regards,
-> dan carpenter
-
-
-
---=20
-Thanks,
-~Nick Desaulniers
+Patches applied
+===============
+[1/1] i2c: imx: Clean up a call to request_irq()
+      commit: b4fd609a2018bb0bfce9351c506a6e0dc7fb64e8
