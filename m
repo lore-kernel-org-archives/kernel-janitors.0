@@ -2,173 +2,197 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F344FC001DF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Aug 2023 16:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EAEC41513
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Aug 2023 21:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbjHBQ6g (ORCPT
+        id S233146AbjHBVkh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Aug 2023 12:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55172 "EHLO
+        Wed, 2 Aug 2023 17:40:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbjHBQ6f (ORCPT
+        with ESMTP id S233125AbjHBVkd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Aug 2023 12:58:35 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E6C271C
-        for <kernel-janitors@vger.kernel.org>; Wed,  2 Aug 2023 09:58:31 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31765aee31bso25291f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Aug 2023 09:58:31 -0700 (PDT)
+        Wed, 2 Aug 2023 17:40:33 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66A4269A
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Aug 2023 14:40:29 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6b9c9944da8so313929a34.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Aug 2023 14:40:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690995510; x=1691600310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1691012429; x=1691617229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yF7ncbVFPQRUGWBMilwqWXSWdbdCMHch/7Ppjxwfoag=;
-        b=cTI946eFvl9Cpc+nZA5NiHAznUMtGLnLtJAYTBePBqSqEELNTYi6lnBVIfRP4s6Zl/
-         t1MPAcz+NEFkydmSCTn7VSjgux5WcsD1Wu50CaWOGop1M7vwbdFiDptl/c5t+wND317T
-         M72qGfI5b6dYrm6vV2QD87cDKVLKvClXDdBSFiXnjzV5ov9D1NnfTr1WrnoMT+wx5Tf3
-         FmFKEoPjgP9ohoT7HtKOYuUnqcyRDMSLakFfTX4tgkl7IrVLw1+5ns+LbOsjg5K8CQm3
-         Bk1NYXGzxhr02IqpmGrQ74612rqlMT7j1n805fTj718xqpfzBcUBGyBYTjh6G/DKchg/
-         kQKQ==
+        bh=H+AS/eYgwiGocz0hRMqEzRe/0E7wSQPQ+cMSrzoRj80=;
+        b=JyZOHalDcREGIRUebxJEHeiwXJ6Et6CNw5fbFraZVOMPVaIyM9nO/X3CUPvSHkxdLT
+         rS71x3IqWf0P9Qm6ii3x+1j3X1l+Tc0zM4HxDnED4k5afgaXNiwFiIv4HMhoONjoeJ7q
+         V0WL0O8CaEQPvfe4/zSOrT1xTYOfLK3NwMRJWCbR7VABElDKeg5p0nsPmKdl8kB6tQ/u
+         RFPEb083Fh6dO/CNdzuhypFc9hQpxbBdLH3Y4c/c1XvmhYCf5+gDKniYOZWXLVeJrKxL
+         6gpKDCanfUJMnaOB8QEMiuqv0s1sUGeR29ViiIvsmrXf/26fXZDDhKVyZNGegOCWbwte
+         xHwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690995510; x=1691600310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1691012429; x=1691617229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yF7ncbVFPQRUGWBMilwqWXSWdbdCMHch/7Ppjxwfoag=;
-        b=EdKwqlLBUPWqMWnQytA6XhudkfOahfdPMYb7XBx/D/PXeYyWM57w6A1ylqLJN0vKyO
-         VpTf27l8N+hBJnnywXN16CX6/LaslZo+dJw9NTaQAAWiX5v9+xd7kxL8HGsDLf/cj8cw
-         xyh/+g2fzRdu/oEuCCYC/ZfUWBt4ngtoz1o9yQqSyuEpCVIramM/j3DjeAI7PDuq4kzR
-         Td3Cz8nP6ECMHewM+4R/+bB4sEWlbxybrolc5XpSiO1Zf4FYn0tPcqLwg/TAL7oSO289
-         uSBrnejlhpcpwF8cii/hefFu/PMibalM9Ur222Q47hfRrvuQQ9+bs9jaVx0CmchdKnpB
-         Q9dQ==
-X-Gm-Message-State: ABy/qLYlcKjj/C+B8LPgtmj0Joj8Ysr/PG2Ebd3TNkyy9dy+VrtsMeTL
-        aumUhauwb6cCg3S6EgeLQO4=
-X-Google-Smtp-Source: APBJJlGqtTksYe/KUeMv+/6921HwRFoGKk38e0E81n8r5Jtn9kD8Vt2sIlEQQo7R4hVocZOkY8++Bw==
-X-Received: by 2002:a5d:5589:0:b0:317:70cb:4f58 with SMTP id i9-20020a5d5589000000b0031770cb4f58mr5232028wrv.63.1690995509568;
-        Wed, 02 Aug 2023 09:58:29 -0700 (PDT)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id m17-20020aa7d351000000b005224c6b2183sm8825968edr.39.2023.08.02.09.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 09:58:29 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 99B2227C0054;
-        Wed,  2 Aug 2023 12:58:27 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 02 Aug 2023 12:58:27 -0400
-X-ME-Sender: <xms:MovKZIu6eO51L6JU7Cn3mXaF2NZxXyDVSN8cRMqCDgGb7tM8SNSR7g>
-    <xme:MovKZFdrGstePY60A345fby3x49W74K19nrNcaEBymE0XiIM3-TUvpqDw1R8FG1kQ
-    7RYgD3PoC6FczMwvw>
-X-ME-Received: <xmr:MovKZDw2RJTY1UTXh9qD-rhGkMiyYkaf6Ze-kWGfX0cYlIFzSgMKicxznpI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrkedtgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepiedtfeevhfetkeelgfethfegleekfeffledvvefhheeukedtvefhtedtvdet
-    vedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
-    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
-    hmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:MovKZLNr-LWFtZPM1yJWiMsGZmALzl4a3pJVojO_4oPVSeIbfqnVmw>
-    <xmx:MovKZI9x0GoKKNeu9dNUn_Fu8X1RKMwRG234Tzoz6h8Z1KETiuhWsA>
-    <xmx:MovKZDVwgfOUt2GEIkL0QQhKfgrGsNB8IN-pOtr2SI3oMp6i1KjlLA>
-    <xmx:M4vKZMaQQaLgWAtSOBKInXeHDPtaATKUqnJYyYP9ISQJivtB4AGmPQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Aug 2023 12:58:26 -0400 (EDT)
-Date:   Wed, 2 Aug 2023 09:57:37 -0700
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [bug report] lockdep/selftests: Use SBRM APIs for wait context
- tests
-Message-ID: <ZMqLAUyMuiTKdLfS@boqun-archlinux>
-References: <c7b538a3-eb0b-4905-8ebf-8bda88e576fa@moroto.mountain>
+        bh=H+AS/eYgwiGocz0hRMqEzRe/0E7wSQPQ+cMSrzoRj80=;
+        b=ftMFjyXduNAV1U6Pdv+8wN5nYn3x4bXw+YyifdhEJDF8ySCP0K09GwPzJtsDKzu9n0
+         Q9csnGnaX7AmPQKFNH/H/t2380CYkVjh9m/n+8KWXGYHe5DeZhZIlNxGwCgxB3RqSqlE
+         IMNr0mslFgu6zd09kecIokjx2gob9QOR2VKLgivAW78FcYzA+RzJyQINoirGwRrDEO8S
+         HBYML8bdQO2OAFDNTtx+95TXIcxOoH+tdZyQVNG23I7rLS014xdxO2/1ewmaRN5qfTKm
+         6y8Ew422IFxkP8HFvgxu/GT2BFSr4RXZDiT/xgBUjp37ePZKoVlWik+o+bviPFoZq2cL
+         +I1w==
+X-Gm-Message-State: ABy/qLYtkTfk5Ld8AcCyCPTUV6n7gMA1bu8qiW6WKH6UEeDNAMdkauMn
+        mfnyVzswV4Ps1yAQd1clZBpRItwtjX6UwDVfyEUT0A==
+X-Google-Smtp-Source: APBJJlFpo8nVaGFRVuT56BDjEKf8O23JElU7FcvApgZioYBFUBNDtxQczH22U7n95IT3rW7s29tffm7gNlVxtRvxtT8=
+X-Received: by 2002:a05:6358:711:b0:135:85ec:a092 with SMTP id
+ e17-20020a056358071100b0013585eca092mr7354336rwj.26.1691012428979; Wed, 02
+ Aug 2023 14:40:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7b538a3-eb0b-4905-8ebf-8bda88e576fa@moroto.mountain>
+References: <20230802080544.3239967-1-suhui@nfschina.com> <531df8ee-ba09-49df-8201-4221df5853c6@kadam.mountain>
+In-Reply-To: <531df8ee-ba09-49df-8201-4221df5853c6@kadam.mountain>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 2 Aug 2023 14:40:18 -0700
+Message-ID: <CAKwvOdnRwmxGuEidZ=OWxSX60D6ry0Rb__DjSayga6um35Jsrg@mail.gmail.com>
+Subject: Re: [PATCH] fs: lockd: avoid possible wrong NULL parameter
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Su Hui <suhui@nfschina.com>, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        nathan@kernel.org, trix@redhat.com, bfields@fieldses.org,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 10:35:09AM +0300, Dan Carpenter wrote:
-> Hello Boqun Feng,
-> 
+On Wed, Aug 2, 2023 at 3:25=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> On Wed, Aug 02, 2023 at 04:05:45PM +0800, Su Hui wrote:
+> > clang's static analysis warning: fs/lockd/mon.c: line 293, column 2:
+> > Null pointer passed as 2nd argument to memory copy function.
+> >
+> > Assuming 'hostname' is NULL and calling 'nsm_create_handle()', this wil=
+l
+> > pass NULL as 2nd argument to memory copy function 'memcpy()'. So return
+> > NULL if 'hostname' is invalid.
+> >
+> > Fixes: 77a3ef33e2de ("NSM: More clean up of nsm_get_handle()")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > ---
+> >  fs/lockd/mon.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/lockd/mon.c b/fs/lockd/mon.c
+> > index 1d9488cf0534..eebab013e063 100644
+> > --- a/fs/lockd/mon.c
+> > +++ b/fs/lockd/mon.c
+> > @@ -358,6 +358,9 @@ struct nsm_handle *nsm_get_handle(const struct net =
+*net,
+> >
+> >       spin_unlock(&nsm_lock);
+> >
+> > +     if (!hostname)
+> > +             return NULL;
+> > +
+> >       new =3D nsm_create_handle(sap, salen, hostname, hostname_len);
+>
+> It's weird that this bug is from 2008 and we haven't found it in
+> testing.  Presumably if hostname is NULL then hostname_len would be zero
+> and in that case, it's not actually a bug.  It's allowed in the kernel
+> to memcpy zero bytes from a NULL pointer.
+>
+>         memcpy(dst, NULL, 0);
+>
+> Outside the kernel it's not allowed though.
 
-Hi Dan,
+I wonder what kind of implications that has on the compilers ability
+to optimize libcalls to memcpy for targets that don't use
+`-ffreestanding`. Hmm...
 
-> The patch f66c538098b6: "lockdep/selftests: Use SBRM APIs for wait
-> context tests" from Jul 15, 2023 (linux-next), leads to the following
-> Smatch static checker warning:
-> 
-> 	lib/locking-selftest.c:2577 mutex_in_HARDIRQ()
-> 	warn: sleeping in atomic context
-> 
-> lib/locking-selftest.c
->     2567 GENERATE_2_CONTEXT_TESTCASE(RCU, , inner, inner_lock)                                \
->     2568 GENERATE_2_CONTEXT_TESTCASE(RCU_BH, , inner, inner_lock)                        \
->     2569 GENERATE_2_CONTEXT_TESTCASE(RCU_SCHED, , inner, inner_lock)                        \
->     2570 GENERATE_2_CONTEXT_TESTCASE(raw_spinlock, &raw_lock_A, inner, inner_lock)        \
->     2571 GENERATE_2_CONTEXT_TESTCASE(spinlock, &lock_A, inner, inner_lock)                \
->     2572 GENERATE_2_CONTEXT_TESTCASE(mutex, &mutex_A, inner, inner_lock)
->     2573 
->     2574 GENERATE_2_CONTEXT_TESTCASE_FOR_ALL_OUTER(RCU, )
->     2575 GENERATE_2_CONTEXT_TESTCASE_FOR_ALL_OUTER(raw_spinlock, &raw_lock_B)
->     2576 GENERATE_2_CONTEXT_TESTCASE_FOR_ALL_OUTER(spinlock, &lock_B)
-> --> 2577 GENERATE_2_CONTEXT_TESTCASE_FOR_ALL_OUTER(mutex, &mutex_B)
-> 
-> This takes a mutex from HARD IRQ context which is illegal because
-> HARDIRQ_ENTER() will disable preemption.  Enable CONFIG_DEBUG_ATOMIC_SLEEP=y
-> to see this bug at run time.
-> 
-> This is a testing file so it does a lot of crazy stuff.  It's a bit
-> hard to tell what is intentional and what isn't.
+Though let's see what the C standard says, since that's what compilers
+target, rather than consider specifics of glibc.
 
-Thanks for reporting this. However the "bug" is by design,
-locking-selftest.c contains tests that trigger incorrect lock usages and
-see if lockdep can catch them, so it's supposed to work in that way.
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf
+>> The memcpy function copies n characters from the object pointed to by s2=
+ into the
+>> object pointed to by s1. If copying takes place between objects that ove=
+rlap, the behavior
+>> is undefined.
 
-Out of curiosity, could Smatch detect the same issue without the patch?
-The patch is simply a cleanup, so no functional change, in theory, the
-"bug" can be detected without that patch.
+So no mention about what assumptions can be made about source or
+destination being NULL.
 
-Regards,
-Boqun
+I noticed that the function in question already has a guard:
+322   if (hostname && memchr(hostname, '/', hostname_len) !=3D NULL) {
 
-> 
-> lib/locking-selftest.c:336 rlock_AA1() error: double locked '&rwlock_X1' (orig line 335)
-> lib/locking-selftest.c:348 rsem_AA1() error: double locked '&rwsem_X1' (orig line 347)
-> lib/locking-selftest.c:740 double_unlock_spin() error: double unlocked '&lock_A' (orig line 740)
-> lib/locking-selftest.c:742 double_unlock_wlock() error: double unlocked '&rwlock_A' (orig line 742)
-> lib/locking-selftest.c:744 double_unlock_rlock() error: double unlocked '&rwlock_A' (orig line 744)
-> lib/locking-selftest.c:746 double_unlock_mutex() error: double unlocked '&mutex_A' (orig line 746)
-> lib/locking-selftest.c:748 double_unlock_wsem() error: double unlocked '&rwsem_A' (orig line 748)
-> lib/locking-selftest.c:750 double_unlock_rsem() error: double unlocked '&rwsem_A' (orig line 750)
-> lib/locking-selftest.c:1678 ww_test_fail_acquire() warn: 'o.ctx' could be an error pointer
-> lib/locking-selftest.c:1683 ww_test_fail_acquire() error: double locked '&o' (orig line 1676)
-> lib/locking-selftest.c:1691 ww_test_fail_acquire() error: double locked '&o' (orig line 1683)
-> lib/locking-selftest.c:1695 ww_test_fail_acquire() error: double locked '&o.base' (orig line 1686)
-> lib/locking-selftest.c:1696 ww_test_fail_acquire() error: double unlocked '&o' (orig line 1693)
-> lib/locking-selftest.c:1699 ww_test_fail_acquire() warn: inconsistent returns '&o'.
-> lib/locking-selftest.c:1768 ww_test_normal() error: double locked '&o.base' (orig line 1767)
-> lib/locking-selftest.c:1776 ww_test_normal() error: double unlocked '&o.base' (orig line 1770)
-> lib/locking-selftest.c:1830 ww_test_object_unlock_twice() error: double unlocked '&o' (orig line 1829)
-> lib/locking-selftest.c:1872 ww_test_edeadlk_normal() error: double locked '&o2' (orig line 1864)
-> lib/locking-selftest.c:1898 ww_test_edeadlk_normal_slow() error: double locked '&o2' (orig line 1890)
-> lib/locking-selftest.c:1923 ww_test_edeadlk_no_unlock() error: double locked '&o2' (orig line 1916)
-> lib/locking-selftest.c:1948 ww_test_edeadlk_no_unlock_slow() error: double locked '&o2' (orig line 1941)
-> lib/locking-selftest.c:2066 ww_test_edeadlk_acquire_wrong() warn: XXX '&o2' both locked and unlocked.
-> lib/locking-selftest.c:2091 ww_test_edeadlk_acquire_wrong_slow() warn: XXX '&o2' both locked and unlocked.
-> lib/locking-selftest.c:2236 ww_test_spin_block() warn: sleeping in atomic context
-> lib/locking-selftest.c:2255 ww_test_spin_try() error: double locked '&o.base' (orig line 2248)
-> lib/locking-selftest.c:2257 ww_test_spin_try() error: double unlocked '&o' (orig line 2252)
-> lib/locking-selftest.c:2277 ww_test_spin_context() warn: sleeping in atomic context
-> lib/locking-selftest.c:2577 mutex_in_HARDIRQ() warn: sleeping in atomic context
-> 
+Which implies that hostname COULD be NULL.
+
+Should this perhaps simply be rewritten as:
+
+if (!hostname)
+  return NULL;
+if (memchr(...) !=3D NULL)
+  ...
+
+Rather than bury yet another guard for the same check further down in
+the function? Check once and bail early.
+
+>
+> I noticed a related bug which Smatch doesn't find, because of how Smatch
+> handles the dprintk macro.
+>
+> fs/lockd/host.c
+> truct nlm_host *nlmclnt_lookup_host(const struct sockaddr *sap,
+>    217                                       const size_t salen,
+>    218                                       const unsigned short protoco=
+l,
+>    219                                       const u32 version,
+>    220                                       const char *hostname,
+>    221                                       int noresvport,
+>    222                                       struct net *net,
+>    223                                       const struct cred *cred)
+>    224  {
+>    225          struct nlm_lookup_host_info ni =3D {
+>    226                  .server         =3D 0,
+>    227                  .sap            =3D sap,
+>    228                  .salen          =3D salen,
+>    229                  .protocol       =3D protocol,
+>    230                  .version        =3D version,
+>    231                  .hostname       =3D hostname,
+>    232                  .hostname_len   =3D strlen(hostname),
+>                                                  ^^^^^^^^
+> Dereferenced
+>
+>    233                  .noresvport     =3D noresvport,
+>    234                  .net            =3D net,
+>    235                  .cred           =3D cred,
+>    236          };
+>    237          struct hlist_head *chain;
+>    238          struct nlm_host *host;
+>    239          struct nsm_handle *nsm =3D NULL;
+>    240          struct lockd_net *ln =3D net_generic(net, lockd_net_id);
+>    241
+>    242          dprintk("lockd: %s(host=3D'%s', vers=3D%u, proto=3D%s)\n"=
+, __func__,
+>    243                          (hostname ? hostname : "<none>"), version=
+,
+>                                  ^^^^^^^^
+> Checked too late.
+>
+>    244                          (protocol =3D=3D IPPROTO_UDP ? "udp" : "t=
+cp"));
+>    245
+>
 > regards,
 > dan carpenter
+
+
+
+--=20
+Thanks,
+~Nick Desaulniers
