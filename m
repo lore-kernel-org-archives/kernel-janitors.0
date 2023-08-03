@@ -2,99 +2,158 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6B2C41513
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 11:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB492EB64DD
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 16:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234712AbjHCLPm (ORCPT
+        id S234066AbjHCQim (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Aug 2023 07:15:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
+        Thu, 3 Aug 2023 12:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234497AbjHCLPh (ORCPT
+        with ESMTP id S233321AbjHCQil (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Aug 2023 07:15:37 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B7F1BE;
-        Thu,  3 Aug 2023 04:15:30 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-ccc462deca6so899188276.0;
-        Thu, 03 Aug 2023 04:15:30 -0700 (PDT)
+        Thu, 3 Aug 2023 12:38:41 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B967D30E2
+        for <kernel-janitors@vger.kernel.org>; Thu,  3 Aug 2023 09:38:40 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6b9ec15e014so1143301a34.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Aug 2023 09:38:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691061330; x=1691666130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XvrkmR/GsQ1HMr54PqMYkqS+TeUTTxRI2jjZ2dcD23k=;
-        b=IvXAE9PwMCOx4lOEXxYjeJCC+Aes1HqoaXiTM+vKHIPLBzawNSbVZc39cPlGlpCU8z
-         dMlhuP+G1oWareynzfU43+5EZByDJcY6rgyOPVvEi26TU93WiInRpUPLP3zcO2p1UGTI
-         GcnC9qKWiF2vpVZvO2JTDFAeWiFYQZ5PS9wQv29tktS2X7X1LWtJeypVeHQg0dqrXwpz
-         GFW8OZ+OBDqfFDddS6umW/ZcTMn6zmZjI8X/KuFc+PbTIsyB+NgYqfrTEJBrNL82VwUS
-         f+xu3Fsr6u+F2XraijEfkzR50Lm0mG5Y9JbdwzaC4MyL4kW2dqAxE84bDZ/XWUTbSJl+
-         QUCw==
+        d=google.com; s=20221208; t=1691080720; x=1691685520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b7hXTqR0jH2hsI9WNMzkw89TQE7WPo/H+95Mu1R0KQE=;
+        b=TwBfw10n8Q1dq4al0QEoJQbukd0ijgBQZO/dS/h1PHcJqBpzGkA30e5IkPWZoVW9Sy
+         vANVWg9vunFLYRXH5ipbbP2HZHO+WsfO22BijlHNt0bcAyA7yEJHqj7pJ/CvcgSRtOvE
+         3tJR0OXjltD/my4Wag02g++tbHtJEOWfijGbow/pk5LXCJFtEgdbd5ScHetqaO4+RdYg
+         GAdNB+MzTO8OeNKIgmDPgsw7Sz0EffJES7YwhWs5Emv9CxHIzH1/4K7SsfCg7T+Fn1fg
+         P+RTrezTLnE6sy6VpWk6PP7VgNTzo5/06VSmaNCL5Xaw3WYsZcPdNgRKAshbiFFqfaYO
+         cjQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691061330; x=1691666130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XvrkmR/GsQ1HMr54PqMYkqS+TeUTTxRI2jjZ2dcD23k=;
-        b=kvVUTNNDdTkq3aYhGpZ/kTbpGTSBGdesD/uq7hcSv4zJnAVWuNaG1+RYdHbhb1jkoj
-         H/q3lloGXXI0LHkmniynVoRaPcrEv8B62mhfeorsKmtuT8uiRqnFvyx++R9UPrv+qwM4
-         yscfZzi6q4YA8LOEad0FF34MhWqryF6gFOOdCIpp0ykiyErRgCu0ctaIQKPlYH1/8NQU
-         LAoJhtkodmY408kZuwsK3vBDW0s20iA5OX/9rCdkUNoUhV6+3HrGthCFYPExDNcou0hJ
-         vdrQaIIauAZMr/OcjrV66GRKF9E3KiBLwlRGKRTf2eu/iWb7nEuSFsLG+l1Y2mZwflMh
-         Nckg==
-X-Gm-Message-State: ABy/qLZa3oQXiC2X44M33vRoza8RWHcG8gCrc6cxjqy0DF7Ly/YlWHsT
-        I60Xe+xMRA1zSXjxzGw39cekGkHjGfzb0Fg2sz3QCyJPFX8=
-X-Google-Smtp-Source: APBJJlFDLYuiAMlNHHU4rfxVa6ew/plKNYqwkDYP8uCnZ2HdgbEl7P5ytZq4DM5A9tDHYjBGL5RgAyKksJ1W8UQn/zQ=
-X-Received: by 2002:a25:690a:0:b0:d14:b4bc:d574 with SMTP id
- e10-20020a25690a000000b00d14b4bcd574mr20030482ybc.34.1691061330082; Thu, 03
- Aug 2023 04:15:30 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691080720; x=1691685520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b7hXTqR0jH2hsI9WNMzkw89TQE7WPo/H+95Mu1R0KQE=;
+        b=Zmxn3355RpYM6hpqskWdjxHjigXBIbAxXEUvYqllsy8kQ2Ye6ZjYUtqxpB/lhV5Cdj
+         flQiOvhZwVYItWVyEPtW9MnqUB4MghZLtJXtJ7gay9GSKfpolShTjhcTvAA1DdMWISFg
+         tK5pMritti4p8CJF21TlhinQ6z2FhFil9nzkn13+RrHXMQXsw3G1v84KPoSgeZ76VBB0
+         hpyreAX0T9x9oWywti+Icr2UXhm28j9Sh7D7Iu1tkZ1513p58DZ8CvMLLAl873smKph2
+         jZmZScV2DgAPL9bOTvELnEt3SbzU/jxjjFx1ZAPE6fkfKycpf9zx2w4Sn/9hG9VH9bqC
+         95Mg==
+X-Gm-Message-State: ABy/qLZZMOEFYTQzISl1J5bmOVAN38VJc0b/cC5rJzjAfNrrK+d/WMWw
+        nsgmqtBJQlBmasfEgTLCwsQ1IqrV1Tcc/kZhwW4TfA==
+X-Google-Smtp-Source: APBJJlHUyAnRAFZVPgXBElopa5dcKpbBDbuElevyl7taFoGz9yEueMUgSOJhFfonaQeDoBh7LbHScUn0uHooT0zI8vw=
+X-Received: by 2002:a05:6358:998f:b0:137:7ab1:b7bc with SMTP id
+ j15-20020a056358998f00b001377ab1b7bcmr8324379rwb.0.1691080719807; Thu, 03 Aug
+ 2023 09:38:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <55b9c84b-9d21-444f-b91a-cf9316b65833@moroto.mountain> <20230801152231.bdf746e985c8c44209d28bf7@hugovil.com>
-In-Reply-To: <20230801152231.bdf746e985c8c44209d28bf7@hugovil.com>
-From:   Bruno Thomsen <bruno.thomsen@gmail.com>
-Date:   Thu, 3 Aug 2023 13:15:14 +0200
-Message-ID: <CAH+2xPAr-N0VHYxepntk6k5ghiwK5ev6h2-pQq6Q_f1GLjJbpw@mail.gmail.com>
-Subject: Re: [PATCH] rtc: pcf2127: fix error code in pcf2127_enable_ts()
-To:     Hugo Villeneuve <hugo@hugovil.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <CAKwvOdnRwmxGuEidZ=OWxSX60D6ry0Rb__DjSayga6um35Jsrg@mail.gmail.com>
+ <5066885c-3ac9-adbd-6852-eba89657470c@nfschina.com>
+In-Reply-To: <5066885c-3ac9-adbd-6852-eba89657470c@nfschina.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 3 Aug 2023 09:38:28 -0700
+Message-ID: <CAKwvOd=BJy==Ly80zLvW=RiEO=F5KeztVet7CuKT0FjvQtoSbw@mail.gmail.com>
+Subject: Re: [PATCH] fs: lockd: avoid possible wrong NULL parameter
+To:     Su Hui <suhui@nfschina.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        nathan@kernel.org, trix@redhat.com, bfields@fieldses.org,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Den tirs. 1. aug. 2023 kl. 22.14 skrev Hugo Villeneuve <hugo@hugovil.com>:
+On Wed, Aug 2, 2023 at 9:11=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
 >
-> On Mon, 31 Jul 2023 17:09:30 +0300
-> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> On 2023/8/3 05:40, Nick Desaulniers wrote:
 >
-> > This error path accidentally returns success.  Return -EINVAL instead.
-> >
-> > Fixes: 420cc9e850db ("rtc: pcf2127: add support for multiple TS functions")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis.  Not tested.
-> >
-> >  drivers/rtc/rtc-pcf2127.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-> > index 78141bb06ab0..988cad171174 100644
-> > --- a/drivers/rtc/rtc-pcf2127.c
-> > +++ b/drivers/rtc/rtc-pcf2127.c
-> > @@ -1060,7 +1060,7 @@ static int pcf2127_enable_ts(struct device *dev, int ts_id)
-> >       if (pcf2127->cfg->ts[ts_id].gnd_detect_bit == 0) {
-> >               dev_err(dev, "%s: tamper detection to GND configuration invalid\n",
-> >                       __func__);
-> > -             return ret;
-> > +             return -EINVAL;
-> >       }
-> >
-> >       /*
-> > --
-> > 2.39.2
+> On Wed, Aug 2, 2023 at 3:25=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 >
-> Reviewed-by: Hugo Villeneuve <hugo@hugovil.com>
+>
+> I noticed that the function in question already has a guard:
+> 322   if (hostname && memchr(hostname, '/', hostname_len) !=3D NULL) {
+>
+> Which implies that hostname COULD be NULL.
+>
+> Should this perhaps simply be rewritten as:
+>
+> if (!hostname)
+>   return NULL;
+> if (memchr(...) !=3D NULL)
+>   ...
+>
+> Rather than bury yet another guard for the same check further down in
+> the function? Check once and bail early.
+>
+> Hi, Nick Desaulnier,
+>
+> This may disrupt the logic of this function. So maybe the past one is bet=
+ter.
+>
+> 322         if (!hostname)
+> 323                 return NULL;
+>                     ^^^^^^^^^^^^
+> If we return in this place.
+>
+> 324         if (memchr(hostname, '/', hostname_len) !=3D NULL) {
+> 325                 if (printk_ratelimit()) {
+> 326                         printk(KERN_WARNING "Invalid hostname \"%.*s\=
+" "
+> 327                                             "in NFS lock request\n",
+> 328                                 (int)hostname_len, hostname);
+> 329                 }
+> 330                 return NULL;
+> 331         }
+> 332
+> 333 retry:
+> 334         spin_lock(&nsm_lock);
+> 335
+> 336         if (nsm_use_hostnames && hostname !=3D NULL)
+> 337                 cached =3D nsm_lookup_hostname(&ln->nsm_handles,
+> 338                                         hostname, hostname_len);
+> 339         else
+> 340                 cached =3D nsm_lookup_addr(&ln->nsm_handles, sap);
+>                              ^^^^^^^^^^^^^^^
+> This case will be broken when hostname is NULL.
 
-Reviewed-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+Ah, you're right; I agree.
+
+What are your thoughts then about moving the "is hostname NULL" check
+to nsm_create_handle() then?
+
+Perhaps nsm_create_handle() should check that immediately and return
+NULL, or simply skip the memcpy if hostname is NULL?
+
+It seems perhaps best to localize this to the callee rather than the
+caller. While there is only one caller today, should another arise
+someday, they may make the same mistake.
+
+I don't feel strongly either way, and am happy to sign off on either
+approach; just triple checking we've considered a few different cases.
+
+>
+> 341
+> 342         if (cached !=3D NULL) {
+> 343                 refcount_inc(&cached->sm_count);
+> 344                 spin_unlock(&nsm_lock);
+> 345                 kfree(new);
+> 346                 dprintk("lockd: found nsm_handle for %s (%s), "
+> 347                                 "cnt %d\n", cached->sm_name,
+> 348                                 cached->sm_addrbuf,
+> 349                                 refcount_read(&cached->sm_count));
+> 350                 return cached;
+> 351         }
+>
+
+
+--=20
+Thanks,
+~Nick Desaulniers
