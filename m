@@ -2,83 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B526C00528
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 09:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A463BC001DF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 10:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234646AbjHCJK6 (ORCPT
+        id S235258AbjHCKTE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Aug 2023 05:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50294 "EHLO
+        Thu, 3 Aug 2023 06:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233595AbjHCJKx (ORCPT
+        with ESMTP id S235323AbjHCKSf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Aug 2023 05:10:53 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ECF6E53
-        for <kernel-janitors@vger.kernel.org>; Thu,  3 Aug 2023 02:10:51 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fbc1218262so7482625e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Aug 2023 02:10:50 -0700 (PDT)
+        Thu, 3 Aug 2023 06:18:35 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A0F44B3
+        for <kernel-janitors@vger.kernel.org>; Thu,  3 Aug 2023 03:17:54 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-99bcf2de59cso114229566b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Aug 2023 03:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691053849; x=1691658649;
+        d=linaro.org; s=google; t=1691057873; x=1691662673;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJpah36ty+h1V+d/yS60/V9o8V1RRKpQA+HMeX/JC0I=;
-        b=zRU32KM/s4kejwypSNsftglC4dId0r9jmFUNmjuS56xQIPZKXicT/nxtm7K0Vo7rmt
-         e7H37M922zt/gFoHsDGnUXQLs+jyzey5hfJLzRcvYwBowjqlU8tySGn/7oiJafC/5tde
-         f0qol4Y3xusJ/wEZBTGEpSqzTQrZyMkwmTnWZt8bZ3Tewr+DkOsdty638egRkk2g/4RZ
-         Gp+cfU27t6obG+V6TwMCjrKMsu5o2Q9dpUtpXZ7eTD7DWf6DMOf/+GepJGqhF1etOI8/
-         fW/zxjuzkaC17izXgyg1IuPbrUX7RvxojGxpwHiLncGwtQrfSDDRQxYkZnkgT1TZKiEn
-         hHMg==
+        bh=EwPgmkkB31Arabtz8mgYtcF46W4x1m+DLr2workTFqA=;
+        b=mOD6VCFSzDhDE5vqICogFnsKQn6Mp6FGh7gXnfHgCVBF7CEBWMPz4zrJ5CQhkOU4UL
+         iFAItAWw2ZBsRWSbvXXkKDxryMbquO8rKaxQDSCKmBHtdevIhPZ/4retCk3wdeMrJUsX
+         mYdHgX9uUu5zinergWmexDdRjMBdkS1Z5y/ZrvGwH8NABNpbJDNw9X/rz0whunahxOuN
+         xPM1HlTiW1zUMqIQg39Avr6ynXoSiBRFZ/E0fnYFSBLmIbsUSbTlm5KmGaDfp8TMA0y4
+         odBNbML8dUfP/+5ftWDfOfmKrCUPd4mIs3pbq35DDTxFdPqNuiNYRYltgWRBvNMLDkGb
+         t/2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691053849; x=1691658649;
+        d=1e100.net; s=20221208; t=1691057873; x=1691662673;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OJpah36ty+h1V+d/yS60/V9o8V1RRKpQA+HMeX/JC0I=;
-        b=ARd6PvQcoD2LHLux59PagDQd/K4iLoZqDesd2DNtD9v/Xp8iU78uEy6B113VAO4kSC
-         KfwY5T2jau931lXFmMTHPg5OUyz3m1p0m4w3x1zY/b2EkZFNo3Cz2F84072IkA3vTzPz
-         DXtxyIvAau6GRKlK6sE8Yv5h8PTqNkkw7C/XajT8WQUTXlsMRVClYcHRBmGeRlQIiOBk
-         kxZ9ZgKMwG6aVk/2E3UiZZ5tCTx6vojaidxzswEl6BGdHHwhLPPCTKjvY5bACmZV7H4/
-         7m1jumPf8yWLfZe7FcY4TvU7raKmyNbcqvnozYOZ5eCo25KC7fYXNtm/0LyBlF/DLzKG
-         0NEw==
-X-Gm-Message-State: ABy/qLZmc4m6pO/jmubUDWPhBRLuwtfkUW+bmolNF0GXSrkuDKwt1oUL
-        BN/Fue+TqS2TjoCuDFs/fUzF1w==
-X-Google-Smtp-Source: APBJJlG1QbuLw2+H8HhnJeVT1Av59WDq9CwoIWlgg+11h4NWNHUKX3rJlFzg7p+nNHtO4/ZveaIgYA==
-X-Received: by 2002:a7b:c34d:0:b0:3fe:179a:9eee with SMTP id l13-20020a7bc34d000000b003fe179a9eeemr6942588wmj.30.1691053849395;
-        Thu, 03 Aug 2023 02:10:49 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m14-20020a7bce0e000000b003fbc9b9699dsm3702132wmc.45.2023.08.03.02.10.48
+        bh=EwPgmkkB31Arabtz8mgYtcF46W4x1m+DLr2workTFqA=;
+        b=LB2YNSB1ZxSa3fYp1HFHYJENSZkdk6ou5RblXSzOVVwqeLMQ1gPyq0Qr7W0ZE0tD3l
+         4HJmwAe6zagNlnutE8rOkakzpT0iwXIvlmj1hhrMRrYRSuFOyq34GG02+rnbZM5tDFNU
+         Kl+qVxdnkvsCN4D4rQmxi+sRaripNHv2eaATQjJenPbgBtF1YqWhQGOlkiNqfVoGwxqG
+         LpVm1aJWAoVhqCgqj+b9hbFXmucgbBbo+unP0VDvjmOvsoCNhm8TMmIAQVURKm8fgXTO
+         fABfEaIRPAojpKaygqJ5t6HHSGEomFaU6vyHhi10VzQiMp4r1SBsYf/dcgn6RN6fJ2xc
+         QtZw==
+X-Gm-Message-State: ABy/qLZl+J9tU4ZYWWdZ+mdh5HWIEqmKQGRtwjNBAQNbpmzbAuZdICwd
+        dJozvoSd6Rl5mLLfKRizxP/g8g==
+X-Google-Smtp-Source: APBJJlH9IkNJHu2Khh3/GiTbRaLuHqjxLFT03bbdnvYbFOG3mFj9RHmzeDkw/unGxmIaO27MixXEGg==
+X-Received: by 2002:a17:907:b09:b0:993:eef2:5d61 with SMTP id h9-20020a1709070b0900b00993eef25d61mr6789196ejl.27.1691057872792;
+        Thu, 03 Aug 2023 03:17:52 -0700 (PDT)
+Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
+        by smtp.gmail.com with ESMTPSA id oq26-20020a170906cc9a00b009888aa1da11sm10318221ejb.188.2023.08.03.03.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Aug 2023 02:10:49 -0700 (PDT)
-Date:   Thu, 3 Aug 2023 12:10:46 +0300
+        Thu, 03 Aug 2023 03:17:52 -0700 (PDT)
+Date:   Thu, 3 Aug 2023 13:17:41 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, chuck.lever@oracle.com,
-        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        nathan@kernel.org, trix@redhat.com, bfields@fieldses.org,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs: lockd: avoid possible wrong NULL parameter
-Message-ID: <057a4eea-d55a-4402-81c1-46b04b405a73@kadam.mountain>
-References: <CAKwvOdnRwmxGuEidZ=OWxSX60D6ry0Rb__DjSayga6um35Jsrg@mail.gmail.com>
- <18edc2c7-2fb0-493b-9a9f-549acce4e87a@nfschina.com>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [bug report] lockdep/selftests: Use SBRM APIs for wait context
+ tests
+Message-ID: <bb3e6fd6-9d1e-4399-9795-6f0f487948a9@kadam.mountain>
+References: <c7b538a3-eb0b-4905-8ebf-8bda88e576fa@moroto.mountain>
+ <ZMqLAUyMuiTKdLfS@boqun-archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18edc2c7-2fb0-493b-9a9f-549acce4e87a@nfschina.com>
+In-Reply-To: <ZMqLAUyMuiTKdLfS@boqun-archlinux>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 03, 2023 at 12:16:40PM +0800, Su Hui wrote:
-> Should I send a separate patch for this bug and add you as Reported-by ?
+On Wed, Aug 02, 2023 at 09:57:37AM -0700, Boqun Feng wrote:
+> 
+> Thanks for reporting this. However the "bug" is by design,
+> locking-selftest.c contains tests that trigger incorrect lock usages and
+> see if lockdep can catch them, so it's supposed to work in that way.
+> 
+> Out of curiosity, could Smatch detect the same issue without the patch?
+> The patch is simply a cleanup, so no functional change, in theory, the
+> "bug" can be detected without that patch.
+> 
 
-I feel like neither of us know if we should add a check to the
-intializer or remove the check from dprintk.  If you know the answer,
-than absolutely, please send a patch.
+Yeah.  It's just that the warnings show up as new to me when functions
+are renamed.
 
-regards,
+regards
 dan carpenter
 
