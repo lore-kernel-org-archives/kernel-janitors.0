@@ -2,88 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A463BC001DF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 10:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6B2C41513
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Aug 2023 11:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235258AbjHCKTE (ORCPT
+        id S234712AbjHCLPm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Aug 2023 06:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52350 "EHLO
+        Thu, 3 Aug 2023 07:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235323AbjHCKSf (ORCPT
+        with ESMTP id S234497AbjHCLPh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Aug 2023 06:18:35 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A0F44B3
-        for <kernel-janitors@vger.kernel.org>; Thu,  3 Aug 2023 03:17:54 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-99bcf2de59cso114229566b.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Aug 2023 03:17:54 -0700 (PDT)
+        Thu, 3 Aug 2023 07:15:37 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B7F1BE;
+        Thu,  3 Aug 2023 04:15:30 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-ccc462deca6so899188276.0;
+        Thu, 03 Aug 2023 04:15:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691057873; x=1691662673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwPgmkkB31Arabtz8mgYtcF46W4x1m+DLr2workTFqA=;
-        b=mOD6VCFSzDhDE5vqICogFnsKQn6Mp6FGh7gXnfHgCVBF7CEBWMPz4zrJ5CQhkOU4UL
-         iFAItAWw2ZBsRWSbvXXkKDxryMbquO8rKaxQDSCKmBHtdevIhPZ/4retCk3wdeMrJUsX
-         mYdHgX9uUu5zinergWmexDdRjMBdkS1Z5y/ZrvGwH8NABNpbJDNw9X/rz0whunahxOuN
-         xPM1HlTiW1zUMqIQg39Avr6ynXoSiBRFZ/E0fnYFSBLmIbsUSbTlm5KmGaDfp8TMA0y4
-         odBNbML8dUfP/+5ftWDfOfmKrCUPd4mIs3pbq35DDTxFdPqNuiNYRYltgWRBvNMLDkGb
-         t/2A==
+        d=gmail.com; s=20221208; t=1691061330; x=1691666130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvrkmR/GsQ1HMr54PqMYkqS+TeUTTxRI2jjZ2dcD23k=;
+        b=IvXAE9PwMCOx4lOEXxYjeJCC+Aes1HqoaXiTM+vKHIPLBzawNSbVZc39cPlGlpCU8z
+         dMlhuP+G1oWareynzfU43+5EZByDJcY6rgyOPVvEi26TU93WiInRpUPLP3zcO2p1UGTI
+         GcnC9qKWiF2vpVZvO2JTDFAeWiFYQZ5PS9wQv29tktS2X7X1LWtJeypVeHQg0dqrXwpz
+         GFW8OZ+OBDqfFDddS6umW/ZcTMn6zmZjI8X/KuFc+PbTIsyB+NgYqfrTEJBrNL82VwUS
+         f+xu3Fsr6u+F2XraijEfkzR50Lm0mG5Y9JbdwzaC4MyL4kW2dqAxE84bDZ/XWUTbSJl+
+         QUCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691057873; x=1691662673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EwPgmkkB31Arabtz8mgYtcF46W4x1m+DLr2workTFqA=;
-        b=LB2YNSB1ZxSa3fYp1HFHYJENSZkdk6ou5RblXSzOVVwqeLMQ1gPyq0Qr7W0ZE0tD3l
-         4HJmwAe6zagNlnutE8rOkakzpT0iwXIvlmj1hhrMRrYRSuFOyq34GG02+rnbZM5tDFNU
-         Kl+qVxdnkvsCN4D4rQmxi+sRaripNHv2eaATQjJenPbgBtF1YqWhQGOlkiNqfVoGwxqG
-         LpVm1aJWAoVhqCgqj+b9hbFXmucgbBbo+unP0VDvjmOvsoCNhm8TMmIAQVURKm8fgXTO
-         fABfEaIRPAojpKaygqJ5t6HHSGEomFaU6vyHhi10VzQiMp4r1SBsYf/dcgn6RN6fJ2xc
-         QtZw==
-X-Gm-Message-State: ABy/qLZl+J9tU4ZYWWdZ+mdh5HWIEqmKQGRtwjNBAQNbpmzbAuZdICwd
-        dJozvoSd6Rl5mLLfKRizxP/g8g==
-X-Google-Smtp-Source: APBJJlH9IkNJHu2Khh3/GiTbRaLuHqjxLFT03bbdnvYbFOG3mFj9RHmzeDkw/unGxmIaO27MixXEGg==
-X-Received: by 2002:a17:907:b09:b0:993:eef2:5d61 with SMTP id h9-20020a1709070b0900b00993eef25d61mr6789196ejl.27.1691057872792;
-        Thu, 03 Aug 2023 03:17:52 -0700 (PDT)
-Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
-        by smtp.gmail.com with ESMTPSA id oq26-20020a170906cc9a00b009888aa1da11sm10318221ejb.188.2023.08.03.03.17.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Aug 2023 03:17:52 -0700 (PDT)
-Date:   Thu, 3 Aug 2023 13:17:41 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [bug report] lockdep/selftests: Use SBRM APIs for wait context
- tests
-Message-ID: <bb3e6fd6-9d1e-4399-9795-6f0f487948a9@kadam.mountain>
-References: <c7b538a3-eb0b-4905-8ebf-8bda88e576fa@moroto.mountain>
- <ZMqLAUyMuiTKdLfS@boqun-archlinux>
+        d=1e100.net; s=20221208; t=1691061330; x=1691666130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XvrkmR/GsQ1HMr54PqMYkqS+TeUTTxRI2jjZ2dcD23k=;
+        b=kvVUTNNDdTkq3aYhGpZ/kTbpGTSBGdesD/uq7hcSv4zJnAVWuNaG1+RYdHbhb1jkoj
+         H/q3lloGXXI0LHkmniynVoRaPcrEv8B62mhfeorsKmtuT8uiRqnFvyx++R9UPrv+qwM4
+         yscfZzi6q4YA8LOEad0FF34MhWqryF6gFOOdCIpp0ykiyErRgCu0ctaIQKPlYH1/8NQU
+         LAoJhtkodmY408kZuwsK3vBDW0s20iA5OX/9rCdkUNoUhV6+3HrGthCFYPExDNcou0hJ
+         vdrQaIIauAZMr/OcjrV66GRKF9E3KiBLwlRGKRTf2eu/iWb7nEuSFsLG+l1Y2mZwflMh
+         Nckg==
+X-Gm-Message-State: ABy/qLZa3oQXiC2X44M33vRoza8RWHcG8gCrc6cxjqy0DF7Ly/YlWHsT
+        I60Xe+xMRA1zSXjxzGw39cekGkHjGfzb0Fg2sz3QCyJPFX8=
+X-Google-Smtp-Source: APBJJlFDLYuiAMlNHHU4rfxVa6ew/plKNYqwkDYP8uCnZ2HdgbEl7P5ytZq4DM5A9tDHYjBGL5RgAyKksJ1W8UQn/zQ=
+X-Received: by 2002:a25:690a:0:b0:d14:b4bc:d574 with SMTP id
+ e10-20020a25690a000000b00d14b4bcd574mr20030482ybc.34.1691061330082; Thu, 03
+ Aug 2023 04:15:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZMqLAUyMuiTKdLfS@boqun-archlinux>
+References: <55b9c84b-9d21-444f-b91a-cf9316b65833@moroto.mountain> <20230801152231.bdf746e985c8c44209d28bf7@hugovil.com>
+In-Reply-To: <20230801152231.bdf746e985c8c44209d28bf7@hugovil.com>
+From:   Bruno Thomsen <bruno.thomsen@gmail.com>
+Date:   Thu, 3 Aug 2023 13:15:14 +0200
+Message-ID: <CAH+2xPAr-N0VHYxepntk6k5ghiwK5ev6h2-pQq6Q_f1GLjJbpw@mail.gmail.com>
+Subject: Re: [PATCH] rtc: pcf2127: fix error code in pcf2127_enable_ts()
+To:     Hugo Villeneuve <hugo@hugovil.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 09:57:37AM -0700, Boqun Feng wrote:
-> 
-> Thanks for reporting this. However the "bug" is by design,
-> locking-selftest.c contains tests that trigger incorrect lock usages and
-> see if lockdep can catch them, so it's supposed to work in that way.
-> 
-> Out of curiosity, could Smatch detect the same issue without the patch?
-> The patch is simply a cleanup, so no functional change, in theory, the
-> "bug" can be detected without that patch.
-> 
+Den tirs. 1. aug. 2023 kl. 22.14 skrev Hugo Villeneuve <hugo@hugovil.com>:
+>
+> On Mon, 31 Jul 2023 17:09:30 +0300
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> > This error path accidentally returns success.  Return -EINVAL instead.
+> >
+> > Fixes: 420cc9e850db ("rtc: pcf2127: add support for multiple TS functions")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > From static analysis.  Not tested.
+> >
+> >  drivers/rtc/rtc-pcf2127.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
+> > index 78141bb06ab0..988cad171174 100644
+> > --- a/drivers/rtc/rtc-pcf2127.c
+> > +++ b/drivers/rtc/rtc-pcf2127.c
+> > @@ -1060,7 +1060,7 @@ static int pcf2127_enable_ts(struct device *dev, int ts_id)
+> >       if (pcf2127->cfg->ts[ts_id].gnd_detect_bit == 0) {
+> >               dev_err(dev, "%s: tamper detection to GND configuration invalid\n",
+> >                       __func__);
+> > -             return ret;
+> > +             return -EINVAL;
+> >       }
+> >
+> >       /*
+> > --
+> > 2.39.2
+>
+> Reviewed-by: Hugo Villeneuve <hugo@hugovil.com>
 
-Yeah.  It's just that the warnings show up as new to me when functions
-are renamed.
-
-regards
-dan carpenter
-
+Reviewed-by: Bruno Thomsen <bruno.thomsen@gmail.com>
