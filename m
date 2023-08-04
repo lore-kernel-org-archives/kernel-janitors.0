@@ -2,72 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FB5EB64DD
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Aug 2023 01:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56427C41513
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Aug 2023 10:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231540AbjHDB2X (ORCPT
+        id S231389AbjHDKQA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Aug 2023 21:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
+        Fri, 4 Aug 2023 06:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjHDB2W (ORCPT
+        with ESMTP id S231392AbjHDKP3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Aug 2023 21:28:22 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1C70B423E;
-        Thu,  3 Aug 2023 18:28:20 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id E2C10602F96C4;
-        Fri,  4 Aug 2023 09:28:06 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        Fri, 4 Aug 2023 06:15:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D2049DA;
+        Fri,  4 Aug 2023 03:14:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7869E61F93;
+        Fri,  4 Aug 2023 10:14:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72970C433C9;
+        Fri,  4 Aug 2023 10:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691144085;
+        bh=5AbSMMDb611We4H8Uqf50UdR5/vu5K+47HcJ7iRObW4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pF7bqoESmf4ecbWV81PJn8imMt4V+BWKXh8PJTBVpPQYPDJivBcY0d/8XXPTW4bSs
+         ZpNzwdHq0W0/EHFRqrRYE7U4WVxCfdWYv931rVIIpzDRbEg6BzvHnTIHFm80hVRhvf
+         h28iNhNnyR/Bb8qX6wUoyZyjXK7ZaGRx/lCpzGHsSbLhZz/U1i/be7Zr397zFjeiIw
+         f5kxIpC5ZDdvpZc8kr38S6zONMPTBt998z/PEM5axUQoHZMbz4pbQVUO+iphrr8Jc4
+         GO6uqR02C1utDNxNThyTIgQdJWuYcpJH2maYVAhXOmoTy8cmI9Qq91cdezNhzYpGBy
+         LNaKeq4QBN8Rw==
+Message-ID: <85f0d8cb35c8e8c64810f448bae27292703d66ed.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: lockd: avoid possible wrong NULL parameter
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Su Hui <suhui@nfschina.com>, trond.myklebust@hammerspace.com,
+        anna@kernel.org, chuck.lever@oracle.com, neilb@suse.de,
         kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
         nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com
 Cc:     bfields@fieldses.org, linux-nfs@vger.kernel.org,
         linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-Subject: [PATCH v2] fs: lockd: avoid possible wrong NULL parameter
-Date:   Fri,  4 Aug 2023 09:26:57 +0800
-Message-Id: <20230804012656.4091877-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        kernel-janitors@vger.kernel.org
+Date:   Fri, 04 Aug 2023 06:14:43 -0400
+In-Reply-To: <20230804012656.4091877-1-suhui@nfschina.com>
+References: <20230804012656.4091877-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-clang's static analysis warning: fs/lockd/mon.c: line 293, column 2:
-Null pointer passed as 2nd argument to memory copy function.
+On Fri, 2023-08-04 at 09:26 +0800, Su Hui wrote:
+> clang's static analysis warning: fs/lockd/mon.c: line 293, column 2:
+> Null pointer passed as 2nd argument to memory copy function.
+>=20
+> Assuming 'hostname' is NULL and calling 'nsm_create_handle()', this will
+> pass NULL as 2nd argument to memory copy function 'memcpy()'. So return
+> NULL if 'hostname' is invalid.
+>=20
+> Fixes: 77a3ef33e2de ("NSM: More clean up of nsm_get_handle()")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+> v2:
+>  - move NULL check to the callee "nsm_create_handle()"
+>  fs/lockd/mon.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/fs/lockd/mon.c b/fs/lockd/mon.c
+> index 1d9488cf0534..87a0f207df0b 100644
+> --- a/fs/lockd/mon.c
+> +++ b/fs/lockd/mon.c
+> @@ -276,6 +276,9 @@ static struct nsm_handle *nsm_create_handle(const str=
+uct sockaddr *sap,
+>  {
+>  	struct nsm_handle *new;
+> =20
+> +	if (!hostname)
+> +		return NULL;
+> +
+>  	new =3D kzalloc(sizeof(*new) + hostname_len + 1, GFP_KERNEL);
+>  	if (unlikely(new =3D=3D NULL))
+>  		return NULL;
 
-Assuming 'hostname' is NULL and calling 'nsm_create_handle()', this will
-pass NULL as 2nd argument to memory copy function 'memcpy()'. So return
-NULL if 'hostname' is invalid.
-
-Fixes: 77a3ef33e2de ("NSM: More clean up of nsm_get_handle()")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
-v2:
- - move NULL check to the callee "nsm_create_handle()"
- fs/lockd/mon.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/lockd/mon.c b/fs/lockd/mon.c
-index 1d9488cf0534..87a0f207df0b 100644
---- a/fs/lockd/mon.c
-+++ b/fs/lockd/mon.c
-@@ -276,6 +276,9 @@ static struct nsm_handle *nsm_create_handle(const struct sockaddr *sap,
- {
- 	struct nsm_handle *new;
- 
-+	if (!hostname)
-+		return NULL;
-+
- 	new = kzalloc(sizeof(*new) + hostname_len + 1, GFP_KERNEL);
- 	if (unlikely(new == NULL))
- 		return NULL;
--- 
-2.30.2
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
