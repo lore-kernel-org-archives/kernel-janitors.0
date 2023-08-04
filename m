@@ -2,117 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2806DC04A6A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Aug 2023 14:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188D9C001DB
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Aug 2023 15:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbjHDOg5 (ORCPT
+        id S232088AbjHDPuG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Aug 2023 10:36:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
+        Fri, 4 Aug 2023 11:50:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbjHDOgz (ORCPT
+        with ESMTP id S232122AbjHDPuD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Aug 2023 10:36:55 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BB046B3;
-        Fri,  4 Aug 2023 07:36:53 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 374EDNad018854;
-        Fri, 4 Aug 2023 14:36:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=g8m9YHbGVPQa3+rdRgBaIy5Y5YIwzVQr7CMtkHLyfGY=;
- b=b5FxWaI2c0JIcnug6XoXn7RBww4gmGxcDcIsW+cJTWW/PIj1RtdiGbTC5lHwNaAhv6jS
- 4d951+ZUYvhPf7Q2EsY7N6t0XpBmm4ROIWctJvClS+M1VXi24dAIv+bd4fDmE4eOsBcQ
- 4QaNJUxUiwY112aYev729JOf6VxHb5MLag03CZJMfd2ha2XfJRv9ZR3g4v6q2lW0hOpS
- 2B/I2UT11syOmXwOpDbC9ZOvyRlKZvO/84MkDFeQh/mfFZf8DmIvpSYi16m4ZrNuiCNs
- 5xerq8gTPysKMvCotmv8VMbbYwtb+stNhNunqKPUZTM6Gpmrg9dM85JItYITRDzYtAN1 2w== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s8kfuskx2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Aug 2023 14:36:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 374EahUG011615
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 4 Aug 2023 14:36:43 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 4 Aug
- 2023 07:36:42 -0700
-Message-ID: <b5f456c3-1e2e-8d99-c593-140fa3571ae5@quicinc.com>
-Date:   Fri, 4 Aug 2023 08:36:41 -0600
+        Fri, 4 Aug 2023 11:50:03 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DE849C1
+        for <kernel-janitors@vger.kernel.org>; Fri,  4 Aug 2023 08:50:00 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id 71dfb90a1353d-487203bfbc6so227281e0c.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 04 Aug 2023 08:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691164199; x=1691768999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M6GtJle38GYNlw+gZNdG3pGleXzijHW2VDwwGhqBWf0=;
+        b=AW5cXx0H8S0x5I+u2xfxfy1V7vR/jMhVl1HUEGEbVyMQepbBG7qwJSWaktQ6RUC0ry
+         YWp/wcvzZRS0TmRJPYM7ge8Wunb/krBend8Sku8kZ9/XenVwDkKiznYril6qzO64JRls
+         Q7dCK8fwLyw9HBdWcmAEtxT63VH6KCAnDDnSzC6QWOMes9rU+Bk9lh/QSwVUu/+Q9M3F
+         yXe4ljZivaQrSG9TrCIM4df/WqKdrg0WjCIf3SXhO+Omc+9BDZvl7iaQ3gi46u/Wl8kv
+         8M+yzJ6QwWSZYvFrole4BzasoQzljZn068wOxkBGwSzKUGLR070XifJVqziX33IlqbS0
+         aaJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691164199; x=1691768999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M6GtJle38GYNlw+gZNdG3pGleXzijHW2VDwwGhqBWf0=;
+        b=VaGDLrN64HxyCSI3lRsbDPJJ20AJxeWEQgU3vs44s3RjBqOAmrqmMZ5DfOsau+JL3n
+         S4fai0nEgZ3lys6Tw++onFjswkomne490kuyKj2Xjy+TD3gTl7aZMZUB8IbFOJk9HoRf
+         xXDrv6uJAwTh0j+1Z0XYAfECjlM334bvNEj1Q6vbpHJI99Sa1/Rp5dSxNzcVC0gvxYxk
+         gAeDIui9fm9yqVSv341hxKBorVCqXi0oI4j7uF4qIh4Q3sJrSFSz+sy8gtJiDCNHc+F1
+         4QX29pWMfa541qms4S8GvOhj2qqQWwX7Vp2++176MLzt7XqlSICaYzhSsnjhuV80Opwl
+         QPWA==
+X-Gm-Message-State: AOJu0YybTm8QQbwJMSiC1HNv1/WVMYfx6xtu0AvVQEKbPZj+gD1p0CTc
+        rcP9Sntkg7E4vMWWN7sB+Hy3HpVDk2QZlQXD4GSerg==
+X-Google-Smtp-Source: AGHT+IGtDHTDweDFtGPqweVEy6/Ojul8h7Go4cQI7kTAsF7TZW0t3PAPJCedcn9OpWUtmtIlxQmADQwpMGsPvotnBTs=
+X-Received: by 2002:a1f:45d7:0:b0:487:1ae2:2ad7 with SMTP id
+ s206-20020a1f45d7000000b004871ae22ad7mr1601447vka.3.1691164199316; Fri, 04
+ Aug 2023 08:49:59 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 0/5 v4] accel/qaic: Improve bounds checking in
- encode/decode
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <6e935c70-5bd2-4808-bdd9-d664f892b0b5@moroto.mountain>
- <0919d2f7-dbb3-2e8b-adb7-f836b21e6482@quicinc.com>
- <9af2a1c9-a59a-4f7e-a195-82cf5cbd68c9@kadam.mountain>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <9af2a1c9-a59a-4f7e-a195-82cf5cbd68c9@kadam.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SwjckkrSEXwVqNZcYJgv8c0aEMlwH-co
-X-Proofpoint-ORIG-GUID: SwjckkrSEXwVqNZcYJgv8c0aEMlwH-co
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-04_14,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=821 suspectscore=0
- spamscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308040130
+References: <20230804012656.4091877-1-suhui@nfschina.com>
+In-Reply-To: <20230804012656.4091877-1-suhui@nfschina.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 4 Aug 2023 08:49:48 -0700
+Message-ID: <CAKwvOd=1pEE=pspfg7fcofYF5=eziFvcLJgC0_ohG7jq+rbVyg@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: lockd: avoid possible wrong NULL parameter
+To:     Su Hui <suhui@nfschina.com>
+Cc:     trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        nathan@kernel.org, trix@redhat.com, bfields@fieldses.org,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/12/2023 12:30 AM, Dan Carpenter wrote:
-> On Tue, Jul 11, 2023 at 11:33:25AM -0600, Jeffrey Hugo wrote:
->> On 7/11/2023 2:20 AM, Dan Carpenter wrote:
->>> Fixed in v4: Send the correct [PATCH 1/5] patch.
->>>
->>> Fixed in v3: Redo messed up threading
->>>
->>> Fixed two things in v2:  Include the <linux/overflow.h> file.  Change
->>> the >= in encode and decode to >.
->>>
->>> regards,
->>> dan carpenter
->>
->> Did you intentionally drop tags from previous versions?
-> 
-> Sorry, I kept messing up the resends.
-> 
->>
->> For 1-3, 5
->> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
->>
->> Looks like 3,5 are reviewed by Pranjal and also good. I see 5 is also
->> reviewed by Dafna.  Expect those to be merged.  1,2 need a review from
->> Pranjal, but I expect all is good and will be merged.
->>
->> I did not see feedback on my question for 4.  Would like your feedback
->> before queuing that one up.
->>
-> 
-> Sorry, again.  Yeah.  I think you're right.  Could we queue the rest and
-> I will resend 4 separately?  I know it's a headache.  If not it's fine,
-> I can resend them all.
+On Thu, Aug 3, 2023 at 6:28=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
+>
+> clang's static analysis warning: fs/lockd/mon.c: line 293, column 2:
+> Null pointer passed as 2nd argument to memory copy function.
+>
+> Assuming 'hostname' is NULL and calling 'nsm_create_handle()', this will
+> pass NULL as 2nd argument to memory copy function 'memcpy()'. So return
+> NULL if 'hostname' is invalid.
+>
+> Fixes: 77a3ef33e2de ("NSM: More clean up of nsm_get_handle()")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-Resend for #4 is still coming, right?  I just don't want to forget about it.
+Thanks for the patch! And thanks for checking clang static analysis reports=
+!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
--Jeff
+> ---
+> v2:
+>  - move NULL check to the callee "nsm_create_handle()"
+>  fs/lockd/mon.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/lockd/mon.c b/fs/lockd/mon.c
+> index 1d9488cf0534..87a0f207df0b 100644
+> --- a/fs/lockd/mon.c
+> +++ b/fs/lockd/mon.c
+> @@ -276,6 +276,9 @@ static struct nsm_handle *nsm_create_handle(const str=
+uct sockaddr *sap,
+>  {
+>         struct nsm_handle *new;
+>
+> +       if (!hostname)
+> +               return NULL;
+> +
+>         new =3D kzalloc(sizeof(*new) + hostname_len + 1, GFP_KERNEL);
+>         if (unlikely(new =3D=3D NULL))
+>                 return NULL;
+> --
+> 2.30.2
+>
+
+
+--=20
+Thanks,
+~Nick Desaulniers
