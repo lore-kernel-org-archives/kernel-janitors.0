@@ -2,83 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ECBC001DB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Aug 2023 15:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32F3C001DB
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Aug 2023 20:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbjHGPP3 (ORCPT
+        id S230096AbjHGUzA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Aug 2023 11:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
+        Mon, 7 Aug 2023 16:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjHGPP2 (ORCPT
+        with ESMTP id S229915AbjHGUy7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Aug 2023 11:15:28 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E97E10FD
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Aug 2023 08:15:23 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id af79cd13be357-76d072daea2so80818185a.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 07 Aug 2023 08:15:23 -0700 (PDT)
+        Mon, 7 Aug 2023 16:54:59 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EDC1724
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Aug 2023 13:54:52 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1bc3d94d40fso43569305ad.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 07 Aug 2023 13:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1691421322; x=1692026122;
+        d=broadcom.com; s=google; t=1691441692; x=1692046492;
         h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zmrw92VyhyTZMCY0NNjNL2mrZadD7tSYgwx8IwtqCs8=;
-        b=TotBU4newpEXmlVdF9S/KbNVLAUeZ8ICNtK0YrZqpudZ4gfjrMGRcQUms4ZVqql7xf
-         DZ+mCOlWudmDMmOanIfAxjzEm7CMse0K1AsTParKrrHkN8OzADDlakkuRqjDfVmRkCoO
-         VAp+0Sd72HIfm2bPaW5qnGw2NXTt+IBByGOhk=
+        bh=EgkjMrUwrxg3edz7hSDr2ZEYLTKHjUo4kK4E884pOak=;
+        b=MdkI1m0svBMa9p2beL2zrsg1E2+Wk0VViI3uy2AlaCCrEw3lb9Xt7tVahHsExgJ5GE
+         pULG1W656wO5Abpf7NQEWqnvoh/iqcssrfpkl0FAuRmX5IWjymmdfitPTbPcSPJvUbPb
+         9WYJPF88SQQSLca5/U6PsZCtdZiJ9Bx8mBmRI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691421322; x=1692026122;
+        d=1e100.net; s=20221208; t=1691441692; x=1692046492;
         h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zmrw92VyhyTZMCY0NNjNL2mrZadD7tSYgwx8IwtqCs8=;
-        b=I1nHYpXXK/2aS4YlboquxPVkLzvh0mGVa7PqSamUbnR1zEnvd7SDJB6gBvgf9Rifcb
-         kQLd0hWucv3w7EW2cqAflFYHKe27iHPaGwVWeKZopmYTG1twS/DU5FOakHmjONlXIP4J
-         MIgOMYTcC66zWCWZ8heL/TPmcFTyrwZjHWjswvjD87t8A6uwG9phERo3yXvNm/QaHeg3
-         34u7MnGYmsc0blTndTd/d62KgW/prQ7zKVAPruh+isGQtB+qfGLDGAVuNGuDEc2aP4QW
-         FI19YNzXi0dIVqoQFyKGCueoCHX8oBoDKHt0ZQgfrrFCY2MwxRqyMtRXGl49DrwlDmJz
-         WpXw==
-X-Gm-Message-State: AOJu0Yye2uUNMJqO/ANYgVQdskJsawRIITZyQTweBQe64Vp+CyHw9phe
-        sqVAs3RHxSOD7Qt+DQ7UVK3LLw==
-X-Google-Smtp-Source: AGHT+IHyMdJMyz8km8CHWw0qd5WTo+GfOD61WLw0cxex2RET9X+GoBdHxVqwQrF/6vHQbtOKKUjKVQ==
-X-Received: by 2002:a0c:f48f:0:b0:63f:89ef:556a with SMTP id i15-20020a0cf48f000000b0063f89ef556amr3220140qvm.27.1691421322203;
-        Mon, 07 Aug 2023 08:15:22 -0700 (PDT)
-Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id a13-20020a0ce34d000000b0063d281e22f1sm2899455qvm.17.2023.08.07.08.15.18
+        bh=EgkjMrUwrxg3edz7hSDr2ZEYLTKHjUo4kK4E884pOak=;
+        b=EOGTy35wYrdHLIjA4LRA6OhfTOw2BYjdbta/q5NV1wY2YFoRyYYRcpE0jdqNboPrTF
+         KNNPnm+bDrcSE5QllSsTaWEdNN58wAaLQZZw/39UHdiEYesRvqFusqF5uXuT3WnJSvC7
+         FRqVJLGvpD1TYIKLmnet/jvOLL6AA3GJLeGZ83TNVl3v/riT2YmCcD8ER2ru4G3cGVWC
+         EMbcfeX7xMxHQRY1ugP+MsXS7xU8Axo9MM0oX2dyJOWVLUpDNxVwo88qP9zllhedX4c5
+         YneHEurkOjKqsA3OMtiIhhsQH3yuoypxZ3S++79Q1gEU623rnJhAbrso85MvXm0NNl+c
+         PFRA==
+X-Gm-Message-State: AOJu0Yw34nPpOurryppOvSPbOP5bo6BqRzSkoQ40jDDhTfqYzJ/Llamf
+        9uhVxxQ2x6TCmFb6awCjvl3e7A==
+X-Google-Smtp-Source: AGHT+IFCFWrOCpJu3M7sHfzdFMJym0LwFldgQNL7DVPehYMklsP3BcgFn4i3ktscDEAAz14C2mdJIg==
+X-Received: by 2002:a17:902:82c5:b0:1b8:2c6f:3248 with SMTP id u5-20020a17090282c500b001b82c6f3248mr11202437plz.39.1691441691885;
+        Mon, 07 Aug 2023 13:54:51 -0700 (PDT)
+Received: from [10.69.71.77] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id jh19-20020a170903329300b001b6740207d2sm7311346plb.215.2023.08.07.13.54.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Aug 2023 08:15:20 -0700 (PDT)
-Message-ID: <328f276c-bc89-6e41-b530-d916ee208d4d@broadcom.com>
-Date:   Mon, 7 Aug 2023 08:15:17 -0700
+        Mon, 07 Aug 2023 13:54:51 -0700 (PDT)
+Message-ID: <67ec0129-0067-cdeb-f4e5-2ac22558b3c8@broadcom.com>
+Date:   Mon, 7 Aug 2023 13:54:49 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.13.0
 Subject: Re: [PATCH net-next] net: bcmasp: Prevent array undereflow in
  bcmasp_netfilt_get_init()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Justin Chen <justin.chen@broadcom.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Florian Fainelli <florian.fainelli@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 References: <b3b47b25-01fc-4d9f-a6c3-e037ad4d71d7@moroto.mountain>
-From:   Florian Fainelli <florian.fainelli@broadcom.com>
+From:   Justin Chen <justin.chen@broadcom.com>
 In-Reply-To: <b3b47b25-01fc-4d9f-a6c3-e037ad4d71d7@moroto.mountain>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000001886a4060256b743"
+        boundary="0000000000003922bf06025b7580"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---0000000000001886a4060256b743
+--0000000000003922bf06025b7580
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 8/7/2023 6:01 AM, Dan Carpenter wrote:
+On 8/7/23 6:01 AM, Dan Carpenter wrote:
 > The "loc" value comes from the user and it can be negative leading to an
 > an array underflow when we check "priv->net_filters[loc].claimed".  Fix
 > this by changing the type to u32.
@@ -86,18 +86,50 @@ On 8/7/2023 6:01 AM, Dan Carpenter wrote:
 > Fixes: c5d511c49587 ("net: bcmasp: Add support for wake on net filters")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Reviewed-by: Justin Chen <justin.chen@broadcom.com>
 
---0000000000001886a4060256b743
+> ---
+> Recent code.  Only needed on net-next.
+> 
+>   drivers/net/ethernet/broadcom/asp2/bcmasp.c | 2 +-
+>   drivers/net/ethernet/broadcom/asp2/bcmasp.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.c b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+> index eb35ced1c8ba..d63d321f3e7b 100644
+> --- a/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+> +++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+> @@ -640,7 +640,7 @@ bool bcmasp_netfilt_check_dup(struct bcmasp_intf *intf,
+>    * If no more open filters return NULL
+>    */
+>   struct bcmasp_net_filter *bcmasp_netfilt_get_init(struct bcmasp_intf *intf,
+> -						  int loc, bool wake_filter,
+> +						  u32 loc, bool wake_filter,
+>   						  bool init)
+>   {
+>   	struct bcmasp_net_filter *nfilter = NULL;
+> diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.h b/drivers/net/ethernet/broadcom/asp2/bcmasp.h
+> index 6bfcaa7f95a8..5b512f7f5e94 100644
+> --- a/drivers/net/ethernet/broadcom/asp2/bcmasp.h
+> +++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.h
+> @@ -566,7 +566,7 @@ void bcmasp_disable_all_filters(struct bcmasp_intf *intf);
+>   void bcmasp_core_clock_set_intf(struct bcmasp_intf *intf, bool en);
+>   
+>   struct bcmasp_net_filter *bcmasp_netfilt_get_init(struct bcmasp_intf *intf,
+> -						  int loc, bool wake_filter,
+> +						  u32 loc, bool wake_filter,
+>   						  bool init);
+>   
+>   bool bcmasp_netfilt_check_dup(struct bcmasp_intf *intf,
+
+--0000000000003922bf06025b7580
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Description: S/MIME Cryptographic Signature
 
-MIIQeQYJKoZIhvcNAQcCoIIQajCCEGYCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3QMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+MIIQagYJKoZIhvcNAQcCoIIQWzCCEFcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3BMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
 VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
 AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
 AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
@@ -135,40 +167,39 @@ M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
 Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
 14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
 a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+XzCCBUkwggQxoAMCAQICDCPwEotc2kAt96Z1EDANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
 RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjM5NTBaFw0yNTA5MTAxMjM5NTBaMIGM
 MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIND96EuHoPDvRwe3
-wwYsYOhVEvaxH+/hHxcYye9rVgnkMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTIzMDgwNzE1MTUyMlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQB5H8Wof54HZ3Qc4IncxsGVUdwMolPyq013
-W7XrQzAa2Rm+O63fgBmwjOuysQbKERZoQ9cllHMNosVPiMiSOfk2aWz0aNJSOIm1V9eNr2N7/mAE
-TgdKWbvb8X0tWHTBkM6CXmLNOxQxgYx2R0o0NBSPUKkC6aD7188I6DYcMMubduZkGRixv+K2Z5IM
-/N7GV25X9YivGaJiobhRKLkecIoYdctrZHCswHQNSbQUWAcgSeBLpnvQr9FlumMveIQVabre05Z6
-0IPrsh44cWx4xl0GHW1PS0aD9uN28tPCZsflkk9uDljICr7uT0KgDuox3BHY2Vphygx0d4dquDFY
-boXo
---0000000000001886a4060256b743--
+BgNVBAoTDUJyb2FkY29tIEluYy4xFDASBgNVBAMTC0p1c3RpbiBDaGVuMScwJQYJKoZIhvcNAQkB
+FhhqdXN0aW4uY2hlbkBicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+AQDKX7oyRqaeT81UCy+OTzAUHJeHABD6GDVZu7IJxt8GWSGx+ebFexFz/gnRO/sgwnPzzrC2DwM1
+kaDgYe+pI1lMzUZvAB5DfS1qXKNGoeeNv7FoNFlv3iD4bvOykX/K/voKtjS3QNs0EDnwkvETUWWu
+yiXtMiGENBBJcbGirKuFTT3U/2iPoSL5OeMSEqKLdkNTT9O79KN+Rf7Zi4Duz0LUqqpz9hZl4zGc
+NhTY3E+cXCB11wty89QStajwXdhGJTYEvUgvsq1h8CwJj9w/38ldAQf5WjhPmApYeJR2ewFrBMCM
+4lHkdRJ6TDc9nXoEkypUfjJkJHe7Eal06tosh6JpAgMBAAGjggHZMIIB1TAOBgNVHQ8BAf8EBAMC
+BaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJlLmdsb2JhbHNp
+Z24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYIKwYBBQUHMAGG
+NWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwME0G
+A1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxz
+aWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqGOGh0dHA6Ly9j
+cmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3JsMCMGA1UdEQQc
+MBqBGGp1c3Rpbi5jaGVuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSME
+GDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUIWGeYuaTsnIada5Xx8TR3cheUbgw
+DQYJKoZIhvcNAQELBQADggEBAHNQlMqQOFYPYFO71A+8t+qWMmtOdd2iGswSOvpSZ/pmGlfw8ZvY
+dRTkl27m37la84AxRkiVMes14JyOZJoMh/g7fbgPlU14eBc6WQWkIA6AmNkduFWTr1pRezkjpeo6
+xVmdBLM4VY1TFDYj7S8H2adPuypd62uHMY/MZi+BIUys4uAFA+N3NuUBNjcVZXYPplYxxKEuIFq6
+sDL+OV16G+F9CkNMN3txsym8Nnx5WAYZb6+rBUIhMGz70V05xsHQfzvo2s7f0J1tJ5BoRlPPhL0h
+VOnWA3h71u9TfSsv+PXVm3P21TfOS2uc1hbzEqyENCP4i5XQ0rv0TmPW42GZ0o4xggJtMIICaQIB
+ATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhH
+bG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwj8BKLXNpALfemdRAwDQYJ
+YIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIHSYfMmIpafUeZwhp1yD24YKtTTBl63jaQeF
+qoQR5Sc8MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMDgwNzIw
+NTQ1MlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFl
+AwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATAN
+BgkqhkiG9w0BAQEFAASCAQCdi/erXYC2ChpCV2Ay/wVEu72SVyobzYaqSJLdWkce6d+KdzPXNxdE
+clVyJwkZpn9WyxmZktLEPMECT2/0a/Ggwee460KyNwyhbZITGo5Ym5KIZv3zpWEFaRCC95LebsE9
+Mhk7y/03eH5913xq4HP72ad9drjJxJrNlhcMCaHW/QoQSLHClGz8njGCx5yxT5Nicrf3A+6iA4rZ
+L6Tvd28kkAn8CXxkLWGI1eoK8JruhKaPstZNZCSy1s9Y77Hta6ABYlvJtdkTygOAInpi7QfXjHuY
+EohIXr4WJAtB+RZHzNqzrtPu+g7fVgK4E/tCpZZBnXD8tYNCJz5V/rgL3+qe
+--0000000000003922bf06025b7580--
