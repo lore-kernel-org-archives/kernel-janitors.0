@@ -2,100 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81366C001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Aug 2023 10:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297E8C001B0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Aug 2023 13:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjHGKwN (ORCPT
+        id S231728AbjHGNCH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Aug 2023 06:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36686 "EHLO
+        Mon, 7 Aug 2023 09:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231512AbjHGKwM (ORCPT
+        with ESMTP id S230449AbjHGNCG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Aug 2023 06:52:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1198F97;
-        Mon,  7 Aug 2023 03:52:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FB666177E;
-        Mon,  7 Aug 2023 10:52:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA53C433C8;
-        Mon,  7 Aug 2023 10:52:07 +0000 (UTC)
-Message-ID: <1cb55979-b2a9-9a1f-067e-1ea898229203@xs4all.nl>
-Date:   Mon, 7 Aug 2023 12:52:05 +0200
+        Mon, 7 Aug 2023 09:02:06 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D66CE1BC
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Aug 2023 06:02:04 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fe1a17f983so37722005e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 07 Aug 2023 06:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691413323; x=1692018123;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FpyfDN0eJfDxw+M0r25gq3OoqMM9xi4hx56P+54Pp9g=;
+        b=tqzDXiI8OZMqGeDi30tZrTrIMm4sAr8CR7r3GNw8azJFWYk4fdljWuFyz4nHdG1pJZ
+         MNoSQAINoB5jmCrh1QmJA2pjNV0vRoX2qXYp4LBBUxbBryTN2nQyHmu0ZYQDBY99oBec
+         +YqoTrNG5Bk3/RGlqQAi/wyNVeD6kDKw7W6OiZqSCMQSRm/KWDzHDtTcxkKojxAtjqpk
+         lQDUb/iXmx9tLWeIb6ybWXBBIoY0TJv8tQ9zX2LeQcfSypLYaYk0nDXBn2kET2BrIgao
+         QA6c7e9eaS1WUis6pnjcHfVId1H4JoKEgO1rvr2MCaSFtdUL3ot7CX80EUnRcTOuEV5b
+         /9tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691413323; x=1692018123;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpyfDN0eJfDxw+M0r25gq3OoqMM9xi4hx56P+54Pp9g=;
+        b=P3WswksV+IDmxZ4w07ttlUZB429SLgnnX6C/UJSlHIHdemLNRHuoV4/Ry95l6VNkam
+         p/7DhpxzL+ujUJnQyWDvkOn8tzr2uf9/3JdjhA5G1zMQdBDOeii0Wr/mL2j4aQf4uAX5
+         dSTu76mdgXgZyijs3qRn8vA7Td9nKeo9So0wpeeTEluqzbkOB/z+pjoEHR23L6/6MRFn
+         K43vAolkXaEKQQ7Pq2jJG/KeSpmbRche0cpNNXA0/4RUbjCEvsc32PDqL5IOU1NIhlKP
+         WhtwQtpEMq6NmYeKj18YyzvwgwcjYC+rZ793e6I7AHzkekzmhX+NJGjgWH2d8KfxiJl6
+         Puig==
+X-Gm-Message-State: AOJu0YyC1cO/zUbakuzGMWTutXUmUzN2mAg0J+y4myKpUylOugmXwZzj
+        oT/ebMMXNCVKzQhGqLBNVdnOrw==
+X-Google-Smtp-Source: AGHT+IE9xxt35dprXlSxGKthWWSScFtz1rP1Vo++Uz8EQ9YlkYF9+Z7IRPzk0CsRud7BA6OTyf4zCA==
+X-Received: by 2002:a05:6000:1203:b0:317:759a:8ca8 with SMTP id e3-20020a056000120300b00317759a8ca8mr5018336wrx.67.1691413321798;
+        Mon, 07 Aug 2023 06:02:01 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a2-20020a5d4d42000000b00317ca89f6c5sm10423456wru.107.2023.08.07.06.02.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 06:02:01 -0700 (PDT)
+Date:   Mon, 7 Aug 2023 16:01:53 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Justin Chen <justin.chen@broadcom.com>
+Cc:     Florian Fainelli <florian.fainelli@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: bcmasp: Prevent array undereflow in
+ bcmasp_netfilt_get_init()
+Message-ID: <b3b47b25-01fc-4d9f-a6c3-e037ad4d71d7@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] media: mediatek: vcodec: Fix an error handling path in
- vdec_msg_queue_init()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <efa0d4910998931a2ec9d933117fa71482d7b33a.1689624542.git.christophe.jaillet@wanadoo.fr>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <efa0d4910998931a2ec9d933117fa71482d7b33a.1689624542.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+The "loc" value comes from the user and it can be negative leading to an
+an array underflow when we check "priv->net_filters[loc].claimed".  Fix
+this by changing the type to u32.
 
-This no longer applies after some major rework of the driver from Yunfei that
-was merged to our media_stage tree.
+Fixes: c5d511c49587 ("net: bcmasp: Add support for wake on net filters")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Recent code.  Only needed on net-next.
 
-Can you rebase this patch (if it is even still relevant)?
+ drivers/net/ethernet/broadcom/asp2/bcmasp.c | 2 +-
+ drivers/net/ethernet/broadcom/asp2/bcmasp.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-	Hans
-
-On 17/07/2023 22:09, Christophe JAILLET wrote:
-> All errors go to the error handling path, except this one. Be consistent
-> and also branch to it.
-> 
-> Fixes: 2f5d0aef37c6 ("media: mediatek: vcodec: support stateless AV1 decoder")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-> index 04e6dc6cfa1d..c6cc2785e0e8 100644
-> --- a/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-> +++ b/drivers/media/platform/mediatek/vcodec/vdec_msg_queue.c
-> @@ -338,14 +338,16 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg_queue,
->  			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->rd_mv_addr);
->  			if (err) {
->  				mtk_v4l2_err("failed to allocate rd_mv_addr buf[%d]", i);
-> -				return -ENOMEM;
-> +				err = -ENOMEM;
-> +				goto mem_alloc_err;
->  			}
->  
->  			lat_buf->tile_addr.size = VDEC_LAT_TILE_SZ;
->  			err = mtk_vcodec_mem_alloc(ctx, &lat_buf->tile_addr);
->  			if (err) {
->  				mtk_v4l2_err("failed to allocate tile_addr buf[%d]", i);
-> -				return -ENOMEM;
-> +				err = -ENOMEM;
-> +				goto mem_alloc_err;
->  			}
->  		}
->  
+diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.c b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+index eb35ced1c8ba..d63d321f3e7b 100644
+--- a/drivers/net/ethernet/broadcom/asp2/bcmasp.c
++++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+@@ -640,7 +640,7 @@ bool bcmasp_netfilt_check_dup(struct bcmasp_intf *intf,
+  * If no more open filters return NULL
+  */
+ struct bcmasp_net_filter *bcmasp_netfilt_get_init(struct bcmasp_intf *intf,
+-						  int loc, bool wake_filter,
++						  u32 loc, bool wake_filter,
+ 						  bool init)
+ {
+ 	struct bcmasp_net_filter *nfilter = NULL;
+diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.h b/drivers/net/ethernet/broadcom/asp2/bcmasp.h
+index 6bfcaa7f95a8..5b512f7f5e94 100644
+--- a/drivers/net/ethernet/broadcom/asp2/bcmasp.h
++++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.h
+@@ -566,7 +566,7 @@ void bcmasp_disable_all_filters(struct bcmasp_intf *intf);
+ void bcmasp_core_clock_set_intf(struct bcmasp_intf *intf, bool en);
+ 
+ struct bcmasp_net_filter *bcmasp_netfilt_get_init(struct bcmasp_intf *intf,
+-						  int loc, bool wake_filter,
++						  u32 loc, bool wake_filter,
+ 						  bool init);
+ 
+ bool bcmasp_netfilt_check_dup(struct bcmasp_intf *intf,
+-- 
+2.39.2
 
