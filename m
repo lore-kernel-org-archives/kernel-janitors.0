@@ -2,106 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8E4C001DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Aug 2023 19:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE0BC04E69
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Aug 2023 19:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbjHHTua (ORCPT
+        id S231148AbjHHTue (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:50:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40380 "EHLO
+        Tue, 8 Aug 2023 15:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233740AbjHHTuP (ORCPT
+        with ESMTP id S231501AbjHHTuV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:50:15 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36A2A2BE
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Aug 2023 09:56:38 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fe5c0e587eso21724785e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Aug 2023 09:56:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691513797; x=1692118597;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hRMNIql4h6i50DoW9rO+SQKBVq3u6OMyHVjggvsaHiY=;
-        b=XJ2thEz0926gfZVa9/5N5jbPRnjXXRkiBNzaRqSvNHfw5jX8HssZTwycUzJ+lApX0C
-         Btnibd0oBAZXuoKhIMu9U83aOhzR6NzfeoSCdGwSnyUTC2VNf09i78HeFAo8YTuhoAbB
-         AvXn5HTtMddwnXllJ2R+dmsjRAioBttSxC3LJB8rPEasZJdkd26ggAsSWZEm1MfPEDLW
-         Hr/fibkl9SP0FzUWJy4gxD+6DQ/krqFPPUjbb4Yav+knfF57mrXLEqAy6JsQo5dDtx2j
-         ZDnycyhvfJaagKPDRYV88KfUD/yGDW0KAvE/UTFoWmIEdgZ3D+jKuMhnEL6nbLPoJz8T
-         VZyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691513797; x=1692118597;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRMNIql4h6i50DoW9rO+SQKBVq3u6OMyHVjggvsaHiY=;
-        b=VzrmAkP9aDCowOgoNFFnkxi5OxQ0WENUSBG+RxAlXKICXMl8MUssDLz1R+7/u06gQm
-         yBH+GJTMfVgX2U196BaWGRg5C2kGJ2ctN3BRtt1bBCFUy6g+So6w1VHant0Pz0ZblBgT
-         VTR1lQPQuez68fPOo5ohnl7vISyYdKIiBnMaJg0B+z9NGaw9Zq6qwRVbE5QTLrTw7UF9
-         7VSpP64s7Xy6Lr9cnTaX+EU1CKA+XMhSrzSJssF5ENCgIubFM0VXGdPrUEydPOzgbgoW
-         kT5SgF/JR4rYQQcJgjT9Bf1CDh2gwTH+xlvpBj6L9FPYNZjIJQi7uRPDbnNsb9CxwM1A
-         HnlA==
-X-Gm-Message-State: AOJu0Yx23UTq2pk7uDdYVTacL7E6Cw7g2U2/bdZgOWMry4Bbnw9HErxa
-        w9EzV6NsCL7jUU8t3W9MONJQ+K/xbXF78N4U8UA=
-X-Google-Smtp-Source: AGHT+IG+xa/G0KUFOC99116SrrI42b1Qeto1ZUGnZKL3zxEPkqVqherNWGnAP7AYkTuw2scsVZ/Dtg==
-X-Received: by 2002:a1c:f216:0:b0:3fe:1fdb:cf5 with SMTP id s22-20020a1cf216000000b003fe1fdb0cf5mr9645023wmc.1.1691483293856;
-        Tue, 08 Aug 2023 01:28:13 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h20-20020a05600c261400b003fe2ebf479fsm12982952wma.36.2023.08.08.01.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:28:13 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 11:28:09 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
-Cc:     "Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] misc: microchip: pci1xxxx: Fix some NULL vs IS_ERR() bugs
-Message-ID: <043df330-222b-4c2c-ae19-ed2f731bfe0b@moroto.mountain>
+        Tue, 8 Aug 2023 15:50:21 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D85D51D20
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Aug 2023 09:55:59 -0700 (PDT)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1qTNon-0005h7-To; Tue, 08 Aug 2023 16:36:17 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 825AC206CE6;
+        Tue,  8 Aug 2023 14:36:11 +0000 (UTC)
+Date:   Tue, 8 Aug 2023 16:36:10 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     John Watts <contact@jookia.org>, linux-sunxi@lists.linux.dev,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maksim Kiselev <bigunclemax@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] riscv: dts: allwinner: d1: Add CAN controller nodes
+Message-ID: <20230808-outgoing-trifocals-ee5d44aea113-mkl@pengutronix.de>
+References: <20230807191952.2019208-1-contact@jookia.org>
+ <49ce2d9c-eb38-4ceb-bae1-0409df876e9b@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4nwq7phqlae7mco3"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <49ce2d9c-eb38-4ceb-bae1-0409df876e9b@web.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_nvmem_register() function returns error pointers.  It never
-returns NULL.  Update the checks accordingly.
 
-Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--4nwq7phqlae7mco3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-index 3d3d1578119a..16695cb5e69c 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-@@ -379,8 +379,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
- 
- 		priv->nvmem_eeprom = devm_nvmem_register(&aux_dev->dev,
- 							 &priv->nvmem_config_eeprom);
--		if (!priv->nvmem_eeprom)
--			return -ENOMEM;
-+		if (IS_ERR(priv->nvmem_eeprom))
-+			return PTR_ERR(priv->nvmem_eeprom);
- 	}
- 
- 	release_sys_lock(priv);
-@@ -398,8 +398,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
- 
- 	priv->nvmem_otp = devm_nvmem_register(&aux_dev->dev,
- 					      &priv->nvmem_config_otp);
--	if (!priv->nvmem_otp)
--		return -ENOMEM;
-+	if (IS_ERR(priv->nvmem_otp))
-+		return PTR_ERR(priv->nvmem_otp);
- 
- 	return ret;
- }
--- 
-2.39.2
+On 08.08.2023 16:26:17, Markus Elfring wrote:
+> =E2=80=A6
+> > Both of these fully support both CAN controllers.
+>=20
+> Please choose a corresponding imperative change suggestion.
+>=20
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.5-rc5#n94
+>=20
+>=20
+> > Signed-off-by: John Watts <contact@jookia.org>
+>=20
+> I find the local-part of this email address suspicious according to the D=
+eveloper's Certificate of Origin.
+> Should it usually indicate an unique person instead of the shown key word?
 
+FYI: https://lore.kernel.org/all/20230718221504.GA2015343-robh@kernel.org
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--4nwq7phqlae7mco3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmTSUtgACgkQvlAcSiqK
+BOhQSgf/Yqmf0f7tupRc/JJY1XEaKV/WZHCse/ijc2E8sbJdhF4F8eilfyDriOxt
+6TRqL9fD0DcjKx9WR719GJm7CgigzwOJk0vj56seoQGtzqkVZg3qjARMOiHTlILS
+UvIh6ZgNdGP0WmdAiB1ZO7p1imugZGua7gGihHobLLVOT4Ipa8AD/I9TQLo7LudX
+zAhTYepqt3nxf0fxvTgqQc3I2lmtV/LuOViF2NxE2BiSNjPzpQxGyIAMElRaQg4D
+RJdamfDLYuJletg5OFI6QMb0JmASUZlz7889cgGx+UGtSp+JWNviXxDq4bvoF8KC
+MbYMhncSKCPdpTJYRLMLCxaaXGCF4w==
+=4/vk
+-----END PGP SIGNATURE-----
+
+--4nwq7phqlae7mco3--
