@@ -2,281 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EBDC001E0
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Aug 2023 18:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F56C001DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Aug 2023 08:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230323AbjHISPo (ORCPT
+        id S232614AbjHJIIu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Aug 2023 14:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54778 "EHLO
+        Thu, 10 Aug 2023 04:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjHISPk (ORCPT
+        with ESMTP id S229904AbjHJIIt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Aug 2023 14:15:40 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8281987;
-        Wed,  9 Aug 2023 11:15:39 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 379F8act005806;
-        Wed, 9 Aug 2023 18:15:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=TdTJK7rXmdvom4IujR3FyQVvWCyDKaXZBuauVoQ6NAU=;
- b=fiOJ69Y3LbVUAxCdMFyXFMdoy7dgkk1tOlpPCPOiExlPAWbLuR6QDdYQ0YuHEgASHNoa
- XvA4NNlNscEzGTaiH1eTYI1JB7oynd/wrBrnZ1f/FaPNUuHIZVC6Q6HY6CVtrcsEWstN
- DImUPFEsEKUIHZ7tTPbTY/IX6HkoAuyUHVKXgdr34Ve8wVzzKtLY1Uj5KNrVX9kUvszC
- QQpUQD/A5eLWrJGKEvcQ+j8DELOH1YNy2vCJWfWntjllmvrayRuyuJ4JSvylI87wQKIw
- /vqlwIhfQf1NFDC4Xi5Dx7mk9J8ZG6ZYJGqkR2ldgaxfQDo6x1TgTVHmTEsP9oujEDgn +w== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3scbd4gpvd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 18:15:32 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 379IFVLA026746
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 18:15:31 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 9 Aug
- 2023 11:15:30 -0700
-Message-ID: <3dd7ba0d-61d5-813f-6895-56e2943cb465@quicinc.com>
-Date:   Wed, 9 Aug 2023 12:15:29 -0600
+        Thu, 10 Aug 2023 04:08:49 -0400
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1FB1BCF
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Aug 2023 01:08:44 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id BF7FB295F5; Thu, 10 Aug 2023 08:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1691654909; bh=V4qwQGqC7KpJoyielzRpnopuINFIOvKXsSgJ3ZENIXU=;
+        h=Date:From:To:Subject:From;
+        b=JY9LuCqtlRyZOgKZDgAUWD2gxRa7K+Raexd+cqI1A9GIuu2A2HmFh5ORjpTWTcW/0
+         BhMxF9tS9QFpg3fwva/iYYztOIhOYy2aFtJwh/Rjjndty8e6Js8lqfIj56fG6BLjBN
+         oPBYsmrgMS60cgGOFxlzt/WyVbxBVEIi+fgChPsDe5cm3qBue6SZQ424sXhLOtMxHE
+         +A+/tfB//gbJHcNJBnu+iRg0qc68yeb28m6Vv1i9X7v3Ns6iFv8Tn4ogMTneO7MYfq
+         uSAiPEND/ORzKytHZPcubv6l8y97mM6ZgIj7iA1mcVHy4kRiaLUIMGgYn/SzhKwykO
+         j+NCHoVBoHzMw==
+Received: by mail.ettrick.pl for <kernel-janitors@vger.kernel.org>; Thu, 10 Aug 2023 08:05:51 GMT
+Message-ID: <20230810064500-0.1.u.feyb.0.oa6e95n8e5@ettrick.pl>
+Date:   Thu, 10 Aug 2023 08:05:51 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Fotowoltaika - propozycja instalacji
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v5] accel/qaic: tighten integer overflow checking in
- map_user_pages()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <e6cbc8a3-c2ae-46be-a731-494470c0a21c@moroto.mountain>
- <67e728b4-7d3f-447d-bbaa-2f69f65bb63e@kadam.mountain>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <67e728b4-7d3f-447d-bbaa-2f69f65bb63e@kadam.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rXp-Fn8L1kFksLKKSkADqc8ELJa3HSda
-X-Proofpoint-ORIG-GUID: rXp-Fn8L1kFksLKKSkADqc8ELJa3HSda
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-09_16,2023-08-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- phishscore=0 bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2308090160
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 8/7/2023 8:43 AM, Dan Carpenter wrote:
-> On Mon, Aug 07, 2023 at 05:09:34PM +0300, Dan Carpenter wrote:
->> The encode_dma() function has some validation on in_trans->size but it's
->> not complete and it would be more clear to move those checks to
->> find_and_map_user_pages().
->>
->> The encode_dma() had two checks:
->>
->> 	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
->> 		return -EINVAL;
->>
->> It's not sufficeint to just check if in_trans->size is zero.  The
+Dzie=C5=84 dobry,
+=20
+Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
+=20
+Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
+ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
+sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
+ elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
+d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
+rodowiska naturalnego.
+=20
+Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
+wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
+zak=C5=82adu energetycznego.=20
+=20
+Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
 
-sufficient
 
->> resources->xferred_dma_size variable represent the number of bytes
->> already transferred.  If we have already transferred more bytes than
->> in_trans->size then there are negative bytes remaining which doesn't
->> make sense.  Check for that as well.
->>
->> I introduced a new variable "remaining" which represents the amount
-
-introduce (commit text should be present tense per my understanding)
-
->> we want to transfer (in_trans->size) minus the ammount we have already
-
-amount
-
->> transferred (resources->xferred_dma_size).
->>
->> The check in encode_dma() checked that "addr + size" could not overflow
->> however we may already have transferred some bytes so the real starting
->> address is "xfer_start_addr" so check that "xfer_start_addr + size"
->> cannot overflow instead.  Also check that "addr +
->> resources->xferred_dma_size cannot overflow.
->>
->> My other concern was that we are dealing with u64 values but on 32bit
->> systems the kmalloc() function will truncate the sizes to 32 bits.  So
->> I calculated "total = in_trans->size + offset_in_page(xfer_start_addr);"
->> and returned -EINVAL if it were >= SIZE_MAX.  This will not affect 64bit
->> systems.
->>
->> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> ---
->> This is re-write re-write of the previous version.
->>
->> I am not necessarily sure it is correct.  Please review carefully.  In
->> particular, please check how "total" is calculated.  Maybe it would make
->> more sense to write that as:
->>
->> 	total = remaining + offset_in_page(xfer_start_addr);
-
-I think this makes more sense.
-
->>
->> The other question I had is should we add a check:
->>
->> 	if (remaining == 0)
->> 		return 0;
-
-I don't see why adding this would hurt anything.  I don't believe it is 
-necessary.  Remaining is a function of of the driver code and not an 
-external input.  The driver transfers as much as it can, and stops when 
-everything is sent (remaining == 0).  If we hit this check, it is a 
-driver bug.
-
->>
->>   drivers/accel/qaic/qaic_control.c | 23 +++++++++++++++--------
->>   1 file changed, 15 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
->> index cfbc92da426f..d64505bcf4ae 100644
->> --- a/drivers/accel/qaic/qaic_control.c
->> +++ b/drivers/accel/qaic/qaic_control.c
->> @@ -392,18 +392,28 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
->>   				   struct qaic_manage_trans_dma_xfer *in_trans,
->>   				   struct ioctl_resources *resources, struct dma_xfer *xfer)
->>   {
->> +	u64 xfer_start_addr, remaining, end, total;
->>   	unsigned long need_pages;
->>   	struct page **page_list;
->>   	unsigned long nr_pages;
->>   	struct sg_table *sgt;
->> -	u64 xfer_start_addr;
->>   	int ret;
->>   	int i;
->>   
->> -	xfer_start_addr = in_trans->addr + resources->xferred_dma_size;
->> +	if (check_add_overflow(in_trans->addr, resources->xferred_dma_size, &xfer_start_addr))
->> +		return -EINVAL;
->> +
->> +	if (in_trans->size == 0 ||
->> +	    in_trans->size < resources->xferred_dma_size ||
->> +	    check_add_overflow(xfer_start_addr, in_trans->size, &end))
->                                                  ^^^^^^^^^^^^^^
-> This should be remaining.  So maybe it should be something like this
-> with a return 0 for no bytes remaining and total calculated differently.
-
-Yep, should be remaining.  Your below proposed version looks good to me.
-
-> 
-> 	if (check_add_overflow(in_trans->addr, resources->xferred_dma_size, &xfer_start_addr))
-> 		return -EINVAL;
-> 
-> 	if (in_trans->size < resources->xferred_dma_size)
-> 		return -EINVAL;
-
-This check should never hit unless we have a driver bug.  I don't object 
-to having it though.
-
-> 	remaining = in_trans->size - resources->xferred_dma_size;
-> 	if (remaining == 0)
-> 		return 0;
-> 
-> 	if (check_add_overflow(xfer_start_addr, remaining, &end))
-> 		return -EINVAL;
-> 
-> 	/* Still not really sure why total is calculated this way */
-
-Physical memory layout.
-
-Lets say remaining is 4k, and PAGE_SIZE is 4k.
-
-4k / 4k = 1 so we need 1 page.
-
-Except, if that 4k remaining is some remainder of the transfer and not 
-the complete transfer, then where we start the transfer matters.
-
-If the remaining 4k starts right at a page boundary, then we just need a 
-single page.  However, if the remaining 4k starts X bytes into a page 
-(where X is non-zero), we would actually be transferring data from two 
-physical pages, even though 4k can be fully represented by one page.
-
-This representation might make a bit more sense (although I argue it is 
-wrong) -
-
-total = remaining;
-need_pages = DIV_ROUND_UP(total, PAGE_SIZE);
-if (offset_in_page(xfer_state_addr))
-	need_pages++;
-
-Where this breaks down is when the start addr and the remaining combine 
-to fit into a page.
-
-Assume remaining == 5k and PAGE_SIZE == 4k.  offset_in_page() is going 
-to return 1k.
-
-The right answer is 2 pages.  The first page will contain 3k (4k - 1k 
-from the offset) and the second page will contain 2k.
-
-DIV_ROUND_UP(remaining, PAGE_SIZE) == 5k / 4k == 2
-
-DIV_ROUND_UP(remaining + offset_in_page(), PAGE_SIZE) == (5k + 1k) / 4k == 2
-
-Seems like we need a comment explaining this.
-
-> 	total = remaining + offset_in_page(xfer_start_addr);
-> 	if (total >= SIZE_MAX)
-> 		return -EINVAL;
-> 
-> 	need_pages = DIV_ROUND_UP(total, PAGE_SIZE);
-> 
-> regards,
-> dan carpenter
-> 
->> +		return -EINVAL;
->>   
->> -	need_pages = DIV_ROUND_UP(in_trans->size + offset_in_page(xfer_start_addr) -
->> -				  resources->xferred_dma_size, PAGE_SIZE);
->> +	remaining = in_trans->size - resources->xferred_dma_size;
->> +	total = in_trans->size + offset_in_page(xfer_start_addr);
->> +	if (total >= SIZE_MAX)
->> +		return -EINVAL;
->> +
->> +	need_pages = DIV_ROUND_UP(total - resources->xferred_dma_size, PAGE_SIZE);
->>   
->>   	nr_pages = need_pages;
->>   
->> @@ -435,7 +445,7 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
->>   
->>   	ret = sg_alloc_table_from_pages(sgt, page_list, nr_pages,
->>   					offset_in_page(xfer_start_addr),
->> -					in_trans->size - resources->xferred_dma_size, GFP_KERNEL);
->> +					remaining, GFP_KERNEL);
->>   	if (ret) {
->>   		ret = -ENOMEM;
->>   		goto free_sgt;
->> @@ -566,9 +576,6 @@ static int encode_dma(struct qaic_device *qdev, void *trans, struct wrapper_list
->>   	    QAIC_MANAGE_EXT_MSG_LENGTH)
->>   		return -ENOMEM;
->>   
->> -	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
->> -		return -EINVAL;
->> -
->>   	xfer = kmalloc(sizeof(*xfer), GFP_KERNEL);
->>   	if (!xfer)
->>   		return -ENOMEM;
->> -- 
->> 2.39.2
-
+Pozdrawiam
+Norbert Karecki
