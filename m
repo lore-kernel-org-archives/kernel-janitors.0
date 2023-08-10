@@ -2,183 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFE5C04A94
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Aug 2023 12:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D43C04A6A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Aug 2023 13:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235084AbjHJMXS (ORCPT
+        id S233699AbjHJNaT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Aug 2023 08:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50702 "EHLO
+        Thu, 10 Aug 2023 09:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234919AbjHJMXN (ORCPT
+        with ESMTP id S231610AbjHJNaS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Aug 2023 08:23:13 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFBB212B
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Aug 2023 05:23:11 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fe79b170e2so5696425e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Aug 2023 05:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691670190; x=1692274990;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zr/Mhw5ILyK63+MjSQ6uC1kOGczJiabTmNqreNeP1g8=;
-        b=a733kCJZWdgy8S7SLUwWDixfAOOrZUbYpqO8z29w0ie5I7U490jMLttJrXPGbc2pnT
-         1Zrx4FSgC4TuIO6UVsyBRcDmaRNK5rj6wwHBMp9J62hIRTEEc9W9OuJMahon+VAs93Tn
-         Yt5WsEK5+EwDWInCqcZOFFpDoAOUF0bj6xaurNkbi7CkNPWArDnxuQACNRpGkGHoBM3Q
-         hQMih1T77HUb9IezaYkynEgMNkn9RbRkBdudKWGXEH3ekhXIrojRZA2/w8zblDddVsCc
-         pT4G8jinfS5CnsCDnyoGXzoiYr9pGy930Pp4d1hWoYr1vnYYdBJw3MasaWom5fg+b2kA
-         EM6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691670190; x=1692274990;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zr/Mhw5ILyK63+MjSQ6uC1kOGczJiabTmNqreNeP1g8=;
-        b=RdqyJ/n1o85HcqKWK5r7sZLt+NoO+z+AmxI7MRA3N17gI0IgtGkNCmGrWsrFgYOOcm
-         edbhw8b3fNIgURqlIh8q5puDOriunFQpJdPrzvXX7AmrBCkocZYIIAEjr0khj9qYPMXF
-         IF2wapM9MPt7XwYZ/cbO+bGAUQ0hINm5tEmkSbCSacVAVKqaQGTteX9Z+ucl8AfxOGzK
-         mE0TaLcn5rjBI6dkJbwhS+lhyB02pMf/IJ7+iY54oJnG/ut50i2bC27Q6uV6vTr0+XvH
-         PzEToZBfmS3LSU8vfCfxMDpM85y7WHZbA2rdy2CM83rRjMcdsSxLScPwvgzqkMh4IrpO
-         Irvw==
-X-Gm-Message-State: AOJu0YxIzZCBFwwO2wMsMJHxir03Z7JAlcZ5vNTBCdJH8tm6aprjMr9j
-        eO/rZ2mhsszn9vjKHIOzx79qvdRD1Xe0huigIKk=
-X-Google-Smtp-Source: AGHT+IGXYtn2GpsCxrnbibEKzmgQkNNcdoFU2U3Bo5Oti8uDK9Ygc+2fIlj12Rg8GpXrcTsnR2aDOA==
-X-Received: by 2002:a05:600c:2288:b0:3fe:1deb:82 with SMTP id 8-20020a05600c228800b003fe1deb0082mr1917714wmf.7.1691670190436;
-        Thu, 10 Aug 2023 05:23:10 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u16-20020a5d4690000000b00313de682eb3sm2003995wrq.65.2023.08.10.05.23.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 05:23:10 -0700 (PDT)
-Date:   Thu, 10 Aug 2023 15:23:06 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc:     Carl Vanderlip <quic_carlv@quicinc.com>,
-        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] accel/qaic: Clean up integer overflow checking in
- map_user_pages()
-Message-ID: <24d3348b-25ac-4c1b-b171-9dae7c43e4e0@moroto.mountain>
+        Thu, 10 Aug 2023 09:30:18 -0400
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9733C2115;
+        Thu, 10 Aug 2023 06:30:16 -0700 (PDT)
+Received: from loongson.cn (unknown [10.20.42.43])
+        by gateway (Coremail) with SMTP id _____8Bxyepn5tRkq7gUAA--.34943S3;
+        Thu, 10 Aug 2023 21:30:15 +0800 (CST)
+Received: from [10.20.42.43] (unknown [10.20.42.43])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxDc9m5tRk6jtTAA--.11317S3;
+        Thu, 10 Aug 2023 21:30:14 +0800 (CST)
+Message-ID: <44e4e8a8-b714-1cfd-c20c-d8151e73cdac@loongson.cn>
+Date:   Thu, 10 Aug 2023 21:30:14 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH next] drm/loongson: Fix error handling in
+ lsdc_pixel_pll_setup()
+Content-Language: en-US
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+References: <20230720123950.543082-1-harshit.m.mogalapalli@oracle.com>
+From:   suijingfeng <suijingfeng@loongson.cn>
+In-Reply-To: <20230720123950.543082-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf8DxDc9m5tRk6jtTAA--.11317S3
+X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7trWrAFW7WrW5ZrWruF17Arc_yoW8XFW8pw
+        s8Ca4jvrZFyFy2gwnrA3W8WFyrZ3W3KFyfuay7uwsI9r1DAryUWFWFvFyUJrZxXa48Aa1a
+        qrn7GryY9FyDt3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+        sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+        0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+        IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+        e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+        0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+        xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+        AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+        AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+        8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+        xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+        cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+        AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+        14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU466zUUUUU
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The encode_dma() function has some validation on in_trans->size but it
-would be more clear to move those checks to find_and_map_user_pages().
+Hi,
 
-The encode_dma() had two checks:
 
-	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
-		return -EINVAL;
+On 2023/7/20 20:39, Harshit Mogalapalli wrote:
+> There are two problems in lsdc_pixel_pll_setup()
+> 1. If kzalloc() fails then call iounmap() to release the resources.
+> 2. Both kzalloc and ioremap doesnot return error pointers on failure, so
+>     using IS_ERR_OR_NULL() checks is a bit confusing and not very right,
+>     fix this by changing those to NULL checks instead.
+>
+> Fixes: f39db26c5428 ("drm: Add kms driver for loongson display controller")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-The in_trans->addr variable is the starting address.  The in_trans->size
-variable is the total size of the transfer.  The transfer can occur in
-parts and the resources->xferred_dma_size tracks how many bytes we have
-already transferred.
 
-This patch introduces a new variable "remaining" which represents the
-amount we want to transfer (in_trans->size) minus the amount we have
-already transferred (resources->xferred_dma_size).
+Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
 
-I have modified the check for if in_trans->size is zero to instead check
-if in_trans->size is less than resources->xferred_dma_size.  If we have
-already transferred more bytes than in_trans->size then there are negative
-bytes remaining which doesn't make sense.  If there are zero bytes
-remaining to be copied, just return success.
 
-The check in encode_dma() checked that "addr + size" could not overflow
-and barring a driver bug that should work, but it's easier to check if
-we do this in parts.  First check that "in_trans->addr +
-resources->xferred_dma_size" is safe.  Then check that "xfer_start_addr +
-remaining" is safe.
-
-My final concern was that we are dealing with u64 values but on 32bit
-systems the kmalloc() function will truncate the sizes to 32 bits.  So
-I calculated "total = in_trans->size + offset_in_page(xfer_start_addr);"
-and returned -EINVAL if it were >= SIZE_MAX.  This will not affect 64bit
-systems.
-
-Fixes: 129776ac2e38 ("accel/qaic: Add control path")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v6: it turns out this patch is mostly a clean up instead of a bug fix.
-    The only real issue is the 32bit truncation bug, and no one is going to
-    be using this driver on 32bit.
-
-    This patch does change the behavior to return 0 for
-    in_trans->size == 0 as discussed earlier.
-
-v5: re-write
----
- drivers/accel/qaic/qaic_control.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/accel/qaic/qaic_control.c b/drivers/accel/qaic/qaic_control.c
-index cfbc92da426f..388abd40024b 100644
---- a/drivers/accel/qaic/qaic_control.c
-+++ b/drivers/accel/qaic/qaic_control.c
-@@ -392,18 +392,31 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
- 				   struct qaic_manage_trans_dma_xfer *in_trans,
- 				   struct ioctl_resources *resources, struct dma_xfer *xfer)
- {
-+	u64 xfer_start_addr, remaining, end, total;
- 	unsigned long need_pages;
- 	struct page **page_list;
- 	unsigned long nr_pages;
- 	struct sg_table *sgt;
--	u64 xfer_start_addr;
- 	int ret;
- 	int i;
- 
--	xfer_start_addr = in_trans->addr + resources->xferred_dma_size;
-+	if (check_add_overflow(in_trans->addr, resources->xferred_dma_size, &xfer_start_addr))
-+		return -EINVAL;
- 
--	need_pages = DIV_ROUND_UP(in_trans->size + offset_in_page(xfer_start_addr) -
--				  resources->xferred_dma_size, PAGE_SIZE);
-+	if (in_trans->size < resources->xferred_dma_size)
-+		return -EINVAL;
-+	remaining = in_trans->size - resources->xferred_dma_size;
-+	if (remaining == 0)
-+		return 0;
-+
-+	if (check_add_overflow(xfer_start_addr, remaining, &end))
-+		return -EINVAL;
-+
-+	total = remaining + offset_in_page(xfer_start_addr);
-+	if (total >= SIZE_MAX)
-+		return -EINVAL;
-+
-+	need_pages = DIV_ROUND_UP(total, PAGE_SIZE);
- 
- 	nr_pages = need_pages;
- 
-@@ -435,7 +448,7 @@ static int find_and_map_user_pages(struct qaic_device *qdev,
- 
- 	ret = sg_alloc_table_from_pages(sgt, page_list, nr_pages,
- 					offset_in_page(xfer_start_addr),
--					in_trans->size - resources->xferred_dma_size, GFP_KERNEL);
-+					remaining, GFP_KERNEL);
- 	if (ret) {
- 		ret = -ENOMEM;
- 		goto free_sgt;
-@@ -566,9 +579,6 @@ static int encode_dma(struct qaic_device *qdev, void *trans, struct wrapper_list
- 	    QAIC_MANAGE_EXT_MSG_LENGTH)
- 		return -ENOMEM;
- 
--	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
--		return -EINVAL;
--
- 	xfer = kmalloc(sizeof(*xfer), GFP_KERNEL);
- 	if (!xfer)
- 		return -ENOMEM;
--- 
-2.39.2
+> ---
+> This is found with static analysis with smacth and only compile tested.
+> ---
+>   drivers/gpu/drm/loongson/lsdc_pixpll.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/loongson/lsdc_pixpll.c b/drivers/gpu/drm/loongson/lsdc_pixpll.c
+> index 04c15b4697e2..2609a2256da4 100644
+> --- a/drivers/gpu/drm/loongson/lsdc_pixpll.c
+> +++ b/drivers/gpu/drm/loongson/lsdc_pixpll.c
+> @@ -120,12 +120,14 @@ static int lsdc_pixel_pll_setup(struct lsdc_pixpll * const this)
+>   	struct lsdc_pixpll_parms *pparms;
+>   
+>   	this->mmio = ioremap(this->reg_base, this->reg_size);
+> -	if (IS_ERR_OR_NULL(this->mmio))
+> +	if (!this->mmio)
+>   		return -ENOMEM;
+>   
+>   	pparms = kzalloc(sizeof(*pparms), GFP_KERNEL);
+> -	if (IS_ERR_OR_NULL(pparms))
+> +	if (!pparms) {
+> +		iounmap(this->mmio);
+>   		return -ENOMEM;
+> +	}
+>   
+>   	pparms->ref_clock = LSDC_PLL_REF_CLK_KHZ;
+>   
 
