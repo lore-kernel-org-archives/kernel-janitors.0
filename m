@@ -2,104 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8529C001B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Aug 2023 17:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A58C04A6A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Aug 2023 08:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235535AbjHJR63 (ORCPT
+        id S234448AbjHKIaj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Aug 2023 13:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        Fri, 11 Aug 2023 04:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbjHJR62 (ORCPT
+        with ESMTP id S231659AbjHKIaj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Aug 2023 13:58:28 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD4CED;
-        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-4872c3dff53so331580e0c.1;
-        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691690307; x=1692295107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
-        b=TtnCfLTLSVsD/8mjJL/uLjovm8JaiHo4b/mdbCmmW0taf99at9JYttFr/1Hu0stXaV
-         QQl2us1k6/9eXNUFDtwJb/oSuQXngYpRZyyf0G9fxzspyXjrJ08NiAKA7m7tceYtevTM
-         SReJ4OltoiPmzNpA2eGc+eP1wKX5raWlRyrAvhi8nsbCv0x7tNoXClfdZzAHbT4uN2/F
-         833eH1GXj8mx9+xOrghJw7iLqZw2NgupKsylHF/WEShyB8+GcMTeB7oaQnkqdW6diB8R
-         cZennwKesLSivITSEzqKKThB1XmJW193+8NPxsGt2vfR35g3PWm0PdRrvL09OKlJk8AL
-         rk4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691690307; x=1692295107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
-        b=ZFnT6z4stSsMI0SlnBC8hCPOqTD+HtR7UJribqHd1tNbo4sRqigDRqCoUbnq5h6h+P
-         DCcMpdXgnnFI6EmpyevHvtFwIjvQ+4dCgVsc23AKwzM8xDHDH4/ouxzUz59zOBpeo3Up
-         2oL0Jz628o/PSewfbpLfb9Jlnbgp22pKvX3s0+QqMYo1pKDG99Z8IpUiK8YhckvaGO5R
-         u7Y4iW7hCEWH4gobt02j1NCpcs1OC/1aykds/9/zXtYNNLxhpJ+7GTcduRAN6sh8QRu3
-         ZOmaT7BXhGmIMVCnmhiL7SoloNR/AqVHznjNtbZA3gmrlXbW1hAim+ATcHza6tu+Rqet
-         Nrkw==
-X-Gm-Message-State: AOJu0YzpZp+2u2DwoQXsm5/m6fRwgabORNuffJG1x9MBvtVP2Ld6VDmx
-        IioZOUmi+K7G06CKgKLfA7vz3rhoI/NTv9wv/8g=
-X-Google-Smtp-Source: AGHT+IGDjuq+B+GVfzoZTy2uejYFgq74ja6JTdwGiEo0ZXML7lE1kjUGv4Wrybm5T8bBc8rvSZq8nEyKiMdB+Vd+2EQ=
-X-Received: by 2002:a1f:6011:0:b0:45e:892b:d436 with SMTP id
- u17-20020a1f6011000000b0045e892bd436mr2213267vkb.12.1691690307097; Thu, 10
- Aug 2023 10:58:27 -0700 (PDT)
+        Fri, 11 Aug 2023 04:30:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11AD630C0;
+        Fri, 11 Aug 2023 01:30:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A565D64CD0;
+        Fri, 11 Aug 2023 08:30:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4D8C433CB;
+        Fri, 11 Aug 2023 08:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691742637;
+        bh=9IG8uNLc0T7yeYC5H+HbxR8/JxuZHHX9NigCQAULIPk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=KFx/EwtSreaqN1gTlo099WB/vQAbPLwNgq2GnUFG3YK74qfEXTpCjekwyTL7hESVA
+         XyfVMoJHPeaWqOHKMUwTyscTTxLfTFMaKof7cpHIcrRaNdv1ZU8W6O99Cn+1fKhl59
+         jAtFJ+N2U96xNgvuXxDj4pmzm7A17/luS1w6PwXHG7iaxvNQ+HNCrUrjDDJ+fDthjQ
+         piFUyC8B7Kp6wiZEdmjn5aIK5Y4S7nthOHMRZp8sGXlzeFRFBbhXL+xbc6xT8j83Qc
+         y6uT59a2X3mdxcM4DY6gR/ANY26I/jHZMLfVY7DbYUzHLLk0+jn1fkp1ZKzC5M9XMl
+         pwi2NEogDqcgA==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jack Zhu <jack.zhu@starfivetech.com>,
+        Changhuang Liang <changhuang.liang@starfivetech.com>,
+        Minda Chen <minda.chen@starfivetech.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
+References: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: correct file entry in STARFIVE JH7110
+ DPHY RX DRIVER
+Message-Id: <169174263563.106197.3926692362175021526.b4-ty@kernel.org>
+Date:   Fri, 11 Aug 2023 09:30:35 +0100
 MIME-Version: 1.0
-References: <20230808091849.505809-1-suhui@nfschina.com>
-In-Reply-To: <20230808091849.505809-1-suhui@nfschina.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 10 Aug 2023 20:58:16 +0300
-Message-ID: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
-To:     Su Hui <suhui@nfschina.com>
-Cc:     jack@suse.cz, repnop@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 8, 2023 at 12:19=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
->
-> smatch error:
-> fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
-> we previously assumed 'fh' could be null (see line 421)
->
-> Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
-> Signed-off-by: Su Hui <suhui@nfschina.com>'
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+On Mon, 31 Jul 2023 13:48:56 +0200, Lukas Bulwahn wrote:
+> Commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support") adds the
+> MAINTAINERS section STARFIVE JH7110 DPHY RX DRIVER referring to
+> 'phy-starfive-dphy-rx.c', but the file actually added in this commit is
+> named 'phy-jh7110-dphy-rx.c'.
+> 
+> Correct the file entry in STARFIVE JH7110 DPHY RX DRIVER.
+> 
+> [...]
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index f69c451018e3..5a5487ae2460 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *f=
-sid, struct fanotify_fh *fh,
->         if (WARN_ON_ONCE(len < sizeof(handle)))
->                 return -EFAULT;
->
-> -       handle.handle_type =3D fh->type;
->         handle.handle_bytes =3D fh_len;
->
->         /* Mangle handle_type for bad file_handle */
->         if (!fh_len)
->                 handle.handle_type =3D FILEID_INVALID;
-> +       else
-> +               handle.handle_type =3D fh->type;
->
->         if (copy_to_user(buf, &handle, sizeof(handle)))
->                 return -EFAULT;
-> --
-> 2.30.2
->
+Applied, thanks!
+
+[1/1] MAINTAINERS: correct file entry in STARFIVE JH7110 DPHY RX DRIVER
+      commit: 6ac1bb86953cc8a2419a4845de56c280b6f62890
+
+Best regards,
+-- 
+~Vinod
+
+
