@@ -2,78 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A58C04A6A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Aug 2023 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AB6C41513
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Aug 2023 01:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234448AbjHKIaj (ORCPT
+        id S233918AbjHLBGm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Aug 2023 04:30:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
+        Fri, 11 Aug 2023 21:06:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231659AbjHKIaj (ORCPT
+        with ESMTP id S229475AbjHLBGm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Aug 2023 04:30:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11AD630C0;
-        Fri, 11 Aug 2023 01:30:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A565D64CD0;
-        Fri, 11 Aug 2023 08:30:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4D8C433CB;
-        Fri, 11 Aug 2023 08:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691742637;
-        bh=9IG8uNLc0T7yeYC5H+HbxR8/JxuZHHX9NigCQAULIPk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=KFx/EwtSreaqN1gTlo099WB/vQAbPLwNgq2GnUFG3YK74qfEXTpCjekwyTL7hESVA
-         XyfVMoJHPeaWqOHKMUwTyscTTxLfTFMaKof7cpHIcrRaNdv1ZU8W6O99Cn+1fKhl59
-         jAtFJ+N2U96xNgvuXxDj4pmzm7A17/luS1w6PwXHG7iaxvNQ+HNCrUrjDDJ+fDthjQ
-         piFUyC8B7Kp6wiZEdmjn5aIK5Y4S7nthOHMRZp8sGXlzeFRFBbhXL+xbc6xT8j83Qc
-         y6uT59a2X3mdxcM4DY6gR/ANY26I/jHZMLfVY7DbYUzHLLk0+jn1fkp1ZKzC5M9XMl
-         pwi2NEogDqcgA==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jack Zhu <jack.zhu@starfivetech.com>,
-        Changhuang Liang <changhuang.liang@starfivetech.com>,
-        Minda Chen <minda.chen@starfivetech.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
-References: <20230731114856.14401-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: correct file entry in STARFIVE JH7110
- DPHY RX DRIVER
-Message-Id: <169174263563.106197.3926692362175021526.b4-ty@kernel.org>
-Date:   Fri, 11 Aug 2023 09:30:35 +0100
+        Fri, 11 Aug 2023 21:06:42 -0400
+Received: from mx.treblig.org (unknown [IPv6:2a00:1098:5b::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA96E3;
+        Fri, 11 Aug 2023 18:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+        ; s=bytemarkmx; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0nOmPoc7/KaXqqM6sll/NFw0+f3JP8V3LF0ylnj3aUg=; b=UkDNE7OR+2FQhUwLK3KJg/Hfn2
+        jwk2TroflmJguxb1eP+geoe8B8X+Gix7L5IWt1sGr0Evd/9Qd0tMGfziO68Dg4IcQVxqJ3v/mWHPa
+        UaAmKkZSWnW1/GJ2iYKtElUR6UE4XlxxZRnmpXQCnff5Ni3XA6B+hf4yXMofzGCRtMQmQQ6t21G/H
+        j3va8taMPmtuDD5/jwx/rSVBCSDs8R5wLG5Ho69zp2Q576GYPBwYbjVqOzLE/ZXMam1ZD8VCHiOg7
+        7he6Ye9TklpLVFPBoLutDA6VDFN3/x4EWFzymHmXYpjDBe4Xi39DO73rfox2qivfR6Xyl7rqjJ/IE
+        87BGkTow==;
+Received: from dg by mx.treblig.org with local (Exim 4.94.2)
+        (envelope-from <dg@treblig.org>)
+        id 1qUd5H-006WX2-7m; Sat, 12 Aug 2023 01:06:27 +0000
+Date:   Sat, 12 Aug 2023 01:06:27 +0000
+From:   "Dr. David Alan Gilbert" <linux@treblig.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] sparc: Use shared font data
+Message-ID: <ZNbbEyLRZG+CGePc@gallifrey>
+References: <20230807010914.799713-1-linux@treblig.org>
+ <8c0ea24d-9993-492c-a7bd-fbdac7800479@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8c0ea24d-9993-492c-a7bd-fbdac7800479@web.de>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/5.10.0-23-amd64 (x86_64)
+X-Uptime: 01:05:33 up 36 days, 10:37,  1 user,  load average: 0.00, 0.00, 0.00
+User-Agent: Mutt/2.0.5 (2021-01-21)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-On Mon, 31 Jul 2023 13:48:56 +0200, Lukas Bulwahn wrote:
-> Commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support") adds the
-> MAINTAINERS section STARFIVE JH7110 DPHY RX DRIVER referring to
-> 'phy-starfive-dphy-rx.c', but the file actually added in this commit is
-> named 'phy-jh7110-dphy-rx.c'.
+* Markus Elfring (Markus.Elfring@web.de) wrote:
+> …
+> > v3
+> >   Added 'select FONT_SUPPORT' (to stop modconfig causing the font to be
+> >    linked into a module rather than the main kernel)
+> >
+> > ---
+> >  arch/sparc/Kconfig        |   2 +
+> …
 > 
-> Correct the file entry in STARFIVE JH7110 DPHY RX DRIVER.
+> I hope that the placement of the version description (or the marker line) will be reconsidered once more
+> for the final commit.
+
+Oops yes, I think I got this right in the v3 of the PPC one I just sent.
+Do we want a new version sent to move that --- or will someone (who??)
+fix that up during commit?
+
+Dave
+
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc5#n711
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] MAINTAINERS: correct file entry in STARFIVE JH7110 DPHY RX DRIVER
-      commit: 6ac1bb86953cc8a2419a4845de56c280b6f62890
-
-Best regards,
+> Regards,
+> Markus
 -- 
-~Vinod
-
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
