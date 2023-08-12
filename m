@@ -2,90 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AB6C41513
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Aug 2023 01:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF81C04A94
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Aug 2023 11:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233918AbjHLBGm (ORCPT
+        id S237162AbjHLLCj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Aug 2023 21:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45250 "EHLO
+        Sat, 12 Aug 2023 07:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjHLBGm (ORCPT
+        with ESMTP id S237157AbjHLLCi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Aug 2023 21:06:42 -0400
-Received: from mx.treblig.org (unknown [IPv6:2a00:1098:5b::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA96E3;
-        Fri, 11 Aug 2023 18:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-        ; s=bytemarkmx; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0nOmPoc7/KaXqqM6sll/NFw0+f3JP8V3LF0ylnj3aUg=; b=UkDNE7OR+2FQhUwLK3KJg/Hfn2
-        jwk2TroflmJguxb1eP+geoe8B8X+Gix7L5IWt1sGr0Evd/9Qd0tMGfziO68Dg4IcQVxqJ3v/mWHPa
-        UaAmKkZSWnW1/GJ2iYKtElUR6UE4XlxxZRnmpXQCnff5Ni3XA6B+hf4yXMofzGCRtMQmQQ6t21G/H
-        j3va8taMPmtuDD5/jwx/rSVBCSDs8R5wLG5Ho69zp2Q576GYPBwYbjVqOzLE/ZXMam1ZD8VCHiOg7
-        7he6Ye9TklpLVFPBoLutDA6VDFN3/x4EWFzymHmXYpjDBe4Xi39DO73rfox2qivfR6Xyl7rqjJ/IE
-        87BGkTow==;
-Received: from dg by mx.treblig.org with local (Exim 4.94.2)
-        (envelope-from <dg@treblig.org>)
-        id 1qUd5H-006WX2-7m; Sat, 12 Aug 2023 01:06:27 +0000
-Date:   Sat, 12 Aug 2023 01:06:27 +0000
-From:   "Dr. David Alan Gilbert" <linux@treblig.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] sparc: Use shared font data
-Message-ID: <ZNbbEyLRZG+CGePc@gallifrey>
-References: <20230807010914.799713-1-linux@treblig.org>
- <8c0ea24d-9993-492c-a7bd-fbdac7800479@web.de>
+        Sat, 12 Aug 2023 07:02:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0830A113
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Aug 2023 04:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691838117;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hUQODfZCQSly3skRl2EdqxgNTUVNaeM4NYBujWjSHHY=;
+        b=VDuORCYnU3CaQMgcw92Oe9ButDgK1dTRVDf31DH2e7BdNsDzNiaCPUrF1M1IrKmePh/ZBO
+        nE+vDfquaWWiiSPuzxp1cwija0kXbrwFuatlyCWRaljoiAZLY0vp9syv/TKdcbBB5Lw+af
+        UvLrwMdzW7cM7Z7A15kB2UvmVy3E3Do=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-34-Sc-mJRvhNmuNE6381Lv12A-1; Sat, 12 Aug 2023 07:01:55 -0400
+X-MC-Unique: Sc-mJRvhNmuNE6381Lv12A-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2b9d0b3a572so29943001fa.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Aug 2023 04:01:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691838114; x=1692442914;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hUQODfZCQSly3skRl2EdqxgNTUVNaeM4NYBujWjSHHY=;
+        b=dTVPyzReNxO7ELmBHpiQXjtt5/lC6RJuxyV8np2v+bj1skobWgM5f9P2RMBCyeGTJF
+         5qC2yU6NH+JpJckrUjplmsYPVN+CzR+NJZcoZ+/hWBwoq6rm7Mr4kkswDlk2ou7RIPtT
+         MzTSzHntlubonQ2N5jHd+qRgcRCnU7Jbi8AWWuyko/CPdQy8nTx+firnXohhF26HcE0b
+         BR3YnJ2DE5xWlSy0F5H4WaUL6lI6QkmRJvavvazypqH9MNHSYPArUH520e5v60gDnO7K
+         lRCw5abdulWP5hkKp7iG6acKJhLBpvU4aoonLwnx5B4xBoxN2YsxJcxFntP0kn8evS6J
+         cwqA==
+X-Gm-Message-State: AOJu0Yxgn3srf+SAfCZogJgsKaEy18TWSom9XgVExwrDR9guDltXF05K
+        FOw7am3MaJwgaiqg9rEvtMks1FNYpyr6bkQf7fR7HajFiwN+ngJf9w9G3U3gCe0JWF9bqchyULw
+        eKQatxJa29OWIKswRhTCz6B5xc4mW
+X-Received: by 2002:a2e:6a10:0:b0:2b6:e361:4b3c with SMTP id f16-20020a2e6a10000000b002b6e3614b3cmr3340989ljc.14.1691838114319;
+        Sat, 12 Aug 2023 04:01:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVkmLxJ4rN4icCeOX6whnRxHTUgwxoqhAMuMSHLlrs8YdydySDT+7hEsYkmxBnP8IpH5ltPg==
+X-Received: by 2002:a2e:6a10:0:b0:2b6:e361:4b3c with SMTP id f16-20020a2e6a10000000b002b6e3614b3cmr3340972ljc.14.1691838114002;
+        Sat, 12 Aug 2023 04:01:54 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id si28-20020a170906cedc00b00988dbbd1f7esm3315334ejb.213.2023.08.12.04.01.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Aug 2023 04:01:53 -0700 (PDT)
+Message-ID: <f332c309-795e-195b-9b77-1e2902938cec@redhat.com>
+Date:   Sat, 12 Aug 2023 13:01:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c0ea24d-9993-492c-a7bd-fbdac7800479@web.de>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/5.10.0-23-amd64 (x86_64)
-X-Uptime: 01:05:33 up 36 days, 10:37,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.0.5 (2021-01-21)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] media: atomisp: csi2-bridge: check for negative port
+ values
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+References: <8bc2ab0f-88ac-42f1-876b-147da525b1eb@moroto.mountain>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <8bc2ab0f-88ac-42f1-876b-147da525b1eb@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-* Markus Elfring (Markus.Elfring@web.de) wrote:
-> …
-> > v3
-> >   Added 'select FONT_SUPPORT' (to stop modconfig causing the font to be
-> >    linked into a module rather than the main kernel)
-> >
-> > ---
-> >  arch/sparc/Kconfig        |   2 +
-> …
+Hi Dan,
+
+On 8/5/23 08:53, Dan Carpenter wrote:
+> The atomisp_csi2_get_port() function reads an integer value from the
+> firmware.  We check for invalid positive values but we should also
+> check for negatives.
 > 
-> I hope that the placement of the version description (or the marker line) will be reconsidered once more
-> for the final commit.
-
-Oops yes, I think I got this right in the v3 of the PPC one I just sent.
-Do we want a new version sent to move that --- or will someone (who??)
-fix that up during commit?
-
-Dave
-
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc5#n711
+> Fixes: 8d28ec7e9145 ("media: atomisp: Add support for v4l2-async sensor registration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Regards,
-> Markus
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> diff --git a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
+> index 46d9f31986c9..0f0ec5d7e49d 100644
+> --- a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
+> +++ b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
+> @@ -626,7 +626,7 @@ static int atomisp_csi2_connect_sensor(const struct atomisp_csi2_sensor_config *
+>  			goto err_put_adev;
+>  
+>  		sensor->port = atomisp_csi2_get_port(adev, clock_num);
+> -		if (sensor->port >= ATOMISP_CAMERA_NR_PORTS) {
+> +		if (sensor->port < 0 || sensor->port >= ATOMISP_CAMERA_NR_PORTS) {
+>  			acpi_handle_err(adev->handle, "Invalid port: %d\n", sensor->port);
+>  			ret = -EINVAL;
+>  			goto err_put_adev;
+
+Thank you for the fix, this code has been refactored in -next and now it uses sensor->link rather then sensor->port with sensor now being a 'struct ipu_sensor *' and link being a 'u8' so checking for < 0 no longer is necessary.
+
+Regards,
+
+Hans
+
+
+
