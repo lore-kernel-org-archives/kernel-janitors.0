@@ -2,111 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA5FC001B0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Aug 2023 15:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621E4C001E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Aug 2023 15:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232593AbjHNPJ3 (ORCPT
+        id S230265AbjHNPxl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Aug 2023 11:09:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60364 "EHLO
+        Mon, 14 Aug 2023 11:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232665AbjHNPJU (ORCPT
+        with ESMTP id S230218AbjHNPxd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Aug 2023 11:09:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44E1DE;
-        Mon, 14 Aug 2023 08:08:57 -0700 (PDT)
+        Mon, 14 Aug 2023 11:53:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB24ED;
+        Mon, 14 Aug 2023 08:53:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 525D763CBB;
-        Mon, 14 Aug 2023 15:08:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0E1C433C7;
-        Mon, 14 Aug 2023 15:08:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D939D61B7A;
+        Mon, 14 Aug 2023 15:53:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11F9C433C7;
+        Mon, 14 Aug 2023 15:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692025736;
-        bh=8Cv/BMHeQ7rKCMZngi9mR7iIQEdnNBrdmdHtORcWLrk=;
+        s=k20201202; t=1692028411;
+        bh=QeBjVxnV7WT8mRAO2BW0JAlyyfb0qIXuQJE+4alUsS8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GQ1sgyN6eXewx8s2DblbbkB/sc7g7kdGkBzZuwI42KIxIeeu0KgZxPN+gEvUZsu5y
-         fW12GYcWspun0TPz1d6Q6zFm9/CCphmoV/CE00oqHRe8Iqd0z/YW2BNbLe+PV1vIG4
-         k6zzNY+5jTo6WR38bTvo1J4+A7chC+ctr1x0OOsycEuBZxcnv1IaFSY8Ei2HU28Z75
-         iV3Hw+KEMKw7/6oFN/N2RQHxXgu8WGubPlYYYqYTfzOr7qGzkYmIpAEhDwa+Z4QnNb
-         b3/iG1n1J9kV8ZZx0vNXAiEA8XmzKgt0fPOTnsjcgAJr+9FlFw+gK6pEteqrDUVrCA
-         hK0c3quqNWrEw==
-Date:   Mon, 14 Aug 2023 17:08:53 +0200
+        b=dAjdBrOQNN6M6qQCrLpW2MGhazBXn4N1rPpn/rNd4JBX7eCHT4X1pb1bJOpsMgpqu
+         NdrBnlpmD1Wq+wjz2QFfQguKJ0BP6ZcU9AazHTmUCTI5vGdlkoh2ILz9zXh1fEjHEu
+         WY/d763bZCT7WOWeQjZJoGqINvPeARzzYllKjUqkWNt3ZJk8QaE49mBRPpBv2qwlrK
+         jRcwP9Kg2Qwm5DyiVI/bwaps9CB7/Rd8ZEgWj2jnBtrNuZM6YombAxI9Rknm2slYTe
+         oRQAVptxeH3A7U8TUwjQQdI18xD6QvJvLuEWJqvcM+12XT8v7wsDXCCVwLLg8Fvc4Y
+         Pdd7WK9Z3Fvpg==
+Date:   Mon, 14 Aug 2023 17:53:28 +0200
 From:   Wolfram Sang <wsa@kernel.org>
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Oleksij Rempel <linux@rempel-privat.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: imx: Clean up a call to request_irq()
-Message-ID: <ZNpDhQCsQK4f9PjB@shikoro>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Andi Shyti <andi.shyti@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: sun6i-p2wi: Fix an error message in probe()
+Message-ID: <ZNpN+Lv7mR2cCEun@shikoro>
 Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
         Dan Carpenter <dan.carpenter@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-i2c@vger.kernel.org,
+        Andi Shyti <andi.shyti@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         kernel-janitors@vger.kernel.org
-References: <fa375cc0-893a-4e64-8bf6-cc37f9ebecf5@moroto.mountain>
- <169100562784.1919254.4818687788219395410.b4-ty@kernel.org>
+References: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8b6/iXORvNVy2AfX"
+        protocol="application/pgp-signature"; boundary="xcB87gd7QtFay+4j"
 Content-Disposition: inline
-In-Reply-To: <169100562784.1919254.4818687788219395410.b4-ty@kernel.org>
+In-Reply-To: <98afbc28-3366-459e-bd01-f77cf1a67fe9@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---8b6/iXORvNVy2AfX
+--xcB87gd7QtFay+4j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 02, 2023 at 10:10:32PM +0200, Andi Shyti wrote:
-> Hi
+On Tue, Jun 27, 2023 at 10:12:36AM +0300, Dan Carpenter wrote:
+> The "ret" variable is uninitialized.  It was the "p2wi->rstc" variable
+> that was intended.  We can also use the %pe string format to print the
+> error code name instead of just the number.
 >=20
-> On Tue, 25 Jul 2023 09:50:55 +0300, Dan Carpenter wrote:
-> > This is passing a NULL thread to request_threaded_irq().  So it's not
-> > really a threaded IRQ at all.  It's more readable to call request_irq()
-> > instead.
-> >=20
-> >=20
->=20
-> Applied to i2c/andi-for-next on
+> Fixes: 75ff8a340a81 ("i2c: sun6i-p2wi: Use devm_clk_get_enabled()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied to for-next (via Andi's branch), thanks!
+Applied to for-current, thanks!
 
 
---8b6/iXORvNVy2AfX
+--xcB87gd7QtFay+4j
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTaQ4UACgkQFA3kzBSg
-KbapcBAAnYjsvZs2Zo/p953XEnqvE/tozYkPo9/U1JAUW5LDH+ikeBkI2dShvN6o
-qwEbW9P9e1nTO8KcN3oJeA9GWRWiCBJOgxRimPJZ9BwNmADoVWiXrgKy/5gq2Fz1
-OZRjaOPOPyOWKFSPNbzjtbWSJfx+CDPCVcyCmGpxcoR3NipavUzHKZJSp3bRj5pC
-MZ3QXw5VWdf4+4upXC1zSgGK6MEdXa8HnVezB7aQabp08X2/KKOOTX27vuXgCSiy
-pJ50uK9ilRds4r3DfkTTdn9THi5me30+hDkW4D0DAjdqONY0+RGjmFPyqSX5NEdj
-MSNQxeHBgqtQ5Gka7SOlNaargWJIWEZa72weJAMj6xw0yHjoWrNP2j+0xh8EoxkG
-TXhCCBRL9R/Y2ApWiyaWic9fFmW/d7wNdSyzpN9gnHP/mjHa6PBnKCKGftRRWNej
-E2ulao6U46cngI/HjPlyK75JwH0xRa1bR1meWPrXL1Phf9/BNhZbHPe+ggXhmlzE
-jYR51nC1YgFwpfHAYIUBtKXYkXhhdq11z51fnu6IgSAzlTpdYznkpEJ9EPle1SnR
-zV/fRaqdrTN1r4rR3awh3f7CgqpxdiivpFcy4K9QNoAqkJVsheiqsv5QbkNMa32M
-SiTCnDSvNEDrlYQxdv6YQcl1KvLtBuisPeAbrigI0kJwR7YHDfM=
-=jned
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTaTfgACgkQFA3kzBSg
+KbakpxAAsVMYJOIQWAKvPEtX90YHGD2HuqPNw0RgfoH46avGPoAkEwKoFyiIPXY9
+a571Nfcn3ETJh/o74XE2s3QiC8uzA9UZAh/eCYdi/lvWBcZX4GQMDVpyTQ0WxTw3
+ujR+5Wqrw/OaBcSACbquqQ0HDe4w6XoLGqzXc2dv29P5yHBDhxkKDb+MGuMkVZJ6
+G4eZpi3QIT7T5z4QJrIKKmVg7/zpeUBxFOPy6vOxgLRLudZp6MSxvOuWLLnAm64J
+mKKXV+Jottc/jjGaiWrclnJWgjY+Yj1HOa+Frr5VgHv3bwMssqmfwJnl0gsPy4Rg
+hO272xeaA4aIR22a4d8XqDW7pf2WDxigSOy3cuIXePPkRnk6avD/bexXKp7a+4vq
+Zc5tfh/WuzbO1kBz3rY7Hz6hqdogunbths5C/+p6LkwC86j0tOR7wKl6OQ2Apd5L
+m+/Bfyy3lqE21RH07ITsVvmGQIGPeiHwBWGiKf4/Z9ky6PBAMeU2wdvLqZ2p9thc
+DxZZBFMd/Ju9o+1uGmIn80sQNsrWASPBq9zNIM4vi/PNM/s37t1kyipqFiP1Pztv
+vT1tKvPq+zOM/KyeBFHSOykyy5C1Fu9gmlazW04oFG7gu672VxH/uL8AmSuWtHkW
+n/kM2TwIwUQZO2WzoOUgVf6FR43/Tknk0QdunnWOTOFdXACkr40=
+=6351
 -----END PGP SIGNATURE-----
 
---8b6/iXORvNVy2AfX--
+--xcB87gd7QtFay+4j--
