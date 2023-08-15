@@ -2,112 +2,123 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD13C001DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Aug 2023 12:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3904AC001B0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Aug 2023 15:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235731AbjHOMO7 (ORCPT
+        id S238350AbjHOPyY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Aug 2023 08:14:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49188 "EHLO
+        Tue, 15 Aug 2023 11:54:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235444AbjHOMOu (ORCPT
+        with ESMTP id S238405AbjHOPyK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Aug 2023 08:14:50 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E671733;
-        Tue, 15 Aug 2023 05:14:49 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3197a71a9c0so1072139f8f.1;
-        Tue, 15 Aug 2023 05:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692101688; x=1692706488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tyXMRhOdLAsflsZxbsHhFbM6pTunAygx9wUZGK4+va4=;
-        b=cDfuUZCgemlPICUotl9bXplDlFIT8Js96e3xxyay4LerLktDGKE65nSJp2VcKmtFd+
-         y9z8GsltSobQ1/vXuZoc45l+lQDcjzQnMbDk3jvhWagXVlEKTYJJZNTXzCkmG9K2oPKT
-         m2ZVs8o9DIW1exS7ixATKr4s7xPO1R+qbmGYfZlFyZg4zmMTiWggRutp8j41InW/yytL
-         IVQAiYyhviYQZphveamqbRx6txd64xjktC4eLoblcXWmIv47pTirPEKuNaB4nKOWD5x8
-         s2RmV4ClSaZRgtlV6lt5L0ISjD/mYEoTDmPcXXwfrpIQpKAkqxNeYOYwP3Z/ss9Jf8bs
-         zsPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692101688; x=1692706488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tyXMRhOdLAsflsZxbsHhFbM6pTunAygx9wUZGK4+va4=;
-        b=Kj5qYRxy77AUNw1Hj1YKV8r73/CW4IBuu78AQjaGb1i1fgMm2nxB5oK8CVEDmaUVPJ
-         tVkmleEfT3yaB0pU1RF64OpeVF1jriX06zrgcF4LZaIrfOhEhgy2ED4LxLrEf0EfaxrQ
-         LtmxgeuvnoYBQ1rMb5pqj4H2yE6hyMILwcFTOQlVAEBhBvbkQCnPesnAA9XGwVST1vWW
-         iE7cwe5BlAhOoq+i4BcTVxgxluarzIhmCDiCHV5Jk2HiNEyacPfJwiGW0DRGtKycy89n
-         jMJbmjNCdWVCw4AB/IFRAfY/x4kLdKAzYxCtccxe6Wa+Zl3/i6KfYDl+Lq1gMMhl73RA
-         y6bQ==
-X-Gm-Message-State: AOJu0YzY1GuFqsGFlymXtHNOxXH+HkL411CBBDhnlyy4WXDpNAPUSzqi
-        poj5iWlRN2TDcGvaSUw6iM8=
-X-Google-Smtp-Source: AGHT+IEwMuqs1Ttrj7d7T5WLLsuOk7IcerlFOkms3rb9c6fPo6crXQko9+9C8C7o/m8iOzB7ZLRmew==
-X-Received: by 2002:a5d:5292:0:b0:315:a235:8aa8 with SMTP id c18-20020a5d5292000000b00315a2358aa8mr1497503wrv.2.1692101687680;
-        Tue, 15 Aug 2023 05:14:47 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 8-20020a05600c228800b003fbcf032c55sm20631723wmf.7.2023.08.15.05.14.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 05:14:46 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH][next] media: mediatek: vcodec: fix spelling mistake "resonable" -> "reasonable"
-Date:   Tue, 15 Aug 2023 13:14:46 +0100
-Message-Id: <20230815121446.742742-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 15 Aug 2023 11:54:10 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808C01B6;
+        Tue, 15 Aug 2023 08:54:03 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37FFOgDa010244;
+        Tue, 15 Aug 2023 15:53:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=2PlecWAlfBhCfts3ubDN5CZ/qZA3WWvzg+/g3N09+2M=;
+ b=GoTUYmaIF3Z12V6FCjqpoUPfoI7S8w3AitCo3W+xf2G09/YLmyW9A5m0wCC/vt9biJWM
+ IRYYw3At9/DlC57VT95984ZxIXboD/PFfSAk0x8Q/6i15EkAEBp8jYfiIqKQhjtXabFB
+ uu9iXe8n6I13wIeGg1kcHzU+xKYhCxtIXMJ8PxVta1ob63LMTVZL51xeZPYlZheuTm0h
+ shVi1Bl8qO8Fdwf/AOXRRCgyFvSsVbx+XfUrEsJz7mV730zY3UiB1cDPtqtj8Yf1d2C7
+ TuawlMh37ucqGyxIN/ufsvDw9z6M6E8Yl9QWvpzjoXLLf0sZ2nuIbuozKQpPjtUoRSLj kg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sfh74k28d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 15:53:55 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37FFrsCW001811
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 15:53:54 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 15 Aug
+ 2023 08:53:53 -0700
+Message-ID: <c581e23c-805e-6acf-78ea-07b4dba8efc7@quicinc.com>
+Date:   Tue, 15 Aug 2023 09:53:53 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] accel/qaic: Clean up integer overflow checking in
+ map_user_pages()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        "Jacek Lawrynowicz" <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <24d3348b-25ac-4c1b-b171-9dae7c43e4e0@moroto.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <24d3348b-25ac-4c1b-b171-9dae7c43e4e0@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sFySdkTOyzTLpVrdi0Z8UvFRlHjHWhys
+X-Proofpoint-GUID: sFySdkTOyzTLpVrdi0Z8UvFRlHjHWhys
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-15_16,2023-08-15_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999 phishscore=0
+ priorityscore=1501 impostorscore=0 clxscore=1015 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308150142
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a couple of spelling mistakes in pr_err error messages. Fix them.
+On 8/10/2023 6:23 AM, Dan Carpenter wrote:
+> The encode_dma() function has some validation on in_trans->size but it
+> would be more clear to move those checks to find_and_map_user_pages().
+> 
+> The encode_dma() had two checks:
+> 
+> 	if (in_trans->addr + in_trans->size < in_trans->addr || !in_trans->size)
+> 		return -EINVAL;
+> 
+> The in_trans->addr variable is the starting address.  The in_trans->size
+> variable is the total size of the transfer.  The transfer can occur in
+> parts and the resources->xferred_dma_size tracks how many bytes we have
+> already transferred.
+> 
+> This patch introduces a new variable "remaining" which represents the
+> amount we want to transfer (in_trans->size) minus the amount we have
+> already transferred (resources->xferred_dma_size).
+> 
+> I have modified the check for if in_trans->size is zero to instead check
+> if in_trans->size is less than resources->xferred_dma_size.  If we have
+> already transferred more bytes than in_trans->size then there are negative
+> bytes remaining which doesn't make sense.  If there are zero bytes
+> remaining to be copied, just return success.
+> 
+> The check in encode_dma() checked that "addr + size" could not overflow
+> and barring a driver bug that should work, but it's easier to check if
+> we do this in parts.  First check that "in_trans->addr +
+> resources->xferred_dma_size" is safe.  Then check that "xfer_start_addr +
+> remaining" is safe.
+> 
+> My final concern was that we are dealing with u64 values but on 32bit
+> systems the kmalloc() function will truncate the sizes to 32 bits.  So
+> I calculated "total = in_trans->size + offset_in_page(xfer_start_addr);"
+> and returned -EINVAL if it were >= SIZE_MAX.  This will not affect 64bit
+> systems.
+> 
+> Fixes: 129776ac2e38 ("accel/qaic: Add control path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c   | 2 +-
- .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Pushed to drm-misc-fixes
 
-diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-index 9e744d07a1e8..6bbe55de6ce9 100644
---- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-+++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-@@ -68,7 +68,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
- 
- 		plat_dev = dec_dev->plat_dev;
- 	} else {
--		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
-+		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-index 5e03b0886559..9f6e4b59455d 100644
---- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-+++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-@@ -109,7 +109,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_vpu_init(void *priv, enum mtk_vcodec_fw_use
- 		plat_dev = dec_dev->plat_dev;
- 		rst_id = VPU_RST_DEC;
- 	} else {
--		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
-+		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--- 
-2.39.2
-
+-Jeff
