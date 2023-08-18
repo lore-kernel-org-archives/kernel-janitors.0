@@ -2,62 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28173C71159
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 14:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C414C7115A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 15:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377863AbjHROqG (ORCPT
+        id S1354698AbjHRPBK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Aug 2023 10:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
+        Fri, 18 Aug 2023 11:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377869AbjHROqB (ORCPT
+        with ESMTP id S1377994AbjHRPBJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Aug 2023 10:46:01 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB141BB;
-        Fri, 18 Aug 2023 07:45:59 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fe167d4a18so9900575e9.0;
-        Fri, 18 Aug 2023 07:45:59 -0700 (PDT)
+        Fri, 18 Aug 2023 11:01:09 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73074CD;
+        Fri, 18 Aug 2023 08:01:04 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-31977ace1c8so914122f8f.1;
+        Fri, 18 Aug 2023 08:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692369958; x=1692974758;
+        d=gmail.com; s=20221208; t=1692370863; x=1692975663;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6i9pCVUjF2qmzQ66FFN2ILF9KSYNTknknoJlRz3YoXg=;
-        b=kbPrliKvxLCHmqg3CWjzMWBRlHZgnPewXPHSfKzqTAgoQuySYZaEFyUCSXMFV7k7+W
-         QWCYLSrmVyn6MnXuJfMkDtiAbd42GwPKjkWeWt3M4X1MRUBiwrkbPaKhT8dsfmQP1xPN
-         HSX5WyrwJ5ZInNNiWEcmLDLZ8PEgCE8dxx2T9NC80IJCuXuRM5Jgyq1rUBUZDg8hg4Nl
-         odAYB+C64Liahvd2tw8+a5ujxNUqAI6eXYjYa3OqBpwiG9EuGWMsVU2mICvaeO3BKHZA
-         LQpJ3tt5+OdYLcMslAtNw+fSV0otKFIi2IoZIL+NsJIZ4ETdR5TrylJRslx22yAiyby/
-         hp2g==
+        bh=oUObAblvfLP9rsjJtUMFKffZ4hlMmB39YapsTL/V6WI=;
+        b=nZXdFutToZq80kEOn11H6ZYPz8AR+EzTzNEfIhgp7it6KkiyIV0Kw6gMS3xug+HfIT
+         w1DvhAxv9Pgr8UzTD3fr/zI1d+6E9ANqoF02bfvrWmnx6gN29uUNe1A6JYXwc5virlzD
+         ixFt/loVmT9NHMkvV6ejgBo9HHl8I1Eq8hyIdR3c826NdYDISQjCkiC97YtgqKUtGe5I
+         Q7ZWVBQne2gGTiFOpZbNCs20ZF8I7U3GKMOobtFZE2DFzIufVvUJoe5PW5XAl//7HxbS
+         QDwjgl7jA1a+OgR8c4qlHX5vSvakt1I2zw9Z3XO6tRBqmuX0BCQq9loI5dMr8xRQFmGc
+         F/zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692369958; x=1692974758;
+        d=1e100.net; s=20221208; t=1692370863; x=1692975663;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6i9pCVUjF2qmzQ66FFN2ILF9KSYNTknknoJlRz3YoXg=;
-        b=Vg2NDO0TXc2/FQfdsqosXK0d+kZ6dUFfQbxA7CmrHJR0vNgZ/COmrcJ02PIUrEyQJH
-         2H2iVdkulVEgzslZanwG4HUorHxQZ1cGROYH7HM0PaRlVbp21wzweofm1SFjmllXGiUf
-         ONhoWRp6jln/mjtz0PrAOzQsdweelaGjVBAKogLzE7VIyLxVgBYhm0cAPzB8nbnjv75t
-         8fGhDNFNR9Uhy4AMtP1lIwiVmlf95dlP2y0KNbZwWP5a1RBkxX8iDD399gJsHCZ1712J
-         xHnH6O7fUH+yZwKiadq67T5g7051crEXsrmcFXvKhvWi3G8D0WyuzyRG7myFfq/bFi7I
-         lp1g==
-X-Gm-Message-State: AOJu0Yyd4FyXccaFv1wrGeeFijuDqnSTwApHZnPm5tWNkmit2wOHS8uO
-        7aQCsbrxSvUh6LGX7Ke9Gpg=
-X-Google-Smtp-Source: AGHT+IFY7AEmsqMhdY/QP1fKn9uU0KQsrQV1OMK0/me8P/u+kQSGtj29eqa/moyk7N5blGSj02ra9Q==
-X-Received: by 2002:a5d:40c6:0:b0:319:731f:748c with SMTP id b6-20020a5d40c6000000b00319731f748cmr2246008wrq.34.1692369958001;
-        Fri, 18 Aug 2023 07:45:58 -0700 (PDT)
+        bh=oUObAblvfLP9rsjJtUMFKffZ4hlMmB39YapsTL/V6WI=;
+        b=jcMoO6uXWcc6m/r1aRTJxq2nC2AicataxVCY99BlWaOgyVBJtcsxRcNUURBagGMWxb
+         fo1w4fRtBxo+Ta6PvZS4iw6gDVBcs4MEscJ5NtxRkKNEgB/Bw+uslpC5AAWkBJa3ryPu
+         yzUe50Cq5wiT46uwyLQspkM9YbfbWtVF9YwUyjQZr1X6PEQqOZsO1P3l5miN1JuA92kH
+         YOz529eKrcnwbIlto1BbTGhIZCjk7SC9PC2CZ8n06DygTxX5nNlSZK3z71KeFQiRF4sX
+         PSnK++JFy0pGaK6DdfXc5jKUe6PTck6k/n43xoKvmLdgaZg02a39YDm41ieryaIs+6vj
+         4SRQ==
+X-Gm-Message-State: AOJu0YyYoLkOpPq7u4xa4noYBFVLjaus9MN84v2B0mJtn0vo4EOq97Cx
+        O2mw7k7sSDdGP/J5HlCf9Kkjt/B3v4o=
+X-Google-Smtp-Source: AGHT+IGyxcmhl/x938ugMTqpE1VDJ2270Rjbn4jaudhCg6XnlS+PAwhNXyHUs8VD7ParQwRdv1W9Dg==
+X-Received: by 2002:adf:e985:0:b0:313:ecd3:7167 with SMTP id h5-20020adfe985000000b00313ecd37167mr2145149wrm.42.1692370862804;
+        Fri, 18 Aug 2023 08:01:02 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n23-20020a1c7217000000b003fe4548188bsm6521058wmc.48.2023.08.18.07.45.57
+        by smtp.gmail.com with ESMTPSA id z7-20020a5d4d07000000b00317afc7949csm3070116wrt.50.2023.08.18.08.01.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Aug 2023 07:45:57 -0700 (PDT)
+        Fri, 18 Aug 2023 08:01:01 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
+To:     Christian Brauner <brauner@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs/pipe: remove redundant initialization of pointer buf
-Date:   Fri, 18 Aug 2023 15:45:56 +0100
-Message-Id: <20230818144556.1208082-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] jfs: remove redundant initialization to pointer ip
+Date:   Fri, 18 Aug 2023 16:01:00 +0100
+Message-Id: <20230818150100.1208648-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,32 +66,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer buf is being initializated with a value that is never read,
-it is being re-assigned later on at the pointer where it is being used.
-The initialization is redundant and can be removed. Cleans up clang scan
-build warning:
+The pointer ip is being uninitialized with a value that is never read, it
+is being re-assigned later on. The assignment is redundant and can be
+removed.  Cleans up clang scan warning:
 
-fs/pipe.c:492:24: warning: Value stored to 'buf' during its
+fs/jfs/namei.c:886:16: warning: Value stored to 'ip' during its
 initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/pipe.c | 2 +-
+ fs/jfs/namei.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 8190a231329b..6c1a9b1db907 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -489,7 +489,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		head = pipe->head;
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
--			struct pipe_buffer *buf = &pipe->bufs[head & mask];
-+			struct pipe_buffer *buf;
- 			struct page *page = pipe->tmp_page;
- 			int copied;
- 
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index 029d47065600..57d7a4300210 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -883,7 +883,7 @@ static int jfs_symlink(struct mnt_idmap *idmap, struct inode *dip,
+ 	struct component_name dname;
+ 	u32 ssize;		/* source pathname size */
+ 	struct btstack btstack;
+-	struct inode *ip = d_inode(dentry);
++	struct inode *ip;
+ 	s64 xlen = 0;
+ 	int bmask = 0, xsize;
+ 	s64 xaddr;
 -- 
 2.39.2
 
