@@ -2,60 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574D1C2FC14
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Aug 2023 07:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D7FC05052
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 05:06:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348567AbjHQHlX (ORCPT
+        id S1357972AbjHRFGS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Aug 2023 03:41:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
+        Fri, 18 Aug 2023 01:06:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348599AbjHQHlE (ORCPT
+        with ESMTP id S1357894AbjHRFFn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Aug 2023 03:41:04 -0400
-X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Aug 2023 00:40:49 PDT
-Received: from mail.melynllyn.pl (mail.melynllyn.pl [51.75.66.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C6C2D5D
-        for <kernel-janitors@vger.kernel.org>; Thu, 17 Aug 2023 00:40:49 -0700 (PDT)
-Received: by mail.melynllyn.pl (Postfix, from userid 1002)
-        id DB4DDA294F; Thu, 17 Aug 2023 07:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=melynllyn.pl; s=mail;
-        t=1692257728; bh=YRRXO3jEu97VPQQgC6v1VliieJbhUvx3UFrtvEDC9os=;
-        h=Date:From:To:Subject:From;
-        b=OqgoEcgs5jPp+t06ht6WVnqSHeVF03FZa0cIyK0Rdd0ZwbEJhYlcseXpUT8ZLHT0M
-         4HdzTu4vwwnTwoWJGKH6utkfLEvllpPi+mOnIin6LxpPJ/Y4Xg/Ycpup2+b1kA/Lo5
-         ZnVzl16Y3tmnG19tSPw2fd0n10WTUF3cBbSTRn8reugf9jZnguyX7EMZdpVnP52zFq
-         SlQZ6sK9AZS85WOQpI7m2vg4H5FaDODXo8YSR5pOhsr1bv/eU4SjYdQ7SswoUv1uW1
-         SdvG3TtADgCc+rQsnDLeyf9uY+mTQNa8r+fsVsxMuWD8BvtrBvxLzigR4vVtf1iXee
-         FXTdaO30qxxVw==
-Received: by mail.melynllyn.pl for <kernel-janitors@vger.kernel.org>; Thu, 17 Aug 2023 07:35:28 GMT
-Message-ID: <20230817064500-0.1.cs.1ita9.0.hfpq4gkq6j@melynllyn.pl>
-Date:   Thu, 17 Aug 2023 07:35:28 GMT
-From:   "Urszula Wasiak" <urszula.wasiak@melynllyn.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.melynllyn.pl
+        Fri, 18 Aug 2023 01:05:43 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E6F3A8B
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Aug 2023 22:05:42 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-102-95.bstnma.fios.verizon.net [173.48.102.95])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 37I55F4q026958
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 01:05:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1692335120; bh=pWdnLuG4Y2whhIRpKLlXWkti6XtHB5EMydPw1ofl5Z8=;
+        h=From:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=Jp+jtVJEOhKIGB2MtuyvC3RbCXVnoTjpCS7CONS8d+ghxWCyTyE3iFMqV7K8vI979
+         RbDO9IL1R7NjwjJkfLVVbvJgjdIsL4fejYymb4WZFjVO9gCbp8ZpS+NPeFvXVrq6yX
+         OL5cZlucbBsdqcbZhMVmN1P9geD6whEewLA/bk8A5LbHyuXDqSlBmNEc9rUqWFoEyi
+         sow8nd1wB1n1L6qi2XSqO4RvGrn3tpHfB1OA8hC4rh6SMDEVtK+yAz0bFqLopJqEEP
+         l7g/44uFWRLcn84pP+N4/d2wkh/W0V4WAfG8XrD+ZAn4IIWHM2oBxfBeQC7arsT3/j
+         LuC/8i8NWmt8g==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 37F8115C0506; Fri, 18 Aug 2023 01:05:13 -0400 (EDT)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     adilger.kernel@dilger.ca, nathan@kernel.org,
+        ndesaulniers@google.com, trix@redhat.com,
+        Su Hui <suhui@nfschina.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: mballoc: avoid garbage value from err
+Date:   Fri, 18 Aug 2023 01:05:11 -0400
+Message-Id: <169233503392.3504102.15591922902240482750.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20230725043310.1227621-1-suhui@nfschina.com>
+References: <20230725043310.1227621-1-suhui@nfschina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+On Tue, 25 Jul 2023 12:33:11 +0800, Su Hui wrote:
+> clang's static analysis warning: fs/ext4/mballoc.c
+> line 4178, column 6, Branch condition evaluates to a garbage value.
+> 
+> err is uninitialized and will be judged when 'len <= 0' or
+> it first enters the loop while the condition "!ext4_sb_block_valid()"
+> is true. Although this can't make problems now, it's better to
+> correct it.
+> 
+> [...]
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Applied, thanks!
 
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+[1/1] ext4: mballoc: avoid garbage value from err
+      commit: f2060a35e10fc3db2950e98f5b7f6f55ad4e4079
 
-
-Pozdrawiam
-Urszula Wasiak
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
