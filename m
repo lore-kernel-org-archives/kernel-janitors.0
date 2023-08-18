@@ -2,62 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C414C7115A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 15:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347A5C7115A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 15:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354698AbjHRPBK (ORCPT
+        id S1377944AbjHRPCS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59298 "EHLO
+        Fri, 18 Aug 2023 11:02:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377994AbjHRPBJ (ORCPT
+        with ESMTP id S1377982AbjHRPCQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:01:09 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73074CD;
-        Fri, 18 Aug 2023 08:01:04 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-31977ace1c8so914122f8f.1;
-        Fri, 18 Aug 2023 08:01:04 -0700 (PDT)
+        Fri, 18 Aug 2023 11:02:16 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06E43C3E;
+        Fri, 18 Aug 2023 08:02:14 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3159d5e409dso1420186f8f.0;
+        Fri, 18 Aug 2023 08:02:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692370863; x=1692975663;
+        d=gmail.com; s=20221208; t=1692370933; x=1692975733;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUObAblvfLP9rsjJtUMFKffZ4hlMmB39YapsTL/V6WI=;
-        b=nZXdFutToZq80kEOn11H6ZYPz8AR+EzTzNEfIhgp7it6KkiyIV0Kw6gMS3xug+HfIT
-         w1DvhAxv9Pgr8UzTD3fr/zI1d+6E9ANqoF02bfvrWmnx6gN29uUNe1A6JYXwc5virlzD
-         ixFt/loVmT9NHMkvV6ejgBo9HHl8I1Eq8hyIdR3c826NdYDISQjCkiC97YtgqKUtGe5I
-         Q7ZWVBQne2gGTiFOpZbNCs20ZF8I7U3GKMOobtFZE2DFzIufVvUJoe5PW5XAl//7HxbS
-         QDwjgl7jA1a+OgR8c4qlHX5vSvakt1I2zw9Z3XO6tRBqmuX0BCQq9loI5dMr8xRQFmGc
-         F/zg==
+        bh=zJHlyZzft6x6dnuuBVxn9Ii0k2/HjUEQPD+5O6t3C00=;
+        b=ClpemFziK9wgtXZmFtabx4yCanw5kv62zUa2AoBVF/sVwNtcp9/gQX/jMsarS/1bwD
+         y0laLAq9Xk3Rr+RTy5yb6zhQrdl4NvuapT/NQaU1xfwnLYuDCw/JwvB7yYmzzoNZzROD
+         AOote0PLtBPLe6+uVOL9f8EnS7Rr3EhRpc7dPQPpSwDgX7bzXKhiRvbbM3PQc+YQKFRP
+         Rsu2em6iiFsKkt5dViXRb9PsSjDqxwSp21DgqbGBBjG5d/Y29k7nUATUeDhmrCLQh+KZ
+         yrwLKvvkwnRW7N1IBKpOSxIcx88oL479Mz3tjhCy1UEkiGKRHLeCqGArmdc6BbZflKbC
+         lNNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692370863; x=1692975663;
+        d=1e100.net; s=20221208; t=1692370933; x=1692975733;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oUObAblvfLP9rsjJtUMFKffZ4hlMmB39YapsTL/V6WI=;
-        b=jcMoO6uXWcc6m/r1aRTJxq2nC2AicataxVCY99BlWaOgyVBJtcsxRcNUURBagGMWxb
-         fo1w4fRtBxo+Ta6PvZS4iw6gDVBcs4MEscJ5NtxRkKNEgB/Bw+uslpC5AAWkBJa3ryPu
-         yzUe50Cq5wiT46uwyLQspkM9YbfbWtVF9YwUyjQZr1X6PEQqOZsO1P3l5miN1JuA92kH
-         YOz529eKrcnwbIlto1BbTGhIZCjk7SC9PC2CZ8n06DygTxX5nNlSZK3z71KeFQiRF4sX
-         PSnK++JFy0pGaK6DdfXc5jKUe6PTck6k/n43xoKvmLdgaZg02a39YDm41ieryaIs+6vj
-         4SRQ==
-X-Gm-Message-State: AOJu0YyYoLkOpPq7u4xa4noYBFVLjaus9MN84v2B0mJtn0vo4EOq97Cx
-        O2mw7k7sSDdGP/J5HlCf9Kkjt/B3v4o=
-X-Google-Smtp-Source: AGHT+IGyxcmhl/x938ugMTqpE1VDJ2270Rjbn4jaudhCg6XnlS+PAwhNXyHUs8VD7ParQwRdv1W9Dg==
-X-Received: by 2002:adf:e985:0:b0:313:ecd3:7167 with SMTP id h5-20020adfe985000000b00313ecd37167mr2145149wrm.42.1692370862804;
-        Fri, 18 Aug 2023 08:01:02 -0700 (PDT)
+        bh=zJHlyZzft6x6dnuuBVxn9Ii0k2/HjUEQPD+5O6t3C00=;
+        b=Mr9mSLz4uQr52tcncFHTezn/wIgOZX3SItuJPkEh/g93equ5yF3WtIha7yDmauVTb4
+         0mzb16jL7FziReIJS9ney8+gIH46U9WzXmfW80+kCNcrTPDTmW9/kjLDM7FdHxVBdmXh
+         dr8S28u46YIrGO6OoONfkblL0Ef9UA9gzcEoKML61mUrjk2HM9mBeueGa9Fjp83nWnts
+         r1Lxj8vIeirRed98ph+BNOyFucrjdqbtIYRYCvVzjpaOvbk9ErzHV8OIKO6cjyTI4Tfs
+         Ad2VrpgqGvLyHjKLuxBH6E9ec3HjY+HLpfwj5mIhH9OLBBgBGuuSEXdSvJJs376P0bmF
+         j+Ew==
+X-Gm-Message-State: AOJu0YzUNSONH1rGOjr+EGUi2fmm9cnG7oDHycwyGqekj7cvEyDW12ip
+        6n99CUcCBfic0mLYSdpPFXkvBzVVxLw=
+X-Google-Smtp-Source: AGHT+IE+MuOg7mP0WA9aTQK/GskX/8rO9PO2TLBbAuMp98i0Ofh2O1gm7nR4FrZBFoOfi+LH5Dh21g==
+X-Received: by 2002:a5d:4b8f:0:b0:317:4bde:9e72 with SMTP id b15-20020a5d4b8f000000b003174bde9e72mr1782210wrt.10.1692370932811;
+        Fri, 18 Aug 2023 08:02:12 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z7-20020a5d4d07000000b00317afc7949csm3070116wrt.50.2023.08.18.08.01.01
+        by smtp.gmail.com with ESMTPSA id y17-20020adfe6d1000000b003176eab8868sm3046181wrm.82.2023.08.18.08.02.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Aug 2023 08:01:01 -0700 (PDT)
+        Fri, 18 Aug 2023 08:02:11 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
 To:     Christian Brauner <brauner@kernel.org>,
         Dave Kleikamp <shaggy@kernel.org>,
         jfs-discussion@lists.sourceforge.net
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] jfs: remove redundant initialization to pointer ip
-Date:   Fri, 18 Aug 2023 16:01:00 +0100
-Message-Id: <20230818150100.1208648-1-colin.i.king@gmail.com>
+Subject: [PATCH][next][V2] jfs: remove redundant initialization to pointer ip
+Date:   Fri, 18 Aug 2023 16:02:10 +0100
+Message-Id: <20230818150210.1208746-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,7 +66,7 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer ip is being uninitialized with a value that is never read, it
+The pointer ip is being initialized with a value that is never read, it
 is being re-assigned later on. The assignment is redundant and can be
 removed.  Cleans up clang scan warning:
 
@@ -74,6 +74,10 @@ fs/jfs/namei.c:886:16: warning: Value stored to 'ip' during its
 initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+
+V2: fix commit message "uninitialized" -> "initialized"
+
 ---
  fs/jfs/namei.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
