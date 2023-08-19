@@ -2,99 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347A5C7115A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Aug 2023 15:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2558EE49AC
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Aug 2023 11:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377944AbjHRPCS (ORCPT
+        id S232100AbjHSLiz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47046 "EHLO
+        Sat, 19 Aug 2023 07:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377982AbjHRPCQ (ORCPT
+        with ESMTP id S231946AbjHSLiy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:02:16 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06E43C3E;
-        Fri, 18 Aug 2023 08:02:14 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3159d5e409dso1420186f8f.0;
-        Fri, 18 Aug 2023 08:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692370933; x=1692975733;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zJHlyZzft6x6dnuuBVxn9Ii0k2/HjUEQPD+5O6t3C00=;
-        b=ClpemFziK9wgtXZmFtabx4yCanw5kv62zUa2AoBVF/sVwNtcp9/gQX/jMsarS/1bwD
-         y0laLAq9Xk3Rr+RTy5yb6zhQrdl4NvuapT/NQaU1xfwnLYuDCw/JwvB7yYmzzoNZzROD
-         AOote0PLtBPLe6+uVOL9f8EnS7Rr3EhRpc7dPQPpSwDgX7bzXKhiRvbbM3PQc+YQKFRP
-         Rsu2em6iiFsKkt5dViXRb9PsSjDqxwSp21DgqbGBBjG5d/Y29k7nUATUeDhmrCLQh+KZ
-         yrwLKvvkwnRW7N1IBKpOSxIcx88oL479Mz3tjhCy1UEkiGKRHLeCqGArmdc6BbZflKbC
-         lNNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692370933; x=1692975733;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zJHlyZzft6x6dnuuBVxn9Ii0k2/HjUEQPD+5O6t3C00=;
-        b=Mr9mSLz4uQr52tcncFHTezn/wIgOZX3SItuJPkEh/g93equ5yF3WtIha7yDmauVTb4
-         0mzb16jL7FziReIJS9ney8+gIH46U9WzXmfW80+kCNcrTPDTmW9/kjLDM7FdHxVBdmXh
-         dr8S28u46YIrGO6OoONfkblL0Ef9UA9gzcEoKML61mUrjk2HM9mBeueGa9Fjp83nWnts
-         r1Lxj8vIeirRed98ph+BNOyFucrjdqbtIYRYCvVzjpaOvbk9ErzHV8OIKO6cjyTI4Tfs
-         Ad2VrpgqGvLyHjKLuxBH6E9ec3HjY+HLpfwj5mIhH9OLBBgBGuuSEXdSvJJs376P0bmF
-         j+Ew==
-X-Gm-Message-State: AOJu0YzUNSONH1rGOjr+EGUi2fmm9cnG7oDHycwyGqekj7cvEyDW12ip
-        6n99CUcCBfic0mLYSdpPFXkvBzVVxLw=
-X-Google-Smtp-Source: AGHT+IE+MuOg7mP0WA9aTQK/GskX/8rO9PO2TLBbAuMp98i0Ofh2O1gm7nR4FrZBFoOfi+LH5Dh21g==
-X-Received: by 2002:a5d:4b8f:0:b0:317:4bde:9e72 with SMTP id b15-20020a5d4b8f000000b003174bde9e72mr1782210wrt.10.1692370932811;
-        Fri, 18 Aug 2023 08:02:12 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y17-20020adfe6d1000000b003176eab8868sm3046181wrm.82.2023.08.18.08.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Aug 2023 08:02:11 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] jfs: remove redundant initialization to pointer ip
-Date:   Fri, 18 Aug 2023 16:02:10 +0100
-Message-Id: <20230818150210.1208746-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Sat, 19 Aug 2023 07:38:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F18D2EC97;
+        Sat, 19 Aug 2023 04:38:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D58460B52;
+        Sat, 19 Aug 2023 11:38:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A760C433C8;
+        Sat, 19 Aug 2023 11:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692445098;
+        bh=8Xb1sXpK5Czzw+xGJmlX3j6jz4r9B4+2GgzRkwc9Qx8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=d9imIt/XhSq5NYpp+4zuMr6YIgg2dHGSIFCpFwJJyd2GJTKLypz9X65P9AV1V7dNx
+         N1s11sNw/pwSLkZlPmzw/O5CIj/9cSkN3vK2iMtiqbUaXrRSt7199vYxbNTUt42Fl7
+         kuwSOwFR5mQiQVTQM44BcoE9lsQfGTtVrs4e5ucgUSxkVsPRZ1knEu+CSSMoqsT8EH
+         IxjMtHy4w59/aOd54hT8LKoPmfQwqKD/UxYQc5PBNYPaMoksNO2+fe72EnDZeEbFyj
+         +uZ057iQpDIi1DDpa5VMiBMvOr9hkbrAts38/OymHt2AsSLXdqlbVDZjvn1EbnzokJ
+         EW6bR+eeJVYnw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][next] fs/pipe: remove redundant initialization of pointer buf
+Date:   Sat, 19 Aug 2023 13:38:12 +0200
+Message-Id: <20230819-mundschutz-neuanfang-4dc2a6524c56@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230818144556.1208082-1-colin.i.king@gmail.com>
+References: <20230818144556.1208082-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1204; i=brauner@kernel.org; h=from:subject:message-id; bh=8Xb1sXpK5Czzw+xGJmlX3j6jz4r9B4+2GgzRkwc9Qx8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8WDnz83WD4LNmCus8HK68mqqYs/RK79sjdcy39ELmZ3qd WZ29rKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiP+Yy/FP5cPx+rPCuc9n2kVadT7 7N2L0nXerSQkWfzYoeLEF3fjowMvw6ahvUfPOydPv2JX2JH/4+TbrSkLFA+N3iiNWN7gGMxiwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer ip is being initialized with a value that is never read, it
-is being re-assigned later on. The assignment is redundant and can be
-removed.  Cleans up clang scan warning:
+On Fri, 18 Aug 2023 15:45:56 +0100, Colin Ian King wrote:
+> The pointer buf is being initializated with a value that is never read,
+> it is being re-assigned later on at the pointer where it is being used.
+> The initialization is redundant and can be removed. Cleans up clang scan
+> build warning:
+> 
+> fs/pipe.c:492:24: warning: Value stored to 'buf' during its
+> initialization is never read [deadcode.DeadStores]
+> 
+> [...]
 
-fs/jfs/namei.c:886:16: warning: Value stored to 'ip' during its
-initialization is never read [deadcode.DeadStores]
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-V2: fix commit message "uninitialized" -> "initialized"
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
----
- fs/jfs/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
-index 029d47065600..57d7a4300210 100644
---- a/fs/jfs/namei.c
-+++ b/fs/jfs/namei.c
-@@ -883,7 +883,7 @@ static int jfs_symlink(struct mnt_idmap *idmap, struct inode *dip,
- 	struct component_name dname;
- 	u32 ssize;		/* source pathname size */
- 	struct btstack btstack;
--	struct inode *ip = d_inode(dentry);
-+	struct inode *ip;
- 	s64 xlen = 0;
- 	int bmask = 0, xsize;
- 	s64 xaddr;
--- 
-2.39.2
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
+[1/1] fs/pipe: remove redundant initialization of pointer buf
+      https://git.kernel.org/vfs/vfs/c/241a71ef5d91
