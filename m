@@ -2,85 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1817EE49A4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 07:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFF5EE4993
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 09:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbjHTHAt (ORCPT
+        id S230302AbjHTJvn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Aug 2023 03:00:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53876 "EHLO
+        Sun, 20 Aug 2023 05:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230086AbjHTHAi (ORCPT
+        with ESMTP id S230255AbjHTJvk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Aug 2023 03:00:38 -0400
-X-Greylist: delayed 521 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 19 Aug 2023 23:34:34 PDT
-Received: from cavan.codon.org.uk (cavan.codon.org.uk [176.126.240.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B7A903C;
-        Sat, 19 Aug 2023 23:34:34 -0700 (PDT)
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-        id 0548340733; Sun, 20 Aug 2023 07:25:49 +0100 (BST)
-Date:   Sun, 20 Aug 2023 07:25:48 +0100
-From:   Matthew Garrett <mjg59@srcf.ucam.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm_crb: Fix an error handling path in crb_acpi_add()
-Message-ID: <ZOGx7F/3fTXaj8oI@srcf.ucam.org>
-References: <a820eaf8c77ca4fde50fc170f535de4b28c82a2d.1677322706.git.christophe.jaillet@wanadoo.fr>
- <c2263ee0-2133-6f89-3f16-2ae1129a20df@wanadoo.fr>
+        Sun, 20 Aug 2023 05:51:40 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A52A64EC3
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Aug 2023 02:51:29 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id Xf5hqwKJwP8tnXf5iq04g0; Sun, 20 Aug 2023 11:51:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1692525087;
+        bh=Mh61Dvqgft6jmx3lrPrBaNnQEkuCgovy2orBj5LwvkM=;
+        h=From:To:Cc:Subject:Date;
+        b=P66eIAB0ilchO3DxiGNwVbTmhNv/U6gsfPkzH9QXC3zpFhFiqJlCIeA2dACx9CTzS
+         pi3tnzo/2pz2MaKGt0p0iOAXeuU62m/eL8HyaDsqyxj8KtWSqE6uodGkbrE2tTdsZb
+         1V/gkLCuVTQStoff3xpdxZZ3nLK4j5mE7JZrLDVP/yYLzLGWWOW0kdxjWqjhnA2W+4
+         yfiwiTnPTRSzI2tlirYSSxMSH6pXgGrhkhzZjpKVrdN4cGXVnJsqGXYf6wQY1Tuh3s
+         QC5mSwfHYVj+/Vyfr30UDwPNZU9IV7Hm6Uzz90Rfq0nrhcmpNzhaA6s99jQo1Kt3xB
+         XCjra/tiLPySQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 20 Aug 2023 11:51:27 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch,
+        Felix.Kuehling@amd.com, Arunpravin.PaneerSelvam@amd.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] drm/amdgpu: Explicitly add a flexible array at the end of 'struct amdgpu_bo_list' and simplify amdgpu_bo_list_create()
+Date:   Sun, 20 Aug 2023 11:51:12 +0200
+Message-Id: <cover.1692524665.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c2263ee0-2133-6f89-3f16-2ae1129a20df@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Aug 20, 2023 at 08:21:47AM +0200, Christophe JAILLET wrote:
-> Le 25/02/2023 à 11:58, Christophe JAILLET a écrit :
-> > Some error paths don't call acpi_put_table() before returning.
-> > Branch to the correct place instead of doing some direct return.
-> > 
-> > Fixes: 4d2732882703 ("tpm_crb: Add support for CRB devices based on Pluton")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >   drivers/char/tpm/tpm_crb.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > index 99698ee1a744..f7068bd8b3d0 100644
-> > --- a/drivers/char/tpm/tpm_crb.c
-> > +++ b/drivers/char/tpm/tpm_crb.c
-> > @@ -771,12 +771,13 @@ static int crb_acpi_add(struct acpi_device *device)
-> >   				FW_BUG "TPM2 ACPI table has wrong size %u for start method type %d\n",
-> >   				buf->header.length,
-> >   				ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON);
-> > -			return -EINVAL;
-> > +			rc = -EINVAL;
-> > +			goto out;
-> >   		}
-> >   		crb_pluton = ACPI_ADD_PTR(struct tpm2_crb_pluton, buf, sizeof(*buf));
-> >   		rc = crb_map_pluton(dev, priv, buf, crb_pluton);
-> >   		if (rc)
-> > -			return rc;
-> > +			goto out;
-> >   	}
-> >   	priv->sm = sm;
-> 
-> Hi,
-> 
-> polite reminder.
-> 
-> While re-looking at it, the 3rd parameter of crb_map_pluton() (i.e. buf)
-> looks unused and could be removed if it makes sense to you.
+This serie simplifies amdgpu_bo_list_create() and usage of the 'struct
+amdgpu_bo_list'.
 
-For the original patch:
+It is compile tested only.
 
-ACKed-by: Matthew Garrett <mgarrett@aurora.tech>
+Christophe JAILLET (4):
+  drm/amdgpu: Explicitly add a flexible array at the end of 'struct
+    amdgpu_bo_list'
+  drm/amdgpu: Remove a redundant sanity check
+  drm/amdgpu: Remove amdgpu_bo_list_array_entry()
+  drm/amdgpu: Use kvzalloc() to simplify code
 
-I'm actually re-working the pluton mapping code because right now it's 
-impossible to use localities because the ACPI table is unhelpful and I 
-think that can be worked around.
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 15 ++-------------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.h | 18 ++++++------------
+ 2 files changed, 8 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
+
