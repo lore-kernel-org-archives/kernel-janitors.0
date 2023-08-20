@@ -2,71 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C68EE49A8
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 06:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D123EE49A5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 06:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjHTGb4 (ORCPT
+        id S230031AbjHTGzz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Aug 2023 02:31:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
+        Sun, 20 Aug 2023 02:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjHTGbn (ORCPT
+        with ESMTP id S229943AbjHTGzw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Aug 2023 02:31:43 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C9621228
-        for <kernel-janitors@vger.kernel.org>; Sat, 19 Aug 2023 23:24:33 -0700 (PDT)
+        Sun, 20 Aug 2023 02:55:52 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9F47689
+        for <kernel-janitors@vger.kernel.org>; Sat, 19 Aug 2023 23:26:06 -0700 (PDT)
 Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id XbrRqhueC7qfuXbrRqufiJ; Sun, 20 Aug 2023 08:24:31 +0200
+        id XbsvqZmnh8aG6XbsvqhZSZ; Sun, 20 Aug 2023 08:26:05 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1692512671;
-        bh=BVJEPI0bU+i+PXyy1ybvXbIzpm7dFFrxg1n6imDgDOw=;
+        s=t20230301; t=1692512765;
+        bh=hA/31A3nSikbjETm9tmDXC3w2WmloFZQ7/DFTrTusAU=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=ZOBP6PzLjvyAAJR3FMzWYkuFPvU4TtfdFXb+zgyiinEELoN4q4r/Kl3gP3JY20+XF
-         MiIpgt+oC22o6qjncOTmuKtbCJzy4Un8oAkbKI07toKw7cykOkbCuPmHTxCg7ox6l1
-         HFrSaa5eSKGXIFxqtrAv15qWaxpT4D1amB2TP4D7K2nX01vn6xIMjGgNanoA7bUW5z
-         G+eHXgSrEOEy0mbVhjPUTeuPGi08+FZ/mtPuHXSDnsAKnCsSACcVvnPQLBET0qV3TN
-         tsNm9LYf+Cu/EeH9k63UeqhTfFo38//7k23a0UEfEUCEUwv4Xpwaa27bYSS28KCtAV
-         6Jeu7xwrGZXEA==
+        b=RCrhZUcxXtrh7cDKGb3F/lzLcCv6rmtJGrrjTahMqx0swjF6QPjKAQq5Oc4AZ/yEq
+         CUh02Ik4mJbGJIVPy/Zj+UbAQQtVR4y9YDmucbiLV8ZuJ2nED7r+NiaOc4h8vSIz6n
+         iMVJeUWEl4RticbG+ZEZ1kI6E0bqx0Kwztpqokz3p+BsPfW7ppRmGN5JBzC5GuToVT
+         Q4717P0hAr/rErNJL2llBitlNlH5SpuwVP4TbsVrRf0cyDFB8OkRJ4mRamN3KqgM7n
+         z9CTFAQfEP3/jeNad8JWRJBz7GSoDJwlMkAHQf7fX49dpOrbkJCQQlKJG8FbyAyWv0
+         VpEiUkMij6Rsw==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Aug 2023 08:24:31 +0200
+X-ME-Date: Sun, 20 Aug 2023 08:26:05 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <1298f205-813f-9b6d-b7e4-4debe69d16ec@wanadoo.fr>
-Date:   Sun, 20 Aug 2023 08:24:29 +0200
+Message-ID: <022417df-9d3b-6760-3a57-c725906561e5@wanadoo.fr>
+Date:   Sun, 20 Aug 2023 08:26:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] power: supply: rt9467: Fix rt9467_run_aicl()
+Subject: Re: [PATCH] firmware: imx-dsp: Fix an error handling path in
+ imx_dsp_setup_channels()
 Content-Language: fr
-To:     ChiYuan Huang <cy_huang@richtek.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-pm@vger.kernel.org
-References: <2ed01020fa8a135c36dbaa871095ded47d926507.1676464968.git.christophe.jaillet@wanadoo.fr>
- <20230217055122.GA5502@linuxcarl2.richtek.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
+ <CAEnQRZC=JNGixTRVDnEK0p5rZWuQbOmQvApTUM5=0iJN9pzVRw@mail.gmail.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230217055122.GA5502@linuxcarl2.richtek.com>
+In-Reply-To: <CAEnQRZC=JNGixTRVDnEK0p5rZWuQbOmQvApTUM5=0iJN9pzVRw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/02/2023 à 06:51, ChiYuan Huang a écrit :
-> Hi, Christophe:
-> On Wed, Feb 15, 2023 at 01:43:04PM +0100, Christophe JAILLET wrote:
->> It is spurious to bail-out on a wait_for_completion_timeout() call that
->> does NOT timeout.
+Le 17/01/2023 à 08:55, Daniel Baluta a écrit :
+> On Sun, Jan 15, 2023 at 8:35 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
 >>
->> Reverse the logic to return -ETIMEDOUT instead, in case of tiemout.
+>> If mbox_request_channel_byname() fails, the memory allocated a few lines
+>> above still need to be freed before going to the error handling path.
 >>
-> Thanks. It's really our coding issue.
+>> Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > 
-> Reviewed-by: ChiYuan Huang <cy_huang@richtek.com>
+> Good catch.
+> 
+> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> 
 
 Hi,
 
@@ -75,35 +83,3 @@ polite reminder.
 This patch is still not in -next.
 
 CJ
-
->> Fixes: 6f7f70e3a8dd ("power: supply: rt9467: Add Richtek RT9467 charger driver")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
->>
->> This is spurious, because if I'm right, it means that it does not work!
->> Testing on a real hardware is really welcomed.
->> ---
->>   drivers/power/supply/rt9467-charger.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
->> index 96ad0d7d3af4..bb737fd1cca6 100644
->> --- a/drivers/power/supply/rt9467-charger.c
->> +++ b/drivers/power/supply/rt9467-charger.c
->> @@ -598,8 +598,8 @@ static int rt9467_run_aicl(struct rt9467_chg_data *data)
->>   
->>   	reinit_completion(&data->aicl_done);
->>   	ret = wait_for_completion_timeout(&data->aicl_done, msecs_to_jiffies(3500));
->> -	if (ret)
->> -		return ret;
->> +	if (ret == 0)
->> +		return -ETIMEDOUT;
->>   
->>   	ret = rt9467_get_value_from_ranges(data, F_IAICR, RT9467_RANGE_IAICR, &aicr_get);
->>   	if (ret) {
->> -- 
->> 2.34.1
->>
-> 
-
