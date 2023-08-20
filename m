@@ -2,82 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E23EE49AB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 09:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4F1EE49A4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Aug 2023 15:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjHTJ4s (ORCPT
+        id S231285AbjHTPFU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Aug 2023 05:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
+        Sun, 20 Aug 2023 11:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbjHTJ4p (ORCPT
+        with ESMTP id S229779AbjHTPFR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Aug 2023 05:56:45 -0400
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D72E1
-        for <kernel-janitors@vger.kernel.org>; Sun, 20 Aug 2023 02:51:42 -0700 (PDT)
+        Sun, 20 Aug 2023 11:05:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CEB49D7
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Aug 2023 08:02:52 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id Xf5hqwKJwP8tnXf5wq04i8; Sun, 20 Aug 2023 11:51:41 +0200
+        id Xjx3q3THNLJHlXjx3qAvDw; Sun, 20 Aug 2023 17:02:50 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1692525101;
-        bh=yRDJ9XSY8QRbt3yLCfIDe34UtsQbHZ65Dhi1TjJrFY8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=qmlzG+dR3ODzfEAyq2nozyOmz/4fk68YdpOo4AtnY/6SRR5teLsTrYBxDg5FMysGf
-         a0Wh/hh0H1N4ONZdaePGjGGtyX4S4guy3rN0r2kgTPYQnmcAhc9DAU8V8y3qKdMGiN
-         fgMu+e+Ek6rMjUMs/M6suC0sLroIChN8RNZCF2nyWiqLTA2Qon726jqaIRCBRdNgQW
-         0Yb9V5RCMqjSq+cKhYv4GPnw9+EAlX0/Ixf0DhnSc7tMXWGqE+23Ctpq6z9mapvCp3
-         bcajwwUtPgpph45cFMyaGphBxCsn5YvG/ZUtPj+rPsUhp+qwhoNmTOsu3P0doqPQCd
-         5HacW/XYLBkmQ==
+        s=t20230301; t=1692543770;
+        bh=kzvm+R76qxOFMP8OSiSP2Bx28/FrmYY6yJvbRtaD+SM=;
+        h=From:To:Cc:Subject:Date;
+        b=MwNqm3iiS3cYDdbfC+jrHpoGxtqaTfj9gLNUlImPCIEkZltyM2xKlkpmEymujxh/E
+         BNTChImY1keRQegBPrML8oxUKgYha5JXhtBgmvY7D+4LhwHuaTFfn8pcBTs/hTko+K
+         uz4GrOlq5itb6o1W5oaZlPqn7/1o93VtxsRzFTnFP9qRLpjk31QRZWKfeOqddMSnuX
+         sUiZvg/FGkS8pKuffSymf8U0xBCkngX+lPhuwvKETo7xdK2LyRfIlyU8rdDudq20k0
+         pdkyiIzrH4ci3eJpi+LfvAbNVF+eD/yXLkSfStLE7XX/wnQpXO15U2KuuwA5wU2gQw
+         vzr1Dbi7w8h1g==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Aug 2023 11:51:41 +0200
+X-ME-Date: Sun, 20 Aug 2023 17:02:50 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch,
-        Felix.Kuehling@amd.com, Arunpravin.PaneerSelvam@amd.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/4] drm/amdgpu: Remove a redundant sanity check
-Date:   Sun, 20 Aug 2023 11:51:14 +0200
-Message-Id: <2f8cf2af583ea6893c6665aae5dcb6d69d0909bd.1692524665.git.christophe.jaillet@wanadoo.fr>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/user_events: Fix an erroneous usage of struct_size()
+Date:   Sun, 20 Aug 2023 17:02:42 +0200
+Message-Id: <7a20160628fa586a74936c9212102dbf896e7332.1692543738.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1692524665.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1692524665.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The case where 'num_entries' is too big, is already handled by
-struct_size(), because kvmalloc() would fail.
+If struct_size() returns a value that does not fit in a 'int', the size
+passed to kzalloc() is wrong.
 
-It will return -ENOMEM instead of -EINVAL, but it is only related to a
-unlikely to happen sanity check.
+Remove the intermediate 'size' variable and use struct_size() directly.
 
+Fixes: 7f5a08c79df3 ("user_events: Add minimal support for trace_event into ftrace")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 4 ----
- 1 file changed, 4 deletions(-)
+I don't know if 'size' can get bigger than a int in the real world, but the
+change looks safe in any cases.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-index 571fed04eb7a..c8f59a044286 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-@@ -78,10 +78,6 @@ int amdgpu_bo_list_create(struct amdgpu_device *adev, struct drm_file *filp,
- 	unsigned i;
- 	int r;
+On x86_64, looking at the .s files, the previous code had an extra:
+    movslq	%r13d, %r13
+which really looks wrong to me.
+---
+ kernel/trace/trace_events_user.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+index 33cb6af31f39..67cc71a872b0 100644
+--- a/kernel/trace/trace_events_user.c
++++ b/kernel/trace/trace_events_user.c
+@@ -2153,7 +2153,7 @@ static int user_events_ref_add(struct user_event_file_info *info,
+ {
+ 	struct user_event_group *group = info->group;
+ 	struct user_event_refs *refs, *new_refs;
+-	int i, size, count = 0;
++	int i, count = 0;
  
--	if (num_entries > (SIZE_MAX - sizeof(struct amdgpu_bo_list))
--				/ sizeof(struct amdgpu_bo_list_entry))
--		return -EINVAL;
+ 	refs = rcu_dereference_protected(info->refs,
+ 					 lockdep_is_held(&group->reg_mutex));
+@@ -2166,10 +2166,8 @@ static int user_events_ref_add(struct user_event_file_info *info,
+ 				return i;
+ 	}
+ 
+-	size = struct_size(refs, events, count + 1);
 -
- 	list = kvmalloc(struct_size(list, entries, num_entries), GFP_KERNEL);
- 	if (!list)
+-	new_refs = kzalloc(size, GFP_KERNEL_ACCOUNT);
+-
++	new_refs = kzalloc(struct_size(refs, events, count + 1),
++			   GFP_KERNEL_ACCOUNT);
+ 	if (!new_refs)
  		return -ENOMEM;
+ 
 -- 
 2.34.1
 
