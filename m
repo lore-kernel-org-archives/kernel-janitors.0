@@ -2,73 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2353CEE49A6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 13:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58675EE4993
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 15:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235577AbjHUNwJ (ORCPT
+        id S236236AbjHUPPG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Aug 2023 09:52:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
+        Mon, 21 Aug 2023 11:15:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235578AbjHUNwH (ORCPT
+        with ESMTP id S232461AbjHUPPG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Aug 2023 09:52:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C72FE3;
-        Mon, 21 Aug 2023 06:52:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 21 Aug 2023 11:15:06 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41CBDBC;
+        Mon, 21 Aug 2023 08:15:04 -0700 (PDT)
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:bae9::7a9])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3A58637E1;
-        Mon, 21 Aug 2023 13:52:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6DEC433C8;
-        Mon, 21 Aug 2023 13:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692625920;
-        bh=tXlAncwQ5snLHAoPCQYRiKxtAeTDGyGNz79KY8AOJYg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=N7sdohgqPFgNPtdKLKhKMzs5/iraZAio84/Vor5aEp9Bi6LG+lADN50XTasbM6gVS
-         EXujHjyFJAzL/vJe9FVmM1x0ih8vap+EZ7rAXo7GPAvsknRge6f3M8rkWHuB+ElGfu
-         Fr6I98NM45iHq26WvIbwOA+75J84w7t5Urgw6f/ApA4WyVq/Vde7+jRFtQGiiH2pIG
-         yNy0RVLd1mR6fsQJqS9JkUys5vbTs/00I94IAq5YmoUqScTQ/VulOwrbRdLcKX2s6D
-         yLHvDI9HGOtC8sxAv/AY+TIHFLOESiZS9+hcxydurQVEAtg+IPe81MktW/QK+M1e2N
-         z2GpVSG+T635w==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dmaengine@vger.kernel.org
-In-Reply-To: <97c2bb1c9b69d0739da3762a7752ae6582c4ad02.1683390112.git.christophe.jaillet@wanadoo.fr>
-References: <97c2bb1c9b69d0739da3762a7752ae6582c4ad02.1683390112.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] dmaengine: mcf-edma: Use struct_size()
-Message-Id: <169262591881.224153.14237535666254778689.b4-ty@kernel.org>
-Date:   Mon, 21 Aug 2023 19:21:58 +0530
+        (Authenticated sender: nicolas)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B121766071A2;
+        Mon, 21 Aug 2023 16:15:01 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1692630903;
+        bh=yOP/crzuh324Aakcxxz+eZDVYJZgYrNZoRWG4V5bccQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=kxw8+vzPsdiXctTFi0QYl6nsI1jma5ed2T2gzHXgiSoGxahsSOn09uc1WKF59ENtg
+         pdDyTrzmhDgvkXXCErA+3Jwn86Nex+xNS2n4BjX1ONWyIAm5q4DobU9ZkAuIiy2OCi
+         YmfV6/xD1mNcumpRFapH8wU06O/3Unz9CasZn25bJXTPMPm3oCVYQVY5mKLP3M62db
+         yqY0IWo90gmqNqgTlnS4smnKs3B2V2FPWLDYuSSMBmW9CYztsxwzIIdhxyS2y5GLk/
+         mX5E0l25cKdFYtBux03+ubQztI3f89DPz/GLZ8GIXTIAyVMgWQuW8uJjKNFF12Sz4I
+         Za9Zqx9pyTPNg==
+Message-ID: <f21dfae7466a441fbe175db62ad3c9aa4eff3f0c.camel@collabora.com>
+Subject: Re: [PATCH][next] media: mediatek: vcodec: fix spelling mistake
+ "resonable" -> "reasonable"
+From:   Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 21 Aug 2023 11:14:52 -0400
+In-Reply-To: <20230815121446.742742-1-colin.i.king@gmail.com>
+References: <20230815121446.742742-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Le mardi 15 ao=C3=BBt 2023 =C3=A0 13:14 +0100, Colin Ian King a =C3=A9crit=
+=C2=A0:
+> There are a couple of spelling mistakes in pr_err error messages. Fix the=
+m.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-On Sat, 06 May 2023 18:22:06 +0200, Christophe JAILLET wrote:
-> Use struct_size() instead of hand writing it.
-> This is less verbose and more informative.
-> 
-> 'mcf_chan' is now unused and can be removed. In fact, it is shadowed by
-> another variable in the 'for' loop below. Keep this one.
-> 
-> 
-> [...]
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-Applied, thanks!
-
-[1/1] dmaengine: mcf-edma: Use struct_size()
-      commit: 923b138388928ade722cba86c55145f3dfac1cab
-
-Best regards,
--- 
-~Vinod
-
+> ---
+>  .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c   | 2 +-
+>  .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_=
+scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+> index 9e744d07a1e8..6bbe55de6ce9 100644
+> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+> @@ -68,7 +68,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv=
+, enum mtk_vcodec_fw_use
+> =20
+>  		plat_dev =3D dec_dev->plat_dev;
+>  	} else {
+> -		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
+> +		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> =20
+> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_=
+vpu.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
+> index 5e03b0886559..9f6e4b59455d 100644
+> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
+> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
+> @@ -109,7 +109,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_vpu_init(void *pr=
+iv, enum mtk_vcodec_fw_use
+>  		plat_dev =3D dec_dev->plat_dev;
+>  		rst_id =3D VPU_RST_DEC;
+>  	} else {
+> -		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
+> +		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> =20
 
