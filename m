@@ -2,71 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8257EE49A0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 06:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8FBEE4996
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 06:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231797AbjHUGWx (ORCPT
+        id S233300AbjHUGr7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Aug 2023 02:22:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33226 "EHLO
+        Mon, 21 Aug 2023 02:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbjHUGWw (ORCPT
+        with ESMTP id S231562AbjHUGr7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Aug 2023 02:22:52 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id A16AA102;
-        Sun, 20 Aug 2023 23:22:15 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 7DC1B6061F466;
-        Mon, 21 Aug 2023 14:22:06 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     airlied@redhat.com, tzimmermann@suse.de, airlied@gmail.com,
-        daniel@ffwll.ch
-Cc:     eich@suse.de, tiwai@suse.de, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Su Hui <suhui@nfschina.com>
-Subject: [PATCH] drm/ast: Avoid possible NULL dereference
-Date:   Mon, 21 Aug 2023 14:22:00 +0800
-Message-Id: <20230821062159.198691-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 21 Aug 2023 02:47:59 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DEFDA9
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Aug 2023 23:47:56 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id XyhbqE06S8hXQXyhcqw3V8; Mon, 21 Aug 2023 08:47:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1692600473;
+        bh=VKY79l4BMS+XNL5J3gXH51QA4MGqOn2fyIFQ894irYI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=oNAWQvmZI2xUCvFd5vsfvc4Rg0xT2d57oXjSqUqVl4pql2iZjSkXoNLUed4xgtROS
+         lMtOos2PRov4AvnMnHY3xputg8PHPn6P1PPDAF/JczkmsBgoGlYjAg46MdS/DsZ8xd
+         Zu7nxgmgu3aG98h+TmKWs0qboDrUkArStJLQF4YcQzl/DjMsU9IryeQfJEENWxlBVL
+         jOLsBDjvexg3I+bBvEyALisDOBRSqYBIz2kGHLko2gokb8cLE/noTRfU7rhg/OAP4x
+         GcIDw2ZbeOAPMVq1waCs0uyCnzYsbkm7uKrrJmm76cJvt7AWCcM9G1oWg9DcQ5S4UV
+         3qgzUpWmE2JVQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 21 Aug 2023 08:47:53 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <7ac675b6-a000-6ad7-36f3-a3ce186414b6@wanadoo.fr>
+Date:   Mon, 21 Aug 2023 08:47:51 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] drm/amdgpu: Avoid possible buffer overflow
+Content-Language: fr
+To:     Su Hui <suhui@nfschina.com>, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+        daniel@ffwll.ch
+Cc:     Hawking.Zhang@amd.com, le.ma@amd.com, lijo.lazar@amd.com,
+        yifan1.zhang@amd.com, candice.li@amd.com, Yuliang.Shi@amd.com,
+        guchun.chen@amd.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20230821061944.197934-1-suhui@nfschina.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230821061944.197934-1-suhui@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch error:
-drivers/gpu/drm/ast/ast_dp501.c:227 ast_launch_m68k() error:
-we previously assumed 'ast->dp501_fw' could be null (see line 223)
+Le 21/08/2023 à 08:19, Su Hui a écrit :
+> smatch error:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c:1257 amdgpu_discovery_reg_base_init() error:
+> testing array offset 'adev->vcn.num_vcn_inst' after use.
+> 
+> change the assignment order to avoid buffer overflow.
+> 
+> Fixes: c40bdfb2ffa4 ("drm/amdgpu: fix incorrect VCN revision in SRIOV")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+> index 8e1cfc87122d..ba95526c3d45 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+> @@ -1250,11 +1250,12 @@ static int amdgpu_discovery_reg_base_init(struct amdgpu_device *adev)
+>   				 *     0b10 : encode is disabled
+>   				 *     0b01 : decode is disabled
+>   				 */
+> -				adev->vcn.vcn_config[adev->vcn.num_vcn_inst] =
+> -					ip->revision & 0xc0;
+> +
+>   				ip->revision &= ~0xc0;
+>   				if (adev->vcn.num_vcn_inst <
+>   				    AMDGPU_MAX_VCN_INSTANCES) {
+> +					adev->vcn.vcn_config[adev->vcn.num_vcn_inst] =
+> +						ip->revision & 0xc0;
 
-when "!ast->dp501_fw" and "ast_load_dp501_microcode(dev) >= 0" is true,
-there will be a NULL dereference of 'ast->dp501_fw'.
+Hi,
+I don't think that the patch is correct.
 
-Fixes: 12f8030e05c6 ("drm/ast: Actually load DP501 firmware when required")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/gpu/drm/ast/ast_dp501.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Because of the "ip->revision &= ~0xc0" which is now above it, 
+"ip->revision & 0xc0" should now always be 0.
 
-diff --git a/drivers/gpu/drm/ast/ast_dp501.c b/drivers/gpu/drm/ast/ast_dp501.c
-index 1bc35a992369..d9f3a0786a6f 100644
---- a/drivers/gpu/drm/ast/ast_dp501.c
-+++ b/drivers/gpu/drm/ast/ast_dp501.c
-@@ -224,8 +224,10 @@ static bool ast_launch_m68k(struct drm_device *dev)
- 			    ast_load_dp501_microcode(dev) < 0)
- 				return false;
- 
--			fw_addr = (u8 *)ast->dp501_fw->data;
--			len = ast->dp501_fw->size;
-+			if (ast->dp501_fw) {
-+				fw_addr = (u8 *)ast->dp501_fw->data;
-+				len = ast->dp501_fw->size;
-+			}
- 		}
- 		/* Get BootAddress */
- 		ast_moutdwm(ast, 0x1e6e2000, 0x1688a8a8);
--- 
-2.30.2
+Maybe both lines should be moved within the "if"?
+
+CJ
+
+
+
+
+
+>   					adev->vcn.num_vcn_inst++;
+>   					adev->vcn.inst_mask |=
+>   						(1U << ip->instance_number);
 
