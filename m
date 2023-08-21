@@ -2,106 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58675EE4993
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 15:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BEDEE4993
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 16:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236236AbjHUPPG (ORCPT
+        id S234897AbjHUQGQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Aug 2023 11:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
+        Mon, 21 Aug 2023 12:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232461AbjHUPPG (ORCPT
+        with ESMTP id S230021AbjHUQGP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Aug 2023 11:15:06 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41CBDBC;
-        Mon, 21 Aug 2023 08:15:04 -0700 (PDT)
-Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:bae9::7a9])
+        Mon, 21 Aug 2023 12:06:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47744186;
+        Mon, 21 Aug 2023 09:05:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        (Authenticated sender: nicolas)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B121766071A2;
-        Mon, 21 Aug 2023 16:15:01 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1692630903;
-        bh=yOP/crzuh324Aakcxxz+eZDVYJZgYrNZoRWG4V5bccQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kxw8+vzPsdiXctTFi0QYl6nsI1jma5ed2T2gzHXgiSoGxahsSOn09uc1WKF59ENtg
-         pdDyTrzmhDgvkXXCErA+3Jwn86Nex+xNS2n4BjX1ONWyIAm5q4DobU9ZkAuIiy2OCi
-         YmfV6/xD1mNcumpRFapH8wU06O/3Unz9CasZn25bJXTPMPm3oCVYQVY5mKLP3M62db
-         yqY0IWo90gmqNqgTlnS4smnKs3B2V2FPWLDYuSSMBmW9CYztsxwzIIdhxyS2y5GLk/
-         mX5E0l25cKdFYtBux03+ubQztI3f89DPz/GLZ8GIXTIAyVMgWQuW8uJjKNFF12Sz4I
-         Za9Zqx9pyTPNg==
-Message-ID: <f21dfae7466a441fbe175db62ad3c9aa4eff3f0c.camel@collabora.com>
-Subject: Re: [PATCH][next] media: mediatek: vcodec: fix spelling mistake
- "resonable" -> "reasonable"
-From:   Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Mon, 21 Aug 2023 11:14:52 -0400
-In-Reply-To: <20230815121446.742742-1-colin.i.king@gmail.com>
-References: <20230815121446.742742-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CF90C614B8;
+        Mon, 21 Aug 2023 16:05:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292A1C433C7;
+        Mon, 21 Aug 2023 16:05:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692633958;
+        bh=DjEcc6PbcNIOqnCtc2X9VmSONvXMV/e+tgBh9dcI5CQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=XdDtHTOGTsx+gYtmiLfB3v2oIqXvq1btsiXqbPUxSrSMc88V/WOlt39ZyfB18DFQT
+         roiN5nWNVF5DbaWYr2QGYudLZCyI1MgK50tPl/D0jWOA8Bw/M20+CUX3/o5zpKlfx6
+         4OU8jDOu8yOv2BKb3UM/q9cGi2I5+XaDaTT6KbKxen7vEyG9RUrJEC9GwR1opUBlaS
+         ubNe9mNhEJQwj3XwYOrPqHITLxMsg0Ny/7H5fJ4VDq3iFgftQshkS2HdbFu3xQ5k1D
+         OCxAdtgrLAOsxi12oibhCCBZO/8ZfptEvqrg8BXh3n/R5ov5Qww03DYrYn1gDMF4wh
+         9gHXf0h0Y+wcQ==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Ping-Ke Shih <pkshih@realtek.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Timlee <timlee@realtek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] wifi: rtw89: fix a width vs precision bug
+References: <0700c7b9-bfd3-4aa6-82bf-5bf3c74644e1@moroto.mountain>
+        <63f8219b49604fc9805319c391ee44bf@realtek.com>
+Date:   Mon, 21 Aug 2023 19:05:55 +0300
+In-Reply-To: <63f8219b49604fc9805319c391ee44bf@realtek.com> (Ping-Ke Shih's
+        message of "Tue, 8 Aug 2023 08:30:35 +0000")
+Message-ID: <87wmxoidng.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le mardi 15 ao=C3=BBt 2023 =C3=A0 13:14 +0100, Colin Ian King a =C3=A9crit=
-=C2=A0:
-> There are a couple of spelling mistakes in pr_err error messages. Fix the=
-m.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Ping-Ke Shih <pkshih@realtek.com> writes:
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>> -----Original Message-----
+>> From: Dan Carpenter <dan.carpenter@linaro.org>
+>> Sent: Tuesday, August 8, 2023 1:36 PM
+>> To: Timlee <timlee@realtek.com>
+>> Cc: Ping-Ke Shih <pkshih@realtek.com>; Kalle Valo
+>> <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
+>> kernel-janitors@vger.kernel.org
+>> Subject: [PATCH] wifi: rtw89: fix a width vs precision bug
+>> 
+>> The "buf" is skb->data that comes from the firmware.  We want to print
+>> "len" number of bytes.  But there is a missing period so the "len"
+>> variable is used for formatting (width) instead of limiting the output
+>> (precision).
+>> 
+>> Fixes: cad2bd8a136c ("wifi: rtw89: support firmware log with formatted text")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> Thanks for the fix. 
+>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-> ---
->  .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c   | 2 +-
->  .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_=
-scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-> index 9e744d07a1e8..6bbe55de6ce9 100644
-> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-> @@ -68,7 +68,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv=
-, enum mtk_vcodec_fw_use
-> =20
->  		plat_dev =3D dec_dev->plat_dev;
->  	} else {
-> -		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
-> +		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
->  		return ERR_PTR(-EINVAL);
->  	}
-> =20
-> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_=
-vpu.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> index 5e03b0886559..9f6e4b59455d 100644
-> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> @@ -109,7 +109,7 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_vpu_init(void *pr=
-iv, enum mtk_vcodec_fw_use
->  		plat_dev =3D dec_dev->plat_dev;
->  		rst_id =3D VPU_RST_DEC;
->  	} else {
-> -		pr_err("Invalid fw_use %d (use a resonable fw id here)\n", fw_use);
-> +		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
->  		return ERR_PTR(-EINVAL);
->  	}
-> =20
+Weird, Ping's reply didn't go to patchwork:
 
+https://patchwork.kernel.org/project/linux-wireless/patch/0700c7b9-bfd3-4aa6-82bf-5bf3c74644e1@moroto.mountain/
+
+But I do see it on the list:
+
+https://lore.kernel.org/all/63f8219b49604fc9805319c391ee44bf@realtek.com/
+
+Crossing fingers that this was just a random anomaly in patchwork and
+it's not losing more email.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
