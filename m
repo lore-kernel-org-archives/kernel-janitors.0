@@ -2,93 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BEDEE4993
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 16:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8852EE49AA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Aug 2023 16:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234897AbjHUQGQ (ORCPT
+        id S235052AbjHUQHV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Aug 2023 12:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
+        Mon, 21 Aug 2023 12:07:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbjHUQGP (ORCPT
+        with ESMTP id S232366AbjHUQHS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Aug 2023 12:06:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47744186;
-        Mon, 21 Aug 2023 09:05:59 -0700 (PDT)
+        Mon, 21 Aug 2023 12:07:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17896F3;
+        Mon, 21 Aug 2023 09:07:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF90C614B8;
-        Mon, 21 Aug 2023 16:05:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292A1C433C7;
-        Mon, 21 Aug 2023 16:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692633958;
-        bh=DjEcc6PbcNIOqnCtc2X9VmSONvXMV/e+tgBh9dcI5CQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=XdDtHTOGTsx+gYtmiLfB3v2oIqXvq1btsiXqbPUxSrSMc88V/WOlt39ZyfB18DFQT
-         roiN5nWNVF5DbaWYr2QGYudLZCyI1MgK50tPl/D0jWOA8Bw/M20+CUX3/o5zpKlfx6
-         4OU8jDOu8yOv2BKb3UM/q9cGi2I5+XaDaTT6KbKxen7vEyG9RUrJEC9GwR1opUBlaS
-         ubNe9mNhEJQwj3XwYOrPqHITLxMsg0Ny/7H5fJ4VDq3iFgftQshkS2HdbFu3xQ5k1D
-         OCxAdtgrLAOsxi12oibhCCBZO/8ZfptEvqrg8BXh3n/R5ov5Qww03DYrYn1gDMF4wh
-         9gHXf0h0Y+wcQ==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Ping-Ke Shih <pkshih@realtek.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Timlee <timlee@realtek.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] wifi: rtw89: fix a width vs precision bug
-References: <0700c7b9-bfd3-4aa6-82bf-5bf3c74644e1@moroto.mountain>
-        <63f8219b49604fc9805319c391ee44bf@realtek.com>
-Date:   Mon, 21 Aug 2023 19:05:55 +0300
-In-Reply-To: <63f8219b49604fc9805319c391ee44bf@realtek.com> (Ping-Ke Shih's
-        message of "Tue, 8 Aug 2023 08:30:35 +0000")
-Message-ID: <87wmxoidng.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A08AF62567;
+        Mon, 21 Aug 2023 16:07:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58136C433C7;
+        Mon, 21 Aug 2023 16:07:15 +0000 (UTC)
+Date:   Mon, 21 Aug 2023 12:07:28 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/user_events: Fix an erroneous usage of
+ struct_size()
+Message-ID: <20230821120728.7b34266c@gandalf.local.home>
+In-Reply-To: <7a20160628fa586a74936c9212102dbf896e7332.1692543738.git.christophe.jaillet@wanadoo.fr>
+References: <7a20160628fa586a74936c9212102dbf896e7332.1692543738.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Ping-Ke Shih <pkshih@realtek.com> writes:
+On Sun, 20 Aug 2023 17:02:42 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
->> -----Original Message-----
->> From: Dan Carpenter <dan.carpenter@linaro.org>
->> Sent: Tuesday, August 8, 2023 1:36 PM
->> To: Timlee <timlee@realtek.com>
->> Cc: Ping-Ke Shih <pkshih@realtek.com>; Kalle Valo
->> <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
->> kernel-janitors@vger.kernel.org
->> Subject: [PATCH] wifi: rtw89: fix a width vs precision bug
->> 
->> The "buf" is skb->data that comes from the firmware.  We want to print
->> "len" number of bytes.  But there is a missing period so the "len"
->> variable is used for formatting (width) instead of limiting the output
->> (precision).
->> 
->> Fixes: cad2bd8a136c ("wifi: rtw89: support firmware log with formatted text")
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> Thanks for the fix. 
->
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> If struct_size() returns a value that does not fit in a 'int', the size
+> passed to kzalloc() is wrong.
+> 
+> Remove the intermediate 'size' variable and use struct_size() directly.
+> 
+> Fixes: 7f5a08c79df3 ("user_events: Add minimal support for trace_event into ftrace")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I don't know if 'size' can get bigger than a int in the real world, but the
+> change looks safe in any cases.
+> 
+> On x86_64, looking at the .s files, the previous code had an extra:
+>     movslq	%r13d, %r13
+> which really looks wrong to me.
 
-Weird, Ping's reply didn't go to patchwork:
+If size is bigger than int, then we have much bigger problems than this allocation.
 
-https://patchwork.kernel.org/project/linux-wireless/patch/0700c7b9-bfd3-4aa6-82bf-5bf3c74644e1@moroto.mountain/
+That means count is over 2 billion, and the kzalloc() will fail regardless.
 
-But I do see it on the list:
+This is an unneeded change.
 
-https://lore.kernel.org/all/63f8219b49604fc9805319c391ee44bf@realtek.com/
+-- Steve
 
-Crossing fingers that this was just a random anomaly in patchwork and
-it's not losing more email.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+> ---
+>  kernel/trace/trace_events_user.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+> index 33cb6af31f39..67cc71a872b0 100644
+> --- a/kernel/trace/trace_events_user.c
+> +++ b/kernel/trace/trace_events_user.c
+> @@ -2153,7 +2153,7 @@ static int user_events_ref_add(struct user_event_file_info *info,
+>  {
+>  	struct user_event_group *group = info->group;
+>  	struct user_event_refs *refs, *new_refs;
+> -	int i, size, count = 0;
+> +	int i, count = 0;
+>  
+>  	refs = rcu_dereference_protected(info->refs,
+>  					 lockdep_is_held(&group->reg_mutex));
+> @@ -2166,10 +2166,8 @@ static int user_events_ref_add(struct user_event_file_info *info,
+>  				return i;
+>  	}
+>  
+> -	size = struct_size(refs, events, count + 1);
+> -
+> -	new_refs = kzalloc(size, GFP_KERNEL_ACCOUNT);
+> -
+> +	new_refs = kzalloc(struct_size(refs, events, count + 1),
+> +			   GFP_KERNEL_ACCOUNT);
+>  	if (!new_refs)
+>  		return -ENOMEM;
+>  
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
