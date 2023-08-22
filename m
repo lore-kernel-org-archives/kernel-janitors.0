@@ -2,129 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686B0EE4996
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Aug 2023 01:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E3CEE4996
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Aug 2023 11:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232094AbjHVBjq (ORCPT
+        id S234621AbjHVL2c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Aug 2023 21:39:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34800 "EHLO
+        Tue, 22 Aug 2023 07:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232096AbjHVBjo (ORCPT
+        with ESMTP id S234178AbjHVL2b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Aug 2023 21:39:44 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 817FD101;
-        Mon, 21 Aug 2023 18:39:40 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 863BD607583BC;
-        Tue, 22 Aug 2023 09:39:23 +0800 (CST)
-Message-ID: <c589a9b0-fc6b-d699-f08f-2e18c3e034a4@nfschina.com>
-Date:   Tue, 22 Aug 2023 09:39:22 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2] drm/amdgpu: Avoid possible buffer overflow
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-        daniel@ffwll.ch
-Cc:     Hawking.Zhang@amd.com, le.ma@amd.com, lijo.lazar@amd.com,
-        yifan1.zhang@amd.com, candice.li@amd.com, guchun.chen@amd.com,
-        Yuliang.Shi@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, christophe.jaillet@wanadoo.fr
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <2a4448cb-ac01-71fc-9335-68acdded0a78@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 22 Aug 2023 07:28:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B38FCD7;
+        Tue, 22 Aug 2023 04:28:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BB14648AA;
+        Tue, 22 Aug 2023 11:28:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E79C433C7;
+        Tue, 22 Aug 2023 11:28:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692703708;
+        bh=ImDJH7/Kwvo1zhzEm+BfmajPtkbIFANMBKvkW2Hz0ls=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=EtRhrjNEFjeW893ERMvh0WrT2ZlievG3ARvphKajTXCSwvd4NUufgGwLzjyR9GYGQ
+         QNI3S8dwXN8guAX9lNrkW0oZI61/fq6QB+VUQHhJGDGHQqK9GBH8huio4DEIVjDk2+
+         k71xbqoxTI0cs749rJTY/alque09MQK3mwtE7nL8BNKeJlPBZjI1Lnnhoqf5aAAvME
+         eLv5kR5CGKS3ta12+Hscw5dCNz1dXNfQ0TrbOvXHQQ26ydR9m7mnfdpFYG5O1ol7+a
+         4AqskFeLW2h50Kg28SqAIrrUy1i9nPjj1r7M445vw0sAEbXUZQxlvuzZ2DGQtOn0Lc
+         GUJDE91EgdBAg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 22 Aug 2023 14:28:24 +0300
+Message-Id: <CUZ1DUXBEAWM.6JDTPLT9I7NM@suppilovahvero>
+Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH] tpm_crb: Fix an error handling path in crb_acpi_add()
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        "Matthew Garrett" <mjg59@srcf.ucam.org>
+X-Mailer: aerc 0.14.0
+References: <a820eaf8c77ca4fde50fc170f535de4b28c82a2d.1677322706.git.christophe.jaillet@wanadoo.fr> <c2263ee0-2133-6f89-3f16-2ae1129a20df@wanadoo.fr>
+In-Reply-To: <c2263ee0-2133-6f89-3f16-2ae1129a20df@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/8/21 17:31, Christian König wrote:
-> Am 21.08.23 um 09:37 schrieb Su Hui:
->> smatch error:
->> drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c:1257 
->> amdgpu_discovery_reg_base_init() error:
->> testing array offset 'adev->vcn.num_vcn_inst' after use.
->>
->> change the assignment order to avoid buffer overflow.
->>
->> Fixes: c40bdfb2ffa4 ("drm/amdgpu: fix incorrect VCN revision in SRIOV")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->> changes in v2:
->>   - fix the error about ip->revision (thanks to Christophe JAILLET).
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c 
->> b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
->> index 8e1cfc87122d..b07bfd106a9b 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
->> @@ -1250,11 +1250,10 @@ static int 
->> amdgpu_discovery_reg_base_init(struct amdgpu_device *adev)
->>                    *     0b10 : encode is disabled
->>                    *     0b01 : decode is disabled
->>                    */
->> - adev->vcn.vcn_config[adev->vcn.num_vcn_inst] =
->> -                    ip->revision & 0xc0;
->> -                ip->revision &= ~0xc0;
->>                   if (adev->vcn.num_vcn_inst <
->>                       AMDGPU_MAX_VCN_INSTANCES) {
->> + adev->vcn.vcn_config[adev->vcn.num_vcn_inst] =
->> +                        ip->revision & 0xc0;
->>                       adev->vcn.num_vcn_inst++;
->>                       adev->vcn.inst_mask |=
->>                           (1U << ip->instance_number);
->> @@ -1265,6 +1264,7 @@ static int 
->> amdgpu_discovery_reg_base_init(struct amdgpu_device *adev)
->>                           adev->vcn.num_vcn_inst + 1,
->>                           AMDGPU_MAX_VCN_INSTANCES);
->>                   }
->> +                ip->revision &= ~0xc0;
+On Sun Aug 20, 2023 at 9:21 AM EEST, Christophe JAILLET wrote:
+> Le 25/02/2023 =C3=A0 11:58, Christophe JAILLET a =C3=A9crit=C2=A0:
+> > Some error paths don't call acpi_put_table() before returning.
+> > Branch to the correct place instead of doing some direct return.
+> >=20
+> > Fixes: 4d2732882703 ("tpm_crb: Add support for CRB devices based on Plu=
+ton")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> >   drivers/char/tpm/tpm_crb.c | 5 +++--
+> >   1 file changed, 3 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> > index 99698ee1a744..f7068bd8b3d0 100644
+> > --- a/drivers/char/tpm/tpm_crb.c
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -771,12 +771,13 @@ static int crb_acpi_add(struct acpi_device *devic=
+e)
+> >   				FW_BUG "TPM2 ACPI table has wrong size %u for start method type %=
+d\n",
+> >   				buf->header.length,
+> >   				ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON);
+> > -			return -EINVAL;
+> > +			rc =3D -EINVAL;
+> > +			goto out;
+> >   		}
+> >   		crb_pluton =3D ACPI_ADD_PTR(struct tpm2_crb_pluton, buf, sizeof(*bu=
+f));
+> >   		rc =3D crb_map_pluton(dev, priv, buf, crb_pluton);
+> >   		if (rc)
+> > -			return rc;
+> > +			goto out;
+> >   	}
+> >  =20
+> >   	priv->sm =3D sm;
 >
-> That doesn't looks correct either. The assignment is intentionally 
-> outside of the "if".
+> Hi,
 >
-> See "adev->vcn.vcn_config[adev->vcn.num_vcn_inst] = ip->revision & 
-> 0xc0;" is always valid.
-
-Hi,
-
-if "adev->vcn.vcn_config[adev->vcn.num_vcn_inst] = ip->revision & 0xc0;" 
-is always valid, then
-
-"adev->vcn.num_vcn_inst< AMDGPU_MAX_VCN_INSTANCES " is always true. So 
-the below judgement has
-
-no sense.
-
-                   if (adev->vcn.num_vcn_inst <
-                       AMDGPU_MAX_VCN_INSTANCES) {
-
-On the contrary, if we need this judgement, then 
-"adev->vcn.vcn_config[adev->vcn.num_vcn_inst] = ip->revision & 0xc0;"is not
-
-always valid, because "adev->vcn.num_vcn_inst >= 
-AMDGPU_MAX_VCN_INSTANCES" can be true, which cause buffer overflow.
-
-So I think this patch has some sense if I don't make some mistakes.
-
-Su Hui
-
+> polite reminder.
 >
-> We just avoid incrementing num_vcn_inst when we already have to many.
->
-> Regards,
-> Christian.
->
->
->>               }
->>               if (le16_to_cpu(ip->hw_id) == SDMA0_HWID ||
->>                   le16_to_cpu(ip->hw_id) == SDMA1_HWID ||
->
+> While re-looking at it, the 3rd parameter of crb_map_pluton() (i.e. buf)=
+=20
+> looks unused and could be removed if it makes sense to you.
+
+This AFAIK went to Linux v6.2 already.
+
+BR, Jarkko
