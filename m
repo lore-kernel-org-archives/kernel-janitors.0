@@ -2,112 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C92EEE49AB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Aug 2023 20:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DCAEE49AF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Aug 2023 01:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbjHVUPd (ORCPT
+        id S231962AbjHWBOt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Aug 2023 16:15:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
+        Tue, 22 Aug 2023 21:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbjHVUPc (ORCPT
+        with ESMTP id S231453AbjHWBOs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Aug 2023 16:15:32 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E0D010B
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Aug 2023 13:15:30 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id YXfBq73trxiGYYXfBq9Cf4; Tue, 22 Aug 2023 22:07:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1692734868;
-        bh=BqANjHXG+mgSGlru4/suuPmjj23Toc5pJJs87UEpxT0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=W0x5NouoJPBOhf9VoR9+F8c8OqnbcQmsGnlc2eGqGkyTt9anehbOPWj/9KiGY4jwI
-         KumpSsCzE3WFtSn/xAYnna7HmkNbNWZF9o66ZEDarOuJMvmk26ij8G5w+ER/dB2YwV
-         cDa2WNLukRL9myM8zXzjKpb0r/7JvjxPEe58UaYWvwJ10r1Ta4rWpa12MEFd3aitXL
-         sENTMzMIbBulm6tDKhqVV530G/5dsOseyg2bcLIhX266XVVkpoGQiCmCBPbWjjguW6
-         y+djQaZlZrcYfcZfjenyaQHd40TGGHUOFTNxKde46Foa+J65Pmk3A7nb7gCQ6cOj1c
-         XYkRR9FXGP9Fg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 22 Aug 2023 22:07:47 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <49247018-20fe-8a04-75f2-dad4524aa3a3@wanadoo.fr>
-Date:   Tue, 22 Aug 2023 22:07:40 +0200
+        Tue, 22 Aug 2023 21:14:48 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:14:35 PDT
+Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A917AE4D
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Aug 2023 18:14:35 -0700 (PDT)
+X-AuditID: cb7c291e-055ff70000002aeb-1a-64e5450b901d
+Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 7B.28.10987.B0545E46; Wed, 23 Aug 2023 04:30:19 +0500 (PKT)
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
+        d=iesco.com.pk; s=default;
+        h=received:content-type:mime-version:content-transfer-encoding
+          :content-description:subject:to:from:date:reply-to;
+        b=S2rvOuP5m0JlAHMdb5tJOaSQOwyZasAMfO8rT7FuQ+vxEuK47LhuZ4AB2RKCro3K6
+          Qyd8Jo4w4xld32N7EZm8xNGqVyC52VkTiBmgGZ2fn15QlsgUx3MkAlyUA+CsDNnu3
+          T7TzjjfMIEhkmhXWSpXy5Cl1w1/gYXeWvpXs7FEis=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iesco.com.pk; s=default;
+        h=reply-to:date:from:to:subject:content-description
+          :content-transfer-encoding:mime-version:content-type;
+        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
+        b=d9etdZB+Wx8YZo7saODnjcJa/gr9RMKXCd1ndxJiYhy80DXQQjVZWKldXghJOzZiG
+          BYPlC5QpZwnR7OqKvQlI+CjTyc/LBWJ++p9yoetZI6C6qRLSylBR3DxXnaBnScJpZ
+          hajvlHlImcWH9Ap7BtB61eNvbdjWYw2bFK5TVep3U=
+Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
+   Wed, 23 Aug 2023 04:01:36 +0500
+Message-ID: <7B.28.10987.B0545E46@symantec4.comsats.net.pk>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] ALSA: ac97: Fix possible NULL dereference in
- snd_ac97_mixer
-To:     Su Hui <suhui@nfschina.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, maciej.szmigiero@oracle.com,
-        yangyingliang@huawei.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20230615021732.1972194-1-suhui@nfschina.com>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230615021732.1972194-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Re; Interest,
+To:     kernel-janitors@vger.kernel.org
+From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
+Date:   Tue, 22 Aug 2023 16:01:51 -0700
+Reply-To: chnyne@gmail.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVyyUKGW5fb9WmKwZwGUYutt6QdGD0+b5IL
+        YIzisklJzcksSy3St0vgyliy7gJLwW7mirb+RSwNjI+Zuhg5OSQETCR2v2hl72Lk4hAS2MMk
+        se/FaWYQh0VgNbPEhP6PUM5DZoln864zQZQ1M0rcO9zFCtLPK2AtMWPbfHYQm1lAT+LG1Cls
+        EHFBiZMzn7BAxLUlli18DTSJA8hWk/jaVQISFhYQk/g0bRk7SFhEQFliwgGwKWwC+hIrvjYz
+        gtgsAqoS0168A5soJCAlsfHKerYJjPyzkCybhWTZLCTLZiEsW8DIsopRorgyNxEYaMkmesn5
+        ucWJJcV6eaklegXZmxiBQXi6RlNuB+PSS4mHGAU4GJV4eH+ue5IixJpYBtR1iFGCg1lJhFf6
+        +8MUId6UxMqq1KL8+KLSnNTiQ4zSHCxK4ry2Qs+ShQTSE0tSs1NTC1KLYLJMHJxSDYzb78ub
+        LFBY+ufRw+hNq6d/mM2x73eDv/0cX53f2SeKJnw5EVdnr5C6eHGg4bKrHyPCVaOO7a4vXBl3
+        wS139nMD9aRfl/Yo6/At8y6UDmHydtM89fhl1Ytz604c49l4NXpptbfCrXVGpsYrSmbff26c
+        XJlRIOEs83e204HsrsnqfhNn7XX59UdCiaU4I9FQi7moOBEAumNirD4CAAA=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/06/2023 à 04:17, Su Hui a écrit :
-> smatch error:
-> sound/pci/ac97/ac97_codec.c:2354 snd_ac97_mixer() error:
-> we previously assumed 'rac97' could be null (see line 2072)
-> 
-> remove redundant assignment, return error if rac97 is NULL.
+Re; Interest,
 
-Hi,
+I am interested in discussing the Investment proposal as I explained
+in my previous mail. May you let me know your interest and the
+possibility of a cooperation aimed for mutual interest.
 
-why is the assigment redundant?
+Looking forward to your mail for further discussion.
 
-Should an error occur, the 'struct snd_ac97 **' parameter was garanted 
-to be set to NULL, now it is left as-is.
+Regards
 
-I've checked all callers and apparently this is fine because the probes 
-fail if snd_ac97_mixer() returns an error.
-
-However, some drivers with several mixers seem to rely on the value 
-being NULL in case of error.
-
-See [1] as an example of such code that forces a NULL value on its own, 
-to be sure.
-
-So, wouldn't it be safer to leave a "*rac97 = NULL;" just after the 
-added sanity check?
-
-
-CJ
-
-
-[1]: 
-https://elixir.bootlin.com/linux/v6.5-rc7/source/sound/pci/atiixp.c#L1438
-
-> 
-> Fixes: da3cec35dd3c ("ALSA: Kill snd_assert() in sound/pci/*")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->   sound/pci/ac97/ac97_codec.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
-> index 9afc5906d662..80a65b8ad7b9 100644
-> --- a/sound/pci/ac97/ac97_codec.c
-> +++ b/sound/pci/ac97/ac97_codec.c
-> @@ -2069,8 +2069,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
->   		.dev_disconnect =	snd_ac97_dev_disconnect,
->   	};
->   
-> -	if (rac97)
-> -		*rac97 = NULL;
-> +	if (!rac97)
-> +		return -EINVAL;
->   	if (snd_BUG_ON(!bus || !template))
->   		return -EINVAL;
->   	if (snd_BUG_ON(template->num >= 4))
+------
+Chen Yun - Chairman of CREC
+China Railway Engineering Corporation - CRECG
+China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
+China
 
