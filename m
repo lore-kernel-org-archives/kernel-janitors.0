@@ -2,110 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93941EE4996
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Aug 2023 11:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C92EEE49AB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Aug 2023 20:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234836AbjHVLcP (ORCPT
+        id S230442AbjHVUPd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Aug 2023 07:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
+        Tue, 22 Aug 2023 16:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234817AbjHVLcO (ORCPT
+        with ESMTP id S230424AbjHVUPc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Aug 2023 07:32:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C682FE51;
-        Tue, 22 Aug 2023 04:31:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9600265248;
-        Tue, 22 Aug 2023 11:31:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42FF1C433CB;
-        Tue, 22 Aug 2023 11:31:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692703889;
-        bh=ZkE3D0phJi9dVWs1lWeliBNMdHqs4kAWwch6/Y7lEhY=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=EOgdSs5bt6FxYTXUYUEr+R8JtQP1FkD3hnomCWRWNmJz/X/N02sNuvqQuh0eiSCiF
-         C5XTT8w62Jh4NlPZQlBTMwud8R42YFKpEK46ju8S4g9ZvUyNCmza6OOACiSniinjm9
-         3FD2pW1UONGrtV1FhxiKuwzmDywPgeY8hp5DTCoZmDDhRH6Z9fFobZQ+8+Bu/Ti7uc
-         +CjY/2Ow5OPdunWlnc2JInbL9P7lJhiwmklG9t1b2mgUQI9qG+l1g15oswtN/L3aG8
-         Q3aYB+SZ06XNFnKBs3At2xP+qgsFg80cwFVtpJ77C2DYuBImjwnICeVB1ZkVGpa4Jv
-         jeYe8DuZkYe/w==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 22 Aug 2023 14:31:26 +0300
-Message-Id: <CUZ1G69D6DVR.10SDRFENHCCAZ@suppilovahvero>
-Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH] tpm_crb: Fix an error handling path in crb_acpi_add()
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Peter Huewe" <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        "Matthew Garrett" <mjg59@srcf.ucam.org>
-X-Mailer: aerc 0.14.0
-References: <a820eaf8c77ca4fde50fc170f535de4b28c82a2d.1677322706.git.christophe.jaillet@wanadoo.fr> <c2263ee0-2133-6f89-3f16-2ae1129a20df@wanadoo.fr> <CUZ1DUXBEAWM.6JDTPLT9I7NM@suppilovahvero>
-In-Reply-To: <CUZ1DUXBEAWM.6JDTPLT9I7NM@suppilovahvero>
+        Tue, 22 Aug 2023 16:15:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E0D010B
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Aug 2023 13:15:30 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id YXfBq73trxiGYYXfBq9Cf4; Tue, 22 Aug 2023 22:07:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1692734868;
+        bh=BqANjHXG+mgSGlru4/suuPmjj23Toc5pJJs87UEpxT0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=W0x5NouoJPBOhf9VoR9+F8c8OqnbcQmsGnlc2eGqGkyTt9anehbOPWj/9KiGY4jwI
+         KumpSsCzE3WFtSn/xAYnna7HmkNbNWZF9o66ZEDarOuJMvmk26ij8G5w+ER/dB2YwV
+         cDa2WNLukRL9myM8zXzjKpb0r/7JvjxPEe58UaYWvwJ10r1Ta4rWpa12MEFd3aitXL
+         sENTMzMIbBulm6tDKhqVV530G/5dsOseyg2bcLIhX266XVVkpoGQiCmCBPbWjjguW6
+         y+djQaZlZrcYfcZfjenyaQHd40TGGHUOFTNxKde46Foa+J65Pmk3A7nb7gCQ6cOj1c
+         XYkRR9FXGP9Fg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 22 Aug 2023 22:07:47 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <49247018-20fe-8a04-75f2-dad4524aa3a3@wanadoo.fr>
+Date:   Tue, 22 Aug 2023 22:07:40 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] ALSA: ac97: Fix possible NULL dereference in
+ snd_ac97_mixer
+To:     Su Hui <suhui@nfschina.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, maciej.szmigiero@oracle.com,
+        yangyingliang@huawei.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20230615021732.1972194-1-suhui@nfschina.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230615021732.1972194-1-suhui@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-rn Tue Aug 22, 2023 at 2:28 PM EEST, Jarkko Sakkinen wrote:
-> On Sun Aug 20, 2023 at 9:21 AM EEST, Christophe JAILLET wrote:
-> > Le 25/02/2023 =C3=A0 11:58, Christophe JAILLET a =C3=A9crit=C2=A0:
-> > > Some error paths don't call acpi_put_table() before returning.
-> > > Branch to the correct place instead of doing some direct return.
-> > >=20
-> > > Fixes: 4d2732882703 ("tpm_crb: Add support for CRB devices based on P=
-luton")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > >   drivers/char/tpm/tpm_crb.c | 5 +++--
-> > >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > > index 99698ee1a744..f7068bd8b3d0 100644
-> > > --- a/drivers/char/tpm/tpm_crb.c
-> > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > @@ -771,12 +771,13 @@ static int crb_acpi_add(struct acpi_device *dev=
-ice)
-> > >   				FW_BUG "TPM2 ACPI table has wrong size %u for start method type=
- %d\n",
-> > >   				buf->header.length,
-> > >   				ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON);
-> > > -			return -EINVAL;
-> > > +			rc =3D -EINVAL;
-> > > +			goto out;
-> > >   		}
-> > >   		crb_pluton =3D ACPI_ADD_PTR(struct tpm2_crb_pluton, buf, sizeof(*=
-buf));
-> > >   		rc =3D crb_map_pluton(dev, priv, buf, crb_pluton);
-> > >   		if (rc)
-> > > -			return rc;
-> > > +			goto out;
-> > >   	}
-> > >  =20
-> > >   	priv->sm =3D sm;
-> >
-> > Hi,
-> >
-> > polite reminder.
-> >
-> > While re-looking at it, the 3rd parameter of crb_map_pluton() (i.e. buf=
-)=20
-> > looks unused and could be removed if it makes sense to you.
->
-> This AFAIK went to Linux v6.2 already.
+Le 15/06/2023 à 04:17, Su Hui a écrit :
+> smatch error:
+> sound/pci/ac97/ac97_codec.c:2354 snd_ac97_mixer() error:
+> we previously assumed 'rac97' could be null (see line 2072)
+> 
+> remove redundant assignment, return error if rac97 is NULL.
 
-Sorry I overlooked! There was bunch of patches with almost similar name,
-so I must have overlooked also back then. Now it is applied.
+Hi,
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+why is the assigment redundant?
 
-BR, Jarkko
+Should an error occur, the 'struct snd_ac97 **' parameter was garanted 
+to be set to NULL, now it is left as-is.
+
+I've checked all callers and apparently this is fine because the probes 
+fail if snd_ac97_mixer() returns an error.
+
+However, some drivers with several mixers seem to rely on the value 
+being NULL in case of error.
+
+See [1] as an example of such code that forces a NULL value on its own, 
+to be sure.
+
+So, wouldn't it be safer to leave a "*rac97 = NULL;" just after the 
+added sanity check?
+
+
+CJ
+
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.5-rc7/source/sound/pci/atiixp.c#L1438
+
+> 
+> Fixes: da3cec35dd3c ("ALSA: Kill snd_assert() in sound/pci/*")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>   sound/pci/ac97/ac97_codec.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
+> index 9afc5906d662..80a65b8ad7b9 100644
+> --- a/sound/pci/ac97/ac97_codec.c
+> +++ b/sound/pci/ac97/ac97_codec.c
+> @@ -2069,8 +2069,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+>   		.dev_disconnect =	snd_ac97_dev_disconnect,
+>   	};
+>   
+> -	if (rac97)
+> -		*rac97 = NULL;
+> +	if (!rac97)
+> +		return -EINVAL;
+>   	if (snd_BUG_ON(!bus || !template))
+>   		return -EINVAL;
+>   	if (snd_BUG_ON(template->num >= 4))
 
