@@ -2,80 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DCAEE49AF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Aug 2023 01:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B669AEE49AF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Aug 2023 01:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231962AbjHWBOt (ORCPT
+        id S232008AbjHWBZY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Aug 2023 21:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
+        Tue, 22 Aug 2023 21:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231453AbjHWBOs (ORCPT
+        with ESMTP id S232006AbjHWBZX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Aug 2023 21:14:48 -0400
-X-Greylist: delayed 903 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:14:35 PDT
-Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A917AE4D
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Aug 2023 18:14:35 -0700 (PDT)
-X-AuditID: cb7c291e-055ff70000002aeb-1a-64e5450b901d
-Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 7B.28.10987.B0545E46; Wed, 23 Aug 2023 04:30:19 +0500 (PKT)
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
-        d=iesco.com.pk; s=default;
-        h=received:content-type:mime-version:content-transfer-encoding
-          :content-description:subject:to:from:date:reply-to;
-        b=S2rvOuP5m0JlAHMdb5tJOaSQOwyZasAMfO8rT7FuQ+vxEuK47LhuZ4AB2RKCro3K6
-          Qyd8Jo4w4xld32N7EZm8xNGqVyC52VkTiBmgGZ2fn15QlsgUx3MkAlyUA+CsDNnu3
-          T7TzjjfMIEhkmhXWSpXy5Cl1w1/gYXeWvpXs7FEis=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iesco.com.pk; s=default;
-        h=reply-to:date:from:to:subject:content-description
-          :content-transfer-encoding:mime-version:content-type;
-        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
-        b=d9etdZB+Wx8YZo7saODnjcJa/gr9RMKXCd1ndxJiYhy80DXQQjVZWKldXghJOzZiG
-          BYPlC5QpZwnR7OqKvQlI+CjTyc/LBWJ++p9yoetZI6C6qRLSylBR3DxXnaBnScJpZ
-          hajvlHlImcWH9Ap7BtB61eNvbdjWYw2bFK5TVep3U=
-Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
-   Wed, 23 Aug 2023 04:01:36 +0500
-Message-ID: <7B.28.10987.B0545E46@symantec4.comsats.net.pk>
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 22 Aug 2023 21:25:23 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 5873AE40;
+        Tue, 22 Aug 2023 18:25:21 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 1ED8E6019B71A;
+        Wed, 23 Aug 2023 09:24:42 +0800 (CST)
+Message-ID: <c2327680-b03c-ca95-b286-12a2e4b2c241@nfschina.com>
+Date:   Wed, 23 Aug 2023 09:24:41 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Re; Interest,
-To:     kernel-janitors@vger.kernel.org
-From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
-Date:   Tue, 22 Aug 2023 16:01:51 -0700
-Reply-To: chnyne@gmail.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVyyUKGW5fb9WmKwZwGUYutt6QdGD0+b5IL
-        YIzisklJzcksSy3St0vgyliy7gJLwW7mirb+RSwNjI+Zuhg5OSQETCR2v2hl72Lk4hAS2MMk
-        se/FaWYQh0VgNbPEhP6PUM5DZoln864zQZQ1M0rcO9zFCtLPK2AtMWPbfHYQm1lAT+LG1Cls
-        EHFBiZMzn7BAxLUlli18DTSJA8hWk/jaVQISFhYQk/g0bRk7SFhEQFliwgGwKWwC+hIrvjYz
-        gtgsAqoS0168A5soJCAlsfHKerYJjPyzkCybhWTZLCTLZiEsW8DIsopRorgyNxEYaMkmesn5
-        ucWJJcV6eaklegXZmxiBQXi6RlNuB+PSS4mHGAU4GJV4eH+ue5IixJpYBtR1iFGCg1lJhFf6
-        +8MUId6UxMqq1KL8+KLSnNTiQ4zSHCxK4ry2Qs+ShQTSE0tSs1NTC1KLYLJMHJxSDYzb78ub
-        LFBY+ufRw+hNq6d/mM2x73eDv/0cX53f2SeKJnw5EVdnr5C6eHGg4bKrHyPCVaOO7a4vXBl3
-        wS139nMD9aRfl/Yo6/At8y6UDmHydtM89fhl1Ytz604c49l4NXpptbfCrXVGpsYrSmbff26c
-        XJlRIOEs83e204HsrsnqfhNn7XX59UdCiaU4I9FQi7moOBEAumNirD4CAAA=
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] ALSA: ac97: Fix possible NULL dereference in
+ snd_ac97_mixer
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, maciej.szmigiero@oracle.com,
+        yangyingliang@huawei.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <49247018-20fe-8a04-75f2-dad4524aa3a3@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Re; Interest,
+On 2023/8/23 04:07, Christophe JAILLET wrote:
+> Le 15/06/2023 à 04:17, Su Hui a écrit :
+>> smatch error:
+>> sound/pci/ac97/ac97_codec.c:2354 snd_ac97_mixer() error:
+>> we previously assumed 'rac97' could be null (see line 2072)
+>>
+>> remove redundant assignment, return error if rac97 is NULL.
+>
+> Hi,
+>
+> why is the assigment redundant?
+>
+> Should an error occur, the 'struct snd_ac97 **' parameter was garanted 
+> to be set to NULL, now it is left as-is.
+>
+> I've checked all callers and apparently this is fine because the 
+> probes fail if snd_ac97_mixer() returns an error.
+>
+> However, some drivers with several mixers seem to rely on the value 
+> being NULL in case of error.
+>
+> See [1] as an example of such code that forces a NULL value on its 
+> own, to be sure.
+>
+> So, wouldn't it be safer to leave a "*rac97 = NULL;" just after the 
+> added sanity check?
+>
+Hi,
 
-I am interested in discussing the Investment proposal as I explained
-in my previous mail. May you let me know your interest and the
-possibility of a cooperation aimed for mutual interest.
+Really thanks for pointing this mistake.
 
-Looking forward to your mail for further discussion.
+this assignment is necessary and removing it may cause some problem.
 
-Regards
+So sorry for my mistake, I will send a patch to fix it right now.
 
-------
-Chen Yun - Chairman of CREC
-China Railway Engineering Corporation - CRECG
-China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
-China
+Su Hui
 
+>
+> CJ
+>
+>
+> [1]: 
+> https://elixir.bootlin.com/linux/v6.5-rc7/source/sound/pci/atiixp.c#L1438
+>
+>>
+>> Fixes: da3cec35dd3c ("ALSA: Kill snd_assert() in sound/pci/*")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   sound/pci/ac97/ac97_codec.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
+>> index 9afc5906d662..80a65b8ad7b9 100644
+>> --- a/sound/pci/ac97/ac97_codec.c
+>> +++ b/sound/pci/ac97/ac97_codec.c
+>> @@ -2069,8 +2069,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, 
+>> struct snd_ac97_template *template,
+>>           .dev_disconnect =    snd_ac97_dev_disconnect,
+>>       };
+>>   -    if (rac97)
+>> -        *rac97 = NULL;
+>> +    if (!rac97)
+>> +        return -EINVAL;
+>>       if (snd_BUG_ON(!bus || !template))
+>>           return -EINVAL;
+>>       if (snd_BUG_ON(template->num >= 4))
+>
