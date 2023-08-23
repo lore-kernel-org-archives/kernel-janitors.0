@@ -2,80 +2,143 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D665EE4993
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Aug 2023 11:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A09EE49A3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Aug 2023 14:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234352AbjHWLJZ (ORCPT
+        id S236564AbjHWOhz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Aug 2023 07:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53730 "EHLO
+        Wed, 23 Aug 2023 10:37:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234347AbjHWLJY (ORCPT
+        with ESMTP id S231497AbjHWOhz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Aug 2023 07:09:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA3C010D0;
-        Wed, 23 Aug 2023 04:09:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Wed, 23 Aug 2023 10:37:55 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C38171A;
+        Wed, 23 Aug 2023 07:37:22 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39E026470F;
-        Wed, 23 Aug 2023 11:09:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED48C433C7;
-        Wed, 23 Aug 2023 11:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692788946;
-        bh=xlokbwy5AnReUi5HAX8ojrTBAr8hRcsPhhw7S8VCoqE=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=CVRHHdTAVKNHcZvmerFqH6NkB/pjBosn6RcR5+6Ur8WNSRvNow5MPw8d+AM9YZ76m
-         ISpl+L7IYYn8ILcK6bGKX1y9Cg23vZ6QVzDOHV2ds2Jgd9v82JRoOVHlUizSAn59l1
-         t4l43nwFepQBxtu1QEWd3RytmYMEDPDpb8CCvzzeugQgigQFDzBnptFsxg1qmMw5MG
-         +JEJD+9b6yGPDZftorJgNSoT420uj6DmF/yYusG7QJKIDVdkNflx7/WXDVfY42EJkb
-         BvRktk3Va3y1LrHL9X7Y/1sNoohHfv/nNPZl+7U9oqDXGCCe+GpUE+/3U9yuXIIVwh
-         uFI79aMkJheuw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH net-next v2 1/9] wifi: rsi: rsi_91x_coex: Remove
- unnecessary
- (void*) conversions
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20230803073440.3666204-1-yunchuan@nfschina.com>
-References: <20230803073440.3666204-1-yunchuan@nfschina.com>
-To:     Wu Yunchuan <yunchuan@nfschina.com>
-Cc:     yuancan@huawei.com, simon.horman@corigine.com,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Wu Yunchuan <yunchuan@nfschina.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <169278894246.1133515.6568305086508315511.kvalo@kernel.org>
-Date:   Wed, 23 Aug 2023 11:09:04 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C39782089E;
+        Wed, 23 Aug 2023 14:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1692801439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7YQmfngXtmZejVEeBJjUH8MBFQJSfsmQsxJxZLFJgWw=;
+        b=zo4tA3JAAexJz3fT1AyEABYRwYCbQ5KAOb+yc83T55CroziOfpfC02gy1uzagko8UORMai
+        VDY2uncVQBC87lg5rACSXPq2wq2iI/uK8iyJfkl+denuIyCfN3/4odX6vy8d7RCKAnYU+Y
+        NlBnvppN04Yn0PYX1o8ffh4jecK9OlU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1692801439;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7YQmfngXtmZejVEeBJjUH8MBFQJSfsmQsxJxZLFJgWw=;
+        b=l5Qvd95Mbt3cxcIVQ6AfKXoApEomKVI3bTLRFUU6k9FLzNmZW2vvPgyKr0v87XTMCMQ/C8
+        rMKW2Hs6UcAsvaAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AD37C1351F;
+        Wed, 23 Aug 2023 14:37:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id FeGvKZ8Z5mSsEgAAMHmgww
+        (envelope-from <tiwai@suse.de>); Wed, 23 Aug 2023 14:37:19 +0000
+Date:   Wed, 23 Aug 2023 16:37:19 +0200
+Message-ID: <878ra1hlk0.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Su Hui <suhui@nfschina.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        maciej.szmigiero@oracle.com, yangyingliang@huawei.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: ac97: Fix possible NULL dereference in snd_ac97_mixer
+In-Reply-To: <49247018-20fe-8a04-75f2-dad4524aa3a3@wanadoo.fr>
+References: <20230615021732.1972194-1-suhui@nfschina.com>
+        <49247018-20fe-8a04-75f2-dad4524aa3a3@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Wu Yunchuan <yunchuan@nfschina.com> wrote:
-
-> No need cast (void*) to (struct rsi_coex_ctrl_block *) or
-> (struct rsi_common *).
+On Tue, 22 Aug 2023 22:07:40 +0200,
+Christophe JAILLET wrote:
 > 
-> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+> Le 15/06/2023 à 04:17, Su Hui a écrit :
+> > smatch error:
+> > sound/pci/ac97/ac97_codec.c:2354 snd_ac97_mixer() error:
+> > we previously assumed 'rac97' could be null (see line 2072)
+> > 
+> > remove redundant assignment, return error if rac97 is NULL.
+> 
+> Hi,
+> 
+> why is the assigment redundant?
 
-9 patches applied to wireless-next.git, thanks.
+It's misleading, yeah.  Basically all callers are with non-NULL, hence
+we took rather make it mandatory.  Maybe it should have been with
+WARN_ON() to catch the NULL argument for an out-of-tree stuff. 
 
-5f48e91624b3 wifi: rsi: rsi_91x_coex: Remove unnecessary (void*) conversions
-148924e537df wifi: rsi: rsi_91x_debugfs: Remove unnecessary (void*) conversions
-52424e0c49d6 wifi: rsi: rsi_91x_hal: Remove unnecessary conversions
-6d5d2dbd00bf wifi: rsi: rsi_91x_mac80211: Remove unnecessary conversions
-db2be1a01fc5 wifi: rsi: rsi_91x_main: Remove unnecessary (void*) conversions
-f9bf6e729f4e wifi: rsi: rsi_91x_sdio: Remove unnecessary (void*) conversions
-361beddbfb7c wifi: rsi: rsi_91x_sdio_ops: Remove unnecessary (void*) conversions
-f543235c3948 wifi: rsi: rsi_91x_usb: Remove unnecessary (void*) conversions
-7d8473c799be wifi: rsi: rsi_91x_usb_ops: Remove unnecessary (void*) conversions
+> Should an error occur, the 'struct snd_ac97 **' parameter was garanted
+> to be set to NULL, now it is left as-is.
+> 
+> I've checked all callers and apparently this is fine because the
+> probes fail if snd_ac97_mixer() returns an error.
+> 
+> However, some drivers with several mixers seem to rely on the value
+> being NULL in case of error.
+> 
+> See [1] as an example of such code that forces a NULL value on its
+> own, to be sure.
+> 
+> So, wouldn't it be safer to leave a "*rac97 = NULL;" just after the
+> added sanity check?
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20230803073440.3666204-1-yunchuan@nfschina.com/
+Yes, we need the NULL initialization.
+Care to submit an additional fix patch?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
+thanks,
+
+Takashi
+
+> 
+> 
+> CJ
+> 
+> 
+> [1]:
+> https://elixir.bootlin.com/linux/v6.5-rc7/source/sound/pci/atiixp.c#L1438
+> 
+> > 
+> > Fixes: da3cec35dd3c ("ALSA: Kill snd_assert() in sound/pci/*")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > ---
+> >   sound/pci/ac97/ac97_codec.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
+> > index 9afc5906d662..80a65b8ad7b9 100644
+> > --- a/sound/pci/ac97/ac97_codec.c
+> > +++ b/sound/pci/ac97/ac97_codec.c
+> > @@ -2069,8 +2069,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+> >   		.dev_disconnect =	snd_ac97_dev_disconnect,
+> >   	};
+> >   -	if (rac97)
+> > -		*rac97 = NULL;
+> > +	if (!rac97)
+> > +		return -EINVAL;
+> >   	if (snd_BUG_ON(!bus || !template))
+> >   		return -EINVAL;
+> >   	if (snd_BUG_ON(template->num >= 4))
+> 
