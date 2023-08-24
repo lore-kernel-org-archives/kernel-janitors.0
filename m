@@ -2,117 +2,228 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51980C27C40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Aug 2023 09:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79569C27C40
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Aug 2023 14:38:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235850AbjHXJKb (ORCPT
+        id S238933AbjHXOiD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Aug 2023 05:10:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48120 "EHLO
+        Thu, 24 Aug 2023 10:38:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235417AbjHXJK0 (ORCPT
+        with ESMTP id S241799AbjHXOh7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Aug 2023 05:10:26 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C83B1987
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Aug 2023 02:10:24 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fef4b063a7so31691395e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Aug 2023 02:10:24 -0700 (PDT)
+        Thu, 24 Aug 2023 10:37:59 -0400
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1E31BDF;
+        Thu, 24 Aug 2023 07:37:52 -0700 (PDT)
+Received: by mail-oo1-xc31.google.com with SMTP id 006d021491bc7-570e005c480so2333640eaf.0;
+        Thu, 24 Aug 2023 07:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692868222; x=1693473022;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mKd6Vvyg5ivmrlFMRaOzprAQ+7LMDgFGorbXZwvtdBc=;
-        b=UtOf53zCWwvSmtWKwUsfXtI9nVcdRIpJQj3Q3GOTDLRh8jJ/HUIJJ5wAtouFJA3JSA
-         OgzYvO5ojI2ZIjJauqTkqFnNUJtA661EBWnihPUl8Wll4fw7prW0LQu5m6RZT39R2+/h
-         43JAGSrjfwdoAcyc0kfnj4/1F40XxcUb/FLRxDVAdKexQ+qxqJmBvXm0ZKXHjujlUzvX
-         gt9Zv+mhzYZ5nAEsq8IflloSygPrq2O13ARPNjPbvFVMU1lt3q8vY/z0lpPg3oRIfsTk
-         ENpeT24SFS3SeRHFpDRU5H3IpOk7/5i2cHPwz7pnZv5KkTyLfHeSlL8lKvIZurFj9Apd
-         F+zg==
+        d=gmail.com; s=20221208; t=1692887871; x=1693492671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6o2ZOzS0JMq71T3BvQHWRtn6n0Naj278KFpjqiFiWXw=;
+        b=AZFFwro5yLZ0vEPT544VBqd0ppSjUxe2mNbK5cpWxbTOeyYBpLhntjoPgUNompTmp0
+         FMXL+bO9Up1X9ybnHi9iA6jcSlkcdMB/aLVRb1w7nH5MbMTfXJwcUqPPzP8sVizkMyZE
+         FxgTNHnbKzIxG4F7G48iBW8CrKqqrUBB9hOHtuVtsgTHgglLSeoze7Zl7C9dEYRLoFSv
+         ivLsS1pSKnejzriaxy05wT8OZmW9dTgJcduBlf0XrfYLRXWnjQAmrP4tO4RN5HWSNu7p
+         oIDU3L0+3kXsUcm1rhkllqtGRT7/O9nukO1mZdbgAxq5wUvGPdq7JJUuLRriVxT27XNb
+         hM0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692868222; x=1693473022;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mKd6Vvyg5ivmrlFMRaOzprAQ+7LMDgFGorbXZwvtdBc=;
-        b=bSDH5/xCek4GF5hPWvT54UxYNFpE3b/RfEvPnfVjBZIrp3HbKB1ic3/bzUyYd9Cl0E
-         vQ4bzpWDs/q56mJpZDBU5ihKrzhPF/NF2aIc+2p1D7X+ew5zmYFHMPJoz3RSeiPvZ7UG
-         JrBPgHfDJUDHRPwvemNkneIP93dexWgZBxqqaOpQEweQ2+YPEBgnGWaTE4gOcu/dgqcH
-         Yk5bVblviR+NjsgXTjr+jyblzs3HUEEupV4/NEkq2jsbOPwr7MxDQuQDATnqmQv7F6Vs
-         vQX2Sq+xBH/W3vFuqFan8ir1Bff5VK0yfJyOZfSOBRqupNvAEMD/mYD2bYR5X46ZB/Gp
-         xs6Q==
-X-Gm-Message-State: AOJu0YxShQO15icRngEXFSwXvyEXrV9SroEtSO0AkwCc7b4ynSWmWAWe
-        npm5JA2FApv0YHqcpoghI60yoA==
-X-Google-Smtp-Source: AGHT+IEFtIP2c9EMTFKuYT/daW8nU0vsF89E71wEi0EWILazOM7HDO+P+pVno5HHzC9MfGzx4+Zfxg==
-X-Received: by 2002:adf:d0c4:0:b0:319:785a:fce5 with SMTP id z4-20020adfd0c4000000b00319785afce5mr10365544wrh.38.1692868222588;
-        Thu, 24 Aug 2023 02:10:22 -0700 (PDT)
-Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id x9-20020a5d4909000000b0031c5e9c2ed7sm8765038wrq.92.2023.08.24.02.10.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 02:10:22 -0700 (PDT)
-Message-ID: <bacbdd5e-0547-213e-407e-eabf4e84141d@linaro.org>
-Date:   Thu, 24 Aug 2023 10:10:20 +0100
+        d=1e100.net; s=20221208; t=1692887871; x=1693492671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6o2ZOzS0JMq71T3BvQHWRtn6n0Naj278KFpjqiFiWXw=;
+        b=gAmJj27/x09UPY/UT8ABMCDwlt6usI6EEBU9TtK8FAS2DAoQ0dLooyL8emL5iE6jMf
+         5u1TxljCQogYeCTYA/Ch3VsLr7YeqZe+mJMrKty64ccgxzUSPOt5Hkdgrh/Th6RypgYs
+         VFGwdV5tO5PaiSUioPLrn5uf3aRrq0mZgod2HErYrGzpfA0006q2NaY6yv98L4dhoFvf
+         0EyG2w6Kc3xebo8vuSilWGR3itGs/wDQ+gcgv1xz/BZIaoxrqYuN1v/ohZnluL44AKue
+         QjXZ857IvDc8Qy0cHzpK2PBt8j018So/LwKUd97By16v7CuBk9BKA5TLQezAyXO/sBr6
+         cbuQ==
+X-Gm-Message-State: AOJu0YzPfjus73qq7xjtW1ODKzm/XZLCw4l36Yx12DTwc2GhRd7uZgzs
+        7GZQEaEQNm3HwhgjcuY+rCdCCWbYgD3FiKGbMAM=
+X-Google-Smtp-Source: AGHT+IHScBrnxmIPHIGRU83oJMjjbc1Dqi2WGE1vyd1r4mVoBR4fgCbsUq+gq25t3bEaXdL3OyfwmZFAHh0CctQI4eY=
+X-Received: by 2002:a4a:301e:0:b0:570:fdf2:41f0 with SMTP id
+ q30-20020a4a301e000000b00570fdf241f0mr2511525oof.1.1692887871297; Thu, 24 Aug
+ 2023 07:37:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
-Content-Language: en-US
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        dmitry.baryshkov@linaro.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Liao Chang <liaochang1@huawei.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, vegard.nossum@oracle.com
-References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1692524665.git.christophe.jaillet@wanadoo.fr>
+ <5d52550a-92a1-55e7-69ad-92f18330ff48@amd.com> <09943fe4-792f-e2b8-05d0-2c11f688b8bd@amd.com>
+ <05d2313c-1ff9-6c9e-727a-2364f5472325@amd.com>
+In-Reply-To: <05d2313c-1ff9-6c9e-727a-2364f5472325@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 24 Aug 2023 10:37:40 -0400
+Message-ID: <CADnq5_MCcFxXVWiAKJsaQ5esPCXnRtRTF0ES3r_OarMcNG96+w@mail.gmail.com>
+Subject: Re: [PATCH 0/4] drm/amdgpu: Explicitly add a flexible array at the
+ end of 'struct amdgpu_bo_list' and simplify amdgpu_bo_list_create()
+To:     "Somalapuram, Amaranath" <asomalap@amd.com>
+Cc:     Shashank Sharma <shashank.sharma@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Arunpravin.PaneerSelvam@amd.com,
+        "Prosyak, Vitaly" <Vitaly.Prosyak@amd.com>,
+        "Somalapuram, Amaranath" <Amaranath.Somalapuram@amd.com>,
+        Felix.Kuehling@amd.com, Xinhui.Pan@amd.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        daniel@ffwll.ch, alexander.deucher@amd.com, airlied@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 23/08/2023 20:42, Harshit Mogalapalli wrote:
-> devm_clk_bulk_get_all() can return zero when no clocks are obtained.
-> Passing zero to dev_err_probe() is a success which is incorrect.
-> 
-> Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> Only compile tested, found by static analysis with smatch.
-> 
-> https://lore.kernel.org/all/CAA8EJprTOjbOy7N5+8NiJaNNhK+_btdUUFcpHKPkMuCZj5umMA@mail.gmail.com/
-> ^^ I reported initially here, Dmitry suggested we need to fix it in a
-> different patch.
-> 
-> the Fixes commit used above pointed this bug, but the real fixes tag is this:
-> Fixes: e517526195de ("i2c: Add Qualcomm CCI I2C driver")
-> ---
->   drivers/i2c/busses/i2c-qcom-cci.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
-> index cf13abec05f1..414882c57d7f 100644
-> --- a/drivers/i2c/busses/i2c-qcom-cci.c
-> +++ b/drivers/i2c/busses/i2c-qcom-cci.c
-> @@ -588,8 +588,10 @@ static int cci_probe(struct platform_device *pdev)
->   	/* Clocks */
->   
->   	ret = devm_clk_bulk_get_all(dev, &cci->clocks);
-> -	if (ret < 1)
-> +	if (ret < 0)
->   		return dev_err_probe(dev, ret, "failed to get clocks\n");
-> +	else if (!ret)
-> +		return dev_err_probe(dev, -EINVAL, "not enough clocks in DT\n");
->   	cci->nclocks = ret;
->   
->   	/* Retrieve CCI clock rate */
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Tue, Aug 22, 2023 at 9:35=E2=80=AFAM Somalapuram, Amaranath <asomalap@am=
+d.com> wrote:
+>
+>
+> On 8/21/2023 6:30 PM, Shashank Sharma wrote:
+> > + Amar should be able to help.
+> >
+> > Amar,
+> >
+> > Can you please check this patch (series if required) with a few IGTs
+> > and probably with Xonotic as well ?
+> >
+> Tested patch series  with IGT and Xonoti,
+> 1st time I observed while launching  xonoti, some kernel WARNING. But
+> unable to reproduced it.
+> Attaching dmesg.
+
+This looks unrelated.  I think I saw a display patch that went out
+this week to fix this.  I've applied the patches.  We'll see how CI
+likes them as well.
+
+Thanks!
+
+Alex
+
+
+>
+> [  739.564460] ------------[ cut here ]------------
+> [  739.564466] amdgpu 0000:03:00.0:
+> drm_WARN_ON_ONCE(drm_drv_uses_atomic_modeset(dev))
+> [  739.564518] WARNING: CPU: 15 PID: 1072 at
+> drivers/gpu/drm/drm_vblank.c:728
+> drm_crtc_vblank_helper_get_vblank_timestamp_internal+0x375/0x3d0 [drm]
+> [  739.564593] Modules linked in: amdgpu snd_hda_codec_realtek
+> snd_hda_codec_generic ledtrig_audio snd_hda_codec_hdmi intel_rapl_msr
+> intel_rapl_common snd_hda_intel edac_mce_amd binfmt_misc
+> snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec iommu_v2 snd_hda_core
+> drm_buddy kvm_amd snd_hwdep gpu_sched nls_iso8859_1 snd_pcm
+> drm_suballoc_helper drm_ttm_helper kvm ttm snd_seq_midi
+> drm_display_helper snd_seq_midi_event snd_rawmidi cec rc_core snd_seq
+> crct10dif_pclmul ghash_clmulni_intel drm_kms_helper sha512_ssse3
+> aesni_intel snd_seq_device i2c_algo_bit crypto_simd snd_timer
+> snd_rn_pci_acp3x syscopyarea cryptd sysfillrect snd_acp_config
+> snd_soc_acpi joydev input_leds rapl wmi_bmof sysimgblt snd snd_pci_acp3x
+> ccp k10temp soundcore mac_hid amd_pmc sch_fq_codel msr parport_pc ppdev
+> lp drm parport ramoops reed_solomon pstore_blk pstore_zone efi_pstore
+> ip_tables x_tables autofs4 uas usb_storage hid_generic nvme usbhid hid
+> crc32_pclmul i2c_piix4 r8169 nvme_core ahci xhci_pci libahci realtek
+> xhci_pci_renesas video wmi gpio_amdpt
+> [  739.564703]  gpio_generic
+> [  739.564707] CPU: 15 PID: 1072 Comm: gnome-shell Not tainted 6.3.0-rc4+=
+ #5
+> [  739.564713] Hardware name: AMD Artic/Artic-RN, BIOS WAF2309N 03/07/202=
+2
+> [  739.564716] RIP:
+> 0010:drm_crtc_vblank_helper_get_vblank_timestamp_internal+0x375/0x3d0 [dr=
+m]
+> [  739.564779] Code: 4c 8b 67 50 4d 85 e4 75 03 4c 8b 27 e8 44 23 d9 d3
+> 48 c7 c1 58 7a 62 c0 4c 89 e2 48 c7 c7 74 a4 62 c0 48 89 c6 e8 cb 12 4c
+> d3 <0f> 0b eb 85 4c 8b 65 98 44 8b 5d 94 41 89 c5 4d 85 e4 74 05 4d 8b
+> [  739.564782] RSP: 0018:ffffbde6c172faf0 EFLAGS: 00010282
+> [  739.564787] RAX: 0000000000000000 RBX: ffffffffc0e89370 RCX:
+> 0000000000000000
+> [  739.564790] RDX: 0000000000000002 RSI: ffffffff950ca531 RDI:
+> 00000000ffffffff
+> [  739.564793] RBP: ffffbde6c172fb60 R08: 0000000000000000 R09:
+> 00000000ffffdfff
+> [  739.564795] R10: ffffbde6c172f958 R11: ffffffff95556ec8 R12:
+> ffff9d4881cd0820
+> [  739.564798] R13: 0000000000000000 R14: 0000000000000000 R15:
+> ffff9d4886b9b8a8
+> [  739.564800] FS:  00007fac3d72c5c0(0000) GS:ffff9d4da5fc0000(0000)
+> knlGS:0000000000000000
+> [  739.564804] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  739.564807] CR2: 000055e4351b4a38 CR3: 0000000122ad8000 CR4:
+> 0000000000350ee0
+> [  739.564810] Call Trace:
+> [  739.564813]  <TASK>
+> [  739.564817]  ? dma_resv_get_singleton+0xb7/0x130
+> [  739.564828] drm_crtc_vblank_helper_get_vblank_timestamp+0x20/0x30 [drm=
+]
+> [  739.564889]  drm_crtc_get_last_vbltimestamp+0x59/0x90 [drm]
+> [  739.564950]  drm_crtc_next_vblank_start+0x44/0x80 [drm]
+> [  739.565010]  drm_atomic_helper_wait_for_fences+0x87/0x1e0
+> [drm_kms_helper]
+> [  739.565045]  drm_atomic_helper_commit+0xa1/0x160 [drm_kms_helper]
+> [  739.565076]  drm_atomic_commit+0x9d/0xd0 [drm]
+> [  739.565172]  ? __pfx___drm_printfn_info+0x10/0x10 [drm]
+> [  739.565240]  drm_mode_atomic_ioctl+0xa0b/0xba0 [drm]
+> [  739.565306]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10 [drm]
+> [  739.565381]  drm_ioctl_kernel+0xbf/0x150 [drm]
+> [  739.565474]  drm_ioctl+0x29e/0x500 [drm]
+> [  739.565539]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10 [drm]
+> [  739.565606]  ? _raw_spin_unlock_irqrestore+0x2b/0x50
+> [  739.565614]  amdgpu_drm_ioctl+0x52/0x90 [amdgpu]
+> [  739.566064]  __x64_sys_ioctl+0x99/0xd0
+> [  739.566073]  do_syscall_64+0x3f/0x90
+> [  739.566079]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
+> [  739.566086] RIP: 0033:0x7fac40b1aaff
+> [  739.566091] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10
+> 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f
+> 05 <41> 89 c0 3d 00 f0 ff ff 77 1f 48 8b 44 24 18 64 48 2b 04 25 28 00
+> [  739.566094] RSP: 002b:00007ffc71f5c250 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000010
+> [  739.566099] RAX: ffffffffffffffda RBX: 00007ffc71f5c2f0 RCX:
+> 00007fac40b1aaff
+> [  739.566102] RDX: 00007ffc71f5c2f0 RSI: 00000000c03864bc RDI:
+> 0000000000000009
+> [  739.566104] RBP: 00000000c03864bc R08: 0000000000000010 R09:
+> 0000000000000010
+> [  739.566107] R10: 0000000000000007 R11: 0000000000000246 R12:
+> 000055e43609c5d0
+> [  739.566110] R13: 0000000000000009 R14: 000055e43488cac0 R15:
+> 000055e435f14ee0
+> [  739.566116]  </TASK>
+> [  739.566118] ---[ end trace 0000000000000000 ]---
+>
+> >
+> > Regards
+> >
+> > Shashank
+> >
+> > On 21/08/2023 13:03, Christian K=C3=B6nig wrote:
+> >> Am 20.08.23 um 11:51 schrieb Christophe JAILLET:
+> >>> This serie simplifies amdgpu_bo_list_create() and usage of the 'struc=
+t
+> >>> amdgpu_bo_list'.
+> >>
+> >> Oh, yes please. That's something I always wanted to cleanup as well.
+> >>
+> >>> It is compile tested only.
+> >>
+> >> That bothers me a bit. Arun, Vitaly, Shashank can anybody with time
+> >> run a quick test on this? Preferable the IGT tests, but this just
+> >> some game should probably do as well.
+> >>
+> >> Apart from that looks good to me,
+> >> Christian.
+> >>
+> >>>
+> >>> Christophe JAILLET (4):
+> >>>    drm/amdgpu: Explicitly add a flexible array at the end of 'struct
+> >>>      amdgpu_bo_list'
+> >>>    drm/amdgpu: Remove a redundant sanity check
+> >>>    drm/amdgpu: Remove amdgpu_bo_list_array_entry()
+> >>>    drm/amdgpu: Use kvzalloc() to simplify code
+> >>>
+> >>>   drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 15 ++-------------
+> >>>   drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.h | 18 ++++++------------
+> >>>   2 files changed, 8 insertions(+), 25 deletions(-)
+> >>>
+> >>
