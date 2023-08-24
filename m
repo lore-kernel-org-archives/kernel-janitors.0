@@ -2,72 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DA4C27C40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Aug 2023 16:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81686C6FA8F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Aug 2023 19:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242392AbjHXQLS (ORCPT
+        id S243158AbjHXTSk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Aug 2023 12:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40758 "EHLO
+        Thu, 24 Aug 2023 15:18:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242475AbjHXQLK (ORCPT
+        with ESMTP id S243181AbjHXTSd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Aug 2023 12:11:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446041995;
-        Thu, 24 Aug 2023 09:11:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B8CB864542;
-        Thu, 24 Aug 2023 16:11:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1453EC433C7;
-        Thu, 24 Aug 2023 16:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692893468;
-        bh=tZDgZ4F2s45swKCSwkXA7XjLqukt6/fIKBodiXl4Vu8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=huZej8CxQo/Q64nMHPiNi/0UkHmbHd2Jss/51fVdPPMJpOGLjyke62WGpMydGA8B8
-         TCwX0mzkqqXeWXqyLNMJGUNjJlgQOZtIi9OGDFHH9LWIh1jc11AcKzUr9VSpBu/g+n
-         essoU7utuuqkbFsnkgi17Q3vmu5LQE8GOo90kpFFRFMsWomLeZ//EF9WvP5L9X0e5U
-         jw7qi1iclij4UzY/lgm7bzTYc62V7fVy8yAtnRh05OIUM6MNSs6G0y744SppVxWTD6
-         wQPXXZ7ux+yvH8vSArujsLlv1oWZZRTmAaJkc7rzcAvctmfG78QE2l15M09zbMAFJz
-         7L3i8Ocou9Zhg==
-Date:   Thu, 24 Aug 2023 18:11:02 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dmitry.baryshkov@linaro.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Liao Chang <liaochang1@huawei.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
-        kernel-janitors@vger.kernel.org, error27@gmail.com,
-        vegard.nossum@oracle.com
-Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
-Message-ID: <20230824161102.vdzs25lqcmadlnkr@intel.intel>
-References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
+        Thu, 24 Aug 2023 15:18:33 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD45A1BE2;
+        Thu, 24 Aug 2023 12:18:31 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37OJEJ9u009509;
+        Thu, 24 Aug 2023 19:17:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=ie1xPRR4qBkUMu82YM5u8Hszy21ND7rb5N7h4LosZ3w=;
+ b=v/FwLPmha//ef1DvHp9NjK4HEv9WfLz61mK2SZon+H86+5y6Qazgr7YzRTtRoJJr2SZO
+ UNDWEwQa4av38dLLIYqhcsmoJ00vCjNRjBy2t0wamZt5L06a0zcTkjC94saHztCKvNBT
+ gdkFCCDx+E/p8USePUOo7uxX5elyj0k33kM3ugReRg9MT627VgkULXYOKG+l3ySj/ijm
+ UZrpsqZsD40xMbTqb/FXSqzqPakwrXTlGuaLdu1kwUKk6PFrXGoWsnGyTxb4slg8eDdi
+ kj3HelVx8+xNTve5WX6QWwDUphv29y5nqmfBxyZWWat5SEE84KeP7pmKDhWbK+UF6o9p GQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sn1ytvwwk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Aug 2023 19:17:34 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 37OHjGq9036111;
+        Thu, 24 Aug 2023 19:17:34 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3sn1ywcs3b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Aug 2023 19:17:34 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37OJEu7s015687;
+        Thu, 24 Aug 2023 19:17:33 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3sn1ywcs25-1;
+        Thu, 24 Aug 2023 19:17:33 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Weidong Wang <wangweidong.a@awinic.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, kernel test robot <lkp@intel.com>
+Subject: [PATCH next] ASoC: codecs: Fix error code in aw88261_i2c_probe()
+Date:   Thu, 24 Aug 2023 12:17:10 -0700
+Message-ID: <20230824191722.2701215-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-24_15,2023-08-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 phishscore=0 mlxlogscore=999 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308240165
+X-Proofpoint-ORIG-GUID: 8ZmfQOOK_gXxcNqu5Djc4-zMwMTqRWbY
+X-Proofpoint-GUID: 8ZmfQOOK_gXxcNqu5Djc4-zMwMTqRWbY
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Harshit,
+Passing zero to dev_err_probe is a success which is incorrect when
+i2c_check_functionality() fails.
 
-On Wed, Aug 23, 2023 at 12:42:02PM -0700, Harshit Mogalapalli wrote:
-> devm_clk_bulk_get_all() can return zero when no clocks are obtained.
-> Passing zero to dev_err_probe() is a success which is incorrect.
-> 
-> Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Fix this by passing -ENXIO instead of zero to dev_err_probe().
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
+Fixes: 028a2ae25691 ("ASoC: codecs: Add aw88261 amplifier driver")
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <error27@gmail.com>
+Closes: https://lore.kernel.org/r/202308150315.CvOTIOKm-lkp@intel.com/
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is only compile tested.
+---
+ sound/soc/codecs/aw88261.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andi
+diff --git a/sound/soc/codecs/aw88261.c b/sound/soc/codecs/aw88261.c
+index 6e2266b71386..a697b5006b45 100644
+--- a/sound/soc/codecs/aw88261.c
++++ b/sound/soc/codecs/aw88261.c
+@@ -1245,7 +1245,7 @@ static int aw88261_i2c_probe(struct i2c_client *i2c)
+ 
+ 	ret = i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C);
+ 	if (!ret)
+-		return dev_err_probe(&i2c->dev, ret, "check_functionality failed");
++		return dev_err_probe(&i2c->dev, -ENXIO, "check_functionality failed");
+ 
+ 	aw88261 = devm_kzalloc(&i2c->dev, sizeof(*aw88261), GFP_KERNEL);
+ 	if (!aw88261)
+-- 
+2.39.3
+
