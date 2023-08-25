@@ -2,88 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34670C71133
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 08:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD62C3DA6F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 12:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242940AbjHYInO (ORCPT
+        id S238603AbjHYMBN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 04:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60260 "EHLO
+        Fri, 25 Aug 2023 08:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243926AbjHYInA (ORCPT
+        with ESMTP id S239548AbjHYMAr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 04:43:00 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A512688
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Aug 2023 01:42:26 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-d77f614243aso672292276.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Aug 2023 01:42:26 -0700 (PDT)
+        Fri, 25 Aug 2023 08:00:47 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19058198E;
+        Fri, 25 Aug 2023 05:00:45 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99bf8e5ab39so101570766b.2;
+        Fri, 25 Aug 2023 05:00:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692952936; x=1693557736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1692964843; x=1693569643;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=paPaNBgdy8fC81NTESXp1GcybAQpiRbyhR1Y6LYNTlA=;
-        b=UEwtWD8cjlTAVSHsFw5Zp4/mr0/l3+aZwHQuhmEFr7b6685U7R7GnTDdnV21BNSKlT
-         EhkZn2ver6+pmnGz4oy7F9+4/nibRpgQZEx9oK3Vvczbf3oCDPx2mKTLDt22bak8ZIFj
-         4WYMa6BeMkgdZNWcONmE4Vdaz4Hhl60K0Z0J6wQul4rzgCR5LJ7mq/F2mXP9WHWWYmOl
-         2Wzd9iha3q/8dnndQN0TPTkscWnfPYCQiR2GM8f5TbfM6U9Q+wVE+rhwclLNVEn9gpmN
-         MXkRNgPlTm34skRZJ2YhfjIcBTgnhmKlvoaXS59Fb5v+6ua/FqwqqJcEdhVj9uCywD9n
-         ya7g==
+        bh=iEKttxCzK+Mm67M/OBwLV0O7SaBvRkymMovm4HH+Y/A=;
+        b=UT5aEFvLRj5zZAYtUtNheAbMhi5dWM9FGy5ss/gCVYufeVSCg5L3ktpb8BtDdRLdkw
+         7Hz64ZFfEGBZ6FLl3sAR2YXGH/hbZJ+pXIDtLRlEd15liC8q0QC+0PqEgbC34XhNj57p
+         un1antFnLT6vdhiegdhac8/Phwf7GSxRDTYEutyZOtVi28lubv1cy2hKDegTXxjnO7yF
+         +mM/liT7wUkRKws2+8cuPemu3wqEErveRXWTtWLY3lzPDl6041+aSRs04xuBt+BrnoJA
+         sa/o3rRhS7D3dUBDQeU/527Nct16LcaPJ6ZraBFO3WuVl7Z5t9eCP/IY5r2ZU6x2vJcD
+         GO0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692952936; x=1693557736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1692964843; x=1693569643;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=paPaNBgdy8fC81NTESXp1GcybAQpiRbyhR1Y6LYNTlA=;
-        b=aYZ3cypB6wyyhMHl+RbrD4VlVSoTwoa2LyvXVXtLqS3zW2QCCnhBEFUkiVcBl5Rjjp
-         0nFmdvLiZuhZd4YoIkXShBc0LZ5pKNLCLbKIcPlvrzn2R+jjytEp8t0xr2Ek3mVlT++9
-         VNRXLfWGHZckK7+Teros6oHl8JHselTDJ35DLwwJg1fY3PDPSGCNsoTateQ0/chAqo2J
-         QxewrgoZYPLndFDPz5/8b2eVGjAewu5cDFV8YTtFZn6IB4jkqc6QUtDmwyvfGI0y591X
-         KzGmIxTV+qzLZii8A6khY25pE6QFMP/YoQcD54Lvf4FTWd0SQU1I8VXWkmcFH4+Kq/4T
-         g90Q==
-X-Gm-Message-State: AOJu0YzSwsUYQCjUs1+hwCdWxmSe/wRojzzjfQuxyX7rH6U57szmJNsR
-        VAMn3dUqYMJTbTWRIAMapzdpJz64mnNaAmBxGXc5c7xK+T6o9klg
-X-Google-Smtp-Source: AGHT+IFUJlU5/qBTUdIhAJDXncihHOCmd0RSL/+XkaajLB1RBuxUUa4sOsQ56q6Awg6wjBB56OfCUhU8LLtIvuaGiUE=
-X-Received: by 2002:a25:b309:0:b0:cc6:26f7:f0ea with SMTP id
- l9-20020a25b309000000b00cc626f7f0eamr16232194ybj.27.1692952936378; Fri, 25
- Aug 2023 01:42:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230825053910.17941-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230825053910.17941-1-lukas.bulwahn@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 25 Aug 2023 10:42:05 +0200
-Message-ID: <CACRpkdaP1_57rYv0C4gf=1XQxtCC=BvxzeU15b0uY+uTFhMCQA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: remove obsolete pattern in RTC SUBSYSTEM section
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        bh=iEKttxCzK+Mm67M/OBwLV0O7SaBvRkymMovm4HH+Y/A=;
+        b=XT7tbrM8lXJY8pXp5+xIKR5Swk8gYT2HJU/cac3OsE5NUFTCN5nCFGxXZi7T4ppP6z
+         6m0c4A0z9LQ4Zp0ZvwKnzvg5HnXGF95I9XjxNW55OR2Pn3V8Kj2Bqy3KP563OX1YqUP/
+         KFDVHJ7WbBlTc5AxLHM66I/VBhLhzgmqaxTi01MquYAt7xoAiIsOuXcU4aOeBiBIP6Gp
+         HZ/yYwr+UKDLQNr2FNnwXlpfmxbmgZZY6hzO8dZ/B4z7ol4LfoZ9ybx9pxMMFbvDTedz
+         3jRIvkvu7D2n/WrYwGXl6gWSl+Sttv2vT30q+jibrcaveSJp4wmSeXPId9MOVprLF0dH
+         Uu9A==
+X-Gm-Message-State: AOJu0YzH8jRIQlwuLxs6unDtte6h1R1fPXNlq1euUYMXll1DOdpUZCAp
+        s7fbX3M2EbOy7EZzbcpjvHI=
+X-Google-Smtp-Source: AGHT+IFGpXchAX+me0QmgZkYFyDzhksUmHvKKo/TWK1FTt4vhPSWOBe+n5kULj6C/IKWWW0iKKdNqA==
+X-Received: by 2002:a17:907:60c7:b0:9a2:2635:daab with SMTP id hv7-20020a17090760c700b009a22635daabmr2984195ejc.47.1692964843242;
+        Fri, 25 Aug 2023 05:00:43 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
+        by smtp.gmail.com with ESMTPSA id h7-20020a170906718700b0099bcf1c07c6sm892662ejk.138.2023.08.25.05.00.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Aug 2023 05:00:42 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] xfs: fix select in config XFS_ONLINE_SCRUB_STATS
+Date:   Fri, 25 Aug 2023 14:00:40 +0200
+Message-Id: <20230825120040.26314-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 25, 2023 at 7:39=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
-com> wrote:
+Commit d7a74cad8f45 ("xfs: track usage statistics of online fsck")
+introduces config XFS_ONLINE_SCRUB_STATS, which selects the non-existing
+config FS_DEBUG. It is probably intended to select the existing config
+XFS_DEBUG.
 
-> Commit d890cfc25fe9 ("rtc: ds2404: Convert to GPIO descriptors") removes
-> the rtc-ds2404.h platform data and with that, there is no file remaining
-> matching the pattern 'include/linux/platform_data/rtc-*'. Hence,
-> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a brok=
-en
-> reference.
->
-> Remove the obsolete file pattern in the REAL TIME CLOCK (RTC) SUBSYSTEM.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Linus, please ack.
+Fix the select in config XFS_ONLINE_SCRUB_STATS.
 
-Excellent attention to detail here Lukas,
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: d7a74cad8f45 ("xfs: track usage statistics of online fsck")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>i
+---
+Darrick, please pick this quick 'typo' fix.
 
-Yours,
-Linus Walleij
+ fs/xfs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+index c9d653168ad0..ed0bc8cbc703 100644
+--- a/fs/xfs/Kconfig
++++ b/fs/xfs/Kconfig
+@@ -147,7 +147,7 @@ config XFS_ONLINE_SCRUB_STATS
+ 	bool "XFS online metadata check usage data collection"
+ 	default y
+ 	depends on XFS_ONLINE_SCRUB
+-	select FS_DEBUG
++	select XFS_DEBUG
+ 	help
+ 	  If you say Y here, the kernel will gather usage data about
+ 	  the online metadata check subsystem.  This includes the number
+-- 
+2.17.1
+
