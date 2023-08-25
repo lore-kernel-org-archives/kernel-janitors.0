@@ -2,97 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1309FC7EE2C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 12:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8FFC3DA6F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 12:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240719AbjHYMFa (ORCPT
+        id S244860AbjHYMvS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 08:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41560 "EHLO
+        Fri, 25 Aug 2023 08:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240494AbjHYMFV (ORCPT
+        with ESMTP id S244913AbjHYMvI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 08:05:21 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5FE1FD7;
-        Fri, 25 Aug 2023 05:05:18 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-98377c5d53eso102375666b.0;
-        Fri, 25 Aug 2023 05:05:18 -0700 (PDT)
+        Fri, 25 Aug 2023 08:51:08 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6F91FD3;
+        Fri, 25 Aug 2023 05:51:05 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-52a3ec08d93so1315967a12.2;
+        Fri, 25 Aug 2023 05:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692965117; x=1693569917;
+        d=gmail.com; s=20221208; t=1692967864; x=1693572664;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fCIIdxGXgbtA0ZFgi3G4fDNBziu5Q20KuX0FkDoMPjY=;
-        b=KNnUnKxPA9T5qgkv61UlqXSeDdwN+Zz/1xYcGybkBrK3mnz+UHxGx+zP7wfSRH/34m
-         VphPCVqfF349uIigmK0Lbjmt24BR0YFIwn26Pu/gLBY01UO7ZFSEOxHBmxtImUlDKJb2
-         Uy8t71Ser275sWDVYhZGusaHnEvWNRJ0t3HxY4iBofLnGICkSbKZ6avRz69zmsb1oDei
-         IdEwkzB/9RbexMLxJvy0y2gVatj7cJS6UofMsVlEsSA1Bo2xrEd3xoiji+e1chmWgEgC
-         mGgDRAxrn3SR9Wb4ka7sC2aIAu4Q5/+C/FQFsj7OVrqNa9K+XOOrAMZHuFolyjaVZfxU
-         w1Pg==
+        bh=3veK2GLQgAEyb3AnmI5hfEQQ/nHn4wGQ/Gz5qedNjzc=;
+        b=KSo8N+C+lT7gjxgt0QTTjqKba1nHMTCn1/CGila3+nU74bsq8Mv6iojbozL1LzafRO
+         HbNxYDtICoE/zeuDbr3nMaxFW+kuVan4FsyeYpnq7csAxY+ehTqGlOT1r2S+RxnSJuvW
+         1h01y2SOlnmEIve/pzqc/ryEofvuHkItUkJtK2Nejr7X6tgg6V4U6tsgkUsNxh3Vi/+9
+         5KRsQEgtWX7ET07xI6y3yidv18lx4tSB+VXp6yBbjp/hL3U4Vk0TL4ag489Wv0ilPvcF
+         O4UpoOIaQzEF91IGN7YOUGH4lnvh6A+3OcN0KF57mGNTZJq4nOxfiy/Eh5FxaGo0YGQV
+         lv6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692965117; x=1693569917;
+        d=1e100.net; s=20221208; t=1692967864; x=1693572664;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fCIIdxGXgbtA0ZFgi3G4fDNBziu5Q20KuX0FkDoMPjY=;
-        b=dIUsXpXuuOjlnA1dSYbmI0sEaqiHv6UkTlaqmOTrvAe1IMnCivIOxmcyiH51qHJSy0
-         tyCrH5No++uG2hWJs/D0zI28/Tc9S3DpdpjAEENOYxleb03hpOK++p7XVJ+BnhOxXy0E
-         GN88F3NEC1bT6yeWla4rxcB/l126A8i5Jg08t/SuWKtiUY18sxEv36wsNNimDmFO3qIg
-         DFbvVDVVK8skpCFspSfir/C2dVkySH8sm3OYQVcGYsMS6mrESBR1b6O2qAOFvtIuI6CJ
-         +PKFpetW9bnDfihZpExPXH0zw4hS6CTSSdzKnaFoHqncFr9CevvK9lRJNyJ9LvA7fZb1
-         FRKQ==
-X-Gm-Message-State: AOJu0YydgNqlL9sGjiCuqQlQg0al3hQqNgHm86ESP6vnxhRzm4a/72MV
-        MXcaLKjcy1joHE4KHBv+Hc4=
-X-Google-Smtp-Source: AGHT+IEvSzy4l1py10ko6cQxsKtwTyta6kmj2sJKAtLcNpi5YkQsEaZ/w8LrbjQXsJUiFyQIxeF5zw==
-X-Received: by 2002:a17:906:23e1:b0:99b:f3d1:7735 with SMTP id j1-20020a17090623e100b0099bf3d17735mr12590629ejg.29.1692965116426;
-        Fri, 25 Aug 2023 05:05:16 -0700 (PDT)
+        bh=3veK2GLQgAEyb3AnmI5hfEQQ/nHn4wGQ/Gz5qedNjzc=;
+        b=H2muq5KYl5miHpIMoqf0tQY+12fHnNSj2IYQP+0GJkCpueL7T4L/4y2heNGuaVDl+w
+         iRR9SoeO41vPagVkcYi9n4+OeXnuNt8RXpELy7/QpdVt0724jkJV84ZGRV14IKUR1Xf+
+         U2gtp3cGhLUbk7S66h0fS+ycSctgAT3vwFi6/NH2plitQ1ovvltNN9v8M8YRU8nkdIer
+         msM9CSXjY5i6Rn4+uWuUV3TCaOWfE5rtcYhFdBirHiHBNpbKIJxyLKAH6r+e9AuNY9wu
+         WgBkOoowaxwjL+RHD6hsAAkyY7svJDHR3tuKDuc5tusG2wXOtOiEmDn/3s5fiS5jU9gM
+         i8iw==
+X-Gm-Message-State: AOJu0YyPl1LQIJOFhRnncsfLF2LhqVqOdw+HZmZloAJ+72R7v8dvf8cS
+        E1tYomqxWGv5/4E7IhI6P5v0Vto2nrU=
+X-Google-Smtp-Source: AGHT+IFI3Q0yMaKg4B5UwItri9FXog9d/RAogfgWy6j5YJ81cfmiJjeVJZgZiaF2B4L1kKoLDFNrjg==
+X-Received: by 2002:a17:906:7395:b0:9a1:b5fc:8c5f with SMTP id f21-20020a170906739500b009a1b5fc8c5fmr9538341ejl.49.1692967864276;
+        Fri, 25 Aug 2023 05:51:04 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
-        by smtp.gmail.com with ESMTPSA id s11-20020a170906354b00b00992bea2e9d2sm899199eja.62.2023.08.25.05.05.15
+        by smtp.gmail.com with ESMTPSA id ck16-20020a170906c45000b00992b8d56f3asm922571ejb.105.2023.08.25.05.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 05:05:15 -0700 (PDT)
+        Fri, 25 Aug 2023 05:51:03 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Chandan Babu R <chandan.babu@oracle.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Gal Pressman <gal@nvidia.com>,
+        Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+        Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] xfs: fix select in config XFS_ONLINE_SCRUB_STATS
-Date:   Fri, 25 Aug 2023 14:05:13 +0200
-Message-Id: <20230825120513.29235-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] net/mlx5: fix config name in Kconfig parameter documentation
+Date:   Fri, 25 Aug 2023 14:51:00 +0200
+Message-Id: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit d7a74cad8f45 ("xfs: track usage statistics of online fsck")
-introduces config XFS_ONLINE_SCRUB_STATS, which selects the non-existing
-config FS_DEBUG. It is probably intended to select the existing config
-XFS_DEBUG.
+Commit a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
+adds documentation on Kconfig options for the mlx5 driver. It refers to the
+config MLX5_EN_MACSEC for MACSec offloading, but the config is actually
+called MLX5_MACSEC.
 
-Fix the select in config XFS_ONLINE_SCRUB_STATS.
+Fix the reference to the right config name in the documentation.
 
-Fixes: d7a74cad8f45 ("xfs: track usage statistics of online fsck")
+Fixes: a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Darrick, please pick this quick 'typo' fix.
+Saeed, please pick this quick fix to the documentation.
 
-v2: removed a stupid last-minute insert on my Signed-off-by line.
-
- fs/xfs/Kconfig | 2 +-
+ .../device_drivers/ethernet/mellanox/mlx5/kconfig.rst           | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-index c9d653168ad0..ed0bc8cbc703 100644
---- a/fs/xfs/Kconfig
-+++ b/fs/xfs/Kconfig
-@@ -147,7 +147,7 @@ config XFS_ONLINE_SCRUB_STATS
- 	bool "XFS online metadata check usage data collection"
- 	default y
- 	depends on XFS_ONLINE_SCRUB
--	select FS_DEBUG
-+	select XFS_DEBUG
- 	help
- 	  If you say Y here, the kernel will gather usage data about
- 	  the online metadata check subsystem.  This includes the number
+diff --git a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
+index 0a42c3395ffa..20d3b7e87049 100644
+--- a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
++++ b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
+@@ -67,7 +67,7 @@ Enabling the driver and kconfig options
+ |    Enables :ref:`IPSec XFRM cryptography-offload acceleration <xfrm_device>`.
+ 
+ 
+-**CONFIG_MLX5_EN_MACSEC=(y/n)**
++**CONFIG_MLX5_MACSEC=(y/n)**
+ 
+ |    Build support for MACsec cryptography-offload acceleration in the NIC.
+ 
 -- 
 2.17.1
 
