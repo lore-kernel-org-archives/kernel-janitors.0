@@ -2,101 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63800C71133
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 05:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15750C3DA6F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 06:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239359AbjHYF67 (ORCPT
+        id S233074AbjHYGTw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 01:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39976 "EHLO
+        Fri, 25 Aug 2023 02:19:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239385AbjHYF63 (ORCPT
+        with ESMTP id S234731AbjHYGTh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 01:58:29 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 558B219B5;
-        Thu, 24 Aug 2023 22:58:26 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bcfe28909so59071466b.3;
-        Thu, 24 Aug 2023 22:58:26 -0700 (PDT)
+        Fri, 25 Aug 2023 02:19:37 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941771BF1;
+        Thu, 24 Aug 2023 23:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692943105; x=1693547905;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IJG8goSXk3zwWZ19FJPr0WxT/uyTahaaLMr2MHUcYLA=;
-        b=GNWYmUiuTytI+dVDFGnG7EG3wZqzZqbSLOqOqQ3+M7fas1jK/dQcmKOVwJVl+TA9vS
-         C0GpP5+io7Di8GvFK2C1VsQF8MYgkI6VxmRasZBP4RRXkvLHQ236CF1xusNX9owrOOsG
-         MoWMEHwrhlKotucXNIzltl3TJYvDwwG9vKshqMXCZ8FQI8x6koilEZqG6V4fcUgy8jWS
-         +jmBk9DgG1RO2YJ4ZGD/Xvmmg+8HWFwRc6Xiqu08POhJe9b//KXUwrsqfupx028mUgpd
-         2QbKNLI0FfpJRYD0bif239CmKXO4QlN1RSiQvojLc/H02cFMB9LWHnXv5h82tfp5Tb3T
-         YthA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692943105; x=1693547905;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IJG8goSXk3zwWZ19FJPr0WxT/uyTahaaLMr2MHUcYLA=;
-        b=GNHIhSIpvDxNLpbtn/s5tWHZVqGal7vfaSWom+VajUzkpX58jEoehJI21VGjbVFVUq
-         0ifInUDbcA0KpYE4xhIr/4KMkQ+CbpPDo/sFZ749hQ6ZJ1ei/jkHkROSQwSEaDrRj721
-         LWPxx1DRwn2Mr8D9wXNwL4Ia6JKpxQkRzKFCUJGGZPToHhenZ2wx5DJwHRtAcpOSm4tQ
-         64agdcmi89fDe5dvUhps2Y4FFMcYBWJrz+NYtM9JZL110dAXmyOUgn9Em6no8gVGpb86
-         Mx8/LMIUBxXw8tUoznk5rMWikPmKGS9yccraL6ylb+O6FniF+d1ZPxKG/f2g+Gn/b8SD
-         vfXw==
-X-Gm-Message-State: AOJu0YxkVTV2uGuXqoPwaUbErOsasH7Yo9yoZav635B9CDy0LBISSrML
-        2ful/mGCsAheSCurVkOMwew=
-X-Google-Smtp-Source: AGHT+IF9kWnJZdSru5yBZvRTrZ/LkXpY1drHf+dQXac0YH3cB4rwp3hFRPP5zVnGqhA1fMZuHoiU0Q==
-X-Received: by 2002:a17:906:1ba9:b0:9a1:680e:8c54 with SMTP id r9-20020a1709061ba900b009a1680e8c54mr13090737ejg.71.1692943104488;
-        Thu, 24 Aug 2023 22:58:24 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
-        by smtp.gmail.com with ESMTPSA id re4-20020a170906d8c400b009930042510csm546959ejb.222.2023.08.24.22.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Aug 2023 22:58:23 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1692944374; x=1724480374;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1+p0zY/IBQSsqQ7CeXy3RYnB3en+Ol+WgPS2hbi2Ohs=;
+  b=Qi2lAKgrUXxXl9jnAfoFVarbxhQ5eNq27r/CdDhRcwoUageuxD8fSAuS
+   LKm15eU2CMfO8mVuThQNmmU42POInGasOZepOI+cy25QZHGWwnOQK1Zu0
+   htGIpUSzBS5RhB5F3wmhHhT2PxddKJmZcn4ohBivlZfgu6sdXFiLFg0N4
+   1KdiCPL9sJJS2+0OP4WkSjI5QEAe2jYMHs2wy6ynNGaBCbH1V0wXko8h6
+   Btd/NhTA70CheL8Qljv9kszUT3qi+71I0aTuWU2UD6vxH0nNFkxafqmSU
+   BPAICg4dmLasMezrjngKXjWxyZG/AWMJc2u/Ey46JvHNJtTy8y6L2KN+P
+   w==;
+X-IronPort-AV: E=Sophos;i="6.02,195,1688421600"; 
+   d="scan'208";a="32620719"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 25 Aug 2023 08:19:32 +0200
+Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id B05C7280075;
+        Fri, 25 Aug 2023 08:19:32 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
 To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
         Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Lee Jones <lee@kernel.org>
+        Lee Jones <lee@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
-Date:   Fri, 25 Aug 2023 07:58:21 +0200
-Message-Id: <20230825055821.30508-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
+Date:   Fri, 25 Aug 2023 08:19:32 +0200
+Message-ID: <11135245.nUPlyArG6x@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20230825055821.30508-1-lukas.bulwahn@gmail.com>
+References: <20230825055821.30508-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
-and drivers") adds some file patterns for files in arch/arm/boot/dts/, but
-those patterns do not match any files in the repository. Hence,
-./scripts/get_maintainer.pl --self-test=patterns complains about broken
-references. The files of interest are actually in the directory
-arch/arm/boot/dts/nxp/imx/.
+Hi Lukas,
 
-Adjust the file patterns to match the intended files.
+Am Freitag, 25. August 2023, 07:58:21 CEST schrieb Lukas Bulwahn:
+> Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
+> and drivers") adds some file patterns for files in arch/arm/boot/dts/, but
+> those patterns do not match any files in the repository. Hence,
+> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about broken
+> references. The files of interest are actually in the directory
+> arch/arm/boot/dts/nxp/imx/.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Lee, please pick this minor clean-up patch.
+Nice, I didn't know about --self-test=3Dpatterns. But you are right, the=20
+patterns do not match anymore since arch/arm dts restructuring.
+I also suggest to add the Fixes tag:
 
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+=46ixes: 77da3f22b3d54 ("MAINTAINERS: Add entry for TQ-Systems device trees=
+ and=20
+drivers")
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 52277ee9c1b8..f5d4058b7ff4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21817,9 +21817,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
- L:	linux@ew.tq-group.com
- S:	Supported
- W:	https://www.tq-group.com/en/products/tq-embedded/
--F:	arch/arm/boot/dts/imx*mba*.dts*
--F:	arch/arm/boot/dts/imx*tqma*.dts*
--F:	arch/arm/boot/dts/mba*.dtsi
-+F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
- F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
- F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
- F:	arch/arm64/boot/dts/freescale/mba*.dtsi
--- 
-2.17.1
+> Adjust the file patterns to match the intended files.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Lee, please pick this minor clean-up patch.
+>=20
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 52277ee9c1b8..f5d4058b7ff4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21817,9 +21817,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+>  L:	linux@ew.tq-group.com
+>  S:	Supported
+>  W:	https://www.tq-group.com/en/products/tq-embedded/
+> -F:	arch/arm/boot/dts/imx*mba*.dts*
+> -F:	arch/arm/boot/dts/imx*tqma*.dts*
+> -F:	arch/arm/boot/dts/mba*.dtsi
+> +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+>  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+>  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+>  F:	arch/arm64/boot/dts/freescale/mba*.dtsi
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
