@@ -2,127 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C70C3DA6F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 14:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B1C3DA66
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 15:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343536AbjHYOPM (ORCPT
+        id S234126AbjHYPPM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 10:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
+        Fri, 25 Aug 2023 11:15:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245741AbjHYOOl (ORCPT
+        with ESMTP id S234556AbjHYPPG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 10:14:41 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22B742684;
-        Fri, 25 Aug 2023 07:14:16 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so218878466b.0;
-        Fri, 25 Aug 2023 07:14:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692972758; x=1693577558;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ihkK5NeLOZPOBD1OQ/Tzq+VAxZOB0etz/fl/JNHwlX4=;
-        b=c+XJMgB55NsYFJv5WR559iqqkSrg2AqaIGmgNTNXbpszVN5XqWpCEaEGPwX+F18l+u
-         ABMVpMFXD/CIFRSsUjIjhIic5NcEv4zeX8+dO8XMVGJVfk720QlS8vztg46hcH3jozGu
-         nRAgx2CyWn1G9mmVdv+DhJ4Ga6DORdeF0gcRLknW4Tbc51ex6itu4kGQKliiTsAtObtc
-         V5ipu/sYCru7I7tsnsU1fN2IHWtaNmHRV8ThUbGz13DadZylY7wVzdaDDJI063gO3Sz4
-         v4hjSG78xZ8bi4050PVEflRXMUFVp9zlbdHC2TTkHwxcu/a5Lq5s++4AytVswRkETBcC
-         ZAgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692972758; x=1693577558;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ihkK5NeLOZPOBD1OQ/Tzq+VAxZOB0etz/fl/JNHwlX4=;
-        b=QwPFiHxhmsoqQLHnO1msRaT0ikl06n33u6vzbr4RGvcb1X0pGRGW2/mvkwHki3UOop
-         JYtVw73UjEQ70YNT6m/Yjvro/rpf/HFLc6c15EzcMVQZJSsN15AJBXDCvzuPUidpbaZV
-         ZHXvOgxyJTOydEqIfrqV6rC8QnDBrg7Pb+TZs6C66u2uGiG3puTKiCWgw8y0NeH4Kyv9
-         I6uRaIM0TyPQDH1gycqSUBEK9z6sP8uDwIX1BLa4FlpR2vI+T4EeHAgBdy5KEtoplj0E
-         t1L/qUQnHJG8gF1Hjy3389xuT2Vxnio80AdHc56ZPtxLaHQFM/LaGAFO5kdJ/X/r9eoR
-         6yTQ==
-X-Gm-Message-State: AOJu0YyTlhzUmAQmwILLgQgU1jxwDscxbkld7G0nvjrck3b+WrFu1kQJ
-        gzn4mjsdcUlscb7025R86xI=
-X-Google-Smtp-Source: AGHT+IEcnwmZdInLFupKMvs7mSWhUpXTvdYvLyN0xOh+sKRS7/s4w1OumaQywBBfVhATp/3j9fWa/w==
-X-Received: by 2002:a17:906:cc16:b0:99b:b398:53b6 with SMTP id ml22-20020a170906cc1600b0099bb39853b6mr19451389ejb.34.1692972757994;
-        Fri, 25 Aug 2023 07:12:37 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
-        by smtp.gmail.com with ESMTPSA id q9-20020a170906940900b0099bccb03eadsm989057ejx.205.2023.08.25.07.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 07:12:32 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] x86: Clean up remaining references to CONFIG_MICROCODE_AMD
-Date:   Fri, 25 Aug 2023 16:12:26 +0200
-Message-Id: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 25 Aug 2023 11:15:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73486212A;
+        Fri, 25 Aug 2023 08:15:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11B78655D3;
+        Fri, 25 Aug 2023 15:15:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC8EC433C8;
+        Fri, 25 Aug 2023 15:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692976502;
+        bh=6DMQCZbZ+UizhzDWoKS3qOjSB+JIh/P9g7AHQPjx3zw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H6ZooxvDWg9sQQq89Kv+P1kZPnVCYjeoLUDGi0I7c+4R/vEVKhGvwZPqKb+ie3GDW
+         gnQ/ugkoNkke68/VTkdtbIP23bLHxBvuUZoYtgGpm4GcGlKJbH242oyPQ+qFHSHeFy
+         Yc2xIhav0xIA97T4GJM/F5ooVx+H+bddxw7zSPqKPrBTjsKrQBRv1IJCzRAXnqrCRu
+         BXQDa7HtshBHNanVMTtzzycO1YNcucTcZeApaSfn2eDTRbnf73y5K0d/qvWlSteV19
+         vV5LjZmvi14B2P1fjGITNC9+POBcKqFa2eIEiNdO7fcv0GSg0ho8lSgKy4UCzFGx1D
+         vIFxzUaACY3lQ==
+Date:   Fri, 25 Aug 2023 08:15:01 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xfs: fix select in config XFS_ONLINE_SCRUB_STATS
+Message-ID: <20230825151501.GJ17912@frogsfrogsfrogs>
+References: <20230825120513.29235-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825120513.29235-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit e6bcfdd75d53 ("x86/microcode: Hide the config knob") removes config
-MICROCODE_AMD, but left some references that have no effect on any kernel
-build around.
+On Fri, Aug 25, 2023 at 02:05:13PM +0200, Lukas Bulwahn wrote:
+> Commit d7a74cad8f45 ("xfs: track usage statistics of online fsck")
+> introduces config XFS_ONLINE_SCRUB_STATS, which selects the non-existing
+> config FS_DEBUG. It is probably intended to select the existing config
+> XFS_DEBUG.
+> 
+> Fix the select in config XFS_ONLINE_SCRUB_STATS.
+> 
+> Fixes: d7a74cad8f45 ("xfs: track usage statistics of online fsck")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Clean up those remaining config references. No functional change.
+Oops.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/x86/configs/i386_defconfig          | 1 -
- arch/x86/configs/x86_64_defconfig        | 1 -
- arch/x86/kernel/cpu/microcode/internal.h | 4 ++--
- 3 files changed, 2 insertions(+), 4 deletions(-)
+> ---
+> Darrick, please pick this quick 'typo' fix.
 
-diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
-index 75a343f10e58..1b411bbf3cb0 100644
---- a/arch/x86/configs/i386_defconfig
-+++ b/arch/x86/configs/i386_defconfig
-@@ -33,7 +33,6 @@ CONFIG_HYPERVISOR_GUEST=y
- CONFIG_PARAVIRT=y
- CONFIG_NR_CPUS=8
- CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
--CONFIG_MICROCODE_AMD=y
- CONFIG_X86_MSR=y
- CONFIG_X86_CPUID=y
- CONFIG_X86_CHECK_BIOS_CORRUPTION=y
-diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
-index 0902518e9b93..409e9182bd29 100644
---- a/arch/x86/configs/x86_64_defconfig
-+++ b/arch/x86/configs/x86_64_defconfig
-@@ -31,7 +31,6 @@ CONFIG_SMP=y
- CONFIG_HYPERVISOR_GUEST=y
- CONFIG_PARAVIRT=y
- CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
--CONFIG_MICROCODE_AMD=y
- CONFIG_X86_MSR=y
- CONFIG_X86_CPUID=y
- CONFIG_NUMA=y
-diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/microcode/internal.h
-index 8ee9392e5c68..bf883aa71233 100644
---- a/arch/x86/kernel/cpu/microcode/internal.h
-+++ b/arch/x86/kernel/cpu/microcode/internal.h
-@@ -104,7 +104,7 @@ int save_microcode_in_initrd_amd(unsigned int family);
- void reload_ucode_amd(unsigned int cpu);
- struct microcode_ops *init_amd_microcode(void);
- void exit_amd_microcode(void);
--#else /* CONFIG_MICROCODE_AMD */
-+#else /* CONFIG_CPU_SUP_AMD */
- static inline void load_ucode_amd_bsp(unsigned int family) { }
- static inline void load_ucode_amd_ap(unsigned int family) { }
- static inline void load_ucode_amd_early(unsigned int family) { }
-@@ -112,7 +112,7 @@ static inline int save_microcode_in_initrd_amd(unsigned int family) { return -EI
- static inline void reload_ucode_amd(unsigned int cpu) { }
- static inline struct microcode_ops *init_amd_microcode(void) { return NULL; }
- static inline void exit_amd_microcode(void) { }
--#endif /* !CONFIG_MICROCODE_AMD */
-+#endif /* !CONFIG_CPU_SUP_AMD */
- 
- #ifdef CONFIG_CPU_SUP_INTEL
- void load_ucode_intel_bsp(void);
--- 
-2.17.1
+  ^^^^ isn't the maintainer anymore. ;)
 
+--D
+
+> v2: removed a stupid last-minute insert on my Signed-off-by line.
+> 
+>  fs/xfs/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+> index c9d653168ad0..ed0bc8cbc703 100644
+> --- a/fs/xfs/Kconfig
+> +++ b/fs/xfs/Kconfig
+> @@ -147,7 +147,7 @@ config XFS_ONLINE_SCRUB_STATS
+>  	bool "XFS online metadata check usage data collection"
+>  	default y
+>  	depends on XFS_ONLINE_SCRUB
+> -	select FS_DEBUG
+> +	select XFS_DEBUG
+>  	help
+>  	  If you say Y here, the kernel will gather usage data about
+>  	  the online metadata check subsystem.  This includes the number
+> -- 
+> 2.17.1
+> 
