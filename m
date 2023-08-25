@@ -2,98 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8FFC3DA6F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C70C3DA6F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 14:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244860AbjHYMvS (ORCPT
+        id S1343536AbjHYOPM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 08:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49668 "EHLO
+        Fri, 25 Aug 2023 10:15:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244913AbjHYMvI (ORCPT
+        with ESMTP id S245741AbjHYOOl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 08:51:08 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6F91FD3;
-        Fri, 25 Aug 2023 05:51:05 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-52a3ec08d93so1315967a12.2;
-        Fri, 25 Aug 2023 05:51:05 -0700 (PDT)
+        Fri, 25 Aug 2023 10:14:41 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22B742684;
+        Fri, 25 Aug 2023 07:14:16 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so218878466b.0;
+        Fri, 25 Aug 2023 07:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692967864; x=1693572664;
+        d=gmail.com; s=20221208; t=1692972758; x=1693577558;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3veK2GLQgAEyb3AnmI5hfEQQ/nHn4wGQ/Gz5qedNjzc=;
-        b=KSo8N+C+lT7gjxgt0QTTjqKba1nHMTCn1/CGila3+nU74bsq8Mv6iojbozL1LzafRO
-         HbNxYDtICoE/zeuDbr3nMaxFW+kuVan4FsyeYpnq7csAxY+ehTqGlOT1r2S+RxnSJuvW
-         1h01y2SOlnmEIve/pzqc/ryEofvuHkItUkJtK2Nejr7X6tgg6V4U6tsgkUsNxh3Vi/+9
-         5KRsQEgtWX7ET07xI6y3yidv18lx4tSB+VXp6yBbjp/hL3U4Vk0TL4ag489Wv0ilPvcF
-         O4UpoOIaQzEF91IGN7YOUGH4lnvh6A+3OcN0KF57mGNTZJq4nOxfiy/Eh5FxaGo0YGQV
-         lv6w==
+        bh=ihkK5NeLOZPOBD1OQ/Tzq+VAxZOB0etz/fl/JNHwlX4=;
+        b=c+XJMgB55NsYFJv5WR559iqqkSrg2AqaIGmgNTNXbpszVN5XqWpCEaEGPwX+F18l+u
+         ABMVpMFXD/CIFRSsUjIjhIic5NcEv4zeX8+dO8XMVGJVfk720QlS8vztg46hcH3jozGu
+         nRAgx2CyWn1G9mmVdv+DhJ4Ga6DORdeF0gcRLknW4Tbc51ex6itu4kGQKliiTsAtObtc
+         V5ipu/sYCru7I7tsnsU1fN2IHWtaNmHRV8ThUbGz13DadZylY7wVzdaDDJI063gO3Sz4
+         v4hjSG78xZ8bi4050PVEflRXMUFVp9zlbdHC2TTkHwxcu/a5Lq5s++4AytVswRkETBcC
+         ZAgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692967864; x=1693572664;
+        d=1e100.net; s=20221208; t=1692972758; x=1693577558;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3veK2GLQgAEyb3AnmI5hfEQQ/nHn4wGQ/Gz5qedNjzc=;
-        b=H2muq5KYl5miHpIMoqf0tQY+12fHnNSj2IYQP+0GJkCpueL7T4L/4y2heNGuaVDl+w
-         iRR9SoeO41vPagVkcYi9n4+OeXnuNt8RXpELy7/QpdVt0724jkJV84ZGRV14IKUR1Xf+
-         U2gtp3cGhLUbk7S66h0fS+ycSctgAT3vwFi6/NH2plitQ1ovvltNN9v8M8YRU8nkdIer
-         msM9CSXjY5i6Rn4+uWuUV3TCaOWfE5rtcYhFdBirHiHBNpbKIJxyLKAH6r+e9AuNY9wu
-         WgBkOoowaxwjL+RHD6hsAAkyY7svJDHR3tuKDuc5tusG2wXOtOiEmDn/3s5fiS5jU9gM
-         i8iw==
-X-Gm-Message-State: AOJu0YyPl1LQIJOFhRnncsfLF2LhqVqOdw+HZmZloAJ+72R7v8dvf8cS
-        E1tYomqxWGv5/4E7IhI6P5v0Vto2nrU=
-X-Google-Smtp-Source: AGHT+IFI3Q0yMaKg4B5UwItri9FXog9d/RAogfgWy6j5YJ81cfmiJjeVJZgZiaF2B4L1kKoLDFNrjg==
-X-Received: by 2002:a17:906:7395:b0:9a1:b5fc:8c5f with SMTP id f21-20020a170906739500b009a1b5fc8c5fmr9538341ejl.49.1692967864276;
-        Fri, 25 Aug 2023 05:51:04 -0700 (PDT)
+        bh=ihkK5NeLOZPOBD1OQ/Tzq+VAxZOB0etz/fl/JNHwlX4=;
+        b=QwPFiHxhmsoqQLHnO1msRaT0ikl06n33u6vzbr4RGvcb1X0pGRGW2/mvkwHki3UOop
+         JYtVw73UjEQ70YNT6m/Yjvro/rpf/HFLc6c15EzcMVQZJSsN15AJBXDCvzuPUidpbaZV
+         ZHXvOgxyJTOydEqIfrqV6rC8QnDBrg7Pb+TZs6C66u2uGiG3puTKiCWgw8y0NeH4Kyv9
+         I6uRaIM0TyPQDH1gycqSUBEK9z6sP8uDwIX1BLa4FlpR2vI+T4EeHAgBdy5KEtoplj0E
+         t1L/qUQnHJG8gF1Hjy3389xuT2Vxnio80AdHc56ZPtxLaHQFM/LaGAFO5kdJ/X/r9eoR
+         6yTQ==
+X-Gm-Message-State: AOJu0YyTlhzUmAQmwILLgQgU1jxwDscxbkld7G0nvjrck3b+WrFu1kQJ
+        gzn4mjsdcUlscb7025R86xI=
+X-Google-Smtp-Source: AGHT+IEcnwmZdInLFupKMvs7mSWhUpXTvdYvLyN0xOh+sKRS7/s4w1OumaQywBBfVhATp/3j9fWa/w==
+X-Received: by 2002:a17:906:cc16:b0:99b:b398:53b6 with SMTP id ml22-20020a170906cc1600b0099bb39853b6mr19451389ejb.34.1692972757994;
+        Fri, 25 Aug 2023 07:12:37 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
-        by smtp.gmail.com with ESMTPSA id ck16-20020a170906c45000b00992b8d56f3asm922571ejb.105.2023.08.25.05.51.03
+        by smtp.gmail.com with ESMTPSA id q9-20020a170906940900b0099bccb03eadsm989057ejx.205.2023.08.25.07.12.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 05:51:03 -0700 (PDT)
+        Fri, 25 Aug 2023 07:12:32 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Gal Pressman <gal@nvidia.com>,
-        Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-        Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] net/mlx5: fix config name in Kconfig parameter documentation
-Date:   Fri, 25 Aug 2023 14:51:00 +0200
-Message-Id: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86: Clean up remaining references to CONFIG_MICROCODE_AMD
+Date:   Fri, 25 Aug 2023 16:12:26 +0200
+Message-Id: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
-adds documentation on Kconfig options for the mlx5 driver. It refers to the
-config MLX5_EN_MACSEC for MACSec offloading, but the config is actually
-called MLX5_MACSEC.
+Commit e6bcfdd75d53 ("x86/microcode: Hide the config knob") removes config
+MICROCODE_AMD, but left some references that have no effect on any kernel
+build around.
 
-Fix the reference to the right config name in the documentation.
+Clean up those remaining config references. No functional change.
 
-Fixes: a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Saeed, please pick this quick fix to the documentation.
+ arch/x86/configs/i386_defconfig          | 1 -
+ arch/x86/configs/x86_64_defconfig        | 1 -
+ arch/x86/kernel/cpu/microcode/internal.h | 4 ++--
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
- .../device_drivers/ethernet/mellanox/mlx5/kconfig.rst           | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
-index 0a42c3395ffa..20d3b7e87049 100644
---- a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
-+++ b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5/kconfig.rst
-@@ -67,7 +67,7 @@ Enabling the driver and kconfig options
- |    Enables :ref:`IPSec XFRM cryptography-offload acceleration <xfrm_device>`.
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index 75a343f10e58..1b411bbf3cb0 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -33,7 +33,6 @@ CONFIG_HYPERVISOR_GUEST=y
+ CONFIG_PARAVIRT=y
+ CONFIG_NR_CPUS=8
+ CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+-CONFIG_MICROCODE_AMD=y
+ CONFIG_X86_MSR=y
+ CONFIG_X86_CPUID=y
+ CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
+index 0902518e9b93..409e9182bd29 100644
+--- a/arch/x86/configs/x86_64_defconfig
++++ b/arch/x86/configs/x86_64_defconfig
+@@ -31,7 +31,6 @@ CONFIG_SMP=y
+ CONFIG_HYPERVISOR_GUEST=y
+ CONFIG_PARAVIRT=y
+ CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+-CONFIG_MICROCODE_AMD=y
+ CONFIG_X86_MSR=y
+ CONFIG_X86_CPUID=y
+ CONFIG_NUMA=y
+diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/microcode/internal.h
+index 8ee9392e5c68..bf883aa71233 100644
+--- a/arch/x86/kernel/cpu/microcode/internal.h
++++ b/arch/x86/kernel/cpu/microcode/internal.h
+@@ -104,7 +104,7 @@ int save_microcode_in_initrd_amd(unsigned int family);
+ void reload_ucode_amd(unsigned int cpu);
+ struct microcode_ops *init_amd_microcode(void);
+ void exit_amd_microcode(void);
+-#else /* CONFIG_MICROCODE_AMD */
++#else /* CONFIG_CPU_SUP_AMD */
+ static inline void load_ucode_amd_bsp(unsigned int family) { }
+ static inline void load_ucode_amd_ap(unsigned int family) { }
+ static inline void load_ucode_amd_early(unsigned int family) { }
+@@ -112,7 +112,7 @@ static inline int save_microcode_in_initrd_amd(unsigned int family) { return -EI
+ static inline void reload_ucode_amd(unsigned int cpu) { }
+ static inline struct microcode_ops *init_amd_microcode(void) { return NULL; }
+ static inline void exit_amd_microcode(void) { }
+-#endif /* !CONFIG_MICROCODE_AMD */
++#endif /* !CONFIG_CPU_SUP_AMD */
  
- 
--**CONFIG_MLX5_EN_MACSEC=(y/n)**
-+**CONFIG_MLX5_MACSEC=(y/n)**
- 
- |    Build support for MACsec cryptography-offload acceleration in the NIC.
- 
+ #ifdef CONFIG_CPU_SUP_INTEL
+ void load_ucode_intel_bsp(void);
 -- 
 2.17.1
 
