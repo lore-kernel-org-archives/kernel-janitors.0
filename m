@@ -2,109 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE443EE49A6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 20:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2729EE49B3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 22:15:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbjHYUIM (ORCPT
+        id S230139AbjHYWOf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 16:08:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51548 "EHLO
+        Fri, 25 Aug 2023 18:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbjHYUH6 (ORCPT
+        with ESMTP id S230200AbjHYWOJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 16:07:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD00A2686;
-        Fri, 25 Aug 2023 13:07:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39DF362AD0;
-        Fri, 25 Aug 2023 20:07:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3CEC433C8;
-        Fri, 25 Aug 2023 20:07:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692994075;
-        bh=kvYJY9GVkYB1KvLokRDqmnYgpNsujZYT6/nl/kMTZHM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mAD1fmKqnwS1/LbiUvdzh0WfHfssTaHymtW7SXRUAa8qq8Y8Zi+AbANCzY8UMR69B
-         0aM8w3V9Lwr6wPexmih6fAyhbkkKE6Ukyfw9vxon87sOr1j+PGkS6Lw4W2vr2e0Tl9
-         02ADvZ+3COI8ZWf/i4vktTYdvLoVJz6MBKbwyR9kQAZpDMu4old3IbVoFSBetWfps9
-         11oKD+87PwhrH5NFOknacLolivH5wbIeG/4FH8JwtEmL2zGn15ejLoK3bGY5c9FVud
-         BfIh04UsB0TPrlx0cf5UuRxLG5pzcLKKzGyygTBGSJDvR13O3+lz6PQ/EKneHKKoI6
-         0vGJaRg34ODoA==
-Date:   Fri, 25 Aug 2023 22:07:52 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dmitry.baryshkov@linaro.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Liao Chang <liaochang1@huawei.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, vegard.nossum@oracle.com
-Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
-Message-ID: <ZOkKGAv5iBHRNL4M@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        dmitry.baryshkov@linaro.org, Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Liao Chang <liaochang1@huawei.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, vegard.nossum@oracle.com
-References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
+        Fri, 25 Aug 2023 18:14:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A462706
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Aug 2023 15:13:52 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id Zf3sqGJVgADjwZf3sq3hFV; Sat, 26 Aug 2023 00:13:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693001630;
+        bh=Vbo5vzDX7vXJX6v/iiFgU/SzjBJx25qCoIqU0bH1fO0=;
+        h=From:To:Cc:Subject:Date;
+        b=OrQuGg2RhxTMxjxNifXtxC0fGgWsbJ8gPJ+m5RM7Xl3nJeQlKZ00dkX5VWWXY4d91
+         GZx0x+194k3bU3NEjwXkIOEpftqUtmrsYUCI1RScVvNHXWaJD5OytrkGcZSjeW1iTv
+         /TGq7ZWgYCjdayw4vGHys55WGcs6Z6p2K3ycSq+253GCYNnbeaTz8S+siB/CudvK7p
+         yus6FBf+nsSVqGM7JBDI8Ug0BvDSZlw4/vFP2U5W48N9kS1XOjmg7OPMXZLO2ImAaD
+         RjcJxOk7LLS4GgDdqgyW6tjJgeBcDa0l8YB5kZ51ogQzZx/f5c7HRdstKEXFP1QDJb
+         R2pA6migAjLbQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Aug 2023 00:13:50 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: i2c: max9286: Fix some redundant of_node_put() calls
+Date:   Sat, 26 Aug 2023 00:13:40 +0200
+Message-Id: <084fdd562690c08f1ee72bc08e63e8ee576dc86a.1693001599.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="B0A59Lbk1gxNIIfK"
-Content-Disposition: inline
-In-Reply-To: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+This is odd to have a of_node_put() just after a for_each_child_of_node()
+or a for_each_endpoint_of_node() loop. It should already be called
+during the last iteration.
 
---B0A59Lbk1gxNIIfK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove these calls.
 
-On Wed, Aug 23, 2023 at 12:42:02PM -0700, Harshit Mogalapalli wrote:
-> devm_clk_bulk_get_all() can return zero when no clocks are obtained.
-> Passing zero to dev_err_probe() is a success which is incorrect.
->=20
-> Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Fixes: 66d8c9d2422d ("media: i2c: Add MAX9286 driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+/!\  This patch is speculative, review with case  /!\
+---
+ drivers/media/i2c/max9286.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied to for-next, thanks!
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index 20e7c7cf5eeb..f27a69b1b727 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -1450,7 +1450,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 
+ 		i2c_mux_mask |= BIT(id);
+ 	}
+-	of_node_put(node);
+ 	of_node_put(i2c_mux);
+ 
+ 	/* Parse the endpoints */
+@@ -1514,7 +1513,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 		priv->source_mask |= BIT(ep.port);
+ 		priv->nsources++;
+ 	}
+-	of_node_put(node);
+ 
+ 	of_property_read_u32(dev->of_node, "maxim,bus-width", &priv->bus_width);
+ 	switch (priv->bus_width) {
+-- 
+2.34.1
 
-
---B0A59Lbk1gxNIIfK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTpChgACgkQFA3kzBSg
-KbYsYQ//fCeqqLuAljmXlXehorWuqtDXrAlPqj5kBBySFZEgZwvwZk8WtONlY6PL
-9I5SLVOwwUIHX7P5p9lrsN6E7dlVcSp5E6olJLV5fY/rANLgd6tLU9XbIvOig9zF
-D7atebwcLCRZuP407yt0OMPm8tf48KIAQBHeae5WreWnAdgDzARVFi8NrFrQI1oL
-NW7olTC76jtj9/9FGVAbvRAJsQU9nW/tV/ILS+S9rSqO1HLPfF2KXe5Ua6AAvOQy
-Y9vPkEWYsNMQO0vzoyFWem6cFxznzLRirtcv6R4DBrjmK64jivAYKeWtUt7i7tIY
-NsfFIKZBoMn+XxfGzogeib3ShdqUgFaNChwyh95wmG40HnIRHQn8fBdDzX9tJir8
-cYpnHS3zNY/iQh37uZRW+UZUvCR6VEUqev67LaFDm/4uRMAyKUUsVvWsizvMN/Ex
-7WOhzWMt/1M67pFBXDFRLssLTEJQ8qZPZDBhvr/97xr1xglGsR8+kLLLRssD52Sm
-PHuzPf7KCg/msJ1DJ9KzrBGoIPscpuM38aIleH0DLan8nql3zzCkK2OP3UmIrljh
-DMe+BN8NED12eFLkJWUr2oKaa3B28ux8FIUST7Fn24u5myNc6vVAeoBfbsjzcWTC
-HbPpPa+ylOSLBscEWEQR/GFW+z8qiYT7ai2yAQfXhBg8kDWEAWU=
-=F7WM
------END PGP SIGNATURE-----
-
---B0A59Lbk1gxNIIfK--
