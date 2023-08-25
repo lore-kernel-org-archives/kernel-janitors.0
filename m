@@ -2,95 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B7AC6FA8F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Aug 2023 22:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE3CC3DA66
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 05:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243940AbjHXWoS (ORCPT
+        id S237998AbjHYFjj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Aug 2023 18:44:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
+        Fri, 25 Aug 2023 01:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243908AbjHXWnq (ORCPT
+        with ESMTP id S240893AbjHYFj1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Aug 2023 18:43:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A93B1BF1;
-        Thu, 24 Aug 2023 15:43:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A1F06370C;
-        Thu, 24 Aug 2023 22:43:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4231C433C8;
-        Thu, 24 Aug 2023 22:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692917015;
-        bh=hQ1fgLiWLR8trUuCaYLEOSHIOYHu6hkDSCVcbXCSY+k=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=rrZfqM18bVtzaiGaUuKP9b7xmnkXs8g8c3wSLjDJ9HzgvNmH1i2m8emrAWI22C21D
-         FHYQa5K/Xvxz9/lDO7HHXUlWLdV4vvrN94IQYKumiqfmDGWUwd2FRaogmS2/L1lAyi
-         /tjXD+/k1vOAQnMppF2o5IP53a9TV3sg6ePYqRXorT/qChWJ7NDY6HbXzwUDBLrvST
-         E9uKOIjPBXdr59q5RMQ4zTSCflL+vR7vf98eVvLDQWmMa9ieWWehqU5DUZKQc7WHUH
-         iOQYoLdmjWSg9RSQtPTAiQZ4EETCktewKG8lTbcdwEkJRUNOdtKrYgvLHhLL2M2sbt
-         qPvBqcszAOpEA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Weidong Wang <wangweidong.a@awinic.com>,
-        Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, kernel test robot <lkp@intel.com>
-In-Reply-To: <20230824191722.2701215-1-harshit.m.mogalapalli@oracle.com>
-References: <20230824191722.2701215-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH next] ASoC: codecs: Fix error code in
- aw88261_i2c_probe()
-Message-Id: <169291701152.2997200.14506800052724539808.b4-ty@kernel.org>
-Date:   Thu, 24 Aug 2023 23:43:31 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+        Fri, 25 Aug 2023 01:39:27 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD3B1FF3;
+        Thu, 24 Aug 2023 22:39:21 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4ff8a1746e0so797607e87.0;
+        Thu, 24 Aug 2023 22:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692941959; x=1693546759;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XxM4hun7J7j3+pA4h09bA4XVsK57JjdIEry9BgKjY3Q=;
+        b=czfc5ny0qfUkRN4qcHiJLAkogPE+hwYtJcgx7VIVnu9wpxNhcdBPdjqqnJuf0Q1UOM
+         oqEWLpPeHnJSdfy6dA4VBo1sHaRzu7ny3u1cyfyefRssEsB62r31K+PQ8qq1RzUUuIMj
+         iSmhx7DPK3pMH//YQKv6qBvA6Tftn+VHelEaIZ6yXXy4TWzO9C55zXVhehfxByDu3o+p
+         zesKgOyKD3FY06RAEXd0Dffpt8w9JhuDRyir0/Pxw7rpzTXQj9kOthzVprCGsitSgi41
+         YRbh4dw18+l/HKvkPFdcv5akBsXfLSGfEt2su4zrzDI2PHmJGjyDvI613NropKfuGC/V
+         6JlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692941959; x=1693546759;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XxM4hun7J7j3+pA4h09bA4XVsK57JjdIEry9BgKjY3Q=;
+        b=dw6P/YhKCBD9c3qCP9CSOVGYEEF/7xLPKaaIekBqDqg68HkiyarL5+8pnrPeW9J7DY
+         8qnNvRq1IkpN0GXyfIEiPqSbyS9iyuKJSF/rSMOqKORzJa889AAToK6tPGblMg+/X4ib
+         DCseWxkIofyVX/r17whY+HWV8kuxodhWWLMdnIx1InRw407lGlZ0cbxrkzTvS+WAumli
+         zaa4a23fxwzpVEmaWQsZYZd7tFfIqJetw1egalHKkJ0Zs0UaJhVuqTZKumAyZiVrB0W+
+         wHK9wjMY0HKdZXJdA3YFuqq+c+OLjuUCy6mGJ6oladNM9yhpxXPub7nuwFnFloR6QYjE
+         DySw==
+X-Gm-Message-State: AOJu0Yy0lprl/yZbrREWSVpjaSFFIK/anLqPqjALfj0PNXZBHITbtSlv
+        mz9M9ORY6Xahrc7NyslMag0=
+X-Google-Smtp-Source: AGHT+IGs7LI6eP5/RZSHTVEf9VXin5JHG9+q/5+tAOHoHiyBvuWVgn7WeG0XLuPmJgMT6OFGHiSdhA==
+X-Received: by 2002:a19:8c0f:0:b0:500:7685:839 with SMTP id o15-20020a198c0f000000b0050076850839mr10472065lfd.65.1692941958921;
+        Thu, 24 Aug 2023 22:39:18 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:98c5:e120:ff1e:7709])
+        by smtp.gmail.com with ESMTPSA id m22-20020aa7d356000000b0052338f5b2a4sm598540edr.86.2023.08.24.22.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 22:39:17 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove obsolete pattern in RTC SUBSYSTEM section
+Date:   Fri, 25 Aug 2023 07:39:10 +0200
+Message-Id: <20230825053910.17941-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 24 Aug 2023 12:17:10 -0700, Harshit Mogalapalli wrote:
-> Passing zero to dev_err_probe is a success which is incorrect when
-> i2c_check_functionality() fails.
-> 
-> Fix this by passing -ENXIO instead of zero to dev_err_probe().
-> 
-> 
+Commit d890cfc25fe9 ("rtc: ds2404: Convert to GPIO descriptors") removes
+the rtc-ds2404.h platform data and with that, there is no file remaining
+matching the pattern 'include/linux/platform_data/rtc-*'. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
-Applied to
+Remove the obsolete file pattern in the REAL TIME CLOCK (RTC) SUBSYSTEM.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Linus, please ack.
 
-Thanks!
+Alexandre, please pick this into your rtc tree.
 
-[1/1] ASoC: codecs: Fix error code in aw88261_i2c_probe()
-      commit: 8886e1b03669c498f7a24bc5e483f46db5e81f82
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 250c43c675cb..52277ee9c1b8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18089,7 +18089,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git
+ F:	Documentation/admin-guide/rtc.rst
+ F:	Documentation/devicetree/bindings/rtc/
+ F:	drivers/rtc/
+-F:	include/linux/platform_data/rtc-*
+ F:	include/linux/rtc.h
+ F:	include/linux/rtc/
+ F:	include/uapi/linux/rtc.h
+-- 
+2.17.1
 
