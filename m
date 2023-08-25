@@ -2,94 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B1C3DA66
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 15:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4978EE49A3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 17:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234126AbjHYPPM (ORCPT
+        id S238454AbjHYRpv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 11:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42236 "EHLO
+        Fri, 25 Aug 2023 13:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234556AbjHYPPG (ORCPT
+        with ESMTP id S234005AbjHYRpk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 11:15:06 -0400
+        Fri, 25 Aug 2023 13:45:40 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73486212A;
-        Fri, 25 Aug 2023 08:15:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCFE2128;
+        Fri, 25 Aug 2023 10:45:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 11B78655D3;
-        Fri, 25 Aug 2023 15:15:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC8EC433C8;
-        Fri, 25 Aug 2023 15:15:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F012E62D97;
+        Fri, 25 Aug 2023 17:45:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C77C433C8;
+        Fri, 25 Aug 2023 17:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692976502;
-        bh=6DMQCZbZ+UizhzDWoKS3qOjSB+JIh/P9g7AHQPjx3zw=;
+        s=k20201202; t=1692985537;
+        bh=FvFWJfTHnCJBuxAYcJU2vDvioeoRGpbuDc+4qUjlpqE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H6ZooxvDWg9sQQq89Kv+P1kZPnVCYjeoLUDGi0I7c+4R/vEVKhGvwZPqKb+ie3GDW
-         gnQ/ugkoNkke68/VTkdtbIP23bLHxBvuUZoYtgGpm4GcGlKJbH242oyPQ+qFHSHeFy
-         Yc2xIhav0xIA97T4GJM/F5ooVx+H+bddxw7zSPqKPrBTjsKrQBRv1IJCzRAXnqrCRu
-         BXQDa7HtshBHNanVMTtzzycO1YNcucTcZeApaSfn2eDTRbnf73y5K0d/qvWlSteV19
-         vV5LjZmvi14B2P1fjGITNC9+POBcKqFa2eIEiNdO7fcv0GSg0ho8lSgKy4UCzFGx1D
-         vIFxzUaACY3lQ==
-Date:   Fri, 25 Aug 2023 08:15:01 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
+        b=NN+b5k9geYk3K1cJNOm+eHUaw9RzRYKdAr4Uhf7S2hAmpYRTMJhHbj/2am0yxYpJ9
+         bv9j/ZLTkpogSFptzQnG2KHXQaDWzKdECGk4Z3uYsfobS/dEuA9riZB+3nVor+fY1D
+         uisXjvytC7giuKf6N1PFGEfB6HemZ7wAy6HBvvDPRPCV6YjaGbo1ZJQepZhaqixTtg
+         I/FA7A5Sw8ui7n4MWwxa7MvKfPG9q5XF3f4BokNLhGO4P/zp0Ck1/05xcrnuYE81PF
+         ZIko3rkLvjUnBWW2Eff9jzWLfh3GICQJUEZq3TuMkvT+8SNHK8rO/kwhZqPQkCXqf1
+         64m7NywDjaW5A==
+Date:   Fri, 25 Aug 2023 10:45:35 -0700
+From:   Saeed Mahameed <saeed@kernel.org>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Chandan Babu R <chandan.babu@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xfs: fix select in config XFS_ONLINE_SCRUB_STATS
-Message-ID: <20230825151501.GJ17912@frogsfrogsfrogs>
-References: <20230825120513.29235-1-lukas.bulwahn@gmail.com>
+Cc:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Gal Pressman <gal@nvidia.com>,
+        Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+        Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: fix config name in Kconfig parameter
+ documentation
+Message-ID: <ZOjov4PvI19Jdgs+@x130>
+References: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20230825120513.29235-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 25, 2023 at 02:05:13PM +0200, Lukas Bulwahn wrote:
-> Commit d7a74cad8f45 ("xfs: track usage statistics of online fsck")
-> introduces config XFS_ONLINE_SCRUB_STATS, which selects the non-existing
-> config FS_DEBUG. It is probably intended to select the existing config
-> XFS_DEBUG.
-> 
-> Fix the select in config XFS_ONLINE_SCRUB_STATS.
-> 
-> Fixes: d7a74cad8f45 ("xfs: track usage statistics of online fsck")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 25 Aug 14:51, Lukas Bulwahn wrote:
+>Commit a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
+>adds documentation on Kconfig options for the mlx5 driver. It refers to the
+>config MLX5_EN_MACSEC for MACSec offloading, but the config is actually
+>called MLX5_MACSEC.
+>
+>Fix the reference to the right config name in the documentation.
+>
+>Fixes: a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
+>Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>---
+>Saeed, please pick this quick fix to the documentation.
 
-Oops.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Thanks applied to net-next-mlx5.
 
-> ---
-> Darrick, please pick this quick 'typo' fix.
 
-  ^^^^ isn't the maintainer anymore. ;)
-
---D
-
-> v2: removed a stupid last-minute insert on my Signed-off-by line.
-> 
->  fs/xfs/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-> index c9d653168ad0..ed0bc8cbc703 100644
-> --- a/fs/xfs/Kconfig
-> +++ b/fs/xfs/Kconfig
-> @@ -147,7 +147,7 @@ config XFS_ONLINE_SCRUB_STATS
->  	bool "XFS online metadata check usage data collection"
->  	default y
->  	depends on XFS_ONLINE_SCRUB
-> -	select FS_DEBUG
-> +	select XFS_DEBUG
->  	help
->  	  If you say Y here, the kernel will gather usage data about
->  	  the online metadata check subsystem.  This includes the number
-> -- 
-> 2.17.1
-> 
