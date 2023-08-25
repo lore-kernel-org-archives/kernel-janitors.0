@@ -2,73 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4978EE49A3
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 17:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE443EE49A6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Aug 2023 20:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238454AbjHYRpv (ORCPT
+        id S230232AbjHYUIM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Aug 2023 13:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
+        Fri, 25 Aug 2023 16:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234005AbjHYRpk (ORCPT
+        with ESMTP id S230207AbjHYUH6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Aug 2023 13:45:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCFE2128;
-        Fri, 25 Aug 2023 10:45:38 -0700 (PDT)
+        Fri, 25 Aug 2023 16:07:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD00A2686;
+        Fri, 25 Aug 2023 13:07:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F012E62D97;
-        Fri, 25 Aug 2023 17:45:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C77C433C8;
-        Fri, 25 Aug 2023 17:45:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 39DF362AD0;
+        Fri, 25 Aug 2023 20:07:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3CEC433C8;
+        Fri, 25 Aug 2023 20:07:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692985537;
-        bh=FvFWJfTHnCJBuxAYcJU2vDvioeoRGpbuDc+4qUjlpqE=;
+        s=k20201202; t=1692994075;
+        bh=kvYJY9GVkYB1KvLokRDqmnYgpNsujZYT6/nl/kMTZHM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NN+b5k9geYk3K1cJNOm+eHUaw9RzRYKdAr4Uhf7S2hAmpYRTMJhHbj/2am0yxYpJ9
-         bv9j/ZLTkpogSFptzQnG2KHXQaDWzKdECGk4Z3uYsfobS/dEuA9riZB+3nVor+fY1D
-         uisXjvytC7giuKf6N1PFGEfB6HemZ7wAy6HBvvDPRPCV6YjaGbo1ZJQepZhaqixTtg
-         I/FA7A5Sw8ui7n4MWwxa7MvKfPG9q5XF3f4BokNLhGO4P/zp0Ck1/05xcrnuYE81PF
-         ZIko3rkLvjUnBWW2Eff9jzWLfh3GICQJUEZq3TuMkvT+8SNHK8rO/kwhZqPQkCXqf1
-         64m7NywDjaW5A==
-Date:   Fri, 25 Aug 2023 10:45:35 -0700
-From:   Saeed Mahameed <saeed@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Gal Pressman <gal@nvidia.com>,
-        Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-        Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: fix config name in Kconfig parameter
- documentation
-Message-ID: <ZOjov4PvI19Jdgs+@x130>
-References: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
+        b=mAD1fmKqnwS1/LbiUvdzh0WfHfssTaHymtW7SXRUAa8qq8Y8Zi+AbANCzY8UMR69B
+         0aM8w3V9Lwr6wPexmih6fAyhbkkKE6Ukyfw9vxon87sOr1j+PGkS6Lw4W2vr2e0Tl9
+         02ADvZ+3COI8ZWf/i4vktTYdvLoVJz6MBKbwyR9kQAZpDMu4old3IbVoFSBetWfps9
+         11oKD+87PwhrH5NFOknacLolivH5wbIeG/4FH8JwtEmL2zGn15ejLoK3bGY5c9FVud
+         BfIh04UsB0TPrlx0cf5UuRxLG5pzcLKKzGyygTBGSJDvR13O3+lz6PQ/EKneHKKoI6
+         0vGJaRg34ODoA==
+Date:   Fri, 25 Aug 2023 22:07:52 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     dmitry.baryshkov@linaro.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Liao Chang <liaochang1@huawei.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, vegard.nossum@oracle.com
+Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
+Message-ID: <ZOkKGAv5iBHRNL4M@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        dmitry.baryshkov@linaro.org, Loic Poulain <loic.poulain@linaro.org>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Liao Chang <liaochang1@huawei.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, vegard.nossum@oracle.com
+References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="B0A59Lbk1gxNIIfK"
 Content-Disposition: inline
-In-Reply-To: <20230825125100.26453-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 25 Aug 14:51, Lukas Bulwahn wrote:
->Commit a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
->adds documentation on Kconfig options for the mlx5 driver. It refers to the
->config MLX5_EN_MACSEC for MACSec offloading, but the config is actually
->called MLX5_MACSEC.
->
->Fix the reference to the right config name in the documentation.
->
->Fixes: a12ba19269d7 ("net/mlx5: Update Kconfig parameter documentation")
->Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->---
->Saeed, please pick this quick fix to the documentation.
 
-Thanks applied to net-next-mlx5.
+--B0A59Lbk1gxNIIfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 23, 2023 at 12:42:02PM -0700, Harshit Mogalapalli wrote:
+> devm_clk_bulk_get_all() can return zero when no clocks are obtained.
+> Passing zero to dev_err_probe() is a success which is incorrect.
+>=20
+> Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+
+Applied to for-next, thanks!
 
 
+--B0A59Lbk1gxNIIfK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTpChgACgkQFA3kzBSg
+KbYsYQ//fCeqqLuAljmXlXehorWuqtDXrAlPqj5kBBySFZEgZwvwZk8WtONlY6PL
+9I5SLVOwwUIHX7P5p9lrsN6E7dlVcSp5E6olJLV5fY/rANLgd6tLU9XbIvOig9zF
+D7atebwcLCRZuP407yt0OMPm8tf48KIAQBHeae5WreWnAdgDzARVFi8NrFrQI1oL
+NW7olTC76jtj9/9FGVAbvRAJsQU9nW/tV/ILS+S9rSqO1HLPfF2KXe5Ua6AAvOQy
+Y9vPkEWYsNMQO0vzoyFWem6cFxznzLRirtcv6R4DBrjmK64jivAYKeWtUt7i7tIY
+NsfFIKZBoMn+XxfGzogeib3ShdqUgFaNChwyh95wmG40HnIRHQn8fBdDzX9tJir8
+cYpnHS3zNY/iQh37uZRW+UZUvCR6VEUqev67LaFDm/4uRMAyKUUsVvWsizvMN/Ex
+7WOhzWMt/1M67pFBXDFRLssLTEJQ8qZPZDBhvr/97xr1xglGsR8+kLLLRssD52Sm
+PHuzPf7KCg/msJ1DJ9KzrBGoIPscpuM38aIleH0DLan8nql3zzCkK2OP3UmIrljh
+DMe+BN8NED12eFLkJWUr2oKaa3B28ux8FIUST7Fn24u5myNc6vVAeoBfbsjzcWTC
+HbPpPa+ylOSLBscEWEQR/GFW+z8qiYT7ai2yAQfXhBg8kDWEAWU=
+=F7WM
+-----END PGP SIGNATURE-----
+
+--B0A59Lbk1gxNIIfK--
