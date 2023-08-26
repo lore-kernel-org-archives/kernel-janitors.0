@@ -2,114 +2,154 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62AAC83F1C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 17:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A8AC83F11
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 20:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230497AbjHZRnL (ORCPT
+        id S229750AbjHZUBI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Aug 2023 13:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
+        Sat, 26 Aug 2023 16:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjHZRml (ORCPT
+        with ESMTP id S230205AbjHZUBD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Aug 2023 13:42:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E0FE7F
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Aug 2023 10:42:38 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id ZxInqYKe17qfuZxIzqGrR5; Sat, 26 Aug 2023 19:42:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693071757;
-        bh=QTIm/KtA3vhwN8cxnOOJvoO7+sH2uOIZpMI8GWwMiqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ZKLAgxe0jXbDOKq1GyiKn7ylNbFayEaNogLejRQcu90GaIae+cmlBqpnhTxhxDH7I
-         Hx7irQUuQraeQcWUbRMUpuF6O8ds/gkCUS9kg6R2thfL+OugE57Yu1mrK9Ojn8PuFq
-         OF35YKkp8QS8iTxNSC7B7MBQKA9fOQxXBuyfRnjnzMTIXRYObF+pZhOq5ePTYnEIw3
-         KseeEd1dFmF8z2hC69YMFDooDN7Sm+WpHG5i4SsmOa6jOWdX2GULeGJPF4g/UTDoFk
-         xNffvtVM8OqL9n9drabhnuBXyZhM2kRk7vLX43swB8Pnq/CEpGnf9Ry/a0SdRacB8j
-         JzBaiqAd6A2tQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Aug 2023 19:42:37 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rrameshbabu@nvidia.com, jikos@kernel.org,
+        Sat, 26 Aug 2023 16:01:03 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275081FCB;
+        Sat, 26 Aug 2023 13:00:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693080053; x=1724616053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kRCs66Y4BOmYyzMuS8/lzn0GhXveL6QMCWUqcBj9eTA=;
+  b=E/1dSjzg+VwLkccYfieQjX8YeHcMAkACg8H/g8y7uLGvQnLlm5dOCeu6
+   y+Rp5KrVfYqa8HMIGmrgRURSlyytxOpePdfXSHtuIckljIf+CfFVtIsNF
+   lWwcofJR1W0xxR9qcAsRK5lIDXymjzJgvmUMc6LmFSbAlscjjKnFXFC2E
+   LTwruSks94lOnwLwA+egyKr9M3/Vyqecg1UaEy/IQXj4XiLKJzVY1zXYC
+   c5Zeowtm9k7T2tpMYluil9CkIJrkn3ZHM7EtpxAj3pHy/gEKYzA91aJXT
+   6Yr8sMlrmwNN6jQexGn5ySsUXTstdN11jocv9zQH33EFT/J7stLKhONZf
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="355228502"
+X-IronPort-AV: E=Sophos;i="6.02,203,1688454000"; 
+   d="scan'208";a="355228502"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2023 13:00:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="772839527"
+X-IronPort-AV: E=Sophos;i="6.02,203,1688454000"; 
+   d="scan'208";a="772839527"
+Received: from lkp-server02.sh.intel.com (HELO daf8bb0a381d) ([10.239.97.151])
+  by orsmga001.jf.intel.com with ESMTP; 26 Aug 2023 13:00:49 -0700
+Received: from kbuild by daf8bb0a381d with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qZzSi-00052F-3D;
+        Sat, 26 Aug 2023 20:00:48 +0000
+Date:   Sun, 27 Aug 2023 04:00:35 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        rrameshbabu@nvidia.com, jikos@kernel.org,
         benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+Cc:     oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] HID: nvidia-shield: Introduce thunderstrike_destroy()
-Date:   Sat, 26 Aug 2023 19:42:19 +0200
-Message-Id: <4c9a8c7f6b4eb879dd7ef4d44bb6a80b3f126d25.1693070958.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 3/3] HID: nvidia-shield: Introduce thunderstrike_destroy()
+Message-ID: <202308270307.EDe7t62T-lkp@intel.com>
+References: <4c9a8c7f6b4eb879dd7ef4d44bb6a80b3f126d25.1693070958.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c9a8c7f6b4eb879dd7ef4d44bb6a80b3f126d25.1693070958.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In order to simplify some error handling paths, and avoid code duplication
-introduce thunderstrike_destroy() which undoes thunderstrike_create().
+Hi Christophe,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/hid/hid-nvidia-shield.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
-index 849b3f8409a0..4e39e7c1a2c3 100644
---- a/drivers/hid/hid-nvidia-shield.c
-+++ b/drivers/hid/hid-nvidia-shield.c
-@@ -915,6 +915,20 @@ static struct shield_device *thunderstrike_create(struct hid_device *hdev)
- 	return ERR_PTR(ret);
- }
- 
-+static void thunderstrike_destroy(struct hid_device *hdev)
-+{
-+	struct shield_device *dev = hid_get_drvdata(hdev);
-+	struct thunderstrike *ts;
-+
-+	ts = container_of(dev, struct thunderstrike, base);
-+
-+	power_supply_unregister(ts->base.battery_dev.psy);
-+	if (ts->haptics_dev)
-+		input_unregister_device(ts->haptics_dev);
-+	led_classdev_unregister(&ts->led_dev);
-+	ida_free(&thunderstrike_ida, ts->id);
-+}
-+
- static int android_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 				 struct hid_field *field,
- 				 struct hid_usage *usage, unsigned long **bit,
-@@ -1074,11 +1088,7 @@ static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
- err_stop:
- 	hid_hw_stop(hdev);
- err_haptics:
--	power_supply_unregister(ts->base.battery_dev.psy);
--	if (ts->haptics_dev)
--		input_unregister_device(ts->haptics_dev);
--	led_classdev_unregister(&ts->led_dev);
--	ida_free(&thunderstrike_ida, ts->id);
-+	thunderstrike_destroy(hdev);
- 	return ret;
- }
- 
-@@ -1090,11 +1100,7 @@ static void shield_remove(struct hid_device *hdev)
- 	ts = container_of(dev, struct thunderstrike, base);
- 
- 	hid_hw_close(hdev);
--	power_supply_unregister(dev->battery_dev.psy);
--	if (ts->haptics_dev)
--		input_unregister_device(ts->haptics_dev);
--	led_classdev_unregister(&ts->led_dev);
--	ida_free(&thunderstrike_ida, ts->id);
-+	thunderstrike_destroy(hdev);
- 	del_timer_sync(&ts->psy_stats_timer);
- 	cancel_work_sync(&ts->hostcmd_req_work);
- 	hid_hw_stop(hdev);
+[auto build test WARNING on linux-next/master]
+[cannot apply to linus/master v6.5-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/HID-nvidia-shield-Fix-a-missing-led_classdev_unregister-in-the-probe-error-handling-path/20230827-014602
+base:   linux-next/master
+patch link:    https://lore.kernel.org/r/4c9a8c7f6b4eb879dd7ef4d44bb6a80b3f126d25.1693070958.git.christophe.jaillet%40wanadoo.fr
+patch subject: [PATCH 3/3] HID: nvidia-shield: Introduce thunderstrike_destroy()
+config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20230827/202308270307.EDe7t62T-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20230827/202308270307.EDe7t62T-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308270307.EDe7t62T-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/hid/hid-nvidia-shield.c: In function 'shield_probe':
+>> drivers/hid/hid-nvidia-shield.c:1046:31: warning: variable 'ts' set but not used [-Wunused-but-set-variable]
+    1046 |         struct thunderstrike *ts;
+         |                               ^~
+
+
+vim +/ts +1046 drivers/hid/hid-nvidia-shield.c
+
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1042  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1043  static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1044  {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1045  	struct shield_device *shield_dev = NULL;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08 @1046  	struct thunderstrike *ts;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1047  	int ret;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1048  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1049  	ret = hid_parse(hdev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1050  	if (ret) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1051  		hid_err(hdev, "Parse failed\n");
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1052  		return ret;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1053  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1054  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1055  	switch (id->product) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1056  	case USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER:
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1057  		shield_dev = thunderstrike_create(hdev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1058  		break;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1059  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1060  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1061  	if (unlikely(!shield_dev)) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1062  		hid_err(hdev, "Failed to identify SHIELD device\n");
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1063  		return -ENODEV;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1064  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1065  	if (IS_ERR(shield_dev)) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1066  		hid_err(hdev, "Failed to create SHIELD device\n");
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1067  		return PTR_ERR(shield_dev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1068  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1069  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1070  	ts = container_of(shield_dev, struct thunderstrike, base);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1071  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1072  	ret = hid_hw_start(hdev, HID_CONNECT_HIDINPUT);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1073  	if (ret) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1074  		hid_err(hdev, "Failed to start HID device\n");
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1075  		goto err_haptics;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1076  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1077  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1078  	ret = hid_hw_open(hdev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1079  	if (ret) {
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1080  		hid_err(hdev, "Failed to open HID device\n");
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1081  		goto err_stop;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1082  	}
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1083  
+3ab196f882377ed Rahul Rameshbabu   2023-08-07  1084  	thunderstrike_device_init_info(shield_dev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1085  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1086  	return ret;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1087  
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1088  err_stop:
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1089  	hid_hw_stop(hdev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1090  err_haptics:
+2cc4637842495c6 Christophe JAILLET 2023-08-26  1091  	thunderstrike_destroy(hdev);
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1092  	return ret;
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1093  }
+09308562d4afb1a Rahul Rameshbabu   2023-06-08  1094  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
