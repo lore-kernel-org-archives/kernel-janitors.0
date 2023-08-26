@@ -2,51 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EFEC83F16
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 08:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7BCC83F01
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 17:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231993AbjHZIFg (ORCPT
+        id S230271AbjHZRmg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Aug 2023 04:05:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
+        Sat, 26 Aug 2023 13:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232159AbjHZIFV (ORCPT
+        with ESMTP id S229925AbjHZRmb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Aug 2023 04:05:21 -0400
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A852686
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Aug 2023 01:05:14 -0700 (PDT)
+        Sat, 26 Aug 2023 13:42:31 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A22198
+        for <kernel-janitors@vger.kernel.org>; Sat, 26 Aug 2023 10:42:27 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id ZoIAqIrNMOQiUZoIAqOb6j; Sat, 26 Aug 2023 10:05:13 +0200
+        id ZxInqYKe17qfuZxInqGrPq; Sat, 26 Aug 2023 19:42:26 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693037113;
-        bh=1Gj5BE4925dZFZIgp6qeJNN2Uh0t4RwmAE2vfWPWlHg=;
+        s=t20230301; t=1693071746;
+        bh=orB9jPwaecPFP/gpzbrOrsYdsANF2oVXr2ZGkrw1kio=;
         h=From:To:Cc:Subject:Date;
-        b=Mtc9wkbD2Qb8iaLZJqRusvwUfBsgZTlNj8sxJfPvYTXbiaFLTh6bJj15oKxTBvlgL
-         TFu0tT6abzOIl5F3NdyJlvMd0NJ7GnAA6WcKavJec/bMe/i0+kXhxOxnmv5Zm8xQ0s
-         R1wb24yQFsg8tEw2VpWL3dZAyFmsOA5SxDzfrbbuzc3V3dF7eP59f33eq6wm1KgMqA
-         kGtTriSrJfCA8EGGGFjePAYk6JaCCh/tfyrXrzFD1iJx/13e3hZosTewFqufuriEzs
-         2ljWaf6jsM8O0GGLZ2UDTPJYXM12jfEiQaF0qoYz4Oeo7HXKPJF7eEIKNkrVoTrQYh
-         GGl8ek4DCIstA==
+        b=NJHc2LnPPCsJoZ1Ueo2HFkPUULSxF3IPHkgQ5KDAT1lAynfkoQtFBKjg/+3bE9/Ca
+         dWS4w5bcD09zfugdsG+HqBMefh6RCcoBDNPI+SBVZcV/jniTspdwtb/8lpxHOjaYig
+         VIDQbCYsLFkmjOFc2p04DIB8GB53BRUsoIAQL17N47Ot7kTagsICH0I0VbMRTZZ66y
+         8Xu+pxLOvrLCGULDZYu44PZStavJJ6ISh39DPqzCsVZOTyakYXKbvO2m64DtqC5YRq
+         lSQkn+pOTv3CgOyMS+oQn6ohPAIA2EQL0kW6z90zc1ZCgZiZQSQxszIdqzo86qyGDp
+         lK07r7YBaZ/UA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Aug 2023 10:05:13 +0200
+X-ME-Date: Sat, 26 Aug 2023 19:42:26 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: i2c: rdacm2: Remove an incorrect fwnode_handle_put() call
-Date:   Sat, 26 Aug 2023 10:05:06 +0200
-Message-Id: <d9230082aefcb7bab6363c51c08598eb5ab62cfc.1693037086.git.christophe.jaillet@wanadoo.fr>
+To:     rrameshbabu@nvidia.com, jikos@kernel.org,
+        benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] HID: nvidia-shield: Fix the error handling path of shield_probe()
+Date:   Sat, 26 Aug 2023 19:42:16 +0200
+Message-Id: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,36 +49,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The commit in Fixes has removed an fwnode_handle_put() call in the error
-handling path of the probe.
+This serie fixes some missing clean-up function calls in the error handling of
+the probe.
 
-Remove the same call from the remove function.
+Patch 1 and 2 fix some similar issues introduced in 2 different commits (hence 2
+patches)
 
-Fixes: 1029939b3782 ("media: v4l: async: Simplify async sub-device fwnode matching")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-/!\   This patch is highly speculative. Review with care.   /!\
+Patch 3 is a proposal to be more future proof.
 
-If it is correct, it is likely that other similar issue lurk in commit
-1029939b3782. I've not looked in detail and my cocci script did not
-trigger on them but drivers/media/i2c/max9286.c also looks like a
-similar candidate.
----
- drivers/media/i2c/rdacm21.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
-index a36a709243fd..3e22df36354f 100644
---- a/drivers/media/i2c/rdacm21.c
-+++ b/drivers/media/i2c/rdacm21.c
-@@ -608,7 +608,6 @@ static void rdacm21_remove(struct i2c_client *client)
- 	v4l2_async_unregister_subdev(&dev->sd);
- 	v4l2_ctrl_handler_free(&dev->ctrls);
- 	i2c_unregister_device(dev->isp);
--	fwnode_handle_put(dev->sd.fwnode);
- }
- 
- static const struct of_device_id rdacm21_of_ids[] = {
+*Note*: I'm not 100% sure that the order of the functions is the best one in
+thunderstrike_destroy(), but it is the way it was.
+
+My personal preference would be to undo things in reverse order they are
+allocated, such as:
+	led_classdev_unregister(&ts->led_dev);
+	power_supply_unregister(ts->base.battery_dev.psy);
+	if (ts->haptics_dev)
+		input_unregister_device(ts->haptics_dev);
+	ida_free(&thunderstrike_ida, ts->id);
+This order was explicitly chnaged by 3ab196f88237, so, as I can't test the
+changes on a real harware, I've left it as-is.
+
+Christophe JAILLET (3):
+  HID: nvidia-shield: Fix a missing led_classdev_unregister() in the
+    probe error handling path
+  HID: nvidia-shield: Fix some missing function calls() in the probe
+    error handling path
+  HID: nvidia-shield: Introduce thunderstrike_destroy()
+
+ drivers/hid/hid-nvidia-shield.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
 -- 
 2.34.1
 
