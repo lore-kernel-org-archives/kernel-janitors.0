@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7BCC83F01
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 17:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53735C83F16
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Aug 2023 17:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbjHZRmg (ORCPT
+        id S230477AbjHZRnK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Aug 2023 13:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
+        Sat, 26 Aug 2023 13:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbjHZRmb (ORCPT
+        with ESMTP id S230447AbjHZRmk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Aug 2023 13:42:31 -0400
+        Sat, 26 Aug 2023 13:42:40 -0400
 Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A22198
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Aug 2023 10:42:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D8C310A
+        for <kernel-janitors@vger.kernel.org>; Sat, 26 Aug 2023 10:42:38 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id ZxInqYKe17qfuZxInqGrPq; Sat, 26 Aug 2023 19:42:26 +0200
+        id ZxInqYKe17qfuZxIyqGrQw; Sat, 26 Aug 2023 19:42:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693071746;
-        bh=orB9jPwaecPFP/gpzbrOrsYdsANF2oVXr2ZGkrw1kio=;
-        h=From:To:Cc:Subject:Date;
-        b=NJHc2LnPPCsJoZ1Ueo2HFkPUULSxF3IPHkgQ5KDAT1lAynfkoQtFBKjg/+3bE9/Ca
-         dWS4w5bcD09zfugdsG+HqBMefh6RCcoBDNPI+SBVZcV/jniTspdwtb/8lpxHOjaYig
-         VIDQbCYsLFkmjOFc2p04DIB8GB53BRUsoIAQL17N47Ot7kTagsICH0I0VbMRTZZ66y
-         8Xu+pxLOvrLCGULDZYu44PZStavJJ6ISh39DPqzCsVZOTyakYXKbvO2m64DtqC5YRq
-         lSQkn+pOTv3CgOyMS+oQn6ohPAIA2EQL0kW6z90zc1ZCgZiZQSQxszIdqzo86qyGDp
-         lK07r7YBaZ/UA==
+        s=t20230301; t=1693071757;
+        bh=J2IAazKwns7ngGWe0+roM1E+yKslkp7WaduYjND4iwo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Da+Zq5dulkq/6u8ueEkQC7tVbRjzFcU14vepedq7lCPcgoiWXmpY7NWgggLDzBNwm
+         fQcep7UXqbOXM7Ea8SYawTl9ubr+NnE5l0b6gjCi273ywxzL9ezxnPy/O6sdtkqGb5
+         oXF+68yFPVAyfgoce4hIXb4Z2Wrseo5CiS0NS7cNPoCvRDVgRHrgwCtvWiwsloznZN
+         IzCKKtxEW1LzjANK0t0lBOGyTmk+lLHkT5zLHPnH1ujmYHP6MV4Hb/nBDfQLij+4ZE
+         6PfkLbsmk+3JkE/2LNtxL1FCi1dp5oy4ZcHRt0IYEzmstnPaD2W7+QXwRqeRO3RvWy
+         TPRC0BO9aD2HA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Aug 2023 19:42:26 +0200
+X-ME-Date: Sat, 26 Aug 2023 19:42:37 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     rrameshbabu@nvidia.com, jikos@kernel.org,
@@ -39,48 +39,47 @@ To:     rrameshbabu@nvidia.com, jikos@kernel.org,
 Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/3] HID: nvidia-shield: Fix the error handling path of shield_probe()
-Date:   Sat, 26 Aug 2023 19:42:16 +0200
-Message-Id: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/3] HID: nvidia-shield: Fix some missing function calls() in the probe error handling path
+Date:   Sat, 26 Aug 2023 19:42:18 +0200
+Message-Id: <443aef6a6d90011e8fffcd43e1a88cd9e98594ca.1693070958.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This serie fixes some missing clean-up function calls in the error handling of
-the probe.
+The commit in Fixes updated the error handling path of
+thunderstrike_create() and the remove function but not the error handling
+path of shield_probe(), should an error occur after a successful
+thunderstrike_create() call.
 
-Patch 1 and 2 fix some similar issues introduced in 2 different commits (hence 2
-patches)
+Add the missing calls.
 
-Patch 3 is a proposal to be more future proof.
+Fixes: 3ab196f88237 ("HID: nvidia-shield: Add battery support for Thunderstrike")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/hid-nvidia-shield.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-*Note*: I'm not 100% sure that the order of the functions is the best one in
-thunderstrike_destroy(), but it is the way it was.
-
-My personal preference would be to undo things in reverse order they are
-allocated, such as:
-	led_classdev_unregister(&ts->led_dev);
-	power_supply_unregister(ts->base.battery_dev.psy);
-	if (ts->haptics_dev)
-		input_unregister_device(ts->haptics_dev);
-	ida_free(&thunderstrike_ida, ts->id);
-This order was explicitly chnaged by 3ab196f88237, so, as I can't test the
-changes on a real harware, I've left it as-is.
-
-Christophe JAILLET (3):
-  HID: nvidia-shield: Fix a missing led_classdev_unregister() in the
-    probe error handling path
-  HID: nvidia-shield: Fix some missing function calls() in the probe
-    error handling path
-  HID: nvidia-shield: Introduce thunderstrike_destroy()
-
- drivers/hid/hid-nvidia-shield.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
+index 66a7478e2c9d..849b3f8409a0 100644
+--- a/drivers/hid/hid-nvidia-shield.c
++++ b/drivers/hid/hid-nvidia-shield.c
+@@ -1074,9 +1074,11 @@ static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ err_stop:
+ 	hid_hw_stop(hdev);
+ err_haptics:
++	power_supply_unregister(ts->base.battery_dev.psy);
+ 	if (ts->haptics_dev)
+ 		input_unregister_device(ts->haptics_dev);
+ 	led_classdev_unregister(&ts->led_dev);
++	ida_free(&thunderstrike_ida, ts->id);
+ 	return ret;
+ }
+ 
 -- 
 2.34.1
 
