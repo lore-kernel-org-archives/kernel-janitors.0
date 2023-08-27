@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1520FC83F11
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Aug 2023 09:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1652DC83F01
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Aug 2023 09:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230241AbjH0JiX (ORCPT
+        id S230381AbjH0Ji7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Aug 2023 05:38:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46256 "EHLO
+        Sun, 27 Aug 2023 05:38:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjH0JiH (ORCPT
+        with ESMTP id S230297AbjH0JiU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Aug 2023 05:38:07 -0400
+        Sun, 27 Aug 2023 05:38:20 -0400
 Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C26E5FA
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Aug 2023 02:38:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630B2E4
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Aug 2023 02:38:18 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id aCDYqs7H09KIfaCDYq3nVP; Sun, 27 Aug 2023 11:38:02 +0200
+        id aCDYqs7H09KIfaCDoq3nY7; Sun, 27 Aug 2023 11:38:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693129082;
-        bh=eq0x3iigUAjoi4D0w91pgHaAwqeD7R2OBa1kT6pnQ2g=;
-        h=From:To:Cc:Subject:Date;
-        b=fPSJLpblS3Yu70HOrJviqaDMJByLb2CaOFA7ikx3WuTq//wD9+qnKhz82HFJn0p3q
-         cRH42ggURSGiJFgCPN3cHzub8twAQf0PSwJJV0IdtCArAztC+PcxucbuqHGVxx8XeV
-         cgS6ucw9aBDokf0CAqj444HQfdPYsUUYV77qg8OnjZ55cOOX2bCltPzLpfvtFFTC8m
-         toq+Dgm/p/ZLl+uESmRH0LHFFkfPzDDgexDJoz3t8tDtfr8hVNuF7xXlSudcOSJz8F
-         Qi8/OnpRKJfbjzoV3NSLloOqQUbvOiMrOn4Hoyynn4gtCNkn2x+9sFE6RnpM02mvGL
-         0zByFg+24Tumg==
+        s=t20230301; t=1693129097;
+        bh=piFugZHMLuSIS9b+Rv/FmdqkIddGgweuSK0getmdWiQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=YJ7XAJ3+B+BiabruVyPjt4PsGR3SEyI6KA0N9ZzKe1O7WTLRY7+zI5tUkCIBTuA5t
+         bZlYskYXbE0zGWWPU3nokcAl/cDDfnn3G3xe1ePsfo/Z1U3EjGHWM24bdc2xO0+Gyp
+         lKyqco2d0LCAV5ijqFVthSYu3TktErkNQj7GhLqHUJFDaR3dcks7n2k9uk032IOZ0p
+         nZMtMcMgJZvQ3N3wg6qAQvg+yrT1pFg6mln7VCkDxfF1+VREHmM8HZErGNYIylbxby
+         TBigHzrjqAsU5YdeolnqtnxbT5BJqICZdrm1SBB9bq2spVbUmfRH+7gA8rGANPYxzc
+         bbT8mV+3w3fEQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Aug 2023 11:38:02 +0200
+X-ME-Date: Sun, 27 Aug 2023 11:38:17 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
@@ -41,40 +41,44 @@ To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
-Date:   Sun, 27 Aug 2023 11:37:51 +0200
-Message-Id: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/5] clk: imx: imx8: Fix an error handling path in clk_imx_acm_attach_pm_domains()
+Date:   Sun, 27 Aug 2023 11:37:52 +0200
+Message-Id: <84ba2f52d43887f954d26a784bd576f20587320f.1693126687.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This serie fix some error handling paths. It is split in different patches to
-ease review because the issues are unrelated and the proposed fixes are maybe
-wrong (I don't have the hardware to test anything)
+If a dev_pm_domain_attach_by_id() call fails, previously allocated
+resources need to be released.
 
-Patch 2 and 3 are more speculative than the 3 oher ones. Review with care.
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/imx/clk-imx8-acm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-Finally, I got some problem when generating the serie, and some patches have
-been hand-modified afterwards.
-They look good to me, but I hope have not screwed up things...
-
-Christophe JAILLET (5):
-  clk: imx: imx8: Fix an error handling path in
-    clk_imx_acm_attach_pm_domains()
-  clk: imx: imx8: Fix an error handling path if
-    devm_clk_hw_register_mux_parent_data_table() fails
-  clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
-  clk: imx: imx8: Add a message in case of
-    devm_clk_hw_register_mux_parent_data_table() error
-  clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
-
- drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index 1e82f72b75c6..87025a6772d0 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -279,8 +279,10 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+ 
+ 	for (i = 0; i < dev_pm->num_domains; i++) {
+ 		dev_pm->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
+-		if (IS_ERR(dev_pm->pd_dev[i]))
+-			return PTR_ERR(dev_pm->pd_dev[i]);
++		if (IS_ERR(dev_pm->pd_dev[i])) {
++			ret = PTR_ERR(dev_pm->pd_dev[i]);
++			goto detach_pm;
++		}
+ 
+ 		dev_pm->pd_dev_link[i] = device_link_add(dev,
+ 							 dev_pm->pd_dev[i],
 -- 
 2.34.1
 
