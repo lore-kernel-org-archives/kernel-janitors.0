@@ -2,72 +2,139 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7183DC83F16
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Aug 2023 21:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D39C83F12
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Aug 2023 07:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230389AbjH0Vtk (ORCPT
+        id S229830AbjH1He5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Aug 2023 17:49:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41596 "EHLO
+        Mon, 28 Aug 2023 03:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbjH0Vtf (ORCPT
+        with ESMTP id S229818AbjH1Hev (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Aug 2023 17:49:35 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8706B119;
-        Sun, 27 Aug 2023 14:49:32 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C280240005;
-        Sun, 27 Aug 2023 21:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1693172971;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X1A41XLxiGjxOXQQYjkjIEZWNYJ8/Qz7bBby00Az0O0=;
-        b=EC5HzCEh0AvIIP0SqBdPnGdLACH4bx6Lk7ekPxEK09ugjkAOnj+ksdmjleZIg7iYu4FOp2
-        IxxGyTyAnjEyok2rwnJGWA7Iy1PvdzVOLbR6mkGWTZBWlHxgaZ3cCZxxXAIRXMZw0mhZMn
-        9tTIToDmEoI2IkLF09ZEcA6tgErqAW9kDAPB5jwisfyY+n0z9SZyEQpucKruQgMd6Tolc+
-        ZFbxNYeVbDfh+6HjrPv8Mtn67EYLVzZ/OCh8uYdsSUA7eo3bULHJeAabPk3CKxHc7G0ULC
-        Mg/IfiahTdnYXorMA4cIVRfIdTj1OZbELq+18CrLysrVoRl+jUMAgtaELOS18Q==
-Date:   Sun, 27 Aug 2023 23:49:30 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove obsolete pattern in RTC SUBSYSTEM
- section
-Message-ID: <169317294154.537637.1894827530197722432.b4-ty@bootlin.com>
-References: <20230825053910.17941-1-lukas.bulwahn@gmail.com>
+        Mon, 28 Aug 2023 03:34:51 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B96E10A;
+        Mon, 28 Aug 2023 00:34:48 -0700 (PDT)
+Received: from ideasonboard.com (mob-5-91-19-240.net.vodafone.it [5.91.19.240])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E95C6B5;
+        Mon, 28 Aug 2023 09:33:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1693208005;
+        bh=1rsSXCqvZ4/X2DpUqa0xnHt/RsZuL51FvPDwOwl1IEQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JxOrOdrW4hcUebkgh5EsYFtGsTv0CsmBEkc7ORijPg/6TVCtQkQ3lwNGedZHpagcp
+         txIeGE7FWB3u9GjdZ/+ZYvuqJpzeIxS3eyX0aKiKHWZHy2r49S21ClleGmErP8TDnA
+         O9S8vWEy9FtjHLbuullKPnTp6xTzzT8eqtjEA3ag=
+Date:   Mon, 28 Aug 2023 09:34:40 +0200
+From:   Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: max9286: Fix some redundant of_node_put()
+ calls
+Message-ID: <rveb47frebdzhpcxdt4jnyasiztrhfnee3pzgl5ndafh2jbrsf@za4o23cw3lch>
+References: <084fdd562690c08f1ee72bc08e63e8ee576dc86a.1693001599.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230825053910.17941-1-lukas.bulwahn@gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <084fdd562690c08f1ee72bc08e63e8ee576dc86a.1693001599.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Christophe
 
-On Fri, 25 Aug 2023 07:39:10 +0200, Lukas Bulwahn wrote:
-> Commit d890cfc25fe9 ("rtc: ds2404: Convert to GPIO descriptors") removes
-> the rtc-ds2404.h platform data and with that, there is no file remaining
-> matching the pattern 'include/linux/platform_data/rtc-*'. Hence,
-> ./scripts/get_maintainer.pl --self-test=patterns complains about a broken
-> reference.
-> 
-> Remove the obsolete file pattern in the REAL TIME CLOCK (RTC) SUBSYSTEM.
-> 
-> [...]
+On Sat, Aug 26, 2023 at 12:13:40AM +0200, Christophe JAILLET wrote:
+> This is odd to have a of_node_put() just after a for_each_child_of_node()
+> or a for_each_endpoint_of_node() loop. It should already be called
+> during the last iteration.
 
-Applied, thanks!
+Let's unwrap the calls:
 
-[1/1] MAINTAINERS: remove obsolete pattern in RTC SUBSYSTEM section
-      commit: 45cc2a7de905a1f3bb38fb7d6f68a204c71630be
+#define for_each_child_of_node(parent, child) \
+     for (child = of_get_next_child(parent, NULL); child != NULL; \
+          child = of_get_next_child(parent, child))
 
-Best regards,
+static struct device_node *__of_get_next_child(const struct device_node *node,
+						struct device_node *prev)
+{
+	struct device_node *next;
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+	if (!node)
+		return NULL;
+
+	next = prev ? prev->sibling : node->child;
+	of_node_get(next);
+	of_node_put(prev);
+	return next;
+}
+
+Let's express the C for loop semantic as a while to help following the
+code:
+
+        child = of_get_next_child(parent, NULL);
+        while (child != NULL)
+                child = of_get_next_child(parent, child);
+
+I concur that the last loop iteration the call to
+__of_get_next_child() will expand to
+
+        next = NULL;
+        of_node_get(NULL);
+        of_node_put(prev)
+
+So it seems to me it is not necessary to put the node after
+for_each_child_of_node() ?
+
+In facts none of the other usages of for_each_child_of_node() in the
+kernel (the ones i checked at least) have a put() after the loop.
+
+>
+> Remove these calls.
+>
+> Fixes: 66d8c9d2422d ("media: i2c: Add MAX9286 driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+Thanks
+  j
+
+> ---
+> /!\  This patch is speculative, review with case  /!\
+> ---
+>  drivers/media/i2c/max9286.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> index 20e7c7cf5eeb..f27a69b1b727 100644
+> --- a/drivers/media/i2c/max9286.c
+> +++ b/drivers/media/i2c/max9286.c
+> @@ -1450,7 +1450,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+>
+>  		i2c_mux_mask |= BIT(id);
+>  	}
+> -	of_node_put(node);
+>  	of_node_put(i2c_mux);
+>
+>  	/* Parse the endpoints */
+> @@ -1514,7 +1513,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+>  		priv->source_mask |= BIT(ep.port);
+>  		priv->nsources++;
+>  	}
+> -	of_node_put(node);
+>
+>  	of_property_read_u32(dev->of_node, "maxim,bus-width", &priv->bus_width);
+>  	switch (priv->bus_width) {
+> --
+> 2.34.1
+>
