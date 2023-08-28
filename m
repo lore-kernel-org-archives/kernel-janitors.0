@@ -2,62 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E221C83F16
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Aug 2023 08:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5345CC83F16
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Aug 2023 10:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229878AbjH1IJm (ORCPT
+        id S232235AbjH1KyW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Aug 2023 04:09:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52588 "EHLO
+        Mon, 28 Aug 2023 06:54:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbjH1IJ0 (ORCPT
+        with ESMTP id S232156AbjH1Kxw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Aug 2023 04:09:26 -0400
-Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B264E125
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Aug 2023 01:09:22 -0700 (PDT)
-Received: by mail.ettrick.pl (Postfix, from userid 1002)
-        id 0F6FA24EE6; Mon, 28 Aug 2023 08:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
-        t=1693210126; bh=V4qwQGqC7KpJoyielzRpnopuINFIOvKXsSgJ3ZENIXU=;
-        h=Date:From:To:Subject:From;
-        b=SsTsC5lEqoquj0enngVUUXd33IaW2SXyIalp0F2hgYQS6Of4URgIOXps1+mP80ZLi
-         J4GI4VNClxqqQb+1jAoQhUUTWdKn/GkNRFqt+BKdhVyogq4b4xQYaeaDbalS0sNLAB
-         uhl99sAocFehSq/BoqcgMSGRr3u3P+flgLIojCG5owfokM1PzOxk/6A/f5zr7IECnw
-         XeV/w8M0+4TJgtZcfK1qQFH6o+g3hk6iJ28yrMajunICSFH0wzRxdh9Att0mY3OQtD
-         J31s8SFmtRTYYySgYob4Qi07doGsbEM7RNFHweiZwOX9Z1SUGfxDTNnbmEhMVTMNc+
-         RldL4DsIPp2dA==
-Received: by mail.ettrick.pl for <kernel-janitors@vger.kernel.org>; Mon, 28 Aug 2023 08:06:03 GMT
-Message-ID: <20230828064500-0.1.16.mkg4.0.7j7mrqmldg@ettrick.pl>
-Date:   Mon, 28 Aug 2023 08:06:03 GMT
-From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Fotowoltaika - propozycja instalacji
-X-Mailer: mail.ettrick.pl
+        Mon, 28 Aug 2023 06:53:52 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1500CDD;
+        Mon, 28 Aug 2023 03:53:28 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (aztw-30-b2-v4wan-166917-cust845.vm26.cable.virginm.net [82.37.23.78])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F37BA6B5;
+        Mon, 28 Aug 2023 12:50:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1693219835;
+        bh=urchrIa5bibTdqbDKSnaOSwnMIAFoyrrFQmDtnh6exM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=bo4EHvlqFzoLdyiH67p6WzYo9CsyU2bibJMxXL1mDq37g/YtVc01Egl2FU6asOMJr
+         WtZUY8FxR4tPpChgMR/YCO3UUdfV5D7lOIAlrDcR2qG58YqXR6RmvmvAv5N+n9d02g
+         IzILXe7ZZpePA1/OHC4Q4UUNLlE7ZdaLcLFKtwzk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <rveb47frebdzhpcxdt4jnyasiztrhfnee3pzgl5ndafh2jbrsf@za4o23cw3lch>
+References: <084fdd562690c08f1ee72bc08e63e8ee576dc86a.1693001599.git.christophe.jaillet@wanadoo.fr> <rveb47frebdzhpcxdt4jnyasiztrhfnee3pzgl5ndafh2jbrsf@za4o23cw3lch>
+Subject: Re: [PATCH] media: i2c: max9286: Fix some redundant of_node_put() calls
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?utf-8?q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-media@vger.kernel.org
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Date:   Mon, 28 Aug 2023 11:51:53 +0100
+Message-ID: <169321991310.137962.4278774029844229066@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
-=20
-Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
-=20
-Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
-ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
-sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
- elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
-d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
-rodowiska naturalnego.
-=20
-Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
-wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
-zak=C5=82adu energetycznego.=20
-=20
-Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
+Quoting Jacopo Mondi (2023-08-28 08:34:40)
+> Hi Christophe
+>=20
+> On Sat, Aug 26, 2023 at 12:13:40AM +0200, Christophe JAILLET wrote:
+> > This is odd to have a of_node_put() just after a for_each_child_of_node=
+()
+> > or a for_each_endpoint_of_node() loop. It should already be called
+> > during the last iteration.
+>=20
+> Let's unwrap the calls:
+>=20
+> #define for_each_child_of_node(parent, child) \
+>      for (child =3D of_get_next_child(parent, NULL); child !=3D NULL; \
+>           child =3D of_get_next_child(parent, child))
+>=20
+> static struct device_node *__of_get_next_child(const struct device_node *=
+node,
+>                                                 struct device_node *prev)
+> {
+>         struct device_node *next;
+>=20
+>         if (!node)
+>                 return NULL;
+>=20
+>         next =3D prev ? prev->sibling : node->child;
+>         of_node_get(next);
+>         of_node_put(prev);
+>         return next;
+> }
+>=20
+> Let's express the C for loop semantic as a while to help following the
+> code:
+>=20
+>         child =3D of_get_next_child(parent, NULL);
+>         while (child !=3D NULL)
+>                 child =3D of_get_next_child(parent, child);
+>=20
+> I concur that the last loop iteration the call to
+> __of_get_next_child() will expand to
+>=20
+>         next =3D NULL;
+>         of_node_get(NULL);
+>         of_node_put(prev)
+>=20
+> So it seems to me it is not necessary to put the node after
+> for_each_child_of_node() ?
+>=20
+> In facts none of the other usages of for_each_child_of_node() in the
+> kernel (the ones i checked at least) have a put() after the loop.
+
+I agree. As long as the loops don't use any break statement - there
+shouldn't be any _put() after the completion of the loop.
+
+That would make a good cocci script - make sure these iterators do not
+use 'break' internally - as that would then conflict!
 
 
-Pozdrawiam
-Norbert Karecki
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+>=20
+> >
+> > Remove these calls.
+> >
+> > Fixes: 66d8c9d2422d ("media: i2c: Add MAX9286 driver")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>=20
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>=20
+> Thanks
+>   j
+>=20
+> > ---
+> > /!\  This patch is speculative, review with case  /!\
+> > ---
+> >  drivers/media/i2c/max9286.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> > index 20e7c7cf5eeb..f27a69b1b727 100644
+> > --- a/drivers/media/i2c/max9286.c
+> > +++ b/drivers/media/i2c/max9286.c
+> > @@ -1450,7 +1450,6 @@ static int max9286_parse_dt(struct max9286_priv *=
+priv)
+> >
+> >               i2c_mux_mask |=3D BIT(id);
+> >       }
+> > -     of_node_put(node);
+> >       of_node_put(i2c_mux);
+> >
+> >       /* Parse the endpoints */
+> > @@ -1514,7 +1513,6 @@ static int max9286_parse_dt(struct max9286_priv *=
+priv)
+> >               priv->source_mask |=3D BIT(ep.port);
+> >               priv->nsources++;
+> >       }
+> > -     of_node_put(node);
+> >
+> >       of_property_read_u32(dev->of_node, "maxim,bus-width", &priv->bus_=
+width);
+> >       switch (priv->bus_width) {
+> > --
+> > 2.34.1
+> >
