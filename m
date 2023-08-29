@@ -2,98 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52ACC71153
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Aug 2023 19:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB9DC83F18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Aug 2023 20:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbjH2TM5 (ORCPT
+        id S240156AbjH2Umt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Aug 2023 15:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45168 "EHLO
+        Tue, 29 Aug 2023 16:42:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234731AbjH2TMZ (ORCPT
+        with ESMTP id S240546AbjH2Uma (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Aug 2023 15:12:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA4983;
-        Tue, 29 Aug 2023 12:12:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AF0F61CE5;
-        Tue, 29 Aug 2023 19:12:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8AAC433C7;
-        Tue, 29 Aug 2023 19:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693336342;
-        bh=Y7BWzSc1wFmIX6sTKYMV6PLaewMUa7ZUlRGapp3Ioi8=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=PKN5m15DXO595Bhz9BRIBaawKwSMtOsqBsxocXLUvyxmSyoLkJIt/JcS2QgsERIjf
-         YQV5dW+/xVCyUQa13+bazoMI1c9UmFie/IK0zgcFNWVtO3/4vpHYSDCklUPxXIrHKW
-         BmS3Pn0d+bTzvIhCBqQcMZ12goCjDJoQCwJViPNCbgHWvXc1n39o7f/c5w1k4CoMAW
-         an6W1kIJWZBucjM64zKIo+xPjS1YEdS2r1+Xa6B4zNMwIhlXzOSJYPpLQJ8v5mk/qj
-         UCxqw8gfSRiR/SiQn535ayH+hA6EwhCztrgxIVnXgfGg3bGDPm+kFBMYNvIRCfJScs
-         EmSE5TD0emOxw==
-From:   Mark Brown <broonie@kernel.org>
-To:     James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-In-Reply-To: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
-References: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH next] ASoC: cs42l43: Fix missing error code in
- cs42l43_codec_probe()
-Message-Id: <169333633540.3145573.6288237748073624350.b4-ty@kernel.org>
-Date:   Tue, 29 Aug 2023 20:12:15 +0100
+        Tue, 29 Aug 2023 16:42:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FADDFD
+        for <kernel-janitors@vger.kernel.org>; Tue, 29 Aug 2023 13:42:27 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id b5XZqcc2VQ296b5Xaq5xos; Tue, 29 Aug 2023 22:42:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693341744;
+        bh=NSFtOWiCqFXMHVz2Ts71ekjvauIWND+mQAvXMrYTxRo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=JiJGg1XhYATzHEw6lkCs+v8JzG7gkLoK6B2h9GWjgYXoHcLSsWYKWpyXNH9E3NO+X
+         OqG0pgqugAg+DP3GM/hGNuyeGdmd3td054G7PxovknxnSfxzmnx4KCCQ0tniL7ff0q
+         ke+h+AevJ3PVZ9ZICdFkdFptUaOb2KV7OilfTIx8G4wF+9dbIL04DTxN+OsO8d06Hd
+         N3Nz/p5StB2zqeLSCbCkEMMmdy7bCer5unzlFdQtw/0uRASZgiaPKiIkADTlDLlYHV
+         KcxoJpTOMErIlNVHi10adQssTia9qP8BEvUQN+Xqwc8OcNizUoU4ZZqDnNZ3+frfGP
+         UH6mWOgtv5UVA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 29 Aug 2023 22:42:24 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <6875e4e7-085e-fa0c-c0f7-404fb82a872c@wanadoo.fr>
+Date:   Tue, 29 Aug 2023 22:42:21 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] media: i2c: rdacm2: Remove an incorrect
+ fwnode_handle_put() call
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <d9230082aefcb7bab6363c51c08598eb5ab62cfc.1693037086.git.christophe.jaillet@wanadoo.fr>
+ <zijwh5kcrfsg4q4pmxtkzia7tdpg4wnau53npe2y2xe4j7n7wy@zqwigtmyftu3>
+ <20230828105723.GF14596@pendragon.ideasonboard.com>
+ <20230828111630.GH14596@pendragon.ideasonboard.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230828111630.GH14596@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 29 Aug 2023 00:36:35 -0700, Harshit Mogalapalli wrote:
-> When clk_get_optional() fails, the error handling code does a 'goto
-> err_pm' with ret = 0, which is resturning success on a failure path.
+Le 28/08/2023 à 13:16, Laurent Pinchart a écrit :
+> On Mon, Aug 28, 2023 at 01:57:24PM +0300, Laurent Pinchart wrote:
+>> On Mon, Aug 28, 2023 at 09:48:10AM +0200, Jacopo Mondi wrote:
+>>> Hi Christophe
+>>>
+>>> On Sat, Aug 26, 2023 at 10:05:06AM +0200, Christophe JAILLET wrote:
+>>>> The commit in Fixes has removed an fwnode_handle_put() call in the error
+>>>> handling path of the probe.
+>>>>
+>>>> Remove the same call from the remove function.
+>>>>
+>>>> Fixes: 1029939b3782 ("media: v4l: async: Simplify async sub-device fwnode matching")
+>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>
+>>> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>>
+>> The subject line should read "rdacm21", not "rdacm2". with that fixed,
+>>
+>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>
+>>>> ---
+>>>> /!\   This patch is highly speculative. Review with care.   /!\
+>>>>
+>>>> If it is correct, it is likely that other similar issue lurk in commit
+>>>> 1029939b3782. I've not looked in detail and my cocci script did not
+>>>> trigger on them but drivers/media/i2c/max9286.c also looks like a
+>>>> similar candidate.
+>>>
+>>> I think the call to  fwnode_handle_put(priv->sd.fwnode) in
+>>> max9286_v4l2_unregister() can indeed be removed, yes!
+>>
+>> I agree.
 > 
-> Fix this by assigning the PTR_ERR(priv->mclk) to ret variable.
+> drivers/media/platform/nxp/imx-mipi-csis.c also needs a fix.
 > 
-> 
+> Christophe, do you plan to send patches for those ? If not, I can handle
+> it.
 
-Applied to
+I'll propose patches for both in the coming days.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+CJ
 
-Thanks!
-
-[1/1] ASoC: cs42l43: Fix missing error code in cs42l43_codec_probe()
-      commit: 9e07f8bfd959d2d09823430eab35d12182446dcf
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
