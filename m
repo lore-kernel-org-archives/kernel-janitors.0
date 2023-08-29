@@ -2,107 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379F5C83F12
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Aug 2023 07:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C27CC83F12
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Aug 2023 08:53:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232941AbjH2Hhm (ORCPT
+        id S230263AbjH2Iwm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Aug 2023 03:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
+        Tue, 29 Aug 2023 04:52:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231393AbjH2HhL (ORCPT
+        with ESMTP id S234355AbjH2Iwa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Aug 2023 03:37:11 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3C0B5;
-        Tue, 29 Aug 2023 00:37:08 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37T6hrr0012633;
-        Tue, 29 Aug 2023 07:36:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=BxK/SLJlbdVlGnbew4iPZrnJYslywfcoRRZh2jM1k9s=;
- b=EllaCH86CU2gCGrCfkwY3+/SvX7f3qdiZMddx0EVfjGXAb4l6Ql8MUZ77unC/FhSahbG
- v/C4yr8ri5EzG8AOCp5UReRiRQJTTZpKdS29TOqN/PCh9wChl8p9//Tc6/YoMwLI2Qj1
- iEUk4jvDm+oHL360V6VUIr6pvTdSEAfbMOEiDK7QVHpXz+Z7xkUI0eIqW4DqxdjqNqnb
- h9c7jCF5YKNWxqusZmCtifGF/koRBGdUzdZC6KYiSo9O4yQjvO27ra0qpeEOK+3nSYJN
- GhMo/UaKDj/QTW504zfiHSjgTFfaolpFB6YFmlegmZHS28YYZWjtyixlK1XpnZuZMZIX HA== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sq9gcmarf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Aug 2023 07:36:40 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 37T72EXE032686;
-        Tue, 29 Aug 2023 07:36:39 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3sr6dn7sm5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Aug 2023 07:36:39 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37T7acCA027124;
-        Tue, 29 Aug 2023 07:36:38 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3sr6dn7ske-1;
-        Tue, 29 Aug 2023 07:36:38 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     James Schulman <james.schulman@cirrus.com>,
+        Tue, 29 Aug 2023 04:52:30 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BD8E0;
+        Tue, 29 Aug 2023 01:52:27 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 37T7duvW028909;
+        Tue, 29 Aug 2023 03:46:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=PODMain02222019; bh=tCsuP7AKJMpbFbr
+        bid78TMjDeHr7H/IBH+iAMJKh65k=; b=CvIf87YrdV58Fbqzkb47X/AYBuKZfOH
+        tB/s9zRImfwOiv5yx2Mv68PPJpvkj2YBog0ZyTgYAokzO3lPA+mV8KzR+xYjTWDX
+        V0do/wUHMvz8puSDpboNinjCRO9FfTzpJgBriFf0RqPVaGq2BDE3cdkwiKqeIO9r
+        JirJIczjlZNmDElEfeMLJmeJPaUnmDVYX+og8Ondw0s8cdMaPdHkf18B2SpVi73a
+        gGNVpkkBAPyqnHNRFgQwvRMbj8143shKjhJ9m9w5/YeN2h6R8iJpd853kjTY5zyL
+        +qdjlIc4ISlSGMe+wjUbWRBzFvmSexfNdMX4w7PKDEE2y68XU5SVE1A==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3sqdtj2qgq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Aug 2023 03:46:59 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.37; Tue, 29 Aug
+ 2023 09:46:58 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.2.1118.37 via Frontend
+ Transport; Tue, 29 Aug 2023 09:46:58 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DF72F357C;
+        Tue, 29 Aug 2023 08:46:57 +0000 (UTC)
+Date:   Tue, 29 Aug 2023 08:46:57 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+CC:     James Schulman <james.schulman@cirrus.com>,
         David Rhodes <david.rhodes@cirrus.com>,
         Richard Fitzgerald <rf@opensource.cirrus.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH next] ASoC: cs42l43: Fix missing error code in cs42l43_codec_probe()
-Date:   Tue, 29 Aug 2023 00:36:35 -0700
-Message-ID: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.41.0
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        <dan.carpenter@linaro.org>, <kernel-janitors@vger.kernel.org>,
+        <error27@gmail.com>
+Subject: Re: [PATCH next] ASoC: cs42l43: Fix missing error code in
+ cs42l43_codec_probe()
+Message-ID: <20230829084657.GO103419@ediswmail.ad.cirrus.com>
+References: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-29_04,2023-08-28_04,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- adultscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308290064
-X-Proofpoint-ORIG-GUID: kw1aQ_vsj7yYeDlYbURxPTCNSw0YSGst
-X-Proofpoint-GUID: kw1aQ_vsj7yYeDlYbURxPTCNSw0YSGst
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: lt2KSslfaEEodS0lMHqEliLgRvuY-hKQ
+X-Proofpoint-GUID: lt2KSslfaEEodS0lMHqEliLgRvuY-hKQ
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When clk_get_optional() fails, the error handling code does a 'goto
-err_pm' with ret = 0, which is resturning success on a failure path.
+On Tue, Aug 29, 2023 at 12:36:35AM -0700, Harshit Mogalapalli wrote:
+> When clk_get_optional() fails, the error handling code does a 'goto
+> err_pm' with ret = 0, which is resturning success on a failure path.
+> 
+> Fix this by assigning the PTR_ERR(priv->mclk) to ret variable.
+> 
+> Fixes: fc918cbe874e ("ASoC: cs42l43: Add support for the cs42l43")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
 
-Fix this by assigning the PTR_ERR(priv->mclk) to ret variable.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Fixes: fc918cbe874e ("ASoC: cs42l43: Add support for the cs42l43")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with smatch, only compile tested.
----
- sound/soc/codecs/cs42l43.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/cs42l43.c b/sound/soc/codecs/cs42l43.c
-index 24e718e51174..1a95c370fc4c 100644
---- a/sound/soc/codecs/cs42l43.c
-+++ b/sound/soc/codecs/cs42l43.c
-@@ -2205,7 +2205,8 @@ static int cs42l43_codec_probe(struct platform_device *pdev)
- 	// Don't use devm as we need to get against the MFD device
- 	priv->mclk = clk_get_optional(cs42l43->dev, "mclk");
- 	if (IS_ERR(priv->mclk)) {
--		dev_err_probe(priv->dev, PTR_ERR(priv->mclk), "Failed to get mclk\n");
-+		ret = PTR_ERR(priv->mclk);
-+		dev_err_probe(priv->dev, ret, "Failed to get mclk\n");
- 		goto err_pm;
- 	}
- 
--- 
-2.39.3
-
+Thanks,
+Charles
