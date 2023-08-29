@@ -2,92 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2C3C83F12
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Aug 2023 21:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379F5C83F12
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Aug 2023 07:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233658AbjH1Vbg (ORCPT
+        id S232941AbjH2Hhm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Aug 2023 17:31:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54102 "EHLO
+        Tue, 29 Aug 2023 03:37:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233736AbjH1VbO (ORCPT
+        with ESMTP id S231393AbjH2HhL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Aug 2023 17:31:14 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88819194;
-        Mon, 28 Aug 2023 14:31:04 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-31c71898109so3164599f8f.2;
-        Mon, 28 Aug 2023 14:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693258263; x=1693863063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v0x0vlFhawEtT6ZLRUNUkUNLsMfxgSs9gin/e6c5kP8=;
-        b=gxr01ZE/NCLkm5nQhEpmWAN5SoIZl2UnWfvFHYEBnK85ptaU421j936pMn+Kz9OoR3
-         izDxxZUB3gJGdv4Qd3uHJ4zGhxrxXcU+CDwgR5mfHsTH7vfuISrVeu2YTqbM1brggKtG
-         IdO/WiUiKaLWiBT4ZjPaips8Ip+YtaDarujz4Wjpm+j0x+ePlDYwELCARfYt3Pj0S3z+
-         Cvd0NjqegsPx/PhkWvJAmDripl415+nmJgVIxALumsniYDFf+UYwrzrZBDgl5EWpL0xK
-         ezUpFm6jPM1j3MpmkxwHSIx/MR5Tqnmgwp9Jy2cjHkJdipcsXqUC98ikSqKgWDErSsea
-         O0JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693258263; x=1693863063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v0x0vlFhawEtT6ZLRUNUkUNLsMfxgSs9gin/e6c5kP8=;
-        b=WdHj/AaBRRqcLOxqm2KlvDscDa4cf8OF7vYhMeLujPqhC86KTGaDmHhXbFCS/FpFE4
-         qNOAvhO3hx30CDoJSHB1VHzOs2qBWyqUI+TpCX1SPogAFMmq+dnsykSY/PwnBk/d8yAh
-         OrDrBy/fJSdxNbm6zQYV9J5xTO/gJswI2TOXDw7rPzsJLv0LIJhr/fpQBTt9o7uRao3E
-         gfPFy2/OjjgxniN+cpGgQbSTs0oilPF1A072QhY8odzhqwj+ozQYKe16tIFXR8ucvjmC
-         f4E4mz0Y+RMwy1g1i3B9v7VeNoCb7PemT45F3XT7pkR4F3DX/ku3u/1aj+2sT+RsTrs3
-         rTDA==
-X-Gm-Message-State: AOJu0Yz0q1mcSqN1QH+nMSPhjCJ4/xXWtEGWcKveRY1v9U+B1SGFGlJF
-        hisfA1lbyRatlOL6c7mBiU2SaJxodNE=
-X-Google-Smtp-Source: AGHT+IEI2oQ1tZ9EVEM2cyDcjwgEDA8bCclGhtkajA6M2Br5vngzbkGo6kV6BGGtTh65lxMIV0YMmw==
-X-Received: by 2002:adf:edca:0:b0:31a:d7fc:28f with SMTP id v10-20020adfedca000000b0031ad7fc028fmr21272839wro.19.1693258262696;
-        Mon, 28 Aug 2023 14:31:02 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h8-20020a056000000800b0031759e6b43fsm11593148wrx.39.2023.08.28.14.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 14:31:01 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: qla2xxx: Fix spelling mistake "tranport" -> "transport"
-Date:   Mon, 28 Aug 2023 22:31:01 +0100
-Message-Id: <20230828213101.758609-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 29 Aug 2023 03:37:11 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3C0B5;
+        Tue, 29 Aug 2023 00:37:08 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37T6hrr0012633;
+        Tue, 29 Aug 2023 07:36:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=BxK/SLJlbdVlGnbew4iPZrnJYslywfcoRRZh2jM1k9s=;
+ b=EllaCH86CU2gCGrCfkwY3+/SvX7f3qdiZMddx0EVfjGXAb4l6Ql8MUZ77unC/FhSahbG
+ v/C4yr8ri5EzG8AOCp5UReRiRQJTTZpKdS29TOqN/PCh9wChl8p9//Tc6/YoMwLI2Qj1
+ iEUk4jvDm+oHL360V6VUIr6pvTdSEAfbMOEiDK7QVHpXz+Z7xkUI0eIqW4DqxdjqNqnb
+ h9c7jCF5YKNWxqusZmCtifGF/koRBGdUzdZC6KYiSo9O4yQjvO27ra0qpeEOK+3nSYJN
+ GhMo/UaKDj/QTW504zfiHSjgTFfaolpFB6YFmlegmZHS28YYZWjtyixlK1XpnZuZMZIX HA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sq9gcmarf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Aug 2023 07:36:40 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 37T72EXE032686;
+        Tue, 29 Aug 2023 07:36:39 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3sr6dn7sm5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Aug 2023 07:36:39 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37T7acCA027124;
+        Tue, 29 Aug 2023 07:36:38 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3sr6dn7ske-1;
+        Tue, 29 Aug 2023 07:36:38 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     James Schulman <james.schulman@cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH next] ASoC: cs42l43: Fix missing error code in cs42l43_codec_probe()
+Date:   Tue, 29 Aug 2023 00:36:35 -0700
+Message-ID: <20230829073635.1877367-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-29_04,2023-08-28_04,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ adultscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308290064
+X-Proofpoint-ORIG-GUID: kw1aQ_vsj7yYeDlYbURxPTCNSw0YSGst
+X-Proofpoint-GUID: kw1aQ_vsj7yYeDlYbURxPTCNSw0YSGst
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a ql_dbg message. Fix it.
+When clk_get_optional() fails, the error handling code does a 'goto
+err_pm' with ret = 0, which is resturning success on a failure path.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fix this by assigning the PTR_ERR(priv->mclk) to ret variable.
+
+Fixes: fc918cbe874e ("ASoC: cs42l43: Add support for the cs42l43")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- drivers/scsi/qla2xxx/qla_nvme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is based on static analysis with smatch, only compile tested.
+---
+ sound/soc/codecs/cs42l43.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
-index 62a67662cbf3..04e02de36100 100644
---- a/drivers/scsi/qla2xxx/qla_nvme.c
-+++ b/drivers/scsi/qla2xxx/qla_nvme.c
-@@ -1189,7 +1189,7 @@ qla2xxx_process_purls_pkt(struct scsi_qla_host *vha, struct purex_item *item)
- 				 &item->iocb, item->size);
- #endif
- 	if (ret) {
--		ql_dbg(ql_dbg_unsol, vha, 0x2125, "NVMe tranport ls_req failed\n");
-+		ql_dbg(ql_dbg_unsol, vha, 0x2125, "NVMe transport ls_req failed\n");
- 		memset((void *)&a, 0, sizeof(a));
- 		a.vp_idx = vha->vp_idx;
- 		a.nport_handle = uctx->nport_handle;
+diff --git a/sound/soc/codecs/cs42l43.c b/sound/soc/codecs/cs42l43.c
+index 24e718e51174..1a95c370fc4c 100644
+--- a/sound/soc/codecs/cs42l43.c
++++ b/sound/soc/codecs/cs42l43.c
+@@ -2205,7 +2205,8 @@ static int cs42l43_codec_probe(struct platform_device *pdev)
+ 	// Don't use devm as we need to get against the MFD device
+ 	priv->mclk = clk_get_optional(cs42l43->dev, "mclk");
+ 	if (IS_ERR(priv->mclk)) {
+-		dev_err_probe(priv->dev, PTR_ERR(priv->mclk), "Failed to get mclk\n");
++		ret = PTR_ERR(priv->mclk);
++		dev_err_probe(priv->dev, ret, "Failed to get mclk\n");
+ 		goto err_pm;
+ 	}
+ 
 -- 
-2.39.2
+2.39.3
 
