@@ -2,100 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C48C83F29
-	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Aug 2023 07:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D115EC83F2E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Aug 2023 07:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231689AbjHaHQ2 (ORCPT
+        id S239394AbjHaHfG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 31 Aug 2023 03:16:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44504 "EHLO
+        Thu, 31 Aug 2023 03:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbjHaHQ1 (ORCPT
+        with ESMTP id S229891AbjHaHfF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 31 Aug 2023 03:16:27 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8380AE62;
-        Thu, 31 Aug 2023 00:16:02 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 75645836;
-        Thu, 31 Aug 2023 09:14:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1693466054;
-        bh=tVpuZI+y28Ywlldd4PZ6z5BJVpXZjNaH4iaRbuAIPbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lu2ZvOQ6sdIZ+07h4wvxA+rgmdmI7xLnvfEztbfY4wd9O0X7cNRGhrbrF4SEwlslZ
-         VMvY9qmgXY7M6IuqD93rozTmaHdikGsVeCIu+ej4t8QF3BASPmahKkatNYrDvD+NKA
-         b+Xm8/4rrLr2ZlgJBgLU9eaqIHn2UY1y8/lOkrs8=
-Date:   Thu, 31 Aug 2023 10:15:47 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Rui Miguel Silva <rmfrfs@gmail.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thu, 31 Aug 2023 03:35:05 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 5FA6D1A4;
+        Thu, 31 Aug 2023 00:35:01 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id BAC8A604DE354;
+        Thu, 31 Aug 2023 15:34:40 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org
+Cc:     linux-acpi@vger.kernel.org, acpica-devel@lists.linuxfoundation.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] media: imx-mipi-csis: Remove an incorrect
- fwnode_handle_put() call
-Message-ID: <20230831071547.GC2698@pendragon.ideasonboard.com>
-References: <dd5b741f496d074d342958f14baff5bae8c71531.1693429556.git.christophe.jaillet@wanadoo.fr>
+        Su Hui <suhui@nfschina.com>
+Subject: [PATCH 1/2] ACPICA: Use strscpy to replace strncpy
+Date:   Thu, 31 Aug 2023 15:34:32 +0800
+Message-Id: <20230831073432.1712904-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dd5b741f496d074d342958f14baff5bae8c71531.1693429556.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+With gcc and W=1 option to compile kernel, warning happens:
 
-Thank you for the patch.
+inlined from ‘acpi_tb_find_table’ at drivers/acpi/acpica/tbfind.c:60:2:
+include/linux/fortify-string.h:68:30: error: ‘__builtin_strncpy’ specified
+bound 6 equals destination size [-Werror=stringop-truncation]
 
-On Wed, Aug 30, 2023 at 11:06:14PM +0200, Christophe JAILLET wrote:
-> The commit in Fixes has removed an fwnode_graph_get_endpoint_by_id() call
-> in mipi_csis_subdev_init().
-> So the reference that was taken should not be released anymore in the
-> error handling path of the probe and in the remove function.
-> 
-> Remove the now incorrect fwnode_handle_put() calls.
-> 
-> Fixes: 1029939b3782 ("media: v4l: async: Simplify async sub-device fwnode matching")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Use strscpy to avoid this warning and is safer.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/acpi/acpica/tbfind.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index 16f19a640130..5f93712bf485 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -1490,7 +1490,6 @@ static int mipi_csis_probe(struct platform_device *pdev)
->  	v4l2_async_unregister_subdev(&csis->sd);
->  err_disable_clock:
->  	mipi_csis_clk_disable(csis);
-> -	fwnode_handle_put(csis->sd.fwnode);
->  
->  	return ret;
->  }
-> @@ -1510,7 +1509,6 @@ static void mipi_csis_remove(struct platform_device *pdev)
->  	mipi_csis_clk_disable(csis);
->  	v4l2_subdev_cleanup(&csis->sd);
->  	media_entity_cleanup(&csis->sd.entity);
-> -	fwnode_handle_put(csis->sd.fwnode);
->  	pm_runtime_set_suspended(&pdev->dev);
->  }
->  
-
+diff --git a/drivers/acpi/acpica/tbfind.c b/drivers/acpi/acpica/tbfind.c
+index 1c1b2e284bd9..5536d1755188 100644
+--- a/drivers/acpi/acpica/tbfind.c
++++ b/drivers/acpi/acpica/tbfind.c
+@@ -57,8 +57,8 @@ acpi_tb_find_table(char *signature,
+ 
+ 	memset(&header, 0, sizeof(struct acpi_table_header));
+ 	ACPI_COPY_NAMESEG(header.signature, signature);
+-	strncpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
+-	strncpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
++	strscpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
++	strscpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
+ 
+ 	/* Search for the table */
+ 
 -- 
-Regards,
+2.30.2
 
-Laurent Pinchart
