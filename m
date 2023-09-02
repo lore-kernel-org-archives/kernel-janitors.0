@@ -2,93 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9602C83F32
-	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Aug 2023 09:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28769C001DB
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Sep 2023 15:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243061AbjHaJfl convert rfc822-to-8bit (ORCPT
+        id S233025AbjIBPWW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 31 Aug 2023 05:35:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39354 "EHLO
+        Sat, 2 Sep 2023 11:22:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231892AbjHaJfk (ORCPT
+        with ESMTP id S231189AbjIBPWV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 31 Aug 2023 05:35:40 -0400
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60361CDD;
-        Thu, 31 Aug 2023 02:35:37 -0700 (PDT)
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5733d11894dso147846eaf.0;
-        Thu, 31 Aug 2023 02:35:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693474536; x=1694079336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w1zXFq6yH7gKwLUxTi+5zNAwg8QTKD31cnvIQY4Ezq4=;
-        b=MdQZEA+QRH/2YwCpiwqPxcVTSPPPiY85nOMb4Fwr0eYW7x4rDUa4cny7IQL1FwfDIx
-         qwNjRICZRVRNrw6kZHatEI6UlP21bSmSduWGTiCMPWBJem1QEVXu3RibF8Gi1N9Cm/86
-         /NIp/il3aQ2lwmaqpN0vad6I+pwYDkn/pYVTU7xWPXYiG4ZptLPdB1vgma5tDlnq2xYX
-         lB5rZq2kVOM3Q6FW/KB9n/s7TMB5JEF/S7PBDsX+LEWgZk2Q8D1ny/hjhA2RaCQCnP1d
-         ZknscjsER6+Vs80bzK/AfgwtpBArS0i+fySahEV+sbB+ZNs0g4anG0g8Jittv5J8djHv
-         XUBg==
-X-Gm-Message-State: AOJu0YxYKMAVltPBnOC+qC+D73oz6b3CgYmbRDTSypk6xnMs1OZQCYuP
-        gEMtWKjcGsvpZ5qMN5qjUjvWztpl1ka//o4bPAbpZI+gZhw=
-X-Google-Smtp-Source: AGHT+IGs+OAQkyf1C22XbnDRZlpFQWeSdCYSJR8ugVMflKZNJqiA0hEKd6f20IUpQWn0zmZLVycO62nGOrz+psrh70U=
-X-Received: by 2002:a4a:a302:0:b0:573:764b:3b8d with SMTP id
- q2-20020a4aa302000000b00573764b3b8dmr4332395ool.0.1693474536546; Thu, 31 Aug
- 2023 02:35:36 -0700 (PDT)
+        Sat, 2 Sep 2023 11:22:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE81D3
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Sep 2023 08:22:18 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id cSRzqoXOCUaEwcSRzqaRzL; Sat, 02 Sep 2023 17:22:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693668136;
+        bh=yjDI6etd+k4oOa2FG7xcDg5/IuMHAnQLiXRlOSm4IIo=;
+        h=From:To:Cc:Subject:Date;
+        b=L6KSI2Id8suQcDx8BCJvdaSOTHrmcA/V6FokPsR/KDUblTLpNEasdMOhZMotfdGzG
+         J9yZTCOflaCm/lsUzAeVLcwvSNRTIE1vMcV+2fHEfVPDgFvA5QkK50NFoox9lysS/t
+         iz4SOVG1VnXJyuy1i0tNimLk4uuO8OH+UCGVlpOlk8F4if0egol/sRZ/jRtzx6BmFh
+         D8DougwFq+Tmvgz58J0yyEk+GBcbkfsVbbXlh408B80kBcjBzpIi2QETTTwNfqaPlO
+         QIjgwPI6+35FmBW4VIFkdc0+r/wNYB0uWYwO1NNLH8eVGPkSPzYNmsw0s831ivbM9O
+         8jrQz+2Or4VtQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 02 Sep 2023 17:22:16 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
+        daniel@ffwll.ch, jonathanh@nvidia.com, digetx@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/6] drm/tegra: Fix some error handling paths
+Date:   Sat,  2 Sep 2023 17:22:07 +0200
+Message-Id: <cover.1693667005.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230831073432.1712904-1-suhui@nfschina.com>
-In-Reply-To: <20230831073432.1712904-1-suhui@nfschina.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 31 Aug 2023 11:35:24 +0200
-Message-ID: <CAJZ5v0iBZhz6oRgzU3_E+TFT244cgcWxS5ufo_8LnsgvrbbTJQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ACPICA: Use strscpy to replace strncpy
-To:     Su Hui <suhui@nfschina.com>
-Cc:     robert.moore@intel.com, rafael.j.wysocki@intel.com,
-        lenb@kernel.org, linux-acpi@vger.kernel.org,
-        acpica-devel@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 9:35 AM Su Hui <suhui@nfschina.com> wrote:
->
-> With gcc and W=1 option to compile kernel, warning happens:
->
-> inlined from ‘acpi_tb_find_table’ at drivers/acpi/acpica/tbfind.c:60:2:
-> include/linux/fortify-string.h:68:30: error: ‘__builtin_strncpy’ specified
-> bound 6 equals destination size [-Werror=stringop-truncation]
->
-> Use strscpy to avoid this warning and is safer.
->
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+Most of the patches are retated to tegra_output_probe() and missing
+tegra_output_remove(). Others are things spotted while writting the serie.
 
-Please see
 
-https://lore.kernel.org/linux-acpi/202308241612.DFE4119@keescook/
+Patches 1, 3, 4 are verbose, but some functions called in the probe can
+return -EPROBE_DEFER, so it is nice to correctly release resources.
 
-> ---
->  drivers/acpi/acpica/tbfind.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/acpica/tbfind.c b/drivers/acpi/acpica/tbfind.c
-> index 1c1b2e284bd9..5536d1755188 100644
-> --- a/drivers/acpi/acpica/tbfind.c
-> +++ b/drivers/acpi/acpica/tbfind.c
-> @@ -57,8 +57,8 @@ acpi_tb_find_table(char *signature,
->
->         memset(&header, 0, sizeof(struct acpi_table_header));
->         ACPI_COPY_NAMESEG(header.signature, signature);
-> -       strncpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
-> -       strncpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
-> +       strscpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
-> +       strscpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
->
->         /* Search for the table */
->
-> --
-> 2.30.2
->
+Maybe moving the tegra_output_probe() call would minimize the changes, but I'm
+always reluctant to move code, because of possible side-effects.
+
+
+Christophe JAILLET (6):
+  drm/tegra: dsi: Fix some error handling paths in tegra_dsi_probe()
+  drm/tegra: dsi: Fix missing pm_runtime_disable() in the error handling
+    path of tegra_dsi_probe()
+  drm/tegra: dsi: Fix some error handling paths in tegra_hdmi_probe()
+  drm/tegra: rgb: Fix some error handling paths in tegra_dc_rgb_probe()
+  drm/tegra: rgb: Fix missing clk_put() in the error handling paths of
+    tegra_dc_rgb_probe()
+  drm/tegra: output: Fix missing i2c_put_adapter() in the error handling
+    paths of tegra_output_probe()
+
+ drivers/gpu/drm/tegra/dsi.c    | 55 ++++++++++++++++++++++------------
+ drivers/gpu/drm/tegra/hdmi.c   | 20 ++++++++-----
+ drivers/gpu/drm/tegra/output.c | 16 +++++++---
+ drivers/gpu/drm/tegra/rgb.c    | 18 +++++++----
+ 4 files changed, 74 insertions(+), 35 deletions(-)
+
+-- 
+2.34.1
+
