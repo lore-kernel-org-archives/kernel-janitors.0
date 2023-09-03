@@ -2,106 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F9EC83F2D
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 15:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CE4C83F3F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 16:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243118AbjICPId (ORCPT
+        id S244292AbjICQEK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Sep 2023 11:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58960 "EHLO
+        Sun, 3 Sep 2023 12:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237182AbjICPIc (ORCPT
+        with ESMTP id S232636AbjICQEI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Sep 2023 11:08:32 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090E811D
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Sep 2023 08:08:24 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Sun, 3 Sep 2023 12:04:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3321100
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Sep 2023 09:04:05 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id coi3qCr0AbNd0coi4qbqwR; Sun, 03 Sep 2023 17:08:23 +0200
+        id cpZyqw0SP3NA1cpZyqIn6j; Sun, 03 Sep 2023 18:04:03 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693753703;
-        bh=3vbBQKPo4LJHiDDNu1Lpt1WO/D8AzSItjWjmWe5gbq8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=hpsDbBq0hKZCwQat/ZIqq9w4sx53uM36YjYqIk+2GzJJnrbYsApNAK6K376YZMh3Y
-         YridCz3gFWp99me5kiRpM16zf2tf34HZ36JkGtxfTHRa1D1vh2XMPJy5u8EtwO16gO
-         Yn2lXRujKdf5NwRv4+ELdOABRCwznCAfk+ClZB4b85aPxetGtTJdubXx/8D+lYVV50
-         5PNFxk55viO4pR6TjXvvEb2ortM6IId3uWUMgOKGho1dsj2uCVJ8OuafX4i0ouPeuZ
-         SrXDiuvpDBYtfW8jPB/SEOU7K/mRTYhhNHnLdqogvBwp3CraKUGNEFDuWNEn4vR+ma
-         VXSZagSubZefA==
-X-ME-Helo: [192.168.1.18]
+        s=t20230301; t=1693757043;
+        bh=0Dvq01YC9MuzymMWpQIoP54YILXU0BzVCv3KM5F3VMM=;
+        h=From:To:Cc:Subject:Date;
+        b=Q4WMbVSZ36skZXQE9+/ctkGLhzX3XnlQK5RGd8F0vVgRmSZBmt50WwsrD+pHnRQ/H
+         NmOZDTcUTuLjz7RgZ1zHg8Y3jqVtYi/GnOVZjkQyCrz8avQCXBPXDcGeHUyo1Gwl0I
+         4EAZ40iXSvLGXvJEM5yr/WX54Wqtj4SvzOMlW0uMjHYkr2K9xByRewFAtdBccQSPUx
+         lqNrlhrt+JoMy82W3h6af0RuLi3C1tiONTUF8tqb+yiv1zw9hDClp7TJdoptG3RF2v
+         TFawHU2RKKyB2nQmKUQwGcWSCyOVyvfsRztgC8Dk0ozTsIHE2hvY/yLRT/3d4qfXDz
+         3kGBGxcm3jg0w==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 03 Sep 2023 17:08:23 +0200
+X-ME-Date: Sun, 03 Sep 2023 18:04:03 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <6014901d-8fe6-9e80-171e-a1017cc9e0f9@wanadoo.fr>
-Date:   Sun, 3 Sep 2023 17:08:19 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] ALSA: scarlett2: Fix a potential memory leak in
- scarlett2_init_notify()
-Content-Language: fr, en-US
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
-References: <73aab53d53df156a5df2bc61314ff26448526749.1693744859.git.christophe.jaillet@wanadoo.fr>
- <87zg23l4bn.wl-tiwai@suse.de>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <87zg23l4bn.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Pascal Giard <pascal.giard@etsmtl.ca>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
+Subject: [PATCH] HID: sony: Fix a potential memory leak in sony_probe()
+Date:   Sun,  3 Sep 2023 18:04:00 +0200
+Message-Id: <db06095c912d6bc56bed6b7e4663c7994072a2ce.1693757011.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 03/09/2023 à 16:27, Takashi Iwai a écrit :
-> On Sun, 03 Sep 2023 14:41:45 +0200,
-> Christophe JAILLET wrote:
->>
->> If kmalloc() fails, we should release 'mixer->urb'.
-> 
-> This is released at the common error path in mixer.c,
-> snd_usb_mixer_free(), hence it's not needed.
+If an error occurs after a successful usb_alloc_urb() call, usb_free_urb()
+should be called.
 
-Agreed, sorry for the noise.
+Fixes: fb1a79a6b6e1 ("HID: sony: fix freeze when inserting ghlive ps3/wii dongles")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The NULL check is not needed, but I think that it is more informative
+written this way.
+---
+ drivers/hid/hid-sony.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-CJ
-
-> 
-> And, even if freeing here, you must NULL-clear mixer->urb, too;
-> otherwise it'll lead to double-free.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
->>
->> Fixes: 9e4d5c1be21f ("ALSA: usb-audio: Scarlett Gen 2 mixer interface")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   sound/usb/mixer_scarlett_gen2.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/usb/mixer_scarlett_gen2.c b/sound/usb/mixer_scarlett_gen2.c
->> index 9d11bb08667e..a439c7f64b2e 100644
->> --- a/sound/usb/mixer_scarlett_gen2.c
->> +++ b/sound/usb/mixer_scarlett_gen2.c
->> @@ -4060,8 +4060,10 @@ static int scarlett2_init_notify(struct usb_mixer_interface *mixer)
->>   		return -ENOMEM;
->>   
->>   	transfer_buffer = kmalloc(private->wMaxPacketSize, GFP_KERNEL);
->> -	if (!transfer_buffer)
->> +	if (!transfer_buffer) {
->> +		usb_free_urb(mixer->urb);
->>   		return -ENOMEM;
->> +	}
->>   
->>   	usb_fill_int_urb(mixer->urb, dev, pipe,
->>   			 transfer_buffer, private->wMaxPacketSize,
->> -- 
->> 2.34.1
->>
-> 
+diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
+index dd942061fd77..a02046a78b2d 100644
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -2155,6 +2155,9 @@ static int sony_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	return ret;
+ 
+ err:
++	if (sc->ghl_urb)
++		usb_free_urb(sc->ghl_urb);
++
+ 	hid_hw_stop(hdev);
+ 	return ret;
+ }
+-- 
+2.34.1
 
