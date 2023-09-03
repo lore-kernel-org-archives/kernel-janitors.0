@@ -2,87 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B541AC83F3E
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 06:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCABC83F2D
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 10:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235929AbjICGN2 (ORCPT
+        id S236379AbjICKL2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Sep 2023 02:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
+        Sun, 3 Sep 2023 06:11:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjICGN2 (ORCPT
+        with ESMTP id S236370AbjICKL1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Sep 2023 02:13:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C49CDCC5
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Sep 2023 23:13:24 -0700 (PDT)
+        Sun, 3 Sep 2023 06:11:27 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D72E93
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Sep 2023 03:11:23 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id cgMMqubDxIQx7cgMMqJ4sJ; Sun, 03 Sep 2023 08:13:23 +0200
+        id ck4Sq0Dlhv5KTck4SqU8l5; Sun, 03 Sep 2023 12:11:16 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693721603;
-        bh=Ah00WuGELkeIZdCrdZYVintNpevWzDVLlBUMTDJqm00=;
+        s=t20230301; t=1693735876;
+        bh=pYSxdLERm6FegRN8OPQImJFFHzRLF2IYwebwjAKvv44=;
         h=From:To:Cc:Subject:Date;
-        b=UQ+24zXdZjFIgmQh9kSHqzBbDISooD8Q1GyC3q15aAsy+Vmyr9vUZ2g20l6SdWdD/
-         vyqeQfp5WA5Zdq6EQ2ENVQ2fSZR1buRhi8Vu00iLaYhbcXcP+9F7iuqwd7izV6TRrz
-         yc+b+48EMD00XbtCtsqA4T1PiKVi5JxUXOG79b6qeqVCXn/poJvdJT3U0j/FWcX+4s
-         B01e9E9Ckw7m0g5Z+c7tjm6Fah86REgmjATlkN9Q5cqSBDyT93KDE9yr+0wxkW+A3p
-         g2/LrIVHN5ECGt+JeXp/p9PsfjQb7zFAL5gUcuQQGE87G0zrWHOa+S0HTHLSh/WpNq
-         wKODpgU9YNj4A==
+        b=lU56k2SraqBFtjnPVVg8n3TRO2AETyZ8PZ4ZsOtXQ9jlEQ7NzBjETYeyloHBTlseE
+         Kw1Q1aUFASROqv/CNJxZY4qi8A5BWp+GNcxWhqrNJXqLZASE1EfBe/7QSYUvaFVsz/
+         jpAsIzyUJyCjmHrTJPjkqKgtG6F/F2TylX+QybouB+H9eAn0aiP6PbzqcpLE7SFDB+
+         AgbHF0w9TmvoL3oEioO3Kaks6KPCK3Pjd/OEcmG82JMhxHo4zn1W5Qb2muC6FXOVQ9
+         3w/FZx2yotk3MON9BzBkmLucNWX2oO/+aqs0XoIDWv2mKix7Qcca2ATgO9rHC2KgrB
+         ueXdOyY9nKaYw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 03 Sep 2023 08:13:23 +0200
+X-ME-Date: Sun, 03 Sep 2023 12:11:16 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org,
-        galak@codeaurora.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] gpio: tb10x: Fix an error handling path in tb10x_gpio_probe()
-Date:   Sun,  3 Sep 2023 08:13:21 +0200
-Message-Id: <ceeda269bceee1c805f148bcbc628abc9d42601a.1693721348.git.christophe.jaillet@wanadoo.fr>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
+Date:   Sun,  3 Sep 2023 12:11:06 +0200
+Message-Id: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful irq_domain_add_linear() call, it
-should be undone by a corresponding irq_domain_remove(), as already done
-in the remove function.
+With gcc 12.3.0, when this file is built, we get errors such as:
 
-Fixes: c6ce2b6bffe5 ("gpio: add TB10x GPIO driver")
+drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
+drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
+  790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+      |                                                    ^~~~~
+drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
+  790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because of the possible value of 'i', this can't be an issue in real world
+application, but in order to have "make W=1" work correctly, give more
+space for 'name'.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpio/gpio-tb10x.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/phy/allwinner/phy-sun4i-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-index 78f8790168ae..f96d260a4a19 100644
---- a/drivers/gpio/gpio-tb10x.c
-+++ b/drivers/gpio/gpio-tb10x.c
-@@ -195,7 +195,7 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
- 				handle_edge_irq, IRQ_NOREQUEST, IRQ_NOPROBE,
- 				IRQ_GC_INIT_MASK_CACHE);
- 		if (ret)
--			return ret;
-+			goto err_remove_domain;
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index ec551464dd4f..e53a9a9317bc 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -782,7 +782,7 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
  
- 		gc = tb10x_gpio->domain->gc->gc[0];
- 		gc->reg_base                         = tb10x_gpio->base;
-@@ -209,6 +209,10 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
- 	}
+ 	for (i = 0; i < data->cfg->num_phys; i++) {
+ 		struct sun4i_usb_phy *phy = data->phys + i;
+-		char name[16];
++		char name[32];
  
- 	return 0;
-+
-+err_remove_domain:
-+	irq_domain_remove(tb10x_gpio->domain);
-+	return ret;
- }
- 
- static int tb10x_gpio_remove(struct platform_device *pdev)
+ 		if (data->cfg->missing_phys & BIT(i))
+ 			continue;
 -- 
 2.34.1
 
