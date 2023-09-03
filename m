@@ -2,52 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0103DC83F3E
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Sep 2023 17:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B541AC83F3E
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 06:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbjIBRer (ORCPT
+        id S235929AbjICGN2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Sep 2023 13:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52222 "EHLO
+        Sun, 3 Sep 2023 02:13:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjIBRem (ORCPT
+        with ESMTP id S229586AbjICGN2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Sep 2023 13:34:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC711A4
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Sep 2023 10:34:38 -0700 (PDT)
+        Sun, 3 Sep 2023 02:13:28 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C49CDCC5
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Sep 2023 23:13:24 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id cUW0qSQdLrpphcUW0qfbpv; Sat, 02 Sep 2023 19:34:37 +0200
+        id cgMMqubDxIQx7cgMMqJ4sJ; Sun, 03 Sep 2023 08:13:23 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693676077;
-        bh=PV3aglENvRj4bS2y961dRJdE/WDfkUhp4usjVXMs0ww=;
+        s=t20230301; t=1693721603;
+        bh=Ah00WuGELkeIZdCrdZYVintNpevWzDVLlBUMTDJqm00=;
         h=From:To:Cc:Subject:Date;
-        b=hRSEsyIWKalQpMErnUONxjzgb4O9iWvHtSxaJB3YQiGGWkPJY4N4qAK0dNPSoXRUl
-         1hqaq+WzZgHFHrrz9dkCCJmusa3n50lLsmlJ5yElhp63Px2TDucSgRN5nC5lBm0tha
-         d5PQ8y+JEeA2xJTDUFAurZWpXtGoIZmcHS4Q1fK0dbqgB0F7Ita89NLsSYCWd7f1P9
-         bcMCrdtU3sdzIFzwDaHuvAeZFA466KMdcmoa55AnTqE6ubmh/rBjAxIzbjnOXmDeHz
-         DkL7iOo6LGuryLTAcAS15YXT+4sz0cbFJWMSADv8hXcL9lZ0fTNvyZm45WOHOUsT/B
-         kT0lf0kVOCX9g==
+        b=UQ+24zXdZjFIgmQh9kSHqzBbDISooD8Q1GyC3q15aAsy+Vmyr9vUZ2g20l6SdWdD/
+         vyqeQfp5WA5Zdq6EQ2ENVQ2fSZR1buRhi8Vu00iLaYhbcXcP+9F7iuqwd7izV6TRrz
+         yc+b+48EMD00XbtCtsqA4T1PiKVi5JxUXOG79b6qeqVCXn/poJvdJT3U0j/FWcX+4s
+         B01e9E9Ckw7m0g5Z+c7tjm6Fah86REgmjATlkN9Q5cqSBDyT93KDE9yr+0wxkW+A3p
+         g2/LrIVHN5ECGt+JeXp/p9PsfjQb7zFAL5gUcuQQGE87G0zrWHOa+S0HTHLSh/WpNq
+         wKODpgU9YNj4A==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 02 Sep 2023 19:34:37 +0200
+X-ME-Date: Sun, 03 Sep 2023 08:13:23 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH] drm/rockchip: cdn-dp: Fix some error handling paths in cdn_dp_probe()
-Date:   Sat,  2 Sep 2023 19:34:31 +0200
-Message-Id: <8494a41602fadb7439630921a9779640698f2f9f.1693676045.git.christophe.jaillet@wanadoo.fr>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org,
+        galak@codeaurora.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] gpio: tb10x: Fix an error handling path in tb10x_gpio_probe()
+Date:   Sun,  3 Sep 2023 08:13:21 +0200
+Message-Id: <ceeda269bceee1c805f148bcbc628abc9d42601a.1693721348.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -55,51 +49,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-cdn_dp_audio_codec_init() can fail. So add some error handling.
+If an error occurs after a successful irq_domain_add_linear() call, it
+should be undone by a corresponding irq_domain_remove(), as already done
+in the remove function.
 
-If component_add() fails, the previous cdn_dp_audio_codec_init() call
-should be undone, as already done in the remove function.
-
-Fixes: 88582f564692 ("drm/rockchip: cdn-dp: Don't unregister audio dev when unbinding")
+Fixes: c6ce2b6bffe5 ("gpio: add TB10x GPIO driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/rockchip/cdn-dp-core.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-tb10x.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-index a29fbafce393..3793863c210e 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-@@ -1177,6 +1177,7 @@ static int cdn_dp_probe(struct platform_device *pdev)
- 	struct cdn_dp_device *dp;
- 	struct extcon_dev *extcon;
- 	struct phy *phy;
-+	int ret;
- 	int i;
+diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+index 78f8790168ae..f96d260a4a19 100644
+--- a/drivers/gpio/gpio-tb10x.c
++++ b/drivers/gpio/gpio-tb10x.c
+@@ -195,7 +195,7 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
+ 				handle_edge_irq, IRQ_NOREQUEST, IRQ_NOPROBE,
+ 				IRQ_GC_INIT_MASK_CACHE);
+ 		if (ret)
+-			return ret;
++			goto err_remove_domain;
  
- 	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
-@@ -1217,9 +1218,19 @@ static int cdn_dp_probe(struct platform_device *pdev)
- 	mutex_init(&dp->lock);
- 	dev_set_drvdata(dev, dp);
+ 		gc = tb10x_gpio->domain->gc->gc[0];
+ 		gc->reg_base                         = tb10x_gpio->base;
+@@ -209,6 +209,10 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
+ 	}
  
--	cdn_dp_audio_codec_init(dp, dev);
-+	ret = cdn_dp_audio_codec_init(dp, dev);
-+	if (ret)
-+		return ret;
+ 	return 0;
 +
-+	ret = component_add(dev, &cdn_dp_component_ops);
-+	if (ret)
-+		goto err_audio_deinit;
- 
--	return component_add(dev, &cdn_dp_component_ops);
-+	return 0;
-+
-+err_audio_deinit:
-+	platform_device_unregister(dp->audio_pdev);
++err_remove_domain:
++	irq_domain_remove(tb10x_gpio->domain);
 +	return ret;
  }
  
- static void cdn_dp_remove(struct platform_device *pdev)
+ static int tb10x_gpio_remove(struct platform_device *pdev)
 -- 
 2.34.1
 
