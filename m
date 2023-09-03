@@ -2,102 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDC0C83F2C
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 15:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F9EC83F2D
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Sep 2023 15:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235157AbjICPEy (ORCPT
+        id S243118AbjICPId (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Sep 2023 11:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59730 "EHLO
+        Sun, 3 Sep 2023 11:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbjICPEy (ORCPT
+        with ESMTP id S237182AbjICPIc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Sep 2023 11:04:54 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5131E115
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Sep 2023 08:04:50 -0700 (PDT)
+        Sun, 3 Sep 2023 11:08:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090E811D
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Sep 2023 08:08:24 -0700 (PDT)
 Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id coedqFIfsPnvscoedq11w0; Sun, 03 Sep 2023 17:04:48 +0200
+        id coi3qCr0AbNd0coi4qbqwR; Sun, 03 Sep 2023 17:08:23 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693753488;
-        bh=jKoUYb09gGu7FzODWXf/YNYwwFG/WPF7F5CxMSBP/HI=;
+        s=t20230301; t=1693753703;
+        bh=3vbBQKPo4LJHiDDNu1Lpt1WO/D8AzSItjWjmWe5gbq8=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=XUSqYTLhGozU6PLT24lNsYtT/2KsRirBALIAlLT0ExJ0CwqoCZNtqftriK8hX7G6m
-         44k4wJcpKYnS/4JW/fYW+lhL3Kd+wO+G98jAvbZvbOmQBAr9xO3pHi+Uv2P/QQerNY
-         wMsqDcidCNnc2V/thuAdH37Q/p8/A2QJzPuAAjB6Bb4PJhATYKzY7Fh31LyYG10zcv
-         nzUg/algK73W7i2Y6UOAMu7zxcU2J98GslvvLtHohEeOGqwhYD66+YTUx8iRhtn6YC
-         fh2wj5Mr3hIG12wO6jpqYoynIx/OHiXs15LV7JNYsJ7zjmCe7zY0QxLaLlzSvPriQu
-         l32SvQ7+hUsNQ==
+        b=hpsDbBq0hKZCwQat/ZIqq9w4sx53uM36YjYqIk+2GzJJnrbYsApNAK6K376YZMh3Y
+         YridCz3gFWp99me5kiRpM16zf2tf34HZ36JkGtxfTHRa1D1vh2XMPJy5u8EtwO16gO
+         Yn2lXRujKdf5NwRv4+ELdOABRCwznCAfk+ClZB4b85aPxetGtTJdubXx/8D+lYVV50
+         5PNFxk55viO4pR6TjXvvEb2ortM6IId3uWUMgOKGho1dsj2uCVJ8OuafX4i0ouPeuZ
+         SrXDiuvpDBYtfW8jPB/SEOU7K/mRTYhhNHnLdqogvBwp3CraKUGNEFDuWNEn4vR+ma
+         VXSZagSubZefA==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 03 Sep 2023 17:04:48 +0200
+X-ME-Date: Sun, 03 Sep 2023 17:08:23 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <8cde2320-517f-3a38-8c3f-f807791c6c52@wanadoo.fr>
-Date:   Sun, 3 Sep 2023 17:04:47 +0200
+Message-ID: <6014901d-8fe6-9e80-171e-a1017cc9e0f9@wanadoo.fr>
+Date:   Sun, 3 Sep 2023 17:08:19 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] ALSA: usb-audio: Fix a potential memory leak in
+Subject: Re: [PATCH] ALSA: scarlett2: Fix a potential memory leak in
  scarlett2_init_notify()
+Content-Language: fr, en-US
 To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <fc275ed315b9157952dcf2744ee7bdb78defdb5f.1693746347.git.christophe.jaillet@wanadoo.fr>
- <871qffmj2d.wl-tiwai@suse.de>
-Content-Language: fr
+Cc:     "Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+References: <73aab53d53df156a5df2bc61314ff26448526749.1693744859.git.christophe.jaillet@wanadoo.fr>
+ <87zg23l4bn.wl-tiwai@suse.de>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <871qffmj2d.wl-tiwai@suse.de>
+In-Reply-To: <87zg23l4bn.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 03/09/2023 à 16:23, Takashi Iwai a écrit :
-> On Sun, 03 Sep 2023 15:06:00 +0200,
+Le 03/09/2023 à 16:27, Takashi Iwai a écrit :
+> On Sun, 03 Sep 2023 14:41:45 +0200,
 > Christophe JAILLET wrote:
 >>
->> If usb_alloc_coherent() or usb_urb_ep_type_check() fail, we should release
->> the resources previously allocated.
+>> If kmalloc() fails, we should release 'mixer->urb'.
 > 
-> Those are freed in the caller side, start_input_streams() instead.
+> This is released at the common error path in mixer.c,
+> snd_usb_mixer_free(), hence it's not needed.
 
-Thanks for the fast review.
-
-Hmpm, If IIUC, resources allocated *before* the ending "ep->num_urbs++" 
-still need to be freed here, otherwise free_midi_urbs() in the caller 
-will not free them.
-
-Do you agree?
-
-If yes, I can send v2 which would look like:
-	usb_alloc_urb()
-	if (err)
-		return -ENOMEM
-
-	usb_alloc_coherent()
-	if (err) {
-		usb_free_urb()
-		urb = NULL
-		return -ENOMEM
-	}
-	
-	 usb_urb_ep_type_check()
-	if (err) {
-		usb_free_coherent()
-		usb_free_urb()
-		urb = NULL
-		return -err
-	}
-
-Or, if yuo prefer, with an error handling path just like below, but 
-without the final free_midi_urbs() + a comment explaining that the 
-caller does this part of job instead.
+Agreed, sorry for the noise.
 
 CJ
 
+> 
+> And, even if freeing here, you must NULL-clear mixer->urb, too;
+> otherwise it'll lead to double-free.
 > 
 > 
 > thanks,
@@ -105,60 +78,28 @@ CJ
 > Takashi
 > 
 >>
->> Fixes: ff49d1df79ae ("ALSA: usb-audio: USB MIDI 2.0 UMP support")
+>> Fixes: 9e4d5c1be21f ("ALSA: usb-audio: Scarlett Gen 2 mixer interface")
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 >> ---
->>   sound/usb/midi2.c | 17 ++++++++++++++---
->>   1 file changed, 14 insertions(+), 3 deletions(-)
+>>   sound/usb/mixer_scarlett_gen2.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
->> diff --git a/sound/usb/midi2.c b/sound/usb/midi2.c
->> index a27e244650c8..4109c82adff6 100644
->> --- a/sound/usb/midi2.c
->> +++ b/sound/usb/midi2.c
->> @@ -302,7 +302,8 @@ static int alloc_midi_urbs(struct snd_usb_midi2_endpoint *ep)
->>   		ctx->urb = usb_alloc_urb(0, GFP_KERNEL);
->>   		if (!ctx->urb) {
->>   			dev_err(&ep->dev->dev, "URB alloc failed\n");
->> -			return -ENOMEM;
->> +			err = -ENOMEM;
->> +			goto err_free_all;
->>   		}
->>   		ctx->ep = ep;
->>   		buffer = usb_alloc_coherent(ep->dev, len, GFP_KERNEL,
->> @@ -310,7 +311,8 @@ static int alloc_midi_urbs(struct snd_usb_midi2_endpoint *ep)
->>   		if (!buffer) {
->>   			dev_err(&ep->dev->dev,
->>   				"URB buffer alloc failed (size %d)\n", len);
->> -			return -ENOMEM;
->> +			err = -ENOMEM;
->> +			goto err_free_cur_urb;
->>   		}
->>   		if (ep->interval)
->>   			usb_fill_int_urb(ctx->urb, ep->dev, ep->pipe,
->> @@ -322,13 +324,22 @@ static int alloc_midi_urbs(struct snd_usb_midi2_endpoint *ep)
->>   		if (err < 0) {
->>   			dev_err(&ep->dev->dev, "invalid MIDI EP %x\n",
->>   				endpoint);
->> -			return err;
->> +			goto err_free_cur_dma;
->>   		}
->>   		ctx->urb->transfer_flags = URB_NO_TRANSFER_DMA_MAP;
->>   		ep->num_urbs++;
->>   	}
->>   	ep->urb_free = ep->urb_free_mask = GENMASK(ep->num_urbs - 1, 0);
->>   	return 0;
->> +
->> +err_free_cur_dma:
->> +	usb_free_coherent(ep->dev, len, buffer, ctx->urb->transfer_dma);
->> +err_free_cur_urb:
->> +	usb_free_urb(ctx->urb);
->> +	ctx->urb = NULL;
->> +err_free_all:
->> +	free_midi_urbs(ep);
->> +	return err;
->>   }
+>> diff --git a/sound/usb/mixer_scarlett_gen2.c b/sound/usb/mixer_scarlett_gen2.c
+>> index 9d11bb08667e..a439c7f64b2e 100644
+>> --- a/sound/usb/mixer_scarlett_gen2.c
+>> +++ b/sound/usb/mixer_scarlett_gen2.c
+>> @@ -4060,8 +4060,10 @@ static int scarlett2_init_notify(struct usb_mixer_interface *mixer)
+>>   		return -ENOMEM;
 >>   
->>   static struct snd_usb_midi2_endpoint *
+>>   	transfer_buffer = kmalloc(private->wMaxPacketSize, GFP_KERNEL);
+>> -	if (!transfer_buffer)
+>> +	if (!transfer_buffer) {
+>> +		usb_free_urb(mixer->urb);
+>>   		return -ENOMEM;
+>> +	}
+>>   
+>>   	usb_fill_int_urb(mixer->urb, dev, pipe,
+>>   			 transfer_buffer, private->wMaxPacketSize,
 >> -- 
 >> 2.34.1
 >>
