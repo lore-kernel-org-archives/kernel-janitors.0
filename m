@@ -2,85 +2,132 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9206CA0FE3
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 09:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BD8C71153
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 14:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348804AbjIDJPI (ORCPT
+        id S1351275AbjIDOIW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Sep 2023 05:15:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46160 "EHLO
+        Mon, 4 Sep 2023 10:08:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbjIDJPH (ORCPT
+        with ESMTP id S231166AbjIDOIV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Sep 2023 05:15:07 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A951FCC;
-        Mon,  4 Sep 2023 02:15:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 4 Sep 2023 10:08:21 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D71CDB;
+        Mon,  4 Sep 2023 07:08:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id EFCEFCE0E26;
-        Mon,  4 Sep 2023 09:15:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4361C433C8;
-        Mon,  4 Sep 2023 09:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693818901;
-        bh=Hk4bV/Rgx40tj5feYEnqHLgixfKcAoENzQWXVc75qiQ=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=G65PM8jXz76Em0qx6rHdiwroexPmMyy1EbX7PqGkkBwKGCucxHBkNEQ9l0Yn047ph
-         i0p4obDh6yE6yiOcLhjbapD2SHdDKyuz1pifBe49kdvuIOAPz5e0YNY92nlc0Xxl1/
-         RgZtUzvPTQ0zmmHDwDalCNo87u74W1x7E3/bV2W0/GXCIzrY4LLF883/qyujiigrQG
-         p+G4dO7wI2OV8Hrcf007a5F8llm+MjbscjqQecY0leIg2IQDL9NQigPaY5vnVydG4n
-         8Me9c2ATW2qqV31Iu7CwiIjeXiFUCN7FtjV1zhWuVzRCSuf3nN71CZ3kGHxu2C+s9I
-         /S+It6RM9t8OQ==
-Date:   Mon, 4 Sep 2023 11:14:57 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 03C471F38C;
+        Mon,  4 Sep 2023 14:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1693836496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d5r04qVqTrOT2KJTqTw8pN2+2R0Bk1SAzGCxmHII/9E=;
+        b=MrVmBVJEOPyfdtD7KdbhdFS/fssl93Ysfncpd73zI54VymUaQE4NO/WSjLZSTubRrwCDdf
+        VXWlsodUJmmYImHhnyvWMSM/wFEI8mLeJdUz/xRC5pms9sR1Kjc6qm3sEu6/UknX2bKJ4E
+        LPtsMwG56NhdqnK2nfmtW2lM9Cj6CkA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1693836496;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d5r04qVqTrOT2KJTqTw8pN2+2R0Bk1SAzGCxmHII/9E=;
+        b=33G/3lZs1AP62zGxlniLVD2fPOGlxy9T/jeePvy2fhws4fhqZtd3S157lwWY6C2yC8ZyTv
+        czLv0YeHmwuzSrDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CCF8C13425;
+        Mon,  4 Sep 2023 14:08:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mSnVMM/k9WR5IwAAMHmgww
+        (envelope-from <tiwai@suse.de>); Mon, 04 Sep 2023 14:08:15 +0000
+Date:   Mon, 04 Sep 2023 16:08:15 +0200
+Message-ID: <87ledmjak0.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Pascal Giard <pascal.giard@etsmtl.ca>,
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] HID: sony: Fix a potential memory leak in sony_probe()
-In-Reply-To: <db06095c912d6bc56bed6b7e4663c7994072a2ce.1693757011.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2309041114500.14207@cbobk.fhfr.pm>
-References: <db06095c912d6bc56bed6b7e4663c7994072a2ce.1693757011.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH] ALSA: usb-audio: Fix a potential memory leak in scarlett2_init_notify()
+In-Reply-To: <a0387d53-a08f-5e0c-c3a5-681ab5545150@wanadoo.fr>
+References: <fc275ed315b9157952dcf2744ee7bdb78defdb5f.1693746347.git.christophe.jaillet@wanadoo.fr>
+        <871qffmj2d.wl-tiwai@suse.de>
+        <8cde2320-517f-3a38-8c3f-f807791c6c52@wanadoo.fr>
+        <87sf7vkybk.wl-tiwai@suse.de>
+        <a0387d53-a08f-5e0c-c3a5-681ab5545150@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 3 Sep 2023, Christophe JAILLET wrote:
-
-> If an error occurs after a successful usb_alloc_urb() call, usb_free_urb()
-> should be called.
+On Sun, 03 Sep 2023 21:42:55 +0200,
+Christophe JAILLET wrote:
 > 
-> Fixes: fb1a79a6b6e1 ("HID: sony: fix freeze when inserting ghlive ps3/wii dongles")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The NULL check is not needed, but I think that it is more informative
-> written this way.
-> ---
->  drivers/hid/hid-sony.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Le 03/09/2023 à 18:37, Takashi Iwai a écrit :
+> > On Sun, 03 Sep 2023 17:04:47 +0200,
+> ...
 > 
-> diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-> index dd942061fd77..a02046a78b2d 100644
-> --- a/drivers/hid/hid-sony.c
-> +++ b/drivers/hid/hid-sony.c
-> @@ -2155,6 +2155,9 @@ static int sony_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  	return ret;
->  
->  err:
-> +	if (sc->ghl_urb)
-> +		usb_free_urb(sc->ghl_urb);
-> +
+> > Indeed.  The fix would be rather a oneliner like below, though:
+> 
+> Looks much better than mine :)
+> 
+> I let you send the patch, it is your solution.
+> 
+> 
+> 
+> Just for my understanding, how is snd_ump_ops used, especially .open?
+> I've not been able to figure out where it was called.
 
-Applied, thanks.
+It's called via rawmidi open (the snd_ump_endpoint is a sort of child
+class of snd_rawmidi).
 
--- 
-Jiri Kosina
-SUSE Labs
+> In alloc_midi_urbs(), if usb_alloc_coherent() fails, then
+> ctx->urb->transfer_buffer could be anything because usb_fill_xxx_urb()
+> is not called.
+> So there could be an edge case where your fix could still be incomplete.
 
+Each URB is allocated in the loop via usb_alloc_urb(), and it does
+zero-initialize the object, hence the buffer is supposed to be NULL
+until it's set up via usb_fill_xxx().
+
+
+thanks,
+
+Takashi
+
+> For the start_input_streams() caller, this is fine, because the
+> corresponding memory is kzalloc()'ed in start_input_streams() at some
+> point, but I've not been able to check for snd_usb_midi_v2_open().
+> 
+> CJ
+> 
+> > 
+> > --- a/sound/usb/midi2.c
+> > +++ b/sound/usb/midi2.c
+> > @@ -265,7 +265,7 @@ static void free_midi_urbs(struct snd_usb_midi2_endpoint *ep)
+> >     	if (!ep)
+> >   		return;
+> > -	for (i = 0; i < ep->num_urbs; ++i) {
+> > +	for (i = 0; i < NUM_URBS; ++i) {
+> >   		ctx = &ep->urbs[i];
+> >   		if (!ctx->urb)
+> >   			break;
+> > 
+> > That was the intended behavior of free_midi_urbs().
+> > 
+> > 
+> > Takashi
+> > 
+> 
