@@ -2,104 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5061DC83F33
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 19:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE37EC83F33
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 19:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232216AbjIDTgq (ORCPT
+        id S234382AbjIDTyo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Sep 2023 15:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45230 "EHLO
+        Mon, 4 Sep 2023 15:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233213AbjIDTgg (ORCPT
+        with ESMTP id S233329AbjIDTyn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Sep 2023 15:36:36 -0400
-Received: from sonata.ens-lyon.org (domu-toccata.ens-lyon.fr [140.77.166.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB701A7;
-        Mon,  4 Sep 2023 12:36:32 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by sonata.ens-lyon.org (Postfix) with ESMTP id 6882820152;
-        Mon,  4 Sep 2023 21:36:30 +0200 (CEST)
-Received: from sonata.ens-lyon.org ([127.0.0.1])
-        by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hfugnFnfAGl4; Mon,  4 Sep 2023 21:36:30 +0200 (CEST)
-Received: from begin (lfbn-bor-1-1163-184.w92-158.abo.wanadoo.fr [92.158.138.184])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by sonata.ens-lyon.org (Postfix) with ESMTPSA id A62C120155;
-        Mon,  4 Sep 2023 21:36:29 +0200 (CEST)
-Received: from samy by begin with local (Exim 4.96)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1qdFN6-00D65a-2I;
-        Mon, 04 Sep 2023 21:36:28 +0200
-Date:   Mon, 4 Sep 2023 21:36:28 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Greg Kroah-Hartman <gregkh@suse.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        speakup@linux-speakup.org
-Subject: Re: [PATCH] accessibility: speakup: Fix incorrect string length
- computation in report_char_chartab_status()
-Message-ID: <20230904193628.movlpsvxnxre6vy3@begin>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Mon, 4 Sep 2023 15:54:43 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7628F9E
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Sep 2023 12:54:40 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id dFefqC0Qrv5KTdFegqYMk4; Mon, 04 Sep 2023 21:54:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693857278;
+        bh=S1+Rkq+ROd/7LSdXHx0aBQcEpBzXY0817GAhloPvxCk=;
+        h=From:To:Cc:Subject:Date;
+        b=rLTpoOqY0dmETWh4mpir9NldYiYrRCXA+2Q4dYXexIdb1wn+DpUS838TIf6k5V3mq
+         9NVp4sQbuWo1ouYxxs/5zZazgopPg2leDo1alKzPv5L7U/ePAJOXsnzPhko3Ly6STa
+         jqwHwcQyiakU9rniBTYLTMfeLCRBP2KpQgaT84s1mmK8gbJuBUadJwPsheXwP5/OrP
+         sFtIWhU8I2qNSyvH1ffNb3L0oFMSNchAvMv3yNQkdnJ0iZXRlyCMFIr/r6ePcV2ZPp
+         3d+Sjzcw/wCePPEBFCJePhOoqhOElwOVXbJ00QLweLCTXl5YJ1wWNqN7nRYv2eSZog
+         jsQSgbNd1JzBg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 04 Sep 2023 21:54:38 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Damien Le Moal <dlemoal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>, Greg Kroah-Hartman <gregkh@suse.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        speakup@linux-speakup.org
-References: <b388b088485aff5dc223f2723ee61e00e5cd3f7d.1693855874.git.christophe.jaillet@wanadoo.fr>
+        linux-ide@vger.kernel.org
+Subject: [PATCH] ata: sata_mv: Fix incorrect string length computation in mv_dump_mem()
+Date:   Mon,  4 Sep 2023 21:54:36 +0200
+Message-Id: <1a35e114a3dcc33053ca7cca41cb06b8426d8c40.1693857262.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b388b088485aff5dc223f2723ee61e00e5cd3f7d.1693855874.git.christophe.jaillet@wanadoo.fr>
-Organization: I am not organized
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET, le lun. 04 sept. 2023 21:31:44 +0200, a ecrit:
-> snprintf() returns the "number of characters which *would* be generated for
-> the given input", not the size *really* generated.
-> 
-> In order to avoid too large values for 'len' (and potential negative
-> values for "sizeof(buf) - (len - 1)") use scnprintf() instead of
-> snprintf().
-> 
-> Fixes: c6e3fd22cd53 ("Staging: add speakup to the staging directory")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+snprintf() returns the "number of characters which *would* be generated for
+the given input", not the size *really* generated.
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+In order to avoid too large values for 'o' (and potential negative values
+for "sizeof(linebuf) o") use scnprintf() instead of snprintf().
 
-Thanks!
+Note that given the "w < 4" in the for loop, the buffer can NOT
+overflow, but using the *right* function is always better.
 
-> ---
-> I guess that the -1 in the 2nd snprintf() call is here to overwrite the
-> ending \n.
-> ---
->  drivers/accessibility/speakup/kobjects.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/accessibility/speakup/kobjects.c b/drivers/accessibility/speakup/kobjects.c
-> index a7522d409802..1eea7c492875 100644
-> --- a/drivers/accessibility/speakup/kobjects.c
-> +++ b/drivers/accessibility/speakup/kobjects.c
-> @@ -92,9 +92,9 @@ static void report_char_chartab_status(int reset, int received, int used,
->  	if (reset) {
->  		pr_info("%s reset to defaults\n", object_type[do_characters]);
->  	} else if (received) {
-> -		len = snprintf(buf, sizeof(buf),
-> -			       " updated %d of %d %s\n",
-> -			       used, received, object_type[do_characters]);
-> +		len = scnprintf(buf, sizeof(buf),
-> +				" updated %d of %d %s\n",
-> +				used, received, object_type[do_characters]);
->  		if (rejected)
->  			snprintf(buf + (len - 1), sizeof(buf) - (len - 1),
->  				 " with %d reject%s\n",
-> -- 
-> 2.34.1
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/ata/sata_mv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
+index d105db5c7d81..45e48d653c60 100644
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@ -1255,8 +1255,8 @@ static void mv_dump_mem(struct device *dev, void __iomem *start, unsigned bytes)
+ 
+ 	for (b = 0; b < bytes; ) {
+ 		for (w = 0, o = 0; b < bytes && w < 4; w++) {
+-			o += snprintf(linebuf + o, sizeof(linebuf) - o,
+-				      "%08x ", readl(start + b));
++			o += scnprintf(linebuf + o, sizeof(linebuf) - o,
++				       "%08x ", readl(start + b));
+ 			b += sizeof(u32);
+ 		}
+ 		dev_dbg(dev, "%s: %p: %s\n",
+-- 
+2.34.1
+
