@@ -2,95 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBADBC83F2C
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 00:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9206CA0FE3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 09:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241998AbjIDAAK convert rfc822-to-8bit (ORCPT
+        id S1348804AbjIDJPI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Sep 2023 20:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43758 "EHLO
+        Mon, 4 Sep 2023 05:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231361AbjIDAAJ (ORCPT
+        with ESMTP id S230446AbjIDJPH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Sep 2023 20:00:09 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B4B21C4;
-        Sun,  3 Sep 2023 17:00:05 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF8CE165C;
-        Sun,  3 Sep 2023 17:00:43 -0700 (PDT)
-Received: from slackpad.lan (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 072F13F766;
-        Sun,  3 Sep 2023 17:00:03 -0700 (PDT)
-Date:   Mon, 4 Sep 2023 00:58:55 +0100
-From:   Andre Przywara <andre.przywara@arm.com>
+        Mon, 4 Sep 2023 05:15:07 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A951FCC;
+        Mon,  4 Sep 2023 02:15:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id EFCEFCE0E26;
+        Mon,  4 Sep 2023 09:15:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4361C433C8;
+        Mon,  4 Sep 2023 09:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693818901;
+        bh=Hk4bV/Rgx40tj5feYEnqHLgixfKcAoENzQWXVc75qiQ=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=G65PM8jXz76Em0qx6rHdiwroexPmMyy1EbX7PqGkkBwKGCucxHBkNEQ9l0Yn047ph
+         i0p4obDh6yE6yiOcLhjbapD2SHdDKyuz1pifBe49kdvuIOAPz5e0YNY92nlc0Xxl1/
+         RgZtUzvPTQ0zmmHDwDalCNo87u74W1x7E3/bV2W0/GXCIzrY4LLF883/qyujiigrQG
+         p+G4dO7wI2OV8Hrcf007a5F8llm+MjbscjqQecY0leIg2IQDL9NQigPaY5vnVydG4n
+         8Me9c2ATW2qqV31Iu7CwiIjeXiFUCN7FtjV1zhWuVzRCSuf3nN71CZ3kGHxu2C+s9I
+         /S+It6RM9t8OQ==
+Date:   Mon, 4 Sep 2023 11:14:57 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Pascal Giard <pascal.giard@etsmtl.ca>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
-Message-ID: <20230904005855.658819b3@slackpad.lan>
-In-Reply-To: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
-References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] HID: sony: Fix a potential memory leak in sony_probe()
+In-Reply-To: <db06095c912d6bc56bed6b7e4663c7994072a2ce.1693757011.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.2309041114500.14207@cbobk.fhfr.pm>
+References: <db06095c912d6bc56bed6b7e4663c7994072a2ce.1693757011.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun,  3 Sep 2023 12:11:06 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Sun, 3 Sep 2023, Christophe JAILLET wrote:
 
-> With gcc 12.3.0, when this file is built, we get errors such as:
+> If an error occurs after a successful usb_alloc_urb() call, usb_free_urb()
+> should be called.
 > 
-> drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
-> drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
->   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
->       |                                                    ^~~~~
-> drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
->   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
->       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Because of the possible value of 'i', this can't be an issue in real world
-
-Would using "u8 i;" help? After all currently there are only 4 PHYs
-max, and in general this isn't expected to be more than a "handful", so
-8 bits should be plenty. An unsigned is better anyway.
-It leaves a bit of a bitter taste, though, as we shouldn't do this kind
-type tweaking, especially not to work around the compiler trying to be
-clever, but then not seeing the whole picture (that "i" is bounded by
-compile time constants not exceeding "4").
-
-Cheers,
-Andre
-
-> application, but in order to have "make W=1" work correctly, give more
-> space for 'name'.
-> 
+> Fixes: fb1a79a6b6e1 ("HID: sony: fix freeze when inserting ghlive ps3/wii dongles")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/phy/allwinner/phy-sun4i-usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The NULL check is not needed, but I think that it is more informative
+> written this way.
+> ---
+>  drivers/hid/hid-sony.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-> index ec551464dd4f..e53a9a9317bc 100644
-> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
-> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-> @@ -782,7 +782,7 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+> diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
+> index dd942061fd77..a02046a78b2d 100644
+> --- a/drivers/hid/hid-sony.c
+> +++ b/drivers/hid/hid-sony.c
+> @@ -2155,6 +2155,9 @@ static int sony_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  	return ret;
 >  
->  	for (i = 0; i < data->cfg->num_phys; i++) {
->  		struct sun4i_usb_phy *phy = data->phys + i;
-> -		char name[16];
-> +		char name[32];
->  
->  		if (data->cfg->missing_phys & BIT(i))
->  			continue;
+>  err:
+> +	if (sc->ghl_urb)
+> +		usb_free_urb(sc->ghl_urb);
+> +
+
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
 
