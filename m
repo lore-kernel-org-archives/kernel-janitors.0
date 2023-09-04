@@ -2,47 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC063C83F2C
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 19:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD3BC83F33
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 19:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239623AbjIDTSw (ORCPT
+        id S229990AbjIDTdM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Sep 2023 15:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
+        Mon, 4 Sep 2023 15:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbjIDTSw (ORCPT
+        with ESMTP id S237018AbjIDTb6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Sep 2023 15:18:52 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB0418C
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Sep 2023 12:18:47 -0700 (PDT)
+        Mon, 4 Sep 2023 15:31:58 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76143CD4
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Sep 2023 12:31:54 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id dF5pqisSfrpphdF5qqmw28; Mon, 04 Sep 2023 21:18:40 +0200
+        id dFIYqTR5S8E6NdFIYqYM3W; Mon, 04 Sep 2023 21:31:52 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693855120;
-        bh=IJ6e+7Zx4V39vofq+85y5jlLYHgKa63pDRxIQQkBNeo=;
+        s=t20230301; t=1693855912;
+        bh=o2e9NDGfNwzpiA1kqh0HoqAJClRDkDa8piEOQbsZYwY=;
         h=From:To:Cc:Subject:Date;
-        b=stflw7wrngPm23k1j/k3IOrf8dC+0fTLtV3ZRPCb6gYi7+b6tsAqanlXa2oBI8D5o
-         3vPfKvWPNFl39fEdz1kGs+Yo+gdePwLBH5KGlY07d9rnkYEib7+TYap7+0o8bUi0H1
-         qh0AdSjs5+Ylrl4GcvV5d0qmMfTWcezVwQk3u3XYpzxkNlUW4HErscX29tjMgOBxuz
-         xOasZJpVeRrDIhkbtwRv+SUIagIJKtea6lobGm9Z+B464GNdWWHL8gFkBkY95q+bG/
-         QJYniGX457kSH7/VZynexZLs3dhPX/ojuUM5Ws8eUxgsaaeqDKYZvoB7yCsCsKC5Z4
-         OPmT2doe+12fA==
+        b=RuDHDSD1LFumnGOpPsvM2hYvoCD2FgUpOXqCIY9MJND5sX2120Kyv4AAxWFnZcANs
+         9V1R/hdXNqSxHqCEmuOlaC2o2KXeyaphWtDp2E4kfJWmropp4CCQWrxFnrmMMujO0C
+         Cz0VMHdHLcT7R/dQw+8g5wH5czWvCmybe3QT/OC04tdyOr9R5Fo/t3/Yi/ZN31OKYM
+         LHMlMDZvGuevXsoJf2b+UjksHClzeCIJsl8hqhN0J+PhU3WIuMJHf6q0/DJczpoOwz
+         verkiTqS4gLjKo5L7Y7GXTV+WdDyLpT0o4ORC5Cm4TaVx5iS1g/FIL/1/TWIdOf4y6
+         zxkk9/lFqWKrw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 04 Sep 2023 21:18:40 +0200
+X-ME-Date: Mon, 04 Sep 2023 21:31:52 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Oded Gabbay <ogabbay@kernel.org>,
-        Dani Liberman <dliberman@habana.ai>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+To:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@suse.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] accel/habanalabs/gaudi2: Fix incorrect string length computation in gaudi2_psoc_razwi_get_engines()
-Date:   Mon,  4 Sep 2023 21:18:36 +0200
-Message-Id: <d38582083ece76155dabdfd9a29d5a9dd0d6bce7.1693855091.git.christophe.jaillet@wanadoo.fr>
+        speakup@linux-speakup.org
+Subject: [PATCH] accessibility: speakup: Fix incorrect string length computation in report_char_chartab_status()
+Date:   Mon,  4 Sep 2023 21:31:44 +0200
+Message-Id: <b388b088485aff5dc223f2723ee61e00e5cd3f7d.1693855874.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,34 +55,36 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 snprintf() returns the "number of characters which *would* be generated for
 the given input", not the size *really* generated.
 
-In order to avoid too large values for 'str_size' (and potential negative
-values for "PSOC_RAZWI_ENG_STR_SIZE - str_size") use scnprintf()
-instead of snprintf().
+In order to avoid too large values for 'len' (and potential negative
+values for "sizeof(buf) - (len - 1)") use scnprintf() instead of
+snprintf().
 
-Fixes: c0e6df916050 ("accel/habanalabs: fix address decode RAZWI handling")
+Fixes: c6e3fd22cd53 ("Staging: add speakup to the staging directory")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/accel/habanalabs/gaudi2/gaudi2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I guess that the -1 in the 2nd snprintf() call is here to overwrite the
+ending \n.
+---
+ drivers/accessibility/speakup/kobjects.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-index d94acec63d95..9617c062b7ca 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-@@ -8277,11 +8277,11 @@ static int gaudi2_psoc_razwi_get_engines(struct gaudi2_razwi_info *razwi_info, u
- 		eng_id[num_of_eng] = razwi_info[i].eng_id;
- 		base[num_of_eng] = razwi_info[i].rtr_ctrl;
- 		if (!num_of_eng)
--			str_size += snprintf(eng_name + str_size,
-+			str_size += scnprintf(eng_name + str_size,
- 						PSOC_RAZWI_ENG_STR_SIZE - str_size, "%s",
- 						razwi_info[i].eng_name);
- 		else
--			str_size += snprintf(eng_name + str_size,
-+			str_size += scnprintf(eng_name + str_size,
- 						PSOC_RAZWI_ENG_STR_SIZE - str_size, " or %s",
- 						razwi_info[i].eng_name);
- 		num_of_eng++;
+diff --git a/drivers/accessibility/speakup/kobjects.c b/drivers/accessibility/speakup/kobjects.c
+index a7522d409802..1eea7c492875 100644
+--- a/drivers/accessibility/speakup/kobjects.c
++++ b/drivers/accessibility/speakup/kobjects.c
+@@ -92,9 +92,9 @@ static void report_char_chartab_status(int reset, int received, int used,
+ 	if (reset) {
+ 		pr_info("%s reset to defaults\n", object_type[do_characters]);
+ 	} else if (received) {
+-		len = snprintf(buf, sizeof(buf),
+-			       " updated %d of %d %s\n",
+-			       used, received, object_type[do_characters]);
++		len = scnprintf(buf, sizeof(buf),
++				" updated %d of %d %s\n",
++				used, received, object_type[do_characters]);
+ 		if (rejected)
+ 			snprintf(buf + (len - 1), sizeof(buf) - (len - 1),
+ 				 " with %d reject%s\n",
 -- 
 2.34.1
 
