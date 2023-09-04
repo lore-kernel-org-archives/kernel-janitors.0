@@ -2,132 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BD8C71153
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 14:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ACEC83F33
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 17:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351275AbjIDOIW (ORCPT
+        id S1353377AbjIDR5w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Sep 2023 10:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52544 "EHLO
+        Mon, 4 Sep 2023 13:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231166AbjIDOIV (ORCPT
+        with ESMTP id S1353370AbjIDR5u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Sep 2023 10:08:21 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D71CDB;
-        Mon,  4 Sep 2023 07:08:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 03C471F38C;
-        Mon,  4 Sep 2023 14:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1693836496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d5r04qVqTrOT2KJTqTw8pN2+2R0Bk1SAzGCxmHII/9E=;
-        b=MrVmBVJEOPyfdtD7KdbhdFS/fssl93Ysfncpd73zI54VymUaQE4NO/WSjLZSTubRrwCDdf
-        VXWlsodUJmmYImHhnyvWMSM/wFEI8mLeJdUz/xRC5pms9sR1Kjc6qm3sEu6/UknX2bKJ4E
-        LPtsMwG56NhdqnK2nfmtW2lM9Cj6CkA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1693836496;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d5r04qVqTrOT2KJTqTw8pN2+2R0Bk1SAzGCxmHII/9E=;
-        b=33G/3lZs1AP62zGxlniLVD2fPOGlxy9T/jeePvy2fhws4fhqZtd3S157lwWY6C2yC8ZyTv
-        czLv0YeHmwuzSrDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CCF8C13425;
-        Mon,  4 Sep 2023 14:08:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mSnVMM/k9WR5IwAAMHmgww
-        (envelope-from <tiwai@suse.de>); Mon, 04 Sep 2023 14:08:15 +0000
-Date:   Mon, 04 Sep 2023 16:08:15 +0200
-Message-ID: <87ledmjak0.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Mon, 4 Sep 2023 13:57:50 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADCF1702
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Sep 2023 10:57:39 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id dDpNqLclXewmQdDpNqCbJ0; Mon, 04 Sep 2023 19:57:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693850257;
+        bh=nR71hbq/PjoQgx6c1QsB9ddoM6wjPhcwxem+IF/5MAs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=DAmM/NUC9xDbqtOy08KIXOcL8tmmpXv9w0aLhvdPCW/b3pVhHp9s92Gs39idwsLOO
+         uUgQN9V6cvYbGFBLFo6PaXwsP00xKZF4t5QmeRhjGoDPX6dGmUOOKeiuNYI2jOxUOK
+         wTiKH4H4u25rVSTHmdJQjIS0EnRDs6dqOklCrfNIQr50dp8JRVcYmbvu7dNhZh9N/0
+         qzxO81ISdmp2bUVqs7gie3KaoNksdre5yy5anbMFHWB1nFVQaM38ZDT0xiIkuCq9gn
+         TBUJGCnGh2i2fKUgx/Hlmc++hm5Nly5Wzr38Ua4mGwpGus3VaAGQw+vOuAvK+x+z64
+         wfek9dll6yFog==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 04 Sep 2023 19:57:37 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <858ca657-3845-f65e-b9d8-9d7700e4a069@wanadoo.fr>
+Date:   Mon, 4 Sep 2023 19:57:33 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH] ALSA: usb-audio: Fix a potential memory leak in scarlett2_init_notify()
-In-Reply-To: <a0387d53-a08f-5e0c-c3a5-681ab5545150@wanadoo.fr>
-References: <fc275ed315b9157952dcf2744ee7bdb78defdb5f.1693746347.git.christophe.jaillet@wanadoo.fr>
-        <871qffmj2d.wl-tiwai@suse.de>
-        <8cde2320-517f-3a38-8c3f-f807791c6c52@wanadoo.fr>
-        <87sf7vkybk.wl-tiwai@suse.de>
-        <a0387d53-a08f-5e0c-c3a5-681ab5545150@wanadoo.fr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+ <20230904005855.658819b3@slackpad.lan>
+Content-Language: fr, en-GB
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230904005855.658819b3@slackpad.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 03 Sep 2023 21:42:55 +0200,
-Christophe JAILLET wrote:
+Le 04/09/2023 à 01:58, Andre Przywara a écrit :
+> On Sun,  3 Sep 2023 12:11:06 +0200
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 > 
-> Le 03/09/2023 � 18:37, Takashi Iwai a �crit�:
-> > On Sun, 03 Sep 2023 17:04:47 +0200,
-> ...
+>> With gcc 12.3.0, when this file is built, we get errors such as:
+>>
+>> drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
+>> drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
+>>    790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>>        |                                                    ^~~~~
+>> drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
+>>    790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>>        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> Because of the possible value of 'i', this can't be an issue in real world
 > 
-> > Indeed.  The fix would be rather a oneliner like below, though:
-> 
-> Looks much better than mine :)
-> 
-> I let you send the patch, it is your solution.
-> 
-> 
-> 
-> Just for my understanding, how is snd_ump_ops used, especially .open?
-> I've not been able to figure out where it was called.
+> Would using "u8 i;" help? After all currently there are only 4 PHYs
+> max, and in general this isn't expected to be more than a "handful", so
+> 8 bits should be plenty. An unsigned is better anyway.
+> It leaves a bit of a bitter taste, though, as we shouldn't do this kind
+> type tweaking, especially not to work around the compiler trying to be
+> clever, but then not seeing the whole picture (that "i" is bounded by
+> compile time constants not exceeding "4").
 
-It's called via rawmidi open (the snd_ump_endpoint is a sort of child
-class of snd_rawmidi).
+data->cfg->num_phys is also an int, and having 'i' as an char is really 
+unusual.
 
-> In alloc_midi_urbs(), if usb_alloc_coherent() fails, then
-> ctx->urb->transfer_buffer could be anything because usb_fill_xxx_urb()
-> is not called.
-> So there could be an edge case where your fix could still be incomplete.
+So, if changing the size of name (only to waste some stack in order to 
+silence a compiler warning) is not acceptable, I think that the best is 
+to leave things as-is.
 
-Each URB is allocated in the loop via usb_alloc_urb(), and it does
-zero-initialize the object, hence the buffer is supposed to be NULL
-until it's set up via usb_fill_xxx().
+CJ
 
 
-thanks,
-
-Takashi
-
-> For the start_input_streams() caller, this is fine, because the
-> corresponding memory is kzalloc()'ed in start_input_streams() at some
-> point, but I've not been able to check for snd_usb_midi_v2_open().
 > 
-> CJ
+> Cheers,
+> Andre
 > 
-> > 
-> > --- a/sound/usb/midi2.c
-> > +++ b/sound/usb/midi2.c
-> > @@ -265,7 +265,7 @@ static void free_midi_urbs(struct snd_usb_midi2_endpoint *ep)
-> >     	if (!ep)
-> >   		return;
-> > -	for (i = 0; i < ep->num_urbs; ++i) {
-> > +	for (i = 0; i < NUM_URBS; ++i) {
-> >   		ctx = &ep->urbs[i];
-> >   		if (!ctx->urb)
-> >   			break;
-> > 
-> > That was the intended behavior of free_midi_urbs().
-> > 
-> > 
-> > Takashi
-> > 
+>> application, but in order to have "make W=1" work correctly, give more
+>> space for 'name'.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/phy/allwinner/phy-sun4i-usb.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+>> index ec551464dd4f..e53a9a9317bc 100644
+>> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
+>> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+>> @@ -782,7 +782,7 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+>>   
+>>   	for (i = 0; i < data->cfg->num_phys; i++) {
+>>   		struct sun4i_usb_phy *phy = data->phys + i;
+>> -		char name[16];
+>> +		char name[32];
+>>   
+>>   		if (data->cfg->missing_phys & BIT(i))
+>>   			continue;
 > 
+> 
+
