@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E394DC71153
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Sep 2023 20:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F35CA0FFA
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236675AbjIDURn (ORCPT
+        id S236815AbjIEQTn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Sep 2023 16:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
+        Tue, 5 Sep 2023 12:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237001AbjIDURm (ORCPT
+        with ESMTP id S1354241AbjIEKS7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Sep 2023 16:17:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAA8CCB
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Sep 2023 13:17:37 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id dG0pqeKoS8SVPdG0pq4cey; Mon, 04 Sep 2023 22:17:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693858656;
-        bh=CYs6Pi9ip+Z9VKoEozhkP3TrOf4OP+Jsrs8iY7ts6Eo=;
-        h=From:To:Cc:Subject:Date;
-        b=GgtgJbiGZv1ULNPAttm/j2ejlI3/Q6oll65cb0wqmMwari4AaTI5Vxwlq7XXyWRn2
-         6tJt9BBlwfUhvXuXHahouMwTVZk/NI40f7DorR0huRlFK81QruYm8rGaVKBo1JFfbW
-         GE67WvtsvAjS8h0Yq0vgLKXrkjAB9gzVh74v4QVNqhQUl3M9lYtOh+8TaCauFj6S+J
-         4qUYBI7EdZ1PWw4sn26ajCR0kBm5EjIcpK96fvq3bPEgojFMBhCGX4GCdNRgPEReFO
-         AxHIEl6vHOgvPLFCP0P6+Ho7Sfp2ragATygkonB47/kIQmEQrfkL0MqcjJLFLFpufp
-         Iy2/IOBVFA1sg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 04 Sep 2023 22:17:36 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Longfang Liu <liulongfang@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zaibo Xu <xuzaibo@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after snprintf()
-Date:   Mon,  4 Sep 2023 22:17:29 +0200
-Message-Id: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 5 Sep 2023 06:18:59 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9499A18D;
+        Tue,  5 Sep 2023 03:18:55 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3853OFjQ023612;
+        Tue, 5 Sep 2023 10:18:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-03-30;
+ bh=3PSbr7PxvuHc44jNSRQy1RWbVgyf5JrcACIDlRAzgvQ=;
+ b=YlzVOhp+er44xs16fv6vOo9l+KxUjuD6QvLFp63lrRrW+O0N4YIyQey3ir0yDzRPp0uR
+ VHvKsRx0itupQzHmJZb1aEBQw0BmU9Dar6e8dy+ZdhKUg5zEMMer0ZeMLXffcCIOYCbI
+ jcWUG0IPukLbpyrP6NQ/vDopX5Q+zvDnYwL0vaXC+ELj4StJ4ycPInUFQdV+en5oD+Dl
+ eaHrKJWKJKu/p1GiRFCPLVGzo3PP4gCmMWzLkKkS7vO5RlLDpg+0uYRpS4wFb2ELsQdl
+ Tqf3CUYCJwbPbiDakGojfxH99UKDjmGccdFiFGgE2Gc1w64LJrWX/N9mSA2XUhuxLSqz /A== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3suufdmwxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Sep 2023 10:18:52 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3859of7B029094;
+        Tue, 5 Sep 2023 10:18:51 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3suug4j8by-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Sep 2023 10:18:51 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 385AIlOZ032271;
+        Tue, 5 Sep 2023 10:18:50 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3suug4j85n-3;
+        Tue, 05 Sep 2023 10:18:50 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] scsi: qla2xxx: Fix spelling mistake "tranport" -> "transport"
+Date:   Tue,  5 Sep 2023 06:18:26 -0400
+Message-Id: <169390541186.1533355.10096498850574984132.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230828213101.758609-1-colin.i.king@gmail.com>
+References: <20230828213101.758609-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-05_08,2023-08-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=917 malwarescore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309050092
+X-Proofpoint-ORIG-GUID: K-y-bxADK3NXz5VkW8Gydb3NsyLpgRx8
+X-Proofpoint-GUID: K-y-bxADK3NXz5VkW8Gydb3NsyLpgRx8
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This error handling looks really strange.
-Check if the string has been truncated instead.
+On Mon, 28 Aug 2023 22:31:01 +0100, Colin Ian King wrote:
 
-Fixes: 02ab994635eb ("crypto: hisilicon - Fixed some tiny bugs of HPRE")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/crypto/hisilicon/hpre/hpre_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There is a spelling mistake in a ql_dbg message. Fix it.
+> 
+> 
 
-diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
-index 39297ce70f44..db44d889438a 100644
---- a/drivers/crypto/hisilicon/hpre/hpre_main.c
-+++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
-@@ -1033,7 +1033,7 @@ static int hpre_cluster_debugfs_init(struct hisi_qm *qm)
- 
- 	for (i = 0; i < clusters_num; i++) {
- 		ret = snprintf(buf, HPRE_DBGFS_VAL_MAX_LEN, "cluster%d", i);
--		if (ret < 0)
-+		if (ret >= HPRE_DBGFS_VAL_MAX_LEN)
- 			return -EINVAL;
- 		tmp_d = debugfs_create_dir(buf, qm->debug.debug_root);
- 
+Applied to 6.6/scsi-queue, thanks!
+
+[1/1] scsi: qla2xxx: Fix spelling mistake "tranport" -> "transport"
+      https://git.kernel.org/mkp/scsi/c/7a5dee9b72e9
+
 -- 
-2.34.1
-
+Martin K. Petersen	Oracle Linux Engineering
