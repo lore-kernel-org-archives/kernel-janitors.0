@@ -2,94 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69629CA0FFC
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CC3CA0FF3
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242069AbjIEQUW (ORCPT
+        id S234263AbjIEQUR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38002 "EHLO
+        Tue, 5 Sep 2023 12:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350519AbjIEFEK (ORCPT
+        with ESMTP id S245719AbjIEC1o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Sep 2023 01:04:10 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A3CCC5;
-        Mon,  4 Sep 2023 22:04:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 15C2ACE1020;
-        Tue,  5 Sep 2023 05:04:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3746C433C7;
-        Tue,  5 Sep 2023 05:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693890242;
-        bh=rNZ6gSz952FnYbdOwNayc8WW+NGygaXz472YSAOluYk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=b0GC0EYlTsTH7sHYMimcCh/EOaOHV4uGQ7vqQf/HuRw9Qulq+4xw75y80YOFRnkv9
-         b4LwteX6i6uFW4Fi/ztQKY0pa4fXglePRsstW5agm7HVr4h21wC+8G73P3d1omz09n
-         GGU1bpU3WQG8xLoTtxpVnQnHg6fx0QC3kZW9vs1ru7oUifErFtuAMkxJEKXZ7d4ht6
-         sryxO7lp4qym/OQ1QPl3o9iWxAJOcuRmQROuIxNSbTxRonsykbGilksIMBUfibE0jK
-         Q7wJoHWgM41x5ogHEVlUfkVJZSQroVIQvuP5b5/gvHNG2/fsm7hFKRlU03NC6GpKOD
-         +ekqiIr73cSXQ==
-Message-ID: <b5dcc85d-f709-a3a3-e7ad-9c71f278842a@kernel.org>
-Date:   Tue, 5 Sep 2023 14:04:00 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] ata: sata_mv: Fix incorrect string length computation in
- mv_dump_mem()
-Content-Language: en-US
+        Mon, 4 Sep 2023 22:27:44 -0400
+Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818D3CC7;
+        Mon,  4 Sep 2023 19:27:39 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1qdLmg-00ArED-E7; Tue, 05 Sep 2023 10:27:19 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 05 Sep 2023 10:27:20 +0800
+Date:   Tue, 5 Sep 2023 10:27:20 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-ide@vger.kernel.org
-References: <1a35e114a3dcc33053ca7cca41cb06b8426d8c40.1693857262.git.christophe.jaillet@wanadoo.fr>
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <1a35e114a3dcc33053ca7cca41cb06b8426d8c40.1693857262.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc:     Longfang Liu <liulongfang@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
+ snprintf()
+Message-ID: <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
+References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/5/23 04:54, Christophe JAILLET wrote:
-> snprintf() returns the "number of characters which *would* be generated for
-> the given input", not the size *really* generated.
+On Mon, Sep 04, 2023 at 10:17:29PM +0200, Christophe JAILLET wrote:
+> This error handling looks really strange.
+> Check if the string has been truncated instead.
 > 
-> In order to avoid too large values for 'o' (and potential negative values
-> for "sizeof(linebuf) o") use scnprintf() instead of snprintf().
-> 
-> Note that given the "w < 4" in the for loop, the buffer can NOT
-> overflow, but using the *right* function is always better.
-> 
+> Fixes: 02ab994635eb ("crypto: hisilicon - Fixed some tiny bugs of HPRE")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Doesn't this need Fixes and CC stable tags ?
-
 > ---
->  drivers/ata/sata_mv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/crypto/hisilicon/hpre/hpre_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
-> index d105db5c7d81..45e48d653c60 100644
-> --- a/drivers/ata/sata_mv.c
-> +++ b/drivers/ata/sata_mv.c
-> @@ -1255,8 +1255,8 @@ static void mv_dump_mem(struct device *dev, void __iomem *start, unsigned bytes)
+> diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
+> index 39297ce70f44..db44d889438a 100644
+> --- a/drivers/crypto/hisilicon/hpre/hpre_main.c
+> +++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
+> @@ -1033,7 +1033,7 @@ static int hpre_cluster_debugfs_init(struct hisi_qm *qm)
 >  
->  	for (b = 0; b < bytes; ) {
->  		for (w = 0, o = 0; b < bytes && w < 4; w++) {
-> -			o += snprintf(linebuf + o, sizeof(linebuf) - o,
-> -				      "%08x ", readl(start + b));
-> +			o += scnprintf(linebuf + o, sizeof(linebuf) - o,
-> +				       "%08x ", readl(start + b));
->  			b += sizeof(u32);
->  		}
->  		dev_dbg(dev, "%s: %p: %s\n",
+>  	for (i = 0; i < clusters_num; i++) {
+>  		ret = snprintf(buf, HPRE_DBGFS_VAL_MAX_LEN, "cluster%d", i);
+> -		if (ret < 0)
+> +		if (ret >= HPRE_DBGFS_VAL_MAX_LEN)
+>  			return -EINVAL;
+>  		tmp_d = debugfs_create_dir(buf, qm->debug.debug_root);
 
+Who is going to free the allocated memory in case of error?
+
+The other snprintf in the same file also looks suspect.
+
+Thanks,
 -- 
-Damien Le Moal
-Western Digital Research
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
