@@ -2,88 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3749CA0FE2
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52686CA0FFC
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239556AbjIEQUI (ORCPT
+        id S242598AbjIEQUG convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60424 "EHLO
+        Tue, 5 Sep 2023 12:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354259AbjIEKZx (ORCPT
+        with ESMTP id S1354769AbjIEONK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Sep 2023 06:25:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1B5DB;
-        Tue,  5 Sep 2023 03:25:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BAB11B8113E;
-        Tue,  5 Sep 2023 10:25:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6876DC433C7;
-        Tue,  5 Sep 2023 10:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693909547;
-        bh=s5OcvhMGsauyHDIDghPQ23qUl8W6KKM1Q1jw2SF9yi4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MCmfXrexYhH4Ai/BXu//C7U3rOTpsCWaLsG2uJMmVDnnEHOp1gXStiwclOrtqdLCF
-         MncEUQuevfAWcC/UQV5gAuG3WKjdr9gaDPvbVnTVJae/dzpZCdgEXzRv3Cb74PEev5
-         +0AAn1NOM6DAmxh0fEreYMJ1dJ8/wZqN5KGGWfc1nsBNPN4G+61Ic8F9Mb5EQWiHca
-         hl4iq8ICMou/PeI5bUv9Er9LzY0Ek2BOGGSveOQJFtSxnin4jDb3dngoSq6d1+EPJx
-         N4tUUInzW1rehli5Atc4hYch3YUxSuyIuL672CLe1FgME3om0QlqSbN1FrGb9QTkzy
-         NbANuoCgERNpg==
-Date:   Tue, 5 Sep 2023 12:25:43 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
+        Tue, 5 Sep 2023 10:13:10 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E5A671A7;
+        Tue,  5 Sep 2023 07:13:05 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91547143D;
+        Tue,  5 Sep 2023 07:13:43 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E63A23F67D;
+        Tue,  5 Sep 2023 07:13:03 -0700 (PDT)
+Date:   Tue, 5 Sep 2023 15:13:01 +0100
+From:   Andre Przywara <andre.przywara@arm.com>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        dmitry.baryshkov@linaro.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Liao Chang <liaochang1@huawei.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, vegard.nossum@oracle.com
-Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
-Message-ID: <20230905102543.54weuecvkcujusip@zenone.zhora.eu>
-References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
- <47e3acac-7d4f-43bd-bd55-5ae9ab993f2d@kadam.mountain>
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
+Message-ID: <20230905151301.591fa238@donnerap.manchester.arm.com>
+In-Reply-To: <e1a5eea0-33a0-4a58-912a-9548d249ea5d@kadam.mountain>
+References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+        <20230904005855.658819b3@slackpad.lan>
+        <e1a5eea0-33a0-4a58-912a-9548d249ea5d@kadam.mountain>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47e3acac-7d4f-43bd-bd55-5ae9ab993f2d@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Tue, 5 Sep 2023 13:32:08 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-On Tue, Sep 05, 2023 at 12:10:31PM +0300, Dan Carpenter wrote:
-> On Wed, Aug 23, 2023 at 12:42:02PM -0700, Harshit Mogalapalli wrote:
-> > devm_clk_bulk_get_all() can return zero when no clocks are obtained.
-> > Passing zero to dev_err_probe() is a success which is incorrect.
+Hi,
+
+> On Mon, Sep 04, 2023 at 12:58:55AM +0100, Andre Przywara wrote:
+> > On Sun,  3 Sep 2023 12:11:06 +0200
+> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> >   
+> > > With gcc 12.3.0, when this file is built, we get errors such as:
+> > > 
+> > > drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
+> > > drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
+> > >   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+> > >       |                                                    ^~~~~
+> > > drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
+> > >   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+> > >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > 
+> > > Because of the possible value of 'i', this can't be an issue in real world  
 > > 
-> > Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
-> > Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> > ---
-> > Only compile tested, found by static analysis with smatch.
-> > 
-> > https://lore.kernel.org/all/CAA8EJprTOjbOy7N5+8NiJaNNhK+_btdUUFcpHKPkMuCZj5umMA@mail.gmail.com/
-> > ^^ I reported initially here, Dmitry suggested we need to fix it in a
-> > different patch.
-> > 
-> > the Fixes commit used above pointed this bug, but the real fixes tag is this:
-> > Fixes: e517526195de ("i2c: Add Qualcomm CCI I2C driver")
+> > Would using "u8 i;" help? After all currently there are only 4 PHYs
+> > max, and in general this isn't expected to be more than a "handful", so
+> > 8 bits should be plenty. An unsigned is better anyway.  
 > 
-> This has already been applied but, for future reference, you should have
-> gone with the real fixes tag instead of where the static checker started
-> complaining.
+> Generally unsigned types are trickier and cause bugs.  I've blogged
+> about this before.  The title is a probably more negative than it should
+> have been.
+> 
+> https://staticthinking.wordpress.com/2022/06/01/unsigned-int-i-is-stupid/
+> 
+> My blog mentions u8 i.  I would say avoid that unless forced by an API.
 
-yeah... sorry... I normally check all the "Fixes:" tags, but
-sometimes, out of sheer laziness, I trust the commit.
+Fair enough, the reason I suggested u8 was to allow us using "%u" in the
+snprintf, so any static checker would not try to account for a potential
+'-' character. Because not doing so would spoil that approach for the
+"usb%d_hsic_12M" string further down.
 
-Andi
+> > It leaves a bit of a bitter taste, though, as we shouldn't do this kind
+> > type tweaking, especially not to work around the compiler trying to be
+> > clever, but then not seeing the whole picture (that "i" is bounded by
+> > compile time constants not exceeding "4").  
+> 
+> Yeah.  There is always the option of just ignoring the static checker
+> when it tells you to write bad code.
+
+Agreed on that, though I find those diagnostics useful, and just ignoring
+or masking them might come back and haunt us later.
+
+So I still think we should fix this, one way or the other.
+
+But I feel this goes quite far into bikeshedding territory, so we should
+probably just go with name[32].
+
+Cheers,
+Andre.
+
+> You don't have to even look at the *whole* picture to know that GCC is
+> wrong.  The BIT(i) would overflow if i is more than 31.
+> 
+> regards,
+> dan carpenter
+> 
+
