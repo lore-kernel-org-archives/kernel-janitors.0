@@ -2,71 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9CACA0FF8
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3749CA0FE2
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242261AbjIEQUE (ORCPT
+        id S239556AbjIEQUI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
+        Tue, 5 Sep 2023 12:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354542AbjIEM2f (ORCPT
+        with ESMTP id S1354259AbjIEKZx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Sep 2023 08:28:35 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C595F1A8;
-        Tue,  5 Sep 2023 05:28:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693916911; x=1725452911;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bIvwvVLX2QgqgZ6NIpuMrd+CJE12wHgoLPkmBc9kTgM=;
-  b=CYASRsL8e8a3oLKwz5mE5kMg0LV/sV484j52k61uesQ7Zpjjp3RMXcZp
-   F7Qm5J5ugUGEzeGW9yDokC13KVGlSsx5Pchjoro3NJRX1FlkvYmd6OL3e
-   mnIrodc3m+pwHtSIum0eScmq1Soyc7LAK88LK1oHOw2U+/kY8dm4bAfzv
-   p86we1SP/1f9E//fRE9BuRxuKRKfNDVoYtjUlDMs4znu0yoSGsB0OAvo+
-   SqHge78sMH7IUkVJiVMBnsL21s8d5pafVZcdqQjBocYmQc8aUAv1YfvtE
-   5oKRmSOLVKDgjZ8sIbbN9wvqW74h7GxQSxTBAsW1Dqqb68TtERsj7uDsd
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="379501517"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="379501517"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 05:28:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="776187146"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="776187146"
-Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 05:28:29 -0700
-Date:   Tue, 5 Sep 2023 14:28:27 +0200
-From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Oded Gabbay <ogabbay@kernel.org>,
-        Dani Liberman <dliberman@habana.ai>,
+        Tue, 5 Sep 2023 06:25:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1B5DB;
+        Tue,  5 Sep 2023 03:25:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BAB11B8113E;
+        Tue,  5 Sep 2023 10:25:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6876DC433C7;
+        Tue,  5 Sep 2023 10:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693909547;
+        bh=s5OcvhMGsauyHDIDghPQ23qUl8W6KKM1Q1jw2SF9yi4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MCmfXrexYhH4Ai/BXu//C7U3rOTpsCWaLsG2uJMmVDnnEHOp1gXStiwclOrtqdLCF
+         MncEUQuevfAWcC/UQV5gAuG3WKjdr9gaDPvbVnTVJae/dzpZCdgEXzRv3Cb74PEev5
+         +0AAn1NOM6DAmxh0fEreYMJ1dJ8/wZqN5KGGWfc1nsBNPN4G+61Ic8F9Mb5EQWiHca
+         hl4iq8ICMou/PeI5bUv9Er9LzY0Ek2BOGGSveOQJFtSxnin4jDb3dngoSq6d1+EPJx
+         N4tUUInzW1rehli5Atc4hYch3YUxSuyIuL672CLe1FgME3om0QlqSbN1FrGb9QTkzy
+         NbANuoCgERNpg==
+Date:   Tue, 5 Sep 2023 12:25:43 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        dmitry.baryshkov@linaro.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Liao Chang <liaochang1@huawei.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] accel/habanalabs/gaudi2: Fix incorrect string length
- computation in gaudi2_psoc_razwi_get_engines()
-Message-ID: <20230905122827.GD184247@linux.intel.com>
-References: <d38582083ece76155dabdfd9a29d5a9dd0d6bce7.1693855091.git.christophe.jaillet@wanadoo.fr>
+        error27@gmail.com, vegard.nossum@oracle.com
+Subject: Re: [PATCH next] i2c: qcom-cci: Fix error checking in cci_probe()
+Message-ID: <20230905102543.54weuecvkcujusip@zenone.zhora.eu>
+References: <20230823194202.2280957-1-harshit.m.mogalapalli@oracle.com>
+ <47e3acac-7d4f-43bd-bd55-5ae9ab993f2d@kadam.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d38582083ece76155dabdfd9a29d5a9dd0d6bce7.1693855091.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <47e3acac-7d4f-43bd-bd55-5ae9ab993f2d@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 04, 2023 at 09:18:36PM +0200, Christophe JAILLET wrote:
-> snprintf() returns the "number of characters which *would* be generated for
-> the given input", not the size *really* generated.
+Hi Dan,
+
+On Tue, Sep 05, 2023 at 12:10:31PM +0300, Dan Carpenter wrote:
+> On Wed, Aug 23, 2023 at 12:42:02PM -0700, Harshit Mogalapalli wrote:
+> > devm_clk_bulk_get_all() can return zero when no clocks are obtained.
+> > Passing zero to dev_err_probe() is a success which is incorrect.
+> > 
+> > Fixes: 605efbf43813 ("i2c: qcom-cci: Use dev_err_probe in probe function")
+> > Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> > ---
+> > Only compile tested, found by static analysis with smatch.
+> > 
+> > https://lore.kernel.org/all/CAA8EJprTOjbOy7N5+8NiJaNNhK+_btdUUFcpHKPkMuCZj5umMA@mail.gmail.com/
+> > ^^ I reported initially here, Dmitry suggested we need to fix it in a
+> > different patch.
+> > 
+> > the Fixes commit used above pointed this bug, but the real fixes tag is this:
+> > Fixes: e517526195de ("i2c: Add Qualcomm CCI I2C driver")
 > 
-> In order to avoid too large values for 'str_size' (and potential negative
-> values for "PSOC_RAZWI_ENG_STR_SIZE - str_size") use scnprintf()
-> instead of snprintf().
-> 
-> Fixes: c0e6df916050 ("accel/habanalabs: fix address decode RAZWI handling")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+> This has already been applied but, for future reference, you should have
+> gone with the real fixes tag instead of where the static checker started
+> complaining.
+
+yeah... sorry... I normally check all the "Fixes:" tags, but
+sometimes, out of sheer laziness, I trust the commit.
+
+Andi
