@@ -2,96 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AF4EE49B2
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Sep 2023 02:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8D0EB8FB5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Sep 2023 08:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236883AbjIFCFJ (ORCPT
+        id S236062AbjIFItH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Sep 2023 22:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
+        Wed, 6 Sep 2023 04:49:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbjIFCFJ (ORCPT
+        with ESMTP id S235881AbjIFItC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Sep 2023 22:05:09 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447BC1A7;
-        Tue,  5 Sep 2023 19:05:02 -0700 (PDT)
-Received: from kwepemm600005.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RgQbz2ZR6zVkdx;
-        Wed,  6 Sep 2023 10:02:07 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 6 Sep 2023 10:04:43 +0800
-Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
- snprintf()
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Zaibo Xu <xuzaibo@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-crypto@vger.kernel.org>
-References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
- <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
- <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
- <ZPbkJOPsx4as96D/@gondor.apana.org.au>
-From:   liulongfang <liulongfang@huawei.com>
-Message-ID: <f4379fee-22c2-3b94-1725-70a317cc9baf@huawei.com>
-Date:   Wed, 6 Sep 2023 10:04:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 6 Sep 2023 04:49:02 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89012E76;
+        Wed,  6 Sep 2023 01:48:50 -0700 (PDT)
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3868Z4nt021181;
+        Wed, 6 Sep 2023 08:48:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=3ADrDgev14r5OWCL9x3U1yc8Xe/xKR0+iOVCoQWm1qA=;
+ b=b3ZUkFvX7upMVYvjZr9V40lhB5DjoQW3kPPZQyoumhFWhiaPt0WCCcMgOXQjlfP22bM2
+ Yq1GE8Xze9Qj67MjSao3ZczReztp+M1aZmFoG49fAKsTP7ZUYow34+qsEwUwIJ9iYv+B
+ k9ovCYY4E8OJDF6WTVpfWE/aqxELEPzwiFEtWZZVH1LHm8Q3dE6bt9Oje9AktzdM2x/c
+ NFxxQ93BqmYRJSOWQqdjSYRcxk12lw53xIyPLq9IM7f/YKDPeDVQmOoHYJCG63hs3BJb
+ RywXhcRcdl1GIS01ngXx+2QuyrOtNNjPRzEvUe+6BtWvyvUzb37Benh0z+wkNv5HKne7 wg== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sxp1mg1f6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Sep 2023 08:48:25 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3867NFA1010355;
+        Wed, 6 Sep 2023 08:48:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3suugc67fd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Sep 2023 08:48:24 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3868mNAh035692;
+        Wed, 6 Sep 2023 08:48:23 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3suugc67er-1;
+        Wed, 06 Sep 2023 08:48:23 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] power: supply: mt6370: Fix missing error code in mt6370_chg_toggle_cfo()
+Date:   Wed,  6 Sep 2023 01:48:15 -0700
+Message-ID: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-In-Reply-To: <ZPbkJOPsx4as96D/@gondor.apana.org.au>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.110]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600005.china.huawei.com (7.193.23.191)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-06_02,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309060073
+X-Proofpoint-GUID: mBA6BaxruvbDyQa6SZnY-Fl1TQfJqhVM
+X-Proofpoint-ORIG-GUID: mBA6BaxruvbDyQa6SZnY-Fl1TQfJqhVM
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/9/5 16:17, Herbert Xu wrote:
-> On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
->>
->> Some debugfs dir of file way be left around. Is it what your are talking
->> about?
-> 
-> Yes all allocated resources should be freed on the error path.
-> 
->>> The other snprintf in the same file also looks suspect.
->>
->> It looks correct to me.
->>
->> And HPRE_DBGFS_VAL_MAX_LEN being 20, it doesn't really matter. The string
->> can't be truncated with just a "%u\n".
-> 
-> Well if you're going to go with that line of reasoning then this
-> case ("cluster%d") can't overflow either, no?
->
+When mt6370_chg_field_get() suceeds, ret is set to zero and returning
+zero when flash led is still in strobe mode looks incorrect.
 
-First, I checked the calling code of the snprintf function in all driver files in
-the hisilicon directory. Only here is the processing of return value judgment.
-This treatment is indeed problematic and needs to be modified.
+Fixes: 233cb8a47d65 ("power: supply: mt6370: Add MediaTek MT6370 charger driver")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/power/supply/mt6370-charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then, I don't quite agree with your modification plan.
-The modification of this solution is not complete.
-As Herbert said, ("cluster%d") may still have overflow problems.
+diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+index f27dae5043f5..a9641bd3d8cf 100644
+--- a/drivers/power/supply/mt6370-charger.c
++++ b/drivers/power/supply/mt6370-charger.c
+@@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
+ 
+ 	if (fl_strobe) {
+ 		dev_err(priv->dev, "Flash led is still in strobe mode\n");
+-		return ret;
++		return -EINVAL;
+ 	}
+ 
+ 	/* cfo off */
+-- 
+2.39.3
 
-In the end, my proposed modification scheme is this:
-...
-	int ret;
-	u8 i;
-
-	for (i = 0; i < clusters_num; i++) {
-		snprintf(buf, HPRE_DBGFS_VAL_MAX_LEN, "cluster%u", i);
-		tmp_d = debugfs_create_dir(buf, qm->debug.debug_root);
-		...
-	}
-...
-
-Thanks,
-Longfang.
-
-> Cheers,
-> 
