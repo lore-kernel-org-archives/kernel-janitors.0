@@ -2,102 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8D0EB8FB5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Sep 2023 08:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38ACEB8FB6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Sep 2023 09:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236062AbjIFItH (ORCPT
+        id S234237AbjIFJJl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Sep 2023 04:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
+        Wed, 6 Sep 2023 05:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235881AbjIFItC (ORCPT
+        with ESMTP id S229921AbjIFJJf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Sep 2023 04:49:02 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89012E76;
-        Wed,  6 Sep 2023 01:48:50 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3868Z4nt021181;
-        Wed, 6 Sep 2023 08:48:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=3ADrDgev14r5OWCL9x3U1yc8Xe/xKR0+iOVCoQWm1qA=;
- b=b3ZUkFvX7upMVYvjZr9V40lhB5DjoQW3kPPZQyoumhFWhiaPt0WCCcMgOXQjlfP22bM2
- Yq1GE8Xze9Qj67MjSao3ZczReztp+M1aZmFoG49fAKsTP7ZUYow34+qsEwUwIJ9iYv+B
- k9ovCYY4E8OJDF6WTVpfWE/aqxELEPzwiFEtWZZVH1LHm8Q3dE6bt9Oje9AktzdM2x/c
- NFxxQ93BqmYRJSOWQqdjSYRcxk12lw53xIyPLq9IM7f/YKDPeDVQmOoHYJCG63hs3BJb
- RywXhcRcdl1GIS01ngXx+2QuyrOtNNjPRzEvUe+6BtWvyvUzb37Benh0z+wkNv5HKne7 wg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sxp1mg1f6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Sep 2023 08:48:25 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3867NFA1010355;
-        Wed, 6 Sep 2023 08:48:24 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3suugc67fd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Sep 2023 08:48:24 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3868mNAh035692;
-        Wed, 6 Sep 2023 08:48:23 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3suugc67er-1;
-        Wed, 06 Sep 2023 08:48:23 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] power: supply: mt6370: Fix missing error code in mt6370_chg_toggle_cfo()
-Date:   Wed,  6 Sep 2023 01:48:15 -0700
-Message-ID: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.41.0
+        Wed, 6 Sep 2023 05:09:35 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1BB495
+        for <kernel-janitors@vger.kernel.org>; Wed,  6 Sep 2023 02:09:31 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-501bef6e0d3so2585779e87.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Sep 2023 02:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693991370; x=1694596170; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4X/jYs+/ceK6gWtZlFl/YtSigIH0OiPo792O7Nz2m84=;
+        b=JX4cTXQ4GlLrtTxfwB4xtBhNhGxozgHrH1Dpuq+Jz4nIgRnQBSGtjDEvgwNlroBtxe
+         pkly8woKuU6HEy6XbCSnT5PFmd62i0w9Y0GmgOzqBtEgj2eSq+ImMC2JqUr2ltbxZ6QY
+         vf7GsLVHUpbNf8bwoeXBdJqWCjAIXOHpd7t/fje0qGGFiqgUmmO0zr/Z4e4MvWlv/C6D
+         TR0DFfYr8qKjzOv2qPmd7reRPAgn5mqQAIDGdCAgrXa8d6S3OH0ASCh04euftbeN+87z
+         eran3NSrAedDgO9UloQ+EqHqLlM2YYsM9q2eFUhd/ej/oUZIXOC82H9qHya31uoEeLqi
+         kkAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693991370; x=1694596170;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4X/jYs+/ceK6gWtZlFl/YtSigIH0OiPo792O7Nz2m84=;
+        b=Tt+v60ixSQZfH1ijsfsDKWMbBLd3AyeYUynTL3RzaMPSxtB2DbdhzuAYB2zBzi2CO7
+         WEk6Ybb2nyYNe3rCK8yTP7HIuuaQYTuUDFKFwrNFKbFD+xpxGTeQMICoArT6tRX0dLDu
+         fDj/V6x7NncTkcFk+7puO/nV82O7zfSj4Mo3lpjlNEQ/zzFberp65X4pr5l3hGwxJoTl
+         uWJVZqME8wPLmVKfyZTVz+Y/HslfUAx6jkOrB85ZaWPS6CcNYajMCePhkf7WhNCzlH7L
+         JcqKjbZzwYnPr2foqhGEPiHxRg61Eud0wvPyMQeFL9HFSfiBgU5sZiT+75fnT9DYTJ2/
+         XVuw==
+X-Gm-Message-State: AOJu0YyTcujb2n4wxG28Tq3m5Qf+eKADHtbrHvOd69XiDtmsBkV1BGZC
+        1iz4+Q2JEkSYML5dJZm1z5rNnw==
+X-Google-Smtp-Source: AGHT+IFNS8vMe8UQso30/VjQUsvJh4qnhE+E9TRK6jeh1PSIGk7aZr1gUHl7XJYvP0P7idfjMDRGkw==
+X-Received: by 2002:ac2:5f49:0:b0:500:b302:3281 with SMTP id 9-20020ac25f49000000b00500b3023281mr1478513lfz.27.1693991369955;
+        Wed, 06 Sep 2023 02:09:29 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id dd18-20020a0560001e9200b0031f3ad17b2csm12319036wrb.52.2023.09.06.02.09.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Sep 2023 02:09:29 -0700 (PDT)
+Date:   Wed, 6 Sep 2023 12:09:25 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@suse.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        speakup@linux-speakup.org
+Subject: Re: [PATCH] accessibility: speakup: Fix incorrect string length
+ computation in report_char_chartab_status()
+Message-ID: <10d321d6-89ab-464e-971d-bb9635a5308f@moroto.mountain>
+References: <b388b088485aff5dc223f2723ee61e00e5cd3f7d.1693855874.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-06_02,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309060073
-X-Proofpoint-GUID: mBA6BaxruvbDyQa6SZnY-Fl1TQfJqhVM
-X-Proofpoint-ORIG-GUID: mBA6BaxruvbDyQa6SZnY-Fl1TQfJqhVM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b388b088485aff5dc223f2723ee61e00e5cd3f7d.1693855874.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When mt6370_chg_field_get() suceeds, ret is set to zero and returning
-zero when flash led is still in strobe mode looks incorrect.
+On Mon, Sep 04, 2023 at 09:31:44PM +0200, Christophe JAILLET wrote:
+> snprintf() returns the "number of characters which *would* be generated for
+> the given input", not the size *really* generated.
+> 
+> In order to avoid too large values for 'len' (and potential negative
+> values for "sizeof(buf) - (len - 1)") use scnprintf() instead of
+> snprintf().
+> 
 
-Fixes: 233cb8a47d65 ("power: supply: mt6370: Add MediaTek MT6370 charger driver")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with smatch, only compile tested.
----
- drivers/power/supply/mt6370-charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A bunch of kernel-janitors mail didn't reach my inbox...  Like this
+one.  So weird.
 
-diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
-index f27dae5043f5..a9641bd3d8cf 100644
---- a/drivers/power/supply/mt6370-charger.c
-+++ b/drivers/power/supply/mt6370-charger.c
-@@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
- 
- 	if (fl_strobe) {
- 		dev_err(priv->dev, "Flash led is still in strobe mode\n");
--		return ret;
-+		return -EINVAL;
- 	}
- 
- 	/* cfo off */
--- 
-2.39.3
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+The impact of this bug is a WARN() btw.  snprintf() will refuse to
+print negative bytes.
+
+regards,
+dan carpenter
 
