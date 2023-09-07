@@ -2,78 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88F8EC8742
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 17:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A2DEC8742
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 17:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241728AbjIGRSH (ORCPT
+        id S237629AbjIGRdU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:18:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50600 "EHLO
+        Thu, 7 Sep 2023 13:33:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242407AbjIGRSD (ORCPT
+        with ESMTP id S244684AbjIGRc5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:18:03 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C063BC;
-        Thu,  7 Sep 2023 10:17:37 -0700 (PDT)
+        Thu, 7 Sep 2023 13:32:57 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95AA10EC
+        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 10:32:31 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2bceca8a41aso20524611fa.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 10:32:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=62TySAHC1N1G9xqdoVRmmg5fUX1gEgCoM5TVnSAfm1w=;
-  b=TKlOCVNtV4EtiX6/v665r/6e/F6v+j5ghyDiYIk8w4tR5gk+lwpMkTtg
-   E9GEAdIev2+X/KVusJ8ooLvvJetyaRhccVDbFXBWkuxAyMUjrY4XWD4z9
-   4SGHusWg+taayQm6FZymoPqYON3JzvWl2aRfdGwvHM+whC7FlPOOnyoIa
-   8=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.02,234,1688421600"; 
-   d="scan'208";a="65324657"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 11:55:30 +0200
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Justin Chen <justin.chen@broadcom.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] net: bcmasp: add missing of_node_put
-Date:   Thu,  7 Sep 2023 11:55:12 +0200
-Message-Id: <20230907095521.14053-3-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+        d=linaro.org; s=google; t=1694107903; x=1694712703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FdAB2Jh5naeisydTV3u43XXNVH38AlgAr9dXqaut4m8=;
+        b=WxDzS1a3bbbbgEPp4E3SkD0BgGCtmsTBVDW+PHr/TVY0ooZS9s7tgEZFe6lXS93hKu
+         RK2W3D2jOLvn06IbP8BX1m7ekOvDsrQTbOCHVzp7JgbdP8gDdjgHCaB+Y49RLsWyuGFu
+         H8S/PvmRx3lKfNsxeK1ouH8+5vyrjrzW9tDiWyTV5WjRSe8EgUMlY1BXQBVne76q8pSl
+         V7wWvAPNYyGbUw8rHV/9U+1sMxLy3tdcGgARgIApjCkWMO6WR2s90MaK/6mytv/D0EM6
+         7U1w7B1ya0UWfeyYSV1Uyp5UDOgdOgdzlvNYodG2AOTyeImGoHkm2mup1z72Qn2yDooz
+         7jWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694107903; x=1694712703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FdAB2Jh5naeisydTV3u43XXNVH38AlgAr9dXqaut4m8=;
+        b=eNb5HdQIY11xZANvjztT0fMFJ1qOm59USIkjY4Rz43ILAXA8BE7x+LneYcRdgLsU+0
+         CbXssvf72iYleZ6bcIVVI62BVcOLHTGR9XrkrcDbAFoVkS/j64be8dw4hJnl9oOY4fu9
+         mVflwcz1cXgeO7rXihGTzlwZRexPumvUWFd2lSVIJUGNhpGEgYrl0JS5wo/kh6HjYIyK
+         iIHYFX/3FyjcPn/orONBeN0ZypRhHVNNrK96TIesD2UczgoZiscFg+ggplfFfRaVxT21
+         qhs8/dnTnu1qaRXNVwBVbrxZi3Pg3fTmT6jsHAL5mxBtWie3X+ye0AxkHVmKFncD81+c
+         MSBg==
+X-Gm-Message-State: AOJu0YzJJm+cKL/xRai5kr2lFTcc0VsHCAEmK934fDlhr9SP5tpe/xB5
+        kBSw646oMNA3WvYdRRLXSJBaW9MCB4RsgOwHejk=
+X-Google-Smtp-Source: AGHT+IFVw0hhgJ9cIVl3OyrJhRbiJmQ67lfQPapydSicLHG49QPh+uB3ol2Bh2Lb6O0nBJh4qYsOpA==
+X-Received: by 2002:a5d:4441:0:b0:317:e04c:6791 with SMTP id x1-20020a5d4441000000b00317e04c6791mr4011818wrr.62.1694082564882;
+        Thu, 07 Sep 2023 03:29:24 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k11-20020a5d6d4b000000b0031ad2663ed0sm22917456wri.66.2023.09.07.03.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 03:29:24 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 13:29:22 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom-m31: Fix error code in probe()
+Message-ID: <4c60268a-0896-4ce8-8c9f-61ff520cc90a@kadam.mountain>
+References: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
+ <20230907102405.GA7987@varda-linux.qualcomm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230907102405.GA7987@varda-linux.qualcomm.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-for_each_available_child_of_node performs an of_node_get
-on each iteration, so a break out of the loop requires an
-of_node_put.
+On Thu, Sep 07, 2023 at 03:54:05PM +0530, Varadarajan Narayanan wrote:
+> On Thu, Sep 07, 2023 at 12:54:39PM +0300, Dan Carpenter wrote:
+> > This accidentally returns the wrong variable.  It should be "qphy->vreg"
+> > instead of "qphy->phy".
+> >
+> > Fixes: 08e49af50701 ("phy: qcom: Introduce M31 USB PHY driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > When we're adding new drivers then we should use the new driver
+> > prefix instead of the subsystem prefix.  For example:
+> >
+> >  Bad: [PATCH] phy: qcom: Introduce M31 USB PHY driver
+> > Good: [PATCH] phy: qcom-m31: Introduce M31 USB PHY driver
+> >
+> > That way it's obvious to the first person who sends a bugfix
+> > what the driver prefix is.
+> >
+> >  drivers/phy/qualcomm/phy-qcom-m31.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-m31.c b/drivers/phy/qualcomm/phy-qcom-m31.c
+> > index ed08072ca032..99d570f4142a 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-m31.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-m31.c
+> > @@ -256,7 +256,7 @@ static int m31usb_phy_probe(struct platform_device *pdev)
+> >
+> >  	qphy->vreg = devm_regulator_get(dev, "vdda-phy");
+> >  	if (IS_ERR(qphy->vreg))
+> > -		return dev_err_probe(dev, PTR_ERR(qphy->phy),
+> > +		return dev_err_probe(dev, PTR_ERR(qphy->vreg),
+> >  						"failed to get vreg\n");
+> >
+> >  	phy_set_drvdata(qphy->phy, qphy);
+> > --
+> > 2.39.2
+> 
+> I believe this is addressed by https://lore.kernel.org/linux-arm-msm/20230824091345.1072650-1-yangyingliang@huawei.com/
+> 
 
-This was done using the Coccinelle semantic patch
-iterators/for_each_child.cocci
+Ah, I normally look up these sorts of fixes using the following command
+`elinks "http://lore.kernel.org/all/?q=${FUNC}`
+before sending but Yang Yingliang's patch wasn't in the first page of
+results so I missed it.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
----
- drivers/net/ethernet/broadcom/asp2/bcmasp.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff -u -p a/drivers/net/ethernet/broadcom/asp2/bcmasp.c b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
---- a/drivers/net/ethernet/broadcom/asp2/bcmasp.c
-+++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
-@@ -1300,6 +1300,7 @@ static int bcmasp_probe(struct platform_
- 		if (!intf) {
- 			dev_err(dev, "Cannot create eth interface %d\n", i);
- 			bcmasp_remove_intfs(priv);
-+			of_node_put(intf_node);
- 			goto of_put_exit;
- 		}
- 		list_add_tail(&intf->list, &priv->intfs);
+regards,
+dan carpenter
 
