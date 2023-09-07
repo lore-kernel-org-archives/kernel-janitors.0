@@ -2,107 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B3FEC8742
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 17:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC768EC874B
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 18:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237233AbjIGRqK (ORCPT
+        id S231667AbjIGSLH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46820 "EHLO
+        Thu, 7 Sep 2023 14:11:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232935AbjIGRqI (ORCPT
+        with ESMTP id S234039AbjIGSLH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:46:08 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3311BF9
-        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 10:45:42 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2bd3f629c76so21634941fa.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 10:45:42 -0700 (PDT)
+        Thu, 7 Sep 2023 14:11:07 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62FB310CF
+        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 11:10:37 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52bcd4db4e6so1713235a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 11:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694108730; x=1694713530; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7+oeYHhCCZf4UqPQvsghd+Ar5QM+qfPLVMJj3atC+1c=;
-        b=v51ZIL5esQ3cXxYsEsAligWkVLciLkacWEdojoby3wYNx66KpxG7oZMASY6AZ9a8Lp
-         As1VujL+ZSNreAlNexHR9jYRUEHfIrbIET3AU5GImYo4JZCncBGmO1i9xt61aHn9gYtc
-         j21exWpB2gENYwMmTsGrx96hPkAHtbWWIJQaEcJ2GZrxwCMDFScWXNr+85w0PkveVlb3
-         bavhX8BoVM7DKZMUMRqsSaD13xfizUWiROyP2c+rKd/zjLEtz7eC966dxHiIL+BmUFzq
-         7l5YbWC0cnMOAZTeCDh1/FIdabRXq3LMSuuc6B7CFZMeqCB5XKYR46nKHX75iWoM3YEO
-         TVLA==
+        d=linaro.org; s=google; t=1694110231; x=1694715031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGxlXmD7rXzlXkZp/1+5eV0AkPQGPfHPdjs2ruZgIyU=;
+        b=ZNrxkRPpHWTJ0buJgluIumehlzHtQUdwHJnY+lD7PYsah3aGYKVjOBa/X/vG9qqIIU
+         S07MsDYWq+Myk3cmGDGaHNnXOt/tPxO6JyU9qYgk4MS5pbCoSTnlwGRp8bI7oyVDU54B
+         Mdg9SKsm4APiWnOoF4N5GjhJbLsuBaag5dpU2aO0wcQIMdOIa/MoUWffgtInhV/DS2F7
+         25Fstu3lapq3nllKM3rNWnHMlwhvx0uPlQCmnExI7xAUan0S95M7TDqqyvtcVbdlEZUi
+         4zg4f7CIREaKFwOWH0sF/xCYxMmtj7H6WxcTKVhUy6zdCTWJrvM6RMnqKIeMYyeKSVeH
+         CDYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694108730; x=1694713530;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+oeYHhCCZf4UqPQvsghd+Ar5QM+qfPLVMJj3atC+1c=;
-        b=oEZcDueifSVCxtwTcJZOFLysUrIdgmfZNefnNnM/wuWKoQDS/8vcyZ2uwmiWGSyt0w
-         K4RguDnXgCssRkrrDD1VZpnwTKCTZQ2ehAYhbnRNOzeiMvCuhdp0ygDLks/kvJa42n0y
-         OmHswdFxlzwBnXGzOounVb/Eiuc6atxMyTJ5HUixt5A5qGgsmVQlPhj+bvrEuuUXlfEV
-         RJuv0b7hn9IqRP/KltXPORkhnuBG8QWJGUVbRJgRvaApW6of0Qp9SlkbXBD88r64wgqp
-         mkKEEykL75XWypR+hXdkQhsc74C4hcowChWSIJQad/RguVLtbNvacGVYD0BjU1FUskNy
-         Qomg==
-X-Gm-Message-State: AOJu0YwatnZXq6IrkwnNgF3v3yqODvkveITT9c1m/u/aBNMjLMKWux6j
-        cIingMft7PbFuzP0WtzbpGsOIRhwLdaYGJIZL58=
-X-Google-Smtp-Source: AGHT+IEUCqT/4Qvl7BteIhCYfFd+u2xnC6HQNrqjt2oIdRyQrjNUNt43eRhSqUZxSCuOAp+rQ/F7EQ==
-X-Received: by 2002:adf:ee08:0:b0:317:5e73:7594 with SMTP id y8-20020adfee08000000b003175e737594mr4534863wrn.28.1694080549826;
-        Thu, 07 Sep 2023 02:55:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694110231; x=1694715031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jGxlXmD7rXzlXkZp/1+5eV0AkPQGPfHPdjs2ruZgIyU=;
+        b=qgFGQo0z3HawrrqbF41/Ha+Mjr8lUTuEQuOee7zMEWA2DfxTtvd4dM2PlxCxYVv6f6
+         iqSWeDf5l/fg34EbRgIggLzWEEC7dTaXUOx9voEGG1BX0SQhH3lWPn6Z1VpoWtWQ60sC
+         N3QCmWXvXqsSKL59mNrMwFyFaBXfcT2HGWPSh2SV60dZt5uZwF9aNkTP174U+Y0rPgFR
+         PQS0tNf4P6mXb2kDvE4Ulbv6yp9dn90nmgYj+S8vpkO+hgg3IKD8ADxYbDeAq0h1x0Fx
+         tQ/PdUrRBK/BKoKGD2yXVIsyXfix9FGXZuZYp7Pwj7MT7chOLHKwh8zeiP9FDJJyiobZ
+         S/tg==
+X-Gm-Message-State: AOJu0YxTKy1+//hjy0MGubK8v3qN0zfb1GqFmsQCU5NWz5nXAJ5PjUyu
+        5Jhh/yjT20d6c/n9rk0ajp8LTwbZMT3owRSsLao=
+X-Google-Smtp-Source: AGHT+IF4ScXeNFc9T6sa37xCIejdfIcIV8Ku7W6rsWwu23Jm9Jysj7coReVtQDIMzxl8ptY3zXn6Fg==
+X-Received: by 2002:a05:6000:ca:b0:31c:488e:ff33 with SMTP id q10-20020a05600000ca00b0031c488eff33mr4065832wrx.58.1694078850155;
+        Thu, 07 Sep 2023 02:27:30 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d18-20020a5d5392000000b0031c6e1ea4c7sm22973928wrv.90.2023.09.07.02.55.49
+        by smtp.gmail.com with ESMTPSA id ay30-20020a5d6f1e000000b0031f65cdd271sm3766111wrb.100.2023.09.07.02.27.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 02:55:49 -0700 (PDT)
-Date:   Thu, 7 Sep 2023 12:55:46 +0300
+        Thu, 07 Sep 2023 02:27:29 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 12:27:24 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Alistar Popple <alistair@popple.id.au>,
-        linux-fsi@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] fsi: i2cr-scom: Fix error code in read/write
-Message-ID: <ee554aa1-0257-4662-8da5-1ea6be2740e9@moroto.mountain>
+To:     Edward Cree <ecree.xilinx@gmail.com>
+Cc:     linux-net-drivers@amd.com, kernel-janitors@vger.kernel.org
+Subject: Re: [bug report] sfc: functions to register for conntrack zone
+ offload
+Message-ID: <dc2012e9-d1aa-43bc-bc84-03abb4cbc487@kadam.mountain>
+References: <ede55fab-c74d-4594-9c71-0165b9460d22@moroto.mountain>
+ <d80bf2ed-e91e-1f8b-fb38-e164ec7b5704@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <d80bf2ed-e91e-1f8b-fb38-e164ec7b5704@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The copy_to/from_user() functions return the number of bytes that they
-were not able to copy but we want to return negative -EFAULT to the
-user.
+On Wed, Sep 06, 2023 at 11:58:28PM +0100, Edward Cree wrote:
+> On 06/09/2023 12:55, Dan Carpenter wrote:
+> > rhashtable_lookup_get_insert_fast() can return NULL or error pointers.
+> 
+> So it can!  Thanks for catching this.
+> Looking at the rest of the driver, it appears quite a few other calls
+>  to this function also assume it returns only valid ptr or NULL.
+> I'll audit them all and produce a patch, with your Reported-by if
+>  that's okay?
 
-Fixes: c0b34bed0bbf ("fsi: Add I2C Responder SCOM driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/fsi/i2cr-scom.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Yes, please!  Thanks.
 
-diff --git a/drivers/fsi/i2cr-scom.c b/drivers/fsi/i2cr-scom.c
-index cb7e02213032..df1e1df40332 100644
---- a/drivers/fsi/i2cr-scom.c
-+++ b/drivers/fsi/i2cr-scom.c
-@@ -45,9 +45,8 @@ static ssize_t i2cr_scom_read(struct file *filep, char __user *buf, size_t len,
- 	if (ret)
- 		return ret;
- 
--	ret = copy_to_user(buf, &data, len);
--	if (ret)
--		return ret;
-+	if (copy_to_user(buf, &data, len))
-+		return -EFAULT;
- 
- 	return len;
- }
-@@ -62,9 +61,8 @@ static ssize_t i2cr_scom_write(struct file *filep, const char __user *buf, size_
- 	if (len != sizeof(data))
- 		return -EINVAL;
- 
--	ret = copy_from_user(&data, buf, len);
--	if (ret)
--		return ret;
-+	if (copy_from_user(&data, buf, len))
-+		return -EFAULT;
- 
- 	ret = fsi_master_i2cr_write(scom->i2cr, (u32)*offset, data);
- 	if (ret)
--- 
-2.39.2
+regars,
+dan carpenter
 
