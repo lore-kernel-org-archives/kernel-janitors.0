@@ -2,100 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4773CEC873E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F57EC873E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 16:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234819AbjIGPq6 (ORCPT
+        id S235597AbjIGQBA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
+        Thu, 7 Sep 2023 12:01:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236067AbjIGPj6 (ORCPT
+        with ESMTP id S240643AbjIGP7E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:39:58 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0952733;
-        Thu,  7 Sep 2023 08:37:30 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1c4cd0f6cb2so561000fac.0;
-        Thu, 07 Sep 2023 08:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694101008; x=1694705808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ije11m2dJHIRUBhbKjnCtBLajU/SOG5fYp+6ZMnYu94=;
-        b=bfyh7YbvQHv6K2Hilm8W8ODsr8m3x3GVivBs2HHUPAA/mwPSnv/ol4wlExlOK3OrN8
-         OVdOwHYLKSWaK6eyToiOemjmAmCVJOmwWC8jwL1A7cMIR7THLtKYQh3z2hrrrpojg5/A
-         G0NYkX7Tpw4bkFzEcSj8nehVrObCK4ZWgFCqRN9jN1SdfK9ExlfyRWV67+84QugBDQqs
-         2KiDEbGb/rI3Io7EHUwuDvBquOAuxOxUAGvlzs4GfyRcwm3agAOhUcp5jVS/4m/4u65c
-         XneddAwpAe7mPqDZSaKejq+g/bau7lk9c1QYlHaPkP9riwL2QRPxq0VB1LkG1SIEPwc9
-         SHOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694101008; x=1694705808;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ije11m2dJHIRUBhbKjnCtBLajU/SOG5fYp+6ZMnYu94=;
-        b=cfCrAwZj31ji2buwqMy+KY57DENKkhU+NvAcKU0Z+AedvHDSNeAUAN5YcHF9SYdUd7
-         ENhyRXfztI/Mb0VVRzp0XK7gbqgM532cbrlTDIB1j/7RM/OC3FD4lefwX3m8elKbIK8U
-         h6qcHHY3d79KHDrzicU2rtURkyquybtze+GYeGfo0Nr0OT32l/GuCBGuE7SHju1ZCovz
-         ObF3tS5sNXHszfRjyH03pvweu4tulO0kYAaoO2KX5GKrnfWIRN4f+vqobYUZyJi1XfO3
-         DyG9bUg/F5tJk86ZykKO2K36vmb/SIXp26v4Gjjq/EEOzEPC1PVZqKzFUdCAoDJfAg79
-         d99g==
-X-Gm-Message-State: AOJu0YygOD5K2t8BJjy5UlVimmXkEqwRCh8dqz3xuG1Ba3tP1xO8fd4Z
-        oaliducVzq+MFud7eELMSZPWnMpM3Nc=
-X-Google-Smtp-Source: AGHT+IE0wyur8SddnB7DKaXqnaG9wVQJXrBPrrxn8sfCzESUzgNQEQbmpEk1rhv1ZNOsSu2KKZ1oTw==
-X-Received: by 2002:a05:6a20:8e0d:b0:f0:50c4:4c43 with SMTP id y13-20020a056a208e0d00b000f050c44c43mr3279856pzj.5.1694085901243;
-        Thu, 07 Sep 2023 04:25:01 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h3-20020a63b003000000b0056c466b09a4sm12571178pgf.59.2023.09.07.04.24.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 04:25:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <41dcef20-1a16-71be-e658-6fa84405f1a5@roeck-us.net>
-Date:   Thu, 7 Sep 2023 04:24:59 -0700
+        Thu, 7 Sep 2023 11:59:04 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32704284C2;
+        Thu,  7 Sep 2023 08:47:26 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3876nb4Q016363;
+        Thu, 7 Sep 2023 10:24:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=XLJztAV/phq5KKxeTjoRmOdM6LRYuvdNOdfunfImmz0=;
+ b=O25m78kPKU3qPVRbzYBDctUw+uACsHY0eVcMND/kH9QtaP30r8S7NKwWXY2fpUdXNaVl
+ 61I4gN0MXSSqFhRY4D2syvGoR2EsKkLQHBqi1esiICEE1BdEnCGdpE7ICLzOJBxeLKhW
+ /LMzvAvpW85q+GWTy68juVeVDrnaeK+kQ8f31ErWF9zJ45eV/2f/gVMoe0KoODbTN/lT
+ dK1j16/8drhYgKFvLiy7EzaIg6Gbc6yhxHus2T8mQk/N9fKdc20ajsCKYm9vQNR8F79B
+ MmBm4ClbtnTRF8LSSdFQKibSQLqO9DzHAn0CONi+7z2WH4uhsy+3ZDqE8Giy+le8iLsn GA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sy951ggcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Sep 2023 10:24:13 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 387AODmW007795
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 7 Sep 2023 10:24:13 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Thu, 7 Sep 2023 03:24:09 -0700
+Date:   Thu, 7 Sep 2023 15:54:05 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] phy: qcom-m31: Fix error code in probe()
+Message-ID: <20230907102405.GA7987@varda-linux.qualcomm.com>
+References: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] watchdog: marvell_gti_wdt: Fix error code in probe()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Bharat Bhushan <bbhushan2@marvell.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <af326fd7-ac71-43a1-b7de-81779b61d242@moroto.mountain>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <af326fd7-ac71-43a1-b7de-81779b61d242@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uepUk1hYhfIIYyBLxKaaYwTVyx55XYRF
+X-Proofpoint-ORIG-GUID: uepUk1hYhfIIYyBLxKaaYwTVyx55XYRF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-07_02,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ adultscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=782 priorityscore=1501 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309070091
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/7/23 02:53, Dan Carpenter wrote:
-> This error path accidentally returns success.  Return -EINVAL instead.
-> 
-> Fixes: ef9e7fe2c890 ("Watchdog: Add marvell GTI watchdog driver")
+On Thu, Sep 07, 2023 at 12:54:39PM +0300, Dan Carpenter wrote:
+> This accidentally returns the wrong variable.  It should be "qphy->vreg"
+> instead of "qphy->phy".
+>
+> Fixes: 08e49af50701 ("phy: qcom: Introduce M31 USB PHY driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
 > ---
->   drivers/watchdog/marvell_gti_wdt.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/marvell_gti_wdt.c b/drivers/watchdog/marvell_gti_wdt.c
-> index d7eb8286e11e..1ec1e014ba83 100644
-> --- a/drivers/watchdog/marvell_gti_wdt.c
-> +++ b/drivers/watchdog/marvell_gti_wdt.c
-> @@ -271,7 +271,7 @@ static int gti_wdt_probe(struct platform_device *pdev)
->   				   &wdt_idx);
->   	if (!err) {
->   		if (wdt_idx >= priv->data->gti_num_timers)
-> -			return dev_err_probe(&pdev->dev, err,
-> +			return dev_err_probe(&pdev->dev, -EINVAL,
->   				"GTI wdog timer index not valid");
->   
->   		priv->wdt_timer_idx = wdt_idx;
+> When we're adding new drivers then we should use the new driver
+> prefix instead of the subsystem prefix.  For example:
+>
+>  Bad: [PATCH] phy: qcom: Introduce M31 USB PHY driver
+> Good: [PATCH] phy: qcom-m31: Introduce M31 USB PHY driver
+>
+> That way it's obvious to the first person who sends a bugfix
+> what the driver prefix is.
+>
+>  drivers/phy/qualcomm/phy-qcom-m31.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-m31.c b/drivers/phy/qualcomm/phy-qcom-m31.c
+> index ed08072ca032..99d570f4142a 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-m31.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-m31.c
+> @@ -256,7 +256,7 @@ static int m31usb_phy_probe(struct platform_device *pdev)
+>
+>  	qphy->vreg = devm_regulator_get(dev, "vdda-phy");
+>  	if (IS_ERR(qphy->vreg))
+> -		return dev_err_probe(dev, PTR_ERR(qphy->phy),
+> +		return dev_err_probe(dev, PTR_ERR(qphy->vreg),
+>  						"failed to get vreg\n");
+>
+>  	phy_set_drvdata(qphy->phy, qphy);
+> --
+> 2.39.2
 
+I believe this is addressed by https://lore.kernel.org/linux-arm-msm/20230824091345.1072650-1-yangyingliang@huawei.com/
+
+Thanks
+Varada
