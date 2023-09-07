@@ -2,106 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D928FEC873A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD3EC873A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234303AbjIGPqt (ORCPT
+        id S234592AbjIGPqx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
+        Thu, 7 Sep 2023 11:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240265AbjIGPaf (ORCPT
+        with ESMTP id S1344218AbjIGPcm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:30:35 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B26D1700;
-        Thu,  7 Sep 2023 08:30:09 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B2EEE66072BA;
-        Thu,  7 Sep 2023 11:43:14 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1694083395;
-        bh=AtNfCg0ORcDFoK5Walc1Hu3UGCme85N5dgstHaeabAc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NejBNi91GDBi0Au8P24t4H4LZjQGG9Ryf1BpDJdsXgET3EkPKMCZFUG7BCYuxsp0A
-         L5J666GBfK2HyOu6yTaz/Zdt9srJi+5RKfsPZV35jTt1DuIjOV5nERNjqPd61FOF9M
-         1HiviQkDD472ch4zIdW+FtQekf0Fqf3SaP8d0MbPWgZ0QpNRuBKobGhS7xydNgFhgX
-         uUE0F5MmxWTv8He1c0FXyZ6t8nMYMInIUVo0N72Mqo1KXMOA4MxZJJvh5lfKIFp7+p
-         X7z5G8hFmmvlxMnVt4LcbxoOqjM8OW9eDq+vbWzlIYRdMbQnJ7STxw4HIqlaHsKBtK
-         d2YAIXSKPE/tQ==
-Message-ID: <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
-Date:   Thu, 7 Sep 2023 12:43:12 +0200
+        Thu, 7 Sep 2023 11:32:42 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E3A1FDC
+        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 08:32:17 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-500913779f5so1866484e87.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 08:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100687; x=1694705487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JnMGoGgKemb+DDrSQzPTABi+a718THu1rk85qOkvFQg=;
+        b=DB7iM+w/gW3bkJVnVzZw8EIzE5plcublWASUZnTdM7wJuVm5yQ9wbBsHUyFnMdzJY9
+         qbTNfSos7u82g5QWw6s1hH6dgDQQQPhryxUO3gSUBchHJDGYlOGyph8qnBmUdDZ2l0ul
+         o12GwhiPjAcD5SmMiV5avPgyToC65dvKezs8A6vL2VsODQn/oQmXS1VFMpDzrx/1vcwr
+         y/jvtuB3dJIA5on824hXB+wBA/u9ypWfheC8spZHN+qZXjKc/L9LZte4JWYftkJxH9jq
+         McjNA+WOcwiYq4Z/7KPETcNzHGcxt/nu5Q4+Wy8G1VctwO9zslAXhtOdbvWJtygJ21uI
+         MRTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100687; x=1694705487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JnMGoGgKemb+DDrSQzPTABi+a718THu1rk85qOkvFQg=;
+        b=GrpZ0VyygfOBr555uxoNr6Wa4fFDX4ACKM0KHXCBU5P3xCMAl9yCz6X2FSrZCQKRIx
+         yThYZwYY1zKQ/verKE5734whAkJ6ARgSBDpM2EQPVFgZRokuKuLrMkV+roa3rOZtWrGu
+         mB+XglUSa/FwVGfB0Rhr7l8DbS5F1d29EkMPwT2DAZyXSZ9UjWtg/Z1Q1atSWkI7EAZj
+         SVXSbY231Hx1drVMsSDgSMv1BxtGCHfIypLYjs3tQoU+K6uWHfNyqqh4dWgv1qo3XWgo
+         fiGHdS85MzdpFYFfs7Tbc8p8Z3TheUslm7bLJsCDpAOaeVAJDqeqT9XALitkOEt5in6X
+         A7Xg==
+X-Gm-Message-State: AOJu0YyXQ3VxQ612pZ58yzbJPx5KCvr3GrJDmgkUL2gIwrfOpVSYOz5s
+        DuLlzlCmuDNyzJLs5dLyIzbnxQTUMgNVTl9zh1A=
+X-Google-Smtp-Source: AGHT+IGyPStu/4bGX3A398E8xixDQaUmGkOmIW0jf0T9gkQFvDYPcLVleJrm+vURQhH+rA2UwXThOQ==
+X-Received: by 2002:a05:600c:2246:b0:401:c297:affb with SMTP id a6-20020a05600c224600b00401c297affbmr4284944wmm.37.1694085336903;
+        Thu, 07 Sep 2023 04:15:36 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y10-20020a05600c364a00b00401b242e2e6sm2208451wmq.47.2023.09.07.04.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 04:15:36 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 14:15:33 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Longfang Liu <liulongfang@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
+ snprintf()
+Message-ID: <71bf9b84-462f-405e-91aa-fb21fc6ffbd5@moroto.mountain>
+References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
+ <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
+ <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
- mt6370_chg_toggle_cfo()
-Content-Language: en-US
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 06/09/23 10:48, Harshit Mogalapalli ha scritto:
-> When mt6370_chg_field_get() suceeds, ret is set to zero and returning
-> zero when flash led is still in strobe mode looks incorrect.
+On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
+> > 
+> > The other snprintf in the same file also looks suspect.
 > 
-> Fixes: 233cb8a47d65 ("power: supply: mt6370: Add MediaTek MT6370 charger driver")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is based on static analysis with smatch, only compile tested.
-> ---
->   drivers/power/supply/mt6370-charger.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> It looks correct to me.
 > 
-> diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
-> index f27dae5043f5..a9641bd3d8cf 100644
-> --- a/drivers/power/supply/mt6370-charger.c
-> +++ b/drivers/power/supply/mt6370-charger.c
-> @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
->   
->   	if (fl_strobe) {
->   		dev_err(priv->dev, "Flash led is still in strobe mode\n");
-> -		return ret;
-> +		return -EINVAL;
+> And HPRE_DBGFS_VAL_MAX_LEN being 20, it doesn't really matter. The string
+> can't be truncated with just a "%u\n".
+> 
 
-I think that returning 0 here was intentional, but I agree on a return ret
-here being both confusing and wrong.
+drivers/crypto/hisilicon/hpre/hpre_main.c
+   884          ret = snprintf(tbuf, HPRE_DBGFS_VAL_MAX_LEN, "%u\n", val);
+   885          return simple_read_from_buffer(buf, count, pos, tbuf, ret);
 
-That's how I get this logic:
+You can't pass the return value from snprintf() to simple_read_from_buffer().
+Otherwise the snprintf() checking turned a sprintf() write overflow into
+a read overflow, which is less bad but not ideal.  It needs to be
+scnprintf().
 
-The function is enabling strobe mode, but if the flash led is *already* in
-strobe mode, the function exits cleanly because there's nothing to do, as
-the enablement is already done.
-
-Hence.... I believe that the right fix is not to return -EINVAL, but rather
-to change that to `return 0` instead.
-
-ChiaEn, can you please confirm, or deny my statement?
-
-Regards,
-Angelo
-
->   	}
->   
->   	/* cfo off */
-
+regards,
+dan carpenter
 
