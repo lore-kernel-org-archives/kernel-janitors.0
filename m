@@ -2,95 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD3EC873A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7CBEC873E
 	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234592AbjIGPqx (ORCPT
+        id S233991AbjIGPqr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
+        Thu, 7 Sep 2023 11:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344218AbjIGPcm (ORCPT
+        with ESMTP id S1345271AbjIGPfU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:32:42 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E3A1FDC
-        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 08:32:17 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-500913779f5so1866484e87.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 08:32:17 -0700 (PDT)
+        Thu, 7 Sep 2023 11:35:20 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC8D1FC6
+        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 08:34:49 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso136367166b.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 08:34:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694100687; x=1694705487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnMGoGgKemb+DDrSQzPTABi+a718THu1rk85qOkvFQg=;
-        b=DB7iM+w/gW3bkJVnVzZw8EIzE5plcublWASUZnTdM7wJuVm5yQ9wbBsHUyFnMdzJY9
-         qbTNfSos7u82g5QWw6s1hH6dgDQQQPhryxUO3gSUBchHJDGYlOGyph8qnBmUdDZ2l0ul
-         o12GwhiPjAcD5SmMiV5avPgyToC65dvKezs8A6vL2VsODQn/oQmXS1VFMpDzrx/1vcwr
-         y/jvtuB3dJIA5on824hXB+wBA/u9ypWfheC8spZHN+qZXjKc/L9LZte4JWYftkJxH9jq
-         McjNA+WOcwiYq4Z/7KPETcNzHGcxt/nu5Q4+Wy8G1VctwO9zslAXhtOdbvWJtygJ21uI
-         MRTw==
+        d=linaro.org; s=google; t=1694100862; x=1694705662; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ro+pKVjgj+qjW5pgqGuvDVB8LEkYu3AYgnnmwQIWsbs=;
+        b=YrYSBxTgBsy9IYSRDmmhfvsrJoPL3uZ34KK+Lour2LXAI2T8nIlPxmIHV/4oSayuOL
+         v0uwalZhuFvVMIONdSp8gXJHUZaPsUadG7pHM2NBOBTKgBgs6TKM2T90TVIhHqAAXsZI
+         hxIbVqI60P5w/0+OrjCGXD2lCHWkQYNgKi/fh5O+AHCRewVk6Y80IyxzXEXM2sEHvbOJ
+         4cZbuZtQltI3j1uzn+TVRvP3MV0UBkJr9eVis1ihWCyvsXN4dwJ+ymIFDnzuq3lQF+EP
+         TkuH1tFG3E8i5sodi8ENrI2cm+dxMFXCt0zsW9dMDdYqtO03sgO58D1QqQiLve/HAJGO
+         6cBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100687; x=1694705487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JnMGoGgKemb+DDrSQzPTABi+a718THu1rk85qOkvFQg=;
-        b=GrpZ0VyygfOBr555uxoNr6Wa4fFDX4ACKM0KHXCBU5P3xCMAl9yCz6X2FSrZCQKRIx
-         yThYZwYY1zKQ/verKE5734whAkJ6ARgSBDpM2EQPVFgZRokuKuLrMkV+roa3rOZtWrGu
-         mB+XglUSa/FwVGfB0Rhr7l8DbS5F1d29EkMPwT2DAZyXSZ9UjWtg/Z1Q1atSWkI7EAZj
-         SVXSbY231Hx1drVMsSDgSMv1BxtGCHfIypLYjs3tQoU+K6uWHfNyqqh4dWgv1qo3XWgo
-         fiGHdS85MzdpFYFfs7Tbc8p8Z3TheUslm7bLJsCDpAOaeVAJDqeqT9XALitkOEt5in6X
-         A7Xg==
-X-Gm-Message-State: AOJu0YyXQ3VxQ612pZ58yzbJPx5KCvr3GrJDmgkUL2gIwrfOpVSYOz5s
-        DuLlzlCmuDNyzJLs5dLyIzbnxQTUMgNVTl9zh1A=
-X-Google-Smtp-Source: AGHT+IGyPStu/4bGX3A398E8xixDQaUmGkOmIW0jf0T9gkQFvDYPcLVleJrm+vURQhH+rA2UwXThOQ==
-X-Received: by 2002:a05:600c:2246:b0:401:c297:affb with SMTP id a6-20020a05600c224600b00401c297affbmr4284944wmm.37.1694085336903;
-        Thu, 07 Sep 2023 04:15:36 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1694100862; x=1694705662;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ro+pKVjgj+qjW5pgqGuvDVB8LEkYu3AYgnnmwQIWsbs=;
+        b=YfFx+fb27UENxVqJeolmcncWvNKy/UU+9E8qkzvffrRY/8piS4ajUgJMUaew9F7K07
+         W4zkF+p94hMOe0QW89zCpAO4ovyqd0QE0Gx9VcTeaN57LfGWAU2J2flCDy3CRoKwkQkj
+         fPc1ZgcBT45jGVqKJNOKgLscz6feyR94mLSIfHGcvSFYWW+0ze9YDxB+RaSKtDalvWXc
+         TaRgbAWddis2VkpPUjWUEX6nEHaHh4JOWksNoHeVeNg/2ONiFby50kx6VHKTaSyBDZvf
+         cGoEF9qkPmZO2VOEHiGg2MzH2X/AskeUkMjou5cn91fkXCmrUD0e5WHChz/IicKO38Tz
+         e/hg==
+X-Gm-Message-State: AOJu0Yy6+SPuhhNI8+hTyoQhM2JjhyQ0xVnezk4ThBGHNcW4OSSAnkvv
+        SpIu/E1F3Z1Up7upAdYJUvOagkcIVJrTzCazeVA=
+X-Google-Smtp-Source: AGHT+IFg0bFSC0lzaqVqa/PY0sh6IBWdUUoK9G2NFmiJdxUui9GFWOqDAfoxG2ThzfavR6oiUtxwag==
+X-Received: by 2002:adf:e508:0:b0:317:6e08:ed35 with SMTP id j8-20020adfe508000000b003176e08ed35mr4543247wrm.1.1694080483294;
+        Thu, 07 Sep 2023 02:54:43 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y10-20020a05600c364a00b00401b242e2e6sm2208451wmq.47.2023.09.07.04.15.36
+        by smtp.gmail.com with ESMTPSA id f7-20020a7bcd07000000b00401c595fcc7sm2026280wmj.11.2023.09.07.02.54.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 04:15:36 -0700 (PDT)
-Date:   Thu, 7 Sep 2023 14:15:33 +0300
+        Thu, 07 Sep 2023 02:54:43 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 12:54:39 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Longfang Liu <liulongfang@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
- snprintf()
-Message-ID: <71bf9b84-462f-405e-91aa-fb21fc6ffbd5@moroto.mountain>
-References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
- <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
- <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] phy: qcom-m31: Fix error code in probe()
+Message-ID: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
-> > 
-> > The other snprintf in the same file also looks suspect.
-> 
-> It looks correct to me.
-> 
-> And HPRE_DBGFS_VAL_MAX_LEN being 20, it doesn't really matter. The string
-> can't be truncated with just a "%u\n".
-> 
+This accidentally returns the wrong variable.  It should be "qphy->vreg"
+instead of "qphy->phy".
 
-drivers/crypto/hisilicon/hpre/hpre_main.c
-   884          ret = snprintf(tbuf, HPRE_DBGFS_VAL_MAX_LEN, "%u\n", val);
-   885          return simple_read_from_buffer(buf, count, pos, tbuf, ret);
+Fixes: 08e49af50701 ("phy: qcom: Introduce M31 USB PHY driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+When we're adding new drivers then we should use the new driver
+prefix instead of the subsystem prefix.  For example:
 
-You can't pass the return value from snprintf() to simple_read_from_buffer().
-Otherwise the snprintf() checking turned a sprintf() write overflow into
-a read overflow, which is less bad but not ideal.  It needs to be
-scnprintf().
+ Bad: [PATCH] phy: qcom: Introduce M31 USB PHY driver
+Good: [PATCH] phy: qcom-m31: Introduce M31 USB PHY driver
 
-regards,
-dan carpenter
+That way it's obvious to the first person who sends a bugfix
+what the driver prefix is.
+
+ drivers/phy/qualcomm/phy-qcom-m31.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-m31.c b/drivers/phy/qualcomm/phy-qcom-m31.c
+index ed08072ca032..99d570f4142a 100644
+--- a/drivers/phy/qualcomm/phy-qcom-m31.c
++++ b/drivers/phy/qualcomm/phy-qcom-m31.c
+@@ -256,7 +256,7 @@ static int m31usb_phy_probe(struct platform_device *pdev)
+ 
+ 	qphy->vreg = devm_regulator_get(dev, "vdda-phy");
+ 	if (IS_ERR(qphy->vreg))
+-		return dev_err_probe(dev, PTR_ERR(qphy->phy),
++		return dev_err_probe(dev, PTR_ERR(qphy->vreg),
+ 						"failed to get vreg\n");
+ 
+ 	phy_set_drvdata(qphy->phy, qphy);
+-- 
+2.39.2
 
