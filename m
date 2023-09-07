@@ -2,90 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF0FEC8738
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D928FEC873A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233129AbjIGPW2 (ORCPT
+        id S234303AbjIGPqt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
+        Thu, 7 Sep 2023 11:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbjIGPVW (ORCPT
+        with ESMTP id S240265AbjIGPaf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:21:22 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418FB19C
-        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 08:21:08 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-501cba1ec0aso1784848e87.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 08:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694100030; x=1694704830; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t1Xg8daKkiRDx70DYNoiC72rqrty0xVzo35tP0pXzLM=;
-        b=WogZqgrIfkFN/mV7lU6O9uIhXseBf4Br/BrPT2bi5XlnkQ88RNtlHouQZyACXiF+QY
-         J9l81o/4tMYzIiKkddeDWB0gNnQBgqJNslmzTMZl5ToTqLYfaXohdGDP5o1i/stEIt4U
-         mCnjBUeAD4uCQa3tbFQ2jk7A16oE7uVHKH3xzwQg2oX5VHq/7ibU3TctGNRGFvrf1CQN
-         ylKbpHIYxZuPmOLy55F59wAyLtyVyvDHInkgFJ6uUlX/QWAMYLqeWBrcKBmEPSOpvvmB
-         Ub2IDPlrixnGiqt0wVhMkgb4u8OB21fBtMkBzk4ieb5EbkFk7TRLmsBK/l41vhIox6wi
-         +A/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100030; x=1694704830;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1Xg8daKkiRDx70DYNoiC72rqrty0xVzo35tP0pXzLM=;
-        b=HPlzXZtqB6IFdxU3JKZG/us35Rf/bE0OT10MwAjXAzFQMg1dj2VgklDrbtPTo6n9bD
-         9FxXvbsHsayPQ0NJZVYV3aI71Us5YzvlUavx0THAFiytfQE1Y5oeJG1qQwezZ2zcXsbT
-         hTsgshpBNyIUKjY2oh2ruinTO9cjllJB63Bu40pMef9s9WuanWwX5mD1Uwl2u3NNiPcr
-         E5aNJzv7uaEq8FfWLeLkCmmm+n0xr7eKrkn8M0J/5emhc34X2MoROsBcjX0bpNUHoriG
-         duFbtV7h0p6yZ4Xmae6JuxIx1XFRyFAkBq3fpwJfMgUc0nLp/wuB+8NPwgtH0v6NP0Lq
-         UedA==
-X-Gm-Message-State: AOJu0Yz9UYs+p/8ubu6f4dvXYK5Wys/O6DlrmWRkzUCfrtl0qVSnC1U3
-        ZiLfQhAXKS8eJD8PwkWc4entBllmGd8tTTJ+qpE=
-X-Google-Smtp-Source: AGHT+IFmOiv05mocpi1VtcAzIkJzCg0pJhhEwIKxEuNtBoOnNOTF9KpuJgW2+cmwkNw5fVoET3C7lg==
-X-Received: by 2002:a05:600c:151:b0:400:6b36:ee2a with SMTP id w17-20020a05600c015100b004006b36ee2amr4511896wmm.26.1694080399345;
-        Thu, 07 Sep 2023 02:53:19 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id ay30-20020a5d6f1e000000b0031f65cdd271sm3827670wrb.100.2023.09.07.02.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 02:53:19 -0700 (PDT)
-Date:   Thu, 7 Sep 2023 12:53:15 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Bharat Bhushan <bbhushan2@marvell.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] watchdog: marvell_gti_wdt: Fix error code in probe()
-Message-ID: <af326fd7-ac71-43a1-b7de-81779b61d242@moroto.mountain>
+        Thu, 7 Sep 2023 11:30:35 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B26D1700;
+        Thu,  7 Sep 2023 08:30:09 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B2EEE66072BA;
+        Thu,  7 Sep 2023 11:43:14 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694083395;
+        bh=AtNfCg0ORcDFoK5Walc1Hu3UGCme85N5dgstHaeabAc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=NejBNi91GDBi0Au8P24t4H4LZjQGG9Ryf1BpDJdsXgET3EkPKMCZFUG7BCYuxsp0A
+         L5J666GBfK2HyOu6yTaz/Zdt9srJi+5RKfsPZV35jTt1DuIjOV5nERNjqPd61FOF9M
+         1HiviQkDD472ch4zIdW+FtQekf0Fqf3SaP8d0MbPWgZ0QpNRuBKobGhS7xydNgFhgX
+         uUE0F5MmxWTv8He1c0FXyZ6t8nMYMInIUVo0N72Mqo1KXMOA4MxZJJvh5lfKIFp7+p
+         X7z5G8hFmmvlxMnVt4LcbxoOqjM8OW9eDq+vbWzlIYRdMbQnJ7STxw4HIqlaHsKBtK
+         d2YAIXSKPE/tQ==
+Message-ID: <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
+Date:   Thu, 7 Sep 2023 12:43:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
+ mt6370_chg_toggle_cfo()
+Content-Language: en-US
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This error path accidentally returns success.  Return -EINVAL instead.
+Il 06/09/23 10:48, Harshit Mogalapalli ha scritto:
+> When mt6370_chg_field_get() suceeds, ret is set to zero and returning
+> zero when flash led is still in strobe mode looks incorrect.
+> 
+> Fixes: 233cb8a47d65 ("power: supply: mt6370: Add MediaTek MT6370 charger driver")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with smatch, only compile tested.
+> ---
+>   drivers/power/supply/mt6370-charger.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+> index f27dae5043f5..a9641bd3d8cf 100644
+> --- a/drivers/power/supply/mt6370-charger.c
+> +++ b/drivers/power/supply/mt6370-charger.c
+> @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
+>   
+>   	if (fl_strobe) {
+>   		dev_err(priv->dev, "Flash led is still in strobe mode\n");
+> -		return ret;
+> +		return -EINVAL;
 
-Fixes: ef9e7fe2c890 ("Watchdog: Add marvell GTI watchdog driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/watchdog/marvell_gti_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think that returning 0 here was intentional, but I agree on a return ret
+here being both confusing and wrong.
 
-diff --git a/drivers/watchdog/marvell_gti_wdt.c b/drivers/watchdog/marvell_gti_wdt.c
-index d7eb8286e11e..1ec1e014ba83 100644
---- a/drivers/watchdog/marvell_gti_wdt.c
-+++ b/drivers/watchdog/marvell_gti_wdt.c
-@@ -271,7 +271,7 @@ static int gti_wdt_probe(struct platform_device *pdev)
- 				   &wdt_idx);
- 	if (!err) {
- 		if (wdt_idx >= priv->data->gti_num_timers)
--			return dev_err_probe(&pdev->dev, err,
-+			return dev_err_probe(&pdev->dev, -EINVAL,
- 				"GTI wdog timer index not valid");
- 
- 		priv->wdt_timer_idx = wdt_idx;
--- 
-2.39.2
+That's how I get this logic:
+
+The function is enabling strobe mode, but if the flash led is *already* in
+strobe mode, the function exits cleanly because there's nothing to do, as
+the enablement is already done.
+
+Hence.... I believe that the right fix is not to return -EINVAL, but rather
+to change that to `return 0` instead.
+
+ChiaEn, can you please confirm, or deny my statement?
+
+Regards,
+Angelo
+
+>   	}
+>   
+>   	/* cfo off */
+
 
