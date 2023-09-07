@@ -2,176 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C48EE14C3
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 01:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF0FEC8738
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 15:23:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbjIGBk4 (ORCPT
+        id S233129AbjIGPW2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Sep 2023 21:40:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
+        Thu, 7 Sep 2023 11:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjIGBkz (ORCPT
+        with ESMTP id S229766AbjIGPVW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Sep 2023 21:40:55 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288D519A8
-        for <kernel-janitors@vger.kernel.org>; Wed,  6 Sep 2023 18:40:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dhJc9KX0BObMtD+PBh16w7MWkQtralOg9g1QGmJmRNZ2QC5TOlONmDyuIKkIiS+VgEJR/Rf23lnPigI3Ohw5SVViOiXLfU+I7Qo7z8Ou2+vR7SbnUCgrI7m59vyUVCYlpe0v1lXjWa9oFhRK3XewBFH+WMbRFWB1kE6LNTn4sCXqZliBFwithi3o+PY6lfxZwLlVu29yiug6xI81iXYcMH+Afwxta9hlndGTkbPxuc2kptiWmL418aMyW7kPrzSK+Wt9+8PaBcJbhJ9V6Jq7ZRZMZc+6q2rcptDnFvevO387PSbQA+6xJIy8WAtaBWD8inCCMjlOHI6aNMdjGGD3rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WPrjMT0O1Lj1hkDQ4ELRTxR5jie95DsJlqaT/ngEnoI=;
- b=FfMV7awyi9an1CE3tponIjMBJJ6dmOSlTf7mSP2F4l/8dnslj9Yu5nWq1ngREmz936vQzHVoLnulWKj+zZMur2t44WQBwdCj4/fU001kyeJAwjcZaWZLnkzhb/tpJVyk6HX6OHT84LCFK2ezq7tDpDJc/yC700SnJJQ96fOa/eEfUIOQhNlIhnLWctqIBAZc0Xo790qY6rjLHUoWEEjpN3qxNKsLunc9nKuH6FK0xEGMZOwdOdZASe3Y64dZxrKxLOfON+f5Q/DpcI2P20Ki0ySLLwRN4GADQJjx9d6o/XePwBS5Mjwxn6kv2D5hRsO82qNtpWO5G1VPV3iJjQRw0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WPrjMT0O1Lj1hkDQ4ELRTxR5jie95DsJlqaT/ngEnoI=;
- b=2nNQW9U3BxDftyb0o4NQMBBLKsnRgTkBSA7IUfUE+7B1EF72wGveg+DEswtXk6LRMN2wiJYfik9cBF6gDO11wkUnQrMuid3KFstu4Lqclaa+CFZZGuZslVSdVi+qb9oTRoP6H1PQ+//D/2fAV31PR7d/FngayuUsiNxnsvWqejQ=
-Received: from DM6PR12MB2619.namprd12.prod.outlook.com (2603:10b6:5:45::18) by
- CY8PR12MB7314.namprd12.prod.outlook.com (2603:10b6:930:52::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6745.35; Thu, 7 Sep 2023 01:40:43 +0000
-Received: from DM6PR12MB2619.namprd12.prod.outlook.com
- ([fe80::56a5:d451:bf62:2b06]) by DM6PR12MB2619.namprd12.prod.outlook.com
- ([fe80::56a5:d451:bf62:2b06%7]) with mapi id 15.20.6745.030; Thu, 7 Sep 2023
- 01:40:43 +0000
-From:   "Quan, Evan" <Evan.Quan@amd.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        "Wang, Yang(Kevin)" <KevinYang.Wang@amd.com>
-CC:     "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "Lazar, Lijo" <Lijo.Lazar@amd.com>,
-        "Kamal, Asad" <Asad.Kamal@amd.com>,
-        "Zhang, Hawking" <Hawking.Zhang@amd.com>,
-        "Limonciello, Mario" <Mario.Limonciello@amd.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] drm/amdgpu: fix retry loop test
-Thread-Topic: [PATCH] drm/amdgpu: fix retry loop test
-Thread-Index: AQHZ4LCLJvKFAHXnEUqO/FgoxjO1P7AOlqbA
-Date:   Thu, 7 Sep 2023 01:40:42 +0000
-Message-ID: <DM6PR12MB26197B9B9A827160B1932F60E4EEA@DM6PR12MB2619.namprd12.prod.outlook.com>
-References: <ea9bfa9b-2689-45cf-95b7-57577f0d76c2@moroto.mountain>
-In-Reply-To: <ea9bfa9b-2689-45cf-95b7-57577f0d76c2@moroto.mountain>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ActionId=8b7abf18-7a46-42e2-8a2c-66d622de54a2;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ContentBits=0;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Enabled=true;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Method=Standard;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Name=General;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SetDate=2023-09-07T01:38:34Z;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR12MB2619:EE_|CY8PR12MB7314:EE_
-x-ms-office365-filtering-correlation-id: 54438123-9fa6-4f42-6c35-08dbaf437307
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: e/m/M5M0YqD8fNydads8vT2WFJr7mJqWe01wMTtWN9Uj6AFjPUCgQxkdcbM91ws9Jv4lnaQtF8ZjXxqbJfEnngiSnJzrUaObgZN5X2rho3NbZCyZLTakzBldqJN8waXuq0upUcG2O5cWum7CBnp67xdaEZj9+ER9lw1ImlVT9jZkdkLn6Tpxb3BAD0TWteFDWvxq3apzydG51Jfi0NwpG54NBBqaJBSdBuw1pHMtInhMoWQOh+NiQkRRQ3M5kXiwN7mWxdGhWDpGp2d+gA+bIjWK0yDGnB0hq4T+NbArtaGJ8pO+9w9jf+1kP4GBQw9mCy5srAhTgoVdR2bHpBSAUvsjZ1oLRlC8s/dS7mrNY1DRyX717OlbKRnftV1p2waTILNz1l1ffLZWQyXTlze+fWAoxqoqUaCWjKehBPBeRJMjibmLm1w61f/I8kk59DZrMwLs9btY3AmLQ7rDgRp5ADSKaVBZsGuU0m+WPAP2E+QrRrOCBgXo/cbtFeM1uQ7hsYTCI0/4hKXoI9u39wXpJGDxI0TLtuTQDVLLk1KY4ZW+47GJEVijv/el3R5z4phS8z3ljtDcYaOQO3GCCiSsbOSWjv1VaY0w0zOfmcUCKZrIKwmXnsEejzN8o3yvxC2Y
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2619.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(136003)(376002)(346002)(39860400002)(451199024)(186009)(1800799009)(38070700005)(122000001)(9686003)(7696005)(6506007)(71200400001)(53546011)(38100700002)(86362001)(33656002)(55016003)(316002)(2906002)(83380400001)(478600001)(76116006)(52536014)(8676002)(5660300002)(66556008)(110136005)(4326008)(8936002)(41300700001)(66946007)(54906003)(66476007)(64756008)(6636002)(66446008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?dPwdCmvZDqAizh2mAaVnQ3ixfEXzwWUw7Xaz5VjP8xTAA8tZ05hS8aIiymaQ?=
- =?us-ascii?Q?5MHy1YmlAQ8z4xBPieGhLTE/hs8udqPJbq4N5rL9+RdVHD/EiAFxcEFU4nig?=
- =?us-ascii?Q?zlI7dkdru5XuQKYt4W2MFpY2mRqQaH91PkEwCAH6Fgvh7qHoVWp7t41ifQrV?=
- =?us-ascii?Q?5y+32iA9j5vtopcTYnezplNcOJZHhDR6q7q2UG//1YFw4wm5GU1Pt6Yugd/L?=
- =?us-ascii?Q?1RMMehmBuFKkMh6zcDlVAHyf0N3S0UiewkjeD/PN1m01JzVkUHaUCuQM1p4r?=
- =?us-ascii?Q?QSsryomAzkhauZSrcN4tgvy+mehQTrlUr5M3lbmSaeI9xFo+C4qwmDK+K4Jf?=
- =?us-ascii?Q?CwtcNZxpsBPG4xFParuOLY29tyMK3/6h7uqAcK55sS7nEuRFAWnUx1kx+Qmi?=
- =?us-ascii?Q?pP0DcwOcvLVmkt5gCNleDies4Cxnn+WF/0Hl+yTRkJINgc41ZGjNtnE7IaBf?=
- =?us-ascii?Q?ly5JDMQPP4l321zKSZBqvHFAD2dIDP+qJBAhhXDFpIl6QCYki7I1fKJC/flQ?=
- =?us-ascii?Q?cVZa4hKAMKQqZk2vLq308WOAAV5m7trBfrmLfM3WpvVZsUY8vUezMTZEQgjA?=
- =?us-ascii?Q?n29k4QfIkp4A0Hj5pXtrCzB3YNmPu4q6FOevMubEjcP9KhC1l2YaVqkRYix4?=
- =?us-ascii?Q?ftz2+fASPOr3ygIblNt6iWCi5ZLvRgTSuUjWB8ij1EHCngrlk85ps/R7p3/r?=
- =?us-ascii?Q?q8gVMKKCTatgt6aoXGsdHAWoxAPodbPTuc97MQ4gGpB0eQOpPAUcoV5maTfj?=
- =?us-ascii?Q?WeXVLTTi8qeyVEsy0hLI0/SmVsF1lc11NNwu3x9gAQbglci+DGorX7LOFYAr?=
- =?us-ascii?Q?TNqEODVresZLET4t6yTm+nFhwvuPWmTIqoaqfuUbIPSDTqCCT+QcdRyvF/vM?=
- =?us-ascii?Q?tEa2Pretce/YUxSyijeEtU5bhkcv7mnpf/o3sIlenv5hI0al/0F/BEAye3Kf?=
- =?us-ascii?Q?DTR3xnVfGTjpXouRCYTr5CKy09r7mw6N4C2OquyGVCVAGwyQKb2Tg4Peo1OG?=
- =?us-ascii?Q?6AZzBG5mzcj0Fv+7wPsVOp1fJeUWjAo0weGb2C2zcxQFQVT+bzQLj9Ii5Xcq?=
- =?us-ascii?Q?Ulehyr1u1FENEVWyXkvPyohGz7ogMYlV0TRbIiwTuX6P54KYAdLXKWOtJehC?=
- =?us-ascii?Q?gksqPjZRN6jSQ/foQd8xEPgkLHuojaKOwy8u9NK8v+TXmuYVKr2saxuMowhk?=
- =?us-ascii?Q?HatCpj72Z/ibPI7MugK0NXnXqnINRu/yqph27mouee6Hl1M5iMI3QHikUl3C?=
- =?us-ascii?Q?Slwk8S/8L0SzVbLZ690XPsMOE1kf/9CIuoOvANu13VK2i34d7JS9IUC5c5zu?=
- =?us-ascii?Q?SVTqy189IzQywpcNBqEEf9xmqWpoQP73WUzNCO+udD3tXDZvUXjzr55MOrX+?=
- =?us-ascii?Q?UowUfCI/RLhqehggZa25OxZzNE2nG/f7FSlfH1yU3TeAplgEe7WEJQEWAlFw?=
- =?us-ascii?Q?oVeyoCgxPYBlty8ETCDMRxKa2KHO10gtTft2IK3s+dZV6dW5vPLNj1v1SAyx?=
- =?us-ascii?Q?EqITCI2/CGlVxxKnDOdlvsvP9TbKCYdJpL/I7YsKj2iVbkoP503x2PlTGg?=
- =?us-ascii?Q?=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 7 Sep 2023 11:21:22 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418FB19C
+        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 08:21:08 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-501cba1ec0aso1784848e87.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 08:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100030; x=1694704830; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1Xg8daKkiRDx70DYNoiC72rqrty0xVzo35tP0pXzLM=;
+        b=WogZqgrIfkFN/mV7lU6O9uIhXseBf4Br/BrPT2bi5XlnkQ88RNtlHouQZyACXiF+QY
+         J9l81o/4tMYzIiKkddeDWB0gNnQBgqJNslmzTMZl5ToTqLYfaXohdGDP5o1i/stEIt4U
+         mCnjBUeAD4uCQa3tbFQ2jk7A16oE7uVHKH3xzwQg2oX5VHq/7ibU3TctGNRGFvrf1CQN
+         ylKbpHIYxZuPmOLy55F59wAyLtyVyvDHInkgFJ6uUlX/QWAMYLqeWBrcKBmEPSOpvvmB
+         Ub2IDPlrixnGiqt0wVhMkgb4u8OB21fBtMkBzk4ieb5EbkFk7TRLmsBK/l41vhIox6wi
+         +A/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100030; x=1694704830;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1Xg8daKkiRDx70DYNoiC72rqrty0xVzo35tP0pXzLM=;
+        b=HPlzXZtqB6IFdxU3JKZG/us35Rf/bE0OT10MwAjXAzFQMg1dj2VgklDrbtPTo6n9bD
+         9FxXvbsHsayPQ0NJZVYV3aI71Us5YzvlUavx0THAFiytfQE1Y5oeJG1qQwezZ2zcXsbT
+         hTsgshpBNyIUKjY2oh2ruinTO9cjllJB63Bu40pMef9s9WuanWwX5mD1Uwl2u3NNiPcr
+         E5aNJzv7uaEq8FfWLeLkCmmm+n0xr7eKrkn8M0J/5emhc34X2MoROsBcjX0bpNUHoriG
+         duFbtV7h0p6yZ4Xmae6JuxIx1XFRyFAkBq3fpwJfMgUc0nLp/wuB+8NPwgtH0v6NP0Lq
+         UedA==
+X-Gm-Message-State: AOJu0Yz9UYs+p/8ubu6f4dvXYK5Wys/O6DlrmWRkzUCfrtl0qVSnC1U3
+        ZiLfQhAXKS8eJD8PwkWc4entBllmGd8tTTJ+qpE=
+X-Google-Smtp-Source: AGHT+IFmOiv05mocpi1VtcAzIkJzCg0pJhhEwIKxEuNtBoOnNOTF9KpuJgW2+cmwkNw5fVoET3C7lg==
+X-Received: by 2002:a05:600c:151:b0:400:6b36:ee2a with SMTP id w17-20020a05600c015100b004006b36ee2amr4511896wmm.26.1694080399345;
+        Thu, 07 Sep 2023 02:53:19 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id ay30-20020a5d6f1e000000b0031f65cdd271sm3827670wrb.100.2023.09.07.02.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 02:53:19 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 12:53:15 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Bharat Bhushan <bbhushan2@marvell.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] watchdog: marvell_gti_wdt: Fix error code in probe()
+Message-ID: <af326fd7-ac71-43a1-b7de-81779b61d242@moroto.mountain>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2619.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54438123-9fa6-4f42-6c35-08dbaf437307
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2023 01:40:43.0034
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: H6uRH8LXtftxaLGd8kqqPThmq9YnhtscRvVXOijM1qsMBeFbl8MO4jwvDxVs1Lzt
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7314
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[AMD Official Use Only - General]
+This error path accidentally returns success.  Return -EINVAL instead.
 
-Yeah, nice catch. But personally I would prefer to change the check as "if =
-(retry <=3D 0)".
-Either way, the patch is reviewed-by: Evan Quan <evan.quan@amd.com>
+Fixes: ef9e7fe2c890 ("Watchdog: Add marvell GTI watchdog driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/watchdog/marvell_gti_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Evan
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Wednesday, September 6, 2023 6:55 PM
-> To: Quan, Evan <Evan.Quan@amd.com>; Wang, Yang(Kevin)
-> <KevinYang.Wang@amd.com>
-> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
-> <Christian.Koenig@amd.com>; Pan, Xinhui <Xinhui.Pan@amd.com>; David
-> Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>; Lazar, Lijo
-> <Lijo.Lazar@amd.com>; Kamal, Asad <Asad.Kamal@amd.com>; Zhang,
-> Hawking <Hawking.Zhang@amd.com>; Limonciello, Mario
-> <Mario.Limonciello@amd.com>; amd-gfx@lists.freedesktop.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH] drm/amdgpu: fix retry loop test
->
-> This loop will exit with "retry" set to -1 if it fails but the code
-> checks for if "retry" is zero.  Fix this by changing post-op to a
-> pre-op.  --retry vs retry--.
->
-> Fixes: e01eeffc3f86 ("drm/amd/pm: avoid driver getting empty metrics tabl=
-e
-> for the first time")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Obviously this only loop 99 times now instead of a hundred but that's
-> fine, this is an approximation.
->
->  drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> index ff58ee14a68f..20163a9b2a66 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> @@ -336,7 +336,7 @@ static int smu_v13_0_6_setup_driver_pptable(struct
-> smu_context *smu)
->
->       /* Store one-time values in driver PPTable */
->       if (!pptable->Init) {
-> -             while (retry--) {
-> +             while (--retry) {
->                       ret =3D smu_v13_0_6_get_metrics_table(smu, NULL,
-> true);
->                       if (ret)
->                               return ret;
-> --
-> 2.39.2
+diff --git a/drivers/watchdog/marvell_gti_wdt.c b/drivers/watchdog/marvell_gti_wdt.c
+index d7eb8286e11e..1ec1e014ba83 100644
+--- a/drivers/watchdog/marvell_gti_wdt.c
++++ b/drivers/watchdog/marvell_gti_wdt.c
+@@ -271,7 +271,7 @@ static int gti_wdt_probe(struct platform_device *pdev)
+ 				   &wdt_idx);
+ 	if (!err) {
+ 		if (wdt_idx >= priv->data->gti_num_timers)
+-			return dev_err_probe(&pdev->dev, err,
++			return dev_err_probe(&pdev->dev, -EINVAL,
+ 				"GTI wdog timer index not valid");
+ 
+ 		priv->wdt_timer_idx = wdt_idx;
+-- 
+2.39.2
 
