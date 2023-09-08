@@ -2,96 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627DDEC8747
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 02:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F074CEC875F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 02:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239220AbjIHCTo (ORCPT
+        id S241539AbjIHCWA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 22:19:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
+        Thu, 7 Sep 2023 22:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230380AbjIHCTm (ORCPT
+        with ESMTP id S238040AbjIHCV7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 22:19:42 -0400
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78EFD1BD5;
-        Thu,  7 Sep 2023 19:19:35 -0700 (PDT)
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-Received: from 192.168.10.47
-        by mg.richtek.com with MailGates ESMTPS Server V6.0(696440:0:AUTH_RELAY)
-        (envelope-from <chiaen_wu@richtek.com>)
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 08 Sep 2023 10:19:13 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Fri, 8 Sep
- 2023 10:19:13 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.25 via Frontend
- Transport; Fri, 8 Sep 2023 10:19:13 +0800
-Date:   Fri, 8 Sep 2023 10:19:13 +0800
-From:   ChiaEn Wu <chiaen_wu@richtek.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, <error27@gmail.com>
-Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
- mt6370_chg_toggle_cfo()
-Message-ID: <20230908021913.GB3115@linuxcarl2.richtek.com>
-References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
- <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
- <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
+        Thu, 7 Sep 2023 22:21:59 -0400
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18D01BD9;
+        Thu,  7 Sep 2023 19:21:54 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=chengyou@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Vraere9_1694139710;
+Received: from 30.221.108.114(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0Vraere9_1694139710)
+          by smtp.aliyun-inc.com;
+          Fri, 08 Sep 2023 10:21:51 +0800
+Message-ID: <70a9dc1a-b8b7-a85b-61e0-a540e819fc61@linux.alibaba.com>
+Date:   Fri, 8 Sep 2023 10:21:48 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH] RDMA/erdma: Fix error code in erdma_create_scatter_mtt()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Kai Shen <kaishen@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
+From:   Cheng Xu <chengyou@linux.alibaba.com>
+In-Reply-To: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 02:08:17PM +0300, Dan Carpenter wrote:
 
-[...]
 
-> > > diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
-> > > index f27dae5043f5..a9641bd3d8cf 100644
-> > > --- a/drivers/power/supply/mt6370-charger.c
-> > > +++ b/drivers/power/supply/mt6370-charger.c
-> > > @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
-> > >   	if (fl_strobe) {
-> > >   		dev_err(priv->dev, "Flash led is still in strobe mode\n");
-> > > -		return ret;
-> > > +		return -EINVAL;
-> > 
-> > I think that returning 0 here was intentional, but I agree on a return ret
-> > here being both confusing and wrong.
+On 9/6/23 7:23 PM, Dan Carpenter wrote:
+> The erdma_create_scatter_mtt() function is supposed to return error
+> pointers.  Returning NULL will lead to an Oops.
 > 
-> If it's a success path then probably we should remove the dev_err().
+> Fixes: ed10435d3583 ("RDMA/erdma: Implement hierarchical MTT")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/infiniband/hw/erdma/erdma_verbs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
-Hi all,
-Sorry for the late reply!
+Acked-by: Cheng Xu <chengyou@linux.alibaba.com>
 
-I agree with the first half of Angelo's statement, I did make the
-mistake on this 'return ret'.
-What I was trying to say is that you should not to toggle cfo function
-when the FLED of MT6370 is still in "strobe mode".
+Thanks very much!
 
-Therefore, I think the change of Harshit's patch is correct.
-It should be 'return -EINVAL' or 'return -EPERM' here.
-
-Thanks!
-
-
-Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
-
-
-Best regards,
-ChiaEn Wu
+Cheng Xu
