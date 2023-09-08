@@ -2,111 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866B3EE8015
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 15:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E52FEE8017
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 15:35:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244455AbjIHPTC (ORCPT
+        id S241115AbjIHPfM convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 11:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
+        Fri, 8 Sep 2023 11:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244456AbjIHPTB (ORCPT
+        with ESMTP id S232078AbjIHPfM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 11:19:01 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED03E1FC6;
-        Fri,  8 Sep 2023 08:18:51 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 889DEC433CB;
-        Fri,  8 Sep 2023 15:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694186331;
-        bh=2K30IgWgtATYzYBqUXdhOY9Vmr0FQNltvy2dR5bV6xY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gUtbxxmmXVR5oOCQGPHnJbqMA3aEDumNGO7n4XI34qQZ5AOximOABS2g1qHkYkqb4
-         0vJ6CjM6HnLn0w22T06UYi1DTYY3zzXQ6AKKrOGzIUMFUOdGd0rvn4EOoJh4n1w0Mk
-         eDRkZovIJj9zKc9DcA4R+DGQgrvUie5suuy3AELKSHUKa8pNgD4ROHMduJXygAQOxw
-         mMW7TC90WevP3Iqz+ss/dFRRMWuAMjuoBL8Jj+yJ7qjrw9YGi0tQ9rk29J1WbLz2LN
-         278tzAYYn+3Te7HwROQaUDrrNuC/qw5Z87nQ+CupGlitM2H5Co7VePNDwIHXN3MJJy
-         /WIUYk7v9td1Q==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-500913779f5so3759760e87.2;
-        Fri, 08 Sep 2023 08:18:51 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzEQtwo15uEeAvUHiUVHmaAdjKDrWbZB0RyUYWAPEKd83j3soiY
-        /eboLNAeqc10BxY2KrcEmhQSlbUgiXCkdiRkDA==
-X-Google-Smtp-Source: AGHT+IGG5jRUpBNeSXjeSHPTSlaJAXcBbVQov0w3yTxU0+/SuBOS+pAK4V4XgqqDGUtFlpARuMmtqskh82mEne9vFFc=
-X-Received: by 2002:a05:6512:3496:b0:500:863e:fc57 with SMTP id
- v22-20020a056512349600b00500863efc57mr1923461lfr.25.1694186329768; Fri, 08
- Sep 2023 08:18:49 -0700 (PDT)
+        Fri, 8 Sep 2023 11:35:12 -0400
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FDC1BFF;
+        Fri,  8 Sep 2023 08:35:07 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-d77a4e30e97so1940843276.2;
+        Fri, 08 Sep 2023 08:35:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694187306; x=1694792106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c+6VjZU2vxtVbghCxEX+9cbu10teXXLUQ8IVk0xjDXQ=;
+        b=vgfhlVFsXG+MaevA54BlpPTuf0oA5Hxu6JV0q3F22WXVfNrcEEqRBF5GoUKOiVW3t/
+         842b1UteDhaqi3+EWY7mF1FRkuxmWI1F/3au9HBShte7fDVqMuOc7Ao4ptjwX3xTpfNR
+         bM6wyuKdbHjbiri7SnEzxjHrc0lCHUl/V/Gl3K4dJTLUvCvuwWPtC7gUefwxKIpHEyii
+         50hO4W9PvsWzDNVO5Ib///QBKkBAGQGne2Gxt8j78huhBpGAI5Sax+wq8+AyEk3Yqt34
+         Q7i4OFLCgrgFcW9rGsfADAzA+jQJO5J9TE9TYYDhmcYly5grA6/SJm+E033+K9KMfqh+
+         mYZw==
+X-Gm-Message-State: AOJu0YytBwJswkF3w2iXedoag9bHDQOHfMOxly1sY3GJPZ5oY5/30bGA
+        X0jHcaYOAQOieU3mGpyYIGapxajtkxgtF5QM
+X-Google-Smtp-Source: AGHT+IGlfgmlpj39lxfg+W5V2L7AOLFFrlfIEWzp1VCpb/mLlcm0AgsY/G9qZGcTKYhF6HXPUHeKcA==
+X-Received: by 2002:a5b:e84:0:b0:d7b:97f3:4646 with SMTP id z4-20020a5b0e84000000b00d7b97f34646mr207507ybr.60.1694187306635;
+        Fri, 08 Sep 2023 08:35:06 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id p198-20020a2574cf000000b00d749bc5b169sm411709ybc.43.2023.09.08.08.35.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Sep 2023 08:35:05 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5921a962adfso21875807b3.1;
+        Fri, 08 Sep 2023 08:35:05 -0700 (PDT)
+X-Received: by 2002:a25:adc3:0:b0:d07:60bd:89f4 with SMTP id
+ d3-20020a25adc3000000b00d0760bd89f4mr2887335ybe.37.1694187305502; Fri, 08 Sep
+ 2023 08:35:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
-In-Reply-To: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 8 Sep 2023 10:18:37 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
-Message-ID: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain> <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 8 Sep 2023 17:34:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
+Message-ID: <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
 Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        kbuild test robot <lkp@intel.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        kbuild test robot <lkp@intel.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 8, 2023 at 2:03=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> Smatch complains that the error path where "action" is invalid leaks
-> the "ce" allocation:
->     drivers/of/dynamic.c:935 of_changeset_action()
->     warn: possible memory leak of 'ce'
->
-> Fix this by doing the validation before the allocation.
+Hi Rob,
 
-I'm going to add a note when applying that "action" can't ever
-actually be invalid because all the callers are static inlines with
-hardcoded action values. I suppose there could be an out of tree
-module calling of_changeset_action() directly, but that's wrong given
-the wrappers.
+On Fri, Sep 8, 2023 at 5:18 PM Rob Herring <robh@kernel.org> wrote:
+> On Fri, Sep 8, 2023 at 2:03 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > Smatch complains that the error path where "action" is invalid leaks
+> > the "ce" allocation:
+> >     drivers/of/dynamic.c:935 of_changeset_action()
+> >     warn: possible memory leak of 'ce'
+> >
+> > Fix this by doing the validation before the allocation.
+>
+> I'm going to add a note when applying that "action" can't ever
+> actually be invalid because all the callers are static inlines with
+> hardcoded action values. I suppose there could be an out of tree
+> module calling of_changeset_action() directly, but that's wrong given
+> the wrappers.
 
-> Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pO=
-F" inside devtree_lock")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
+FTR, the out-of-tree overlay configfs patches do not call
+of_changeset_action() (or any of the wrappers).
 
-Despite what that says, it was never reported to me. IOW, the added TO
-and CC lines don't seem to have any effect.
+> > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
+>
+> Despite what that says, it was never reported to me. IOW, the added TO
+> and CC lines don't seem to have any effect.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/of/dynamic.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> index 0a3483e247a8..f63250c650ca 100644
-> --- a/drivers/of/dynamic.c
-> +++ b/drivers/of/dynamic.c
-> @@ -890,13 +890,13 @@ int of_changeset_action(struct of_changeset *ocs, u=
-nsigned long action,
->  {
->         struct of_changeset_entry *ce;
->
-> +       if (WARN_ON(action >=3D ARRAY_SIZE(action_names)))
-> +               return -EINVAL;
-> +
->         ce =3D kzalloc(sizeof(*ce), GFP_KERNEL);
->         if (!ce)
->                 return -ENOMEM;
->
-> -       if (WARN_ON(action >=3D ARRAY_SIZE(action_names)))
-> -               return -EINVAL;
-> -
->         /* get a reference to the node */
->         ce->action =3D action;
->         ce->np =3D of_node_get(np);
-> --
-> 2.39.2
->
+The copy I received did list you in the "To"-header, though.
+Fall-out of the issues seen with Gmail lately?
+I do miss lots of email, too :-(
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
