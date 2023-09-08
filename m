@@ -2,91 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBE1EE8019
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 16:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7349EE8013
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 16:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244969AbjIHQOc (ORCPT
+        id S243665AbjIHQdq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 12:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
+        Fri, 8 Sep 2023 12:33:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241892AbjIHQOa (ORCPT
+        with ESMTP id S231976AbjIHQdp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 12:14:30 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C4819B6
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 09:14:22 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-401d10e3e54so23875325e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 08 Sep 2023 09:14:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694189661; x=1694794461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1lEtuBXbcns8c9Df/q9SbHpcHbW0xN88YLKSbiCoRw=;
-        b=elna+rTnZB1mkkH5OXd9ABL5Tbv4w/IU4GnoVum/JZaaeu5Io77x2SByY8msjCXJYw
-         Q6j0L5edrCosWQciGgEqRkZHg+07BRSo55y/2Hrz+QfB0yoBKmJXVTh8XzThPbcKaf33
-         K0kXVyFHfHLPi6aqj3DtjZ3u8hmyRR5XqCYe8tlLbZeIFRLkTziCAuIetMJ3N7M2dnu+
-         US0O2Z1UKxc+Y8ulmo6DbMhLg11qdKK6/CYSdD/o8M7QMmBI475dY97eiDg46sM+3u8x
-         5HpDNUgrZ8SW1xPw1Cc8vqCLWvwGDDDpw1+vjGTuUKxZaektbMUgLDi+gky05doLYbMG
-         9Tvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694189661; x=1694794461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1lEtuBXbcns8c9Df/q9SbHpcHbW0xN88YLKSbiCoRw=;
-        b=baQT/+EGDQHFC51EbVIDx5U4nsx0PdiSljrpH/j27LTivIfMfZXhHpzTZjExp/q/AA
-         ubdJJ3HZMb6sqPB9GWiDftIXcIAQhgs6s/wRN6Lbqshmdql8pSmE+vqWRM2sFKZ0DFJH
-         g8F9dStliVBJl4gsW4azB9HvJ+lrrYukVinXuLDEuYMMdxAE6fSjst3xBnTG4ZCngod/
-         XQpitl5tYFuzf36etlMzlyRyOifIaXBPscr423rT4xV3lpt02ZxG1BlPSaNz0kCDasg/
-         t0xq/Qt/y/ZdOn7wOKHwSTIX0GUB/uT1ggI028+fdBHxSiHIKWFe6Iw7op/deDvcbkTY
-         t0zw==
-X-Gm-Message-State: AOJu0Yz0F9VnKqYbpoqcmXVtHZsbRfnh4/OHML4ztuHwkISwt1K0g14j
-        9tj5IdLe59AKlFBtjQ6QpMgXAg==
-X-Google-Smtp-Source: AGHT+IEfIHCl5JZjC8C/GrEcOS/jteqB4pBE9mfQdLGqHwSgttn3bJ9wxd8wJ741AikZAFN0HK7AFA==
-X-Received: by 2002:a05:600c:2303:b0:3fe:785:abf9 with SMTP id 3-20020a05600c230300b003fe0785abf9mr2622090wmo.2.1694189660640;
-        Fri, 08 Sep 2023 09:14:20 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s14-20020a7bc38e000000b00401d8181f8bsm5547915wmj.25.2023.09.08.09.14.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Sep 2023 09:14:20 -0700 (PDT)
-Date:   Fri, 8 Sep 2023 19:14:17 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh@kernel.org>, kbuild test robot <lkp@intel.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in
- of_changeset_action()
-Message-ID: <06327197-9b17-481f-8ecc-3f9c5ba3e391@kadam.mountain>
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
- <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
- <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
+        Fri, 8 Sep 2023 12:33:45 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED30B1FD5
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 09:33:41 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id eeQKqI5GZmTYjeeQKqPfiw; Fri, 08 Sep 2023 18:33:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694190820;
+        bh=sdUE6TT14eCOvBoLJKIUC2N7D/QN1SaUjLEtihNQU5w=;
+        h=From:To:Cc:Subject:Date;
+        b=HGltK7lFNNSlaViWY5Tw+9MdSB0TIuI2S4w5MayZ5ex+ylWxQQqhQVVxZm5ugaxgy
+         pMfJ3CzQ6IgikgF75wQaqaTr5/maVjAVP+hh/QDI25vYO33kpOAw6DrH1Uj3uM7766
+         de+6KA1xEduuUmHwxLbB231sJJFBVXFgOSJXYW64mMpj623DgpsQGeRBVGa/ToWE4P
+         LctZ4qg0h5GAOZeCo0b30nemcfEZVN1axXIgE2uhGctFhbfttk4r5D2ka3L85a4YOr
+         DN4gsmr5tiiIkl1J2/s4U5GQTL0p90mM2PXzc+jmQlecxD/7iI1ZQZk8fgX9InOpX4
+         /NRBoMrt5AGug==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 08 Sep 2023 18:33:40 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Martin KaFai Lau <martin.lau@linux.dev>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        David Vernet <void@manifault.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        bpf@vger.kernel.org
+Subject: [PATCH] bpf: Fix a erroneous check after snprintf()
+Date:   Fri,  8 Sep 2023 18:33:35 +0200
+Message-Id: <393bdebc87b22563c08ace094defa7160eb7a6c0.1694190795.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 05:34:53PM +0200, Geert Uytterhoeven wrote:
-> > > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
-> >
-> > Despite what that says, it was never reported to me. IOW, the added TO
-> > and CC lines don't seem to have any effect.
-> 
-> The copy I received did list you in the "To"-header, though.
-> Fall-out of the issues seen with Gmail lately?
-> I do miss lots of email, too :-(
+snprintf() does not return negative error code on error, it returns the
+number of characters which *would* be generated for the given input.
 
-My gmail account dropped a whole lot of mail too in the last week of
-August.  I was out of office that week so I didn't investigate.  I was
-assuming it was an issue with vger...
+Fix the error handling check.
 
-regards,
-dan carpenter
+Fixes: 57539b1c0ac2 ("bpf: Enable annotating trusted nested pointers")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 1095bbe29859..8090d7fb11ef 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -8501,7 +8501,7 @@ bool btf_nested_type_is_trusted(struct bpf_verifier_log *log,
+ 	tname = btf_name_by_offset(btf, walk_type->name_off);
+ 
+ 	ret = snprintf(safe_tname, sizeof(safe_tname), "%s%s", tname, suffix);
+-	if (ret < 0)
++	if (ret >= sizeof(safe_tname))
+ 		return false;
+ 
+ 	safe_id = btf_find_by_name_kind(btf, safe_tname, BTF_INFO_KIND(walk_type->info));
+-- 
+2.34.1
 
