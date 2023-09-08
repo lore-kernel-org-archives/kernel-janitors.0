@@ -2,106 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E52FEE8017
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 15:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3E7EE8019
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 16:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241115AbjIHPfM convert rfc822-to-8bit (ORCPT
+        id S244877AbjIHQLa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 11:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
+        Fri, 8 Sep 2023 12:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbjIHPfM (ORCPT
+        with ESMTP id S235377AbjIHQLa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 11:35:12 -0400
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FDC1BFF;
-        Fri,  8 Sep 2023 08:35:07 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-d77a4e30e97so1940843276.2;
-        Fri, 08 Sep 2023 08:35:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694187306; x=1694792106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+6VjZU2vxtVbghCxEX+9cbu10teXXLUQ8IVk0xjDXQ=;
-        b=vgfhlVFsXG+MaevA54BlpPTuf0oA5Hxu6JV0q3F22WXVfNrcEEqRBF5GoUKOiVW3t/
-         842b1UteDhaqi3+EWY7mF1FRkuxmWI1F/3au9HBShte7fDVqMuOc7Ao4ptjwX3xTpfNR
-         bM6wyuKdbHjbiri7SnEzxjHrc0lCHUl/V/Gl3K4dJTLUvCvuwWPtC7gUefwxKIpHEyii
-         50hO4W9PvsWzDNVO5Ib///QBKkBAGQGne2Gxt8j78huhBpGAI5Sax+wq8+AyEk3Yqt34
-         Q7i4OFLCgrgFcW9rGsfADAzA+jQJO5J9TE9TYYDhmcYly5grA6/SJm+E033+K9KMfqh+
-         mYZw==
-X-Gm-Message-State: AOJu0YytBwJswkF3w2iXedoag9bHDQOHfMOxly1sY3GJPZ5oY5/30bGA
-        X0jHcaYOAQOieU3mGpyYIGapxajtkxgtF5QM
-X-Google-Smtp-Source: AGHT+IGlfgmlpj39lxfg+W5V2L7AOLFFrlfIEWzp1VCpb/mLlcm0AgsY/G9qZGcTKYhF6HXPUHeKcA==
-X-Received: by 2002:a5b:e84:0:b0:d7b:97f3:4646 with SMTP id z4-20020a5b0e84000000b00d7b97f34646mr207507ybr.60.1694187306635;
-        Fri, 08 Sep 2023 08:35:06 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id p198-20020a2574cf000000b00d749bc5b169sm411709ybc.43.2023.09.08.08.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Sep 2023 08:35:05 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5921a962adfso21875807b3.1;
-        Fri, 08 Sep 2023 08:35:05 -0700 (PDT)
-X-Received: by 2002:a25:adc3:0:b0:d07:60bd:89f4 with SMTP id
- d3-20020a25adc3000000b00d0760bd89f4mr2887335ybe.37.1694187305502; Fri, 08 Sep
- 2023 08:35:05 -0700 (PDT)
+        Fri, 8 Sep 2023 12:11:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A421FDE
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 09:11:23 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id ee4jq6ujawJ7Jee4jqw3bA; Fri, 08 Sep 2023 18:11:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694189481;
+        bh=+6AindnLA3kWmbjcoqncg4z08JP7Gi43jNm6msbfoQY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=tAot1hcjXjpXglcWx3paiok/8diihH91pXTsmoFf7sgUWJhzeZaC5APrenWuK2Mmg
+         yLu4aW8kA12gzpqQ4KpA0ELuzd7rHjPfkKkF2ZcHRDexhrXxgLkFu3s8mZgiY5lTcY
+         LExo1GnajVVNP+dpIXsMvksBogoGkiUx/76aaBfJzVAvzzHMwDGeXTBjEqRKtrbzNW
+         Eo7XwpL6m0agMxiMwATj277M/bMFKie+SyEsSVLVjjPBxJfBum99TdpJfdyF8blivf
+         YsJoOEFkb7EmRj9JoJI2YHZSRcUXYhcdgR6qmYYlGyBqUjyngk53p4cfY4qxpmzPuT
+         MlWyGnqPDD2WA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 08 Sep 2023 18:11:21 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <492ae2a2-3364-f13c-4d93-0175221483a9@wanadoo.fr>
+Date:   Fri, 8 Sep 2023 18:11:17 +0200
 MIME-Version: 1.0
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain> <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
-In-Reply-To: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Sep 2023 17:34:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
-Message-ID: <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
-Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
-To:     Rob Herring <robh@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        kbuild test robot <lkp@intel.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
+ snprintf()
+Content-Language: fr, en-US
+To:     liulongfang <liulongfang@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
+References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
+ <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
+ <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
+ <ZPbkJOPsx4as96D/@gondor.apana.org.au>
+ <f4379fee-22c2-3b94-1725-70a317cc9baf@huawei.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f4379fee-22c2-3b94-1725-70a317cc9baf@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Rob,
+Le 06/09/2023 à 04:04, liulongfang a écrit :
+> On 2023/9/5 16:17, Herbert Xu wrote:
+>> On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
+>>>
+>>> Some debugfs dir of file way be left around. Is it what your are talking
+>>> about?
+>>
+>> Yes all allocated resources should be freed on the error path.
+>>
+>>>> The other snprintf in the same file also looks suspect.
+>>>
+>>> It looks correct to me.
+>>>
+>>> And HPRE_DBGFS_VAL_MAX_LEN being 20, it doesn't really matter. The string
+>>> can't be truncated with just a "%u\n".
+>>
+>> Well if you're going to go with that line of reasoning then this
+>> case ("cluster%d") can't overflow either, no?
+>>
+> 
+> First, I checked the calling code of the snprintf function in all driver files in
+> the hisilicon directory. Only here is the processing of return value judgment.
+> This treatment is indeed problematic and needs to be modified.
+> 
+> Then, I don't quite agree with your modification plan.
+> The modification of this solution is not complete.
+> As Herbert said, ("cluster%d") may still have overflow problems.
 
-On Fri, Sep 8, 2023 at 5:18 PM Rob Herring <robh@kernel.org> wrote:
-> On Fri, Sep 8, 2023 at 2:03 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > Smatch complains that the error path where "action" is invalid leaks
-> > the "ce" allocation:
-> >     drivers/of/dynamic.c:935 of_changeset_action()
-> >     warn: possible memory leak of 'ce'
-> >
-> > Fix this by doing the validation before the allocation.
->
-> I'm going to add a note when applying that "action" can't ever
-> actually be invalid because all the callers are static inlines with
-> hardcoded action values. I suppose there could be an out of tree
-> module calling of_changeset_action() directly, but that's wrong given
-> the wrappers.
+Herbert said the contrary, and I agree with him.
 
-FTR, the out-of-tree overlay configfs patches do not call
-of_changeset_action() (or any of the wrappers).
+HPRE_DBGFS_VAL_MAX_LEN is 20.
 
-> > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
->
-> Despite what that says, it was never reported to me. IOW, the added TO
-> and CC lines don't seem to have any effect.
+cluster%u will be at max:
+	strlen("cluster") + strlen("4294967295") + 1 = 17
 
-The copy I received did list you in the "To"-header, though.
-Fall-out of the issues seen with Gmail lately?
-I do miss lots of email, too :-(
+(unless some system have 64 bits int?)
 
-Gr{oetje,eeting}s,
+I do agree that it is safe to remove the test after snprintf(), but 
+there is no need from my POV to turn "i" into a u8.
 
-                        Geert
+CJ
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In the end, my proposed modification scheme is this:
+> ...
+> 	int ret;
+> 	u8 i;
+> 
+> 	for (i = 0; i < clusters_num; i++) {
+> 		snprintf(buf, HPRE_DBGFS_VAL_MAX_LEN, "cluster%u", i);
+> 		tmp_d = debugfs_create_dir(buf, qm->debug.debug_root);
+> 		...
+> 	}
+> ...
+> 
+> Thanks,
+> Longfang.
+> 
+>> Cheers,
+>>
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
