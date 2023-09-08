@@ -2,89 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774A0EE57DA
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 07:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB6FEE57DA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 07:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242527AbjIHHQp convert rfc822-to-8bit (ORCPT
+        id S240704AbjIHHTH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 03:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50380 "EHLO
+        Fri, 8 Sep 2023 03:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233296AbjIHHQp (ORCPT
+        with ESMTP id S231371AbjIHHTG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 03:16:45 -0400
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6A619A8;
-        Fri,  8 Sep 2023 00:16:40 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-58d40c2debeso17995797b3.2;
-        Fri, 08 Sep 2023 00:16:40 -0700 (PDT)
+        Fri, 8 Sep 2023 03:19:06 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780B51BF5
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 00:18:55 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-401da71b7c5so19834215e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 08 Sep 2023 00:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694157534; x=1694762334; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4jUsdI8IAMPdJ2/ajS6yTZqWDFGbQHyhhBt8Pkr2WW8=;
+        b=NeAR2uxEmJ7UFdnUqFQbiNrJh6+Yzvc4JMjc8ASsiaixzKWJOgTj0wvFaIfGcRSoGT
+         7LlBdT0SllqJRKtkZeVugBnran4E4ChfylGrDEDmzj2kWMzcCJphb3mixG/K74CFZ+JV
+         md737IVhoiq+Vtcz7T+xIdpCOu6gEzClQRoAqcGZ9vN/EVQHgM6hyxzKlVH46TvH48U9
+         uJSmA16QdkNXrelL4PJU2DKBRwaluLVkPBQahBU7xw7LznaexbT0Nctr+nIPOvNGcLxe
+         yEKIjrRoLoEeeQS09I0lqA12qREhZLtkpPDvsT5GPadX6fCH9/LZpaY/qdwhAQGuR4ai
+         WFPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694157399; x=1694762199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cwxJqdgaKxlBJddMvg3cbLWlQQ2B9elRfFjjlHicF/4=;
-        b=ULcIAie39VbXKxCgzvvG6h4PAoKcVHJbHn5rVa5HedUOFmz7fAylHS0D/DaiwgKVFM
-         x+6ziX3oykNnNRuV5cBwCx3kz4HYeSahTEuEB+lehz4v55QTxXLO+bL2d+2Mw8jWwAe4
-         C5biKSxb2HlEftf+r+4yY/6sq+IwId2Lbfyw+6i1d+ybvaIvJ0GUn1LvQncxf3tUaTXk
-         I1YjOosZbzrSxOMPHQ9LnQbC3P8q+J5zN4jqbKqsHT5wzB6+nTqi4c4MK/idfFp8tlLZ
-         bGxi4cXVmr4d5ZeBSV5ynJYHWcfZNRBWJi9+BPPT+5wsQpGSlwFnX5VFcCFWAnK7XRoR
-         mw4w==
-X-Gm-Message-State: AOJu0Yyv9tCKTMPAOnGuIZ89TdHaA86LRbOhpuvCjhO7PGkr8WbFsIiG
-        fcoVb1dDjQSVc7cP3JtBjPn4kmvTs8PtrW0d
-X-Google-Smtp-Source: AGHT+IGZW0B/nj3i2PT0p1GXsZK2zmhnVmfAMs+G8375PXE9HC5YboIjHWSYmB45SySh3t7ttXY3rQ==
-X-Received: by 2002:a0d:d6d3:0:b0:59b:2458:f612 with SMTP id y202-20020a0dd6d3000000b0059b2458f612mr2019622ywd.28.1694157399541;
-        Fri, 08 Sep 2023 00:16:39 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id y126-20020a81a184000000b0056974f4019esm306919ywg.6.2023.09.08.00.16.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Sep 2023 00:16:38 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-58caaedb20bso18111427b3.1;
-        Fri, 08 Sep 2023 00:16:38 -0700 (PDT)
-X-Received: by 2002:a25:cbc8:0:b0:d7a:cb32:2747 with SMTP id
- b191-20020a25cbc8000000b00d7acb322747mr1684982ybg.17.1694157398059; Fri, 08
- Sep 2023 00:16:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
-In-Reply-To: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Sep 2023 09:16:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVUQ1rZj_9TLd3qjZ2knRK0npnTME9ijiU8qkPnKbyqmA@mail.gmail.com>
-Message-ID: <CAMuHMdVUQ1rZj_9TLd3qjZ2knRK0npnTME9ijiU8qkPnKbyqmA@mail.gmail.com>
-Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1694157534; x=1694762334;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jUsdI8IAMPdJ2/ajS6yTZqWDFGbQHyhhBt8Pkr2WW8=;
+        b=Uudj/hfWP0nMJ/MnorWU5K4FSj4FDO5LDmBQLoAoxAUIMRunyWQzkdqodCS0Vg3dRQ
+         Zqr9ovCqY0++T9+pJcwoeKx10YK3fz/4CQCe/+3VPZBJuIIy/S314jiS0z20Yt235jIr
+         LHoYZKECz7qyq11RtyUx8Z77rPl5Y57xRkCBQj3WdOLkvjbkVjMLPPUFf0VXo2mWwsfN
+         8yYB+yK5TCQvbuK/1qZ4mRl/bqiwyZlr3RkfqItPAGU8QI275Cn/2BzKLXuxwVRUVrK8
+         XiIqsl/PSLGMyYbA/fzjqbU/t9E4ud1oMmBZrgg3P8NwjN2JzR+0ITkMuk2Nn6PO8okR
+         u2DQ==
+X-Gm-Message-State: AOJu0YxK5zDE99h18c3Lp6jH1n2Ii8cPighIYALpOTwCZTbrQ16Jfhoi
+        soLfFgxxP8ghsSnlaCv3Pk9wh+81HW9oEI41p/8=
+X-Google-Smtp-Source: AGHT+IHQsY/0Ej3aK9aAUnwQ/E6w27NF8Re4ys97xwbLX+YFgUeolkfZLNQJw3R/v4XFVKS7HptjDg==
+X-Received: by 2002:a05:600c:3b1e:b0:402:f536:41c5 with SMTP id m30-20020a05600c3b1e00b00402f53641c5mr1277095wms.3.1694157533662;
+        Fri, 08 Sep 2023 00:18:53 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t24-20020a1c7718000000b003fee7b67f67sm1182993wmi.31.2023.09.08.00.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Sep 2023 00:18:53 -0700 (PDT)
+Date:   Fri, 8 Sep 2023 10:18:50 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Deepak R Varma <drv@mailo.com>
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] phy: qcom-m31: Fix error code in probe()
+Message-ID: <5a6da4c1-6d65-4219-8314-9b5697bcf8e8@kadam.mountain>
+References: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
+ <053077e761ecaeb44b76f5865e100d588101461b.camel@mailo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <053077e761ecaeb44b76f5865e100d588101461b.camel@mailo.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 8, 2023 at 9:03â€¯AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> Smatch complains that the error path where "action" is invalid leaks
-> the "ce" allocation:
->     drivers/of/dynamic.c:935 of_changeset_action()
->     warn: possible memory leak of 'ce'
->
-> Fix this by doing the validation before the allocation.
->
-> Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Sep 07, 2023 at 09:53:36PM +0530, Deepak R Varma wrote:
+> On Thu, 2023-09-07 at 12:54 +0300, Dan Carpenter wrote:
+> > This accidentally returns the wrong variable.  It should be "qphy-
+> > >vreg"
+> > instead of "qphy->phy".
+> 
+> Hi Dan,
+> Just curious: How did you find this? Visual catch or Static Analyzer?
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This was from a Smatch warning.
 
-Gr{oetje,eeting}s,
+$ ~/smatch/smatch_scripts/kchecker drivers/phy/qualcomm/phy-qcom-m31.c
+  CHECK   scripts/mod/empty.c
+  CALL    scripts/checksyscalls.sh
+  DESCEND objtool
+  INSTALL libsubcmd_headers
+  CC      drivers/phy/qualcomm/phy-qcom-m31.o
+  CHECK   drivers/phy/qualcomm/phy-qcom-m31.c
+drivers/phy/qualcomm/phy-qcom-m31.c:175 m31usb_phy_init() warn: variable dereferenced before check 'qphy->vreg' (see line 167)
+drivers/phy/qualcomm/phy-qcom-m31.c:259 m31usb_phy_probe() warn: passing a valid pointer to 'PTR_ERR'
+$
 
-                        Geert
+regards,
+dan carpenter
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
