@@ -2,106 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82649EE57E3
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 08:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5F3EE57EC
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 10:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234677AbjIHIh7 (ORCPT
+        id S238371AbjIHKC7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 04:37:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
+        Fri, 8 Sep 2023 06:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236220AbjIHIh7 (ORCPT
+        with ESMTP id S238690AbjIHKCo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 04:37:59 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F52C1BE6;
-        Fri,  8 Sep 2023 01:37:55 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-649a653479bso10900016d6.0;
-        Fri, 08 Sep 2023 01:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694162274; x=1694767074; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZLIX+qkXBSKjQlXcim9NmeX7B/uqpBQpeJJ9z2xGlQ=;
-        b=A0Kdoj05fjHCpXszkveCQ8H0iJ+QfK2YTZ/YwuTthB+CAVOevjFeESeSQcNGQ1DNGD
-         JUBL18Aztp30W0eB51xcYgZyBVPb9onj9j5DdXsuFZWNYB3M4CPXaxuyT8We4JeJ1NUh
-         UFfVSTyrwKR9s3hWkFmLvf8x+oBDYE9jl00K1gpmXLx0/anw09l32tfk7rZdE51hzuSZ
-         Yqz51v8IlHpRiAytNkFGLuZv93HmFfTsqHh2sn3UbMBinAb5YLcEuDoO6mNjiKv+y10l
-         7FW1wr8o2gk8pWum/oC5d7r6EQp+ZfjgeIP0how2FH/mmYmvhP8gVAsIhq3PT16Ye4Ox
-         MdfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694162274; x=1694767074;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IZLIX+qkXBSKjQlXcim9NmeX7B/uqpBQpeJJ9z2xGlQ=;
-        b=MoqnPxydA0Bzy0JQgHYIGZif5JigmUTmPRFZlzlXEUvn+awfL8Jx+e4wzGxBSlSl5a
-         Oa5p37cqG2D72+++NeTqCrdUIhHVQh0Fac6TWldxnQVUHZ4hWwfhEgE9iVEcBKxjRHwx
-         GbNRMwqL/6i5kb3hKuRAnMj9DNtBvi+QoDHyVAupqGvFWuOULbDDKoGVr0ZGEHWAFGx+
-         +ElMUYhJvDubRKsL3SVD1sgtmhaOz5qP2L54dyGK6VXyQgVxbgjanoil2H7ovCKXbK/j
-         wjoRWUm0+zw/iFWWSvuzzQBhSmywwhYoJlqQjQ9kmQMwYeABOyx6cLKSy1BBIrZD6S4l
-         TXnQ==
-X-Gm-Message-State: AOJu0Yx4M8RMg6o9UqsROtfDJsM5NyfN3BQxzACGgi0J3Tx/9PnYMQeD
-        kFctzq83pe+5267l7LyKvqodlGO/jNe9D8R9RNs=
-X-Google-Smtp-Source: AGHT+IHFy6wcaGj3ffQOJmttrg2ui42ldutOVivvrtIwaEbq7LnnNMUHxyMTvsuLMKtN+AQ4nFcTC7V3BgMT2kgYWEo=
-X-Received: by 2002:a0c:c985:0:b0:647:1bae:a37b with SMTP id
- b5-20020a0cc985000000b006471baea37bmr1566886qvk.60.1694162274453; Fri, 08 Sep
- 2023 01:37:54 -0700 (PDT)
+        Fri, 8 Sep 2023 06:02:44 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFB02128;
+        Fri,  8 Sep 2023 03:02:08 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3A5566607286;
+        Fri,  8 Sep 2023 11:02:01 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694167321;
+        bh=CJX6Es8XVyYycbnz90Chqf3r+Q8Nrk3dqnQg+Fy6VtE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=a+htBuzs035plfZ7GT2pnM9VV2Pnz5NNYpc+o9kzZJSkdROU9a/nZRqxTiPCW4KeI
+         8KpEEPJHlTxyYC8Ky6RnNG/ObZoJYITr+cLtxJA+4oPKuoKrXmh7tyLS2HVjOO1w3k
+         +vdFJVoGhxG+4uGImhrmThl/OqhuVcIf3GALmitwL+wZNMBEzbcKKuDFg+8XqFmjeO
+         ImMpWkSOV2usXSHq3IGF6n7ehNb30XuvquSdTQrk4BLuGAKycTLPGWwJ4kxP/RogZW
+         bT5XrBHxGGt/ou/hEFsXYiBAhdX3wksZYaHyh5KqtMN2QHscOB5snXVUKgnimwiLyX
+         aD1jiY4pIlT+g==
+Message-ID: <a13b0e48-103d-8e3d-6d40-994cbdca9b44@collabora.com>
+Date:   Fri, 8 Sep 2023 12:01:58 +0200
 MIME-Version: 1.0
-References: <a8af0a08-8405-43cc-bd83-85ff25f572ca@moroto.mountain> <CAAfSe-tMK=4D3=JTw-tLDz8OL0BPgzCd35eUFx7gxD49BHLOrA@mail.gmail.com>
-In-Reply-To: <CAAfSe-tMK=4D3=JTw-tLDz8OL0BPgzCd35eUFx7gxD49BHLOrA@mail.gmail.com>
-From:   Wenchao Chen <wenchao.chen666@gmail.com>
-Date:   Fri, 8 Sep 2023 16:37:43 +0800
-Message-ID: <CA+Da2qy4Gt7g4g5N2HyOZjk4KXu=fkkVO=Wr_vsDBZKxTc75dg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-sprd: Fix error code in sdhci_sprd_tuning()
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Wenchao Chen <wenchao.chen@unisoc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
+ mt6370_chg_toggle_cfo()
+To:     ChiaEn Wu <chiaen_wu@richtek.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, error27@gmail.com
+References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+ <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
+ <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
+ <20230908021913.GB3115@linuxcarl2.richtek.com>
+Content-Language: en-US
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230908021913.GB3115@linuxcarl2.richtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 8 Sept 2023 at 15:31, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> + Wenchao's gmail
->
-> On Thu, 7 Sept 2023 at 17:54, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > Return an error code if sdhci_sprd_get_best_clk_sample() fails.
-> > Currently, it returns success.
-> >
-> > Fixes: d83d251bf3c2 ("mmc: sdhci-sprd: Add SD HS mode online tuning")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
+Il 08/09/23 04:19, ChiaEn Wu ha scritto:
+> On Thu, Sep 07, 2023 at 02:08:17PM +0300, Dan Carpenter wrote:
+> 
+> [...]
+> 
+>>>> diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+>>>> index f27dae5043f5..a9641bd3d8cf 100644
+>>>> --- a/drivers/power/supply/mt6370-charger.c
+>>>> +++ b/drivers/power/supply/mt6370-charger.c
+>>>> @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
+>>>>    	if (fl_strobe) {
+>>>>    		dev_err(priv->dev, "Flash led is still in strobe mode\n");
+>>>> -		return ret;
+>>>> +		return -EINVAL;
+>>>
+>>> I think that returning 0 here was intentional, but I agree on a return ret
+>>> here being both confusing and wrong.
+>>
+>> If it's a success path then probably we should remove the dev_err().
+>>
+> 
+> Hi all,
+> Sorry for the late reply!
+> 
+> I agree with the first half of Angelo's statement, I did make the
+> mistake on this 'return ret'.
+> What I was trying to say is that you should not to toggle cfo function
+> when the FLED of MT6370 is still in "strobe mode".
+> 
+> Therefore, I think the change of Harshit's patch is correct.
+> It should be 'return -EINVAL' or 'return -EPERM' here.
+> 
+> Thanks!
+> 
+> 
+> Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
+> 
+> 
+> Best regards,
+> ChiaEn Wu
 
-Reviewed-by: Wenchao Chen <wenchao.chen@unisoc.com>
+Cool. In that case:
 
-Thanks,
-Wenchao
-
-> > This is from static analysis and has not been tested.
-> > ---
-> >  drivers/mmc/host/sdhci-sprd.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> > index 649ae075e229..6b84ba27e6ab 100644
-> > --- a/drivers/mmc/host/sdhci-sprd.c
-> > +++ b/drivers/mmc/host/sdhci-sprd.c
-> > @@ -644,6 +644,7 @@ static int sdhci_sprd_tuning(struct mmc_host *mmc, struct mmc_card *card,
-> >         best_clk_sample = sdhci_sprd_get_best_clk_sample(mmc, value);
-> >         if (best_clk_sample < 0) {
-> >                 dev_err(mmc_dev(host->mmc), "all tuning phase fail!\n");
-> > +               err = best_clk_sample;
-> >                 goto out;
-> >         }
-> >
-> > --
-> > 2.39.2
-> >
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
