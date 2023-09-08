@@ -2,102 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB6FEE57DA
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 07:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82772EE57CA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 07:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240704AbjIHHTH (ORCPT
+        id S236986AbjIHHbM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 03:19:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
+        Fri, 8 Sep 2023 03:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231371AbjIHHTG (ORCPT
+        with ESMTP id S230300AbjIHHbM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 03:19:06 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780B51BF5
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 00:18:55 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-401da71b7c5so19834215e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 08 Sep 2023 00:18:55 -0700 (PDT)
+        Fri, 8 Sep 2023 03:31:12 -0400
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B20021990;
+        Fri,  8 Sep 2023 00:31:07 -0700 (PDT)
+Received: by mail-vk1-xa29.google.com with SMTP id 71dfb90a1353d-4935f87ca26so660516e0c.3;
+        Fri, 08 Sep 2023 00:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694157534; x=1694762334; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4jUsdI8IAMPdJ2/ajS6yTZqWDFGbQHyhhBt8Pkr2WW8=;
-        b=NeAR2uxEmJ7UFdnUqFQbiNrJh6+Yzvc4JMjc8ASsiaixzKWJOgTj0wvFaIfGcRSoGT
-         7LlBdT0SllqJRKtkZeVugBnran4E4ChfylGrDEDmzj2kWMzcCJphb3mixG/K74CFZ+JV
-         md737IVhoiq+Vtcz7T+xIdpCOu6gEzClQRoAqcGZ9vN/EVQHgM6hyxzKlVH46TvH48U9
-         uJSmA16QdkNXrelL4PJU2DKBRwaluLVkPBQahBU7xw7LznaexbT0Nctr+nIPOvNGcLxe
-         yEKIjrRoLoEeeQS09I0lqA12qREhZLtkpPDvsT5GPadX6fCH9/LZpaY/qdwhAQGuR4ai
-         WFPQ==
+        d=gmail.com; s=20221208; t=1694158267; x=1694763067; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gclUsf36eX8Zu/F0aBv6Pp4DYKTZJM56puvJkHceqCU=;
+        b=OrouDuYrHQ1CWJ/oRmoFOulwiYo/1S7UR22UeeNjFC91gbImoZWRkaoOaTVeD2Fr8y
+         cRvaUZheaJls+zPwJ2aoFENZIroU1BzPJ16JziYFhcJMN9gpzCrzOXgO4rA8n7y44W0h
+         OT0zK3uJNnUsxHKVs/SzPrAG2KOisGYJGcEArIXlpAGSAHOJ/pw7p5vOmR6Zbb4QwFkQ
+         YsN74rsctFrnDMlreBaBBdnjldaCbPggY9sxxmQ0SCLfvIwdJO4d2F4ZXHwKsNSXQmOr
+         Ocl9W0RzkBI+h7BU/FcT8IuyzPYCviHRbdDtatQKByJysLWmmU0JFv/APP3TUdB9nTzq
+         kAYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694157534; x=1694762334;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4jUsdI8IAMPdJ2/ajS6yTZqWDFGbQHyhhBt8Pkr2WW8=;
-        b=Uudj/hfWP0nMJ/MnorWU5K4FSj4FDO5LDmBQLoAoxAUIMRunyWQzkdqodCS0Vg3dRQ
-         Zqr9ovCqY0++T9+pJcwoeKx10YK3fz/4CQCe/+3VPZBJuIIy/S314jiS0z20Yt235jIr
-         LHoYZKECz7qyq11RtyUx8Z77rPl5Y57xRkCBQj3WdOLkvjbkVjMLPPUFf0VXo2mWwsfN
-         8yYB+yK5TCQvbuK/1qZ4mRl/bqiwyZlr3RkfqItPAGU8QI275Cn/2BzKLXuxwVRUVrK8
-         XiIqsl/PSLGMyYbA/fzjqbU/t9E4ud1oMmBZrgg3P8NwjN2JzR+0ITkMuk2Nn6PO8okR
-         u2DQ==
-X-Gm-Message-State: AOJu0YxK5zDE99h18c3Lp6jH1n2Ii8cPighIYALpOTwCZTbrQ16Jfhoi
-        soLfFgxxP8ghsSnlaCv3Pk9wh+81HW9oEI41p/8=
-X-Google-Smtp-Source: AGHT+IHQsY/0Ej3aK9aAUnwQ/E6w27NF8Re4ys97xwbLX+YFgUeolkfZLNQJw3R/v4XFVKS7HptjDg==
-X-Received: by 2002:a05:600c:3b1e:b0:402:f536:41c5 with SMTP id m30-20020a05600c3b1e00b00402f53641c5mr1277095wms.3.1694157533662;
-        Fri, 08 Sep 2023 00:18:53 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t24-20020a1c7718000000b003fee7b67f67sm1182993wmi.31.2023.09.08.00.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Sep 2023 00:18:53 -0700 (PDT)
-Date:   Fri, 8 Sep 2023 10:18:50 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Deepak R Varma <drv@mailo.com>
-Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom-m31: Fix error code in probe()
-Message-ID: <5a6da4c1-6d65-4219-8314-9b5697bcf8e8@kadam.mountain>
-References: <7926c8e6-630e-4d7a-b0b2-d29b3c8b2c09@moroto.mountain>
- <053077e761ecaeb44b76f5865e100d588101461b.camel@mailo.com>
+        d=1e100.net; s=20230601; t=1694158267; x=1694763067;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gclUsf36eX8Zu/F0aBv6Pp4DYKTZJM56puvJkHceqCU=;
+        b=pKO+WQ9cK0KeFU2A0TW8vrdtXN6shoWP8qN2+ObMazzBqJK8qptBZI6dMsrGu/wgl0
+         uLH4PMJHKwnKbFbdtkaRWRuqzRbYosTrtebuUYJc+RTKkqdJowG8ltHrIdyvwIx4UEOE
+         V7Nc8b+aG8QNHsIdpbnP6Q1khNEXQz4g6G3KlBg5weacru5ukPWZvbkminZ9j7AFfXsl
+         iUw5gL8ZleDGTJzHvvQh6mW0Og/JrDwF6SYPrjRNaAj676BdNY5fJSwctimlyj1NzjRd
+         pcqYV7opKIy0AJ0a45YWYV6kPLkkpc90cZO3yY6XPXYvBfnnvSwIkcZXJKa+JcNTh8Og
+         kUzg==
+X-Gm-Message-State: AOJu0Yyj3VTbeLabSXNefvq1sSYbnxffQ0Y/t/O+rtM+c2eb2+blTmXb
+        tvMb7FiYQ5npZAhJBq39beDb30qBP9jFY3B1nRA=
+X-Google-Smtp-Source: AGHT+IEEExJtkKBBo1N76ecCfx3+ZsZRnKOibJhy7JvGjB5M7X4ybTKEmbQu71sLVXWYVZ+aIJt7ncY7Gv4WjEaF+ms=
+X-Received: by 2002:a1f:4a41:0:b0:48f:8f80:8bf4 with SMTP id
+ x62-20020a1f4a41000000b0048f8f808bf4mr1491450vka.16.1694158266697; Fri, 08
+ Sep 2023 00:31:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <053077e761ecaeb44b76f5865e100d588101461b.camel@mailo.com>
+References: <a8af0a08-8405-43cc-bd83-85ff25f572ca@moroto.mountain>
+In-Reply-To: <a8af0a08-8405-43cc-bd83-85ff25f572ca@moroto.mountain>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Fri, 8 Sep 2023 15:30:30 +0800
+Message-ID: <CAAfSe-tMK=4D3=JTw-tLDz8OL0BPgzCd35eUFx7gxD49BHLOrA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-sprd: Fix error code in sdhci_sprd_tuning()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        "wenchao.chen666@gmail.com" <wenchao.chen666@gmail.com>
+Cc:     Wenchao Chen <wenchao.chen@unisoc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 09:53:36PM +0530, Deepak R Varma wrote:
-> On Thu, 2023-09-07 at 12:54 +0300, Dan Carpenter wrote:
-> > This accidentally returns the wrong variable.  It should be "qphy-
-> > >vreg"
-> > instead of "qphy->phy".
-> 
-> Hi Dan,
-> Just curious: How did you find this? Visual catch or Static Analyzer?
-> 
++ Wenchao's gmail
 
-This was from a Smatch warning.
-
-$ ~/smatch/smatch_scripts/kchecker drivers/phy/qualcomm/phy-qcom-m31.c
-  CHECK   scripts/mod/empty.c
-  CALL    scripts/checksyscalls.sh
-  DESCEND objtool
-  INSTALL libsubcmd_headers
-  CC      drivers/phy/qualcomm/phy-qcom-m31.o
-  CHECK   drivers/phy/qualcomm/phy-qcom-m31.c
-drivers/phy/qualcomm/phy-qcom-m31.c:175 m31usb_phy_init() warn: variable dereferenced before check 'qphy->vreg' (see line 167)
-drivers/phy/qualcomm/phy-qcom-m31.c:259 m31usb_phy_probe() warn: passing a valid pointer to 'PTR_ERR'
-$
-
-regards,
-dan carpenter
-
+On Thu, 7 Sept 2023 at 17:54, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Return an error code if sdhci_sprd_get_best_clk_sample() fails.
+> Currently, it returns success.
+>
+> Fixes: d83d251bf3c2 ("mmc: sdhci-sprd: Add SD HS mode online tuning")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This is from static analysis and has not been tested.
+> ---
+>  drivers/mmc/host/sdhci-sprd.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> index 649ae075e229..6b84ba27e6ab 100644
+> --- a/drivers/mmc/host/sdhci-sprd.c
+> +++ b/drivers/mmc/host/sdhci-sprd.c
+> @@ -644,6 +644,7 @@ static int sdhci_sprd_tuning(struct mmc_host *mmc, struct mmc_card *card,
+>         best_clk_sample = sdhci_sprd_get_best_clk_sample(mmc, value);
+>         if (best_clk_sample < 0) {
+>                 dev_err(mmc_dev(host->mmc), "all tuning phase fail!\n");
+> +               err = best_clk_sample;
+>                 goto out;
+>         }
+>
+> --
+> 2.39.2
+>
