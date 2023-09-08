@@ -2,109 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5F3EE57EC
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 10:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866B3EE8015
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 15:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238371AbjIHKC7 (ORCPT
+        id S244455AbjIHPTC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 06:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54014 "EHLO
+        Fri, 8 Sep 2023 11:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238690AbjIHKCo (ORCPT
+        with ESMTP id S244456AbjIHPTB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 06:02:44 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFB02128;
-        Fri,  8 Sep 2023 03:02:08 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3A5566607286;
-        Fri,  8 Sep 2023 11:02:01 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1694167321;
-        bh=CJX6Es8XVyYycbnz90Chqf3r+Q8Nrk3dqnQg+Fy6VtE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=a+htBuzs035plfZ7GT2pnM9VV2Pnz5NNYpc+o9kzZJSkdROU9a/nZRqxTiPCW4KeI
-         8KpEEPJHlTxyYC8Ky6RnNG/ObZoJYITr+cLtxJA+4oPKuoKrXmh7tyLS2HVjOO1w3k
-         +vdFJVoGhxG+4uGImhrmThl/OqhuVcIf3GALmitwL+wZNMBEzbcKKuDFg+8XqFmjeO
-         ImMpWkSOV2usXSHq3IGF6n7ehNb30XuvquSdTQrk4BLuGAKycTLPGWwJ4kxP/RogZW
-         bT5XrBHxGGt/ou/hEFsXYiBAhdX3wksZYaHyh5KqtMN2QHscOB5snXVUKgnimwiLyX
-         aD1jiY4pIlT+g==
-Message-ID: <a13b0e48-103d-8e3d-6d40-994cbdca9b44@collabora.com>
-Date:   Fri, 8 Sep 2023 12:01:58 +0200
+        Fri, 8 Sep 2023 11:19:01 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED03E1FC6;
+        Fri,  8 Sep 2023 08:18:51 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 889DEC433CB;
+        Fri,  8 Sep 2023 15:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694186331;
+        bh=2K30IgWgtATYzYBqUXdhOY9Vmr0FQNltvy2dR5bV6xY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gUtbxxmmXVR5oOCQGPHnJbqMA3aEDumNGO7n4XI34qQZ5AOximOABS2g1qHkYkqb4
+         0vJ6CjM6HnLn0w22T06UYi1DTYY3zzXQ6AKKrOGzIUMFUOdGd0rvn4EOoJh4n1w0Mk
+         eDRkZovIJj9zKc9DcA4R+DGQgrvUie5suuy3AELKSHUKa8pNgD4ROHMduJXygAQOxw
+         mMW7TC90WevP3Iqz+ss/dFRRMWuAMjuoBL8Jj+yJ7qjrw9YGi0tQ9rk29J1WbLz2LN
+         278tzAYYn+3Te7HwROQaUDrrNuC/qw5Z87nQ+CupGlitM2H5Co7VePNDwIHXN3MJJy
+         /WIUYk7v9td1Q==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-500913779f5so3759760e87.2;
+        Fri, 08 Sep 2023 08:18:51 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzEQtwo15uEeAvUHiUVHmaAdjKDrWbZB0RyUYWAPEKd83j3soiY
+        /eboLNAeqc10BxY2KrcEmhQSlbUgiXCkdiRkDA==
+X-Google-Smtp-Source: AGHT+IGG5jRUpBNeSXjeSHPTSlaJAXcBbVQov0w3yTxU0+/SuBOS+pAK4V4XgqqDGUtFlpARuMmtqskh82mEne9vFFc=
+X-Received: by 2002:a05:6512:3496:b0:500:863e:fc57 with SMTP id
+ v22-20020a056512349600b00500863efc57mr1923461lfr.25.1694186329768; Fri, 08
+ Sep 2023 08:18:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
- mt6370_chg_toggle_cfo()
-To:     ChiaEn Wu <chiaen_wu@richtek.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, error27@gmail.com
-References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
- <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
- <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
- <20230908021913.GB3115@linuxcarl2.richtek.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230908021913.GB3115@linuxcarl2.richtek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
+In-Reply-To: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 8 Sep 2023 10:18:37 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+Message-ID: <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 08/09/23 04:19, ChiaEn Wu ha scritto:
-> On Thu, Sep 07, 2023 at 02:08:17PM +0300, Dan Carpenter wrote:
-> 
-> [...]
-> 
->>>> diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
->>>> index f27dae5043f5..a9641bd3d8cf 100644
->>>> --- a/drivers/power/supply/mt6370-charger.c
->>>> +++ b/drivers/power/supply/mt6370-charger.c
->>>> @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
->>>>    	if (fl_strobe) {
->>>>    		dev_err(priv->dev, "Flash led is still in strobe mode\n");
->>>> -		return ret;
->>>> +		return -EINVAL;
->>>
->>> I think that returning 0 here was intentional, but I agree on a return ret
->>> here being both confusing and wrong.
->>
->> If it's a success path then probably we should remove the dev_err().
->>
-> 
-> Hi all,
-> Sorry for the late reply!
-> 
-> I agree with the first half of Angelo's statement, I did make the
-> mistake on this 'return ret'.
-> What I was trying to say is that you should not to toggle cfo function
-> when the FLED of MT6370 is still in "strobe mode".
-> 
-> Therefore, I think the change of Harshit's patch is correct.
-> It should be 'return -EINVAL' or 'return -EPERM' here.
-> 
-> Thanks!
-> 
-> 
-> Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
-> 
-> 
-> Best regards,
-> ChiaEn Wu
+On Fri, Sep 8, 2023 at 2:03=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> Smatch complains that the error path where "action" is invalid leaks
+> the "ce" allocation:
+>     drivers/of/dynamic.c:935 of_changeset_action()
+>     warn: possible memory leak of 'ce'
+>
+> Fix this by doing the validation before the allocation.
 
-Cool. In that case:
+I'm going to add a note when applying that "action" can't ever
+actually be invalid because all the callers are static inlines with
+hardcoded action values. I suppose there could be an out of tree
+module calling of_changeset_action() directly, but that's wrong given
+the wrappers.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pO=
+F" inside devtree_lock")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
+
+Despite what that says, it was never reported to me. IOW, the added TO
+and CC lines don't seem to have any effect.
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/of/dynamic.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index 0a3483e247a8..f63250c650ca 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -890,13 +890,13 @@ int of_changeset_action(struct of_changeset *ocs, u=
+nsigned long action,
+>  {
+>         struct of_changeset_entry *ce;
+>
+> +       if (WARN_ON(action >=3D ARRAY_SIZE(action_names)))
+> +               return -EINVAL;
+> +
+>         ce =3D kzalloc(sizeof(*ce), GFP_KERNEL);
+>         if (!ce)
+>                 return -ENOMEM;
+>
+> -       if (WARN_ON(action >=3D ARRAY_SIZE(action_names)))
+> -               return -EINVAL;
+> -
+>         /* get a reference to the node */
+>         ce->action =3D action;
+>         ce->np =3D of_node_get(np);
+> --
+> 2.39.2
+>
