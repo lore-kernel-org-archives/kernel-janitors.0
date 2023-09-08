@@ -2,139 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A46EC8759
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Sep 2023 20:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECBBEC875F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 01:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236878AbjIGUel (ORCPT
+        id S240722AbjIHBX6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 16:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
+        Thu, 7 Sep 2023 21:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231206AbjIGUek (ORCPT
+        with ESMTP id S233106AbjIHBX5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 16:34:40 -0400
-Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3BB1703
-        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 13:34:36 -0700 (PDT)
-Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-1c8d2606fc9so1329926fac.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Sep 2023 13:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694118875; x=1694723675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h9h7IPXqY30s3vlnhZjWCz1icv85zvx9M/gASr/Ioew=;
-        b=HG6lzUQKtFP9ZDLak8B+PAP6413uOoZLNisWveRA9TohSllAn+qFG7mvVNO7yplfIJ
-         oeVHF7/WzvIUMs8H63SoIJpk2+sI6swKzcLZRT1cpKk/CFVesjvrZENKQnrDyHCXnA2V
-         ZgswVjRMj5Yp431UwlWM6kI7ssmMHLmmqS81+Cj+ZgQsAmn74Z3FZ+2ypfl5+/thJEH4
-         sNkoWAB38WjPBDNP1LBkLwsCbDsIXtjC+WPjGABa3Pw1+H9cU8Ye5rl8Ta/lduvvY8ri
-         5seMqK3kyT/Z4Gy8Keri6WBOiYCopLsNdgO3rnrFMxYYsZhoesM0ljtoBsVDRfh+1bbO
-         j29w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694118875; x=1694723675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h9h7IPXqY30s3vlnhZjWCz1icv85zvx9M/gASr/Ioew=;
-        b=VdBWm06SXwHkD8j/d4M8GYQINgSjbsn2g+rLwEV7iSdrDRiPQolGqYg1X0hp+5Va3n
-         rvTZdIc6KZsd9qGkbdUdFrvvq1cX/JBY/xBJJERNPQ4+2zlSVNYwZNaievuoq7GsFCHY
-         8scXDNWTGTgsVKkozs0Km3trP6D8e2E2oB/r9mggL025X6jzwKeS703GHHUmAdb/T7Jt
-         Tiywmw6jxh94s3ttBX31dd7XYS7P0wCjcje7euVMVpeqLEhIe3PGxN0tdwgsZDmHx8/S
-         BSGSEiF62Fc20q1K1er0uJ1QfG3Ac1uMOaw2t3+hUZtIvwKSayTXh0v7pz/n/UzZw/lv
-         xiHw==
-X-Gm-Message-State: AOJu0Yz5NzA+Cbcq+YMz8YI1oawvXpyulyBoscCy2S1GWcWdM5zHAsuj
-        nm2Ul5IF7t4mRFvMfZpibJLD4xFc6AD92F+BPlQ=
-X-Google-Smtp-Source: AGHT+IGNG0v4pAKAt4Megoy9yOX9ndc4y5RbA9i9OSriJ42fXgtl4avRsSP7NbqAPa73dOsIU1+sT/yfDYlOox7b8VA=
-X-Received: by 2002:a05:6870:c596:b0:1b4:3388:d69d with SMTP id
- ba22-20020a056870c59600b001b43388d69dmr2197609oab.2.1694118875650; Thu, 07
- Sep 2023 13:34:35 -0700 (PDT)
+        Thu, 7 Sep 2023 21:23:57 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1ADDF19A7;
+        Thu,  7 Sep 2023 18:23:52 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 0819C602A11D1;
+        Fri,  8 Sep 2023 09:23:22 +0800 (CST)
+Message-ID: <45027fa0-cda5-2a80-f1cd-ed805d2717ee@nfschina.com>
+Date:   Fri, 8 Sep 2023 09:23:22 +0800
 MIME-Version: 1.0
-References: <ea9bfa9b-2689-45cf-95b7-57577f0d76c2@moroto.mountain> <DM6PR12MB26197B9B9A827160B1932F60E4EEA@DM6PR12MB2619.namprd12.prod.outlook.com>
-In-Reply-To: <DM6PR12MB26197B9B9A827160B1932F60E4EEA@DM6PR12MB2619.namprd12.prod.outlook.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 7 Sep 2023 16:34:24 -0400
-Message-ID: <CADnq5_M==-2-2vWThG3TeC-o+6Ya5xiDT0SoSj1XHVNDvo4Wmw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: fix retry loop test
-To:     "Quan, Evan" <Evan.Quan@amd.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        "Wang, Yang(Kevin)" <KevinYang.Wang@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "Lazar, Lijo" <Lijo.Lazar@amd.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "Kamal, Asad" <Asad.Kamal@amd.com>,
-        "Limonciello, Mario" <Mario.Limonciello@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhang, Hawking" <Hawking.Zhang@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] driver base: slience unused warning
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <3b710f6d-05cf-49d5-b004-849ee2a3ca42@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-Alex
+On 2023/9/7 18:49, Dan Carpenter wrote:
+> On Thu, Aug 31, 2023 at 03:36:55PM +0800, Su Hui wrote:
+>> Avoid unused warning with gcc and W=1 option.
+>>
+>> drivers/base/module.c:36:6: error:
+>> variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
+>>
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/base/module.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/module.c b/drivers/base/module.c
+>> index 46ad4d636731..10494336d601 100644
+>> --- a/drivers/base/module.c
+>> +++ b/drivers/base/module.c
+>> @@ -33,7 +33,7 @@ static void module_create_drivers_dir(struct module_kobject *mk)
+>>   void module_add_driver(struct module *mod, struct device_driver *drv)
+>>   {
+>>   	char *driver_name;
+>> -	int no_warn;
+>> +	int __maybe_unused no_warn;
+> Just delete the variable if it isn't used.
 
-On Wed, Sep 6, 2023 at 10:00=E2=80=AFPM Quan, Evan <Evan.Quan@amd.com> wrot=
-e:
+Hi,
+
+The variable "no_warn" is used to avoid warning like this:
+
+drivers/base/module.c: In function ‘module_add_driver’:
+drivers/base/module.c:62:2: error: ignoring return value of 
+‘sysfs_create_link’ declared with attribute ‘warn_unused_result’ 
+[-Werror=unused-result]
+
+    62 |  sysfs_create_link(&drv->p->kobj, &mk->kobj, "module");
+       |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This variable is been used but never be read, so gcc and W=1 give such 
+warning.
+
+drivers/base/module.c:36:6: error:
+variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
+
+I wanted to use "__maybe_unused" to avoid  this warning.
+
+However it seems like a wrong using of "__maybe_unused" as Greg KH said:
+
+"But no_warn is being used in this file, it's being set but not read
+which is ok.  That's a real use, so this change really isn't correct,
+sorry."
+
+Su Hui
+
+>   
 >
-> [AMD Official Use Only - General]
->
-> Yeah, nice catch. But personally I would prefer to change the check as "i=
-f (retry <=3D 0)".
-> Either way, the patch is reviewed-by: Evan Quan <evan.quan@amd.com>
->
-> Evan
-> > -----Original Message-----
-> > From: Dan Carpenter <dan.carpenter@linaro.org>
-> > Sent: Wednesday, September 6, 2023 6:55 PM
-> > To: Quan, Evan <Evan.Quan@amd.com>; Wang, Yang(Kevin)
-> > <KevinYang.Wang@amd.com>
-> > Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
-> > <Christian.Koenig@amd.com>; Pan, Xinhui <Xinhui.Pan@amd.com>; David
-> > Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>; Lazar, Lij=
-o
-> > <Lijo.Lazar@amd.com>; Kamal, Asad <Asad.Kamal@amd.com>; Zhang,
-> > Hawking <Hawking.Zhang@amd.com>; Limonciello, Mario
-> > <Mario.Limonciello@amd.com>; amd-gfx@lists.freedesktop.org; kernel-
-> > janitors@vger.kernel.org
-> > Subject: [PATCH] drm/amdgpu: fix retry loop test
-> >
-> > This loop will exit with "retry" set to -1 if it fails but the code
-> > checks for if "retry" is zero.  Fix this by changing post-op to a
-> > pre-op.  --retry vs retry--.
-> >
-> > Fixes: e01eeffc3f86 ("drm/amd/pm: avoid driver getting empty metrics ta=
-ble
-> > for the first time")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Obviously this only loop 99 times now instead of a hundred but that's
-> > fine, this is an approximation.
-> >
-> >  drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> > b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> > index ff58ee14a68f..20163a9b2a66 100644
-> > --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> > +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-> > @@ -336,7 +336,7 @@ static int smu_v13_0_6_setup_driver_pptable(struct
-> > smu_context *smu)
-> >
-> >       /* Store one-time values in driver PPTable */
-> >       if (!pptable->Init) {
-> > -             while (retry--) {
-> > +             while (--retry) {
-> >                       ret =3D smu_v13_0_6_get_metrics_table(smu, NULL,
-> > true);
-> >                       if (ret)
-> >                               return ret;
-> > --
-> > 2.39.2
+> regards,
+> dan carpenter
 >
