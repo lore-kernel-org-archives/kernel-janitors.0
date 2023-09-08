@@ -2,144 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFF8EE57C6
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 05:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6FEEE57CB
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 06:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236219AbjIHFTI (ORCPT
+        id S236349AbjIHGFg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 01:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
+        Fri, 8 Sep 2023 02:05:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235850AbjIHFTH (ORCPT
+        with ESMTP id S231128AbjIHGFf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 01:19:07 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E2D19AB
-        for <kernel-janitors@vger.kernel.org>; Thu,  7 Sep 2023 22:19:01 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id eTtSq3ExTwJ7JeTtSquAk1; Fri, 08 Sep 2023 07:18:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694150339;
-        bh=1aKK5/OKSU14ilyxwV1rrS2kE29ll/URZdd4NMDeNTc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=q4q6Wh9m0Z8Hyd9KGJQn1ZO4FH++Lpx9m0OUr59vZqQ09pZgTASZweCl/EWRilv89
-         TeGiAtBOWhxs/cPalwIIDYqhItW+UBPH1jc46eCW5pDp0vhsmLhpY0USFPiFXbVrB5
-         wOQAfmhfXxkOpCRbSLogIrEYmelyAeyMRT8f+lv/HaWAqbM1OM4A0Mbh0PnOMcVypW
-         khEh+QB4PIKDwUYXUddtGezVBq+z2zJccttUhRV4PHd+oyvDnFL1IHiH/GzM/YWEsG
-         7JGof2Jpy+mcfswNUoltHNWW9Ju2/uXrJ0o7V3MckF78PzcZeE8U1L6MyOAaIZ7tY5
-         DuyqKGuSVJzSw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 08 Sep 2023 07:18:59 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <2b36ae3d-de9b-4125-a0e3-e1083a67cf4a@wanadoo.fr>
-Date:   Fri, 8 Sep 2023 07:18:58 +0200
+        Fri, 8 Sep 2023 02:05:35 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2136.outbound.protection.outlook.com [40.107.113.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE721BD3;
+        Thu,  7 Sep 2023 23:05:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CPXMyJ5nsFFw99JW2jEoMo17XdUBxO/gbd6meBYGFu/oTYhp4k4gQujlrY6KIKZ3SEW4VA913L+pEtXwQNkb7lhl8LKFQfS8ofmRKqHVjwBoQrYQT9u0On8Xd7Q7rv1CAhk4atJxIlyEkn/ST97JeFeY+eW9RNFxG02TB/srhzYet6AkhWDvFkWduKWw9vlCUC4TZ1EMQO73iJZGOl+DYPnjMIVdINTQMxn5H0PcUXjvTYn6Jj12urMYcys56PjXHqg23NC6btATqb2XosY+yN4EJb4vJiswXZINHquElulzbY6bi2JC3FMBq8tFKOWLk0pXgI1Go8x8n000tbhg3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lEuJ7rvqtc69wj/UVB1RGeLFl9gIIDbZvoXcPScZOOE=;
+ b=hWDe/PAJdTEO6edClUaIGqq8STBj5kkC3bSyzLXkmtMbhN+oitTDxGzQwo3NqcnH7hBthLhSRcvaAFNJGnMY5rnjepXd6rvQEyhaCLKl0gGfa0Hn4iGJdEZe1kLqbKuxUdRJk+nFSHre4yiwZKTB2Rx6RLQ5Xz8NL1Zs5G8JiooiU3Fzq7Om7QS2ZbIefKfutTgn1dkQiur5ymBisyHAMlQ1px6R/iWKb4Tu925m8vpRKzSkpmZk8yaD4HAT69/IHHnYel5KgkXTbPEs8JSskmd4awIXU+bjZZKNxzUqvjLnTJg+WPhcIVR7cSvj3KWszGE1HgVjLbPwNG8Fw/KTZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lEuJ7rvqtc69wj/UVB1RGeLFl9gIIDbZvoXcPScZOOE=;
+ b=V/GbZJMLQLTyMYXLixANceUuSL5F3dal3OSOmlOPZjPSpcqUkSTFk+2bPLOi6oDC9nRtKDD2Jvhj1kYpGszUTFdGXD3gapF10LqywlJ0KO4URBJWASxqmYvG0cgUgOt5I5EJx013hfB5veHAVEKcRXBmL6T1zuF3GC8apVaCxgI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com (2603:1096:604:194::10)
+ by TYWPR01MB10018.jpnprd01.prod.outlook.com (2603:1096:400:1e2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30; Fri, 8 Sep
+ 2023 06:05:27 +0000
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::8c08:d94c:8e54:9b5d]) by OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::8c08:d94c:8e54:9b5d%6]) with mapi id 15.20.6768.029; Fri, 8 Sep 2023
+ 06:05:27 +0000
+Message-ID: <874jk55heh.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] ASoC: rsnd: add missing of_node_put
+In-Reply-To: <20230907095521.14053-11-Julia.Lawall@inria.fr>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+        <20230907095521.14053-11-Julia.Lawall@inria.fr>
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 8 Sep 2023 06:05:26 +0000
+X-ClientProxiedBy: TYCP286CA0245.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::13) To OS3PR01MB8426.jpnprd01.prod.outlook.com
+ (2603:1096:604:194::10)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] ata: sata_mv: Fix incorrect string length computation in
- mv_dump_mem()
-To:     Damien Le Moal <dlemoal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-ide@vger.kernel.org
-References: <1a35e114a3dcc33053ca7cca41cb06b8426d8c40.1693857262.git.christophe.jaillet@wanadoo.fr>
- <b5dcc85d-f709-a3a3-e7ad-9c71f278842a@kernel.org>
- <9150d691-49b8-c102-a5de-d1fa207d61ed@wanadoo.fr>
- <3b7f0d1d-57ec-7870-fc6e-0449e3112461@kernel.org>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3b7f0d1d-57ec-7870-fc6e-0449e3112461@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3PR01MB8426:EE_|TYWPR01MB10018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 627a4dfd-8971-4d7f-6d56-08dbb0319925
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sEJFjzyizbfhjd1oLuAKSqJ4+cSj9oMUp1Xo2BoL+09q/m5yUpyMdyReUEgXnXR4X0v186jp0DJ8cX/bAhy4CC0TnmJoNT/zkEzbjzvUFSZMpUHVe1JK4EjlmqBGokL11Xv3yrFc/YRmhTRN9TR1fTKhyS016t++C4tY0xXMNwQdlSBnk6COabQlRTnqN/SorBL4DNS2FERGGFMXmzh10tlutKKEYufBdcVb22qAPr1tf0bD0L1UOkagvzV/E0iK8ARH/P9oZtiVfx2YEfjIWhzd6uNxkcaTBTJb1Cfd5hODMAQsB6VaIOspFmXveXfdLOiDcHpwfOSMOaKh5lRSuYK85Ps4H+R12Y4xkYG3ynObu8VPdgxELvc4egIaZ4S8pmoew8Ew/fOp1Uv611b72cLcxsS3QIK1uklt2tJBS7S+/vwQin7FYbtKmD+uotRkNhAtqrM64gtYa0dD5/g91bBNDE89nOn7Bx1tUdHRyYRkEuyqB2YiC/q4P2RPWX+mCpqg8HEvyxYkxKnIEs67QZj2K834JQVnbQV5iCt521itdgWOgZis/VJXLj71AG3GaOjlM9euRWP71X4MtqgOib79ZeEtIBSLCkGQPj6YfVY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8426.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(136003)(346002)(39860400002)(396003)(451199024)(186009)(1800799009)(5660300002)(4326008)(6486002)(66556008)(8676002)(8936002)(6506007)(66946007)(316002)(54906003)(4744005)(6916009)(66476007)(41300700001)(478600001)(2906002)(6512007)(52116002)(26005)(2616005)(83380400001)(38350700002)(38100700002)(86362001)(36756003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?flDsiyAZ5eK3oSOibzKTKR7hymAVFzzCw0HgoAe9dPekst8asFqNtxtbTUya?=
+ =?us-ascii?Q?suyvxyUrtq5qu/DQGmibXQkZmfmL4mayMDvOgjRKA6Mp3EUcgTuX5KtLQVxu?=
+ =?us-ascii?Q?mA6F8sG6VtZAwWUhgb2qsUk0xhLZGWzfIKO05ZtI/71APk+eRHJUl6X0IeIe?=
+ =?us-ascii?Q?JLhfoJgSoAWtXSX59yObph9luDjFJc/krl0ut0VUx9548taC3abUw7rK2T7y?=
+ =?us-ascii?Q?BMfX2qLnV07+pNc8mDw1O50jJmCJcubghWjdzt3W6AsMsNC8kc/e94hezbg+?=
+ =?us-ascii?Q?22q7SwPVA7JE9XXWwpPaV17IJ+g2NM04LlNasXcqfX3V8xgyc/pZRvs90N8K?=
+ =?us-ascii?Q?JPX8QMDdPxW2XJAOsG8PRPYnWDj1S53LodUQjU3TrAfTn1QnUBqR+VyQZCep?=
+ =?us-ascii?Q?wlDWHztQfkZ30wnRDxFw04xxXFz0b3hO/2f/gD3q4+AnsH6G6EGpVgMbK+Wq?=
+ =?us-ascii?Q?C9GWXOCSicBNNyhhRh90fKeRjOv/QPbAv2V2swX6CPf23L8miuqWZn7U91oX?=
+ =?us-ascii?Q?cW+UMWFPQHxDTlsBoBepOi2uydvnKoFq1MztbkPqs3eH1kptTGG3+CBphzte?=
+ =?us-ascii?Q?tnGQBZYKV5+5HZbbKisZ21AXrUzcsd1rTvyMwTkx4rKV2n0ezCgYNhYHl3LB?=
+ =?us-ascii?Q?fNy4RKD7JPqe8oGeQbNo7wgN17x6m7qRjfZsYWF8wcHUe9kVxUlyBc95WkPH?=
+ =?us-ascii?Q?7wCLyO1jxfM/tmy/OQw+29AyH9SWJVWMuA5OHnxfi0fUELE8h3QIM7qMotgo?=
+ =?us-ascii?Q?sCG8ZsJOMFXAU0BhRH8EDZLqLSieUPLeSCfGENxGwmk6jFo78RwP475+jLIO?=
+ =?us-ascii?Q?ZEhn+E9zOmalskCIr85E7M5wdjX/3+S4kqKiustMAb5Mt3k4rbXddjKHBXP1?=
+ =?us-ascii?Q?UsimbOA83aKER9oWqyzertn+h6wewCEzRhFvfAgp10wHyxDfhU7bPHB0bA66?=
+ =?us-ascii?Q?AVRQmJgOfd8Hu+vZPpWdVPc5tZc7tX9JNj1Ljv4WXNpcR4X6/fO8BAU9phtU?=
+ =?us-ascii?Q?krh44CgiM4VObU/qVeLP5ylg5xq5TrdT0TbrKrKNidbaQ3NAxXB1vKrb+dlB?=
+ =?us-ascii?Q?AVHv1RxeIEBqKuJoafqXHPZ85W051h0hFSB27IZyqYe03bqsorI4GoRm8HRK?=
+ =?us-ascii?Q?tcO9dirE9Ti1NId84/osvL8CoG750mHIx6ThKbK/Lnzux4AUl9Zi8mqVywkf?=
+ =?us-ascii?Q?uOKC9mTwX7uC1sIDxUOT/TkcJeNLa0ORhEdZ3rsjUPH78fFjTPE2z1Qk/A0L?=
+ =?us-ascii?Q?19qy7GrH2tpSJuLSMcGXZSudEQ1a9zpMIWKgBtEQ6+g86+1FZJuG3roZ+6F0?=
+ =?us-ascii?Q?GWTbbA1foWIqrpNTI0/ecfnjFyGWcJujkmQLC2hLvDNJBQ/caCoQZSIVAaJU?=
+ =?us-ascii?Q?9QFDvyd7U/I4zTOM0qdds54uKOJq29GrsZVge8POiUK/vQr04QaqDf/nDxxw?=
+ =?us-ascii?Q?26Ni3GB2nZnDh+PJQ/eDgGx3ibfXjuHQgwoyxLFl728oXeDMj+7XAUQUi6gI?=
+ =?us-ascii?Q?TNF6rImnw0HiDynWrWZq/jNc3gLZBcLzzWvCQRu+3TySwZGwpiyr2uly2A95?=
+ =?us-ascii?Q?VfFkQljAA8fLi3LKBxfhF7YncX4Lxr1ZB1X8XpueUD+GnWT+wTPJ0AxkpKmi?=
+ =?us-ascii?Q?WWAA0ovZFwNK9ZaeeewOpHY=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 627a4dfd-8971-4d7f-6d56-08dbb0319925
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8426.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2023 06:05:27.3734
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nxu1hUi1gYDiiKjjFDZ1ErU3gt8mRXBdPQFQSTz85VE8y5Wng/GOg4mfP4ecjekXY5NdZS8qjfi/OWrX7pDcoUAuAzj+YVUm0h5Stz5yrMbF89c31Gf2z6DgliTttlnE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10018
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 06/09/2023 à 03:11, Damien Le Moal a écrit :
-> On 9/6/23 00:28, Christophe JAILLET wrote:
->>
->>
->> Le 05/09/2023 à 07:04, Damien Le Moal a écrit :
->>> On 9/5/23 04:54, Christophe JAILLET wrote:
->>>> snprintf() returns the "number of characters which *would* be generated for
->>>> the given input", not the size *really* generated.
->>>>
->>>> In order to avoid too large values for 'o' (and potential negative values
->>>> for "sizeof(linebuf) o") use scnprintf() instead of snprintf().
->>>>
->>>> Note that given the "w < 4" in the for loop, the buffer can NOT
->>>> overflow, but using the *right* function is always better.
->>>>
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>
->>> Doesn't this need Fixes and CC stable tags ?
->>
->> I don't think so.
->> As said in the commit message :
->>      Note that given the "w < 4" in the for loop, the buffer can NOT
->>      overflow, but using the *right* function is always better.
->>
->> linebuf is 38 chars.
->> In each iteration, we write 9 bytes + NULL.
->> We write only 4 elements per line (because of w < 4), so 9 * 4 + 1 = 37
->> bytes are needed.
->> 9 is for %08x<space>
->>
->> It can't overflow.
->> Moreover, it is really unlikely that the size of linebuf or the number
->> of elements on each line change in a stable kernel.
->>
->> So, from my POV, this patch is more a clean-up than anything else.
->>
->> I would even agree that it is maybe not even needed. But should someone
->> cut'n'paste it one day, then using the correct function could maybe help
->> him.
+
+Hi Julia
+
+Thank you for the patch
+
+> for_each_child_of_node performs an of_node_get on each
+> iteration, so a break out of the loop requires an
+> of_node_put.
 > 
-> OK. Fine. But then maybe the patch title should be something like "Improve
-> string length computation in mv_dump_mem()" as the "Fix" word you used seems to
-> be somewhat misleading. With the patch title as is, the stable bot will likely
-> pick up that patch for stable. Fine with me, unless you see an issue with that.
-
-Hi,
-
-up to you to tweak it if desired.
-
-My POV is that it *fixes* the length calculation, but having it "wrong" 
-is harmless.
-Should it trigger a backport, it wouldn't be a real issue either. And we 
-can still ask to remove it from the backport list when notified.
-
-And as said, leaving things as-is looks also fine to me.
-
-I let you choose the best option.
-
-CJ
-
+> This was done using the Coccinelle semantic patch
+> iterators/for_each_child.cocci
 > 
->>
->> CJ
->>
->>>
->>>> ---
->>>>    drivers/ata/sata_mv.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
->>>> index d105db5c7d81..45e48d653c60 100644
->>>> --- a/drivers/ata/sata_mv.c
->>>> +++ b/drivers/ata/sata_mv.c
->>>> @@ -1255,8 +1255,8 @@ static void mv_dump_mem(struct device *dev, void __iomem *start, unsigned bytes)
->>>>    
->>>>    	for (b = 0; b < bytes; ) {
->>>>    		for (w = 0, o = 0; b < bytes && w < 4; w++) {
->>>> -			o += snprintf(linebuf + o, sizeof(linebuf) - o,
->>>> -				      "%08x ", readl(start + b));
->>>> +			o += scnprintf(linebuf + o, sizeof(linebuf) - o,
->>>> +				       "%08x ", readl(start + b));
->>>>    			b += sizeof(u32);
->>>>    		}
->>>>    		dev_dbg(dev, "%s: %p: %s\n",
->>>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
+> ---
+>  sound/soc/sh/rcar/core.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff -u -p a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+> --- a/sound/soc/sh/rcar/core.c
+> +++ b/sound/soc/sh/rcar/core.c
+> @@ -1303,6 +1303,7 @@ audio_graph:
+>  		if (i >= RSND_MAX_COMPONENT) {
+>  			dev_info(dev, "reach to max component\n");
+>  			of_node_put(node);
+> +			of_node_put(ports);
+>  			break;
+>  		}
+>  	}
 
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+I noticed that existing "of_node_put(node)" itself is not needed.
+We can remove it, and I will post the patch next week.
+
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
