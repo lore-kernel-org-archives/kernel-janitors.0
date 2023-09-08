@@ -2,98 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECBBEC875F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 01:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627DDEC8747
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 02:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240722AbjIHBX6 (ORCPT
+        id S239220AbjIHCTo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Sep 2023 21:23:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
+        Thu, 7 Sep 2023 22:19:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233106AbjIHBX5 (ORCPT
+        with ESMTP id S230380AbjIHCTm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Sep 2023 21:23:57 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1ADDF19A7;
-        Thu,  7 Sep 2023 18:23:52 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 0819C602A11D1;
-        Fri,  8 Sep 2023 09:23:22 +0800 (CST)
-Message-ID: <45027fa0-cda5-2a80-f1cd-ed805d2717ee@nfschina.com>
-Date:   Fri, 8 Sep 2023 09:23:22 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] driver base: slience unused warning
-Content-Language: en-US
+        Thu, 7 Sep 2023 22:19:42 -0400
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78EFD1BD5;
+        Thu,  7 Sep 2023 19:19:35 -0700 (PDT)
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+Received: from 192.168.10.47
+        by mg.richtek.com with MailGates ESMTPS Server V6.0(696440:0:AUTH_RELAY)
+        (envelope-from <chiaen_wu@richtek.com>)
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 08 Sep 2023 10:19:13 +0800 (CST)
+Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Fri, 8 Sep
+ 2023 10:19:13 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.25 via Frontend
+ Transport; Fri, 8 Sep 2023 10:19:13 +0800
+Date:   Fri, 8 Sep 2023 10:19:13 +0800
+From:   ChiaEn Wu <chiaen_wu@richtek.com>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <3b710f6d-05cf-49d5-b004-849ee2a3ca42@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+CC:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <error27@gmail.com>
+Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
+ mt6370_chg_toggle_cfo()
+Message-ID: <20230908021913.GB3115@linuxcarl2.richtek.com>
+References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+ <cd6eea67-df0f-08b1-61cd-57a3b4f9cf0d@collabora.com>
+ <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1092ffb3-0238-4dc0-baf3-344a653fca3f@kadam.mountain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Sep 07, 2023 at 02:08:17PM +0300, Dan Carpenter wrote:
 
-On 2023/9/7 18:49, Dan Carpenter wrote:
-> On Thu, Aug 31, 2023 at 03:36:55PM +0800, Su Hui wrote:
->> Avoid unused warning with gcc and W=1 option.
->>
->> drivers/base/module.c:36:6: error:
->> variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
->>
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   drivers/base/module.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/module.c b/drivers/base/module.c
->> index 46ad4d636731..10494336d601 100644
->> --- a/drivers/base/module.c
->> +++ b/drivers/base/module.c
->> @@ -33,7 +33,7 @@ static void module_create_drivers_dir(struct module_kobject *mk)
->>   void module_add_driver(struct module *mod, struct device_driver *drv)
->>   {
->>   	char *driver_name;
->> -	int no_warn;
->> +	int __maybe_unused no_warn;
-> Just delete the variable if it isn't used.
+[...]
 
-Hi,
+> > > diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+> > > index f27dae5043f5..a9641bd3d8cf 100644
+> > > --- a/drivers/power/supply/mt6370-charger.c
+> > > +++ b/drivers/power/supply/mt6370-charger.c
+> > > @@ -324,7 +324,7 @@ static int mt6370_chg_toggle_cfo(struct mt6370_priv *priv)
+> > >   	if (fl_strobe) {
+> > >   		dev_err(priv->dev, "Flash led is still in strobe mode\n");
+> > > -		return ret;
+> > > +		return -EINVAL;
+> > 
+> > I think that returning 0 here was intentional, but I agree on a return ret
+> > here being both confusing and wrong.
+> 
+> If it's a success path then probably we should remove the dev_err().
+> 
 
-The variable "no_warn" is used to avoid warning like this:
+Hi all,
+Sorry for the late reply!
 
-drivers/base/module.c: In function ‘module_add_driver’:
-drivers/base/module.c:62:2: error: ignoring return value of 
-‘sysfs_create_link’ declared with attribute ‘warn_unused_result’ 
-[-Werror=unused-result]
+I agree with the first half of Angelo's statement, I did make the
+mistake on this 'return ret'.
+What I was trying to say is that you should not to toggle cfo function
+when the FLED of MT6370 is still in "strobe mode".
 
-    62 |  sysfs_create_link(&drv->p->kobj, &mk->kobj, "module");
-       |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Therefore, I think the change of Harshit's patch is correct.
+It should be 'return -EINVAL' or 'return -EPERM' here.
 
-This variable is been used but never be read, so gcc and W=1 give such 
-warning.
+Thanks!
 
-drivers/base/module.c:36:6: error:
-variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
 
-I wanted to use "__maybe_unused" to avoid  this warning.
+Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
 
-However it seems like a wrong using of "__maybe_unused" as Greg KH said:
 
-"But no_warn is being used in this file, it's being set but not read
-which is ok.  That's a real use, so this change really isn't correct,
-sorry."
-
-Su Hui
-
->   
->
-> regards,
-> dan carpenter
->
+Best regards,
+ChiaEn Wu
