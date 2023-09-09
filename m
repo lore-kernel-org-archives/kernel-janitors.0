@@ -2,55 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7349EE8013
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Sep 2023 16:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DF4EE3EC2
+	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Sep 2023 16:25:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243665AbjIHQdq (ORCPT
+        id S235056AbjIIQZl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Sep 2023 12:33:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49112 "EHLO
+        Sat, 9 Sep 2023 12:25:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231976AbjIHQdp (ORCPT
+        with ESMTP id S232603AbjIIQHR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Sep 2023 12:33:45 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED30B1FD5
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Sep 2023 09:33:41 -0700 (PDT)
+        Sat, 9 Sep 2023 12:07:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4377D197
+        for <kernel-janitors@vger.kernel.org>; Sat,  9 Sep 2023 09:07:12 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id eeQKqI5GZmTYjeeQKqPfiw; Fri, 08 Sep 2023 18:33:40 +0200
+        id f0UBqPpdGlD5tf0UCqzuca; Sat, 09 Sep 2023 18:07:10 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694190820;
-        bh=sdUE6TT14eCOvBoLJKIUC2N7D/QN1SaUjLEtihNQU5w=;
+        s=t20230301; t=1694275630;
+        bh=M9hyEFFDEMxxrx1+9It4RWlADeh61fRaXNc2/8F9oGU=;
         h=From:To:Cc:Subject:Date;
-        b=HGltK7lFNNSlaViWY5Tw+9MdSB0TIuI2S4w5MayZ5ex+ylWxQQqhQVVxZm5ugaxgy
-         pMfJ3CzQ6IgikgF75wQaqaTr5/maVjAVP+hh/QDI25vYO33kpOAw6DrH1Uj3uM7766
-         de+6KA1xEduuUmHwxLbB231sJJFBVXFgOSJXYW64mMpj623DgpsQGeRBVGa/ToWE4P
-         LctZ4qg0h5GAOZeCo0b30nemcfEZVN1axXIgE2uhGctFhbfttk4r5D2ka3L85a4YOr
-         DN4gsmr5tiiIkl1J2/s4U5GQTL0p90mM2PXzc+jmQlecxD/7iI1ZQZk8fgX9InOpX4
-         /NRBoMrt5AGug==
+        b=H1kBQ1HrwcdInkRmHnzdOZ75JPnmDdIoR7TL3xoOw3MpJBojN563dgCQGXEeU8LBY
+         wms5cu3/os9G/8qftVre1W4aabxP2zWDYSzIPaB/tdpdXsqjCiIwrQrmjcC7inQJvM
+         lY6eRlkox4L0W16sBPGaEU1MIIQCcc9yWdKaWE2eX2Ya6jruwFMRra3bY086U9aUbj
+         9+uy1KkwwsN9FuOqUZnVKZpW7ANPEF2PghMKlep6KCoyaY7DZs6NFA2ncmZSCfqQxK
+         M77Me8ky4BIEH7LprZRLZe355DeE1xZewEOpnL/keOpXXwlOLGu/86uJrOVBJHYJKd
+         39Yz0EaiaRTQw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 08 Sep 2023 18:33:40 +0200
+X-ME-Date: Sat, 09 Sep 2023 18:07:10 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Martin KaFai Lau <martin.lau@linux.dev>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        David Vernet <void@manifault.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Dave Kleikamp <shaggy@austin.ibm.com>,
+        Andrew Morton <akpm@osdl.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        bpf@vger.kernel.org
-Subject: [PATCH] bpf: Fix a erroneous check after snprintf()
-Date:   Fri,  8 Sep 2023 18:33:35 +0200
-Message-Id: <393bdebc87b22563c08ace094defa7160eb7a6c0.1694190795.git.christophe.jaillet@wanadoo.fr>
+        linux-ext4@vger.kernel.org
+Subject: [PATCH] ext4: Fix a test in ext4_decode_error()
+Date:   Sat,  9 Sep 2023 18:07:02 +0200
+Message-Id: <2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,30 +51,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-snprintf() does not return negative error code on error, it returns the
-number of characters which *would* be generated for the given input.
+The doc of snprintf() states that "If the return is greater than or equal
+to @size, the resulting string is truncated".
 
-Fix the error handling check.
+So in order to "Check for truncated error codes...", we must check that the
+returned value is < 16.
 
-Fixes: 57539b1c0ac2 ("bpf: Enable annotating trusted nested pointers")
+Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- kernel/bpf/btf.c | 2 +-
+ fs/ext4/super.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 1095bbe29859..8090d7fb11ef 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8501,7 +8501,7 @@ bool btf_nested_type_is_trusted(struct bpf_verifier_log *log,
- 	tname = btf_name_by_offset(btf, walk_type->name_off);
- 
- 	ret = snprintf(safe_tname, sizeof(safe_tname), "%s%s", tname, suffix);
--	if (ret < 0)
-+	if (ret >= sizeof(safe_tname))
- 		return false;
- 
- 	safe_id = btf_find_by_name_kind(btf, safe_tname, BTF_INFO_KIND(walk_type->info));
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 38217422f938..f58fc7cc6f81 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -941,7 +941,7 @@ const char *ext4_decode_error(struct super_block *sb, int errno,
+ 		 * NULL. */
+ 		if (nbuf) {
+ 			/* Check for truncated error codes... */
+-			if (snprintf(nbuf, 16, "error %d", -errno) >= 0)
++			if (snprintf(nbuf, 16, "error %d", -errno) < 16)
+ 				errstr = nbuf;
+ 		}
+ 		break;
 -- 
 2.34.1
 
