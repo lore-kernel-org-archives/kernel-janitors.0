@@ -2,80 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DF4EE3EC2
-	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Sep 2023 16:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2874EE14D8
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Sep 2023 13:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235056AbjIIQZl (ORCPT
+        id S1346677AbjIJNtr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 9 Sep 2023 12:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37012 "EHLO
+        Sun, 10 Sep 2023 09:49:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232603AbjIIQHR (ORCPT
+        with ESMTP id S233001AbjIJNtr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 9 Sep 2023 12:07:17 -0400
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4377D197
-        for <kernel-janitors@vger.kernel.org>; Sat,  9 Sep 2023 09:07:12 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id f0UBqPpdGlD5tf0UCqzuca; Sat, 09 Sep 2023 18:07:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694275630;
-        bh=M9hyEFFDEMxxrx1+9It4RWlADeh61fRaXNc2/8F9oGU=;
-        h=From:To:Cc:Subject:Date;
-        b=H1kBQ1HrwcdInkRmHnzdOZ75JPnmDdIoR7TL3xoOw3MpJBojN563dgCQGXEeU8LBY
-         wms5cu3/os9G/8qftVre1W4aabxP2zWDYSzIPaB/tdpdXsqjCiIwrQrmjcC7inQJvM
-         lY6eRlkox4L0W16sBPGaEU1MIIQCcc9yWdKaWE2eX2Ya6jruwFMRra3bY086U9aUbj
-         9+uy1KkwwsN9FuOqUZnVKZpW7ANPEF2PghMKlep6KCoyaY7DZs6NFA2ncmZSCfqQxK
-         M77Me8ky4BIEH7LprZRLZe355DeE1xZewEOpnL/keOpXXwlOLGu/86uJrOVBJHYJKd
-         39Yz0EaiaRTQw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 09 Sep 2023 18:07:10 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Dave Kleikamp <shaggy@austin.ibm.com>,
-        Andrew Morton <akpm@osdl.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-ext4@vger.kernel.org
-Subject: [PATCH] ext4: Fix a test in ext4_decode_error()
-Date:   Sat,  9 Sep 2023 18:07:02 +0200
-Message-Id: <2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 10 Sep 2023 09:49:47 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED37CCA;
+        Sun, 10 Sep 2023 06:49:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D0FC433C8;
+        Sun, 10 Sep 2023 13:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694353782;
+        bh=IAqYcnKPzNeIDqtgIjazLW2Yv7D0oebDNR4aro3tFR8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CwVw6uy4xBOyPC7qVHVIFToy35ARWHf379d+0HzdxNvsXYwH1v+eY1MvBRhL7oYdo
+         hW/oawjpRjhEPSSVEzxX3YisDq+Jj0P4bGzpnMNZZgm0ajODZLwEg5136pVjUfTgem
+         5SWaweMjWsFxjta5iIwUvjQNib4Upzjz2Q7cj492mahxKd6VRfeqCvwDfDNCHYFYK7
+         WsFGKucXwBEWljBB60m3P88mjdVLA1oV4HByBNPrTYUDayOwZ453Fo27VRUb921im3
+         PZ/7ZTSMCnEIPmOHNggCCcjLLA7caGXZ+sefborg1PEnkXMa6ttMbzrDbZbnq9xZut
+         eRCzJ3cu2fWtw==
+Date:   Sun, 10 Sep 2023 15:49:37 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Justin Chen <justin.chen@broadcom.com>,
+        kernel-janitors@vger.kernel.org,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/11] net: bcmasp: add missing of_node_put
+Message-ID: <20230910134937.GB775887@kernel.org>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+ <20230907095521.14053-3-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230907095521.14053-3-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The doc of snprintf() states that "If the return is greater than or equal
-to @size, the resulting string is truncated".
+On Thu, Sep 07, 2023 at 11:55:12AM +0200, Julia Lawall wrote:
+> for_each_available_child_of_node performs an of_node_get
+> on each iteration, so a break out of the loop requires an
+> of_node_put.
+> 
+> This was done using the Coccinelle semantic patch
+> iterators/for_each_child.cocci
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-So in order to "Check for truncated error codes...", we must check that the
-returned value is < 16.
-
-Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- fs/ext4/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 38217422f938..f58fc7cc6f81 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -941,7 +941,7 @@ const char *ext4_decode_error(struct super_block *sb, int errno,
- 		 * NULL. */
- 		if (nbuf) {
- 			/* Check for truncated error codes... */
--			if (snprintf(nbuf, 16, "error %d", -errno) >= 0)
-+			if (snprintf(nbuf, 16, "error %d", -errno) < 16)
- 				errstr = nbuf;
- 		}
- 		break;
--- 
-2.34.1
+Reviewed-by: Simon Horman <horms@kernel.org>
 
