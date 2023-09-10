@@ -2,91 +2,138 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9584EEB57D
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Sep 2023 18:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC03FC71153
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Sep 2023 22:43:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235624AbjIJSA2 (ORCPT
+        id S229834AbjIJWng (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Sep 2023 14:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58958 "EHLO
+        Sun, 10 Sep 2023 18:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235350AbjIJSA0 (ORCPT
+        with ESMTP id S229475AbjIJWnf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Sep 2023 14:00:26 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FA24188;
-        Sun, 10 Sep 2023 11:00:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D277FC433C8;
-        Sun, 10 Sep 2023 18:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694368821;
-        bh=7pMVydPneVg3URKXwfaH+adzpHN2LLjVZsTSGuRN/Dc=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=WNCcNX0j78tRLBxMWD5xHUNdVWsV4X1c4GJprcT9133xluNlViXTJ+y1MbbMmvw4S
-         9l6p0mwmq1ciXkoHmtsYyK8lFvb1p3EVodnEbrR25eIRn+6jRHWBjTxm2wzjyRS6Mh
-         /jvEouU2JwW8Gm/EnKA/L+ncaZS7ANxE1SqxSdP9VAlRZQQbAQGSZNr44Pfjzomk2O
-         YmugA3EJ+2/4ZTwGg7O1MhyTBgt+SEpxLAiqRaqU5NrZ9WSluxkkNsOvrlaLWdV7jR
-         voEyBX1vKb3bWRjPhlJDd4v26hqNBBRPVghPsTewXgHu/u+K2aUEWjjrhAgY/J0FrG
-         nZp7NWsEXqO2w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8F74F1D6A8;
-        Sun, 10 Sep 2023 18:00:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/11] add missing of_node_put
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169436882175.20878.16500068409286410519.git-patchwork-notify@kernel.org>
-Date:   Sun, 10 Sep 2023 18:00:21 +0000
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+        Sun, 10 Sep 2023 18:43:35 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2092.outbound.protection.outlook.com [40.107.114.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E4D184;
+        Sun, 10 Sep 2023 15:43:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Iy8BnXwDpmPJb522pNm+YUMdydFjQFLmaq7oqasf78Yh2KyCrl5lxLlfoVgXFhPd62sK+NCwWob/MOHPI+SpRgLflgajkwssVi7c5h4VQUTFSZrM98UynIKXpgm/LiLrOFvTv3ZbeQ0n6ZDvRknwDKn+LwscQyjC1zX/JcF/KZtzD1VplW+upINOI2r+w2fEdMdvISyY0pKYG3sc5OlG9K4oWESSDjDAstxY2pS6Z3+wo+TqgKwavfTPFHRdqIq+gwhQCDC+2wREyC/9y41ZOGewWjOrye5ZdiuaoEPnCcyHP62j68ED4+jvm5cwf3W6iEgp8GPlu9ZfHV4TxhTT2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ykEMargkYJzYOKRzgZdLsCKArQF6ax1S58N/Rpnirhg=;
+ b=dGdt+7LyxcXTWL9JYGSyBOBJTWJPl35AuKeMxqX7GWfX+VbynV4tzyiAhX27sglcVJm0IgUbGl5EqyB1jSpPqXiEceSY+jkk3vcd6fgxmF4XdBJjVgtEun2mp9RgZoDlk7qEuVDz5IeLRalMuCEyBr26lRn0lw+d/ZUwJCkyhM9AgEVpdFva+CHbQqB2d0ed3K4V93Dj6owvVge0TugYfWN7PpN8a38OFGnSY04+h2UEENmn02F6pwULREwT8YtzdSAbhM9aUz/bIFObh6ErSNrA7xctZXblbcVaJAIx/r8jG03X5NVE156UFr6Rz6hOPeRMMk/xKPX8vnp9NEsykQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ykEMargkYJzYOKRzgZdLsCKArQF6ax1S58N/Rpnirhg=;
+ b=c1txAIQsZ/Hhozv3nW+oIRDqxBWfrwLRNDLJwI9QP2gYUAE/tmxHpyWjXyHiU0GKGsLoqUq2dzk2ZVR9IbUHbjE/+y7kDQ3B2ldiGA0gv/8xNrpRZ4MXJAY03coovpX/QBOP5wC03ApCqaUhn9cVNA+sxC/oTSo/AIq4MbpWAQI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com (2603:1096:604:194::10)
+ by TYWPR01MB8478.jpnprd01.prod.outlook.com (2603:1096:400:175::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.34; Sun, 10 Sep
+ 2023 22:43:23 +0000
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::8c08:d94c:8e54:9b5d]) by OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::8c08:d94c:8e54:9b5d%6]) with mapi id 15.20.6768.029; Sun, 10 Sep 2023
+ 22:43:22 +0000
+Message-ID: <877coxd4zg.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        rui.zhang@intel.com, amitk@kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, linuxppc-dev@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        angelogioacchino.delregno@collabora.com,
-        linux-media@vger.kernel.org
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] ASoC: rsnd: add missing of_node_put
+In-Reply-To: <6348f825-645b-14ed-31e-7ef7f607a29@inria.fr>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+        <20230907095521.14053-11-Julia.Lawall@inria.fr>
+        <874jk55heh.wl-kuninori.morimoto.gx@renesas.com>
+        <6348f825-645b-14ed-31e-7ef7f607a29@inria.fr>
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date:   Sun, 10 Sep 2023 22:43:22 +0000
+X-ClientProxiedBy: TYCP286CA0285.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c9::20) To OS3PR01MB8426.jpnprd01.prod.outlook.com
+ (2603:1096:604:194::10)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3PR01MB8426:EE_|TYWPR01MB8478:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7479a84-89e5-47fe-316a-08dbb24f563c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: brF9vSUXSSqTmgs2NWULurP9VQ3nea63KK/eE9/Ja8pQv2Zx6vr7x6MKtT7xD+Y/a6ZBmnIhGOJNsRx2YQR4301TZDcZn2Z6j4GGkbZxwrUWSmD3s2RGUeetpdMWxn1gD/aTqAATgpkL1PvAuWvopzuM5WU6vUA/kpxM7+ycCHlBqxqoH9PDYO4jNySAPoPo9o3qH/fUsl4ZXH/yj8nJSVBtGcnIm8seZAP5Y7f45JzuuzW2YLU+nStNqxVSNADQDlLyXs+//l83YC4sjEV93mtob8EOzhrfewdxQ+dWswG4S1wqtAQfnG+Dz3uMh4D4Q/0LYPN3kEZJ+L8uD6nNW6HaUw5WWeHidcL5eh1tObCpYMUNMyM+yJiHzAKuUwJ/N8pXqJ7kYtKpBB81V03jez9fL0WzDGDKpkc0kOCfPKxyoPXU0GeM07W5nFfZQX2fu9Are778VvaJgo/wyzqTWXYfD0Yq9DyuDhESgKFesk41Yv7ELq5DWkFQiUhoaUpMQSPXr3G5BWEaSEVAKczfr355CrWuENhib42hvag+LEUIzF909xPzzL2xibXqRBEy43IkTIHzJerxNOaIw38v/yLECtA+n9b40OkzV5frZH5gJvzU99K4luEwAHrmOB1f
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8426.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(396003)(39860400002)(346002)(376002)(186009)(1800799009)(451199024)(41300700001)(6916009)(316002)(26005)(478600001)(2906002)(8676002)(66556008)(66946007)(66476007)(8936002)(4326008)(4744005)(54906003)(5660300002)(52116002)(6486002)(6506007)(6512007)(36756003)(2616005)(83380400001)(38350700002)(38100700002)(86362001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MPdVg+zJdPeBfxAYksrFqfXBmE3Jbkj4XNJu1bugby5TNyCBcErTeyaL6GAo?=
+ =?us-ascii?Q?L9EQsKtTRt206QoRlF/nfkxN7TkUosQB0WwvdondCfJMfAgs7qlzqrgYIzAw?=
+ =?us-ascii?Q?7bPS7RIDDZsKtjm5Ng4B8xKW/6tKglpMiJekir8bVwc9POkHGVM3bGVhoLNU?=
+ =?us-ascii?Q?0t/xEGoAGFmnjCNqLt7JV0ze7uLKe9KRool2M8zCFbNSRiqK54XawXaBqDWY?=
+ =?us-ascii?Q?NptdLMVTCXEqfPluiVBM53hyLP2e54GUmGppQsV2Q5AWw9T2drk1qMdaMPgB?=
+ =?us-ascii?Q?CDy75z/tcF2GsTUKJd3W777PUbJQ6VfXkyxdbNBi5WY2pPeG+yrZHKI9MCay?=
+ =?us-ascii?Q?eLFEPRYKwBLzcnSz6NocjgrbS/tIpiUkskVzThOdGXLn6vM0UHOiK8rQxrHa?=
+ =?us-ascii?Q?nis9GsiDbf4RvIOmcQ9LcLbsliWjRacOS2gcKYo+U5C9jFsFipcYRHruGDWJ?=
+ =?us-ascii?Q?6epK+txRmHsDOFdi+5E8RMSpxdA7nrzJSvKVihdhPyI88wBgc0puxKl1iELZ?=
+ =?us-ascii?Q?jI1QdUitKKoamK5bGxDeZpgaiSPnrUhvLWTDgHk86wB4ezrb61hMfJfIaZ1X?=
+ =?us-ascii?Q?JpKGSRIKXIokasnYdciMVPqJj+vVNkcVdhu5P04Ch4KAOdm8lUK+vWh7p364?=
+ =?us-ascii?Q?Zu+kBp6eE5dl7byhgwyi3dJ2jPNOxNSYJzE+hVcBVKhoaMuivM6ODWmNH6SJ?=
+ =?us-ascii?Q?Jo5qUj5AdEJxUuVlLedLuEHhl+Zx6vFbPCusshNoFL189KyjV8gyo5lP/R8t?=
+ =?us-ascii?Q?I0U6l4n1EmG3XtKoeG2Z4VZtqWKegReEuAxr80zPiuZ2XrHOH4IytmRUJ5ve?=
+ =?us-ascii?Q?7fI4b4RN/tM3KzgHuWEhpSwcTKXmhAnLSlZcZ5EhuIFAQ500MOhBOt9ks8cP?=
+ =?us-ascii?Q?QNdpep2qUhevlfFGuA0NiwPdg5iN4ujCU/ojCEwPQNO/OAQaiqfzbANWtKN+?=
+ =?us-ascii?Q?a/J/CrjLOTJqy0SQAniX6251bmQzzxI1LzztQVHmda1ZHpQUnkmSzyPlQTZC?=
+ =?us-ascii?Q?8ILcwIhXOlpI+aoeIw3iKINJb1t6TgUnYKvnp/WqPP4TOzf7aU4mAaozJyLi?=
+ =?us-ascii?Q?nfPKQljpmU9LmAUawh6HIdfKrSc+Ni/OS3KNeSI0d+DQYT7DZOkm2jgSRVHC?=
+ =?us-ascii?Q?Uwh/LYCUKj7gurEdqOln7VsXpkjeFKyDdfkfT+0qj7pEabMloUyzbJiTrlml?=
+ =?us-ascii?Q?8DrvHiUIiUyMyBsm5tdrAjHien9AKjxoep/5VINakTSaiMHPvOZKra6Z9CVC?=
+ =?us-ascii?Q?xUYxzx4Sw/5GZyEZNISDh1aj52UmqvBWU7K6VzK0a8n0ZdnI7ZrUSdS2sGVt?=
+ =?us-ascii?Q?bUabIbfCYh5wx0Mzw4HFziahxwfeEhzlB+cs1H9+3ig0x4XDgqwh2Mo8vqpq?=
+ =?us-ascii?Q?RZOg0sQJ/O7HqWFsKMIW5+ik/PvwnVgcd5EGC+VjqDLGuMHfHy7FNTD1NFZU?=
+ =?us-ascii?Q?x5fDIGz40T91uvDTX7c5AOavM7lb9Rz86gc6H5lkP5yr7LJDNqJPwkSeukWK?=
+ =?us-ascii?Q?5JvWBSBL5/8YOSaGfgY3PCJn+icJFXJuustJvGRmWwBuqwGBBdtz0y3j9Aha?=
+ =?us-ascii?Q?zQANfs02l8wgXldhzSTs5NRnba46jDQm5NfwRFc2Vxx0x0URprmlBOooUj8J?=
+ =?us-ascii?Q?BepieuLAPVw6xKFMWGQWt0Y=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7479a84-89e5-47fe-316a-08dbb24f563c
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8426.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2023 22:43:22.3946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MgqVLoFdesV5uWWnjmOG7JVJZIsvrIdf5s7yAMn3AkDZaIqsbYm879Xn57KqKxb/WuFBI0dgeArCYVpwhvCmhfW7W0UrJ/22uDj3m/4qUH3eCtSCw6hMWEAZyyUtz1ki
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8478
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Hi Julia, Mark
 
-On Thu,  7 Sep 2023 11:55:10 +0200 you wrote:
-> Add of_node_put on a break out of an of_node loop.
+Thank you for your feedback
+
+> > I noticed that existing "of_node_put(node)" itself is not needed.
+> > We can remove it, and I will post the patch next week.
 > 
-> ---
-> 
->  arch/powerpc/kexec/file_load_64.c                    |    8 ++++++--
->  arch/powerpc/platforms/powermac/low_i2c.c            |    4 +++-
->  arch/powerpc/platforms/powermac/smp.c                |    4 +++-
->  drivers/bus/arm-cci.c                                |    4 +++-
->  drivers/genpd/ti/ti_sci_pm_domains.c                 |    8 ++++++--
->  drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c      |    4 +++-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c               |    4 +++-
->  drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c |    1 +
->  drivers/mmc/host/atmel-mci.c                         |    8 ++++++--
->  drivers/net/ethernet/broadcom/asp2/bcmasp.c          |    1 +
->  drivers/soc/dove/pmu.c                               |    5 ++++-
->  drivers/thermal/thermal_of.c                         |    8 ++++++--
->  sound/soc/sh/rcar/core.c                             |    1 +
->  13 files changed, 46 insertions(+), 14 deletions(-)
+> Oops, indeed the better way to make the change would have been to convert
+> node to ports.  It's just a copy paste error with respect to the code
+> above the audio_graph label.  Do you want me to send this change instead?
 
-Here is the summary with links:
-  - [02/11] net: bcmasp: add missing of_node_put
-    https://git.kernel.org/netdev/net/c/e73d1ab6cd7e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+No problem
+"add missing no_node_put()" and "remove unneeded no_node_put()" are
+mutual independent, it can be separate patch, I think.
 
 
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
