@@ -2,131 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2315FEE801F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 07:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92F0CA0EC8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234123AbjIKH1i (ORCPT
+        id S239164AbjIKWpi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Sep 2023 03:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39466 "EHLO
+        Mon, 11 Sep 2023 18:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbjIKH1h (ORCPT
+        with ESMTP id S244277AbjIKTvN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Sep 2023 03:27:37 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DBC2CD1
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 00:27:31 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-401f68602a8so44712755e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 00:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694417250; x=1695022050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyNRJsgDnT0Q1wv9e4Yhzfbl/njbmsE4L07P0lJyW3k=;
-        b=u1Gyjua/NAJ+ui+tSAZUYCfRHILudJ+sRaJ8BAx64xKYROiUN3LSW6vEdOw2oLtIdP
-         2nnyrCb9YY9rwlapAnzdmMXeuqLdEIfL3oPSY3rXI942tq8FO4konwYTXeKbBwEkx6Vb
-         i2u7LKif9sY7Hv3BozT7TPQkJYDNaawZK13cGPlM6oBfTuMnvFKstiw2sDnvXGkfhabc
-         gB0njW9ogvpahtusGe2w2daZ60/YbTZkoQu40JYypdF47ZyKxSamlTuDiAQoRXc9nJU2
-         pdU5wtEysRg56a1sY+saKaZVKgATmPYTdjkUDn8XVAn7xYxStIYwFSQNiFprTYlIfwC/
-         PG1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694417250; x=1695022050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XyNRJsgDnT0Q1wv9e4Yhzfbl/njbmsE4L07P0lJyW3k=;
-        b=EUt8zi5d3d5Ja4Z783EgW6g8l0ABw5o1EPlNBgGB0DFkg4HizqFujMkYOM8N6DfUpK
-         sTtz4SOvdUfe6YGr+vThA/H5b8lwOzm7m/FxGcBCW3i4VIMS6tIzWbTeHFuHb/++VjDB
-         feyoLhlyn3QT962kRUJ3HrBxqKjy3jJmv76NpUE7KnYA++nThLc2siCoqY9Mohvh/iwT
-         WFL+BK0Ij4BJ4CTArXduSJ9tjHDZw+SLcdifOgc7wMDJOmTBQNsczfHLHUbqVPaxDG1g
-         1oq4z/sWNZhK2uAY1ORnFGw4bUphn7BQ3qt2cs8vlc1qA1WIklPm2sZrlyfqWNL4oY5o
-         EOGg==
-X-Gm-Message-State: AOJu0YxyE17DKlL0EDKQBXLcm3cjOHWqvLn3rg7WmBBNVvhpa+O3QyhB
-        qK1UR9FwAuKL/ixU0UwKelny7Q==
-X-Google-Smtp-Source: AGHT+IGdBfloYgMq0Mc9JPKNVTFK1Kj770gyf2LEnnuCfIgLbNILenUucwmxL1Rn2ZvcDwzJG4mIDQ==
-X-Received: by 2002:adf:f589:0:b0:319:7b66:7803 with SMTP id f9-20020adff589000000b003197b667803mr6607879wro.55.1694417250043;
-        Mon, 11 Sep 2023 00:27:30 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 14-20020a056000154e00b0031f8be5b41bsm6289336wry.5.2023.09.11.00.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 00:27:29 -0700 (PDT)
-Date:   Mon, 11 Sep 2023 10:27:25 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     liulongfang <liulongfang@huawei.com>
-Cc:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mon, 11 Sep 2023 15:51:13 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806F31A2
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 12:51:05 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id fmvuqjtZmmTYjfmvuqYQl7; Mon, 11 Sep 2023 21:50:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694461858;
+        bh=ZamjEVZ18uTTJvONVpJjngq/DbdaPZNJa1qgQbQpoRw=;
+        h=From:To:Cc:Subject:Date;
+        b=K9obfdGdVxHS2CYE7BBNg4g3et6obL90MC7iMj/0IaUB/W1GHPqeBy0547TCtk0Iw
+         g5LmkU8HegOrtKi97dK0zjIG9bSiHQWs8hIPYY6463Wr7wTTzGdtM5CGN5pTErkKCi
+         sSU1I8z/XVqwSJQvVZ32XUEWF+EG/3+5YkKkT/F3/s2KUYc0qpSr6DDwwnqZOe7Au0
+         baUiJYEtIre5X/neoTE++KjllhD7DVruxTVCUYmzdRurnS0pdY3MC1BYmQ8IJfmS5W
+         HZ7dDI5LChMHgZnfld0y35Y6zsXM0JA1ZhUrEtpEH2MEneNJN/hP6F14EHSm32bFYw
+         QwF6I7ZXfBUQQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 11 Sep 2023 21:50:58 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Cai Huoqing <cai.huoqing@linux.dev>,
         "David S. Miller" <davem@davemloft.net>,
-        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
- snprintf()
-Message-ID: <6b9ada4d-0bfc-43c6-9793-be6762c1bbba@kadam.mountain>
-References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
- <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
- <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
- <71bf9b84-462f-405e-91aa-fb21fc6ffbd5@moroto.mountain>
- <258d6883-f572-9ac7-f6c6-73c34b9d5b63@huawei.com>
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] net: hinic: Use devm_kasprintf()
+Date:   Mon, 11 Sep 2023 21:50:52 +0200
+Message-Id: <198375f3b77b4a6bae4fdaefff7630414c0c89fe.1694461804.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <258d6883-f572-9ac7-f6c6-73c34b9d5b63@huawei.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 09:58:56AM +0800, liulongfang wrote:
-> On 2023/9/7 19:15, Dan Carpenter wrote:
-> > On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
-> >>>
-> >>> The other snprintf in the same file also looks suspect.
-> >>
-> >> It looks correct to me.
-> >>
-> >> And HPRE_DBGFS_VAL_MAX_LEN being 20, it doesn't really matter. The string
-> >> can't be truncated with just a "%u\n".
-> >>
-> > 
-> > drivers/crypto/hisilicon/hpre/hpre_main.c
-> >    884          ret = snprintf(tbuf, HPRE_DBGFS_VAL_MAX_LEN, "%u\n", val);
-> >    885          return simple_read_from_buffer(buf, count, pos, tbuf, ret);
-> > 
-> > You can't pass the return value from snprintf() to simple_read_from_buffer().
-> > Otherwise the snprintf() checking turned a sprintf() write overflow into
-> > a read overflow, which is less bad but not ideal.  It needs to be
-> > scnprintf().
-> >
-> 
-> Here only one "%u" data is written to buf, the return value ret cannot exceed 10,
-> and the length of tbuf is 20.
-> How did the overflow you mentioned occur?
+Use devm_kasprintf() instead of hand writing it.
+This is less verbose and less error prone.
 
-Why are we using snprintf() if the overflow can't occur?  We could just
-use sprintf().
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_tx.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-The reason why we prefer to use snprintf() is because we are trying
-extra hard to avoid buffer overflows.  Belt and suspenders.  The
-overflow can't happen because we measured but even if we messed up we
-are still safe.
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+index ad47ac51a139..9b60966736db 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+@@ -861,7 +861,7 @@ int hinic_init_txq(struct hinic_txq *txq, struct hinic_sq *sq,
+ 	struct hinic_qp *qp = container_of(sq, struct hinic_qp, sq);
+ 	struct hinic_dev *nic_dev = netdev_priv(netdev);
+ 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
+-	int err, irqname_len;
++	int err;
+ 
+ 	txq->netdev = netdev;
+ 	txq->sq = sq;
+@@ -882,15 +882,13 @@ int hinic_init_txq(struct hinic_txq *txq, struct hinic_sq *sq,
+ 		goto err_alloc_free_sges;
+ 	}
+ 
+-	irqname_len = snprintf(NULL, 0, "%s_txq%d", netdev->name, qp->q_id) + 1;
+-	txq->irq_name = devm_kzalloc(&netdev->dev, irqname_len, GFP_KERNEL);
++	txq->irq_name = devm_kasprintf(&netdev->dev, GFP_KERNEL, "%s_txq%d",
++				       netdev->name, qp->q_id);
+ 	if (!txq->irq_name) {
+ 		err = -ENOMEM;
+ 		goto err_alloc_irqname;
+ 	}
+ 
+-	sprintf(txq->irq_name, "%s_txq%d", netdev->name, qp->q_id);
+-
+ 	err = hinic_hwdev_hw_ci_addr_set(hwdev, sq, CI_UPDATE_NO_PENDING,
+ 					 CI_UPDATE_NO_COALESC);
+ 	if (err)
+-- 
+2.34.1
 
-We should apply that same logic to the next line.  Even if an overflow
-occurs, then we still want to be safe.  And the way to do that is to
-change snprintf() to scnprintf().
-
-It is always incorrect to assume that snprintf() cannot overflow.  It is
-a mismatch.  snprintf() is for careful people, and if we are going to be
-careful then we have to be careful everywhere within the function
-boundary.  Outside of the function boundary then we can have different
-assumptions, but within the function boundary then we have to logically
-consistent.
-
-It's the same logic as checking for NULL consistently.
-
-	foo->bar = frob();
-	if (!foo)
-		return -EINVAL;
-
-This code is wrong.  Even if foo can never be NULL and the code can
-never crash, it is a logic inconsistency so it is wrong.
-
-regards,
-dan carpenter
