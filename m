@@ -2,78 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744A4CA0EC7
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FAACA0EC6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239512AbjIKWpr (ORCPT
+        id S239980AbjIKWpu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:45:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        Mon, 11 Sep 2023 18:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244379AbjIKUPy (ORCPT
+        with ESMTP id S241425AbjIKPI0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Sep 2023 16:15:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309D3185;
-        Mon, 11 Sep 2023 13:15:49 -0700 (PDT)
-Received: from mercury (unknown [185.209.196.239])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BE10566072FB;
-        Mon, 11 Sep 2023 21:15:46 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1694463346;
-        bh=QvYpu+E4ir6H9xoX6RAFUKeRn6noR1kwabk8MMjaLtc=;
+        Mon, 11 Sep 2023 11:08:26 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C42FA;
+        Mon, 11 Sep 2023 08:08:21 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA0AC433C9;
+        Mon, 11 Sep 2023 15:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694444901;
+        bh=QQhUsR8kda3/hj6CcImnvWnHoUxICmdWDtUfw+d0L2k=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=EwwodJ5FTz+p6UYEh057UhpgWQwoWjtl5y2YvIZyQfaFIQmcG9+9uHf4t24SRuZO5
-         hPc8ON09f5gyM9RnP+FYqD2s7LzWITpD6LcDRmDiFIWgO/tiRTer0qEwzOLnID+mTB
-         RggGg4AB1PtBH9DsyR7hoGq/V9xbCe/4vaxajZBIOyrnJ8/uF7VHXFi6VwhJUyt+yR
-         L20eEOSWK66I+nAt4VFh0EXu0jyoaLa6UY6h3xmWXpO8FJ/MZRImeWJc91lYcQrUM1
-         +uZKPCBlyKid6yI+hqybuXfgVpLXnKOnuCKSzp4A3ywhcJwi958kGX8uLI4+uZbCD2
-         Z1dxlDPJnZfvA==
-Received: by mercury (Postfix, from userid 1000)
-        id 73FFB1060929; Mon, 11 Sep 2023 22:15:44 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        b=oMnmqdvCbB/b9eUNHcCKrZgBIXAfEa4l3Ut8F+Krr/A+TO4Qp5xFRdmhtzOYMkOQW
+         98qwiW7ihtvdhmXn9/JMY3cAkCWfkf2RS329FQiqevC0xj5zMYEDcJaG1IoD/tdcm4
+         kpZWOr1Vyd7e3Vmm3u4QL91seR/p4ZlqPgFodnlHBoxj1eBGPhSgK/yrDWOIq40+f5
+         aUnUpUTw2aMPaIA27iibLEyT3mePx5Lnjot6mQy4HcSMzruUmZLyKo9qd8lzteD46Z
+         2M1fvO80IowMc9BrQIeMCwHpPKkPdDJZ3fzLDWpXm32vUmqUZe+eAU80MyQvPY7gmH
+         AOdhADl4GZdow==
+From:   Mark Brown <broonie@kernel.org>
+To:     alsa-devel@alsa-project.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-mmc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-In-Reply-To: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
-References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
- mt6370_chg_toggle_cfo()
-Message-Id: <169446334445.405661.9324882432164519233.b4-ty@collabora.com>
-Date:   Mon, 11 Sep 2023 22:15:44 +0200
+        linux-media@vger.kernel.org
+In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+Subject: Re: (subset) [PATCH 00/11] add missing of_node_put
+Message-Id: <169444489227.1851820.10212594180854433279.b4-ty@kernel.org>
+Date:   Mon, 11 Sep 2023 16:08:12 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-On Wed, 06 Sep 2023 01:48:15 -0700, Harshit Mogalapalli wrote:
-> When mt6370_chg_field_get() suceeds, ret is set to zero and returning
-> zero when flash led is still in strobe mode looks incorrect.
-> 
+On Thu, 07 Sep 2023 11:55:10 +0200, Julia Lawall wrote:
+> Add of_node_put on a break out of an of_node loop.
 > 
 
-Applied, thanks!
+Applied to
 
-[1/1] power: supply: mt6370: Fix missing error code in mt6370_chg_toggle_cfo()
-      commit: 779873ec81306d2c40c459fa7c91a5d40655510d
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+Thanks!
+
+[10/11] ASoC: rsnd: add missing of_node_put
+        commit: 28115b1c4f2bb76e786436bf6597c5eb27638a5c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
