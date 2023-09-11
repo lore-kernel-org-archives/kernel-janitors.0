@@ -2,51 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FAACA0EC6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6ACBCA0ECE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239980AbjIKWpu (ORCPT
+        id S240458AbjIKWqB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
+        Mon, 11 Sep 2023 18:46:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241425AbjIKPI0 (ORCPT
+        with ESMTP id S243852AbjIKSDZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Sep 2023 11:08:26 -0400
+        Mon, 11 Sep 2023 14:03:25 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C42FA;
-        Mon, 11 Sep 2023 08:08:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA0AC433C9;
-        Mon, 11 Sep 2023 15:08:12 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02754103;
+        Mon, 11 Sep 2023 11:03:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B114AC433C9;
+        Mon, 11 Sep 2023 18:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694444901;
-        bh=QQhUsR8kda3/hj6CcImnvWnHoUxICmdWDtUfw+d0L2k=;
+        s=k20201202; t=1694455398;
+        bh=8VUHQIE2bSECn1O0T1XpJ7Vzs1gNAY1Lke9jXYxNgpc=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=oMnmqdvCbB/b9eUNHcCKrZgBIXAfEa4l3Ut8F+Krr/A+TO4Qp5xFRdmhtzOYMkOQW
-         98qwiW7ihtvdhmXn9/JMY3cAkCWfkf2RS329FQiqevC0xj5zMYEDcJaG1IoD/tdcm4
-         kpZWOr1Vyd7e3Vmm3u4QL91seR/p4ZlqPgFodnlHBoxj1eBGPhSgK/yrDWOIq40+f5
-         aUnUpUTw2aMPaIA27iibLEyT3mePx5Lnjot6mQy4HcSMzruUmZLyKo9qd8lzteD46Z
-         2M1fvO80IowMc9BrQIeMCwHpPKkPdDJZ3fzLDWpXm32vUmqUZe+eAU80MyQvPY7gmH
-         AOdhADl4GZdow==
+        b=HqDRjIs4lIt69JcxecmjXusNSPXcNtC+h7GNDtfbzFmtuukxb7VLzaJLfvyGGUbgE
+         GDMiHWCHVyVSZqhK277+7e8sw3xoasyxxvCSlnYukTIUvBAzASuGil6xgJui4I3Zv8
+         kn3ukN00P4df4oeFNCBOJL0fqyCo4cBvknZLfdqRzQ4c4nNv/Fyn3dOa/M693pWL4l
+         9CWc7JT9WNQq+stcP4K6uT/YGsXeyJdUtX+y+R7pVjVMRrPHEUU0kiBWAYgUwavKN+
+         6hn40V7oJbpTmt4pH6CNqHKVwXgMLUfpcUdAOWgWnamfsudEsodiKkqv8Fyef/46u4
+         bP3lxeVi351Iw==
 From:   Mark Brown <broonie@kernel.org>
-To:     alsa-devel@alsa-project.org, Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-mmc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-media@vger.kernel.org
-In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-Subject: Re: (subset) [PATCH 00/11] add missing of_node_put
-Message-Id: <169444489227.1851820.10212594180854433279.b4-ty@kernel.org>
-Date:   Mon, 11 Sep 2023 16:08:12 +0100
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>
+In-Reply-To: <8595de2462c490561f70020a6d11f4d6b652b468.1693857825.git.christophe.jaillet@wanadoo.fr>
+References: <8595de2462c490561f70020a6d11f4d6b652b468.1693857825.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regmap: debugfs: Fix a erroneous check after
+ snprintf()
+Message-Id: <169445539626.1864802.2526626192884158313.b4-ty@kernel.org>
+Date:   Mon, 11 Sep 2023 19:03:16 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -55,18 +49,20 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 07 Sep 2023 11:55:10 +0200, Julia Lawall wrote:
-> Add of_node_put on a break out of an of_node loop.
+On Mon, 04 Sep 2023 22:04:06 +0200, Christophe JAILLET wrote:
+> This error handling looks really strange.
+> Check if the string has been truncated instead.
+> 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
 Thanks!
 
-[10/11] ASoC: rsnd: add missing of_node_put
-        commit: 28115b1c4f2bb76e786436bf6597c5eb27638a5c
+[1/1] regmap: debugfs: Fix a erroneous check after snprintf()
+      commit: d3601857e14de6369f00ae19564f1d817d175d19
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
