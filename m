@@ -2,95 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92F0CA0EC8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744A4CA0EC7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Sep 2023 22:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239164AbjIKWpi (ORCPT
+        id S239512AbjIKWpr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
+        Mon, 11 Sep 2023 18:45:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244277AbjIKTvN (ORCPT
+        with ESMTP id S244379AbjIKUPy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Sep 2023 15:51:13 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806F31A2
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 12:51:05 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id fmvuqjtZmmTYjfmvuqYQl7; Mon, 11 Sep 2023 21:50:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694461858;
-        bh=ZamjEVZ18uTTJvONVpJjngq/DbdaPZNJa1qgQbQpoRw=;
-        h=From:To:Cc:Subject:Date;
-        b=K9obfdGdVxHS2CYE7BBNg4g3et6obL90MC7iMj/0IaUB/W1GHPqeBy0547TCtk0Iw
-         g5LmkU8HegOrtKi97dK0zjIG9bSiHQWs8hIPYY6463Wr7wTTzGdtM5CGN5pTErkKCi
-         sSU1I8z/XVqwSJQvVZ32XUEWF+EG/3+5YkKkT/F3/s2KUYc0qpSr6DDwwnqZOe7Au0
-         baUiJYEtIre5X/neoTE++KjllhD7DVruxTVCUYmzdRurnS0pdY3MC1BYmQ8IJfmS5W
-         HZ7dDI5LChMHgZnfld0y35Y6zsXM0JA1ZhUrEtpEH2MEneNJN/hP6F14EHSm32bFYw
-         QwF6I7ZXfBUQQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 11 Sep 2023 21:50:58 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Cai Huoqing <cai.huoqing@linux.dev>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next] net: hinic: Use devm_kasprintf()
-Date:   Mon, 11 Sep 2023 21:50:52 +0200
-Message-Id: <198375f3b77b4a6bae4fdaefff7630414c0c89fe.1694461804.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 11 Sep 2023 16:15:54 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309D3185;
+        Mon, 11 Sep 2023 13:15:49 -0700 (PDT)
+Received: from mercury (unknown [185.209.196.239])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BE10566072FB;
+        Mon, 11 Sep 2023 21:15:46 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694463346;
+        bh=QvYpu+E4ir6H9xoX6RAFUKeRn6noR1kwabk8MMjaLtc=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=EwwodJ5FTz+p6UYEh057UhpgWQwoWjtl5y2YvIZyQfaFIQmcG9+9uHf4t24SRuZO5
+         hPc8ON09f5gyM9RnP+FYqD2s7LzWITpD6LcDRmDiFIWgO/tiRTer0qEwzOLnID+mTB
+         RggGg4AB1PtBH9DsyR7hoGq/V9xbCe/4vaxajZBIOyrnJ8/uF7VHXFi6VwhJUyt+yR
+         L20eEOSWK66I+nAt4VFh0EXu0jyoaLa6UY6h3xmWXpO8FJ/MZRImeWJc91lYcQrUM1
+         +uZKPCBlyKid6yI+hqybuXfgVpLXnKOnuCKSzp4A3ywhcJwi958kGX8uLI4+uZbCD2
+         Z1dxlDPJnZfvA==
+Received: by mercury (Postfix, from userid 1000)
+        id 73FFB1060929; Mon, 11 Sep 2023 22:15:44 +0200 (CEST)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+In-Reply-To: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+References: <20230906084815.2827930-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH] power: supply: mt6370: Fix missing error code in
+ mt6370_chg_toggle_cfo()
+Message-Id: <169446334445.405661.9324882432164519233.b4-ty@collabora.com>
+Date:   Mon, 11 Sep 2023 22:15:44 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_kasprintf() instead of hand writing it.
-This is less verbose and less error prone.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/huawei/hinic/hinic_tx.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On Wed, 06 Sep 2023 01:48:15 -0700, Harshit Mogalapalli wrote:
+> When mt6370_chg_field_get() suceeds, ret is set to zero and returning
+> zero when flash led is still in strobe mode looks incorrect.
+> 
+> 
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index ad47ac51a139..9b60966736db 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -861,7 +861,7 @@ int hinic_init_txq(struct hinic_txq *txq, struct hinic_sq *sq,
- 	struct hinic_qp *qp = container_of(sq, struct hinic_qp, sq);
- 	struct hinic_dev *nic_dev = netdev_priv(netdev);
- 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
--	int err, irqname_len;
-+	int err;
- 
- 	txq->netdev = netdev;
- 	txq->sq = sq;
-@@ -882,15 +882,13 @@ int hinic_init_txq(struct hinic_txq *txq, struct hinic_sq *sq,
- 		goto err_alloc_free_sges;
- 	}
- 
--	irqname_len = snprintf(NULL, 0, "%s_txq%d", netdev->name, qp->q_id) + 1;
--	txq->irq_name = devm_kzalloc(&netdev->dev, irqname_len, GFP_KERNEL);
-+	txq->irq_name = devm_kasprintf(&netdev->dev, GFP_KERNEL, "%s_txq%d",
-+				       netdev->name, qp->q_id);
- 	if (!txq->irq_name) {
- 		err = -ENOMEM;
- 		goto err_alloc_irqname;
- 	}
- 
--	sprintf(txq->irq_name, "%s_txq%d", netdev->name, qp->q_id);
--
- 	err = hinic_hwdev_hw_ci_addr_set(hwdev, sq, CI_UPDATE_NO_PENDING,
- 					 CI_UPDATE_NO_COALESC);
- 	if (err)
+Applied, thanks!
+
+[1/1] power: supply: mt6370: Fix missing error code in mt6370_chg_toggle_cfo()
+      commit: 779873ec81306d2c40c459fa7c91a5d40655510d
+
+Best regards,
 -- 
-2.34.1
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
