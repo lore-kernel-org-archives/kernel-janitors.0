@@ -2,80 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD123CA0EF9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5E5CA0EF2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236256AbjILPLh (ORCPT
+        id S236295AbjILPS4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 11:11:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
+        Tue, 12 Sep 2023 11:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236225AbjILPLf (ORCPT
+        with ESMTP id S236227AbjILPSz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 11:11:35 -0400
-X-Greylist: delayed 431 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Sep 2023 08:11:31 PDT
-Received: from out-227.mta1.migadu.com (out-227.mta1.migadu.com [IPv6:2001:41d0:203:375::e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB548115
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 08:11:31 -0700 (PDT)
-Date:   Tue, 12 Sep 2023 11:04:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1694531058;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KuWSEZptyoIKYbVUjrrCSBbg/IDp1Wjy8rRVOQLAIiA=;
-        b=iF7PavcoJP3MP3UoQNX9FjNdKP7hMUnvG7X1LSuSWx/CPKNB+6E53OMTMSn+XXkgRVCN20
-        sD9LwtpDktc4HM6hwLc/9kvCBX/2UIMTuVZDJtZJSnZzHlrKbJFQZ59VtpvKfcRVlrpu8V
-        YJp+B6pxyf175WZ2P6Bz7LTyc9Z9tjo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] bcachefs: Fix a handful of spelling mistakes in
- various messages
-Message-ID: <20230912150414.p3fx5ryd77e2ju43@moria.home.lan>
-References: <20230912082527.3913330-1-colin.i.king@gmail.com>
- <ZQBs2yEEupnoa2ZI@bfoster>
- <82d97565-ebb4-806c-70ba-c0fec16d51d5@gmail.com>
+        Tue, 12 Sep 2023 11:18:55 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABE9CC3
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 08:18:51 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31c73c21113so5450105f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 08:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694531929; x=1695136729; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wxJCnX9ULZJZ5EZ1+KhUGW2+yh2EzIqp3qUG+6odjo0=;
+        b=wLRzgA0q66t1rXgnB/XT/MGaMLm1VOkSW++SfHAht+n5kkCtLfH4fh6Jn0PcWkq9iB
+         2Iinak9AsgbZy5aNMgkfKfNpWYYyTFILQ7v6tD6DNpZOfKRXyCs8LO/ko/82ApKYRP1k
+         2E8cnhrnsASXNf/ZZ9JuWstGwXuX1j2iENyUMzMxTEvBGW8uWE0QymdW1aIDm0qXKTfI
+         2lURgVRcmtiqmWe8UiauVYKcZ9Rs/Oxhzt56ScFM6e5yzDHFTwV0nDFa1t2oIrsH5Ri7
+         bmL4pODaqwqxQMmGI841qiG+do8222trgmfAeJ7QziIPqKp+dR+5Nx88mXJHY6upmfoe
+         8v3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694531929; x=1695136729;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxJCnX9ULZJZ5EZ1+KhUGW2+yh2EzIqp3qUG+6odjo0=;
+        b=gnqWXGBBWmZKA79/CNBYZ3aUrY5b56hjaf7v3CBwIP+b4fkyLE9gPwMc+4K/uFOTxd
+         pVvdwKG/hPkNGOMmg8mCzBo333FqWxexVmcYZ2IYX1PVDbf0qiZ2ge7cMC9+ruIBZR4O
+         Lbpmti7hlxJw8IGTnR58gxx9sfhFsn50OprJ9vyvFsEXZh7gKxMaHQAL91Ve0xyFXpLa
+         jytKfHXnPVs/jzHSceDY87G8VS7w8bHo8rR+OWlxMqb7rXGymhaxemYngNkHlVFFtPAN
+         RxlNJIEglz6jx5e+y8LdkZKDijdMwZHO7QXZmkdVlfbFgXqyUZskquEOF/vj8ypZbcs3
+         hO1A==
+X-Gm-Message-State: AOJu0YwHFbNPKsyIAaf1fe9owCEFHRinsm0oUJTXwyImtoQoVs650dxy
+        QoDA9vwPRnlXXSbXresJzoAbQg==
+X-Google-Smtp-Source: AGHT+IG4G4EPJSBi08YRktht53x04eTCy4Xm66qjHNK8xF5mLb+PMtQt5HnUjbjnFd1cBboa+E7eNw==
+X-Received: by 2002:a5d:4584:0:b0:317:5bb2:aeca with SMTP id p4-20020a5d4584000000b003175bb2aecamr10300996wrq.16.1694531929340;
+        Tue, 12 Sep 2023 08:18:49 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id ay21-20020a5d6f15000000b0031fbbe347e1sm1805881wrb.65.2023.09.12.08.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Sep 2023 08:18:48 -0700 (PDT)
+Date:   Tue, 12 Sep 2023 18:18:45 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] xfs: delete some dead code in xfile_create()
+Message-ID: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82d97565-ebb4-806c-70ba-c0fec16d51d5@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 04:00:23PM +0100, Colin King (gmail) wrote:
-> On 12/09/2023 14:51, Brian Foster wrote:
-> > On Tue, Sep 12, 2023 at 09:25:27AM +0100, Colin Ian King wrote:
-> > > There are several spelling mistakes in error messages. Fix these.
-> > > 
-> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > > ---
-> > >   fs/bcachefs/alloc_background.c | 2 +-
-> > >   fs/bcachefs/backpointers.c     | 2 +-
-> > >   fs/bcachefs/btree_iter.c       | 2 +-
-> > >   fs/bcachefs/fsck.c             | 2 +-
-> > >   fs/bcachefs/recovery.c         | 2 +-
-> > >   fs/bcachefs/snapshot.c         | 2 +-
-> > >   fs/bcachefs/super-io.c         | 2 +-
-> > >   7 files changed, 7 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
-> > > index 540d94c0cceb..dd9f3cbace1e 100644
-> > > --- a/fs/bcachefs/alloc_background.c
-> > > +++ b/fs/bcachefs/alloc_background.c
-> > > @@ -1247,7 +1247,7 @@ static noinline_for_stack int __bch2_check_discard_freespace_key(struct btree_tr
-> > >   		return ret;
-> > >   	if (fsck_err_on(!bch2_dev_bucket_exists(c, pos), c,
-> > > -			"entry in %s btree for nonexistant dev:bucket %llu:%llu",
-> > > +			"entry in %s btree for non-existent dev:bucket %llu:%llu",
-> > 
-> > "nonexistent" doesn't necessarily need to be hyphenated, right?
-> 
-> either way is valid, but some folk prefer the hyphenated version as it's
-> apparently easier to scan.
+The shmem_file_setup() function can't return NULL so there is no need
+to check and doing so is a bit confusing.
 
-Let's stick with the non hyphenated.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+No fixes tag because this is not a bug, just some confusing code.
+
+ fs/xfs/scrub/xfile.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+index d98e8e77c684..71779d81cad7 100644
+--- a/fs/xfs/scrub/xfile.c
++++ b/fs/xfs/scrub/xfile.c
+@@ -70,8 +70,6 @@ xfile_create(
+ 		return -ENOMEM;
+ 
+ 	xf->file = shmem_file_setup(description, isize, 0);
+-	if (!xf->file)
+-		goto out_xfile;
+ 	if (IS_ERR(xf->file)) {
+ 		error = PTR_ERR(xf->file);
+ 		goto out_xfile;
+-- 
+2.39.2
+
