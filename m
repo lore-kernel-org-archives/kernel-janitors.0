@@ -2,116 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445E7CA0EF2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E23CA0EEB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231348AbjILPmA (ORCPT
+        id S236446AbjILPzc convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 11:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60202 "EHLO
+        Tue, 12 Sep 2023 11:55:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjILPl7 (ORCPT
+        with ESMTP id S229661AbjILPzb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 11:41:59 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6595210E5
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 08:41:55 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-79536bc669dso193167439f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 08:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1694533315; x=1695138115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VDNK5jWxgoHKOmCCzn/tqxPBEH7/Kr3vTPO3bSps3Zg=;
-        b=ar0Gv4rqwm03m6JYF5GycaXqqUfDX8SojcG3rn8HEBK5RJ6NA6+9HGv1AXlmCIMN+g
-         Z+V+4/vAFiRlROiuKWCXYEknJCNeFMU1J3sKWqsekcCCM68cpGtjG57GIGiUc86NoKL9
-         sFfbKim3s8W5AthyetrxndmqC02Mt7ui4LrNU=
+        Tue, 12 Sep 2023 11:55:31 -0400
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1ED010DE;
+        Tue, 12 Sep 2023 08:55:27 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-590685a3be5so56206727b3.0;
+        Tue, 12 Sep 2023 08:55:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694533315; x=1695138115;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDNK5jWxgoHKOmCCzn/tqxPBEH7/Kr3vTPO3bSps3Zg=;
-        b=iBdb4xOrmeHBICieoUYLmcXWwfayNQyooweREW5aRvss4hvkDXVFpdIUGIIqF94AvV
-         lGiJIebEL3AWVPkttdDk2JFro4bZHmoN82bSS2f90ZUpC3AxPayuB3r85zolS1b2+ArL
-         J9rU7BM+7QcO0KL+94Xbfxe1DchiGGju/R8hvN2eA+nYX8OQPUJ+sscNpBSekmc5r3Uf
-         h4czBBF7HYHhKKoz/ZgdTXE82Fax6r6YdILcuVFsiFDpFA8kz/zKdF3/wxVb/NOmbIZN
-         QxQ1kv3bhTQX79WtKPw8jkAOlSqO1WYjEGz0BJJN6s6G/ZuCVYJJdQBIjqt8XZ1IrOua
-         dYMw==
-X-Gm-Message-State: AOJu0YwaHiE2qt+/ZVIvgFk5pAoc47I38gqtlKPFtbb/v8GQg1d0D6GJ
-        kah2opVIaa1egTLiGoSnCJiBeQ==
-X-Google-Smtp-Source: AGHT+IHhqB2YJjwIaI0yHXnKZwS98a5YXRBDK9CZv/ud4lMLOjHhuOSeE6ucAS6gLtpMRtSQWOD4WA==
-X-Received: by 2002:a5d:9c4f:0:b0:798:3e95:274f with SMTP id 15-20020a5d9c4f000000b007983e95274fmr121547iof.19.1694533314846;
-        Tue, 12 Sep 2023 08:41:54 -0700 (PDT)
-Received: from [172.22.22.28] (c-98-61-227-136.hsd1.mn.comcast.net. [98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id e2-20020a05660222c200b00777b7fdbbffsm2897139ioe.8.2023.09.12.08.41.53
+        d=1e100.net; s=20230601; t=1694534126; x=1695138926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/PFSfKLAM1gCAYkgRSEmmAAf6iQtA8HoP13Hb3Irmy0=;
+        b=KNEE/pJ6PChjuPMhn62+LhOvw2w2PZMF2UyUZosTza2ZFxylDQsY2nLTfNshAER/L5
+         aw6kFM4nvYYa1aON3mcjdscPociapHmhvnnRtXN+zV1pBwOW0hSNzyuXxXWYVVAJD97F
+         I01t3DdfInz3h/2UTt1ZSoOyBoI78N0bWY/v1IdwP2xdh2ZUXp6aOXmaWVwcsuUUF7Jy
+         5RZ4YnKOkGiLROjymIiM4WkzYXdCCP06E45SnRLAt281zRwPypRqta2w6/DIwLUFcyNP
+         1kVGYfMSPI/TgqfPL66q64mJw+QAWP2UVZ15CvuGRbDNu3MFK6T/Yhg4/1ZTZyLesiHl
+         xMoA==
+X-Gm-Message-State: AOJu0YxR9dnF2UIh6xuIydIzuxZzo6QbJRbzupfF7JkClpzW3oOs+ITu
+        mFC3xMl0GKlT4+q4C6odj9MBIQexvZje1A==
+X-Google-Smtp-Source: AGHT+IF0Sf9dPZUoRjhnjq7yeit6zrU+DYd0t2Q0yUUrO6PglU2FcmNwxjlRerKzT1anHD2Dc7jJbQ==
+X-Received: by 2002:a81:4705:0:b0:599:b59f:5280 with SMTP id u5-20020a814705000000b00599b59f5280mr13576685ywa.28.1694534124937;
+        Tue, 12 Sep 2023 08:55:24 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id o189-20020a0dfec6000000b0059a34cfa2a8sm2584895ywf.62.2023.09.12.08.55.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Sep 2023 08:41:54 -0700 (PDT)
-Message-ID: <e575bbf3-f0ba-ec39-03c5-9165678d1fc7@ieee.org>
-Date:   Tue, 12 Sep 2023 10:41:53 -0500
+        Tue, 12 Sep 2023 08:55:24 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-d7e741729a2so5415117276.2;
+        Tue, 12 Sep 2023 08:55:24 -0700 (PDT)
+X-Received: by 2002:a25:c016:0:b0:d78:cb14:d395 with SMTP id
+ c22-20020a25c016000000b00d78cb14d395mr12784586ybf.34.1694534123948; Tue, 12
+ Sep 2023 08:55:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Chandan Babu R <chandan.babu@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
- <20230912153824.GB28186@frogsfrogsfrogs>
-From:   Alex Elder <elder@ieee.org>
-In-Reply-To: <20230912153824.GB28186@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
+ <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
+ <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
+ <06327197-9b17-481f-8ecc-3f9c5ba3e391@kadam.mountain> <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Sep 2023 17:55:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX9xi5S3LGLoO7+pyAmX=h5_0KFQ5xfFrC7_Z1GV1TGfA@mail.gmail.com>
+Message-ID: <CAMuHMdX9xi5S3LGLoO7+pyAmX=h5_0KFQ5xfFrC7_Z1GV1TGfA@mail.gmail.com>
+Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
+To:     Rob Herring <robh@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        kbuild test robot <lkp@intel.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/12/23 10:38 AM, Darrick J. Wong wrote:
-> On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
->> The shmem_file_setup() function can't return NULL so there is no need
->> to check and doing so is a bit confusing.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> ---
->> No fixes tag because this is not a bug, just some confusing code.
-> 
-> Please don't re-send patches that have already been presented here.
-> https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
+Hi Rob,
 
-FWIW, I side with Dan's argument.  shmem_file_setup() *does not*
-return NULL.  If it ever *did* return NULL, it would be up to the
-person who makes that happen to change all callers to check for NULL.
+On Tue, Sep 12, 2023 at 5:32 PM Rob Herring <robh@kernel.org> wrote:
+> On Fri, Sep 8, 2023 at 11:14 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > On Fri, Sep 08, 2023 at 05:34:53PM +0200, Geert Uytterhoeven wrote:
+> > > > > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
+> > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
+> > > >
+> > > > Despite what that says, it was never reported to me. IOW, the added TO
+> > > > and CC lines don't seem to have any effect.
+> > >
+> > > The copy I received did list you in the "To"-header, though.
+>
+> Are you sure that's the header and not in the body?
 
-The current code *suggests* that it could return NULL, which
-is not correct.
+Yes:
 
-					-Alex
+    Date: Thu, 7 Sep 2023 13:52:48 +0300
+    From: Dan Carpenter <dan.carpenter@linaro.org>
+    To: oe-kbuild@lists.linux.dev, Rob Herring <robh@kernel.org>
+    Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+linux-kernel@vger.kernel.org, Geert Uytterhoeven
+<geert+renesas@glider.be>
+    Subject: drivers/of/dynamic.c:935 of_changeset_action() warn:
+possible memory leak of 'ce'
+    Message-ID: <eaa86211-436d-445b-80bd-84cea5745b5a@kadam.mountain>
 
-> 
-> --D
-> 
->>   fs/xfs/scrub/xfile.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
->> index d98e8e77c684..71779d81cad7 100644
->> --- a/fs/xfs/scrub/xfile.c
->> +++ b/fs/xfs/scrub/xfile.c
->> @@ -70,8 +70,6 @@ xfile_create(
->>   		return -ENOMEM;
->>   
->>   	xf->file = shmem_file_setup(description, isize, 0);
->> -	if (!xf->file)
->> -		goto out_xfile;
->>   	if (IS_ERR(xf->file)) {
->>   		error = PTR_ERR(xf->file);
->>   		goto out_xfile;
->> -- 
->> 2.39.2
->>
+> > > Fall-out of the issues seen with Gmail lately?
+> > > I do miss lots of email, too :-(
+> >
+> > My gmail account dropped a whole lot of mail too in the last week of
+> > August.  I was out of office that week so I didn't investigate.  I was
+> > assuming it was an issue with vger...
+>
+> I don't think it's related to those issues. If I search lore including
+> my email[1], then it doesn't find it either. Lore only has it in
+> oe-kbuild. Not LKML or oe-kbuild-all. It really just looks like the
+> git-send-email style of extracting emails from tags in the body is not
+> happening.
 
+Oh, looks like there were two emails, one from lkp, and one from Dan:
+https://lore.kernel.org/all/eaa86211-436d-445b-80bd-84cea5745b5a@kadam.mountain
+
+I was referring to the one from Dan, which is not the one in Closes:.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
