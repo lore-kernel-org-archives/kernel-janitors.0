@@ -2,84 +2,174 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC7DCA0EC3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 06:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC08CA0ECE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 08:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbjILGj3 (ORCPT
+        id S232530AbjILIZf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 02:39:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
+        Tue, 12 Sep 2023 04:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjILGj2 (ORCPT
+        with ESMTP id S231725AbjILIZe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 02:39:28 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26403AF
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 23:39:24 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-4018af1038cso57322455e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 23:39:24 -0700 (PDT)
+        Tue, 12 Sep 2023 04:25:34 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FBBAE7F;
+        Tue, 12 Sep 2023 01:25:30 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40037db2fe7so57251775e9.0;
+        Tue, 12 Sep 2023 01:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694500762; x=1695105562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qcwi6kxTJhR+/TgoB8rdjDl1NyuqB+Mgf6FMTnsLTE=;
-        b=McFwbZ6LbZY2cROgViHN1XZLBGDPdJfvBc5t61ZUo+kGevhvk+ulunSxQ5TsPvpHsp
-         GZ9/3kZv6YXMxGf8S/GCq3OzLMvPzUHZ2mHU2OJYwdwy/CJBvehv0YhYwlloYe5DL+sb
-         RLI4RuMfbSm3Q0RKRFZC0gC+RHHA6iRnG9p8yKaCiF6DwhcpUwBbVwKCFHKLOG/xloN6
-         lpuTqXs/Si7aNwuvDxVyenmP7p1Ms+PmiI02zVQlv6yR/JwOaJsXUwkYeDnFqMIpQ+eX
-         zDmdLMbrwwCzdyTi/sLZA+6b7RdN7ofSg+fg62xUKcqhqrPbpKo4TOBZFMk/UsMNUgCy
-         dHyA==
+        d=gmail.com; s=20221208; t=1694507128; x=1695111928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D7De/Z5pdwojJ2jszAuU+85kLqgXihOlwaZjwgP1sxA=;
+        b=K0nC4cL9QHO/D+jpgh21Y7d4L0zCmbRkDb0vg2gV15UqJuRwmOO073cETS92VatcD3
+         G8oaHAyhQm305CrOeLGGtl9SjmmTyRCpStOLWk8ruWrL3mkd8xjYZRbGC41+rv6GGlIj
+         asHm5aKm+YgHUnF0Z/bApVRMJw95fP8oAuIMxNZoWRAOTSgqAaBc4zwH02PSEMxURfRT
+         HzAAhZmyjKm/0mXmDrsZjki19e2ohggfiQCUUsme2JVx4jK+TxFmq6wfObK3Gajwpm0c
+         EaLWWivLsv+ucRYAVxKcJhI0wHdbS3voJJ08SG8gAXhtWDzOk5qjabqVty/POvqB2jUr
+         FaDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694500762; x=1695105562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6qcwi6kxTJhR+/TgoB8rdjDl1NyuqB+Mgf6FMTnsLTE=;
-        b=CiIl2+sRgBdRjhLnjT4Og1o54zov3eAC+iwJBfzOj3Uf1DJWqwaLQ4fprjZGuVxqHX
-         5UA9gTghFf9L2c+y8Lz5dyNeyMoPMGAu9wSs73G/Z6qBKkFKV9Cgl2DrRjCT68X62hFo
-         6Y2UtuYVvH4Q/b6xtUjNenWyY3rOkIkdIJpfpqLN10GF6KHpGXDOSQY9xHhbpphTgsBT
-         JyM4D2ol5nl1QwgjFtDi+EtY/0J3JDwraYKyGwY7ZW7Tv+RwI9VR/hoQqzyvmYD997Jq
-         /mZKUEAlAW1nOi6XMS/lpo5e77+h+ZhzeRAAL7ykD+GIRRSRFv7wofUtucjx637aNl4Q
-         3I2A==
-X-Gm-Message-State: AOJu0YzccCSigCEdTDm0hMmI7SO2FnBQG7vEx6hCPyEDb8fmA5JSsuRp
-        AzF6ftGEbp2TN2z2cD84js1EZg==
-X-Google-Smtp-Source: AGHT+IE9EhgxWYP9IQXI+O9vQP40R2keaJWtbd2zvD66D6jJq/9krmYKNdmeNyJU92c9kWwVldWlDw==
-X-Received: by 2002:a5d:6510:0:b0:317:ec04:ee0c with SMTP id x16-20020a5d6510000000b00317ec04ee0cmr9809162wru.47.1694500762566;
-        Mon, 11 Sep 2023 23:39:22 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a16-20020a5d4570000000b00317f70240afsm11965035wrc.27.2023.09.11.23.39.21
+        d=1e100.net; s=20230601; t=1694507128; x=1695111928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D7De/Z5pdwojJ2jszAuU+85kLqgXihOlwaZjwgP1sxA=;
+        b=wzvgARlOz60ciXOuvrfgGmtY8OaSwvqR+z4oWMwgT92BOVgU9w163QnU6Au0ecnOq4
+         CDhY9bNGJr3Whagu9PPTNlbLepumPIwoqdBYzd2QGZgIG77eSHlmvlgDD+6ti56jKw+Z
+         Dibh3WsMFyMJ7t1JRovR6TUzTSUvYTVYSipLDufztyLlXY7gXD/uk+TP3phH+eZ6l4gA
+         8PLUqgMALr6Ue7R69wcttTqm9l32mTt1Tiix0pYso4aDKUM2lS2XSjLUtSAWrySwPmky
+         owppRyrEVqt1ZISSqrXd3+OM5XoMGWyPhB9engyoGaFqaZnT1cQXmxwWwn5LV83cQJ8w
+         H6wg==
+X-Gm-Message-State: AOJu0YxxLqCcxAeQWa2Opg0v5hIQOiJ0VDyjl5z8mew7xkRJctKo20QH
+        EWmUt3E6B9xLaxloMKX2vpJP8IssANvhdw==
+X-Google-Smtp-Source: AGHT+IEmyam1ZgZag5nPuvuHC8kshNWVtdrwUjXTCwVabXtYAaVg/+h0lBIGOMko+UCiW5dNL2eW6A==
+X-Received: by 2002:a5d:6a03:0:b0:314:1e47:8bc2 with SMTP id m3-20020a5d6a03000000b003141e478bc2mr9505317wru.0.1694507128342;
+        Tue, 12 Sep 2023 01:25:28 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o21-20020adfa115000000b0031f9bdb79dasm6749997wro.61.2023.09.12.01.25.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 23:39:22 -0700 (PDT)
-Date:   Tue, 12 Sep 2023 09:39:18 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Longfang Liu <liulongfang@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zaibo Xu <xuzaibo@huawei.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon/hpre - Fix a erroneous check after
- snprintf()
-Message-ID: <909a0cff-ed2c-4728-81ee-57a5d786f450@moroto.mountain>
-References: <73534cb1713f58228d54ea53a8a137f4ef939bad.1693858632.git.christophe.jaillet@wanadoo.fr>
- <ZPaSCOX1F9b36rxV@gondor.apana.org.au>
- <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
+        Tue, 12 Sep 2023 01:25:27 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Brian Foster <bfoster@redhat.com>,
+        linux-bcachefs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bcachefs: Fix a handful of spelling mistakes in various messages
+Date:   Tue, 12 Sep 2023 09:25:27 +0100
+Message-Id: <20230912082527.3913330-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00bdcfec-6cc1-e521-ceaa-d16d6341ca16@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 07:27:47AM +0200, Marion & Christophe JAILLET wrote:
-> 
-> Some debugfs dir of file way be left around. Is it what your are talking
-> about?
-> 
+There are several spelling mistakes in error messages. Fix these.
 
-No debugfs files are left.  There is a remove recursive in
-hpre_debugfs_init().
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/bcachefs/alloc_background.c | 2 +-
+ fs/bcachefs/backpointers.c     | 2 +-
+ fs/bcachefs/btree_iter.c       | 2 +-
+ fs/bcachefs/fsck.c             | 2 +-
+ fs/bcachefs/recovery.c         | 2 +-
+ fs/bcachefs/snapshot.c         | 2 +-
+ fs/bcachefs/super-io.c         | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+index 540d94c0cceb..dd9f3cbace1e 100644
+--- a/fs/bcachefs/alloc_background.c
++++ b/fs/bcachefs/alloc_background.c
+@@ -1247,7 +1247,7 @@ static noinline_for_stack int __bch2_check_discard_freespace_key(struct btree_tr
+ 		return ret;
+ 
+ 	if (fsck_err_on(!bch2_dev_bucket_exists(c, pos), c,
+-			"entry in %s btree for nonexistant dev:bucket %llu:%llu",
++			"entry in %s btree for non-existent dev:bucket %llu:%llu",
+ 			bch2_btree_ids[iter->btree_id], pos.inode, pos.offset))
+ 		goto delete;
+ 
+diff --git a/fs/bcachefs/backpointers.c b/fs/bcachefs/backpointers.c
+index 8747c5e19f99..bec62e5b21e5 100644
+--- a/fs/bcachefs/backpointers.c
++++ b/fs/bcachefs/backpointers.c
+@@ -357,7 +357,7 @@ static int bch2_check_btree_backpointer(struct btree_trans *trans, struct btree_
+ 	int ret = 0;
+ 
+ 	if (fsck_err_on(!bch2_dev_exists2(c, k.k->p.inode), c,
+-			"backpointer for mising device:\n%s",
++			"backpointer for missing device:\n%s",
+ 			(bch2_bkey_val_to_text(&buf, c, k), buf.buf))) {
+ 		ret = bch2_btree_delete_at(trans, bp_iter, 0);
+ 		goto out;
+diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+index 1dbb4d7dfb45..8d089bbdb1e5 100644
+--- a/fs/bcachefs/btree_iter.c
++++ b/fs/bcachefs/btree_iter.c
+@@ -1495,7 +1495,7 @@ static void bch2_trans_update_max_paths(struct btree_trans *trans)
+ static noinline void btree_path_overflow(struct btree_trans *trans)
+ {
+ 	bch2_dump_trans_paths_updates(trans);
+-	panic("trans path oveflow\n");
++	panic("trans path overflow\n");
+ }
+ 
+ static inline struct btree_path *btree_path_alloc(struct btree_trans *trans,
+diff --git a/fs/bcachefs/fsck.c b/fs/bcachefs/fsck.c
+index 238caeeaf06c..cc04d5a22f40 100644
+--- a/fs/bcachefs/fsck.c
++++ b/fs/bcachefs/fsck.c
+@@ -80,7 +80,7 @@ static int __snapshot_lookup_subvol(struct btree_trans *trans, u32 snapshot,
+ 	if (!ret)
+ 		*subvol = le32_to_cpu(s.subvol);
+ 	else if (bch2_err_matches(ret, ENOENT))
+-		bch_err(trans->c, "snapshot %u not fonud", snapshot);
++		bch_err(trans->c, "snapshot %u not found", snapshot);
+ 	return ret;
+ 
+ }
+diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+index 30efb3c90560..a78f5d023ef2 100644
+--- a/fs/bcachefs/recovery.c
++++ b/fs/bcachefs/recovery.c
+@@ -561,7 +561,7 @@ static void check_version_upgrade(struct bch_fs *c)
+ 			if ((recovery_passes & RECOVERY_PASS_ALL_FSCK) == RECOVERY_PASS_ALL_FSCK)
+ 				prt_str(&buf, "fsck required");
+ 			else {
+-				prt_str(&buf, "running recovery passses: ");
++				prt_str(&buf, "running recovery passes: ");
+ 				prt_bitflags(&buf, bch2_recovery_passes, recovery_passes);
+ 			}
+ 
+diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
+index 9da09911466e..c2af574acb7c 100644
+--- a/fs/bcachefs/snapshot.c
++++ b/fs/bcachefs/snapshot.c
+@@ -1385,7 +1385,7 @@ int bch2_delete_dead_snapshots(struct bch_fs *c)
+ 	if (!test_bit(BCH_FS_STARTED, &c->flags)) {
+ 		ret = bch2_fs_read_write_early(c);
+ 		if (ret) {
+-			bch_err(c, "error deleleting dead snapshots: error going rw: %s", bch2_err_str(ret));
++			bch_err(c, "error deleting dead snapshots: error going rw: %s", bch2_err_str(ret));
+ 			return ret;
+ 		}
+ 	}
+diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+index f01883e785a5..6efd279655ae 100644
+--- a/fs/bcachefs/super-io.c
++++ b/fs/bcachefs/super-io.c
+@@ -385,7 +385,7 @@ static int bch2_sb_validate(struct bch_sb_handle *disk_sb, struct printbuf *out,
+ 	}
+ 
+ 	if (bch2_is_zero(sb->uuid.b, sizeof(sb->uuid))) {
+-		prt_printf(out, "Bad intenal UUID (got zeroes)");
++		prt_printf(out, "Bad internal UUID (got zeroes)");
+ 		return -BCH_ERR_invalid_sb_uuid;
+ 	}
+ 
+-- 
+2.39.2
+
