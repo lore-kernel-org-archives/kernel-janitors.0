@@ -2,72 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7616ECA0EC7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 01:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DFBCA0ECD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 03:09:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235631AbjILBjE (ORCPT
+        id S241864AbjILDJz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Sep 2023 21:39:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39946 "EHLO
+        Mon, 11 Sep 2023 23:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235262AbjILBiq (ORCPT
+        with ESMTP id S241866AbjILDJj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Sep 2023 21:38:46 -0400
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C3A1601AF;
-        Mon, 11 Sep 2023 18:16:28 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R851e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Vruc1gH_1694481384;
-Received: from 30.97.48.71(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Vruc1gH_1694481384)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Sep 2023 09:16:25 +0800
-Message-ID: <7c4a8e50-499c-ec13-536b-42ee951f58c3@linux.alibaba.com>
-Date:   Tue, 12 Sep 2023 09:16:32 +0800
+        Mon, 11 Sep 2023 23:09:39 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AA45F8D3
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Sep 2023 18:50:05 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-113-225.bstnma.fios.verizon.net [173.48.113.225])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 38C1nuOT011233
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 21:49:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1694483399; bh=s/sNfzwYevk+Y0pvlAXrndruCaAI/NMq2RHWu1p5lv0=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=FCbGFjdTCqBv1956viEFvp2wv86UD1iScNuz6Q63doqVjOLJ3zpQP/sC4hpqG5SmH
+         nmPbYmlTMOvOKtQYbQwPKnk7NMTlECWJ5x/aYm1853ZmTW0wAvhB4EtNcRMPZVoC8X
+         3d5kq+7g6K2QOQZkXPhI0Wy//cIXCfIojEd5I6DY8D/kwcl9UtNZk00+HVjRfhBfkp
+         aSHloMt2Sg85HW54Re4oiyc8LD9YHVJbtfh/a8gyK3fHNxR+/kQ2o2OIABv4G2WOlj
+         etSRCZu5Eg8lwZz5N53EhGeAdjy1iS8EyZLwPc9NmTSlfFHXMirIx8Xv2P+rjbcIeY
+         uvcw7Pi5bwjGA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 855F615C023F; Mon, 11 Sep 2023 21:49:56 -0400 (EDT)
+Date:   Mon, 11 Sep 2023 21:49:56 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        Dave Kleikamp <shaggy@austin.ibm.com>,
+        Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] ext4: Fix a test in ext4_decode_error()
+Message-ID: <20230912014956.GB1182921@mit.edu>
+References: <2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH] mmc: sdhci-sprd: Fix error code in sdhci_sprd_tuning()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Wenchao Chen <wenchao.chen@unisoc.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <a8af0a08-8405-43cc-bd83-85ff25f572ca@moroto.mountain>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <a8af0a08-8405-43cc-bd83-85ff25f572ca@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 9/7/2023 5:54 PM, Dan Carpenter wrote:
-> Return an error code if sdhci_sprd_get_best_clk_sample() fails.
-> Currently, it returns success.
+On Sat, Sep 09, 2023 at 06:07:02PM +0200, Christophe JAILLET wrote:
+> The doc of snprintf() states that "If the return is greater than or equal
+> to @size, the resulting string is truncated".
 > 
-> Fixes: d83d251bf3c2 ("mmc: sdhci-sprd: Add SD HS mode online tuning")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
-> This is from static analysis and has not been tested.
-> ---
->   drivers/mmc/host/sdhci-sprd.c | 1 +
->   1 file changed, 1 insertion(+)
+> So in order to "Check for truncated error codes...", we must check that the
+> returned value is < 16.
 > 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index 649ae075e229..6b84ba27e6ab 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -644,6 +644,7 @@ static int sdhci_sprd_tuning(struct mmc_host *mmc, struct mmc_card *card,
->   	best_clk_sample = sdhci_sprd_get_best_clk_sample(mmc, value);
->   	if (best_clk_sample < 0) {
->   		dev_err(mmc_dev(host->mmc), "all tuning phase fail!\n");
-> +		err = best_clk_sample;
->   		goto out;
->   	}
->   
+> Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+This patch is not needed.  It's fine if snprintf truncates the string,
+since it will still be null terminated.  This was checking for the
+case where snprintf() returns an error, and the comment was
+misleading.
+
+Looking that the current implementation of the kernel snprintf, it
+will never return a negative number, and nbuf is always passed in from
+the callers, so it could be changed to
+
+		snprintf(nbuf, 16, "error %d", -errno);
+		errstr = nbuf;
+		
+But what is currently there is certainly valid.
+
+						- Ted
