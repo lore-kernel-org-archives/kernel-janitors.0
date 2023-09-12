@@ -2,66 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80924CA0EF1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 16:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C685BEE3F06
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 20:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236802AbjILQfw (ORCPT
+        id S232350AbjILUUa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 12:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        Tue, 12 Sep 2023 16:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232279AbjILQfw (ORCPT
+        with ESMTP id S230361AbjILUU3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 12:35:52 -0400
-X-Greylist: delayed 466 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Sep 2023 09:35:48 PDT
-Received: from out-219.mta0.migadu.com (out-219.mta0.migadu.com [91.218.175.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A9A115
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 09:35:47 -0700 (PDT)
-Date:   Tue, 12 Sep 2023 12:27:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1694536078;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xAKCqRDHW+lPEAd+hDQsFbTfpENfjf47jiZ8XYV5zrE=;
-        b=KkZIjbyxLo4mrQcQZ+yfNImzrOmyAmeWTxmkeOtqZ6g1y20pydPw8WtEmB941odcOulUf0
-        RyXYi7uYbc+PyyaQyKpMukySB5KIrS1WkbbqyUos/M0VoV+ps/e1X+8fce90AhFRqHSqsT
-        WYvZk+UostgNdQg1KWcmTHAUFv2TAbs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5][next] bcachefs: clean up some redundant assignments
-Message-ID: <20230912162754.jcavjd7ezhsaeycl@moria.home.lan>
-References: <20230912123744.3929609-1-colin.i.king@gmail.com>
+        Tue, 12 Sep 2023 16:20:29 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1322EE4B;
+        Tue, 12 Sep 2023 13:20:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CCF6C433C9;
+        Tue, 12 Sep 2023 20:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694550025;
+        bh=hHFOxkwWPUtRzqpYo757WoZUZn4Twmz5EfGjFfx3rb8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=S10YmzMZz4XIQRC3fXmBgknQ8g7X57k/VJQPqviJOj0AgPZAzlCTwEoysB/nJYQ0w
+         d9PL6WUaqmQrMnLRkEvpxEpNqTFdjyQhNCU0NRpIUipMdYnBD5shVdxXBI33GAJmzI
+         9/TxL9HwbbN0TitzSn21gZNAKoi0xbVakDz6PBZ8jVGaMtXAapIWgxoJTCDHmaafIF
+         9P2xa6hf7S8qk6W2AilFxrpWLck8k0tmOGQqzQ/xUHHXXdmqH8BoY9FTDWN8oqGdxe
+         igoD0VA3DFyDxFmd5F/78zUVmwmQBbqXKRhOj3uLzWPIjtSifPl9ffMP/zQfnU/ScA
+         CCBXDJm9l/39A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6FF15C04DD9;
+        Tue, 12 Sep 2023 20:20:25 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230912123744.3929609-1-colin.i.king@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] bpf: Fix a erroneous check after snprintf()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169455002545.29579.9098192345328945185.git-patchwork-notify@kernel.org>
+Date:   Tue, 12 Sep 2023 20:20:25 +0000
+References: <393bdebc87b22563c08ace094defa7160eb7a6c0.1694190795.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <393bdebc87b22563c08ace094defa7160eb7a6c0.1694190795.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, song@kernel.org, yonghong.song@linux.dev,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, void@manifault.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        bpf@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 01:37:39PM +0100, Colin Ian King wrote:
-> Clean up some redundant assignments and variables based on warnings
-> found by clang scan build static analysis.
-> 
-> Colin Ian King (5):
->   bcachefs: remove redundant initialization of pointer d
->   bcachefs: remove redundant initialization of pointer dst
->   bcachefs: remove redundant initializations of variables start_offset
->     and end_offset
->   bcachefs: remove duplicated assignment to variable offset_into_extent
->   bcachefs: remove redundant pointer q
-> 
->  fs/bcachefs/btree_update_interior.c | 2 +-
->  fs/bcachefs/buckets.c               | 2 +-
->  fs/bcachefs/disk_groups.c           | 3 +--
->  fs/bcachefs/fs-io.c                 | 4 ++--
->  fs/bcachefs/io.c                    | 1 -
->  fs/bcachefs/quota.c                 | 3 ---
->  6 files changed, 5 insertions(+), 10 deletions(-)
+Hello:
 
-Applied - thanks
+This patch was applied to bpf/bpf.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Fri,  8 Sep 2023 18:33:35 +0200 you wrote:
+> snprintf() does not return negative error code on error, it returns the
+> number of characters which *would* be generated for the given input.
+> 
+> Fix the error handling check.
+> 
+> Fixes: 57539b1c0ac2 ("bpf: Enable annotating trusted nested pointers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
+
+Here is the summary with links:
+  - bpf: Fix a erroneous check after snprintf()
+    https://git.kernel.org/bpf/bpf/c/a8f12572860a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
