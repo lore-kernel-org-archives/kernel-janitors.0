@@ -2,122 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA09CA0EEB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 16:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80924CA0EF1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 16:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233790AbjILQXV (ORCPT
+        id S236802AbjILQfw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 12:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
+        Tue, 12 Sep 2023 12:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbjILQXU (ORCPT
+        with ESMTP id S232279AbjILQfw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 12:23:20 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D544310E5;
-        Tue, 12 Sep 2023 09:23:16 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791E3C433C7;
-        Tue, 12 Sep 2023 16:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694535796;
-        bh=I5dNEeI6bRHV6GsDxON6Fz8Pg5i4Lyeep+UZ568o5F0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cRtdkrJEf5cqfrpOzj5wgy4/1vxsRBkDll5XJ7lPGE10aQfybVHGp0EzaAR1iHcN+
-         hFFWz6roGfyI5dtKbYCQ0I3VCY2hjPY8+l+giguI/uAcaopBw3vpXTLwfMpGYqrfop
-         qA/Jg4mZOXBqvj737nk4yLioBsW+QQTLAjossZonretc7ZQTBOVBYW6vlX/9TKAaDm
-         /WxrsgTF2fmZCaDR+FofMR0eDh+/fTw9ZObnd38gdLajjhaO31vzdJ1wg+tAksiPON
-         XbBAL3QosjxEKltsccNPv46lBuKdrwDAt+LRp7ItFi0dJ8my8GcHeM7AXyVejuFcnt
-         L+DHXwH5ndK2Q==
-Date:   Tue, 12 Sep 2023 09:23:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Alex Elder <elder@ieee.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
-Message-ID: <20230912162315.GC28186@frogsfrogsfrogs>
-References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
- <20230912153824.GB28186@frogsfrogsfrogs>
- <e575bbf3-f0ba-ec39-03c5-9165678d1fc7@ieee.org>
+        Tue, 12 Sep 2023 12:35:52 -0400
+X-Greylist: delayed 466 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Sep 2023 09:35:48 PDT
+Received: from out-219.mta0.migadu.com (out-219.mta0.migadu.com [91.218.175.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A9A115
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 09:35:47 -0700 (PDT)
+Date:   Tue, 12 Sep 2023 12:27:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694536078;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xAKCqRDHW+lPEAd+hDQsFbTfpENfjf47jiZ8XYV5zrE=;
+        b=KkZIjbyxLo4mrQcQZ+yfNImzrOmyAmeWTxmkeOtqZ6g1y20pydPw8WtEmB941odcOulUf0
+        RyXYi7uYbc+PyyaQyKpMukySB5KIrS1WkbbqyUos/M0VoV+ps/e1X+8fce90AhFRqHSqsT
+        WYvZk+UostgNdQg1KWcmTHAUFv2TAbs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5][next] bcachefs: clean up some redundant assignments
+Message-ID: <20230912162754.jcavjd7ezhsaeycl@moria.home.lan>
+References: <20230912123744.3929609-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e575bbf3-f0ba-ec39-03c5-9165678d1fc7@ieee.org>
+In-Reply-To: <20230912123744.3929609-1-colin.i.king@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 10:41:53AM -0500, Alex Elder wrote:
-> On 9/12/23 10:38 AM, Darrick J. Wong wrote:
-> > On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
-> > > The shmem_file_setup() function can't return NULL so there is no need
-> > > to check and doing so is a bit confusing.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > > No fixes tag because this is not a bug, just some confusing code.
-> > 
-> > Please don't re-send patches that have already been presented here.
-> > https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
+On Tue, Sep 12, 2023 at 01:37:39PM +0100, Colin Ian King wrote:
+> Clean up some redundant assignments and variables based on warnings
+> found by clang scan build static analysis.
 > 
-> FWIW, I side with Dan's argument.  shmem_file_setup() *does not*
-> return NULL.  If it ever *did* return NULL, it would be up to the
-> person who makes that happen to change all callers to check for NULL.
-
-And as I asked three weeks ago, what's the harm in checking for a NULL
-pointer here?  The kerneldoc for shmem_file_setup doesn't explicitly
-exclude a null return.  True, it doesn't mention the possibility of
-ERR_PTR returns either, but that's an accepted practice for pointer
-returns.
-
-For a call outside of the xfs subsystem, I think it's prudent to have
-stronger return value checking.  Yes, someone changing the interface
-would have to add a null check to all the callsites, but (a) it's benign
-to guard against a behavior change in another module and (b) people miss
-things all the time.
-
-> The current code *suggests* that it could return NULL, which
-> is not correct.
-
-Huh?
-
-Are you talking about this stupid behavior of bots where they decide
-what a function returns based on the callsites in lieu of analyzing the
-actual implementation code?
-
-I don't feel like getting harassed by bots when someone /does/
-accidentally change the implementation to return NULL, and now one of
-the other build/test/syz bots starts crashing in xfile_create.
-
-Of course all that has bought me is ... more f*** bot harassment.
-
-I'm BURNED OUT, give me a fucking break!
-
---D
-
-> 					-Alex
+> Colin Ian King (5):
+>   bcachefs: remove redundant initialization of pointer d
+>   bcachefs: remove redundant initialization of pointer dst
+>   bcachefs: remove redundant initializations of variables start_offset
+>     and end_offset
+>   bcachefs: remove duplicated assignment to variable offset_into_extent
+>   bcachefs: remove redundant pointer q
 > 
-> > 
-> > --D
-> > 
-> > >   fs/xfs/scrub/xfile.c | 2 --
-> > >   1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-> > > index d98e8e77c684..71779d81cad7 100644
-> > > --- a/fs/xfs/scrub/xfile.c
-> > > +++ b/fs/xfs/scrub/xfile.c
-> > > @@ -70,8 +70,6 @@ xfile_create(
-> > >   		return -ENOMEM;
-> > >   	xf->file = shmem_file_setup(description, isize, 0);
-> > > -	if (!xf->file)
-> > > -		goto out_xfile;
-> > >   	if (IS_ERR(xf->file)) {
-> > >   		error = PTR_ERR(xf->file);
-> > >   		goto out_xfile;
-> > > -- 
-> > > 2.39.2
-> > > 
-> 
+>  fs/bcachefs/btree_update_interior.c | 2 +-
+>  fs/bcachefs/buckets.c               | 2 +-
+>  fs/bcachefs/disk_groups.c           | 3 +--
+>  fs/bcachefs/fs-io.c                 | 4 ++--
+>  fs/bcachefs/io.c                    | 1 -
+>  fs/bcachefs/quota.c                 | 3 ---
+>  6 files changed, 5 insertions(+), 10 deletions(-)
+
+Applied - thanks
