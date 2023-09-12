@@ -2,95 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD330CA0EF2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3A8CA0EF3
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Sep 2023 15:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236467AbjILPcx (ORCPT
+        id S236351AbjILPi3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Sep 2023 11:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
+        Tue, 12 Sep 2023 11:38:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236368AbjILPcs (ORCPT
+        with ESMTP id S233996AbjILPi3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Sep 2023 11:32:48 -0400
+        Tue, 12 Sep 2023 11:38:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0071F1995;
-        Tue, 12 Sep 2023 08:32:23 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9374DC433C7;
-        Tue, 12 Sep 2023 15:32:23 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E0C10DE;
+        Tue, 12 Sep 2023 08:38:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB53C433C9;
+        Tue, 12 Sep 2023 15:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694532743;
-        bh=aP1q85HwpR6MN+z+kgmwRqnZ5/UeHlephsY4A436iPc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KvUJ1pk2rdvvrrQsS5AlI/zh7thGtzqmZ3vtUa+66ZNBtwK2TxbG3eyI+uVCD1zud
-         kqeEbGjACxSxzSUDHiIcuTBDZStptYFuJWwYgrrsWbzg8PWGWeDb+zDG+UG+Gfqr9S
-         hdfiNtUCWYYNiEjmU13o/O08mLIelGglz6kfYOGnyg0iM0dHvuqZyZgxZ6XONY8Pq+
-         J2Wqco412nKm6q7B/9s/8oEcko5QHOhRvVuZ4zAIA8cU+cftx9JrVzFmTvhV4Yz4jZ
-         q3wcqIpS46lPZV22MtmDXwAGLc6JMCR9G4UN5DHh060caH92cDMjBDQb/c3F47G29j
-         tw3U5rRJyWtqw==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2bd0d135ca3so100169601fa.3;
-        Tue, 12 Sep 2023 08:32:23 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzJ8ek19jUblldG9Ek3SLr7Eqkt0JPhr7PPeZrlzGnulQp1AT/j
-        RINI8Qqx/nUd93viJWnt+rJNdhfMnwc1m3N0ig==
-X-Google-Smtp-Source: AGHT+IF7yvHU5JtvkJlFSQSpzz6yf0IyFvMIb+pn1jl8NW+pfuw50rW/Mra/ZdqhpnEzrQ5euY2oaMs/mZebFQ9NlEE=
-X-Received: by 2002:a05:6512:3b86:b0:500:af82:7dd6 with SMTP id
- g6-20020a0565123b8600b00500af827dd6mr12406327lfv.41.1694532741801; Tue, 12
- Sep 2023 08:32:21 -0700 (PDT)
+        s=k20201202; t=1694533104;
+        bh=JX2M//UEtbXXtWy9skglEBEoG5GsJrmIdJJVT3ZixzQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qQ+jI73xLqI7U1svOYCfGRsOg5ha+HQbSiY9j88dE/qTRUWRX1yMiTtyHP34qOsu8
+         JMRbWTKgtgoHyq5K/mDx4ebcp4zmDJPbElLXhgevZAsUMN3dXIj/4TxDKP7jIpJLes
+         9ZSgTQhDS+6NzCv9VMwpEd9v9trnJIS6zP+xOTIIm0v3PYLh6j9T9CaRZQhfGm5p1Q
+         E0e+Jb6KiZXL9oAteY93g3dH5Q5dh/s0/at7FhczUxoQUrNl2nTPL9sUzoTy+m8WDJ
+         mC8SraqiUiAc7BzsC2e5fVEUmLX6Kpk/Z5eut7scT4vHtv9H+sq5CH0OnOvu3wD9L8
+         e7kZn0zeGRQWQ==
+Date:   Tue, 12 Sep 2023 08:38:24 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
+Message-ID: <20230912153824.GB28186@frogsfrogsfrogs>
+References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
 MIME-Version: 1.0
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
- <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
- <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com> <06327197-9b17-481f-8ecc-3f9c5ba3e391@kadam.mountain>
-In-Reply-To: <06327197-9b17-481f-8ecc-3f9c5ba3e391@kadam.mountain>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 12 Sep 2023 10:32:08 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
-Message-ID: <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
-Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in of_changeset_action()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     kbuild test robot <lkp@intel.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 8, 2023 at 11:14=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> On Fri, Sep 08, 2023 at 05:34:53PM +0200, Geert Uytterhoeven wrote:
-> > > > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not us=
-e "%pOF" inside devtree_lock")
-> > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.c=
-om/
-> > >
-> > > Despite what that says, it was never reported to me. IOW, the added T=
-O
-> > > and CC lines don't seem to have any effect.
-> >
-> > The copy I received did list you in the "To"-header, though.
+On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
+> The shmem_file_setup() function can't return NULL so there is no need
+> to check and doing so is a bit confusing.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> No fixes tag because this is not a bug, just some confusing code.
 
-Are you sure that's the header and not in the body?
+Please don't re-send patches that have already been presented here.
+https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
 
-> > Fall-out of the issues seen with Gmail lately?
-> > I do miss lots of email, too :-(
->
-> My gmail account dropped a whole lot of mail too in the last week of
-> August.  I was out of office that week so I didn't investigate.  I was
-> assuming it was an issue with vger...
+--D
 
-I don't think it's related to those issues. If I search lore including
-my email[1], then it doesn't find it either. Lore only has it in
-oe-kbuild. Not LKML or oe-kbuild-all. It really just looks like the
-git-send-email style of extracting emails from tags in the body is not
-happening.
-
-Rob
-
-
-[1] https://lore.kernel.org/all/?q=3Df%3Alkp%40intel.com+a%3Arobh%40kernel.=
-org+of_changeset_action
+>  fs/xfs/scrub/xfile.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+> index d98e8e77c684..71779d81cad7 100644
+> --- a/fs/xfs/scrub/xfile.c
+> +++ b/fs/xfs/scrub/xfile.c
+> @@ -70,8 +70,6 @@ xfile_create(
+>  		return -ENOMEM;
+>  
+>  	xf->file = shmem_file_setup(description, isize, 0);
+> -	if (!xf->file)
+> -		goto out_xfile;
+>  	if (IS_ERR(xf->file)) {
+>  		error = PTR_ERR(xf->file);
+>  		goto out_xfile;
+> -- 
+> 2.39.2
+> 
