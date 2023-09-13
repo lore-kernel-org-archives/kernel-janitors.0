@@ -2,106 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8111EEB596
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 06:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E9EEB59A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 06:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238336AbjIMG3K (ORCPT
+        id S238357AbjIMGcT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 02:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50848 "EHLO
+        Wed, 13 Sep 2023 02:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237729AbjIMG3I (ORCPT
+        with ESMTP id S229780AbjIMGcT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 02:29:08 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA7DB1734
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:29:03 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-403012f276dso43008525e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:29:03 -0700 (PDT)
+        Wed, 13 Sep 2023 02:32:19 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1FE1732
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:32:15 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso6075689f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:32:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694586542; x=1695191342; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2hZ3bBvS6PJ0gaaTtw3Mjo6n8oJuQneFLvtDKhq14QU=;
-        b=iLsl20J16p5kLcO2E4Ohbp2jK9PRF9GA2NHNw/XL2dqX8WV2B782gpZ3GTgPUpExE3
-         TUwECwUo1GenCXz1Jx4MHSWQMU0lv8+mTLP6+RkreC8RogABjIB9n/K5biLyMcKKVMsH
-         B96AFZNR5QL/B5PwO+G3kpMnZun0mgZvTj6ovQ8Zw5YQ7IMugvEECbX5jSkc3WAldGk0
-         ClYOvuJQDQH+tpcuPEL9kl+fzpVwg5I1IwpMQXdeXvfJnoAFhbilEw4kEKXzzOudR67x
-         SjClRD+c8v0gLmxmVFnx3vhTgbaOBx9JqFOGQc2AOJxYM8NdflzuijebFC2s4hdRhKq0
-         vzjg==
+        d=linaro.org; s=google; t=1694586733; x=1695191533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qivlJCMaVg4OhszwDItIXcqLsMXxomkblOjI78ZSe0=;
+        b=mqGHuKPIuVXFPsHpdKjXAWD0O+tGW+AUVpsSYr0oJ4koa3vbY8SCLB9g7oSldGfqN4
+         03lcwkXNF8fwl4ZGwjcNkX5z6oJQK+Vz37Kz+BLQJDLkJgjcRCehgJ1wUM7KtuzkQh96
+         7zX32EFnEQMocMZ0xLSgvT5LY49O0yd40+D4fkVRJVhpOHX+9dAe7ybheXKh0PeTgrw7
+         IcHKIC3mkUi5dcMy7TiB3o08ihtQVNkrvni2t19njgv/MgdgUdYAqEuXXdMS+JAdpDiM
+         NIvSIGql/G4vuwi2UCCgoKo8+cvQlUOeKQ+0RxrektbZugZwXqREHu+x57TorGrrSEhO
+         61/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694586542; x=1695191342;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hZ3bBvS6PJ0gaaTtw3Mjo6n8oJuQneFLvtDKhq14QU=;
-        b=LRXGDtgqw+H5nHLStvnf60ybOV4ZPU+xRd/Cc/tNk3Bqxmk5pxZfyW0xB1eaPyzbAt
-         QH4gZaVm35FxFyKGqZJLmhJU3TVXX2rVJfnRbE/PoQkBIDI2Tjx5GAiGxNWLugcl+rq+
-         PsjZ1dy6n8WINNGQWgzMC9RWyMF2D9pK98hMXDJGvYAQuVB1ksKFCdUeM6cJNOwHuIi1
-         Ma3OijstHYwqHXGQ7aJ75LsgwG5o3WJni0mM0mVnmIgAgpCvwTplDZv6BHRXSm+c0mV2
-         PiMU7yMo69ilB1tpfcK18HbCQqdziT8Kw4ovEv9fRqSl33UgujbZxtBqiXBIxCemm0/r
-         AKTQ==
-X-Gm-Message-State: AOJu0YwDEUajaxAipRUygQ+7V0ce1aEpm9GbDrSHuIf5sa+TL05lBnAE
-        LEarhmxp5spSZqVOZgrEccYNHFj/WG/Kbo0He14=
-X-Google-Smtp-Source: AGHT+IHWkZ+L3kTcnBUHagrcUZ8bYghUlgASuvgAq3bJq/vxSGpLVj8skg6xAA3S6yJlHPRUTz73Ow==
-X-Received: by 2002:a1c:771a:0:b0:401:2ee0:754a with SMTP id t26-20020a1c771a000000b004012ee0754amr1161874wmi.13.1694586542329;
-        Tue, 12 Sep 2023 23:29:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694586733; x=1695191533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qivlJCMaVg4OhszwDItIXcqLsMXxomkblOjI78ZSe0=;
+        b=eLDvcmMzRtoH5OiVcMpG5yZKBEI5oMcujDFW6ez0leTUl3RGAHWPaAxZUQrqZENRDq
+         Jj9TSwNb2ALswzrbywdEqBQVkt3/1VZeEvtM8wx0miNRYpiA3iahuZRwCE68LfBMIVmW
+         6dUzfu09j9jFnZX0vWyGVrsKjZ3aQcJEN61Q40wOIYV2mBZOD6hLi/K3FbIspI+fj0Ep
+         5jLRaAShSVhXF4PnSXF9bGatl/SAhbtXIURvCMCrsK4tDq2/2rn9g21j0ELNlYxZef87
+         GouFKuY4nlhQ+YJqV9uiywEaDMdk2Uyt0NQVTaFvrrVIXSQsTcXSGb3Zat1q0uEpvdvW
+         wvnQ==
+X-Gm-Message-State: AOJu0YxvPime+u82KkB1JSLGqYJa0mJZUTJnUvjp8z1frjBpQFxs8fGF
+        ppr2NJr7ihRC2VsXTdQfMFzOvQ==
+X-Google-Smtp-Source: AGHT+IFLgbNNjiR4DdCGvpuElp8AEsWOHQjCfROEsReGABYxZyFLZYUc8maQbYBhXR6y29iNCDUacw==
+X-Received: by 2002:a05:6000:926:b0:317:5849:c2e0 with SMTP id cx6-20020a056000092600b003175849c2e0mr1438760wrb.9.1694586733682;
+        Tue, 12 Sep 2023 23:32:13 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s17-20020adff811000000b0030ada01ca78sm14489694wrp.10.2023.09.12.23.29.01
+        by smtp.gmail.com with ESMTPSA id o12-20020a5d408c000000b003142ea7a661sm14482643wrp.21.2023.09.12.23.32.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 23:29:01 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 09:28:59 +0300
+        Tue, 12 Sep 2023 23:32:13 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 09:32:11 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        kbuild test robot <lkp@intel.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] of: dynamic: Fix potential memory leak in
- of_changeset_action()
-Message-ID: <e6cba9f9-2d90-473d-a6b3-5b74b520617d@kadam.mountain>
-References: <7dfaf999-30ad-491c-9615-fb1138db121c@moroto.mountain>
- <CAL_JsqJB_pK-Q-Y-v6mWV1KwfL8sjFGgCcSL5gdrZm-TqxvBJg@mail.gmail.com>
- <CAMuHMdVep4Hib0iBabGdFfbCxdftWcJ8wfySGLB8GbmbSmBNhg@mail.gmail.com>
- <06327197-9b17-481f-8ecc-3f9c5ba3e391@kadam.mountain>
- <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
+Message-ID: <df3c1a41-13a7-4531-8676-6c39dde2d055@kadam.mountain>
+References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
+ <20230912153824.GB28186@frogsfrogsfrogs>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKZuG4dK2ThuTaFKk9b9HtGcvmuJMgZFMeVw7ADg2+_kQ@mail.gmail.com>
+In-Reply-To: <20230912153824.GB28186@frogsfrogsfrogs>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 10:32:08AM -0500, Rob Herring wrote:
-> On Fri, Sep 8, 2023 at 11:14 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Fri, Sep 08, 2023 at 05:34:53PM +0200, Geert Uytterhoeven wrote:
-> > > > > Fixes: 914d9d831e61 ("of: dynamic: Refactor action prints to not use "%pOF" inside devtree_lock")
-> > > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > > Closes: https://lore.kernel.org/r/202309011059.EOdr4im9-lkp@intel.com/
-> > > >
-> > > > Despite what that says, it was never reported to me. IOW, the added TO
-> > > > and CC lines don't seem to have any effect.
-> > >
-> > > The copy I received did list you in the "To"-header, though.
+On Tue, Sep 12, 2023 at 08:38:24AM -0700, Darrick J. Wong wrote:
+> On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
+> > The shmem_file_setup() function can't return NULL so there is no need
+> > to check and doing so is a bit confusing.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > No fixes tag because this is not a bug, just some confusing code.
 > 
-> Are you sure that's the header and not in the body?
+> Please don't re-send patches that have already been presented here.
+> https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
 > 
 
-How these warnings work is that the kbuild bot sends the email to me and
-the oe-kbuild@lists.linux.dev list.  I look it over and send it out
-publicly if the warning seems right.
+Should we set an error code?  These kinds of impossible error situations
+are hard to handle correctly.
 
-You're seeing the first email that I hadn't forwarded yet but the second
-forwarded email went out and it reached lkml.
-
-https://lore.kernel.org/lkml/eaa86211-436d-445b-80bd-84cea5745b5a@kadam.mountain/raw
-
-You're on the To: header so it should have reached you as well...
+Like there are some places were we work around bugs in driver code where
+we can trust them to return error pointers and that's totally a valid
+thing.  But here it's a very puzzling thing.
 
 regards,
 dan carpenter
