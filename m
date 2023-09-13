@@ -2,84 +2,137 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657E7EE01FC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 17:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E772EE0201
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 17:51:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbjIMRqo (ORCPT
+        id S231470AbjIMRv2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 13:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57244 "EHLO
+        Wed, 13 Sep 2023 13:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbjIMRqo (ORCPT
+        with ESMTP id S231637AbjIMRv0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 13:46:44 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255F519AC
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 10:46:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E45C433C7;
-        Wed, 13 Sep 2023 17:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694627199;
-        bh=6RQLwm9+y0/pjTEP8oYtSeOWaSaM8z+j+IMHHzvs4IQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=MXKAplrAetGPjfxNmSciWt8ol/UlnaVaGb1xTkcfa9zoMQgsP8xhzUPxy1vJDhPhj
-         1llVebSBlwhirtTcAxlyolhl1zlsMvIP23EG5pSTPe+rwIo5BOuImY1QzjbVkE1F4p
-         WqaScJkoBxa4fLJvvWFnnLl8NLtGBiLbKTHhCwpfFeYDEU49qENOUyHnGtlyKIcw7g
-         4vGmHZlSfN7V/YDFOFawm5fXzHSTK+sO9nzWm0CSYbcmGKy77MT/IoYt2lRzp/zfDz
-         9OunRFzWvMlUOTsfhx8bq33/QYxS3+u7xiPE1Mwyxb7BEZ8BKPf9hNuueWopBvQcwS
-         SaiDOyEvz4a8Q==
-From:   Mark Brown <broonie@kernel.org>
-To:     Weidong Wang <wangweidong.a@awinic.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Nick Li <liweilei@awinic.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Ben Yi <yijiangtao@awinic.com>, Tom Rix <trix@redhat.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <81476e78-05c2-4656-b754-f314c7ccdb81@moroto.mountain>
-References: <81476e78-05c2-4656-b754-f314c7ccdb81@moroto.mountain>
-Subject: Re: [PATCH] ASoC: codecs: aw88395: Fix some error codes
-Message-Id: <169462719734.54382.4099179509276849892.b4-ty@kernel.org>
-Date:   Wed, 13 Sep 2023 18:46:37 +0100
+        Wed, 13 Sep 2023 13:51:26 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9A319AF
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 10:51:21 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-401da71b7c5so657865e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 10:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694627480; x=1695232280; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FyYx53FxfQAw89va0cpnMmgS15dAzd07q2KbIgbInrY=;
+        b=Nls/83M6nVqSO7V/qs+xMAtqcqaWoPVKJ3385RWOkdkpibSXzm2rRBNI4BKI+FfBV1
+         gHzSENaPL2eqzQHQPuo5+1FFuqu/B72lcnJpjpSgnTpVZ13bXtp4a/+KYYaiXLJXEatj
+         QgDc+JD2PKkgB1RCR9jmF2CWHKFUk162trpQIyFq3diKV0UrOSRYdI4qBFNMpIzx+eF9
+         2cmoC586s1wJIuWSeGwJQjai6HyUrppWdv8aBle0N7YmC2TQOoBU2Oq4N/bLLVMjFFR6
+         e+GUpaDykwC4Cg7+cBy5kiibrEcTAT89cjua+Z8CzWJopsYqcXN1/x4OMRSkvmc7mBEg
+         Zb5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694627480; x=1695232280;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FyYx53FxfQAw89va0cpnMmgS15dAzd07q2KbIgbInrY=;
+        b=rWwvzY6sBfK+obW7HT50QrmZeGhUX6gjivhzFCjnIMGUyDVd8PnO4QWOkBY4k5QVki
+         6JomCCJ18p4Gez/kNoCYROukuJHiaUy0i7GRE0U3kG+1cW5rszjhxpVZbCSjz+v32MnI
+         Uf5miUzk9j/LaVufY8DvVQHoCaST2EY40utw1gNx7c0I8cxVEZGk+iRFWo7ExyL61ep5
+         DdayUVSeQxO0DeYn5yIaJHlVQSpC4IPTv98qlNLf/OGig/u+fXJKSNjPcOcrqugEA4nF
+         PWWSGXpwyATLeZl7RRHjyPjbQ/jLz+3p9qVVhHreJ/X7jdOpsUwnbkYc5DlJCEaN499y
+         8y7Q==
+X-Gm-Message-State: AOJu0Ywjfm+zNyoMikUt9PWe1EhPnnxqwOehx5AocBJHW13zrrdIKxwP
+        qdTTP6XlqWQGAexQxWZoWmEVqw==
+X-Google-Smtp-Source: AGHT+IELlc+r0cfJgPdnyPQO/pphf431jMg+zw/m3Zlk+KFfPLVGjzhiNVEt/6LVuguJr7V0DLLvQQ==
+X-Received: by 2002:a1c:7703:0:b0:3ff:516b:5c65 with SMTP id t3-20020a1c7703000000b003ff516b5c65mr2883462wmi.30.1694627480327;
+        Wed, 13 Sep 2023 10:51:20 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b14-20020a05600c11ce00b00403038d7652sm2641434wmi.39.2023.09.13.10.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 10:51:20 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 20:38:10 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Bastien Nocera <hadess@hadess.net>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: steelseries: Fix signedness bug in
+ steelseries_headset_arctis_1_fetch_battery()
+Message-ID: <ca55accf-5a7b-43f5-83e0-59c48d0a9389@kadam.mountain>
+References: <5c1cc882-b2b8-45cb-b8f7-4b35d1800e5d@moroto.mountain>
+ <e0ad67eea72936e44df399e46bb89b7be914419e.camel@hadess.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-034f2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e0ad67eea72936e44df399e46bb89b7be914419e.camel@hadess.net>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 13 Sep 2023 11:18:22 +0300, Dan Carpenter wrote:
-> These error paths should return -EINVAL instead of success.
+On Wed, Sep 13, 2023 at 04:43:29PM +0200, Bastien Nocera wrote:
+> Hey Dan,
+> 
+> On Thu, 2023-09-07 at 12:55 +0300, Dan Carpenter wrote:
+> > The hid_hw_raw_request() function returns negative error codes or the
+> > number bytes transferred.  If it returns negative error codes, then
+> > the
+> > problem is that when we check if "ret <
+> > sizeof(arctis_1_battery_request)",
+> > negative values are type promoted to high unsigned values and treated
+> > as
+> > success.  Add an explicit check for negatives to address this issue.
+> 
+> I would be grateful if you could either add the compiler's error
+> message or explain in greater details the integer type promotion (or
+> demotion from signed to unsigned in this case) in the commit message.
+> 
+
+This is a Smatch warning but you have to have built the cross function
+database and I only know one other person who does that for sure...
+
+drivers/hid/hid-steelseries.c:393 steelseries_headset_arctis_1_fetch_battery()
+warn: error code type promoted to positive: 'ret'
+
+I can add that and resend.
+
+> > Fixes: a0c76896c3fb ("HID: steelseries: Add support for Arctis 1
+> > XBox")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
 > 
+> 
+> > ---
+> >  drivers/hid/hid-steelseries.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/hid/hid-steelseries.c b/drivers/hid/hid-
+> > steelseries.c
+> > index 43d2cf7153d7..485d2287d58a 100644
+> > --- a/drivers/hid/hid-steelseries.c
+> > +++ b/drivers/hid/hid-steelseries.c
+> > @@ -390,7 +390,7 @@ static int
+> > steelseries_headset_arctis_1_fetch_battery(struct hid_device *hdev)
+> >         ret = hid_hw_raw_request(hdev, arctis_1_battery_request[0],
+> >                                  write_buf,
+> > sizeof(arctis_1_battery_request),
+> >                                  HID_OUTPUT_REPORT,
+> > HID_REQ_SET_REPORT);
+> > -       if (ret < sizeof(arctis_1_battery_request)) {
+> > +       if (ret < 0 || ret < sizeof(arctis_1_battery_request)) {
+> 
+> I prefer:
+> -       if (ret < sizeof(arctis_1_battery_request)) {
+> +       if (ret < (int) sizeof(arctis_1_battery_request)) {
+> 
+> although I'm not sure that's the kernel-style for this sort of checks.
+> 
 
-Applied to
+I grepped to see which format is more popular and it's 14 vs 13 in favor
+of casting.  I prefer to avoid casts, but I can resend.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+regards,
+dan carpenter
 
-Thanks!
-
-[1/1] ASoC: codecs: aw88395: Fix some error codes
-      commit: cf0ba445f5e4dd74c1e9d7a83ca721ba69204a11
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
