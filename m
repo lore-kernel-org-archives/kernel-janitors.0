@@ -2,78 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1C6EDEC43
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 11:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B18EDEC40
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 11:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240021AbjIMLZg (ORCPT
+        id S240228AbjIMLac (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 07:25:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46808 "EHLO
+        Wed, 13 Sep 2023 07:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234090AbjIMLZf (ORCPT
+        with ESMTP id S240129AbjIMLab (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 07:25:35 -0400
+        Wed, 13 Sep 2023 07:30:31 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A09FA1726;
-        Wed, 13 Sep 2023 04:25:31 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ACBBC433CB;
-        Wed, 13 Sep 2023 11:25:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 545321726;
+        Wed, 13 Sep 2023 04:30:27 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E33F0C4339A;
+        Wed, 13 Sep 2023 11:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694604331;
-        bh=gd4Qg3wRr62r6hfNz7SvyOMx7SR3EXpHDzF31oJWhNg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fo1KTGbXd6yIn2G5OTB8aXaZ0oNY2PoRgqPMb2bkR3QDXuZ8OoFmfTmR6bLztmi9x
-         jyZAjwygsU0QQE9I5pvecp8p/1rV7QYk8kyonQyaeOCkMljHwP8tR+SWIyw/Cr9T5t
-         ZmiQXLvzQEwP/AVEwCewjBiQwSh1+pyaIBkCKzvwXwbq+wBlx0dQ/R4b9YLUfExxsD
-         jJdxRfmio/ua4K1MB/slVwl9PClTibPp3A3/dOl17tBr5BCoMJMVm99RhGLqzgd7aB
-         JyTOQpbieVzjmdGEYpEreJcgKyH5aeo2sy2FKM/rGqgOFfIyQOz24kSHnS8azaKE0j
-         dOt1psUDKAnfQ==
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-d7f0048b042so5799666276.2;
-        Wed, 13 Sep 2023 04:25:31 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwR8ZdpLdYrXWML4H2rKx2UQXNdFt1tBFTDuwMJL2m/clvmBjnP
-        cV4gUvDrUixRZl9z0vNpceo6AQ+7e4VXv1rYpDw=
-X-Google-Smtp-Source: AGHT+IF++WTrqbY3O8aaxIaa8Yma5uo3TC1iem9FGG5Ad85NyXYy6VAVo51407NjSpy8mj+70+8MDQDzOS1MswcqFvI=
-X-Received: by 2002:a25:d009:0:b0:d7b:9d44:767a with SMTP id
- h9-20020a25d009000000b00d7b9d44767amr2030302ybg.17.1694604330438; Wed, 13 Sep
- 2023 04:25:30 -0700 (PDT)
+        s=k20201202; t=1694604626;
+        bh=fys3AwpYMFkt4YpMz2d9cBa4HOo29zLSnKJq0CztGhM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=HoigTJxBqwRaERj0uhNCxnLnoW8QdbIdiKARdggVKYc4BF94U8xJ9jLO8vpKvZCIg
+         +Tc6HJXn0UBZE/QFNZw5+NBrOaFd+jr8M7WtTev9Rprbpu8Mo5ipDsK5fkQzqjQ32l
+         Q9MITKDV0bDOyh591rVUBvkCOv6bjRPKwnKdtrqaFa3Eptl/lVI0b6JvosIcrgovIo
+         fZ4DQvxukMTSyKErFxumMx6LytrSXyzI/wxB0oUIK/HFl/FqnTrgvEtm9zZhAtHK2b
+         TlyD5lw7wsfyfG1DT+8kwuIBcatUPCrzXJTfk9dJfJJGPSjV5u/b69CN4IMldbZ2lP
+         S+mjqMQup/b+w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D08B7E1C281;
+        Wed, 13 Sep 2023 11:30:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <d38582083ece76155dabdfd9a29d5a9dd0d6bce7.1693855091.git.christophe.jaillet@wanadoo.fr>
- <20230905122827.GD184247@linux.intel.com>
-In-Reply-To: <20230905122827.GD184247@linux.intel.com>
-From:   Oded Gabbay <ogabbay@kernel.org>
-Date:   Wed, 13 Sep 2023 14:25:03 +0300
-X-Gmail-Original-Message-ID: <CAFCwf11LyA-pyq2kZ_oJhCtw_LCyx3h_a4JTurPvRNBFngzqcw@mail.gmail.com>
-Message-ID: <CAFCwf11LyA-pyq2kZ_oJhCtw_LCyx3h_a4JTurPvRNBFngzqcw@mail.gmail.com>
-Subject: Re: [PATCH] accel/habanalabs/gaudi2: Fix incorrect string length
- computation in gaudi2_psoc_razwi_get_engines()
-To:     Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dani Liberman <dliberman@habana.ai>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: hinic: Use devm_kasprintf()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169460462685.4298.10103672469852664707.git-patchwork-notify@kernel.org>
+Date:   Wed, 13 Sep 2023 11:30:26 +0000
+References: <198375f3b77b4a6bae4fdaefff7630414c0c89fe.1694461804.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <198375f3b77b4a6bae4fdaefff7630414c0c89fe.1694461804.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     cai.huoqing@linux.dev, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 5, 2023 at 3:28=E2=80=AFPM Stanislaw Gruszka
-<stanislaw.gruszka@linux.intel.com> wrote:
->
-> On Mon, Sep 04, 2023 at 09:18:36PM +0200, Christophe JAILLET wrote:
-> > snprintf() returns the "number of characters which *would* be generated=
- for
-> > the given input", not the size *really* generated.
-> >
-> > In order to avoid too large values for 'str_size' (and potential negati=
-ve
-> > values for "PSOC_RAZWI_ENG_STR_SIZE - str_size") use scnprintf()
-> > instead of snprintf().
-> >
-> > Fixes: c0e6df916050 ("accel/habanalabs: fix address decode RAZWI handli=
-ng")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Applied to -next.
-Thanks for the patch.
-Oded
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 11 Sep 2023 21:50:52 +0200 you wrote:
+> Use devm_kasprintf() instead of hand writing it.
+> This is less verbose and less error prone.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ethernet/huawei/hinic/hinic_tx.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+
+Here is the summary with links:
+  - [net-next] net: hinic: Use devm_kasprintf()
+    https://git.kernel.org/netdev/net-next/c/9cc91173cf1b
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
