@@ -2,123 +2,56 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2F4EE0207
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 19:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCF2EE0212
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 23:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbjIMTG5 convert rfc822-to-8bit (ORCPT
+        id S233098AbjIMXBu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 15:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49756 "EHLO
+        Wed, 13 Sep 2023 19:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbjIMTG4 (ORCPT
+        with ESMTP id S229455AbjIMXBu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 15:06:56 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC34F170F;
-        Wed, 13 Sep 2023 12:06:51 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A1E8B20003;
-        Wed, 13 Sep 2023 19:06:49 +0000 (UTC)
-Message-ID: <33c23979dc418a499699e890203930aaa47dbae7.camel@hadess.net>
-Subject: Re: [PATCH] HID: steelseries: Fix signedness bug in
- steelseries_headset_arctis_1_fetch_battery()
-From:   Bastien Nocera <hadess@hadess.net>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date:   Wed, 13 Sep 2023 21:06:49 +0200
-In-Reply-To: <ca55accf-5a7b-43f5-83e0-59c48d0a9389@kadam.mountain>
-References: <5c1cc882-b2b8-45cb-b8f7-4b35d1800e5d@moroto.mountain>
-         <e0ad67eea72936e44df399e46bb89b7be914419e.camel@hadess.net>
-         <ca55accf-5a7b-43f5-83e0-59c48d0a9389@kadam.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Wed, 13 Sep 2023 19:01:50 -0400
+Received: from out-214.mta0.migadu.com (out-214.mta0.migadu.com [91.218.175.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9721BCB;
+        Wed, 13 Sep 2023 16:01:45 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 19:01:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694646103;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=936FjOrJ5smwNM8opXoifLeImI0aNI7wDdh2+lfJJno=;
+        b=p9xXQT3eeIpGBB2+SQb2w8E1bHynlFI1LXkI/rh0VGAUzF8IDHgPqGkIhXXvXn+X89XW/8
+        l7+BUnexQZDrQuED0EmL/4NW8BFVuXGYYHw+0jRN8iWk4RqfuJ+GxvlrVlduHyJMpj5wWg
+        7lNT1oYTpnqhGXu56vNEc9rgWhn8diM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: Fix a potential in the error handling path
+ of use-after-free inbch2_dev_add()
+Message-ID: <20230913230135.y27i2bx244tdjhvj@moria.home.lan>
+References: <3ab17a294fd2b5fcb180d44955b0d76a28af11cb.1694623395.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-X-GND-Sasl: hadess@hadess.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ab17a294fd2b5fcb180d44955b0d76a28af11cb.1694623395.git.christophe.jaillet@wanadoo.fr>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2023-09-13 at 20:38 +0300, Dan Carpenter wrote:
-> On Wed, Sep 13, 2023 at 04:43:29PM +0200, Bastien Nocera wrote:
-> > Hey Dan,
-> > 
-> > On Thu, 2023-09-07 at 12:55 +0300, Dan Carpenter wrote:
-> > > The hid_hw_raw_request() function returns negative error codes or
-> > > the
-> > > number bytes transferred.  If it returns negative error codes,
-> > > then
-> > > the
-> > > problem is that when we check if "ret <
-> > > sizeof(arctis_1_battery_request)",
-> > > negative values are type promoted to high unsigned values and
-> > > treated
-> > > as
-> > > success.  Add an explicit check for negatives to address this
-> > > issue.
-> > 
-> > I would be grateful if you could either add the compiler's error
-> > message or explain in greater details the integer type promotion
-> > (or
-> > demotion from signed to unsigned in this case) in the commit
-> > message.
-> > 
+On Wed, Sep 13, 2023 at 06:44:08PM +0200, Christophe JAILLET wrote:
+> If __bch2_dev_attach_bdev() fails, bch2_dev_free() is called twice.
+> Once here and another time in the error handling path.
 > 
-> This is a Smatch warning but you have to have built the cross
-> function
-> database and I only know one other person who does that for sure...
+> This leads to several use-after-free.
 > 
-> drivers/hid/hid-steelseries.c:393
-> steelseries_headset_arctis_1_fetch_battery()
-> warn: error code type promoted to positive: 'ret'
-> 
-> I can add that and resend.
+> Remove the redundant call and only rely on the error handling path.
 
-That would be great, thanks!
-
-> 
-> > > Fixes: a0c76896c3fb ("HID: steelseries: Add support for Arctis 1
-> > > XBox")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > 
-> > 
-> > 
-> > > ---
-> > >  drivers/hid/hid-steelseries.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/hid/hid-steelseries.c b/drivers/hid/hid-
-> > > steelseries.c
-> > > index 43d2cf7153d7..485d2287d58a 100644
-> > > --- a/drivers/hid/hid-steelseries.c
-> > > +++ b/drivers/hid/hid-steelseries.c
-> > > @@ -390,7 +390,7 @@ static int
-> > > steelseries_headset_arctis_1_fetch_battery(struct hid_device
-> > > *hdev)
-> > >         ret = hid_hw_raw_request(hdev,
-> > > arctis_1_battery_request[0],
-> > >                                  write_buf,
-> > > sizeof(arctis_1_battery_request),
-> > >                                  HID_OUTPUT_REPORT,
-> > > HID_REQ_SET_REPORT);
-> > > -       if (ret < sizeof(arctis_1_battery_request)) {
-> > > +       if (ret < 0 || ret < sizeof(arctis_1_battery_request)) {
-> > 
-> > I prefer:
-> > -       if (ret < sizeof(arctis_1_battery_request)) {
-> > +       if (ret < (int) sizeof(arctis_1_battery_request)) {
-> > 
-> > although I'm not sure that's the kernel-style for this sort of
-> > checks.
-> > 
-> 
-> I grepped to see which format is more popular and it's 14 vs 13 in
-> favor
-> of casting.  I prefer to avoid casts, but I can resend.
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
+Thanks, both applied
