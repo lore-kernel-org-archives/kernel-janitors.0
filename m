@@ -2,93 +2,160 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E9EEB59A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 06:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7312EEEB596
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 07:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238357AbjIMGcT (ORCPT
+        id S238398AbjIMHBM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 02:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
+        Wed, 13 Sep 2023 03:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbjIMGcT (ORCPT
+        with ESMTP id S232592AbjIMHBK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 02:32:19 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1FE1732
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:32:15 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso6075689f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Sep 2023 23:32:15 -0700 (PDT)
+        Wed, 13 Sep 2023 03:01:10 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA581738
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 00:01:06 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-401da71b85eso70178915e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 00:01:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694586733; x=1695191533; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694588465; x=1695193265; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7qivlJCMaVg4OhszwDItIXcqLsMXxomkblOjI78ZSe0=;
-        b=mqGHuKPIuVXFPsHpdKjXAWD0O+tGW+AUVpsSYr0oJ4koa3vbY8SCLB9g7oSldGfqN4
-         03lcwkXNF8fwl4ZGwjcNkX5z6oJQK+Vz37Kz+BLQJDLkJgjcRCehgJ1wUM7KtuzkQh96
-         7zX32EFnEQMocMZ0xLSgvT5LY49O0yd40+D4fkVRJVhpOHX+9dAe7ybheXKh0PeTgrw7
-         IcHKIC3mkUi5dcMy7TiB3o08ihtQVNkrvni2t19njgv/MgdgUdYAqEuXXdMS+JAdpDiM
-         NIvSIGql/G4vuwi2UCCgoKo8+cvQlUOeKQ+0RxrektbZugZwXqREHu+x57TorGrrSEhO
-         61/A==
+        bh=rxEwSrADigL55KUK+kn7a1SeYT+9CqL3SU8EoT51CDk=;
+        b=Wua8OQ8hb5BPxMUekouQOb5BZwOj13VSbftvNQwBa6hltLVm0VPPzkksJzVh2Hi+B7
+         dP8/NLX+E0uk4CTZ7oHsBnmjEgKaiJYuYywlMgOXdXonJ1uvkj//etMX19k7DIAVpQHf
+         DwUWHXJ9m+uJsQx2BhhjcRbIrtXdgLFWWqH9aGysbNjadt4kQsUMZk/NPwRV4+QPrK5p
+         Z2Hop3oO80VuTWlnxHOLWxAvamv4hqsnkUuHARirTPOFDXf40XqfsnKZ2HMbfkgWRngr
+         8f4wZ3jnk4Ol2mMTD/vaq/OlBcTC3JwJr0vW9NDC6hBN7QsLa++3fWXScgroeKNHaS2v
+         oC8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694586733; x=1695191533;
+        d=1e100.net; s=20230601; t=1694588465; x=1695193265;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7qivlJCMaVg4OhszwDItIXcqLsMXxomkblOjI78ZSe0=;
-        b=eLDvcmMzRtoH5OiVcMpG5yZKBEI5oMcujDFW6ez0leTUl3RGAHWPaAxZUQrqZENRDq
-         Jj9TSwNb2ALswzrbywdEqBQVkt3/1VZeEvtM8wx0miNRYpiA3iahuZRwCE68LfBMIVmW
-         6dUzfu09j9jFnZX0vWyGVrsKjZ3aQcJEN61Q40wOIYV2mBZOD6hLi/K3FbIspI+fj0Ep
-         5jLRaAShSVhXF4PnSXF9bGatl/SAhbtXIURvCMCrsK4tDq2/2rn9g21j0ELNlYxZef87
-         GouFKuY4nlhQ+YJqV9uiywEaDMdk2Uyt0NQVTaFvrrVIXSQsTcXSGb3Zat1q0uEpvdvW
-         wvnQ==
-X-Gm-Message-State: AOJu0YxvPime+u82KkB1JSLGqYJa0mJZUTJnUvjp8z1frjBpQFxs8fGF
-        ppr2NJr7ihRC2VsXTdQfMFzOvQ==
-X-Google-Smtp-Source: AGHT+IFLgbNNjiR4DdCGvpuElp8AEsWOHQjCfROEsReGABYxZyFLZYUc8maQbYBhXR6y29iNCDUacw==
-X-Received: by 2002:a05:6000:926:b0:317:5849:c2e0 with SMTP id cx6-20020a056000092600b003175849c2e0mr1438760wrb.9.1694586733682;
-        Tue, 12 Sep 2023 23:32:13 -0700 (PDT)
+        bh=rxEwSrADigL55KUK+kn7a1SeYT+9CqL3SU8EoT51CDk=;
+        b=ItF3xa7ihvRFQfPzpjRqsPJb8aYNY+CVXJ0YjM8zmTcstN+PVirZylhU3XawhXembg
+         XQmH8F2Dpk8HU/LVc/jcNmf1Qel2R61X5827jtUg5PklbEJ/HG/nScu7FQyIC+NuI0Bl
+         Lr1pVX8a5F+JcN4bjjQsMm2Ff0g9Dqn9kTTWPAE+UF7GulF/osZhf49LK3zYAs4ts1S0
+         JCscw8LJXHeS8bhA43KQdJIYzBbTslx1m+OFvsUQrK1njCILi7vGEDJNg1Sl5oNAUxCT
+         htSvIN6oRTLjMULUyal4Pgu2OQizKRP3NGwP4UQQsT9Hdtub2OEMgm/AXKEHqmNhzZPr
+         kQwA==
+X-Gm-Message-State: AOJu0YyiS0yQH25e8PQ2wmWlDQexui7GRQuf5A8HWuyBL5HJkFBtyqQN
+        /ywXSgaKeTmZrh7G//ZoWJJRXA==
+X-Google-Smtp-Source: AGHT+IGICr3IH8Jp41V2bYK9Ff2nTqLZswVkjLZvdCTwqajKf/5QT/EFKcb52xlWuAdRsrkmSCW0Rg==
+X-Received: by 2002:adf:ea85:0:b0:319:7c1f:8dae with SMTP id s5-20020adfea85000000b003197c1f8daemr1473001wrm.3.1694588465003;
+        Wed, 13 Sep 2023 00:01:05 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o12-20020a5d408c000000b003142ea7a661sm14482643wrp.21.2023.09.12.23.32.12
+        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b0031912c0ffebsm14594274wrq.23.2023.09.13.00.01.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 23:32:13 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 09:32:11 +0300
+        Wed, 13 Sep 2023 00:01:04 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 10:01:01 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+Cc:     Alex Elder <elder@ieee.org>,
+        Chandan Babu R <chandan.babu@oracle.com>,
         Dave Chinner <dchinner@redhat.com>,
         Kent Overstreet <kent.overstreet@linux.dev>,
         linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
-Message-ID: <df3c1a41-13a7-4531-8676-6c39dde2d055@kadam.mountain>
+Message-ID: <3c63cc50-c6a8-4bba-87d8-6556ebe1905e@kadam.mountain>
 References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
  <20230912153824.GB28186@frogsfrogsfrogs>
+ <e575bbf3-f0ba-ec39-03c5-9165678d1fc7@ieee.org>
+ <20230912162315.GC28186@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230912153824.GB28186@frogsfrogsfrogs>
+In-Reply-To: <20230912162315.GC28186@frogsfrogsfrogs>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 08:38:24AM -0700, Darrick J. Wong wrote:
-> On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
-> > The shmem_file_setup() function can't return NULL so there is no need
-> > to check and doing so is a bit confusing.
+On Tue, Sep 12, 2023 at 09:23:15AM -0700, Darrick J. Wong wrote:
+> On Tue, Sep 12, 2023 at 10:41:53AM -0500, Alex Elder wrote:
+> > On 9/12/23 10:38 AM, Darrick J. Wong wrote:
+> > > On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
+> > > > The shmem_file_setup() function can't return NULL so there is no need
+> > > > to check and doing so is a bit confusing.
+> > > > 
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > ---
+> > > > No fixes tag because this is not a bug, just some confusing code.
+> > > 
+> > > Please don't re-send patches that have already been presented here.
+> > > https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
 > > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > No fixes tag because this is not a bug, just some confusing code.
+> > FWIW, I side with Dan's argument.  shmem_file_setup() *does not*
+> > return NULL.  If it ever *did* return NULL, it would be up to the
+> > person who makes that happen to change all callers to check for NULL.
 > 
-> Please don't re-send patches that have already been presented here.
-> https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
+> And as I asked three weeks ago, what's the harm in checking for a NULL
+> pointer here?  The kerneldoc for shmem_file_setup doesn't explicitly
+> exclude a null return.  True, it doesn't mention the possibility of
+> ERR_PTR returns either, but that's an accepted practice for pointer
+> returns.
+
+Mixing up error pointers and NULL checking is a common bug.  We never
+hit this in run time these days because we've been using static analysis
+to prevent it for over a decade.
+
+If you look at the code we used to ship in the 2006 era it's absolutely
+amazing (bad).  Static analysis isn't perfect for everything but there
+are some kinds of simple bugs where we've almost eliminated them
+completely.
+
 > 
+> For a call outside of the xfs subsystem, I think it's prudent to have
+> stronger return value checking.  Yes, someone changing the interface
+> would have to add a null check to all the callsites, but (a) it's benign
+> to guard against a behavior change in another module and (b) people miss
+> things all the time.
+> 
+> > The current code *suggests* that it could return NULL, which
+> > is not correct.
+> 
+> Huh?
+> 
+> Are you talking about this stupid behavior of bots where they decide
+> what a function returns based on the callsites in lieu of analyzing the
+> actual implementation code?
 
-Should we set an error code?  These kinds of impossible error situations
-are hard to handle correctly.
+In this case Smatch is looking at the implementation.
 
-Like there are some places were we work around bugs in driver code where
-we can trust them to return error pointers and that's totally a valid
-thing.  But here it's a very puzzling thing.
+$ smdb return_states shmem_file_setup | grep INTER
+mm/shmem.c | shmem_file_setup | 2229 |  4096-ptr_max|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
+mm/shmem.c | shmem_file_setup | 2230 |  (-4095)-(-1)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
+mm/shmem.c | shmem_file_setup | 2231 | (-4095)-(-4),(-2)-(-1)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
+mm/shmem.c | shmem_file_setup | 2232 |         (-22)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
+mm/shmem.c | shmem_file_setup | 2233 |         (-12)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
+
+I also manually reviewed the function implementation to verify.
+
+> 
+> I don't feel like getting harassed by bots when someone /does/
+> accidentally change the implementation to return NULL, and now one of
+> the other build/test/syz bots starts crashing in xfile_create.
+
+If someone changes it to return NULL then there are a few things to
+note.
+
+1) That person is going to have change all the call sites.
+2) Normally when a function returns both error pointers and NULL then
+   the NULL is success. So this code doesn't handle the normal case
+   correctly because it assumes NULL is an error.
+3) Static checkers will complain if the call sites are not updated.  Try
+   to find any IS_ERR vs NULL bugs in the past year that were found at
+   run time instead of through static analysis.  Occasionally syzbot
+   will hit them before me but it's rare.  I don't even remember the
+   last time where this sort of bug managed to reach actual users.
+
+> 
+> Of course all that has bought me is ... more f*** bot harassment.
+> 
+> I'm BURNED OUT, give me a fucking break!
+
+Fair enough.  I should have seen Yang Yingliang's email.
 
 regards,
 dan carpenter
-
