@@ -2,160 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7312EEEB596
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 07:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C8ACA5504
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 08:18:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238398AbjIMHBM (ORCPT
+        id S231301AbjIMISd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:01:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
+        Wed, 13 Sep 2023 04:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232592AbjIMHBK (ORCPT
+        with ESMTP id S229789AbjIMISc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:01:10 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA581738
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 00:01:06 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-401da71b85eso70178915e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 00:01:06 -0700 (PDT)
+        Wed, 13 Sep 2023 04:18:32 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CB31996
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 01:18:28 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-403004a96a4so45045455e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Sep 2023 01:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694588465; x=1695193265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxEwSrADigL55KUK+kn7a1SeYT+9CqL3SU8EoT51CDk=;
-        b=Wua8OQ8hb5BPxMUekouQOb5BZwOj13VSbftvNQwBa6hltLVm0VPPzkksJzVh2Hi+B7
-         dP8/NLX+E0uk4CTZ7oHsBnmjEgKaiJYuYywlMgOXdXonJ1uvkj//etMX19k7DIAVpQHf
-         DwUWHXJ9m+uJsQx2BhhjcRbIrtXdgLFWWqH9aGysbNjadt4kQsUMZk/NPwRV4+QPrK5p
-         Z2Hop3oO80VuTWlnxHOLWxAvamv4hqsnkUuHARirTPOFDXf40XqfsnKZ2HMbfkgWRngr
-         8f4wZ3jnk4Ol2mMTD/vaq/OlBcTC3JwJr0vW9NDC6hBN7QsLa++3fWXScgroeKNHaS2v
-         oC8A==
+        d=linaro.org; s=google; t=1694593107; x=1695197907; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rL0QYm+4DpNU20BBRJmcQSCbvNXdp8splkqH77lfanI=;
+        b=i2JkCVM075NkwYKDIN0J+QMEQo/TjgniNmFEh8rQOxB0DaNenBDWUHjLNI2MWhrhWz
+         PhIVY3pDjGtApGLPkoKZEQg4YzRIGeYyKqwZf8/GBDsQThRasIwEuH69WPUhh9OatYJP
+         UUIVGXAaqNGJC1KkJohuBjvVzrTr8r49OMuA2flA34HGqXpAaFkH7d9YYxKcfpeFGpxT
+         MtpoxLn7RFBHlXB2aXNuHfsItXuXi6qiPz1Z6av1xjc+/g+iiSVhRoKmfvEIaKSSvgPT
+         L/G3T+IJnZhP2EyStwuWZKGmBQpxI9JDmHRPqpFhXv1hxvZfOCV9DYwLHvIUo8w4c0T5
+         m/hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694588465; x=1695193265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxEwSrADigL55KUK+kn7a1SeYT+9CqL3SU8EoT51CDk=;
-        b=ItF3xa7ihvRFQfPzpjRqsPJb8aYNY+CVXJ0YjM8zmTcstN+PVirZylhU3XawhXembg
-         XQmH8F2Dpk8HU/LVc/jcNmf1Qel2R61X5827jtUg5PklbEJ/HG/nScu7FQyIC+NuI0Bl
-         Lr1pVX8a5F+JcN4bjjQsMm2Ff0g9Dqn9kTTWPAE+UF7GulF/osZhf49LK3zYAs4ts1S0
-         JCscw8LJXHeS8bhA43KQdJIYzBbTslx1m+OFvsUQrK1njCILi7vGEDJNg1Sl5oNAUxCT
-         htSvIN6oRTLjMULUyal4Pgu2OQizKRP3NGwP4UQQsT9Hdtub2OEMgm/AXKEHqmNhzZPr
-         kQwA==
-X-Gm-Message-State: AOJu0YyiS0yQH25e8PQ2wmWlDQexui7GRQuf5A8HWuyBL5HJkFBtyqQN
-        /ywXSgaKeTmZrh7G//ZoWJJRXA==
-X-Google-Smtp-Source: AGHT+IGICr3IH8Jp41V2bYK9Ff2nTqLZswVkjLZvdCTwqajKf/5QT/EFKcb52xlWuAdRsrkmSCW0Rg==
-X-Received: by 2002:adf:ea85:0:b0:319:7c1f:8dae with SMTP id s5-20020adfea85000000b003197c1f8daemr1473001wrm.3.1694588465003;
-        Wed, 13 Sep 2023 00:01:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694593107; x=1695197907;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rL0QYm+4DpNU20BBRJmcQSCbvNXdp8splkqH77lfanI=;
+        b=MS8TiFOu/FPStzeIJ6F8WocYo1h1WjUNRgUch/mg6RUIZDaMkBixvIg9Ugp2y462tt
+         hyVROUHbUh6fTDD9kvIW9Vg6vmyaLO3i/ELLfwqYEgDvHtxrjqNr8uYWxVEhiCLFBuQo
+         nuNsljyj4zXAXVOW5dbcHwpOAl30yyUGxALf69fiiNTYNuN97di1Nq8cPB73v0dWgAyl
+         fzeJWiz8qEb6m7EtOUKn9bR8AMdVDVRe081zEJeZs52d5hMf8hY3YIxAefH0dzKr1lxk
+         6e767Y2PujR3Rx2jiQ9zNqSCvuJMhx0mlKkcPKvMSgZ1vYdFH75yRnsbxnGhQBgfjlxi
+         8YKw==
+X-Gm-Message-State: AOJu0YyGYVxET/wuH8EXU+XeKL050pF8cxI58JkClU+yhUd2aCv3K/Na
+        wgjrutWf4rBD9yH22D7rcOfBKA==
+X-Google-Smtp-Source: AGHT+IGFO0CwSx+Hl2v9TdNBISeq9HBmh94Hh3tAzgvAXxD6wKVhKIFaJvI+u/oy1HGcv/6YLqtxUg==
+X-Received: by 2002:a05:600c:108b:b0:3fe:207c:1aea with SMTP id e11-20020a05600c108b00b003fe207c1aeamr1314950wmd.23.1694593106762;
+        Wed, 13 Sep 2023 01:18:26 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b0031912c0ffebsm14594274wrq.23.2023.09.13.00.01.03
+        by smtp.gmail.com with ESMTPSA id f18-20020a7bcd12000000b00402f7e473b7sm1285889wmj.15.2023.09.13.01.18.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 00:01:04 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 10:01:01 +0300
+        Wed, 13 Sep 2023 01:18:26 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 11:18:22 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Alex Elder <elder@ieee.org>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: delete some dead code in xfile_create()
-Message-ID: <3c63cc50-c6a8-4bba-87d8-6556ebe1905e@kadam.mountain>
-References: <1429a5db-874d-45f4-8571-7854d15da58d@moroto.mountain>
- <20230912153824.GB28186@frogsfrogsfrogs>
- <e575bbf3-f0ba-ec39-03c5-9165678d1fc7@ieee.org>
- <20230912162315.GC28186@frogsfrogsfrogs>
+To:     Weidong Wang <wangweidong.a@awinic.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Nick Li <liweilei@awinic.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Ben Yi <yijiangtao@awinic.com>, Tom Rix <trix@redhat.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: aw88395: Fix some error codes
+Message-ID: <81476e78-05c2-4656-b754-f314c7ccdb81@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230912162315.GC28186@frogsfrogsfrogs>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 09:23:15AM -0700, Darrick J. Wong wrote:
-> On Tue, Sep 12, 2023 at 10:41:53AM -0500, Alex Elder wrote:
-> > On 9/12/23 10:38 AM, Darrick J. Wong wrote:
-> > > On Tue, Sep 12, 2023 at 06:18:45PM +0300, Dan Carpenter wrote:
-> > > > The shmem_file_setup() function can't return NULL so there is no need
-> > > > to check and doing so is a bit confusing.
-> > > > 
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > ---
-> > > > No fixes tag because this is not a bug, just some confusing code.
-> > > 
-> > > Please don't re-send patches that have already been presented here.
-> > > https://lore.kernel.org/linux-xfs/20230824161428.GO11263@frogsfrogsfrogs/
-> > 
-> > FWIW, I side with Dan's argument.  shmem_file_setup() *does not*
-> > return NULL.  If it ever *did* return NULL, it would be up to the
-> > person who makes that happen to change all callers to check for NULL.
-> 
-> And as I asked three weeks ago, what's the harm in checking for a NULL
-> pointer here?  The kerneldoc for shmem_file_setup doesn't explicitly
-> exclude a null return.  True, it doesn't mention the possibility of
-> ERR_PTR returns either, but that's an accepted practice for pointer
-> returns.
+These error paths should return -EINVAL instead of success.
 
-Mixing up error pointers and NULL checking is a common bug.  We never
-hit this in run time these days because we've been using static analysis
-to prevent it for over a decade.
+Fixes: 7f4ec77802aa ("ASoC: codecs: Add code for bin parsing compatible with aw88261")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/soc/codecs/aw88395/aw88395_lib.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If you look at the code we used to ship in the 2006 era it's absolutely
-amazing (bad).  Static analysis isn't perfect for everything but there
-are some kinds of simple bugs where we've almost eliminated them
-completely.
+diff --git a/sound/soc/codecs/aw88395/aw88395_lib.c b/sound/soc/codecs/aw88395/aw88395_lib.c
+index 8ee1baa03269..87dd0ccade4c 100644
+--- a/sound/soc/codecs/aw88395/aw88395_lib.c
++++ b/sound/soc/codecs/aw88395/aw88395_lib.c
+@@ -452,11 +452,13 @@ static int aw_dev_parse_reg_bin_with_hdr(struct aw_device *aw_dev,
+ 	if ((aw_bin->all_bin_parse_num != 1) ||
+ 		(aw_bin->header_info[0].bin_data_type != DATA_TYPE_REGISTER)) {
+ 		dev_err(aw_dev->dev, "bin num or type error");
++		ret = -EINVAL;
+ 		goto parse_bin_failed;
+ 	}
+ 
+ 	if (aw_bin->header_info[0].valid_data_len % 4) {
+ 		dev_err(aw_dev->dev, "bin data len get error!");
++		ret = -EINVAL;
+ 		goto parse_bin_failed;
+ 	}
+ 
+-- 
+2.39.2
 
-> 
-> For a call outside of the xfs subsystem, I think it's prudent to have
-> stronger return value checking.  Yes, someone changing the interface
-> would have to add a null check to all the callsites, but (a) it's benign
-> to guard against a behavior change in another module and (b) people miss
-> things all the time.
-> 
-> > The current code *suggests* that it could return NULL, which
-> > is not correct.
-> 
-> Huh?
-> 
-> Are you talking about this stupid behavior of bots where they decide
-> what a function returns based on the callsites in lieu of analyzing the
-> actual implementation code?
-
-In this case Smatch is looking at the implementation.
-
-$ smdb return_states shmem_file_setup | grep INTER
-mm/shmem.c | shmem_file_setup | 2229 |  4096-ptr_max|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
-mm/shmem.c | shmem_file_setup | 2230 |  (-4095)-(-1)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
-mm/shmem.c | shmem_file_setup | 2231 | (-4095)-(-4),(-2)-(-1)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
-mm/shmem.c | shmem_file_setup | 2232 |         (-22)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
-mm/shmem.c | shmem_file_setup | 2233 |         (-12)|        INTERNAL | -1 |                      | struct file*(*)(char*, llong, ulong) |
-
-I also manually reviewed the function implementation to verify.
-
-> 
-> I don't feel like getting harassed by bots when someone /does/
-> accidentally change the implementation to return NULL, and now one of
-> the other build/test/syz bots starts crashing in xfile_create.
-
-If someone changes it to return NULL then there are a few things to
-note.
-
-1) That person is going to have change all the call sites.
-2) Normally when a function returns both error pointers and NULL then
-   the NULL is success. So this code doesn't handle the normal case
-   correctly because it assumes NULL is an error.
-3) Static checkers will complain if the call sites are not updated.  Try
-   to find any IS_ERR vs NULL bugs in the past year that were found at
-   run time instead of through static analysis.  Occasionally syzbot
-   will hit them before me but it's rare.  I don't even remember the
-   last time where this sort of bug managed to reach actual users.
-
-> 
-> Of course all that has bought me is ... more f*** bot harassment.
-> 
-> I'm BURNED OUT, give me a fucking break!
-
-Fair enough.  I should have seen Yang Yingliang's email.
-
-regards,
-dan carpenter
