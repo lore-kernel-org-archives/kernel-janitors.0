@@ -2,118 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4325FEEAA50
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 14:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54824EEAA4F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 14:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240646AbjINOsh (ORCPT
+        id S240566AbjINOto (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Sep 2023 10:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56114 "EHLO
+        Thu, 14 Sep 2023 10:49:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240329AbjINOsV (ORCPT
+        with ESMTP id S240663AbjINOtc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Sep 2023 10:48:21 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 800581FD6
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 07:48:17 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d7f0048b042so1100823276.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 07:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694702896; x=1695307696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Axe2duEfuOBrZKGe1Hg8YlxOu+jjdU0N6PT8NsaFlc=;
-        b=CN7xM2+heQyyVg8TI5eGb/2VbaZb70cBQ8Qaes9zrHzgNTj68oA54K5cNtkDQqdNfA
-         jwAnS8iMGfYLbwwONGh22TPZowbJ62KuM3lCyC1+IYR+RmG+koFjY6+h9SgUQyhLqeyB
-         zvxhtOsOk22BKe8GSTO50ysMbcl+2HcyNBouA3HoIQ48I5SqnihFBFjpYC6evY+sQyXT
-         MRosYgtXwmjTsUoHZXPV8v/plFAJMU7ZG0Son9bF20vK1gHoocysn0GOx2PjQx5d4vaI
-         2+njI0lkvKcUgn0hvUSccKwjmH/V4Btv7rDVKNn36xNYKE/yu0uGcZPgN4Aqli9rDVw3
-         Z22w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694702896; x=1695307696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Axe2duEfuOBrZKGe1Hg8YlxOu+jjdU0N6PT8NsaFlc=;
-        b=tBtOrlUW7jms0L+QgHyOVb5Ivtwt18/cK3UTJIxp1uGatmb25JeYnSxvqQjuKetELD
-         TatlHMwnJBvQK1zoIiaHQ9VLr+99epgeDa6rnQrxrq2d8V1RT6yZLtUotQKUX2WdoyIU
-         plCfTMmclebEHVC+j8/nfXN4hFTcKhfQGyIhqoBk2WpYHgUp8759fkk3LbgC7d7hym4J
-         okTt8wGjkqllyIjM1DPXgo2DEhyXnnkspci6WA45P4j6QncPa/14mgoAONPaQXvi3N7N
-         2/ErluTLaK+RKP05lIRpxnifHRHDIbldKxrOOM2Mz9PddgHY3bwNUfti/ftdGOAf1mv7
-         KXeA==
-X-Gm-Message-State: AOJu0Yy9Q2o4illgg5w9clWb8yZ7IGGFpwYEbavktMUfzKX5jIJ7wmDT
-        e6T9EpsYAs63UFDxDe2OxO81ShzSJny/F0TeBll3/g==
-X-Google-Smtp-Source: AGHT+IHnzFOVJ52w9x2aGfc3G1A0+Rb1tgxdPqm+H1YIyuSUJj1t9UQSZcaiUe7d1wKub3eYIasAy9G4f7OCUGke+go=
-X-Received: by 2002:a25:f44b:0:b0:d81:9442:aab2 with SMTP id
- p11-20020a25f44b000000b00d819442aab2mr1757132ybe.54.1694702896742; Thu, 14
- Sep 2023 07:48:16 -0700 (PDT)
+        Thu, 14 Sep 2023 10:49:32 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50941FFF;
+        Thu, 14 Sep 2023 07:49:12 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38EE8ZlM027382;
+        Thu, 14 Sep 2023 14:48:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=aL++Hd0s2d7IrNOsxWTei1ji/pjM+JhOfFszoIJYSMA=;
+ b=Nh3IfxgSoU46L4p9ldF3wIAOzk7Fofe5fxlElC3vnWaZcPRM+z9J5kyt+Toc//f3b6kT
+ A9p2ax0nLIm2ndL+WGPeKj3OCUdn35YHrZYSbwAgo2hlaEqda51YXS3UBfJZonZ+NfPe
+ 67q2jklcWHSTcrjLcJc+gX7i+JJfdhW5TB8iArslR2IjLquqS2X8qXprjOPRsZrP5Sgg
+ YAdgEgXffFiWpEOlsJVxh36nlUC4XeAjWl4IgWcImrvdI6PccDkfLDI57bqKCHW+7MVY
+ dullUEjq/Cms3fhaxmLfFU7nF5eZutZhq52SKf5coBk1fabU+qaMr08m143EX8AGjQIY Mw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t40tart0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 14:48:57 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38EEmuLj018476
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 14:48:56 GMT
+Received: from [10.111.183.186] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 14 Sep
+ 2023 07:48:55 -0700
+Message-ID: <7855cee1-c554-40b7-885f-d7f8d3d90979@quicinc.com>
+Date:   Thu, 14 Sep 2023 07:48:54 -0700
 MIME-Version: 1.0
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr> <20230907095521.14053-6-Julia.Lawall@inria.fr>
-In-Reply-To: <20230907095521.14053-6-Julia.Lawall@inria.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 14 Sep 2023 16:47:41 +0200
-Message-ID: <CAPDyKFpEaG77cq+EgOavaD0zvDmOJVkjJyYq2kP30VtPSikY4g@mail.gmail.com>
-Subject: Re: [PATCH 05/11] mmc: atmel-mci: add missing of_node_put
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        kernel-janitors@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH wireless-next 6/9] wifi: ath10k: Remove unnecessary
+ (void*) conversions
+Content-Language: en-US
+To:     Wu Yunchuan <yunchuan@nfschina.com>, <kvalo@kernel.org>,
+        <toke@toke.dk>
+CC:     <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20230914040517.1170024-1-yunchuan@nfschina.com>
+From:   Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20230914040517.1170024-1-yunchuan@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UFWaF2sTRwLgOAH9vtvK2J8JDZ4uPXlr
+X-Proofpoint-ORIG-GUID: UFWaF2sTRwLgOAH9vtvK2J8JDZ4uPXlr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-14_09,2023-09-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 mlxlogscore=611 phishscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309140127
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 7 Sept 2023 at 11:55, Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> for_each_child_of_node performs an of_node_get on each
-> iteration, so a break out of the loop requires an
-> of_node_put.
->
-> This was done using the Coccinelle semantic patch
-> iterators/for_each_child.cocci
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
->
+On 9/13/2023 9:05 PM, Wu Yunchuan wrote:
+> No need cast (void*) to (struct htt_rx_ring_setup_ring32 *),
+> (struct htt_rx_ring_setup_ring64 *), (struct ath_softc *)
+> or (struct ath_hw *).
+> 
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
 > ---
->  drivers/mmc/host/atmel-mci.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff -u -p a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-> --- a/drivers/mmc/host/atmel-mci.c
-> +++ b/drivers/mmc/host/atmel-mci.c
-> @@ -674,8 +674,10 @@ atmci_of_init(struct platform_device *pd
->                                               "cd", GPIOD_IN, "cd-gpios");
->                 err = PTR_ERR_OR_ZERO(pdata->slot[slot_id].detect_pin);
->                 if (err) {
-> -                       if (err != -ENOENT)
-> +                       if (err != -ENOENT) {
-> +                               of_node_put(cnp);
->                                 return ERR_PTR(err);
-> +                       }
->                         pdata->slot[slot_id].detect_pin = NULL;
->                 }
->
-> @@ -687,8 +689,10 @@ atmci_of_init(struct platform_device *pd
->                                               "wp", GPIOD_IN, "wp-gpios");
->                 err = PTR_ERR_OR_ZERO(pdata->slot[slot_id].wp_pin);
->                 if (err) {
-> -                       if (err != -ENOENT)
-> +                       if (err != -ENOENT) {
-> +                               of_node_put(cnp);
->                                 return ERR_PTR(err);
-> +                       }
->                         pdata->slot[slot_id].wp_pin = NULL;
->                 }
->         }
->
+>   drivers/net/wireless/ath/ath10k/htt_tx.c | 6 ++----
+>   drivers/net/wireless/ath/ath9k/pci.c     | 6 +++---
+
+ath9k change should be in a separate patch since it has a different 
+maintainer than ath10k
+
