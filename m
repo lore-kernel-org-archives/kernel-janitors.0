@@ -2,89 +2,147 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54824EEAA4F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 14:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1487EEAA51
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 14:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240566AbjINOto (ORCPT
+        id S240548AbjINO6S (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Sep 2023 10:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49382 "EHLO
+        Thu, 14 Sep 2023 10:58:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240663AbjINOtc (ORCPT
+        with ESMTP id S240511AbjINO6R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Sep 2023 10:49:32 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50941FFF;
-        Thu, 14 Sep 2023 07:49:12 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38EE8ZlM027382;
-        Thu, 14 Sep 2023 14:48:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=aL++Hd0s2d7IrNOsxWTei1ji/pjM+JhOfFszoIJYSMA=;
- b=Nh3IfxgSoU46L4p9ldF3wIAOzk7Fofe5fxlElC3vnWaZcPRM+z9J5kyt+Toc//f3b6kT
- A9p2ax0nLIm2ndL+WGPeKj3OCUdn35YHrZYSbwAgo2hlaEqda51YXS3UBfJZonZ+NfPe
- 67q2jklcWHSTcrjLcJc+gX7i+JJfdhW5TB8iArslR2IjLquqS2X8qXprjOPRsZrP5Sgg
- YAdgEgXffFiWpEOlsJVxh36nlUC4XeAjWl4IgWcImrvdI6PccDkfLDI57bqKCHW+7MVY
- dullUEjq/Cms3fhaxmLfFU7nF5eZutZhq52SKf5coBk1fabU+qaMr08m143EX8AGjQIY Mw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t40tart0w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Sep 2023 14:48:57 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38EEmuLj018476
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Sep 2023 14:48:56 GMT
-Received: from [10.111.183.186] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 14 Sep
- 2023 07:48:55 -0700
-Message-ID: <7855cee1-c554-40b7-885f-d7f8d3d90979@quicinc.com>
-Date:   Thu, 14 Sep 2023 07:48:54 -0700
+        Thu, 14 Sep 2023 10:58:17 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A596F1FC7
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 07:58:13 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-404573e6c8fso7954665e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 07:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694703492; x=1695308292; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2iEXUo7L1L2P5qy8PSDyYpoZnAf2eRJf6as5S4xiefk=;
+        b=y1snU6aU/DKFHF2N4+VZGpfqrZXfABHvndo5U5ckD7XOf/C7656klYza9k0L5ouAva
+         mG1rQAvkIW2+L0Zig2im1S9eYm107WQmMfSJTHfZ6mWhYQwC8hI01qAeiRi969beVzz6
+         QzqY2COJv3geJ0b7kjY/x+JArhnGs0DDT4OzleqD+P1/cq20CE7TqpYg8o6gjhAw1OGy
+         vtUaVyhGo6L5oMXFRLpJ7NykMgrGE6tY88j/UU8HL9480IGne4qwvbS3Oe+EnboCQZ6f
+         1EmO1tcz5ogfgg1l4nItpfe8+uVRiulP75e4XGD4bZE8mzZxDaHfaGWKvpV0gyMSbpFr
+         s2+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694703492; x=1695308292;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2iEXUo7L1L2P5qy8PSDyYpoZnAf2eRJf6as5S4xiefk=;
+        b=wRzZjRti8EJLi8IN/rJgUPVsJXWZrEQmJS8jE0CX+Ai1y1z6i100PgYfdbtp20VAQ4
+         e4aRojDLRjGTwGbFY+ZAecF1gWf2Evl9cIqdy3cp+icmSvX8AuAWed9zqd4wupcKhkky
+         g1Pv8aYn/UT9OiYxZeI+x/oePctXIMkFCec7DEGHi2z0LAsfc+y2zDVasARzqJyQ6vt1
+         bkeOWw4SyxKvS7prhgs+aCU5MrSt7R40PNdZD9pUFARna0gqQgezP4/mgteHWztAlIyl
+         0MIb3gupT/03mhrvHAa6oGoVFais8k/EZzYJ/pX1nc+qQfI9KGuRsqrJejjmkWHuXLOb
+         Cepw==
+X-Gm-Message-State: AOJu0YytlueNX6pZjIOGBZw14E3r3DhCSDoN+WTPNQoKmNOtlJ6kEeNa
+        h0269TLTEwsqrXOxbYkqz8Ct7w==
+X-Google-Smtp-Source: AGHT+IHrKtZ/aOiKDcUl1rJlvHU7nquOrPU1iyyQ8f7xYdDQH6xtSAmCVhQ6eMtaVRQwlG7SjR7yag==
+X-Received: by 2002:a05:600c:3006:b0:404:34d3:6110 with SMTP id j6-20020a05600c300600b0040434d36110mr1938927wmh.0.1694703492065;
+        Thu, 14 Sep 2023 07:58:12 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y6-20020a7bcd86000000b003fee6e170f9sm2183869wmj.45.2023.09.14.07.58.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 07:58:11 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 17:58:07 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Brian Foster <bfoster@redhat.com>,
+        linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/3] bcachefs: chardev: return -EFAULT if copy_to_user() fails
+Message-ID: <6f3b0d3e-d20e-47fc-a3e5-4ad4c03d58b8@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless-next 6/9] wifi: ath10k: Remove unnecessary
- (void*) conversions
-Content-Language: en-US
-To:     Wu Yunchuan <yunchuan@nfschina.com>, <kvalo@kernel.org>,
-        <toke@toke.dk>
-CC:     <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20230914040517.1170024-1-yunchuan@nfschina.com>
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20230914040517.1170024-1-yunchuan@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UFWaF2sTRwLgOAH9vtvK2J8JDZ4uPXlr
-X-Proofpoint-ORIG-GUID: UFWaF2sTRwLgOAH9vtvK2J8JDZ4uPXlr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-14_09,2023-09-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 clxscore=1011 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=611 phishscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309140127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/13/2023 9:05 PM, Wu Yunchuan wrote:
-> No need cast (void*) to (struct htt_rx_ring_setup_ring32 *),
-> (struct htt_rx_ring_setup_ring64 *), (struct ath_softc *)
-> or (struct ath_hw *).
-> 
-> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
-> ---
->   drivers/net/wireless/ath/ath10k/htt_tx.c | 6 ++----
->   drivers/net/wireless/ath/ath9k/pci.c     | 6 +++---
+The copy_to_user() function returns the number of bytes remaining but
+we want to return -EFAULT to the user.
 
-ath9k change should be in a separate patch since it has a different 
-maintainer than ath10k
+Fixes: e0750d947352 ("bcachefs: Initial commit")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/bcachefs/chardev.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
+index fb603df099a5..e5e9fddddfb5 100644
+--- a/fs/bcachefs/chardev.c
++++ b/fs/bcachefs/chardev.c
+@@ -149,9 +149,10 @@ static long bch2_global_ioctl(unsigned cmd, void __user *arg)
+ static long bch2_ioctl_query_uuid(struct bch_fs *c,
+ 			struct bch_ioctl_query_uuid __user *user_arg)
+ {
+-	return copy_to_user(&user_arg->uuid,
+-			    &c->sb.user_uuid,
+-			    sizeof(c->sb.user_uuid));
++	if (copy_to_user(&user_arg->uuid, &c->sb.user_uuid,
++			 sizeof(c->sb.user_uuid)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ #if 0
+@@ -338,7 +339,10 @@ static ssize_t bch2_data_job_read(struct file *file, char __user *buf,
+ 	if (len < sizeof(e))
+ 		return -EINVAL;
+ 
+-	return copy_to_user(buf, &e, sizeof(e)) ?: sizeof(e);
++	if (copy_to_user(buf, &e, sizeof(e)))
++		return -EFAULT;
++
++	return sizeof(e);
+ }
+ 
+ static const struct file_operations bcachefs_data_ops = {
+@@ -466,9 +470,11 @@ static long bch2_ioctl_fs_usage(struct bch_fs *c,
+ 	percpu_up_read(&c->mark_lock);
+ 	kfree(src);
+ 
+-	if (!ret)
+-		ret = copy_to_user(user_arg, arg,
+-			sizeof(*arg) + arg->replica_entries_bytes);
++	if (ret)
++		goto err;
++	if (copy_to_user(user_arg, arg,
++			 sizeof(*arg) + arg->replica_entries_bytes))
++		ret = -EFAULT;
+ err:
+ 	kfree(arg);
+ 	return ret;
+@@ -513,7 +519,10 @@ static long bch2_ioctl_dev_usage(struct bch_fs *c,
+ 
+ 	percpu_ref_put(&ca->ref);
+ 
+-	return copy_to_user(user_arg, &arg, sizeof(arg));
++	if (copy_to_user(user_arg, &arg, sizeof(arg)))
++		return -EFAULT;
++
++	return 0;
+ }
+ 
+ static long bch2_ioctl_read_super(struct bch_fs *c,
+@@ -550,8 +559,9 @@ static long bch2_ioctl_read_super(struct bch_fs *c,
+ 		goto err;
+ 	}
+ 
+-	ret = copy_to_user((void __user *)(unsigned long)arg.sb,
+-			   sb, vstruct_bytes(sb));
++	if (copy_to_user((void __user *)(unsigned long)arg.sb, sb,
++			 vstruct_bytes(sb)))
++		ret = -EFAULT;
+ err:
+ 	if (!IS_ERR_OR_NULL(ca))
+ 		percpu_ref_put(&ca->ref);
+-- 
+2.39.2
 
