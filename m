@@ -2,50 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7270EEAA6E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 19:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACA3EEAA74
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 20:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbjINT6Z (ORCPT
+        id S229834AbjINUbS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Sep 2023 15:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
+        Thu, 14 Sep 2023 16:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbjINT6Z (ORCPT
+        with ESMTP id S229643AbjINUbP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Sep 2023 15:58:25 -0400
-Received: from out-224.mta0.migadu.com (out-224.mta0.migadu.com [91.218.175.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B9826B8
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 12:58:20 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 15:58:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1694721499;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cMYkJu+KocFqvcljDF1KPeCHEI57snC+fJaLw5pl1C0=;
-        b=thvAad2tn6CbzmmnVuHuccjT9ZpUsi9+wak05U2kViSasK7a+L3hxKgcUznxd/qv4pckMd
-        2oRF/5p7GYJZCUhZz3Sxo779Y7PHlGegz51UIH6zKsMrcUgGPvs3NSgOqZO9p4P5EEN4vw
-        OsLz/rFqxfijadEYKbPzkv/fRWLsghY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: fix error checking in bch2_fs_alloc()
-Message-ID: <20230914195817.fmpwy7yafwm2tgv4@moria.home.lan>
-References: <a0032f97-333a-41ec-97b0-62f0b6135d54@moroto.mountain>
+        Thu, 14 Sep 2023 16:31:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FFE52697
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 13:31:11 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id gszUqMvFz7mcCgszUqSuhP; Thu, 14 Sep 2023 22:31:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694723469;
+        bh=Sb61MGbLqsf+CsIMkkDke3Cvm/shDI295oG39gW+CtY=;
+        h=From:To:Cc:Subject:Date;
+        b=UwON7NmSvg7mtEanY+4I6YQv7qqLAI1G+Uy0/Q/THiamTR7s3nbj+HcQ0M5V17DqS
+         nZ+75/D30Rq03k2eDlNrK90bw2b8OGG7I9a/35Ot4rVad6FwXxNe1dVlquOZmdF/vP
+         FaSPjlLYiceEv/qdn/Etd8FnJHWXpSarWzW8X8ov+QDxcu0Ach0bkowQ4juoDGzRi1
+         SLZHcYvX+PbIw3QZNIWD2CMaLeMbZWrU3g4cDzDCsVzalCU8Vh1o4LfmjRxcW+qQzI
+         aHz+so4vGspS4P7bO9ENAqtd5zMYLgm8MdoZR18KZQSrtmWX6rtc2y6crgaPkDRTKk
+         t79GaoGvxY6JQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Sep 2023 22:31:09 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/5] clk: imx: imx8: Fix some error handling paths
+Date:   Thu, 14 Sep 2023 22:31:01 +0200
+Message-Id: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0032f97-333a-41ec-97b0-62f0b6135d54@moroto.mountain>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 12:47:44PM +0300, Dan Carpenter wrote:
-> There is a typo here where it uses ";" instead of "?:".  The result is
-> that bch2_fs_fs_io_direct_init() is called unconditionally and the errors
-> from it are not checked.
+This serie fix some error handling paths. It is split in different patches to
+ease review because the issues are unrelated and the proposed fixes are maybe
+wrong (I don't have the hardware to test anything)
 
-Thanks, applied
+Some of v1 patches had been incorrectly hand modified. There was a extra ')' in
+patch 3 and 4 that prevented the merge.
+
+This v2 is a cleanly regenarated serie, compile tested at each step. This
+time, git format-patch did all the work and the patches have NOT been hand
+modified afterwards.
+
+
+Some log messages have also been slightly tweaked.
+R-b tags have been added.
+
+v1: https://lore.kernel.org/all/cover.1693126687.git.christophe.jaillet@wanadoo.fr/
+
+Christophe JAILLET (5):
+  clk: imx: imx8: Fix an error handling path in
+    clk_imx_acm_attach_pm_domains()
+  clk: imx: imx8: Fix an error handling path if
+    devm_clk_hw_register_mux_parent_data_table() fails
+  clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+  clk: imx: imx8: Add a message in case of
+    devm_clk_hw_register_mux_parent_data_table() error
+  clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+
+ drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
+-- 
+2.34.1
+
