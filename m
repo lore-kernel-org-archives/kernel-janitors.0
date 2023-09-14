@@ -2,109 +2,133 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC93EEAA5D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 18:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8145EEAA6B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 19:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241276AbjINScD (ORCPT
+        id S230428AbjINTyA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Sep 2023 14:32:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50432 "EHLO
+        Thu, 14 Sep 2023 15:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240156AbjINScC (ORCPT
+        with ESMTP id S229486AbjINTx7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Sep 2023 14:32:02 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D491FE0
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 11:31:58 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id gr87qJd7OVPLSgr87qVaza; Thu, 14 Sep 2023 20:31:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694716316;
-        bh=v/TDaIRxJKGlPY3fpIXLuEW+O/pJ/KGfg3MooNqWmPg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=DDU0oPPSHjTHHZulF/fW8fttRhxzZMW45GPSWMZEF8ewpK5IIDxMHhJmvdzC76/JX
-         +EskoztytTE1jMet+dGErWhFeMv5qguonENn2WH14VXr80uVgD6wmo5BcUn/Bo8Q4K
-         IF+gJD+Ich4nTiC0W9cuD49BAf0kZwQAJENdSWp4s8Pu+9OBCB7XJIUBN4Hbwxe4VL
-         FV/2VN0zY3yKtI5MawaU/KOoACGUmZO0OVuJ49UJTC8b859b6ZpD3ss8S5kgeVNHtS
-         M+5ucGSyopZqnJINrUUvkLtwinG3nwsmtbm8OobXPbVWHhWbiH7//C7bTSSRxKvL4Y
-         PlYEIj1yTCBSg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Sep 2023 20:31:56 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <b3b54c2a-e567-a4fe-d022-eae04aa07354@wanadoo.fr>
-Date:   Thu, 14 Sep 2023 20:31:55 +0200
+        Thu, 14 Sep 2023 15:53:59 -0400
+Received: from out-215.mta0.migadu.com (out-215.mta0.migadu.com [91.218.175.215])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633E526B8
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 12:53:55 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 15:53:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694721232;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=n/V9mDPlBb+hzGkiVeVycrEpppJ/yuLI+34FNkiVo3I=;
+        b=o2cx2cODMZ83S2wl/LaQLKWz55pqmCUEMG6/bKenksvdWssIoTxZuJp40bcn4zL4KrKOcP
+        PoXetd1egM/jGXMMPzYICSvMoDgYuAsytQkpUpnhP8Nwh/GPzcOmibwqngyhb0inHG2RB0
+        jsxMcXTc/umH5YE+XTQoWFhOaFUPVQE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Brian Foster <bfoster@redhat.com>,
+        linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/3] bcachefs: chardev: return -EFAULT if copy_to_user()
+ fails
+Message-ID: <20230914195349.owzmdq6bjnyozni3@moria.home.lan>
+References: <6f3b0d3e-d20e-47fc-a3e5-4ad4c03d58b8@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: RE: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
-To:     "S.J. Wang" <shengjiu.wang@nxp.com>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-References: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
- <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f3b0d3e-d20e-47fc-a3e5-4ad4c03d58b8@moroto.mountain>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 14/09/2023 à 12:22, S.J. Wang a écrit :
->>
->> This serie fix some error handling paths. It is split in different patches to ease
->> review because the issues are unrelated and the proposed fixes are maybe
->> wrong (I don't have the hardware to test anything)
->>
->> Patch 2 and 3 are more speculative than the 3 oher ones. Review with care.
->>
->>
->> Finally, I got some problem when generating the serie, and some patches
->> have been hand-modified afterwards.
->> They look good to me, but I hope have not screwed up things...
+On Thu, Sep 14, 2023 at 05:58:07PM +0300, Dan Carpenter wrote:
+> The copy_to_user() function returns the number of bytes remaining but
+> we want to return -EFAULT to the user.
 > 
-> 
->  From the 3rd patch,  it can't be applied, maybe there is generating issue.
+> Fixes: e0750d947352 ("bcachefs: Initial commit")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I will resend.
+Thanks - never liked this about copy_to_user(), that behaviour is
+practically never what we want, maybe we could get a helper that returns
+the proper error code someday...
 
-CJ
-
+> ---
+>  fs/bcachefs/chardev.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
 > 
-> Best regards
-> Wang Shengjiu
+> diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
+> index fb603df099a5..e5e9fddddfb5 100644
+> --- a/fs/bcachefs/chardev.c
+> +++ b/fs/bcachefs/chardev.c
+> @@ -149,9 +149,10 @@ static long bch2_global_ioctl(unsigned cmd, void __user *arg)
+>  static long bch2_ioctl_query_uuid(struct bch_fs *c,
+>  			struct bch_ioctl_query_uuid __user *user_arg)
+>  {
+> -	return copy_to_user(&user_arg->uuid,
+> -			    &c->sb.user_uuid,
+> -			    sizeof(c->sb.user_uuid));
+> +	if (copy_to_user(&user_arg->uuid, &c->sb.user_uuid,
+> +			 sizeof(c->sb.user_uuid)))
+> +		return -EFAULT;
+> +	return 0;
+>  }
+>  
+>  #if 0
+> @@ -338,7 +339,10 @@ static ssize_t bch2_data_job_read(struct file *file, char __user *buf,
+>  	if (len < sizeof(e))
+>  		return -EINVAL;
+>  
+> -	return copy_to_user(buf, &e, sizeof(e)) ?: sizeof(e);
+> +	if (copy_to_user(buf, &e, sizeof(e)))
+> +		return -EFAULT;
+> +
+> +	return sizeof(e);
+>  }
+>  
+>  static const struct file_operations bcachefs_data_ops = {
+> @@ -466,9 +470,11 @@ static long bch2_ioctl_fs_usage(struct bch_fs *c,
+>  	percpu_up_read(&c->mark_lock);
+>  	kfree(src);
+>  
+> -	if (!ret)
+> -		ret = copy_to_user(user_arg, arg,
+> -			sizeof(*arg) + arg->replica_entries_bytes);
+> +	if (ret)
+> +		goto err;
+> +	if (copy_to_user(user_arg, arg,
+> +			 sizeof(*arg) + arg->replica_entries_bytes))
+> +		ret = -EFAULT;
+>  err:
+>  	kfree(arg);
+>  	return ret;
+> @@ -513,7 +519,10 @@ static long bch2_ioctl_dev_usage(struct bch_fs *c,
+>  
+>  	percpu_ref_put(&ca->ref);
+>  
+> -	return copy_to_user(user_arg, &arg, sizeof(arg));
+> +	if (copy_to_user(user_arg, &arg, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+>  }
+>  
+>  static long bch2_ioctl_read_super(struct bch_fs *c,
+> @@ -550,8 +559,9 @@ static long bch2_ioctl_read_super(struct bch_fs *c,
+>  		goto err;
+>  	}
+>  
+> -	ret = copy_to_user((void __user *)(unsigned long)arg.sb,
+> -			   sb, vstruct_bytes(sb));
+> +	if (copy_to_user((void __user *)(unsigned long)arg.sb, sb,
+> +			 vstruct_bytes(sb)))
+> +		ret = -EFAULT;
+>  err:
+>  	if (!IS_ERR_OR_NULL(ca))
+>  		percpu_ref_put(&ca->ref);
+> -- 
+> 2.39.2
 > 
->>
->> Christophe JAILLET (5):
->>    clk: imx: imx8: Fix an error handling path in
->>      clk_imx_acm_attach_pm_domains()
->>    clk: imx: imx8: Fix an error handling path if
->>      devm_clk_hw_register_mux_parent_data_table() fails
->>    clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
->>    clk: imx: imx8: Add a message in case of
->>      devm_clk_hw_register_mux_parent_data_table() error
->>    clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
->>
->>   drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
->>   1 file changed, 15 insertions(+), 12 deletions(-)
->>
->> --
->> 2.34.1
-> 
-> 
-
