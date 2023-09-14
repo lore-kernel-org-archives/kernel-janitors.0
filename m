@@ -2,56 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCF2EE0212
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Sep 2023 23:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C075CA0ECD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 04:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233098AbjIMXBu (ORCPT
+        id S234340AbjINEEm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Sep 2023 19:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
+        Thu, 14 Sep 2023 00:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjIMXBu (ORCPT
+        with ESMTP id S233285AbjINEEl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Sep 2023 19:01:50 -0400
-Received: from out-214.mta0.migadu.com (out-214.mta0.migadu.com [91.218.175.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9721BCB;
-        Wed, 13 Sep 2023 16:01:45 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 19:01:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1694646103;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=936FjOrJ5smwNM8opXoifLeImI0aNI7wDdh2+lfJJno=;
-        b=p9xXQT3eeIpGBB2+SQb2w8E1bHynlFI1LXkI/rh0VGAUzF8IDHgPqGkIhXXvXn+X89XW/8
-        l7+BUnexQZDrQuED0EmL/4NW8BFVuXGYYHw+0jRN8iWk4RqfuJ+GxvlrVlduHyJMpj5wWg
-        7lNT1oYTpnqhGXu56vNEc9rgWhn8diM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: Fix a potential in the error handling path
- of use-after-free inbch2_dev_add()
-Message-ID: <20230913230135.y27i2bx244tdjhvj@moria.home.lan>
-References: <3ab17a294fd2b5fcb180d44955b0d76a28af11cb.1694623395.git.christophe.jaillet@wanadoo.fr>
+        Thu, 14 Sep 2023 00:04:41 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 6DF3CE4B;
+        Wed, 13 Sep 2023 21:04:36 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 8D438606080EF;
+        Thu, 14 Sep 2023 12:04:32 +0800 (CST)
+X-MD-Sfrom: yunchuan@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Wu Yunchuan <yunchuan@nfschina.com>
+To:     kvalo@kernel.org
+Cc:     syoshida@redhat.com, alexander@wetzel-home.de,
+        johannes.berg@intel.com, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wu Yunchuan <yunchuan@nfschina.com>
+Subject: [PATCH wireless-next 1/9] wifi: ar5523: Remove unnecessary (void*) conversions
+Date:   Thu, 14 Sep 2023 12:04:26 +0800
+Message-Id: <20230914040425.1169493-1-yunchuan@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ab17a294fd2b5fcb180d44955b0d76a28af11cb.1694623395.git.christophe.jaillet@wanadoo.fr>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 06:44:08PM +0200, Christophe JAILLET wrote:
-> If __bch2_dev_attach_bdev() fails, bch2_dev_free() is called twice.
-> Once here and another time in the error handling path.
-> 
-> This leads to several use-after-free.
-> 
-> Remove the redundant call and only rely on the error handling path.
+No need cast (void*) to (struct ar5523_cmd_hdr *).
 
-Thanks, both applied
+Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+---
+ drivers/net/wireless/ath/ar5523/ar5523.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ar5523/ar5523.c b/drivers/net/wireless/ath/ar5523/ar5523.c
+index 19f61225a708..43e0db78d42b 100644
+--- a/drivers/net/wireless/ath/ar5523/ar5523.c
++++ b/drivers/net/wireless/ath/ar5523/ar5523.c
+@@ -256,7 +256,7 @@ static int ar5523_cmd(struct ar5523 *ar, u32 code, const void *idata,
+ 	/* always bulk-out a multiple of 4 bytes */
+ 	xferlen = (sizeof(struct ar5523_cmd_hdr) + ilen + 3) & ~3;
+ 
+-	hdr = (struct ar5523_cmd_hdr *)cmd->buf_tx;
++	hdr = cmd->buf_tx;
+ 	memset(hdr, 0, sizeof(struct ar5523_cmd_hdr));
+ 	hdr->len  = cpu_to_be32(xferlen);
+ 	hdr->code = cpu_to_be32(code);
+-- 
+2.30.2
+
