@@ -2,96 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BDCEEB596
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 06:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AA5EEB59A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 06:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbjIOG1A (ORCPT
+        id S232301AbjIOGdf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 02:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
+        Fri, 15 Sep 2023 02:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbjIOG07 (ORCPT
+        with ESMTP id S230101AbjIOGde (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 02:26:59 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA04B1FE0
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:26:53 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-401b5516104so19076365e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694759212; x=1695364012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yCzLWCleGTrH60yMtoTcAtGGH4fS0a6XxniUnrVCyg=;
-        b=uDE9yv3AkcNm7F3xBpHWXKuy94VK4j3UNmoNiMM6AFPv7iD/5fJ+Y8vM7nXZgz4uJp
-         UGjvQgjRMPqQJnx2vLGlTosqNYQoaT7H/P0Agblzns1CBs6932s3qtPB3H+kwxFd25r5
-         GRi/794AHK6LcLAvHi6Exywe7nOiUKfj0uZCQW/QMpYv5nWqLBnHcJB89H0EB4u46Sfi
-         2Z4Na4UgbB+F+otHxbG00tVwdTqVibSDrhkxIXZIUM3aCRk4Go1bZbwEe3Y/wOqpiXKt
-         RYBoeXqq65g6sxOf9rCJnagipD1PaD2Hr8wDeiw5hp4avfm1IOo7D7eL+lTZWRbHEVm1
-         eCcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694759212; x=1695364012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2yCzLWCleGTrH60yMtoTcAtGGH4fS0a6XxniUnrVCyg=;
-        b=h5u5e8i5Udq3anwLR2JPeqLAWmsiG6ET4eeJYGh0JJL0GEN4Pvk00GNVLgMzrHhTsZ
-         iymBdnquNPSTK6gB6Kn7e7b3/kRcliQzzkFzA6rhF4yjHPmqgd8Ei1ZUvxRyWJ2IzHqB
-         aTx1EVL4ONu8m1MegZhZa2UWBad3kZu44UavIJe+938eJdd6mj2E3H+UkRgKj0qBvNRj
-         foLqN/n+TW7iC/polIZ/iUehFnThgcKpdZ5yO++cuFWsa/71M9r1/3E3Bq9VBuCT3uq+
-         MV5p72nMI2PuIqLhyuf+BavnbvG2S/IpYPRKaG1DuKH4ptNFBUmkPZeWSciCmuaORTid
-         oU8A==
-X-Gm-Message-State: AOJu0YzYND5NXWnrnT8KadwCJAkm11cUQHD5/SN5dx9IL0aK+ijM6SwD
-        5WflZwlmLNasxczGGLa8PPe2Fw==
-X-Google-Smtp-Source: AGHT+IFDWReF+6kPGekoGZgsON+6DD/KP/aL3jH0gtGbfkBOdEKeWgHNjSczETHZcSeaUSj32oIFmA==
-X-Received: by 2002:adf:d082:0:b0:31a:e728:8682 with SMTP id y2-20020adfd082000000b0031ae7288682mr550499wrh.68.1694759211469;
-        Thu, 14 Sep 2023 23:26:51 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w4-20020a5d6804000000b003196e992567sm3599584wru.115.2023.09.14.23.26.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Sep 2023 23:26:44 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 09:26:41 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Brian Foster <bfoster@redhat.com>,
-        linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/3] bcachefs: chardev: fix NULL vs IS_ERR() checks
-Message-ID: <bb309472-7165-4654-a00d-eb9374338908@kadam.mountain>
-References: <6f3b0d3e-d20e-47fc-a3e5-4ad4c03d58b8@moroto.mountain>
- <043689fd-b686-429f-a4bb-602c37578370@moroto.mountain>
- <20230914195604.vjshvlv76zknbgvu@moria.home.lan>
+        Fri, 15 Sep 2023 02:33:34 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5D3CCD;
+        Thu, 14 Sep 2023 23:33:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335D2C433C8;
+        Fri, 15 Sep 2023 06:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694759609;
+        bh=df8KjSGqkWBXElZoWeRLQf76mAYxB8rwFbLo3Cy0rAs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RspfMpfuO6tDZoafl93RwEe0tsWn64BfyjrBXAKOj1rJ5Ie6MuCjusM9+o+2Mz+iC
+         EvVyaHtWCQb4EJYwMVxB5l2IBpV2BJsPDKwDDJaZpP5Sx1EORsFHYYBevThHch13lQ
+         OTE248VuOWKjnbZxT1idEbfkrf1jW7XPiCVr8uVgJhgWb8wa48vP1yVGnmEbm8Lrkn
+         k0kUgvFSO3GFvkt7Jl5LEbhjA4nFkDic6r3G38Fm+GYavkrAVEl4YnrfuwMtt7viXK
+         FitgqiiRJYR75RJbPR+4DJV2hna9ByRMF+qE5uEHezR06MyYOzdVm5fKgj0T23RZK3
+         Dni5STX/YTDpw==
+Date:   Fri, 15 Sep 2023 08:33:24 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        Andrew Lunn <andrew@lunn.ch>, dmaengine@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] dmaengine: ti: k3-udma-glue: fix
+ k3_udma_glue_tx_get_irq() error checking
+Message-ID: <20230915063324.GC758782@kernel.org>
+References: <5b29881f-a11a-4230-a044-a60871d3d38c@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230914195604.vjshvlv76zknbgvu@moria.home.lan>
+In-Reply-To: <5b29881f-a11a-4230-a044-a60871d3d38c@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 03:56:04PM -0400, Kent Overstreet wrote:
-> On Thu, Sep 14, 2023 at 05:58:48PM +0300, Dan Carpenter wrote:
-> > The strndup_user() function returns error pointers on error.  It never
-> > returns NULL.  Fix the checks including the commented out code.
+On Wed, Sep 13, 2023 at 02:05:31PM +0300, Dan Carpenter wrote:
+> The problem is that xudma_pktdma_tflow_get_irq() returns zero on error
+> and k3_ringacc_get_ring_irq_num() returns negatives.  This complicates
+> the error handling.  Change it to always return negative errors.
 > 
-> My preferred style in bcachefs is
-> 
-> ret = PTR_ERR_OR_ZERO(p);
-> if (ret)
-> 	return ret;
-> 
-> It keeps things consistent when we're doing a goto err instead of a
-> return.
+> Both callers have other bugs as well.  The am65_cpsw_nuss_init_tx_chns()
+> function doesn't preserve the error code but instead returns success.
+> In prueth_init_tx_chns() there is a signedness bug since "tx_chn->irq"
+> is unsigned so negative errors are not handled correctly.
 
-So you want people to write:
+Hi Dan,
 
-	path = strndup_user();
-	ret = PTR_ERR_OR_ZERO(p);
-	if (ret)
-		goto err;
+I understand that the problems are related, but there are several of them.
+Could they be handled in separate patches (applied in a specific order) ?
+I suspect this would aid backporting, and, moreover, I think it is nice
+to try to work on a one-fix-per-patch basis.
 
-I don't want people to look at the git log and see me writing code like
-that.  :P  You're going to have to do that yourself.  That's yuck.
+The above notwithstanding, I do agree with the correctness of your changes.
 
-regards,
-dan carpenter
+> Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
+> Fixes: 5b65781d06ea ("dmaengine: ti: k3-udma-glue: Add support for K3 PKTDMA")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> The k3_udma_glue_tx_get_irq() function is in dmaengine, but this bug
+> affects networking so I think the fix should go through networking.
+
+...
