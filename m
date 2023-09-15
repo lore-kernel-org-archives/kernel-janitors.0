@@ -2,94 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A4BEEAA76
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Sep 2023 20:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BDCEEB596
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 06:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbjINUbe (ORCPT
+        id S232032AbjIOG1A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Sep 2023 16:31:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        Fri, 15 Sep 2023 02:27:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbjINUb1 (ORCPT
+        with ESMTP id S230101AbjIOG07 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Sep 2023 16:31:27 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7762707
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 13:31:23 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id gszUqMvFz7mcCgszhqSuk1; Thu, 14 Sep 2023 22:31:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694723482;
-        bh=c1IUka5tijpIrp0HcvGSlR2aksa59ckg6dwZ4iF3jNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Nq8wEKbOwyagqkhVYlXixP+fuOOqU8zwUvxYo6II81d5G4IkN0J0t3Nf+/UaVUTfw
-         yQh6KOw1za3vgcL8WO9nEpJUo6zZiN2jJxvdDS3kq93kfpDqj01vJEKdW7BrcxHnV6
-         zRKqvZsvZa0kF9c7uC9fHidpGwVFGtt3SafoXXB//Wo/kyK3EG+1y+nOJmawmnEcV9
-         X+7Vo/4J/l8Nm4spTLkfl1zKyKkCvG51dtOVQy+ini++O8oMm0iZ7NEX4mCoMTdBly
-         wuLvQzI08zUcZYd+ryss/AoT7/lKvx8BgD4QSLuksdc2c2JELJgKLnoLS474/Rx72p
-         TK4vxugtfiFpw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Sep 2023 22:31:22 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        shengjiu.wang@nxp.com
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 5/5] clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
-Date:   Thu, 14 Sep 2023 22:31:06 +0200
-Message-Id: <b95fbefbb960573637e78ab71bfd889ae7a9d49c.1694722339.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
+        Fri, 15 Sep 2023 02:26:59 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA04B1FE0
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:26:53 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-401b5516104so19076365e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694759212; x=1695364012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2yCzLWCleGTrH60yMtoTcAtGGH4fS0a6XxniUnrVCyg=;
+        b=uDE9yv3AkcNm7F3xBpHWXKuy94VK4j3UNmoNiMM6AFPv7iD/5fJ+Y8vM7nXZgz4uJp
+         UGjvQgjRMPqQJnx2vLGlTosqNYQoaT7H/P0Agblzns1CBs6932s3qtPB3H+kwxFd25r5
+         GRi/794AHK6LcLAvHi6Exywe7nOiUKfj0uZCQW/QMpYv5nWqLBnHcJB89H0EB4u46Sfi
+         2Z4Na4UgbB+F+otHxbG00tVwdTqVibSDrhkxIXZIUM3aCRk4Go1bZbwEe3Y/wOqpiXKt
+         RYBoeXqq65g6sxOf9rCJnagipD1PaD2Hr8wDeiw5hp4avfm1IOo7D7eL+lTZWRbHEVm1
+         eCcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694759212; x=1695364012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2yCzLWCleGTrH60yMtoTcAtGGH4fS0a6XxniUnrVCyg=;
+        b=h5u5e8i5Udq3anwLR2JPeqLAWmsiG6ET4eeJYGh0JJL0GEN4Pvk00GNVLgMzrHhTsZ
+         iymBdnquNPSTK6gB6Kn7e7b3/kRcliQzzkFzA6rhF4yjHPmqgd8Ei1ZUvxRyWJ2IzHqB
+         aTx1EVL4ONu8m1MegZhZa2UWBad3kZu44UavIJe+938eJdd6mj2E3H+UkRgKj0qBvNRj
+         foLqN/n+TW7iC/polIZ/iUehFnThgcKpdZ5yO++cuFWsa/71M9r1/3E3Bq9VBuCT3uq+
+         MV5p72nMI2PuIqLhyuf+BavnbvG2S/IpYPRKaG1DuKH4ptNFBUmkPZeWSciCmuaORTid
+         oU8A==
+X-Gm-Message-State: AOJu0YzYND5NXWnrnT8KadwCJAkm11cUQHD5/SN5dx9IL0aK+ijM6SwD
+        5WflZwlmLNasxczGGLa8PPe2Fw==
+X-Google-Smtp-Source: AGHT+IFDWReF+6kPGekoGZgsON+6DD/KP/aL3jH0gtGbfkBOdEKeWgHNjSczETHZcSeaUSj32oIFmA==
+X-Received: by 2002:adf:d082:0:b0:31a:e728:8682 with SMTP id y2-20020adfd082000000b0031ae7288682mr550499wrh.68.1694759211469;
+        Thu, 14 Sep 2023 23:26:51 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id w4-20020a5d6804000000b003196e992567sm3599584wru.115.2023.09.14.23.26.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 23:26:44 -0700 (PDT)
+Date:   Fri, 15 Sep 2023 09:26:41 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Brian Foster <bfoster@redhat.com>,
+        linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/3] bcachefs: chardev: fix NULL vs IS_ERR() checks
+Message-ID: <bb309472-7165-4654-a00d-eb9374338908@kadam.mountain>
+References: <6f3b0d3e-d20e-47fc-a3e5-4ad4c03d58b8@moroto.mountain>
+ <043689fd-b686-429f-a4bb-602c37578370@moroto.mountain>
+ <20230914195604.vjshvlv76zknbgvu@moria.home.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230914195604.vjshvlv76zknbgvu@moria.home.lan>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The return value of clk_imx_acm_detach_pm_domains() is never used.
-Simplify the code and turn it into a void function.
+On Thu, Sep 14, 2023 at 03:56:04PM -0400, Kent Overstreet wrote:
+> On Thu, Sep 14, 2023 at 05:58:48PM +0300, Dan Carpenter wrote:
+> > The strndup_user() function returns error pointers on error.  It never
+> > returns NULL.  Fix the checks including the commented out code.
+> 
+> My preferred style in bcachefs is
+> 
+> ret = PTR_ERR_OR_ZERO(p);
+> if (ret)
+> 	return ret;
+> 
+> It keeps things consistent when we're doing a goto err instead of a
+> return.
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/imx/clk-imx8-acm.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+So you want people to write:
 
-diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
-index c744fb78bb44..735b08296cc8 100644
---- a/drivers/clk/imx/clk-imx8-acm.c
-+++ b/drivers/clk/imx/clk-imx8-acm.c
-@@ -310,20 +310,18 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
-  * @dev: deivice pointer
-  * @dev_pm: multi power domain for device
-  */
--static int clk_imx_acm_detach_pm_domains(struct device *dev,
--					 struct clk_imx_acm_pm_domains *dev_pm)
-+static void clk_imx_acm_detach_pm_domains(struct device *dev,
-+					  struct clk_imx_acm_pm_domains *dev_pm)
- {
- 	int i;
- 
- 	if (dev_pm->num_domains <= 1)
--		return 0;
-+		return;
- 
- 	for (i = 0; i < dev_pm->num_domains; i++) {
- 		device_link_del(dev_pm->pd_dev_link[i]);
- 		dev_pm_domain_detach(dev_pm->pd_dev[i], false);
- 	}
--
--	return 0;
- }
- 
- static int imx8_acm_clk_probe(struct platform_device *pdev)
--- 
-2.34.1
+	path = strndup_user();
+	ret = PTR_ERR_OR_ZERO(p);
+	if (ret)
+		goto err;
 
+I don't want people to look at the git log and see me writing code like
+that.  :P  You're going to have to do that yourself.  That's yuck.
+
+regards,
+dan carpenter
