@@ -2,145 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDDCEE6440
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 08:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A6EEE644B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 09:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233118AbjIOIOV (ORCPT
+        id S233311AbjIOJKA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 04:14:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
+        Fri, 15 Sep 2023 05:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233282AbjIOIOQ (ORCPT
+        with ESMTP id S233269AbjIOJJ4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 04:14:16 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346A63AAC
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 01:12:53 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-404732a0700so15695255e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 01:12:53 -0700 (PDT)
+        Fri, 15 Sep 2023 05:09:56 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F262113;
+        Fri, 15 Sep 2023 02:09:13 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4018af103bcso12664495e9.1;
+        Fri, 15 Sep 2023 02:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694765571; x=1695370371; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6nBcz24d1Uv1RZNghnP2ocTy4sdHcik9t3HUcbQZ4tg=;
-        b=Di/kf2Wdm93Lrx3jrBGTAi3i660kqLizdAqSa4izaHnwA7rmtYQcMjV3aGa9LIXsG+
-         yi2cGbOQ7LgCfh9yCKtJOXkQn5PV9/4OWxWwIQTQZbHdwilewhuoxOVGZk69fBjWV7mL
-         +Y2jMRwVhktlE9sxu9ZIL3pIReZR5SxPChBtA2esuEgVPF4fum4AfUaw8x1p2Dqi22O4
-         +6C+eDD5IxpsvT77vEsUSMbFwOLBOfmp+l4VJAQQB/ulyauerAg0Is5dNVkEogQjGsGD
-         6irSMtLxPzIEvHowKC4QeeyYsenrivlYzpDlGNNG0rmG9TgbHRKDL8v9VrVkDVpxgnvB
-         IqJQ==
+        d=gmail.com; s=20230601; t=1694768951; x=1695373751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+SaUS6vSo7orYelt85erkzzlVKhFWk0a2MJr/r0pFQ=;
+        b=Fh+brkwz58HhzcVqcicA8gMpuMan4iWcVLjzurRhekcN0kFlOyTOu3/rcY/ywEoE+2
+         JrCk/V/TgP2ZDuFlqx+/HBeGOe6d0tfkufp242Br6eFoYQuJx4lqHxCwwofGjgdl+e9V
+         e1zsrn9DMdQk4sBA8pAP3enkOIU3AORaAVrYOez7MUp/Lxlih1hPT1IxZYFcxr9uHO45
+         /jJqM4cZSmTp3SA4EfsOxfwW/R8/gJqvkdQyHmBrQCsqKatVguQ1kMxyA29zywlH6IMQ
+         pWHqywoDXZMvFkyLGdnp+aOPAsasTB6wQ6ghtsoWxAx161hTAwjcOKOjjDFWARBslYm0
+         7iRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694765571; x=1695370371;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6nBcz24d1Uv1RZNghnP2ocTy4sdHcik9t3HUcbQZ4tg=;
-        b=Gk3HLksOIYea3Pq8FVZtOndXTx1YP64/qi1gsWEvY+p3Q+bj1L0mM4160xnK8aH71+
-         vae0fJ9TvvsSq4G3Ljnj0wwW44SDo/qr8MAXUycE16FGQrfYujoktUcjSsBDMAi+7oA3
-         qeGrYABdUH/7eZHFr0XTBpf2zjHaAccs3xw+qevzvRqOc8G9dD60n7pqnqZbUMnsi3pt
-         H4MDx48IjCzOmx2vCcX+ZyZGo8RbeARuDPDaujhbvmcNvH35njUOf/ABPH6kp/6zPVGz
-         3qf9FviinWr3Bq237afTC1s0uvxO6+l1amXZZfUHoA/MGT0up4IiMs/9CK4jcvRwOYXE
-         U9ow==
-X-Gm-Message-State: AOJu0YzrL0ktgi+jd63BhnO2PjSydigEw9Zg7kTT+X/9MfyaN0kw4Ndj
-        fQV0M69Epj6lLxQvkeFDIrzChI8O10TuAs6lE0I=
-X-Google-Smtp-Source: AGHT+IHhjx+C2tXd6/fYAfk1dEjJySXvLSfq3+0Ehw02LkHJthywaVX6DUtWsNVb0JiNu+Y55DacTg==
-X-Received: by 2002:a7b:c4cb:0:b0:401:6800:703c with SMTP id g11-20020a7bc4cb000000b004016800703cmr1007479wmk.21.1694765571493;
-        Fri, 15 Sep 2023 01:12:51 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w11-20020a05600c014b00b00400268671c6sm3971315wmm.13.2023.09.15.01.12.50
+        d=1e100.net; s=20230601; t=1694768951; x=1695373751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V+SaUS6vSo7orYelt85erkzzlVKhFWk0a2MJr/r0pFQ=;
+        b=Jnc6b/ORiH4KylxqE9cfMVwXmwUyOHk51azbZvW3P0BfKwNNIczs+t2jGUtSRpn/w5
+         mPwsAAzWwwbyU6PQFrbfH3zaJhQcm+ssROsPSb/X1gGS7C+xg/Q58W3ih66j24qMNaDR
+         As+GA4oPwR25th/1bJi2M5KQuS9tpIluA2BTf2dLTbazjw8E0hM8oxDsjy3NO9S49pZb
+         prbGc42DLhawNEucjXp/CNUYd0toyFezukQGgeaY6FLu9SiM9jhiMVPoujAukexz2q3m
+         BOg419CuTFyytigQIK9XZVM8n2tRJaxtb/zY6BDnZ5ITcDZSWtHOnk9lYnRNPc5ErcV0
+         XsqA==
+X-Gm-Message-State: AOJu0YxUMyJF5yAq5ENR0s9LzIucLSxzKKeC5kxrs2ocnpUiF7DiJ610
+        uOR+rnw97xcLvCxXn/ll4AMdBl0S0YogV5xq
+X-Google-Smtp-Source: AGHT+IFOf/E8HzEzYsp3EqhqBQ2CwqOBGF19/Nx5TFz4oIQWeKi0fYakDvNq6BtdabSYRMC7++88fg==
+X-Received: by 2002:a05:600c:4b92:b0:403:aced:f7f4 with SMTP id e18-20020a05600c4b9200b00403acedf7f4mr3436020wmp.12.1694768951383;
+        Fri, 15 Sep 2023 02:09:11 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f10-20020a7bc8ca000000b00401d8181f8bsm6928709wml.25.2023.09.15.02.09.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 01:12:51 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 11:12:47 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     jiri@resnulli.us
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] devlink: implement shared buffer occupancy monitoring
- interface
-Message-ID: <e483bcad-10c6-43fb-9c49-57062728885b@moroto.mountain>
+        Fri, 15 Sep 2023 02:09:10 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf kwork: Fix spelling mistake "COMMMAND" -> "COMMAND"
+Date:   Fri, 15 Sep 2023 10:09:10 +0100
+Message-Id: <20230915090910.30182-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Jiri Pirko,
+There is a spelling mistake in a literal string. Fix it.
 
-The patch df38dafd2559: "devlink: implement shared buffer occupancy
-monitoring interface" from Apr 14, 2016 (linux-next), leads to the
-following Smatch static checker warning:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/perf/builtin-kwork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	net/devlink/sb.c:699 devlink_nl_sb_tc_pool_bind_fill()
-	warn: missing unwind goto?
+diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
+index 04b966801643..7e8dd35d764b 100644
+--- a/tools/perf/builtin-kwork.c
++++ b/tools/perf/builtin-kwork.c
+@@ -1629,7 +1629,7 @@ static void top_print_header(struct perf_kwork *kwork __maybe_unused)
+ 
+ 		     PRINT_CPU_USAGE_WIDTH, "%CPU",
+ 		     PRINT_RUNTIME_HEADER_WIDTH + RPINT_DECIMAL_WIDTH, "RUNTIME",
+-		     PRINT_TASK_NAME_WIDTH, "COMMMAND");
++		     PRINT_TASK_NAME_WIDTH, "COMMAND");
+ 	printf("\n ");
+ 	print_separator(ret);
+ }
+-- 
+2.39.2
 
-net/devlink/sb.c
-    651 static int
-    652 devlink_nl_sb_tc_pool_bind_fill(struct sk_buff *msg, struct devlink *devlink,
-    653                                 struct devlink_port *devlink_port,
-    654                                 struct devlink_sb *devlink_sb, u16 tc_index,
-    655                                 enum devlink_sb_pool_type pool_type,
-    656                                 enum devlink_command cmd,
-    657                                 u32 portid, u32 seq, int flags)
-    658 {
-    659         const struct devlink_ops *ops = devlink->ops;
-    660         u16 pool_index;
-    661         u32 threshold;
-    662         void *hdr;
-    663         int err;
-    664 
-    665         err = ops->sb_tc_pool_bind_get(devlink_port, devlink_sb->index,
-    666                                        tc_index, pool_type,
-    667                                        &pool_index, &threshold);
-    668         if (err)
-    669                 return err;
-    670 
-    671         hdr = genlmsg_put(msg, portid, seq, &devlink_nl_family, flags, cmd);
-    672         if (!hdr)
-    673                 return -EMSGSIZE;
-    674 
-    675         if (devlink_nl_put_handle(msg, devlink))
-    676                 goto nla_put_failure;
-    677         if (nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX, devlink_port->index))
-    678                 goto nla_put_failure;
-    679         if (nla_put_u32(msg, DEVLINK_ATTR_SB_INDEX, devlink_sb->index))
-    680                 goto nla_put_failure;
-    681         if (nla_put_u16(msg, DEVLINK_ATTR_SB_TC_INDEX, tc_index))
-    682                 goto nla_put_failure;
-    683         if (nla_put_u8(msg, DEVLINK_ATTR_SB_POOL_TYPE, pool_type))
-    684                 goto nla_put_failure;
-    685         if (nla_put_u16(msg, DEVLINK_ATTR_SB_POOL_INDEX, pool_index))
-    686                 goto nla_put_failure;
-    687         if (nla_put_u32(msg, DEVLINK_ATTR_SB_THRESHOLD, threshold))
-    688                 goto nla_put_failure;
-    689 
-    690         if (ops->sb_occ_tc_port_bind_get) {
-    691                 u32 cur;
-    692                 u32 max;
-    693 
-    694                 err = ops->sb_occ_tc_port_bind_get(devlink_port,
-    695                                                    devlink_sb->index,
-    696                                                    tc_index, pool_type,
-    697                                                    &cur, &max);
-    698                 if (err && err != -EOPNOTSUPP)
---> 699                         return err;
-
-Moving code around means re-visiting all the static checker warnings.
-:)  Should this return genlmsg_cancel(msg, hdr) before returning?
-
-    700                 if (!err) {
-    701                         if (nla_put_u32(msg, DEVLINK_ATTR_SB_OCC_CUR, cur))
-    702                                 goto nla_put_failure;
-    703                         if (nla_put_u32(msg, DEVLINK_ATTR_SB_OCC_MAX, max))
-    704                                 goto nla_put_failure;
-    705                 }
-    706         }
-    707 
-    708         genlmsg_end(msg, hdr);
-    709         return 0;
-    710 
-    711 nla_put_failure:
-    712         genlmsg_cancel(msg, hdr);
-    713         return -EMSGSIZE;
-    714 }
-
-regards,
-dan carpenter
