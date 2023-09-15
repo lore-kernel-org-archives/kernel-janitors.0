@@ -2,70 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5596AEE6457
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 12:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E49EE645C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 13:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235143AbjIOM7u (ORCPT
+        id S235201AbjIONAK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 08:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36886 "EHLO
+        Fri, 15 Sep 2023 09:00:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbjIOM7u (ORCPT
+        with ESMTP id S235155AbjIONAJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 08:59:50 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE79A8
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 05:59:45 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-400a087b0bfso22768715e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 05:59:45 -0700 (PDT)
+        Fri, 15 Sep 2023 09:00:09 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E3EDA8
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 06:00:04 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31f7638be6eso1941516f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 06:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694782784; x=1695387584; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694782803; x=1695387603; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBjLzWWXqag1yraVARE9n+lKqu6pTxol3i6MhDouFAw=;
-        b=S9AFSttRGrcbW/xiejor62H64Egzo6vZEGWY65aS/Th+ELrTpomAhGYD/du8hJlcai
-         ZhzzBSuvx7owwhV7BH7Jl0vge9AH+M726l5FZEskt4t9pRXztWt7l+eyFCqiAnQIYiTl
-         Cl5SBHvbO6kNGFsoFwaf70bSnL4fimbC7fse2HCv3UHYnILHkP7Ha1Rq7bAO3Tp74/0P
-         KZRwOsclVaMwcFa5uPsi66h5oeglZTdJQbAVUyZpHSGls1xTtdxN+eAQaWeXhjI9hO64
-         CB2OKs2LeYq3J8ipKdN/Q8l6BGsCdyKyVESJINbeGDKlM1KqXuAZpbDpyExDOJjrLp5e
-         6k3g==
+        bh=Q2vzfiw2ZNco/+K3UhfhRVgvKgLkbjldFT59MMHDNvc=;
+        b=VCMGsiIZG6xXiuOT7MLaNg1xZAcMN3gkcWaWG8CqyZqqNl20tADON7ysbxOVVwixi4
+         8IbEG/54Eg4O++y1zCSUTqQ5ZPxN6dBreQQY4p8mnxjEIUAKPai+sBT5EkrdJXEmAdYp
+         REKgAJ48pua5OybVh+MHSHt1m2o6OSQx7NZGnWKIuqZ/bG5yYfd4kRirEbLMN/w2kB+n
+         2xUu7Rt4Facy+6Ak9EoQ0xWT/D8SRmAIn/ZfPwwWQKgd3i2j7OlOtYpGepHwcjsv7pX0
+         FzwDdJdgX8IMRn5TYr4RFOI4mY9SG43r2nYr9HJriO5nZRckWF+AR43hh6p8m+82daff
+         NXPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694782784; x=1695387584;
+        d=1e100.net; s=20230601; t=1694782803; x=1695387603;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBjLzWWXqag1yraVARE9n+lKqu6pTxol3i6MhDouFAw=;
-        b=MOItGJMKP9o+f1dSBwrCcvUojwzJOnBAYusRWeuHGcIV7ZJudCZTl12J1nm6f/w26W
-         SCgtj1+wM9taUHY8YvXz9zabofJJ3mkrCCW/OTXZWGbUQjaDN9EXDnCEFeNt03TUSjjk
-         4zbuGvNVJdcGW7PtKbkX34RsmFVDFsq9+FAV8Om6Xx7bD6aIM1CvsYroJ5BDsu1qv9JR
-         Vf4LzZ/QBoA+SXdk9V+ihDuonKJO+wSMSTn7qp5kWvJaV19XoxQgZIUo7WpeC3ApdUhC
-         gzPy1OemBujT1lz8Ur6lMyc1CEyHES5zGEJwZgnjfolGILJ+OLQ2kjFmZ5rmK9Hyc2O+
-         WNxQ==
-X-Gm-Message-State: AOJu0Ywm7GMnmUP7yT3UJ6FtSn+RsSzmahiSnoN2cBJPPC4vb8luvT9Z
-        RoSIby8mJ/b+ozO1rsih5eVdnQ==
-X-Google-Smtp-Source: AGHT+IFc8Uw7ChZ541s7ZfDx5J0oDr/O+QkUoZ9jlAAj8nlQTtlVtdYU7vkKZ9OJ1800nSO6KAFtFQ==
-X-Received: by 2002:a1c:7209:0:b0:401:bf62:9456 with SMTP id n9-20020a1c7209000000b00401bf629456mr1420706wmc.8.1694782783609;
-        Fri, 15 Sep 2023 05:59:43 -0700 (PDT)
+        bh=Q2vzfiw2ZNco/+K3UhfhRVgvKgLkbjldFT59MMHDNvc=;
+        b=kIOc63Sr+SvMVv4B9vyJcim6H6FeX1Z3W9EH3WDawu6QtX0XF50sV08F7RVE70Zwex
+         nxoqKVgn0SI/2A8pFIPoaWlpbLIW26qZ0a3ZucLjlf6CzB8G4rKY4oAdsieZu5hcU53g
+         sRfeT06rwQ8s3ztgK5COFcpH1f5X1+TGEVa6KsKfXHfYcNrcfMgmARdiEMxIsy+Ctur9
+         MlCBW07x6u0SA1RUVztcDxXSoWoUDxaWh7D0zaR9pc3ohNlMYX41IxomdIZYQ9t0hXPA
+         4VzSvfKUNQTqp/sOzLvNYQaqhxaKN3RYl+7mlnNDBBHAOJedLksU+GBI4LmkUgjEYgl3
+         MNPw==
+X-Gm-Message-State: AOJu0YynUJvTKMor0d9//rbvLHE53IVXTod7z8eYk9st+H2cwFQ1vbTG
+        0KonnDtnLejy+Ril4Qm4eESSmg==
+X-Google-Smtp-Source: AGHT+IFrvK4b5JrWiUggbSdGEe7g/FVTOL5O3WOCeaHefX37IgkzRGQ+NkeYxcGVlolQQRxauEAKmA==
+X-Received: by 2002:a5d:568a:0:b0:317:5d1c:9719 with SMTP id f10-20020a5d568a000000b003175d1c9719mr1361131wrv.9.1694782803078;
+        Fri, 15 Sep 2023 06:00:03 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l20-20020a1c7914000000b003fe29dc0ff2sm4635302wme.21.2023.09.15.05.59.42
+        by smtp.gmail.com with ESMTPSA id n7-20020adffe07000000b003140f47224csm4358363wrr.15.2023.09.15.06.00.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 05:59:43 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 15:59:40 +0300
+        Fri, 15 Sep 2023 06:00:02 -0700 (PDT)
+Date:   Fri, 15 Sep 2023 15:59:59 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Hai Li <hali@codeaurora.org>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, dmaengine@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/msm/dsi: fix irq_of_parse_and_map() error checking
-Message-ID: <4f3c5c98-04f7-43f7-900f-5d7482c83eef@moroto.mountain>
+Subject: [PATCH] dmaengine: ti: edma: handle irq_of_parse_and_map() errors
+Message-ID: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -74,33 +66,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The irq_of_parse_and_map() function returns zero on error.  It
-never returns negative error codes.  Fix the check.
+Zero is not a valid IRQ for in-kernel code and the irq_of_parse_and_map()
+function returns zero on error.  So this check for valid IRQs should only
+accept values > 0.
 
-Fixes: a689554ba6ed ("drm/msm: Initial add DSI connector support")
+Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi_host.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/dma/ti/edma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 5d9ec27c89d3..13da53737a6a 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -1894,10 +1894,9 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
- 	}
+diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+index aa8e2e8ac260..33d6d931b33b 100644
+--- a/drivers/dma/ti/edma.c
++++ b/drivers/dma/ti/edma.c
+@@ -2401,7 +2401,7 @@ static int edma_probe(struct platform_device *pdev)
+ 	if (irq < 0 && node)
+ 		irq = irq_of_parse_and_map(node, 0);
  
- 	msm_host->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
--	if (msm_host->irq < 0) {
--		ret = msm_host->irq;
--		dev_err(&pdev->dev, "failed to get irq: %d\n", ret);
--		return ret;
-+	if (!msm_host->irq) {
-+		dev_err(&pdev->dev, "failed to get irq\n");
-+		return -EINVAL;
- 	}
+-	if (irq >= 0) {
++	if (irq > 0) {
+ 		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccint",
+ 					  dev_name(dev));
+ 		ret = devm_request_irq(dev, irq, dma_irq_handler, 0, irq_name,
+@@ -2417,7 +2417,7 @@ static int edma_probe(struct platform_device *pdev)
+ 	if (irq < 0 && node)
+ 		irq = irq_of_parse_and_map(node, 2);
  
- 	/* do not autoenable, will be enabled later */
+-	if (irq >= 0) {
++	if (irq > 0) {
+ 		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccerrint",
+ 					  dev_name(dev));
+ 		ret = devm_request_irq(dev, irq, dma_ccerr_handler, 0, irq_name,
 -- 
 2.39.2
 
