@@ -2,102 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E49EE645C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 13:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF3CEE645C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 13:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235201AbjIONAK (ORCPT
+        id S235214AbjIONAc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 09:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60434 "EHLO
+        Fri, 15 Sep 2023 09:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235155AbjIONAJ (ORCPT
+        with ESMTP id S235192AbjIONAb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 09:00:09 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E3EDA8
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 06:00:04 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31f7638be6eso1941516f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 06:00:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694782803; x=1695387603; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2vzfiw2ZNco/+K3UhfhRVgvKgLkbjldFT59MMHDNvc=;
-        b=VCMGsiIZG6xXiuOT7MLaNg1xZAcMN3gkcWaWG8CqyZqqNl20tADON7ysbxOVVwixi4
-         8IbEG/54Eg4O++y1zCSUTqQ5ZPxN6dBreQQY4p8mnxjEIUAKPai+sBT5EkrdJXEmAdYp
-         REKgAJ48pua5OybVh+MHSHt1m2o6OSQx7NZGnWKIuqZ/bG5yYfd4kRirEbLMN/w2kB+n
-         2xUu7Rt4Facy+6Ak9EoQ0xWT/D8SRmAIn/ZfPwwWQKgd3i2j7OlOtYpGepHwcjsv7pX0
-         FzwDdJdgX8IMRn5TYr4RFOI4mY9SG43r2nYr9HJriO5nZRckWF+AR43hh6p8m+82daff
-         NXPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694782803; x=1695387603;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2vzfiw2ZNco/+K3UhfhRVgvKgLkbjldFT59MMHDNvc=;
-        b=kIOc63Sr+SvMVv4B9vyJcim6H6FeX1Z3W9EH3WDawu6QtX0XF50sV08F7RVE70Zwex
-         nxoqKVgn0SI/2A8pFIPoaWlpbLIW26qZ0a3ZucLjlf6CzB8G4rKY4oAdsieZu5hcU53g
-         sRfeT06rwQ8s3ztgK5COFcpH1f5X1+TGEVa6KsKfXHfYcNrcfMgmARdiEMxIsy+Ctur9
-         MlCBW07x6u0SA1RUVztcDxXSoWoUDxaWh7D0zaR9pc3ohNlMYX41IxomdIZYQ9t0hXPA
-         4VzSvfKUNQTqp/sOzLvNYQaqhxaKN3RYl+7mlnNDBBHAOJedLksU+GBI4LmkUgjEYgl3
-         MNPw==
-X-Gm-Message-State: AOJu0YynUJvTKMor0d9//rbvLHE53IVXTod7z8eYk9st+H2cwFQ1vbTG
-        0KonnDtnLejy+Ril4Qm4eESSmg==
-X-Google-Smtp-Source: AGHT+IFrvK4b5JrWiUggbSdGEe7g/FVTOL5O3WOCeaHefX37IgkzRGQ+NkeYxcGVlolQQRxauEAKmA==
-X-Received: by 2002:a5d:568a:0:b0:317:5d1c:9719 with SMTP id f10-20020a5d568a000000b003175d1c9719mr1361131wrv.9.1694782803078;
-        Fri, 15 Sep 2023 06:00:03 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n7-20020adffe07000000b003140f47224csm4358363wrr.15.2023.09.15.06.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 06:00:02 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 15:59:59 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, dmaengine@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] dmaengine: ti: edma: handle irq_of_parse_and_map() errors
-Message-ID: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
+        Fri, 15 Sep 2023 09:00:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE5CE7
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 06:00:27 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BC091C43391;
+        Fri, 15 Sep 2023 13:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694782826;
+        bh=76yJ9uq8Wm+A3ULyt02D/DhghQd9p17VeJRR0YidpVc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=TP80jSjES0FygjSQJzpZI1AOdT2qPFuG8Uv7UhS8JB+LDfP9kH6XE6xvLfXLmoYZv
+         v7o8JP4gYHae/MoPn2adQgdxKv8RUS4bzBLabwW+9rZ8Dk4n+mSqqEft25rPIit1xz
+         jTcCvw63Bi8Wpp6J9dxO5ZfGDSdVuahB/avNgNpOf21BlsXVl3uEJ/ZQDdB9O7FEYq
+         sC4qMSQGleksLv787AJAfveWF7ZOW2K1Tb5jspqfeWhVJQ1xj0iNntUgbeYNfHZdpv
+         J/ze7gGk+sFcIeYvo+GgRXNy0n3Dl1dEkJwEgIjbc+o3cwtjr8gTOLNMVO1B2kDJnb
+         UWcyXfIegQYCw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A108FE22AF6;
+        Fri, 15 Sep 2023 13:00:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] tcp: indent an if statement
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169478282665.10241.11990246045934976904.git-patchwork-notify@kernel.org>
+Date:   Fri, 15 Sep 2023 13:00:26 +0000
+References: <de6b9eed-7049-45c6-aa49-ca7990c979c8@moroto.mountain>
+In-Reply-To: <de6b9eed-7049-45c6-aa49-ca7990c979c8@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Zero is not a valid IRQ for in-kernel code and the irq_of_parse_and_map()
-function returns zero on error.  So this check for valid IRQs should only
-accept values > 0.
+Hello:
 
-Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/dma/ti/edma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index aa8e2e8ac260..33d6d931b33b 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -2401,7 +2401,7 @@ static int edma_probe(struct platform_device *pdev)
- 	if (irq < 0 && node)
- 		irq = irq_of_parse_and_map(node, 0);
- 
--	if (irq >= 0) {
-+	if (irq > 0) {
- 		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccint",
- 					  dev_name(dev));
- 		ret = devm_request_irq(dev, irq, dma_irq_handler, 0, irq_name,
-@@ -2417,7 +2417,7 @@ static int edma_probe(struct platform_device *pdev)
- 	if (irq < 0 && node)
- 		irq = irq_of_parse_and_map(node, 2);
- 
--	if (irq >= 0) {
-+	if (irq > 0) {
- 		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccerrint",
- 					  dev_name(dev));
- 		ret = devm_request_irq(dev, irq, dma_ccerr_handler, 0, irq_name,
+On Wed, 13 Sep 2023 12:36:29 +0300 you wrote:
+> Indent this if statement one tab.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Applies to net and net-next, but it's just a white space issue so it
+> should go into net-next.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] tcp: indent an if statement
+    https://git.kernel.org/netdev/net-next/c/4fa5ce3e3a10
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
