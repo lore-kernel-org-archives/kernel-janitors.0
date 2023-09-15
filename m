@@ -2,35 +2,57 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AA5EEB59A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 06:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0D8EEB59B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 06:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232301AbjIOGdf (ORCPT
+        id S232195AbjIOGpj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 02:33:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48908 "EHLO
+        Fri, 15 Sep 2023 02:45:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbjIOGde (ORCPT
+        with ESMTP id S232148AbjIOGpi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 02:33:34 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5D3CCD;
-        Thu, 14 Sep 2023 23:33:29 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335D2C433C8;
-        Fri, 15 Sep 2023 06:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694759609;
-        bh=df8KjSGqkWBXElZoWeRLQf76mAYxB8rwFbLo3Cy0rAs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RspfMpfuO6tDZoafl93RwEe0tsWn64BfyjrBXAKOj1rJ5Ie6MuCjusM9+o+2Mz+iC
-         EvVyaHtWCQb4EJYwMVxB5l2IBpV2BJsPDKwDDJaZpP5Sx1EORsFHYYBevThHch13lQ
-         OTE248VuOWKjnbZxT1idEbfkrf1jW7XPiCVr8uVgJhgWb8wa48vP1yVGnmEbm8Lrkn
-         k0kUgvFSO3GFvkt7Jl5LEbhjA4nFkDic6r3G38Fm+GYavkrAVEl4YnrfuwMtt7viXK
-         FitgqiiRJYR75RJbPR+4DJV2hna9ByRMF+qE5uEHezR06MyYOzdVm5fKgj0T23RZK3
-         Dni5STX/YTDpw==
-Date:   Fri, 15 Sep 2023 08:33:24 +0200
-From:   Simon Horman <horms@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
+        Fri, 15 Sep 2023 02:45:38 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E3F6CCD
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:45:32 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31c5cac3ae2so1533421f8f.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Sep 2023 23:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694760331; x=1695365131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6iid8k6i/7ugCP4LiXGAP3iTfZTR6oaJGyaJr18W15M=;
+        b=WplxrfYqiyDMLZnf4oX7fZ3fZzfBoLKt30zp59n8Lx+0HOi2R8ijtlXsjv47SIKYlD
+         HRbOEJ+PQK8WbR2AlsEIhXk3qjAlQZbZ1/vQBCj++QatQiHZMo4T4uZsNtLCOAs6EFSo
+         xkzPjfhZHVNM23mR0r8HmFZbwrvjeNFyvXnIkG6g1g46NhGVgB8ox5dZCZSYt9gtxx1l
+         SPtWwZK2T0PrwZTMoy904j9Ig12K9OFth2JShV2utcjhuovXG/Z9GLGondC237x7YJOP
+         AhhzrSMoNuT/6xRfVee6vP+6D/yvFPMfe9Ytz7EWqUKlcZ9lMEp4KeOl/OL/74aQo3fP
+         v2Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694760331; x=1695365131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6iid8k6i/7ugCP4LiXGAP3iTfZTR6oaJGyaJr18W15M=;
+        b=Xw2uQdAZOAvbUsvmfLAHLd+1vA83riFbedGoIm97w7/FLwjalR85Gbx0TRGh4mxqk/
+         fcd/vQ2odEIVjjoai+Ij/ipZjqnvgCGJrqkJEsRIXwa8xrU+bMrsmFzOhlMqBQi4a1KI
+         csM93A47sWzvQ7BuigStImnFK/H0x6t6W4b7ocPCaOQ6vxqoHKjPsmJ+IjcPIi+7HO0o
+         l2Dmv57XHUMfRuknl6WlPPQRKeAeRToB42w7PSjnrFUx7J3mcfRTxrAycQxJIHxQq+t+
+         diU1Rum0+RsYfL03nddxbuk/LyUvrW4cPanY7hhfuNbWhwRWp0WUDxN2qiCE8ahH/Oie
+         43uA==
+X-Gm-Message-State: AOJu0YxC2BhiptnwyeQnWqbVhY7nZJfjFBMZqXhMOWBayra/EnM0TPu4
+        hRMLMx4qLl7cSv7SFk656fY4jw==
+X-Google-Smtp-Source: AGHT+IE8Thgq+Szgaiwj/ucohZyW9eDpZBH7Q1t53swPZGciT9VZ3dn2zP3CW2L86IyMPCp+kCVKWQ==
+X-Received: by 2002:a5d:67cf:0:b0:31f:a62d:264 with SMTP id n15-20020a5d67cf000000b0031fa62d0264mr583580wrw.37.1694760330972;
+        Thu, 14 Sep 2023 23:45:30 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id 26-20020a05600c229a00b003fe17901fcdsm6630449wmf.32.2023.09.14.23.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 23:45:30 -0700 (PDT)
+Date:   Fri, 15 Sep 2023 09:45:27 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Simon Horman <horms@kernel.org>
 Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Peter Ujfalusi <peter.ujfalusi@gmail.com>,
@@ -46,40 +68,48 @@ Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] dmaengine: ti: k3-udma-glue: fix
  k3_udma_glue_tx_get_irq() error checking
-Message-ID: <20230915063324.GC758782@kernel.org>
+Message-ID: <62125aa6-e279-474c-a0d5-c63d226c6c40@kadam.mountain>
 References: <5b29881f-a11a-4230-a044-a60871d3d38c@kili.mountain>
+ <20230915063324.GC758782@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5b29881f-a11a-4230-a044-a60871d3d38c@kili.mountain>
+In-Reply-To: <20230915063324.GC758782@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 02:05:31PM +0300, Dan Carpenter wrote:
-> The problem is that xudma_pktdma_tflow_get_irq() returns zero on error
-> and k3_ringacc_get_ring_irq_num() returns negatives.  This complicates
-> the error handling.  Change it to always return negative errors.
+On Fri, Sep 15, 2023 at 08:33:24AM +0200, Simon Horman wrote:
+> On Wed, Sep 13, 2023 at 02:05:31PM +0300, Dan Carpenter wrote:
+> > The problem is that xudma_pktdma_tflow_get_irq() returns zero on error
+> > and k3_ringacc_get_ring_irq_num() returns negatives.  This complicates
+> > the error handling.  Change it to always return negative errors.
+> > 
+> > Both callers have other bugs as well.  The am65_cpsw_nuss_init_tx_chns()
+> > function doesn't preserve the error code but instead returns success.
+> > In prueth_init_tx_chns() there is a signedness bug since "tx_chn->irq"
+> > is unsigned so negative errors are not handled correctly.
 > 
-> Both callers have other bugs as well.  The am65_cpsw_nuss_init_tx_chns()
-> function doesn't preserve the error code but instead returns success.
-> In prueth_init_tx_chns() there is a signedness bug since "tx_chn->irq"
-> is unsigned so negative errors are not handled correctly.
+> Hi Dan,
+> 
+> I understand that the problems are related, but there are several of them.
+> Could they be handled in separate patches (applied in a specific order) ?
+> I suspect this would aid backporting, and, moreover, I think it is nice
+> to try to work on a one-fix-per-patch basis.
+> 
+> The above notwithstanding, I do agree with the correctness of your changes.
+> 
 
-Hi Dan,
+Sure.  Let me write it like:
 
-I understand that the problems are related, but there are several of them.
-Could they be handled in separate patches (applied in a specific order) ?
-I suspect this would aid backporting, and, moreover, I think it is nice
-to try to work on a one-fix-per-patch basis.
+patch 1: fix first caller
+patch 2: fix second caller
+patch 3: re-write both callers to cleaner API
 
-The above notwithstanding, I do agree with the correctness of your changes.
+And we can push everything to net because it's nice to have one version
+of the API instead of a version for net and a different version in
+net-next.  Or we could apply patch 3 to only net-next.
 
-> Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
-> Fixes: 5b65781d06ea ("dmaengine: ti: k3-udma-glue: Add support for K3 PKTDMA")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> The k3_udma_glue_tx_get_irq() function is in dmaengine, but this bug
-> affects networking so I think the fix should go through networking.
+regards,
+dan carpenter
 
-...
