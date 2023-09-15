@@ -2,69 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A6EEE644B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 09:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7D4EE644B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 09:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233311AbjIOJKA (ORCPT
+        id S233663AbjIOJ1p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 05:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        Fri, 15 Sep 2023 05:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233269AbjIOJJ4 (ORCPT
+        with ESMTP id S233585AbjIOJ1o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:09:56 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F262113;
-        Fri, 15 Sep 2023 02:09:13 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4018af103bcso12664495e9.1;
-        Fri, 15 Sep 2023 02:09:13 -0700 (PDT)
+        Fri, 15 Sep 2023 05:27:44 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 133EF35B0;
+        Fri, 15 Sep 2023 02:26:42 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-31fe2c8db0dso1348053f8f.3;
+        Fri, 15 Sep 2023 02:26:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1694768951; x=1695373751; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1694770001; x=1695374801; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+SaUS6vSo7orYelt85erkzzlVKhFWk0a2MJr/r0pFQ=;
-        b=Fh+brkwz58HhzcVqcicA8gMpuMan4iWcVLjzurRhekcN0kFlOyTOu3/rcY/ywEoE+2
-         JrCk/V/TgP2ZDuFlqx+/HBeGOe6d0tfkufp242Br6eFoYQuJx4lqHxCwwofGjgdl+e9V
-         e1zsrn9DMdQk4sBA8pAP3enkOIU3AORaAVrYOez7MUp/Lxlih1hPT1IxZYFcxr9uHO45
-         /jJqM4cZSmTp3SA4EfsOxfwW/R8/gJqvkdQyHmBrQCsqKatVguQ1kMxyA29zywlH6IMQ
-         pWHqywoDXZMvFkyLGdnp+aOPAsasTB6wQ6ghtsoWxAx161hTAwjcOKOjjDFWARBslYm0
-         7iRg==
+        bh=I6AkTjApExULwisbP0f8MYFXveFddh4jpBpFZba8uP0=;
+        b=KDLSJRrPMi6Dwin5RTeic/NH8yD2GiK7lj0omhggupAyViLgjLBcVhWvG+kup9f85b
+         X+l4e1io38rHPzPbiFS+r48hgukSdQ2p2xbsqWhDL/dF3x+gJ3hn+e/e1Hnmng2kjZKr
+         gij/5oKcMCzYKlY2mDb7QfGAalW33vCPDNUhPpSAndY7QWgiBpKJdL0VCGKeFQ4uVr/1
+         2rh7c4ugKXhjImvSt1R3cIlR8zH3OV3rKwTp0FPOTvSfbzfPVL3AcWZz4C/pV1skapIu
+         qjHIWkKmNbnL2fqQ9Ays3kHqvjtKvmBlNuVDmqcm0APNAsctHZGQikEooZAZI4nsbNR0
+         nvhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694768951; x=1695373751;
+        d=1e100.net; s=20230601; t=1694770001; x=1695374801;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V+SaUS6vSo7orYelt85erkzzlVKhFWk0a2MJr/r0pFQ=;
-        b=Jnc6b/ORiH4KylxqE9cfMVwXmwUyOHk51azbZvW3P0BfKwNNIczs+t2jGUtSRpn/w5
-         mPwsAAzWwwbyU6PQFrbfH3zaJhQcm+ssROsPSb/X1gGS7C+xg/Q58W3ih66j24qMNaDR
-         As+GA4oPwR25th/1bJi2M5KQuS9tpIluA2BTf2dLTbazjw8E0hM8oxDsjy3NO9S49pZb
-         prbGc42DLhawNEucjXp/CNUYd0toyFezukQGgeaY6FLu9SiM9jhiMVPoujAukexz2q3m
-         BOg419CuTFyytigQIK9XZVM8n2tRJaxtb/zY6BDnZ5ITcDZSWtHOnk9lYnRNPc5ErcV0
-         XsqA==
-X-Gm-Message-State: AOJu0YxUMyJF5yAq5ENR0s9LzIucLSxzKKeC5kxrs2ocnpUiF7DiJ610
-        uOR+rnw97xcLvCxXn/ll4AMdBl0S0YogV5xq
-X-Google-Smtp-Source: AGHT+IFOf/E8HzEzYsp3EqhqBQ2CwqOBGF19/Nx5TFz4oIQWeKi0fYakDvNq6BtdabSYRMC7++88fg==
-X-Received: by 2002:a05:600c:4b92:b0:403:aced:f7f4 with SMTP id e18-20020a05600c4b9200b00403acedf7f4mr3436020wmp.12.1694768951383;
-        Fri, 15 Sep 2023 02:09:11 -0700 (PDT)
+        bh=I6AkTjApExULwisbP0f8MYFXveFddh4jpBpFZba8uP0=;
+        b=Ao7p3o3Wbt9Jvuo5l+2z0MAz6oSz13w8PrLEyQjP2+hsLvyXIRR7tnMc9sl9wx07Z2
+         dFPMTGFaXhmg/eXPl9+6Z2fguOaLV7kNjTc248Ke4EKMn99yjztSegyujUjJEgnU2PQU
+         CApwqU2BFaqrMlxsDGn1stk7GtG74I0ZzvCPzBISccIRjBuL0FbHtfrseuui9QtQ5eJ8
+         CXbMFeXQk+DzvSMH3Ok/D8B3ziVxV8YGBYjbSNyg06zyGpGLnWhWl+TUgFyg0qPQgbr0
+         tc0Qj95dQGt+dk2GsqluSpgGL6NTNfojpo/m5qSO2s2xI3MI2eV+sc9QR5NrkLiRx+7c
+         eWkg==
+X-Gm-Message-State: AOJu0YwgQIu0vvc6CWtx0jfELCFG/e7smq9KWhAsyC66qWZV/fqs5jeF
+        gb73aLhCCzvVnEm+UIdrAz8=
+X-Google-Smtp-Source: AGHT+IGO7dNEsmwqe62k1eEbBiRKgNNo1d4fDvsoEEl8b2q/cCALAmnkXq8JIS+ehHW+Ftj+DVntWg==
+X-Received: by 2002:adf:ecc7:0:b0:31f:a717:f1cf with SMTP id s7-20020adfecc7000000b0031fa717f1cfmr893102wro.56.1694770000481;
+        Fri, 15 Sep 2023 02:26:40 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f10-20020a7bc8ca000000b00401d8181f8bsm6928709wml.25.2023.09.15.02.09.10
+        by smtp.gmail.com with ESMTPSA id p20-20020a7bcc94000000b003feea62440bsm4109371wma.43.2023.09.15.02.26.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 02:09:10 -0700 (PDT)
+        Fri, 15 Sep 2023 02:26:40 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org
+To:     James Schulman <james.schulman@cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf kwork: Fix spelling mistake "COMMMAND" -> "COMMAND"
-Date:   Fri, 15 Sep 2023 10:09:10 +0100
-Message-Id: <20230915090910.30182-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: cs42l43: make const array controls static
+Date:   Fri, 15 Sep 2023 10:26:39 +0100
+Message-Id: <20230915092639.31074-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -73,26 +71,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a literal string. Fix it.
+Don't populate the const array controls on the stack, instead make it
+static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/perf/builtin-kwork.c | 2 +-
+ sound/soc/codecs/cs42l43.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-index 04b966801643..7e8dd35d764b 100644
---- a/tools/perf/builtin-kwork.c
-+++ b/tools/perf/builtin-kwork.c
-@@ -1629,7 +1629,7 @@ static void top_print_header(struct perf_kwork *kwork __maybe_unused)
- 
- 		     PRINT_CPU_USAGE_WIDTH, "%CPU",
- 		     PRINT_RUNTIME_HEADER_WIDTH + RPINT_DECIMAL_WIDTH, "RUNTIME",
--		     PRINT_TASK_NAME_WIDTH, "COMMMAND");
-+		     PRINT_TASK_NAME_WIDTH, "COMMAND");
- 	printf("\n ");
- 	print_separator(ret);
- }
+diff --git a/sound/soc/codecs/cs42l43.c b/sound/soc/codecs/cs42l43.c
+index 1a95c370fc4c..4e3bc15f1b25 100644
+--- a/sound/soc/codecs/cs42l43.c
++++ b/sound/soc/codecs/cs42l43.c
+@@ -162,7 +162,7 @@ CS42L43_IRQ_COMPLETE(load_detect)
+ static irqreturn_t cs42l43_mic_shutter(int irq, void *data)
+ {
+ 	struct cs42l43_codec *priv = data;
+-	const char * const controls[] = {
++	static const char * const controls[] = {
+ 		"Decimator 1 Switch",
+ 		"Decimator 2 Switch",
+ 		"Decimator 3 Switch",
 -- 
 2.39.2
 
