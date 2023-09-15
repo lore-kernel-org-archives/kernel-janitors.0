@@ -2,80 +2,145 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B204BEE6431
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 07:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDDCEE6440
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Sep 2023 08:14:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232321AbjIOHvS (ORCPT
+        id S233118AbjIOIOV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Sep 2023 03:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41326 "EHLO
+        Fri, 15 Sep 2023 04:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232805AbjIOHvQ (ORCPT
+        with ESMTP id S233282AbjIOIOQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Sep 2023 03:51:16 -0400
-X-Greylist: delayed 577 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 15 Sep 2023 00:51:03 PDT
-Received: from mail.innovatebizlab.com (mail.innovatebizlab.com [217.61.112.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 946D4193
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 00:51:03 -0700 (PDT)
-Received: by mail.innovatebizlab.com (Postfix, from userid 1002)
-        id F368A82930; Fri, 15 Sep 2023 09:41:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=innovatebizlab.com;
-        s=mail; t=1694763667;
-        bh=wvil646weoWMA5JjxcTHGdry6YE1uZbSEvjBB8Nwnwo=;
-        h=Date:From:To:Subject:From;
-        b=BkXRsFbxtSpJIRsZ/LuIx1pMSMUWK2rGQ4SNBlQ7P+KYosdgHy7P9moOs6uHtLGrf
-         BiImpfmP+a/a5TAklPyTSlyR82b4qJQiCToMQo1jmQpUcD7qR1KgVvWu0myr8krNhc
-         jeIrcvGTkT2QrwJeKufBc/O9QYGU+DcN8BjgMSzt9dZzWVufo94bW8rCwENS/fwSNv
-         mb5sd2zGWtU5thFyDCDqJFyMc1zuxhUl882KAvoaZWzu0wC4fqwz0aDy4LYXd3E2o1
-         ObVIXfsz49dP8qDTJwJ98BBry3b5G0fA1JG50rX/PV8FcWJncsw9e1Vp8WIjup8A1y
-         j692f3UkAbmmA==
-Received: by mail.innovatebizlab.com for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 07:40:54 GMT
-Message-ID: <20230915084500-0.1.n.1h24.0.87agzp0i7k@innovatebizlab.com>
-Date:   Fri, 15 Sep 2023 07:40:54 GMT
-From:   =?UTF-8?Q? "Kry=C5=A1tof_Prus=C3=ADk" ?= 
-        <krystof.prusik@innovatebizlab.com>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Je=C5=99=C3=A1bov=C3=BD_a_dopravn=C3=AD_stroje?=
-X-Mailer: mail.innovatebizlab.com
+        Fri, 15 Sep 2023 04:14:16 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346A63AAC
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 01:12:53 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-404732a0700so15695255e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Sep 2023 01:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694765571; x=1695370371; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6nBcz24d1Uv1RZNghnP2ocTy4sdHcik9t3HUcbQZ4tg=;
+        b=Di/kf2Wdm93Lrx3jrBGTAi3i660kqLizdAqSa4izaHnwA7rmtYQcMjV3aGa9LIXsG+
+         yi2cGbOQ7LgCfh9yCKtJOXkQn5PV9/4OWxWwIQTQZbHdwilewhuoxOVGZk69fBjWV7mL
+         +Y2jMRwVhktlE9sxu9ZIL3pIReZR5SxPChBtA2esuEgVPF4fum4AfUaw8x1p2Dqi22O4
+         +6C+eDD5IxpsvT77vEsUSMbFwOLBOfmp+l4VJAQQB/ulyauerAg0Is5dNVkEogQjGsGD
+         6irSMtLxPzIEvHowKC4QeeyYsenrivlYzpDlGNNG0rmG9TgbHRKDL8v9VrVkDVpxgnvB
+         IqJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694765571; x=1695370371;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6nBcz24d1Uv1RZNghnP2ocTy4sdHcik9t3HUcbQZ4tg=;
+        b=Gk3HLksOIYea3Pq8FVZtOndXTx1YP64/qi1gsWEvY+p3Q+bj1L0mM4160xnK8aH71+
+         vae0fJ9TvvsSq4G3Ljnj0wwW44SDo/qr8MAXUycE16FGQrfYujoktUcjSsBDMAi+7oA3
+         qeGrYABdUH/7eZHFr0XTBpf2zjHaAccs3xw+qevzvRqOc8G9dD60n7pqnqZbUMnsi3pt
+         H4MDx48IjCzOmx2vCcX+ZyZGo8RbeARuDPDaujhbvmcNvH35njUOf/ABPH6kp/6zPVGz
+         3qf9FviinWr3Bq237afTC1s0uvxO6+l1amXZZfUHoA/MGT0up4IiMs/9CK4jcvRwOYXE
+         U9ow==
+X-Gm-Message-State: AOJu0YzrL0ktgi+jd63BhnO2PjSydigEw9Zg7kTT+X/9MfyaN0kw4Ndj
+        fQV0M69Epj6lLxQvkeFDIrzChI8O10TuAs6lE0I=
+X-Google-Smtp-Source: AGHT+IHhjx+C2tXd6/fYAfk1dEjJySXvLSfq3+0Ehw02LkHJthywaVX6DUtWsNVb0JiNu+Y55DacTg==
+X-Received: by 2002:a7b:c4cb:0:b0:401:6800:703c with SMTP id g11-20020a7bc4cb000000b004016800703cmr1007479wmk.21.1694765571493;
+        Fri, 15 Sep 2023 01:12:51 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id w11-20020a05600c014b00b00400268671c6sm3971315wmm.13.2023.09.15.01.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Sep 2023 01:12:51 -0700 (PDT)
+Date:   Fri, 15 Sep 2023 11:12:47 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     jiri@resnulli.us
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] devlink: implement shared buffer occupancy monitoring
+ interface
+Message-ID: <e483bcad-10c6-43fb-9c49-57062728885b@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-V=C3=A1=C5=BEen=C3=AD,
+Hello Jiri Pirko,
 
-hled=C3=A1te je=C5=99=C3=A1by nebo jinou manipula=C4=8Dn=C3=AD techniku?
+The patch df38dafd2559: "devlink: implement shared buffer occupancy
+monitoring interface" from Apr 14, 2016 (linux-next), leads to the
+following Smatch static checker warning:
 
-Zastupuj=C3=AD evropsk=C3=A9ho l=C3=ADdra ve v=C3=BDvoji a stavb=C4=9B je=
-=C5=99=C3=A1b=C5=AF r=C5=AFzn=C3=A9ho druhu (mj. mostov=C3=BD, port=C3=A1=
-lov=C3=BDch a samohybn=C3=BDch je=C5=99=C3=A1b=C5=AF a speci=C3=A1ln=C3=AD=
-ch =C5=99e=C5=A1en=C3=AD), poj=C3=ADzdn=C3=BDch je=C5=99=C3=A1b=C5=AF, v=C4=
-=9B=C5=BEov=C3=BDch je=C5=99=C3=A1b=C5=AF, kladkostroj=C5=AF a n=C3=A1hra=
-dn=C3=ADch d=C3=ADl=C5=AF pro manipula=C4=8Dn=C3=AD techniku.
+	net/devlink/sb.c:699 devlink_nl_sb_tc_pool_bind_fill()
+	warn: missing unwind goto?
 
-Na=C5=A1e za=C5=99=C3=ADzen=C3=AD vyr=C3=A1b=C3=ADme z nejkvalitn=C4=9Bj=C5=
-=A1=C3=ADch materi=C3=A1l=C5=AF a pou=C5=BE=C3=ADv=C3=A1me u nich modern=C3=
-=AD technologii. Garantujeme komplexn=C3=AD podporu =E2=80=93 po=C4=8D=C3=
-=ADnaje v=C3=BDrobou, p=C5=99es mont=C3=A1=C5=BE, zprovozn=C4=9Bn=C3=AD, =
-pro=C5=A1kolen=C3=AD oper=C3=A1toru a kon=C4=8De dod=C3=A1vkou p=C5=99=C3=
-=ADslu=C5=A1enstv=C3=AD, n=C3=A1hradn=C3=ADch d=C3=ADl=C5=AF a servisem v=
- re=C5=BEimu 24 h/den. =20
+net/devlink/sb.c
+    651 static int
+    652 devlink_nl_sb_tc_pool_bind_fill(struct sk_buff *msg, struct devlink *devlink,
+    653                                 struct devlink_port *devlink_port,
+    654                                 struct devlink_sb *devlink_sb, u16 tc_index,
+    655                                 enum devlink_sb_pool_type pool_type,
+    656                                 enum devlink_command cmd,
+    657                                 u32 portid, u32 seq, int flags)
+    658 {
+    659         const struct devlink_ops *ops = devlink->ops;
+    660         u16 pool_index;
+    661         u32 threshold;
+    662         void *hdr;
+    663         int err;
+    664 
+    665         err = ops->sb_tc_pool_bind_get(devlink_port, devlink_sb->index,
+    666                                        tc_index, pool_type,
+    667                                        &pool_index, &threshold);
+    668         if (err)
+    669                 return err;
+    670 
+    671         hdr = genlmsg_put(msg, portid, seq, &devlink_nl_family, flags, cmd);
+    672         if (!hdr)
+    673                 return -EMSGSIZE;
+    674 
+    675         if (devlink_nl_put_handle(msg, devlink))
+    676                 goto nla_put_failure;
+    677         if (nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX, devlink_port->index))
+    678                 goto nla_put_failure;
+    679         if (nla_put_u32(msg, DEVLINK_ATTR_SB_INDEX, devlink_sb->index))
+    680                 goto nla_put_failure;
+    681         if (nla_put_u16(msg, DEVLINK_ATTR_SB_TC_INDEX, tc_index))
+    682                 goto nla_put_failure;
+    683         if (nla_put_u8(msg, DEVLINK_ATTR_SB_POOL_TYPE, pool_type))
+    684                 goto nla_put_failure;
+    685         if (nla_put_u16(msg, DEVLINK_ATTR_SB_POOL_INDEX, pool_index))
+    686                 goto nla_put_failure;
+    687         if (nla_put_u32(msg, DEVLINK_ATTR_SB_THRESHOLD, threshold))
+    688                 goto nla_put_failure;
+    689 
+    690         if (ops->sb_occ_tc_port_bind_get) {
+    691                 u32 cur;
+    692                 u32 max;
+    693 
+    694                 err = ops->sb_occ_tc_port_bind_get(devlink_port,
+    695                                                    devlink_sb->index,
+    696                                                    tc_index, pool_type,
+    697                                                    &cur, &max);
+    698                 if (err && err != -EOPNOTSUPP)
+--> 699                         return err;
 
-Poskytujeme aplikaci pro sledov=C3=A1n=C3=AD =C4=8Dinnosti je=C5=99=C3=A1=
-bu v re=C3=A1ln=C3=A9m =C4=8Dase. P=C5=AFsob=C3=ADme ve 73 a m=C3=A1me 11=
- v=C3=BDrobn=C3=ADch z=C3=A1vod=C5=AF, d=C3=ADky =C4=8Demu=C5=BE jsme sch=
-opni rychle reagovat na Va=C5=A1e po=C5=BEadavky a jsme d=C5=AFv=C4=9Bryh=
-odn=C3=BDm partnerem.=20
+Moving code around means re-visiting all the static checker warnings.
+:)  Should this return genlmsg_cancel(msg, hdr) before returning?
 
-V=C3=BDrobn=C3=AD procesy prob=C3=ADhaj=C3=AD v souladu s mezin=C3=A1rodn=
-=C3=ADmi normami IEC, FEM, DIN, EN, kvalita je potvrzena certifik=C3=A1te=
-m ISO 9001:2015.
+    700                 if (!err) {
+    701                         if (nla_put_u32(msg, DEVLINK_ATTR_SB_OCC_CUR, cur))
+    702                                 goto nla_put_failure;
+    703                         if (nla_put_u32(msg, DEVLINK_ATTR_SB_OCC_MAX, max))
+    704                                 goto nla_put_failure;
+    705                 }
+    706         }
+    707 
+    708         genlmsg_end(msg, hdr);
+    709         return 0;
+    710 
+    711 nla_put_failure:
+    712         genlmsg_cancel(msg, hdr);
+    713         return -EMSGSIZE;
+    714 }
 
-Pokud se chcete sezn=C3=A1mit s na=C5=A1imi =C5=99e=C5=A1en=C3=ADmi, nev=C3=
-=A1hejte se na m=C4=9B obr=C3=A1tit.
-
-
-S pozdravem
-Kry=C5=A1tof Prus=C3=ADk
+regards,
+dan carpenter
