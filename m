@@ -2,113 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A8CCD37BD
-	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Sep 2023 15:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89295CD37BD
+	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Sep 2023 15:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbjIPPKm (ORCPT
+        id S235085AbjIPPup (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 16 Sep 2023 11:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41296 "EHLO
+        Sat, 16 Sep 2023 11:50:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231447AbjIPPKU (ORCPT
+        with ESMTP id S232394AbjIPPuZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 16 Sep 2023 11:10:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5148ACE7
-        for <kernel-janitors@vger.kernel.org>; Sat, 16 Sep 2023 08:10:13 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Sat, 16 Sep 2023 11:50:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5ACCE9
+        for <kernel-janitors@vger.kernel.org>; Sat, 16 Sep 2023 08:50:18 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id hWvyqftxFNtVWhWvyqismR; Sat, 16 Sep 2023 17:10:11 +0200
+        id hXYkq3WSEUbVihXYkqPVvW; Sat, 16 Sep 2023 17:50:16 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694877011;
-        bh=6jwMYAEqJdvc3UEqksxRjN6+6v4fxqBOxhEdpC1aB2w=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=t+BvTvMHqfmRNlhzui1OBOyxk0/k/0D0FuMcSRbEktFCHLq3BjnLA9OHemlXwRp+L
-         pNwL1IErYVUnSiKUooWgiaNj6NA/FFAm+RbXw00LXjw6Y0uWPsEkgK/Afm112TDt2b
-         5O7n3sa2GciUP19MoU7H7wAEigTqF/CuipLPOo+UgS50W0CeNoAAv1TcX2fkJl4Oqn
-         sIed5WdUUkfOfn2qz2CQvrDhA8hDmlS69/STHV13lUy4k9N9KlXCuqTot4h6GRnAlI
-         OY7P+4JRnd7RGqqlw0JHBZkLy9PdEj3NHqHRO7u8INHMEDI2UWXnxyXOchq8zN22DY
-         S4hM6HcFw3UMA==
-X-ME-Helo: [192.168.1.18]
+        s=t20230301; t=1694879416;
+        bh=Apgbf+4k5j0y245gUGakuZZxFJFzdZ6jheOh94UyP3g=;
+        h=From:To:Cc:Subject:Date;
+        b=Q8rWoivz63vNREMgi47qen5kKm5KBYmXPC9+wiTnsNU0BR0L0+5jxXf7PDZasaVnz
+         8ohvQ7QiIGvPMW7oM6UDkEz1UoiUCfSztkHA56sK2HS+d3pcOXzwY6WGVKSPGG6i3W
+         IzrpVvt9n8Ta9/PI3VF/yAoYXDNO/ikh/c1ZAnmobGbo9w2nsG6bVnazxgw/YWdzbH
+         hEIZkK/glw1ZBa267LkMf41OzHQuaYxUEnrCGUFre8TBfQp8N2nxPjRaDHrk51PRoX
+         6GliQedPc22O89AzjZFflbhY6HcsYGwCiU5/U6KJC4GUnwmiknrThu+hXSQ9wzCLdN
+         3CKIA3VQ5geEQ==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 16 Sep 2023 17:10:11 +0200
+X-ME-Date: Sat, 16 Sep 2023 17:50:16 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <4f629125-2b62-1284-3311-d95639044764@wanadoo.fr>
-Date:   Sat, 16 Sep 2023 17:10:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] gpio: tb10x: Fix an error handling path in
- tb10x_gpio_probe()
-Content-Language: fr, en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linus.walleij@linaro.org, andy@kernel.org, galak@codeaurora.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <ceeda269bceee1c805f148bcbc628abc9d42601a.1693721348.git.christophe.jaillet@wanadoo.fr>
- <CAMRc=Meq+1z50=tXXt3MFAexRCmfSQ5rs6hT7311KRGO=q2RHQ@mail.gmail.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAMRc=Meq+1z50=tXXt3MFAexRCmfSQ5rs6hT7311KRGO=q2RHQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH resend] kstrtox: Remove strtobool()
+Date:   Sat, 16 Sep 2023 17:50:11 +0200
+Message-Id: <87e3cc2547df174cd5af1fadbf866be4ef9e8e45.1694878151.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 03/09/2023 à 19:02, Bartosz Golaszewski a écrit :
-> On Sun, Sep 3, 2023 at 8:13 AM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> If an error occurs after a successful irq_domain_add_linear() call, it
->> should be undone by a corresponding irq_domain_remove(), as already done
->> in the remove function.
->>
->> Fixes: c6ce2b6bffe5 ("gpio: add TB10x GPIO driver")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/gpio/gpio-tb10x.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
->> index 78f8790168ae..f96d260a4a19 100644
->> --- a/drivers/gpio/gpio-tb10x.c
->> +++ b/drivers/gpio/gpio-tb10x.c
->> @@ -195,7 +195,7 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
->>                                  handle_edge_irq, IRQ_NOREQUEST, IRQ_NOPROBE,
->>                                  IRQ_GC_INIT_MASK_CACHE);
->>                  if (ret)
->> -                       return ret;
->> +                       goto err_remove_domain;
->>
->>                  gc = tb10x_gpio->domain->gc->gc[0];
->>                  gc->reg_base                         = tb10x_gpio->base;
->> @@ -209,6 +209,10 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
->>          }
->>
->>          return 0;
->> +
->> +err_remove_domain:
->> +       irq_domain_remove(tb10x_gpio->domain);
->> +       return ret;
->>   }
->>
->>   static int tb10x_gpio_remove(struct platform_device *pdev)
->> --
->> 2.34.1
->>
-> 
-> That's not enough, you also need to dispose of all remaining mappings.
-> Please see drivers/gpio/gpiolib.c and how it handles the gpio_irq_chip
-> domain.
+The conversion from strtobool() to kstrtobool() is completed.
+So strtobool() can now be removed.
 
-Hi,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v6.6-rc1 has no more reference to strtobool() (except a version local to
+tools/)
 
-you'll have to give me more explanation because I've not been able to 
-find anything useful to me.
+The previous post is:
+    https://lore.kernel.org/all/23d2ea6b90579207e87cc1bf64fc4eed1ed9f173.1689885328.git.christophe.jaillet@wanadoo.fr/
+---
+ include/linux/kstrtox.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-CJ
-
-> 
-> Bartosz
-> 
+diff --git a/include/linux/kstrtox.h b/include/linux/kstrtox.h
+index 529974e22ea7..7fcf29a4e0de 100644
+--- a/include/linux/kstrtox.h
++++ b/include/linux/kstrtox.h
+@@ -147,9 +147,4 @@ extern long simple_strtol(const char *,char **,unsigned int);
+ extern unsigned long long simple_strtoull(const char *,char **,unsigned int);
+ extern long long simple_strtoll(const char *,char **,unsigned int);
+ 
+-static inline int strtobool(const char *s, bool *res)
+-{
+-	return kstrtobool(s, res);
+-}
+-
+ #endif	/* _LINUX_KSTRTOX_H */
+-- 
+2.34.1
 
