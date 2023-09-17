@@ -2,74 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A59CD37B3
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 05:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88601CD37B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 07:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233394AbjIQFaE convert rfc822-to-8bit (ORCPT
+        id S232398AbjIQHDw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 17 Sep 2023 01:30:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38604 "EHLO
+        Sun, 17 Sep 2023 03:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233820AbjIQF34 (ORCPT
+        with ESMTP id S230136AbjIQHDm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 17 Sep 2023 01:29:56 -0400
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6172D19F;
-        Sat, 16 Sep 2023 22:29:51 -0700 (PDT)
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-792979d4cb5so128746839f.2;
-        Sat, 16 Sep 2023 22:29:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694928590; x=1695533390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tpNTlQ+I7CtsqqIB+axgS1MdKohh402zrq7Eb4xNf68=;
-        b=KCdYb4MZgD/M5H0BVAwq3MF6oDmQxCKzYRa98VIk9O3jE6WaYRNLra3KoAR7ViiFRY
-         a9B0qwZw5AMKf/jfmhxDfL/QFpEXOitwKLPycPx6xAfTi6zNC1pW/wQmqTUbrBfZFcwh
-         FiuwQ4MgNwWNU2QcKxOgSaaBPAGBJTYrj+hhJk3LIfPGuYnQQyZLAuklj5U7cnOOTuBx
-         G4dbRXj8zQhSJO4Wcj9R91ic4csYmiq5qIk1fEk3Dw4yfuq3zFMwKrpAN1mlwvaz+WZ2
-         xSpNapPRQIeP8geSaTjDMNb71/+oAXPVPhB+mz8qsd3NpcqEsMgCYdBnoL1BJt8XW7ke
-         xytg==
-X-Gm-Message-State: AOJu0Yzo04U9aqMBZ5nwTn75XE8aKaFj2NlW02uB28vr4zYzp6hF/toE
-        kEuwwLW/QTJnknY79tR0SfpJJUvZiWpdzaoW54g=
-X-Google-Smtp-Source: AGHT+IF3QvKmNNGR1cNWajdo3lRVBvm9Np+46EOSZsCsh2b0DFOqYFTb8nEPA60Nu9s/6e6lGfa/fieJjVqNSX7n5AU=
-X-Received: by 2002:a6b:ef09:0:b0:787:1472:3181 with SMTP id
- k9-20020a6bef09000000b0078714723181mr6861355ioh.3.1694928590567; Sat, 16 Sep
- 2023 22:29:50 -0700 (PDT)
+        Sun, 17 Sep 2023 03:03:42 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0028130
+        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 00:03:35 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id hloaqFL4Xr3Xehlobq2VOd; Sun, 17 Sep 2023 09:03:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694934213;
+        bh=2fqQXXMdIZvdAOxGhxK9XXxf9aMwLimzUQK9Weept9E=;
+        h=From:To:Cc:Subject:Date;
+        b=bx88y+Xvyg2H9W+pXyxhRjj4NoS/c5bSDvXGmSc5u2cwRU11/YekmvOSmlhAW5tdS
+         2W/xOYiyZLjPOY+PRtnbyiPFmp/RbtP+LX/FFLS9QsHCykOdbkuGKpc5zgu1p7gqzQ
+         kMJYktJKrEwxwPgx7XRJUzcIlkU3QH38pSWcuv223YJM3rW0Xxl26NAncKThJ4OaTG
+         HAevUPMqR+DXtf4tnEmhvlCA1UO6oGgUph9xKDrAhNRWt2F6TQjRTZKNC3CKuJBJEu
+         +U1nhvUrnh099UipBYu9X6s9PN6rctGAPcXCAw4dIC4UnPTFgddefLIGxLe3WEVtGE
+         jDDRzev93RBkA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 17 Sep 2023 09:03:33 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH v2] ext4: Simplify code in ext4_decode_error()
+Date:   Sun, 17 Sep 2023 09:03:28 +0200
+Message-Id: <4c299692e35a0a14add58a5dd399d07843a4d350.1694934182.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230915090910.30182-1-colin.i.king@gmail.com> <CAP-5=fVwyt+VriYacj3nmGZbfqVZciRwozr2sJQSPpHhoyxAaA@mail.gmail.com>
-In-Reply-To: <CAP-5=fVwyt+VriYacj3nmGZbfqVZciRwozr2sJQSPpHhoyxAaA@mail.gmail.com>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sat, 16 Sep 2023 22:29:38 -0700
-Message-ID: <CAM9d7cikYxmbnRS0djejEB-zh04hKt6dbHnoof3S35Mn9-c2RQ@mail.gmail.com>
-Subject: Re: [PATCH][next] perf kwork: Fix spelling mistake "COMMMAND" -> "COMMAND"
-To:     Ian Rogers <irogers@google.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 15, 2023 at 9:44 AM Ian Rogers <irogers@google.com> wrote:
->
-> On Fri, Sep 15, 2023 at 2:09 AM Colin Ian King <colin.i.king@gmail.com> wrote:
-> >
-> > There is a spelling mistake in a literal string. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
+snprintf() returns the number of characters which would be generated,
+excluding the trailing NULL. Here the value is always >= 7, so the test
+is always true.
 
-Applied to perf-tools-next, thanks!
+Instead of fixing the test, just remove it. What matters is that the
+string is NULL terminated.
 
-Namhyung
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2:
+   - remove the bogus check, instead of fixing it
+   - Remove the Fixes tag (was: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3"))
+
+v1:
+   https://lore.kernel.org/all/2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr/
+
+The comment about nbuf being NULL or not, and the related test could be
+removed, but keeping it is harmless and more future proof.
+---
+ fs/ext4/super.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 2684ed69403e..86ed931f402a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -947,9 +947,8 @@ const char *ext4_decode_error(struct super_block *sb, int errno,
+ 		 * errors, textualise them now.  Else we just return
+ 		 * NULL. */
+ 		if (nbuf) {
+-			/* Check for truncated error codes... */
+-			if (snprintf(nbuf, 16, "error %d", -errno) >= 0)
+-				errstr = nbuf;
++			snprintf(nbuf, 16, "error %d", -errno);
++			errstr = nbuf;
+ 		}
+ 		break;
+ 	}
+-- 
+2.34.1
+
