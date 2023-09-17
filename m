@@ -2,46 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 541BACD37B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 13:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB943CD37B3
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 14:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234976AbjIQNrh (ORCPT
+        id S232640AbjIQOhH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 17 Sep 2023 09:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
+        Sun, 17 Sep 2023 10:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236043AbjIQNr3 (ORCPT
+        with ESMTP id S236743AbjIQOgm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 17 Sep 2023 09:47:29 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C4313E
-        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 06:47:23 -0700 (PDT)
+        Sun, 17 Sep 2023 10:36:42 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A15B12C
+        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 07:36:36 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id hs7MqNnnjvRSUhs7MqLFyC; Sun, 17 Sep 2023 15:47:22 +0200
+        id hsstqeOGW9p0Shssuq1bZf; Sun, 17 Sep 2023 16:36:29 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694958442;
-        bh=hOGjJOJ5faGeiDJ8M4RMHf63I+hgy05f2bSDAh+zQrY=;
+        s=t20230301; t=1694961389;
+        bh=Eb9i/pcg2sDgpzwYBXcHCssoUoji+5TNSyNGZC5cFDI=;
         h=From:To:Cc:Subject:Date;
-        b=SLmIQVLAeIsjHjno63AidoYTz4Lvlg+QaN4WAqHJh8HRQ94RkPkTf35hFIdqpAMEw
-         lceSC9tVm/O02R31TOE1iP70oU5WJc5GH+Y1F9Eczm2xkIVJReQcbTkEqa+yqzcpQf
-         ju1UR2F1QeFroPHbe8WnhgOKd166Z4ipQ1Xyl1I+C/MfvjTiuVPgR65ZW651j3lm/t
-         yGVn3aEWrShJ/eLk1OCamV9YWyj06g+XH2Xppqi+7srLVrMZUkTnP3X23Kj+Em2VFh
-         L/6kCRqvKdVqRevvN57Fmp5j73n54PNFLlT4VEYk0ZZYLrrxAI6sZy1gXEh5GPKe3F
-         IlRYxjziOeXvQ==
+        b=OUpyags0q45Skaeadp0j10giUtgRYonu/aKJ16AVOVD6A2stjVU2bpJsEf1Gek3nY
+         Y7vZgkJw84llWWsZMfMK7Jaj9aYH3VV9pCl9+reGddQJdSKL2zWJXkqpf8VoM3GxhO
+         GXwcv/Py9iCKgAHi1SGaYt5icxMiU6dTHQC0/V+4vpnsl8gySvCTXq/xaY2NWRkHll
+         Ijzh1pG79230bGCDcS1VXhSUGutSYiYUKushEwsFoKQYRyFMECO6psyphEWqgSlz2J
+         4PFphBZ0eDwqGvC6CB2ijPj6wayN24dyBnxGslGwsp4ZOnKCXVW2nBcgvUNT02Jtq+
+         gB23zUaopkKUg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Sep 2023 15:47:22 +0200
+X-ME-Date: Sun, 17 Sep 2023 16:36:29 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: pxa_camera: Fix an error handling path in pxa_camera_probe()
-Date:   Sun, 17 Sep 2023 15:47:16 +0200
-Message-Id: <30e64707efd739982d3f5747ec3613e4270e7434.1694958384.git.christophe.jaillet@wanadoo.fr>
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] spi: at91-usart: Remove some dead code
+Date:   Sun, 17 Sep 2023 16:36:26 +0200
+Message-Id: <84eb08daf85d203b34af9d8d08abf86804211413.1694961365.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,30 +52,57 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The commit in Fixes has reordered the code and the error handling path.
-However one 'goto' was missed.
+dma_request_chan() does not return NULL. It returns a valid pointer or an
+error pointer.
 
-Fix it and branch at the correct place in the error handling path.
+So, some dead code can be removed.
 
-Fixes: 5073d10cbaba ("media: pxa_camera: Register V4L2 device early")
+The IS_ERR_OR_NULL() in the error handling path are still needed, because
+the error handling path is common to the whole function and the
+ctlr->dma_xx are NULL when at91_usart_spi_configure_dma() is called.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/intel/pxa_camera.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-at91-usart.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/media/platform/intel/pxa_camera.c b/drivers/media/platform/intel/pxa_camera.c
-index 6e6caf50e11e..59b89e421dc2 100644
---- a/drivers/media/platform/intel/pxa_camera.c
-+++ b/drivers/media/platform/intel/pxa_camera.c
-@@ -2398,7 +2398,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
- 			       PXA_CAM_DRV_NAME, pcdev);
- 	if (err) {
- 		dev_err(&pdev->dev, "Camera interrupt register failed\n");
--		goto exit_v4l2_device_unregister;
-+		goto exit_deactivate;
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index b11d0f993cc7..1cea8e159344 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -132,28 +132,14 @@ static int at91_usart_spi_configure_dma(struct spi_controller *ctlr,
+ 	dma_cap_set(DMA_SLAVE, mask);
+ 
+ 	ctlr->dma_tx = dma_request_chan(dev, "tx");
+-	if (IS_ERR_OR_NULL(ctlr->dma_tx)) {
+-		if (IS_ERR(ctlr->dma_tx)) {
+-			err = PTR_ERR(ctlr->dma_tx);
+-			goto at91_usart_spi_error_clear;
+-		}
+-
+-		dev_dbg(dev,
+-			"DMA TX channel not available, SPI unable to use DMA\n");
+-		err = -EBUSY;
++	if (IS_ERR(ctlr->dma_tx)) {
++		err = PTR_ERR(ctlr->dma_tx);
+ 		goto at91_usart_spi_error_clear;
  	}
  
- 	pcdev->notifier.ops = &pxa_camera_sensor_ops;
+ 	ctlr->dma_rx = dma_request_chan(dev, "rx");
+-	if (IS_ERR_OR_NULL(ctlr->dma_rx)) {
+-		if (IS_ERR(ctlr->dma_rx)) {
+-			err = PTR_ERR(ctlr->dma_rx);
+-			goto at91_usart_spi_error;
+-		}
+-
+-		dev_dbg(dev,
+-			"DMA RX channel not available, SPI unable to use DMA\n");
+-		err = -EBUSY;
++	if (IS_ERR(ctlr->dma_rx)) {
++		err = PTR_ERR(ctlr->dma_rx);
+ 		goto at91_usart_spi_error;
+ 	}
+ 
 -- 
 2.34.1
 
