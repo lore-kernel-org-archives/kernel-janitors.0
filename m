@@ -2,107 +2,131 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB943CD37B3
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 14:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C087DCD37B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 20:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232640AbjIQOhH (ORCPT
+        id S241179AbjIQUhx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 17 Sep 2023 10:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
+        Sun, 17 Sep 2023 16:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236743AbjIQOgm (ORCPT
+        with ESMTP id S241197AbjIQUhk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 17 Sep 2023 10:36:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A15B12C
-        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 07:36:36 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
+        Sun, 17 Sep 2023 16:37:40 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 747D810E
+        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 13:37:31 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id hsstqeOGW9p0Shssuq1bZf; Sun, 17 Sep 2023 16:36:29 +0200
+        id hyWCqBxzXiBkuhyWCqhbFr; Sun, 17 Sep 2023 22:37:24 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694961389;
-        bh=Eb9i/pcg2sDgpzwYBXcHCssoUoji+5TNSyNGZC5cFDI=;
-        h=From:To:Cc:Subject:Date;
-        b=OUpyags0q45Skaeadp0j10giUtgRYonu/aKJ16AVOVD6A2stjVU2bpJsEf1Gek3nY
-         Y7vZgkJw84llWWsZMfMK7Jaj9aYH3VV9pCl9+reGddQJdSKL2zWJXkqpf8VoM3GxhO
-         GXwcv/Py9iCKgAHi1SGaYt5icxMiU6dTHQC0/V+4vpnsl8gySvCTXq/xaY2NWRkHll
-         Ijzh1pG79230bGCDcS1VXhSUGutSYiYUKushEwsFoKQYRyFMECO6psyphEWqgSlz2J
-         4PFphBZ0eDwqGvC6CB2ijPj6wayN24dyBnxGslGwsp4ZOnKCXVW2nBcgvUNT02Jtq+
-         gB23zUaopkKUg==
-X-ME-Helo: pop-os.home
+        s=t20230301; t=1694983044;
+        bh=R/OeMX2iB0ZqhHm0GSAy+GcdjH61pb96H2jNofIJ5Ew=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=Fj356q0IIfB9U9L7pEdjjUe7Ib1OOQFf6KpHjy7W1RhdscPqsNz4iPyK9IMQVI/Xl
+         yjZPuMLSufqntgRhuDvbbXCxKpRQr/ykJ3alH8I5Wvu4Gns8Z6SYtymYxvluo2mHD7
+         BwH/CWUHdISxYD0y0mi45nYtoI1TUoQiMtBXJ3yXTclVc/wEl8zYN+W/x6TcAoBGh9
+         RFlNpMYpVs2lqk1tBKuqe10UrKaUpMA/mTatnCi8kBFz1oYdIFZSa0SQZUcE6z+YCQ
+         H10o4bTWfIfO/F3QMUL7Yc1/eVq4c9Yw8tDoDvPIOCitxtgJdoYzvCj/kN7eWVK1yH
+         tTgfmUaTAg3Bg==
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Sep 2023 16:36:29 +0200
+X-ME-Date: Sun, 17 Sep 2023 22:37:24 +0200
 X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Radu Pirea <radu_nicolae.pirea@upb.ro>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] spi: at91-usart: Remove some dead code
-Date:   Sun, 17 Sep 2023 16:36:26 +0200
-Message-Id: <84eb08daf85d203b34af9d8d08abf86804211413.1694961365.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <5111a913-efc9-28c6-64ad-df2586bd0895@wanadoo.fr>
+Date:   Sun, 17 Sep 2023 22:37:23 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 0/3] HID: nvidia-shield: Fix the error handling path of
+ shield_probe()
+Content-Language: fr, en-GB
+To:     Rahul Rameshbabu <rrameshbabu@nvidia.com>
+Cc:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <cover.1693070958.git.christophe.jaillet@wanadoo.fr>
+ <87msxns3nv.fsf@nvidia.com> <d083215e-e9bf-860d-6d04-d919a9b90752@wanadoo.fr>
+ <87msxnupmc.fsf@nvidia.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <87msxnupmc.fsf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dma_request_chan() does not return NULL. It returns a valid pointer or an
-error pointer.
+Le 15/09/2023 à 22:51, Rahul Rameshbabu a écrit :
+> On Fri, 15 Sep, 2023 22:14:18 +0200 Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>> Le 15/09/2023 à 20:16, Rahul Rameshbabu a écrit :
+>>> Hi Christophe,
+>>> On Sat, 26 Aug, 2023 19:42:16 +0200 Christophe JAILLET
+>>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>> This serie fixes some missing clean-up function calls in the error handling of
+>>>> the probe.
+>>>>
+>>>> Patch 1 and 2 fix some similar issues introduced in 2 different commits (hence 2
+>>>> patches)
+>>>>
+>>>> Patch 3 is a proposal to be more future proof.
+>>>>
+>>>>
+>>>> *Note*: I'm not 100% sure that the order of the functions is the best one in
+>>>> thunderstrike_destroy(), but it is the way it was.
+>>>>
+>>>> My personal preference would be to undo things in reverse order they are
+>>>> allocated, such as:
+>>>> 	led_classdev_unregister(&ts->led_dev);
+>>>> 	power_supply_unregister(ts->base.battery_dev.psy);
+>>>> 	if (ts->haptics_dev)
+>>>> 		input_unregister_device(ts->haptics_dev);
+>>>> 	ida_free(&thunderstrike_ida, ts->id);
+>>>> This order was explicitly chnaged by 3ab196f88237, so, as I can't test the
+>>>> changes on a real harware, I've left it as-is.
+>>>>
+>>>> Christophe JAILLET (3):
+>>>>     HID: nvidia-shield: Fix a missing led_classdev_unregister() in the
+>>>>       probe error handling path
+>>>>     HID: nvidia-shield: Fix some missing function calls() in the probe
+>>>>       error handling path
+>>>>     HID: nvidia-shield: Introduce thunderstrike_destroy()
+>>>>
+>>>>    drivers/hid/hid-nvidia-shield.c | 23 ++++++++++++++++-------
+>>>>    1 file changed, 16 insertions(+), 7 deletions(-)
+>>> I was wondering if you have time to address the comments in this
+>>> submission. If not, I can re-spin the patches with the needed changes in
+>>> upcoming days.
+>>
+>> I can send an update tomorrow, but I'm only working with -next, so should using
+>> for-6.6/nvidia (as said in your comment in #1/3) be a must have, then it would
+>> be more convenient for me if you make the changes by yourself.
+> 
+> Luckily, it does not have to be on top of for-6.6/nvidia to add the fix
+> I mentioned with regards to the led_classdev flag for not trying to
+> power off the led when unregistering the led_classdev. That should still
+> merge nicely on top of for-6.6/nvidia. The main reason I mentioned it
+> was due to the commit living there with regards to the issue involving
+> unregistering the led_classdev without the mentioned flag.
 
-So, some dead code can be removed.
+Well, because of your comment on patch #1/3, I would prefer you to make 
+the relevant changes.
 
-The IS_ERR_OR_NULL() in the error handling path are still needed, because
-the error handling path is common to the whole function and the
-ctlr->dma_xx are NULL when at91_usart_spi_configure_dma() is called.
+Understanding this code if more time consuming than I first expected.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/spi/spi-at91-usart.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+CJ
 
-diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
-index b11d0f993cc7..1cea8e159344 100644
---- a/drivers/spi/spi-at91-usart.c
-+++ b/drivers/spi/spi-at91-usart.c
-@@ -132,28 +132,14 @@ static int at91_usart_spi_configure_dma(struct spi_controller *ctlr,
- 	dma_cap_set(DMA_SLAVE, mask);
- 
- 	ctlr->dma_tx = dma_request_chan(dev, "tx");
--	if (IS_ERR_OR_NULL(ctlr->dma_tx)) {
--		if (IS_ERR(ctlr->dma_tx)) {
--			err = PTR_ERR(ctlr->dma_tx);
--			goto at91_usart_spi_error_clear;
--		}
--
--		dev_dbg(dev,
--			"DMA TX channel not available, SPI unable to use DMA\n");
--		err = -EBUSY;
-+	if (IS_ERR(ctlr->dma_tx)) {
-+		err = PTR_ERR(ctlr->dma_tx);
- 		goto at91_usart_spi_error_clear;
- 	}
- 
- 	ctlr->dma_rx = dma_request_chan(dev, "rx");
--	if (IS_ERR_OR_NULL(ctlr->dma_rx)) {
--		if (IS_ERR(ctlr->dma_rx)) {
--			err = PTR_ERR(ctlr->dma_rx);
--			goto at91_usart_spi_error;
--		}
--
--		dev_dbg(dev,
--			"DMA RX channel not available, SPI unable to use DMA\n");
--		err = -EBUSY;
-+	if (IS_ERR(ctlr->dma_rx)) {
-+		err = PTR_ERR(ctlr->dma_rx);
- 		goto at91_usart_spi_error;
- 	}
- 
--- 
-2.34.1
+> 
+> --
+> Thanks for the patches,
+> 
+> Rahul Rameshbabu
+> 
+>>
+>> CJ
+>>
+>>> --
+>>> Thanks,
+>>> Rahul Rameshbabu
+>>>
+> 
 
