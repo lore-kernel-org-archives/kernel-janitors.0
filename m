@@ -2,79 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89295CD37BD
-	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Sep 2023 15:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A59CD37B3
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 05:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235085AbjIPPup (ORCPT
+        id S233394AbjIQFaE convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 16 Sep 2023 11:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
+        Sun, 17 Sep 2023 01:30:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbjIPPuZ (ORCPT
+        with ESMTP id S233820AbjIQF34 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 16 Sep 2023 11:50:25 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5ACCE9
-        for <kernel-janitors@vger.kernel.org>; Sat, 16 Sep 2023 08:50:18 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id hXYkq3WSEUbVihXYkqPVvW; Sat, 16 Sep 2023 17:50:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694879416;
-        bh=Apgbf+4k5j0y245gUGakuZZxFJFzdZ6jheOh94UyP3g=;
-        h=From:To:Cc:Subject:Date;
-        b=Q8rWoivz63vNREMgi47qen5kKm5KBYmXPC9+wiTnsNU0BR0L0+5jxXf7PDZasaVnz
-         8ohvQ7QiIGvPMW7oM6UDkEz1UoiUCfSztkHA56sK2HS+d3pcOXzwY6WGVKSPGG6i3W
-         IzrpVvt9n8Ta9/PI3VF/yAoYXDNO/ikh/c1ZAnmobGbo9w2nsG6bVnazxgw/YWdzbH
-         hEIZkK/glw1ZBa267LkMf41OzHQuaYxUEnrCGUFre8TBfQp8N2nxPjRaDHrk51PRoX
-         6GliQedPc22O89AzjZFflbhY6HcsYGwCiU5/U6KJC4GUnwmiknrThu+hXSQ9wzCLdN
-         3CKIA3VQ5geEQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 16 Sep 2023 17:50:16 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH resend] kstrtox: Remove strtobool()
-Date:   Sat, 16 Sep 2023 17:50:11 +0200
-Message-Id: <87e3cc2547df174cd5af1fadbf866be4ef9e8e45.1694878151.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 17 Sep 2023 01:29:56 -0400
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6172D19F;
+        Sat, 16 Sep 2023 22:29:51 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-792979d4cb5so128746839f.2;
+        Sat, 16 Sep 2023 22:29:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694928590; x=1695533390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tpNTlQ+I7CtsqqIB+axgS1MdKohh402zrq7Eb4xNf68=;
+        b=KCdYb4MZgD/M5H0BVAwq3MF6oDmQxCKzYRa98VIk9O3jE6WaYRNLra3KoAR7ViiFRY
+         a9B0qwZw5AMKf/jfmhxDfL/QFpEXOitwKLPycPx6xAfTi6zNC1pW/wQmqTUbrBfZFcwh
+         FiuwQ4MgNwWNU2QcKxOgSaaBPAGBJTYrj+hhJk3LIfPGuYnQQyZLAuklj5U7cnOOTuBx
+         G4dbRXj8zQhSJO4Wcj9R91ic4csYmiq5qIk1fEk3Dw4yfuq3zFMwKrpAN1mlwvaz+WZ2
+         xSpNapPRQIeP8geSaTjDMNb71/+oAXPVPhB+mz8qsd3NpcqEsMgCYdBnoL1BJt8XW7ke
+         xytg==
+X-Gm-Message-State: AOJu0Yzo04U9aqMBZ5nwTn75XE8aKaFj2NlW02uB28vr4zYzp6hF/toE
+        kEuwwLW/QTJnknY79tR0SfpJJUvZiWpdzaoW54g=
+X-Google-Smtp-Source: AGHT+IF3QvKmNNGR1cNWajdo3lRVBvm9Np+46EOSZsCsh2b0DFOqYFTb8nEPA60Nu9s/6e6lGfa/fieJjVqNSX7n5AU=
+X-Received: by 2002:a6b:ef09:0:b0:787:1472:3181 with SMTP id
+ k9-20020a6bef09000000b0078714723181mr6861355ioh.3.1694928590567; Sat, 16 Sep
+ 2023 22:29:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230915090910.30182-1-colin.i.king@gmail.com> <CAP-5=fVwyt+VriYacj3nmGZbfqVZciRwozr2sJQSPpHhoyxAaA@mail.gmail.com>
+In-Reply-To: <CAP-5=fVwyt+VriYacj3nmGZbfqVZciRwozr2sJQSPpHhoyxAaA@mail.gmail.com>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Sat, 16 Sep 2023 22:29:38 -0700
+Message-ID: <CAM9d7cikYxmbnRS0djejEB-zh04hKt6dbHnoof3S35Mn9-c2RQ@mail.gmail.com>
+Subject: Re: [PATCH][next] perf kwork: Fix spelling mistake "COMMMAND" -> "COMMAND"
+To:     Ian Rogers <irogers@google.com>
+Cc:     Colin Ian King <colin.i.king@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The conversion from strtobool() to kstrtobool() is completed.
-So strtobool() can now be removed.
+On Fri, Sep 15, 2023 at 9:44 AM Ian Rogers <irogers@google.com> wrote:
+>
+> On Fri, Sep 15, 2023 at 2:09 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+> >
+> > There is a spelling mistake in a literal string. Fix it.
+> >
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v6.6-rc1 has no more reference to strtobool() (except a version local to
-tools/)
+Applied to perf-tools-next, thanks!
 
-The previous post is:
-    https://lore.kernel.org/all/23d2ea6b90579207e87cc1bf64fc4eed1ed9f173.1689885328.git.christophe.jaillet@wanadoo.fr/
----
- include/linux/kstrtox.h | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/include/linux/kstrtox.h b/include/linux/kstrtox.h
-index 529974e22ea7..7fcf29a4e0de 100644
---- a/include/linux/kstrtox.h
-+++ b/include/linux/kstrtox.h
-@@ -147,9 +147,4 @@ extern long simple_strtol(const char *,char **,unsigned int);
- extern unsigned long long simple_strtoull(const char *,char **,unsigned int);
- extern long long simple_strtoll(const char *,char **,unsigned int);
- 
--static inline int strtobool(const char *s, bool *res)
--{
--	return kstrtobool(s, res);
--}
--
- #endif	/* _LINUX_KSTRTOX_H */
--- 
-2.34.1
-
+Namhyung
