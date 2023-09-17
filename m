@@ -2,46 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88601CD37B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 07:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541BACD37B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Sep 2023 13:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232398AbjIQHDw (ORCPT
+        id S234976AbjIQNrh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 17 Sep 2023 03:03:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
+        Sun, 17 Sep 2023 09:47:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230136AbjIQHDm (ORCPT
+        with ESMTP id S236043AbjIQNr3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 17 Sep 2023 03:03:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0028130
-        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 00:03:35 -0700 (PDT)
+        Sun, 17 Sep 2023 09:47:29 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C4313E
+        for <kernel-janitors@vger.kernel.org>; Sun, 17 Sep 2023 06:47:23 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id hloaqFL4Xr3Xehlobq2VOd; Sun, 17 Sep 2023 09:03:33 +0200
+        id hs7MqNnnjvRSUhs7MqLFyC; Sun, 17 Sep 2023 15:47:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694934213;
-        bh=2fqQXXMdIZvdAOxGhxK9XXxf9aMwLimzUQK9Weept9E=;
+        s=t20230301; t=1694958442;
+        bh=hOGjJOJ5faGeiDJ8M4RMHf63I+hgy05f2bSDAh+zQrY=;
         h=From:To:Cc:Subject:Date;
-        b=bx88y+Xvyg2H9W+pXyxhRjj4NoS/c5bSDvXGmSc5u2cwRU11/YekmvOSmlhAW5tdS
-         2W/xOYiyZLjPOY+PRtnbyiPFmp/RbtP+LX/FFLS9QsHCykOdbkuGKpc5zgu1p7gqzQ
-         kMJYktJKrEwxwPgx7XRJUzcIlkU3QH38pSWcuv223YJM3rW0Xxl26NAncKThJ4OaTG
-         HAevUPMqR+DXtf4tnEmhvlCA1UO6oGgUph9xKDrAhNRWt2F6TQjRTZKNC3CKuJBJEu
-         +U1nhvUrnh099UipBYu9X6s9PN6rctGAPcXCAw4dIC4UnPTFgddefLIGxLe3WEVtGE
-         jDDRzev93RBkA==
+        b=SLmIQVLAeIsjHjno63AidoYTz4Lvlg+QaN4WAqHJh8HRQ94RkPkTf35hFIdqpAMEw
+         lceSC9tVm/O02R31TOE1iP70oU5WJc5GH+Y1F9Eczm2xkIVJReQcbTkEqa+yqzcpQf
+         ju1UR2F1QeFroPHbe8WnhgOKd166Z4ipQ1Xyl1I+C/MfvjTiuVPgR65ZW651j3lm/t
+         yGVn3aEWrShJ/eLk1OCamV9YWyj06g+XH2Xppqi+7srLVrMZUkTnP3X23Kj+Em2VFh
+         L/6kCRqvKdVqRevvN57Fmp5j73n54PNFLlT4VEYk0ZZYLrrxAI6sZy1gXEh5GPKe3F
+         IlRYxjziOeXvQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Sep 2023 09:03:33 +0200
+X-ME-Date: Sun, 17 Sep 2023 15:47:22 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-ext4@vger.kernel.org
-Subject: [PATCH v2] ext4: Simplify code in ext4_decode_error()
-Date:   Sun, 17 Sep 2023 09:03:28 +0200
-Message-Id: <4c299692e35a0a14add58a5dd399d07843a4d350.1694934182.git.christophe.jaillet@wanadoo.fr>
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: pxa_camera: Fix an error handling path in pxa_camera_probe()
+Date:   Sun, 17 Sep 2023 15:47:16 +0200
+Message-Id: <30e64707efd739982d3f5747ec3613e4270e7434.1694958384.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,44 +49,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-snprintf() returns the number of characters which would be generated,
-excluding the trailing NULL. Here the value is always >= 7, so the test
-is always true.
+The commit in Fixes has reordered the code and the error handling path.
+However one 'goto' was missed.
 
-Instead of fixing the test, just remove it. What matters is that the
-string is NULL terminated.
+Fix it and branch at the correct place in the error handling path.
 
+Fixes: 5073d10cbaba ("media: pxa_camera: Register V4L2 device early")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2:
-   - remove the bogus check, instead of fixing it
-   - Remove the Fixes tag (was: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3"))
+ drivers/media/platform/intel/pxa_camera.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v1:
-   https://lore.kernel.org/all/2c0edffd8557807c6cd6d55111482c5cad7c8f2f.1694275603.git.christophe.jaillet@wanadoo.fr/
-
-The comment about nbuf being NULL or not, and the related test could be
-removed, but keeping it is harmless and more future proof.
----
- fs/ext4/super.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 2684ed69403e..86ed931f402a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -947,9 +947,8 @@ const char *ext4_decode_error(struct super_block *sb, int errno,
- 		 * errors, textualise them now.  Else we just return
- 		 * NULL. */
- 		if (nbuf) {
--			/* Check for truncated error codes... */
--			if (snprintf(nbuf, 16, "error %d", -errno) >= 0)
--				errstr = nbuf;
-+			snprintf(nbuf, 16, "error %d", -errno);
-+			errstr = nbuf;
- 		}
- 		break;
+diff --git a/drivers/media/platform/intel/pxa_camera.c b/drivers/media/platform/intel/pxa_camera.c
+index 6e6caf50e11e..59b89e421dc2 100644
+--- a/drivers/media/platform/intel/pxa_camera.c
++++ b/drivers/media/platform/intel/pxa_camera.c
+@@ -2398,7 +2398,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 			       PXA_CAM_DRV_NAME, pcdev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Camera interrupt register failed\n");
+-		goto exit_v4l2_device_unregister;
++		goto exit_deactivate;
  	}
+ 
+ 	pcdev->notifier.ops = &pxa_camera_sensor_ops;
 -- 
 2.34.1
 
