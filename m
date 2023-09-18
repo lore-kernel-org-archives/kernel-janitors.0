@@ -2,136 +2,185 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4CBCD13D2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 11:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ED5CD37B0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 11:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239962AbjIRLdr (ORCPT
+        id S241235AbjIRL4V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Sep 2023 07:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47648 "EHLO
+        Mon, 18 Sep 2023 07:56:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241696AbjIRLdY (ORCPT
+        with ESMTP id S241346AbjIRLzv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Sep 2023 07:33:24 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84489E62
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Sep 2023 04:32:11 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-44d5c49af07so1715788137.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Sep 2023 04:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1695036730; x=1695641530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJ1hMKB1iB8dAD1LFazBadXx45gs+UjtNDgrBqnCBUo=;
-        b=fYc201JNOm85UhfriW1Li6EKcs+b33GQmN2K+TTw4YoBDfR+JyNfP81F9s8WlnoueX
-         bjLXzIx2KIfqZj5nExtqcnW3TrAWGaEIt8Ick4ips535rDwsJ2gMLFmzPxWT6XdFX9qJ
-         Y7kbmQfkc7El0Soaax2FLnrqyptRlY7Lz7qojZVtqP4Ax4DbOH2P8u4F5WZMd0KrbgcU
-         6ZXtf8ua9gcycjNnt35tMJzl18Jrmi67fIgRxWkqjHgExPmQYqur6Q46ZbMkgOjClj88
-         J7vjO3lTviZvyDJOGBtGGSWbFNrLEyNyBjxGN36dVJkph5omEern5eHYfaeF8T6uFQSE
-         4sxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695036730; x=1695641530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KJ1hMKB1iB8dAD1LFazBadXx45gs+UjtNDgrBqnCBUo=;
-        b=jn/hBsUTO+nE8PQsxSSnf6jvwvW1C8MjNbylzxXA/wKvPzueTuSns4WBsPaeSovgcQ
-         0oI7VaHIHtqyW1y3qAmh2DllyEgRVCArgah34wKGE/ZGMTOJ3QYG4kuG/wT9ze6vYS/8
-         rdgzElxsdExlPZmSmhGGxnjSmQwvNo2ZfMU+z59S8CJuWKvOPINvIfF5i8HrzJt5Wxui
-         t3+0kCSiih+A0ZXAyGJrLCjI8WHhpgknEwGtCn32bDfFuJ2KMfixkQ8S+ZDpNGsOL4Qw
-         Erx4clvPYbWtSI8h1YakQEJwSbAgofKlV1UsQNCT5tF01gfCKkuC9BLze0bufc5HHvhj
-         XZkw==
-X-Gm-Message-State: AOJu0Yz3SO/i7N6glmhZeVgg3+u6nk2ZrDsj/3kOspbI2/ljOvfXWXpT
-        XSiedX0/hfDuI+jqWQh6TEuaglHbkhkCnFY2k3tL8g==
-X-Google-Smtp-Source: AGHT+IH6WTWHIBU8iYzdKZOEYuBcimHPITgvbwfNRJESqbvBBkRntYAnIFYou7q9tm+/2Oyoneqn1TTqoBgXOkpzewg=
-X-Received: by 2002:a05:6102:2336:b0:452:60c5:20b with SMTP id
- b22-20020a056102233600b0045260c5020bmr2943809vsa.15.1695036730526; Mon, 18
- Sep 2023 04:32:10 -0700 (PDT)
+        Mon, 18 Sep 2023 07:55:51 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C64EA10F;
+        Mon, 18 Sep 2023 04:54:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Exz7EGtXsNfBwM1pdmIOZ3TDbuuwshfb4keJsaTKoNaNrE3PVIJYZq9wbsrLEy84f5rZC3oJugBg2pQ9F4XZKSARoRmm/KPnd6P1FT6ud4MDMFd0YMZmc9TEJTB/GoYZwX3m2C1fvlIa+ouh52hrkY4XSeiXd94azr7bn3KnUncDUt9EgSrbD2ov9bPtjgFjjtHwAY0au81V8hhCXRjPGCFtHLpDvurX02o3Lc6ZbmsPNoJv+VzGFBSKMzbCjOVvZRIVdC+u1FEWTow2VuIU6G3gq2LJiRaF9YVAyGn0LgqnRXF9LjJO2xmWt3CpR+9QULQeWoj2e6BzV3YBpgHI9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aeb7NXPu+SVpuJcq0GnojPrdoC4Ed6o8r6TYXWxu18c=;
+ b=Okli5iyhrTaTKmMd9Ha1D876VKvV8Pqe0uNdv7t7fPBAC191iLWr5G0Luhb+1b24LjLo6a+UcdNg7E2dmLnvnI8g5u4itJa7pcy6Oy29ZRNeWNsKM3ZFxcMtVm7Ohrsp3I+sk0gENe2gYoMlQmRH9wO0EWwUlIWCBgNpSP/3Pot+iE/S63xsUijgY06JdaStZUe31K1c5aOIOpyIMzpL0SF2gnYlANtIv2/SKiCs2NmXF4ejpAqpaPFb8cENfp7zsihqFtm9mKjBq9uI1jxHYrN++Vyb8rpefA40cJuq+LfBnGp4h13GSnIDgaL6oM2yl+kWH1IE+t8jws250qwOfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aeb7NXPu+SVpuJcq0GnojPrdoC4Ed6o8r6TYXWxu18c=;
+ b=JH6Ktx8pJmekqwJwZBDzSxZAhlIgMz1W3ZkJnLSDu4TWnCDFQChDEmHGdLqIRHwxos5qvDYIvrzIXgqV10EXZa/LnOyIiybsG5bs43FrwDHF11+LNz0oA97OZJTrU6AOOxgQ8QBs0huWxRNgGwp5lkwW0U2RssYBWYJp51p//veNqLwQ54u7NT9s8ql3hNxydxtZ1JJ8RP+edcWgyVPhKtpSYfGdx1qUG4OLc48ZUapgAB09qSmc6kU3Iw6nnlIQM8vhz19BeIxRS222N5jCLYz7+dreKqXngYbek0uljFy9iTNOCd+KHRQmCoelBTJrpv5JLzqRD7+MI7TB5p5FPw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB2743.namprd12.prod.outlook.com (2603:10b6:a03:61::28)
+ by DS0PR12MB9346.namprd12.prod.outlook.com (2603:10b6:8:1be::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Mon, 18 Sep
+ 2023 11:54:50 +0000
+Received: from BYAPR12MB2743.namprd12.prod.outlook.com
+ ([fe80::5cc1:1ea3:4ec5:72af]) by BYAPR12MB2743.namprd12.prod.outlook.com
+ ([fe80::5cc1:1ea3:4ec5:72af%5]) with mapi id 15.20.6792.026; Mon, 18 Sep 2023
+ 11:54:50 +0000
+From:   Rahul Rameshbabu <rrameshbabu@nvidia.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rahul Rameshbabu <rrameshbabu@nvidia.com>
+Subject: [PATCH v3 3/3] HID: nvidia-shield: Introduce thunderstrike_destroy()
+Date:   Mon, 18 Sep 2023 04:54:32 -0700
+Message-Id: <20230918115432.30076-4-rrameshbabu@nvidia.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230918115432.30076-1-rrameshbabu@nvidia.com>
+References: <20230918115432.30076-1-rrameshbabu@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0002.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::7) To BYAPR12MB2743.namprd12.prod.outlook.com
+ (2603:10b6:a03:61::28)
 MIME-Version: 1.0
-References: <ceeda269bceee1c805f148bcbc628abc9d42601a.1693721348.git.christophe.jaillet@wanadoo.fr>
- <CAMRc=Meq+1z50=tXXt3MFAexRCmfSQ5rs6hT7311KRGO=q2RHQ@mail.gmail.com> <4f629125-2b62-1284-3311-d95639044764@wanadoo.fr>
-In-Reply-To: <4f629125-2b62-1284-3311-d95639044764@wanadoo.fr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 18 Sep 2023 13:31:59 +0200
-Message-ID: <CAMRc=MfmOTy6zU0v3gc6-d9zLpuzZaP9ChCajF=POmKhEQ+g_g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: tb10x: Fix an error handling path in tb10x_gpio_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linus.walleij@linaro.org, andy@kernel.org, galak@codeaurora.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2743:EE_|DS0PR12MB9346:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c6d9c14-6bba-4e28-5d86-08dbb83e1036
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: CREfAjYvumeXMZoZQ1mp5W21Cif+fDm3hvDmcyoHxjUSWeB+pBzM6GR5EuA5IZEAvG3xlXcyZJnBLG2S/5RtjBBE7nHsToZMAUJAsoDFMTprYkv5ED0fuTbRMrLME8X604vUkp788lTL7fVJ80oBTE3kfSpuTqOiYwNPyZRrVLsvi0sMVI68vTWvSF8FzxfKWnBLRPHL6kWQYLD0WEZAqn67wCu4/PtB/1lEcBkBYPjL9PuYBqFc580H3Xl1Kz0LdalIFtmc8rZUnuYOCAVMdE01kAqNZXTJiIje6EwLwuWQpcPPiKXtLf0M4QCDURDlhPWzihnjMi1Dqd3RWnpZNL40XHtB4P1xES5p1jsZ5SVeuSSILpMW35aRNvAAvW5exEwEVG7revOsNImYVh4BBx+RuSN+R12odMcwHo1hL9jNzJSyh+S7NT0TOIIoPddvyIRXkiF6yGidmFjsM9bvWKzNRejRsynv9vZqZssrgiKKUaYKYNQOygJ3+PMGMnJdKz2WGXPwVQrDEP2Rymvn8OjVH+hP2oSiKm32ToJHG8bH2XkDqPWe5l4dZuiriw6v
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2743.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(366004)(136003)(376002)(346002)(186009)(1800799009)(451199024)(6486002)(6506007)(6512007)(6666004)(83380400001)(86362001)(38100700002)(36756003)(107886003)(2616005)(1076003)(26005)(316002)(41300700001)(8936002)(8676002)(4326008)(2906002)(66946007)(54906003)(66476007)(66556008)(110136005)(478600001)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1Y6Aa8yCZiwDRtjc3+iOaMyrJPO6Enssffq9KPmpjlskIpiD4zAYPl9Q0PrK?=
+ =?us-ascii?Q?Gkii5eNrp4/4s7XTOBprjmhPxB9RmMWiwa0+llmVXW7jqm/y0bPPs+ijRzyW?=
+ =?us-ascii?Q?PA+nulU4PQlpo5D/sbz9iAOfhHliZ6idfCQQPCKcmiMmCIEBWkiOJAQ5bl4n?=
+ =?us-ascii?Q?OkwoxowKgJRkgGFenCuUvY+xRU5eQy6WufPxx7LhSK5zo1VANEpDBoHhfM1l?=
+ =?us-ascii?Q?6mme5jOQrR/iPijLKGQNAKqIcaY0No+Hpeae8t9uHfeyiuuOrFHKHD4U/mFy?=
+ =?us-ascii?Q?PsVWMpcLeybTTP1R50comyNmYeyCBtiKzld1p3MFc7SlIoPaXKEeEkLnwptZ?=
+ =?us-ascii?Q?ymAJeys/57eXT+9hEdYWb/qFCHjP3vy1LkNPe9BC2tVhtRBtcEz0EQ0Tufwr?=
+ =?us-ascii?Q?U0AeTDZvUt+pgorBxVVcyyWk9vGuv868RxIdHZ51lvjNtLK00uYz8psqkloi?=
+ =?us-ascii?Q?rFQgQKlHR611XCzGMe4R2A+aSb4hwgGt0b7pS0mzkFMnx4XYvvpV8Zux4x/C?=
+ =?us-ascii?Q?0rJdoVnl7yii1uD6IAhfZGIbwD0YHD8wBM9z1IQB8kJNKsPhcT5oMQ8MsNjw?=
+ =?us-ascii?Q?zP6FjElKx+FMK0Gspkhve1gwYWTbhkklr6xyKRs8J7mCQBl/9MtxKe7ogedH?=
+ =?us-ascii?Q?Jdk7c6XlMxZ1WBiXSbK84wH8zHsVrnecLMY0VnCqNwVUGN5A04CG7PzziLVg?=
+ =?us-ascii?Q?GKVUh6/vJBsuSrcjnATLJz/Zii5RpTSYWlAug4PpaBCdVdMkQ930+maHO3ZG?=
+ =?us-ascii?Q?Ipc+OJRPg7GXE0NTubZGKKnJpgLZidBlDyYAWnaqv7vXXolnDXI4GqyHNUqL?=
+ =?us-ascii?Q?xWvprJFOavRUqvb9Nbbog6cwhyqNLLUwVGFAH6cw+bGXTl/o/nwkrEvLsITF?=
+ =?us-ascii?Q?RzTnkb8q7wyCgF5ohat1eIcqqUYejWauqZiYwz8PAL4x50SSzYzWappORE45?=
+ =?us-ascii?Q?bRS35gqkSm34UVFnh1Q3MkzzOILA2VodxwPBRbaOuyBxjbBLI3xeZ3E2h6RC?=
+ =?us-ascii?Q?BJRb6Jgmbvo4jvEhLxblPwXE5DbDSbE7ovFJiOmlFynY6tYKPEBKIZLS+8sL?=
+ =?us-ascii?Q?GWg5KZq5FY0k5qgtMeoT26UT6Yn3Y3GzmrD4LpdEXolSvT+PNmF5u9fNDBzL?=
+ =?us-ascii?Q?KdLH5+tr+NxUwAw+VtSfc50QRlCsZ5uDiQN8HnmTx4hf/Jgcxjkx9JztIWtf?=
+ =?us-ascii?Q?kMHJVW7vm5CSAsNNDprICCMgI612DBWWNj5Lj0gGrc0Vm3iwl9mFwit4tJQX?=
+ =?us-ascii?Q?owV/wVV4zF5Eh7/NjpvSeLAXT5wAQyupWvlxsdYjsXk7FdUayC+6PWhncWKS?=
+ =?us-ascii?Q?D8Q6TkkxncN7a/cHDmOtMI2ElkEnHjCnf7+ng0xE7dy4Su0ChkAqqJXJTsAE?=
+ =?us-ascii?Q?rt5uTyu9+Wh7VtG6eDsOvT5PwfyrDdrfj2/GCEs8JVzpGKZs8J4XJcIQeWqE?=
+ =?us-ascii?Q?6Jf8g/IguvyQODBCUgA7088+yex9RosuMZ4I+X6HpnkbP6sqLCBS0vmZNFj0?=
+ =?us-ascii?Q?GKthtWAc7ILQApq5bpo9wbousykonSjmx6CCKa2W17qwCQKBL2OuCxhq5tlh?=
+ =?us-ascii?Q?+EiQPbpAe6X5O2Gz8bUZl9m85hs52Maq4gqepVle?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c6d9c14-6bba-4e28-5d86-08dbb83e1036
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2743.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 11:54:50.3746
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xyr4U2Otah3fjMO0zXnA/pnjdqjuA4zOO/Sshj85hAwDcUYCcgSFPgv+HtOXdvPisOwsz7tzoyCeOnh0bfFHXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9346
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 16, 2023 at 5:10=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 03/09/2023 =C3=A0 19:02, Bartosz Golaszewski a =C3=A9crit :
-> > On Sun, Sep 3, 2023 at 8:13=E2=80=AFAM Christophe JAILLET
-> > <christophe.jaillet@wanadoo.fr> wrote:
-> >>
-> >> If an error occurs after a successful irq_domain_add_linear() call, it
-> >> should be undone by a corresponding irq_domain_remove(), as already do=
-ne
-> >> in the remove function.
-> >>
-> >> Fixes: c6ce2b6bffe5 ("gpio: add TB10x GPIO driver")
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >>   drivers/gpio/gpio-tb10x.c | 6 +++++-
-> >>   1 file changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-> >> index 78f8790168ae..f96d260a4a19 100644
-> >> --- a/drivers/gpio/gpio-tb10x.c
-> >> +++ b/drivers/gpio/gpio-tb10x.c
-> >> @@ -195,7 +195,7 @@ static int tb10x_gpio_probe(struct platform_device=
- *pdev)
-> >>                                  handle_edge_irq, IRQ_NOREQUEST, IRQ_N=
-OPROBE,
-> >>                                  IRQ_GC_INIT_MASK_CACHE);
-> >>                  if (ret)
-> >> -                       return ret;
-> >> +                       goto err_remove_domain;
-> >>
-> >>                  gc =3D tb10x_gpio->domain->gc->gc[0];
-> >>                  gc->reg_base                         =3D tb10x_gpio->=
-base;
-> >> @@ -209,6 +209,10 @@ static int tb10x_gpio_probe(struct platform_devic=
-e *pdev)
-> >>          }
-> >>
-> >>          return 0;
-> >> +
-> >> +err_remove_domain:
-> >> +       irq_domain_remove(tb10x_gpio->domain);
-> >> +       return ret;
-> >>   }
-> >>
-> >>   static int tb10x_gpio_remove(struct platform_device *pdev)
-> >> --
-> >> 2.34.1
-> >>
-> >
-> > That's not enough, you also need to dispose of all remaining mappings.
-> > Please see drivers/gpio/gpiolib.c and how it handles the gpio_irq_chip
-> > domain.
->
-> Hi,
->
-> you'll have to give me more explanation because I've not been able to
-> find anything useful to me.
->
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I should have expressed myself clearer. Your patch is correct and I
-will queue it. But in your remove callback, you'll need to go through
-the existing irq mappings and dispose of them before returning. Please
-see gpiochip_irqchip_remove()[1]. You can send it as a follow-up.
+In order to simplify some error handling paths and avoid code duplication,
+introduce thunderstrike_destroy() which undoes thunderstrike_create().
 
-Bart
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Rahul Rameshbabu <rrameshbabu@nvidia.com>
+---
 
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L=
-1725
+Notes:
+    Changes:
+    
+      v1->v2:
+        - Re-order operations in thunderstrike_destroy to be in LIFO order with
+          regards to the operations in thunderstrike_create.
+      v2->v3:
+        - Refactor thunderstrike_destroy to take a thunderstrike instance
+          pointer as a parameter and prevent a variable from being unused
+          in shield_probe.
+
+ drivers/hid/hid-nvidia-shield.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
+index a566f9cdc97d..bc47e19ef117 100644
+--- a/drivers/hid/hid-nvidia-shield.c
++++ b/drivers/hid/hid-nvidia-shield.c
+@@ -915,6 +915,15 @@ static struct shield_device *thunderstrike_create(struct hid_device *hdev)
+ 	return ERR_PTR(ret);
+ }
+ 
++static void thunderstrike_destroy(struct thunderstrike *ts)
++{
++	led_classdev_unregister(&ts->led_dev);
++	power_supply_unregister(ts->base.battery_dev.psy);
++	if (ts->haptics_dev)
++		input_unregister_device(ts->haptics_dev);
++	ida_free(&thunderstrike_ida, ts->id);
++}
++
+ static int android_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 				 struct hid_field *field,
+ 				 struct hid_usage *usage, unsigned long **bit,
+@@ -1074,11 +1083,7 @@ static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ err_stop:
+ 	hid_hw_stop(hdev);
+ err_ts_create:
+-	power_supply_unregister(ts->base.battery_dev.psy);
+-	if (ts->haptics_dev)
+-		input_unregister_device(ts->haptics_dev);
+-	led_classdev_unregister(&ts->led_dev);
+-	ida_free(&thunderstrike_ida, ts->id);
++	thunderstrike_destroy(ts);
+ 	return ret;
+ }
+ 
+@@ -1090,11 +1095,7 @@ static void shield_remove(struct hid_device *hdev)
+ 	ts = container_of(dev, struct thunderstrike, base);
+ 
+ 	hid_hw_close(hdev);
+-	power_supply_unregister(dev->battery_dev.psy);
+-	if (ts->haptics_dev)
+-		input_unregister_device(ts->haptics_dev);
+-	led_classdev_unregister(&ts->led_dev);
+-	ida_free(&thunderstrike_ida, ts->id);
++	thunderstrike_destroy(ts);
+ 	del_timer_sync(&ts->psy_stats_timer);
+ 	cancel_work_sync(&ts->hostcmd_req_work);
+ 	hid_hw_stop(hdev);
+-- 
+2.40.1
+
