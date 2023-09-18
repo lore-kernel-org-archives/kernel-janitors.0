@@ -2,186 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AE5CD3421
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 04:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FC9CD37B0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 06:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239580AbjIREPL (ORCPT
+        id S239697AbjIRGNA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Sep 2023 00:15:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59306 "EHLO
+        Mon, 18 Sep 2023 02:13:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239519AbjIREOl (ORCPT
+        with ESMTP id S239704AbjIRGMn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Sep 2023 00:14:41 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2055.outbound.protection.outlook.com [40.107.212.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55B1FF;
-        Sun, 17 Sep 2023 21:14:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iHoMhNo0JimCXWrKmF9fd4LIAufu0uhWD0RQd5xR9tS4NCG6a9jajkYtSWUsiUA1JFAUHig9f1/F7JnjCZ7ZR1TD6UtjrrdNULO7yM3fTUKtiLakhnt4dey2N1JZwXVGikFHwbSco8cruN9Cszudi517CVbCqBu6aTM2E8zvpZcJFtjWKJzACCglXUrSJLiOv9ti6PmKh0B5CbpGUpipI+xBVClGwMhJCYopwXgYffr5yE5/5OrRsJ3ct31jJqrwOqEi4nXX6N1S5rB4Umx399+TLZ0AtdMBBAGFoUTpESQOMtTFKYZDxvHZCRkqBDjfwDGWg0hHtrfkG/SI8s5WXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vktCfwR6O5t2TIifqIPV8Clwm49DhFPFArNxOy8kS88=;
- b=SW/yC2FUeR+s/Iq89ka9rM12i3ILGli4wa3jri8xMtrQZQsV+9vnDvyo5TZpLi+KjpsYtASEK+2xzhHAbluhcUudwb9Akji4UrBqqrWcJ6YaF/vxwh2I2mFYl0R1SVcUfZ8+Grf43MPSXTUHr+iw03n9a/u2yDyAhhziksHsVg5LNJyxtXRHGBpq7sZ/CkP8PlWhxGPFEmvtvxvigRpRuUc0VxJKtEF+2ksorwJvKn7hCAQANptDvAJjE/uZJYl5C/59dI7HI91aUd3B5yvkuqejZR7j9vHcq0lHSFWks0cQiXB6WG40x6JCDJp1wD978nIFbgyHp0u/sVlHKtCZMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vktCfwR6O5t2TIifqIPV8Clwm49DhFPFArNxOy8kS88=;
- b=e7QEhCBp5LlReKVTVUKPH0VJwpBLcdTO/E66T7pR9TI15U6/mvZTcPqB4JqhdRsOLigd0Az/+FY9irsf/aY0fyWVbdTIOowWX7Scz/u/NFAIt1SkQByUNMvUH+J4PC46BSTiKgPo6xXj2M/KuSrmY6JkFtMmMjkRVbt6u8FdcIqFD+Gt391DnmOWQmS+aIgtNfSmXNOirNRkSKcJN//y/gD/RH2KBlne/5J9WmdOKL7kufEufGv4Lv8mjI5goT3oxd9FAeDuc+ZCBLpvskAE3kTNKLuyQ1CznKlxDZzUF95pviPl3ZatiX/iOB7KSEkyXyJLJ8+NxTlyMCKpMsS2hQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BYAPR12MB2743.namprd12.prod.outlook.com (2603:10b6:a03:61::28)
- by SA1PR12MB5658.namprd12.prod.outlook.com (2603:10b6:806:235::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.26; Mon, 18 Sep
- 2023 04:14:30 +0000
-Received: from BYAPR12MB2743.namprd12.prod.outlook.com
- ([fe80::5cc1:1ea3:4ec5:72af]) by BYAPR12MB2743.namprd12.prod.outlook.com
- ([fe80::5cc1:1ea3:4ec5:72af%5]) with mapi id 15.20.6792.026; Mon, 18 Sep 2023
- 04:14:30 +0000
-From:   Rahul Rameshbabu <rrameshbabu@nvidia.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: [PATCH v2 3/3] HID: nvidia-shield: Introduce thunderstrike_destroy()
-Date:   Sun, 17 Sep 2023 21:13:45 -0700
-Message-Id: <20230918041345.59859-4-rrameshbabu@nvidia.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230918041345.59859-1-rrameshbabu@nvidia.com>
-References: <20230918041345.59859-1-rrameshbabu@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0200.namprd05.prod.outlook.com
- (2603:10b6:a03:330::25) To BYAPR12MB2743.namprd12.prod.outlook.com
- (2603:10b6:a03:61::28)
+        Mon, 18 Sep 2023 02:12:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9053D11A;
+        Sun, 17 Sep 2023 23:12:37 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55BDC433C8;
+        Mon, 18 Sep 2023 06:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695017557;
+        bh=tlidCVK90ZbvQxpDKx3+A03UVl7rYVSMOdOwRtf7ues=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=sc3Xjj2EIURwSWee/GbBsCNgUjwdxEZMwtvBv+HhcuItNn6AxYscsMdvS9uv1LC9x
+         I2gQwGawVrO1gOg3OUne2Q/+6j3GrbTXEUwfNjQA/uhtkReDvNFMIS6b7G1uPdo6mW
+         GLItXXcGqys+hSdugSLW8K6Aw5nGysQuyPycd4ssReQIl9/0TG4FskUFBaba833LPZ
+         4ZoJ27kR+f5ELs/gGc1D1e9m3CqqqLJ8vDtec0mjXQiTes08DLLQd3IxiJYoE5fTVH
+         R4A3+Pklgf3HghccSpndKFzYLPb4kCOzdRtzLSh3CnkrL+V8jzL3onsExgtVB644kT
+         /ECXBjUgGJTng==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Cheng Xu <chengyou@linux.alibaba.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Kai Shen <kaishen@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
+References: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
+Subject: Re: [PATCH] RDMA/erdma: Fix error code in erdma_create_scatter_mtt()
+Message-Id: <169501755395.62733.5570197144363281019.b4-ty@kernel.org>
+Date:   Mon, 18 Sep 2023 09:12:33 +0300
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB2743:EE_|SA1PR12MB5658:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9336be4-9e8e-4baa-47d3-08dbb7fdc13f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FtbPFlCbCu735/ucZCmXdVAlZh5oyUe314kjV+qGZcmljcwEagWB/sTRCIJWFn6wiLdHJNWQme5R7x4yT6A++fZTaYKPpjlN5FgYG4zJPi1HWmF/vXne4NvgxHxheNlBvmiGpHk+wJKW6YhyJr0MUMge2g0yLZli2c3c9yrGj3dsE+8YpzHvhwMJYY3oRpxSBJp5GKdFMy9Z5dmgXrcN98M59RMUDKXwrkJiu/BsIIge0RmABa5GsyPGFzoUp/HsVNsssU/a3iUjNF9nr97Zj8tyD1cbHvcLXB+ZO8Zx5oKe5Z2DYfJX7pRUNpY3v8QQl4BQHNdr1QVdQVpgmzH4FMEJGxNxqlo1i9X2MUrhej0EN3bwIUyJ6t1jmCGSKuc/U8nFWTxDZ1j9QNVJ4J35gLRjwLJ/K+ia88zcZ1dRulASE1FQ9MbQYaJm8EL3TFepEUUc+bnEIMZ2mzLLVXnGgUQZZngmMEkk7Kfc/u8o3+92bv6Ipo4c/m+szA93NSuINmu2HKTSSvrep0JcbODy2F7bD4WC+EgBWQbsLkRRkf5wV9J35ol01GxJunrXUn2Q
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2743.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(376002)(396003)(366004)(346002)(451199024)(1800799009)(186009)(6486002)(5660300002)(6506007)(86362001)(6512007)(54906003)(316002)(66946007)(41300700001)(38100700002)(66556008)(66476007)(110136005)(6666004)(478600001)(2616005)(8936002)(8676002)(26005)(2906002)(36756003)(107886003)(1076003)(4326008)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7JZrC8Mn0+yyF14u57PWUmWynbVrrjXQA6k/7+G7V1fLZSCC+py2bCkUzWiC?=
- =?us-ascii?Q?khcrEYRbTpNNSSweLnYEZFA3MXqsnbsod1tKDgj28Oh4OteM47Kujs3HZq8u?=
- =?us-ascii?Q?npt30NkLADmPIUsgzHk0zm3gDSfBJQluXqFdnpm0EN6SVVz+G2Y97RbbHY4o?=
- =?us-ascii?Q?cyfPEOfEf/DfrSM1O0VKWeNzBlhHUK6D1E4/pD5DuuXGbmrR0Yebj4CxapVp?=
- =?us-ascii?Q?PmrzpuT4wZ+u/L9YPbC6sEX3dkRjp7fBr0RfXhgStawy//XpA7DuwVw44fOY?=
- =?us-ascii?Q?efaZngo15CwPay1P4wUOckzJtQ25RlQgNK9b2bKkmtti+abV8oObFA4wIlhF?=
- =?us-ascii?Q?EYP9Mh6rJ6n5Yzhxw4r/KkW1LlHUJy70WahU6Qxyz7XKA2zFXBCvuCihKcWC?=
- =?us-ascii?Q?67NJYbj4QfVk91pejYwXcpdC0MAEo19/WuUBKyExt4ayoQ3t4pqtw2ZficCg?=
- =?us-ascii?Q?nifXT9qXwW4YCdV6z0fwHL1J9q+iM1GeJgo/Vb3JwI6CkwOQtUd3ZfvdUOCW?=
- =?us-ascii?Q?eYPa+q2euF+wUEzWZh/QV2w3aoJsjFa0M6byhHR/KkKTtYu6VdB3pjhOpjkt?=
- =?us-ascii?Q?92tvZ7jQhChi8W7An/vL3EHwmCTNGTjz6DRPLvNH1D4c7Qw7VMdtQyqEggpA?=
- =?us-ascii?Q?OzX2YHFykdEG9jKnGvqCauX0j3Ed8wASkEOfIdiiQvDLFwozk8hU80D90do2?=
- =?us-ascii?Q?IGpdeCvVGjkDCEA5eZr2XGBuM4VjP63QdpCLDtvtUfTJ1Hlj3I+GQ/ZPrZfI?=
- =?us-ascii?Q?4pof420fBIhzuRKtlFXTGZAqVRlA7B+ZGFT1LYvkRxh5qLV5GCJxJHcup77M?=
- =?us-ascii?Q?XXZOkL1TTUHR3EcNIS71qBzeb0zaLNg8k8D3U5XOBng2Mwcv51716/D1mGRw?=
- =?us-ascii?Q?vUAeJhnUOUFDLItCa+B7oueq85K7kcKnm2JAKAq3ttcIM7A/QqEmLezGICAk?=
- =?us-ascii?Q?WO3HsUa3n2PEq+7n6P99XfCbwScmJ4uiu5ysJnUyeKdwi3zQpxUBMaL2NkIo?=
- =?us-ascii?Q?e8ZlZHWMFdDrOWTMHABJExvahOragDPCIYfIyKlsfIeeg5VzbjLLt1bL7ILK?=
- =?us-ascii?Q?1IMKV/58VU4aEeG8aogkKYHOHbJFUvt4M/9vc+bhF7BCSRyoLs00noweSnwf?=
- =?us-ascii?Q?4Xoj5OYOaVxBFoZeZJjvTw2dHLKZPNnoafnnzAKssHHPKo6SWTZLFowteCXL?=
- =?us-ascii?Q?D1c5qawKxivTmKkxEcoYwzVsmm+TlNpHw8OQVFbYeJW1yKEatC5M8e8Yqaq0?=
- =?us-ascii?Q?C88800IphRbdaCDjl3uYRtlAkQT4A+n0hbF9SqaqL7fMbQBBG2ASP2N2wrnu?=
- =?us-ascii?Q?C6/ZVfzFea7UD3E98NiWwpzVykCL6BIdt2pgeo+SaGtyHJ6x9mw74/rjHHli?=
- =?us-ascii?Q?n6D6fp82kFnGveZykxCQkU0o2I8V1Zt6vk6WsD8s22RH3plZJgmCSwwyw+MJ?=
- =?us-ascii?Q?RwLNpdR34P7E6Sxuq7dZatp2CYp3yM679WYanS6pdUOsuE8mBd5LB+YXeglD?=
- =?us-ascii?Q?bP9nU1+qt6o4MoNmPWGaetCvEZRYdmOKcN86w93q2dSrdgbLl5pAlfEx53ln?=
- =?us-ascii?Q?z440HEn4MsBhepqNHZ0VDyQmOfvk15/Bai6pm3Dk?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9336be4-9e8e-4baa-47d3-08dbb7fdc13f
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2743.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 04:14:30.0935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2AH6E8dbKOLq7ID3Q1ScoMwEGvpKHtakG6NLx9pvDOvQ6OR7e1RFF9OhKO41lsMAdhRPpF7yvtRAfkT9YCBUbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5658
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-a055d
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-In order to simplify some error handling paths and avoid code duplication,
-introduce thunderstrike_destroy() which undoes thunderstrike_create().
+On Wed, 06 Sep 2023 14:23:52 +0300, Dan Carpenter wrote:
+> The erdma_create_scatter_mtt() function is supposed to return error
+> pointers.  Returning NULL will lead to an Oops.
+> 
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Rahul Rameshbabu <rrameshbabu@nvidia.com>
----
+Applied, thanks!
 
-Notes:
-    Changes:
-    
-      v1->v2:
-        - Re-order operations in thunderstrike_destroy to be in LIFO order with
-          regards to the operations in thunderstrike_create.
+[1/1] RDMA/erdma: Fix error code in erdma_create_scatter_mtt()
+      https://git.kernel.org/rdma/rdma/c/6b5f0749ce48c1
 
- drivers/hid/hid-nvidia-shield.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
-index a566f9cdc97d..817ad6c01129 100644
---- a/drivers/hid/hid-nvidia-shield.c
-+++ b/drivers/hid/hid-nvidia-shield.c
-@@ -915,6 +915,20 @@ static struct shield_device *thunderstrike_create(struct hid_device *hdev)
- 	return ERR_PTR(ret);
- }
- 
-+static void thunderstrike_destroy(struct hid_device *hdev)
-+{
-+	struct shield_device *dev = hid_get_drvdata(hdev);
-+	struct thunderstrike *ts;
-+
-+	ts = container_of(dev, struct thunderstrike, base);
-+
-+	led_classdev_unregister(&ts->led_dev);
-+	power_supply_unregister(ts->base.battery_dev.psy);
-+	if (ts->haptics_dev)
-+		input_unregister_device(ts->haptics_dev);
-+	ida_free(&thunderstrike_ida, ts->id);
-+}
-+
- static int android_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 				 struct hid_field *field,
- 				 struct hid_usage *usage, unsigned long **bit,
-@@ -1074,11 +1088,7 @@ static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
- err_stop:
- 	hid_hw_stop(hdev);
- err_ts_create:
--	power_supply_unregister(ts->base.battery_dev.psy);
--	if (ts->haptics_dev)
--		input_unregister_device(ts->haptics_dev);
--	led_classdev_unregister(&ts->led_dev);
--	ida_free(&thunderstrike_ida, ts->id);
-+	thunderstrike_destroy(hdev);
- 	return ret;
- }
- 
-@@ -1090,11 +1100,7 @@ static void shield_remove(struct hid_device *hdev)
- 	ts = container_of(dev, struct thunderstrike, base);
- 
- 	hid_hw_close(hdev);
--	power_supply_unregister(dev->battery_dev.psy);
--	if (ts->haptics_dev)
--		input_unregister_device(ts->haptics_dev);
--	led_classdev_unregister(&ts->led_dev);
--	ida_free(&thunderstrike_ida, ts->id);
-+	thunderstrike_destroy(hdev);
- 	del_timer_sync(&ts->psy_stats_timer);
- 	cancel_work_sync(&ts->hostcmd_req_work);
- 	hid_hw_stop(hdev);
+Best regards,
 -- 
-2.40.1
-
+Leon Romanovsky <leon@kernel.org>
