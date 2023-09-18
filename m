@@ -2,63 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FC9CD37B0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 06:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B4AC46CA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Sep 2023 06:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239697AbjIRGNA (ORCPT
+        id S239912AbjIRG4m (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Sep 2023 02:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48736 "EHLO
+        Mon, 18 Sep 2023 02:56:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239704AbjIRGMn (ORCPT
+        with ESMTP id S239933AbjIRG4X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Sep 2023 02:12:43 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9053D11A;
-        Sun, 17 Sep 2023 23:12:37 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55BDC433C8;
-        Mon, 18 Sep 2023 06:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695017557;
-        bh=tlidCVK90ZbvQxpDKx3+A03UVl7rYVSMOdOwRtf7ues=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=sc3Xjj2EIURwSWee/GbBsCNgUjwdxEZMwtvBv+HhcuItNn6AxYscsMdvS9uv1LC9x
-         I2gQwGawVrO1gOg3OUne2Q/+6j3GrbTXEUwfNjQA/uhtkReDvNFMIS6b7G1uPdo6mW
-         GLItXXcGqys+hSdugSLW8K6Aw5nGysQuyPycd4ssReQIl9/0TG4FskUFBaba833LPZ
-         4ZoJ27kR+f5ELs/gGc1D1e9m3CqqqLJ8vDtec0mjXQiTes08DLLQd3IxiJYoE5fTVH
-         R4A3+Pklgf3HghccSpndKFzYLPb4kCOzdRtzLSh3CnkrL+V8jzL3onsExgtVB644kT
-         /ECXBjUgGJTng==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Cheng Xu <chengyou@linux.alibaba.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Kai Shen <kaishen@linux.alibaba.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        Mon, 18 Sep 2023 02:56:23 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F809E7;
+        Sun, 17 Sep 2023 23:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695020178; x=1726556178;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XrSfw2W0O+t/0lvXd45ewRtfb5Pv7XZcrDJN+rZoBSI=;
+  b=gNabwxF8llHsdhIe8maUWf/t/4QlZtH0T6AVWzf8Ggs5A8mJ6Td8qXos
+   WZMAR6CEWARYShn24DRsS9+REM5fCcyVKZWSSLrXgppDxS4jpaRAa2VP7
+   TXsbS/HdQjtEciMHSR0SFnxbzwz1/1k9KtIupg48kxoU1GZQ+ChWZC6EJ
+   7OPWnUJAe/s8oSeJykZkGDqKGpTmAW4zj7goxaXl7zQsATi0oVyKfIk1g
+   ugx4dbWQWanywbMYOric2eUZ0Cy4SZ+F+hnbg0spqpK78Pxr3wNul9Wtj
+   51m3exxNTO6/ADFXRZGcM1XGlNYE22WciATmptNp3ek9f1ORJYOIMviT1
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="383402053"
+X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
+   d="scan'208";a="383402053"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2023 23:56:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="919354263"
+X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
+   d="scan'208";a="919354263"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2023 23:56:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC0)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qi8B3-0000000DXFJ-33wO;
+        Mon, 18 Sep 2023 09:56:13 +0300
+Date:   Mon, 18 Sep 2023 09:56:13 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-In-Reply-To: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
-References: <1eb400d5-d8a3-4a8e-b3da-c43c6c377f86@moroto.mountain>
-Subject: Re: [PATCH] RDMA/erdma: Fix error code in erdma_create_scatter_mtt()
-Message-Id: <169501755395.62733.5570197144363281019.b4-ty@kernel.org>
-Date:   Mon, 18 Sep 2023 09:12:33 +0300
+Subject: Re: [PATCH resend] kstrtox: Remove strtobool()
+Message-ID: <ZQf0jUg6DP42Mgi2@smile.fi.intel.com>
+References: <87e3cc2547df174cd5af1fadbf866be4ef9e8e45.1694878151.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-a055d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87e3cc2547df174cd5af1fadbf866be4ef9e8e45.1694878151.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sat, Sep 16, 2023 at 05:50:11PM +0200, Christophe JAILLET wrote:
+> The conversion from strtobool() to kstrtobool() is completed.
+> So strtobool() can now be removed.
 
-On Wed, 06 Sep 2023 14:23:52 +0300, Dan Carpenter wrote:
-> The erdma_create_scatter_mtt() function is supposed to return error
-> pointers.  Returning NULL will lead to an Oops.
-> 
-> 
+Thank you for this cleaning up and previous work you have done to make this
+occur!
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Applied, thanks!
-
-[1/1] RDMA/erdma: Fix error code in erdma_create_scatter_mtt()
-      https://git.kernel.org/rdma/rdma/c/6b5f0749ce48c1
-
-Best regards,
 -- 
-Leon Romanovsky <leon@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
