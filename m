@@ -2,112 +2,139 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148FACE79AA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 18:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC14CE79A9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 18:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbjISSJU (ORCPT
+        id S232084AbjISSS7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Sep 2023 14:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45404 "EHLO
+        Tue, 19 Sep 2023 14:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232036AbjISSJR (ORCPT
+        with ESMTP id S229891AbjISSS5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Sep 2023 14:09:17 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6E890;
-        Tue, 19 Sep 2023 11:09:11 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-503056c8195so5663620e87.1;
-        Tue, 19 Sep 2023 11:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695146949; x=1695751749; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0XlOW3FqVXIEND6K8vcbJAOT3ReGThUKI6YJBY51K+I=;
-        b=Nc8y/WygTIQ1G2nvGTSYq5Te8j208Jcu3RLFvXhCWlRtVfmq5PYfZsQkUPkxHQy4cB
-         tTZNaxEss5yUyqA8eVjPX6s6ybgxUjDuXz6Oo5Spl/iAkdHZwxaljRKSzcSpOsQ98Dz+
-         VYTykdOGoyHrLz6XzE2TfEJuSlg7J/tMPyax8geeUvDAJHyOvCZ/P3LvkVd6Db21Bcxh
-         AMTsU+fv3BiaA9d0/R1EnVLWf+8ApcZiqIwbXrgolyJrbN/swGiUfYsPk7vf+BfT7zYR
-         gvBncwYAfby7K+c0Nh4Qb1r0hVeAjjKvggjxB2h2+xtGpTr5mO/Fdz78XLxPgyLMZ4ya
-         +SPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695146949; x=1695751749;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XlOW3FqVXIEND6K8vcbJAOT3ReGThUKI6YJBY51K+I=;
-        b=XP7roe0cvSMf62p7VhHTe+KLaTWjEwCmAqAaJQ0ZbCYPsopYDNrBX3BATHdXdqpMUu
-         56HxyD5GOkEx0WxkDenO7k8pHIMAlArLC+Ap1fGtzgEPOsiWuCnyawMUnnEY+mYA4bh2
-         c2IaWwp6o+DacehKVZH0+oaFpgpRTeX6vVlMe74TlNMWG8nqJRrzHyvbp2mZxii3h4iw
-         sNWmliTHKuDIa8HpwvuohBjG/6kagl45Pe2wBiivw2pXh45kb3k7GbhY5BZHBF+NqYNy
-         UGY4GMdojNQiMny7zjL52fWlBS8V4p+Ae/mTX9t/lUicjYdC6WFrVgqqZKpRc/Rby9xw
-         9Wng==
-X-Gm-Message-State: AOJu0Yw6sEGsMkN8LkwGxpLAZF0Y2F+f07laG6ypYqlCze/pwHURBW+F
-        JUVAUvIRcNApMFkJv0wnb+g=
-X-Google-Smtp-Source: AGHT+IEZhlA0qpMdwNFTV5hwdM4rt1b7hmfpwTHcB6yWMVe/97tcVSSO50VgYAmwVP1/MPWFSqEmrA==
-X-Received: by 2002:a05:6512:10c4:b0:500:7f71:e46b with SMTP id k4-20020a05651210c400b005007f71e46bmr488562lfg.1.1695146949278;
-        Tue, 19 Sep 2023 11:09:09 -0700 (PDT)
-Received: from [10.0.0.42] (host-85-29-92-32.kaisa-laajakaista.fi. [85.29.92.32])
-        by smtp.gmail.com with ESMTPSA id k8-20020ac24568000000b00502ae6b8ebcsm137289lfm.304.2023.09.19.11.09.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Sep 2023 11:09:08 -0700 (PDT)
-Message-ID: <7715e403-87ef-4e09-8c87-6e4f0119a921@gmail.com>
-Date:   Tue, 19 Sep 2023 21:09:07 +0300
+        Tue, 19 Sep 2023 14:18:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5960B97
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Sep 2023 11:18:51 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id ifJBqJadip9IzifJBqxwF4; Tue, 19 Sep 2023 20:18:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1695147529;
+        bh=sQOOjOR6EK78uepakJco6y634UwxpbcVIJU4ZkM1xMw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=QwWwTSgW9XqXCIQeKkJ5J1hU5ZUS5GDgXWDm1+RaipTzsuwDOcG1YxKsVLx1/W5Ox
+         bvpuYzc8chfQE92kLzbn2OlZIBRsIKZ4dS7fBE7VZD5LvisJ3lF2hJ+XbxVXm4FK1d
+         JO0Lcr0FRwngg6lSzrj39DtkM9lrd3n2cY/NvawhplfhY+RrtCIGq2zOuHA6dI8Lj1
+         IS/XZJfQyUsviAP47NrPWKM24Ox5whJGvjXvOjFhMb44p0AvqH89tVNAMglxq6xSRN
+         1hAvsnBNr3qFhmOK1XMa6/WjqJ84zIKEZCeAWtOkL/0Q0eHtQxDzuntUL29B1F0idD
+         3NgdXGiFWu3KA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Sep 2023 20:18:49 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <490d4bac-3c0f-32f7-6bbf-4bf9418729fc@wanadoo.fr>
+Date:   Tue, 19 Sep 2023 20:18:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: ti: edma: handle irq_of_parse_and_map() errors
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
-Content-Language: en-US
-From:   =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] bcachefs: Avoid a potential useless over memory
+ allocation in bch2_prt_vprintf()
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org
+References: <0f40108bed3e084057223bdbe32c4b37f8500ff3.1694845203.git.christophe.jaillet@wanadoo.fr>
+ <ZQmfWbIgPM0Oo8Jg@bfoster>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ZQmfWbIgPM0Oo8Jg@bfoster>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 9/15/23 15:59, Dan Carpenter wrote:
-> Zero is not a valid IRQ for in-kernel code and the irq_of_parse_and_map()
-> function returns zero on error.  So this check for valid IRQs should only
-> accept values > 0.
+Le 19/09/2023 à 15:17, Brian Foster a écrit :
+> On Sat, Sep 16, 2023 at 08:20:24AM +0200, Christophe JAILLET wrote:
+>> printbuf_remaining() returns the number of characters we can print to the
+>> output buffer - i.e. excluding the terminating null.
+>>
+>> vsnprintf() takes the size of the buffer, including the trailing null
+>> space.
+>> It is truncated if the returned value is greater than or equal to the size
+>> of the buffer.
+>>
+>> Knowing all that, buffer sizes and overflow checks can be fixed in order
+>> to potentially avoid a useless memory over-allocation.
+>>
 > 
-> Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> For whatever reason I had a hard time parsing this last sentence.  Do
+> you mean to say there's an off by one here that leads to an unnecessary
+> overallocation?
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+An off-by-two in fact, IIUC.
+But yes, that's my point.
 
-> ---
->  drivers/dma/ti/edma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+We consider that the string is truncated when it may not be (len+1 vs 
+len) and we under-estimate the available space (printbuf_remaining() vs 
+printbuf_remaining()+1 or printbuf_remaining_size())
+
 > 
-> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-> index aa8e2e8ac260..33d6d931b33b 100644
-> --- a/drivers/dma/ti/edma.c
-> +++ b/drivers/dma/ti/edma.c
-> @@ -2401,7 +2401,7 @@ static int edma_probe(struct platform_device *pdev)
->  	if (irq < 0 && node)
->  		irq = irq_of_parse_and_map(node, 0);
->  
-> -	if (irq >= 0) {
-> +	if (irq > 0) {
->  		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccint",
->  					  dev_name(dev));
->  		ret = devm_request_irq(dev, irq, dma_irq_handler, 0, irq_name,
-> @@ -2417,7 +2417,7 @@ static int edma_probe(struct platform_device *pdev)
->  	if (irq < 0 && node)
->  		irq = irq_of_parse_and_map(node, 2);
->  
-> -	if (irq >= 0) {
-> +	if (irq > 0) {
->  		irq_name = devm_kasprintf(dev, GFP_KERNEL, "%s_ccerrint",
->  					  dev_name(dev));
->  		ret = devm_request_irq(dev, irq, dma_ccerr_handler, 0, irq_name,
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Un-tested
+>> ---
+>>   fs/bcachefs/printbuf.c | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
+>> index de41f9a14492..77bee9060bfe 100644
+>> --- a/fs/bcachefs/printbuf.c
+>> +++ b/fs/bcachefs/printbuf.c
+>> @@ -54,8 +54,9 @@ void bch2_prt_vprintf(struct printbuf *out, const char *fmt, va_list args)
+>>   		va_list args2;
+>>   
+>>   		va_copy(args2, args);
+>> -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args2);
+>> -	} while (len + 1 >= printbuf_remaining(out) &&
+>> +		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out) + 1,
+>> +				fmt, args2);
+>> +	} while (len >= printbuf_remaining(out) + 1 &&
+>>   		 !bch2_printbuf_make_room(out, len + 1));
+> 
+> It's amazing how simple arithmetic can make my eyes cross at times. :) I
+> think I follow the fix after reading the commit log a couple times, but
+> could we use printbuf_remaining_size() appropriately in these places
+> that want to check actual buffer size (i.e. including terminating null)
+> instead of doing the manual size fixup?
 
--- 
-Péter
+Sure, it would be much better.
+I had not seen this function.
+
+CJ
+
+> 
+> Brian
+> 
+>>   
+>>   	len = min_t(size_t, len,
+>> @@ -70,9 +71,10 @@ void bch2_prt_printf(struct printbuf *out, const char *fmt, ...)
+>>   
+>>   	do {
+>>   		va_start(args, fmt);
+>> -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args);
+>> +		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out) + 1,
+>> +				fmt, args);
+>>   		va_end(args);
+>> -	} while (len + 1 >= printbuf_remaining(out) &&
+>> +	} while (len >= printbuf_remaining(out) + 1 &&
+>>   		 !bch2_printbuf_make_room(out, len + 1));
+>>   
+>>   	len = min_t(size_t, len,
+>> -- 
+>> 2.34.1
+>>
+> 
+> 
+
