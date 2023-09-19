@@ -2,94 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D36FCD54AD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 09:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4B7CD5BA6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 12:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbjISJwQ (ORCPT
+        id S231583AbjISMOI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Sep 2023 05:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49870 "EHLO
+        Tue, 19 Sep 2023 08:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231488AbjISJwO (ORCPT
+        with ESMTP id S229552AbjISMOH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Sep 2023 05:52:14 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2278F1;
-        Tue, 19 Sep 2023 02:52:08 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-31fe3426a61so4484106f8f.1;
-        Tue, 19 Sep 2023 02:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695117127; x=1695721927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i9GTFmeV/EvnfETMNwPDcGK8R8Ka2xMUzQavnbL/9JU=;
-        b=FuMsnxRRP/EEVypsxJxsP6lUWTSCp4NqTiQJ2nfj65eWMMh2i4rfQyVQAqYBWPNSIr
-         rL0z5wxU2dBoGmVIN+bki+Sov0EengJVhOqnkpSXTzn5yc7cG/tteVzghIBlAtGdg8Vn
-         qx2sUuseeait4HoEcqex5Wq96TjA0YVI8BVO9CNsQnt13MKjz6zwmoxjis3GWzx/Pnwq
-         eyposhUbg3K8hjpExR/B1uO54qImTmpSxUGjJMHPuix0Utynbh0/QyTy+xS/Ih7NYO+E
-         fkOe3xgtIRlQJQTIoDz24OWrVPIloD40ReOFoSTcUScAT7t9vrxLp/xwB5amadqq7emA
-         f2zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695117127; x=1695721927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i9GTFmeV/EvnfETMNwPDcGK8R8Ka2xMUzQavnbL/9JU=;
-        b=Th8FEnqjyLjFev+bCXwoC2gGHNdAuNsdgXj0PX7xAYUgVpoteD+vXhZVyJDPXRWLbg
-         hGvkdF0CwRYrK6Nf8kPUizwOeRQsHDM5GoT8CgJidM+5pOI3XDA1JiLV8wQMkPufP153
-         MIcKDm4Yk46gx2eG7rHpttNjrYUW7cXikFJTqGStPYW0gkB75mgdu31/lpU/nCDmvrX2
-         N4C9RcFQWWm1vbdUppSs5ZASKaMvTDztxhh27ztttnZ/AvpERY/JA+iOsex71J4Az3PG
-         hgfp+C/Gwhd7K6sRVXbDLBwED7JzCX7B4lmlGRZANvRy3Q8tLVlhxxGkDB6DOMryG/RK
-         Ng8Q==
-X-Gm-Message-State: AOJu0Yxug0uIRG+Cmdip7MBL4jQQAsgHreZUwmaicbEOAXVO9qwGhCdx
-        OPq7r0js7oQXw05ic9a0VgidbVVc/XsMphjZ
-X-Google-Smtp-Source: AGHT+IE1EeLCPjpp+AXIFpbF/nRxGjd1pR3+gE3AJcM2Glipz4CkCgE5tGRL+MdphG6QCcqPday1FQ==
-X-Received: by 2002:a5d:678f:0:b0:31c:6697:6947 with SMTP id v15-20020a5d678f000000b0031c66976947mr10470011wru.69.1695117126737;
-        Tue, 19 Sep 2023 02:52:06 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h18-20020a5d5052000000b0031ad5470f89sm10335659wrt.18.2023.09.19.02.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 02:52:06 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: cfg80211: make read-only array centers_80mhz static const
-Date:   Tue, 19 Sep 2023 10:52:05 +0100
-Message-Id: <20230919095205.24949-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 19 Sep 2023 08:14:07 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE17A118;
+        Tue, 19 Sep 2023 05:14:01 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0504C433C8;
+        Tue, 19 Sep 2023 12:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695125641;
+        bh=dauXQLkstRtCzMJMb/trFr2w1LvhwGBSPPyfgMFurg0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WjtUmVDnQuu+bFgm6br3V1WI5C2NapYx3u5HXEhzpdX0dfJp55l9KvXOmpoadJyAn
+         zGl4fHyNp9Vd80LIMc/WMTRx2CFXofx4jpaAUN789waSxmED5pf9ojHKv4ZanOOmzd
+         3Oyt14g4l7A+5Sk9jF+6gw8DqxwC6/98G8yvIv+L4jn8MIr5WI6u+I/lanWE8AGQ5I
+         /rOq3J9CX0ZvqIEvV4z5S3HwyZyZk5D4V0DbEbMRXccagXtc2SoX/wzNdnAA26zEjF
+         15GMMqTfKNqFhaO0rxFFONkXxMmlQmcFrOCRqaXHpOpQhqzCAkokz5bd7Cdodq+kB5
+         YZUp0M2v19Igw==
+Date:   Tue, 19 Sep 2023 14:13:55 +0200
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Daniel Baluta <daniel.baluta@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] firmware: imx-dsp: Fix an error handling path in
+ imx_dsp_setup_channels()
+Message-ID: <20230919121354.GA11740@T480>
+References: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
+ <CAEnQRZC=JNGixTRVDnEK0p5rZWuQbOmQvApTUM5=0iJN9pzVRw@mail.gmail.com>
+ <022417df-9d3b-6760-3a57-c725906561e5@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <022417df-9d3b-6760-3a57-c725906561e5@wanadoo.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array lanes on the stack, instead make
-it static const.
+On Sun, Aug 20, 2023 at 08:26:01AM +0200, Christophe JAILLET wrote:
+> Le 17/01/2023 à 08:55, Daniel Baluta a écrit :
+> > On Sun, Jan 15, 2023 at 8:35 PM Christophe JAILLET
+> > <christophe.jaillet@wanadoo.fr> wrote:
+> > > 
+> > > If mbox_request_channel_byname() fails, the memory allocated a few lines
+> > > above still need to be freed before going to the error handling path.
+> > > 
+> > > Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > 
+> > Good catch.
+> > 
+> > Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > 
+> 
+> Hi,
+> 
+> polite reminder.
+> 
+> This patch is still not in -next.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/mac80211/tdls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry, not sure how this fell from the crack.
 
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index ba14f570cda7..f3fd66d30b84 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -309,7 +309,7 @@ ieee80211_tdls_chandef_vht_upgrade(struct ieee80211_sub_if_data *sdata,
- 				   struct sta_info *sta)
- {
- 	/* IEEE802.11ac-2013 Table E-4 */
--	u16 centers_80mhz[] = { 5210, 5290, 5530, 5610, 5690, 5775 };
-+	static const u16 centers_80mhz[] = { 5210, 5290, 5530, 5610, 5690, 5775 };
- 	struct cfg80211_chan_def uc = sta->tdls_chandef;
- 	enum nl80211_chan_width max_width =
- 		ieee80211_sta_cap_chan_bw(&sta->deflink);
--- 
-2.39.2
-
+Applied, thanks!
