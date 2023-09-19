@@ -2,59 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4A1CD5BCA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 14:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0FACD5BD4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 15:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232870AbjISOjO (ORCPT
+        id S233022AbjISPK3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Sep 2023 10:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47224 "EHLO
+        Tue, 19 Sep 2023 11:10:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232858AbjISOjN (ORCPT
+        with ESMTP id S232490AbjISPK2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Sep 2023 10:39:13 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062E5EC;
-        Tue, 19 Sep 2023 07:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=dB+Dyt00RhzJnxkRDlEPURBML1dk2tdOzZGBav2KXT0=; b=137sszfZ3mbCCc633XhbwWTPlP
-        XE+yWywCzi6YXhTkcdEL4TEw59Dt3sGlwCi04scCQ2a3LJS0yLensAjWdUy9U+IdmUAlg73IdAtFG
-        Nt6a0ZDetgIzN5AXpO5lB6R1f1BIH+dr/RR/URYI0NR5xt4eQDLzTwUzyKKvYVfOvvOc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qibsM-006v7D-P2; Tue, 19 Sep 2023 16:38:54 +0200
-Date:   Tue, 19 Sep 2023 16:38:54 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: make const read-only array
- lanes static
-Message-ID: <73b78b15-09c5-4d7c-99cc-8bcc89992fda@lunn.ch>
-References: <20230919094021.24699-1-colin.i.king@gmail.com>
+        Tue, 19 Sep 2023 11:10:28 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C7994;
+        Tue, 19 Sep 2023 08:10:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44B02C433C9;
+        Tue, 19 Sep 2023 15:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695136222;
+        bh=wrqC6REkEJrkRzfwAscQTd/GQ3EwDBjwa+nBdT4zorE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=hRZBH2mRC+9x0jnRcoJj/8vSiEbpNPMMVLx+2BRpC36iWRIP0c/814EkbSSEd4WEP
+         r3iJ0aI4ZMVAXGMMTqoTKj4Uy73IGK0ZQWfmUbIKpbCgmm18Q5oDCx0VwDvNS6bHZi
+         djewUojBorSM0g1Lfr+9QFFi0tXFlRbSyZi2jPiomWVpSmkyAV/tb37GmEui/oBjwz
+         c5FICpWs+CU9qV3LlvZl/IPBTzeieMc7lSj8ZPisRuqCe8HyFcomZ7+N61dEzSeTjr
+         jgByjGxT6+cC1QxM35NvM6Qgq4/qYO0QSU+Ycqh5jO9Ek8NxEQViKpLgf9sZ0mdsrE
+         hlUNrWCXeGvRQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 27214E11F41;
+        Tue, 19 Sep 2023 15:10:22 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230919094021.24699-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: dsa: microchip: Fix spelling mistake "unxpexted"
+ -> "unexpected"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169513622215.19882.9342395230402169534.git-patchwork-notify@kernel.org>
+Date:   Tue, 19 Sep 2023 15:10:22 +0000
+References: <20230918132142.199638-1-colin.i.king@gmail.com>
+In-Reply-To: <20230918132142.199638-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+        andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 10:40:21AM +0100, Colin Ian King wrote:
-> Don't populate the const read-only array lanes on the stack, instead make
-> it static.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 18 Sep 2023 14:21:42 +0100 you wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/dsa/microchip/ksz9477_acl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Here is the summary with links:
+  - [next] net: dsa: microchip: Fix spelling mistake "unxpexted" -> "unexpected"
+    https://git.kernel.org/netdev/net-next/c/1964aacfaed5
 
-    Andrew
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
