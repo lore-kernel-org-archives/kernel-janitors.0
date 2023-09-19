@@ -2,162 +2,139 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A1ECE79A8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 18:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDD7CE79AA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Sep 2023 18:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232223AbjISSrT (ORCPT
+        id S232366AbjISSuE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Sep 2023 14:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51068 "EHLO
+        Tue, 19 Sep 2023 14:50:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232084AbjISSrR (ORCPT
+        with ESMTP id S232223AbjISSuD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Sep 2023 14:47:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BCA49D
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Sep 2023 11:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695149185;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TzpUibuueoiUi5QQWcPcHUVW4AL0fimUeWUbG94nOMk=;
-        b=CFPdPAluWjsXOBsHuq57Xsb+K7moW0WlU7a1rmjJEfBUe4xa6hSq8jFV7QsOXrCKRfL8Q4
-        4jUISbR9RBo/Hy98bJMoe+HbI7Oql7imQdtqBmglsiAZsRkQjNWrDCfTaxT0HrjJ6XKYLS
-        1ZebrgSxB2Ic6WJAgDMS/V0czTZ2acQ=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-389-437xpNx0MlOf8_JHfN0dig-1; Tue, 19 Sep 2023 14:46:24 -0400
-X-MC-Unique: 437xpNx0MlOf8_JHfN0dig-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6561b118866so65882726d6.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Sep 2023 11:46:23 -0700 (PDT)
+        Tue, 19 Sep 2023 14:50:03 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2390B9E
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Sep 2023 11:49:57 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-4047c6ec21dso18505e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Sep 2023 11:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695149395; x=1695754195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3b3SE1y993w9s8TptT+65qp+DeVHMyKSmy+Ooj7umuM=;
+        b=PSFZ/zTb2uhWJFHReGyXjuajECuDa0FA67//VPxjG8dPGcqndKRXCnDu75IdUJyl+3
+         WacmLDJnOk82+60rRfTE5Uw8Vlefi86Ye1XBpQI6JP6XVMYFu4wwX9RPshjcQcKdkNBV
+         a+GNv4oDMVPrh5kyMkUrQI2Oi8+MoIN6gB74p1vUa8dmnvnfgUppg7fau3Bh4cd6tx4r
+         FdKVdlVXx0RDtQQxhag+aILrrJJibvTs9DE8h0WOSQhOhnm3pzrVg8l5PEvdlBIGB4MH
+         b9xjvQ4SlfdPiTwkA0cBsVOa32Tgzhr86Vb/1iJXiMNWVBwSKgFB0Fpr/O4okLB19+h0
+         F+bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695149183; x=1695753983;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TzpUibuueoiUi5QQWcPcHUVW4AL0fimUeWUbG94nOMk=;
-        b=cn3EnFa40KwacTCgIIWQCjW1ufZ2PtXZr5piWDvOGnP9wzRGlr7T6xX+2CKgPZ0X09
-         ykqjL8h0XPAp1ShouFAgrJsJDQL2SSt9ePP7oqcQQP3Kx59ctHYSEGMelIjRzZbXIYn9
-         uaYcXIS4YMC6Mz3tAtWsk3DY3B8auOb3EfiPE3Nqv8xO90sFpfT4YvxSPBuwuQHOc0In
-         E+OjZOhsC12oN0cvdC5eM7LK6UL9CRtvPOfQPkDqlt2HGu2Ih1Zq+QLLG/85ZzUymYwV
-         PidIE1wO6KR0jUtAIWbnotjI7F8SCl/EShk5Ln5fEbVahg7ydpcoIgVR4pptchiks9pI
-         YSVA==
-X-Gm-Message-State: AOJu0Ywj7WS3flm7KPE4hldvbo1h9eS231x33cv6hmEALur8EM88W/AR
-        gWaAPuGBzibwQ8xhOwKGPywFd1lTYuBXwMKpXrg/Eunnfgf9DiVkp/B0kMALqkEItsCnK1BMwrA
-        lAn8DGBT9GPhYomugBLEcjORWPlJm
-X-Received: by 2002:a0c:f394:0:b0:655:c204:9307 with SMTP id i20-20020a0cf394000000b00655c2049307mr256853qvk.38.1695149183440;
-        Tue, 19 Sep 2023 11:46:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEi0um2A+yZHNy+40yE80Y6Ufc0+PSoBWGaAEKvPr4k7X1+IkZBcYv08eShWHHQg4gYPls3w==
-X-Received: by 2002:a0c:f394:0:b0:655:c204:9307 with SMTP id i20-20020a0cf394000000b00655c2049307mr256842qvk.38.1695149183227;
-        Tue, 19 Sep 2023 11:46:23 -0700 (PDT)
-Received: from bfoster (c-24-60-61-41.hsd1.ma.comcast.net. [24.60.61.41])
-        by smtp.gmail.com with ESMTPSA id h20-20020a0cf414000000b0065647f59c4esm3024931qvl.51.2023.09.19.11.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 11:46:22 -0700 (PDT)
-Date:   Tue, 19 Sep 2023 14:46:36 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: Avoid a potential memory over-allocation in
- bch2_printbuf_make_room()
-Message-ID: <ZQnsjHlCdk5adChF@bfoster>
-References: <2e6a82a83d0ddd9ce7f36ea889dd7ffc30f5fbc9.1694853900.git.christophe.jaillet@wanadoo.fr>
- <ZQmfpzxX+qjLtJjm@bfoster>
- <2931c006-d987-2261-1c39-5c41a4b17f75@wanadoo.fr>
+        d=1e100.net; s=20230601; t=1695149395; x=1695754195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3b3SE1y993w9s8TptT+65qp+DeVHMyKSmy+Ooj7umuM=;
+        b=DbMrphk2UtcS12lmsXAP/2zwkzkDWC4XKdBF1Btu87WhenVdjcT15DyTW6M24c4VYn
+         ICg/m8yfOOSACHpHjoxFlxQw/3eRyIM7C0Se9R2sEFZnLFLuRYXx55xzurPDSXJwB//V
+         aA9855ZxGMTBT4oljxkHAamg+e/LPuvK8GIlLAXCBTkVQNDos0iyNjjltE1cS44ypiiZ
+         3m4wluIZMAXyeRROmlkXo/L9km01u9sDp+N6Y/CAMXQpcO6PLqpBuj24ssL6b24rd8Bf
+         WSfTUvCMKNdQy3ueTPXNgJwwfi+Hu8wNZVjXvdYWZzMF4CcHdN+OyCIrd050ph/7a4YB
+         kNYg==
+X-Gm-Message-State: AOJu0YztDWbcVA3mR80Ji1P5B0wGPTmUmVsR7RqSiEmTj7gamt/ukQTX
+        UubKqfTRlGj1R3Xu4ZEIxoGdxfuSK7cLL4lHDDGNNg==
+X-Google-Smtp-Source: AGHT+IHdRcasEy33j0LLjfk3xBcc7G26qkdrcJaCdU/boWopbvtOxlEHTEfXJ/SqOn0lzR3O4BAc9O47dYEpPB99F4c=
+X-Received: by 2002:a05:600c:1d09:b0:3fe:f32f:c57f with SMTP id
+ l9-20020a05600c1d0900b003fef32fc57fmr16193wms.0.1695149395391; Tue, 19 Sep
+ 2023 11:49:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2931c006-d987-2261-1c39-5c41a4b17f75@wanadoo.fr>
+References: <3ff9d019-75b6-45ee-9b03-9d6ec7c5364f@moroto.mountain>
+In-Reply-To: <3ff9d019-75b6-45ee-9b03-9d6ec7c5364f@moroto.mountain>
+From:   Rae Moar <rmoar@google.com>
+Date:   Tue, 19 Sep 2023 14:49:43 -0400
+Message-ID: <CA+GJov4SRGa6scDUmm1Tzu8JX4ZaF8S7YVxwZVvYJMSLXVRwrw@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Check for kunit_parse_glob_filter() failure
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 08:34:00PM +0200, Christophe JAILLET wrote:
-> Le 19/09/2023 à 15:18, Brian Foster a écrit :
-> > On Sat, Sep 16, 2023 at 10:45:23AM +0200, Christophe JAILLET wrote:
-> > > kmalloc() and co. don't always allocate a power of 2 number of bytes.
-> > > There are some special handling for 64<n<=96 and 128<n<=192 cases.
-> > > 
-> > 
-> > It's not immediately clear to me what you mean by "special handling."
-> > Taking a quick look at slabinfo, it looks like what you mean is that
-> > slab rounding is a bit more granular than power of two, particularly in
-> > these ranges. Is that right? If so, JFYI it would be helpful to describe
-> > that more explicitly in the commit log.
-> 
-> That's what I tried to do with my 2 phrases.
-> Sound good and clear to the French speaking man I am :)
-> 
-> Would you mind updating the phrasing yourself?
-> A trial and error method about wording with a non native English speaking
-> person can be somewhat a long and boring experience to me.
-> 
-> All what I could propose, with the help of google translate, is:
-> 
-> "
-> kmalloc() does not necessarily allocate a number of bytes equal to a power
-> of two. There are special cases for sizes between 65 and 96 and between 129
-> and 192. In these cases, 96 and 192 bytes are allocated respectively.
-> 
-> So, instead of forcing an allocation always equal to a power of two, it may
-> be interesting to use the same rounding rules as kmalloc(). This helps avoid
-> over-allocating some memory.
-> 
-> Use kmalloc_size_roundup() instead of roundup_pow_of_two().
-> "
-> 
-> If this is fine to you I can send a v2 with this wording, otherwise, either
-> tweak it to what sounds good to you, or just ignore this patch.
-> 
+On Fri, Sep 15, 2023 at 8:58=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Smatch complains that the missing error checks would lead to a crash:
+>
+>     lib/kunit/executor_test.c:40 parse_filter_test()
+>     error: double free of 'filter.test_glob'
+>
+> We may as well do it right...
+>
+> Fixes: a127b154a8f2 ("kunit: tool: allow filtering test cases via glob")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I think that wording is fine. I don't think it's necessary to send a v2
-just for a commit log update, but feel free to do so if you want.
-Ultimately it will be up to Kent if he's alright with the change.
+Hello!
 
-Brian
+We definitely should add in checks for these errors. I have a couple
+comments below.
 
-> CJ
-> 
-> > 
-> > > So trust kmalloc() algorithm instead of forcing a power of 2 allocation.
-> > > This can saves a few bytes of memory and still make use of all the
-> > > memory allocated.
-> > > 
-> > > On the other side, it may require an additional realloc() in some cases.
-> > > 
-> > 
-> > Well, I feel like this isn't the only place I've seen the power of two
-> > buffer size realloc algorithm thing, but in thinking about it this seems
-> > fairly harmless and reasonable for printbufs. FWIW:
-> > 
-> > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > >   fs/bcachefs/printbuf.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
-> > > index 77bee9060bfe..34527407e950 100644
-> > > --- a/fs/bcachefs/printbuf.c
-> > > +++ b/fs/bcachefs/printbuf.c
-> > > @@ -28,7 +28,7 @@ int bch2_printbuf_make_room(struct printbuf *out, unsigned extra)
-> > >   	if (out->pos + extra < out->size)
-> > >   		return 0;
-> > > -	new_size = roundup_pow_of_two(out->size + extra);
-> > > +	new_size = kmalloc_size_roundup(out->size + extra);
-> > >   	/*
-> > >   	 * Note: output buffer must be freeable with kfree(), it's not required
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-> > 
-> 
+Thanks!
+-Rae
 
+> ---
+>  lib/kunit/executor_test.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/kunit/executor_test.c b/lib/kunit/executor_test.c
+> index b4f6f96b2844..176c9c9dfcfc 100644
+> --- a/lib/kunit/executor_test.c
+> +++ b/lib/kunit/executor_test.c
+> @@ -27,13 +27,15 @@ static void parse_filter_test(struct kunit *test)
+>  {
+>         struct kunit_glob_filter filter =3D {NULL, NULL};
+>
+> -       kunit_parse_glob_filter(&filter, "suite");
+> +       if (!kunit_parse_glob_filter(&filter, "suite"))
+> +               return;
+
+First, this is returning every time this test is run because the
+kunit_parse_glob_filter returns 0 when there is no error. So this
+should instead be checking for a result of not equal to 0.
+
+Secondly, this should fail the test if the parsing returns an error.
+So instead of returning I would recommend using a KUNIT_ASSERT
+statement to check the result of this method is equal to 0.
+
+>         KUNIT_EXPECT_STREQ(test, filter.suite_glob, "suite");
+>         KUNIT_EXPECT_FALSE(test, filter.test_glob);
+>         kfree(filter.suite_glob);
+>         kfree(filter.test_glob);
+>
+> -       kunit_parse_glob_filter(&filter, "suite.test");
+> +       if (!kunit_parse_glob_filter(&filter, "suite.test"))
+> +               return;
+
+Similar to above I think this should be changed to a KUNIT_ASSERT
+statement to ensure the result is equal to 0.
+
+>         KUNIT_EXPECT_STREQ(test, filter.suite_glob, "suite");
+>         KUNIT_EXPECT_STREQ(test, filter.test_glob, "test");
+>         kfree(filter.suite_glob);
+> --
+> 2.39.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/kunit-dev/3ff9d019-75b6-45ee-9b03-9d6ec7c5364f%40moroto.mountain.
