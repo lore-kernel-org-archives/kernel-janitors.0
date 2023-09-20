@@ -2,75 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 120F8CE79CC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 11:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA980CE79CC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 11:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234374AbjITLAc (ORCPT
+        id S234465AbjITLH6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 07:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51204 "EHLO
+        Wed, 20 Sep 2023 07:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231593AbjITLAa (ORCPT
+        with ESMTP id S234476AbjITLHy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 07:00:30 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7EFB4;
-        Wed, 20 Sep 2023 04:00:24 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EFB9BC43395;
-        Wed, 20 Sep 2023 11:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695207624;
-        bh=q6NPHTdLIJ7RI/7zOZQ3KCd40OPqqToSztFaLpAMoDE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=cZ6uPpXzLFkqWWxeVxd2b965QMsTokYpUUM7ExuDOaRlFo9PxQMonp4Vx1m+vudu8
-         bt3vSfhXuartYFs3siC93UTyiSWQK6ycbj6mw7mK+mFPAyuyav3VheB7NOWcuvotXw
-         4G33d0GVB2Cqg1JTTRIXca+qHc7hB5prR9ePmI5Uz+e3srDuPtKV0AuLXnUrdu/GSD
-         WG/1aY9C96nMQskYVT22CAPmnHnZfH9xzwTv7c3ibfUScccgyO8nZsmw5AtUSATYdM
-         1fDtEcPkAAK8MBrS0JMEBpQ3Oq/g3liUNOzBpr0auQzidJkjkYcuzZTC2i1llZWBTE
-         v7H7jhkvZHOOQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D8FBCC595C0;
-        Wed, 20 Sep 2023 11:00:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: make const read-only array lanes
- static
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169520762388.31903.489961378827553101.git-patchwork-notify@kernel.org>
-Date:   Wed, 20 Sep 2023 11:00:23 +0000
-References: <20230919094021.24699-1-colin.i.king@gmail.com>
-In-Reply-To: <20230919094021.24699-1-colin.i.king@gmail.com>
+        Wed, 20 Sep 2023 07:07:54 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27B2F3;
+        Wed, 20 Sep 2023 04:07:46 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so8466799a12.0;
+        Wed, 20 Sep 2023 04:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695208065; x=1695812865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vS/Cs2PLMP0wrXesDar8P/cFTTk09RoR8vpOfuuFr04=;
+        b=FXd2I3XyuHZDW6sMuOLbD9oBI6GbFcL07yr+qtB7jwgqvPaOQy9g/DBw8sxq6OpZOe
+         XyGCF9GhpjdPlNJUuZMg4KOnHgGEc9NY2+YbXpMZt540ocAogHp0LDTwGli3HnOdAABI
+         wAvNRXDSINNzrzZuuiUXVxF0PuF/pENTzexppxjoEvx1P7ql1C4YpJKLRIfP0fYXOt7M
+         nC5MP3nbwR4MQ6kvKezFLX3Q7MhwHdzq3qauSFnm+ABMl8SsaRwuUSo/bm6jOERWH8jy
+         2k5eUOmMoxVqSSWINbjZOy0+vgNESy9srBjkQtF/h5rr1W06TjFDSfP+QFs+WNc6vd3L
+         e0qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695208065; x=1695812865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vS/Cs2PLMP0wrXesDar8P/cFTTk09RoR8vpOfuuFr04=;
+        b=Ey85zOk9wjcoRLx2jJkLhBZxkytR7etY1z26YXSPVEuxkRl0SB+jdza0syabJ5Jnnf
+         qq/EgtCKgn/+ps/0bSmF7YBy3jI7LbSTT8J8LY0NTTLibLgsRY4Pvd3M6EXPnHowB4dE
+         WrDBd7RsiGs9KSMTH6DqgfJTGzdciY812beya7dwehUPW4Av2iDTy8qWYl1B+19S1KGT
+         1rWbmeV86vQvujJKiRWnk5StpXL/mQjle9Pt4dcCPjcFDvuHaw9E50VllTF93PfKFhIu
+         A27ubvqwRfME8ZWBAMOfTCNYaomVIGMA3yTNHez7NcW5h+DGlNGc0LRPzdTQM8XHvF4E
+         iKyg==
+X-Gm-Message-State: AOJu0YzRICb6kIBU4rjmJi46owZmWeRhSUP9ZzC9/B2ERnMSpWX2saLK
+        tVxJYnr7WPd/5MBADkoA3uE=
+X-Google-Smtp-Source: AGHT+IHJhYxXGF/oFkiARA6ufQ+RN2C28QZsKxEpzmxPTjndi+q1qWkXBk95MZAnjOn+PYiONQvuSw==
+X-Received: by 2002:aa7:d518:0:b0:530:52d2:f656 with SMTP id y24-20020aa7d518000000b0053052d2f656mr1749171edq.21.1695208064972;
+        Wed, 20 Sep 2023 04:07:44 -0700 (PDT)
+Received: from skbuf ([188.26.57.160])
+        by smtp.gmail.com with ESMTPSA id es19-20020a056402381300b0051e1660a34esm7605111edb.51.2023.09.20.04.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Sep 2023 04:07:44 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 14:07:42 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: sja1105: make read-only const arrays
+ static
+Message-ID: <20230920110742.aykludzienjg5fn6@skbuf>
+References: <20230919093606.24446-1-colin.i.king@gmail.com>
+ <20230919093606.24446-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230919093606.24446-1-colin.i.king@gmail.com>
+ <20230919093606.24446-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue, 19 Sep 2023 10:40:21 +0100 you wrote:
-> Don't populate the const read-only array lanes on the stack, instead make
-> it static.
+On Tue, Sep 19, 2023 at 10:36:06AM +0100, Colin Ian King wrote:
+> Don't populate read-only const arrays on the stack, instead make them
+> static.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/net/dsa/mv88e6xxx/pcs-639x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [next] net: dsa: mv88e6xxx: make const read-only array lanes static
-    https://git.kernel.org/netdev/net-next/c/ccd663caffc7
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
