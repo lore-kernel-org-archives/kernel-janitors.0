@@ -2,65 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE317CE79CF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 11:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A71ECE79CF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 12:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233125AbjITLlv (ORCPT
+        id S235469AbjITMMv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 07:41:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
+        Wed, 20 Sep 2023 08:12:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjITLlu (ORCPT
+        with ESMTP id S235301AbjITMMu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 07:41:50 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E2AB0;
-        Wed, 20 Sep 2023 04:41:44 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-401d6f6b2e0so5346975e9.1;
-        Wed, 20 Sep 2023 04:41:44 -0700 (PDT)
+        Wed, 20 Sep 2023 08:12:50 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9BC0B4;
+        Wed, 20 Sep 2023 05:12:43 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31dca134c83so6669281f8f.3;
+        Wed, 20 Sep 2023 05:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695210103; x=1695814903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695211962; x=1695816762; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l0bjyLQzALz+mGal4nDqDnLTgwXZ5k5mNvC8JvxOXaE=;
-        b=mkf9b3++aDixWc4+JaTzappLB5euszM4hX9QpR/4FaHm3/EWRU6uPdRj6ByItAGDgi
-         KTSAxPNpNeBV+wtflvHEmsAWFUoFdFBtEFnxefxOzF8YpdMtFIKRs7CfXjF9ZKTe+I2s
-         W5iWqOfmoBy1dLgEhW79HM7/umxlpZ4Pkff6rib+i0JdRajIaQVgGwTa3aJc9BQldPmk
-         LlWpnHt+f4+5aUYqxx4fQiz8gDv/fzda0bIDVcxWBK5wtdbXVe5Hr7xpgvxsFlgtqY8y
-         I2s5EV9lApprh20NgyUhLXkqtpQJpatZVgHDP1+oN8cwhR+XH7ee8F04qcZOosRpXUGH
-         bCnQ==
+        bh=RoTCcIJ6irx30M2vhW+lG8oTwIdTkWyEb+BI/OR7VyU=;
+        b=lwuLcpNaEVL/NeUfx8ixOC/p1zdTHaDbRzwUOYh2M/UsQwH04mpTJqzRqJakDOG9Qf
+         A/ysJxi7T9YkmXTujAZ1dk4kuy69KCSwzQ8Dd0+BUcAGon1qhk7tjX7ZlPckq5+Qh/C1
+         LAE2egDcY8tNzDKqE5+GaWloh0M8SUVeEB7h8B5LU143c91Mie6oYmGLiNAXVohXWQDm
+         uDL2vOY+SliFEap+oOpYDai+izmO+xuDJC4CYWFw738i1iPowg4OxZ84fUB3LONiHol5
+         XlWLqwbFC/KYakeIqllokpZOYiamk8UQG3g6zkV13fIY2+OPlcVyACdVzUcO8Wna25Jq
+         4E6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695210103; x=1695814903;
+        d=1e100.net; s=20230601; t=1695211962; x=1695816762;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l0bjyLQzALz+mGal4nDqDnLTgwXZ5k5mNvC8JvxOXaE=;
-        b=J/0/puEbnGgYBTjKQhE9kQmgrBBKAHX4qTMlbsNGzU7flYnul9t42q3Cc5tYWa2YQ/
-         1tQzJB3sUlk/kR5hhTJ3I43S3bwKDCQYUyESpz+ZogHB8ligRhneZM7fnaNzLpnmVNtW
-         qGzKsN3Txd/Cd4b5Wbs5vV+QcYJbAmx346APq3paHAuR7Mv+USkwhv6F0JvU37tXVMac
-         k2Ec1Xdm2U2o/KPOuKo1z2dFBxSemM6VdpW5GPKS8EhQR+waeKzYfDWdVlgFL6EJZS7P
-         Fzs7Jb41ssI2aQ3LQYU/zopLprj8Sd6NI8qKztWQgUdVsE4EAHSBa+7ttx1jl6zX+F3B
-         yTEg==
-X-Gm-Message-State: AOJu0YyD085ewO9Fk3L1WELBJblzO23kl8VxgG+2yRd9yh7VY5kA8+TF
-        JfJ3XK5aD2jZt1VoFB9zVro=
-X-Google-Smtp-Source: AGHT+IHHfNcZhS4i3ItXzPzHqebwjb4GlO5M7Tpuh6NDxMuETe7SdV0JlOz/Yg42mxnyccxI0D+lhQ==
-X-Received: by 2002:a05:600c:3b20:b0:405:251f:8455 with SMTP id m32-20020a05600c3b2000b00405251f8455mr850185wms.7.1695210102787;
-        Wed, 20 Sep 2023 04:41:42 -0700 (PDT)
+        bh=RoTCcIJ6irx30M2vhW+lG8oTwIdTkWyEb+BI/OR7VyU=;
+        b=Xg2mj2ktorxsjefEIJtXtM3vuSwxKxTcXZMhcQ5lHtP2z2F/sLCXyfpieKCMw+M4RG
+         IS5F8xBQC1xfbdklQiSquJc1Q/qeyKb5GRtsCBiGiB8/Y7TZ3k2ECqmQL2LqRlhJFJwr
+         0l1kfE7BATvOmpNfEJ/qbkc2CiNNgd6nsbGvQL/fK+NC9hyqmfwzYyd2K9KcsVB0Iu6w
+         gayn+NwiwcVAYKjQ4p8VfaIrvWPa2sdNHIYZzPHXL3NELQoq6SDRwCrJxuRk2kfCEFuT
+         rfxRFZ0ahitkc8gUJfvT/KxAcjtubsURCAx8wWRudeaDh1WiY/ufsKcltbZdFgRRVtRo
+         wBYA==
+X-Gm-Message-State: AOJu0YxYY8hR2PrpeFS/T+FQy+dD26RPUHZdK1xYvKgMJumNWJ+HN9gh
+        2feSNAJgP5gmPouxLItFYQ4=
+X-Google-Smtp-Source: AGHT+IEcKSJQUFSjV/2RX02FU3pzQ1+p/LBWfStRRjLwUK3vKCLPkbfffJEKnecFE7zHLH7xGqRQuw==
+X-Received: by 2002:a05:6000:118d:b0:321:6936:c217 with SMTP id g13-20020a056000118d00b003216936c217mr2267388wrx.14.1695211961876;
+        Wed, 20 Sep 2023 05:12:41 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o16-20020a05600c379000b00401e32b25adsm1752642wmr.4.2023.09.20.04.41.41
+        by smtp.gmail.com with ESMTPSA id y14-20020a5d4ace000000b0031c5dda3aedsm18539018wrs.95.2023.09.20.05.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 04:41:42 -0700 (PDT)
+        Wed, 20 Sep 2023 05:12:41 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>
+To:     Stanislaw Gruszka <stf_xl@wp.pl>,
+        Helmut Schaa <helmut.schaa@googlemail.com>,
+        Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] x86/unwind/orc: remove redundant initialization of pointer mid
-Date:   Wed, 20 Sep 2023 12:41:41 +0100
-Message-Id: <20230920114141.118919-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: rt2x00: remove redundant check if u8 array element is less than zero
+Date:   Wed, 20 Sep 2023 13:12:40 +0100
+Message-Id: <20230920121240.120455-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,31 +66,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer mid is being initialized with a value that is never read,
-it is being re-assigned and used inside a for-loop. Remove the
-redundant initialization. Cleans up clang scan build warning:
+The check on vga_gain[ch_idx] being less than zero is always false since
+vga_gain is a u8 array. Clean up the code by removing the check and the
+following assignment. Cleans up clang scan build warning:
 
-arch/x86/kernel/unwind_orc.c:88:7: warning: Value stored to 'mid'
-during its initialization is never read [deadcode.DeadStores]
+drivers/net/wireless/ralink/rt2x00/rt2800lib.c:9704:26: warning:
+result of comparison of unsigned expression < 0 is always
+false [-Wtautological-unsigned-zero-compare]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/kernel/unwind_orc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ralink/rt2x00/rt2800lib.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 7e574cf3bf8a..d00c28aaa5be 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -85,7 +85,7 @@ static struct orc_entry *__orc_find(int *ip_table, struct orc_entry *u_table,
- {
- 	int *first = ip_table;
- 	int *last = ip_table + num_entries - 1;
--	int *mid = first, *found = first;
-+	int *mid, *found = first;
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+index e65cc00fa17c..fe11fa4917ac 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+@@ -9700,9 +9700,6 @@ static void rt2800_loft_iq_calibration(struct rt2x00_dev *rt2x00dev)
  
- 	if (!num_entries)
- 		return NULL;
+ 				rt2x00_dbg(rt2x00dev, "Used VGA %d %x\n", vga_gain[ch_idx],
+ 					   rfvga_gain_table[vga_gain[ch_idx]]);
+-
+-				if (vga_gain[ch_idx] < 0)
+-					vga_gain[ch_idx] = 0;
+ 			}
+ 
+ 			rfvalue = rfvga_gain_table[vga_gain[ch_idx]];
 -- 
 2.39.2
 
