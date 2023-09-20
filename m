@@ -2,96 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB53FCE79AC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 09:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA030CE79CB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 11:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234181AbjITJat (ORCPT
+        id S234346AbjITLAb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 05:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
+        Wed, 20 Sep 2023 07:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234131AbjITJam (ORCPT
+        with ESMTP id S232327AbjITLAa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 05:30:42 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E22B9D9;
-        Wed, 20 Sep 2023 02:30:33 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 58162E0015;
-        Wed, 20 Sep 2023 09:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695202232;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uRsjF3ZsI6skt5kshYvuqos8ZR+vrYu2G0yFq6mynuo=;
-        b=KXTPoMu03uZGq75hrW7mMTRi86wRm+y6XEOdV3KTGlKmjO4xLicAY8Sn93ObuLzTNWnWEC
-        7FMjjX4SH5ULx+sSrkt2me3djgfCsz5ckQm1s5+mh39Ls80z+2+k6mjp1UIHpnqdfxuK9l
-        3WTNGnNFj0CKDjgq8H97vE6U8A0bGTQz0IoBudf4WdiJeeFr4vEnz3ZpGRsEQk41vm1qra
-        G/GKr1+A6YHHYTKIwP37L/QeOfLKSmdX9VFLmaLADLKFNR6qWtI2m02KTmrLuXjLPaBQy7
-        Jc6liGruNi6RWiSMVRz57b0El4vvShFogf+ksdg2pA+iloqrfory++Vf6tCzvQ==
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>, Andrew Lunn <andrew@lunn.ch>
-Cc:     kernel-janitors@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] soc: dove: add missing of_node_put
-In-Reply-To: <20230907095521.14053-8-Julia.Lawall@inria.fr>
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
- <20230907095521.14053-8-Julia.Lawall@inria.fr>
-Date:   Wed, 20 Sep 2023 11:30:30 +0200
-Message-ID: <87jzslfayx.fsf@BL-laptop>
+        Wed, 20 Sep 2023 07:00:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486FC97;
+        Wed, 20 Sep 2023 04:00:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E498FC433CD;
+        Wed, 20 Sep 2023 11:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695207623;
+        bh=rPiOUM5aaPiWdfVsIO/cyE3yqhenjHG0uI9o5H+GhkU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=c4uykEEPwEbr8zdbbSliJKEUBvRYSJjrN5AghndhxVSToOBFQbQXaXWS/acoVkMh0
+         1dGt0z+PYTgMdyaAFwh1eoyXuLRgoYxThzE7aGUJW66AXvMczPNaiIkaRgT+Ww0Thu
+         PwyQr0UbEgfGcJbdz0xOw8WjRQq/EtkoDDOiaaBuuwxGduEmHByahc12iHhz+/tZRx
+         Zd6Ng/kWGjsx7G0SxGY2LZJFNMCF0SDfZivVx/0wls4ctLTwGQclXzsNtkJLz6tO0n
+         kgb7lBM+ZE7UjMXEo89/L+EsZqO6ychFHcQdGSMhcJxTPNzGo60joUiXY3hvPhEomB
+         5FsAlUa2dTfuA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CFDF7C41671;
+        Wed, 20 Sep 2023 11:00:23 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] wifi: cfg80211: make read-only array centers_80mhz
+ static const
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169520762384.31903.1385774049535484165.git-patchwork-notify@kernel.org>
+Date:   Wed, 20 Sep 2023 11:00:23 +0000
+References: <20230919095205.24949-1-colin.i.king@gmail.com>
+In-Reply-To: <20230919095205.24949-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     johannes@sipsolutions.net, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@inria.fr> writes:
+Hello:
 
-> for_each_available_child_of_node performs an of_node_get
-> on each iteration, so a break out of the loop requires an
-> of_node_put.
->
-> This was done using the Coccinelle semantic patch
-> iterators/for_each_child.cocci
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Applied on mvebu/arm
-
-Thanks,
-
-Gregory
->
+On Tue, 19 Sep 2023 10:52:05 +0100 you wrote:
+> Don't populate the read-only array lanes on the stack, instead make
+> it static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/soc/dove/pmu.c |    5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff -u -p a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
-> --- a/drivers/soc/dove/pmu.c
-> +++ b/drivers/soc/dove/pmu.c
-> @@ -410,13 +410,16 @@ int __init dove_init_pmu(void)
->  		struct pmu_domain *domain;
->  
->  		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-> -		if (!domain)
-> +		if (!domain) {
-> +			of_node_put(np);
->  			break;
-> +		}
->  
->  		domain->pmu = pmu;
->  		domain->base.name = kasprintf(GFP_KERNEL, "%pOFn", np);
->  		if (!domain->base.name) {
->  			kfree(domain);
-> +			of_node_put(np);
->  			break;
->  		}
->  
->
+>  net/mac80211/tdls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+Here is the summary with links:
+  - [next] wifi: cfg80211: make read-only array centers_80mhz static const
+    https://git.kernel.org/netdev/net-next/c/6c0da8406382
+
+You are awesome, thank you!
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
