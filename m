@@ -2,79 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A196CE79AC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 00:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB53FCE79AC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 09:30:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbjITAjA (ORCPT
+        id S234181AbjITJat (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Sep 2023 20:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55472 "EHLO
+        Wed, 20 Sep 2023 05:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjITAi7 (ORCPT
+        with ESMTP id S234131AbjITJam (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Sep 2023 20:38:59 -0400
-Received: from out-220.mta1.migadu.com (out-220.mta1.migadu.com [95.215.58.220])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FEABAB;
-        Tue, 19 Sep 2023 17:38:53 -0700 (PDT)
-Date:   Tue, 19 Sep 2023 20:38:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1695170331;
+        Wed, 20 Sep 2023 05:30:42 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E22B9D9;
+        Wed, 20 Sep 2023 02:30:33 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 58162E0015;
+        Wed, 20 Sep 2023 09:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695202232;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kaQ4quY2FOsV6dNr0SfZBxe3SAq2X9fKDNK/mTJUPJo=;
-        b=fcDGTbVMFIQBEQQkC1wwEadLsMgzFYjQD45cjxVUPdUiWnXP7BAGG2BBy9HL98dl1VVqv8
-        MrbxQqzERfO5k8wwlYNRmfFUpUB/liPIKJRtQ+IXJZCPp6TRaP2iiSJG8RAaSd6ifLb7yc
-        vSjQ5g13+izc5myuYNdH/3DYZgCA+AA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: Use snprintf() instead of scnprintf() when
- appropriate
-Message-ID: <20230920003847.nus6l45zqhv5hseb@moria.home.lan>
-References: <9a998be3e2dbedcd3a9eae5f81ae6dcc6c0f98c4.1694849375.git.christophe.jaillet@wanadoo.fr>
- <ZQmfZ/nPMgiJK9eW@bfoster>
- <20230919190234.2k7v75htqlbfqofh@moria.home.lan>
- <011234f5-19f3-21c5-f0cf-8027971397e7@wanadoo.fr>
+        bh=uRsjF3ZsI6skt5kshYvuqos8ZR+vrYu2G0yFq6mynuo=;
+        b=KXTPoMu03uZGq75hrW7mMTRi86wRm+y6XEOdV3KTGlKmjO4xLicAY8Sn93ObuLzTNWnWEC
+        7FMjjX4SH5ULx+sSrkt2me3djgfCsz5ckQm1s5+mh39Ls80z+2+k6mjp1UIHpnqdfxuK9l
+        3WTNGnNFj0CKDjgq8H97vE6U8A0bGTQz0IoBudf4WdiJeeFr4vEnz3ZpGRsEQk41vm1qra
+        G/GKr1+A6YHHYTKIwP37L/QeOfLKSmdX9VFLmaLADLKFNR6qWtI2m02KTmrLuXjLPaBQy7
+        Jc6liGruNi6RWiSMVRz57b0El4vvShFogf+ksdg2pA+iloqrfory++Vf6tCzvQ==
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>, Andrew Lunn <andrew@lunn.ch>
+Cc:     kernel-janitors@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] soc: dove: add missing of_node_put
+In-Reply-To: <20230907095521.14053-8-Julia.Lawall@inria.fr>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+ <20230907095521.14053-8-Julia.Lawall@inria.fr>
+Date:   Wed, 20 Sep 2023 11:30:30 +0200
+Message-ID: <87jzslfayx.fsf@BL-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <011234f5-19f3-21c5-f0cf-8027971397e7@wanadoo.fr>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-GND-Sasl: gregory.clement@bootlin.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 09:23:47PM +0200, Christophe JAILLET wrote:
-> Le 19/09/2023 à 21:02, Kent Overstreet a écrit :
-> > On Tue, Sep 19, 2023 at 09:17:27AM -0400, Brian Foster wrote:
-> > > On Sat, Sep 16, 2023 at 09:30:19AM +0200, Christophe JAILLET wrote:
-> > > > snprintf() and scnprintf() are the same, except for the returned value.
-> > > > When this value is not used, it is more logical to use snprintf() which is
-> > > > slightly simpler.
-> > > > 
-> > > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > > ---
-> > > 
-> > > Seems reasonable:
-> > > 
-> > > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > 
-> > No, let's stay with scnprintf as the default - snprintf should be
-> > deprecated except for when its return value is actually needed, using it
-> > incorrectly has been a source of buffer overruns in the past.
-> > 
-> 
-> Ok, I was not aware of it.
-> 
-> In this case, there are also some s/snprintf/scnprintf/ opportunities in
-> fs/bcachefs
-> 
-> Does it make sense to update them or is it too low value changes?
+Julia Lawall <Julia.Lawall@inria.fr> writes:
 
-Not terribly important - long term, I want to depracate both snprintf
-and scnprintf and convert everything to printbufs.
+> for_each_available_child_of_node performs an of_node_get
+> on each iteration, so a break out of the loop requires an
+> of_node_put.
+>
+> This was done using the Coccinelle semantic patch
+> iterators/for_each_child.cocci
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+Applied on mvebu/arm
+
+Thanks,
+
+Gregory
+>
+> ---
+>  drivers/soc/dove/pmu.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff -u -p a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
+> --- a/drivers/soc/dove/pmu.c
+> +++ b/drivers/soc/dove/pmu.c
+> @@ -410,13 +410,16 @@ int __init dove_init_pmu(void)
+>  		struct pmu_domain *domain;
+>  
+>  		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+> -		if (!domain)
+> +		if (!domain) {
+> +			of_node_put(np);
+>  			break;
+> +		}
+>  
+>  		domain->pmu = pmu;
+>  		domain->base.name = kasprintf(GFP_KERNEL, "%pOFn", np);
+>  		if (!domain->base.name) {
+>  			kfree(domain);
+> +			of_node_put(np);
+>  			break;
+>  		}
+>  
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
