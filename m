@@ -2,58 +2,58 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BB4C04E84
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 18:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF629C04FCD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 18:14:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjITSES (ORCPT
+        id S229731AbjITSPC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 14:04:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34318 "EHLO
+        Wed, 20 Sep 2023 14:15:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjITSEQ (ORCPT
+        with ESMTP id S229719AbjITSPC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 14:04:16 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7204CC9;
-        Wed, 20 Sep 2023 11:04:09 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38KHO7Ne012647;
-        Wed, 20 Sep 2023 18:03:50 GMT
+        Wed, 20 Sep 2023 14:15:02 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D52CA;
+        Wed, 20 Sep 2023 11:14:55 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38KIEVfL030845;
+        Wed, 20 Sep 2023 18:14:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=d6hdCc5sOQVcCqTmOAQhuBvnC4Z4vZNf3OAh6V5VMSI=;
- b=UWVx+jGwK9ujPuqWA+ucsy1A/c9xD8tilGN+2yhfRHOKTSmpiKjP2hsyZh/YviDAOf7I
- TcZT+gjtCn/n3wvV5tt6LGLRpSmy2anGkDLBI2q73Ne8QocSj21Wp+MWyZkgHorNtvLL
- pE77d51ap87orvlPfu3br92J3Fgql/Iltqm2AgBFDbXMJXxRnDotibub5gdbo+nViMw1
- QtpP0Tg4CypPMkCXkFlgxflGtbQiacdBrUgRHkaUdD5HeaTPxv4jBJ9zaGwBFJWV25Qm
- sSAs4kkwxuxfy+N1q2SpXSuF/09lVV0lSXGPmPXmWvg8GPolt9ZgOpwyrSQcnWeGRhv8 eQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t7vbksfhm-1
+ bh=3sioAcKLxxe5PCijkngfhgV8WZTIUxqLlulMSRyMJuM=;
+ b=TJHqd7lpxRyUa8EmA1T7Wf/MgITMg6Sg5X17XtOdvlVi3VpsJHXe7xhUnZJsskXypXzW
+ Z/ksXEjscuMfHLY/CeiI77Uw8OFCnMilA+7gIK5G65J52M9DHlhKH2h6E8VanqEMRCtA
+ OMRxaaUUNo/bEWmgxI6/zXsBUQsfVq6jc/qnDL1pzM3sOztsq4OuMTnr65Lk0xKDEY4W
+ iElLulXmCrjRDJtNJdeZX4KxsB35EXzOL5vDt58UxHkrsx566CanOx3Tl4MGc3DDEJn2
+ b7Er83/hlxgt3PfajflUOLLTCCXnIb6ugYe2oXtjbPayzMFxDEPFzp8RmONeWaB70cEW vQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t80pk8xnp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Sep 2023 18:03:49 +0000
+        Wed, 20 Sep 2023 18:14:37 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38KI3me4013620
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38KIEatU008860
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Sep 2023 18:03:48 GMT
+        Wed, 20 Sep 2023 18:14:36 GMT
 Received: from [10.48.245.144] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 20 Sep
- 2023 11:03:48 -0700
-Message-ID: <5a67f11d-0cd2-42bd-bbda-58b0cd196add@quicinc.com>
-Date:   Wed, 20 Sep 2023 11:03:47 -0700
+ 2023 11:14:35 -0700
+Message-ID: <1b8b3a0f-a9f7-435f-aeda-47ba92c78df1@quicinc.com>
+Date:   Wed, 20 Sep 2023 11:14:35 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 wireless-next 7/9] wifi: ath12k: Remove unnecessary
+Subject: Re: [PATCH v2 wireless-next 1/9] wifi: ar5523: Remove unnecessary
  (void*) conversions
 Content-Language: en-US
-To:     Kalle Valo <kvalo@kernel.org>, Wu Yunchuan <yunchuan@nfschina.com>
-CC:     <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+To:     Wu Yunchuan <yunchuan@nfschina.com>, <kvalo@kernel.org>
+CC:     <syoshida@redhat.com>, <johannes.berg@intel.com>,
+        <alexander@wetzel-home.de>, <linux-wireless@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20230919045142.524226-1-yunchuan@nfschina.com>
- <169522155403.1418260.5064455550425202498.kvalo@kernel.org>
+References: <20230919044906.523189-1-yunchuan@nfschina.com>
 From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <169522155403.1418260.5064455550425202498.kvalo@kernel.org>
+In-Reply-To: <20230919044906.523189-1-yunchuan@nfschina.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.49.16.6]
@@ -61,31 +61,24 @@ X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vOISO6D7w7dmLs3Rq77WTSW7vmlYR9TO
-X-Proofpoint-ORIG-GUID: vOISO6D7w7dmLs3Rq77WTSW7vmlYR9TO
+X-Proofpoint-GUID: 0CCuXFV1rXh-9X8GNV4LKCFDVzrdNcMT
+X-Proofpoint-ORIG-GUID: 0CCuXFV1rXh-9X8GNV4LKCFDVzrdNcMT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
  definitions=2023-09-20_08,2023-09-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=754
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309200149
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=819
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 clxscore=1011
+ impostorscore=0 phishscore=0 mlxscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2308100000 definitions=main-2309200151
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/20/2023 7:52 AM, Kalle Valo wrote:
-> Wu Yunchuan <yunchuan@nfschina.com> wrote:
+On 9/18/2023 9:49 PM, Wu Yunchuan wrote:
+> No need cast (void*) to (struct ar5523_cmd_hdr *).
 > 
->> No need cast (void*) to (struct hal_rx_ppdu_end_user_stats *),
->> (struct ath12k_rx_desc_info *) or (struct hal_tx_msdu_ext_desc *).
->> Change the prototype to remove the local variable.
->>
->> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
->> Suggested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-For the Pending change:
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
