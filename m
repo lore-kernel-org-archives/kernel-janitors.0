@@ -2,97 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A71ECE79CF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 12:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD20C00454
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 14:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235469AbjITMMv (ORCPT
+        id S235196AbjITOwq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 08:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
+        Wed, 20 Sep 2023 10:52:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235301AbjITMMu (ORCPT
+        with ESMTP id S235086AbjITOwn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 08:12:50 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9BC0B4;
-        Wed, 20 Sep 2023 05:12:43 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31dca134c83so6669281f8f.3;
-        Wed, 20 Sep 2023 05:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695211962; x=1695816762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RoTCcIJ6irx30M2vhW+lG8oTwIdTkWyEb+BI/OR7VyU=;
-        b=lwuLcpNaEVL/NeUfx8ixOC/p1zdTHaDbRzwUOYh2M/UsQwH04mpTJqzRqJakDOG9Qf
-         A/ysJxi7T9YkmXTujAZ1dk4kuy69KCSwzQ8Dd0+BUcAGon1qhk7tjX7ZlPckq5+Qh/C1
-         LAE2egDcY8tNzDKqE5+GaWloh0M8SUVeEB7h8B5LU143c91Mie6oYmGLiNAXVohXWQDm
-         uDL2vOY+SliFEap+oOpYDai+izmO+xuDJC4CYWFw738i1iPowg4OxZ84fUB3LONiHol5
-         XlWLqwbFC/KYakeIqllokpZOYiamk8UQG3g6zkV13fIY2+OPlcVyACdVzUcO8Wna25Jq
-         4E6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695211962; x=1695816762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RoTCcIJ6irx30M2vhW+lG8oTwIdTkWyEb+BI/OR7VyU=;
-        b=Xg2mj2ktorxsjefEIJtXtM3vuSwxKxTcXZMhcQ5lHtP2z2F/sLCXyfpieKCMw+M4RG
-         IS5F8xBQC1xfbdklQiSquJc1Q/qeyKb5GRtsCBiGiB8/Y7TZ3k2ECqmQL2LqRlhJFJwr
-         0l1kfE7BATvOmpNfEJ/qbkc2CiNNgd6nsbGvQL/fK+NC9hyqmfwzYyd2K9KcsVB0Iu6w
-         gayn+NwiwcVAYKjQ4p8VfaIrvWPa2sdNHIYZzPHXL3NELQoq6SDRwCrJxuRk2kfCEFuT
-         rfxRFZ0ahitkc8gUJfvT/KxAcjtubsURCAx8wWRudeaDh1WiY/ufsKcltbZdFgRRVtRo
-         wBYA==
-X-Gm-Message-State: AOJu0YxYY8hR2PrpeFS/T+FQy+dD26RPUHZdK1xYvKgMJumNWJ+HN9gh
-        2feSNAJgP5gmPouxLItFYQ4=
-X-Google-Smtp-Source: AGHT+IEcKSJQUFSjV/2RX02FU3pzQ1+p/LBWfStRRjLwUK3vKCLPkbfffJEKnecFE7zHLH7xGqRQuw==
-X-Received: by 2002:a05:6000:118d:b0:321:6936:c217 with SMTP id g13-20020a056000118d00b003216936c217mr2267388wrx.14.1695211961876;
-        Wed, 20 Sep 2023 05:12:41 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y14-20020a5d4ace000000b0031c5dda3aedsm18539018wrs.95.2023.09.20.05.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 05:12:41 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Stanislaw Gruszka <stf_xl@wp.pl>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: rt2x00: remove redundant check if u8 array element is less than zero
-Date:   Wed, 20 Sep 2023 13:12:40 +0100
-Message-Id: <20230920121240.120455-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
+        Wed, 20 Sep 2023 10:52:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1FEA91;
+        Wed, 20 Sep 2023 07:52:37 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CADFC433C7;
+        Wed, 20 Sep 2023 14:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695221557;
+        bh=5h6v16wWKhONz72yVfPnsD86/kim+Vey7bcx5sp9XPw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=H1BGfj0tjIThLBRbQg1ItMQ3Ju2K+XPPDe3C5H2KlmI88xRnwSjHZltwSGjWGQDTn
+         Hz+lKxfdNxKpN+fMYhTSOm/7uuiX0n5H4muLu3dtYhbiXDNytLCfSXTP0tTeZqfIB0
+         3Utoa4RnTSjOe50PQWHNtQ/W/mGaEgtO/2tC3oer65fgBtzbWMjaGVkieF1iiomoDr
+         nCqKQZwSmLd1yg4z0xr66clgZDgQlkB5KWtKCBVEHLiwaaKYTakZAIm2V1pzWTlou/
+         cV5s+YiBtBjlZd+7+bUFPMj4B8+oSLVlVt0ptF0jgwOFURs6wQ5duwOj4u3w37VZ7C
+         4krVl8Seq4tNw==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 wireless-next 7/9] wifi: ath12k: Remove unnecessary
+ (void*)
+ conversions
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230919045142.524226-1-yunchuan@nfschina.com>
+References: <20230919045142.524226-1-yunchuan@nfschina.com>
+To:     Wu Yunchuan <yunchuan@nfschina.com>
+Cc:     quic_jjohnson@quicinc.com, ath12k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Wu Yunchuan <yunchuan@nfschina.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <169522155403.1418260.5064455550425202498.kvalo@kernel.org>
+Date:   Wed, 20 Sep 2023 14:52:35 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The check on vga_gain[ch_idx] being less than zero is always false since
-vga_gain is a u8 array. Clean up the code by removing the check and the
-following assignment. Cleans up clang scan build warning:
+Wu Yunchuan <yunchuan@nfschina.com> wrote:
 
-drivers/net/wireless/ralink/rt2x00/rt2800lib.c:9704:26: warning:
-result of comparison of unsigned expression < 0 is always
-false [-Wtautological-unsigned-zero-compare]
+> No need cast (void*) to (struct hal_rx_ppdu_end_user_stats *),
+> (struct ath12k_rx_desc_info *) or (struct hal_tx_msdu_ext_desc *).
+> Change the prototype to remove the local variable.
+> 
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+> Suggested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/ralink/rt2x00/rt2800lib.c | 3 ---
- 1 file changed, 3 deletions(-)
+This added new warnings:
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
-index e65cc00fa17c..fe11fa4917ac 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
-@@ -9700,9 +9700,6 @@ static void rt2800_loft_iq_calibration(struct rt2x00_dev *rt2x00dev)
- 
- 				rt2x00_dbg(rt2x00dev, "Used VGA %d %x\n", vga_gain[ch_idx],
- 					   rfvga_gain_table[vga_gain[ch_idx]]);
--
--				if (vga_gain[ch_idx] < 0)
--					vga_gain[ch_idx] = 0;
- 			}
- 
- 			rfvalue = rfvga_gain_table[vga_gain[ch_idx]];
+drivers/net/wireless/ath/ath12k/dp_mon.c:25: line length of 92 exceeds 90 columns
+drivers/net/wireless/ath/ath12k/dp_mon.c:26: line length of 95 exceeds 90 columns
+
+I fixed them in the pending branch by renaming ppdu_end_user to stats and
+moving rx_user_status to it's own line:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=5c0910fdf1d800f1aeb8ab3e860e61bebec0091b
+
+No need to resend because of this.
+
 -- 
-2.39.2
+https://patchwork.kernel.org/project/linux-wireless/patch/20230919045142.524226-1-yunchuan@nfschina.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
