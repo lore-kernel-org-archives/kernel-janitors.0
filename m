@@ -2,83 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDE8C04FF1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Sep 2023 19:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BBBCE79CC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Sep 2023 17:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjITTa3 (ORCPT
+        id S229506AbjIURKz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Sep 2023 15:30:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
+        Thu, 21 Sep 2023 13:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbjITTaV (ORCPT
+        with ESMTP id S230502AbjIURKD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Sep 2023 15:30:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC59118F;
-        Wed, 20 Sep 2023 12:29:51 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38KJOsab031106;
-        Wed, 20 Sep 2023 19:29:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=f9M2cPom+8uzIHRKEFk/J7faMo4xsq8DtVTD+om7VMw=;
- b=Zl+3OEBi73ct+/2c+QwcHcaixTS4klPhGJjhkH87k8pVAJWI9xtX3977xVpH5Mn1uMIS
- vc14a/phGyPTNSJ2JCdF0HRsP7GODaUc9CCnk5fHYPqiqpmfTNtqXpX3n9VsMCaEjHto
- DhPVmdArgchTFFYgkxf2MNgTh4tjFzeY3hN5y8Lb3Ip/6DsagJePOM8pHqAFZRhd/EZ1
- efNP0RwB5jgDpUiTLsmaVpffljIRasrSGzE5rgbzggxj51T7FBfDRK0a5EGUEz0ArcM3
- WawOlYa1TpD9FQqcCaqda0TJ1k7vmPBecsyXtmoWnqpOySGdgLXxttjv9hut2z8scQyN 7Q== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t7qujj376-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Sep 2023 19:29:41 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38KJTeSF024325
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Sep 2023 19:29:40 GMT
-Received: from [10.48.245.144] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 20 Sep
- 2023 12:29:40 -0700
-Message-ID: <47c0e19e-5f79-4b91-8110-9df835434cfd@quicinc.com>
-Date:   Wed, 20 Sep 2023 12:29:39 -0700
+        Thu, 21 Sep 2023 13:10:03 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7863C7693;
+        Thu, 21 Sep 2023 10:05:26 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Rrqvj0M5wz4xPc;
+        Thu, 21 Sep 2023 19:33:21 +1000 (AEST)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     alsa-devel@alsa-project.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-mmc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-media@vger.kernel.org
+In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH 00/11] add missing of_node_put
+Message-Id: <169528860030.876432.17353767421208248949.b4-ty@ellerman.id.au>
+Date:   Thu, 21 Sep 2023 19:30:00 +1000
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 wireless-next 8/9] wifi: ath11k: remove unnecessary
- (void*) conversions
-Content-Language: en-US
-To:     Wu Yunchuan <yunchuan@nfschina.com>, <kvalo@kernel.org>
-CC:     <ath11k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20230919045150.524304-1-yunchuan@nfschina.com>
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20230919045150.524304-1-yunchuan@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vCCQPVBNwDbx0ZSqzURi7wLIjz9qGuIt
-X-Proofpoint-ORIG-GUID: vCCQPVBNwDbx0ZSqzURi7wLIjz9qGuIt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-20_09,2023-09-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=668
- impostorscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309200161
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/18/2023 9:51 PM, Wu Yunchuan wrote:
-> No need cast (void *) to (struct ath11k_base *),
-> struct hal_rx_msdu_link *), (struct ath11k_buffer_addr *) or
-> other types.
+On Thu, 07 Sep 2023 11:55:10 +0200, Julia Lawall wrote:
+> Add of_node_put on a break out of an of_node loop.
 > 
-> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
+Patches 3 and 6 applied to powerpc/next.
+
+[03/11] powerpc/powermac: add missing of_node_put
+        https://git.kernel.org/powerpc/c/a59e9eb25216eb1dc99e14fc31b76aa648d79540
+[06/11] powerpc/kexec_file: add missing of_node_put
+        https://git.kernel.org/powerpc/c/06b627c1236216ac1239c5e1afcc75359af3fb72
+
+cheers
