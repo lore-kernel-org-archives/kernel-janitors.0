@@ -2,61 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BBBCE79CC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Sep 2023 17:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994FBE7D0A2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Sep 2023 18:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229506AbjIURKz (ORCPT
+        id S230179AbjIUSPf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
+        Thu, 21 Sep 2023 14:15:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230502AbjIURKD (ORCPT
+        with ESMTP id S230062AbjIUSPK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:10:03 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7863C7693;
-        Thu, 21 Sep 2023 10:05:26 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Rrqvj0M5wz4xPc;
-        Thu, 21 Sep 2023 19:33:21 +1000 (AEST)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     alsa-devel@alsa-project.org, Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-mmc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-media@vger.kernel.org
-In-Reply-To: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-References: <20230907095521.14053-1-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH 00/11] add missing of_node_put
-Message-Id: <169528860030.876432.17353767421208248949.b4-ty@ellerman.id.au>
-Date:   Thu, 21 Sep 2023 19:30:00 +1000
-MIME-Version: 1.0
+        Thu, 21 Sep 2023 14:15:10 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3103583F43;
+        Thu, 21 Sep 2023 10:37:14 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8419C116AE;
+        Thu, 21 Sep 2023 08:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695283729;
+        bh=nJaYB8uCoRYXDXO2rEMYKSZU2AEtKUxZKZjNBbP5yx0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=q7U3o4KOKAt6ddMSu4iMCNpdJ0lygN6aVaZkka9VdPOMVGPBdrl62qR1kwBKNhfDJ
+         rB9wXuFzUj0pBLmQzotRCXgD5wuDo7nqMxV9t4ex7J7BLKUVp2E2AxC3S7vMsa/3fU
+         +aDkez0WG6bHzw+WEl/8GLIMqY4HW4l6+81YgSDgbnuFXhHySdvf3UATYPqf4OCStT
+         J/rRvQEWibsp6/+zk9tBe2cCCg0CRiAN9h2lrStdBz3H7fGjuzFMu7fVJyie3MxG4R
+         tBz/5MAT6Bs6rLxi9q2+OC7oTPAh3N7+CkZs7M8fTKi9G6L+Gf3NRuvnxFlmnCsq9e
+         iCZdtvr/8coFQ==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 wireless-next 1/9] wifi: ar5523: Remove unnecessary
+ (void*)
+ conversions
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230919044906.523189-1-yunchuan@nfschina.com>
+References: <20230919044906.523189-1-yunchuan@nfschina.com>
+To:     Wu Yunchuan <yunchuan@nfschina.com>
+Cc:     syoshida@redhat.com, johannes.berg@intel.com,
+        alexander@wetzel-home.de, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wu Yunchuan <yunchuan@nfschina.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <169528372582.1539628.14233908546139336293.kvalo@kernel.org>
+Date:   Thu, 21 Sep 2023 08:08:47 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 07 Sep 2023 11:55:10 +0200, Julia Lawall wrote:
-> Add of_node_put on a break out of an of_node loop.
+Wu Yunchuan <yunchuan@nfschina.com> wrote:
+
+> No need cast (void*) to (struct ar5523_cmd_hdr *).
 > 
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Patches 3 and 6 applied to powerpc/next.
+6 patches applied to ath-next branch of ath.git, thanks.
 
-[03/11] powerpc/powermac: add missing of_node_put
-        https://git.kernel.org/powerpc/c/a59e9eb25216eb1dc99e14fc31b76aa648d79540
-[06/11] powerpc/kexec_file: add missing of_node_put
-        https://git.kernel.org/powerpc/c/06b627c1236216ac1239c5e1afcc75359af3fb72
+37c113e94fa0 wifi: ar5523: Remove unnecessary (void*) conversions
+9705103f8e8e wifi: wcn36xx: remove unnecessary (void*) conversions
+4bd0f7d0f311 wifi: ath5k: remove unnecessary (void*) conversions
+779163fa1a37 wifi: ath6kl: remove unnecessary (void*) conversions
+16e972d5767a wifi: ath10k: Remove unnecessary (void*) conversions
+e5e8b38f0c05 wifi: ath12k: Remove unnecessary (void*) conversions
 
-cheers
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20230919044906.523189-1-yunchuan@nfschina.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
