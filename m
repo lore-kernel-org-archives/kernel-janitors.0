@@ -2,84 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB14E7D0A4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Sep 2023 18:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12894E7D0A2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Sep 2023 20:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230403AbjIUS7F convert rfc822-to-8bit (ORCPT
+        id S231617AbjIUUeA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Sep 2023 14:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37804 "EHLO
+        Thu, 21 Sep 2023 16:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230252AbjIUS6w (ORCPT
+        with ESMTP id S231679AbjIUUd2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Sep 2023 14:58:52 -0400
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD37914FD;
-        Thu, 21 Sep 2023 11:52:48 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3ae0df6494bso68213b6e.1;
-        Thu, 21 Sep 2023 11:52:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695322368; x=1695927168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S368RYIxIE+vfbv4FtAkq0lxjLR2QQXx+z91SUfGEkA=;
-        b=JLHc4XAtJy9L4auLTrVerezSNqQGMotveQFaLVrVIkCWsNuUT9Dhi9zcff8ES3/K49
-         f0CGvKT95ZsWgQU3QPMXF5WZsqrg0h4sBx0geT5N96UD9MLu/wgB9lRdECYgy8/LWxEr
-         K+xrD+AWv3KK2WPYQBy5Fd56Gcmi+ZfTkXHNAD7YhywxOpmEGUIjF/wE2GrquXX2Gjdb
-         XRg41Rksp/mHmGguN39HNxVsy4zFsxRdgQ3pWeAiMCqHSY7NWtNi7d2xHpjGGwNCXRF1
-         fmPPOCiABCE16Aob0M29RYT+ymHN2DscukHI0PWXq0w5CUCv36Ndhj60SvfL9RpBBNMc
-         x7Dg==
-X-Gm-Message-State: AOJu0YxQ17+zMsY3l25fsEefcthm1FwQNR35G4hguRY6oarl5hn+DAwP
-        Fc6kcmHnVdPr7+O5ZanR/BTdDwbb0z61a2KlVfnWhksj
-X-Google-Smtp-Source: AGHT+IEn8NLYB0nu5g45X7aTiJystRGnaPlbDekU48JgG/maT3448p4/tZ9WQhxai3uevSrP3pklcUd3uC3Bbhpwqow=
-X-Received: by 2002:a05:6808:1496:b0:3ab:8ae5:e7c6 with SMTP id
- e22-20020a056808149600b003ab8ae5e7c6mr7272698oiw.1.1695322367835; Thu, 21 Sep
- 2023 11:52:47 -0700 (PDT)
+        Thu, 21 Sep 2023 16:33:28 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563FB8611B;
+        Thu, 21 Sep 2023 10:37:56 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D48E3C4E755;
+        Thu, 21 Sep 2023 14:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695306022;
+        bh=WBpt0UJgzXAKDLTjwPscCIHs+G2g2Gy4mXrkc6WDOS0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=lHqMUpxmk5mzil1T6dqxSSOJlWKcVRpUK8QUxua1r0kiQ+SZc1wl4wKlv4nKHq0ck
+         c+6j+wOlgtH5dD9c/nseoxc8LU3h/yDzzHyG8TmLYpRXe5MxrtODaM0/0aBMjNHgpY
+         lBo3J3B/3sOr6x74f/G3NWvaeycU2wBMt6JKqe7m3vPSxKaqCJrezzQETdGAmNNAb8
+         J0eH5q3okKfdo1vzxaDBmS86uJIExByXI/0/uW9V3qB+YXARn4Sj8e+m8+iFTS+Atd
+         ZOLUheqv97C7IAytIG+GQeyWh2beqrNv+YOfAV0sozERVbsQvPhyANp6/3LFcB5hnj
+         tcBqePEeoLO6g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BA84DC04DD9;
+        Thu, 21 Sep 2023 14:20:22 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20230831073456.1713093-1-suhui@nfschina.com>
-In-Reply-To: <20230831073456.1713093-1-suhui@nfschina.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 21 Sep 2023 20:52:37 +0200
-Message-ID: <CAJZ5v0gH6XF1tD7=8O1Qb8OA2U-8MOS7EiLUUN-TBOo69+qQhg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: OSL: add __printf format attribute to acpi_os_vprintf
-To:     Su Hui <suhui@nfschina.com>
-Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: dsa: sja1105: make read-only const arrays static
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169530602276.5007.573256202106314126.git-patchwork-notify@kernel.org>
+Date:   Thu, 21 Sep 2023 14:20:22 +0000
+References: <20230919093606.24446-1-colin.i.king@gmail.com>
+In-Reply-To: <20230919093606.24446-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     olteanv@gmail.com, andrew@lunn.ch, f.fainelli@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 9:35 AM Su Hui <suhui@nfschina.com> wrote:
->
-> With gcc and W=1 option to compile kernel, warning happends:
->
-> drivers/acpi/osl.c:156:2: error:
-> function ‘acpi_os_vprintf’ might be a candidate for ‘gnu_printf’
-> format attribute [-Werror=suggest-attribute=format].
->
-> Allow the compiler to recognize and check format strings is safer.
->
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/acpi/osl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> index f725813d0cce..357f1325485d 100644
-> --- a/drivers/acpi/osl.c
-> +++ b/drivers/acpi/osl.c
-> @@ -149,7 +149,7 @@ void acpi_os_printf(const char *fmt, ...)
->  }
->  EXPORT_SYMBOL(acpi_os_printf);
->
-> -void acpi_os_vprintf(const char *fmt, va_list args)
-> +void __printf(1, 0) acpi_os_vprintf(const char *fmt, va_list args)
->  {
->         static char buffer[512];
->
-> --
+Hello:
 
-Applied (with some subject and changelog edits) as 6.7 material, thanks!
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue, 19 Sep 2023 10:36:06 +0100 you wrote:
+> Don't populate read-only const arrays on the stack, instead make them
+> static.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/dsa/sja1105/sja1105_clocking.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+
+Here is the summary with links:
+  - [next] net: dsa: sja1105: make read-only const arrays static
+    https://git.kernel.org/netdev/net-next/c/f30e5323a188
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
