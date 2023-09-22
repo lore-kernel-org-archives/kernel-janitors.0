@@ -2,50 +2,52 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A7CCD4848
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 17:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5443FCD4859
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 19:27:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233151AbjIVRcR (ORCPT
+        id S233893AbjIVT1j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Sep 2023 13:32:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
+        Fri, 22 Sep 2023 15:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231687AbjIVRcC (ORCPT
+        with ESMTP id S233785AbjIVT1i (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Sep 2023 13:32:02 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F5DF1
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 10:31:22 -0700 (PDT)
+        Fri, 22 Sep 2023 15:27:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8573AA3
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 12:27:30 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id jjzlq1mvsWkeLjjztquw11; Fri, 22 Sep 2023 19:31:21 +0200
+        id jloFqD9PsGlzojloFq0RyT; Fri, 22 Sep 2023 21:27:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695403881;
-        bh=6Mdh92zSNjb03Q7lpVvrUXLMKkbkfsGWVKmrcZV58LM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AZd/C7jzdQa8ngS7YatO0pIUnC9sf4kMD7wM3+F9BD1uFMFkcWVNsYh0f1LIt9D4Z
-         joUYrPlswQyOQV56ZVyVwIERfHNwU4fUfhCWHUl1I4/edi36ISh9wFUgkJ0GtrLyBp
-         3FDS/eM5ItGXeXr8HMPwL62+CNLbog2c6azapzDX0SmDSl8PX+M7BGGN65X+IKEP5o
-         gVQXSRuscfpeSnZBt0m7/rXpUGJpnqcwNF/bmlY0sbfTPWvOWj7+UFT5J57uyOUUcP
-         I29cFGtpQWeE+fED1ZTviktVnCGi/ibU1bM3OU9NSl7dzla5FS0LcPWLh7ntXpA+4t
-         hzxGrCDr3kPzw==
+        s=t20230301; t=1695410848;
+        bh=XEqKkQdd+1AGqY7DppYqYg8hkwbZVqfTt1fDBwsytHo=;
+        h=From:To:Cc:Subject:Date;
+        b=tzuTLQNT2FcvHWUhvK7u8I5xvd2KA5IRJCU1xjcCBN4l14vbvTpn2YO5G3N99N/iJ
+         hBcGEeW26CUo24OMz22rm7R7kHw6+L9UiNn9p1RihPMY9pIFn50z7GsjgWYTCKf8hq
+         Xk2ml88ep4HJsD9wm1TI+fpSCN3ITNY6nXlOcQvmGLuQBji6qGheyUzJs25Bc9c+rP
+         6a61QFX1qkWHe5OzhUMSVPdemOGVORUV8YmY6sHZrkLKy+lnBZ72S5fJe4/UxuG34e
+         p6B4dixT6ScxQcx+gFHVwUxGEovC9xubtfVh4LnikubTrm4NFY/d7Plxm0r5/+1EwQ
+         Jm27Pr7yM5EWQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 22 Sep 2023 19:31:21 +0200
+X-ME-Date: Fri, 22 Sep 2023 21:27:28 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Alexander Aring <aahringo@redhat.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lijo Lazar <lijo.lazar@amd.com>,
+        Mario Limonciello <mario.limonciello@amd.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        gfs2@lists.linux.dev
-Subject: [PATCH 2/3] fs: dlm: Fix the size of a buffer in dlm_create_debug_file()
-Date:   Fri, 22 Sep 2023 19:31:09 +0200
-Message-Id: <6083c5d6e7e4eb567bf6f5cbb5bdf6b0286cee45.1695403360.git.christophe.jaillet@wanadoo.fr>
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/amd: Fix the size of a buffer in amdgpu_vcn_idle_work_handler()
+Date:   Fri, 22 Sep 2023 21:27:25 +0200
+Message-Id: <d8a9cda0c4c391458ddd63d1be88f2a757f6a5d0.1695410820.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1695403360.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1695403360.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,47 +55,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-8 is not the maximum size of the suffix used when creating debugfs files.
+In order to be sure that fw_name is not truncated, this buffer should be
+at least 41 bytes long.
 
-Let the compiler compute the correct size, and only give a hint about the
-longest possible string that is used.
+Let the compiler compute the correct length by itself.
 
 When building with W=1, this fixes the following warnings:
 
-  fs/dlm/debug_fs.c: In function ‘dlm_create_debug_file’:
-  fs/dlm/debug_fs.c:1020:58: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
-   1020 |         snprintf(name, DLM_LOCKSPACE_LEN + 8, "%s_waiters", ls->ls_name);
+  drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c: In function ‘amdgpu_vcn_early_init’:
+  drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c:95:58: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
+     95 |         snprintf(fw_name, sizeof(fw_name), "amdgpu/%s.bin", ucode_prefix);
         |                                                          ^
-  fs/dlm/debug_fs.c:1020:9: note: ‘snprintf’ output between 9 and 73 bytes into a destination of size 72
-   1020 |         snprintf(name, DLM_LOCKSPACE_LEN + 8, "%s_waiters", ls->ls_name);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  fs/dlm/debug_fs.c:1031:50: error: ‘_queued_asts’ directive output may be truncated writing 12 bytes into a region of size between 8 and 72 [-Werror=format-truncation=]
-   1031 |         snprintf(name, DLM_LOCKSPACE_LEN + 8, "%s_queued_asts", ls->ls_name);
-        |                                                  ^~~~~~~~~~~~
-  fs/dlm/debug_fs.c:1031:9: note: ‘snprintf’ output between 13 and 77 bytes into a destination of size 72
-   1031 |         snprintf(name, DLM_LOCKSPACE_LEN + 8, "%s_queued_asts", ls->ls_name);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c:95:9: note: ‘snprintf’ output between 12 and 41 bytes into a destination of size 40
+     95 |         snprintf(fw_name, sizeof(fw_name), "amdgpu/%s.bin", ucode_prefix);
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: 541adb0d4d10b ("fs: dlm: debugfs for queued callbacks")
+Fixes: 69939009bde7 ("drm/amd: Load VCN microcode during early_init")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/dlm/debug_fs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/dlm/debug_fs.c b/fs/dlm/debug_fs.c
-index e9726c6cbdf2..c93359ceaae6 100644
---- a/fs/dlm/debug_fs.c
-+++ b/fs/dlm/debug_fs.c
-@@ -973,7 +973,8 @@ void dlm_delete_debug_comms_file(void *ctx)
- 
- void dlm_create_debug_file(struct dlm_ls *ls)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index c93f3a4c0e31..f8cd55a0d1f0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -88,7 +88,7 @@ static void amdgpu_vcn_idle_work_handler(struct work_struct *work);
+ int amdgpu_vcn_early_init(struct amdgpu_device *adev)
  {
--	char name[DLM_LOCKSPACE_LEN + 8];
-+	/* Reserve enough space for the longest file name */
-+	char name[DLM_LOCKSPACE_LEN + sizeof("_queued_asts")];
+ 	char ucode_prefix[30];
+-	char fw_name[40];
++	char fw_name[sizeof(ucode_prefix) + sizeof("amdgpu/.bin") - 1];
+ 	int r;
  
- 	/* format 1 */
- 
+ 	amdgpu_ucode_ip_version_decode(adev, UVD_HWIP, ucode_prefix, sizeof(ucode_prefix));
 -- 
 2.34.1
 
