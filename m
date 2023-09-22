@@ -2,137 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25960E7D0BC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 01:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FB0CD4846
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 16:47:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjIVBeK (ORCPT
+        id S232158AbjIVQrH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Sep 2023 21:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56572 "EHLO
+        Fri, 22 Sep 2023 12:47:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbjIVBeJ (ORCPT
+        with ESMTP id S230254AbjIVQrG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Sep 2023 21:34:09 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id AD96DCF;
-        Thu, 21 Sep 2023 18:34:02 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id AEF146031B0B7;
-        Fri, 22 Sep 2023 09:33:53 +0800 (CST)
-Message-ID: <902e29df-785c-b194-44a9-72d1691813dd@nfschina.com>
-Date:   Fri, 22 Sep 2023 09:33:52 +0800
+        Fri, 22 Sep 2023 12:47:06 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7919519A
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 09:46:59 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id jjIsq2ZPzvU2mjjIsqGgWO; Fri, 22 Sep 2023 18:46:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1695401216;
+        bh=Q1oYEVgCzB2BEas6VVucG5Z6yGKKhY2zMrab8TyT8H8=;
+        h=From:To:Cc:Subject:Date;
+        b=X15GIoiohLjAaHucwxuvze1L032YvbXPA4L4dzmux09BBwsFP2Ih1ehfM7HnotQCS
+         fZZNerdTtHIAwQmvjZrHjpRZj2B3yUn4clkKn33w9teMEeMBffD6w6EXNnkSpdP5tk
+         JENDrzspr8UCGW8fAVJolqctQIqs6cpJ17ek2vYUQ/Y3WBNrfaDDEyzArF26AExsvo
+         IJ3QSohNW5/XEtwqoTiCdaZtM+eyVFgikxibEdKgKs/oyqmi3YcI/KKu0LMl3/7bOn
+         e+6lXYqjhEchzYgjZUMYzHOLo7dMIY+R7jA/tYJKD52g1iFq6RMw2mtBLzwNZ729y8
+         xHV6Dh5CQTSGQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 22 Sep 2023 18:46:56 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/kgdb: Fix a kerneldoc issue when build with W=1
+Date:   Fri, 22 Sep 2023 18:46:49 +0200
+Message-Id: <aad659537c1d4ebd86912a6f0be458676c8e69af.1695401178.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary (void*)
- conversions
-Content-Language: en-US
-To:     Christian Lamparter <chunkeey@gmail.com>, kvalo@kernel.org
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-X-MD-Sfrom: yunchuan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   yunchuan <yunchuan@nfschina.com>
-In-Reply-To: <e544d992-cddd-4ade-81ef-2eed4f3681e8@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi, Christian
+When compiled with W=1, the following warning is generated:
+  arch/x86/kernel/kgdb.c:698: warning: Cannot understand  *
+   on line 698 - I thought it was a doc line
 
-On 2023/9/21 03:00, Christian Lamparter wrote:
+Remove the corresponding empty comment line to fix the warning.
 
-> On 9/19/23 06:49, Wu Yunchuan wrote:
->> No need cast (void *) to (struct ar9170 *), (u8 *) or (void*).
->
-> hmm, your mail went into the spam folder. Good thing I checked.
->
-Sometimes mail didn't work :(.
-> From what I remember: The reason why these casts were added in
-> carl9170 was because of compiler warnings/complaints.
-> Current gcc compilers should be OK (given that the kernel-bot
-> didn't react, or went your Mail to their spam-folder as well?)
-> but have you checked these older versions?
->
-My gcc version is 10.2.1. And this seems work when gcc version is 
-5.4(ubuntu 16.04) or 4.84(Ubuntu 14.04）.
-I can't  compile Linux under Ubuntu 16.04 because of some compatibility 
-problems.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/x86/kernel/kgdb.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-So I test a simple demo like this:
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 3a43a2dee658..9c9faa1634fb 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -695,7 +695,6 @@ void kgdb_arch_exit(void)
+ }
+ 
+ /**
+- *
+  *	kgdb_skipexception - Bail out of KGDB when we've been triggered.
+  *	@exception: Exception vector number
+  *	@regs: Current &struct pt_regs.
+-- 
+2.34.1
 
-
-void *p_void = NULL;
-long var_long = 5;
-long *p_long = &var_long;
-p_void = p_long;
-
-This works fine.
-
-> (In 6.5.0 Documentation/admin-guide/README.rst states that one
-> should have at least gcc 5.1 - could you run with those and
-> see if C=2 W=1 passes?)
-Oh, I want to do this, but I can't compile or install gcc 5.1 in my 
-computer.
-There are some compatibility problems. I hope I can deal this problem 
-next week.
-
-Wu Yunchan
-
->
-> Regards,
-> Christian
->
->> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
->> ---
->>   drivers/net/wireless/ath/carl9170/usb.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/wireless/ath/carl9170/usb.c 
->> b/drivers/net/wireless/ath/carl9170/usb.c
->> index e4eb666c6eea..c4edf8355941 100644
->> --- a/drivers/net/wireless/ath/carl9170/usb.c
->> +++ b/drivers/net/wireless/ath/carl9170/usb.c
->> @@ -178,7 +178,7 @@ static void carl9170_usb_tx_data_complete(struct 
->> urb *urb)
->>       switch (urb->status) {
->>       /* everything is fine */
->>       case 0:
->> -        carl9170_tx_callback(ar, (void *)urb->context);
->> +        carl9170_tx_callback(ar, urb->context);
->>           break;
->>         /* disconnect */
->> @@ -369,7 +369,7 @@ void carl9170_usb_handle_tx_err(struct ar9170 *ar)
->>       struct urb *urb;
->>         while ((urb = usb_get_from_anchor(&ar->tx_err))) {
->> -        struct sk_buff *skb = (void *)urb->context;
->> +        struct sk_buff *skb = urb->context;
->>             carl9170_tx_drop(ar, skb);
->>           carl9170_tx_callback(ar, skb);
->> @@ -397,7 +397,7 @@ static void carl9170_usb_tasklet(struct 
->> tasklet_struct *t)
->>     static void carl9170_usb_rx_complete(struct urb *urb)
->>   {
->> -    struct ar9170 *ar = (struct ar9170 *)urb->context;
->> +    struct ar9170 *ar = urb->context;
->>       int err;
->>         if (WARN_ON_ONCE(!ar))
->> @@ -559,7 +559,7 @@ static int carl9170_usb_flush(struct ar9170 *ar)
->>       int ret, err = 0;
->>         while ((urb = usb_get_from_anchor(&ar->tx_wait))) {
->> -        struct sk_buff *skb = (void *)urb->context;
->> +        struct sk_buff *skb = urb->context;
->>           carl9170_tx_drop(ar, skb);
->>           carl9170_tx_callback(ar, skb);
->>           usb_free_urb(urb);
->> @@ -668,7 +668,7 @@ int carl9170_exec_cmd(struct ar9170 *ar, const 
->> enum carl9170_cmd_oids cmd,
->>           memcpy(ar->cmd.data, payload, plen);
->>         spin_lock_bh(&ar->cmd_lock);
->> -    ar->readbuf = (u8 *)out;
->> +    ar->readbuf = out;
->>       ar->readlen = outlen;
->>       spin_unlock_bh(&ar->cmd_lock);
->
