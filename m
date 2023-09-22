@@ -2,77 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FB0CD4846
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 16:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE93CCD4846
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Sep 2023 17:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232158AbjIVQrH (ORCPT
+        id S232464AbjIVRcO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Sep 2023 12:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59990 "EHLO
+        Fri, 22 Sep 2023 13:32:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbjIVQrG (ORCPT
+        with ESMTP id S229541AbjIVRcA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Sep 2023 12:47:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7919519A
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 09:46:59 -0700 (PDT)
+        Fri, 22 Sep 2023 13:32:00 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6851EC6
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 10:31:15 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id jjIsq2ZPzvU2mjjIsqGgWO; Fri, 22 Sep 2023 18:46:56 +0200
+        id jjzlq1mvsWkeLjjzlquvzJ; Fri, 22 Sep 2023 19:31:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695401216;
-        bh=Q1oYEVgCzB2BEas6VVucG5Z6yGKKhY2zMrab8TyT8H8=;
+        s=t20230301; t=1695403873;
+        bh=0c+1nrtaYzzyJr/TMUP01Cfy/oTbrxiF1JN1eoAupD0=;
         h=From:To:Cc:Subject:Date;
-        b=X15GIoiohLjAaHucwxuvze1L032YvbXPA4L4dzmux09BBwsFP2Ih1ehfM7HnotQCS
-         fZZNerdTtHIAwQmvjZrHjpRZj2B3yUn4clkKn33w9teMEeMBffD6w6EXNnkSpdP5tk
-         JENDrzspr8UCGW8fAVJolqctQIqs6cpJ17ek2vYUQ/Y3WBNrfaDDEyzArF26AExsvo
-         IJ3QSohNW5/XEtwqoTiCdaZtM+eyVFgikxibEdKgKs/oyqmi3YcI/KKu0LMl3/7bOn
-         e+6lXYqjhEchzYgjZUMYzHOLo7dMIY+R7jA/tYJKD52g1iFq6RMw2mtBLzwNZ729y8
-         xHV6Dh5CQTSGQ==
+        b=FoJEE5rScCw656R799hUGXQbCc58OWjIa5E8OZvqmu6yTdTIQQhNJUyZKtGbJahLj
+         uGzKNhw2pvojdCk1iB0lsqaf59t160v76sLLD7JIoDichUPuLplCYAc9iTMSgfBkhk
+         VXxnBjUqMaNNu5BH75vVfaovAz9m5EAS9EDxpJ3h3GZr4IthvKlZpSzuD6SL9FLbRn
+         n+T3HtE0AwUzD56cY/K5qxOY7cUCwwgz9Ij7yqJECG65djgye7BdOXRMQIChjXrZ/4
+         p1aGiDCGlFekZW3M0xGCc8cTEh6Cfh97Daz20o2ZdOqwBjf/JRaWH8whK34h2tqYnC
+         2zwEcPXPMRB6g==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 22 Sep 2023 18:46:56 +0200
+X-ME-Date: Fri, 22 Sep 2023 19:31:13 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/kgdb: Fix a kerneldoc issue when build with W=1
-Date:   Fri, 22 Sep 2023 18:46:49 +0200
-Message-Id: <aad659537c1d4ebd86912a6f0be458676c8e69af.1695401178.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] fs: dlm: Fix some issues related to a buffer in dlm_create_debug_file()
+Date:   Fri, 22 Sep 2023 19:31:07 +0200
+Message-Id: <cover.1695403360.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When compiled with W=1, the following warning is generated:
-  arch/x86/kernel/kgdb.c:698: warning: Cannot understand  *
-   on line 698 - I thought it was a doc line
+The goal of this serie is to remove a warning when building with W=1.
+(details in patch 2)
 
-Remove the corresponding empty comment line to fix the warning.
+Patch 1 is a preparation step. It is a no-op. The generated code is the same.
+Patch 2 is the real fix.
+Patch 3 is an additionnal clean-up.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/x86/kernel/kgdb.c | 1 -
- 1 file changed, 1 deletion(-)
+Christophe JAILLET (3):
+  fs: dlm: Simplify buffer size computation in dlm_create_debug_file()
+  fs: dlm: Fix the size of a buffer in dlm_create_debug_file()
+  fs: dlm: Remove some useless memset()
 
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 3a43a2dee658..9c9faa1634fb 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -695,7 +695,6 @@ void kgdb_arch_exit(void)
- }
- 
- /**
-- *
-  *	kgdb_skipexception - Bail out of KGDB when we've been triggered.
-  *	@exception: Exception vector number
-  *	@regs: Current &struct pt_regs.
+ fs/dlm/debug_fs.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
 -- 
 2.34.1
 
