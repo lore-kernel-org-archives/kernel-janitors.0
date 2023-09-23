@@ -2,48 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F1BCE7A8C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 07:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B01CE7A88
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 10:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbjIWHPx (ORCPT
+        id S230458AbjIWKyi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Sep 2023 03:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47144 "EHLO
+        Sat, 23 Sep 2023 06:54:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbjIWHPw (ORCPT
+        with ESMTP id S229903AbjIWKyi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Sep 2023 03:15:52 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D11B199
-        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 00:15:42 -0700 (PDT)
+        Sat, 23 Sep 2023 06:54:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9F0194
+        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 03:54:28 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id jwrbqrekTcLIgjwrbqAzVs; Sat, 23 Sep 2023 09:15:40 +0200
+        id k0HKqXroxN7Qtk0HKqgwxU; Sat, 23 Sep 2023 12:54:27 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695453340;
-        bh=Pwbdp/ALGy4X1W3d5bb3j8VmlzglmaHLWQ82s+zIwjM=;
+        s=t20230301; t=1695466467;
+        bh=o6dXl6wZ2p8h+DtX0RSVtic+N8fFWJdpYZ/8V5pO/+o=;
         h=From:To:Cc:Subject:Date;
-        b=bsXnvC+OsPEQQYIP6GC2EcGJcwME9UMZuNil/vQx6pXE8Vz3SIcCBxlJuXLeu8Uqj
-         uw+ErlMH6E+a7lSNvdRjPzzE8qGDtwKYul1uni7zIapmNguUaCcOnjAoM5+IY9xYgk
-         pwJujQ1DJpxrWbwmvXnz170LInVGPwBPVs2YfLvrHLnfgD+EFf2Flv33TkyBxC6yUl
-         2DnTgiOfGDV3j/I0pT0DjAWDYibH/W0bTkzpCCm9TDUOx0v14Vz6hybqdK+f3Se6E1
-         Dd+foaEyIbawZ71lt4+4d+Rwn6QLFbLV7ZLAanJWFfSSoFz1oXb7xYNqkYv4dlay80
-         FyTjIFWMxs7aA==
+        b=mcQykgLvv5hKI2mZozZzRXVLylMgYxnioHBSXfRif9ZDjE83Z/OAuwY+RqsnqOzpM
+         Q68eBhNpcMD3XG+M/8YAjS9naOqitumOm5q4mvb78YMGynFQTHdaaExjWFnVBxO9Gj
+         SQr626Hk9TehEbEinQ7CSVJbmBhL6sV93okVDGlKXVcsLRW52qDyde59c5zzkBf79l
+         pXA+8Np6xLdKu+z9sgMh91E25QQ3z0U1PZicqI15p26rDfiqUhPUWBG7HYO3WMj8zw
+         qSF5HPBSe1BCEX3yMey2QOBg8RkJzalbPZvVlI4vWGORh2jOhE/qGwzIFyAH5su7S7
+         ybkC0BMuGIQJA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 23 Sep 2023 09:15:40 +0200
+X-ME-Date: Sat, 23 Sep 2023 12:54:27 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Bryan Wu <bryan.wu@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jamie Iles <jamie@jamieiles.com>
+To:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Dooks <ben@simtec.co.uk>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH] leds: trigger: ledtrig-cpu:: Fix a warning when compiling with W=1
-Date:   Sat, 23 Sep 2023 09:15:38 +0200
-Message-Id: <3f4be7a99933cf8566e630da54f6ab913caac432.1695453322.git.christophe.jaillet@wanadoo.fr>
+        Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org
+Subject: [PATCH] usb: dwc2: gadget: Fix a warning when compiling with W=1
+Date:   Sat, 23 Sep 2023 12:54:24 +0200
+Message-Id: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,50 +51,72 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In order to teach the compiler that 'trig->name' will never be truncated,
-we need to tell it that 'cpu' is not negative.
+In order to teach the compiler that 'hs_ep->name' will never be truncated,
+we need to tell it that 'epnum' is not negative.
+
+'epnum' comes from in a 'for' loop in dwc2_gadget_init(), starting at 0
+and ending at 255. (hsotg->num_of_eps is a char)
 
 When building with W=1, this fixes the following warnings:
 
-  drivers/leds/trigger/ledtrig-cpu.c: In function ‘ledtrig_cpu_init’:
-  drivers/leds/trigger/ledtrig-cpu.c:155:56: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 5 [-Werror=format-truncation=]
-    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
-        |                                                        ^~
-  drivers/leds/trigger/ledtrig-cpu.c:155:52: note: directive argument in the range [-2147483648, 7]
-    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
-        |                                                    ^~~~~~~
-  drivers/leds/trigger/ledtrig-cpu.c:155:17: note: ‘snprintf’ output between 5 and 15 bytes into a destination of size 8
-    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
-        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/usb/dwc2/gadget.c: In function ‘dwc2_hsotg_initep’:
+  drivers/usb/dwc2/gadget.c:4804:55: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 8 [-Werror=format-truncation=]
+   4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+        |                                                       ^~
+  drivers/usb/dwc2/gadget.c:4804:52: note: directive argument in the range [-2147483645, 255]
+   4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+        |                                                    ^~~~~~~~
+  drivers/usb/dwc2/gadget.c:4804:9: note: ‘snprintf’ output between 6 and 17 bytes into a destination of size 10
+   4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: 8f88731d052d ("led-triggers: create a trigger for CPU activity")
+Fixes: 5b7d70c6dbf2 ("USB: Gadget driver for Samsung HS/OtG block")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/trigger/ledtrig-cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Only changing:
+  -	int epnum;
+  +	unsigned int epnum;
+is enought to fix the build warning.
 
-diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
-index 8af4f9bb9cde..05848a2fecff 100644
---- a/drivers/leds/trigger/ledtrig-cpu.c
-+++ b/drivers/leds/trigger/ledtrig-cpu.c
-@@ -130,7 +130,7 @@ static int ledtrig_prepare_down_cpu(unsigned int cpu)
- 
- static int __init ledtrig_cpu_init(void)
+But changing the prototype of dwc2_hsotg_initep() and the printf() format
+as well, to make obvious that epnum is >= 0, looks more logical to me.
+---
+ drivers/usb/dwc2/gadget.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index b517a7216de2..102b2dd8113e 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -4786,8 +4786,8 @@ static const struct usb_gadget_ops dwc2_hsotg_gadget_ops = {
+  */
+ static void dwc2_hsotg_initep(struct dwc2_hsotg *hsotg,
+ 			      struct dwc2_hsotg_ep *hs_ep,
+-				       int epnum,
+-				       bool dir_in)
++			      unsigned int epnum,
++			      bool dir_in)
  {
--	int cpu;
-+	unsigned int cpu;
+ 	char *dir;
+ 
+@@ -4801,7 +4801,7 @@ static void dwc2_hsotg_initep(struct dwc2_hsotg *hsotg,
+ 	hs_ep->dir_in = dir_in;
+ 	hs_ep->index = epnum;
+ 
+-	snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
++	snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%u%s", epnum, dir);
+ 
+ 	INIT_LIST_HEAD(&hs_ep->queue);
+ 	INIT_LIST_HEAD(&hs_ep->ep.ep_list);
+@@ -4965,7 +4965,7 @@ static void dwc2_hsotg_dump(struct dwc2_hsotg *hsotg)
+ int dwc2_gadget_init(struct dwc2_hsotg *hsotg)
+ {
+ 	struct device *dev = hsotg->dev;
+-	int epnum;
++	unsigned int epnum;
  	int ret;
  
- 	/* Supports up to 9999 cpu cores */
-@@ -152,7 +152,7 @@ static int __init ledtrig_cpu_init(void)
- 		if (cpu >= 8)
- 			continue;
- 
--		snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
-+		snprintf(trig->name, MAX_NAME_LEN, "cpu%u", cpu);
- 
- 		led_trigger_register_simple(trig->name, &trig->_trig);
- 	}
+ 	/* Dump fifo information */
 -- 
 2.34.1
 
