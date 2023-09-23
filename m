@@ -2,106 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15B3CE7A89
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 11:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC07DCE7A89
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 12:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbjIWLsb (ORCPT
+        id S231487AbjIWMRU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Sep 2023 07:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
+        Sat, 23 Sep 2023 08:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230426AbjIWLsa (ORCPT
+        with ESMTP id S231343AbjIWMRT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Sep 2023 07:48:30 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F499F;
-        Sat, 23 Sep 2023 04:48:23 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38NBlxAS028604;
-        Sat, 23 Sep 2023 11:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=MbbdfnIprRaXRgZX4bukDl9QS5PDJbFVxm3H6/bcw+8=;
- b=N89AaHg/TdfpR/vPiFjH5I5JjBk2L+lVaI8b8DxPe8eQRm/1ReV+lzAsKEMK5ys+HzLk
- 6LKkMHb4AvSEhTFW70z+o/b5gJJ39pVYWCah+sSYEymv0k8Equ0qegn4Qmz8ZgphaHlX
- ax5/jB1VbxeG7JLKD6If2G9r2bIimwwzZw7eu+fAhgkLJLnlPd3VGBhIWtseTTBKEMha
- HDDnk+zlLOJG9HjoVMQf0MrzXFSChLIQmdmA8MePiArjCLjzj0hIsbSAi0QAHGGnwmsv
- P9lub+Og3taeU3rNW/BA7P5PzP/NBsUbBsyBx5cf8LMjpFi6JMEalLd0hU4A06mZbl3J 0A== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3t9qwb8yn5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 23 Sep 2023 11:48:12 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 38NBLoUr017972;
-        Sat, 23 Sep 2023 11:48:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3t9pf8n6wd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 23 Sep 2023 11:48:11 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38NBmAY5021486;
-        Sat, 23 Sep 2023 11:48:10 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3t9pf8n6w1-1;
-        Sat, 23 Sep 2023 11:48:10 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     Konrad Dybcio <konradybcio@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH next] power: supply: mm8013: Fix error code in mm8013_probe()
-Date:   Sat, 23 Sep 2023 04:48:06 -0700
-Message-ID: <20230923114807.2829188-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.41.0
+        Sat, 23 Sep 2023 08:17:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264EB197
+        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 05:17:11 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id k1ZLq0FE4ttXNk1ZLq9cSW; Sat, 23 Sep 2023 14:17:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1695471430;
+        bh=MZ+x3+dMxPzCGceJF8/93Shpse4vUvBYF6v0b3D2kfE=;
+        h=From:To:Cc:Subject:Date;
+        b=pWrkqoYWrs+z0eZtol7HHfGiyoEXhV/dOMobQxnDEhy6fd6vb/VVWl+xgiAj4FXnz
+         4PvjXGd+S2o3TMbt4Ut7bO62rSgDkrpmxKcfbTt9ZBgTg+WQ1X+cRAIwr8ZPvxx+TL
+         unF0hAolnIG5mmLcu0WkE4eqgFOYmtiwp+867RTzbgveloEchATdFmfzfB359NaQHC
+         y2nJVmMr/0cV50aDKXwfsgFzViVX8Rul99nI4gR5DjZMggg/qrfGY34L7oFPnBMrvX
+         SvRULTOQBPjgKYToaahMrfT2APagS9YohRwfVWOAZ9IrPna8uYXnvjEX6NrQaznMMa
+         +RLYynY5dib/w==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 23 Sep 2023 14:17:10 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH net-next] iavf: Avoid a memory allocation in iavf_print_link_message()
+Date:   Sat, 23 Sep 2023 14:17:05 +0200
+Message-Id: <966968bda15a7128a381b589329184dfea3e0548.1695471387.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-23_09,2023-09-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2309230097
-X-Proofpoint-GUID: Ys6HgNCpVyI69ggK3IvPX8U7Wih9dzuo
-X-Proofpoint-ORIG-GUID: Ys6HgNCpVyI69ggK3IvPX8U7Wih9dzuo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The value of ret is zero when passed to dev_error_probe(), we are passing
-zero to dev_err_probe() is a success which is incorrect.
+IAVF_MAX_SPEED_STRLEN is only 13 and 'speed' is allocated and freed within
+iavf_print_link_message().
 
-Fix this by getting the error code using PTR_ERR().
+'speed' is only used with some snprintf() and netdev_info() calls.
 
-Fixes: c75f4bf6800b ("power: supply: Introduce MM8013 fuel gauge driver")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Closes: https://lore.kernel.org/r/202309190838.eu8WS6sz-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+So there is no real use to kzalloc()/free() it. Use the stack instead.
+This saves a memory allocation.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This is based on static analysis with smatch, only compile tested.
----
- drivers/power/supply/mm8013.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/iavf/iavf_virtchnl.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/power/supply/mm8013.c b/drivers/power/supply/mm8013.c
-index ddac40ef9ae5..29fd65fe6545 100644
---- a/drivers/power/supply/mm8013.c
-+++ b/drivers/power/supply/mm8013.c
-@@ -273,8 +273,10 @@ static int mm8013_probe(struct i2c_client *client)
- 	chip->client = client;
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
+index 8ce6389b5815..980dc69d7fbe 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
++++ b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
+@@ -1389,18 +1389,14 @@ void iavf_disable_vlan_insertion_v2(struct iavf_adapter *adapter, u16 tpid)
+ static void iavf_print_link_message(struct iavf_adapter *adapter)
+ {
+ 	struct net_device *netdev = adapter->netdev;
++	char speed[IAVF_MAX_SPEED_STRLEN];
+ 	int link_speed_mbps;
+-	char *speed;
  
- 	chip->regmap = devm_regmap_init_i2c(client, &mm8013_regmap_config);
--	if (IS_ERR(chip->regmap))
-+	if (IS_ERR(chip->regmap)) {
-+		ret = PTR_ERR(chip->regmap);
- 		return dev_err_probe(dev, ret, "Couldn't initialize regmap\n");
-+	}
+ 	if (!adapter->link_up) {
+ 		netdev_info(netdev, "NIC Link is Down\n");
+ 		return;
+ 	}
  
- 	ret = mm8013_checkdevice(chip);
- 	if (ret)
+-	speed = kzalloc(IAVF_MAX_SPEED_STRLEN, GFP_KERNEL);
+-	if (!speed)
+-		return;
+-
+ 	if (ADV_LINK_SUPPORT(adapter)) {
+ 		link_speed_mbps = adapter->link_speed_mbps;
+ 		goto print_link_msg;
+@@ -1452,7 +1448,6 @@ static void iavf_print_link_message(struct iavf_adapter *adapter)
+ 	}
+ 
+ 	netdev_info(netdev, "NIC Link is Up Speed is %s Full Duplex\n", speed);
+-	kfree(speed);
+ }
+ 
+ /**
 -- 
-2.39.3
+2.34.1
 
