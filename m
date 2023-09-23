@@ -2,47 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D3BCE7A88
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 06:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F1BCE7A8C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 07:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbjIWGPf (ORCPT
+        id S230193AbjIWHPx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Sep 2023 02:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
+        Sat, 23 Sep 2023 03:15:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbjIWGPf (ORCPT
+        with ESMTP id S230013AbjIWHPw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Sep 2023 02:15:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10711A5
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 23:15:28 -0700 (PDT)
+        Sat, 23 Sep 2023 03:15:52 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D11B199
+        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 00:15:42 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id jvvKqieqFqQHijvvKqqbog; Sat, 23 Sep 2023 08:15:27 +0200
+        id jwrbqrekTcLIgjwrbqAzVs; Sat, 23 Sep 2023 09:15:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695449727;
-        bh=G7tAIoMWyx5SK/7lnnnDHZQxV+76Lbl3kc2YAXhhFds=;
+        s=t20230301; t=1695453340;
+        bh=Pwbdp/ALGy4X1W3d5bb3j8VmlzglmaHLWQ82s+zIwjM=;
         h=From:To:Cc:Subject:Date;
-        b=MGzImVvYYc5cHEX3tVkaysSdw4wuTrxD6R7sWHjIOZ2qws4JYxELVTHhdQ4eNkF+Y
-         FSRNHfwED57IwVmOLTRF9Jfe4ckoQ5aYFsB8IOx6mhkvSeTpNkEL0Qk9NpdkInRH4k
-         xL920sfyYWK6wUVTAY1hCvKm+Lx2oND0wzQM9br3tNBn0l8hmSb9WbbmPThSL6NBI8
-         6QWE3aRnarN3FP4mEBH+G6AgJZ9k6rzZGNRX3qjNowyYmX8ZyEVtqJ01UyQ/xHjVo4
-         S/UKjvIG4UCmOcp47MV3BK29U2pJvgV7P/rhm7tFO2jlJXDvNDRHdb+9oHdNdr6Hid
-         ntKvus+7XzSxQ==
+        b=bsXnvC+OsPEQQYIP6GC2EcGJcwME9UMZuNil/vQx6pXE8Vz3SIcCBxlJuXLeu8Uqj
+         uw+ErlMH6E+a7lSNvdRjPzzE8qGDtwKYul1uni7zIapmNguUaCcOnjAoM5+IY9xYgk
+         pwJujQ1DJpxrWbwmvXnz170LInVGPwBPVs2YfLvrHLnfgD+EFf2Flv33TkyBxC6yUl
+         2DnTgiOfGDV3j/I0pT0DjAWDYibH/W0bTkzpCCm9TDUOx0v14Vz6hybqdK+f3Se6E1
+         Dd+foaEyIbawZ71lt4+4d+Rwn6QLFbLV7ZLAanJWFfSSoFz1oXb7xYNqkYv4dlay80
+         FyTjIFWMxs7aA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 23 Sep 2023 08:15:27 +0200
+X-ME-Date: Sat, 23 Sep 2023 09:15:40 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Matan Barak <matanb@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Bryan Wu <bryan.wu@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Iles <jamie@jamieiles.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/cma: Fix the size of a buffer in add_port_entries()
-Date:   Sat, 23 Sep 2023 08:15:25 +0200
-Message-Id: <91395b73a64c13dfe45c3fd3b088b216ba0c9332.1695449697.git.christophe.jaillet@wanadoo.fr>
+        linux-leds@vger.kernel.org
+Subject: [PATCH] leds: trigger: ledtrig-cpu:: Fix a warning when compiling with W=1
+Date:   Sat, 23 Sep 2023 09:15:38 +0200
+Message-Id: <3f4be7a99933cf8566e630da54f6ab913caac432.1695453322.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,38 +52,50 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In order to be sure that 'buff' is never truncated, its size should be
-11, not 10.
+In order to teach the compiler that 'trig->name' will never be truncated,
+we need to tell it that 'cpu' is not negative.
 
 When building with W=1, this fixes the following warnings:
 
-  drivers/infiniband/core/cma_configfs.c: In function ‘make_cma_ports’:
-  drivers/infiniband/core/cma_configfs.c:223:57: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
-    223 |                 snprintf(port_str, sizeof(port_str), "%u", i + 1);
-        |                                                         ^
-  drivers/infiniband/core/cma_configfs.c:223:17: note: ‘snprintf’ output between 2 and 11 bytes into a destination of size 10
-    223 |                 snprintf(port_str, sizeof(port_str), "%u", i + 1);
-        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/leds/trigger/ledtrig-cpu.c: In function ‘ledtrig_cpu_init’:
+  drivers/leds/trigger/ledtrig-cpu.c:155:56: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 5 [-Werror=format-truncation=]
+    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+        |                                                        ^~
+  drivers/leds/trigger/ledtrig-cpu.c:155:52: note: directive argument in the range [-2147483648, 7]
+    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+        |                                                    ^~~~~~~
+  drivers/leds/trigger/ledtrig-cpu.c:155:17: note: ‘snprintf’ output between 5 and 15 bytes into a destination of size 8
+    155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: 045959db65c67 ("IB/cma: Add configfs for rdma_cm")
+Fixes: 8f88731d052d ("led-triggers: create a trigger for CPU activity")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/infiniband/core/cma_configfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/trigger/ledtrig-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/cma_configfs.c b/drivers/infiniband/core/cma_configfs.c
-index 7b68b3ea979f..f2fb2d8a6597 100644
---- a/drivers/infiniband/core/cma_configfs.c
-+++ b/drivers/infiniband/core/cma_configfs.c
-@@ -217,7 +217,7 @@ static int make_cma_ports(struct cma_dev_group *cma_dev_group,
- 		return -ENOMEM;
+diff --git a/drivers/leds/trigger/ledtrig-cpu.c b/drivers/leds/trigger/ledtrig-cpu.c
+index 8af4f9bb9cde..05848a2fecff 100644
+--- a/drivers/leds/trigger/ledtrig-cpu.c
++++ b/drivers/leds/trigger/ledtrig-cpu.c
+@@ -130,7 +130,7 @@ static int ledtrig_prepare_down_cpu(unsigned int cpu)
  
- 	for (i = 0; i < ports_num; i++) {
--		char port_str[10];
-+		char port_str[11];
+ static int __init ledtrig_cpu_init(void)
+ {
+-	int cpu;
++	unsigned int cpu;
+ 	int ret;
  
- 		ports[i].port_num = i + 1;
- 		snprintf(port_str, sizeof(port_str), "%u", i + 1);
+ 	/* Supports up to 9999 cpu cores */
+@@ -152,7 +152,7 @@ static int __init ledtrig_cpu_init(void)
+ 		if (cpu >= 8)
+ 			continue;
+ 
+-		snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
++		snprintf(trig->name, MAX_NAME_LEN, "cpu%u", cpu);
+ 
+ 		led_trigger_register_simple(trig->name, &trig->_trig);
+ 	}
 -- 
 2.34.1
 
