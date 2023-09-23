@@ -2,86 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DCDCE7A81
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 00:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93050CE7A8C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 05:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjIWAnZ (ORCPT
+        id S229835AbjIWF4M (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Sep 2023 20:43:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
+        Sat, 23 Sep 2023 01:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230432AbjIWAnZ (ORCPT
+        with ESMTP id S229716AbjIWF4J (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Sep 2023 20:43:25 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A1EB9;
-        Fri, 22 Sep 2023 17:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=KNRIdUf44g9Un/KxayezGTbM6ynKDPZExldCQORQEZg=; b=f4B+nslvLWKhLuYnfr8J5Ch7AW
-        eYS9hKwG1Isa3JaeORvocaeLfcrBMBM6hMcuRUKO6cmeurWYjDdbWiIHd/iU4xdv52gwXW7y3l186
-        sL4lkQteOiszPMt6SOAvamG8CDRZ2Cbi2qIuJ12OjisZwztvFXPSmjgDyRDmSNZeWu9Yjec2Ts9Ym
-        BrmnfCFAiSBw9oymFpcLFvg34XBuQspLkLcbRLv2d9CTifZXjdjgj4LoQAmRzCQHtFTGpPpyTNJo9
-        KDYrecMCUzvVhAooTnbT/tYEhHvznXfnAn6Ll+fobbIT9aT3VYVn95MUXZb3O8yNE9oUjvHMB4Qjj
-        chhWT3Hg==;
-Received: from [2601:1c2:980:9ec0::9fed]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qjqjZ-00A3SI-1E;
-        Sat, 23 Sep 2023 00:42:57 +0000
-Message-ID: <d7fa3574-6686-4044-a808-c426be18ad9d@infradead.org>
-Date:   Fri, 22 Sep 2023 17:42:56 -0700
+        Sat, 23 Sep 2023 01:56:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78A81A5
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Sep 2023 22:56:00 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id jvcTqd9qqGc65jvcTqO2V0; Sat, 23 Sep 2023 07:55:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1695448558;
+        bh=X+CtKcB78+yvu8ZZawbK0NDtaqDQpwnaiaMKGnIwB/U=;
+        h=From:To:Cc:Subject:Date;
+        b=C2HhcJ+R6sDDIHtYI2gXorhU6B3gVMn9SuoGR3X5rIh+wNYt/hPC9jn5cSqBv6Za3
+         vIomc5Wzz6nbuyiGZj1/xfCA09+GMJvzSEacyyi4ya7gK1yfbkboYwJpsZr8xqnOLR
+         qHbgNE74BI6omSY5SVeN1nk35LHdKEAlWR/SpSG33ivD5XAl/zVNuZVPGvjc53bkRE
+         Vtem4eY3t6/oM+zcOhWmlBIlU2YuxQ7pv0ThCUbyldHA+NpmB/xW/iCd8P5wzG/2sB
+         2ObQl0jD+Vs83a5Fz1BODZbAEGG3nKOxe5Yr+EK2+oJpUz6Gbv2CHQNVOtNBB38YTZ
+         uXdZxlta2XWKA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 23 Sep 2023 07:55:58 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Roland Dreier <roland@purestorage.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] IB/mlx4: Fix the size of a buffer in add_port_entries()
+Date:   Sat, 23 Sep 2023 07:55:56 +0200
+Message-Id: <0bb1443eb47308bc9be30232cc23004c4d4cf43e.1695448530.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/kgdb: Fix a kerneldoc issue when build with W=1
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aad659537c1d4ebd86912a6f0be458676c8e69af.1695401178.git.christophe.jaillet@wanadoo.fr>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aad659537c1d4ebd86912a6f0be458676c8e69af.1695401178.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+In order to be sure that 'buff' is never truncated, its size should be
+12, not 11.
 
+When building with W=1, this fixes the following warnings:
 
-On 9/22/23 09:46, Christophe JAILLET wrote:
-> When compiled with W=1, the following warning is generated:
->   arch/x86/kernel/kgdb.c:698: warning: Cannot understand  *
->    on line 698 - I thought it was a doc line
-> 
-> Remove the corresponding empty comment line to fix the warning.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+  drivers/infiniband/hw/mlx4/sysfs.c: In function ‘add_port_entries’:
+  drivers/infiniband/hw/mlx4/sysfs.c:268:34: error: ‘sprintf’ may write a terminating nul past the end of the destination [-Werror=format-overflow=]
+    268 |                 sprintf(buff, "%d", i);
+        |                                  ^
+  drivers/infiniband/hw/mlx4/sysfs.c:268:17: note: ‘sprintf’ output between 2 and 12 bytes into a destination of size 11
+    268 |                 sprintf(buff, "%d", i);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~
+  drivers/infiniband/hw/mlx4/sysfs.c:286:34: error: ‘sprintf’ may write a terminating nul past the end of the destination [-Werror=format-overflow=]
+    286 |                 sprintf(buff, "%d", i);
+        |                                  ^
+  drivers/infiniband/hw/mlx4/sysfs.c:286:17: note: ‘sprintf’ output between 2 and 12 bytes into a destination of size 11
+    286 |                 sprintf(buff, "%d", i);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: c1e7e466120b ("IB/mlx4: Add iov directory in sysfs under the ib device")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+We could also use snprintf(), but it would just lead to a bigger patch for
+no additional benefit.
+This patch is already certainly more a clean-up than a fix.
+---
+ drivers/infiniband/hw/mlx4/sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-
-> ---
->  arch/x86/kernel/kgdb.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-> index 3a43a2dee658..9c9faa1634fb 100644
-> --- a/arch/x86/kernel/kgdb.c
-> +++ b/arch/x86/kernel/kgdb.c
-> @@ -695,7 +695,6 @@ void kgdb_arch_exit(void)
->  }
->  
->  /**
-> - *
->   *	kgdb_skipexception - Bail out of KGDB when we've been triggered.
->   *	@exception: Exception vector number
->   *	@regs: Current &struct pt_regs.
-
+diff --git a/drivers/infiniband/hw/mlx4/sysfs.c b/drivers/infiniband/hw/mlx4/sysfs.c
+index 24ee79aa2122..88f534cf690e 100644
+--- a/drivers/infiniband/hw/mlx4/sysfs.c
++++ b/drivers/infiniband/hw/mlx4/sysfs.c
+@@ -223,7 +223,7 @@ void del_sysfs_port_mcg_attr(struct mlx4_ib_dev *device, int port_num,
+ static int add_port_entries(struct mlx4_ib_dev *device, int port_num)
+ {
+ 	int i;
+-	char buff[11];
++	char buff[12];
+ 	struct mlx4_ib_iov_port *port = NULL;
+ 	int ret = 0 ;
+ 	struct ib_port_attr attr;
 -- 
-~Randy
+2.34.1
+
