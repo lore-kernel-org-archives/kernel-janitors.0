@@ -2,80 +2,137 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BDCE7A89
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Sep 2023 18:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FEDCE7A8C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 02:57:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjIWSyb (ORCPT
+        id S229861AbjIXC5X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Sep 2023 14:54:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47804 "EHLO
+        Sat, 23 Sep 2023 22:57:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjIWSyb (ORCPT
+        with ESMTP id S229806AbjIXC5W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Sep 2023 14:54:31 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1D3113;
-        Sat, 23 Sep 2023 11:54:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 208A4C433C8;
-        Sat, 23 Sep 2023 18:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695495264;
-        bh=sICPMG7DrfOIsbSz6O+ydsinXn38Gvmn60xRu4Htgbk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jh2AclgOIt9jUjQcls244C0E2UgqwBQHanDiARy2WXJUt1epZlozfZomdLiyUC1hw
-         yAfXl73bLDf3Zu7zdZzd0pxWZFkjEb/c7Lrnm2OlDkJwgFuXKehZyBEXs+Jlh5DBjx
-         Eh0hC/dDbm2p/a62AJsz3JKgihST/SkOOkWSVsrtZfR1R/h9/scotpdA06Kx3SrUbY
-         r/TRlbpfAIEA9i5yp1dDrdxX7avl6Xo8WEkQo6pBImsavX8o4H0W7tdz4uQAqmP/I7
-         AaDXCW0hUJbN1hQsB3rAYXm1EQCy+gdxNlznazZU3pkPX9EJMfSiqASjhEdiXChtxw
-         atHI4eZEGYOkw==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Roland Dreier <roland@purestorage.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] IB/mlx4: Fix the size of a buffer in add_port_entries()
-Date:   Sat, 23 Sep 2023 21:54:16 +0300
-Message-ID: <169549523606.309442.12357071231764109578.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <0bb1443eb47308bc9be30232cc23004c4d4cf43e.1695448530.git.christophe.jaillet@wanadoo.fr>
-References: <0bb1443eb47308bc9be30232cc23004c4d4cf43e.1695448530.git.christophe.jaillet@wanadoo.fr>
+        Sat, 23 Sep 2023 22:57:22 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D1A7139
+        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 19:57:15 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-1ba5cda3530so2775249fac.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 19:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695524234; x=1696129034; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NPXBmCzK3FG70guuha+2I+A6yn1HdDxLwlr5P+cFkHs=;
+        b=O63eZjVFAjb/vmW9m3BmvPdxALTCh7hQu/tYUx5AitrO91BWsWLPDk4CL76jtUPDLW
+         dXEDJkXkJm1O8Yc0UUK2ED/GA8T0qDTAwlazEeaBuj0xUA3g88RT4Y39aGKaaOOTvcqV
+         qRp8TvB3HGyHc2lJd4MWOo2sRryLIWtn0kF/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695524234; x=1696129034;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPXBmCzK3FG70guuha+2I+A6yn1HdDxLwlr5P+cFkHs=;
+        b=nFoFpuNDlnqXnaLyTrlDmn3TWOrp2l2mkafO34SFvr18Sh8M5rwV8HcZUfhv+IltIh
+         NfugHtFHdz4bV8wRuC2UOiLNu63m1VbhhcHrJhGPprGmkeB/NnRLj5fX6ZXZvkE5bkBH
+         dn9KBiQnEwooncuFlTd9Dqm1ETV7FfyBaP+Ix41wPJLiDAEedVTEoij0gu+SzkIMZ1Jr
+         vndQAc5JeY/278/+vuI/ZBT9nVCHdny1oIdhFPbTOsziM3PqrwcCNQzMoJVaG/HS36xT
+         MeIdX96PhpahETsZov4X1HJeZPB5eNbVbQR9ZefnEwEAEQkF7oAE95X+TZiEQFiJnTdP
+         jngA==
+X-Gm-Message-State: AOJu0YzWimYXhcMSPfkCDvbLUGvEHmMRpnC0iZ5Paqqhff2oBtZK3N8k
+        24O4Lvg2BSof739CmjTj6Ljnyw==
+X-Google-Smtp-Source: AGHT+IFK1V+i4tYBOwcJa9hlcUbQL0WgYEFL3YN7gDnaCzlxB+A01+MYEGZT9yHCPBAf6SjDQGiVSQ==
+X-Received: by 2002:a05:6870:6486:b0:1c0:c42f:6db2 with SMTP id cz6-20020a056870648600b001c0c42f6db2mr4979469oab.37.1695524233832;
+        Sat, 23 Sep 2023 19:57:13 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id m29-20020a638c1d000000b005787395e301sm3964077pgd.44.2023.09.23.19.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Sep 2023 19:57:12 -0700 (PDT)
+Date:   Sat, 23 Sep 2023 19:57:12 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH] udmabuf: Fix a potential (and unlikely) access to
+ unallocated memory
+Message-ID: <202309231954.1EAD0FA5A7@keescook>
+References: <3e37f05c7593f1016f0a46de188b3357cbbd0c0b.1695060389.git.christophe.jaillet@wanadoo.fr>
+ <7043f179-b670-db3c-3ab0-a1f3e991add9@embeddedor.com>
+ <a49f800e-e56f-433a-81d2-6edd68a0a015@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a49f800e-e56f-433a-81d2-6edd68a0a015@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-On Sat, 23 Sep 2023 07:55:56 +0200, Christophe JAILLET wrote:
-> In order to be sure that 'buff' is never truncated, its size should be
-> 12, not 11.
+On Mon, Sep 18, 2023 at 09:22:44PM +0200, Christophe JAILLET wrote:
+> Le 18/09/2023 à 05:10, Gustavo A. R. Silva a écrit :
+> > 
+> > 
+> > On 9/18/23 12:46, Christophe JAILLET wrote:
+> > > If 'list_limit' is set to a very high value, 'lsize' computation could
+> > > overflow if 'head.count' is big enough.
+> > > 
+> > > In such a case, udmabuf_create() will access to memory beyond 'list'.
+> > > 
+> > > Use size_mul() to saturate the value, and have memdup_user() fail.
+> > > 
+> > > Fixes: fbb0de795078 ("Add udmabuf misc device")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > >   drivers/dma-buf/udmabuf.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> > > index c40645999648..fb4c4b5b3332 100644
+> > > --- a/drivers/dma-buf/udmabuf.c
+> > > +++ b/drivers/dma-buf/udmabuf.c
+> > > @@ -314,13 +314,13 @@ static long udmabuf_ioctl_create_list(struct
+> > > file *filp, unsigned long arg)
+> > >       struct udmabuf_create_list head;
+> > >       struct udmabuf_create_item *list;
+> > >       int ret = -EINVAL;
+> > > -    u32 lsize;
+> > > +    size_t lsize;
+> > >       if (copy_from_user(&head, (void __user *)arg, sizeof(head)))
+> > >           return -EFAULT;
+> > >       if (head.count > list_limit)
+> > >           return -EINVAL;
+> > > -    lsize = sizeof(struct udmabuf_create_item) * head.count;
+> > > +    lsize = size_mul(sizeof(struct udmabuf_create_item), head.count);
+> > >       list = memdup_user((void __user *)(arg + sizeof(head)), lsize);
+> > >       if (IS_ERR(list))
+> > >           return PTR_ERR(list);
+> > 
+> > How about this, and we get rid of `lsize`:
 > 
-> When building with W=1, this fixes the following warnings:
-> 
->   drivers/infiniband/hw/mlx4/sysfs.c: In function â€˜add_port_entriesâ€™:
->   drivers/infiniband/hw/mlx4/sysfs.c:268:34: error: â€˜sprintfâ€™ may write a terminating nul past the end of the destination [-Werror=format-overflow=]
->     268 |                 sprintf(buff, "%d", i);
->         |                                  ^
->   drivers/infiniband/hw/mlx4/sysfs.c:268:17: note: â€˜sprintfâ€™ output between 2 and 12 bytes into a destination of size 11
->     268 |                 sprintf(buff, "%d", i);
->         |                 ^~~~~~~~~~~~~~~~~~~~~~
->   drivers/infiniband/hw/mlx4/sysfs.c:286:34: error: â€˜sprintfâ€™ may write a terminating nul past the end of the destination [-Werror=format-overflow=]
->     286 |                 sprintf(buff, "%d", i);
->         |                                  ^
->   drivers/infiniband/hw/mlx4/sysfs.c:286:17: note: â€˜sprintfâ€™ output between 2 and 12 bytes into a destination of size 11
->     286 |                 sprintf(buff, "%d", i);
->         |                 ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> [...]
+> Keeping or removing lsize is mostly a matter of taste, I think.
 
-Applied, thanks!
+I'm on the fence, but kind of lean towards keeping lsize, but I think
+it's fine either way.
 
-[1/1] IB/mlx4: Fix the size of a buffer in add_port_entries()
-      https://git.kernel.org/rdma/rdma/c/d7f393430a17c2
+> Using sizeof(*list) is better.
 
-Best regards,
+That I agree with, yes.
+
+> Let see if there are some other comments, and I'll send a v2.
+
+I note that this looks like a use-case for the very recently proposed
+memdup_array_user():
+https://lore.kernel.org/all/ACD75DAA-AF42-486C-B44B-9272EF302E3D@kernel.org/
+
+(i.e. a built-in size_mul)
+
+-Kees
+
 -- 
-Leon Romanovsky <leon@kernel.org>
+Kees Cook
