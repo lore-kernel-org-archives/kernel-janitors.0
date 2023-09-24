@@ -2,47 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0311CE7A8A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 07:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0104ECE7A8A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 08:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjIXHgO (ORCPT
+        id S229943AbjIXIDV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Sep 2023 03:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
+        Sun, 24 Sep 2023 04:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjIXHgO (ORCPT
+        with ESMTP id S229904AbjIXIDU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Sep 2023 03:36:14 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44FF9106
-        for <kernel-janitors@vger.kernel.org>; Sun, 24 Sep 2023 00:36:05 -0700 (PDT)
+        Sun, 24 Sep 2023 04:03:20 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D3010C
+        for <kernel-janitors@vger.kernel.org>; Sun, 24 Sep 2023 01:03:11 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id kJesqk7nIGc65kJesqQUu3; Sun, 24 Sep 2023 09:36:03 +0200
+        id kK56qpUBLqQHikK57qsa0Q; Sun, 24 Sep 2023 10:03:10 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695540963;
-        bh=018xaLEDvxggoMddYpgeo/uvtqjMWAwwaPEHKHKhtvA=;
+        s=t20230301; t=1695542590;
+        bh=u45atJv1BtkgA8BuqIIa8D3M4GDg5T72SV54ytqq6ds=;
         h=From:To:Cc:Subject:Date;
-        b=pQy7OeR8/JRokKoalfqARW7ycJBOE9XFchZQxVNYhEXztu4UfdU1+F0kj2pmV28aO
-         avdVOG0lO5QJB3GNl3bBX6xGCB2HsPjwCPGC7ZqDlHUFdlzbmmvmofoZQq2OofMt9g
-         zl975c9qmr6bq2Ji42XXpKuAK1ig5oC5yVccIcVpOOYiEBRfXSZAmwF1uA43icMWrh
-         mmlPixtAbDWeRPqP7MHo3XDf6exTjL5hhPh0Jj86aRb/YFxqXekWxjXu7y0/iYnUU+
-         /R1zrZGk5lKkqODxeXGwJv1SG2Ja2xHQcrjd2mCUOXlK3zLH7MsnQCVsRnV9LjF8N4
-         mYyvzM4ZCl5dg==
+        b=dQ3XcACW9ta7AnZyfPgpVGsN/g48nPB37c5JGi9GvpVYsFrpFjdO3OTZN4CzJ1nzA
+         1WMkzjKVtrJvAGKEDVaq1JhOpmVdcfnBvbFkjNAJfftslP/W2DaK5q1inEuYNQC6J7
+         EcMvq5v392XkUSM5/xqcpcDoeZeoY7YKsuk3sv/+VRG89QXWLYJKBC5QRGPJXS302P
+         8nNQP4YCqnkVrPsLeeKPmJf190vFld8wMUYk1uIppsZZkW9+wg2aRD9JcUxuQwR8in
+         X62S8P5I9mcWHDADcalieY0iQwPweHBJmoplO47U3BZMJYZV7ldR+wUKNxZ3lAwu4q
+         8kqZYZHGGqi7A==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 24 Sep 2023 09:36:03 +0200
+X-ME-Date: Sun, 24 Sep 2023 10:03:10 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        David Ahern <dsahern@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: audio-iio-aux: Use flex array to simplify code
-Date:   Sun, 24 Sep 2023 09:36:01 +0200
-Message-Id: <1c0090aaf49504eaeaff5e7dd119fd37173290b5.1695540940.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] udp_tunnel: Use flex array to simplify code
+Date:   Sun, 24 Sep 2023 10:03:07 +0200
+Message-Id: <4a096ba9cf981a588aa87235bb91e933ee162b3d.1695542544.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,12 +52,12 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-"io-channel-names" is expected to have few values, so there is no real
-point to allocate audio_iio_aux_chan structure with a dedicate memory
-allocation.
+'n_tables' is small, UDP_TUNNEL_NIC_MAX_TABLES	= 4 as a maximum. So there
+is no real point to allocate the 'entries' pointers array with a dedicate
+memory allocation.
 
-Using a flexible array for struct audio_iio_aux->chans avoids the
-overhead of an additional, managed, memory allocation.
+Using a flexible array for struct udp_tunnel_nic->entries avoids the
+overhead of an additional memory allocation.
 
 This also saves an indirection when the array is accessed.
 
@@ -64,52 +66,57 @@ configured and supported by the compiler.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/audio-iio-aux.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ net/ipv4/udp_tunnel_nic.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/codecs/audio-iio-aux.c b/sound/soc/codecs/audio-iio-aux.c
-index a8bf14239bd7..1e8e1effc2af 100644
---- a/sound/soc/codecs/audio-iio-aux.c
-+++ b/sound/soc/codecs/audio-iio-aux.c
-@@ -26,8 +26,8 @@ struct audio_iio_aux_chan {
+diff --git a/net/ipv4/udp_tunnel_nic.c b/net/ipv4/udp_tunnel_nic.c
+index 029219749785..b6d2d16189c0 100644
+--- a/net/ipv4/udp_tunnel_nic.c
++++ b/net/ipv4/udp_tunnel_nic.c
+@@ -47,7 +47,7 @@ struct udp_tunnel_nic {
  
- struct audio_iio_aux {
- 	struct device *dev;
--	struct audio_iio_aux_chan *chans;
- 	unsigned int num_chans;
-+	struct audio_iio_aux_chan chans[]  __counted_by(num_chans);
+ 	unsigned int n_tables;
+ 	unsigned long missed;
+-	struct udp_tunnel_nic_table_entry **entries;
++	struct udp_tunnel_nic_table_entry *entries[] __counted_by(n_tables);
  };
  
- static int audio_iio_aux_info_volsw(struct snd_kcontrol *kcontrol,
-@@ -250,23 +250,18 @@ static int audio_iio_aux_probe(struct platform_device *pdev)
- 	int ret;
- 	int i;
+ /* We ensure all work structs are done using driver state, but not the code.
+@@ -725,16 +725,12 @@ udp_tunnel_nic_alloc(const struct udp_tunnel_nic_info *info,
+ 	struct udp_tunnel_nic *utn;
+ 	unsigned int i;
  
--	iio_aux = devm_kzalloc(dev, sizeof(*iio_aux), GFP_KERNEL);
-+	count = device_property_string_array_count(dev, "io-channel-names");
-+	if (count < 0)
-+		return dev_err_probe(dev, count, "failed to count io-channel-names\n");
-+
-+	iio_aux = devm_kzalloc(dev, struct_size(iio_aux, chans, count), GFP_KERNEL);
- 	if (!iio_aux)
- 		return -ENOMEM;
+-	utn = kzalloc(sizeof(*utn), GFP_KERNEL);
++	utn = kzalloc(struct_size(utn, entries, n_tables), GFP_KERNEL);
+ 	if (!utn)
+ 		return NULL;
+ 	utn->n_tables = n_tables;
+ 	INIT_WORK(&utn->work, udp_tunnel_nic_device_sync_work);
  
- 	iio_aux->dev = dev;
- 
--	count = device_property_string_array_count(dev, "io-channel-names");
--	if (count < 0)
--		return dev_err_probe(dev, count, "failed to count io-channel-names\n");
+-	utn->entries = kmalloc_array(n_tables, sizeof(void *), GFP_KERNEL);
+-	if (!utn->entries)
+-		goto err_free_utn;
 -
- 	iio_aux->num_chans = count;
+ 	for (i = 0; i < n_tables; i++) {
+ 		utn->entries[i] = kcalloc(info->tables[i].n_entries,
+ 					  sizeof(*utn->entries[i]), GFP_KERNEL);
+@@ -747,8 +743,6 @@ udp_tunnel_nic_alloc(const struct udp_tunnel_nic_info *info,
+ err_free_prev_entries:
+ 	while (i--)
+ 		kfree(utn->entries[i]);
+-	kfree(utn->entries);
+-err_free_utn:
+ 	kfree(utn);
+ 	return NULL;
+ }
+@@ -759,7 +753,6 @@ static void udp_tunnel_nic_free(struct udp_tunnel_nic *utn)
  
--	iio_aux->chans = devm_kmalloc_array(dev, iio_aux->num_chans,
--					    sizeof(*iio_aux->chans), GFP_KERNEL);
--	if (!iio_aux->chans)
--		return -ENOMEM;
--
- 	names = kcalloc(iio_aux->num_chans, sizeof(*names), GFP_KERNEL);
- 	if (!names)
- 		return -ENOMEM;
+ 	for (i = 0; i < utn->n_tables; i++)
+ 		kfree(utn->entries[i]);
+-	kfree(utn->entries);
+ 	kfree(utn);
+ }
+ 
 -- 
 2.34.1
 
