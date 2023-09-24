@@ -2,126 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB22ACE7A8C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 06:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0311CE7A8A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 07:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbjIXG6F (ORCPT
+        id S229927AbjIXHgO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Sep 2023 02:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
+        Sun, 24 Sep 2023 03:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjIXG6E (ORCPT
+        with ESMTP id S229437AbjIXHgO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Sep 2023 02:58:04 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E0810E
-        for <kernel-janitors@vger.kernel.org>; Sat, 23 Sep 2023 23:57:57 -0700 (PDT)
+        Sun, 24 Sep 2023 03:36:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44FF9106
+        for <kernel-janitors@vger.kernel.org>; Sun, 24 Sep 2023 00:36:05 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id kJ3wqxINJLxWbkJ3zqOyHM; Sun, 24 Sep 2023 08:57:56 +0200
+        id kJesqk7nIGc65kJesqQUu3; Sun, 24 Sep 2023 09:36:03 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1695538676;
-        bh=PSnDJBNGC1tP4164Wnhkgh8HavtiyRUWc4qNKuLAPY0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=HLMnRd41/RUlgoc93i1SIhYkHq4NIqC574gjkWB0wtvQ55rvb2zCtXdUMPKd0zAGr
-         a4laNmOjx1eAun7nxTaLBZ678kfZtjMV29BjIoT2jUFKy8m82k22xZ7gQuelOTfDQa
-         8zwsYXndljlF4XHMVhTjzATM11djyI9GlEXFmTqv9pTdtnEMHBpYn0boBcOIEkh5KZ
-         k4p1NNnKDF8NQzMDYPrFBH3H6qhyyhLccHjViohypu5My4lSTlr0aObzdWbkSJ4RZ0
-         pDHyfWfsU1vTWFQx4kYZcbysaMC9r2KOWYB9JOZQbL5NLVoADv1Pq7bLPWTPAC9BHO
-         LeTyhIKgQjDRw==
+        s=t20230301; t=1695540963;
+        bh=018xaLEDvxggoMddYpgeo/uvtqjMWAwwaPEHKHKhtvA=;
+        h=From:To:Cc:Subject:Date;
+        b=pQy7OeR8/JRokKoalfqARW7ycJBOE9XFchZQxVNYhEXztu4UfdU1+F0kj2pmV28aO
+         avdVOG0lO5QJB3GNl3bBX6xGCB2HsPjwCPGC7ZqDlHUFdlzbmmvmofoZQq2OofMt9g
+         zl975c9qmr6bq2Ji42XXpKuAK1ig5oC5yVccIcVpOOYiEBRfXSZAmwF1uA43icMWrh
+         mmlPixtAbDWeRPqP7MHo3XDf6exTjL5hhPh0Jj86aRb/YFxqXekWxjXu7y0/iYnUU+
+         /R1zrZGk5lKkqODxeXGwJv1SG2Ja2xHQcrjd2mCUOXlK3zLH7MsnQCVsRnV9LjF8N4
+         mYyvzM4ZCl5dg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 24 Sep 2023 08:57:56 +0200
+X-ME-Date: Sun, 24 Sep 2023 09:36:03 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Kalle Valo <kvalo@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-wireless@vger.kernel.org
-Subject: [PATCH wireless-next 2/2] ath: dfs_pattern_detector: Use flex array to simplify code
-Date:   Sun, 24 Sep 2023 08:57:50 +0200
-Message-Id: <1920cc38db2e570633e13b37d50852f3202a7270.1695538105.git.christophe.jaillet@wanadoo.fr>
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: audio-iio-aux: Use flex array to simplify code
+Date:   Sun, 24 Sep 2023 09:36:01 +0200
+Message-Id: <1c0090aaf49504eaeaff5e7dd119fd37173290b5.1695540940.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ad8c55b97ee4b330cb053ce2c448123c309cc91c.1695538105.git.christophe.jaillet@wanadoo.fr>
-References: <ad8c55b97ee4b330cb053ce2c448123c309cc91c.1695538105.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-At the time of the writing, the value of 'num_radar_types' is 7 or 9. So
-on a 64 bits system, only 56 or 72 bytes are allocated for the
-'detectors' array.
+"io-channel-names" is expected to have few values, so there is no real
+point to allocate audio_iio_aux_chan structure with a dedicate memory
+allocation.
 
-Turn it into a flex array, in order to simplify memory management and save
-an indirection when the array is used.
+Using a flexible array for struct audio_iio_aux->chans avoids the
+overhead of an additional, managed, memory allocation.
 
-Doing so, cd->detectors can't be NULL, and channel_detector_exit() can be
-simplified as well.
+This also saves an indirection when the array is accessed.
+
+Finally, __counted_by() can be used for run-time bounds checking if
+configured and supported by the compiler.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Patch #1/2 is a fix, for for wireless.
-Patch #2/2 is for wireless-next I guess, but depnds on #1
+ sound/soc/codecs/audio-iio-aux.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-Not sure if we can mix different target in the same serie. Let me know.
----
- .../net/wireless/ath/dfs_pattern_detector.c   | 21 +++++++------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
-index 2788a1b06c17..700da9f4531e 100644
---- a/drivers/net/wireless/ath/dfs_pattern_detector.c
-+++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
-@@ -161,7 +161,7 @@ get_dfs_domain_radar_types(enum nl80211_dfs_regions region)
- struct channel_detector {
- 	struct list_head head;
- 	u16 freq;
--	struct pri_detector **detectors;
-+	struct pri_detector *detectors[];
+diff --git a/sound/soc/codecs/audio-iio-aux.c b/sound/soc/codecs/audio-iio-aux.c
+index a8bf14239bd7..1e8e1effc2af 100644
+--- a/sound/soc/codecs/audio-iio-aux.c
++++ b/sound/soc/codecs/audio-iio-aux.c
+@@ -26,8 +26,8 @@ struct audio_iio_aux_chan {
+ 
+ struct audio_iio_aux {
+ 	struct device *dev;
+-	struct audio_iio_aux_chan *chans;
+ 	unsigned int num_chans;
++	struct audio_iio_aux_chan chans[]  __counted_by(num_chans);
  };
  
- /* channel_detector_reset() - reset detector lines for a given channel */
-@@ -183,14 +183,13 @@ static void channel_detector_exit(struct dfs_pattern_detector *dpd,
- 	if (cd == NULL)
- 		return;
- 	list_del(&cd->head);
--	if (cd->detectors) {
--		for (i = 0; i < dpd->num_radar_types; i++) {
--			struct pri_detector *de = cd->detectors[i];
--			if (de != NULL)
--				de->exit(de);
--		}
+ static int audio_iio_aux_info_volsw(struct snd_kcontrol *kcontrol,
+@@ -250,23 +250,18 @@ static int audio_iio_aux_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 
+-	iio_aux = devm_kzalloc(dev, sizeof(*iio_aux), GFP_KERNEL);
++	count = device_property_string_array_count(dev, "io-channel-names");
++	if (count < 0)
++		return dev_err_probe(dev, count, "failed to count io-channel-names\n");
 +
-+	for (i = 0; i < dpd->num_radar_types; i++) {
-+		struct pri_detector *de = cd->detectors[i];
-+		if (de != NULL)
-+			de->exit(de);
- 	}
--	kfree(cd->detectors);
-+
- 	kfree(cd);
- }
++	iio_aux = devm_kzalloc(dev, struct_size(iio_aux, chans, count), GFP_KERNEL);
+ 	if (!iio_aux)
+ 		return -ENOMEM;
  
-@@ -200,16 +199,12 @@ channel_detector_create(struct dfs_pattern_detector *dpd, u16 freq)
- 	u32 i;
- 	struct channel_detector *cd;
+ 	iio_aux->dev = dev;
  
--	cd = kmalloc(sizeof(*cd), GFP_ATOMIC);
-+	cd = kzalloc(struct_size(cd, detectors, dpd->num_radar_types), GFP_ATOMIC);
- 	if (cd == NULL)
- 		goto fail;
+-	count = device_property_string_array_count(dev, "io-channel-names");
+-	if (count < 0)
+-		return dev_err_probe(dev, count, "failed to count io-channel-names\n");
+-
+ 	iio_aux->num_chans = count;
  
- 	INIT_LIST_HEAD(&cd->head);
- 	cd->freq = freq;
--	cd->detectors = kcalloc(dpd->num_radar_types,
--				      sizeof(*cd->detectors), GFP_ATOMIC);
--	if (cd->detectors == NULL)
--		goto fail;
- 
- 	for (i = 0; i < dpd->num_radar_types; i++) {
- 		const struct radar_detector_specs *rs = &dpd->radar_spec[i];
+-	iio_aux->chans = devm_kmalloc_array(dev, iio_aux->num_chans,
+-					    sizeof(*iio_aux->chans), GFP_KERNEL);
+-	if (!iio_aux->chans)
+-		return -ENOMEM;
+-
+ 	names = kcalloc(iio_aux->num_chans, sizeof(*names), GFP_KERNEL);
+ 	if (!names)
+ 		return -ENOMEM;
 -- 
 2.34.1
 
