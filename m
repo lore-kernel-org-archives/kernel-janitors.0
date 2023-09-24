@@ -2,118 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E79CE7A88
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 16:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4A9CE7A8C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 20:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbjIXQBI (ORCPT
+        id S229603AbjIXUBi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Sep 2023 12:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34564 "EHLO
+        Sun, 24 Sep 2023 16:01:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjIXQBG (ORCPT
+        with ESMTP id S229437AbjIXUBg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Sep 2023 12:01:06 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA81F1;
-        Sun, 24 Sep 2023 09:01:00 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id a1e0cc1a2514c-76d846a4b85so1497118241.1;
-        Sun, 24 Sep 2023 09:01:00 -0700 (PDT)
+        Sun, 24 Sep 2023 16:01:36 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FFBA6;
+        Sun, 24 Sep 2023 13:01:30 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bfea381255so85964581fa.3;
+        Sun, 24 Sep 2023 13:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695571259; x=1696176059; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1695585688; x=1696190488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=am3voQeukfK3Fa9MI7o7NoFaSzEtIQEuGq0/yQAOzzo=;
-        b=j0cBx221dklxEpvyAdea59Vq2cfq1eKLjxSeyhFQETNUJhmhXPkj1DJycFJJxicGJb
-         8BH86pogCeSxYzR5+2Wr2oa0IEjSEAJNZiAVUO+/oJKIiTogqtjfQAiPF/Sx4tiPQlyB
-         FLm46/q+EsJoPcBzR3sJTNtoLffc9g3VVpitt9oeH07RW4fShvHr/N4eKqZIFvxtif49
-         IxlxBOlPsYgKl0Kk0jlkhHGQjBE4y/xBea8mI4RPQ9fhzJl0mRIeqW5CvzgocFq8X639
-         ZSwJBNKaYoazFXzK4aKzu9Fkqj8W/b0Gm29wXp6k4DK19iww86yxXymxwhBDettiwLKT
-         G+dA==
+        bh=r/sEzFSU1WeZTVMeaZJF4z8FtiU96nb3S95OQlSjSS0=;
+        b=J04It9k9+XJZJ1aGzfPobSFbmASAnh3nI9LdU1IO6rZ8yPcb9N64fiOu43oSZ/TUYB
+         mgu+t0utjIrmyl6l8O4PTJtZc6upAUeR/vI7q3JosOgxs6WR+yiZxSAeuFfev64DNrdf
+         bhJuEY0ljY/dXHwzvo6fabHHV0KPJEnRyjmYmwxwIDZT3mZBEBvDgvlxGZhlIOvmjFQD
+         yp/BtFreRquq2ac96AHGtotqJWpkbvbsQivLKAHy7eiLDODfBp5BeWdCc6YaZFAXHc5q
+         LbKfpzf8ya8DTl0i4vxua+9CGOD3TmRDNcFcmZggiRWlV6MwfiiBR37groVW+XcfsvkP
+         6cqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695571259; x=1696176059;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=am3voQeukfK3Fa9MI7o7NoFaSzEtIQEuGq0/yQAOzzo=;
-        b=WnIpllFskmAxvDTRGgpZMSaM6TP251k+o/ujW/fcvJQ5H+YyyKiA3LRk5ZTb9f/CbT
-         SaLgZ/gtAoOLSXl8kppaNcv18C6sXq4MTXchy8t8XHlS+tg7xtu2LL0CDwPjRYYqAzfW
-         RHKcJfSCw+Y7bJdY21y6pNr4aHxLaczOc5QbPQBL00/GcdLbuWTpPRVWiPQLgARAepKL
-         6zVM+FXG05Cfq5i7R3m1/tPBXUnomcpCc0DtNcEeDuRO9pmtVi+HEnyb0NGI+pFSdn0E
-         YLPcyDdlC7e2iW4baoGovMykDvPDDcsHpzmZ3+InbWUNwRc5mx+87PxdKW/nVl2ho94H
-         JU/w==
-X-Gm-Message-State: AOJu0Yxm+eILDYV9abtfbiyTXc4pL+2hzusU1G2MScPxE4Aeb3hsUMbI
-        cLqxs+wudHKeg51YoFVJ+Qc=
-X-Google-Smtp-Source: AGHT+IFt8v6Fy7hiLfyklLf9mVM0sH6wNHKf6sJ49B+sz6r/itsik2Tbe9+p8BTWMtxvHePpqipvRw==
-X-Received: by 2002:a1f:cb03:0:b0:495:dc43:7440 with SMTP id b3-20020a1fcb03000000b00495dc437440mr1457729vkg.9.1695571259574;
-        Sun, 24 Sep 2023 09:00:59 -0700 (PDT)
-Received: from localhost (193.132.150.34.bc.googleusercontent.com. [34.150.132.193])
-        by smtp.gmail.com with ESMTPSA id s7-20020ac85287000000b004108d49f391sm1270041qtn.48.2023.09.24.09.00.58
+        d=1e100.net; s=20230601; t=1695585688; x=1696190488;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r/sEzFSU1WeZTVMeaZJF4z8FtiU96nb3S95OQlSjSS0=;
+        b=Ew3Khn7lnwbSAOt/Kg+QbVExcAsVcSdm8B9C2ACEQ3PyIju8ZyrMyrWNbBEG+104eI
+         sDGL8mGHp5S1HmlNJpvcgZ8NJU+7IfD6rg2b7mijVaVvcOGUnPEM4UQtJyH5/Q1KhP2A
+         xb143Kp4y/Lth+ns0o1xk9A0qAj2O4pY1Hwhwv/v/gl6tlmpl7G+ONCx0daCBQ+xmgMj
+         eLXFPkXRdi0kU46Cq3qEnd9+2lhK/Wz8lT/2VCsylF/OYzvQMT0IDgbEni5syPDogLg7
+         whlYok3m/iBNWYs4V3PNRgi4K93jIwWYEKpVUGjpWEDMg/mUO+Dunkk7GNQcgp0MGCUZ
+         xTzg==
+X-Gm-Message-State: AOJu0YyROiLKdFeo1lCM6xFOzQ6GhL1MkN8kcZAW9fOHzWegt55trMok
+        +YV63+jlNI17E4kFo9iF4qY=
+X-Google-Smtp-Source: AGHT+IHXra175J8cJCP1mYtvO6y1HC5Qd13x962DSEgj/v3iYxK9Qz6wXvUiRAobb0w7iX71A52zWA==
+X-Received: by 2002:a2e:b78f:0:b0:2bf:cf44:dde5 with SMTP id n15-20020a2eb78f000000b002bfcf44dde5mr4102294ljo.30.1695585688175;
+        Sun, 24 Sep 2023 13:01:28 -0700 (PDT)
+Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
+        by smtp.gmail.com with ESMTPSA id l15-20020a1709067d4f00b009920a690cd9sm5340296ejp.59.2023.09.24.13.01.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Sep 2023 09:00:58 -0700 (PDT)
-Date:   Sun, 24 Sep 2023 12:00:58 -0400
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Ahern <dsahern@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+        Sun, 24 Sep 2023 13:01:27 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Message-ID: <65105d3a8e70e_12c73e29410@willemb.c.googlers.com.notmuch>
-In-Reply-To: <4a096ba9cf981a588aa87235bb91e933ee162b3d.1695542544.git.christophe.jaillet@wanadoo.fr>
-References: <4a096ba9cf981a588aa87235bb91e933ee162b3d.1695542544.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next] udp_tunnel: Use flex array to simplify code
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
+Date:   Sun, 24 Sep 2023 22:01:26 +0200
+Message-ID: <3520089.iIbC2pHGDl@jernej-laptop>
+In-Reply-To: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET wrote:
-> 'n_tables' is small, UDP_TUNNEL_NIC_MAX_TABLES	= 4 as a maximum. So there
-> is no real point to allocate the 'entries' pointers array with a dedicate
-> memory allocation.
-> 
-> Using a flexible array for struct udp_tunnel_nic->entries avoids the
-> overhead of an additional memory allocation.
-> 
-> This also saves an indirection when the array is accessed.
-> 
-> Finally, __counted_by() can be used for run-time bounds checking if
-> configured and supported by the compiler.
-> 
+Dne nedelja, 03. september 2023 ob 12:11:06 CEST je Christophe JAILLET napi=
+sal(a):
+> With gcc 12.3.0, when this file is built, we get errors such as:
+>=20
+> drivers/phy/allwinner/phy-sun4i-usb.c: In function =E2=80=98sun4i_usb_phy=
+_probe=E2=80=99:
+> drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: =E2=80=98_vbus=E2=80=
+=99 directive output may be truncated writing 5 bytes into a region of size=
+ between 2 and 12 [-Werror=3Dformat-truncation=3D]
+>   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>       |                                                    ^~~~~
+> drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: =E2=80=98snprintf=E2=
+=80=99 output between 10 and 20 bytes into a destination of size 16
+>   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> Because of the possible value of 'i', this can't be an issue in real world
+> application, but in order to have "make W=3D1" work correctly, give more
+> space for 'name'.
+>=20
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/ipv4/udp_tunnel_nic.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/net/ipv4/udp_tunnel_nic.c b/net/ipv4/udp_tunnel_nic.c
-> index 029219749785..b6d2d16189c0 100644
-> --- a/net/ipv4/udp_tunnel_nic.c
-> +++ b/net/ipv4/udp_tunnel_nic.c
-> @@ -47,7 +47,7 @@ struct udp_tunnel_nic {
->  
->  	unsigned int n_tables;
->  	unsigned long missed;
-> -	struct udp_tunnel_nic_table_entry **entries;
-> +	struct udp_tunnel_nic_table_entry *entries[] __counted_by(n_tables);
->  };
->  
->  /* We ensure all work structs are done using driver state, but not the code.
-> @@ -725,16 +725,12 @@ udp_tunnel_nic_alloc(const struct udp_tunnel_nic_info *info,
->  	struct udp_tunnel_nic *utn;
->  	unsigned int i;
->  
-> -	utn = kzalloc(sizeof(*utn), GFP_KERNEL);
-> +	utn = kzalloc(struct_size(utn, entries, n_tables), GFP_KERNEL);
->  	if (!utn)
->  		return NULL;
->  	utn->n_tables = n_tables;
 
-Should utn->n_tables be initialized before first use of
-struct_size(utn, entries, n_tables)?
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+Best regards,
+Jernej
+
+> ---
+>  drivers/phy/allwinner/phy-sun4i-usb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinne=
+r/phy-sun4i-usb.c
+> index ec551464dd4f..e53a9a9317bc 100644
+> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
+> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+> @@ -782,7 +782,7 @@ static int sun4i_usb_phy_probe(struct platform_device=
+ *pdev)
+> =20
+>  	for (i =3D 0; i < data->cfg->num_phys; i++) {
+>  		struct sun4i_usb_phy *phy =3D data->phys + i;
+> -		char name[16];
+> +		char name[32];
+> =20
+>  		if (data->cfg->missing_phys & BIT(i))
+>  			continue;
+>=20
+
+
+
+
