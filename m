@@ -2,78 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DA6CE7A89
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Sep 2023 04:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D383CE7A89
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Sep 2023 05:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbjIYExF (ORCPT
+        id S231941AbjIYFnV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Sep 2023 00:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38762 "EHLO
+        Mon, 25 Sep 2023 01:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231779AbjIYExE (ORCPT
+        with ESMTP id S229658AbjIYFnV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Sep 2023 00:53:04 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id C9DE8BE;
-        Sun, 24 Sep 2023 21:52:57 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 5491A6047A8C6;
-        Mon, 25 Sep 2023 12:52:29 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     sfrench@samba.org, pc@manguebit.com, lsahlber@redhat.com,
-        sprasad@microsoft.com, tom@talpey.com
-Cc:     Su Hui <suhui@nfschina.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] cifs: avoid possible NULL dereference
-Date:   Mon, 25 Sep 2023 12:52:21 +0800
-Message-Id: <20230925045220.93400-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 25 Sep 2023 01:43:21 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59EDE8;
+        Sun, 24 Sep 2023 22:43:14 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c127ac7255so85427761fa.0;
+        Sun, 24 Sep 2023 22:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695620593; x=1696225393; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=28NxZ+rgLDNAeJjBwfxzpAPSvGWfmS2MYsQ9559Q2CU=;
+        b=hTodVOQnjIXEnR93kbAV/XQJDiyknecpXUnfi/+qluX0Gb9AZsA6JITesFLDAeaonz
+         /siHZ/KMKx5X/MZuZqIqeznJy2PQbc70gV6/yPsehy4977t8nslQRPHnFY52UltBQjz3
+         OWFnRLO5Hxvp9zM6Q6TsQQ1HFj2wIQHTNn8RD/rIseJ/7mcwjj7KxXZ753q4RNmc7HUd
+         +xTzF3o6P0NimGem8kfWj/abpdJSRUotSRbvt2LM6klAzmqg344QcfpJeNiDBWu7PMOK
+         OqkLUrEb/q1n5dA6cv99bEO4E5eOSbBpYaqPFXjlkfxGfODl5mHAdgglqYatTDL/ZQHN
+         VSvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695620593; x=1696225393;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=28NxZ+rgLDNAeJjBwfxzpAPSvGWfmS2MYsQ9559Q2CU=;
+        b=nsx27H2GiC9mEKVDTd85nPnIosQp5DuX6HxsYSeqeVRoHA0njnC6AEwwPc0Kd9BWf/
+         wa7IGPHfedjKb5syeepuDRa6Be7nO22R01hMI50W45gfi+Bug5/7CbAwW6Ab7+p+iS44
+         m+iksmQjAWWZzDbrXaA9aR5DlC3iIl5Sot8NRSp8xoMduLgsfbARLAxq8hNyraAnzjNm
+         ofsIvPGX+dDqdgsgUdozJ9N3F6BFz83mrN6qQ4an1Y+KKYd9Kc6KgOc+fI1jQ1unMlVZ
+         U6ZFNu0ua6ZW39gaqJozn5Gpvj2Txsw9LNbD/R9m1E5v2OqliU2SyDFjsm4nfK8Y9JyE
+         /fAA==
+X-Gm-Message-State: AOJu0YysflqPbPfnFzkfNInlyyB/4ERPHqcXRjAj9eNKOK5Vza5sFxh+
+        4nKHHq7iSl30qHvjf9zp5AyxKXJfJaY=
+X-Google-Smtp-Source: AGHT+IFfRtH6/ov3tCkVh6xX9A64r/ZytBBUvH8kItTSelsjtGyV02YGBCeFxfEJ5UkWkDyZZDeaVA==
+X-Received: by 2002:a05:651c:b21:b0:2c1:5470:6cb8 with SMTP id b33-20020a05651c0b2100b002c154706cb8mr3214511ljr.35.1695620592672;
+        Sun, 24 Sep 2023 22:43:12 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:5985:a031:1aef:cf7a])
+        by smtp.gmail.com with ESMTPSA id g5-20020a17090670c500b009a13fdc139fsm5762878ejk.183.2023.09.24.22.43.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Sep 2023 22:43:12 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust header file entry in DPLL SUBSYSTEM
+Date:   Mon, 25 Sep 2023 07:43:05 +0200
+Message-Id: <20230925054305.16771-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch warn:
-fs/smb/client/file.c:4910 cifs_oplock_break() warn:
-variable dereferenced before check 'inode' (see line 4881)
+Commit 9431063ad323 ("dpll: core: Add DPLL framework base functions") adds
+the section DPLL SUBSYSTEM in MAINTAINERS and includes a file entry to the
+non-existing file 'include/net/dpll.h'.
 
-If 'inode' is NULL, print some warning and return.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference. Looking at the file stat of the commit above, this entry
+clearly intended to refer to 'include/linux/dpll.h'.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Adjust this header file entry in DPLL SUBSYSTEM.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- fs/smb/client/file.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 2108b3b40ce9..37eed057ded0 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -4878,6 +4878,12 @@ void cifs_oplock_break(struct work_struct *work)
- 	struct cifsFileInfo *cfile = container_of(work, struct cifsFileInfo,
- 						  oplock_break);
- 	struct inode *inode = d_inode(cfile->dentry);
-+
-+	if (!inode) {
-+		cifs_dbg(FYI, "%s : failed to find inode\n", __func__);
-+		return;
-+	}
-+
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
- 	struct cifsInodeInfo *cinode = CIFS_I(inode);
- 	struct cifs_tcon *tcon;
-@@ -4907,7 +4913,7 @@ void cifs_oplock_break(struct work_struct *work)
- 		cinode->oplock = 0;
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9aa84682ccb9..cfa82f0fe017 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6363,7 +6363,7 @@ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	Documentation/driver-api/dpll.rst
+ F:	drivers/dpll/*
+-F:	include/net/dpll.h
++F:	include/linux/dpll.h
+ F:	include/uapi/linux/dpll.h
  
--	if (inode && S_ISREG(inode->i_mode)) {
-+	if (S_ISREG(inode->i_mode)) {
- 		if (CIFS_CACHE_READ(cinode))
- 			break_lease(inode, O_RDONLY);
- 		else
+ DRBD DRIVER
 -- 
-2.30.2
+2.17.1
 
