@@ -2,75 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DB4CE7A8A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Sep 2023 20:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D93BCE7A81
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Sep 2023 04:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbjIXU60 (ORCPT
+        id S230412AbjIYEsi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Sep 2023 16:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44344 "EHLO
+        Mon, 25 Sep 2023 00:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjIXU60 (ORCPT
+        with ESMTP id S229449AbjIYEsh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Sep 2023 16:58:26 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E27EE;
-        Sun, 24 Sep 2023 13:58:20 -0700 (PDT)
-Received: from mercury (cust-west-par-46-193-56-210.cust.wifirst.net [46.193.56.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2C93366072E9;
-        Sun, 24 Sep 2023 21:58:18 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1695589098;
-        bh=h8S0AVpoW3F2EytvwOGglewnFQNIvkNAQbE34WlVL0E=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=XeUq47K7GoNnjFu0Z/Xl6fZURJ+CNaPsMYNqh2EYtwcf88C/4ahy2EBGI/7ioASQm
-         SyngW67glqcbQX/gvOCwXWxW9wpfS2KLxQrKoxzk6eMw5+1CVl6o++Ttk2uVgqA7uI
-         TU8qq9SAqEuA7rOzh2LeIgY6EyytQwHAyxZiGsolgYiLE4IhznVXzsdZTYw1k6dLZR
-         CRnxjy4mX1yUXxO5XY/5oLAzCcXpZxEPi7XMkkEIs5KB2CDe5B9HuI8c8ODhA1IoMs
-         BlOKefBWl5QLOEMFHpUBylE5j7g4KAwJLYE/vtM3UKWUQvz2YUJeDFVnNKG867Cglw
-         3JpD8g7/fG+vQ==
-Received: by mercury (Postfix, from userid 1000)
-        id A0C3D10611D9; Sun, 24 Sep 2023 22:58:15 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Konrad Dybcio <konradybcio@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, kernel test robot <lkp@intel.com>
-In-Reply-To: <20230923114807.2829188-1-harshit.m.mogalapalli@oracle.com>
-References: <20230923114807.2829188-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH next] power: supply: mm8013: Fix error code in
- mm8013_probe()
-Message-Id: <169558909561.1797612.1920151492515517327.b4-ty@collabora.com>
-Date:   Sun, 24 Sep 2023 22:58:15 +0200
+        Mon, 25 Sep 2023 00:48:37 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id B803DDF;
+        Sun, 24 Sep 2023 21:48:29 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id E31A36047A8C6;
+        Mon, 25 Sep 2023 12:48:19 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     almaz.alexandrovich@paragon-software.com
+Cc:     Su Hui <suhui@nfschina.com>, ntfs3@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] fs/ntfs3: Avoid possible NULL dereference
+Date:   Mon, 25 Sep 2023 12:48:06 +0800
+Message-Id: <20230925044807.92037-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+smatch error:
+fs/ntfs3/attrib.c:1826 attr_allocate_frame() error:
+we previously assumed 'attr_b' could be null (see line 1739)
 
-On Sat, 23 Sep 2023 04:48:06 -0700, Harshit Mogalapalli wrote:
-> The value of ret is zero when passed to dev_error_probe(), we are passing
-> zero to dev_err_probe() is a success which is incorrect.
-> 
-> Fix this by getting the error code using PTR_ERR().
-> 
-> 
+Return error code directly if 'attr_b' is NULL.
 
-Applied, thanks!
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ fs/ntfs3/attrib.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-[1/1] power: supply: mm8013: Fix error code in mm8013_probe()
-      commit: 43ee22422db545800b8bf2c24ef53d040372fc7a
-
-Best regards,
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index a9d82bbb4729..ebc934ac5cf5 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -1737,8 +1737,7 @@ int attr_allocate_frame(struct ntfs_inode *ni, CLST frame, size_t compr_size,
+ 			attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL,
+ 					      0, NULL, &mi_b);
+ 			if (!attr_b) {
+-				err = -ENOENT;
+-				goto out;
++				return -ENOENT;
+ 			}
+ 
+ 			attr = attr_b;
 -- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+2.30.2
 
