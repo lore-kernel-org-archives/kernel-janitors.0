@@ -2,145 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2296DE7E639
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Sep 2023 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF02E7E63F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Sep 2023 14:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbjIZOHM (ORCPT
+        id S234349AbjIZOe0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Sep 2023 10:07:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37746 "EHLO
+        Tue, 26 Sep 2023 10:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbjIZOHL (ORCPT
+        with ESMTP id S234480AbjIZOeY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Sep 2023 10:07:11 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0802E10E
-        for <kernel-janitors@vger.kernel.org>; Tue, 26 Sep 2023 07:07:04 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-31c5cac3ae2so8601978f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 26 Sep 2023 07:07:03 -0700 (PDT)
+        Tue, 26 Sep 2023 10:34:24 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD13810E
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Sep 2023 07:34:17 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50317080342so15159292e87.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Sep 2023 07:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695737222; x=1696342022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fL7byGgITI5Pp0Gd+G4m6HpKfvXhtfMbVSSCjqe9VQ=;
-        b=BnCASo/Tc6qi8EZNvvmtD3lpKkDK5Jr10FBAjpayIpuUuTWRz+oWq5JIEXd8y8Oi9y
-         5MbEsapYW42020HkaAUkZGGEG1TxizLzNgG+0sLORgH4dbUuOe8B/yo8Fmac0/LSOWRm
-         vnGYrva4u1M3QdsYVkLOiU+wVOiOkkW6MJfbPxtqcvKSqClcAfBYIYkWKqwkXtUjOM4a
-         x1IuOqaJZ37If7bT35bvHgR3EZNHfQX4+jROIFzLAhXQ5pAOWeAeHA1lubjEQ2FT4o52
-         rbIf4hqF71maWXWVBUQiz1x+Dqla2Elt4xhwbwveJAOhcRqLxHIR6LZRcHoWWPTK/ivS
-         32Kg==
+        d=linaro.org; s=google; t=1695738856; x=1696343656; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/riFuqlTy29sJVYgyLAuQOHUjoD2tge6GmUK1p+oNFo=;
+        b=H6jiNH6eKW4fNubrtolzQWuFBpZSTlFgowBn7rCGXgskl5pqIc7Z4Nqth5SE/6rSjq
+         9jru1QQBkVPHHnYtuBivH5UXvIO5nlLO9FgxYC/aEId/6s89ZkhgXsdwT4KlKOulWfQ8
+         qVRrkZwhJqMTr9TUDvqohEy52siP1JMmqoLBgsBrFzbTE7Z92TQDZk1c+AFSIoZ5Q4LT
+         Guo69cu2Bp6wY0t84cZ8p57Bn8IYm8FvuaaqEjOQlFm/lAwRyltr4TZPxtR6uEawWu6+
+         3CkFbMgf3TUBnDztdxd1qmKdBmueWP3sGLocSmBjPYBXHmdL0IModcrRyc5yqFazjLyf
+         GqHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695737222; x=1696342022;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3fL7byGgITI5Pp0Gd+G4m6HpKfvXhtfMbVSSCjqe9VQ=;
-        b=Ote11ZbCYFGMj989dYr95nKZf2DGcAUKz9vD+0LunO6uUtZGKm/T0cDFzr9wg8mbMq
-         05o1Pe2fegRDAB0AbmDq82CO8zS1IYVxu3XGi8IQ9A8bdTGNo3/kJuItKpy7qluubl+B
-         aywhAm65A2gioE3LlEimACQhT8xthHPfSvbg4UWN8uKurzNPM0guX6foGz8fxdI4er6H
-         n61SyRjZALiyKirPc0FJ4JSvHRwcr5AZ6BXBqNMWoMGZQ8aWKY/9oIsbwWVw1XpxhgAV
-         sZ0mt/sYYBrg1A3dAL3ptC/FR+zrGTIY6P0b9UHwlHOkzLzJBHjwIjEb8d+YBCoiqd6B
-         J/Yg==
-X-Gm-Message-State: AOJu0Ywc6d8BZ5prCO3aJISDdYI3Kh6gbDvkTli1RGcfrYH7mVNnb4xH
-        Xb9z/Bk0uPighConJVQ+eJZpug==
-X-Google-Smtp-Source: AGHT+IHrmM3RsXnpLcivnylPyp5TD1hIjaMqvfDzbaCd3y/aleld6b+go0DyjpPmtjDYj1lye7oReA==
-X-Received: by 2002:a5d:4c85:0:b0:317:6ef1:7939 with SMTP id z5-20020a5d4c85000000b003176ef17939mr9042370wrs.23.1695737222048;
-        Tue, 26 Sep 2023 07:07:02 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id b1-20020a5d4d81000000b003215c6e30cbsm14632256wru.104.2023.09.26.07.07.01
+        d=1e100.net; s=20230601; t=1695738856; x=1696343656;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/riFuqlTy29sJVYgyLAuQOHUjoD2tge6GmUK1p+oNFo=;
+        b=S2Ki+s/PgC4SAgTMlNaeyPYdq/EHg/bmC4FPA88lwJ/sRKkaNpF1/mI0bAI8zaJJu4
+         VLWZm272qV/Cp5NLmWqREK4GahKp3DkAXrApMQ+cqDUBKOPtWYhu7oYv4kFS3yGFIp4q
+         e9xC3xJqMBhIoCOr/dINCSWDFlXfoPoBAUXtMN+mFkFc+7FIb7cT/J0/qqp2cB2KkL74
+         by1htG5YDOYz2KFkAf2819H9Ne6KjQrEsK7HAxqJN273JFcXyJp1XPMZp7/InfeS5rmT
+         gprvN2I0UPELFyHMlvI+S9AyhTn1LnQYbl53LNWH0H8Lqu1zE6EI7CSOPg3wTRCEuDUT
+         BpXg==
+X-Gm-Message-State: AOJu0YwnaLw3Nchmpk2ytbkIjwcJn2FqOTOgkZ+mOQ7yrqZj13+9Uwgh
+        phoP6epDJ6mfjj5CvYsePbVMGvq9nQYNYBvS15M=
+X-Google-Smtp-Source: AGHT+IGK6jhA/UCwpJHkwbyR/2+2F0OVC7pOaBisfmsQWfnk9JuVbAkFtDU5C2SUoJpgwUFe+tFE0Q==
+X-Received: by 2002:ac2:5397:0:b0:4fd:faf0:6591 with SMTP id g23-20020ac25397000000b004fdfaf06591mr7584690lfh.10.1695738855814;
+        Tue, 26 Sep 2023 07:34:15 -0700 (PDT)
+Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
+        by smtp.gmail.com with ESMTPSA id g4-20020aa7c584000000b0052e2472f884sm6916835edq.21.2023.09.26.07.34.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 07:07:01 -0700 (PDT)
-Date:   Tue, 26 Sep 2023 17:06:58 +0300
+        Tue, 26 Sep 2023 07:34:15 -0700 (PDT)
+Date:   Tue, 26 Sep 2023 17:34:12 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Peter Ujfalusi <peter.ujfalusi@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 3/3 net] dmaengine: ti: k3-udma-glue: clean up
- k3_udma_glue_tx_get_irq() return
-Message-ID: <bf2cee83-ca8d-4d95-9e83-843a2ad63959@moroto.mountain>
+To:     Rae Moar <rmoar@google.com>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kunit: Check for kunit_parse_glob_filter() failure
+Message-ID: <7bee596c-e0af-40cd-8204-6767266c8a0d@kadam.mountain>
+References: <3ff9d019-75b6-45ee-9b03-9d6ec7c5364f@moroto.mountain>
+ <CA+GJov4SRGa6scDUmm1Tzu8JX4ZaF8S7YVxwZVvYJMSLXVRwrw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4c2073cc-e7ef-4f16-9655-1a46cfed9fe9@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+GJov4SRGa6scDUmm1Tzu8JX4ZaF8S7YVxwZVvYJMSLXVRwrw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The k3_udma_glue_tx_get_irq() function currently returns negative error
-codes on error, zero on error and positive values for success.  This
-complicates life for the callers who need to propagate the error code.
-Also GCC will not warn about unsigned comparisons when you check:
+On Tue, Sep 19, 2023 at 02:49:43PM -0400, Rae Moar wrote:
+> On Fri, Sep 15, 2023 at 8:58 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > Smatch complains that the missing error checks would lead to a crash:
+> >
+> >     lib/kunit/executor_test.c:40 parse_filter_test()
+> >     error: double free of 'filter.test_glob'
+> >
+> > We may as well do it right...
+> >
+> > Fixes: a127b154a8f2 ("kunit: tool: allow filtering test cases via glob")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Hello!
+> 
+> We definitely should add in checks for these errors. I have a couple
+> comments below.
+> 
+> Thanks!
+> -Rae
+> 
+> > ---
+> >  lib/kunit/executor_test.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/kunit/executor_test.c b/lib/kunit/executor_test.c
+> > index b4f6f96b2844..176c9c9dfcfc 100644
+> > --- a/lib/kunit/executor_test.c
+> > +++ b/lib/kunit/executor_test.c
+> > @@ -27,13 +27,15 @@ static void parse_filter_test(struct kunit *test)
+> >  {
+> >         struct kunit_glob_filter filter = {NULL, NULL};
+> >
+> > -       kunit_parse_glob_filter(&filter, "suite");
+> > +       if (!kunit_parse_glob_filter(&filter, "suite"))
+> > +               return;
+> 
+> First, this is returning every time this test is run because the
+> kunit_parse_glob_filter returns 0 when there is no error. So this
+> should instead be checking for a result of not equal to 0.
 
-	if (unsigned_irq <= 0)
+Oh...  Duh.  Sorry.  That's embarrassing.
 
-All the callers have been fixed now but let's just make this easy going
-forward.
+> 
+> Secondly, this should fail the test if the parsing returns an error.
+> So instead of returning I would recommend using a KUNIT_ASSERT
+> statement to check the result of this method is equal to 0.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/dma/ti/k3-udma-glue.c                | 3 +++
- drivers/net/ethernet/ti/am65-cpsw-nuss.c     | 4 ++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 4 +---
- 3 files changed, 6 insertions(+), 5 deletions(-)
+Will do.  Thanks!
 
-diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
-index 789193ed0386..c278d5facf7d 100644
---- a/drivers/dma/ti/k3-udma-glue.c
-+++ b/drivers/dma/ti/k3-udma-glue.c
-@@ -558,6 +558,9 @@ int k3_udma_glue_tx_get_irq(struct k3_udma_glue_tx_channel *tx_chn)
- 		tx_chn->virq = k3_ringacc_get_ring_irq_num(tx_chn->ringtxcq);
- 	}
- 
-+	if (!tx_chn->virq)
-+		return -ENXIO;
-+
- 	return tx_chn->virq;
- }
- EXPORT_SYMBOL_GPL(k3_udma_glue_tx_get_irq);
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 31e84c503e22..24120605502f 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -1747,10 +1747,10 @@ static int am65_cpsw_nuss_init_tx_chns(struct am65_cpsw_common *common)
- 		}
- 
- 		tx_chn->irq = k3_udma_glue_tx_get_irq(tx_chn->tx_chn);
--		if (tx_chn->irq <= 0) {
-+		if (tx_chn->irq < 0) {
- 			dev_err(dev, "Failed to get tx dma irq %d\n",
- 				tx_chn->irq);
--			ret = tx_chn->irq ?: -ENXIO;
-+			ret = tx_chn->irq;
- 			goto err;
- 		}
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 89c0c3449d98..3c611b9aaecf 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -317,9 +317,7 @@ static int prueth_init_tx_chns(struct prueth_emac *emac)
- 		}
- 
- 		ret = k3_udma_glue_tx_get_irq(tx_chn->tx_chn);
--		if (ret <= 0) {
--			if (!ret)
--				ret = -EINVAL;
-+		if (ret < 0) {
- 			netdev_err(ndev, "failed to get tx irq\n");
- 			goto fail;
- 		}
--- 
-2.39.2
+regards,
+dan carpenter
 
