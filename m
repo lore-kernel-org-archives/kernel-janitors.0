@@ -2,90 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDD3E81808
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Sep 2023 01:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0014EE7D26C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Sep 2023 09:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232976AbjIZB2B (ORCPT
+        id S234143AbjIZJXC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Sep 2023 21:28:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39340 "EHLO
+        Tue, 26 Sep 2023 05:23:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232218AbjIZB2A (ORCPT
+        with ESMTP id S233940AbjIZJXB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Sep 2023 21:28:00 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id F3DD4101;
-        Mon, 25 Sep 2023 18:27:52 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id D75F9604DFA33;
-        Tue, 26 Sep 2023 09:27:48 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     sfrench@samba.org, pc@manguebit.com, lsahlber@redhat.com,
-        sprasad@microsoft.com, tom@talpey.com
-Cc:     Su Hui <suhui@nfschina.com>, dan.carpenter@linaro.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] cifs: avoid possible NULL dereference
-Date:   Tue, 26 Sep 2023 09:27:34 +0800
-Message-Id: <20230926012733.814657-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 26 Sep 2023 05:23:01 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3FDBE;
+        Tue, 26 Sep 2023 02:22:54 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85A0C433CD;
+        Tue, 26 Sep 2023 09:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695720174;
+        bh=XizUt1Q7kWwQVBWeHzt2ZtzkYTGFUWffB2y0PHPGIyg=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=J4h5WnIkDZPA676VW6bCVSBg3R8KzghueRiwnq2ly6bSGmvJI6G2UhzKQGVAop4zD
+         zTxzyJPnVZ17ssFHT6rqIleG+ey/Ro5wbbhx1IJtDFh1plL4TkCardmpUMf48PEEGy
+         IXr+JR1TipPUKdCXC+jqw2FpCuEr/twjAtJM5iFtrfKDD7ssPNBhpn99/SHsyFeXYz
+         nvVnAxOrsoOr3p6gowjnTbmzzkhY2FyNsIo5EEr6KUz0yxwTvprqsGSl+vrf2HCa0N
+         yKeAoNqHKtTVBDS5ozvOjs0TfVmARLQkG+E1PYEgKZ/h8cwEEVLvWPpAxgdbEI2pTl
+         v6wdEK42a6k+Q==
+From:   Mark Brown <broonie@kernel.org>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <84eb08daf85d203b34af9d8d08abf86804211413.1694961365.git.christophe.jaillet@wanadoo.fr>
+References: <84eb08daf85d203b34af9d8d08abf86804211413.1694961365.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] spi: at91-usart: Remove some dead code
+Message-Id: <169572017245.2563985.3260563484580012452.b4-ty@kernel.org>
+Date:   Tue, 26 Sep 2023 11:22:52 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch warn:
-fs/smb/client/file.c:4910 cifs_oplock_break() warn:
-variable dereferenced before check 'inode' (see line 4881)
+On Sun, 17 Sep 2023 16:36:26 +0200, Christophe JAILLET wrote:
+> dma_request_chan() does not return NULL. It returns a valid pointer or an
+> error pointer.
+> 
+> So, some dead code can be removed.
+> 
+> The IS_ERR_OR_NULL() in the error handling path are still needed, because
+> the error handling path is common to the whole function and the
+> ctlr->dma_xx are NULL when at91_usart_spi_configure_dma() is called.
+> 
+> [...]
 
-If 'inode' is NULL, print some warning and return.
+Applied to
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/smb/client/file.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 2108b3b40ce9..de705c8b2d22 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -4878,8 +4878,8 @@ void cifs_oplock_break(struct work_struct *work)
- 	struct cifsFileInfo *cfile = container_of(work, struct cifsFileInfo,
- 						  oplock_break);
- 	struct inode *inode = d_inode(cfile->dentry);
--	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
--	struct cifsInodeInfo *cinode = CIFS_I(inode);
-+	struct cifs_sb_info *cifs_sb;
-+	struct cifsInodeInfo *cinode;
- 	struct cifs_tcon *tcon;
- 	struct TCP_Server_Info *server;
- 	struct tcon_link *tlink;
-@@ -4888,6 +4888,13 @@ void cifs_oplock_break(struct work_struct *work)
- 	__u64 persistent_fid, volatile_fid;
- 	__u16 net_fid;
- 
-+	if (!inode) {
-+		cifs_dbg(FYI, "%s : failed to find inode\n", __func__);
-+		return;
-+	}
-+	cifs_sb = CIFS_SB(inode->i_sb);
-+	cinode = CIFS_I(inode);
-+
- 	wait_on_bit(&cinode->flags, CIFS_INODE_PENDING_WRITERS,
- 			TASK_UNINTERRUPTIBLE);
- 
-@@ -4907,7 +4914,7 @@ void cifs_oplock_break(struct work_struct *work)
- 		cinode->oplock = 0;
- 	}
- 
--	if (inode && S_ISREG(inode->i_mode)) {
-+	if (S_ISREG(inode->i_mode)) {
- 		if (CIFS_CACHE_READ(cinode))
- 			break_lease(inode, O_RDONLY);
- 		else
--- 
-2.30.2
+Thanks!
+
+[1/1] spi: at91-usart: Remove some dead code
+      commit: 8a771075e50bef5e2a063a9f954b36a33fb7359f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
