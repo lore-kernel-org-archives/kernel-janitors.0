@@ -2,186 +2,142 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3F8E7D27E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Sep 2023 19:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B592E80A97
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 06:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235404AbjIZTul (ORCPT
+        id S229882AbjI0G6n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Sep 2023 15:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32814 "EHLO
+        Wed, 27 Sep 2023 02:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233431AbjIZTuk (ORCPT
+        with ESMTP id S229757AbjI0G6m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Sep 2023 15:50:40 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CD4A3;
-        Tue, 26 Sep 2023 12:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695757833; x=1727293833;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2yuwy3Y57nWqXAlW1YASdDQfdwt4RIuFLba+rx8HU+w=;
-  b=ADoBhADvXk+6Qmv5Cy/sOUCIN5Kgxj+e+DA0XWractRfYbciC/+s2qmZ
-   1ZO5NYxytLRdpw91aLS2NCsG0DApzaXA5V5XZnldOchD6LWAyZcH5S0A1
-   t9iHPCiGcau2KY234zK0r/ymcWO1vxCujeERRIsr29hWhwg89j9mmJnXM
-   WfprBpnZdDECbhHWVMqSqln7jyZK690o2c34xDbIFhr/nMO/KZ609Nyi/
-   bDJzcwrLMg8Mgf0Pi85liOHVe5vPB8iWCLk8QsId+iLY6qejZp98LZyoi
-   EEYQbm+Mg3qnNgwGwFoKPluJbbt9QFIt8F5AE6dJ9VqAP1IXgqhwXR0Un
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="445786846"
-X-IronPort-AV: E=Sophos;i="6.03,178,1694761200"; 
-   d="scan'208";a="445786846"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2023 12:50:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.03,178,1694761200"; 
-   d="scan'208";a="274191"
-Received: from lkp-server02.sh.intel.com (HELO 32c80313467c) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Sep 2023 12:50:31 -0700
-Received: from kbuild by 32c80313467c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qlE4g-0003Iz-3C;
-        Tue, 26 Sep 2023 19:50:27 +0000
-Date:   Wed, 27 Sep 2023 03:49:32 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Dooks <ben@simtec.co.uk>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc2: gadget: Fix a warning when compiling with W=1
-Message-ID: <202309270325.uqGsh5Cw-lkp@intel.com>
-References: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
+        Wed, 27 Sep 2023 02:58:42 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9B7D6;
+        Tue, 26 Sep 2023 23:58:41 -0700 (PDT)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38QLTNqi006223;
+        Wed, 27 Sep 2023 06:58:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=1JPRMkBEdyKk7oKqtMorRqkKFZiq/eCbKVfKVWvw/8s=;
+ b=j4f7qUPE1xQaJtTa6nZl4W//hfXjWP5a2DFCPZl8T0jADiS8+vk+ZlihvKPLWcndWMDR
+ Io99PmShvV3XhYzlX9ToHqCUbz3Jbsk7DSwMOdZqem/pFY3tYzdT584CxVORSTojonz4
+ NB32mTuF0HPRr+J5G10VoYlxUDcF6l/J2GItREUnlJfN1puMP3GaH4cwQy84KxCeBZbM
+ omffYvkUO2xYO+AofidEXUfZ9qoBPZbSX9C4fkZ0kyOsn25EmBVNOCFsPCzaRMmimFYD
+ vBOJQAYCoj93OdOnBvpG+dacfNDwgplgn35foQRey2IleSHdCzuaJO6+swavPa1B7zYk dA== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3t9pxc0pjg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Sep 2023 06:58:07 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 38R6CI0V030811;
+        Wed, 27 Sep 2023 06:58:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3t9pfdd2yg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Sep 2023 06:58:05 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38R6u0dh023218;
+        Wed, 27 Sep 2023 06:58:05 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3t9pfdd2xb-1;
+        Wed, 27 Sep 2023 06:58:05 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Waiman Long <longman@redhat.com>,
+        Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
+        kamalesh.babulal@oracle.com, kernel test robot <lkp@intel.com>
+Subject: [PATCH next] cgroup/cpuset: Cleanup signedness issue in cpu_exclusive_check()
+Date:   Tue, 26 Sep 2023 23:58:01 -0700
+Message-ID: <20230927065801.2139969-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-27_03,2023-09-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2309270058
+X-Proofpoint-GUID: TdBcfUHpmIQ-MCe_6iUo7Dn4JgRp97J1
+X-Proofpoint-ORIG-GUID: TdBcfUHpmIQ-MCe_6iUo7Dn4JgRp97J1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Smatch complains about returning negative error codes from a type
+bool function.
 
-kernel test robot noticed the following build warnings:
+kernel/cgroup/cpuset.c:705 cpu_exclusive_check() warn:
+	signedness bug returning '(-22)'
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.6-rc3 next-20230926]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The code works correctly, but it is confusing.  The current behavior is
+that cpu_exclusive_check() returns true if it's *NOT* exclusive.  Rename
+it to cpusets_are_exclusive() and reverse the returns so it returns true
+if it is exclusive and false if it's not.  Update both callers as well.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/usb-dwc2-gadget-Fix-a-warning-when-compiling-with-W-1/20230923-185559
-base:   linus/master
-patch link:    https://lore.kernel.org/r/5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet%40wanadoo.fr
-patch subject: [PATCH] usb: dwc2: gadget: Fix a warning when compiling with W=1
-config: x86_64-buildonly-randconfig-004-20230927 (https://download.01.org/0day-ci/archive/20230927/202309270325.uqGsh5Cw-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230927/202309270325.uqGsh5Cw-lkp@intel.com/reproduce)
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <error27@gmail.com>
+Closes: https://lore.kernel.org/r/202309201706.2LhKdM6o-lkp@intel.com/
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on sattic analysis, only compile tested
+---
+ kernel/cgroup/cpuset.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309270325.uqGsh5Cw-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/usb/dwc2/gadget.c: In function 'dwc2_hsotg_initep':
->> drivers/usb/dwc2/gadget.c:4804:55: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 8 [-Wformat-truncation=]
-    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%u%s", epnum, dir);
-         |                                                       ^~
-   drivers/usb/dwc2/gadget.c:4804:52: note: directive argument in the range [1, 4294967295]
-    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%u%s", epnum, dir);
-         |                                                    ^~~~~~~~
-   drivers/usb/dwc2/gadget.c:4804:9: note: 'snprintf' output between 6 and 16 bytes into a destination of size 10
-    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%u%s", epnum, dir);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +4804 drivers/usb/dwc2/gadget.c
-
-  4775	
-  4776	/**
-  4777	 * dwc2_hsotg_initep - initialise a single endpoint
-  4778	 * @hsotg: The device state.
-  4779	 * @hs_ep: The endpoint to be initialised.
-  4780	 * @epnum: The endpoint number
-  4781	 * @dir_in: True if direction is in.
-  4782	 *
-  4783	 * Initialise the given endpoint (as part of the probe and device state
-  4784	 * creation) to give to the gadget driver. Setup the endpoint name, any
-  4785	 * direction information and other state that may be required.
-  4786	 */
-  4787	static void dwc2_hsotg_initep(struct dwc2_hsotg *hsotg,
-  4788				      struct dwc2_hsotg_ep *hs_ep,
-  4789				      unsigned int epnum,
-  4790				      bool dir_in)
-  4791	{
-  4792		char *dir;
-  4793	
-  4794		if (epnum == 0)
-  4795			dir = "";
-  4796		else if (dir_in)
-  4797			dir = "in";
-  4798		else
-  4799			dir = "out";
-  4800	
-  4801		hs_ep->dir_in = dir_in;
-  4802		hs_ep->index = epnum;
-  4803	
-> 4804		snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%u%s", epnum, dir);
-  4805	
-  4806		INIT_LIST_HEAD(&hs_ep->queue);
-  4807		INIT_LIST_HEAD(&hs_ep->ep.ep_list);
-  4808	
-  4809		/* add to the list of endpoints known by the gadget driver */
-  4810		if (epnum)
-  4811			list_add_tail(&hs_ep->ep.ep_list, &hsotg->gadget.ep_list);
-  4812	
-  4813		hs_ep->parent = hsotg;
-  4814		hs_ep->ep.name = hs_ep->name;
-  4815	
-  4816		if (hsotg->params.speed == DWC2_SPEED_PARAM_LOW)
-  4817			usb_ep_set_maxpacket_limit(&hs_ep->ep, 8);
-  4818		else
-  4819			usb_ep_set_maxpacket_limit(&hs_ep->ep,
-  4820						   epnum ? 1024 : EP0_MPS_LIMIT);
-  4821		hs_ep->ep.ops = &dwc2_hsotg_ep_ops;
-  4822	
-  4823		if (epnum == 0) {
-  4824			hs_ep->ep.caps.type_control = true;
-  4825		} else {
-  4826			if (hsotg->params.speed != DWC2_SPEED_PARAM_LOW) {
-  4827				hs_ep->ep.caps.type_iso = true;
-  4828				hs_ep->ep.caps.type_bulk = true;
-  4829			}
-  4830			hs_ep->ep.caps.type_int = true;
-  4831		}
-  4832	
-  4833		if (dir_in)
-  4834			hs_ep->ep.caps.dir_in = true;
-  4835		else
-  4836			hs_ep->ep.caps.dir_out = true;
-  4837	
-  4838		/*
-  4839		 * if we're using dma, we need to set the next-endpoint pointer
-  4840		 * to be something valid.
-  4841		 */
-  4842	
-  4843		if (using_dma(hsotg)) {
-  4844			u32 next = DXEPCTL_NEXTEP((epnum + 1) % 15);
-  4845	
-  4846			if (dir_in)
-  4847				dwc2_writel(hsotg, next, DIEPCTL(epnum));
-  4848			else
-  4849				dwc2_writel(hsotg, next, DOEPCTL(epnum));
-  4850		}
-  4851	}
-  4852	
-
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 15f399153a2e..afefddd33c3e 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -719,18 +719,18 @@ static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
+ }
+ 
+ /*
+- * cpu_exclusive_check() - check if two cpusets are exclusive
++ * cpusets_are_exclusive() - check if two cpusets are exclusive
+  *
+- * Return 0 if exclusive, -EINVAL if not
++ * Return true if exclusive, false if not
+  */
+-static inline bool cpu_exclusive_check(struct cpuset *cs1, struct cpuset *cs2)
++static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
+ {
+ 	struct cpumask *xcpus1 = fetch_xcpus(cs1);
+ 	struct cpumask *xcpus2 = fetch_xcpus(cs2);
+ 
+ 	if (cpumask_intersects(xcpus1, xcpus2))
+-		return -EINVAL;
+-	return 0;
++		return false;
++	return true;
+ }
+ 
+ /*
+@@ -833,7 +833,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
+ 	cpuset_for_each_child(c, css, par) {
+ 		if ((is_cpu_exclusive(trial) || is_cpu_exclusive(c)) &&
+ 		    c != cur) {
+-			if (cpu_exclusive_check(trial, c))
++			if (!cpusets_are_exclusive(trial, c))
+ 				goto out;
+ 		}
+ 		if ((is_mem_exclusive(trial) || is_mem_exclusive(c)) &&
+@@ -1864,7 +1864,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 			cpuset_for_each_child(child, css, parent) {
+ 				if (child == cs)
+ 					continue;
+-				if (cpu_exclusive_check(cs, child)) {
++				if (!cpusets_are_exclusive(cs, child)) {
+ 					exclusive = false;
+ 					break;
+ 				}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.41.0
+
