@@ -2,80 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B22E810D1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 11:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AD1E810DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbjI0L3g (ORCPT
+        id S230383AbjI0Mhe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 07:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40126 "EHLO
+        Wed, 27 Sep 2023 08:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230138AbjI0L3g (ORCPT
+        with ESMTP id S229531AbjI0Mhd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 07:29:36 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1577F180;
-        Wed, 27 Sep 2023 04:29:33 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 38RBTKIp028294;
-        Wed, 27 Sep 2023 06:29:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1695814160;
-        bh=/uygrMTt+sS6fKj6H6SonG1Pv9RkLKarrN56GecG968=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=Oodd9r3X4XG3ypLQwNcaz2MwI031FYdcqKdG33Xz8OQEaYJ5Rin3MxO6v1Z7XeCdi
-         RjCwWHrfXy/dXMFJs8hyKV3jynq6R9W1dJzbgWJ6ZMKGtbr50riRdoiylGGjerkY2x
-         V7KfZYRfNzpIfFpkorUwV1Anhl0M1PHALuuO0BlE=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 38RBTKh6009677
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Sep 2023 06:29:20 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 27
- Sep 2023 06:29:20 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 27 Sep 2023 06:29:20 -0500
-Received: from [10.250.135.44] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 38RBTDeg067437;
-        Wed, 27 Sep 2023 06:29:14 -0500
-Message-ID: <20c88067-17f6-097b-be51-b6bf82cba619@ti.com>
-Date:   Wed, 27 Sep 2023 14:29:12 +0300
+        Wed, 27 Sep 2023 08:37:33 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165F0C0
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:32 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4053c6f1087so101352195e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695818250; x=1696423050; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lSvSjPBwBbpaP5Mr40QQhbIUu3AL4PWGVIl5zKwP4Ko=;
+        b=vqSN7EoAlxbuq316KtnPtrkiBXOGVi80pIVPzAvZgfQJ69/fF/dWZD0qPZUw8XkTg6
+         Q2DwZuQPN5gObvrPR04Xf9xuHoexcQkjBjlEe958czpDUNFmxgzjlJwRu7DByWljJA59
+         TZy9HdPGoa5Ek//1VeQlbiUwPyuNTw9XysqMIiwmc4HKZDCd8qMG6otb4I4y2MrvAdpZ
+         JgkIOq9GODyhXxql8z4tIkrYvxprPU8Q9c3/NTGK+Th6bZAm+FqSMFtg7UmlIWMa5Hpz
+         6fPMt4RFYIJgKTI4JdKTOXmO2qIwvmX/pj2j/YmzI4mqsjWo1tc4MbxkkJ344QmFyQGy
+         I0WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695818250; x=1696423050;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSvSjPBwBbpaP5Mr40QQhbIUu3AL4PWGVIl5zKwP4Ko=;
+        b=Kcs+dh+rU2G9vxXq7lQC/rTTL2rqxqqJwhUlMIl6U5oy6AQ9EyGaGEXgj+sA3oRbGR
+         V9kZuica6y1zkNKjlZwRdJnwcbPOqY4H9vlpDXiLKSUsqUqTZalfr7Lt0EuyIrR+mir+
+         DVR54Dmwyn+zRSnNkm9ruEEiObQQRY3RUPmfKBzFTJpAIxrHqtiqsnhvc4bCI6w+9zVz
+         aQk97lBv22Gw6QG+ohm70GjlVcFyaRaoBsc6GW+7ZBqXeUf5RZKADL3AySn0oqr4wBGN
+         X9ddXkdOjS6ab9yaTYhh6UyZxz7ePcjc49yTXJmYSmT6YDTtfcNaHLweQ1+Cr1Ae2xeC
+         9kvA==
+X-Gm-Message-State: AOJu0Yz57IntxQvrRWvpc+nVRitt6CSHOf07vJoccm0uJiW02zTqRuvf
+        WNjpPgnlAKLoZ/BFRdUXgeLfmw==
+X-Google-Smtp-Source: AGHT+IGMNwZeZVMjHYbbFlIN0HffM3gIJdpZbL37AcIUk1gPy81JzbFuqU5EaISKNrPJieFYqvUpNQ==
+X-Received: by 2002:a05:600c:2308:b0:401:bd2e:49fc with SMTP id 8-20020a05600c230800b00401bd2e49fcmr1921153wmo.24.1695818250434;
+        Wed, 27 Sep 2023 05:37:30 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t16-20020a5d49d0000000b0031c5b380291sm17074203wrs.110.2023.09.27.05.37.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 05:37:30 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 15:37:26 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ACPI: thermal: Fix a small leak in acpi_thermal_add()
+Message-ID: <37eb30ba-1dc9-42e7-a22e-af44f6270e67@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 2/3 net] net: ti: icssg-prueth: Fix signedness bug in
- prueth_init_tx_chns()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "Vignesh Raghavendra" <vigneshr@ti.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <34770474-0345-4223-9c11-9039b74d03b4@moroto.mountain>
-From:   Roger Quadros <rogerq@ti.com>
-In-Reply-To: <34770474-0345-4223-9c11-9039b74d03b4@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Free "tz" if the "trip" allocation fails.
 
+Fixes: 5fc2189f9335 ("ACPI: thermal: Create and populate trip points table earlier")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/acpi/thermal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On 26.9.2023 17.05, Dan Carpenter wrote:
-> The "tx_chn->irq" variable is unsigned so the error checking does not
-> work correctly.
-> 
-> Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 10720a038846..f8a95939c88d 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -928,8 +928,10 @@ static int acpi_thermal_add(struct acpi_device *device)
+ 	acpi_thermal_guess_offset(tz, crit_temp);
+ 
+ 	trip = kcalloc(trip_count, sizeof(*trip), GFP_KERNEL);
+-	if (!trip)
+-		return -ENOMEM;
++	if (!trip) {
++		result = -ENOMEM;
++		goto free_memory;
++	}
+ 
+ 	tz->trip_table = trip;
+ 
+-- 
+2.39.2
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
