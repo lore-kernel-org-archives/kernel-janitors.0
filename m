@@ -2,106 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE4BE82CA0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 14:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F567E82CCC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 19:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbjI0Oqq convert rfc822-to-8bit (ORCPT
+        id S229717AbjI0TzK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 10:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53154 "EHLO
+        Wed, 27 Sep 2023 15:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbjI0Oqp (ORCPT
+        with ESMTP id S229592AbjI0TzJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 10:46:45 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1D9DF9
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 07:46:43 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1qlVo2-000330-AL; Wed, 27 Sep 2023 16:46:26 +0200
-Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ore@pengutronix.de>)
-        id 1qlVo0-009McB-Tv; Wed, 27 Sep 2023 16:46:24 +0200
-Received: from ore by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1qlVo0-00BjIg-RC; Wed, 27 Sep 2023 16:46:24 +0200
-Date:   Wed, 27 Sep 2023 16:46:24 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
+        Wed, 27 Sep 2023 15:55:09 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8406F10E
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 12:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        sang-engineering.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=k1; bh=/hPS
+        uQ2NRUAu1MtmSEqw5S0lNV0lO0QlN8GLk370his=; b=XOiPE246PKdjaE/6qIiH
+        uOCkrfpbEdsnjiRwkuadk+B+EHrffSp8PKtmiTMNdQiq91oaPc20aQhOx7CjglmS
+        A5iykt26jeK++A4KNR0UInFayB8ZzuYsQjrbxOvpPicf92O9ZY5sGIdJ7L51PwZP
+        OgXmXmtAuNHxNrYUwqvnaLRFs5BS6d1SnE4UsEeCtc+PJzYpEztjjUnDUX/vw7oc
+        /h/lgyRoV9UrfbQ3sBNkwHfDyYSQLc2ocst3SFJ0mRG+4WH0gNm83j2M6EZBhLOW
+        LLTzNpfuALZV1biLxhb0n5jzal5GFQHhA6uZHgsgNoFrX+5HGQbcCv9xrKtve+zb
+        vA==
+Received: (qmail 3184996 invoked from network); 27 Sep 2023 21:55:03 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Sep 2023 21:55:03 +0200
+X-UD-Smtp-Session: l3s3148p1@zKsykVwGQqwgAQnoAF+HAOhQXz46dAsh
+Date:   Wed, 27 Sep 2023 21:55:02 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Oleksij Rempel <linux@rempel-privat.de>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+Cc:     Andi Shyti <andi.shyti@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: microchip: Uninitialized variable in
- ksz9477_acl_move_entries()
-Message-ID: <20230927144624.GN2714790@pengutronix.de>
-References: <2f58ca9a-9ac5-460a-98a4-aa8304f2348a@moroto.mountain>
+Subject: Re: [PATCH] i2c: rcar: fix error code in probe()
+Message-ID: <ZRSIlgWhDIz3pbh+@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KqCQv6EJAFfntN6O"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <2f58ca9a-9ac5-460a-98a4-aa8304f2348a@moroto.mountain>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 03:53:37PM +0300, Dan Carpenter wrote:
-> Smatch complains that if "src_idx" equals "dst_idx" then
-> ksz9477_validate_and_get_src_count() doesn't initialized "src_count".
-> Set it to zero for this situation.
-> 
-> Fixes: 002841be134e ("net: dsa: microchip: Add partial ACL support for ksz9477 switches")
+
+--KqCQv6EJAFfntN6O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 27, 2023 at 03:38:36PM +0300, Dan Carpenter wrote:
+> Return an error code if devm_reset_control_get_exclusive() fails.
+> The current code returns success.
+>=20
+> Fixes: 0e864b552b23 ("i2c: rcar: reset controller is mandatory for Gen3+")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Applied to for-next, thanks!
 
-Thank you!
 
-> ---
->  drivers/net/dsa/microchip/ksz9477_acl.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz9477_acl.c b/drivers/net/dsa/microchip/ksz9477_acl.c
-> index 06d74c19eb94..e554cd4a024b 100644
-> --- a/drivers/net/dsa/microchip/ksz9477_acl.c
-> +++ b/drivers/net/dsa/microchip/ksz9477_acl.c
-> @@ -554,7 +554,8 @@ static int ksz9477_acl_move_entries(struct ksz_device *dev, int port,
->  	struct ksz9477_acl_entry buffer[KSZ9477_ACL_MAX_ENTRIES];
->  	struct ksz9477_acl_priv *acl = dev->ports[port].acl_priv;
->  	struct ksz9477_acl_entries *acles = &acl->acles;
-> -	int src_count, ret, dst_count;
-> +	int ret, dst_count;
-> +	int src_count = 0;
->  
->  	ret = ksz9477_validate_and_get_src_count(dev, port, src_idx, dst_idx,
->  						 &src_count, &dst_count);
-> -- 
-> 2.39.2
-> 
-> 
-> 
+--KqCQv6EJAFfntN6O
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUUiJYACgkQFA3kzBSg
+KbZs1A//TOmDoDRhG66rSNLMeTXX3iCyJjGg+vuMugfXruz8YuQJVCVHPPtPpFSc
+trU5w7jhUPtDqpJJCdbsqAq6Z1Y63E+Cc5gTuAGmbBcAPyAt+cycRaw54+SwNd//
+0z5yR3ebf9V42xtoOAgLLfck+d4YKzRaHbEOyzbnpziCvVYhUWG7DwWikZv1oLwj
+PrQzSlNk/lMEzRYAlgIkknxlkRjbzK+Kx9AlnjcXJg3uPK6Me31kPWkDjR0Y88oA
+4mJlNdCxHYyIy+bULEpDvXRMcRCCol7LzZEY6+P9M59IdeVgdxp9ncUHzRH3+xxo
+NbjNNDyuRZluhiVVkDga+RsEExdvgcOOy1HX+P3QqzC6kuzwldBxo1AFwT548Xj/
+ut7NUIMI+mVfHb62wBXfDZUCwnS/9j2LV0V/NT5VHdVqoen/oqNBofO/vq/L0l/o
+RnUFCgjUsI/H/xnC/6AKrYzVq5RYYUk1uIEbOzB3XTP/37MD5Aaq8ZFU1nuhYEEm
+Nfg8Emp4V+amr5yEHf9gsMjLEv6EXG+WvfwMeIJrUhEPKXO/LAmrVg7tZnNSOsDm
+xj+uPOzE1/CPXy4QZrr2i+joshBRB+i+IBbQ7y9YxInbH+qP5TCmR37PzoE3nN+t
+eaAreurIdi1Dy8ZSlhMCZOt3KZLB6NkyKBVEhT6/86h2zBkt7lc=
+=Oh/z
+-----END PGP SIGNATURE-----
+
+--KqCQv6EJAFfntN6O--
