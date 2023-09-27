@@ -2,105 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C11E80AAD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 14:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 053D6E80AAF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 14:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbjI0OCk (ORCPT
+        id S232075AbjI0OEd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 10:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
+        Wed, 27 Sep 2023 10:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231758AbjI0OCj (ORCPT
+        with ESMTP id S232071AbjI0OEd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 10:02:39 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C54610A;
-        Wed, 27 Sep 2023 07:02:38 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6c4c594c0eeso5491405a34.0;
-        Wed, 27 Sep 2023 07:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695823357; x=1696428157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZBgo/SWIO02Pm/xzDvMlyzJPp7I0czV8f3hR93KFgsk=;
-        b=R2ULERYdMlfhBMmUAbH1iL3UJpsD6DYE3a157LM7ogB3chQ3KEJXolTPGf/PUdx3Yw
-         oY38XQmN+FoaUjkr9PAdOXxr3aKzjRXW1YfIWaBkSNrT0kk/4QFzAUYWNjSBEecjWxzR
-         f5ZIRVPbHab22Z4+1Krc0sNM6mupDKkp+dMUmG44zEX7HnpqQOup5qT3pEzOozkhiHFt
-         XDFtnWOc0LrkdH3QPmbA7FLsX219gNsYooe+y6tXI6JPpIZ5usPIc45/kX/rSBGPwujX
-         MFBGJjOmN0oSsJQ2F9GL6HNNmTjjtBTLFTW46w8AU1uRnquc4CxOAiJD9vtl8C/qSIqI
-         I7GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695823357; x=1696428157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZBgo/SWIO02Pm/xzDvMlyzJPp7I0czV8f3hR93KFgsk=;
-        b=oIQLTmKlp7uGnrUsikcGCiGOscIc06pXOcTBof0WR0DwvEJKRhsNJqv1oh1qKcrI6g
-         k65H3xxEhW79APbg9c8ZkfpmsWZKg2XgKYt/tRAnm0W+dvsyvZRAL53Cl5DA8rctXCuf
-         R7vV9KtaTauaFLC9Ep0/ejFuzymeoLnq2gDQlZYewFD32H1q9WIBb1qhVyZ5AR86bw1v
-         wOkMUjCgTgKbj4QykoaXbkqUxaz7KQviB81CMxhTQ9KOCSKo6+ALMdAVTz52sgUG0o6N
-         NQaDkdRFBqrJyzbb6SHSktiDQG3iQHmqwH65HjNje15s3zjPqkYMAsLNEcLB284pC40e
-         Ol+Q==
-X-Gm-Message-State: AOJu0YyhzzuSU8qH4T6Vpa2FeKB/DZ9w/wZ1ul6LFBWSjLavAIMZ1zhl
-        4pq6eL0S2hkSTv8J+XLvDZrlrbU8V9z33oXIhQo=
-X-Google-Smtp-Source: AGHT+IGX+Eyi3U6z/rblwtsWWP/9TBKMDyZgdX5YoXYjjU8FFILz4zJPI4wp/Tj307ujnIycKSLX6ReyZlLQaUb169I=
-X-Received: by 2002:a05:6358:6f08:b0:142:d097:3725 with SMTP id
- r8-20020a0563586f0800b00142d0973725mr1931059rwn.9.1695823357416; Wed, 27 Sep
- 2023 07:02:37 -0700 (PDT)
+        Wed, 27 Sep 2023 10:04:33 -0400
+X-Greylist: delayed 585 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 27 Sep 2023 07:04:31 PDT
+Received: from out-191.mta0.migadu.com (out-191.mta0.migadu.com [IPv6:2001:41d0:1004:224b::bf])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39A8126
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 07:04:31 -0700 (PDT)
+Message-ID: <5710f678-b643-b22e-7c73-1d8d6ba916a6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1695822884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/OSwsNOXWM0VgezPfw7af7Si0H/8qY1jnNwHcRl/SBg=;
+        b=VRT903ZJjhjbxqVECRTdLvimf33NZh3T4eQx6dkQ2L/fz3ZcEWCrGtZn4/g/Twte9GD069
+        PMhYDD4izcVHGPVMYf++2K3AaTDtyb+jSk6uEsAywhst7rADOmuWEaxgmYM2XabEDZPqgC
+        m0W8NGhmbYCYFJChm38ODm9Hn3IZAP4=
+Date:   Wed, 27 Sep 2023 14:54:37 +0100
 MIME-Version: 1.0
-References: <20230925045059.92883-1-suhui@nfschina.com>
-In-Reply-To: <20230925045059.92883-1-suhui@nfschina.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 27 Sep 2023 17:02:26 +0300
-Message-ID: <CAOQ4uxhv=Theeq0tEiDXEjUcKLNfaZnsVjnweX84mzWYSmFiZQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: avoid possible NULL dereference
-To:     Su Hui <suhui@nfschina.com>
-Cc:     miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next] ptp: ocp: fix error code in probe()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Richard Cochran <richardcochran@gmail.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <5c581336-0641-48bd-88f7-51984c3b1f79@moroto.mountain>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <5c581336-0641-48bd-88f7-51984c3b1f79@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 25, 2023 at 7:52=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
->
-> smatch warn:
-> fs/overlayfs/copy_up.c:450 ovl_set_origin() warn:
-> variable dereferenced before check 'fh' (see line 449)
->
-> If 'fh' is NULL, passing NULL instead of 'fh->buf'.
->
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+On 27/09/2023 13:55, Dan Carpenter wrote:
+> There is a copy and paste error so this uses a valid pointer instead of
+> an error pointer.
+> 
+> Fixes: 09eeb3aecc6c ("ptp_ocp: implement DPLL ops")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  fs/overlayfs/copy_up.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index d1761ec5866a..086f9176b4d4 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -446,7 +446,7 @@ int ovl_set_origin(struct ovl_fs *ofs, struct dentry =
-*lower,
->         /*
->          * Do not fail when upper doesn't support xattrs.
->          */
-> -       err =3D ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh->buf,
-> +       err =3D ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh ? fh-=
->buf : NULL,
->                                  fh ? fh->fb.len : 0, 0);
->         kfree(fh);
->
-> --
-> 2.30.2
+>   drivers/ptp/ptp_ocp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 88d60a9b5731..d39afe091a7b 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -4453,7 +4453,7 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   	for (i = 0; i < OCP_SMA_NUM; i++) {
+>   		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
+>   		if (IS_ERR(bp->sma[i].dpll_pin)) {
+> -			err = PTR_ERR(bp->dpll);
+> +			err = PTR_ERR(bp->sma[i].dpll_pin);
+>   			goto out_dpll;
+>   		}
+>   
 
-After discussing this with Dan Carpenter, this is not a kernel bug,
-it is a smatch bug.
+Thanks!
 
-The value being passed to setxattr is (void *)OVL_FH_FID_OFFSET,
-which is just as arbitrary as NULL when size is 0.
-
-Thanks,
-Amir.
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
