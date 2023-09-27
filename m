@@ -2,138 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E21E7F14E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 13:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C11E80AAD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 14:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbjI0NOl (ORCPT
+        id S232032AbjI0OCk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 09:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
+        Wed, 27 Sep 2023 10:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231874AbjI0NOi (ORCPT
+        with ESMTP id S231758AbjI0OCj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 09:14:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47125126
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 06:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695820436;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KgZz7s6OjsVA3iD+wDSANk03wfe8Z4jKIykypmODx90=;
-        b=UGGhHHwwfxg0S/LK3Sy0VHdDB0ENddzR0mHYB6e0+y9Xmz1xVG+cBTXWlPmAHWma+BFDQQ
-        962smK3sPNYhAkMmu6Dn8M/b/0q/pijOQEkdVGtnT9ZvXqZwAYxGNDDEjgSnb62M5Aslet
-        d77jS8eDXkEZDPmx8i0pnBk1A+MFTSc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-149-EzV1qdJ5MUidfBf-x9yyig-1; Wed, 27 Sep 2023 09:13:51 -0400
-X-MC-Unique: EzV1qdJ5MUidfBf-x9yyig-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7D830811E88;
-        Wed, 27 Sep 2023 13:13:50 +0000 (UTC)
-Received: from [10.22.33.167] (unknown [10.22.33.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 739A9100651E;
-        Wed, 27 Sep 2023 13:13:49 +0000 (UTC)
-Message-ID: <01f5d9c9-31c1-1b55-f4b1-8153104faa76@redhat.com>
-Date:   Wed, 27 Sep 2023 09:13:49 -0400
+        Wed, 27 Sep 2023 10:02:39 -0400
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C54610A;
+        Wed, 27 Sep 2023 07:02:38 -0700 (PDT)
+Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6c4c594c0eeso5491405a34.0;
+        Wed, 27 Sep 2023 07:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695823357; x=1696428157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZBgo/SWIO02Pm/xzDvMlyzJPp7I0czV8f3hR93KFgsk=;
+        b=R2ULERYdMlfhBMmUAbH1iL3UJpsD6DYE3a157LM7ogB3chQ3KEJXolTPGf/PUdx3Yw
+         oY38XQmN+FoaUjkr9PAdOXxr3aKzjRXW1YfIWaBkSNrT0kk/4QFzAUYWNjSBEecjWxzR
+         f5ZIRVPbHab22Z4+1Krc0sNM6mupDKkp+dMUmG44zEX7HnpqQOup5qT3pEzOozkhiHFt
+         XDFtnWOc0LrkdH3QPmbA7FLsX219gNsYooe+y6tXI6JPpIZ5usPIc45/kX/rSBGPwujX
+         MFBGJjOmN0oSsJQ2F9GL6HNNmTjjtBTLFTW46w8AU1uRnquc4CxOAiJD9vtl8C/qSIqI
+         I7GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695823357; x=1696428157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZBgo/SWIO02Pm/xzDvMlyzJPp7I0czV8f3hR93KFgsk=;
+        b=oIQLTmKlp7uGnrUsikcGCiGOscIc06pXOcTBof0WR0DwvEJKRhsNJqv1oh1qKcrI6g
+         k65H3xxEhW79APbg9c8ZkfpmsWZKg2XgKYt/tRAnm0W+dvsyvZRAL53Cl5DA8rctXCuf
+         R7vV9KtaTauaFLC9Ep0/ejFuzymeoLnq2gDQlZYewFD32H1q9WIBb1qhVyZ5AR86bw1v
+         wOkMUjCgTgKbj4QykoaXbkqUxaz7KQviB81CMxhTQ9KOCSKo6+ALMdAVTz52sgUG0o6N
+         NQaDkdRFBqrJyzbb6SHSktiDQG3iQHmqwH65HjNje15s3zjPqkYMAsLNEcLB284pC40e
+         Ol+Q==
+X-Gm-Message-State: AOJu0YyhzzuSU8qH4T6Vpa2FeKB/DZ9w/wZ1ul6LFBWSjLavAIMZ1zhl
+        4pq6eL0S2hkSTv8J+XLvDZrlrbU8V9z33oXIhQo=
+X-Google-Smtp-Source: AGHT+IGX+Eyi3U6z/rblwtsWWP/9TBKMDyZgdX5YoXYjjU8FFILz4zJPI4wp/Tj307ujnIycKSLX6ReyZlLQaUb169I=
+X-Received: by 2002:a05:6358:6f08:b0:142:d097:3725 with SMTP id
+ r8-20020a0563586f0800b00142d0973725mr1931059rwn.9.1695823357416; Wed, 27 Sep
+ 2023 07:02:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH next] cgroup/cpuset: Cleanup signedness issue in
- cpu_exclusive_check()
-Content-Language: en-US
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, kamalesh.babulal@oracle.com,
-        kernel test robot <lkp@intel.com>
-References: <20230927065801.2139969-1-harshit.m.mogalapalli@oracle.com>
-From:   Waiman Long <longman@redhat.com>
-In-Reply-To: <20230927065801.2139969-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+References: <20230925045059.92883-1-suhui@nfschina.com>
+In-Reply-To: <20230925045059.92883-1-suhui@nfschina.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 27 Sep 2023 17:02:26 +0300
+Message-ID: <CAOQ4uxhv=Theeq0tEiDXEjUcKLNfaZnsVjnweX84mzWYSmFiZQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: avoid possible NULL dereference
+To:     Su Hui <suhui@nfschina.com>
+Cc:     miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/27/23 02:58, Harshit Mogalapalli wrote:
-> Smatch complains about returning negative error codes from a type
-> bool function.
+On Mon, Sep 25, 2023 at 7:52=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
 >
-> kernel/cgroup/cpuset.c:705 cpu_exclusive_check() warn:
-> 	signedness bug returning '(-22)'
+> smatch warn:
+> fs/overlayfs/copy_up.c:450 ovl_set_origin() warn:
+> variable dereferenced before check 'fh' (see line 449)
 >
-> The code works correctly, but it is confusing.  The current behavior is
-> that cpu_exclusive_check() returns true if it's *NOT* exclusive.  Rename
-> it to cpusets_are_exclusive() and reverse the returns so it returns true
-> if it is exclusive and false if it's not.  Update both callers as well.
+> If 'fh' is NULL, passing NULL instead of 'fh->buf'.
 >
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <error27@gmail.com>
-> Closes: https://lore.kernel.org/r/202309201706.2LhKdM6o-lkp@intel.com/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
-> This is based on sattic analysis, only compile tested
-> ---
->   kernel/cgroup/cpuset.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
+>  fs/overlayfs/copy_up.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 15f399153a2e..afefddd33c3e 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -719,18 +719,18 @@ static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
->   }
->   
->   /*
-> - * cpu_exclusive_check() - check if two cpusets are exclusive
-> + * cpusets_are_exclusive() - check if two cpusets are exclusive
->    *
-> - * Return 0 if exclusive, -EINVAL if not
-> + * Return true if exclusive, false if not
->    */
-> -static inline bool cpu_exclusive_check(struct cpuset *cs1, struct cpuset *cs2)
-> +static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
->   {
->   	struct cpumask *xcpus1 = fetch_xcpus(cs1);
->   	struct cpumask *xcpus2 = fetch_xcpus(cs2);
->   
->   	if (cpumask_intersects(xcpus1, xcpus2))
-> -		return -EINVAL;
-> -	return 0;
-> +		return false;
-> +	return true;
->   }
->   
->   /*
-> @@ -833,7 +833,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
->   	cpuset_for_each_child(c, css, par) {
->   		if ((is_cpu_exclusive(trial) || is_cpu_exclusive(c)) &&
->   		    c != cur) {
-> -			if (cpu_exclusive_check(trial, c))
-> +			if (!cpusets_are_exclusive(trial, c))
->   				goto out;
->   		}
->   		if ((is_mem_exclusive(trial) || is_mem_exclusive(c)) &&
-> @@ -1864,7 +1864,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->   			cpuset_for_each_child(child, css, parent) {
->   				if (child == cs)
->   					continue;
-> -				if (cpu_exclusive_check(cs, child)) {
-> +				if (!cpusets_are_exclusive(cs, child)) {
->   					exclusive = false;
->   					break;
->   				}
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index d1761ec5866a..086f9176b4d4 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -446,7 +446,7 @@ int ovl_set_origin(struct ovl_fs *ofs, struct dentry =
+*lower,
+>         /*
+>          * Do not fail when upper doesn't support xattrs.
+>          */
+> -       err =3D ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh->buf,
+> +       err =3D ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh ? fh-=
+>buf : NULL,
+>                                  fh ? fh->fb.len : 0, 0);
+>         kfree(fh);
+>
+> --
+> 2.30.2
 
-Thanks for fixing that.
+After discussing this with Dan Carpenter, this is not a kernel bug,
+it is a smatch bug.
 
-Acked-by: Waiman Long <longman@redhat.com>
+The value being passed to setxattr is (void *)OVL_FH_FID_OFFSET,
+which is just as arbitrary as NULL when size is 0.
 
+Thanks,
+Amir.
