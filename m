@@ -2,84 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FE6E810DD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554C6E810DE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbjI0MyG convert rfc822-to-8bit (ORCPT
+        id S231772AbjI0MzS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 08:54:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45780 "EHLO
+        Wed, 27 Sep 2023 08:55:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230109AbjI0MyF (ORCPT
+        with ESMTP id S231720AbjI0MzR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 08:54:05 -0400
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACCEC0;
-        Wed, 27 Sep 2023 05:54:05 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-59c268676a9so136503617b3.0;
-        Wed, 27 Sep 2023 05:54:05 -0700 (PDT)
+        Wed, 27 Sep 2023 08:55:17 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CAEE6
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:55:16 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-323344eae8eso3632362f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695819314; x=1696424114; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q+1t1P5I5WKboLrqwp2yf5WoUoPKv1FgbHipL+4z2I8=;
+        b=YsK6MiVTivqK4Je8frhGBVlnTQTB/wbXvGz7mWFg6xAl8FdNzNyOBu0/M2Y0WppkOB
+         iH+piKYx947Aetzky3KQzQHPPY2UhXb5reD5iG0pyW8fUvG6QuGXnR62otNc7b7HbOpk
+         rUIcK01i7fM6wGJ/FKDcVF7PP4zzrrX8xp5mniZhkO+5oy1N1IozYvycbq4GcArH79sK
+         lIeiiwJq4ZFlsqGQtbkWjYrGaTYDHY8uExm/oydW80toF0dm7skRgd31vGagu82aNAbj
+         e0Qnt10ckl1jEcrofJxmhWJAH48u2UaCvdrBbk+9Qm9aJsO4mv58qdd1vLHnN+MF813o
+         wtFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695819244; x=1696424044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sThNs3/TW7sTCSV76wSMCOz0Es9XY2adRXprcTalxv0=;
-        b=R0Hiy+RgHDfLIV+YU7kGjxxW6faiC1TywkmScpFA5aZQi5WcaBKFDkMJX7nJCI86NQ
-         8PHPqD/ErCZJuLQf2Jghxrb7vDn2g3b2cyb6ebzpF/mr2wCqa97zuDWJxYWgTKp1s2Ze
-         G09A/GX3EpO7zME4YE27XfLt502wEXPJJJeFr88+P7ITPkTzAm4zadwa10UHXMch5IBf
-         dhSIjR3O4AH0P+bjp4nlouUPEaBThZEScwhk+nwNzaYX8ArtJipCcNBiibtWt9jDwsYb
-         Y/AKm5y5l1uQ15BETvJ17wnDl5qt6M4c+tnudX2kO5ed5GIWvVsqbBJSuigpzW1CiFGY
-         ZZNA==
-X-Gm-Message-State: AOJu0YyXPqDcR8HEcIEz7nx15BJ4e+9pOxgLdF5wx5PFQ/dqN7aK8+WV
-        XGgFa+T+LthSPrB7GwbL7zww7M75yf4g+w==
-X-Google-Smtp-Source: AGHT+IFGSn05jEgrLkFA4O0bEls7ifE+OL6GhMrzwES+SisilOgyAltUarNyK4L7lDOIoR6v3EKdfw==
-X-Received: by 2002:a81:6241:0:b0:58c:b8b4:2785 with SMTP id w62-20020a816241000000b0058cb8b42785mr2383898ywb.45.1695819244071;
-        Wed, 27 Sep 2023 05:54:04 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id c7-20020a0dc107000000b0058e37788bf7sm3678265ywd.72.2023.09.27.05.54.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 05:54:03 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-59bc956b029so135881757b3.2;
-        Wed, 27 Sep 2023 05:54:03 -0700 (PDT)
-X-Received: by 2002:a81:9e4e:0:b0:59b:c6a4:15c7 with SMTP id
- n14-20020a819e4e000000b0059bc6a415c7mr2090271ywj.46.1695819242821; Wed, 27
- Sep 2023 05:54:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695819314; x=1696424114;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+1t1P5I5WKboLrqwp2yf5WoUoPKv1FgbHipL+4z2I8=;
+        b=Flhz5TwEaHLOZkXdScjEj+/wEsYSEMWWAiazhYwl9SHekJC6BmH2Kl+EXkIwx2+vSA
+         eIETahhmdL29L5/gASAaAR13XDk0czESo23oA66DyPOYSK/tNeC3k5ET0kqi9JlFlHBH
+         ObWISUWV0MSDbPwPNFNgVcWAXEJCUPIgPGHDjsHQXPs2Sy4DE44ymPXO6iTH/KBxCiz5
+         8dTJkWOXmCAe202rL/4XnCNUv/xbxYD16K+g00b0zzBYA1BwaB/HKvB5m1+1pMtqQkW4
+         KKr83AEgkNFmdncV1RYzmtRWm4cVND86uGyeHbWi9tNP8ciwfEfz5MZ8UtZpVpRNOqKz
+         ySVw==
+X-Gm-Message-State: AOJu0YwYlL78qOEvXabUMbb0PGGjDUpWC7jCaHBKzCx1ZrXTEPmnJaXu
+        NEGms3V3kp6mWQMGwIstOaTrWQ==
+X-Google-Smtp-Source: AGHT+IEWh365sjezz7UFOsIzAffZmD/KojQX6xd0VdrtKc3n8/qBapI+G3fEBTQNXR5CBME+Ozhx8A==
+X-Received: by 2002:a5d:4cc7:0:b0:314:a3f:9c08 with SMTP id c7-20020a5d4cc7000000b003140a3f9c08mr1526754wrt.39.1695819314384;
+        Wed, 27 Sep 2023 05:55:14 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b1-20020a5d4d81000000b003140f47224csm16937060wru.15.2023.09.27.05.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 05:55:14 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 15:55:10 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Richard Cochran <richardcochran@gmail.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Vadim Fedorenko <vadfed@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] ptp: ocp: fix error code in probe()
+Message-ID: <5c581336-0641-48bd-88f7-51984c3b1f79@moroto.mountain>
 MIME-Version: 1.0
-References: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
-In-Reply-To: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Sep 2023 14:53:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWiQrswHrHJNc_DDu9COQn+yA6H3=E-LRDJh7VuUSNMeQ@mail.gmail.com>
-Message-ID: <CAMuHMdWiQrswHrHJNc_DDu9COQn+yA6H3=E-LRDJh7VuUSNMeQ@mail.gmail.com>
-Subject: Re: [PATCH] i2c: rcar: fix error code in probe()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 2:38 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> Return an error code if devm_reset_control_get_exclusive() fails.
-> The current code returns success.
->
-> Fixes: 0e864b552b23 ("i2c: rcar: reset controller is mandatory for Gen3+")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+There is a copy and paste error so this uses a valid pointer instead of
+an error pointer.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 09eeb3aecc6c ("ptp_ocp: implement DPLL ops")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/ptp/ptp_ocp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index 88d60a9b5731..d39afe091a7b 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -4453,7 +4453,7 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	for (i = 0; i < OCP_SMA_NUM; i++) {
+ 		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
+ 		if (IS_ERR(bp->sma[i].dpll_pin)) {
+-			err = PTR_ERR(bp->dpll);
++			err = PTR_ERR(bp->sma[i].dpll_pin);
+ 			goto out_dpll;
+ 		}
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
