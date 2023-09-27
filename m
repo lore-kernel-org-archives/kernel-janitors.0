@@ -2,94 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F567E82CCC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 19:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519DEE7109E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 22:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjI0TzK (ORCPT
+        id S229734AbjI0WMB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 15:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46638 "EHLO
+        Wed, 27 Sep 2023 18:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjI0TzJ (ORCPT
+        with ESMTP id S229672AbjI0WMA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 15:55:09 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8406F10E
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 12:55:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=/hPS
-        uQ2NRUAu1MtmSEqw5S0lNV0lO0QlN8GLk370his=; b=XOiPE246PKdjaE/6qIiH
-        uOCkrfpbEdsnjiRwkuadk+B+EHrffSp8PKtmiTMNdQiq91oaPc20aQhOx7CjglmS
-        A5iykt26jeK++A4KNR0UInFayB8ZzuYsQjrbxOvpPicf92O9ZY5sGIdJ7L51PwZP
-        OgXmXmtAuNHxNrYUwqvnaLRFs5BS6d1SnE4UsEeCtc+PJzYpEztjjUnDUX/vw7oc
-        /h/lgyRoV9UrfbQ3sBNkwHfDyYSQLc2ocst3SFJ0mRG+4WH0gNm83j2M6EZBhLOW
-        LLTzNpfuALZV1biLxhb0n5jzal5GFQHhA6uZHgsgNoFrX+5HGQbcCv9xrKtve+zb
-        vA==
-Received: (qmail 3184996 invoked from network); 27 Sep 2023 21:55:03 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Sep 2023 21:55:03 +0200
-X-UD-Smtp-Session: l3s3148p1@zKsykVwGQqwgAQnoAF+HAOhQXz46dAsh
-Date:   Wed, 27 Sep 2023 21:55:02 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andi Shyti <andi.shyti@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: rcar: fix error code in probe()
-Message-ID: <ZRSIlgWhDIz3pbh+@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
+        Wed, 27 Sep 2023 18:12:00 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF8710A;
+        Wed, 27 Sep 2023 15:11:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D48B81F385;
+        Wed, 27 Sep 2023 22:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1695852717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ywgPMmVKMCF2OBsdPVyyMuS0V6hzCVtZvwuPzOBMAN8=;
+        b=gPHuSKZaHU9KAuUuuwNiDKETwxW4fWysw5JxRtY6rOTZsQZPEmfp03uV+qRS1CV/9RSbh7
+        nDBdV40djXBiaicQs+1X24AVauIhVYbo/Klfb2WGEDku1QOoJ97JQVBA/DqZJ8a/WDT/+L
+        UkABx68z0TGnkWbHsHttr8yVs5La+CA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1695852717;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ywgPMmVKMCF2OBsdPVyyMuS0V6hzCVtZvwuPzOBMAN8=;
+        b=3DL/6u4HVP2mdSxIrxYzOb49x4BTIzkl7HKf+hOqb0rVW9iaKRYNVu7GOxnyCSx41tGjAk
+        I0UXzMBpX7CigVCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 47D8D13479;
+        Wed, 27 Sep 2023 22:11:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pPumOquoFGUELgAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 27 Sep 2023 22:11:55 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KqCQv6EJAFfntN6O"
-Content-Disposition: inline
-In-Reply-To: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
+From:   "NeilBrown" <neilb@suse.de>
+To:     Chuck Lever <chuck.lever@oracle.com>,
+        "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH nfsd] SQUASH 8dc9e02aed76 lib: add light-weight queuing mechanism.
+In-reply-to: <8e9f5845-0d9c-4d50-b2e4-5c1cd622a71c@moroto.mountain>
+References: <8e9f5845-0d9c-4d50-b2e4-5c1cd622a71c@moroto.mountain>
+Date:   Thu, 28 Sep 2023 08:11:52 +1000
+Message-id: <169585271242.5939.14975098525477744646@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---KqCQv6EJAFfntN6O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove assumption that kmalloc never fails.
 
-On Wed, Sep 27, 2023 at 03:38:36PM +0300, Dan Carpenter wrote:
-> Return an error code if devm_reset_control_get_exclusive() fails.
-> The current code returns success.
->=20
-> Fixes: 0e864b552b23 ("i2c: rcar: reset controller is mandatory for Gen3+")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
 
-Applied to for-next, thanks!
+Hi Chuck,
+ please squash this into the relevant patch - thanks.
+Hi Dan,
+ thanks for the review!
 
+NeilBrown
 
---KqCQv6EJAFfntN6O
-Content-Type: application/pgp-signature; name="signature.asc"
+ lib/lwq.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/lib/lwq.c b/lib/lwq.c
+index 8a723b29b39e..57d080a4d53d 100644
+--- a/lib/lwq.c
++++ b/lib/lwq.c
+@@ -111,6 +111,8 @@ static int lwq_test(void)
+ 		threads[i] = kthread_run(lwq_exercise, &q, "lwq-test-%d", i);
+ 	for (i = 0; i < 100; i++) {
+ 		t = kmalloc(sizeof(*t), GFP_KERNEL);
++		if (!t)
++			break;
+ 		t->i = i;
+ 		t->c = 0;
+ 		if (lwq_enqueue(&t->n, &q))
+@@ -127,7 +129,8 @@ static int lwq_test(void)
+ 			printk(KERN_INFO " lwq: ... ");
+ 		}
+ 		t = lwq_dequeue(&q, struct tnode, n);
+-		printk(KERN_CONT " %d(%d)", t->i, t->c);
++		if (t)
++			printk(KERN_CONT " %d(%d)", t->i, t->c);
+ 		kfree(t);
+ 	}
+ 	printk(KERN_CONT "\n");
+-- 
+2.42.0
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUUiJYACgkQFA3kzBSg
-KbZs1A//TOmDoDRhG66rSNLMeTXX3iCyJjGg+vuMugfXruz8YuQJVCVHPPtPpFSc
-trU5w7jhUPtDqpJJCdbsqAq6Z1Y63E+Cc5gTuAGmbBcAPyAt+cycRaw54+SwNd//
-0z5yR3ebf9V42xtoOAgLLfck+d4YKzRaHbEOyzbnpziCvVYhUWG7DwWikZv1oLwj
-PrQzSlNk/lMEzRYAlgIkknxlkRjbzK+Kx9AlnjcXJg3uPK6Me31kPWkDjR0Y88oA
-4mJlNdCxHYyIy+bULEpDvXRMcRCCol7LzZEY6+P9M59IdeVgdxp9ncUHzRH3+xxo
-NbjNNDyuRZluhiVVkDga+RsEExdvgcOOy1HX+P3QqzC6kuzwldBxo1AFwT548Xj/
-ut7NUIMI+mVfHb62wBXfDZUCwnS/9j2LV0V/NT5VHdVqoen/oqNBofO/vq/L0l/o
-RnUFCgjUsI/H/xnC/6AKrYzVq5RYYUk1uIEbOzB3XTP/37MD5Aaq8ZFU1nuhYEEm
-Nfg8Emp4V+amr5yEHf9gsMjLEv6EXG+WvfwMeIJrUhEPKXO/LAmrVg7tZnNSOsDm
-xj+uPOzE1/CPXy4QZrr2i+joshBRB+i+IBbQ7y9YxInbH+qP5TCmR37PzoE3nN+t
-eaAreurIdi1Dy8ZSlhMCZOt3KZLB6NkyKBVEhT6/86h2zBkt7lc=
-=Oh/z
------END PGP SIGNATURE-----
-
---KqCQv6EJAFfntN6O--
