@@ -2,61 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AD1E810DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9509DE810DA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbjI0Mhe (ORCPT
+        id S231358AbjI0Mh6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 08:37:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37084 "EHLO
+        Wed, 27 Sep 2023 08:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbjI0Mhd (ORCPT
+        with ESMTP id S229531AbjI0Mh5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 08:37:33 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165F0C0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:32 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4053c6f1087so101352195e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:32 -0700 (PDT)
+        Wed, 27 Sep 2023 08:37:57 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D72C0
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:56 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4053cf48670so98182695e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695818250; x=1696423050; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1695818275; x=1696423075; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lSvSjPBwBbpaP5Mr40QQhbIUu3AL4PWGVIl5zKwP4Ko=;
-        b=vqSN7EoAlxbuq316KtnPtrkiBXOGVi80pIVPzAvZgfQJ69/fF/dWZD0qPZUw8XkTg6
-         Q2DwZuQPN5gObvrPR04Xf9xuHoexcQkjBjlEe958czpDUNFmxgzjlJwRu7DByWljJA59
-         TZy9HdPGoa5Ek//1VeQlbiUwPyuNTw9XysqMIiwmc4HKZDCd8qMG6otb4I4y2MrvAdpZ
-         JgkIOq9GODyhXxql8z4tIkrYvxprPU8Q9c3/NTGK+Th6bZAm+FqSMFtg7UmlIWMa5Hpz
-         6fPMt4RFYIJgKTI4JdKTOXmO2qIwvmX/pj2j/YmzI4mqsjWo1tc4MbxkkJ344QmFyQGy
-         I0WQ==
+        bh=8gt0z84tNKlqBU0ORxjwF1YuLnJ3DYpGxnw1e57pMcg=;
+        b=zISGlxcMl8IWHEnufDiUgDHXHDBAXg3wZvWUXuIcEyQNLkyUwN3AlRdVv2f2e7csLN
+         rTzonKxiBk3Tmu2e7Brl5dsI+kaG5jwDLF+R4FDoT1FaAGTAdWweC4WhayrlCa5Z0DCc
+         lBsE55Zphz17dTFzzaDmXH67Zi0JMoT1N6xp0PwrIyt5f1rvZ16UCwCnogs3Br4ZTJdH
+         p0EZMQVz26g0NbzsN9p+6bRmi1JJn4gwD2F90S8uqNXEpBk1venFmND58/qXBJ+PdVC5
+         gKy7nfd+lhphegVE3zx6gXogCy4vNqdsYPHVt00cnhtcxXA+e4MXF2hiWS9LhdGKXta9
+         gCqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695818250; x=1696423050;
+        d=1e100.net; s=20230601; t=1695818275; x=1696423075;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lSvSjPBwBbpaP5Mr40QQhbIUu3AL4PWGVIl5zKwP4Ko=;
-        b=Kcs+dh+rU2G9vxXq7lQC/rTTL2rqxqqJwhUlMIl6U5oy6AQ9EyGaGEXgj+sA3oRbGR
-         V9kZuica6y1zkNKjlZwRdJnwcbPOqY4H9vlpDXiLKSUsqUqTZalfr7Lt0EuyIrR+mir+
-         DVR54Dmwyn+zRSnNkm9ruEEiObQQRY3RUPmfKBzFTJpAIxrHqtiqsnhvc4bCI6w+9zVz
-         aQk97lBv22Gw6QG+ohm70GjlVcFyaRaoBsc6GW+7ZBqXeUf5RZKADL3AySn0oqr4wBGN
-         X9ddXkdOjS6ab9yaTYhh6UyZxz7ePcjc49yTXJmYSmT6YDTtfcNaHLweQ1+Cr1Ae2xeC
-         9kvA==
-X-Gm-Message-State: AOJu0Yz57IntxQvrRWvpc+nVRitt6CSHOf07vJoccm0uJiW02zTqRuvf
-        WNjpPgnlAKLoZ/BFRdUXgeLfmw==
-X-Google-Smtp-Source: AGHT+IGMNwZeZVMjHYbbFlIN0HffM3gIJdpZbL37AcIUk1gPy81JzbFuqU5EaISKNrPJieFYqvUpNQ==
-X-Received: by 2002:a05:600c:2308:b0:401:bd2e:49fc with SMTP id 8-20020a05600c230800b00401bd2e49fcmr1921153wmo.24.1695818250434;
-        Wed, 27 Sep 2023 05:37:30 -0700 (PDT)
+        bh=8gt0z84tNKlqBU0ORxjwF1YuLnJ3DYpGxnw1e57pMcg=;
+        b=EXwSZrdteeFqmRa4awNAArkN0P2CEMzjYAiCH9GTLxGNlBbajAcuJS6oseKxPYOz4J
+         FLGmV7HgX8Yps2KWzDJ6ULLPTKDJVJ2UxngZWFZDPfXU10OdGIvPmqGzZV8wmq9ksvAA
+         BMIXJRgi40K2pMkzd1XLOfqlfoKuR2Xmq5yUJRnUXf1u8pKxXwcjolFo5q865CPmArvI
+         pwPRwp8Tq4CzFOt0hAcHphEOfSAOT5zXMLhU/mm1dXvqw41Ujw5P0Ak2amzUgE9OeQ8J
+         m9rkY7aYQDU+Kw8GJmhcRGDKpRdMzXOUGFTjj7S87kdsep+r7qvc/ubtbwkv5zHpwuSA
+         X22g==
+X-Gm-Message-State: AOJu0YzVLkmXgGw/Zg+O2DahjIv71dGker0OTN7KmSmQ7gC5ZBULeY27
+        SIZhBKCKR2GYjiN+pHcp3ujK1w==
+X-Google-Smtp-Source: AGHT+IF//SsjAFSKGtGIY4ySU5+yXbv00B5OFBnRt/YiczmsYbnBFnOPNKevQVsLvVlA2FKz/O/b1A==
+X-Received: by 2002:a05:600c:365a:b0:401:b204:3b97 with SMTP id y26-20020a05600c365a00b00401b2043b97mr1810459wmq.4.1695818274882;
+        Wed, 27 Sep 2023 05:37:54 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t16-20020a5d49d0000000b0031c5b380291sm17074203wrs.110.2023.09.27.05.37.29
+        by smtp.gmail.com with ESMTPSA id p19-20020a05600c1d9300b0040531f5c51asm17841529wms.5.2023.09.27.05.37.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Sep 2023 05:37:30 -0700 (PDT)
-Date:   Wed, 27 Sep 2023 15:37:26 +0300
+        Wed, 27 Sep 2023 05:37:54 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 15:37:51 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ACPI: thermal: Fix a small leak in acpi_thermal_add()
-Message-ID: <37eb30ba-1dc9-42e7-a22e-af44f6270e67@moroto.mountain>
+To:     Evan Quan <evan.quan@amd.com>, Yang Wang <kevinyang.wang@amd.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lijo Lazar <lijo.lazar@amd.com>,
+        Asad Kamal <asad.kamal@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Yang Wang <kevinyang.wang@amd.com>,
+        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/pm: delete dead code
+Message-ID: <b238c665-91d6-4afe-83a8-da2f2d59a75b@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -65,30 +72,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Free "tz" if the "trip" allocation fails.
+"ret" was checked earlier inside the loop, so we know it is zero here.
+No need to check a second time.
 
-Fixes: 5fc2189f9335 ("ACPI: thermal: Create and populate trip points table earlier")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/acpi/thermal.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-index 10720a038846..f8a95939c88d 100644
---- a/drivers/acpi/thermal.c
-+++ b/drivers/acpi/thermal.c
-@@ -928,8 +928,10 @@ static int acpi_thermal_add(struct acpi_device *device)
- 	acpi_thermal_guess_offset(tz, crit_temp);
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
+index 11a6cd96c601..0ffe55e713f3 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
+@@ -2346,9 +2346,6 @@ static int mca_get_mca_entry(struct amdgpu_device *adev, enum amdgpu_mca_error_t
+ 			return ret;
+ 	}
  
- 	trip = kcalloc(trip_count, sizeof(*trip), GFP_KERNEL);
--	if (!trip)
--		return -ENOMEM;
-+	if (!trip) {
-+		result = -ENOMEM;
-+		goto free_memory;
-+	}
- 
- 	tz->trip_table = trip;
+-	if (ret)
+-		return ret;
+-
+ 	entry->idx = idx;
+ 	entry->type = type;
  
 -- 
 2.39.2
