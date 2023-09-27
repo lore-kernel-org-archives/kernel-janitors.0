@@ -2,68 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9509DE810DA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4150E810DD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 12:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbjI0Mh6 (ORCPT
+        id S231648AbjI0Mio (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 08:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40812 "EHLO
+        Wed, 27 Sep 2023 08:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbjI0Mh5 (ORCPT
+        with ESMTP id S231378AbjI0Min (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 08:37:57 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D72C0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:56 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4053cf48670so98182695e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:37:56 -0700 (PDT)
+        Wed, 27 Sep 2023 08:38:43 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E12B13A
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:38:41 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3214cdb4b27so10220543f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Sep 2023 05:38:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695818275; x=1696423075; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1695818320; x=1696423120; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8gt0z84tNKlqBU0ORxjwF1YuLnJ3DYpGxnw1e57pMcg=;
-        b=zISGlxcMl8IWHEnufDiUgDHXHDBAXg3wZvWUXuIcEyQNLkyUwN3AlRdVv2f2e7csLN
-         rTzonKxiBk3Tmu2e7Brl5dsI+kaG5jwDLF+R4FDoT1FaAGTAdWweC4WhayrlCa5Z0DCc
-         lBsE55Zphz17dTFzzaDmXH67Zi0JMoT1N6xp0PwrIyt5f1rvZ16UCwCnogs3Br4ZTJdH
-         p0EZMQVz26g0NbzsN9p+6bRmi1JJn4gwD2F90S8uqNXEpBk1venFmND58/qXBJ+PdVC5
-         gKy7nfd+lhphegVE3zx6gXogCy4vNqdsYPHVt00cnhtcxXA+e4MXF2hiWS9LhdGKXta9
-         gCqQ==
+        bh=Iv3thYPyIQ8GygicfHZHZp04/tIitP9GfIoOieD69Cs=;
+        b=PAVvej6nT02WuWdyz3iOG0pIB59mAZ6AwvDrdGeZygRd9tWVf8Tczz8JzLcu9QD7IV
+         61tzWha6DXsHM45EB/hefAC5qMTDw/89VvwWGogGv0/uz7pQaS9KMkX73o59jtWodIRV
+         9Z/5S5WGPPoZ7i/RvbsoElgDARG3SOVBKixYLCP3r2kdCjI81WP9so6pr264frivB+zL
+         1OMubEIDBxUhTrgrWQesc6DXs/LkYikjMn3mQO0ZP0CSqZ2I+B18/QxzK34VajRhY4MK
+         S+X1lfeBm8erdqhtsPL8tDiqFRWu02bSt1UvbpfXbxkl3mINr5yRtS1Qo1Pzbl2SBPlN
+         w1AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695818275; x=1696423075;
+        d=1e100.net; s=20230601; t=1695818320; x=1696423120;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gt0z84tNKlqBU0ORxjwF1YuLnJ3DYpGxnw1e57pMcg=;
-        b=EXwSZrdteeFqmRa4awNAArkN0P2CEMzjYAiCH9GTLxGNlBbajAcuJS6oseKxPYOz4J
-         FLGmV7HgX8Yps2KWzDJ6ULLPTKDJVJ2UxngZWFZDPfXU10OdGIvPmqGzZV8wmq9ksvAA
-         BMIXJRgi40K2pMkzd1XLOfqlfoKuR2Xmq5yUJRnUXf1u8pKxXwcjolFo5q865CPmArvI
-         pwPRwp8Tq4CzFOt0hAcHphEOfSAOT5zXMLhU/mm1dXvqw41Ujw5P0Ak2amzUgE9OeQ8J
-         m9rkY7aYQDU+Kw8GJmhcRGDKpRdMzXOUGFTjj7S87kdsep+r7qvc/ubtbwkv5zHpwuSA
-         X22g==
-X-Gm-Message-State: AOJu0YzVLkmXgGw/Zg+O2DahjIv71dGker0OTN7KmSmQ7gC5ZBULeY27
-        SIZhBKCKR2GYjiN+pHcp3ujK1w==
-X-Google-Smtp-Source: AGHT+IF//SsjAFSKGtGIY4ySU5+yXbv00B5OFBnRt/YiczmsYbnBFnOPNKevQVsLvVlA2FKz/O/b1A==
-X-Received: by 2002:a05:600c:365a:b0:401:b204:3b97 with SMTP id y26-20020a05600c365a00b00401b2043b97mr1810459wmq.4.1695818274882;
-        Wed, 27 Sep 2023 05:37:54 -0700 (PDT)
+        bh=Iv3thYPyIQ8GygicfHZHZp04/tIitP9GfIoOieD69Cs=;
+        b=M1GRGSjyiVq+WibapdsN52oCowuADZpYof3H5r0UZGl954Zluc/X3/UuoCOadQZxf0
+         0xqukkzoHa3f8VbjgeoufaGkCLLSG1F5RH4Np0hvxXYCMurL4kwCE5ohosT0kaEh7BYX
+         B2eycmt+Ky7J7mTt8SwavbSZJgif6wmSt/N9h/3eIinHnbU359sgm5I6OX/EYZ6tyzyR
+         ec/f+xSumYJOUbPoccfFEy8jGD8B/oqvj/VT9foONhmx4eLzhGTQuDbKUKmVIgEFwqeC
+         FRhTBOaZ1eRtJBXqSeIBYzDBPvZX/kMVCFcCn1SC2c93nkXJkbVCMXadCmsVqnFxuLOG
+         i/sg==
+X-Gm-Message-State: AOJu0YxrPIhdESnXL9SL4U8nu0oGR++tR3G3H8TPN/qXuodn41ltBKyi
+        UO2y+zDNMTVm/bhw41ZcwheBCURwdyj9JhCgc6Q=
+X-Google-Smtp-Source: AGHT+IG+giG0uB2f0slqRXUC2s/Xr805TX2Mc8YoPELbwGNV0aJ3OYBXte08KuYU4ss+e25T8ZVO6g==
+X-Received: by 2002:adf:f044:0:b0:321:521f:836f with SMTP id t4-20020adff044000000b00321521f836fmr1709032wro.26.1695818319926;
+        Wed, 27 Sep 2023 05:38:39 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p19-20020a05600c1d9300b0040531f5c51asm17841529wms.5.2023.09.27.05.37.54
+        by smtp.gmail.com with ESMTPSA id c12-20020adfed8c000000b0032179c4a46dsm16988190wro.100.2023.09.27.05.38.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Sep 2023 05:37:54 -0700 (PDT)
-Date:   Wed, 27 Sep 2023 15:37:51 +0300
+        Wed, 27 Sep 2023 05:38:39 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 15:38:36 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Evan Quan <evan.quan@amd.com>, Yang Wang <kevinyang.wang@amd.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lijo Lazar <lijo.lazar@amd.com>,
-        Asad Kamal <asad.kamal@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Yang Wang <kevinyang.wang@amd.com>,
-        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/pm: delete dead code
-Message-ID: <b238c665-91d6-4afe-83a8-da2f2d59a75b@moroto.mountain>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Andi Shyti <andi.shyti@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] i2c: rcar: fix error code in probe()
+Message-ID: <06d4de31-dfe5-432d-acab-600b01422155@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -72,28 +67,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-"ret" was checked earlier inside the loop, so we know it is zero here.
-No need to check a second time.
+Return an error code if devm_reset_control_get_exclusive() fails.
+The current code returns success.
 
+Fixes: 0e864b552b23 ("i2c: rcar: reset controller is mandatory for Gen3+")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-index 11a6cd96c601..0ffe55e713f3 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c
-@@ -2346,9 +2346,6 @@ static int mca_get_mca_entry(struct amdgpu_device *adev, enum amdgpu_mca_error_t
- 			return ret;
- 	}
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 8417d5bc662b..829ac053bbb7 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -1153,8 +1153,10 @@ static int rcar_i2c_probe(struct platform_device *pdev)
  
--	if (ret)
--		return ret;
--
- 	entry->idx = idx;
- 	entry->type = type;
+ 	if (priv->devtype == I2C_RCAR_GEN3) {
+ 		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-		if (IS_ERR(priv->rstc))
++		if (IS_ERR(priv->rstc)) {
++			ret = PTR_ERR(priv->rstc);
+ 			goto out_pm_put;
++		}
  
+ 		ret = reset_control_status(priv->rstc);
+ 		if (ret < 0)
 -- 
 2.39.2
 
