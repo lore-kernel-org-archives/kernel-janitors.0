@@ -2,104 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6ADCE7B1E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 19:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AC9E743C3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 21:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjI1T0T (ORCPT
+        id S232587AbjI1VME (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Sep 2023 15:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
+        Thu, 28 Sep 2023 17:12:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjI1T0S (ORCPT
+        with ESMTP id S232481AbjI1VMC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Sep 2023 15:26:18 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B87619F;
-        Thu, 28 Sep 2023 12:26:17 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38SISQbA015355;
-        Thu, 28 Sep 2023 19:26:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=ooAQqC9xWI1PCS2E+DEZfMn/7C9bplMAfccRyJkPlJk=;
- b=Hd66bLzENYH5cLyg9yLHt7Z5DSnu0WeilfkB5Av+Si2k/4gYn4+pEEZW3WpeM/Zt6UP7
- +7hsRLYGC21CGmOi+ouuanNXSL1i21cIvU0W2L9gSExAfC5kO1gmXGp7dpwmBEJcmXF3
- S2t26O08EvmdicxUNyJLtvoAjmjoSUDkYWmjMcK7Y5X8lcVH2AmEY6FaqvXGziJqhCjT
- W6S+6nxzX4q+fXwpiioXDoid7Ookgcfc03xRhc9A864/1nYpeEKiEQz1kbVGVtXb8JwU
- lnbW+eMuwuiS2Ff1nJLZsWEOPAyuhkHl2UdSD3MJUpJlWZiCspMHdwP3G1z1lqWUgZCa hQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tct5gty2v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Sep 2023 19:26:07 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38SJQ6On015886
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Sep 2023 19:26:06 GMT
-Received: from [10.111.177.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 28 Sep
- 2023 12:26:06 -0700
-Message-ID: <712b1f74-72c3-4655-9e38-3138db74a1b7@quicinc.com>
-Date:   Thu, 28 Sep 2023 12:26:05 -0700
+        Thu, 28 Sep 2023 17:12:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E5D1BB
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Sep 2023 14:11:52 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id lyIVqxYRoFUAIlyIVqcqAN; Thu, 28 Sep 2023 23:11:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1695935510;
+        bh=CT0rFoQj+YDKwuwWbEo3e5SQCHTQDs01F+cu4QFHXgE=;
+        h=From:To:Cc:Subject:Date;
+        b=GKDTgvqa9RYXrDd7JRIRmjq5ZV7qkctMPq1hXE3q0NsVLQwHqbGamk6UI1d2nPUpt
+         wmUHjQPqpiZSvfFThnPHZQ2OsNfff/EifuIlFkkCm4pxAgDynuyUt10RDW0/PDJ/aT
+         UPvUPd+uHpExnaTjcnrfd/tYK46sKW2p98W/51Fz1R9mWWGcR56KziyEuF2+VLXSIx
+         x2k+9Ab7Qqdyrc34Tu/2AY4DWIj8qCuvaBo7SBAEZBcTRIkJjOanuxFrmrAjQBGHDf
+         6F4KAUSeyAOuIB+DMWS8I1GmEtE34dvPw1W+jfFqPlRRlsQO+Mh3i1Z3wEOm/fA+hQ
+         aj0DiKIrWPF5A==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 28 Sep 2023 23:11:50 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] radix tree test suite: Fix a memory initialization issue
+Date:   Thu, 28 Sep 2023 23:11:45 +0200
+Message-Id: <b1f490b450b14dd754a45f91bb1abd622ce8d4f7.1695935486.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary (void*)
- conversions
-Content-Language: en-US
-To:     Kalle Valo <kvalo@kernel.org>,
-        Christian Lamparter <chunkeey@gmail.com>
-CC:     Wu Yunchuan <yunchuan@nfschina.com>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20230919044916.523308-1-yunchuan@nfschina.com>
- <e544d992-cddd-4ade-81ef-2eed4f3681e8@gmail.com> <87zg16iab3.fsf@kernel.org>
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <87zg16iab3.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _B7Ky4Z_Shdw0MgsMykdd17s1DKnzkXl
-X-Proofpoint-GUID: _B7Ky4Z_Shdw0MgsMykdd17s1DKnzkXl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-28_18,2023-09-28_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxlogscore=676 impostorscore=0 phishscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2309280166
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/28/2023 8:31 AM, Kalle Valo wrote:
-> Christian Lamparter <chunkeey@gmail.com> writes:
-> 
->> On 9/19/23 06:49, Wu Yunchuan wrote:
->>> No need cast (void *) to (struct ar9170 *), (u8 *) or (void*).
->>
->> hmm, your mail went into the spam folder. Good thing I checked.
->>
->>  From what I remember: The reason why these casts were added in
->> carl9170 was because of compiler warnings/complaints.
->> Current gcc compilers should be OK (given that the kernel-bot
->> didn't react, or went your Mail to their spam-folder as well?)
->> but have you checked these older versions?
-> 
-> Do you remember anything more about these warnings? I tried to check the
-> git history and at least quickly couldn't find anything related to this.
-> 
-> The changes look very safe to me, struct urb::context field and the out
-> variable are both of type 'void *' so removing the explicit casts should
-> change anything. I cannot really come up a reason why would this patch
-> cause new warnings so I am inclined towards taking this patch. What do
-> you think?
+If __GFP_ZERO is used, the whole allocated memory should be cleared, not
+the first part of it only.
 
-Anything that would have had issue would have predated C99.
-This change is safe.
+Fixes: cc86e0c2f306 ("radix tree test suite: add support for slab bulk APIs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ tools/testing/radix-tree/linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/radix-tree/linux.c b/tools/testing/radix-tree/linux.c
+index d587a558997f..8ab162c48629 100644
+--- a/tools/testing/radix-tree/linux.c
++++ b/tools/testing/radix-tree/linux.c
+@@ -172,7 +172,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
+ 			if (cachep->ctor)
+ 				cachep->ctor(p[i]);
+ 			else if (gfp & __GFP_ZERO)
+-				memset(p[i], 0, cachep->size);
++				memset(p[i], 0, cachep->size * size);
+ 		}
+ 	}
+ 
+-- 
+2.34.1
 
