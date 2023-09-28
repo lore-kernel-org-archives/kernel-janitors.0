@@ -2,73 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E81FCE7B19
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 10:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E00E732C9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 11:56:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbjI1Kn4 (ORCPT
+        id S232265AbjI1L4i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Sep 2023 06:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
+        Thu, 28 Sep 2023 07:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231313AbjI1Kn4 (ORCPT
+        with ESMTP id S232114AbjI1L4e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Sep 2023 06:43:56 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EADB1180;
-        Thu, 28 Sep 2023 03:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LUmEFVgYyEJd0Y33BFcDH3/Ea1qs67OuZS/yeIuLfWU=;
-  b=BazJQIymVfr5MFVaqLBBi67mhojX2DO/rPD82cWOq356vfv2M/l0jLWg
-   oJ8FlNpA9Cx7ICaWWIlXMPfunCGOV7yT7ruP/0K49sedyoeoT91AsWbD0
-   wLJs2Xm5jAJ9PUEhj0qWza4Y6JkUwvHXr+1qcgIDUt7bFiygz+tH6V/OV
-   4=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.03,183,1694728800"; 
-   d="scan'208";a="67216334"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2023 12:43:50 +0200
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing/eprobe: drop unneeded breaks
-Date:   Thu, 28 Sep 2023 12:43:34 +0200
-Message-Id: <20230928104334.41215-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
+        Thu, 28 Sep 2023 07:56:34 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF311A5;
+        Thu, 28 Sep 2023 04:56:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41957C433C7;
+        Thu, 28 Sep 2023 11:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695902188;
+        bh=wAziT84zsBar0DnfXJLmnl6XnoBPC7xoMptDDmCkGSg=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=sQNstdL/NaO5ZYXnEyKoGAQteUo9B3pfTj376QsYbb3M3g09CilZsuzlSclEqJECW
+         PYC2ZOrG6pq/RLy2NlMW+WXSypx6UlqEkOs+OBiPfD7yyrsA+cl+5nNZ5GoQDrTVG+
+         mu0Jj3k/fmDvxESqGhtxRtzaTUoQrsjXPxnqs0G94SoLVUkizMXh2CAQxvraPfEetR
+         UUIWgoV3LA6aPJ4ovsNX9rL5qyPzjgk836cph4mupzIpZ+vCSjdKcz5ElBhu034w7s
+         Q5UFoQkkOIJXH23zHy+3tz6X1bqM3nCJExsXiWiAICT6fhDi71R88W0MKAJrnRyp2x
+         65EQ+Eup5n/Vg==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, dmaengine@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
+References: <f15cb6a7-8449-4f79-98b6-34072f04edbc@moroto.mountain>
+Subject: Re: [PATCH] dmaengine: ti: edma: handle irq_of_parse_and_map()
+ errors
+Message-Id: <169590218590.152265.2604230779311762501.b4-ty@kernel.org>
+Date:   Thu, 28 Sep 2023 17:26:25 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Drop break after return.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Fri, 15 Sep 2023 15:59:59 +0300, Dan Carpenter wrote:
+> Zero is not a valid IRQ for in-kernel code and the irq_of_parse_and_map()
+> function returns zero on error.  So this check for valid IRQs should only
+> accept values > 0.
+> 
+> 
 
----
- kernel/trace/trace_eprobe.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index 72714cbf475c..03c851f57969 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -788,12 +788,9 @@ find_and_get_event(const char *system, const char *event_name)
- 		name = trace_event_name(tp_event);
- 		if (!name || strcmp(event_name, name))
- 			continue;
--		if (!trace_event_try_get_ref(tp_event)) {
-+		if (!trace_event_try_get_ref(tp_event))
- 			return NULL;
--			break;
--		}
- 		return tp_event;
--		break;
- 	}
- 	return NULL;
- }
+[1/1] dmaengine: ti: edma: handle irq_of_parse_and_map() errors
+      commit: 4500d86a2e5115724d58c27cfb3ef590bee0dd58
+
+Best regards,
+-- 
+~Vinod
+
 
