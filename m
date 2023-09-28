@@ -2,109 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519DEE7109E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Sep 2023 22:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57579E82CB7
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 01:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbjI0WMB (ORCPT
+        id S229863AbjI1BMJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Sep 2023 18:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48084 "EHLO
+        Wed, 27 Sep 2023 21:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjI0WMA (ORCPT
+        with ESMTP id S229793AbjI1BMI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Sep 2023 18:12:00 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF8710A;
-        Wed, 27 Sep 2023 15:11:59 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D48B81F385;
-        Wed, 27 Sep 2023 22:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1695852717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ywgPMmVKMCF2OBsdPVyyMuS0V6hzCVtZvwuPzOBMAN8=;
-        b=gPHuSKZaHU9KAuUuuwNiDKETwxW4fWysw5JxRtY6rOTZsQZPEmfp03uV+qRS1CV/9RSbh7
-        nDBdV40djXBiaicQs+1X24AVauIhVYbo/Klfb2WGEDku1QOoJ97JQVBA/DqZJ8a/WDT/+L
-        UkABx68z0TGnkWbHsHttr8yVs5La+CA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1695852717;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ywgPMmVKMCF2OBsdPVyyMuS0V6hzCVtZvwuPzOBMAN8=;
-        b=3DL/6u4HVP2mdSxIrxYzOb49x4BTIzkl7HKf+hOqb0rVW9iaKRYNVu7GOxnyCSx41tGjAk
-        I0UXzMBpX7CigVCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 47D8D13479;
-        Wed, 27 Sep 2023 22:11:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id pPumOquoFGUELgAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 27 Sep 2023 22:11:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Sep 2023 21:12:08 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id B1983BF;
+        Wed, 27 Sep 2023 18:12:05 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 4ADCF6018F7FD;
+        Thu, 28 Sep 2023 09:12:02 +0800 (CST)
+Message-ID: <b1a6134d-f976-ed9d-aac0-06f3c93fc1c6@nfschina.com>
+Date:   Thu, 28 Sep 2023 09:12:01 +0800
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        "Dan Carpenter" <dan.carpenter@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH nfsd] SQUASH 8dc9e02aed76 lib: add light-weight queuing mechanism.
-In-reply-to: <8e9f5845-0d9c-4d50-b2e4-5c1cd622a71c@moroto.mountain>
-References: <8e9f5845-0d9c-4d50-b2e4-5c1cd622a71c@moroto.mountain>
-Date:   Thu, 28 Sep 2023 08:11:52 +1000
-Message-id: <169585271242.5939.14975098525477744646@noble.neil.brown.name>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] ovl: avoid possible NULL dereference
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <f929f35e-2599-48e4-a77f-f2002bc94482@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 2023/9/27 22:39, Dan Carpenter wrote:
+> On Wed, Sep 27, 2023 at 05:02:26PM +0300, Amir Goldstein wrote:
+>> On Mon, Sep 25, 2023 at 7:52 AM Su Hui <suhui@nfschina.com> wrote:
+>>> smatch warn:
+>>> fs/overlayfs/copy_up.c:450 ovl_set_origin() warn:
+>>> variable dereferenced before check 'fh' (see line 449)
+>>>
+>>> If 'fh' is NULL, passing NULL instead of 'fh->buf'.
+>>>
+>>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>>> ---
+>>>   fs/overlayfs/copy_up.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+>>> index d1761ec5866a..086f9176b4d4 100644
+>>> --- a/fs/overlayfs/copy_up.c
+>>> +++ b/fs/overlayfs/copy_up.c
+>>> @@ -446,7 +446,7 @@ int ovl_set_origin(struct ovl_fs *ofs, struct dentry *lower,
+>>>          /*
+>>>           * Do not fail when upper doesn't support xattrs.
+>>>           */
+>>> -       err = ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh->buf,
+>>> +       err = ovl_check_setxattr(ofs, upper, OVL_XATTR_ORIGIN, fh ? fh->buf : NULL,
+>>>                                   fh ? fh->fb.len : 0, 0);
+>>>          kfree(fh);
+>>>
+>>> --
+>>> 2.30.2
+>> After discussing this with Dan Carpenter, this is not a kernel bug,
+>> it is a smatch bug.
+> Yeah.  Sorry about that, Su Hui.  The ->buf struct member is not a
+> pointer, it's an array.  So this isn't really a dereference, it's just
+> pointer math and foo = fh->buf won't crash even if fh is NULL.
+Got it, I'm so careless that make this wrong patch.
+Really thanks for your reminder!
 
-Remove assumption that kmalloc never fails.
+Su Hui
 
-Signed-off-by: NeilBrown <neilb@suse.de>
----
-
-Hi Chuck,
- please squash this into the relevant patch - thanks.
-Hi Dan,
- thanks for the review!
-
-NeilBrown
-
- lib/lwq.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/lib/lwq.c b/lib/lwq.c
-index 8a723b29b39e..57d080a4d53d 100644
---- a/lib/lwq.c
-+++ b/lib/lwq.c
-@@ -111,6 +111,8 @@ static int lwq_test(void)
- 		threads[i] = kthread_run(lwq_exercise, &q, "lwq-test-%d", i);
- 	for (i = 0; i < 100; i++) {
- 		t = kmalloc(sizeof(*t), GFP_KERNEL);
-+		if (!t)
-+			break;
- 		t->i = i;
- 		t->c = 0;
- 		if (lwq_enqueue(&t->n, &q))
-@@ -127,7 +129,8 @@ static int lwq_test(void)
- 			printk(KERN_INFO " lwq: ... ");
- 		}
- 		t = lwq_dequeue(&q, struct tnode, n);
--		printk(KERN_CONT " %d(%d)", t->i, t->c);
-+		if (t)
-+			printk(KERN_CONT " %d(%d)", t->i, t->c);
- 		kfree(t);
- 	}
- 	printk(KERN_CONT "\n");
--- 
-2.42.0
-
+>
+> I have written a fix for this in Smatch.  I'll test it a bit before I
+> push it.
+>
+> regards,
+> dan carpenter
+>
