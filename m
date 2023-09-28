@@ -2,70 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A566E732E8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 16:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6ADCE7B1E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 19:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbjI1QYr (ORCPT
+        id S230345AbjI1T0T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Sep 2023 12:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52128 "EHLO
+        Thu, 28 Sep 2023 15:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjI1QYr (ORCPT
+        with ESMTP id S229478AbjI1T0S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Sep 2023 12:24:47 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7423C139;
-        Thu, 28 Sep 2023 09:24:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C3BFC433C8;
-        Thu, 28 Sep 2023 16:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695918284;
-        bh=Yb73gD0w71DZLWWTyXpDtkeRLLlRucCxREX/JemEB8I=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=BKcDfpYNChVFNEtxTBXfELZtQVEthED8lpdnWdWEE8cBEI6x+7gCWHud+T+Eo/LYp
-         r8jb7nxiqf72drCkZcRMc+smSTLeZWKFxSo33taiUk1zs8/iEoX8/v/vlRU0ZoTRTp
-         a4OUdYOFT571q3z2kbTzYbvvZQEOladuJPAUtBN3LGoppTmdIoiFZwhcBmuBBmchTe
-         wShV/JzqhD8WbzG/cB3dx8pIZ1FSNsvWuTIj0x2Ym7f/MRv/7hZg1Et4n+kmrg5Pux
-         b0id+Rj65bBH+m0J5KEd6954DqcXwNp8WHu9oNNgJQ61bzClV2m87UpS5mQozSEPu9
-         11MInDvR5q1dQ==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 28 Sep 2023 15:26:18 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B87619F;
+        Thu, 28 Sep 2023 12:26:17 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38SISQbA015355;
+        Thu, 28 Sep 2023 19:26:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ooAQqC9xWI1PCS2E+DEZfMn/7C9bplMAfccRyJkPlJk=;
+ b=Hd66bLzENYH5cLyg9yLHt7Z5DSnu0WeilfkB5Av+Si2k/4gYn4+pEEZW3WpeM/Zt6UP7
+ +7hsRLYGC21CGmOi+ouuanNXSL1i21cIvU0W2L9gSExAfC5kO1gmXGp7dpwmBEJcmXF3
+ S2t26O08EvmdicxUNyJLtvoAjmjoSUDkYWmjMcK7Y5X8lcVH2AmEY6FaqvXGziJqhCjT
+ W6S+6nxzX4q+fXwpiioXDoid7Ookgcfc03xRhc9A864/1nYpeEKiEQz1kbVGVtXb8JwU
+ lnbW+eMuwuiS2Ff1nJLZsWEOPAyuhkHl2UdSD3MJUpJlWZiCspMHdwP3G1z1lqWUgZCa hQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tct5gty2v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 28 Sep 2023 19:26:07 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38SJQ6On015886
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 28 Sep 2023 19:26:06 GMT
+Received: from [10.111.177.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 28 Sep
+ 2023 12:26:06 -0700
+Message-ID: <712b1f74-72c3-4655-9e38-3138db74a1b7@quicinc.com>
+Date:   Thu, 28 Sep 2023 12:26:05 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary (void*)
+ conversions
+Content-Language: en-US
+To:     Kalle Valo <kvalo@kernel.org>,
+        Christian Lamparter <chunkeey@gmail.com>
+CC:     Wu Yunchuan <yunchuan@nfschina.com>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20230919044916.523308-1-yunchuan@nfschina.com>
+ <e544d992-cddd-4ade-81ef-2eed4f3681e8@gmail.com> <87zg16iab3.fsf@kernel.org>
+From:   Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87zg16iab3.fsf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] wifi: rt2x00: remove redundant check if u8 array
- element is less than zero
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20230920121240.120455-1-colin.i.king@gmail.com>
-References: <20230920121240.120455-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Stanislaw Gruszka <stf_xl@wp.pl>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <169591828085.3187104.685774865780206664.kvalo@kernel.org>
-Date:   Thu, 28 Sep 2023 16:24:42 +0000 (UTC)
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _B7Ky4Z_Shdw0MgsMykdd17s1DKnzkXl
+X-Proofpoint-GUID: _B7Ky4Z_Shdw0MgsMykdd17s1DKnzkXl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-28_18,2023-09-28_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 mlxlogscore=676 impostorscore=0 phishscore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2309280166
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
-
-> The check on vga_gain[ch_idx] being less than zero is always false since
-> vga_gain is a u8 array. Clean up the code by removing the check and the
-> following assignment. Cleans up clang scan build warning:
+On 9/28/2023 8:31 AM, Kalle Valo wrote:
+> Christian Lamparter <chunkeey@gmail.com> writes:
 > 
-> drivers/net/wireless/ralink/rt2x00/rt2800lib.c:9704:26: warning:
-> result of comparison of unsigned expression < 0 is always
-> false [-Wtautological-unsigned-zero-compare]
+>> On 9/19/23 06:49, Wu Yunchuan wrote:
+>>> No need cast (void *) to (struct ar9170 *), (u8 *) or (void*).
+>>
+>> hmm, your mail went into the spam folder. Good thing I checked.
+>>
+>>  From what I remember: The reason why these casts were added in
+>> carl9170 was because of compiler warnings/complaints.
+>> Current gcc compilers should be OK (given that the kernel-bot
+>> didn't react, or went your Mail to their spam-folder as well?)
+>> but have you checked these older versions?
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Do you remember anything more about these warnings? I tried to check the
+> git history and at least quickly couldn't find anything related to this.
+> 
+> The changes look very safe to me, struct urb::context field and the out
+> variable are both of type 'void *' so removing the explicit casts should
+> change anything. I cannot really come up a reason why would this patch
+> cause new warnings so I am inclined towards taking this patch. What do
+> you think?
 
-Patch applied to wireless-next.git, thanks.
-
-b2172a9330b5 wifi: rt2x00: remove redundant check if u8 array element is less than zero
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20230920121240.120455-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Anything that would have had issue would have predated C99.
+This change is safe.
 
