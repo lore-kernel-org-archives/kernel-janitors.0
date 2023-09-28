@@ -2,73 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CA7E732CA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 13:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346A7E732CC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 13:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232590AbjI1NAy (ORCPT
+        id S232590AbjI1NJg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Sep 2023 09:00:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
+        Thu, 28 Sep 2023 09:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232582AbjI1NAy (ORCPT
+        with ESMTP id S232203AbjI1NJf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Sep 2023 09:00:54 -0400
+        Thu, 28 Sep 2023 09:09:35 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6FC0199;
-        Thu, 28 Sep 2023 06:00:50 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC3DC433C7;
-        Thu, 28 Sep 2023 13:00:49 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E98198;
+        Thu, 28 Sep 2023 06:09:34 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1249C433C8;
+        Thu, 28 Sep 2023 13:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695906050;
-        bh=1w5FRlOo1tK8D8G1rHrmB3vPWLFLyIZOOaoFfnEL2Y0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K8N5b0bFaojf/1rQrdbr+Nc6K6JlJEYbmvmTM3APbrIv1dDDlzmLViptfoJl0NSqk
-         wlJdnJKk8RdOgWxHk0HPn+68ktWelgKGpHKeIfYxxEqFflbpjCyq0HGDRMP6SW9WAG
-         4xdtwp176vOXaxqv5YcKKcn1mz6FWZnZJ7LF7Q83topamtD58cF7JtkW8u8OOkU7u5
-         CciCrwmetlb54aGVZquF3WlMnVTgE/oNKq6IvDB6cBiry8AGKGGkl727MAUkzBcLkC
-         E0u53xWe732dqsrYhyNH9D/6RRZ8AgsfVMFVPP2oL84+IK8XuwDANI9RU2b2nH8iGa
-         okbG9cBTBq1ew==
-Date:   Thu, 28 Sep 2023 15:00:47 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] locktorture: Check the correct variable for allocation
- failure
-Message-ID: <ZRV4/20T4pGk2QuX@lothringen>
-References: <ec2c9ecf-9360-41fa-934d-6854d2615799@moroto.mountain>
+        s=k20201202; t=1695906573;
+        bh=Qq0hi3e2tKtQJ3+Z8bOvfTj1CKrpaItZITJxOy4HsYk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=G9QO6tvR7OcWm8lZ1U+06XFAkTtd20/2iYWGGS8m9DpGgk3Wqbh0igL8reiBJW8XS
+         2/N0r8BxxvZeWJNbTzMszbxNsZKtyzfrd0TFew5e32ttARPUYMRQy8KZEqiXK9hqlL
+         pJb2dRM7QlU9IDPiYPt2z/gTkmzAK8k01CzvB4PtXk0sTXQly94hcnAt+akohNi6cE
+         1CYHqrUw2bZ3NPcZnrs87HAluKxL90XedpoHwpAe+0OBxjX5g0U/WqtKIMgfhS6UHB
+         C91lbbCQoXQQuy+Z4O5ninrDG0azWdU/kvvM/bWhOdvwzC6UbM9Z3lqvuK/Ha2pFjk
+         DEcsQIV0YNEDQ==
+From:   Lee Jones <lee@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Bryan Wu <bryan.wu@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Iles <jamie@jamieiles.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-leds@vger.kernel.org
+In-Reply-To: <3f4be7a99933cf8566e630da54f6ab913caac432.1695453322.git.christophe.jaillet@wanadoo.fr>
+References: <3f4be7a99933cf8566e630da54f6ab913caac432.1695453322.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: (subset) [PATCH] leds: trigger: ledtrig-cpu:: Fix a warning
+ when compiling with W=1
+Message-Id: <169590657165.1583104.6448203115570808181.b4-ty@kernel.org>
+Date:   Thu, 28 Sep 2023 14:09:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec2c9ecf-9360-41fa-934d-6854d2615799@moroto.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 10:06:11AM +0300, Dan Carpenter wrote:
-> There is a typo so this checks the wrong variable.  "chains" plural vs
-> "chain" singular.  We already know that "chains" is non-zero.
+On Sat, 23 Sep 2023 09:15:38 +0200, Christophe JAILLET wrote:
+> In order to teach the compiler that 'trig->name' will never be truncated,
+> we need to tell it that 'cpu' is not negative.
 > 
-> Fixes: 7f993623e9eb ("locktorture: Add call_rcu_chains module parameter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  kernel/locking/locktorture.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> When building with W=1, this fixes the following warnings:
 > 
-> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-> index a3abcd136f56..69d3cd2cfc3b 100644
-> --- a/kernel/locking/locktorture.c
-> +++ b/kernel/locking/locktorture.c
-> @@ -1075,7 +1075,7 @@ static int call_rcu_chain_init(void)
->  	if (call_rcu_chains <= 0)
->  		return 0;
->  	call_rcu_chain = kcalloc(call_rcu_chains, sizeof(*call_rcu_chain), GFP_KERNEL);
-> -	if (!call_rcu_chains)
-> +	if (!call_rcu_chain)
->  		return -ENOMEM;
->  	for (i = 0; i < call_rcu_chains; i++) {
->  		call_rcu_chain[i].crc_stop = false;
+>   drivers/leds/trigger/ledtrig-cpu.c: In function ‘ledtrig_cpu_init’:
+>   drivers/leds/trigger/ledtrig-cpu.c:155:56: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 5 [-Werror=format-truncation=]
+>     155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+>         |                                                        ^~
+>   drivers/leds/trigger/ledtrig-cpu.c:155:52: note: directive argument in the range [-2147483648, 7]
+>     155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+>         |                                                    ^~~~~~~
+>   drivers/leds/trigger/ledtrig-cpu.c:155:17: note: ‘snprintf’ output between 5 and 15 bytes into a destination of size 8
+>     155 |                 snprintf(trig->name, MAX_NAME_LEN, "cpu%d", cpu);
+>         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> [...]
 
-Oh good catch, queueing this one, thanks!
+Applied, thanks!
+
+[1/1] leds: trigger: ledtrig-cpu:: Fix a warning when compiling with W=1
+      commit: 5272d74b29929c8395720a7e35971a4f0fb6783d
+
+--
+Lee Jones [李琼斯]
+
