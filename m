@@ -2,73 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7565CE7B0A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 07:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E81FCE7B19
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Sep 2023 10:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbjI1Huq (ORCPT
+        id S231590AbjI1Kn4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
+        Thu, 28 Sep 2023 06:43:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbjI1Huq (ORCPT
+        with ESMTP id S231313AbjI1Kn4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Sep 2023 03:50:46 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E2195;
-        Thu, 28 Sep 2023 00:50:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED51C433C7;
-        Thu, 28 Sep 2023 07:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695887444;
-        bh=FDCqZCAloUgFy83qeaM98dMcfkYWTD/rX6/C78mV2A0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WH0KmnRd2D2TDARyQf3rvTLFNsmRMEUX0BXIGJa1+u020hunr3zKtkKam7ihuK4YQ
-         Z1rDLiTA/VTzyIVFzOOjcUSAyOQNC1phkLkdCIPRZRnEUYDT76ow0K2YUK/d0dkhBs
-         ooZ1AWpwfvTPXtWux5t1o2sIxk7oBczVXC5kAqIhWb/AYxiitEQPQoORjObR0mZFQI
-         M9ZqyP9kcjzE7YtwjAC+cmioUxjpbgRQEma7U50VHay5IlWncl3VtQ1Igh2u+/3gJ2
-         qZQbxfXtPMZM54mMpkRVdJmmhH0t27CVtj/aeUY2lxmLcNMqzw/kqGg2Nskqht5P2o
-         WwKK6ZwH6/hfw==
-Date:   Thu, 28 Sep 2023 13:20:40 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3 net] dmaengine: ti: k3-udma-glue: clean up
- k3_udma_glue_tx_get_irq() return
-Message-ID: <ZRUwUBRvs+bkfOgW@matsya>
-References: <4c2073cc-e7ef-4f16-9655-1a46cfed9fe9@moroto.mountain>
- <bf2cee83-ca8d-4d95-9e83-843a2ad63959@moroto.mountain>
+        Thu, 28 Sep 2023 06:43:56 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EADB1180;
+        Thu, 28 Sep 2023 03:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LUmEFVgYyEJd0Y33BFcDH3/Ea1qs67OuZS/yeIuLfWU=;
+  b=BazJQIymVfr5MFVaqLBBi67mhojX2DO/rPD82cWOq356vfv2M/l0jLWg
+   oJ8FlNpA9Cx7ICaWWIlXMPfunCGOV7yT7ruP/0K49sedyoeoT91AsWbD0
+   wLJs2Xm5jAJ9PUEhj0qWza4Y6JkUwvHXr+1qcgIDUt7bFiygz+tH6V/OV
+   4=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.03,183,1694728800"; 
+   d="scan'208";a="67216334"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2023 12:43:50 +0200
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/eprobe: drop unneeded breaks
+Date:   Thu, 28 Sep 2023 12:43:34 +0200
+Message-Id: <20230928104334.41215-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf2cee83-ca8d-4d95-9e83-843a2ad63959@moroto.mountain>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 26-09-23, 17:06, Dan Carpenter wrote:
-> The k3_udma_glue_tx_get_irq() function currently returns negative error
-> codes on error, zero on error and positive values for success.  This
-> complicates life for the callers who need to propagate the error code.
-> Also GCC will not warn about unsigned comparisons when you check:
-> 
-> 	if (unsigned_irq <= 0)
-> 
-> All the callers have been fixed now but let's just make this easy going
-> forward.
+Drop break after return.
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
--- 
-~Vinod
+---
+ kernel/trace/trace_eprobe.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+index 72714cbf475c..03c851f57969 100644
+--- a/kernel/trace/trace_eprobe.c
++++ b/kernel/trace/trace_eprobe.c
+@@ -788,12 +788,9 @@ find_and_get_event(const char *system, const char *event_name)
+ 		name = trace_event_name(tp_event);
+ 		if (!name || strcmp(event_name, name))
+ 			continue;
+-		if (!trace_event_try_get_ref(tp_event)) {
++		if (!trace_event_try_get_ref(tp_event))
+ 			return NULL;
+-			break;
+-		}
+ 		return tp_event;
+-		break;
+ 	}
+ 	return NULL;
+ }
+
