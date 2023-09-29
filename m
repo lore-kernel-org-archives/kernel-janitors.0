@@ -2,55 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763ADE743EE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Sep 2023 06:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE49E743EE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Sep 2023 06:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232647AbjI2GnL (ORCPT
+        id S232769AbjI2Gtg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Sep 2023 02:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34622 "EHLO
+        Fri, 29 Sep 2023 02:49:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231429AbjI2GnK (ORCPT
+        with ESMTP id S232732AbjI2Gtc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Sep 2023 02:43:10 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579801A2
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Sep 2023 23:43:08 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32329d935d4so8528638f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Sep 2023 23:43:08 -0700 (PDT)
+        Fri, 29 Sep 2023 02:49:32 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBA61A5
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Sep 2023 23:49:30 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b9338e4695so222800381fa.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Sep 2023 23:49:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695969786; x=1696574586; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1695970168; x=1696574968; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c111TxV4LsaZkNFxtorudE/xiCMDuqLd7PyPIRPDzic=;
-        b=WLXk2l1am48w8W/AIcmZftEzunBVfCfZfJLEwgMC28hxsUU9DIHp+T72fpiw+VeVmL
-         lXGLqIYbFdqkibclddlgEOTTNwiBVEO7NsM7NX1tcYE1/vpdyncXl6Qiybr999izNb0q
-         kz91BLqA9iRecPMm4Sw3GMP6Ay1b6SFi1gTKdpuur0gl5wQ2Gb5e/Trj5o/BnlkhThuL
-         VkT3XtkomN7XCyKdx4tGFIt2YB3fCiiKx5wPb+4vkHPQGE22r68meozAgKF7k0Da4t8P
-         aV15uPrkl0nGJFe5z4vlWXZRm9Nu1iGTCbq2/dw7AKGOrEFNJxg3zcAQaoMmX7WGIVxY
-         cJIQ==
+        bh=IdE47ccEJVgPvSH9BWbF+fIplCXC5Qc2Je9vj/botNc=;
+        b=Pr5yvZcp+VjqHWgYEydarW6aRJbG7cJcjTS/gcRyeB27StxQRTRFvXsNbG4eKefuXS
+         vintCQ0TkitYH4g/JynVx63syoAkU7cvZL5jKmAUlXV8/GY2NQFRv3n/RpdsEPigrK28
+         eYlWxL5sBJVEGEfW/EfPWok55T+6L+ak5gey4NlXwLSHF0emXlB4xdBLgwHicUo6uzr1
+         Evjx+J7Eh7UwcOX1VZ25ufqm5KhxLvBNMk9Fr3AwjZK94d5GzcUg5H8Zh8Az5OmIeggH
+         L+LUvhWzXN+gU1nwupgOOB0FvL4Ew1pdilMODIMn/bAPD0cqCHZo1pVTn67bp7kkfjb9
+         aVXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695969786; x=1696574586;
+        d=1e100.net; s=20230601; t=1695970168; x=1696574968;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c111TxV4LsaZkNFxtorudE/xiCMDuqLd7PyPIRPDzic=;
-        b=vmaWc4Sn3Psq3GFy8EcnHkCYfVuBcbide+hDFDgzzV4ZKiub39zsZzDbCVA4IbcUtE
-         +Gz5Z1MIB72Up0sYzu+VctuSPjwMyJMivFc4yHAY0OsKIr7hzuQ9khh5uwygvKu61XMb
-         WsLwYqTmIMi9ryXZ5rEoXDZqC9/F79jnBtYIZcf9LsCdZ6hI8dMi45cH1kYpxxmwsRK+
-         ZL5dPzDmJYMnYfzCy6+aYNZtujWnTMX/+EtHLfh4W++3jygcGudGZnmnmJGrFL9/Tzyz
-         tBPbolbTZuH/crblVhhd6B9DKlu7Eq0KEGGKPoe2/JFQb6s31C6Z91kS9jyXASmLS6nA
-         FJ+Q==
-X-Gm-Message-State: AOJu0YwA+qfxbZYwLkh1KtEgF5WoaAqBrG+5wWu4ExgI9IA73OJBsEXl
-        kJD0noBIlAYN52/mldw9yKGWLA==
-X-Google-Smtp-Source: AGHT+IEDol4wmJM4q7PwQeoCPFVL1+bTQtJagyVB3S67aWJXbdjUevr+b3uO8jUY+r/CU2uIS4XipQ==
-X-Received: by 2002:a5d:6e53:0:b0:324:8353:940e with SMTP id j19-20020a5d6e53000000b003248353940emr2925201wrz.34.1695969786653;
-        Thu, 28 Sep 2023 23:43:06 -0700 (PDT)
+        bh=IdE47ccEJVgPvSH9BWbF+fIplCXC5Qc2Je9vj/botNc=;
+        b=qNsP8HNJdR02+07nZ/Q5+wROyPIhqkhfRd6NqR/crjsj0GwAetVx7Z5isqDYDhi/Tu
+         moEo7Zqpc3c7QOCPgpcpY6Phsofe/Zim6n+uNuEPVAEN8AbGkQvvtnkazq1M6BCLepum
+         acNayU8EoNk3ev0OkvYn+FBGkUXUOKB5+Qv1IYJw5Vu8WTua0SQi5cnffdTgab3tqQm3
+         KwQAEUnotbb4ICwOVeffP8/Bq6JJ8SFe4ukhnSZyklmt0tJycxaFURbzL45J6uRHi+5C
+         7TcO4qg59M9cO7M3QRpCzpE5x3ojSouGjY6RpYMibodmIH06jOwlObxoWF5X/qqnrJvh
+         PNrw==
+X-Gm-Message-State: AOJu0YwyqdaH3EQrvrOXXeqKNQ9F3H3nN5nUzzpewPSZYjK6SZhvKP3I
+        xoZ/e9Jj/Rpgi2ETvy6D1vw0Zw==
+X-Google-Smtp-Source: AGHT+IEQRfeGnYjHSeRYcCXQtu0cyPPVk5fpNmgv97WC9LvDlu4SIDZmtlXa76nDC02T9PGxFv2byg==
+X-Received: by 2002:a05:6512:4819:b0:505:6ede:20b0 with SMTP id eo25-20020a056512481900b005056ede20b0mr825848lfb.58.1695970168197;
+        Thu, 28 Sep 2023 23:49:28 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g16-20020adfa490000000b003232380ffd5sm12868643wrb.106.2023.09.28.23.43.05
+        by smtp.gmail.com with ESMTPSA id o6-20020a05600c378600b00405ee9dc69esm751819wmr.18.2023.09.28.23.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Sep 2023 23:43:05 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 09:43:03 +0300
+        Thu, 28 Sep 2023 23:49:27 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 09:49:24 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     Kalle Valo <kvalo@kernel.org>
 Cc:     Christian Lamparter <chunkeey@gmail.com>,
@@ -59,24 +59,29 @@ Cc:     Christian Lamparter <chunkeey@gmail.com>,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary
  (void*) conversions
-Message-ID: <0b7623f7-561c-4f3b-91c1-aaf1c44f1158@kadam.mountain>
+Message-ID: <d41d0c98-82ef-40f6-8c5c-68a94b5a4655@kadam.mountain>
 References: <20230919044916.523308-1-yunchuan@nfschina.com>
  <e544d992-cddd-4ade-81ef-2eed4f3681e8@gmail.com>
  <87zg16iab3.fsf@kernel.org>
+ <0b7623f7-561c-4f3b-91c1-aaf1c44f1158@kadam.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87zg16iab3.fsf@kernel.org>
+In-Reply-To: <0b7623f7-561c-4f3b-91c1-aaf1c44f1158@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I don't know anything which would warn about this.  Generally, in the
-kernel we try to avoid casts but perhaps there was a static checker
-which likes casts?
+On Fri, Sep 29, 2023 at 09:43:03AM +0300, Dan Carpenter wrote:
+> I don't know anything which would warn about this.  Generally, in the
+> kernel we try to avoid casts but perhaps there was a static checker
+> which likes casts?
+> 
+> If removing these sorts of casts were an issue we would have known by
+> now.
 
-If removing these sorts of casts were an issue we would have known by
-now.
+Thinking about it more, if this caused a static checker warning then
+probably every kmalloc() would need a cast.
 
 regards,
 dan carpenter
