@@ -2,103 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7BDE81815
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Sep 2023 11:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA915E71D21
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Sep 2023 12:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233009AbjI2LhP (ORCPT
+        id S233115AbjI2M01 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Sep 2023 07:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54526 "EHLO
+        Fri, 29 Sep 2023 08:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233027AbjI2LhN (ORCPT
+        with ESMTP id S232834AbjI2M0Y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Sep 2023 07:37:13 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2CF11B0;
-        Fri, 29 Sep 2023 04:37:10 -0700 (PDT)
+        Fri, 29 Sep 2023 08:26:24 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0111B1
+        for <kernel-janitors@vger.kernel.org>; Fri, 29 Sep 2023 05:26:22 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32488a22810so1533145f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 29 Sep 2023 05:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ootNujH4iGHwjSkyEVNQmJn1cqLN7lBrvMBiPY4LClA=;
-  b=WVxXRnm46UgzPhPsYsnCbPrqvO/i7hGnOMaCmAEUNx+TNrWcr7nWTTg+
-   dLmjpBTQgnxsxgLdkyybU7BKycZQa5YLvnVaEh4cP5YmtTxNssMigzTO0
-   xH6UXr1UipC3XbBdQy8lNA0mtC2wfI0+O+tarbjHgKByZH7DrBGEpKgYB
-   c=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.03,187,1694728800"; 
-   d="scan'208";a="67334250"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2023 13:37:09 +0200
-Date:   Fri, 29 Sep 2023 13:37:08 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-cc:     Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/eprobe: drop unneeded breaks
-In-Reply-To: <20230929203259.74d4ba263b3455172ef37f06@kernel.org>
-Message-ID: <alpine.DEB.2.22.394.2309291336260.3137@hadrien>
-References: <20230928104334.41215-1-Julia.Lawall@inria.fr> <20230929203259.74d4ba263b3455172ef37f06@kernel.org>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=linaro.org; s=google; t=1695990380; x=1696595180; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zOwsmdvaqsnWOGdKfDU1+n+TMnPog80u/xFpJeYRDeI=;
+        b=KR5/WRfE8CiflZyoeNSa5QQ2VMG0mRUZILilNdOYVJRVZQM3BZB8yMD4H9NvC+LLKA
+         AllETZlhyBRETV9GtraiHcPgBiqK2W+WdkViEPogKZHWdpkQZSMdA0Oi0yP4holTzuOe
+         izunGc8rPEc67ru2yD/Lqh53SYlQOoWmHtThxfZllnaiz3BsN3OVnFWm95c5XFS8PbAr
+         48fQVNpaIXCHn4Oi3D/Z1q82olGM02po/8yvzezuz+wUYjY3kc8w/uGNiqf7C9y2MX4E
+         o7ZQKgvM1Ka9WA7X7XHwWb0LpByQ39EQibzLI4Yr1LmDcPeX16b4Brxjj47kjWLqDxmT
+         0KtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695990380; x=1696595180;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zOwsmdvaqsnWOGdKfDU1+n+TMnPog80u/xFpJeYRDeI=;
+        b=YeTmxbiIvW5GoLpRe86S7Z0YL2LKkvvlv9Ec+Q+EahOvuJ7tTZ76auXMHuFGcFffXY
+         n9igM0zSy6WATsC8qtWVf/C/UTEiDQfBB2qiobkOmrXxV8PKOc3efQiQyUkYZkIr6zKy
+         KszaTZNEmro/jX77tgHcT9VZOBmhDwDII2Zn6Yp++AL9ZsjnwNg9mjzN301KvAWZ0w/l
+         euISEJ+xXQNmOLSmz8WWL7iLx5eK2tYAIQpgUNeM/6JQg5+2cD7NJog6NXLRRFkbXWxI
+         SBo+eAwSVREOtIv+KgtFW0kenWyYXfL2bAMV8jSYYknuIGbd/tY/uf/bBop/jVAG5Fe7
+         oOTg==
+X-Gm-Message-State: AOJu0YzTIBVEeGNVg6hOC8ZqbyYU8bArWNaDCys1xPbvLBp662o3bfxw
+        3+ojqLCU0yY/uQA6woAp0HX9ag==
+X-Google-Smtp-Source: AGHT+IFUoMj9nVwl6ZieDh3TdJZjzxLVhrxNXo1sk7Mp1DTcFzfqJjOkIJHYQ+0I05t0svf4UpsJyg==
+X-Received: by 2002:a5d:62c6:0:b0:31f:b138:5a0 with SMTP id o6-20020a5d62c6000000b0031fb13805a0mr3305014wrv.48.1695990380575;
+        Fri, 29 Sep 2023 05:26:20 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k8-20020adfe3c8000000b00326028b4dd5sm571889wrm.113.2023.09.29.05.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 05:26:19 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 15:26:17 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Christian Lamparter <chunkeey@gmail.com>,
+        Shiji Yang <yangshiji66@qq.com>
+Cc:     Linux Wireless <linux-wireless@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Wu Yunchuan <yunchuan@nfschina.com>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@kernel.org>
+Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary
+ (void*) conversions
+Message-ID: <721a4c53-a253-4b0e-a5e0-fc4b992feb49@kadam.mountain>
+References: <20230919044916.523308-1-yunchuan@nfschina.com>
+ <e544d992-cddd-4ade-81ef-2eed4f3681e8@gmail.com>
+ <87zg16iab3.fsf@kernel.org>
+ <0b7623f7-561c-4f3b-91c1-aaf1c44f1158@kadam.mountain>
+ <d41d0c98-82ef-40f6-8c5c-68a94b5a4655@kadam.mountain>
+ <c5611be9-ef4d-4e49-84de-7ce893e3c73c@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5611be9-ef4d-4e49-84de-7ce893e3c73c@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Sep 29, 2023 at 09:23:26AM +0200, Christian Lamparter wrote:
+> I would like to take the chance to again point to this beauty:
+> <https://lore.kernel.org/linux-wireless/TYAP286MB03154F9AAFD4C35BEEDE4A99BC4CA@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM/T/#mf1b8919a000fe661803c17073f48b3c410888541>
+> @Dan, @Jeff can you please comment on that too?
 
+I don't know how Shiji Yang generated this warning.  The warning doesn't
+make sense and I don't see how the patch helps.  I tested with GCC (v12)
+and Clang (random from git) and neither one generates a warning.  What's
+the point of having all the struct members in a group when struct itself
+already forms a group?
 
-On Fri, 29 Sep 2023, Masami Hiramatsu  wrote:
+#confused
 
-> On Thu, 28 Sep 2023 12:43:34 +0200
-> Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> > Drop break after return.
-> >
->
-> Good catch! This looks good to me.
->
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
-> And
->
-> Fixes: 7491e2c44278 ("tracing: Add a probe that attaches to trace events")
+regards,
+dan carpenter
 
-Thanks.  I didn't include that because it's not a bug.  But it does break
-Coccinelle, which is how I noticed it.
-
-julia
-
->
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > ---
-> >  kernel/trace/trace_eprobe.c |    5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-> > index 72714cbf475c..03c851f57969 100644
-> > --- a/kernel/trace/trace_eprobe.c
-> > +++ b/kernel/trace/trace_eprobe.c
-> > @@ -788,12 +788,9 @@ find_and_get_event(const char *system, const char *event_name)
-> >  		name = trace_event_name(tp_event);
-> >  		if (!name || strcmp(event_name, name))
-> >  			continue;
-> > -		if (!trace_event_try_get_ref(tp_event)) {
-> > +		if (!trace_event_try_get_ref(tp_event))
-> >  			return NULL;
-> > -			break;
-> > -		}
-> >  		return tp_event;
-> > -		break;
-> >  	}
-> >  	return NULL;
-> >  }
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
