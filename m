@@ -2,115 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55455E7735F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Sep 2023 09:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB66E748E7
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Sep 2023 20:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233950AbjI3JTK (ORCPT
+        id S231124AbjI3U2V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Sep 2023 05:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
+        Sat, 30 Sep 2023 16:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbjI3JTJ (ORCPT
+        with ESMTP id S230108AbjI3U2U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Sep 2023 05:19:09 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE5FB4;
-        Sat, 30 Sep 2023 02:19:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539E7C433C8;
-        Sat, 30 Sep 2023 09:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696065546;
-        bh=CVvQtHQSyndyWy/FagrIZcZBd171yHX/jAjEOxkaFf4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fcQPwglQGQcQUubS/I9/SDHwTgwAtWcUJE/A/+7/Apn5w/5MSfMm+yUXs0mGXrpcO
-         UZvuFt3yb/qYJmKf8dOOkp1eIBGyTUQokCOp+JHlURL5jZWdi7VLTRrrYuNL2bP5PU
-         AxsMcFnAA9B//ObS3Chbf437dPquqf9tF66fq4KZcwfaHfMSXRvgcKiIpF3KD69iAW
-         oBx4eKq9Fpizt0UmpjIXBC4ycRKhyS3cowb1PbvufahsVkrTxnXlp9HkKaL8fTmaA6
-         NqoSVSuLDXgJNKqYIZWlLRG8oniRZUNHxvl2StD3JL6YxvzdBNbhyJh5j3X9yPZIzF
-         ELobq111PNfRg==
-Date:   Sat, 30 Sep 2023 18:19:02 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/eprobe: drop unneeded breaks
-Message-Id: <20230930181902.eb1d089243deca0017046437@kernel.org>
-In-Reply-To: <alpine.DEB.2.22.394.2309291336260.3137@hadrien>
-References: <20230928104334.41215-1-Julia.Lawall@inria.fr>
-        <20230929203259.74d4ba263b3455172ef37f06@kernel.org>
-        <alpine.DEB.2.22.394.2309291336260.3137@hadrien>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sat, 30 Sep 2023 16:28:20 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF97CA;
+        Sat, 30 Sep 2023 13:28:18 -0700 (PDT)
+Received: from mercury (unknown [185.254.75.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5072B6607285;
+        Sat, 30 Sep 2023 21:28:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1696105697;
+        bh=hRlP4DfBi86OovKpM21F/xWPEezlBHK/OG5lsM8V+Sw=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=fMB7aJfZXrh7iex7stsguBcQ2tYDcR2fIaw1W/etZfGkG/Wrv62zz7Srvy0C2hJGb
+         TBQHVnX98LXJfG2mQNd9HTXHBe0jJMpptCsRDNCfJ5cXDsmVZsHG+7upLb7r8NuX4y
+         bFCUPVMaoDWELQOellD7+DFN21ySb9m+Vsli+QIM6BEIEupnVgCDoMXiXA70l/rRrc
+         Pswf6eGDb4kx39se8pvmqhIMqrukMF3y/mulv3fSg1dZv58OVRmKVFUlA6aei8TLCq
+         pGu+XAmesx4FP0B3x9iGLrtuGY1mkGyGGv+v/vruTyEeOo6mu7CnW2mzihvLn6wSbH
+         zaItx0xGQGX+g==
+Received: by mercury (Postfix, from userid 1000)
+        id 2184910603F9; Sat, 30 Sep 2023 22:28:15 +0200 (CEST)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Konrad Dybcio <konradybcio@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <c46b4408-bf1d-408d-9e6b-16b0ad272532@moroto.mountain>
+References: <c46b4408-bf1d-408d-9e6b-16b0ad272532@moroto.mountain>
+Subject: Re: [PATCH] power: supply: mm8013: Fix an error checking issue in
+ mm8013_checkdevice()
+Message-Id: <169610569512.214910.12711679981052235128.b4-ty@collabora.com>
+Date:   Sat, 30 Sep 2023 22:28:15 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 29 Sep 2023 13:37:08 +0200 (CEST)
-Julia Lawall <julia.lawall@inria.fr> wrote:
 
+On Wed, 27 Sep 2023 15:41:05 +0300, Dan Carpenter wrote:
+> There is a missing "ret = " assignment so this checks the same "ret"
+> value twice.
 > 
 > 
-> On Fri, 29 Sep 2023, Masami Hiramatsu  wrote:
-> 
-> > On Thu, 28 Sep 2023 12:43:34 +0200
-> > Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> >
-> > > Drop break after return.
-> > >
-> >
-> > Good catch! This looks good to me.
-> >
-> > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > And
-> >
-> > Fixes: 7491e2c44278 ("tracing: Add a probe that attaches to trace events")
-> 
-> Thanks.  I didn't include that because it's not a bug.  But it does break
-> Coccinelle, which is how I noticed it.
 
-OK, I got it. I thought it may cause a compiler warning because the
-'break' never be executed. (maybe it is just a flow-control word,
-so it may not need to be warned, but a bit storange.)
+Applied, thanks!
 
-> 
-> julia
-> 
-> >
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> > >
-> > > ---
-> > >  kernel/trace/trace_eprobe.c |    5 +----
-> > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > >
-> > > diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-> > > index 72714cbf475c..03c851f57969 100644
-> > > --- a/kernel/trace/trace_eprobe.c
-> > > +++ b/kernel/trace/trace_eprobe.c
-> > > @@ -788,12 +788,9 @@ find_and_get_event(const char *system, const char *event_name)
-> > >  		name = trace_event_name(tp_event);
-> > >  		if (!name || strcmp(event_name, name))
-> > >  			continue;
-> > > -		if (!trace_event_try_get_ref(tp_event)) {
-> > > +		if (!trace_event_try_get_ref(tp_event))
-> > >  			return NULL;
-> > > -			break;
-> > > -		}
-> > >  		return tp_event;
-> > > -		break;
-> > >  	}
-> > >  	return NULL;
-> > >  }
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
+[1/1] power: supply: mm8013: Fix an error checking issue in mm8013_checkdevice()
+      commit: 8f8e9b7388514d937843337140f18ceb0f3da6eb
 
-
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
