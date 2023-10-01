@@ -2,49 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4A1E748ED
-	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Oct 2023 06:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135A5E748ED
+	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Oct 2023 06:21:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234302AbjJAGJK (ORCPT
+        id S234347AbjJAGVC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 1 Oct 2023 02:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40600 "EHLO
+        Sun, 1 Oct 2023 02:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233629AbjJAGJK (ORCPT
+        with ESMTP id S234311AbjJAGVA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 1 Oct 2023 02:09:10 -0400
+        Sun, 1 Oct 2023 02:21:00 -0400
 Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3EDFD3
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 Sep 2023 23:09:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DE9DD
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Sep 2023 23:20:56 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id mpdVqDSB9FUAImpdVqisEq; Sun, 01 Oct 2023 08:09:03 +0200
+        id mpoyqui9X615Bmpozqjj2L; Sun, 01 Oct 2023 08:20:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1696140543;
-        bh=dEigoJc9Nj/oPsIwmLuIjy2oFl0OjwHYbc4E9ZX/Nhc=;
+        s=t20230301; t=1696141254;
+        bh=8VNyDNwvUj63WBSAVLx12j5A3luCQB3hSbdx06sW9dw=;
         h=From:To:Cc:Subject:Date;
-        b=LPUhQqzMzF6cS/lswRtOb/1RTdGXjkT08HH/DJUjRRUjg76PNQ33CONA4z+vf33Gk
-         H3BJsiIKPtpLOchk8aPfC51NJFperyvTW2uIU7MBWb65nggYTgiJ3vFphZpJpzQoaY
-         8+CMhkhsdNVqsxCewuk5aJoO+R3Eac+MrwfYSo6Yb7f5a6XgdiJ6xRVY3Lw1GWbecL
-         NBtbDrZQ9Hi+nv4EXzgmXHBRL2Byp567km9A6HWuXLuQXfw2uq2A3UH6bqsBz2lS2T
-         wspaRQQVkVfFF0vS2AXX3621J1I1iv7AaaWlCB35VU9i+yPVV4wLZpJTyPSBLz9xY2
-         zm/igHjt+6J9g==
+        b=mZm6LI0qG50vdg0Uro8unjFDDj9mH+yKMAUMUQ2ocIobQyTbRkztvejkhx/9rI3jz
+         Hl+ODEgwKZFYvl2X6ERvzj7iv6gsRXKfwqvRnDZw62N5+E+DI3QJp0tunDcRjQoYFO
+         BRzMlDyHaol3lIdT0vaFhd6689GkUMYJa55fCjYYRB8Swp0U96eOtqnpaZJb77WxAL
+         VZ/fJgqABRSSxmUCSls5JP5lA12rFNbDMJfl0/1I6f/28qBUjGUSWKKjpcuZXr95Vw
+         esFvOZH7PFjQ8dgbdYYUjcbkFIZUDtrr6GszNWIzglg7UzEtixuwXls4uoB1WipZWT
+         Mzl7W0rvq7JXQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 01 Oct 2023 08:09:03 +0200
+X-ME-Date: Sun, 01 Oct 2023 08:20:54 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     Vadim Pasternak <vadimp@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Mark Gross <markgross@kernel.org>,
+        Michael Shych <michaelsh@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH wireless] wifi: mac80211: Fix a memory leak in ieee80211_key_link()
-Date:   Sun,  1 Oct 2023 08:08:59 +0200
-Message-Id: <cd52eee26b2afd7823b58654d73ef631ad2930e3.1696140396.git.christophe.jaillet@wanadoo.fr>
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform: mellanox: Fix a resource leak in an error handling path in mlxplat_probe()
+Date:   Sun,  1 Oct 2023 08:20:51 +0200
+Message-Id: <8bd0a7944f0f4f1342333eaf8d92d8e9d5623110.1696141233.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,39 +52,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 5d6020ba6657 seems to be conflicting with d097ae01ebd4 and what
-used to "goto out" now ends with a direct return.
+If an error occurs after a successful mlxplat_i2c_main_init(),
+mlxplat_i2c_main_exit() should be called to free some resources.
 
-Restore the expected behavior.
+Add the missing call, as already done in the remove function.
 
+Fixes: 158cd8320776 ("platform: mellanox: Split logic in init and exit flow")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is here more to draw attention to something that looks wrong
-because of a merge conflict.
+This patch is based on comparison between functions called in the remove
+function and the error handling path of the probe.
 
-If there is really an issue, then the commit description certainly need to
-we improved, by someone that know the recent changes better than me.
+For some reason, the way the code is written and function names are
+puzzling to me. So Review with care!
 ---
- net/mac80211/key.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/platform/x86/mlx-platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/mac80211/key.c b/net/mac80211/key.c
-index 2913c6b13558..af74d7f9d94d 100644
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -910,8 +910,10 @@ int ieee80211_key_link(struct ieee80211_key *key,
- 	 * Silently accept key re-installation without really installing the
- 	 * new version of the key to avoid nonce reuse or replay issues.
- 	 */
--	if (ieee80211_key_identical(sdata, old_key, key))
--		return -EALREADY;
-+	if (ieee80211_key_identical(sdata, old_key, key)) {
-+		ret = -EALREADY;
-+		goto out;
-+	}
- 
- 	key->local = sdata->local;
- 	key->sdata = sdata;
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index 3d96dbf79a72..64701b63336e 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -6598,6 +6598,7 @@ static int mlxplat_probe(struct platform_device *pdev)
+ fail_register_reboot_notifier:
+ fail_regcache_sync:
+ 	mlxplat_pre_exit(priv);
++	mlxplat_i2c_main_exit(priv);
+ fail_mlxplat_i2c_main_init:
+ fail_regmap_write:
+ fail_alloc:
 -- 
 2.34.1
 
