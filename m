@@ -2,131 +2,135 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C3FE784BB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 14:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4666FE784BE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 15:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237903AbjJBO5n (ORCPT
+        id S238100AbjJBP3C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 10:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
+        Mon, 2 Oct 2023 11:29:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237651AbjJBO5m (ORCPT
+        with ESMTP id S238080AbjJBP3A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 10:57:42 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2D0B3
-        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 07:57:37 -0700 (PDT)
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 392EkJqq002052;
-        Mon, 2 Oct 2023 14:57:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=kcPOFWWqOO0WszrP8FNwY6Q3nAzZ1hr2GFFQLObNMNk=;
- b=gChTU3hg7tB85vDI6rgJtuu6R60tYM7FO7mSethdwHDqjt282nLhjXeCIwzF5ZsAQ7mu
- 2YgVuIbQs64uepsLs+Dacnjya2gHlwDCs3HWGVwHB5UhOirVEcEX6JdKTXBWeub8DyNa
- Dwld2gANFcS4J0X3SxUxzB/250p/A9ntCrKE0Bh7Ohcxvl/N9uEKkZzo8TC9UqgJsPZW
- +9pphrDnGocDhnkW9h93TYmEwNLYglOWUvNUCDrUkUkwWwpZwT1p1I6gX0KIYrOQBVNI
- jJ2f+7yaIYzmwCt8KMnOFQ/ZotIZVM5pVBXa7eXfpaEkWi6tYWqDdvgKSF8yZBj8kgkU XA== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tfywx894g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Oct 2023 14:57:23 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 392ElYYd010892;
-        Mon, 2 Oct 2023 14:57:22 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tf0q19s75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Oct 2023 14:57:22 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 392EvM04066260
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Oct 2023 14:57:22 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B21E5805C;
-        Mon,  2 Oct 2023 14:57:22 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 636A95805E;
-        Mon,  2 Oct 2023 14:57:22 +0000 (GMT)
-Received: from [9.61.141.201] (unknown [9.61.141.201])
-        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Oct 2023 14:57:22 +0000 (GMT)
-Message-ID: <4666c1f5-06e3-2b03-993c-5d53637856a2@linux.ibm.com>
-Date:   Mon, 2 Oct 2023 09:57:22 -0500
+        Mon, 2 Oct 2023 11:29:00 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1C299;
+        Mon,  2 Oct 2023 08:28:57 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9b29186e20aso1602858566b.2;
+        Mon, 02 Oct 2023 08:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696260536; x=1696865336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tAOwTmpRnemcwVfQtR+1Q5IapLmuTL7Mfm1a0zU+tQ=;
+        b=UwAc7OaVwiFYgBuZ+sA16hg4GBql9sj9btFPfIzG244xcyGAbAC/gn0/+RFLxtm4xG
+         +RN2ib7V4ErLQ4+2udvtfZLz92jd+TxS/OhYX9OQUux2iM98Y663mRlx9FB4hQDqBciJ
+         lnuUINekKgPHq2ak/fM/+qxONBqzdNr4qrv9PInxSGLFQuto7h+nJbdphUlcCZ4PU/Gi
+         tyRfsJDRL2nrVIaAk2EeDbWdGYDSpjF4IqWan4nPxhZgLUobK7I/F+qhXN49MEkGxddn
+         Ri0IbnY8CAQLKJNfrNs4X8K7J4R8s0LCpSl31MH0P7rKetULc4ODPZTKxq0KsNjAvjWG
+         mzQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696260536; x=1696865336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0tAOwTmpRnemcwVfQtR+1Q5IapLmuTL7Mfm1a0zU+tQ=;
+        b=oNjJyBwH7HvUqtHQA7v+ZiliAmxRIiD9iczdFz3nyrVjIBbl03Df2+JMOUjI0NDcnj
+         pXpgw8BTLW0WAetZYDK9h/tF1aDTMJ2d2WpU9voEqgD9f3OrWOoW934uKOhNhGhwjC7F
+         0CnGc3qTgG8s6/PmwoAFLMPuCXa2hFMDxv8UL/SjCc+2iFmUE7WqJTSFU3AgYATncf+X
+         B4HfXRDrTCpEa/UF7wAnjXF+cTLCGjAHTTXj0kWpk/7QnaXCyrEzlv7K90fKFg7YAgV0
+         Zc62ZHT4xX3XWCkvpBGudrj8rEfK30TjX3a9Wu8fXSs52YWrvIpEuZkvVwMlIsq8OYyF
+         j+CA==
+X-Gm-Message-State: AOJu0YxkexISr3Z7c1SF33DaWrkfq17MAkXVFMojpHer0gJZ3IZ64ld4
+        uUX85nDmXKWDY1QIVks23l8=
+X-Google-Smtp-Source: AGHT+IH5rOh2MCD3U74styayhciaLwOPbUZTm5MUr8kv8T70uoOeBRM0/KQ3jL2FpX2Fv2eSglLc/g==
+X-Received: by 2002:a17:906:197:b0:99e:f3b:2f78 with SMTP id 23-20020a170906019700b0099e0f3b2f78mr9925780ejb.67.1696260536188;
+        Mon, 02 Oct 2023 08:28:56 -0700 (PDT)
+Received: from skbuf ([188.25.255.218])
+        by smtp.gmail.com with ESMTPSA id z17-20020a1709067e5100b0099bc80d5575sm17000207ejr.200.2023.10.02.08.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 08:28:55 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 18:28:53 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: dsa: microchip: Uninitialized variable in
+ ksz9477_acl_move_entries()
+Message-ID: <20231002152853.xjyxlvpouktfbg6k@skbuf>
+References: <2f58ca9a-9ac5-460a-98a4-aa8304f2348a@moroto.mountain>
+ <20230927144624.GN2714790@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] fsi: i2cr-scom: Fix error code in read/write
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Alistar Popple <alistair@popple.id.au>,
-        linux-fsi@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-References: <ee554aa1-0257-4662-8da5-1ea6be2740e9@moroto.mountain>
-From:   Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <ee554aa1-0257-4662-8da5-1ea6be2740e9@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: X_vf9-7XHt4chyeILbSEDDm2kz003zBs
-X-Proofpoint-GUID: X_vf9-7XHt4chyeILbSEDDm2kz003zBs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-02_09,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0
- priorityscore=1501 mlxlogscore=913 malwarescore=0 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310020110
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230927144624.GN2714790@pengutronix.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Oleksij,
 
-On 9/7/23 04:55, Dan Carpenter wrote:
-> The copy_to/from_user() functions return the number of bytes that they
-> were not able to copy but we want to return negative -EFAULT to the
-> user.
+On Wed, Sep 27, 2023 at 04:46:24PM +0200, Oleksij Rempel wrote:
+> On Wed, Sep 27, 2023 at 03:53:37PM +0300, Dan Carpenter wrote:
+> > Smatch complains that if "src_idx" equals "dst_idx" then
+> > ksz9477_validate_and_get_src_count() doesn't initialized "src_count".
+> > Set it to zero for this situation.
+> > 
+> > Fixes: 002841be134e ("net: dsa: microchip: Add partial ACL support for ksz9477 switches")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> Thank you!
+> 
+> > ---
+> >  drivers/net/dsa/microchip/ksz9477_acl.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/dsa/microchip/ksz9477_acl.c b/drivers/net/dsa/microchip/ksz9477_acl.c
+> > index 06d74c19eb94..e554cd4a024b 100644
+> > --- a/drivers/net/dsa/microchip/ksz9477_acl.c
+> > +++ b/drivers/net/dsa/microchip/ksz9477_acl.c
+> > @@ -554,7 +554,8 @@ static int ksz9477_acl_move_entries(struct ksz_device *dev, int port,
+> >  	struct ksz9477_acl_entry buffer[KSZ9477_ACL_MAX_ENTRIES];
+> >  	struct ksz9477_acl_priv *acl = dev->ports[port].acl_priv;
+> >  	struct ksz9477_acl_entries *acles = &acl->acles;
+> > -	int src_count, ret, dst_count;
+> > +	int ret, dst_count;
+> > +	int src_count = 0;
+> >  
+> >  	ret = ksz9477_validate_and_get_src_count(dev, port, src_idx, dst_idx,
+> >  						 &src_count, &dst_count);
+> > -- 
+> > 2.39.2
+> > 
+> > 
+> > 
+> 
+> -- 
+> Pengutronix e.K.                           |                             |
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
+For the case where src_idx == dst_idx that Dan points out, is this patch
+sufficient to ensure that ksz9477_acl_move_entries() will not execute
+unwanted code paths? For example, it will still call ksz9477_move_entries_upwards(),
+which from what I can tell, will do something given the way in which it's written.
 
-Thanks.
+Perhaps it would be better to move this line:
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+	/* Nothing to do */
+	if (src_idx == dst_idx)
+		return 0;
 
-
->
-> Fixes: c0b34bed0bbf ("fsi: Add I2C Responder SCOM driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/fsi/i2cr-scom.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/fsi/i2cr-scom.c b/drivers/fsi/i2cr-scom.c
-> index cb7e02213032..df1e1df40332 100644
-> --- a/drivers/fsi/i2cr-scom.c
-> +++ b/drivers/fsi/i2cr-scom.c
-> @@ -45,9 +45,8 @@ static ssize_t i2cr_scom_read(struct file *filep, char __user *buf, size_t len,
->   	if (ret)
->   		return ret;
->   
-> -	ret = copy_to_user(buf, &data, len);
-> -	if (ret)
-> -		return ret;
-> +	if (copy_to_user(buf, &data, len))
-> +		return -EFAULT;
->   
->   	return len;
->   }
-> @@ -62,9 +61,8 @@ static ssize_t i2cr_scom_write(struct file *filep, const char __user *buf, size_
->   	if (len != sizeof(data))
->   		return -EINVAL;
->   
-> -	ret = copy_from_user(&data, buf, len);
-> -	if (ret)
-> -		return ret;
-> +	if (copy_from_user(&data, buf, len))
-> +		return -EFAULT;
->   
->   	ret = fsi_master_i2cr_write(scom->i2cr, (u32)*offset, data);
->   	if (ret)
+outside of ksz9477_validate_and_get_src_count() and into its single caller,
+ksz9477_acl_move_entries()?
