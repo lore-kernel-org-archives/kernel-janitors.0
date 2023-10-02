@@ -2,98 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB99E7849A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 06:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C92FE784A4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 07:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235553AbjJBGm2 (ORCPT
+        id S235622AbjJBHCB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 02:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48044 "EHLO
+        Mon, 2 Oct 2023 03:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235457AbjJBGm0 (ORCPT
+        with ESMTP id S229519AbjJBHB7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 02:42:26 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22BF0BA
-        for <kernel-janitors@vger.kernel.org>; Sun,  1 Oct 2023 23:42:23 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-327be5fe4beso988573f8f.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 01 Oct 2023 23:42:23 -0700 (PDT)
+        Mon, 2 Oct 2023 03:01:59 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC409F
+        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 00:01:57 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4065f29e933so26642565e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 02 Oct 2023 00:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696228941; x=1696833741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iFLmBMbTAf5mYpVSeF0tgLxlIm+hQtraBWqw0SVaZ1s=;
-        b=naGNygrWouv1YEjdJBD+4287aMp5/GFRojK0NrGzzsdHpmff/N6Io1fiYjlkMD4aw6
-         00oet6LnyjwPxQbu99r1+fu5kyqYPenaYRmQeQ6ffkTh1AE5RtYnPS9ZXtLmiUWHOhhL
-         OJuaYcvCpUtBNYQn2bL2T/6pg6EP+v8C6YMM8NgTfbGPm2CH7fqmZoujoJyvNxEow2HQ
-         mHoXB89mF/4n98+PCVqylfjxp/fHkkho+eANT53vHan+RFgKiy+v1kUeFJWuwjvoKvOp
-         VNpdRNy01htzmY1nnH2VE7SDYyZJFveOVXtMORoIjuhv5j04wfKD9Ckx+uHxMOYL+zVg
-         xsXA==
+        d=linaro.org; s=google; t=1696230116; x=1696834916; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=To5Z1ek1ng/bcrw4gcWQYfPUL1tJalZo399lDaaqlbk=;
+        b=gjh37sAPabYEUrw8HCwH0189hKj07WBRiWaMzSlsgk+A9vIdWk0xfBx/nUCZqG8WXi
+         mJcugLbICX5RPDpfUuRZp66oCbJUB1BQZaOFFLG4fyAl5fkZhNl1So6h5L9p7wMpiAMO
+         a7pbs/v1+fbPTHCjU8ZCgWNCcI1WW/TnhE9xCuWQpZ544Qe794c3+ga6JQoYN71IfQBF
+         KmWcrFuOwXa+05H3HT+lBc9XxHHrd7txiD0n0NyNtPmFosj/+CCxgHbbFPKVC4h87gHc
+         fCr6bwzHEZxEf3JTQoPfQssL6mpE7xmBiRMSgXy3GzB/cnN7JloqH4mnsEubB+wAasgr
+         eOYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696228941; x=1696833741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iFLmBMbTAf5mYpVSeF0tgLxlIm+hQtraBWqw0SVaZ1s=;
-        b=ZbQrz1dsF/sWDBuH8wTB34HI6ly8bftrS1iz3Qslyoc9dznqHdqsKuHRX5bw2MW1AS
-         TFGzvexekjF8q583MiX0G4VuGh3GsxEdE4vg2V+aH2ickGi7R53jax+obuMvGwV9i0vO
-         oY4esUSO0ZzW5AXutPrtF88YQouUIpyl04NN7uI+5tXaqvh/CtdWQszhNnxKU11Uqa9S
-         zSAx/pjY1gJKTYrQ26yPwokRn/FqgPUTJ6SF9LtgbJaXP6qnKwg74wE8WxKIKCljjraI
-         ZiL5owMPrc7iHiu5keVa/F530arykKq/MXDQvmv1viHDIZNtf68misj8n7BJ3YZjwaI5
-         tq6g==
-X-Gm-Message-State: AOJu0Yy6vXKg4cz/QDcot7Qu8QJFsmVagz0BkPMmU7arU3x2+PfqYoVq
-        wmxUwWDfMFMZfTKgjUR7Vu+tFg==
-X-Google-Smtp-Source: AGHT+IG5F6WCA+givsf9KFa40Uq2QQ0EtyZVPcp2/kezx1bCSCz837j2NkrcYNJnzvEwO3xWwac9nA==
-X-Received: by 2002:adf:f085:0:b0:320:77f:a97c with SMTP id n5-20020adff085000000b00320077fa97cmr9346986wro.63.1696228941280;
-        Sun, 01 Oct 2023 23:42:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696230116; x=1696834916;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=To5Z1ek1ng/bcrw4gcWQYfPUL1tJalZo399lDaaqlbk=;
+        b=GtrLv5wRuFeQJfKBSDVxbTIfgYfrvVQjRRRVYj6VAFppie/zRTxLzkHTpsGVh3aBUB
+         EZY4TX2MjRpHQC+FaoEVFnVCstfSPSevYFoIzLRsy+PRZC04kUVqi3V7iyRNqsx7I4OX
+         IARkNMmjUKpErROQHiaqcRalxIW6QizGYd02oLJJAxHiO9hKTojFzXsZBZsdbk371r9j
+         YsrbBVUkOysUDxaE0brZXLPDlO/dExXvelD8fd9vXjeDCe5+O8nGgXC3TmKVP+ZJvbkF
+         ELgZ/oVitLriZv78kKEDYVXvT3La1KGU6a4iRILAnCpqeAGzT8F0E37Es7NF43cPIequ
+         NsMw==
+X-Gm-Message-State: AOJu0YwxLLwVHguryZeQ/1LNWqAO8Q7ca9yefCojA01e8G/3ssN/bEAW
+        bX0xq9XNUyWYnjswWSuJJ5b04w==
+X-Google-Smtp-Source: AGHT+IFUaESPnID8Bx8Iq2U2O1ScDfATW117K0k6Diplm+aeOUbawH1TDpLk+t5XmonRkAxYLh2RTw==
+X-Received: by 2002:a7b:ce8b:0:b0:402:98cd:a3e9 with SMTP id q11-20020a7bce8b000000b0040298cda3e9mr9220533wmj.32.1696230115893;
+        Mon, 02 Oct 2023 00:01:55 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d594b000000b003140f47224csm9346368wri.15.2023.10.01.23.42.17
+        by smtp.gmail.com with ESMTPSA id v3-20020a05600c214300b004063ea92492sm6595641wml.22.2023.10.02.00.01.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Oct 2023 23:42:20 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 09:42:06 +0300
+        Mon, 02 Oct 2023 00:01:55 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 10:01:51 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Brian Foster <bfoster@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] bcachefs: Use struct_size()
-Message-ID: <ff682afb-a914-4cd7-8d19-202a6cb778de@kadam.mountain>
-References: <120b638f99b088f91d5a4491c800463c554e70b8.1696144401.git.christophe.jaillet@wanadoo.fr>
- <7ae7737e-e32c-e9e7-880c-cafc240e7c33@embeddedor.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] clk: imx: imx8: Fix an IS_ERR() vs NULL check in
+ clk_imx_acm_attach_pm_domains()
+Message-ID: <44bacaba-848b-4e62-908c-16538330d4dd@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7ae7737e-e32c-e9e7-880c-cafc240e7c33@embeddedor.com>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 01, 2023 at 09:23:17AM +0200, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 10/1/23 09:13, Christophe JAILLET wrote:
-> > Use struct_size() instead of hand writing it.
-> > This is less verbose and more robust.
-> > 
-> > While at it, prepare for the coming implementation by GCC and Clang of the
-> > __counted_by attribute. Flexible array members annotated with __counted_by
-> > can have their accesses bounds-checked at run-time checking via
-> > CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-> > strcpy/memcpy-family functions).
-> 
-> I would prefer this as two separate patches.
-> 
+The device_link_add() function returns NULL on error.  It doesn't return
+error pointers.  Fix the check accordingly.
 
-I kind of feel like it's all part of one thing.  It's easier to review
-as one patch.
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/clk/imx/clk-imx8-acm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index 1e82f72b75c6..83019b986622 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -287,9 +287,9 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+ 							 DL_FLAG_STATELESS |
+ 							 DL_FLAG_PM_RUNTIME |
+ 							 DL_FLAG_RPM_ACTIVE);
+-		if (IS_ERR(dev_pm->pd_dev_link[i])) {
++		if (!dev_pm->pd_dev_link[i]) {
+ 			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+-			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
++			ret = -EINVAL;
+ 			goto detach_pm;
+ 		}
+ 	}
+-- 
+2.39.2
 
