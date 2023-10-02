@@ -2,65 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A43E7849A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 07:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C6CE7849A
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 07:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235683AbjJBHEV (ORCPT
+        id S235646AbjJBHEq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 03:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57792 "EHLO
+        Mon, 2 Oct 2023 03:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235661AbjJBHEU (ORCPT
+        with ESMTP id S235600AbjJBHEo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 03:04:20 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C80FA6
-        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 00:04:17 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32488a22810so3500341f8f.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 02 Oct 2023 00:04:17 -0700 (PDT)
+        Mon, 2 Oct 2023 03:04:44 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9CB3B3
+        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 00:04:41 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-32799639a2aso1283692f8f.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 02 Oct 2023 00:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696230256; x=1696835056; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696230280; x=1696835080; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6/vJt9ctuXTzh2TrR+gtgZxArsjz8X1YrhkfYqmY7U=;
-        b=D58kjeZhGhkKH+i/XIRIlqTCOuV3CFmax+h4WVQckQnXn02zztf9OmLNCCgg3I2FPw
-         nfl0pcix/oVAEC5g1pp9KbYxmIhmM+uypO0XW2TL+K/2p31xatAxaeldu/4qMGtA/skL
-         De23qSeztdKWiY4jmRgIVft4pD9q9hPArX1wqW3t7V2FazYttgMyb9DTSGgHn+8IZrrB
-         0qhkEUXVjC0p4sKh73Pl0WvGuELZva6yFfZl1xPBWhVUJDmobAPwZri6LDdZ7qHvMs4x
-         uNGqxgRgrJWxAfjYqqfOqkWl17WHWoUYYaHhgtb2PvKeEw+ZFcNgzjLhZK/dJNEUbi70
-         793w==
+        bh=S7ijRdP/7w6YuyMyRRQZzwnMWCZUlvsf+At2pKxS9oA=;
+        b=TJLEzUQ51CsBW31A8R8VKBpzY9o/tgTYx+meecwuCsWKldc7bIaXW+lOVXlmaBHh4M
+         kNTaSFoGLJiUiCD0vTHNvuNKXckXuORu8ZBZURhgbsaJxOd/i6yG67+2nzakHNQi4PHd
+         tWOHPGap505zKlB7jxEhZrPHAZG/qqlMS4HOswi/W0+dIFYDZTvwt6xOs3GVTMLktlfV
+         lF5BVX+n2lrxRbaoyU16QxVm9fWvVyjLI6vN/DaMBAS4LPMgdW5QCqkbrys3+sr2B7au
+         v5w/ikyV68gMMxVdqqtbFMo+SzBpxQAvDvyTimSahI7FYWzCqtqUbpzrmV9ltcUvnZQG
+         T/KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696230256; x=1696835056;
+        d=1e100.net; s=20230601; t=1696230280; x=1696835080;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6/vJt9ctuXTzh2TrR+gtgZxArsjz8X1YrhkfYqmY7U=;
-        b=hhoc19tHzd73yLELZ3Q2go4W0he93kBJKtQk9b8eNFYGTrDY70YDd0RM2rj60uI8kU
-         vWS96HwejZa4Dz0vlPtPOfjG8uzO4frqp24AUvcwp2I//YVo3HvjmALjqu645VSD7hZ7
-         hTeMJm8XqO5a+w7yRSoVVSJhlGTXrldQDxkY9nM7AxuIR5mq37TdUorS/FSyK3KMsXwB
-         VUhWHLIWPL+3IuO8ibTJpn1TO/ARHQWVCqeSnVi3/WdpNrQjzdzwjVYzuNFzIIQQ9r+j
-         SoDyT0tUTL+K4oCW2pL5JHmM4eunHXhL4HNyZcxUfyx9R4YTtLjqw6+BnljhT2HTxvU8
-         LVpA==
-X-Gm-Message-State: AOJu0YwaG5TGsXNczzm0Yy9FVHrfdacnrAJIL22v+VYB4Nd/MzZ/U7Bn
-        al/1hvLtQrNNv8MnKccnvyC2kQ==
-X-Google-Smtp-Source: AGHT+IEyYBJJMbHZjWHeeTihAKMquhbpnNMcEirvRUurb/E/iXkqlOsL65t+QCELvd7XjCoC8de/Mg==
-X-Received: by 2002:adf:edc2:0:b0:320:932:80a0 with SMTP id v2-20020adfedc2000000b00320093280a0mr9049441wro.54.1696230255722;
-        Mon, 02 Oct 2023 00:04:15 -0700 (PDT)
+        bh=S7ijRdP/7w6YuyMyRRQZzwnMWCZUlvsf+At2pKxS9oA=;
+        b=hZnX9P2tWGmIE335dwfpQveLEzULYRb0Un4MRQdWqicprD8vFLQxUsDlG5DnkETtnd
+         DtNYPK2D4b63vayWQRBAXc2NMbZr226kNZaap/7iLsH7dSTGdYclTdi3InQYtOowtxRY
+         NdDqD07h5DNL2WqXZGan1f/Q+Ei2yodtsrlhOpuIH2uKtoqXFJsEJaz+ENcQi3GIp5el
+         m1AQ8xtPGlIlYTTQ8/X5TnWTkqjdRrP3OsWF8B057syJwG33CH/3WF+6p4RIUaLdntwh
+         SePqkZ/uBLxYO8o2SZL7oTk76b4GARX1qM0fC6/m3vcmQ8nMCL46ukudOcCus3zJpXZY
+         GmDg==
+X-Gm-Message-State: AOJu0YxJ5AxqpnIzyD2QiaPWSEJMMsPV+9EcT268L5r7ZEotSxOcaEXU
+        AAuxCflM8hkQQFhnPsnImIN8mQ==
+X-Google-Smtp-Source: AGHT+IFsiV7LuyeR2PhowHbyLrLUsKqyjEGfArvG7roW2WS/P1f6n1ITL262F7Y4H8H+JiPhkc6Cfw==
+X-Received: by 2002:a05:6000:110c:b0:313:f0d7:a43 with SMTP id z12-20020a056000110c00b00313f0d70a43mr8788075wrw.23.1696230280362;
+        Mon, 02 Oct 2023 00:04:40 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s5-20020adf9785000000b003232380ffd7sm19295168wrb.102.2023.10.02.00.04.15
+        by smtp.gmail.com with ESMTPSA id ay13-20020a5d6f0d000000b003179b3fd837sm20220121wrb.33.2023.10.02.00.04.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 00:04:15 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 10:04:12 +0300
+        Mon, 02 Oct 2023 00:04:40 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 10:04:36 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     John Stultz <jstultz@google.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] dma-buf: heaps: Fix off by one in cma_heap_vm_fault()
-Message-ID: <bc145167-0471-4ab3-935c-aa5dc20e342a@moroto.mountain>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     Tero Kristo <kristo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: ti: fix double free in of_ti_divider_clk_setup()
+Message-ID: <6d36eeec-6c8a-4f11-a579-aa3cd7c38749@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,29 +69,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The buffer->pages[] has "buffer->pagecount" elements so this > comparison
-has to be changed to >= to avoid reading beyond the end of the array.
-The buffer->pages[] array is allocated in cma_heap_allocate().
+The "div" pointer is freed in _register_divider() and again in
+of_ti_divider_clk_setup().  Delete the free in _register_divider()
 
-Fixes: a5d2d29e24be ("dma-buf: heaps: Move heap-helper logic into the cma_heap implementation")
+Fixes: fbbc18591585 ("clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/dma-buf/heaps/cma_heap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/divider.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
-index ee899f8e6721..bea7e574f916 100644
---- a/drivers/dma-buf/heaps/cma_heap.c
-+++ b/drivers/dma-buf/heaps/cma_heap.c
-@@ -165,7 +165,7 @@ static vm_fault_t cma_heap_vm_fault(struct vm_fault *vmf)
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct cma_heap_buffer *buffer = vma->vm_private_data;
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 768a1f3398b4..5d5bb123ba94 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -309,7 +309,6 @@ static struct clk *_register_divider(struct device_node *node,
+ 				     u32 flags,
+ 				     struct clk_omap_divider *div)
+ {
+-	struct clk *clk;
+ 	struct clk_init_data init;
+ 	const char *parent_name;
+ 	const char *name;
+@@ -326,12 +325,7 @@ static struct clk *_register_divider(struct device_node *node,
+ 	div->hw.init = &init;
  
--	if (vmf->pgoff > buffer->pagecount)
-+	if (vmf->pgoff >= buffer->pagecount)
- 		return VM_FAULT_SIGBUS;
+ 	/* register the clock */
+-	clk = of_ti_clk_register(node, &div->hw, name);
+-
+-	if (IS_ERR(clk))
+-		kfree(div);
+-
+-	return clk;
++	return of_ti_clk_register(node, &div->hw, name);
+ }
  
- 	vmf->page = buffer->pages[vmf->pgoff];
+ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
 -- 
 2.39.2
 
