@@ -2,135 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4666FE784BE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 15:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17E4E748F8
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 16:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238100AbjJBP3C (ORCPT
+        id S238476AbjJBQvO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 11:29:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53536 "EHLO
+        Mon, 2 Oct 2023 12:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238080AbjJBP3A (ORCPT
+        with ESMTP id S237797AbjJBQvO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 11:29:00 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1C299;
-        Mon,  2 Oct 2023 08:28:57 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9b29186e20aso1602858566b.2;
-        Mon, 02 Oct 2023 08:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696260536; x=1696865336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0tAOwTmpRnemcwVfQtR+1Q5IapLmuTL7Mfm1a0zU+tQ=;
-        b=UwAc7OaVwiFYgBuZ+sA16hg4GBql9sj9btFPfIzG244xcyGAbAC/gn0/+RFLxtm4xG
-         +RN2ib7V4ErLQ4+2udvtfZLz92jd+TxS/OhYX9OQUux2iM98Y663mRlx9FB4hQDqBciJ
-         lnuUINekKgPHq2ak/fM/+qxONBqzdNr4qrv9PInxSGLFQuto7h+nJbdphUlcCZ4PU/Gi
-         tyRfsJDRL2nrVIaAk2EeDbWdGYDSpjF4IqWan4nPxhZgLUobK7I/F+qhXN49MEkGxddn
-         Ri0IbnY8CAQLKJNfrNs4X8K7J4R8s0LCpSl31MH0P7rKetULc4ODPZTKxq0KsNjAvjWG
-         mzQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696260536; x=1696865336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0tAOwTmpRnemcwVfQtR+1Q5IapLmuTL7Mfm1a0zU+tQ=;
-        b=oNjJyBwH7HvUqtHQA7v+ZiliAmxRIiD9iczdFz3nyrVjIBbl03Df2+JMOUjI0NDcnj
-         pXpgw8BTLW0WAetZYDK9h/tF1aDTMJ2d2WpU9voEqgD9f3OrWOoW934uKOhNhGhwjC7F
-         0CnGc3qTgG8s6/PmwoAFLMPuCXa2hFMDxv8UL/SjCc+2iFmUE7WqJTSFU3AgYATncf+X
-         B4HfXRDrTCpEa/UF7wAnjXF+cTLCGjAHTTXj0kWpk/7QnaXCyrEzlv7K90fKFg7YAgV0
-         Zc62ZHT4xX3XWCkvpBGudrj8rEfK30TjX3a9Wu8fXSs52YWrvIpEuZkvVwMlIsq8OYyF
-         j+CA==
-X-Gm-Message-State: AOJu0YxkexISr3Z7c1SF33DaWrkfq17MAkXVFMojpHer0gJZ3IZ64ld4
-        uUX85nDmXKWDY1QIVks23l8=
-X-Google-Smtp-Source: AGHT+IH5rOh2MCD3U74styayhciaLwOPbUZTm5MUr8kv8T70uoOeBRM0/KQ3jL2FpX2Fv2eSglLc/g==
-X-Received: by 2002:a17:906:197:b0:99e:f3b:2f78 with SMTP id 23-20020a170906019700b0099e0f3b2f78mr9925780ejb.67.1696260536188;
-        Mon, 02 Oct 2023 08:28:56 -0700 (PDT)
-Received: from skbuf ([188.25.255.218])
-        by smtp.gmail.com with ESMTPSA id z17-20020a1709067e5100b0099bc80d5575sm17000207ejr.200.2023.10.02.08.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 08:28:55 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 18:28:53 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Mon, 2 Oct 2023 12:51:14 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E64FBD;
+        Mon,  2 Oct 2023 09:51:09 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C3C2C000D;
+        Mon,  2 Oct 2023 16:51:03 +0000 (UTC)
+Message-ID: <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
+Date:   Mon, 2 Oct 2023 18:51:53 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Cc:     dev@openvswitch.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, i.maximets@ovn.org
+Subject: Re: [ovs-dev] [PATCH net-next 2/2] net: openvswitch: Annotate struct
+ mask_array with __counted_byUse struct_size()
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        keescook@chromium.org, Pravin B Shelar <pshelar@ovn.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: microchip: Uninitialized variable in
- ksz9477_acl_move_entries()
-Message-ID: <20231002152853.xjyxlvpouktfbg6k@skbuf>
-References: <2f58ca9a-9ac5-460a-98a4-aa8304f2348a@moroto.mountain>
- <20230927144624.GN2714790@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230927144624.GN2714790@pengutronix.de>
+        Paolo Abeni <pabeni@redhat.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>
+References: <8be59c9e06fca8eff2f264abb4c2f74db0b19a9e.1696156198.git.christophe.jaillet@wanadoo.fr>
+ <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
+From:   Ilya Maximets <i.maximets@ovn.org>
+In-Reply-To: <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Oleksij,
-
-On Wed, Sep 27, 2023 at 04:46:24PM +0200, Oleksij Rempel wrote:
-> On Wed, Sep 27, 2023 at 03:53:37PM +0300, Dan Carpenter wrote:
-> > Smatch complains that if "src_idx" equals "dst_idx" then
-> > ksz9477_validate_and_get_src_count() doesn't initialized "src_count".
-> > Set it to zero for this situation.
-> > 
-> > Fixes: 002841be134e ("net: dsa: microchip: Add partial ACL support for ksz9477 switches")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 10/1/23 13:07, Christophe JAILLET wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
 > 
-> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is part of a work done in parallel of what is currently worked
+> on by Kees Cook.
 > 
-> Thank you!
+> My patches are only related to corner cases that do NOT match the
+> semantic of his Coccinelle script[1].
 > 
-> > ---
-> >  drivers/net/dsa/microchip/ksz9477_acl.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/dsa/microchip/ksz9477_acl.c b/drivers/net/dsa/microchip/ksz9477_acl.c
-> > index 06d74c19eb94..e554cd4a024b 100644
-> > --- a/drivers/net/dsa/microchip/ksz9477_acl.c
-> > +++ b/drivers/net/dsa/microchip/ksz9477_acl.c
-> > @@ -554,7 +554,8 @@ static int ksz9477_acl_move_entries(struct ksz_device *dev, int port,
-> >  	struct ksz9477_acl_entry buffer[KSZ9477_ACL_MAX_ENTRIES];
-> >  	struct ksz9477_acl_priv *acl = dev->ports[port].acl_priv;
-> >  	struct ksz9477_acl_entries *acles = &acl->acles;
-> > -	int src_count, ret, dst_count;
-> > +	int ret, dst_count;
-> > +	int src_count = 0;
-> >  
-> >  	ret = ksz9477_validate_and_get_src_count(dev, port, src_idx, dst_idx,
-> >  						 &src_count, &dst_count);
-> > -- 
-> > 2.39.2
-> > 
-> > 
-> > 
+> In this case, in tbl_mask_array_alloc(), several things are allocated with
+> a single allocation. Then, some pointer arithmetic computes the address of
+> the memory after the flex-array.
 > 
-> -- 
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> ---
+>  net/openvswitch/flow_table.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/openvswitch/flow_table.h b/net/openvswitch/flow_table.h
+> index 9e659db78c05..8d9e83b4d62c 100644
+> --- a/net/openvswitch/flow_table.h
+> +++ b/net/openvswitch/flow_table.h
+> @@ -48,7 +48,7 @@ struct mask_array {
+>  	int count, max;
+>  	struct mask_array_stats __percpu *masks_usage_stats;
+>  	u64 *masks_usage_zero_cntr;
+> -	struct sw_flow_mask __rcu *masks[];
+> +	struct sw_flow_mask __rcu *masks[] __counted_by(size);
 
-For the case where src_idx == dst_idx that Dan points out, is this patch
-sufficient to ensure that ksz9477_acl_move_entries() will not execute
-unwanted code paths? For example, it will still call ksz9477_move_entries_upwards(),
-which from what I can tell, will do something given the way in which it's written.
+Did you mean 'max'?  There is no 'size' in the structure.
 
-Perhaps it would be better to move this line:
+Also, the patch subject is messed up a bit.
 
-	/* Nothing to do */
-	if (src_idx == dst_idx)
-		return 0;
-
-outside of ksz9477_validate_and_get_src_count() and into its single caller,
-ksz9477_acl_move_entries()?
+Best regards, Ilya Maximets.
