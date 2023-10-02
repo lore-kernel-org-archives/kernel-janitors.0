@@ -2,99 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DE6E784A4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 07:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0350E784A4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 11:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235782AbjJBHgk (ORCPT
+        id S236785AbjJBLpp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 03:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
+        Mon, 2 Oct 2023 07:45:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235770AbjJBHgi (ORCPT
+        with ESMTP id S236787AbjJBLpo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 03:36:38 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4B4D3
-        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 00:36:34 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-51b4ef5378bso12645414a12.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 02 Oct 2023 00:36:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696232193; x=1696836993; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8TgiYq+wn9fPs2sstUM34/3tbN8lpchGjTxpN3osFc=;
-        b=EYcTIe1rA5iMT9Eckl75edHfhjI2D9SUeW2wCe3HFLYHXWuxwOgTZgpt6Z4iwjUTES
-         s4ersIvJVc++7TZ+J8kJOkFvuOqa2DRihG/rYeoatuYKdMDtbiepbwDoOryk6a6nn9m3
-         y9uwYMVUPlfjSUYEdwLj2h09wNwEfTgEIFC/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696232193; x=1696836993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o8TgiYq+wn9fPs2sstUM34/3tbN8lpchGjTxpN3osFc=;
-        b=BKChlSHfkAJzUB7F/x1UXJ2RoCE/gA/OKTsjNc33Ms/UseIw8kyGkQx85PLMxI99uk
-         6jLKFw5dGF9sNxis/uBshM5dpx/S7cYHp/WDQgnJZFc5vcTOXPZeN04zYaPtIPM3B83l
-         GnF375oA5SXkyTx+ZJLtnOiEvAEzIrkPFxgYLU84Eoqiu+vEMPxu5ZMDoHQsOi2clpOd
-         uOJ+81JdqcC2Hgm1xqSGHEf0wSLnoXIxOuRnXYfjgKIwGY0jK4xMQ7Pi7LUVM3LQ+Z9V
-         5vRQvj11zJi73vZnqghTHaIml7UXPmBdBzO0fu/Y9FZOIw7jkMfD19TSOvlVYirqgThA
-         B90w==
-X-Gm-Message-State: AOJu0YyvQBrL/p8y4MGHcGl/R7CPuxZqdjdLcceEF9y5fnihfSKse1tv
-        I2qsVyzX5WEnyV+yiLW2rrxg4MQ+b+MeX+HfRDk=
-X-Google-Smtp-Source: AGHT+IE/4RrZBVTAWpHkJyOr41YZ89aixqnrkCQ1kdzSx+Qmep1XqZBJfajMYApMeMqYNsEHfwK1sQ==
-X-Received: by 2002:a17:90b:3644:b0:277:1bd8:abe8 with SMTP id nh4-20020a17090b364400b002771bd8abe8mr9560405pjb.18.1696232193693;
-        Mon, 02 Oct 2023 00:36:33 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 6-20020a17090a194600b00278eb908f78sm6274500pjh.19.2023.10.02.00.36.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 00:36:33 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 00:36:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Kees Cook <kees@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [PATCH] comedi: Annotate struct comedi_lrange with __counted_by
-Message-ID: <202310020036.864B735D60@keescook>
-References: <5c3b7459b820e22e2ac6ce892d4aadcc119cc919.1696065263.git.christophe.jaillet@wanadoo.fr>
- <202309301342.5B5BED40A1@keescook>
- <alpine.DEB.2.22.394.2310010945130.3166@hadrien>
- <90E2BBA5-8A2D-42DE-B36A-CD37BABBB433@kernel.org>
- <alpine.DEB.2.22.394.2310012112560.3166@hadrien>
- <202310011405.7599BA9@keescook>
- <202310011421.C4F19D45@keescook>
- <202310011515.D4C9184@keescook>
- <alpine.DEB.2.22.394.2310020737570.3166@hadrien>
+        Mon, 2 Oct 2023 07:45:44 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 910D3EC;
+        Mon,  2 Oct 2023 04:45:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9FBC433C8;
+        Mon,  2 Oct 2023 11:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1696247141;
+        bh=icjqlZr6yaJOEPjZSqxvz3sMh4fSbBUkJFEUP00JluY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0kJq87fTCjDVun1Wf5/SoHnowBsa4oNHKsTHhAkI26pw6Da8Wq7zY+IopgN+bo/sm
+         +IMENEnmFQezs0ri6cCQZFzN/WqDxRw+qLIG8zZmPuWpIZNhrgAnXJAJlTCXROytMx
+         hRffJbL7O29f/TzmyMNX6gVQhSUgsvAsZCGvFHoA=
+Date:   Mon, 2 Oct 2023 13:45:37 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Ben Dooks <ben@simtec.co.uk>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc2: gadget: Fix a warning when compiling with W=1
+Message-ID: <2023100226-cloak-tissue-7efa@gregkh>
+References: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2310020737570.3166@hadrien>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 02, 2023 at 07:38:42AM +0200, Julia Lawall wrote:
-> The sizeof with an expression argument is treated differently than the
-> sizeof with a type argument.  So you need to write:
+On Sat, Sep 23, 2023 at 12:54:24PM +0200, Christophe JAILLET wrote:
+> In order to teach the compiler that 'hs_ep->name' will never be truncated,
+> we need to tell it that 'epnum' is not negative.
 > 
-> @allocated@
-> identifier STRUCT, ARRAY;
-> expression COUNT;
-> struct STRUCT *PTR;
-> identifier ALLOC;
-> type ELEMENT_TYPE;
-> @@
+> 'epnum' comes from in a 'for' loop in dwc2_gadget_init(), starting at 0
+> and ending at 255. (hsotg->num_of_eps is a char)
 > 
->         PTR = ALLOC(..., \(sizeof(*PTR)\|sizeof(struct STRUCT)\) +
->                          COUNT * \(sizeof(*PTR->ARRAY)\|sizeof(PTR->ARRAY[0])\|sizeof(ELEMENT_TYPE)\), ...);
+> When building with W=1, this fixes the following warnings:
+> 
+>   drivers/usb/dwc2/gadget.c: In function ‘dwc2_hsotg_initep’:
+>   drivers/usb/dwc2/gadget.c:4804:55: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 8 [-Werror=format-truncation=]
+>    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>         |                                                       ^~
+>   drivers/usb/dwc2/gadget.c:4804:52: note: directive argument in the range [-2147483645, 255]
+>    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>         |                                                    ^~~~~~~~
+>   drivers/usb/dwc2/gadget.c:4804:9: note: ‘snprintf’ output between 6 and 17 bytes into a destination of size 10
+>    4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Fixes: 5b7d70c6dbf2 ("USB: Gadget driver for Samsung HS/OtG block")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Ah! Thank you thank you! Yes, this works great now. :)
-
--- 
-Kees Cook
+Looks like the kernel test robot didn't like this one :(
