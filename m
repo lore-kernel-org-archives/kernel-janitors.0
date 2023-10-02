@@ -2,91 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B17E4E748F8
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 16:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC38E784AB
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 16:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238476AbjJBQvO (ORCPT
+        id S238495AbjJBQ5J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 12:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54518 "EHLO
+        Mon, 2 Oct 2023 12:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237797AbjJBQvO (ORCPT
+        with ESMTP id S237910AbjJBQ5I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 12:51:14 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E64FBD;
-        Mon,  2 Oct 2023 09:51:09 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C3C2C000D;
-        Mon,  2 Oct 2023 16:51:03 +0000 (UTC)
-Message-ID: <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
-Date:   Mon, 2 Oct 2023 18:51:53 +0200
+        Mon, 2 Oct 2023 12:57:08 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CA7A9;
+        Mon,  2 Oct 2023 09:57:06 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B57C433C7;
+        Mon,  2 Oct 2023 16:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696265826;
+        bh=O2KXjFpK9ctoc+cpO1etAigjP8A2IP2SYttVxi/uXXQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=TU/maBeSE7H2YjfW8JgfQjjsVkcIhhk96pKXA/djz4Y3N/2EVQPLgsLmaYuNGCPsF
+         iYeaJTqDANypeHgTNvOy576/oaxHwC7UjUfOA+IbamRHOnsmuq3aZZ68dPjaSVC/if
+         UnnymxxPjcATfHwTrWpkG4K9GWr0buN1dFEz6l6mqgP+fXD6cQkTwV4YnYpRPMilld
+         loiaUU5djrRT/ze1wfdAt7QumT7OH3qws3CuWr6xXsfuke8DC8OPWkZVsuiLQVRlCW
+         vo0MuVlGr39kIcMk4Vy2qXxQjuwGru+olapFflqMKE97rnc7FjsS8cMBG+HLI7onEh
+         d9wj1D1PRUx7g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Cc:     dev@openvswitch.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, i.maximets@ovn.org
-Subject: Re: [ovs-dev] [PATCH net-next 2/2] net: openvswitch: Annotate struct
- mask_array with __counted_byUse struct_size()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        keescook@chromium.org, Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-References: <8be59c9e06fca8eff2f264abb4c2f74db0b19a9e.1696156198.git.christophe.jaillet@wanadoo.fr>
- <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
-From:   Ilya Maximets <i.maximets@ovn.org>
-In-Reply-To: <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+Subject: Re: [PATCH v2 wireless-next 2/9] carl9170: remove unnecessary (void*)
+ conversions
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230919044916.523308-1-yunchuan@nfschina.com>
+References: <20230919044916.523308-1-yunchuan@nfschina.com>
+To:     Wu Yunchuan <yunchuan@nfschina.com>
+Cc:     chunkeey@googlemail.com, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wu Yunchuan <yunchuan@nfschina.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <169626582314.3936351.11116263813415463001.kvalo@kernel.org>
+Date:   Mon,  2 Oct 2023 16:57:04 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/1/23 13:07, Christophe JAILLET wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is part of a work done in parallel of what is currently worked
-> on by Kees Cook.
-> 
-> My patches are only related to corner cases that do NOT match the
-> semantic of his Coccinelle script[1].
-> 
-> In this case, in tbl_mask_array_alloc(), several things are allocated with
-> a single allocation. Then, some pointer arithmetic computes the address of
-> the memory after the flex-array.
-> 
-> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
-> ---
->  net/openvswitch/flow_table.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/openvswitch/flow_table.h b/net/openvswitch/flow_table.h
-> index 9e659db78c05..8d9e83b4d62c 100644
-> --- a/net/openvswitch/flow_table.h
-> +++ b/net/openvswitch/flow_table.h
-> @@ -48,7 +48,7 @@ struct mask_array {
->  	int count, max;
->  	struct mask_array_stats __percpu *masks_usage_stats;
->  	u64 *masks_usage_zero_cntr;
-> -	struct sw_flow_mask __rcu *masks[];
-> +	struct sw_flow_mask __rcu *masks[] __counted_by(size);
+Wu Yunchuan <yunchuan@nfschina.com> wrote:
 
-Did you mean 'max'?  There is no 'size' in the structure.
+> No need cast (void *) to (struct ar9170 *), (u8 *) or (void*).
+> 
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+> Acked-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Also, the patch subject is messed up a bit.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Best regards, Ilya Maximets.
+6c751f1a7bb8 wifi: carl9170: remove unnecessary (void*) conversions
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20230919044916.523308-1-yunchuan@nfschina.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
