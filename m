@@ -2,207 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451C7E8FDB5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 20:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7AFE8FDB5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 20:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241065AbjJCUd5 (ORCPT
+        id S241065AbjJCUhg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Oct 2023 16:33:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34616 "EHLO
+        Tue, 3 Oct 2023 16:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232174AbjJCUd5 (ORCPT
+        with ESMTP id S231582AbjJCUhf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Oct 2023 16:33:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DFFAB
-        for <kernel-janitors@vger.kernel.org>; Tue,  3 Oct 2023 13:33:52 -0700 (PDT)
+        Tue, 3 Oct 2023 16:37:35 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE37EAB
+        for <kernel-janitors@vger.kernel.org>; Tue,  3 Oct 2023 13:37:32 -0700 (PDT)
 Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id nm5UqMLsanmFYnm5UqMmLO; Tue, 03 Oct 2023 22:33:50 +0200
+        id nm94qRJHbs3p2nm94qPxBe; Tue, 03 Oct 2023 22:37:31 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1696365230;
-        bh=4szZBF58NVDMkJwPCQGcaCq/8DXhNFlNUXK9ISU4JTg=;
+        s=t20230301; t=1696365451;
+        bh=IKG3F6hJ3v/L25Z0w91DgqZDC5nYGOA6uzkidIkVaf4=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=jMM5hJEqTl55wNmQJ4+r0YBYKX0Tt7hC93DBUR4UNEOanbF1mI9FB5vNtzYC2Pde+
-         C8uatHITU/+hpj/uqY+xb1UDRcQNixIQ0QRqZB5BX1rnOdJR+PV2qgNjdXxQfoBT/q
-         5mH067tDe9dQK9bITKkPOVeZS3Grb0t7xas5Um2HHzjy8eawGUpSaPkrxJLOAQWaOt
-         FqiQqCllcVli5oAHKFhBhF+Ushb8praKuB+JIwc9S2J7+rEW+RJVDPL9+x0xTaAAu+
-         QNHIBIeTTl8ZTcGMnXT6+6FXDCqrD5IzyWDMvBx3LZVqP+/1kvhJ4MrlpwYFc7VkWz
-         CuKV7HsUbuTVQ==
+        b=VBS+xN1HohHEC37JSmZks97ZPR+Inp0YSI+FNwPF/QAUA/KT3PAStE9KlOV02jVwM
+         6851mKbQLhnbIh1Hzo/oKGRMfmJY2K45OU8ySY4Dmt57EPsT4+RzliOs3Zfa+uizUd
+         Tu2LmWX9I2ZlWZ+H7LcuoCCaeS6UZuQUvPI+t9Zd0GCcyGIyJCh5INNQNTXkrdDcws
+         NCwfANy1Ftq7BJG1HZwtyDhtxSeUG+FPh3d+HQsV1pXPDQqaLvbkdXCtKsA25mA4sx
+         PnW6Xutl385l89APfyVNkKUki2TMRFJd0Q9u/IX3r0gXeZuoZ29d73BeSDeKrDJg8T
+         d8iq8y881+TOg==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 03 Oct 2023 22:33:50 +0200
+X-ME-Date: Tue, 03 Oct 2023 22:37:31 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <abf8d279-b579-4a03-9ae9-053cf5efec3d@wanadoo.fr>
-Date:   Tue, 3 Oct 2023 22:33:47 +0200
+Message-ID: <29133480-ad61-482b-9b3e-d7c73344b2f4@wanadoo.fr>
+Date:   Tue, 3 Oct 2023 22:37:30 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] iavf: Avoid a memory allocation in
- iavf_print_link_message()
-To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-References: <966968bda15a7128a381b589329184dfea3e0548.1695471387.git.christophe.jaillet@wanadoo.fr>
- <a5e933fe-4566-9ae6-9a5d-b3a4c186fe0b@intel.com>
-Content-Language: fr
+Subject: Re: [PATCH] usb: dwc2: gadget: Fix a warning when compiling with W=1
+Content-Language: fr, en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Ben Dooks <ben@simtec.co.uk>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org
+References: <5cf603809388aa04c9a02bbfe3cf531c20bb043e.1695466447.git.christophe.jaillet@wanadoo.fr>
+ <2023100226-cloak-tissue-7efa@gregkh>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a5e933fe-4566-9ae6-9a5d-b3a4c186fe0b@intel.com>
+In-Reply-To: <2023100226-cloak-tissue-7efa@gregkh>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 03/10/2023 à 19:14, Jesse Brandeburg a écrit :
-> On 9/23/2023 5:17 AM, Christophe JAILLET wrote:
->> IAVF_MAX_SPEED_STRLEN is only 13 and 'speed' is allocated and freed within
->> iavf_print_link_message().
+Le 02/10/2023 à 13:45, Greg Kroah-Hartman a écrit :
+> On Sat, Sep 23, 2023 at 12:54:24PM +0200, Christophe JAILLET wrote:
+>> In order to teach the compiler that 'hs_ep->name' will never be truncated,
+>> we need to tell it that 'epnum' is not negative.
 >>
->> 'speed' is only used with some snprintf() and netdev_info() calls.
+>> 'epnum' comes from in a 'for' loop in dwc2_gadget_init(), starting at 0
+>> and ending at 255. (hsotg->num_of_eps is a char)
 >>
->> So there is no real use to kzalloc()/free() it. Use the stack instead.
->> This saves a memory allocation.
+>> When building with W=1, this fixes the following warnings:
 >>
+>>    drivers/usb/dwc2/gadget.c: In function ‘dwc2_hsotg_initep’:
+>>    drivers/usb/dwc2/gadget.c:4804:55: error: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 8 [-Werror=format-truncation=]
+>>     4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>>          |                                                       ^~
+>>    drivers/usb/dwc2/gadget.c:4804:52: note: directive argument in the range [-2147483645, 255]
+>>     4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>>          |                                                    ^~~~~~~~
+>>    drivers/usb/dwc2/gadget.c:4804:9: note: ‘snprintf’ output between 6 and 17 bytes into a destination of size 10
+>>     4804 |         snprintf(hs_ep->name, sizeof(hs_ep->name), "ep%d%s", epnum, dir);
+>>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> Fixes: 5b7d70c6dbf2 ("USB: Gadget driver for Samsung HS/OtG block")
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/net/ethernet/intel/iavf/iavf_virtchnl.c | 7 +------
->>   1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> index 8ce6389b5815..980dc69d7fbe 100644
->> --- a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> +++ b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> @@ -1389,18 +1389,14 @@ void iavf_disable_vlan_insertion_v2(struct iavf_adapter *adapter, u16 tpid)
->>   static void iavf_print_link_message(struct iavf_adapter *adapter)
->>   {
->>   	struct net_device *netdev = adapter->netdev;
->> +	char speed[IAVF_MAX_SPEED_STRLEN];
->>   	int link_speed_mbps;
->> -	char *speed;
->>   
->>   	if (!adapter->link_up) {
->>   		netdev_info(netdev, "NIC Link is Down\n");
->>   		return;
->>   	}
->>   
->> -	speed = kzalloc(IAVF_MAX_SPEED_STRLEN, GFP_KERNEL);
->> -	if (!speed)
->> -		return;
->> -
->>   	if (ADV_LINK_SUPPORT(adapter)) {
->>   		link_speed_mbps = adapter->link_speed_mbps;
->>   		goto print_link_msg;
->> @@ -1452,7 +1448,6 @@ static void iavf_print_link_message(struct iavf_adapter *adapter)
->>   	}
->>   
->>   	netdev_info(netdev, "NIC Link is Up Speed is %s Full Duplex\n", speed);
->> -	kfree(speed);
->>   }
->>   
->>   /**
 > 
-> Hi Christophe!
+> Looks like the kernel test robot didn't like this one :(
 > 
-> I had a slightly different proposal that gets rid of all the -Wformat=2
-> warnings in this code by using kasprintf to handle the varying string
-> lengths.
-> 
-> any thoughts about this instead and drop yours? I'm less worried about
-> the "extra allocation" here in this function since it's slow path, and
-> the same comment applies to your patch as well.
 
-kasprintf() is much better.
+Hi,
 
-> 
-> your patch still shows these errors
+unless I missed something, this was built-tested.
+I use gcc 12.3.0 and the report is done with gcc 11.3.0.
 
-I built-tested the patch before sending, so this is strange.
+Maybe the value range propagation algorithm of how the diagnostic for 
+such potential overflow has been improved in recent gcc?
 
-However, I got a similar feedback from Greg KH and the "kernel test 
-robot" for another similar patch.
 
-What version of gcc do you use?
-I use 12.3.0, and I suspect that the value range algorithm or how the 
-diagnostic is done has been improved in recent gcc.
+For your information, I got a similar feedback for another patch.
+It was also built tested from my side, but the maintainer report that 
+there is still some potential overflow warning.
 
-The other report was from 11.3.0.
+Strange :/
 
 CJ
-
->> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c: In function ‘iavf_virtchnl_completion’:
->> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c:1446:60: warning: ‘%s’ directive output may be truncated writing 4 bytes into a region of size between 1 and 11 [-Wformat-truncation=]
->>   1446 |                 snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
->>        |                                                            ^~
->>   1447 |                          link_speed_mbps, "Mbps");
->>        |                                           ~~~~~~
->> In function ‘iavf_print_link_message’,
->>      inlined from ‘iavf_virtchnl_completion’ at drivers/net/ethernet/intel/iavf/iavf_virtchnl.c:1965:4:
->> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c:1446:17: note: ‘snprintf’ output between 7 and 17 bytes into a destination of size 13
->>   1446 |                 snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
->>        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>   1447 |                          link_speed_mbps, "Mbps");
->>        |                          ~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> 
-> <my iavf patch pasted as a quote so my mail client won't wrap the lines...>
-> 
-> 
->> diff --git a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> index 8ce6389b5815..82b84a93bcc8 100644
->> --- a/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> +++ b/drivers/net/ethernet/intel/iavf/iavf_virtchnl.c
->> @@ -1378,8 +1378,6 @@ void iavf_disable_vlan_insertion_v2(struct iavf_adapter *adapter, u16 tpid)
->>                                    VIRTCHNL_OP_DISABLE_VLAN_INSERTION_V2);
->>   }
->>
->> -#define IAVF_MAX_SPEED_STRLEN  13
->> -
->>   /**
->>    * iavf_print_link_message - print link up or down
->>    * @adapter: adapter structure
->> @@ -1397,10 +1395,6 @@ static void iavf_print_link_message(struct iavf_adapter *adapter)
->>                  return;
->>          }
->>
->> -       speed = kzalloc(IAVF_MAX_SPEED_STRLEN, GFP_KERNEL);
->> -       if (!speed)
->> -               return;
->> -
->>          if (ADV_LINK_SUPPORT(adapter)) {
->>                  link_speed_mbps = adapter->link_speed_mbps;
->>                  goto print_link_msg;
->> @@ -1438,17 +1432,17 @@ static void iavf_print_link_message(struct iavf_adapter *adapter)
->>
->>   print_link_msg:
->>          if (link_speed_mbps > SPEED_1000) {
->> -               if (link_speed_mbps == SPEED_2500)
->> -                       snprintf(speed, IAVF_MAX_SPEED_STRLEN, "2.5 Gbps");
->> -               else
->> +               if (link_speed_mbps == SPEED_2500) {
->> +                       speed = kasprintf(GFP_KERNEL, "%s", "2.5 Gbps");
->> +               } else {
->>                          /* convert to Gbps inline */
->> -                       snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
->> -                                link_speed_mbps / 1000, "Gbps");
->> +                       speed = kasprintf(GFP_KERNEL, "%d Gbps",
->> +                                         link_speed_mbps / 1000);
->> +               }
->>          } else if (link_speed_mbps == SPEED_UNKNOWN) {
->> -               snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%s", "Unknown Mbps");
->> +               speed = kasprintf(GFP_KERNEL, "%s", "Unknown Mbps");
->>          } else {
->> -               snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
->> -                        link_speed_mbps, "Mbps");
->> +               speed = kasprintf(GFP_KERNEL, "%d Mbps", link_speed_mbps);
->>          }
->>
->>          netdev_info(netdev, "NIC Link is Up Speed is %s Full Duplex\n", speed);
-> 
-> 
-> 
-
