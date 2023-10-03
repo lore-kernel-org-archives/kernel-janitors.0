@@ -2,139 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEC3E7544F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 12:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A8EE75458
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 12:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232048AbjJCMF5 (ORCPT
+        id S232177AbjJCMt3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Oct 2023 08:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60532 "EHLO
+        Tue, 3 Oct 2023 08:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231946AbjJCMFz (ORCPT
+        with ESMTP id S232124AbjJCMt2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Oct 2023 08:05:55 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65665B0;
-        Tue,  3 Oct 2023 05:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696334752; x=1727870752;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2FVL6oK6St+5P80WJ+yzirfeEardVkYw1NDRImd/gVM=;
-  b=hy6FhSqVPGJW2GTaOqs59afYeTh+sNqjm09T7xMNL7Xt/FD6CSW/YF1a
-   N2Jmni6DBeC6CR1tXVa0epbhNAVS8WJIteMt1KOBFNHnHTxmBHuitkDZQ
-   zruieOvmqBhJ5ZyZTfwW8ugs3E8ta40rRpkke5g0UV1BX4dMh3t4JA82a
-   2DKo/MWOAHocUENldcgBIm7c19wzwEUJsQtEiWAZUWLDbTznAQo+OxL4W
-   vDI3AWaqUZ+/oRPwlffxQ4CnIUd8pqfH80s8zlfp1aqG0N/PKE5pyZOIT
-   4ytUG9PCxoJ+XAWapjPjjJomKbC7xLDhtvJ5jUy/iCQaWn4PTsAsUC048
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="449347037"
-X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
-   d="scan'208";a="449347037"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 05:05:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="727589592"
-X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
-   d="scan'208";a="727589592"
-Received: from tciutacu-mobl.ger.corp.intel.com (HELO rrabie-mobl.amr.corp.intel.com) ([10.252.40.114])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 05:05:47 -0700
-Date:   Tue, 3 Oct 2023 15:05:45 +0300 (EEST)
-From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Vadim Pasternak <vadimp@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Michael Shych <michaelsh@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] platform: mellanox: Fix a resource leak in an error
- handling path in mlxplat_probe()
-In-Reply-To: <8bd0a7944f0f4f1342333eaf8d92d8e9d5623110.1696141233.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <7d966897-56b5-4a53-3b75-dd90072e17@linux.intel.com>
-References: <8bd0a7944f0f4f1342333eaf8d92d8e9d5623110.1696141233.git.christophe.jaillet@wanadoo.fr>
+        Tue, 3 Oct 2023 08:49:28 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FA0BB
+        for <kernel-janitors@vger.kernel.org>; Tue,  3 Oct 2023 05:49:24 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3231d6504e1so864903f8f.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 03 Oct 2023 05:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696337363; x=1696942163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dlhxrmRkRpeN3OD8U4BACgAdd1QbrxInrsx8HMZ5kJg=;
+        b=JXhJ8lVEqaQbQfqiLFkM5IR7OEITC9US5qgu9MwJkSgFwS9b1sawkVfHh/uCP3Vw1d
+         IGTXSmTnj54onQZ7TNLPvJhG36d88ONUNIAV8f+YAjU74UuUoeu7re5UfOeY2JCFANi1
+         PI4MQsUBVTfuqSDT9z0rZMAsBnnXPZntGncIMdgODV5B8b7wYNgRxm44+Nq0vV0L8AxI
+         O6J1knivsTRqHJt6TJaIF9SBI64kq5EDdjWwPyVFN2sZr5BJHx8voZ0emNhL0SJiToK2
+         14qHh4WDqqy0lGkrBP39kPyyLAoPd2qq3QnUPbVDmHL6bKOn+csodW0F2B6SfJWYZ9XB
+         amnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696337363; x=1696942163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dlhxrmRkRpeN3OD8U4BACgAdd1QbrxInrsx8HMZ5kJg=;
+        b=d5CbPCs2wPLhVvLGshdRfGo2acRapo3gVHc254pqcJB53s0zXvYCNdhE+M7C/16HC7
+         wfNzBUYy4GXHGoBuFI76n6qyYtmoDGDGZXs/9xxDyugVxjerO3DB1GnNMVVXp4QbO5m7
+         FOJhMBZqndp8RucEFKG5Ws+BeXXhaU8VecMwcfyIdbFp+QQL3ZKFRXNtu1TCYL9ko5Ol
+         uWP5NmiLRNvoBO5c/uud9TWjT+nv1FfI7Xp1NWwTWFzVUr6r7PUdqB9rvUcH0gJAkRFW
+         qe+BYzRirgpGL4h92443nuhPddIEXONLnN9rsn8U7C+uKNbgqAVyqpSrH3zoEKgCxZGa
+         4m+w==
+X-Gm-Message-State: AOJu0Yz4T2BT135Tlz4xSeW0Ys6UbBAm7Bk1MjKxf8bBEzZudsR3DVQ9
+        RUg0BL5R0Y0GAPTtn1WWLwyJHQ==
+X-Google-Smtp-Source: AGHT+IHaooNR/TbU/A9B5ajdiCBcPIbTQ8DPZxIgHjk9yBVQj+gRRRWDV1SLznjSXOlY8aO5drEItQ==
+X-Received: by 2002:adf:f302:0:b0:320:b2a:4ea6 with SMTP id i2-20020adff302000000b003200b2a4ea6mr13526615wro.9.1696337363023;
+        Tue, 03 Oct 2023 05:49:23 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v8-20020adfe4c8000000b003247d3e5d99sm1522305wrm.55.2023.10.03.05.49.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Oct 2023 05:49:22 -0700 (PDT)
+Date:   Tue, 3 Oct 2023 15:49:19 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Kun-Fa Lin <milkfafa@gmail.com>
+Cc:     Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: nuvoton: npcm-video: Fix IS_ERR() vs NULL bug
+Message-ID: <dd71316e-18e6-47a4-a267-67328b1a1158@kadam.mountain>
+References: <3134a802-75fe-49f3-bcd6-06addc2ffaf5@moroto.mountain>
+ <CADnNmFrOeGxUL1U9eJngKpMpoVVZXN4Owxxo9Ee18tEYxZ6FhQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADnNmFrOeGxUL1U9eJngKpMpoVVZXN4Owxxo9Ee18tEYxZ6FhQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 1 Oct 2023, Christophe JAILLET wrote:
-
-> If an error occurs after a successful mlxplat_i2c_main_init(),
-> mlxplat_i2c_main_exit() should be called to free some resources.
+On Tue, Oct 03, 2023 at 08:02:33PM +0800, Kun-Fa Lin wrote:
+> Hi Dan,
 > 
-> Add the missing call, as already done in the remove function.
+> Thanks for the patch.
 > 
-> Fixes: 158cd8320776 ("platform: mellanox: Split logic in init and exit flow")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is based on comparison between functions called in the remove
-> function and the error handling path of the probe.
+> > The of_parse_phandle() function returns NULL on error.  It never returns
+> > error pointers.  Update the check accordingly.
 > 
-> For some reason, the way the code is written and function names are
-> puzzling to me.
-
-Indeed, pre/post are mixed up for init/exit variants which makes 
-everything very confusing and the call to mlxplat_post_init() is buried 
-deep into the call chain.
-
-These would seem better names for the init/deinit with proper pairing:
-
-- ..._logicdev_init/deinit for FPGA/CPLD init.
-- ..._mainbus_init/deinit
-- perhaps the rest could be just ..._platdevs_reg/unreg
-
-Those alone would make it much easier to follow.
-
-In addition,
-- mlxplat_i2c_mux_complition_notify() looks just useless call chain level
-  and should be removed (it also has a typo in its name).
-- Maybe ..._platdev_reg() (currently mlxplat_post_init()) should be called 
-  directly from mainbus_init() or even from .probe() and not from the
-  mux topo init.
-
-> So Review with care!
-
-It does not look complete as also mlxplat_i2c_main_init() lacks rollback 
-it should do it mlxplat_i2c_mux_topology_init() failed.
-
-Since currently mlxplat_i2c_main_init() is what ultimately calls 
-mlxplat_post_init() deep down in the call chain (unless the call to it 
-gets moved out from there), it would be appropriate for 
-mlxplat_i2c_main_exit() to do/call the cleanup.  And neither .probe() nor 
-.remove() should call mlxplat_pre_exit() directly in that case.
-
-So two alternative ways forward for the fix before all the renaming:
-
-1) Move mlxplat_post_init() call out of its current place into .probe() 
-   and make the rollback path there to match that.
-2) Do cleanup properly in mlxplat_i2c_main_init() and 
-   mlxplat_i2c_main_exit().
-
-I'd prefer 1) because it's much simpler to follow the init logic when the 
-init components are not hidden deep into the call chain.
-
--- 
- i.
-
-
-> ---
->  drivers/platform/x86/mlx-platform.c | 1 +
->  1 file changed, 1 insertion(+)
+> Commit message contains some redundant whitespaces.
 > 
-> diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-> index 3d96dbf79a72..64701b63336e 100644
-> --- a/drivers/platform/x86/mlx-platform.c
-> +++ b/drivers/platform/x86/mlx-platform.c
-> @@ -6598,6 +6598,7 @@ static int mlxplat_probe(struct platform_device *pdev)
->  fail_register_reboot_notifier:
->  fail_regcache_sync:
->  	mlxplat_pre_exit(priv);
-> +	mlxplat_i2c_main_exit(priv);
->  fail_mlxplat_i2c_main_init:
->  fail_regmap_write:
->  fail_alloc:
-> 
+
+I have no idea what you're talking about?  Are you talking about two
+spaces after a period?  :P
+
+regards,
+dan carpenter
+
