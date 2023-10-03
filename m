@@ -2,107 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A433E748FC
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Oct 2023 17:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D475E75433
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 07:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238690AbjJBRQl (ORCPT
+        id S230355AbjJCHtT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Oct 2023 13:16:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
+        Tue, 3 Oct 2023 03:49:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjJBRQk (ORCPT
+        with ESMTP id S230237AbjJCHtS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Oct 2023 13:16:40 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C65B3
-        for <kernel-janitors@vger.kernel.org>; Mon,  2 Oct 2023 10:16:37 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-59bebd5bdadso202867b3.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 02 Oct 2023 10:16:37 -0700 (PDT)
+        Tue, 3 Oct 2023 03:49:18 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 491A6A9;
+        Tue,  3 Oct 2023 00:49:15 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-406618d080eso6031655e9.2;
+        Tue, 03 Oct 2023 00:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696266997; x=1696871797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7Zhp7fexBV0fC94HK3n7XG2/Cz9uGTnvzo3kRDXo4Y=;
-        b=a7H/lTltdgcsnEqhzCEboQj8FAxo52Tjt2722Gl/9dDeKNy9lijLx+PmSfTGB5CUiu
-         9ffEubwWAXt48KTueo8zSuW4PQzsquUhliuOfDaj6a1liGEvDcOtPHPwUbUtxORjGV3m
-         2UzYlwdkuKAn9T6g75G/GYg7rV4ZTBcNmarXBVyJojeX8Zv+UCzOCidizXJmNMbZke+c
-         7rWqSTdLjQp0DSCAnS8m0xotGaJPED3RFzNLIoyGXWrVt1OLA+uq0iuwMzQn/TtrOK0g
-         siMNP0XOd3zI5p9IlGkpKf9zAv22YXR8XgJJqD/JHwY4d+SnP5YCZPODEDuMedJRsLb+
-         lGrw==
+        d=gmail.com; s=20230601; t=1696319354; x=1696924154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F4uGm4UsgcR7Wz0vCxNV3ZjfJf/Okbz0Af+MHqDGOL8=;
+        b=IFiy0DvNGYoUPT0kPDi3wkqhtzdv2pzpiv+QRdtxfBYLzfTlsqzZVPQPgZ7KCl9f4k
+         p2KfqyfTeeIUWI1CenznUqbS8c5uGFMw1fy3DYr48duH5+K6Z5CXds+2q81cGBoBngVy
+         sQb25vUbmgoyBsjvbK0VYpKyogJjkPgEI3UpywXBC6JkjyjzaFVUdD5r/QAkuf8bCf+n
+         mXzqtfhQlWMoY6DH8Phh8t0iOzLaQnMdNZoNlLgnN8b8no67gkrMe9GhqSEDOnfA60ad
+         4pwxfBanC2q/BIepcyewElXWVKJxJyw0OaijWh8TTWq/oTy6Vqf6xoKT0XZFfc6czZhA
+         S6+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696266997; x=1696871797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E7Zhp7fexBV0fC94HK3n7XG2/Cz9uGTnvzo3kRDXo4Y=;
-        b=b/mo45uaaIOg7U6ZeB/1wMNdb5VsWAVVyhxwBZ5WoPW2J2iFL8A3kyU7U/e7VO0xLx
-         t8Mc9VJdy1k7EgLgxUcc0PAIpcf4H27TKdc3Xutd/vSWqhGY/PZN8aKDLJXhy6OEog2V
-         0p1c6mDuGy8j9DymYdRSwSiZhUfBX/C8A105uoRrq3OLYSuQGlQ1SresTeOrsGh4EmK2
-         t1zmIe6EzAizxIiI/C1/iWDNTcsubO1nHt33cnY0LVm5jjy9nuhFz2QjbaGd0mzOphLe
-         YT+j4GpwTyhCP1Z3grAfTkt5zWHQfOs1IZkjV3/8ZwNhgcsZj/7A6qbwcZu0qE/yIu7g
-         LDFw==
-X-Gm-Message-State: AOJu0Yx3j8lXK6g5KGhGl4WpcZ1R+BRfbKJHJejDRc4wpGoF3IXKzkz8
-        DvE+JN0Y/5cgRzPTaUWw6AMnaWmxAYh5/FOUoeGMOA==
-X-Google-Smtp-Source: AGHT+IGczrijvRMqUeno/TKgH4xvzytFv3IKeSpkULE/VT0+zPJxHRO0kz92Wya/ACW5S+oE2CZNgPh4TUBkGNL8H1o=
-X-Received: by 2002:a0d:d44c:0:b0:586:b686:822c with SMTP id
- w73-20020a0dd44c000000b00586b686822cmr13050234ywd.7.1696266996808; Mon, 02
- Oct 2023 10:16:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696319354; x=1696924154;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F4uGm4UsgcR7Wz0vCxNV3ZjfJf/Okbz0Af+MHqDGOL8=;
+        b=w0XDqdp7Ukidjl0uzDbEH/RsOHY3uWGgZFgnjo+TMFt88nLn+tUqtORXzYKQ75eTR3
+         KpFDXqeuNgqOfOS7XGywEimq4T52Oc/kFxCLC3zuzFKBSIDyGFCfO+06ElwERojPLYV9
+         a5uXGvYiq/pGSF9MT4ZsZij4h+SZ3YZbfskcz8enWu92XQB3B9e05hKE6BUpARQY1W6T
+         xalavDjvipeDl1Qj6DsOJsNbscRnRgPgzaBhDDa6fNK2d/aUeqG420phe1cz0JCWWvwb
+         hkPhsgvGhAGg8YALhpotAkWAxE5YdSeDWb7VpxWZydfkAIyuar/krMmjpQZmYdgEVC2w
+         FxKQ==
+X-Gm-Message-State: AOJu0Yyo7pekdLFZwSFZImbBj4EqJlQYN0zHLAUCsUAbierqVLg4hWpG
+        CSOrbWuWyCOhzrxYRqGUJ7KqLmq7QZou0Q==
+X-Google-Smtp-Source: AGHT+IGM0toQ5phS7q3cqK/tEymfpWpGNUL/kuRaKervb++r8PKGOM+/7BfeUmkMJOrBrfRpZkpSOw==
+X-Received: by 2002:a7b:ce16:0:b0:405:3803:5588 with SMTP id m22-20020a7bce16000000b0040538035588mr11036440wmc.22.1696319353524;
+        Tue, 03 Oct 2023 00:49:13 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n9-20020a05600c294900b00401c595fcc7sm8766499wmd.11.2023.10.03.00.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Oct 2023 00:49:13 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        linux-perf-users@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf: fix spelling mistake "parametrized" -> "parameterized"
+Date:   Tue,  3 Oct 2023 08:49:11 +0100
+Message-Id: <20231003074911.220216-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <bc145167-0471-4ab3-935c-aa5dc20e342a@moroto.mountain>
-In-Reply-To: <bc145167-0471-4ab3-935c-aa5dc20e342a@moroto.mountain>
-From:   "T.J. Mercier" <tjmercier@google.com>
-Date:   Mon, 2 Oct 2023 10:16:24 -0700
-Message-ID: <CABdmKX1PsCcRpsnUgwoS9yMhCXcin1bQt6D+N0b2mHP93cmX-A@mail.gmail.com>
-Subject: Re: [PATCH] dma-buf: heaps: Fix off by one in cma_heap_vm_fault()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     John Stultz <jstultz@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 2, 2023 at 12:04=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The buffer->pages[] has "buffer->pagecount" elements so this > comparison
-> has to be changed to >=3D to avoid reading beyond the end of the array.
-> The buffer->pages[] array is allocated in cma_heap_allocate().
->
-> Fixes: a5d2d29e24be ("dma-buf: heaps: Move heap-helper logic into the cma=
-_heap implementation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/dma-buf/heaps/cma_heap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma=
-_heap.c
-> index ee899f8e6721..bea7e574f916 100644
-> --- a/drivers/dma-buf/heaps/cma_heap.c
-> +++ b/drivers/dma-buf/heaps/cma_heap.c
-> @@ -165,7 +165,7 @@ static vm_fault_t cma_heap_vm_fault(struct vm_fault *=
-vmf)
->         struct vm_area_struct *vma =3D vmf->vma;
->         struct cma_heap_buffer *buffer =3D vma->vm_private_data;
->
-> -       if (vmf->pgoff > buffer->pagecount)
-> +       if (vmf->pgoff >=3D buffer->pagecount)
->                 return VM_FAULT_SIGBUS;
->
-Hi Dan,
+There are spelling mistakes in comments and a pr_debug message. Fix them.
 
-Your fix looks correct to me, but I'm curious if you observed this
-problem on a device? The mmap in dma-buf.c looks like it prevents
-creating a mapping that is too large, and I think an access beyond the
-VMA should segfault before reaching here.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/perf/tests/parse-events.c        | 4 ++--
+ tools/perf/tests/shell/stat_all_pmu.sh | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-T.J.
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index f78be21a5999..e52f45c7c3d1 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -2549,7 +2549,7 @@ static int test__pmu_events(struct test_suite *test __maybe_unused, int subtest
+ 			if (strchr(ent->d_name, '.'))
+ 				continue;
+ 
+-			/* exclude parametrized ones (name contains '?') */
++			/* exclude parameterized ones (name contains '?') */
+ 			n = snprintf(pmu_event, sizeof(pmu_event), "%s%s", path, ent->d_name);
+ 			if (n >= PATH_MAX) {
+ 				pr_err("pmu event name crossed PATH_MAX(%d) size\n", PATH_MAX);
+@@ -2578,7 +2578,7 @@ static int test__pmu_events(struct test_suite *test __maybe_unused, int subtest
+ 			fclose(file);
+ 
+ 			if (is_event_parameterized == 1) {
+-				pr_debug("skipping parametrized PMU event: %s which contains ?\n", pmu_event);
++				pr_debug("skipping parameterized PMU event: %s which contains ?\n", pmu_event);
+ 				continue;
+ 			}
+ 
+diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/shell/stat_all_pmu.sh
+index c77955419173..d2a3506e0d19 100755
+--- a/tools/perf/tests/shell/stat_all_pmu.sh
++++ b/tools/perf/tests/shell/stat_all_pmu.sh
+@@ -4,7 +4,7 @@
+ 
+ set -e
+ 
+-# Test all PMU events; however exclude parametrized ones (name contains '?')
++# Test all PMU events; however exclude parameterized ones (name contains '?')
+ for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+[[:space:]]//g'); do
+   echo "Testing $p"
+   result=$(perf stat -e "$p" true 2>&1)
+-- 
+2.39.2
+
