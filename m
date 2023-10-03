@@ -2,89 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF4E75458
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 13:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC9DE7AD57
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Oct 2023 14:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232654AbjJCNJW (ORCPT
+        id S234771AbjJCOUb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Oct 2023 09:09:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48744 "EHLO
+        Tue, 3 Oct 2023 10:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232177AbjJCNJV (ORCPT
+        with ESMTP id S238752AbjJCOU3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Oct 2023 09:09:21 -0400
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D65DCA6;
-        Tue,  3 Oct 2023 06:09:18 -0700 (PDT)
-Received: by mail-ua1-x92a.google.com with SMTP id a1e0cc1a2514c-7abb93528e2so444930241.0;
-        Tue, 03 Oct 2023 06:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696338558; x=1696943358; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Znjfur39qqjdzsEXvyYiHZuLbuaT0vTImvdbRdQV+4=;
-        b=aX7kwnOf3WM6s/BRgpqhktWcZc6KdqVf4PAbMIYA6f8fO75bwAxpbSVALoUITUb87x
-         Yph7YFVmmamLo9Mvqo47MtguGoSF1xrPeJvu07tRCwsQdKqPPWlgoElPpbjaGtYow9fI
-         uiT0AFzWGxbjjNCo5dVZtNzGXfoUyrjrargijbmJiQh9gwF/CbjT0vrOvkTkPf9N/Vhq
-         VDxRRgEFswcAj6Qzpyyx60TTyu/gwsX8AliwvzSlVTEU7qtrhVagetTCXv8wXoSA31e6
-         gEQBN5ffmRxVQKqSAOwZ+1n7ZZaXv0EzHGuMYQJffb/ZwO1WdWFOU6DN5IT70JTnXj6a
-         dsNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696338558; x=1696943358;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Znjfur39qqjdzsEXvyYiHZuLbuaT0vTImvdbRdQV+4=;
-        b=VkrnDyCTk76HKlT+1I+NMH4/LsBvJEeLFX/SastziLuUfMtPVr92ebVfb7j50LgWT8
-         hOgzgbbQjFvCKe1EmtbQ8xe6WOTKFQoAygPd+QtQrb+Wtl7/gi97/uqmWYXYxI4skS2r
-         1X+mKDyWuVh+7UTE1gNSWSOZ+JegHqZ/7kZZngPPpBihwufx5xQ9ni6AQOkNitvthrvX
-         xjOyDi56rN60Qa/s1puL2GA21yLlBAj0vVmoOmB1xPXzg3AWCbu9PQtpLs3IhLwvRpoX
-         0RTvLV+/9UDU+SZVwE1MxqZStgsOEVgRwlX31eNZLMlQ6gY4Jp5RraVMmFEmHwqnhrX0
-         dVTQ==
-X-Gm-Message-State: AOJu0Yzm2Zd5dfaMQNP/APYosc0XI+XJOv6gYoWLbiqxZ+Wjt0qXCm8a
-        lfkTBBY0wrREaZMoUuW0Y+1u9s/aXMVIgfmlFFA=
-X-Google-Smtp-Source: AGHT+IHxLU2viRDvkfkjpNz6nLNjvh8SF9YyPfx8WmQylu/hSi9YoR5Ymu6Rg5pcSwG4lhIaG29eWFWaLLA0k+xwzLw=
-X-Received: by 2002:a67:d094:0:b0:452:7526:73ae with SMTP id
- s20-20020a67d094000000b00452752673aemr12677763vsi.26.1696338557858; Tue, 03
- Oct 2023 06:09:17 -0700 (PDT)
+        Tue, 3 Oct 2023 10:20:29 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55ED09E
+        for <kernel-janitors@vger.kernel.org>; Tue,  3 Oct 2023 07:20:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E83E7C433CA;
+        Tue,  3 Oct 2023 14:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696342825;
+        bh=C1PjOzaL6zGFv+xuvVXZQ13drp+ZYgssUutzpbcy2Ak=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=E/88OPYA3oZRLgnKZRERHOlLix5vAteTZXojrXTtyNsTNmKYsqQoYvdc2QcSIXnkf
+         I48CMArszW0e82A01Z/Rf/mcs4B/IVuSTjEigA2OZMpDWWL6Y8u7L/F9vCrFdYhQLV
+         k4XrdQwSCKHvcz19dKsefaFwxBsfTYHw4r02SpiROVTaVPTvXZ5u+XIJCJVBbc3qC6
+         xAnChi5Qwv8dlcMx7HVamAdiMRLbeqltLqLfvsxKNu4YhOisU2ixwZbtsa+/GdKJ8Q
+         onW+W6fkXa1iUBGPDf2xBs4GvMqdfj+N9W1hgmCn/KIxbM0zyHEYNG2gFa+cr3foWk
+         IvqctveWokijQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C95DEE632D1;
+        Tue,  3 Oct 2023 14:20:24 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <3134a802-75fe-49f3-bcd6-06addc2ffaf5@moroto.mountain>
- <CADnNmFrOeGxUL1U9eJngKpMpoVVZXN4Owxxo9Ee18tEYxZ6FhQ@mail.gmail.com> <dd71316e-18e6-47a4-a267-67328b1a1158@kadam.mountain>
-In-Reply-To: <dd71316e-18e6-47a4-a267-67328b1a1158@kadam.mountain>
-From:   Kun-Fa Lin <milkfafa@gmail.com>
-Date:   Tue, 3 Oct 2023 21:09:09 +0800
-Message-ID: <CADnNmFoNe50AkcVCk2fx4rUkNVZ2QJ2eud0dz5AExy0+4u7Fbw@mail.gmail.com>
-Subject: Re: [PATCH] media: nuvoton: npcm-video: Fix IS_ERR() vs NULL bug
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: microchip: sparx5: clean up error checking in
+ vcap_show_admin()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169634282481.20237.11023023965900224021.git-patchwork-notify@kernel.org>
+Date:   Tue, 03 Oct 2023 14:20:24 +0000
+References: <b88eba86-9488-4749-a896-7c7050132e7b@moroto.mountain>
+In-Reply-To: <b88eba86-9488-4749-a896-7c7050132e7b@moroto.mountain>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     lars.povlsen@microchip.com, horatiu.vultur@microchip.com,
+        Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
+        UNGLinuxDriver@microchip.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> On Tue, Oct 03, 2023 at 08:02:33PM +0800, Kun-Fa Lin wrote:
-> > Hi Dan,
-> >
-> > Thanks for the patch.
-> >
-> > > The of_parse_phandle() function returns NULL on error.  It never returns
+Hello:
 
-                          ^^
-> > > error pointers.  Update the check accordingly.
-                               ^^
-> >
-> > Commit message contains some redundant whitespaces.
-> >
->
-> I have no idea what you're talking about?  Are you talking about two
-> spaces after a period?  :P
->
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Yes :P
+On Fri, 8 Sep 2023 10:03:37 +0300 you wrote:
+> The vcap_decode_rule() never returns NULL.  There is no need to check
+> for that.  This code assumes that if it did return NULL we should
+> end abruptly and return success.  It is confusing.  Fix the check to
+> just be if (IS_ERR()) instead of if (IS_ERR_OR_NULL()).
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202309070831.hTvj9ekP-lkp@intel.com/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-Regards,
-Marvin
+Here is the summary with links:
+  - [net-next] net: microchip: sparx5: clean up error checking in vcap_show_admin()
+    https://git.kernel.org/netdev/net-next/c/788f63c4dc17
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
