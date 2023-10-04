@@ -2,141 +2,139 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9366FE8FDBF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 01:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC798E8FDD1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbjJDBHS (ORCPT
+        id S241632AbjJDIEt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Oct 2023 21:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54318 "EHLO
+        Wed, 4 Oct 2023 04:04:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232262AbjJDBHR (ORCPT
+        with ESMTP id S232804AbjJDIEs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Oct 2023 21:07:17 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791FDB4
-        for <kernel-janitors@vger.kernel.org>; Tue,  3 Oct 2023 18:07:13 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-50302e8fca8so2680e87.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 03 Oct 2023 18:07:13 -0700 (PDT)
+        Wed, 4 Oct 2023 04:04:48 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6F7A7
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Oct 2023 01:04:43 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4060b623e64so3545255e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 Oct 2023 01:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696381632; x=1696986432; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUHUZ6x4ov8yu95Mp1viV4yiZ0CaN+a8BIQnvZlj5oA=;
-        b=ogBFDS8yYmbDw5yd6K1bzA3Op/+Oj9cEo6xPjDWZfZbZ9+wqhmpkoxG3jFtX1nmaKL
-         myRfwEL2UpyUV63iCJEUymxQ7d75ovLPzJWcJlDAcEmcI2O12uKE1BmFSRGRjIew30fV
-         5VdkC+ZDoj+FL0DtlEeS6tUarGbRrUWQcvnhUZg+k4dj8apTuPbl4XD8FFFyum2eYQty
-         0K2HaLh4qbonp79DXv5SU5C657yTFn5K863APwUd8kd2qQ9eRmOCO23B5zOpcdre19gz
-         S5SNV3KNyy7gLpMeE6Smw0t/xdz8C6jdUrF4Px7mkz1Q8efo3N84Qq9PY2XpCDPOrH1d
-         r/mg==
+        d=linaro.org; s=google; t=1696406682; x=1697011482; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IJdb1qMHJ+Cbk4cGjE6rcjXo+B39SPe1RPD3Rof3+L0=;
+        b=uJJ/Vwbc0CbMnwvQUKkm05V3jEdEI7fTq1hMhAHVV6PdLL0OlR43Bd1K2vOuNk/O40
+         bAdRSrMpAdKyez9746d7xRR68K1j7HWK1XmCkfqCRJ6+/JUTrPnRAKl6+3eVFkA+Q0m+
+         s2sAzLLGcGsoWjohU6ceeBi6wbJ5Foh1AeenJjG91dxaBtbo0H26Hr7TS1xXJDx8ms11
+         gH+6HGdRZG8uOhMdiv8Qig+i60VUrp1yhvRMX8YWHkTo2sosivPydebKsIJ4tm8AV9H7
+         E+7mO20CVym0Rzd0HuzLppaZbnhQXfGziAdC3wP2u66srAYJenzHfpd4uqhYHdPRLgSF
+         JF8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696381632; x=1696986432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GUHUZ6x4ov8yu95Mp1viV4yiZ0CaN+a8BIQnvZlj5oA=;
-        b=OHI94z0AiTBkwRLH5arG6cm/PhoYiU69WMWK8emw1owf6aWgs3QPtUXYFR25LwnaK0
-         Vj7IiCMtQLiMZbmywwF5aN2+IEDKe0mOEp8wLvW/jtNSl2Ljg/2peIXUWO6Tl0ibxpQl
-         7aUUuYv1DRcgxrqZaIvYt1bdNZp+4eWRis1YcPZOOCk+iiAV5Trpr7SvSqX+q4z6lzaw
-         a6Yozci53FKXeQgI2PCCe8nvVrfcEne8l1dJZ02Cn18VKmUj0CFB3zWfmoUtGCQkj30E
-         CM4vJj2PjQS1Evwoiwgeo1xF0Vbl8A6ka5Se3HwYGrx23LDocXOTdVXjeTAMgbsdt4BH
-         Snfg==
-X-Gm-Message-State: AOJu0YxG0X8zMzUPBRjDQ25kXmGI2vaQRUMDmrnpEZ7q1rHheGRcLqAF
-        Q06JfMe0u061WOl4gvN6IJwntmvTJZ4GbCKCgzT+1A==
-X-Google-Smtp-Source: AGHT+IEz/zu54LHG+PiNV8mvDcrbp/5O/EekAy8i4ZVup9/Gt4C8BlrCXvFTtbh5YT8+gU03K84mWnZxMvOHq3HRoX8=
-X-Received: by 2002:ac2:4e6f:0:b0:505:715f:d36b with SMTP id
- y15-20020ac24e6f000000b00505715fd36bmr12175lfs.5.1696381631494; Tue, 03 Oct
- 2023 18:07:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696406682; x=1697011482;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJdb1qMHJ+Cbk4cGjE6rcjXo+B39SPe1RPD3Rof3+L0=;
+        b=U8BKe0s1PdIF0z7YgjBvKoV4WyZ0+IN6tXCmurHN8oaYNzdH63oNoLn265asHfv9+w
+         FwdycRJ8e0s7O8/JrXRsZB1TY9qiTR2UO1QgHn6eNTYkyn0iAdhGJ7qJtSmZuhuGk/HJ
+         MsXPvoiRqPL/TVMqz1vukzaVI4/OktZ8td+bPk2P2aAxRbP4o+rKa9ZYkG60aLhQMhUz
+         sfl1ooudqYTGG7m3bqB4B4zrVy0kfPjsKwWcdLmd43s/hLdjL9Ed12EuHvPjTx18EPSO
+         0QAt6MCof+npucTSMXK4/fK+fXmpR6w3vyHkPcWIT+TYWtIEB2fcZxSrQ/9XUdYretpR
+         9Iog==
+X-Gm-Message-State: AOJu0Yw0/9gd2rAZKlto/hTpTDR1BJ+/H3m4rYUAtz/RKx7feOzv18uS
+        DQEGsl36zS9u5F6iuKMgR4fEGA==
+X-Google-Smtp-Source: AGHT+IEC7Kk4F818yPH6966d9Z6ExD5ZI8JjXGRj24+Tu4eq1T+SWsvmQBmsuJ3WYMQq3IezkMnwnQ==
+X-Received: by 2002:a05:600c:5014:b0:401:b425:2414 with SMTP id n20-20020a05600c501400b00401b4252414mr3936654wmr.18.1696406681795;
+        Wed, 04 Oct 2023 01:04:41 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id c15-20020a7bc84f000000b00405323d47fdsm859765wml.21.2023.10.04.01.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 01:04:41 -0700 (PDT)
+Date:   Wed, 4 Oct 2023 11:04:38 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] iavf: Avoid a memory allocation in
+ iavf_print_link_message()
+Message-ID: <8c153188-a5e3-46f9-b126-7ae447236022@kadam.mountain>
+References: <966968bda15a7128a381b589329184dfea3e0548.1695471387.git.christophe.jaillet@wanadoo.fr>
+ <a5e933fe-4566-9ae6-9a5d-b3a4c186fe0b@intel.com>
+ <abf8d279-b579-4a03-9ae9-053cf5efec3d@wanadoo.fr>
+ <ecc05528-ba59-922b-7384-4bedd46cf89b@intel.com>
 MIME-Version: 1.0
-References: <20231003074911.220216-1-colin.i.king@gmail.com>
-In-Reply-To: <20231003074911.220216-1-colin.i.king@gmail.com>
-From:   Ian Rogers <irogers@google.com>
-Date:   Tue, 3 Oct 2023 18:07:00 -0700
-Message-ID: <CAP-5=fXO6+Cgvo4BmC9fgL70FY+ciPjRVR5qghxYBR3VSB7WNQ@mail.gmail.com>
-Subject: Re: [PATCH][next] perf: fix spelling mistake "parametrized" -> "parameterized"
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ecc05528-ba59-922b-7384-4bedd46cf89b@intel.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 3, 2023 at 12:49=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There are spelling mistakes in comments and a pr_debug message. Fix them.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Tue, Oct 03, 2023 at 04:01:18PM -0700, Jesse Brandeburg wrote:
+> On 10/3/2023 1:33 PM, Christophe JAILLET wrote:
+> > kasprintf() is much better.
+> 
+> cool! I just sent the patches and cc'd you earlier today.
+> 
+> > > 
+> > > your patch still shows these errors
+> > 
+> > I built-tested the patch before sending, so this is strange.
+> > 
+> > However, I got a similar feedback from Greg KH and the "kernel test
+> > robot" for another similar patch.
+> > 
+> > What version of gcc do you use?
+> > I use 12.3.0, and I suspect that the value range algorithm or how the
+> > diagnostic is done has been improved in recent gcc.
+> 
+> Fedora gcc 12.3.1, with W=1 flag
+> 
+> gcc version 12.3.1 20230508 (Red Hat 12.3.1-1) (GCC)
+> 
+> [linux]$ make W=1 M=drivers/net/ethernet/intel/iavf
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_main.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_ethtool.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_virtchnl.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_fdir.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_adv_rss.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_txrx.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_common.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_adminq.o
+>   CC [M]  drivers/net/ethernet/intel/iavf/iavf_client.o
+> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c: In function
+> ‘iavf_virtchnl_completion’:
+> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c:1446:60: warning: ‘%s’
+> directive output may be truncated writing 4 bytes into a region of size
+> between 1 and 11 [-Wformat-truncation=]
+>  1446 |                 snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
+>       |                                                            ^~
+>  1447 |                          link_speed_mbps, "Mbps");
+>       |                                           ~~~~~~
 
-+ Athira Rajeev
+GCC is kind of crap at static analysis, right?  Smatch would know that
+this at most 11 characters long.  It's kind of laziness for GCC to print
+this warning.  If you complained to me about a false positive like this
+in Smatch I would at least think about various ways to silence it.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+But I probably wouldn't write a check for this anyway because I don't
+view truncating strings as a note worthy bug...
 
-Thanks,
-Ian
+Smatch also gets stuff wrong, but in that case I just always encourage
+people to mark the warning as old news and move on.  Only new warnings
+are interesting.
 
-> ---
->  tools/perf/tests/parse-events.c        | 4 ++--
->  tools/perf/tests/shell/stat_all_pmu.sh | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
-nts.c
-> index f78be21a5999..e52f45c7c3d1 100644
-> --- a/tools/perf/tests/parse-events.c
-> +++ b/tools/perf/tests/parse-events.c
-> @@ -2549,7 +2549,7 @@ static int test__pmu_events(struct test_suite *test=
- __maybe_unused, int subtest
->                         if (strchr(ent->d_name, '.'))
->                                 continue;
->
-> -                       /* exclude parametrized ones (name contains '?') =
-*/
-> +                       /* exclude parameterized ones (name contains '?')=
- */
->                         n =3D snprintf(pmu_event, sizeof(pmu_event), "%s%=
-s", path, ent->d_name);
->                         if (n >=3D PATH_MAX) {
->                                 pr_err("pmu event name crossed PATH_MAX(%=
-d) size\n", PATH_MAX);
-> @@ -2578,7 +2578,7 @@ static int test__pmu_events(struct test_suite *test=
- __maybe_unused, int subtest
->                         fclose(file);
->
->                         if (is_event_parameterized =3D=3D 1) {
-> -                               pr_debug("skipping parametrized PMU event=
-: %s which contains ?\n", pmu_event);
-> +                               pr_debug("skipping parameterized PMU even=
-t: %s which contains ?\n", pmu_event);
->                                 continue;
->                         }
->
-> diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/sh=
-ell/stat_all_pmu.sh
-> index c77955419173..d2a3506e0d19 100755
-> --- a/tools/perf/tests/shell/stat_all_pmu.sh
-> +++ b/tools/perf/tests/shell/stat_all_pmu.sh
-> @@ -4,7 +4,7 @@
->
->  set -e
->
-> -# Test all PMU events; however exclude parametrized ones (name contains =
-'?')
-> +# Test all PMU events; however exclude parameterized ones (name contains=
- '?')
->  for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+=
-[[:space:]]//g'); do
->    echo "Testing $p"
->    result=3D$(perf stat -e "$p" true 2>&1)
-> --
-> 2.39.2
->
+I feel like as we incorporate more and more static analysis into our
+processes we're going to have to give up on trying to keep every static
+checker happy.
+
+regards,
+dan carpenter
