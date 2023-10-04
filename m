@@ -2,139 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC798E8FDD1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C1BE8FDD1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241632AbjJDIEt (ORCPT
+        id S232743AbjJDIFw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
+        Wed, 4 Oct 2023 04:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232804AbjJDIEs (ORCPT
+        with ESMTP id S232596AbjJDIFv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Oct 2023 04:04:48 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6F7A7
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 Oct 2023 01:04:43 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4060b623e64so3545255e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 04 Oct 2023 01:04:43 -0700 (PDT)
+        Wed, 4 Oct 2023 04:05:51 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7ABAC;
+        Wed,  4 Oct 2023 01:05:47 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-405524e6768so17647445e9.2;
+        Wed, 04 Oct 2023 01:05:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696406682; x=1697011482; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IJdb1qMHJ+Cbk4cGjE6rcjXo+B39SPe1RPD3Rof3+L0=;
-        b=uJJ/Vwbc0CbMnwvQUKkm05V3jEdEI7fTq1hMhAHVV6PdLL0OlR43Bd1K2vOuNk/O40
-         bAdRSrMpAdKyez9746d7xRR68K1j7HWK1XmCkfqCRJ6+/JUTrPnRAKl6+3eVFkA+Q0m+
-         s2sAzLLGcGsoWjohU6ceeBi6wbJ5Foh1AeenJjG91dxaBtbo0H26Hr7TS1xXJDx8ms11
-         gH+6HGdRZG8uOhMdiv8Qig+i60VUrp1yhvRMX8YWHkTo2sosivPydebKsIJ4tm8AV9H7
-         E+7mO20CVym0Rzd0HuzLppaZbnhQXfGziAdC3wP2u66srAYJenzHfpd4uqhYHdPRLgSF
-         JF8w==
+        d=gmail.com; s=20230601; t=1696406746; x=1697011546; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5CfZEEfJRek6a1cxfvCbS2vJHw6e2V38hQo9fWQ7BE=;
+        b=O01hd1MKnI7szlrMtBUpQ9XQSVYnAcpcqmPq6fx1J4+b05wVItWjLvB6595EykVGRu
+         k+hc2AUvxER9MmWP5VYd7ojDldmyc8Xjma3zoF5tmtb+xZNXpwIJ1TR1c8e/W7bB8VLw
+         GtdvgdkgAb3lqlEOkpxqzn6G42+4/CQ9pEwOgdE/aMAjCxgbdgTUlCnE0HNRgjZGTKXs
+         pyfvJ+KcYZPlCeD31cJpedZHo42IHz15MVgtegyUA905C8fjGEU0ZaekR4PG6eXIv55Q
+         XcTTqF+IppMSIxQPrKeAj/33o37pFRTjBW7eHSewxcMKhR/PTBn8B0SQkDNiHqWsIGDP
+         Uy0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696406682; x=1697011482;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJdb1qMHJ+Cbk4cGjE6rcjXo+B39SPe1RPD3Rof3+L0=;
-        b=U8BKe0s1PdIF0z7YgjBvKoV4WyZ0+IN6tXCmurHN8oaYNzdH63oNoLn265asHfv9+w
-         FwdycRJ8e0s7O8/JrXRsZB1TY9qiTR2UO1QgHn6eNTYkyn0iAdhGJ7qJtSmZuhuGk/HJ
-         MsXPvoiRqPL/TVMqz1vukzaVI4/OktZ8td+bPk2P2aAxRbP4o+rKa9ZYkG60aLhQMhUz
-         sfl1ooudqYTGG7m3bqB4B4zrVy0kfPjsKwWcdLmd43s/hLdjL9Ed12EuHvPjTx18EPSO
-         0QAt6MCof+npucTSMXK4/fK+fXmpR6w3vyHkPcWIT+TYWtIEB2fcZxSrQ/9XUdYretpR
-         9Iog==
-X-Gm-Message-State: AOJu0Yw0/9gd2rAZKlto/hTpTDR1BJ+/H3m4rYUAtz/RKx7feOzv18uS
-        DQEGsl36zS9u5F6iuKMgR4fEGA==
-X-Google-Smtp-Source: AGHT+IEC7Kk4F818yPH6966d9Z6ExD5ZI8JjXGRj24+Tu4eq1T+SWsvmQBmsuJ3WYMQq3IezkMnwnQ==
-X-Received: by 2002:a05:600c:5014:b0:401:b425:2414 with SMTP id n20-20020a05600c501400b00401b4252414mr3936654wmr.18.1696406681795;
-        Wed, 04 Oct 2023 01:04:41 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c15-20020a7bc84f000000b00405323d47fdsm859765wml.21.2023.10.04.01.04.40
+        d=1e100.net; s=20230601; t=1696406746; x=1697011546;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o5CfZEEfJRek6a1cxfvCbS2vJHw6e2V38hQo9fWQ7BE=;
+        b=wx+7quhg3J6LylNmDy7rr5tG7QiXqqkIOaKSVUEO5CPloTF8emIhUUHg+nuDMbRF/+
+         KIm8kikJeJ9JNFmHNfWvZ+peNPUQBRCdIZ5589cdOHXAeywaBWHJvURVYAF1cWVBPUXm
+         g10u/X/ShUo9IyRwxYZT6Rl86t52iuJSRRoK2kD3eP0iHxcBsKU6rHMGTeViF826tURT
+         EJg+3sUIyx2O3xmj+KHAtTOej0c9MZe/nB7AL1n9NYE3kMjOs5w5cRu+pS3BmwYJI5jt
+         NC038/RUTdYKh9XG2k0Uvs17Xv8HCDKL46JjPKgFi66J76FMFYt2HxyLlV6GPxL8P+ML
+         /0QA==
+X-Gm-Message-State: AOJu0YzwJAwwRK9c086Jmniv+VyZomracrERnezaTWPiy9VON3gHsaKy
+        OEAZo1UguLrZE3LXZOz3btE=
+X-Google-Smtp-Source: AGHT+IHDBENQD6ewVkil1vNt9g2gLmQNN6XpwzvMqLcZV9IgbXe1MV1L1OAq4tt+VMrRKAiDAQJxQA==
+X-Received: by 2002:a1c:720a:0:b0:401:b6f6:d90c with SMTP id n10-20020a1c720a000000b00401b6f6d90cmr1597644wmc.35.1696406745804;
+        Wed, 04 Oct 2023 01:05:45 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p5-20020a1c7405000000b004064e3b94afsm875372wmc.4.2023.10.04.01.05.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 01:04:41 -0700 (PDT)
-Date:   Wed, 4 Oct 2023 11:04:38 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] iavf: Avoid a memory allocation in
- iavf_print_link_message()
-Message-ID: <8c153188-a5e3-46f9-b126-7ae447236022@kadam.mountain>
-References: <966968bda15a7128a381b589329184dfea3e0548.1695471387.git.christophe.jaillet@wanadoo.fr>
- <a5e933fe-4566-9ae6-9a5d-b3a4c186fe0b@intel.com>
- <abf8d279-b579-4a03-9ae9-053cf5efec3d@wanadoo.fr>
- <ecc05528-ba59-922b-7384-4bedd46cf89b@intel.com>
+        Wed, 04 Oct 2023 01:05:45 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] firmware: arm_ffa: Fix spelling mistake "notifcation" -> "notification"
+Date:   Wed,  4 Oct 2023 09:05:44 +0100
+Message-Id: <20231004080544.271040-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ecc05528-ba59-922b-7384-4bedd46cf89b@intel.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 03, 2023 at 04:01:18PM -0700, Jesse Brandeburg wrote:
-> On 10/3/2023 1:33 PM, Christophe JAILLET wrote:
-> > kasprintf() is much better.
-> 
-> cool! I just sent the patches and cc'd you earlier today.
-> 
-> > > 
-> > > your patch still shows these errors
-> > 
-> > I built-tested the patch before sending, so this is strange.
-> > 
-> > However, I got a similar feedback from Greg KH and the "kernel test
-> > robot" for another similar patch.
-> > 
-> > What version of gcc do you use?
-> > I use 12.3.0, and I suspect that the value range algorithm or how the
-> > diagnostic is done has been improved in recent gcc.
-> 
-> Fedora gcc 12.3.1, with W=1 flag
-> 
-> gcc version 12.3.1 20230508 (Red Hat 12.3.1-1) (GCC)
-> 
-> [linux]$ make W=1 M=drivers/net/ethernet/intel/iavf
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_main.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_ethtool.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_virtchnl.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_fdir.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_adv_rss.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_txrx.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_common.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_adminq.o
->   CC [M]  drivers/net/ethernet/intel/iavf/iavf_client.o
-> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c: In function
-> ‘iavf_virtchnl_completion’:
-> drivers/net/ethernet/intel/iavf/iavf_virtchnl.c:1446:60: warning: ‘%s’
-> directive output may be truncated writing 4 bytes into a region of size
-> between 1 and 11 [-Wformat-truncation=]
->  1446 |                 snprintf(speed, IAVF_MAX_SPEED_STRLEN, "%d %s",
->       |                                                            ^~
->  1447 |                          link_speed_mbps, "Mbps");
->       |                                           ~~~~~~
+There is a spelling mistake in a pr_err message. Fix it.
 
-GCC is kind of crap at static analysis, right?  Smatch would know that
-this at most 11 characters long.  It's kind of laziness for GCC to print
-this warning.  If you complained to me about a false positive like this
-in Smatch I would at least think about various ways to silence it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/firmware/arm_ffa/driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But I probably wouldn't write a check for this anyway because I don't
-view truncating strings as a note worthy bug...
+diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+index 201a750b060d..68d1b308cf5d 100644
+--- a/drivers/firmware/arm_ffa/driver.c
++++ b/drivers/firmware/arm_ffa/driver.c
+@@ -1013,7 +1013,7 @@ static int ffa_notify_relinquish(struct ffa_device *dev, int notify_id)
+ 
+ 	rc = update_notifier_cb(notify_id, type, NULL, NULL, false);
+ 	if (rc) {
+-		pr_err("Could not unregister notifcation callback\n");
++		pr_err("Could not unregister notification callback\n");
+ 		mutex_unlock(&drv_info->notify_lock);
+ 		return rc;
+ 	}
+-- 
+2.39.2
 
-Smatch also gets stuff wrong, but in that case I just always encourage
-people to mark the warning as old news and move on.  Only new warnings
-are interesting.
-
-I feel like as we incorporate more and more static analysis into our
-processes we're going to have to give up on trying to keep every static
-checker happy.
-
-regards,
-dan carpenter
