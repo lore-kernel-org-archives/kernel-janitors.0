@@ -2,97 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EC8E7C4EC
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 19:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6030CE7C4FD
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 20:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245436AbjJDTKc (ORCPT
+        id S244753AbjJDUU4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Oct 2023 15:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
+        Wed, 4 Oct 2023 16:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245357AbjJDTKU (ORCPT
+        with ESMTP id S244551AbjJDUUa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Oct 2023 15:10:20 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 690FE729B;
-        Wed,  4 Oct 2023 11:59:24 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c5ff5f858dso704975ad.2;
-        Wed, 04 Oct 2023 11:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696445964; x=1697050764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w1hvqdbML9jmUrBMXlybcpZa1pczZCR/HKc4A1lMQgY=;
-        b=EXj7eEauLHNRVgPNSHL+gIZiflgb0o3nF9Yix91EZSPGjQzOHJSk0QJonjOexxoi51
-         FCnUlG1hrb7r1EGPFx4mo2OzpFvjqXLuqwhSFMagbVilzov51KePeNeYKnTjXzXedeJG
-         eo9Q5z56moM3WP/zxoawmkjtOYPCiiwR3oyAk0CacLp6mKHQFTW2lkGjURUYW1D4OUDp
-         J0SKiyDbyBa7OwNTkCgTA4I5TsT27Up293x/5bBIa2/DUZElpL2YNfbEizrcBccty8t/
-         TMe+UOJvLjqjseVSp01wT37ada5k19Gd3LygWeizvVQfG0YoHMI7x9KPiG/ZmZNM9/WV
-         o3MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696445964; x=1697050764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w1hvqdbML9jmUrBMXlybcpZa1pczZCR/HKc4A1lMQgY=;
-        b=P5qD+VeBQU3bHXJqzdYcVZJ1EUXxqzCUYZO3aFA6GJieZs9+l9lw7rPkEXzjObPFgw
-         L1j2u4uiVNIPUJlRfZTSSVuQrvBj+MWlpcaB2SBuOWM/CbH/45TZCGso1ANiIYda2pVi
-         czSpQ47sTr9PXnCeLONNg5rAbfFoUurwlUwpIxT9KkV4v0vuDgv3CEm8TmAodOpbF2PE
-         ZijU++PPxrfcxdhl2BXUP8hLQ/WlGesDbi8A0Ki66m394nDx6PWVU7whnYxIfSNxu7Ei
-         M+3KlymH8zrTtXcY5GmlJPo1NXrvSkHEMVx4lhJQ0qSpE2r+JtIvpERfqcm6T0MFSdRY
-         ai9Q==
-X-Gm-Message-State: AOJu0YwpuZP47dfedcidOgJDGvM6TR052gbOeQg7gnPGiBsXG5Ujb1cP
-        68J2c7mrFCvheZcWNjtWb9o=
-X-Google-Smtp-Source: AGHT+IG75w5n02io1w2XgbjxayXe88gCBJkiBf/LNuRQyB6rWxM/VHoLwG47D/pBOW+f3fVlwp6+Wg==
-X-Received: by 2002:a17:902:c40a:b0:1c3:a4f2:7c92 with SMTP id k10-20020a170902c40a00b001c3a4f27c92mr3777226plk.65.1696445963644;
-        Wed, 04 Oct 2023 11:59:23 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::4:cef])
-        by smtp.gmail.com with ESMTPSA id j2-20020a170902da8200b001b891259eddsm4071184plx.197.2023.10.04.11.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 11:59:23 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 4 Oct 2023 08:59:21 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
-        kernel-janitors@vger.kernel.org, error27@gmail.com,
-        kamalesh.babulal@oracle.com, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH next] cgroup/cpuset: Cleanup signedness issue in
- cpu_exclusive_check()
-Message-ID: <ZR22CYkZCv52AmML@slm.duckdns.org>
-References: <20230927065801.2139969-1-harshit.m.mogalapalli@oracle.com>
+        Wed, 4 Oct 2023 16:20:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9335BCE
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Oct 2023 13:20:27 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 389B8C433C7;
+        Wed,  4 Oct 2023 20:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696450827;
+        bh=ZvmH7BIUXoz9+C8yaYMR64uYcJgl8a+wyuUOvtV2rS4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=YHrjPkZeALDkpw8fgCbuwv/BTVhN1O8rIfpDk/8p1MJC0FKncy9c0qX+XkcYgs4Rr
+         OIJwXfSW8Fms1z5hVAeZKjBC3mCs5YXS8L2OYJw1LLVl9NXqBsrl+rNaDeeP5rMXVN
+         RNwIADN11/R3DZUGWNLEBu93Ml2//3mEUmE7wF+lpOqIVRNMSzbKiIuIEvSM7S/NFT
+         adDZAFtBRQQKTwT4CPhgIN2R8DaL8ntnnGC0cQRIpwJubbvD7Myhp1c0/FCRo4Hoer
+         j/+CykVG9GEGiShNOl3CkwYHXh9hJJlOk4tyIBTEVEyV0lIzpQWkK0yUq8bKZjcHb3
+         6A6cdti+xOnCw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2120FC395EC;
+        Wed,  4 Oct 2023 20:20:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230927065801.2139969-1-harshit.m.mogalapalli@oracle.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] ptp: ocp: fix error code in probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169645082713.3149.4125825140201127243.git-patchwork-notify@kernel.org>
+Date:   Wed, 04 Oct 2023 20:20:27 +0000
+References: <5c581336-0641-48bd-88f7-51984c3b1f79@moroto.mountain>
+In-Reply-To: <5c581336-0641-48bd-88f7-51984c3b1f79@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     vadim.fedorenko@linux.dev, richardcochran@gmail.com,
+        jonathan.lemon@gmail.com, vadfed@fb.com, davem@davemloft.net,
+        jiri@resnulli.us, arkadiusz.kubalewski@intel.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 26, 2023 at 11:58:01PM -0700, Harshit Mogalapalli wrote:
-> Smatch complains about returning negative error codes from a type
-> bool function.
-> 
-> kernel/cgroup/cpuset.c:705 cpu_exclusive_check() warn:
-> 	signedness bug returning '(-22)'
-> 
-> The code works correctly, but it is confusing.  The current behavior is
-> that cpu_exclusive_check() returns true if it's *NOT* exclusive.  Rename
-> it to cpusets_are_exclusive() and reverse the returns so it returns true
-> if it is exclusive and false if it's not.  Update both callers as well.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <error27@gmail.com>
-> Closes: https://lore.kernel.org/r/202309201706.2LhKdM6o-lkp@intel.com/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Hello:
 
-Applied to cgroup/for-6.7.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks.
+On Wed, 27 Sep 2023 15:55:10 +0300 you wrote:
+> There is a copy and paste error so this uses a valid pointer instead of
+> an error pointer.
+> 
+> Fixes: 09eeb3aecc6c ("ptp_ocp: implement DPLL ops")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/ptp/ptp_ocp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+Here is the summary with links:
+  - [net-next] ptp: ocp: fix error code in probe()
+    https://git.kernel.org/netdev/net-next/c/24a0fbf48cbe
+
+You are awesome, thank you!
 -- 
-tejun
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
