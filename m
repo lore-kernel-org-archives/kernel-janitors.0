@@ -2,180 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04384E8FDD1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B7DE8FDDA
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241624AbjJDIOZ (ORCPT
+        id S241637AbjJDIYz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34492 "EHLO
+        Wed, 4 Oct 2023 04:24:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241613AbjJDIOY (ORCPT
+        with ESMTP id S232845AbjJDIYz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Oct 2023 04:14:24 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEACB0;
-        Wed,  4 Oct 2023 01:14:19 -0700 (PDT)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3947ieTT011703;
-        Wed, 4 Oct 2023 08:13:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=content-type : subject :
- from : in-reply-to : date : cc : message-id : references : to :
- content-transfer-encoding : mime-version; s=pp1;
- bh=6wG+CAtIPo9jgqQLO5mIdbva2aNMLf22M0rB+4CtlYk=;
- b=tH3Yrlr6pQ7/HE0aoAIRmWXqr83aGemwPVi7gxvjAZm7dMG2SeEA27NrQcVQuKWmwPoN
- 5f6/vM+zmrPyWRg6mb79QfTFzXWA6OPGpeb4Ab+nJr4YZLLwAiOWusLx8yiATBcwrvAJ
- YIBllgV7VVKWaDTPEtHb+zeehL1OLxUqX0OEhbHCBSqY4dJJOnS7jLCrd94UKNhW13Nu
- Nudfq0xalzrY/AoCIySMtFpY8FwQQR4Lu5p1nhAdeaXwVwVDC33Z/grEn7qFMooH5u9T
- CdiiBXVMDyOzks9ItaLz66EQ+meqBd1LoTWA4lInHXPNBrAoVV29eOHJEECA6nNHeqRU BQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f49fba-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:13:45 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3947gRoV006247;
-        Wed, 4 Oct 2023 08:13:44 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f49fb5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:13:44 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3947GjaW025043;
-        Wed, 4 Oct 2023 08:13:43 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3texcya2pa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:13:43 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3948Df2618547268
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Oct 2023 08:13:41 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3A0F20040;
-        Wed,  4 Oct 2023 08:13:41 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EC95E2004D;
-        Wed,  4 Oct 2023 08:13:39 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.116.168])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Oct 2023 08:13:39 +0000 (GMT)
-Content-Type: text/plain;
-        charset=utf-8
-Subject: Re: [PATCH][next] perf: fix spelling mistake "parametrized" ->
- "parameterized"
-From:   Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <CAP-5=fXO6+Cgvo4BmC9fgL70FY+ciPjRVR5qghxYBR3VSB7WNQ@mail.gmail.com>
-Date:   Wed, 4 Oct 2023 13:43:28 +0530
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Message-Id: <6929FC3F-06F4-45D1-96D4-0ABF86EA8698@linux.vnet.ibm.com>
-References: <20231003074911.220216-1-colin.i.king@gmail.com>
- <CAP-5=fXO6+Cgvo4BmC9fgL70FY+ciPjRVR5qghxYBR3VSB7WNQ@mail.gmail.com>
-To:     Ian Rogers <irogers@google.com>, colin.i.king@gmail.com
-X-Mailer: Apple Mail (2.3731.700.6)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EUb2hcIaI2GPCHb0IB-fHt_ukS24SjOc
-X-Proofpoint-GUID: l5qlavOLMhoQ30ZRDfGi_hiR-yPfDrjN
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 4 Oct 2023 04:24:55 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D413EA6
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Oct 2023 01:24:51 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-50433d8385cso2211818e87.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 Oct 2023 01:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696407890; x=1697012690; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TBzBZLupXX9UvXePvIFpTAv9OlD36MZ7fOKKYNoR2SQ=;
+        b=kjygUUFE5GnEOOvdYosUeFeICI76kEgoGnj/TRNED9n0JexH/dxJ6y81d3JNTakjdc
+         uCYHMlsV9DuFFxGXecViAF/ydLHvuPoSyZ8kb4Qnq4lyJJ1ZCMTFFzVeL6rqxP9aqmTQ
+         VvZDOAsFCmwpagFT36ojPB484vEbdRMCEJwgH0nsIn3oWFdjL+CD1cW9CY9r6EDe1lSZ
+         bmulkisSvYpF78hUgcZk6Ddb4afE9aR03hz6vZVC9vEylcDyx2pr1HVeMrDg+6RYr9L5
+         UO8UAuTW9hkzfylSXtdGa22WI/AIhFxmF06L2hZ+bk+JiMSW+M3DGjn03QO47DMrMvoN
+         15Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696407890; x=1697012690;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TBzBZLupXX9UvXePvIFpTAv9OlD36MZ7fOKKYNoR2SQ=;
+        b=aRDPwsPVprnfQEAibDjlBXsWDlfojdsXzD6lVoZpHvEM/3Echm/9Cjhmb2jxr5uwXC
+         NaRnHAD2CsNhuAXlp028juiOX6yNcMgueW55IdRD6omI3HLQEiEsYl3egk9Kae6cfAXq
+         RmT/c7qUexe4HhghJirOK55cW+FTT1buwY2z2Shu9qc1CumCw+ovVW8YyjWbr953eh2y
+         uTkml2C8fksfFDhHGkzjUEOAsKefb1rZqnExdVoUMMzdoJ4OVkoVqx7rU3AUDKAUsoNg
+         ey+FF4qER8cHJ3pZr5OoJIPRG6essykC2oFQoDN/UmrQoW9Gx9HQxjy0jJpd2eGpAgdt
+         fCiQ==
+X-Gm-Message-State: AOJu0Yysv9QCe/Pbt/nJVCHIwSKZYizkjo9IDQJUQVDMUMQFBJAK3WEf
+        atiunjqCOT0JYkfFZotHzzzyxQ==
+X-Google-Smtp-Source: AGHT+IEvoV7teqz1BwPrURsFy2E9i2CruD+t5R/jxpizo3Sc5L4ZFkFV6uWGLb5w+yGTlNScGzRgiA==
+X-Received: by 2002:a19:e05b:0:b0:503:56e:ae4 with SMTP id g27-20020a19e05b000000b00503056e0ae4mr1277421lfj.38.1696407890054;
+        Wed, 04 Oct 2023 01:24:50 -0700 (PDT)
+Received: from hackbox.lan ([86.123.99.172])
+        by smtp.gmail.com with ESMTPSA id bo18-20020a0564020b3200b00533f111b61dsm2021467edb.68.2023.10.04.01.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 01:24:49 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@nxp.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] clk: imx: imx8: Fix some error handling paths
+Date:   Wed,  4 Oct 2023 11:24:41 +0300
+Message-Id: <169640782687.164802.380569938820374861.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-04_01,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2309180000 definitions=main-2310040049
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+On Thu, 14 Sep 2023 22:31:01 +0200, Christophe JAILLET wrote:
+> This serie fix some error handling paths. It is split in different patches to
+> ease review because the issues are unrelated and the proposed fixes are maybe
+> wrong (I don't have the hardware to test anything)
+> 
+> Some of v1 patches had been incorrectly hand modified. There was a extra ')' in
+> patch 3 and 4 that prevented the merge.
+> 
+> [...]
 
-> On 04-Oct-2023, at 6:37 AM, Ian Rogers <irogers@google.com> wrote:
->=20
-> On Tue, Oct 3, 2023 at 12:49=E2=80=AFAM Colin Ian King <colin.i.king@gmai=
-l.com> wrote:
->>=20
->> There are spelling mistakes in comments and a pr_debug message. Fix them.
->>=20
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->=20
-> + Athira Rajeev
->=20
-> Reviewed-by: Ian Rogers <irogers@google.com>
+Applied, thanks!
 
-Reviewed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <mailto:atrajeev@li=
-nux.vnet.ibm.com>>
+[1/5] clk: imx: imx8: Fix an error handling path in clk_imx_acm_attach_pm_domains()
+      commit: 156624e2cf815ce98fad5a24f04370f4459ae6f4
+[2/5] clk: imx: imx8: Fix an error handling path if devm_clk_hw_register_mux_parent_data_table() fails
+      commit: 9a0108acdb1b6189dcc8f9318edfc6b7e0281df4
+[3/5] clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+      commit: e9a164e367f039629fd5466a79b9f495646e1261
+[4/5] clk: imx: imx8: Add a message in case of devm_clk_hw_register_mux_parent_data_table() error
+      commit: ef23d44b7fcbd19773dcedcb50ca2f625107604f
+[5/5] clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+      commit: 3af29a89de2c6e49737a1201b7d6fd5ad3f635a4
 
-Thanks
-Athira
->=20
-> Thanks,
-> Ian
->=20
->> ---
->> tools/perf/tests/parse-events.c        | 4 ++--
->> tools/perf/tests/shell/stat_all_pmu.sh | 2 +-
->> 2 files changed, 3 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-ev=
-ents.c
->> index f78be21a5999..e52f45c7c3d1 100644
->> --- a/tools/perf/tests/parse-events.c
->> +++ b/tools/perf/tests/parse-events.c
->> @@ -2549,7 +2549,7 @@ static int test__pmu_events(struct test_suite *tes=
-t __maybe_unused, int subtest
->>                        if (strchr(ent->d_name, '.'))
->>                                continue;
->>=20
->> -                       /* exclude parametrized ones (name contains '?')=
- */
->> +                       /* exclude parameterized ones (name contains '?'=
-) */
->>                        n =3D snprintf(pmu_event, sizeof(pmu_event), "%s%=
-s", path, ent->d_name);
->>                        if (n >=3D PATH_MAX) {
->>                                pr_err("pmu event name crossed PATH_MAX(%=
-d) size\n", PATH_MAX);
->> @@ -2578,7 +2578,7 @@ static int test__pmu_events(struct test_suite *tes=
-t __maybe_unused, int subtest
->>                        fclose(file);
->>=20
->>                        if (is_event_parameterized =3D=3D 1) {
->> -                               pr_debug("skipping parametrized PMU even=
-t: %s which contains ?\n", pmu_event);
->> +                               pr_debug("skipping parameterized PMU eve=
-nt: %s which contains ?\n", pmu_event);
->>                                continue;
->>                        }
->>=20
->> diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/s=
-hell/stat_all_pmu.sh
->> index c77955419173..d2a3506e0d19 100755
->> --- a/tools/perf/tests/shell/stat_all_pmu.sh
->> +++ b/tools/perf/tests/shell/stat_all_pmu.sh
->> @@ -4,7 +4,7 @@
->>=20
->> set -e
->>=20
->> -# Test all PMU events; however exclude parametrized ones (name contains=
- '?')
->> +# Test all PMU events; however exclude parameterized ones (name contain=
-s '?')
->> for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+=
-[[:space:]]//g'); do
->>   echo "Testing $p"
->>   result=3D$(perf stat -e "$p" true 2>&1)
->> --
->> 2.39.2
->>=20
-
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
