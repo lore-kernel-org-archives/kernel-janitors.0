@@ -2,89 +2,180 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C1BE8FDD1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04384E8FDD1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Oct 2023 08:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232743AbjJDIFw (ORCPT
+        id S241624AbjJDIOZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:05:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38246 "EHLO
+        Wed, 4 Oct 2023 04:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232596AbjJDIFv (ORCPT
+        with ESMTP id S241613AbjJDIOY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Oct 2023 04:05:51 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7ABAC;
-        Wed,  4 Oct 2023 01:05:47 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-405524e6768so17647445e9.2;
-        Wed, 04 Oct 2023 01:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696406746; x=1697011546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5CfZEEfJRek6a1cxfvCbS2vJHw6e2V38hQo9fWQ7BE=;
-        b=O01hd1MKnI7szlrMtBUpQ9XQSVYnAcpcqmPq6fx1J4+b05wVItWjLvB6595EykVGRu
-         k+hc2AUvxER9MmWP5VYd7ojDldmyc8Xjma3zoF5tmtb+xZNXpwIJ1TR1c8e/W7bB8VLw
-         GtdvgdkgAb3lqlEOkpxqzn6G42+4/CQ9pEwOgdE/aMAjCxgbdgTUlCnE0HNRgjZGTKXs
-         pyfvJ+KcYZPlCeD31cJpedZHo42IHz15MVgtegyUA905C8fjGEU0ZaekR4PG6eXIv55Q
-         XcTTqF+IppMSIxQPrKeAj/33o37pFRTjBW7eHSewxcMKhR/PTBn8B0SQkDNiHqWsIGDP
-         Uy0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696406746; x=1697011546;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o5CfZEEfJRek6a1cxfvCbS2vJHw6e2V38hQo9fWQ7BE=;
-        b=wx+7quhg3J6LylNmDy7rr5tG7QiXqqkIOaKSVUEO5CPloTF8emIhUUHg+nuDMbRF/+
-         KIm8kikJeJ9JNFmHNfWvZ+peNPUQBRCdIZ5589cdOHXAeywaBWHJvURVYAF1cWVBPUXm
-         g10u/X/ShUo9IyRwxYZT6Rl86t52iuJSRRoK2kD3eP0iHxcBsKU6rHMGTeViF826tURT
-         EJg+3sUIyx2O3xmj+KHAtTOej0c9MZe/nB7AL1n9NYE3kMjOs5w5cRu+pS3BmwYJI5jt
-         NC038/RUTdYKh9XG2k0Uvs17Xv8HCDKL46JjPKgFi66J76FMFYt2HxyLlV6GPxL8P+ML
-         /0QA==
-X-Gm-Message-State: AOJu0YzwJAwwRK9c086Jmniv+VyZomracrERnezaTWPiy9VON3gHsaKy
-        OEAZo1UguLrZE3LXZOz3btE=
-X-Google-Smtp-Source: AGHT+IHDBENQD6ewVkil1vNt9g2gLmQNN6XpwzvMqLcZV9IgbXe1MV1L1OAq4tt+VMrRKAiDAQJxQA==
-X-Received: by 2002:a1c:720a:0:b0:401:b6f6:d90c with SMTP id n10-20020a1c720a000000b00401b6f6d90cmr1597644wmc.35.1696406745804;
-        Wed, 04 Oct 2023 01:05:45 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p5-20020a1c7405000000b004064e3b94afsm875372wmc.4.2023.10.04.01.05.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 01:05:45 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] firmware: arm_ffa: Fix spelling mistake "notifcation" -> "notification"
-Date:   Wed,  4 Oct 2023 09:05:44 +0100
-Message-Id: <20231004080544.271040-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Wed, 4 Oct 2023 04:14:24 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEACB0;
+        Wed,  4 Oct 2023 01:14:19 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3947ieTT011703;
+        Wed, 4 Oct 2023 08:13:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=content-type : subject :
+ from : in-reply-to : date : cc : message-id : references : to :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=6wG+CAtIPo9jgqQLO5mIdbva2aNMLf22M0rB+4CtlYk=;
+ b=tH3Yrlr6pQ7/HE0aoAIRmWXqr83aGemwPVi7gxvjAZm7dMG2SeEA27NrQcVQuKWmwPoN
+ 5f6/vM+zmrPyWRg6mb79QfTFzXWA6OPGpeb4Ab+nJr4YZLLwAiOWusLx8yiATBcwrvAJ
+ YIBllgV7VVKWaDTPEtHb+zeehL1OLxUqX0OEhbHCBSqY4dJJOnS7jLCrd94UKNhW13Nu
+ Nudfq0xalzrY/AoCIySMtFpY8FwQQR4Lu5p1nhAdeaXwVwVDC33Z/grEn7qFMooH5u9T
+ CdiiBXVMDyOzks9ItaLz66EQ+meqBd1LoTWA4lInHXPNBrAoVV29eOHJEECA6nNHeqRU BQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f49fba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Oct 2023 08:13:45 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3947gRoV006247;
+        Wed, 4 Oct 2023 08:13:44 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f49fb5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Oct 2023 08:13:44 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3947GjaW025043;
+        Wed, 4 Oct 2023 08:13:43 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3texcya2pa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Oct 2023 08:13:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3948Df2618547268
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Oct 2023 08:13:41 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3A0F20040;
+        Wed,  4 Oct 2023 08:13:41 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC95E2004D;
+        Wed,  4 Oct 2023 08:13:39 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.116.168])
+        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Wed,  4 Oct 2023 08:13:39 +0000 (GMT)
+Content-Type: text/plain;
+        charset=utf-8
+Subject: Re: [PATCH][next] perf: fix spelling mistake "parametrized" ->
+ "parameterized"
+From:   Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <CAP-5=fXO6+Cgvo4BmC9fgL70FY+ciPjRVR5qghxYBR3VSB7WNQ@mail.gmail.com>
+Date:   Wed, 4 Oct 2023 13:43:28 +0530
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Message-Id: <6929FC3F-06F4-45D1-96D4-0ABF86EA8698@linux.vnet.ibm.com>
+References: <20231003074911.220216-1-colin.i.king@gmail.com>
+ <CAP-5=fXO6+Cgvo4BmC9fgL70FY+ciPjRVR5qghxYBR3VSB7WNQ@mail.gmail.com>
+To:     Ian Rogers <irogers@google.com>, colin.i.king@gmail.com
+X-Mailer: Apple Mail (2.3731.700.6)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: EUb2hcIaI2GPCHb0IB-fHt_ukS24SjOc
+X-Proofpoint-GUID: l5qlavOLMhoQ30ZRDfGi_hiR-yPfDrjN
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-04_01,2023-10-02_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310040049
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_err message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/firmware/arm_ffa/driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index 201a750b060d..68d1b308cf5d 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -1013,7 +1013,7 @@ static int ffa_notify_relinquish(struct ffa_device *dev, int notify_id)
- 
- 	rc = update_notifier_cb(notify_id, type, NULL, NULL, false);
- 	if (rc) {
--		pr_err("Could not unregister notifcation callback\n");
-+		pr_err("Could not unregister notification callback\n");
- 		mutex_unlock(&drv_info->notify_lock);
- 		return rc;
- 	}
--- 
-2.39.2
+> On 04-Oct-2023, at 6:37 AM, Ian Rogers <irogers@google.com> wrote:
+>=20
+> On Tue, Oct 3, 2023 at 12:49=E2=80=AFAM Colin Ian King <colin.i.king@gmai=
+l.com> wrote:
+>>=20
+>> There are spelling mistakes in comments and a pr_debug message. Fix them.
+>>=20
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>=20
+> + Athira Rajeev
+>=20
+> Reviewed-by: Ian Rogers <irogers@google.com>
+
+Reviewed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <mailto:atrajeev@li=
+nux.vnet.ibm.com>>
+
+Thanks
+Athira
+>=20
+> Thanks,
+> Ian
+>=20
+>> ---
+>> tools/perf/tests/parse-events.c        | 4 ++--
+>> tools/perf/tests/shell/stat_all_pmu.sh | 2 +-
+>> 2 files changed, 3 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-ev=
+ents.c
+>> index f78be21a5999..e52f45c7c3d1 100644
+>> --- a/tools/perf/tests/parse-events.c
+>> +++ b/tools/perf/tests/parse-events.c
+>> @@ -2549,7 +2549,7 @@ static int test__pmu_events(struct test_suite *tes=
+t __maybe_unused, int subtest
+>>                        if (strchr(ent->d_name, '.'))
+>>                                continue;
+>>=20
+>> -                       /* exclude parametrized ones (name contains '?')=
+ */
+>> +                       /* exclude parameterized ones (name contains '?'=
+) */
+>>                        n =3D snprintf(pmu_event, sizeof(pmu_event), "%s%=
+s", path, ent->d_name);
+>>                        if (n >=3D PATH_MAX) {
+>>                                pr_err("pmu event name crossed PATH_MAX(%=
+d) size\n", PATH_MAX);
+>> @@ -2578,7 +2578,7 @@ static int test__pmu_events(struct test_suite *tes=
+t __maybe_unused, int subtest
+>>                        fclose(file);
+>>=20
+>>                        if (is_event_parameterized =3D=3D 1) {
+>> -                               pr_debug("skipping parametrized PMU even=
+t: %s which contains ?\n", pmu_event);
+>> +                               pr_debug("skipping parameterized PMU eve=
+nt: %s which contains ?\n", pmu_event);
+>>                                continue;
+>>                        }
+>>=20
+>> diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/s=
+hell/stat_all_pmu.sh
+>> index c77955419173..d2a3506e0d19 100755
+>> --- a/tools/perf/tests/shell/stat_all_pmu.sh
+>> +++ b/tools/perf/tests/shell/stat_all_pmu.sh
+>> @@ -4,7 +4,7 @@
+>>=20
+>> set -e
+>>=20
+>> -# Test all PMU events; however exclude parametrized ones (name contains=
+ '?')
+>> +# Test all PMU events; however exclude parameterized ones (name contain=
+s '?')
+>> for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+=
+[[:space:]]//g'); do
+>>   echo "Testing $p"
+>>   result=3D$(perf stat -e "$p" true 2>&1)
+>> --
+>> 2.39.2
+>>=20
 
