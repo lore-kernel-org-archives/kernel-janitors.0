@@ -2,165 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F1FE9270D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 15:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3C4E92718
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 15:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234157AbjJEPx6 (ORCPT
+        id S234353AbjJEP6G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43582 "EHLO
+        Thu, 5 Oct 2023 11:58:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235715AbjJEPvl (ORCPT
+        with ESMTP id S234452AbjJEP4t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:51:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5938E20E63
-        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 07:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696514952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=D2fnoj8vzkTz1uPdmOImvOOhAqJGXgCxNbu69/797zA=;
-        b=FeVSjt2pfjdD1BjdvtyHqNtSfz5ktD8wdQsHxbKphom5+5AkZTm9c/QQK7+1xs+T7q1Hrm
-        8cVNf8+wPeh8QRbXMdHwUqwr+jU49NdUIKCwkCnYAMGghuYlQVtr1HXEBl4Wgg5TI7H8oR
-        ocbFq8wCUmWwO5olO+bG5I8y0AUFC4s=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-403-1Rv6iIZNN2yJolcwKKicJQ-1; Thu, 05 Oct 2023 04:06:25 -0400
-X-MC-Unique: 1Rv6iIZNN2yJolcwKKicJQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9ae5101b152so15404966b.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 01:06:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696493184; x=1697097984;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        Thu, 5 Oct 2023 11:56:49 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614101347E
+        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 06:57:26 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3248ac76acbso924343f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 06:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696514245; x=1697119045; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=D2fnoj8vzkTz1uPdmOImvOOhAqJGXgCxNbu69/797zA=;
-        b=eJTZ/bxMaul3SSioBx/BXnK+TjmHXOmj5PdqBeSqNty7HXzV85uQ4JM5qItKMVUuoO
-         dFh8EnlnAz9OfYpBK6Qmid2TTb9dzFYOwcTvxrVq1e3509kHfcOVgUdtL+yj4cYRNUPg
-         GOhVTerzkeb5qfST3iykJ6Zyp/CwnH9kSetfZ84ly8s+pU712hxcaXiRTEQjo7fDt152
-         DZHUmen6ThKHr98fhBptrh9brTe05NndyvERBZu9pTPOS9tkxCHKrP/TPNnNiCimu6EP
-         AuXkV/u/kUuRLqv4aDhWmFcNdt/IQGcmU7tAAgTKXdpCT4VtpYBxq8gS/ynsdfFAZKEK
-         YHkw==
-X-Gm-Message-State: AOJu0Yz/S/vRWwFHDB5WSAdBd37wiVf9EyzFFoyWfdPLAERp5s1+H6x5
-        pF5i9n3+Uov8MiZ64m0al7WWHVmask+Toy6nxo6DHEwLcgCginqr6kLh+G+36fnAhjOFhTBsqPB
-        5YkndpGwQD8DQ8CtxMce7VrGFyVeC
-X-Received: by 2002:a17:906:10a:b0:9b1:488d:afd1 with SMTP id 10-20020a170906010a00b009b1488dafd1mr4562856eje.5.1696493184541;
-        Thu, 05 Oct 2023 01:06:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeg2b8hY+aWyTZPpZKtdDpIPfskC7OlfK/6tOjFU1hvul2wP0Aq6GMQ3TFGXo026SjSV5hYg==
-X-Received: by 2002:a17:906:10a:b0:9b1:488d:afd1 with SMTP id 10-20020a170906010a00b009b1488dafd1mr4562827eje.5.1696493184131;
-        Thu, 05 Oct 2023 01:06:24 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-237-55.dyn.eolo.it. [146.241.237.55])
-        by smtp.gmail.com with ESMTPSA id si5-20020a170906cec500b009b97d9ae329sm747224ejb.198.2023.10.05.01.06.22
+        bh=AooGTYUy452CMDPClrlTisOX8k1qSdGixxMstg0I9q0=;
+        b=RXHKOdEK900FcuhVBywDk8NW2QQyrPnVZzSGHaCppaXF0yqIKMULLollDslbMvc0W2
+         FcMBed8lKnDktsfnD+TmkWNtV0Aqs3C6gDFTvaaj4HWE/OxmUB60K/wMv05dmX9jcBC+
+         a2qTcHku8g5tAt40GYteCXkgQZpauuTQmPCU7bYYprUZpxtH4t1VMoxWl4Hnp4TnkNVl
+         nQ1ky6ZjrZGCNKP5N3V6Dixagr5IDmdZ9FMy/k2vEYKTgy3C5xfS5/S7XG5JFyKrCtN3
+         71syKa/+TeN/zF1lD7/x7OsBB6tcO905CWXQtRFxGY1g8WHTChIJqjnxxu0dshJvllM8
+         jvZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696514245; x=1697119045;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AooGTYUy452CMDPClrlTisOX8k1qSdGixxMstg0I9q0=;
+        b=RFwo2jDRVXGYEnr5NgovovAUs/EIEuIDDxJtNA3pvmTH7o/IiD/VzFXCJjVQ4wUCOb
+         hP+0NUYOAdufFW91/YZbbmjkHJ2Zrw1Q0kfkPdfOGXJgawYzCO81W/6xICjbzj12/QlJ
+         RwafiEW1R1SJSZfyLdSXllEHxBbLkjCvCVVinqr9GW0RRE4IMdJWJOcmfZ3JHOb+NvLA
+         3XS+l+8A6Wph/7K9pzEh8+zSWquLmPTyloWCGcveKj8ynpijoveoyDR3y5SwwTmXQv5N
+         PDLN0G03AsJ7rb6a5FeYm8yTCwWZdizLUIQI7ac2w+P6s4/AkO2jDSNbs/x7QCWPcZwo
+         ANRA==
+X-Gm-Message-State: AOJu0YxkqBXvKcZhIRFZe43O1C7RbLBYkPqDE7MQb2ATYJCLUg3jAw90
+        iQFvq3m331deNrAle79g9g+DCxyazCwdHAiE9yY=
+X-Google-Smtp-Source: AGHT+IGEGxGJ8wEps7sHxei6GOKIWpDvnRrTfQ/aBGCmZAYI2aBq2ytwW6bqUoWdRMnKb5xGjvnu4Q==
+X-Received: by 2002:a5d:45c8:0:b0:317:dd94:ed38 with SMTP id b8-20020a5d45c8000000b00317dd94ed38mr4875974wrs.42.1696514244730;
+        Thu, 05 Oct 2023 06:57:24 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id q13-20020adff78d000000b0032415213a6fsm1861805wrp.87.2023.10.05.06.57.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 01:06:23 -0700 (PDT)
-Message-ID: <7102fb731c18f7b10f19f6bdc05d8a7f74e43feb.camel@redhat.com>
-Subject: Re: [PATCH net-next] net: dsa: microchip: Uninitialized variable in
- ksz9477_acl_move_entries()
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Vladimir Oltean <olteanv@gmail.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Thu, 05 Oct 2023 06:57:24 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 16:57:21 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jinjie Ruan <ruanjinjie@huawei.com>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Simon Horman <horms@kernel.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Date:   Thu, 05 Oct 2023 10:06:22 +0200
-In-Reply-To: <20231002152853.xjyxlvpouktfbg6k@skbuf>
-References: <2f58ca9a-9ac5-460a-98a4-aa8304f2348a@moroto.mountain>
-         <20230927144624.GN2714790@pengutronix.de>
-         <20231002152853.xjyxlvpouktfbg6k@skbuf>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+Subject: [PATCH net-next 1/2] igb: Fix an end of loop test
+Message-ID: <4d61f086-c7b4-4762-b025-0ba5df08968b@moroto.mountain>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2023-10-02 at 18:28 +0300, Vladimir Oltean wrote:
-> Hi Oleksij,
->=20
-> On Wed, Sep 27, 2023 at 04:46:24PM +0200, Oleksij Rempel wrote:
-> > On Wed, Sep 27, 2023 at 03:53:37PM +0300, Dan Carpenter wrote:
-> > > Smatch complains that if "src_idx" equals "dst_idx" then
-> > > ksz9477_validate_and_get_src_count() doesn't initialized "src_count".
-> > > Set it to zero for this situation.
-> > >=20
-> > > Fixes: 002841be134e ("net: dsa: microchip: Add partial ACL support fo=
-r ksz9477 switches")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >=20
-> > Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> >=20
-> > Thank you!
-> >=20
-> > > ---
-> > >  drivers/net/dsa/microchip/ksz9477_acl.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/net/dsa/microchip/ksz9477_acl.c b/drivers/net/ds=
-a/microchip/ksz9477_acl.c
-> > > index 06d74c19eb94..e554cd4a024b 100644
-> > > --- a/drivers/net/dsa/microchip/ksz9477_acl.c
-> > > +++ b/drivers/net/dsa/microchip/ksz9477_acl.c
-> > > @@ -554,7 +554,8 @@ static int ksz9477_acl_move_entries(struct ksz_de=
-vice *dev, int port,
-> > >  	struct ksz9477_acl_entry buffer[KSZ9477_ACL_MAX_ENTRIES];
-> > >  	struct ksz9477_acl_priv *acl =3D dev->ports[port].acl_priv;
-> > >  	struct ksz9477_acl_entries *acles =3D &acl->acles;
-> > > -	int src_count, ret, dst_count;
-> > > +	int ret, dst_count;
-> > > +	int src_count =3D 0;
-> > > =20
-> > >  	ret =3D ksz9477_validate_and_get_src_count(dev, port, src_idx, dst_=
-idx,
-> > >  						 &src_count, &dst_count);
-> > > --=20
-> > > 2.39.2
-> > >=20
-> > >=20
-> > >=20
-> >=20
-> > --=20
-> > Pengutronix e.K.                           |                           =
-  |
-> > Steuerwalder Str. 21                       | http://www.pengutronix.de/=
-  |
-> > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0  =
-  |
-> > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
->=20
-> For the case where src_idx =3D=3D dst_idx that Dan points out, is this pa=
-tch
-> sufficient to ensure that ksz9477_acl_move_entries() will not execute
-> unwanted code paths? For example, it will still call ksz9477_move_entries=
-_upwards(),
-> which from what I can tell, will do something given the way in which it's=
- written.
->=20
-> Perhaps it would be better to move this line:
->=20
-> 	/* Nothing to do */
-> 	if (src_idx =3D=3D dst_idx)
-> 		return 0;
->=20
-> outside of ksz9477_validate_and_get_src_count() and into its single calle=
-r,
-> ksz9477_acl_move_entries()?
+When we exit a list_for_each_entry() without hitting a break statement,
+the list iterator isn't NULL, it just point to an offset off the
+list_head.  In that situation, it wouldn't be too surprising for
+entry->free to be true and we end up corrupting memory.
 
-Additionally, it looks like that when (src_idx =3D=3D dst_idx) even
-dst_count is not initialized but is still later used.
+The way to test for these is to just set a flag.
 
-Cheers,
+Fixes: c1fec890458a ("ethernet/intel: Use list_for_each_entry() helper")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Paolo
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 2ac9dffd0bf8..c45b1e7cde58 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -7857,7 +7857,8 @@ static int igb_set_vf_mac_filter(struct igb_adapter *adapter, const int vf,
+ {
+ 	struct pci_dev *pdev = adapter->pdev;
+ 	struct vf_data_storage *vf_data = &adapter->vf_data[vf];
+-	struct vf_mac_filter *entry = NULL;
++	struct vf_mac_filter *entry;
++	bool found = false;
+ 	int ret = 0;
+ 
+ 	if ((vf_data->flags & IGB_VF_FLAG_PF_SET_MAC) &&
+@@ -7888,11 +7889,13 @@ static int igb_set_vf_mac_filter(struct igb_adapter *adapter, const int vf,
+ 	case E1000_VF_MAC_FILTER_ADD:
+ 		/* try to find empty slot in the list */
+ 		list_for_each_entry(entry, &adapter->vf_macs.l, l) {
+-			if (entry->free)
++			if (entry->free) {
++				found = true;
+ 				break;
++			}
+ 		}
+ 
+-		if (entry && entry->free) {
++		if (found) {
+ 			entry->free = false;
+ 			entry->vf = vf;
+ 			ether_addr_copy(entry->vf_mac, addr);
+-- 
+2.39.2
 
