@@ -2,165 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC50E92706
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DAE9270C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232714AbjJEOTd (ORCPT
+        id S233729AbjJEOex (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57378 "EHLO
+        Thu, 5 Oct 2023 10:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231863AbjJEOR0 (ORCPT
+        with ESMTP id S235115AbjJEOdL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:17:26 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD87F2486A
-        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 04:19:29 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40566f8a093so7393825e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 04:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696504768; x=1697109568; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9LKCiGSV/cuMXEYdiJil1myXSOfx9MNViFnO/h9nEBA=;
-        b=rsKd1eCDCzM3GTQdScgk/dEX4rrYOiT0DrzGPGxytPiv01oDu8dmJxCnE9PrP/WIkI
-         7IwRMo6regjvT8hhcuBpNzbzL3yuFM8ONqqGstKcYk49MvD/3lR8Yv/NDGwph5Zydu7a
-         puRnPZYG06yle4Q37/qv10vPZIoHjo35B7c89vpFyPeCwbs8RbeEIv3MRGf76ixyFqcd
-         y3hTZMIMl62kImLmt3VpvBVkGfqAX9fN0GGRwQUnEv08bjSVx+0df83X8mjvVQD1TI6l
-         9kji+YqqOtWYW0BOj0eUHWxkQ1GB7mGLOoPkD1p0FnEammnndDS9zx+zWZ1k74ksaXa6
-         x6pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696504768; x=1697109568;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9LKCiGSV/cuMXEYdiJil1myXSOfx9MNViFnO/h9nEBA=;
-        b=iS8Oz7IVgDRe0AV48U9qXx2lPb7hssYfQaIg22dSjhbPhe7Q/BN8RSC83c4q+NG55U
-         aHZa11rEHnqLaGCRrfbxTpVpXFn8TmReTf9A3Ct2jSitTMgBmmuSoohPXxzsVbzZQ2Wk
-         XeJAnFj9eRUoeMSyOr8F4WeIKJWkolcE0Yhmm7YSBFDnZwYiUBvuO+OGg6bVAeQcsvgT
-         FkVHhngpWbVAyT7x4/9UJDDF6z10RWB7cUE7FqFbnUKeu9+73Pe0+rjmjSqVUgbHMD0j
-         vAG/KeXLXBepSmFAAaLi62bNsIokM/8MNXOmXZGuWmswYKhEtqxuDc9orQuncp8tnVPY
-         n55A==
-X-Gm-Message-State: AOJu0YwheMFB7XmGeW6vYFyzHSM3kfxPacNzb0I+CO1LkU11Gr/velNx
-        +JhY80Gxa6l5ox0zINLWHefdpQ==
-X-Google-Smtp-Source: AGHT+IHXJRakpDXJ4VUBMMYIV9wfPKW43f+yaIrWAqlTvo3Y/zdHtgPKm4FKUQCuKZK3LdgpybK9dQ==
-X-Received: by 2002:a05:600c:2197:b0:405:514d:eb0e with SMTP id e23-20020a05600c219700b00405514deb0emr4954223wme.19.1696504768002;
-        Thu, 05 Oct 2023 04:19:28 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s10-20020a05600c044a00b004063c9f68f2sm1282084wmb.26.2023.10.05.04.19.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 04:19:27 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 14:19:23 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] Bluetooth: msft: __hci_cmd_sync() doesn't return NULL
-Message-ID: <5fffad33-4d19-4645-a21f-57321d1c82a6@moroto.mountain>
+        Thu, 5 Oct 2023 10:33:11 -0400
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C342261B4;
+        Thu,  5 Oct 2023 05:24:16 -0700 (PDT)
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+        id 6F01992009C; Thu,  5 Oct 2023 14:24:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by angie.orcam.me.uk (Postfix) with ESMTP id 6B00692009B;
+        Thu,  5 Oct 2023 13:24:12 +0100 (BST)
+Date:   Thu, 5 Oct 2023 13:24:12 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+cc:     Su Hui <suhui@nfschina.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rafael@kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] driver base: slience unused warning
+In-Reply-To: <d98f7107-56d7-44a3-8b77-b8766cdc02d9@kadam.mountain>
+Message-ID: <alpine.DEB.2.21.2310051305530.20354@angie.orcam.me.uk>
+References: <45027fa0-cda5-2a80-f1cd-ed805d2717ee@nfschina.com> <alpine.DEB.2.21.2310041557310.61599@angie.orcam.me.uk> <d98f7107-56d7-44a3-8b77-b8766cdc02d9@kadam.mountain>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The __hci_cmd_sync() function doesn't return NULL.  Checking for NULL
-doesn't make the code safer, it just confuses people.
+On Wed, 4 Oct 2023, Dan Carpenter wrote:
 
-When a function returns both error pointers and NULL then generally the
-NULL is a kind of success case.  For example, maybe we look up an item
-then errors mean we ran out of memory but NULL means the item is not
-found.  Or if we request a feature, then error pointers mean that there
-was an error but NULL means that the feature has been deliberately
-turned off.
+> > > This variable is been used but never be read, so gcc and W=1 give such
+> > > warning.
+> > > 
+> > > drivers/base/module.c:36:6: error:
+> > > variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
+> > > 
+> > > I wanted to use "__maybe_unused" to avoid  this warning.
+> > > 
+> > > However it seems like a wrong using of "__maybe_unused" as Greg KH said:
+> > > 
+> > > "But no_warn is being used in this file, it's being set but not read
+> > > which is ok.  That's a real use, so this change really isn't correct,
+> > > sorry."
+> > 
+> >  The warning itself is a real issue to be sorted though.  Is this a use 
+> > case for `#pragma GCC diagnostic'?
+> 
+> I thought Greg liked using __maybe_unused in this case?  This is
+> drivers/base.  Do the rest of us even get a vote?  ;)
+> 
+> If I do have a vote then #pragma is always the worst option.  Linus has
+> taught me to dislike pragmas a lot.
 
-In this code it's different.  The NULL is handled as if there is a bug
-in __hci_cmd_sync() where it accidentally returns NULL instead of a
-proper error code.  This was done consistently until commit 9e14606d8f38
-("Bluetooth: msft: Extended monitor tracking by address filter") which
-deleted the work around for the potential future bug and treated NULL as
-success.
+ I'm not a great supporter of this solution, but at least it's guaranteed 
+to work by definition.  Otherwise we could try to outsmart the compiler; 
+perhaps:
 
-Predicting potential future bugs is complicated, but we should just fix
-them instead of working around them.  Instead of debating whether NULL
-is failure or success, let's just say it's currently impossible and
-delete the dead code.
+	(no_warn = sysfs_create_link(&drv->p->kobj, &mk->kobj,
+				     "module")), no_warn;
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/bluetooth/msft.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+would work.  At the end of the day it's us who told the compiler to warn 
+if the result of `sysfs_create_link' is unused with all the consequences.  
+And while assigning to `no_warn' technically fulfils the requirement, the 
+variable itself isn't used beyond being assigned to, which the compiler 
+rightfully complains about because we asked for it.  It's up to us really 
+to tell the compiler what we want it to complain about and what we do not.
 
-diff --git a/net/bluetooth/msft.c b/net/bluetooth/msft.c
-index abbafa6194ca..630e3023273b 100644
---- a/net/bluetooth/msft.c
-+++ b/net/bluetooth/msft.c
-@@ -150,10 +150,7 @@ static bool read_supported_features(struct hci_dev *hdev,
- 
- 	skb = __hci_cmd_sync(hdev, hdev->msft_opcode, sizeof(cp), &cp,
- 			     HCI_CMD_TIMEOUT);
--	if (IS_ERR_OR_NULL(skb)) {
--		if (!skb)
--			skb = ERR_PTR(-EIO);
--
-+	if (IS_ERR(skb)) {
- 		bt_dev_err(hdev, "Failed to read MSFT supported features (%ld)",
- 			   PTR_ERR(skb));
- 		return false;
-@@ -353,7 +350,7 @@ static void msft_remove_addr_filters_sync(struct hci_dev *hdev, u8 handle)
- 
- 		skb = __hci_cmd_sync(hdev, hdev->msft_opcode, sizeof(cp), &cp,
- 				     HCI_CMD_TIMEOUT);
--		if (IS_ERR_OR_NULL(skb)) {
-+		if (IS_ERR(skb)) {
- 			kfree(address_filter);
- 			continue;
- 		}
-@@ -442,11 +439,8 @@ static int msft_remove_monitor_sync(struct hci_dev *hdev,
- 
- 	skb = __hci_cmd_sync(hdev, hdev->msft_opcode, sizeof(cp), &cp,
- 			     HCI_CMD_TIMEOUT);
--	if (IS_ERR_OR_NULL(skb)) {
--		if (!skb)
--			return -EIO;
-+	if (IS_ERR(skb))
- 		return PTR_ERR(skb);
--	}
- 
- 	return msft_le_cancel_monitor_advertisement_cb(hdev, hdev->msft_opcode,
- 						       monitor, skb);
-@@ -559,7 +553,7 @@ static int msft_add_monitor_sync(struct hci_dev *hdev,
- 	skb = __hci_cmd_sync(hdev, hdev->msft_opcode, total_size, cp,
- 			     HCI_CMD_TIMEOUT);
- 
--	if (IS_ERR_OR_NULL(skb)) {
-+	if (IS_ERR(skb)) {
- 		err = PTR_ERR(skb);
- 		goto out_free;
- 	}
-@@ -740,10 +734,10 @@ static int msft_cancel_address_filter_sync(struct hci_dev *hdev, void *data)
- 
- 	skb = __hci_cmd_sync(hdev, hdev->msft_opcode, sizeof(cp), &cp,
- 			     HCI_CMD_TIMEOUT);
--	if (IS_ERR_OR_NULL(skb)) {
-+	if (IS_ERR(skb)) {
- 		bt_dev_err(hdev, "MSFT: Failed to cancel address (%pMR) filter",
- 			   &address_filter->bdaddr);
--		err = -EIO;
-+		err = PTR_ERR(skb);
- 		goto done;
- 	}
- 	kfree_skb(skb);
-@@ -893,7 +887,7 @@ static int msft_add_address_filter_sync(struct hci_dev *hdev, void *data)
- 
- 	skb = __hci_cmd_sync(hdev, hdev->msft_opcode, size, cp,
- 			     HCI_CMD_TIMEOUT);
--	if (IS_ERR_OR_NULL(skb)) {
-+	if (IS_ERR(skb)) {
- 		bt_dev_err(hdev, "Failed to enable address %pMR filter",
- 			   &address_filter->bdaddr);
- 		skb = NULL;
--- 
-2.39.2
-
+  Maciej
