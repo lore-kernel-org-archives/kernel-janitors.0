@@ -2,81 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DAE9270C
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0608FE92705
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233729AbjJEOex (ORCPT
+        id S236145AbjJEOiA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
+        Thu, 5 Oct 2023 10:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235115AbjJEOdL (ORCPT
+        with ESMTP id S235616AbjJEOft (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:33:11 -0400
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C342261B4;
-        Thu,  5 Oct 2023 05:24:16 -0700 (PDT)
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-        id 6F01992009C; Thu,  5 Oct 2023 14:24:12 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by angie.orcam.me.uk (Postfix) with ESMTP id 6B00692009B;
-        Thu,  5 Oct 2023 13:24:12 +0100 (BST)
-Date:   Thu, 5 Oct 2023 13:24:12 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-cc:     Su Hui <suhui@nfschina.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rafael@kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] driver base: slience unused warning
-In-Reply-To: <d98f7107-56d7-44a3-8b77-b8766cdc02d9@kadam.mountain>
-Message-ID: <alpine.DEB.2.21.2310051305530.20354@angie.orcam.me.uk>
-References: <45027fa0-cda5-2a80-f1cd-ed805d2717ee@nfschina.com> <alpine.DEB.2.21.2310041557310.61599@angie.orcam.me.uk> <d98f7107-56d7-44a3-8b77-b8766cdc02d9@kadam.mountain>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 5 Oct 2023 10:35:49 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C480937913
+        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 06:58:54 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4054f790190so9538715e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 06:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696514331; x=1697119131; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wn6Em+o0gkIpmb/ObfPSgCvA3m73Mu1ZDj4fK+nToG4=;
+        b=myUhvOYUMD9mCSNtAfme9GJ7ioBDJQvjDoYy06CCw0iCYUpFdNc5Y3zLpDk96JPCI1
+         1sgSkhKqiEtXM9PzVHzscew6aDo6G/qmohduHzYiqpKJISoQTeS65Ss3rriJ+T0FTWtf
+         nLmDJb3k3GQ40h/XFru4IkFMa7ytdvp3mKiS/V5Zn9MeXJmzdDAiAlUzefUsjBnVfkaa
+         Xz+aWmbQjK4G7M1mTKjt6IFQqh6qE1ZhSwE2DMkRJB8MR0yQvP7zziUo2i/Jy5MiNcey
+         jp0dqgNXXv9TSS4R7f6mCFc9HxCphTz8CIaqFSXCckBD1GLdmRPHJ5QKFvvhUeg0Pzg2
+         iZkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696514331; x=1697119131;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wn6Em+o0gkIpmb/ObfPSgCvA3m73Mu1ZDj4fK+nToG4=;
+        b=CTfT32E3jjySdc8jxjxuMIVbS/QOcmVZgrlHXPNA21GzomZyH28GXp+ERmFGGkj1f/
+         uD+Hl0z7/BRrwo/b/fd/VwmeFx9Iu6bXTmfZ9XjOnrL66ncjmNgqlRuqPm5KWjzKC0VK
+         THwxJgrSUzH4FfGKYxsYBH3S0Ws1kQeCl9Jv/tGvoETGEhfkHEc6UaV9XLGByRlx7g31
+         0j8GSdY/Y8VvKD6IKv/MQgeAZ0oOdY5WfVleRK7/AIgGhh68lXMkauP8dUIE0DFsKeYt
+         DrfIC/cZk7b+PhbA0YxwNVLeJ/4jDa1lYJTMQTb/lAshFd69e5ckl2tanZuG1i/ZdIx5
+         RSMA==
+X-Gm-Message-State: AOJu0YxOen+eYB5fakKCsD3eqHtQVtwX5RmENhDBjcAXgQIG3hSEZncL
+        f8zxvy/aMT0ju8Br+qS/8mBU/A==
+X-Google-Smtp-Source: AGHT+IEm8BURx2Ll1byyK8uUf5yHWTqN0Cz1KB7q4EUDkoypWK0U6H3oDODp3tRIwZmxWiHDt38ZpA==
+X-Received: by 2002:adf:e406:0:b0:31a:e6c2:7705 with SMTP id g6-20020adfe406000000b0031ae6c27705mr4615866wrm.50.1696514331718;
+        Thu, 05 Oct 2023 06:58:51 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v11-20020adfedcb000000b0031fd849e797sm1845899wro.105.2023.10.05.06.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 06:58:51 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 16:58:48 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev,
+        linux-cxl@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] dax: remove unnecessary check
+Message-ID: <554b10f3-dbd5-46a2-8d98-9b3ecaf9465a@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 4 Oct 2023, Dan Carpenter wrote:
+We know that "rc" is zero so there is no need to check.
 
-> > > This variable is been used but never be read, so gcc and W=1 give such
-> > > warning.
-> > > 
-> > > drivers/base/module.c:36:6: error:
-> > > variable ‘no_warn’ set but not used [-Werror=unused-but-set-variable]
-> > > 
-> > > I wanted to use "__maybe_unused" to avoid  this warning.
-> > > 
-> > > However it seems like a wrong using of "__maybe_unused" as Greg KH said:
-> > > 
-> > > "But no_warn is being used in this file, it's being set but not read
-> > > which is ok.  That's a real use, so this change really isn't correct,
-> > > sorry."
-> > 
-> >  The warning itself is a real issue to be sorted though.  Is this a use 
-> > case for `#pragma GCC diagnostic'?
-> 
-> I thought Greg liked using __maybe_unused in this case?  This is
-> drivers/base.  Do the rest of us even get a vote?  ;)
-> 
-> If I do have a vote then #pragma is always the worst option.  Linus has
-> taught me to dislike pragmas a lot.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/dax/bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- I'm not a great supporter of this solution, but at least it's guaranteed 
-to work by definition.  Otherwise we could try to outsmart the compiler; 
-perhaps:
+diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+index 1d818401103b..ea7298d8da99 100644
+--- a/drivers/dax/bus.c
++++ b/drivers/dax/bus.c
+@@ -1300,7 +1300,7 @@ static ssize_t memmap_on_memory_store(struct device *dev,
+ 	dev_dax->memmap_on_memory = val;
+ 
+ 	device_unlock(dax_region->dev);
+-	return rc == 0 ? len : rc;
++	return len;
+ }
+ static DEVICE_ATTR_RW(memmap_on_memory);
+ 
+-- 
+2.39.2
 
-	(no_warn = sysfs_create_link(&drv->p->kobj, &mk->kobj,
-				     "module")), no_warn;
-
-would work.  At the end of the day it's us who told the compiler to warn 
-if the result of `sysfs_create_link' is unused with all the consequences.  
-And while assigning to `no_warn' technically fulfils the requirement, the 
-variable itself isn't used beyond being assigned to, which the compiler 
-rightfully complains about because we asked for it.  It's up to us really 
-to tell the compiler what we want it to complain about and what we do not.
-
-  Maciej
