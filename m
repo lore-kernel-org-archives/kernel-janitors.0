@@ -2,66 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B169E92705
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05620E92706
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Oct 2023 14:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237080AbjJEOiy (ORCPT
+        id S237301AbjJEOi4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
+        Thu, 5 Oct 2023 10:38:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236607AbjJEOgo (ORCPT
+        with ESMTP id S235975AbjJEOg0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:36:44 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDE04484D
-        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 07:00:29 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-323168869daso1027819f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 07:00:29 -0700 (PDT)
+        Thu, 5 Oct 2023 10:36:26 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB0C3B49E
+        for <kernel-janitors@vger.kernel.org>; Thu,  5 Oct 2023 07:00:22 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40684f53d11so9598115e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Oct 2023 07:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696514428; x=1697119228; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696514415; x=1697119215; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bq6Al0uhdqE8dyQRZT83/DywvErgo4yew/KdSq0MhvE=;
-        b=KAlIt+hB8EUmFm67YkqsHFFnq+fy2xAGJXG5dRKfIO8mBKvSKUjK/+MfL8SNKOTqRW
-         RDAHOgvinLoN1W7HM9xwimZRUfx+9ZDPRSxEgN+P25whAFj24sONk3NTIeIFr7w1TULC
-         IuhOagybghF/j+Xy4jdxsWkHrH+xNCt/FsEUY8bpOhnHSueIxiGpyqZMoXg3Eo4Rn70R
-         M1UqtNUZIPP2gJfa4dUmsGEA1YN7si+nRpUqg+o1qeuegyFs3GVze/1pQrcCuwNXCkmA
-         1tWq1QAZFR/zB9mTvWwnFiRgEyfA8bhOafeuq4IQK23TpwCCrmrrM3OABZAOkmxtt2F5
-         r8UQ==
+        bh=XKYvXra/D0tLphe3ZYt8M2FkTUMUP0fbv8DSSHNP3AU=;
+        b=q4HA2HFPnByx2wqryKNgqw7msNORxZy4rtAadz53kSnuGzKXoU5CALJUlPMjAkIcws
+         qaj7dSLiV6U1u8lFE1A7o79bCJTHxXe2NC3PIwNgo6vwY1VdjMArA4Jg4zKlbf9Z5kwK
+         XknL/scw5r5t6yLHgfpQ7g68TBkQIt86sO0YRS+DQylp1sGM+hMvtKcsIyDjZzPd3GWp
+         xcvy2ow0i4UHquJrs8fMN47sdLEcg2NcJkeY05Cn5TkOv9L2/Q2cIp07f7EE54OiDcFk
+         BuljjSEQDhwPeHQV9UthYNhdEBXVbxWU1sV3/If1j2dvHuB+k82B4FfOm+ravcz5LKA+
+         hRbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696514428; x=1697119228;
+        d=1e100.net; s=20230601; t=1696514415; x=1697119215;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bq6Al0uhdqE8dyQRZT83/DywvErgo4yew/KdSq0MhvE=;
-        b=ZBTaX719kvIegMNFe7Artv55i8feHQ84wU68pG86LbZ2ZP0Wv3QSSDe5ZGPJ4Txkz5
-         miHGcLH9ZxTwgT0nedgz5gIHR/ircEaP8bJIXN5BmPVgJQLoD4wXxzMrlZJ+8hCH7r41
-         gFiLmePUoprhzN4VxfI0d295eiZm/W/dT5DtsgpOnk1+g9EZYudEHYKkaavD5+HrVYpe
-         LSVHXweaJPfxkWraMzehSQUtBXbNA2KQOI7/MptrUF73n0GGJLpvcKUE7vYaeGO50m+O
-         6mwW7Xhl5qrVa4tjnkD/06od3AqEprToY/51sWF9BiZD1WkSxuh5b6L3nq+qeePQ6poi
-         vrhQ==
-X-Gm-Message-State: AOJu0YwFHD8UYOV+4hYgz0YZE5SBvINoe8fPotyAF6QRKLvujqasQO0D
-        wnX06T/W4/m6Z1MUZyaU1bFoIA==
-X-Google-Smtp-Source: AGHT+IHwNsl3R2+inwJL9KG2n8GmwjwPTWGIpRhvHpykm2Ag3TFC5h678lIY/dcNTTM8eNFy6XA3Eg==
-X-Received: by 2002:a5d:4149:0:b0:31f:eb8d:481f with SMTP id c9-20020a5d4149000000b0031feb8d481fmr4870624wrq.29.1696514428084;
-        Thu, 05 Oct 2023 07:00:28 -0700 (PDT)
+        bh=XKYvXra/D0tLphe3ZYt8M2FkTUMUP0fbv8DSSHNP3AU=;
+        b=qa8fU8Ok++jzugsGJ7KaoAu+Qht0WBVmnRQxrRga+TlHKwX2zbTxQj0DnjU5zrzJ4o
+         6izSZKUmCTEm/QCgJKsrMxXKz1nVL9w+v+0lzpLF5T3kiA4g3IT4Mn9g7SefRxmMnx1G
+         YBiD78lSOfqB2JtmJULmy1TBAmvHqE2moAPvQsaUuSVhNAVcMXjQ3PzgGN4KMhT0iUPx
+         SoK5cgP0LbzvbLOl9FrkUntOpwbtzKA+pFQ1tFLo9fiMrBliy6cXiYpn1xHrDe5apqAP
+         6mEyXGJJueBo++BrCiBO3nbNued+G/W3dhBupZIEEVEn4PmjQseGj9SUgLyyQx8mYkSQ
+         qMQw==
+X-Gm-Message-State: AOJu0YxWEDNUIXTL7Whv5U8OHL3h6dlZ38SVemB63rj4ns2zftxLqvas
+        vkoOBe3jVKxNxq2PGY9s1UD7Zw==
+X-Google-Smtp-Source: AGHT+IFeXTKirNHzitQdtS6ll6h532Honm6zVck6PvhrBG0gk4w02aInvnn9ivNnit9lXF/4TmElFA==
+X-Received: by 2002:a05:600c:2981:b0:403:8fb9:8d69 with SMTP id r1-20020a05600c298100b004038fb98d69mr4991682wmd.25.1696514415402;
+        Thu, 05 Oct 2023 07:00:15 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id da4-20020a056000196400b003176c6e87b1sm1856481wrb.81.2023.10.05.07.00.27
+        by smtp.gmail.com with ESMTPSA id hn32-20020a05600ca3a000b004053e9276easm3840958wmb.32.2023.10.05.07.00.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 07:00:27 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 17:00:24 +0300
+        Thu, 05 Oct 2023 07:00:15 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 17:00:12 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Daniel Mack <daniel@zonque.org>
-Cc:     Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+To:     Ido Schimmel <idosch@mellanox.com>
+Cc:     Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: pxa: fix a memory leak in probe()
-Message-ID: <84ac2313-1420-471a-b2cb-3269a2e12a7c@moroto.mountain>
+Subject: [PATCH net] mlxsw: fix mlxsw_sp2_nve_vxlan_learning_set() return type
+Message-ID: <6b2eb847-1d23-4b72-a1da-204df03f69d3@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,27 +68,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Free the "priv" pointer before returning the error code.
+The mlxsw_sp2_nve_vxlan_learning_set() function is supposed to return
+zero on success or negative error codes.  So it needs to be type int
+instead of bool.
 
-Fixes: 90eb6b59d311 ("ASoC: pxa-ssp: add support for an external clock in devicetree")
+Fixes: 4ee70efab68d ("mlxsw: spectrum_nve: Add support for VXLAN on Spectrum-2")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/soc/pxa/pxa-ssp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_nve_vxlan.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/pxa/pxa-ssp.c b/sound/soc/pxa/pxa-ssp.c
-index b70034c07eee..b8a3cb8b7597 100644
---- a/sound/soc/pxa/pxa-ssp.c
-+++ b/sound/soc/pxa/pxa-ssp.c
-@@ -773,7 +773,7 @@ static int pxa_ssp_probe(struct snd_soc_dai *dai)
- 		if (IS_ERR(priv->extclk)) {
- 			ret = PTR_ERR(priv->extclk);
- 			if (ret == -EPROBE_DEFER)
--				return ret;
-+				goto err_priv;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve_vxlan.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve_vxlan.c
+index bb8eeb86edf7..52c2fe3644d4 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve_vxlan.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve_vxlan.c
+@@ -310,8 +310,8 @@ const struct mlxsw_sp_nve_ops mlxsw_sp1_nve_vxlan_ops = {
+ 	.fdb_clear_offload = mlxsw_sp_nve_vxlan_clear_offload,
+ };
  
- 			priv->extclk = NULL;
- 		}
+-static bool mlxsw_sp2_nve_vxlan_learning_set(struct mlxsw_sp *mlxsw_sp,
+-					     bool learning_en)
++static int mlxsw_sp2_nve_vxlan_learning_set(struct mlxsw_sp *mlxsw_sp,
++					    bool learning_en)
+ {
+ 	char tnpc_pl[MLXSW_REG_TNPC_LEN];
+ 
 -- 
 2.39.2
 
