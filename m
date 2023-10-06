@@ -2,62 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B65DE81DF4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 13:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8670E81E1A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 16:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbjJFNZ7 (ORCPT
+        id S232999AbjJFQqH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Oct 2023 09:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
+        Fri, 6 Oct 2023 12:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232082AbjJFNZ6 (ORCPT
+        with ESMTP id S231705AbjJFQqF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Oct 2023 09:25:58 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA5995
-        for <kernel-janitors@vger.kernel.org>; Fri,  6 Oct 2023 06:25:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9523DC433C7;
-        Fri,  6 Oct 2023 13:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696598757;
-        bh=GK6+gdGAri1G6rozMe9+EwaIXQ9xuRPorgKW+tLw1L4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hyXzPBiYVRHBuL1QwV3tmCN0UqHukILJ3h4u8TxJvG9SgcfyjffCHRnrTkmecrBcI
-         Aq01AZUiCeZQIJc5233PU9okbYh1Bcm38ceGU1KtFnp7D9TV9NWx4rh2B6yH02w5ep
-         GoiwWthZ8JntltpZhFJhyVWfzBsrBJ6gs2izE1og9o0GfRszEET1xMjbAqAyzHLxL6
-         g7qrZZFt52GRRoulRee3sO9n9rMj7KiZMp93qoahLcY2rMXUQMI2iiB8QkuEQwcc8e
-         UE6GlyTi6Uq53a9ovcKOcnfTiQUsl7oRN/JEypGlOefT++3f2cGcnuv9I7XlJb9TVW
-         QJEiC4XDXMM6g==
-Date:   Fri, 6 Oct 2023 15:25:53 +0200
-From:   Simon Horman <horms@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net v2] ixgbe: fix crash with empty VF macvlan list
-Message-ID: <ZSAK4eB2Wkl5RImI@kernel.org>
-References: <ZSADNdIw8zFx1xw2@kadam>
+        Fri, 6 Oct 2023 12:46:05 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BF9109;
+        Fri,  6 Oct 2023 09:45:41 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CED8221866;
+        Fri,  6 Oct 2023 16:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696610739;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uqDMUwx47nLjOd+5PVCe7OmDbxetBPZSe0ERMtxmiWw=;
+        b=VX1FIG7v7QeoQrq3ICOjtJWeeqm2yf11BndHW5OUan5KTAQiR4PxR6mWXITfVznSJjbkEH
+        MojhVncOKS96omGJX/sxNbGdXgCk+7paENILy1470en+GIVcwiiU+b1rJGAWqkvKP9crF7
+        Jz0t2EmR42tZvljkCZtAXm/WIwjxp+w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696610739;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uqDMUwx47nLjOd+5PVCe7OmDbxetBPZSe0ERMtxmiWw=;
+        b=/ZKfHWVA4UsdFvi7LEgcC4jQ+4O+pgcrr5+lKa/SbWcTz2973sn4i2/kKvUuZ93E5fVjEA
+        /uuDwF9kJrE5TUDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A64D613586;
+        Fri,  6 Oct 2023 16:45:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id tsbFJ7M5IGV5JAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Fri, 06 Oct 2023 16:45:39 +0000
+Date:   Fri, 6 Oct 2023 18:38:56 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: remove redundant initialization of variable
+ dirty
+Message-ID: <20231006163856.GN28758@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230818135525.1206140-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZSADNdIw8zFx1xw2@kadam>
+In-Reply-To: <20230818135525.1206140-1-colin.i.king@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 03:53:09PM +0300, Dan Carpenter wrote:
-> The adapter->vf_mvs.l list needs to be initialized even if the list is
-> empty.  Otherwise it will lead to crashes.
+On Fri, Aug 18, 2023 at 02:55:25PM +0100, Colin Ian King wrote:
+> The variable dirty is initialized with a value that is never read, it
+> is being re-assigned later on. Remove the redundant initialization.
+> Cleans up clang scan build warning:
 > 
-> Fixes: a1cbb15c1397 ("ixgbe: Add macvlan support for VF")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: Use the correct fixes tag.  Thanks, Simon.
+> fs/btrfs/inode.c:5965:7: warning: Value stored to 'dirty' during its
+> initialization is never read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Added to misc-next, thanks.
