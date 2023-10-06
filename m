@@ -2,70 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA59E81DE0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 11:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E13BE81DEC
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 12:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232018AbjJFLV2 (ORCPT
+        id S232248AbjJFM1n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Oct 2023 07:21:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54032 "EHLO
+        Fri, 6 Oct 2023 08:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjJFLVK (ORCPT
+        with ESMTP id S232342AbjJFM1e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Oct 2023 07:21:10 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB6ACA
-        for <kernel-janitors@vger.kernel.org>; Fri,  6 Oct 2023 04:21:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881E1C433C7;
-        Fri,  6 Oct 2023 11:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696591268;
-        bh=2OvrbOVd1DKguidAQ5wXL9nm274STWXog0it8L1OjsM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GdZZwAQSgZBHWp1jTnfdzwFBAtEaTGAn8O2qY7csoymxukv1i+x6bVX714q6IREqu
-         CEl0BDx9ADZFQ4hPKZbF7j6jaMQEN9IGE2L2Scvto9fcflXDe0ly/ULA8TZOPHcWVW
-         USV0yQ/MPTbYN40TNv6D6v3Ox6msODB4Fw6AJpaU4YK+AmuVDQEnZlwOXSpCS+pcRj
-         Mkn5eUhg/LMAUYNirlKoiX4QeeU125ckl/GfElank9zcVUNUPA0oXi9psoL5RNU+J7
-         QLuZYVdl0crucpwbB3AHsZXUqqHovYkTP8lOhruoPURrj4mpcAeXbq33Ef5oeZPLt6
-         pJKSvTHkYQVkA==
-Date:   Fri, 6 Oct 2023 13:21:04 +0200
-From:   Simon Horman <horms@kernel.org>
+        Fri, 6 Oct 2023 08:27:34 -0400
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 86CAD1A7;
+        Fri,  6 Oct 2023 05:27:24 -0700 (PDT)
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+        id 2FE0C9200B4; Fri,  6 Oct 2023 14:27:23 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by angie.orcam.me.uk (Postfix) with ESMTP id 2D9209200B3;
+        Fri,  6 Oct 2023 13:27:23 +0100 (BST)
+Date:   Fri, 6 Oct 2023 13:27:23 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jinjie Ruan <ruanjinjie@huawei.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+cc:     Su Hui <suhui@nfschina.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rafael@kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] ixgbe: fix end of loop test in
- ixgbe_set_vf_macvlan()
-Message-ID: <ZR/toAqmRnTWljdy@kernel.org>
-References: <4d61f086-c7b4-4762-b025-0ba5df08968b@moroto.mountain>
- <34603f41-1d51-48df-9bca-a28fd5b27a53@moroto.mountain>
+Subject: Re: [PATCH] driver base: slience unused warning
+In-Reply-To: <ceaa146a-2781-4266-ade8-6a25eb39abbf@kadam.mountain>
+Message-ID: <alpine.DEB.2.21.2310061312460.20732@angie.orcam.me.uk>
+References: <45027fa0-cda5-2a80-f1cd-ed805d2717ee@nfschina.com> <alpine.DEB.2.21.2310041557310.61599@angie.orcam.me.uk> <d98f7107-56d7-44a3-8b77-b8766cdc02d9@kadam.mountain> <alpine.DEB.2.21.2310051305530.20354@angie.orcam.me.uk>
+ <ceaa146a-2781-4266-ade8-6a25eb39abbf@kadam.mountain>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34603f41-1d51-48df-9bca-a28fd5b27a53@moroto.mountain>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 04:58:01PM +0300, Dan Carpenter wrote:
-> The list iterator in a list_for_each_entry() loop can never be NULL.
-> If the loop exits without hitting a break then the iterator points
-> to an offset off the list head and dereferencing it is an out of
-> bounds access.
-> 
-> Before we transitioned to using list_for_each_entry() loops, then
-> it was possible for "entry" to be NULL and the comments mention
-> this.  I have updated the comments to match the new code.
-> 
-> Fixes: c1fec890458a ("ethernet/intel: Use list_for_each_entry() helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, 5 Oct 2023, Dan Carpenter wrote:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> This is a W=1 static checker warning.  We've already reviewed it, and
+> marked it as old.  There isn't anything else required.
 
+ Good point.
+
+> Or are we close to promoting the unused-but-set-variable warning from
+> W=1 to being on by default?  How many of these warnings are remaining?
+> It it's like only 20-50 warnings left then maybe we should consider the
+> other options but that kind of information needs to be in the cover
+> letter or otherwise we won't know about it.
+
+ Hmm, these warnings do help chasing dead code, which in turn may reveal 
+real issues, such as where someone missed or forgot something when writing 
+their code and a value that was supposed to be used somehow is instead 
+discarded.
+
+ Most commonly it will be the case when some code has been deliberately 
+removed as it evolves and a part that is no longer needed has been missed 
+by chance and left in place.  I've seen it happen.  Apart from the code 
+sloppiness resulting it shouldn't matter that much though as the compiler 
+is usually pretty good at discarding dead code.
+
+  Maciej
