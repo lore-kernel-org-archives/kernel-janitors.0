@@ -2,81 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8670E81E1A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C571E81E1B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Oct 2023 17:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232999AbjJFQqH (ORCPT
+        id S233022AbjJFRcz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Oct 2023 12:46:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
+        Fri, 6 Oct 2023 13:32:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231705AbjJFQqF (ORCPT
+        with ESMTP id S232774AbjJFRcz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Oct 2023 12:46:05 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BF9109;
-        Fri,  6 Oct 2023 09:45:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id CED8221866;
-        Fri,  6 Oct 2023 16:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696610739;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
+        Fri, 6 Oct 2023 13:32:55 -0400
+Received: from out-204.mta0.migadu.com (out-204.mta0.migadu.com [IPv6:2001:41d0:1004:224b::cc])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 371AFBF
+        for <kernel-janitors@vger.kernel.org>; Fri,  6 Oct 2023 10:32:53 -0700 (PDT)
+Date:   Fri, 6 Oct 2023 13:32:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1696613571;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=uqDMUwx47nLjOd+5PVCe7OmDbxetBPZSe0ERMtxmiWw=;
-        b=VX1FIG7v7QeoQrq3ICOjtJWeeqm2yf11BndHW5OUan5KTAQiR4PxR6mWXITfVznSJjbkEH
-        MojhVncOKS96omGJX/sxNbGdXgCk+7paENILy1470en+GIVcwiiU+b1rJGAWqkvKP9crF7
-        Jz0t2EmR42tZvljkCZtAXm/WIwjxp+w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696610739;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uqDMUwx47nLjOd+5PVCe7OmDbxetBPZSe0ERMtxmiWw=;
-        b=/ZKfHWVA4UsdFvi7LEgcC4jQ+4O+pgcrr5+lKa/SbWcTz2973sn4i2/kKvUuZ93E5fVjEA
-        /uuDwF9kJrE5TUDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A64D613586;
-        Fri,  6 Oct 2023 16:45:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id tsbFJ7M5IGV5JAAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Fri, 06 Oct 2023 16:45:39 +0000
-Date:   Fri, 6 Oct 2023 18:38:56 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: remove redundant initialization of variable
- dirty
-Message-ID: <20231006163856.GN28758@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20230818135525.1206140-1-colin.i.king@gmail.com>
+        bh=iUMRqrzp9W95pILwy96rYNmF5hIvu0nKh4XVqWJvVSc=;
+        b=NFVqlDcwNUWDo8jT9q7F9j+KLX1hUbmwWpDbz6g6QmFFw2uCJ9T/1s8Y+LDo5tNftPqdkB
+        9WHn1P6XslM4qUBwY6IQgTK86eE6M0I0l9MXwmZT8y3VhoIwz9jzP6StUedJU02/QxdsrN
+        xlctjU3lE2jpUGnG7b09S4MGHW4uTwk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] bcachefs: Use struct_size()
+Message-ID: <20231006173247.zn4l6mwhup4bjkrf@moria.home.lan>
+References: <120b638f99b088f91d5a4491c800463c554e70b8.1696144401.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230818135525.1206140-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <120b638f99b088f91d5a4491c800463c554e70b8.1696144401.git.christophe.jaillet@wanadoo.fr>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 18, 2023 at 02:55:25PM +0100, Colin Ian King wrote:
-> The variable dirty is initialized with a value that is never read, it
-> is being re-assigned later on. Remove the redundant initialization.
-> Cleans up clang scan build warning:
+On Sun, Oct 01, 2023 at 09:13:54AM +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand writing it.
+> This is less verbose and more robust.
 > 
-> fs/btrfs/inode.c:5965:7: warning: Value stored to 'dirty' during its
-> initialization is never read [deadcode.DeadStores]
+> While at it, prepare for the coming implementation by GCC and Clang of the
+> __counted_by attribute. Flexible array members annotated with __counted_by
+> can have their accesses bounds-checked at run-time checking via
+> CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
+> strcpy/memcpy-family functions).
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Added to misc-next, thanks.
+Thanks! Applied.
