@@ -2,48 +2,53 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E838AE95A61
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 13:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C52E95A61
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 14:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343956AbjJGNuS (ORCPT
+        id S231290AbjJGOcl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 Oct 2023 09:50:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
+        Sat, 7 Oct 2023 10:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343892AbjJGNuR (ORCPT
+        with ESMTP id S229586AbjJGOcl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 Oct 2023 09:50:17 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DCEBD
-        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 06:50:14 -0700 (PDT)
+        Sat, 7 Oct 2023 10:32:41 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615D2B6
+        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 07:32:39 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id p7h0qpPqZqToTp7h0qy9q1; Sat, 07 Oct 2023 15:50:12 +0200
+        id p8M7q9ALBzRICp8M7qMa0a; Sat, 07 Oct 2023 16:32:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1696686612;
-        bh=+NsrC/kMBjP5jYS5nCk9DfFO8Yn5kcVnJ7NUbypxWEE=;
+        s=t20230301; t=1696689156;
+        bh=MjiCcPHgIztJA3fnnekG+6x6iUsfkXWEmL8zOsP0oyA=;
         h=From:To:Cc:Subject:Date;
-        b=S/BuIu22dvKaQZVcytkPFaooazzGdz6iVKPujBs6N8X9Uu+z4UbmAnryyDm8S4qTi
-         /tslWKj4umgblAYL000xKgNdUbZF3ReR7cg8t1LtjGq7K9C8rHLXiSBaIqr0tX4ajY
-         1IZdGZSeVlT5bDdZET+U0jRVhDD8YXIkg+PoPd+IxRBpE4WXztn4p88MCqBEZUxagO
-         O3Z4llfIe3LOG/3i+k/j9RSOS4IfazIdbV3srp82iDeUHRZHw9REoeuJsSZ1Cp/Tc8
-         w4islVbqKYeLJfgGsoAdVKT5VctLwFS42DqXs9YLwUkMpc6p6zPwlqH/iN/JxHyZ+9
-         krAqU6VFsdHEA==
+        b=aaTGehvocX9wx7mzR++6IjvE/DnvOr1TK37GENxTG7UcuGGj71s15N9fuweFAnxxI
+         ESKXegYY0HxgSvoQRDsUPvuPSW94PdhLG0UFGRucogB/jIThA0DThR8TbAWUEhnqIl
+         26R7DE6KcGns2SgqBf9EnJQky6wt4TVQnHPjiSiRPCBw5yI0xWJ6jnblqxZwpIn0Qt
+         FOWsYidbppIjC6EYKl+1Hkda0hbZqfdw0FgIVGY/Dzwt7D4JpP6DCAGUPFxSUmlFAI
+         AhAlenwT1BDhFtdxtXbNTiZUZ2RB8kvdPktkfqSoBnmQL+Q8GANy/OroO97bNapOIh
+         RC2t7Cv91bz3Q==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Oct 2023 15:50:12 +0200
+X-ME-Date: Sat, 07 Oct 2023 16:32:36 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
+To:     Bryan Tan <bryantan@vmware.com>, Vishnu Dasa <vdasa@vmware.com>,
+        VMware PV-Drivers Reviewers <pv-drivers@vmware.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] media: vde: Use struct_size()
-Date:   Sat,  7 Oct 2023 15:50:02 +0200
-Message-Id: <bb201c3f0e7d2ca5cd222d9bb4c78ded8fded54e.1696686558.git.christophe.jaillet@wanadoo.fr>
+        linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH] VMCI: Annotate struct vmci_handle_arr with __counted_by
+Date:   Sat,  7 Oct 2023 16:32:34 +0200
+Message-Id: <56bef519d982218176b59bbba64a3a308d8733d5.1696689091.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,26 +56,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() which is much more common than this offsetof().
+Prepare for the coming implementation by GCC and Clang of the __counted_by
+attribute. Flexible array members annotated with __counted_by can have
+their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+functions).
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/nvidia/tegra-vde/v4l2.c | 2 +-
+This patch is part of a work done in parallel of what is currently worked
+on by Kees Cook.
+
+My patches are only related to corner cases that do NOT match the
+semantic of his Coccinelle script[1].
+
+In this case, something similar to struct_size() is implemented in
+handle_arr_calc_size().
+
+Note that I'm slightly unsure on how things will behave in regards to the
+krealloc() in vmci_handle_arr_append_entry().
+
+[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+---
+ drivers/misc/vmw_vmci/vmci_handle_array.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/nvidia/tegra-vde/v4l2.c b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
-index bd8c207d5b54..0f48ce6f243e 100644
---- a/drivers/media/platform/nvidia/tegra-vde/v4l2.c
-+++ b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
-@@ -813,7 +813,7 @@ static int tegra_open(struct file *file)
- 	struct tegra_ctx *ctx;
- 	int err;
+diff --git a/drivers/misc/vmw_vmci/vmci_handle_array.h b/drivers/misc/vmw_vmci/vmci_handle_array.h
+index 96193f85be5b..b0e6b1956014 100644
+--- a/drivers/misc/vmw_vmci/vmci_handle_array.h
++++ b/drivers/misc/vmw_vmci/vmci_handle_array.h
+@@ -17,7 +17,7 @@ struct vmci_handle_arr {
+ 	u32 max_capacity;
+ 	u32 size;
+ 	u32 pad;
+-	struct vmci_handle entries[];
++	struct vmci_handle entries[] __counted_by(capacity);
+ };
  
--	ctx = kzalloc(offsetof(struct tegra_ctx, ctrls[ARRAY_SIZE(ctrl_cfgs)]),
-+	ctx = kzalloc(struct_size(ctx, ctrls, ARRAY_SIZE(ctrl_cfgs)),
- 		      GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
+ #define VMCI_HANDLE_ARRAY_HEADER_SIZE				\
 -- 
 2.34.1
 
