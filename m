@@ -2,108 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24702E95A61
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 08:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FC9E95A61
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 08:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343671AbjJGI6y (ORCPT
+        id S1343686AbjJGI7s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 Oct 2023 04:58:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
+        Sat, 7 Oct 2023 04:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234173AbjJGI6w (ORCPT
+        with ESMTP id S1343641AbjJGI7r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 Oct 2023 04:58:52 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB30BD
-        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 01:58:49 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c189dabcc3so34033261fa.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 07 Oct 2023 01:58:49 -0700 (PDT)
+        Sat, 7 Oct 2023 04:59:47 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C75D3BB
+        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 01:59:44 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4053c6f0db8so26182095e9.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 07 Oct 2023 01:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696669128; x=1697273928; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696669183; x=1697273983; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=H12pKzlY1qJNaDjNatUY0Tut5bot5lcPr1eF3WZ1ZJs=;
-        b=uIhsDVZbPQqPP8pmNp3L2FsekGukrDcHlxtDKClu4IOxTEl3KxBwenfAu7BgZFpS29
-         EtDVpr6b4IC5xePMiC+T3CHLohvSedrlE9Xsy6XErY8fJvvwDWo/dNJ2xgsy1Stb6S5z
-         /L1hKR/7smt6RbXqMjELRiz6B9etmsGk3vD4QjCJH1MbC3f7LvDUymzQIC01RncTbxsl
-         jPAwBiBZRcMsWPmaMuiYF+bJ0kR5Vr6z04OqO65YCHzXwx3ogwkcZSdh2TBj15EVrwch
-         HrGhCG3uuHeak0Arl/vGG16xOUp2mdsjtOmoICKcu6izYvdXNFUqF1H50nDWlYqeyCh6
-         JN3w==
+        bh=DRLCAfYAsLg0hm9u7tG016t4o8+WS7/bFdh06s3Y9Mg=;
+        b=V9FGIAf4J2wDbfXsMJRD3JMiy6hpGauoLf4RrrzpdbCYUnqdBJQAkbDE4ShK4DT0PL
+         dWpTnU5LukqlzZ8pzYOHc6zI8jBuYKlmKSUplKDUi5WYZJiGxm9utMGWR8/3/lyECGct
+         22ciW+ebCTzcmwObpkVr4qUqQgZ6IuLzmozetK/pKj8NAdWSEbPHIJn1n4sB63kABdVi
+         CrksVS21BWfDn9DeP3oFyvovBHHbEhLkkvSO53Zv+Q8pcBCDdTG0tKgWoQuq/wX8MX64
+         23e9vP2q+aWFNIjYr8hPMv/Pli62EJ76mQMGyH1UZaVzxxxubusKexO1B5bH5wlG12zk
+         H9cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696669128; x=1697273928;
+        d=1e100.net; s=20230601; t=1696669183; x=1697273983;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H12pKzlY1qJNaDjNatUY0Tut5bot5lcPr1eF3WZ1ZJs=;
-        b=Q8nF1Y41zoEqI7Nv02wA0JWDYDqrKZ0+TtG8fYa/snSnUGmAxWS22vyu0PcATbTeOw
-         kfWpo/xlMeClEHEyluR8q/Znidxm5xNAQH5XWZIP6HlcomOVirxTX2tuipOntsd3lclk
-         1qXYDvQLEcS8Ak1MM2npwnP4zHuPxM78HwesSmJxcJSQ8a+gsRoJEbkpxdxmGlDpCQCP
-         ru4rl7MAhvr2boJ2onAxtnq9cqLqPX/IZBBWFzDjmBrnfaxNYIFFZYEdX2qptP+QFA+5
-         xSzONe8uRjiucRj8CoRgtrDNUwHaBSdHGcGxDhlkMapPR2E70OSikT6JPNW2OJnnddQq
-         pUtQ==
-X-Gm-Message-State: AOJu0Ywg625v3MJBZzgJjVUhvaz+5Jm2pnSot01iNAr+Sa+JQ984Xkvv
-        NaBByHOL3aV0cf2oojCH4EQEcA==
-X-Google-Smtp-Source: AGHT+IGuk6sVO7TRt2L2LX7v5qRMZPLQlFwREbRuAKYphYKeiQKSCZE7U+q3uVjRUnBthndq1MxRKQ==
-X-Received: by 2002:ac2:5f68:0:b0:502:fe0a:af23 with SMTP id c8-20020ac25f68000000b00502fe0aaf23mr7856529lfc.56.1696669127770;
-        Sat, 07 Oct 2023 01:58:47 -0700 (PDT)
+        bh=DRLCAfYAsLg0hm9u7tG016t4o8+WS7/bFdh06s3Y9Mg=;
+        b=P5tLypFG0sNhW5w25FP+zQSRqazaMPuAHUjU+QjJpGrA3yU/cCqC/3E6ht1cS/LPo5
+         rdUIhpJ+RD9tiP4BDabt85rNHMDsCPuUh9cLeu+vwQfwEqi6RRRPffP9ks+I2y0hnQY2
+         Wm1iyDuue9fqJhKUnyHLAZJloQK10qnQSV5Zx1Ycl/qqS1utijedYEG8Dxz51W+l4QW4
+         L1so2AXCXbET/vGtcJm/6+ko7KktIqVwY4YgEedf0Ey1Gg6I1/ljEyd1G09J9pQ2EdhV
+         HdyGOBsaPtF7icP3XC4pktazcvjBPrdB9F40BXE6GVUCdpesOyc2eKGW0NfWY1SHiSNo
+         cMcQ==
+X-Gm-Message-State: AOJu0YxbesOSv7JFoPsJoLO81xUKMSKlkUnD/5lI9Z4j22pw9bzq6z64
+        ORY7sRleqqYuhGWpM5t+HKBVXQ==
+X-Google-Smtp-Source: AGHT+IHi9iFgj3uEg7h3dId9e48yuQPWx5PVBJ83rE3h31iWwkuzFGdpca1Qra5vQ7YEmnMTA/pYfw==
+X-Received: by 2002:a05:600c:2299:b0:3fe:1232:93fa with SMTP id 25-20020a05600c229900b003fe123293famr9100738wmf.22.1696669183168;
+        Sat, 07 Oct 2023 01:59:43 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i14-20020a05600c354e00b004068de50c64sm5520658wmq.46.2023.10.07.01.58.46
+        by smtp.gmail.com with ESMTPSA id q15-20020a7bce8f000000b00405391f485fsm5591798wmj.41.2023.10.07.01.59.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Oct 2023 01:58:47 -0700 (PDT)
-Date:   Sat, 7 Oct 2023 11:58:44 +0300
+        Sat, 07 Oct 2023 01:59:42 -0700 (PDT)
+Date:   Sat, 7 Oct 2023 11:59:39 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     masahiroy@kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net: liquidio: fix mixed module-builtin object
-Message-ID: <512670ff-bdec-487c-9bac-e6b52b4b1a5d@moroto.mountain>
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Thomas Sujith <sujith.thomas@intel.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] thermal: core: prevent potential string overflow
+Message-ID: <514ef814-458d-4421-b93d-2d30bdc4a1e7@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Masahiro Yamada,
+The dev->id value comes from ida_alloc() so it's a number between zero
+and INT_MAX.  If it's too high then these sprintf()s will overflow.
 
-The patch f71be9d084c9: "net: liquidio: fix mixed module-builtin
-object" from Jun 7, 2023 (linux-next), leads to the following Smatch
-static checker warning:
+Fixes: 203d3d4aa482 ("the generic thermal sysfs driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/thermal/thermal_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-	drivers/net/ethernet/cavium/liquidio/lio_main.c:810 liquidio_watchdog()
-	error: NULL dereference inside function 'module_refcount()'.
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 45d0aa0b69b7..61f0b5a3b00c 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -681,7 +681,8 @@ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+ 	if (result)
+ 		goto release_ida;
+ 
+-	sprintf(dev->attr_name, "cdev%d_trip_point", dev->id);
++	snprintf(dev->attr_name, sizeof(dev->attr_name), "cdev%d_trip_point",
++		 dev->id);
+ 	sysfs_attr_init(&dev->attr.attr);
+ 	dev->attr.attr.name = dev->attr_name;
+ 	dev->attr.attr.mode = 0444;
+@@ -690,7 +691,8 @@ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+ 	if (result)
+ 		goto remove_symbol_link;
+ 
+-	sprintf(dev->weight_attr_name, "cdev%d_weight", dev->id);
++	snprintf(dev->weight_attr_name, sizeof(dev->weight_attr_name),
++		 "cdev%d_weight", dev->id);
+ 	sysfs_attr_init(&dev->weight_attr.attr);
+ 	dev->weight_attr.attr.name = dev->weight_attr_name;
+ 	dev->weight_attr.attr.mode = S_IWUSR | S_IRUGO;
+-- 
+2.39.2
 
-drivers/net/ethernet/cavium/liquidio/lio_main.c
-    800                 disable_all_vf_links(other_oct);
-    801                 all_vf_links_are_disabled = true;
-    802 
-    803 #ifdef CONFIG_MODULE_UNLOAD
-
-This code is old and buggy, but I think it's possibly the recent changes
-which make this bug visible.  Modules can be enabled but it doesn't mean
-that this particular driver was built as a module.  I think we want to
-test #if MODULE as well?
-
-    804                 vfs_mask1 = READ_ONCE(oct->sriov_info.vf_drv_loaded_mask);
-    805                 vfs_mask2 = READ_ONCE(other_oct->sriov_info.vf_drv_loaded_mask);
-    806 
-    807                 vfs_referencing_pf  = hweight64(vfs_mask1);
-    808                 vfs_referencing_pf += hweight64(vfs_mask2);
-    809 
---> 810                 refcount = module_refcount(THIS_MODULE);
-                                                   ^^^^^^^^^^^
-This will crash because THIS_MODULE is NULL when it's built in to the
-kernel.
-
-    811                 if (refcount >= vfs_referencing_pf) {
-    812                         while (vfs_referencing_pf) {
-    813                                 module_put(THIS_MODULE);
-    814                                 vfs_referencing_pf--;
-    815                         }
-    816                 }
-    817 #endif
-    818         }
-    819 
-    820         return 0;
-    821 }
-
-regards,
-dan carpenter
