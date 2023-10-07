@@ -2,139 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A788E95A60
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 11:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E838AE95A61
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Oct 2023 13:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343812AbjJGLNc (ORCPT
+        id S1343956AbjJGNuS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 Oct 2023 07:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56986 "EHLO
+        Sat, 7 Oct 2023 09:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343858AbjJGLNb (ORCPT
+        with ESMTP id S1343892AbjJGNuR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 Oct 2023 07:13:31 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75943B6
-        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 04:13:29 -0700 (PDT)
+        Sat, 7 Oct 2023 09:50:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DCEBD
+        for <kernel-janitors@vger.kernel.org>; Sat,  7 Oct 2023 06:50:14 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id p5FLqUFvtkkaep5FPqw9oL; Sat, 07 Oct 2023 13:13:28 +0200
+        id p7h0qpPqZqToTp7h0qy9q1; Sat, 07 Oct 2023 15:50:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1696677208;
-        bh=SyXlzkufD32ONJRqEUudpUaKb11ktLKN0H131JCB37s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=pa0Ht/+kirGb8FefDOjnr78UXIM/jKWvkUJW1HqJ1jqV7PCngyX3to4Qwqebkgm9K
-         3keqCckP+l0pg1CZP9QpPxdvHMzp3RoDABNokHmtkj1SUaK2ZyKJV7/oknFCxppc46
-         kzzfVDxSvYGwDoTWHYd54DNXfyDKjuC3mPB6jbK2jKFqomJRipzuC2iwChQczE8MxN
-         YyBDLqCvyKmJQv9dQjlhwHIzLY2vGzlmlUh2waj4iT8JTurRZuc5uvUMuLi14Jki8C
-         rfo7eAe+o2iy++uI6XfvE26dIt5fRBM1g1p6lAkk2tGCrKpszW9ummZdTZliNSyY2N
-         ff9FzmYcnxY8w==
+        s=t20230301; t=1696686612;
+        bh=+NsrC/kMBjP5jYS5nCk9DfFO8Yn5kcVnJ7NUbypxWEE=;
+        h=From:To:Cc:Subject:Date;
+        b=S/BuIu22dvKaQZVcytkPFaooazzGdz6iVKPujBs6N8X9Uu+z4UbmAnryyDm8S4qTi
+         /tslWKj4umgblAYL000xKgNdUbZF3ReR7cg8t1LtjGq7K9C8rHLXiSBaIqr0tX4ajY
+         1IZdGZSeVlT5bDdZET+U0jRVhDD8YXIkg+PoPd+IxRBpE4WXztn4p88MCqBEZUxagO
+         O3Z4llfIe3LOG/3i+k/j9RSOS4IfazIdbV3srp82iDeUHRZHw9REoeuJsSZ1Cp/Tc8
+         w4islVbqKYeLJfgGsoAdVKT5VctLwFS42DqXs9YLwUkMpc6p6zPwlqH/iN/JxHyZ+9
+         krAqU6VFsdHEA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Oct 2023 13:13:28 +0200
+X-ME-Date: Sat, 07 Oct 2023 15:50:12 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     keescook@chromium.org, gustavoars@kernel.org,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Vinod Koul <vkoul@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-Cc:     linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH 2/2] dmaengine: pxa_dma: Annotate struct pxad_desc_sw with __counted_by
-Date:   Sat,  7 Oct 2023 13:13:10 +0200
-Message-Id: <1c9ef22826f449a3756bb13a83494e9fe3e0be8b.1696676782.git.christophe.jaillet@wanadoo.fr>
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] media: vde: Use struct_size()
+Date:   Sat,  7 Oct 2023 15:50:02 +0200
+Message-Id: <bb201c3f0e7d2ca5cd222d9bb4c78ded8fded54e.1696686558.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <c8fc5563c9593c914fde41f0f7d1489a21b45a9a.1696676782.git.christophe.jaillet@wanadoo.fr>
-References: <c8fc5563c9593c914fde41f0f7d1489a21b45a9a.1696676782.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Prepare for the coming implementation by GCC and Clang of the __counted_by
-attribute. Flexible array members annotated with __counted_by can have
-their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-functions).
-
-To do so, the code needs a little shuffling related to how hw_desc is used
-and nb_desc incremented.
-
-The one by one increment is needed for the error handling path, calling
-pxad_free_desc(), to work correctly.
-
-So, add a new intermediate variable, desc, to store the result of the
-dma_pool_alloc() call.
+Use struct_size() which is much more common than this offsetof().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is part of a work done in parallel of what is currently worked
-on by Kees Cook.
+ drivers/media/platform/nvidia/tegra-vde/v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My patches are only related to corner cases that do NOT match the
-semantic of his Coccinelle script[1].
-
-[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
----
- drivers/dma/pxa_dma.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
-index 94cef2905940..c6e2862896e3 100644
---- a/drivers/dma/pxa_dma.c
-+++ b/drivers/dma/pxa_dma.c
-@@ -91,7 +91,8 @@ struct pxad_desc_sw {
- 	bool			cyclic;
- 	struct dma_pool		*desc_pool;	/* Channel's used allocator */
+diff --git a/drivers/media/platform/nvidia/tegra-vde/v4l2.c b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
+index bd8c207d5b54..0f48ce6f243e 100644
+--- a/drivers/media/platform/nvidia/tegra-vde/v4l2.c
++++ b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
+@@ -813,7 +813,7 @@ static int tegra_open(struct file *file)
+ 	struct tegra_ctx *ctx;
+ 	int err;
  
--	struct pxad_desc_hw	*hw_desc[];	/* DMA coherent descriptors */
-+	struct pxad_desc_hw	*hw_desc[] __counted_by(nb_desc);
-+						/* DMA coherent descriptors */
- };
- 
- struct pxad_phy {
-@@ -739,6 +740,7 @@ pxad_alloc_desc(struct pxad_chan *chan, unsigned int nb_hw_desc)
- {
- 	struct pxad_desc_sw *sw_desc;
- 	dma_addr_t dma;
-+	void *desc;
- 	int i;
- 
- 	sw_desc = kzalloc(struct_size(sw_desc, hw_desc, nb_hw_desc),
-@@ -748,20 +750,21 @@ pxad_alloc_desc(struct pxad_chan *chan, unsigned int nb_hw_desc)
- 	sw_desc->desc_pool = chan->desc_pool;
- 
- 	for (i = 0; i < nb_hw_desc; i++) {
--		sw_desc->hw_desc[i] = dma_pool_alloc(sw_desc->desc_pool,
--						     GFP_NOWAIT, &dma);
--		if (!sw_desc->hw_desc[i]) {
-+		desc = dma_pool_alloc(sw_desc->desc_pool, GFP_NOWAIT, &dma);
-+		if (!desc) {
- 			dev_err(&chan->vc.chan.dev->device,
- 				"%s(): Couldn't allocate the %dth hw_desc from dma_pool %p\n",
- 				__func__, i, sw_desc->desc_pool);
- 			goto err;
- 		}
- 
-+		sw_desc->nb_desc++;
-+		sw_desc->hw_desc[i] = desc;
-+
- 		if (i == 0)
- 			sw_desc->first = dma;
- 		else
- 			sw_desc->hw_desc[i - 1]->ddadr = dma;
--		sw_desc->nb_desc++;
- 	}
- 
- 	return sw_desc;
+-	ctx = kzalloc(offsetof(struct tegra_ctx, ctrls[ARRAY_SIZE(ctrl_cfgs)]),
++	ctx = kzalloc(struct_size(ctx, ctrls, ARRAY_SIZE(ctrl_cfgs)),
+ 		      GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
 -- 
 2.34.1
 
