@@ -2,85 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B52E95A88
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Oct 2023 01:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018FEE95A67
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Oct 2023 06:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344299AbjJHBsQ (ORCPT
+        id S1344407AbjJHGCB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 Oct 2023 21:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56570 "EHLO
+        Sun, 8 Oct 2023 02:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344257AbjJHBsP (ORCPT
+        with ESMTP id S1344363AbjJHGCA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 Oct 2023 21:48:15 -0400
+        Sun, 8 Oct 2023 02:02:00 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id E940B92;
-        Sat,  7 Oct 2023 18:48:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 04D08BD;
+        Sat,  7 Oct 2023 23:01:58 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 1CD25604A13E3;
-        Sun,  8 Oct 2023 09:48:06 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 11702604A87F2;
+        Sun,  8 Oct 2023 14:01:48 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-Cc:     Su Hui <suhui@nfschina.com>, tj@kernel.org, josef@toxicpanda.com,
-        axboe@kernel.dk, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] blk-throttle: silence truncated string warning
-Date:   Sun,  8 Oct 2023 09:47:52 +0800
-Message-Id: <20231008014751.423133-1-suhui@nfschina.com>
+To:     ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+        linux_oss@crudebyte.com
+Cc:     Su Hui <suhui@nfschina.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/9p/xattr.c: avoid format-overflow warning
+Date:   Sun,  8 Oct 2023 14:01:39 +0800
+Message-Id: <20231008060138.517057-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-using gcc and w=1, there are some warnings like these:
+with gcc and W=1 option, there's a warning like this:
 
-block/blk-throttle.c:1531:53: error:
-‘snprintf’ output may be truncated before the last format character
-[-Werror=format-truncation=]
- 1531 |    snprintf(idle_time, sizeof(idle_time), " idle=%lu",
-      |                                                     ^
-block/blk-throttle.c:1531:4: note: ‘snprintf’ output between 8 and 27 bytes
-into a destination of size 26
- 1531 |    snprintf(idle_time, sizeof(idle_time), " idle=%lu",
-      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1532 |     tg->idletime_threshold_conf);
-      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-block/blk-throttle.c:1538:15: error:
-‘%lu’ directive output may be truncated writing between 1 and 20 bytes
-into a region of size 17 [-Werror=format-truncation=]
- 1538 |     " latency=%lu", tg->latency_target_conf);
-      |               ^~~
+In file included from fs/9p/xattr.c:12:
+In function ‘v9fs_xattr_get’,
+    inlined from ‘v9fs_listxattr’ at fs/9p/xattr.c:142:9:
+include/net/9p/9p.h:55:2: error: ‘%s’ directive argument is null
+[-Werror=format-overflow=]
+   55 |  _p9_debug(level, __func__, fmt, ##__VA_ARGS__)
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-"%lu" can up to 21, so string " idle=%lu" can up to 27. But 'idle_time'
-only has 26 Bytes. It's same for 'latency_time' whose size should be 30
-rather than 26 because string " latency=%lu" can up to 30.
+use "" replace NULL to silence this warning.
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- block/blk-throttle.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/9p/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 38a881cf97d0..dfc5c0d3d9c1 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -1489,8 +1489,8 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
- 	char bufs[4][21] = { "max", "max", "max", "max" };
- 	u64 bps_dft;
- 	unsigned int iops_dft;
--	char idle_time[26] = "";
--	char latency_time[26] = "";
-+	char idle_time[27] = "";
-+	char latency_time[30] = "";
+diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+index e00cf8109b3f..d995ee080835 100644
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -139,7 +139,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
  
- 	if (!dname)
- 		return 0;
+ ssize_t v9fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ {
+-	return v9fs_xattr_get(dentry, NULL, buffer, buffer_size);
++	return v9fs_xattr_get(dentry, "", buffer, buffer_size);
+ }
+ 
+ static int v9fs_xattr_handler_get(const struct xattr_handler *handler,
 -- 
 2.30.2
 
