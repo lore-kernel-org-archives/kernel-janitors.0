@@ -2,121 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DEAE95A8E
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Oct 2023 13:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030C6E95A96
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Oct 2023 13:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377331AbjJINjv (ORCPT
+        id S1377549AbjJINyV convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Oct 2023 09:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        Mon, 9 Oct 2023 09:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376990AbjJINjt (ORCPT
+        with ESMTP id S1377659AbjJINyK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Oct 2023 09:39:49 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BBECA;
-        Mon,  9 Oct 2023 06:39:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 375001F390;
-        Mon,  9 Oct 2023 13:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1696858784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rhhdrKYTtCPVKmKC9S4vTagGuNFEkueMHImZJv8X2YM=;
-        b=Bt2zpHEqyPysxVZ5M3oLzODYBREFlRdKXZCNTkUo5nVnjolyHlKTSqsHc0wLt16UCUCoGV
-        o5FSHr52+c41Zqh0WgU4xpr57lKbxluxV9MsWLeduU3KW8/IGZ+vIixQmZoqb9duTpD/Yg
-        ln7PX4IFxS3p2paY1+N7RW4CAH7mVCc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1696858784;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rhhdrKYTtCPVKmKC9S4vTagGuNFEkueMHImZJv8X2YM=;
-        b=GTPpcXs5FZVOBc6rMbaoAuxBJfWVKABL547gd9V7aCeCaeAzRhzXPGiNrLxWRqqimAkxCc
-        9haxXwyqCBAkXlCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BF5BD13586;
-        Mon,  9 Oct 2023 13:39:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id BYk7K58CJGUFcQAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Mon, 09 Oct 2023 13:39:43 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 651cf113;
-        Mon, 9 Oct 2023 13:39:38 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix type promotion bug on 32bit systems
-In-Reply-To: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain> (Dan
-        Carpenter's message of "Sat, 7 Oct 2023 11:52:39 +0300")
-References: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
-Date:   Mon, 09 Oct 2023 14:39:38 +0100
-Message-ID: <87sf6jrk2t.fsf@suse.de>
+        Mon, 9 Oct 2023 09:54:10 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 674C391;
+        Mon,  9 Oct 2023 06:54:07 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6c4c40ca4f4so424557a34.0;
+        Mon, 09 Oct 2023 06:54:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696859646; x=1697464446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tr0Ks+DzpCxj2Tm5X8RhGp9w9ypX3KRdOtOpwoJiGjc=;
+        b=CH9wo4Okm35EP2ZIibm+LRUjll1w6vMlD6czBHK6v1P1P6AJKGKkdgPWZhoFP8W3eA
+         Y1K68DgcATNtJsbrvuEHBhXirFqzH9CZTKQAHzJ8EYG2iIXBiyqUzuTUshpz9EXawoNV
+         4uT/TVqKG1wnw1P/9fo/R50wZZG2zOi4cpgyX/yxIFVpOT3rTrtsHfeCvqP4kq276XcC
+         H5xoGDHZ4sLJxlJ1laPEplPPcbXiNgFPq7qsH2bB7ltK2byHp8k2wForYjZMy4vXi1pc
+         +WGHpSX77viPOSVVpm3omSinB5SusRuIUKoLxxLyJnw2t14+aLas/4TCHDtH4L/D30d0
+         9nrQ==
+X-Gm-Message-State: AOJu0YywWQLSdJNVx+OzWbCD0NO/Hf5DX4R7k10XptRXKr/1C2U9hIpe
+        sQ9d48gHOMN+90rQWCIAymuhB4QtqWhzAmhSAbFO1RFT
+X-Google-Smtp-Source: AGHT+IE9Rwip+TGOvl+gCaBsaQyvpRsKiROcw1KB4xANYuzHZvexXqgz5D1FfrnpNxVuH2aTgbILb7LAbYIO8ego840=
+X-Received: by 2002:a4a:c509:0:b0:57e:c9bf:696e with SMTP id
+ i9-20020a4ac509000000b0057ec9bf696emr13507256ooq.1.1696859646687; Mon, 09 Oct
+ 2023 06:54:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <514ef814-458d-4421-b93d-2d30bdc4a1e7@moroto.mountain>
+In-Reply-To: <514ef814-458d-4421-b93d-2d30bdc4a1e7@moroto.mountain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 9 Oct 2023 15:53:55 +0200
+Message-ID: <CAJZ5v0j83GHpmWhQPPJG6Xrv9ryy0tKEzcX=nbM0K71arpAwog@mail.gmail.com>
+Subject: Re: [PATCH] thermal: core: prevent potential string overflow
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Thomas Sujith <sujith.thomas@intel.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
-
-> In this code "ret" is type long and "src_objlen" is unsigned int.  The
-> problem is that on 32bit systems, when we do the comparison signed longs
-> are type promoted to unsigned int.  So negative error codes from
-> do_splice_direct() are treated as success instead of failure.
+On Sat, Oct 7, 2023 at 10:59 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
-> Fixes: 1b0c3b9f91f0 ("ceph: re-org copy_file_range and fix some error pat=
-hs")
+> The dev->id value comes from ida_alloc() so it's a number between zero
+> and INT_MAX.  If it's too high then these sprintf()s will overflow.
+>
+> Fixes: 203d3d4aa482 ("the generic thermal sysfs driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> 32bit is so weird and ancient.  It's strange to think that unsigned int
-> has more positive bits than signed long.
-
-Yikes! Thanks for catching this, Dan.  Really tricky.  I guess you used
-some static analysis tool (smatch?) to highlight this issue for you,
-right?
-
-Anyway, feel free to add my
-
-Reviewed-by: Luis Henriques <lhenriques@suse.de>
-
-Cheers,
---=20
-Lu=C3=ADs
-
-
+>  drivers/thermal/thermal_core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> fs/ceph/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 45d0aa0b69b7..61f0b5a3b00c 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -681,7 +681,8 @@ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+>         if (result)
+>                 goto release_ida;
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index b1da02f5dbe3..b5f8038065d7 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -2969,7 +2969,7 @@ static ssize_t __ceph_copy_file_range(struct file *=
-src_file, loff_t src_off,
->  		ret =3D do_splice_direct(src_file, &src_off, dst_file,
->  				       &dst_off, src_objlen, flags);
->  		/* Abort on short copies or on error */
-> -		if (ret < src_objlen) {
-> +		if (ret < (long)src_objlen) {
->  			dout("Failed partial copy (%zd)\n", ret);
->  			goto out;
->  		}
-> --=20
+> -       sprintf(dev->attr_name, "cdev%d_trip_point", dev->id);
+> +       snprintf(dev->attr_name, sizeof(dev->attr_name), "cdev%d_trip_point",
+> +                dev->id);
+>         sysfs_attr_init(&dev->attr.attr);
+>         dev->attr.attr.name = dev->attr_name;
+>         dev->attr.attr.mode = 0444;
+> @@ -690,7 +691,8 @@ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+>         if (result)
+>                 goto remove_symbol_link;
 >
-> 2.39.2
->
+> -       sprintf(dev->weight_attr_name, "cdev%d_weight", dev->id);
+> +       snprintf(dev->weight_attr_name, sizeof(dev->weight_attr_name),
+> +                "cdev%d_weight", dev->id);
+>         sysfs_attr_init(&dev->weight_attr.attr);
+>         dev->weight_attr.attr.name = dev->weight_attr_name;
+>         dev->weight_attr.attr.mode = S_IWUSR | S_IRUGO;
+> --
+
+Applied as 6.7 material, thanks!
