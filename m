@@ -2,62 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC4CD6136
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Oct 2023 20:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EBDE784AF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Oct 2023 22:20:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377918AbjJIUh1 (ORCPT
+        id S1378880AbjJIWUc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Oct 2023 16:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
+        Mon, 9 Oct 2023 18:20:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234601AbjJIUhZ (ORCPT
+        with ESMTP id S234610AbjJIWUa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Oct 2023 16:37:25 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 074649E;
-        Mon,  9 Oct 2023 13:37:23 -0700 (PDT)
-Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1qpx07-00058Z-Dy; Mon, 09 Oct 2023 22:37:15 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     David Airlie <airlied@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Fix some error handling paths in cdn_dp_probe()
-Date:   Mon,  9 Oct 2023 22:37:10 +0200
-Message-Id: <169688381986.192795.11170132261049443621.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <8494a41602fadb7439630921a9779640698f2f9f.1693676045.git.christophe.jaillet@wanadoo.fr>
-References: <8494a41602fadb7439630921a9779640698f2f9f.1693676045.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
+        Mon, 9 Oct 2023 18:20:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F1FFE6;
+        Mon,  9 Oct 2023 15:20:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95EAAC433C8;
+        Mon,  9 Oct 2023 22:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696890025;
+        bh=4io3LO+uu080DbbCaJxSHVDpj0edN9NVy7xVKX8iYxU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=BfjLqvQJsjXODlTcOArD7a9TKKIwFBbNY3F7GCvcPytvoo76zmfxDkKFhmkrQvtP9
+         WA+SC/xKyPd4sTNFqqm+bGtyawu8j+Zs2DMom3fOte5xIoe1Pos2mOM7lc5jozeZqD
+         81BWGJmrnsXhly+AfaDIcTykHKhe3bZb6MSagVvV/+ttRH7Y54D6EKPbUMnQ4SRDZi
+         mGkpXItZI3aOgK+bf2qKP1pgI2rC3oR1wUNUmWdDIO1d2VK3rZacH8Fmb1OIRx7pdN
+         pvfcoowyOFbaRUtIxxKIatrHYrXrzv3QAC1m4V1473TBP/pOhb5FlPoEPSZV6Rzjfq
+         h93vGOPgLGL0w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 73AD8E0009C;
+        Mon,  9 Oct 2023 22:20:25 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: msft: __hci_cmd_sync() doesn't return NULL
+From:   patchwork-bot+bluetooth@kernel.org
+Message-Id: <169689002546.32192.12724090135362600749.git-patchwork-notify@kernel.org>
+Date:   Mon, 09 Oct 2023 22:20:25 +0000
+References: <5fffad33-4d19-4645-a21f-57321d1c82a6@moroto.mountain>
+In-Reply-To: <5fffad33-4d19-4645-a21f-57321d1c82a6@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 2 Sep 2023 19:34:31 +0200, Christophe JAILLET wrote:
-> cdn_dp_audio_codec_init() can fail. So add some error handling.
-> 
-> If component_add() fails, the previous cdn_dp_audio_codec_init() call
-> should be undone, as already done in the remove function.
-> 
-> 
+Hello:
 
-Applied, thanks!
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-[1/1] drm/rockchip: cdn-dp: Fix some error handling paths in cdn_dp_probe()
-      commit: 44b968d0d0868b7a9b7a5c64464ada464ff4d532
+On Thu, 5 Oct 2023 14:19:23 +0300 you wrote:
+> The __hci_cmd_sync() function doesn't return NULL.  Checking for NULL
+> doesn't make the code safer, it just confuses people.
+> 
+> When a function returns both error pointers and NULL then generally the
+> NULL is a kind of success case.  For example, maybe we look up an item
+> then errors mean we ran out of memory but NULL means the item is not
+> found.  Or if we request a feature, then error pointers mean that there
+> was an error but NULL means that the feature has been deliberately
+> turned off.
+> 
+> [...]
 
-Best regards,
+Here is the summary with links:
+  - Bluetooth: msft: __hci_cmd_sync() doesn't return NULL
+    https://git.kernel.org/bluetooth/bluetooth-next/c/99976bf519f2
+
+You are awesome, thank you!
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
