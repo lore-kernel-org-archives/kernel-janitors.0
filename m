@@ -2,122 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12FCCD68EC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 05:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D822CD68EE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 06:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346691AbjJJF2F (ORCPT
+        id S1442253AbjJJG1U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Oct 2023 01:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
+        Tue, 10 Oct 2023 02:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344471AbjJJF2E (ORCPT
+        with ESMTP id S1442245AbjJJG1T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Oct 2023 01:28:04 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579FCD7
-        for <kernel-janitors@vger.kernel.org>; Mon,  9 Oct 2023 22:27:56 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id q5HZqevR01Bgiq5HZqbsce; Tue, 10 Oct 2023 07:27:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1696915674;
-        bh=UhBzoQl6b6SPgBCx3O6qpCX6Jh+GHE2nQg1Lh1Bbdvc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=sUJg8M77dK2uUmiq5tDeHAGl5t8tBzowgZDea1fMdllYtFrUVU6nFeUaWAf9Wo06Z
-         esfa5UPwLBbtN6f36c8onGpTL8vfUy1mRZ2gb+etSvA6Aftn1jYzJPSsKjBlkrveuS
-         pFMS5/QPWTbDI+j7Rtv/9XZCxOU8Ga6T2Ii+aZZ3tPw2X8ER19weJsjCL0EfxghF2s
-         MF/+yi2da4MgzK3RdkIq9ajWAPH8ZjCVv2MadKxaZ6PFiJCbzR35oNa3oZYrtOe57s
-         qCVQFEYjLL+upHzUtCo4nxDeVuiPm1aX6UgFVci7cupr5gQZY0hjXjjnQ8sTSZc8/2
-         pTNufJQc3eNww==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 10 Oct 2023 07:27:54 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <e9384a5a-caf6-48cd-8ba6-9bc5fa891177@wanadoo.fr>
-Date:   Tue, 10 Oct 2023 07:27:48 +0200
+        Tue, 10 Oct 2023 02:27:19 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D584FC1
+        for <kernel-janitors@vger.kernel.org>; Mon,  9 Oct 2023 23:27:17 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-3231d6504e1so4841627f8f.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Oct 2023 23:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696919236; x=1697524036; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ri9EKRL9KIpCxIS9ro/yli5p5EOl1LURZZBjNQ94PTo=;
+        b=QaHAFPTMAW9ioYk8qe9OvRtMW/51GTAmpSKFagyqLKEmEPGKTvm7Vr67/AL5Wsjt9M
+         WonUJbQwNcSstIjPXba7ah8EEBfvNQgoM3YFCx4OTPPs1CY+bBIZonjx/lS5Pfn+K9iV
+         ZALbwQvXGdZC/J7q/M2J2Ltr1vQlUjtf0o/c0dA/NcZUbUATX0lzDTpDlO05YUZolLn7
+         iLb+qCsv3iMp6x9Y8+DjhVNjcLqh1HEw8Gm3Mhg/X5hXHdxXJzg7Jeaiv7hmfGnhSSkG
+         //qNkinpXikJvMeh4rIObSWJqwTVt6UYngezCSpJqRAP4+y8dpxuMbNn0Rw4UJd1uMF3
+         UD/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696919236; x=1697524036;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ri9EKRL9KIpCxIS9ro/yli5p5EOl1LURZZBjNQ94PTo=;
+        b=UbbwowogBexexw2cEaj3a7u3h1VE5owuV1REflcAhIhBCJ/HhpyCQ/l3GCGEJm/5p0
+         0pv5LVHIHjmFrx1e/56QpjqBTibpfAthvT1i0fNbRRBKuahEIBMZCcqsVOp3AH+V6gAq
+         +4/qH03xonfeJ0GfGnG2tJGqAzYMxTfj6wN+tFwSD0oVwYn5ENFC4nnI3sBBGp4C9oyT
+         dHwTBBRV1teS4euMVjN0UcT7vtHiTJvFbOTeRiuS/FETvoF3BAJT2g04uY6jyhuelIpU
+         RCljMhwjb10SMueLG83wx6rPXxhebUiRrhcibbqcCtjjrgchkrmC0Z8pxCMiKIqpG89q
+         Hyvg==
+X-Gm-Message-State: AOJu0YxW4cOgrH4hrRSvaon0EKd/vKuBGS+RleSYDdsb3F8Xfz5TLYKg
+        93ny/Ew+FIK+oaFaPivz36MmoQ==
+X-Google-Smtp-Source: AGHT+IE+N98c4s/xb+S/dtBcmAo4nHFFZliG6hDnBwvWeNQTOEdiAzf+3Co5YyLLg9hsrpVEFkyb3g==
+X-Received: by 2002:adf:eac3:0:b0:322:dbc6:8cf7 with SMTP id o3-20020adfeac3000000b00322dbc68cf7mr14766445wrn.16.1696919236163;
+        Mon, 09 Oct 2023 23:27:16 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v15-20020a5d4b0f000000b00325aca09ad1sm11681034wrq.24.2023.10.09.23.27.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 23:27:15 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 09:27:12 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix type promotion bug on 32bit systems
+Message-ID: <987bade1-8753-437b-a5c0-f593a2629caf@kadam.mountain>
+References: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
+ <87sf6jrk2t.fsf@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ovs-dev] [PATCH net-next 2/2] net: openvswitch: Annotate struct
- mask_array with __counted_byUse struct_size()
-To:     Ilya Maximets <i.maximets@ovn.org>, keescook@chromium.org,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-Cc:     dev@openvswitch.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-References: <8be59c9e06fca8eff2f264abb4c2f74db0b19a9e.1696156198.git.christophe.jaillet@wanadoo.fr>
- <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
- <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sf6jrk2t.fsf@suse.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 02/10/2023 à 18:51, Ilya Maximets a écrit :
-> On 10/1/23 13:07, Christophe JAILLET wrote:
->> Prepare for the coming implementation by GCC and Clang of the __counted_by
->> attribute. Flexible array members annotated with __counted_by can have
->> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
->> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
->> functions).
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> This patch is part of a work done in parallel of what is currently worked
->> on by Kees Cook.
->>
->> My patches are only related to corner cases that do NOT match the
->> semantic of his Coccinelle script[1].
->>
->> In this case, in tbl_mask_array_alloc(), several things are allocated with
->> a single allocation. Then, some pointer arithmetic computes the address of
->> the memory after the flex-array.
->>
->> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
->> ---
->>   net/openvswitch/flow_table.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/openvswitch/flow_table.h b/net/openvswitch/flow_table.h
->> index 9e659db78c05..8d9e83b4d62c 100644
->> --- a/net/openvswitch/flow_table.h
->> +++ b/net/openvswitch/flow_table.h
->> @@ -48,7 +48,7 @@ struct mask_array {
->>   	int count, max;
->>   	struct mask_array_stats __percpu *masks_usage_stats;
->>   	u64 *masks_usage_zero_cntr;
->> -	struct sw_flow_mask __rcu *masks[];
->> +	struct sw_flow_mask __rcu *masks[] __counted_by(size);
+On Mon, Oct 09, 2023 at 02:39:38PM +0100, Luis Henriques wrote:
+> Dan Carpenter <dan.carpenter@linaro.org> writes:
 > 
-> Did you mean 'max'?  There is no 'size' in the structure.
-
-Hi,
-
-Of courtse, yes. I'll resend.
-
-'size' is the name of the variable that is written in mask_array->max in 
-tbl_mask_array_alloc()
-
+> > In this code "ret" is type long and "src_objlen" is unsigned int.  The
+> > problem is that on 32bit systems, when we do the comparison signed longs
+> > are type promoted to unsigned int.  So negative error codes from
+> > do_splice_direct() are treated as success instead of failure.
+> >
+> > Fixes: 1b0c3b9f91f0 ("ceph: re-org copy_file_range and fix some error paths")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > 32bit is so weird and ancient.  It's strange to think that unsigned int
+> > has more positive bits than signed long.
 > 
-> Also, the patch subject is messed up a bit.
+> Yikes! Thanks for catching this, Dan.  Really tricky.  I guess you used
+> some static analysis tool (smatch?) to highlight this issue for you,
+> right?
 
-Yes.
-Will fix it as well.
+Yes.  I've pushed this check but you need the cross function DB to know
+which functions return error codes so most people won't see the warning.
 
-CJ
-
-> 
-> Best regards, Ilya Maximets.
-> 
+regards,
+dan carpenter
 
