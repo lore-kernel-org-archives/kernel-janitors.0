@@ -2,77 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE85CD691B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 09:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8A2CD80BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 12:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230258AbjJJJk0 (ORCPT
+        id S231823AbjJJMVc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Oct 2023 05:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47980 "EHLO
+        Tue, 10 Oct 2023 08:21:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbjJJJkZ (ORCPT
+        with ESMTP id S231637AbjJJMVb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Oct 2023 05:40:25 -0400
+        Tue, 10 Oct 2023 08:21:31 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DA694
-        for <kernel-janitors@vger.kernel.org>; Tue, 10 Oct 2023 02:40:24 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25D84C433CA;
-        Tue, 10 Oct 2023 09:40:24 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5CA99;
+        Tue, 10 Oct 2023 05:21:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBE5C433C7;
+        Tue, 10 Oct 2023 12:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696930824;
-        bh=d5GXNWwoNDXNq9hUxuk9GxPSEE/IHXHFL6VyvMeDIvo=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=QVRXkPWUzCFltimaLELy7wuruoL5hw4jf0oeZnlyvltelKamaJzsHlxuhfO8n6eZN
-         tEJ4FPG6ayQGR9Dyk0ox5mUgGJLOJTBOPOsADgsuTm3gYbmJabiWg9aStcy5jphIgY
-         E4YY/UTsDWqxTPThOdSYVTDvGN3vLVM4qPFu2HESvpvmBX1/rcGvKubX49vYUOZEI0
-         NIi/n7xzRHlGWoPx+Gm+sws/ZV38kyj4t+NUJ/RpiqXL3cusMT6rmjoBWE1rw3bKIX
-         p2CJaaY1nbU+xI39k/HCSIKy9jPOz+TwXgExHnDnMEB7hUGOUNzAIfFe+U7bdQlgXh
-         9/1AIPvdJRYMQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 09E68C595C5;
-        Tue, 10 Oct 2023 09:40:24 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] ixgbe: fix crash with empty VF macvlan list
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169693082403.5800.6981451364289759108.git-patchwork-notify@kernel.org>
-Date:   Tue, 10 Oct 2023 09:40:24 +0000
-References: <ZSADNdIw8zFx1xw2@kadam>
-In-Reply-To: <ZSADNdIw8zFx1xw2@kadam>
+        s=k20201202; t=1696940489;
+        bh=Yej9bVPXe3Yn3VuZSMy7tR2lCorR7YuG7/gHIvWhSps=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LnkFxwRGButXSwjFV9YJqgfe/gHEZ5zf1Pf8vukA8jB+DXk1OiCCacoqLk844x5Te
+         ktVllChcD+0a31UVSv4aH2SSYW1Gw7ACD+6AZJEVX8llNNEViwVbASpUv/IDvqB/fD
+         RU6g2iAxhNNCF2YBOXCmASbuLePa1mW3a8/vCw97fnhqQG4VvIWsHgnUJUv3xnR5Mn
+         YZUNJiTCoart30dZshRKI6TU9V+63kY6M7rOVaRwf+eKJcePo6zSE/8ZiqYhBVFNOW
+         dDbcy+qMbGJw8pOJpkBd0NgddKk2YsSqVi1nv2v2CVayomsNkwTIjbGK20LRTMO3AY
+         vUkWFxpfdgDJQ==
+Date:   Tue, 10 Oct 2023 17:51:16 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     jesse.brandeburg@intel.com, horms@kernel.org,
-        anthony.l.nguyen@intel.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: ufs: qcom: remove unnecessary check
+Message-ID: <20231010122116.GI4884@thinkpad>
+References: <fe3b8fcd-64a7-4887-bddd-32239a88a6a3@moroto.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fe3b8fcd-64a7-4887-bddd-32239a88a6a3@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 6 Oct 2023 15:53:09 +0300 you wrote:
-> The adapter->vf_mvs.l list needs to be initialized even if the list is
-> empty.  Otherwise it will lead to crashes.
+On Mon, Oct 02, 2023 at 10:03:35AM +0300, Dan Carpenter wrote:
+> The "attr" pointer points to an offset into the "host" struct so it
+> can't be NULL.  Delete the if statement and pull the code in a tab.
 > 
-> Fixes: a1cbb15c1397 ("ixgbe: Add macvlan support for VF")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
 > ---
-> v2: Use the correct fixes tag.  Thanks, Simon.
+>  drivers/ufs/host/ufs-qcom.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 2128db0293b5..96cb8b5b4e66 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1447,15 +1447,11 @@ static int ufs_qcom_clk_scale_up_pre_change(struct ufs_hba *hba)
+>  	if (!ufs_qcom_cap_qunipro(host))
+>  		return 0;
+>  
+> -	if (attr) {
+> -		ret = ufs_qcom_cfg_timers(hba, attr->gear_rx,
+> -					attr->pwr_rx, attr->hs_rate,
+> -					false, true);
+> -		if (ret) {
+> -			dev_err(hba->dev, "%s ufs cfg timer failed\n",
+> -						__func__);
+> -			return ret;
+> -		}
+> +	ret = ufs_qcom_cfg_timers(hba, attr->gear_rx, attr->pwr_rx,
+> +				  attr->hs_rate, false, true);
+> +	if (ret) {
+> +		dev_err(hba->dev, "%s ufs cfg timer failed\n", __func__);
+> +		return ret;
+>  	}
+>  	/* set unipro core clock attributes and clear clock divider */
+>  	return ufs_qcom_set_core_clk_ctrl(hba, true);
+> -- 
+> 2.39.2
+> 
 
-Here is the summary with links:
-  - [net,v2] ixgbe: fix crash with empty VF macvlan list
-    https://git.kernel.org/netdev/net/c/7b5add9af567
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+மணிவண்ணன் சதாசிவம்
