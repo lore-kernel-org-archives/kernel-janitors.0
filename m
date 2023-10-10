@@ -2,92 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAC4CD68E4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 02:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12FCCD68EC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 05:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441880AbjJJCXg (ORCPT
+        id S1346691AbjJJF2F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Oct 2023 22:23:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55008 "EHLO
+        Tue, 10 Oct 2023 01:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1441877AbjJJCXf (ORCPT
+        with ESMTP id S1344471AbjJJF2E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Oct 2023 22:23:35 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E70BDA;
-        Mon,  9 Oct 2023 19:23:32 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 31D10C01D; Tue, 10 Oct 2023 04:23:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1696904608; bh=vDDZpwwma7Avl3c22y5CxXhDLr3FrhQCVpBoVTpT7Is=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cLZzej6iwRpfw/yDnbY1P1nWxiXfJ9Deryd9mZkGAgBhKJizV7SZdWvnz7ltlXo2k
-         AbXVzq712zwJ2NQat3uECJmclHScHyYObiXEdYxWO3KCRNi3aXISuP0z8V9JVAm/ml
-         04gGbPyOVM9ukcinXvdO7X3VM+3ZEaWtosp0G8Xj84kzNDuyMUKNc9V4uKD8L+rFw2
-         Ai8l0mz81aoWlHZ5X2qpjNNEzRc19cEnMEV4OvB/iHnHwjuy0oTstUC1HKda3olIFx
-         2Lla+WA6j7ciAzApdT4hVUQhGoX9AqPdD/snBcXEQ+6kqTQi7zVIPflpi0km8g8d62
-         Qjkys3SYx3IQA==
-Received: from gaia (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 6D504C009;
-        Tue, 10 Oct 2023 04:23:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1696904607; bh=vDDZpwwma7Avl3c22y5CxXhDLr3FrhQCVpBoVTpT7Is=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wo2S7iv9h8oygPJ3rzyYbNjLs/YiTnhz28dN0FQ4cvWcmxrEKYzhwvvWqSShV/Zqj
-         DFcKBwysqunq25EHaT+LqRVFy76WY3j4Mvf5gHzCPfP9C/cNJH2ua9amjdBr8zUEeE
-         Uh9LJvl576hU1aVOa/PY7GzchJwaPToZjaPAmg3Lt7Vv2bTM99PyOpObUiHO5ghK6F
-         QZ9QVeGt+ZYzC7DW9mbUb4fXt1pJRBfry+i8ic6VuegDn5UGdMYh6WhDOdfjf2vgVe
-         szc1JxsbuhyxydgnHYcHimIao0z3PBEtr7MXArOTQpr51NrqT4tk6rzoxQkRgG4RCu
-         08muuPd8HJxBg==
-Received: from localhost (gaia [local])
-        by gaia (OpenSMTPD) with ESMTPA id 80c398e3;
-        Tue, 10 Oct 2023 02:23:22 +0000 (UTC)
-Date:   Tue, 10 Oct 2023 11:23:06 +0900
-From:   asmadeus@codewreck.org
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     ericvh@kernel.org, lucho@ionkov.net, Su Hui <suhui@nfschina.com>,
-        v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/9p/xattr.c: avoid format-overflow warning
-Message-ID: <ZSS1irFMxC35cg01@codewreck.org>
-References: <20231008060138.517057-1-suhui@nfschina.com>
- <13910281.Zj71IQSfG8@silver>
+        Tue, 10 Oct 2023 01:28:04 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579FCD7
+        for <kernel-janitors@vger.kernel.org>; Mon,  9 Oct 2023 22:27:56 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id q5HZqevR01Bgiq5HZqbsce; Tue, 10 Oct 2023 07:27:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1696915674;
+        bh=UhBzoQl6b6SPgBCx3O6qpCX6Jh+GHE2nQg1Lh1Bbdvc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=sUJg8M77dK2uUmiq5tDeHAGl5t8tBzowgZDea1fMdllYtFrUVU6nFeUaWAf9Wo06Z
+         esfa5UPwLBbtN6f36c8onGpTL8vfUy1mRZ2gb+etSvA6Aftn1jYzJPSsKjBlkrveuS
+         pFMS5/QPWTbDI+j7Rtv/9XZCxOU8Ga6T2Ii+aZZ3tPw2X8ER19weJsjCL0EfxghF2s
+         MF/+yi2da4MgzK3RdkIq9ajWAPH8ZjCVv2MadKxaZ6PFiJCbzR35oNa3oZYrtOe57s
+         qCVQFEYjLL+upHzUtCo4nxDeVuiPm1aX6UgFVci7cupr5gQZY0hjXjjnQ8sTSZc8/2
+         pTNufJQc3eNww==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 10 Oct 2023 07:27:54 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <e9384a5a-caf6-48cd-8ba6-9bc5fa891177@wanadoo.fr>
+Date:   Tue, 10 Oct 2023 07:27:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <13910281.Zj71IQSfG8@silver>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ovs-dev] [PATCH net-next 2/2] net: openvswitch: Annotate struct
+ mask_array with __counted_byUse struct_size()
+To:     Ilya Maximets <i.maximets@ovn.org>, keescook@chromium.org,
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>
+Cc:     dev@openvswitch.org, netdev@vger.kernel.org, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+References: <8be59c9e06fca8eff2f264abb4c2f74db0b19a9e.1696156198.git.christophe.jaillet@wanadoo.fr>
+ <f66ddcf1ef9328f10292ea75a17b584359b6cde3.1696156198.git.christophe.jaillet@wanadoo.fr>
+ <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <689fe81f-e2b4-9f99-4005-8ae330afb869@ovn.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christian Schoenebeck wrote on Mon, Oct 09, 2023 at 08:34:15PM +0200:
-> > +++ b/fs/9p/xattr.c
-> > @@ -139,7 +139,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
-> >  
-> >  ssize_t v9fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
-> >  {
-> > -	return v9fs_xattr_get(dentry, NULL, buffer, buffer_size);
-> > +	return v9fs_xattr_get(dentry, "", buffer, buffer_size);
-> >  }
-> >  
-> >  static int v9fs_xattr_handler_get(const struct xattr_handler *handler,
-> > 
+Le 02/10/2023 à 18:51, Ilya Maximets a écrit :
+> On 10/1/23 13:07, Christophe JAILLET wrote:
+>> Prepare for the coming implementation by GCC and Clang of the __counted_by
+>> attribute. Flexible array members annotated with __counted_by can have
+>> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+>> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+>> functions).
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> This patch is part of a work done in parallel of what is currently worked
+>> on by Kees Cook.
+>>
+>> My patches are only related to corner cases that do NOT match the
+>> semantic of his Coccinelle script[1].
+>>
+>> In this case, in tbl_mask_array_alloc(), several things are allocated with
+>> a single allocation. Then, some pointer arithmetic computes the address of
+>> the memory after the flex-array.
+>>
+>> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+>> ---
+>>   net/openvswitch/flow_table.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/openvswitch/flow_table.h b/net/openvswitch/flow_table.h
+>> index 9e659db78c05..8d9e83b4d62c 100644
+>> --- a/net/openvswitch/flow_table.h
+>> +++ b/net/openvswitch/flow_table.h
+>> @@ -48,7 +48,7 @@ struct mask_array {
+>>   	int count, max;
+>>   	struct mask_array_stats __percpu *masks_usage_stats;
+>>   	u64 *masks_usage_zero_cntr;
+>> -	struct sw_flow_mask __rcu *masks[];
+>> +	struct sw_flow_mask __rcu *masks[] __counted_by(size);
 > 
-> Mmm, that's not the same is it? Have you tested this change?
+> Did you mean 'max'?  There is no 'size' in the structure.
+
+Hi,
+
+Of courtse, yes. I'll resend.
+
+'size' is the name of the variable that is written in mask_array->max in 
+tbl_mask_array_alloc()
+
 > 
-> Currently this function causes a 'Txattrwalk' 9p message to be sent to 9p
-> server with its name[s] field being NULL, and the latter being the magical
-> hint to 9p server to not send an attribute, but rather the list of attributes.
+> Also, the patch subject is messed up a bit.
+
+Yes.
+Will fix it as well.
+
+CJ
+
 > 
-> With your change I would assume that it would rather ask server for one
-> attribute called "". I have not tested myself, just worrying that it might
-> break behaviour.
+> Best regards, Ilya Maximets.
+> 
 
-p9pdu_vwritef should output the same (just a 0 length) for both NULL and
-"" so I think it should be ok, but it definitely needs testing.
-
-I'll try to find time to check (getfattr -d should be enough) later this
-week and add it to the pile
-
--- 
-Dominique Martinet | Asmadeus
