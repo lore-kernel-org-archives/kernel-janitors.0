@@ -2,85 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14157CD68FA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 07:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356B1CD68FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 08:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442572AbjJJH7Y (ORCPT
+        id S1442742AbjJJITq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Oct 2023 03:59:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39572 "EHLO
+        Tue, 10 Oct 2023 04:19:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442658AbjJJH7Y (ORCPT
+        with ESMTP id S1442750AbjJJITl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Oct 2023 03:59:24 -0400
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 535F2AC;
-        Tue, 10 Oct 2023 00:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=vZ/Iuu84hep1RjBDXaiCtQLKdDGxvE+knWVOSwSOFmg=; b=YzZE4smWZ+q1Mv7lXM23xEuJHM
-        ZP7WoGJCARna5evriYPQuoydFF0clnT/ChUm0MTeGEUNK15U5UXFt8o+INlOw8DimXlAxraQv7Mzy
-        6uFAF1ts4lE6i46Rt6eOYHYtw6s7lhmv+tvyxFdZ+IaJe3IgBZqP6lzaHlBnQ7z6HPBiSN9g2y04x
-        6c1yIy6h2MFxa3qarhFqqXcyYHOWXcnsCG0P3Ztv3iNTK+jVdx2eWIj8xmiRq9t6FXTDWq6yq01wX
-        kmrqCZpSZXxeDHFjHUo/l3RIdjvdupSYF0V6hZ39d6w4q1jGq0A/diV7mbm4EhU/F5YJQuIoZVTkJ
-        YZnO8kZiyUfmiKR4Hl8XHbYx3oIvm+TDZIqDdfMYnPGx+0bybv+4FihZ2fxIjyaU9zgUg3f1hs9Td
-        PbohF7ljIpr7/U6tdJY3wSV72clciralsqhHOzcggHjGBNEGKTiRcweeUnRJvhThvOgbeyFqKZEGB
-        cLLbrrOdjR5MGW9L3Yd+BlJ7aEL0kGjZl7L4JF74qsh/aGHL41rsYW0VZNKyjW39fEc7MEaI+KklP
-        tKA5a8O2lwqqoRLBWhHXEbD3NHWYQWhMle4gqLJh3Me5Yu0rb76vU4aMKOTuAiTvP5PuqU4rIn0Xv
-        OlhzQo8VRUFFTnoDV/t0p0Tx+ZBUDK10hMeH+T5vo=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     asmadeus@codewreck.org
-Cc:     ericvh@kernel.org, lucho@ionkov.net, Su Hui <suhui@nfschina.com>,
-        v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/9p/xattr.c: avoid format-overflow warning
-Date:   Tue, 10 Oct 2023 09:59:11 +0200
-Message-ID: <1795281.aKYqWbn8Tv@silver>
-In-Reply-To: <ZSS1irFMxC35cg01@codewreck.org>
-References: <20231008060138.517057-1-suhui@nfschina.com> <13910281.Zj71IQSfG8@silver>
- <ZSS1irFMxC35cg01@codewreck.org>
+        Tue, 10 Oct 2023 04:19:41 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 2583CB4;
+        Tue, 10 Oct 2023 01:19:37 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 8FB1D60637837;
+        Tue, 10 Oct 2023 16:19:33 +0800 (CST)
+Message-ID: <d0753768-874e-6f41-550d-c10dfc6f9c5b@nfschina.com>
+Date:   Tue, 10 Oct 2023 16:19:32 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] fs/9p/xattr.c: avoid format-overflow warning
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+        linux_oss@crudebyte.com, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <56aa4f09-8f61-48f3-9836-687bf852b03a@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tuesday, October 10, 2023 4:23:06 AM CEST asmadeus@codewreck.org wrote:
-> Christian Schoenebeck wrote on Mon, Oct 09, 2023 at 08:34:15PM +0200:
-> > > +++ b/fs/9p/xattr.c
-> > > @@ -139,7 +139,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
-> > >  
-> > >  ssize_t v9fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
-> > >  {
-> > > -	return v9fs_xattr_get(dentry, NULL, buffer, buffer_size);
-> > > +	return v9fs_xattr_get(dentry, "", buffer, buffer_size);
-> > >  }
-> > >  
-> > >  static int v9fs_xattr_handler_get(const struct xattr_handler *handler,
-> > > 
-> > 
-> > Mmm, that's not the same is it? Have you tested this change?
-> > 
-> > Currently this function causes a 'Txattrwalk' 9p message to be sent to 9p
-> > server with its name[s] field being NULL, and the latter being the magical
-> > hint to 9p server to not send an attribute, but rather the list of attributes.
-> > 
-> > With your change I would assume that it would rather ask server for one
-> > attribute called "". I have not tested myself, just worrying that it might
-> > break behaviour.
-> 
-> p9pdu_vwritef should output the same (just a 0 length) for both NULL and
-> "" so I think it should be ok, but it definitely needs testing.
-> 
-> I'll try to find time to check (getfattr -d should be enough) later this
-> week and add it to the pile
 
-Yeah, I think you are right Dominique, it should end up the same as both cases
-result in a string length of 0.
+On 2023/10/10 15:51, Dan Carpenter wrote:
+> On Sun, Oct 08, 2023 at 02:01:39PM +0800, Su Hui wrote:
+>> with gcc and W=1 option, there's a warning like this:
+>>
+>> In file included from fs/9p/xattr.c:12:
+>> In function ‘v9fs_xattr_get’,
+>>      inlined from ‘v9fs_listxattr’ at fs/9p/xattr.c:142:9:
+>> include/net/9p/9p.h:55:2: error: ‘%s’ directive argument is null
+>> [-Werror=format-overflow=]
+>>     55 |  _p9_debug(level, __func__, fmt, ##__VA_ARGS__)
+>>        |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> use "" replace NULL to silence this warning.
+>>
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   fs/9p/xattr.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+>> index e00cf8109b3f..d995ee080835 100644
+>> --- a/fs/9p/xattr.c
+>> +++ b/fs/9p/xattr.c
+>> @@ -139,7 +139,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
+>>   
+>>   ssize_t v9fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+>>   {
+>> -	return v9fs_xattr_get(dentry, NULL, buffer, buffer_size);
+>> +	return v9fs_xattr_get(dentry, "", buffer, buffer_size);
+> I'm pretty uncomfortable with this patch...  This code is 13 years old
+> so it can't be too huge of a problem.  We're doing this for the printks,
+> but now they're going to look weird first of all.
+>
+> Old: "file = (null)"
+> New: "file = "
+Agreed, this looks  really weird and the patch is just for avoiding 
+gcc's warning.
+Sorry for the noise.
 
-/Christian
+Su Hui
 
-
+>
+> But also this must have some other effects on runtime right?
+>
+> regards,
+> dan carpenter
+>
