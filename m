@@ -2,96 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8A2CD80BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 12:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01E9CD80D0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Oct 2023 13:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbjJJMVc (ORCPT
+        id S232239AbjJJNfl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Oct 2023 08:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39590 "EHLO
+        Tue, 10 Oct 2023 09:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231637AbjJJMVb (ORCPT
+        with ESMTP id S232291AbjJJNfj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Oct 2023 08:21:31 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5CA99;
-        Tue, 10 Oct 2023 05:21:29 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBE5C433C7;
-        Tue, 10 Oct 2023 12:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696940489;
-        bh=Yej9bVPXe3Yn3VuZSMy7tR2lCorR7YuG7/gHIvWhSps=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LnkFxwRGButXSwjFV9YJqgfe/gHEZ5zf1Pf8vukA8jB+DXk1OiCCacoqLk844x5Te
-         ktVllChcD+0a31UVSv4aH2SSYW1Gw7ACD+6AZJEVX8llNNEViwVbASpUv/IDvqB/fD
-         RU6g2iAxhNNCF2YBOXCmASbuLePa1mW3a8/vCw97fnhqQG4VvIWsHgnUJUv3xnR5Mn
-         YZUNJiTCoart30dZshRKI6TU9V+63kY6M7rOVaRwf+eKJcePo6zSE/8ZiqYhBVFNOW
-         dDbcy+qMbGJw8pOJpkBd0NgddKk2YsSqVi1nv2v2CVayomsNkwTIjbGK20LRTMO3AY
-         vUkWFxpfdgDJQ==
-Date:   Tue, 10 Oct 2023 17:51:16 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Tue, 10 Oct 2023 09:35:39 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B8AB7
+        for <kernel-janitors@vger.kernel.org>; Tue, 10 Oct 2023 06:35:32 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40537481094so52686985e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 10 Oct 2023 06:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696944931; x=1697549731; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Aw6UgjAaJ8qgdoYorSKFrZHMQyZGneinKTuRi4ShVJM=;
+        b=YVLLAT5osZiogBgOw0c+ojKV+UqOqDiOv1IhJBWW++yYXUnbrH2a2UWSTW2fzZRGcc
+         va/uTmRxNLd8HpNiRniwz2QE0GUsvMpFVFJdbnPTpgSOmyt85bgeEUDAQdm6AVcFqG13
+         NKTdrkCjMT6ReKxlaNd0faulxSryLq3n2PMBWwS+GTIgrNF9A0+5+vJdmNR/3xPINfTp
+         /ktLdu1WNUquIVVxxb4lq58oDhD5ljcjBqRobNpMkWWOJAlT31oswncDjMZTkyG/1uDn
+         u88/YjUUp1ZCZWAP3REiqV75hFP5ocp8DBqotDFusMgh5Cu1CmLP9lxLwuK8WEN1Kdvj
+         XqHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696944931; x=1697549731;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aw6UgjAaJ8qgdoYorSKFrZHMQyZGneinKTuRi4ShVJM=;
+        b=JuEXSj2eqUU7whct+M40oZHVCVd6X5GJRGFcyO0qazM0SKQqLPGIjTXHiHoDdp32b5
+         isGAbf4lnlR0aubugowgkAKiBmY7zyP6B6eodp1eZfD2L9A+ZNjn9G5hoEP7ZlxFpL5u
+         /j+b9pJzVn5BudGTmcyPNfdtXNBTQ4LmeUlQZLD59xN0A1hi05yPeBLTtSKfcs+QABgh
+         k0GpK83dvZ7K2OjfwQsSfa1GSWyszkqexVNvn9zwZLXI1jBuChQ6YYd1RJdXm5jz4avs
+         9l5mTonxRWi9Nil61KWH/Pd9mtKJd4PR4hZpEbdPBtDcKIGRVvNvLq6qBnJG97xXe1mI
+         6xlg==
+X-Gm-Message-State: AOJu0Yw1Lf4aqE/iUYvptFrMCbTcinO1w0Z6VLUXHByUqa7fKlcJeb32
+        Gu40bbkwbcF253oNxn7IAWM5Bg==
+X-Google-Smtp-Source: AGHT+IFw0S6b8g/kvtjWSB5E2ensCP7thl7P6ePtjXo8nKPhrToH5H95gZBpPNqgpHUyhd5SXj2FaQ==
+X-Received: by 2002:a05:6000:1f87:b0:32d:24c7:a268 with SMTP id bw7-20020a0560001f8700b0032d24c7a268mr1899178wrb.4.1696944931382;
+        Tue, 10 Oct 2023 06:35:31 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id q9-20020adfcd89000000b00317f70240afsm12596738wrj.27.2023.10.10.06.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Oct 2023 06:35:31 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 16:35:28 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: qcom: remove unnecessary check
-Message-ID: <20231010122116.GI4884@thinkpad>
-References: <fe3b8fcd-64a7-4887-bddd-32239a88a6a3@moroto.mountain>
+Subject: [PATCH] clk: stm32: Fix a signedness issue in
+ clk_stm32_composite_determine_rate()
+Message-ID: <d9a78453-9b40-48c1-830e-00751ba3ecb8@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe3b8fcd-64a7-4887-bddd-32239a88a6a3@moroto.mountain>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 02, 2023 at 10:03:35AM +0300, Dan Carpenter wrote:
-> The "attr" pointer points to an offset into the "host" struct so it
-> can't be NULL.  Delete the if statement and pull the code in a tab.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+The divider_ro_round_rate() function could potentially return -EINVAL on
+error but the error handling doesn't work because "rate" is unsigned.
+It should be a type long.
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: 06ed0fc0fbac ("clk: stm32: composite: Switch to determine_rate")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/clk/stm32/clk-stm32-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Mani
-
-> ---
->  drivers/ufs/host/ufs-qcom.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 2128db0293b5..96cb8b5b4e66 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -1447,15 +1447,11 @@ static int ufs_qcom_clk_scale_up_pre_change(struct ufs_hba *hba)
->  	if (!ufs_qcom_cap_qunipro(host))
->  		return 0;
->  
-> -	if (attr) {
-> -		ret = ufs_qcom_cfg_timers(hba, attr->gear_rx,
-> -					attr->pwr_rx, attr->hs_rate,
-> -					false, true);
-> -		if (ret) {
-> -			dev_err(hba->dev, "%s ufs cfg timer failed\n",
-> -						__func__);
-> -			return ret;
-> -		}
-> +	ret = ufs_qcom_cfg_timers(hba, attr->gear_rx, attr->pwr_rx,
-> +				  attr->hs_rate, false, true);
-> +	if (ret) {
-> +		dev_err(hba->dev, "%s ufs cfg timer failed\n", __func__);
-> +		return ret;
->  	}
->  	/* set unipro core clock attributes and clear clock divider */
->  	return ufs_qcom_set_core_clk_ctrl(hba, true);
-> -- 
-> 2.39.2
-> 
-
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index d5aa09e9fce4..067b918a8894 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -431,7 +431,7 @@ static int clk_stm32_composite_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_stm32_composite *composite = to_clk_stm32_composite(hw);
+ 	const struct stm32_div_cfg *divider;
+-	unsigned long rate;
++	long rate;
+ 
+ 	if (composite->div_id == NO_STM32_DIV)
+ 		return 0;
 -- 
-மணிவண்ணன் சதாசிவம்
+2.39.2
+
