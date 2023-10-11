@@ -2,72 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1217CD98F9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Oct 2023 08:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D14CD98FA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Oct 2023 08:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345529AbjJKIAd (ORCPT
+        id S1345420AbjJKIBa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Oct 2023 04:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
+        Wed, 11 Oct 2023 04:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345394AbjJKIAb (ORCPT
+        with ESMTP id S1345393AbjJKIB3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Oct 2023 04:00:31 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49E65A4
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:00:28 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-405505b07dfso3667195e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:00:28 -0700 (PDT)
+        Wed, 11 Oct 2023 04:01:29 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80C191
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:26 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-406619b53caso60986765e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697011226; x=1697616026; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697011285; x=1697616085; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qz8ZijtXypgZfgGaNG42ozEudQwZ/S4uYiYC3qrkT4w=;
-        b=InioOG/MLYTDZA2VHIziYLynQlDASgEG+NsTSePgf3hOroOP5kj0NKANmiB5gbdz12
-         aIqTEaXK9XQNielWD5T8+sDPokI4KknFTR4RhtYHpUTFyXbbWiNwjL10mDh9FayHngzC
-         iJGDxFBD7rnAKMz+WEndq+J7kc7cBGiF5fDYBTf2+oVPrZO15w3ZR5yfLEuDhGzahH8U
-         LfhzXgdZtv2kBprW7uywpeluZ/vBjFoqKC1uTHr3QECeMV0y4DLIzLAgUc04sQ9XLjH1
-         cz7aU9n/QBmMqNQ0w07ct+mqhcyCzgq6shmHSr2+LjQZth2g0ux3L12ooRYkqFohFRUj
-         YgHg==
+        bh=6DPOMkbV8m1dOR5Sk90YZJLjnmUA8RGbfyNkiDIQZzk=;
+        b=cmwhYQMDZS4ukxRrOweuD7fRE7FQcGmo/x81tQgfZ8DT8w/CwNXMtdzz7sArkA4RTl
+         wWxGnz8sY2yIE7uUBk9uTMCPV6D/Rx7ck60Oj6EXL9OIRnQs2hFNeOvQbpZ8JbT9laVO
+         iRrc9rSKp5cyYD/A7pNIeCrpIxoEd3t8QBa2c5iB5ZEo2XNwSxKLcct25+TZ5+yMoV2l
+         xC5ZD+MGdZIkK7QBEDoBjmVBLnQWPVM4yZ2lMmGOEZsoo0DzqVmvNQrxY4Kj4Zumk6od
+         hylg4jFjb1PjC2dwuohlg6fPrvEs1Rfh5zeP4694Mk8u450o9ZadPnRp37BfKhPNcWvH
+         SYsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697011226; x=1697616026;
+        d=1e100.net; s=20230601; t=1697011285; x=1697616085;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qz8ZijtXypgZfgGaNG42ozEudQwZ/S4uYiYC3qrkT4w=;
-        b=wL0zRliPKCyrbzc6bcELuZ2Pz9PriBBHYJvn/VdYO6XqnWyYHz31hE+LjR+jjTCwW/
-         ZXAofsbJY99VVk2k9f1cI4mNkKvbiTEaL56rOq5lGr4riRNMa+P3DWrZ4Gf04qbL9MUl
-         8HNRwDkKcypkiGOYOeaxSLCQsBxy4kLB9Gyl1wh41EhTmTYQ668SsPHPRVcErZtjBGv5
-         5mFWk/42hUNk8JTgW1Ayci21P7paCrEYtFOxKrzlBoP59kf6bZUltuZBBPvp8eO2MQEA
-         CpvaNjLNvl5Gf9YJVW8l02r5ra1HjXt3QEeIaUTMcKKmItHIPheFXlbvc70bsK34WOha
-         kJHg==
-X-Gm-Message-State: AOJu0YzrA4FCcr01NWx9cTFs6p9IZtbd2Cm7aTvdlh02dPWKmR9ryq+D
-        9OCnGchUK6uw49+lsH4aIRyWvQ==
-X-Google-Smtp-Source: AGHT+IFZXX0jarvpNDfAJY2TbuzWh9WTigeX7sMPpWABOvC6Pd2KQOBcSrlU0uwBWQ3W4y5pUCkMbg==
-X-Received: by 2002:a05:6000:243:b0:329:6b53:e3ad with SMTP id m3-20020a056000024300b003296b53e3admr12254266wrz.34.1697011226548;
-        Wed, 11 Oct 2023 01:00:26 -0700 (PDT)
+        bh=6DPOMkbV8m1dOR5Sk90YZJLjnmUA8RGbfyNkiDIQZzk=;
+        b=vqfqOkt4LCaby6msr1x2LAqXZuyTfvfibOAt8lfWdZZ0e5/jt1F4qz2ldG0bqipLKb
+         OB4hkhGszFPmUAIJqldq/gVTLbTDc+GWHsgOsJjmPx18jAjT/NsMUvzlGXNMhOTsElxr
+         e/yFvplqXYHWex5Xe3EVfa7AlEMaWMq1UdhgibLhwyTFQKwMzrkWIHUzeHomeQmOMj3i
+         BmMEEpuQ6XnARdgFQ3aSOnSoWPALy2YScTR75rszol0wxUVIAyyCajmkZVuHoAal2Nz2
+         U0zcDS62Wlo9WKHhGDJvCBuMeUFLx3m3If7Ul4++wfTJT587TWOw0uXj7e8DoRiIqifm
+         DBCw==
+X-Gm-Message-State: AOJu0YwzqQ5hFYEpXTC9pKL0VENopsjA6R8GyC8IYmeVQzpoAcfW8D5x
+        fyzmPFF/0vrCekpTKqj/QVRtqQ==
+X-Google-Smtp-Source: AGHT+IE7TrMElZ+MD00E1lGL1rYFkYEf2CQuJZ7ft6WMMefYmJIMZYoJAQLIUtkDtLsxIDRMMlS7aQ==
+X-Received: by 2002:a05:600c:22cf:b0:401:4542:5edd with SMTP id 15-20020a05600c22cf00b0040145425eddmr17894937wmg.34.1697011285253;
+        Wed, 11 Oct 2023 01:01:25 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l9-20020a1c7909000000b00401b242e2e6sm18282714wme.47.2023.10.11.01.00.25
+        by smtp.gmail.com with ESMTPSA id n16-20020a05600c3b9000b0040684abb623sm18613958wms.24.2023.10.11.01.01.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 01:00:26 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 11:00:22 +0300
+        Wed, 11 Oct 2023 01:01:24 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 11:01:21 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Xiyu Yang <xiyuyang19@fudan.edu.cn>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Xin Tan <tanxin.ctf@gmail.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-XXX] SUNRPC: Add an IS_ERR() check back to where it was
-Message-ID: <356fb42c-9cf1-45cd-9233-ac845c507fb7@moroto.mountain>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: [PATCH] iommu: change iommu_map_sgtable to return signed values
+Message-ID: <06672b96-23fd-424c-8880-1626e7bf119c@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -76,41 +64,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This IS_ERR() check was deleted during in a cleanup because, at the time,
-the rpcb_call_async() function could not return an error pointer.  That
-changed in commit 25cf32ad5dba ("SUNRPC: Handle allocation failure in
-rpc_new_task()") and now it can return an error pointer.  Put the check
-back.
+The iommu_map_sgtable() function returns ssize_t and negative error
+codes but it's declared as size_t instead.  I think that static checkers
+would have complained if this caused a bug, but even though it doesn't
+cause a bug, it's definitely worth fixing.
 
-A related revert was done in commit 13bd90141804 ("Revert "SUNRPC:
-Remove unreachable error condition"").
-
-Fixes: 037e910b52b0 ("SUNRPC: Remove unreachable error condition in rpcb_getport_async()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-It's possible Smatch was responsible for generating the original warning
-because it warns for unnecessary NULL checks.  But generally, there was
-a future error pointer implied.  Those warnings are just a hint, not a
-command.
+ include/linux/iommu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- net/sunrpc/rpcb_clnt.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/sunrpc/rpcb_clnt.c b/net/sunrpc/rpcb_clnt.c
-index 5988a5c5ff3f..102c3818bc54 100644
---- a/net/sunrpc/rpcb_clnt.c
-+++ b/net/sunrpc/rpcb_clnt.c
-@@ -769,6 +769,10 @@ void rpcb_getport_async(struct rpc_task *task)
- 
- 	child = rpcb_call_async(rpcb_clnt, map, proc);
- 	rpc_release_client(rpcb_clnt);
-+	if (IS_ERR(child)) {
-+		/* rpcb_map_release() has freed the arguments */
-+		return;
-+	}
- 
- 	xprt->stat.bind_count++;
- 	rpc_put_task(child);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 0c4d8ae985ac..b5b254e205c6 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1118,7 +1118,7 @@ static inline void iommu_free_global_pasid(ioasid_t pasid) {}
+  * Creates a mapping at @iova for the buffer described by a scatterlist
+  * stored in the given sg_table object in the provided IOMMU domain.
+  */
+-static inline size_t iommu_map_sgtable(struct iommu_domain *domain,
++static inline ssize_t iommu_map_sgtable(struct iommu_domain *domain,
+ 			unsigned long iova, struct sg_table *sgt, int prot)
+ {
+ 	return iommu_map_sg(domain, iova, sgt->sgl, sgt->orig_nents, prot,
 -- 
 2.39.2
 
