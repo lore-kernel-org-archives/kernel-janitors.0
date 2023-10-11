@@ -2,60 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D14CD98FA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Oct 2023 08:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320EACD98FB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Oct 2023 08:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345420AbjJKIBa (ORCPT
+        id S230039AbjJKIB7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Oct 2023 04:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39192 "EHLO
+        Wed, 11 Oct 2023 04:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345393AbjJKIB3 (ORCPT
+        with ESMTP id S230012AbjJKIB5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Oct 2023 04:01:29 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80C191
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:26 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-406619b53caso60986765e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:26 -0700 (PDT)
+        Wed, 11 Oct 2023 04:01:57 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43ADE9C
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:54 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40572aeb6d0so61332245e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Oct 2023 01:01:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697011285; x=1697616085; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697011312; x=1697616112; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6DPOMkbV8m1dOR5Sk90YZJLjnmUA8RGbfyNkiDIQZzk=;
-        b=cmwhYQMDZS4ukxRrOweuD7fRE7FQcGmo/x81tQgfZ8DT8w/CwNXMtdzz7sArkA4RTl
-         wWxGnz8sY2yIE7uUBk9uTMCPV6D/Rx7ck60Oj6EXL9OIRnQs2hFNeOvQbpZ8JbT9laVO
-         iRrc9rSKp5cyYD/A7pNIeCrpIxoEd3t8QBa2c5iB5ZEo2XNwSxKLcct25+TZ5+yMoV2l
-         xC5ZD+MGdZIkK7QBEDoBjmVBLnQWPVM4yZ2lMmGOEZsoo0DzqVmvNQrxY4Kj4Zumk6od
-         hylg4jFjb1PjC2dwuohlg6fPrvEs1Rfh5zeP4694Mk8u450o9ZadPnRp37BfKhPNcWvH
-         SYsQ==
+        bh=YZT/8mXHXiKgkNO5lwynSIruokO6XSAvA489Hqpy4Bo=;
+        b=U5hq1/UlIFInSzY1FQ52XyZhXHN2FcPsBIOveRjWKqIYvuhHALTjmmZ7bsMpnaKDRS
+         PpZyNltMvf13zJESHa2wU446qs5COThVWKdbo6681t+y+/98aCRGk8Mgub7NTxeqYaSk
+         Toi0u9ypuSl7lYsXiPGrzAcXWAX6sosAAckEKQWoWjo4W/I1beAjNdaOJYYFT8MGhN/M
+         hWQK07m4A946k1hjdyjUld6Tz1PMGK/ijrVijbTuym0vbCkpNdIqrS5NGizBorIxbvsR
+         /3IAQ/yKxfd6FUOnD5NdVlCHatFX8f8UWHFLjXOAL10iYU0ob+q904mlaHNOry/usRHy
+         PWGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697011285; x=1697616085;
+        d=1e100.net; s=20230601; t=1697011312; x=1697616112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6DPOMkbV8m1dOR5Sk90YZJLjnmUA8RGbfyNkiDIQZzk=;
-        b=vqfqOkt4LCaby6msr1x2LAqXZuyTfvfibOAt8lfWdZZ0e5/jt1F4qz2ldG0bqipLKb
-         OB4hkhGszFPmUAIJqldq/gVTLbTDc+GWHsgOsJjmPx18jAjT/NsMUvzlGXNMhOTsElxr
-         e/yFvplqXYHWex5Xe3EVfa7AlEMaWMq1UdhgibLhwyTFQKwMzrkWIHUzeHomeQmOMj3i
-         BmMEEpuQ6XnARdgFQ3aSOnSoWPALy2YScTR75rszol0wxUVIAyyCajmkZVuHoAal2Nz2
-         U0zcDS62Wlo9WKHhGDJvCBuMeUFLx3m3If7Ul4++wfTJT587TWOw0uXj7e8DoRiIqifm
-         DBCw==
-X-Gm-Message-State: AOJu0YwzqQ5hFYEpXTC9pKL0VENopsjA6R8GyC8IYmeVQzpoAcfW8D5x
-        fyzmPFF/0vrCekpTKqj/QVRtqQ==
-X-Google-Smtp-Source: AGHT+IE7TrMElZ+MD00E1lGL1rYFkYEf2CQuJZ7ft6WMMefYmJIMZYoJAQLIUtkDtLsxIDRMMlS7aQ==
-X-Received: by 2002:a05:600c:22cf:b0:401:4542:5edd with SMTP id 15-20020a05600c22cf00b0040145425eddmr17894937wmg.34.1697011285253;
-        Wed, 11 Oct 2023 01:01:25 -0700 (PDT)
+        bh=YZT/8mXHXiKgkNO5lwynSIruokO6XSAvA489Hqpy4Bo=;
+        b=ot2N8gG2XzQRhNiGrXnuI+zCI1WNTBIo030kvJ4kqEPP6KSagVz8CvgE/j+tOlcz84
+         IxVs0LPzUSFr/gO2nso3LPmPt3oVYxJdZ7sKIvR4GPEMn4IsXiSqeZrmtJfiQVe3eFM5
+         ii5NaPS7YImCgpNfpA7584OG/u6bSpcEwdYgg8Zbpxpem7WQxVI+MVqabdBONIuRvQL7
+         Rp9gC/9O5JEWFHc6JdIULbZF3BbfFs1Jei9L1R7SCI7NSM7XYE4Rtmmf57MqtfTZ8Djs
+         fVUKiDfB1kQD8V3+T2Tfw9H3jI86lLEaTlkG6VAz6Gc/7xCRj00/fsLoWnBfaVHS8cY4
+         l3bA==
+X-Gm-Message-State: AOJu0YyygNN2+quZ+Su6g5KY619ffodIutV4QzOsTYIwx3wQmjsCmUrB
+        aBwYbckYoBJ6LlX4V19spvV9xJ5nAMRqTPCr21Q=
+X-Google-Smtp-Source: AGHT+IHlYGaipThrXKIKMr2CcQW1kf8ZvYk9AY5BdTWtgsZ4chvat2yBykWEZU5sAaKVW2Tsl/EQeQ==
+X-Received: by 2002:a5d:5911:0:b0:324:e284:fab8 with SMTP id v17-20020a5d5911000000b00324e284fab8mr19093365wrd.39.1697011312630;
+        Wed, 11 Oct 2023 01:01:52 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n16-20020a05600c3b9000b0040684abb623sm18613958wms.24.2023.10.11.01.01.24
+        by smtp.gmail.com with ESMTPSA id n6-20020adffe06000000b003140f47224csm14690117wrr.15.2023.10.11.01.01.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 01:01:24 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 11:01:21 +0300
+        Wed, 11 Oct 2023 01:01:52 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 11:01:48 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iommu: change iommu_map_sgtable to return signed values
-Message-ID: <06672b96-23fd-424c-8880-1626e7bf119c@moroto.mountain>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        rjan Eide <orjan.eide@arm.com>,
+        Mark Yao <markyao0591@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/rockchip: Fix type promotion bug in
+ rockchip_gem_iommu_map()
+Message-ID: <2bfa28b5-145d-4b9e-a18a-98819dd686ce@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,29 +76,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The iommu_map_sgtable() function returns ssize_t and negative error
-codes but it's declared as size_t instead.  I think that static checkers
-would have complained if this caused a bug, but even though it doesn't
-cause a bug, it's definitely worth fixing.
+The "ret" variable is declared as ssize_t and it can hold negative error
+codes but the "rk_obj->base.size" variable is type size_t.  This means
+that when we compare them, they are both type promoted to size_t and the
+negative error code becomes a high unsigned value and is treated as
+success.  Add a cast to fix this.
 
+Fixes: 38f993b7c59e ("drm/rockchip: Do not use DMA mapping API if attached to IOMMU domain")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- include/linux/iommu.h | 2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 0c4d8ae985ac..b5b254e205c6 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -1118,7 +1118,7 @@ static inline void iommu_free_global_pasid(ioasid_t pasid) {}
-  * Creates a mapping at @iova for the buffer described by a scatterlist
-  * stored in the given sg_table object in the provided IOMMU domain.
-  */
--static inline size_t iommu_map_sgtable(struct iommu_domain *domain,
-+static inline ssize_t iommu_map_sgtable(struct iommu_domain *domain,
- 			unsigned long iova, struct sg_table *sgt, int prot)
- {
- 	return iommu_map_sg(domain, iova, sgt->sgl, sgt->orig_nents, prot,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index b8f8b45ebf59..93ed841f5dce 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -40,7 +40,7 @@ static int rockchip_gem_iommu_map(struct rockchip_gem_object *rk_obj)
+ 
+ 	ret = iommu_map_sgtable(private->domain, rk_obj->dma_addr, rk_obj->sgt,
+ 				prot);
+-	if (ret < rk_obj->base.size) {
++	if (ret < (ssize_t)rk_obj->base.size) {
+ 		DRM_ERROR("failed to map buffer: size=%zd request_size=%zd\n",
+ 			  ret, rk_obj->base.size);
+ 		ret = -ENOMEM;
 -- 
 2.39.2
 
