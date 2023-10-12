@@ -2,159 +2,134 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DC1CDB46E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 05:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA90CDB46E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 06:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347049AbjJLFPW (ORCPT
+        id S1377329AbjJLGev (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 01:15:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        Thu, 12 Oct 2023 02:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235229AbjJLFPV (ORCPT
+        with ESMTP id S1347069AbjJLGev (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 01:15:21 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2049.outbound.protection.outlook.com [40.107.92.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEC190;
-        Wed, 11 Oct 2023 22:15:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L2ITh1H+bn/PKIFk4xIKixWhdMTOmBk0i+bww6/Q1aw2gJ0/2AyS983YguYx9RERTS/cYZkix3vcSIpWVh9jL31R7ZhCw1F+bGj00bCSxapXO81gW8Sxjo5HjoZfOForEwWLJcqvbIX5bwcglyib9KPZpOX8nIwttCsPb5b/ibHJzyOLuv31I9nN/tEl8+Gn3P+eA4tAhXUPNRy5FlsuJ6a0iTMypWt2zBXB6a0/IizSttY/kd5F1s2FU+mTEkiGw6kZwitXiL1zhRFz5NXmmluInDYaw9aACtdOKWQqC2LkGtrI5dDsANGRmDq20nVUySxU669TbWNOWa+xM99XIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fDyUBOxWZRmE65ZHgG+4Npsi8293cKvALUhauMOPYSQ=;
- b=MuuDEqPfIzJ0qG+gSE4kjJjfpmMdqxRGHe9i8F0e7Tmugwq9E0fKvoQCibzjT6668NzzSWi74WKSZV8mhxxvKkOmnGggnmeBuTc5hQxpENF2qb9aI23+cTbsDc215Pd5i29msfHLMdlw/8URAt5Mtc4NkaWCT4k49gq9tjHqG4iv3Ir3dtGxAGIgpliefZsmc6sjk68/fWRpcc4Iax48QZCRks5RPqMjOq2+PdElxFpepno4/d82M5bS7ChIfedxa5Zu9nLzL3eBNlaTxvZGV9wN18gk3b1vH4Jayw6Pa7XBypQx89lh5GAv/Q+c7o0WfjKzURdWFIY8vM+vGev0nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDyUBOxWZRmE65ZHgG+4Npsi8293cKvALUhauMOPYSQ=;
- b=BCdAG/tOvsq51lPgFQTXzqz2fPkxfY+rL/3tJyfHBppG+v+zMuMMez0UiIbD+tAcqcoEyCd3NSGit0Ji8p46h6msgmZH/zRBAepQBAABxRFnuNIAY2E7F/qdjU2sr0Gh9LHFclLZKUV1exkm45x+QjEV+eirXWhnI4rJciqTPVE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DS7PR12MB6024.namprd12.prod.outlook.com (2603:10b6:8:84::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6863.43; Thu, 12 Oct 2023 05:15:16 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::726d:296a:5a0b:1e98]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::726d:296a:5a0b:1e98%4]) with mapi id 15.20.6863.032; Thu, 12 Oct 2023
- 05:15:16 +0000
-Message-ID: <7533e359-2024-b69a-2bcf-1906c1a8dbca@amd.com>
-Date:   Thu, 12 Oct 2023 10:45:03 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] hardening: x86: drop reference to removed config
- AMD_IOMMU_V2
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, iommu@lists.linux.dev,
-        Joerg Roedel <jroedel@suse.de>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
-From:   Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0039.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:98::15) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DS7PR12MB6024:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2dc2b740-2e80-4276-c34c-08dbcae2384b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hXxOe89VzBPXEkrb4M24ry82G8vqAAUc2NAvRZPHnBw+3Zy8VRljlYJi7pkUugtR6Ql4XeH3Do0LcTEw9HjjAzmBe/67fw3cb55CYvhgGK//bgFKCOlA/zAsPFZDl+5Y9ixGbLhcelRxYW80rL9VhN1YmboKF6huHUgG6Kfc6bPgwwCoPlK7J4TbK7HeFwqahTgBGQfa+T7YBgKEvZO/Ds4rhvx0woNaOKLENrT3IusdqM3W12IamfiEyvcXvgJM0cUOiSXLpeWlmVXn0X1LpuoHH5eJaKwXhhBQqiF7drEHxEMDztfax5JBG1lDyIBwBUxqEnQzsKyjKTpJE5j3SQQNnc+7xjRfXrPS2sV/+0f/bC18Yrh6Mthn4TFPHwx1ym33GDTOm6KmTwzSNIxiSRfQ9Xgvo6DVFL1l3oLcYRs7IKj8wBquhRT02PDcBDFuVevLGN3I6mAjMeFeMuCM1CqU/E1JIhJZZ291j6hXV9AfAY4hvi6rdMWFJnOWXHL5OtLxvqJfTe3PCYMypnrCTmxqCn8/abdtOtVAny70TrGzfy2qILmZcokULM32IeQ8a9D5ayJPfsjnk7pcfkKtBE+OzKFcDk2mXkoLqZ9Bi1zfLt7sGD1zYjq+rafDUNCFcKJKWqSoG6wYqORoO3tvpA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(376002)(396003)(346002)(136003)(230922051799003)(186009)(451199024)(64100799003)(1800799009)(31686004)(2616005)(83380400001)(26005)(6512007)(54906003)(4326008)(5660300002)(44832011)(66556008)(6636002)(66476007)(316002)(8936002)(8676002)(6666004)(38100700002)(66946007)(2906002)(110136005)(41300700001)(478600001)(6506007)(36756003)(53546011)(31696002)(6486002)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V3pnUnpaS29XY3ZkdHYxSjNaRExsNkhhMlhnSlJYeGdWYTI5Yzl5RzlGZC9j?=
- =?utf-8?B?UC9BdDM3RXpFZzVrbWE3amtCS0QwcVY3ZGdkSG8zU2xOS1hnNXdCbU1wOE9L?=
- =?utf-8?B?cUVHbGJQUlJWcldVMHhxVStWNGd1TExveVl5d1ZpMkRTVUdSWWw1N0FRc1FC?=
- =?utf-8?B?K0NvZ2NFSm5kb210U0hza0tRTTBSdm16aXZQOWNQaU9td0gzVzJyVHN2STZH?=
- =?utf-8?B?N3k3RU5OYTRTZkpBZTVMMnVXZGxpUTcva3FxY1RpQ0d1REp5VmpraE5QeHBT?=
- =?utf-8?B?Mzd3ZGUzVU9wOVdoemdLd210SzFIcUhvczljLzVKaDZ6dFhaTVdKTk9xVzNZ?=
- =?utf-8?B?bmVhMS8rN1dnNGpONlpjcGg4Um5KTjlNM2xRdDErVTYyNE1BbDNBZW13c0FF?=
- =?utf-8?B?RUtWZy9aaGVTd2ROWFFQUm0yTFpwOWJheFBXcGFNK3VZc3BkbUZOclVrM09T?=
- =?utf-8?B?dHVKcFV5Vjd6WEdZTVVMQWVjVE5XN1l4SXNGR042RDU1TlhsV3RzUjR2Q1hn?=
- =?utf-8?B?dFZseUtUcW1vNGphdzBIYjdaNlNxaDl6WWJlWkhEM2IwNHRTTllrZlNyQno1?=
- =?utf-8?B?M28yT280ZnM2MDJod0RCZnAzajk0L3plUkJmbjFJSXBZOXBzT2VVZXhNYzNK?=
- =?utf-8?B?Y1NKMjVXVktGU3VwendET0NacTJjbEdhL3JtS0NzTFdrN3J5ZVFhd0JqM2th?=
- =?utf-8?B?VzRDR3NzL0gzcjFyTVpWaVdzbGZsTVVkeVlpa09ndHlXQjNvUHhuVXAvZGRo?=
- =?utf-8?B?QU4zczFBaldCaVMrTkc1K1llN2dLRlhnb2tncUE1ZlZ5WXMyNVRueXN4dEJI?=
- =?utf-8?B?Q1NxRHFTcGV5bk01ZlZnUm15Wm16ZmQyS0R2a0Q5ZENoS3plRVZWaUlIK2o4?=
- =?utf-8?B?VTVQUzlKdVVhYlBRdzNPUXpuSHgwZnBKWmdjaFBGTUQ0emdvQUoxQUFkbkpO?=
- =?utf-8?B?NCt3ci8ycytpQVJRSmFLZWlaSXhtMWwvdWtjeVZTM0NuN0s5bmxOV2FqMExX?=
- =?utf-8?B?WnY1MEVRQ3Vyanc0UGcvOTJ0OTllNEpnOC9ZWnJZaXBtdlpYYWVwN3JyWlE5?=
- =?utf-8?B?My9oMXVjYzF0ajNWQ3I2cWFsTWgvOE9jUFFoZ2tCTFlxZEJjWjhtMzI2Tms3?=
- =?utf-8?B?OTA3VFQ0WEhyUnFLd0hmdHkwT3E4UUtYcnQwTFVva1RnVjhzNWVKSlBrY2Fr?=
- =?utf-8?B?VEZldk4wY2ZZaUQrdEpCL2lyL0VLTmNDMjNzZmQ1ZEIwWmcyNjNGd2RXZ1c4?=
- =?utf-8?B?d2U2cFI4YlRCdXJyalFkaWMzZEdnVWVGeGtJUGRPY05QTFVLQnVRWTVyeEVT?=
- =?utf-8?B?Y1BPNEJUckhiWWZhTU5rZmZKSWl4bVIzKzVieTJ2R213QWFxRzhBZ0N6amNv?=
- =?utf-8?B?U3JZUTVGYU8vRnU0d2pmamNLSFpXdUwwZm13cXRxeXFubTRvTlppV1B2YnEx?=
- =?utf-8?B?T0laNnpTMzBuL0c2bHg1dlVIL1ljdG5aRzlRYW5kaDIzWnByODlLMWV2aTVG?=
- =?utf-8?B?alkwZW5uQ1hYUEUrd3Z1QU9lNFU3TExhQzd6Vjhkbk5zR2J5WUpjQ2JHQ1pu?=
- =?utf-8?B?MHd0WitLNXhNenI5QmQ3ODZhV1lzK0drMnNWdG9KSDJ1OEVQdFYrUWhtcHhu?=
- =?utf-8?B?TGJQLzJKaE1mYjVYb3FESUVmcWNNK1BrYXRnUEFIMzBUcXU3N0FSV1pQNnFU?=
- =?utf-8?B?ai9vcEFIdWdNOHlJc1lueG9ualBVQnRFdTZGT1NGdjQwS0RvTGlJZXViYmxG?=
- =?utf-8?B?S0dJbG5jK3FMbXRHKytJQ0l6cjZzdC93TWFoUnNYT1lCUGZYazBKcE9rblkv?=
- =?utf-8?B?QjBDMFBzSkJ0V3htVlRDUzdObHZudi8rVGVuN0dDRjdFcFJkSDU3MU50WU1m?=
- =?utf-8?B?aUNVekVRUWM3WStYLysvVktSNjUxM3JLdTRSaFNZMFZFYTFrV0FtQlllNDgz?=
- =?utf-8?B?dFZOZ3lOeWR6NWE5Wk5STVZSbWNHbEQrQ2hrVW8rQm90T2QyNmlWRURqQm1y?=
- =?utf-8?B?bTNEZVhEcHNsYk0wQlpyMk1MaDNTaWdIeHV6SWQ1Q1BWaSt1ZnViUUJSK1BH?=
- =?utf-8?B?d2JaSzNOZ0RMUkI2MFMzSHdmOFZPRHgwYlF4Z1RKRnMyRDhHbnkzRG02bUcx?=
- =?utf-8?Q?h9ZLHekgVI1qlsn3uGyv369oy?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2dc2b740-2e80-4276-c34c-08dbcae2384b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2023 05:15:16.2816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4uGwdPTmIqSfOVbCQkC+m/Wx6DtVO0eSgT+wjAJlMAxgM/QRTMZqsBmPCxWg6zhkDBXSmd4lV6awNGe4hxLxmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6024
+        Thu, 12 Oct 2023 02:34:51 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8393FBA;
+        Wed, 11 Oct 2023 23:34:48 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-538e8eca9c1so1053304a12.3;
+        Wed, 11 Oct 2023 23:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697092487; x=1697697287; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5PIkgPW8JUfHwEbEXt9w8uRHHsdsSPbeRNc83sTlpWk=;
+        b=chny9sPE3Nt6WNrIj7vPF2Wd1bKaelACpTyoZonEQd+g3xjJg1YxKligFtfNXHQB30
+         yuixiQaeYxChIQFVMn7pAjh7nT9e4CHIKVY5c2G2cxlKZFZJNzBPepy5jEgkZdgEBrVS
+         FFVEOi5U5iKXia0C6aM/AoiKJhV1hS0zrIHy/osHJ2BH49i/2BOAtbLerXXYoJOFuhCY
+         iIVhg7p2qR2WqOgqMP6lKa7DVDWwpYZxM9IsQdvf1GcOj6QWWAkDcDrPu9r369ZQGCdE
+         PWwB+cbqGeuZyv4hb3/p0mOwr+GiQ8Oqx08vD5hyd2zPj4F5QtRq4HCzzoxd0fzNa2Uz
+         N+mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697092487; x=1697697287;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5PIkgPW8JUfHwEbEXt9w8uRHHsdsSPbeRNc83sTlpWk=;
+        b=bYv8MMFNPNS4Iqu5K1a3bpN+gTWRDG7HsH15dtwFe6N7OxEepFgi2DvbuQ+bqpeigR
+         9a1tXFs81Hbwbm8XFdDGRaqZ4IpfuZBuDzriPgF1nrZOoMcoEI88wqIc0b5epcsa2BnB
+         avIRGZ1l3H0RvxQBMV/0gjU8czMpYyxLBXzAUzQBCJPEYxCdzOpp6Gy2JfnHYHKZiwd3
+         Wt8vOKzm+9ITHpV2uPIBu5OaMky4OSptALBXZZGc7Gz3ECKQ0eJAraINvKGt0hKSU26n
+         dtxIARmSi5Bku4h+z9RGBx2N/jOCSQKowbDrJ/VBt8jhz6U6t1sljdarz9tuHOVtmBkk
+         nLkA==
+X-Gm-Message-State: AOJu0Yxk7yPpQeDPVePXnJ6teBdA/QkkwZvhpZ3c6Ceh02RBtuDJi04D
+        5JKjV0BRQcPoazDWo0jvQbw=
+X-Google-Smtp-Source: AGHT+IHKoqOogbSjh+HQMlJa+qjY7oWFhk0GJ8WeueGzUD/T6m/rl4rignzsiqX1r0/rQxdMSEszfA==
+X-Received: by 2002:a05:6402:5d3:b0:53d:a727:3846 with SMTP id n19-20020a05640205d300b0053da7273846mr5555830edx.20.1697092486735;
+        Wed, 11 Oct 2023 23:34:46 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:78dc:282:cf18:8032])
+        by smtp.gmail.com with ESMTPSA id dn5-20020a05640222e500b0053dd8898f75sm1629149edb.81.2023.10.11.23.34.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 23:34:46 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] appletalk: remove special handling code for ipddp
+Date:   Thu, 12 Oct 2023 08:34:43 +0200
+Message-Id: <20231012063443.22368-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+After commit 1dab47139e61 ("appletalk: remove ipddp driver") removes the
+config IPDDP, there is some minor code clean-up possible in the appletalk
+network layer.
 
+Remove some code in appletalk layer after the ipddp driver is gone.
 
-On 10/12/2023 10:20 AM, Lukas Bulwahn wrote:
-> Commit 5a0b11a180a9 ("iommu/amd: Remove iommu_v2 module") removes the
-> config AMD_IOMMU_V2.
-> 
-> Remove the reference to this config in the x86 architecture-specific
-> hardening config fragment as well.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Joerg, please pick this patch on top of the commit above. Thanks.
-> 
->  arch/x86/configs/hardening.config | 1 -
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ net/appletalk/ddp.c | 36 ------------------------------------
+ 1 file changed, 36 deletions(-)
 
-Thanks for the fix Lukas. But I don't see this file in upstream linux tree. Am I
-missing something?
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 8978fb6212ff..9ba04a69ec2a 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1284,39 +1284,6 @@ static int atalk_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	return err;
+ }
+ 
+-#if IS_ENABLED(CONFIG_IPDDP)
+-static __inline__ int is_ip_over_ddp(struct sk_buff *skb)
+-{
+-	return skb->data[12] == 22;
+-}
+-
+-static int handle_ip_over_ddp(struct sk_buff *skb)
+-{
+-	struct net_device *dev = __dev_get_by_name(&init_net, "ipddp0");
+-	struct net_device_stats *stats;
+-
+-	/* This needs to be able to handle ipddp"N" devices */
+-	if (!dev) {
+-		kfree_skb(skb);
+-		return NET_RX_DROP;
+-	}
+-
+-	skb->protocol = htons(ETH_P_IP);
+-	skb_pull(skb, 13);
+-	skb->dev   = dev;
+-	skb_reset_transport_header(skb);
+-
+-	stats = netdev_priv(dev);
+-	stats->rx_packets++;
+-	stats->rx_bytes += skb->len + 13;
+-	return netif_rx(skb);  /* Send the SKB up to a higher place. */
+-}
+-#else
+-/* make it easy for gcc to optimize this test out, i.e. kill the code */
+-#define is_ip_over_ddp(skb) 0
+-#define handle_ip_over_ddp(skb) 0
+-#endif
+-
+ static int atalk_route_packet(struct sk_buff *skb, struct net_device *dev,
+ 			      struct ddpehdr *ddp, __u16 len_hops, int origlen)
+ {
+@@ -1480,9 +1447,6 @@ static int atalk_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		return atalk_route_packet(skb, dev, ddp, len_hops, origlen);
+ 	}
+ 
+-	/* if IP over DDP is not selected this code will be optimized out */
+-	if (is_ip_over_ddp(skb))
+-		return handle_ip_over_ddp(skb);
+ 	/*
+ 	 * Which socket - atalk_search_socket() looks for a *full match*
+ 	 * of the <net, node, port> tuple.
+-- 
+2.17.1
 
--Vasant
-
-
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/configs/hardening.config b/arch/x86/configs/hardening.config
-> index 19bb0c7a7669..7b497f3b7bc3 100644
-> --- a/arch/x86/configs/hardening.config
-> +++ b/arch/x86/configs/hardening.config
-> @@ -9,7 +9,6 @@ CONFIG_INTEL_IOMMU=y
->  CONFIG_INTEL_IOMMU_DEFAULT_ON=y
->  CONFIG_INTEL_IOMMU_SVM=y
->  CONFIG_AMD_IOMMU=y
-> -CONFIG_AMD_IOMMU_V2=y
->  
->  # Enable CET Shadow Stack for userspace.
->  CONFIG_X86_USER_SHADOW_STACK=y
