@@ -2,226 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEE0CDB46E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 04:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED7BCDB46E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 04:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343515AbjJLE2u (ORCPT
+        id S1343508AbjJLEu7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 00:28:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56840 "EHLO
+        Thu, 12 Oct 2023 00:50:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjJLE2t (ORCPT
+        with ESMTP id S229510AbjJLEu6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 00:28:49 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9750A9;
-        Wed, 11 Oct 2023 21:28:47 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9adb9fa7200so105936466b.0;
-        Wed, 11 Oct 2023 21:28:47 -0700 (PDT)
+        Thu, 12 Oct 2023 00:50:58 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B28B790;
+        Wed, 11 Oct 2023 21:50:56 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9a645e54806so82143966b.0;
+        Wed, 11 Oct 2023 21:50:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697084926; x=1697689726; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697086255; x=1697691055; darn=vger.kernel.org;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=03gb1vqwxiL5Z9iTAYGZjwocB8IZIyrRtKYufIydfpI=;
-        b=eSzy9pEeCtczHt8MheF9/D1PSkGqCfEgEqypJr5aadI6cek8c+7VpSMoVPKiAQuHy5
-         PAhpCXszVwZ+UsHlJ0xA5RuwWulKWZNgO95BujL8Yn7xPxmNj7awlSVwMHWUnOQUgPa6
-         Xb4oxyLKIfO95bhcelahek6I/ErTVlcQmyEO/hN0+3KLACryOhFIMMMZy/p8tnDICenH
-         9Kp6K3fMzEfS7J2IvdGGbl5XbIDC37J8PXPBnncUxffCrIBjFflxEqp/GA5aq1dazlIz
-         tNJDQ1SKUm9KryB1XZ+zQZwSzdC3aNeAXXvBFzqutUVZRGt7nOOWIUqEJ56pwgjE8Yyi
-         dLKQ==
+        bh=YSjZDUjjPOz4QqV7E0UZLHS9zrizXOtrbmGqfrqmqCI=;
+        b=eJ1Pz6J7H8qQO31WvJYQSvt4ui401mMgjSEmgtcetAfPwDyXx/FVoQabxHRAkcPsT0
+         /AUbWuP3uQTD3cabFiyVNldNiPHfo7lSivmfD9pTpLfcmcfiCj5xC380XK4fZuUpZ6Uu
+         zZBc3696Lg/BuQhNYWwFhmRUMawZ3b/g2oQwjVoyJv5iFsf/83PayyvS/RNn7CvP67CD
+         qCJX5qSJko4KSTzPjEcuq7msYzI+tV3TzSqPbkwkyHba2mojpf+AYuLloOOiFrbCH8eM
+         yMo2iXliZfN4kdjcENJoX/R0w7HPjDlhaJurznXui0scpmj6DC5khhvDzLLaPrc9SxyU
+         PMTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697084926; x=1697689726;
+        d=1e100.net; s=20230601; t=1697086255; x=1697691055;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=03gb1vqwxiL5Z9iTAYGZjwocB8IZIyrRtKYufIydfpI=;
-        b=LYIzZ4kn6QxwpAtcLYSpelwipyN3bl/QC/KlFI4wNkMmeM6m7yw2XzjbVjSMG4duNa
-         jNRTXGIRwFxKf9imTzo1H4Xp2EWC6ZfFLe1ORnuCNS+Pyn7cstnQSRRsxtwCvzoNxxj1
-         0QRV2mBRQ2CfMBxgWEKdv98V5yQSH9wqlMnT2sSByTmZdVYXVhzSbrcNo2cmPga+h4pX
-         IDEj7RH65WhaOgTn/DcePNQge6EFKGxLP6N2F04nXD8ymf5kayjNNAeWjTllKbCO30vx
-         XKuQ5+XLTJPNqYWIVMBauLySsU5/5xTwdDuXVAD2PSLe1cefdAzESK/kPRjPLzU5TJKK
-         0lHg==
-X-Gm-Message-State: AOJu0YxRL/e3bEfjDVcQ60RXwWUbWLfLtzTorvpvQihtphC64enBGNxt
-        F/AK95VfspRRuGnr6A0USeI=
-X-Google-Smtp-Source: AGHT+IFN8xfpMw+qbnj0j0PylQSY2EAm6Y0INtbrN5Zb12/I0fMHJoIBEW+UEmFCc3C8tmIolx6bUw==
-X-Received: by 2002:a17:907:808:b0:9b2:cee1:1f82 with SMTP id wv8-20020a170907080800b009b2cee11f82mr16725318ejb.7.1697084925838;
-        Wed, 11 Oct 2023 21:28:45 -0700 (PDT)
+        bh=YSjZDUjjPOz4QqV7E0UZLHS9zrizXOtrbmGqfrqmqCI=;
+        b=cYF0wf7Ol+U/mFswR8jD53lrMFFzNTCt7bbQGy5iGc8WHaV6dSwy6C59vUANMbZrIr
+         jJJYQJjq5ahUnnEyD1JZKbPL4m86YQYm53RONeVRbo5Q4Fbba5Kl1BxbccI2drL9ksHF
+         K0Ia6CwLxofKe7FnVaoK9bI7B20P06OlsI85UMAcIebL4TelxBSkomwC6Pz9x6cSPO2v
+         Rbim0k+YnYk8sAhEj425kjJkhX/SQmyUYBmtyCO4t9Xv7sX7twKssl86w5AV8e6eOomm
+         WnImcEHYk+c1p4xoWXHtOXJ7KpIFso9/XHT6MoBu/YlK+3hvE6AkNB3puoi/HP68NV2r
+         rtYg==
+X-Gm-Message-State: AOJu0YxPiPIAbu9iGZVClmMx2yVN0epkk3fen+rkFxKR7W4FE9aySCWX
+        Ovlb/QxBg39h5EZDNpCA5RU=
+X-Google-Smtp-Source: AGHT+IFJU5Xjs5SYCirYwBHBkaBd6589j3RzlYuxc/TtMyuhUiNB3IoWlaEQrYaPTu0/d3k7JkPpdQ==
+X-Received: by 2002:a17:906:2d2:b0:9ad:8ef8:a7e8 with SMTP id 18-20020a17090602d200b009ad8ef8a7e8mr20459122ejk.25.1697086254881;
+        Wed, 11 Oct 2023 21:50:54 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:78dc:282:cf18:8032])
-        by smtp.gmail.com with ESMTPSA id k16-20020a1709062a5000b0099315454e76sm10491490eje.211.2023.10.11.21.28.45
+        by smtp.gmail.com with ESMTPSA id w19-20020a170906481300b009b9720a85e5sm10573362ejq.38.2023.10.11.21.50.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 21:28:45 -0700 (PDT)
+        Wed, 11 Oct 2023 21:50:54 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Jean Delvare <jdelvare@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     iommu@lists.linux.dev, Joerg Roedel <jroedel@suse.de>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Vasant Hegde <vasant.hegde@amd.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] eeprom: remove doc and MAINTAINERS section after driver was removed
-Date:   Thu, 12 Oct 2023 06:28:34 +0200
-Message-Id: <20231012042834.6663-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] hardening: x86: drop reference to removed config AMD_IOMMU_V2
+Date:   Thu, 12 Oct 2023 06:50:40 +0200
+Message-Id: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 0113a99b8a75 ("eeprom: Remove deprecated legacy eeprom driver")
-already removes the eeprom driver's code.
+Commit 5a0b11a180a9 ("iommu/amd: Remove iommu_v2 module") removes the
+config AMD_IOMMU_V2.
 
-Remove also the eeprom driver's documentation and MAINTAINERS section.
+Remove the reference to this config in the x86 architecture-specific
+hardening config fragment as well.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Greg, please pick this patch into your -next char and misc tree on top
-of the commit above.
+Joerg, please pick this patch on top of the commit above. Thanks.
 
- Documentation/misc-devices/eeprom.rst | 107 --------------------------
- Documentation/misc-devices/index.rst  |   1 -
- MAINTAINERS                           |   6 --
- 3 files changed, 114 deletions(-)
- delete mode 100644 Documentation/misc-devices/eeprom.rst
+ arch/x86/configs/hardening.config | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/misc-devices/eeprom.rst b/Documentation/misc-devices/eeprom.rst
-deleted file mode 100644
-index 008249675ccc..000000000000
---- a/Documentation/misc-devices/eeprom.rst
-+++ /dev/null
-@@ -1,107 +0,0 @@
--====================
--Kernel driver eeprom
--====================
--
--Supported chips:
--
--  * Any EEPROM chip in the designated address range
--
--    Prefix: 'eeprom'
--
--    Addresses scanned: I2C 0x50 - 0x57
--
--    Datasheets: Publicly available from:
--
--                Atmel (www.atmel.com),
--                Catalyst (www.catsemi.com),
--                Fairchild (www.fairchildsemi.com),
--                Microchip (www.microchip.com),
--                Philips (www.semiconductor.philips.com),
--                Rohm (www.rohm.com),
--                ST (www.st.com),
--                Xicor (www.xicor.com),
--                and others.
--
--        ========= ============= ============================================
--        Chip      Size (bits)   Address
--        ========= ============= ============================================
--        24C01     1K            0x50 (shadows at 0x51 - 0x57)
--        24C01A    1K            0x50 - 0x57 (Typical device on DIMMs)
--        24C02     2K            0x50 - 0x57
--        24C04     4K            0x50, 0x52, 0x54, 0x56
--                                (additional data at 0x51, 0x53, 0x55, 0x57)
--        24C08     8K            0x50, 0x54 (additional data at 0x51, 0x52,
--                                0x53, 0x55, 0x56, 0x57)
--        24C16     16K           0x50 (additional data at 0x51 - 0x57)
--        Sony      2K            0x57
--
--        Atmel     34C02B  2K    0x50 - 0x57, SW write protect at 0x30-37
--        Catalyst  34FC02  2K    0x50 - 0x57, SW write protect at 0x30-37
--        Catalyst  34RC02  2K    0x50 - 0x57, SW write protect at 0x30-37
--        Fairchild 34W02   2K    0x50 - 0x57, SW write protect at 0x30-37
--        Microchip 24AA52  2K    0x50 - 0x57, SW write protect at 0x30-37
--        ST        M34C02  2K    0x50 - 0x57, SW write protect at 0x30-37
--        ========= ============= ============================================
--
--
--Authors:
--        - Frodo Looijaard <frodol@dds.nl>,
--        - Philip Edelbrock <phil@netroedge.com>,
--        - Jean Delvare <jdelvare@suse.de>,
--        - Greg Kroah-Hartman <greg@kroah.com>,
--        - IBM Corp.
--
--Description
-------------
--
--This is a simple EEPROM module meant to enable reading the first 256 bytes
--of an EEPROM (on a SDRAM DIMM for example). However, it will access serial
--EEPROMs on any I2C adapter. The supported devices are generically called
--24Cxx, and are listed above; however the numbering for these
--industry-standard devices may vary by manufacturer.
--
--This module was a programming exercise to get used to the new project
--organization laid out by Frodo, but it should be at least completely
--effective for decoding the contents of EEPROMs on DIMMs.
--
--DIMMS will typically contain a 24C01A or 24C02, or the 34C02 variants.
--The other devices will not be found on a DIMM because they respond to more
--than one address.
--
--DDC Monitors may contain any device. Often a 24C01, which responds to all 8
--addresses, is found.
--
--Recent Sony Vaio laptops have an EEPROM at 0x57. We couldn't get the
--specification, so it is guess work and far from being complete.
--
--The Microchip 24AA52/24LCS52, ST M34C02, and others support an additional
--software write protect register at 0x30 - 0x37 (0x20 less than the memory
--location). The chip responds to "write quick" detection at this address but
--does not respond to byte reads. If this register is present, the lower 128
--bytes of the memory array are not write protected. Any byte data write to
--this address will write protect the memory array permanently, and the
--device will no longer respond at the 0x30-37 address. The eeprom driver
--does not support this register.
--
--Lacking functionality
-----------------------
--
--* Full support for larger devices (24C04, 24C08, 24C16). These are not
--  typically found on a PC. These devices will appear as separate devices at
--  multiple addresses.
--
--* Support for really large devices (24C32, 24C64, 24C128, 24C256, 24C512).
--  These devices require two-byte address fields and are not supported.
--
--* Enable Writing. Again, no technical reason why not, but making it easy
--  to change the contents of the EEPROMs (on DIMMs anyway) also makes it easy
--  to disable the DIMMs (potentially preventing the computer from booting)
--  until the values are restored somehow.
--
--Use
-----
--
--After inserting the module (and any other required SMBus/i2c modules), you
--should have some EEPROM directories in ``/sys/bus/i2c/devices/*`` of names such
--as "0-0050". Inside each of these is a series of files, the eeprom file
--contains the binary data from EEPROM.
-diff --git a/Documentation/misc-devices/index.rst b/Documentation/misc-devices/index.rst
-index ecc40fbbcfb8..7de16797987a 100644
---- a/Documentation/misc-devices/index.rst
-+++ b/Documentation/misc-devices/index.rst
-@@ -17,7 +17,6 @@ fit into other categories.
-    ad525x_dpot
-    apds990x
-    bh1770glc
--   eeprom
-    c2port
-    dw-xdata-pcie
-    ibmvmc
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ecdf3ab6f371..706769e04570 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12007,12 +12007,6 @@ F:	drivers/leds/
- F:	include/dt-bindings/leds/
- F:	include/linux/leds.h
+diff --git a/arch/x86/configs/hardening.config b/arch/x86/configs/hardening.config
+index 19bb0c7a7669..7b497f3b7bc3 100644
+--- a/arch/x86/configs/hardening.config
++++ b/arch/x86/configs/hardening.config
+@@ -9,7 +9,6 @@ CONFIG_INTEL_IOMMU=y
+ CONFIG_INTEL_IOMMU_DEFAULT_ON=y
+ CONFIG_INTEL_IOMMU_SVM=y
+ CONFIG_AMD_IOMMU=y
+-CONFIG_AMD_IOMMU_V2=y
  
--LEGACY EEPROM DRIVER
--M:	Jean Delvare <jdelvare@suse.com>
--S:	Maintained
--F:	Documentation/misc-devices/eeprom.rst
--F:	drivers/misc/eeprom/eeprom.c
--
- LEGO MINDSTORMS EV3
- R:	David Lechner <david@lechnology.com>
- S:	Maintained
+ # Enable CET Shadow Stack for userspace.
+ CONFIG_X86_USER_SHADOW_STACK=y
 -- 
 2.17.1
 
