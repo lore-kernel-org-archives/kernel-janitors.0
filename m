@@ -2,91 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CFDCDB46E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 16:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196D3CDB482
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 16:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379466AbjJLQKR (ORCPT
+        id S1344029AbjJLQNe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 12:10:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
+        Thu, 12 Oct 2023 12:13:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379454AbjJLQKP (ORCPT
+        with ESMTP id S235764AbjJLQN2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 12:10:15 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C04C6
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:10:13 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c88b46710bso9035985ad.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:10:13 -0700 (PDT)
+        Thu, 12 Oct 2023 12:13:28 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F15ED
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:13:24 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9b2cee55056so201953966b.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1697127013; x=1697731813; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uywQQTLnXLWpXOPun4QKJKuWvTo48kWYaCdd1C3bRtY=;
-        b=eXB57y8nF6Lv2jjt8DJUA5l8vtoO9MlqrHWgvl9EC/lLrBSxANJOHH8Zofq9nI0j5B
-         a8yE0FsRdtOSnrjHXJN28K587uCxeTmtYXzxo2XlJs0YpHI3b65TaAvAsLiHgZsfuuZW
-         +5ShGjLpTL7+ux/gIPtpAndl/Up79e8MWNCl4=
+        d=linaro.org; s=google; t=1697127203; x=1697732003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MnFQr6jYAWszvBkm1ZQBSlRvBAO0cVodRWwMD84lNmo=;
+        b=g5/kzYwX0+W5cx1T3YboYvLDu0ueSn4Bsf3UZ0wiEUY1R41Ti1Z0gZY/0hPtuuOiTa
+         nTE2jP+K2cyR3qKAXPFjM18mG2vWBr0Lb0jSzlfq8g9YwDJryCH/DcbgBNhZ/UoGchki
+         thLvJxE9hn/kp2uRH81XVUZ/XSf5qWtKF0KHDylF1R+NEmwad9yIlws7wupTEKu6FRVl
+         DcEtJMMggSM/AifeWS3D0h2fshtu/sdYLPlcizl36BID9zmlEKEnoMRGzm0iYlTm3PoQ
+         f52/PXpLnOpWEBv4ShFPn48l3xZH1Vc6aWqBRIhITPea73OetuQJaXCcrs3PUj8MMLDx
+         WxXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697127013; x=1697731813;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uywQQTLnXLWpXOPun4QKJKuWvTo48kWYaCdd1C3bRtY=;
-        b=qyWyT0Qy/yxHXkmGmXdiG4ipsLnL14lHEhCgQZ84DiKjBy3+P21FlUhShfF4dYvh9p
-         StbIonKk51WpoIIRyls59PEoPkTzHLqQ8ZxiAuSBRHzPgqaWpWquyO2EyABFvCp/057W
-         8A8dsh95pKzipEKxFRSMi9DEcAnHs6sWiWFjQSqTylcrQe5ENXpri8F5kxpVy4e+ff8F
-         WgKp3ivJ1URWXSNjM4Zd5GgiHPMkoULCY1CgRmBDP0gOvMXb32Ra8BNfBcoZ2UfNcszv
-         gLXqtfK6sZ7i5oqGZGeuZrRSJR4EP/Rl7yKMM60nD2wFiIcUkQZFFPs0XypWygh34xVq
-         oarQ==
-X-Gm-Message-State: AOJu0YzmXSL9G8IDQNYp9UNpcGdrciMLpIWfvWJq4wlPIKwYwoNpm9LU
-        /O99VRuOpfQNXxa9UUy+j4GH5Q==
-X-Google-Smtp-Source: AGHT+IE70nC8DSZzov+QUlaT8psAeyZAo6cLbH9AArJEY5B9saYS5UPiiNtcut6ioYKyhJakE+UGSQ==
-X-Received: by 2002:a17:903:120e:b0:1bb:c64f:9a5e with SMTP id l14-20020a170903120e00b001bbc64f9a5emr26657038plh.5.1697127012911;
-        Thu, 12 Oct 2023 09:10:12 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id f7-20020a17090274c700b001c72f51b84asm2177860plt.52.2023.10.12.09.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 09:10:12 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     iommu@lists.linux.dev, Joerg Roedel <jroedel@suse.de>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Vasant Hegde <vasant.hegde@amd.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hardening: x86: drop reference to removed config AMD_IOMMU_V2
-Date:   Thu, 12 Oct 2023 09:10:07 -0700
-Message-Id: <169712700540.4491.11130004795723202092.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
-References: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
+        d=1e100.net; s=20230601; t=1697127203; x=1697732003;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MnFQr6jYAWszvBkm1ZQBSlRvBAO0cVodRWwMD84lNmo=;
+        b=O8hWHxztSYSr6+uSXDNJ/9VgKXOYJXEo3nLK2NrGPP6D65tGKKhkpuO25us1o0/R80
+         qDMtR5+kAj8563SImdz45kb8CdjJGSW2FakX6d+DvzQp4nuTxEqaj6WDkdh617BSfH3m
+         uUWZVhRhFtfbrC5riZSw1W/nfvbMk33mlrJ6jL3jI5OEcCVv+yr61sXNqCbGJ3P7OGg3
+         YNKXH46uKy7dYmZUjyrTA5FxvLhXPLpbOMwiLNwhn0VKlh5Qu4DAWrGXLjylM98vmJYL
+         ziqPEUODL0OJ7oFLaP8q1DsyuT6eRw63vrYDaSR35fs3ikA0RbcKcBB+mrCJpHJeL6az
+         Q4Dg==
+X-Gm-Message-State: AOJu0Yy+vDJkNlSN5A1Ib+9B1RR+CE8SHPLBoqMV206641Od/ZafY+Po
+        PPj880VSo/LEHITPKNX4gy6Oxw==
+X-Google-Smtp-Source: AGHT+IFOiYf0k5d4B4vLBtX0oIcpHRdtEKqYYefcW1oOnsQ3xCONkHjy1mgRmErlEYAkDMqxvkKKsg==
+X-Received: by 2002:a17:907:b12:b0:9ba:246c:1fa9 with SMTP id h18-20020a1709070b1200b009ba246c1fa9mr8958480ejl.10.1697127203087;
+        Thu, 12 Oct 2023 09:13:23 -0700 (PDT)
+Received: from [172.30.204.175] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id lc16-20020a170906dff000b0099c53c44083sm11162480ejc.79.2023.10.12.09.13.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Oct 2023 09:13:22 -0700 (PDT)
+Message-ID: <0b51b73b-8ead-400f-bf66-1df1fde23b56@linaro.org>
+Date:   Thu, 12 Oct 2023 18:13:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: clean up a check
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Robert Foss <rfoss@kernel.org>
+Cc:     Todor Tomov <todor.too@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <f11b1d6b-5800-4d75-9732-506be3f8458d@moroto.mountain>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <f11b1d6b-5800-4d75-9732-506be3f8458d@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 12 Oct 2023 06:50:40 +0200, Lukas Bulwahn wrote:
-> Commit 5a0b11a180a9 ("iommu/amd: Remove iommu_v2 module") removes the
-> config AMD_IOMMU_V2.
+
+
+On 10/12/23 11:42, Dan Carpenter wrote:
+> Imagine that "->vfe_num" is zero, then the subtraction will underflow to
+> UINT_MAX.  Plus it's just cleaner to use >= instead.
 > 
-> Remove the reference to this config in the x86 architecture-specific
-> hardening config fragment as well.
-> 
-> 
-> [...]
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Applied to for-next/hardening, thanks!
-
-[1/1] hardening: x86: drop reference to removed config AMD_IOMMU_V2
-      https://git.kernel.org/kees/c/faed498d0db7
-
-Take care,
-
--- 
-Kees Cook
-
+Konrad
