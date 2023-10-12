@@ -2,108 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC35CDB46E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 10:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CFDCDB46E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 16:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235694AbjJLKkT (ORCPT
+        id S1379466AbjJLQKR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 06:40:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43242 "EHLO
+        Thu, 12 Oct 2023 12:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235698AbjJLKkQ (ORCPT
+        with ESMTP id S1379454AbjJLQKP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 06:40:16 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B810C4
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 03:40:09 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-405524e6769so4465925e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 03:40:09 -0700 (PDT)
+        Thu, 12 Oct 2023 12:10:15 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C04C6
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:10:13 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c88b46710bso9035985ad.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 09:10:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697107208; x=1697712008; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6fBGv66jYc2kP0EhTg6b4IeqJJdAfPC3InwDkFeTIyA=;
-        b=AKzwN74bLWFYfSbHpcwoInEIDR7BGv9cWxDz2cIurqZYRCSUWjyjlYcBzMMr+BJAIU
-         jO872G/bFm9/p7/p/13tuJZQQPaJLnnFvJDXYEB10CT5zPSVMRCpH7JNgqswslovxsh3
-         lB5zQ+DdOElErZxffy/oyetPq4Z1vZeRkf8gUjc/4RM0PVgQd3vkSg+HICoPNla8LRKy
-         cJbaYc26AbXcEQIrWtCIdanVNAGsk2WA4GPOZ/fchJmzCvL1WJglTbMsaG2IHYj2jeKV
-         CJxh2uOyx4pexgHhX5faDltt7DpQGfucUGKWB5OiAgSraJnZXbiOtOD44NjuoV1yNXjv
-         /hIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697107208; x=1697712008;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1697127013; x=1697731813; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6fBGv66jYc2kP0EhTg6b4IeqJJdAfPC3InwDkFeTIyA=;
-        b=lboVTbmxaEPa8YUk5BcBT1HqbXN3x2LPBuem8cEjcv6KFAC5k31M9gJZp67hJRldrZ
-         n+9GEuY+CVOW0lc75fL+3PuKjZc1XkWjmfVah/1YWcu7aiuHw9+GtCtXwmgenGgoNLXZ
-         1K5nw59DwM/zRhZolzehVQu3MNxS4Gb0uNmqsekA6oB9VSpwgYxZtqckGOYpV+oyM3gN
-         8rcN1MbuzPRARFExc1qNGeM1M9O8orUtHMqdYwnDIYP+V6CyxU9uA9lKCtUYOxp5lLLM
-         mHPyJtGYkNDt2DRxbfqLOtY3wIPonDd+6Oe2Z0RScc6v36NbFY24NAU7XAJK9sVazw27
-         5ikA==
-X-Gm-Message-State: AOJu0YzIDqll3HNrSM/Yivgd7HXEazTPDoYmIAFSTlbw8rkPaSMRxt3p
-        uXG3XYGR45FLm9lXr2bvL1A7aA==
-X-Google-Smtp-Source: AGHT+IF8V6MtmrGJXfoKWdkMTLSXJ0Shox2IXfQr1G5ZzSCY11ydmvnI2OuBxMZRARrCQZrzayKNqw==
-X-Received: by 2002:a7b:c457:0:b0:401:c8b9:4b86 with SMTP id l23-20020a7bc457000000b00401c8b94b86mr19040636wmi.9.1697107207598;
-        Thu, 12 Oct 2023 03:40:07 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a12-20020adff7cc000000b0031423a8f4f7sm18050789wrq.56.2023.10.12.03.40.06
+        bh=uywQQTLnXLWpXOPun4QKJKuWvTo48kWYaCdd1C3bRtY=;
+        b=eXB57y8nF6Lv2jjt8DJUA5l8vtoO9MlqrHWgvl9EC/lLrBSxANJOHH8Zofq9nI0j5B
+         a8yE0FsRdtOSnrjHXJN28K587uCxeTmtYXzxo2XlJs0YpHI3b65TaAvAsLiHgZsfuuZW
+         +5ShGjLpTL7+ux/gIPtpAndl/Up79e8MWNCl4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697127013; x=1697731813;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uywQQTLnXLWpXOPun4QKJKuWvTo48kWYaCdd1C3bRtY=;
+        b=qyWyT0Qy/yxHXkmGmXdiG4ipsLnL14lHEhCgQZ84DiKjBy3+P21FlUhShfF4dYvh9p
+         StbIonKk51WpoIIRyls59PEoPkTzHLqQ8ZxiAuSBRHzPgqaWpWquyO2EyABFvCp/057W
+         8A8dsh95pKzipEKxFRSMi9DEcAnHs6sWiWFjQSqTylcrQe5ENXpri8F5kxpVy4e+ff8F
+         WgKp3ivJ1URWXSNjM4Zd5GgiHPMkoULCY1CgRmBDP0gOvMXb32Ra8BNfBcoZ2UfNcszv
+         gLXqtfK6sZ7i5oqGZGeuZrRSJR4EP/Rl7yKMM60nD2wFiIcUkQZFFPs0XypWygh34xVq
+         oarQ==
+X-Gm-Message-State: AOJu0YzmXSL9G8IDQNYp9UNpcGdrciMLpIWfvWJq4wlPIKwYwoNpm9LU
+        /O99VRuOpfQNXxa9UUy+j4GH5Q==
+X-Google-Smtp-Source: AGHT+IE70nC8DSZzov+QUlaT8psAeyZAo6cLbH9AArJEY5B9saYS5UPiiNtcut6ioYKyhJakE+UGSQ==
+X-Received: by 2002:a17:903:120e:b0:1bb:c64f:9a5e with SMTP id l14-20020a170903120e00b001bbc64f9a5emr26657038plh.5.1697127012911;
+        Thu, 12 Oct 2023 09:10:12 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id f7-20020a17090274c700b001c72f51b84asm2177860plt.52.2023.10.12.09.10.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 03:40:07 -0700 (PDT)
-Date:   Thu, 12 Oct 2023 13:40:04 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Julia Lawall <julia.lawall@inria.fr>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/eprobe: drop unneeded breaks
-Message-ID: <ef43db1c-c50f-479e-8747-3f3a0915eb70@kadam.mountain>
-References: <20230928104334.41215-1-Julia.Lawall@inria.fr>
- <20230929203259.74d4ba263b3455172ef37f06@kernel.org>
- <alpine.DEB.2.22.394.2309291336260.3137@hadrien>
- <20230930181902.eb1d089243deca0017046437@kernel.org>
+        Thu, 12 Oct 2023 09:10:12 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     iommu@lists.linux.dev, Joerg Roedel <jroedel@suse.de>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Vasant Hegde <vasant.hegde@amd.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hardening: x86: drop reference to removed config AMD_IOMMU_V2
+Date:   Thu, 12 Oct 2023 09:10:07 -0700
+Message-Id: <169712700540.4491.11130004795723202092.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
+References: <20231012045040.22088-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230930181902.eb1d089243deca0017046437@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 30, 2023 at 06:19:02PM +0900, Masami Hiramatsu wrote:
-> On Fri, 29 Sep 2023 13:37:08 +0200 (CEST)
-> Julia Lawall <julia.lawall@inria.fr> wrote:
+On Thu, 12 Oct 2023 06:50:40 +0200, Lukas Bulwahn wrote:
+> Commit 5a0b11a180a9 ("iommu/amd: Remove iommu_v2 module") removes the
+> config AMD_IOMMU_V2.
 > 
-> > 
-> > 
-> > On Fri, 29 Sep 2023, Masami Hiramatsu  wrote:
-> > 
-> > > On Thu, 28 Sep 2023 12:43:34 +0200
-> > > Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> > >
-> > > > Drop break after return.
-> > > >
-> > >
-> > > Good catch! This looks good to me.
-> > >
-> > > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > >
-> > > And
-> > >
-> > > Fixes: 7491e2c44278 ("tracing: Add a probe that attaches to trace events")
-> > 
-> > Thanks.  I didn't include that because it's not a bug.  But it does break
-> > Coccinelle, which is how I noticed it.
+> Remove the reference to this config in the x86 architecture-specific
+> hardening config fragment as well.
 > 
-> OK, I got it. I thought it may cause a compiler warning because the
-> 'break' never be executed. (maybe it is just a flow-control word,
-> so it may not need to be warned, but a bit storange.)
+> 
+> [...]
 
-I don't think GCC warns about unreachable code, but yeah, in Smatch
-unreachable break statements do not trigger a warning.  People like
-to add extra break statements to switch statements.
+Applied to for-next/hardening, thanks!
 
-regards,
-dan carpenter
+[1/1] hardening: x86: drop reference to removed config AMD_IOMMU_V2
+      https://git.kernel.org/kees/c/faed498d0db7
+
+Take care,
+
+-- 
+Kees Cook
 
