@@ -2,57 +2,57 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F8DC46CA1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 09:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0F0C41513
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 09:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235595AbjJLJqN (ORCPT
+        id S235625AbjJLJrK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 05:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
+        Thu, 12 Oct 2023 05:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235569AbjJLJqL (ORCPT
+        with ESMTP id S235532AbjJLJrJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 05:46:11 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FC1CB7
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 02:46:08 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4066692ad35so8107645e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 02:46:08 -0700 (PDT)
+        Thu, 12 Oct 2023 05:47:09 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF599D
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 02:47:07 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4065dea9a33so8091125e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Oct 2023 02:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1697103966; x=1697708766; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697104025; x=1697708825; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1LrQiAxqlGKNF6MEwrNjQTS6wOHahnzLIVbZnvTgWfQ=;
-        b=Bu3hiDsmqhDTlKZnbLYT2URaDHmCmyTefQ4xXUC0bwU2bSJRl4LXUKJkzqxiqyBA6U
-         ERR26mEN++xCQbfBWzcENX2Yghre82F4ZFFZkJJ4L3zdyB2YGQsyidQtWZA7Q3pTMdM2
-         G9m3rqljmKEjEUg8Yd/riCQJb6s9POsG6oESp+vVeQciMsZCpk2B1iHo+DSP/m1c3NRP
-         BDJEDGZrKpTyUaeLQJ6Ccq1h7e+UlBgKFRDE2zGeNk/pJXJQVjhU5C5OtQvTqpQLb4Tq
-         /9768Poa/Z7m4yDFKxeNJB+YKExY27NGAq4OY/EsKZUzAYw7+XL4R69ZetrumQE7PUp8
-         0vqg==
+        bh=UeXq+sUDC3iybMZQ272ShVYmOdXvv1Ct1/FwJd1aa9o=;
+        b=edqsYuxkZLbFD+hkob0yMwXHAQH1QcpASHOLBr+z2wvwZpSr/uIKyiAH2FR9RFo5jw
+         LuhECETq7JNP1R338vO0M8pnP0gpBZwaOJZcfUc2fH6O4tvv+ModYFsYY86SIT5LThTU
+         ld46b+Uer2B60gzK3gFVdusCbV/l6a1ObMnvNoKzub2Yyhd4MRj+4EPZAP/7nklMVNAV
+         BAUtAiYWgfAVr/pSEd8sxqqdGdF2ZiGMsCE5fUtsl+3eDBF7+FeAEhUnntCKQgKmlIne
+         74zESbY0VmiDMlzRd8av4gBHin5ZBiLvVA4EmRVE4tzcrTwl1P5k5ummMcdTJ2UJbfU9
+         K9Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697103966; x=1697708766;
+        d=1e100.net; s=20230601; t=1697104025; x=1697708825;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1LrQiAxqlGKNF6MEwrNjQTS6wOHahnzLIVbZnvTgWfQ=;
-        b=DkY8UGufKwUL4N2hbD2oML9g3Q/rypZO/hHFIlkEWE26Xr4Jn9c247/Ft6qiTI2M92
-         7StL1q1ISApKuuujZ2rg/aJkSykQrB6Vk7lNa8BmSOm3HPSxhRG2q4ONEVzQoClNJMx1
-         Op0JC0Nhecp+m0EvseeTVx2YGsrz6wt7F86tFbPY/3SCSFTvyGEMuRaE1ArfNSZn1wf2
-         +8OHXS3EPgOlC22AbAwemlPeN3TiqVm8nz9/re9PDnb3nsk+gRjv0W2ofwOz/gOBctlb
-         9v91lxgd0f8t1H1W/9CW/DeTsu1Y0N7P4/6bzDWsoem67oeq6vCDIP7CG5jgKMbG7gl/
-         xgRQ==
-X-Gm-Message-State: AOJu0YxldKJFC1t/dVBDXH934GoX/PmX83S6R668QKv6RDFeT4OJ/2PM
-        bjxlU+HBbuDJyLEr6/z/Rnjt3w==
-X-Google-Smtp-Source: AGHT+IFiLtT5Nc0mO1wfsGHF5m6vzalYohuo0bIDDh8rXBL43WWU0SIWdS8LTByNnHO2zC5j3VmHbw==
-X-Received: by 2002:a05:600c:4686:b0:405:95ae:4a94 with SMTP id p6-20020a05600c468600b0040595ae4a94mr19961294wmo.5.1697103966588;
-        Thu, 12 Oct 2023 02:46:06 -0700 (PDT)
+        bh=UeXq+sUDC3iybMZQ272ShVYmOdXvv1Ct1/FwJd1aa9o=;
+        b=Bww2EixP2BRdygpkjTNTQ6tLNVNT2x1bVkAEvNvkHKn9Xq09KWet41ttzx8XiyW3T8
+         Fh92yTHhhPxxPdMe1Rz28EJyBZiErLp7KUoc8OPLdXjimQ1r+RzCnsj0jQNgia7S1ppr
+         uQnxGv1OcZI5VzZADE0/UMzNCdIUzJh55XEDi6RKwsd4mrjmMvsrBx8emUvkr2DaHyBx
+         M582AmXIBCHtSSZCwlNBiBIMzEgD3qXX4vq74h+vESzePVnCvJigWVXcDsGwmUfYES+n
+         gukbiyt4ohQgWzpozpCiXTq/KRg9XHFOyNe0uelikidyp5GI3cGALmGTgKG/MrinhBnR
+         FJqw==
+X-Gm-Message-State: AOJu0YwWdDpHRvrIGzDDejvNnOQ13EJCPWR9fSK6RLW+TePwSYlgAwYw
+        l0LUPnW80LPTbKveXe3L1zZjFg==
+X-Google-Smtp-Source: AGHT+IF6r7I9r42k4ezEvRypqI+xNwUcQQhDvwzlcBBRZUMp2y+pZPHzECAyVxIq0q1oNpYu8Z0E/g==
+X-Received: by 2002:adf:c805:0:b0:329:6bfa:dc8c with SMTP id d5-20020adfc805000000b003296bfadc8cmr13510782wrh.46.1697104025557;
+        Thu, 12 Oct 2023 02:47:05 -0700 (PDT)
 Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id z7-20020a7bc7c7000000b003fee567235bsm21408076wmk.1.2023.10.12.02.46.05
+        by smtp.gmail.com with ESMTPSA id e14-20020adffd0e000000b00315af025098sm18065099wrr.46.2023.10.12.02.47.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 02:46:05 -0700 (PDT)
-Message-ID: <f1d86cdc-d423-41bd-9b1e-43c6fec25dc5@nexus-software.ie>
-Date:   Thu, 12 Oct 2023 10:46:04 +0100
+        Thu, 12 Oct 2023 02:47:05 -0700 (PDT)
+Message-ID: <4fb9f4e8-2b6d-46ae-bf7a-cc21a3ea2366@linaro.org>
+Date:   Thu, 12 Oct 2023 10:47:04 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] media: qcom: camss: clean up a check
@@ -68,7 +68,7 @@ Cc:     Todor Tomov <todor.too@gmail.com>,
         linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 References: <f11b1d6b-5800-4d75-9732-506be3f8458d@moroto.mountain>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 In-Reply-To: <f11b1d6b-5800-4d75-9732-506be3f8458d@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
@@ -98,5 +98,7 @@ On 12/10/2023 10:42, Dan Carpenter wrote:
 >   		dev_err(camss->dev,
 >   			"Error: asked reset for invalid VFE%d\n", vfe_id);
 >   		return -ENOENT;
+
+ From my @linaro.org address
 
 Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
