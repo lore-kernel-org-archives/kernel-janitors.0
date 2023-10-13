@@ -2,77 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EABCDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 11:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B49CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 12:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231166AbjJML5P (ORCPT
+        id S231821AbjJMMen (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 07:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32814 "EHLO
+        Fri, 13 Oct 2023 08:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230469AbjJML5O (ORCPT
+        with ESMTP id S231664AbjJMMem (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 07:57:14 -0400
+        Fri, 13 Oct 2023 08:34:42 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C4BDBF;
-        Fri, 13 Oct 2023 04:57:13 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37664C433C7;
-        Fri, 13 Oct 2023 11:57:11 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B75E4BD;
+        Fri, 13 Oct 2023 05:34:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92344C433C8;
+        Fri, 13 Oct 2023 12:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697198232;
-        bh=qmNJK5kb0pjOZzNaO3kMDXlaWvXC+MM1xD16tJxhhBg=;
+        s=k20201202; t=1697200481;
+        bh=TvaszAa1RVva07RsdzVcq3JaOcKMz7c1edgzZZ1dueA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=guvnoj8QEFgUXYVa4hApXHh4Edmp7s55USpRL1S7t9YqCWRi1etuNV5xbRZZ4Ogjj
-         KoQwzRKJrrNJBsLubdhan8ogOEbIe6HYkrDpnpBXr0CCZDG7Vae3c1KmiTU7XH/WJz
-         Vc38ykCC5ilmuduuYpjH8UozzxW6XAp0bx4eTx3GrswzzhYHHLoXRZV5nVBRtfgCZ7
-         Zc56AzcSEmGLA6+hkrscfSwSDo9K/kJIVOBaRBOalyvv6g3WdAIJOYbzkocdJ31V7G
-         C6Hthh75FdF6ANntNhoHnYw8pujwNwX3R9yn0bQf3ISDb4Eq66z6PPo2E1bFTMgtuj
-         sPAAsgqfPEbzQ==
-Date:   Fri, 13 Oct 2023 17:27:08 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
-Message-ID: <ZSkwlILa0fjh7cop@matsya>
-References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
- <169719382030.165658.16055633686751767855.b4-ty@kernel.org>
+        b=H2QrR7x8DjDdi3eZfOOEmzZCHQfw/uXf4rmdALLzwAXUAHlYGdTzrrlZg9AZlgtvz
+         U7/z/4n8J9hxcySByWivnR0BZYOzct8yzGmWbRUIwFy0XXqAPNj6xYzpdzsiO2DGQ2
+         BqX7XBlldwH0h76xXG67B4+9RoYLsSZmDAg7vy9EbBnbJUjBbfwmD9MdtuczV3cvad
+         7bOMKH6+/a27wTRrSoOPtm+LkupyGkRFh8Yy1Wgf1BgAU8+gyF/3T9zg68fh1Vis6H
+         kJ+XbJl6N+gHSdp7XnwlBSTnyTwZhXFHU6VzWIoK7/g4GUpQXOC2x2bDeMaDhVpUuw
+         0W+8yoXKALA4A==
+Date:   Fri, 13 Oct 2023 14:34:35 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Xin Tan <tanxin.ctf@gmail.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-XXX] SUNRPC: Add an IS_ERR() check back to where it
+ was
+Message-ID: <20231013123435.GK29570@kernel.org>
+References: <356fb42c-9cf1-45cd-9233-ac845c507fb7@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <169719382030.165658.16055633686751767855.b4-ty@kernel.org>
+In-Reply-To: <356fb42c-9cf1-45cd-9233-ac845c507fb7@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 13-10-23, 16:13, Vinod Koul wrote:
+On Wed, Oct 11, 2023 at 11:00:22AM +0300, Dan Carpenter wrote:
+> This IS_ERR() check was deleted during in a cleanup because, at the time,
+> the rpcb_call_async() function could not return an error pointer.  That
+> changed in commit 25cf32ad5dba ("SUNRPC: Handle allocation failure in
+> rpc_new_task()") and now it can return an error pointer.  Put the check
+> back.
 > 
-> On Sun, 03 Sep 2023 12:11:06 +0200, Christophe JAILLET wrote:
-> > With gcc 12.3.0, when this file is built, we get errors such as:
-> > 
-> > drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
-> > drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
-> >   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
-> >       |                                                    ^~~~~
-> > drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
-> >   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
-> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > [...]
+> A related revert was done in commit 13bd90141804 ("Revert "SUNRPC:
+> Remove unreachable error condition"").
 > 
-> Applied, thanks!
-> 
-> [1/1] phy: sun4i-usb: Fix a W=1 compilation failure
->       commit: 9e34abc7abfac781df909891c8d53781f607105d
+> Fixes: 037e910b52b0 ("SUNRPC: Remove unreachable error condition in rpcb_getport_async()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-FWIW, I have modified patch title to reflect the change it introduces
-while applying
+Thanks,
 
--- 
-~Vinod
+I've reviewed the logic of this commit along with the description
+and it matches up in my mind.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
