@@ -2,78 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B49CDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 12:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0E3CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 15:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbjJMMen (ORCPT
+        id S232410AbjJMPio (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 08:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
+        Fri, 13 Oct 2023 11:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbjJMMem (ORCPT
+        with ESMTP id S232270AbjJMPin (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 08:34:42 -0400
+        Fri, 13 Oct 2023 11:38:43 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B75E4BD;
-        Fri, 13 Oct 2023 05:34:41 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92344C433C8;
-        Fri, 13 Oct 2023 12:34:37 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00C2B7;
+        Fri, 13 Oct 2023 08:38:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C564C433C8;
+        Fri, 13 Oct 2023 15:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697200481;
-        bh=TvaszAa1RVva07RsdzVcq3JaOcKMz7c1edgzZZ1dueA=;
+        s=k20201202; t=1697211522;
+        bh=lVnd1G0BacgAj5hg/niS/IrsOZDEG8FKK2/F3/5ctjc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H2QrR7x8DjDdi3eZfOOEmzZCHQfw/uXf4rmdALLzwAXUAHlYGdTzrrlZg9AZlgtvz
-         U7/z/4n8J9hxcySByWivnR0BZYOzct8yzGmWbRUIwFy0XXqAPNj6xYzpdzsiO2DGQ2
-         BqX7XBlldwH0h76xXG67B4+9RoYLsSZmDAg7vy9EbBnbJUjBbfwmD9MdtuczV3cvad
-         7bOMKH6+/a27wTRrSoOPtm+LkupyGkRFh8Yy1Wgf1BgAU8+gyF/3T9zg68fh1Vis6H
-         kJ+XbJl6N+gHSdp7XnwlBSTnyTwZhXFHU6VzWIoK7/g4GUpQXOC2x2bDeMaDhVpUuw
-         0W+8yoXKALA4A==
-Date:   Fri, 13 Oct 2023 14:34:35 +0200
+        b=EzoAOWaRK2AJhRD1gIPgUsyoKp18HiPtgGvYc8ueGj5iyieVvth8Z2imW0lv6Lde2
+         nXBvADKYObTTkCnn+tVNA2XzyUzJfX+/WyEohwtUB9sSi9BPJZlWIWALflkblVPQFr
+         vYmfPbs54+336BbPs7m0e1fcy6C/Susc+Rl4xVVGSbK1JmJgtsjmPuJ5+sP5KI8dfG
+         6WSECSRW4hHHmKxZNUZIGmzERbMB7Jo0JFvzEub6vWnICQ2VK4nD+fvJaUsxlHXfPI
+         85X4P5YvnqEYCOvCbTpCjabaGttaM6d7OrE2q427NWUS38c6CrU4HEF6+NUKpuBxZp
+         EPRL8GFxi1Fbw==
+Date:   Fri, 13 Oct 2023 17:38:38 +0200
 From:   Simon Horman <horms@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Xin Tan <tanxin.ctf@gmail.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-XXX] SUNRPC: Add an IS_ERR() check back to where it
- was
-Message-ID: <20231013123435.GK29570@kernel.org>
-References: <356fb42c-9cf1-45cd-9233-ac845c507fb7@moroto.mountain>
+        Paolo Abeni <pabeni@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] appletalk: remove special handling code for ipddp
+Message-ID: <20231013153838.GN29570@kernel.org>
+References: <20231012063443.22368-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <356fb42c-9cf1-45cd-9233-ac845c507fb7@moroto.mountain>
+In-Reply-To: <20231012063443.22368-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 11, 2023 at 11:00:22AM +0300, Dan Carpenter wrote:
-> This IS_ERR() check was deleted during in a cleanup because, at the time,
-> the rpcb_call_async() function could not return an error pointer.  That
-> changed in commit 25cf32ad5dba ("SUNRPC: Handle allocation failure in
-> rpc_new_task()") and now it can return an error pointer.  Put the check
-> back.
+On Thu, Oct 12, 2023 at 08:34:43AM +0200, Lukas Bulwahn wrote:
+> After commit 1dab47139e61 ("appletalk: remove ipddp driver") removes the
+> config IPDDP, there is some minor code clean-up possible in the appletalk
+> network layer.
 > 
-> A related revert was done in commit 13bd90141804 ("Revert "SUNRPC:
-> Remove unreachable error condition"").
+> Remove some code in appletalk layer after the ipddp driver is gone.
 > 
-> Fixes: 037e910b52b0 ("SUNRPC: Remove unreachable error condition in rpcb_getport_async()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
 Thanks,
 
-I've reviewed the logic of this commit along with the description
-and it matches up in my mind.
+CONFIG_IPDDP is gone so this code doesn't do anything.
 
 Reviewed-by: Simon Horman <horms@kernel.org>
+
+As a further follow-up should we consider dropping CONFIG_IPDDP*
+from various defconfigs it appears in?
