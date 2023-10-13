@@ -2,107 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A8CCDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 08:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71527CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 09:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbjJMI0R (ORCPT
+        id S230272AbjJMJDr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 04:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        Fri, 13 Oct 2023 05:03:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbjJMI0Q (ORCPT
+        with ESMTP id S230160AbjJMJDq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 04:26:16 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9550EB8
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:26:14 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32d9b507b00so408989f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:26:14 -0700 (PDT)
+        Fri, 13 Oct 2023 05:03:46 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AF895;
+        Fri, 13 Oct 2023 02:03:44 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32d849cc152so1781575f8f.1;
+        Fri, 13 Oct 2023 02:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697185573; x=1697790373; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5lZIjZUIrHJnpE4t/QLHPx/DZrADcMrWtR2aEpPyl1M=;
-        b=m/H5A8bZDZWC9XS0kjvzIxh7AD8n01mY0hyH495b5/jTTJ/VBmxDDYr6QX1I+t0we8
-         AWYkZG1xC9wM8bG7KY261BGZTrFCwdeBT19iDlnYqp27Rt4I79FSlWV/hLT9D11s7/Wd
-         BQ+OmKX23HJo5HaUhhBcANcz9klLTk3Tb8MzUHh8OqIEiFzhR320qgg7/JOv0upqJNgL
-         7iTWndLFYY3oVbpIFRTw0jIZXvK+bLa12kqjkIkrbljfvNSWO1oo0or866sQMlIx8Ify
-         ipr4GbG2CDsEOjfvti+MRHAbk7Xx4RcfFRU3XhM9vtDcXIAHgIshGLKlToweIPZ9aJid
-         fcwg==
+        d=gmail.com; s=20230601; t=1697187823; x=1697792623; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mVXzaNCQ+HvBISgUOUJ4L9y3uEa9RCaldYHVY2YAQiM=;
+        b=k20zYg/bYmrGUQvX3T6N+NxkeIHyufUrLU5ZOQVuAabVIfSdj7TrxFmZHV+6WtrP3/
+         Zy1xv6NBHQPClOOAojsgsR7hWTKviJIySdikbDsIo/cURoj9JHDuQ8CBGycei2BM03eq
+         CiK4aLPw9OalKAYeTXbsnazt6K6bIYwCKayuI4HcGwxO8yKC9sc+A1J2qlqnDJgWFQH0
+         hyccD4l4GBLVTt1RMt/IokssGQDBpCmd/1AoWNL1cM9g1i2XHdb7l/3xc89Msn2lSOhG
+         3I/dU53e8OxIP26/vfHgWczsnDWP9x/hGtwa2+o67eCAlaDlRDzYU9bBnSaAQRYNxYjA
+         Yc9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697185573; x=1697790373;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5lZIjZUIrHJnpE4t/QLHPx/DZrADcMrWtR2aEpPyl1M=;
-        b=L0ylE/fjF2d7O4IvsnSBvuubtepCI4kYb2lZU0njCgqmWHfv9z8p3WpkTTjp6Bi2RI
-         vLvRHEjMaBjov/iyeqbp5ifUn0EivYmDNGMdKw8kf/YO6ntf0eVoqNqKU4oHI3YocmcF
-         +3ZMisIBI104mSVVv3un13NUKRORajxF1cpTxmboXTggNM/layKL5sR3xDdhiQbOGF4x
-         1TKxjFrBYrteoVzxB68rCHWIArxFPtGYw+ckkh45DBXGjOIoMNQuAVEbkn2WkOzLY/w0
-         XciEp/YoBJTJwBCWVVUCYLiAPw+QmDgcwzEud4rCER37+lKJHcYB+1RCsc6Iv2JfiJ82
-         RY9A==
-X-Gm-Message-State: AOJu0YxuqmGiRc41eb1JOl2aE9arjSn7EeqPAHJsiVviL3ma72FIUy/D
-        GB9pCwqHm+qAovBeBc7ndm5ODg==
-X-Google-Smtp-Source: AGHT+IHFwmu2jkp0Wem5odeef0kN4MbW9MLkLDGoEmUDINiSFC1xy+l7yDeEAV6+kZu/zr8QTLnrOw==
-X-Received: by 2002:adf:eac6:0:b0:32d:9a7c:56ed with SMTP id o6-20020adfeac6000000b0032d9a7c56edmr1164992wrn.10.1697185573035;
-        Fri, 13 Oct 2023 01:26:13 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f4-20020a5d4dc4000000b003253523d767sm3778669wru.109.2023.10.13.01.26.12
+        d=1e100.net; s=20230601; t=1697187823; x=1697792623;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mVXzaNCQ+HvBISgUOUJ4L9y3uEa9RCaldYHVY2YAQiM=;
+        b=gXcA7pygHWZzakysZjvuEmhaQec5MqCOtdLC1TaqyitYKLCL5ewZg7E4o6oYCBcjeg
+         k0wc+6j87VTOpeH6JGH3WPWCl55bEIL2kktPMjLANURcMWohSpCMNXGwZTTN6rsWstqs
+         96LUhHV8X+pc2gt3G2OE8qAio1kT0W4hCsqfC769z0jEAvw8oZtYJjxcCQozps0pDxle
+         wCfqp/eAvRiX9ClFTher29aTHNg2gMF8+IbuE/g0VhSrYbbmPS6hr9wjjz42t6yEYe2Q
+         IL3jCw0K8qFWL2Eqjls4VHSOds5g0quuLCjt2Q/cBo5qzV3XppjObNAvOj0hE//lSLNa
+         rKgQ==
+X-Gm-Message-State: AOJu0YwAVz5TpUYa248SCTE3CtZ4JDhDdgllohohIA41EZNpWoCtl1aV
+        hJHrDUiWoRdLLaFVvR+hZZ8=
+X-Google-Smtp-Source: AGHT+IGBJbJOOMt2ygR5MBho8elPwZ41u1q9oxDLqPoxSsf1UOx0K63NlPMgoUjBfzna0nS+3W/5dA==
+X-Received: by 2002:a5d:5a86:0:b0:32d:260b:5b7b with SMTP id bp6-20020a5d5a86000000b0032d260b5b7bmr9876635wrb.11.1697187822845;
+        Fri, 13 Oct 2023 02:03:42 -0700 (PDT)
+Received: from gmail.com (1F2EF405.nat.pool.telekom.hu. [31.46.244.5])
+        by smtp.gmail.com with ESMTPSA id m8-20020adfa3c8000000b0032d7fde2d3csm8136690wrb.79.2023.10.13.02.03.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 01:26:12 -0700 (PDT)
-Date:   Fri, 13 Oct 2023 11:26:10 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Su Hui <suhui@nfschina.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: remove unnecessary NULL check
-Message-ID: <2ac432ce-b253-41c9-9814-19e2afafad5c@kadam.mountain>
-References: <5de18b71-c3db-4820-b35e-262b4cac35fc@moroto.mountain>
- <20231013080149.hbcuxww6w362g6xh@pengutronix.de>
+        Fri, 13 Oct 2023 02:03:42 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date:   Fri, 13 Oct 2023 11:03:39 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Sandipan Das <sandipan.das@amd.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/amd/uncore: fix error codes in amd_uncore_init()
+Message-ID: <ZSkH64SpvOTOJSpE@gmail.com>
+References: <cec62eba-c4b8-4cb7-9671-58894dd4b974@moroto.mountain>
+ <fbc90ef0-1418-4c7b-8f3e-7dd1a0d7499e@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231013080149.hbcuxww6w362g6xh@pengutronix.de>
+In-Reply-To: <fbc90ef0-1418-4c7b-8f3e-7dd1a0d7499e@amd.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 10:01:49AM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Fri, Oct 13, 2023 at 10:17:08AM +0300, Dan Carpenter wrote:
-> > This NULL check was required when it was added, but we shuffled the code
-> > around in commit 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation
-> > to the _probe function") and now it's not.  The inconsistent NULL
-> > checking triggers a Smatch warning:
+
+* Sandipan Das <sandipan.das@amd.com> wrote:
+
+> On 10/13/2023 12:48 PM, Dan Carpenter wrote:
+> > Some of the error paths in this function return don't initialize the
+> > error code.  Return -ENODEV.
 > > 
-> >     drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
-> >     variable dereferenced before check 'mdp5_kms' (see line 782)
-> > 
+> > Fixes: d6389d3ccc13 ("perf/x86/amd/uncore: Refactor uncore management")
 > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  arch/x86/events/amd/uncore.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+> > index 9b444ce24108..a389828f378c 100644
+> > --- a/arch/x86/events/amd/uncore.c
+> > +++ b/arch/x86/events/amd/uncore.c
+> > @@ -1009,7 +1009,8 @@ static struct amd_uncore uncores[UNCORE_TYPE_MAX] = {
+> >  static int __init amd_uncore_init(void)
+> >  {
+> >  	struct amd_uncore *uncore;
+> > -	int ret, i;
+> > +	int ret = -ENODEV;
+> > +	int i;
+> >  
+> >  	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+> >  	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
 > 
-> LGTM
 > 
-> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> This patch opportunity is valid since commit 1f50db2f3e1e
-> ("drm/msm/mdp5: move resource allocation to the _probe function") but
-> applies to older trees (where it introduces a bug).
-> On one hand it's not really a fix, but maybe still add a Fixes: line to
-> ensure it's not backported to older stables? Hmm, I don't know.
+> Thanks for catching this. I see that 'ret' remains uninitialized for cases
+> where the hotplug callback registration fails and was thinking if the
+> following is a better fix for this as the reason might not be ENODEV.
 
-Sure.  Being extra safe is good.
+Yeah, passing through the real error codes is usually better.
 
-regards,
-dan carpenter
+Here's it's probably a bit academic, as I don't think we are even using the 
+init return code in the init sequence iterator, see how the return code by 
+do_one_initcall() gets ignored by do_initcall_level() & do_pre_smp_initcalls() ...
 
+Nevertheless, mind submitting this as a separate patch?
+
+Thanks,
+
+	Ingo
