@@ -2,94 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25946CDB482
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 08:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A3CCDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 08:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbjJMIMP (ORCPT
+        id S230033AbjJMIZX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 04:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57700 "EHLO
+        Fri, 13 Oct 2023 04:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230057AbjJMIMN (ORCPT
+        with ESMTP id S229939AbjJMIZW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 04:12:13 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5964CC
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:12:11 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32615eaa312so1646307f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:12:11 -0700 (PDT)
+        Fri, 13 Oct 2023 04:25:22 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3774691
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:25:20 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40572aeb6d0so18967205e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 01:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697184730; x=1697789530; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGC52X+6EfdOM44b7esjFLrzvMzDKL2p4mgyAiVtcQk=;
-        b=erGPeaKd63nm7hBvQllthRPPjZtjjs5Q8i/uQX8KVRUBp8ShKblK6Ie9HkYbfDL2Zj
-         3eunWTOMPs1Uy71MgzpYm5qbwxz2F4Fn6IiGZvFNjSPdNqKDS75f8RoAiQ0mqiK9Xvko
-         9SqWgT9dgzm7x+Gd2qU+v0j43QccVHZXmV536A9rnb9q8tlcEbmry9SKlbTeB4CJhxNB
-         nIeilfgWnhAq8W+g5fz7rjuCS5rfhk4nMHL6NhZSTDBKgtYb6o1t3E4iw/lwg77+N7EN
-         aA2BqX/gmkhLtETUT2+8KQTHdvGO/S9TPKe9QnvuypxewJ1uk0YBDLKk2bHu0AgBMW4V
-         1DAQ==
+        d=linaro.org; s=google; t=1697185518; x=1697790318; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M+uauCSgQKcWUCd6FsYiqka8NNHbjlLVkJ7rYh7s+Tg=;
+        b=YRxxc1Qw02CIizIz0lAMetrEjcfh3grdv8x56ilWPCq5FAHPBRqS4IAi4WXlaPyZ12
+         fwlRnSRyySJZwlS2/gOAG0faI09Thr0v4tzl5JjAR0K5ePzimgGhndUBR59wE3jiUzSc
+         wAwfxbcX9sI7YeHgp8XMS19jP8OT7S953w0+0rnqfNoSTdxx8pbL3xOurqIJ+sn1Dzx8
+         i1C64qSH9P5BPhUTEY7n7WcIeyhO37jqthQwc9nUtb2n5X6E6Dp4cQBhlwIzo/9wkgeP
+         RtbZkzOl7nxgOQz5xf1jFloG3btcx32rZ3D2Nuo+gOiMnSZnw3xRrkQhBYyuB5mJGEFl
+         84+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697184730; x=1697789530;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SGC52X+6EfdOM44b7esjFLrzvMzDKL2p4mgyAiVtcQk=;
-        b=YY2zhouEVkAcrN9OLXbwbYD+PQitmyJL65q3HdyJTydNFIvHYX3h9FBmNJcDOuymUM
-         u2XBCmDVxPflQ+ukJgdFVEZxGybN/XqDRopKyl3b6shdbudvmiLUFcFdXUG/dkW1dCe3
-         3ZB43Sm9bnTMpjyAnL84fNA+7VKyHchOesziy2PsMOmFe4AxvYk4v6X6nIdsyHOLQFPc
-         PoO4npSpoWfztmM3bOZeFsPHEha9MIAFe2NimGg4EVdPvoFgSfHQCrv1Sv2SbOH9aacP
-         nw9VqdELDxKYzJfxtCdhqJeJjsBkM06+pR2Is7nDGmM8zmbuLCYIrdaC7jd4knsULMYf
-         mlGQ==
-X-Gm-Message-State: AOJu0YzqPBYp+E1OJLzT7bMjID/myR9HugTnNiTIqlz+HnNUlxVJwRAX
-        hy9YdBp3OcSVOoM3HoZKbvveOA==
-X-Google-Smtp-Source: AGHT+IGXwzt6GufVlnOjsPlfsRIPzlaGtVvngq610MlsMUP7gghxkfnbbfFsixU3uwFuXhpwNvI7nA==
-X-Received: by 2002:a5d:58ca:0:b0:31f:f65f:74ac with SMTP id o10-20020a5d58ca000000b0031ff65f74acmr21004242wrf.70.1697184730218;
-        Fri, 13 Oct 2023 01:12:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697185518; x=1697790318;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+uauCSgQKcWUCd6FsYiqka8NNHbjlLVkJ7rYh7s+Tg=;
+        b=CH8IO9Tn8SmDAjfAzRYF/f9m/rIxRYZwMij2wOg2MnagfFgZs2Ip8h6RQxGeGoJO3U
+         Yd3+wXayv10YZMv08ixS7p4DSHnXR4mZUskqQt8cvK1EqybOklvN/Q1Eq+MAOYBPuppb
+         zo7CNCPTgyQYoD3z1lU+C9tebu/phbieiS5wedDSZgkM8vFY0boN0tVdUuBOwb36pE9J
+         fkZlI4Usyx1Dp3iHTBY53lRCpQxLKa+CHiBpdJfzzsgEaG6ngZUdTiY1K0ELhQjguGPM
+         tKXhJLuMzZoZEicxKVidHgXykMA4Hqd7Ed4ckMZKl1GX9Ej83H5Upa9HzXNpcBr/cjtl
+         DB1A==
+X-Gm-Message-State: AOJu0YylEhz1j7ww7IRaoyctfUdruyZOnAOwByhu3yVvARLLdic9syT6
+        ZZkQPjstJ2Y6v30kzTYzwke7Ag==
+X-Google-Smtp-Source: AGHT+IEjRa/nZrp2h3uISb8MvRVIEmCnprt03btuSLuHCUEtgB3tAH3dRRIg0+64ePhtBFCv/YHqZg==
+X-Received: by 2002:a05:600c:282:b0:406:44e7:ef93 with SMTP id 2-20020a05600c028200b0040644e7ef93mr24194490wmk.1.1697185518504;
+        Fri, 13 Oct 2023 01:25:18 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w14-20020adfee4e000000b0032d2489a399sm2745645wro.49.2023.10.13.01.12.09
+        by smtp.gmail.com with ESMTPSA id t9-20020a05600001c900b0032179c4a46dsm20236629wrx.100.2023.10.13.01.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 01:12:09 -0700 (PDT)
-Date:   Fri, 13 Oct 2023 11:12:07 +0300
+        Fri, 13 Oct 2023 01:25:17 -0700 (PDT)
+Date:   Fri, 13 Oct 2023 11:25:15 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Sandipan Das <sandipan.das@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH] perf/x86/amd/uncore: fix error codes in amd_uncore_init()
-Message-ID: <0c973a20-e10c-4989-b7d9-86cb0f522718@kadam.mountain>
-References: <cec62eba-c4b8-4cb7-9671-58894dd4b974@moroto.mountain>
- <ZSjyJuqk3z0RyKP2@gmail.com>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Su Hui <suhui@nfschina.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] drm/msm: remove unnecessary NULL check
+Message-ID: <ZSj+6/J6YsoSpLak@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZSjyJuqk3z0RyKP2@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 09:30:46AM +0200, Ingo Molnar wrote:
-> Ugh, why on Earth didn't GCC warn about this? The bad pattern is pretty 
-> simple & obvious once pointed out ... compilers should have no trouble 
-> realizing that 'ret' is returned uninitialized in some of these control 
-> paths. Yet not a peep from the compiler ...
+This NULL check was required when it was added, but we shuffled the code
+around and now it's not.  The inconsistent NULL checking triggers a
+Smatch warning:
 
-We disabled that warning years ago (5?) because GCC had too many false
-positives.
+    drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
+    variable dereferenced before check 'mdp5_kms' (see line 782)
 
-regards,
-dan carpenter
+Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the _probe function"
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: Added a Fixes tag.  It's not really a bug fix and so adding the
+fixes tag is slightly unfair but it should prevent this patch from
+accidentally getting backported before the refactoring and causing an
+issue.
 
+Btw, fixes tags are often unfair like this.  People look at fixes tags
+and think, "the fix introduced a bug" but actually it's really common
+that the fix was just not complete.  But from a backporting perspective
+it makes sense to tie them together.
+
+Plus everyone introduces bugs.  If you're not introducing bugs, then
+you're probably not writing a lot of code.
+
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index 11d9fc2c6bf5..ec933d597e20 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -844,8 +844,7 @@ static int mdp5_init(struct platform_device *pdev, struct drm_device *dev)
+ 
+ 	return 0;
+ fail:
+-	if (mdp5_kms)
+-		mdp5_destroy(mdp5_kms);
++	mdp5_destroy(mdp5_kms);
+ 	return ret;
+ }
+ 
+-- 
+2.39.2
