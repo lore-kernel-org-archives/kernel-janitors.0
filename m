@@ -2,111 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AF2CDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 09:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56812C41513
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 09:54:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbjJMJKw (ORCPT
+        id S230523AbjJMJyv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 05:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49864 "EHLO
+        Fri, 13 Oct 2023 05:54:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbjJMJKd (ORCPT
+        with ESMTP id S231301AbjJMJyt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 05:10:33 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D60D54;
-        Fri, 13 Oct 2023 02:09:56 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-53e16f076b3so2797652a12.0;
-        Fri, 13 Oct 2023 02:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697188192; x=1697792992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJzZvH8fBl6ADPsi6DUS9ksyUncHYpaqW3DpQr1VE2E=;
-        b=B7e3NZO8ryyuyijh0TahGkmqE48K7IqNPiQsBTJMEoQ0idChHpMvG5+rpzw0yBz2jf
-         ibd/rXQI4g7Pa2psj1H4/5tKfJrH73vfUWDINv/NwtOXuCT7L/JDLrR3Tr3XBYzAwctQ
-         x07eni3AfGpDI/W+Je9rt1dWa1lIkOtydBCTMLx+kl1uFic1Cd28fhhATPrl9Aa74VHC
-         PIEf78sNj6UvrvPn3+z1SIEobxu/rkZY7S0B60HTTOtaAHQ89hAyGcTdjjpFWpkGKPtg
-         l7HN/EdAMDnMRZu91hhVsGFcuQ0Xjp3WcKYwK9VPK87iS76tCQTcV91UDMLzibfFyzqN
-         hN/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697188192; x=1697792992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iJzZvH8fBl6ADPsi6DUS9ksyUncHYpaqW3DpQr1VE2E=;
-        b=GRA981RsZ77E9qYiZmujt7m4UCBMEGAAomg1FpszRH9pGgordEZCNVOQ6ZRBeh70Jx
-         j5eBOMc23yB4EXaidjLwwZmBjhKHndu2gnVziHOTVJOz0hAe6e2jkwzsjXCNdQbq6rrP
-         aLBUrNtVw6GeFDPsToy2w8oGkr7oksiBxNTe1eNqW7xsmQgSM37lD7Ehsx1VbYGpqYp6
-         E52gi6raNgitMimOurzcYX60k+A825dQA7fojgXrwGkxxp/RyQeqQmV+bFwpcvE/9X0i
-         ixuB7g5guWyeE72/Xwq/D6RhEEvvuXXCoNdib1r6Zt4HkIbSC4GrOYNkm2gfNAhcTIgT
-         pKCQ==
-X-Gm-Message-State: AOJu0YybFIHkYO13NvdWFQgks1MRM65cmSI8GuN5ylF7QktNNktvJwYJ
-        1QZGJYe/kbCnKjy7Ax4C2LWmUIZiwSA0IdqhqT0=
-X-Google-Smtp-Source: AGHT+IHFTCW7zjIdWbJ7zJJDNC9TMhAztBlpLvu213GykOM5zhVVEq8OGtCQFQv9Cd/wi4lA8iUAsCvCiq8XxXye8uM=
-X-Received: by 2002:a05:6402:350b:b0:529:d147:e9f3 with SMTP id
- b11-20020a056402350b00b00529d147e9f3mr21470925edd.5.1697188192093; Fri, 13
- Oct 2023 02:09:52 -0700 (PDT)
+        Fri, 13 Oct 2023 05:54:49 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D72C2
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 02:54:47 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrEsQ-0007Xb-Kn; Fri, 13 Oct 2023 11:54:38 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrEsP-001Mg2-3t; Fri, 13 Oct 2023 11:54:37 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qrEsO-00FU43-QC; Fri, 13 Oct 2023 11:54:36 +0200
+Date:   Fri, 13 Oct 2023 11:54:36 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Su Hui <suhui@nfschina.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] drm/msm: remove unnecessary NULL check
+Message-ID: <20231013095436.fo5rieew5z74ck42@pengutronix.de>
+References: <ZSj+6/J6YsoSpLak@kadam>
 MIME-Version: 1.0
-References: <cec62eba-c4b8-4cb7-9671-58894dd4b974@moroto.mountain>
- <ZSjyJuqk3z0RyKP2@gmail.com> <0c973a20-e10c-4989-b7d9-86cb0f522718@kadam.mountain>
- <ZSkInflBriOL9V3M@gmail.com>
-In-Reply-To: <ZSkInflBriOL9V3M@gmail.com>
-From:   Uros Bizjak <ubizjak@gmail.com>
-Date:   Fri, 13 Oct 2023 11:09:40 +0200
-Message-ID: <CAFULd4b7F=MNMduRn99FFcAc7Of7RsL+vyXVzsiBZZ9hz0+HnA@mail.gmail.com>
-Subject: Re: [PATCH] perf/x86/amd/uncore: fix error codes in amd_uncore_init()
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Sandipan Das <sandipan.das@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="azie4tzhhm5wnxd7"
+Content-Disposition: inline
+In-Reply-To: <ZSj+6/J6YsoSpLak@kadam>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 11:06=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wro=
-te:
->
->
-> * Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> > On Fri, Oct 13, 2023 at 09:30:46AM +0200, Ingo Molnar wrote:
-> >
-> > > Ugh, why on Earth didn't GCC warn about this? The bad pattern is pret=
-ty
-> > > simple & obvious once pointed out ... compilers should have no troubl=
-e
-> > > realizing that 'ret' is returned uninitialized in some of these contr=
-ol
-> > > paths. Yet not a peep from the compiler ...
-> >
-> > We disabled that warning years ago (5?) because GCC had too many false
-> > positives.
->
-> GCC had some pretty bogus notions about 'possible' uninitialized use that
-> encouraged some bad code patterns, but in this case there's readily
-> provable uninitialized use, that a compiler should warn about.
->
-> Is it possible to disable just the unreliable, probabilistic part of GCC'=
-s
-> uninitialized variables warnings?
 
--Wno-maybe-uninitialized?
+--azie4tzhhm5wnxd7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Uros.
+On Fri, Oct 13, 2023 at 11:25:15AM +0300, Dan Carpenter wrote:
+> This NULL check was required when it was added, but we shuffled the code
+> around and now it's not.  The inconsistent NULL checking triggers a
+> Smatch warning:
+>=20
+>     drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
+>     variable dereferenced before check 'mdp5_kms' (see line 782)
+>=20
+> Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the _prob=
+e function"
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+(already provided for (implicit) v1, but wasn't picked up)
+
+Thanks
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--azie4tzhhm5wnxd7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUpE9sACgkQj4D7WH0S
+/k7/mgf/eePbGSTxnx4bSU48gePsiOai39SNEhuEk2iMBkHEaEE8kbcY9d2HO/Fn
+ULnenRAalSQCnIDqzahTlQLieRBsBHdyT68+Y+4TS3n6gpGKUxi03gq1NJiIeql2
+tNtmWBtntXzSBb02rbdzJEfoWUu9VUajD6cY+PVPSDMLnwMImygX+0WFsM3AACPG
+eTb1bwsu08/JRAzkj5nWqshlZekBEVg3KKucphJA+jKP0R9yCkR1ErzACUSFrK1E
+yTBJYS28zv3OfxKUUoEGQ0S7BHZiYCMjALJk1C1sUDmYoLDkI0MtRQ5o83d79kPx
+2c64Eqk0cGyDnsy6ygTwEFkI6DvwXw==
+=UDqN
+-----END PGP SIGNATURE-----
+
+--azie4tzhhm5wnxd7--
