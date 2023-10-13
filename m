@@ -2,103 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56812C41513
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 09:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4466ECDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 10:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbjJMJyv (ORCPT
+        id S230255AbjJMKnq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 05:54:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
+        Fri, 13 Oct 2023 06:43:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231301AbjJMJyt (ORCPT
+        with ESMTP id S230239AbjJMKnp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 05:54:49 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D72C2
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 02:54:47 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrEsQ-0007Xb-Kn; Fri, 13 Oct 2023 11:54:38 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrEsP-001Mg2-3t; Fri, 13 Oct 2023 11:54:37 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrEsO-00FU43-QC; Fri, 13 Oct 2023 11:54:36 +0200
-Date:   Fri, 13 Oct 2023 11:54:36 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Su Hui <suhui@nfschina.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/msm: remove unnecessary NULL check
-Message-ID: <20231013095436.fo5rieew5z74ck42@pengutronix.de>
-References: <ZSj+6/J6YsoSpLak@kadam>
+        Fri, 13 Oct 2023 06:43:45 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066B9C9;
+        Fri, 13 Oct 2023 03:43:44 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2ECCC433C7;
+        Fri, 13 Oct 2023 10:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697193823;
+        bh=VWAGS5bqi44dAk1bOrEDdGkpcvk+RhQ/wntAJMfz8+I=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=RE3JjP1/8H9sDG9/u6gs7yMJDy0tQPrWtPf/YiAAUbOktrbBKm+UHzTAwSHq3vbna
+         GvvxvV4rRv/xMVoW1M5wqRX/8NMC40gKbJy2Nh7hVD84D9/h+lTD6DYwXZXJzy5oIv
+         xTnFd32rr+ZmCKfAatVxH61tIs9QOq3F24xf2pdO+Yod64DC5SMNip5qirMBW+XCln
+         BFw1U28P1ahuYvwD0bsSt3DnJrtN7ThUb06eOq5SdLJc4zlG27BH+Z638Dt40J7/FD
+         DpFka2Vs8UQf/RVOs8YqisjsvakFREBDiN1M8TO/cphCVrUKoKZ4uqCbAUh6hZVxn9
+         x7al7/jnVk0Jg==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
+Message-Id: <169719382030.165658.16055633686751767855.b4-ty@kernel.org>
+Date:   Fri, 13 Oct 2023 16:13:40 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="azie4tzhhm5wnxd7"
-Content-Disposition: inline
-In-Reply-To: <ZSj+6/J6YsoSpLak@kadam>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---azie4tzhhm5wnxd7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 03 Sep 2023 12:11:06 +0200, Christophe JAILLET wrote:
+> With gcc 12.3.0, when this file is built, we get errors such as:
+> 
+> drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
+> drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
+>   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>       |                                                    ^~~~~
+> drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
+>   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
+>       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> [...]
 
-On Fri, Oct 13, 2023 at 11:25:15AM +0300, Dan Carpenter wrote:
-> This NULL check was required when it was added, but we shuffled the code
-> around and now it's not.  The inconsistent NULL checking triggers a
-> Smatch warning:
->=20
->     drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
->     variable dereferenced before check 'mdp5_kms' (see line 782)
->=20
-> Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the _prob=
-e function"
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Applied, thanks!
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+[1/1] phy: sun4i-usb: Fix a W=1 compilation failure
+      commit: 9e34abc7abfac781df909891c8d53781f607105d
 
-(already provided for (implicit) v1, but wasn't picked up)
+Best regards,
+-- 
+~Vinod
 
-Thanks
-Uwe
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---azie4tzhhm5wnxd7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUpE9sACgkQj4D7WH0S
-/k7/mgf/eePbGSTxnx4bSU48gePsiOai39SNEhuEk2iMBkHEaEE8kbcY9d2HO/Fn
-ULnenRAalSQCnIDqzahTlQLieRBsBHdyT68+Y+4TS3n6gpGKUxi03gq1NJiIeql2
-tNtmWBtntXzSBb02rbdzJEfoWUu9VUajD6cY+PVPSDMLnwMImygX+0WFsM3AACPG
-eTb1bwsu08/JRAzkj5nWqshlZekBEVg3KKucphJA+jKP0R9yCkR1ErzACUSFrK1E
-yTBJYS28zv3OfxKUUoEGQ0S7BHZiYCMjALJk1C1sUDmYoLDkI0MtRQ5o83d79kPx
-2c64Eqk0cGyDnsy6ygTwEFkI6DvwXw==
-=UDqN
------END PGP SIGNATURE-----
-
---azie4tzhhm5wnxd7--
