@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4466ECDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 10:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39F9CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 11:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbjJMKnq (ORCPT
+        id S231161AbjJMLop (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Oct 2023 06:43:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59638 "EHLO
+        Fri, 13 Oct 2023 07:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230239AbjJMKnp (ORCPT
+        with ESMTP id S230458AbjJMLop (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Oct 2023 06:43:45 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066B9C9;
-        Fri, 13 Oct 2023 03:43:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2ECCC433C7;
-        Fri, 13 Oct 2023 10:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697193823;
-        bh=VWAGS5bqi44dAk1bOrEDdGkpcvk+RhQ/wntAJMfz8+I=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=RE3JjP1/8H9sDG9/u6gs7yMJDy0tQPrWtPf/YiAAUbOktrbBKm+UHzTAwSHq3vbna
-         GvvxvV4rRv/xMVoW1M5wqRX/8NMC40gKbJy2Nh7hVD84D9/h+lTD6DYwXZXJzy5oIv
-         xTnFd32rr+ZmCKfAatVxH61tIs9QOq3F24xf2pdO+Yod64DC5SMNip5qirMBW+XCln
-         BFw1U28P1ahuYvwD0bsSt3DnJrtN7ThUb06eOq5SdLJc4zlG27BH+Z638Dt40J7/FD
-         DpFka2Vs8UQf/RVOs8YqisjsvakFREBDiN1M8TO/cphCVrUKoKZ4uqCbAUh6hZVxn9
-         x7al7/jnVk0Jg==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
-References: <0bc81612171baaa6d5dff58c8e009debc03e1ba8.1693735840.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] phy: sun4i-usb: Fix a W=1 compilation failure
-Message-Id: <169719382030.165658.16055633686751767855.b4-ty@kernel.org>
-Date:   Fri, 13 Oct 2023 16:13:40 +0530
+        Fri, 13 Oct 2023 07:44:45 -0400
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB48A9
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 04:44:43 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id 58C51207B3;
+        Fri, 13 Oct 2023 13:44:41 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3scqEpFXX8PO; Fri, 13 Oct 2023 13:44:40 +0200 (CEST)
+Received: from mailout1.secunet.com (mailout1.secunet.com [62.96.220.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id E0623206F0;
+        Fri, 13 Oct 2023 13:44:40 +0200 (CEST)
+Received: from cas-essen-01.secunet.de (unknown [10.53.40.201])
+        by mailout1.secunet.com (Postfix) with ESMTP id D4FA980004A;
+        Fri, 13 Oct 2023 13:44:40 +0200 (CEST)
+Received: from mbx-essen-02.secunet.de (10.53.40.198) by
+ cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Fri, 13 Oct 2023 13:44:40 +0200
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
+ (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.32; Fri, 13 Oct
+ 2023 13:44:40 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+        id D225131840FD; Fri, 13 Oct 2023 13:44:39 +0200 (CEST)
+Date:   Fri, 13 Oct 2023 13:44:39 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     <kernel-janitors@vger.kernel.org>
+Subject: Re: [bug report] xfrm: Support GRO for IPv4 ESP in UDP encapsulation
+Message-ID: <ZSktpwdmL3ZDp4yI@gauss3.secunet.de>
+References: <8a3f05b4-bde7-4a5e-86be-e1f402907ab0@moroto.mountain>
+ <4b8c8474-280b-4715-b2f2-53301ac991e7@kadam.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4b8c8474-280b-4715-b2f2-53301ac991e7@kadam.mountain>
+X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
+ mbx-essen-02.secunet.de (10.53.40.198)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-On Sun, 03 Sep 2023 12:11:06 +0200, Christophe JAILLET wrote:
-> With gcc 12.3.0, when this file is built, we get errors such as:
+On Wed, Oct 11, 2023 at 01:16:33PM +0300, Dan Carpenter wrote:
+> On Wed, Oct 11, 2023 at 12:57:52PM +0300, Dan Carpenter wrote:
+> > Hello Steffen Klassert,
+> > 
+> > The patch 172bf009c18d: "xfrm: Support GRO for IPv4 ESP in UDP
+> > encapsulation" from Oct 4, 2023 (linux-next), leads to the following
+> > Smatch static checker warning:
+> > 
+> > 	net/ipv6/xfrm6_input.c:174 xfrm6_udp_encap_rcv()
+> > 	warn: passing freed memory 'skb'
+> > 
+> > net/ipv6/xfrm6_input.c
+> >     168 int xfrm6_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
+> >     169 {
+> >     170         int ret;
+> >     171 
+> >     172         ret = __xfrm6_udp_encap_rcv(sk, skb, true);
+> > 
+> > The xfrm4_udp_encap_rcv() function frees skb and returns zero.
+> > 
+> >     173         if (!ret)
+> > --> 174                 return xfrm6_rcv_encap(skb, IPPROTO_ESP, 0,
+> >                                                ^^^
+> > Use after free
+> > 
 > 
-> drivers/phy/allwinner/phy-sun4i-usb.c: In function ‘sun4i_usb_phy_probe’:
-> drivers/phy/allwinner/phy-sun4i-usb.c:790:52: error: ‘_vbus’ directive output may be truncated writing 5 bytes into a region of size between 2 and 12 [-Werror=format-truncation=]
->   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
->       |                                                    ^~~~~
-> drivers/phy/allwinner/phy-sun4i-usb.c:790:17: note: ‘snprintf’ output between 10 and 20 bytes into a destination of size 16
->   790 |                 snprintf(name, sizeof(name), "usb%d_vbus", i);
->       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> [...]
+> This generated warnings for the other places that call
+> __xfrm6_udp_encap_rcv() as well.
 
-Applied, thanks!
+I see what it is. We can't call xfrm4_udp_encap_rcv from
+__xfrm6_udp_encap_rcv as we currently do it
 
-[1/1] phy: sun4i-usb: Fix a W=1 compilation failure
-      commit: 9e34abc7abfac781df909891c8d53781f607105d
+I'll send a fix at the beginning of the next week.
 
-Best regards,
--- 
-~Vinod
-
-
+Thanks a lot for the report!
