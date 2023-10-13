@@ -2,61 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC788CDB482
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Oct 2023 23:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017F0CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Oct 2023 07:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233350AbjJLXre (ORCPT
+        id S229867AbjJMHRR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Oct 2023 19:47:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34090 "EHLO
+        Fri, 13 Oct 2023 03:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjJLXrd (ORCPT
+        with ESMTP id S229699AbjJMHRQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Oct 2023 19:47:33 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE7BC0;
-        Thu, 12 Oct 2023 16:47:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1C4C433C8;
-        Thu, 12 Oct 2023 23:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697154451;
-        bh=g0j0ntI7cDursByucgnzG9BJl82/ZPQ8pgpkva55nnE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=dK8W5ZmTFp+nRPaYMnqtSLj8r06kz2uUeV6PikgHxVbIdah6Kn6Bb8WNEMyUylTYZ
-         Uk2ugUn8P3sbz0Lv2tZK8HV508ta0OnNSRN8KpXu4MHjrdvzQEeBNLaJIUZax3VzFW
-         P7NkX8xDZn2tT/H03E+bhTHSS8YUpmmzJheYBfigCbRjHtbOCzQOx14pCXb5kxneiN
-         1CIjSW1fib+3wFN+OI54384AqtxoUeowMXkcNxjMNc4ut+fgEheSjQWrmTpRcQjpe7
-         n5KfSVpAWgKv49p9PdExdzMSmS+hAv7hJI2JO+Q6OmZ+07CAl7VdcEcqfemKF5XUbE
-         anlVynjdKNAKA==
-Message-ID: <8ec3d2c6458d6979d780936d3521cf1d.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d9a78453-9b40-48c1-830e-00751ba3ecb8@kili.mountain>
-References: <d9a78453-9b40-48c1-830e-00751ba3ecb8@kili.mountain>
-Subject: Re: [PATCH] clk: stm32: Fix a signedness issue in clk_stm32_composite_determine_rate()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
+        Fri, 13 Oct 2023 03:17:16 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20FBB8
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 00:17:14 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-406609df1a6so18941505e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Oct 2023 00:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697181433; x=1697786233; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kWaFz4n8BLo1UJoI34jBeJHgdxXO/CE+i3BR2uQsDEA=;
+        b=AQjFVp0SQ8uqfvjqEqLuY3mfJ3Dgv9219p/qdwBeBcyBrfLgT0ZYnRJTxuufyElCMm
+         MNReCjF+QiM/whxbFUEVJ+C+cTzogpWOR2yn7on1+8/yTQMLcEcyJ5rWz+Azn+gM8zqf
+         wE1HHF+eqZzVa2ll2JqmN3aeIPoHUuMbzvupEWAkyU7LDi/sAPDw4gSEkk1jhjBEWjk3
+         VPeettWomLhknGQzf86jNmzoSZDb0xIA40sQREDB3SEKGYAPQecuTx+wI2rYqFll1DnG
+         FgPnYrsmhE8+ghPD0qnvpmhbx0mmxWhV2gfdo+SsadpsH+Kd5dZOIorpCISt2Yt5BNnv
+         j9Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697181433; x=1697786233;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kWaFz4n8BLo1UJoI34jBeJHgdxXO/CE+i3BR2uQsDEA=;
+        b=ZxVN7oprkKyi31CC9JgUbphMCW803YJD1TwfVxIEyTohEHXifDiCdDubyrMLfmzVs+
+         cBeEbYVjwQ3LdggjBUXaYDRJI8itdTg9QMbQ98Y/mITxS36uVKDEC+1J9Q3zZOBARZw9
+         9Lls5H2Cz/mI84mtQDpUIlEvAa33AejQ8/rYQ95toh+bhT20J41VPVF6kJebphE/vScV
+         cyhjvdORdNhMdRm1UAXRHv45Go20P67+P10d728znxqxeCpxUz/g9L2iX638rmgYTEPF
+         MpVC7sRgO3A/sfZde0l6Ge98v21H53AssxuzbBPt85Lk+6rtA32FpDt41X77ADtD7LVr
+         z8lA==
+X-Gm-Message-State: AOJu0YzCDV02zXNLzZDWdkdPoluFEI3UYdMRIi1sxsIIZ4vZ+GcZYrQq
+        EGPayPMezlT4zZ20S/CgLyBLIg==
+X-Google-Smtp-Source: AGHT+IEMChUF1nF5n5VUZpjuNffyhQxqCtCzn921jYAb9ji1wXEYdUyTy8LrYKKnYNgqSRFV3TqNLg==
+X-Received: by 2002:a1c:7c0a:0:b0:405:39c1:a98b with SMTP id x10-20020a1c7c0a000000b0040539c1a98bmr22624232wmc.20.1697181433171;
+        Fri, 13 Oct 2023 00:17:13 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y11-20020a05600c20cb00b0040531f5c51asm1751016wmm.5.2023.10.13.00.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 00:17:12 -0700 (PDT)
+Date:   Fri, 13 Oct 2023 10:17:08 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Su Hui <suhui@nfschina.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>
-Date:   Thu, 12 Oct 2023 16:47:29 -0700
-User-Agent: alot/0.10
+Subject: [PATCH] drm/msm: remove unnecessary NULL check
+Message-ID: <5de18b71-c3db-4820-b35e-262b4cac35fc@moroto.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2023-10-10 06:35:28)
-> The divider_ro_round_rate() function could potentially return -EINVAL on
-> error but the error handling doesn't work because "rate" is unsigned.
-> It should be a type long.
->=20
-> Fixes: 06ed0fc0fbac ("clk: stm32: composite: Switch to determine_rate")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+This NULL check was required when it was added, but we shuffled the code
+around in commit 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation
+to the _probe function") and now it's not.  The inconsistent NULL
+checking triggers a Smatch warning:
 
-Applied to clk-fixes
+    drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
+    variable dereferenced before check 'mdp5_kms' (see line 782)
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index 11d9fc2c6bf5..ec933d597e20 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -844,8 +844,7 @@ static int mdp5_init(struct platform_device *pdev, struct drm_device *dev)
+ 
+ 	return 0;
+ fail:
+-	if (mdp5_kms)
+-		mdp5_destroy(mdp5_kms);
++	mdp5_destroy(mdp5_kms);
+ 	return ret;
+ }
+ 
+-- 
+2.39.2
+
