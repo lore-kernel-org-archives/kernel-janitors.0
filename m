@@ -2,103 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8FBCDB482
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 11:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BB2CDB482
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 14:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232630AbjJPLUB (ORCPT
+        id S233374AbjJPOLo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Oct 2023 07:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
+        Mon, 16 Oct 2023 10:11:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbjJPLUA (ORCPT
+        with ESMTP id S229784AbjJPOLn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Oct 2023 07:20:00 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28082B4
-        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 04:19:58 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-405505b07dfso33475565e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 04:19:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697455196; x=1698059996; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A8KsGpPOOoWej+EABAJ7O0MnezxzJN0p6iOYP9JLBdQ=;
-        b=bsEAkxWY0dzw4kb9IARJlAMASvaxvEHrkDR1Cv7mzOkiEEKWZjplB5nQUpTsjP5tLo
-         D8wTUqty9LpDUOXUNPX3iT4cZ2uMT0Lq4LDSM5Ll4e79Cg7eGCLQPNCgtdglsyxFqAAk
-         Qn2Sdx+IIJBF8LsBEk5ltng9JGnt8XAiYLqa16SUOTSaYwX/4tf95RNM1USnuaz7CeUw
-         ENfWZOH11Uu6S9nGST6hoCE82Pc29C3QdlalUd9s2YbHzhIn9IAO2qUY9eBQL+wdSi7C
-         GjykIu4ItNhuHfnRPiC7qm4cX9oWlJ/g0igZHj10JaGnUQ3a+2E5EzZbEFjwQkWfbNeQ
-         Mu2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697455196; x=1698059996;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A8KsGpPOOoWej+EABAJ7O0MnezxzJN0p6iOYP9JLBdQ=;
-        b=gDPZfbqTaAmszGoolHRkR5CPbQZsHibV/DAEwrAOnP6ASRJGcgiHFDKtkJx6o+JEZZ
-         aNlInG08Y/ruLJWc9d/gq+anLtmFIEmoVScpCZT0qgsx2TB2k6hu6kXb+X2ecRIIofBh
-         N7lt7hsPt/p/UnPeBf/bznKfr7zMFgljK85HmT7vsUwiDv9fjOFAjX0JPMiLzQnvslpU
-         rxEeVGG75wB1mG+FzoPHGqAQvdjulKNWXC+m/6M30BQLnrJ3QDbI99G0E/uf92M/ndQx
-         Lbcw88VcqyW0gADdj+H8rooOrOMgjMOZv2PZvcNrNwPg13F0xesMwuaY7OWF5She3mm9
-         cJBw==
-X-Gm-Message-State: AOJu0YzC9C+EJcOLDeOzCtttu3tjccflQ7KoRXutgUjWkAUGQeEfCt6Y
-        kUrHQB9a2MAz+ToCMV43T3FO4Q==
-X-Google-Smtp-Source: AGHT+IEwsg3DmJum5HD3wiLEYwzwIlJS3Ala8HDGksmUXDObbnciWs0r3lFHIdZY4gQew0/dSIC84g==
-X-Received: by 2002:a05:600c:1552:b0:407:7def:382c with SMTP id f18-20020a05600c155200b004077def382cmr4012116wmg.13.1697455196603;
-        Mon, 16 Oct 2023 04:19:56 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p11-20020a05600c358b00b004075d5664basm6983560wmq.8.2023.10.16.04.19.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 04:19:56 -0700 (PDT)
-Date:   Mon, 16 Oct 2023 14:19:52 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Helge Deller <deller@gmx.de>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Yang Yang <yang.yang29@zte.com>,
-        Xu Panda <xu.panda@zte.com.cn>,
-        Lucy Mielke <mielkesteven@icloud.com>,
-        linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] fbdev: omapfb: fix some error codes
-Message-ID: <843b063c-ee4a-4e17-add6-75e2cc82c2f4@moroto.mountain>
+        Mon, 16 Oct 2023 10:11:43 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B479DEE
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 07:11:39 -0700 (PDT)
+Received: from i53875b5b.versanet.de ([83.135.91.91] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1qsOJd-00062e-DJ; Mon, 16 Oct 2023 16:11:29 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sandy Huang <hjc@rock-chips.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Mark Yao <markyao0591@gmail.com>,
+        kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        rjan Eide <orjan.eide@arm.com>,
+        linux-rockchip@lists.infradead.org,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/rockchip: Fix type promotion bug in rockchip_gem_iommu_map()
+Date:   Mon, 16 Oct 2023 16:11:26 +0200
+Message-Id: <169746544051.926160.339275214162402772.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <2bfa28b5-145d-4b9e-a18a-98819dd686ce@moroto.mountain>
+References: <2bfa28b5-145d-4b9e-a18a-98819dd686ce@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Return negative -ENXIO instead of positive ENXIO.
+On Wed, 11 Oct 2023 11:01:48 +0300, Dan Carpenter wrote:
+> The "ret" variable is declared as ssize_t and it can hold negative error
+> codes but the "rk_obj->base.size" variable is type size_t.  This means
+> that when we compare them, they are both type promoted to size_t and the
+> negative error code becomes a high unsigned value and is treated as
+> success.  Add a cast to fix this.
+> 
+> 
+> [...]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-No fixes tag because the caller doesn't check for errors.
+Applied, thanks!
 
- drivers/video/fbdev/omap/omapfb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[1/1] drm/rockchip: Fix type promotion bug in rockchip_gem_iommu_map()
+      commit: 6471da5ee311d53ef46eebcb7725bc94266cc0cf
 
-diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
-index f28cb90947a3..42c96f1cfc93 100644
---- a/drivers/video/fbdev/omap/omapfb_main.c
-+++ b/drivers/video/fbdev/omap/omapfb_main.c
-@@ -1645,13 +1645,13 @@ static int omapfb_do_probe(struct platform_device *pdev,
- 	}
- 	fbdev->int_irq = platform_get_irq(pdev, 0);
- 	if (fbdev->int_irq < 0) {
--		r = ENXIO;
-+		r = -ENXIO;
- 		goto cleanup;
- 	}
- 
- 	fbdev->ext_irq = platform_get_irq(pdev, 1);
- 	if (fbdev->ext_irq < 0) {
--		r = ENXIO;
-+		r = -ENXIO;
- 		goto cleanup;
- 	}
- 
+Best regards,
 -- 
-2.39.2
-
+Heiko Stuebner <heiko@sntech.de>
