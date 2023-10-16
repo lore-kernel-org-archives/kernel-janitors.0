@@ -2,68 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BB2CDB482
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 14:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A939DCDB465
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 17:28:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbjJPOLo (ORCPT
+        id S233006AbjJPR2V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Oct 2023 10:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35570 "EHLO
+        Mon, 16 Oct 2023 13:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbjJPOLn (ORCPT
+        with ESMTP id S232295AbjJPR2U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Oct 2023 10:11:43 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B479DEE
-        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 07:11:39 -0700 (PDT)
-Received: from i53875b5b.versanet.de ([83.135.91.91] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1qsOJd-00062e-DJ; Mon, 16 Oct 2023 16:11:29 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sandy Huang <hjc@rock-chips.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Mark Yao <markyao0591@gmail.com>,
-        kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        rjan Eide <orjan.eide@arm.com>,
-        linux-rockchip@lists.infradead.org,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/rockchip: Fix type promotion bug in rockchip_gem_iommu_map()
-Date:   Mon, 16 Oct 2023 16:11:26 +0200
-Message-Id: <169746544051.926160.339275214162402772.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <2bfa28b5-145d-4b9e-a18a-98819dd686ce@moroto.mountain>
-References: <2bfa28b5-145d-4b9e-a18a-98819dd686ce@moroto.mountain>
+        Mon, 16 Oct 2023 13:28:20 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15B5AB
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 10:28:18 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40684f53d11so55004985e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Oct 2023 10:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697477297; x=1698082097; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GnUN5cuxAgIn1AVeXZDWW/Efxhy2T4tZCHS7uiiKgls=;
+        b=kzMuA8F+SZXWnOoOLwbjFBhyf3A2zoQnxTdAD/0BAgRWxlK/kF8d9Jva1U6HVSQ3D5
+         /V5v/XnJfNLJ0zHtfF2IRjr7/gGiP74VeHLhlbW7QwO/+6nvKzJ4uJFGUDd0ilk+qQ2p
+         N1jUORFJA4dyi9DCycILMwVHgikF1WSATJIbOXxjW9Ut2Sg8br8nS0z0jzPyYP2Tx9fx
+         pVVaJjS/OCXnoqBbnndjreUZv4GqROvmbpzfYf32738x2fzrdPUY4DaNmrehY7X6MB6n
+         t1PYx+7R5TbTs1DpYjR8bMv/sSmCBFFfhLw5p2ltpwVfLPV4rHE+YFMGDkvmvzabeXXZ
+         h8dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697477297; x=1698082097;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GnUN5cuxAgIn1AVeXZDWW/Efxhy2T4tZCHS7uiiKgls=;
+        b=WnHcJK3m0eJus0dLe4TlAd0/9GUiP2+OFw60n+jpZjTtMxXWiTTcHL9en8VpHoPuYj
+         fOr3EfhDUGVTYPreqfrASnyJ2WgsTxH01plH3EkqGRs+f/cQHGjRE2I2iqRNKVFmHry1
+         28+n3192cQFHV1GUa0NMxmNm1O2iAmmeKms+TNKSBjoq8UZd6c39ILUGY5GmWrMq8+Jv
+         6I4nyC+jTFn4Quv7ZwASAbrOoabS+4GT8a8hMf2cAE/1m06QMCC160R3zoLrHgHwgwZs
+         aAsjZgkFIXusErtHrVevDApo0pozs/rI7H22/1adsD6/YROij721YsnKo8mC3/PaZPFl
+         vkkA==
+X-Gm-Message-State: AOJu0YxWLd16fVI4uX4rxWr27HzfoIJknW5KPA+13eY5/dWm64U6i4Sf
+        CMhusKOLOM4Gjjhafj528POMIA==
+X-Google-Smtp-Source: AGHT+IFvIriZAI51ky7DuqcLEVh5b/T3s0wt9PW2D2Orplfm20a2U8/iKGSHNrjNFmituKSYmvwOjw==
+X-Received: by 2002:adf:f608:0:b0:32d:b19b:b3d9 with SMTP id t8-20020adff608000000b0032db19bb3d9mr94924wrp.2.1697477297102;
+        Mon, 16 Oct 2023 10:28:17 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id bq1-20020a5d5a01000000b0031ad5fb5a0fsm1906088wrb.58.2023.10.16.10.28.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Oct 2023 10:28:16 -0700 (PDT)
+Date:   Mon, 16 Oct 2023 20:28:10 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Steve Glendinning <steve.glendinning@smsc.com>
+Cc:     Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: usb: smsc95xx: Fix an error code in smsc95xx_reset()
+Message-ID: <147927f0-9ada-45cc-81ff-75a19dd30b76@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 11 Oct 2023 11:01:48 +0300, Dan Carpenter wrote:
-> The "ret" variable is declared as ssize_t and it can hold negative error
-> codes but the "rk_obj->base.size" variable is type size_t.  This means
-> that when we compare them, they are both type promoted to size_t and the
-> negative error code becomes a high unsigned value and is treated as
-> success.  Add a cast to fix this.
-> 
-> 
-> [...]
+Return a negative error code instead of success.
 
-Applied, thanks!
+Fixes: 2f7ca802bdae ("net: Add SMSC LAN9500 USB2.0 10/100 ethernet adapter driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/usb/smsc95xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] drm/rockchip: Fix type promotion bug in rockchip_gem_iommu_map()
-      commit: 6471da5ee311d53ef46eebcb7725bc94266cc0cf
-
-Best regards,
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 563ecd27b93e..17da42fe605c 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -897,7 +897,7 @@ static int smsc95xx_reset(struct usbnet *dev)
+ 
+ 	if (timeout >= 100) {
+ 		netdev_warn(dev->net, "timeout waiting for completion of Lite Reset\n");
+-		return ret;
++		return -ETIMEDOUT;
+ 	}
+ 
+ 	ret = smsc95xx_set_mac_address(dev);
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.39.2
+
