@@ -2,83 +2,198 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FF4CDB483
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 09:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9317CDB465
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 10:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232100AbjJPJ3x (ORCPT
+        id S232206AbjJPKZN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Oct 2023 05:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
+        Mon, 16 Oct 2023 06:25:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233440AbjJPJ3Y (ORCPT
+        with ESMTP id S232090AbjJPKZM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Oct 2023 05:29:24 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A694128;
-        Mon, 16 Oct 2023 02:29:20 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 117C224000C;
-        Mon, 16 Oct 2023 09:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1697448559;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jzhn3DjNSC33v2hlK3z5m8ef6dw4MhEJceWy7BvoV6U=;
-        b=gQZRvonJzMX6QAVE0fEIHrohBTTG8kozKJatzGb3Ka3isRzFqed2Y+zVFkVyv/6MhZztdD
-        h4oYN2hVTLhddyKydQw8TWSJbcxHNc02HnQYDVJa0U5TVxowg5uT1uDGfbKOLXKOtXxZfi
-        11hzDxUdH/3vtSkW+vrThYfsm6qprxcWIjtLv4+W1yXwSZ4E/HQonQ0pOWooa7kx4Eqzhz
-        oOShHGPRapwd0+jYqeXsFCswsE5zVg2VcXjUXy6/2W0lhC5nVeUF2KikMDcfTSieLkSF+E
-        V56rY1aKk7quCobXEcDYfa2wQtOYF0yPJaq+uBgQKa5DrJnIymNiO8djUIT9Ow==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] mtd: rawnand: rockchip: Use struct_size()
-Date:   Mon, 16 Oct 2023 11:29:16 +0200
-Message-Id: <20231016092916.289194-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To:  <481721c2c7fe570b4027dbe231d523961c953d5a.1696146232.git.christophe.jaillet@wanadoo.fr>
-References: 
+        Mon, 16 Oct 2023 06:25:12 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37623AC;
+        Mon, 16 Oct 2023 03:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697451909; x=1728987909;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=EbdcjJBxDrXiBpd4uUul/55SK9TbMBfaffYi4nG1iLQ=;
+  b=cyqNMnWr90qUj3oRsfKuTI2Yq21MfKMZNLHecnF1kgxYlOW/16kDcBuZ
+   CrbBOCZXPcxqsg243BXWtC6dxgkpUFGBgob6d1MMpWOTueS7tOtz1ia3z
+   o3Wl4rYYh/lzhaKaPzVP+ozedIL25ePirdrjxOE0sbgcHbDFTwnXs/CBV
+   gzThhHQRZ8b9KIh8s9g1nBhC0dZVU/MY06CKttC/RHxUnOchLwUmntHKD
+   SeWxpfI9F90Wvpmq88QQCknj77wLAnOVZTn9XnmzLXJIHfyv1IcqDryZg
+   AKmuCFnTVph9600K1FKhS81gzaGx+8qQTqoVHjqsx+XzVc+18D0BUFgzv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="370569001"
+X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
+   d="scan'208";a="370569001"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 03:25:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="749248384"
+X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
+   d="scan'208";a="749248384"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Oct 2023 03:25:08 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Mon, 16 Oct 2023 03:25:07 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32 via Frontend Transport; Mon, 16 Oct 2023 03:25:07 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.32; Mon, 16 Oct 2023 03:25:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gl1ObVwSs4KUY52dkCvREh1clxTlvh+6VSf6Ln2Y3OcSTiDtneoe1o4PVLrhsFssCy89fnp3YBCqJwjzJVSGg4KOIlQ1D7i0xP5jjqj/LD4Hvmif7maa8yXl7H0bwD5XCL1Hj7P/3AzV4AwAmRbRJIuNBmSvwxJbBc1KsOobbP3tEAHde7pM0gxcL4zSCkaj26sZX9eaPhbTfZs7Hsc92zGU5ghnhAXcLCzlMEdyXrmiRDUWCebt12AqG3brYQQkuu8k11u5VBtdTIhaZ2miJEYkW/EM0TVHhtZgMlL6zJRn9D+kopvR4ngM68V46q+UCiZYeCv4IIu/b8qYSNjVKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B/rW7Vf4JlZfQaZUKDFRAtSfcPWcEWQpiQhH0ieY8g4=;
+ b=UOJtXKobQOm/K/FmAg121Op4a+60EANqbZWO4hhM0ml5/4E0hJEyfK6uEzWRZ3qk0Rq1PA2UgK8BCYjew4sE48zHBivrVAQ7CNRDPVZNb53XM23GVc3iKFPquZ6VmMqgyvhQXNjXbXMc4ZgW84QEJTVy1k6T9W/yafb2Vq5loOVw4a3f++hWXlVKtsmTFcHo/1EUZyNst8CyUvyQkaT6sMhsOytEHmrQJT3ng3lOQNDOe0T6pBYyecD8WGzLy+uY+G4h+Jv/SqWUXzFBbr9S4+HWFzNPvFoFzEDOujPQdaJvb1t1vFKIjpUdBCNJwqyv8Gd0cD8tDsCbqtFH048zyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL0PR11MB3521.namprd11.prod.outlook.com (2603:10b6:208:7b::32)
+ by SA3PR11MB7526.namprd11.prod.outlook.com (2603:10b6:806:31c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.35; Mon, 16 Oct
+ 2023 10:25:05 +0000
+Received: from BL0PR11MB3521.namprd11.prod.outlook.com
+ ([fe80::a2bc:136a:3f41:c858]) by BL0PR11MB3521.namprd11.prod.outlook.com
+ ([fe80::a2bc:136a:3f41:c858%6]) with mapi id 15.20.6886.034; Mon, 16 Oct 2023
+ 10:25:05 +0000
+From:   "Romanowski, Rafal" <rafal.romanowski@intel.com>
+To:     "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Jinjie Ruan <ruanjinjie@huawei.com>
+CC:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        Simon Horman <horms@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Keller, Jacob E" <jacob.e.keller@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: RE: [Intel-wired-lan] [PATCH net-next 1/2] igb: Fix an end of loop
+ test
+Thread-Topic: [Intel-wired-lan] [PATCH net-next 1/2] igb: Fix an end of loop
+ test
+Thread-Index: AQHZ95QOjtHQwFcfE02+YCzWjlaUJLBBmF0AgAqudxA=
+Date:   Mon, 16 Oct 2023 10:25:05 +0000
+Message-ID: <BL0PR11MB3521FD279A6FC102DBEC8DAB8FD7A@BL0PR11MB3521.namprd11.prod.outlook.com>
+References: <4d61f086-c7b4-4762-b025-0ba5df08968b@moroto.mountain>
+ <95370ca0-c60a-ad91-aa22-60a1d9376461@intel.com>
+In-Reply-To: <95370ca0-c60a-ad91-aa22-60a1d9376461@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL0PR11MB3521:EE_|SA3PR11MB7526:EE_
+x-ms-office365-filtering-correlation-id: 10b68bd0-2244-4a9c-752a-08dbce322a0f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: c2Axro3mwq5+rnusW+plTrCaHDlR5ajxJDLdmYpj+W+EY6anvLqr/CvVaBBAwxNXr54UXNgP4SD/FzfvsvqWy2sWiUQkPMmCDf8via9BekCkcjqWLC+XUwx4rMuU31k5eUOA2bkAYVua+SSkp5mhQK/2EXEKQ7Y4dvoE2RIabp8vpjFoIzgBMkXp/tllpikQMrenROvsqDR5yp9DLIv3/6Yn7oY+7WzY2RE1s6SCB0KrGnjnk4zL+lJbYnrzzE86h4bauaKpllwn7LYSTVtktKkOHeiIpLTyyYCpCTnyvq3QDZ8ZAXfF+HIwx/CSpPUgJ/pSHWzvLJB7sUYImGgaqvuW387XA8NZnlv1E/7akOm4UlpgfaO41/rCk4JcRkymLh6NN72T4tDBCbdI1Rz9aROO7KFNtpg0279o8ze4Q77UAbjne/6nv8UHGSiPMrChDzl0GX8t1te4+eaWOjX+HhQIPpgUDemCHtkaxi6EELrXGdLKxXIVQGu96jhaDu1un9vvn/XJ4VZgb6iNtrK5d+Np3CL2B3j4zkFWRh4YYHNvrPlq4jkUSJjki9oVYaMxA6n1VAcLlXXxw47LsnjRhaOnThJPwl+Lsp6r/07umww=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB3521.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(376002)(346002)(39860400002)(396003)(230922051799003)(451199024)(64100799003)(186009)(1800799009)(55016003)(478600001)(966005)(110136005)(76116006)(66946007)(66556008)(66476007)(66446008)(64756008)(54906003)(316002)(71200400001)(82960400001)(83380400001)(86362001)(38100700002)(9686003)(26005)(53546011)(7696005)(6506007)(33656002)(41300700001)(5660300002)(38070700005)(122000001)(8936002)(8676002)(4326008)(7416002)(2906002)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?w+c7ul/MEJsK7kWymF3P9V5KYn56weGinZoFzuq8QHUzZo5X89RAX86JL8vp?=
+ =?us-ascii?Q?SYAwa+YewYjTwZP86koe/xcEou0mt56H2chVBnbPdjmxJ5aVW6a3yAqOg7Vg?=
+ =?us-ascii?Q?Ivf9zRjMFDhKBqi5PR580lewu+o00qlfTNDwpj9zWTIBZ3M6BXsIs3J23kfM?=
+ =?us-ascii?Q?gYLLMFgVu1sStbORucbI1tsm3dxmVxCIoSAwGlydo3jsjGjCwQjOGBcQA/8v?=
+ =?us-ascii?Q?MBpwjbsdRsfPXy5Pn0XA91yUMzezrLPLY5C7DaEuJyJlRWSYrMrOEpYQFIr6?=
+ =?us-ascii?Q?SBSby9yO3xu5E6n8y6I6ZQMTLprxdqOqLvMuaV1BYJ8O/RN+6W9EkyBxRG/2?=
+ =?us-ascii?Q?TPOLCeXcgDVm55phjFKthI+gQ6HEEaM0COhNwbX0UpRKUEZ+azhL79OHLfAc?=
+ =?us-ascii?Q?iogXW4H/NwKd49OumHh19Rh8S4d6XBHyIplSMEuM/Uh6B8F8VSm/nH7icsyZ?=
+ =?us-ascii?Q?+500nexSUSFEmBIdP9lsBtx47HgtydWPKePuS/mLp/TX/MCIdRbA/fMzG1ns?=
+ =?us-ascii?Q?aGiYGI3UlQGr6OyMLk/09TYscmErTfrbstCsSrlXGGA+ofMNBV0g1LiuPbFR?=
+ =?us-ascii?Q?E4oGF1YVt0YoFzYmj9wO+UmnMVfljgvq13EatOuTui46x+B8Hpzhdkc7KWM4?=
+ =?us-ascii?Q?/2uSXAu/aZAOQK+V1v2+TFCu+tWvSID6BZCqKo0l4WwugXttgGhMywUxEUYz?=
+ =?us-ascii?Q?Dtcf+sH4MjXgMT2P6lixS/cV8qvUTxlxtG5ageN58T7UnJosY79cEu7ZIdMm?=
+ =?us-ascii?Q?ikA+ql5b4Ebv6c2wdpwddiWmROCnN8GjUBgzvn2OumZ/oanpd9sssW24ujAr?=
+ =?us-ascii?Q?aF12wxej0QiALKqUe1jlfy4h1fqlwzFPvZh6Y0J9/R2jwjafNilzz0su0CdU?=
+ =?us-ascii?Q?+o6HuTDjDsYKTSqYYL0Q1XxrVTbQgNNKo15XK2PDzl5wL3p7DPCJWx7f+Xnb?=
+ =?us-ascii?Q?c259GqEluwQLpaOcgrC05fjuYnzh23woQ0/Z7+xTUSnjM2KuHqYtO6jadtLu?=
+ =?us-ascii?Q?QToskDZGZc/xHaqyQ2PIUMUI1agRwdPTDfESKvaXxw1ZtDNq34RcXdc14RKv?=
+ =?us-ascii?Q?pO67spyeWz6wJ/oFFY6XFMmX6+nbvqhQSJh73reqGlsnRbnYo/32pMarPcxG?=
+ =?us-ascii?Q?+Gs6mmnK8C1gZ1wp6u7EQJJpqP7ImszQ272NkonCnx111pmtSINq/8OWZVdF?=
+ =?us-ascii?Q?1li0lYMZNveJhbyYVpg7IRZFbWpMJ2C06Xsism3H41UF71Y1l6nGwjW1B1Er?=
+ =?us-ascii?Q?6uhaYAjR18gZ3lTNI9aOP6RI5mEfNIuf9bas40Cvu0FFqrqU7yTUL7vZgtE3?=
+ =?us-ascii?Q?f5i0fytGKjwv+NglX6aX5IueF4ztH3KeT7e95Do6wHEx7WOk7khWHtNFVgx9?=
+ =?us-ascii?Q?+K7yOZ0FmeMKX42qRk3bamrNbI008vuxg43ViYlexdTo8e+ki2CZl4vzNnHg?=
+ =?us-ascii?Q?8QqBRmo6YHRBsmui3pDoCMhIpsfZ2buPn5+k+/rLmWi0qI1yVjVwbgfo97i3?=
+ =?us-ascii?Q?J67Y0AgIusEVtj8vrt3T9nyR9hez9ule3HjnOw/AkhxK/PWEQ/o3pGNadYRX?=
+ =?us-ascii?Q?nLEvg+PatOgYohXbAJ2NN7aDtng9bKrthEZ3xz0vmP20uheJ7VQ0t/XqTbJ5?=
+ =?us-ascii?Q?qA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'1cfa2f76afb1fdedfbcbd83973a233e60c3e7add'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB3521.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10b68bd0-2244-4a9c-752a-08dbce322a0f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2023 10:25:05.2025
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hAZEdj4IRTF6vguC9OFh0lBaUnXKC4pAyv9jiqGkHoATJV1Xn7jLr/El6swkKzGOd3sflOamBUuItbc98khn1IXkPb4sdYCWXUpM5qfldME=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7526
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2023-10-01 at 07:44:04 UTC, Christophe JAILLET wrote:
-> Use struct_size() instead of hand writing it.
-> This is less verbose and more robust.
-> 
-> While at it, prepare for the coming implementation by GCC and Clang of the
-> __counted_by attribute. Flexible array members annotated with __counted_by
-> can have their accesses bounds-checked at run-time checking via
-> CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-> strcpy/memcpy-family functions).
-> 
-> Also remove a useless comment about the position of a flex-array in a
-> structure.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Jesse Brandeburg
+> Sent: Monday, October 9, 2023 5:18 PM
+> To: Dan Carpenter <dan.carpenter@linaro.org>; Jinjie Ruan
+> <ruanjinjie@huawei.com>
+> Cc: intel-wired-lan@lists.osuosl.org; kernel-janitors@vger.kernel.org; Er=
+ic
+> Dumazet <edumazet@google.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Simon Horman <horms@kernel.org>;
+> netdev@vger.kernel.org; Keller, Jacob E <jacob.e.keller@intel.com>; Jakub
+> Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; David S.
+> Miller <davem@davemloft.net>
+> Subject: Re: [Intel-wired-lan] [PATCH net-next 1/2] igb: Fix an end of lo=
+op test
+>=20
+> On 10/5/2023 6:57 AM, Dan Carpenter wrote:
+> > When we exit a list_for_each_entry() without hitting a break
+> > statement, the list iterator isn't NULL, it just point to an offset
+> > off the list_head.  In that situation, it wouldn't be too surprising
+> > for
+> > entry->free to be true and we end up corrupting memory.
+> >
+> > The way to test for these is to just set a flag.
+> >
+> > Fixes: c1fec890458a ("ethernet/intel: Use list_for_each_entry()
+> > helper")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>=20
+> Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+>=20
+>=20
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-Miquel
+Tested-by: Rafal Romanowski <rafal.romanowski@intel.com>
+
+
