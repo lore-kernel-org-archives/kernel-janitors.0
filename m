@@ -2,155 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C18CDB482
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Oct 2023 21:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50D4CDB474
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 08:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233657AbjJPVJl (ORCPT
+        id S234722AbjJQIGX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Oct 2023 17:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
+        Tue, 17 Oct 2023 04:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233463AbjJPVJk (ORCPT
+        with ESMTP id S234642AbjJQIGW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Oct 2023 17:09:40 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C29D9;
-        Mon, 16 Oct 2023 14:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
- t=1697490548; x=1698095348; i=deller@gmx.de;
- bh=0l5HRln2aLrQCHUgzKay/9XIY0Mr4awYAadqROs/OAs=;
- h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
- b=N5BdS+KWNPUf9/OfdjXUFTlr5rSCv5vppRovuPYZt+pf5CL9NNHFWru4ZeD6x1JuLw694COb1at
- JTLa3T5h84yqBSABtTXdSSToXnYC9UyHik1skJ1ShcQY8Ohr+xzGoqWkERNDJihHxdVFN6dLvyeJI
- khKZoa/VEIfQHBgnOWKob+cKWEeNEuyztdvtSzMU2YwYkMIPRiv88DARhMW+W/mwWHMnN378ngwI/
- /W+zY3rdxp5Y8iuTGaNaWhn/xgxFOk0NAn0vPziID1ercUVQ4CQUllrXmKDblV60pSq/9YoXil4+l
- UbfSVQznT1pNnP0ynF9jbUJpx+VExszunZqA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.153.197]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3siA-1raOH61yrY-00zpwm; Mon, 16
- Oct 2023 23:09:08 +0200
-Message-ID: <e1c6a19b-7587-4b99-b8d5-5572d946f185@gmx.de>
-Date:   Mon, 16 Oct 2023 23:09:05 +0200
+        Tue, 17 Oct 2023 04:06:22 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A457093;
+        Tue, 17 Oct 2023 01:06:20 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4065f29e933so57303055e9.1;
+        Tue, 17 Oct 2023 01:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697529979; x=1698134779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=StdO7xGyH3UvCyXhFtXv4psWFKvp1DucCdvwZVAgPBA=;
+        b=CcEq5js2mZ7nbHJoXQLzMjMIA6yG5y9cE5UahQTp1WNVBm8ivxykBJnAZO3MoW2nJh
+         DGzaUsm62X2YIadIA8w//hWP+uwalPtLyxj4nE7oViztse7pF2XG0WhBEhMngY2btQef
+         KGl/3XSfa3c20wHf7js/DGE1kqbJce4jN/MRI0ayIv49VuFPJQW5giu7bterRv2ALAzZ
+         uf0J5mKfM7mglL/OZkeSlBjBQN0SjvSCZsY2IMR86br9OIdLNvAxe+7EnntOMZ4dqr2k
+         kms9+NaM52J6mx8fJa3wAsrFqPLzrHy7JDidLjNORcbJ1pglkn4qocnR40HYrrpWIZFk
+         vkIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697529979; x=1698134779;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=StdO7xGyH3UvCyXhFtXv4psWFKvp1DucCdvwZVAgPBA=;
+        b=AH48LbKJLj3bnO3hFqAZfDunyMHk130dpYlEw0y2f4YkcMYTvoHblG1BeghiKyeQ7H
+         rHMhM1IEv2gjfnIIiKFYZJtrpMc4Oc5IO4lYl849hHb1LQU2otpegqwzLwGmZiGqBA3C
+         u0jL5FdNIg+kqwbXlaKsk7JYpQ7/r//UiJsH/B8JP+8x6Mh2KPfS+rAhZ54Ug3j3qjes
+         H1h/uXuZFjyi+R8KwCjrJOhTkfbM3MrFvyBrXPra2pD7suKU7kucRrqPC6xKqsTBfYlN
+         nsevtAwKv6WqsVKkq8hqhYeW5/6xXUagXXzYW8KK7RruzOOI3G1tl56Vvgs385E0xQS3
+         4cwg==
+X-Gm-Message-State: AOJu0YxklmdsjI/lrW3oLV1JLbjPXsdJAIRSBOQFwmk0cCpGJkKeeZ4U
+        48k5StnB83B5/2fzUBxoHHg=
+X-Google-Smtp-Source: AGHT+IFR4L3IZmU8EMr8i/pPBeWSbK4wVJmXm3XWNz2lDoOIdQiZh9xearr+dexY2Zc4QIiTdnjeqA==
+X-Received: by 2002:a05:6000:1104:b0:32d:96e0:8048 with SMTP id z4-20020a056000110400b0032d96e08048mr1417525wrw.9.1697529978826;
+        Tue, 17 Oct 2023 01:06:18 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i5-20020adffc05000000b0032dab20e773sm1072053wrr.69.2023.10.17.01.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Oct 2023 01:06:17 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Qingqing Zhuo <Qingqing.Zhuo@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: Fix a handful of spelling mistakes in dml_print output
+Date:   Tue, 17 Oct 2023 09:06:16 +0100
+Message-Id: <20231017080616.18970-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: omapfb: fix some error codes
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Yang Yang <yang.yang29@zte.com>,
-        Xu Panda <xu.panda@zte.com.cn>,
-        Lucy Mielke <mielkesteven@icloud.com>,
-        linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <843b063c-ee4a-4e17-add6-75e2cc82c2f4@moroto.mountain>
-From:   Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <843b063c-ee4a-4e17-add6-75e2cc82c2f4@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FOyYUK4b2kQYxx/cAdXEvw+vAIrXHbwCICGIvD6Kz5Obv8fpWfo
- +yxSC1QHy9oSBBS+anxDLcgMYbDMpuj/kYNgRbd8u4EUTiQZExSABwuTZ6wpNJYTaAvH4w6
- GGzs305XXJBHWE3UgmezXl4gIZMEZ5HLU7AhntwUFtq5K6DpCiLi7tQr0NsAvpjdyEtnn2h
- ANIv4o7mbdykPwdII9uzw==
-UI-OutboundReport: notjunk:1;M01:P0:i3G6yuKsgbo=;HyJOwbkzpDfgVsMPYidrsW2Dbgm
- kXOBK3eWbsiNnbYRo1a9giCySikv94pxQPxGLaIEkO5kHowmkfxNzf2I8CTaY6KEm5tcrYsQ/
- Nsn/31TdVzmDfcENep2oouVDmdEwSy84IFV46FlD/V9p2Dy36l8o+XL2aCasQ8j+/J1eb9cPg
- a8SaCHvv6mn83gYgss9U5O99oWMButQKjkyiWsTPa+IoMuxkpaNQ6XYmGaKjsRnEAqghZpoK5
- zouLeu7r0iFkwrKu043Clb+4xpAbvrR/wzrp4klYxqr5cuBg5UxbpepzkE6jqRAlSn89dsOr+
- elGLbOe7eamMh7xq/AkFb0HGDX4x0GgP+LKORwh3sOErVbuqDW8U+jXTAX6FlvfqhfOVM+xfh
- ifl1xL9c2/DQg5WW3Dptf1VKijyP5yOqMMQwJibDOfr5lL63gOff+U7I7TDLZcgziKlFfDOpp
- 7JmnmWYe1NYF0pFFmLjSlZ1vkhzl3tyoEVNjlwN24Bv9SLlS5MuXYPCFGYf9GZRdmIAQDsMCo
- wsX08Pw97zI45yA5V/w2gGmyALj2aoXDa31R1KotmNeWqOSCnQQuqxwIES3amgYzR8krjlutr
- 64/CsF54D9iNMP6ZW/4n96u0O0Pu99CTl/EHrIW0CKE6o0JkqqIeSs8KfVSYKsiyzW2XqwEjq
- elpWv5O5oV0iQdSDW5+CdiB0ReQFP6GFcivKq+w7BeFaZ5mDsQ2cersNIVPtCe47J0h30AhKs
- XqWq8HbMACJTlJINQjKA5hYP9rXJw1zn8emqne9od2b9QTNJGxU0tL0fKR6J62cJl2M2oB5KF
- 8m9eSV87Gk8LQGC4yRqIyUwLnwGbNVMa/prsO1IwsRFYobRSGHPzGXLTaqAjWVUHuxIoOQvRR
- TsWoyfWa7D4V4syb7xiT9VDV5dV1eb/cvDh3Jx/aeshpNsHTKuQKKSw6zND4rDbjFGvx4Blya
- xr7TDCJo9w8AjoRMvTvObtMroI0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/16/23 13:19, Dan Carpenter wrote:
-> Return negative -ENXIO instead of positive ENXIO.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+There are a few spelling mistakes and an minor grammatical issue in
+some dml_print messages. Fix these.
 
-applied.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks!
-Helge
-
-> ---
-> No fixes tag because the caller doesn't check for errors.
->
->   drivers/video/fbdev/omap/omapfb_main.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbde=
-v/omap/omapfb_main.c
-> index f28cb90947a3..42c96f1cfc93 100644
-> --- a/drivers/video/fbdev/omap/omapfb_main.c
-> +++ b/drivers/video/fbdev/omap/omapfb_main.c
-> @@ -1645,13 +1645,13 @@ static int omapfb_do_probe(struct platform_devic=
-e *pdev,
->   	}
->   	fbdev->int_irq =3D platform_get_irq(pdev, 0);
->   	if (fbdev->int_irq < 0) {
-> -		r =3D ENXIO;
-> +		r =3D -ENXIO;
->   		goto cleanup;
->   	}
->
->   	fbdev->ext_irq =3D platform_get_irq(pdev, 1);
->   	if (fbdev->ext_irq < 0) {
-> -		r =3D ENXIO;
-> +		r =3D -ENXIO;
->   		goto cleanup;
->   	}
->
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c b/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+index 851db026f251..218c355a97a4 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+@@ -1507,7 +1507,7 @@ static dml_bool_t CalculatePrefetchSchedule(struct display_mode_lib_scratch_st *
+ 		dml_print("DML: Tvm: %fus - time to fetch page tables for meta surface\n", s->TimeForFetchingMetaPTE);
+ 		dml_print("DML: Tr0: %fus - time to fetch first row of data pagetables and first row of meta data (done in parallel)\n", s->TimeForFetchingRowInVBlank);
+ 		dml_print("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (dml_float_t)s->LinesToRequestPrefetchPixelData * s->LineTime);
+-		dml_print("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((dml_float_t) (*p->DSTXAfterScaler) / (dml_float_t)p->myPipe->HTotal)) * s->LineTime);
++		dml_print("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((dml_float_t) (*p->DSTXAfterScaler) / (dml_float_t)p->myPipe->HTotal)) * s->LineTime);
+ 		dml_print("DML: Tvstartup - TSetup - Tcalc - Twait - Tpre - To > 0\n");
+ 		dml_print("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingMetaPTE - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((dml_float_t) (*p->DSTXAfterScaler) / (dml_float_t)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
+ 		dml_print("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
+@@ -9323,7 +9323,7 @@ void dml_core_mode_programming(struct display_mode_lib_st *mode_lib, const struc
+ 				if (mode_lib->ms.policy.ImmediateFlipRequirement[k] != dml_immediate_flip_not_required && locals->ImmediateFlipSupportedForPipe[k] == false) {
+ 					locals->ImmediateFlipSupported = false;
+ #ifdef __DML_VBA_DEBUG__
+-					dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
++					dml_print("DML::%s: Pipe %0d not supporting iflip\n", __func__, k);
+ #endif
+ 				}
+ 			}
+@@ -9376,7 +9376,7 @@ void dml_core_mode_programming(struct display_mode_lib_st *mode_lib, const struc
+ 	if (locals->PrefetchAndImmediateFlipSupported) {
+ 		dml_print("DML::%s: Good, Prefetch and flip scheduling solution found at VStartupLines=%u (MaxVStartupAllPlanes=%u)\n", __func__, s->VStartupLines-1, s->MaxVStartupAllPlanes);
+ 	} else {
+-		dml_print("DML::%s: Bad, Prefetch and flip scheduling soluation NOT found solution! (MaxVStartupAllPlanes=%u)\n", __func__, s->MaxVStartupAllPlanes);
++		dml_print("DML::%s: Bad, Prefetch and flip scheduling solution did NOT find solution! (MaxVStartupAllPlanes=%u)\n", __func__, s->MaxVStartupAllPlanes);
+ 	}
+ 
+ 	//Watermarks and NB P-State/DRAM Clock Change Support
+-- 
+2.39.2
 
