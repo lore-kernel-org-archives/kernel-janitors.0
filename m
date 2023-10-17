@@ -2,59 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A94CDB474
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 14:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211F7C41513
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 14:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343869AbjJQOEs (ORCPT
+        id S1343998AbjJQOHH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Oct 2023 10:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46120 "EHLO
+        Tue, 17 Oct 2023 10:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343675AbjJQOEs (ORCPT
+        with ESMTP id S1344007AbjJQOHB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Oct 2023 10:04:48 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5A792
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:04:46 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40684f53d11so63634935e9.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:04:46 -0700 (PDT)
+        Tue, 17 Oct 2023 10:07:01 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B4EF9
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:06:59 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4064876e8b8so60448515e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697551485; x=1698156285; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697551618; x=1698156418; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ouydOp9DCQDO9RKyjjgbFfmh727nP3T250yuxX8/3Do=;
-        b=of6uTkZQE6Dwl26wJIWPVxFCBjvsbx7mj61SATc1kwz91dw49h7aM3C6poTraxETeZ
-         zqd1rrolQ0UFmOLsEpgPLcUtIRHoJyMMlhjBA1nOuwilbAIeGlegYh3Nx+UWZ2dmkQ1c
-         8Y9wR3oNKJjQo/wb55/eJSPdG+EwCsKZPYsqWE5s9inRs8WLdCS6mQ0nbVBtX3Amjzl8
-         0G7xuxtmqiuen+ddf5mlcco+VXNzqLLf4ueTd5DKYclY9HZFp3qQYQGCsWJWo1C6VOjS
-         aJM/vHogM7NiazeDq2N7QoZvPuVPvBDCj4yFL6z62PEZUZk0Du6D956Qcxksb7w2gbjS
-         ot1Q==
+        bh=nlwwFMRACSsUlwqNfTsi8M+bx9LmW0A46F96Cg6Qp3E=;
+        b=c31kmMYBsC4MN/h0o5bi+9SdSwiY8T6KWUzMRUxOzo1YqRuYgSGA0foa+rv4xASCMm
+         lF4IiNkBoCc07W2nJ7sIUOj7tqzMbmEHH/mWGaNbjAIdV1N4lJhk2rQhjCm7Nj2H5G7z
+         T0d+wpmXi0kS8RkgI8chUvpadd/N+Ny9gmKXQsdH7xZZc4b6z7xC55JfLEWlT3ICX7qb
+         We1M9Icf4LK3LzYbFc5lqIACVxJ09cPRVx+S6XrL+3ZPPVeCzV0XCBbaL3FYtD7DU5nQ
+         VZmPIZ/bL0a3xe95AXFiIwtsYV7Nj8QexJZaidqvTDuxoHa3OTWTznizhnXZI0t+Nchb
+         4BVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697551485; x=1698156285;
+        d=1e100.net; s=20230601; t=1697551618; x=1698156418;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ouydOp9DCQDO9RKyjjgbFfmh727nP3T250yuxX8/3Do=;
-        b=I4+xGCA7widrpHOfPokPMO7qgdg+BWJm+RkNUZmyPIlxJ3dv06onsf0ew47T8JkGfH
-         LjQineHuczdZpUBT9IJepUK7oRUJlhKNDYN4stdG4UZhtKkm05EN5wNHAODf0DqpncAR
-         KM5Fz6SiSKJ7gglFOUYV4yt0XeiG86oK9TtOSFZBczBKsoiqngqmEHO996Gw2eYsD03x
-         67tMw61McL6sYj7w3UM/qtwT/cM0artwDFfVkB4V2M++C8GmU8cmMqj4dw8YnOGHoeyI
-         Diyclfir3n4FSSuWZW2y/q/zCxza4b2/e1GtAlFN3joPGiFvqxD/fWdvEdDsbJgHKs5K
-         qBCg==
-X-Gm-Message-State: AOJu0YzqkLFBcTvPFEcAuS4965ZYFGq8nW3U3dqlNX5CKpVmuJkXSrYD
-        fqsNgqMAOSwINsut62PWeyjoP49fJsJvAa+Xpic=
-X-Google-Smtp-Source: AGHT+IG+7ZMm33Rpww/J0URdy4cjxktBY6DGdh6pUvEnJTHaaeZewjB7KcCSa1ayxVlxIeHyAxsIqQ==
-X-Received: by 2002:a5d:4b50:0:b0:32d:9fc9:d14c with SMTP id w16-20020a5d4b50000000b0032d9fc9d14cmr2220441wrs.47.1697551484896;
-        Tue, 17 Oct 2023 07:04:44 -0700 (PDT)
+        bh=nlwwFMRACSsUlwqNfTsi8M+bx9LmW0A46F96Cg6Qp3E=;
+        b=RluWSef8YTF2kTTYtOM+LMiACujbSO24syGlmvWyuG+2ArSViCCF1k3t8rimYRecfg
+         9ITViCIBU3iRX6C9Gr8pfzbrROqJ1kP8Bx/9dBx55vBjJ6AbRHeeQwb2fseKNGk8LfPK
+         /KTcY4pO6IwJwJCs/xqpVOheuINye8zvS2n3f4aq7QGVaXodaTOkEhZ3VCAsyYzLYSWI
+         2RJRY2ooLt8O0h7xBf9RTcewZGsiaJNOYev/q2mTK7oYkCGqR9MpfpCMpTlk1cbgToEd
+         XXWXZrAwhcfmBQggFH+y2e7ydD/oaaN8QAklsxGXzUbRzn7b+omh/DgzrDRDPPfEZdgQ
+         CZ+w==
+X-Gm-Message-State: AOJu0Yyv4F0jPV8wATRDTmj5GcWMdRk2hgynnq5GGoLZ4n4H5jy21QIc
+        AYZJvIInRXSMpXRkHnX8SzglEg==
+X-Google-Smtp-Source: AGHT+IElkgM7RSL3FOTXdHu+CEAbodkap74uXGoj9xrE4AZmarxqeuWMC6vTAHtVYesdvhJ8Bd8fUQ==
+X-Received: by 2002:a05:600c:5487:b0:401:c338:ab96 with SMTP id iv7-20020a05600c548700b00401c338ab96mr1766952wmb.34.1697551618146;
+        Tue, 17 Oct 2023 07:06:58 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o18-20020a5d58d2000000b0031c6581d55esm1752895wrf.91.2023.10.17.07.04.43
+        by smtp.gmail.com with ESMTPSA id m11-20020a05600c4f4b00b004068def185asm2047137wmq.28.2023.10.17.07.06.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 07:04:44 -0700 (PDT)
-Date:   Tue, 17 Oct 2023 17:04:39 +0300
+        Tue, 17 Oct 2023 07:06:57 -0700 (PDT)
+Date:   Tue, 17 Oct 2023 17:06:53 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/ntfs3: Fix an NULL dereference bug
-Message-ID: <4dea69da-738b-41b2-b48c-22dfee5f4fc8@moroto.mountain>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: at91: remove unnecessary conditions
+Message-ID: <7782b4f1-deed-49dc-8207-b6ea06d7602f@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,32 +68,52 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The issue here is when this is called from ntfs_load_attr_list().  The
-"size" comes from le32_to_cpu(attr->res.data_size) so it can't overflow
-on a 64bit systems but on 32bit systems the "+ 1023" can overflow and
-the result is zero.  This means that the kmalloc will succeed by
-returning the ZERO_SIZE_PTR and then the memcpy() will crash with an
-Oops on the next line.
+This code checks "if (parent_hw)" is non-NULL, but then it has more
+checks if parent_hw is non-NULL on the lines inside the if statement.
+It is a bit confusing.
 
-Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
+For the else statement, keep in mind that at the start of the function
+we checked:
+
+	if (!(parent_name || parent_hw))
+		return ERR_PTR(-EINVAL);
+
+That check ensures that if parent_hw is NULL that means that parent_name
+is non-NULL.  At least one must always be non-NULL.  So here again, the
+checks inside the if statement can be removed.
+
+In the original code, it was a bit confusing and you could easily get
+the impression that "init.num_parents" could be zero.  When we remove
+the unnecessary checking it's more obvious that it's always set to 1.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/ntfs3/ntfs_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/at91/clk-utmi.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index f6706143d14b..a46d30b84bf3 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -473,7 +473,7 @@ bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
- int al_update(struct ntfs_inode *ni, int sync);
- static inline size_t al_aligned(size_t size)
- {
--	return (size + 1023) & ~(size_t)1023;
-+	return size_add(size, 1023) & ~(size_t)1023;
- }
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index 40c84f5af5e8..b991180beea1 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -161,13 +161,11 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
  
- /* Globals from bitfunc.c */
+ 	init.name = name;
+ 	init.ops = ops;
+-	if (parent_hw) {
+-		init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
+-		init.num_parents = parent_hw ? 1 : 0;
+-	} else {
+-		init.parent_names = parent_name ? &parent_name : NULL;
+-		init.num_parents = parent_name ? 1 : 0;
+-	}
++	if (parent_hw)
++		init.parent_hws = (const struct clk_hw **)&parent_hw;
++	else
++		init.parent_names = &parent_name;
++	init.num_parents = 1;
+ 	init.flags = flags;
+ 
+ 	utmi->hw.init = &init;
 -- 
 2.39.2
 
