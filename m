@@ -2,118 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211F7C41513
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3276FCDB474
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 17:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343998AbjJQOHH (ORCPT
+        id S1343844AbjJQREm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Oct 2023 10:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52230 "EHLO
+        Tue, 17 Oct 2023 13:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344007AbjJQOHB (ORCPT
+        with ESMTP id S233493AbjJQREl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Oct 2023 10:07:01 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B4EF9
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:06:59 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4064876e8b8so60448515e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 07:06:59 -0700 (PDT)
+        Tue, 17 Oct 2023 13:04:41 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD06A4;
+        Tue, 17 Oct 2023 10:04:39 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40684f53bfcso53198395e9.0;
+        Tue, 17 Oct 2023 10:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697551618; x=1698156418; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nlwwFMRACSsUlwqNfTsi8M+bx9LmW0A46F96Cg6Qp3E=;
-        b=c31kmMYBsC4MN/h0o5bi+9SdSwiY8T6KWUzMRUxOzo1YqRuYgSGA0foa+rv4xASCMm
-         lF4IiNkBoCc07W2nJ7sIUOj7tqzMbmEHH/mWGaNbjAIdV1N4lJhk2rQhjCm7Nj2H5G7z
-         T0d+wpmXi0kS8RkgI8chUvpadd/N+Ny9gmKXQsdH7xZZc4b6z7xC55JfLEWlT3ICX7qb
-         We1M9Icf4LK3LzYbFc5lqIACVxJ09cPRVx+S6XrL+3ZPPVeCzV0XCBbaL3FYtD7DU5nQ
-         VZmPIZ/bL0a3xe95AXFiIwtsYV7Nj8QexJZaidqvTDuxoHa3OTWTznizhnXZI0t+Nchb
-         4BVg==
+        d=gmail.com; s=20230601; t=1697562278; x=1698167078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYhVgVukknKnttKNru5mCHTZ6wmo6E2zfS+vFjWMe7o=;
+        b=QO/ZDkK3EhPj4DZHs+NlLly2/TBT43VjH3Ea4JTW9Vm6FFvyEPdAGBGibbzir80brh
+         nurxejzCPnP8qj5CLFnqkK1rOTWzx+6Y9z7XtRSaXCpIdYHpAQE2mL0Hj8z5t6DBZr3s
+         p1cLBTHW0FzYLjXpcUjplLwwZ7Xh+1jCa1LktH+Rr1jxbLcQ59xfgySgTtbjyooM9tkM
+         efeVcnH3KkJKZPcSWYQvQDZklHMXpmZJnVnrBbflPpf661pDpZE6clAhkh12Z8oLmTRH
+         Ngaj1cnW1Ol2T3LUTlwhnPx0a1iUN+9TU1L5SJv/AYeCx02IDfajwpAQz07Af0oFJzZQ
+         sC0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697551618; x=1698156418;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nlwwFMRACSsUlwqNfTsi8M+bx9LmW0A46F96Cg6Qp3E=;
-        b=RluWSef8YTF2kTTYtOM+LMiACujbSO24syGlmvWyuG+2ArSViCCF1k3t8rimYRecfg
-         9ITViCIBU3iRX6C9Gr8pfzbrROqJ1kP8Bx/9dBx55vBjJ6AbRHeeQwb2fseKNGk8LfPK
-         /KTcY4pO6IwJwJCs/xqpVOheuINye8zvS2n3f4aq7QGVaXodaTOkEhZ3VCAsyYzLYSWI
-         2RJRY2ooLt8O0h7xBf9RTcewZGsiaJNOYev/q2mTK7oYkCGqR9MpfpCMpTlk1cbgToEd
-         XXWXZrAwhcfmBQggFH+y2e7ydD/oaaN8QAklsxGXzUbRzn7b+omh/DgzrDRDPPfEZdgQ
-         CZ+w==
-X-Gm-Message-State: AOJu0Yyv4F0jPV8wATRDTmj5GcWMdRk2hgynnq5GGoLZ4n4H5jy21QIc
-        AYZJvIInRXSMpXRkHnX8SzglEg==
-X-Google-Smtp-Source: AGHT+IElkgM7RSL3FOTXdHu+CEAbodkap74uXGoj9xrE4AZmarxqeuWMC6vTAHtVYesdvhJ8Bd8fUQ==
-X-Received: by 2002:a05:600c:5487:b0:401:c338:ab96 with SMTP id iv7-20020a05600c548700b00401c338ab96mr1766952wmb.34.1697551618146;
-        Tue, 17 Oct 2023 07:06:58 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m11-20020a05600c4f4b00b004068def185asm2047137wmq.28.2023.10.17.07.06.56
+        d=1e100.net; s=20230601; t=1697562278; x=1698167078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iYhVgVukknKnttKNru5mCHTZ6wmo6E2zfS+vFjWMe7o=;
+        b=pUgcO6BMl2tXC9CYp1diNQkx1Xdv1KD64Jjx4s0eoknKf7DV/kWL/TnREAfOHWQ0T/
+         WJ/etwB/gnctiUBRZfUp9NxBSVex4KsVu2kEXZ+KolRq0iMlG3Eut525Vx9SX/RJ6K9d
+         PCHRhsN/1FvW7I8GSSJHxjLX7u5Wy1oetJR/6SvA9rnrrfTnBji5hVef7A5xYnZDISgu
+         uenDqPTjQIPGj4IYbx2wkO6y0EN1oqevb/G+QtZoK2neps4bhsVKwsNKyZMAVxXMIPJr
+         ZNtdVEBl+JSKgS2J5RL0wyHSbh6dC6wOmYF1ge0xu9RkuWazEH4aMsBkviVT3cZXavU4
+         nCXQ==
+X-Gm-Message-State: AOJu0YzViKu8cxW5Bimu0OdC1HM+sahGSibQOg4Ig5nwDKFJ7vYfKSal
+        Cyaq7bl7UpRjJtyUlTzhJfTxB/A/nxLesA==
+X-Google-Smtp-Source: AGHT+IFtNy7l3EGxYkZCWkiAhFWEYsg/TRqDQWID7CtM3pnURtITPTRRkvuHyQUSXKuBI5Nf0blqLQ==
+X-Received: by 2002:a5d:4e47:0:b0:32d:65ab:2228 with SMTP id r7-20020a5d4e47000000b0032d65ab2228mr2287392wrt.11.1697562278015;
+        Tue, 17 Oct 2023 10:04:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z9-20020adff749000000b00323287186aasm191730wrp.32.2023.10.17.10.04.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 07:06:57 -0700 (PDT)
-Date:   Tue, 17 Oct 2023 17:06:53 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: at91: remove unnecessary conditions
-Message-ID: <7782b4f1-deed-49dc-8207-b6ea06d7602f@moroto.mountain>
+        Tue, 17 Oct 2023 10:04:37 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+        Baojun Xu <baojun.xu@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: tas2781: make const read-only array magic_number static
+Date:   Tue, 17 Oct 2023 18:04:36 +0100
+Message-Id: <20231017170436.176615-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code checks "if (parent_hw)" is non-NULL, but then it has more
-checks if parent_hw is non-NULL on the lines inside the if statement.
-It is a bit confusing.
+Don't populate the const read-only array magic_number on the stack,
+instead make it static const.
 
-For the else statement, keep in mind that at the start of the function
-we checked:
-
-	if (!(parent_name || parent_hw))
-		return ERR_PTR(-EINVAL);
-
-That check ensures that if parent_hw is NULL that means that parent_name
-is non-NULL.  At least one must always be non-NULL.  So here again, the
-checks inside the if statement can be removed.
-
-In the original code, it was a bit confusing and you could easily get
-the impression that "init.num_parents" could be zero.  When we remove
-the unnecessary checking it's more obvious that it's always set to 1.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/at91/clk-utmi.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ sound/soc/codecs/tas2781-fmwlib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index 40c84f5af5e8..b991180beea1 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -161,13 +161,11 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index e27775d834e9..4efe95b60aaa 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -1757,7 +1757,7 @@ static int fw_parse_header(struct tasdevice_priv *tas_priv,
+ {
+ 	struct tasdevice_dspfw_hdr *fw_hdr = &(tas_fmw->fw_hdr);
+ 	struct tasdevice_fw_fixed_hdr *fw_fixed_hdr = &(fw_hdr->fixed_hdr);
+-	const unsigned char magic_number[] = { 0x35, 0x35, 0x35, 0x32 };
++	static const unsigned char magic_number[] = { 0x35, 0x35, 0x35, 0x32 };
+ 	const unsigned char *buf = (unsigned char *)fmw->data;
  
- 	init.name = name;
- 	init.ops = ops;
--	if (parent_hw) {
--		init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
--		init.num_parents = parent_hw ? 1 : 0;
--	} else {
--		init.parent_names = parent_name ? &parent_name : NULL;
--		init.num_parents = parent_name ? 1 : 0;
--	}
-+	if (parent_hw)
-+		init.parent_hws = (const struct clk_hw **)&parent_hw;
-+	else
-+		init.parent_names = &parent_name;
-+	init.num_parents = 1;
- 	init.flags = flags;
- 
- 	utmi->hw.init = &init;
+ 	if (offset + 92 > fmw->size) {
 -- 
 2.39.2
 
