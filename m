@@ -2,86 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BBD2C46CA1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 08:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20885CDB474
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 09:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234777AbjJQInj (ORCPT
+        id S234943AbjJQJKM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Oct 2023 04:43:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49164 "EHLO
+        Tue, 17 Oct 2023 05:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234782AbjJQInf (ORCPT
+        with ESMTP id S234868AbjJQJJw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Oct 2023 04:43:35 -0400
+        Tue, 17 Oct 2023 05:09:52 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6026AED;
-        Tue, 17 Oct 2023 01:43:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB809C433C7;
-        Tue, 17 Oct 2023 08:43:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4677C191;
+        Tue, 17 Oct 2023 02:09:27 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E005CC43395;
+        Tue, 17 Oct 2023 09:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697532214;
-        bh=CuMFUN7SSAJyB5Hs2Sw1yPemkO2qhqwV3uarBTFnFsc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Jfo+B2I8RflD38I2fr0TkxwP3YiH8ldKGiaD0Z7y9lFawxu7zg4RgBVu5yw5fdi0a
-         wRurigC6+9sehsxN+piW9AtmgeYw10xAWKekLmrWXHk++KAd2oSzhe72EKB1dZbXzi
-         +zdDrALYdprbZQcIy6svl+6eO1RYch7MjjLo+MU+S6K0jLcxCSs+JOMhYkpa+XqrS+
-         +5QhkyBeH9cu0Is691po8zR4M0BrSbRNoPBbuiFqfg2PVNx29hMkRTgdn2BsaSvvHY
-         1izyoBWnc7YjCDQiINlYya1B1WKot/Riwkxrc56t/jPSut8pv3IF5oIddNWhMYPiHh
-         0VBKbCyyB/YPw==
-Message-ID: <82958ea9-cc1c-44af-9144-53cf2bd5c23b@kernel.org>
-Date:   Tue, 17 Oct 2023 17:43:30 +0900
+        s=k20201202; t=1697533766;
+        bh=0J00yBt6B+0GI95PaNrYuW82ColdTJxLKzN75HBOfTI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M93MFRgowGo0xLvNH6mhY5IHz2AkL7yxlNmuE7f59h0T89aSwLaRh0fll8U2VvMMq
+         uYt3SmBdvdMxZKlHcPYonQHU/Lk7OQTer9zwjggGGYnijGlTHRRzgHKzu3ikmbjsuc
+         igoHi5ZtXAC/Dz1s0Irue5hYTRz+YBVW+/Otljrg7SV4207jGrwNcvu0rdLTOEkncr
+         OnAroEb0QT8ruQQ007OAEJQe05hskjvquJ1X7X2Llt7KGT/GkvGWmbBFJEz466qBQE
+         apkoWKiptypCbWpjR0rEg26YlOozMELZfxcFeRAlJJ3v0VrBCmXpClLfXUIy1kMkdb
+         63Cmh90bJvkdw==
+Date:   Tue, 17 Oct 2023 11:09:22 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, dev@openvswitch.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [ovs-dev] [PATCH v2 1/2] net: openvswitch: Use struct_size()
+Message-ID: <20231017090922.GQ1751252@kernel.org>
+References: <e5122b4ff878cbf3ed72653a395ad5c4da04dc1e.1697264974.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM / devfreq: mediatek: unlock on error in
- mtk_ccifreq_target()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Mark Tseng <chun-jen.tseng@mediatek.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <1bada9b2-d276-4123-bfdf-03d165569543@moroto.mountain>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-In-Reply-To: <1bada9b2-d276-4123-bfdf-03d165569543@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5122b4ff878cbf3ed72653a395ad5c4da04dc1e.1697264974.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 23. 10. 12. 18:41, Dan Carpenter wrote:
-> Call mutex_unlock(&drv->reg_lock) before returning the error code.
+On Sat, Oct 14, 2023 at 08:34:52AM +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand writing it.
+> This is less verbose and more robust.
 > 
-> Fixes: d2805601988f ("PM / devfreq: mediatek: protect oop in critical session")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/devfreq/mtk-cci-devfreq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> v2: No change
 > 
-> diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
-> index b0ed25e33f2b..11bc3d03494c 100644
-> --- a/drivers/devfreq/mtk-cci-devfreq.c
-> +++ b/drivers/devfreq/mtk-cci-devfreq.c
-> @@ -146,7 +146,8 @@ static int mtk_ccifreq_target(struct device *dev, unsigned long *freq,
->  	opp = devfreq_recommended_opp(dev, &opp_rate, 1);
->  	if (IS_ERR(opp)) {
->  		dev_err(dev, "failed to find opp for freq: %ld\n", opp_rate);
-> -		return PTR_ERR(opp);
-> +		ret = PTR_ERR(opp);
-> +		goto out_unlock;
->  	}
->  
->  	voltage = dev_pm_opp_get_voltage(opp);
+> v1: https://lore.kernel.org/all/8be59c9e06fca8eff2f264abb4c2f74db0b19a9e.1696156198.git.christophe.jaillet@wanadoo.fr/
+> 
+> 
+> This is IMHO more readable, even if not perfect.
+> 
+> However (untested):
+> +	new = kzalloc(size_add(struct_size(new, masks, size),
+> 			       size_mul(sizeof(u64), size)), GFP_KERNEL);
+> looks completely unreadable to me.
 
-Applied it. Thanks.
+Thanks, this looks correct (and more readable) to me.
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
-
+Reviewed-by: Simon Horman <horms@kernel.org>
