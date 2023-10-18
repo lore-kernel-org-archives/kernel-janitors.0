@@ -2,85 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EAECDB474
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Oct 2023 23:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E15ACDB474
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Oct 2023 01:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234859AbjJQXl1 (ORCPT
+        id S232009AbjJRBA0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Oct 2023 19:41:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59536 "EHLO
+        Tue, 17 Oct 2023 21:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbjJQXl0 (ORCPT
+        with ESMTP id S229459AbjJRBAZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Oct 2023 19:41:26 -0400
+        Tue, 17 Oct 2023 21:00:25 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8568C98;
-        Tue, 17 Oct 2023 16:41:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84FA1C433C7;
-        Tue, 17 Oct 2023 23:41:22 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6107192
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Oct 2023 18:00:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C892AC433CA;
+        Wed, 18 Oct 2023 01:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697586085;
-        bh=PZdgpkAaVuDpoTwI/pZyJZapPPLuDvDgBIRrvAyEbiQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=bRY2AgSWcAGt7Faxr0pff/R5TZ0PCaZdVM/Nnc9xLEZSgst8aYVWc9WYaPR45sYqW
-         0ionzrtvgbHwYnxQLiKq63XODvQ9aE3XVmwDjT/khPAzIiRR/EpTDuVddx0Ke0dNrH
-         gfjHTnldy/RVmFdal81wXF8SJVBjqfslXwXQqkhYnx7fg4hGSwgAfDjNRMqWaxZVOv
-         OvDC009YBkxtmxsGmpIPbmqUzme6LSSYws0XQwIHEzr+eCTdVi7osu/CTD6wa5fCJ0
-         7Q6XCNEp8FXXEUDhk6bgOBfOzuLT554oGX7bNQA1zlFaE57GKpz7x/hfYPyR3dtWSD
-         sAs2FkN+dt1AA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-        Baojun Xu <baojun.xu@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20231017170436.176615-1-colin.i.king@gmail.com>
-References: <20231017170436.176615-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: tas2781: make const read-only array
- magic_number static
-Message-Id: <169758608220.3230119.5780419992173270730.b4-ty@kernel.org>
-Date:   Wed, 18 Oct 2023 00:41:22 +0100
-MIME-Version: 1.0
+        s=k20201202; t=1697590823;
+        bh=9bt1AZQZu+kPf7xfbsepDklv1R2kPXwB8sI4S2GxjkY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=IcAEBV+bJY4o6YELr3D5GjVhcBkH3+RgMtRFVUdrwlN0uqNKKPp3JLLx4ukweuRSJ
+         aljDiTjH1+3xLaS470gaDntRsj8TaEhE29kSkqsQ2YyNv6o6mB6Od5Sw1T1cab/3bE
+         FZkXqsoVd+G35JCt6V8y2LKou7kH5T7fBmULVHQd4ZgK0zXA/qnlStxb6gbhDMDCKz
+         zB16A247svgCWCbnAMJm4SW56pd3MlKRtBI2RIGVlpx2p456H6nyFRGlCXVtjruMit
+         Llp3QfnvHNUPcMKptt6lvU+BHxk9JP2XZBdetiZSnI5QhnaamvXHbHmINu6KPEkW5L
+         QXcYm8qRIl+Pw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AEF30E4E9BC;
+        Wed, 18 Oct 2023 01:00:23 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: usb: smsc95xx: Fix an error code in smsc95xx_reset()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169759082371.18882.10002947976673675674.git-patchwork-notify@kernel.org>
+Date:   Wed, 18 Oct 2023 01:00:23 +0000
+References: <147927f0-9ada-45cc-81ff-75a19dd30b76@moroto.mountain>
+In-Reply-To: <147927f0-9ada-45cc-81ff-75a19dd30b76@moroto.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     steve.glendinning@smsc.com, steve.glendinning@shawell.net,
+        UNGLinuxDriver@microchip.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 17 Oct 2023 18:04:36 +0100, Colin Ian King wrote:
-> Don't populate the const read-only array magic_number on the stack,
-> instead make it static const.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 16 Oct 2023 20:28:10 +0300 you wrote:
+> Return a negative error code instead of success.
 > 
-> 
+> Fixes: 2f7ca802bdae ("net: Add SMSC LAN9500 USB2.0 10/100 ethernet adapter driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/usb/smsc95xx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to
+Here is the summary with links:
+  - [net] net: usb: smsc95xx: Fix an error code in smsc95xx_reset()
+    https://git.kernel.org/netdev/net/c/c53647a5df9e
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
-
-[1/1] ASoC: tas2781: make const read-only array magic_number static
-      commit: 9a4bf1f0be01582806e85322d18bf5c9f21d0b40
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
