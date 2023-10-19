@@ -2,33 +2,33 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAE5CDB483
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Oct 2023 08:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9DACDB465
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Oct 2023 08:34:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235109AbjJSIa4 (ORCPT
+        id S235109AbjJSIeb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Oct 2023 04:30:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54990 "EHLO
+        Thu, 19 Oct 2023 04:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232813AbjJSIaz (ORCPT
+        with ESMTP id S232850AbjJSIea (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Oct 2023 04:30:55 -0400
+        Thu, 19 Oct 2023 04:34:30 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id BC39911F;
-        Thu, 19 Oct 2023 01:30:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 12F3BAB;
+        Thu, 19 Oct 2023 01:34:27 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id CA64C6071E208;
-        Thu, 19 Oct 2023 16:30:32 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id C9F696071E216;
+        Thu, 19 Oct 2023 16:34:10 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-To:     kartilak@cisco.com, sebaddel@cisco.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     Su Hui <suhui@nfschina.com>, linux-scsi@vger.kernel.org,
+To:     shannon.nelson@amd.com, brett.creeley@amd.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc:     Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: snici: Remove dead code in snic_dr_clean_pending_req
-Date:   Thu, 19 Oct 2023 16:30:27 +0800
-Message-Id: <20231019083026.1525366-1-suhui@nfschina.com>
+Subject: [PATCH] pds_core: add an error code check in pdsc_dl_info_get
+Date:   Thu, 19 Oct 2023 16:33:52 +0800
+Message-Id: <20231019083351.1526484-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,30 +36,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Value stored to 'ret' is never read, remove it to save space.
+check the value of 'ret' after call 'devlink_info_version_stored_put'.
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/scsi/snic/snic_scsi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/amd/pds_core/devlink.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/snic/snic_scsi.c b/drivers/scsi/snic/snic_scsi.c
-index c50ede326cc4..badd0d5640bc 100644
---- a/drivers/scsi/snic/snic_scsi.c
-+++ b/drivers/scsi/snic/snic_scsi.c
-@@ -1867,11 +1867,8 @@ snic_dr_clean_pending_req(struct snic *snic, struct scsi_cmnd *lr_sc)
- 	schedule_timeout(msecs_to_jiffies(100));
+diff --git a/drivers/net/ethernet/amd/pds_core/devlink.c b/drivers/net/ethernet/amd/pds_core/devlink.c
+index d9607033bbf2..09041f7fccaf 100644
+--- a/drivers/net/ethernet/amd/pds_core/devlink.c
++++ b/drivers/net/ethernet/amd/pds_core/devlink.c
+@@ -124,6 +124,8 @@ int pdsc_dl_info_get(struct devlink *dl, struct devlink_info_req *req,
+ 			snprintf(buf, sizeof(buf), "fw.slot_%d", i);
+ 		err = devlink_info_version_stored_put(req, buf,
+ 						      fw_list.fw_names[i].fw_version);
++		if (err)
++			return err;
+ 	}
  
- 	/* Walk through all the cmds and check abts status. */
--	if (snic_is_abts_pending(snic, lr_sc)) {
--		ret = FAILED;
--
-+	if (snic_is_abts_pending(snic, lr_sc))
- 		goto clean_err;
--	}
- 
- 	ret = 0;
- 	SNIC_SCSI_DBG(snic->shost, "clean_pending_req: Success.\n");
+ 	err = devlink_info_version_running_put(req,
 -- 
 2.30.2
 
