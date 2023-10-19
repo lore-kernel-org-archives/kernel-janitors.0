@@ -2,73 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B8C46CA1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Oct 2023 21:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60633CDB483
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Oct 2023 00:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235343AbjJRVho (ORCPT
+        id S231740AbjJSAxP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Oct 2023 17:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54504 "EHLO
+        Wed, 18 Oct 2023 20:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbjJRVg6 (ORCPT
+        with ESMTP id S229688AbjJSAxO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Oct 2023 17:36:58 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A35210C4;
-        Wed, 18 Oct 2023 14:36:20 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40806e40fccso16400635e9.2;
-        Wed, 18 Oct 2023 14:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697664978; x=1698269778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HCVhrp90okWSl9RRgMNdpBPnBJhruFjjACD6W7aKPnE=;
-        b=fMYLrq/Wp45Ig88rjE3KTV0ATRN2Ui6Q+yQhIhCyG81hL+Hfpo/HSUyoI6IS9S2wZe
-         Mol6t6hncOWwXXCCYwfn01MUDGDztJ0KHJQTcu1aCiZsafnm69dFzBxh0g08CRpEz+kO
-         1MB5JXE/KTGn36iuvqEeN3vmszxGTEMo1P1p+RH9ZEQdRiRi4ACyoOHfWBvA31TkGpVm
-         AwaTzhykr830pSOyQNsC/P4QavSGU2jj47YKFhMZycLnudCSbSktB/KifFf5iPbpBPal
-         hfKGw/ryAx9H8UCo69/mRD81ScA86XUzIwzsUn6YS1ruEjI48F3VEmU/ryZq65fFRGwf
-         TOLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697664978; x=1698269778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HCVhrp90okWSl9RRgMNdpBPnBJhruFjjACD6W7aKPnE=;
-        b=LnURJyIRn93elarE8MxRklVxjhBvKkWiXLHp5vDx8dfUHCNLkHIVLVQhwwKJtIZNaQ
-         E/3dlEMOy4Z0ouHTDTJxlth0s4E6Gx4SnSVxPVYlOMNizERwE0ir0REypNh0TpclMc62
-         gu7na9QyePw4fUDDL9cGQSbk5M0irdWgpalnqdzp2ptTfCE8Go35Me60tANgEHB3F5Tc
-         qIcrRDkrTYL/b0cgVpZkOZIGNzYZGryXjBttAgM6j/Vwrm4Ive/u8JcQaWekOBZ1jsx5
-         AnWXL8WXmAvgIWVr5fQRhHMhBj80rNowDlEdyTHKLOXCkF9gqZHaWXhIZwnUKmfCvH6S
-         sH5w==
-X-Gm-Message-State: AOJu0YxuncAz0w5at4qArHaIwH139YzV7Kp7uqN08TO2xUDH1mIwCj1c
-        2bobm9NkrPoaR6vAbXDk49k=
-X-Google-Smtp-Source: AGHT+IHjqcHZlWwSZER6472scqSi0GlbXjVK2Qg9iOIon9lhuOzZOXx7h0ejemyGWbBMaK1zGnxvqQ==
-X-Received: by 2002:a05:600c:1384:b0:408:4160:1528 with SMTP id u4-20020a05600c138400b0040841601528mr409741wmf.30.1697664978620;
-        Wed, 18 Oct 2023 14:36:18 -0700 (PDT)
-Received: from reibax-minipc.lan ([2a0c:5a80:3302:f900::978])
-        by smtp.gmail.com with ESMTPSA id bi26-20020a05600c3d9a00b003feea62440bsm2617007wmb.43.2023.10.18.14.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 14:36:18 -0700 (PDT)
-From:   Xabier Marquiegui <reibax@gmail.com>
-To:     dan.carpenter@linaro.org
-Cc:     davem@davemloft.net, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, reibax@gmail.com, richardcochran@gmail.com
-Subject: Re: [PATCH net-next] ptp: prevent string overflow
-Date:   Wed, 18 Oct 2023 23:36:17 +0200
-Message-Id: <20231018213617.3196-1-reibax@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <d4b1a995-a0cb-4125-aa1d-5fd5044aba1d@moroto.mountain>
-References: <d4b1a995-a0cb-4125-aa1d-5fd5044aba1d@moroto.mountain>
+        Wed, 18 Oct 2023 20:53:14 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F02F113;
+        Wed, 18 Oct 2023 17:53:13 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64889C433C7;
+        Thu, 19 Oct 2023 00:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697676792;
+        bh=CEQdIpYGiXQ1Tk7MRzCm63RnC1FrMtAZVv/NGqOXQo8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gULiuu8YLZe0MpC175uhkmbaVC1wD27JwZpDeaJcpCo/fkwThsCHTxqjngljeCq+d
+         EeL9LOe9z/asi2QvcgORfUvTGMDiUZFKeSAUt3vhVppIGe7uBmFbFy90FXMLYYesWn
+         dqjQTjN5ieeSQx3s9Q+WfO1FBL/fEc33dJgjv4KTej7EtLIKDWT4srLX8xAgQG12eW
+         z9p3TKWJ3tktcqP1xq0qrG+bicLQtYGAR1m9MxXwbVx8lp9NGa3gl/N8L24CYd3I1S
+         6umkzHoXVrO0Sytmzyg/8q/Upfun/oxOvPseIcoWRc1Gpj7RoIDrHxDYs1/ez+cI4s
+         LiFlPU3yVE4Gg==
+Message-ID: <ccb799ac301df6b59fc64bb4df49a761.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d9da4c97-0da9-499f-9a21-1f8e3f148dc1@moroto.mountain>
+References: <d9da4c97-0da9-499f-9a21-1f8e3f148dc1@moroto.mountain>
+Subject: Re: [PATCH] clk: keystone: pll: fix a couple NULL vs IS_ERR() checks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mike Turquette <mturquette@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Santosh Shilimkar <santosh.shilimkar@ti.com>
+Date:   Wed, 18 Oct 2023 17:53:08 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Nice catch Dan. Thank you very much for the fix! Looks good to me.
+Quoting Dan Carpenter (2023-10-05 07:01:57)
+> The clk_register_divider() and clk_register_mux() functions returns
+> error pointers on error but this code checks for NULL.  Fix that.
+>=20
+> Fixes: b9e0d40c0d83 ("clk: keystone: add Keystone PLL clock driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Cheers,
-
-Xabier.
+Applied to clk-next
