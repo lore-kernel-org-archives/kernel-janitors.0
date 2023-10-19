@@ -2,90 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B04CDB483
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Oct 2023 07:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAE5CDB483
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Oct 2023 08:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344865AbjJSHzB (ORCPT
+        id S235109AbjJSIa4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Oct 2023 03:55:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36204 "EHLO
+        Thu, 19 Oct 2023 04:30:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232870AbjJSHzA (ORCPT
+        with ESMTP id S232813AbjJSIaz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Oct 2023 03:55:00 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CD9124;
-        Thu, 19 Oct 2023 00:54:58 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-507c5249d55so3058587e87.3;
-        Thu, 19 Oct 2023 00:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697702097; x=1698306897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXJ/Mr+spXECJ9u0aAvXnCzzdApNwtlPUw+XhQPOmiE=;
-        b=e0DCnjIJ0KC82mf+oqwh0/o+YUCkFPpsjshuG/5RB7trYriLGI0Q0xZ/GrZz/acjOk
-         bUJi6HsW+tPDbwXNmaCnkuh4yE6WKk4Vm+5KLI9Iz5bgNIi/z6HwnMO9/7JDyfWwyfIX
-         uC1qBvJnPApas892IwlilYShHIzJ2qL+THAjq82nrmqOe8F3JiWFemfhWcs5BgmdfLI4
-         44+pua6NizIl3/SHcqfKUA+Lov5OvMktkOFRguzbnSa4GCevDPDigREHISn/dxRk++I/
-         lOrgBb0RbgeI9f/KUWQfL0P4kb6BhyLlDTbeCtag22qR9l5nIe8C04Wsbgd9VOlWrvP3
-         YIYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697702097; x=1698306897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rXJ/Mr+spXECJ9u0aAvXnCzzdApNwtlPUw+XhQPOmiE=;
-        b=WHg6W5QMBMfLh+V1IrMG8lBzFTYoKp76oDKv8MNAwTzwl8P49M6mPUCD6mnZ4TXcDX
-         dBa4CKYALW1Tay0zqrINczffF5fFg7pErXX7wV8dpCR52RWrBjuNZtITdkDZDps6sZbm
-         /fZqtlXA5aDLFZAnLlv5yZao7HpuSmCBGT62Qr/QE4UEDDcGOoU9D6vUeiSyze5Z45BE
-         HAsqBTMSVDKVxCb+NMndj2Oe4bjaei6RZgc60Gly23cU05dez+enmqNC7MnY/tNKCodN
-         MG2YAE5Kgz6qD3Vn+B1X+Uu3IUTX8XZD88TtHUEU6ztFEcBlaozPWeQdxeegwIBS3vgD
-         e81A==
-X-Gm-Message-State: AOJu0YxYjaDZ2eJAjNj1HZPDLyWhmK/ZEiDrrSOeIx6fmu3HdgE06RfZ
-        dPtRFgQzmPvwZrvIyOzXfxCFzx/j2Ns=
-X-Google-Smtp-Source: AGHT+IGhBCdv3F02RoO6WXb7swa56I2T+hnTKGyT76SnzWyqXbwC7LTjG7c2oBJSqzEOTMfGgxaX3A==
-X-Received: by 2002:a05:6512:455:b0:507:9dfd:f840 with SMTP id y21-20020a056512045500b005079dfdf840mr909014lfk.68.1697702096870;
-        Thu, 19 Oct 2023 00:54:56 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id c18-20020adfe712000000b0032da49e18fasm3881275wrm.23.2023.10.19.00.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Oct 2023 00:54:56 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Brian Foster <bfoster@redhat.com>,
-        linux-bcachefs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bcachefs: Fix spelling mistake "strcuct" -> "struct"
-Date:   Thu, 19 Oct 2023 08:54:55 +0100
-Message-Id: <20231019075455.369650-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 19 Oct 2023 04:30:55 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id BC39911F;
+        Thu, 19 Oct 2023 01:30:49 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id CA64C6071E208;
+        Thu, 19 Oct 2023 16:30:32 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     kartilak@cisco.com, sebaddel@cisco.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     Su Hui <suhui@nfschina.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: snici: Remove dead code in snic_dr_clean_pending_req
+Date:   Thu, 19 Oct 2023 16:30:27 +0800
+Message-Id: <20231019083026.1525366-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an unsafe_memcpy message. Fix it.
+Value stored to 'ret' is never read, remove it to save space.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- fs/bcachefs/buckets.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/snic/snic_scsi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
-index a1a4b5feadaa..9e93de2670d5 100644
---- a/fs/bcachefs/buckets.c
-+++ b/fs/bcachefs/buckets.c
-@@ -475,7 +475,7 @@ static inline int update_replicas_list(struct btree_trans *trans,
- 	n->delta = sectors;
- 	unsafe_memcpy((void *) n + offsetof(struct replicas_delta, r),
- 		      r, replicas_entry_bytes(r),
--		      "flexible array member embedded in strcuct with padding");
-+		      "flexible array member embedded in struct with padding");
- 	bch2_replicas_entry_sort(&n->r);
- 	d->used += b;
- 	return 0;
+diff --git a/drivers/scsi/snic/snic_scsi.c b/drivers/scsi/snic/snic_scsi.c
+index c50ede326cc4..badd0d5640bc 100644
+--- a/drivers/scsi/snic/snic_scsi.c
++++ b/drivers/scsi/snic/snic_scsi.c
+@@ -1867,11 +1867,8 @@ snic_dr_clean_pending_req(struct snic *snic, struct scsi_cmnd *lr_sc)
+ 	schedule_timeout(msecs_to_jiffies(100));
+ 
+ 	/* Walk through all the cmds and check abts status. */
+-	if (snic_is_abts_pending(snic, lr_sc)) {
+-		ret = FAILED;
+-
++	if (snic_is_abts_pending(snic, lr_sc))
+ 		goto clean_err;
+-	}
+ 
+ 	ret = 0;
+ 	SNIC_SCSI_DBG(snic->shost, "clean_pending_req: Success.\n");
 -- 
-2.39.2
+2.30.2
 
