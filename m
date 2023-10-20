@@ -2,33 +2,34 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FF7CDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813C1CDB474
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:34:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376626AbjJTJ2W (ORCPT
+        id S1376728AbjJTJev (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 05:28:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49292 "EHLO
+        Fri, 20 Oct 2023 05:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376572AbjJTJ2U (ORCPT
+        with ESMTP id S1376770AbjJTJep (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 05:28:20 -0400
+        Fri, 20 Oct 2023 05:34:45 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 64DE2106;
-        Fri, 20 Oct 2023 02:28:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 434F0D5B;
+        Fri, 20 Oct 2023 02:34:43 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 1C9D86053B795;
-        Fri, 20 Oct 2023 17:28:08 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 8621A60583963;
+        Fri, 20 Oct 2023 17:34:40 +0800 (CST)
+X-MD-Sfrom: yunchuan@nfschina.com
 X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     rajur@chelsio.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc:     Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] net: chelsio: cxgb4: add an error code check in t4_load_phy_fw
-Date:   Fri, 20 Oct 2023 17:27:59 +0800
-Message-Id: <20231020092758.211170-1-suhui@nfschina.com>
+From:   Wu Yunchuan <yunchuan@nfschina.com>
+To:     kvalo@kernel.org
+Cc:     Wu Yunchuan <yunchuan@nfschina.com>, dzm91@hust.edu.cn,
+        christophe.jaillet@wanadoo.fr, horms@kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH wireless-next 1/2] wifi: ray_cs: Remove unnecessary (void*) conversions
+Date:   Fri, 20 Oct 2023 17:34:31 +0800
+Message-Id: <20231020093432.214001-1-yunchuan@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,27 +37,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-t4_set_params_timeout() can return -EINVAL if failed, add check
-for this.
+No need cast (void *) to (struct net_device *).
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/legacy/ray_cs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-index 8d719f82854a..76de55306c4d 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -3816,6 +3816,8 @@ int t4_load_phy_fw(struct adapter *adap, int win,
- 		 FW_PARAMS_PARAM_Z_V(FW_PARAMS_PARAM_DEV_PHYFW_DOWNLOAD));
- 	ret = t4_set_params_timeout(adap, adap->mbox, adap->pf, 0, 1,
- 				    &param, &val, 30000);
-+	if (ret)
-+		return ret;
+diff --git a/drivers/net/wireless/legacy/ray_cs.c b/drivers/net/wireless/legacy/ray_cs.c
+index 8ace797ce951..c95a79e01cd0 100644
+--- a/drivers/net/wireless/legacy/ray_cs.c
++++ b/drivers/net/wireless/legacy/ray_cs.c
+@@ -348,7 +348,7 @@ static int ray_config(struct pcmcia_device *link)
+ {
+ 	int ret = 0;
+ 	int i;
+-	struct net_device *dev = (struct net_device *)link->priv;
++	struct net_device *dev = link->priv;
+ 	ray_dev_t *local = netdev_priv(dev);
  
- 	/* If we have version number support, then check to see that the new
- 	 * firmware got loaded properly.
+ 	dev_dbg(&link->dev, "ray_config\n");
+@@ -1830,7 +1830,7 @@ static void set_multicast_list(struct net_device *dev)
+ =============================================================================*/
+ static irqreturn_t ray_interrupt(int irq, void *dev_id)
+ {
+-	struct net_device *dev = (struct net_device *)dev_id;
++	struct net_device *dev = dev_id;
+ 	struct pcmcia_device *link;
+ 	ray_dev_t *local;
+ 	struct ccs __iomem *pccs;
+@@ -2567,7 +2567,7 @@ static int ray_cs_proc_show(struct seq_file *m, void *v)
+ 	link = this_device;
+ 	if (!link)
+ 		return 0;
+-	dev = (struct net_device *)link->priv;
++	dev = link->priv;
+ 	if (!dev)
+ 		return 0;
+ 	local = netdev_priv(dev);
 -- 
 2.30.2
 
