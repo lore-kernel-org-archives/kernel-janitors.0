@@ -2,32 +2,33 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA88C001DF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3620DCDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376586AbjJTJTp (ORCPT
+        id S1376626AbjJTJXo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 05:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
+        Fri, 20 Oct 2023 05:23:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376523AbjJTJTo (ORCPT
+        with ESMTP id S1376612AbjJTJXm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 05:19:44 -0400
+        Fri, 20 Oct 2023 05:23:42 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id A9DE8AB;
-        Fri, 20 Oct 2023 02:19:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 21423106;
+        Fri, 20 Oct 2023 02:23:39 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 2FE38604F6624;
-        Fri, 20 Oct 2023 17:19:40 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id EE915604FCB31;
+        Fri, 20 Oct 2023 17:23:30 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-To:     pavel@ucw.cz, lee@kernel.org
-Cc:     Su Hui <suhui@nfschina.com>, linux-leds@vger.kernel.org,
+To:     mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com
+Cc:     Su Hui <suhui@nfschina.com>,
+        virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] leds: lp5521: add an error check in lp5521_post_init_device
-Date:   Fri, 20 Oct 2023 17:19:31 +0800
-Message-Id: <20231020091930.207870-1-suhui@nfschina.com>
+Subject: [PATCH] virtio_ring: add an error code check in virtqueue_resize
+Date:   Fri, 20 Oct 2023 17:23:21 +0800
+Message-Id: <20231020092320.209234-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,26 +36,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-lp55xx_write() can return an error code, add a check for this.
+virtqueue_resize_packed() or virtqueue_resize_split() can return
+error code if failed, so add a check for this.
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/leds/leds-lp5521.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 2ef19ad23b1d..f9c8b568b652 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -301,6 +301,8 @@ static int lp5521_post_init_device(struct lp55xx_chip *chip)
+I'm not sure that return directly is right or not,
+maybe there are some process should do before return.
+
+ drivers/virtio/virtio_ring.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 51d8f3299c10..cf662c3a755b 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -2759,6 +2759,9 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+ 	else
+ 		err = virtqueue_resize_split(_vq, num);
  
- 	/* Set all PWMs to direct control mode */
- 	ret = lp55xx_write(chip, LP5521_REG_OP_MODE, LP5521_CMD_DIRECT);
-+	if (ret)
-+		return ret;
- 
- 	/* Update configuration for the clock setting */
- 	val = LP5521_DEFAULT_CFG;
++	if (err)
++		return err;
++
+ 	return virtqueue_enable_after_reset(_vq);
+ }
+ EXPORT_SYMBOL_GPL(virtqueue_resize);
 -- 
 2.30.2
 
