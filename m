@@ -2,34 +2,32 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AB9CDB474
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F241CCDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376564AbjJTJQo (ORCPT
+        id S1376601AbjJTJRo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 05:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47944 "EHLO
+        Fri, 20 Oct 2023 05:17:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376552AbjJTJQn (ORCPT
+        with ESMTP id S1376523AbjJTJRn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 05:16:43 -0400
+        Fri, 20 Oct 2023 05:17:43 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 72129106;
-        Fri, 20 Oct 2023 02:16:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 7F890AB;
+        Fri, 20 Oct 2023 02:17:40 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 23851604AABDF;
-        Fri, 20 Oct 2023 17:16:39 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id DB0366024D8BF;
+        Fri, 20 Oct 2023 17:17:37 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-To:     horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
+To:     mchehab@kernel.org
+Cc:     Su Hui <suhui@nfschina.com>, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] net: lan966x: remove useless code in lan966x_xtr_irq_handler
-Date:   Fri, 20 Oct 2023 17:16:26 +0800
-Message-Id: <20231020091625.206561-1-suhui@nfschina.com>
+Subject: [PATCH] media: ddbridge: fix an error code problem in ddb_probe
+Date:   Fri, 20 Oct 2023 17:17:23 +0800
+Message-Id: <20231020091722.207022-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,26 +35,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'err' is useless after break, remove this to save space and
-be more clear.
+Error code is assigned to 'stat', return 'stat' rather than '-1'.
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/pci/ddbridge/ddbridge-main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index 0d6e79af2410..7861defafb85 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -671,7 +671,6 @@ static irqreturn_t lan966x_xtr_irq_handler(int irq, void *args)
- 		skb = netdev_alloc_skb(dev, len);
- 		if (unlikely(!skb)) {
- 			netdev_err(dev, "Unable to allocate sk_buff\n");
--			err = -ENOMEM;
- 			break;
- 		}
- 		buf_len = len - ETH_FCS_LEN;
+diff --git a/drivers/media/pci/ddbridge/ddbridge-main.c b/drivers/media/pci/ddbridge/ddbridge-main.c
+index 91733ab9f58c..363badab7cf0 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-main.c
++++ b/drivers/media/pci/ddbridge/ddbridge-main.c
+@@ -238,7 +238,7 @@ static int ddb_probe(struct pci_dev *pdev,
+ 	ddb_unmap(dev);
+ 	pci_set_drvdata(pdev, NULL);
+ 	pci_disable_device(pdev);
+-	return -1;
++	return stat;
+ }
+ 
+ /****************************************************************************/
 -- 
 2.30.2
 
