@@ -2,108 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8663C001DF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 15:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C118DCDB474
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 16:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377799AbjJTPzP (ORCPT
+        id S229776AbjJTQeM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 11:55:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34956 "EHLO
+        Fri, 20 Oct 2023 12:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377676AbjJTPzO (ORCPT
+        with ESMTP id S229871AbjJTQeK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 11:55:14 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF42BF;
-        Fri, 20 Oct 2023 08:55:13 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SBpy04L8bz6K62H;
-        Fri, 20 Oct 2023 23:52:40 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Fri, 20 Oct
- 2023 16:55:10 +0100
-Date:   Fri, 20 Oct 2023 16:55:09 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Su Hui <suhui@nfschina.com>
-CC:     <jic23@kernel.org>, <lars@metafoo.de>,
-        <jean-baptiste.maneyrol@tdk.com>, <chenhuiz@axis.com>,
-        <andy.shevchenko@gmail.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 2/2] phy: mapphone-mdm6600: fix an error code problem in
- inv_mpu6050_read_raw
-Message-ID: <20231020165509.00003350@Huawei.com>
-In-Reply-To: <20231020091413.205743-2-suhui@nfschina.com>
-References: <20231020091413.205743-1-suhui@nfschina.com>
-        <20231020091413.205743-2-suhui@nfschina.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+        Fri, 20 Oct 2023 12:34:10 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24EEBD6B;
+        Fri, 20 Oct 2023 09:34:09 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C26C433C7;
+        Fri, 20 Oct 2023 16:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1697819648;
+        bh=dKYd/12MjaWQfmGSj1V3kcKO/BZ3aLW0Ffk7QfWNPBg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zPs2WckD1f1dvmFYwwvemYD6GDE5M8HkbjSPYVlx/K4R0WRe0vBlqvn4prb+p3SCR
+         qmT70LEpvgWad7VaRpyqoULmHnnxk4/m0Ok1UYAtXO/RgGk9kIXNWdLhOx3pFEDxIZ
+         3kIjPeMBxpcguF9j9ZCr/5f8vynAFi2Edos8Xqwo=
+Date:   Fri, 20 Oct 2023 09:34:07 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Zach O'Keefe <zokeefe@google.com>, Yang Shi <shy828301@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Zach O'Keefe <zokeefe@google.com>
+Subject: Re: [PATCH 1/2] mm/khugepaged: Fix an uninitialized variable bug
+Message-Id: <20231020093407.02be8ef4984ce31a7222f69f@linux-foundation.org>
+In-Reply-To: <a1f3242f-1aae-4b46-9893-36b11ee0a6dd@moroto.mountain>
+References: <a1f3242f-1aae-4b46-9893-36b11ee0a6dd@moroto.mountain>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 20 Oct 2023 17:14:14 +0800
-Su Hui <suhui@nfschina.com> wrote:
+On Fri, 20 Oct 2023 17:13:32 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> inv_mpu6050_sensor_show() can return -EINVAL or IIO_VAL_INT. Return the
-> true value rather than only return IIO_VAL_INT.
-
-What does this have to do with the phy: mapphone-mdm6600?
-
+> Smatch complains that "hpage" can be used uninitialized:
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-
-I'm not sure why inv_mpu6050_sensor_show() doesn't return
-the actual error code from the regmap_bulk_read() and instead replaces it
-with -EINVAL.  Given you are tidying up this related issues perhaps change
-that as well?
-
-static int inv_mpu6050_sensor_show(struct inv_mpu6050_state  *st, int reg,
-				   int axis, int *val)
-{
-	int ind, result;
-	__be16 d;
-
-	ind = (axis - IIO_MOD_X) * 2;
-	result = regmap_bulk_read(st->map, reg + ind, &d, sizeof(d));
-	if (result)
-		return -EINVAL;
-//Make this return result;
-
-
-	*val = (short)be16_to_cpup(&d);
-
-	return IIO_VAL_INT;
-}
-> ---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>     mm/khugepaged.c:1234 collapse_huge_page()
+>     error: uninitialized symbol 'hpage'.
 > 
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> index 29f906c884bd..a9a5fb266ef1 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> @@ -749,13 +749,13 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
->  			ret = inv_mpu6050_sensor_show(st, st->reg->gyro_offset,
->  						chan->channel2, val);
->  			mutex_unlock(&st->lock);
-> -			return IIO_VAL_INT;
-> +			return ret;
->  		case IIO_ACCEL:
->  			mutex_lock(&st->lock);
->  			ret = inv_mpu6050_sensor_show(st, st->reg->accl_offset,
->  						chan->channel2, val);
->  			mutex_unlock(&st->lock);
-> -			return IIO_VAL_INT;
-> +			return ret;
+> Initialized it on this path.
+> 
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1062,8 +1062,10 @@ static int alloc_charge_hpage(struct page **hpage, struct mm_struct *mm,
+>  	int node = hpage_collapse_find_target_node(cc);
+>  	struct folio *folio;
 >  
->  		default:
->  			return -EINVAL;
+> -	if (!hpage_collapse_alloc_folio(&folio, gfp, node, &cc->alloc_nmask))
+> +	if (!hpage_collapse_alloc_folio(&folio, gfp, node, &cc->alloc_nmask)) {
+> +		*hpage = NULL;
+>  		return SCAN_ALLOC_HUGE_PAGE_FAIL;
+> +	}
+>  
+>  	if (unlikely(mem_cgroup_charge(folio, mm, gfp))) {
+>  		folio_put(folio);
 
+Thanks.   Seems this was accidentally fixed by 
+
+Author:     Peter Xu <peterx@redhat.com>
+AuthorDate: Wed Feb 22 14:52:47 2023 -0500
+Commit:     Andrew Morton <akpm@linux-foundation.org>
+CommitDate: Tue Mar 28 16:20:06 2023 -0700
+
+    mm/khugepaged: alloc_charge_hpage() take care of mem charge errors
+
+
+Which was quite a long time ago.  Are you scanning old kernel versions?
