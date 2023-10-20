@@ -2,105 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0F6CDB47E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B15CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 10:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376755AbjJTJwf (ORCPT
+        id S1376870AbjJTKHR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 05:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41492 "EHLO
+        Fri, 20 Oct 2023 06:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376319AbjJTJwd (ORCPT
+        with ESMTP id S1376715AbjJTKHQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 05:52:33 -0400
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52BAED5B;
-        Fri, 20 Oct 2023 02:52:30 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VuWrMoa_1697795545;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VuWrMoa_1697795545)
-          by smtp.aliyun-inc.com;
-          Fri, 20 Oct 2023 17:52:26 +0800
-Message-ID: <1697795422.0986886-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
-Date:   Fri, 20 Oct 2023 17:50:22 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Su Hui <suhui@nfschina.com>
-References: <20231020092320.209234-1-suhui@nfschina.com>
- <20231020053047-mutt-send-email-mst@kernel.org>
- <1697794601.5857713-2-xuanzhuo@linux.alibaba.com>
- <20231020054140-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20231020054140-mutt-send-email-mst@kernel.org>
+        Fri, 20 Oct 2023 06:07:16 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5DCD64;
+        Fri, 20 Oct 2023 03:07:14 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4083cd3917eso5305535e9.3;
+        Fri, 20 Oct 2023 03:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697796433; x=1698401233; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eg/csZTe11WF84HY2bC30HCtKA95bWgVvxI9p/8afRY=;
+        b=W/1H7+mxcgaW2CIZYzlMcgQmGAkNadgMutA1aQstRAx9seq239n1cCjK/Hb3GePFU7
+         oTyN5GT+MGBb7uwWj39MSJTqvbVL+rM+zFhdKRTn4KXT3M4uS39UxDxbuQKTCibZEZ79
+         kDVkcFl3q08PLSlfw9O9SV0KVxz83GGdKedAFdvdA0N2gaPbuU0qDCiSUK1IXeRQUBuJ
+         yClwWAe5ZQJCuN9DuDm19GaHekHy7k+sriVO270bN6Meo6kSbMTTsUp6BKLEqOJcoZ4o
+         rVSQ9BJZ3ZWcbzB6EVwFuAZGQb7sqKloI7CQH9MBWLZtBvY96xKCIOnS1pKVSvdEEUyN
+         i+uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697796433; x=1698401233;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eg/csZTe11WF84HY2bC30HCtKA95bWgVvxI9p/8afRY=;
+        b=MedMJRwlHgNMeTbIGyJX7TKd+FKnmNJVzeuNcNncpKGuT1niv7qr2Qv91CT0to9Onc
+         1gBe64QnjDfMbKmSqsDeoUL/L9hObYQ62bE1l6uJ5EKXgOKGNqOQpty8tOJbYUgONnp4
+         DVqAUNmM45moPum67EL9huBX2t92y38EuQe7R0d/bYQEoKrquRQ+6JwBE9bfLwt6eZmJ
+         J2jUL0zHsFVnofyfOFhGFuwzAQKaFydiDKJAZiGvLmS5jKbZjijM5TFnKObetybCGeBY
+         ub3KjOkPTYDxxDQJDZCfElFhFUujs2IWbfBPLE88joK/8VbmH46zSnPfsHK2WNlh5lrU
+         Wn6g==
+X-Gm-Message-State: AOJu0Ywv7/SaSRthovZesJ1yGF8rLM98NW4+/1QyC5FTBRZxYFiPDN76
+        o89UVSym26DFQUgeY5dN/jY=
+X-Google-Smtp-Source: AGHT+IEqZwxXRL66lw1+cuj95TIKompxhoWp5WEAhk2qvUt3UtBRe+YVmcGEZrYV3uvDzSEbs5b0Rg==
+X-Received: by 2002:a05:600c:510d:b0:406:53f1:d629 with SMTP id o13-20020a05600c510d00b0040653f1d629mr1084077wms.5.1697796432432;
+        Fri, 20 Oct 2023 03:07:12 -0700 (PDT)
+Received: from skbuf ([188.26.57.160])
+        by smtp.gmail.com with ESMTPSA id w15-20020a5d608f000000b0032dbf32bd56sm1343204wrt.37.2023.10.20.03.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Oct 2023 03:07:12 -0700 (PDT)
+Date:   Fri, 20 Oct 2023 13:07:09 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Su Hui <suhui@nfschina.com>
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        richardcochran@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: mv88e6xxx: add an error code check in
+ mv88e6352_tai_event_work
+Message-ID: <20231020100709.yy2ovjm3q2hphek6@skbuf>
+References: <20231020090003.200092-1-suhui@nfschina.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231020090003.200092-1-suhui@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 20 Oct 2023 05:42:14 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> On Fri, Oct 20, 2023 at 05:36:41PM +0800, Xuan Zhuo wrote:
-> > On Fri, 20 Oct 2023 05:34:32 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > On Fri, Oct 20, 2023 at 05:23:21PM +0800, Su Hui wrote:
-> > > > virtqueue_resize_packed() or virtqueue_resize_split() can return
-> > > > error code if failed, so add a check for this.
-> > > >
-> > > > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > > > ---
-> > > >
-> > > > I'm not sure that return directly is right or not,
-> > > > maybe there are some process should do before return.
-> > >
-> > > yes - presizely what virtqueue_enable_after_reset does.
-> > >
-> > > Error handling in virtqueue_enable_after_reset is really weird BTW.
-> > > For some reason it overrides the error code returned.
-> > >
-> > >
-> > >
-> > >
-> > >
-> > > >  drivers/virtio/virtio_ring.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > >
-> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > index 51d8f3299c10..cf662c3a755b 100644
-> > > > --- a/drivers/virtio/virtio_ring.c
-> > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > @@ -2759,6 +2759,9 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
-> > > >  	else
-> > > >  		err = virtqueue_resize_split(_vq, num);
-> > > >
-> > > > +	if (err)
-> > > > +		return err;
-> > > > +
-> > > >  	return virtqueue_enable_after_reset(_vq);
-> > >
-> > > So I think it should be something like:
-> > >
-> > > 	int err_reset = virtqueue_enable_after_reset(_vq);
-> > > 	BUG_ON(err_reset);
-> > >
-> > > 	return err;
-> > >
-> >
-> > How about WARN and vq->broken?
-> >
-> > Thanks.
->
-> Well, what are the cases where it can happen practically?
+On Fri, Oct 20, 2023 at 05:00:04PM +0800, Su Hui wrote:
+> mv88e6xxx_tai_write() can return error code (-EOPNOTSUPP ...) if failed.
+> So check the value of 'ret' after calling mv88e6xxx_tai_write().
+> 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
 
-Device error. Such as vp_active_vq()
+mv88e6xxx_avb_ops :: tai_read() and tai_write() come in pairs for the
+existing implementations. So, a missing tai_write() method also implies
+a missing tai_read() and would have been caught by the previous call to
+mv88e6xxx_tai_read() in this function.
 
-Thanks.
+But, ok.
 
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
->
-> >
-> > >
-> > >
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(virtqueue_resize);
-> > > > --
-> > > > 2.30.2
-> > >
->
+This is a patch for net-next, as it doesn't fix any user-visible issue
+and is just an improvement. For future changes, please note your
+expectation regarding the target tree yourself, by formatting the patch
+as "[PATCH net-next]".
