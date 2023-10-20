@@ -2,59 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EEFC001DF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 13:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD69CDB474
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 14:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377445AbjJTNzt (ORCPT
+        id S1377429AbjJTOHJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 09:55:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34800 "EHLO
+        Fri, 20 Oct 2023 10:07:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377419AbjJTNzs (ORCPT
+        with ESMTP id S1377512AbjJTOHI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 09:55:48 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9682210DC
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 06:55:34 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32caaa1c493so626207f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 06:55:34 -0700 (PDT)
+        Fri, 20 Oct 2023 10:07:08 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65251A8
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 07:07:06 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4064876e8b8so7402415e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 07:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697810132; x=1698414932; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697810825; x=1698415625; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=b2DzarA0xQh4ACLILXDHfJLTXlPocLj2W25IPZIhrr4=;
-        b=Q4qZjk/heJPoPxmDw0AMsk8Q4046Ru0jedo4Niz3wdvWpualcLVv39s5nigvMDCKbS
-         ZF2Z0vk3WfG3HedFmwkJXPrNjnj9mQk6muUiuPe4jeQw+Ou6H1wajvdh9qNBBvOEQhFs
-         4bo3UF36ulVxQs9Q0Y0hU2YFP9E7kxINQWLKJ39Ys/ZX06tzvx4QEvnh7SdfIjVDf1Vr
-         ntgAY4yNxU4HX2m5uf9rNDLjTaMZJ9LMxKlcI+d2bNEbSaFREW8yxn46NdObEjAtFFTs
-         0/qu8G+Gq6ngCIm+YsSfebByRrohkcWhP0kHwZhxmln1aVq96XAFefB3KsaI4XcvT7TH
-         8Fiw==
+        bh=AEt/75FaiyiDkjvNY3gfpUDmE+gdWB2DPAqGukeS3XA=;
+        b=ky76O4zH+oPOowISCpAcG2zONvz5TJ1ZQtaTcYXF6+/d8B5ckKU6K82rljIdvWcHmV
+         q6DG9bUvqbLOtsJi1wMa5rIXkhXO7csVXCXvBz6yYyqRz94smXwbU9BdyGKCiiYpHs/L
+         vkYQu3sqkiC6xfdzOSF3d7oftb7op2oOzV5HVMvDdXWhdNCskCXGwXmg3DOSc9bVO4HJ
+         tgm3ZdhdiZdPPwGzi58Bt2GZZp0xQcgddmzFsljd0ffrj8jfNbtNJS1cJvOLQwNZaooh
+         aY0mjSyyNVGe+OC2A395VTvuXSygo39NIs6qYLEx3t26UKZEoVss/uund5rZd1Vhxp6V
+         FEDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697810132; x=1698414932;
+        d=1e100.net; s=20230601; t=1697810825; x=1698415625;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b2DzarA0xQh4ACLILXDHfJLTXlPocLj2W25IPZIhrr4=;
-        b=rvlcCiFe9QTDQKgXJbzG2ci2hYqgVGD0eXITEmnj+M/mEm9BRwZYYeHa/Q1LAQGdkX
-         XYRSL3D3ax8b2Ff/VeBaVX2iErMHVyEEIL8SOg+GrmjPcawVoyR9RKgTSr443io6aHmV
-         lY48WTdKk+0Igs2b2IX9JJpDCQKAIUiQeT/5iL7Vw9DjWnJdNx617Xy1ugi5RvI2lOD6
-         Q2G9L+rs0YP/OZd7a9hOLghQCKtcOqlwoFiUk24CAiHGIhCUGlGQkJquaTesz6xfLYu7
-         1MBUQtcZKnu2VCvsA7WHLub8iYPl9BsPfVHTKZbKSBmD92EM60eOJyJjsJQIHW8yZ473
-         PDIg==
-X-Gm-Message-State: AOJu0YzE6mFgOzWsfSWFhQE+xNEK2s3G6pJ3ide5zBN2wg6Ti1cxBk8y
-        gkYSLE8SLaPSA4F1tbz1ANxXv/+dxYWLWeyuQTc=
-X-Google-Smtp-Source: AGHT+IHAe6MtvikVSj5VKn6OKvvbvt+1EzvNWF0+fQ9uZyNMNuTFuO+7UpF+QdP0xK9EzxMcQZPLQg==
-X-Received: by 2002:adf:f487:0:b0:31f:ef77:67ee with SMTP id l7-20020adff487000000b0031fef7767eemr1693076wro.40.1697810132403;
-        Fri, 20 Oct 2023 06:55:32 -0700 (PDT)
+        bh=AEt/75FaiyiDkjvNY3gfpUDmE+gdWB2DPAqGukeS3XA=;
+        b=CicFMFMzFu+7zPISEWOoEWsJR9V52OUY+miLRtbqVZhvbwbHnedmMCM2n7Uf0u72pQ
+         obzlIi7vBZm+fKT2hQJ+WV5Q1v0bgpaQhPh6mMM+SoAQ8Ykn3HqK6yn0nFm1HbRyiLBu
+         9sBOJtMZAIYX/UGy4cdmjAkwZsqyLVFJIKA4VTDJmy0wBnX/w7/OmkOZrGwxMV9veTuL
+         tYnVUxW0DYD95PhUj5XlM4SEpe2I6LbT8TJniL6smRFsW5OxiRU1TnyDDI739lUOuQt2
+         Rzoeus0TpB2a+rPSYMjzDXSKD5l8dy4yDJYg5/aKYNlKRoooItGcWh8UBmKWWx5WC7gY
+         xeXQ==
+X-Gm-Message-State: AOJu0YxoOT57DcWx9Tk0k9NJEGYLIMPxeEOzznk4t6UlQwA3kgV/cJAE
+        fv8/tPhUBzPdgoj3tUKyyKhTYg==
+X-Google-Smtp-Source: AGHT+IEMaJB8Dy7SAmPCPzTypXxxjPGx3Fy+T1gzlJXV+/wAZLTIbm0oiP5Dq/V0Xiqhn3gcuEUwXQ==
+X-Received: by 2002:adf:ea0c:0:b0:32d:a49c:dfd1 with SMTP id q12-20020adfea0c000000b0032da49cdfd1mr1416002wrm.48.1697810825077;
+        Fri, 20 Oct 2023 07:07:05 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a3-20020adfe5c3000000b0032da40fd7bdsm1786001wrn.24.2023.10.20.06.55.31
+        by smtp.gmail.com with ESMTPSA id t18-20020a5d6a52000000b0032db8cccd3asm1737492wrw.114.2023.10.20.07.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 06:55:32 -0700 (PDT)
-Date:   Fri, 20 Oct 2023 16:55:28 +0300
+        Fri, 20 Oct 2023 07:07:04 -0700 (PDT)
+Date:   Fri, 20 Oct 2023 17:07:00 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     willy@infradead.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] ufs: add ufs_get_locked_folio and ufs_put_locked_folio
-Message-ID: <ba3327ae-3c2a-4a5e-a809-3716c278fe15@moroto.mountain>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, Hyunchul Lee <hyc.lee@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ksmbd: prevent some integer overflows
+Message-ID: <205c4ec1-7c41-4f5d-8058-501fc1b5163c@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -62,49 +67,57 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Matthew Wilcox (Oracle),
+The "payload_sz" comes from the user and it can be to U32_MAX.  On a
+32bit system that could lead to integer overflows and crashing.
 
-The patch 2aadca213a3f: "ufs: add ufs_get_locked_folio and
-ufs_put_locked_folio" from Oct 16, 2023 (linux-next), leads to the
-following Smatch static checker warning:
+Fixes: 0626e6641f6b ("cifsd: add server handler for central processing and tranport layers")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/smb/server/transport_ipc.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-fs/ufs/util.c:248 ufs_get_locked_folio() warn: 'folio' is an error pointer or valid
-fs/ufs/util.c:266 ufs_get_locked_folio() error: 'folio' dereferencing possible ERR_PTR()
+diff --git a/fs/smb/server/transport_ipc.c b/fs/smb/server/transport_ipc.c
+index b49d47bdafc9..086e5ee4ebb3 100644
+--- a/fs/smb/server/transport_ipc.c
++++ b/fs/smb/server/transport_ipc.c
+@@ -227,9 +227,8 @@ static void ipc_update_last_active(void)
+ static struct ksmbd_ipc_msg *ipc_msg_alloc(size_t sz)
+ {
+ 	struct ksmbd_ipc_msg *msg;
+-	size_t msg_sz = sz + sizeof(struct ksmbd_ipc_msg);
+ 
+-	msg = kvzalloc(msg_sz, GFP_KERNEL);
++	msg = kvzalloc(size_add(sizeof(struct ksmbd_ipc_msg), sz), GFP_KERNEL);
+ 	if (msg)
+ 		msg->sz = sz;
+ 	return msg;
+@@ -709,7 +708,7 @@ struct ksmbd_rpc_command *ksmbd_rpc_write(struct ksmbd_session *sess, int handle
+ 	struct ksmbd_rpc_command *req;
+ 	struct ksmbd_rpc_command *resp;
+ 
+-	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
++	msg = ipc_msg_alloc(size_add(sizeof(struct ksmbd_rpc_command) + 1, payload_sz));
+ 	if (!msg)
+ 		return NULL;
+ 
+@@ -757,7 +756,7 @@ struct ksmbd_rpc_command *ksmbd_rpc_ioctl(struct ksmbd_session *sess, int handle
+ 	struct ksmbd_rpc_command *req;
+ 	struct ksmbd_rpc_command *resp;
+ 
+-	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
++	msg = ipc_msg_alloc(size_add(sizeof(struct ksmbd_rpc_command) + 1, payload_sz));
+ 	if (!msg)
+ 		return NULL;
+ 
+@@ -782,7 +781,7 @@ struct ksmbd_rpc_command *ksmbd_rpc_rap(struct ksmbd_session *sess, void *payloa
+ 	struct ksmbd_rpc_command *req;
+ 	struct ksmbd_rpc_command *resp;
+ 
+-	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
++	msg = ipc_msg_alloc(size_add(sizeof(struct ksmbd_rpc_command) + 1, payload_sz));
+ 	if (!msg)
+ 		return NULL;
+ 
+-- 
+2.42.0
 
-fs/ufs/util.c
-    243 struct folio *ufs_get_locked_folio(struct address_space *mapping,
-    244                                  pgoff_t index)
-    245 {
-    246         struct inode *inode = mapping->host;
-    247         struct folio *folio = filemap_lock_folio(mapping, index);
---> 248         if (!folio) {
-
-Should this be if (!IS_ERR(folio)) {
-
-    249                 folio = read_mapping_folio(mapping, index, NULL);
-    250 
-    251                 if (IS_ERR(folio)) {
-    252                         printk(KERN_ERR "ufs_change_blocknr: read_mapping_folio error: ino %lu, index: %lu\n",
-    253                                mapping->host->i_ino, index);
-    254                         return folio;
-    255                 }
-    256 
-    257                 folio_lock(folio);
-    258 
-    259                 if (unlikely(folio->mapping == NULL)) {
-    260                         /* Truncate got there first */
-    261                         folio_unlock(folio);
-    262                         folio_put(folio);
-    263                         return NULL;
-    264                 }
-    265         }
-    266         if (!folio_buffers(folio))
-                                   ^^^^^
-
-
-    267                 create_empty_buffers(folio, 1 << inode->i_blkbits, 0);
-    268         return folio;
-    269 }
-
-regards,
-dan carpenter
