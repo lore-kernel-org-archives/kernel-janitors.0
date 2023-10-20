@@ -2,98 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3332DC0032E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 16:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D80BC0032E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 17:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbjJTQtd (ORCPT
+        id S1377706AbjJTR3I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 12:49:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59858 "EHLO
+        Fri, 20 Oct 2023 13:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjJTQtc (ORCPT
+        with ESMTP id S229905AbjJTR3H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 12:49:32 -0400
-Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8F9CA
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 09:49:30 -0700 (PDT)
-Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-1ea48ef2cbfso798800fac.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 Oct 2023 09:49:30 -0700 (PDT)
+        Fri, 20 Oct 2023 13:29:07 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5650D7;
+        Fri, 20 Oct 2023 10:29:02 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-6b5cac99cfdso987380b3a.2;
+        Fri, 20 Oct 2023 10:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697820566; x=1698425366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+yT1FhZ3b/ibL0Fh6OvbZfjd8B9u/pcLk4nz41h94Ws=;
-        b=Pru0MRU6xoF597SafPhHsjyD9rLUE65VUGShFljD5/+jzIDkRmi5q1vbVYN8OOfF5T
-         lWuuHJ6+4nU4NH4A2rb/e+GA4HoreY7gkN8qZSSnqst71/XSEn34i2vygk8cyePpNfUf
-         dB8gpMb+6/ITbw4YJla10Tp+Fiw7jzF0aSBlEs9ShVKjwz8S0eFBzfQrHi1vTkn1ZdaR
-         eV33nSwoKJpwSG8irMN6i4/hOyUVfQp08beAKDVP3NiQhZQZ4/WEl0mDd13ObIl8k9Xa
-         8E6ReFKSwLclqa47R63AGPzBgMOtB0KL8Dw8I95qAg9+h6aJX7GVcDa26WBGPqZDX8UX
-         ycow==
+        d=gmail.com; s=20230601; t=1697822942; x=1698427742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NxB8vtzhJUprPLKYP1Ef80ZPGLv0Ykbm1oiksB9CNqo=;
+        b=i55LKdik00kaTmHcfGHC+4iW4DSxfbq08j46wehLxgakkMCgzwIJ58HQCDvkNJgei5
+         DIYBhbUc+YQcy1RegXCxPA4ENnnK9Hl1LgD1YwHZMb5j2Rf44yP43+Mk+L7OCVrbnY14
+         hI7hIryoBSqnyefEW21rAtb4kQHk+UmrrmrB1lDnA6RIO2ITcEw/3Z/JEs6z5vNmiToS
+         mxshMeD9cXDQg7co7SCaO3Ik/BFNB/tS+dloUqmJCJ3UnsbJLLPqznPK0XtOerZOWN0r
+         sw7uFoW6kQcxrfz9oT/Ewe2i2cRo1HayOWVZJR5N5pCtL1UwYR9qlJ6m3CgaEQF0DLQC
+         +ALw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697820566; x=1698425366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+yT1FhZ3b/ibL0Fh6OvbZfjd8B9u/pcLk4nz41h94Ws=;
-        b=lc1r4pISl7ameeZXqJ93eFoEc+/n+me72mVwE0hJTzIT1u0uXu0mGmcTXJkg7thfSO
-         aWI13NpwwUoBJH41G/7pKcOyWCLSNXz22BSWxIwGgZZiguU3Sv3OYYPz9lxaoDXQNWNc
-         4uYsXNeRPwXWA3yaqA5VJKX67srMMQSwhhHthzmSaGSmLjvE0DnCQsCv8cNDbRzTNL0S
-         Kq65Nos8711FRImSCbMPK0fzrY8ZvH4OdGMrOC7am1MJrqGlfPHU7clSen06eRAQ8rFw
-         9Il7JaVhOpEt3teBcdjSTCGTKrAMEdLVZ/YFi85/ITgsa5OMjofebD3mIMYNRrzetT0y
-         MMPA==
-X-Gm-Message-State: AOJu0YyMK5xTd3rkvXCvc07CD0a+YZrlQIPymVqHcTw4fUFuxhCMBs4f
-        HevLE6eMCkRxc8akmAuI+Sym1TRvA8SUS4o/aKQ=
-X-Google-Smtp-Source: AGHT+IFe2AqbZem12Ct2F0B+zqQDX0QDjsDeIc2tnLVO7E8floLQHExpjbvePO8+PcbOomECrxwTzTDZ6GiaAD/y3q0=
-X-Received: by 2002:a05:6870:1382:b0:1e9:e5b2:759b with SMTP id
- 2-20020a056870138200b001e9e5b2759bmr2068365oas.40.1697820566310; Fri, 20 Oct
- 2023 09:49:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697822942; x=1698427742;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NxB8vtzhJUprPLKYP1Ef80ZPGLv0Ykbm1oiksB9CNqo=;
+        b=bWTw+5CWXzWsp2uaC3cWG5PsnhE+HhgmCRgs/MHgEUOmfdWqtz7iV5lIbdMsnEi1MO
+         ZWMjUnLvB11aaSJdGcJmxNQ8Wg8gafxvZ2k72NcRf97XPKCd2gTsSvwlKEfSNdne5nJj
+         wLkAySpOgtIX4k0MJ//cebfCUMrP7zO0+IfTfyO5VdqaRUwKfDONDbCEKFZgVmjJWMD6
+         6zF4WiprY9o0+qbGxFKvWNk+egLIqqSvW8GT9/uvc5SEi6kN6ftVQRZFeUoRHOil1Iw5
+         DZy/ZSjYsgq40s04IU2jbzzR5cJdbeXtIFcXBNX8qJpUkIXaqKdR0z1ikiGcYr9ShjsD
+         8woA==
+X-Gm-Message-State: AOJu0YzFbt8NmJ/xV8hh8kr1wL6w5t2nAjOtfpaqOhciyV4pxByf3GBS
+        Sur+Fa/82LuAvES0op5U7pU5xOL5lKd8X/qE
+X-Google-Smtp-Source: AGHT+IEIO++MhDiW2A0cmoep73n/pDwBrHZus56cH9G+41Iy7TbfquNrCIf0vsHII6D2kTBcfJvZYQ==
+X-Received: by 2002:a05:6a20:4321:b0:14e:b4d5:782d with SMTP id h33-20020a056a20432100b0014eb4d5782dmr2601313pzk.2.1697822942105;
+        Fri, 20 Oct 2023 10:29:02 -0700 (PDT)
+Received: from [0.0.0.0] (74.211.104.32.16clouds.com. [74.211.104.32])
+        by smtp.gmail.com with ESMTPSA id u7-20020aa78487000000b00694fee1011asm1778804pfn.208.2023.10.20.10.28.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Oct 2023 10:29:01 -0700 (PDT)
+Message-ID: <d2cb55a9-6bc0-47a0-a812-418d187c2c00@gmail.com>
+Date:   Sat, 21 Oct 2023 01:28:50 +0800
 MIME-Version: 1.0
-References: <a1f3242f-1aae-4b46-9893-36b11ee0a6dd@moroto.mountain>
- <0882a964-770e-418c-9c34-1a64195baafc@moroto.mountain> <20231020093626.bae70759c0f0fe5ee5159eae@linux-foundation.org>
-In-Reply-To: <20231020093626.bae70759c0f0fe5ee5159eae@linux-foundation.org>
-From:   Vishal Moola <vishal.moola@gmail.com>
-Date:   Fri, 20 Oct 2023 09:49:15 -0700
-Message-ID: <CAOzc2pzzwq2G9CV1cHh2i1RcXi2KLtd=aHaqK1HQjiJwgnjLKQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/khugepaged: Fix a NULL vs IS_ERR() bug in collapse_pte_mapped_thp()
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] scsi: scsi_debug: delete some bogus error checking
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Wenchao Hao <haowenchao2@huawei.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f96d6366-9271-4020-ab66-f75737a1e8bd@moroto.mountain>
+From:   Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <f96d6366-9271-4020-ab66-f75737a1e8bd@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 20, 2023 at 9:36=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Fri, 20 Oct 2023 17:14:36 +0300 Dan Carpenter <dan.carpenter@linaro.or=
-g> wrote:
->
-> > This was changed from find_lock_page() which returns NULL to
-> > filemap_lock_folio() which returns error pointers.  Update the
-> > error checking to match.
-> >
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -1508,7 +1508,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm,=
- unsigned long addr,
-> >
-> >       folio =3D filemap_lock_folio(vma->vm_file->f_mapping,
-> >                              linear_page_index(vma, haddr));
-> > -     if (!folio)
-> > +     if (IS_ERR(folio))
-> >               return SCAN_PAGE_NULL;
-> >
-> >       if (folio_order(folio) !=3D HPAGE_PMD_ORDER) {
->
-> Also doesn't appear applicable to current kernels?
+On 2023/10/20 22:15, Dan Carpenter wrote:
+> Smatch complains that "dentry" is never initialized.  These days everyone
+> initializes all their stack variables to zero so this means that it will
+> trigger a warning every time this function is run.
+> 
+> Really debugfs functions are not supposed to be checked for errors so
+> this checking can just be deleted.
+> 
+> Fixes: f084fe52c640 ("scsi: scsi_debug: Add debugfs interface to fail target reset")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> See my blog for more information on the history of debugfs error
+> checking:
+> 
+> https://staticthinking.wordpress.com/2023/07/24/debugfs-functions-are-not-supposed-to-be-checked/
+> ---
+>  drivers/scsi/scsi_debug.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 0a4e41d84df8..c0be9a53ac79 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -1127,7 +1127,6 @@ static const struct file_operations sdebug_target_reset_fail_fops = {
+>  static int sdebug_target_alloc(struct scsi_target *starget)
+>  {
+>  	struct sdebug_target_info *targetip;
+> -	struct dentry *dentry;
+>  
+>  	targetip = kzalloc(sizeof(struct sdebug_target_info), GFP_KERNEL);
+>  	if (!targetip)
+> @@ -1135,15 +1134,9 @@ static int sdebug_target_alloc(struct scsi_target *starget)
+>  
+>  	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
+>  				sdebug_debugfs_root);
+> -	if (IS_ERR_OR_NULL(targetip->debugfs_entry))
+> -		pr_info("%s: failed to create debugfs directory for target %s\n",
+> -			__func__, dev_name(&starget->dev));
+>  
+>  	debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
+>  				&sdebug_target_reset_fail_fops);
+> -	if (IS_ERR_OR_NULL(dentry))
+> -		pr_info("%s: failed to create fail_reset file for target %s\n",
+> -			__func__, dev_name(&starget->dev));
+>  
+>  	starget->hostdata = targetip;
+>  
 
-Thanks for these. Both these fix patches address issues introduced by my
-khugepaged folio conversion patchset:
-https://lore.kernel.org/linux-mm/20231018203213.50224-1-vishal.moola@gmail.=
-com/T/#t
 
-Andrew already dropped the patchset from current kernels so I can fix a
-couple issues, v3 will include all these fixes.
+Thank you for the fix, the check for debugfs_create_file() is added because 
+scsi_debug driver is often used to test abnormal situations, here just check
+and prompt a log, so maybe you should not remove it and fix the issue
+following changes:
+
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 67922e2c4c19..d37437fa9eba 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -1144,8 +1144,8 @@ static int sdebug_target_alloc(struct scsi_target *starget)
+                pr_info("%s: failed to create debugfs directory for target %s\n",
+                        __func__, dev_name(&starget->dev));
+ 
+-       debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
+-                               &sdebug_target_reset_fail_fops);
++       dentry = debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry,
++                                    starget, &sdebug_target_reset_fail_fops);
+        if (IS_ERR_OR_NULL(dentry))
+                pr_info("%s: failed to create fail_reset file for target %s\n",
+                        __func__, dev_name(&starget->dev));
