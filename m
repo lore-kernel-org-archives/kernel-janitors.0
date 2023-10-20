@@ -2,36 +2,34 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55053C001DF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 08:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C209CDB47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Oct 2023 09:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376554AbjJTIzz (ORCPT
+        id S1376556AbjJTJAg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Oct 2023 04:55:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35398 "EHLO
+        Fri, 20 Oct 2023 05:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376546AbjJTIzy (ORCPT
+        with ESMTP id S1376521AbjJTJAd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Oct 2023 04:55:54 -0400
+        Fri, 20 Oct 2023 05:00:33 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 96248D57;
-        Fri, 20 Oct 2023 01:55:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 04C4EAB;
+        Fri, 20 Oct 2023 02:00:29 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id F1F88604889BB;
-        Fri, 20 Oct 2023 16:55:35 +0800 (CST)
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 5758960494CD8;
+        Fri, 20 Oct 2023 17:00:17 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-To:     avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        jdelvare@suse.com, linux@roeck-us.net, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de
-Cc:     Su Hui <suhui@nfschina.com>, openbmc@lists.ozlabs.org,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] hwmon: npcm750-pwm: add an error code check in npcm7xx_en_pwm_fan
-Date:   Fri, 20 Oct 2023 16:55:19 +0800
-Message-Id: <20231020085518.198477-1-suhui@nfschina.com>
+To:     andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, richardcochran@gmail.com
+Cc:     Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] net: dsa: mv88e6xxx: add an error code check in mv88e6352_tai_event_work
+Date:   Fri, 20 Oct 2023 17:00:04 +0800
+Message-Id: <20231020090003.200092-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,27 +37,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-npcm7xx_pwm_config_set() can return '-ENODEV' for failed. So check
-the value of 'ret' after calling npcm7xx_pwm_config_set().
+mv88e6xxx_tai_write() can return error code (-EOPNOTSUPP ...) if failed.
+So check the value of 'ret' after calling mv88e6xxx_tai_write().
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/hwmon/npcm750-pwm-fan.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/dsa/mv88e6xxx/ptp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
-index 10ed3f4335d4..4702e4edc662 100644
---- a/drivers/hwmon/npcm750-pwm-fan.c
-+++ b/drivers/hwmon/npcm750-pwm-fan.c
-@@ -875,6 +875,8 @@ static int npcm7xx_en_pwm_fan(struct device *dev,
- 	data->pwm_present[pwm_port] = true;
- 	ret = npcm7xx_pwm_config_set(data, pwm_port,
- 				     NPCM7XX_PWM_CMR_DEFAULT_NUM);
-+	if (ret)
-+		return ret;
+diff --git a/drivers/net/dsa/mv88e6xxx/ptp.c b/drivers/net/dsa/mv88e6xxx/ptp.c
+index ea17231dc34e..56391e09b325 100644
+--- a/drivers/net/dsa/mv88e6xxx/ptp.c
++++ b/drivers/net/dsa/mv88e6xxx/ptp.c
+@@ -182,6 +182,10 @@ static void mv88e6352_tai_event_work(struct work_struct *ugly)
+ 	mv88e6xxx_reg_lock(chip);
+ 	err = mv88e6xxx_tai_write(chip, MV88E6XXX_TAI_EVENT_STATUS, status[0]);
+ 	mv88e6xxx_reg_unlock(chip);
++	if (err) {
++		dev_err(chip->dev, "failed to write TAI status register\n");
++		return;
++	}
  
- 	ret = of_property_count_u8_elems(child, "cooling-levels");
- 	if (ret > 0) {
+ 	/* This is an external timestamp */
+ 	ev.type = PTP_CLOCK_EXTTS;
 -- 
 2.30.2
 
