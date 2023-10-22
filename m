@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D1DC00A8F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Oct 2023 21:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A4CC00A8F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Oct 2023 21:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232724AbjJVVAI (ORCPT
+        id S232804AbjJVVA2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Oct 2023 17:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
+        Sun, 22 Oct 2023 17:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbjJVVAH (ORCPT
+        with ESMTP id S232655AbjJVVA0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Oct 2023 17:00:07 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A670F7
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 Oct 2023 14:00:04 -0700 (PDT)
+        Sun, 22 Oct 2023 17:00:26 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF795188
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 Oct 2023 14:00:24 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id ufYFqwcwpG6boufYFqoC7e; Sun, 22 Oct 2023 23:00:02 +0200
+        id ufYFqwcwpG6boufYdqoCCl; Sun, 22 Oct 2023 23:00:23 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1698008402;
-        bh=73cQQIxO45qz3cOFWQdWJSGSNfMmo4mVxgrZWMonIWY=;
-        h=From:To:Cc:Subject:Date;
-        b=W0jDMP76iQYbOVkh8s0a7nAGBI9/PsvZpt5OmcjtevMyXpYOxcpRCJivVzH6a+8/b
-         JHWcrTT2HHXpXLixt0PdiPc6KyDxglR4iVrjsHnHfa6aiz1fy0tPnAA7w2JWivP4pm
-         u3CPtXZUYgbL9dzQ7ZSp64O5e5n50XKGz8K5UeNhlO1M2MUG1kKYgcXa4P0rVlfBfm
-         rJTXzrq5Dt497JsQuAeJ3W4+SJEFRCk2C2D0q+A2/eZbnwocU0knlXpk7xjIiyGTHv
-         3gM7JzerLUSCATt/C1dx0NNp+mCNhTerUQK1RbwiMQQmOMb25D4txUe+b8lFpbaANP
-         XZfxbwnQZL+Wg==
+        s=t20230301; t=1698008423;
+        bh=W0mHaNEAAUX2nTaO6oddXS59CQugHmEWhSnV8c4UJ+w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=UxbDtzfouZDnBiHAY7DY4xX5Tf2OqORvmMe7We+8GBAdJ3IU/P+6Q9u7nxkUNbxU0
+         XiNAMfBiNWFs99Zczv0LH6m6oj5Kq6Iji3ALJUQyKjWMHTw4uio+/MYJnwA1bO/6+Q
+         RnhczO2O942rlK/5B1OzgsvX3uICfJg05m6jD92x7lueFfPc3fAxZH56OYqkkb/X86
+         Y9OzKhbYJVwu3OyF7lcYW1Bf9nx7kBvonzjkLokWtftsIqhRcJ8TDYt86/eUTZ1SBv
+         0NbQCcTyFss5/bkwM1kZ8lpoRy68YLlV7GfW2OL6UPSGvPg1MerPNx/VYUilpuRkFd
+         Hsq7qCbOo1Oqg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Oct 2023 23:00:02 +0200
+X-ME-Date: Sun, 22 Oct 2023 23:00:23 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
@@ -40,35 +40,47 @@ To:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
 Cc:     felix.manlunas@cavium.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net 0/2] liquidio: Fix an off by one in octeon_download_firmware()
-Date:   Sun, 22 Oct 2023 22:59:45 +0200
-Message-Id: <cover.1698007858.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net 1/2] liquidio: Fix an off by one in octeon_download_firmware()
+Date:   Sun, 22 Oct 2023 22:59:46 +0200
+Message-Id: <30f085627802594da71bb0b5ca52213ab11301fc.1698007858.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1698007858.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1698007858.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This serie fixes an off by one related to the usage of strncat() in
-octeon_download_firmware().
+In order to append the 'boottime' string to 'h->bootcmd', the final NULL
+has to betaken into account when checking if there is enough space.
 
-The first patch is a minimal fix.
+Fixes: 907aaa6babe1 ("liquidio: pass date and time info to NIC firmware")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/cavium/liquidio/octeon_console.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The 2nd one is an attempt to remove strncat() which is used in a wrong way
-most of the time.
-It removes the need of an intermediate buffer but may need further discussions.
-(i.e. is it a good idea to update h->bootcmd directly?)
-
-Both patches are compile tested only.
-
-Christophe JAILLET (2):
-  liquidio: Fix an off by one in octeon_download_firmware()
-  liquidio: Simplify octeon_download_firmware()
-
- .../net/ethernet/cavium/liquidio/octeon_console.c   | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_console.c b/drivers/net/ethernet/cavium/liquidio/octeon_console.c
+index 67c3570f875f..bd6baf2872a5 100644
+--- a/drivers/net/ethernet/cavium/liquidio/octeon_console.c
++++ b/drivers/net/ethernet/cavium/liquidio/octeon_console.c
+@@ -899,13 +899,13 @@ int octeon_download_firmware(struct octeon_device *oct, const u8 *data,
+ 	ret = snprintf(boottime, MAX_BOOTTIME_SIZE,
+ 		       " time_sec=%lld time_nsec=%ld",
+ 		       (s64)ts.tv_sec, ts.tv_nsec);
+-	if ((sizeof(h->bootcmd) - strnlen(h->bootcmd, sizeof(h->bootcmd))) <
++	if ((sizeof(h->bootcmd) - strnlen(h->bootcmd, sizeof(h->bootcmd))) <=
+ 		ret) {
+ 		dev_err(&oct->pci_dev->dev, "Boot command buffer too small\n");
+ 		return -EINVAL;
+ 	}
+ 	strncat(h->bootcmd, boottime,
+-		sizeof(h->bootcmd) - strnlen(h->bootcmd, sizeof(h->bootcmd)));
++		sizeof(h->bootcmd) - strnlen(h->bootcmd, sizeof(h->bootcmd)) - 1);
+ 
+ 	dev_info(&oct->pci_dev->dev, "Writing boot command: %s\n",
+ 		 h->bootcmd);
 -- 
 2.34.1
 
