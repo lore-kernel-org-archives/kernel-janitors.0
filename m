@@ -2,96 +2,56 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5676C25B46
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 18:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F2EC25B45
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 18:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjJWSdJ (ORCPT
+        id S233449AbjJWSt4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 14:33:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37608 "EHLO
+        Mon, 23 Oct 2023 14:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230121AbjJWSdI (ORCPT
+        with ESMTP id S233387AbjJWStx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 14:33:08 -0400
-Received: from out.smtpout.orange.fr (out-16.smtpout.orange.fr [193.252.22.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22438F
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 11:33:05 -0700 (PDT)
-Received: from localhost.localdomain ([89.207.171.96])
-        by smtp.orange.fr with ESMTPSA
-        id uzjXqFyhBlciauzjaqWBr8; Mon, 23 Oct 2023 20:33:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1698085983;
-        bh=FMjgweLhTo5SkdcoVkpbQPkyPY7V0wNxVnhTVFmu8Uw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=emNSBpG/a9z3B1LDISJdjQaKSpJTUuKZpDTHiYtYZlavdx3+54rvcUgu0Cn2sHtnl
-         3FOcFQnp8G5lOpqX9RY0+ui+ci8ifYkIARA+gttPtI+ytelf1TlFTL80WgtS0+yRFe
-         BAmDhOQYLMaQgpbMSW30h0IIfvUfSwQl1o3aEz/t5HqWgKGFN0G1nj+F03Prik93zi
-         jXQ0MuoExuirfsSiR6of0Bk9z+685/GYw7SQfZM6cmnzFjt5VEKxkRk7kRUUHQRP6W
-         sAntpAAf820X/JJyE8N0YeshMzhBqn5vqASJOvWRj679qL5D4SzO6V1RH4QTgrN9cT
-         +VqLoqedq9CDw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 23 Oct 2023 20:33:03 +0200
-X-ME-IP: 89.207.171.96
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rafael@kernel.org, lenb@kernel.org
-Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/4] ACPI: sysfs: Fix the check for a potential string truncation
-Date:   Mon, 23 Oct 2023 20:32:54 +0200
-Message-Id: <20001867d5d19c3b3e677f6020750cc232b3325b.1698081019.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 23 Oct 2023 14:49:53 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DD7D78
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 11:49:51 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0D9C433CC;
+        Mon, 23 Oct 2023 18:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1698086991;
+        bh=m+WlsyLq5l1Kq4y/rSEj4WsaDxO+2meb6Bp7ach1P2o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=08iJPnxihDePlRvjA//xTPdu+vZrhzsIrEZReQhg9CuciLY5QDQyTEyPEYh7wLLCR
+         rRjALXNupBFb80HLEaVq/RbTrg1MrHVpabdbmfCDXOQn9NjbRgpAVakbGBB73+kJ0d
+         /bU9CBXtF+ssadrumQEWyPtGtB0QgZiU1fCUNFok=
+Date:   Mon, 23 Oct 2023 11:49:49 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: KTODO automated TODO lists
+Message-Id: <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+In-Reply-To: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-snprintf() does not return negative values on error.
-To know if the buffer was too small, the returned value should be compared
-with the length of the passed buffer. If it is bigger or equal, then the
-output has been truncated.
+On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Update the test for truncation accordingly.
+> Yesterday someone on my lists just sent an email looking for kernel
+> tasks. 
 
-Also return -ENOMEM in such a case, as already done below in the same
-functions.
+Well here's a task: write a bot which follows the mailing lists and
+sends people nastygrams if one of their emails is more than 95%(?)
+quoted text.
 
-Fixes: 8765c5ba1949 ("ACPI / scan: Rework modalias creation when "compatible" is present")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/acpi/device_sysfs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It's happening significantly more lately.  Possibly because the gmail
+client helpfully hides quoted text.
 
-diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-index 9d8e90744cb5..4deb36dccb73 100644
---- a/drivers/acpi/device_sysfs.c
-+++ b/drivers/acpi/device_sysfs.c
-@@ -158,8 +158,8 @@ static int create_pnp_modalias(const struct acpi_device *acpi_dev, char *modalia
- 		return 0;
- 
- 	len = snprintf(modalias, size, "acpi:");
--	if (len <= 0)
--		return len;
-+	if (len >= size)
-+		return -ENOMEM;
- 
- 	size -= len;
- 
-@@ -212,8 +212,8 @@ static int create_of_modalias(const struct acpi_device *acpi_dev, char *modalias
- 	len = snprintf(modalias, size, "of:N%sT", (char *)buf.pointer);
- 	ACPI_FREE(buf.pointer);
- 
--	if (len <= 0)
--		return len;
-+	if (len >= size)
-+		return -ENOMEM;
- 
- 	of_compatible = acpi_dev->data.of_compatible;
- 	if (of_compatible->type == ACPI_TYPE_PACKAGE) {
--- 
-2.32.0
-
+Probably not a great way of becoming popular.
