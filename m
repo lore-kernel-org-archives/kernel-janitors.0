@@ -2,74 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F402AC25B46
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 19:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B6FC25B46
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 20:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjJWTlx (ORCPT
+        id S229968AbjJWUJj convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 15:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
+        Mon, 23 Oct 2023 16:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbjJWTlw (ORCPT
+        with ESMTP id S229482AbjJWUJi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 15:41:52 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EA8BE
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 12:41:50 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4579AC433C8;
-        Mon, 23 Oct 2023 19:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698090109;
-        bh=OlH4XjprJoV3SDdpbTy99xlKsXNxkPszOjj1otladfI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PW2DULXfgacuAqKWGrEKpODTf8CprrVatOu13kJyFkzMUoARbu9A+y6CWacngLpvc
-         wfi2GT/VnVtRyQQ0U93UmFJNa5jZ/RYd6cbrZCHpZ9IA3vs4tS20U7/K+zyGhwSxAz
-         4KMP3EbRT++3But83IqEq4f1wsIeh5BjJUCEZd8FlPhXcc9OtDkKze41Zl9j/2RFK+
-         W5MRRq4L3+1GF+GnOBk5thIyOM0hIWTZeMqKcsf+la92A1+cvMberTtMk1CDy21rRx
-         8lAvd/qZ0LVmKHgYYl3Nz/mRU/+cgQvsIYQOXhiT+K6v3wM24eDhpZBJ4F453cutW0
-         FWWf8hL1Dalfg==
-Date:   Mon, 23 Oct 2023 15:41:48 -0400
-From:   Konstantin Ryabitsev <mricon@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: KTODO automated TODO lists
-Message-ID: <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
+        Mon, 23 Oct 2023 16:09:38 -0400
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7712F9;
+        Mon, 23 Oct 2023 13:09:36 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-57de3096e25so325511eaf.1;
+        Mon, 23 Oct 2023 13:09:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698091776; x=1698696576;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VBRQn/+2CoCnRG/UpsIRpdz1Uxer0EBXhtYg8c4HrP8=;
+        b=F+8EPtuKJhSXVT9MmCijhEFG4yMGPV1ARLDfhI/l8H1gnrPrTvDkiyd3LycBMvnCfa
+         an4nAgSp+R9JAAdujvSvVjXAOePzdgZrUHHP6ytdkbkoY+JrXhHhpoXEVM5Ai/eAHkfX
+         ZQen0K+jpfV85aTmGncaOFha0JSEjqSgAp2YKVgrZe1hZEEp5hKGbU8asloQIjnuPCPa
+         UbdZXPDMoHn7XJuERK8nwXi2L2m5uwwTTOdJogTrxHFzopIXtgsilEg9oz7jSfmzP78A
+         UlBwFVtr9h/SoAoCj1luVM2jlz2tNdS8AI37qdUgUlLbD5DE01kKMIlLIpJFLAYND7gh
+         CLoQ==
+X-Gm-Message-State: AOJu0Yy3q/qrlDQrSiJWna1JMAgWAhips231IrVjqXux4a/JB9tGfXxE
+        5PXXCrMXVMbOkVMKxVhWpGOTPsnlqqFZxtlTUzvnI26p
+X-Google-Smtp-Source: AGHT+IGoqvQxwQn+qvVRNOgCRCySjLvm7UySkMEB0RQE4CLReVM7ZkEekFHMAZs1YAuLbjHJQCbuu6gpb0jhlXEaAsE=
+X-Received: by 2002:a4a:e7d1:0:b0:583:ec88:e0 with SMTP id y17-20020a4ae7d1000000b00583ec8800e0mr10230228oov.0.1698091775886;
+ Mon, 23 Oct 2023 13:09:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
+References: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 23 Oct 2023 22:09:24 +0200
+Message-ID: <CAJZ5v0h9mfQoiok6URGaw7OHjHCFxPWDxiP68NGe9Ow-8PY0jA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] ACPI: sysfs: Fix some issues in create_of_modalias()
+ and create_pnp_modalias()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 23, 2023 at 08:55:56AM -1000, Linus Torvalds wrote:
-> > Well here's a task: write a bot which follows the mailing lists and
-> > sends people nastygrams if one of their emails is more than 95%(?)
-> > quoted text.
-> 
-> I think that might be better off as a spam filter rule.
-> 
-> Don't make it some after-the-fact "trawl the lists". Just make it a
-> bounce with a "you quoted too much". Same as the html avoidance.
+On Mon, Oct 23, 2023 at 7:32 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> All issues have been introduced by the same commit, 8765c5ba1949 ("ACPI
+> / scan: Rework modalias creation when "compatible" is present")
+>
+> The first 2 patches fixe some issues related to string truncation checks
+> and to computation of the available space in the output buffer.
+>
+> The 2 others are just some clean-ups.
+>
+> Christophe JAILLET (4):
+>   ACPI: sysfs: Fix the check for a potential string truncation
+>   ACPI: sysfs: Fix a potential out-of-bound write in
+>     create_of_modalias()
+>   ACPI: sysfs: Remove some useless trailing NULL writes
+>   ACPI: sysfs: Remove some dead code
+>
+>  drivers/acpi/device_sysfs.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+>
+> --
 
-I know people aren't being very serious, but automating this away either
-aggressively (reject as spam) or passive-agressively (whine at poster) will
-run into rare but valid corner cases. For example, we have no way of
-distinguishing between "this person quoted too much from previous message" and
-"this person posted a large but relevant quote from docs or another
-conversation," and so we will likely punish/annoy the innocent.
+Thanks for the fixes!
 
-It's better to treat this as a mentoring opportunity and send an off-list
-reply with "please trim your quotes" and maybe a link to
-https://people.kernel.org/tglx/notes-about-netiquette
+I would combine patch [1/4] with patch [2/4] and patch [3/4] with
+patch [4/4], though.
 
-If it helps, I can add a mailing list etiquette page on subspace.kernel.org,
-so it's easier to find.
-
--K
+If that's OK, I can do that while applying the patches.
