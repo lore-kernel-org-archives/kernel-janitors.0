@@ -2,78 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD3CC0032E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 01:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DC8C0032E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 01:34:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbjJWB1A (ORCPT
+        id S233027AbjJWBeK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Oct 2023 21:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55206 "EHLO
+        Sun, 22 Oct 2023 21:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233155AbjJWB0x (ORCPT
+        with ESMTP id S232989AbjJWBeI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Oct 2023 21:26:53 -0400
+        Sun, 22 Oct 2023 21:34:08 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 33375D41;
-        Sun, 22 Oct 2023 18:26:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1ED30F1;
+        Sun, 22 Oct 2023 18:34:05 -0700 (PDT)
 Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 8D33D6047A8C6;
-        Mon, 23 Oct 2023 09:26:35 +0800 (CST)
-Message-ID: <394deb86-89c8-9e77-eb92-8fca21997083@nfschina.com>
-Date:   Mon, 23 Oct 2023 09:26:34 +0800
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id E57BE6047A8EA;
+        Mon, 23 Oct 2023 09:33:52 +0800 (CST)
+Message-ID: <7f81d365-0440-de01-8be4-9c8d3ab9d69c@nfschina.com>
+Date:   Mon, 23 Oct 2023 09:33:52 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
-Subject: Re: [PATCH v2] i40e: add an error code check in i40e_vsi_setup
+Subject: Re: [PATCH 2/2] phy: mapphone-mdm6600: fix an error code problem in
+ inv_mpu6050_read_raw
 Content-Language: en-US
-To:     Jacob Keller <jacob.e.keller@intel.com>
-Cc:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     jic23@kernel.org, lars@metafoo.de, jean-baptiste.maneyrol@tdk.com,
+        chenhuiz@axis.com, andy.shevchenko@gmail.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <58d18354-dbd6-47d3-93a8-ba0446dcc8f6@intel.com>
+In-Reply-To: <20231020165509.00003350@Huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/10/21 05:09, Jacob Keller wrote:
-
+On 2023/10/20 23:55, Jonathan Cameron wrote:
+> What does this have to do with the phy: mapphone-mdm6600?
+Oh, really sorry for this. My careless mistake :( .
+> I'm not sure why inv_mpu6050_sensor_show() doesn't return
+> the actual error code from the regmap_bulk_read() and instead replaces it
+> with -EINVAL.  Given you are tidying up this related issues perhaps change
+> that as well?
 >
-> On 10/19/2023 11:56 PM, Dan Carpenter wrote:
->> On Fri, Oct 20, 2023 at 10:43:09AM +0800, Su Hui wrote:
->>> check the value of 'ret' after calling 'i40e_vsi_config_rss'.
->>>
->>> Signed-off-by: Su Hui <suhui@nfschina.com>
->>> ---
->>> v2:
->>> - call i40e_vsi_clear_rings() to free rings(thank dan carpenter for
->>>    pointing out this).
->> Looks okay now.
->>
->> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
->>
->> regards,
->> dan carpenter
->>
->>
-> For some reason this patch doesn't appear to have hit the
-> intel-wired-lan list and is thus not being recorded in patchwork for IWL.
+> static int inv_mpu6050_sensor_show(struct inv_mpu6050_state  *st, int reg,
+> 				   int axis, int *val)
+> {
+> 	int ind, result;
+> 	__be16 d;
 >
-> Su Hui, would you mind please re-sending this so that it gets picked up
-> by patchwork? Otherwise I'm afraid that it might get lost inbetween when
-> Tony returns from vacation.
+> 	ind = (axis - IIO_MOD_X) * 2;
+> 	result = regmap_bulk_read(st->map, reg + ind, &d, sizeof(d));
+> 	if (result)
+> 		return -EINVAL;
+> //Make this return result;
 
-Sorry for the late reply, I have already resent it[1].
+Sure, I will tidy up this, Thanks for your suggestion!
 
 Su Hui
-
-[1] https://lore.kernel.org/all/20231023012024.18757-1-suhui@nfschina.com/
-
 
