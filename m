@@ -2,106 +2,160 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CBDC00A8F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 13:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ABDC004C0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 13:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbjJWNfI (ORCPT
+        id S230526AbjJWNjt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 09:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59158 "EHLO
+        Mon, 23 Oct 2023 09:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbjJWNfH (ORCPT
+        with ESMTP id S230363AbjJWNjs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 09:35:07 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7638C9B;
-        Mon, 23 Oct 2023 06:35:05 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c509f2c46cso47039161fa.1;
-        Mon, 23 Oct 2023 06:35:05 -0700 (PDT)
+        Mon, 23 Oct 2023 09:39:48 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540C2E8
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 06:39:46 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40859c46447so14023095e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 06:39:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698068103; x=1698672903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wx0BrSEgwwqDaJo2A/cSmzYDiAma8W23poMJduSA6Ow=;
-        b=nhlSRXDksbUM/cjLOmKub52Fp2knTiFJOY8CcD/notS3ykAd7cOSRXoYuyFOnf4YZ2
-         XVPF+G5HL7nVTkrfNwJC2fAVUephG1JbZ+hSwQK5hP8ixX1slVwurkH41IypOwW6SjZ9
-         ZWfc34x8ViyeXRubNeAUHHEpPvUIFqxzU8saYOrEvH8VXN5s8hH8m6dJ0g8NWEqiA8nY
-         cIroRwyZOiAPo7vD/itfofybMS18hVegWQMqdtYTduiOgoXlrXc1ZT+r8I2KhYbWcinh
-         grgpYBDYhT0mJEkUkls5Yiy8ojfZx2YOq7uTYFZJKJcd6caJ0VCQCvo9pUT0R5za/1he
-         YhUQ==
+        d=linaro.org; s=google; t=1698068384; x=1698673184; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Oex7vPSNi+K4wyo+SJFiOJvbKKmAeNdDpD4hzG0BrPE=;
+        b=wTRt2dLgXtTfcjgSlKJO0BnIf+1ysYNsl4AdW0SZkomG13IfUZe9CRa3e5DiDg7I50
+         Rx1eiBSMa8NsXgBT81Pl1DKvbQYloJYuK9H9MeTdoTtQh00Dz9MlSQ2eTJNJ8ahMGnDL
+         edVRUy68rSES3jW5+ZQALZZtjk/DqpBKZonV/RyHPCzJlbDd3hGQwZX9pKxi/u9NwnV7
+         VzvEVXM5yuHWqiRrnNIe07rByVhaVz/21wDjUKrXk9fB50EE9l1x06hmZOA9ZyODjMH/
+         fG1IXyDPZxHkTPYLVYoMg94IS7tPtZzerESYErw5cDR1rZfchcAlw8ZaSEg9jxpidspo
+         hYjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698068103; x=1698672903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wx0BrSEgwwqDaJo2A/cSmzYDiAma8W23poMJduSA6Ow=;
-        b=JkitEktwUl2HzRxkPEwLRmav2+P5kPPsxH0RhIGVwcgxqZREuvPFx2z5AIySYfxEbv
-         Fe6Er8CplKL5Bv1BlE15NyMU1NlAEynM3cWU4ypyCJOMLG+b2wXSkQa2vyAzHYD6TTQ3
-         L5J/UC9OuP56MqOFZr5+ItICbmn+TiK4Ato+fQ+XmriGYrxq1ncl8OJYhY81VE/c0WIc
-         fB5n62nLEI3S0DzuOYmc0WU8JxEFjM1ct5qYPJE2JprIhXXTomLq9etI196H08iDFyPE
-         xHpaQ7WjI+ZgbTl3Gt9SszxK9M8idwaOZYaqhMUCXulNY/Hd360Sc049gkVPlZS9SFsg
-         ivcQ==
-X-Gm-Message-State: AOJu0YzWSoCM+okuKQtgwaTj7cZKJZ34JWTfTkz1pWgAYIUBFCDXXOgB
-        Q3QW63bD80mzF9M63CZlphc=
-X-Google-Smtp-Source: AGHT+IF6iFCOYLHVJ673/GenbGT2JYzGsYEv1qorObhiXC5W33ZMltiL1xwut1ShRpGUTtslY+tkdw==
-X-Received: by 2002:a2e:9f50:0:b0:2bc:f39b:d1a8 with SMTP id v16-20020a2e9f50000000b002bcf39bd1a8mr5834000ljk.46.1698068103373;
-        Mon, 23 Oct 2023 06:35:03 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m29-20020a05600c3b1d00b003fe61c33df5sm14469380wms.3.2023.10.23.06.35.02
+        d=1e100.net; s=20230601; t=1698068384; x=1698673184;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oex7vPSNi+K4wyo+SJFiOJvbKKmAeNdDpD4hzG0BrPE=;
+        b=lEaM4TMuP7xLvIl/ii3s0hH1dIGKJaFD4R9gzrJATtvFhZwN6FsgvekIAzrr4JID9C
+         KOskUBdY112mH5cBI6xMRKgKRgOCcyZr1K717pNul8XjkAtuGa1aytQCDSrfVW+N2dZ/
+         kPwAeAILpPBRQUJchL2Pue6ZRetE12V8dmDGZHK7yhWKa+eWSkuOiH6BRe8qpnKmTBP1
+         Fq81jcIRxuKeb6rmpLCeS4GfRrUVdOIJNa7gdZnCC6PWHaF0Xdpxw/sSdeiS8lEIjtvS
+         dY72hc9r5sko1jnA3PmnZ89YGnYh0FzGrt9gUTcHlUb7iZwllx56ZRB7GQ/F9YTs3GPj
+         uJ2w==
+X-Gm-Message-State: AOJu0Yxg8eS2yZ/bNJIjegYgp0QiKiZWRuNS8gvbJoyyNaBmK5uF0ZEm
+        WIbqGEt9zUyPnx4dC9Hj6ZC+jw==
+X-Google-Smtp-Source: AGHT+IH5kAoRyKQpRMqONNTgp7G1lcXCc8F0IYiMMwvgYRXd2AetNAdDkKS9m4vRbjni1lH7htGnSQ==
+X-Received: by 2002:a5d:62c7:0:b0:32d:9d0e:7841 with SMTP id o7-20020a5d62c7000000b0032d9d0e7841mr6827228wrv.6.1698068384382;
+        Mon, 23 Oct 2023 06:39:44 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id c17-20020a5d4151000000b0032d87b13240sm7885952wrq.73.2023.10.23.06.39.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 06:35:02 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH][next] clk: sunxi-ng: nkm: remove redundant initialization of tmp_parent
-Date:   Mon, 23 Oct 2023 14:35:02 +0100
-Message-Id: <20231023133502.666559-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 23 Oct 2023 06:39:44 -0700 (PDT)
+Date:   Mon, 23 Oct 2023 16:39:40 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Wenchao Hao <haowenchao22@gmail.com>
+Cc:     Wenchao Hao <haowenchao2@huawei.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        dmaengine@vger.kernel.org, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+Message-ID: <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
+References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
+ <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable tmp_parent is being ininitialized with a value that is never
-read, the initialization is redundant and can be removed. Move the
-initialization and move the variable to the inner loop scope.
+On Sat, Oct 21, 2023 at 06:10:44PM +0800, Wenchao Hao wrote:
+> On Fri, Oct 20, 2023 at 10:15 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > There are two bug in this code:
+> 
+> Thanks for your fix, some different points of view as follows.
+> 
+> > 1) If count is zero, then it will lead to a NULL dereference.  The
+> > kmalloc() will successfully allocate zero bytes and the test for
+> > "if (buf[0] == '-')" will read beyond the end of the zero size buffer
+> > and Oops.
+> 
+> This sysfs interface is usually used by cmdline, mostly, "echo" is used
+> to write it and "echo" always writes with '\n' terminated, which would
+> not cause a write with count=0.
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/sunxi-ng/ccu_nkm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+You are saying "sysfs" but this is debugfs.  Sysfs is completely
+different.  Also saying that 'and "echo" always writes with '\n'
+terminated' is not true either even in sysfs...
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index eed64547ad42..853f84398e2b 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -21,17 +21,16 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
- 						       unsigned long *parent, unsigned long rate,
- 						       struct _ccu_nkm *nkm)
- {
--	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
-+	unsigned long best_rate = 0, best_parent_rate = *parent;
- 	unsigned long best_n = 0, best_k = 0, best_m = 0;
- 	unsigned long _n, _k, _m;
- 
- 	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
- 		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
- 			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
--				unsigned long tmp_rate;
-+				unsigned long tmp_rate, tmp_parent;
- 
- 				tmp_parent = clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
--
- 				tmp_rate = tmp_parent * _n * _k / _m;
- 
- 				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
--- 
-2.39.2
+> While in terms of security, we should add a check for count==0
+> condition and return EINVAL.
+
+Checking for zero is a valid approach.  I considered that but my way
+was cleaner.
+
+> 
+> > 2) The code does not ensure that the user's string is properly NUL
+> > terminated which could lead to a read overflow.
+> >
+> 
+> I don't think so, the copy_from_user() would limit the accessed length
+> to count, so no read overflow would happen.
+> 
+> Userspace's write would allocate a buffer larger than it actually
+> needed(usually 4K), but the buffer would not be cleared, so some
+> dirty data would be passed to the kernel space.
+> 
+> We might have following pairs of parameters for sdebug_error_write:
+> 
+> ubuf: "0 -10 0x12\n0 0 0x2 0x6 0x4 0x2"
+> count=11
+> 
+> the valid data in ubuf is "0 -10 -x12\n", others are dirty data.
+> strndup_user() would return EINVAL for this pair which caused
+> a correct write to fail.
+> 
+> You can recurrent the above error with my script attached.
+
+You're looking for the buffer overflow in the wrong place.
+
+drivers/scsi/scsi_debug.c
+  1026          if (copy_from_user(buf, ubuf, count)) {
+                                   ^^^
+We copy data from the user but it is not NUL terminated.
+
+  1027                  kfree(buf);
+  1028                  return -EFAULT;
+  1029          }
+  1030  
+  1031          if (buf[0] == '-')
+  1032                  return sdebug_err_remove(sdev, buf, count);
+  1033  
+  1034          if (sscanf(buf, "%d", &inject_type) != 1) {
+                           ^^^
+This will read beyond the end of the buffer.  sscanf() relies on a NUL
+terminator to know when then end of the string is.
+
+  1035                  kfree(buf);
+  1036                  return -EINVAL;
+  1037          }
+
+Obviously the user in this situation is like a hacker who wants to do
+something bad, not a normal users.  For a normal user this code is fine
+as you say.
+
+You will need to test this with .c code instead of shell if you want to
+see the bug.
+
+regards,
+dan carpenter
 
