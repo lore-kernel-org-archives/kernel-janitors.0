@@ -2,68 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DA9C004C0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 15:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5632C001E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 15:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjJWPRL (ORCPT
+        id S232406AbjJWPtY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 11:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40252 "EHLO
+        Mon, 23 Oct 2023 11:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjJWPRK (ORCPT
+        with ESMTP id S232212AbjJWPtW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 11:17:10 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B21DD;
-        Mon, 23 Oct 2023 08:17:07 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32caaa1c493so2478832f8f.3;
-        Mon, 23 Oct 2023 08:17:07 -0700 (PDT)
+        Mon, 23 Oct 2023 11:49:22 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108B0101;
+        Mon, 23 Oct 2023 08:49:20 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso25385795e9.3;
+        Mon, 23 Oct 2023 08:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698074226; x=1698679026; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698076158; x=1698680958; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAyRkZU+G6EHBgXjNlQRdapo8Bo6bVrz7BpJ95EsKKo=;
-        b=Q6dWGkTchYhEQO8eiI6BkdXC/b/J1vj+wusDdEoTU7V7vzZjByc8NWdV2sbqgdC+32
-         zqLEeQ8aTvTIhB+90Y9A04xw0KokWspnE0rGBlLwH8Ojw4qCK79HOoL9xqeVxDp7ErL9
-         nWiUbsxRaeMDkEAHWNcmQ5nUW30bhVhftAJIei66GCX1iJoFyrnDQb74VepsfRzhEt8i
-         q/g+tdb5YAL8rYS0Ln3gTnE7rBJxCRUa3e0B6Ot7OVPMicv/Uvj1frjk0dxZYBD8zIvx
-         cChf0icpsWJmXEFSVT0STLLTPIYzwRgCm368vKycSFGg1NavanNkzqu6cwZRCcg1MKz3
-         nkVw==
+        bh=99vvqY3a62R+FSNgedTvGTn1Ho9xYE+BPOA4cYmL7ss=;
+        b=FovKsoKoQBOTOMoCbnso84aoD1fKPtCM7hvJhFBKTXmuV+7LoFB8SlQsWONlMgqTJW
+         Supzfz8jT4CNxjxpuG6SSOrW3otFA9VDGrRE5C7pof2D0iDli/pyUypITK8AZlKjpdEo
+         cNEOHaVKcPW0gLwN5dAi25lg3tCwXx7egACdMqwOToGsIesUjgzODYXipbgSUeFWWCR9
+         rM8f/8yX0Urz+4HJy1jlKxmEEfeF/xQzZm0j0nfIEiDE+eDh09BFRwkl71PDenqlKeXU
+         mXOcO8NStbNlIEOaL677BJYKUAowpAnQ9N2q4ZgpPm1q0J6xoyDbwJOyOQBsSWx3GHBA
+         LIPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698074226; x=1698679026;
+        d=1e100.net; s=20230601; t=1698076158; x=1698680958;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jAyRkZU+G6EHBgXjNlQRdapo8Bo6bVrz7BpJ95EsKKo=;
-        b=xS+aCro8iZKZNN1gnyfTyQ7hR32myicRWn8tHQc5Dd8hQF0cHfqImxtM6tFQ7Ko45L
-         tcoXW/+nfiAS18F5uXhO2RdaFPCCppijWdadTpqa2C8zDM96j6x5AZgBBWjxZkPY/TVQ
-         fSbsDcPSvJjYIlOY3Lft98nNxOhJDhtDzpy0sIjNKtiaqpsEsKAKO7SYMxn3LUcTnEpo
-         P0OBZCAJ/gfwR6bnwNgbhJAB0bM1bt8ThxA5EfwdJXl62TWO6evOWB8DEB7SWnjdocrv
-         CRsxxXzBp2vxtvzCN+9CgfgsMLlJWoBXhhc3gPVWJnoPdl5Ny03N+krhocznRTYfWsea
-         /ZDw==
-X-Gm-Message-State: AOJu0Yww4YD3qS1L5NIM/qoPO2GrT3a1Du1q4XJls7FxOftdPkImdVYl
-        qQIyx75qsWkdmc2u5BRoy2o=
-X-Google-Smtp-Source: AGHT+IG/PhtGCsg7wXm8Rc5Irl5IiMZvAOjGLp6Od9Km/HS5gzwHrgf4OZgoP6sqwU+2RfvtoTXxsQ==
-X-Received: by 2002:adf:9dcb:0:b0:32d:a29a:b6ef with SMTP id q11-20020adf9dcb000000b0032da29ab6efmr6726291wre.23.1698074225584;
-        Mon, 23 Oct 2023 08:17:05 -0700 (PDT)
+        bh=99vvqY3a62R+FSNgedTvGTn1Ho9xYE+BPOA4cYmL7ss=;
+        b=jRko4kBSRo6b6TuZ/7jQ50kxO9lrbT5+kZWYrD28zhNzsqYFW6m2BaKz5IW2r4wM9J
+         9rVXh39zuDYBt6HoWJU40UYOkBLdiKCHBTmxCfKJOjYaV4/TelZKhkBPdPJ0FXqsOl8C
+         d6Vm/PeWteM/x2ohVLKPfO8bHforO7g6H11ja3D5fvqE+gxR+xmD+P9fgeNNuDu9Ew6H
+         Imka4CVlc6vsji/DjmV2vAMmgtsW/sWMX6VBGFp/hZ0wATfjjoc6E9AOzDAeIH4pLs+/
+         Mitd430Egu8J/431Pi6xJkwwZahbp9M4oFVx5XZ/ZmgGvkwuk02M+vieyMuWqTeAzyUs
+         d6Uw==
+X-Gm-Message-State: AOJu0YwJAM0cQTkDzRmqVPuNCTLntUykXD1/PBdmToXnC6L8XE5kmDqJ
+        0twPLXlQwSWwjkDEtHrNGeo=
+X-Google-Smtp-Source: AGHT+IG99IjlfivFo6WK5QnjYKrDjIihUfYEP6AcPPqn8XoZsXSFBeG9i6v7AO+y6rhDotBMZnRCzA==
+X-Received: by 2002:a05:600c:4f12:b0:401:bdd7:49ae with SMTP id l18-20020a05600c4f1200b00401bdd749aemr8315715wmq.18.1698076158310;
+        Mon, 23 Oct 2023 08:49:18 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b16-20020a5d5510000000b0032d2489a399sm7913701wrv.49.2023.10.23.08.17.04
+        by smtp.gmail.com with ESMTPSA id b24-20020a05600c06d800b004064e3b94afsm14420510wmn.4.2023.10.23.08.49.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 08:17:05 -0700 (PDT)
+        Mon, 23 Oct 2023 08:49:17 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
+To:     Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: mediatek: mt8186: remove redundant assignments to variable tdm_con
-Date:   Mon, 23 Oct 2023 16:17:04 +0100
-Message-Id: <20231023151704.670240-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: codecs: rt298: remove redundant assignment to d_len_code
+Date:   Mon, 23 Oct 2023 16:49:17 +0100
+Message-Id: <20231023154917.671595-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -72,32 +68,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two occurrences where variable tdm_con is being initialized
-to zero and the next statement re-assigns tdm_con to a new value. The
-initializations are redundant and can be removed.
+Variable d_len_code is being initialized to zero and then re-assigned a
+different value in all the valid cases in the following switch statement.
+The only place it is not being assigned a value is on the return for
+a default case and in this case it does not need to be assigned. The
+initialization is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/soc/mediatek/mt8186/mt8186-dai-tdm.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/codecs/rt298.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/mt8186/mt8186-dai-tdm.c b/sound/soc/mediatek/mt8186/mt8186-dai-tdm.c
-index 4148dceb3a4c..ef2801f84d27 100644
---- a/sound/soc/mediatek/mt8186/mt8186-dai-tdm.c
-+++ b/sound/soc/mediatek/mt8186/mt8186-dai-tdm.c
-@@ -416,12 +416,10 @@ static int mtk_dai_tdm_hw_params(struct snd_pcm_substream *substream,
- 	regmap_update_bits(afe->regmap, ETDM_IN1_CON1, ETDM_IN_CON1_CTRL_MASK, tdm_con);
+diff --git a/sound/soc/codecs/rt298.c b/sound/soc/codecs/rt298.c
+index 8fbd25ad9b47..ad3783ade1b5 100644
+--- a/sound/soc/codecs/rt298.c
++++ b/sound/soc/codecs/rt298.c
+@@ -789,7 +789,6 @@ static int rt298_hw_params(struct snd_pcm_substream *substream,
+ 		return -EINVAL;
+ 	}
  
- 	/* ETDM_IN1_CON3 */
--	tdm_con = 0;
- 	tdm_con = ETDM_IN_CON3_FS(tran_rate);
- 	regmap_update_bits(afe->regmap, ETDM_IN1_CON3, ETDM_IN_CON3_CTRL_MASK, tdm_con);
- 
- 	/* ETDM_IN1_CON4 */
--	tdm_con = 0;
- 	tdm_con = ETDM_IN_CON4_FS(tran_relatch_rate);
- 	if (slave_mode) {
- 		if (lrck_inv)
+-	d_len_code = 0;
+ 	switch (params_width(params)) {
+ 	/* bit 6:4 Bits per Sample */
+ 	case 16:
 -- 
 2.39.2
 
