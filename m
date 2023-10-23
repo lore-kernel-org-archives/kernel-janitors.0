@@ -2,65 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F55EC001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 07:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1191CC25B41
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 08:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbjJWHwX (ORCPT
+        id S229521AbjJWILA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 03:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33328 "EHLO
+        Mon, 23 Oct 2023 04:11:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjJWHwX (ORCPT
+        with ESMTP id S229476AbjJWIK7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 03:52:23 -0400
-X-Greylist: delayed 391 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Oct 2023 00:52:18 PDT
-Received: from mail.projektbudowlany.biz.pl (mail.projektbudowlany.biz.pl [94.177.230.190])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB14CC
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 00:52:18 -0700 (PDT)
-Received: by mail.projektbudowlany.biz.pl (Postfix, from userid 1002)
-        id 614DB827FE; Mon, 23 Oct 2023 09:45:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=projektbudowlany.biz.pl; s=mail; t=1698047143;
-        bh=biyW755MzzVxeTjJpyR/fzHTo/SOjoGZzb8vJNzw6Bg=;
-        h=Date:From:To:Subject:From;
-        b=MTEqdm8szxnREEGnl31Uo1Nvhpt4s+TKHNoLGNJyh13cU8yG+16yEd+giK+23OXwp
-         Ey3fc8KEKrXQ52gJaGZmWtr9A8iaY9uqkBwq0yxvgHCx0h3Dsy2AcKtYr32Os3Z65m
-         sGUWKnDVu/SLBCwd17mjFuN8LRvhJLcIwZM7eAO0Nbu1d3tUFiy/3KXesAK5cyGJp0
-         hqwPd9Go7b/NJQyyPRP/gA98y7gS6nCVNkuGzHed5Czshi45CzLj7bH539XwKjbq4F
-         Iu4A1in8amYzif/zbsVDkzO7gOZOGJy0sC3txf2TU0XXk9YD81YV1p3Zaqja1OKy0S
-         wbfrMULGaUOUw==
-Received: by mail.projektbudowlany.biz.pl for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 07:45:39 GMT
-Message-ID: <20231023084500-0.1.32.a1ji.0.eh7lm6qybs@projektbudowlany.biz.pl>
-Date:   Mon, 23 Oct 2023 07:45:39 GMT
-From:   =?UTF-8?Q? "Robert_Miko=C5=82ajczyk" ?= 
-        <robert.mikolajczyk@projektbudowlany.biz.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Apartament  nad morzem  - inwestycja
-X-Mailer: mail.projektbudowlany.biz.pl
+        Mon, 23 Oct 2023 04:10:59 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25750D6B;
+        Mon, 23 Oct 2023 01:10:57 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32d9b507b00so2212529f8f.1;
+        Mon, 23 Oct 2023 01:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698048655; x=1698653455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d7cqCaedoqoHpQD8+KvfrceThO52+AoPN4P2eMWZ0lk=;
+        b=NJ33L3H/QTwpLwqP0Lm6GJvUVM9jH76LiIt0iTIljXBJUwK23+1iO7yINTxHIKv8ow
+         6Vmid2unVbPV7jIoMMU4TeduilIlziXa0b8k4zx3M8tHkdCKDQnv1mPQrSkM0+OjaLnG
+         MupX44pVFqSYMd2Yz6exZBXIndgjpwMJ1CpbyVw1jVWGEKomK7+cPITfQwUydieUkN0U
+         VKKc1v0rWlHvpv1nkGvxZFqwdfUZnv6EagxYx+2PvvscN51i+Fe5v9r01deUpqoNksWd
+         /uvyuOTpvlC4FWioJtR1hYcvXNjRZ/JufRrWhwbNka4wOCXAnV2ivByTfhdijKJyR87t
+         uBww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698048655; x=1698653455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d7cqCaedoqoHpQD8+KvfrceThO52+AoPN4P2eMWZ0lk=;
+        b=FRHMNP/DtV6pWR732dgZAjEyLG2sWgqUQi45hKW4HCP8YXgpRtj8ogqht0FSUghfUt
+         Dlk79WK0jVHa28E4M5n0Mhu3V0deiunb48LdlAJu0kWWbimC5lX2AchD6jhx89rSwPqS
+         cj05fY7ku8X4ftkkZk9fzCgswLLi1zUXYIBr0QTBVachSEHhTiCzemAdAwMejCPlc5Tx
+         h6fAzhKqhs1of+FsLC82VFAv+vF+vNvC0OFT+GQ/pRjEpjRvoPDx61/sf6vSwUOmO/mJ
+         dmIRj8JKQ/ttgzvwsajjy6InsINxVWjOE/DvbWWUxo741FKjk4hXjvwHwe1i3e6STvGm
+         zyLA==
+X-Gm-Message-State: AOJu0YygwLVZ0SqTQ1ZomJMCr2GEMxHJnkKe2HO5NIAJyHF5Rrwmdh17
+        HIwL7YsRXJ3KU6Mez7KGTsCM8ZW14Kk=
+X-Google-Smtp-Source: AGHT+IEuu1pCWAMxs1QZIe5QYfyRiSzhhF+pj2KcV9gO4YSBwJ73Q58dPai8HlEnY56JCt10KECh/Q==
+X-Received: by 2002:a5d:4a86:0:b0:32d:a2c4:18bf with SMTP id o6-20020a5d4a86000000b0032da2c418bfmr5607012wrq.59.1698048655302;
+        Mon, 23 Oct 2023 01:10:55 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id y5-20020adff145000000b0031fd849e797sm7218480wro.105.2023.10.23.01.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 01:10:54 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jagath Jog J <jagathjog1996@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iio: imu: Fix spelling mistake "accelrometer" -> "accelerometer"
+Date:   Mon, 23 Oct 2023 09:10:54 +0100
+Message-Id: <20231023081054.617292-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+There are two spelling mistakes in dev_err messages. Fix them.
 
-czy byliby Pa=C5=84stwo zainteresowani inwestycj=C4=85 w jedno z najbardz=
-iej dochodowych przedsi=C4=99wzi=C4=99=C4=87 na rynku?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iio/imu/bmi323/bmi323_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Inwestycja w luksusowy condohotel w Mi=C4=99dzywodziu to gwarancja stopy =
-zwrotu do 8%, corocznej waloryzacji czynszu o wska=C5=BAnik inflacji, ren=
-towno=C5=9Bci, rosn=C4=85cej warto=C5=9Bci nieruchomo=C5=9Bci i mo=C5=BCl=
-iwo=C5=9B=C4=87 rozliczenia VAT do 23%.  =20
+diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+index 0bd5dedd9a63..183af482828f 100644
+--- a/drivers/iio/imu/bmi323/bmi323_core.c
++++ b/drivers/iio/imu/bmi323/bmi323_core.c
+@@ -545,7 +545,7 @@ static int bmi323_tap_event_en(struct bmi323_data *data,
+ 	guard(mutex)(&data->mutex);
+ 
+ 	if (data->odrhz[BMI323_ACCEL] < 200) {
+-		dev_err(data->dev, "Invalid accelrometer parameter\n");
++		dev_err(data->dev, "Invalid accelerometer parameter\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1453,7 +1453,7 @@ static int bmi323_enable_steps(struct bmi323_data *data, int val)
+ 
+ 	guard(mutex)(&data->mutex);
+ 	if (data->odrhz[BMI323_ACCEL] < 200) {
+-		dev_err(data->dev, "Invalid accelrometer parameter\n");
++		dev_err(data->dev, "Invalid accelerometer parameter\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.39.2
 
-Inwestor nie musi zajmowa=C4=87 si=C4=99 ob=C5=82o=C5=BCeniem, og=C5=82os=
-zeniami i negocjacj=C4=85 cen, poniewa=C5=BC dbaj=C4=85 o to profesjonali=
-=C5=9Bci. Apartament pracuje dla Pa=C5=84stwa przy minimum zaanga=C5=BCow=
-ania.
-
-Mog=C4=99 przedstawi=C4=87 szczeg=C3=B3=C5=82y tego projektu?
-
-
-Pozdrawiam
-Robert Miko=C5=82ajczyk
