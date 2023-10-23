@@ -2,67 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DC8C0032E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 01:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B10D8C0032E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 02:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbjJWBeK (ORCPT
+        id S229484AbjJWC2O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Oct 2023 21:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        Sun, 22 Oct 2023 22:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232989AbjJWBeI (ORCPT
+        with ESMTP id S229468AbjJWC2N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Oct 2023 21:34:08 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1ED30F1;
-        Sun, 22 Oct 2023 18:34:05 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id E57BE6047A8EA;
-        Mon, 23 Oct 2023 09:33:52 +0800 (CST)
-Message-ID: <7f81d365-0440-de01-8be4-9c8d3ab9d69c@nfschina.com>
-Date:   Mon, 23 Oct 2023 09:33:52 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 2/2] phy: mapphone-mdm6600: fix an error code problem in
- inv_mpu6050_read_raw
-Content-Language: en-US
-To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc:     jic23@kernel.org, lars@metafoo.de, jean-baptiste.maneyrol@tdk.com,
-        chenhuiz@axis.com, andy.shevchenko@gmail.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <20231020165509.00003350@Huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Sun, 22 Oct 2023 22:28:13 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA28E6;
+        Sun, 22 Oct 2023 19:28:08 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Vud6gWk_1698028084;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0Vud6gWk_1698028084)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Oct 2023 10:28:05 +0800
+Message-ID: <1698028017.8052797-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
+Date:   Mon, 23 Oct 2023 10:26:57 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Su Hui <suhui@nfschina.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20231020092320.209234-1-suhui@nfschina.com>
+ <20231020053047-mutt-send-email-mst@kernel.org>
+ <1697794601.5857713-2-xuanzhuo@linux.alibaba.com>
+ <20231020054140-mutt-send-email-mst@kernel.org>
+ <1697795422.0986886-1-xuanzhuo@linux.alibaba.com>
+ <20231020055943-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20231020055943-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/10/20 23:55, Jonathan Cameron wrote:
-> What does this have to do with the phy: mapphone-mdm6600?
-Oh, really sorry for this. My careless mistake :( .
-> I'm not sure why inv_mpu6050_sensor_show() doesn't return
-> the actual error code from the regmap_bulk_read() and instead replaces it
-> with -EINVAL.  Given you are tidying up this related issues perhaps change
-> that as well?
+On Fri, 20 Oct 2023 06:08:06 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> On Fri, Oct 20, 2023 at 05:50:22PM +0800, Xuan Zhuo wrote:
+> > On Fri, 20 Oct 2023 05:42:14 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> > > On Fri, Oct 20, 2023 at 05:36:41PM +0800, Xuan Zhuo wrote:
+> > > > On Fri, 20 Oct 2023 05:34:32 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> > > > > On Fri, Oct 20, 2023 at 05:23:21PM +0800, Su Hui wrote:
+> > > > > > virtqueue_resize_packed() or virtqueue_resize_split() can return
+> > > > > > error code if failed, so add a check for this.
+> > > > > >
+> > > > > > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > > > > > ---
+> > > > > >
+> > > > > > I'm not sure that return directly is right or not,
+> > > > > > maybe there are some process should do before return.
+> > > > >
+> > > > > yes - presizely what virtqueue_enable_after_reset does.
+> > > > >
+> > > > > Error handling in virtqueue_enable_after_reset is really weird BTW.
+> > > > > For some reason it overrides the error code returned.
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > > >  drivers/virtio/virtio_ring.c | 3 +++
+> > > > > >  1 file changed, 3 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > > > index 51d8f3299c10..cf662c3a755b 100644
+> > > > > > --- a/drivers/virtio/virtio_ring.c
+> > > > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > > > @@ -2759,6 +2759,9 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> > > > > >  	else
+> > > > > >  		err = virtqueue_resize_split(_vq, num);
+> > > > > >
+> > > > > > +	if (err)
+> > > > > > +		return err;
+> > > > > > +
+> > > > > >  	return virtqueue_enable_after_reset(_vq);
+> > > > >
+> > > > > So I think it should be something like:
+> > > > >
+> > > > > 	int err_reset = virtqueue_enable_after_reset(_vq);
+> > > > > 	BUG_ON(err_reset);
+> > > > >
+> > > > > 	return err;
+> > > > >
+> > > >
+> > > > How about WARN and vq->broken?
+> > > >
+> > > > Thanks.
+> > >
+> > > Well, what are the cases where it can happen practically?
+> >
+> > Device error. Such as vp_active_vq()
+> >
+> > Thanks.
 >
-> static int inv_mpu6050_sensor_show(struct inv_mpu6050_state  *st, int reg,
-> 				   int axis, int *val)
-> {
-> 	int ind, result;
-> 	__be16 d;
+> Hmm interesting. OK. But do callers know to recover?
+
+
+No.
+
+So I think WARN + broken is suitable.
+
+Thanks.
+
+
 >
-> 	ind = (axis - IIO_MOD_X) * 2;
-> 	result = regmap_bulk_read(st->map, reg + ind, &d, sizeof(d));
-> 	if (result)
-> 		return -EINVAL;
-> //Make this return result;
-
-Sure, I will tidy up this, Thanks for your suggestion!
-
-Su Hui
-
+> >
+> > >
+> > > >
+> > > > >
+> > > > >
+> > > > > >  }
+> > > > > >  EXPORT_SYMBOL_GPL(virtqueue_resize);
+> > > > > > --
+> > > > > > 2.30.2
+> > > > >
+> > >
+>
+> _______________________________________________
+> Virtualization mailing list
+> Virtualization@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
