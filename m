@@ -2,110 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FD2C25B42
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 09:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EB0C001E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 09:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbjJWJPk (ORCPT
+        id S233097AbjJWJu4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
+        Mon, 23 Oct 2023 05:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232489AbjJWJPV (ORCPT
+        with ESMTP id S232994AbjJWJuw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:15:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0403B0;
-        Mon, 23 Oct 2023 02:15:18 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39N7qj1g000810;
-        Mon, 23 Oct 2023 09:15:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=LUoQr0hYJduIxljSjQr0HmVn2PUMQz/Kl4QD0zk+G4c=;
- b=d8aJGOfiNg9+34mYtnKAuCXXJRHhxPA7tnnLe/eseF1whJLbgqdUvM/QQt4dyBBMrJvz
- sQtu0z8IJ45kkOnMVzDR0jJuXr99eN8/OhXxws8jEk6uga5h8vcdC0RmvOUzsdVREfBX
- k17fFcnGLR8rxVJLChZqaU2Q2hp1jO0rJ3reBOk8zopNbcTH3sEpjzGRcbV30QqbHeBp
- upykvrPFrYFOm/QM75tn5+T3UjlJVe0FV6y/QEhiQQ3cuoLzm522hjIBNzg9XsBG/3U/
- rZANZNnxx9bxm8nmjWfiP4Jw/lrTD8QN+J9d4VxoxJFVfNfaZM2eECoJDsfT3PNYnd23 mA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tv6873kff-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Oct 2023 09:15:13 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39N9FCN8030486
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Oct 2023 09:15:12 GMT
-Received: from [10.216.32.116] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Mon, 23 Oct
- 2023 02:15:10 -0700
-Message-ID: <bf577aca-77f5-d50c-7a3c-28b0a5b6928c@quicinc.com>
-Date:   Mon, 23 Oct 2023 14:44:59 +0530
+        Mon, 23 Oct 2023 05:50:52 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id BBACED75;
+        Mon, 23 Oct 2023 02:50:49 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 56C0460259F26;
+        Mon, 23 Oct 2023 17:50:47 +0800 (CST)
+Message-ID: <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
+Date:   Mon, 23 Oct 2023 17:50:46 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] tracing: Fix a NULL vs IS_ERR() bug in
- event_subsystem_dir()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-CC:     Masami Hiramatsu <mhiramat@kernel.org>,
-        <linux-trace-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <ff641474-84e2-46a7-9d7a-62b251a1050c@moroto.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
 Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <ff641474-84e2-46a7-9d7a-62b251a1050c@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <1698040004.5365264-4-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: j2UWuHmje0Xo7GCze61x4CmOSFT_pbgS
-X-Proofpoint-ORIG-GUID: j2UWuHmje0Xo7GCze61x4CmOSFT_pbgS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-23_06,2023-10-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=897 impostorscore=0
- spamscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310170001 definitions=main-2310230079
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 2023/10/23 13:46, Xuan Zhuo wrote:
+>>>>>>>> Well, what are the cases where it can happen practically?
+>>>>>>> Device error. Such as vp_active_vq()
+>>>>>>>
+>>>>>>> Thanks.
+>>>>>> Hmm interesting. OK. But do callers know to recover?
+>>>>> No.
+>>>>>
+>>>>> So I think WARN + broken is suitable.
+>>>>>
+>>>>> Thanks.
+>>>> Sorry for the late, is the following code okay?
+>>>>
+>>>> @@ -2739,7 +2739,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+>>>>                         void (*recycle)(struct virtqueue *vq, void *buf))
+>>>>     {
+>>>>            struct vring_virtqueue *vq = to_vvq(_vq);
+>>>> -       int err;
+>>>> +       int err, err_reset;
+>>>>
+>>>>            if (num > vq->vq.num_max)
+>>>>                    return -E2BIG;
+>>>> @@ -2759,7 +2759,15 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+>>>>            else
+>>>>                    err = virtqueue_resize_split(_vq, num);
+>>>>
+>>>> -       return virtqueue_enable_after_reset(_vq);
+>>>> +       err_reset = virtqueue_enable_after_reset(_vq);
+>>>> +
+>>>> +       if (err) {
+>>> No err.
+>>>
+>>> err is not important.
+>>> You can remove that.
+>> Emm, I'm a little confused that which code should I remove ?
+>>
+>>
+>> like this:
+>> 	if (vq->packed_ring)
+>> 		virtqueue_resize_packed(_vq, num);
+>> 	else
+>> 		virtqueue_resize_split(_vq, num);
+>>
+>> And we should set broken and warn inside virtqueue_enable_after_reset()?
 
+In my opinion, we should return the error code of virtqueue_resize_packed() / virtqueue_resize_split().
+But if this err is not important, this patch makes no sense.
+Maybe I misunderstand somewhere...
+If you think it's worth sending a patch, you can send it :).(I'm not familiar with this code).
 
-On 10/20/2023 7:22 PM, Dan Carpenter wrote:
-> The eventfs_create_dir() function returns error pointers, it never returns
-> NULL.  Update the check to reflect that.
-> 
-> Fixes: 5790b1fb3d67 ("eventfs: Remove eventfs_file and just use eventfs_inode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Thanks,
+Su Hui
 
-LGTM, Thanks.
-
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--Mukesh
-
-> ---
->   kernel/trace/trace_events.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index db46d2116500..f9e3e24d8796 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -2354,7 +2354,7 @@ event_subsystem_dir(struct trace_array *tr, const char *name,
->   		nr_entries = ARRAY_SIZE(system_entries);
->   
->   	ei = eventfs_create_dir(name, parent, system_entries, nr_entries, dir);
-> -	if (!ei) {
-> +	if (IS_ERR(ei)) {
->   		pr_warn("Failed to create system directory %s\n", name);
->   		__put_system(system);
->   		goto out_free;
