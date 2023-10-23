@@ -2,94 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EB0C001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 09:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44667CDB474
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 09:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233097AbjJWJu4 (ORCPT
+        id S229747AbjJWJwQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:50:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33030 "EHLO
+        Mon, 23 Oct 2023 05:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbjJWJuw (ORCPT
+        with ESMTP id S229575AbjJWJwP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:50:52 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id BBACED75;
-        Mon, 23 Oct 2023 02:50:49 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 56C0460259F26;
-        Mon, 23 Oct 2023 17:50:47 +0800 (CST)
-Message-ID: <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
-Date:   Mon, 23 Oct 2023 17:50:46 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
+        Mon, 23 Oct 2023 05:52:15 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8390DA;
+        Mon, 23 Oct 2023 02:52:12 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Vujf6Ku_1698054729;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0Vujf6Ku_1698054729)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Oct 2023 17:52:10 +0800
+Message-ID: <1698054722.2894735-1-xuanzhuo@linux.alibaba.com>
 Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
-Content-Language: en-US
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Date:   Mon, 23 Oct 2023 17:52:02 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Su Hui <suhui@nfschina.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         "Michael S. Tsirkin" <mst@redhat.com>
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <1698040004.5365264-4-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231020092320.209234-1-suhui@nfschina.com>
+ <20231020053047-mutt-send-email-mst@kernel.org>
+ <1697794601.5857713-2-xuanzhuo@linux.alibaba.com>
+ <20231020054140-mutt-send-email-mst@kernel.org>
+ <1697795422.0986886-1-xuanzhuo@linux.alibaba.com>
+ <20231020055943-mutt-send-email-mst@kernel.org>
+ <1698028017.8052797-1-xuanzhuo@linux.alibaba.com>
+ <d4aa3f76-3e08-a852-a948-b88226a37fdd@nfschina.com>
+ <1698029596.5404413-3-xuanzhuo@linux.alibaba.com>
+ <46aee820-6c01-ed8a-613b-5c57258d749e@nfschina.com>
+ <1698040004.5365264-4-xuanzhuo@linux.alibaba.com>
+ <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
+In-Reply-To: <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/10/23 13:46, Xuan Zhuo wrote:
->>>>>>>> Well, what are the cases where it can happen practically?
->>>>>>> Device error. Such as vp_active_vq()
->>>>>>>
->>>>>>> Thanks.
->>>>>> Hmm interesting. OK. But do callers know to recover?
->>>>> No.
->>>>>
->>>>> So I think WARN + broken is suitable.
->>>>>
->>>>> Thanks.
->>>> Sorry for the late, is the following code okay?
->>>>
->>>> @@ -2739,7 +2739,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
->>>>                         void (*recycle)(struct virtqueue *vq, void *buf))
->>>>     {
->>>>            struct vring_virtqueue *vq = to_vvq(_vq);
->>>> -       int err;
->>>> +       int err, err_reset;
->>>>
->>>>            if (num > vq->vq.num_max)
->>>>                    return -E2BIG;
->>>> @@ -2759,7 +2759,15 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
->>>>            else
->>>>                    err = virtqueue_resize_split(_vq, num);
->>>>
->>>> -       return virtqueue_enable_after_reset(_vq);
->>>> +       err_reset = virtqueue_enable_after_reset(_vq);
->>>> +
->>>> +       if (err) {
->>> No err.
->>>
->>> err is not important.
->>> You can remove that.
->> Emm, I'm a little confused that which code should I remove ?
->>
->>
->> like this:
->> 	if (vq->packed_ring)
->> 		virtqueue_resize_packed(_vq, num);
->> 	else
->> 		virtqueue_resize_split(_vq, num);
->>
->> And we should set broken and warn inside virtqueue_enable_after_reset()?
+On Mon, 23 Oct 2023 17:50:46 +0800, Su Hui <suhui@nfschina.com> wrote:
+> On 2023/10/23 13:46, Xuan Zhuo wrote:
+> >>>>>>>> Well, what are the cases where it can happen practically?
+> >>>>>>> Device error. Such as vp_active_vq()
+> >>>>>>>
+> >>>>>>> Thanks.
+> >>>>>> Hmm interesting. OK. But do callers know to recover?
+> >>>>> No.
+> >>>>>
+> >>>>> So I think WARN + broken is suitable.
+> >>>>>
+> >>>>> Thanks.
+> >>>> Sorry for the late, is the following code okay?
+> >>>>
+> >>>> @@ -2739,7 +2739,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> >>>>                         void (*recycle)(struct virtqueue *vq, void *buf))
+> >>>>     {
+> >>>>            struct vring_virtqueue *vq = to_vvq(_vq);
+> >>>> -       int err;
+> >>>> +       int err, err_reset;
+> >>>>
+> >>>>            if (num > vq->vq.num_max)
+> >>>>                    return -E2BIG;
+> >>>> @@ -2759,7 +2759,15 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> >>>>            else
+> >>>>                    err = virtqueue_resize_split(_vq, num);
+> >>>>
+> >>>> -       return virtqueue_enable_after_reset(_vq);
+> >>>> +       err_reset = virtqueue_enable_after_reset(_vq);
+> >>>> +
+> >>>> +       if (err) {
+> >>> No err.
+> >>>
+> >>> err is not important.
+> >>> You can remove that.
+> >> Emm, I'm a little confused that which code should I remove ?
+> >>
+> >>
+> >> like this:
+> >> 	if (vq->packed_ring)
+> >> 		virtqueue_resize_packed(_vq, num);
+> >> 	else
+> >> 		virtqueue_resize_split(_vq, num);
+> >>
+> >> And we should set broken and warn inside virtqueue_enable_after_reset()?
+>
+> In my opinion, we should return the error code of virtqueue_resize_packed() / virtqueue_resize_split().
+> But if this err is not important, this patch makes no sense.
+> Maybe I misunderstand somewhere...
+> If you think it's worth sending a patch, you can send it :).(I'm not familiar with this code).
 
-In my opinion, we should return the error code of virtqueue_resize_packed() / virtqueue_resize_split().
-But if this err is not important, this patch makes no sense.
-Maybe I misunderstand somewhere...
-If you think it's worth sending a patch, you can send it :).(I'm not familiar with this code).
+OK.
 
-Thanks,
-Su Hui
+Thanks.
 
+
+>
+> Thanks,
+> Su Hui
+>
