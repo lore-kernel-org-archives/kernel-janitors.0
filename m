@@ -2,98 +2,118 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D897C001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 13:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A93FCDB474
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 14:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjJWN6e (ORCPT
+        id S230012AbjJWOQm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 09:58:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46816 "EHLO
+        Mon, 23 Oct 2023 10:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230427AbjJWN6d (ORCPT
+        with ESMTP id S229578AbjJWOQl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 09:58:33 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E997103;
-        Mon, 23 Oct 2023 06:58:31 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2c5210a1515so50303421fa.0;
-        Mon, 23 Oct 2023 06:58:31 -0700 (PDT)
+        Mon, 23 Oct 2023 10:16:41 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7ACB3
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 07:16:39 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso24584055e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 07:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698069509; x=1698674309; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUDrbA7z4Yp0QmwWdKitAt1oZzrzXyIRbjMblpzWv7M=;
-        b=IRhFfrypKU/9/J53PrS8feiYQA3RT4F4YNkr5pMuh8paex7gVCCJ7IyMxH6eXl0B2A
-         Z8LSQjzyCIiLqssj+UWe5ScEuh5oE0pl7wPMzi2Sg93LrkxXQjAVyUHgs69Izr6L1yat
-         HwgAyDgfygL48hQUjT9rLiswjJk/6hGjGc+VuuUdsr8fQJB54rs0jdyD1txKobFdcLVj
-         D/++hDlF/1MDdKhvvhM4BIksw0Khek+QVHly5HRPJ0KqmufWXGWxMUTh32eiClWB51jt
-         xm5ESSs5Z4uHXh79UmaDXl1uYF0W+DkXDqnO+YQNRamkhQ3ThwpkLjrqmM/ARH6Hmu9Q
-         ALPg==
+        d=linaro.org; s=google; t=1698070597; x=1698675397; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T5iW1K0Yi1e4FvpckzyR1RHnUVcBJrUNHSLAnahLGys=;
+        b=yz5jZUKbSy5rmabrf5h3+FyRHiQADlU5UzcJhet5ZxV77OCUig0Ba78llI4NG0UklS
+         9RoLkDzN1OYjDM2lHYdnl5zSkDmHCjRIzlBhNNinu2i2H9/n71mbPWJF4loRHHv7re9V
+         uOD7UcyFJlHRuWCC5LrNDs/LoB+nVeLUD3D8W7zBhldZLtcyTGl3vkGIQqxf1OQvCJdf
+         kckVWUuUC5iGZGPLzV900yWFEVxMsDPsmplhpMt/8/iumARlCjHUVtN5nZeayxNxtY46
+         mcF+fCwthkph+qoAY44ZcxQwcqfryP0pmBqHOiiUqtZzoUwWSiMmlF6nTvjxCWXL1THh
+         e7hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698069509; x=1698674309;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TUDrbA7z4Yp0QmwWdKitAt1oZzrzXyIRbjMblpzWv7M=;
-        b=Exl5ijBB51ZO3oRU7Wh2iZZkQl+yJid7jrOF2O/Fc0RYtiZviJvby2nZhU6bbkDZya
-         U1Kk0Y/4QcxVTp44vK/LdG7sTQX6KLc3YJ3TA9cqHiS77y9C8eN8FBttduemmZEDDh2z
-         69F6VQ9cQPHfkj9HxFVxvKJG7iiO7iZozNRLlREy/9U6NsNMHMK014FvfgG+Bn+Ud3Xb
-         PMNFn+ekos3WcRigjw3uicq30VbaJE5vfG8TUhzwCupYm680bbSEu2RYV/m967E7rkG8
-         CFbParldH0ZpdCBmm9TF57h/HLhhou94LOx3wUuScnnSVN4kwWY7inSegpkzRMLagPTf
-         Qgeg==
-X-Gm-Message-State: AOJu0Yw20mKikhaxHIY3pmHSndglIseoIS56nzRZo4iTA1orHZezqMTs
-        D1DRDw9C37WrVAY3d3kugaw=
-X-Google-Smtp-Source: AGHT+IFpxu0QqbHhBmob+AtbXLwBK+0npAGP23JsRvRxF7fN5/siyppzBnpZkSSr5gyoGQ5H1TUqnA==
-X-Received: by 2002:a2e:9b87:0:b0:2c0:3186:8efa with SMTP id z7-20020a2e9b87000000b002c031868efamr6612649lji.11.1698069509129;
-        Mon, 23 Oct 2023 06:58:29 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p15-20020a05600c1d8f00b00402d34ea099sm14316895wms.29.2023.10.23.06.58.28
+        d=1e100.net; s=20230601; t=1698070597; x=1698675397;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5iW1K0Yi1e4FvpckzyR1RHnUVcBJrUNHSLAnahLGys=;
+        b=p/Fy1bP4sK077x4A489NKnd1t8ZX2dIEG10ZebxiulRcDvN6n9h62ll2hCZSjWkM/q
+         FnYJnOvFVvjJ5pQq3GmpjNgl0BUpoXCa6s0rz+jGcW6Ei3H69UZwWneJhcrBTHdjXiJT
+         9iDJWUUfB+2PYzjM30sglwo7cMtTRqsqUtavXIYpwQzIgeUQZmGQ1XS4VrNtj5/Tzky1
+         UCgsOpnJJLQHPjyeN6IpPqkV+6Jd6g6w2QhkJTjjoSsmkF0lDEAaBl2bxGUlBVquES+I
+         vdhMGmU6oBjEUAQlx04UeGCaifUob3y5ZSiNAjaUnxC1DjCqQxV9ug/NuOJvubQNw9mU
+         VUjw==
+X-Gm-Message-State: AOJu0YwjKCPGCH1+qTtzAOs3uHS6o+IX08vrsNtjJ9deVcgkaiKGhlJ2
+        45yQ2Qky6uma9Dw8Sax8WY0AOg==
+X-Google-Smtp-Source: AGHT+IGGx/yvYrzQl788u+y8LS+2FpbnKdDk7w1H7ljsv4zkDSMMW+8W9HvMhJoIrmPWNrr/x050+Q==
+X-Received: by 2002:a05:600c:3555:b0:3f9:b430:199b with SMTP id i21-20020a05600c355500b003f9b430199bmr7149362wmq.15.1698070597552;
+        Mon, 23 Oct 2023 07:16:37 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id i18-20020a05600c481200b00407b93d8085sm14105092wmo.27.2023.10.23.07.16.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 06:58:28 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andre Werner <andre.werner@systec-electronic.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: HS3001: remove redundant store on division
-Date:   Mon, 23 Oct 2023 14:58:28 +0100
-Message-Id: <20231023135828.667297-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 23 Oct 2023 07:16:37 -0700 (PDT)
+Date:   Mon, 23 Oct 2023 17:16:33 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Vishal Moola <vishal.moola@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm/khugepaged: Fix a NULL vs IS_ERR() bug in
+ collapse_pte_mapped_thp()
+Message-ID: <0003b576-e63f-440a-ab24-739c0557dfb8@kadam.mountain>
+References: <a1f3242f-1aae-4b46-9893-36b11ee0a6dd@moroto.mountain>
+ <0882a964-770e-418c-9c34-1a64195baafc@moroto.mountain>
+ <20231020093626.bae70759c0f0fe5ee5159eae@linux-foundation.org>
+ <CAOzc2pzzwq2G9CV1cHh2i1RcXi2KLtd=aHaqK1HQjiJwgnjLKQ@mail.gmail.com>
+ <183a70ee-cf95-4101-b89b-e274c210229f@kadam.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <183a70ee-cf95-4101-b89b-e274c210229f@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently the local variable hum is being divided by a constant and
-the results is being re-assigned back to hum before the value is being
-returned to the caller. The assignment to hum is redundant and can
-be removed.
+On Mon, Oct 23, 2023 at 07:59:12AM +0300, Dan Carpenter wrote:
+> On Fri, Oct 20, 2023 at 09:49:15AM -0700, Vishal Moola wrote:
+> > On Fri, Oct 20, 2023 at 9:36 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >
+> > > On Fri, 20 Oct 2023 17:14:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > >
+> > > > This was changed from find_lock_page() which returns NULL to
+> > > > filemap_lock_folio() which returns error pointers.  Update the
+> > > > error checking to match.
+> > > >
+> > > > --- a/mm/khugepaged.c
+> > > > +++ b/mm/khugepaged.c
+> > > > @@ -1508,7 +1508,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+> > > >
+> > > >       folio = filemap_lock_folio(vma->vm_file->f_mapping,
+> > > >                              linear_page_index(vma, haddr));
+> > > > -     if (!folio)
+> > > > +     if (IS_ERR(folio))
+> > > >               return SCAN_PAGE_NULL;
+> > > >
+> > > >       if (folio_order(folio) != HPAGE_PMD_ORDER) {
+> > >
+> > > Also doesn't appear applicable to current kernels?
+> > 
+> > Thanks for these. Both these fix patches address issues introduced by my
+> > khugepaged folio conversion patchset:
+> > https://lore.kernel.org/linux-mm/20231018203213.50224-1-vishal.moola@gmail.com/T/#t
+> > 
+> > Andrew already dropped the patchset from current kernels so I can fix a
+> > couple issues, v3 will include all these fixes.
+> 
+> 
+> Only this one was introduced by your patchset.  The other bug is older.
+> I don't know why it only showed up as a new bug now.  I had guessed that
+> it was other changes I had made to Smatch which affected this.
 
-Cleans up clang scan build warning:
-drivers/hwmon/hs3001.c:65:9: warning: Although the value stored to 'hum'
-is used in the enclosing expression, the value is never actually read
-from 'hum' [deadcode.DeadStores]
+Heh.  Nope.  I was wrong.  These were both introduces as part of the
+folio conversion patchset.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hwmon/hs3001.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for taking care of this, Vishal.
 
-diff --git a/drivers/hwmon/hs3001.c b/drivers/hwmon/hs3001.c
-index ac574e46d069..01ea9a3062bc 100644
---- a/drivers/hwmon/hs3001.c
-+++ b/drivers/hwmon/hs3001.c
-@@ -62,7 +62,7 @@ static u32 hs3001_extract_humidity(u16 raw)
- {
- 	u32 hum = (raw & HS3001_MASK_HUMIDITY_0X3FFF) * HS3001_FIXPOINT_ARITH * 100;
- 
--	return hum /= (1 << 14) - 1;
-+	return hum / (1 << 14) - 1;
- }
- 
- static int hs3001_data_fetch_command(struct i2c_client *client,
--- 
-2.39.2
+regards,
+dan carpenter
 
