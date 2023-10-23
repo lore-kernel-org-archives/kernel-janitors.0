@@ -2,166 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35770C004C0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 10:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99620C004C0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 11:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjJWK6d (ORCPT
+        id S233516AbjJWLHW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39202 "EHLO
+        Mon, 23 Oct 2023 07:07:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbjJWK60 (ORCPT
+        with ESMTP id S233398AbjJWLHS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 06:58:26 -0400
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19ABD6E;
-        Mon, 23 Oct 2023 03:58:23 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VukpPyF_1698058699;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VukpPyF_1698058699)
-          by smtp.aliyun-inc.com;
-          Mon, 23 Oct 2023 18:58:20 +0800
-Message-ID: <1698058354.8316164-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
-Date:   Mon, 23 Oct 2023 18:52:34 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, Su Hui <suhui@nfschina.com>
-References: <20231020092320.209234-1-suhui@nfschina.com>
- <20231020053047-mutt-send-email-mst@kernel.org>
- <1697794601.5857713-2-xuanzhuo@linux.alibaba.com>
- <20231020054140-mutt-send-email-mst@kernel.org>
- <1697795422.0986886-1-xuanzhuo@linux.alibaba.com>
- <20231020055943-mutt-send-email-mst@kernel.org>
- <1698028017.8052797-1-xuanzhuo@linux.alibaba.com>
- <d4aa3f76-3e08-a852-a948-b88226a37fdd@nfschina.com>
- <1698029596.5404413-3-xuanzhuo@linux.alibaba.com>
- <46aee820-6c01-ed8a-613b-5c57258d749e@nfschina.com>
- <1698040004.5365264-4-xuanzhuo@linux.alibaba.com>
- <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
- <1698054722.2894735-1-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <1698054722.2894735-1-xuanzhuo@linux.alibaba.com>
+        Mon, 23 Oct 2023 07:07:18 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39E610C1;
+        Mon, 23 Oct 2023 04:07:14 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5401bab7525so2648323a12.2;
+        Mon, 23 Oct 2023 04:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698059233; x=1698664033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=akpOMj5d/8woIMFc1elzm+z11AzbUxl+8mKKF9Y05x4=;
+        b=KYUEqtVY0dPFgKH5BW4s4EC5G/rTxAocKASQqCvo1BBxESFRVwdOhowEU1Azo/Vjzv
+         BZKgKV/bb7vUS6tl7rNBTvPqIBAoRXUd83u7wUOuEFUuU4TfczBY0ThYmJ0qfCLMDJck
+         WXVDs4ER+6ct00RG6SAVlM1YM6lIXNBrT+c5rP3GMS58rpwFxexK9JDb45NrJu7XLzUr
+         GOYJMzVTnZif3dsTAb6m01JRFjS4gnNsofKUkhtmUmVw4+6P5MCFiLScVn9FAEj29CS9
+         E1f+kmvgCy7NTYBy3oHtkF+ebL6un2XkKJEdBpnYfHxhIIi5c/o3kwsNJ+TVBg2wTqso
+         T8Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698059233; x=1698664033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=akpOMj5d/8woIMFc1elzm+z11AzbUxl+8mKKF9Y05x4=;
+        b=aPrNXLygEluvZeYQYuRAOd1Z+Xt5Z238mL2kdXSEWPlW7D1Ml/6qnuUioiVJ1InSLr
+         NpOv8U/M2kvWsAJggFc+7ZRODsnYAmk17lXFrhtdN5taAGqgkEVtTDmwy/jl0O4YIvmV
+         DHVswszlGtustBqcCLESBuKiKQ/geRovsfQt1g80mILpjLN4Vzoi7+MqWTz7fBkK8cHa
+         ox+sZh27Qfp2uwiQLk4j8en2jWW3aglEekwK7ewzRUaYjgKs9UjQKFS4nbPjABPuiB+R
+         /4NjJQI1Al6gxaQqsTzhpr8lDlJqOI8IeLbS6sjcHDOJNCzL31ic5ZHZgtGKg85kOnaX
+         aelA==
+X-Gm-Message-State: AOJu0Yyt2ABoY6W1HQNCAZCDbIzjP3GMZhLG2dPtKigB5NmcIbAWsEhY
+        BOBtieXaI1/egXZaumgPD6oEF7kpGHaf+a/HesWluIvE3Tk=
+X-Google-Smtp-Source: AGHT+IEZXn3icFVMprpTKAJBq8ZATZ8OjKGw9+gMt9vd6GvtN/HQYPrTH8CbfwUh4K+VheXfRTMbZCDAkYMsEodzgJI=
+X-Received: by 2002:a05:6402:518e:b0:53e:7597:77dc with SMTP id
+ q14-20020a056402518e00b0053e759777dcmr7109901edd.25.1698059232954; Mon, 23
+ Oct 2023 04:07:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20231023081054.617292-1-colin.i.king@gmail.com>
+In-Reply-To: <20231023081054.617292-1-colin.i.king@gmail.com>
+From:   Jagath Jog J <jagathjog1996@gmail.com>
+Date:   Mon, 23 Oct 2023 16:37:01 +0530
+Message-ID: <CAM+2EuK2LOL=g=r866c6zwE4XOSL5uZ-rweUjm6svgSi8v9Xkw@mail.gmail.com>
+Subject: Re: [PATCH][next] iio: imu: Fix spelling mistake "accelrometer" -> "accelerometer"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 23 Oct 2023 17:52:02 +0800, Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
-> On Mon, 23 Oct 2023 17:50:46 +0800, Su Hui <suhui@nfschina.com> wrote:
-> > On 2023/10/23 13:46, Xuan Zhuo wrote:
-> > >>>>>>>> Well, what are the cases where it can happen practically?
-> > >>>>>>> Device error. Such as vp_active_vq()
-> > >>>>>>>
-> > >>>>>>> Thanks.
-> > >>>>>> Hmm interesting. OK. But do callers know to recover?
-> > >>>>> No.
-> > >>>>>
-> > >>>>> So I think WARN + broken is suitable.
-> > >>>>>
-> > >>>>> Thanks.
-> > >>>> Sorry for the late, is the following code okay?
-> > >>>>
-> > >>>> @@ -2739,7 +2739,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
-> > >>>>                         void (*recycle)(struct virtqueue *vq, void *buf))
-> > >>>>     {
-> > >>>>            struct vring_virtqueue *vq = to_vvq(_vq);
-> > >>>> -       int err;
-> > >>>> +       int err, err_reset;
-> > >>>>
-> > >>>>            if (num > vq->vq.num_max)
-> > >>>>                    return -E2BIG;
-> > >>>> @@ -2759,7 +2759,15 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
-> > >>>>            else
-> > >>>>                    err = virtqueue_resize_split(_vq, num);
-> > >>>>
-> > >>>> -       return virtqueue_enable_after_reset(_vq);
-> > >>>> +       err_reset = virtqueue_enable_after_reset(_vq);
-> > >>>> +
-> > >>>> +       if (err) {
-> > >>> No err.
-> > >>>
-> > >>> err is not important.
-> > >>> You can remove that.
-> > >> Emm, I'm a little confused that which code should I remove ?
-> > >>
-> > >>
-> > >> like this:
-> > >> 	if (vq->packed_ring)
-> > >> 		virtqueue_resize_packed(_vq, num);
-> > >> 	else
-> > >> 		virtqueue_resize_split(_vq, num);
-> > >>
-> > >> And we should set broken and warn inside virtqueue_enable_after_reset()?
-> >
-> > In my opinion, we should return the error code of virtqueue_resize_packed() / virtqueue_resize_split().
-> > But if this err is not important, this patch makes no sense.
-> > Maybe I misunderstand somewhere...
-> > If you think it's worth sending a patch, you can send it :).(I'm not familiar with this code).
+On Mon, Oct 23, 2023 at 1:40=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 >
-> OK.
+> There are two spelling mistakes in dev_err messages. Fix them.
 
-Hi Michael,
+Hi Colin,
 
-The queue reset code is wrote with the CONFIG_VIRTIO_HARDEN_NOTIFICATION.
-
-When we disable the vq, the broken is true until we re-enable it.
-
-So when we re-enable it fail, the vq is broken status.
-
-Normally, this just happens on the buggy device.
-So I think that is enough.
-
-Thanks.
-
-
-	static int vp_modern_disable_vq_and_reset(struct virtqueue *vq)
-	{
-		[...]
-
-		vp_modern_set_queue_reset(mdev, vq->index);
-
-		[...]
-
-	#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-->>		__virtqueue_break(vq);
-	#endif
-
-		[...]
-	}
-
-	static int vp_modern_enable_vq_after_reset(struct virtqueue *vq)
-	{
-		[...]
-
-		if (vp_modern_get_queue_reset(mdev, index))
-			return -EBUSY;
-
-		if (vp_modern_get_queue_enable(mdev, index))
-			return -EBUSY;
-
-		err = vp_active_vq(vq, info->msix_vector);
-		if (err)
-			return err;
-
-		}
-
-		[...]
-
-	#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-->>		__virtqueue_unbreak(vq);
-	#endif
-
-		[...]
-	}
-
-
-
+Thanks for fixing this.
+Reviewed-by: Jagath Jog J <jagathjog1996@gmail.com>
 
 >
-> Thanks.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/iio/imu/bmi323/bmi323_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
+> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi32=
+3/bmi323_core.c
+> index 0bd5dedd9a63..183af482828f 100644
+> --- a/drivers/iio/imu/bmi323/bmi323_core.c
+> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
+> @@ -545,7 +545,7 @@ static int bmi323_tap_event_en(struct bmi323_data *da=
+ta,
+>         guard(mutex)(&data->mutex);
 >
-> >
-> > Thanks,
-> > Su Hui
-> >
+>         if (data->odrhz[BMI323_ACCEL] < 200) {
+> -               dev_err(data->dev, "Invalid accelrometer parameter\n");
+> +               dev_err(data->dev, "Invalid accelerometer parameter\n");
+>                 return -EINVAL;
+>         }
+>
+> @@ -1453,7 +1453,7 @@ static int bmi323_enable_steps(struct bmi323_data *=
+data, int val)
+>
+>         guard(mutex)(&data->mutex);
+>         if (data->odrhz[BMI323_ACCEL] < 200) {
+> -               dev_err(data->dev, "Invalid accelrometer parameter\n");
+> +               dev_err(data->dev, "Invalid accelerometer parameter\n");
+>                 return -EINVAL;
+>         }
+>
+> --
+> 2.39.2
+>
