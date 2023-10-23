@@ -2,84 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6ECC25B46
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 19:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F402AC25B46
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 19:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231147AbjJWTde (ORCPT
+        id S230059AbjJWTlx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 15:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47616 "EHLO
+        Mon, 23 Oct 2023 15:41:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230386AbjJWTdd (ORCPT
+        with ESMTP id S229568AbjJWTlw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 15:33:33 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71488C0
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 12:33:31 -0700 (PDT)
-Received: from localhost.localdomain ([141.170.221.62])
-        by smtp.orange.fr with ESMTPSA
-        id v0fzqGEQclciav0g5qWHER; Mon, 23 Oct 2023 21:33:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1698089610;
-        bh=kOczc4xzag/NnlA9XkZf9hv4EVckr0nepjgeN8+fjfE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=R+rP9eZtOV0Gu0NgUyXgpD5G0f7Mtnczfb9ANQB6jCAf4xSPtHm9RgbLkUnE2KTiG
-         bMzIpIpSvRY8aVNbezdI543C0GvzU2WBn/AWvO8yTCymF+IEThHhmXyh6W2hnYgjih
-         47nmsTCLNMt1SjjO/t++jo/H/DcBtu2tBh45kl+XeeoQpwnjyNt3woqlqbN//11jK6
-         CtGtMniOzX2+jIp2J6vd40m9penXIjlljjSx21ozWTrFgNdliWCUSKO7hP1+Or8TDU
-         LKjitwJAjSQjTlfkrtnqGvNXfrsVHmTIUD5mWrnIkAGnvWaMQn4dhqj183ecjJOEyL
-         /8FbvSHUFvyOQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 23 Oct 2023 21:33:30 +0200
-X-ME-IP: 141.170.221.62
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rafael@kernel.org, lenb@kernel.org
-Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] ACPI: sysfs: Remove some dead code
-Date:   Mon, 23 Oct 2023 21:33:18 +0200
-Message-Id: <eb978f8d3141857438a134885e9c38a75bf2245c.1698081019.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
+        Mon, 23 Oct 2023 15:41:52 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EA8BE
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 12:41:50 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4579AC433C8;
+        Mon, 23 Oct 2023 19:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698090109;
+        bh=OlH4XjprJoV3SDdpbTy99xlKsXNxkPszOjj1otladfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PW2DULXfgacuAqKWGrEKpODTf8CprrVatOu13kJyFkzMUoARbu9A+y6CWacngLpvc
+         wfi2GT/VnVtRyQQ0U93UmFJNa5jZ/RYd6cbrZCHpZ9IA3vs4tS20U7/K+zyGhwSxAz
+         4KMP3EbRT++3But83IqEq4f1wsIeh5BjJUCEZd8FlPhXcc9OtDkKze41Zl9j/2RFK+
+         W5MRRq4L3+1GF+GnOBk5thIyOM0hIWTZeMqKcsf+la92A1+cvMberTtMk1CDy21rRx
+         8lAvd/qZ0LVmKHgYYl3Nz/mRU/+cgQvsIYQOXhiT+K6v3wM24eDhpZBJ4F453cutW0
+         FWWf8hL1Dalfg==
+Date:   Mon, 23 Oct 2023 15:41:48 -0400
+From:   Konstantin Ryabitsev <mricon@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: KTODO automated TODO lists
+Message-ID: <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+ <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-snprintf() never returns <0 values.
-So remove some dead code.
+On Mon, Oct 23, 2023 at 08:55:56AM -1000, Linus Torvalds wrote:
+> > Well here's a task: write a bot which follows the mailing lists and
+> > sends people nastygrams if one of their emails is more than 95%(?)
+> > quoted text.
+> 
+> I think that might be better off as a spam filter rule.
+> 
+> Don't make it some after-the-fact "trawl the lists". Just make it a
+> bounce with a "you quoted too much". Same as the html avoidance.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/acpi/device_sysfs.c | 4 ----
- 1 file changed, 4 deletions(-)
+I know people aren't being very serious, but automating this away either
+aggressively (reject as spam) or passive-agressively (whine at poster) will
+run into rare but valid corner cases. For example, we have no way of
+distinguishing between "this person quoted too much from previous message" and
+"this person posted a large but relevant quote from docs or another
+conversation," and so we will likely punish/annoy the innocent.
 
-diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-index 1cf6568a813f..23373faa35ec 100644
---- a/drivers/acpi/device_sysfs.c
-+++ b/drivers/acpi/device_sysfs.c
-@@ -168,8 +168,6 @@ static int create_pnp_modalias(const struct acpi_device *acpi_dev, char *modalia
- 			continue;
- 
- 		count = snprintf(&modalias[len], size, "%s:", id->id);
--		if (count < 0)
--			return -EINVAL;
- 
- 		if (count >= size)
- 			return -ENOMEM;
-@@ -228,8 +226,6 @@ static int create_of_modalias(const struct acpi_device *acpi_dev, char *modalias
- 	for (i = 0; i < nval; i++, obj++) {
- 		count = snprintf(&modalias[len], size, "C%s",
- 				 obj->string.pointer);
--		if (count < 0)
--			return -EINVAL;
- 
- 		if (count >= size)
- 			return -ENOMEM;
--- 
-2.32.0
+It's better to treat this as a mentoring opportunity and send an off-list
+reply with "please trim your quotes" and maybe a link to
+https://people.kernel.org/tglx/notes-about-netiquette
 
+If it helps, I can add a mailing list etiquette page on subspace.kernel.org,
+so it's easier to find.
+
+-K
