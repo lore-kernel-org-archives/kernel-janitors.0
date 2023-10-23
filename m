@@ -2,123 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033C2C001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 11:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0358FC001E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 13:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234300AbjJWLmP (ORCPT
+        id S230468AbjJWN2I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 07:42:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
+        Mon, 23 Oct 2023 09:28:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234284AbjJWLmM (ORCPT
+        with ESMTP id S231237AbjJWN2E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 07:42:12 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC101733;
-        Mon, 23 Oct 2023 04:41:49 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9C376218E0;
-        Mon, 23 Oct 2023 11:41:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1698061300; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q3h7bYkmxNuybyYNDcveX5DD2P/BKzeu6mm/kPPgPdU=;
-        b=h/G7ygAoWyM5zG8eKGcVm8HrcWPzEDEivri0BJSGDEgVhXNBapQpqLSY/8WomkLmxcWnPW
-        Qd/etiyPEqAW5IiWxf5u3MHWyFl6LJVnk1+HZFFADVEBlP4wT4UihwYeIKatbtOywQW/Ot
-        59VmbHbqJsX44/2IWsJWPT+BxFhrie8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1698061300;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q3h7bYkmxNuybyYNDcveX5DD2P/BKzeu6mm/kPPgPdU=;
-        b=TfEkAPS+RDAVdr1D6jh0FO7uRl0fz6n7JS5sAVCpeRIX8ZVWMqM1dosMUdnVhvssKVsGwC
-        bSetY7o4jXdTWfDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 55407139C2;
-        Mon, 23 Oct 2023 11:41:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Q2VGE/RbNmWTDQAAMHmgww
-        (envelope-from <jdelvare@suse.de>); Mon, 23 Oct 2023 11:41:40 +0000
-Date:   Mon, 23 Oct 2023 13:41:39 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] eeprom: remove doc and MAINTAINERS section after driver
- was removed
-Message-ID: <20231023134139.66e95a04@endymion.delvare>
-In-Reply-To: <20231012042834.6663-1-lukas.bulwahn@gmail.com>
-References: <20231012042834.6663-1-lukas.bulwahn@gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.34; x86_64-suse-linux-gnu)
+        Mon, 23 Oct 2023 09:28:04 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E64510C9;
+        Mon, 23 Oct 2023 06:28:02 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507b9408c61so4539420e87.0;
+        Mon, 23 Oct 2023 06:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698067680; x=1698672480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2urRTeG3ufYgcsCQiPb5uV+eiXVppkz+Tw64mxpZfeY=;
+        b=VG8WgYBCnu4eF0j6J04vYy11wA5RSF9DlylHfWgoeS1FpC50RFyUxEHkKPBnLstd2C
+         RjgtXyh+B9RcxJtzrHsVXYCp/RaOdTYIgIzhdJZ1yrleEkHQr5vFaUdlMsaZ8iYAmfmu
+         pzat4CKxxEyQlRGwG/s+PU84DSJb2rnUWm84IGVYZx0nYccc34Ku0DjCMl4e2bXX6O6A
+         pJ0qGBtrxxPy0MUis/XJaVvNIoiu7SJzHVtJknZD11F+i4weonjCo/4st2LTXJFXprxW
+         WkuDbGZ9KmwAUwjdv2HGKNB99FQx2Rkf77iXak1JAHWb3uLT8hN+IvWdrslIMdW457AI
+         muPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698067680; x=1698672480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2urRTeG3ufYgcsCQiPb5uV+eiXVppkz+Tw64mxpZfeY=;
+        b=vPUiScbF7nIhbRYpjJp0pqHVwuHNLJThEyqkO3u8jnuytIY3s1TGh+8zi+c4vRFrad
+         j6SC9cuhmSOj+v3qJk3UK6cpwq94z9TaHJE0rj0qnBxSjXSIek6NVYe0iNA3ArETvdba
+         X+5voGvLG/txFTdH8/p8HeWTbgqr/WRI17x9kjEu4E8hR/zlHiJtmfoijcEKLG+Z85Fn
+         2mgithqUU+AKqg40ftw8zm+EdrAVQlrEzqYPCKpRpmX/kYTx99Y3hXp2xcdJOW3AZaO+
+         t0CME7PIXQ1xLT0s7NDfaqmiXPLrbVHVVARPKnFVzfhx9ervjNVa95xIXT/mcKgWDG/Y
+         itBA==
+X-Gm-Message-State: AOJu0YzLLYkrjcElRpBKVF3cQJ5CuBk7+JKgpd+7ZfX1TUGnc8monLNR
+        IFbdX79cw6RkS5Uj2fvT7Xs=
+X-Google-Smtp-Source: AGHT+IHoOqLfenpIDVx8JfQwy19YnxYvRmL3hM1j1nZMRcsvojnGLGLzBNAhcIvEp+gdH4N+YYLicg==
+X-Received: by 2002:a19:5e1c:0:b0:503:1aae:eca0 with SMTP id s28-20020a195e1c000000b005031aaeeca0mr6397211lfb.44.1698067680102;
+        Mon, 23 Oct 2023 06:28:00 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o3-20020a5d6843000000b003143c9beeaesm7785417wrw.44.2023.10.23.06.27.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 06:27:59 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] agp/amd64: remove redundant assignment to variable i
+Date:   Mon, 23 Oct 2023 14:27:59 +0100
+Message-Id: <20231023132759.666224-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Authentication-Results: smtp-out1.suse.de;
-        none
-X-Spamd-Result: default: False [-3.75 / 50.00];
-         ARC_NA(0.00)[];
-         RCVD_VIA_SMTP_AUTH(0.00)[];
-         BAYES_HAM(-1.15)[88.68%];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         NEURAL_HAM_LONG(-3.00)[-1.000];
-         HAS_ORG_HEADER(0.00)[];
-         DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-         NEURAL_HAM_SHORT(-1.00)[-1.000];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         FREEMAIL_TO(0.00)[gmail.com];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         RCVD_TLS_ALL(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[];
-         FREEMAIL_CC(0.00)[arndb.de,linuxfoundation.org,gmail.com,lwn.net,vger.kernel.org]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 12 Oct 2023 06:28:34 +0200, Lukas Bulwahn wrote:
-> Commit 0113a99b8a75 ("eeprom: Remove deprecated legacy eeprom driver")
-> already removes the eeprom driver's code.
-> 
-> Remove also the eeprom driver's documentation and MAINTAINERS section.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Greg, please pick this patch into your -next char and misc tree on top
-> of the commit above.
-> 
->  Documentation/misc-devices/eeprom.rst | 107 --------------------------
->  Documentation/misc-devices/index.rst  |   1 -
->  MAINTAINERS                           |   6 --
->  3 files changed, 114 deletions(-)
->  delete mode 100644 Documentation/misc-devices/eeprom.rst
-> (...)
+The variable i is being initialized to 0 and then again in the
+following for-loop. The initialization outside the for-loop is
+redundant and can be removed.
 
-Probably too late, but anyway:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/char/agp/amd64-agp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-
-Thanks,
+diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+index ce8651436609..47bd3b8a54b4 100644
+--- a/drivers/char/agp/amd64-agp.c
++++ b/drivers/char/agp/amd64-agp.c
+@@ -333,7 +333,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
+ 	if (!amd_nb_has_feature(AMD_NB_GART))
+ 		return -ENODEV;
+ 
+-	i = 0;
+ 	for (i = 0; i < amd_nb_num(); i++) {
+ 		struct pci_dev *dev = node_to_amd_nb(i)->misc;
+ 		if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
 -- 
-Jean Delvare
-SUSE L3 Support
+2.39.2
+
