@@ -2,125 +2,166 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD46EC001E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 10:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35770C004C0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Oct 2023 10:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbjJWKJF (ORCPT
+        id S229685AbjJWK6d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
+        Mon, 23 Oct 2023 06:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjJWKJE (ORCPT
+        with ESMTP id S229753AbjJWK60 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Oct 2023 06:09:04 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0FC1F7;
-        Mon, 23 Oct 2023 03:09:01 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39N7qjV7000816;
-        Mon, 23 Oct 2023 10:08:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=BLdOF2MNcWnOdGsdKCRiPVsu2ONU9CpChtK8Cj13Kyk=;
- b=PIjw8wL2LFZ7/SbuuwsqYNH2brQcBS1j9QVD9QwHy9ZH+gfTboGWixa5FI7rBLktyou6
- 3RTbYbrnFbxnRYkp9WiXa4J53vF/O0QCLzyCdDdQxivZxOA7GNFu/7gEbwJZhOSEJVpF
- avEVbZ/WRtl2p7RvHZRbZZFVQrzMCd3QfNs0AcbTkFKz4X1nYgPMrMRV0G96WuwbWgYV
- xNyXIF26yHKytuvQoquXHUrMhGB9g78i5Ag0+LzpJKhL4HormRXdmWZ2F1pCSWhXYjd1
- bojSwlcirWZzguotI5buFoWJu8SMTtAinxHdsByGJzvniSCGU4axgGOAHklYHU6kIwqM Rw== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tv6873pnm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Oct 2023 10:08:57 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39NA8urh006366
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Oct 2023 10:08:56 GMT
-Received: from [10.216.32.116] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Mon, 23 Oct
- 2023 03:08:53 -0700
-Message-ID: <0ed6de5e-5b47-30cb-68fa-ce6ee7c839a8@quicinc.com>
-Date:   Mon, 23 Oct 2023 15:38:48 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] tracing/histograms: Simplify last_cmd_set()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-trace-kernel@vger.kernel.org>
-References: <30b6fb04dadc10a03cc1ad08f5d8a93ef623a167.1697899346.git.christophe.jaillet@wanadoo.fr>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <30b6fb04dadc10a03cc1ad08f5d8a93ef623a167.1697899346.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UHy1YigTnHOKlS2qWr2zbYMPfhnsbHda
-X-Proofpoint-ORIG-GUID: UHy1YigTnHOKlS2qWr2zbYMPfhnsbHda
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-23_08,2023-10-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- spamscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310170001 definitions=main-2310230087
+        Mon, 23 Oct 2023 06:58:26 -0400
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19ABD6E;
+        Mon, 23 Oct 2023 03:58:23 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VukpPyF_1698058699;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VukpPyF_1698058699)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Oct 2023 18:58:20 +0800
+Message-ID: <1698058354.8316164-2-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH] virtio_ring: add an error code check in virtqueue_resize
+Date:   Mon, 23 Oct 2023 18:52:34 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, Su Hui <suhui@nfschina.com>
+References: <20231020092320.209234-1-suhui@nfschina.com>
+ <20231020053047-mutt-send-email-mst@kernel.org>
+ <1697794601.5857713-2-xuanzhuo@linux.alibaba.com>
+ <20231020054140-mutt-send-email-mst@kernel.org>
+ <1697795422.0986886-1-xuanzhuo@linux.alibaba.com>
+ <20231020055943-mutt-send-email-mst@kernel.org>
+ <1698028017.8052797-1-xuanzhuo@linux.alibaba.com>
+ <d4aa3f76-3e08-a852-a948-b88226a37fdd@nfschina.com>
+ <1698029596.5404413-3-xuanzhuo@linux.alibaba.com>
+ <46aee820-6c01-ed8a-613b-5c57258d749e@nfschina.com>
+ <1698040004.5365264-4-xuanzhuo@linux.alibaba.com>
+ <6a7d1006-0988-77ea-0991-9c7b422d78e1@nfschina.com>
+ <1698054722.2894735-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1698054722.2894735-1-xuanzhuo@linux.alibaba.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, 23 Oct 2023 17:52:02 +0800, Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
+> On Mon, 23 Oct 2023 17:50:46 +0800, Su Hui <suhui@nfschina.com> wrote:
+> > On 2023/10/23 13:46, Xuan Zhuo wrote:
+> > >>>>>>>> Well, what are the cases where it can happen practically?
+> > >>>>>>> Device error. Such as vp_active_vq()
+> > >>>>>>>
+> > >>>>>>> Thanks.
+> > >>>>>> Hmm interesting. OK. But do callers know to recover?
+> > >>>>> No.
+> > >>>>>
+> > >>>>> So I think WARN + broken is suitable.
+> > >>>>>
+> > >>>>> Thanks.
+> > >>>> Sorry for the late, is the following code okay?
+> > >>>>
+> > >>>> @@ -2739,7 +2739,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> > >>>>                         void (*recycle)(struct virtqueue *vq, void *buf))
+> > >>>>     {
+> > >>>>            struct vring_virtqueue *vq = to_vvq(_vq);
+> > >>>> -       int err;
+> > >>>> +       int err, err_reset;
+> > >>>>
+> > >>>>            if (num > vq->vq.num_max)
+> > >>>>                    return -E2BIG;
+> > >>>> @@ -2759,7 +2759,15 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> > >>>>            else
+> > >>>>                    err = virtqueue_resize_split(_vq, num);
+> > >>>>
+> > >>>> -       return virtqueue_enable_after_reset(_vq);
+> > >>>> +       err_reset = virtqueue_enable_after_reset(_vq);
+> > >>>> +
+> > >>>> +       if (err) {
+> > >>> No err.
+> > >>>
+> > >>> err is not important.
+> > >>> You can remove that.
+> > >> Emm, I'm a little confused that which code should I remove ?
+> > >>
+> > >>
+> > >> like this:
+> > >> 	if (vq->packed_ring)
+> > >> 		virtqueue_resize_packed(_vq, num);
+> > >> 	else
+> > >> 		virtqueue_resize_split(_vq, num);
+> > >>
+> > >> And we should set broken and warn inside virtqueue_enable_after_reset()?
+> >
+> > In my opinion, we should return the error code of virtqueue_resize_packed() / virtqueue_resize_split().
+> > But if this err is not important, this patch makes no sense.
+> > Maybe I misunderstand somewhere...
+> > If you think it's worth sending a patch, you can send it :).(I'm not familiar with this code).
+>
+> OK.
+
+Hi Michael,
+
+The queue reset code is wrote with the CONFIG_VIRTIO_HARDEN_NOTIFICATION.
+
+When we disable the vq, the broken is true until we re-enable it.
+
+So when we re-enable it fail, the vq is broken status.
+
+Normally, this just happens on the buggy device.
+So I think that is enough.
+
+Thanks.
 
 
-On 10/21/2023 8:12 PM, Christophe JAILLET wrote:
-> Turn a kzalloc()+strcpy()+strncat() into an equivalent and less verbose
-> kasprintf().
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   kernel/trace/trace_events_hist.c | 11 ++---------
->   1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index d06938ae0717..1abc07fba1b9 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -774,23 +774,16 @@ static void last_cmd_set(struct trace_event_file *file, char *str)
->   {
->   	const char *system = NULL, *name = NULL;
->   	struct trace_event_call *call;
-> -	int len;
->   
->   	if (!str)
->   		return;
->   
-> -	/* sizeof() contains the nul byte */
-> -	len = sizeof(HIST_PREFIX) + strlen(str);
->   	kfree(last_cmd);
-> -	last_cmd = kzalloc(len, GFP_KERNEL);
-> +
-> +	last_cmd = kasprintf(GFP_KERNEL, HIST_PREFIX "%s", str);
->   	if (!last_cmd)
->   		return;
->   
-> -	strcpy(last_cmd, HIST_PREFIX);
-> -	/* Again, sizeof() contains the nul byte */
-> -	len -= sizeof(HIST_PREFIX);
-> -	strncat(last_cmd, str, len);
+	static int vp_modern_disable_vq_and_reset(struct virtqueue *vq)
+	{
+		[...]
 
-LGTM, careful optimization., Thanks.
-Reviewed-by: Mukesh ojha <quic_mojha@quicinc.com>
+		vp_modern_set_queue_reset(mdev, vq->index);
+
+		[...]
+
+	#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+->>		__virtqueue_break(vq);
+	#endif
+
+		[...]
+	}
+
+	static int vp_modern_enable_vq_after_reset(struct virtqueue *vq)
+	{
+		[...]
+
+		if (vp_modern_get_queue_reset(mdev, index))
+			return -EBUSY;
+
+		if (vp_modern_get_queue_enable(mdev, index))
+			return -EBUSY;
+
+		err = vp_active_vq(vq, info->msix_vector);
+		if (err)
+			return err;
+
+		}
+
+		[...]
+
+	#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+->>		__virtqueue_unbreak(vq);
+	#endif
+
+		[...]
+	}
 
 
--Mukesh
 
-> -
->   	if (file) {
->   		call = file->event_call;
->   		system = call->class->system;
+
+>
+> Thanks.
+>
+>
+> >
+> > Thanks,
+> > Su Hui
+> >
