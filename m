@@ -2,232 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E6AC07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7990C00A8F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232561AbjJXHJk (ORCPT
+        id S232706AbjJXHTp convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 03:09:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42656 "EHLO
+        Tue, 24 Oct 2023 03:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbjJXHJj (ORCPT
+        with ESMTP id S232503AbjJXHTp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 03:09:39 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65619118
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:09:37 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4084de32db5so35551875e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698131375; x=1698736175; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bg3/yG5alTR9cURzI2G+r1/RbWGLer43z8qyypczxLw=;
-        b=Es5LaCKFhseaBU5oll84kZYT2OmAJo7qfuMEdVFj5z5cMPOZwB04F9A0rA47M+NlQm
-         uQqljutvsShk+pazg0qG45M6bfa+ncEdwNImh/yNTWeYuyYpwNqBqVFegUCT3uwn4CqR
-         +agV5NPGRZXlVQy30QdF36xpPCRUsxmJp1SaEsQCwfBj9CS44dzve6xZ5wU0be1Z2QXl
-         sfc6KcmwyxbLfT3miiDpVOtNLmhut6H0/uSwpx6tSrPuwm3TzeuAvPkipx9pgRxn1epS
-         CHk3jAqyy4+1/Lp+0v2jPaGZxFsu3f8aNnukKz2enTGlL9biGtTkyZh5Rp+f8SQrdK3z
-         nYEg==
+        Tue, 24 Oct 2023 03:19:45 -0400
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C6E398
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:19:43 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a7d9d357faso42011617b3.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:19:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698131375; x=1698736175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bg3/yG5alTR9cURzI2G+r1/RbWGLer43z8qyypczxLw=;
-        b=tep1oGPfIrAQEtrP6vJcQEjNLpYd94AZ6u5P2f/yQEKsdfBHllv2TYwvvp/O2n7JaC
-         bvYKt9KZkxGw7rqIfoGnqyMicu1mzIRkx2EhcpHdxLCy6NtlRH0uh5hSvqZRj6MnQe20
-         F2pev8Ep80QwVmgR1h3Su1QgkKcjwas9n8gKIISTk7TqQq09iNmabLmhHlcwoUytRHLg
-         qgdO7fV5M+xgcrCT71xqbU5+I5m9NX5hSEzcI9diNXaTQvJMCCq30DissKYOQ9H7HJDp
-         QG4c6tJPRWcjhyis4FZN0XVBXm3NyG6Kyhaib9VlyuZyCTFDVnq1vZ8Nu4NLjyYodoyo
-         T7EQ==
-X-Gm-Message-State: AOJu0YzaiKiMuCSgbe+CArVVK/v+/fqc9997hAXvvfqCy87oZ6pXV0KC
-        z+a34pH17C79zlL2ZgXP1qE7IA==
-X-Google-Smtp-Source: AGHT+IG82Wy7z7LaS15pZRBGLYgELtLF6fUMo8x83zDPQE5+VC1wueXV6hw8d9oATcWQwSIY0XVuQQ==
-X-Received: by 2002:a05:600c:4fc9:b0:402:8c7e:3fc4 with SMTP id o9-20020a05600c4fc900b004028c7e3fc4mr9410480wmq.30.1698131375586;
-        Tue, 24 Oct 2023 00:09:35 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s10-20020a05600c45ca00b00407752f5ab6sm11368047wmo.6.2023.10.24.00.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 00:09:34 -0700 (PDT)
-Date:   Tue, 24 Oct 2023 10:09:31 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/4] ACPI: sysfs: Fix a potential out-of-bound write in
- create_of_modalias()
-Message-ID: <6c38f870-8f89-4955-abd5-50439853e440@kadam.mountain>
-References: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
- <004a9aa85dcc37d112443e133c9edfd7624cd47b.1698081019.git.christophe.jaillet@wanadoo.fr>
- <df33bc21-4792-4395-bbe0-4c8893818f6b@kadam.mountain>
- <ae1f9a0a-2058-4126-b716-44dc54449c4d@kadam.mountain>
+        d=1e100.net; s=20230601; t=1698131981; x=1698736781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NoyfqL9xvTo4TOT00Ugl9s8iTQc8bsijATmwRynbRy4=;
+        b=joSw/CMM9H10aXl4zaFJwVgIcgtKNBnXw+8jnmjdvoZJWb4o+Y1WY9KY87rM8M+N0h
+         pl1cXAHl3d2on0tFmpw9q+g2UhV8eALXZeAmD9G7/y7YqVeSXAhDkYax8hBfCMqk9Dxu
+         aaJXPXjE4H9aFm//VgmFqvSs4vMnbiugnImwseWTTfedC9nrmeR0FHtAwt8l0VxBlkv+
+         g1DK+ECaWSd7CYBk8rbGFRvzzBF27d04+C8AYAse0z69HiiMNERqNnf2cWJST3nRJSD9
+         MLSyIHZDt0KMwKLivWH9rXe7rt6NpVQ3LPYnfS4yHWJ9+Pv62Y0948NLr9wfiiu5WXTP
+         BO3A==
+X-Gm-Message-State: AOJu0YwJlbM4+S5nCAtULLEJ7cCCLnSBaUOUvKNfymhyfyJ92jG6f1R7
+        t49xTEgvyH9faK3mA+RvzeSWOqeBjxZw+w==
+X-Google-Smtp-Source: AGHT+IG84SGW0qeJgl0iyXA0Rvf6B29GhH8f0jbnZhCBs9KwdCoaJ3RsNSuHQr1ema5fF9wNMpSzbQ==
+X-Received: by 2002:a0d:ea8d:0:b0:5a7:a989:b85c with SMTP id t135-20020a0dea8d000000b005a7a989b85cmr11932657ywe.16.1698131981313;
+        Tue, 24 Oct 2023 00:19:41 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id o207-20020a0dccd8000000b00589c103d00asm3854932ywd.79.2023.10.24.00.19.40
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 00:19:41 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-d852b28ec3bso3949402276.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:19:40 -0700 (PDT)
+X-Received: by 2002:a25:f812:0:b0:d9c:b566:242c with SMTP id
+ u18-20020a25f812000000b00d9cb566242cmr11089305ybd.55.1698131980606; Tue, 24
+ Oct 2023 00:19:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="gSLSPFJSYIsxf/4V"
-Content-Disposition: inline
-In-Reply-To: <ae1f9a0a-2058-4126-b716-44dc54449c4d@kadam.mountain>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org> <169809755184.20306.3698252725424588550@noble.neil.brown.name>
+In-Reply-To: <169809755184.20306.3698252725424588550@noble.neil.brown.name>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 24 Oct 2023 09:19:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUku6U2EMCEXCE_K7bX2XX28P6qXq6ByWvC25C0bVhTOw@mail.gmail.com>
+Message-ID: <CAMuHMdUku6U2EMCEXCE_K7bX2XX28P6qXq6ByWvC25C0bVhTOw@mail.gmail.com>
+Subject: Re: KTODO automated TODO lists
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Neil,
 
---gSLSPFJSYIsxf/4V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Oct 23, 2023 at 11:46 PM NeilBrown <neilb@suse.de> wrote:
+> On Tue, 24 Oct 2023, Andrew Morton wrote:
+> > On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > > Yesterday someone on my lists just sent an email looking for kernel
+> > > tasks.
+> >
+> > Well here's a task: write a bot which follows the mailing lists and
+> > sends people nastygrams if one of their emails is more than 95%(?)
+> > quoted text.
+>
+> Doesn't your email reader automatically hide most of a large quote?
+> Mine does :-)
 
-On Tue, Oct 24, 2023 at 09:08:26AM +0300, Dan Carpenter wrote:
-> So I had a Smatch check for this kind of stuff but it was pretty junk.
-> It also only looked for "modalias + len" and here the code is doing
-> "&modalias[len]".
-> 
-> I can fix it up a bit today and look again at the warnings.  Here is the
-> the check and the warnings as-is.
+That's part of the problem: many people don't see anymore if the
+previous email author removed irrelevant parts or not.  Until they
+want to reply...
 
-Alright.  Here is the new version.  :)
+> > It's happening significantly more lately.  Possibly because the gmail
+> > client helpfully hides quoted text.
 
-regards,
-dan carpenter
+When replying, the Gmail web interface (or Chrome?) is also very
+slow when selecting very long irrelevant parts for deletion.  And it's
+hard to predict when "Show original" and "b4 mbox && alpine -f"
+would be faster...
 
---gSLSPFJSYIsxf/4V
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="check_snprintf_no_minus.c"
+Gr{oetje,eeting}s,
 
-/*
- * Copyright (C) 2021 Oracle.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
- */
+                        Geert
 
-#include "smatch.h"
-#include "smatch_slist.h"
-#include "smatch_extra.h"
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-static int my_id;
-
-STATE(plus_equal);
-STATE(minus_equal);
-
-static bool is_plus_address(struct expression *expr)
-{
-	sval_t sval;
-
-	if (expr->type != EXPR_PREOP ||
-	    expr->op != '&')
-		return false;
-
-	expr = expr->unop;
-	if (expr->type != EXPR_PREOP ||
-	    expr->op != '*')
-		return false;
-
-	expr = expr->unop;
-	if (expr->type != EXPR_BINOP ||
-	    expr->op != '+')
-		return false;
-
-	if (get_implied_value(expr->right, &sval) && sval.value == 0)
-		return false;
-
-	return true;
-}
-
-static bool is_plus(struct expression *expr)
-{
-	struct expression *tmp;
-	sval_t sval;
-
-	tmp = get_assigned_expr(expr);
-	if (tmp)
-		expr = tmp;
-	expr = strip_expr(expr);
-	if (expr->type == EXPR_BINOP && expr->op == '+') {
-		if (get_implied_value(expr->right, &sval) && sval.value == 0)
-			return false;
-		return true;
-	}
-
-	if (is_plus_address(expr))
-		return true;
-
-	if (get_state_expr(my_id, expr) == &plus_equal)
-		return true;
-
-	return false;
-}
-
-static bool is_minus(struct expression *expr)
-{
-	struct expression *tmp;
-
-	tmp = get_assigned_expr(expr);
-	if (tmp)
-		expr = tmp;
-	expr = strip_expr(expr);
-	if (expr->type == EXPR_BINOP && expr->op == '-')
-		return true;
-	/*
-	 * If, after calling strip_expr, the expression is still () that means
-	 * it is an EXPR_STATEMENT and some kind of complicated macro.
-	 */
-	if (expr->type == EXPR_PREOP && expr->op == '(')
-		return true;
-	if (get_state_expr(my_id, expr) == &minus_equal)
-		return true;
-	return false;
-}
-
-static void match_snprintf(const char *fn, struct expression *expr, void *unused)
-{
-	struct expression *dest, *limit;
-	char *name;
-
-	dest = get_argument_from_call_expr(expr->args, 0);
-	limit = get_argument_from_call_expr(expr->args, 1);
-	dest = strip_expr(dest);
-	limit = strip_expr(limit);
-	if (!dest || !limit)
-		return;
-
-	if (!is_plus(dest))
-		return;
-
-	if (is_minus(limit))
-		return;
-
-	name = expr_to_str(limit);
-	sm_warning("expected subtract in snprintf limit '%s'", name);
-	free_string(name);
-}
-
-static void match_assign(struct expression *expr)
-{
-	if (expr->op == SPECIAL_ADD_ASSIGN)
-		set_state_expr(my_id, expr->left, &plus_equal);
-
-	if (expr->op == SPECIAL_SUB_ASSIGN)
-		set_state_expr(my_id, expr->left, &minus_equal);
-}
-
-void check_snprintf_no_minus(int id)
-{
-	my_id = id;
-
-	add_function_hook("snprintf", &match_snprintf, NULL);
-	add_function_hook("scnprintf", &match_snprintf, NULL);
-
-	add_hook(&match_assign, ASSIGNMENT_HOOK);
-}
-
-
---gSLSPFJSYIsxf/4V--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
