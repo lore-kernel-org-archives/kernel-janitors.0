@@ -2,89 +2,156 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35709C07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 18:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54947C25B47
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 21:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344192AbjJXSxh (ORCPT
+        id S1344325AbjJXVMQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 14:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39654 "EHLO
+        Tue, 24 Oct 2023 17:12:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344169AbjJXSxg (ORCPT
+        with ESMTP id S1344256AbjJXVMP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 14:53:36 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA5210DE;
-        Tue, 24 Oct 2023 11:53:33 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E3DC433C7;
-        Tue, 24 Oct 2023 18:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698173613;
-        bh=tqKKyqDACaNThpvov4ZEREo0ocu9Uu1TB1KubL2Jyrk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=upJ/xPXUUl2MVFWJAnynPy1fEw+RcVMCd7BRbMNgQG8LRpN+NXeVsBxbbX7DTvVQ1
-         MxxK2JTWCB3XWh6z0nqsuBV47X9edm7/QsIS86/UgbOMgRzDYUW8QIyXY+ea773pjU
-         yPLTSX0U1EZwK92rSSpGag2/n5im7zDXFwWWpxEU3/RV0aY4dWgrP1pGDfBOrDmWVE
-         quaW4R4NBl50hwxFKo/Sw1IbFixev5TDxpWX5HdjB71o/Sx/a0Bk7MVf0IpZIn17Cy
-         TC8KpsHAXYh4IB25/glnpHNIe9tDyrcvgFGxaNvTm/bqskNYwovn/Bg6ukA93+JfZq
-         2FVlR1jK+zR9w==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20231023151704.670240-1-colin.i.king@gmail.com>
-References: <20231023151704.670240-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: mediatek: mt8186: remove redundant
- assignments to variable tdm_con
-Message-Id: <169817361079.82257.18121881250208985059.b4-ty@kernel.org>
-Date:   Tue, 24 Oct 2023 19:53:30 +0100
+        Tue, 24 Oct 2023 17:12:15 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EEC10CF
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 14:12:13 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvOgx-0005EP-SP; Tue, 24 Oct 2023 23:11:59 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvOgw-00421X-Cl; Tue, 24 Oct 2023 23:11:58 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvOgw-005XxO-3K; Tue, 24 Oct 2023 23:11:58 +0200
+Date:   Tue, 24 Oct 2023 23:11:57 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: samsung: Fix a bit test
+Message-ID: <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
+References: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nkibwm3sl7ikb3rs"
+Content-Disposition: inline
+In-Reply-To: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 23 Oct 2023 16:17:04 +0100, Colin Ian King wrote:
-> There are two occurrences where variable tdm_con is being initialized
-> to zero and the next statement re-assigns tdm_con to a new value. The
-> initializations are redundant and can be removed.
-> 
-> 
 
-Applied to
+--nkibwm3sl7ikb3rs
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Hello Dan,
 
-Thanks!
+On Tue, Oct 17, 2023 at 05:04:08PM +0300, Dan Carpenter wrote:
+> This code has two problems.  First, it passes the wrong bit parameter to
+> test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
+> open coded bit tests.
+>=20
+> The test_bit() function takes a bit number.  In other words,
+> "if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
+> Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
+> double shift bug.
+>=20
+> In pwm_samsung_resume() these issues mean that the flag is never set and
+> the function is essentially a no-op.
+>=20
+> Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> From static analysis and not tested.
+>=20
+>  drivers/pwm/pwm-samsung.c | 2 +-
+>  include/linux/pwm.h       | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index 10fe2c13cd80..acf4a0d8d990 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
+>  		struct pwm_device *pwm =3D &chip->pwms[i];
+>  		struct samsung_pwm_channel *chan =3D &our_chip->channel[i];
+> =20
+> -		if (!(pwm->flags & PWMF_REQUESTED))
+> +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+>  			continue;
+> =20
+>  		if (our_chip->variant.output_mask & BIT(i))
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index e3b437587b32..3eee5bf367fb 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -41,8 +41,8 @@ struct pwm_args {
+>  };
+> =20
+>  enum {
+> -	PWMF_REQUESTED =3D 1 << 0,
+> -	PWMF_EXPORTED =3D 1 << 1,
+> +	PWMF_REQUESTED =3D 0,
+> +	PWMF_EXPORTED  =3D 1,
 
-[1/1] ASoC: mediatek: mt8186: remove redundant assignments to variable tdm_con
-      commit: 2e2a1613342658962250873cb8a0406bebdab9e3
+I'd want s/  / / here. Or even not assign explicit values at all?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+>  };
+> =20
+>  /*
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I'd say these are two separate issues, with the one in pwm-samsung being
+bad and the one in <linux/pwm.h> "only" ugly.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I wonder how I could get the samsung part wrong. All current usages of
+PMWF_REQUESTED (and also PWMF_EXPORTED) use test_bit (et al). Grepping
+through history pwm-pca9685.c got this wrong in a similar way for some
+time, but otherwise it was always used correctly.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+The definition of the flags in <linux/pwm.h> is ugly since=20
+f051c466cf69 ("pwm: Allow chips to support multiple PWMs") from 2011!
 
-Thanks,
-Mark
+@Dan: Would you split the patch in two please?
 
+Thanks for catching that!
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--nkibwm3sl7ikb3rs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmU4Mx0ACgkQj4D7WH0S
+/k7KQwf/eaAyfpovq4WF+Ttz94ctJhg4PD7Nk9TRKnE72mEh/giRc3ZaQ6RY3ybw
+1ymd1StO/XRx6QtH16VFBW7x3FHcxMedBndun4K33rruSUaaQ9lw+Br8FPNuHFmg
+akDIcusQDG+PUR2K2ERAAELHU0cmFHxG78jbUZ+Y/+lQg7JEiRLW4lFvMSzTsJMs
+I4i3EzBZXRpcFPk80HoA9PhECYqP+OleLpUmuc53hRb8txwJpSJrWjohaXP45ps0
+gEcS7ItZJQOjDvc5bHEy6/DOwdhtbZU/nuOqqGLqs4PIuM2WARmQKrtVCl4IMrJ1
+5sd5d5F3TWurS/8+vXSjNWQj+fMOAQ==
+=qrEt
+-----END PGP SIGNATURE-----
+
+--nkibwm3sl7ikb3rs--
