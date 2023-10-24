@@ -2,92 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0901EC00A8F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C38DC07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 08:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233727AbjJXH6j (ORCPT
+        id S233832AbjJXI3c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 03:58:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
+        Tue, 24 Oct 2023 04:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbjJXH6i (ORCPT
+        with ESMTP id S233837AbjJXI3a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 03:58:38 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097B5111;
-        Tue, 24 Oct 2023 00:58:36 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso30453875e9.3;
-        Tue, 24 Oct 2023 00:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698134314; x=1698739114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F/HtEs3uRz9gEWjbZhb7PO6cLxbnlpDSnYG/nx0cMBY=;
-        b=F/dyGMQgmhF3JiwUgQcwVkMJRjFCzkjgSIMlc3gU0om+1QrYezWMPKD4gArJ++S9mT
-         XGzfaal64ct0rU6Qgq2wglto2ZgeNGt9oEecZ6d4Md7kvi3jemsdoEFxYnTcEN2zDt9W
-         9NJGLs9tn2xHgA58Hq35JJkf+IgMDOn2Upq574lbBtUHPAyug+06Us2mxcPXYea2caRw
-         e5UEOdt0lv/gGk5+IEUVXe2xCqJSYUCX3ECB5+zKaUuF8bQ9AIZJSGAddeS8iI6/nLVQ
-         qDN5oZDJ/tPuQxLBk/8e8N+eKHVQKQdtyIHm6TbvWXYk+O/B1cnuQe2ZxwOd3mgJ/IXf
-         lWzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698134314; x=1698739114;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F/HtEs3uRz9gEWjbZhb7PO6cLxbnlpDSnYG/nx0cMBY=;
-        b=YvvRTONZL8jJrbJl64gy/8+Kw1zL8CwUgS9OPKBTT9yn9f8CieuOwU7C0mMQ7llh9f
-         dKvJeTo7cnhJxjBMNYR4cn4E+bCTuF3CEyeglcYLGZbHU0d4GZk3nYBKA0FQnjSktmOh
-         FwF4x1UBcbW8DEWK+SNoyFmsLwZGhAeLUpD7EdPAz+RX7xptE2c8jo+ydaExkcMrVJMG
-         WkL161WoItLAfh5S8pTT7bipwBh7gAUr6iT6Ugp2Zl0YHYNa3oTgxrlt+3F63bDLRJS2
-         J09BRscrsKeavgpC2ZTZTyXZ7n46D4322dtTm7VUnmyzp6e6IY+rpwgEjIBppJmo05zW
-         jjhA==
-X-Gm-Message-State: AOJu0YxCpPTtQgtqd0z+tiweuPL2L+GVBxfa+peFY+OVh+/zuxoduEje
-        D/mfQrAZXWJOXciN/IoemC4=
-X-Google-Smtp-Source: AGHT+IF30oiEgFGhMcxcPgUJRA24HG6sxIFDWiPUfcQIYeZXfeyFm+j5FHiLpV82d/M11oRUgBv6Fg==
-X-Received: by 2002:a05:600c:4e8c:b0:401:bf56:8ba6 with SMTP id f12-20020a05600c4e8c00b00401bf568ba6mr8759283wmq.28.1698134314272;
-        Tue, 24 Oct 2023 00:58:34 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r6-20020a05600c458600b00406443c8b4fsm16155790wmo.19.2023.10.24.00.58.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 00:58:33 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Gregory Greenman <gregory.greenman@intel.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-        linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: iwlwifi: Fix spelling mistake "SESION" -> "SESSION"
-Date:   Tue, 24 Oct 2023 08:58:32 +0100
-Message-Id: <20231024075832.695405-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 24 Oct 2023 04:29:30 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B3C9F;
+        Tue, 24 Oct 2023 01:29:28 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C5BB566072F1;
+        Tue, 24 Oct 2023 09:29:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698136167;
+        bh=y6VQewPIt6l+bjj3DnPMyynt5aWnCBl8s5jWO+bDUOM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=NRTXXfLVPezJQBP3em8vk4+lrxWFVXd5zmibFfHwIXDlZf39BQJN2dOLTfgIrgEvp
+         cVhfOszGsMBPHWlqYMva/TtD/IeXaQ5apoe3LG6eeZ+IfVD3SbjUllbqJpaBvWvO+A
+         TSSnpYz8XWANuuDznv25Syg9J76Sj32qvoUw/spfCsgoeVmroBv2ah48ACzLnJMi8x
+         tAVUqh3dspHH3CtjMnX1LX6S9UFxlRv2r2mWgjL5kQUPc0TLd/B4ef6bCOIO/P7s3i
+         FyIZPtXXG9xY3Armm3LLkbtWhI211fnYYNfpYM16co2gtGy6LVNYYZiwpp10K+y9bM
+         d8BsI4F+bDt6A==
+Message-ID: <624ec4b3-1b0b-4880-a0dd-2379d3c3d0c0@collabora.com>
+Date:   Tue, 24 Oct 2023 10:29:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ASoC: mediatek: mt8186: remove redundant
+ assignments to variable tdm_con
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231023151704.670240-1-colin.i.king@gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20231023151704.670240-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a WARN message. Fix it.
+Il 23/10/23 17:17, Colin Ian King ha scritto:
+> There are two occurrences where variable tdm_con is being initialized
+> to zero and the next statement re-assigns tdm_con to a new value. The
+> initializations are redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/time-event.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-index 218fdf1ed530..245d45f48cc0 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-@@ -929,7 +929,7 @@ void iwl_mvm_rx_session_protect_notif(struct iwl_mvm *mvm,
- 
- 	if (WARN(ver > 2 && mvmvif->time_event_data.link_id >= 0 &&
- 		 mvmvif->time_event_data.link_id != notif_link_id,
--		 "SESION_PROTECTION_NOTIF was received for link %u, while the current time event is on link %u\n",
-+		 "SESSION_PROTECTION_NOTIF was received for link %u, while the current time event is on link %u\n",
- 		 notif_link_id, mvmvif->time_event_data.link_id))
- 		goto out_unlock;
- 
--- 
-2.39.2
 
