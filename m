@@ -2,131 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF8FC00A8F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 06:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E6AC07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbjJXGIi (ORCPT
+        id S232561AbjJXHJk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 02:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
+        Tue, 24 Oct 2023 03:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbjJXGIg (ORCPT
+        with ESMTP id S232420AbjJXHJj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 02:08:36 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0559D
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 23:08:32 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32d9b507b00so2993464f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 23:08:32 -0700 (PDT)
+        Tue, 24 Oct 2023 03:09:39 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65619118
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:09:37 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4084de32db5so35551875e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698127710; x=1698732510; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698131375; x=1698736175; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TqNCl8l+KnQqm1rHah7h5hq+q0hn/gFoy9mSnGDjiFI=;
-        b=B5/mt5PiqavyI7wpp6rQRuQOqXQg7jGGFPgl6lL6MSBq2ArbnP7tKJfxbntf8YjnQ0
-         YOPd0Asqi/+Ocz2HgN0Npg5BVxEXRxFLJKvUJLWmqWxXMMCbAhkvcXI4VmNehU0DiAKw
-         tMCeOBoR8bS0STlgedOLkMp8Lkc9RlwKUpYBZ4/MO58+ukQ66kryfpdKDX60DjCIhrRK
-         6fvK4OZDVVTV/19Ldt0/g1oE/W6flHrYYxHuoLDDzpjURqPIDRAOrpFPxCGIJP9lhecS
-         KcRhyOh3FpkbpIPokpWNUfGH9M0RH/hWX99OplGC+aoP8yiupTAIAGj4mJj1IZNEioHD
-         tEhw==
+        bh=bg3/yG5alTR9cURzI2G+r1/RbWGLer43z8qyypczxLw=;
+        b=Es5LaCKFhseaBU5oll84kZYT2OmAJo7qfuMEdVFj5z5cMPOZwB04F9A0rA47M+NlQm
+         uQqljutvsShk+pazg0qG45M6bfa+ncEdwNImh/yNTWeYuyYpwNqBqVFegUCT3uwn4CqR
+         +agV5NPGRZXlVQy30QdF36xpPCRUsxmJp1SaEsQCwfBj9CS44dzve6xZ5wU0be1Z2QXl
+         sfc6KcmwyxbLfT3miiDpVOtNLmhut6H0/uSwpx6tSrPuwm3TzeuAvPkipx9pgRxn1epS
+         CHk3jAqyy4+1/Lp+0v2jPaGZxFsu3f8aNnukKz2enTGlL9biGtTkyZh5Rp+f8SQrdK3z
+         nYEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698127710; x=1698732510;
+        d=1e100.net; s=20230601; t=1698131375; x=1698736175;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TqNCl8l+KnQqm1rHah7h5hq+q0hn/gFoy9mSnGDjiFI=;
-        b=E/Te+Tmh9rghrjVwSnuzKt78TlqRi8CTil28pes+f39+A2udMIQGDbC+4auiC0cx6X
-         ugMlyl8ipHm61p5zq6sfqTojjVjJX4kBKbtaMmxqo+/GO/v+VTjhsQGHbNKpESHz5VCo
-         InS5nWwiC3UbOFxgwohk13VeGaYzIVLOmig62+ICTzAB0v0tcToGBWZomIEDQHqE+nK0
-         +wr52OOUDQVqtnE4DiEhvDpYo9jylxFRL3NSFp2aSdP/OtNpVbGsZ6911peE3OxDnxe7
-         6esDLNyTXLD+E36efykCfmQn9K21m5t+sW8PVpChH0eSE30iFUq3/XbggK4StKt23b+o
-         vE3A==
-X-Gm-Message-State: AOJu0YyfU81kRiZ9/3WoHGmPbnLkP4Ey8pCbc+lfE8lQCWUAhkX4iZ9P
-        F3urBC/V5bS7kJ6N8quGn/711A==
-X-Google-Smtp-Source: AGHT+IE8pQjyPk0MmN1uOsGxmhiiTVjbFu+htr0cIvDHXFuoc2dgLg0tpeLOzrT2sKb4wWrJmZLy9A==
-X-Received: by 2002:a05:6000:bc3:b0:32d:a466:c470 with SMTP id dm3-20020a0560000bc300b0032da466c470mr7473958wrb.21.1698127710513;
-        Mon, 23 Oct 2023 23:08:30 -0700 (PDT)
+        bh=bg3/yG5alTR9cURzI2G+r1/RbWGLer43z8qyypczxLw=;
+        b=tep1oGPfIrAQEtrP6vJcQEjNLpYd94AZ6u5P2f/yQEKsdfBHllv2TYwvvp/O2n7JaC
+         bvYKt9KZkxGw7rqIfoGnqyMicu1mzIRkx2EhcpHdxLCy6NtlRH0uh5hSvqZRj6MnQe20
+         F2pev8Ep80QwVmgR1h3Su1QgkKcjwas9n8gKIISTk7TqQq09iNmabLmhHlcwoUytRHLg
+         qgdO7fV5M+xgcrCT71xqbU5+I5m9NX5hSEzcI9diNXaTQvJMCCq30DissKYOQ9H7HJDp
+         QG4c6tJPRWcjhyis4FZN0XVBXm3NyG6Kyhaib9VlyuZyCTFDVnq1vZ8Nu4NLjyYodoyo
+         T7EQ==
+X-Gm-Message-State: AOJu0YzaiKiMuCSgbe+CArVVK/v+/fqc9997hAXvvfqCy87oZ6pXV0KC
+        z+a34pH17C79zlL2ZgXP1qE7IA==
+X-Google-Smtp-Source: AGHT+IG82Wy7z7LaS15pZRBGLYgELtLF6fUMo8x83zDPQE5+VC1wueXV6hw8d9oATcWQwSIY0XVuQQ==
+X-Received: by 2002:a05:600c:4fc9:b0:402:8c7e:3fc4 with SMTP id o9-20020a05600c4fc900b004028c7e3fc4mr9410480wmq.30.1698131375586;
+        Tue, 24 Oct 2023 00:09:35 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q5-20020adfea05000000b0032d9548240fsm9138398wrm.82.2023.10.23.23.08.29
+        by smtp.gmail.com with ESMTPSA id s10-20020a05600c45ca00b00407752f5ab6sm11368047wmo.6.2023.10.24.00.09.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 23:08:30 -0700 (PDT)
-Date:   Tue, 24 Oct 2023 09:08:26 +0300
+        Tue, 24 Oct 2023 00:09:34 -0700 (PDT)
+Date:   Tue, 24 Oct 2023 10:09:31 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH 2/4] ACPI: sysfs: Fix a potential out-of-bound write in
  create_of_modalias()
-Message-ID: <ae1f9a0a-2058-4126-b716-44dc54449c4d@kadam.mountain>
+Message-ID: <6c38f870-8f89-4955-abd5-50439853e440@kadam.mountain>
 References: <cover.1698081019.git.christophe.jaillet@wanadoo.fr>
  <004a9aa85dcc37d112443e133c9edfd7624cd47b.1698081019.git.christophe.jaillet@wanadoo.fr>
  <df33bc21-4792-4395-bbe0-4c8893818f6b@kadam.mountain>
+ <ae1f9a0a-2058-4126-b716-44dc54449c4d@kadam.mountain>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="bqF84jalhcFd/GyC"
+Content-Type: multipart/mixed; boundary="gSLSPFJSYIsxf/4V"
 Content-Disposition: inline
-In-Reply-To: <df33bc21-4792-4395-bbe0-4c8893818f6b@kadam.mountain>
+In-Reply-To: <ae1f9a0a-2058-4126-b716-44dc54449c4d@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---bqF84jalhcFd/GyC
+--gSLSPFJSYIsxf/4V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Oct 24, 2023 at 08:55:25AM +0300, Dan Carpenter wrote:
-> On Mon, Oct 23, 2023 at 09:33:16PM +0200, Christophe JAILLET wrote:
-> > The remaining size of the buffer used by snprintf() is not updated after
-> > the first write, so subsequent write in the 'for' loop a few lines below
-> > can write some data past the end of the 'modalias' buffer.
-> > 
-> > Correctly update the remaining size.
-> > 
-> > Note that this pattern is already correctly written in
-> > create_pnp_modalias().
-> > 
-> > Fixes: 8765c5ba1949 ("ACPI / scan: Rework modalias creation when "compatible" is present")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/acpi/device_sysfs.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-> > index 4deb36dccb73..7ec3142f3eda 100644
-> > --- a/drivers/acpi/device_sysfs.c
-> > +++ b/drivers/acpi/device_sysfs.c
-> > @@ -215,6 +215,8 @@ static int create_of_modalias(const struct acpi_device *acpi_dev, char *modalias
-> >  	if (len >= size)
-> >  		return -ENOMEM;
-> >  
-> > +	size -= len;
-> > +
+On Tue, Oct 24, 2023 at 09:08:26AM +0300, Dan Carpenter wrote:
+> So I had a Smatch check for this kind of stuff but it was pretty junk.
+> It also only looked for "modalias + len" and here the code is doing
+> "&modalias[len]".
 > 
-> Yeah.  This is a good bugfix but it also shows why the canonical format
-> is better.  In the canonical format the "size - len" happens as part of
-> snprintf() instead of on a separate line where it can be forgotten.
-> 
-> 	len += snprintf(buf + len, size - len, "string");
-> 
-> Also the user space version of snprintf() can fail but the
-> kernel space version can't.  This code is more complicated and introduces
-> a memory corruption bug because it is pretending that we need to check
-> for negatives.  People (someone) sometimes (once ten years ago) tell me
-> that checking for negatives is important for security but actually it's
-> the reverse.
+> I can fix it up a bit today and look again at the warnings.  Here is the
+> the check and the warnings as-is.
 
-So I had a Smatch check for this kind of stuff but it was pretty junk.
-It also only looked for "modalias + len" and here the code is doing
-"&modalias[len]".
-
-I can fix it up a bit today and look again at the warnings.  Here is the
-the check and the warnings as-is.
+Alright.  Here is the new version.  :)
 
 regards,
 dan carpenter
 
-
---bqF84jalhcFd/GyC
+--gSLSPFJSYIsxf/4V
 Content-Type: text/x-csrc; charset=us-ascii
 Content-Disposition: attachment; filename="check_snprintf_no_minus.c"
 
@@ -153,11 +115,75 @@ Content-Disposition: attachment; filename="check_snprintf_no_minus.c"
 
 static int my_id;
 
+STATE(plus_equal);
+STATE(minus_equal);
+
+static bool is_plus_address(struct expression *expr)
+{
+	sval_t sval;
+
+	if (expr->type != EXPR_PREOP ||
+	    expr->op != '&')
+		return false;
+
+	expr = expr->unop;
+	if (expr->type != EXPR_PREOP ||
+	    expr->op != '*')
+		return false;
+
+	expr = expr->unop;
+	if (expr->type != EXPR_BINOP ||
+	    expr->op != '+')
+		return false;
+
+	if (get_implied_value(expr->right, &sval) && sval.value == 0)
+		return false;
+
+	return true;
+}
+
 static bool is_plus(struct expression *expr)
 {
-	if (expr->type == EXPR_BINOP && expr->op == '+')
+	struct expression *tmp;
+	sval_t sval;
+
+	tmp = get_assigned_expr(expr);
+	if (tmp)
+		expr = tmp;
+	expr = strip_expr(expr);
+	if (expr->type == EXPR_BINOP && expr->op == '+') {
+		if (get_implied_value(expr->right, &sval) && sval.value == 0)
+			return false;
 		return true;
-	/* fixme: what about dst += snprintf() */
+	}
+
+	if (is_plus_address(expr))
+		return true;
+
+	if (get_state_expr(my_id, expr) == &plus_equal)
+		return true;
+
+	return false;
+}
+
+static bool is_minus(struct expression *expr)
+{
+	struct expression *tmp;
+
+	tmp = get_assigned_expr(expr);
+	if (tmp)
+		expr = tmp;
+	expr = strip_expr(expr);
+	if (expr->type == EXPR_BINOP && expr->op == '-')
+		return true;
+	/*
+	 * If, after calling strip_expr, the expression is still () that means
+	 * it is an EXPR_STATEMENT and some kind of complicated macro.
+	 */
+	if (expr->type == EXPR_PREOP && expr->op == '(')
+		return true;
+	if (get_state_expr(my_id, expr) == &minus_equal)
+		return true;
 	return false;
 }
 
@@ -176,7 +202,7 @@ static void match_snprintf(const char *fn, struct expression *expr, void *unused
 	if (!is_plus(dest))
 		return;
 
-	if (limit->type == EXPR_BINOP && limit->op == '-')
+	if (is_minus(limit))
 		return;
 
 	name = expr_to_str(limit);
@@ -184,116 +210,24 @@ static void match_snprintf(const char *fn, struct expression *expr, void *unused
 	free_string(name);
 }
 
+static void match_assign(struct expression *expr)
+{
+	if (expr->op == SPECIAL_ADD_ASSIGN)
+		set_state_expr(my_id, expr->left, &plus_equal);
+
+	if (expr->op == SPECIAL_SUB_ASSIGN)
+		set_state_expr(my_id, expr->left, &minus_equal);
+}
+
 void check_snprintf_no_minus(int id)
 {
 	my_id = id;
+
 	add_function_hook("snprintf", &match_snprintf, NULL);
 	add_function_hook("scnprintf", &match_snprintf, NULL);
+
+	add_hook(&match_assign, ASSIGNMENT_HOOK);
 }
 
 
---bqF84jalhcFd/GyC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=err-list
-
-kernel/locking/lockdep_proc.c:497 seq_stats() warn: expected subtract in snprintf limit '3'
-kernel/locking/lockdep_proc.c:501 seq_stats() warn: expected subtract in snprintf limit '3'
-kernel/time/clocksource.c:1429 available_clocksource_show() warn: expected subtract in snprintf limit '(null)'
-kernel/time/clocksource.c:1434 available_clocksource_show() warn: expected subtract in snprintf limit '(null)'
-kernel/trace/trace_probe.c:1635 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1639 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1642 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1645 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1646 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1649 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1652 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1663 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_probe.c:1670 __set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:616 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:619 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:623 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:628 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:631 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_synth.c:634 __set_synth_event_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_syscalls.c:218 __set_enter_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_syscalls.c:220 __set_enter_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_syscalls.c:224 __set_enter_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_syscalls.c:227 __set_enter_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1330 user_dyn_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1332 user_dyn_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1353 user_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1354 user_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1355 user_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1358 user_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1361 user_field_set_string() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1373 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1377 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1379 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1385 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1390 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-kernel/trace/trace_events_user.c:1393 user_event_set_print_fmt() warn: expected subtract in snprintf limit '(len) ?len - pos:0'
-lib/ref_tracker.c:99 __ref_tracker_dir_pr_ostream() warn: expected subtract in snprintf limit 'len'
-lib/ref_tracker.c:110 __ref_tracker_dir_pr_ostream() warn: expected subtract in snprintf limit 'len'
-lib/ref_tracker.c:116 __ref_tracker_dir_pr_ostream() warn: expected subtract in snprintf limit 'len'
-lib/dynamic_debug.c:828 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:830 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:836 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:839 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:841 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:845 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-lib/dynamic_debug.c:847 __dynamic_emit_prefix() warn: expected subtract in snprintf limit 'remaining(pos)'
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c:3204 bnx2x_get_strings() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/sfc/siena/ethtool_common.c:229 efx_fill_test() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/sfc/falcon/ethtool.c:229 ef4_fill_test() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/sfc/ethtool_common.c:278 efx_fill_test() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/mellanox/mlx5/core/main.c:243 mlx5_set_driver_version() warn: expected subtract in snprintf limit 'remaining_size'
-drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c:198 mlx5_lag_print_mapping() warn: expected subtract in snprintf limit '4'
-drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c:209 mlx5_lag_print_mapping() warn: expected subtract in snprintf limit '10'
-drivers/net/ethernet/mellanox/mlx4/eq.c:1264 mlx4_init_eq_table() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/mellanox/mlx4/eq.c:1505 mlx4_assign_eq() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:2630 hns_dsaf_get_node_stats_strings() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:2633 hns_dsaf_get_node_stats_strings() warn: expected subtract in snprintf limit '32'
-drivers/net/ethernet/hisilicon/hns/hns_ethtool.c:436 __lb_other_process() warn: expected subtract in snprintf limit '3'
-drivers/net/ethernet/qlogic/qede/qede_main.c:1205 qede_log_probe() warn: expected subtract in snprintf limit 'left_size'
-drivers/ata/libata-transport.c:578 show_ata_dev_id() warn: expected subtract in snprintf limit '20'
-drivers/ata/libata-transport.c:597 show_ata_dev_gscr() warn: expected subtract in snprintf limit '20'
-drivers/usb/atm/cxacru.c:490 adsl_config_store() warn: expected subtract in snprintf limit '13'
-drivers/gpu/drm/i915/display/intel_sdvo.c:423 intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:426 intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:431 intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:433 intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:586 intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:588 intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/i915/display/intel_sdvo.c:599 intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:416 psb_intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:420 psb_intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:425 psb_intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:431 psb_intel_sdvo_debug_write() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:541 psb_intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:543 psb_intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/gma500/psb_intel_sdvo.c:554 psb_intel_sdvo_read_response() warn: expected subtract in snprintf limit '(null)'
-drivers/gpu/drm/drm_print.c:144 __drm_printfn_coredump() warn: expected subtract in snprintf limit 'iterator->remain'
-drivers/md/dm-ima.c:337 dm_ima_measure_on_table_load() warn: expected subtract in snprintf limit '3'
-drivers/input/input.c:1087 input_bits_to_string() warn: expected subtract in snprintf limit '(null)'
-drivers/input/input.c:1386 input_print_modalias_bits() warn: expected subtract in snprintf limit '(null)'
-drivers/input/input.c:1420 input_print_modalias() warn: expected subtract in snprintf limit '(null)'
-drivers/input/input.c:1543 input_print_bitmap() warn: expected subtract in snprintf limit '(null)'
-drivers/input/input.c:1554 input_print_bitmap() warn: expected subtract in snprintf limit '(null)'
-drivers/input/misc/keyspan_remote.c:132 keyspan_print() warn: expected subtract in snprintf limit '4'
-drivers/block/zram/zram_drv.c:878 read_block_state() warn: expected subtract in snprintf limit 'count'
-drivers/infiniband/hw/cxgb4/device.c:267 dump_qp() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:288 dump_qp() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:304 dump_qp() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:390 dump_stag() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:574 dump_ep() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:595 dump_ep() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:631 dump_listen_ep() warn: expected subtract in snprintf limit 'space'
-drivers/infiniband/hw/cxgb4/device.c:644 dump_listen_ep() warn: expected subtract in snprintf limit 'space'
-drivers/accel/habanalabs/gaudi/gaudi.c:8927 gaudi_fill_sobs_from_mon() warn: expected subtract in snprintf limit 'max_write'
-drivers/accel/habanalabs/gaudi/gaudi.c:8930 gaudi_fill_sobs_from_mon() warn: expected subtract in snprintf limit 'max_write'
-fs/ocfs2/filecheck.c:327 ocfs2_filecheck_attr_show() warn: expected subtract in snprintf limit 'remain'
-fs/ecryptfs/crypto.c:127 ecryptfs_derive_iv() warn: expected subtract in snprintf limit '16'
-sound/soc/sof/sof-client-probes.c:226 sof_probes_dfs_points_read() warn: expected subtract in snprintf limit 'remaining'
-sound/soc/sof/ipc4-mtrace.c:320 sof_ipc4_priority_mask_dfs_read() warn: expected subtract in snprintf limit 'remaining'
-
---bqF84jalhcFd/GyC--
+--gSLSPFJSYIsxf/4V--
