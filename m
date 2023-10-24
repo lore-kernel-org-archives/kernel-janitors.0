@@ -2,109 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F287C07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 05:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95816C25B47
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 05:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231820AbjJXFBx (ORCPT
+        id S232308AbjJXFfp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 01:01:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        Tue, 24 Oct 2023 01:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjJXFBw (ORCPT
+        with ESMTP id S232051AbjJXFfo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 01:01:52 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4437A111
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:01:50 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40838915cecso33576975e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:01:50 -0700 (PDT)
+        Tue, 24 Oct 2023 01:35:44 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C8D12B
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:35:38 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40853c639abso28733225e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698123709; x=1698728509; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ImCVUO1ahKZsANhATFtH58NBKo6LvXQpu5phZSZNnHA=;
-        b=P7yfevt670UDrrJy2sLgR32SWGzoJr+ZhkcM4YI9B2UEWLYqVwrGr80r5DhWfPajFi
-         Gk9NdDfMv3yogB0JdKJvlTwhmMHtKJJq2V1EjTYqqnimGX+QIxse+NMg1NiMv9LsXSXI
-         aOlkOPWiNqdtIGcKpAroKOSU7ox/5QjSr+URm4Uhg61W0onWDCxSRoN4kV5s8XWte91j
-         2AliML5j0YC+qQ3hp9OAAcc8gFd0Hk6ErBFvHOag10aoc6DxW5Wp5BDfEMG23sP1ODSd
-         Fh/oeTLk/S3Hkb8VaX4urRCML2IO4VX+rTaZACZOZvbEbSS2Z0mCjWsC+e6Cp5HDVYgj
-         +8fA==
+        d=linaro.org; s=google; t=1698125737; x=1698730537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMzU+U96Jrm5po+L9hfZsnb4xlLlkv8Neetn1c1Qi+w=;
+        b=C5RMelYFv2AJ/NffMFYA6lakp/mcmLq+A4jTz2NCEsLZxLaJi+3AX9YY0T1LEdXK8O
+         xDRSzCcR20TPRjVBqBxJL+g6aHCqa0eE/33xh3yhXUYs4VaAd+LI6zubPqn7LqTahO2L
+         kYmy4vypzJUn7y54HROv/bGMarH3pfJrMIFQRAheNySCqdELa9KK+dK19HBnqTLfUgz5
+         U9IYwb1ak11vAkBqIty5i5Ogk7K1GXRsb29oD77ZnZU7OgSKW8VlDp2uaGFvyUXTQzF1
+         UfPxULnqlHKLhjghIuxuv8xaEkUoYNM6+SiOyKxRM9l09r/KQZ53w/3MtywnEwEdvudK
+         Eu7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698123709; x=1698728509;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ImCVUO1ahKZsANhATFtH58NBKo6LvXQpu5phZSZNnHA=;
-        b=k5FYDrHYRMC4B52GnBPrM6TqXnJtaEihwxmTRBUewxQEKl5XlKbbtzv4bdXa3uSheH
-         egIbq/5poL6Cwz9SJG2yo0PzLhMPouO8qT1FfXHl3GHDi5JBjCpu3yRRatG7P5540aP9
-         GI2NHjwlbzywUrvTQaPyZm1zR57fbbdzz6l/bls3wdltusiesk/hW6rgw1LM44EKtsNg
-         kpuruBWolOYGgIzgj6TG+kj3GxUwY5nEU7ftH9kKn39P0ORJnU5Jyhezacu+GffL9KK1
-         fgmYE0jPIUvlUSVjTDSOm3jBNnALPbNfoiv2VQc8F8O29A4uueyqDHnpAYED6GIj98Sb
-         2k1A==
-X-Gm-Message-State: AOJu0YyyIx1xJ5S5PVvt3Jo7P9UX+VAV+fjwUF3M1dFQIAI9zcUZoYcR
-        6m0BQvkVI2Y6RCTjo450OtcjBMkfzuKSS4DLBbc=
-X-Google-Smtp-Source: AGHT+IHgvVy2f1BV1BsDfwKNhz9rEUGmMdEhT1ISE8VviisrMqlIOWgrMNB36+9/H1gdNBXg8/aFTA==
-X-Received: by 2002:a05:600c:3594:b0:408:59d4:f3d8 with SMTP id p20-20020a05600c359400b0040859d4f3d8mr6674127wmq.18.1698123708705;
-        Mon, 23 Oct 2023 22:01:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698125737; x=1698730537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AMzU+U96Jrm5po+L9hfZsnb4xlLlkv8Neetn1c1Qi+w=;
+        b=QXtRnlkh/tL6SFFUy9btUBerKt3nCF3/70i8yMA+tDdykxO3uIgpHieXlEqordTTr8
+         NT9QMJfqcwnQbsACDOBv3uWy7ir4mLUQFhlCpfD30zcbscQvarHDRwWYONgihaAaI0OJ
+         sJYgA5fSwRRUbTN3gEdZ+TiZxSSgKSjX6+u8bRPJhqT2qpkmSmWdJuKkijgznN7O7qzH
+         lAd2/skVUOz80NnuantEdJ4wDIVzw+VufemH731gbO9FR8CFZ+iMZAc+3CgUP+k9FphF
+         rzsu4RTokfTHuuC7xdrUZtWD12En+uUwGMJb3O+wiwqxgi1SbQ+QlQ0+yBOt6hrjzJMN
+         2yRg==
+X-Gm-Message-State: AOJu0YzHv4MJSW7VsFD1l6j3jQx6iiiUFjO2+XM4hR46NL0AJw2sVTQV
+        e+5mKDhhznuYevEzT7qLihOdLw==
+X-Google-Smtp-Source: AGHT+IEo8KiM/RFZR69QTA1j71GiZ98Rzw3Ga2dc1o6Sa78qJi5HYkvqoAQIkUVRn3xG1/AuzJPStA==
+X-Received: by 2002:a05:600c:5122:b0:408:3bbd:4a82 with SMTP id o34-20020a05600c512200b004083bbd4a82mr8534471wms.15.1698125737154;
+        Mon, 23 Oct 2023 22:35:37 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n1-20020a5d4001000000b0032dc1fc84f2sm9154045wrp.46.2023.10.23.22.01.47
+        by smtp.gmail.com with ESMTPSA id f5-20020a056000128500b0031c6581d55esm9115663wrx.91.2023.10.23.22.35.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 22:01:48 -0700 (PDT)
-Date:   Tue, 24 Oct 2023 08:01:44 +0300
+        Mon, 23 Oct 2023 22:35:36 -0700 (PDT)
+Date:   Tue, 24 Oct 2023 08:35:33 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Laurent Fert <laurent.fert@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] stm class: Fix a double free in stm_register_device()
-Message-ID: <ddaf5742-931b-4cdd-820b-72808ddf4fdf@moroto.mountain>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     keescook@chromium.org, Robert Richter <rric@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergey Temerkhanov <s.temerkhanov@gmail.com>,
+        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        linux-edac@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC/thunderx: Fix some potential buffer overflow in
+ thunderx_ocx_com_threaded_isr()
+Message-ID: <70bd7480-508a-451d-bc0a-f78e652cf511@kadam.mountain>
+References: <91ec35cd8e2e86fa3d24c2e8ea6970e0437cdfd2.1697908406.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <91ec35cd8e2e86fa3d24c2e8ea6970e0437cdfd2.1697908406.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The put_device(&stm->dev) call will trigger stm_device_release() which
-frees "stm" so the vfree(stm) on the next line is a double free.
+On Sat, Oct 21, 2023 at 07:13:51PM +0200, Christophe JAILLET wrote:
+> @@ -1127,27 +1128,26 @@ static irqreturn_t thunderx_ocx_com_threaded_isr(int irq, void *irq_id)
+>  				ARRAY_SIZE(ocx->com_err_ctx));
+>  		ctx = &ocx->com_err_ctx[tail];
+>  
+> -		snprintf(msg, OCX_MESSAGE_SIZE, "%s: OCX_COM_INT: %016llx",
+> -			ocx->edac_dev->ctl_name, ctx->reg_com_int);
+> -
+>  		decode_register(other, OCX_OTHER_SIZE,
+>  				ocx_com_errors, ctx->reg_com_int);
+>  
+> -		strncat(msg, other, OCX_MESSAGE_SIZE);
+> +		remaining = OCX_MESSAGE_SIZE;
+> +		remaining -= scnprintf(msg, remaining, "%s: OCX_COM_INT: %016llx%s",
+> +				       ocx->edac_dev->ctl_name, ctx->reg_com_int,
+> +				       other);
+>  
+>  		for (lane = 0; lane < OCX_RX_LANES; lane++)
+>  			if (ctx->reg_com_int & BIT(lane)) {
+> -				snprintf(other, OCX_OTHER_SIZE,
+> -					 "\n\tOCX_LNE_INT[%02d]: %016llx OCX_LNE_STAT11[%02d]: %016llx",
+> -					 lane, ctx->reg_lane_int[lane],
+> -					 lane, ctx->reg_lane_stat11[lane]);
+> -
+> -				strncat(msg, other, OCX_MESSAGE_SIZE);
+> -
+>  				decode_register(other, OCX_OTHER_SIZE,
+>  						ocx_lane_errors,
+>  						ctx->reg_lane_int[lane]);
+> -				strncat(msg, other, OCX_MESSAGE_SIZE);
+> +
+> +				remaining -= scnprintf(msg + (OCX_MESSAGE_SIZE - remaining),
+> +						       remaining,
 
-Fixes: 389b6699a2aa ("stm class: Fix stm device initialization order")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/hwtracing/stm/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Instead of doing "remaining -=" the canonincal way is "off +=".  Then
+the snprintf() becomes:
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index 534fbefc7f6a..7315f7d3910d 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -868,8 +868,10 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- 		return -ENOMEM;
- 
- 	stm->major = register_chrdev(0, stm_data->name, &stm_fops);
--	if (stm->major < 0)
--		goto err_free;
-+	if (stm->major < 0) {
-+		vfree(stm);
-+		return stm->major;
-+	}
- 
- 	device_initialize(&stm->dev);
- 	stm->dev.devt = MKDEV(stm->major, 0);
-@@ -913,10 +915,8 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- err_device:
- 	unregister_chrdev(stm->major, stm_data->name);
- 
--	/* matches device_initialize() above */
-+	/* calls stm_device_release() */
- 	put_device(&stm->dev);
--err_free:
--	vfree(stm);
- 
- 	return err;
- }
--- 
-2.42.0
+	off += scnprintf(msg + off, OCX_MESSAGE_SIZE - off, ""\n\tOCX_...
+
+Your way works but it makes my head hurt.
+
+regards,
+dan carpenter
 
