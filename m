@@ -2,67 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B247EC07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 05:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F287C07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 05:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbjJXFBF (ORCPT
+        id S231820AbjJXFBx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 01:01:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
+        Tue, 24 Oct 2023 01:01:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbjJXFBD (ORCPT
+        with ESMTP id S229688AbjJXFBw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 01:01:03 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8B27F9
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:00:59 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32db8924201so2718328f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:00:59 -0700 (PDT)
+        Tue, 24 Oct 2023 01:01:52 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4437A111
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:01:50 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40838915cecso33576975e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698123658; x=1698728458; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698123709; x=1698728509; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PfAUTnXWgmubMD55oBXowoonH5R6qeZ5OH5Z0vIY35g=;
-        b=NwkvYPetnhu5uYsBtd+1JCbNl3mKIMrTxAMZfjauZYCy72aQa0/GcaeXbQpasjjt5r
-         6d77CURcn0a55mCdhFnZlZzw7039a0e2DnyQ4bQ3X6RTYPGCojhYWrOQD2Kh/qryrKsb
-         SuksJbBlJ3wIwYTdfEx/6HpljuMYrUI3rIaV+T/01od9W7lDF4ek7acYrP6Bu1pDX7Cc
-         qvH4qTAQzZl2wU2MprYZjCE4SzpHShYE9UaRf9kYMJjaSQR+eBXIyUs9eIQTCUvYUEUh
-         Rdupo1laMo9oFbSztbtMOMewz10EIhglzzr8/Q8N/RqsRJkidLvbKK4UFi4OUgZb/OcU
-         uykQ==
+        bh=ImCVUO1ahKZsANhATFtH58NBKo6LvXQpu5phZSZNnHA=;
+        b=P7yfevt670UDrrJy2sLgR32SWGzoJr+ZhkcM4YI9B2UEWLYqVwrGr80r5DhWfPajFi
+         Gk9NdDfMv3yogB0JdKJvlTwhmMHtKJJq2V1EjTYqqnimGX+QIxse+NMg1NiMv9LsXSXI
+         aOlkOPWiNqdtIGcKpAroKOSU7ox/5QjSr+URm4Uhg61W0onWDCxSRoN4kV5s8XWte91j
+         2AliML5j0YC+qQ3hp9OAAcc8gFd0Hk6ErBFvHOag10aoc6DxW5Wp5BDfEMG23sP1ODSd
+         Fh/oeTLk/S3Hkb8VaX4urRCML2IO4VX+rTaZACZOZvbEbSS2Z0mCjWsC+e6Cp5HDVYgj
+         +8fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698123658; x=1698728458;
+        d=1e100.net; s=20230601; t=1698123709; x=1698728509;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PfAUTnXWgmubMD55oBXowoonH5R6qeZ5OH5Z0vIY35g=;
-        b=gShqaObIaJRbHpvC5OwUGMpDQkugJVL1ohqY/5e2MXL1+kXl5CLWoH6Rc+UsKYoruD
-         51kqthDuWyLM284fq6Sb8gEMo9fmU2zFlYMveNn+OTbHoJRZI67sOCLvKzejdJhHpqNf
-         W4y00Sxae1a7iyCrHk6mTU9aXt9Soxn3/aBwcRf8BgtSB2JtLgwLHlP8plF0CWM/MeL0
-         9WpBGurwsGgv4d9eaSjXnOPYEYjR1CZES9sX4uqNqZObaGQrMhOMGIwg7uzxvQq1x58v
-         1dPiV+sK2botj7ro6AIZQCv5I4aNBd4lGag8m0lfKpi+l7BXZgJmLaSgI9BurpTcDU0q
-         Jy6Q==
-X-Gm-Message-State: AOJu0YyVmyZSIPkQva/jK7xdpEiExGYVEPG5sA3+yFBr0pZy9lvcM6E9
-        DwHU02V7gGslqDT7xgT1NcGycOxN/HHF2XtpFR4=
-X-Google-Smtp-Source: AGHT+IGCxa8zVvugVsfJkL9J6ZS+nuttr3UC3F3P4N8AKS3AC9nbGPTuSL5sW9pl6CVyGpEEPy2M/A==
-X-Received: by 2002:a5d:44c8:0:b0:32d:83b7:bdb3 with SMTP id z8-20020a5d44c8000000b0032d83b7bdb3mr8294329wrr.70.1698123658157;
-        Mon, 23 Oct 2023 22:00:58 -0700 (PDT)
+        bh=ImCVUO1ahKZsANhATFtH58NBKo6LvXQpu5phZSZNnHA=;
+        b=k5FYDrHYRMC4B52GnBPrM6TqXnJtaEihwxmTRBUewxQEKl5XlKbbtzv4bdXa3uSheH
+         egIbq/5poL6Cwz9SJG2yo0PzLhMPouO8qT1FfXHl3GHDi5JBjCpu3yRRatG7P5540aP9
+         GI2NHjwlbzywUrvTQaPyZm1zR57fbbdzz6l/bls3wdltusiesk/hW6rgw1LM44EKtsNg
+         kpuruBWolOYGgIzgj6TG+kj3GxUwY5nEU7ftH9kKn39P0ORJnU5Jyhezacu+GffL9KK1
+         fgmYE0jPIUvlUSVjTDSOm3jBNnALPbNfoiv2VQc8F8O29A4uueyqDHnpAYED6GIj98Sb
+         2k1A==
+X-Gm-Message-State: AOJu0YyyIx1xJ5S5PVvt3Jo7P9UX+VAV+fjwUF3M1dFQIAI9zcUZoYcR
+        6m0BQvkVI2Y6RCTjo450OtcjBMkfzuKSS4DLBbc=
+X-Google-Smtp-Source: AGHT+IHgvVy2f1BV1BsDfwKNhz9rEUGmMdEhT1ISE8VviisrMqlIOWgrMNB36+9/H1gdNBXg8/aFTA==
+X-Received: by 2002:a05:600c:3594:b0:408:59d4:f3d8 with SMTP id p20-20020a05600c359400b0040859d4f3d8mr6674127wmq.18.1698123708705;
+        Mon, 23 Oct 2023 22:01:48 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d17-20020a5d6451000000b0032da022855fsm9020793wrw.111.2023.10.23.22.00.57
+        by smtp.gmail.com with ESMTPSA id n1-20020a5d4001000000b0032dc1fc84f2sm9154045wrp.46.2023.10.23.22.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 22:00:57 -0700 (PDT)
-Date:   Tue, 24 Oct 2023 08:00:53 +0300
+        Mon, 23 Oct 2023 22:01:48 -0700 (PDT)
+Date:   Tue, 24 Oct 2023 08:01:44 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Johnson Wang <johnson.wang@mediatek.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: mediatek: fix double free in mtk_clk_register_pllfh()
-Message-ID: <cd7fa365-28cc-4c34-ac64-6da57c98baa6@moroto.mountain>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Laurent Fert <laurent.fert@intel.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] stm class: Fix a double free in stm_register_device()
+Message-ID: <ddaf5742-931b-4cdd-820b-72808ddf4fdf@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -71,45 +67,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The mtk_clk_register_pll_ops() currently frees the "pll" parameter.
-The function has two callers, mtk_clk_register_pll() and
-mtk_clk_register_pllfh().  The first one, the _pll() function relies on
-the free, but for the second _pllfh() function it causes a double free
-bug.
+The put_device(&stm->dev) call will trigger stm_device_release() which
+frees "stm" so the vfree(stm) on the next line is a double free.
 
-Really the frees should be done in the caller because that's where
-the allocation is.
-
-Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
+Fixes: 389b6699a2aa ("stm class: Fix stm device initialization order")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/clk/mediatek/clk-pll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hwtracing/stm/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index a4eca5fd539c..513ab6b1b322 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -321,10 +321,8 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 534fbefc7f6a..7315f7d3910d 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -868,8 +868,10 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ 		return -ENOMEM;
  
- 	ret = clk_hw_register(NULL, &pll->hw);
+ 	stm->major = register_chrdev(0, stm_data->name, &stm_fops);
+-	if (stm->major < 0)
+-		goto err_free;
++	if (stm->major < 0) {
++		vfree(stm);
++		return stm->major;
++	}
  
--	if (ret) {
--		kfree(pll);
-+	if (ret)
- 		return ERR_PTR(ret);
--	}
+ 	device_initialize(&stm->dev);
+ 	stm->dev.devt = MKDEV(stm->major, 0);
+@@ -913,10 +915,8 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ err_device:
+ 	unregister_chrdev(stm->major, stm_data->name);
  
- 	return &pll->hw;
- }
-@@ -340,6 +338,8 @@ struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 		return ERR_PTR(-ENOMEM);
+-	/* matches device_initialize() above */
++	/* calls stm_device_release() */
+ 	put_device(&stm->dev);
+-err_free:
+-	vfree(stm);
  
- 	hw = mtk_clk_register_pll_ops(pll, data, base, &mtk_pll_ops);
-+	if (IS_ERR(hw))
-+		kfree(pll);
- 
- 	return hw;
+ 	return err;
  }
 -- 
 2.42.0
