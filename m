@@ -2,84 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B712C07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 04:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B247EC07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 05:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbjJXE6n (ORCPT
+        id S231470AbjJXFBF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 00:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51776 "EHLO
+        Tue, 24 Oct 2023 01:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbjJXE6m (ORCPT
+        with ESMTP id S229921AbjJXFBD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 00:58:42 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5A8A1
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 21:58:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA02C433C9;
-        Tue, 24 Oct 2023 04:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1698123520;
-        bh=S0th/boKiLGnON1ey4xgB1axQfKN7ZcEoC6cvI93OcE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RnPDW1siSvlCPsUSHk597l638SSjLM2QWIipVZs1SgG57Rarx31q9qNDW1OMd6Q0l
-         Mm5IflxyJqx2G7+/sElQ3byl4BYkuxrMhIMpqYpPCpzQhpXO4C3Q555zqxt1IwmbOL
-         J23zsElqOKpozrj0K/TdG8UZIelcHpsFkQ47kGF0=
-Date:   Mon, 23 Oct 2023 21:58:39 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Konstantin Ryabitsev <mricon@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: KTODO automated TODO lists
-Message-Id: <20231023215839.bb712e78fec6a6e0c3e6b62f@linux-foundation.org>
-In-Reply-To: <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
-        <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
-        <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
-        <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Oct 2023 01:01:03 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8B27F9
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:00:59 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32db8924201so2718328f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Oct 2023 22:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698123658; x=1698728458; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PfAUTnXWgmubMD55oBXowoonH5R6qeZ5OH5Z0vIY35g=;
+        b=NwkvYPetnhu5uYsBtd+1JCbNl3mKIMrTxAMZfjauZYCy72aQa0/GcaeXbQpasjjt5r
+         6d77CURcn0a55mCdhFnZlZzw7039a0e2DnyQ4bQ3X6RTYPGCojhYWrOQD2Kh/qryrKsb
+         SuksJbBlJ3wIwYTdfEx/6HpljuMYrUI3rIaV+T/01od9W7lDF4ek7acYrP6Bu1pDX7Cc
+         qvH4qTAQzZl2wU2MprYZjCE4SzpHShYE9UaRf9kYMJjaSQR+eBXIyUs9eIQTCUvYUEUh
+         Rdupo1laMo9oFbSztbtMOMewz10EIhglzzr8/Q8N/RqsRJkidLvbKK4UFi4OUgZb/OcU
+         uykQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698123658; x=1698728458;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PfAUTnXWgmubMD55oBXowoonH5R6qeZ5OH5Z0vIY35g=;
+        b=gShqaObIaJRbHpvC5OwUGMpDQkugJVL1ohqY/5e2MXL1+kXl5CLWoH6Rc+UsKYoruD
+         51kqthDuWyLM284fq6Sb8gEMo9fmU2zFlYMveNn+OTbHoJRZI67sOCLvKzejdJhHpqNf
+         W4y00Sxae1a7iyCrHk6mTU9aXt9Soxn3/aBwcRf8BgtSB2JtLgwLHlP8plF0CWM/MeL0
+         9WpBGurwsGgv4d9eaSjXnOPYEYjR1CZES9sX4uqNqZObaGQrMhOMGIwg7uzxvQq1x58v
+         1dPiV+sK2botj7ro6AIZQCv5I4aNBd4lGag8m0lfKpi+l7BXZgJmLaSgI9BurpTcDU0q
+         Jy6Q==
+X-Gm-Message-State: AOJu0YyVmyZSIPkQva/jK7xdpEiExGYVEPG5sA3+yFBr0pZy9lvcM6E9
+        DwHU02V7gGslqDT7xgT1NcGycOxN/HHF2XtpFR4=
+X-Google-Smtp-Source: AGHT+IGCxa8zVvugVsfJkL9J6ZS+nuttr3UC3F3P4N8AKS3AC9nbGPTuSL5sW9pl6CVyGpEEPy2M/A==
+X-Received: by 2002:a5d:44c8:0:b0:32d:83b7:bdb3 with SMTP id z8-20020a5d44c8000000b0032d83b7bdb3mr8294329wrr.70.1698123658157;
+        Mon, 23 Oct 2023 22:00:58 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d17-20020a5d6451000000b0032da022855fsm9020793wrw.111.2023.10.23.22.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 22:00:57 -0700 (PDT)
+Date:   Tue, 24 Oct 2023 08:00:53 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Johnson Wang <johnson.wang@mediatek.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: mediatek: fix double free in mtk_clk_register_pllfh()
+Message-ID: <cd7fa365-28cc-4c34-ac64-6da57c98baa6@moroto.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 23 Oct 2023 15:41:48 -0400 Konstantin Ryabitsev <mricon@kernel.org> wrote:
+The mtk_clk_register_pll_ops() currently frees the "pll" parameter.
+The function has two callers, mtk_clk_register_pll() and
+mtk_clk_register_pllfh().  The first one, the _pll() function relies on
+the free, but for the second _pllfh() function it causes a double free
+bug.
 
-> On Mon, Oct 23, 2023 at 08:55:56AM -1000, Linus Torvalds wrote:
-> > > Well here's a task: write a bot which follows the mailing lists and
-> > > sends people nastygrams if one of their emails is more than 95%(?)
-> > > quoted text.
-> > 
-> > I think that might be better off as a spam filter rule.
-> > 
-> > Don't make it some after-the-fact "trawl the lists". Just make it a
-> > bounce with a "you quoted too much". Same as the html avoidance.
-> 
-> I know people aren't being very serious, but automating this away either
-> aggressively (reject as spam) or passive-agressively (whine at poster) will
-> run into rare but valid corner cases. For example, we have no way of
-> distinguishing between "this person quoted too much from previous message" and
-> "this person posted a large but relevant quote from docs or another
-> conversation," and so we will likely punish/annoy the innocent.
+Really the frees should be done in the caller because that's where
+the allocation is.
 
-Rejecting a legtimate email would be bad.
+Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/clk/mediatek/clk-pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-So we choose "whine at poster".  If it's a false positive then they'll
-somehow survive the experience.   And, most importantly, the mail
-will get through.
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index a4eca5fd539c..513ab6b1b322 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -321,10 +321,8 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
+ 
+ 	ret = clk_hw_register(NULL, &pll->hw);
+ 
+-	if (ret) {
+-		kfree(pll);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return &pll->hw;
+ }
+@@ -340,6 +338,8 @@ struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	hw = mtk_clk_register_pll_ops(pll, data, base, &mtk_pll_ops);
++	if (IS_ERR(hw))
++		kfree(pll);
+ 
+ 	return hw;
+ }
+-- 
+2.42.0
 
-> It's better to treat this as a mentoring opportunity and send an off-list
-> reply with "please trim your quotes" and maybe a link to
-> https://people.kernel.org/tglx/notes-about-netiquette
-
-I'm tiring of sending off-list emails.  This task could be automated. 
-Which is what I'm suggesting!
-
-> If it helps, I can add a mailing list etiquette page on subspace.kernel.org,
-> so it's easier to find.
-
-Great, link to that in the whiney emails.
