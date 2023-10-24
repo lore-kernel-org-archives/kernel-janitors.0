@@ -2,156 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54947C25B47
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 21:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C123DC07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 21:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344325AbjJXVMQ (ORCPT
+        id S1344329AbjJXV3Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 17:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55920 "EHLO
+        Tue, 24 Oct 2023 17:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344256AbjJXVMP (ORCPT
+        with ESMTP id S234957AbjJXV3X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 17:12:15 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EEC10CF
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 14:12:13 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvOgx-0005EP-SP; Tue, 24 Oct 2023 23:11:59 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvOgw-00421X-Cl; Tue, 24 Oct 2023 23:11:58 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvOgw-005XxO-3K; Tue, 24 Oct 2023 23:11:58 +0200
-Date:   Tue, 24 Oct 2023 23:11:57 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: samsung: Fix a bit test
-Message-ID: <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
-References: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
+        Tue, 24 Oct 2023 17:29:23 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F41B129
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 14:29:21 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B032521C8D;
+        Tue, 24 Oct 2023 21:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1698182959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2n61CgsiXsrQYGPMe+vk8J3/9XYVbLRDpTEs3FhuK4A=;
+        b=rQVRqxIn3pBBpF/BK43wGmDLSme430KI+BcAUXwfEjYoMJA8lM6K38RvlSNLomXGIIP524
+        WLmKAQ29jgQU6d/D7ReLW/csP0aFGh6YEysZWW4fAz/KnY9f9lPhrqlEroJjrJCczZMN2A
+        UHZyIuq2Tgcq1yWp+vR+9Y8Hq7s47oc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1698182959;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2n61CgsiXsrQYGPMe+vk8J3/9XYVbLRDpTEs3FhuK4A=;
+        b=d3SZ/AhFThSoyMYDauSWEIsQwzAPo/qJUlS9qp2YBU+g/NW7xXTeqiyOn45/nn49p5ybuq
+        yMF5VqqHYOatA3Cw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 992D3134F5;
+        Tue, 24 Oct 2023 21:29:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id JMY9FC03OGX2cgAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 24 Oct 2023 21:29:17 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nkibwm3sl7ikb3rs"
-Content-Disposition: inline
-In-Reply-To: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Dan Carpenter" <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: KTODO automated TODO lists
+In-reply-to: <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>,
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>,
+ <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+Date:   Wed, 25 Oct 2023 08:29:14 +1100
+Message-id: <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+Authentication-Results: smtp-out1.suse.de;
+        none
+X-Spamd-Result: default: False [-8.10 / 50.00];
+         ARC_NA(0.00)[];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         NEURAL_HAM_LONG(-3.00)[-1.000];
+         MIME_GOOD(-0.10)[text/plain];
+         REPLY(-4.00)[];
+         RCPT_COUNT_FIVE(0.00)[6];
+         DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+         NEURAL_HAM_SHORT(-1.00)[-1.000];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-0.00)[43.84%]
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---nkibwm3sl7ikb3rs
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello Dan,
-
-On Tue, Oct 17, 2023 at 05:04:08PM +0300, Dan Carpenter wrote:
-> This code has two problems.  First, it passes the wrong bit parameter to
-> test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
-> open coded bit tests.
+On Wed, 25 Oct 2023, Krzysztof Kozlowski wrote:
+> On 23/10/2023 20:49, Andrew Morton wrote:
+> > On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.or=
+g> wrote:
+> >=20
+> >> Yesterday someone on my lists just sent an email looking for kernel
+> >> tasks.=20
+> >=20
+> > Well here's a task: write a bot which follows the mailing lists and
+> > sends people nastygrams if one of their emails is more than 95%(?)
+> > quoted text.
+> >=20
+> > It's happening significantly more lately.  Possibly because the gmail
+> > client helpfully hides quoted text.
 >=20
-> The test_bit() function takes a bit number.  In other words,
-> "if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
-> Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
-> double shift bug.
+> I would also point to reviewers and maintainers who give a Rb/Ack tag:
+> 1. somewhere at the top, without any footer like Best regards, and then
+> quote entire patch, so I don't know shall I look for more comments after
+> Rb/Ack?
 >=20
-> In pwm_samsung_resume() these issues mean that the flag is never set and
-> the function is essentially a no-op.
->=20
-> Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> From static analysis and not tested.
->=20
->  drivers/pwm/pwm-samsung.c | 2 +-
->  include/linux/pwm.h       | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> index 10fe2c13cd80..acf4a0d8d990 100644
-> --- a/drivers/pwm/pwm-samsung.c
-> +++ b/drivers/pwm/pwm-samsung.c
-> @@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
->  		struct pwm_device *pwm =3D &chip->pwms[i];
->  		struct samsung_pwm_channel *chan =3D &our_chip->channel[i];
-> =20
-> -		if (!(pwm->flags & PWMF_REQUESTED))
-> +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
->  			continue;
-> =20
->  		if (our_chip->variant.output_mask & BIT(i))
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index e3b437587b32..3eee5bf367fb 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -41,8 +41,8 @@ struct pwm_args {
->  };
-> =20
->  enum {
-> -	PWMF_REQUESTED =3D 1 << 0,
-> -	PWMF_EXPORTED =3D 1 << 1,
-> +	PWMF_REQUESTED =3D 0,
-> +	PWMF_EXPORTED  =3D 1,
+> 2. quote entire email and then add Rb/Ack, so I need to figure out
+> whether there was something between the hundreds of lines of text or not.
 
-I'd want s/  / / here. Or even not assign explicit values at all?
+Here we all are, brilliantly talented computer programmers who spend
+our days making amazing fast digital devices do amazingly clever and
+subtle things, inventing time-saving tools and processing vast amounts
+of data without blinking, but for some reason we think the task of
+skipping over a few thousand lines that all start with '> " is too hard
+for us and that we should, in stead, complain to some other human to
+convince them to make our life easier for us.
 
->  };
-> =20
->  /*
+Does anyone else see the irony?
 
-I'd say these are two separate issues, with the one in pwm-samsung being
-bad and the one in <linux/pwm.h> "only" ugly.
-
-I wonder how I could get the samsung part wrong. All current usages of
-PMWF_REQUESTED (and also PWMF_EXPORTED) use test_bit (et al). Grepping
-through history pwm-pca9685.c got this wrong in a similar way for some
-time, but otherwise it was always used correctly.
-
-The definition of the flags in <linux/pwm.h> is ugly since=20
-f051c466cf69 ("pwm: Allow chips to support multiple PWMs") from 2011!
-
-@Dan: Would you split the patch in two please?
-
-Thanks for catching that!
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---nkibwm3sl7ikb3rs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmU4Mx0ACgkQj4D7WH0S
-/k7KQwf/eaAyfpovq4WF+Ttz94ctJhg4PD7Nk9TRKnE72mEh/giRc3ZaQ6RY3ybw
-1ymd1StO/XRx6QtH16VFBW7x3FHcxMedBndun4K33rruSUaaQ9lw+Br8FPNuHFmg
-akDIcusQDG+PUR2K2ERAAELHU0cmFHxG78jbUZ+Y/+lQg7JEiRLW4lFvMSzTsJMs
-I4i3EzBZXRpcFPk80HoA9PhECYqP+OleLpUmuc53hRb8txwJpSJrWjohaXP45ps0
-gEcS7ItZJQOjDvc5bHEy6/DOwdhtbZU/nuOqqGLqs4PIuM2WARmQKrtVCl4IMrJ1
-5sd5d5F3TWurS/8+vXSjNWQj+fMOAQ==
-=qrEt
------END PGP SIGNATURE-----
-
---nkibwm3sl7ikb3rs--
+NeilBrown
