@@ -2,116 +2,173 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF657C00A8F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 15:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B1CC00A8F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 17:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234824AbjJXPxn (ORCPT
+        id S233103AbjJXRFw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 11:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
+        Tue, 24 Oct 2023 13:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjJXPxm (ORCPT
+        with ESMTP id S1344023AbjJXQuK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 11:53:42 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B261B3
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 08:53:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF464C433C8;
-        Tue, 24 Oct 2023 15:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698162820;
-        bh=hffzHEOH/h0OLJtbnxMAP9iStc9W0AgwL0VvmgsWWy8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=sutAya0xy6HMIymIMmYQSdxuAOzL6lJamkMsQsFt7iqT72KZI+IeNeVwkmkqg6tF2
-         WTMS0wpiKAx76SCgZLzADbhCr26UjoqCdBVWrH5glWs9bausVRcaBVFhwFzfClsKyT
-         9KVlUIeqpoU+eYdO5LTX7f1VXrDWF9XdTLVxu8T+4+sRaosB+/ANBQIViXBDIZgld9
-         yZcu0kURgSHfAHb8ydp+PuXlwIFr5IU+MPKIYTXPPVaTSK/PSTGF0KrZxwfV30HoUZ
-         LfT8HWaVA4O9+szTD/j8l2Y1MCNvuXZhxRHPXQM4KU0GA+TD1fKtO1kQgwT1vd7wSf
-         NUMIEAknLkLhA==
-Message-ID: <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
-Date:   Tue, 24 Oct 2023 17:53:35 +0200
+        Tue, 24 Oct 2023 12:50:10 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB63BDA;
+        Tue, 24 Oct 2023 09:50:04 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1caa371dcd8so30780595ad.0;
+        Tue, 24 Oct 2023 09:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698166204; x=1698771004; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7OWsY7SJu8Gcvebw6x0jzvB0rtdPPzgdRgH26lmxO24=;
+        b=GatAlJKtbEMsG4VGtBOo21eD5FG5iY2cb1u9Pp65kI/GtscB7Bdot8Wo2eCAMk1G85
+         sjACzUXY9ITc461zBi5RaM3/Rbl/Dux62tdufn0Hp6N9GBgN/iUNWfSk84ATTorjTv1v
+         Qh2MnVLsga91iFDgZU8HUYTO0axK6LUbhB03nK1m73ofqWAZMRWFgTp1KS+BKerycqPU
+         ypXVM9T4skmeUo44zB0FUboYbnSY7Wb5UWse3Byc/y8ZZkBVoZxRcKQv44M4AsdoZ/Gf
+         tkR5c+G4OM37Aa2pWjUH/t11e/VssYlRq7JR5JlUrJDLcGwIi7Z9unPIRuWPG4PkZU/e
+         ZvKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698166204; x=1698771004;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7OWsY7SJu8Gcvebw6x0jzvB0rtdPPzgdRgH26lmxO24=;
+        b=xVK1Uj8xo9zkK0c6g7IkYe5gxhJTtvGpqsR1+D8UyUKyfWQCIqBfEuELDgqaDjt1yV
+         SDOf7etCL5EUiik45/9owqXkuGA3CA7DRjEchi1/qLNhj7XCItH37BmmI5kz2nuSleck
+         ZcSES28zWpO6T3HWmDARNt3r1wxzc1UM0ormYXj582ng+zQmVo2hqfvaTpzq2toczyXn
+         EYEWjPJuLRWg4ce+JNIrLFXchZWmWGFmjVZ7gl48+HH0V4Tyio1baQwqQjcdTtmdzWwK
+         E1vJZ7Ou4gDQXo3pMdNzei9aDiyzGpoLJ+gOPjRmD1AKZGb6gxosP7hgqL115KLBZJoH
+         sCCw==
+X-Gm-Message-State: AOJu0Yy/L1wR1c95LQlmghlXAiIeUj9/P2BzQWAWYNokOAn/0amgmpQt
+        qefM5ipBeNBP4gEH3xvW+5w=
+X-Google-Smtp-Source: AGHT+IEXDosIVFqRUC5d6Eu+w9C11XUamGFEmaHuZlAJYQoFh9KHdrCMuKcoVbR/s64kV7W2ri7xkg==
+X-Received: by 2002:a17:902:cec6:b0:1c5:cbfb:c16f with SMTP id d6-20020a170902cec600b001c5cbfbc16fmr11682593plg.25.1698166204037;
+        Tue, 24 Oct 2023 09:50:04 -0700 (PDT)
+Received: from [0.0.0.0] (74.211.104.32.16clouds.com. [74.211.104.32])
+        by smtp.gmail.com with ESMTPSA id u15-20020a170902e80f00b001c9bc811d4dsm7659875plg.295.2023.10.24.09.49.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 09:50:03 -0700 (PDT)
+Message-ID: <f882e8ba-c563-4c9a-99ab-50b20fe7b1b0@gmail.com>
+Date:   Wed, 25 Oct 2023 00:49:48 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: KTODO automated TODO lists
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+Subject: Re: [PATCH 2/2] scsi: scsi_debug: delete some bogus error checking
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Wenchao Hao <haowenchao2@huawei.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f96d6366-9271-4020-ab66-f75737a1e8bd@moroto.mountain>
+ <d2cb55a9-6bc0-47a0-a812-418d187c2c00@gmail.com>
+ <d8ec82e6-5ba5-4945-825c-0e622c62f5b6@kadam.mountain>
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+From:   Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <d8ec82e6-5ba5-4945-825c-0e622c62f5b6@kadam.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 23/10/2023 20:49, Andrew Morton wrote:
-> On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On 10/23/23 1:06 PM, Dan Carpenter wrote:
+> On Sat, Oct 21, 2023 at 01:28:50AM +0800, Wenchao Hao wrote:
+>> On 2023/10/20 22:15, Dan Carpenter wrote:
+>>> Smatch complains that "dentry" is never initialized.  These days everyone
+>>> initializes all their stack variables to zero so this means that it will
+>>> trigger a warning every time this function is run.
+>>>
+>>> Really debugfs functions are not supposed to be checked for errors so
+>>> this checking can just be deleted.
+>>>
+>>> Fixes: f084fe52c640 ("scsi: scsi_debug: Add debugfs interface to fail target reset")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> ---
+>>> See my blog for more information on the history of debugfs error
+>>> checking:
+>>>
+>>> https://staticthinking.wordpress.com/2023/07/24/debugfs-functions-are-not-supposed-to-be-checked/
+>>> ---
+>>>  drivers/scsi/scsi_debug.c | 7 -------
+>>>  1 file changed, 7 deletions(-)
+>>>
+>>> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+>>> index 0a4e41d84df8..c0be9a53ac79 100644
+>>> --- a/drivers/scsi/scsi_debug.c
+>>> +++ b/drivers/scsi/scsi_debug.c
+>>> @@ -1127,7 +1127,6 @@ static const struct file_operations sdebug_target_reset_fail_fops = {
+>>>  static int sdebug_target_alloc(struct scsi_target *starget)
+>>>  {
+>>>  	struct sdebug_target_info *targetip;
+>>> -	struct dentry *dentry;
+>>>  
+>>>  	targetip = kzalloc(sizeof(struct sdebug_target_info), GFP_KERNEL);
+>>>  	if (!targetip)
+>>> @@ -1135,15 +1134,9 @@ static int sdebug_target_alloc(struct scsi_target *starget)
+>>>  
+>>>  	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
+>>>  				sdebug_debugfs_root);
+>>> -	if (IS_ERR_OR_NULL(targetip->debugfs_entry))
+>>> -		pr_info("%s: failed to create debugfs directory for target %s\n",
+>>> -			__func__, dev_name(&starget->dev));
+>>>  
+>>>  	debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
+>>>  				&sdebug_target_reset_fail_fops);
+>>> -	if (IS_ERR_OR_NULL(dentry))
+>>> -		pr_info("%s: failed to create fail_reset file for target %s\n",
+>>> -			__func__, dev_name(&starget->dev));
+>>>  
+>>>  	starget->hostdata = targetip;
+>>>  
+>>
+>>
+>> Thank you for the fix, the check for debugfs_create_file() is added because 
+>> scsi_debug driver is often used to test abnormal situations, here just check
+>> and prompt a log, so maybe you should not remove it and fix the issue
+>> following changes:
+>>
 > 
->> Yesterday someone on my lists just sent an email looking for kernel
->> tasks. 
+> No, the correct thing is to remove it.  This is explained in my blog
+> article linked to earlier.
 > 
-> Well here's a task: write a bot which follows the mailing lists and
-> sends people nastygrams if one of their emails is more than 95%(?)
-> quoted text.
+> https://staticthinking.wordpress.com/2023/07/24/debugfs-functions-are-not-supposed-to-be-checked/
 > 
-> It's happening significantly more lately.  Possibly because the gmail
-> client helpfully hides quoted text.
 
-I would also point to reviewers and maintainers who give a Rb/Ack tag:
-1. somewhere at the top, without any footer like Best regards, and then
-quote entire patch, so I don't know shall I look for more comments after
-Rb/Ack?
+There are other places in scsi_debug which check return value
+of debugfs functions added by my previous patches, would you
+remove them?
 
-2. quote entire email and then add Rb/Ack, so I need to figure out
-whether there was something between the hundreds of lines of text or not.
+Thanks
 
-Best regards,
-Krzysztof
+
+> commit ff9fb72bc07705c00795ca48631f7fffe24d2c6b
+> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Date:   Wed Jan 23 11:28:14 2019 +0100
+> 
+>     debugfs: return error values, not NULL
+>     
+>     When an error happens, debugfs should return an error pointer value, not
+>     NULL.  This will prevent the totally theoretical error where a debugfs
+>     call fails due to lack of memory, returning NULL, and that dentry value
+>     is then passed to another debugfs call, which would end up succeeding,
+>     creating a file at the root of the debugfs tree, but would then be
+>     impossible to remove (because you can not remove the directory NULL).
+>     
+>     So, to make everyone happy, always return errors, this makes the users
+>     of debugfs much simpler (they do not have to ever check the return
+>     value), and everyone can rest easy.
+> 
+> In your code, if there is an error the debugfs code will print an error and
+> your code will print an info.  The info adds nothing.  Also if debugfs fails
+> to load you are already screwed so the info adds nothing.
+> 
+> In your code if the user disables CONFIG_DEBUGFS then printing "failed to create
+> fail_reset file for target" is wrong.  The user did that deliberately.  No need
+> to complain about the user's deliberate choices.  If it's really necessary to
+> have CONFIG_DEBUGFS then enforce that with Kconfig.
+> 
+> regards,
+> dan carpenter
 
