@@ -2,98 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA47C07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0901EC00A8F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 07:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232420AbjJXHZD (ORCPT
+        id S233727AbjJXH6j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 03:25:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52916 "EHLO
+        Tue, 24 Oct 2023 03:58:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232396AbjJXHZC (ORCPT
+        with ESMTP id S232004AbjJXH6i (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 03:25:02 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21329A6
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 00:25:00 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8977BB53;
-        Tue, 24 Oct 2023 09:24:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1698132287;
-        bh=h35qdVb87ld4h3tZAHlWww8KZpTygqvvKKcgD+CXG/c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ckgI09Uj/9lrSib1HWJz7XmSSlyJXKFdhkRGLQg8bujTcydTRy1VbSZwabOWfy9On
-         3Y7d0hNN8a6gd/ShFj8xJiy6FMI6bjLQsrcbCwqUr7VhaMGHhrjMq6gOD5LA28IY19
-         MZjHOduhc0OIhvQUidk3tN7rSXLeA1nA8DNJpa7c=
-Date:   Tue, 24 Oct 2023 10:25:06 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: KTODO automated TODO lists
-Message-ID: <20231024072506.GC31956@pendragon.ideasonboard.com>
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <169809755184.20306.3698252725424588550@noble.neil.brown.name>
- <CAMuHMdUku6U2EMCEXCE_K7bX2XX28P6qXq6ByWvC25C0bVhTOw@mail.gmail.com>
+        Tue, 24 Oct 2023 03:58:38 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097B5111;
+        Tue, 24 Oct 2023 00:58:36 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso30453875e9.3;
+        Tue, 24 Oct 2023 00:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698134314; x=1698739114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F/HtEs3uRz9gEWjbZhb7PO6cLxbnlpDSnYG/nx0cMBY=;
+        b=F/dyGMQgmhF3JiwUgQcwVkMJRjFCzkjgSIMlc3gU0om+1QrYezWMPKD4gArJ++S9mT
+         XGzfaal64ct0rU6Qgq2wglto2ZgeNGt9oEecZ6d4Md7kvi3jemsdoEFxYnTcEN2zDt9W
+         9NJGLs9tn2xHgA58Hq35JJkf+IgMDOn2Upq574lbBtUHPAyug+06Us2mxcPXYea2caRw
+         e5UEOdt0lv/gGk5+IEUVXe2xCqJSYUCX3ECB5+zKaUuF8bQ9AIZJSGAddeS8iI6/nLVQ
+         qDN5oZDJ/tPuQxLBk/8e8N+eKHVQKQdtyIHm6TbvWXYk+O/B1cnuQe2ZxwOd3mgJ/IXf
+         lWzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698134314; x=1698739114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F/HtEs3uRz9gEWjbZhb7PO6cLxbnlpDSnYG/nx0cMBY=;
+        b=YvvRTONZL8jJrbJl64gy/8+Kw1zL8CwUgS9OPKBTT9yn9f8CieuOwU7C0mMQ7llh9f
+         dKvJeTo7cnhJxjBMNYR4cn4E+bCTuF3CEyeglcYLGZbHU0d4GZk3nYBKA0FQnjSktmOh
+         FwF4x1UBcbW8DEWK+SNoyFmsLwZGhAeLUpD7EdPAz+RX7xptE2c8jo+ydaExkcMrVJMG
+         WkL161WoItLAfh5S8pTT7bipwBh7gAUr6iT6Ugp2Zl0YHYNa3oTgxrlt+3F63bDLRJS2
+         J09BRscrsKeavgpC2ZTZTyXZ7n46D4322dtTm7VUnmyzp6e6IY+rpwgEjIBppJmo05zW
+         jjhA==
+X-Gm-Message-State: AOJu0YxCpPTtQgtqd0z+tiweuPL2L+GVBxfa+peFY+OVh+/zuxoduEje
+        D/mfQrAZXWJOXciN/IoemC4=
+X-Google-Smtp-Source: AGHT+IF30oiEgFGhMcxcPgUJRA24HG6sxIFDWiPUfcQIYeZXfeyFm+j5FHiLpV82d/M11oRUgBv6Fg==
+X-Received: by 2002:a05:600c:4e8c:b0:401:bf56:8ba6 with SMTP id f12-20020a05600c4e8c00b00401bf568ba6mr8759283wmq.28.1698134314272;
+        Tue, 24 Oct 2023 00:58:34 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r6-20020a05600c458600b00406443c8b4fsm16155790wmo.19.2023.10.24.00.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Oct 2023 00:58:33 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Gregory Greenman <gregory.greenman@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+        linux-wireless@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: iwlwifi: Fix spelling mistake "SESION" -> "SESSION"
+Date:   Tue, 24 Oct 2023 08:58:32 +0100
+Message-Id: <20231024075832.695405-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUku6U2EMCEXCE_K7bX2XX28P6qXq6ByWvC25C0bVhTOw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Geert,
+There is a spelling mistake in a WARN message. Fix it.
 
-On Tue, Oct 24, 2023 at 09:19:26AM +0200, Geert Uytterhoeven wrote:
-> On Mon, Oct 23, 2023 at 11:46 PM NeilBrown wrote:
-> > On Tue, 24 Oct 2023, Andrew Morton wrote:
-> > > On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter wrote:
-> > > > Yesterday someone on my lists just sent an email looking for kernel
-> > > > tasks.
-> > >
-> > > Well here's a task: write a bot which follows the mailing lists and
-> > > sends people nastygrams if one of their emails is more than 95%(?)
-> > > quoted text.
-> >
-> > Doesn't your email reader automatically hide most of a large quote?
-> > Mine does :-)
-> 
-> That's part of the problem: many people don't see anymore if the
-> previous email author removed irrelevant parts or not.  Until they
-> want to reply...
-> 
-> > > It's happening significantly more lately.  Possibly because the gmail
-> > > client helpfully hides quoted text.
-> 
-> When replying, the Gmail web interface (or Chrome?) is also very
-> slow when selecting very long irrelevant parts for deletion.  And it's
-> hard to predict when "Show original" and "b4 mbox && alpine -f"
-> would be faster...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/time-event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Get a better e-mail client ? ;-) At least with e-mail you have a choice
-between different clients.
-
-I've refrained from replying to this thread so far, as it seemed to be a
-caricature of a bikeshedding discussion, but for what it's worth, I
-often find myself in the opposite situation when I'm annoyed that
-someone trimmed too much of the discussion in their replies.
-
-Yes, replying to a 3000-lines patches with a full quote ana d a
-Reviewed-by tag at the very bottom, without any other comment, is
-annoying. On the other hand, trimming everything but the few lines to
-which you reply means that it gets much more annoying to jump in the
-discussion in the middle of a mail thread. There's a difference between
-trimming unrelated parts, and removing related content that happens not
-to be the direct subject of a particular reply.
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
+index 218fdf1ed530..245d45f48cc0 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
+@@ -929,7 +929,7 @@ void iwl_mvm_rx_session_protect_notif(struct iwl_mvm *mvm,
+ 
+ 	if (WARN(ver > 2 && mvmvif->time_event_data.link_id >= 0 &&
+ 		 mvmvif->time_event_data.link_id != notif_link_id,
+-		 "SESION_PROTECTION_NOTIF was received for link %u, while the current time event is on link %u\n",
++		 "SESSION_PROTECTION_NOTIF was received for link %u, while the current time event is on link %u\n",
+ 		 notif_link_id, mvmvif->time_event_data.link_id))
+ 		goto out_unlock;
+ 
 -- 
-Regards,
+2.39.2
 
-Laurent Pinchart
