@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200A6C00A8F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 10:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC676C07545
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 11:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232698AbjJXKin (ORCPT
+        id S229669AbjJXLMN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 06:38:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
+        Tue, 24 Oct 2023 07:12:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbjJXKil (ORCPT
+        with ESMTP id S229517AbjJXLML (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 06:38:41 -0400
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5630E5;
-        Tue, 24 Oct 2023 03:38:39 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 1830C20820;
-        Tue, 24 Oct 2023 12:38:38 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id b4xwplae0baS; Tue, 24 Oct 2023 12:38:37 +0200 (CEST)
-Received: from mailout1.secunet.com (mailout1.secunet.com [62.96.220.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id AB4F520743;
-        Tue, 24 Oct 2023 12:38:37 +0200 (CEST)
-Received: from cas-essen-02.secunet.de (unknown [10.53.40.202])
-        by mailout1.secunet.com (Postfix) with ESMTP id A881E80004A;
-        Tue, 24 Oct 2023 12:38:37 +0200 (CEST)
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Tue, 24 Oct 2023 12:38:37 +0200
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.32; Tue, 24 Oct
- 2023 12:38:37 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-        id 7A38D3182A2A; Tue, 24 Oct 2023 12:38:36 +0200 (CEST)
-Date:   Tue, 24 Oct 2023 12:38:36 +0200
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     <netdev@vger.kernel.org>
-CC:     Antony Antony <antony.antony@secunet.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH ipsec-next] xfrm Fix use after free in
- __xfrm6_udp_encap_rcv.
-Message-ID: <ZTeerJZ6Js393ZEs@gauss3.secunet.de>
-References: <ZTI0452CF5hoHRoA@gauss3.secunet.de>
+        Tue, 24 Oct 2023 07:12:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD73C128
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 04:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698145883;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2H7Y3L+wO4O4PCAdKbwK4BPdzk6P9AjMRpwDaWWqLDQ=;
+        b=akgns4zA5ob87Qyt6oy44mamjdlKwMz+YAgM4cxso2+uW0VOC3F4ESYlz9z0pgFWd2xgXR
+        pKbk/7mKZ95T/lEU2pIObhJN08+AIk0droAyeHvsPYzihTXFzBKsRlHTJfzvLSfixjan7q
+        8/ntxgi/rjEqCtmAKEMETraPPE0Y1pU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-421-llgEdxxXPpGFtlm7Vh8oYg-1; Tue, 24 Oct 2023 07:11:16 -0400
+X-MC-Unique: llgEdxxXPpGFtlm7Vh8oYg-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9c45a6a8832so44241666b.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 04:11:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698145875; x=1698750675;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2H7Y3L+wO4O4PCAdKbwK4BPdzk6P9AjMRpwDaWWqLDQ=;
+        b=Ha8eYyqz666ncTR3r5pZLzIb4cl/LTF6y2g5ohVifJCwJR+oweA7486E6qiL6LSwZ0
+         M/f1wPPyH0RAsQPzahtiOCleIBKcxuKmS7Q+S6P/R3PsGyuUa9InywtGnE4BpCsMLhda
+         SxbYMGMXIDB7BmNjYIm808DsXPh9aGaGpr89C10Esb/sS3gW19Jr85GcZ+Mbd25/VUjy
+         cLcqdepe0gG93s02s5M5oCKfTig0zhwk/T9LGBDoLO9hL5MtWEyFrFba2S567mjHgFS3
+         54So6XDb91hyDNYtPTpCyCUm71W1lkrW7vhRWumoKK/ncVMXNPpDcbpUStKCZba32P9A
+         3b+Q==
+X-Gm-Message-State: AOJu0YxETD3I8X6Ka8dkyw2UBavE3IJYN1ocrXPVpMeKMphpakzvVvg3
+        nJ3nQ2cIXpgwxqfFh/4Kg7NWl2lqtw0BiG26WxJpzy4woffVFT5kfqc0qbrYDVgPtp2AOZjyJ2j
+        nM8USawxFp3TlOQE7pvzNpAmer4El
+X-Received: by 2002:a17:906:f50:b0:9cb:b737:e469 with SMTP id h16-20020a1709060f5000b009cbb737e469mr1904593ejj.4.1698145875545;
+        Tue, 24 Oct 2023 04:11:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbm6fF0XWXv8tlBeoO6lS6nrzwyNW4FLJl6hKfbijCy2f0/nuEpU6IezwHCF7SzoFNY107dQ==
+X-Received: by 2002:a17:906:f50:b0:9cb:b737:e469 with SMTP id h16-20020a1709060f5000b009cbb737e469mr1904578ejj.4.1698145875194;
+        Tue, 24 Oct 2023 04:11:15 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-242-180.dyn.eolo.it. [146.241.242.180])
+        by smtp.gmail.com with ESMTPSA id d13-20020a1709064c4d00b009a5f1d15642sm8026369ejw.158.2023.10.24.04.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Oct 2023 04:11:14 -0700 (PDT)
+Message-ID: <f44e4fd716729f1f35ef58895b1acde53adb9b35.camel@redhat.com>
+Subject: Re: [PATCH net 2/2] liquidio: Simplify octeon_download_firmware()
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        veerasenareddy.burru@cavium.com
+Cc:     felix.manlunas@cavium.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Tue, 24 Oct 2023 13:11:13 +0200
+In-Reply-To: <0278c7dfbc23f78a2d85060369132782f8466090.1698007858.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1698007858.git.christophe.jaillet@wanadoo.fr>
+         <0278c7dfbc23f78a2d85060369132782f8466090.1698007858.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZTI0452CF5hoHRoA@gauss3.secunet.de>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 20, 2023 at 10:05:55AM +0200, Steffen Klassert wrote:
-> A recent patch changed xfrm6_udp_encap_rcv to not
-> free the skb itself anymore but fogot the case
-> where xfrm4_udp_encap_rcv is called subsequently.
-> 
-> Fix this by moving the call to xfrm4_udp_encap_rcv
-> from __xfrm6_udp_encap_rcv to xfrm6_udp_encap_rcv.
-> 
-> Fixes: 221ddb723d90 ("xfrm: Support GRO for IPv6 ESP in UDP encapsulation")
-> Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+On Sun, 2023-10-22 at 22:59 +0200, Christophe JAILLET wrote:
+> In order to remove the usage of strncat(), write directly at the rigth
+> place in the 'h->bootcmd' array and check if the output is truncated.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> The goal is to potentially remove the strncat() function from the kernel.
+> Their are only few users and most of them use it wrongly.
+>=20
+> This patch is compile tested only.
 
-Now applied to ipsec-next.
+Then just switch to strlcat, would be less invasive.
+
+Thanks,
+
+Paolo
+
