@@ -2,58 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CF7C07545
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 15:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF657C00A8F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Oct 2023 15:53:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343508AbjJXP2Q (ORCPT
+        id S234824AbjJXPxn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Oct 2023 11:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51748 "EHLO
+        Tue, 24 Oct 2023 11:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234969AbjJXP2H (ORCPT
+        with ESMTP id S230316AbjJXPxm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Oct 2023 11:28:07 -0400
+        Tue, 24 Oct 2023 11:53:42 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029D11BF4
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 08:28:03 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BEECC433CB;
-        Tue, 24 Oct 2023 15:28:02 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B261B3
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 08:53:40 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF464C433C8;
+        Tue, 24 Oct 2023 15:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698161282;
-        bh=rTvxCljC76kJYEmKBkHM2IhWXaKCGdgKaZZd3Qxzv/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HxCyJJJRdFKvutQg+IEL4YCvyqBl/9MXeFPo7zj2SAzKp4h2lDb7e74GxFXKnnL2j
-         TeIUHLy+wSX27i1UFhsnvYPuNBZtWajCm3uaKsSJYgAPiqHT4j5p1QsUmvZ2qtlLLj
-         atBwH0aEjiMN7X7ipQVR+d/zKFo8q1U1aYf+V+61mrRrQtoiCKkSz6tma8AvBiFfPm
-         Zxnb5svpKo2Md97A4aHHZ6FynfM4jUf+OmOPSlv2iIBtuN2DxF2w7UsjbfmeY223bA
-         TK3F07EtA9WiOv92sV78LvHbFI6SOPj76VaRq2OQ6g2JF4mfdwV48TKv8Oq4qa2RZ8
-         WWFSW/DM5Pfkw==
-Date:   Tue, 24 Oct 2023 11:28:01 -0400
-From:   Konstantin Ryabitsev <mricon@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
+        s=k20201202; t=1698162820;
+        bh=hffzHEOH/h0OLJtbnxMAP9iStc9W0AgwL0VvmgsWWy8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=sutAya0xy6HMIymIMmYQSdxuAOzL6lJamkMsQsFt7iqT72KZI+IeNeVwkmkqg6tF2
+         WTMS0wpiKAx76SCgZLzADbhCr26UjoqCdBVWrH5glWs9bausVRcaBVFhwFzfClsKyT
+         9KVlUIeqpoU+eYdO5LTX7f1VXrDWF9XdTLVxu8T+4+sRaosB+/ANBQIViXBDIZgld9
+         yZcu0kURgSHfAHb8ydp+PuXlwIFr5IU+MPKIYTXPPVaTSK/PSTGF0KrZxwfV30HoUZ
+         LfT8HWaVA4O9+szTD/j8l2Y1MCNvuXZhxRHPXQM4KU0GA+TD1fKtO1kQgwT1vd7wSf
+         NUMIEAknLkLhA==
+Message-ID: <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+Date:   Tue, 24 Oct 2023 17:53:35 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: KTODO automated TODO lists
-Message-ID: <20231024-notorious-elegant-crayfish-a45d63@meerkat>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
 References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
  <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
- <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231023-righteous-peridot-parakeet-1bbda0@meerkat>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 23, 2023 at 03:41:48PM -0400, Konstantin Ryabitsev wrote:
-> If it helps, I can add a mailing list etiquette page on subspace.kernel.org,
-> so it's easier to find.
+On 23/10/2023 20:49, Andrew Morton wrote:
+> On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+>> Yesterday someone on my lists just sent an email looking for kernel
+>> tasks. 
+> 
+> Well here's a task: write a bot which follows the mailing lists and
+> sends people nastygrams if one of their emails is more than 95%(?)
+> quoted text.
+> 
+> It's happening significantly more lately.  Possibly because the gmail
+> client helpfully hides quoted text.
 
-FWIW, such page now exists:
-https://subspace.kernel.org/etiquette.html
+I would also point to reviewers and maintainers who give a Rb/Ack tag:
+1. somewhere at the top, without any footer like Best regards, and then
+quote entire patch, so I don't know shall I look for more comments after
+Rb/Ack?
 
--K
+2. quote entire email and then add Rb/Ack, so I need to figure out
+whether there was something between the hundreds of lines of text or not.
+
+Best regards,
+Krzysztof
+
