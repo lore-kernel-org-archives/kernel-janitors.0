@@ -2,86 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D55C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F00C0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjJYTAZ (ORCPT
+        id S229557AbjJYT2E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:00:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
+        Wed, 25 Oct 2023 15:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjJYTAX (ORCPT
+        with ESMTP id S229498AbjJYT2D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 15:00:23 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1169F10E;
-        Wed, 25 Oct 2023 12:00:22 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c9e95aa02dso569465ad.0;
-        Wed, 25 Oct 2023 12:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698260421; x=1698865221; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nzAfQ6yYZLyhx2cAwtxAGCA0+tOzhnyj4YuE87FGQU4=;
-        b=bIsGHb7WaVBQ74oLBGji5cEIrgoN6P9fvH2alJukwyw8Uh34w2+o96pbJ9G66cStNL
-         O8wkG4nsPp3C+xj7jC6ug9A5vGQzgOtW5UdgbkEKmYhfaRtUb9wUA9q3ehy23PiEd9k1
-         jDqVPgVtOAnkk+mqjnYbaFZIGsdER14TPRthHpIV5cjznvB1l4V6ahFubjXTtueIIAC9
-         ihr+lyuXZaG0bJYIBgT6HAEgalzYK3+/zrMpYT168UdRB2IqiRDDod07Ogh82I8ToIqA
-         WvmziC3JhNCvwaIsnTY/6tnQE1HgQRU+PchxNA9rkxJPO1Y+8b/+Qfs0njyPjdWGKfwF
-         JNlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698260421; x=1698865221;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nzAfQ6yYZLyhx2cAwtxAGCA0+tOzhnyj4YuE87FGQU4=;
-        b=f6j5EuLS21jBkiygUhYLUfZe1K7QEyTKOKFj75QWzWbUdfnJ+NHp381G7Q7gCLaUgf
-         jmhcAfE8OlJic/RIhptZOC2I2gh86wHtpgUf34naerS/S5bAX2+Goz5wg1UCt+87LXOR
-         ZBb1s4Y+Z5ltc9fJSNMI5MBYqpV5fPbh8dtlR0VAcHuVBwxEdQ8eQleIQ7TEzj9n2UCb
-         c1tipL9aT2uVWCcVaUpmDJZhg0CYXL+ECFug8z/F4c/x0b86x96mG5GYiQO8/cIhHVDg
-         eFNhqXx54EJp8FfAR/Z18y53yjRSGEoK7mFAmBh9oim7KoelTqoXiXbtyGsFN8Z/gldB
-         dhJw==
-X-Gm-Message-State: AOJu0YyKcCgDkKe1CCub+Y2hSakt52iFp6EXK+px1Pj+7IetjAsR19Ve
-        nqQU5YG2ajDYjTIJ0oUo3ytdX7fa7T4=
-X-Google-Smtp-Source: AGHT+IH0f70yOL3Vogs/TZ3xF70f7ik/ljg1vfYB4+38oocqr+9dom1dGVftRe4bhCVo4zwwbojxUg==
-X-Received: by 2002:a17:902:d50b:b0:1c8:75d9:f7dc with SMTP id b11-20020a170902d50b00b001c875d9f7dcmr626772plg.28.1698260421448;
-        Wed, 25 Oct 2023 12:00:21 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id jj11-20020a170903048b00b001c8a0879805sm9591444plb.206.2023.10.25.12.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 12:00:20 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 25 Oct 2023 12:00:20 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Andre Werner <andre.werner@systec-electronic.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: HS3001: remove redundant store on division
-Message-ID: <6a943960-d283-44e5-b19c-0250d6f4bed8@roeck-us.net>
-References: <20231023135828.667297-1-colin.i.king@gmail.com>
+        Wed, 25 Oct 2023 15:28:03 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E70B137
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:27:54 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE14DC433C8;
+        Wed, 25 Oct 2023 19:27:52 +0000 (UTC)
+Date:   Wed, 25 Oct 2023 15:27:51 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        NeilBrown <neilb@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: KTODO automated TODO lists
+Message-ID: <20231025152751.22639f2e@gandalf.local.home>
+In-Reply-To: <e4aa47e3-4858-41ba-813f-c17aa5f5ba7d@p183>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+        <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+        <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+        <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+        <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
+        <e4aa47e3-4858-41ba-813f-c17aa5f5ba7d@p183>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231023135828.667297-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 23, 2023 at 02:58:28PM +0100, Colin Ian King wrote:
-> Currently the local variable hum is being divided by a constant and
-> the results is being re-assigned back to hum before the value is being
-> returned to the caller. The assignment to hum is redundant and can
-> be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/hwmon/hs3001.c:65:9: warning: Although the value stored to 'hum'
-> is used in the enclosing expression, the value is never actually read
-> from 'hum' [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, 25 Oct 2023 21:55:16 +0300
+Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Applied.
+> It's MUAs failure. Microsoft "solved" this problem by forcing top
+> posting onto everyone, but there is no reason Outlook couldn't scroll
+> to the first reply in the middle of email. I use mutt, it doesn't
+> scroll to the first reply either.
 
-Guenter
+Outlook is the worse. There may be no reason it can't scroll to the first
+reply, but in many cases it just hides it! When I worked at VMware, I would
+always inline my replies (and I was forced to use outlook). If I didn't
+remove the:
+
+  On Wed, 25 Oct 2023 21:55:16 +0300
+  Jane Doe <jane.doe@vmware.com> wrote:
+
+Line at the top, it would show a blank message. I had to manually start
+removing that when I received several responses telling me "You sent me a
+blank email"!
+
+-- Steve
