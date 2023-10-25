@@ -2,152 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78032C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 04:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DE1C25B72
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 04:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232503AbjJYEHk (ORCPT
+        id S232620AbjJYESZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 00:07:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39520 "EHLO
+        Wed, 25 Oct 2023 00:18:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232579AbjJYEHj (ORCPT
+        with ESMTP id S232622AbjJYESW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 00:07:39 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0AA136
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:07:36 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4081ccf69dcso2140195e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:07:36 -0700 (PDT)
+        Wed, 25 Oct 2023 00:18:22 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEB9123
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c4fdf94666so69802261fa.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698206855; x=1698811655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ffh1hc5+xa7pdyDr+SRzq0H2ZTdMTKrRahcZ7F1PnBI=;
-        b=PvnAZ3txpUeZ2/gW4Ke9J1F/JU5tBTNscKZc9e8G/18e96aMo7X4xL2/3eBkuzHvWV
-         is3GrPy2cIjF3GxrGoWoJTu0CTFN+HY8RHaaYSFJ1U8Eeria6jJ8th0GmLvZVhykRdRD
-         grga75UQAfTahZNnn5KFAWtBkyR3yDmvs78VcWLJzoJ57hbmkKBAQkgJnwlPKJaVk1zS
-         lP7HtXKN5f3ME0V5Cf7QcAK2TgBKiaLgM4x+NQqcwxOsaF+kHo9BgKk5SdCsNSYfqZEG
-         tMzu4H08sdNzN1M+LhwemOiKqLBqQrLg4S3k3xLIA4vY5oxC6u5pEs63S9xEuYF7Rrx0
-         dHOg==
+        d=linaro.org; s=google; t=1698207497; x=1698812297; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
+        b=FlKaqcyVdAYJtXjhaJt/N2OrkFr4S6OUbh0ngCT+jV1hCUGmqFFjUQXEOE9DFKD4FE
+         zEAIbgWTQDVb5SvLWhglvVWwsaI6RfkHOgEyTkou+boHN3eT/qiSsDz4FPj2xs9g13ua
+         l2ASkiI0fre3XU0YViPHhtPiXDfdVHJBV8bPJIB5QkDFO4EZ3zrNJ+1kPOGcQrnFOcGF
+         gsFTzupCHOGFDr/ZSRRSGMJvgwafyYPWp9CtEKz63tuCGPKPpV2QYyKqnkLYRU+j/SSC
+         pwPfwga59DsWpxDVCFLk2QRmj3GZEwMnyUS94i7EAy3pnzL32FO0GG15q1tQvnH1gMcB
+         nfPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698206855; x=1698811655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ffh1hc5+xa7pdyDr+SRzq0H2ZTdMTKrRahcZ7F1PnBI=;
-        b=IaJIxfWeCiJ2qgDyegzGRtDDAj8mORRBEG0J7nDCsb+h9paf06OUaF59Bqq51mZSXw
-         wy3xhnxOlV/ioDCPZRYMmmOuwD30iQzOi/bY9RkMuPWVoYus/SaVWAq+ZGYsY9j/e/uR
-         vxSxCWHh9T52B7LRvP4f9P+bZxDvaCa/F3OWKjoSSBL1PKUrampVKihobKDEaWkjyuRv
-         Q8+L4d3LFLnCHNoBFmQXFhtuRHRCWKkA7XAGKpYRR4UwURO7aww59u1V79qH4XjVI+sL
-         y5K3kTFw2ldAzqmZhl5iw49Cc7sg61eDhI2KiRBTPnAgGFHR3pQhDsM0y1wi9fEHMYn2
-         9tpw==
-X-Gm-Message-State: AOJu0Yxe9KY7pCoWzqXiwRrLoqyf6nylO+r98/aVp7tve+WRZgJsn5zA
-        2pIvBF+/MbEZam0XrkufFMvHzA==
-X-Google-Smtp-Source: AGHT+IGnsflWEFj9kmnbEqGjA6gOQ1vVEZ1jGDutnomG+MGT1NN/xSTeV1TZUMzgtVdXz2qL7DKGNw==
-X-Received: by 2002:adf:b198:0:b0:32d:cae5:3573 with SMTP id q24-20020adfb198000000b0032dcae53573mr17923061wra.32.1698206855013;
-        Tue, 24 Oct 2023 21:07:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698207497; x=1698812297;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
+        b=gtaEHr1tCfWkkSDPkLvyT6gZHEi0lhIBKD7DGcMZuB7ZmKkJ6NEbu1VX+0x4M0EAnl
+         vZHVusoKkpeAl/rPGVXxXO/XZyJdJjNdnNKKWcw8L6KV2kDT6T5kN7YThdHFvwC0P+Qi
+         1TTHEgaJqF4rKistuqxt+X2h/yS7PM2OqFwTygC/O/bKCUTO04iRiwmIKB4bZqSHMKxy
+         55CM8KoYNJrhyg9SsMiZ6awuUyRstzuEk9ZOg6GknEHsilJT+U01Y1AiLPZRpyAD24IR
+         Gl9zWiulmBXbFg6IcJ6fhmmdGimZV0PRuvbvh4zH8MNZCqGsF2+zhvJY1v5msdihLQhT
+         QfaQ==
+X-Gm-Message-State: AOJu0YzkfOkSjpKEhIQ2TmClIagsF4QEpJbObsURUFZWyP3UwovFR0JH
+        o/r+xJvRfwdUseAp8IOvQ3Vb8A==
+X-Google-Smtp-Source: AGHT+IHK9MNBEXuKit4Dyq67gtZ3P+f3+x9ngQPQaqjPnQ9oZd4mGeNK5F+gV0c1lFk5HL0q/K6iHQ==
+X-Received: by 2002:a2e:9691:0:b0:2bf:f32a:1f64 with SMTP id q17-20020a2e9691000000b002bff32a1f64mr10173412lji.18.1698207497173;
+        Tue, 24 Oct 2023 21:18:17 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e16-20020adfef10000000b0032d8354fb43sm11210237wro.76.2023.10.24.21.07.33
+        by smtp.gmail.com with ESMTPSA id q16-20020adfea10000000b00326dd5486dcsm11165440wrm.107.2023.10.24.21.18.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 21:07:34 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 07:07:30 +0300
+        Tue, 24 Oct 2023 21:18:16 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 07:18:13 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Wenchao Hao <haowenchao22@gmail.com>
-Cc:     Wenchao Hao <haowenchao2@huawei.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] scsi: scsi_debug: delete some bogus error checking
-Message-ID: <d49244a3-6d00-483b-9ae5-ac45de5169b2@kadam.mountain>
-References: <f96d6366-9271-4020-ab66-f75737a1e8bd@moroto.mountain>
- <d2cb55a9-6bc0-47a0-a812-418d187c2c00@gmail.com>
- <d8ec82e6-5ba5-4945-825c-0e622c62f5b6@kadam.mountain>
- <f882e8ba-c563-4c9a-99ab-50b20fe7b1b0@gmail.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: samsung: Fix a bit test
+Message-ID: <0d61bf0a-3aca-466c-9198-e937e81b5328@kadam.mountain>
+References: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
+ <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <f882e8ba-c563-4c9a-99ab-50b20fe7b1b0@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 12:49:48AM +0800, Wenchao Hao wrote:
-> On 10/23/23 1:06 PM, Dan Carpenter wrote:
-> > On Sat, Oct 21, 2023 at 01:28:50AM +0800, Wenchao Hao wrote:
-> >> On 2023/10/20 22:15, Dan Carpenter wrote:
-> >>> Smatch complains that "dentry" is never initialized.  These days everyone
-> >>> initializes all their stack variables to zero so this means that it will
-> >>> trigger a warning every time this function is run.
-> >>>
-> >>> Really debugfs functions are not supposed to be checked for errors so
-> >>> this checking can just be deleted.
-> >>>
-> >>> Fixes: f084fe52c640 ("scsi: scsi_debug: Add debugfs interface to fail target reset")
-> >>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >>> ---
-> >>> See my blog for more information on the history of debugfs error
-> >>> checking:
-> >>>
-> >>> https://staticthinking.wordpress.com/2023/07/24/debugfs-functions-are-not-supposed-to-be-checked/
-> >>> ---
-> >>>  drivers/scsi/scsi_debug.c | 7 -------
-> >>>  1 file changed, 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-> >>> index 0a4e41d84df8..c0be9a53ac79 100644
-> >>> --- a/drivers/scsi/scsi_debug.c
-> >>> +++ b/drivers/scsi/scsi_debug.c
-> >>> @@ -1127,7 +1127,6 @@ static const struct file_operations sdebug_target_reset_fail_fops = {
-> >>>  static int sdebug_target_alloc(struct scsi_target *starget)
-> >>>  {
-> >>>  	struct sdebug_target_info *targetip;
-> >>> -	struct dentry *dentry;
-> >>>  
-> >>>  	targetip = kzalloc(sizeof(struct sdebug_target_info), GFP_KERNEL);
-> >>>  	if (!targetip)
-> >>> @@ -1135,15 +1134,9 @@ static int sdebug_target_alloc(struct scsi_target *starget)
-> >>>  
-> >>>  	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
-> >>>  				sdebug_debugfs_root);
-> >>> -	if (IS_ERR_OR_NULL(targetip->debugfs_entry))
-> >>> -		pr_info("%s: failed to create debugfs directory for target %s\n",
-> >>> -			__func__, dev_name(&starget->dev));
-> >>>  
-> >>>  	debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
-> >>>  				&sdebug_target_reset_fail_fops);
-> >>> -	if (IS_ERR_OR_NULL(dentry))
-> >>> -		pr_info("%s: failed to create fail_reset file for target %s\n",
-> >>> -			__func__, dev_name(&starget->dev));
-> >>>  
-> >>>  	starget->hostdata = targetip;
-> >>>  
-> >>
-> >>
-> >> Thank you for the fix, the check for debugfs_create_file() is added because 
-> >> scsi_debug driver is often used to test abnormal situations, here just check
-> >> and prompt a log, so maybe you should not remove it and fix the issue
-> >> following changes:
-> >>
-> > 
-> > No, the correct thing is to remove it.  This is explained in my blog
-> > article linked to earlier.
-> > 
-> > https://staticthinking.wordpress.com/2023/07/24/debugfs-functions-are-not-supposed-to-be-checked/
-> > 
+On Tue, Oct 24, 2023 at 11:11:57PM +0200, Uwe Kleine-König wrote:
+> Hello Dan,
 > 
-> There are other places in scsi_debug which check return value
-> of debugfs functions added by my previous patches, would you
-> remove them?
+> On Tue, Oct 17, 2023 at 05:04:08PM +0300, Dan Carpenter wrote:
+> > This code has two problems.  First, it passes the wrong bit parameter to
+> > test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
+> > open coded bit tests.
+> > 
+> > The test_bit() function takes a bit number.  In other words,
+> > "if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
+> > Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
+> > double shift bug.
+> > 
+> > In pwm_samsung_resume() these issues mean that the flag is never set and
+> > the function is essentially a no-op.
+> > 
+> > Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > From static analysis and not tested.
+> > 
+> >  drivers/pwm/pwm-samsung.c | 2 +-
+> >  include/linux/pwm.h       | 4 ++--
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> > index 10fe2c13cd80..acf4a0d8d990 100644
+> > --- a/drivers/pwm/pwm-samsung.c
+> > +++ b/drivers/pwm/pwm-samsung.c
+> > @@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
+> >  		struct pwm_device *pwm = &chip->pwms[i];
+> >  		struct samsung_pwm_channel *chan = &our_chip->channel[i];
+> >  
+> > -		if (!(pwm->flags & PWMF_REQUESTED))
+> > +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+> >  			continue;
+> >  
+> >  		if (our_chip->variant.output_mask & BIT(i))
+> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> > index e3b437587b32..3eee5bf367fb 100644
+> > --- a/include/linux/pwm.h
+> > +++ b/include/linux/pwm.h
+> > @@ -41,8 +41,8 @@ struct pwm_args {
+> >  };
+> >  
+> >  enum {
+> > -	PWMF_REQUESTED = 1 << 0,
+> > -	PWMF_EXPORTED = 1 << 1,
+> > +	PWMF_REQUESTED = 0,
+> > +	PWMF_EXPORTED  = 1,
+> 
+> I'd want s/  / / here. Or even not assign explicit values at all?
+> 
 
-It's harmless to check most of the time.  Technically, they should be
-removed but that's like a whitespace clean up so it's not worth spending
-a lot of time on unless you care about a specific driver.  Here, though,
-it was an uninitialized variable bug, and try to fix bugs.
+I feel like the 0 and 1 add value.  But sure, I can remove the extra
+space.  You're right that trying to align stuff is potentially going to
+cause pain in the future.
 
-Smatch is really about fixing bugs so I have special code to not warn
-about if people check debugfs code for NULL.  Normally Smatch would
-complain if people check an error pointer function for NULL but with
-debugfs functions it doesn't matter.
+> >  };
+> >  
+> >  /*
+> 
+> I'd say these are two separate issues, with the one in pwm-samsung being
+> bad and the one in <linux/pwm.h> "only" ugly.
+> 
+> I wonder how I could get the samsung part wrong. All current usages of
+> PMWF_REQUESTED (and also PWMF_EXPORTED) use test_bit (et al). Grepping
+> through history pwm-pca9685.c got this wrong in a similar way for some
+> time, but otherwise it was always used correctly.
+> 
+> The definition of the flags in <linux/pwm.h> is ugly since 
+> f051c466cf69 ("pwm: Allow chips to support multiple PWMs") from 2011!
+> 
+> @Dan: Would you split the patch in two please?
+
+Sure.
 
 regards,
 dan carpenter
+
