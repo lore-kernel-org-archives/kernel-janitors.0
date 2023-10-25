@@ -2,79 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9E6C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8256C0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344023AbjJYMgf (ORCPT
+        id S234883AbjJYMg4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 08:36:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51998 "EHLO
+        Wed, 25 Oct 2023 08:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234883AbjJYMgc (ORCPT
+        with ESMTP id S234892AbjJYMgy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 08:36:32 -0400
+        Wed, 25 Oct 2023 08:36:54 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103C1184
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:35:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B73F3181
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698237342;
+        s=mimecast20190719; t=1698237371;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aZpHifrU2s5Zl3Ak7+hsd8JgtA2mkf3sTAvVq9SRCPk=;
-        b=g3kqYUL6KFUDBSAq5/4H9wCx+GYKyssyAey3k6VF8Q0EdczVm/biISICpVPNH977MLmQnE
-        eQPJEGW7PD6M8HpMySClUT3mmJ8oQQvruhBm7AMLzrcGvVy/pHiePf4SJE52HvdegeU7Lh
-        2ghijiWNaS+G38qex9HxC7so08J+MxM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=vvU+ODlhbBzCksS16LHKl+sMj+DM+WDalvoXiTfFa+g=;
+        b=b8trevSlKIZ6lK1h/jAu/UB9j050idfopVhEeFl6i0tvpPbVZpvFfEk5NWiRxDowpbamVe
+        c3wEcEPvzkwHxjlKSc2r+bq+XWk4cxw17Kv5x3pHEghVkMliQyckVHSXZNL7xAbAheipjk
+        dD/LmtFzFINFt16UiA4qjanqXe9rcIg=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-margzujmNWm9iKyqDIlRyQ-1; Wed, 25 Oct 2023 08:35:38 -0400
-X-MC-Unique: margzujmNWm9iKyqDIlRyQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 86848857CF6;
-        Wed, 25 Oct 2023 12:35:37 +0000 (UTC)
-Received: from [100.85.132.103] (unknown [10.22.48.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 992CF1C060AE;
-        Wed, 25 Oct 2023 12:35:34 +0000 (UTC)
-From:   Benjamin Coddington <bcodding@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net v2] net: sunrpc: Fix an off by one in
- rpc_sockaddr2uaddr()
-Date:   Wed, 25 Oct 2023 08:35:33 -0400
-Message-ID: <3860625A-B435-45A7-BC53-883A50539510@redhat.com>
-In-Reply-To: <31b27c8e54f131b7eabcbd78573f0b5bfe380d8c.1698184674.git.christophe.jaillet@wanadoo.fr>
-References: <31b27c8e54f131b7eabcbd78573f0b5bfe380d8c.1698184674.git.christophe.jaillet@wanadoo.fr>
+ us-mta-159-iRyEz_zUPSWOcQI8iIUeKQ-1; Wed, 25 Oct 2023 08:35:58 -0400
+X-MC-Unique: iRyEz_zUPSWOcQI8iIUeKQ-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c9fc94b182so58885455ad.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:35:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698237358; x=1698842158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vvU+ODlhbBzCksS16LHKl+sMj+DM+WDalvoXiTfFa+g=;
+        b=wDoIGfpkE7104KFv/UeuPhtcMkW+EprMBEzPmLdrdhJtDdCrilfcNcfXp0mV121J9y
+         pn6Q77SAGrV89ZJxY/7Ad8M9mn94hMp/qpmD/BkUfmgW233xg94xyw9+uqjR72PMDoFN
+         ygIzLyHkJbdBdmPOi/09WR4v0ulY46cjQ5zWnHR93J3VyTUnZLeMjMINNc7MU1AKgRyC
+         TVO8/uLYG2R40pZMggT1h8f160OCpOk2V4Ln9fq2JTUEnPa325iyXt+vqmd+B363FFGv
+         FKAQXWfHE8Q77LneD1/N8jn25Av0FGoY+vIb9Quc2Ot5e4MLl/m+Jom7bNyqFliyPJ9A
+         euSg==
+X-Gm-Message-State: AOJu0Yyf1eTdhxCDHLvZaPvuF84BEQRBCRPiRhLL/7n0DinIuAMJaKzq
+        pm+QURozKoE/tAEdTAZamMPeuElgcQhOCYLAiBBWS2hY5WtrD/w+tlxt34m7/w5wxwW0M5he4IF
+        tPTlONofgGmTaQfPoJc3/DFyD7aTAvYHLtItFBOhcEXJ0
+X-Received: by 2002:a17:902:e841:b0:1b6:6f12:502e with SMTP id t1-20020a170902e84100b001b66f12502emr17465925plg.49.1698237357792;
+        Wed, 25 Oct 2023 05:35:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/lVpfMUNBBfWqBo8bfvljBYSBCHKzm8BaAaoys67eChIuLm8w5Asc6ul+K1gzocSNYltZL1dL0BrIqtcbXRQ=
+X-Received: by 2002:a17:902:e841:b0:1b6:6f12:502e with SMTP id
+ t1-20020a170902e84100b001b66f12502emr17465908plg.49.1698237357450; Wed, 25
+ Oct 2023 05:35:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+References: <0b9cb1ea-4656-4802-b7a7-811c1e9e118a@moroto.mountain>
+In-Reply-To: <0b9cb1ea-4656-4802-b7a7-811c1e9e118a@moroto.mountain>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 25 Oct 2023 14:35:45 +0200
+Message-ID: <CAHc6FU646Jj3iODoHoAYpps2PL732Feb_w+5p=8GfUOMfYTHhw@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: uninitialized variable in __gfs2_iomap_get()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Bob Peterson <rpeterso@redhat.com>, gfs2@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 24 Oct 2023, at 17:58, Christophe JAILLET wrote:
+Dan,
 
-> The intent is to check if the strings' are truncated or not. So, >= should
-> be used instead of >, because strlcat() and snprintf() return the length of
-> the output, excluding the trailing NULL.
+On Wed, Oct 25, 2023 at 1:57=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+> The "ret" variable is uninitialized when we goto out because
+> gfs2_is_stuffed(ip).
 >
-> Fixes: a02d69261134 ("SUNRPC: Provide functions for managing universal addresses")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: Fix cut'n'paste typo in subject
->     Add net in [PATCH...]
-> ---
+> Fixes: 2cd225820b91 ("gfs2: Initialize metapaths outside of __gfs2_iomap_=
+get")
 
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+thanks for catching this. I've fixed that patch directly.
 
-Ben
+Andreas
 
