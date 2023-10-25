@@ -2,84 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9039DC25B6E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A12BC0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229909AbjJYTgz (ORCPT
+        id S229573AbjJYToJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45824 "EHLO
+        Wed, 25 Oct 2023 15:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjJYTgz (ORCPT
+        with ESMTP id S229441AbjJYToI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 15:36:55 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7937C13A;
-        Wed, 25 Oct 2023 12:36:53 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-6b1d1099a84so91491b3a.1;
-        Wed, 25 Oct 2023 12:36:53 -0700 (PDT)
+        Wed, 25 Oct 2023 15:44:08 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4A4E5
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:06 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so2663523a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698262613; x=1698867413; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TGbMnAcQD9MpNg1isUp8Xn3wZuZoLOEwvnOJV3Zib1c=;
-        b=bztixrk69l+e/+jYISH76bAmPfZObiC7kZDH/4Ca0ghdA0sPIu2NLK74NWXSabG774
-         eIi7N6H6CW3zUJZD+A0PThMI5RDrXkhd2m5i2cn5sslVklqovQuJGL/4Kesf4rzfg1Hl
-         uDYvAifXSn6gQ99DypxNbMDc2nt3/yo7YtmnnWubxH7W3Y9kXR5T8zhysWdM45yvlm8X
-         snO/8iFmaUf4dr56gp/YQBW40nIqt/PMUVcDM+HjDQg5+heubVA4kenJ4FKejJZnaRkU
-         UeP7mIAU3i1lYmk5F+9amlzCeHKCowKdMhaSamvQiNl/BsSuJmLb7cGVBU1vFhDGRHHM
-         NAuw==
+        d=linux-foundation.org; s=google; t=1698263044; x=1698867844; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeXrnJe8xvNfcrNS9vywqBs8RswX60g4RVbYr0154Ac=;
+        b=Ebkn7cRfn1JhRy64xdFtiY5ujBfGzD61F6IXFEOe/9WezZJ1l8AUog0ImXFNEodyES
+         0uNIienMC1DUlPUtkcZiwfLfCmcOXr9j/H8s3LqQzeavmpqTTEylEMacfmYM0BcBmgUR
+         /+byw/GxlHdtAdqADOSHAZItToadgE76Carv4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698262613; x=1698867413;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TGbMnAcQD9MpNg1isUp8Xn3wZuZoLOEwvnOJV3Zib1c=;
-        b=V4BLka9nyp1cTG4/aE90R1SoKUxfxbe9c8q0/1DaFUGIo5upDH3DtM8Cx/36mdZDdG
-         9K8LQHDgegAtpKLzZQiCoPibNuyGrxU0eBiROD9TQ5Hk87GtgRZstSWLwzvwY/iO54mo
-         YnGUak+v+gbJGpzUqFWzEHmNEQf3JlUDda3c67YNOuErT304lQCvgoc2x1nP9VL+zQh8
-         Zi4lBeGbEZ6dJDlgvB28Km+n2WYyamlmJmtTpzbWpdbdV7Gy3fo4YeNFQOOcrsbRamCX
-         uJsl+y9JI3vNtfJfjZyXM/OSi+HO2sjXfKngS8mEiH/ZbRY/pBZxQ9TZ50d05eWB1WyG
-         AZOw==
-X-Gm-Message-State: AOJu0YztsFcZwQPJyqo9bbIwaFHak2s2HA5ch+LbCIAYMNQbVnN3OS6W
-        UVotfw9IhLvWh2CDR+9tYIQ=
-X-Google-Smtp-Source: AGHT+IFDdIs+VkhqOZmhmb39SGTaiCH9s23YjOt7r0Pg9uoy33BcIMUwPDCXdR+5BIBpQO0/ZEH7AQ==
-X-Received: by 2002:a05:6a00:1a4f:b0:6bc:e7f8:821e with SMTP id h15-20020a056a001a4f00b006bce7f8821emr19565769pfv.10.1698262612844;
-        Wed, 25 Oct 2023 12:36:52 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g5-20020aa79f05000000b006be055ab117sm9980413pfr.92.2023.10.25.12.36.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 12:36:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 25 Oct 2023 12:36:51 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        jdelvare@suse.com, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, openbmc@lists.ozlabs.org,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] hwmon: npcm750-pwm: add an error code check in
- npcm7xx_en_pwm_fan
-Message-ID: <5036fed5-ff29-4d9b-a31a-1676a8e4f051@roeck-us.net>
-References: <20231020085518.198477-1-suhui@nfschina.com>
+        d=1e100.net; s=20230601; t=1698263044; x=1698867844;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JeXrnJe8xvNfcrNS9vywqBs8RswX60g4RVbYr0154Ac=;
+        b=P/sRCkEksZNa4jzaga9XSMnVWsY7dl6QiDKcKhSkOlQuN4ar8KtUdGOhUQeh7TT40a
+         sPTBaTjvkkZbT720PfBHEnQc9b2uxGMYpD49OSZNEbgH9qE1vw4aEFhy1iYem/UvxNWK
+         s2l4OY9heb1rqvll8WkeEthwnq7PcEHG+8xf50Er5lrzOK5J37KUFe4pNDOyTPIEFJjF
+         oZPrYT4PDE3oZi4ETqZDCpwnx9oPmo5Om1ipLG5ZGdVN3Y3GoZFzlSgLchUVyP68lh7d
+         bH+e63qHIvq9QLcxGPOW/mfGwZWeabXXFXR3vDS4p/akV+8gXxRFF/qWALKmjBb69Xf1
+         ewDw==
+X-Gm-Message-State: AOJu0Ywoyu6ko0am0Pp9hgD7rEQ/bFZTXQIDoDqxb7EIBqxoT2uC7mVP
+        R12sL+p5FDGeswK5+EvkQRfiVEOLZykJQ+RUrwGYp5js
+X-Google-Smtp-Source: AGHT+IEAeHCU7Mq98xC5EFAC0PEuujH8yeNt8T2AktXJ9lZ9rIMMzDAedrR42kJW1MzZbdUHKwWdDw==
+X-Received: by 2002:a17:907:9811:b0:9ae:5513:e475 with SMTP id ji17-20020a170907981100b009ae5513e475mr635162ejc.9.1698263044486;
+        Wed, 25 Oct 2023 12:44:04 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id 30-20020a170906209e00b009a1b857e3a5sm10381768ejq.54.2023.10.25.12.44.03
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 12:44:03 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-9adb9fa7200so22892966b.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:03 -0700 (PDT)
+X-Received: by 2002:a17:907:9492:b0:9ad:8a9e:23ee with SMTP id
+ dm18-20020a170907949200b009ad8a9e23eemr587581ejc.13.1698263043242; Wed, 25
+ Oct 2023 12:44:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231020085518.198477-1-suhui@nfschina.com>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+ <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org> <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+ <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
+ <87fs1y8xkl.fsf@intel.com> <893b8cc27684a03865dbf9517a4cbf1bd132950a.camel@HansenPartnership.com>
+ <20231025141030.63acb006@gandalf.local.home>
+In-Reply-To: <20231025141030.63acb006@gandalf.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 25 Oct 2023 09:43:45 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wj_4VNHeNmRJ_DeD7RDZFvPCQxVR1O2RwFAOG7Gb7OYYg@mail.gmail.com>
+Message-ID: <CAHk-=wj_4VNHeNmRJ_DeD7RDZFvPCQxVR1O2RwFAOG7Gb7OYYg@mail.gmail.com>
+Subject: Re: KTODO automated TODO lists
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jani Nikula <jani.nikula@intel.com>, NeilBrown <neilb@suse.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 20, 2023 at 04:55:19PM +0800, Su Hui wrote:
-> npcm7xx_pwm_config_set() can return '-ENODEV' for failed. So check
-> the value of 'ret' after calling npcm7xx_pwm_config_set().
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+On Wed, 25 Oct 2023 at 08:10, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> I think this is the key issue. We only want the context of an email that is
+> being responded to present, and the rest trimmed. Automated trimming or
+> collapsing doesn't do this well.
 
-Applied.
+It's not just about MUA's that hide things. The MUA _I_ use hides
+excessive quoting, but then when I look at the results on lore I often
+get completely unreadable results because somebody quoted several
+hundred lines of patch or whatever. And then I scrolling through the
+thread is suddenly a major PITA.
 
-Thanks,
-Guenter
+So I do think that the whole excessive quoting on the lists should
+just be a hard no, the same way html is.
+
+                 Linus
