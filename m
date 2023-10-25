@@ -2,114 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6185EC25B47
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 11:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FD1C0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 11:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232835AbjJYLVu (ORCPT
+        id S233280AbjJYLqE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
+        Wed, 25 Oct 2023 07:46:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjJYLVt (ORCPT
+        with ESMTP id S233862AbjJYLqD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:21:49 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E84AC;
-        Wed, 25 Oct 2023 04:21:46 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-53f6ccea1eeso8602373a12.3;
-        Wed, 25 Oct 2023 04:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698232905; x=1698837705; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E2rHfcsjlV4rlBGbf4CfwSEr1+dgsfk+VxIq/saYt7A=;
-        b=QH0zn8AfCu8yLe24O97F19CUDfYyn+D7LnEY0TkkmKEz5V/1ZTA2X+oFxl7IIUytjG
-         qeuTimXeMYhkcZxvvonlb26y2shQbxQSXEZvHWg26eB2xbgBLGJaSS30UVc3xcswD/Ru
-         +mMPx8ewrIo9Itjt1wwLwpOLrNq2MrFICSE/ufd/Y6n81bu6NIq5U1uzR8l1frnc9eFu
-         5t6HGUDogPpbaIC5ubC/U/Hqk6YGFJ0koPIiljYGgT3wpNcrxFlrKDy4pDfszp02vtfX
-         KouhZHXlCpAC50EgERnsVae3WU/MP3xUBygq/t/a2CBg0OJHfB8jQx8lgqmZ4pyMciCJ
-         cMPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698232905; x=1698837705;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E2rHfcsjlV4rlBGbf4CfwSEr1+dgsfk+VxIq/saYt7A=;
-        b=ogyiRrtICWbTri2PLWhU7dpLbXnGyz4kUuPvBpEbTeNW6Yd2y6TuiYJYH+6lI9yTrK
-         prtMCC8DGsHlkay2Km/rNinscgg6SU9HBiWw7AMmkHhwO5d/GY+DW3LaX/p8oFU83QED
-         oP3hAg0zD0O0htKMIvQcX0nonWtN9xLWolkZfE562LOQfnC8b1OJFWdsHRZHkVmqpGsj
-         1RlYWxX8pL1i6ldp1H5IYZcLAbf2H1UyeYgT+q13huPeYUtJB/qoSY9Q6TYjohzJKzz7
-         wINFf8rbI/ytnQDP4rGqfx0F5yajyjaGa7LsN4WOlJDfdfSiryGs0n0d3EB3aDwiCacL
-         KcYA==
-X-Gm-Message-State: AOJu0YzrL7lLR71sumFjbMAR+c8uz12FsLJQDk8b/05e0KgJaxoLdq+b
-        MMNQ8lO7neMZJPmXRexcGu4tX0D0VVg=
-X-Google-Smtp-Source: AGHT+IGPuYW/6V1UmkcJQL53Gndt5qS6mrifdkq1FD6CQye3uPK1nErdTXZVKKpQwX3DZ2hm9yT2yA==
-X-Received: by 2002:a17:906:6a0e:b0:9be:45b3:1c3d with SMTP id qw14-20020a1709066a0e00b009be45b31c3dmr9871645ejc.48.1698232904750;
-        Wed, 25 Oct 2023 04:21:44 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:2cbd:f9ec:f035:ebea])
-        by smtp.gmail.com with ESMTPSA id xa22-20020a170907b9d600b0099bd1ce18fesm9841288ejc.10.2023.10.25.04.21.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 04:21:44 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm: debug: reuse the config DEBUG_OMAP2UART{1,2} for OMAP{3,4,5}
-Date:   Wed, 25 Oct 2023 13:21:36 +0200
-Message-Id: <20231025112136.3445-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 25 Oct 2023 07:46:03 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1DF5131
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1698234359;
+        bh=eXAXk6onRk3Nfca4dVEs+edIdJK1E8j5lBEv5MVEPnM=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=h+rAPHFdQq0mTi5RGysjHVHjKU51KeWEeIPIZQ7iA1l0jUt8qw7mwEIYO98uVUS21
+         TaodZgeK1IYTsptkZObQthxuGwWW5qC36TBhbcIqbUG7RfnnIsdqVrjCnHavlSHVmT
+         1Lt2V9CcUo/ro7RDv14x7ICs7WxHq+OyZdzNkMzE=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 11EE512867CE;
+        Wed, 25 Oct 2023 07:45:59 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id owkWJzw--QJo; Wed, 25 Oct 2023 07:45:58 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1698234358;
+        bh=eXAXk6onRk3Nfca4dVEs+edIdJK1E8j5lBEv5MVEPnM=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=gIy/k5NYOxT33P6nrpOqfMFh9SUmA5Rg7JfifTxdzsb7VCHNxrlVIosdWWLT4S1CC
+         R8r+D0uChs025VxTX5c2HfrLE+9xg/mb7pz8ReOMsuY1Gqm4UqKsDiKk9jk3Hhrswp
+         fUlo2LC+NmYrvOPCKhr6MtUhRAxMmnN1N5hR9n0o=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id AD05B12865DA;
+        Wed, 25 Oct 2023 07:45:57 -0400 (EDT)
+Message-ID: <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
+Subject: Re: KTODO automated TODO lists
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     NeilBrown <neilb@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Date:   Wed, 25 Oct 2023 07:45:55 -0400
+In-Reply-To: <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+        , <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+        , <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+         <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit d2b310b0234c ("ARM: debug: Use generic 8250 debug_ll for omap2 and
-omap3/4/5 common uarts") adds address definitions of DEBUG_UART_PHYS for
-OMAP2, OMAP3, OMAP4 and OMAP5 in ./arch/arm/Kconfig.debug.
+On Wed, 2023-10-25 at 08:29 +1100, NeilBrown wrote:
+> On Wed, 25 Oct 2023, Krzysztof Kozlowski wrote:
+> > On 23/10/2023 20:49, Andrew Morton wrote:
+> > > On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter
+> > > <dan.carpenter@linaro.org> wrote:
+> > > 
+> > > > Yesterday someone on my lists just sent an email looking for
+> > > > kernel
+> > > > tasks. 
+> > > 
+> > > Well here's a task: write a bot which follows the mailing lists
+> > > and
+> > > sends people nastygrams if one of their emails is more than
+> > > 95%(?)
+> > > quoted text.
+> > > 
+> > > It's happening significantly more lately.  Possibly because the
+> > > gmail
+> > > client helpfully hides quoted text.
+> > 
+> > I would also point to reviewers and maintainers who give a Rb/Ack
+> > tag:
+> > 1. somewhere at the top, without any footer like Best regards, and
+> > then
+> > quote entire patch, so I don't know shall I look for more comments
+> > after
+> > Rb/Ack?
+> > 
+> > 2. quote entire email and then add Rb/Ack, so I need to figure out
+> > whether there was something between the hundreds of lines of text
+> > or not.
+> 
+> Here we all are, brilliantly talented computer programmers who spend
+> our days making amazing fast digital devices do amazingly clever and
+> subtle things, inventing time-saving tools and processing vast
+> amounts of data without blinking, but for some reason we think the
+> task of skipping over a few thousand lines that all start with '> "
+> is too hard for us and that we should, in stead, complain to some
+> other human to convince them to make our life easier for us.
+> 
+> Does anyone else see the irony?
 
-These definitions depend on DEBUG_OMAP{2,3,4,5}UART{1,2}; however, only
-DEBUG_OMAP2UART{1,2} are defined in ./arch/arm/Kconfig.debug, and
-DEBUG_OMAP{3,4,5}UART{1,2} are not defined. Hence, the script
-./scripts/checkkconfigsymbols.py warns here on non-existing symbols.
-Simply reuse the config DEBUG_OMAP2UART{1,2}; there is no need to define
-separate config symbols for OMAP{3,4,5}. So, just delete the dead
-references to DEBUG_OMAP{3,4,5}UART{1,2}.
+So if I'm a brilliantly talented driver, it's OK for other people to
+drive on the wrong side of the road because I should be able to avoid
+them?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/arm/Kconfig.debug | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+The point being there are some situations where observing global
+etiquette is way more helpful than an individual solution, however
+talented the individual.
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index b407b7b9b715..fc2b41d41447 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -1593,10 +1593,8 @@ config DEBUG_UART_PHYS
- 	default 0x48020000 if DEBUG_OMAP4UART3 || DEBUG_TI81XXUART1
- 	default 0x48022000 if DEBUG_TI81XXUART2
- 	default 0x48024000 if DEBUG_TI81XXUART3
--	default 0x4806a000 if DEBUG_OMAP2UART1 || DEBUG_OMAP3UART1 || \
--				DEBUG_OMAP4UART1 || DEBUG_OMAP5UART1
--	default 0x4806c000 if DEBUG_OMAP2UART2 || DEBUG_OMAP3UART2 || \
--				DEBUG_OMAP4UART2 || DEBUG_OMAP5UART2
-+	default 0x4806a000 if DEBUG_OMAP2UART1
-+	default 0x4806c000 if DEBUG_OMAP2UART2
- 	default 0x4806e000 if DEBUG_OMAP2UART3 || DEBUG_OMAP4UART4
- 	default 0x49020000 if DEBUG_OMAP3UART3
- 	default 0x49042000 if DEBUG_OMAP3UART4
-@@ -1719,10 +1717,8 @@ config DEBUG_UART_VIRT
- 	default 0xfa020000 if DEBUG_OMAP4UART3 || DEBUG_TI81XXUART1
- 	default 0xfa022000 if DEBUG_TI81XXUART2
- 	default 0xfa024000 if DEBUG_TI81XXUART3
--	default 0xfa06a000 if DEBUG_OMAP2UART1 || DEBUG_OMAP3UART1 || \
--				DEBUG_OMAP4UART1 || DEBUG_OMAP5UART1
--	default 0xfa06c000 if DEBUG_OMAP2UART2 || DEBUG_OMAP3UART2 || \
--				DEBUG_OMAP4UART2 || DEBUG_OMAP5UART2
-+	default 0xfa06a000 if DEBUG_OMAP2UART1
-+	default 0xfa06c000 if DEBUG_OMAP2UART2
- 	default 0xfa06e000 if DEBUG_OMAP2UART3 || DEBUG_OMAP4UART4
- 	default 0xfa71e000 if DEBUG_QCOM_UARTDM
- 	default 0xfb009000 if DEBUG_REALVIEW_STD_PORT
--- 
-2.17.1
+James
+
+
 
