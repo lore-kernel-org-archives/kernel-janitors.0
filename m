@@ -2,96 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80099C07545
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 16:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C637C0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 17:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjJYQlw (ORCPT
+        id S229842AbjJYRFa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 12:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
+        Wed, 25 Oct 2023 13:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjJYQlv (ORCPT
+        with ESMTP id S229616AbjJYRFa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 12:41:51 -0400
-X-Greylist: delayed 61 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 Oct 2023 09:41:49 PDT
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A78129
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 09:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698252110; x=1729788110;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=n1EgBmf+lXleYrrXsvueB3LRxOHeYf0SL1x84vpv0LQ=;
-  b=a/koTpAzRukPygAy7e4K7X6MoXk6JHiRe96ZAo3a0K8xV4c6GZ2RXoY1
-   q/3JPSZc4zjiu8/AMPW72DQ3m5FEbzANMVFNqrTmFnsL4NjKV2yRLlhgW
-   v0qgTf35ul4NSA/olfGm7L4irE3md83CwYTWX7wAhW9hX9wL5RBM5rgF1
-   zzwGi+8KYDKtyF0xhoUDzkUCynxlKgEL12WQh6+oTTwnIKYtFp7rTXlkg
-   6SgOYc2j1+YzgysG6ZyyHJU/GhOJ0TwQlrj+WXkgNBYS/UZ4WAWclCqFt
-   PzUbUJq26msbQjEAPz6s9EcKEacw/hPap8PqU2YbJvGcrzCi+X5uruyxL
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="130854"
-X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
-   d="scan'208";a="130854"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2023 09:40:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="762511557"
-X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
-   d="scan'208";a="762511557"
-Received: from dtorrice-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.33.83])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2023 09:40:44 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        NeilBrown <neilb@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        Wed, 25 Oct 2023 13:05:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F43138;
+        Wed, 25 Oct 2023 10:05:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E53C433C7;
+        Wed, 25 Oct 2023 17:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698253527;
+        bh=itrf3YPLZXA1U9eMPDK77GgHzah33OvhKLvGx9sIU/A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FZD3KDLlVqQkHNy61Z+yJ3gbkRB8IJ4kgu9FeDqGEg1ILEgs1D8NjaWVnuYexaPIT
+         58fSjj1NexuGw+DWXrtx8L7jIKGIqhkXNai+q5A34GJa9wfEs+UFrX1LdzZHXY2t/t
+         psTxWQcy59CTA0apshwXuiF8Tbcc19vJ9+eZyWlM/kG/n5yDtGC2i7uUNz4A0ivTOt
+         2ORRS4TUafJ+Ljy14s0guA9o5a5qex77WWKOy4tzbibs81wY1g9EXcGWEo037nFpQy
+         8qWAY/tQEYlErK6sS+41ByF2+VlcVqLNEWgtsdUQlvv8iuhMrYIdo8kQ2P+b0vsQjG
+         znWXcKvMybf9w==
+Date:   Wed, 25 Oct 2023 22:35:20 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: KTODO automated TODO lists
-In-Reply-To: <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
- <169818295461.20306.14022136719064683486@noble.neil.brown.name>
- <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
-Date:   Wed, 25 Oct 2023 19:40:42 +0300
-Message-ID: <87fs1y8xkl.fsf@intel.com>
+Subject: Re: [PATCH] PCI: endpoint: Fix double free in __pci_epc_create()
+Message-ID: <20231025170520.GA96219@thinkpad>
+References: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 25 Oct 2023, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> On Wed, 2023-10-25 at 08:29 +1100, NeilBrown wrote:
->> Here we all are, brilliantly talented computer programmers who spend
->> our days making amazing fast digital devices do amazingly clever and
->> subtle things, inventing time-saving tools and processing vast
->> amounts of data without blinking, but for some reason we think the
->> task of skipping over a few thousand lines that all start with '> "
->> is too hard for us and that we should, in stead, complain to some
->> other human to convince them to make our life easier for us.
->> 
->> Does anyone else see the irony?
->
-> So if I'm a brilliantly talented driver, it's OK for other people to
-> drive on the wrong side of the road because I should be able to avoid
-> them?
+On Wed, Oct 25, 2023 at 02:57:23PM +0300, Dan Carpenter wrote:
+> The pci_epc_release() function frees "epc" so the kfree() on the next
+> line is a double free.
+> 
+> Fixes: 7711cbb4862a ("PCI: endpoint: Fix WARN() when an endpoint driver is removed")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Nah, we're all brilliant car manufacturers that could have our cars deal
-with the situation. ;)
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-The notmuch emacs interface has collapsed citations since at least
-2010. I think Neil's point is, if we're all using open source MUAs, why
-don't we scratch that particular itch and move on, instead of getting
-frustrated by it year after year?
+- Mani
 
-
-BR,
-Jani.
-
+> ---
+>  drivers/pci/endpoint/pci-epc-core.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+> index fe421d46a8a4..56e1184bc6c2 100644
+> --- a/drivers/pci/endpoint/pci-epc-core.c
+> +++ b/drivers/pci/endpoint/pci-epc-core.c
+> @@ -869,7 +869,6 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+>  
+>  put_dev:
+>  	put_device(&epc->dev);
+> -	kfree(epc);
+>  
+>  err_ret:
+>  	return ERR_PTR(ret);
+> -- 
+> 2.42.0
+> 
 
 -- 
-Jani Nikula, Intel
+மணிவண்ணன் சதாசிவம்
