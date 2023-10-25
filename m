@@ -2,64 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330D5C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 11:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D361BC25B47
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 11:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234957AbjJYL5f (ORCPT
+        id S234367AbjJYL5q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:57:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        Wed, 25 Oct 2023 07:57:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234943AbjJYL5d (ORCPT
+        with ESMTP id S234911AbjJYL5o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:57:33 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E72B137
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:57:29 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2c518a1d83fso88929361fa.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:57:29 -0700 (PDT)
+        Wed, 25 Oct 2023 07:57:44 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63BF13A
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:57:42 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso40604765e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698235048; x=1698839848; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698235061; x=1698839861; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FLjK8RH2hQrcnxdXwxL9ujbIfgaQvug2oCqsCmeP5e0=;
-        b=XzEv5su2C+jLr2qHcY4g+0bw4W8dYoIlhyPUNa3nexL3RJNr/sMvkVOKrMLXk51keZ
-         cc6zVSpwZxB3V2KFxAM2mcL18PpacTmXF2meYmSUTKLy8iXGRSRTGg/7IMI2A/jSUb2A
-         GGd9Se+gaXwu5+5k6eIvrr29I5dna89nAOd25Y1d59IOGBaI+a1xKEXRKjrWWKpgTjSc
-         uZaVMmv308yF1OwLLfZ0bTp47Fs/UMo4t7JwyhThGkUqYpdJfiG0wJIVybv7IRkkoppG
-         3rCvielW3RLqKAVpVo/VJ+bdz7r3w4WHJRa6C77xWVNr434HTrJ575hsQR5lqWHI1oJN
-         szhQ==
+        bh=j6uVxf5kYe92K+O00MCE5FtASY43IgluJLHruF2586U=;
+        b=yW8cRiy2S28hINm9iivjLPTYHXDnF3RaX0kTa3T6QkKPyMX8rQDb3fSYe4kJbY0RjQ
+         IXHOQLG0QOy8EX2brbHLSzcPNUye+yeFQcvHIDcwJxeoOZMElRHUZvJx3OPa1Vz91Ed0
+         cHworUftdcF4GwVgpVb9D9b1YLbxVKVV4pwtwOOSm6SR4Wn0eSQROQIe5Evxm2j8kmqC
+         cAl8CI+ogGJ0erGyfi3h3lMzwVI5TmZlMDzweXSvZvRYt5ztHk+dFV8S0EUk7ehTxy/M
+         AMF3gmTyP+Qmiq8TUHE8XXKKwnf759+G35iedNDBnuwrmsF5uF+Bj5aIpaDkS60jykGU
+         BiaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698235048; x=1698839848;
+        d=1e100.net; s=20230601; t=1698235061; x=1698839861;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FLjK8RH2hQrcnxdXwxL9ujbIfgaQvug2oCqsCmeP5e0=;
-        b=eME1gHSBzJSbmEtwD6zx1KtE3dU6FYcxc8YU1YYBrVGWica/JL1hPMbOFmpVh1sVEm
-         S+u7wqkVglCSnWFRwMTH7XkfQdPDtm75L3USKXOcLai93Qi5to26tc94N0d+j4Xc5X+k
-         FvUcwAKuQE1zLT8e+w0ngDUImQYZ7kaH5vNhL2l1i5cD9LoFWA1bI+AAC+ppr848xkSF
-         l70D8JEQP5ScaL/gpx6HBmcOWTrIwyPsAY0xorNN2BjyMulC83zl1Y+IO11xrZb446tW
-         e3QntRRXKQPg6UShE6FpbIWa7Pq31ejnRjUSSz4We7SWdugvOoFkqGNZUwJOUPFZ7hec
-         kxGA==
-X-Gm-Message-State: AOJu0YyYsZjYGDGzk+UtpjTfwDBWi3EcN2EIRJsq4xIBQeOuWHfT77SF
-        wDrgIgfCA44/x3fj9j0LvpX8VA==
-X-Google-Smtp-Source: AGHT+IHt+ZHyJntfYE7bZiBPM7m3Mw4gV60PtPFa/Z1UEb1CDLD4v0EPRaFHGozSPydq2e9pVmKjpA==
-X-Received: by 2002:a05:651c:152:b0:2b9:ecab:d924 with SMTP id c18-20020a05651c015200b002b9ecabd924mr11483741ljd.18.1698235047783;
-        Wed, 25 Oct 2023 04:57:27 -0700 (PDT)
+        bh=j6uVxf5kYe92K+O00MCE5FtASY43IgluJLHruF2586U=;
+        b=ifC8xh+8mCvNytGgWZflzW/8AJHXS90vCcvB8+EYxJn1ttN7jZoKEzxPc+rVPwZNqW
+         AGLycI529D9n34R6hByFIAKTQWreYytFcGQUvS8+IwYXqvai+fdh8kV7uHz+CKhYJWEl
+         DtGiGtTp8PL8UAIRHO0dvHW1SiO1dkLJdkmepdy3sWkfq3h6BcXdBMktzpiQOKzoobLB
+         3RR/8EI6su4pzfQwpLWSzJ/0dukn4oJs/kYqqRW2HKBxTBcqU3b5t8pG2CXvMQ4Ri1P7
+         OSGeCy+gxIPR47fHUky9SqisfrlW10cnaFGuaw7/3yWFrJd1Xd65RuQ7RkJPDZUwIXNn
+         krLw==
+X-Gm-Message-State: AOJu0YwCSuGGAMJw5wXUMRuNvH1MWKUIZWpSfHiylzlQ9u4rn/N9zdnf
+        Wpou3lxQhv4UExuwkeQtzw9AXA==
+X-Google-Smtp-Source: AGHT+IFlcuVvisAHY6IpOp9uDQk7RA7FjTqkZ2XNTiaE5hdwCeCI/PV48ajajNqa8VjggLSkT9Do7A==
+X-Received: by 2002:a05:600c:3b20:b0:405:4f78:e128 with SMTP id m32-20020a05600c3b2000b004054f78e128mr12172686wms.4.1698235061312;
+        Wed, 25 Oct 2023 04:57:41 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p12-20020a05600c358c00b00401b242e2e6sm19359165wmq.47.2023.10.25.04.57.26
+        by smtp.gmail.com with ESMTPSA id p30-20020a05600c1d9e00b003fefaf299b6sm14317313wms.38.2023.10.25.04.57.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 04:57:27 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 14:57:23 +0300
+        Wed, 25 Oct 2023 04:57:41 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 14:57:34 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] PCI: endpoint: Fix double free in __pci_epc_create()
-Message-ID: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
+Subject: [PATCH v2 1/2] pwm: samsung: Fix a bit test in pwm_samsung_resume()
+Message-ID: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,27 +69,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pci_epc_release() function frees "epc" so the kfree() on the next
-line is a double free.
+The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
+used as in a bitwise AND.  In this specific code the flag will never be
+set so the function is effectively a no-op.
 
-Fixes: 7711cbb4862a ("PCI: endpoint: Fix WARN() when an endpoint driver is removed")
+Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pci/endpoint/pci-epc-core.c | 1 -
- 1 file changed, 1 deletion(-)
+v2: Split the patch into two parts
 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index fe421d46a8a4..56e1184bc6c2 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -869,7 +869,6 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+ drivers/pwm/pwm-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 568491ed6829..69d9f4577b34 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -631,7 +631,7 @@ static int pwm_samsung_resume(struct device *dev)
+ 		struct pwm_device *pwm = &chip->pwms[i];
+ 		struct samsung_pwm_channel *chan = &our_chip->channel[i];
  
- put_dev:
- 	put_device(&epc->dev);
--	kfree(epc);
+-		if (!(pwm->flags & PWMF_REQUESTED))
++		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+ 			continue;
  
- err_ret:
- 	return ERR_PTR(ret);
+ 		if (our_chip->variant.output_mask & BIT(i))
 -- 
 2.42.0
 
