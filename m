@@ -2,101 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF23C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3800CC07545
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:35:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233804AbjJYMLV (ORCPT
+        id S234876AbjJYMfb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 08:11:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59510 "EHLO
+        Wed, 25 Oct 2023 08:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232748AbjJYMLT (ORCPT
+        with ESMTP id S234865AbjJYMfa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 08:11:19 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693A7B0
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:11:17 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj2-00027m-Ld; Wed, 25 Oct 2023 14:11:04 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj1-004Alg-Ii; Wed, 25 Oct 2023 14:11:03 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qvcj1-005x1E-9S; Wed, 25 Oct 2023 14:11:03 +0200
-Date:   Wed, 25 Oct 2023 14:11:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pwm: samsung: Fix a bit test in
- pwm_samsung_resume()
-Message-ID: <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
-References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
+        Wed, 25 Oct 2023 08:35:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45FA3C1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698237283;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=e9rhzqr3NOHtVKCBuqfpDxgciMBYDCCCmcwS5w2Kpjs=;
+        b=R5ZbuhpxT/U0CDLwXSLp1+O6Oa0KP4K4bj2H34j10vvLjLcBPjoJ3fzqTJxICn3tq8DqAm
+        mloi7miOxU7LXacqybF0yqffLCLu43Fd59LXXNrLYbrSrL+EEcIsWYjMFx+wg6VSku/kWv
+        3DArUWMfNM8+EFnYedfbAzBo4hzljo0=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-FJPbped1NaSK3-7XS-bRXg-1; Wed,
+ 25 Oct 2023 08:34:38 -0400
+X-MC-Unique: FJPbped1NaSK3-7XS-bRXg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A91512812940;
+        Wed, 25 Oct 2023 12:34:37 +0000 (UTC)
+Received: from [100.85.132.103] (unknown [10.22.48.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6593725C0;
+        Wed, 25 Oct 2023 12:34:36 +0000 (UTC)
+From:   Benjamin Coddington <bcodding@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] NFS: Fix an off by one in root_nfs_cat()
+Date:   Wed, 25 Oct 2023 08:34:35 -0400
+Message-ID: <11A69D01-44A5-4261-BF9B-EC3A1209E3F1@redhat.com>
+In-Reply-To: <7f97bb62c4e8137c5d7f7a7a30789440a5102b3f.1698183837.git.christophe.jaillet@wanadoo.fr>
+References: <7f97bb62c4e8137c5d7f7a7a30789440a5102b3f.1698183837.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zpelnl45zfbroznb"
-Content-Disposition: inline
-In-Reply-To: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 24 Oct 2023, at 17:47, Christophe JAILLET wrote:
 
---zpelnl45zfbroznb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The intent is to check if the 'dest' is truncated or not. So, >+ should be
+> used instead of >, because strlcat() returns the length of 'dest' and 'src'
+> excluding the trailing NULL.
+>
+> Fixes: 56463e50d1fc ("NFS: Use super.c for NFSROOT mount option parsing")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello Dan,
+Minor typo in the body: >+ should be >=, otherwise looks right.
 
-On Wed, Oct 25, 2023 at 02:57:34PM +0300, Dan Carpenter wrote:
-> The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
-> used as in a bitwise AND.  In this specific code the flag will never be
-> set so the function is effectively a no-op.
->=20
-> Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver data=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Ben
 
-@Thierry: e3fe982b2e4e is currently in your for-next branch. So it would
-be good to get Dan's patch into your PR for 6.7-rc1.
-
-Thanks
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---zpelnl45zfbroznb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmU5BdYACgkQj4D7WH0S
-/k5c4Qf8DMLh//DxSj4/1JTd7zwD+4SRK8uIst1TlaY4J5LAYvtuS71ekVCZRAWs
-UmnHnCRph9cO0t/iO5ByLUpMCUkFl1pscve+VBq68SuMx+r75vMpbNjYkZkf0vRq
-tvsJehuVargiPvCLhGPU0EEIh5NmnUPClt9PRWa64HpiSmJDy0iCk1hlmDIEzMtH
-/rKqE2hj36QOuwEK/kv/YOVLQdlVU8SN+ZmNr8WjsA9Wyb+e/G6tWR2VIF3hiv35
-s+k8JY9CBlIzO06pzjpvy7tqcgiAv4/klV2utLT2DXs+f1Pnlo1k8+ui8cpkiUKY
-OyF69dT6Q1rHzu3CYI0BB1Vrcss1UA==
-=2irA
------END PGP SIGNATURE-----
-
---zpelnl45zfbroznb--
