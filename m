@@ -2,96 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A12BC0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4B6C25B6B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229573AbjJYToJ (ORCPT
+        id S231469AbjJYTuN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
+        Wed, 25 Oct 2023 15:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjJYToI (ORCPT
+        with ESMTP id S234579AbjJYTuJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 15:44:08 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4A4E5
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:06 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so2663523a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:06 -0700 (PDT)
+        Wed, 25 Oct 2023 15:50:09 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77E21A1;
+        Wed, 25 Oct 2023 12:50:04 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c50906f941so1538451fa.2;
+        Wed, 25 Oct 2023 12:50:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1698263044; x=1698867844; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JeXrnJe8xvNfcrNS9vywqBs8RswX60g4RVbYr0154Ac=;
-        b=Ebkn7cRfn1JhRy64xdFtiY5ujBfGzD61F6IXFEOe/9WezZJ1l8AUog0ImXFNEodyES
-         0uNIienMC1DUlPUtkcZiwfLfCmcOXr9j/H8s3LqQzeavmpqTTEylEMacfmYM0BcBmgUR
-         /+byw/GxlHdtAdqADOSHAZItToadgE76Carv4=
+        d=gmail.com; s=20230601; t=1698263403; x=1698868203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EHfvnUbqg9GtaO1sB11RiBDoSfdRrypjGI2a/Q+8XQQ=;
+        b=bOVtHpJsxD4cx3oyJTS/0IVxuILyUHezuL4579KB9y6LP0qhXEdMNHA0NvgqY8G/vC
+         bAk5CiYkyFk7N4Bt81H/k4jrD3/LhlaU0EaC7rLY/QP0pcYu3bMPJhG12d4ODQhlL3mp
+         NIcsm9SBw4fKJLCn/j4LRTDQnYMrLs/HcoLCjSThV6wW3UU3M/eUVEAVqc/yMzbs7o+x
+         6id1ktYVbLZo5JuPpcFLIyA3C3rQK13NGgSm66rzziXefsHJu+BDhnEmJYrdYw0xpU3X
+         f79BVtzgyDXpfP4RXJEg1/ikNCfFP7xhSoNs/IJSJRnA2673J+xYetAlXeYGMNuSIl7V
+         4UJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698263044; x=1698867844;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JeXrnJe8xvNfcrNS9vywqBs8RswX60g4RVbYr0154Ac=;
-        b=P/sRCkEksZNa4jzaga9XSMnVWsY7dl6QiDKcKhSkOlQuN4ar8KtUdGOhUQeh7TT40a
-         sPTBaTjvkkZbT720PfBHEnQc9b2uxGMYpD49OSZNEbgH9qE1vw4aEFhy1iYem/UvxNWK
-         s2l4OY9heb1rqvll8WkeEthwnq7PcEHG+8xf50Er5lrzOK5J37KUFe4pNDOyTPIEFJjF
-         oZPrYT4PDE3oZi4ETqZDCpwnx9oPmo5Om1ipLG5ZGdVN3Y3GoZFzlSgLchUVyP68lh7d
-         bH+e63qHIvq9QLcxGPOW/mfGwZWeabXXFXR3vDS4p/akV+8gXxRFF/qWALKmjBb69Xf1
-         ewDw==
-X-Gm-Message-State: AOJu0Ywoyu6ko0am0Pp9hgD7rEQ/bFZTXQIDoDqxb7EIBqxoT2uC7mVP
-        R12sL+p5FDGeswK5+EvkQRfiVEOLZykJQ+RUrwGYp5js
-X-Google-Smtp-Source: AGHT+IEAeHCU7Mq98xC5EFAC0PEuujH8yeNt8T2AktXJ9lZ9rIMMzDAedrR42kJW1MzZbdUHKwWdDw==
-X-Received: by 2002:a17:907:9811:b0:9ae:5513:e475 with SMTP id ji17-20020a170907981100b009ae5513e475mr635162ejc.9.1698263044486;
-        Wed, 25 Oct 2023 12:44:04 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id 30-20020a170906209e00b009a1b857e3a5sm10381768ejq.54.2023.10.25.12.44.03
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 12:44:03 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-9adb9fa7200so22892966b.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:44:03 -0700 (PDT)
-X-Received: by 2002:a17:907:9492:b0:9ad:8a9e:23ee with SMTP id
- dm18-20020a170907949200b009ad8a9e23eemr587581ejc.13.1698263043242; Wed, 25
- Oct 2023 12:44:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698263403; x=1698868203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EHfvnUbqg9GtaO1sB11RiBDoSfdRrypjGI2a/Q+8XQQ=;
+        b=sT7NsU5Jyz2YSxDkPDNkkAwIQLLLgfEWAsL7IA4V32wxIEiITbcjbpJSpVQE0c9l5M
+         lRSceVINQdNJogUo2X/pJOYu5eg2cmG+ZSJhDPt83bTj1Y/E/gNhSyPTCntNmXg7K/zW
+         9Xb0FhHYOSom4KcQAhVw6IuYB9C9rMJtAOaIUQulcWqlU0nMNWl8GK4xmzrURefstc94
+         DQa9jjjAJmrf0brHGsRE5lgIL2BCDJHzpwMYwYFPoVO8poDiRQ31r2/VieHaqUnED9IS
+         o6V1uHQwmigNLoboDd/A4+amuKojYav9ccqVun5gD3Anhjv2dE7fsfTkTI/AgfC9p+4R
+         1CtQ==
+X-Gm-Message-State: AOJu0YyB0Jyc2bkFNYnSIKd/7tkeXRnUKW5N0J/fmQ+bWGUGwvwCI143
+        pXgHUPCI65Ba4zy+OdH7984UIIJY7DNvPmHgeQIgDUARhsu6SQ==
+X-Google-Smtp-Source: AGHT+IFTSIFhk7YK+RtSUQtz1foEIyZxmQA2dcXEGjb8hG3jcEut0JFjg8m+QhAobRlv9Wn6NZ/NFyUUAUASKYBl2LM=
+X-Received: by 2002:a19:2d5d:0:b0:4f8:77db:1d9e with SMTP id
+ t29-20020a192d5d000000b004f877db1d9emr11554827lft.12.1698263402639; Wed, 25
+ Oct 2023 12:50:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org> <169818295461.20306.14022136719064683486@noble.neil.brown.name>
- <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
- <87fs1y8xkl.fsf@intel.com> <893b8cc27684a03865dbf9517a4cbf1bd132950a.camel@HansenPartnership.com>
- <20231025141030.63acb006@gandalf.local.home>
-In-Reply-To: <20231025141030.63acb006@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 25 Oct 2023 09:43:45 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wj_4VNHeNmRJ_DeD7RDZFvPCQxVR1O2RwFAOG7Gb7OYYg@mail.gmail.com>
-Message-ID: <CAHk-=wj_4VNHeNmRJ_DeD7RDZFvPCQxVR1O2RwFAOG7Gb7OYYg@mail.gmail.com>
-Subject: Re: KTODO automated TODO lists
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jani Nikula <jani.nikula@intel.com>, NeilBrown <neilb@suse.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
+References: <20231025091550.21052-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20231025091550.21052-1-lukas.bulwahn@gmail.com>
+From:   Jagath Jog J <jagathjog1996@gmail.com>
+Date:   Thu, 26 Oct 2023 01:19:51 +0530
+Message-ID: <CAM+2Eu+yjguvkZLzAw6u+Y3PxT5JDuOEWtJSfv-U-C5mdmvL+Q@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: correct file entry in BOSCH SENSORTEC BMI323
+ IMU IIO DRIVER
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 25 Oct 2023 at 08:10, Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Oct 25, 2023 at 2:45=E2=80=AFPM Lukas Bulwahn <lukas.bulwahn@gmail.=
+com> wrote:
 >
-> I think this is the key issue. We only want the context of an email that is
-> being responded to present, and the rest trimmed. Automated trimming or
-> collapsing doesn't do this well.
+> Commit b512c767e7bc ("iio: imu: Add driver for BMI323 IMU") adds the
+> MAINTAINERS section BOSCH SENSORTEC BMI323 IMU IIO DRIVER and refers to a
+> non-existing device-tree file.
+>
+> Probably, this mistake was introduced by copying from the BOSCH SENSORTEC
+> BMA400 ACCELEROMETER IIO DRIVER section and missing to adjust the file
+> entry properly. This is however easily caught, as the script
+> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a brok=
+en
+> reference.
+>
+> The related commit 77583938740e ("dt-bindings: iio: imu: Add Bosch BMI323=
+")
+> adds bosch,bmi323.yaml, so refer to that intended file instead.
 
-It's not just about MUA's that hide things. The MUA _I_ use hides
-excessive quoting, but then when I look at the results on lore I often
-get completely unreadable results because somebody quoted several
-hundred lines of patch or whatever. And then I scrolling through the
-thread is suddenly a major PITA.
+My apologies for the silly mistake, and thank you for fixing it.
+Reviewed-by: Jagath Jog J <jagathjog1996@gmail.com>
 
-So I do think that the whole excessive quoting on the lists should
-just be a hard no, the same way html is.
 
-                 Linus
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a493d96ffd85..82ba3695f614 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3642,7 +3642,7 @@ BOSCH SENSORTEC BMI323 IMU IIO DRIVER
+>  M:     Jagath Jog J <jagathjog1996@gmail.com>
+>  L:     linux-iio@vger.kernel.org
+>  S:     Maintained
+> -F:     Documentation/devicetree/bindings/iio/imu/bosch,bma400.yaml
+> +F:     Documentation/devicetree/bindings/iio/imu/bosch,bmi323.yaml
+>  F:     drivers/iio/imu/bmi323/
+>
+>  BPF JIT for ARM
+> --
+> 2.17.1
+>
