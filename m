@@ -2,112 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4B6C25B6B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 19:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A1EC07545
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 20:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbjJYTuN (ORCPT
+        id S229874AbjJYUDo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:50:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
+        Wed, 25 Oct 2023 16:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234579AbjJYTuJ (ORCPT
+        with ESMTP id S234735AbjJYUDm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 15:50:09 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77E21A1;
-        Wed, 25 Oct 2023 12:50:04 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c50906f941so1538451fa.2;
-        Wed, 25 Oct 2023 12:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698263403; x=1698868203; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EHfvnUbqg9GtaO1sB11RiBDoSfdRrypjGI2a/Q+8XQQ=;
-        b=bOVtHpJsxD4cx3oyJTS/0IVxuILyUHezuL4579KB9y6LP0qhXEdMNHA0NvgqY8G/vC
-         bAk5CiYkyFk7N4Bt81H/k4jrD3/LhlaU0EaC7rLY/QP0pcYu3bMPJhG12d4ODQhlL3mp
-         NIcsm9SBw4fKJLCn/j4LRTDQnYMrLs/HcoLCjSThV6wW3UU3M/eUVEAVqc/yMzbs7o+x
-         6id1ktYVbLZo5JuPpcFLIyA3C3rQK13NGgSm66rzziXefsHJu+BDhnEmJYrdYw0xpU3X
-         f79BVtzgyDXpfP4RXJEg1/ikNCfFP7xhSoNs/IJSJRnA2673J+xYetAlXeYGMNuSIl7V
-         4UJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698263403; x=1698868203;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EHfvnUbqg9GtaO1sB11RiBDoSfdRrypjGI2a/Q+8XQQ=;
-        b=sT7NsU5Jyz2YSxDkPDNkkAwIQLLLgfEWAsL7IA4V32wxIEiITbcjbpJSpVQE0c9l5M
-         lRSceVINQdNJogUo2X/pJOYu5eg2cmG+ZSJhDPt83bTj1Y/E/gNhSyPTCntNmXg7K/zW
-         9Xb0FhHYOSom4KcQAhVw6IuYB9C9rMJtAOaIUQulcWqlU0nMNWl8GK4xmzrURefstc94
-         DQa9jjjAJmrf0brHGsRE5lgIL2BCDJHzpwMYwYFPoVO8poDiRQ31r2/VieHaqUnED9IS
-         o6V1uHQwmigNLoboDd/A4+amuKojYav9ccqVun5gD3Anhjv2dE7fsfTkTI/AgfC9p+4R
-         1CtQ==
-X-Gm-Message-State: AOJu0YyB0Jyc2bkFNYnSIKd/7tkeXRnUKW5N0J/fmQ+bWGUGwvwCI143
-        pXgHUPCI65Ba4zy+OdH7984UIIJY7DNvPmHgeQIgDUARhsu6SQ==
-X-Google-Smtp-Source: AGHT+IFTSIFhk7YK+RtSUQtz1foEIyZxmQA2dcXEGjb8hG3jcEut0JFjg8m+QhAobRlv9Wn6NZ/NFyUUAUASKYBl2LM=
-X-Received: by 2002:a19:2d5d:0:b0:4f8:77db:1d9e with SMTP id
- t29-20020a192d5d000000b004f877db1d9emr11554827lft.12.1698263402639; Wed, 25
- Oct 2023 12:50:02 -0700 (PDT)
+        Wed, 25 Oct 2023 16:03:42 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACB518A
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 13:03:40 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 730DD1C0002;
+        Wed, 25 Oct 2023 20:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1698264219;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aL2U1V9L42Wp9j3tZkGZ1h3ykDEf4gy3mNSNm4h+0Uo=;
+        b=LXqzSyixYlUw1ha1/405oHulNX/O/uPIaknUuXwCt1KZrTrx6H001llr7694rce+FEu4o1
+        SxDUXOJ1DppqFa7vxBFQQmz7q+/WZRbOEranRnpD2JnoR4wMHBkR/G+JN7csaYvfK14iC6
+        bEyTUi+JTdRJ0awoLZSgOdFosQrixblOqrZHEIk1r7pEG+tlrzSiCSvSuGrx1E3jbG1M4g
+        PMn6Ccs6APQAdjZW8qtwYNlhse4T3fqCnPjl9kdEv2yt9KuBgryGoDXL9nwAlALjlmFRoh
+        PmOUFod7tA3CBJCeprpzNOVz5a/v/RlywijcpbTuI52lJECvvc9IF81mKPJmHA==
+Date:   Wed, 25 Oct 2023 22:03:38 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        NeilBrown <neilb@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: KTODO automated TODO lists
+Message-ID: <20231025200338b3a293de@mail.local>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+ <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
+ <169818295461.20306.14022136719064683486@noble.neil.brown.name>
+ <53c584c21f273548004a7ddb5aa4c04ec7bca1c5.camel@HansenPartnership.com>
+ <e4aa47e3-4858-41ba-813f-c17aa5f5ba7d@p183>
 MIME-Version: 1.0
-References: <20231025091550.21052-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20231025091550.21052-1-lukas.bulwahn@gmail.com>
-From:   Jagath Jog J <jagathjog1996@gmail.com>
-Date:   Thu, 26 Oct 2023 01:19:51 +0530
-Message-ID: <CAM+2Eu+yjguvkZLzAw6u+Y3PxT5JDuOEWtJSfv-U-C5mdmvL+Q@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: correct file entry in BOSCH SENSORTEC BMI323
- IMU IIO DRIVER
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4aa47e3-4858-41ba-813f-c17aa5f5ba7d@p183>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 2:45=E2=80=AFPM Lukas Bulwahn <lukas.bulwahn@gmail.=
-com> wrote:
->
-> Commit b512c767e7bc ("iio: imu: Add driver for BMI323 IMU") adds the
-> MAINTAINERS section BOSCH SENSORTEC BMI323 IMU IIO DRIVER and refers to a
-> non-existing device-tree file.
->
-> Probably, this mistake was introduced by copying from the BOSCH SENSORTEC
-> BMA400 ACCELEROMETER IIO DRIVER section and missing to adjust the file
-> entry properly. This is however easily caught, as the script
-> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a brok=
-en
-> reference.
->
-> The related commit 77583938740e ("dt-bindings: iio: imu: Add Bosch BMI323=
-")
-> adds bosch,bmi323.yaml, so refer to that intended file instead.
+On 25/10/2023 21:55:16+0300, Alexey Dobriyan wrote:
+> It's MUAs failure. Microsoft "solved" this problem by forcing top
+> posting onto everyone, but there is no reason Outlook couldn't scroll
+> to the first reply in the middle of email. I use mutt, it doesn't
+> scroll to the first reply either.
+> 
 
-My apologies for the silly mistake, and thank you for fixing it.
-Reviewed-by: Jagath Jog J <jagathjog1996@gmail.com>
+Just press 'S'?
 
+<skip-quoted> (default: S)
+This function will go to the next line of non-quoted text which comes after a line of quoted text in the internal pager.
 
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a493d96ffd85..82ba3695f614 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3642,7 +3642,7 @@ BOSCH SENSORTEC BMI323 IMU IIO DRIVER
->  M:     Jagath Jog J <jagathjog1996@gmail.com>
->  L:     linux-iio@vger.kernel.org
->  S:     Maintained
-> -F:     Documentation/devicetree/bindings/iio/imu/bosch,bma400.yaml
-> +F:     Documentation/devicetree/bindings/iio/imu/bosch,bmi323.yaml
->  F:     drivers/iio/imu/bmi323/
->
->  BPF JIT for ARM
-> --
-> 2.17.1
->
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
