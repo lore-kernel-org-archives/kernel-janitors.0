@@ -2,154 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DE1C25B72
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 04:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2ABC25B6E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 04:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232620AbjJYESZ (ORCPT
+        id S232665AbjJYESf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 00:18:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54956 "EHLO
+        Wed, 25 Oct 2023 00:18:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232622AbjJYESW (ORCPT
+        with ESMTP id S232654AbjJYESc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 00:18:22 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEB9123
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c4fdf94666so69802261fa.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:18 -0700 (PDT)
+        Wed, 25 Oct 2023 00:18:32 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CC1130
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:29 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40859c464daso31764725e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Oct 2023 21:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698207497; x=1698812297; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
-        b=FlKaqcyVdAYJtXjhaJt/N2OrkFr4S6OUbh0ngCT+jV1hCUGmqFFjUQXEOE9DFKD4FE
-         zEAIbgWTQDVb5SvLWhglvVWwsaI6RfkHOgEyTkou+boHN3eT/qiSsDz4FPj2xs9g13ua
-         l2ASkiI0fre3XU0YViPHhtPiXDfdVHJBV8bPJIB5QkDFO4EZ3zrNJ+1kPOGcQrnFOcGF
-         gsFTzupCHOGFDr/ZSRRSGMJvgwafyYPWp9CtEKz63tuCGPKPpV2QYyKqnkLYRU+j/SSC
-         pwPfwga59DsWpxDVCFLk2QRmj3GZEwMnyUS94i7EAy3pnzL32FO0GG15q1tQvnH1gMcB
-         nfPA==
+        d=linaro.org; s=google; t=1698207508; x=1698812308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qNR7ea//1RhQMh43Nn1LOqMDgljHo5DtbTVWYpA0DcM=;
+        b=ko9Ir6CpWZ+1p4uRxfMW2laYWn1bIFDmU44AwsklfHpf80B9uJtZfEU5imcIXl7bcx
+         KiBX97ZdFAebrAtW4ui+7tWLxeJNpFcQeu9W6PS0DYIyFmS2lKvBR8mVc02O5YjWeIqz
+         /xqIIg/9jE4HJircGcnUCyMwFJQf0jofy9XS8gDqwvoW5TjzckDXaWBlX7MkNOIhyfCO
+         ht/e4S4HP0BXgr5qRP2NuwMVkojnUEybiL0eku7VOaDY+H5tRva5fgIJtz3vCXZBnibV
+         sl7BdTqLbWbqld+rtEGqx5dF/H//hmZEPnUP8LrscCd6E/MpobCyDcTTbp6d8Ya3oTtA
+         GZdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698207497; x=1698812297;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Brd8GKY25UMovr2lsG9TvdPpEmwQAUXbZxdfbbkQOpE=;
-        b=gtaEHr1tCfWkkSDPkLvyT6gZHEi0lhIBKD7DGcMZuB7ZmKkJ6NEbu1VX+0x4M0EAnl
-         vZHVusoKkpeAl/rPGVXxXO/XZyJdJjNdnNKKWcw8L6KV2kDT6T5kN7YThdHFvwC0P+Qi
-         1TTHEgaJqF4rKistuqxt+X2h/yS7PM2OqFwTygC/O/bKCUTO04iRiwmIKB4bZqSHMKxy
-         55CM8KoYNJrhyg9SsMiZ6awuUyRstzuEk9ZOg6GknEHsilJT+U01Y1AiLPZRpyAD24IR
-         Gl9zWiulmBXbFg6IcJ6fhmmdGimZV0PRuvbvh4zH8MNZCqGsF2+zhvJY1v5msdihLQhT
-         QfaQ==
-X-Gm-Message-State: AOJu0YzkfOkSjpKEhIQ2TmClIagsF4QEpJbObsURUFZWyP3UwovFR0JH
-        o/r+xJvRfwdUseAp8IOvQ3Vb8A==
-X-Google-Smtp-Source: AGHT+IHK9MNBEXuKit4Dyq67gtZ3P+f3+x9ngQPQaqjPnQ9oZd4mGeNK5F+gV0c1lFk5HL0q/K6iHQ==
-X-Received: by 2002:a2e:9691:0:b0:2bf:f32a:1f64 with SMTP id q17-20020a2e9691000000b002bff32a1f64mr10173412lji.18.1698207497173;
-        Tue, 24 Oct 2023 21:18:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698207508; x=1698812308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qNR7ea//1RhQMh43Nn1LOqMDgljHo5DtbTVWYpA0DcM=;
+        b=FElw06LXGneiB96fDWMlVnIqIhiY2ARorE650efB6IdSK5QMJFnZe4712Dd+C9vzwW
+         rIqVXfliYB/q7VIHtnV9/v3ZN3kMVPAsYFZvib4JrXKhLUG24bUIg5L+vtUhjhsL1XCV
+         BeyD38oRnBtgYC/95cBGG4KbdDCIegbMzmTDQev2TjEiFTDVYRj56ZybcPXJC0rfKHDb
+         wB+tp24h2KUfRMaBoyl6L4O5FmXoHlRpjfb9b1LFQmqB7w7rNlC8jPyrSwCJY5pFC2uC
+         jwT7dwdOwDm0IysxPzlsRSNupZ03CAggWW/azO3HhwCuy4QKYh6xxap7+w3/pcpRx72u
+         TszQ==
+X-Gm-Message-State: AOJu0YyMbRtfjyzBC0pjnjiuU6b9RxYk6kLrDl5QLGWPuD1e4jmdWgFt
+        IYaJJQyZYcQgGKTIgfPLwIe8WQ==
+X-Google-Smtp-Source: AGHT+IHh0Yz93NJIxzr1UvkVjXqIOZmuaG6avCJrJHwpf93+day3qOWd2OD7YLuO2MBZGqUL+ayLdg==
+X-Received: by 2002:a05:600c:19d1:b0:405:82c0:d9d9 with SMTP id u17-20020a05600c19d100b0040582c0d9d9mr10694503wmq.41.1698207507203;
+        Tue, 24 Oct 2023 21:18:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q16-20020adfea10000000b00326dd5486dcsm11165440wrm.107.2023.10.24.21.18.16
+        by smtp.gmail.com with ESMTPSA id h12-20020a05600c314c00b004068def185asm4181970wmo.28.2023.10.24.21.18.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 21:18:16 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 07:18:13 +0300
+        Tue, 24 Oct 2023 21:18:26 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 07:11:24 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+To:     Wenchao Hao <haowenchao22@gmail.com>
+Cc:     Wenchao Hao <haowenchao2@huawei.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        dmaengine@vger.kernel.org, linux-scsi@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: samsung: Fix a bit test
-Message-ID: <0d61bf0a-3aca-466c-9198-e937e81b5328@kadam.mountain>
-References: <917e3890-7895-4b1c-bcee-4eecb3b7fe09@moroto.mountain>
- <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
+Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+Message-ID: <9767953c-480d-4ad9-a553-a45ae80c572b@kadam.mountain>
+References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
+ <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
+ <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
+ <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231024211157.xv3vzqlmxmxwgvle@pengutronix.de>
+In-Reply-To: <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 11:11:57PM +0200, Uwe Kleine-König wrote:
-> Hello Dan,
-> 
-> On Tue, Oct 17, 2023 at 05:04:08PM +0300, Dan Carpenter wrote:
-> > This code has two problems.  First, it passes the wrong bit parameter to
-> > test_bit().  Second, it mixes using PWMF_REQUESTED in test_bit() and in
-> > open coded bit tests.
-> > 
-> > The test_bit() function takes a bit number.  In other words,
-> > "if (test_bit(0, &flags))" is the equivalent of "if (flags & (1 << 0))".
-> > Passing (1 << 0) to test_bit() is like writing BIT(BIT(0)).  It's a
-> > double shift bug.
-> > 
-> > In pwm_samsung_resume() these issues mean that the flag is never set and
-> > the function is essentially a no-op.
-> > 
-> > Fixes: 4c9548d24c0d ("pwm: samsung: Put per-channel data into driver data")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis and not tested.
-> > 
-> >  drivers/pwm/pwm-samsung.c | 2 +-
-> >  include/linux/pwm.h       | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> > index 10fe2c13cd80..acf4a0d8d990 100644
-> > --- a/drivers/pwm/pwm-samsung.c
-> > +++ b/drivers/pwm/pwm-samsung.c
-> > @@ -630,7 +630,7 @@ static int pwm_samsung_resume(struct device *dev)
-> >  		struct pwm_device *pwm = &chip->pwms[i];
-> >  		struct samsung_pwm_channel *chan = &our_chip->channel[i];
-> >  
-> > -		if (!(pwm->flags & PWMF_REQUESTED))
-> > +		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
-> >  			continue;
-> >  
-> >  		if (our_chip->variant.output_mask & BIT(i))
-> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> > index e3b437587b32..3eee5bf367fb 100644
-> > --- a/include/linux/pwm.h
-> > +++ b/include/linux/pwm.h
-> > @@ -41,8 +41,8 @@ struct pwm_args {
-> >  };
-> >  
-> >  enum {
-> > -	PWMF_REQUESTED = 1 << 0,
-> > -	PWMF_EXPORTED = 1 << 1,
-> > +	PWMF_REQUESTED = 0,
-> > +	PWMF_EXPORTED  = 1,
-> 
-> I'd want s/  / / here. Or even not assign explicit values at all?
-> 
+On Wed, Oct 25, 2023 at 01:09:34AM +0800, Wenchao Hao wrote:
+> Yes, there is bug here if write with .c code. Because your change to use
+> strndup_user() would make write with dirty data appended to "ubuf" failed,
 
-I feel like the 0 and 1 add value.  But sure, I can remove the extra
-space.  You're right that trying to align stuff is potentially going to
-cause pain in the future.
+I don't understand this sentence.  What is "dirty" data in this context?
 
-> >  };
-> >  
-> >  /*
+> can we fix it with following change:
 > 
-> I'd say these are two separate issues, with the one in pwm-samsung being
-> bad and the one in <linux/pwm.h> "only" ugly.
-> 
-> I wonder how I could get the samsung part wrong. All current usages of
-> PMWF_REQUESTED (and also PWMF_EXPORTED) use test_bit (et al). Grepping
-> through history pwm-pca9685.c got this wrong in a similar way for some
-> time, but otherwise it was always used correctly.
-> 
-> The definition of the flags in <linux/pwm.h> is ugly since 
-> f051c466cf69 ("pwm: Allow chips to support multiple PWMs") from 2011!
-> 
-> @Dan: Would you split the patch in two please?
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 67922e2c4c19..0e8ct724463f 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -1019,7 +1019,7 @@ static seize_t sdebug_error_write(struct file *file, const char __user *ubuf,
+>         struct sdebug_err_inject *inject;
+>         struct scsi_device *sdev = (struct scsi_device *)file->f_inode->i_private;
+>  
+> -       buf = kmalloc(count, GFP_KERNEL);
+> +       buf = kzalloc(count + 1, GFP_KERNEL);
 
-Sure.
+That would also fix the bug.
+
+>         if (!buf)
+>                 return -ENOMEM;
+> 
+> Or is there other kernel lib function which can address this issue?
+
+I don't understand the issue.
 
 regards,
 dan carpenter
