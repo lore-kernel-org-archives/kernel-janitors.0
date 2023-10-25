@@ -2,83 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C637C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 17:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A87BC0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 17:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbjJYRFa (ORCPT
+        id S231552AbjJYRpf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 13:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
+        Wed, 25 Oct 2023 13:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjJYRFa (ORCPT
+        with ESMTP id S229453AbjJYRpe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 13:05:30 -0400
+        Wed, 25 Oct 2023 13:45:34 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F43138;
-        Wed, 25 Oct 2023 10:05:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E53C433C7;
-        Wed, 25 Oct 2023 17:05:24 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E1ACC;
+        Wed, 25 Oct 2023 10:45:32 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7044AC433C8;
+        Wed, 25 Oct 2023 17:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698253527;
-        bh=itrf3YPLZXA1U9eMPDK77GgHzah33OvhKLvGx9sIU/A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FZD3KDLlVqQkHNy61Z+yJ3gbkRB8IJ4kgu9FeDqGEg1ILEgs1D8NjaWVnuYexaPIT
-         58fSjj1NexuGw+DWXrtx8L7jIKGIqhkXNai+q5A34GJa9wfEs+UFrX1LdzZHXY2t/t
-         psTxWQcy59CTA0apshwXuiF8Tbcc19vJ9+eZyWlM/kG/n5yDtGC2i7uUNz4A0ivTOt
-         2ORRS4TUafJ+Ljy14s0guA9o5a5qex77WWKOy4tzbibs81wY1g9EXcGWEo037nFpQy
-         8qWAY/tQEYlErK6sS+41ByF2+VlcVqLNEWgtsdUQlvv8iuhMrYIdo8kQ2P+b0vsQjG
-         znWXcKvMybf9w==
-Date:   Wed, 25 Oct 2023 22:35:20 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Fix double free in __pci_epc_create()
-Message-ID: <20231025170520.GA96219@thinkpad>
-References: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
+        s=k20201202; t=1698255932;
+        bh=qTeZ6U7qAakYJ5XSVziQjOqbVXvEjhzJrKi9js8BYMM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=JA2vsm3KZDI7mSCKzD2QFZOytcyrITQhbUSA8OHuHI/8/zTl2A9PYdIF3stYRtwZh
+         xKwPOeFfoYD8YNsNvT1trJ48+eEc43CJ8Bus6D7FI+76l9d3qRCr79uziGgAErH55Z
+         KKpXeKu98GSAvncDZjrIktu1Sb//Ey5ztRnlgv0UdN6/uoD4SNIKMs4BY16d8G9Wev
+         vkCx9lQXIFlJrzbzDaV35nJ0BZg5fDgONqfjkvsAGPEnGBfhsg8WcyBL39QTHQM0hr
+         jy5u4fEcl0gxnwOOYiQAY8XzFduA3wicrMm/yfZoLIXPU6ywMNzzOvvmvgkUY/Kha5
+         zxhiFru7sCMyw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless-next 1/2] wifi: ray_cs: Remove unnecessary
+ (void*)
+ conversions
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20231020093432.214001-1-yunchuan@nfschina.com>
+References: <20231020093432.214001-1-yunchuan@nfschina.com>
+To:     Wu Yunchuan <yunchuan@nfschina.com>
+Cc:     Wu Yunchuan <yunchuan@nfschina.com>, dzm91@hust.edu.cn,
+        christophe.jaillet@wanadoo.fr, horms@kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <169825592825.1275256.15739613451588018012.kvalo@kernel.org>
+Date:   Wed, 25 Oct 2023 17:45:30 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 02:57:23PM +0300, Dan Carpenter wrote:
-> The pci_epc_release() function frees "epc" so the kfree() on the next
-> line is a double free.
-> 
-> Fixes: 7711cbb4862a ("PCI: endpoint: Fix WARN() when an endpoint driver is removed")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Wu Yunchuan <yunchuan@nfschina.com> wrote:
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/endpoint/pci-epc-core.c | 1 -
->  1 file changed, 1 deletion(-)
+> No need cast (void *) to (struct net_device *).
 > 
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index fe421d46a8a4..56e1184bc6c2 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -869,7 +869,6 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
->  
->  put_dev:
->  	put_device(&epc->dev);
-> -	kfree(epc);
->  
->  err_ret:
->  	return ERR_PTR(ret);
-> -- 
-> 2.42.0
-> 
+> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+
+Patch applied to wireless-next.git, thanks.
+
+1002f8171d96 wifi: ray_cs: Remove unnecessary (void*) conversions
 
 -- 
-மணிவண்ணன் சதாசிவம்
+https://patchwork.kernel.org/project/linux-wireless/patch/20231020093432.214001-1-yunchuan@nfschina.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
