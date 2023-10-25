@@ -2,113 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62772C25B47
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 07:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B78EC25B47
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 07:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232291AbjJYHHJ (ORCPT
+        id S232720AbjJYHU4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 03:07:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
+        Wed, 25 Oct 2023 03:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjJYHHH (ORCPT
+        with ESMTP id S232584AbjJYHUy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 03:07:07 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D42A6
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:07:05 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-32d885e97e2so3395474f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:07:05 -0700 (PDT)
+        Wed, 25 Oct 2023 03:20:54 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E8C90
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:20:52 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40907b82ab9so2735355e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:20:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698217624; x=1698822424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F9y5xYJB0io3mRJrUc/0FkGqa7RrEdlAEtFuIgcZZVQ=;
-        b=Lpx1smO86zS+ruNxxQ/VMZh1BMqXgixfO5Wxh+Y/vxLf1rz8J88UfE1Qp+O2T6T2uU
-         c0Lq4Bg7Eoxb/0VP22BbrrCmIN7z5r2zQkBwmRdyFSVOy8msqS/2/qLAQ1q0gmsJT5/k
-         rPxhPJ0S8XC7uIrGSscT2wmqgvC0K3dsh9iEI0Yna8+zWEKkOItuS62T3+a45wp0VJ5U
-         riuQ/0Vp3jY/zruIMWisf1wrHdNIRZhts5LEBSiBUhmTPNNmnfLSXYvKA+ZEU1KQ3tme
-         M+jmr0j3qJhCVUvDohBWewKda7Opp4JwEXunqgolNqtY3N+VxPy/CrH4w5oGM2aByxDc
-         T18A==
+        d=linaro.org; s=google; t=1698218450; x=1698823250; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NoS842zLgIKkSI8+QUqHv3sPQiEji6N4hBzkvgiFN50=;
+        b=Zeb2dGp+KJVRUsNBZLnaD+cNpclZ85/aSmQM0DuC2trmexYKEWGFT601Uzo642C4Bc
+         ki2zu+W/FiPOVT/ePGKtBH68cY+2+cX29BDRdXvxtgZCz2MLQveonL5uFPoh6za1h9Fg
+         OclvqFWuM2NmhnbE08Zwr3WRX8a5RKaU77Mts5GbO1sqSz1aVFItNQwgOOnj9wyQqPJ7
+         XN9wIc+a+8sfE1iACQxt5+6YXcnHs1lbRXL4gz7wWNuYk/gw2NvIGf+U9bQDWDLqrF5u
+         4GbsumiB5hAgAxvNvwIsUDFaMFg9l9VUo4QIXEU9MagmQHQFTyvOW7u1mCA1dyg+KvFd
+         4Q1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698217624; x=1698822424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F9y5xYJB0io3mRJrUc/0FkGqa7RrEdlAEtFuIgcZZVQ=;
-        b=IpCtvIrjRm4ryf7yn6B/9aOmCE8LArPsLMTQ4EVbx+sZQ1zNR1LcEQqooMW23u8+PJ
-         Bt/79V653wO5nMu1MRAdukailoTU63WFrVVuzR2a2SxoosXkfANyGx+skFTlKhCIZxbb
-         ybtI4dVr2t9+LueWJ4RZzWXrRYWtfeKJcQhv9HATNitp6fCbAaU45XPVxmR8A4doyRQ9
-         1hRfC33V1m1VXEswVUFhnXsenbIqGGP2e9jAEml8l+Ro2N1OrsMedMGQTr8zecWUVEb3
-         bH4ENOmXpIvPEAib4ph2ciUoANRbvnkwxCWghkv9S//Uz9fFBUkGYm2Dljv2VzL3wt/q
-         G2KA==
-X-Gm-Message-State: AOJu0YxI3IFB30nBiz1kb3eFG66DUE/nJV/3wIMP6UEppAdeazdu85QP
-        iwdcNO4crY0W4L/ek/Gny7iqvg==
-X-Google-Smtp-Source: AGHT+IEpX6UdKN7Bif3mppqkWoE/HLm44z1lSiDEQdOpxke1PbZnv2rsGblEhtuSfvVBWpZOAHUJnA==
-X-Received: by 2002:adf:fd91:0:b0:31f:e5cf:6724 with SMTP id d17-20020adffd91000000b0031fe5cf6724mr10161138wrr.46.1698217623977;
-        Wed, 25 Oct 2023 00:07:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698218450; x=1698823250;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NoS842zLgIKkSI8+QUqHv3sPQiEji6N4hBzkvgiFN50=;
+        b=UtmWdIVfygVk8/jit8CWTG+YxSoVt1txBd4MKTL82Pcs83/Ydjx09kOPTd9PBKwkML
+         FiHGwbbCxTjRI4GN6ZA6nkmdyAwr/y8rxwlkoS0h+FNOrgNcU0n1fo1D2AJf6LdVk+yE
+         OD/a28U7KIUPqE4YbPbwpnWGqiZJqK/IyHBi5yw6sdsnTjL5eyHSKYamipn7XKPaUm0O
+         jMRNUaLP4h4oDGyzqZ8l3GbAh/0Ng19zD19QwkIrqhHhSDoXhCceyX4fmG+UC6ThN9xp
+         +sWNsfV3hC0pFXRzun1eXKf4/ILNWjJm2ntGIoIdbkrTcKnsZ9Sw3vQvd2chdCA/VdCT
+         KI7w==
+X-Gm-Message-State: AOJu0Ywn9AYysTb/Hgb78zYByXryKEyV+Q6LbmFGF6tZC+OWhMTxYUq0
+        mm40N6bnGoG0O70kAzUBvaPvuA==
+X-Google-Smtp-Source: AGHT+IGmnYPUPc5xfkBAUX/aDYGji9jc3HoO/aGKz5O7ooj69MkfZd5JW8TMd25Bp/TNALuVjjD/tQ==
+X-Received: by 2002:a5d:5911:0:b0:329:2649:ced5 with SMTP id v17-20020a5d5911000000b003292649ced5mr15232476wrd.32.1698218450519;
+        Wed, 25 Oct 2023 00:20:50 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id dj18-20020a0560000b1200b0032d96dd703bsm11470892wrb.70.2023.10.25.00.07.02
+        by smtp.gmail.com with ESMTPSA id r5-20020a056000014500b0032db4825495sm11370891wrx.22.2023.10.25.00.20.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 00:07:03 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 10:07:00 +0300
+        Wed, 25 Oct 2023 00:20:50 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 10:20:46 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Wenchao Hao <haowenchao2@huawei.com>
-Cc:     Wenchao Hao <haowenchao22@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        dmaengine@vger.kernel.org, linux-scsi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
- sdebug_error_write()
-Message-ID: <9207ed62-4e41-4b8c-8aee-5143c1a71bf8@kadam.mountain>
-References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
- <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
- <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
- <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
- <9767953c-480d-4ad9-a553-a45ae80c572b@kadam.mountain>
- <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Laurent Fert <laurent.fert@intel.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>
+Subject: [PATCH v2] stm class: Fix a double free in stm_register_device()
+Message-ID: <143baf7a-9d8c-471a-893a-fd827bbc7d05@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 02:10:41PM +0800, Wenchao Hao wrote:
-> On 2023/10/25 12:11, Dan Carpenter wrote:
-> > On Wed, Oct 25, 2023 at 01:09:34AM +0800, Wenchao Hao wrote:
-> > > Yes, there is bug here if write with .c code. Because your change to use
-> > > strndup_user() would make write with dirty data appended to "ubuf" failed,
-> > 
-> > I don't understand this sentence.  What is "dirty" data in this context?
-> > 
-> 
-> This is what I posted in previous reply:
-> 
-> We might have following pairs of parameters for sdebug_error_write:
-> 
-> ubuf: "0 -10 0x12\n0 0 0x2 0x6 0x4 0x2"
-> count=11
-> 
-> the valid data in ubuf is "0 -10 -x12\n", others are dirty data.
-> strndup_user() would return EINVAL for this pair which caused
-> a correct write to fail.
+The put_device(&stm->dev) call will trigger stm_device_release() which
+frees "stm" so the vfree(stm) on the next line is a double free.
 
-I mean, I could just tell you that your kzalloc(count + 1, GFP_KERNEL)
-fix will work.  It does work.
+Fixes: 389b6699a2aa ("stm class: Fix stm device initialization order")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2:  My first version introduced a use after free bug.  Thanks Amelie,
+     for catching this.
 
-But how is passing "dirty data" a "correct write"?  I feel like it
-should be treated as incorrect and returning -EINVAL is the correct
-behavior.  I'm so confused.  Why are users doing that?
+ drivers/hwtracing/stm/core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-I have looked at the code and it just doesn't seem that complicated.
-They shouldn't be passing messed up strings and expect the kernel to
-allow it.
-
-regards,
-dan carpenter
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 534fbefc7f6a..20895d391562 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -868,8 +868,11 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ 		return -ENOMEM;
+ 
+ 	stm->major = register_chrdev(0, stm_data->name, &stm_fops);
+-	if (stm->major < 0)
+-		goto err_free;
++	if (stm->major < 0) {
++		err = stm->major;
++		vfree(stm);
++		return err;
++	}
+ 
+ 	device_initialize(&stm->dev);
+ 	stm->dev.devt = MKDEV(stm->major, 0);
+@@ -913,10 +916,8 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ err_device:
+ 	unregister_chrdev(stm->major, stm_data->name);
+ 
+-	/* matches device_initialize() above */
++	/* calls stm_device_release() */
+ 	put_device(&stm->dev);
+-err_free:
+-	vfree(stm);
+ 
+ 	return err;
+ }
+-- 
+2.42.0
 
