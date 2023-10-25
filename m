@@ -2,123 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB708C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 07:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAA0C0032E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 09:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbjJYHZt (ORCPT
+        id S233435AbjJYJQA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 03:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56274 "EHLO
+        Wed, 25 Oct 2023 05:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232777AbjJYHZp (ORCPT
+        with ESMTP id S233880AbjJYJP5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 03:25:45 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6067DD
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:25:42 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39P0b9i9024280;
-        Wed, 25 Oct 2023 09:25:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-        message-id:date:mime-version:subject:to:cc:references:from
-        :in-reply-to:content-type:content-transfer-encoding; s=
-        selector1; bh=eZcf6Nex+okGCYfnBvOvvvKf/hhzIGIVLGg4l49To5k=; b=ha
-        YMvPB/HcnM1eXeV6Iq4vJ0i3NHynFlPYJBgImJu5+pBTsGvBTPgkEzMkl09H1ysO
-        eXJezuSB9Zk6YT+LnVJzslO23FbmjyUd9P7A/2XtykRpGJTHBh0vA1cpbhmZfPKB
-        EUcFGvm6rJhXT9H8GNDX/Y4dMIjkcaE+98oXfGaFtTxNBfh8NDGt+b6gWgSA/VMH
-        DMQyQMH7KXO2VJFOYsgPzDa74lsLQoAJMLtvRSWuGLP2nsYODP6eSPaJgt398ZbR
-        zzxz5504QmQHBf+ozJ89xEFzvLJKIjKWHPEUVGUA6KI7UPgP4/qEQ6TLvWxFYXh/
-        kWaLpxZp+a/KGvi4a3wg==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3tv3s4se32-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Oct 2023 09:25:31 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D64B8100059;
-        Wed, 25 Oct 2023 09:25:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CEB67216EF8;
-        Wed, 25 Oct 2023 09:25:28 +0200 (CEST)
-Received: from [10.201.20.208] (10.201.20.208) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 25 Oct
- 2023 09:25:28 +0200
-Message-ID: <4b4a339d-3da4-472a-885c-745465f34d6e@foss.st.com>
-Date:   Wed, 25 Oct 2023 09:25:27 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] stm class: Fix a double free in stm_register_device()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Laurent Fert <laurent.fert@intel.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <kernel-janitors@vger.kernel.org>
-References: <143baf7a-9d8c-471a-893a-fd827bbc7d05@moroto.mountain>
-Content-Language: en-US
-From:   Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <143baf7a-9d8c-471a-893a-fd827bbc7d05@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.20.208]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-25_01,2023-10-24_01,2023-05-22_02
+        Wed, 25 Oct 2023 05:15:57 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAFEF138;
+        Wed, 25 Oct 2023 02:15:55 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ba1eb73c27so847644266b.3;
+        Wed, 25 Oct 2023 02:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698225354; x=1698830154; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sA3KLuKCI9H+7Y8UJbCOZUdVsc0t74/8ar37Z4W1LJA=;
+        b=heeWbtRKQYAeHE6jWukhEJhuRNIoHMLldJLnXLPmcBJ/ATIwAjeyjFDVhJWT4CTaMQ
+         ghn4ETGXeUrtNSWzQaxr5RFTZ28igFa5CYZfQ8KOZ27lQnj38HBSlLE4ltQKk0E4ASG0
+         oo20b7wjzKVP0BwL5v4qcVpPE5TDfQzml9Z69KviQEng9pCnOivA0mQy6wd6jJ/9GxEP
+         iwJ/sFSuHzXladx9YUl97NMnLy50Tc1PEzj0eanHd0sjHsmZ0FMOGhgvE1wzAIPCR5i9
+         12ozVxfEqTtxx8gHDwO7vKcuGsqMV2dHwnrFqpqX1uoNmspYWxvFXr7Or0YigdpDldsa
+         i99A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698225354; x=1698830154;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sA3KLuKCI9H+7Y8UJbCOZUdVsc0t74/8ar37Z4W1LJA=;
+        b=uyLBNAk2p2as7/56CzT3r0dmT4eFCnZoczYMme9iRjbiZAEt5MeCYF++592qFu7b6t
+         RAKsj7C8+BonYDTz0ESgEq5jzj5Gyf13luY75PXZqSfA3tv+jo8IplYSa0QMZEoIHY2W
+         qgcYTpprrfz1/t/FJJq0maWR31buo9E2H+DFcR/VD5y/56hkIuce3anfvhCe8Zx7JcIf
+         XRHhCwY0uxXqQYmPAmTQ8WgwawORdSx7hdrTj6jiDZKZ6QQKfMUqSL8YASB3g+1lP9Oq
+         eKrxCtGFpomF6sNtm6Nauds43Ged9hCyw2MTMLvd4JLItmYirXmh5MWsXe7X/dUIgkTX
+         YcVw==
+X-Gm-Message-State: AOJu0Yzw1wAVQxkBCVSOTGcHj9c3r1oWJHAD2a7KZ3II3l+E7GpC0bZ6
+        xNSht2+EEpTSkxjkpJEdz3M=
+X-Google-Smtp-Source: AGHT+IE0Mv6Iod3FRLXOFtaujOuioouSP5SZ3DRcTBOCmppK4r5+q19s0X13iI5wN/hT3yxSyw69Pw==
+X-Received: by 2002:a17:906:7311:b0:9bd:9507:ed1c with SMTP id di17-20020a170906731100b009bd9507ed1cmr12678504ejc.18.1698225353936;
+        Wed, 25 Oct 2023 02:15:53 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:2cbd:f9ec:f035:ebea])
+        by smtp.gmail.com with ESMTPSA id cw23-20020a170906c79700b0099cce6f7d50sm9546446ejb.64.2023.10.25.02.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 02:15:53 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jagath Jog J <jagathjog1996@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: correct file entry in BOSCH SENSORTEC BMI323 IMU IIO DRIVER
+Date:   Wed, 25 Oct 2023 11:15:50 +0200
+Message-Id: <20231025091550.21052-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Commit b512c767e7bc ("iio: imu: Add driver for BMI323 IMU") adds the
+MAINTAINERS section BOSCH SENSORTEC BMI323 IMU IIO DRIVER and refers to a
+non-existing device-tree file.
 
-On 10/25/23 09:20, Dan Carpenter wrote:
-> The put_device(&stm->dev) call will trigger stm_device_release() which
-> frees "stm" so the vfree(stm) on the next line is a double free.
-> 
-> Fixes: 389b6699a2aa ("stm class: Fix stm device initialization order")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Probably, this mistake was introduced by copying from the BOSCH SENSORTEC
+BMA400 ACCELEROMETER IIO DRIVER section and missing to adjust the file
+entry properly. This is however easily caught, as the script
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
-Reviewed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+The related commit 77583938740e ("dt-bindings: iio: imu: Add Bosch BMI323")
+adds bosch,bmi323.yaml, so refer to that intended file instead.
 
-> ---
-> v2:  My first version introduced a use after free bug.  Thanks Amelie,
->       for catching this.
-> 
->   drivers/hwtracing/stm/core.c | 11 ++++++-----
->   1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-> index 534fbefc7f6a..20895d391562 100644
-> --- a/drivers/hwtracing/stm/core.c
-> +++ b/drivers/hwtracing/stm/core.c
-> @@ -868,8 +868,11 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
->   		return -ENOMEM;
->   
->   	stm->major = register_chrdev(0, stm_data->name, &stm_fops);
-> -	if (stm->major < 0)
-> -		goto err_free;
-> +	if (stm->major < 0) {
-> +		err = stm->major;
-> +		vfree(stm);
-> +		return err;
-> +	}
->   
->   	device_initialize(&stm->dev);
->   	stm->dev.devt = MKDEV(stm->major, 0);
-> @@ -913,10 +916,8 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
->   err_device:
->   	unregister_chrdev(stm->major, stm_data->name);
->   
-> -	/* matches device_initialize() above */
-> +	/* calls stm_device_release() */
->   	put_device(&stm->dev);
-> -err_free:
-> -	vfree(stm);
->   
->   	return err;
->   }
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Amelie
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a493d96ffd85..82ba3695f614 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3642,7 +3642,7 @@ BOSCH SENSORTEC BMI323 IMU IIO DRIVER
+ M:	Jagath Jog J <jagathjog1996@gmail.com>
+ L:	linux-iio@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/iio/imu/bosch,bma400.yaml
++F:	Documentation/devicetree/bindings/iio/imu/bosch,bmi323.yaml
+ F:	drivers/iio/imu/bmi323/
+ 
+ BPF JIT for ARM
+-- 
+2.17.1
+
