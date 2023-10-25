@@ -2,136 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC13C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 07:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62772C25B47
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 07:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232270AbjJYHBw (ORCPT
+        id S232291AbjJYHHJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 03:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
+        Wed, 25 Oct 2023 03:07:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbjJYHBu (ORCPT
+        with ESMTP id S229498AbjJYHHH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 03:01:50 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E751116
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:01:47 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C335C433C8;
-        Wed, 25 Oct 2023 07:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698217307;
-        bh=6bpoBX0kdFh4MK89QNKnictrdfcKlGVxk0LHuV7WNYM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JjEgSPz27bny71UelvLtKpjnS5ujW3jPuAJu2yFAwoZIEcpJmLmSrd7VG9J83Z9XB
-         zeUOHHNNzAEOgb0A3Rgdp7vI+s5HB+L96gNh/G0ImSN2SpkbsjnPYHu2dembnrv+Nz
-         jkuBwMv2xZLxST9JO6mDe/BgvJh6CO78QNwsKhqrY/nScfsa3aa+6unZFHhoGSaSlz
-         bh+wRYNB0XS1DgJtzt5gv4tScUgoiBploIb+74UjlgQOfJ/o+ZVMUBDjSwdo3uGZWQ
-         88vYK2hT2z4YMDk0m8v1IsVvTHjmOHcVMVicZ9f8h3FXsWZL8y8AhCw2L0nWeKJq+G
-         emwhCYdRILNVA==
-Message-ID: <db623920-34db-46e3-a768-f9b8b36d3268@kernel.org>
-Date:   Wed, 25 Oct 2023 09:01:40 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: KTODO automated TODO lists
-Content-Language: en-US
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        Wed, 25 Oct 2023 03:07:07 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D42A6
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:07:05 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-32d885e97e2so3395474f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 00:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698217624; x=1698822424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9y5xYJB0io3mRJrUc/0FkGqa7RrEdlAEtFuIgcZZVQ=;
+        b=Lpx1smO86zS+ruNxxQ/VMZh1BMqXgixfO5Wxh+Y/vxLf1rz8J88UfE1Qp+O2T6T2uU
+         c0Lq4Bg7Eoxb/0VP22BbrrCmIN7z5r2zQkBwmRdyFSVOy8msqS/2/qLAQ1q0gmsJT5/k
+         rPxhPJ0S8XC7uIrGSscT2wmqgvC0K3dsh9iEI0Yna8+zWEKkOItuS62T3+a45wp0VJ5U
+         riuQ/0Vp3jY/zruIMWisf1wrHdNIRZhts5LEBSiBUhmTPNNmnfLSXYvKA+ZEU1KQ3tme
+         M+jmr0j3qJhCVUvDohBWewKda7Opp4JwEXunqgolNqtY3N+VxPy/CrH4w5oGM2aByxDc
+         T18A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698217624; x=1698822424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F9y5xYJB0io3mRJrUc/0FkGqa7RrEdlAEtFuIgcZZVQ=;
+        b=IpCtvIrjRm4ryf7yn6B/9aOmCE8LArPsLMTQ4EVbx+sZQ1zNR1LcEQqooMW23u8+PJ
+         Bt/79V653wO5nMu1MRAdukailoTU63WFrVVuzR2a2SxoosXkfANyGx+skFTlKhCIZxbb
+         ybtI4dVr2t9+LueWJ4RZzWXrRYWtfeKJcQhv9HATNitp6fCbAaU45XPVxmR8A4doyRQ9
+         1hRfC33V1m1VXEswVUFhnXsenbIqGGP2e9jAEml8l+Ro2N1OrsMedMGQTr8zecWUVEb3
+         bH4ENOmXpIvPEAib4ph2ciUoANRbvnkwxCWghkv9S//Uz9fFBUkGYm2Dljv2VzL3wt/q
+         G2KA==
+X-Gm-Message-State: AOJu0YxI3IFB30nBiz1kb3eFG66DUE/nJV/3wIMP6UEppAdeazdu85QP
+        iwdcNO4crY0W4L/ek/Gny7iqvg==
+X-Google-Smtp-Source: AGHT+IEpX6UdKN7Bif3mppqkWoE/HLm44z1lSiDEQdOpxke1PbZnv2rsGblEhtuSfvVBWpZOAHUJnA==
+X-Received: by 2002:adf:fd91:0:b0:31f:e5cf:6724 with SMTP id d17-20020adffd91000000b0031fe5cf6724mr10161138wrr.46.1698217623977;
+        Wed, 25 Oct 2023 00:07:03 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id dj18-20020a0560000b1200b0032d96dd703bsm11470892wrb.70.2023.10.25.00.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 00:07:03 -0700 (PDT)
+Date:   Wed, 25 Oct 2023 10:07:00 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Wenchao Hao <haowenchao2@huawei.com>
+Cc:     Wenchao Hao <haowenchao22@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        dmaengine@vger.kernel.org, linux-scsi@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
- <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
- <8ca50d4c-3c96-4efa-a111-fca04d580ab5@kernel.org>
- <169818295461.20306.14022136719064683486@noble.neil.brown.name>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <169818295461.20306.14022136719064683486@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+Message-ID: <9207ed62-4e41-4b8c-8aee-5143c1a71bf8@kadam.mountain>
+References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
+ <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
+ <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
+ <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
+ <9767953c-480d-4ad9-a553-a45ae80c572b@kadam.mountain>
+ <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 24/10/2023 23:29, NeilBrown wrote:
-> On Wed, 25 Oct 2023, Krzysztof Kozlowski wrote:
->> On 23/10/2023 20:49, Andrew Morton wrote:
->>> On Thu, 19 Oct 2023 07:11:36 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
->>>
->>>> Yesterday someone on my lists just sent an email looking for kernel
->>>> tasks. 
->>>
->>> Well here's a task: write a bot which follows the mailing lists and
->>> sends people nastygrams if one of their emails is more than 95%(?)
->>> quoted text.
->>>
->>> It's happening significantly more lately.  Possibly because the gmail
->>> client helpfully hides quoted text.
->>
->> I would also point to reviewers and maintainers who give a Rb/Ack tag:
->> 1. somewhere at the top, without any footer like Best regards, and then
->> quote entire patch, so I don't know shall I look for more comments after
->> Rb/Ack?
->>
->> 2. quote entire email and then add Rb/Ack, so I need to figure out
->> whether there was something between the hundreds of lines of text or not.
+On Wed, Oct 25, 2023 at 02:10:41PM +0800, Wenchao Hao wrote:
+> On 2023/10/25 12:11, Dan Carpenter wrote:
+> > On Wed, Oct 25, 2023 at 01:09:34AM +0800, Wenchao Hao wrote:
+> > > Yes, there is bug here if write with .c code. Because your change to use
+> > > strndup_user() would make write with dirty data appended to "ubuf" failed,
+> > 
+> > I don't understand this sentence.  What is "dirty" data in this context?
+> > 
 > 
-> Here we all are, brilliantly talented computer programmers who spend
-> our days making amazing fast digital devices do amazingly clever and
-> subtle things, inventing time-saving tools and processing vast amounts
-> of data without blinking, but for some reason we think the task of
-> skipping over a few thousand lines that all start with '> " is too hard
-> for us and that we should, in stead, complain to some other human to
-> convince them to make our life easier for us.
+> This is what I posted in previous reply:
 > 
-> Does anyone else see the irony?
+> We might have following pairs of parameters for sdebug_error_write:
+> 
+> ubuf: "0 -10 0x12\n0 0 0x2 0x6 0x4 0x2"
+> count=11
+> 
+> the valid data in ubuf is "0 -10 -x12\n", others are dirty data.
+> strndup_user() would return EINVAL for this pair which caused
+> a correct write to fail.
 
-Neither my email client is able to skip the quoted text, nor
-lore.kernel.org or Patchwork. Therefore in both cases - reading the
-email with my current toolset or checking some older threads on
-lore/Patchwork - I would have to do it manually. Quite a waste of time.
+I mean, I could just tell you that your kzalloc(count + 1, GFP_KERNEL)
+fix will work.  It does work.
 
-Best regards,
-Krzysztof
+But how is passing "dirty data" a "correct write"?  I feel like it
+should be treated as incorrect and returning -EINVAL is the correct
+behavior.  I'm so confused.  Why are users doing that?
+
+I have looked at the code and it just doesn't seem that complicated.
+They shouldn't be passing messed up strings and expect the kernel to
+allow it.
+
+regards,
+dan carpenter
 
