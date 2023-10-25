@@ -2,101 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07366C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 11:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6386C07545
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234897AbjJYL61 (ORCPT
+        id S231648AbjJYMIq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40136 "EHLO
+        Wed, 25 Oct 2023 08:08:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233153AbjJYL60 (ORCPT
+        with ESMTP id S233880AbjJYMIp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:58:26 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916C9136
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:58:24 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c501bd6ff1so78171541fa.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 04:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698235103; x=1698839903; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KfUbynUkW0A2o7wHLTAuig9K/lMD2l5OcDGR5b7mo8I=;
-        b=HYyYR0uMNwcSdS9CVikc8iJGHfOC/5jShavalbMU6vJRt68ZUt1rT8JKwOLZ/49sJ6
-         gvVZsnQJ3RkhSX+MJS8RmKe8iC+jl60pBcvHL1es8DBpk7oTMPb1Ak23xItagqxMm4o3
-         lL3yBozDfXqWPhSryx2B9E8mASZUyY1YToXF+2JVIpxvhwAn5jkE7+0xpiUzrF12ijrR
-         88ZBpJAgvjfqUAV//vCZv9qmm0Wpw+MskL4OfMNext53DqHEQtCrBhuddDnF9Ai40HFr
-         O6AtZwjbe92j4N/66Hz3qHQ9eDmA8cyWaNp8F7NETU4NFSDfVXtyET19GvP5IMOIVML+
-         LCXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698235103; x=1698839903;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KfUbynUkW0A2o7wHLTAuig9K/lMD2l5OcDGR5b7mo8I=;
-        b=ecU1v3642baVqRbWLkDiJAgpcZIkTfFFp+D1pe2JfRx2/gtB1PTV+5JeKZu9F24eEx
-         yBY3+9sHsAnROjNM0Whwz9M8M4K89VZ4zYkKhAO7vFfQIeU6Q6sj59mu+kgxj+bhHEps
-         kljc661Wygv1kJCoHP8Ala6AlBsm/m+l/22S4aMgVON0rrzjUyY7AEDETQgGcd5RQ82d
-         gqbjay6PGsqndY5LtY3JFimS3sQQEUZa5tD6hX35TgWRrHVnLGP38fyu7fubSkhaBYqh
-         QDqAsCx3duAyCfEMvl2Bc0cOjGjvbtcApupWudKxj10RCy4fbW/wPpZjwHeb/Cywa98s
-         cTJQ==
-X-Gm-Message-State: AOJu0YxaBh3Dx7mf8y7qKBX1jZSC2rzPfVCEmiqBSM756VhZvVMYfrpe
-        SedcjmYkzx4BCsQbpIpK7a4qbWk88AEf7rQl2tg=
-X-Google-Smtp-Source: AGHT+IErfEwam0o9Z+S9MmPXBYGKaBe2GqXi5WgE8PLd41wLN6ZsTrlS6woDbrEBK+9ZpW85UKerfw==
-X-Received: by 2002:a05:651c:c8a:b0:2bf:fa62:5d0e with SMTP id bz10-20020a05651c0c8a00b002bffa625d0emr12084791ljb.2.1698235102948;
-        Wed, 25 Oct 2023 04:58:22 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c16-20020a05600c0ad000b003fee567235bsm19103191wmr.1.2023.10.25.04.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 04:58:22 -0700 (PDT)
-Date:   Wed, 25 Oct 2023 14:58:18 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 2/2] pwm: Fix double shift bug
-Message-ID: <447a8e49-ee37-4fde-bc4a-ebec3e37a311@moroto.mountain>
+        Wed, 25 Oct 2023 08:08:45 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35802137
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:08:43 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvcgj-0001sB-3b; Wed, 25 Oct 2023 14:08:41 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvcgi-004AlC-Ib; Wed, 25 Oct 2023 14:08:40 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qvcgi-005wyH-9Z; Wed, 25 Oct 2023 14:08:40 +0200
+Date:   Wed, 25 Oct 2023 14:08:40 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] pwm: Fix double shift bug
+Message-ID: <20231025120840.fowsdkkfbig4rfjo@pengutronix.de>
+References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
+ <447a8e49-ee37-4fde-bc4a-ebec3e37a311@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xxdjgjw3tjdsdt6b"
 Content-Disposition: inline
-In-Reply-To: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <447a8e49-ee37-4fde-bc4a-ebec3e37a311@moroto.mountain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-These enums are passed to set/test_bit().  The set/test_bit() functions
-take a bit number instead of a shifted value.  Passing a shifted value
-is a double shift bug like doing BIT(BIT(1)).  The double shift bug
-doesn't cause a problem here because we are only checking 0 and 1 but
-if the value was 5 or above then it can lead to a buffer overflow.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2:  White space change.  Split the patch into two parts
+--xxdjgjw3tjdsdt6b
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I didn't put a Fixes tag because it doesn't affect run time
+On Wed, Oct 25, 2023 at 02:58:18PM +0300, Dan Carpenter wrote:
+> These enums are passed to set/test_bit().  The set/test_bit() functions
+> take a bit number instead of a shifted value.  Passing a shifted value
+> is a double shift bug like doing BIT(BIT(1)).  The double shift bug
+> doesn't cause a problem here because we are only checking 0 and 1 but
+> if the value was 5 or above then it can lead to a buffer overflow.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2:  White space change.  Split the patch into two parts
+>=20
+> I didn't put a Fixes tag because it doesn't affect run time
 
- include/linux/pwm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index e3b437587b32..cda3597b84f2 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -41,8 +41,8 @@ struct pwm_args {
- };
- 
- enum {
--	PWMF_REQUESTED = 1 << 0,
--	PWMF_EXPORTED = 1 << 1,
-+	PWMF_REQUESTED = 0,
-+	PWMF_EXPORTED = 1,
- };
- 
- /*
--- 
-2.42.0
+Best regards and thanks!
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--xxdjgjw3tjdsdt6b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmU5BUcACgkQj4D7WH0S
+/k5ItggAnDwB2il2EA16HJ6v/5bbpaqCk3WkVUbHRIzQdaA25FJ1hQGhRfy8GRvv
+EYBG2KhwUqheQyQgqY/mCo0X9H/a+ky0ozS6viVvkcnpqMNEUH+ktADcVr5XxKaM
+WameA1oqWq0nT1dKflXcjusk81MU92ozuKjWzWsNivKiGjc37Lm1D6ZCMtzokxVW
+dCR68SA9z5GlaXVt7PJZyzgkXqkh5314iptmGwU7UPT8LnvtHcm1lYohbQTUkBqJ
+i2+4PJpaYpxpb++VnSvUuxxyqGMeedLR7PCFdW+CO/M0doZuxcjpI0I4fz/eDrxf
+MzA+ox64JfsWg+eIeFnWjCGbrHLeeg==
+=H3TL
+-----END PGP SIGNATURE-----
+
+--xxdjgjw3tjdsdt6b--
