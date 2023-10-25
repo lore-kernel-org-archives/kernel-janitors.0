@@ -2,85 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8256C0032E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F83C25B47
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Oct 2023 12:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234883AbjJYMg4 (ORCPT
+        id S1344271AbjJYM5x (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Oct 2023 08:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53606 "EHLO
+        Wed, 25 Oct 2023 08:57:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234892AbjJYMgy (ORCPT
+        with ESMTP id S1344232AbjJYM5v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Oct 2023 08:36:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B73F3181
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698237371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vvU+ODlhbBzCksS16LHKl+sMj+DM+WDalvoXiTfFa+g=;
-        b=b8trevSlKIZ6lK1h/jAu/UB9j050idfopVhEeFl6i0tvpPbVZpvFfEk5NWiRxDowpbamVe
-        c3wEcEPvzkwHxjlKSc2r+bq+XWk4cxw17Kv5x3pHEghVkMliQyckVHSXZNL7xAbAheipjk
-        dD/LmtFzFINFt16UiA4qjanqXe9rcIg=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-iRyEz_zUPSWOcQI8iIUeKQ-1; Wed, 25 Oct 2023 08:35:58 -0400
-X-MC-Unique: iRyEz_zUPSWOcQI8iIUeKQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c9fc94b182so58885455ad.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:35:58 -0700 (PDT)
+        Wed, 25 Oct 2023 08:57:51 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66316116
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:57:49 -0700 (PDT)
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 695F93FD3B
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 12:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1698238666;
+        bh=YZ12GF+aERDoIF3r6TEMZGT37W8A+JNypJswAaYxRhM=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=Nq3lJYRjmvlNFzhC88nKA+acZLBDUj9Ov5G9LL4MuBCW+ekeopmaP6jh1I3O7zSi3
+         VHcgE4W3aVos+T3jx4sC9AuqdjMKXzFYdSIp7QtXybesE78Tp0Y+I9/UCodeFPk9vy
+         bhlFQn1hVxFVdvg+jlfaHTMdnjHRibS57BNgxU/3ADQoqprN+STbnIyn84Fqeue9z4
+         wueAES6fHVy8EtziuEz7fG/7tmbevvB9wpoMp9MhLoHG/JlQYoWmizinkzN1jdNFyW
+         rMz82xE0dxseXyB0G1AIoOTTCiGq4xJIkoTNpvV6GCnM4v2+Sif16TcizvuwguCX3v
+         qRT5RAREbrXog==
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-408508aa81cso39337555e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Oct 2023 05:57:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698237358; x=1698842158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vvU+ODlhbBzCksS16LHKl+sMj+DM+WDalvoXiTfFa+g=;
-        b=wDoIGfpkE7104KFv/UeuPhtcMkW+EprMBEzPmLdrdhJtDdCrilfcNcfXp0mV121J9y
-         pn6Q77SAGrV89ZJxY/7Ad8M9mn94hMp/qpmD/BkUfmgW233xg94xyw9+uqjR72PMDoFN
-         ygIzLyHkJbdBdmPOi/09WR4v0ulY46cjQ5zWnHR93J3VyTUnZLeMjMINNc7MU1AKgRyC
-         TVO8/uLYG2R40pZMggT1h8f160OCpOk2V4Ln9fq2JTUEnPa325iyXt+vqmd+B363FFGv
-         FKAQXWfHE8Q77LneD1/N8jn25Av0FGoY+vIb9Quc2Ot5e4MLl/m+Jom7bNyqFliyPJ9A
-         euSg==
-X-Gm-Message-State: AOJu0Yyf1eTdhxCDHLvZaPvuF84BEQRBCRPiRhLL/7n0DinIuAMJaKzq
-        pm+QURozKoE/tAEdTAZamMPeuElgcQhOCYLAiBBWS2hY5WtrD/w+tlxt34m7/w5wxwW0M5he4IF
-        tPTlONofgGmTaQfPoJc3/DFyD7aTAvYHLtItFBOhcEXJ0
-X-Received: by 2002:a17:902:e841:b0:1b6:6f12:502e with SMTP id t1-20020a170902e84100b001b66f12502emr17465925plg.49.1698237357792;
-        Wed, 25 Oct 2023 05:35:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/lVpfMUNBBfWqBo8bfvljBYSBCHKzm8BaAaoys67eChIuLm8w5Asc6ul+K1gzocSNYltZL1dL0BrIqtcbXRQ=
-X-Received: by 2002:a17:902:e841:b0:1b6:6f12:502e with SMTP id
- t1-20020a170902e84100b001b66f12502emr17465908plg.49.1698237357450; Wed, 25
- Oct 2023 05:35:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698238664; x=1698843464;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YZ12GF+aERDoIF3r6TEMZGT37W8A+JNypJswAaYxRhM=;
+        b=s/XiThfYaiKO/HN8yru4pTjhP4boU0z9TmOZyBBFy5jvZHyelFw8vgQivzN8mwO/OX
+         PfPU9kC/+GLkxFJhBirhElTpcyMxv0MJsO2l2cp7WBbD8o4M1RKVzjfi5j7umLoOeoT4
+         eRWs8gGI5gFeCz93eKb2tuCsXAgBjmykTyn5uyJGCymG68ZdP6GIA1RcU7xjS7eEWC/A
+         4EMDmnbypiM20+t+de8WJVXfMvXj0TNqurv9v0rXBxfT4804RqSCsEBASyha8mY9vy4j
+         LyGmF6sgEMQbj1QjBseBZTMz0e+Y5GYZ7bh03LBxXfhsRm0P3gOqIWzWYijQMWB/1Zri
+         onBA==
+X-Gm-Message-State: AOJu0YyOq9sqy51BRtGjLEzdqR/0+/YSslg3Lhb+m4BmJExrThfzbVRp
+        yGxnau3fdCAPoBfNwyI+lyYZ3Wb1g3XKclxzx5LK0oPlLiftJrE1TZUwteUeH3KqgaLfRRUadzF
+        60SzMTbFbbeFbrqDeQ/uExDNeOnKuHABqNhilhMgJ+ythTxSuku4SGoJMwqdI+g==
+X-Received: by 2002:adf:edc2:0:b0:32d:a57b:8c8d with SMTP id v2-20020adfedc2000000b0032da57b8c8dmr12438004wro.69.1698238664538;
+        Wed, 25 Oct 2023 05:57:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaI9gj2ovxx4sLpIcOCYpedqxIgHFi3Wcs69w/nw0GZB5lBOAnarl0/VEXOqC/394g7rDDa9Lg2WtTwOg2eIM=
+X-Received: by 2002:adf:edc2:0:b0:32d:a57b:8c8d with SMTP id
+ v2-20020adfedc2000000b0032da57b8c8dmr12437987wro.69.1698238664182; Wed, 25
+ Oct 2023 05:57:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <0b9cb1ea-4656-4802-b7a7-811c1e9e118a@moroto.mountain>
-In-Reply-To: <0b9cb1ea-4656-4802-b7a7-811c1e9e118a@moroto.mountain>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 25 Oct 2023 14:35:45 +0200
-Message-ID: <CAHc6FU646Jj3iODoHoAYpps2PL732Feb_w+5p=8GfUOMfYTHhw@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: uninitialized variable in __gfs2_iomap_get()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Bob Peterson <rpeterso@redhat.com>, gfs2@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20231025104212.12738-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20231025104212.12738-1-lukas.bulwahn@gmail.com>
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+Date:   Wed, 25 Oct 2023 13:57:08 +0100
+Message-ID: <CADWks+ZoLs1FUJx0sSg5FBYK5BtD+Po7bRORVT4uBLM6QJxXJQ@mail.gmail.com>
+Subject: Re: [PATCH] docs: module-signing: adjust guide after sha1 and sha224
+ support is gone
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-modules@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan,
+Hi,
 
-On Wed, Oct 25, 2023 at 1:57=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
-> The "ret" variable is uninitialized when we goto out because
-> gfs2_is_stuffed(ip).
+On Wed, 25 Oct 2023 at 11:42, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Fixes: 2cd225820b91 ("gfs2: Initialize metapaths outside of __gfs2_iomap_=
-get")
+> Commit 16ab7cb5825f ("crypto: pkcs7 - remove sha1 support") and commit
+> fc3225fd6f1e ("module: Do not offer sha224 for built-in module signing")
+> removes sha1 and sha224 support for kernel module signing.
+>
+> Adjust the module-signing admin guide documentation to those changes.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-thanks for catching this. I've fixed that patch directly.
+Note I have submitted this change as part of the patch series that
+adds SHA-3 over at
+https://lore.kernel.org/linux-crypto/20231022182208.188714-1-dimitri.ledkov@canonical.com/T/#m81c32a65341a4de39596b72743ba38d46899016f
 
-Andreas
+But indeed, if that patch series doesn't make it into the cryptodev
+tree, then this documentation should go in, and the sha-3 one rebased
+/ adjusted.
 
+Sorry for not patching documentation at the same time as the code
+changes that made documentation out of date.
+
+Acked-by: Dimitri John ledkov <dimitri.ledkov@canonical.com>
+
+> ---
+>  Documentation/admin-guide/module-signing.rst | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/module-signing.rst b/Documentation/admin-guide/module-signing.rst
+> index 2898b2703297..e3ea1def4c0c 100644
+> --- a/Documentation/admin-guide/module-signing.rst
+> +++ b/Documentation/admin-guide/module-signing.rst
+> @@ -30,8 +30,8 @@ This facility uses X.509 ITU-T standard certificates to encode the public keys
+>  involved.  The signatures are not themselves encoded in any industrial standard
+>  type.  The facility currently only supports the RSA public key encryption
+>  standard (though it is pluggable and permits others to be used).  The possible
+> -hash algorithms that can be used are SHA-1, SHA-224, SHA-256, SHA-384, and
+> -SHA-512 (the algorithm is selected by data in the signature).
+> +hash algorithms that can be used are SHA-256, SHA-384, and SHA-512 (the
+> +algorithm is selected by data in the signature).
+>
+>
+>  ==========================
+> @@ -81,8 +81,6 @@ This has a number of options available:
+>       sign the modules with:
+>
+>          =============================== ==========================================
+> -       ``CONFIG_MODULE_SIG_SHA1``      :menuselection:`Sign modules with SHA-1`
+> -       ``CONFIG_MODULE_SIG_SHA224``    :menuselection:`Sign modules with SHA-224`
+>         ``CONFIG_MODULE_SIG_SHA256``    :menuselection:`Sign modules with SHA-256`
+>         ``CONFIG_MODULE_SIG_SHA384``    :menuselection:`Sign modules with SHA-384`
+>         ``CONFIG_MODULE_SIG_SHA512``    :menuselection:`Sign modules with SHA-512`
+> --
+> 2.17.1
+>
+
+
+-- 
+okurrr,
+
+Dimitri
