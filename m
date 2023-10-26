@@ -2,101 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A405C25B48
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 08:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0AAC25B6B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 08:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbjJZIqn (ORCPT
+        id S1344527AbjJZItD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 04:46:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46344 "EHLO
+        Thu, 26 Oct 2023 04:49:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjJZIqm (ORCPT
+        with ESMTP id S1344700AbjJZItB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 04:46:42 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 0CCBC10E;
-        Thu, 26 Oct 2023 01:46:39 -0700 (PDT)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id AF3DB60863911;
-        Thu, 26 Oct 2023 16:46:30 +0800 (CST)
-Message-ID: <54d21280-6e1e-780c-372d-d630630a4fe9@nfschina.com>
-Date:   Thu, 26 Oct 2023 16:46:29 +0800
+        Thu, 26 Oct 2023 04:49:01 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BDB129;
+        Thu, 26 Oct 2023 01:48:59 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-53df747cfe5so992690a12.2;
+        Thu, 26 Oct 2023 01:48:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698310138; x=1698914938; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E7ze34EchX/27SSwpayDxZBsZvdn030bpVJnYH1TN7c=;
+        b=ebky1cqYTdlTIu0LpyldbaL/y5WJFR/8ASKi9avgOlHyzoaVdCPdGlSCPyc1st4t/v
+         CHQEvLvBXUz88vblFspm/wPJi7kNGAzEawsjU9Eqax1R4vSbYwuPOY1Euf/y/R/Aebrg
+         zK/8nLKKiOwo6XMWRByriJLOIfX7U6pLj9WMe1vg6Pn4rlPMQYD2E6BOrWmESqbQ33H4
+         EKHjzO+DAxnVd3CCmsLMqA+vD1qyToSKjfOBni7Ull8UgowmBlqsgbbfR0ib2beimD3n
+         ECBkT8PJTYLi+B8piH1Jw2Wgm/U1H2t8EcUK8b+MfJbEtJXFIZPp46M8CZ8NqK65InkH
+         PoNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698310138; x=1698914938;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E7ze34EchX/27SSwpayDxZBsZvdn030bpVJnYH1TN7c=;
+        b=B6f9NdArYwms4/qfuwhY2wvG57TLVSMZotNA0kTp6v+GykIFH6lteEdtF9/BrCP2z4
+         4Aq1vU08qVJymPZ5yTBO69nR97ZdpJxixccHhPQLZexGUxAVZoQ3Kqc6BAxng4gwh3+p
+         Sq+WPCHu9Z1QTV9h8bTksvLuuRWm41WedaMkYRP6BAl9f3EGhXLIaVUGkeKIHSpMLY6J
+         Gl74XkE/vIKkwdH8Gchea8sGoMZdqEk+yNyoR2TYNrAmGwlLnL/fUoyLXFYtMvJCZwjr
+         wWSbtQ3NHUD3mKSeMJ+SnaDvnWRMp37V9Xt341/UZ6xh3rvcyJcl27+eV947Woq9Gouo
+         D8Tw==
+X-Gm-Message-State: AOJu0YzDzz1OCx+M2CGBTJCvCSizwu+94rswuj6VOtCZbfKs4+Vb2yUs
+        cIRbZkuox+sz7RFMR95MEQ6AMZxReMdgAQ==
+X-Google-Smtp-Source: AGHT+IELWK/AXGrWy9ydyRdEnqCeROKTMQt9o+/7nV3eJfjMQmTC5ijntEY7PFCGAparxz0sgFH69Q==
+X-Received: by 2002:a05:6402:3552:b0:540:b95b:6ecf with SMTP id f18-20020a056402355200b00540b95b6ecfmr5292807edd.7.1698310137941;
+        Thu, 26 Oct 2023 01:48:57 -0700 (PDT)
+Received: from skbuf ([188.26.57.160])
+        by smtp.gmail.com with ESMTPSA id if5-20020a0564025d8500b0053f10da1105sm10936161edb.87.2023.10.26.01.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Oct 2023 01:48:57 -0700 (PDT)
+Date:   Thu, 26 Oct 2023 11:48:55 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: microchip: ksz9477: Fix spelling mistake
+ "Enery" -> "Energy"
+Message-ID: <20231026084855.mfrqnzfk3uulwy5o@skbuf>
+References: <20231026065408.1087824-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] vga_switcheroo: Fix impossible judgment condition
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     lukas@wunner.de, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        daniel@ffwll.ch, tiwai@suse.de, Jim.Qu@amd.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-In-Reply-To: <4ec2b80b-f042-4abf-b799-0a9ef364f0fa@kadam.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231026065408.1087824-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/10/26 12:44, Dan Carpenter wrote:
-> On Thu, Oct 26, 2023 at 10:10:57AM +0800, Su Hui wrote:
->> 'id' is enum type like unsigned int, so it will never be less than zero.
->>
->> Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   drivers/gpu/vga/vga_switcheroo.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
->> index 365e6ddbe90f..d3064466fd3a 100644
->> --- a/drivers/gpu/vga/vga_switcheroo.c
->> +++ b/drivers/gpu/vga/vga_switcheroo.c
->> @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
->>   	mutex_lock(&vgasr_mutex);
->>   	if (vgasr_priv.active) {
->>   		id = vgasr_priv.handler->get_client_id(vga_dev);
->> -		if (id < 0) {
->> +		if ((int)id < 0) {
-> Hi,
->
-> I feel like you're using Smatch?  Which is great!  Fantastic!
-Yep, Smatch helps me  a lot to find these bugs! I really like this 
-excellent tool!
->
-> Have you built the cross function database?  If you have there is a
-> command that's useful.
-Not yet, bu I want to build this.
-> $ ~/smatch/smatch_db/smdb.py functions vga_switcheroo_handler get_client_id | tee where
-> drivers/gpu/drm/nouveau/nouveau_acpi.c | (struct vga_switcheroo_handler)->get_client_id | nouveau_dsm_get_client_id | 1
-> drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | (struct vga_switcheroo_handler)->get_client_id | amdgpu_atpx_get_client_id | 1
-> drivers/gpu/drm/radeon/radeon_atpx_handler.c | (struct vga_switcheroo_handler)->get_client_id | radeon_atpx_get_client_id | 1
-> drivers/platform/x86/apple-gmux.c | (struct vga_switcheroo_handler)->get_client_id | gmux_get_client_id | 1
-> $ make cscope
-> $ vim where
-> Use cscope to jump to each of those four functions.  Move the cursor to
-> the nouveau_dsm_get_client_id and hit CTRL-].
-Sounds great! I must try this!
->
-> They never return negatives.  The enum vga_switcheroo_client_id has a
-> VGA_SWITCHEROO_UNKNOWN_ID define which I guess these functions are
-> supposed to return on error.  They never do return that, but I bet
-> that's what we are supposed to check for.  It honestly might be good
-> to check for both...
->
-> 		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
-> 			mutex_unlock(&vgasr_mutex);
-> 			return -EINVAL;
-> 		}
-Agreed, I will send v2 patch soon.
-Really thanks for your wonderful suggestion! :)
+Colin,
 
-Su Hui
+On Thu, Oct 26, 2023 at 07:54:08AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_dbg message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-> regards,
-> dan carpenter
->
+If the patch is 1 day old, please also copy the original patch author.
+
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+
+>  drivers/net/dsa/microchip/ksz9477.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
+> index 2534c3d122e4..b102a27960e1 100644
+> --- a/drivers/net/dsa/microchip/ksz9477.c
+> +++ b/drivers/net/dsa/microchip/ksz9477.c
+> @@ -83,7 +83,7 @@ static int ksz9477_handle_wake_reason(struct ksz_device *dev, int port)
+>  
+>  	dev_dbg(dev->dev, "Wake event on port %d due to:%s%s\n", port,
+>  		pme_status & PME_WOL_LINKUP ? " \"Link Up\"" : "",
+> -		pme_status & PME_WOL_ENERGY ? " \"Enery detect\"" : "");
+> +		pme_status & PME_WOL_ENERGY ? " \"Energy detect\"" : "");
+>  
+>  	return ksz_pwrite8(dev, port, REG_PORT_PME_STATUS, pme_status);
+>  }
+> -- 
+> 2.39.2
+> 
