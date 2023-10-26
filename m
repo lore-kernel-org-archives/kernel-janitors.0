@@ -2,95 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FFEC25B6F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 08:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A405C25B48
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 08:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbjJZId3 (ORCPT
+        id S229678AbjJZIqn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 04:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34456 "EHLO
+        Thu, 26 Oct 2023 04:46:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjJZId2 (ORCPT
+        with ESMTP id S229518AbjJZIqm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 04:33:28 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07367129;
-        Thu, 26 Oct 2023 01:33:26 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-5b92b852390so335125a12.2;
-        Thu, 26 Oct 2023 01:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698309205; x=1698914005; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0rAQQMv1ZezqzCyridF6wP4Hk8j91NSdkTPCmyPZUck=;
-        b=mpuFgqrtkuT98lFKqukKjlm4uQCAqjrNSI9YbqC0WO0NZ9Wz+uTvoPSeGX2sRxy9ws
-         O3qrX7i7ZpSmqX3iHCyvsjE/HueD0DFGkKWtHvdSFdmsQlqvERDaBZE9H7XWkv16r1+P
-         kPmS08UW8rTuCxocwzFiLpJkxgNsymzMAcpMFx+4/dwlWIYGNlr6vkuoKDkR779lst0n
-         LSvcbBCSu9cJDTVsl4/C5o8VS8ZwLal1fX+kN4JBe1IU310bYOyF4lG2bhPY8GOU/xVt
-         LHWvlpluK/9WzE8H8nDkQ2ysBlBBMuaaljpQBTyk//qvxVlMYyPcQCKuYRKtOTr13KTB
-         RX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698309205; x=1698914005;
-        h=cc:to:subject:message-id:date:mime-version:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0rAQQMv1ZezqzCyridF6wP4Hk8j91NSdkTPCmyPZUck=;
-        b=aqo1QIpbMWFxAEi667PjZu2Acqhho6zAtpnWeeG3qWsDpfjEiXeyBFqNGxGygHwVsT
-         29NGD9TWQiqjyqlkUvFGmbnTTNMB5dgZ68D3RGzDxZGg3bvg7gEM0aRHL7A4CFUYj34F
-         Yx/WNlr2cMtxN9nf5K1+ZuUZwui2zYQzG7QjOZ+Hlel/8sPnSKi2W7HZMKRsxDwOZhlB
-         EeUvO/F88FCfFEa9NFuDQr7LdUi+2zEgDBf0CXs5oS4oVJ/+cxInwTXqovS0ZXFnfWAt
-         2cznMHr5fHoWif20UUHwib0Sf0xM1STUPtS3/CYMC0Jvus13jD3EnVvVxEZFIxtexh3T
-         tuSg==
-X-Gm-Message-State: AOJu0YzMNSeHEaPEg9PqeksyXLCxShtH8rBizhiidGZxqD1o70eMLgY3
-        XqPDDRiA51qpnm1RGm7aSA4Wu1Gxnl0+DRJZGjGl5+CwWsk=
-X-Google-Smtp-Source: AGHT+IHvQxMAWX/Z4H95EPaFqPcP0wO8CcaB+algzWFJoGOaHbQ8N+r8aNPd2I95+/b6+yLyCuDb0riOpy/pSRxsgdU=
-X-Received: by 2002:a17:90b:1204:b0:27c:eb59:e9c7 with SMTP id
- gl4-20020a17090b120400b0027ceb59e9c7mr17400460pjb.36.1698309205459; Thu, 26
- Oct 2023 01:33:25 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 26 Oct 2023 01:33:25 -0700
-From:   Amit Dhingra <mechanicalamit@gmail.com>
+        Thu, 26 Oct 2023 04:46:42 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 0CCBC10E;
+        Thu, 26 Oct 2023 01:46:39 -0700 (PDT)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id AF3DB60863911;
+        Thu, 26 Oct 2023 16:46:30 +0800 (CST)
+Message-ID: <54d21280-6e1e-780c-372d-d630630a4fe9@nfschina.com>
+Date:   Thu, 26 Oct 2023 16:46:29 +0800
 MIME-Version: 1.0
-Date:   Thu, 26 Oct 2023 01:33:25 -0700
-Message-ID: <CAO=gReHuuwB6mBZAXpYHGk9XsWE8e8+U3T9e6iqCXYQMcjZZVg@mail.gmail.com>
-Subject: [PATCH] MAINTAINERS: correct file entry IIO LIGHT SENSOR
- GAIN-TIME_SCALE HELPERS
-To:     Matti Vaittinen <mazziesaccount@gmail.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] vga_switcheroo: Fix impossible judgment condition
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     lukas@wunner.de, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        daniel@ffwll.ch, tiwai@suse.de, Jim.Qu@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <4ec2b80b-f042-4abf-b799-0a9ef364f0fa@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ca11e4a35154 ("MAINTAINERS: Add IIO gain-time-scale helpers"),
-updates the MAINTAINERS file. However the files listed do not exist.
-These presumably come from commit 38416c28e168 ("iio: light: Add
-gain-time-scale helpers")
+On 2023/10/26 12:44, Dan Carpenter wrote:
+> On Thu, Oct 26, 2023 at 10:10:57AM +0800, Su Hui wrote:
+>> 'id' is enum type like unsigned int, so it will never be less than zero.
+>>
+>> Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/gpu/vga/vga_switcheroo.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+>> index 365e6ddbe90f..d3064466fd3a 100644
+>> --- a/drivers/gpu/vga/vga_switcheroo.c
+>> +++ b/drivers/gpu/vga/vga_switcheroo.c
+>> @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+>>   	mutex_lock(&vgasr_mutex);
+>>   	if (vgasr_priv.active) {
+>>   		id = vgasr_priv.handler->get_client_id(vga_dev);
+>> -		if (id < 0) {
+>> +		if ((int)id < 0) {
+> Hi,
+>
+> I feel like you're using Smatch?  Which is great!  Fantastic!
+Yep, Smatch helps me  a lot to find these bugs! I really like this 
+excellent tool!
+>
+> Have you built the cross function database?  If you have there is a
+> command that's useful.
+Not yet, bu I want to build this.
+> $ ~/smatch/smatch_db/smdb.py functions vga_switcheroo_handler get_client_id | tee where
+> drivers/gpu/drm/nouveau/nouveau_acpi.c | (struct vga_switcheroo_handler)->get_client_id | nouveau_dsm_get_client_id | 1
+> drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | (struct vga_switcheroo_handler)->get_client_id | amdgpu_atpx_get_client_id | 1
+> drivers/gpu/drm/radeon/radeon_atpx_handler.c | (struct vga_switcheroo_handler)->get_client_id | radeon_atpx_get_client_id | 1
+> drivers/platform/x86/apple-gmux.c | (struct vga_switcheroo_handler)->get_client_id | gmux_get_client_id | 1
+> $ make cscope
+> $ vim where
+> Use cscope to jump to each of those four functions.  Move the cursor to
+> the nouveau_dsm_get_client_id and hit CTRL-].
+Sounds great! I must try this!
+>
+> They never return negatives.  The enum vga_switcheroo_client_id has a
+> VGA_SWITCHEROO_UNKNOWN_ID define which I guess these functions are
+> supposed to return on error.  They never do return that, but I bet
+> that's what we are supposed to check for.  It honestly might be good
+> to check for both...
+>
+> 		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
+> 			mutex_unlock(&vgasr_mutex);
+> 			return -EINVAL;
+> 		}
+Agreed, I will send v2 patch soon.
+Really thanks for your wonderful suggestion! :)
 
-Fix the entries.
+Su Hui
 
-Found by ./scripts/get_maintainer.pl --self-test=patterns
-
-Signed-off-by: Amit Dhingra <mechanicalamit@gmail.com>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a493d96ffd85..6dd44ec48886 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10287,8 +10287,8 @@ IIO LIGHT SENSOR GAIN-TIME-SCALE HELPERS
- M:	Matti Vaittinen <mazziesaccount@gmail.com>
- L:	linux-iio@vger.kernel.org
- S:	Maintained
--F:	drivers/iio/light/gain-time-scale-helper.c
--F:	drivers/iio/light/gain-time-scale-helper.h
-+F:	drivers/iio/industrialio-gts-helper.c
-+F:	include/linux/iio/iio-gts-helper.h
-
- IIO MULTIPLEXER
- M:	Peter Rosin <peda@axentia.se>
--- 
-2.42.0
+> regards,
+> dan carpenter
+>
