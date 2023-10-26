@@ -2,106 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0AAC25B6B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 08:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53306C25B48
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 09:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344527AbjJZItD (ORCPT
+        id S1344545AbjJZJEJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 04:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
+        Thu, 26 Oct 2023 05:04:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344700AbjJZItB (ORCPT
+        with ESMTP id S229567AbjJZJEI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 04:49:01 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BDB129;
-        Thu, 26 Oct 2023 01:48:59 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-53df747cfe5so992690a12.2;
-        Thu, 26 Oct 2023 01:48:59 -0700 (PDT)
+        Thu, 26 Oct 2023 05:04:08 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3446810E
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 02:04:06 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-408002b5b9fso4975085e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 02:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698310138; x=1698914938; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E7ze34EchX/27SSwpayDxZBsZvdn030bpVJnYH1TN7c=;
-        b=ebky1cqYTdlTIu0LpyldbaL/y5WJFR/8ASKi9avgOlHyzoaVdCPdGlSCPyc1st4t/v
-         CHQEvLvBXUz88vblFspm/wPJi7kNGAzEawsjU9Eqax1R4vSbYwuPOY1Euf/y/R/Aebrg
-         zK/8nLKKiOwo6XMWRByriJLOIfX7U6pLj9WMe1vg6Pn4rlPMQYD2E6BOrWmESqbQ33H4
-         EKHjzO+DAxnVd3CCmsLMqA+vD1qyToSKjfOBni7Ull8UgowmBlqsgbbfR0ib2beimD3n
-         ECBkT8PJTYLi+B8piH1Jw2Wgm/U1H2t8EcUK8b+MfJbEtJXFIZPp46M8CZ8NqK65InkH
-         PoNQ==
+        d=linaro.org; s=google; t=1698311044; x=1698915844; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4l+2Rs7C7x9u0N7SLFEtVHo7I01QW3h5/pshwo3pB28=;
+        b=BRjTfjNXTHK1C8LkfCGW0ykS2ONoB0nN3Ft8hei9cUQAnmJax9dN4ppJ4YS12ezckb
+         60zAqAr6TQYV9Vzh513jOXhQDWTxUsasTDjt/gHDL8Hnl1n1LjJwD843O5OytLrKW17+
+         NEjIAcZN84L/iwTI41Yf7c8OkDZUQ00v+mYoOIqJPcW0CdKvNXU6W1hxEaJTq5cBY4jD
+         RVKDnMOVmi3gfKZgOwsqeS93YeDuVzO7zvXVJEHUPx63FWXzzZOZBTLRoS+uu2wpuuMm
+         DaHSxIzbbBvQJM21ma2USTszgQ56N2bHzmq64WCgaJsPwm1qANSRipFXkxSWqyhHnmLN
+         wcqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698310138; x=1698914938;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7ze34EchX/27SSwpayDxZBsZvdn030bpVJnYH1TN7c=;
-        b=B6f9NdArYwms4/qfuwhY2wvG57TLVSMZotNA0kTp6v+GykIFH6lteEdtF9/BrCP2z4
-         4Aq1vU08qVJymPZ5yTBO69nR97ZdpJxixccHhPQLZexGUxAVZoQ3Kqc6BAxng4gwh3+p
-         Sq+WPCHu9Z1QTV9h8bTksvLuuRWm41WedaMkYRP6BAl9f3EGhXLIaVUGkeKIHSpMLY6J
-         Gl74XkE/vIKkwdH8Gchea8sGoMZdqEk+yNyoR2TYNrAmGwlLnL/fUoyLXFYtMvJCZwjr
-         wWSbtQ3NHUD3mKSeMJ+SnaDvnWRMp37V9Xt341/UZ6xh3rvcyJcl27+eV947Woq9Gouo
-         D8Tw==
-X-Gm-Message-State: AOJu0YzDzz1OCx+M2CGBTJCvCSizwu+94rswuj6VOtCZbfKs4+Vb2yUs
-        cIRbZkuox+sz7RFMR95MEQ6AMZxReMdgAQ==
-X-Google-Smtp-Source: AGHT+IELWK/AXGrWy9ydyRdEnqCeROKTMQt9o+/7nV3eJfjMQmTC5ijntEY7PFCGAparxz0sgFH69Q==
-X-Received: by 2002:a05:6402:3552:b0:540:b95b:6ecf with SMTP id f18-20020a056402355200b00540b95b6ecfmr5292807edd.7.1698310137941;
-        Thu, 26 Oct 2023 01:48:57 -0700 (PDT)
-Received: from skbuf ([188.26.57.160])
-        by smtp.gmail.com with ESMTPSA id if5-20020a0564025d8500b0053f10da1105sm10936161edb.87.2023.10.26.01.48.56
+        d=1e100.net; s=20230601; t=1698311044; x=1698915844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4l+2Rs7C7x9u0N7SLFEtVHo7I01QW3h5/pshwo3pB28=;
+        b=WHldsYhhw+Z/iInh0G9pKPkwJvJLZWmNpJrrGd9Am4f/s2AfLasaYXxt9wp7ZrONzj
+         HCYk1+HlkeOHxpe7dpU91nq/WxHV2zxaYVU0vo4j5BmJkAx8maQ4DuxwcXsOjx5DqoN4
+         0Tb9x5/q0UuK7jzf0dvk6M4pW0MG3BUluG8RfPaG8Q2ZcJh02YxlQTVU/uXD0/clcMR8
+         eBbgpR6A9EmAAg806aQvCXOP6vClvq+ppe0lCrFaJIuyB+0tDAbi2BGAsB6h1EnneaUn
+         KzVsh87K/KSZti6nEHf3EtAdvr0JINIud2RYu6hfh1ZG4oWXhvemvde34IOYdkKos5vA
+         EdeQ==
+X-Gm-Message-State: AOJu0YzG+aj2GLnTIrscM/HjayoDDi4RkIb/nBc/oBDaQUhQV/brhYd/
+        1n9aYvUAmZ0lNRGoV/nPVAqgig==
+X-Google-Smtp-Source: AGHT+IG8hSkFGo9COVTu/+5Jxw+21cZ8QP5ccxewFjEgxFfeOWN7uvJ1RwUqTZdRpeNw0xm000OrMA==
+X-Received: by 2002:a05:600c:3b0f:b0:406:44e6:c00d with SMTP id m15-20020a05600c3b0f00b0040644e6c00dmr14858423wms.2.1698311044570;
+        Thu, 26 Oct 2023 02:04:04 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f21-20020a05600c43d500b00401bbfb9b2bsm990772wmn.0.2023.10.26.02.04.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 01:48:57 -0700 (PDT)
-Date:   Thu, 26 Oct 2023 11:48:55 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: dsa: microchip: ksz9477: Fix spelling mistake
- "Enery" -> "Energy"
-Message-ID: <20231026084855.mfrqnzfk3uulwy5o@skbuf>
-References: <20231026065408.1087824-1-colin.i.king@gmail.com>
+        Thu, 26 Oct 2023 02:04:04 -0700 (PDT)
+Date:   Thu, 26 Oct 2023 12:04:00 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Su Hui <suhui@nfschina.com>
+Cc:     lukas@wunner.de, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        daniel@ffwll.ch, tiwai@suse.de, Jim.Qu@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vga_switcheroo: Fix impossible judgment condition
+Message-ID: <06e868cb-f96e-46af-9484-a613de0baaaf@kadam.mountain>
+References: <4ec2b80b-f042-4abf-b799-0a9ef364f0fa@kadam.mountain>
+ <54d21280-6e1e-780c-372d-d630630a4fe9@nfschina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20231026065408.1087824-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54d21280-6e1e-780c-372d-d630630a4fe9@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin,
+On Thu, Oct 26, 2023 at 04:46:29PM +0800, Su Hui wrote:
+> On 2023/10/26 12:44, Dan Carpenter wrote:
+> > On Thu, Oct 26, 2023 at 10:10:57AM +0800, Su Hui wrote:
+> > > 'id' is enum type like unsigned int, so it will never be less than zero.
+> > > 
+> > > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+> > > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > > ---
+> > >   drivers/gpu/vga/vga_switcheroo.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+> > > index 365e6ddbe90f..d3064466fd3a 100644
+> > > --- a/drivers/gpu/vga/vga_switcheroo.c
+> > > +++ b/drivers/gpu/vga/vga_switcheroo.c
+> > > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+> > >   	mutex_lock(&vgasr_mutex);
+> > >   	if (vgasr_priv.active) {
+> > >   		id = vgasr_priv.handler->get_client_id(vga_dev);
+> > > -		if (id < 0) {
+> > > +		if ((int)id < 0) {
+> > Hi,
+> > 
+> > I feel like you're using Smatch?  Which is great!  Fantastic!
+> Yep, Smatch helps me  a lot to find these bugs! I really like this excellent
+> tool!
+> > 
+> > Have you built the cross function database?  If you have there is a
+> > command that's useful.
+> Not yet, bu I want to build this.
 
-On Thu, Oct 26, 2023 at 07:54:08AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_dbg message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+Yeah.  It's super useful for kernel development.  It helps to understand
+how functions are called and where variables are set etc.  The smatch
+documentation is crap, I know.  But I did write a short blog about the
+cross function DB.
 
-If the patch is 1 day old, please also copy the original patch author.
+https://staticthinking.wordpress.com/2023/05/02/the-cross-function-db/
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+It's simple to build, but it takes a long time.  Just run
+smatch_scripts/build_kernel_data.sh
 
->  drivers/net/dsa/microchip/ksz9477.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
-> index 2534c3d122e4..b102a27960e1 100644
-> --- a/drivers/net/dsa/microchip/ksz9477.c
-> +++ b/drivers/net/dsa/microchip/ksz9477.c
-> @@ -83,7 +83,7 @@ static int ksz9477_handle_wake_reason(struct ksz_device *dev, int port)
->  
->  	dev_dbg(dev->dev, "Wake event on port %d due to:%s%s\n", port,
->  		pme_status & PME_WOL_LINKUP ? " \"Link Up\"" : "",
-> -		pme_status & PME_WOL_ENERGY ? " \"Enery detect\"" : "");
-> +		pme_status & PME_WOL_ENERGY ? " \"Energy detect\"" : "");
->  
->  	return ksz_pwrite8(dev, port, REG_PORT_PME_STATUS, pme_status);
->  }
-> -- 
-> 2.39.2
-> 
+regards,
+dan carpenter
+
