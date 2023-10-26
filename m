@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E693C25B6B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 16:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3217DC25B6B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 17:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbjJZQNU (ORCPT
+        id S231777AbjJZRSi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 12:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40378 "EHLO
+        Thu, 26 Oct 2023 13:18:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230330AbjJZQNT (ORCPT
+        with ESMTP id S231140AbjJZRSh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 12:13:19 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A89F1AA;
-        Thu, 26 Oct 2023 09:13:17 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F400DC433C8;
-        Thu, 26 Oct 2023 16:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698336797;
-        bh=SgDvMPJ39b3G/EkHg60mFb/WIe6493yyXQcBZtYOsR4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Uu8jcw4IZuVTE+TQe1BG8hsLlOQmTpLauUJW0YOscrUCL3FNpgWRBd725kC8mqsKc
-         LsJQ7zfEuZcx5V6tzjJ2raw3EiEpzRPf8o9tjMZruE6lJXOP1Z35IMKIxU7VNyxvWD
-         wPSm4dtiCD8GqC/bT5h3/HxEQRXyR5F2GkEqtoAig4N60Ex9YJZ7HseGriD40N5CK1
-         u4WeBLieS7gemda+XkUoqgtGZj70LNPwlQGzchBgdfb+4KetKKrvEr3A5v/z9+i9/v
-         rSe0W2XcNBHe1doz3qqBcGsxBpzqnukRP7uUwqZqdJ88daCF7C+uZ8LiNNwcbzK3nV
-         q7Wb9vc39/G3Q==
-Date:   Thu, 26 Oct 2023 11:13:14 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Fix double free in __pci_epc_create()
-Message-ID: <20231026161314.GA1823497@bhelgaas>
+        Thu, 26 Oct 2023 13:18:37 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4965E194
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 10:18:35 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c8a1541232so10235425ad.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 10:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1698340715; x=1698945515; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xw07DRWLKz2p8vG1tYsMr3W7FGieeNrenFoAi4zFRnI=;
+        b=HadBnEolRBsouoN5HKIQwrdKGT90ph91wFGZO1Kh5BqVkPACw6uQi6tPd9qfuGP5dz
+         CyoAoLWht3zZNY4Gd6Mib7/yZdbWBCsVAg6kuvQRJrw2aJnC9DLN1yzLhSNERggO6nNX
+         j8y9WPuWqJUdQ21PwjJL3VJWbH3ZyDOQiocKs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698340715; x=1698945515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xw07DRWLKz2p8vG1tYsMr3W7FGieeNrenFoAi4zFRnI=;
+        b=Z0zcW/UoWfu4TV5IjjJfW0LFOBFS78imh+hqHsWoWO4eXPSFZUlXg2Sk93g4zCU5qV
+         AvWmcagf0gj3S0lF/FHv2vCW/U9Eau4Kx8YASLVMaBw+1m7Ej1G0sLUY5WoEGhWooJuY
+         1Am1YGiLE8XK1POiH9jS+K5sYkoRANM+GBmbuujBSadFYWDtK0zwF8+tKGUEfni35rfK
+         WbasT35bNGgBEeuTkA4veKB3qxS7ttslulIlGNOOEfrDAZm7c5d/PWzyGhNVjyTyPZyI
+         tDOjl1t+dJtXy43ZUlglM7nrUBJXoQ3pRCSaoAg4Gwt3KRPRv1Z9KOmUJtQXDSETiYHd
+         FigQ==
+X-Gm-Message-State: AOJu0YzmxRzsprsMXf2di+ru3+rhVasfgzpnNwGxQhB6SHXLkdclhJjQ
+        uzzauF3TcghNv00q7TSqvcs4Uw==
+X-Google-Smtp-Source: AGHT+IHJaeoDvNexJ51nTj9W7C9gqugA0dotXJMCxzzBW0CIkG528rxu+gpmgCcu1OYKpZe+Tr0uBQ==
+X-Received: by 2002:a17:903:40cd:b0:1c8:7822:e5c3 with SMTP id t13-20020a17090340cd00b001c87822e5c3mr143766pld.47.1698340714728;
+        Thu, 26 Oct 2023 10:18:34 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id b3-20020a170902d50300b001b8622c1ad2sm11228966plg.130.2023.10.26.10.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Oct 2023 10:18:34 -0700 (PDT)
+Date:   Thu, 26 Oct 2023 10:18:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Robert Richter <rric@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergey Temerkhanov <s.temerkhanov@gmail.com>,
+        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        linux-edac@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC/thunderx: Fix some potential buffer overflow in
+ thunderx_ocx_com_threaded_isr()
+Message-ID: <202310261016.2D17ACACE@keescook>
+References: <91ec35cd8e2e86fa3d24c2e8ea6970e0437cdfd2.1697908406.git.christophe.jaillet@wanadoo.fr>
+ <202310241629.0A4206316F@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ce68694-87a7-4c06-b8a4-9870c891b580@moroto.mountain>
+In-Reply-To: <202310241629.0A4206316F@keescook>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 02:57:23PM +0300, Dan Carpenter wrote:
-> The pci_epc_release() function frees "epc" so the kfree() on the next
-> line is a double free.
-> 
-> Fixes: 7711cbb4862a ("PCI: endpoint: Fix WARN() when an endpoint driver is removed")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Tue, Oct 24, 2023 at 04:39:36PM -0700, Kees Cook wrote:
+> As the replacements get longer, I would encourage you to use seq_buf
+> instead -- it does all the length math internally. For example:
 
-Applied with Manivannan's reviewed-by to pci/misc for v6.7, thanks!
+There's some ongoing work to make seq_buf easier to use:
+https://lore.kernel.org/lkml/20231026170722.work.638-kees@kernel.org/
 
-> ---
->  drivers/pci/endpoint/pci-epc-core.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index fe421d46a8a4..56e1184bc6c2 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -869,7 +869,6 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
->  
->  put_dev:
->  	put_device(&epc->dev);
-> -	kfree(epc);
->  
->  err_ret:
->  	return ERR_PTR(ret);
-> -- 
-> 2.42.0
-> 
+Perhaps we can add an "alloc" and "free" pair too, to handle this case:
+
+>	msg = kmalloc(OCX_MESSAGE_SIZE, GFP_KERNEL);
+> 	seq_buf_init(&s, msg, OCX_MESSAGE_SIZE);
+
+But perhaps it's overkill...
+
+-- 
+Kees Cook
