@@ -2,94 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6657C25B6F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 09:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993F1C25B48
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 09:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbjJZJab (ORCPT
+        id S231179AbjJZJ4u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 05:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59632 "EHLO
+        Thu, 26 Oct 2023 05:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjJZJaa (ORCPT
+        with ESMTP id S229934AbjJZJ4t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 05:30:30 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15386184
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 02:30:28 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083cd3917eso5353915e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 02:30:28 -0700 (PDT)
+        Thu, 26 Oct 2023 05:56:49 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A5219B;
+        Thu, 26 Oct 2023 02:56:42 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50802148be9so765464e87.2;
+        Thu, 26 Oct 2023 02:56:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698312626; x=1698917426; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JzN3kghX0r8zpxRcc0ENszPUJaJiNNkjOsgmWnftG5k=;
-        b=uUIIzoj6LhQ3YkhL2X6FbtyyDNz/xxhHdXFh3ZNTbxiDVxO74olbEZX9mPoSGafYoT
-         bm3Qvsoo4UwMeTEMINeb1aucCRt8H+tOL07nnlPzyAUr9JPxsnHhUAmIddTN/W16Tdgo
-         FJu5EEDISp6iV4vSgicXnLoP63yPvy4+E64mfvgtub4tFC8L2JKoKkqx7pxbsqqVzXh0
-         prf9xjb6Qoxrm74ho3EP+2rsiNw1wDGbWy4gXLoMJcBXt89MFxhtoi2oY5b5uAJFP1c7
-         vPEyR4RAf1CG/txpb/j6WmQ03+LxiEPN3o0bMtnKtmbiwdvkEZazaru9djKFU5NFTujw
-         oa6A==
+        d=gmail.com; s=20230601; t=1698314201; x=1698919001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TIHrwT1IPJSaVwo9toEDHyrvoQFfktSqXsqS3njZKmY=;
+        b=QlPTn5Z9dFonCrT8DYbptGRXh7V00BD/frE3sBNwN66Y2Vfyn2smyIWXzGEOtoqwS+
+         +QTFBob0khaeliZX1ZZxC9oNJPXTE6vcAlkmnteVjh8TT8cZS6J3PQnxOUaoR7s+bN65
+         Y5QlOIYcvt7JmDj0WuCEBymnmE4up7wFyK9t+SnlUCqaLt80BbyVO/UQkIpX6JeunVFA
+         sUEC8ThZwxVRRgizAX484HAx3HH1HbjmIa9L1iE5zrbWB1ykZXcoCzOssyJ5ud4FmkKa
+         IaMTygKYDskYf18EelnPYwNcvtJjDkIa16gZfRhHjvKPdQ4/t0xUu+iZW3cs06kpdGXG
+         MVlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698312626; x=1698917426;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1698314201; x=1698919001;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzN3kghX0r8zpxRcc0ENszPUJaJiNNkjOsgmWnftG5k=;
-        b=XRM5X2xDT6re+3FWT5w5QpJ1XucQymImeBPV+nB1lB1Feo1ImbE6EIMglrly1cco6l
-         vxIjDMCg+Yl/jUg7NEmnbDl/QUwGzrhOqdy4+Y9r3BssObpcs25+9h9aqRV0KEmflZnm
-         JH/RXX5kuJn21FcWBpFdm4WA8wKVRI8Xj6mm+E74fPdtWz34+bFe8xa5l6PlyHBo79wO
-         xe7QkpyvVXXI2+6M7J6AdK4cIlUImD7uc+LDr2ncJ1DxGVrzs0HxAopILpkiTvTSjAKm
-         JTI1GFwCJbzulPopES/NFAQYutYB93XydHWDtISctzc/rgbOLsGBHbfM3nluig/lvwdW
-         nBqg==
-X-Gm-Message-State: AOJu0YwVsax39a/R4k+0oSpGC0HR0PAz7FVrji7v45SIlccHc3WL974L
-        qoRau7YeP0CHK3IuYuENqB8TXQ==
-X-Google-Smtp-Source: AGHT+IFbCJ2aNN5hfs6KLklgeQ8R+R7dBY0KqY6VDKCiFgk6oQIaJA1xQzDXWqNVc6p9WIW1ERMmVw==
-X-Received: by 2002:a5d:4b4b:0:b0:32d:8401:4057 with SMTP id w11-20020a5d4b4b000000b0032d84014057mr11785427wrs.15.1698312626501;
-        Thu, 26 Oct 2023 02:30:26 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p17-20020a5d68d1000000b0032d687fd9d0sm13842098wrw.19.2023.10.26.02.30.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 02:30:26 -0700 (PDT)
-Date:   Thu, 26 Oct 2023 12:30:22 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     lukas@wunner.de, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        daniel@ffwll.ch, tiwai@suse.de, Jim.Qu@amd.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] vga_switcheroo: Fix impossible judgment condition
-Message-ID: <6a5f2bff-cef4-4287-b72d-0db91c850de4@kadam.mountain>
-References: <20231026091804.967960-1-suhui@nfschina.com>
+        bh=TIHrwT1IPJSaVwo9toEDHyrvoQFfktSqXsqS3njZKmY=;
+        b=b7NEtOnYhGgr8ePRmHk+BOJn946ZHYyplWyvM5p4xGSTfjjm24VdDSA86gHRhsvbQf
+         DOL2AoOUFjf2H86TNIe6KCUrZLOY/2QJ/wQl/k3JlbKVHQP9LArMREyIS15GoeU0IvEi
+         l3KqC8+T/GpZytY3KOkio7Os6kJoilAuptVANj08IzjQ5nvtBaEAlDw7m7pxStYq/vLT
+         LUlbfsztLgxhrw/fheWfO6yne8gVR7RXK1j2RhYK+ySnE6pVMQvjPTVZjzXi/GFCF99L
+         5JjuLv5wMVl/jjmxnaNawZWfsr1lk2NpDwkW7/1XX7P0UbWDTM4zd30gDR0JwVeWS1Il
+         Upfg==
+X-Gm-Message-State: AOJu0Yz82UL4a7/eQOsh87EY4Z9ALzUJeICjOJNrxcz4mEsiKyNb6Q2E
+        ABWT7vD48F65RtRQGtMhWs8=
+X-Google-Smtp-Source: AGHT+IGtf29HTCS4vL+Y3AWJnjV7GZMqO3o0uHhE7d85x7B61jHNbHPFH7TpxYlEaXNI+XJ32j4Yig==
+X-Received: by 2002:a05:6512:3e0d:b0:4ff:b830:4b6b with SMTP id i13-20020a0565123e0d00b004ffb8304b6bmr17178751lfv.14.1698314200473;
+        Thu, 26 Oct 2023 02:56:40 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:16f8:1500::1? (dc78bmyyyyyyyyyyyyyyt-3.rev.dnainternet.fi. [2001:14ba:16f8:1500::1])
+        by smtp.gmail.com with ESMTPSA id o13-20020ac24bcd000000b00507a622184dsm2958861lfq.173.2023.10.26.02.56.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Oct 2023 02:56:39 -0700 (PDT)
+Message-ID: <a0636e8e-7a39-4c58-8dee-7187ffd7fc63@gmail.com>
+Date:   Thu, 26 Oct 2023 12:56:38 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231026091804.967960-1-suhui@nfschina.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: correct file entry IIO LIGHT SENSOR
+ GAIN-TIME_SCALE HELPERS
+To:     Amit Dhingra <mechanicalamit@gmail.com>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <CAO=gReHuuwB6mBZAXpYHGk9XsWE8e8+U3T9e6iqCXYQMcjZZVg@mail.gmail.com>
+Content-Language: en-US, en-GB
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAO=gReHuuwB6mBZAXpYHGk9XsWE8e8+U3T9e6iqCXYQMcjZZVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 26, 2023 at 05:18:04PM +0800, Su Hui wrote:
-> 'id' is enum type like unsigned int, so it will never be less than zero.
-> It's better to check VGA_SWITCHEROO_UNKNOWN_ID too.
+On 10/26/23 11:33, Amit Dhingra wrote:
+> Commit ca11e4a35154 ("MAINTAINERS: Add IIO gain-time-scale helpers"),
+> updates the MAINTAINERS file. However the files listed do not exist.
+> These presumably come from commit 38416c28e168 ("iio: light: Add
+> gain-time-scale helpers")
 > 
-> Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Fix the entries.
+> 
+> Found by ./scripts/get_maintainer.pl --self-test=patterns
+> 
+> Signed-off-by: Amit Dhingra <mechanicalamit@gmail.com>
 > ---
-> v2:
->  - add check of VGA_SWITCHEROO_UNKNOWN_ID(Dan's suggestion). 
+>   MAINTAINERS | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> By the way, all functions of 'get_client_id' will never return error code
-> or VGA_SWITCHEROO_UNKNOWN_ID，should we remove this check or keep it for
-> future.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a493d96ffd85..6dd44ec48886 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10287,8 +10287,8 @@ IIO LIGHT SENSOR GAIN-TIME-SCALE HELPERS
+>   M:	Matti Vaittinen <mazziesaccount@gmail.com>
+>   L:	linux-iio@vger.kernel.org
+>   S:	Maintained
+> -F:	drivers/iio/light/gain-time-scale-helper.c
+> -F:	drivers/iio/light/gain-time-scale-helper.h
+> +F:	drivers/iio/industrialio-gts-helper.c
+> +F:	include/linux/iio/iio-gts-helper.h
+
+Thanks a lot Amit!
+Seems like the very old file names were left in here.
+
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
 > 
+>   IIO MULTIPLEXER
+>   M:	Peter Rosin <peda@axentia.se>
 
-Thanks!
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+~~ When things go utterly wrong vim users can always type :help! ~~
 
