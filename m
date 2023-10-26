@@ -2,88 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3217DC25B6B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 17:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BA8C25B48
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Oct 2023 21:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231777AbjJZRSi (ORCPT
+        id S230186AbjJZV66 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Oct 2023 13:18:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
+        Thu, 26 Oct 2023 17:58:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjJZRSh (ORCPT
+        with ESMTP id S229649AbjJZV65 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Oct 2023 13:18:37 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4965E194
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 10:18:35 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c8a1541232so10235425ad.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 10:18:35 -0700 (PDT)
+        Thu, 26 Oct 2023 17:58:57 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E4B91
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 14:58:53 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-da0359751dbso1279966276.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Oct 2023 14:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1698340715; x=1698945515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xw07DRWLKz2p8vG1tYsMr3W7FGieeNrenFoAi4zFRnI=;
-        b=HadBnEolRBsouoN5HKIQwrdKGT90ph91wFGZO1Kh5BqVkPACw6uQi6tPd9qfuGP5dz
-         CyoAoLWht3zZNY4Gd6Mib7/yZdbWBCsVAg6kuvQRJrw2aJnC9DLN1yzLhSNERggO6nNX
-         j8y9WPuWqJUdQ21PwjJL3VJWbH3ZyDOQiocKs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698340715; x=1698945515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1698357533; x=1698962333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xw07DRWLKz2p8vG1tYsMr3W7FGieeNrenFoAi4zFRnI=;
-        b=Z0zcW/UoWfu4TV5IjjJfW0LFOBFS78imh+hqHsWoWO4eXPSFZUlXg2Sk93g4zCU5qV
-         AvWmcagf0gj3S0lF/FHv2vCW/U9Eau4Kx8YASLVMaBw+1m7Ej1G0sLUY5WoEGhWooJuY
-         1Am1YGiLE8XK1POiH9jS+K5sYkoRANM+GBmbuujBSadFYWDtK0zwF8+tKGUEfni35rfK
-         WbasT35bNGgBEeuTkA4veKB3qxS7ttslulIlGNOOEfrDAZm7c5d/PWzyGhNVjyTyPZyI
-         tDOjl1t+dJtXy43ZUlglM7nrUBJXoQ3pRCSaoAg4Gwt3KRPRv1Z9KOmUJtQXDSETiYHd
-         FigQ==
-X-Gm-Message-State: AOJu0YzmxRzsprsMXf2di+ru3+rhVasfgzpnNwGxQhB6SHXLkdclhJjQ
-        uzzauF3TcghNv00q7TSqvcs4Uw==
-X-Google-Smtp-Source: AGHT+IHJaeoDvNexJ51nTj9W7C9gqugA0dotXJMCxzzBW0CIkG528rxu+gpmgCcu1OYKpZe+Tr0uBQ==
-X-Received: by 2002:a17:903:40cd:b0:1c8:7822:e5c3 with SMTP id t13-20020a17090340cd00b001c87822e5c3mr143766pld.47.1698340714728;
-        Thu, 26 Oct 2023 10:18:34 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id b3-20020a170902d50300b001b8622c1ad2sm11228966plg.130.2023.10.26.10.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 10:18:34 -0700 (PDT)
-Date:   Thu, 26 Oct 2023 10:18:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Robert Richter <rric@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergey Temerkhanov <s.temerkhanov@gmail.com>,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/thunderx: Fix some potential buffer overflow in
- thunderx_ocx_com_threaded_isr()
-Message-ID: <202310261016.2D17ACACE@keescook>
-References: <91ec35cd8e2e86fa3d24c2e8ea6970e0437cdfd2.1697908406.git.christophe.jaillet@wanadoo.fr>
- <202310241629.0A4206316F@keescook>
+        bh=zvwMcqSWwKO0wXJv0H7UCPPqsu6sxGdcOrGctTr5qgQ=;
+        b=Nyn45E+T9Qn+U3s9c3+cDbMhQoeVTqtDG52CqIGsbYa17hMoh0HWICo3zHTHIa5JvN
+         kbvYA6upDB9Yvc662R8gYw2Er5g0UdtTJOzG+lgKkHkv3gv0GaHYX41wkdEeIbnotXe4
+         o/ZQbspRgjLmM0fKzhHB+WQRsBodsLH6+6Xi39V5MJwmSj0YLMeK6MddoGXGZxZ5iCFa
+         HUHfLRUa41Ep52JavCQzNBsppDqHl81IJMwT+tGK6DFnxvXev3LzAfvC+X+eGpPi/sKw
+         cYVXZYfcKjAYqQWgxIXsstpNHTiksd7W4KSrFanMek3KZT0Fg31Rw+o7SAm+y3drhUPW
+         Vy/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698357533; x=1698962333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zvwMcqSWwKO0wXJv0H7UCPPqsu6sxGdcOrGctTr5qgQ=;
+        b=XakreVMMiVQlEOkTSTXjUSZpxpvVQDq1rjTT6z9fcf4rXwdYRNZgT3novU8QJbDX86
+         2xpaqO75OgoXaj+I0BdkfnkQHSaaKkJ6PJkErNSWlFgxCsgqWiNaXKr1DBUHia/oFKCq
+         zhh01kphPRvtE2zomFCB/urJUJC7NlVMWqmNWXDs+FZrzE3kNL2zbCtfUyTqCQzvfDCl
+         8OVfhBn2xz0qsEXFi84skYpAp2I9AVtr6CydrwUQaYpOA5HQ87UdOlNFCYFMQASI3R30
+         ZQgARCbh6LHlTnMBYjWjkAk2IxF+jHJVT5Um+inHMypx2cYifgQp7lopOQg3pE+UZfuk
+         ApKg==
+X-Gm-Message-State: AOJu0Yz53p/fGsah91pn/8iGS6aePQjNt0Qhj5wBTrZqoWKD0BpoTw5W
+        1ps+MPjXy6htzxRAJ3j85oazTJnbi77H80N2cmTuWeRejgVRSQ==
+X-Google-Smtp-Source: AGHT+IGx/ZHQdoq72DxRa+WbDxL2QzPV1zMjFCJVUT76NH83eBA1Fk7QbBfs4Yj0Olum11qg0SZMgiYJ097GUhy6e1Q=
+X-Received: by 2002:a25:4041:0:b0:da0:8283:416e with SMTP id
+ n62-20020a254041000000b00da08283416emr6952142yba.27.1698357532913; Thu, 26
+ Oct 2023 14:58:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202310241629.0A4206316F@keescook>
+References: <369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain>
+ <20231023114949.34fc967988c354547f79c4e7@linux-foundation.org>
+ <CAHk-=wiS=h7XBt0UMHq_8xWZxR_hmFik_j=SwTp9LzHhJVW=aQ@mail.gmail.com>
+ <20231023-righteous-peridot-parakeet-1bbda0@meerkat> <20231024-notorious-elegant-crayfish-a45d63@meerkat>
+In-Reply-To: <20231024-notorious-elegant-crayfish-a45d63@meerkat>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 26 Oct 2023 23:58:41 +0200
+Message-ID: <CANiq72nndjv301OE9oZpO5Uqwf1-hMyGn5FVVWqyrCEY0_ZG2A@mail.gmail.com>
+Subject: Re: KTODO automated TODO lists
+To:     Konstantin Ryabitsev <mricon@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        ksummit@lists.linux.dev, outreachy@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 04:39:36PM -0700, Kees Cook wrote:
-> As the replacements get longer, I would encourage you to use seq_buf
-> instead -- it does all the length math internally. For example:
+On Tue, Oct 24, 2023 at 5:28=E2=80=AFPM Konstantin Ryabitsev <mricon@kernel=
+.org> wrote:
+>
+> FWIW, such page now exists:
+> https://subspace.kernel.org/etiquette.html
 
-There's some ongoing work to make seq_buf easier to use:
-https://lore.kernel.org/lkml/20231026170722.work.638-kees@kernel.org/
+Thanks Konstantin -- I have added a link to it in the Rust for Linux webpag=
+e.
 
-Perhaps we can add an "alloc" and "free" pair too, to handle this case:
+I would suggest linking it at
+https://docs.kernel.org/process/submitting-patches.html#use-trimmed-interle=
+aved-replies-in-email-discussions
+too.
 
->	msg = kmalloc(OCX_MESSAGE_SIZE, GFP_KERNEL);
-> 	seq_buf_init(&s, msg, OCX_MESSAGE_SIZE);
-
-But perhaps it's overkill...
-
--- 
-Kees Cook
+Cheers,
+Miguel
