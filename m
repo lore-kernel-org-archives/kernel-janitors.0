@@ -2,89 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401A9C25B67
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 07:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D934CC25B47
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 08:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235080AbjJ0HRJ (ORCPT
+        id S235079AbjJ0Ik7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Oct 2023 03:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45964 "EHLO
+        Fri, 27 Oct 2023 04:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345425AbjJ0HQ5 (ORCPT
+        with ESMTP id S235105AbjJ0Ika (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Oct 2023 03:16:57 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3AA1985;
-        Fri, 27 Oct 2023 00:16:45 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A3EC433C8;
-        Fri, 27 Oct 2023 07:16:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1698391004;
-        bh=CBkxV/uFvpzCOvXq/7DVXjOGLxxi3GTw/t/A+HTWNJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0nGMnJTiNrrl2+rN9XPzMH2IcacHjDqVSv6UlJ/cULBbI+YiCV5QLG5YHCkoLKuZK
-         eeItrfl/qeCk8SU0jS7rudj7Bw5yKwjE7UVm1sMMjxhAuaTUyeUJGdRosPS0Nhtjfx
-         hoafJV4TNcsIqxE1mhrXswdKwYOML9x0OuA/Xw6c=
-Date:   Fri, 27 Oct 2023 09:16:41 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     joel@jms.id.au, andrew@codeconstruct.com.au, robh@kernel.org,
-        arnd@arndb.de, roblip@gmail.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soc: aspeed: lpc: Fix impossible judgment condition
-Message-ID: <2023102730-outmatch-rising-14f0@gregkh>
-References: <20231027020703.1231875-1-suhui@nfschina.com>
+        Fri, 27 Oct 2023 04:40:30 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4C219A3;
+        Fri, 27 Oct 2023 01:40:14 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-4084de32db5so14835115e9.0;
+        Fri, 27 Oct 2023 01:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698396013; x=1699000813; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NLfx2GCVwo2B3bImCCwCI1lgsjgZt6z3r+jCmDSbHsg=;
+        b=g2pGX+IaPuhevRFURWowXm7G+66N2yHMN+ZUdFgZlM9C7YpCShA41erZEVlwsueOlX
+         BOhndoi1X3/nRzE2KiLOeoZxilHRKckZDYDcA0uXnrnAjs7fQDtq9ZBzMWdnSVS07C9X
+         Uxe6Au5pbfivno6SCnsw+4TQaccuQQdSyPFjNBZdSzOqUVFDWWaRS6ne4OlbiwZWCdfx
+         0vMs1W+wf+ixYgWgNLaIjcv/12vKwj8VjXFNG8zqTTCQQfAsK7mUGJVzP1iWQTy1TjBo
+         hG7a1O3t5XNuCOgbfMkv1cD0SPd2RBkuqf8FzN1ZLz1KDvFC0ArVVi78B+sjAaHsrjtb
+         R5EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698396013; x=1699000813;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NLfx2GCVwo2B3bImCCwCI1lgsjgZt6z3r+jCmDSbHsg=;
+        b=LVNkjqfmJvN8vSKQqXsdPY7g85KGl8srZ4cSj3JEGFJA0YE7Xt+2yo88gHbHQnJMSz
+         cyunGEjrPz6iOT+HhyHPemidB/IUWc+IrehkDuIgNCJR/ahgmOxYhcFHCFcgTsR68t1J
+         V0kQ0pkuB1S8tDFe1ZTWfDulnD1lhJxSCaQ4TdlpVECZnLE9xuvQXmO/m1NwLHhD7LKX
+         EFoBfRsUMkjmtMXMdcur6/ouHBmGBr35mKRlHzlvf/tNKsYBi1TLsAu/GE2Lo5NAXGIy
+         EZnMQhLXbuwlNNph/Q/uLfwYiY5zBUxLkjtkA95mtz1OEiPXD7WCLtz0WNXuY6L+1SbO
+         CJQA==
+X-Gm-Message-State: AOJu0YxUXqLg7XRDXFwBFlFOYewKuDf0KW9ON6xo/XdOjtpQ/7folpYB
+        rzfCdybeiypoBTw/p0z0Xa0=
+X-Google-Smtp-Source: AGHT+IHlZlQcpEITcJAvwaFd2YBxY5klWuCO0q22QjmwnyxXzB0IGr8JjdKrK5xSjl6wyD9g6GeoHA==
+X-Received: by 2002:a05:600c:4748:b0:409:325:e499 with SMTP id w8-20020a05600c474800b004090325e499mr1609413wmo.32.1698396012758;
+        Fri, 27 Oct 2023 01:40:12 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id u6-20020a05600c19c600b004064288597bsm1064379wmq.30.2023.10.27.01.40.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Oct 2023 01:40:12 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf report: Fix spelling mistake "heirachy" -> "hierarchy"
+Date:   Fri, 27 Oct 2023 09:40:11 +0100
+Message-Id: <20231027084011.1167091-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231027020703.1231875-1-suhui@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 27, 2023 at 10:07:04AM +0800, Su Hui wrote:
-> smatch error：
-> drivers/soc/aspeed/aspeed-lpc-snoop.c:169
-> aspeed_lpc_snoop_config_irq() warn: platform_get_irq() does not return zero
-> 
-> platform_get_irq() return non-zero IRQ number or negative error code,
-> change '!lpc_snoop->irq' to 'lpc_snoop->irq < 0' to fix this.
-> 
-> Fixes: 9f4f9ae81d0a ("drivers/misc: add Aspeed LPC snoop driver")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/soc/aspeed/aspeed-lpc-snoop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There is a spelling mistake in a ui error message. Fix it.
 
-Hi,
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/perf/builtin-report.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index ca8f2331795c..9cb1da2dc0c0 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -705,7 +705,7 @@ static int report__collapse_hists(struct report *rep)
+ 	 */
+ 	if (perf_data__is_pipe(session->data)) {
+ 		if (perf_hpp__setup_hists_formats(&perf_hpp_list, evlist) < 0) {
+-			ui__error("Failed to setup hierachy output formats\n");
++			ui__error("Failed to setup hierarchy output formats\n");
+ 			return -1;
+ 		}
+ 	}
+-- 
+2.39.2
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
