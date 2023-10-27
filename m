@@ -2,148 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAF2C25B67
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 12:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA88EC25B47
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 12:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345796AbjJ0MFx (ORCPT
+        id S1345825AbjJ0MNE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Oct 2023 08:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
+        Fri, 27 Oct 2023 08:13:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345800AbjJ0MFw (ORCPT
+        with ESMTP id S1345800AbjJ0MNC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Oct 2023 08:05:52 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2781B1
-        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:05:49 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-5079f6efd64so2717472e87.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:05:49 -0700 (PDT)
+        Fri, 27 Oct 2023 08:13:02 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FF6C0
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:12:59 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-32d81864e3fso1287084f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:12:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698408347; x=1699013147; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rtys4OVP5ZzVlnIPSorJGpGjoOL2VcdIqIpp51DIOc0=;
-        b=k4SQRzmRV9BFUXc5DNokM8iEZaCj/aOpkp1U/ZSVnN98XzWL6JqXXHO+db86NBfrHk
-         dI9/Oylp2mWjdz8oHBPEo4NtbyEn++eAcJE5m1X1a+CIC3dKOk0GYKScJXMyWnixofjJ
-         XRaFR++f1r9/oyH7UHEQJ8HK2vYzAAB9y+8XaBeXr76lygsORRwUgirwwn/sEz5gvgJn
-         WX7N3X19gsa6fUfeVhfYYd+OnyG4gTsqtJ3o2uHaIP/UzrAyupkX3FbrHYfkj5jI28PK
-         ZOPnn9ddeWEReaSpYwunNucDjBL6TSj/LeNKr9+RLg7Bu+Qd2zUA0ULiHp5LAbaeOykg
-         N0RQ==
+        d=linaro.org; s=google; t=1698408778; x=1699013578; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph8ZV619qssLjPgO/yEQk7zJEM+NsPqPerc7acZSWpY=;
+        b=o8daz6rc631MqPzy5xXDSWpQC+qqEDyriqahCFFP9KRW2v++lJAhP/3E+UkavWESWk
+         NjGQCqPCP6iaxR/8iQ1k1cAdnBq/w6mI6oOGXfdinxLKzSAYjVbFF7t6w3U1WM2jE/HS
+         sefaSYFJesUVGHnLJgUCvDTW54reKPRxa4ZjaefZVGU6SdnB2PhFIM7X8FwQg79nbtMw
+         jmpk4LdHu3lkPoWMHmUz8+51aFjt/sx1/RQ9Pcc8xBoMD1DdKodC7FhZpHSj/sl+4WF5
+         +neR2a5bqH0+fFnPNPIZARb7BD9OyVxg4UuBXpyhRAXX79mIQ+WK7baW3dWEnFNRT9Ew
+         fxzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698408347; x=1699013147;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rtys4OVP5ZzVlnIPSorJGpGjoOL2VcdIqIpp51DIOc0=;
-        b=qk6LKrGueK2tI/zBx3sgQDCjlsO1UuJlBWnbzlBQqYgHAhLDB+SsM9LzKrpJ40paOg
-         IJ3CuvoJ6A/5MqJQ1iDp4klwyeVQam9ewYBgfPUiwdFKZLNlTWPFJDgr3uYmGnUPZRKl
-         CoNlE4RcZENkwoaL2ejD8kqlhoj4T8z90RzKXzX6PGWPlSa3TVa41Py/whadXHewUO7F
-         h9aafTZ5vPtjbnSvM8nbBWPK/khcNxrqoEw2SVk1vlCb0IeQU6tfkKa7BowIGbfYtns/
-         eJL0E5aaXrnCUrsaea+kH0ftT3AkhVSj4F1Hr6Hh94Zzf4JEJ6atSBuIqshYq5t6sEYU
-         6J2g==
-X-Gm-Message-State: AOJu0Yy5s8viphZB9bs8DJGQXMPByjgB5+OPW2ud03jr2YGPISXHRbW4
-        hOV+RFJCkuBQFpKSycJiLNCZcg==
-X-Google-Smtp-Source: AGHT+IEwMLdMiT1DpGl66JFRaW3Jkd9s7CFvWo0aNUOb8/tWmvL7FTmnMQJ10tzgk46/kJ10FHVi5Q==
-X-Received: by 2002:a05:6512:48d1:b0:500:bf33:3add with SMTP id er17-20020a05651248d100b00500bf333addmr1543741lfb.47.1698408347447;
-        Fri, 27 Oct 2023 05:05:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698408778; x=1699013578;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph8ZV619qssLjPgO/yEQk7zJEM+NsPqPerc7acZSWpY=;
+        b=ICBaPB59n1NX+WAm28uOfednhrhC4/KgWU7hETdvqxXJQ+uMJmAt0wdiIpVz16dVsN
+         jNNyyfcL+hkqIX2Wp11n6gS+AqFhb9UhRFV2irIviTYjrAm021K3FEP0nQVHUWXqlkK3
+         FddGjV9oYF/39bySU0QLiJBmiMJgaVH8FWY1TvuFebLpbuKmYu7747qvrQJds9j1EJWd
+         9YraGZB2ikhALTo/4CiSRni40r8NOOZ24zLQBlcWbFsMJsMHkcT7YX2MAA+rGxC678AP
+         /MIKga/1PC4u60lLnfB/YraK4IE0Ym8Ra8ubj5zz3SwFhfbP3ydJKtFLuD0ZANb3jCLE
+         2KYw==
+X-Gm-Message-State: AOJu0YxrIFJ8h2KEY5fe0xVp64DM+RQSKD2kudJOdJxA0IUl5/5LAY3n
+        GD33MMPeSp8orWls2V4HFs0ZNA==
+X-Google-Smtp-Source: AGHT+IHQCvYgKC4GIYkhBWYFRXqIbXkxbYn7XjCLJnX8gknw9LeiqQ8kmzYwo5Nm46vJg6lPKDEazw==
+X-Received: by 2002:a5d:53c9:0:b0:32d:701b:a585 with SMTP id a9-20020a5d53c9000000b0032d701ba585mr2104274wrw.69.1698408778388;
+        Fri, 27 Oct 2023 05:12:58 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t20-20020a0560001a5400b0032ddc3b88e9sm1663138wry.0.2023.10.27.05.05.46
+        by smtp.gmail.com with ESMTPSA id p9-20020adff209000000b00324853fc8adsm1642437wro.104.2023.10.27.05.12.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Oct 2023 05:05:47 -0700 (PDT)
-Date:   Fri, 27 Oct 2023 15:05:44 +0300
+        Fri, 27 Oct 2023 05:12:58 -0700 (PDT)
+Date:   Fri, 27 Oct 2023 15:12:54 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Zheng Wang <zyytlz.wz@163.com>
-Cc:     Helge Deller <deller@gmx.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] fbdev/imsttfb: fix a resource leak in probe
-Message-ID: <71f55328-2275-4e53-98f2-f8a88cbd3399@moroto.mountain>
+To:     Bo Liu <liubo03@inspur.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-XXX] vhost-vdpa: fix use after free in vhost_vdpa_probe()
+Message-ID: <cf53cb61-0699-4e36-a980-94fd4268ff00@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <014c0272-0d53-4625-8517-e8b4aa68f4dd@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I've re-written the error handling but the bug is that if init_imstt()
-fails we need to call iounmap(par->cmap_regs).
+The put_device() calls vhost_vdpa_release_dev() which calls
+ida_simple_remove() and frees "v".  So this call to
+ida_simple_remove() is a use after free and a double free.
 
-Fixes: c75f5a550610 ("fbdev: imsttfb: Fix use after free bug in imsttfb_probe")
+Fixes: ebe6a354fa7e ("vhost-vdpa: Call ida_simple_remove() when failed")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/video/fbdev/imsttfb.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ drivers/vhost/vdpa.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
-index acb943f85700..660499260f46 100644
---- a/drivers/video/fbdev/imsttfb.c
-+++ b/drivers/video/fbdev/imsttfb.c
-@@ -1496,8 +1496,8 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 9a2343c45df0..1aa67729e188 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -1511,7 +1511,6 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
  
- 	if (!request_mem_region(addr, size, "imsttfb")) {
- 		printk(KERN_ERR "imsttfb: Can't reserve memory region\n");
--		framebuffer_release(info);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto release_info;
- 	}
- 
- 	switch (pdev->device) {
-@@ -1514,36 +1514,39 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 			printk(KERN_INFO "imsttfb: Device 0x%x unknown, "
- 					 "contact maintainer.\n", pdev->device);
- 			ret = -ENODEV;
--			goto error;
-+			goto release_mem_region;
- 	}
- 
- 	info->fix.smem_start = addr;
- 	info->screen_base = (__u8 *)ioremap(addr, par->ramdac == IBM ?
- 					    0x400000 : 0x800000);
- 	if (!info->screen_base)
--		goto error;
-+		goto release_mem_region;
- 	info->fix.mmio_start = addr + 0x800000;
- 	par->dc_regs = ioremap(addr + 0x800000, 0x1000);
- 	if (!par->dc_regs)
--		goto error;
-+		goto unmap_screen_base;
- 	par->cmap_regs_phys = addr + 0x840000;
- 	par->cmap_regs = (__u8 *)ioremap(addr + 0x840000, 0x1000);
- 	if (!par->cmap_regs)
--		goto error;
-+		goto unmap_dc_regs;
- 	info->pseudo_palette = par->palette;
- 	ret = init_imstt(info);
- 	if (ret)
--		goto error;
-+		goto unmap_cmap_regs;
- 
- 	pci_set_drvdata(pdev, info);
--	return ret;
-+	return 0;
- 
--error:
--	if (par->dc_regs)
--		iounmap(par->dc_regs);
--	if (info->screen_base)
--		iounmap(info->screen_base);
-+unmap_cmap_regs:
-+	iounmap(par->cmap_regs);
-+unmap_dc_regs:
-+	iounmap(par->dc_regs);
-+unmap_screen_base:
-+	iounmap(info->screen_base);
-+release_mem_region:
- 	release_mem_region(addr, size);
-+release_info:
- 	framebuffer_release(info);
- 	return ret;
+ err:
+ 	put_device(&v->dev);
+-	ida_simple_remove(&vhost_vdpa_ida, v->minor);
+ 	return r;
  }
+ 
 -- 
 2.42.0
 
