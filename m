@@ -2,62 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB99C25B6E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 08:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E94C25B47
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 08:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235172AbjJ0IoI (ORCPT
+        id S235079AbjJ0Iql (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Oct 2023 04:44:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55828 "EHLO
+        Fri, 27 Oct 2023 04:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235202AbjJ0Int (ORCPT
+        with ESMTP id S234963AbjJ0Iqj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Oct 2023 04:43:49 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0C071BC7;
-        Fri, 27 Oct 2023 01:42:54 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4083f613275so13584245e9.2;
-        Fri, 27 Oct 2023 01:42:54 -0700 (PDT)
+        Fri, 27 Oct 2023 04:46:39 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168F31B9;
+        Fri, 27 Oct 2023 01:46:37 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2c50fbc218bso25284861fa.3;
+        Fri, 27 Oct 2023 01:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698396173; x=1699000973; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698396395; x=1699001195; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Su06d3g/RWBb4+DMAaq/G++oBj/S2Aap11dmZjGAwP8=;
-        b=RdsrMVyg//jvHjw79oeZmSAyDA5wKAUt5+Ijt4FC/RgcjWZB3Hk7TxI+cQdab3xIAL
-         tw03Uj2tig02zfAsnZMVXkOPGdiZhOVeOdlgktrsIRGhprwv+5SUtwaqOGg2oV1deAVX
-         O4HwMO8FeVWIMuzdcC/wyYOOw5SZ8B05kV65U+g5c5224GzQ9DlYnfDfyTodV6rxBjsD
-         0GIPWuAe4J2b7npCyYCCRiLkhWh+o/+SbNeORNK9pKHZy9Uzf4/ruU1eR1V77qmwXNU9
-         AQfgepP6BsMpxlFKjDmS4wcp+Z99Ta2nGE0PaJ6UqGwRLSq7VOOo3yF8AgHxq3Ks5YnU
-         l06A==
+        bh=dLCn7UHp+SZUNn49syvJKwh2mLvcGW4KGz1Fbc7fgO0=;
+        b=Y9UFPyOUUCFiKkZ0Yu3kcYGITrQ3CpII+GjF4ASQ4tYkcQ4mhMseAt90beAayKQyGJ
+         5vW06bv7YLC2UHu/CMIBk7B8loESczPjbKH9gmUgvEQZ4HFGjCwVUjtmWJpJP+k3cOp7
+         lkyNGzZxwBAQMi7BLSeyfpYxhtRfXKZAy3XPZejlpEuyIday2d5WH7R51MNdo0axctnF
+         Xb93GiuFVrp81rWG8OC5N13GzwusuPVuiYdF2AkJuxwP+5QxewSkiLWSBvp2Gsy98ETR
+         LuYkzH0DI5mRXvipRrEwzIFRI6XMDzG0bXIeBFIMHfhsp50AyrI6VvIEQl0kbUu/a3qJ
+         Mejg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698396173; x=1699000973;
+        d=1e100.net; s=20230601; t=1698396395; x=1699001195;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Su06d3g/RWBb4+DMAaq/G++oBj/S2Aap11dmZjGAwP8=;
-        b=JY9h9vaHcTuFdGEo8bemUVv7xfyykJYuwCAHfX/PB1ykZVKGE97vO6n5BJdLEPNJpW
-         tu+ALAxFpxXIdceungbrbcCXGY2e6b0/J9gT0KtkmmxrufB6aOZHAaWs7L0ihtw5Q0hu
-         pQn9+cTYHfSDjpwDJiIgCwAcny8mO8ZvVO0ZB0VUnr8pPoMkD/D+eg0Ehrz46WTmFnjr
-         NJte8Hn9bLxjW+EinvxRY49jMKFVdY2impq2Kz56TviUAtT6kEY/qdqEvRqsVSRj3dpv
-         irXLkE3/3lWrnV10jcf3EjN6wP/OKSxd31SZ5iEC5JaBYh0F8IJ4sSjEUPx9T4OEURRA
-         mxcg==
-X-Gm-Message-State: AOJu0YyRnozUGL6qOAVWgx21hfmfkl9uUBY8ixuiVbgEeYkMBkos2vXp
-        TVLyttrydJvkvNHd1IVq49Q=
-X-Google-Smtp-Source: AGHT+IFlmOUMQ18Ip8AZhoad16ZwRRPgBiQp4M5mitaE98hQyDeoFF/1lDQspl//lmsJ6KMwkUz6Rw==
-X-Received: by 2002:a05:600c:524f:b0:406:5463:3f51 with SMTP id fc15-20020a05600c524f00b0040654633f51mr1707855wmb.25.1698396172872;
-        Fri, 27 Oct 2023 01:42:52 -0700 (PDT)
+        bh=dLCn7UHp+SZUNn49syvJKwh2mLvcGW4KGz1Fbc7fgO0=;
+        b=b9lq8YAHF/3bi9tqp/fDXSTxBEtuuvUA/z1LvEvBgm66xMTkGRK6NbWXs4hkf+cNAQ
+         LTPJW2pCKbjcOj21ym4m1kdI3nmDlu5pJHReGVOAR08Gagbgghzanu45TjP6aMporvBT
+         4SKDpuzhQjjejJAFLLkndHYFeW+lmUaYQIyd52RwDNntxHXcR/P8hnpFEPRuCsk+78Pr
+         PScO60yUahavUbR5MaJnD6zxnMetOtHqTe/OzD6sNh+F2vyvgr7mHT3KlB9hczCty4RU
+         leRF3DMHH3QdByipigiwRWQVGadMqCQgm4eSWet8jOol+D74/vARZg5Ox/OtcYz/89p1
+         0Xbw==
+X-Gm-Message-State: AOJu0YxpFvxjS+YdOMXkzKua4mqgE25bfN4sNq2IkxXJZcxfZF+q3sxj
+        yBK3E6FR9cC+cIpnh6Vc/zA=
+X-Google-Smtp-Source: AGHT+IGUvjJGJ/lC22QiIWWvXgmA6P40WDl5e/vGTz779cMSodx/zSxvFWrbY6bA4N1hQYBuTMfdGA==
+X-Received: by 2002:a05:651c:2211:b0:2c5:6c7:9e73 with SMTP id y17-20020a05651c221100b002c506c79e73mr1776256ljq.48.1698396394942;
+        Fri, 27 Oct 2023 01:46:34 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o2-20020a05600c378200b004083a105f27sm4459448wmr.26.2023.10.27.01.42.52
+        by smtp.gmail.com with ESMTPSA id f14-20020a05600c4e8e00b003fc0505be19sm1077344wmq.37.2023.10.27.01.46.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Oct 2023 01:42:52 -0700 (PDT)
+        Fri, 27 Oct 2023 01:46:34 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Ivan Orlov <ivan.orlov0322@gmail.com>,
-        linux-kselftest@vger.kernel.org
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: sched: Fix spelling mistake "hiearchy" -> "hierarchy"
-Date:   Fri, 27 Oct 2023 09:42:51 +0100
-Message-Id: <20231027084251.1167279-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] perf callchain: Fix spelling mistake "statisitcs" -> "statistics"
+Date:   Fri, 27 Oct 2023 09:46:33 +0100
+Message-Id: <20231027084633.1167530-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,26 +71,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a printf message. Fix it.
+There are a couple of spelling mistakes in perror messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/callchain.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-index 3e1619b6bf2d..7b4fc02a0d05 100644
---- a/tools/testing/selftests/sched/cs_prctl_test.c
-+++ b/tools/testing/selftests/sched/cs_prctl_test.c
-@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
- 	if (setpgid(0, 0) != 0)
- 		handle_error("process group");
- 
--	printf("\n## Create a thread/process/process group hiearchy\n");
-+	printf("\n## Create a thread/process/process group hierarchy\n");
- 	create_processes(num_processes, num_threads, procs);
- 	need_cleanup = 1;
- 	disp_processes(num_processes, procs);
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 99cce43ba152..8262f69118db 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -605,7 +605,7 @@ fill_node(struct callchain_node *node, struct callchain_cursor *cursor)
+ 				if (!call->brtype_stat) {
+ 					call->brtype_stat = zalloc(sizeof(*call->brtype_stat));
+ 					if (!call->brtype_stat) {
+-						perror("not enough memory for the code path branch statisitcs");
++						perror("not enough memory for the code path branch statistics");
+ 						free(call->brtype_stat);
+ 						return -ENOMEM;
+ 					}
+@@ -774,7 +774,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
+ 			if (!cnode->brtype_stat) {
+ 				cnode->brtype_stat = zalloc(sizeof(*cnode->brtype_stat));
+ 				if (!cnode->brtype_stat) {
+-					perror("not enough memory for the code path branch statisitcs");
++					perror("not enough memory for the code path branch statistics");
+ 					return MATCH_ERROR;
+ 				}
+ 			}
 -- 
 2.39.2
 
