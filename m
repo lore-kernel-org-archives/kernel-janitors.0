@@ -2,63 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F1BC25B47
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 12:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF18AC25B47
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Oct 2023 12:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345825AbjJ0MSh (ORCPT
+        id S1345823AbjJ0MTK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Oct 2023 08:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54154 "EHLO
+        Fri, 27 Oct 2023 08:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345802AbjJ0MSf (ORCPT
+        with ESMTP id S1345780AbjJ0MTJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Oct 2023 08:18:35 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8D61B9
-        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:18:33 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2c5056059e0so30073091fa.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:18:33 -0700 (PDT)
+        Fri, 27 Oct 2023 08:19:09 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3966FA
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:19:06 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32d81864e3fso1290787f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Oct 2023 05:19:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698409112; x=1699013912; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698409145; x=1699013945; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QpUWJTFpNjZIZmlXASTkiTbyMnR1l2jQNO9OKE0q/GM=;
-        b=pE6+grLQaaewtp632izCFvBX+dXcwDo7OtL2ItcZZjGSGNb7RvQGXf6/e3wMOHLMVK
-         po5ElzvZshbpk9gZJAmOFowWHMSi2s28Txvp4W4kC/zBQsA5SsPSdTC4eUOJDr01yXUA
-         qWUO2dWVXSAZEOLL5jp82weY094cv0HgYO3itkcBHt0SapryzPlzaYNG0rx97qwA7o4U
-         Pi+E1xR/1m6ZtXLCb0NqsN805AZ7UjXP64CULje2+KJhArmL5qH4/v4rR6+b7yZ4EiOD
-         VbS2HMi55rGnSjpWmv9i208mF7lbJJIwwDJfjIzqTb9GlpTWxINRuHxl8P35Qr0T2oM4
-         zw4A==
+        bh=1EzbclxQ3u34ehr5EAcmOA1Z6rmxefKbVbR6r26szvQ=;
+        b=XwHhpskL8IMdjxs09mtAzuwbK1DWk5NkdAaXMBzQfz44wgf9HBjsJiY78Xt7NfKjiv
+         RKmGfJXZQU0mE75L3DjUvdN3djaXrhQh2YhqS74Zw9YKIvSbbyxBnhnLrXxd8S8kz8Hs
+         Z86cF3ReCvLJxpcemdNVhuNuvvTtg1XRl0opkkwzpgKcHv2RzSoBhjUTXpX2+Yum829F
+         3iat7ZN5EjG7Jgrj0skU83qs/cxnAIaFVxuifllOv7C4xdSGp7zo+fuTQy4Xtt0IH3hj
+         CJnlHmui4fcMmqEFUptAkOP0e615x+oTY8o0EAcFF9r6orNu7S/6DRV6bVjxLrs1oxbk
+         lrhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698409112; x=1699013912;
+        d=1e100.net; s=20230601; t=1698409145; x=1699013945;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QpUWJTFpNjZIZmlXASTkiTbyMnR1l2jQNO9OKE0q/GM=;
-        b=j2WJrwM1WKlVbwpIBzdKqryGaA4uDpmBXYfetZxCS0xDEJiV9QkUTWCB1U7bFeVnhf
-         kY9ysTP2hX8Y60OfUowY4D/uILnJWK6QQF3yU4lSIBDXR334AA/Vb5Myj1/QcJQcTBlh
-         qw2g6W/OEDgEGMRW+Cq3RK5fmFPHMr8+AgWFnFPMzCH3Laalc3Gkzm7ov0GuTgybWQ74
-         d0AVdEHPIbR0FGR63ViU4pG7Q24JtjS4EGErwyZYQjtWLbWnCEHhWnjlWguQ2tZ/yveZ
-         YRz4n+z2IsSPlVgrz2J962A0HxOH6dMiUP1f0wzTP7xjb6iYF8YlR60T+akFceMmIZdU
-         BNAQ==
-X-Gm-Message-State: AOJu0YyjmJvQiVPoNZ7II5Rova7gSfq8JyWKCMX9OlD161dz/cGfEsdv
-        C/K+LqK6eanSWSgahLgTZWzjYg==
-X-Google-Smtp-Source: AGHT+IHImjFD7lLH1TbPG7jI/g8XfCWe653u0TtNhH0Hv6ccJVrEwmTebgogehWeNAQTLInLhq/J5w==
-X-Received: by 2002:a2e:8e67:0:b0:2bd:d34:d98a with SMTP id t7-20020a2e8e67000000b002bd0d34d98amr1702848ljk.44.1698409111745;
-        Fri, 27 Oct 2023 05:18:31 -0700 (PDT)
+        bh=1EzbclxQ3u34ehr5EAcmOA1Z6rmxefKbVbR6r26szvQ=;
+        b=Ja1EgqIqMQ/lv7CyUZHk1Kedkvfv74UZAKweyldBx0VeGSvoXw4sv4diB2WMZKo0NJ
+         u4WeEVeCIJl1SSqpKOdPLQzbxaSmR2p0jW6kZAEqwQ0EdCZe1O6u5TpjxhI8uhW4D8qi
+         dCaxRyDvokls5tyxOtGpyPu0Uoc3PmELtDctlQueX7RPfO44HXtAQ3x0SeQrccPwGC+D
+         eUbchDDBDtbrXUONQ6k4oBPVPxMpmlbCNmb/KMj8ZSeVkySbchZhw5Nt0i2LX2kGkgFo
+         5UPJ7wfg2KXDKLE4Jh4B9IKXpnYiwjZzFzmaK4MpRBx/08HdtV93jl2E1tllEuscoS3y
+         iBLA==
+X-Gm-Message-State: AOJu0YzcIyZu2gBqkIRz5o2dM7K8DQFfeDDxlDRvxVsZmVquEtUQqpJd
+        T1pwTdpsahZ/OcgMZ7PvBTBWsg==
+X-Google-Smtp-Source: AGHT+IGaTuV20uSRVXSnwziXt58hhE17/CHwj+ungjmuHjw+I0pFjFq7hF25shZR6uJCilkIM/3gLA==
+X-Received: by 2002:a5d:5002:0:b0:32d:88dc:b219 with SMTP id e2-20020a5d5002000000b0032d88dcb219mr2084219wrt.45.1698409144589;
+        Fri, 27 Oct 2023 05:19:04 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y20-20020a1c4b14000000b0040588d85b3asm4867476wma.15.2023.10.27.05.18.30
+        by smtp.gmail.com with ESMTPSA id r16-20020a5d4950000000b0032d81837433sm1658047wrs.30.2023.10.27.05.19.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Oct 2023 05:18:31 -0700 (PDT)
-Date:   Fri, 27 Oct 2023 15:18:28 +0300
+        Fri, 27 Oct 2023 05:19:04 -0700 (PDT)
+Date:   Fri, 27 Oct 2023 15:19:01 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Nick Dyer <nick@shmanahar.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Christopher Heiny <cheiny@synaptics.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] Input: synaptics-rmi4 - fix use after free in
- rmi_unregister_function()
-Message-ID: <706efd36-7561-42f3-adfa-dd1d0bd4f5a1@moroto.mountain>
+To:     Murali Karicheri <m-karicheri2@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Ziyang Xuan <william.xuanziyang@huawei.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] hsr: Prevent use after free in prp_create_tagged_frame()
+Message-ID: <57af1f28-7f57-4a96-bcd3-b7a0f2340845@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,33 +70,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The put_device() calls rmi_release_function() which frees "fn" so the
-dereference on the next line "fn->num_of_irqs" is a use after free.
-Move the put_device() to the end to fix this.
+The prp_fill_rct() function can fail.  In that situation, it frees the
+skb and returns NULL.  Meanwhile on the success path, it returns the
+original skb.  So it's straight forward to fix bug by using the returned
+value.
 
-Fixes: 24d28e4f1271 ("Input: synaptics-rmi4 - convert irq distribution to irq_domain")
+Fixes: 451d8123f897 ("net: prp: add packet handling support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/input/rmi4/rmi_bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/hsr/hsr_forward.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/rmi4/rmi_bus.c b/drivers/input/rmi4/rmi_bus.c
-index f2e093b0b998..1b45b1d3077d 100644
---- a/drivers/input/rmi4/rmi_bus.c
-+++ b/drivers/input/rmi4/rmi_bus.c
-@@ -277,11 +277,11 @@ void rmi_unregister_function(struct rmi_function *fn)
- 
- 	device_del(&fn->dev);
- 	of_node_put(fn->dev.of_node);
--	put_device(&fn->dev);
- 
- 	for (i = 0; i < fn->num_of_irqs; i++)
- 		irq_dispose_mapping(fn->irq[i]);
- 
-+	put_device(&fn->dev);
+diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
+index b71dab630a87..80cdc6f6b34c 100644
+--- a/net/hsr/hsr_forward.c
++++ b/net/hsr/hsr_forward.c
+@@ -342,9 +342,7 @@ struct sk_buff *prp_create_tagged_frame(struct hsr_frame_info *frame,
+ 	skb = skb_copy_expand(frame->skb_std, 0,
+ 			      skb_tailroom(frame->skb_std) + HSR_HLEN,
+ 			      GFP_ATOMIC);
+-	prp_fill_rct(skb, frame, port);
+-
+-	return skb;
++	return prp_fill_rct(skb, frame, port);
  }
  
- /**
+ static void hsr_deliver_master(struct sk_buff *skb, struct net_device *dev,
 -- 
 2.42.0
 
