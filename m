@@ -1,76 +1,174 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F347258C
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Oct 2023 13:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3CF168A3
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Oct 2023 15:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pczJLlS4"
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 406BAE1
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Oct 2023 06:55:10 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JaK34++6"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4524AF4
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Oct 2023 08:27:40 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
 	by smtp.orange.fr with ESMTPA
-	id wjmMqrqoPLilFwjmMqmAXJ; Sat, 28 Oct 2023 15:55:07 +0200
+	id wlDtqYmVP63GJwlDtqx8Ol; Sat, 28 Oct 2023 17:27:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698501308;
-	bh=QDDAkjDTfNEpw/wshaLCFDIwV6LReU6Ggu0GJWjqj6Q=;
-	h=From:To:Cc:Subject:Date;
-	b=pczJLlS4Ft5Nsvs8VT0hKx66s+tQvUDKhbWvAV+q1ZWhNbgM8tNhTceHCv0wmjUeQ
-	 4ChR4r7nOQgaJcglERdNOyWwEN0NMK8yviJXFqpoePokbXMfQWoI/PqA+2OTZImwS8
-	 c3cQMTajHH3zR0e7tpni7NlgyLvk7PsgNuFtmKoiXNnX6yyZ7bUQsLTLiZfTtE9uH8
-	 IHOHzzNEu9EQurDmgr3UTpteovLjp2O69CtgNCB8FUMoG0PvBzuNjiIXtDzlttQqen
-	 RI8U5KtJaDHLQ/DmooE5dyrEJfFsldW/FK9ngV0OmRq0/3vBbLc9I6cZTr1B+thNqa
-	 YN6cPqqRRLQjQ==
-X-ME-Helo: pop-os.home
+	s=t20230301; t=1698506858;
+	bh=Rr61ezqlXIq+++3fG0PqDAvd8T62b+RT8E7liIDwSbI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=JaK34++6Peed5B3Y4WwXjt7qsuwfg4ZQp5BCr1IxNyZY0F9M9QpVc2671n0v9rgX3
+	 B0IcKccT08IF8fLuo/rhu++vuCEcVRsI/92rboy2I+pOdsQ5uFDjF5FtTZzGn6/orq
+	 Zxv1dv+FjBUHhBwSGIruFeyLTwwv5FwymTGs3Q5Hc4iKeDS98TTE9qCUK7UVlL7yKv
+	 5JSHQleTGkb9aow4KtNUmNzeaMwG2idl05oqc06iY+NaM1Hs+0AUgICQLsh6uUMh3q
+	 0IUbFCbPY4kVVs02k1Lk55cKfXSfE6XTr4KHJBMSjmpz7GqnrqF8JFG3iRdIPnx9AY
+	 o/I828mmiNrfg==
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 28 Oct 2023 15:55:08 +0200
+X-ME-Date: Sat, 28 Oct 2023 17:27:38 +0200
 X-ME-IP: 86.243.2.178
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Martin Hicks <mort@sgi.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	kgdb-bugreport@lists.sourceforge.net
-Subject: [PATCH] kdb: Fix a potential buffer overflow in kdb_local()
-Date: Sat, 28 Oct 2023 15:55:00 +0200
-Message-Id: <0b1790ca91b71e3362a6a4c2863bc5787b4d60c9.1698501284.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <701141cc-bfe8-4bde-93cd-5fd7d13da3e4@wanadoo.fr>
+Date: Sat, 28 Oct 2023 17:27:37 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc2: Use seq_buf instead of hand writing it
+Content-Language: fr
+To: Minas Harutyunyan <hminas@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <4c8b71efe4fe05ed0cc37f33ef774746d4d55299.1698489641.git.christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4c8b71efe4fe05ed0cc37f33ef774746d4d55299.1698489641.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-When appending "[defcmd]" to 'kdb_prompt_str', the size of the string
-already in the buffer should be taken into account.
+Le 28/10/2023 à 12:41, Christophe JAILLET a écrit :
+> cat_printf() re-implements what the seq_buf API does.
+> So, switch to the seq_buf API to save some line of code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Switch from strncat() to strlcat() which does the correct test to avoid
-such an overflow.
+NACK.
 
-Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- kernel/debug/kdb/kdb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This was built tested, but i think that DWC2_PRINT_SCHEDULE was not defined.
 
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index 438b868cbfa9..e5f0bf0f45d1 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1350,7 +1350,7 @@ static int kdb_local(kdb_reason_t reason, int error, struct pt_regs *regs,
- 		snprintf(kdb_prompt_str, CMD_BUFLEN, kdbgetenv("PROMPT"),
- 			 raw_smp_processor_id());
- 		if (defcmd_in_progress)
--			strncat(kdb_prompt_str, "[defcmd]", CMD_BUFLEN);
-+			strlcat(kdb_prompt_str, "[defcmd]", CMD_BUFLEN);
- 
- 		/*
- 		 * Fetch command from keyboard
--- 
-2.34.1
+	seq_buf_init((&s, tmp, sizeof(tmp));
+can't compile, 's' is not defined.
+
+Let me give another look at it.
+
+CJ
+
+> ---
+> seq_buf_printf(&buf, ", "); could be seq_buf_puts(), but the result could
+> be slightly different. So I kept a conservative approach.
+> 
+> If only some seq_buf_printf() are used, the final seq_buf_terminate() can
+> be avoided, but I think it is cleaner with it.
+> ---
+>   drivers/usb/dwc2/hcd_queue.c | 53 ++++++++----------------------------
+>   1 file changed, 11 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
+> index 0d4495c6b9f7..66fb74a70bdd 100644
+> --- a/drivers/usb/dwc2/hcd_queue.c
+> +++ b/drivers/usb/dwc2/hcd_queue.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/io.h>
+>   #include <linux/slab.h>
+>   #include <linux/usb.h>
+> +#include <linux/seq_buf.h>
+>   
+>   #include <linux/usb/hcd.h>
+>   #include <linux/usb/ch11.h>
+> @@ -359,41 +360,6 @@ static unsigned long *dwc2_get_ls_map(struct dwc2_hsotg *hsotg,
+>   }
+>   
+>   #ifdef DWC2_PRINT_SCHEDULE
+> -/*
+> - * cat_printf() - A printf() + strcat() helper
+> - *
+> - * This is useful for concatenating a bunch of strings where each string is
+> - * constructed using printf.
+> - *
+> - * @buf:   The destination buffer; will be updated to point after the printed
+> - *         data.
+> - * @size:  The number of bytes in the buffer (includes space for '\0').
+> - * @fmt:   The format for printf.
+> - * @...:   The args for printf.
+> - */
+> -static __printf(3, 4)
+> -void cat_printf(char **buf, size_t *size, const char *fmt, ...)
+> -{
+> -	va_list args;
+> -	int i;
+> -
+> -	if (*size == 0)
+> -		return;
+> -
+> -	va_start(args, fmt);
+> -	i = vsnprintf(*buf, *size, fmt, args);
+> -	va_end(args);
+> -
+> -	if (i >= *size) {
+> -		(*buf)[*size - 1] = '\0';
+> -		*buf += *size;
+> -		*size = 0;
+> -	} else {
+> -		*buf += i;
+> -		*size -= i;
+> -	}
+> -}
+> -
+>   /*
+>    * pmap_print() - Print the given periodic map
+>    *
+> @@ -417,8 +383,7 @@ static void pmap_print(unsigned long *map, int bits_per_period,
+>   
+>   	for (period = 0; period < periods_in_map; period++) {
+>   		char tmp[64];
+> -		char *buf = tmp;
+> -		size_t buf_size = sizeof(tmp);
+> +		struct seq_buf buf;
+>   		int period_start = period * bits_per_period;
+>   		int period_end = period_start + bits_per_period;
+>   		int start = 0;
+> @@ -426,6 +391,8 @@ static void pmap_print(unsigned long *map, int bits_per_period,
+>   		bool printed = false;
+>   		int i;
+>   
+> +		seq_buf_init((&s, tmp, sizeof(tmp));
+> +
+>   		for (i = period_start; i < period_end + 1; i++) {
+>   			/* Handle case when ith bit is set */
+>   			if (i < period_end &&
+> @@ -442,17 +409,19 @@ static void pmap_print(unsigned long *map, int bits_per_period,
+>   				continue;
+>   
+>   			if (!printed)
+> -				cat_printf(&buf, &buf_size, "%s %d: ",
+> -					   period_name, period);
+> +				seq_buf_printf(&buf, "%s %d: ", period_name,
+> +					       period);
+>   			else
+> -				cat_printf(&buf, &buf_size, ", ");
+> +				seq_buf_printf(&buf, ", ");
+>   			printed = true;
+>   
+> -			cat_printf(&buf, &buf_size, "%d %s -%3d %s", start,
+> -				   units, start + count - 1, units);
+> +			seq_buf_printf(&buf, "%d %s -%3d %s", start, units,
+> +				       start + count - 1, units);
+>   			count = 0;
+>   		}
+>   
+> +		seq_buf_terminate(&s);
+> +
+>   		if (printed)
+>   			print_fn(tmp, print_data);
+>   	}
 
