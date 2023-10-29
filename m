@@ -1,42 +1,40 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199D653A4
-	for <kernel-janitors@vger.kernel.org>; Sun, 29 Oct 2023 07:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3B7BE53
+	for <kernel-janitors@vger.kernel.org>; Sun, 29 Oct 2023 10:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pEE4unCD"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA56C9
-	for <kernel-janitors@vger.kernel.org>; Sun, 29 Oct 2023 00:52:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="l4AlWDnc"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68113C1
+	for <kernel-janitors@vger.kernel.org>; Sun, 29 Oct 2023 03:30:14 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
 	by smtp.orange.fr with ESMTPA
-	id x0b8qrtw4dj4Ix0b8qBkib; Sun, 29 Oct 2023 08:52:42 +0100
+	id x33bqUCJFRr5vx33bqsdPz; Sun, 29 Oct 2023 11:30:12 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698565962;
-	bh=aXnsQa8QKoNJcBcPyfHeo4PkQFM1z9XmPc+yVIVeH5U=;
+	s=t20230301; t=1698575412;
+	bh=0csRcwC0zp8g1RspI9Q/JAaWFLGDVf/EQzQzOfWYg+A=;
 	h=From:To:Cc:Subject:Date;
-	b=pEE4unCD2vcRQHf6N/wDjcR80QbYtMJB0BhuTadKRK5e3Nhj+qg8zMuASpCgZffCO
-	 VYsJ57zIZHUllW57CbwKPQCaZgp9MdGj1QTNlkEaNiZ4/rzxbzOqd6tslpy4e+4A5u
-	 eL9RXrf3wi+j9KRzRGpzjM1VdXDjgulTMuu5lmYWdZWtVNFWFZKjfNNnO3V4b55ekB
-	 zMWn0xlyi7ArvB7PHppRk/epfxjzWP0Do2zgCVe43O3JYtFz9MBnO51jWirKi9uKnQ
-	 q9FkWGCfqtddSFV384CGKeKjKvmeZ9Ai6ENJzQSZZ3AQg3ptI8tS0pqJHu67U4+gku
-	 R6+T3xztTd2gg==
+	b=l4AlWDncAlsOegFIom9cmvrcSzm61IG9iUnUK/WhCAuIU8SYLlBwbE6Bi8C5v6mLl
+	 aotEEC7COAl/0mAxBJiHOm9At/fyciMjWxe9nvB8MIO+aRxeL66M2XCY6pUza46weX
+	 5pw0L1yFqbT24nfpdS08DO1URE2pwg6PdF6f0nkYMg9luatsVfrHSsKtVxjkuhco0s
+	 o1J0opi6YXidPzGMQX5GTnJz4S1AOAJeXKjXHbPz9dZx5UNoasgTk8rOkCD8VkiiaH
+	 WCSffMQxUyvXrScCqhIwugWUXs9F/j0RsaFaTguyjQJnDrpG5cakgRFuL9hbiKySek
+	 9EsoPN930QBAA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Oct 2023 08:52:42 +0100
+X-ME-Date: Sun, 29 Oct 2023 11:30:12 +0100
 X-ME-IP: 86.243.2.178
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>
+To: Coly Li <colyli@suse.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Tero Kristo <t-kristo@ti.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] firmware: ti_sci: Fix an off-by-one in ti_sci_debugfs_create()
-Date: Sun, 29 Oct 2023 08:52:36 +0100
-Message-Id: <880aeea52f3bdde5e3e8843bbedb7fd068a58be2.1698565938.git.christophe.jaillet@wanadoo.fr>
+	linux-bcache@vger.kernel.org
+Subject: [PATCH] bcache: Optimize sysfs_hprint()
+Date: Sun, 29 Oct 2023 11:30:06 +0100
+Message-Id: <9b82413f1ca0b924cc139d945777e32dd22ffe41.1698575385.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -46,37 +44,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The ending NULL is not taken into account by strncat(), so switch to
-strlcat() to correctly compute the size of the available memory when
-building 'debug_name'.
+The size of what is in 'buf' is already computed by bch_hprint(), so skip
+these bytes when calling strcat().
 
-Because of the difference in the return type between strncat() and
-strlcat(), some code shuffling is needed.
+This easily saves a few cycles. (should it matter)
 
-Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/ti_sci.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/md/bcache/sysfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 7041befc756a..1036c6b0f3eb 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -181,10 +181,9 @@ static int ti_sci_debugfs_create(struct platform_device *pdev,
- 	/* Setup NULL termination */
- 	info->debug_buffer[info->debug_region_size] = 0;
- 
--	info->d = debugfs_create_file(strncat(debug_name, dev_name(dev),
--					      sizeof(debug_name) -
--					      sizeof("ti_sci_debug@")),
--				      0444, NULL, info, &ti_sci_debug_fops);
-+	strlcat(debug_name, dev_name(dev), sizeof(debug_name));
-+	info->d = debugfs_create_file(debug_name, 0444, NULL, info,
-+				      &ti_sci_debug_fops);
- 	if (IS_ERR(info->d))
- 		return PTR_ERR(info->d);
- 
+diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
+index 65b8bd975ab1..798bcbeab0bb 100644
+--- a/drivers/md/bcache/sysfs.h
++++ b/drivers/md/bcache/sysfs.h
+@@ -78,7 +78,7 @@ do {									\
+ do {									\
+ 	if (attr == &sysfs_ ## file) {					\
+ 		ssize_t ret = bch_hprint(buf, val);			\
+-		strcat(buf, "\n");					\
++		strcat(buf + ret, "\n");				\
+ 		return ret + 1;						\
+ 	}								\
+ } while (0)
 -- 
 2.34.1
 
