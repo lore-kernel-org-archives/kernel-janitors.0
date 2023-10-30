@@ -1,101 +1,110 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B968718B10
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 16:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ED61944D
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 16:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PYtjKeP3"
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C79DA
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:31:12 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40853f2e93eso395e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:31:12 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kUc4CRwP"
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C978298
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:36:34 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53fc7c67a41so11910551a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698683471; x=1699288271; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1698683792; x=1699288592; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dUgGBhAUq575qSM0tgYzZcW8UZXPwajt+t4WCeUOLCQ=;
-        b=PYtjKeP3xWMUHCaNKBciZ6y+/Nz/MgPTltDDMjuZRB80QQRN/1WeWbqFypAe5toAsA
-         sLels+uJbS0zwEah+8/jaB7O/wgYX2qhQcTdlV/OR/D7pRkRyij04JH38v/7l8V8J0ty
-         eHLAhBqgOJTZs7UgXteOKbs7+qHU/jZC472WtdyEv/UZ7fBB4UtI272frD6bqxt2HkS3
-         IF6d96cuK8FWBP3nEHKiQ8uil4Ml9EaVZckCs8fIzbYXESWnylj56D7WRdQvjk6w6CpG
-         zS71o1RYdPP49GW7UOrA5ls1e1/BdEMt3mXpABN5aFmHHE0Uxkf9wrqOFeHirL2vzf12
-         kp4w==
+        bh=xavDmDYDKGApF37pHfgaeVpvo2fMN9hqfhiSorYJU94=;
+        b=kUc4CRwPR2GBlOsecyBr+QjtRkefpigXdSs3oescTtah+xV2mj0aeHdltzbKKdtk1I
+         ckq/n1Kxhrn0RZ9nClR8bmqFpzRp3nykn1LSizHTlnrjz3LIo5ufMWld1nTBPtCGVzDH
+         GI+7nUrEGOjq7VFMyGVXKafaRgRot67+fjB3w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698683471; x=1699288271;
+        d=1e100.net; s=20230601; t=1698683792; x=1699288592;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dUgGBhAUq575qSM0tgYzZcW8UZXPwajt+t4WCeUOLCQ=;
-        b=i6C+05jSg89mXgKy5PqKEtz0Q3fdnvXxs7HL++P16A+D4PD+GXcKai8i+WSnJ3Z0dR
-         neTqDbIKjxjNUT+34vZg6MkrUaAhwdawSc00lG4T9MvNSBOs9B5EOMljv/dn3pQ6U1nt
-         +PdgVf+7RXVl/Qp+whnmuaU4RAeJTHKLsmN7KRdze4lD3SFl1ssXcs1EE1x1Oj6xCnMQ
-         dXtf53YCK7zuJJ24iRWepynjdNeZgb5HU08qzInF/yh9FPIqRRw2MDb/vI9qXn/5yBpf
-         VvYqUBLrCVlqLc6XL42EcWzDsah/iXYrTzr82VFzkax5Lxl51TEs/cypMDxG7s2TbJFl
-         w7Bw==
-X-Gm-Message-State: AOJu0YyaiKmdQ34SgxCBxNuVqee2MPPPkOTFn7JXC/7VdZXmJIChvxFm
-	PhB4GkbTxDZCQ90hBlEJa2XySPhlXMFoc/k8Cz3sHQ==
-X-Google-Smtp-Source: AGHT+IHM2pKPoSKXK0V1dT89nWBjcKgKADyzPqg7Dy8ofLAEmOfvrHnweUB3255UvW2FTBui8efpOki/sgyWCoflaoA=
-X-Received: by 2002:a05:600c:1c81:b0:3f4:fb7:48d4 with SMTP id
- k1-20020a05600c1c8100b003f40fb748d4mr134778wms.3.1698683470764; Mon, 30 Oct
- 2023 09:31:10 -0700 (PDT)
+        bh=xavDmDYDKGApF37pHfgaeVpvo2fMN9hqfhiSorYJU94=;
+        b=l1x3YV5MO0p4WnNwB8qvAivyWcNVe7aUNW2pcgJXiSjRp2ZT6piHB6QzoCShD5Kj5d
+         qmLRPaIMX6hVUzn2KFXJMib9hNQz8UHg3HVu03yJwH76UG1HKNWY4MOhi8bHB5vL4qlB
+         6MwdvH0xhUN9num6cKM0mHUbTk+wmTI2CgpEqJEjgVNv2lox9wTKGr3wsmHLIyulvPBm
+         ptSfnlcmog4CI9wbYCPOtWTTee0NfnEOdsUG5ygSDqYP+lCQB9ZmgC/XwbTFJyZ7a8lr
+         1K3titVT3SGZEn1SNNNXFGbVqRNBSW4hORDdiFLkYtKopMRifbiHM2CDalUV3AnAql5E
+         fk/A==
+X-Gm-Message-State: AOJu0YzBjdVvRRavETJ/u2prrh9Ri8/yjMHge5ctSxIrBppyp1vFUxjT
+	qfGurtiffN/aL4TzR/4IheaFWmfZDtRoOcB0gdGmEPQw
+X-Google-Smtp-Source: AGHT+IGzu/fTZYlAY24Mset9xkdpenfBQr/ROnR+4Rluhcq5WCR6apHIMNclvTU3TTesZvFf7WICQw==
+X-Received: by 2002:aa7:dcda:0:b0:530:8942:e830 with SMTP id w26-20020aa7dcda000000b005308942e830mr167122edu.2.1698683792137;
+        Mon, 30 Oct 2023 09:36:32 -0700 (PDT)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id c1-20020aa7df01000000b0053dff5568acsm6317466edy.58.2023.10.30.09.36.31
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Oct 2023 09:36:31 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4078fe6a063so116865e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:36:31 -0700 (PDT)
+X-Received: by 2002:a05:600c:1d17:b0:400:c6de:6a20 with SMTP id
+ l23-20020a05600c1d1700b00400c6de6a20mr133775wms.3.1698683791371; Mon, 30 Oct
+ 2023 09:36:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231030075825.3701-1-zhaimingbing@cmss.chinamobile.com>
-In-Reply-To: <20231030075825.3701-1-zhaimingbing@cmss.chinamobile.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 30 Oct 2023 09:30:58 -0700
-Message-ID: <CAP-5=fX6EW+6ZpTkdqKJeeXPjgBiwAGyDLWJGAzoNF5DEYmViw@mail.gmail.com>
-Subject: Re: [PATCH] perf tests:FIx spelling mistake "whic" to "which"
-To: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <0b1790ca91b71e3362a6a4c2863bc5787b4d60c9.1698501284.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0b1790ca91b71e3362a6a4c2863bc5787b4d60c9.1698501284.git.christophe.jaillet@wanadoo.fr>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 30 Oct 2023 09:36:16 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WSh7wKN7Yp-3wWiDgX4E3isQ8uh0LCzTmd1v9Cg9j+nQ@mail.gmail.com>
+Message-ID: <CAD=FV=WSh7wKN7Yp-3wWiDgX4E3isQ8uh0LCzTmd1v9Cg9j+nQ@mail.gmail.com>
+Subject: Re: [PATCH] kdb: Fix a potential buffer overflow in kdb_local()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jason Wessel <jason.wessel@windriver.com>, 
+	Daniel Thompson <daniel.thompson@linaro.org>, Martin Hicks <mort@sgi.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2023 at 2:12=E2=80=AFAM zhaimingbing
-<zhaimingbing@cmss.chinamobile.com> wrote:
+Hi,
+
+On Sat, Oct 28, 2023 at 6:55=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> There is a spelling mistake, Please fix it.
+> When appending "[defcmd]" to 'kdb_prompt_str', the size of the string
+> already in the buffer should be taken into account.
 >
-> Signed-off-by: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
+> Switch from strncat() to strlcat() which does the correct test to avoid
+> such an overflow.
+>
+> Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/perf/tests/attr.c | 2 +-
+>  kernel/debug/kdb/kdb_main.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/tools/perf/tests/attr.c b/tools/perf/tests/attr.c
-> index 61186d0d1..97e1bdd6e 100644
-> --- a/tools/perf/tests/attr.c
-> +++ b/tools/perf/tests/attr.c
-> @@ -188,7 +188,7 @@ static int test__attr(struct test_suite *test __maybe=
-_unused, int subtest __mayb
->         if (perf_pmus__num_core_pmus() > 1) {
->                 /*
->                  * TODO: Attribute tests hard code the PMU type. If there=
- are >1
-> -                * core PMU then each PMU will have a different type whic
-> +                * core PMU then each PMU will have a different type whic=
-h
->                  * requires additional support.
->                  */
->                 pr_debug("Skip test on hybrid systems");
-> --
-> 2.33.0
->
->
->
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 438b868cbfa9..e5f0bf0f45d1 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -1350,7 +1350,7 @@ static int kdb_local(kdb_reason_t reason, int error=
+, struct pt_regs *regs,
+>                 snprintf(kdb_prompt_str, CMD_BUFLEN, kdbgetenv("PROMPT"),
+>                          raw_smp_processor_id());
+>                 if (defcmd_in_progress)
+> -                       strncat(kdb_prompt_str, "[defcmd]", CMD_BUFLEN);
+> +                       strlcat(kdb_prompt_str, "[defcmd]", CMD_BUFLEN);
+
+Some of this code is a bit hard to follow, but I think it's better to
+simply delete the whole "strncat". Specifically, as of commit
+a37372f6c3c0 ("kdb: Prevent kernel oops with kdb_defcmd") it's clear
+that "defcmd" can't actually be run to define new commands
+interactively. It's also clear to me that "defcmd_in_progress" is only
+set when defining new commands.
+
+The prompt being constructed here is a prompt that's printed to the
+end user when working interactively. That means the "if
+(defcmd_in_progress)" should never be true and it can be deleted as
+dead code.
+
+-Doug
