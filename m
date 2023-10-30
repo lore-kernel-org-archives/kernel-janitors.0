@@ -1,74 +1,90 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7404717727
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 14:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC92B33E0
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 14:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XzR15MZS"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D94B7
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 07:07:59 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4079ed65582so33024825e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 07:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698674878; x=1699279678; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+x6+LsrjZdB8dHUELRSubYTsHMKRqi5GBjTWofSCMDk=;
-        b=XzR15MZSaJ5rcYRcqgEh7c8vUnMlL5v9R+zWTwbI4usZ3aPhMF5rinw2t9iEsxbYEy
-         H5gp4XB4XlAF/bySz4rt+PGc1f9nyW3YWafsXXMnE/bOlaJUML8A/VkrmnMLZRS7GJ3k
-         QAHXipYM3oM7fyBAzg8G9PLSi2//LurYS2cgeE8y21NB+MrZWFOi9KJcUk2uz7GvyuvZ
-         9DhRI/ZZbSo9WlgwrqMO3uyewsXb+6ijOq3wlwgL9zZFDAO5RLCee/dqzKe0IV2X0e+o
-         X6QWMr3R1z9/hSMtDLx0pBB29Is//qmbc7/DrsFFH8bxOV15bcdUt3Miq1oRUyfipYIP
-         nqqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698674878; x=1699279678;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+x6+LsrjZdB8dHUELRSubYTsHMKRqi5GBjTWofSCMDk=;
-        b=Tu8zDCicBvgF9j/eLVp6dCJhJNnTzMSP3Ug0x3gq71agj6n2+JKlwjS6XFYB2B33rU
-         dC6tg898h4wcat6g+hj3XFyoPb55sFYiLKdGGXf9WpWp2+ICE3bsX2vRvrwSAoNVj1Qq
-         /hibmzeHNzwIsOMS+Ae543mqM6m2hnlSEOl8vVvahFQDF+X0qGE/cVYTmwjB5wirZFVQ
-         PBdzwp1Q+Ze/f5yDN4ZwJdSeZa/zsTj2BaZzjLMa+OaPJ8UI665HZykwt7Uha5FPgoe0
-         GZe2UsgtvQZW0lPayPWJwIVjl22Mtuf26l594kTED07QP50or5++0zAg5GypfOAujx9h
-         wmYw==
-X-Gm-Message-State: AOJu0Yww4MXSt/uIvk0+9f7SsyXhw1/ILDwSzgvjXjsstTd4eoBnbmTF
-	xLVhpwuSUj0DoqXeRWUiVY1nKw==
-X-Google-Smtp-Source: AGHT+IHa3PONe2ZHFjs1Ut/yXYmZH5eEEBpHXQF4IG+q5Drd25RgyRrQwRp16iOxIIUmK+4amlW37A==
-X-Received: by 2002:a05:600c:35cd:b0:406:872d:7725 with SMTP id r13-20020a05600c35cd00b00406872d7725mr8744073wmq.1.1698674878017;
-        Mon, 30 Oct 2023 07:07:58 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g10-20020a5d46ca000000b0031980783d78sm8241952wrs.54.2023.10.30.07.07.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 07:07:57 -0700 (PDT)
-Date: Mon, 30 Oct 2023 17:07:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, ecryptfs@vger.kernel.org
-Subject: Re: [PATCH] ecryptfs: Simplify
- ecryptfs_crypto_api_algify_cipher_name()
-Message-ID: <72f7eca6-3566-46fd-9ff9-386b4077d55d@kadam.mountain>
-References: <2c4bd387e8036854d3338400038fdde8dce3806a.1698672391.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Er2l+6Na"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F66CC9
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 07:49:33 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+	by smtp.orange.fr with ESMTPA
+	id xTa5qOlxecvbdxTa5q48rW; Mon, 30 Oct 2023 15:49:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1698677371;
+	bh=cE6pCOkG8VB8NCmHUswVDdYmjB1x/ugVETT8yljrntY=;
+	h=From:To:Cc:Subject:Date;
+	b=Er2l+6NauL9234lJe7ylyNTS7h2FxAYZxIGdbUrnqT7VfXoom0z5tvfFX+wo/kwNT
+	 XogrjtbgxYUWy1xFHaL9wpsWjPnsRHYyd171U+cbZ7NhD0Zrkmbq0fvI/Nlm3Dm2YI
+	 697gvVaod9WwwGS9U5lEBC1TMbmpsMo3zofyGKqDDjjViKFNG7tiIJy0cu1vux2BOM
+	 OFZykYnrx5D4/UXRyAglnMe8cJohqJRv5ZwAp2qcSLqjDTVPhDgsBCUyGK2281IPvB
+	 5zntwOGXgeO3sKoRnUYOWvFQWIKzfmgpaWC8HEJbAIYnKBVOb/McdJpLFV/1i+MLWR
+	 rBQD1EiMkBQKw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 30 Oct 2023 15:49:31 +0100
+X-ME-IP: 86.243.2.178
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Hannes Reinecke <hare@suse.de>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-nvme@lists.infradead.org
+Subject: [PATCH v2] nvme-tcp: Fix a memory leak
+Date: Mon, 30 Oct 2023 15:49:28 +0100
+Message-Id: <7f132cc47e627d63ddb084f3d0fcad10956d1e35.1698677322.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c4bd387e8036854d3338400038fdde8dce3806a.1698672391.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 30, 2023 at 02:27:32PM +0100, Christophe JAILLET wrote:
-> Use kasprintf() instead of hand writing it.
-> It is much less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+All error handling path end to the error handling path, except this one.
+Go to the error handling branch as well here, otherwise 'icreq' and
+'icresp' will leak.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 2837966ab2a8 ("nvme-tcp: control message handling for recvmsg()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+v2: - move ret = -xx; to the main path   [Christoph Hellwig]
+    - Add R-b tag
 
-regards,
-dan carpenter
+v1: https://lore.kernel.org/all/f9420cde9afdc5af40bf8a8d5aa9184a9b5da729.1698614556.git.christophe.jaillet@wanadoo.fr/
+
+Personally I prefer v1. Pick the one you prefer :)
+---
+ drivers/nvme/host/tcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 4714a902f4ca..f97711fc9f9f 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1423,13 +1423,14 @@ static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
+ 			nvme_tcp_queue_id(queue), ret);
+ 		goto free_icresp;
+ 	}
++	ret = -ENOTCONN;
+ 	if (queue->ctrl->ctrl.opts->tls) {
+ 		ctype = tls_get_record_type(queue->sock->sk,
+ 					    (struct cmsghdr *)cbuf);
+ 		if (ctype != TLS_RECORD_TYPE_DATA) {
+ 			pr_err("queue %d: unhandled TLS record %d\n",
+ 			       nvme_tcp_queue_id(queue), ctype);
+-			return -ENOTCONN;
++			goto free_icresp;
+ 		}
+ 	}
+ 	ret = -EINVAL;
+-- 
+2.34.1
 
