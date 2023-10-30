@@ -1,15 +1,15 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D14AEA3
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0127EE
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id DD96BBE;
-	Sun, 29 Oct 2023 19:03:20 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id E712693;
+	Sun, 29 Oct 2023 19:08:05 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id E5EC16027E066;
-	Mon, 30 Oct 2023 10:02:53 +0800 (CST)
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id BC42D6027E05D;
+	Mon, 30 Oct 2023 10:08:02 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
@@ -17,15 +17,14 @@ To: jic23@kernel.org,
 	lars@metafoo.de
 Cc: Su Hui <suhui@nfschina.com>,
 	jean-baptiste.maneyrol@tdk.com,
-	andy.shevchenko@gmail.com,
 	chenhuiz@axis.com,
-	mranostay@gmail.com,
+	andy.shevchenko@gmail.com,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v3] iio: imu: inv_mpu6050: fix an error code problem in inv_mpu6050_read_raw
-Date: Mon, 30 Oct 2023 10:02:19 +0800
-Message-Id: <20231030020218.65728-1-suhui@nfschina.com>
+Subject: [PATCH] iio: imu: inv_mpu6050: return callee's error code rather than -EINVAL
+Date: Mon, 30 Oct 2023 10:07:53 +0800
+Message-Id: <20231030020752.67630-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -35,42 +34,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-inv_mpu6050_sensor_show() can return -EINVAL or IIO_VAL_INT. Return the
-true value rather than only return IIO_VAL_INT.
+regmap_bulk_write()/regmap_bulk_read() return zero or negative error
+code, return the callee's error code is better than '-EINVAL'.
 
-Fixes: d5098447147c ("iio: imu: mpu6050: add calibration offset support")
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-v3:
- - add Fixes tag
-v2:
- - fix the error of commit title.
-v1: 
- - https://lore.kernel.org/all/20231020091413.205743-2-suhui@nfschina.com/
-
  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-index 29f906c884bd..a9a5fb266ef1 100644
+index a9a5fb266ef1..5ded0781797c 100644
 --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
 +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-@@ -749,13 +749,13 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
- 			ret = inv_mpu6050_sensor_show(st, st->reg->gyro_offset,
- 						chan->channel2, val);
- 			mutex_unlock(&st->lock);
--			return IIO_VAL_INT;
-+			return ret;
- 		case IIO_ACCEL:
- 			mutex_lock(&st->lock);
- 			ret = inv_mpu6050_sensor_show(st, st->reg->accl_offset,
- 						chan->channel2, val);
- 			mutex_unlock(&st->lock);
--			return IIO_VAL_INT;
-+			return ret;
+@@ -572,7 +572,7 @@ static int inv_mpu6050_sensor_set(struct inv_mpu6050_state  *st, int reg,
+ 	ind = (axis - IIO_MOD_X) * 2;
+ 	result = regmap_bulk_write(st->map, reg + ind, &d, sizeof(d));
+ 	if (result)
+-		return -EINVAL;
++		return result;
  
- 		default:
- 			return -EINVAL;
+ 	return 0;
+ }
+@@ -586,7 +586,7 @@ static int inv_mpu6050_sensor_show(struct inv_mpu6050_state  *st, int reg,
+ 	ind = (axis - IIO_MOD_X) * 2;
+ 	result = regmap_bulk_read(st->map, reg + ind, &d, sizeof(d));
+ 	if (result)
+-		return -EINVAL;
++		return result;
+ 	*val = (short)be16_to_cpup(&d);
+ 
+ 	return IIO_VAL_INT;
 -- 
 2.30.2
 
