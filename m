@@ -1,82 +1,101 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8569318AED
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 15:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B968718B10
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 16:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nCd4Ksw9"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8463CDA;
-	Mon, 30 Oct 2023 08:35:10 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39UDtnZ8013294;
-	Mon, 30 Oct 2023 15:35:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-03-30;
- bh=CrbiaMaWf5Mwb3F8GLvHk/mLZs9QCeYbPx7aBZB52co=;
- b=nCd4Ksw9p219e6K2BEfjgfXWxOuX5xXJmlmkHKVRY+0RahDwO6gxYoK6SCV0/TAKZoEw
- 5dAUDtnqevdaG1unYuRcDNUbq+al/y3VUXV0GKVA+YifRfpR/i1le61Ogbu3X3CCEm3o
- X1IWjwC0x8cC9a4U2h7qu1WkOU+pIBRUQUUzUfsKocHeDHilaD6pepNrov7xy4rRKnrc
- ingp95v9Uyy1BlcVw5tEk4DRWvveiHF3LQet/g2uvANBDVxxL5Vc1FXnRYMkwYwkSx9b
- 2EJQiwzblmQZ5p594VzlLVy30DAiP5HpPI45k0Vm1q+LGrb0ZBYQ18eR/OAqRmU03U6O ug== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3u0tbdk0pd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Oct 2023 15:35:02 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 39UE42lO038142;
-	Mon, 30 Oct 2023 15:35:01 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3u0rran8yb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Oct 2023 15:35:01 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39UFVkmM023458;
-	Mon, 30 Oct 2023 15:35:01 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3u0rran8wc-7;
-	Mon, 30 Oct 2023 15:35:01 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: dan.carpenter@linaro.org, kartilak@cisco.com, sebaddel@cisco.com,
-        jejb@linux.ibm.com, Su Hui <suhui@nfschina.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: snici: remove useless code in snic_dr_clean_pending_req
-Date: Mon, 30 Oct 2023 11:34:51 -0400
-Message-Id: <169868005491.2933713.3223961175436609019.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231020023326.43898-1-suhui@nfschina.com>
-References: <20231020023326.43898-1-suhui@nfschina.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PYtjKeP3"
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C79DA
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:31:12 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40853f2e93eso395e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1698683471; x=1699288271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dUgGBhAUq575qSM0tgYzZcW8UZXPwajt+t4WCeUOLCQ=;
+        b=PYtjKeP3xWMUHCaNKBciZ6y+/Nz/MgPTltDDMjuZRB80QQRN/1WeWbqFypAe5toAsA
+         sLels+uJbS0zwEah+8/jaB7O/wgYX2qhQcTdlV/OR/D7pRkRyij04JH38v/7l8V8J0ty
+         eHLAhBqgOJTZs7UgXteOKbs7+qHU/jZC472WtdyEv/UZ7fBB4UtI272frD6bqxt2HkS3
+         IF6d96cuK8FWBP3nEHKiQ8uil4Ml9EaVZckCs8fIzbYXESWnylj56D7WRdQvjk6w6CpG
+         zS71o1RYdPP49GW7UOrA5ls1e1/BdEMt3mXpABN5aFmHHE0Uxkf9wrqOFeHirL2vzf12
+         kp4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698683471; x=1699288271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dUgGBhAUq575qSM0tgYzZcW8UZXPwajt+t4WCeUOLCQ=;
+        b=i6C+05jSg89mXgKy5PqKEtz0Q3fdnvXxs7HL++P16A+D4PD+GXcKai8i+WSnJ3Z0dR
+         neTqDbIKjxjNUT+34vZg6MkrUaAhwdawSc00lG4T9MvNSBOs9B5EOMljv/dn3pQ6U1nt
+         +PdgVf+7RXVl/Qp+whnmuaU4RAeJTHKLsmN7KRdze4lD3SFl1ssXcs1EE1x1Oj6xCnMQ
+         dXtf53YCK7zuJJ24iRWepynjdNeZgb5HU08qzInF/yh9FPIqRRw2MDb/vI9qXn/5yBpf
+         VvYqUBLrCVlqLc6XL42EcWzDsah/iXYrTzr82VFzkax5Lxl51TEs/cypMDxG7s2TbJFl
+         w7Bw==
+X-Gm-Message-State: AOJu0YyaiKmdQ34SgxCBxNuVqee2MPPPkOTFn7JXC/7VdZXmJIChvxFm
+	PhB4GkbTxDZCQ90hBlEJa2XySPhlXMFoc/k8Cz3sHQ==
+X-Google-Smtp-Source: AGHT+IHM2pKPoSKXK0V1dT89nWBjcKgKADyzPqg7Dy8ofLAEmOfvrHnweUB3255UvW2FTBui8efpOki/sgyWCoflaoA=
+X-Received: by 2002:a05:600c:1c81:b0:3f4:fb7:48d4 with SMTP id
+ k1-20020a05600c1c8100b003f40fb748d4mr134778wms.3.1698683470764; Mon, 30 Oct
+ 2023 09:31:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-30_10,2023-10-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- mlxscore=0 adultscore=0 mlxlogscore=548 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310240000
- definitions=main-2310300120
-X-Proofpoint-GUID: UtWRX96p_dAV9WPNRqqibqWpHZ2fdUxC
-X-Proofpoint-ORIG-GUID: UtWRX96p_dAV9WPNRqqibqWpHZ2fdUxC
+References: <20231030075825.3701-1-zhaimingbing@cmss.chinamobile.com>
+In-Reply-To: <20231030075825.3701-1-zhaimingbing@cmss.chinamobile.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 30 Oct 2023 09:30:58 -0700
+Message-ID: <CAP-5=fX6EW+6ZpTkdqKJeeXPjgBiwAGyDLWJGAzoNF5DEYmViw@mail.gmail.com>
+Subject: Re: [PATCH] perf tests:FIx spelling mistake "whic" to "which"
+To: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 20 Oct 2023 10:33:27 +0800, Su Hui wrote:
+On Mon, Oct 30, 2023 at 2:12=E2=80=AFAM zhaimingbing
+<zhaimingbing@cmss.chinamobile.com> wrote:
+>
+> There is a spelling mistake, Please fix it.
+>
+> Signed-off-by: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
 
-> return error code directly to save space and be more clear.
-> 
-> 
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-Applied to 6.7/scsi-queue, thanks!
+Thanks,
+Ian
 
-[1/1] scsi: snici: remove useless code in snic_dr_clean_pending_req
-      https://git.kernel.org/mkp/scsi/c/44a31659ea60
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> ---
+>  tools/perf/tests/attr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/tests/attr.c b/tools/perf/tests/attr.c
+> index 61186d0d1..97e1bdd6e 100644
+> --- a/tools/perf/tests/attr.c
+> +++ b/tools/perf/tests/attr.c
+> @@ -188,7 +188,7 @@ static int test__attr(struct test_suite *test __maybe=
+_unused, int subtest __mayb
+>         if (perf_pmus__num_core_pmus() > 1) {
+>                 /*
+>                  * TODO: Attribute tests hard code the PMU type. If there=
+ are >1
+> -                * core PMU then each PMU will have a different type whic
+> +                * core PMU then each PMU will have a different type whic=
+h
+>                  * requires additional support.
+>                  */
+>                 pr_debug("Skip test on hybrid systems");
+> --
+> 2.33.0
+>
+>
+>
