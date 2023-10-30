@@ -1,58 +1,54 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2542D2FA
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F07DD302
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y5s5ywDX"
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C358E
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:03:19 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-5079f9675c6so6340459e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:03:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="btJogvBK"
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7927E1
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:03:29 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507a55302e0so5879379e87.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698656598; x=1699261398; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698656608; x=1699261408; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cYFH7qp0u3X29NywKpoP1IyU1hw7BcleLqoH2m7DO8E=;
-        b=Y5s5ywDXY17VpFmQLqcxMF3nB2z0rMzmYfP61fi9xZqPM2poxvivPWkEGbdfT8qR3h
-         JgUeHN1Koj1fs/uyS+tYRsUoAyLWpXZ1W6M2OkWT5BjtlxyqJX6LC6nnPfwK7RR5bo3x
-         s6ah5I67xUjpxGfPavGHnylO7DKrFVQycjJSS8ijGA6848Hq6aBUhV8yp3MqWa55c01R
-         NQ66FgQT6cTF66Hrkrdy1l8zlNc3YP+/fS1P78wnLJXCgLy5SoOr0KwEOa45sUO+t+NQ
-         jcViTW1Y80XgqedkL9jrJCaSt7x/V9rliuF02PXcUgJ8knWgjsfIM4qEwYyAkbQtcOPy
-         rFwA==
+        bh=+Og0eGEy6ECnZkx/WHAySjGVnAuOJT/PL7KvVeqDKaQ=;
+        b=btJogvBKRD/2sSBeYwuZkt0DD9rMsW7Uha4WYku4+MRNTcMew9moEzzOdvNqWt8RVT
+         FLmwk4pr7/mj5Lt3MMkapv60tzZScrpZS2HOaSBR0ybK+2wFJqEO3i85VsYZwA3Yzxfh
+         RP0VFI0uW6UG375CWzP0mnfSW4HM5tALMsUtS7ZFcmiMTqIXmjyfkunledcJ3R3x4ZYW
+         nJIFjssZN1ikwtsZyVfU8Dib7Kil8uyaS//cvgAeRdX5ktuUqa7xKMZMSl7I4XO1Z7ar
+         2YB/MaTfipawugQxF+Nd2GmRKVRTtU1kmxPjXm3cCfgddrjCkI/3+ojIUCVZz15hfGG2
+         d4zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698656598; x=1699261398;
+        d=1e100.net; s=20230601; t=1698656608; x=1699261408;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYFH7qp0u3X29NywKpoP1IyU1hw7BcleLqoH2m7DO8E=;
-        b=CEToU+Y4RTBjaPhvE5qy21RDUtEnpQA/Siwkx7sLfJQWwWPPamIEP7N/8qcRSyShvy
-         4FkSxUgEiV8K2CNyYcEj0N+g+X5UqLb2Ju6fPx0rUxN38sIBK3rQmGaTp+a4QjdjC0lk
-         lnyaY0jxbX7UPAdt15hifC0zIFYJnTDQZ1n5RZf2lugX5f2SeXJsL0XtTxZbrhiE2DJM
-         r825/znynMtaJgSkP6rg4QVlGfq2nzGv69hI+8pNg6UIPkSabazrbe06JvHKZE/a96DN
-         yQdAO3O7ja/zMAIoy6tv2nAHZlhSDNxnDvCjYsIBkv+PmbcIYHSbCWPdVZ5hDLT3+7Gl
-         iLBA==
-X-Gm-Message-State: AOJu0YwZtjChd9OjOB7TtlHBBFwZ203fME0Ls9Zsoqxmysz0Q4vZrk15
-	gopNYLDso2h16Pqw7ox+ZA15WHgtrjRu8NjT/bA=
-X-Google-Smtp-Source: AGHT+IEhqt5JyMuDyehB8tfDt0aSGJIzli2DgC7Bp6/VFUQmD21VwzJ1TqPJN1de7TiMAV9dumwFyA==
-X-Received: by 2002:a05:6512:6d1:b0:507:c7ae:32cc with SMTP id u17-20020a05651206d100b00507c7ae32ccmr8087977lff.41.1698656597789;
-        Mon, 30 Oct 2023 02:03:17 -0700 (PDT)
+        bh=+Og0eGEy6ECnZkx/WHAySjGVnAuOJT/PL7KvVeqDKaQ=;
+        b=svTG2dOiNRg1tYDEqlWOa2ATVMGpBKqI+2xCbN2JwqDC7RdJHco04XKDMnM06Mogyf
+         2RHshIBNtFbIo1Ss83Cf9ZnY37hAPhPJXwhlp6b8y0eAc8x7LIJZgtPSs3ozUq+8ojL1
+         xLNrX7fH/ICqT+sM3KwxpqfolRJxKHhCklfvPA7M7m+XDGbWZPiD6lWmNQUSNLBN0CBK
+         6NTISSn8Kn6OPedQM1vmky/1sKdYUsUcbO78DL1asGYsEHT0uNcAyhZe/uIxRl1r0cWQ
+         oHLp5OR3/Z/5ifQYFY+YJ1UAnwRS7/SLX8o+sfBzvSYi6HoyoGB2HgbLsfjgkRUPAy1c
+         2v2Q==
+X-Gm-Message-State: AOJu0Yy0diwTyb7KSbBfR5zeX3qA4h/BU32iZkJyn1vAZm+9WQ4hyygX
+	z5HbY777wzPkDMC2Ab02++uduQ==
+X-Google-Smtp-Source: AGHT+IEVwK0EPwzXp3ZPpA567lm9mf9RmP+zWXN0GwNBvo7GPH4UCC9PSUAH//0uQ+MLYDODelpm9A==
+X-Received: by 2002:ac2:5f6d:0:b0:506:899d:1989 with SMTP id c13-20020ac25f6d000000b00506899d1989mr5436459lfc.44.1698656607852;
+        Mon, 30 Oct 2023 02:03:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s10-20020a05600c45ca00b0040772138bb7sm12176139wmo.2.2023.10.30.02.03.17
+        by smtp.gmail.com with ESMTPSA id c11-20020a5d4ccb000000b0032179c4a46dsm7771900wrt.100.2023.10.30.02.03.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 02:03:17 -0700 (PDT)
-Date: Mon, 30 Oct 2023 12:03:12 +0300
+        Mon, 30 Oct 2023 02:03:27 -0700 (PDT)
+Date: Mon, 30 Oct 2023 12:03:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Janne Grunau <j@jannau.net>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iommu/dart: Fix return code in
- apple_dart_domain_alloc_paging()
-Message-ID: <b85e0715-3224-4f45-ad6b-ebb9f08c015d@moroto.mountain>
+To: Srinivasan Raju <srini.raju@purelifi.com>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: plfxlc: check for allocation failure in
+ plfxlc_usb_wreq_async()
+Message-ID: <e8d4a19a-f251-4101-a89b-607345e938cb@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,29 +59,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The apple_dart_domain_alloc_paging() function is supposed to return NULL
-on error.  Returning an error pointer will lead to an Oops in
-__iommu_domain_alloc().
+Check for if the usb_alloc_urb() failed.
 
-Fixes: 482feb5c6492 ("iommu/dart: Call apple_dart_finalize_domain() as part of alloc_paging()")
+Fixes: 68d57a07bfe5 ("wireless: add plfxlc driver for pureLiFi X, XL, XC devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/iommu/apple-dart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/purelifi/plfxlc/usb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index ee05f4824bfa..cb38a7a826dc 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -761,7 +761,7 @@ static struct iommu_domain *apple_dart_domain_alloc_paging(struct device *dev)
- 		ret = apple_dart_finalize_domain(dart_domain, cfg);
- 		if (ret) {
- 			kfree(dart_domain);
--			return ERR_PTR(ret);
-+			return NULL;
- 		}
- 	}
- 	return &dart_domain->domain;
+diff --git a/drivers/net/wireless/purelifi/plfxlc/usb.c b/drivers/net/wireless/purelifi/plfxlc/usb.c
+index 76d0a778636a..311676c1ece0 100644
+--- a/drivers/net/wireless/purelifi/plfxlc/usb.c
++++ b/drivers/net/wireless/purelifi/plfxlc/usb.c
+@@ -493,9 +493,12 @@ int plfxlc_usb_wreq_async(struct plfxlc_usb *usb, const u8 *buffer,
+ 			  void *context)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(usb->ez_usb);
+-	struct urb *urb = usb_alloc_urb(0, GFP_ATOMIC);
++	struct urb *urb;
+ 	int r;
+ 
++	urb = usb_alloc_urb(0, GFP_ATOMIC);
++	if (!urb)
++		return -ENOMEM;
+ 	usb_fill_bulk_urb(urb, udev, usb_sndbulkpipe(udev, EP_DATA_OUT),
+ 			  (void *)buffer, buffer_len, complete_fn, context);
+ 
 -- 
 2.42.0
 
