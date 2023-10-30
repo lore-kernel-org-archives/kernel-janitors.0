@@ -1,52 +1,73 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4FF6AD9
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738F7D50F;
+	Mon, 30 Oct 2023 09:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43328A7;
-	Mon, 30 Oct 2023 02:11:42 -0700 (PDT)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1qxOIw-00CS2p-Ob; Mon, 30 Oct 2023 17:11:27 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 30 Oct 2023 17:11:33 +0800
-Date: Mon, 30 Oct 2023 17:11:33 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Mahmoud Adam <mngyadam@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: rsa - add a check for allocation failure
-Message-ID: <ZT9zRaTmFp6xl9x3@gondor.apana.org.au>
-References: <d870c278-3f0e-4386-a58d-c9e2c97a7c6c@moroto.mountain>
+X-Greylist: delayed 186 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 30 Oct 2023 02:15:04 PDT
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E35D9A7;
+	Mon, 30 Oct 2023 02:15:04 -0700 (PDT)
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee8653f735c45d-61d69;
+	Mon, 30 Oct 2023 17:11:56 +0800 (CST)
+X-RM-TRANSID:2ee8653f735c45d-61d69
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain.localdomain (unknown[10.54.5.255])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9653f7359c44-21d77;
+	Mon, 30 Oct 2023 17:11:55 +0800 (CST)
+X-RM-TRANSID:2ee9653f7359c44-21d77
+From: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+To: Ian Rogers <irogers@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+Subject: [PATCH] perf tests:FIx spelling mistake "whic" to "which"
+Date: Mon, 30 Oct 2023 15:58:25 +0800
+Message-Id: <20231030075825.3701-1-zhaimingbing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d870c278-3f0e-4386-a58d-c9e2c97a7c6c@moroto.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 30, 2023 at 12:02:59PM +0300, Dan Carpenter wrote:
-> Static checkers insist that the mpi_alloc() allocation can fail so add
-> a check to prevent a NULL dereference.  Small allocations like this
-> can't actually fail in current kernels, but adding a check is very
-> simple and makes the static checkers happy.
-> 
-> Fixes: 6637e11e4ad2 ("crypto: rsa - allow only odd e and restrict value in FIPS mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  crypto/rsa.c | 2 ++
->  1 file changed, 2 insertions(+)
+There is a spelling mistake, Please fix it.
 
-Nack.  Please fix the static checker instead.
+Signed-off-by: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+---
+ tools/perf/tests/attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/tools/perf/tests/attr.c b/tools/perf/tests/attr.c
+index 61186d0d1..97e1bdd6e 100644
+--- a/tools/perf/tests/attr.c
++++ b/tools/perf/tests/attr.c
+@@ -188,7 +188,7 @@ static int test__attr(struct test_suite *test __maybe_unused, int subtest __mayb
+ 	if (perf_pmus__num_core_pmus() > 1) {
+ 		/*
+ 		 * TODO: Attribute tests hard code the PMU type. If there are >1
+-		 * core PMU then each PMU will have a different type whic
++		 * core PMU then each PMU will have a different type which
+ 		 * requires additional support.
+ 		 */
+ 		pr_debug("Skip test on hybrid systems");
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.33.0
+
+
+
