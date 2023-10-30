@@ -1,58 +1,48 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EC9D50F
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08078BE0;
+	Mon, 30 Oct 2023 09:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8kvBOdk"
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58968AB
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:15:24 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40853c639abso33268245e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698657323; x=1699262123; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lTNUjRX3ECq7ehIr2zP5G3ay0ebpeMQRBEnNy7LpYnE=;
-        b=R8kvBOdk/MfBmNP/ljYZOMDZKjVhydlqzZaWsz0ehUtyqhBmhhnINmTNRvORkWw42n
-         gEQhb19DYL1Sn/L0WvUEBB3BFjV7vlUJbA8INyR1+xiLrU7zuZV4yoO1SI3DcXtBYrbv
-         XPqkHAz5IMoFAQ6mLR/PN1ZT1otchLgU20811PF1zpgjd6Ut8g6gd8Hh1YDO6LeSI4oG
-         AnbgpZVAW32/rPn7b8+DedB98JgrfKs14/KIS6DBP6iTNvMxG0G41gsSAZSGarZUF1fp
-         tLSdXS8OLFC4uTP7Z0HdZ2AZtJMWwe/1guwBos+hybv7+VfxCi9KV63T6POHLRVx7tOd
-         VSOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698657323; x=1699262123;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lTNUjRX3ECq7ehIr2zP5G3ay0ebpeMQRBEnNy7LpYnE=;
-        b=aVVpRLbunCl7pKgB0yvS+lyQD6mB64YIjqn7JRPCtnaqLiKJAB2B2YSkBNJXFLvNyg
-         j2RMaYM3siNlPChFB3qWg8dDT+BzDVXwHtrXGoEG923Nex5eXJIKIN4nZ2WIDibwRPCH
-         /7hpr5jSH+BTVqzjy+daNDU7DIdxoRtBTPc/EHQZfZ9mUREdQYOpXNFRZiqyAhJ2UntJ
-         2L2M8TXMITx01M1Ta3tdNPgP/EloRcCJK1iNMqDJKGj7gHtTCBQtj6I/xGlhv3Ps+glS
-         CKvQGBul8ld5uo8nVmvWQSz8kUO5G6AcFYGGjJQsTeGkCqZ9ZkGFKDQPdy6rydvoQXVF
-         UByg==
-X-Gm-Message-State: AOJu0YxNtAXD/7amg14MkAa27YgkStVySYpGQz4nlNCJGVo2kbW6cN7o
-	QGcNF+TsfqFovgApxH4vSeezZg==
-X-Google-Smtp-Source: AGHT+IFWqfiqIA5CXsh+JANuT5+BV8FcjUfQ6nP3L+Rkd93JFQGo+1+6aEMAKj4wrjDNjY2PchllmQ==
-X-Received: by 2002:a05:600c:4750:b0:408:3d91:8251 with SMTP id w16-20020a05600c475000b004083d918251mr7344980wmo.5.1698657322727;
-        Mon, 30 Oct 2023 02:15:22 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j7-20020a05600c1c0700b003fefb94ccc9sm8681319wms.11.2023.10.30.02.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 02:15:22 -0700 (PDT)
-Date: Mon, 30 Oct 2023 12:15:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Mahmoud Adam <mngyadam@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: rsa - add a check for allocation failure
-Message-ID: <43d34a02-fc43-4ce8-b3ca-d996cf605ba2@kadam.mountain>
-References: <d870c278-3f0e-4386-a58d-c9e2c97a7c6c@moroto.mountain>
- <ZT9zRaTmFp6xl9x3@gondor.apana.org.au>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIajnS0M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E154AA7;
+	Mon, 30 Oct 2023 02:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698657578; x=1730193578;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fyIMF6N+1ePKlbVBfoyWa6vLLpP4q55GWPlHPlpHeeM=;
+  b=hIajnS0M1EbShPOqH37y7u7Qb1+H9XfZklzwvWujMyDuSEBICWZDxZUU
+   w+VjdbwS0O93yWnsYpMutMg1SHk9iWnKqf80AI3kZ4OJhwAABFEzkRctY
+   5N9GBDmW8UI0qP6epyctDeGSBqrakqmEVECeHoKHJ4YmnyFc83yxwKDfE
+   gjcMXRec/F0/Bs265y3iO3l/fGfz/vT1Y/sJGAuTZ5N+zHhrjRpPZPIQx
+   eWx9luZgU0Vged67J7IU/BI9LoNPFklnO77VqvMN/OB0m73bkPp4gou7C
+   5RI53Hnm1UTjTPNSXy3tprZEPjTR3ik1G9L+nNORa1KMbpoh+SMWA176P
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="904238"
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="904238"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 02:19:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="1091571992"
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="1091571992"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga005.fm.intel.com with SMTP; 30 Oct 2023 02:19:34 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 30 Oct 2023 11:19:33 +0200
+Date: Mon, 30 Oct 2023 11:19:33 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Abdel Alkuor <abdelalkuor@geotab.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] USB: typec: tps6598x: Fix a memory leak in an error
+ handling path
+Message-ID: <ZT91JeJPKdKNy6Ih@kuha.fi.intel.com>
+References: <23168336f18a9f6cb1a5b47130fc134dc0510d7f.1698648980.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,30 +51,48 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZT9zRaTmFp6xl9x3@gondor.apana.org.au>
+In-Reply-To: <23168336f18a9f6cb1a5b47130fc134dc0510d7f.1698648980.git.christophe.jaillet@wanadoo.fr>
 
-On Mon, Oct 30, 2023 at 05:11:33PM +0800, Herbert Xu wrote:
-> On Mon, Oct 30, 2023 at 12:02:59PM +0300, Dan Carpenter wrote:
-> > Static checkers insist that the mpi_alloc() allocation can fail so add
-> > a check to prevent a NULL dereference.  Small allocations like this
-> > can't actually fail in current kernels, but adding a check is very
-> > simple and makes the static checkers happy.
-> > 
-> > Fixes: 6637e11e4ad2 ("crypto: rsa - allow only odd e and restrict value in FIPS mode")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  crypto/rsa.c | 2 ++
-> >  1 file changed, 2 insertions(+)
+On Mon, Oct 30, 2023 at 07:56:40AM +0100, Christophe JAILLET wrote:
+> All error handling end to the error handling path, except these ones.
+> Go to 'release_fw' as well here, otherwise 'fw' is leaking.
 > 
-> Nack.  Please fix the static checker instead.
+> Fixes: 7e7a3c815d22 ("USB: typec: tps6598x: Add TPS25750 support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The checker is not wrong.  Kernel policy is that every allocation has
-to be checked for failure.  In *current* kernels it won't but we have
-discussed changing this so the policy makes sense.
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-I have tested this some years back and I don't think it's so infeasible
-as people think to allow these allocations to fail.
+> ---
+>  drivers/usb/typec/tipd/core.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index 0e867f531d34..b0184be06c3d 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -968,16 +968,17 @@ static int tps25750_start_patch_burst_mode(struct tps6598x *tps)
+>  	ret = of_property_match_string(np, "reg-names", "patch-address");
+>  	if (ret < 0) {
+>  		dev_err(tps->dev, "failed to get patch-address %d\n", ret);
+> -		return ret;
+> +		goto release_fw;
+>  	}
+>  
+>  	ret = of_property_read_u32_index(np, "reg", ret, &addr);
+>  	if (ret)
+> -		return ret;
+> +		goto release_fw;
+>  
+>  	if (addr == 0 || (addr >= 0x20 && addr <= 0x23)) {
+>  		dev_err(tps->dev, "wrong patch address %u\n", addr);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto release_fw;
+>  	}
+>  
+>  	bpms_data.addr = (u8)addr;
+> -- 
+> 2.34.1
 
-regards,
-dan carpenter
-
+-- 
+heikki
