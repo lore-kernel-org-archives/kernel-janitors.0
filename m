@@ -1,48 +1,59 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08078BE0;
-	Mon, 30 Oct 2023 09:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EAC8BE0
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 09:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIajnS0M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E154AA7;
-	Mon, 30 Oct 2023 02:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698657578; x=1730193578;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fyIMF6N+1ePKlbVBfoyWa6vLLpP4q55GWPlHPlpHeeM=;
-  b=hIajnS0M1EbShPOqH37y7u7Qb1+H9XfZklzwvWujMyDuSEBICWZDxZUU
-   w+VjdbwS0O93yWnsYpMutMg1SHk9iWnKqf80AI3kZ4OJhwAABFEzkRctY
-   5N9GBDmW8UI0qP6epyctDeGSBqrakqmEVECeHoKHJ4YmnyFc83yxwKDfE
-   gjcMXRec/F0/Bs265y3iO3l/fGfz/vT1Y/sJGAuTZ5N+zHhrjRpPZPIQx
-   eWx9luZgU0Vged67J7IU/BI9LoNPFklnO77VqvMN/OB0m73bkPp4gou7C
-   5RI53Hnm1UTjTPNSXy3tprZEPjTR3ik1G9L+nNORa1KMbpoh+SMWA176P
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="904238"
-X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="904238"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 02:19:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="1091571992"
-X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="1091571992"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga005.fm.intel.com with SMTP; 30 Oct 2023 02:19:34 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 30 Oct 2023 11:19:33 +0200
-Date: Mon, 30 Oct 2023 11:19:33 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Abdel Alkuor <abdelalkuor@geotab.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] USB: typec: tps6598x: Fix a memory leak in an error
- handling path
-Message-ID: <ZT91JeJPKdKNy6Ih@kuha.fi.intel.com>
-References: <23168336f18a9f6cb1a5b47130fc134dc0510d7f.1698648980.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l5sJ1tPT"
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63C0B6
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:20:33 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4083cd3917eso33208235e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 02:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698657632; x=1699262432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLvSJ4WILzCQbRai7VhjkCmCDbJmlR0hsNCXw7/mMsA=;
+        b=l5sJ1tPTSJVi9/tNni9tbb5Ip0Sb4Ykr6Kuv8xjwKoBnSdYOZf6cm00DdhZlAylfxI
+         j3/I5g6Kq8scKj03j+wfwZQMRZiEmBG9Ic6zw74irf4gJWQpIfY0cAj4L2CH3KIY227B
+         q9LtX9JdYep3T13u5oKUOsvFD98R6GASF6qcCuD9t1Da98WC+2S9jxkRteBfIOC0Aulh
+         OXkIaiM5zVd5BQ68DIBBr0OuHVSMryYqOHVPBGjlMKMtADGQzUcxAAA3TeaPzihEkzIM
+         rVAdUgW23Ce0F50c5cZG0tS7nZLjYi2F8odNIQw9wM+Xz9tuXgQf1XC9AkQLWx5LeJqi
+         tKJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698657632; x=1699262432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XLvSJ4WILzCQbRai7VhjkCmCDbJmlR0hsNCXw7/mMsA=;
+        b=n/niTjHe5fAGG3vo1/fwpYUA9vmcTouq3KPCWo9RuO8DypSvoOfBRCigLMjAoDeMj0
+         wFpF/RsId7ryuDIhlAOppJoYTOGc/szt4nLcG7W8u5fQxa5yoF3Azx9pw/gXKimj/tIM
+         6wh6wz8QCA4qxVd6L6aHEPP3coPOX87IObUADGP1EF5Iin2nN84teuPJm2C4VLB2x+5w
+         KLX3CMo/eDn4ddtj0EAPHbWorXhLG2qLYDg643GoDmqORQE1BrthS3yg6acVvpyx1+cP
+         sx/Jn3pY7LD2EsQzhAVDm6Fh2Wl0kIROKZ95CEvrs6jVH9qau9Mlt+bJLo6RwWfXYCLq
+         ahfw==
+X-Gm-Message-State: AOJu0Yzh7dnL4wWNd0E02PJZkkE37NGwh4E9Wy2kjsk+SbNVfoVR18Iu
+	u3qKi7ILPcVqzsr03pXCGyD8Cg==
+X-Google-Smtp-Source: AGHT+IHGsT/YTW07JZa6BB2LlyG3+WAKOizPA0kax+aj3lRWAFPbwJUUPk0n3MXi8E1VhVfV1XAu2Q==
+X-Received: by 2002:a5d:6dad:0:b0:32f:7d21:fd7b with SMTP id u13-20020a5d6dad000000b0032f7d21fd7bmr4342284wrs.39.1698657632132;
+        Mon, 30 Oct 2023 02:20:32 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id ba13-20020a0560001c0d00b0032db4825495sm7979207wrb.22.2023.10.30.02.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Oct 2023 02:20:31 -0700 (PDT)
+Date: Mon, 30 Oct 2023 12:20:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Mahmoud Adam <mngyadam@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: rsa - add a check for allocation failure
+Message-ID: <6f0902b8-f323-4534-9ad5-90c4ff92b677@kadam.mountain>
+References: <d870c278-3f0e-4386-a58d-c9e2c97a7c6c@moroto.mountain>
+ <ZT9zRaTmFp6xl9x3@gondor.apana.org.au>
+ <43d34a02-fc43-4ce8-b3ca-d996cf605ba2@kadam.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,48 +62,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23168336f18a9f6cb1a5b47130fc134dc0510d7f.1698648980.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <43d34a02-fc43-4ce8-b3ca-d996cf605ba2@kadam.mountain>
 
-On Mon, Oct 30, 2023 at 07:56:40AM +0100, Christophe JAILLET wrote:
-> All error handling end to the error handling path, except these ones.
-> Go to 'release_fw' as well here, otherwise 'fw' is leaking.
+On Mon, Oct 30, 2023 at 12:15:19PM +0300, Dan Carpenter wrote:
+> On Mon, Oct 30, 2023 at 05:11:33PM +0800, Herbert Xu wrote:
+> > On Mon, Oct 30, 2023 at 12:02:59PM +0300, Dan Carpenter wrote:
+> > > Static checkers insist that the mpi_alloc() allocation can fail so add
+> > > a check to prevent a NULL dereference.  Small allocations like this
+> > > can't actually fail in current kernels, but adding a check is very
+> > > simple and makes the static checkers happy.
+> > > 
+> > > Fixes: 6637e11e4ad2 ("crypto: rsa - allow only odd e and restrict value in FIPS mode")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > >  crypto/rsa.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > 
+> > Nack.  Please fix the static checker instead.
 > 
-> Fixes: 7e7a3c815d22 ("USB: typec: tps6598x: Add TPS25750 support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> The checker is not wrong.  Kernel policy is that every allocation has
+> to be checked for failure.  In *current* kernels it won't but we have
+> discussed changing this so the policy makes sense.
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+One way to fix the code would be to take gfp parameter and let people
+pass a GFP_NOFAIL.  Unless there is a GFP_NOFAIL then the policy is that
+the allocation can fail.
 
-> ---
->  drivers/usb/typec/tipd/core.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index 0e867f531d34..b0184be06c3d 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -968,16 +968,17 @@ static int tps25750_start_patch_burst_mode(struct tps6598x *tps)
->  	ret = of_property_match_string(np, "reg-names", "patch-address");
->  	if (ret < 0) {
->  		dev_err(tps->dev, "failed to get patch-address %d\n", ret);
-> -		return ret;
-> +		goto release_fw;
->  	}
->  
->  	ret = of_property_read_u32_index(np, "reg", ret, &addr);
->  	if (ret)
-> -		return ret;
-> +		goto release_fw;
->  
->  	if (addr == 0 || (addr >= 0x20 && addr <= 0x23)) {
->  		dev_err(tps->dev, "wrong patch address %u\n", addr);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto release_fw;
->  	}
->  
->  	bpms_data.addr = (u8)addr;
-> -- 
-> 2.34.1
+Or you could take the brtfs v1 approach and follow every kmalloc() with
+a:
+	p = kmalloc();
+	BUG_on(!p);
 
--- 
-heikki
+regards,
+dan carpenter
+
