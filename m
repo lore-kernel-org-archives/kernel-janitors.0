@@ -1,44 +1,56 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9416ADB
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 07:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFF25683
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 07:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BpQwBHoE"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 804E2D7D
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 00:20:31 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id xMZXqGw8VIsudxMZXqcmOd; Mon, 30 Oct 2023 08:20:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698650428;
-	bh=7XgPRehCSAWCRbDjmZl/84CZ6/WWxMs6uaboa+ApIJw=;
-	h=From:To:Cc:Subject:Date;
-	b=BpQwBHoE2T3irox9hMtwFlrsmiWk6BjqE45Zz12TX3diF9APEZ5rKQFCektaKsfTi
-	 +gOggw3fke5Z48pTjDYUQeQyHSyBCXu4+Euh4p3ujAjSAylJpOVYnWTLYUKWl6RrJU
-	 kZx0ek7fJ5nwV/Omem0GvSH6x1pj01Plg6ypzoxmUfeaMOdulGs8O9USdP5MZd4MBt
-	 +l1QsIBE5Mzx0hkIh0MYSE5xmRbcjzhOzgCr7QtJwLm8zH+W7SoYMAlRe1ryjL8TlW
-	 8GyU6IXR82HxyP2n8iIJiSErPFEgPUreA3NujAEXJcftwe1yrWQnDuhj3Tn6epi2Uj
-	 LM5DMbYOkBfZA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 30 Oct 2023 08:20:28 +0100
-X-ME-IP: 86.243.2.178
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Antti Palosaari <crope@iki.fi>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Brad Love <brad@nextdimension.cc>,
-	Sean Young <sean@mess.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: dvb-frontends: m88ds3103: Fix a memory leak in an error handling path of m88ds3103_probe()
-Date: Mon, 30 Oct 2023 08:20:26 +0100
-Message-Id: <1b254cae201809f85e9884ed33ae72ff6338017d.1698650397.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tQ9jPywQ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 939D9A2;
+	Mon, 30 Oct 2023 00:28:16 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39U3ei0K021240;
+	Mon, 30 Oct 2023 07:28:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=k8xJjWrcWKXPldA9YKlYtBPXjtNfajVMGGZoYYMVxIc=;
+ b=tQ9jPywQInbVGR86ivd5swz3k7A1h2+qRtTPL2Dj993FTsRuYTxxMVMVLPWyMhauCqAw
+ /vznMOdZqrMgIXKWUqoV63LwAoFWraj5ajN67TCf4tl7RJ+8UwnUtLU/G4JVC+zmW1FP
+ YAImSJFSjrOjONWM6B9Pek/YGWadOlW4D1p4A/lkaIml5n6vlFs7juGHqubdwxSy+oKy
+ pQh4tLw/0YdX0IO+KrEoCSJSloBb8semuvH8yxqo1h3gDVgENyRqf40+XqiPrcL1yYPa
+ au/886ZasuTfYxR5EoFE/xB2jU87uT4p9qD/DOelaxUojzyr9ed8uejjLMsdnh6vkFt5 sg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3u0swtj3qv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Oct 2023 07:28:03 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 39U73KFs029508;
+	Mon, 30 Oct 2023 07:28:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3u0rr48pmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Oct 2023 07:28:00 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39U7RxXZ029637;
+	Mon, 30 Oct 2023 07:28:00 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3u0rr48pm7-1;
+	Mon, 30 Oct 2023 07:27:59 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH next] PCI: xilinx-xdma: Fix error code in xilinx_pl_dma_pcie_init_irq_domain()
+Date: Mon, 30 Oct 2023 00:27:57 -0700
+Message-ID: <20231030072757.3236546-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,46 +58,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-30_05,2023-10-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=940 suspectscore=0
+ malwarescore=0 phishscore=0 spamscore=0 adultscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2310300055
+X-Proofpoint-ORIG-GUID: wBOheiCvW2FrvX3aPqokHcQtzunkk3Yq
+X-Proofpoint-GUID: wBOheiCvW2FrvX3aPqokHcQtzunkk3Yq
 
-If an error occurs after a successful i2c_mux_add_adapter(), then
-i2c_mux_del_adapters() should be called to free some resources, as
-already done in the remove function.
+Return -ENOMEM instead of zero(success) when it fails to get IRQ domain.
 
-Fixes: e6089feca460 ("media: m88ds3103: Add support for ds3103b demod")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- drivers/media/dvb-frontends/m88ds3103.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+This is found with smatch and the patch is only compile tested.
+---
+ drivers/pci/controller/pcie-xilinx-dma-pl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index 26c67ef05d13..e0272054fca5 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -1894,7 +1894,7 @@ static int m88ds3103_probe(struct i2c_client *client)
- 		/* get frontend address */
- 		ret = regmap_read(dev->regmap, 0x29, &utmp);
- 		if (ret)
--			goto err_kfree;
-+			goto err_del_adapters;
- 		dev->dt_addr = ((utmp & 0x80) == 0) ? 0x42 >> 1 : 0x40 >> 1;
- 		dev_dbg(&client->dev, "dt addr is 0x%02x\n", dev->dt_addr);
- 
-@@ -1902,11 +1902,14 @@ static int m88ds3103_probe(struct i2c_client *client)
- 						      dev->dt_addr);
- 		if (IS_ERR(dev->dt_client)) {
- 			ret = PTR_ERR(dev->dt_client);
--			goto err_kfree;
-+			goto err_del_adapters;
- 		}
+diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+index 2f7d676c683c..52f3211d11cd 100644
+--- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
++++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+@@ -576,7 +576,7 @@ static int xilinx_pl_dma_pcie_init_irq_domain(struct pl_dma_pcie *port)
+ 						  &intx_domain_ops, port);
+ 	if (!port->intx_domain) {
+ 		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+-		return PTR_ERR(port->intx_domain);
++		return -ENOMEM;
  	}
  
- 	return 0;
-+
-+err_del_adapters:
-+	i2c_mux_del_adapters(dev->muxc);
- err_kfree:
- 	kfree(dev);
- err:
+ 	irq_domain_update_bus_token(port->intx_domain, DOMAIN_BUS_WIRED);
 -- 
-2.34.1
+2.39.3
 
