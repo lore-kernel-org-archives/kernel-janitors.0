@@ -1,105 +1,80 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B124019446
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 17:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7821199CD;
+	Mon, 30 Oct 2023 18:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Z+JbvFky"
-X-Greylist: delayed 486 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 30 Oct 2023 10:04:17 PDT
-Received: from relay.mailchannels.net (gt-egress-001.relay.mailchannels.net [199.10.31.235])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4986A9;
-	Mon, 30 Oct 2023 10:04:14 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 89E3C4C3D18;
-	Mon, 30 Oct 2023 16:55:49 +0000 (UTC)
-Received: from pdx1-sub0-mail-a298.dreamhost.com (unknown [127.0.0.6])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 1079B4C3BE3;
-	Mon, 30 Oct 2023 16:55:22 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1698684943; a=rsa-sha256;
-	cv=none;
-	b=2CXHmmycSwYVIhoJzBRjEghs5y4qN+dM+Esljemt1HIPg5/6I7WtTltVbs6NmjVPk6KiU0
-	FpFnyrNvWMin1OV7lBQBNyjygUbMJMhZH7byDu2D3P06ZwyZumMwPmP/K2C6zLwJt6RS5Z
-	1si2APyxQws2ZdRGYQu7mCAaxod+NvUiwDJurXw23eGh06YL/Qe9iVEvduztm4SScbLTWJ
-	te8By5di/55RgEiUoy4ZRLTMbXegZ+5KcdsyGR2pNSrVpZg7F1QEPz4xv1RFYJ7HWNrHIm
-	EeXzem74Cd5sjbEhrzM4r0IsT5a18GXhrPP9T1q5GCUz+nNbluVKoGq2NAuYFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1698684943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=yeWInyf9RC5QASJ328kWPFhyjq9Bvnkp3cAVgJZB9XM=;
-	b=q6WEpp+HPm1nyOwEL5zJH/EPuhKjtBP9XM4SO/KxnjmI/ibWaIA4tQEIUkv+cpDktIEmv1
-	7vTmp+v+/AwQdBoHxAldinWD2GuKa+XbPX4rAe73+0Ok3pEsyZ1LK2Xt1xOI1QxLshW4XT
-	yG4cpfHfQLIi34TGL4TpAcRZSTF+geXOmULwIubOdxERq7htiTp3laa6yMxaFnuvz1Wh+a
-	NhpN1tssF4S/AKjCLAQ/xRIRPixgF7Rq9l3uLWYQ0H8CuyeURtrwSzNjBcy8ao8pBdsUTr
-	u5Ov/MJCBqRslElp8iC6F32hfbRsc6FmFvvX1cf9cqg7B+5JNXuqSCuXGh/9tw==
-ARC-Authentication-Results: i=1;
-	rspamd-86646d89b6-ckfgs;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Bottle-Whispering: 4ae5ec7e59508ca9_1698684944770_746902069
-X-MC-Loop-Signature: 1698684944770:32499628
-X-MC-Ingress-Time: 1698684944770
-Received: from pdx1-sub0-mail-a298.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.112.232.215 (trex/6.9.2);
-	Mon, 30 Oct 2023 16:55:43 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a298.dreamhost.com (Postfix) with ESMTPSA id 4SJzsg06S8z11v;
-	Mon, 30 Oct 2023 09:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1698684919;
-	bh=yeWInyf9RC5QASJ328kWPFhyjq9Bvnkp3cAVgJZB9XM=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=Z+JbvFkyQRZtyUncgVFxZMNUs9G45Y4IMC9OkchLlhWLFRHpHfzFrxjMlM+iX9mCt
-	 B1QXY243c8l2p9L+OFF/lDNRBYjqvhFj73XrZ92no/zJypywl94LdRbIUdtZCAmmQn
-	 d3y3H409U8ZrylXdcuilycy9CmJqGDEXqsPI68D0qWSQRtd7QPWYosTxVQE5u98Rfy
-	 wm/1IqZTjZDIDO3VI3UcAIrnlomveWiommV2zTGV+oIKH77b1J4oEOmgizpOrqfmv7
-	 0bEbZECPLe8ocxLKZfTWZOMNP15S2WTJustjcw0mxLizFNoxQELjq3qI/KlGg6Vrec
-	 oGL6ETX4BDaZQ==
-Date: Mon, 30 Oct 2023 09:55:16 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	rcu@vger.kernel.org
-Subject: Re: [PATCH] refscale: Optimize process_durations()
-Message-ID: <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
-References: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIiPIMD2"
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469C3DA;
+	Mon, 30 Oct 2023 11:59:16 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-5a1d89ff4b9so2655491a12.0;
+        Mon, 30 Oct 2023 11:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698692356; x=1699297156; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D4r8A7cJSUO7lfmtbA5mwhHvGqetNnRtlKJGlMM6PRY=;
+        b=NIiPIMD250EZETgc9HnKfDKpGTgT7HsmW6n3ixbMJghda66sLUx6UCzEaW68cUyZms
+         SHhxY8Ieo9P3WgUTN9mkE4MfPQAGgpLb6BwGrnspqy6tT4c5MTdk94YYH17III4HUyxl
+         ppXEguWjs3ZIEG7L6l19qj5SBnDjCScX344r93Oh5o3bWJc0jHBcPT1Q3B3ttSLf+SpZ
+         RUN6vTGVdG3PKQlSEEyc4+5LB475i3QsYqc1rxhYLPWwJsPJjkQzkfle5cv5l3E79PzQ
+         1ea2jluJ5CE8vJaGDI7NgSTW8TLkobC1Cotl0rbkfEA6xXQ+KGnpoz7D9QblOraIpGrr
+         QmhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698692356; x=1699297156;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=D4r8A7cJSUO7lfmtbA5mwhHvGqetNnRtlKJGlMM6PRY=;
+        b=CGtGg/VPPzSaP6YvhieyG2n0MGh4LGkWcU8cjjILApITpcsVHd6spCMwKYCnbofG3T
+         xsDiP37+yDo/HU5maz4ZM+LZEszrK46OV05BLS8PRAA5dYzYwJ4MuHuYkxSo//ZTRunc
+         DH0xG0mj8dq+F9UcbGHX4wSEJEGsg4mR3vlI3ldUpBfQv4XkvGIk0/UaXMtjBqmMfMKz
+         Lq+7Ftw3fJVLX2GEbJO+EmNzvv3sEyaGPUPPbsqwDE81rv4fQcrQWL3pFqqFxlVZH1qs
+         jQ1n4aE26vjLcORTStSHsn+CpAqcE4/VDfrsfuAW3MoS7/EMyQkIzxTHKQKYsARgF/8h
+         ZQtw==
+X-Gm-Message-State: AOJu0YwYsx/gVw/Gx0yyrfBqJ1zN0H3xX0H/khKRDVEBzY2o8Pxdnv8W
+	XUETGhm2+pk7TnlwXDNDJRs=
+X-Google-Smtp-Source: AGHT+IHU/caUo7izeKElyOwTfqzasmSBVd/ezx4D3hnVXYJAPrKvlwOmK1T7uaqU/3a+2fG7g0MGSA==
+X-Received: by 2002:a05:6a20:da88:b0:174:af85:954b with SMTP id iy8-20020a056a20da8800b00174af85954bmr11840648pzb.22.1698692355705;
+        Mon, 30 Oct 2023 11:59:15 -0700 (PDT)
+Received: from moohyul.svl.corp.google.com ([2620:15c:2a3:200:b306:b3a5:37ab:d58f])
+        by smtp.gmail.com with ESMTPSA id a18-20020aa78652000000b006be484e5b9bsm6191396pfo.58.2023.10.30.11.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Oct 2023 11:59:15 -0700 (PDT)
+Sender: Namhyung Kim <namhyung@gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf callchain: Fix spelling mistake "statisitcs" -> "statistics"
+Date: Mon, 30 Oct 2023 11:59:03 -0700
+Message-ID: <169869215963.2773399.7096091787995372516.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
+In-Reply-To: <20231027084633.1167530-1-colin.i.king@gmail.com>
+References: <20231027084633.1167530-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20231006
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 28 Oct 2023, Christophe JAILLET wrote:
+On Fri, 27 Oct 2023 09:46:33 +0100, Colin Ian King wrote:
+> There are a couple of spelling mistakes in perror messages. Fix them.
+> 
+> 
 
->process_durations() is not a hot path, but there is no good reason to
->iterate over and over the data already in 'buf'.
->
->Using a seq_buf saves some useless strcat() and the need of a temp buffer.
->Data is written directly at the correct place.
-
-Makes sense.
-
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Applied to perf-tools-next, thanks!
