@@ -1,96 +1,50 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE8D273
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G7g6nIpo"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E838E
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 06:27:37 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id xSIoq4DJYLilFxSIpqpweO; Mon, 30 Oct 2023 14:27:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698672455;
-	bh=/DkN5aD3T5Ca9TtQI/yHLRzDeLFOsujUxsYE2YCrNlU=;
-	h=From:To:Cc:Subject:Date;
-	b=G7g6nIpo2eAt6Fz7quD13L6Gm0WeEBDbpvi0RJGBjXKcpZ/DjQCWzwqv1Gl94Ny3h
-	 2idDLo5gCuCq53k/KKKiHBbbfY7iDz8q27xlbLOO14yiW+GsHza75cm1yx5yOw1Ao6
-	 ibW7+WoTLu+LEh2x+VLRI4CbFOe4vC573ziiA9w3TVvjK/DDSEO2RNHU+2tSMdwiP6
-	 C9VIbwhQ4ild3H21VcKgM35kPS1bHYQfHJ9tydWYUTMJrpxSUvV3W/Moak3qPuXLHN
-	 FTkIQ6QrqnE1P5INGirV7puw3fhCYpZtInVGoB9xzjZVEMEEHuDC6ibJXK2v4pPf+n
-	 t/m2nhemHB+Pw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 30 Oct 2023 14:27:35 +0100
-X-ME-IP: 86.243.2.178
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Tyler Hicks <code@tyhicks.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	ecryptfs@vger.kernel.org
-Subject: [PATCH] ecryptfs: Simplify ecryptfs_crypto_api_algify_cipher_name()
-Date: Mon, 30 Oct 2023 14:27:32 +0100
-Message-Id: <2c4bd387e8036854d3338400038fdde8dce3806a.1698672391.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EBDD273
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 13:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728DAC6;
+	Mon, 30 Oct 2023 06:29:57 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AF9C26732A; Mon, 30 Oct 2023 14:29:54 +0100 (CET)
+Date: Mon, 30 Oct 2023 14:29:54 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH] nvme-tcp: Fix a memory leak
+Message-ID: <20231030132954.GD21741@lst.de>
+References: <f9420cde9afdc5af40bf8a8d5aa9184a9b5da729.1698614556.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9420cde9afdc5af40bf8a8d5aa9184a9b5da729.1698614556.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Use kasprintf() instead of hand writing it.
-It is much less verbose.
+On Sun, Oct 29, 2023 at 10:22:57PM +0100, Christophe JAILLET wrote:
+>  		if (ctype != TLS_RECORD_TYPE_DATA) {
+>  			pr_err("queue %d: unhandled TLS record %d\n",
+>  			       nvme_tcp_queue_id(queue), ctype);
+> -			return -ENOTCONN;
+> +			ret = -ENOTCONN;
+> +			goto free_icresp;
+>  		}
+>  	}
+>  	ret = -EINVAL;
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- fs/ecryptfs/crypto.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+I'd slightly prefer the code to be consistent how it assigns to err,
+and use the style where it is assigned in the main path as with the
+-EINVAL for the next checks.
 
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 044863c0d824..00d795658cf5 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <asm/unaligned.h>
- #include <linux/kernel.h>
-+#include <linux/sprintf.h>
- #include <linux/xattr.h>
- #include "ecryptfs_kernel.h"
- 
-@@ -78,22 +79,12 @@ static int ecryptfs_crypto_api_algify_cipher_name(char **algified_name,
- 						  char *cipher_name,
- 						  char *chaining_modifier)
- {
--	int cipher_name_len = strlen(cipher_name);
--	int chaining_modifier_len = strlen(chaining_modifier);
--	int algified_name_len;
--	int rc;
-+	*algified_name = kasprintf(GFP_KERNEL, "%s(%s)",
-+				   chaining_modifier, cipher_name);
-+	if (!(*algified_name))
-+		return -ENOMEM;
- 
--	algified_name_len = (chaining_modifier_len + cipher_name_len + 3);
--	(*algified_name) = kmalloc(algified_name_len, GFP_KERNEL);
--	if (!(*algified_name)) {
--		rc = -ENOMEM;
--		goto out;
--	}
--	snprintf((*algified_name), algified_name_len, "%s(%s)",
--		 chaining_modifier, cipher_name);
--	rc = 0;
--out:
--	return rc;
-+	return 0;
- }
- 
- /**
--- 
-2.34.1
+Except for that this looks good:
 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
