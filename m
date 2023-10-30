@@ -1,58 +1,64 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D31379
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 11:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1CC13FE2
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 11:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZqEKQOmn"
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46EB5A9
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 04:06:43 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c523ac38fbso63290311fa.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 04:06:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BxxX/yaH"
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0ACC5
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 04:56:53 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-77774120c6eso305869285a.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 04:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698664001; x=1699268801; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1698667013; x=1699271813; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RPDLogMX2Okl0yWKKv3brKmDR3BK6A6t8hBL6zMzTPM=;
-        b=ZqEKQOmnxUMMQIMHczCPqIFQYtD1i6rCDD9eI4pyX77D6LMP8ON9Cm2UDhHp81grRh
-         FStLIjUklpSxd7dyrw5p8Xz+gfR6paxRNSaAJZOfuHY+91CIc6nvLl20KbW/abmSvG+0
-         7IeNqhw79CEBQZCkXW0R0aBmsbetHVSpuCjxGKax2Cm+roIHCmdj5GuTHXEhXVEiikwl
-         FnH8GDdq58fbkfogKaIRU598L3tqENVv1Y1ryoK6E+aQE1dXdz/3ZOTXN9Ri5985pu30
-         C03EHTVRNPkGMa+P0yHSLi42/+oEAgMk+yYd92mpQrpOpKvWE0O2dpRYNCUr7Jhv9+7e
-         VzeA==
+        bh=gQKrKJYeQqI408ZiaZJRkmFH/H0/KalWqC8BKV3SRh4=;
+        b=BxxX/yaH3N0SnoY3YHlM/FgUnbyQ3wwunyVaEo6W1A7FFcOQv10Jzpk8T5xc7mtSvT
+         /pBBQ/eaH4eZr46j7f12ANQX+SK+6gQJhS8WRR3hpyIYIQ/7hMl+fLy03JTc+jbwhZwG
+         HYh2y+dIHiTzIv5b9d4l0ZKmeK62dFuAwGwrBcx4I92unMRLYT9XCWPWC6ANa1V5JZnK
+         7AMrVsqT+nrcPB2Nzyi8L2Lk2fYogAqzXdn63VVLFxJg6zMWNBaUnfqkvBSKLRyGw95M
+         9bAPCot9dsFuw1wv8TetxrZZd6ZjwzAyBW3xKjHwshpgnc0lODN7shjC5eqPJvvdziO2
+         XuPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698664001; x=1699268801;
+        d=1e100.net; s=20230601; t=1698667013; x=1699271813;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RPDLogMX2Okl0yWKKv3brKmDR3BK6A6t8hBL6zMzTPM=;
-        b=p3do6Hflho44hOHrq3YISFTujxxbvYQ5iYd0kE2wbP3MM8eyhApo10nmKEcxx2TAWE
-         dEbhbiidI3eGjmiz+y9vo17XmIkxGFOpFPyzEIGjv1iQhm/w5QS3MmEo+8gokUZ37j8g
-         gTBBluBkIOjnDRIyNaskWE/u2LaRfDNoJnpIE4F3T42Q+Z+7bOufcJJq14gTBhFN2c5z
-         c1QL4UuQCxBN6qNMBiytpkLJu24jfbBWkchPQvojmPlJwd+ZdgBWdFzDoqR5wDPzclKd
-         WYVmU8bMUBhQK8DA2rksmNvw6HNEkMRkXs3E8fd/8pYD5dYDhcnr0y6uVB8VXZ8GmFe9
-         5UIg==
-X-Gm-Message-State: AOJu0Yxbgyu+iOP5cdFBo3flfAtwYh+BMrRPkcd5xwihmZB3peumt6Ub
-	zF7hkV9B1W/yE+bDdZFwCB3AiA==
-X-Google-Smtp-Source: AGHT+IEUF8qSE8BtR3dxKojdv94s9eYZmdvIVxNuat/ryX9vyqJd2oVzRTWo37qXTG/xd6BKZkoX4A==
-X-Received: by 2002:a05:651c:2122:b0:2c5:a1b0:d95a with SMTP id a34-20020a05651c212200b002c5a1b0d95amr8130145ljq.14.1698664001170;
-        Mon, 30 Oct 2023 04:06:41 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n35-20020a05600c3ba300b004068de50c64sm8934726wms.46.2023.10.30.04.06.40
+        bh=gQKrKJYeQqI408ZiaZJRkmFH/H0/KalWqC8BKV3SRh4=;
+        b=fxQIvZ32TUuXUeeCBJk/SFAV7Y/Bus8kgS9IL6jIDvI4mdkMEsv92McbQP//qeezx1
+         LqEnKwpW3N0waufSZOhEVsJ9SjJTzvAvzU0Y+iDT1311qxcnMYcGX8u2FDirAmFa3/a7
+         HgfXAltMGELkNCz2sC6XfBLs/dc2AZmB1YZ3/3TNc4ePLc40Cbyf1ARh30/zUjYhUsTY
+         alRP4nM1CJK4NsRfkVzLuWYBJoqWaOooserC1/+KUt70GLz2JNDe5GQzg1MP4nIOhCOS
+         awrS0D6kdxchR4Wy/eO+lrA7C8T0kRUZACg3OZPOYzlvfEtrGn6rcOWu9/OHW2mxEgmh
+         oy1Q==
+X-Gm-Message-State: AOJu0YzY/YhLalXUf4t1xo/6ZbswU+h5HxChmu7VJ1HwvEy7wKFI1vpu
+	UONKmiW71rDlPo4tIqDEfcxoKysESx8eLPP4baM=
+X-Google-Smtp-Source: AGHT+IGlo1N1nWgqEHCTfKHD4x4QvCUlpDbIj3E4lfEj8khCJx1F+5pIBfZ7gBWPby1i734LKGkdUg==
+X-Received: by 2002:a05:620a:4395:b0:778:909b:58c8 with SMTP id a21-20020a05620a439500b00778909b58c8mr8857446qkp.78.1698667012846;
+        Mon, 30 Oct 2023 04:56:52 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-26-201.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.26.201])
+        by smtp.gmail.com with ESMTPSA id r29-20020a05620a03dd00b00767da9b6ae9sm3242228qkm.11.2023.10.30.04.56.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 04:06:40 -0700 (PDT)
-Date: Mon, 30 Oct 2023 14:06:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] firmware: ti_sci: Fix an off-by-one in
- ti_sci_debugfs_create()
-Message-ID: <cd8ab7d2-d59b-4973-9180-0389b29fad0e@kadam.mountain>
-References: <7158db0a4d7b19855ddd542ec61b666973aad8dc.1698660720.git.christophe.jaillet@wanadoo.fr>
+        Mon, 30 Oct 2023 04:56:51 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1qxQt0-006eIL-QP;
+	Mon, 30 Oct 2023 08:56:50 -0300
+Date: Mon, 30 Oct 2023 08:56:50 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Janne Grunau <j@jannau.net>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/dart: Fix return code in
+ apple_dart_domain_alloc_paging()
+Message-ID: <20231030115650.GC691768@ziepe.ca>
+References: <b85e0715-3224-4f45-ad6b-ebb9f08c015d@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,25 +67,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7158db0a4d7b19855ddd542ec61b666973aad8dc.1698660720.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b85e0715-3224-4f45-ad6b-ebb9f08c015d@moroto.mountain>
 
-On Mon, Oct 30, 2023 at 11:12:26AM +0100, Christophe JAILLET wrote:
-> The ending NULL is not taken into account by strncat(), so switch to
-> snprintf() to correctly build 'debug_name'.
+On Mon, Oct 30, 2023 at 12:03:12PM +0300, Dan Carpenter wrote:
+> The apple_dart_domain_alloc_paging() function is supposed to return NULL
+> on error.  Returning an error pointer will lead to an Oops in
+> __iommu_domain_alloc().
 > 
-> Using snprintf() also makes the code more readable.
-> 
-> Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 482feb5c6492 ("iommu/dart: Call apple_dart_finalize_domain() as part of alloc_paging()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> v2:
->    - use snprintf() to simplify code   [Dan Carpenter]
-> 
+>  drivers/iommu/apple-dart.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Really need to fix this so the function does return ERR_PTR..
 
-regards,
-dan carpenter
-
+Thanks,
+Jason
