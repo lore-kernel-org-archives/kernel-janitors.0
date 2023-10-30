@@ -1,99 +1,136 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A9D529
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 12:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C1D505
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 12:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oG99BPfM"
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF10A2
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 05:38:25 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-6705379b835so15526726d6.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Oct 2023 05:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1698669504; x=1699274304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnuIYwmSwa+S4XlLT3QvUcDtJ9g3YgN2fZ+LLWa8C7o=;
-        b=oG99BPfMZybkj6u24AruhJ0xkXKFcgrx1mmspYsSUMjM6ik7kjuNc7zGYA6tJ94VRM
-         ghQJl86pIRyDFtaORpOaU2me3xqxVDLZ2CfIc1U6zENWFGniMMd1Q6CR1wQKjq44UD4H
-         fhk5QwoT0UJAoLQep7mmgfrvkrLW/1cz3Pjcg8zaV0n25wVnR/VJsFQcoEtRqr5kw236
-         yP23k04xc2rX3Y++zOS0GISDEva4hpaWktXNvADDJsgWT260NCVxAeIMup/spWiy4z2Z
-         /4LSzJJW6tH52rPGqvJJvNt90rpzvpXk+0Vu5OQslMtdyWYN3zvw6FQtQ/y0/ZXnOmf0
-         vrhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698669504; x=1699274304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PnuIYwmSwa+S4XlLT3QvUcDtJ9g3YgN2fZ+LLWa8C7o=;
-        b=Ocmhw/xswUTQT8TSH9eKgpqH5GX9eM6oIADmcCf1EcZPojeSCAEkEp2D7PaK1SXYpO
-         Qk+uTDuz2tzMua7gbngF6FXOUcjmhRw6LDCa0P/93UcVlQ+zd13I2l9Lpq0BKUBIGedE
-         mb2KG85g+RQdFLYK3BaT+81rBRN1785jdWtqYsa2lDjLBekr21d1e5WizgnE9flUuQg1
-         D4T6sa5LcNEqAzNqNMKeFAGXvIEvNG5Vno8/08gsY5rVZFASJ/WbpcIZ6+AwIHaZxNR8
-         3ICYbx69mUUqMO8TxOstmM3olfWUXYX1h/KPTsw2Me1/+vbor10JfVAO51xm6kwi/PlP
-         aV/g==
-X-Gm-Message-State: AOJu0YwxFwyCi3BOarFRwSH+SmGlQ7O//NfLUkk+qzWXaxu8Gq2QkoD6
-	JW3MpqLtDv0QOYcV5sNTCYSDTA==
-X-Google-Smtp-Source: AGHT+IFzZsEpO/RvvLS1iMDezad+WvzdwmrIgbedQy9A5of3lpQHjn7moFPfQR8WitI3jcfQDCqOxQ==
-X-Received: by 2002:a05:6214:2a87:b0:66d:138f:95df with SMTP id jr7-20020a0562142a8700b0066d138f95dfmr12128949qvb.56.1698669504669;
-        Mon, 30 Oct 2023 05:38:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-26-201.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.26.201])
-        by smtp.gmail.com with ESMTPSA id es16-20020a056214193000b0065b0554ae78sm3321400qvb.100.2023.10.30.05.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 05:38:24 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1qxRXD-006etA-C1;
-	Mon, 30 Oct 2023 09:38:23 -0300
-Date: Mon, 30 Oct 2023 09:38:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Janne Grunau <j@jannau.net>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iommu/dart: Fix return code in
- apple_dart_domain_alloc_paging()
-Message-ID: <20231030123823.GD691768@ziepe.ca>
-References: <b85e0715-3224-4f45-ad6b-ebb9f08c015d@moroto.mountain>
- <20231030115650.GC691768@ziepe.ca>
- <d42a8cb4-dd0d-407e-8659-915ca821e1f6@kadam.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXQSBd9+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04A6C6;
+	Mon, 30 Oct 2023 05:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698670026; x=1730206026;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=acCrsCNmaOONI9brAj/EA4NAdkInhvJZ2O3IwgG1etU=;
+  b=aXQSBd9+GmreSxzvBdAjvkyjFZdOBQsxzJ//YoVQIYH13Qf5F+WPf2lI
+   4nMkd4evf3Eg3Cry2Vu5DDxjD8IFZ1cGG5eCCEXc9KFAcoYRK6i1dWizn
+   /PjyONKXVC1g3daPQhNwcoxEnFhnWkTW/qo6/EkirYwopymmhlDTIN4U/
+   rmMDNNCVp9DDlCM0IXWX4GFtQJ+w0hJJdX5hOsOMSzvoY7Mb1QxFqznsp
+   EYrudwZiBxUMtToTXmLKTRmE/bvZUEXC+Q1AaC4AIMrSQMCZQk6lf8toL
+   etmb06ohEKWc5TcPjA6U7IVqoorzS1ePzuqnj8NgrAzUda3iL04EGCAJW
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="9596831"
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="9596831"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:47:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="1502059"
+Received: from igherghe-mobl1.ger.corp.intel.com (HELO [10.213.220.192]) ([10.213.220.192])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:47:02 -0700
+Message-ID: <2e9df6e9-fa6e-46d5-b2ff-4da0efb44d74@linux.intel.com>
+Date: Mon, 30 Oct 2023 12:47:00 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d42a8cb4-dd0d-407e-8659-915ca821e1f6@kadam.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] i915/perf: Fix NULL deref bugs with drm_dbg() calls
+Content-Language: en-US
+From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>,
+ Matt Roper <matthew.d.roper@intel.com>,
+ Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+References: <20231027172822.2753059-1-harshit.m.mogalapalli@oracle.com>
+ <29c2bf2b-82b1-457d-ba42-29b0b30ecf32@linux.intel.com>
+Organization: Intel Corporation UK Plc
+In-Reply-To: <29c2bf2b-82b1-457d-ba42-29b0b30ecf32@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 30, 2023 at 03:00:56PM +0300, Dan Carpenter wrote:
-> On Mon, Oct 30, 2023 at 08:56:50AM -0300, Jason Gunthorpe wrote:
-> > On Mon, Oct 30, 2023 at 12:03:12PM +0300, Dan Carpenter wrote:
-> > > The apple_dart_domain_alloc_paging() function is supposed to return NULL
-> > > on error.  Returning an error pointer will lead to an Oops in
-> > > __iommu_domain_alloc().
-> > > 
-> > > Fixes: 482feb5c6492 ("iommu/dart: Call apple_dart_finalize_domain() as part of alloc_paging()")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > >  drivers/iommu/apple-dart.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > 
-> > Really need to fix this so the function does return ERR_PTR..
+
+On 27/10/2023 18:38, Tvrtko Ursulin wrote:
 > 
-> It's called as a function pointer.  Changing that will create a
-> backporting hazard unless we rename the pointer or something.
+> On 27/10/2023 18:28, Harshit Mogalapalli wrote:
+>> When i915 perf interface is not available dereferencing it will lead to
+>> NULL dereferences.
+>>
+>> As returning -ENOTSUPP is pretty clear return when perf interface is not
+>> available.
+>>
+>> Fixes: 2fec539112e8 ("i915/perf: Replace DRM_DEBUG with driver 
+>> specific drm_dbg call")
+>> Suggested-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+>> ---
+>> v1 --> v2: Remove the debug calls as they don't add much value and
+>> -ENOTSUPP is a good enough return value.
+>> ---
+>>   drivers/gpu/drm/i915/i915_perf.c | 15 +++------------
+>>   1 file changed, 3 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/i915_perf.c 
+>> b/drivers/gpu/drm/i915/i915_perf.c
+>> index 2f3ecd7d4804..7b1c8de2f9cb 100644
+>> --- a/drivers/gpu/drm/i915/i915_perf.c
+>> +++ b/drivers/gpu/drm/i915/i915_perf.c
+>> @@ -4227,11 +4227,8 @@ int i915_perf_open_ioctl(struct drm_device 
+>> *dev, void *data,
+>>       u32 known_open_flags;
+>>       int ret;
+>> -    if (!perf->i915) {
+>> -        drm_dbg(&perf->i915->drm,
+>> -            "i915 perf interface not available for this system\n");
+>> +    if (!perf->i915)
+>>           return -ENOTSUPP;
+>> -    }
+>>       known_open_flags = I915_PERF_FLAG_FD_CLOEXEC |
+>>                  I915_PERF_FLAG_FD_NONBLOCK |
+>> @@ -4607,11 +4604,8 @@ int i915_perf_add_config_ioctl(struct 
+>> drm_device *dev, void *data,
+>>       struct i915_oa_reg *regs;
+>>       int err, id;
+>> -    if (!perf->i915) {
+>> -        drm_dbg(&perf->i915->drm,
+>> -            "i915 perf interface not available for this system\n");
+>> +    if (!perf->i915)
+>>           return -ENOTSUPP;
+>> -    }
+>>       if (!perf->metrics_kobj) {
+>>           drm_dbg(&perf->i915->drm,
+>> @@ -4773,11 +4767,8 @@ int i915_perf_remove_config_ioctl(struct 
+>> drm_device *dev, void *data,
+>>       struct i915_oa_config *oa_config;
+>>       int ret;
+>> -    if (!perf->i915) {
+>> -        drm_dbg(&perf->i915->drm,
+>> -            "i915 perf interface not available for this system\n");
+>> +    if (!perf->i915)
+>>           return -ENOTSUPP;
+>> -    }
+>>       if (i915_perf_stream_paranoid && !perfmon_capable()) {
+>>           drm_dbg(&perf->i915->drm,
+> 
+> Thanks for re-spinning it so quickly! LGTM.
+> 
+> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-You can make that argument about almost any change in the kernel..
+Now merged to drm-intel-gt-next. Thanks again!
 
-IMHO we needed an annotation like __user/__iomem/etc to indicate
-ERR_PTR so at least there is some hope of trivially finding it.
+Regards,
 
-Jason
+Tvrtko
