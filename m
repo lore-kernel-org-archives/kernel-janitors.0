@@ -1,55 +1,59 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DAC179B9
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 09:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62917182A4
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 09:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLlODXyK"
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63422707
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:53:11 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-32f70391608so2517469f8f.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:53:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEYiSDYF"
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CE21BC
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:53:38 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32f7abbb8b4so2270926f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698745990; x=1699350790; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698746017; x=1699350817; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cFRxwinx1cM2sVOqCV9quISEyDqLS+FaZtQfbRBK1rA=;
-        b=yLlODXyKAftmOd5NF3c+z+I6Gf2qg+g3Pwv64ppyv4lcSQuLY3mPuTTvY79qn3cV4r
-         a+oUYD5W0bElf9aZBj8A2osyEJmAbvwSfVRJb7zygG6u5/RSHjCK2Bk8Vmos29TP1dyl
-         MnITroExuJSHn2TVkfO3OUSym0WaKM00VN2E8V29jGMVmcY0tCDUeym57TWmVTVzx6Wk
-         D2VBXcc0XhDS0MEPUYVeIfiz/Cs8fTiSVr8r4sC2/8EzOStz9KehlGxpqvJAQW9pwH4l
-         Jk0jhHWcmfloRd93zd2NVLDep7GbdGXCSxBrpXCRK+H39AhfARLrxFS03gKhpFEsIhdm
-         hEdw==
+        bh=UzcHgJeME8SmvLN454BJ2f75d3TFJlrQAlY/l2HK+Us=;
+        b=mEYiSDYFll1/nWffzhgULhJcenS803yMEQI5RBGRsP+WAXVo72YLCmCYQjrFRkHHbG
+         abGpv9KrYZJQ9t+eFBDK86P21ss9bz/L8oE0Rx1Aw/fLuhAL62eglI/KFmRC+9nwpkTw
+         roGnQ7LxYAw1b1QxZYzyJTMQt/RMGRVzTIH3V986zAoioQ0QldYCMLVFFSrnnyBVPg2q
+         tluwMOohAGp3tb0fc8sEQnfjgX6HZabza6X2Kf+TOytGKgY2jO6oJ9ebjD2Q++4wqmrr
+         HdBIY92VYCkSx6w7AnFhMqdjMZMGbED6ONJu2KOfs4RQhpmR2trj9aj7HwPIh9u446pK
+         getQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698745990; x=1699350790;
+        d=1e100.net; s=20230601; t=1698746017; x=1699350817;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cFRxwinx1cM2sVOqCV9quISEyDqLS+FaZtQfbRBK1rA=;
-        b=DUzpU4YanbDcYE2blsAGYer9X4od4YKFOiDkxNgwjnQd7EpeQnu/pYWI4dYLXNQrsH
-         cx4T+XZni3yp0eY4dPZoL660D/VDUVrjRZOfxeG8CGu1XaGGkE/L69jOxc8HViaEAAiN
-         DC8KZvG5TEVeIIdj2rHos7rrHZt7dI6nJu4ttRGaQlMQiaHgscXR2YMioPD3dlXHnGF+
-         hu7SmTGCP+LeJjtxImqHl9UuuN9N//gQI6qyVSX9R2HWuAi/yLTOOT+bOpi8MF0rN0Yz
-         g0dnA7OtnyIAijBW2fYLb9vU75GSZsJtl0fN5ItoAhIE58arzFsjuz72XNXvz5fY7Cc8
-         XE+A==
-X-Gm-Message-State: AOJu0YzHEp7ohPKv7zFTJSo/vr2Q53W5d9ii9HnlUZltGxJM7ShahpDV
-	webSLlaARrZCghZeNPVP0PUZrXLteOTky1emun0=
-X-Google-Smtp-Source: AGHT+IG8siE7KnFaasdwbgCjK7u76Z93oel5ja003Na7cnX3EmogDwE8acrkjpq54EA7RJ8DlL1OSA==
-X-Received: by 2002:a05:6000:2aa:b0:32f:7c27:423b with SMTP id l10-20020a05600002aa00b0032f7c27423bmr7734652wry.51.1698745990224;
-        Tue, 31 Oct 2023 02:53:10 -0700 (PDT)
+        bh=UzcHgJeME8SmvLN454BJ2f75d3TFJlrQAlY/l2HK+Us=;
+        b=DD6OuqUXcOigen6p1CfRJKyszPXrEgm2hZI9lHGmWqSdkVrJhHESG7AKsoQXhNZd7X
+         0+JMtyMHGQg74Ukf3vCW6GTKXdeJg7gyFOFIjYz+Tve/zyeI+0z4T1In36Vvo6Pc69n3
+         JDtwwmVRp6rqDlLkD9SRSoiBK76hWc2gbVEfqyE2GY8qed1YcBjWaStsMAtExSt6J4lv
+         HnUw/5ea9o+gT26n390a7IhB764WT+wygbgRZ2xxvwDCEPRSVlB6uvsqqR9qsAp87LFR
+         bRpwA0B8e5AywY2pwPJUxnKCArxdoxZE71X4Xl+i3Q7rg+C2lHIJZHkw2bHtidIe9DLl
+         RbSQ==
+X-Gm-Message-State: AOJu0Yx3s/u2BBBDOHsQt0vJOczZ2nTWjrxhFECtvj8aOZ8xQvJQQtxQ
+	/coltO4L8lO/v0h0Qz9WtuRWjw==
+X-Google-Smtp-Source: AGHT+IGQ3EbnVgYbgH2NgwfDvLm3+nygpGdf5Agqt6r2SrYPqkaggyRBMRzQlA+p82ssNtqPOj1Idw==
+X-Received: by 2002:a5d:670c:0:b0:32d:8431:341e with SMTP id o12-20020a5d670c000000b0032d8431341emr7738143wru.62.1698746016957;
+        Tue, 31 Oct 2023 02:53:36 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r12-20020a5d694c000000b0032dde679398sm1093302wrw.8.2023.10.31.02.53.09
+        by smtp.gmail.com with ESMTPSA id e13-20020a5d594d000000b00327bf4f2f14sm1073304wri.88.2023.10.31.02.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 02:53:09 -0700 (PDT)
-Date: Tue, 31 Oct 2023 12:53:06 +0300
+        Tue, 31 Oct 2023 02:53:36 -0700 (PDT)
+Date: Tue, 31 Oct 2023 12:53:33 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ACPI: thermal: Fix acpi_thermal_unregister_thermal_zone()
- cleanup
-Message-ID: <45750e0c-ce53-4994-8abc-19e75377ba5f@moroto.mountain>
+To: Lin Ma <linma@zju.edu.cn>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Hyunwoo Kim <imv4bel@gmail.com>, linux-media@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: dvbdev: drop refcount on error path in
+ dvb_device_open()
+Message-ID: <47a1e8bd-accf-4afb-85aa-c9a746561902@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -60,49 +64,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The acpi_thermal_unregister_thermal_zone() is paired with
-acpi_thermal_register_thermal_zone() so it should mirror it.  It should
-clean up all the resources that the register function allocated and
-leave the stuff that was allocated elsewhere.
+If call to file->f_op->open() fails, then call dvb_device_put(dvbdev).
 
-Unfortunately, it doesn't call thermal_zone_device_disable().  Also it
-calls kfree(tz->trip_table) when it shouldn't.  That was allocated in
-acpi_thermal_add().  Putting the kfree() here leads to a double free
-in the acpi_thermal_add() clean up function.
-
-Likewise, the acpi_thermal_remove() should mirror acpi_thermal_add() so
-it should have an explicit kfree(tz->trip_table) as well.
-
-Fixes: ec23c1c462de ("ACPI: thermal: Use trip point table to register thermal zones")
+Fixes: 0fc044b2b5e2 ("media: dvbdev: adopts refcnt to avoid UAF")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/acpi/thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-core/dvbdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-index d98ff69303b3..f74d81abdbfc 100644
---- a/drivers/acpi/thermal.c
-+++ b/drivers/acpi/thermal.c
-@@ -702,9 +702,9 @@ static int acpi_thermal_register_thermal_zone(struct acpi_thermal *tz,
- 
- static void acpi_thermal_unregister_thermal_zone(struct acpi_thermal *tz)
- {
-+	thermal_zone_device_disable(tz->thermal_zone);
- 	acpi_thermal_zone_sysfs_remove(tz);
- 	thermal_zone_device_unregister(tz->thermal_zone);
--	kfree(tz->trip_table);
- 	tz->thermal_zone = NULL;
- }
- 
-@@ -967,7 +967,7 @@ static void acpi_thermal_remove(struct acpi_device *device)
- 
- 	flush_workqueue(acpi_thermal_pm_queue);
- 	acpi_thermal_unregister_thermal_zone(tz);
--
-+	kfree(tz->trip_table);
- 	acpi_thermal_free_thermal_zone(tz);
- }
- 
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 305bb21d843c..49f0eb7d0b9d 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -104,6 +104,8 @@ static int dvb_device_open(struct inode *inode, struct file *file)
+ 			err = file->f_op->open(inode, file);
+ 		up_read(&minor_rwsem);
+ 		mutex_unlock(&dvbdev_mutex);
++		if (err)
++			dvb_device_put(dvbdev);
+ 		return err;
+ 	}
+ fail:
 -- 
 2.42.0
 
