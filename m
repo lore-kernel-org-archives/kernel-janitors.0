@@ -1,87 +1,87 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBDA6D22
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 08:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A27D291
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 08:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEIfClgS"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399FDC1;
-	Tue, 31 Oct 2023 01:42:45 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40853c639abso41994735e9.0;
-        Tue, 31 Oct 2023 01:42:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lIRRkAAc"
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AEAC1
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 01:58:05 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-5079f6efd64so7526856e87.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 01:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698741763; x=1699346563; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AROgZw/JVvq+68xbNYsvRy/4pT+NfjXN2lg6x0CjG8A=;
-        b=hEIfClgSZNaP3I6eKSGlPQF6PJqqGnSF1OBnFjaBccKWtQDxZVdULZcUFLG/i81G09
-         Ng7FbbE9DcK20cdurESAuvslDp/dzHGJd9MvQCPQBDx0eCXi2O+BhBHzwxSJDT5FcqWX
-         K+eT7sv1wEYE8XyelIlGCwf27YEMFOZCpYKzkUA2n1+8UE1QvM2XPH3J+ChJ0X9KSsvV
-         XxGN8w03hsYfimJBFltRwFAqDk+NeWnE5tVJpngGFZt9IqKt0EcY2Hc4sahDPS0/VOvZ
-         1ikbSYcxMvRQfIf4JKjzO+KOWpKL/IRzLJttcJcwkiYh5P0g0FDnr3eDdObMWt/bToDt
-         3XBw==
+        d=linaro.org; s=google; t=1698742684; x=1699347484; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d4STdM0jYEXN+54aJ9JQEaU7mf4zySlUWnw/NPnMyOY=;
+        b=lIRRkAAcg+uQNDo+L7xqz+20yba9RZQ55trzNV8YpjJBCjy4NneV5kx1NBy9U5A2iT
+         Kzck1Fb6Lnf0XFB1KXYzVDILn72xlZseWGeC1XbDBkKPnM8zdoSyeQ8iBvhB+synZ52L
+         H9916lelA8YBHU307XEaHX8XNRFZgiUHjcEBgexfPYTccOI4bpDeJXnCevwaCUcZQ/7A
+         xpQfarpj776xq2dz0ssMWUb742NIC+oWh0dEk1wNpz+1HpSmVvjTo11U7Pm2CBeovqdm
+         /id6UbqFdCFIsX7BvnoCrF7ayhTJCPxsNI2m3ZCDy8XwYw0FUi1/TZQV0uNgs+7KNgzx
+         SXvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698741763; x=1699346563;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AROgZw/JVvq+68xbNYsvRy/4pT+NfjXN2lg6x0CjG8A=;
-        b=F/g+gFX301U+BGTQRMQkQSYQ4jJBczRdR+PWRelFsJ0WswefY/q0U4WQcPZIcvGpfl
-         k1DWhv8/eCgXBBc0jFD52zNn0scmDHit36xSaBa2aYnkIz7TrJmqmMG0kLKZ1J3AS/Uj
-         KAK/eS/fmvYlcX5oO1YREpuqPBjgTwHDYM0GwrCeGHpfMBIDqqQWSh8mxSnlaiKllxb9
-         H8zkpnArjzNfjV4jKFcrXQjHY1FP5jmQKwPH6CciVNdVd6gLqiG/CFsCyhyo6nFz3oWu
-         lcl+5rxlQuv6kKzAbFWIDyDPF1KtTlp0f3cXljXloyBcH/zF+Js+dHIIL8ghbgmNNFgV
-         uvkg==
-X-Gm-Message-State: AOJu0YwTDtYdqpT1YAJk5WTeb2gUT5PcMY+RxnubZkkz+zzltKMgTpMT
-	0h/TQ+xyXWL1o/6yGK+vegg=
-X-Google-Smtp-Source: AGHT+IHZDRSngvhDQENTdP/LPwLPHEITHKXi7mwWdOtvMYjLB8/qRkJ++HuLwOr0jzkp77KVReCxhA==
-X-Received: by 2002:a05:600c:5251:b0:409:247b:b0ae with SMTP id fc17-20020a05600c525100b00409247bb0aemr9418327wmb.36.1698741763356;
-        Tue, 31 Oct 2023 01:42:43 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id fl14-20020a05600c0b8e00b00402d34ea099sm1083873wmb.29.2023.10.31.01.42.42
+        d=1e100.net; s=20230601; t=1698742684; x=1699347484;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d4STdM0jYEXN+54aJ9JQEaU7mf4zySlUWnw/NPnMyOY=;
+        b=D5Rp/d0TW0cRRALqdCN3241VIbnKTIUeaUa10hJ3Tmt4RY0wEK0T5R7z6RddhhFyQ5
+         nHhUSGZmV6NPn4nTjeh9bqTd3ooUsSSSysflHYnBa6FwN17rbDXJKqfCHO8elWRCZXTl
+         hUwmCh0dvfu6/utyV3trfwZkNUvpxg5AocNYPhGdpY0maepVl53adp6Y3Gi1JTMvHhBM
+         xcVMYw6+mV6CfSVHEwE3I4g3mAcJMVspjguhwoY9abcym3ePkFxvL+yfkgS0Mw/XNdxQ
+         nGWv/5Cr/m4Gu/zgkjLEsc7tFRkoYXCynv68F9jgRXa/Y+kpUqfV7oIb5NiXw3j8RMzN
+         oemA==
+X-Gm-Message-State: AOJu0YysbidnoHjDRFnVOsIiCMT28xLWS4OoAbt4yNPB8BnFuht9avRW
+	UO4TnmtznnLt5GYFcPbq6WzG7ztXt6zE6JVNYH8=
+X-Google-Smtp-Source: AGHT+IGpyL5LNThnF9EVE+It32ZKweaZuoUkY2L75q/AthejDBJRPtrL7WQrHmLGI6tPuRs941KE2w==
+X-Received: by 2002:ac2:5f51:0:b0:507:9f4c:b72 with SMTP id 17-20020ac25f51000000b005079f4c0b72mr8428895lfz.15.1698742683962;
+        Tue, 31 Oct 2023 01:58:03 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y17-20020adff6d1000000b0032f7d7ec4adsm973923wrp.92.2023.10.31.01.58.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 01:42:42 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hwmon: ltc2991: Fix spelling mistake "contiuous" -> "continuous"
-Date: Tue, 31 Oct 2023 08:42:40 +0000
-Message-Id: <20231031084240.2148339-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 31 Oct 2023 01:58:03 -0700 (PDT)
+Date: Tue, 31 Oct 2023 11:58:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] KVM: Add missing fput() on error path
+Message-ID: <64117a7f-ece5-42b1-a88a-3a1412f76dca@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-There is a spelling mistake in a dev_err_probe messages. Fix it.
+Call fput() on this error path.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: fcbef1e5e5d2 ("KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for guest-specific backing memory")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hwmon/ltc2991.c | 2 +-
+ virt/kvm/guest_memfd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/ltc2991.c b/drivers/hwmon/ltc2991.c
-index bd63c61129a9..fc53fdcb2b6c 100644
---- a/drivers/hwmon/ltc2991.c
-+++ b/drivers/hwmon/ltc2991.c
-@@ -373,7 +373,7 @@ static int ltc2991_init(struct ltc2991_state *st)
- 			   LTC2991_REPEAT_ACQ_EN);
- 	if (ret)
- 		return dev_err_probe(st->dev, ret,
--				     "Error: Failed to set contiuous mode.\n");
-+				     "Error: Failed to set continuous mode.\n");
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 7f62abe3df9e..039f1bb70a0c 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -473,7 +473,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	inode = file_inode(file);
  
- 	/* Enable all channels and trigger conversions */
- 	return regmap_write(st->regmap, LTC2991_CH_EN_TRIGGER,
+ 	if (offset < 0 || !PAGE_ALIGNED(offset))
+-		return -EINVAL;
++		goto err;
+ 
+ 	if (offset + size > i_size_read(inode))
+ 		goto err;
 -- 
-2.39.2
+2.42.0
 
