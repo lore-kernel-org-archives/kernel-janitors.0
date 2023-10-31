@@ -1,61 +1,35 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083410A33
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 09:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09CF20EE
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 10:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BZiU5eGV"
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7B9123
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:54:31 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-507975d34e8so7896831e87.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 02:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698746069; x=1699350869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZU07pbgnI66N/yRyT5yyBSwPkEnTukC8jFqVdALn0X8=;
-        b=BZiU5eGV+X+mdjCmMdBqukIX03icf7W+SpBXYNkFyoYAGOCD6ACQ54Z4ZSG+ORITTJ
-         GrkLbO9mD/FZpl8Qcj+YU1o0U0zB8GwjkNMAW5F8/OG/kvjalHHclaM/67Pb4V+Nquis
-         qYZEx1k+QY7CtYVd24xzM+6h02vsK2StMuNt/l1AJ6D/zfISmQEcDRj7hKD44EXseECB
-         tJbjwoAPjbPWcPfQK02iZApCxXNax/yNPQtX3je7j87SKuLbQCaQb5wwX0YJeDaqxgfr
-         8fdUVrFlrclS1PSHMJmsAyfddS+Wi833dbeY3Z1GOeFcwlx8EcCdFFziZh6K6K3N7QU/
-         lIfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698746069; x=1699350869;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZU07pbgnI66N/yRyT5yyBSwPkEnTukC8jFqVdALn0X8=;
-        b=aliiY9oSOAKQOmFHMyo34AcqalY2b0i39+zfEJSn79v3QBFwAfAJ6GRE6QXCBcEIgU
-         FbmMTg/EbsSO7G8FC8QoldZIb3l0x3ynf4/Jvcms0dfaz/mk6PPOI/Js7NoDGt1dxlJO
-         wKVBlWfMJZ5WnpdCC9DK73oKmLJTzF4Py1g+OiV4K9D2rZ6Q8G6mJLI8gi5KPW81ihBo
-         1wfJTQZt3HhKKWaDNs/WNcwhxocuf3B+tFF9aneWYeUGNKxiYIrjn0pw+Qg2YAmvsb9L
-         GixrDoCyDC7Sbix9tp8bXvoCQubRYduh6+xdaUOKRjkQli+rZZZM0TLqmmeSi32FGj4k
-         g19Q==
-X-Gm-Message-State: AOJu0YyKeVvRTNMTX8Jn8TLTKPUrHmEyfVTmk0VBXSBRFIVY8MZgqArR
-	5Lv3O4bD6dpGO18R2jLhGtWZHg==
-X-Google-Smtp-Source: AGHT+IHr8nE960Uc3xUzQfase2Sduc+v8EfCz56jdjXt6Q8sabke258Q3uhp/yrn2zXUrL7L3ceaBA==
-X-Received: by 2002:a05:6512:312f:b0:507:9ae3:6ba7 with SMTP id p15-20020a056512312f00b005079ae36ba7mr8585994lfd.67.1698746069663;
-        Tue, 31 Oct 2023 02:54:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h13-20020a5d6e0d000000b0032dbf26e7aesm1091362wrz.65.2023.10.31.02.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 02:54:29 -0700 (PDT)
-Date: Tue, 31 Oct 2023 12:54:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mObP8r+B"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF32F1;
+	Tue, 31 Oct 2023 03:01:42 -0700 (PDT)
+Received: from umang.jainideasonboard.com (unknown [103.86.18.252])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F1683D6;
+	Tue, 31 Oct 2023 11:01:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1698746484;
+	bh=Jl+xsisgGaEGcRycAbLfuH+GR5oIKMeZIutbGi45Jio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mObP8r+Bj16HOBypfv+h8OpHY2GSQr9PdprT/4uCHMoEb+3flzfrcrgb43yBHDPm1
+	 p35eJcn924dFAaPfJcqX+rVY1UzNLsRjq4Xime6MQnTWTNM153BKXXKowxYx6MzYKD
+	 uGj9y+cPMozszty+ECAKkEBMDmv4il6hOd0SIKOQ=
+Date: Tue, 31 Oct 2023 15:31:30 +0530
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Stefan Wahren <stefan.wahren@i2se.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Phil Elwell <phil@raspberrypi.com>, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] cxl/hdm: add unlock on error path
-Message-ID: <63295673-5d63-4919-b851-3b06d48734c0@moroto.mountain>
+Subject: Re: [PATCH] staging: vc04_services: remove unnecessary NULL check
+Message-ID: <4hbwnpv3qw6sxbtgqjraalzh55cg7los6mtddksitcikm4xjgx@wpqa3eqsw7xn>
+References: <1dff4d9b-d067-4525-95e0-ffdc1185cccd@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -64,30 +38,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <60028378-d3d5-4d6d-90fd-f915f061e731@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <1dff4d9b-d067-4525-95e0-ffdc1185cccd@moroto.mountain>
 
-This error path needs to call up_read(&cxl_dpa_rwsem).
+Hi Dan,
 
-Fixes: 176baefb2eb5 ("cxl/hdm: Commit decoder state to hardware")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/cxl/core/hdm.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for the patch.
 
-diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-index af17da8230d5..0eb580245276 100644
---- a/drivers/cxl/core/hdm.c
-+++ b/drivers/cxl/core/hdm.c
-@@ -684,6 +684,7 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
- 		if (rc) {
- 			dev_dbg(&port->dev, "%s: target configuration error\n",
- 				dev_name(&cxld->dev));
-+			up_read(&cxl_dpa_rwsem);
- 			goto err;
- 		}
- 
--- 
-2.42.0
+On Tue, Oct 31, 2023 at 11:59:34AM +0300, Dan Carpenter wrote:
+> We ensured that "service" as non-NULL in the previous if statement so
+> there is no need to check again here.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
+LGTM,
+
+Reviewed-by: Umang Jain <umang.jain@ideasonboard.com>
+> ---
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index 39b857da2d42..a0117efa2991 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -2040,8 +2040,7 @@ sync_func(void *v)
+>  			continue;
+>  		}
+>  
+> -		svc_fourcc = service ? service->base.fourcc
+> -				     : VCHIQ_MAKE_FOURCC('?', '?', '?', '?');
+> +		svc_fourcc = service->base.fourcc;
+>  
+>  		vchiq_log_trace(state->dev, VCHIQ_SYNC,
+>  				"Rcvd Msg %s from %p4cc s:%d d:%d len:%d",
+> -- 
+> 2.42.0
+> 
