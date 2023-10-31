@@ -1,108 +1,66 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01352031C
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 17:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA51DFDE
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 18:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LeYo5Jpz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J/mYFyYk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5B692;
-	Tue, 31 Oct 2023 10:31:27 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 14DBF1F38C;
-	Tue, 31 Oct 2023 17:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1698773486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FbLimeeIAWSKH++prZUBu8VvBLGBX6LRqI36ipCTUV8=;
-	b=LeYo5Jpz/RT4uGrlS/D/o563bJTa1Ml8pINCAJHBiKepCeoVlxRMY8Mc90kANQEr2rWXfi
-	+rOXuZPvuz1BMcbYrk+OYJ/94hcT9X+e3jJkE6/yl7El/IO9Kx7oE34Kqsc9a32eqokQC6
-	1QoXaalIGEeL+WDHSiYsEtN7dynOsuQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1698773486;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FbLimeeIAWSKH++prZUBu8VvBLGBX6LRqI36ipCTUV8=;
-	b=J/mYFyYkhcSt1achBAMLy5zw3k3LaiGZznv0/oxiBm/4dAgXbhPvmJrb10x2amv2f641py
-	2rD+YyWQgPqvYSCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C60201391B;
-	Tue, 31 Oct 2023 17:31:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id zhmFL+05QWXCdAAAMHmgww
-	(envelope-from <tiwai@suse.de>); Tue, 31 Oct 2023 17:31:25 +0000
-Date: Tue, 31 Oct 2023 18:31:25 +0100
-Message-ID: <87lebiwvf6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: James Schulman <james.schulman@cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	alsa-devel@alsa-project.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org,
-	kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH next] ALSA: hda: cs35l41: Fix missing error code in cs35l41_smart_amp()
-In-Reply-To: <20231030070836.3234385-1-harshit.m.mogalapalli@oracle.com>
-References: <20231030070836.3234385-1-harshit.m.mogalapalli@oracle.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8MBAcAJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E71C433C8;
+	Tue, 31 Oct 2023 18:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698776475;
+	bh=o18vwaeO2R36/vbyGopKWMEkawn3UVBm6qFsz82W5YI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=I8MBAcAJPkzoHLFjXMEloJwiM/7wimzAfmbxD83KW+cC7avlJB9q4JQuHfg5LhPyT
+	 anBo1h+8CEJJ5qgX0UsK0FgrbQF0r7XJprBgsCoLm531DVwCe4WRYfto6u5jWZiZL7
+	 aT3z17ps/46SatgUYjIMd8jPRJe8ZfcAen/zMThUhyb/SlmtcxeTyw9NDm6vDtz29D
+	 dZQgq6sS5wlJxs6QgdzepKEu/nnTnJCu2dseeZ62PbXKVHobmrzfMdTqjssa3wytZl
+	 NCbW8foBsRd4QEzc42BrgihiaW/LsntsTG+2GiFFxWlB541tE1ZztVaL2QxBdg9h9E
+	 GTSytXb6asd9w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 92E30CE0B77; Tue, 31 Oct 2023 11:21:14 -0700 (PDT)
+Date: Tue, 31 Oct 2023 11:21:14 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH] refscale: Optimize process_durations()
+Message-ID: <bcd6bfe1-9891-4f22-86ad-361330e47e9d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
+ <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
 
-On Mon, 30 Oct 2023 08:08:36 +0100,
-Harshit Mogalapalli wrote:
+On Mon, Oct 30, 2023 at 09:55:16AM -0700, Davidlohr Bueso wrote:
+> On Sat, 28 Oct 2023, Christophe JAILLET wrote:
 > 
-> When firmware status is invalid, assign -EINVAL to ret as ret is '0' at
-> that point and returning success is incorrect when firmware status is
-> invalid.
+> > process_durations() is not a hot path, but there is no good reason to
+> > iterate over and over the data already in 'buf'.
+> > 
+> > Using a seq_buf saves some useless strcat() and the need of a temp buffer.
+> > Data is written directly at the correct place.
 > 
-> Fixes: a51d8ba03a4f ("ALSA: hda: cs35l41: Check CSPL state after loading firmware")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-
-Thanks, applied now.
-
-
-Takashi
-
-
-> ---
-> This is found using smatch and only compile tested.
-> ---
->  sound/pci/hda/cs35l41_hda.c | 1 +
->  1 file changed, 1 insertion(+)
+> Makes sense.
 > 
-> diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
-> index 496ff6a9d300..09f8d8fa4c71 100644
-> --- a/sound/pci/hda/cs35l41_hda.c
-> +++ b/sound/pci/hda/cs35l41_hda.c
-> @@ -1042,6 +1042,7 @@ static int cs35l41_smart_amp(struct cs35l41_hda *cs35l41)
->  	default:
->  		dev_err(cs35l41->dev, "Firmware status is invalid: %u\n",
->  			fw_status);
-> +		ret = -EINVAL;
->  		goto clean_dsp;
->  	}
->  
-> -- 
-> 2.39.3
-> 
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+
+Queued and pushed, thank you all!
+
+							Thanx, Paul
