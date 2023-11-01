@@ -1,126 +1,112 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFD910959
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 10:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE6B12B72
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 15:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ELL/tWmh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC9DFD
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 03:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698836356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ChCUMS4Z0zFJSSZC7NvVm2TXc5lFEMGFDVYjPFXyk18=;
-	b=ELL/tWmhxAQgOJ/m9hitNjvjelxbTWrWU/1mM4gJFZwwqKkn9stzfK5EidG2DRs3MpeIqD
-	TldgfAMNOdknEz0coA6trC/Xx4p1kikYnLIYaYKF3+V+Zu1D5MAw7xqidfgv/5JoL0HvlY
-	mqsfbQnxaYVsqlhB36cPfl+MRLhdUqs=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-eBZK1dIGM82uPw15Anpecg-1; Wed, 01 Nov 2023 06:59:13 -0400
-X-MC-Unique: eBZK1dIGM82uPw15Anpecg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9d31e27d0bfso241698166b.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 01 Nov 2023 03:59:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mD6EUGWQ"
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73363A6;
+	Wed,  1 Nov 2023 08:32:40 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-32f7c44f6a7so2765566f8f.1;
+        Wed, 01 Nov 2023 08:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698852759; x=1699457559; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FskWsrQJNJdVJ7FWmgRoYhcAsvNJ7ClQAxHmsraKq6Q=;
+        b=mD6EUGWQtP/yvrP3kI4+oepuCKmI/l59dp+h+lRAqXm+9t5INc8yhCc5FkwGhKNpyT
+         jb+d4xs/YFyZN5DiuIFvsc4xpcGcbbRrrfBnA8loqP0c/xlpPgVW8Ra6ofUmcyevSZz6
+         KpU3vGTA59IJVSwV2OR/gsTyTo1dBscMPQkIhmgbtrIgIgpcp6KL3Qz+LakXzKxYxr7u
+         8qEOQEtCC1NLO7nh6rhzy0EyubUIW8DWidrN00lSElbuTmBBPQSL5LxHbm5cDbBriH6Q
+         47mPmLqsa/C/quqJJtd+/TlTQW3X6fuyyw8jzLib3K1433c3WdkZKpk0xCJwfXpYWkE2
+         uYGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698836352; x=1699441152;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ChCUMS4Z0zFJSSZC7NvVm2TXc5lFEMGFDVYjPFXyk18=;
-        b=pp9agNVNpIMhVgw+wi9SNX1BLDuGZOkdaE0yglfk4ssdj6Cg2fHcfC7q06TlWAF5NT
-         i3GNZhDuafFqTSxXJBeU+f8LxhEKbnR7V364TPA18zAWAo2MjzxJ2DtSsqxUCbMzGtHC
-         /LnydC8Fw7K38DbiBvyoBBu2HcyHRXEACPvyVol429AvJ4O3hvLfeNdKTKFJRgr3OYog
-         ZNuQuzEEDzLbIeJnqOiVqM7dsC5B3GMv9MTGxsQuTzzBbamJ47bghaFho67zFDSJnxO3
-         XUO4YZ4otfZzeNr2QNu4HdqLebPRRG+JJaqGYnm/4gE1xSsyFzg5QBHlj1wkE+huNNF2
-         1nlg==
-X-Gm-Message-State: AOJu0Yzxn+NSbEGBeDiXTRgSYFLGDgTAV0x7o9JEb/jZxIvbrO5v5ZMb
-	rkECnIo0iujJOJwreF+k6ZQ5j8KktY9HTNPxObzVaRDqt9gj57bE5BFCdC5OK3OCf7kVckH6kuV
-	dvhT0Lf4By5vZ7fQI2FZy89WsoByP
-X-Received: by 2002:a17:907:a44:b0:9be:b668:5700 with SMTP id be4-20020a1709070a4400b009beb6685700mr1473978ejc.58.1698836352533;
-        Wed, 01 Nov 2023 03:59:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHN4iF493a6l6vf8pkc7Vcdp9JsgvmrZwNhMEkxLmF5mmGf3XNHFkTZfmDTINO03oYIYYz4pw==
-X-Received: by 2002:a17:907:a44:b0:9be:b668:5700 with SMTP id be4-20020a1709070a4400b009beb6685700mr1473967ejc.58.1698836352277;
-        Wed, 01 Nov 2023 03:59:12 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a22-20020a1709062b1600b0099ddc81903asm2265963ejg.221.2023.11.01.03.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Nov 2023 03:59:11 -0700 (PDT)
-Message-ID: <24e0ae5c-26bb-6efa-d59a-262541d2a452@redhat.com>
-Date: Wed, 1 Nov 2023 11:59:10 +0100
+        d=1e100.net; s=20230601; t=1698852759; x=1699457559;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FskWsrQJNJdVJ7FWmgRoYhcAsvNJ7ClQAxHmsraKq6Q=;
+        b=hMHxr/lbE6bgS5uu4z7r6GpcLdBW31BDISDkdCAaI80eVoU1/FQZxcYWIo2NyBofkd
+         Bo6Get9g9elWrIEGzkNHyjHGkvDe1cwFhDpgpAR9ykjXIIfj0yo/ZqNv96oJOW7M+Gfs
+         BW5Y2t0/7ShV2L9xrNr2v6Yi1Gqm6R/zEsQzHaJQHsL/UYE0IKccWbTdedW6hiGfyDAu
+         LkdHc07XQMWmzrs6eWwsidist0IyXw0wddFEcxCvcX0LxBrbCzq6e8j+9iwpOn4tWnxM
+         Fkijwai2/6oBYGTjKSXWvToquux6h/Xixt64nRhBluJQQwObwM2YAlD6YJIVMoWtMQN2
+         h0JQ==
+X-Gm-Message-State: AOJu0YzXHv6URbb8UCfgqgj9bhQDLO7REqwWFyutQCZPfJTwwGrxO7At
+	8Jf948+C5INDr26kea6sBX9LG73CaY0=
+X-Google-Smtp-Source: AGHT+IHoTkpKNbPsk//syKlxPlAIDqRLX4UMeKD9/InuujWE65V1w2q4EuIJjER2sOfV1UWA1h2/Rw==
+X-Received: by 2002:a5d:6c61:0:b0:32f:7d50:62ef with SMTP id r1-20020a5d6c61000000b0032f7d5062efmr10448784wrz.13.1698852758575;
+        Wed, 01 Nov 2023 08:32:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id d2-20020adffd82000000b003296b488961sm128146wrr.31.2023.11.01.08.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Nov 2023 08:32:37 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/lib: Fix overflow of variable m when val >= 1410065408
+Date: Wed,  1 Nov 2023 15:32:37 +0000
+Message-Id: <20231101153237.2214698-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
- fails
-Content-Language: en-US, nl
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Christophe,
+There is an overflow in variable m in function num_digits when val
+is >= 1410065408 which leads to the digit calculation loop to
+iterate more times than required. This results in either more
+digits being counted or in some cases (for example where val is
+1932683193) the value of m eventually overflows to zero and the
+while loop spins forever).
 
-On 11/1/23 11:49, Christophe JAILLET wrote:
-> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
-> still 0.
-> So, in the error handling path, we will call ida_simple_remove(..., 0)
-> which is not allocated yet.
-> 
-> In order to prevent a spurious "ida_free called for id=0 which is not
-> allocated." message, tweak the error handling path and add a new label.
-> 
-> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Currently the function num_digits is currently only being used for
+small values of val in the SMP boot stage for digit counting on the
+number of cpus and NUMA nodes, so the overflow is never encounterd.
+However it is useful to fix the overflow issue in case the function
+is used for other purposes in the future. (The issue was discovered
+while investigating the digit counting performance in various
+kernel helper functions rather than any real-world use-case).
 
-Thank you, both patches look good to me:
+The simplest fix is to make m a long int, the overhead in
+multiplication speed for a long is very minor for small values
+of val less than 10000 on modern processors. The alternative
+fix is to replace the multiplication with a constant division
+by 10 loop (this compiles down to an multiplication and shift)
+without needing to make m a long int, but this is slightly slower
+than the fix in this commit when measured on a range of x86
+processors).
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: 646e29a1789a ("x86: Improve the printout of the SMP bootup CPU table")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/x86/lib/misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-for the series.
-
-Regards,
-
-Hans
-
-
-
-> ---
->  fs/vboxsf/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 1fb8f4df60cb..9848af78215b 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		if (!sbi->nls) {
->  			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
->  			err = -EINVAL;
-> -			goto fail_free;
-> +			goto fail_destroy_idr;
->  		}
->  	}
->  
-> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
-> +fail_destroy_idr:
->  	idr_destroy(&sbi->ino_idr);
->  	kfree(sbi);
->  	return err;
+diff --git a/arch/x86/lib/misc.c b/arch/x86/lib/misc.c
+index 92cd8ecc3a2c..41e26e246d8f 100644
+--- a/arch/x86/lib/misc.c
++++ b/arch/x86/lib/misc.c
+@@ -8,7 +8,7 @@
+  */
+ int num_digits(int val)
+ {
+-	int m = 10;
++	long m = 10;
+ 	int d = 1;
+ 
+ 	if (val < 0) {
+-- 
+2.39.2
 
