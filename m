@@ -1,32 +1,29 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5537B15E83
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 22:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CF51CAA7
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 23:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JfMKBQJK"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDB4124
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 14:59:34 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id yJFFqHI8mvx99yJFFq7gSV; Wed, 01 Nov 2023 22:59:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698875971;
-	bh=CZUc2x18jLVE3/dA5z40LzEyxqd/JgpG1ks1H6XqaJc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=JfMKBQJKcuW5hVFeb3FkC6gJN5P5gPM/1BhbVn5FB5fv3w7Oqy9eWrWY/ZPfBpp1T
-	 7lgy+AaRo815BcThA8C/vRY6KjtoifDvpeTBNhrSqZuj9/vG++7eZIGjeEBKWydnB8
-	 C8xrraykwVdaGIi0d0m7Dzfs3VDkYxifFGKkrsfeDJ+i5l3P2f50y7qL1HwnL9rrqm
-	 2+plC3k9BRoryJ+5D3k6CY3HkZdYWIOHkRK3nbFc0C0TWBbn2h3V3IBihLeYJQejhg
-	 I8lsYTZt6tAKDfG8QvnoS/tiqUkvMqiBZLv9InOo2wve2wq9Kc1qxSBeQHpSAkGLAE
-	 5fS7RRSgeVWqQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 Nov 2023 22:59:31 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <ee352f12-084d-45d4-9c8e-172e073b7e36@wanadoo.fr>
-Date: Wed, 1 Nov 2023 22:59:25 +0100
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jRTV0RXO"
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A29126;
+	Wed,  1 Nov 2023 16:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=KRgbwZSg+I8F4GIWxZtVNCJODdPzeC1pCi/Dya698bY=; b=jRTV0RXOOtdPIBwTv30bAO9kVO
+	eG7/s4QyT4OltzFZZ/ZFrZpucTGfEwluKPNcSgw0wErQqeG3pcS0NKJSg2yvrFOrMDRv3BCxstay7
+	24aCUC9B8ow6ha+pnJnNitqSDC4w0ZIQn0d1XWbiiwgJmke7qnsXwqmMvcZcAholaSRUT2zkzPwZm
+	p0w/ebAS9BUM8YTPsPviPUxRQAMaELqTcp3TenRwXinrB+dHusyIlI5VjUIHNPA9esobcXjBBmgLe
+	knyZjy8lQlvU5ed/lkSZPQP8gVT3Osavf142MA5P8BMGFqKRjTHFYRjmXJaeKLODpo0lK2vDtqcU3
+	1wwYzrpQ==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1qyKzD-008MgL-1I;
+	Wed, 01 Nov 2023 23:50:59 +0000
+Message-ID: <4db3c258-a7c8-4e92-83db-797da32dd336@infradead.org>
+Date: Wed, 1 Nov 2023 16:50:57 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -34,47 +31,76 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] seq_buf: Export seq_buf_putc() &nd seq_buf_puts()
-Content-Language: fr, en-US
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: gregkh@linuxfoundation.org, keescook@chromium.org, willy@infradead.org,
- senozhatsky@chromium.org, list@mail.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>
-References: <cover.1698861216.git.christophe.jaillet@wanadoo.fr>
- <20231101141705.4208d441@gandalf.local.home>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20231101141705.4208d441@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] x86/lib: Fix overflow of variable m when val >=
+ 1410065408
+Content-Language: en-US
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231101153237.2214698-1-colin.i.king@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20231101153237.2214698-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 01/11/2023 à 19:17, Steven Rostedt a écrit :
-> On Wed,  1 Nov 2023 18:59:04 +0100
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
->> seq_buf_putc() has a potential real use-case (link in the patch), but
->> seq_buf_puts() has currently no forseen use-case, so I have split it in 2
->> patches if only the 1st one is accepted.
->>
->> Christophe JAILLET (2):
->>    seq_buf: Export seq_buf_putc()
->>    seq_buf: Export seq_buf_puts()
->>
->>   lib/seq_buf.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
-> 
-> I can pull these in as I'm getting ready for my pull request to Linus soon
-> (and just kicked off my testing).
-> 
-> Or do you need them as part of the patch you mentioned? When does that need
-> to go in? Can it wait till it hits Linus's tree?
-> 
-> -- Steve
-> 
 
-You timing will be mine, no need to hurry.
-I'll see when it reaches -next.
 
-Thanks for taking care of it.
+On 11/1/23 08:32, Colin Ian King wrote:
+> There is an overflow in variable m in function num_digits when val
+> is >= 1410065408 which leads to the digit calculation loop to
+> iterate more times than required. This results in either more
+> digits being counted or in some cases (for example where val is
+> 1932683193) the value of m eventually overflows to zero and the
+> while loop spins forever).
+> 
+> Currently the function num_digits is currently only being used for
+> small values of val in the SMP boot stage for digit counting on the
+> number of cpus and NUMA nodes, so the overflow is never encounterd.
 
-CJ
+                                                          encountered.
+
+> However it is useful to fix the overflow issue in case the function
+> is used for other purposes in the future. (The issue was discovered
+> while investigating the digit counting performance in various
+> kernel helper functions rather than any real-world use-case).
+> 
+> The simplest fix is to make m a long int, the overhead in
+> multiplication speed for a long is very minor for small values
+> of val less than 10000 on modern processors. The alternative
+> fix is to replace the multiplication with a constant division
+> by 10 loop (this compiles down to an multiplication and shift)
+> without needing to make m a long int, but this is slightly slower
+> than the fix in this commit when measured on a range of x86
+> processors).
+> 
+> Fixes: 646e29a1789a ("x86: Improve the printout of the SMP bootup CPU table")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+num_digits() now works for all int values.
+Thanks.
+
+> ---
+>  arch/x86/lib/misc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/lib/misc.c b/arch/x86/lib/misc.c
+> index 92cd8ecc3a2c..41e26e246d8f 100644
+> --- a/arch/x86/lib/misc.c
+> +++ b/arch/x86/lib/misc.c
+> @@ -8,7 +8,7 @@
+>   */
+>  int num_digits(int val)
+>  {
+> -	int m = 10;
+> +	long m = 10;
+>  	int d = 1;
+>  
+>  	if (val < 0) {
+
+-- 
+~Randy
