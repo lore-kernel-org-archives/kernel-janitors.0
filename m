@@ -1,38 +1,40 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC14C14A8A
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 15:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A5413ACA
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 15:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HIfwAvNr"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7E0FD
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 08:55:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dOSSpP4v"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5731A102
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 08:58:08 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
 	by smtp.orange.fr with ESMTPA
-	id yDZKqJ4wOLilFyDZKqui3f; Wed, 01 Nov 2023 16:55:47 +0100
+	id yDbZq0T7ydFbKyDbaqoC18; Wed, 01 Nov 2023 16:58:06 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698854147;
-	bh=ufZ6eZhZNmydg60KYGYUmr72dJOjnFUCCdCp0lk2s4g=;
+	s=t20230301; t=1698854286;
+	bh=i21kCUborbDIm4AbDPL2tQN3AqBRzOGB4lpH+Cd5dY8=;
 	h=From:To:Cc:Subject:Date;
-	b=HIfwAvNr4Wr/ZqZITN+UDDI6Sr+OP0ffSXr6wMVGL42Io4gtcI2JevZbjrzSmRSHb
-	 sPI5r2tTON9FAGdFrWEhkWCVHArvlw/pkjUzyIm/E0CWmrpmALHSCdoslU/7LDArhu
-	 0yLkai4iY4mIAZ9dver1cur852e+lofck18LtFau0yGJdoz3mrgW4p4V2gEI8WsGdk
-	 UN5FhiWAH587QA/dCkXrmVLHHApBfoGkV5CjuyieGtowAiWgtocibWW/aBXtKsf3ZF
-	 TtgcauYzH7yQz8UUKLZF8RFYqnZTTggBadf9g+V55FohN6L9Myy3hAER7walH0IX+X
-	 vn32+War5/CGQ==
+	b=dOSSpP4vQt0MNdHx9PyLyIAn38jj8YspPHjD2QCCUf9Uxsof8mzZ3pfM3ULTChpMu
+	 0IjIVsFBWuzWIjTIBOIOCp/PW9+q1UKBOgNU4UTcdyhrrxRz7zD3BB9+kBk+NCtMPu
+	 mK3Re2YadiLmgBGIKlren4V71eaOizgHLuf/z2ZMKEI+m3fnoSWWoTbXYPFOUkGPT0
+	 J+Ks83hInGhi5lEtFbAQal/dujHm6jAcqZSxpJ0+yM5Lh7CdKR1ZoaM8PPEzsuMxOM
+	 gnMYGrfHWx+H9mNmaTQ68TbutnjMeC9hDytjv3V1RbedSFaznZYXFwgLAE7LpRIqt1
+	 2VdzsVliFMI6w==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 Nov 2023 16:55:47 +0100
+X-ME-Date: Wed, 01 Nov 2023 16:58:06 +0100
 X-ME-IP: 86.243.2.178
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lee Jones <lee@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mfd: intel-lpss: Remove usage of the deprecated ida_simple_xx() API
-Date: Wed,  1 Nov 2023 16:55:38 +0100
-Message-Id: <a63f3da5745187f5a9b1e2ec0492f2fe2e0b0b8d.1698854117.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-phy@lists.infradead.org
+Subject: [PATCH] phy: core: Remove usage of the deprecated ida_simple_xx() API
+Date: Wed,  1 Nov 2023 16:57:57 +0100
+Message-Id: <d2323636c6cd2ec22f73a0ae6c2d34ac99b4abd5.1698854255.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,39 +51,30 @@ This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mfd/intel-lpss.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/phy/phy-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-index 9591b354072a..9115ba4c768f 100644
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -405,7 +405,7 @@ int intel_lpss_probe(struct device *dev,
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 96a0b1e111f3..d9be6a4d5383 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -959,7 +959,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
+ 	if (!phy)
+ 		return ERR_PTR(-ENOMEM);
  
- 	intel_lpss_init_dev(lpss);
- 
--	lpss->devid = ida_simple_get(&intel_lpss_devid_ida, 0, 0, GFP_KERNEL);
-+	lpss->devid = ida_alloc(&intel_lpss_devid_ida, GFP_KERNEL);
- 	if (lpss->devid < 0)
- 		return lpss->devid;
- 
-@@ -442,7 +442,7 @@ int intel_lpss_probe(struct device *dev,
- 	intel_lpss_unregister_clock(lpss);
- 
- err_clk_register:
--	ida_simple_remove(&intel_lpss_devid_ida, lpss->devid);
-+	ida_free(&intel_lpss_devid_ida, lpss->devid);
- 
- 	return ret;
+-	id = ida_simple_get(&phy_ida, 0, 0, GFP_KERNEL);
++	id = ida_alloc(&phy_ida, GFP_KERNEL);
+ 	if (id < 0) {
+ 		dev_err(dev, "unable to get id\n");
+ 		ret = id;
+@@ -1232,7 +1232,7 @@ static void phy_release(struct device *dev)
+ 	dev_vdbg(dev, "releasing '%s'\n", dev_name(dev));
+ 	debugfs_remove_recursive(phy->debugfs);
+ 	regulator_put(phy->pwr);
+-	ida_simple_remove(&phy_ida, phy->id);
++	ida_free(&phy_ida, phy->id);
+ 	kfree(phy);
  }
-@@ -456,7 +456,7 @@ void intel_lpss_remove(struct device *dev)
- 	intel_lpss_debugfs_remove(lpss);
- 	intel_lpss_ltr_hide(lpss);
- 	intel_lpss_unregister_clock(lpss);
--	ida_simple_remove(&intel_lpss_devid_ida, lpss->devid);
-+	ida_free(&intel_lpss_devid_ida, lpss->devid);
- }
- EXPORT_SYMBOL_GPL(intel_lpss_remove);
  
 -- 
 2.34.1
