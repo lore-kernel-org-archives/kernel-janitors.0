@@ -1,78 +1,99 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F44E1374
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 04:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313DA1845
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 05:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3jHizBOY"
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDF1102
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 21:51:18 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54357417e81so7759a12.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 21:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698814276; x=1699419076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dtCv4uG/OXM/B1BEBS+Fmutn+hm813UycnKuzQVP7jE=;
-        b=3jHizBOYcML+9JVIgjk33Bvx200q9GecNc9xu3/5kB9w0rgjUWP2319hRbkd4QSpl8
-         BIbE6eyq/HbcSBRZR+1433YqzntSkyp/WG53LdouhwnBWcthvM0ULoanZHuDmdp2vQzd
-         LTHa8xWo/Y48cE8O3bz+qNsr6Ab742t1nYCgnjuOTjULJK2t1nY8cC5xVM2BkL+wEpRq
-         bPiSKm6doGmDixaRdhqK7r1nqyIsOHO9Xic9r/3iNN7F/IdkF80kJF6wKrmxVQOgw0PE
-         /zzbvSkRtUMKk73MquXSFgfME91ShNRvN6wHAzOTbOxhUrTVNjJEJ8qbRVc3/gaoSUTk
-         1VMg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFoieUlh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29507E4
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 22:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1698816798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rDjrgwKhV0X8uxDqmbjmkhKFvllwLl3UFb2d3q6wJf0=;
+	b=AFoieUlhJRiWnlWfcrq88PHXwct6Lnv8TONw/bFEFAhlAsbtJ6nW2fd8Cmj1SB3/hXfph6
+	JOoIKdByCPIPK1hVhLadwzQqTkeEpXW3p9vvM6+16sCet0mIYBVjvZks2lwxgQ5NLzOQ2E
+	alQlS/lgDjW4yEjFGit0a9x3vO4RUyw=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-126-orkMA8xVPyCivIN1hynj-g-1; Wed, 01 Nov 2023 01:33:16 -0400
+X-MC-Unique: orkMA8xVPyCivIN1hynj-g-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2c5073588cbso55903671fa.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 22:33:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698814276; x=1699419076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dtCv4uG/OXM/B1BEBS+Fmutn+hm813UycnKuzQVP7jE=;
-        b=H6yd4cAoTeB9wFYur9sEhtxEmMCAwMStWST1euehctwDlWr1FNDEtQauorvhyvwuXC
-         f4jSH129aOOymV1RqO8Neq7OVi2dQiHPhFy7CwJaUYeCrVJv5fMg18qOMvekWiqIYgaf
-         AS+8ZRMgGqfspfs1bq40rai8k+DubtwOHC4D6H9XHJPk9x1cEnks8DGGXkIWdy271aH6
-         3npwGDCdSSlMF0COiHCEjqq4j0N0HcZtZUEirRNT61HmEjMQFEOgbAQkMsb6uF90uN5C
-         tYyNIloZBy+BP3LvlbLGQ4/cttR4mhqCCrnziVLOIWHyATIsiOuNIkp5aTBOUsxm/Epi
-         4PbA==
-X-Gm-Message-State: AOJu0YygquUL7Pk4aPVOIfgJWwaf1Zf42vgZxxIf5G75snDQN0FypSke
-	0qvtkGwzcIMTSwohV19mi5Z/2hxVt7JLAnLijWUg/w==
-X-Google-Smtp-Source: AGHT+IG1a4+d2onDesPfbMcPoMuS3zsQ3O9VgdzWLfs5Oes0xMUVSoJdoFVmwMemPip99YH29m6tfyjIwu1s5dNiEs8=
-X-Received: by 2002:a50:99cf:0:b0:543:6397:b46d with SMTP id
- n15-20020a5099cf000000b005436397b46dmr202885edb.2.1698814276242; Tue, 31 Oct
- 2023 21:51:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698816795; x=1699421595;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rDjrgwKhV0X8uxDqmbjmkhKFvllwLl3UFb2d3q6wJf0=;
+        b=KqNmk91zsm63ptnOWOs/uDwsDsvTBDY+qSzM69ENHRS27W+3wEAGh6zZMP6EiodW3C
+         V/oP2CAnv7Sqo4l8vlqI4ZZTm5hFB7a5Bm/uxIeHKvrujAR/gDtQ94gp+aXJ1dXTq101
+         0W1ry5OgSLGd5G221MuxPz6BFH9S4Hs7KMYbKAmgH7/CvQao1kEZe4jv7XHQuQMfk2ej
+         TS4uzrpvFyly4foYf2C/aSWGMd3C9eYKWgVjwa/ikJxWe9WEcAQHQ8UAVDXjcZyYmZij
+         dTGdbNh+A4+IOFYiQJS5KwZ11lDyNdgkYndIxYewsh2Gs2Iasi3n83SsDXTkFU4DiXhZ
+         tIBg==
+X-Gm-Message-State: AOJu0YzWv4YnnSzVVLf9+hdAF4PKW0+UVgsGbCAYUetwLqzmZJyyI75F
+	dzdk6cBahVUrxDiK79lpzGC+i5QwHjHlR1ZAsP3hkNJLDKZvn8p/vw6UEww5Btlt9aSTUbSaKsE
+	mUqIti93kBI/oret4rGW20Uqr+ie1
+X-Received: by 2002:a2e:9812:0:b0:2c5:2661:ca06 with SMTP id a18-20020a2e9812000000b002c52661ca06mr11925686ljj.46.1698816795390;
+        Tue, 31 Oct 2023 22:33:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdJKneWa6ZspieVJDbbOlVQ+x9L/r+0QQ7YYcFs15rRPnwA70wPVRW0dWuTfkT8+oyMFvGtg==
+X-Received: by 2002:a2e:9812:0:b0:2c5:2661:ca06 with SMTP id a18-20020a2e9812000000b002c52661ca06mr11925671ljj.46.1698816795061;
+        Tue, 31 Oct 2023 22:33:15 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:173:14b6:b6f1:4797:8f5d:fa41])
+        by smtp.gmail.com with ESMTPSA id fk15-20020a05600c0ccf00b0040849ce7116sm204668wmb.43.2023.10.31.22.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Oct 2023 22:33:14 -0700 (PDT)
+Date: Wed, 1 Nov 2023 01:33:10 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bo Liu <liubo03@inspur.com>, Jason Wang <jasowang@redhat.com>,
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-XXX] vhost-vdpa: fix use after free in
+ vhost_vdpa_probe()
+Message-ID: <20231101013303-mutt-send-email-mst@kernel.org>
+References: <cf53cb61-0699-4e36-a980-94fd4268ff00@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ce915d61-04bc-44fb-b450-35fcc9fc8831@moroto.mountain>
-In-Reply-To: <ce915d61-04bc-44fb-b450-35fcc9fc8831@moroto.mountain>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 1 Nov 2023 05:51:05 +0100
-Message-ID: <CANn89i+_xggUyAc4F3vBuH=5PtkCfrLcF77poKJU2N1BMc_1MA@mail.gmail.com>
-Subject: Re: [PATCH net] net/tcp_sigpool: Fix some off by one bugs
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, netdev@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf53cb61-0699-4e36-a980-94fd4268ff00@moroto.mountain>
 
-On Tue, Oct 31, 2023 at 10:51=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> The "cpool_populated" variable is the number of elements in the cpool[]
-> array that have been populated.  It is incremented in
-> tcp_sigpool_alloc_ahash() every time we populate a new element.
-> Unpopulated elements are NULL but if we have populated every element then
-> this code will read one element beyond the end of the array.
->
-> Fixes: 8c73b26315aa ("net/tcp: Prepare tcp_md5sig_pool for TCP-AO")
+On Fri, Oct 27, 2023 at 03:12:54PM +0300, Dan Carpenter wrote:
+> The put_device() calls vhost_vdpa_release_dev() which calls
+> ida_simple_remove() and frees "v".  So this call to
+> ida_simple_remove() is a use after free and a double free.
+> 
+> Fixes: ebe6a354fa7e ("vhost-vdpa: Call ida_simple_remove() when failed")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> From static analysis and review.
->
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+queued, thanks!
+
+> ---
+>  drivers/vhost/vdpa.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index 9a2343c45df0..1aa67729e188 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -1511,7 +1511,6 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
+>  
+>  err:
+>  	put_device(&v->dev);
+> -	ida_simple_remove(&vhost_vdpa_ida, v->minor);
+>  	return r;
+>  }
+>  
+> -- 
+> 2.42.0
+
