@@ -1,94 +1,104 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB3A63AD
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 10:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD4B101;
-	Wed,  1 Nov 2023 03:00:23 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.226])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SL2VL3Ckfz6K63t;
-	Wed,  1 Nov 2023 17:57:14 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Wed, 1 Nov
- 2023 10:00:20 +0000
-Date: Wed, 1 Nov 2023 10:00:19 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Su Hui <suhui@nfschina.com>
-CC: Jonathan Cameron <jic23@kernel.org>, <lars@metafoo.de>,
-	<jean-baptiste.maneyrol@tdk.com>, <andy.shevchenko@gmail.com>,
-	<chenhuiz@axis.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] iio: imu: inv_mpu6050: fix an error code problem in
- inv_mpu6050_read_raw
-Message-ID: <20231101100019.00004be7@Huawei.com>
-In-Reply-To: <7555437b-9289-eba4-efa8-965386e0e956@nfschina.com>
-References: <20231027145949.243f03f2@jic23-huawei>
-	<7555437b-9289-eba4-efa8-965386e0e956@nfschina.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2159FE54F
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 10:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzVf4mZK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92531C433C7;
+	Wed,  1 Nov 2023 10:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698834276;
+	bh=RwpwGnocw6uZNsKYyHZSk+qs8oRJkl1AiuuR52/+UbE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=bzVf4mZK3OhUrBy3tKrxdZXEjVnrMKW8Uf0jHVhmd1ibzGKf006kFgN/Ydm9GaEAY
+	 yRo54G9eMZ0s5BpI5L8Z0vGSvDhOtCFQtEIlEm9vO7igrdjas9ivN/UkfCBl5DIoxq
+	 agDEdFID51CjV8ByCHfQzxvW39zr2MnLmNNRjefhWI20sLn2o7cxQuwYnzjcHhg7K0
+	 dO7T3UCwjyqnGxCH3wjwwpagt/tBVzfXPFcJykroMtxhxq+VY9z+EHgAlyQWo+XmLQ
+	 8wksKDwZLnFht6sV4eNMzqCsgPnRzBUYNmHNoRYGEiulRzV/u/xmAo7uI8HE7qed4s
+	 gHg2GEwe9JIjA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 25BDBCE0B77; Wed,  1 Nov 2023 03:24:36 -0700 (PDT)
+Date: Wed, 1 Nov 2023 03:24:36 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] refscale: Optimize process_durations()
+Message-ID: <014c446a-23c4-40f9-9512-6869a9b02117@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
+ <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
+ <bcd6bfe1-9891-4f22-86ad-361330e47e9d@paulmck-laptop>
+ <a6943003-da31-4ac7-8944-c7dc06381148@paulmck-laptop>
+ <37ab9219-a049-4a43-b555-83b1629e5a48@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <37ab9219-a049-4a43-b555-83b1629e5a48@wanadoo.fr>
 
-On Mon, 30 Oct 2023 10:10:05 +0800
-Su Hui <suhui@nfschina.com> wrote:
-
-> On 2023/10/27 21:59, Jonathan Cameron wrote:
-> > On Mon, 23 Oct 2023 12:05:52 +0800
-> > Su Hui <suhui@nfschina.com> wrote:
-> >  
-> >> inv_mpu6050_sensor_show() can return -EINVAL or IIO_VAL_INT. Return the
-> >> true value rather than only return IIO_VAL_INT.
-> >>
-> >> Signed-off-by: Su Hui <suhui@nfschina.com>  
-> > If you can figure out a fixes tag that would be great.  Just reply to this thread
-> > with it and I'll pick it up from here.  
-> Oh, I just send a v3 patch, sorry....
-> Fixes: d5098447147c ("iio: imu: mpu6050: add calibration offset support")
-That works too!
-
-Thanks,
-
-J
-> >> ---
-> >> v2:
-> >>   - fix the error of commit title.
-> >> v1:
-> >>   - https://lore.kernel.org/all/20231020091413.205743-2-suhui@nfschina.com/
-> >>   drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
-> >>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> >> index 29f906c884bd..a9a5fb266ef1 100644
-> >> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> >> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> >> @@ -749,13 +749,13 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
-> >>   			ret = inv_mpu6050_sensor_show(st, st->reg->gyro_offset,
-> >>   						chan->channel2, val);
-> >>   			mutex_unlock(&st->lock);
-> >> -			return IIO_VAL_INT;
-> >> +			return ret;
-> >>   		case IIO_ACCEL:
-> >>   			mutex_lock(&st->lock);
-> >>   			ret = inv_mpu6050_sensor_show(st, st->reg->accl_offset,
-> >>   						chan->channel2, val);
-> >>   			mutex_unlock(&st->lock);
-> >> -			return IIO_VAL_INT;
-> >> +			return ret;
-> >>   
-> >>   		default:
-> >>   			return -EINVAL;  
+On Wed, Nov 01, 2023 at 08:41:39AM +0100, Christophe JAILLET wrote:
+> Le 31/10/2023 à 23:47, Paul E. McKenney a écrit :
+> > On Tue, Oct 31, 2023 at 11:21:14AM -0700, Paul E. McKenney wrote:
+> > > On Mon, Oct 30, 2023 at 09:55:16AM -0700, Davidlohr Bueso wrote:
+> > > > On Sat, 28 Oct 2023, Christophe JAILLET wrote:
+> > > > 
+> > > > > process_durations() is not a hot path, but there is no good reason to
+> > > > > iterate over and over the data already in 'buf'.
+> > > > > 
+> > > > > Using a seq_buf saves some useless strcat() and the need of a temp buffer.
+> > > > > Data is written directly at the correct place.
+> > > > 
+> > > > Makes sense.
+> > > > 
+> > > > Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> > > 
+> > > Queued and pushed, thank you all!
+> > 
+> > But an allmodconfig build complains about seq_buf_putc() being undefined,
+> > that is, not exported.  I suspect that other seq_buf_*() functions in
+> > this patch might also be complained about.
+> > 
+> > I am dropping this for the moment.  Please make it pass an allmodconfig
+> > build so that I can pull it in again.  Please see below for the commit.
 > 
+> Ouch!
 
+Believe me, I know that feeling!  ;-)
+
+> seq_buf_init(), seq_buf_terminate(), seq_buf_clear() are inlined functions
+> in a .h file, so shouldn't be a problem.
+> 
+> seq_buf_printf() is exported, but seq_buf_putc() is not!
+> Really odd to me.
+> 
+> Kees Cook (added in cc) suggests to use this API (see [1]) to avoid some
+> potential issues and ease the management of NULL terminated strings in
+> buffers. (#LinuxHardening).
+> 
+> I'll propose to add the missing EXPORT_SYMBOL_GPL.
+
+Very good, looking forward to seeing the result.
+
+							Thanx, Paul
+
+> CJ
+> 
+> [1]: https://lore.kernel.org/all/202310241629.0A4206316F@keescook/
+> 
