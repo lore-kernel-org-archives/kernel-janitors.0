@@ -1,39 +1,44 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AC76FDB
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 09:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4B07477
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 09:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BbVBnsZm"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N58b8yS5"
 Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2BBDA
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 02:33:39 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC07103
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 02:36:10 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
 	by smtp.orange.fr with ESMTPA
-	id y7bUqR7n2QRiPy7bUqGpjn; Wed, 01 Nov 2023 10:33:37 +0100
+	id y7dwqR8ijQRiPy7dwqGq2i; Wed, 01 Nov 2023 10:36:09 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698831217;
-	bh=Lk6by+apJlXOTJCfTgHSgCgxJ2Nx6rTRDAgAWtwwfU4=;
+	s=t20230301; t=1698831369;
+	bh=NZ1iobFX10Nh/HKZlug5CXulRdixpZgCPip/7q+e51k=;
 	h=From:To:Cc:Subject:Date;
-	b=BbVBnsZmRk2OMHr0SyJFrkLIzjmbNG6017Q+W8zqghSIP2TMIyMLZArrpLCPxvnF5
-	 4x7t+NAHTlbmCfMcwD5W2LI8bqKszLrscaC2+j+/BbVhqNtNHs1TRVGKHVHnac8zEz
-	 dgajdDB/wKaW5JtsL4GXQnfLhIqLFiSY5OcL/a3tOQvqv31nOLhYOLl9c3hJpVXB9D
-	 IlCfF5Xk+5iRalotiMUMGdCId+VOoxodLNLCrWDIYUOFKqhidUyWi9xLgpZ52Dxpeq
-	 Ff1cGFU0RPUELO5nH2cwprGhHxZSZ421QjYbTQkJ0KasVPcsglOikh5gQ7kC0Ij1Lf
-	 S+tGPGydgTuIQ==
+	b=N58b8yS5T9e1AGnVTLHT5D9yQZIbYZvut3OPuh1dhJh5J+OBWVa55fwmOG+JqJyfb
+	 soCXr/tgO1by2Ka7A2gYbnjdl+iL/tPmSgTf4rLz4XscCcX2cIZ6LY8FfBjFFxWeHI
+	 woXsk7LBCEdRNIs2vWFJSftUAAz+KCF0YWPBnZT6BNyJMaGsykoLWEbV/de5jna5Nk
+	 PNzEVgmxODvu3TBSKH1gtwoZ5aArZ1w5+94pok0OXI3pnccDgz0gloII2R+kQJXbh2
+	 GMmTqlqow5kLrJL88qhcQhKxdni7hJzVcgZ1vabT0PEUew6+7D+luXVQm5cDPUXHk1
+	 hegOaO1W8Jofw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 Nov 2023 10:33:37 +0100
+X-ME-Date: Wed, 01 Nov 2023 10:36:09 +0100
 X-ME-IP: 86.243.2.178
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] base: soc: Remove usage of the deprecated ida_simple_xx() API
-Date: Wed,  1 Nov 2023 10:33:33 +0100
-Message-Id: <f0ef849446c9b3df7d6b16b1a58d089b4c17276c.1698831191.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH] software node: Remove usage of the deprecated ida_simple_xx() API
+Date: Wed,  1 Nov 2023 10:36:04 +0100
+Message-Id: <c7cdc3566c783d106138698b1e1923351fabace8.1698831275.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,31 +55,37 @@ This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/base/soc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/swnode.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 8dec5228fde3..c741d0845852 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -106,7 +106,7 @@ static void soc_release(struct device *dev)
- {
- 	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
+diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+index 1886995a0b3a..f7c4317b2ccf 100644
+--- a/drivers/base/swnode.c
++++ b/drivers/base/swnode.c
+@@ -747,10 +747,10 @@ static void software_node_release(struct kobject *kobj)
+ 	struct swnode *swnode = kobj_to_swnode(kobj);
  
--	ida_simple_remove(&soc_ida, soc_dev->soc_dev_num);
-+	ida_free(&soc_ida, soc_dev->soc_dev_num);
- 	kfree(soc_dev->dev.groups);
- 	kfree(soc_dev);
- }
-@@ -155,7 +155,7 @@ struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr
- 	soc_attr_groups[1] = soc_dev_attr->custom_attr_group;
+ 	if (swnode->parent) {
+-		ida_simple_remove(&swnode->parent->child_ids, swnode->id);
++		ida_free(&swnode->parent->child_ids, swnode->id);
+ 		list_del(&swnode->entry);
+ 	} else {
+-		ida_simple_remove(&swnode_root_ids, swnode->id);
++		ida_free(&swnode_root_ids, swnode->id);
+ 	}
  
- 	/* Fetch a unique (reclaimable) SOC ID. */
--	ret = ida_simple_get(&soc_ida, 0, 0, GFP_KERNEL);
-+	ret = ida_alloc(&soc_ida, GFP_KERNEL);
- 	if (ret < 0)
- 		goto out3;
- 	soc_dev->soc_dev_num = ret;
+ 	if (swnode->allocated)
+@@ -776,8 +776,8 @@ swnode_register(const struct software_node *node, struct swnode *parent,
+ 	if (!swnode)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	ret = ida_simple_get(parent ? &parent->child_ids : &swnode_root_ids,
+-			     0, 0, GFP_KERNEL);
++	ret = ida_alloc(parent ? &parent->child_ids : &swnode_root_ids,
++			GFP_KERNEL);
+ 	if (ret < 0) {
+ 		kfree(swnode);
+ 		return ERR_PTR(ret);
 -- 
 2.34.1
 
