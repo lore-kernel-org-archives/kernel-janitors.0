@@ -1,102 +1,180 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460655C9A
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 07:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A876FDF
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 09:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k05IFa8G"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDBFEA
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 00:41:44 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id y5rAqxjn51jHcy5rAqb1Lk; Wed, 01 Nov 2023 08:41:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698824503;
-	bh=W0JdcYadX1Uj/95T3fXcyVaHAA0+IQtzR59DL7bY2cg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=k05IFa8GzXylwHKRm10nhBZrgD7pVppqAA7dozugSEw0Fy+64nxdUFNGBCOXE9MVM
-	 fa6D/XqpE2vvTEtMUs8821cAnm1QP0K6Vw7ns9Naih7xVsoN+YAygefGd6CExXUTlN
-	 Py7BKtTktPAF+9X+Qab78w2BNEUH1d76TfhGxGW60ubrsuqRCN+TyWi/xwquuSdK9s
-	 7G7lOyLXOWWQkXeqI+U6OdduGHER7avOFjXT1brQvNRTPyqzBN/pOjqHzWe4bOG1Q5
-	 TTUWZ3OVcOPTesfZLtw1fSCDSISILZLqFhaEntd+01EGHmsZT1e0LZexXbtCprNi14
-	 OEecP7VhLj3Pw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 Nov 2023 08:41:43 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <37ab9219-a049-4a43-b555-83b1629e5a48@wanadoo.fr>
-Date: Wed, 1 Nov 2023 08:41:39 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lvJrhrll"
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A57ADE
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 02:08:05 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-98377c5d53eso973012266b.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 01 Nov 2023 02:08:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698829684; x=1699434484; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l/U0/4Zp074LQCHLOPGw0y7Rk5ZQHkrZnxdbMLDRkzg=;
+        b=lvJrhrll+gvD+M6wGbJBSmHy1aSyYOGVuMJTJ2gdXBcSLGPTWGVJutLDvpaA6enOB/
+         BF5sDYPJkB0QfL92zR6KSrd3xYn7z2EVIK17ix5CuzJRc8LuLbXoktQ3IUll3AgdiW3n
+         XBGGpA3dO9LwzanJsPpxPzwinuWlXy6tQ29lsb5LOl9WJarizmKHcqvuUDcGbTbHpfNP
+         oF4xEND1sTLlnMxOh/oFUiqfvI5HK7FYVHQA+h3eWmA8iSd8ADJHyttIAqrLS3HC+T38
+         Swv2m2ON4ufsUUra7Xm0dJBmZByTtqTcDf/p9m6pivlDbiJYj+Fb8DhOV1oUyNbc5Hjj
+         3UNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698829684; x=1699434484;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l/U0/4Zp074LQCHLOPGw0y7Rk5ZQHkrZnxdbMLDRkzg=;
+        b=CFOgJDd8vOfjPRORT7ShtDDgplte75TXuZXD5teCwl4gNcayyzZpe1/kndXjFq6Whv
+         PIRsryi8x8v0HBvtcnkYWP3m2HKFoMOPFtqxyQoxwp0D22HpzOJJj5vxVH6n1rNyRv1p
+         Z1KRDvbn5uGgjxsAGOLLFtn4IRgkQK5MwFvkcGxj4OcZqXaJvpg+yes3fbz27aH5Mgcq
+         R5Yrr1g40o+GlvV8LXEi8g3bHH1hI/D0O+3RisoFZKUg2MnO4iDcAQyWZXPVdPwIDpz2
+         shDeuF8ACSvHSgZKxH24k+kyDFqg5TK41SDNnijifGGEJ8RxiIn6luQr6g4YAGGmmHkg
+         MzYw==
+X-Gm-Message-State: AOJu0YyqFCDiJIW7E1RfYoyGegQn5+W9SC6T/1pqPcUp2FZQm3KyKddW
+	xYLUe56mS+Bcg9xw4loQ2XAgdA==
+X-Google-Smtp-Source: AGHT+IEkFDGkW54r0Ia2H+xR2vSsVr8SXlt4hH1CjQgcbJiO9brVXLFjPPYe9xJEUR1RVJrrvuPydg==
+X-Received: by 2002:a17:906:c107:b0:9bf:b022:dc7 with SMTP id do7-20020a170906c10700b009bfb0220dc7mr1204358ejc.48.1698829683706;
+        Wed, 01 Nov 2023 02:08:03 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a12-20020a1709065f8c00b0099bd5d28dc4sm2161031eju.195.2023.11.01.02.08.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Nov 2023 02:08:02 -0700 (PDT)
+Date: Wed, 1 Nov 2023 12:08:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	kernel-janitors@vger.kernel.org,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	kv-team <kv-team@linaro.org>
+Subject: Re: [RFC] drm/tests: annotate intentional stack trace in
+ drm_test_rect_calc_hscale()
+Message-ID: <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
+References: <02546e59-1afe-4b08-ba81-d94f3b691c9a@moroto.mountain>
+ <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] refscale: Optimize process_durations()
-To: paulmck@kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Josh Triplett
- <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <quic_neeraju@quicinc.com>,
- Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- rcu@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
- <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
- <bcd6bfe1-9891-4f22-86ad-361330e47e9d@paulmck-laptop>
- <a6943003-da31-4ac7-8944-c7dc06381148@paulmck-laptop>
-Content-Language: fr, en-US
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a6943003-da31-4ac7-8944-c7dc06381148@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
 
-Le 31/10/2023 à 23:47, Paul E. McKenney a écrit :
-> On Tue, Oct 31, 2023 at 11:21:14AM -0700, Paul E. McKenney wrote:
->> On Mon, Oct 30, 2023 at 09:55:16AM -0700, Davidlohr Bueso wrote:
->>> On Sat, 28 Oct 2023, Christophe JAILLET wrote:
->>>
->>>> process_durations() is not a hot path, but there is no good reason to
->>>> iterate over and over the data already in 'buf'.
->>>>
->>>> Using a seq_buf saves some useless strcat() and the need of a temp buffer.
->>>> Data is written directly at the correct place.
->>>
->>> Makes sense.
->>>
->>> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
->>
->> Queued and pushed, thank you all!
+Let me add Richard to the CC list.  See lore for more details.
+https://lore.kernel.org/all/CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com/
+
+On Tue, Oct 31, 2023 at 09:57:48PM +0530, Naresh Kamboju wrote:
+> On Mon, 30 Oct 2023 at 14:33, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > We have started printing more and more intentional stack traces.  Whether
+> > it's testing KASAN is able to detect use after frees or it's part of a
+> > kunit test.
+> >
+> > These stack traces can be problematic.  They suddenly show up as a new
+> > failure.  Now the test team has to contact the developers.  A bunch of
+> > people have to investigate the bug.  We finally decide that it's
+> > intentional so now the test team has to update their filter scripts to
+> > mark it as intentional.  These filters are ad-hoc because there is no
+> > standard format for warnings.
+> >
+> > A better way would be to mark it as intentional from the start.
+> >
+> > Here, I have marked the beginning and the end of the trace.  It's more
+> > tricky for things like lkdtm_FORTIFY_MEM_MEMBER() where the flow doesn't
+> > reach the end of the function.  I guess I would print a different
+> > warning for stack traces that can't have a
+> > "Intentional warning finished\n" message at the end.
+> >
+> > I haven't actually tested this patch...  Daniel, do you have a
+> > list of intentional stack traces we could annotate?
 > 
-> But an allmodconfig build complains about seq_buf_putc() being undefined,
-> that is, not exported.  I suspect that other seq_buf_*() functions in
-> this patch might also be complained about.
+> [My two cents]
 > 
-> I am dropping this for the moment.  Please make it pass an allmodconfig
-> build so that I can pull it in again.  Please see below for the commit.
+> I have been noticing following kernel warnings / BUGs
+
+Some are intentional and some are not.  I had a similar thing happen to
+me last week where I had too many Smatch false positives in my devel
+code so I accidentally sent a patch with a stupid bug.  I've since
+updated my QC process to run both the devel and released versions of
+Smatch.
+
+But a similar thing is happening here where we have so many bogus
+warnings that we missed a real bug.
+
+> These are starting happening from next-20231009.
+> I am not sure which are "Intentional warnings" or real regressions.
 > 
-> 							Thanx, Paul
+> [   37.378220] BUG: KASAN: slab-out-of-bounds in kmalloc_oob_right+0xc4/0x300
+> [   37.645506] BUG: KASAN: slab-out-of-bounds in kmalloc_oob_right+0xec/0x300
+> ..
+> [  632.407425] BUG: KASAN: null-ptr-deref in kobject_namespace+0x3c/0xb0
 > 
+> 
+> Logs: [Sorry for sharing long logs ]
 
-Ouch!
+Not your fault.  These long warnings are the issue at hand.
 
-seq_buf_init(), seq_buf_terminate(), seq_buf_clear() are inlined 
-functions in a .h file, so shouldn't be a problem.
+> ==========
+> 
+> ------------[ cut here ]------------
+> [  629.699281] WARNING: CPU: 0 PID: 2834 at
+> drivers/gpu/drm/drm_rect.c:138 drm_rect_calc_hscale+0xbc/0xe8
 
-seq_buf_printf() is exported, but seq_buf_putc() is not!
-Really odd to me.
+Deliberate.
 
-Kees Cook (added in cc) suggests to use this API (see [1]) to avoid some 
-potential issues and ease the management of NULL terminated strings in 
-buffers. (#LinuxHardening).
+> [  629.914458] WARNING: CPU: 5 PID: 2836 at
+> drivers/gpu/drm/drm_rect.c:138 drm_rect_calc_hscale+0xbc/0xe8
+> [drm_kms_helper]
 
-I'll propose to add the missing EXPORT_SYMBOL_GPL.
+Deliberate.
 
-CJ
+> [  630.172564] WARNING: CPU: 5 PID: 2846 at
+> drivers/gpu/drm/drm_rect.c:138 drm_rect_calc_vscale+0xbc/0xe8
+> [drm_kms_helper]
 
-[1]: https://lore.kernel.org/all/202310241629.0A4206316F@keescook/
+Deliberate.
+> ------------[ cut here ]------------
+> [  630.388003] WARNING: CPU: 3 PID: 2848 at
+> drivers/gpu/drm/drm_rect.c:138 drm_rect_calc_vscale+0xbc/0xe8
+> [drm_kms_helper]
+
+Deliberate.
+
+> ------------[ cut here ]------------
+> [  631.679963] kobject: '(null)' (00000000f512f33b): is not
+> initialized, yet kobject_get() is being called.
+
+Not deliberate.  This seems like a straight forward bug to fix.
+
+Failing a kobject_get() seems like it would obviously lead to a
+refcounting underflow and a use after free so I suspect some of the
+other warnings that follow are caused by this issue.  We should fix it
+first and see which warnings disappear.
+
+So testing the Linux Kernel Dump Test Module is always going to create
+warnings.  So intentional warnings are a part of life.  We should
+annotate them.
+
+But having too many warnings is bad and has caused this kobject_get()
+bug.  We should delete the warning in drm_calc_scale() or make it a
+WARN_ONCE() and mark it as intentional in the kunit test.
+
+regards,
+dan carpenter
 
