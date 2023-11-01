@@ -1,82 +1,94 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06F7483
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 09:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZuWrnT+/"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E09EFD
-	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 02:41:21 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id y7ixqyFEudFbKy7ixqnEFP; Wed, 01 Nov 2023 10:41:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698831679;
-	bh=lci7+3XvwKBuDxgeW1wZiQqQ9+xbVFXx8gAOWcltF4c=;
-	h=From:To:Cc:Subject:Date;
-	b=ZuWrnT+/z6mhaRO+RjEg7sfHBiks0kwfbkKTfXvCeJDOBJrVbBfXue2PRK7hml0nq
-	 hnUBezI3CTTXVRZn4Y1OjI05wCe2qDYx5CPE+kGx0oljosiIzaAFN8BAwJW0BNHfu7
-	 8mUnoVjyjAu8/9lPRRnOrsNhr4rx4FE1Pvoex6IYmsK0J/o1BW+HsXWzjF/RKrm9GD
-	 IfsLshZMz8GB+vLGU/5LBRpiQsNJJSHby+PpJiDJ43rrfQVOKpwTZFNXNgxgTnbFTU
-	 8suae4HiKPcn41G9tJ9ibzUsZpCvr4p5EPI9PDIzpt9GAT4nFyQOYAk3niCnGnjlkn
-	 /mDrT5XRbr5Ew==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 Nov 2023 10:41:19 +0100
-X-ME-IP: 86.243.2.178
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Vaibhav Gupta <vaibhavgupta40@gmail.com>,
-	Jens Taprogge <jens.taprogge@taprogge.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	industrypack-devel@lists.sourceforge.net
-Subject: [PATCH] ipack: Remove usage of the deprecated ida_simple_xx() API
-Date: Wed,  1 Nov 2023 10:41:17 +0100
-Message-Id: <435bd17b8a5ddb2fc3e42e2796117ee02263d02a.1698831664.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB3A63AD
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 10:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD4B101;
+	Wed,  1 Nov 2023 03:00:23 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.226])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SL2VL3Ckfz6K63t;
+	Wed,  1 Nov 2023 17:57:14 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Wed, 1 Nov
+ 2023 10:00:20 +0000
+Date: Wed, 1 Nov 2023 10:00:19 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Su Hui <suhui@nfschina.com>
+CC: Jonathan Cameron <jic23@kernel.org>, <lars@metafoo.de>,
+	<jean-baptiste.maneyrol@tdk.com>, <andy.shevchenko@gmail.com>,
+	<chenhuiz@axis.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] iio: imu: inv_mpu6050: fix an error code problem in
+ inv_mpu6050_read_raw
+Message-ID: <20231101100019.00004be7@Huawei.com>
+In-Reply-To: <7555437b-9289-eba4-efa8-965386e0e956@nfschina.com>
+References: <20231027145949.243f03f2@jic23-huawei>
+	<7555437b-9289-eba4-efa8-965386e0e956@nfschina.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
+On Mon, 30 Oct 2023 10:10:05 +0800
+Su Hui <suhui@nfschina.com> wrote:
 
-This is less verbose.
+> On 2023/10/27 21:59, Jonathan Cameron wrote:
+> > On Mon, 23 Oct 2023 12:05:52 +0800
+> > Su Hui <suhui@nfschina.com> wrote:
+> >  
+> >> inv_mpu6050_sensor_show() can return -EINVAL or IIO_VAL_INT. Return the
+> >> true value rather than only return IIO_VAL_INT.
+> >>
+> >> Signed-off-by: Su Hui <suhui@nfschina.com>  
+> > If you can figure out a fixes tag that would be great.  Just reply to this thread
+> > with it and I'll pick it up from here.  
+> Oh, I just send a v3 patch, sorry....
+> Fixes: d5098447147c ("iio: imu: mpu6050: add calibration offset support")
+That works too!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/ipack/ipack.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/drivers/ipack/ipack.c b/drivers/ipack/ipack.c
-index cc1ecfd49928..b1471ba016a5 100644
---- a/drivers/ipack/ipack.c
-+++ b/drivers/ipack/ipack.c
-@@ -207,7 +207,7 @@ struct ipack_bus_device *ipack_bus_register(struct device *parent, int slots,
- 	if (!bus)
- 		return NULL;
- 
--	bus_nr = ida_simple_get(&ipack_ida, 0, 0, GFP_KERNEL);
-+	bus_nr = ida_alloc(&ipack_ida, GFP_KERNEL);
- 	if (bus_nr < 0) {
- 		kfree(bus);
- 		return NULL;
-@@ -237,7 +237,7 @@ int ipack_bus_unregister(struct ipack_bus_device *bus)
- {
- 	bus_for_each_dev(&ipack_bus_type, NULL, bus,
- 		ipack_unregister_bus_member);
--	ida_simple_remove(&ipack_ida, bus->bus_nr);
-+	ida_free(&ipack_ida, bus->bus_nr);
- 	kfree(bus);
- 	return 0;
- }
--- 
-2.34.1
+J
+> >> ---
+> >> v2:
+> >>   - fix the error of commit title.
+> >> v1:
+> >>   - https://lore.kernel.org/all/20231020091413.205743-2-suhui@nfschina.com/
+> >>   drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
+> >>   1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> >> index 29f906c884bd..a9a5fb266ef1 100644
+> >> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> >> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> >> @@ -749,13 +749,13 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
+> >>   			ret = inv_mpu6050_sensor_show(st, st->reg->gyro_offset,
+> >>   						chan->channel2, val);
+> >>   			mutex_unlock(&st->lock);
+> >> -			return IIO_VAL_INT;
+> >> +			return ret;
+> >>   		case IIO_ACCEL:
+> >>   			mutex_lock(&st->lock);
+> >>   			ret = inv_mpu6050_sensor_show(st, st->reg->accl_offset,
+> >>   						chan->channel2, val);
+> >>   			mutex_unlock(&st->lock);
+> >> -			return IIO_VAL_INT;
+> >> +			return ret;
+> >>   
+> >>   		default:
+> >>   			return -EINVAL;  
+> 
 
