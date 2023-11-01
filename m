@@ -1,44 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EBB20333
-	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 22:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32500627
+	for <kernel-janitors@vger.kernel.org>; Wed,  1 Nov 2023 00:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNt+AXsT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E213AC433C9;
-	Tue, 31 Oct 2023 22:47:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698792465;
-	bh=uW1kAs4Hu3zlaOFxuayVPq7jvgYsrqUYDI9NXhfEGuo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=rNt+AXsTxLmRoM+i2Do/iF1sAU4KhXvDy83JQ+60HSLXrKTsLJVGclCtwydrwoLyY
-	 DfJji34SEEEO7tyfNNa3nuB8tcNGcY+TOObTBeJC9uMKJnAz1UpJpf3LQDa7Vyd98E
-	 V1RakDJsQx7tEQSQNrGcn8NDvdEvDNdQHjSNkA9jhtgurHIAGOZl7D7CqTRIKUHI4h
-	 TxCvEYvOGJfWaSmHDYyeIzAGnE+KLAmHgOeKD3uTdgLkYlWtE7L4+kmYZU2QOZa0+a
-	 3pLWlzJtDY/pV5peuW1mav85dJmDKCBGXsTNeucldgS3rsNcDXQJ1rk1kn1btavK+o
-	 XTvrMrttx5YsQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 75B1CCE0DE2; Tue, 31 Oct 2023 15:47:44 -0700 (PDT)
-Date: Tue, 31 Oct 2023 15:47:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH] refscale: Optimize process_durations()
-Message-ID: <a6943003-da31-4ac7-8944-c7dc06381148@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr>
- <ozbrmbywamyfkv3amsf2dfdacwmi25serwhc75h6fpsahklsmo@rm43srgxumef>
- <bcd6bfe1-9891-4f22-86ad-361330e47e9d@paulmck-laptop>
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EYD23sd3"
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921E7EA
+	for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 17:47:49 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id 6a1803df08f44-6707401e22eso25388656d6.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 31 Oct 2023 17:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1698799668; x=1699404468; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KtTZeU1qyZPr5NnJG5tqBE/Hw8vzn/1VxFwr17IS4sA=;
+        b=EYD23sd3v847ta7jMHm5JMo1RAdnvLiWwSAwwY0mdG4SAClFN6D6wm7BH8KC/trhkt
+         YHkLQ4pxyAVqZbSup7fqvMPbUt1zigYnPAij9iqFp1Mi00j/18zBzTzMrTOO92J6rJuh
+         6Sdb2wzs8AphI/TWQKSBFztuJ6Scu6FlqrEggT0uHL9//F9YET6T1em42h03yRr8tg8P
+         GkuHlBT92NUy4NRoqYri8bMWVCZPgrnuoENcWEBzYeIXQPVqUG8+ZXBfUQIN6s6sQ2B6
+         Ho9hj02NC/8DHInmNNUeFi546D9Gvs4DqANaU6uMOyTYt6W1lctDdGPMIxvml7rmNiQH
+         LVEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698799668; x=1699404468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KtTZeU1qyZPr5NnJG5tqBE/Hw8vzn/1VxFwr17IS4sA=;
+        b=AbytX062sqpwagAI3UsCGVnUUmwGdWuuLH8Hvid2CWCkwxD6DD3gXwPUg1J1mtzA/F
+         KJp6pdReOPkHBJyKYX0SuKyh2OTgCN6JnIGitqevs7yW+l4ufrf4KQXMBlC58a9ByunQ
+         MHClE8ccvpdNEzF2wkd24M54wEZfz5rbMliSJiEz1MCNbJnWOvMCES3aitXeO831Gg6j
+         OapFa5ijS2GKmdv+oVoQYEPLzgDvvvl8Y03Mf4T/MwHQwB64TX33nASQsJLkwtk/8X1P
+         vyvR2zkRH61hYpYRHvRUlTp//mA1YXv2wsobwXc4/jN7cGt8psPvuYPq+Qhzl64JIlOA
+         EjzA==
+X-Gm-Message-State: AOJu0YyZeT5ken+9tINg2wlsjTpt9Cb5Xo9vSLfWfonsIffK0yWrZmxY
+	BzmLk8qzvNB9ZWC1+cZVq0xzGA==
+X-Google-Smtp-Source: AGHT+IGBoZF6m4BoEcXMbgmscTRORzSW7sDdPYnhLQJDO7yeyyH3b7tmen41fCbsn0gHL99uZVHZtw==
+X-Received: by 2002:ad4:574b:0:b0:66d:775:d1af with SMTP id q11-20020ad4574b000000b0066d0775d1afmr17062290qvx.59.1698799668692;
+        Tue, 31 Oct 2023 17:47:48 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-26-201.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.26.201])
+        by smtp.gmail.com with ESMTPSA id i5-20020ad44ba5000000b0065b22afe53csm997511qvw.94.2023.10.31.17.47.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Oct 2023 17:47:48 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1qxzOd-0080uo-GZ;
+	Tue, 31 Oct 2023 21:47:47 -0300
+Date: Tue, 31 Oct 2023 21:47:47 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Janne Grunau <j@jannau.net>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/dart: Fix return code in
+ apple_dart_domain_alloc_paging()
+Message-ID: <20231101004747.GK691768@ziepe.ca>
+References: <b85e0715-3224-4f45-ad6b-ebb9f08c015d@moroto.mountain>
+ <20231030115650.GC691768@ziepe.ca>
+ <d42a8cb4-dd0d-407e-8659-915ca821e1f6@kadam.mountain>
+ <20231030123823.GD691768@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,106 +70,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bcd6bfe1-9891-4f22-86ad-361330e47e9d@paulmck-laptop>
+In-Reply-To: <20231030123823.GD691768@ziepe.ca>
 
-On Tue, Oct 31, 2023 at 11:21:14AM -0700, Paul E. McKenney wrote:
-> On Mon, Oct 30, 2023 at 09:55:16AM -0700, Davidlohr Bueso wrote:
-> > On Sat, 28 Oct 2023, Christophe JAILLET wrote:
-> > 
-> > > process_durations() is not a hot path, but there is no good reason to
-> > > iterate over and over the data already in 'buf'.
+On Mon, Oct 30, 2023 at 09:38:23AM -0300, Jason Gunthorpe wrote:
+> On Mon, Oct 30, 2023 at 03:00:56PM +0300, Dan Carpenter wrote:
+> > On Mon, Oct 30, 2023 at 08:56:50AM -0300, Jason Gunthorpe wrote:
+> > > On Mon, Oct 30, 2023 at 12:03:12PM +0300, Dan Carpenter wrote:
+> > > > The apple_dart_domain_alloc_paging() function is supposed to return NULL
+> > > > on error.  Returning an error pointer will lead to an Oops in
+> > > > __iommu_domain_alloc().
+> > > > 
+> > > > Fixes: 482feb5c6492 ("iommu/dart: Call apple_dart_finalize_domain() as part of alloc_paging()")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > ---
+> > > >  drivers/iommu/apple-dart.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > > 
-> > > Using a seq_buf saves some useless strcat() and the need of a temp buffer.
-> > > Data is written directly at the correct place.
+> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > 
+> > > Really need to fix this so the function does return ERR_PTR..
 > > 
-> > Makes sense.
-> > 
-> > Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> > It's called as a function pointer.  Changing that will create a
+> > backporting hazard unless we rename the pointer or something.
 > 
-> Queued and pushed, thank you all!
+> You can make that argument about almost any change in the kernel..
+> 
+> IMHO we needed an annotation like __user/__iomem/etc to indicate
+> ERR_PTR so at least there is some hope of trivially finding it.
 
-But an allmodconfig build complains about seq_buf_putc() being undefined,
-that is, not exported.  I suspect that other seq_buf_*() functions in
-this patch might also be complained about.
+I was thinking about this some more, I think I prefer we fix the core
+code to accept the ERR_PTR and just start moving gently in that
+direction. I was working on some other stuff and it is starting to get
+really confusing that only this op is different.
 
-I am dropping this for the moment.  Please make it pass an allmodconfig
-build so that I can pull it in again.  Please see below for the commit.
+I'll send a patch
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit a1ef9b4cff53c509f412c354c715449d7f2e159b
-Author: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date:   Sat Oct 28 19:04:44 2023 +0200
-
-    refscale: Optimize process_durations()
-    
-    The process_durations() function is not on a hot path, but there is
-    still no good reason to iterate over and over the data already in 'buf',
-    but this is exactly what the current use of strlen() and strcat() do.
-    
-    Using a seq_buf saves some useless strcat() and the need of a temp buffer.
-    Data is written directly at the correct place.
-    
-    Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-    Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index 2c2648a3ad30..861485d865ec 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -28,6 +28,7 @@
- #include <linux/rcupdate_trace.h>
- #include <linux/reboot.h>
- #include <linux/sched.h>
-+#include <linux/seq_buf.h>
- #include <linux/spinlock.h>
- #include <linux/smp.h>
- #include <linux/stat.h>
-@@ -890,31 +891,36 @@ static u64 process_durations(int n)
- {
- 	int i;
- 	struct reader_task *rt;
--	char buf1[64];
-+	struct seq_buf s;
- 	char *buf;
- 	u64 sum = 0;
- 
- 	buf = kmalloc(800 + 64, GFP_KERNEL);
- 	if (!buf)
- 		return 0;
--	buf[0] = 0;
-+
-+	seq_buf_init(&s, buf, 800 + 64);
-+
- 	sprintf(buf, "Experiment #%d (Format: <THREAD-NUM>:<Total loop time in ns>)",
- 		exp_idx);
- 
- 	for (i = 0; i < n && !torture_must_stop(); i++) {
- 		rt = &(reader_tasks[i]);
--		sprintf(buf1, "%d: %llu\t", i, rt->last_duration_ns);
- 
- 		if (i % 5 == 0)
--			strcat(buf, "\n");
--		if (strlen(buf) >= 800) {
-+			seq_buf_putc(&s, '\n');
-+
-+		if (seq_buf_used(&s) >= 800) {
-+			seq_buf_terminate(&s);
- 			pr_alert("%s", buf);
--			buf[0] = 0;
-+			seq_buf_clear(&s);
- 		}
--		strcat(buf, buf1);
-+
-+		seq_buf_printf(&s, "%d: %llu\t", i, rt->last_duration_ns);
- 
- 		sum += rt->last_duration_ns;
- 	}
-+	seq_buf_terminate(&s);
- 	pr_alert("%s\n", buf);
- 
- 	kfree(buf);
+Jason
