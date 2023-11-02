@@ -1,39 +1,50 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C994F1DFCA
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 16:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268EC200B7
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 17:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPazedrG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7996197;
-	Thu,  2 Nov 2023 09:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698943130; x=1730479130;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TbgSOUP/KBLYQvMLt1e9jTgTHS7bUT2DGs5jbUlh/Cc=;
-  b=CPazedrGsSez9xyXLEqN7Ve6DHspY5smfnMxH1IOPOKfDxn9C26H5ki1
-   E1mn2pyxoKIwrUAHZSir0opyxW1fbe1b2juUBoNjF3vdLmfqKDV4NTvrd
-   ZQwdtTVfkooGiD/SSyyciChxgCOftYFhC4hrMGCt6sT9S3LMxVcy4W4Yq
-   +2IlNlt4mI92+eiktmIhSJoYTTTdxAtboadoACvaxFa9tZHjfHYQg89kD
-   dCaydPOGgKEA1I/0SWXRM2QixpzqTqC/Lxeq40Z6u800fUprrqKdW0dU9
-   KmLm595eIFrPNNCdPxlokkqG0P/CmljYX7bdGsEHZTFKzMeSyA6NnAFh8
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10882"; a="419863626"
-X-IronPort-AV: E=Sophos;i="6.03,272,1694761200"; 
-   d="scan'208";a="419863626"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2023 09:38:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10882"; a="851974439"
-X-IronPort-AV: E=Sophos;i="6.03,272,1694761200"; 
-   d="scan'208";a="851974439"
-Received: from kookjinl-mobl.amr.corp.intel.com (HELO [10.212.164.123]) ([10.212.164.123])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2023 09:38:49 -0700
-Message-ID: <203cf76c-3855-408c-9a7c-8ff3f74a88bd@intel.com>
-Date: Thu, 2 Nov 2023 09:38:49 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTbBN7Vx"
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6578A123;
+	Thu,  2 Nov 2023 10:25:33 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-509109104e2so1389505e87.3;
+        Thu, 02 Nov 2023 10:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698945931; x=1699550731; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uNZVlyzQ1sL4l4gGZgfOvYzM1lLpkdtOhbOEpCB9H7k=;
+        b=bTbBN7VxXSA2ECARdfbNcJGc3fXTbPWb71voIgvQyjQPCAmvW7J4m6tKeIGlOoipaA
+         VfrhJB2MwKTXSWclqkyI5ROLmqC7256U35ilFNoIOdwIh3ezDgwd4tAKEJT3rM6gF94s
+         eb1cJxL0y3lg3J99st2QoVEZS/9EWvaGQjH0tbzFutwo0SJTn5w1pEadvxXcH34eJh9q
+         bTSk8rV+8uqnCPq0+wF1e47C5xQpmxU0xZNKKljru3rR0R4hWRWOj5w63PtPfl8Rr8Bc
+         frxcZ/y9OcZUDH4enw+Grao80FSjPbX8zT/LLDv2DvbYV1gYS+Qg6wv8G85kbOGB4LD3
+         li1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698945931; x=1699550731;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNZVlyzQ1sL4l4gGZgfOvYzM1lLpkdtOhbOEpCB9H7k=;
+        b=QVecksxuChQJ0pHBa7roqipVw277vCM54JzxZlVUMWvn5U+QKAEJ94GyCRKOzka2UU
+         BTa5hUehBy11gD+52dYwufX8awwYDu+DPj8Cl0tnHIG2aDlS0aHO/6L/BMewt0TZVe10
+         FMh1/9B0vSbOqE+i2gSOzj3tcSMJiB6pLjdxQbYPfjbvkZyYXB/oRLF7gbne4uE1QPjQ
+         egaiGS+qHvamz6P9kqYTYsFUL2Xbnlzk8DbIsTKnUkECftVV/cjWpFBpU6IE2HaU5f8R
+         KcX7sbhzuw3ZhT3vv0XgBsmCLq6TURgKh+1mxG/vSo+nM4vx+rbWNctc6Ja5QpTrqvM/
+         xXwg==
+X-Gm-Message-State: AOJu0YwlygBQDjv6hG2s7BNa+ibZwOcrRqxviISTFd3x/y7q5h/Jc1nQ
+	APnLwRCq04Qmg3dWvEqdBdBcGUvLcaw=
+X-Google-Smtp-Source: AGHT+IGNcflDK5tx9dXHxqAkZ0BhsAWy/q3GpGaWNvhx3Ti1pY8diRK8GPvFwdgYGKxvkIcqpyKRIA==
+X-Received: by 2002:a19:644d:0:b0:509:44b6:e3ac with SMTP id b13-20020a19644d000000b0050944b6e3acmr2964636lfj.61.1698945931285;
+        Thu, 02 Nov 2023 10:25:31 -0700 (PDT)
+Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id v6-20020a5d5906000000b0032f7cfac0fesm856147wrd.51.2023.11.02.10.25.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Nov 2023 10:25:30 -0700 (PDT)
+Message-ID: <b8183f5e-7c4f-48c1-8130-54b77e55349d@gmail.com>
+Date: Thu, 2 Nov 2023 17:25:29 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,75 +54,46 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] x86/lib: Fix overflow of variable m when val >=
  1410065408
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+To: Dave Hansen <dave.hansen@intel.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
  x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231101153237.2214698-1-colin.i.king@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20231101153237.2214698-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <203cf76c-3855-408c-9a7c-8ff3f74a88bd@intel.com>
+Content-Language: en-US
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <203cf76c-3855-408c-9a7c-8ff3f74a88bd@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/1/23 08:32, Colin Ian King wrote:
-...
->  int num_digits(int val)
->  {
-> -	int m = 10;
-> +	long m = 10;
->  	int d = 1;
->  
->  	if (val < 0) {
+On 02/11/2023 16:38, Dave Hansen wrote:
+> On 11/1/23 08:32, Colin Ian King wrote:
+> ...
+>>   int num_digits(int val)
+>>   {
+>> -	int m = 10;
+>> +	long m = 10;
+>>   	int d = 1;
+>>   
+>>   	if (val < 0) {
+> 
+> Isn't this still broken on 32-bit where sizeof(long) == sizeof(int)?
+> Seems like we need 'm' to be able to hold values that are ~10x larger
+> than 'val' if we need this to work for the entire int range.
 
-Isn't this still broken on 32-bit where sizeof(long) == sizeof(int)?
-Seems like we need 'm' to be able to hold values that are ~10x larger
-than 'val' if we need this to work for the entire int range.
+Good point, long long is required for 32 bit,
 
-Also, performance doesn't matter here at *all* with the current use in
-a couple of printk()'s.  Just making 'm' 'long long' or u64 probably be
-just fine.
+sizes:
+arch     int   long   long long
+i386     4     4      8
+x86_64   4     8      8
+
+I'll send a V2.
+
+
+> 
+> Also, performance doesn't matter here at *all* with the current use in
+> a couple of printk()'s.  Just making 'm' 'long long' or u64 probably be
+> just fine.
+
