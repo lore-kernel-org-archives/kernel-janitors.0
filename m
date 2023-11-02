@@ -1,112 +1,103 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945AF12B60
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 10:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0EF15484
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 11:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2hH8erk"
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C9C111
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 03:00:57 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9c3aec5f326so366092766b.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 02 Nov 2023 03:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698919256; x=1699524056; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0LcGLJp2nUFTt1mQ7QkcQWl/m98DtGflVjKV6EHC9c=;
-        b=K2hH8erkD+CVMbqrhIf679PSA044P/V/5hSnCs8XnOWRTVBSAW8m+o6NKADcaVOPyE
-         Tieq3A2sLcCcwTmcUXorDclKZ2pJS/jXusoP9/jZOBQA7K3NHPcXRsvNIW1gPRl+6/N3
-         XqMtVssIkt9NUtiBNpsz01WHsg0eo4zGr0Qqwdqi2ITl37nRFLljq/FYaXBnj/BOMBLs
-         bgvyX2JbRC23GJE7QN07Tq7uAwZFa6wkxqWE+XbXaWXtTOloGH1paZPWL/xRxt6WRVd3
-         4Qea1zsQ8dIEmTwG/H4NzapQsgM8n1EDnyClCTWvam0NBCUWF5FnWAu0WeNSliuujKRV
-         zrYA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="USCyJZST"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6E9F194
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 04:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1698925862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BXvh0HaN7chqLYewNa2LL+UKTHm+C7BuJqCkmXwm+hI=;
+	b=USCyJZSTDBCXDiq5yT9cLdzjZZnMPqg/SIWV8fo7pZCEiuowbR3Ysylz625DvPIBZN1rzr
+	sydkyZjOsC4qEZpkuQ7Indg5HsTWAgaXd3KHt2bHP2OaDjTDA+BPqZuq6kKKxfFjHtUhf0
+	uw7OGWiGk3epPAALvs1uE9t9BGAYr9M=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-192-zOOYF8KhMAygW9R6LzMiWA-1; Thu, 02 Nov 2023 07:51:00 -0400
+X-MC-Unique: zOOYF8KhMAygW9R6LzMiWA-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1cc281f1214so7048115ad.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 02 Nov 2023 04:51:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698919256; x=1699524056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u0LcGLJp2nUFTt1mQ7QkcQWl/m98DtGflVjKV6EHC9c=;
-        b=AaIstBZKXUxX6qDvol60kvnVfMhBt+ajyxkNZRZOoyOHsUtQUipfAbf8F+yP60CdTe
-         U2zfPuN1mp6ibTcZMkvKF//M/Q8SEehAchGpBzXZGrb72I/cgnGIqbQTEO8/4zKiOAKA
-         Nx0xqfKVKMuFyypUdaMbA13g4PgGtkc6YLle9Mi60tfqLxXsJrMBoRVbpeHMOPN6qtzd
-         BGfvk7MVGDYVeYKkCaCv3cnYAepPRzPKYgkUL5j1kd8mTQ6gpMbMjwQ3aJkUDqTiWlmm
-         SHj1FVEONW0ReiA9FsVKz5M6t8MsAs0b1jfY94XXNApqrjzG1b7cbrOjX1DFmQEseQay
-         tD7g==
-X-Gm-Message-State: AOJu0YzOYEul5fAIb9fPCCdxtHWL8ES0yEr0Mk2qQmv3BroWPhH6coFI
-	MvCyA63wnF9WJ2bdLgHmtfKEMFdC9Pga0kbdDow=
-X-Google-Smtp-Source: AGHT+IEpU/ej3CYQUe/o1DvbFvmckpjAshkofsBTRaetWyZq+iS8hdM8yD/H6kzDdk6QF70Ds0Mvkw==
-X-Received: by 2002:a17:907:868d:b0:9b2:b15b:383d with SMTP id qa13-20020a170907868d00b009b2b15b383dmr4786608ejc.11.1698919256473;
-        Thu, 02 Nov 2023 03:00:56 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id qh9-20020a170906eca900b009c762d89c76sm934607ejb.0.2023.11.02.03.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 03:00:55 -0700 (PDT)
-Date: Thu, 2 Nov 2023 13:00:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	coresight@lists.linaro.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coresight: trbe: Fix an IS_ERR() vs NULL check
-Message-ID: <eb4591d3-268a-4590-a0ca-a8a12c8efe5c@kadam.mountain>
-References: <ee0d1f92-b0c3-4f4e-8e16-2aabd47a3447@kili.mountain>
- <536d621a-19fa-4d2f-8bc1-ca7747de7921@arm.com>
+        d=1e100.net; s=20230601; t=1698925860; x=1699530660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BXvh0HaN7chqLYewNa2LL+UKTHm+C7BuJqCkmXwm+hI=;
+        b=nurM1Bvie9QwwsTcKYaIG24yRmZ/tGA2z+itWeG3td+rRMx6Mz+dt5Q0ZraqBH9ZUl
+         FxuT2RV+CHvQOgch829c7VH8SoWKx0qs3lNwpXjPXlNprvZVE9+16lEgj/5e/ftfFFLE
+         bJfdpVjIoVCXrZn6TC4L9WgXtiSM48i1ywahP4KdYmiCkmgVIl1OYf0s9BuHTs4zAhPu
+         Wk3coREj5xHcnxYSzCKBGrD9ad5ocvG9cmb03ussQGF8W1YfyULebSJYU4g7KkG8qk/z
+         jsjALvce5FO8QgWYLfWrInnE4qCcbY3lhyu1kBUEnvS6hnD+eYNrIlPpkrTN0URyPp7F
+         uanA==
+X-Gm-Message-State: AOJu0YxHEoHtEfh6clkHlpUc45b/Hf2x9CKGCBFNlfFbPX841dhTqZfo
+	0cTRg3ePaf1y/0zL3T3OTcG1UwMASh0CO58qvd/5yGk15fA8TmSdjdyURDFqhSvDEdQ6Vdlicc8
+	nd1Q452REn7EISc2l9+9X84V6GgoYh0z9ZnZ/WPFzWxBh
+X-Received: by 2002:a17:902:ec91:b0:1cc:54fb:60f9 with SMTP id x17-20020a170902ec9100b001cc54fb60f9mr10689020plg.37.1698925859918;
+        Thu, 02 Nov 2023 04:50:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeDlGc9ZGH6KLUUs2Oy1+WEmNgkUJb5lFfrVvtguyJjyCi7rE9YZlkZPXYJTVtaydPfwGnkT4uiclyiO5PhFc=
+X-Received: by 2002:a17:902:ec91:b0:1cc:54fb:60f9 with SMTP id
+ x17-20020a170902ec9100b001cc54fb60f9mr10689005plg.37.1698925859679; Thu, 02
+ Nov 2023 04:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <536d621a-19fa-4d2f-8bc1-ca7747de7921@arm.com>
+References: <20231102015141.1355762-1-suhui@nfschina.com>
+In-Reply-To: <20231102015141.1355762-1-suhui@nfschina.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 2 Nov 2023 12:50:47 +0100
+Message-ID: <CAHc6FU5H-Ju9129Xr3RGA6DePDL58tQ7nOkSJXdig4gJc1w+WA@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: remove dead code in __acquires
+To: Su Hui <suhui@nfschina.com>
+Cc: rpeterso@redhat.com, nathan@kernel.org, ndesaulniers@google.com, 
+	trix@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 02, 2023 at 02:01:44PM +0530, Anshuman Khandual wrote:
-> On 11/2/23 13:22, Dan Carpenter wrote:
-> >  	desc.pdata = devm_kzalloc(dev, sizeof(*desc.pdata), GFP_KERNEL);
-> > -	if (IS_ERR(desc.pdata))
-> > +	if (!desc.pdata)
-> 
-> Although this might not be applicable here, given the input size is always
-> valid, devm_kzalloc() might also return ZERO_SIZE_PTR as well.
-> 
-> /*
->  * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
->  *
->  * Dereferencing ZERO_SIZE_PTR will lead to a distinct access fault.
->  *
->  * ZERO_SIZE_PTR can be passed to kfree though in the same way that NULL can.
->  * Both make kfree a no-op.
->  */
-> #define ZERO_SIZE_PTR ((void *)16)
-> 
-> #define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
->                                 (unsigned long)ZERO_SIZE_PTR)
-> 
-> Hence should ZERO_OR_NULL_PTR() check be used instead ?
+On Thu, Nov 2, 2023 at 2:54=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
+>
+> clang static analyzer complains that value stored to 'gh' is never read.
+> The code of this line is useless after commit 0b93bac2271e
+> ("gfs2: Remove LM_FLAG_PRIORITY flag"). Remove this code to save space.
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  fs/gfs2/glock.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> index 3772a5d9e85c..347f8a020c82 100644
+> --- a/fs/gfs2/glock.c
+> +++ b/fs/gfs2/glock.c
+> @@ -1524,7 +1524,6 @@ __acquires(&gl->gl_lockref.lock)
+>                 return;
+>         }
+>         list_add_tail(&gh->gh_list, insert_pt);
+> -       gh =3D list_first_entry(&gl->gl_holders, struct gfs2_holder, gh_l=
+ist);
+>         spin_unlock(&gl->gl_lockref.lock);
+>         if (sdp->sd_lockstruct.ls_ops->lm_cancel)
+>                 sdp->sd_lockstruct.ls_ops->lm_cancel(gl);
+> --
+> 2.30.2
+>
 
-It doesn't apply here and generally you should validate the size instead
-of using ZERO_OR_NULL_PTR().
+Thanks, I'll add this.
 
-The ZERO_SIZE_PTR is actually a really kind of magical innovation
-because it lets you allocate zero element arrays successfully.  So
-kmalloc() should just be checked for NULL because you normally want
-zero element arrays to work without creating a special case for that.
-If not, then check the size before the allocation.
+(The subject "gfs2: remove dead code in __acquires" is misleading
+because the function this is in is called add_to_queue(); __acquires
+is just an annotation.)
 
-The big problem with zero element arrays is in strings.  People do stuff
-like.
+Andreas
 
-	str = kmalloc(size);  <-- size is zero from the user
-	copy_from_user(str, buf, size);
-	str[size - 1] = '\0';  <-- crash
-
-Better to do:
-
-	str = strndup_user(buf, size);
-
-regards,
-dan carpenter
