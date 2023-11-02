@@ -1,61 +1,75 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A9915AC
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 01:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id 7727D121;
-	Wed,  1 Nov 2023 18:52:11 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 72A4A60292B89;
-	Thu,  2 Nov 2023 09:52:00 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: rpeterso@redhat.com,
-	agruenba@redhat.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	trix@redhat.com
-Cc: Su Hui <suhui@nfschina.com>,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] gfs2: remove dead code in __acquires
-Date: Thu,  2 Nov 2023 09:51:42 +0800
-Message-Id: <20231102015141.1355762-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADBE2D61F
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 03:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j24z/zUF"
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2255101;
+	Wed,  1 Nov 2023 20:08:54 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-3b2ea7cca04so292065b6e.2;
+        Wed, 01 Nov 2023 20:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698894534; x=1699499334; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FDyUdMXxOZyxGka8nH6miMPNn2W5hAmBJES98BuVD/s=;
+        b=j24z/zUFO4sJggHkZicSnrP9HnesHh1b4d+1sPk5Q17Km0DOXiM5D7SFWGP6+k8IRX
+         qxgnvrZ3NPakDKZZuxxQJ6GFH5dKmA3kEMsYWum70WwIHEvLqZzTjdtKy1W/7aYGciC6
+         GB+PWxvJ9M5UJ1iQd31Y5NXy8QzpPFy4I+5g+ODss957lkYpvcV59FxZneKvijs5XtCf
+         1gXdu/JPilZsH032u1cjAgUdAw59P9m4eX4LSQslj28h8zjNwGV8nDg3oavxDmojujR/
+         hTSynyxwUtc6cKmXYN4imD1HK6xyZfIgSTAOehEYIG6VEKhnYCxxqx6ZR9Oh08xwnOdC
+         rmWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698894534; x=1699499334;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FDyUdMXxOZyxGka8nH6miMPNn2W5hAmBJES98BuVD/s=;
+        b=LO1M/m4ePTbmFYLVj+wMtwZMwIA0xanZswKFGwQPwx2GUr7+OLdrDpUnrW940h5K8h
+         Ckw6OC9iLkNM7824N/FR2bn2aYEj+KuPTplqYg9Zjzp8S5topK/QP8Mq84BkmmAwUU9I
+         jzLNhm+mVmBeyYU9wTKFollq4qietDm8ci8xD7Zy3rnUnW/hnskvm1lTRPNnZGStjxnN
+         uhc5duxNn0qWDrjLN5Mel+r4vQt2ePW/BajV4XxtllOxSLzBzPaGUa0Pi7MJ0fH8nqbE
+         bUsl2ptns3I06Dd6LH6HtG3/PasjPhrPbuYT0XJiHbaigrk3bEy2iqm8kWFeSdaEr8VT
+         J4YA==
+X-Gm-Message-State: AOJu0Yx9uxt+O9Z/y4eKhNekyhxdqbdDZLmf0Rsnd8gz1vC5aw+TL8h/
+	zYKHwjB+xJisnBmwyGeNe3X3OvMFE30=
+X-Google-Smtp-Source: AGHT+IFSJoRUgQ/5MywXb/2S6QGk99xonwcFvX+ypA5VRZJuvCPHBCTd9pVbyqGuafFGwh10+y/m9g==
+X-Received: by 2002:aca:1214:0:b0:3ae:1446:d48b with SMTP id 20-20020aca1214000000b003ae1446d48bmr17972225ois.3.1698894533827;
+        Wed, 01 Nov 2023 20:08:53 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id u37-20020a056808152500b003afe5617691sm421510oiw.12.2023.11.01.20.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Nov 2023 20:08:52 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 1 Nov 2023 20:08:51 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] hwmon: ltc2991: Fix spelling mistake "contiuous"
+ -> "continuous"
+Message-ID: <fff2742f-6e90-4d7a-b9e5-365429c57f4d@roeck-us.net>
+References: <20231031084240.2148339-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231031084240.2148339-1-colin.i.king@gmail.com>
 
-clang static analyzer complains that value stored to 'gh' is never read.
-The code of this line is useless after commit 0b93bac2271e
-("gfs2: Remove LM_FLAG_PRIORITY flag"). Remove this code to save space.
+On Tue, Oct 31, 2023 at 08:42:40AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err_probe messages. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/gfs2/glock.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied.
 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index 3772a5d9e85c..347f8a020c82 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -1524,7 +1524,6 @@ __acquires(&gl->gl_lockref.lock)
- 		return;
- 	}
- 	list_add_tail(&gh->gh_list, insert_pt);
--	gh = list_first_entry(&gl->gl_holders, struct gfs2_holder, gh_list);
- 	spin_unlock(&gl->gl_lockref.lock);
- 	if (sdp->sd_lockstruct.ls_ops->lm_cancel)
- 		sdp->sd_lockstruct.ls_ops->lm_cancel(gl);
--- 
-2.30.2
-
+Thanks,
+Guenter
