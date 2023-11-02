@@ -1,56 +1,54 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5763E63DE
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 07:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0618D6FA5
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 07:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZY9QEtj"
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 840C212C
-	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 00:51:11 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-543c3756521so912803a12.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 02 Nov 2023 00:51:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QLAMrg5a"
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A23E111
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 Nov 2023 00:52:44 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9d465d1c86bso90810966b.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 02 Nov 2023 00:52:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698911470; x=1699516270; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698911562; x=1699516362; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VLeHfEw+cn20BXnMZ/DKySQ1fS0mAfiqS3/naT53NPg=;
-        b=HZY9QEtjw+L6I62BldV1gztQKtOu+Tdg5wYhFX0k+9kgmYdFXX2OgcJoGj6hTOisgE
-         yXnOD20OvzWLBV32rIC1HWID+HWBiHuoTZTNb57zbw10igviGFIFbiFyzI6cSBhYWPjz
-         x8mXDkFW6/yBG8fcTEGo4zqiue4v02Jzhe7luopv1aUxMJWK45+5bixWaRPTyQvSK/hg
-         niQ3xkfMtlIOCk/rYbNPQdX4pKck1lY1iw5tCYAtU1QXpKs2yrXSUmJ1JVDFtJHUpniA
-         qNUZBSRMimHaJDYg22GhqrArmXKnrAGgUW9g3Suhpxv6qltzFHty9neHDlI55hrSyD5/
-         LEcQ==
+        bh=D3hLFviShdiRz0LWrvjD0/NiNeyz2Hw1WeffZlM9qtA=;
+        b=QLAMrg5ahUYfKyaXPcXeoAJqV4UcCJcptCCVDGdZNvoCRNPP21uOuc/nFV9dkxW52m
+         tXtsAoeTLu2ti2RqL0xprqzCEcBiZLjWaOcHaTIW8GQSQUt1TDF2+01MXIkZAZx1bZ+V
+         Mj+yM92R0sIjS6A38KoWkztO0rxbatE8ypu+Ll9p8zPcW0Qyq1exP5AG6ZXVtt8j2wth
+         tq91B24kLBiChz+JoY6IUUj9AHgTO3nnUnf4n2wzqRwIJQ4k66sKDNYbtwH+kCZ7ZhWr
+         h0zIGsoS35yIFfHHAP/p3lOxjHG7yVFbM7kIbmNFEmxfseYO51InO0WNIY2dV1JMbjmc
+         cW0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698911470; x=1699516270;
+        d=1e100.net; s=20230601; t=1698911562; x=1699516362;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VLeHfEw+cn20BXnMZ/DKySQ1fS0mAfiqS3/naT53NPg=;
-        b=ARsGXl82i3vj0gzgGLmUJAWIrp7r9uZIAj+215TmA1A60RxI3ERW/A8D/32vCtextA
-         BsJGOs7EbmKwHHD7qwirLUfVaO0vlca7rgeo6P5fFT153QOyO1TCsAg64Dncepauk0Ib
-         xFHFeG/ZXFiDbHCWJFRa9NxU8DY5SKmu+nef6XKl7WhQmkaxjR9WGhdrteZA9zNjlgDi
-         KRQmkLsOMvPZlFPRmePcMkTatiUKIDvJo7/b17e2F7r9iQjDlcJu13SLvnG4si67dh4p
-         NW9LtfkvlQRk27XOd1c8iEjEWhn2hzw6pIL245DgjQsIGAV9O9MZ7iab1DmJLIiFOUew
-         yb+A==
-X-Gm-Message-State: AOJu0YzfCEjkRr/0sAV7ncWMMOWD+T799MBmLYtetItZ2NIpks8XOmfH
-	5hRs0moaZx2gsbyBxi5WRacZiA==
-X-Google-Smtp-Source: AGHT+IEvdPf0bsjLKR2aakbO3iQpSkAUBXV0koo+A/Q6lU6+FKL40aJmbs6dvIzpK3w8Pl7MEUx1CQ==
-X-Received: by 2002:a17:907:25cd:b0:9c7:4d98:981f with SMTP id ae13-20020a17090725cd00b009c74d98981fmr3233503ejc.33.1698911470132;
-        Thu, 02 Nov 2023 00:51:10 -0700 (PDT)
+        bh=D3hLFviShdiRz0LWrvjD0/NiNeyz2Hw1WeffZlM9qtA=;
+        b=IwnhvkSl7RG0JMdAhDy7rWy/H4xQjUAP53ia7e6vN/kaFENoy97Ye0JE9/d589oBIE
+         UNjnRK46/cyqNQZo0M0BXLRE5rTHBzKVNF5d3gqnvtIHt0EREF8hped6yC+dYmkgwMps
+         sh2m72hbMKW4Fb2tSHSlGpb61/oZ6eA4boQPOlzM1l8GMlk+KRrz76OjecWWs7l5kCJH
+         +G0zqNgeT3tYxqBUHN9EDa/7jI1C/mfUPLr3kvyXR5qBTQRCb6YBgcHfVJm+Ig6L7uaQ
+         Lfxj1o59zGrZ0669FazYjpUiEOi1sZkg5Xf4t+/XtYbS5WBw9OKKsJ8BoEjDzS/18DvY
+         Iv0Q==
+X-Gm-Message-State: AOJu0YzfS5qkXVPIcK4+4SiZhW2AqVqhMCbjRFtMSCEwTXKURgcE2SeJ
+	xs7iUpexsO+Kupf/TUVJWrkFmQ==
+X-Google-Smtp-Source: AGHT+IE+zTYMpPC3/du1pIEMVlc98f5u2A177kNIdZdJFJ1+S097g5Bgd6lOcqyK8tu9QSQBWpqk7A==
+X-Received: by 2002:a17:906:eece:b0:9d3:f436:6806 with SMTP id wu14-20020a170906eece00b009d3f4366806mr3176651ejb.47.1698911562416;
+        Thu, 02 Nov 2023 00:52:42 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v9-20020a1709060b4900b009cc1e8ed7c5sm801913ejg.133.2023.11.02.00.51.09
+        by smtp.gmail.com with ESMTPSA id mj14-20020a170906af8e00b009930308425csm799836ejb.31.2023.11.02.00.52.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 00:51:09 -0700 (PDT)
-Date: Thu, 2 Nov 2023 10:51:06 +0300
+        Thu, 02 Nov 2023 00:52:42 -0700 (PDT)
+Date: Thu, 2 Nov 2023 10:52:38 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tony Olech <tony.olech@elandigitalsystems.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Deren Wu <deren.wu@mediatek.com>,
-	Bo Liu <liubo03@inspur.com>, Justin Stitt <justinstitt@google.com>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] mmc: vub300: fix an error code
-Message-ID: <0769d30c-ad80-421b-bf5d-7d6f5d85604e@moroto.mountain>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] coresight-tpdm: clean up sanity checks in dsb_mode_store()
+Message-ID: <1a53b166-798c-4eca-9389-674fb896cbcc@kili.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,26 +59,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This error path should return -EINVAL instead of success.
+The (val < 0) check can't be true because "val" is an unsigned long.
+Fortunately, that check is not required because the MODE_MASK check works.
+Ideally, we would return the error from kstrtoul().  Let's clean this
+up a little bit.
 
-Fixes: 88095e7b473a ("mmc: Add new VUB300 USB-to-SD/SDIO/MMC driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mmc/host/vub300.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/coresight/coresight-tpdm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
-index de3f443f5fdc..fd67c0682b38 100644
---- a/drivers/mmc/host/vub300.c
-+++ b/drivers/mmc/host/vub300.c
-@@ -2309,6 +2309,7 @@ static int vub300_probe(struct usb_interface *interface,
- 		vub300->read_only =
- 			(0x0010 & vub300->system_port_status.port_flags) ? 1 : 0;
- 	} else {
-+		retval = -EINVAL;
- 		goto error5;
- 	}
- 	usb_set_intfdata(interface, vub300);
+diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+index b25284e06395..8c2fd4318ac9 100644
+--- a/drivers/hwtracing/coresight/coresight-tpdm.c
++++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+@@ -457,9 +457,12 @@ static ssize_t dsb_mode_store(struct device *dev,
+ {
+ 	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 	unsigned long val;
++	int ret;
+ 
+-	if ((kstrtoul(buf, 0, &val)) || (val < 0) ||
+-			(val & ~TPDM_DSB_MODE_MASK))
++	ret = kstrtoul(buf, 0, &val);
++	if (ret)
++		return ret;
++	if (val & ~TPDM_DSB_MODE_MASK)
+ 		return -EINVAL;
+ 
+ 	spin_lock(&drvdata->spinlock);
 -- 
-2.42.0
+2.39.2
 
