@@ -1,117 +1,52 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A54C79D1
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 08:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="kv7cb5gR"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102D4D43;
-	Fri,  3 Nov 2023 01:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1698999354; x=1730535354;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bvVuH8PuQUV64vR22Glj7m93WZ75FEboVmfiiEOIF00=;
-  b=kv7cb5gRKPLmo3mawp9RGLy0THUfNckfJHn26oqsxt9NgkF3WxVJc6Yp
-   Wl4zo86urRg2OG08PWthgRWDTypXfafVhJKTipiwE+vcD1xcsyjnZSYfc
-   jic2ntC5UdJfTetP37zspTAeFEGCjVMscCWfygmVmgmWd9134alJcLcWi
-   x7OILzlOaJwtdZNYMN8Ox8E/+W1PtVJtLfDh3i/ABMCD1dtjArIx5Ynfk
-   RCrbkU26gK6l9z9QBOP57Azx+aQPSdIx24jpuSVLq4vtFpzwbFtRDu57Y
-   eAmDAlZkFKcOVmbXQwpJDVDWxy+zlEJvf48zGqJdurt7rjUyE112kUY6t
-   w==;
-X-IronPort-AV: E=Sophos;i="6.03,273,1694728800"; 
-   d="scan'208";a="33793751"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Nov 2023 09:15:51 +0100
-Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id A229028007F;
-	Fri,  3 Nov 2023 09:15:51 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
-Date: Fri, 03 Nov 2023 09:15:52 +0100
-Message-ID: <13490070.uLZWGnKmhe@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <11135245.nUPlyArG6x@steina-w>
-References: <20230825055821.30508-1-lukas.bulwahn@gmail.com> <11135245.nUPlyArG6x@steina-w>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2370B79D1;
+	Fri,  3 Nov 2023 09:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:237:300::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58170DE;
+	Fri,  3 Nov 2023 02:18:21 -0700 (PDT)
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1qyqJV-0004lH-Ne; Fri, 03 Nov 2023 10:18:01 +0100
+Date: Fri, 3 Nov 2023 10:18:01 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nf_tables: fix pointer math issue in
+ nft_byteorder_eval()
+Message-ID: <20231103091801.GA8035@breakpoint.cc>
+References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi,
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> The problem is in nft_byteorder_eval() where we are iterating through a
+> loop and writing to dst[0], dst[1], dst[2] and so on...  On each
+> iteration we are writing 8 bytes.  But dst[] is an array of u32 so each
+> element only has space for 4 bytes.  That means that every iteration
+> overwrites part of the previous element.
+> 
+> I spotted this bug while reviewing commit caf3ef7468f7 ("netfilter:
+> nf_tables: prevent OOB access in nft_byteorder_eval") which is a related
+> issue.  I think that the reason we have not detected this bug in testing
+> is that most of time we only write one element.
 
-Am Freitag, 25. August 2023, 08:19:32 CET schrieb Alexander Stein:
-> Hi Lukas,
->=20
-> Am Freitag, 25. August 2023, 07:58:21 CEST schrieb Lukas Bulwahn:
-> > Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
-> > and drivers") adds some file patterns for files in arch/arm/boot/dts/, =
-but
-> > those patterns do not match any files in the repository. Hence,
-> > ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about brok=
-en
-> > references. The files of interest are actually in the directory
-> > arch/arm/boot/dts/nxp/imx/.
->=20
-> Nice, I didn't know about --self-test=3Dpatterns. But you are right, the
-> patterns do not match anymore since arch/arm dts restructuring.
-> I also suggest to add the Fixes tag:
->=20
-> Fixes: 77da3f22b3d54 ("MAINTAINERS: Add entry for TQ-Systems device trees
-> and drivers")
-> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-Any progress on this?
-Thanks
-
-Alexander
-
-> > Adjust the file patterns to match the intended files.
-> >=20
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > Lee, please pick this minor clean-up patch.
-> >=20
-> >  MAINTAINERS | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 52277ee9c1b8..f5d4058b7ff4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -21817,9 +21817,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
-> >=20
-> >  L:	linux@ew.tq-group.com
-> >  S:	Supported
-> >  W:	https://www.tq-group.com/en/products/tq-embedded/
-> >=20
-> > -F:	arch/arm/boot/dts/imx*mba*.dts*
-> > -F:	arch/arm/boot/dts/imx*tqma*.dts*
-> > -F:	arch/arm/boot/dts/mba*.dtsi
-> > +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-> > +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-> > +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
-> >=20
-> >  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
-> >  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
-> >  F:	arch/arm64/boot/dts/freescale/mba*.dtsi
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+LGTM, thanks Dan.  We will route this via nf.git.
