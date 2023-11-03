@@ -1,157 +1,79 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4231C125A8
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 09:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gL6m+T9t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE2FD45;
-	Fri,  3 Nov 2023 02:37:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699004268; x=1730540268;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S/nkKrTesetAZ6aXFR4Ncu3X482+P1gkm27faoGAlpc=;
-  b=gL6m+T9tazegAY1+2iKwJDdwam33EulNYWM/uyswwjZ1q0piq/xS/InD
-   G4LpIRG0GSlb4RbdcCOO2Ajyyjbx9mx9QHsYC60v6FspzsoNd5tnfI9v1
-   RvUQ2iNGj3iNg/BENS46eW5pldFMr3tCgzAu7GsYD4Dkm0BZi1AvkAEiQ
-   sJfWL9knUoSsxrAtJVIJocyxjsLFoDAZ8ynGuEnFyIVQ6YpPI2jkyMnIw
-   yo5999i03+4E/8HeLb1hbNs4T3SRR/glpnfO4OcY2plE6rIkpUdKt+xeV
-   2p164a43YsYtGUKwAcYd+C2uVUnvNu9wF5OUq1QrpNHA6S0rkV45L6/gm
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10882"; a="388741441"
-X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
-   d="scan'208";a="388741441"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 02:37:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10882"; a="711460349"
-X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
-   d="scan'208";a="711460349"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 02:37:45 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 11148120F5B;
-	Fri,  3 Nov 2023 10:42:54 +0200 (EET)
-Date: Fri, 3 Nov 2023 08:42:54 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-subdev: Fix a 64bit bug
-Message-ID: <ZUSyjllEUXYYszoF@kekkonen.localdomain>
-References: <a14df0e5-74aa-42c9-a444-ba4c7d733364@moroto.mountain>
- <ZUSaccRE_lq5Mizh@kekkonen.localdomain>
- <f335560c-af40-4bed-ba3f-46a9efa339b8@kadam.mountain>
- <ZUSiGbcoutTPErJH@kekkonen.localdomain>
- <f47de73d-7741-4c2e-8a15-41264fb91e56@kadam.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F19D11702;
+	Fri,  3 Nov 2023 09:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [IPv6:2001:780:45:1d:225:90ff:fe52:c662])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CE11BD;
+	Fri,  3 Nov 2023 02:45:31 -0700 (PDT)
+Received: from [78.30.35.151] (port=34830 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1qyqk1-00EAjx-Tf; Fri, 03 Nov 2023 10:45:27 +0100
+Date: Fri, 3 Nov 2023 10:45:25 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nf_tables: fix pointer math issue in
+ nft_byteorder_eval()
+Message-ID: <ZUTBNcA7ApLu5DMA@calendula>
+References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
+ <20231103091801.GA8035@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f47de73d-7741-4c2e-8a15-41264fb91e56@kadam.mountain>
+In-Reply-To: <20231103091801.GA8035@breakpoint.cc>
+X-Spam-Score: -1.9 (-)
 
-Hi Dan,
-
-On Fri, Nov 03, 2023 at 10:51:09AM +0300, Dan Carpenter wrote:
-> On Fri, Nov 03, 2023 at 07:32:41AM +0000, Sakari Ailus wrote:
-> > > > > diff --git a/include/uapi/linux/v4l2-subdev.h b/include/uapi/linux/v4l2-subdev.h
-> > > > > index 4a195b68f28f..21d149969119 100644
-> > > > > --- a/include/uapi/linux/v4l2-subdev.h
-> > > > > +++ b/include/uapi/linux/v4l2-subdev.h
->                       ^^^^
-> 
-> > > > > @@ -239,7 +239,7 @@ struct v4l2_subdev_routing {
-> > > > >   * set (which is the default), the 'stream' fields will be forced to 0 by the
-> > > > >   * kernel.
-> > > > >   */
-> > > > > - #define V4L2_SUBDEV_CLIENT_CAP_STREAMS		(1U << 0)
-> > > > > + #define V4L2_SUBDEV_CLIENT_CAP_STREAMS		BIT_ULL(0)
-> > > > 
-> > > > This is a UAPI header but BIT_ULL() is defined in kernel-only headers.
-> > > > 
-> > > > So (1ULL << 0) ?
-> > > > 
-> > > > uapi/linux/const.h also has _BITULL().
-> > > 
-> > > Let's just do 1ULL < 0.  I'll resend.  Is there an automated way I could
-> > > have caught this?
+On Fri, Nov 03, 2023 at 10:18:01AM +0100, Florian Westphal wrote:
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > The problem is in nft_byteorder_eval() where we are iterating through a
+> > loop and writing to dst[0], dst[1], dst[2] and so on...  On each
+> > iteration we are writing 8 bytes.  But dst[] is an array of u32 so each
+> > element only has space for 4 bytes.  That means that every iteration
+> > overwrites part of the previous element.
 > > 
-> > I don't know. :-) Remember to use shift left for bit definitions in UAPI
-> > headers?
+> > I spotted this bug while reviewing commit caf3ef7468f7 ("netfilter:
+> > nf_tables: prevent OOB access in nft_byteorder_eval") which is a related
+> > issue.  I think that the reason we have not detected this bug in testing
+> > is that most of time we only write one element.
 > 
-> Yeah.  I knew it was UAPI but I'm not used to thinking about UAPI rules.
-> I only tried to build this on kernel .c files and didn't try to rebuild
-> the usr/ dir.
-> 
-> I bet someone would have complained eventually but who would have
-> run into this first...  I see there are existing BIT() users in the usr/
-> dir, but everyone seems good about using __u32 instead of u32.  Probably
-> because declaring a variable as u32 causes an immediate compile error
-> for everyone but bogus BIT() defines are not an issue until someone
-> tries to use them.
-> 
-> KTODO: write a script to check that UAPI doesn't use kernel types
-> 
-> Maybe this could be a part of checkpatch.pl?
+> LGTM, thanks Dan.  We will route this via nf.git.
 
-I think that would be useful.
+Thanks for your patch.
 
-I wonder if there are be better ways to check for non-existent macros
-than e.g. singling out BIT() and others. I'd think just checking for BIT()
-etc. should be enough.
+One question, is this update really required?
 
-> 
-> regards,
-> dan carpenter
-> 
-> $ grep BIT usr/ -Rw
-> usr/include/misc/uacce/uacce.h:#define UACCE_DEV_SVA            BIT(0)
-> usr/include/linux/psci.h:#define PSCI_1_0_OS_INITIATED                  BIT(0)
-> usr/include/linux/can/netlink.h: * For further information, please read chapter "8 BIT TIMING
-> usr/include/linux/cxl_mem.h:#define CXL_MEM_COMMAND_FLAG_ENABLED                BIT(0)
-> usr/include/linux/cxl_mem.h:#define CXL_MEM_COMMAND_FLAG_EXCLUSIVE              BIT(1)
-> usr/include/linux/nl80211.h: *  bitmask of BIT(NL80211_BAND_*) as described in %enum
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_PAUSE            BIT(10)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_ASM_DIR          BIT(11)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_C2               BIT(12)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_RF               BIT(13)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_ACK              BIT(14)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_0_NP               BIT(15)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_1000BASE_KX      BIT(5)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_10GBASE_KX4      BIT(6)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_10GBASE_KR       BIT(7)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_40GBASE_KR4      BIT(8)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_40GBASE_CR4      BIT(9)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_100GBASE_CR10    BIT(10)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_100GBASE_KP4     BIT(11)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_100GBASE_KR4     BIT(12)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_100GBASE_CR4     BIT(13)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_25GBASE_R_S      BIT(14)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_1_25GBASE_R                BIT(15)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_2_2500BASE_KX      BIT(0)
-> usr/include/linux/mdio.h:#define MDIO_AN_C73_2_5GBASE_KR                BIT(1)
-> usr/include/asm/kvm.h:#define KVM_PMU_EVENT_FLAG_MASKED_EVENTS BIT(0)
-> usr/include/asm/kvm.h:#define KVM_EXIT_HYPERCALL_LONG_MODE      BIT(0)
-> usr/include/drm/radeon_drm.h: * THESE ARE NOT BIT FIELDS
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_READ                BIT(0)
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_WRITE               BIT(1)
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_LBW         BIT(2)
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_HBW         BIT(3)
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_RR          BIT(4)
-> usr/include/drm/habanalabs_accel.h:#define HL_RAZWI_ADDR_DEC    BIT(5)
+diff --git a/include/net/netfilter/nf_tables.h b/include/net/netfilter/nf_tables.h
+index 3bbd13ab1ecf..b157c5cafd14 100644
+--- a/include/net/netfilter/nf_tables.h
++++ b/include/net/netfilter/nf_tables.h
+@@ -178,9 +178,9 @@ static inline __be32 nft_reg_load_be32(const u32 *sreg)
+        return *(__force __be32 *)sreg;
+ }
 
-Indeed.
+-static inline void nft_reg_store64(u32 *dreg, u64 val)
++static inline void nft_reg_store64(u64 *dreg, u64 val)
+ {
+-       put_unaligned(val, (u64 *)dreg);
++       put_unaligned(val, dreg);
+ }
 
--- 
-Regards,
+ static inline u64 nft_reg_load64(const u32 *sreg)
 
-Sakari Ailus
+because one of the goals of nft_reg_store64() is to avoid that caller
+casts the register to 64-bits.
