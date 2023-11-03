@@ -1,64 +1,92 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAB714293;
-	Fri,  3 Nov 2023 10:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:237:300::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9523D4E;
-	Fri,  3 Nov 2023 03:25:54 -0700 (PDT)
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1qyrN4-00055B-3O; Fri, 03 Nov 2023 11:25:46 +0100
-Date: Fri, 3 Nov 2023 11:25:46 +0100
-From: Florian Westphal <fw@strlen.de>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Florian Westphal <fw@strlen.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] netfilter: nf_tables: fix pointer math issue in
- nft_byteorder_eval()
-Message-ID: <20231103102546.GB8035@breakpoint.cc>
-References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
- <20231103091801.GA8035@breakpoint.cc>
- <ZUTBNcA7ApLu5DMA@calendula>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1F14F86
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 11:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="clreFg0c"
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945EBD43
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 04:16:57 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5a82c2eb50cso23246517b3.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 Nov 2023 04:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699010216; x=1699615016; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9eA8efKOPXzUzYKsuUX5NbXDmCYD0utTiCrivhgq71I=;
+        b=clreFg0cxUHkmLnUkW1GWW/RDuUk/AJ88WfNAMQOakldVXHuvub6iO0D9EdpEjvQtB
+         qxjxn0XKCBzoA/Kb3DXotsZy4S8gHo3mmpX8YiF7MK5IGMUgZO5IIgW2r6ZClqlFqaE0
+         jwJuxYXZOHhCRwjiH1h8jQxZsK4m3pL5ZiQAn/RaS+l59bBosyO2B8txdd626wo0DWOW
+         yvQGPQoqhT0E8Ys2snUl4W38hUd1ruJiuI4mLtNzvxXQ/Yo9wfy7TY1TGcTj2XhVMMIZ
+         FGJODgBGbtztT4TujvO0RhxI9n+omro05/roxWK2QM0MfCN7hTipmneKtqigDKvO2geM
+         l5kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699010216; x=1699615016;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9eA8efKOPXzUzYKsuUX5NbXDmCYD0utTiCrivhgq71I=;
+        b=K1tEtEuFkE/Y7XpSL7c4zSTsKKfCnxQIfJWxRWX5WibqAhQ856zJT/GtGts9TXMsOW
+         Reh73o8iwLGdaPIf0cf9CpxK06ADt3Z90kXXyRQEuCoCQXVrzIkVS5kp5aMqkNs13zVt
+         whM7rG523pNAdpiJxvv7X4HLB+jK4KlKTZwjug8SORpXSrn1NfU1uDwDofH6RVjLpnsc
+         E5SaQ364h2mR75bhOwyvuQWBjCA13vzOkrrsc5JfMSDvYosXwP0p9FMAoPCNNeiK8Bx9
+         y8WNw0aVZFrlM0q9lXor1OVQxmKt6XsaatSoLEOlO8Qj+g4qYNhKqtd7bCwYw49P4QWz
+         9csQ==
+X-Gm-Message-State: AOJu0YwaRd5jC8aJUMJpAGU1ODDQ5YinAFo0VXy9zq3vfnZtcXcVKMxG
+	aU539qlNt7qnWTxbSaLUlBhP0i5ljnNU2baaaykzq0CwL6cXyCuZ
+X-Google-Smtp-Source: AGHT+IGFr/4fnxq3hTHWQYUSTvNr3iWFzoC5V9kIq8qHxBgrMwioqwRQgDyzjZNIOBCQDjh83t+jl6o/P71DDEgT8Io=
+X-Received: by 2002:a81:7c03:0:b0:59f:535b:52a7 with SMTP id
+ x3-20020a817c03000000b0059f535b52a7mr2128058ywc.48.1699010216748; Fri, 03 Nov
+ 2023 04:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZUTBNcA7ApLu5DMA@calendula>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <0769d30c-ad80-421b-bf5d-7d6f5d85604e@moroto.mountain>
+In-Reply-To: <0769d30c-ad80-421b-bf5d-7d6f5d85604e@moroto.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 3 Nov 2023 12:16:20 +0100
+Message-ID: <CAPDyKFoYUtQzMCPKhEHrzxAA5_zk8KiwR-Knj30X+9FebdxW5A@mail.gmail.com>
+Subject: Re: [PATCH] mmc: vub300: fix an error code
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tony Olech <tony.olech@elandigitalsystems.com>, Deren Wu <deren.wu@mediatek.com>, 
+	Bo Liu <liubo03@inspur.com>, Justin Stitt <justinstitt@google.com>, 
+	Yang Yingliang <yangyingliang@huawei.com>, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> On Fri, Nov 03, 2023 at 10:18:01AM +0100, Florian Westphal wrote:
-> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > > The problem is in nft_byteorder_eval() where we are iterating through a
-> > > loop and writing to dst[0], dst[1], dst[2] and so on...  On each
-> > > iteration we are writing 8 bytes.  But dst[] is an array of u32 so each
-> > > element only has space for 4 bytes.  That means that every iteration
-> > > overwrites part of the previous element.
-> > > 
-> > > I spotted this bug while reviewing commit caf3ef7468f7 ("netfilter:
-> > > nf_tables: prevent OOB access in nft_byteorder_eval") which is a related
-> > > issue.  I think that the reason we have not detected this bug in testing
-> > > is that most of time we only write one element.
-> > 
-> > LGTM, thanks Dan.  We will route this via nf.git.
-> 
-> Thanks for your patch.
-> 
-> One question, is this update really required?
+On Thu, 2 Nov 2023 at 08:51, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> This error path should return -EINVAL instead of success.
+>
+> Fixes: 88095e7b473a ("mmc: Add new VUB300 USB-to-SD/SDIO/MMC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I think so, yes.  Part of this bug here is that this helper-niceness
-masks whats really happening in the caller (advancing in strides of
-'u32', rather than 'u64').
+Applied for fixes and by adding a stable tag, thanks!
+
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/vub300.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
+> index de3f443f5fdc..fd67c0682b38 100644
+> --- a/drivers/mmc/host/vub300.c
+> +++ b/drivers/mmc/host/vub300.c
+> @@ -2309,6 +2309,7 @@ static int vub300_probe(struct usb_interface *interface,
+>                 vub300->read_only =
+>                         (0x0010 & vub300->system_port_status.port_flags) ? 1 : 0;
+>         } else {
+> +               retval = -EINVAL;
+>                 goto error5;
+>         }
+>         usb_set_intfdata(interface, vub300);
+> --
+> 2.42.0
+>
