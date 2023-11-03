@@ -1,92 +1,157 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1F14F86
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 11:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843BD18626;
+	Fri,  3 Nov 2023 18:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="clreFg0c"
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945EBD43
-	for <kernel-janitors@vger.kernel.org>; Fri,  3 Nov 2023 04:16:57 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5a82c2eb50cso23246517b3.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 03 Nov 2023 04:16:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMe0wpwo"
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143B2D44;
+	Fri,  3 Nov 2023 11:00:30 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-5a9bc2ec556so2443637a12.0;
+        Fri, 03 Nov 2023 11:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699010216; x=1699615016; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9eA8efKOPXzUzYKsuUX5NbXDmCYD0utTiCrivhgq71I=;
-        b=clreFg0cxUHkmLnUkW1GWW/RDuUk/AJ88WfNAMQOakldVXHuvub6iO0D9EdpEjvQtB
-         qxjxn0XKCBzoA/Kb3DXotsZy4S8gHo3mmpX8YiF7MK5IGMUgZO5IIgW2r6ZClqlFqaE0
-         jwJuxYXZOHhCRwjiH1h8jQxZsK4m3pL5ZiQAn/RaS+l59bBosyO2B8txdd626wo0DWOW
-         yvQGPQoqhT0E8Ys2snUl4W38hUd1ruJiuI4mLtNzvxXQ/Yo9wfy7TY1TGcTj2XhVMMIZ
-         FGJODgBGbtztT4TujvO0RhxI9n+omro05/roxWK2QM0MfCN7hTipmneKtqigDKvO2geM
-         l5kw==
+        d=gmail.com; s=20230601; t=1699034429; x=1699639229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cXd01u8s8gECIb4ZeeRSiRqCzypgHIXS8Szs1ZiS6Tg=;
+        b=mMe0wpwoaenKQRKqLik3z8E3NQcMpsUMRYc5LmMPBjfKUfSzxFVxsnjqzxrl2TMuUI
+         SGmKJfZRx9JWIEBL+R4okHEFydjwyoqFycYLpYCku7WQqhXZmUbIig9f6b/g8bcpfNzh
+         FB9eT09suV9aVI8jy16Zaay0wdhMJqgVuXcPc6668wTq3DFsTjjkuEw7UwlRhhDBf5gb
+         PQCVSHwmCy2GWcBcBqeVNNFkZmsSY7HQoIKlEy2AEcbcwDgteCVpbpQ8vf7jfPb+/ivA
+         xCxj4mxYMFN3Neg2Zlz1N2WGh5YUEBtY7CpJaGHd1pV4M8bBdWMAlsrLvygl5MEFVf6v
+         bftQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699010216; x=1699615016;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9eA8efKOPXzUzYKsuUX5NbXDmCYD0utTiCrivhgq71I=;
-        b=K1tEtEuFkE/Y7XpSL7c4zSTsKKfCnxQIfJWxRWX5WibqAhQ856zJT/GtGts9TXMsOW
-         Reh73o8iwLGdaPIf0cf9CpxK06ADt3Z90kXXyRQEuCoCQXVrzIkVS5kp5aMqkNs13zVt
-         whM7rG523pNAdpiJxvv7X4HLB+jK4KlKTZwjug8SORpXSrn1NfU1uDwDofH6RVjLpnsc
-         E5SaQ364h2mR75bhOwyvuQWBjCA13vzOkrrsc5JfMSDvYosXwP0p9FMAoPCNNeiK8Bx9
-         y8WNw0aVZFrlM0q9lXor1OVQxmKt6XsaatSoLEOlO8Qj+g4qYNhKqtd7bCwYw49P4QWz
-         9csQ==
-X-Gm-Message-State: AOJu0YwaRd5jC8aJUMJpAGU1ODDQ5YinAFo0VXy9zq3vfnZtcXcVKMxG
-	aU539qlNt7qnWTxbSaLUlBhP0i5ljnNU2baaaykzq0CwL6cXyCuZ
-X-Google-Smtp-Source: AGHT+IGFr/4fnxq3hTHWQYUSTvNr3iWFzoC5V9kIq8qHxBgrMwioqwRQgDyzjZNIOBCQDjh83t+jl6o/P71DDEgT8Io=
-X-Received: by 2002:a81:7c03:0:b0:59f:535b:52a7 with SMTP id
- x3-20020a817c03000000b0059f535b52a7mr2128058ywc.48.1699010216748; Fri, 03 Nov
- 2023 04:16:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1699034429; x=1699639229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXd01u8s8gECIb4ZeeRSiRqCzypgHIXS8Szs1ZiS6Tg=;
+        b=oWfrjLihfb1x1q+fPKmeQlJBQfuLjMGIB2h2AF7CemW8hrmFd/EtP9y0gSrVKpv2k7
+         BKaZ/dl3NjZ2kJTGmszLbSaW+juNUg52cTXDRW5DVSzxnHC6Wkn3tgYa7iAc3Q/Lspb6
+         dNjAHNCpfqfa0NZeYgBCXKVjPtG2qoBOifzwE981NH8tuhoHObv5UP3wUe/Lt3EJ/Udi
+         3omCNrI9jRIzgdoKOG3pvWB620i0EgRBDAk+eS020Qo1gLAJlDiWrkSeAWttY4NsDD/G
+         H70w3TQkCKTVP+C3oTHUD6acjq9N9HmnG2wgD6L4LGsWBtuXaqz+vx2R3pWBRjzxN71q
+         LKvg==
+X-Gm-Message-State: AOJu0YwG7xrXSObakxFsVrJr0IWZ48/l5CvLXTBCffnXREzUQn20bk38
+	bNdrdc1171cUDWxjKEj4jfQ=
+X-Google-Smtp-Source: AGHT+IHau5+/xuZkna2xIUKpz5ip5IOq2QpswpbkcBgn7DiL9/8AqeAoQEArRWer89/aSBY1gk5Y1Q==
+X-Received: by 2002:a05:6a20:8f1c:b0:174:7f7:d049 with SMTP id b28-20020a056a208f1c00b0017407f7d049mr23962196pzk.9.1699034429414;
+        Fri, 03 Nov 2023 11:00:29 -0700 (PDT)
+Received: from [0.0.0.0] (74.211.104.32.16clouds.com. [74.211.104.32])
+        by smtp.gmail.com with ESMTPSA id u22-20020a1709026e1600b001b9c5e07bc3sm1699596plk.238.2023.11.03.11.00.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Nov 2023 11:00:28 -0700 (PDT)
+Message-ID: <65b8f53d-4956-4440-bd4c-66475015aaff@gmail.com>
+Date: Sat, 4 Nov 2023 02:00:11 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0769d30c-ad80-421b-bf5d-7d6f5d85604e@moroto.mountain>
-In-Reply-To: <0769d30c-ad80-421b-bf5d-7d6f5d85604e@moroto.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 3 Nov 2023 12:16:20 +0100
-Message-ID: <CAPDyKFoYUtQzMCPKhEHrzxAA5_zk8KiwR-Knj30X+9FebdxW5A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: vub300: fix an error code
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tony Olech <tony.olech@elandigitalsystems.com>, Deren Wu <deren.wu@mediatek.com>, 
-	Bo Liu <liubo03@inspur.com>, Justin Stitt <justinstitt@google.com>, 
-	Yang Yingliang <yangyingliang@huawei.com>, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Wenchao Hao <haowenchao2@huawei.com>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Vinod Koul <vkoul@kernel.org>, "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Douglas Gilbert <dgilbert@interlog.com>, dmaengine@vger.kernel.org,
+ linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
+ <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
+ <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
+ <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
+ <9767953c-480d-4ad9-a553-a45ae80c572b@kadam.mountain>
+ <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
+ <9207ed62-4e41-4b8c-8aee-5143c1a71bf8@kadam.mountain>
+Content-Language: en-US
+From: Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <9207ed62-4e41-4b8c-8aee-5143c1a71bf8@kadam.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2 Nov 2023 at 08:51, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> This error path should return -EINVAL instead of success.
->
-> Fixes: 88095e7b473a ("mmc: Add new VUB300 USB-to-SD/SDIO/MMC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 10/25/23 3:07 PM, Dan Carpenter wrote:
+> On Wed, Oct 25, 2023 at 02:10:41PM +0800, Wenchao Hao wrote:
+>> On 2023/10/25 12:11, Dan Carpenter wrote:
+>>> On Wed, Oct 25, 2023 at 01:09:34AM +0800, Wenchao Hao wrote:
+>>>> Yes, there is bug here if write with .c code. Because your change to use
+>>>> strndup_user() would make write with dirty data appended to "ubuf" failed,
+>>>
+>>> I don't understand this sentence.  What is "dirty" data in this context?
+>>>
+>>
+>> This is what I posted in previous reply:
+>>
+>> We might have following pairs of parameters for sdebug_error_write:
+>>
+>> ubuf: "0 -10 0x12\n0 0 0x2 0x6 0x4 0x2"
+>> count=11
+>>
+>> the valid data in ubuf is "0 -10 -x12\n", others are dirty data.
+>> strndup_user() would return EINVAL for this pair which caused
+>> a correct write to fail.
+> 
+> I mean, I could just tell you that your kzalloc(count + 1, GFP_KERNEL)
+> fix will work.  It does work.
+> 
+> But how is passing "dirty data" a "correct write"?  I feel like it
+> should be treated as incorrect and returning -EINVAL is the correct
+> behavior.  I'm so confused.  Why are users doing that?
+> 
+> I have looked at the code and it just doesn't seem that complicated.
+> They shouldn't be passing messed up strings and expect the kernel to
+> allow it.
+> 
 
-Applied for fixes and by adding a stable tag, thanks!
+First, echo command would call write() system call with string which is
+terminated with '\n'. (I come to this conclusion with strace, but did not
+check the source code of echo). So when we input echo "0 -10 0x12" > $error,
+following pairs would be passed to sdebug_error_write:
 
-Kind regards
-Uffe
+ubuf: "0 -10 0x12\n"
+count: 11
 
+Second, it seems shell sh would not clean the dirty of previous execution.
+For example, dirty data is passed to sdebug_error_write with following steps. 
 
-> ---
->  drivers/mmc/host/vub300.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
-> index de3f443f5fdc..fd67c0682b38 100644
-> --- a/drivers/mmc/host/vub300.c
-> +++ b/drivers/mmc/host/vub300.c
-> @@ -2309,6 +2309,7 @@ static int vub300_probe(struct usb_interface *interface,
->                 vub300->read_only =
->                         (0x0010 & vub300->system_port_status.port_flags) ? 1 : 0;
->         } else {
-> +               retval = -EINVAL;
->                 goto error5;
->         }
->         usb_set_intfdata(interface, vub300);
-> --
-> 2.42.0
->
+echo "2 -10 0x1b 0 0 0x2 0x6 0x4 0x2" > /sys/kernel/debug/scsi_debug/3:0:0:0/error
+echo "0 -10 0x1b" > /sys/kernel/debug/scsi_debug/3:0:0:0/error
+
+I trace the parameters of sdebug_error_write with probe, following log is printed
+when executing above two echo commands:
+
+trace log:
+
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 2/2   #P:8
+#
+#                                _-----=> irqs-off/BH-disabled
+#                               / _----=> need-resched
+#                              | / _---=> hardirq/softirq
+#                              || / _--=> preempt-depth
+#                              ||| / _-=> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+              sh-13912   [007] ..... 482676.030303: sdebug_error_write: (sdebug_error_write+0x0/0x321 [scsi_debug]) comm="sh" count=31 ubuf="2 -10 0x1b 0 0 0x2 0x6 0x4 0x2
+"
+              sh-13912   [007] ..... 482676.030525: sdebug_error_write: (sdebug_error_write+0x0/0x321 [scsi_debug]) comm="sh" count=11 ubuf="0 -10 0x1b
+0 0 0x2 0x6 0x4 0x2
+"
+
+Here is command to add kprobe trace:
+echo 'p:sdebug_error_write sdebug_error_write comm=$comm count=$arg3:u64 ubuf=+0($arg2):ustring' >> /sys/kernel/debug/tracing/kprobe_events
+
+It is proved that dirty data does exist, so I think we should now use strndup_user() here.
+
+Thanks.
+
+> regards,
+> dan carpenter
+> 
+
