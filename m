@@ -1,29 +1,29 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B090F101CB
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 15:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC57C23762;
+	Sun,  5 Nov 2023 16:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QnP4mZKZ"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iFxkHu/L"
 Received: from mout.web.de (mout.web.de [212.227.15.3])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BE0E1;
-	Sun,  5 Nov 2023 07:50:26 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6BE2171E;
+	Sun,  5 Nov 2023 08:34:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1699199415; x=1699804215; i=markus.elfring@web.de;
-	bh=r9OwS1ivzSWe+FjftUfNAX167xv+AilwuKPkbzNdkTI=;
+	t=1699202030; x=1699806830; i=markus.elfring@web.de;
+	bh=AJzJ0pD7PIrmE6AzU/uMIyD8mCJuDdnySvLzrjiZPgM=;
 	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=QnP4mZKZ+4SYxL2AJg7rZW0ShKW2s2yI9EF29FbrXQsnRTAZSLnlLS6HUoeX2/qZ
-	 oP86/tpwDqXhl6mdOFbzyRLTuILXs/R49f3QfuBMOwXBYPxAlIJw79WEUt9QiwtEs
-	 7elI5dSgl9S2nUTXRcXfUwYEQoSsF6bgO0ZiViQ+oW7eoMNQgCFDmtLRjpVGO5+wX
-	 bFXEIpXoW909pjT21uaVNZ0f5P0qHX8sqd9ysqQ+AquzpWpkJNTa9VRkql061vPhY
-	 XryFxKADTLTAQZtuaemajdosp/ZG3i5wAuXjgJauRSvQVizzyjH6cALLmXeAJhZW1
-	 delpBsohl2Sw8lrlEA==
+	b=iFxkHu/LmKUzE7S3sWGb0x4Z0Si2kJw3v9Ae09arSrdgVRc6Fi105NuBq2Z1Ylv9
+	 8yR7W77jIKyW5gUFVPDOvZqM0bc+TKfy172l5np+GBShr0twy4uFqgC/GF0SRiPDY
+	 DM2Bo3Q8znVpICuMWFI8gorlGul6C0s53EOtngGwvWyF+dWb1RYDuWn0aWLnjK4CH
+	 RMOFV5pCyV8mGVbQ77VkzGq+cO3+3IGe1u/FXk/mXKSDGinMX/qEaD72lC626Lsk7
+	 edjURE0XZulkQSZ4vK1hc28kJd3FT9oBJiIBoIk+L20uBakjrODYsu1QCWUPAX1qW
+	 lUZ0ooU0xBstE0Sd8w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MEUSE-1rESQG3vh4-00GIYD; Sun, 05
- Nov 2023 16:50:15 +0100
-Message-ID: <c70c100a-ebfd-442e-875f-738593faf0dc@web.de>
-Date: Sun, 5 Nov 2023 16:50:11 +0100
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6Jxd-1rWFi30wKv-016iJC; Sun, 05
+ Nov 2023 17:33:50 +0100
+Message-ID: <0b2972cb-03b2-40c7-a728-6ebe2512637f@web.de>
+Date: Sun, 5 Nov 2023 17:33:46 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -32,91 +32,88 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Julia Lawall <Julia.Lawall@inria.fr>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Aubin Constans <aubin.constans@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jakub Kicinski <kuba@kernel.org>, Justin Chen <justin.chen@broadcom.com>,
+ Paolo Abeni <pabeni@redhat.com>, bcm-kernel-feedback-list@broadcom.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] mmc: atmel-mci: Use common error handling code in
- atmci_of_init()
+Subject: [PATCH] net: bcmasp: Use common error handling code in bcmasp_probe()
 Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:I12YPWcJkgb4qemXUDa5g2yz/0EJ7eNy6kviteJVU6Jvyx1IXDS
- fJCuAXKh/vFUy8tuheOX3CCAluN1Ta3/1IAR1zYa8HJvRrKv87P4jqzVRFa/BLvwn6jCnra
- 7u3ncddjTjh6cn2V8NnXoXAOGWwDJ/kEAWfTmS4gd/zAx2atAkrTnRA63noA/yiikSwnP+t
- 1AKh+NT4Rfn+v4pEcqAzg==
-UI-OutboundReport: notjunk:1;M01:P0:95EuTFPbeDk=;WTLQLz2c0Yh4z0Rz5KBypRlAh7E
- +KLcnoIYyd4sX8G1993JEzz4y5+58I4wZPDuWHsqJc5aYDs6veaR0PCq2qwzooyP1JPzeav/U
- OOQ2Ul2+69foGufNMAJCuoQkd1ywW2D9YZ3uxXyoig165upItMG+uAOhldvawIfFegXwmdqt6
- kY4S3SFdx+5lfSStNt30OWRxVvDvUDCNZF+/NaSkmWgOoZuTMT6rh4YtwSAMsu/qDtalOjsiS
- VY80UtvKoO8HHnnkUHfsFIE4gtX4fff4pGkkvoBegyl6VQj00u7mrcHueB0JIUeAuIjYruavk
- m295PBP1h2Eg+6kTgj/KqEq6SmbPyU8ueToIYGdfxPUxA1WNfTHzkGYnJd4SQR65V+AYJcbMf
- O2QXxvvhmD6rZZVyZwXLCYzkBdWiH32t7nFGcAi/s8eZVDjfBViHNW6fbj+g0pv0yVNYWZ5Xb
- sJ7uZl8jbpNb41bgFa3GTCVq6TCxXZ2XHIkm3Jr4e+JlMRCPO/ixhZHUNMqmL0gYkoPuBKvwk
- Q3Go1WhiKNL0CPSl9833Z5DwZr0VQb8vN4+gmXd6X7K/EJ+bADYRWKDbGqT3Pm4QGNEP5+2+J
- qviuj0GmAP7Zy1Fj7VF9EC0Pxt8KAvi0XMSkCxm6bwFU5D8duSnjFUfy8WswThqTsuWw7EZ+I
- zK7X/8sYOHgShaRYPuM4Hc3+CMfDQ2h8+3VfMzOZIXE5AGyRLtj/ijzo2KVjL6HUR/UNC3iXp
- q6fyeFWCStCNnFUOQNr7gOAmAxzS8Ppk7Dh84fAiiwCv1RE49j3ldVq49Ky1BbYxTkt6I+ZPK
- vl4tpZQXpt0P1v/Tj7G+ycR013OQBY6uSRjZ6/VRZtulThv5R49UQYJ/XeB5vSDj3lNgV7t1m
- Dj/eRMdKIN3QzKXhMwWBnrEn71dFKmk2y9NuyD/naS7G32GdJk8u77zdgjCgmPkimaVZa9eH/
- ZJelYA==
+X-Provags-ID: V03:K1:6++zPlahvKLDI/Fdz1N+9LgnJ3iTWU2g1ZWw7sjCgkR189sh42S
+ vxLUehhG8l5lgi5q8GrndZwdbXiCmh5iaUD9WkLR/AmFoJmOZDW3DPvmMq5VULEJv/R4aBi
+ WKc0kXfXRjmsW5SAIzOgHGKR64T0WbQ0zPoLNIYH0UzM4Gs3ulpp8NbNBwuppkdKOVWtH5V
+ SdtkFxUusIPUfqzHtoKMw==
+UI-OutboundReport: notjunk:1;M01:P0:Io53oQfVKEs=;rXX/5a1ZB50YgxR0EkBnJzYrQvN
+ L+FvVojPLFM3b7oWBkU7AlOl3gUM3ekqmaZuYC7RcNONUzUWJ8noMYWpUEpo85NJJxgSfhE3j
+ u4auKRdiSKOaBJEJyitSALkBPHw6lVGfr054SugCmeoWqVkIxoM3l94uPDtqPMLp+CCLpfgM/
+ wIogfEzvjN8lC3X/kvls+yA7JO77MDmbM736OzPCa+nlPgJRkLCTucpxgbe4K9B1T7VtGaR7q
+ 5WzIIC8v7KHu4Ae2tpKwDgnuKFeOC18N8U57AladnM93hO/odtIcDgse7rlKfV2vLOeto9Qtp
+ YEsRLpV0D4AdrL/yYSBTIPxvmtoszHEmCdWE4B9325Hc7QVdgL/uVutUvLi1zB9QZxn/Ywy1I
+ udLtABZsQpChihcn+QK8DMusaG5KFLtvBuol/tG4es8kQ+hcbvTZo7Pi1za2TV+e7Uxtu3lk1
+ UmO6yc51LCQSDLU4k1DNVRA8o5u/jco8JzkMAyBbAg41YOJWBeYp2vtfTuXnJs3feBwO9VsLq
+ k/ZrwPsZwyJhBu8S+0GC23ORJt8HoVf+0SJiKApGIAlyjHAHTJVqrgsrlnhRWzEURfiGV0/Aj
+ ubI5irwxYo3DZMuJxV9YfABQjw2ztt/dlUmSm5urq1kecriv+TpMkMaETaykfd6hlAGZ+ERsb
+ Bk1vmoiF4FyTxllfSZ5XUkdiBS9DeYrdKtT5JV2dYCaY+sbdph5cVXFUVdUClLvHUoYVMN+Nt
+ UzsEaCNz1+9a/06SpiC/T6HlGKXvM1JhpbdaNlmBcridp9rHUTPYckUV8hX4tAgxcv+IzGjF8
+ n1vxiZMjDCwFfLyYf+D+Cxe47I9H0advvup3Mhc/olt/F5DHdTKX+2v4xsqTNOMnBOCknBIaA
+ zgrbN+4aUOxe6QIiyBI8S3Sib1jLVe8uFrbKGkxfs3SyO+ejATdPSDM8+mboYRF/g+65HZKme
+ +0rE+w==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Nov 2023 16:36:58 +0100
+Date: Sun, 5 Nov 2023 17:24:01 +0100
 
 Add a jump target so that a bit of exception handling can be better
 reused at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/mmc/host/atmel-mci.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/broadcom/asp2/bcmasp.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index dba826db739a..1e83119d1dcb 100644
-=2D-- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -675,10 +675,9 @@ atmci_of_init(struct platform_device *pdev)
- 					      "cd", GPIOD_IN, "cd-gpios");
- 		err =3D PTR_ERR_OR_ZERO(pdata->slot[slot_id].detect_pin);
- 		if (err) {
--			if (err !=3D -ENOENT) {
--				of_node_put(cnp);
--				return ERR_PTR(err);
--			}
-+			if (err !=3D -ENOENT)
-+				goto put_node;
-+
- 			pdata->slot[slot_id].detect_pin =3D NULL;
+diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.c b/drivers/net/eth=
+ernet/broadcom/asp2/bcmasp.c
+index 29b04a274d07..675437e44b94 100644
+=2D-- a/drivers/net/ethernet/broadcom/asp2/bcmasp.c
++++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+@@ -1304,9 +1304,8 @@ static int bcmasp_probe(struct platform_device *pdev=
+)
+ 		intf =3D bcmasp_interface_create(priv, intf_node, i);
+ 		if (!intf) {
+ 			dev_err(dev, "Cannot create eth interface %d\n", i);
+-			bcmasp_remove_intfs(priv);
+ 			of_node_put(intf_node);
+-			goto of_put_exit;
++			goto remove_intfs;
  		}
-
-@@ -690,15 +689,18 @@ atmci_of_init(struct platform_device *pdev)
- 					      "wp", GPIOD_IN, "wp-gpios");
- 		err =3D PTR_ERR_OR_ZERO(pdata->slot[slot_id].wp_pin);
- 		if (err) {
--			if (err !=3D -ENOENT) {
--				of_node_put(cnp);
--				return ERR_PTR(err);
--			}
-+			if (err !=3D -ENOENT)
-+				goto put_node;
-+
- 			pdata->slot[slot_id].wp_pin =3D NULL;
+ 		list_add_tail(&intf->list, &priv->intfs);
+ 		i++;
+@@ -1331,8 +1330,7 @@ static int bcmasp_probe(struct platform_device *pdev=
+)
+ 			netdev_err(intf->ndev,
+ 				   "failed to register net_device: %d\n", ret);
+ 			priv->destroy_wol(priv);
+-			bcmasp_remove_intfs(priv);
+-			goto of_put_exit;
++			goto remove_intfs;
  		}
+ 		count++;
  	}
-
- 	return pdata;
+@@ -1342,6 +1340,10 @@ static int bcmasp_probe(struct platform_device *pde=
+v)
+ of_put_exit:
+ 	of_node_put(ports_node);
+ 	return ret;
 +
-+put_node:
-+	of_node_put(cnp);
-+	return ERR_PTR(err);
++remove_intfs:
++	bcmasp_remove_intfs(priv);
++	goto of_put_exit;
  }
- #else /* CONFIG_OF */
- static inline struct mci_platform_data*
+
+ static void bcmasp_remove(struct platform_device *pdev)
 =2D-
 2.42.0
 
