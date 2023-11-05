@@ -1,29 +1,29 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AB815B7
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 14:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B090F101CB
+	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 15:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NCdv0eeq"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QnP4mZKZ"
 Received: from mout.web.de (mout.web.de [212.227.15.3])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB691C6;
-	Sun,  5 Nov 2023 06:52:40 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BE0E1;
+	Sun,  5 Nov 2023 07:50:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1699195941; x=1699800741; i=markus.elfring@web.de;
-	bh=cTUM0tlXKDqvxN6TopqTFS5ikFPl23V/+yi1WeDuI1c=;
+	t=1699199415; x=1699804215; i=markus.elfring@web.de;
+	bh=r9OwS1ivzSWe+FjftUfNAX167xv+AilwuKPkbzNdkTI=;
 	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=NCdv0eeqk6RaELUh9BVJgRCGmsZDvR5nPWvQ6H51qz2W+LIZMLIDfVgvXVtNi6Or
-	 sA+ZvNcI1jYtWuIRax7tY2lmDiXw82gZoUBj2qNjEvz63baDA4cwt/endhJsOAV1G
-	 AlGh6jXlYRFKXuuXe8HgdBzfKBPridF49nwWReFThlmTyIXYhtNjhudfNXK+kZEmU
-	 ZLnRdXT8Vm3jNUuZzMByjy3ESe1qS4P9E+9UCs5/VNjx38eyQpBxoWqcxxU53CySg
-	 +0/P3zrBMIDnZwS9hvK1Y6jPOw4rXIyiIVqt4Kur2OeOVV5i0uj9L/tuokiyuvaFJ
-	 fIX3GECIGhTZWFj7Sw==
+	b=QnP4mZKZ+4SYxL2AJg7rZW0ShKW2s2yI9EF29FbrXQsnRTAZSLnlLS6HUoeX2/qZ
+	 oP86/tpwDqXhl6mdOFbzyRLTuILXs/R49f3QfuBMOwXBYPxAlIJw79WEUt9QiwtEs
+	 7elI5dSgl9S2nUTXRcXfUwYEQoSsF6bgO0ZiViQ+oW7eoMNQgCFDmtLRjpVGO5+wX
+	 bFXEIpXoW909pjT21uaVNZ0f5P0qHX8sqd9ysqQ+AquzpWpkJNTa9VRkql061vPhY
+	 XryFxKADTLTAQZtuaemajdosp/ZG3i5wAuXjgJauRSvQVizzyjH6cALLmXeAJhZW1
+	 delpBsohl2Sw8lrlEA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnFy4-1rgNDV1kKS-00jbwg; Sun, 05
- Nov 2023 15:52:21 +0100
-Message-ID: <f6dddb61-e803-4930-885d-f353d9c7cc73@web.de>
-Date: Sun, 5 Nov 2023 15:52:18 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MEUSE-1rESQG3vh4-00GIYD; Sun, 05
+ Nov 2023 16:50:15 +0100
+Message-ID: <c70c100a-ebfd-442e-875f-738593faf0dc@web.de>
+Date: Sun, 5 Nov 2023 16:50:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,89 +31,92 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+To: Julia Lawall <Julia.Lawall@inria.fr>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Aubin Constans <aubin.constans@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
 Content-Language: en-GB
-To: Julia Lawall <Julia.Lawall@inria.fr>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <kristo@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] pmdomain: ti: Use common error handling code in
- ti_sci_pm_domain_probe()
+Subject: [PATCH] mmc: atmel-mci: Use common error handling code in
+ atmci_of_init()
 Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EVx6K6Dbhllcg76fEBr8eJp8TNxpr36C3n52XAScpLwXLybWEx2
- 8sBDmghFFz/lqOXYx5P6g787lSmK2UnLWVWFAR+42XsuyY8QnJ2YWrQjMiYK4pNQN0KV4B6
- H4FFTGmU4IAkfPiVxPJfSOwwsX08ANPNsDhn45Ua6Z6s6vd0EefwFpRDWo5coKk8MbtYbne
- Z1u/0Y7pSRWyum9G2SWTQ==
-UI-OutboundReport: notjunk:1;M01:P0:asLwKnFE5+4=;MLkdzKDui2wx6SyKPwy0ffvxPSs
- 5HxknfqweUZDkdVMBoyyCoUXr025K5OAIOFxNwjh19AorPw2uYMU83aGA4dePx+mXXPTUu/y8
- rc72gPzX5qfkMCfdIYvNRWScdifu81vTV3Mo+28hI8BH2Sty3WarTX6Y9Kk5byKtROwBaP+MX
- oafREwZ3/Wg0VjIhsfLyQzDwtV9U4dZHmb0HXAow6bp+R/H1KcGAGn4D7eYEHiKWsRSFYhr7E
- 4aNHgdauHiE4GxQZjdoQiOjC2lFNexmO9n9955rTB14QdgdJQcwN4p6UpcRBZgBHsSus7fhSY
- jLYk7PJ+Qpwyk31uYH2A15l0/WvKRvN80nhvoAINNOskNZ0m9TDDuDEl8C7uaAhvoQRcz/odq
- fNGyac2lhSeSkt+S5hwJi9bS1Ix/GjAz5knlWz24P29xZdWtrNDFo13HgQPinIKiPgg0IXPeE
- YVzFl80ghgNEdezturGjCwqq3xbZ5274gmMRWdk7yVvFYy4oEuU1l/eetu9SXZ/uPN+Yc5MCJ
- FRt/HaCYzlKihJ0+MWn+w1Vd1rfBEztU9RCIrQilqdsdcTz+D55/2MHYZCQhIn/jGZ2Qmy1Wq
- +eyA9FntNoufnz0jQd+rx/Dvtg7sHOMwqm56TUnE6qZhPEmMwAYw87K9AHnsGMbxoOQtiDDrQ
- 87mIZT0vdVQ+7hmH9hFD5CAYrXDnbgnGbUQ3zqzGFLu4A8GStI5n+AUgmhi33WxPShMgj4Lwa
- LxAnKRnKksLoxJGBXE/0z9uRU3FOZnDmpP7vhN0TxMzGVDsA9MpW6O9s2k+NF1GcKRDm9vgR5
- QOSIQ4LERQSPOh9xbWckxUN2ASy+2IOT+YH3HCkWKromDOL/DuHeKt5B8wvC3L0uiFy+t11wT
- YOhB65y5BLdHMbKIB2dq4rsacAyGMZkKGSlmPLFpHwt0x0AL1tu5vxuFyyuSmbGrf9yHlsmDZ
- T9xZBA==
+X-Provags-ID: V03:K1:I12YPWcJkgb4qemXUDa5g2yz/0EJ7eNy6kviteJVU6Jvyx1IXDS
+ fJCuAXKh/vFUy8tuheOX3CCAluN1Ta3/1IAR1zYa8HJvRrKv87P4jqzVRFa/BLvwn6jCnra
+ 7u3ncddjTjh6cn2V8NnXoXAOGWwDJ/kEAWfTmS4gd/zAx2atAkrTnRA63noA/yiikSwnP+t
+ 1AKh+NT4Rfn+v4pEcqAzg==
+UI-OutboundReport: notjunk:1;M01:P0:95EuTFPbeDk=;WTLQLz2c0Yh4z0Rz5KBypRlAh7E
+ +KLcnoIYyd4sX8G1993JEzz4y5+58I4wZPDuWHsqJc5aYDs6veaR0PCq2qwzooyP1JPzeav/U
+ OOQ2Ul2+69foGufNMAJCuoQkd1ywW2D9YZ3uxXyoig165upItMG+uAOhldvawIfFegXwmdqt6
+ kY4S3SFdx+5lfSStNt30OWRxVvDvUDCNZF+/NaSkmWgOoZuTMT6rh4YtwSAMsu/qDtalOjsiS
+ VY80UtvKoO8HHnnkUHfsFIE4gtX4fff4pGkkvoBegyl6VQj00u7mrcHueB0JIUeAuIjYruavk
+ m295PBP1h2Eg+6kTgj/KqEq6SmbPyU8ueToIYGdfxPUxA1WNfTHzkGYnJd4SQR65V+AYJcbMf
+ O2QXxvvhmD6rZZVyZwXLCYzkBdWiH32t7nFGcAi/s8eZVDjfBViHNW6fbj+g0pv0yVNYWZ5Xb
+ sJ7uZl8jbpNb41bgFa3GTCVq6TCxXZ2XHIkm3Jr4e+JlMRCPO/ixhZHUNMqmL0gYkoPuBKvwk
+ Q3Go1WhiKNL0CPSl9833Z5DwZr0VQb8vN4+gmXd6X7K/EJ+bADYRWKDbGqT3Pm4QGNEP5+2+J
+ qviuj0GmAP7Zy1Fj7VF9EC0Pxt8KAvi0XMSkCxm6bwFU5D8duSnjFUfy8WswThqTsuWw7EZ+I
+ zK7X/8sYOHgShaRYPuM4Hc3+CMfDQ2h8+3VfMzOZIXE5AGyRLtj/ijzo2KVjL6HUR/UNC3iXp
+ q6fyeFWCStCNnFUOQNr7gOAmAxzS8Ppk7Dh84fAiiwCv1RE49j3ldVq49Ky1BbYxTkt6I+ZPK
+ vl4tpZQXpt0P1v/Tj7G+ycR013OQBY6uSRjZ6/VRZtulThv5R49UQYJ/XeB5vSDj3lNgV7t1m
+ Dj/eRMdKIN3QzKXhMwWBnrEn71dFKmk2y9NuyD/naS7G32GdJk8u77zdgjCgmPkimaVZa9eH/
+ ZJelYA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Nov 2023 15:30:28 +0100
+Date: Sun, 5 Nov 2023 16:36:58 +0100
 
 Add a jump target so that a bit of exception handling can be better
 reused at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/pmdomain/ti/ti_sci_pm_domains.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/mmc/host/atmel-mci.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti=
-/ti_sci_pm_domains.c
-index c091d569ecd5..af8a1ed2db70 100644
-=2D-- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-+++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-@@ -153,18 +153,14 @@ static int ti_sci_pm_domain_probe(struct platform_de=
-vice *pdev)
- 					max_id =3D args.args[0];
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index dba826db739a..1e83119d1dcb 100644
+=2D-- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -675,10 +675,9 @@ atmci_of_init(struct platform_device *pdev)
+ 					      "cd", GPIOD_IN, "cd-gpios");
+ 		err =3D PTR_ERR_OR_ZERO(pdata->slot[slot_id].detect_pin);
+ 		if (err) {
+-			if (err !=3D -ENOENT) {
+-				of_node_put(cnp);
+-				return ERR_PTR(err);
+-			}
++			if (err !=3D -ENOENT)
++				goto put_node;
++
+ 			pdata->slot[slot_id].detect_pin =3D NULL;
+ 		}
 
- 				pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
--				if (!pd) {
--					of_node_put(np);
--					return -ENOMEM;
--				}
-+				if (!pd)
-+					goto put_node;
+@@ -690,15 +689,18 @@ atmci_of_init(struct platform_device *pdev)
+ 					      "wp", GPIOD_IN, "wp-gpios");
+ 		err =3D PTR_ERR_OR_ZERO(pdata->slot[slot_id].wp_pin);
+ 		if (err) {
+-			if (err !=3D -ENOENT) {
+-				of_node_put(cnp);
+-				return ERR_PTR(err);
+-			}
++			if (err !=3D -ENOENT)
++				goto put_node;
++
+ 			pdata->slot[slot_id].wp_pin =3D NULL;
+ 		}
+ 	}
 
- 				pd->pd.name =3D devm_kasprintf(dev, GFP_KERNEL,
- 							     "pd:%d",
- 							     args.args[0]);
--				if (!pd->pd.name) {
--					of_node_put(np);
--					return -ENOMEM;
--				}
-+				if (!pd->pd.name)
-+					goto put_node;
-
- 				pd->pd.power_off =3D ti_sci_pd_power_off;
- 				pd->pd.power_on =3D ti_sci_pd_power_on;
-@@ -193,6 +189,10 @@ static int ti_sci_pm_domain_probe(struct platform_dev=
-ice *pdev)
- 		pd_provider->data.domains[pd->idx] =3D &pd->pd;
-
- 	return of_genpd_add_provider_onecell(dev->of_node, &pd_provider->data);
+ 	return pdata;
 +
 +put_node:
-+	of_node_put(np);
-+	return -ENOMEM;
++	of_node_put(cnp);
++	return ERR_PTR(err);
  }
-
- static struct platform_driver ti_sci_pm_domains_driver =3D {
+ #else /* CONFIG_OF */
+ static inline struct mci_platform_data*
 =2D-
 2.42.0
 
