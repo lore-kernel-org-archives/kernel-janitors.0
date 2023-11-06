@@ -1,89 +1,90 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F891EAE7
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 21:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218B117FD
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 03:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="J6v+fcTe"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774CACF
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 13:27:58 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id zkesqAuzormQMzketqBHoe; Sun, 05 Nov 2023 22:27:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1699219676;
-	bh=ZBxI7c/ZChbSFF3scIbmQ8sKou5OuuJXp2+47TLI3rs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=J6v+fcTecyDpqZOwya2BFcaG7NTjcE8SMRq2En1aoYFEWFQTUxdmoR3OjwMQki+sj
-	 A3G+EzSeHG4AQ7HrknhbeQucLb9iLNWw0alr1vksWl6DOct0aWWbEKw7yJVBEaojpL
-	 2ZQhq25gKfiXSGDQ7BIT8qUfFmKem/1dra+97rZuHqTLd9UWO1vd14hDgS/IxG/Jv4
-	 sQUCtoTv4voh/tUQpSO/8vOOZlkCF7+MLX65eBagf3rtzUHlARjVXkbLY7UcUSADfu
-	 bTZZnb1FNbN2v171oUpB/lmpCi+RLOrGPLVqmvPJnwqRGWfZyThSkY23NVSFnZgOS3
-	 CJ3aIqoLiErSg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 05 Nov 2023 22:27:56 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <bcfc4079-2f50-4a7f-a4fa-65fcfb465e6f@wanadoo.fr>
-Date: Sun, 5 Nov 2023 22:27:50 +0100
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="BlhvldTx"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAE2DF2
+	for <kernel-janitors@vger.kernel.org>; Sun,  5 Nov 2023 19:57:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1699243066; x=1699502266;
+	bh=As3a27QMW/BoHW+UlSXOW4dmynjX02XHuetDPzr1fAg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=BlhvldTx+ZtolLJefmPmmfXaOWSIoBHIGgVD+Ozt4PdRogycXX5xb/xAjyTNQJkoN
+	 1gG1i0KW01EJD/WZ929bmEkGbwsexNCyMqEXdYZC/127RtzPlTSRal2Aypr3Nuv7k+
+	 QRpizadcihXeVXMqOcRy0VdIa3J+E3oCGMgHkzNBk/lQi1OxE9X6RsgYUjOHpHEmdV
+	 8MiR0g/1UXnAG2bQjilDkbwTYXEEkp351zsCtQXUUHRY2QuWLVPN/6RZyay0KvoDP8
+	 K2eOMom3LhYidTXM0riGHoot+2itGyI6MxGDnvd5NoRU15MRhhar2jMW5aWQBznbIB
+	 6J7BGZ3Rr9bxQ==
+Date: Mon, 06 Nov 2023 03:57:39 +0000
+To: Su Hui <suhui@nfschina.com>
+From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: ping.cheng@wacom.com, jason.gerecke@wacom.com, jikos@kernel.org, benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: wacom_sys: add error code check in wacom_feature_mapping
+Message-ID: <871qd31qkx.fsf@protonmail.com>
+In-Reply-To: <20231020090237.201029-1-suhui@nfschina.com>
+References: <20231020090237.201029-1-suhui@nfschina.com>
+Feedback-ID: 26003777:user:proton
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: Annotate struct comedi_lrange with __counted_by
-Content-Language: fr, en-US
-To: Kees Cook <keescook@chromium.org>, Julia Lawall <julia.lawall@inria.fr>
-Cc: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <5c3b7459b820e22e2ac6ce892d4aadcc119cc919.1696065263.git.christophe.jaillet@wanadoo.fr>
- <202309301342.5B5BED40A1@keescook>
- <alpine.DEB.2.22.394.2310010945130.3166@hadrien>
- <90E2BBA5-8A2D-42DE-B36A-CD37BABBB433@kernel.org>
- <alpine.DEB.2.22.394.2310012112560.3166@hadrien>
- <202310011405.7599BA9@keescook> <202310011421.C4F19D45@keescook>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <202310011421.C4F19D45@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Le 01/10/2023 à 23:22, Kees Cook a écrit :
-> On Sun, Oct 01, 2023 at 02:05:46PM -0700, Kees Cook wrote:
->> On Sun, Oct 01, 2023 at 09:14:02PM +0200, Julia Lawall wrote:
->>> Kees,
->>>
->>> You can try the following.
->>
->> Cool! Yeah, this finds the example:
->>
->> drivers/comedi/drivers/rti800.c:74: struct comedi_lrange: field at offset 0 is the counter for the flex array
->> drivers/comedi/drivers/rti800.c:83: struct comedi_lrange: field at offset 0 is the counter for the flex array
->> drivers/comedi/drivers/rti800.c:92: struct comedi_lrange: field at offset 0 is the counter for the flex array
->>
->> I'll run it on the whole codebase...
-> 
-> It found only the struct comedi_lrange instances, but that's good to
-> know. :)
-> 
+On Fri, 20 Oct, 2023 17:02:38 +0800 "Su Hui" <suhui@nfschina.com> wrote:
+> hid_report_raw_event() can return error code like '-ENOMEM' if
+> failed, so check 'ret' to make sure all things work fine.
 
-Hi,
+I can agree with adding logging for error cases personally.
 
-(removing most of people from the thread)
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  drivers/hid/wacom_sys.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+> index 3f704b8072e8..1f898d4ee708 100644
+> --- a/drivers/hid/wacom_sys.c
+> +++ b/drivers/hid/wacom_sys.c
+> @@ -320,6 +320,8 @@ static void wacom_feature_mapping(struct hid_device *=
+hdev,
+>  =09=09=09if (ret =3D=3D n && features->type =3D=3D HID_GENERIC) {
+>  =09=09=09=09ret =3D hid_report_raw_event(hdev,
+>  =09=09=09=09=09HID_FEATURE_REPORT, data, n, 0);
+> +=09=09=09=09if (ret)
+> +=09=09=09=09=09hid_warn(hdev, "failed to report feature\n");
 
+I think we should report the returned error information as well.
 
-I found another one.
+  https://docs.kernel.org/core-api/printk-formats.html#error-pointers
 
-struct ocotp_devtype_data has a field 'num_entry' which is the number of 
-entries in 'entry' flex array.
+Typically what I do is use ERR_PTR in tandem with the %pe modifier for
+printing errors.
 
+>  =09=09=09} else if (ret =3D=3D 2 && features->type !=3D HID_GENERIC) {
+>  =09=09=09=09features->touch_max =3D data[1];
+>  =09=09=09} else {
+> @@ -381,6 +383,8 @@ static void wacom_feature_mapping(struct hid_device *=
+hdev,
+>  =09=09if (ret =3D=3D n) {
+>  =09=09=09ret =3D hid_report_raw_event(hdev, HID_FEATURE_REPORT,
+>  =09=09=09=09=09=09   data, n, 0);
+> +=09=09=09if (ret)
+> +=09=09=09=09hid_warn(hdev, "failed to report feature\n");
+>  =09=09} else {
+>  =09=09=09hid_warn(hdev, "%s: could not retrieve sensor offsets\n",
+>  =09=09=09=09 __func__);
 
-[1]: 
-https://elixir.bootlin.com/linux/v6.6/source/drivers/nvmem/imx-ocotp-ele.c#L28
-[2]: 
-https://elixir.bootlin.com/linux/v6.6/source/drivers/nvmem/imx-ocotp-ele.c#L143
+--
+Thanks for the patch,
 
-CJ
+Rahul Rameshbabu
+
