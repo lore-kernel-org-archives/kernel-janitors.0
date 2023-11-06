@@ -1,124 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A340322301
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 13:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6352E23777
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 14:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyUgHft7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD348C433C8;
-	Mon,  6 Nov 2023 13:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699279095;
-	bh=146Hv24u0iSEfP0Lcoz7MmQS/jc9ccb6iAZD/d2PjY8=;
-	h=From:Date:To:Cc:Subject:References:In-Reply-To:From;
-	b=PyUgHft7oDTb28dERhjiXG7ymjucR0IV3zsIgfoMhonHCtvSfIqGeXiBs4IKUbuZ5
-	 C7wAD6ia7eObwcY43OU5btkXZKbi/XnI4EEDpk8qt483bh2SwD8PfhqviMyMlhXcf+
-	 Ly3RVdmvbAnKJri08i+Op1Tjle50Xsn+QgWJIVPOt9MPZUVr91MjLNQRnJy7t/bqMu
-	 Tnwvfyw8bAC1fBq/S9hoGsxom/XHiMm7m8Y2UFrtxP5K24Gc3AmLwWmrNI3js3Ax7Q
-	 oaeVl6aQv5HgEns4FF82Bera9+OddYbodYnd3Tr4WINKQHLAiFlaVJ+JBlefgC1/8b
-	 CRC4oab8dM2Dw==
-From: mripard@kernel.org
-Date: Mon, 6 Nov 2023 14:58:12 +0100
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Kees Cook <keescook@chromium.org>, Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Arthur Grillo <arthurgrillo@riseup.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, kernel-janitors@vger.kernel.org, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, kv-team <kv-team@linaro.org>
-Subject: Re: [RFC] drm/tests: annotate intentional stack trace in
- drm_test_rect_calc_hscale()
-Message-ID: <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
-65;7400;1cFrom: Maxime Ripard <mripard@kernel.org>
-References: <02546e59-1afe-4b08-ba81-d94f3b691c9a@moroto.mountain>
- <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
- <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWkqTceX"
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBEEBF
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 06:04:39 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99357737980so675169666b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 06 Nov 2023 06:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699279478; x=1699884278; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f8fFJp+6thPSgTWdug5tZ/JbqQ1yt18b9c1a5sYRCho=;
+        b=mWkqTceX605aszjCuQ3djv2+dKQeuE04k8OBtwKIsF8swqRezIMN6QM+UP5592YKn/
+         8birCkGT0YCJeZafYBlKDUIXg5wi9knWtLVNgt/dd9HZKiON+nDMaWiTdwrs2608c8Fb
+         NkCuYrtOhnK2W9x6GQFncvmdYf0N5E0tpf/r55R4eAVBnC2be+UXZ8TCEToCZMITEktg
+         p655g6Idq443Lv7mQ8FD1HIin1KCzdfaWQqt7V6QeYVAaHcONaYMHluPzK0HXtpKaNSc
+         Rpnm7cHFNyVHdUc+V2BhxTP4+TG5wjGekGvt9QgxTbu2PeGsWFthZdb+AFV56l0yzVKB
+         FyQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699279478; x=1699884278;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f8fFJp+6thPSgTWdug5tZ/JbqQ1yt18b9c1a5sYRCho=;
+        b=gIYrRbPiRU0kbtDC/bMqUfhGyXD00wlm/qNjy0vt56QpXd/6LALPM3j4897gqY3nXh
+         zgCx9DCuJFoOjbLW15QQPJGqpawQ929cacLt4rpU0/WBDvaLtoi4d0p4WlHodDGLrL8o
+         ygET7j6RoJrpXGBAR080n4TyaGzFPTfJGkk4slFFVkbl5Q5rHU5wcKq7iNRUFzjoow1g
+         FzWiPRPsNfmlXwhuVT6L8IPO5o4YrTiJix4QSqIIOX6Gks6BAA6Ibl0GAJSxtmRf2Ls8
+         C9JcLEfOWONrPM2M8wxW75YkfePrKh8THYVnsj4naQozefbwtkKhW5c22gBMKsNtXLvD
+         yGsQ==
+X-Gm-Message-State: AOJu0Yz+b16SYNDbrQawdkp/jNsuo/2juas25jNuY5srR6Xf/2LDanzt
+	XDiuYQQ0h1qmqK3L02IWA3nKgA==
+X-Google-Smtp-Source: AGHT+IEYSN/SDYqcdexC3uheG8u1o/CHFCDzFFhLGwA4BcqeG4BAMwpoOZJ0wcjNqkPyHrR3KCVRsQ==
+X-Received: by 2002:a17:907:869f:b0:9c3:a193:2580 with SMTP id qa31-20020a170907869f00b009c3a1932580mr13858512ejc.12.1699279477984;
+        Mon, 06 Nov 2023 06:04:37 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id mc27-20020a170906eb5b00b009b928eb8dd3sm4144123ejb.163.2023.11.06.06.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 06:04:37 -0800 (PST)
+Date: Mon, 6 Nov 2023 17:04:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Wenchao Hao <haowenchao2@huawei.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Douglas Gilbert <dgilbert@interlog.com>, linux-scsi@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 1/2] scsi: scsi_debug: scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+Message-ID: <7733643d-e102-4581-8d29-769472011c97@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xqbcpamsz7sm4ktx"
-Content-Disposition: inline
-In-Reply-To: <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
-
-
---xqbcpamsz7sm4ktx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email haha only kidding
 
-Hi,
+There are two bug in this code:
+1) If count is zero, then it will lead to a NULL dereference.  The
+   kmalloc() will successfully allocate zero bytes and the test for
+   "if (buf[0] == '-')" will read beyond the end of the zero size buffer
+   and Oops.
+2) The code does not ensure that the user's string is properly NUL
+   terminated which could lead to a read overflow.
 
-On Wed, Nov 01, 2023 at 12:08:00PM +0300, Dan Carpenter wrote:
-> Let me add Richard to the CC list.  See lore for more details.
-> https://lore.kernel.org/all/CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=3D7_uFcybBSL=
-=3DQP_sQvQ@mail.gmail.com/
->=20
-> On Tue, Oct 31, 2023 at 09:57:48PM +0530, Naresh Kamboju wrote:
-> > On Mon, 30 Oct 2023 at 14:33, Dan Carpenter <dan.carpenter@linaro.org> =
-wrote:
-> > >
-> > > We have started printing more and more intentional stack traces.  Whe=
-ther
-> > > it's testing KASAN is able to detect use after frees or it's part of a
-> > > kunit test.
-> > >
-> > > These stack traces can be problematic.  They suddenly show up as a new
-> > > failure.  Now the test team has to contact the developers.  A bunch of
-> > > people have to investigate the bug.  We finally decide that it's
-> > > intentional so now the test team has to update their filter scripts to
-> > > mark it as intentional.  These filters are ad-hoc because there is no
-> > > standard format for warnings.
-> > >
-> > > A better way would be to mark it as intentional from the start.
-> > >
-> > > Here, I have marked the beginning and the end of the trace.  It's more
-> > > tricky for things like lkdtm_FORTIFY_MEM_MEMBER() where the flow does=
-n't
-> > > reach the end of the function.  I guess I would print a different
-> > > warning for stack traces that can't have a
-> > > "Intentional warning finished\n" message at the end.
-> > >
-> > > I haven't actually tested this patch...  Daniel, do you have a
-> > > list of intentional stack traces we could annotate?
-> >=20
-> > [My two cents]
-> >=20
-> > I have been noticing following kernel warnings / BUGs
->=20
-> Some are intentional and some are not.  I had a similar thing happen to
-> me last week where I had too many Smatch false positives in my devel
-> code so I accidentally sent a patch with a stupid bug.  I've since
-> updated my QC process to run both the devel and released versions of
-> Smatch.
->=20
-> But a similar thing is happening here where we have so many bogus
-> warnings that we missed a real bug.
+Fixes: a9996d722b11 ("scsi: scsi_debug: Add interface to manage error injection for a single device")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: At first I tried to use strndup_user() but that only accepts NUL
+    terminated strings and the user string is normally not terminated.
 
-IIRC, there was a similar discussion for lockdep issues. IMO, any
-(unintended) warning should trigger a test failure.
+ drivers/scsi/scsi_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I guess that would require adding some intrumentation to __WARN somehow,
-and also allowing tests to check whether a warning had been generated
-during their execution for tests that want to trigger one.
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 67922e2c4c19..0dd21598f7b6 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -1019,7 +1019,7 @@ static ssize_t sdebug_error_write(struct file *file, const char __user *ubuf,
+ 	struct sdebug_err_inject *inject;
+ 	struct scsi_device *sdev = (struct scsi_device *)file->f_inode->i_private;
+ 
+-	buf = kmalloc(count, GFP_KERNEL);
++	buf = kzalloc(count + 1, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-- 
+2.42.0
 
-Maxime
-
---xqbcpamsz7sm4ktx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZUjw9AAKCRDj7w1vZxhR
-xVHxAP9+MVNkRhFAcYBlsPMe3eQ/ZiQV5eqW/Q8okxFof/9xegD/WBapKwZv6qgF
-CyoizI3A8AGSVFpMUx9COGghvklOAQE=
-=iyFQ
------END PGP SIGNATURE-----
-
---xqbcpamsz7sm4ktx--
