@@ -1,101 +1,82 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6BC156D4
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 10:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B6A3A4
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 02:43:13 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1qzx4T-0006mM-Gc; Mon, 06 Nov 2023 11:43:05 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1qzx4S-0070Mg-UN; Mon, 06 Nov 2023 11:43:04 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1qzx4S-00DYxW-L9; Mon, 06 Nov 2023 11:43:04 +0100
-Date: Mon, 6 Nov 2023 11:43:04 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pwm: samsung: Fix a bit test in
- pwm_samsung_resume()
-Message-ID: <20231106104304.cq6353tj5pfdffyc@pengutronix.de>
-References: <e031db45-add0-4da7-97fa-dee95ee936ad@moroto.mountain>
- <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC14D241FC
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 13:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFiq9kxQ"
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3C3134
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 05:44:20 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9ae2cc4d17eso691506666b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 06 Nov 2023 05:44:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699278259; x=1699883059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q7e9Ec68Ydmk63OSQsConTxB03oSMTJh6BRkMmt0d9Q=;
+        b=CFiq9kxQ6L5v+VEMUaAnW1eP2+D2lSjPOwFh49bcjoukS7WDcwu7d7ZaF8TrZx3GQ2
+         VFwc08ajL9hr+R8TwD8eUEzruP0kThul84LT+H8ua0WZeUm12xW1n70hfvvxuO6uBruO
+         gL3nvVkVNiGgV5E4MRl4jvttzLv/AqYlW7vvI594AUcIx9caDNNrzJzGPFfMTvJfD8wj
+         BtdLRJkK8d/2nDNvtL0xdY1lou39kTbiVenDvdROqw3MuBovCee6NEyFZ5J2TMJed5r7
+         8qqRhLirOvTjcNfNIG8fEJuoDXVtgDe44dE/QrSPBDBsG+PporWhuvzgPe9dF7CHqJJZ
+         M7ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699278259; x=1699883059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q7e9Ec68Ydmk63OSQsConTxB03oSMTJh6BRkMmt0d9Q=;
+        b=t7s0/biomH+Mq7Gwy8dxBRxwkwUgOtxmbHjQQ42bFb5/vzBhw0+QxNyHO6twGiWWTj
+         Ggd9Q+ZeXBUwTQs6fRAnLcNIz6vq6wv8FXXnYvITJNBKQZyu8ln5sEAjWOKbLLSsP/4I
+         OgWgIvL8qtQm3mdDPb7a7ToT5sJzEfS/1ZgGEU8DoB6ShzLLpMuFNXoUVaEuXnPHGvAU
+         xvIKUpa2AC6kRQG5TftVvqi2qVgWRbbPp7G8Dz+nXXo/aZlWyMEKramQdXJi1rpLk4mF
+         Nu5friWnTQNvK2JF/POze/ZPcexDrJ+w70B/qI1R6UGMKOiYGFww83uv9GKahGtMezJH
+         glQA==
+X-Gm-Message-State: AOJu0YzafYNejnEa6+b25aERij17O/cHUC9hEHmGinn6cZbrNdKfp3D/
+	/iVSrcI/C7K8r2UZln8ONKkktQ==
+X-Google-Smtp-Source: AGHT+IHiakzgI6LCjuKf2DUxW4dwg+isgj008eu/G7z8A0PZqUSpMz2yarqnNJAljDV/TJ/7ffeHxQ==
+X-Received: by 2002:a17:907:26c9:b0:9e0:dde:cc9f with SMTP id bp9-20020a17090726c900b009e00ddecc9fmr3038620ejc.22.1699278259262;
+        Mon, 06 Nov 2023 05:44:19 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id jw24-20020a17090776b800b0098e78ff1a87sm4144742ejc.120.2023.11.06.05.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 05:44:18 -0800 (PST)
+Date: Mon, 6 Nov 2023 16:44:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Wenchao Hao <haowenchao22@gmail.com>
+Cc: Wenchao Hao <haowenchao2@huawei.com>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Douglas Gilbert <dgilbert@interlog.com>, dmaengine@vger.kernel.org,
+	linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] scsi: scsi_debug: fix some bugs in
+ sdebug_error_write()
+Message-ID: <ea7dff5a-3a5d-414d-8a8c-a737c8ec8004@kadam.mountain>
+References: <96d50cf7-afec-46af-9d98-08099f8dc76e@moroto.mountain>
+ <CAOptpSMTgGwyFkn8o6qAEnUKXh+_mOr8dQKAZUWfM_4QEnxzxw@mail.gmail.com>
+ <44b0eca3-57c1-4edd-ab35-c389dc976273@kadam.mountain>
+ <cbe14e3a-11c7-4da5-b125-5801244e27f2@gmail.com>
+ <9767953c-480d-4ad9-a553-a45ae80c572b@kadam.mountain>
+ <afe1eca8-cdf8-612b-867e-4fef50ad423f@huawei.com>
+ <9207ed62-4e41-4b8c-8aee-5143c1a71bf8@kadam.mountain>
+ <65b8f53d-4956-4440-bd4c-66475015aaff@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sf7jdeeib2wrdg7j"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231025121103.ptck4z62wvndgdlr@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <65b8f53d-4956-4440-bd4c-66475015aaff@gmail.com>
 
+Oh.  Duh.  The issue is that echo doesn't actually put a NUL terminator
+on the end of the string...  Let's go with kzalloc(count + 1, as you
+suggest.
 
---sf7jdeeib2wrdg7j
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+regards,
+dan carpenter
 
-Hello Thierry,
-
-On Wed, Oct 25, 2023 at 02:11:03PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, Oct 25, 2023 at 02:57:34PM +0300, Dan Carpenter wrote:
-> > The PWMF_REQUESTED enum is supposed to be used with test_bit() and not
-> > used as in a bitwise AND.  In this specific code the flag will never be
-> > set so the function is effectively a no-op.
-> >=20
-> > Fixes: e3fe982b2e4e ("pwm: samsung: Put per-channel data into driver da=
-ta")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->=20
-> Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
->=20
-> @Thierry: e3fe982b2e4e is currently in your for-next branch. So it would
-> be good to get Dan's patch into your PR for 6.7-rc1.
-
-I saw you updated your for-next branch but didn't add this patch yet.
-Would be great to get this one in to not get a known-broken state into
-6.7-rc1.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---sf7jdeeib2wrdg7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVIwzcACgkQj4D7WH0S
-/k6HfggAuLzuNztYJ90zdJk4FBdCGz7VtSi2zRm4cN+QJ3PRBuR1akw07gRXBBLD
-D08odKKsrPo33GScRHaBPUtFEbBcKyoE5xl0pHps7pgpS+WhCHsryDrrZ4uCEqBK
-7aUWFwzLUKgv/MMuFTrbhHSkK6LwMRi1vbiGO4/QlMjty8vZadE1Tx+S5Qww4Oc2
-f4jDt9f74a8OWDWdygHdai3W1Xn8c/N5CZ4kV4p5BjdcaG277WwTRreEVsQAleIV
-+HSEmxxib6VvUxpf7Ha8r0rnIFgrzLHfB41XajJYWw7snmr4ZVteUDnUEsJswP0T
-BaJ+o4P1knAaw0z66JqRb6t+eQ9TaQ==
-=Xh6W
------END PGP SIGNATURE-----
-
---sf7jdeeib2wrdg7j--
