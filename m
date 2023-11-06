@@ -1,56 +1,55 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6352E23777
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 14:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F497249F6
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 14:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWkqTceX"
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBEEBF
-	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 06:04:39 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99357737980so675169666b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 06 Nov 2023 06:04:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JqvRT7r7"
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048D1DF
+	for <kernel-janitors@vger.kernel.org>; Mon,  6 Nov 2023 06:05:10 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-53e08e439c7so7692088a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 06 Nov 2023 06:05:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699279478; x=1699884278; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f8fFJp+6thPSgTWdug5tZ/JbqQ1yt18b9c1a5sYRCho=;
-        b=mWkqTceX605aszjCuQ3djv2+dKQeuE04k8OBtwKIsF8swqRezIMN6QM+UP5592YKn/
-         8birCkGT0YCJeZafYBlKDUIXg5wi9knWtLVNgt/dd9HZKiON+nDMaWiTdwrs2608c8Fb
-         NkCuYrtOhnK2W9x6GQFncvmdYf0N5E0tpf/r55R4eAVBnC2be+UXZ8TCEToCZMITEktg
-         p655g6Idq443Lv7mQ8FD1HIin1KCzdfaWQqt7V6QeYVAaHcONaYMHluPzK0HXtpKaNSc
-         Rpnm7cHFNyVHdUc+V2BhxTP4+TG5wjGekGvt9QgxTbu2PeGsWFthZdb+AFV56l0yzVKB
-         FyQw==
+        d=linaro.org; s=google; t=1699279508; x=1699884308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KalBKrt5hDCEZ5KOndx2CJgyQr+tj5elv37LBgFk8uE=;
+        b=JqvRT7r7nwGFKtSw/9DgSJQkxXIGV1X6E7X/nCmBYF8qoStzz4t38usAzMb/vfL7Gy
+         OciUYamBvwWnKzCOlsqY7TscsByJFJFPAINNaHE80C7GU3d+OwJr8bZP+stzJz7pjpMo
+         bIEYUDSgzw0B2tm9I1OcoYg2HaSqzW7CynERfWfIpYj4NKIYwWGfhyMqVNc3h3MiOeYd
+         9flANJfaPh2xCEG+/raVAZP4gVlfAjrtot7g7jD6arGVCqT+C73hKrg60/nTRNSIls7y
+         bspYq1ZVzQO4diDae65Ck9ijcr7VbQIhir5dlYWh/eWxYiFo4+3cJtGx8ugOAkLnBli1
+         0k2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699279478; x=1699884278;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f8fFJp+6thPSgTWdug5tZ/JbqQ1yt18b9c1a5sYRCho=;
-        b=gIYrRbPiRU0kbtDC/bMqUfhGyXD00wlm/qNjy0vt56QpXd/6LALPM3j4897gqY3nXh
-         zgCx9DCuJFoOjbLW15QQPJGqpawQ929cacLt4rpU0/WBDvaLtoi4d0p4WlHodDGLrL8o
-         ygET7j6RoJrpXGBAR080n4TyaGzFPTfJGkk4slFFVkbl5Q5rHU5wcKq7iNRUFzjoow1g
-         FzWiPRPsNfmlXwhuVT6L8IPO5o4YrTiJix4QSqIIOX6Gks6BAA6Ibl0GAJSxtmRf2Ls8
-         C9JcLEfOWONrPM2M8wxW75YkfePrKh8THYVnsj4naQozefbwtkKhW5c22gBMKsNtXLvD
-         yGsQ==
-X-Gm-Message-State: AOJu0Yz+b16SYNDbrQawdkp/jNsuo/2juas25jNuY5srR6Xf/2LDanzt
-	XDiuYQQ0h1qmqK3L02IWA3nKgA==
-X-Google-Smtp-Source: AGHT+IEYSN/SDYqcdexC3uheG8u1o/CHFCDzFFhLGwA4BcqeG4BAMwpoOZJ0wcjNqkPyHrR3KCVRsQ==
-X-Received: by 2002:a17:907:869f:b0:9c3:a193:2580 with SMTP id qa31-20020a170907869f00b009c3a1932580mr13858512ejc.12.1699279477984;
-        Mon, 06 Nov 2023 06:04:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699279508; x=1699884308;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KalBKrt5hDCEZ5KOndx2CJgyQr+tj5elv37LBgFk8uE=;
+        b=A43wlC3qff2BNgrVisUtlnwDYuyY4yRtQDjwoHU9Goa7aFnuTtv64tKDRdCHhKM1aF
+         xOLnn284hJoKuHBCUhasibnMzjkey0yQXwYqjbzHGlwH8htL9Kl+wfal6yKnExvHcpPd
+         pK0XcJp53qicNGB28HLG+/HqKg3HMc7JSmZeOphjGC8z98BwF+Roz6VbUc+lmV5W9xSS
+         p0ByRA+LEzkkw54eZRJn0O9wjuZAePALfTX6kbC8kLiHJw7DikTZM5YdzRT6GcX60VJn
+         cCEla3gqdGMPZbbAApdB/JG++CY4q50nR3CTXP0UY5U7Cavxt4rdJyT2wT9vDsA6ZBsn
+         Djww==
+X-Gm-Message-State: AOJu0YyKy+LL/DU7RL0lODUfrKf3Bl1nYtBqQ0YOZuDznE9/BpSvu0JG
+	S85CgX5oGXDVPABWgS8ozL/GdQ==
+X-Google-Smtp-Source: AGHT+IGAER6GR4FrIdU6at0gU7TeaMmHHbaLxhCkoIMU2j3SIUoMT+g2zyoNcwMsXt1fLC0GQosuHw==
+X-Received: by 2002:a17:907:30ca:b0:9ae:3e72:7c72 with SMTP id vl10-20020a17090730ca00b009ae3e727c72mr8816811ejb.58.1699279508482;
+        Mon, 06 Nov 2023 06:05:08 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id mc27-20020a170906eb5b00b009b928eb8dd3sm4144123ejb.163.2023.11.06.06.04.37
+        by smtp.gmail.com with ESMTPSA id qu28-20020a170907111c00b00992ea405a79sm4114626ejb.166.2023.11.06.06.05.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 06:04:37 -0800 (PST)
-Date: Mon, 6 Nov 2023 17:04:33 +0300
+        Mon, 06 Nov 2023 06:05:08 -0800 (PST)
+Date: Mon, 6 Nov 2023 17:05:04 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Wenchao Hao <haowenchao2@huawei.com>
 Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Douglas Gilbert <dgilbert@interlog.com>, linux-scsi@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 1/2] scsi: scsi_debug: scsi: scsi_debug: fix some bugs in
- sdebug_error_write()
-Message-ID: <7733643d-e102-4581-8d29-769472011c97@moroto.mountain>
+	linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 2/2] scsi: scsi_debug: delete some bogus error checking
+Message-ID: <c602c9ad-5e35-4e18-a47f-87ed956a9ec2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,37 +58,53 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <7733643d-e102-4581-8d29-769472011c97@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 
-There are two bug in this code:
-1) If count is zero, then it will lead to a NULL dereference.  The
-   kmalloc() will successfully allocate zero bytes and the test for
-   "if (buf[0] == '-')" will read beyond the end of the zero size buffer
-   and Oops.
-2) The code does not ensure that the user's string is properly NUL
-   terminated which could lead to a read overflow.
+Smatch complains that "dentry" is never initialized.  These days everyone
+initializes all their stack variables to zero so this means that it will
+trigger a warning every time this function is run.
 
-Fixes: a9996d722b11 ("scsi: scsi_debug: Add interface to manage error injection for a single device")
+Really, debugfs functions are not supposed to be checked for errors in
+normal code.  For example, if we updated this code to check the correct
+variable then it would print a warning if CONFIG_DEBUGFS was disabled.
+We don't want that.  Just delete the check.
+
+Fixes: f084fe52c640 ("scsi: scsi_debug: Add debugfs interface to fail target reset")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-v2: At first I tried to use strndup_user() but that only accepts NUL
-    terminated strings and the user string is normally not terminated.
+v2: Add some more text to the commit message about CONFIG_DEBUGFS
 
- drivers/scsi/scsi_debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_debug.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 67922e2c4c19..0dd21598f7b6 100644
+index 0dd21598f7b6..6d8218a44122 100644
 --- a/drivers/scsi/scsi_debug.c
 +++ b/drivers/scsi/scsi_debug.c
-@@ -1019,7 +1019,7 @@ static ssize_t sdebug_error_write(struct file *file, const char __user *ubuf,
- 	struct sdebug_err_inject *inject;
- 	struct scsi_device *sdev = (struct scsi_device *)file->f_inode->i_private;
+@@ -1132,7 +1132,6 @@ static const struct file_operations sdebug_target_reset_fail_fops = {
+ static int sdebug_target_alloc(struct scsi_target *starget)
+ {
+ 	struct sdebug_target_info *targetip;
+-	struct dentry *dentry;
  
--	buf = kmalloc(count, GFP_KERNEL);
-+	buf = kzalloc(count + 1, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
+ 	targetip = kzalloc(sizeof(struct sdebug_target_info), GFP_KERNEL);
+ 	if (!targetip)
+@@ -1140,15 +1139,9 @@ static int sdebug_target_alloc(struct scsi_target *starget)
+ 
+ 	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
+ 				sdebug_debugfs_root);
+-	if (IS_ERR_OR_NULL(targetip->debugfs_entry))
+-		pr_info("%s: failed to create debugfs directory for target %s\n",
+-			__func__, dev_name(&starget->dev));
+ 
+ 	debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
+ 				&sdebug_target_reset_fail_fops);
+-	if (IS_ERR_OR_NULL(dentry))
+-		pr_info("%s: failed to create fail_reset file for target %s\n",
+-			__func__, dev_name(&starget->dev));
+ 
+ 	starget->hostdata = targetip;
  
 -- 
 2.42.0
