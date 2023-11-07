@@ -1,91 +1,86 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17729445
-	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 04:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C43FC;
-	Mon,  6 Nov 2023 20:19:30 -0800 (PST)
-Received: from kwepemm000012.china.huawei.com (unknown [172.30.72.57])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4SPZfC0G8lzrV03;
-	Tue,  7 Nov 2023 12:16:19 +0800 (CST)
-Received: from [10.174.178.220] (10.174.178.220) by
- kwepemm000012.china.huawei.com (7.193.23.142) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Tue, 7 Nov 2023 12:19:28 +0800
-Message-ID: <b14dd6dd-4960-1a6a-7973-65f627d2b554@huawei.com>
-Date: Tue, 7 Nov 2023 12:19:27 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE0717F0;
+	Tue,  7 Nov 2023 06:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OwHtopZi"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7640E11A;
+	Mon,  6 Nov 2023 22:38:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1699339113; x=1699943913; i=markus.elfring@web.de;
+	bh=dyrvO4jp+FcnYndOBXe6vRqDh6iKvs3/XCz5EqIvItE=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=OwHtopZiF6X55Q63yRs639L8Y+J+DxrviktF7rRXrWEX1OIZhHBeZFuSmNBcTY8/
+	 GMNc78Oy7BFQ7kih8XRZdvrpGahV4YpO2WEdKgFfQpNCDyuuMo2R3PLuv18qRK89j
+	 BcEaXSGIaGQv5ISPA25J8kI0SRVxW/fBh0Hhk7v6e/98xE9dH41jSi8OtyT+g/6x6
+	 1kETCALiGjKCcwXl8CAKd9eP0TP+C2QpOkKoyUe/SzzXDMjS7O6wU1t8Dc7IHJplG
+	 JQeuQ7UzaTYINn29hujX72prCyo0y7iFZLFDnriuIJXMVSLanNcB7uVBb7ME2+6mr
+	 78x+dYLiZQYpVUR/5Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqZQY-1rmWuO3viy-00mRhT; Tue, 07
+ Nov 2023 07:38:33 +0100
+Message-ID: <dce77105-47ab-4ec7-8d46-b983c630dad8@web.de>
+Date: Tue, 7 Nov 2023 07:38:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 2/2] scsi: scsi_debug: delete some bogus error checking
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <c602c9ad-5e35-4e18-a47f-87ed956a9ec2@moroto.mountain>
-From: Wenchao Hao <haowenchao2@huawei.com>
-In-Reply-To: <c602c9ad-5e35-4e18-a47f-87ed956a9ec2@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.220]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000012.china.huawei.com (7.193.23.142)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: net: bcmasp: Use common error handling code in bcmasp_probe()
+To: Jakub Kicinski <kuba@kernel.org>,
+ Wojciech Drewek <wojciech.drewek@intel.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Justin Chen <justin.chen@broadcom.com>, Paolo Abeni <pabeni@redhat.com>,
+ bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, cocci@inria.fr,
+ LKML <linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>
+References: <0b2972cb-03b2-40c7-a728-6ebe2512637f@web.de>
+ <20231106145806.669875f4@kernel.org>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20231106145806.669875f4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pdIZHKFQErHqx0NbYleSCo5hE4ZCvSBGK+/n/+5T+uMOLQIVel1
+ a02M8DQPWIYN1zFE7Z3KitYHOrD1ancHzD+Qlj2Mb6wxElhUBd0aKfCFqlPiJbtID7kARj0
+ 8cX0xGT8LF549KqsHUFj4BYkP1OrlRVEuVEcAypApUXTdL1PdgjB56UYqnSL9gv3psXcADi
+ lEF38jpyEsA9zNXIzHGgA==
+UI-OutboundReport: notjunk:1;M01:P0:rp6EM0Fli/k=;/BHlwusWqvK0jm7hl8YNXaOjWRx
+ gXKzhT1RKvAjOL7NbCp8Zcw29fllzLXzXQNE02FSNP7gmh72wZ9DfcaF4Rbgsxqo3kVKkdYAC
+ WKOhDHtmsX4v1Fro8/T7DIzXnF7NJyP/cF21WLHvpWVFuEMVC251d/iUFKn52DgIRSq1L9vio
+ xnKZT/4gkMcKOVyJ5AaSYyAzgqfqtfyK3ArrDBTx4nPSPnRRoS0xq5+H1nq9Z6jXg6jFfu9zh
+ eW34Toi7hUZj3MznlgcbZ+FDwgzguE21i6Ru389mS7idJSpHjqasZIqvuDC96MU3FV4qD3GFM
+ YyiqgEceeFGOxKg7RQihU1s9mlsWYxlwwdhRWrGBNS8l5oRgP009aUownRZAJAekXU+0dwfJJ
+ y20tDGmnPusQYLPKs2vHP7ksksnWFaXD9mMpuE7Hw/hEb0ffPwMgmWAwVOeRHQDczgxH25dg3
+ vTSvOE3X6BgJS8PuUobE9jGt7bKQMlxV3KLHOyVi2HYz+Ux9iuRooMIgHW/CClkibwnVSk85E
+ 8njooqzR6N6XCIwEbQDFbPDYx6s66JwWxObdcHjjhZb+0W9c+yu+0z3JTFI63rrv3aGWJDgYJ
+ bBeq90gACUDPYfpem7ehaiPeO0BBuTe7YS41QoSv+LgDkEPwaJTQs+m/omuNRqLVJTHHKyx3w
+ MLtznwq2ijik8lFiGa1QOYNKLv+CAapjZ2SX6Eu7M/cBbgFEKqJm6SNsRO6O8hVL7jHz2f4AO
+ GFIFpWPJis/cZqj4feAO6DjXg4wDeKm+FrH0y5v0YgrovD23p/uF+/uZxQbkhoJ8GfI+Gnb0O
+ XFs57nKzsvZm0q+Ac4OqOFFFnr5F+rBFGdyOy58athI8B8gggEZoTze4ZqPh/dcd87OiPNuq1
+ lE9ZdthiGhRNKy7LzG2Z2dKv4LFmx5sUuGPkykjJjBMnrAmh/PeU0J5oakSL72zdH6XMHKCtw
+ fnpwNg==
 
-On 2023/11/6 22:05, Dan Carpenter wrote:
-> Smatch complains that "dentry" is never initialized.  These days everyone
-> initializes all their stack variables to zero so this means that it will
-> trigger a warning every time this function is run.
-> 
-> Really, debugfs functions are not supposed to be checked for errors in
-> normal code.  For example, if we updated this code to check the correct
-> variable then it would print a warning if CONFIG_DEBUGFS was disabled.
-> We don't want that.  Just delete the check.
-> 
-> Fixes: f084fe52c640 ("scsi: scsi_debug: Add debugfs interface to fail target reset")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: Add some more text to the commit message about CONFIG_DEBUGFS
-> 
->   drivers/scsi/scsi_debug.c | 7 -------
->   1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-> index 0dd21598f7b6..6d8218a44122 100644
-> --- a/drivers/scsi/scsi_debug.c
-> +++ b/drivers/scsi/scsi_debug.c
-> @@ -1132,7 +1132,6 @@ static const struct file_operations sdebug_target_reset_fail_fops = {
->   static int sdebug_target_alloc(struct scsi_target *starget)
->   {
->   	struct sdebug_target_info *targetip;
-> -	struct dentry *dentry;
->   
->   	targetip = kzalloc(sizeof(struct sdebug_target_info), GFP_KERNEL);
->   	if (!targetip)
-> @@ -1140,15 +1139,9 @@ static int sdebug_target_alloc(struct scsi_target *starget)
->   
->   	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
->   				sdebug_debugfs_root);
-> -	if (IS_ERR_OR_NULL(targetip->debugfs_entry))
-> -		pr_info("%s: failed to create debugfs directory for target %s\n",
-> -			__func__, dev_name(&starget->dev));
->   
->   	debugfs_create_file("fail_reset", 0600, targetip->debugfs_entry, starget,
->   				&sdebug_target_reset_fail_fops);
-> -	if (IS_ERR_OR_NULL(dentry))
-> -		pr_info("%s: failed to create fail_reset file for target %s\n",
-> -			__func__, dev_name(&starget->dev));
->   
->   	starget->hostdata = targetip;
->   
-Looks good, thanks for the fix.
+>> Add a jump target so that a bit of exception handling can be better
+>> reused at the end of this function.
+=E2=80=A6
+>> ---
+>>  drivers/net/ethernet/broadcom/asp2/bcmasp.c | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> The diffstat proves otherwise.
+> Please don't send such patches to networking.
 
-Reviewed-by: Wenchao Hao <haowenchao2@huawei.com>
+How does this feedback fit to a change possibility which was reviewed by
+Wojciech Drewek yesterday?
+
+Regards,
+Markus
