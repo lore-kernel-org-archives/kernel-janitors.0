@@ -1,56 +1,53 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F2530D0B
-	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 15:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE2030D0B
+	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 15:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePct7L5f"
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700A139AFE
-	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 07:18:36 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9dbb3e0ff65so820795366b.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 07 Nov 2023 07:18:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="raAX/ATH"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970604C33
+	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 07:19:05 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-53dd3f169d8so9667764a12.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 07 Nov 2023 07:19:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699370315; x=1699975115; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699370344; x=1699975144; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BUSa9JJh+Y2Tsk/ZlJbgPDREcy0mvtW6TANBnqjh1wQ=;
-        b=ePct7L5f9CIStUt4cDrBemjuf0OBUK1z0ok4/wJ7z2grny+bWIwkF0v9NwRSygngQF
-         ngYmbdwiPhjBMA4uiBCoj16ArABUuGHZaYRASMXYSRwT46LXmq7gSpONSGgcz6NzpJde
-         XrGewJPJjMn8pcUJl9AKw6jB/chk4h8viDAFern0zViKZZGPBuswU8L4x9k/AFCUY7Mx
-         YW1n+Pa/SdrEbecdLUHKFxukBXaEBUK0fN+dCwfive61Ls7zc6QO1H4dC2jYHuPJf7Uy
-         kQvn94HBabT5SQwHlvVXl3pymCr5m6u1Ts0pjwSA/EmJ5CFcBdqQ2t5QwB64+eMmCd5a
-         2fNQ==
+        bh=Kvnw+5Z8XzZfEDMyj6XCH8/UXST3dZPPSlZR9k5HkhQ=;
+        b=raAX/ATHrx7PI0yXrC51k/ZQKE3TUYtBIyKFoMZXS33fNCNlZAo5HVqepcr5dQeKJW
+         OKr2jiv6oGnE+Pv/6K12R9xM+SN4RE3Ko4MVjFAJbSepwtTRWIh1BaenWIX4SigHoHkT
+         cjYLbEPwDP8XiDLBBryKw+aAJi47nHQhxT1/KsWaiFGvBIwMpi8Iy4I8CsAmbqZw1/Wr
+         mTS/+rNIvaifZFM/mX7YIiJes4F6lDeCQdI3+AtV7a4ItrXqUXn+mw5EbsQBnzbHb1xh
+         zPGt62aoBg3+YokpRrLMbyRG1ZDqdktZ1ZB9y7v42G/AdBMnHyDyInKjvBt5ZFFTMJwp
+         ewew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699370315; x=1699975115;
+        d=1e100.net; s=20230601; t=1699370344; x=1699975144;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BUSa9JJh+Y2Tsk/ZlJbgPDREcy0mvtW6TANBnqjh1wQ=;
-        b=JFQLIhF00RZcVBoRBrOUnqHoZaUlcZJOef4/cqyns0Ts1PPFR/9cKZd2GrW/jq3Aya
-         Ja8fsK1azyNsf4/vxH+cjPrENXpfgNBY7mJoFGcyppsFiT2k7hC+SLe3dnSmqZ7kZ+o+
-         nJxdt4v5m+ZUCxrM8+TeXBUYi2urSinqJ1zplBoTGKAANz8Wn6cyFgHH7x9qXSRrC9tG
-         XD5H8YH1kL2EP071wFXsN37+rlAEubUJH5atq4SxpB/ayOujtS/9aaSbaoKW60Q2v4Qh
-         bqWknKsTSEOyZsuoZfSm1WQKUk7gzL19HROSX/LKE4sHfnHfGlolVzWt1Rawz5OYTcBS
-         DagA==
-X-Gm-Message-State: AOJu0YwgVcvfYlnXLx0JtcyrKgtFjBwMSU+1hzykZYm/g40dK0DQBWGC
-	bSOq0kUkDjjJc+qWF9WY8rWHzw==
-X-Google-Smtp-Source: AGHT+IFg6GPZSi72q4OKki21JP9gaI3a9ZForMI5DrtJhxl7g78VZhTmgTSiHs8/MHjFffQFk6b3jw==
-X-Received: by 2002:a17:907:7fac:b0:9c1:9b3a:4cd1 with SMTP id qk44-20020a1709077fac00b009c19b3a4cd1mr20872644ejc.3.1699370314775;
-        Tue, 07 Nov 2023 07:18:34 -0800 (PST)
+        bh=Kvnw+5Z8XzZfEDMyj6XCH8/UXST3dZPPSlZR9k5HkhQ=;
+        b=gm2e7m+HNQRanZthhktyz5LJgwSF8kkM3OzjmO11lHBsuPfz2nP2+Jo5rRPIz3iSLG
+         mEhj//ps5hzis+hVLq4owNPpkNtUluXl6ajZtfHUnh2IwlZfYlawp9bt1c9BC71x7gKM
+         A4A64nOR6AiqplbjS4j5Od49coWkI1KW9Hy+G7hipNxxh5KprvXNvLgCfbgdRcIZ0BMz
+         4/dhW0HAOPEPwHZUqUcCH/u+NkGcj0opIPzFVHl3WKRLr8GsoW9M4b0QDiDK9Nm00pHs
+         Qg4chVxBtk3NORfq/p0YPYCOoJs86eFyGhKOhOUPO5Pn2sNcnVnqtfOez1J3RuJmcBBc
+         Gx0Q==
+X-Gm-Message-State: AOJu0YwcVcojHkM3h7kIWNuRP7pNouNzfF24Jd84Wm2XrnekHi3nVH1P
+	Ixgn2knGFZ1+6X2ub8qUDymR8Q==
+X-Google-Smtp-Source: AGHT+IEeMhBfKgqh/2BJW46RBs4h2HR2f2v7fHd9CiMgcJpnEdlMsofIr2+F8rRfEzWHQMpEF4WEBw==
+X-Received: by 2002:a17:907:724e:b0:9be:5ab2:73c0 with SMTP id ds14-20020a170907724e00b009be5ab273c0mr17345503ejc.8.1699370344200;
+        Tue, 07 Nov 2023 07:19:04 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id lg20-20020a170906f89400b0099290e2c163sm1131200ejb.204.2023.11.07.07.18.34
+        by smtp.gmail.com with ESMTPSA id ko18-20020a170907987200b0099ce025f8ccsm1135484ejc.186.2023.11.07.07.19.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 07:18:34 -0800 (PST)
-Date: Tue, 7 Nov 2023 18:18:31 +0300
+        Tue, 07 Nov 2023 07:19:04 -0800 (PST)
+Date: Tue, 7 Nov 2023 18:19:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Karol Herbst <kherbst@redhat.com>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] nouveau/gsp/r535: uninitialized variable in
- r535_gsp_acpi_mux_id()
-Message-ID: <1d864f6e-43e9-43d8-9d90-30e76c9c843b@moroto.mountain>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] bcachefs: Fix NULL dereference in bch2_backpointer_get_node()
+Message-ID: <5fc3c28b-c232-4ec7-b0ac-4ef220ddf976@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,29 +58,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The if we hit the "continue" statement on the first iteration through
-the loop then "handle_mux" needs to be set to NULL so we continue
-looping.
+The bch2_btree_iter_peek_node() function returns both error pointers
+and NULL.  Check for NULL before dereferencing "b".
 
-Fixes: 176fdcbddfd2 ("drm/nouveau/gsp/r535: add support for booting GSP-RM")
+Fixes: 853960d00b4b ("bcachefs: Simplify, fix bch2_backpointer_get_key()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 2 +-
+ fs/bcachefs/backpointers.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-index e31f9641114b..afa8e7377a76 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-@@ -1159,7 +1159,7 @@ static void
- r535_gsp_acpi_mux_id(acpi_handle handle, u32 id, MUX_METHOD_DATA_ELEMENT *mode,
- 						 MUX_METHOD_DATA_ELEMENT *part)
- {
--	acpi_handle iter = NULL, handle_mux;
-+	acpi_handle iter = NULL, handle_mux = NULL;
- 	acpi_status status;
- 	unsigned long long value;
+diff --git a/fs/bcachefs/backpointers.c b/fs/bcachefs/backpointers.c
+index ef02c9bb0354..3f9c5c366708 100644
+--- a/fs/bcachefs/backpointers.c
++++ b/fs/bcachefs/backpointers.c
+@@ -316,7 +316,7 @@ struct btree *bch2_backpointer_get_node(struct btree_trans *trans,
+ 	if (IS_ERR(b))
+ 		goto err;
  
+-	BUG_ON(b->c.level != bp.level - 1);
++	BUG_ON(b && b->c.level != bp.level - 1);
+ 
+ 	if (b && extent_matches_bp(c, bp.btree_id, bp.level,
+ 				   bkey_i_to_s_c(&b->key),
 -- 
 2.42.0
 
