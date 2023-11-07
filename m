@@ -1,86 +1,111 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE0717F0;
-	Tue,  7 Nov 2023 06:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2952CBE5F
+	for <kernel-janitors@vger.kernel.org>; Tue,  7 Nov 2023 07:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OwHtopZi"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7640E11A;
-	Mon,  6 Nov 2023 22:38:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1699339113; x=1699943913; i=markus.elfring@web.de;
-	bh=dyrvO4jp+FcnYndOBXe6vRqDh6iKvs3/XCz5EqIvItE=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=OwHtopZiF6X55Q63yRs639L8Y+J+DxrviktF7rRXrWEX1OIZhHBeZFuSmNBcTY8/
-	 GMNc78Oy7BFQ7kih8XRZdvrpGahV4YpO2WEdKgFfQpNCDyuuMo2R3PLuv18qRK89j
-	 BcEaXSGIaGQv5ISPA25J8kI0SRVxW/fBh0Hhk7v6e/98xE9dH41jSi8OtyT+g/6x6
-	 1kETCALiGjKCcwXl8CAKd9eP0TP+C2QpOkKoyUe/SzzXDMjS7O6wU1t8Dc7IHJplG
-	 JQeuQ7UzaTYINn29hujX72prCyo0y7iFZLFDnriuIJXMVSLanNcB7uVBb7ME2+6mr
-	 78x+dYLiZQYpVUR/5Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqZQY-1rmWuO3viy-00mRhT; Tue, 07
- Nov 2023 07:38:33 +0100
-Message-ID: <dce77105-47ab-4ec7-8d46-b983c630dad8@web.de>
-Date: Tue, 7 Nov 2023 07:38:01 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7O075KE"
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC9D810F;
+	Mon,  6 Nov 2023 23:05:22 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1cc0d0a0355so40124205ad.3;
+        Mon, 06 Nov 2023 23:05:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699340722; x=1699945522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fVdEO2KP+08TtoY+y0LCZZB2YuLs/yJFzWmvsh4Fx6A=;
+        b=S7O075KErKYFXNVcQdjNgRsTCn/tyxr3Lgo/hopz0f917e4tNMCIjYLylMkAqPP0lj
+         GA+IsVcgpWEne2SVO3tL7Wv5uUPbZT9j9FJ7yGS1/DcQhoIqeWGPfu77rtOcyL9PO5LP
+         pEFC0oWfBP8biUxKtHuB3iX7/+RsbnrhJcJINatmywaSR5AVGdpUAJejq+O/pOG5bunr
+         Yg/+4sWUTfkmIvOgJlCnsoXZviEs1CbCkw7t1a+c11weZBJnXmyyEdWvqNnK9+8QfgPE
+         Ror5FhJGgIcALIb3MhC6wOWo70DuSzGADI+FXaxil6u6K+F31IYB/zFCoxVqoedE3qfz
+         ad1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699340722; x=1699945522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fVdEO2KP+08TtoY+y0LCZZB2YuLs/yJFzWmvsh4Fx6A=;
+        b=uhV2pmbMQGqpNIDaJ8KkluqGo24fNDF7xwqsllro3oyzqwATA3D0R78ZdArghu8aaO
+         2+R/Mi3mM0PySEY/QR3s+/Pt3E065+D0yd1Aq08FfsFR+XdLH0361jWHyI4rLdgAljME
+         cZz/678i16+4pgO2tF1pY4VCHl76nMPW+1QNUUc+2h9MOBpJAfzIV6UYH6SKi3+YOs2c
+         /X9xe1PoPFGFZIxuzOegwx2ZYV01UAhJoMGU7lcMKmKgpF5sOwGsi/aZR6KW9DS+QIo6
+         vNxA49IbgW4tIuDb6Flwip/1aWwDM1jen+o8sE3EuICINrXosVwgiT7d3kO3PqeIQYEk
+         lKkQ==
+X-Gm-Message-State: AOJu0YylMGFxlk/XuZBKAaovfGQ4AluO3WXEyG8o8dcTCi2oA6bSoEJq
+	V90AWCJfB88zCnwPov8fxk7bw+bM+wOiDr3GNsU=
+X-Google-Smtp-Source: AGHT+IEl6p32sv6Y8/3x3iGEyshuoybc9pkOJVTbCZupieKptfzKLGY8Ok+Jr8ca/1qaRuzxWfVMp41W5osIXTmad8w=
+X-Received: by 2002:a17:903:1103:b0:1cc:e76d:e7b2 with SMTP id
+ n3-20020a170903110300b001cce76de7b2mr3490283plh.22.1699340721976; Mon, 06 Nov
+ 2023 23:05:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: net: bcmasp: Use common error handling code in bcmasp_probe()
-To: Jakub Kicinski <kuba@kernel.org>,
- Wojciech Drewek <wojciech.drewek@intel.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Justin Chen <justin.chen@broadcom.com>, Paolo Abeni <pabeni@redhat.com>,
- bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, cocci@inria.fr,
- LKML <linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>
-References: <0b2972cb-03b2-40c7-a728-6ebe2512637f@web.de>
- <20231106145806.669875f4@kernel.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20231106145806.669875f4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+References: <435bd17b8a5ddb2fc3e42e2796117ee02263d02a.1698831664.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <435bd17b8a5ddb2fc3e42e2796117ee02263d02a.1698831664.git.christophe.jaillet@wanadoo.fr>
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Date: Tue, 7 Nov 2023 08:04:45 +0100
+Message-ID: <CAP+cEOOEmbgon-VjUQtVBVXDcsgmJ1EZr7p=kqt04eUE3D9TeA@mail.gmail.com>
+Subject: Re: [PATCH] ipack: Remove usage of the deprecated ida_simple_xx() API
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jens Taprogge <jens.taprogge@taprogge.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, industrypack-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pdIZHKFQErHqx0NbYleSCo5hE4ZCvSBGK+/n/+5T+uMOLQIVel1
- a02M8DQPWIYN1zFE7Z3KitYHOrD1ancHzD+Qlj2Mb6wxElhUBd0aKfCFqlPiJbtID7kARj0
- 8cX0xGT8LF549KqsHUFj4BYkP1OrlRVEuVEcAypApUXTdL1PdgjB56UYqnSL9gv3psXcADi
- lEF38jpyEsA9zNXIzHGgA==
-UI-OutboundReport: notjunk:1;M01:P0:rp6EM0Fli/k=;/BHlwusWqvK0jm7hl8YNXaOjWRx
- gXKzhT1RKvAjOL7NbCp8Zcw29fllzLXzXQNE02FSNP7gmh72wZ9DfcaF4Rbgsxqo3kVKkdYAC
- WKOhDHtmsX4v1Fro8/T7DIzXnF7NJyP/cF21WLHvpWVFuEMVC251d/iUFKn52DgIRSq1L9vio
- xnKZT/4gkMcKOVyJ5AaSYyAzgqfqtfyK3ArrDBTx4nPSPnRRoS0xq5+H1nq9Z6jXg6jFfu9zh
- eW34Toi7hUZj3MznlgcbZ+FDwgzguE21i6Ru389mS7idJSpHjqasZIqvuDC96MU3FV4qD3GFM
- YyiqgEceeFGOxKg7RQihU1s9mlsWYxlwwdhRWrGBNS8l5oRgP009aUownRZAJAekXU+0dwfJJ
- y20tDGmnPusQYLPKs2vHP7ksksnWFaXD9mMpuE7Hw/hEb0ffPwMgmWAwVOeRHQDczgxH25dg3
- vTSvOE3X6BgJS8PuUobE9jGt7bKQMlxV3KLHOyVi2HYz+Ux9iuRooMIgHW/CClkibwnVSk85E
- 8njooqzR6N6XCIwEbQDFbPDYx6s66JwWxObdcHjjhZb+0W9c+yu+0z3JTFI63rrv3aGWJDgYJ
- bBeq90gACUDPYfpem7ehaiPeO0BBuTe7YS41QoSv+LgDkEPwaJTQs+m/omuNRqLVJTHHKyx3w
- MLtznwq2ijik8lFiGa1QOYNKLv+CAapjZ2SX6Eu7M/cBbgFEKqJm6SNsRO6O8hVL7jHz2f4AO
- GFIFpWPJis/cZqj4feAO6DjXg4wDeKm+FrH0y5v0YgrovD23p/uF+/uZxQbkhoJ8GfI+Gnb0O
- XFs57nKzsvZm0q+Ac4OqOFFFnr5F+rBFGdyOy58athI8B8gggEZoTze4ZqPh/dcd87OiPNuq1
- lE9ZdthiGhRNKy7LzG2Z2dKv4LFmx5sUuGPkykjJjBMnrAmh/PeU0J5oakSL72zdH6XMHKCtw
- fnpwNg==
 
->> Add a jump target so that a bit of exception handling can be better
->> reused at the end of this function.
-=E2=80=A6
->> ---
->>  drivers/net/ethernet/broadcom/asp2/bcmasp.c | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
+Hello Christophe,
+Thank you for your patch.
+
+Acked-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+
+Hey Greg, could you please add this patch to your misc tree?
+
+Thanks,
+Vaibhav
+
+On Wed, Nov 1, 2023 at 10:41=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> The diffstat proves otherwise.
-> Please don't send such patches to networking.
-
-How does this feedback fit to a change possibility which was reviewed by
-Wojciech Drewek yesterday?
-
-Regards,
-Markus
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+>
+> This is less verbose.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/ipack/ipack.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/ipack/ipack.c b/drivers/ipack/ipack.c
+> index cc1ecfd49928..b1471ba016a5 100644
+> --- a/drivers/ipack/ipack.c
+> +++ b/drivers/ipack/ipack.c
+> @@ -207,7 +207,7 @@ struct ipack_bus_device *ipack_bus_register(struct de=
+vice *parent, int slots,
+>         if (!bus)
+>                 return NULL;
+>
+> -       bus_nr =3D ida_simple_get(&ipack_ida, 0, 0, GFP_KERNEL);
+> +       bus_nr =3D ida_alloc(&ipack_ida, GFP_KERNEL);
+>         if (bus_nr < 0) {
+>                 kfree(bus);
+>                 return NULL;
+> @@ -237,7 +237,7 @@ int ipack_bus_unregister(struct ipack_bus_device *bus=
+)
+>  {
+>         bus_for_each_dev(&ipack_bus_type, NULL, bus,
+>                 ipack_unregister_bus_member);
+> -       ida_simple_remove(&ipack_ida, bus->bus_nr);
+> +       ida_free(&ipack_ida, bus->bus_nr);
+>         kfree(bus);
+>         return 0;
+>  }
+> --
+> 2.34.1
+>
