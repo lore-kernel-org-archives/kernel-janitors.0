@@ -1,55 +1,56 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF081D69C;
-	Sat, 11 Nov 2023 20:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF26FCA;
+	Sat, 11 Nov 2023 20:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHyxIWmw"
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57FFDD72;
-	Sat, 11 Nov 2023 12:27:00 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32ddfb38c02so1877483f8f.3;
-        Sat, 11 Nov 2023 12:27:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igikoE07"
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3122D73;
+	Sat, 11 Nov 2023 12:45:31 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-40838915cecso24756385e9.2;
+        Sat, 11 Nov 2023 12:45:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699734418; x=1700339218; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1699735530; x=1700340330; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bDn777LjiyZ8GAUT5k/ZqELGvfKeffJjqAcHYCvV4Gc=;
-        b=YHyxIWmw8PYe7Ujeoa9H8C5qs6LdLveQiYmoFNA5dYMU8GmWEuCoh6TqDY20ndqQE1
-         vDKNwvOr2y4fCYaEu2u7Gy/nfJnjRjLmzb1yr5gQeEUF3oaxIe7mWP7nfINtyCVTTg5j
-         n4ANESgvWgAzdy+pPAU6vtmrPVvi4kJMciAy7LhG+N4Z58uYwOyX07uQwLAlCkJzhw4t
-         eaGUiCIartZYxp/fjVOzjjGRXBeUpR2m8dQx4VFcXSuC+iFo2eV/Ez2Oh64ff4yyjLzb
-         0n6/rndJbZ2DFPZgMImEobUtgP+VJ/8MEFf40fKH3KRuxyTtDiQfhlGmxwC5lI6JbE0L
-         Kf3w==
+        bh=1GkldlTDmPluuvc25beXnNrRPdT3yBfUXiF7PvmZBoU=;
+        b=igikoE07FWz+f0R7yAYolVossedFUBOmjV37o8cwYHUBDIk/x5Jmq57bzeIIHoPaql
+         LiJUhZACoGZJ4rmCavLpeUR16+Zl9Srye3NbTg/UuxYjKWah4Y6uHatvYMVfDtsKqv/R
+         LvXrnJjId3KndWzozdiznVRe6G+Z0nnGG8PjjI2GjAMZPi8W7cEJiIc2r3Qt+OwyLOBu
+         DgVQtJOBK7ejZ9AFMmGQxeJHFomlrDolKxCxEOnWagDykovKhPa1zwaTzPmQelfDTfRY
+         GTRLGr2JTWbZhCeabS20rNp4kGFBLgmn0nLHkTdu49yatphuRpugZ7I6VfXJ91aSofPA
+         6h8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699734418; x=1700339218;
+        d=1e100.net; s=20230601; t=1699735530; x=1700340330;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bDn777LjiyZ8GAUT5k/ZqELGvfKeffJjqAcHYCvV4Gc=;
-        b=Eu5FdYHlwUgQcET6DV+reHQmBXWn6wg4Wys7veQ8ObOylaPt4AsYXPSrcK60XbXAqp
-         1b0fxs3DpXNx6d95vaBBcYnMij5aTu8Pfcpc9dsUOZVYby2CbWnmlhdPtsmjqnDg0d7B
-         UT94YWTV+5W2jAI4kc65hHiZCvl6W+omN1Pea33U7I14pEtNsna7JJoYN3/YFH9rd2ID
-         /4/XY3YaDK66P665w0BsMjOhplXFf7V8mC80MUD8+TZ39dWhoMNSOiNFilg2zfu5QG6O
-         wMaRDjuFd7/r+N3g60PhU0fmOUSS5HCCA2Ijj4VlDPfqhYd2X+2ap7NqbraIkye+hy6/
-         +Fsg==
-X-Gm-Message-State: AOJu0YzHN8EhhzT+/Q8DmTjibLUjVWyJ7+7HseH91abFXttwK0SRuDRq
-	phxOKPQql5J16jijf8xHPjc=
-X-Google-Smtp-Source: AGHT+IH2vnHUzi9+/+7nKNqLcoZVbpuHwJPql1ivHMOtCDo0akTE+5Hwy6kdXrqNvha3OyiK/om/Iw==
-X-Received: by 2002:a05:6000:118c:b0:32d:ad44:cec1 with SMTP id g12-20020a056000118c00b0032dad44cec1mr2062106wrx.3.1699734418205;
-        Sat, 11 Nov 2023 12:26:58 -0800 (PST)
+        bh=1GkldlTDmPluuvc25beXnNrRPdT3yBfUXiF7PvmZBoU=;
+        b=HDQ2SwNidDdR5Zw+urfmcyxv6JtcR+8vPvsmF1GoB785TxhG3TkwMLM13xiHKlbYYh
+         6QHTZVhAciPeYh6LNdxfHszoxjqpbMo+5/Q6lR8GlVhLjNJh1WZVuA+DkUTTUODLza5B
+         eP9vOE7GZUsSvvZvWwNGPsvyTwgtM0Kd4IQzvFnKDaFoJ4KaAG6DJtRkDCLjU9rdye/9
+         84yGW6lAMjHJRXohUKbYZ6tIouzjw5s3/ErH3Mwn1nF7X0anafso246IvvMYNm/bR7M1
+         xa2TzyExCAaByDyqNhFI9/tPP6ctIC6fGnhdaqyuCILSSmJb5flRub1lZmoUkEZ+sEsd
+         /Asg==
+X-Gm-Message-State: AOJu0YypRnBpjshuyjR5/BG+hxE9X4MOowfakHeIZPwq4TjP4whvC0h3
+	ujm+Bb2Hs4Rq7NHdhlEju3s=
+X-Google-Smtp-Source: AGHT+IEnG0zD2f7qH3b+zOSNLBJ3Zr1VKfrMVYdqbVgJgmSEwlnGeKJ9RWtK/ctqWpAANAnUP0wnsg==
+X-Received: by 2002:a05:600c:6022:b0:409:c1e:7fe8 with SMTP id az34-20020a05600c602200b004090c1e7fe8mr2295978wmb.19.1699735529845;
+        Sat, 11 Nov 2023 12:45:29 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h9-20020adffd49000000b0032d8eecf901sm2111432wrs.3.2023.11.11.12.26.57
+        by smtp.gmail.com with ESMTPSA id q25-20020a7bce99000000b004068e09a70bsm3042688wmj.31.2023.11.11.12.45.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Nov 2023 12:26:57 -0800 (PST)
+        Sat, 11 Nov 2023 12:45:29 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>,
+	linux-bcachefs@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] USB: misc: iowarrior: remove redundant assignment to variable io_res
-Date: Sat, 11 Nov 2023 20:26:56 +0000
-Message-Id: <20231111202656.339103-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] bcachefs: remove redundant initialization of variable level
+Date: Sat, 11 Nov 2023 20:45:28 +0000
+Message-Id: <20231111204528.339603-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -60,31 +61,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable io_res is being assigned a value that is never read, it is
-either being re-assigned a new value that is read later or it's not used
-depending on the cases in the following switch statement. The assignment
-is redundant and can be removed. Cleans up clang scan build warning:
+Variable level is being initialized a value that is never read, the
+variable is being re-assigned another value several statements later
+on. The initialization is redundant and can be removed. Cleans up
+clang scan build warning:
 
-drivers/usb/misc/iowarrior.c:504:2: warning: Value stored to 'io_res'
-is never read [deadcode.DeadStores]
+fs/bcachefs/btree_iter.c:1217:11: warning: Value stored to 'level'
+during its initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/misc/iowarrior.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/bcachefs/btree_iter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index 1e3df27bab58..6d28467ce352 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -501,7 +501,6 @@ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
- 		dev->minor, cmd, arg);
+diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+index c2adf3fbb0b3..bd04aeda37bb 100644
+--- a/fs/bcachefs/btree_iter.c
++++ b/fs/bcachefs/btree_iter.c
+@@ -1214,7 +1214,7 @@ __bch2_btree_path_set_pos(struct btree_trans *trans,
+ 		   struct btree_path *path, struct bpos new_pos,
+ 		   bool intent, unsigned long ip, int cmp)
+ {
+-	unsigned level = path->level;
++	unsigned level;
  
- 	retval = 0;
--	io_res = 0;
- 	switch (cmd) {
- 	case IOW_WRITE:
- 		if (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW24 ||
+ 	bch2_trans_verify_not_in_restart(trans);
+ 	EBUG_ON(!path->ref);
 -- 
 2.39.2
 
