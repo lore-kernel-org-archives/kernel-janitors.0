@@ -1,40 +1,44 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147D92572
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 07:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D7C2914
+	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 07:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XEmgaPpT"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4B362D6B
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Nov 2023 23:04:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cOrQyt1S"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2764C2D6B
+	for <kernel-janitors@vger.kernel.org>; Sat, 11 Nov 2023 23:37:10 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
 	by smtp.orange.fr with ESMTPA
-	id 24W0rp1dBgXzu24W0rWg1a; Sun, 12 Nov 2023 08:04:18 +0100
+	id 251irZ6wGaq2K251irxRYF; Sun, 12 Nov 2023 08:37:08 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1699772658;
-	bh=0TwurGk4N8xQeF0I50WBdPaLE9khS76hRB9u8ImU++k=;
+	s=t20230301; t=1699774628;
+	bh=+SExa3iRH7Ca8gW1D0XoaD0vtMK+3bmRILeHnVgGh+c=;
 	h=From:To:Cc:Subject:Date;
-	b=XEmgaPpTdQuZF/aHvzBpkgEAq0ntM1YMzVvOVVRUefQjYa3Ck9LJrTl2lgbbOOBhY
-	 4KqLFMXLrMcdlA1jj6Ocv6AQvyZ3uBOCOru3FIwC7UBg8US+Y0lnJ7QqQc85qhpxRU
-	 AWM2+fbv5ytvZ5dfyFXs/vWBO0J+SCoqO7MaQsqnb0mSUXlRTo0HGqTzHtmAdBoADL
-	 L1tPaKbr2VlmM0HX09RpmShrZMSiyZkVfTOSnFJlvXZ+f/gzfUE7X819CIyjuZCVuy
-	 B8mfUDGGZ/hJzfZ88OA4uYdmqlEOybGT6+jj2ILZlMhrx+ifZqowt7YpFcctlUoGz6
-	 jURZKhQWRe8/A==
+	b=cOrQyt1SjHP/RA29twkYAzgtIAizHd/5aONl/TDF4wKEAiQLlJW8wk4YLPbY/PD0F
+	 hHxsH2xuh4KI061eHKfdIJi5FCxG4jNSQYbXuf7azREDC+9FhdsiiSUpOwEMw3GvZS
+	 5L9I+mhhID8YdVaS2ztTjyWJSO92FgoDkz2E1LwblGAHTpK90yJ4mioJFMN/Onc0Xw
+	 aKZ2IXs8U755U7xLpmWa4MQGaXSCXmaRCt1Vbx7ZuhFz+NoP15doZ2V4Ze93i6fkib
+	 cWp1rrzEsq+K5okptKbt63zHh3aG4EMDteovYnnGEyPt9ycwMFSJ/46lpv/rLRXMiL
+	 hWgg4Fos297QA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 Nov 2023 08:04:18 +0100
+X-ME-Date: Sun, 12 Nov 2023 08:37:08 +0100
 X-ME-IP: 86.243.2.178
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
+To: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: pmc: Remove some old and deprecated functions and constants
-Date: Sun, 12 Nov 2023 08:04:14 +0100
-Message-Id: <9d352be8797f01ffe6193da70e3d9d1e2684c6b4.1699772620.git.christophe.jaillet@wanadoo.fr>
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: kirin: Use devm_kasprintf()
+Date: Sun, 12 Nov 2023 08:37:01 +0100
+Message-Id: <085fc5ac70fc8d73d5da197967e76d18f2ab5208.1699774592.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -44,98 +48,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These TEGRA_IO_RAIL_... functions and constants have been deprecated in
-commit 21b499105178 ("soc/tegra: pmc: Add I/O pad voltage support") in
-2016-11.
+Use devm_kasprintf() instead of hand writing it.
+This saves the need of an intermediate buffer.
 
-There seems to be no users since kernel 4.16.
-
-Remove them now.
+There was also no reason to use the _const() version of devm_kstrdup().
+The string was known be not constant.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/soc/tegra/pmc.c | 24 ------------------------
- include/soc/tegra/pmc.h | 18 ------------------
- 2 files changed, 42 deletions(-)
+ drivers/pci/controller/dwc/pcie-kirin.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index f432aa022ace..6dfcc7f50ece 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1777,30 +1777,6 @@ static int tegra_io_pad_get_voltage(struct tegra_pmc *pmc, enum tegra_io_pad id)
- 	return TEGRA_IO_PAD_VOLTAGE_3V3;
- }
- 
--/**
-- * tegra_io_rail_power_on() - enable power to I/O rail
-- * @id: Tegra I/O pad ID for which to enable power
-- *
-- * See also: tegra_io_pad_power_enable()
-- */
--int tegra_io_rail_power_on(unsigned int id)
--{
--	return tegra_io_pad_power_enable(id);
--}
--EXPORT_SYMBOL(tegra_io_rail_power_on);
--
--/**
-- * tegra_io_rail_power_off() - disable power to I/O rail
-- * @id: Tegra I/O pad ID for which to disable power
-- *
-- * See also: tegra_io_pad_power_disable()
-- */
--int tegra_io_rail_power_off(unsigned int id)
--{
--	return tegra_io_pad_power_disable(id);
--}
--EXPORT_SYMBOL(tegra_io_rail_power_off);
--
- #ifdef CONFIG_PM_SLEEP
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index 2ee146767971..d9e3514de0a0 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -366,7 +366,6 @@ static int kirin_pcie_get_gpio_enable(struct kirin_pcie *pcie,
+ 				      struct platform_device *pdev)
  {
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index aadb845d281d..c545875d0ff1 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -148,10 +148,6 @@ enum tegra_io_pad {
- 	TEGRA_IO_PAD_AO_HV,
- };
+ 	struct device *dev = &pdev->dev;
+-	char name[32];
+ 	int ret, i;
  
--/* deprecated, use TEGRA_IO_PAD_{HDMI,LVDS} instead */
--#define TEGRA_IO_RAIL_HDMI	TEGRA_IO_PAD_HDMI
--#define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
--
- #ifdef CONFIG_SOC_TEGRA_PMC
- int tegra_powergate_power_on(unsigned int id);
- int tegra_powergate_power_off(unsigned int id);
-@@ -164,10 +160,6 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- int tegra_io_pad_power_enable(enum tegra_io_pad id);
- int tegra_io_pad_power_disable(enum tegra_io_pad id);
+ 	/* This is an optional property */
+@@ -387,9 +386,8 @@ static int kirin_pcie_get_gpio_enable(struct kirin_pcie *pcie,
+ 		if (pcie->gpio_id_clkreq[i] < 0)
+ 			return pcie->gpio_id_clkreq[i];
  
--/* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
--int tegra_io_rail_power_on(unsigned int id);
--int tegra_io_rail_power_off(unsigned int id);
--
- void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
- void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
- 
-@@ -211,16 +203,6 @@ static inline int tegra_io_pad_get_voltage(enum tegra_io_pad id)
- 	return -ENOSYS;
- }
- 
--static inline int tegra_io_rail_power_on(unsigned int id)
--{
--	return -ENOSYS;
--}
--
--static inline int tegra_io_rail_power_off(unsigned int id)
--{
--	return -ENOSYS;
--}
--
- static inline void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
- {
- }
+-		sprintf(name, "pcie_clkreq_%d", i);
+-		pcie->clkreq_names[i] = devm_kstrdup_const(dev, name,
+-							    GFP_KERNEL);
++		pcie->clkreq_names[i] = devm_kasprintf(dev, GFP_KERNEL,
++						       "pcie_clkreq_%d", i);
+ 		if (!pcie->clkreq_names[i])
+ 			return -ENOMEM;
+ 	}
 -- 
 2.34.1
 
