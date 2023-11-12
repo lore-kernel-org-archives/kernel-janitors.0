@@ -1,75 +1,90 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1337212B8D
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 15:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95367E553
+	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 18:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CyH3It+l"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFCE2D62
-	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 07:08:07 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id 2C4CrUKVuFh5i2C4CrGN2t; Sun, 12 Nov 2023 16:08:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1699801685;
-	bh=HsPvZv0x+A3KoodF5NWXigZeG3z5ocFLVuOCH93t+Qg=;
-	h=From:To:Cc:Subject:Date;
-	b=CyH3It+lkPlnNtgWnGGIZlRHNIVvTEXPaf9I0NdXq2LolJUOESKjWozbDw47R37KF
-	 zUkYSWt6GBsiJCv6puZYCx7moe2Sd0fY72z+hsmxMznUeLnacVPG4zwiHHiv3I2M5l
-	 XgbulJd1u0Z4kb2opca5zN5Iq36XQOLl8CCSWL+UjOBjmg+ag0LAoIMFiZZmUn78tO
-	 +DR9EPRdddqo0uxgmJJDOI/AhdzMlwaJtVzw7t3m/N88fcmYRvJMGqNRJkXP/fc9I9
-	 aMK0r/mLfJdkw6JbdAb/Ixqjvm6PU7a1/j94QAIa9u3ac5DkIU2k9ZkgCz3TVz1qnn
-	 Q4zKiXHv28r6g==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 Nov 2023 16:08:05 +0100
-X-ME-IP: 86.243.2.178
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Damien Le Moal <dlemoal@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-ide@vger.kernel.org
-Subject: [PATCH] ata: pata_pxa: convert not to use dma_request_slave_channel()
-Date: Sun, 12 Nov 2023 16:07:59 +0100
-Message-Id: <f177835b7f0db810a132916c8a281bbdaf47f9d3.1699801657.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b7TNhQv+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45D11BEF;
+	Sun, 12 Nov 2023 10:10:56 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A2C1640E018F;
+	Sun, 12 Nov 2023 18:10:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id o5jeVJy23QFH; Sun, 12 Nov 2023 18:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1699812651; bh=P+Kou/jpj8gD2sM9ulpNQYbK457wnt04VLoVq55l99E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b7TNhQv+z2v4Uj9Dap4EN/O61lvCqJRdWVwBLIM6UmS+ulbY29Rxvvrx3qZpRSWmF
+	 AeUJ7MTjrYYg/fhvbvVRrATM/21hQnlyfplMueSFBSKPoIdNwARVrlfKDCc/BHEkFt
+	 jwe7ppfKCLDcg9aohDOeRiKrpqPAUP+m7djCbv8AlacX9JX9Lmvp/PB64VBNFJyFD0
+	 L7GQvBSaxHmThr+NtKV069zdYbRcub0O/8s8sgBBNRQw6p/yJ+xwceiHjQ5LDkgDZu
+	 Gkf+z8+BvG5CS247AjIUowXurGrZa+4KXbNgZ/qD0+IbTfmqmrmfsWGGQ7Y94NGcb0
+	 qab+tjcU0tUeceqld8oZFrm9LplYkcbjS16iLOkv1+M/YncupJdtCFZyeSgLes9Cx5
+	 0Ky+/MMUMRf0eSZ0xmelWs75IV0qTvm9uguSUXu+vub5jUyNABLCP2TnrhYwZ5e9Bg
+	 KGpgGgWS1hm5r8snXRmnIj3jJ+P0cPJYXahgT/+wbCGOQnbLXiiz3jy6RRrJusfI80
+	 h1pcgxW/QawzWAluiYxg7XjMup48z97Lcb/zHlSfvOG2EviO+Yt0+hwXy2lmys9KP8
+	 jmsnc9qZlMpoxTLYYMpmVkxr1FwdpUTNfiLEASsqWq+37ukzGvJwpbQ2uwkXW9VbTt
+	 ea7xHrE2jOSzNawFyWwchZew=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 85EFA40E0031;
+	Sun, 12 Nov 2023 18:10:42 +0000 (UTC)
+Date: Sun, 12 Nov 2023 19:10:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [regression] microcode files missing in initramfs imgages from
+ dracut (was Re: [PATCH] x86: Clean up remaining references to
+ CONFIG_MICROCODE_AMD)
+Message-ID: <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
 
-dma_request_slave_channel() is deprecated. dma_request_chan() should
-be used directly instead.
+On Sun, Nov 12, 2023 at 04:03:32PM +0100, Linux regression tracking (Thorsten Leemhuis) wrote:
+> That's because dracut until the recent commit
+> https://github.com/dracutdevs/dracut/commit/6c80408c8644a0add1907b0593eb83f90d6247b1
+> looked for CONFIG_MICROCODE_AMD and CONFIG_MICROCODE_INTEL in the config
+> file to decide what to include or not.
 
-Switch to the preferred function and update the error handling accordingly.
+They've been told a bunch of times already that grepping .config for
+specific symbols is not how one should check whether one should add
+microcode blobs to the initrd or not because Kconfig symbols are not an
+ABI.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/ata/pata_pxa.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+And looking at that commit, now they're grepping for CONFIG_MICROCODE.
+And that'll break again if one day we decide to make the microcode
+loader built in unconditionally.
 
-diff --git a/drivers/ata/pata_pxa.c b/drivers/ata/pata_pxa.c
-index 5275c6464f57..0c9c9cf63d36 100644
---- a/drivers/ata/pata_pxa.c
-+++ b/drivers/ata/pata_pxa.c
-@@ -274,9 +274,8 @@ static int pxa_ata_probe(struct platform_device *pdev)
- 	/*
- 	 * Request the DMA channel
- 	 */
--	data->dma_chan =
--		dma_request_slave_channel(&pdev->dev, "data");
--	if (!data->dma_chan)
-+	data->dma_chan = dma_request_chan(&pdev->dev, "data");
-+	if (IS_ERR(data->dma_chan))
- 		return -EBUSY;
- 	ret = dmaengine_slave_config(data->dma_chan, &config);
- 	if (ret < 0) {
+How to fix this reliably and properly?
+
+Honestly, I don't have a good idea. If we do something like this:
+
+grep microcode_init System.map
+
+then that makes "microode_init" ABI and we won't be able to change it
+eva. I'd need to do some digging here...
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
