@@ -1,67 +1,141 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D101D6A6
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Nov 2023 23:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147D92572
+	for <kernel-janitors@vger.kernel.org>; Sun, 12 Nov 2023 07:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TUWsG0Ia"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [IPv6:2001:41d0:1004:224b::bc])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E764C7
-	for <kernel-janitors@vger.kernel.org>; Sat, 11 Nov 2023 15:39:11 -0800 (PST)
-Date: Sat, 11 Nov 2023 18:39:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1699745947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bY38uoL3AzwYw27KFUn5BoU0Pr+lAR8U8j2TvcseFJU=;
-	b=TUWsG0Ias66t2B3KVVYr7DFZSdj2lgF1ESXEOUdEPI0uIxcDqKbKXQhNHv8JZSRShhSWwg
-	bfA/DsZ0pXxYGOvCRGQiMq40cugAKnNL6kXXf6z446Rzg/W1o/SdLva61q8u58zOf1LWVT
-	Z7eI7U3rVcKDdTeHg9hwlfqZzbkeabg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Brian Foster <bfoster@redhat.com>,
-	"linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] bcachefs: remove redundant initialization of
- variable level
-Message-ID: <20231111233904.zxgqyw3epefiqiro@moria.home.lan>
-References: <20231111204528.339603-1-colin.i.king@gmail.com>
- <20231111210208.qra7xhf2nd4pqvst@moria.home.lan>
- <184af6778ab64b3eb6a4a6071974d5e8@AcuMS.aculab.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XEmgaPpT"
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4B362D6B
+	for <kernel-janitors@vger.kernel.org>; Sat, 11 Nov 2023 23:04:20 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+	by smtp.orange.fr with ESMTPA
+	id 24W0rp1dBgXzu24W0rWg1a; Sun, 12 Nov 2023 08:04:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1699772658;
+	bh=0TwurGk4N8xQeF0I50WBdPaLE9khS76hRB9u8ImU++k=;
+	h=From:To:Cc:Subject:Date;
+	b=XEmgaPpTdQuZF/aHvzBpkgEAq0ntM1YMzVvOVVRUefQjYa3Ck9LJrTl2lgbbOOBhY
+	 4KqLFMXLrMcdlA1jj6Ocv6AQvyZ3uBOCOru3FIwC7UBg8US+Y0lnJ7QqQc85qhpxRU
+	 AWM2+fbv5ytvZ5dfyFXs/vWBO0J+SCoqO7MaQsqnb0mSUXlRTo0HGqTzHtmAdBoADL
+	 L1tPaKbr2VlmM0HX09RpmShrZMSiyZkVfTOSnFJlvXZ+f/gzfUE7X819CIyjuZCVuy
+	 B8mfUDGGZ/hJzfZ88OA4uYdmqlEOybGT6+jj2ILZlMhrx+ifZqowt7YpFcctlUoGz6
+	 jURZKhQWRe8/A==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 12 Nov 2023 08:04:18 +0100
+X-ME-IP: 86.243.2.178
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] soc/tegra: pmc: Remove some old and deprecated functions and constants
+Date: Sun, 12 Nov 2023 08:04:14 +0100
+Message-Id: <9d352be8797f01ffe6193da70e3d9d1e2684c6b4.1699772620.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <184af6778ab64b3eb6a4a6071974d5e8@AcuMS.aculab.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 11, 2023 at 09:19:40PM +0000, David Laight wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> > Sent: 11 November 2023 21:02
-> > > Variable level is being initialized a value that is never read, the
-> > > variable is being re-assigned another value several statements later
-> > > on. The initialization is redundant and can be removed. Cleans up
-> > > clang scan build warning:
-> > >
-> > > fs/bcachefs/btree_iter.c:1217:11: warning: Value stored to 'level'
-> > > during its initialization is never read [deadcode.DeadStores]
-> > >
-> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > 
-> > since we're no longer gnu89, we can simply declare the variable when
-> > it's first used, like so:
-> 
-> ugg... I think that is still frowned upon.
-> It makes it very difficult for the average human to find
-> the variable declaration.
+These TEGRA_IO_RAIL_... functions and constants have been deprecated in
+commit 21b499105178 ("soc/tegra: pmc: Add I/O pad voltage support") in
+2016-11.
 
-No, it's 2023, there's no good reason to be declaring variables before
-giving them values.
+There seems to be no users since kernel 4.16.
+
+Remove them now.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/soc/tegra/pmc.c | 24 ------------------------
+ include/soc/tegra/pmc.h | 18 ------------------
+ 2 files changed, 42 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index f432aa022ace..6dfcc7f50ece 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1777,30 +1777,6 @@ static int tegra_io_pad_get_voltage(struct tegra_pmc *pmc, enum tegra_io_pad id)
+ 	return TEGRA_IO_PAD_VOLTAGE_3V3;
+ }
+ 
+-/**
+- * tegra_io_rail_power_on() - enable power to I/O rail
+- * @id: Tegra I/O pad ID for which to enable power
+- *
+- * See also: tegra_io_pad_power_enable()
+- */
+-int tegra_io_rail_power_on(unsigned int id)
+-{
+-	return tegra_io_pad_power_enable(id);
+-}
+-EXPORT_SYMBOL(tegra_io_rail_power_on);
+-
+-/**
+- * tegra_io_rail_power_off() - disable power to I/O rail
+- * @id: Tegra I/O pad ID for which to disable power
+- *
+- * See also: tegra_io_pad_power_disable()
+- */
+-int tegra_io_rail_power_off(unsigned int id)
+-{
+-	return tegra_io_pad_power_disable(id);
+-}
+-EXPORT_SYMBOL(tegra_io_rail_power_off);
+-
+ #ifdef CONFIG_PM_SLEEP
+ enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
+ {
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index aadb845d281d..c545875d0ff1 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -148,10 +148,6 @@ enum tegra_io_pad {
+ 	TEGRA_IO_PAD_AO_HV,
+ };
+ 
+-/* deprecated, use TEGRA_IO_PAD_{HDMI,LVDS} instead */
+-#define TEGRA_IO_RAIL_HDMI	TEGRA_IO_PAD_HDMI
+-#define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
+-
+ #ifdef CONFIG_SOC_TEGRA_PMC
+ int tegra_powergate_power_on(unsigned int id);
+ int tegra_powergate_power_off(unsigned int id);
+@@ -164,10 +160,6 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+ int tegra_io_pad_power_enable(enum tegra_io_pad id);
+ int tegra_io_pad_power_disable(enum tegra_io_pad id);
+ 
+-/* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
+-int tegra_io_rail_power_on(unsigned int id);
+-int tegra_io_rail_power_off(unsigned int id);
+-
+ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
+ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
+ 
+@@ -211,16 +203,6 @@ static inline int tegra_io_pad_get_voltage(enum tegra_io_pad id)
+ 	return -ENOSYS;
+ }
+ 
+-static inline int tegra_io_rail_power_on(unsigned int id)
+-{
+-	return -ENOSYS;
+-}
+-
+-static inline int tegra_io_rail_power_off(unsigned int id)
+-{
+-	return -ENOSYS;
+-}
+-
+ static inline void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+ {
+ }
+-- 
+2.34.1
+
