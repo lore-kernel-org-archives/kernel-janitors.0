@@ -1,234 +1,153 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A471CAAA
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0A200D4
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 13:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAWMVza+"
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FB8D7E;
-	Mon, 13 Nov 2023 04:55:26 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9becde9ea7bso1118219666b.0;
-        Mon, 13 Nov 2023 04:55:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699880125; x=1700484925; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pwl76K5ocpl2kjJi2q4viEo/K6bLb+9wkUvBOg8UQZQ=;
-        b=kAWMVza+etWHpxx7xiD5wupQtH3tunLXymVycD8A5Ye76E/IJy7v0hva+yZvCDsQhv
-         wtLWc42Zx2jt1KOs8C++YxOVO36xc17rpu7wZuPB53WEMOdhNWcIAd4ecU1hznJ62o/V
-         yQR7o9I0Kf+4kRKc1eD10SI+u0TNusF8jJzF1Uk36f7Bv/+X1YOLK1gmXRibaehLjK2L
-         a+E0Q0a7lwEqE4Q8pDHq4ChV41zZn5dYfxcjZPOY/EtOXYcFxw5gG5jfJxUWCXiyzmf+
-         //p2MpkLsgAnIDUehl9jAFTLm1McO8lCsySMFFCaGD0QNilgeKctCurk1dlPene5dU5z
-         9euA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699880125; x=1700484925;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pwl76K5ocpl2kjJi2q4viEo/K6bLb+9wkUvBOg8UQZQ=;
-        b=BLk41a2PUoiASsuqCD3W2p7Aw8alld6p4Zvezh957AHWcUuqiU5N7zOrJxGGZn6tFj
-         yfquTK5/+LaMu278S7UOqMsCuR1FxP2PUrX4eT3mac5qqtH2BHAamuJsvRLpwtXIhTGP
-         jlmNx2wscqB8hTOJXMKxDN5elO9ZN2zUail3kpRoh0N/Sv6cyu+/nu1wNKZE2WVYKL+t
-         lRHjAIAvx7uPItOH/durHiBkwpAAWI4WMEB/UW1FdVhS9Fes1baUj0Ak1wItJaIPRX9H
-         YZ8nn3MkOeE8dbyoA/SS2eqZExiiZ8v2nAdrTyJKt6SlMzE0q/HrtF8sbQNl7C/SPPrr
-         1maA==
-X-Gm-Message-State: AOJu0YyhWP3XlPNncL7Ow/96Cb8ERzGvtTuaS/WqXbAw7SdaYIjUoMaq
-	q4JsnIIp9xfApykdjH6pB8Y=
-X-Google-Smtp-Source: AGHT+IEm6foKg/8kyjvtKRtucvdqm1moHWBkrq/4hE+WHtpo5AepiI/6UQK+yob7u6EyCvqfs7Gdew==
-X-Received: by 2002:a17:906:a40f:b0:9e4:dc3f:ddae with SMTP id l15-20020a170906a40f00b009e4dc3fddaemr6358562ejz.33.1699880124963;
-        Mon, 13 Nov 2023 04:55:24 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d4a9:adca:9d2f:e54c])
-        by smtp.gmail.com with ESMTPSA id h8-20020a170906260800b009dd98089a48sm4002220ejc.43.2023.11.13.04.55.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Nov 2023 04:55:24 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] lib/xz: remove IA-64 support from library
-Date: Mon, 13 Nov 2023 13:55:22 +0100
-Message-Id: <20231113125522.8943-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQYRCbHC"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6DA173F;
+	Mon, 13 Nov 2023 05:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699882315; x=1731418315;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=Rm8xF28+ANlnLl+TZCO3wVUuV3CaKuPWQyQ/AtEUikQ=;
+  b=CQYRCbHCx8H6oq50/3YXhfJCl6xElZcOuugY76LoPjzoDFaxkKKaj2yW
+   OYEEiMCFJ57CYqiYpRyXtvpm9D8Ie58w4sEZCuF8Ju3JYvLFlTk3V/3wV
+   IaHngBmlSTlgRuOeS6W30+CaDlJWliosKOOrOIDKXKwabPUfj3Tne8PjX
+   I2jze3eJUcMwB2rKJwMiKNmIOJoig6y/IQpi44pGROGHZw9dcKRRvQOg+
+   +RSwfZTo4SsTGgz7/FHMCjPNjCSQKH9Yo7m52xe1xADeFuBNw/Yn0pwT2
+   XNaYmqpShPlAMF09/846PLefy3GulJt0nlzyn/xR/8S40YcyMn9ddDeMq
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="393296277"
+X-IronPort-AV: E=Sophos;i="6.03,299,1694761200"; 
+   d="scan'208";a="393296277"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2023 05:31:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="767921283"
+X-IronPort-AV: E=Sophos;i="6.03,299,1694761200"; 
+   d="scan'208";a="767921283"
+Received: from alexdsou-mobl3.gar.corp.intel.com ([10.249.44.83])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2023 05:31:50 -0800
+Date: Mon, 13 Nov 2023 15:31:48 +0200 (EET)
+From: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+cc: Jorge Lopez <jorge.lopez2@hp.com>, Hans de Goede <hdegoede@redhat.com>, 
+    Mark Gross <markgross@kernel.org>, 
+    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
+    error27@gmail.com, vegard.nossum@oracle.com, darren.kenny@oracle.com, 
+    kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 4/4] platform/x86: hp-bioscfg: Fix error handling in
+ hp_add_other_attributes()
+In-Reply-To: <fb97e3ea-1bee-4d7d-a8d4-dd76107f75ef@oracle.com>
+Message-ID: <1b58df2d-b444-ddb7-7533-9911d35f8f7@linux.intel.com>
+References: <20231110142921.3398072-1-harshit.m.mogalapalli@oracle.com> <20231110142921.3398072-4-harshit.m.mogalapalli@oracle.com> <211e6c1e-9bfa-ac29-b6ba-e198c4f36688@linux.intel.com> <fb97e3ea-1bee-4d7d-a8d4-dd76107f75ef@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323329-668022575-1699881249=:1867"
+Content-ID: <4bf2d21-2a7d-3d82-5c6a-36a047ed157b@linux.intel.com>
 
-Among many removals, commit cf8e8658100d ("arch: Remove Itanium (IA-64)
-architecture") removes the config XZ_DEC_IA64, but does not remove the code
-for IA64 architecture support in lib/xz/.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Remove the definitions XZ_DEC_IA64, bcj_ia64(), BCJ_IA64 and all its
-references.
+--8323329-668022575-1699881249=:1867
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <86264ee5-b556-95d6-45c4-305fcfb9e81b@linux.intel.com>
 
-Note that in the ifdef expression for architectures to enable the generic
-support for BCJ encoders, XZ_DEC_ARM was listed twice, so drop this
-duplicated conditional while removing XZ_DEC_IA64 from the condition.
+On Sat, 11 Nov 2023, Harshit Mogalapalli wrote:
+> On 10/11/23 8:14 pm, Ilpo Järvinen wrote:
+> > On Fri, 10 Nov 2023, Harshit Mogalapalli wrote:
+> > 
+> 
+> Thanks for the review.
+> 
+> > This changelog needs to be rewritten, it contains multiple errors. I
+> > suppose even this patch could be split into two but I'll not be too picky
+> > here if you insist on fixing them in the same patch.
+> > 
+> 
+> Any thoughts on how to split this into two patches ?
+> 
+> I thought of fixing memory leak in separate patch, but that would add more
+> code which should be removed when we move kobject_put() to the end.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- lib/xz/xz_dec_bcj.c | 94 ---------------------------------------------
- lib/xz/xz_private.h |  4 --
- 2 files changed, 98 deletions(-)
+I meant that in the first patch you fix add the missing kfree(). Then in 
+the second one, you correct kobject_put() + play with goto labels. There's 
+no extra code that needs to be added and then removed AFAICT.
 
-diff --git a/lib/xz/xz_dec_bcj.c b/lib/xz/xz_dec_bcj.c
-index ef449e97d1a1..3c8e7135b0e4 100644
---- a/lib/xz/xz_dec_bcj.c
-+++ b/lib/xz/xz_dec_bcj.c
-@@ -21,7 +21,6 @@ struct xz_dec_bcj {
- 	enum {
- 		BCJ_X86 = 4,        /* x86 or x86-64 */
- 		BCJ_POWERPC = 5,    /* Big endian only */
--		BCJ_IA64 = 6,       /* Big or little endian */
- 		BCJ_ARM = 7,        /* Little endian only */
- 		BCJ_ARMTHUMB = 8,   /* Little endian only */
- 		BCJ_SPARC = 9       /* Big or little endian */
-@@ -66,7 +65,6 @@ struct xz_dec_bcj {
- 		 * Type         Alignment   Look-ahead
- 		 * x86              1           4
- 		 * PowerPC          4           0
--		 * IA-64           16           0
- 		 * ARM              4           0
- 		 * ARM-Thumb        2           2
- 		 * SPARC            4           0
-@@ -177,90 +175,6 @@ static size_t bcj_powerpc(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
- }
- #endif
- 
--#ifdef XZ_DEC_IA64
--static size_t bcj_ia64(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
--{
--	static const uint8_t branch_table[32] = {
--		0, 0, 0, 0, 0, 0, 0, 0,
--		0, 0, 0, 0, 0, 0, 0, 0,
--		4, 4, 6, 6, 0, 0, 7, 7,
--		4, 4, 0, 0, 4, 4, 0, 0
--	};
--
--	/*
--	 * The local variables take a little bit stack space, but it's less
--	 * than what LZMA2 decoder takes, so it doesn't make sense to reduce
--	 * stack usage here without doing that for the LZMA2 decoder too.
--	 */
--
--	/* Loop counters */
--	size_t i;
--	size_t j;
--
--	/* Instruction slot (0, 1, or 2) in the 128-bit instruction word */
--	uint32_t slot;
--
--	/* Bitwise offset of the instruction indicated by slot */
--	uint32_t bit_pos;
--
--	/* bit_pos split into byte and bit parts */
--	uint32_t byte_pos;
--	uint32_t bit_res;
--
--	/* Address part of an instruction */
--	uint32_t addr;
--
--	/* Mask used to detect which instructions to convert */
--	uint32_t mask;
--
--	/* 41-bit instruction stored somewhere in the lowest 48 bits */
--	uint64_t instr;
--
--	/* Instruction normalized with bit_res for easier manipulation */
--	uint64_t norm;
--
--	for (i = 0; i + 16 <= size; i += 16) {
--		mask = branch_table[buf[i] & 0x1F];
--		for (slot = 0, bit_pos = 5; slot < 3; ++slot, bit_pos += 41) {
--			if (((mask >> slot) & 1) == 0)
--				continue;
--
--			byte_pos = bit_pos >> 3;
--			bit_res = bit_pos & 7;
--			instr = 0;
--			for (j = 0; j < 6; ++j)
--				instr |= (uint64_t)(buf[i + j + byte_pos])
--						<< (8 * j);
--
--			norm = instr >> bit_res;
--
--			if (((norm >> 37) & 0x0F) == 0x05
--					&& ((norm >> 9) & 0x07) == 0) {
--				addr = (norm >> 13) & 0x0FFFFF;
--				addr |= ((uint32_t)(norm >> 36) & 1) << 20;
--				addr <<= 4;
--				addr -= s->pos + (uint32_t)i;
--				addr >>= 4;
--
--				norm &= ~((uint64_t)0x8FFFFF << 13);
--				norm |= (uint64_t)(addr & 0x0FFFFF) << 13;
--				norm |= (uint64_t)(addr & 0x100000)
--						<< (36 - 20);
--
--				instr &= (1 << bit_res) - 1;
--				instr |= norm << bit_res;
--
--				for (j = 0; j < 6; j++)
--					buf[i + j + byte_pos]
--						= (uint8_t)(instr >> (8 * j));
--			}
--		}
--	}
--
--	return i;
--}
--#endif
--
- #ifdef XZ_DEC_ARM
- static size_t bcj_arm(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
- {
-@@ -361,11 +275,6 @@ static void bcj_apply(struct xz_dec_bcj *s,
- 		filtered = bcj_powerpc(s, buf, size);
- 		break;
- #endif
--#ifdef XZ_DEC_IA64
--	case BCJ_IA64:
--		filtered = bcj_ia64(s, buf, size);
--		break;
--#endif
- #ifdef XZ_DEC_ARM
- 	case BCJ_ARM:
- 		filtered = bcj_arm(s, buf, size);
-@@ -542,9 +451,6 @@ XZ_EXTERN enum xz_ret xz_dec_bcj_reset(struct xz_dec_bcj *s, uint8_t id)
- #ifdef XZ_DEC_POWERPC
- 	case BCJ_POWERPC:
- #endif
--#ifdef XZ_DEC_IA64
--	case BCJ_IA64:
--#endif
- #ifdef XZ_DEC_ARM
- 	case BCJ_ARM:
- #endif
-diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
-index bf1e94ec7873..dd22671c4941 100644
---- a/lib/xz/xz_private.h
-+++ b/lib/xz/xz_private.h
-@@ -25,9 +25,6 @@
- #		ifdef CONFIG_XZ_DEC_POWERPC
- #			define XZ_DEC_POWERPC
- #		endif
--#		ifdef CONFIG_XZ_DEC_IA64
--#			define XZ_DEC_IA64
--#		endif
- #		ifdef CONFIG_XZ_DEC_ARM
- #			define XZ_DEC_ARM
- #		endif
-@@ -98,7 +95,6 @@
-  */
- #ifndef XZ_DEC_BCJ
- #	if defined(XZ_DEC_X86) || defined(XZ_DEC_POWERPC) \
--			|| defined(XZ_DEC_IA64) || defined(XZ_DEC_ARM) \
- 			|| defined(XZ_DEC_ARM) || defined(XZ_DEC_ARMTHUMB) \
- 			|| defined(XZ_DEC_SPARC)
- #		define XZ_DEC_BCJ
+That way, you can make the commit messages more to the point too per 
+patch.
+
+> > > We have two issues:
+> > > 1. Memory leak of 'attr_name_kobj' in the error handling path.
+> > 
+> > True, but not specific enough to be useful.
+> > 
+> 
+> Should I mention something like:
+> 
+> 'attr_name_kobj' is allocated using kzalloc, but on all the error paths we
+> don't free it, hence we have a memory leak.
+>
+> > > 2. When kobject_init_and_add() fails on every subsequent error path call
+> > >     kobject_put() to cleanup.
+> > 
+> > This makes no sense. The only case when there old code had no issue is
+> > "when kobject_init_and_add() fails" but now your wording claims it to be
+> > source of problem. Please rephrase this.
+> > 
+> 
+> Does this look better:
+> 
+> kobject_put() must be called to cleanup memory associated with the object if
+> kobject_init_and_add() returns an error , before this patch only the error
+> path which is immediately next to kobject_init_and_add() has a kobject_put()
+> not any other error paths after it. Fix this by moving the kobject_put() into
+> a goto label "err_other_attr_init:" and use that for error paths after
+> kobject_init_and_add().
+
+This is easier to understand I think:
+
+kobject_put() must be always called after passing the object to 
+kobject_init_and_add(). Only the error path which is immediately next
+to kobject_init_and_add() calls kobject_put() and not any other error 
+path after it.
+
+Fix the error handling by moving the kobject_put() into the goto label 
+err_other_attr_init that is already used by all the error paths after
+kobject_init_and_add().
+
+> > > Both of these issues will be fixed when we add kobject_put() in the goto
+> > > label, as kfree() is already part of kobject_put().
+> > 
+> > No, you're fixing a problem in the patch which is not covered by moving
+> > kobject_put()!
+>
+> Sure, I will try to rephrase it to:
+> 
+> 1. Add a new label "unlock_drv_mutex"
+> 2. Add a kfree() in the default statement of switch before going to
+> "unlock_drv_mutex" to free up the memory allocated with kzalloc.
+> 2. Move kobject_put() to goto "err_other_attr_init:" and use this goto label
+> in every error path after kobject_init_and_add().
+> 
+> Please let me know if you have any comments.
+
+I think none of this is needed for this patch after you move the other fix 
+into a separate patch. Those two paragraphs I suggest above would explain 
+the problem and solution (no need to have these numbered bullets or 
+anything else besides those 2 paragraphs).
+
 -- 
-2.17.1
-
+ i.
+--8323329-668022575-1699881249=:1867--
