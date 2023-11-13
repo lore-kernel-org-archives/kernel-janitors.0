@@ -1,109 +1,77 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4872322F1E
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 19:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234192375E
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 19:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vus6hJZd"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C65385F
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 11:14:44 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id 2cNFrerPZFh5i2cOPrKNl3; Mon, 13 Nov 2023 20:14:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1699902882;
-	bh=cw7DzfrPCld7xSzODOtzNR7CsG05Gedc/Tg0+WmnlFY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Vus6hJZdgAD6gPCyctSi31zSnS0OffNGTJcUNC8rjmd7KNN8TVaQHEsaYDS0DbwfE
-	 BNjCprzVTYa0zAKJSAOnNn1BWahlyLOoeqgyL7L//dd3zzr35cfjlQ3Er4/xgMhNSa
-	 rkgvBPTxuq4KV40bgzZQ+PBA33/XWVHoSsP30vch+9OCwYhmTWtzOM+pkJNu0x/P4I
-	 oJrrPJWNjjMYh+Ocfww8DN+wDBzbH1U8rtPstYuMm6mGtJVEJxpb6s6bkRKk2mtuA+
-	 GRLBzAlkeqejoUEIsr8O9gKrpldQ3i4myYLIO7WAV6s9TV1ZV+Rzol11mzFSz/SvNO
-	 0xBX2LYqcD6ng==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 13 Nov 2023 20:14:42 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <cc2273ef-3539-41c3-b333-f87b309e895b@wanadoo.fr>
-Date: Mon, 13 Nov 2023 20:14:40 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpBa+rX0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A35C433C7;
+	Mon, 13 Nov 2023 19:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699904439;
+	bh=gzrsBuaaq7Ias+HTVjBwYIEOSVwB/9IrgcrQUdiriGg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=WpBa+rX06OyELpVg6hWTYXfcQyMZi9S66lVJvk0TRBPg2CKFE+4Emb61IfX4W2h1K
+	 Zreo0uyfm1CrZKXal7GlHztFwz7eAXQih4xji15328MKeKcKMM5lgp3qvPm3WYLlOs
+	 BI9ZKnBprFk6RrPDqboCiUSpHIq5QQENBMJUe1nEFH2kIeObPQmCnn50F1rRBEIpep
+	 C6GlmAv2tALYrOpucaSFKFhwC1gPnHHc2KnTUSzEcNX2d+daLiL9cBsaY4//PNUfXi
+	 LONDxbF1/7LbGde+MHazELjFZSk4fL0oIeg4SL0V/x4mrD235bJcPP+f5LfWIg43e4
+	 M7/QkbeSmn9NQ==
+From: Mark Brown <broonie@kernel.org>
+To: Tony Lindgren <tony@atomide.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ linux-omap@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20231111195330.338324-1-colin.i.king@gmail.com>
+References: <20231111195330.338324-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] regulator: palmas: remove redundant
+ initialization of pointer pdata
+Message-Id: <169990443689.3294075.9581324276633996428.b4-ty@kernel.org>
+Date: Mon, 13 Nov 2023 19:40:36 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ata: pata_pxa: convert not to use
- dma_request_slave_channel()
-Content-Language: fr
-To: Sergey Shtylyov <s.shtylyov@omp.ru>, Niklas Cassel <Niklas.Cassel@wdc.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-References: <f177835b7f0db810a132916c8a281bbdaf47f9d3.1699801657.git.christophe.jaillet@wanadoo.fr>
- <ZVHYK1rI9Z8DcKJP@x1-carbon> <6e798343-1880-1c58-dd8e-1bd556f6a75b@omp.ru>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6e798343-1880-1c58-dd8e-1bd556f6a75b@omp.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-0438c
 
-Le 13/11/2023 à 11:17, Sergey Shtylyov a écrit :
-> On 11/13/23 11:05 AM, Niklas Cassel wrote:
-> [...]
->>> dma_request_slave_channel() is deprecated. dma_request_chan() should
->>> be used directly instead.
->>>
->>> Switch to the preferred function and update the error handling accordingly.
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/ata/pata_pxa.c | 5 ++---
->>>   1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/ata/pata_pxa.c b/drivers/ata/pata_pxa.c
->>> index 5275c6464f57..0c9c9cf63d36 100644
->>> --- a/drivers/ata/pata_pxa.c
->>> +++ b/drivers/ata/pata_pxa.c
->>> @@ -274,9 +274,8 @@ static int pxa_ata_probe(struct platform_device *pdev)
->>>   	/*
->>>   	 * Request the DMA channel
->>>   	 */
->>> -	data->dma_chan =
->>> -		dma_request_slave_channel(&pdev->dev, "data");
->>> -	if (!data->dma_chan)
->>> +	data->dma_chan = dma_request_chan(&pdev->dev, "data");
->>
->> While the previous API could only return NULL on failure, the new API can
->> return an actual error.
->>
->> I think we should return the actual error instead of -EBUSY.
->>
->> i.e.:
->>
->> if (IS_ERR(data->dma_chan))
->> 	return PTR_ERR(data->dma_chan);
+On Sat, 11 Nov 2023 19:53:30 +0000, Colin Ian King wrote:
+> Pointer pdata is being initialized with a value that is never read. It is
+> being re-assigned later on with the return from a devm_kzalloc call.
+> Remove the redundant initialization, cleans up clang scan build warning:
 > 
->     Agreed. Christophe, please fix.
-
-Will do.
-
-Thx for both of you for the review.
-
-CJ
-
+> drivers/regulator/palmas-regulator.c:1597:36: warning: Value stored
+> to 'pdata' during its initialization is never read [deadcode.DeadStores]
 > 
 > [...]
->>> +	if (IS_ERR(data->dma_chan))
->>>   		return -EBUSY;
->>>   	ret = dmaengine_slave_config(data->dma_chan, &config);
->>>   	if (ret < 0) {
-> [...]
-> 
->> Kind regards,
->> Niklas
-> 
-> MBR, Sergey
-> 
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: palmas: remove redundant initialization of pointer pdata
+      commit: 1fc2e768ff28f096e9fb6438f0d01c3851c7cd68
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
