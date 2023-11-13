@@ -1,36 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F345220B0D
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C3120B05
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Nov 2023 14:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="je2fBLML"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D12C433C7;
-	Mon, 13 Nov 2023 14:05:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lA4FOOmV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95728C433BF;
+	Mon, 13 Nov 2023 14:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699884323;
-	bh=/NaN3JhhTLKf35ns0Tx2hua/FjlGBaju/kmmbE88Qng=;
+	s=k20201202; t=1699884343;
+	bh=sxsc1as84ufBJ/QWw+HF6gUxx16PTyNBJZX2C9hWzFg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=je2fBLML9l0iiFDcvV13EtSB+5+EZpaOZSLolhDMyUZh8bDtB0mwJfe7UJkuvhoMD
-	 vQfTAGA/lSjEnS2PWclJw3NnJs8hLztfI1+luETZe3bQlwspOBQ+ft9jFE26DG+n3Q
-	 3VByj8qpDKlclWwMqjvwjd+92h4atrG729+d7NpJ9bDC52WuQxQZOy8tmaZ/i/t5CN
-	 tyDPyEIbA6bzrv8fLS9fIYtEYe3Wy458jK3eQTGEREIk7UQXvMpiyyEtFhY/tlJUXg
-	 IAtDR2IJ60b9doxF6UswlanSTjOyNEeBo2vHneOQBQSnxj+Xh7YhCtpsLSI0p1/tkO
-	 X6yVM0uoZ4q7g==
+	b=lA4FOOmVCxOsLUhsXylSsn0uQGk1cRkWNFFB6hIAml7Syoj4pWqKUW+f5D9ijJp+o
+	 Xp7V5hUeMiGcWL6NiqOFEgsS7BQUKEDbDe/mpoD411tpclM83GCoAWtSuJoD/zahbk
+	 VPg0CJR9J0cukizX6yczfOqSbmuDRo7ve9OMIv4hNaLd9HKNhlHpnz+nBTIWQ0bu7Y
+	 w+7JoPKdOJqPRGqN04epRNOdRle7bJicQh95Sq6OGuCMGsrDxdLRKNWRk3jtRziMpX
+	 M5rFjw/9gHgVU8bMuQPEEfYk4omp1HcrEisfzhbcWMraVsrJdMbuC13MSLKRc31IgD
+	 l/kEmWi0paWpA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Syed Saba Kareem <Syed.SabaKareem@amd.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
- Yang Li <yang.lee@linux.alibaba.com>, linux-sound@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <e376a712-e0c6-446f-9e0b-c444dd795cbb@moroto.mountain>
-References: <e376a712-e0c6-446f-9e0b-c444dd795cbb@moroto.mountain>
-Subject: Re: [PATCH] ASoC: amd: acp: remove unnecessary NULL check
-Message-Id: <169988432049.3280890.18390269348281971784.b4-ty@kernel.org>
-Date: Mon, 13 Nov 2023 14:05:20 +0000
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <b78685e4103f12931ddb09c1654bc6b04b640868.1699724240.git.christophe.jaillet@wanadoo.fr>
+References: <b78685e4103f12931ddb09c1654bc6b04b640868.1699724240.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: tegra: convert not to use
+ dma_request_slave_channel()
+Message-Id: <169988434099.3280890.15869529541068548630.b4-ty@kernel.org>
+Date: Mon, 13 Nov 2023 14:05:40 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,9 +40,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13-dev-0438c
 
-On Mon, 30 Oct 2023 12:03:51 +0300, Dan Carpenter wrote:
-> The list iterator in a list_for_each_entry() loop can never be NULL.
-> Remove the check and pull the code in a tab.
+On Sat, 11 Nov 2023 18:37:39 +0100, Christophe JAILLET wrote:
+> dma_request_slave_channel() is deprecated. dma_request_chan() should
+> be used directly instead.
+> 
+> Switch to the preferred function and update the error handling accordingly.
 > 
 > 
 
@@ -53,8 +54,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: amd: acp: remove unnecessary NULL check
-      commit: 601cc04c9d73ed728b29eaddb29ae13b48b03ce7
+[1/1] ASoC: tegra: convert not to use dma_request_slave_channel()
+      commit: 8df735701a7051825254ec7a12a661307bb7bdc1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
