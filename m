@@ -1,89 +1,75 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8AA14F60
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 10:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E30118053
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 12:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpY7ScT5"
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF574109;
-	Wed, 15 Nov 2023 02:44:38 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5441305cbd1so10148114a12.2;
-        Wed, 15 Nov 2023 02:44:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700045077; x=1700649877; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbzuiJQ2vBegQA7voMECslTs5KDNKkKwd7ZxQs3+i5k=;
-        b=RpY7ScT5lHA50+KIeOZf2uZXViIB/K4IDLSTkLT5Fw/9jhUVnf8LgakdmgT8NoHOBV
-         YpSZEOfwyHXnDeCzU4VxThbNz9AQ1dM4NqMPYSrryTCyARq9h/Nvnet4LRb0bWpo8PSz
-         cI6YHPDMyl5pLuyz14tPSZXw5qA5CO5RIT0V761mUaHIQSO2ZS9KhjupBExpq8NPXqux
-         1T2YGIDgJIPqKFCh16xCBjR2D8m0klT6MaXL9mmTFKjOKUfGoOoc1zNDk5HBebSgcMzi
-         HKyYVH3C7iNyVFWo8g3RBM0VzBAEzQqKjZTYc9hqt/Wicd8A7VJ0GZ3PW2GM1JBx13SY
-         dv5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700045077; x=1700649877;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GbzuiJQ2vBegQA7voMECslTs5KDNKkKwd7ZxQs3+i5k=;
-        b=K9DvB7urmw4nEnh1xiE2KAUFSbbaZcw6StwsUd9NiLDCOmGTBroHXJ9nrVR5U+jzEw
-         ppJiq1J+bykD3TLojeEydF3TMDhjGt8s7yT2FsqagaQ5mp4By1B/BD2k8r/lEFyaj/Hb
-         hkKWLQ/Bb8/TbK21ZteDL5PnBY9kaFJW3GpEC75BSeFRMkLVErHXTDuI12dHbWX4Ifkz
-         JViRnqs6RW0oA833RUZzDAf9KF8qFCyuF33fH6oscPM6IPPzA0UmfBva5hgzj6tT/PtM
-         kOf5c0QqpD1yGzdaQ02I3Lc6C9CLYF/zu5BLo4bgGHfH3YoIqIvI1kpIMUIPIX04Em1c
-         prRQ==
-X-Gm-Message-State: AOJu0Yz/9/TFM/kfT1n2HbwU3lX3+eDAvNQZh9seU7WwUZFw1J+VqIsw
-	sbg1UJ5m9R50EszfJhqteoo=
-X-Google-Smtp-Source: AGHT+IGoKYeYQ6VqydJ9DHVBCeRFwf/5TrkJAz59XZJNk/mqUrOM6/C5VjmJA5IM2b4Q5cpJvDiByA==
-X-Received: by 2002:a05:6402:1052:b0:543:535f:cc74 with SMTP id e18-20020a056402105200b00543535fcc74mr8252049edu.3.1700045077059;
-        Wed, 15 Nov 2023 02:44:37 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:999:a30e:2872:ffae])
-        by smtp.gmail.com with ESMTPSA id l18-20020a50d6d2000000b00542db304680sm6470010edj.63.2023.11.15.02.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 02:44:36 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Tony Lindgren <tony@atomide.com>,
-	linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add omap bus drivers to OMAP2+ SUPPORT
-Date: Wed, 15 Nov 2023 11:44:34 +0100
-Message-Id: <20231115104434.25796-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hPwSMjcm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF59121;
+	Wed, 15 Nov 2023 04:50:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700052601; x=1731588601;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=17IQzIyHeOleBFfI3fNPQ5d6+A7WndaMjwIptCNyBm8=;
+  b=hPwSMjcmi6taOPqLIywzfHmdo+QJwG6uzrMm+ruYt4Pq8CnAsXs/Luc2
+   8wwIyDSt9N7pBwZBag3Kjhx/BvjZXvb/mIEi8aqVc5sbN3YgtE8/pOVLY
+   tOYSFrzSPp2uPBkB6nEpigdod5uvSudvxsmpjL1lxxufj7vF5CXuY0sJs
+   Rn+/jZI5NL0unH/CrmH4LY9pXoeULyMnITAEir2Jp/TUcGuiI1NKvopQc
+   x4g8m17/eQyrV05YaMfCpcXm7qzoVmTT/ByCebjPsbSFC+cGJr+qbt3av
+   tk72z8hJcG2SGffDjdXUCmDiVegRc5HI3/oT9cAv+F064d11r6TCx6J7b
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10894"; a="12417953"
+X-IronPort-AV: E=Sophos;i="6.03,305,1694761200"; 
+   d="scan'208";a="12417953"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2023 04:50:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.03,305,1694761200"; 
+   d="scan'208";a="12776941"
+Received: from rkhristx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.217])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2023 04:49:57 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Jorge Lopez <jorge.lopez2@hp.com>, Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>, Thomas Weißschuh <linux@weissschuh.net>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, error27@gmail.com, vegard.nossum@oracle.com
+In-Reply-To: <20231113200742.3593548-1-harshit.m.mogalapalli@oracle.com>
+References: <20231113200742.3593548-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v4 1/4] platform/x86: hp-bioscfg: Simplify return check in hp_add_other_attributes()
+Message-Id: <170005255094.3255.4578937371871843438.b4-ty@linux.intel.com>
+Date: Wed, 15 Nov 2023 14:49:10 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-While doing some code cleanup in drivers/bus/, I noticed that the files
-drivers/bus/omap*.[ch] have no maintainer.
+On Mon, 13 Nov 2023 12:07:37 -0800, Harshit Mogalapalli wrote:
 
-As far as I see from the git history, important changes to those files went
-through Tony Lindgren. Further, the inclusion of those drivers depend on
-the config ARCH_OMAP2PLUS being enabled. This suggests these drivers are
-part of the section OMAP2+ SUPPORT.
+> All cases in switch-case have a same goto on error, move the return
+> check out of the switch. This is a cleanup.
+> 
+> 
 
-Add the omap bus drivers to OMAP2+ SUPPORT.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 973568cae9e5..e829dbac1e99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15850,6 +15850,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
- F:	Documentation/devicetree/bindings/arm/ti/omap.yaml
- F:	arch/arm/configs/omap2plus_defconfig
- F:	arch/arm/mach-omap2/
-+F:	drivers/bus/omap*.[ch]
- F:	drivers/bus/ti-sysc.c
- F:	drivers/gpio/gpio-tps65219.c
- F:	drivers/i2c/busses/i2c-omap.c
--- 
-2.17.1
+The list of commits applied:
+[1/4] platform/x86: hp-bioscfg: Simplify return check in hp_add_other_attributes()
+      commit: c5dbf04160005e07e8ca7232a7faa77ab1547ae0
+[2/4] platform/x86: hp-bioscfg: move mutex_lock() down in hp_add_other_attributes()
+      commit: 5736aa9537c9b8927dec32d3d47c8c31fe560f62
+[3/4] platform/x86: hp-bioscfg: Fix error handling in hp_add_other_attributes()
+      commit: f40f939917b2b4cbf18450096c0ce1c58ed59fae
+[4/4] platform/x86: hp-bioscfg: Remove unused obj in hp_add_other_attributes()
+      commit: 92c47597db7d8fb500a4b04ebd457ec7360279cc
 
+--
+ i.
