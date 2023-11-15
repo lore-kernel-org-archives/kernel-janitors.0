@@ -1,44 +1,55 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E30118053
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 12:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66080381A3
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 15:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hPwSMjcm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF59121;
-	Wed, 15 Nov 2023 04:50:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700052601; x=1731588601;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=17IQzIyHeOleBFfI3fNPQ5d6+A7WndaMjwIptCNyBm8=;
-  b=hPwSMjcmi6taOPqLIywzfHmdo+QJwG6uzrMm+ruYt4Pq8CnAsXs/Luc2
-   8wwIyDSt9N7pBwZBag3Kjhx/BvjZXvb/mIEi8aqVc5sbN3YgtE8/pOVLY
-   tOYSFrzSPp2uPBkB6nEpigdod5uvSudvxsmpjL1lxxufj7vF5CXuY0sJs
-   Rn+/jZI5NL0unH/CrmH4LY9pXoeULyMnITAEir2Jp/TUcGuiI1NKvopQc
-   x4g8m17/eQyrV05YaMfCpcXm7qzoVmTT/ByCebjPsbSFC+cGJr+qbt3av
-   tk72z8hJcG2SGffDjdXUCmDiVegRc5HI3/oT9cAv+F064d11r6TCx6J7b
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10894"; a="12417953"
-X-IronPort-AV: E=Sophos;i="6.03,305,1694761200"; 
-   d="scan'208";a="12417953"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2023 04:50:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.03,305,1694761200"; 
-   d="scan'208";a="12776941"
-Received: from rkhristx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.217])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2023 04:49:57 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Jorge Lopez <jorge.lopez2@hp.com>, Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>, Thomas Weißschuh <linux@weissschuh.net>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, error27@gmail.com, vegard.nossum@oracle.com
-In-Reply-To: <20231113200742.3593548-1-harshit.m.mogalapalli@oracle.com>
-References: <20231113200742.3593548-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH v4 1/4] platform/x86: hp-bioscfg: Simplify return check in hp_add_other_attributes()
-Message-Id: <170005255094.3255.4578937371871843438.b4-ty@linux.intel.com>
-Date: Wed, 15 Nov 2023 14:49:10 +0200
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y7zr0BUW"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31148125;
+	Wed, 15 Nov 2023 07:13:28 -0800 (PST)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AFE4o9M015821;
+	Wed, 15 Nov 2023 15:13:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-03-30;
+ bh=3/HVFVhCe8GVOTgZ9DohMQhHSLCTTGPA3q552Ck/iGc=;
+ b=Y7zr0BUWpQVsJg3W4MIiTt+yM+/QJ6InewX3w/d9MVed6HfYt2HiqUPxPkqpDi/Hwit6
+ Equj4s+isP5vrXn2phxLAHRLuaEn4+RHXD+VWz5FbgS7TV6iBTuLIrZv3xtsb9cw12L5
+ WjHIDGfuWUfsHaD1t+LOQfjnO9wnnYUwW1i4VlJy0nMKaUWcQoWf9bACLRxoHR9ZEdkL
+ 1vMrYPL4L5vb6ewVbNndLIc4BHkn8ndOu4RfcWLHFXBl/rFxqDcmKIlE5V7a4Wb8cTDX
+ F8fNS9pgpeQ89yFtRCnouEY4HINPjqurYPrZHtYrIysvg24B+AFS8cTZkvvc5jdOw+uv YA== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ua2n3gnys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Nov 2023 15:13:10 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3AFE7nCL004192;
+	Wed, 15 Nov 2023 15:13:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uaxj4086j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Nov 2023 15:13:08 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AFFD8SN011253;
+	Wed, 15 Nov 2023 15:13:08 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3uaxj4085x-1;
+	Wed, 15 Nov 2023 15:13:08 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Wenchao Hao <haowenchao2@huawei.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Douglas Gilbert <dgilbert@interlog.com>, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] scsi: scsi_debug: scsi: scsi_debug: fix some bugs in sdebug_error_write()
+Date: Wed, 15 Nov 2023 10:12:59 -0500
+Message-Id: <170006111395.506874.3810936215375005901.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <7733643d-e102-4581-8d29-769472011c97@moroto.mountain>
+References: <7733643d-e102-4581-8d29-769472011c97@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,30 +57,35 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-15_13,2023-11-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0
+ mlxlogscore=724 mlxscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311150115
+X-Proofpoint-GUID: NWYFpMpziWV1FPdYyt5UwL3jDm4bIDfy
+X-Proofpoint-ORIG-GUID: NWYFpMpziWV1FPdYyt5UwL3jDm4bIDfy
 
-On Mon, 13 Nov 2023 12:07:37 -0800, Harshit Mogalapalli wrote:
+On Mon, 06 Nov 2023 17:04:33 +0300, Dan Carpenter wrote:
 
-> All cases in switch-case have a same goto on error, move the return
-> check out of the switch. This is a cleanup.
+> There are two bug in this code:
+> 1) If count is zero, then it will lead to a NULL dereference.  The
+>    kmalloc() will successfully allocate zero bytes and the test for
+>    "if (buf[0] == '-')" will read beyond the end of the zero size buffer
+>    and Oops.
+> 2) The code does not ensure that the user's string is properly NUL
+>    terminated which could lead to a read overflow.
 > 
-> 
+> [...]
 
+Applied to 6.7/scsi-fixes, thanks!
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
+[1/2] scsi: scsi_debug: scsi: scsi_debug: fix some bugs in sdebug_error_write()
+      https://git.kernel.org/mkp/scsi/c/860c3d03bbc3
+[2/2] scsi: scsi_debug: delete some bogus error checking
+      https://git.kernel.org/mkp/scsi/c/037fbd3fcfbd
 
-The list of commits applied:
-[1/4] platform/x86: hp-bioscfg: Simplify return check in hp_add_other_attributes()
-      commit: c5dbf04160005e07e8ca7232a7faa77ab1547ae0
-[2/4] platform/x86: hp-bioscfg: move mutex_lock() down in hp_add_other_attributes()
-      commit: 5736aa9537c9b8927dec32d3d47c8c31fe560f62
-[3/4] platform/x86: hp-bioscfg: Fix error handling in hp_add_other_attributes()
-      commit: f40f939917b2b4cbf18450096c0ce1c58ed59fae
-[4/4] platform/x86: hp-bioscfg: Remove unused obj in hp_add_other_attributes()
-      commit: 92c47597db7d8fb500a4b04ebd457ec7360279cc
-
---
- i.
+-- 
+Martin K. Petersen	Oracle Linux Engineering
