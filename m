@@ -1,28 +1,35 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF3D7E
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 05:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CC27E;
+	Wed, 15 Nov 2023 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id AECA4D9;
-	Tue, 14 Nov 2023 21:02:04 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id C9E1F114;
+	Wed, 15 Nov 2023 00:58:34 -0800 (PST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 0765760A15476;
-	Wed, 15 Nov 2023 13:02:00 +0800 (CST)
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id B57E860230185;
+	Wed, 15 Nov 2023 16:58:22 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-To: pkshih@realtek.com,
-	Jes.Sorensen@gmail.com
+To: s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	trix@redhat.com
 Cc: Su Hui <suhui@nfschina.com>,
-	kvalo@kernel.org,
-	linux-wireless@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] wifi: rtl8xxxu: correct the error value of 'timeout'
-Date: Wed, 15 Nov 2023 13:01:24 +0800
-Message-Id: <20231115050123.951862-1-suhui@nfschina.com>
+Subject: [PATCH] media: platform: exynos4-is: return callee's error code rather than -ENXIO
+Date: Wed, 15 Nov 2023 16:57:54 +0800
+Message-Id: <20231115085753.1027348-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -32,48 +39,27 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When 'rtl8xxxu_dma_agg_pages <= page_thresh', 'timeout' should equal to
-'page_thresh' rather than '4'. Change the code order to fix this problem.
+Clang static analyzer complains that value stored to 'ret' is never read.
+Return the callee's error code to fix this.
 
-Fixes: fd83f1227826 ("rtl8xxxu: gen1: Add module parameters to adjust DMA aggregation parameters")
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-v2:
- -  correct the problem about Fixes tag.
+ drivers/media/platform/samsung/exynos4-is/fimc-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c    | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 43ee7592bc6e..9cab8b1dc486 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -4757,6 +4757,12 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
- 	 *   RxAggPageTimeout = 4 or 6 (absolute time 34ms/(2^6))
- 	 */
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+index 97908778e1c8..0be687b01ce5 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+@@ -814,7 +814,7 @@ static int fimc_clk_get(struct fimc_dev *fimc)
+ 	fimc_clk_put(fimc);
+ 	dev_err(&fimc->pdev->dev, "failed to get clock: %s\n",
+ 		fimc_clocks[i]);
+-	return -ENXIO;
++	return ret;
+ }
  
-+	/* REG_RXDMA_AGG_PG_TH + 1 seems to be the timeout register on
-+	 * gen2 chips and rtl8188eu. The rtl8723au seems unhappy if we
-+	 * don't set it, so better set both.
-+	 */
-+	timeout = 4;
-+
- 	page_thresh = (priv->fops->rx_agg_buf_size / 512);
- 	if (rtl8xxxu_dma_agg_pages >= 0) {
- 		if (rtl8xxxu_dma_agg_pages <= page_thresh)
-@@ -4771,12 +4777,6 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
- 				__func__, rtl8xxxu_dma_agg_pages, page_thresh);
- 	}
- 	rtl8xxxu_write8(priv, REG_RXDMA_AGG_PG_TH, page_thresh);
--	/*
--	 * REG_RXDMA_AGG_PG_TH + 1 seems to be the timeout register on
--	 * gen2 chips and rtl8188eu. The rtl8723au seems unhappy if we
--	 * don't set it, so better set both.
--	 */
--	timeout = 4;
- 
- 	if (rtl8xxxu_dma_agg_timeout >= 0) {
- 		if (rtl8xxxu_dma_agg_timeout <= 127)
+ #ifdef CONFIG_PM
 -- 
 2.30.2
 
