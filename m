@@ -1,49 +1,68 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VKsHDqAZ"
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC451A1
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 13:26:51 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1cc316ccc38so1365455ad.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 13:26:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlkCkQTR"
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAA098
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 14:44:11 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-778a92c06d6so6683885a.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 14:44:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1700083611; x=1700688411; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700088250; x=1700693050; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPVyRrN1uRZs7Wz4idyzDBpkXVrVgQKZvwp5LF85yFM=;
-        b=VKsHDqAZgBJA/hD42MObdrmrNLDkPQWr+5eDeZeDc7A0c7CIgEOSH5xS+orPGkaH05
-         GPEbYOcftgTW/Bebwva9UDF0hc2oP6pZmFD8QzHqkPVmBzCxImJSlygYF/gJk+zJkByo
-         9F49L9vpQhd4M3OpsEdS802A3AoC2NKaT7S+0=
+        bh=PnPNvgYVe/a3KXEsnvx4GNWysFw45MMaqeVr2951f4Q=;
+        b=XlkCkQTRQrayA+u8rRgICNJcT9kOdTf1G87HZs9BvjdaHpNVJ84Q5IPEee9tEq6V2Q
+         QlboSang2I73/U1smTY2yLLJR3116OdJpm3yKCacKkBLjWk74mQOQs1PshL0Ys/QDE0q
+         YHPaRTkazBrwX2PV1YeTDOGHu3PVqGdayIMZYnxTM1VFrkO4hzjBM0u/DX8vOqvRgY3E
+         GT/6dwkGGANrKUV5DdMKGe6gw4nRpWauSEjCgBkXQ4znBwbzRggxzVktvYqKOzvRa2bG
+         MaseNbnig/MmS5uMXYTwkkOpi64FhbzvPKh1hEYfhyd55Me0cENWZ83Yz71Y8K/pli2w
+         D3jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700083611; x=1700688411;
+        d=1e100.net; s=20230601; t=1700088250; x=1700693050;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPVyRrN1uRZs7Wz4idyzDBpkXVrVgQKZvwp5LF85yFM=;
-        b=Zpg3TygSjwG3iIyBSSrUObNzmRFL8gGqqoeHPpUWvef2O3F66w4dkKi4HdWhm5gZgs
-         K/2mlAWqmO23wsce1F/Ato2/fmONZbEAPu9Nt6WNnFmBS2HCwrYnzARpfmkoXBDw82Wp
-         FLmmZDsHJaIaC2RpuGlaAwIYCMYezuZjVi1Klcsmg65SQthSURmabP/LJ4lTwFejSQsZ
-         yB8jHQb+3WNdH7KwGSMTxKgiW+3vTBba/smql7HbqUgHTuaMQjtGZIWEkIq5TMw+aYKl
-         6rn3wp+ggaEhfR36GgSVvjPS1KBBAJlDR4NCLnC9tKdaDmboBPyCAerfJhAfoBnilTM4
-         54iA==
-X-Gm-Message-State: AOJu0Yzv7yUik7Amuf5FzTRwCh2ABFHMzOi2Bk8l8+wy+RRkKTAwGh0R
-	JxzCb7Y81n++Q5L3ostLm4Grdw==
-X-Google-Smtp-Source: AGHT+IFRKVgCfEa6Z+5pQ2Y0fxgccYlOkaOEmT5jf2DSAM02NTazA4S/MQNc/T6ApIjdrff/U85aKA==
-X-Received: by 2002:a17:902:6b03:b0:1cc:40a4:9179 with SMTP id o3-20020a1709026b0300b001cc40a49179mr5793617plk.34.1700083610553;
-        Wed, 15 Nov 2023 13:26:50 -0800 (PST)
-Received: from localhost ([2620:15c:9d:2:ff48:d9fc:165e:3caa])
-        by smtp.gmail.com with UTF8SMTPSA id a13-20020a170902b58d00b001c61acd5bd2sm7808729pls.112.2023.11.15.13.26.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 13:26:50 -0800 (PST)
-Date: Wed, 15 Nov 2023 13:26:48 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: kvalo@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
-	trix@redhat.com, lukas@wunner.de, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mwifiex: remove some useless code
-Message-ID: <ZVU3mGzR_759WYAW@google.com>
-References: <20231115092328.1048103-1-suhui@nfschina.com>
+        bh=PnPNvgYVe/a3KXEsnvx4GNWysFw45MMaqeVr2951f4Q=;
+        b=tS7GaxlKRqrYmWzqjfVlhHcnJkEAxaU9mk5VPJhLofrRjQ8l/4Q1HfMg7TgJssAl81
+         JDHj7FuhKGuaTA0d+x2tKisQRoXvsWXg9ij/gTXflYCUA0jWTxqSBhT2lf1L+fNMotA7
+         aFZGWLBXHzIflptnc/2k52J8VKVCgh2av+u+taQ8hVnvCsgIIL4gjH1cSQOcvhLYonjF
+         rgXy/IZBjmhfYssPFddQtZ2H+iRxqZM1E8SY9+LG0Wp/PqbD+B2BddlU9EKDBYCS42Ds
+         3V9ocU1NvjYbF/wRu0z5+zo+2BvVmE8B7YjK9sYD1ZImaxs5h56JcKQcLPFUUF1rapX4
+         1tdQ==
+X-Gm-Message-State: AOJu0YyrQw33vTP0z4HqoehycTj6kUyBcmRTsK2TOZcPNR38RlDO28V2
+	+FGw7Ot0KLZzYYRIqG103/GB8w==
+X-Google-Smtp-Source: AGHT+IEXDa9AqDk6k23ASNVZlgKVGyl4b96qGCZ+OOAUM0YbtOUy7P5HZ7bH5z4OmceD3xsVsN2MMQ==
+X-Received: by 2002:a05:620a:480e:b0:77b:c47e:727f with SMTP id eb14-20020a05620a480e00b0077bc47e727fmr7898555qkb.28.1700088250234;
+        Wed, 15 Nov 2023 14:44:10 -0800 (PST)
+Received: from localhost (ip-185-104-139-34.ptr.icomera.net. [185.104.139.34])
+        by smtp.gmail.com with ESMTPSA id s19-20020a05620a16b300b00772662b7804sm3815744qkj.100.2023.11.15.14.42.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Nov 2023 14:42:58 -0800 (PST)
+Date: Wed, 15 Nov 2023 17:42:17 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: mripard@kernel.org
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	kernel-janitors@vger.kernel.org,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	kv-team <kv-team@linaro.org>
+Subject: Re: [RFC] drm/tests: annotate intentional stack trace in
+ drm_test_rect_calc_hscale()
+Message-ID: <8489c4db-6639-43f5-b6c4-8598652cdce6@suswa.mountain>
+References: <02546e59-1afe-4b08-ba81-d94f3b691c9a@moroto.mountain>
+ <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
+ <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
+ <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,15 +71,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231115092328.1048103-1-suhui@nfschina.com>
+In-Reply-To: <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
+X-Spam-Level: *
 
-On Wed, Nov 15, 2023 at 05:23:29PM +0800, Su Hui wrote:
-> Clang static analyzer complains that value stored to 'priv' is never read.
-> 'priv' is useless, so remove it to save space.
+On Mon, Nov 06, 2023 at 02:58:12PM +0100, mripard@kernel.org wrote:
+> > But a similar thing is happening here where we have so many bogus
+> > warnings that we missed a real bug.
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/net/wireless/marvell/mwifiex/cmdevt.c | 8 --------
->  1 file changed, 8 deletions(-)
+> IIRC, there was a similar discussion for lockdep issues. IMO, any
+> (unintended) warning should trigger a test failure.
+> 
+> I guess that would require adding some intrumentation to __WARN somehow,
+> and also allowing tests to check whether a warning had been generated
+> during their execution for tests that want to trigger one.
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+I think this is a good idea.  I was looking at how lockdep prints
+warnings (see print_circular_bug_header()).  It doesn't use WARN() it
+prints a bunch of pr_warn() statements and then a stack trace.  We would
+have to have a increment the counter manually in that situation.
+
+I'm writing a script to parse a dmesg and collect Oopses.  So now I know
+to look for WARN(), lockdep, and KASAN.  What other bugs formats do we
+have?  Probably someone like the syzbot devs have already has written a
+script like this?
+
+regards,
+dan carpenter
