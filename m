@@ -1,99 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlkCkQTR"
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAA098
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 14:44:11 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-778a92c06d6so6683885a.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Nov 2023 14:44:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700088250; x=1700693050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnPNvgYVe/a3KXEsnvx4GNWysFw45MMaqeVr2951f4Q=;
-        b=XlkCkQTRQrayA+u8rRgICNJcT9kOdTf1G87HZs9BvjdaHpNVJ84Q5IPEee9tEq6V2Q
-         QlboSang2I73/U1smTY2yLLJR3116OdJpm3yKCacKkBLjWk74mQOQs1PshL0Ys/QDE0q
-         YHPaRTkazBrwX2PV1YeTDOGHu3PVqGdayIMZYnxTM1VFrkO4hzjBM0u/DX8vOqvRgY3E
-         GT/6dwkGGANrKUV5DdMKGe6gw4nRpWauSEjCgBkXQ4znBwbzRggxzVktvYqKOzvRa2bG
-         MaseNbnig/MmS5uMXYTwkkOpi64FhbzvPKh1hEYfhyd55Me0cENWZ83Yz71Y8K/pli2w
-         D3jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700088250; x=1700693050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PnPNvgYVe/a3KXEsnvx4GNWysFw45MMaqeVr2951f4Q=;
-        b=tS7GaxlKRqrYmWzqjfVlhHcnJkEAxaU9mk5VPJhLofrRjQ8l/4Q1HfMg7TgJssAl81
-         JDHj7FuhKGuaTA0d+x2tKisQRoXvsWXg9ij/gTXflYCUA0jWTxqSBhT2lf1L+fNMotA7
-         aFZGWLBXHzIflptnc/2k52J8VKVCgh2av+u+taQ8hVnvCsgIIL4gjH1cSQOcvhLYonjF
-         rgXy/IZBjmhfYssPFddQtZ2H+iRxqZM1E8SY9+LG0Wp/PqbD+B2BddlU9EKDBYCS42Ds
-         3V9ocU1NvjYbF/wRu0z5+zo+2BvVmE8B7YjK9sYD1ZImaxs5h56JcKQcLPFUUF1rapX4
-         1tdQ==
-X-Gm-Message-State: AOJu0YyrQw33vTP0z4HqoehycTj6kUyBcmRTsK2TOZcPNR38RlDO28V2
-	+FGw7Ot0KLZzYYRIqG103/GB8w==
-X-Google-Smtp-Source: AGHT+IEXDa9AqDk6k23ASNVZlgKVGyl4b96qGCZ+OOAUM0YbtOUy7P5HZ7bH5z4OmceD3xsVsN2MMQ==
-X-Received: by 2002:a05:620a:480e:b0:77b:c47e:727f with SMTP id eb14-20020a05620a480e00b0077bc47e727fmr7898555qkb.28.1700088250234;
-        Wed, 15 Nov 2023 14:44:10 -0800 (PST)
-Received: from localhost (ip-185-104-139-34.ptr.icomera.net. [185.104.139.34])
-        by smtp.gmail.com with ESMTPSA id s19-20020a05620a16b300b00772662b7804sm3815744qkj.100.2023.11.15.14.42.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 14:42:58 -0800 (PST)
-Date: Wed, 15 Nov 2023 17:42:17 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: mripard@kernel.org
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Arthur Grillo <arthurgrillo@riseup.net>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	kernel-janitors@vger.kernel.org,
-	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-	kv-team <kv-team@linaro.org>
-Subject: Re: [RFC] drm/tests: annotate intentional stack trace in
- drm_test_rect_calc_hscale()
-Message-ID: <8489c4db-6639-43f5-b6c4-8598652cdce6@suswa.mountain>
-References: <02546e59-1afe-4b08-ba81-d94f3b691c9a@moroto.mountain>
- <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
- <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
- <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 0F791196;
+	Wed, 15 Nov 2023 20:19:10 -0800 (PST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 1FDC2605DAF55;
+	Thu, 16 Nov 2023 12:19:02 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: sre@kernel.org,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	trix@redhat.com
+Cc: Su Hui <suhui@nfschina.com>,
+	r-rivera-matos@ti.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] power: supply: bq256xx: fix some problem in bq256xx_hw_init
+Date: Thu, 16 Nov 2023 12:18:23 +0800
+Message-Id: <20231116041822.1378758-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 06, 2023 at 02:58:12PM +0100, mripard@kernel.org wrote:
-> > But a similar thing is happening here where we have so many bogus
-> > warnings that we missed a real bug.
-> 
-> IIRC, there was a similar discussion for lockdep issues. IMO, any
-> (unintended) warning should trigger a test failure.
-> 
-> I guess that would require adding some intrumentation to __WARN somehow,
-> and also allowing tests to check whether a warning had been generated
-> during their execution for tests that want to trigger one.
+smatch complains that there is a buffer overflow and clang complains
+'ret' is never read.
 
-I think this is a good idea.  I was looking at how lockdep prints
-warnings (see print_circular_bug_header()).  It doesn't use WARN() it
-prints a bunch of pr_warn() statements and then a stack trace.  We would
-have to have a increment the counter manually in that situation.
+Smatch error:
+drivers/power/supply/bq256xx_charger.c:1578 bq256xx_hw_init() error:
+buffer overflow 'bq256xx_watchdog_time' 4 <= 4
 
-I'm writing a script to parse a dmesg and collect Oopses.  So now I know
-to look for WARN(), lockdep, and KASAN.  What other bugs formats do we
-have?  Probably someone like the syzbot devs have already has written a
-script like this?
+Clang static checker:
+Value stored to 'ret' is never read.
 
-regards,
-dan carpenter
+Add check for buffer overflow and error code from regmap_update_bits().
+
+Fixes: 32e4978bb920 ("power: supply: bq256xx: Introduce the BQ256XX charger driver")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/power/supply/bq256xx_charger.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/bq256xx_charger.c b/drivers/power/supply/bq256xx_charger.c
+index 789a31bd70c3..1a935bc88510 100644
+--- a/drivers/power/supply/bq256xx_charger.c
++++ b/drivers/power/supply/bq256xx_charger.c
+@@ -1574,13 +1574,16 @@ static int bq256xx_hw_init(struct bq256xx_device *bq)
+ 			wd_reg_val = i;
+ 			break;
+ 		}
+-		if (bq->watchdog_timer > bq256xx_watchdog_time[i] &&
++		if (i + 1 < BQ256XX_NUM_WD_VAL &&
++		    bq->watchdog_timer > bq256xx_watchdog_time[i] &&
+ 		    bq->watchdog_timer < bq256xx_watchdog_time[i + 1])
+ 			wd_reg_val = i;
+ 	}
+ 	ret = regmap_update_bits(bq->regmap, BQ256XX_CHARGER_CONTROL_1,
+ 				 BQ256XX_WATCHDOG_MASK, wd_reg_val <<
+ 						BQ256XX_WDT_BIT_SHIFT);
++	if (ret)
++		return ret;
+ 
+ 	ret = power_supply_get_battery_info(bq->charger, &bat_info);
+ 	if (ret == -ENOMEM)
+-- 
+2.30.2
+
