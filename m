@@ -1,45 +1,59 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486EA341AD
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 Nov 2023 15:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="CTDHL+/I"
-X-Greylist: delayed 557 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 16 Nov 2023 05:48:42 PST
-Received: from mail.toke.dk (mail.toke.dk [IPv6:2a0c:4d80:42:2001::664])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DFC1A0;
-	Thu, 16 Nov 2023 05:48:42 -0800 (PST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1700141962; bh=xz/iIZuRY8Op5WtoC1hs7ryH78Y6fd9GbW1inUZsj3M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CTDHL+/IzwlYYfT58IfEP+UsddbyIZ9mdusYQH+NvNEqXFUTGdZZtBE7T6+QFtrlw
-	 48Gu2yY92JWcInAMHeTbZwuhpjHvkUeRUmyOZJ9IfNr4IC5ZUbAjDVWhinxqB1NHsk
-	 5UTCD2YcUNI2M1Q4DAUIbgrGaRSCnB8e0u6QVI5ATYK8g5ttO8E6ZodsU38KF0OhPT
-	 3mZMgSdASmET9BYE4k+iN70F5qAhsDw3odiBiRkbNjTwSy2vEakHTpL7Db/pUtFPB0
-	 RRv7ceCoyyz/SwNk94NXWITaVPwVpggpmLHltTv/KpBXFYcD+iiQR7eV+yRbDdUBKg
-	 ysi6eWVgYQjpQ==
-To: Wu Yunchuan <yunchuan@nfschina.com>, kvalo@kernel.org, afaerber@suse.de,
- mani@kernel.org
-Cc: linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Wu Yunchuan <yunchuan@nfschina.com>
-Subject: Re: [PATCH v2 wireless-next 9/9] wifi: ath9k: Remove unnecessary
- (void*) conversions
-In-Reply-To: <20230919045226.524544-1-yunchuan@nfschina.com>
-References: <20230919045226.524544-1-yunchuan@nfschina.com>
-Date: Thu, 16 Nov 2023 14:39:22 +0100
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87o7ftddh1.fsf@toke.dk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hm3krBZU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67565C433CB;
+	Thu, 16 Nov 2023 15:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700146815;
+	bh=yhaKzC4xxHXc6E+jm/VpLPlXWoQRVF4q21gWBbdXoGQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hm3krBZUbgHv+CA6eFUw5zuEr59VTiYjyeQnPlEEoUNv6/v6FsfOm1V/HxeRK/Riz
+	 Cf95PF8V5Ukn6d3cq+xdPzXs5Kc3KMikgmQV1pdMtBJgW1q/X9tSV0aXwK9POndwRp
+	 8A3iHdhHAzHLH5muetLX7WQ568lWCB8iycBaRLVQgtlLQlR2lrcsnS9DaRi63cmHjb
+	 dO5QCofMZbYb9wIpErXObDmhVG1kkK4dFH0aYIeTR9dkl8V0+g116D+2xHJFGGVN3y
+	 hQSZqEzvPvLy6BDeozOnDgdQsnloo66emdE6pLuCG4RjNibo3PhXBAKmFW3ma/xRx3
+	 OUoa4T06rywUg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-phy@lists.infradead.org
+In-Reply-To: <d2323636c6cd2ec22f73a0ae6c2d34ac99b4abd5.1698854255.git.christophe.jaillet@wanadoo.fr>
+References: <d2323636c6cd2ec22f73a0ae6c2d34ac99b4abd5.1698854255.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] phy: core: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-Id: <170014681304.545052.17451265867929404624.b4-ty@kernel.org>
+Date: Thu, 16 Nov 2023 20:30:13 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-Wu Yunchuan <yunchuan@nfschina.com> writes:
 
-> No need cast (void *) to (struct owl_ctx *), (struct ath_hw *),
-> (struct cmd_buf *) or other types.
->
-> Signed-off-by: Wu Yunchuan <yunchuan@nfschina.com>
+On Wed, 01 Nov 2023 16:57:57 +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> This is less verbose.
+> 
+> 
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+Applied, thanks!
+
+[1/1] phy: core: Remove usage of the deprecated ida_simple_xx() API
+      commit: 772dd70a5ed6845d87738f82c788c9ff4e37fd7f
+
+Best regards,
+-- 
+~Vinod
+
+
