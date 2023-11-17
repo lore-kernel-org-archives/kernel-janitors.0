@@ -1,121 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uzwwwt1X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926D183;
-	Thu, 16 Nov 2023 13:06:10 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AGJ2GTE016673;
-	Thu, 16 Nov 2023 21:05:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=h/ceQFvVd7icRg18RKM+vHrf4FiKh0owxs7zhww8GgQ=;
- b=Uzwwwt1Xv5PMnINNbk9NxzxpLf8pEvbyPa9Zn4xcgCMTBAhJ+m12mbKxM+GiAchwJTYm
- 2WLmSc5OGKyjevxLNMvhsFUkelIsHJVRWgfBzlLVCEkE9/raueDvUXTVwdsI86xpajL1
- zGgWl3G3/D2ysJzCkmYunJ9LERjzuGaVB5Ebs18SdL8SAYPRpkRCcSq8qRIaG5YTsOwu
- SwuFr2fvri4N7rTnHuWcV8rVORyinnsJi/RqWA7mMcfmi0EgrqT1gK+ZvHGvEHfajc3G
- L3szu0DaBPO6xLMEn6MgCLGbePwXJsxS6AF6qPm3qDq+XGkkTwfx/LQ44m6IUDSajp/Y 2w== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3udrvs0bf2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Nov 2023 21:05:55 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AGL5sZ1014322
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Nov 2023 21:05:54 GMT
-Received: from [10.110.71.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Thu, 16 Nov
- 2023 13:05:53 -0800
-Message-ID: <62943ca3-26ac-8712-2caa-102dc98f099c@quicinc.com>
-Date: Thu, 16 Nov 2023 13:05:52 -0800
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id A8FA6C5;
+	Thu, 16 Nov 2023 17:22:44 -0800 (PST)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 04EF860107C73;
+	Fri, 17 Nov 2023 09:22:25 +0800 (CST)
+Message-ID: <2722c6df-9247-3d8b-272e-9810d5e19c4b@nfschina.com>
+Date: Fri, 17 Nov 2023 09:22:25 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [Freedreno] [PATCH v2] drm/msm: remove unnecessary NULL check
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 1/2] phy: mapphone-mdm6600: fix an error code problem in
+ phy_mdm6600_device_power_on
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Rob Clark <robdclark@gmail.com>
-CC: <freedreno@lists.freedesktop.org>, Su Hui <suhui@nfschina.com>,
-        Sean Paul
-	<sean@poorly.run>, <linux-arm-msm@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        Daniel
- Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?=
-	<u.kleine-koenig@pengutronix.de>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>
-References: <ZSj+6/J6YsoSpLak@kadam>
- <095b7283-3555-cc38-a73e-83efec8a9bf8@quicinc.com>
-In-Reply-To: <095b7283-3555-cc38-a73e-83efec8a9bf8@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QlIewNp0jlFkpuRtJKY-uWweuP2I9WYO
-X-Proofpoint-ORIG-GUID: QlIewNp0jlFkpuRtJKY-uWweuP2I9WYO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-16_23,2023-11-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=956
- priorityscore=1501 malwarescore=0 suspectscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311160163
+To: Vinod Koul <vkoul@kernel.org>
+Cc: kishon@kernel.org, u.kleine-koenig@pengutronix.de,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <ZVX8W8+cM0U4j6Wh@matsya>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2023/11/16 19:26, Vinod Koul wrote:
+> On 20-10-23, 17:14, Su Hui wrote:
+>> When wait_for_completion_timeout() failed, error is assigned
+>> '-ETIMEDOUT'. But this error code is never used. Return '-ETIMEDOUT'
+>> directly to fix this problem.
+> Where is patch 2/2?
 
+Hi,
 
-On 11/1/2023 12:23 PM, Abhinav Kumar wrote:
-> 
-> 
-> On 10/13/2023 1:25 AM, Dan Carpenter wrote:
->> This NULL check was required when it was added, but we shuffled the code
->> around and now it's not.  The inconsistent NULL checking triggers a
->> Smatch warning:
->>
->>      drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
->>      variable dereferenced before check 'mdp5_kms' (see line 782)
->>
->> Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the 
->> _probe function"
+Sorry, I send a error patch 2/2 because of my carelessness.
 
-A small error here. Its missing the closing brace for the Fixes tag.
-Checkpatch cries without it.
+This is the address of patch 2/2 which is irrelevant about this patch.
 
-I have fixed it while applying.
+https://lore.kernel.org/all/7f81d365-0440-de01-8be4-9c8d3ab9d69c@nfschina.com/
 
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Su Hui
+
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
 >> ---
->> v2: Added a Fixes tag.  It's not really a bug fix and so adding the
->> fixes tag is slightly unfair but it should prevent this patch from
->> accidentally getting backported before the refactoring and causing an
->> issue.
 >>
->> Btw, fixes tags are often unfair like this.  People look at fixes tags
->> and think, "the fix introduced a bug" but actually it's really common
->> that the fix was just not complete.  But from a backporting perspective
->> it makes sense to tie them together.
+>> I'm not sure that return directly is true or not, maybe need some
+>> process before return directly.
 >>
->> Plus everyone introduces bugs.  If you're not introducing bugs, then
->> you're probably not writing a lot of code.
+>>   drivers/phy/motorola/phy-mapphone-mdm6600.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>   drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
-> 
-> LGTM,
-> 
-> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
+>> diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+>> index 1d567604b650..e84e3390bff0 100644
+>> --- a/drivers/phy/motorola/phy-mapphone-mdm6600.c
+>> +++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+>> @@ -421,8 +421,8 @@ static int phy_mdm6600_device_power_on(struct phy_mdm6600 *ddata)
+>>   			dev_info(ddata->dev, "Powered up OK\n");
+>>   	} else {
+>>   		ddata->enabled = false;
+>> -		error = -ETIMEDOUT;
+>>   		dev_err(ddata->dev, "Timed out powering up\n");
+>> +		return -ETIMEDOUT;
+>>   	}
+>>   
+>>   	/* Reconfigure mode1 GPIO as input for OOB wake */
+>> -- 
+>> 2.30.2
