@@ -1,72 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="frL2RVUH"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92AB1E0;
-	Sat, 18 Nov 2023 08:42:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1700325749; x=1700930549; i=markus.elfring@web.de;
-	bh=CQBpc2vh9HQN4tT9nBoNJyRogzGDAx/e4sULPoZDeuk=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=frL2RVUHGroASYsDu/y5flARqFEwOJqkvkJ9tsk6acef23d15e1nO99k8JOIJH5m
-	 LOxulL+R1EteiLOukKDk2JAwPy2o0Z6ZQE9Zh2jPanw0Y8V5eAuy3AdHFVjNOBbaK
-	 /jpIUfJcM2ekPQFivRUbSc6op3ZyXKeTRZSNSH2nTTMPjDJmQiieGHGrv2426erU7
-	 LfmtaQMLz/zv2f6gUTj9c8i1MFTcNHcGjz42t2rIUOyXPzkwVKxqVXKeuDsKppycs
-	 LYOWoIGVD/C+Sw7IwfIctUC2+tvXqkQzaoUKsSHdzJHity4jvxNDSlwigjd15bYsz
-	 S8R96L9jd0+/MSF6pg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MT7aP-1qvDAZ3vVX-00UUfW; Sat, 18
- Nov 2023 17:42:28 +0100
-Message-ID: <233689d7-9409-406b-9383-49f10cd29336@web.de>
-Date: Sat, 18 Nov 2023 17:42:17 +0100
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C7C130;
+	Sat, 18 Nov 2023 11:29:27 -0800 (PST)
+Received: from [192.168.1.103] (31.173.87.19) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sat, 18 Nov
+ 2023 22:29:20 +0300
+Subject: Re: [PATCH v2] ata: pata_pxa: convert not to use
+ dma_request_slave_channel()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Damien Le Moal
+	<dlemoal@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+	<linux-ide@vger.kernel.org>
+References: <497fe3c81b83ea74c4850bc44ea09acf15886b7e.1700296910.git.christophe.jaillet@wanadoo.fr>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <cc044bfd-c95b-ce28-ffd9-7382fb8c29ce@omp.ru>
+Date: Sat, 18 Nov 2023 22:29:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- kernel@pengutronix.de, kernel-janitors@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, cocci@inria.fr, Mark Brown
- <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20231105143932.3722920-2-u.kleine-koenig@pengutronix.de>
-Subject: Re: spi: cadence-xspi: Drop useless assignment to NULL
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20231105143932.3722920-2-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <497fe3c81b83ea74c4850bc44ea09acf15886b7e.1700296910.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:bimAwo914tI/X7jy3HV2tL/5MPVU1BNa4SCoqSybb64c+rPbbsI
- SByJoeECEnNN1URSLDPoKC/BGG2YSZMUXKTXd9xVaa2HF3Vfcx5sBHmeUpKQ0empNsyiv0+
- ltukrsnPmCU6/+sDaqnWL7K/Rs1iav0bVjmXpDvqe5pmOLtqYellfPbjw67hlFQWAmMXN+c
- avsiPLS9a8gclWluAshCA==
-UI-OutboundReport: notjunk:1;M01:P0:WRbWlSPQY2w=;Y0bpqMauiBxhaSAbtbiw32FYtdn
- n994UDAYWifH64OcNjZk+GR1tphkCF1wqMUtq84HzT0FuWdN8k1CPJqBp6Pq6ggGV0lVuahEc
- YR8hW6uEhky04OpnwbsioOC5vpUZdPItzmPkkYUKjt1epAp9cCOWplh69zVNHftoW6W/ff7Gb
- +V7/eMwMLiAod8o3Qj8b4NLIUwgvQf8jqYcdR3yxZMWX+2KkOnUQP31nKwqqosoKlrtk9DlqU
- /5LkD7IfdJIyDdJ6BwUgGEQVAGhCRoObo57eCtfOWXX2y4iOcpkLSM/1zDesvekBbtmY9t5cI
- kMNUKEUfJeWttp1G83Xg/Xsn9gtPoD3cthk2jujK5wNtFRn8V8qRgUld8furelTugBl+kLTRL
- DHyj4ntSeEa9TjbN057p15BDpXB2w4SFm4iHYthYGA3dpNvQY1+gXzULkJak02jXq0JmGaFIg
- t89CPS9tVo12XnF+J0HRgKRdQd3dDP7mVG4SEwpRYoJh9UfiVh/FA2uD57XvUOlpO+a3abv7e
- QB9xJOVb7ykahfAbqZf/3GdgCgXjAkQz90wvSx/g6TOR64KY2aRHvb/Q3/ic4INz+JTbLEIhc
- Y49x5/kqN9KIdguU9wBE0LLUMgW4zH6B/aCSKMq/qVIlHbZ0YInSPt7JSmtJDr2WzHtxXA4Q0
- QJrwI70vP8uTO6X94jkpryUrtaorwCNhGSWtOnDL/0wcZ41zxLT+QkxK76IrYVEueli5b0OK8
- 75jC2spBa2xudNQlXPgtMQs7AvC33Fy5uHXIwtLlhTcsl9gHrdWv4b4fvJKRsNN7mx2Zh8QYO
- D6aS0m6hQFFb78FciLO9LMYc+l1nHxbNMH+M9SEVLuhgA1TrR+AYbepWBK7yC3gJQ2uP7T2UJ
- gtU0ESR5NAxrF4LUOK8ChqmCx8e3xWOLwoh07CpMvf1THXBe8ZT+l6KCq86yNIOaTWvm+VGSF
- 0mAVGw==
+X-Originating-IP: [31.173.87.19]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.0.0, Database issued on: 11/18/2023 19:17:29
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 181454 [Nov 18 2023]
+X-KSE-AntiSpam-Info: Version: 6.0.0.2
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 543 543 1e3516af5cdd92079dfeb0e292c8747a62cb1ee4
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Int_BEC_cat_st_0}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.19 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.19 in (user) dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.19
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/18/2023 19:21:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/18/2023 3:15:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-> Static structs are initialized with zeros for unspecified fields.
-> So there is no advantage to explicitly initialize .remove with NULL
-> and the assignment can be dropped without side effects.
+On 11/18/23 11:42 AM, Christophe JAILLET wrote:
 
-Would you become interested to delete redundant initialisation repetitions
-at any more source code places?
+> dma_request_slave_channel() is deprecated. dma_request_chan() should
+> be used directly instead.
+> 
+> Switch to the preferred function and update the error handling accordingly.
+> While at it, also propagate the error code that is now available.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-A corresponding script for the semantic patch language (Coccinelle software)
-can point more remaining update candidates out for various components.
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-Regards,
-Markus
+[...]
+
+MBR, Sergey
