@@ -1,50 +1,109 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED7DD5F;
-	Fri, 17 Nov 2023 03:24:12 -0800 (PST)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1r3wx5-000dL3-JK; Fri, 17 Nov 2023 19:24:00 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 17 Nov 2023 19:24:07 +0800
-Date: Fri, 17 Nov 2023 19:24:07 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ciunas Bennett <ciunas.bennett@intel.com>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Adam Guerin <adam.guerin@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Damian Muszynski <damian.muszynski@intel.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Shashank Gupta <shashank.gupta@intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>, qat-linux@intel.com,
-	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat - prevent underflow in rp2srv_store()
-Message-ID: <ZVdNV87FWjlCmHYf@gondor.apana.org.au>
-References: <3fb31247-5f9c-4dba-a8b7-5d653c6509b6@moroto.mountain>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="X3Sk6Ojh"
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C6B3D5C
+	for <kernel-janitors@vger.kernel.org>; Fri, 17 Nov 2023 23:55:55 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+	by smtp.orange.fr with ESMTPA
+	id 4GBDrwEoPODaN4GBDr1qY9; Sat, 18 Nov 2023 08:55:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1700294153;
+	bh=V9Th/4FKB+iHrGZuL+784CAl/VlpMqyAVTrSivrk2DI=;
+	h=From:To:Cc:Subject:Date;
+	b=X3Sk6OjhaTrfqzMPiplQYjmJHnUa+bh94ufi/kGIuBy5qMNbGfcBw5ssqG/2sz8yC
+	 o4DKWGpTEFWwB7f4Pz9YQ7hMYkrTPlnZkVVoS66drjZatrRnOTwJm7j1xep2QljbK4
+	 Ge6k7vO9PPnEf9p42cDStjPZ8emuC533bWXPmbllMWMlC4RwN2bKXz2jmtngMPG2SS
+	 ciorItkgIpTGVS0Hg+mDBQO3n+hj9a+8r4A/qP18S0e7fBUFtiwQM0i7DiMXNv5lFg
+	 S0XDvXegvYyrgl22lcQANdgmHYdejc6/6hpez52YehoFzCyb++pDJCK4XgWEcwvUZw
+	 iB80AMgC2xXog==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 Nov 2023 08:55:53 +0100
+X-ME-IP: 86.243.2.178
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH v2] PCI: kirin: Use devm_kasprintf()
+Date: Sat, 18 Nov 2023 08:55:48 +0100
+Message-Id: <1bad6879083a7d836c8a47418a0afa22485e8f69.1700294127.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fb31247-5f9c-4dba-a8b7-5d653c6509b6@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 31, 2023 at 11:58:32AM +0300, Dan Carpenter wrote:
-> The "ring" variable has an upper bounds check but nothing checks for
-> negatives.  This code uses kstrtouint() already and it was obviously
-> intended to be declared as unsigned int.  Make it so.
-> 
-> Fixes: dbc8876dd873 ("crypto: qat - add rp2svc sysfs attribute")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/crypto/intel/qat/qat_common/adf_sysfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Use devm_kasprintf() instead of hand writing it.
+This saves the need of an intermediate buffer.
 
-Patch applied.  Thanks.
+There was also no reason to use the _const() version of devm_kstrdup().
+The string was known be not constant.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: Update kirin_pcie_parse_port()   [Krzysztof Wilczyński]
+
+v1: https://lore.kernel.org/all/085fc5ac70fc8d73d5da197967e76d18f2ab5208.1699774592.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/pci/controller/dwc/pcie-kirin.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index 2ee146767971..982f854bc39c 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -366,7 +366,6 @@ static int kirin_pcie_get_gpio_enable(struct kirin_pcie *pcie,
+ 				      struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	char name[32];
+ 	int ret, i;
+ 
+ 	/* This is an optional property */
+@@ -387,9 +386,8 @@ static int kirin_pcie_get_gpio_enable(struct kirin_pcie *pcie,
+ 		if (pcie->gpio_id_clkreq[i] < 0)
+ 			return pcie->gpio_id_clkreq[i];
+ 
+-		sprintf(name, "pcie_clkreq_%d", i);
+-		pcie->clkreq_names[i] = devm_kstrdup_const(dev, name,
+-							    GFP_KERNEL);
++		pcie->clkreq_names[i] = devm_kasprintf(dev, GFP_KERNEL,
++						       "pcie_clkreq_%d", i);
+ 		if (!pcie->clkreq_names[i])
+ 			return -ENOMEM;
+ 	}
+@@ -404,7 +402,6 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *parent, *child;
+ 	int ret, slot, i;
+-	char name[32];
+ 
+ 	for_each_available_child_of_node(node, parent) {
+ 		for_each_available_child_of_node(parent, child) {
+@@ -430,9 +427,9 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+ 
+ 			slot = PCI_SLOT(ret);
+ 
+-			sprintf(name, "pcie_perst_%d", slot);
+-			pcie->reset_names[i] = devm_kstrdup_const(dev, name,
+-								GFP_KERNEL);
++			pcie->reset_names[i] = devm_kasprintf(dev, GFP_KERNEL,
++							      "pcie_perst_%d",
++							      slot);
+ 			if (!pcie->reset_names[i]) {
+ 				ret = -ENOMEM;
+ 				goto put_node;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.34.1
+
