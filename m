@@ -1,60 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ch2Khcdq"
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A219F
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:00:44 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9fd0059a967so206643066b.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:00:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpu1ivGu"
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1DDDFD
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:31:15 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40839652b97so13881135e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:31:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700481643; x=1701086443; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700483474; x=1701088274; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sjQoDu2espA/DfyPs5NRMbvJF9ab6oxweEuJ9vmOymk=;
-        b=ch2KhcdqzcOQ5yfhEq0U0Jta9luyp0Js4cirvGj52p11ZX3EkDnQi0DD9baIqpnUvf
-         kjW93wVEeYejPB9KkH+Icb3HCeWKAH/bjzIwF5XqyzKJzd41u6WaJB5+O8l+lheVb+2V
-         pEc4/81FzHoQ9UF/5n//Hn/vve+/Th7yiYBWdYWdmdPTgjsI9zFbT2p9g82yHyasr3Qq
-         c5ftIWMsY9d+RQrtVOpk92GvDh8JKEijbDljIUZNbO8sddH7kgiCDxVki+yvPS9qffrP
-         K9D0gCx4sIX3K7jCfgyijF6Hbx1TRr47Q1nAxf3H3TUt7icT+5q05d8jUknQtZkXFEHX
-         pxMg==
+        bh=U+ygfjyW2dtt7SNYdGG+a1RKbTlkp8CN0gh3juIVK50=;
+        b=gpu1ivGulkhKvdk5so7NtuqUMLlTWTuX2mLaMv/JBLnR0LBsI2dEjcgi7Qp7MSKHn2
+         FygvSfqECuoRMQCyIuRPi9ZOLY9a5PMZppkIIzTLBbYmgvtY8jF2jBTmhqSVXhsZS+yS
+         csbso2McCRZwKQgOsE69KSLlhM2kpAm++D1lLEoCWTdEz23Pnov9FSY60q90uSx+L6u9
+         oA8nK54+DUqOlEBcLBGLwtqoORc8Q1uVQj7lX4ET3zsOODF86cTNubXKLLPmtv0ciQyz
+         0JmQBuNQxfgrF6DXu5vx0NrivkQ9ed6rxwGA4DSVX4qZUD0GMneKiXEmSYnw4AFoVgHJ
+         WHlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700481643; x=1701086443;
+        d=1e100.net; s=20230601; t=1700483474; x=1701088274;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sjQoDu2espA/DfyPs5NRMbvJF9ab6oxweEuJ9vmOymk=;
-        b=OdD8Bhm6G8ag6OOQk1mysKWC71nM7JqITd8qnu6QMkOiF2o28KF6MNddTqH1fX0IfS
-         CRdRhvfp2vg8tpZYP+Zr1N6bQ0fPHYNLxiqkC5tFxmZFMUWW6CQBzGUJWF0ntmsQUxhv
-         vfqcWWMzsQdpcvj8U0ZCqwpaC3tpkKPtCbhawdk+E07DLaqbq88Q9hHOrJ7dyDXt5yNP
-         iMZMncwSCF39ob4EpQn20rhrGehI8A8L7t274+4Tg7iHXirmzE9qbzsVWrQJ8SKf37ug
-         ujR06AIaWgE41HKOA5O9bh3Zc43tZXyGzzG1d0SURgy88wZy1N8RwzAohnHNDGYVo6pW
-         qmrA==
-X-Gm-Message-State: AOJu0YwVlTRliXpvdO8qcLAVlLxiEAa4cG2UTZBKwsyRnxxOB7koyEtd
-	Fkx2O3OK1C6kwXcIVnMqanxtwA==
-X-Google-Smtp-Source: AGHT+IEGSzMI75iQxFYNWOV/kb9Dv4sZmqfv+pBqswKoug6sgFP47kbo/NInWu7mOCU4xNf0dB0aOA==
-X-Received: by 2002:a17:906:c111:b0:9ee:9d98:7d8c with SMTP id do17-20020a170906c11100b009ee9d987d8cmr1700646ejc.6.1700481642741;
-        Mon, 20 Nov 2023 04:00:42 -0800 (PST)
+        bh=U+ygfjyW2dtt7SNYdGG+a1RKbTlkp8CN0gh3juIVK50=;
+        b=YLEgY7vwLcwNJRzXk4a2gDLipj2Z/CK7leWsDVra8EzoIyjyt6HoanvYGXngWoC2GD
+         oU424HgTInEX9/Y86qgtJWg0VjL6sIBF2zaZu9LRB0q4cfwjh0hfc/mtIHZgguDLt6wO
+         d0B+PJMyV5VEvcxHbXx6JMlf+VBbJxA8q2GimfhG/J8fcqw5RhV3jionXiUtO5dCYdVU
+         TTacYbF41WMPDIYr/1pCMm6j/4ZX0ypuVGqs6Vr7Z36hqVlkOz2uGwWHvAPxjV/V8DgB
+         ni7a96GHBVqVuuHb++MakmjG+8oFzCitncN7NNUznRzDGI+HOciR2VIq5RaGsRsV3nf+
+         RO7g==
+X-Gm-Message-State: AOJu0Yy6FG9x3yqH1NegwI6mm50YR2KzfpK1UNlIqgEXIopY0ObpKmkP
+	tx0tXLyaksc3iYm9zSO1RYJgYA==
+X-Google-Smtp-Source: AGHT+IFH5ZY2W8nrgFtr/VHzEM4XPB2oiuC34QYENqeI3k2VGALPT0oPN0iCaxJHt7hbpyaLHA4VRA==
+X-Received: by 2002:a5d:4382:0:b0:32d:a7b0:62b with SMTP id i2-20020a5d4382000000b0032da7b0062bmr3677437wrq.26.1700483474267;
+        Mon, 20 Nov 2023 04:31:14 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o9-20020a509b09000000b0053deb97e8e6sm3671902edi.28.2023.11.20.04.00.41
+        by smtp.gmail.com with ESMTPSA id d4-20020a5d4f84000000b0032d96dd703bsm11077492wru.70.2023.11.20.04.31.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 04:00:42 -0800 (PST)
-Date: Mon, 20 Nov 2023 07:00:39 -0500
+        Mon, 20 Nov 2023 04:31:13 -0800 (PST)
+Date: Mon, 20 Nov 2023 07:31:10 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: David Laight <David.Laight@aculab.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Brian Foster <bfoster@redhat.com>,
-	"linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] bcachefs: remove redundant initialization of
- variable level
-Message-ID: <ecc75e51-7244-4caa-b89e-b2fc89f6c7bc@suswa.mountain>
-References: <20231111204528.339603-1-colin.i.king@gmail.com>
- <20231111210208.qra7xhf2nd4pqvst@moria.home.lan>
- <184af6778ab64b3eb6a4a6071974d5e8@AcuMS.aculab.com>
- <20231111233904.zxgqyw3epefiqiro@moria.home.lan>
- <d106f21ef1164241a275b1f11b82e7b7@AcuMS.aculab.com>
- <20231112191249.srvcmay2yeewy7ql@moria.home.lan>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Su Hui <suhui@nfschina.com>,
+	"Jes.Sorensen@gmail.com" <Jes.Sorensen@gmail.com>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] wifi: rtl8xxxu: correct the error value of 'timeout'
+Message-ID: <456145f7-9c6e-4231-aec4-9c02511b6550@suswa.mountain>
+References: <20231113054917.96894-1-suhui@nfschina.com>
+ <e8b847437ab242d18108d9364360bb8a@realtek.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,19 +58,78 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231112191249.srvcmay2yeewy7ql@moria.home.lan>
+In-Reply-To: <e8b847437ab242d18108d9364360bb8a@realtek.com>
 
-On Sun, Nov 12, 2023 at 02:12:49PM -0500, Kent Overstreet wrote:
-> David, I don't want you giving this kind of advice here, and if finding
-> declarations is something you have trouble with - perhaps find something
-> easier to do.
+On Tue, Nov 14, 2023 at 06:42:50AM +0000, Ping-Ke Shih wrote:
+> > diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> > b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> > index 43ee7592bc6e..9cab8b1dc486 100644
+> > --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> > +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> > @@ -4757,6 +4757,12 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
+> >          *   RxAggPageTimeout = 4 or 6 (absolute time 34ms/(2^6))
+> >          */
+> > 
+> > +       /* REG_RXDMA_AGG_PG_TH + 1 seems to be the timeout register on
+> > +        * gen2 chips and rtl8188eu. The rtl8723au seems unhappy if we
+> > +        * don't set it, so better set both.
+> > +        */
+> > +       timeout = 4;
+> > +
+> >         page_thresh = (priv->fops->rx_agg_buf_size / 512);
+> >         if (rtl8xxxu_dma_agg_pages >= 0) {
+> >                 if (rtl8xxxu_dma_agg_pages <= page_thresh)
+> 
+> The logic here is:
+> 
+> 	page_thresh = (priv->fops->rx_agg_buf_size / 512);
+> 	if (rtl8xxxu_dma_agg_pages >= 0) {
+> 		if (rtl8xxxu_dma_agg_pages <= page_thresh)
+> 			timeout = page_thresh;
+> 
+> Do you know why 'timeout = page_thresh;'? Intuitively, units of 'timeout' and
+> 'thresh' are different. Maybe, we should correct here instead?
+> 
 
-David is correct.  Putting declarations in the middle of code is still
-frowned on.  It's necessary for the __cleanup work and it's okay in for
-loop iterators but it's generally frowned on.
+Yeah.  That's strange.  I'm not convinced this fix is correct.  I'm
+hesitant to suggest this but maybe the following is the correct fix?
+It just silences the warning but doesn't change runtime.
 
-Please don't force people to redo patches in non-standard style.
+I don't know.  *shrug*.  One thing that we could do is just leave the
+warning as-is until someone who knows better than we do can take a look
+at it.
 
 regards,
 dan carpenter
 
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index 43ee7592bc6e..68d9b4a0ee63 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -4759,16 +4759,16 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
+ 
+ 	page_thresh = (priv->fops->rx_agg_buf_size / 512);
+ 	if (rtl8xxxu_dma_agg_pages >= 0) {
+-		if (rtl8xxxu_dma_agg_pages <= page_thresh)
+-			timeout = page_thresh;
+-		else if (rtl8xxxu_dma_agg_pages <= 6)
+-			dev_err(&priv->udev->dev,
+-				"%s: dma_agg_pages=%i too small, minimum is 6\n",
+-				__func__, rtl8xxxu_dma_agg_pages);
+-		else
+-			dev_err(&priv->udev->dev,
+-				"%s: dma_agg_pages=%i larger than limit %i\n",
+-				__func__, rtl8xxxu_dma_agg_pages, page_thresh);
++		if (rtl8xxxu_dma_agg_pages > page_thresh) {
++			if (rtl8xxxu_dma_agg_pages <= 6)
++				dev_err(&priv->udev->dev,
++					"%s: dma_agg_pages=%i too small, minimum is 6\n",
++					__func__, rtl8xxxu_dma_agg_pages);
++			else
++				dev_err(&priv->udev->dev,
++					"%s: dma_agg_pages=%i larger than limit %i\n",
++					__func__, rtl8xxxu_dma_agg_pages, page_thresh);
++		}
+ 	}
+ 	rtl8xxxu_write8(priv, REG_RXDMA_AGG_PG_TH, page_thresh);
+ 	/*
