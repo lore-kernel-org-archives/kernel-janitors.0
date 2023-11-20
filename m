@@ -1,62 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 880671709;
-	Mon, 20 Nov 2023 05:52:42 -0800 (PST)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-32f8246103cso1193133f8f.1;
-        Mon, 20 Nov 2023 05:52:42 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="as6b0PaR"
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5B9BC
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 06:09:22 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c50fbc218bso55671551fa.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 06:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700489360; x=1701094160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUT5G9wWKDux+q/3wEibNtR/ItuQhmKh/lwb8ikN/Rg=;
+        b=as6b0PaRvP3yHBollblKs+tz7joLu75qq4EQo3nBJAcwjGZ6XirOvH7A8XavQHKPkX
+         tWETe7HHKojaJacbQrEwOk8qovZbOkuPFM1wxa/3Sn3bHdRtpZIHyMs69z8QOKHMdh9V
+         peeokx7CMuaLoi+3ma0uouS6fwuUxt/7y+kFI81mFTPsTVDDb7SP2H3+0Q6K2/Q6/V6a
+         QNzOBRDQN64E4yTBlpOJybe+Dl59fxvZs9yX3kjLVUUULgUaNwCQ6Ce2PD/0fY3DQvq+
+         7wtQRZdSJSAKo9RnWdH7Yg95SpzTNcAwAtV/Ili+MdbLroAe1VZbnhox6+3YEC6yMmGH
+         GRNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700488361; x=1701093161;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fxba1kYMA1eupI9Avrj6/S3g58MdFYbeVhsqFUI7604=;
-        b=YFyemUCIgt4BDePZ2hWYh3NoYS4ly2fSqtuEcFwvxvFXco31YXyxR0mz/n6VbPHpdH
-         PgEz9F8Gknhj2z0nI3MKQwWDFU/x2QE4AwZ0zqAynvWemL4D03brw8jZJmpjO2ZW+pxt
-         CHUGr8LiqltPIhZe7gm4WT4+qoMls1M7m94T5CsPpslxwng0CrGwB7yh6yB5hvP3bcye
-         Jh2KNRpzCRleZUA3Cbr//qWmMZSLyzo7upnk6L/ATM04JR7UTQsXJZuJ9ivYqI3l9t51
-         UhZasYG3jtvITqRaWNklmSJVrh9DBeAteXeZZCclqiNIo77C/ylQ1+pjCLEN31kOpghC
-         PrMg==
-X-Gm-Message-State: AOJu0Yy/RG7pyvs1stVdjqox9Mrobou1Zf0YyyYcbPpM2pqnnwoIEq7Z
-	BADzjFsiM9U/i+brPAiaZ9KPyyy1X6E=
-X-Google-Smtp-Source: AGHT+IEy8NttNiWl2hs/0iIXCgz1D94GnYvZjoMwY7xOM9iulbhxahfrXi1Qdv8nCTj6zfHToFZGdQ==
-X-Received: by 2002:adf:e7c3:0:b0:32d:d932:5848 with SMTP id e3-20020adfe7c3000000b0032dd9325848mr5111777wrn.2.1700488360967;
-        Mon, 20 Nov 2023 05:52:40 -0800 (PST)
-Received: from [192.168.64.177] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id z18-20020a5d4c92000000b00331424a1266sm11249805wrs.84.2023.11.20.05.52.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 05:52:40 -0800 (PST)
-Message-ID: <3a304aea-23a3-4ac7-beca-f814624a466d@grimberg.me>
-Date: Mon, 20 Nov 2023 15:52:39 +0200
+        d=1e100.net; s=20230601; t=1700489360; x=1701094160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tUT5G9wWKDux+q/3wEibNtR/ItuQhmKh/lwb8ikN/Rg=;
+        b=Up9dkG4udw3Xh4COUd8Yb17Mnq6hKCX3BPLvTniAccg6dnH54PSmx3WwqMlXn9BMo2
+         SfP/uBsmvHUifsuQary5DDRbf8u6YPTlRcCR+oDKadj8uqC0PnirmV7FteKVCGhtP9pP
+         dUbyqHBgASAODHrEJ67coW4Qm6jheSvuQ1qvZzb+SDPoM4eK4iazfco2rDQ9oMBrCz5K
+         kbuWfMZ4+ZWGd9jUupYNO/H41gPYVXNh+oi4ogTqb9y7beXbgVIye6Su3m+78CC3IB26
+         LCixRrnlMbBtYHgHcpOkjl/X1wFOuqc1x6S2B++Hfi0pxqOesqzl0ABeqlqN0GxaAzTq
+         Kcyw==
+X-Gm-Message-State: AOJu0YwQJaCgnc3Dxk1ScCPfHrbgkjJOrxj4SM1BSqUn1NG9Sh5IDgtu
+	lZh8EDinWb8TNSoLDLJadq/gTg==
+X-Google-Smtp-Source: AGHT+IFbXKYY9UNUZ8jVcSKkbWSASIFyrO+LxDhQ3+XU4oa71aGhP+E2nN9ls2SkWYQquuniadlVuA==
+X-Received: by 2002:a2e:9101:0:b0:2c5:32b:28fa with SMTP id m1-20020a2e9101000000b002c5032b28famr6563347ljg.30.1700489360533;
+        Mon, 20 Nov 2023 06:09:20 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id p11-20020adfcc8b000000b0032d9337e7d1sm11358195wrj.11.2023.11.20.06.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 06:09:20 -0800 (PST)
+Date: Mon, 20 Nov 2023 09:09:17 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Su Hui <suhui@nfschina.com>,
+	"Jes.Sorensen@gmail.com" <Jes.Sorensen@gmail.com>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] wifi: rtl8xxxu: correct the error value of 'timeout'
+Message-ID: <4b34643f-812e-4aad-9a10-eee5bc553144@suswa.mountain>
+References: <20231115050123.951862-1-suhui@nfschina.com>
+ <ff8637fc05324c04a447ea505d8eba1b@realtek.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] nvme-tcp: Fix a memory leak
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <7f132cc47e627d63ddb084f3d0fcad10956d1e35.1698677322.git.christophe.jaillet@wanadoo.fr>
- <20231030145220.GA28484@lst.de>
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20231030145220.GA28484@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff8637fc05324c04a447ea505d8eba1b@realtek.com>
 
+On Fri, Nov 17, 2023 at 02:53:52AM +0000, Ping-Ke Shih wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Su Hui <suhui@nfschina.com>
+> > Sent: Wednesday, November 15, 2023 1:01 PM
+> > To: Ping-Ke Shih <pkshih@realtek.com>; Jes.Sorensen@gmail.com
+> > Cc: Su Hui <suhui@nfschina.com>; kvalo@kernel.org; linux-wireless@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+> > Subject: [PATCH v2] wifi: rtl8xxxu: correct the error value of 'timeout'
+> > 
+> > When 'rtl8xxxu_dma_agg_pages <= page_thresh', 'timeout' should equal to
+> > 'page_thresh' rather than '4'. Change the code order to fix this problem.
+> > 
+> > Fixes: fd83f1227826 ("rtl8xxxu: gen1: Add module parameters to adjust DMA aggregation parameters")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > ---
+> 
+> Checking logic of agg_pages and agg_timeout, I think we should correct it
+> by below changes. So, NACK this patch. 
+> 
+> diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> index 43ee7592bc6e..c9e227aed685 100644
+> --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> @@ -4760,7 +4760,7 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
+>         page_thresh = (priv->fops->rx_agg_buf_size / 512);
+>         if (rtl8xxxu_dma_agg_pages >= 0) {
+>                 if (rtl8xxxu_dma_agg_pages <= page_thresh)
+> -                       timeout = page_thresh;
+> +                       page_thresh = rtl8xxxu_dma_agg_pages;
 
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
->> Personally I prefer v1. Pick the one you prefer :)
-> 
-> I think we should be consistent with one style or another in a
-> given function.  Otherwise I wouldn't even have mentioned it.
+Yeah.  That looks correct.  What I suggested earlier was wrong.
 
-This looks good too:
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+regards,
+dan carpenter
+
