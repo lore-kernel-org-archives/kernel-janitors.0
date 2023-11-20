@@ -1,127 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LsDwszF9"
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2A3D8
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 07:03:46 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40a5a444c3eso13997925e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 07:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700492625; x=1701097425; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2/DoAoTwRlTiAW4H0ru7cJtclV8pamlA+0Xn4dEDNA=;
-        b=LsDwszF9yLw3F68sA6ArREgDAuvs4tCAFjtZxc+ISp1sgQBcDDxdv0cPlGV06EBfvm
-         jFGhy709V5wpIJurB4pmH87MWmfGgoF1PLdENggzxAUxr6Oqdr5HSMUkfUFom5UOcB1a
-         7KK1Bwuk63783HV4vWtKpDWDuyZAoZO2/wDufmaNZgGmgQrJRI2ttMbrM9Ck+QmVmb4i
-         kNDKNIjHWp1Jt+o7QvPzKFbnqnNezvLu/v8LWRfYB2pF0oRRDMhxCkAEfbZL5aeH77Ze
-         zZY2yd1U6RuHMRx/WhrScuKuqR/PT5VgVQs2RrBnhqjbX326b//4H+AysguJVAiHtaoL
-         wbAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700492625; x=1701097425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2/DoAoTwRlTiAW4H0ru7cJtclV8pamlA+0Xn4dEDNA=;
-        b=Moc27QEsGFYndEEr7NgtgtJPwQtFX/Lh/RejiZkEF5QDgTcASaXPViUL7mD5qrt5ka
-         /hzcL8JlZaYS+p7Czol2KwI1s4VEMZRXQxZlbPbsFuqiPwT7weCUNkZBQsSfh64pSqNe
-         V8nQ9zFBnpf4DJ57ym1MmehtGEXr8XHhLuJXe038vwKwm7dT8kFHPGRPr7+pwt3rpn0+
-         NM7BFjx7cfC75sjaPDXybOdWaEjq9j35skHs6ZPIaHHR2kSwWB3I9dxWv3+gG359aW/4
-         3jWzPAn+LtVCA7NfDZWYRYOmkbCRWj42jUqfQ8/36uy0xmcCqejYqL4RgNnrb4CRp085
-         4PGQ==
-X-Gm-Message-State: AOJu0YyUcQwNrC6Inm00izOMy6XiI8HBRXnm2f2OCGcfMb2RFNv9Gqp9
-	BNeHSTaDytReJl+tpl3NQ0a9dQ==
-X-Google-Smtp-Source: AGHT+IEkROT2Zc5Hlz2XunqbDmD4go7yi0hmtqMvT3a8XjwaqPTovpYGT0//l0lNIYQkihxLKReEsw==
-X-Received: by 2002:a05:600c:4f8a:b0:40a:5c71:2c3e with SMTP id n10-20020a05600c4f8a00b0040a5c712c3emr6350067wmq.19.1700492624536;
-        Mon, 20 Nov 2023 07:03:44 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l4-20020a05600c1d0400b004067e905f44sm13831459wms.9.2023.11.20.07.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 07:03:44 -0800 (PST)
-Date: Mon, 20 Nov 2023 10:03:41 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
-	alexander.usyskin@intel.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] misc: mei: client.c: fix some error code problem in
- mei_cl_write
-Message-ID: <92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain>
-References: <20231120085343.157381-1-suhui@nfschina.com>
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="HEq2w6FP"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A6FBE;
+	Mon, 20 Nov 2023 07:12:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=tdw78nVfIm7n5esUENVhDomIV1AhhrekYq+Vayl1qzc=; b=HEq2w6FPT6t4B3bHlc8R47NQWb
+	YVOBWgUFREVmq4UeQ5Y9tW59Iaf4zovfq8K/cqa8CYoapuNNN/nGhEab8VPJzwNIhbucmnWI9KzkE
+	zi6qNulEwf52gLIPT2NnfFOAZd7BLphfb8R3loxTxjqWI7EzR5wu98s1mTNVuwYDyJq0=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:49764 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1r55x4-00085z-2T; Mon, 20 Nov 2023 10:12:43 -0500
+Date: Mon, 20 Nov 2023 10:12:40 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Message-Id: <20231120101240.f3b6dd4e8c2cfaa8b0c30b7e@hugovil.com>
+In-Reply-To: <20231120072517.7b22ghddzs2w2w36@pengutronix.de>
+References: <a46b493c6b5cfa09417e3e138e304fd01b61e748.1700410346.git.christophe.jaillet@wanadoo.fr>
+	<20231120072517.7b22ghddzs2w2w36@pengutronix.de>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120085343.157381-1-suhui@nfschina.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+Subject: Re: [PATCH] serial: imx: convert not to use
+ dma_request_slave_channel()
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Mon, Nov 20, 2023 at 04:53:45PM +0800, Su Hui wrote:
-> Clang static analyzer complains that value stored to 'rets' is never
-> read. Remove some useless code, and let 'buf_len = -EOVERFLOW' to make
-> sure we can return '-EOVERFLOW'.
-> 
-> mei_msg_hdr_init() return negative error code, rets should be
-> 'PTR_ERR(mei_hdr)' rather than '-PTR_ERR(mei_hdr)'.
-> 
-> Fixes: 0cd7c01a60f8 ("mei: add support for mei extended header.")
-> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/misc/mei/client.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
-> index 9c8fc87938a7..00dac0a47da0 100644
-> --- a/drivers/misc/mei/client.c
-> +++ b/drivers/misc/mei/client.c
-> @@ -2011,7 +2011,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
->  
->  	mei_hdr = mei_msg_hdr_init(cb);
->  	if (IS_ERR(mei_hdr)) {
-> -		rets = -PTR_ERR(mei_hdr);
-> +		rets = PTR_ERR(mei_hdr);
+On Mon, 20 Nov 2023 08:25:17 +0100
+Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de> wrote:
 
-KTODO: write a static checker rule which complains -PTR_ERR()
+> Hello Christophe,
+>=20
+> I didn't look at the patch, but only noticed the Subject while browsing
+> my mail. In my (German) ear the sentence is broken. I'd do
+>=20
+> 	s/not to/to not/
+>=20
+> (Not converting the driver could also be an empty patch :-)
 
-This might be complicated because there are parts of networking where
-we store error codes as positive values.  But there is enough context in
-this function to create some sort of warning about this code.  "Mixing
-positive and negative error codes" perhaps?
+Hi,
+I would suggest:
 
-$ git grep -n '\-PTR_ERR'
-block/partitions/core.c:574:                   disk->disk_name, p, -PTR_ERR(part));
-drivers/infiniband/ulp/ipoib/ipoib_multicast.c:291:                        -PTR_ERR(ah));
-drivers/misc/mei/client.c:2014:         rets = -PTR_ERR(mei_hdr);
-drivers/net/ethernet/intel/igb/igb_main.c:8963:                 unsigned int xdp_res = -PTR_ERR(skb);
-drivers/net/ethernet/intel/igc/igc_main.c:2639:                 unsigned int xdp_res = -PTR_ERR(skb);
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:2348:                     unsigned int xdp_res = -PTR_ERR(skb);
-drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:5431:                         unsigned int xdp_res = -PTR_ERR(skb);
-drivers/phy/sunplus/phy-sunplus-usb2.c:278:             ret = -PTR_ERR(phy);
-drivers/scsi/libfc/fc_elsct.c:86:               switch (-PTR_ERR(fp)) {
-drivers/scsi/libfc/fc_lport.c:1081:                  IS_ERR(fp) ? -PTR_ERR(fp) : 0, fc_lport_state(lport),
-fs/ext4/indirect.c:1042:                                ext4_error_inode_block(inode, nr, -PTR_ERR(bh),
-fs/jffs2/background.c:48:                       -PTR_ERR(tsk));
-fs/ntfs/dir.c:92:                               -PTR_ERR(m));
-fs/ntfs/dir.c:312:                              -PTR_ERR(page));
-fs/ntfs/dir.c:643:                              -PTR_ERR(m));
-fs/ntfs/dir.c:790:                              -PTR_ERR(page));
-fs/ntfs/index.c:141:                            -PTR_ERR(m));
-fs/ntfs/index.c:268:                            -PTR_ERR(page));
-fs/ntfs/mft.c:162:      ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
-fs/ntfs/mft.c:289:                              "mft record, error code %ld.", -PTR_ERR(m));
-net/ipv6/af_inet6.c:852:                        WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
-net/ipv6/inet6_connection_sock.c:123:           WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
-tools/lib/bpf/libbpf.c:10044:           errno = -PTR_ERR(ptr);
-tools/lib/bpf/libbpf_internal.h:520:            errno = -PTR_ERR(ret);
-tools/testing/selftests/bpf/prog_tests/btf_dump.c:59:           err = -PTR_ERR(btf);
-tools/testing/selftests/bpf/prog_tests/sk_lookup.c:483:         errno = -PTR_ERR(link);
+"serial: imx: replace deprecated dma_request_slave_channel()"
 
-Quite a few of those were in printks and it might be an opportunity to
-use %pe to print the ENOMEM etc strings instead of the number.
-
-regards,
-dan carpenter
-
+Hugo.
