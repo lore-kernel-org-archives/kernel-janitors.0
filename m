@@ -1,55 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="as6b0PaR"
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5B9BC
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 06:09:22 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c50fbc218bso55671551fa.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 06:09:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LsDwszF9"
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2A3D8
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 07:03:46 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40a5a444c3eso13997925e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 07:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700489360; x=1701094160; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700492625; x=1701097425; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tUT5G9wWKDux+q/3wEibNtR/ItuQhmKh/lwb8ikN/Rg=;
-        b=as6b0PaRvP3yHBollblKs+tz7joLu75qq4EQo3nBJAcwjGZ6XirOvH7A8XavQHKPkX
-         tWETe7HHKojaJacbQrEwOk8qovZbOkuPFM1wxa/3Sn3bHdRtpZIHyMs69z8QOKHMdh9V
-         peeokx7CMuaLoi+3ma0uouS6fwuUxt/7y+kFI81mFTPsTVDDb7SP2H3+0Q6K2/Q6/V6a
-         QNzOBRDQN64E4yTBlpOJybe+Dl59fxvZs9yX3kjLVUUULgUaNwCQ6Ce2PD/0fY3DQvq+
-         7wtQRZdSJSAKo9RnWdH7Yg95SpzTNcAwAtV/Ili+MdbLroAe1VZbnhox6+3YEC6yMmGH
-         GRNw==
+        bh=j2/DoAoTwRlTiAW4H0ru7cJtclV8pamlA+0Xn4dEDNA=;
+        b=LsDwszF9yLw3F68sA6ArREgDAuvs4tCAFjtZxc+ISp1sgQBcDDxdv0cPlGV06EBfvm
+         jFGhy709V5wpIJurB4pmH87MWmfGgoF1PLdENggzxAUxr6Oqdr5HSMUkfUFom5UOcB1a
+         7KK1Bwuk63783HV4vWtKpDWDuyZAoZO2/wDufmaNZgGmgQrJRI2ttMbrM9Ck+QmVmb4i
+         kNDKNIjHWp1Jt+o7QvPzKFbnqnNezvLu/v8LWRfYB2pF0oRRDMhxCkAEfbZL5aeH77Ze
+         zZY2yd1U6RuHMRx/WhrScuKuqR/PT5VgVQs2RrBnhqjbX326b//4H+AysguJVAiHtaoL
+         wbAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700489360; x=1701094160;
+        d=1e100.net; s=20230601; t=1700492625; x=1701097425;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tUT5G9wWKDux+q/3wEibNtR/ItuQhmKh/lwb8ikN/Rg=;
-        b=Up9dkG4udw3Xh4COUd8Yb17Mnq6hKCX3BPLvTniAccg6dnH54PSmx3WwqMlXn9BMo2
-         SfP/uBsmvHUifsuQary5DDRbf8u6YPTlRcCR+oDKadj8uqC0PnirmV7FteKVCGhtP9pP
-         dUbyqHBgASAODHrEJ67coW4Qm6jheSvuQ1qvZzb+SDPoM4eK4iazfco2rDQ9oMBrCz5K
-         kbuWfMZ4+ZWGd9jUupYNO/H41gPYVXNh+oi4ogTqb9y7beXbgVIye6Su3m+78CC3IB26
-         LCixRrnlMbBtYHgHcpOkjl/X1wFOuqc1x6S2B++Hfi0pxqOesqzl0ABeqlqN0GxaAzTq
-         Kcyw==
-X-Gm-Message-State: AOJu0YwQJaCgnc3Dxk1ScCPfHrbgkjJOrxj4SM1BSqUn1NG9Sh5IDgtu
-	lZh8EDinWb8TNSoLDLJadq/gTg==
-X-Google-Smtp-Source: AGHT+IFbXKYY9UNUZ8jVcSKkbWSASIFyrO+LxDhQ3+XU4oa71aGhP+E2nN9ls2SkWYQquuniadlVuA==
-X-Received: by 2002:a2e:9101:0:b0:2c5:32b:28fa with SMTP id m1-20020a2e9101000000b002c5032b28famr6563347ljg.30.1700489360533;
-        Mon, 20 Nov 2023 06:09:20 -0800 (PST)
+        bh=j2/DoAoTwRlTiAW4H0ru7cJtclV8pamlA+0Xn4dEDNA=;
+        b=Moc27QEsGFYndEEr7NgtgtJPwQtFX/Lh/RejiZkEF5QDgTcASaXPViUL7mD5qrt5ka
+         /hzcL8JlZaYS+p7Czol2KwI1s4VEMZRXQxZlbPbsFuqiPwT7weCUNkZBQsSfh64pSqNe
+         V8nQ9zFBnpf4DJ57ym1MmehtGEXr8XHhLuJXe038vwKwm7dT8kFHPGRPr7+pwt3rpn0+
+         NM7BFjx7cfC75sjaPDXybOdWaEjq9j35skHs6ZPIaHHR2kSwWB3I9dxWv3+gG359aW/4
+         3jWzPAn+LtVCA7NfDZWYRYOmkbCRWj42jUqfQ8/36uy0xmcCqejYqL4RgNnrb4CRp085
+         4PGQ==
+X-Gm-Message-State: AOJu0YyUcQwNrC6Inm00izOMy6XiI8HBRXnm2f2OCGcfMb2RFNv9Gqp9
+	BNeHSTaDytReJl+tpl3NQ0a9dQ==
+X-Google-Smtp-Source: AGHT+IEkROT2Zc5Hlz2XunqbDmD4go7yi0hmtqMvT3a8XjwaqPTovpYGT0//l0lNIYQkihxLKReEsw==
+X-Received: by 2002:a05:600c:4f8a:b0:40a:5c71:2c3e with SMTP id n10-20020a05600c4f8a00b0040a5c712c3emr6350067wmq.19.1700492624536;
+        Mon, 20 Nov 2023 07:03:44 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p11-20020adfcc8b000000b0032d9337e7d1sm11358195wrj.11.2023.11.20.06.09.19
+        by smtp.gmail.com with ESMTPSA id l4-20020a05600c1d0400b004067e905f44sm13831459wms.9.2023.11.20.07.03.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 06:09:20 -0800 (PST)
-Date: Mon, 20 Nov 2023 09:09:17 -0500
+        Mon, 20 Nov 2023 07:03:44 -0800 (PST)
+Date: Mon, 20 Nov 2023 10:03:41 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Su Hui <suhui@nfschina.com>,
-	"Jes.Sorensen@gmail.com" <Jes.Sorensen@gmail.com>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] wifi: rtl8xxxu: correct the error value of 'timeout'
-Message-ID: <4b34643f-812e-4aad-9a10-eee5bc553144@suswa.mountain>
-References: <20231115050123.951862-1-suhui@nfschina.com>
- <ff8637fc05324c04a447ea505d8eba1b@realtek.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+	nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
+	alexander.usyskin@intel.com, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] misc: mei: client.c: fix some error code problem in
+ mei_cl_write
+Message-ID: <92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain>
+References: <20231120085343.157381-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,41 +56,71 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff8637fc05324c04a447ea505d8eba1b@realtek.com>
+In-Reply-To: <20231120085343.157381-1-suhui@nfschina.com>
 
-On Fri, Nov 17, 2023 at 02:53:52AM +0000, Ping-Ke Shih wrote:
+On Mon, Nov 20, 2023 at 04:53:45PM +0800, Su Hui wrote:
+> Clang static analyzer complains that value stored to 'rets' is never
+> read. Remove some useless code, and let 'buf_len = -EOVERFLOW' to make
+> sure we can return '-EOVERFLOW'.
 > 
+> mei_msg_hdr_init() return negative error code, rets should be
+> 'PTR_ERR(mei_hdr)' rather than '-PTR_ERR(mei_hdr)'.
 > 
-> > -----Original Message-----
-> > From: Su Hui <suhui@nfschina.com>
-> > Sent: Wednesday, November 15, 2023 1:01 PM
-> > To: Ping-Ke Shih <pkshih@realtek.com>; Jes.Sorensen@gmail.com
-> > Cc: Su Hui <suhui@nfschina.com>; kvalo@kernel.org; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: [PATCH v2] wifi: rtl8xxxu: correct the error value of 'timeout'
-> > 
-> > When 'rtl8xxxu_dma_agg_pages <= page_thresh', 'timeout' should equal to
-> > 'page_thresh' rather than '4'. Change the code order to fix this problem.
-> > 
-> > Fixes: fd83f1227826 ("rtl8xxxu: gen1: Add module parameters to adjust DMA aggregation parameters")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > ---
+> Fixes: 0cd7c01a60f8 ("mei: add support for mei extended header.")
+> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  drivers/misc/mei/client.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> Checking logic of agg_pages and agg_timeout, I think we should correct it
-> by below changes. So, NACK this patch. 
-> 
-> diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> index 43ee7592bc6e..c9e227aed685 100644
-> --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> @@ -4760,7 +4760,7 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
->         page_thresh = (priv->fops->rx_agg_buf_size / 512);
->         if (rtl8xxxu_dma_agg_pages >= 0) {
->                 if (rtl8xxxu_dma_agg_pages <= page_thresh)
-> -                       timeout = page_thresh;
-> +                       page_thresh = rtl8xxxu_dma_agg_pages;
+> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+> index 9c8fc87938a7..00dac0a47da0 100644
+> --- a/drivers/misc/mei/client.c
+> +++ b/drivers/misc/mei/client.c
+> @@ -2011,7 +2011,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+>  
+>  	mei_hdr = mei_msg_hdr_init(cb);
+>  	if (IS_ERR(mei_hdr)) {
+> -		rets = -PTR_ERR(mei_hdr);
+> +		rets = PTR_ERR(mei_hdr);
 
-Yeah.  That looks correct.  What I suggested earlier was wrong.
+KTODO: write a static checker rule which complains -PTR_ERR()
+
+This might be complicated because there are parts of networking where
+we store error codes as positive values.  But there is enough context in
+this function to create some sort of warning about this code.  "Mixing
+positive and negative error codes" perhaps?
+
+$ git grep -n '\-PTR_ERR'
+block/partitions/core.c:574:                   disk->disk_name, p, -PTR_ERR(part));
+drivers/infiniband/ulp/ipoib/ipoib_multicast.c:291:                        -PTR_ERR(ah));
+drivers/misc/mei/client.c:2014:         rets = -PTR_ERR(mei_hdr);
+drivers/net/ethernet/intel/igb/igb_main.c:8963:                 unsigned int xdp_res = -PTR_ERR(skb);
+drivers/net/ethernet/intel/igc/igc_main.c:2639:                 unsigned int xdp_res = -PTR_ERR(skb);
+drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:2348:                     unsigned int xdp_res = -PTR_ERR(skb);
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:5431:                         unsigned int xdp_res = -PTR_ERR(skb);
+drivers/phy/sunplus/phy-sunplus-usb2.c:278:             ret = -PTR_ERR(phy);
+drivers/scsi/libfc/fc_elsct.c:86:               switch (-PTR_ERR(fp)) {
+drivers/scsi/libfc/fc_lport.c:1081:                  IS_ERR(fp) ? -PTR_ERR(fp) : 0, fc_lport_state(lport),
+fs/ext4/indirect.c:1042:                                ext4_error_inode_block(inode, nr, -PTR_ERR(bh),
+fs/jffs2/background.c:48:                       -PTR_ERR(tsk));
+fs/ntfs/dir.c:92:                               -PTR_ERR(m));
+fs/ntfs/dir.c:312:                              -PTR_ERR(page));
+fs/ntfs/dir.c:643:                              -PTR_ERR(m));
+fs/ntfs/dir.c:790:                              -PTR_ERR(page));
+fs/ntfs/index.c:141:                            -PTR_ERR(m));
+fs/ntfs/index.c:268:                            -PTR_ERR(page));
+fs/ntfs/mft.c:162:      ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
+fs/ntfs/mft.c:289:                              "mft record, error code %ld.", -PTR_ERR(m));
+net/ipv6/af_inet6.c:852:                        WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
+net/ipv6/inet6_connection_sock.c:123:           WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
+tools/lib/bpf/libbpf.c:10044:           errno = -PTR_ERR(ptr);
+tools/lib/bpf/libbpf_internal.h:520:            errno = -PTR_ERR(ret);
+tools/testing/selftests/bpf/prog_tests/btf_dump.c:59:           err = -PTR_ERR(btf);
+tools/testing/selftests/bpf/prog_tests/sk_lookup.c:483:         errno = -PTR_ERR(link);
+
+Quite a few of those were in printks and it might be an opportunity to
+use %pe to print the ENOMEM etc strings instead of the number.
 
 regards,
 dan carpenter
