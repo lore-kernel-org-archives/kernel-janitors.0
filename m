@@ -1,135 +1,121 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpu1ivGu"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1DDDFD
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:31:15 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40839652b97so13881135e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700483474; x=1701088274; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+ygfjyW2dtt7SNYdGG+a1RKbTlkp8CN0gh3juIVK50=;
-        b=gpu1ivGulkhKvdk5so7NtuqUMLlTWTuX2mLaMv/JBLnR0LBsI2dEjcgi7Qp7MSKHn2
-         FygvSfqECuoRMQCyIuRPi9ZOLY9a5PMZppkIIzTLBbYmgvtY8jF2jBTmhqSVXhsZS+yS
-         csbso2McCRZwKQgOsE69KSLlhM2kpAm++D1lLEoCWTdEz23Pnov9FSY60q90uSx+L6u9
-         oA8nK54+DUqOlEBcLBGLwtqoORc8Q1uVQj7lX4ET3zsOODF86cTNubXKLLPmtv0ciQyz
-         0JmQBuNQxfgrF6DXu5vx0NrivkQ9ed6rxwGA4DSVX4qZUD0GMneKiXEmSYnw4AFoVgHJ
-         WHlA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WbaRnwLm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37AA9D9
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 05:06:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700485583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NQ5cLT8IYekGwpisM4dl0LPbfY/xJ50HrjMwWPtrYU=;
+	b=WbaRnwLmpb3qhrIn+WhFGlH6wvcocV5QgjMUuva0NXaiBzNvEj1sz6lDRbQ/FREvdRc+Lq
+	PqrpOUKfRTPOkGHIBmvA8oXQtz/KFMZheIj65odubdia42NzVIunK9xnkGWS58bzAmGtiU
+	pAr3sQ2RIYGNImBwj2KwfdJIF2egLKw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-PpVSSbWkPGOyoxxIJQhZLQ-1; Mon, 20 Nov 2023 08:06:22 -0500
+X-MC-Unique: PpVSSbWkPGOyoxxIJQhZLQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9ff5b5c16beso86588066b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 05:06:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700483474; x=1701088274;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U+ygfjyW2dtt7SNYdGG+a1RKbTlkp8CN0gh3juIVK50=;
-        b=YLEgY7vwLcwNJRzXk4a2gDLipj2Z/CK7leWsDVra8EzoIyjyt6HoanvYGXngWoC2GD
-         oU424HgTInEX9/Y86qgtJWg0VjL6sIBF2zaZu9LRB0q4cfwjh0hfc/mtIHZgguDLt6wO
-         d0B+PJMyV5VEvcxHbXx6JMlf+VBbJxA8q2GimfhG/J8fcqw5RhV3jionXiUtO5dCYdVU
-         TTacYbF41WMPDIYr/1pCMm6j/4ZX0ypuVGqs6Vr7Z36hqVlkOz2uGwWHvAPxjV/V8DgB
-         ni7a96GHBVqVuuHb++MakmjG+8oFzCitncN7NNUznRzDGI+HOciR2VIq5RaGsRsV3nf+
-         RO7g==
-X-Gm-Message-State: AOJu0Yy6FG9x3yqH1NegwI6mm50YR2KzfpK1UNlIqgEXIopY0ObpKmkP
-	tx0tXLyaksc3iYm9zSO1RYJgYA==
-X-Google-Smtp-Source: AGHT+IFH5ZY2W8nrgFtr/VHzEM4XPB2oiuC34QYENqeI3k2VGALPT0oPN0iCaxJHt7hbpyaLHA4VRA==
-X-Received: by 2002:a5d:4382:0:b0:32d:a7b0:62b with SMTP id i2-20020a5d4382000000b0032da7b0062bmr3677437wrq.26.1700483474267;
-        Mon, 20 Nov 2023 04:31:14 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d4-20020a5d4f84000000b0032d96dd703bsm11077492wru.70.2023.11.20.04.31.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 04:31:13 -0800 (PST)
-Date: Mon, 20 Nov 2023 07:31:10 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Su Hui <suhui@nfschina.com>,
-	"Jes.Sorensen@gmail.com" <Jes.Sorensen@gmail.com>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] wifi: rtl8xxxu: correct the error value of 'timeout'
-Message-ID: <456145f7-9c6e-4231-aec4-9c02511b6550@suswa.mountain>
-References: <20231113054917.96894-1-suhui@nfschina.com>
- <e8b847437ab242d18108d9364360bb8a@realtek.com>
+        d=1e100.net; s=20230601; t=1700485581; x=1701090381;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1NQ5cLT8IYekGwpisM4dl0LPbfY/xJ50HrjMwWPtrYU=;
+        b=ii4rwizjcjGyFkl0to9ct1bDuiyCmmCK7OzWCeaU0U2jaCqKKDpNuhMPMqSMay9jUW
+         x+iaOtheI8halDXBJxK7z/udgxn6c1cH4baCxqNAvR5lgzIo6ZUILspXjfYsKLanEzQq
+         IahR9E/cKLz4KkFD3MUGe5BBkWXFnfnyEg8o1kw+7UKeE/npjSeIn4r9bCChoYgPeP7R
+         xWx3FXr006m7Bc/vf1/RJLimRxgY2cyZYeV9ysKoidtmISrQhKdMFw2+AVkwY0Pdyclq
+         21zvWFlC1Hz9SGx//tibWbapBAa5yLY1+HmXltBhQWJgBRagg7WZfyT5R6K+b94QUouw
+         VK5g==
+X-Gm-Message-State: AOJu0YyBBWS+zdr7ORsRUzFlobZQ06M9Q0u6c/FrDAIa6Pq8VeOFNKm3
+	EJLmg0rINPSJ9pyaBFFq8qDFLQXsRQUjCKs8X9LA+/7f/4kGFBOw3nt8Cl3w+ofz0bEZIHgFLaD
+	zcEJEi5TNc/Vq++xk3kFOgknuGGEP
+X-Received: by 2002:a17:906:108d:b0:9ad:8a9e:23ee with SMTP id u13-20020a170906108d00b009ad8a9e23eemr1789483eju.13.1700485580963;
+        Mon, 20 Nov 2023 05:06:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IELvwN8Lt65+G4ZeqKhE8MZ0SNLIYY1WF/08aEqSUqx+9JN7mTwCSurwBgUSjhY2I4Zm3RUzA==
+X-Received: by 2002:a17:906:108d:b0:9ad:8a9e:23ee with SMTP id u13-20020a170906108d00b009ad8a9e23eemr1789469eju.13.1700485580708;
+        Mon, 20 Nov 2023 05:06:20 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id h5-20020a170906718500b009bf7a4d591csm3920594ejk.11.2023.11.20.05.06.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 05:06:20 -0800 (PST)
+Message-ID: <9bb5500a-c66f-4625-af07-454f6df5a32a@redhat.com>
+Date: Mon, 20 Nov 2023 14:06:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8b847437ab242d18108d9364360bb8a@realtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86/dell: alienware-wmi: Use kasprintf()
+Content-Language: en-US, nl
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mark Gross <markgross@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dell.Client.Kernel@dell.com, platform-driver-x86@vger.kernel.org
+References: <f2b2c9e5d80550e480a627c1b2139d5cc9472ffa.1699775015.git.christophe.jaillet@wanadoo.fr>
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <f2b2c9e5d80550e480a627c1b2139d5cc9472ffa.1699775015.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 14, 2023 at 06:42:50AM +0000, Ping-Ke Shih wrote:
-> > diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > index 43ee7592bc6e..9cab8b1dc486 100644
-> > --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > @@ -4757,6 +4757,12 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
-> >          *   RxAggPageTimeout = 4 or 6 (absolute time 34ms/(2^6))
-> >          */
-> > 
-> > +       /* REG_RXDMA_AGG_PG_TH + 1 seems to be the timeout register on
-> > +        * gen2 chips and rtl8188eu. The rtl8723au seems unhappy if we
-> > +        * don't set it, so better set both.
-> > +        */
-> > +       timeout = 4;
-> > +
-> >         page_thresh = (priv->fops->rx_agg_buf_size / 512);
-> >         if (rtl8xxxu_dma_agg_pages >= 0) {
-> >                 if (rtl8xxxu_dma_agg_pages <= page_thresh)
+Hi,
+
+On 11/12/23 08:44, Christophe JAILLET wrote:
+> Use kasprintf() instead of hand writing it.
+> This saves the need of an intermediate buffer.
 > 
-> The logic here is:
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/platform/x86/dell/alienware-wmi.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> 	page_thresh = (priv->fops->rx_agg_buf_size / 512);
-> 	if (rtl8xxxu_dma_agg_pages >= 0) {
-> 		if (rtl8xxxu_dma_agg_pages <= page_thresh)
-> 			timeout = page_thresh;
-> 
-> Do you know why 'timeout = page_thresh;'? Intuitively, units of 'timeout' and
-> 'thresh' are different. Maybe, we should correct here instead?
-> 
+> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+> index a9477e5432e4..f5ee62ce1753 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> @@ -429,7 +429,6 @@ static DEVICE_ATTR(lighting_control_state, 0644, show_control_state,
+>  static int alienware_zone_init(struct platform_device *dev)
+>  {
+>  	u8 zone;
+> -	char buffer[10];
+>  	char *name;
+>  
+>  	if (interface == WMAX) {
+> @@ -466,8 +465,7 @@ static int alienware_zone_init(struct platform_device *dev)
+>  		return -ENOMEM;
+>  
+>  	for (zone = 0; zone < quirks->num_zones; zone++) {
+> -		sprintf(buffer, "zone%02hhX", zone);
+> -		name = kstrdup(buffer, GFP_KERNEL);
+> +		name = kasprintf(GFP_KERNEL, "zone%02hhX", zone);
+>  		if (name == NULL)
+>  			return 1;
+>  		sysfs_attr_init(&zone_dev_attrs[zone].attr);
 
-Yeah.  That's strange.  I'm not convinced this fix is correct.  I'm
-hesitant to suggest this but maybe the following is the correct fix?
-It just silences the warning but doesn't change runtime.
-
-I don't know.  *shrug*.  One thing that we could do is just leave the
-warning as-is until someone who knows better than we do can take a look
-at it.
-
-regards,
-dan carpenter
-
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 43ee7592bc6e..68d9b4a0ee63 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -4759,16 +4759,16 @@ void rtl8xxxu_gen1_init_aggregation(struct rtl8xxxu_priv *priv)
- 
- 	page_thresh = (priv->fops->rx_agg_buf_size / 512);
- 	if (rtl8xxxu_dma_agg_pages >= 0) {
--		if (rtl8xxxu_dma_agg_pages <= page_thresh)
--			timeout = page_thresh;
--		else if (rtl8xxxu_dma_agg_pages <= 6)
--			dev_err(&priv->udev->dev,
--				"%s: dma_agg_pages=%i too small, minimum is 6\n",
--				__func__, rtl8xxxu_dma_agg_pages);
--		else
--			dev_err(&priv->udev->dev,
--				"%s: dma_agg_pages=%i larger than limit %i\n",
--				__func__, rtl8xxxu_dma_agg_pages, page_thresh);
-+		if (rtl8xxxu_dma_agg_pages > page_thresh) {
-+			if (rtl8xxxu_dma_agg_pages <= 6)
-+				dev_err(&priv->udev->dev,
-+					"%s: dma_agg_pages=%i too small, minimum is 6\n",
-+					__func__, rtl8xxxu_dma_agg_pages);
-+			else
-+				dev_err(&priv->udev->dev,
-+					"%s: dma_agg_pages=%i larger than limit %i\n",
-+					__func__, rtl8xxxu_dma_agg_pages, page_thresh);
-+		}
- 	}
- 	rtl8xxxu_write8(priv, REG_RXDMA_AGG_PG_TH, page_thresh);
- 	/*
