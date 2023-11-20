@@ -1,95 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePjR+F68"
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0A6E5
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 00:24:48 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40853c639abso13902035e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 00:24:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700468686; x=1701073486; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LiwLz7rgORSXU5ZDowGagc2wpV+uTLoI4pnI3SOTIak=;
-        b=ePjR+F68z/TXKmj8OI/7Xg1oRcLPmHqdKZV/dRUNsS8pqVEQnnO1VLR7RgCmDrvARO
-         C/YvYnfk185f38imKCrx8vreLGR3zDgGbr0yTJxLeaY3hHU7T1iot98z83HazCzLBKAn
-         PRllcRXLOuR/7Uvfqjyxu6y78eJPpucfaXqf44W7GhOXStnjye+hVHObCxrLPu7vWFLa
-         lvda7nYfDInTx1OPgvi3JvgKguv4VODZb8yg2J3j7JS6jue8smUMGTd/ym+JHYLMeUtb
-         Tz+dF7cWmG1t1QTreYkAH9zsAnTIYLNqiAPli6j5mWUEAsWkoT0wSSLZ5BUELKLp/eE+
-         /f5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700468686; x=1701073486;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LiwLz7rgORSXU5ZDowGagc2wpV+uTLoI4pnI3SOTIak=;
-        b=k13GPjciIziqsycneG/QPqLunIyi6v2TN9vnmJ2qZYP31msK+o7+rCJEXmG/68l+6L
-         0oJWc8HaiupJT+M04Lnbce8hf8TnJYBkcOr8XM7qLbtpF7rIZOp/023/rY9tshQksoEO
-         pP0AfK+AYGQ9nqVftOEdr5CAfs5lp3sIfpPT2tmosAe6T1EVcy+teAn+NKlK3/bUvIu1
-         sPdH2zYHoJ005tC/NkAqT5btt7otkOaD61ZEW+NM3szxWEX5E2ePGBq1ETjMPesGDFLB
-         8A+T+/EdYjduVJtEMRhu5OlUzCY4yRcUYHU357xy2a6MLVM+s0NOrLm0JWG1BoWEMP3F
-         TdwQ==
-X-Gm-Message-State: AOJu0YykFJq3uaSy3cxZ8L+Hb/DDza/70iVADR0mOnE/b6k2w4qpn6Rw
-	TTcEO1K4hoSfFOsJIvlpVYs5VQ==
-X-Google-Smtp-Source: AGHT+IFLuFWYBRvyWcbXSNal7y2L0gxiFMY6jL/MShNjQA43ddXnWWdRUS33btuzM+seVvagiGyBaw==
-X-Received: by 2002:a05:600c:3504:b0:409:5a4e:512b with SMTP id h4-20020a05600c350400b004095a4e512bmr5583059wmq.18.1700468686642;
-        Mon, 20 Nov 2023 00:24:46 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id bg3-20020a05600c3c8300b004077219aed5sm17387903wmb.6.2023.11.20.00.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 00:24:46 -0800 (PST)
-Date: Mon, 20 Nov 2023 03:24:43 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, freedreno@lists.freedesktop.org,
-	Su Hui <suhui@nfschina.com>, Sean Paul <sean@poorly.run>,
-	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>
-Subject: Re: [Freedreno] [PATCH v2] drm/msm: remove unnecessary NULL check
-Message-ID: <23209856-0459-49bc-99d0-cab66e1c098a@suswa.mountain>
-References: <ZSj+6/J6YsoSpLak@kadam>
- <095b7283-3555-cc38-a73e-83efec8a9bf8@quicinc.com>
- <62943ca3-26ac-8712-2caa-102dc98f099c@quicinc.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 889A49F;
+	Mon, 20 Nov 2023 00:54:14 -0800 (PST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 9910763394DBD;
+	Mon, 20 Nov 2023 16:54:05 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: tomas.winkler@intel.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	trix@redhat.com
+Cc: Su Hui <suhui@nfschina.com>,
+	alexander.usyskin@intel.com,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] misc: mei: client.c: fix some error code problem in mei_cl_write
+Date: Mon, 20 Nov 2023 16:53:45 +0800
+Message-Id: <20231120085343.157381-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62943ca3-26ac-8712-2caa-102dc98f099c@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 16, 2023 at 01:05:52PM -0800, Abhinav Kumar wrote:
-> 
-> 
-> On 11/1/2023 12:23 PM, Abhinav Kumar wrote:
-> > 
-> > 
-> > On 10/13/2023 1:25 AM, Dan Carpenter wrote:
-> > > This NULL check was required when it was added, but we shuffled the code
-> > > around and now it's not.? The inconsistent NULL checking triggers a
-> > > Smatch warning:
-> > > 
-> > > ???? drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
-> > > ???? variable dereferenced before check 'mdp5_kms' (see line 782)
-> > > 
-> > > Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the
-> > > _probe function"
-> 
-> A small error here. Its missing the closing brace for the Fixes tag.
-> Checkpatch cries without it.
-> 
+Clang static analyzer complains that value stored to 'rets' is never
+read. Remove some useless code, and let 'buf_len = -EOVERFLOW' to make
+sure we can return '-EOVERFLOW'.
 
-Sorry.  I must have accidentally deleted it after I ran checkpatch.
+mei_msg_hdr_init() return negative error code, rets should be
+'PTR_ERR(mei_hdr)' rather than '-PTR_ERR(mei_hdr)'.
 
-> I have fixed it while applying.
+Fixes: 0cd7c01a60f8 ("mei: add support for mei extended header.")
+Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/misc/mei/client.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks!
-
-regards,
-dan carpenter
+diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+index 9c8fc87938a7..00dac0a47da0 100644
+--- a/drivers/misc/mei/client.c
++++ b/drivers/misc/mei/client.c
+@@ -2011,7 +2011,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+ 
+ 	mei_hdr = mei_msg_hdr_init(cb);
+ 	if (IS_ERR(mei_hdr)) {
+-		rets = -PTR_ERR(mei_hdr);
++		rets = PTR_ERR(mei_hdr);
+ 		mei_hdr = NULL;
+ 		goto err;
+ 	}
+@@ -2020,19 +2020,17 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+ 
+ 	if (rets == 0) {
+ 		cl_dbg(dev, cl, "No flow control credentials: not sending.\n");
+-		rets = buf_len;
+ 		goto out;
+ 	}
+ 
+ 	if (!mei_hbuf_acquire(dev)) {
+ 		cl_dbg(dev, cl, "Cannot acquire the host buffer: not sending.\n");
+-		rets = buf_len;
+ 		goto out;
+ 	}
+ 
+ 	hbuf_slots = mei_hbuf_empty_slots(dev);
+ 	if (hbuf_slots < 0) {
+-		rets = -EOVERFLOW;
++		buf_len = -EOVERFLOW;
+ 		goto out;
+ 	}
+ 
+-- 
+2.30.2
 
