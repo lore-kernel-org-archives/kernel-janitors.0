@@ -1,86 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF29CAA
-	for <kernel-janitors@vger.kernel.org>; Sun, 19 Nov 2023 23:25:30 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r4yeo-00057c-1y; Mon, 20 Nov 2023 08:25:22 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r4yen-00AIZo-1F; Mon, 20 Nov 2023 08:25:21 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r4yem-0049UU-Ny; Mon, 20 Nov 2023 08:25:20 +0100
-Date: Mon, 20 Nov 2023 08:25:17 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH] serial: imx: convert not to use
- dma_request_slave_channel()
-Message-ID: <20231120072517.7b22ghddzs2w2w36@pengutronix.de>
-References: <a46b493c6b5cfa09417e3e138e304fd01b61e748.1700410346.git.christophe.jaillet@wanadoo.fr>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePjR+F68"
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0A6E5
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 00:24:48 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40853c639abso13902035e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 00:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700468686; x=1701073486; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LiwLz7rgORSXU5ZDowGagc2wpV+uTLoI4pnI3SOTIak=;
+        b=ePjR+F68z/TXKmj8OI/7Xg1oRcLPmHqdKZV/dRUNsS8pqVEQnnO1VLR7RgCmDrvARO
+         C/YvYnfk185f38imKCrx8vreLGR3zDgGbr0yTJxLeaY3hHU7T1iot98z83HazCzLBKAn
+         PRllcRXLOuR/7Uvfqjyxu6y78eJPpucfaXqf44W7GhOXStnjye+hVHObCxrLPu7vWFLa
+         lvda7nYfDInTx1OPgvi3JvgKguv4VODZb8yg2J3j7JS6jue8smUMGTd/ym+JHYLMeUtb
+         Tz+dF7cWmG1t1QTreYkAH9zsAnTIYLNqiAPli6j5mWUEAsWkoT0wSSLZ5BUELKLp/eE+
+         /f5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700468686; x=1701073486;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LiwLz7rgORSXU5ZDowGagc2wpV+uTLoI4pnI3SOTIak=;
+        b=k13GPjciIziqsycneG/QPqLunIyi6v2TN9vnmJ2qZYP31msK+o7+rCJEXmG/68l+6L
+         0oJWc8HaiupJT+M04Lnbce8hf8TnJYBkcOr8XM7qLbtpF7rIZOp/023/rY9tshQksoEO
+         pP0AfK+AYGQ9nqVftOEdr5CAfs5lp3sIfpPT2tmosAe6T1EVcy+teAn+NKlK3/bUvIu1
+         sPdH2zYHoJ005tC/NkAqT5btt7otkOaD61ZEW+NM3szxWEX5E2ePGBq1ETjMPesGDFLB
+         8A+T+/EdYjduVJtEMRhu5OlUzCY4yRcUYHU357xy2a6MLVM+s0NOrLm0JWG1BoWEMP3F
+         TdwQ==
+X-Gm-Message-State: AOJu0YykFJq3uaSy3cxZ8L+Hb/DDza/70iVADR0mOnE/b6k2w4qpn6Rw
+	TTcEO1K4hoSfFOsJIvlpVYs5VQ==
+X-Google-Smtp-Source: AGHT+IFLuFWYBRvyWcbXSNal7y2L0gxiFMY6jL/MShNjQA43ddXnWWdRUS33btuzM+seVvagiGyBaw==
+X-Received: by 2002:a05:600c:3504:b0:409:5a4e:512b with SMTP id h4-20020a05600c350400b004095a4e512bmr5583059wmq.18.1700468686642;
+        Mon, 20 Nov 2023 00:24:46 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id bg3-20020a05600c3c8300b004077219aed5sm17387903wmb.6.2023.11.20.00.24.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 00:24:46 -0800 (PST)
+Date: Mon, 20 Nov 2023 03:24:43 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, freedreno@lists.freedesktop.org,
+	Su Hui <suhui@nfschina.com>, Sean Paul <sean@poorly.run>,
+	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>
+Subject: Re: [Freedreno] [PATCH v2] drm/msm: remove unnecessary NULL check
+Message-ID: <23209856-0459-49bc-99d0-cab66e1c098a@suswa.mountain>
+References: <ZSj+6/J6YsoSpLak@kadam>
+ <095b7283-3555-cc38-a73e-83efec8a9bf8@quicinc.com>
+ <62943ca3-26ac-8712-2caa-102dc98f099c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4eph6aoa3f7dk5an"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a46b493c6b5cfa09417e3e138e304fd01b61e748.1700410346.git.christophe.jaillet@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <62943ca3-26ac-8712-2caa-102dc98f099c@quicinc.com>
 
+On Thu, Nov 16, 2023 at 01:05:52PM -0800, Abhinav Kumar wrote:
+> 
+> 
+> On 11/1/2023 12:23 PM, Abhinav Kumar wrote:
+> > 
+> > 
+> > On 10/13/2023 1:25 AM, Dan Carpenter wrote:
+> > > This NULL check was required when it was added, but we shuffled the code
+> > > around and now it's not.? The inconsistent NULL checking triggers a
+> > > Smatch warning:
+> > > 
+> > > ???? drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
+> > > ???? variable dereferenced before check 'mdp5_kms' (see line 782)
+> > > 
+> > > Fixes: 1f50db2f3e1e ("drm/msm/mdp5: move resource allocation to the
+> > > _probe function"
+> 
+> A small error here. Its missing the closing brace for the Fixes tag.
+> Checkpatch cries without it.
+> 
 
---4eph6aoa3f7dk5an
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry.  I must have accidentally deleted it after I ran checkpatch.
 
-Hello Christophe,
+> I have fixed it while applying.
 
-I didn't look at the patch, but only noticed the Subject while browsing
-my mail. In my (German) ear the sentence is broken. I'd do
+Thanks!
 
-	s/not to/to not/
+regards,
+dan carpenter
 
-(Not converting the driver could also be an empty patch :-)
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---4eph6aoa3f7dk5an
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVbCd0ACgkQj4D7WH0S
-/k6XJwf9FLhqB6dJ+NKyS2zYYu1CXC78TdfsG/Ct8GT4IvlI4pvClIA58mkVSbre
-K2/C9v9woHDO0vfRXy/8BJr4eM+qAsC8FkCcQK15TVdCb3FpfAZPIElh5EHY4DL7
-yaqwpY5i9CmeG6yip9vww2D/0jcNb7F5gjv6znQFzn/8xXXaz4rw5BDaLXrMPtUu
-mKdkla0yUbXURFnZNsK3A3XBoqOzPsejKjUmUzMavf69x1lUkZcAn/4DhER8rjVm
-3mxiuwpdF3/sSu5QCLplvFKhGTAn2ew6u4yCtKlLnxNWEVnk+CNktcYt1hrG9C4B
-PjV2VzGX/OZkUEnz3/PXLtMjbgRqBw==
-=bLaO
------END PGP SIGNATURE-----
-
---4eph6aoa3f7dk5an--
