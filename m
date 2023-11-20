@@ -1,32 +1,30 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="HEq2w6FP"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="bp/7xqTW"
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A6FBE;
-	Mon, 20 Nov 2023 07:12:57 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2DBBA;
+	Mon, 20 Nov 2023 08:52:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
 	:Date:subject:date:message-id:reply-to;
-	bh=tdw78nVfIm7n5esUENVhDomIV1AhhrekYq+Vayl1qzc=; b=HEq2w6FPT6t4B3bHlc8R47NQWb
-	YVOBWgUFREVmq4UeQ5Y9tW59Iaf4zovfq8K/cqa8CYoapuNNN/nGhEab8VPJzwNIhbucmnWI9KzkE
-	zi6qNulEwf52gLIPT2NnfFOAZd7BLphfb8R3loxTxjqWI7EzR5wu98s1mTNVuwYDyJq0=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:49764 helo=pettiford)
+	bh=IEmqZPNEHiRj9re2F4iCenA7GeqZoGYK1eYZxhU0tA4=; b=bp/7xqTWwBpASz6lw0QLmHwfKa
+	nbLaNxx6zUa49+0GkKPCOz6bL/SGXVNBlUbiCFhawFla2zuB+XUkafOCRl8OqtJMErw2aiihhNHw5
+	apeF4CXyT/Qhl0dJ9DqLblIcrZkNK04vhBRgD/0vop+i1u4tBGBxEL1E8VSTQ9Awzrtk=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:55666 helo=pettiford)
 	by mail.hugovil.com with esmtpa (Exim 4.92)
 	(envelope-from <hugo@hugovil.com>)
-	id 1r55x4-00085z-2T; Mon, 20 Nov 2023 10:12:43 -0500
-Date: Mon, 20 Nov 2023 10:12:40 -0500
+	id 1r57V2-00009x-Lj; Mon, 20 Nov 2023 11:51:53 -0500
+Date: Mon, 20 Nov 2023 11:51:52 -0500
 From: Hugo Villeneuve <hugo@hugovil.com>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Message-Id: <20231120101240.f3b6dd4e8c2cfaa8b0c30b7e@hugovil.com>
-In-Reply-To: <20231120072517.7b22ghddzs2w2w36@pengutronix.de>
-References: <a46b493c6b5cfa09417e3e138e304fd01b61e748.1700410346.git.christophe.jaillet@wanadoo.fr>
-	<20231120072517.7b22ghddzs2w2w36@pengutronix.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Nicolas
+ Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Message-Id: <20231120115152.77214ee015e6c501e500b22a@hugovil.com>
+In-Reply-To: <f2e9790d8b49aeba8b43ce018d30a35b837ac1eb.1700409299.git.christophe.jaillet@wanadoo.fr>
+References: <f2e9790d8b49aeba8b43ce018d30a35b837ac1eb.1700409299.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -34,31 +32,87 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 70.80.174.168
 X-SA-Exim-Mail-From: hugo@hugovil.com
 X-Spam-Level: 
-Subject: Re: [PATCH] serial: imx: convert not to use
+Subject: Re: [PATCH v2] serial: atmel: convert not to use
  dma_request_slave_channel()
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Mon, 20 Nov 2023 08:25:17 +0100
-Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de> wrote:
-
-> Hello Christophe,
->=20
-> I didn't look at the patch, but only noticed the Subject while browsing
-> my mail. In my (German) ear the sentence is broken. I'd do
->=20
-> 	s/not to/to not/
->=20
-> (Not converting the driver could also be an empty patch :-)
+On Sun, 19 Nov 2023 16:55:15 +0100
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
 Hi,
-I would suggest:
+change the subject to:
 
-"serial: imx: replace deprecated dma_request_slave_channel()"
+"... replace deprecated dma_request_slave_channel()"
 
 Hugo.
+
+
+> dma_request_slave_channel() is deprecated. dma_request_chan() should
+> be used directly instead.
+> 
+> Switch to the preferred function and update the error handling accordingly.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> v2: Also update atmel_prepare_rx_dma()
+> ---
+>  drivers/tty/serial/atmel_serial.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> index 1946fafc3f3e..6aeb4648843b 100644
+> --- a/drivers/tty/serial/atmel_serial.c
+> +++ b/drivers/tty/serial/atmel_serial.c
+> @@ -1013,14 +1013,18 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
+>  	struct device *mfd_dev = port->dev->parent;
+>  	dma_cap_mask_t		mask;
+>  	struct dma_slave_config config;
+> +	struct dma_chan *chan;
+>  	int ret, nent;
+>  
+>  	dma_cap_zero(mask);
+>  	dma_cap_set(DMA_SLAVE, mask);
+>  
+> -	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
+> -	if (atmel_port->chan_tx == NULL)
+> +	chan = dma_request_chan(mfd_dev, "tx");
+> +	if (IS_ERR(chan)) {
+> +		atmel_port->chan_tx = NULL;
+>  		goto chan_err;
+> +	}
+> +	atmel_port->chan_tx = chan;
+>  	dev_info(port->dev, "using %s for tx DMA transfers\n",
+>  		dma_chan_name(atmel_port->chan_tx));
+>  
+> @@ -1188,6 +1192,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
+>  	dma_cap_mask_t		mask;
+>  	struct dma_slave_config config;
+>  	struct circ_buf		*ring;
+> +	struct dma_chan *chan;
+>  	int ret, nent;
+>  
+>  	ring = &atmel_port->rx_ring;
+> @@ -1195,9 +1200,12 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
+>  	dma_cap_zero(mask);
+>  	dma_cap_set(DMA_CYCLIC, mask);
+>  
+> -	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
+> -	if (atmel_port->chan_rx == NULL)
+> +	chan = dma_request_chan(mfd_dev, "rx");
+> +	if (IS_ERR(chan)) {
+> +		atmel_port->chan_rx = NULL;
+>  		goto chan_err;
+> +	}
+> +	atmel_port->chan_rx = chan;
+>  	dev_info(port->dev, "using %s for rx DMA transfers\n",
+>  		dma_chan_name(atmel_port->chan_rx));
+>  
+> -- 
+> 2.34.1
+> 
