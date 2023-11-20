@@ -1,31 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392D211C91;
-	Mon, 20 Nov 2023 10:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qg3+xKVh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3207DC433C7;
-	Mon, 20 Nov 2023 10:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1700474574;
-	bh=cHimYpMhUep/CZIA34BYn3fN2F5JRYJOp6C9HTy9Kyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qg3+xKVhl3cPufNUbrh2VSLXFNldK96+YpJvA8DbDkkpeMp+Hx5ksGncTNmrmcl40
-	 ueSj7yj7matXWd0Jclb+dv+XnCNlKTTYridjT7lcAXzl0UsJAz9jOev0hji2Bsyu51
-	 Mzp/1zhn7NNHV2GI6uzOqUT3Gip1yGTSUq/UHXKs=
-Date: Mon, 20 Nov 2023 11:02:51 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: tomas.winkler@intel.com, arnd@arndb.de, nathan@kernel.org,
-	ndesaulniers@google.com, trix@redhat.com,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] misc: mei: client.c: fix problem of return
- '-EOVERFLOW' in mei_cl_write
-Message-ID: <2023112042-napped-snoring-b766@gregkh>
-References: <20231120095523.178385-1-suhui@nfschina.com>
- <20231120095523.178385-2-suhui@nfschina.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ch2Khcdq"
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A219F
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:00:44 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9fd0059a967so206643066b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 04:00:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700481643; x=1701086443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sjQoDu2espA/DfyPs5NRMbvJF9ab6oxweEuJ9vmOymk=;
+        b=ch2KhcdqzcOQ5yfhEq0U0Jta9luyp0Js4cirvGj52p11ZX3EkDnQi0DD9baIqpnUvf
+         kjW93wVEeYejPB9KkH+Icb3HCeWKAH/bjzIwF5XqyzKJzd41u6WaJB5+O8l+lheVb+2V
+         pEc4/81FzHoQ9UF/5n//Hn/vve+/Th7yiYBWdYWdmdPTgjsI9zFbT2p9g82yHyasr3Qq
+         c5ftIWMsY9d+RQrtVOpk92GvDh8JKEijbDljIUZNbO8sddH7kgiCDxVki+yvPS9qffrP
+         K9D0gCx4sIX3K7jCfgyijF6Hbx1TRr47Q1nAxf3H3TUt7icT+5q05d8jUknQtZkXFEHX
+         pxMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700481643; x=1701086443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjQoDu2espA/DfyPs5NRMbvJF9ab6oxweEuJ9vmOymk=;
+        b=OdD8Bhm6G8ag6OOQk1mysKWC71nM7JqITd8qnu6QMkOiF2o28KF6MNddTqH1fX0IfS
+         CRdRhvfp2vg8tpZYP+Zr1N6bQ0fPHYNLxiqkC5tFxmZFMUWW6CQBzGUJWF0ntmsQUxhv
+         vfqcWWMzsQdpcvj8U0ZCqwpaC3tpkKPtCbhawdk+E07DLaqbq88Q9hHOrJ7dyDXt5yNP
+         iMZMncwSCF39ob4EpQn20rhrGehI8A8L7t274+4Tg7iHXirmzE9qbzsVWrQJ8SKf37ug
+         ujR06AIaWgE41HKOA5O9bh3Zc43tZXyGzzG1d0SURgy88wZy1N8RwzAohnHNDGYVo6pW
+         qmrA==
+X-Gm-Message-State: AOJu0YwVlTRliXpvdO8qcLAVlLxiEAa4cG2UTZBKwsyRnxxOB7koyEtd
+	Fkx2O3OK1C6kwXcIVnMqanxtwA==
+X-Google-Smtp-Source: AGHT+IEGSzMI75iQxFYNWOV/kb9Dv4sZmqfv+pBqswKoug6sgFP47kbo/NInWu7mOCU4xNf0dB0aOA==
+X-Received: by 2002:a17:906:c111:b0:9ee:9d98:7d8c with SMTP id do17-20020a170906c11100b009ee9d987d8cmr1700646ejc.6.1700481642741;
+        Mon, 20 Nov 2023 04:00:42 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id o9-20020a509b09000000b0053deb97e8e6sm3671902edi.28.2023.11.20.04.00.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 04:00:42 -0800 (PST)
+Date: Mon, 20 Nov 2023 07:00:39 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: David Laight <David.Laight@aculab.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Brian Foster <bfoster@redhat.com>,
+	"linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] bcachefs: remove redundant initialization of
+ variable level
+Message-ID: <ecc75e51-7244-4caa-b89e-b2fc89f6c7bc@suswa.mountain>
+References: <20231111204528.339603-1-colin.i.king@gmail.com>
+ <20231111210208.qra7xhf2nd4pqvst@moria.home.lan>
+ <184af6778ab64b3eb6a4a6071974d5e8@AcuMS.aculab.com>
+ <20231111233904.zxgqyw3epefiqiro@moria.home.lan>
+ <d106f21ef1164241a275b1f11b82e7b7@AcuMS.aculab.com>
+ <20231112191249.srvcmay2yeewy7ql@moria.home.lan>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -34,64 +63,19 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231120095523.178385-2-suhui@nfschina.com>
+In-Reply-To: <20231112191249.srvcmay2yeewy7ql@moria.home.lan>
 
-On Mon, Nov 20, 2023 at 05:55:26PM +0800, Su Hui wrote:
-> Clang static analyzer complains that value stored to 'rets' is never
-> read.Let 'buf_len = -EOVERFLOW' to make sure we can return '-EOVERFLOW'.
-> 
-> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
-> v2: split v1 patch to different patches
-> v1: https://lore.kernel.org/all/5c98fc07-36a9-92cc-f8d6-c4efdc0c34aa@nfschina.com/
-> 
->  drivers/misc/mei/client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
-> index 7ea80779a0e2..9d090fa07516 100644
-> --- a/drivers/misc/mei/client.c
-> +++ b/drivers/misc/mei/client.c
-> @@ -2032,7 +2032,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
->  
->  	hbuf_slots = mei_hbuf_empty_slots(dev);
->  	if (hbuf_slots < 0) {
-> -		rets = -EOVERFLOW;
-> +		buf_len = -EOVERFLOW;
->  		goto out;
->  	}
->  
-> -- 
-> 2.30.2
-> 
+On Sun, Nov 12, 2023 at 02:12:49PM -0500, Kent Overstreet wrote:
+> David, I don't want you giving this kind of advice here, and if finding
+> declarations is something you have trouble with - perhaps find something
+> easier to do.
 
-Hi,
+David is correct.  Putting declarations in the middle of code is still
+frowned on.  It's necessary for the __cleanup work and it's okay in for
+loop iterators but it's generally frowned on.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Please don't force people to redo patches in non-standard style.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+regards,
+dan carpenter
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
