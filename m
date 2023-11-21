@@ -1,92 +1,114 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WoEXrYmT"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E207011C
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 23:47:49 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-409299277bbso19926775e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 23:47:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700552868; x=1701157668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J1Y57R3L0HcMhbg8KOSSlooP9Ta78IZFzYPPiGoMQM8=;
-        b=WoEXrYmTOCuaf6fQP2MS3rLn0xC8In8RcUy376BoNX7OoJhhha/gq397UppnvXY0DW
-         8gjGzKsQvoc21JTUEL3triPQ0dt96FVsbYewRHdmR5mi/z+YEPp1aASWh2C0j497BM8T
-         N5pDB9ag9sbyLX5Ei7niXFl7zrHjbLUn8mOq6IaY471PdhbxYScWwFLiQmSYK+CmWmiF
-         8PCsyhFr0t40mB2q77I3mktwROXOGCiQPnKlSpLtz6eMG8/w46vcw9oOvFwRs7+YeBJn
-         Rol/DyzLpwGlArxk7VJ+VzjFZWsziqSUnlPuXaIsVdflpRI9T1nghlDyPBYxtznVUgfL
-         P1jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700552868; x=1701157668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J1Y57R3L0HcMhbg8KOSSlooP9Ta78IZFzYPPiGoMQM8=;
-        b=xDpvucWG9b3UL+GMZ3deJYTJz2unhbQSpnwiiF22d/O7v3+VfjGcNcZNnKWBF+Hiv+
-         ZEBe9gbNPXdxpTtccdNveBxJHextwkfUtZRZsDc8jTIWs8XWvEWPJFxwhyLcV107CXnO
-         NaEWRFAzj4LZp1ARHh4HowWBmBs2NWzBiseSOozVSwV72ZIwfHSUj8WuqWPYuVx0pd+N
-         TAz/Hm5QEhlhOrUj8PoGMT4TfEpd12SRHoBZnkDO1Bk1YltRr56SLibMVYHdAFf9bxim
-         SicGF2i76ok6YaskQ1r5Zu9jQmDu6xSvP4LqRdElO/gMGVBmN9vBCmV/MeSnQNRgw7GJ
-         SXuA==
-X-Gm-Message-State: AOJu0Yy6cQGJFLSIYOsFp/zXkC5N8V16p1mIG3OTPuJ5hCZ3wLBiyy9P
-	kjob4hTRo9f0OBklpPmYqcgCOw==
-X-Google-Smtp-Source: AGHT+IH4wwV1/n3G3r43AoKA8JC1M2MY5Nd1HmsDJfGHfBNRI/Jxb2nv4O1DIdpdiedpMdwWvkGfcg==
-X-Received: by 2002:a05:600c:4f55:b0:402:f55c:faee with SMTP id m21-20020a05600c4f5500b00402f55cfaeemr7478517wmq.26.1700552868351;
-        Mon, 20 Nov 2023 23:47:48 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n21-20020a7bc5d5000000b003fbe4cecc3bsm19975709wmk.16.2023.11.20.23.47.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 23:47:48 -0800 (PST)
-Date: Tue, 21 Nov 2023 02:47:44 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: zhujun2 <zhujun2@cmss.chinamobile.com>
-Cc: kernel-janitors@vger.kernel.org, mathieu.desnoyers@efficios.com,
-	ivan.orlov0322@gmail.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH] selftests/media_tests: fix a resource leak
-Message-ID: <71465605-7179-4281-8ec8-80f741e78038@suswa.mountain>
-References: <8431b227-d053-4a9a-a278-2a43753fdaf7@efficios.com>
- <20231121025918.2570-1-zhujun2@cmss.chinamobile.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A617D9
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 23:57:20 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5LdF-00087q-8G; Tue, 21 Nov 2023 08:57:17 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5LdE-00AWvb-Lf; Tue, 21 Nov 2023 08:57:16 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r5LdE-004qWr-CN; Tue, 21 Nov 2023 08:57:16 +0100
+Date: Tue, 21 Nov 2023 08:57:16 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Amit Dhingra <mechanicalamit@gmail.com>, kernel@pengutronix.de,
+	kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
+	linux-spi@vger.kernel.org
+Subject: Re: spi: cadence-xspi: Drop useless assignment to NULL
+Message-ID: <20231121075716.it3cpwhwymkaqjrh@pengutronix.de>
+References: <20231105143932.3722920-2-u.kleine-koenig@pengutronix.de>
+ <233689d7-9409-406b-9383-49f10cd29336@web.de>
+ <CAO=gReGA17gHSr4ftN1Jwrjt5t76oAgaL6+n6X4wD0osJnuq4g@mail.gmail.com>
+ <53db2c8f-7b9b-47f7-89ba-d78584c12d7b@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6a3voyp4n6fauivi"
 Content-Disposition: inline
-In-Reply-To: <20231121025918.2570-1-zhujun2@cmss.chinamobile.com>
+In-Reply-To: <53db2c8f-7b9b-47f7-89ba-d78584c12d7b@web.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 20, 2023 at 06:59:18PM -0800, zhujun2 wrote:
-> The opened file should be closed in main(), otherwise resource
-> leak will occur that this problem was discovered by code reading
-> 
-> Signed-off-by: zhujun2 <zhujun2@cmss.chinamobile.com>
-> ---
->  tools/testing/selftests/media_tests/media_device_open.c | 3 +++
->  tools/testing/selftests/media_tests/media_device_test.c | 3 +++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/media_tests/media_device_open.c b/tools/testing/selftests/media_tests/media_device_open.c
-> index 93183a37b133..2dfb2a11b148 100644
-> --- a/tools/testing/selftests/media_tests/media_device_open.c
-> +++ b/tools/testing/selftests/media_tests/media_device_open.c
-> @@ -70,6 +70,7 @@ int main(int argc, char **argv)
->  	fd = open(media_device, O_RDWR);
->  	if (fd == -1) {
->  		printf("Media Device open errno %s\n", strerror(errno));
-> +		close(fd);
 
-Open failed so there is nothing to close.
+--6a3voyp4n6fauivi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  		exit(-1);
+On Tue, Nov 21, 2023 at 08:34:35AM +0100, Markus Elfring wrote:
+> >>> Static structs are initialized with zeros for unspecified fields.
+> >>> So there is no advantage to explicitly initialize .remove with NULL
+> >>> and the assignment can be dropped without side effects.
+> >>
+> >> Would you become interested to delete redundant initialisation repetit=
+ions
+> >> at any more source code places?
+> >>
+> >> A corresponding script for the semantic patch language (Coccinelle sof=
+tware)
+> >> can point more remaining update candidates out for various components.
+> >
+> > Coccinelle shows 471 files.
+>=20
+> I got the impression that more source code places can be reconsidered acc=
+ordingly.
+>=20
+> @deletion@
+> identifier member, s, var;
+> @@
+>  static struct s var =3D
+>  {
+>  ...,
+> -.member =3D \( 0 \| NULL \) ,
+>  ...
+>  };
+>=20
+>=20
+> Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> rg '^-\s' =
+=E2=80=A6/Projekte/Bau/Linux/scripts/Coccinelle/delete_NULL_assignment_in_s=
+tatic_struct-20231117.diff | wc -l
+> 6567
 
-When we exit() then all the resources are automatically reclaimed by the
-operating system so we really don't worry about leaks at all in short
-running programs.  It's different for an operating system or a web
-server which is expected to have a long uptime.  But these programs are
-going to run quickly and then exit so resource leaks are not an issue.
+Removing =3D 0 assignments should be carefully reviewed. I skimmed the
+changes to drivers/pwm and would oppose to both changes. Even for my
+patch I wasn't sure if it's a good idea and talked to Mark before
+sending it.
 
-regards,
-dan carpenter
+Best regards
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--6a3voyp4n6fauivi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVcYtsACgkQj4D7WH0S
+/k7aOAgAmw6b08lNM0KVuD1mWeH8O0F945eBgGHR+dlXSFK4qBWH3gxL5hJNZ1K7
+8A0o9C4Wr09PjuAxSH2v4NNLVVSZJ6DMDirGHL09v7m0Bo96/9OKXa7L29ImikZb
+hX4hZjPcMwjgZIHfX3z68IiIWvh7ZLMnqnSgMejfBMqsgKxOGnT+rPQHAIlSd+Kv
+Jzc1szjGNG18gbVbvx/E5Z4iMTnZHc0WlGIigUOJKWTJJh1FdmCXkeLD16ETO3ZT
+iwQGGJ06o8gjicnzoGILvwFxvtpc6duv5YqlX44DjyZA6oX4UhntpGr1xDyk9GdV
+4nTgL/4DyVbcQwyOASd7ELZPbr5lig==
+=HrY5
+-----END PGP SIGNATURE-----
+
+--6a3voyp4n6fauivi--
