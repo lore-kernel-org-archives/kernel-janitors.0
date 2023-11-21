@@ -1,94 +1,92 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3JFzdoVX"
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47C2D71
-	for <kernel-janitors@vger.kernel.org>; Tue, 21 Nov 2023 06:05:39 -0800 (PST)
-Received: by mail-oo1-xc30.google.com with SMTP id 006d021491bc7-58a0d0cdcc1so3570766eaf.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 21 Nov 2023 06:05:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1700575539; x=1701180339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9/TcEF+FhqZ2nz6qvi/9iJUZggk71Tmqu0as2U0xGu4=;
-        b=3JFzdoVXCUHDirJnVsMkGwwuXQY4e9DuM4YaIHoZFNPMSxUHoqRySYBWBdNqSMjEOu
-         0kUmgIbpNvUMjVL7sWaN6vP6VOy374WcAWPNBTCq2sk8O+Hd83vgoMzJ62pLwDdVKRcV
-         a0VrrFm/BROgonetQIH6hKq45kL4OqsJVRI6JYKjft4fxrMGxFdjY189G2cw8VQ+IfNW
-         n7s/Ox1Y0BWueg/YmNGtZA+CmEb5iuvunqdYCCXla8pFo/YExJdVwSz/jTjYBpK5HQOg
-         ZZwfNmcBe5+arf9u5/MVNaKxAuh24I560SfJH0zTPcKBcfnG6LI0AmFjrHVMmej//uBP
-         ZnSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700575539; x=1701180339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9/TcEF+FhqZ2nz6qvi/9iJUZggk71Tmqu0as2U0xGu4=;
-        b=vSWj7TJKr/VzMsFgylFRhOmRqn2emvAzabP7LTvwAsPpH/yx7VLmu1EI9W6YRSDUey
-         WyZZBuLvq6ZWij562it/a1qkgDmZPafKFlwLFURsPGec9gbRU6uxEGuRh8h3jwu06AWH
-         f75NkVEBStkm+u51M0St75pLQ9c1do4eLh929ioxkhJDeJdz0MrkEQ1KOcMJNyr8635G
-         i+OPUhP7J+KNDws9AZBZ9mjwe81IwiQ7+XFTd5fC58LN0L1lthES1dUXpv/9K850Pe5y
-         7I35gUuFfkuPAvI6Qj5ckBfz8MbBbxzgViojaimHclYX8Phwr2ePMooDcNu/KeBKzJcF
-         Y9WA==
-X-Gm-Message-State: AOJu0Yyus3qJOuGRvO38SdIZipwz0khbvz3VvQdDLXI96hMwJtH3ZGir
-	mgMzzLGhOdHI2sRveIuKXkjKzotYrFk8KBSXT3jGesj9gqNdRKLi
-X-Google-Smtp-Source: AGHT+IFdtzRXzXfVy2Uyhi9mLRyDdjmHGp1/Reyrw5PR3wZ9oCq2hd80cAXzSj382UrLHy3w0bEY47RRQFKxOu/bww4=
-X-Received: by 2002:a05:6358:199b:b0:169:7dad:fee1 with SMTP id
- v27-20020a056358199b00b001697dadfee1mr4692933rwn.4.1700575538944; Tue, 21 Nov
- 2023 06:05:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dsmpedhh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A7C9E;
+	Tue, 21 Nov 2023 10:49:55 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ALGLmuD020418;
+	Tue, 21 Nov 2023 18:49:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=lCgylGPv2jsccAcpuVS4wvUD9Pfnb4fjRsSLJaKLxFE=;
+ b=DsmpedhhMbFvtrefEyqaOIbD1Tv8h2Rvho5jrGE9fw1SuCA8LmebDI/DjBDgBQV/Yzxg
+ px/yvCRxls30XPgfkJ97yC2HaCX9qQePNDah1Yob1WupKk9k0JHehyOFdwn3Ee/M9Zwo
+ YYKdJkf11hFaMDal9OJPPgTh/3XALnVTU6mG5dGN5n4NFoniWt6iJODLDwAitq0VrKa/
+ xoXBUmm/WGdKd7UvrzDOH9JrXupkqwgXJ8h7LQqn1TO7n2DRbstX+OoDRwl8R2sOuftT
+ VqyWRkv83nRpDbGTSr/DEssJ9Ss/thji0j+7J+Wkfw4QQEzuBiTdURrTRnwRHCo3CMLu VQ== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ugyb48fd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Nov 2023 18:49:42 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ALInf6X000863
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Nov 2023 18:49:41 GMT
+Received: from abhinavk-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 21 Nov 2023 10:49:40 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Su Hui <suhui@nfschina.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/msm: remove unnecessary NULL check
+Date: Tue, 21 Nov 2023 10:49:29 -0800
+Message-ID: <170059249755.25841.10526095705316851191.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <ZSj+6/J6YsoSpLak@kadam>
+References: <ZSj+6/J6YsoSpLak@kadam>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231121085024.15955-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20231121085024.15955-1-lukas.bulwahn@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 21 Nov 2023 15:05:28 +0100
-Message-ID: <CAMRc=Mf-F5vRPwtV37tuj1-Nwm6ncWM9xfgY-DvYaXXfK1rA7w@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add TI da8xx bus driver to TI DAVINCI
- MACHINE SUPPORT
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xIi2dVQc35rpRu0TlypnHPZiz5Iapafy
+X-Proofpoint-ORIG-GUID: xIi2dVQc35rpRu0TlypnHPZiz5Iapafy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-21_10,2023-11-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 mlxlogscore=674
+ malwarescore=0 adultscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311210147
 
-On Tue, Nov 21, 2023 at 9:50=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
-com> wrote:
->
-> While doing some code cleanup in drivers/bus/, I noticed that the file
-> drivers/bus/da8xx-mstpri.c has no maintainer.
->
-> Although the file has not been touched a lot lately, the git history tell=
-s
-> us that Bartosz Golaszewski is the main author. Further, the driver's
-> config depends on config ARCH_DAVINCI_DA8XX, and that is defined in
-> arch/arm/mach-davinci/, which is part of TI DAVINCI MACHINE SUPPORT with
-> Bartosz already being its maintainer.
->
-> Add drivers/bus/da8xx-mstpri.c to TI DAVINCI MACHINE SUPPORT.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e829dbac1e99..e9cbf6e353bd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21707,6 +21707,7 @@ T:      git git://git.kernel.org/pub/scm/linux/ke=
-rnel/git/brgl/linux.git
->  F:     Documentation/devicetree/bindings/i2c/i2c-davinci.txt
->  F:     arch/arm/boot/dts/ti/davinci/
->  F:     arch/arm/mach-davinci/
-> +F:     drivers/bus/da8xx-mstpri.c
->  F:     drivers/i2c/busses/i2c-davinci.c
->
->  TI DAVINCI SERIES CLOCK DRIVER
-> --
-> 2.17.1
->
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 13 Oct 2023 11:25:15 +0300, Dan Carpenter wrote:
+> This NULL check was required when it was added, but we shuffled the code
+> around and now it's not.  The inconsistent NULL checking triggers a
+> Smatch warning:
+> 
+>     drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
+>     variable dereferenced before check 'mdp5_kms' (see line 782)
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] drm/msm: remove unnecessary NULL check
+      https://gitlab.freedesktop.org/drm/msm/-/commit/56466f653cb5
+
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
