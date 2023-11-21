@@ -1,89 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-X-Greylist: delayed 185 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Nov 2023 19:02:30 PST
-Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 39F63BC
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 Nov 2023 19:02:29 -0800 (PST)
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee2655c1d09f85-7c2b4;
-	Tue, 21 Nov 2023 10:59:21 +0800 (CST)
-X-RM-TRANSID:2ee2655c1d09f85-7c2b4
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.54.5.255])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee7655c1d082ed-c5454;
-	Tue, 21 Nov 2023 10:59:21 +0800 (CST)
-X-RM-TRANSID:2ee7655c1d082ed-c5454
-From: zhujun2 <zhujun2@cmss.chinamobile.com>
-To: kernel-janitors@vger.kernel.org
-Cc: mathieu.desnoyers@efficios.com,
-	ivan.orlov0322@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] selftests/media_tests: fix a resource leak
-Date: Mon, 20 Nov 2023 18:59:18 -0800
-Message-Id: <20231121025918.2570-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <8431b227-d053-4a9a-a278-2a43753fdaf7@efficios.com>
-References: <8431b227-d053-4a9a-a278-2a43753fdaf7@efficios.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iSjuWaRs"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802AA94;
+	Mon, 20 Nov 2023 23:35:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1700552124; x=1701156924; i=markus.elfring@web.de;
+	bh=EosEUZ0nK4S+qZnLMvFL/+6ZdrFe0Z8ZAoXFRjOozyU=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=iSjuWaRsQcYFrYo58ibZ+AOguuZUd+C3gBgq8nSVni4KmTs97IWvMvT6pQeyjCVW
+	 LzU4Q1uQLVJ8Vb8yQBkMT8ibLDk1Tyj36+bGqEHu9zPt/5c4o37tddwUVd7ExCCqb
+	 GsjayoqBhJkUA8OBe893xnayDuVkf2j+74gDgCok0YfF8vF/D3SBbjncA9QkywRzt
+	 U/uw0X8SF4Zu0Oojchb4oAKgMKMwrfGeW31AZHsLd8/5THvE3/HQmqroE9x8oPPL/
+	 GReuM3ManSXMCNZYdgNcUu3L3xA+j/1bonIEO/OGTmBM8KwOg4wOT/ZhHCh5rS5jM
+	 30u+5amJBTWPpnhDMw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxYbN-1rGery3joX-00xgT9; Tue, 21
+ Nov 2023 08:35:23 +0100
+Message-ID: <53db2c8f-7b9b-47f7-89ba-d78584c12d7b@web.de>
+Date: Tue, 21 Nov 2023 08:34:35 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: spi: cadence-xspi: Drop useless assignment to NULL
+To: Amit Dhingra <mechanicalamit@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ kernel@pengutronix.de, kernel-janitors@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, cocci@inria.fr, Mark Brown
+ <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20231105143932.3722920-2-u.kleine-koenig@pengutronix.de>
+ <233689d7-9409-406b-9383-49f10cd29336@web.de>
+ <CAO=gReGA17gHSr4ftN1Jwrjt5t76oAgaL6+n6X4wD0osJnuq4g@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAO=gReGA17gHSr4ftN1Jwrjt5t76oAgaL6+n6X4wD0osJnuq4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hi5eKYljFyBKSF9GeUsBiWyfByALJmAv3HKwvtad5NVY+MXQ0ZV
+ jkx4/iy5jLRQU+ijXzNSSfjItj94nVM5bAjdjMO6gWA237hkMof1r/UCMzh9VzHT6BtXUi7
+ s0XZUMiwlWlbq7SJEFqhb7RqZy1X9QdqQEVMNq6aO2u8ZHnJ70qCUGIVYIZ2h8yvV5skeIw
+ RjGDt9lZDDzVJGLI8QVnw==
+UI-OutboundReport: notjunk:1;M01:P0:wTbQSrQEXqE=;XVsxU66yTz0omK/kA3Zk2un9oxN
+ WCuwBpuA1L6gElfpabAQT4/Z0mtrFIGDXUG1iHT+dMLnxtUnPfuuuTdRETtSFchK7QPEle/no
+ OLoPBkOTamJiadTrgrSPPdMfBUcDUqDVYoH740AuFnbJR7ehUBoCi++L8ylgUgrEm7D/01Dbs
+ eoh4ciWrtcaQ5tHTC2fbh8qCDKGzKZtWer5r6i0UX8fvC7cnW3auJRN8G7ysZsdC2acfpRrHq
+ xmPRJu08BEGe07xN+zpFa6ZUO/bIembEBYKTdQqbUQu+2mAQhP83X+jKniRACV/43GlqeYTop
+ 7x4iL1ttWQ+6M1gJr7TyugjLz9mwUAdkj91zftCVwA15dMMJTnnR2NCsy75f7XKyi/VLAyu6X
+ t4Yew75Fq0rH4qJ02oSS0susktGLsQoVhqqxrUhr7kUH/PCU/MuZF9KeoHEOUu67qiMCL896w
+ TIMmC8UCbgEyi48+NmNsPQkbm1KHoBpmaCls6vLaU/MrDOQFVBDpUNvNsHqzfqP4C2GCpjuyt
+ 9Boc9beOvnqTBePplIE360xwRRqCPPAP88jObaOMbD/8t4HyOpKZoXY8oV0WvzAeFt/BmdxtF
+ 4wLc2WFlOWikIvEGoTGWo0TPy1nPVhIOdYbXuf06iV88WSEyUcgMnUU7S1jCeIVqPkVdJP91x
+ fA/zQ5lFjPjhj65+CkhBGTP7NZzhIvZcXo7kWTUCZxK6Wa/5N3MJqWoJNMrD3qvgPdpiaKeC0
+ 2f89ZVXWrfSNZ5Gj3Tr6ouJW4stB6hQg73yL73xqAd3h1J88KSzORF7aloVpU6wRvLQkGjxzp
+ Nl3yVq9Yfnpr1oVqQ0AnATRPdGKsHdpSVKT/afzFQXfXuWspQTAci65dkCKmCkxfH04JTecDd
+ Jgcz3ynA+vtMmVVKPtnQipUSTcvurhuW7ZaDnXZMLavmFAgNbEleAEEhP/0UIpZR27ty0OPEO
+ 7JSovAJNiEeIBZVZDqQGNHpEk2Q=
 
-The opened file should be closed in main(), otherwise resource
-leak will occur that this problem was discovered by code reading
+>>> Static structs are initialized with zeros for unspecified fields.
+>>> So there is no advantage to explicitly initialize .remove with NULL
+>>> and the assignment can be dropped without side effects.
+>>
+>> Would you become interested to delete redundant initialisation repetiti=
+ons
+>> at any more source code places?
+>>
+>> A corresponding script for the semantic patch language (Coccinelle soft=
+ware)
+>> can point more remaining update candidates out for various components.
+>
+> Coccinelle shows 471 files.
 
-Signed-off-by: zhujun2 <zhujun2@cmss.chinamobile.com>
----
- tools/testing/selftests/media_tests/media_device_open.c | 3 +++
- tools/testing/selftests/media_tests/media_device_test.c | 3 +++
- 2 files changed, 6 insertions(+)
+I got the impression that more source code places can be reconsidered acco=
+rdingly.
 
-diff --git a/tools/testing/selftests/media_tests/media_device_open.c b/tools/testing/selftests/media_tests/media_device_open.c
-index 93183a37b133..2dfb2a11b148 100644
---- a/tools/testing/selftests/media_tests/media_device_open.c
-+++ b/tools/testing/selftests/media_tests/media_device_open.c
-@@ -70,6 +70,7 @@ int main(int argc, char **argv)
- 	fd = open(media_device, O_RDWR);
- 	if (fd == -1) {
- 		printf("Media Device open errno %s\n", strerror(errno));
-+		close(fd);
- 		exit(-1);
- 	}
- 
-@@ -79,4 +80,6 @@ int main(int argc, char **argv)
- 	else
- 		printf("Media device model %s driver %s\n",
- 			mdi.model, mdi.driver);
-+
-+	close(fd);
- }
-diff --git a/tools/testing/selftests/media_tests/media_device_test.c b/tools/testing/selftests/media_tests/media_device_test.c
-index 4b9953359e40..7cabb62535a7 100644
---- a/tools/testing/selftests/media_tests/media_device_test.c
-+++ b/tools/testing/selftests/media_tests/media_device_test.c
-@@ -79,6 +79,7 @@ int main(int argc, char **argv)
- 	fd = open(media_device, O_RDWR);
- 	if (fd == -1) {
- 		printf("Media Device open errno %s\n", strerror(errno));
-+		close(fd);
- 		exit(-1);
- 	}
- 
-@@ -100,4 +101,6 @@ int main(int argc, char **argv)
- 		sleep(10);
- 		count--;
- 	}
-+
-+	close(fd);
- }
--- 
-2.17.1
+@deletion@
+identifier member, s, var;
+@@
+ static struct s var =3D
+ {
+ ...,
+-.member =3D \( 0 \| NULL \) ,
+ ...
+ };
 
 
+Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> rg '^-\s' =E2=
+=80=A6/Projekte/Bau/Linux/scripts/Coccinelle/delete_NULL_assignment_in_sta=
+tic_struct-20231117.diff | wc -l
+6567
 
+Regards,
+Markus
