@@ -1,105 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id BA44B10F1;
-	Tue, 21 Nov 2023 19:06:42 -0800 (PST)
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id B38D060621C85;
-	Wed, 22 Nov 2023 11:06:31 +0800 (CST)
-Message-ID: <22c4788d-1ba4-52c7-4ddc-5a3b0ec2acb3@nfschina.com>
-Date: Wed, 22 Nov 2023 11:06:31 +0800
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeLGbfb0"
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D5B185;
+	Tue, 21 Nov 2023 21:41:53 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-548f6f3cdc9so2474634a12.2;
+        Tue, 21 Nov 2023 21:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700631711; x=1701236511; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/aZqmcfYBbrAwHfQxSijXcVr/4Fn8eCufnaWHNVSYUo=;
+        b=aeLGbfb0HMdvORo2L05IAWuHypYYkYV0hHu6ycMbS5E6QuFOmpWSMhjZdojuYfseuF
+         C8Hy38BXlYXuMjLYcPvsLvMz6eecSpXj6lr6/SoSyD6Vj+fin0WDKisb4MyGjAZ0T5Il
+         Jxf6RMVg8EPAqBZVF4NbBEY4fb8csAl/fL4Kdasmd4ScIRn5ub+0HatdYOwrcbpLvPPB
+         tbnnKzifIMs0xCN74jIKLyLC8EEnE/Ylr9EhFhiK8TF+oNQK1aeg6PNSJhwFe5GkM4Wo
+         IbWyIOV/8P317669Cty4H/q+GD0aPIAinSyn0Rr4G59GNP0G6Hn/TbyUCTu+gNtcaJtr
+         09pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700631711; x=1701236511;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/aZqmcfYBbrAwHfQxSijXcVr/4Fn8eCufnaWHNVSYUo=;
+        b=Th3yzdbHMQzCi/2du/l3Wh5EGze0E/vQBCyC4+1ZrHZ1fZbC8NFAKL1fwD/1nKog97
+         8b6WZ3PA3DZZlNME31vqZG9WOZs5LQlupEWWv04NgjWyGSmwOigJXgO2SSmvjbxvJ/tw
+         NinqdVTTeqLVBO8pTc+cKZoUpWvdIVVMXUE+MNNMq3fZqjg2DUxsngE/HWPl/d64Qkjb
+         /txH91VMqUjebp1W/g7sYCnXMRt9k2t8QFn+tFpLTW0pDvcbI3ow8SbFwroxt4N7CNKy
+         E1WyX0atEBsYmWOUpCEBsGD0vnLua/w9aGUhhznxI57xjqISuXF+3Hu3zI6jU6eyMkBP
+         SoIw==
+X-Gm-Message-State: AOJu0YyapdWm1xPpJ+l88HQqAghQnaS7OC1OhHG7QSCG2OVe38ySl38w
+	+XJkr1zPPVmGCua0XSNMWkSar8fguJ4=
+X-Google-Smtp-Source: AGHT+IEImB9WEU8Dff7wAmw0uyKQ6unSKzYjR8guFrN7so2VrCSOyEM6eY2QufNTE5ftsjeRLo6A7g==
+X-Received: by 2002:a17:906:4119:b0:a03:a857:c6e0 with SMTP id j25-20020a170906411900b00a03a857c6e0mr507265ejk.77.1700631711167;
+        Tue, 21 Nov 2023 21:41:51 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:14bb:d13c:65e3:46bf])
+        by smtp.gmail.com with ESMTPSA id r15-20020a1709067fcf00b00985ed2f1584sm6132440ejs.187.2023.11.21.21.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 21:41:50 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add section MIPS BAIKAL-T1 SOC DRIVERS
+Date: Wed, 22 Nov 2023 06:41:42 +0100
+Message-Id: <20231122054142.31322-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] misc: mei: client.c: fix some error code problem in
- mei_cl_write
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
- nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
- alexander.usyskin@intel.com, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2023/11/20 23:03, Dan Carpenter wrote:
-> On Mon, Nov 20, 2023 at 04:53:45PM +0800, Su Hui wrote:
->> Clang static analyzer complains that value stored to 'rets' is never
->> read. Remove some useless code, and let 'buf_len = -EOVERFLOW' to make
->> sure we can return '-EOVERFLOW'.
->>
->> mei_msg_hdr_init() return negative error code, rets should be
->> 'PTR_ERR(mei_hdr)' rather than '-PTR_ERR(mei_hdr)'.
->>
->> Fixes: 0cd7c01a60f8 ("mei: add support for mei extended header.")
->> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   drivers/misc/mei/client.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
->> index 9c8fc87938a7..00dac0a47da0 100644
->> --- a/drivers/misc/mei/client.c
->> +++ b/drivers/misc/mei/client.c
->> @@ -2011,7 +2011,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
->>   
->>   	mei_hdr = mei_msg_hdr_init(cb);
->>   	if (IS_ERR(mei_hdr)) {
->> -		rets = -PTR_ERR(mei_hdr);
->> +		rets = PTR_ERR(mei_hdr);
-> KTODO: write a static checker rule which complains -PTR_ERR()
->
-> This might be complicated because there are parts of networking where
-> we store error codes as positive values.  But there is enough context in
-> this function to create some sort of warning about this code.  "Mixing
-> positive and negative error codes" perhaps?
+In recent years, a number of drivers for the MIPS Baikal-T1 SoC have been
+added to the kernel tree, but there is no dedicated MAINTAINERS section for
+this SoC.
 
-Maybe add a check in checkpatch.pl is a good idea?
+As all of the code has been contributed by Serge Semin, let us assume he is
+still the active maintainer for this code rather than marking it orphan.
 
->
-> $ git grep -n '\-PTR_ERR'
-> block/partitions/core.c:574:                   disk->disk_name, p, -PTR_ERR(part));
-> drivers/infiniband/ulp/ipoib/ipoib_multicast.c:291:                        -PTR_ERR(ah));
-> drivers/misc/mei/client.c:2014:         rets = -PTR_ERR(mei_hdr);
-> drivers/net/ethernet/intel/igb/igb_main.c:8963:                 unsigned int xdp_res = -PTR_ERR(skb);
-> drivers/net/ethernet/intel/igc/igc_main.c:2639:                 unsigned int xdp_res = -PTR_ERR(skb);
-> drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:2348:                     unsigned int xdp_res = -PTR_ERR(skb);
-> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:5431:                         unsigned int xdp_res = -PTR_ERR(skb);
-> drivers/phy/sunplus/phy-sunplus-usb2.c:278:             ret = -PTR_ERR(phy);
-> drivers/scsi/libfc/fc_elsct.c:86:               switch (-PTR_ERR(fp)) {
-> drivers/scsi/libfc/fc_lport.c:1081:                  IS_ERR(fp) ? -PTR_ERR(fp) : 0, fc_lport_state(lport),
-> fs/ext4/indirect.c:1042:                                ext4_error_inode_block(inode, nr, -PTR_ERR(bh),
-> fs/jffs2/background.c:48:                       -PTR_ERR(tsk));
-> fs/ntfs/dir.c:92:                               -PTR_ERR(m));
-> fs/ntfs/dir.c:312:                              -PTR_ERR(page));
-> fs/ntfs/dir.c:643:                              -PTR_ERR(m));
-> fs/ntfs/dir.c:790:                              -PTR_ERR(page));
-> fs/ntfs/index.c:141:                            -PTR_ERR(m));
-> fs/ntfs/index.c:268:                            -PTR_ERR(page));
-> fs/ntfs/mft.c:162:      ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
-> fs/ntfs/mft.c:289:                              "mft record, error code %ld.", -PTR_ERR(m));
-> net/ipv6/af_inet6.c:852:                        WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
-> net/ipv6/inet6_connection_sock.c:123:           WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
-> tools/lib/bpf/libbpf.c:10044:           errno = -PTR_ERR(ptr);
-> tools/lib/bpf/libbpf_internal.h:520:            errno = -PTR_ERR(ret);
-> tools/testing/selftests/bpf/prog_tests/btf_dump.c:59:           err = -PTR_ERR(btf);
-> tools/testing/selftests/bpf/prog_tests/sk_lookup.c:483:         errno = -PTR_ERR(link);
->
-> Quite a few of those were in printks and it might be an opportunity to
-> use %pe to print the ENOMEM etc strings instead of the number.
+Add a new section MIPS BAIKAL-T1 SOC DRIVERS in MAINTAINERS.
 
-I will try sending some patch for this.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks for your suggestions.
-
-Su Hui
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9613c9c3cc97..820f1ab1ee80 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14474,6 +14474,19 @@ F:	arch/mips/
+ F:	drivers/platform/mips/
+ F:	include/dt-bindings/mips/
+ 
++MIPS BAIKAL-T1 SOC DRIVERS
++M:	Serge Semin <Sergey.Semin@baikalelectronics.ru>
++S:	Maintained
++F:	Documentation/hwmon/bt1-pvt.rst
++F:	drivers/ata/ahci_dwc.c
++F:	drivers/bus/bt1-*.c
++F:	drivers/clk/baikal-t1/
++F:	drivers/hwmon/bt1-pvt.[ch]
++F:	drivers/memory/bt1-l2-ctl.c
++F:	drivers/mtd/maps/physmap-bt1-rom.[ch]
++F:	drivers/pci/controller/dwc/pcie-bt1.c
++F:	drivers/spi/spi-dw-bt1.c
++
+ MIPS BOSTON DEVELOPMENT BOARD
+ M:	Paul Burton <paulburton@kernel.org>
+ L:	linux-mips@vger.kernel.org
+-- 
+2.17.1
 
