@@ -1,96 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id 13EF9DD;
-	Tue, 21 Nov 2023 22:59:57 -0800 (PST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id E795A606AC67E;
-	Wed, 22 Nov 2023 14:59:53 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: kvalo@kernel.org,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	trix@redhat.com
-Cc: Su Hui <suhui@nfschina.com>,
-	yangyingliang@huawei.com,
-	libertas-dev@lists.infradead.org,
-	linux-wireless@vger.kernel.org,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMpQPW1e"
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0D1F9;
+	Tue, 21 Nov 2023 23:56:34 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-548f35e6a4bso2682895a12.0;
+        Tue, 21 Nov 2023 23:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700639793; x=1701244593; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=attY11h1h0WyAPvIDEa+1GfI5MENPYGUC68Kv+mgJhQ=;
+        b=RMpQPW1eEolSNLkMF6y8u/eprUJtbsXwfMddiJ1l9HtaHXVdID0j5UHM6hBU6u10VG
+         cZMO/10E/sGJ91/M1dNyvDVz6L6H2p8+v4tmxUIiu/lHg5eMWeHMwlVyp5BTFPTHAOrW
+         nxw1Xq7ogjqwqZNsKDwPWnFR8wPWhXNyqp6O+F056woZP9QahTsu6RmCsOjwc6wqs0kj
+         w03dMdBrlBJ43BbnjG7ljnHIF3xAxSzPMcyap6mYN0vmKEgLAgPP1qbimUChxbmfiE55
+         3MiP4U7BnNotl3tI9QwhXVA+c3QPW1sRPvbQFprdtnW7o4pxXP7vLRr1UzHLScxArXBM
+         6ryw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700639793; x=1701244593;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=attY11h1h0WyAPvIDEa+1GfI5MENPYGUC68Kv+mgJhQ=;
+        b=wW2EUZdlevW8mih0WZDarpaDlg5rBa0oywG1Cq59gzBEk63JAX/1ESDc6Shlg7aVkm
+         QpeyDg3XMq7nYMnOCkpGtz7d56iI+km1nCHDUkSrlihtkviz8spRQU+bhO63Y14v3vVr
+         WAXRMQzad31WbHOkrBWfFG8oHT9Q7ZbhiPdyMiLGD8uC7pV45oot1ZF4h20HdTKCiE8q
+         SJOnCsbv9rE0Ts7daaKErPDchm/FK/K0aEzHYnhLW1Zf27yrrM3QPEMjy9DyySzLdLQx
+         kdlxJYMEj5JHa54o9FHeZbROoH5XvxF3moS2Gs0XA4FUqgAiR/KWso9fnS0IY3i8h4yH
+         vWOw==
+X-Gm-Message-State: AOJu0YxAi85c9nkOku+BuTIhYddUbAq5cPpRgMI7zYKZWDwefSxLWyVv
+	52IJTBFEAHcD+bFo1d4w3+c/Q6ByvwY=
+X-Google-Smtp-Source: AGHT+IEPGHlnRfT09L3HfIp+efOFBDzs439D/D2xsJWkmd8DJAAiGKS74VLrvi2Xw8aACeQ53Dy3gg==
+X-Received: by 2002:aa7:d3c6:0:b0:543:caf4:e5bc with SMTP id o6-20020aa7d3c6000000b00543caf4e5bcmr1235189edr.1.1700639792716;
+        Tue, 21 Nov 2023 23:56:32 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:14bb:d13c:65e3:46bf])
+        by smtp.gmail.com with ESMTPSA id b8-20020aa7dc08000000b00543597cd190sm5759456edu.47.2023.11.21.23.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 23:56:32 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Marius Cristea <marius.cristea@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH wireless-next] wifi: libertas: if_usb: remove some useless code in if_usb_prog_firmware
-Date: Wed, 22 Nov 2023 14:59:09 +0800
-Message-Id: <20231122065908.907045-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: improve section MICROCHIP MCP3564 ADC DRIVER
+Date: Wed, 22 Nov 2023 08:56:29 +0100
+Message-Id: <20231122075629.21411-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Clang static checker complains that value stored to 'ret' is never read.
-Remove these useless code to save space.
+Commit 33ec3e5fc1ea ("iio: adc: adding support for MCP3564 ADC") adds a new
+iio driver and corresponding MAINTAINERS section. It however uses spaces
+instead of a single tab for all the entries in that MAINTAINERS section.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Although, the get_maintainer.pl script handles spaces instead of tabs
+silently, the MAINTAINERS will quickly get into a messy state with
+different indentations throughout the file. So, the checkpatch.pl script
+complains when spaces instead of a single tab are used.
+
+Fix this recently added section using tabs instead of spaces.
+Further, add the driver's ABI documentation file to this section as well.
+
+Fixes: 33ec3e5fc1ea ("iio: adc: adding support for MCP3564 ADC")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/wireless/marvell/libertas/if_usb.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ MAINTAINERS | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net/wireless/marvell/libertas/if_usb.c
-index 2240b4db8c03..77cc55616ef5 100644
---- a/drivers/net/wireless/marvell/libertas/if_usb.c
-+++ b/drivers/net/wireless/marvell/libertas/if_usb.c
-@@ -830,10 +830,8 @@ static void if_usb_prog_firmware(struct lbs_private *priv, int ret,
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 04c6fcbb21aa..c74ec0681aa1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14213,11 +14213,12 @@ F:	Documentation/devicetree/bindings/regulator/mcp16502-regulator.txt
+ F:	drivers/regulator/mcp16502.c
  
- 	cardp->fw = fw;
--	if (check_fwfile_format(cardp->fw->data, cardp->fw->size)) {
--		ret = -EINVAL;
-+	if (check_fwfile_format(cardp->fw->data, cardp->fw->size))
- 		goto done;
--	}
+ MICROCHIP MCP3564 ADC DRIVER
+-M:      Marius Cristea <marius.cristea@microchip.com>
+-L:      linux-iio@vger.kernel.org
+-S:      Supported
+-F:      Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.yaml
+-F:      drivers/iio/adc/mcp3564.c
++M:	Marius Cristea <marius.cristea@microchip.com>
++L:	linux-iio@vger.kernel.org
++S:	Supported
++F:	Documentation/ABI/testing/sysfs-bus-iio-adc-mcp3564
++F:	Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.yaml
++F:	drivers/iio/adc/mcp3564.c
  
- 	/* Cancel any pending usb business */
- 	usb_kill_urb(cardp->rx_urb);
-@@ -848,7 +846,6 @@ static void if_usb_prog_firmware(struct lbs_private *priv, int ret,
- restart:
- 	if (if_usb_submit_rx_urb_fwload(cardp) < 0) {
- 		lbs_deb_usbd(&cardp->udev->dev, "URB submission is failed\n");
--		ret = -EIO;
- 		goto done;
- 	}
- 
-@@ -866,18 +863,15 @@ static void if_usb_prog_firmware(struct lbs_private *priv, int ret,
- 
- 	if (cardp->bootcmdresp == BOOT_CMD_RESP_NOT_SUPPORTED) {
- 		/* Return to normal operation */
--		ret = -EOPNOTSUPP;
- 		usb_kill_urb(cardp->rx_urb);
- 		usb_kill_urb(cardp->tx_urb);
--		if (if_usb_submit_rx_urb(cardp) < 0)
--			ret = -EIO;
-+		if_usb_submit_rx_urb(cardp);
- 		goto done;
- 	} else if (cardp->bootcmdresp <= 0) {
- 		if (--reset_count >= 0) {
- 			if_usb_reset_device(cardp);
- 			goto restart;
- 		}
--		ret = -EIO;
- 		goto done;
- 	}
- 
-@@ -908,7 +902,6 @@ static void if_usb_prog_firmware(struct lbs_private *priv, int ret,
- 		}
- 
- 		pr_info("FW download failure, time = %d ms\n", i * 100);
--		ret = -EIO;
- 		goto done;
- 	}
- 
+ MICROCHIP MCP3911 ADC DRIVER
+ M:	Marcus Folkesson <marcus.folkesson@gmail.com>
 -- 
-2.30.2
+2.17.1
 
