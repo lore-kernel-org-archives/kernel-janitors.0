@@ -1,121 +1,138 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OD/X2mf+"
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D91597;
-	Wed, 22 Nov 2023 04:59:49 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1cf7a1546c0so4283735ad.0;
-        Wed, 22 Nov 2023 04:59:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="elLTQnSm"
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ADFF195
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 05:02:12 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-3316ad2bee5so3253918f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 05:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700657989; x=1701262789; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700658131; x=1701262931; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QW8tX1Rt7l90NZJE2e+BwQxvjumBfu6BosqaGgb2t5s=;
-        b=OD/X2mf+5z7eOLeaYKVYKpDY1D4P6eAIVSkbFyVCCxSeQ0vzrOm0yCYpT0EJOk09dB
-         49pLNPpa6eEAIp5cxSpxhs4C+SQBleAMR4XW7598u5oRlcr2ImRWlH8sg08BqYyzlx3r
-         DnT2tgJ05k0lhleAuKqpwRSOP4LtEXJ9h4Zbjb6JiwNd3SqdOZbSCJY3iFZeMqPS6xFI
-         rqx3Rkmw8GOY5mu+LsPSIbs8A4aVmBxa7hTF3tP0tOTqQnDnFaD13RsGHnmEINQf/Wm0
-         OK0RD1OHcsIR1tpnJp2vG81oamv5NzbZQmNBIGunpBJ4xyo/8NLB6oIxmBbK3iIsMcH5
-         XHbQ==
+        bh=zAYBW/dYtjxj/mIFheTLcX/YTMyi0LyyXwltchBNxB0=;
+        b=elLTQnSm9XJcVRx/bhUqjBEm8bMjSnlwe2U09kiu4T3UZthjhCyQIdHEoZ5G0bLVY3
+         I6A+PC4GeGvd8r6Sl2x8/RVux5iMsz4TuhX2gry807Q8DGhNIp8DoLcToPirL/tFy+Cv
+         8Q+Efj9qANkBAShtZNIItmh7POAQR0+V94968m6W/7h3N+ONZ70aj26lSKjKBCFWS+t2
+         Mjr8HH25H53fkUlf8Y8q41p0l/rhYsrLPbWJMiO1ic3VL3kAHM/1BO1MrC6GBM6L+XZX
+         I2LXvDpZvGu54DB4YuBCmCqxKl4+MqCnFYjswmET9slqhKNrcnmL422eUolzpdPiDJ/c
+         Z+Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700657989; x=1701262789;
+        d=1e100.net; s=20230601; t=1700658131; x=1701262931;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QW8tX1Rt7l90NZJE2e+BwQxvjumBfu6BosqaGgb2t5s=;
-        b=T7NHMpw+aNcE7UyiLIuDYwNXFJCjeCNty1jXiiUOGdlyYPq229PuQNZdidN4Lf5VpX
-         RKXEf2+2ZjVDUpisDXZgfykrehXfATNrFrOXIKGQzh0Nw13cETpcNOzAr7sGsaGzl76E
-         MlNpUhCQxdEku+mp1+Qwz2JE1QIarUWfqQ8c8gjzWsBpMSlblcy0bQTe4eSSgBcNJtXE
-         nWS+v/2uW6bZgJg72ODcDqiLV4VAWsKV2QPHWhR49t972MWP7ZQlO9XSegVjOnvig2H/
-         CnQtuoSKxwDIm03cr3YZIUOV2Zo6z4qq1d6q9OcgPgRmbNfhX8o6IjkrIHViA8StRY0P
-         g+3A==
-X-Gm-Message-State: AOJu0YxcDbz0ZAIhnEXmldHieeXMsBWbgv8Jwv75ap7WJX8qOMG2fhYB
-	gbU9gk40yp6xSSpQEqjv3aM=
-X-Google-Smtp-Source: AGHT+IFuWa8OmkRUyBAwazRj12HP4KY6Fo6QPFHJVHmgN2KnG25EHNg3/YcnMxKbGhWIZ+2KyWD4TA==
-X-Received: by 2002:a17:902:da85:b0:1cc:3fc9:7d09 with SMTP id j5-20020a170902da8500b001cc3fc97d09mr2633927plx.15.1700657988620;
-        Wed, 22 Nov 2023 04:59:48 -0800 (PST)
-Received: from archie.me ([103.131.18.64])
-        by smtp.gmail.com with ESMTPSA id y5-20020a17090322c500b001acae9734c0sm1405028plg.266.2023.11.22.04.59.47
+        bh=zAYBW/dYtjxj/mIFheTLcX/YTMyi0LyyXwltchBNxB0=;
+        b=XY17+pnXGPazu9oJh+cDZ4CnrpoD/ZhLAHj4L87F69sExTdzVHdqVljLNfeAIE5kQj
+         AtzRRh3gKWxbvfpz0ebsYnDuo6Y0WvwslASY6fH6AE/dP9k2NPmuedHD3M3Dk181lAC8
+         wDel5QOPFft9aaq8brY9ctkm4z5o8qBZ1HYpW+Bi4SfVr+zSADGVCBFr4HTrRJ4M1+2G
+         K8W9/zrpn65sBcnSFlwwmQoCIth1JPJR2o6r8UQhqb++P/E/sXKkiTX+PqIK/9kldEgx
+         XfIUm891KLYA8aU6uR4N5w+BrOVN+d9Iw+uuimmreosCJVSctmV30C01jEdntfjtt35A
+         5RfA==
+X-Gm-Message-State: AOJu0YzOcNTzpg7hGNm8F4USKW0trbPuIZc0n3otrFmU7RSdRZrpKr25
+	VE/gUvNcjhO341Ct9BNMwde7Lg==
+X-Google-Smtp-Source: AGHT+IFm/gvzWYz8Z3gyoz/52Dw4SJ4D1BBYzMbXvuiTFLxpBZfbv3NItqBLCI+UzFq90ikS/hTasA==
+X-Received: by 2002:a5d:6843:0:b0:32f:e1a2:526a with SMTP id o3-20020a5d6843000000b0032fe1a2526amr266266wrw.67.1700658131308;
+        Wed, 22 Nov 2023 05:02:11 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id x11-20020adfffcb000000b003316b8607cesm16215688wrs.1.2023.11.22.05.02.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 04:59:47 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 3976010207134; Wed, 22 Nov 2023 19:59:44 +0700 (WIB)
-Date: Wed, 22 Nov 2023 19:59:44 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Martyn Welch <martyn.welch@collabora.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Staging Drivers <linux-staging@lists.linux.dev>,
-	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <error27@gmail.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Bruno Moreira-Guedes <codeagain@codeagain.dev>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH 1/2] MAINTAINERS: Update Martyn Welch's address
-Message-ID: <ZV37QCEB9zEk368g@archie.me>
-References: <20231122094156.30642-1-bagasdotme@gmail.com>
- <20231122094156.30642-2-bagasdotme@gmail.com>
- <98a17cfe-4358-44f8-aeb3-882a87de1177@collabora.com>
+        Wed, 22 Nov 2023 05:02:10 -0800 (PST)
+Date: Wed, 22 Nov 2023 08:02:06 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: pkshih@realtek.com, kvalo@kernel.org, nathan@kernel.org,
+	ndesaulniers@google.com, trix@redhat.com, lizetao1@huawei.com,
+	linville@tuxdriver.com, Larry.Finger@lwfinger.net,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH wireless-next 2/2] rtlwifi: rtl8821ae: phy: fix an
+ undefined bitwise shift behavior
+Message-ID: <2ec14802-78b0-4a3f-a730-19e95ec8d359@suswa.mountain>
+References: <20231122090210.951185-1-suhui@nfschina.com>
+ <20231122090210.951185-2-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OEFSv2cXj1zn5if4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <98a17cfe-4358-44f8-aeb3-882a87de1177@collabora.com>
+In-Reply-To: <20231122090210.951185-2-suhui@nfschina.com>
 
+On Wed, Nov 22, 2023 at 05:02:12PM +0800, Su Hui wrote:
+> Clang staic checker warning:
+> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c:184:49:
+> 	The result of the left shift is undefined due to shifting by '32',
+> 	which is greater or equal to the width of type 'u32'.
+> 	[core.UndefinedBinaryOperatorResult]
+> 
+> If the value of the right operand is negative or is greater than or
+> equal to the width of the promoted left operand, the behavior is
+> undefined.[1][2]
+> 
+> For example, when using different gcc's compilation optimizaation options
+> (-O0 or -O2), the result of '(u32)data << 32' is different. One is 0, the
+> other is old value of data. Adding an u64 cast to fix this problem.
+> 
+> [1]:https://stackoverflow.com/questions/11270492/what-does-the-c-
+> standard-say-about-bitshifting-more-bits-than-the-width-of-type
+> [2]:https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
+> 
+> Fixes: 21e4b0726dc6 ("rtlwifi: rtl8821ae: Move driver from staging to regular tree")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+> index 6df270e29e66..89713e0587b5 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+> @@ -106,7 +106,7 @@ u32 rtl8821ae_phy_query_bb_reg(struct ieee80211_hw *hw, u32 regaddr,
+>  		regaddr, bitmask);
+>  	originalvalue = rtl_read_dword(rtlpriv, regaddr);
+>  	bitshift = _rtl8821ae_phy_calculate_bit_shift(bitmask);
+> -	returnvalue = (originalvalue & bitmask) >> bitshift;
+> +	returnvalue = (u64)(originalvalue & bitmask) >> bitshift;
 
---OEFSv2cXj1zn5if4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a right shift, not a left shift. << vs >>.
 
-On Wed, Nov 22, 2023 at 11:15:19AM +0000, Martyn Welch wrote:
->=20
-> On 22/11/2023 09:41, Bagas Sanjaya wrote:
-> > He is now active on the mailing lists using his Collabora  >
-> > (@collabora.com) address. Reflect it in MAINTAINERS and also add >
-> address mapping for him.
-> Hmm, mapping yes, changing the email assigned to the VME stuff, no. This =
-is
-> not something that I consider related to my work at Collabora. Any time
-> spent on it at this point will be personal time, hence the use of my
-> non-work email address.
->=20
-> Realistically, I've lost access to hardware to test anything regarding VME
-> and it's not something that's particularly easy to acquire. With the other
-> patch in this series removing Manohar, removing me as a maintainer would
-> leave Greg, who has been amazing covering my shoddy maintenance of this
-> subsystem (what can I say, life has rather got in the way), but I feel it=
-'s
-> unfair to leave him as the sole maintainer. I wonder whether I/we should
-> admit this is basically orphaned at this point?
+>  
+>  	rtl_dbg(rtlpriv, COMP_RF, DBG_TRACE,
+>  		"BBR MASK=0x%x Addr[0x%x]=0x%x\n",
+> @@ -128,7 +128,7 @@ void rtl8821ae_phy_set_bb_reg(struct ieee80211_hw *hw,
+>  		originalvalue = rtl_read_dword(rtlpriv, regaddr);
+>  		bitshift = _rtl8821ae_phy_calculate_bit_shift(bitmask);
+>  		data = ((originalvalue & (~bitmask)) |
+> -			((data << bitshift) & bitmask));
+> +			(((u64)data << bitshift) & bitmask));
 
-I also feel similar thing when basically the subsystem gets more care from
-kernel janitors (including outreachy applicants and people specializing
-in checkpatch fixes) than real users, like the case of DECNET [1]. So
-I'm agree to orphan VME.
+The checker is printing an accurate warning, however, I'm not sure the
+fix is correct.  Obviously, shift wrapping is bad and your patch would
+eliminate that possibility.  However, data is a u32 so we end up
+discarding the high 32 bits.  I can imagine a different static checker
+would complain about that.
 
-Thanks.
+Perhaps, a better way to silence the warning is to just change
+_rtl8821ae_phy_calculate_bit_shift() to not return 32 bits?  Do we
+really ever pass bitmask 0?  No idea...
 
-[1]: https://lore.kernel.org/lkml/20220818004357.375695-1-stephen@networkpl=
-umber.org/
+regards,
+dan carpenter
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---OEFSv2cXj1zn5if4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZV37PAAKCRD2uYlJVVFO
-o1qbAQDpALBJdNaAYVxFyVMxS56nF0gEM2UqT/loGVBX3h35TwD/bGyQnlqQmFHP
-TD5HDyxFAe0m1504rF7uCs2fTjkDRQo=
-=219y
------END PGP SIGNATURE-----
-
---OEFSv2cXj1zn5if4--
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+index 5323ead30db0..42885e3a458f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+@@ -29,9 +29,7 @@ static void _rtl8821ae_phy_rf_serial_write(struct ieee80211_hw *hw,
+ 					   u32 data);
+ static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitmask)
+ {
+-	u32 i = ffs(bitmask);
+-
+-	return i ? i - 1 : 32;
++	return ffs(bitmask) - 1;
+ }
+ static bool _rtl8821ae_phy_bb8821a_config_parafile(struct ieee80211_hw *hw);
+ /*static bool _rtl8812ae_phy_config_mac_with_headerfile(struct ieee80211_hw *hw);*/
