@@ -1,164 +1,268 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FIkm2BEk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3947810C;
-	Wed, 22 Nov 2023 05:25:03 -0800 (PST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1994B40E0258;
-	Wed, 22 Nov 2023 13:25:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0ArRJ98NsNWj; Wed, 22 Nov 2023 13:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1700659498; bh=tfmB5kIO1KjZIKpASvFX87u56VKgZHav99DyvY9sqVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIkm2BEkpLgPj5wpM1geMfClp93ikKBJoNFZjuSANkN8X7QaX7raZTR0GBVKM8jte
-	 pwvnSPf4iQkvXgFQK4H3EkaeI367oCM6+qAjxNMGVEVlaw0yf17XQ+MXcBp3dARkec
-	 pgVCtwTorFnS7NFvcbzoHTNLoNaQQuPhI/HWBfW2RECz/95xoEyM+39zZW86q2aw7m
-	 WpzIvO/I/XmbPJWqL2bg1a/FFP8+Utnw4x5NwMKu0UWEPfcLtXmxVxeRLU9OuzVj7D
-	 lOiyiChmkcUb6g1NHMBX7WmnQKeJmwyQhkJkCGp63ee9wpjOsQ23N2zoD0e8T7LUnX
-	 dpHqE2GDJ/SKkEpykLrUZ05KNQPEfR//boi5hp7TqmCeJItc5DsE80EUxUQzXhB2lq
-	 LEYS7wXsy4vkCLbW9hZEkWv9IpNtUL6iKesNgV09ybHl71HNG46tSy2BNysqaHw+U3
-	 lIKbU/xlQFYyeBCJ9IUT1o8DEm+SPHQZroQu5Zlf6qitQSIFtk78grkuBbbvfzwS74
-	 nnP8UGB2xhn/Agj90HI3Cw4h+ocx49Z7sDt1RHHOG9MsWByJhPt+Oq+CKLOc0O+Tu3
-	 Q+sQJ9ZU/bMeC8qv2TTQ6TrTmijzlFqOm2xhukhQnYN5pLg+Ujt1SNP9MzFPgM53Ee
-	 m5dDBsHNXa65wZFpv3g0Wt5U=
-Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A78840E0257;
-	Wed, 22 Nov 2023 13:24:48 +0000 (UTC)
-Date: Wed, 22 Nov 2023 14:24:43 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
-	initramfs@vger.kernel.org
-Subject: [PATCH] x86: Add a "x86" ELF note namespace
-Message-ID: <20231122132419.GBZV4BA399sG2JRFAJ@fat_crate.local>
-References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
- <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
- <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
- <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
- <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+	dkim=pass (1024-bit key) header.d=baikalelectronics.ru header.i=@baikalelectronics.ru header.b="ZaSD9yzm"
+X-Greylist: delayed 544 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 22 Nov 2023 05:41:34 PST
+Received: from post.baikalelectronics.com (post.baikalelectronics.com [213.79.110.86])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 207AF1A5;
+	Wed, 22 Nov 2023 05:41:34 -0800 (PST)
+Received: from post.baikalelectronics.com (localhost.localdomain [127.0.0.1])
+	by post.baikalelectronics.com (Proxmox) with ESMTP id ABDF8E0EB9;
+	Wed, 22 Nov 2023 16:32:28 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	baikalelectronics.ru; h=cc:cc:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=post; bh=HbHrbH/rcUkVvlTKh1z1
+	S+UWZ0eNJU9qPvTnkmX9sAo=; b=ZaSD9yzmzX2d2SuTq2gLARr4fmQLcPAm4gKl
+	AYfiEFaVpXuA5Wrk7l0Ktf0fiWuiQiGIHm0k/0nIkD8vyKM+bMaEa7YSt/5js9PM
+	ynIzPSyXYnF6qF8AcgteuvPHs6zCjSkTsIeI1SjurBfVjtYYaz7pHQjBWifkGn9+
+	QeIruH8=
+Received: from mail.baikal.int (mail.baikal.int [192.168.51.25])
+	by post.baikalelectronics.com (Proxmox) with ESMTP id 74B73E0EB4;
+	Wed, 22 Nov 2023 16:32:28 +0300 (MSK)
+Received: from mobilestation (10.8.30.118) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 22 Nov 2023 16:32:28 +0300
+Date: Wed, 22 Nov 2023 16:32:27 +0300
+From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+CC: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	<linux-mips@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Serge Semin <fancer.lancer@gmail.com>, Alexey
+ Malahov <Alexey.Malahov@baikalelectronics.ru>
+Subject: Re: [PATCH] MAINTAINERS: add section MIPS BAIKAL-T1 SOC DRIVERS
+Message-ID: <mku6gvd4rfkxzk2vrdjbizglte526ygyfhnwialtri44oqzikt@pq2l7mk25jgc>
+References: <20231122054142.31322-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed; boundary="ec57xuvyqxygqblb"
 Content-Disposition: inline
-In-Reply-To: <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+In-Reply-To: <20231122054142.31322-1-lukas.bulwahn@gmail.com>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 
-On Wed, Nov 22, 2023 at 12:58:26PM +0100, Borislav Petkov wrote:
-> On Wed, Nov 22, 2023 at 10:15:42AM +0100, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > [1] unless you fiddle with things obviously internal; not sure if this
-> > case would qualify for him, but somehow I doubt it -- but I might be
-> > wrong there.
+--ec57xuvyqxygqblb
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+
+Hi Lukas
+
+On Wed, Nov 22, 2023 at 06:41:42AM +0100, Lukas Bulwahn wrote:
+> In recent years, a number of drivers for the MIPS Baikal-T1 SoC have been
+> added to the kernel tree, but there is no dedicated MAINTAINERS section for
+> this SoC.
 > 
-> Well, think about it - by that logic, if CONFIG_* items are an ABI, we
-> will never ever be able to change any of them. Now that would be awful.
+> As all of the code has been contributed by Serge Semin, let us assume he is
+> still the active maintainer for this code rather than marking it orphan.
 > 
-> > Any progress on this?
+> Add a new section MIPS BAIKAL-T1 SOC DRIVERS in MAINTAINERS.
+
+Thanks for submitting this patch. I was going to send a similar change
+in the framework of the arch-series which is hanging up in my local
+repo and alas is still under construction. I know I shouldn't have
+been waiting (I'm sorry about that), but I didn't expect the entire
+work would have taken so much time. On a way to finishing it up I had
+to switch my efforts to the EDAC and network drivers and got sucked by
+the amount of work there. But I will definitely submit the Baikal-T1
+SoC arch patchset when my work on another area is finally over.
+
+Here are several comments about this patch. (Please see my last
+comment should you be ok with accepting the patches with already fixed
+notes.)
+
 > 
-> We're thinking...
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9613c9c3cc97..820f1ab1ee80 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14474,6 +14474,19 @@ F:	arch/mips/
+>  F:	drivers/platform/mips/
+>  F:	include/dt-bindings/mips/
+>  
+> +MIPS BAIKAL-T1 SOC DRIVERS
 
-Turns out this is easier than I think and people have solved this
-problem already - all I need to do is use it. Wonderful.
+> +M:	Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-Lemme Cc initramfs@vger.kernel.org as an FYI and see whether dracut
-folks would have any comments about this.
+It's better to change the email to
++M:	Serge Semin <fancer.lancer@gmail.com>
+I quicker respond from my private inbox, than from the corporate one.
+This will also be useful should the corporate email eventually change.
 
+> +S:	Maintained
+
++F:	Documentation/devicetree/bindings/bus/baikal,bt1-*.yaml
++F:	Documentation/devicetree/bindings/clock/baikal,bt1-*.yaml
+
+> +F:	Documentation/hwmon/bt1-pvt.rst
+
+I'd prefer this and these -+ being in a separate entry (see the
+attached patches), because | the respective device IP-cores have been
+re-used in another SoC. So | eventually the entries will be updated to
+reflect that.              +---------------------------------+
+                                                             |
+> +F:	drivers/ata/ahci_dwc.c                               |
+                                                             |
+I believe this is already listed in the MAINTAINERS file.    |
+                                                             |
+> +F:	drivers/bus/bt1-*.c                                  |
+> +F:	drivers/clk/baikal-t1/                               |
+> +F:	drivers/hwmon/bt1-pvt.[ch] <-------------------------+
+> +F:	drivers/memory/bt1-l2-ctl.c                          |
+> +F:	drivers/mtd/maps/physmap-bt1-rom.[ch]                |
+> +F:	drivers/pci/controller/dwc/pcie-bt1.c <--------------+
+
+> +F:	drivers/spi/spi-dw-bt1.c
+
+This is already marked as maintained by me in the framework of the
+generic DW APB SSI driver (See the "SYNOPSYS DESIGNWARE APB SSI
+DRIVER" entry in the MAINTAINERS file).
+
+Anyway in order to save your time from editing this patch. I've
+prepared a series which takes into account all the comments above. If
+you are ok with it, I can submit it for review. What do you think?
+
+-Serge(y)
+
+> +
+>  MIPS BOSTON DEVELOPMENT BOARD
+>  M:	Paul Burton <paulburton@kernel.org>
+>  L:	linux-mips@vger.kernel.org
+> -- 
+> 2.17.1
+> 
+> 
+
+--ec57xuvyqxygqblb
+Content-Type: text/x-patch; charset="us-ascii"
+Content-Disposition: attachment;
+	filename="0001-MAINTAINERS-Add-maintainer-for-Baikal-T1-PVT-hwmon-d.patch"
+
+From 3474717c649d994afade36f8117695a84120ab26 Mon Sep 17 00:00:00 2001
+From: Serge Semin <fancer.lancer@gmail.com>
+Date: Fri, 7 Feb 2020 12:37:59 +0300
+Subject: [PATCH 1/3] MAINTAINERS: Add maintainer for Baikal-T1 PVT hwmon
+ driver
+
+Add myself as a maintainer of the Baikal-T1 PVT sensors driver.
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 ---
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Wed, 22 Nov 2023 13:59:40 +0100
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Add a "x86" ELF note namespace to put ELF note structures with which to
-communicate in a ABI-compliant manner what a kernel image supports.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 97f51d5ec1cf..9e50a77d746e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3467,6 +3467,14 @@ F:	drivers/video/backlight/
+ F:	include/linux/backlight.h
+ F:	include/linux/pwm_backlight.h
+ 
++BAIKAL-T1 PVT HARDWARE MONITOR DRIVER
++M:	Serge Semin <fancer.lancer@gmail.com>
++L:	linux-hwmon@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/hwmon/baikal,bt1-pvt.yaml
++F:	Documentation/hwmon/bt1-pvt.rst
++F:	drivers/hwmon/bt1-pvt.[ch]
++
+ BARCO P50 GPIO DRIVER
+ M:	Santosh Kumar Yadav <santoshkumar.yadav@barco.com>
+ M:	Peter Korsgaard <peter.korsgaard@barco.com>
+-- 
+2.42.1
 
-Also, add the first note type of this - X86_ELFNOTE_MICROCODE - which
-denotes that microcode support is built into the kernel image and thus
-initrd-generating tools like dracut can parse the ELF .notes section for
-this.
 
-$ readelf -n vmlinux
+--ec57xuvyqxygqblb
+Content-Type: text/x-patch; charset="us-ascii"
+Content-Disposition: attachment;
+	filename="0002-MAINTAINERS-Add-maintainer-for-Baikal-T1-PCIe-driver.patch"
 
-Displaying notes found in: .notes
-  Owner                Data size        Description
-  ...
-  x86                  0x00000004       Unknown note type: (0x00000000)
-  description data: 01 00 00 00
-  ^^^^^^^^^^^^^^
+From 460caf4c02f3b9620cf63127a443e05361ff382a Mon Sep 17 00:00:00 2001
+From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Date: Tue, 22 Mar 2022 23:11:59 +0300
+Subject: [PATCH 2/3] MAINTAINERS: Add maintainer for Baikal-T1 PCIe driver
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Add myself as a maintainer of the Baikal-T1 PCIe Root Port driver.
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 ---
- arch/x86/include/uapi/elfnote.h      | 18 ++++++++++++++++++
- arch/x86/kernel/cpu/microcode/core.c |  5 +++++
- 2 files changed, 23 insertions(+)
- create mode 100644 arch/x86/include/uapi/elfnote.h
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/uapi/elfnote.h b/arch/x86/include/uapi/elfnote.h
-new file mode 100644
-index 000000000000..bef26c4944e8
---- /dev/null
-+++ b/arch/x86/include/uapi/elfnote.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _X86_UAPI_ELFNOTE_H_
-+#define _X86_UAPI_ELFNOTE_H_
-+
-+/*
-+ * "x86" namespaced ELF note structures to communicate features
-+ * supported by the kernel binary to external utilities which need that
-+ * info in order to do additional preparatory work based on the target
-+ * kernel image.
-+ */
-+
-+/*
-+ * Used by the microcode loader to communicate support to external
-+ * initrd generators like dracut.
-+ */
-+#define X86_ELFNOTE_MICROCODE	0
-+
-+#endif /* _X86_UAPI_ELFNOTE_H_ */
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 232026a239a6..f35444bafbbc 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -24,6 +24,7 @@
- #include <linux/capability.h>
- #include <linux/firmware.h>
- #include <linux/cpumask.h>
-+#include <linux/elfnote.h>
- #include <linux/kernel.h>
- #include <linux/delay.h>
- #include <linux/mutex.h>
-@@ -32,6 +33,8 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9e50a77d746e..52ee905c50f4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16796,6 +16796,13 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/pci/axis,artpec*
+ F:	drivers/pci/controller/dwc/*artpec*
  
-+#include <uapi/elfnote.h>
++PCIE DRIVER FOR BAIKAL-T1
++M:	Serge Semin <fancer.lancer@gmail.com>
++L:	linux-pci@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/pci/baikal,bt1-pcie.yaml
++F:	drivers/pci/controller/dwc/pcie-bt1.c
 +
- #include <asm/apic.h>
- #include <asm/cpu_device_id.h>
- #include <asm/perf_event.h>
-@@ -859,3 +862,5 @@ static int __init microcode_init(void)
+ PCIE DRIVER FOR CAVIUM THUNDERX
+ M:	Robert Richter <rric@kernel.org>
+ L:	linux-pci@vger.kernel.org
+-- 
+2.42.1
+
+
+--ec57xuvyqxygqblb
+Content-Type: text/x-patch; charset="us-ascii"
+Content-Disposition: attachment;
+	filename="0003-MAINTAINERS-Add-maintainer-for-MIPS-Baikal-T1-platfo.patch"
+
+From 16297c21f443fac69bf1d60924a9ef8602de8a2e Mon Sep 17 00:00:00 2001
+From: Serge Semin <fancer.lancer@gmail.com>
+Date: Fri, 7 Feb 2020 12:43:00 +0300
+Subject: [PATCH 3/3] MAINTAINERS: Add maintainer for MIPS Baikal-T1 platform
+ code
+
+Add myself as a maintainer of the MIPS Baikal-T1 platform-specific
+drivers. The arch-code hasn't been submitted yet, but will be soon enough.
+Until then it's better to have the already available drivers marked as
+maintained.
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+---
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 52ee905c50f4..a56e241608ae 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14491,6 +14491,17 @@ F:	arch/mips/
+ F:	drivers/platform/mips/
+ F:	include/dt-bindings/mips/
  
- }
- late_initcall(microcode_init);
++MIPS BAIKAL-T1 PLATFORM
++M:	Serge Semin <fancer.lancer@gmail.com>
++L:	linux-mips@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/bus/baikal,bt1-*.yaml
++F:	Documentation/devicetree/bindings/clock/baikal,bt1-*.yaml
++F:	drivers/bus/bt1-*.c
++F:	drivers/clk/baikal-t1/
++F:	drivers/memory/bt1-l2-ctl.c
++F:	drivers/mtd/maps/physmap-bt1-rom.[ch]
 +
-+ELFNOTE32("x86", X86_ELFNOTE_MICROCODE, CONFIG_MICROCODE);
+ MIPS BOSTON DEVELOPMENT BOARD
+ M:	Paul Burton <paulburton@kernel.org>
+ L:	linux-mips@vger.kernel.org
 -- 
-2.42.0.rc0.25.ga82fb66fed25
+2.42.1
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--ec57xuvyqxygqblb--
+
