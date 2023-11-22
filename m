@@ -1,132 +1,162 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ch4GalIX"
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDF110CE;
-	Wed, 22 Nov 2023 05:45:44 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-a00a9c6f283so373262466b.0;
-        Wed, 22 Nov 2023 05:45:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFo3rrRt"
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926A9BC;
+	Wed, 22 Nov 2023 05:50:07 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c887d1fb8fso33751431fa.0;
+        Wed, 22 Nov 2023 05:50:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700660742; x=1701265542; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1700661006; x=1701265806; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=md1yJyViVJIk7bLbArcNZW7/RCjayNMC8N02jDNysO4=;
-        b=ch4GalIXl3dk5A3Nde7K6ha0vSoqXiq8GlivBm64yEA5gkYwvhjHSmYSSrrUWBZQxN
-         KWVIy0xl6mWTGPM1pBUGt9NXa6awo4YXdN2HCpScrWKHHxO9uEBqipL/ogEsfg3kEdNV
-         mS+FhXnhEFbjfUgzbtlX0LRjfG4Lkv1DogZXJzMprC3KluT9fU0IEMhP+751iNwakl8l
-         hBNuqErYdlpNf/v2kL85oEYWNWPPH0+Kb7pyjcslX/YkrcLwSV+i8LNnwECEC/JSHQDk
-         t2SCE3UcceXuDAEI5+Gb5tOZ4iook7FON725REWvgMJQ5wHQPQZog4pw78Q/loR/6ukn
-         hFLQ==
+        bh=VGvo2wK/qUHrm7e4nS+FqOamAmN2Y01aRBg4wudRWCI=;
+        b=nFo3rrRtfsbe3+X6hbnd2uJJiwLwJWqkz/JmWE/HGWtroXsPBhUfnwRtgZEnf5oL/w
+         JjRZyljTXeyIpmc+ngJKrt/TtejzxmGvUbw8+6GCpoLpl24eH29XpehMYjRqh9oXdlbF
+         BF6ILc93UmA8eHIDqHAH8UcHQQTemBeEATlPLdubNojn9ZEtjJirKGr4HK6EAUWaJcla
+         yZqkuFZM4pxbr29U/6OrXaqvfJWia8SYfCF7y0+X+ND3ud3dy1/Oue/lOoQfrGVdr0Hj
+         9ZPkcHfwxQ5GS3Vyn3Mu/NwRXhex81TN9csm01Z+Rh6sEfHik6yZkA5/2/LGFD2kd11I
+         KS+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700660742; x=1701265542;
+        d=1e100.net; s=20230601; t=1700661006; x=1701265806;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=md1yJyViVJIk7bLbArcNZW7/RCjayNMC8N02jDNysO4=;
-        b=DUD465gjirqgF2mAOfWEzd/WvNDInuBelu37aSPzVCyu6giOGO63LDGkX5qhYHyYnr
-         6gigR2Kag/kYDsAFYywolB/s98uvv1pNMVdO9sUu0+GbAtnf/JqaO52iZZqsiS0hDiJ0
-         7gVPwn4VFP+09g0BuF2tiveBS7X7RqipMUoTVv/6lqozKpudlmUy4ucmHinA0OLLGQw8
-         aAl4Fro8AbsEAFpg0FTHmFa93yqAZdKMOTC8u0kCeoKcPSYxPyN32XaMBDQi6BEs+tW6
-         ekt4KYYQGtlo4eUPq0ReKy8GGbfWOb0NAb6HzwlrBsZ1umH5Kc6ZK31Tt3utPpP0BFu1
-         qvXA==
-X-Gm-Message-State: AOJu0Yz5Nbk9/lLaPCDekrwERYwWhcMhlteHUy9088QdIN30wDpoXnE6
-	ISCvM3T5F85gFH+MtH+UhPV3xGaT1CxMFIgMe28=
-X-Google-Smtp-Source: AGHT+IEDJD80sNR88v2ZEvEEO8EO3ir1FQB2gTnGz7Y36msid1xY1pR45oM0Od6H7q9Cr5vTAN6bxG6Disb78sSlYj4=
-X-Received: by 2002:a17:906:4e93:b0:9fc:ae47:5f0d with SMTP id
- v19-20020a1709064e9300b009fcae475f0dmr1464027eju.71.1700660742134; Wed, 22
- Nov 2023 05:45:42 -0800 (PST)
+        bh=VGvo2wK/qUHrm7e4nS+FqOamAmN2Y01aRBg4wudRWCI=;
+        b=LkcHq0Wc5gwKjLMPy2yjhPUkNgCy3CDBJGRbz94+BvL4No/PlNJFvnTNDsLw1W/dcJ
+         ip0iClPAw59qLsWh4GdzRjYs+A3gPPU/PrJBXLrMNBvJ6MpKx0DOVNxckXrA0pYlE9gz
+         wJ5VbKlqnfznRQZN+rop7TxTU1J9hbKXlZV2ZMVNyONW34ukxANgp6k0AvW0kwklu+4u
+         czuZX258qvVosVQDoVsI9VdhYOcou5MAYbQq7ecjIMVkYbvr/jX3f857WVv5fQ0oGGo3
+         4YmbgsJR71nmWFB3I5Pk1Ght5cZ6o0hkRxRMZCcGZ4G+RFS03lRIUAUuzoeQr5A+UJet
+         8UUQ==
+X-Gm-Message-State: AOJu0YwvHrMrs4WCG0yXv9qDJui0OauBilofsDNev16Rcbgy4RAs9g1A
+	UsNizHH63bMuvYEW8ecAPmFYrMea98YrslyeCTU=
+X-Google-Smtp-Source: AGHT+IGADla5AngdafjZj4xVSn2bMpwu94RIXGs1aggs+dTW20GqVt+KqN6QW83yuruj4ESEnG/vy5fguAMd3CGAzQY=
+X-Received: by 2002:a2e:908f:0:b0:2c8:874b:8f19 with SMTP id
+ l15-20020a2e908f000000b002c8874b8f19mr1706701ljg.51.1700661005611; Wed, 22
+ Nov 2023 05:50:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
- <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info> <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
- <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
-In-Reply-To: <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
+References: <20231122054142.31322-1-lukas.bulwahn@gmail.com> <mku6gvd4rfkxzk2vrdjbizglte526ygyfhnwialtri44oqzikt@pq2l7mk25jgc>
+In-Reply-To: <mku6gvd4rfkxzk2vrdjbizglte526ygyfhnwialtri44oqzikt@pq2l7mk25jgc>
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 22 Nov 2023 14:45:30 +0100
-Message-ID: <CAKXUXMzo4cOW3p-XhODanMy5Lig7zHqnqbYJ5aXNvbeYLwfrrQ@mail.gmail.com>
-Subject: Re: [regression] microcode files missing in initramfs imgages from
- dracut (was Re: [PATCH] x86: Clean up remaining references to CONFIG_MICROCODE_AMD)
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com, hpa@zytor.com, 
+Date: Wed, 22 Nov 2023 14:49:54 +0100
+Message-ID: <CAKXUXMwGgtJVWmrFX0chpgNC++Ok54t-qXxware+aEDiyZFszw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add section MIPS BAIKAL-T1 SOC DRIVERS
+To: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+	Serge Semin <fancer.lancer@gmail.com>, 
+	Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 22, 2023 at 10:15=E2=80=AFAM Linux regression tracking (Thorste=
-n
-Leemhuis) <regressions@leemhuis.info> wrote:
+On Wed, Nov 22, 2023 at 2:32=E2=80=AFPM Serge Semin
+<Sergey.Semin@baikalelectronics.ru> wrote:
 >
-> On 12.11.23 19:10, Borislav Petkov wrote:
-> > On Sun, Nov 12, 2023 at 04:03:32PM +0100, Linux regression tracking (Th=
-orsten Leemhuis) wrote:
-> >> That's because dracut until the recent commit
-> >> https://github.com/dracutdevs/dracut/commit/6c80408c8644a0add1907b0593=
-eb83f90d6247b1
-> >> looked for CONFIG_MICROCODE_AMD and CONFIG_MICROCODE_INTEL in the conf=
-ig
-> >> file to decide what to include or not.
+> Hi Lukas
+>
+> On Wed, Nov 22, 2023 at 06:41:42AM +0100, Lukas Bulwahn wrote:
+> > In recent years, a number of drivers for the MIPS Baikal-T1 SoC have be=
+en
+> > added to the kernel tree, but there is no dedicated MAINTAINERS section=
+ for
+> > this SoC.
 > >
-> > They've been told a bunch of times already that grepping .config for
-> > specific symbols is not how one should check whether one should add
-> > microcode blobs to the initrd or not because Kconfig symbols are not an
-> > ABI.
+> > As all of the code has been contributed by Serge Semin, let us assume h=
+e is
+> > still the active maintainer for this code rather than marking it orphan=
+.
+> >
+> > Add a new section MIPS BAIKAL-T1 SOC DRIVERS in MAINTAINERS.
 >
-> Maybe, but you know how Linus sees things like this: what's considered
-> an ABI/API or not is nearly[1] irrelevant - if a change breaks something
-> that used to work then it needs to be fixed.
+> Thanks for submitting this patch. I was going to send a similar change
+> in the framework of the arch-series which is hanging up in my local
+> repo and alas is still under construction. I know I shouldn't have
+> been waiting (I'm sorry about that), but I didn't expect the entire
+> work would have taken so much time. On a way to finishing it up I had
+> to switch my efforts to the EDAC and network drivers and got sucked by
+> the amount of work there. But I will definitely submit the Baikal-T1
+> SoC arch patchset when my work on another area is finally over.
 >
-> [1] unless you fiddle with things obviously internal; not sure if this
-> case would qualify for him, but somehow I doubt it -- but I might be
-> wrong there.
+> Here are several comments about this patch. (Please see my last
+> comment should you be ok with accepting the patches with already fixed
+> notes.)
+>
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> >  MAINTAINERS | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9613c9c3cc97..820f1ab1ee80 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14474,6 +14474,19 @@ F:   arch/mips/
+> >  F:   drivers/platform/mips/
+> >  F:   include/dt-bindings/mips/
+> >
+> > +MIPS BAIKAL-T1 SOC DRIVERS
+>
+> > +M:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+>
+> It's better to change the email to
+> +M:     Serge Semin <fancer.lancer@gmail.com>
+> I quicker respond from my private inbox, than from the corporate one.
+> This will also be useful should the corporate email eventually change.
+>
+> > +S:   Maintained
+>
+> +F:     Documentation/devicetree/bindings/bus/baikal,bt1-*.yaml
+> +F:     Documentation/devicetree/bindings/clock/baikal,bt1-*.yaml
+>
+> > +F:   Documentation/hwmon/bt1-pvt.rst
+>
+> I'd prefer this and these -+ being in a separate entry (see the
+> attached patches), because | the respective device IP-cores have been
+> re-used in another SoC. So | eventually the entries will be updated to
+> reflect that.              +---------------------------------+
+>                                                              |
+> > +F:   drivers/ata/ahci_dwc.c                               |
+>                                                              |
+> I believe this is already listed in the MAINTAINERS file.    |
+>                                                              |
+> > +F:   drivers/bus/bt1-*.c                                  |
+> > +F:   drivers/clk/baikal-t1/                               |
+> > +F:   drivers/hwmon/bt1-pvt.[ch] <-------------------------+
+> > +F:   drivers/memory/bt1-l2-ctl.c                          |
+> > +F:   drivers/mtd/maps/physmap-bt1-rom.[ch]                |
+> > +F:   drivers/pci/controller/dwc/pcie-bt1.c <--------------+
+>
+> > +F:   drivers/spi/spi-dw-bt1.c
+>
+> This is already marked as maintained by me in the framework of the
+> generic DW APB SSI driver (See the "SYNOPSYS DESIGNWARE APB SSI
+> DRIVER" entry in the MAINTAINERS file).
+>
+> Anyway in order to save your time from editing this patch. I've
+> prepared a series which takes into account all the comments above. If
+> you are ok with it, I can submit it for review. What do you think?
 >
 
-Thorsten, I think you are wrong here in this case. We are talking
-about the kernel build configuration options and their names and these
-are certainly not stable and never have been.
-
-Some indication to show that the rate of change we are generally
-talking about without anyone considering this stable ABI/API:
-
-You can run "find . -name Kconfig* | xargs grep -h -E '^(menu)config '
-| sort | uniq" on each kernel release. Then diff those lists of
-configs with increasing kernel config versions.
-
-If this would be stable, then only config options should appear and
-little should disappear, but that is not the case. And if something
-disappears, it should relate to a driver/feature that was removed, but
-that is also not always the case.
-
-Here are some quick numbers:
-
-v6.0 to v6.1: 43 removals
-v6.1 to v6.2: 40 removals
-v6.2 to v6.3: 350 removals
-v6.3 to v6.4: 86 removals
-v6.4 to v6.5: 73 removals
-v6.5 to v6.6: 61 removals
-
-* Removals can also be potentially a renaming.
-
-So, these config names are certainly not stable ABI/API. We can
-investigate a bit deeper on which changes are due to driver removals,
-which due to config removal but making a feature default and which are
-simply a config renaming, but in the past, hardly any kernel developer
-has considered this interface to be a special stable ABI/API.
-
-Further, to my knowledge looking at kernel discussions and the
-repository, there are currently no tools out there that would assist
-in updating a kernel build configuration from one version to the next.
-
-So, we are talking about roughly more than 50 removals to kernel
-config options every release, and now there was this one special case
-in one release, where a tool incorrectly relies on this one config
-option to be stable. That is not a regression of a stable ABI/API,
-that is a misuse of an internal non-stable ABI/API.
-
+Sure, go ahead and submit your series. I just wanted to have all files
+in ./drivers/bus/ have a proper maintainer and then got to look at the
+BAIKAL T1 files.
 
 Lukas
+
+> -Serge(y)
+>
+> > +
+> >  MIPS BOSTON DEVELOPMENT BOARD
+> >  M:   Paul Burton <paulburton@kernel.org>
+> >  L:   linux-mips@vger.kernel.org
+> > --
+> > 2.17.1
+> >
+> >
