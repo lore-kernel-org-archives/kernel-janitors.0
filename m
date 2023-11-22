@@ -1,138 +1,164 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="elLTQnSm"
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ADFF195
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 05:02:12 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-3316ad2bee5so3253918f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 05:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700658131; x=1701262931; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zAYBW/dYtjxj/mIFheTLcX/YTMyi0LyyXwltchBNxB0=;
-        b=elLTQnSm9XJcVRx/bhUqjBEm8bMjSnlwe2U09kiu4T3UZthjhCyQIdHEoZ5G0bLVY3
-         I6A+PC4GeGvd8r6Sl2x8/RVux5iMsz4TuhX2gry807Q8DGhNIp8DoLcToPirL/tFy+Cv
-         8Q+Efj9qANkBAShtZNIItmh7POAQR0+V94968m6W/7h3N+ONZ70aj26lSKjKBCFWS+t2
-         Mjr8HH25H53fkUlf8Y8q41p0l/rhYsrLPbWJMiO1ic3VL3kAHM/1BO1MrC6GBM6L+XZX
-         I2LXvDpZvGu54DB4YuBCmCqxKl4+MqCnFYjswmET9slqhKNrcnmL422eUolzpdPiDJ/c
-         Z+Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700658131; x=1701262931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zAYBW/dYtjxj/mIFheTLcX/YTMyi0LyyXwltchBNxB0=;
-        b=XY17+pnXGPazu9oJh+cDZ4CnrpoD/ZhLAHj4L87F69sExTdzVHdqVljLNfeAIE5kQj
-         AtzRRh3gKWxbvfpz0ebsYnDuo6Y0WvwslASY6fH6AE/dP9k2NPmuedHD3M3Dk181lAC8
-         wDel5QOPFft9aaq8brY9ctkm4z5o8qBZ1HYpW+Bi4SfVr+zSADGVCBFr4HTrRJ4M1+2G
-         K8W9/zrpn65sBcnSFlwwmQoCIth1JPJR2o6r8UQhqb++P/E/sXKkiTX+PqIK/9kldEgx
-         XfIUm891KLYA8aU6uR4N5w+BrOVN+d9Iw+uuimmreosCJVSctmV30C01jEdntfjtt35A
-         5RfA==
-X-Gm-Message-State: AOJu0YzOcNTzpg7hGNm8F4USKW0trbPuIZc0n3otrFmU7RSdRZrpKr25
-	VE/gUvNcjhO341Ct9BNMwde7Lg==
-X-Google-Smtp-Source: AGHT+IFm/gvzWYz8Z3gyoz/52Dw4SJ4D1BBYzMbXvuiTFLxpBZfbv3NItqBLCI+UzFq90ikS/hTasA==
-X-Received: by 2002:a5d:6843:0:b0:32f:e1a2:526a with SMTP id o3-20020a5d6843000000b0032fe1a2526amr266266wrw.67.1700658131308;
-        Wed, 22 Nov 2023 05:02:11 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id x11-20020adfffcb000000b003316b8607cesm16215688wrs.1.2023.11.22.05.02.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 05:02:10 -0800 (PST)
-Date: Wed, 22 Nov 2023 08:02:06 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: pkshih@realtek.com, kvalo@kernel.org, nathan@kernel.org,
-	ndesaulniers@google.com, trix@redhat.com, lizetao1@huawei.com,
-	linville@tuxdriver.com, Larry.Finger@lwfinger.net,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH wireless-next 2/2] rtlwifi: rtl8821ae: phy: fix an
- undefined bitwise shift behavior
-Message-ID: <2ec14802-78b0-4a3f-a730-19e95ec8d359@suswa.mountain>
-References: <20231122090210.951185-1-suhui@nfschina.com>
- <20231122090210.951185-2-suhui@nfschina.com>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FIkm2BEk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3947810C;
+	Wed, 22 Nov 2023 05:25:03 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1994B40E0258;
+	Wed, 22 Nov 2023 13:25:01 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0ArRJ98NsNWj; Wed, 22 Nov 2023 13:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1700659498; bh=tfmB5kIO1KjZIKpASvFX87u56VKgZHav99DyvY9sqVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FIkm2BEkpLgPj5wpM1geMfClp93ikKBJoNFZjuSANkN8X7QaX7raZTR0GBVKM8jte
+	 pwvnSPf4iQkvXgFQK4H3EkaeI367oCM6+qAjxNMGVEVlaw0yf17XQ+MXcBp3dARkec
+	 pgVCtwTorFnS7NFvcbzoHTNLoNaQQuPhI/HWBfW2RECz/95xoEyM+39zZW86q2aw7m
+	 WpzIvO/I/XmbPJWqL2bg1a/FFP8+Utnw4x5NwMKu0UWEPfcLtXmxVxeRLU9OuzVj7D
+	 lOiyiChmkcUb6g1NHMBX7WmnQKeJmwyQhkJkCGp63ee9wpjOsQ23N2zoD0e8T7LUnX
+	 dpHqE2GDJ/SKkEpykLrUZ05KNQPEfR//boi5hp7TqmCeJItc5DsE80EUxUQzXhB2lq
+	 LEYS7wXsy4vkCLbW9hZEkWv9IpNtUL6iKesNgV09ybHl71HNG46tSy2BNysqaHw+U3
+	 lIKbU/xlQFYyeBCJ9IUT1o8DEm+SPHQZroQu5Zlf6qitQSIFtk78grkuBbbvfzwS74
+	 nnP8UGB2xhn/Agj90HI3Cw4h+ocx49Z7sDt1RHHOG9MsWByJhPt+Oq+CKLOc0O+Tu3
+	 Q+sQJ9ZU/bMeC8qv2TTQ6TrTmijzlFqOm2xhukhQnYN5pLg+Ujt1SNP9MzFPgM53Ee
+	 m5dDBsHNXa65wZFpv3g0Wt5U=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A78840E0257;
+	Wed, 22 Nov 2023 13:24:48 +0000 (UTC)
+Date: Wed, 22 Nov 2023 14:24:43 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
+	initramfs@vger.kernel.org
+Subject: [PATCH] x86: Add a "x86" ELF note namespace
+Message-ID: <20231122132419.GBZV4BA399sG2JRFAJ@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
+ <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+ <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
+ <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231122090210.951185-2-suhui@nfschina.com>
+In-Reply-To: <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
 
-On Wed, Nov 22, 2023 at 05:02:12PM +0800, Su Hui wrote:
-> Clang staic checker warning:
-> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c:184:49:
-> 	The result of the left shift is undefined due to shifting by '32',
-> 	which is greater or equal to the width of type 'u32'.
-> 	[core.UndefinedBinaryOperatorResult]
+On Wed, Nov 22, 2023 at 12:58:26PM +0100, Borislav Petkov wrote:
+> On Wed, Nov 22, 2023 at 10:15:42AM +0100, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > [1] unless you fiddle with things obviously internal; not sure if this
+> > case would qualify for him, but somehow I doubt it -- but I might be
+> > wrong there.
 > 
-> If the value of the right operand is negative or is greater than or
-> equal to the width of the promoted left operand, the behavior is
-> undefined.[1][2]
+> Well, think about it - by that logic, if CONFIG_* items are an ABI, we
+> will never ever be able to change any of them. Now that would be awful.
 > 
-> For example, when using different gcc's compilation optimizaation options
-> (-O0 or -O2), the result of '(u32)data << 32' is different. One is 0, the
-> other is old value of data. Adding an u64 cast to fix this problem.
+> > Any progress on this?
 > 
-> [1]:https://stackoverflow.com/questions/11270492/what-does-the-c-
-> standard-say-about-bitshifting-more-bits-than-the-width-of-type
-> [2]:https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
-> 
-> Fixes: 21e4b0726dc6 ("rtlwifi: rtl8821ae: Move driver from staging to regular tree")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> index 6df270e29e66..89713e0587b5 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> @@ -106,7 +106,7 @@ u32 rtl8821ae_phy_query_bb_reg(struct ieee80211_hw *hw, u32 regaddr,
->  		regaddr, bitmask);
->  	originalvalue = rtl_read_dword(rtlpriv, regaddr);
->  	bitshift = _rtl8821ae_phy_calculate_bit_shift(bitmask);
-> -	returnvalue = (originalvalue & bitmask) >> bitshift;
-> +	returnvalue = (u64)(originalvalue & bitmask) >> bitshift;
+> We're thinking...
 
-This is a right shift, not a left shift. << vs >>.
+Turns out this is easier than I think and people have solved this
+problem already - all I need to do is use it. Wonderful.
 
->  
->  	rtl_dbg(rtlpriv, COMP_RF, DBG_TRACE,
->  		"BBR MASK=0x%x Addr[0x%x]=0x%x\n",
-> @@ -128,7 +128,7 @@ void rtl8821ae_phy_set_bb_reg(struct ieee80211_hw *hw,
->  		originalvalue = rtl_read_dword(rtlpriv, regaddr);
->  		bitshift = _rtl8821ae_phy_calculate_bit_shift(bitmask);
->  		data = ((originalvalue & (~bitmask)) |
-> -			((data << bitshift) & bitmask));
-> +			(((u64)data << bitshift) & bitmask));
+Lemme Cc initramfs@vger.kernel.org as an FYI and see whether dracut
+folks would have any comments about this.
 
-The checker is printing an accurate warning, however, I'm not sure the
-fix is correct.  Obviously, shift wrapping is bad and your patch would
-eliminate that possibility.  However, data is a u32 so we end up
-discarding the high 32 bits.  I can imagine a different static checker
-would complain about that.
+---
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Date: Wed, 22 Nov 2023 13:59:40 +0100
 
-Perhaps, a better way to silence the warning is to just change
-_rtl8821ae_phy_calculate_bit_shift() to not return 32 bits?  Do we
-really ever pass bitmask 0?  No idea...
+Add a "x86" ELF note namespace to put ELF note structures with which to
+communicate in a ABI-compliant manner what a kernel image supports.
 
-regards,
-dan carpenter
+Also, add the first note type of this - X86_ELFNOTE_MICROCODE - which
+denotes that microcode support is built into the kernel image and thus
+initrd-generating tools like dracut can parse the ELF .notes section for
+this.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-index 5323ead30db0..42885e3a458f 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-@@ -29,9 +29,7 @@ static void _rtl8821ae_phy_rf_serial_write(struct ieee80211_hw *hw,
- 					   u32 data);
- static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitmask)
- {
--	u32 i = ffs(bitmask);
--
--	return i ? i - 1 : 32;
-+	return ffs(bitmask) - 1;
+$ readelf -n vmlinux
+
+Displaying notes found in: .notes
+  Owner                Data size        Description
+  ...
+  x86                  0x00000004       Unknown note type: (0x00000000)
+  description data: 01 00 00 00
+  ^^^^^^^^^^^^^^
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/include/uapi/elfnote.h      | 18 ++++++++++++++++++
+ arch/x86/kernel/cpu/microcode/core.c |  5 +++++
+ 2 files changed, 23 insertions(+)
+ create mode 100644 arch/x86/include/uapi/elfnote.h
+
+diff --git a/arch/x86/include/uapi/elfnote.h b/arch/x86/include/uapi/elfnote.h
+new file mode 100644
+index 000000000000..bef26c4944e8
+--- /dev/null
++++ b/arch/x86/include/uapi/elfnote.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _X86_UAPI_ELFNOTE_H_
++#define _X86_UAPI_ELFNOTE_H_
++
++/*
++ * "x86" namespaced ELF note structures to communicate features
++ * supported by the kernel binary to external utilities which need that
++ * info in order to do additional preparatory work based on the target
++ * kernel image.
++ */
++
++/*
++ * Used by the microcode loader to communicate support to external
++ * initrd generators like dracut.
++ */
++#define X86_ELFNOTE_MICROCODE	0
++
++#endif /* _X86_UAPI_ELFNOTE_H_ */
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 232026a239a6..f35444bafbbc 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -24,6 +24,7 @@
+ #include <linux/capability.h>
+ #include <linux/firmware.h>
+ #include <linux/cpumask.h>
++#include <linux/elfnote.h>
+ #include <linux/kernel.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
+@@ -32,6 +33,8 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ 
++#include <uapi/elfnote.h>
++
+ #include <asm/apic.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/perf_event.h>
+@@ -859,3 +862,5 @@ static int __init microcode_init(void)
+ 
  }
- static bool _rtl8821ae_phy_bb8821a_config_parafile(struct ieee80211_hw *hw);
- /*static bool _rtl8812ae_phy_config_mac_with_headerfile(struct ieee80211_hw *hw);*/
+ late_initcall(microcode_init);
++
++ELFNOTE32("x86", X86_ELFNOTE_MICROCODE, CONFIG_MICROCODE);
+-- 
+2.42.0.rc0.25.ga82fb66fed25
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
