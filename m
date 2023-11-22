@@ -1,92 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dsmpedhh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A7C9E;
-	Tue, 21 Nov 2023 10:49:55 -0800 (PST)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ALGLmuD020418;
-	Tue, 21 Nov 2023 18:49:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=lCgylGPv2jsccAcpuVS4wvUD9Pfnb4fjRsSLJaKLxFE=;
- b=DsmpedhhMbFvtrefEyqaOIbD1Tv8h2Rvho5jrGE9fw1SuCA8LmebDI/DjBDgBQV/Yzxg
- px/yvCRxls30XPgfkJ97yC2HaCX9qQePNDah1Yob1WupKk9k0JHehyOFdwn3Ee/M9Zwo
- YYKdJkf11hFaMDal9OJPPgTh/3XALnVTU6mG5dGN5n4NFoniWt6iJODLDwAitq0VrKa/
- xoXBUmm/WGdKd7UvrzDOH9JrXupkqwgXJ8h7LQqn1TO7n2DRbstX+OoDRwl8R2sOuftT
- VqyWRkv83nRpDbGTSr/DEssJ9Ss/thji0j+7J+Wkfw4QQEzuBiTdURrTRnwRHCo3CMLu VQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ugyb48fd0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 18:49:42 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ALInf6X000863
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 18:49:41 GMT
-Received: from abhinavk-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 21 Nov 2023 10:49:40 -0800
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Su Hui <suhui@nfschina.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/msm: remove unnecessary NULL check
-Date: Tue, 21 Nov 2023 10:49:29 -0800
-Message-ID: <170059249755.25841.10526095705316851191.b4-ty@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <ZSj+6/J6YsoSpLak@kadam>
-References: <ZSj+6/J6YsoSpLak@kadam>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id BA44B10F1;
+	Tue, 21 Nov 2023 19:06:42 -0800 (PST)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id B38D060621C85;
+	Wed, 22 Nov 2023 11:06:31 +0800 (CST)
+Message-ID: <22c4788d-1ba4-52c7-4ddc-5a3b0ec2acb3@nfschina.com>
+Date: Wed, 22 Nov 2023 11:06:31 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xIi2dVQc35rpRu0TlypnHPZiz5Iapafy
-X-Proofpoint-ORIG-GUID: xIi2dVQc35rpRu0TlypnHPZiz5Iapafy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-21_10,2023-11-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 mlxlogscore=674
- malwarescore=0 adultscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311210147
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] misc: mei: client.c: fix some error code problem in
+ mei_cl_write
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+ nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
+ alexander.usyskin@intel.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2023/11/20 23:03, Dan Carpenter wrote:
+> On Mon, Nov 20, 2023 at 04:53:45PM +0800, Su Hui wrote:
+>> Clang static analyzer complains that value stored to 'rets' is never
+>> read. Remove some useless code, and let 'buf_len = -EOVERFLOW' to make
+>> sure we can return '-EOVERFLOW'.
+>>
+>> mei_msg_hdr_init() return negative error code, rets should be
+>> 'PTR_ERR(mei_hdr)' rather than '-PTR_ERR(mei_hdr)'.
+>>
+>> Fixes: 0cd7c01a60f8 ("mei: add support for mei extended header.")
+>> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/misc/mei/client.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+>> index 9c8fc87938a7..00dac0a47da0 100644
+>> --- a/drivers/misc/mei/client.c
+>> +++ b/drivers/misc/mei/client.c
+>> @@ -2011,7 +2011,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+>>   
+>>   	mei_hdr = mei_msg_hdr_init(cb);
+>>   	if (IS_ERR(mei_hdr)) {
+>> -		rets = -PTR_ERR(mei_hdr);
+>> +		rets = PTR_ERR(mei_hdr);
+> KTODO: write a static checker rule which complains -PTR_ERR()
+>
+> This might be complicated because there are parts of networking where
+> we store error codes as positive values.  But there is enough context in
+> this function to create some sort of warning about this code.  "Mixing
+> positive and negative error codes" perhaps?
 
-On Fri, 13 Oct 2023 11:25:15 +0300, Dan Carpenter wrote:
-> This NULL check was required when it was added, but we shuffled the code
-> around and now it's not.  The inconsistent NULL checking triggers a
-> Smatch warning:
-> 
->     drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c:847 mdp5_init() warn:
->     variable dereferenced before check 'mdp5_kms' (see line 782)
-> 
-> [...]
+Maybe add a check in checkpatch.pl is a good idea?
 
-Applied, thanks!
+>
+> $ git grep -n '\-PTR_ERR'
+> block/partitions/core.c:574:                   disk->disk_name, p, -PTR_ERR(part));
+> drivers/infiniband/ulp/ipoib/ipoib_multicast.c:291:                        -PTR_ERR(ah));
+> drivers/misc/mei/client.c:2014:         rets = -PTR_ERR(mei_hdr);
+> drivers/net/ethernet/intel/igb/igb_main.c:8963:                 unsigned int xdp_res = -PTR_ERR(skb);
+> drivers/net/ethernet/intel/igc/igc_main.c:2639:                 unsigned int xdp_res = -PTR_ERR(skb);
+> drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:2348:                     unsigned int xdp_res = -PTR_ERR(skb);
+> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:5431:                         unsigned int xdp_res = -PTR_ERR(skb);
+> drivers/phy/sunplus/phy-sunplus-usb2.c:278:             ret = -PTR_ERR(phy);
+> drivers/scsi/libfc/fc_elsct.c:86:               switch (-PTR_ERR(fp)) {
+> drivers/scsi/libfc/fc_lport.c:1081:                  IS_ERR(fp) ? -PTR_ERR(fp) : 0, fc_lport_state(lport),
+> fs/ext4/indirect.c:1042:                                ext4_error_inode_block(inode, nr, -PTR_ERR(bh),
+> fs/jffs2/background.c:48:                       -PTR_ERR(tsk));
+> fs/ntfs/dir.c:92:                               -PTR_ERR(m));
+> fs/ntfs/dir.c:312:                              -PTR_ERR(page));
+> fs/ntfs/dir.c:643:                              -PTR_ERR(m));
+> fs/ntfs/dir.c:790:                              -PTR_ERR(page));
+> fs/ntfs/index.c:141:                            -PTR_ERR(m));
+> fs/ntfs/index.c:268:                            -PTR_ERR(page));
+> fs/ntfs/mft.c:162:      ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
+> fs/ntfs/mft.c:289:                              "mft record, error code %ld.", -PTR_ERR(m));
+> net/ipv6/af_inet6.c:852:                        WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
+> net/ipv6/inet6_connection_sock.c:123:           WRITE_ONCE(sk->sk_err_soft, -PTR_ERR(dst));
+> tools/lib/bpf/libbpf.c:10044:           errno = -PTR_ERR(ptr);
+> tools/lib/bpf/libbpf_internal.h:520:            errno = -PTR_ERR(ret);
+> tools/testing/selftests/bpf/prog_tests/btf_dump.c:59:           err = -PTR_ERR(btf);
+> tools/testing/selftests/bpf/prog_tests/sk_lookup.c:483:         errno = -PTR_ERR(link);
+>
+> Quite a few of those were in printks and it might be an opportunity to
+> use %pe to print the ENOMEM etc strings instead of the number.
 
-[1/1] drm/msm: remove unnecessary NULL check
-      https://gitlab.freedesktop.org/drm/msm/-/commit/56466f653cb5
+I will try sending some patch for this.
 
-Best regards,
--- 
-Abhinav Kumar <quic_abhinavk@quicinc.com>
+Thanks for your suggestions.
+
+Su Hui
+
