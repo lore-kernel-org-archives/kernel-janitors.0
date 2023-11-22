@@ -1,90 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lW99JIXN"
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56AFF93;
-	Wed, 22 Nov 2023 00:30:59 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5484ef5e3d2so7052078a12.3;
-        Wed, 22 Nov 2023 00:30:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700641858; x=1701246658; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e9Cxvv/xNdpglan51CFkm8Zx1o0cnxsHHNPItVu8HE8=;
-        b=lW99JIXNNxmQKukkeLMX27uWojIlPBvXFrLN00e9jybu0reXN6diw36EZaPcEv+y9J
-         tTGBXoWuveCHKQMNWU5HJk5ohEr0cykX2jIX5sFeM3DwKHJoBcCOrDPemdlJkOnrlfxC
-         ORDDpGIWP/uIldNgmqyjRdN9ZM17NuKnqSrbIYf8JBQrK87RqZQgwTmuAKDlbECGz9D7
-         m8GALo9JiwxwakwdqAfSMwqOlLjWthNsqGCaXKRiLS2tu8oZzuvOCI3LZKmvIfep5XAj
-         zG/FXtLmwbKur/l3FaukLXBQRsmESHBFNJBUkdgM57DLU/797j1lzTjZkKNA1Yd/7Xqx
-         eYIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700641858; x=1701246658;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e9Cxvv/xNdpglan51CFkm8Zx1o0cnxsHHNPItVu8HE8=;
-        b=AwsG8ilBK22bLFikwvf1ajPbUCpSPoHnAyiQOWrYtVYeOXRKOBQbNycfstRRodzupo
-         x0RPgHzXBAmphGqsWrCu9sYk8FJPPGN3S/9hs6Al567+bnPt9lTa+Ckg39pbeG83bXSL
-         oGIsAYnPaUgI0Z/X3GcRDe2Z6ewYmlD1eUQjjCLPblt77MlbRrc2xrnKQ9WFjwEKRk9l
-         FXxSFX5sES8hhCVe6OSqwpwcAXTgKBNlWRh/5GTHirMybKsikTM3KR7gO4kMIu2iUsLZ
-         FNHUJldpDWxvE9/CfCogNxNJdZi1rrSMV8kYkHQnOyCfuyT0LHcZwlK3ioWR/gBcqubG
-         oQAw==
-X-Gm-Message-State: AOJu0Yxw+92AmDOxiAYgp3iUeC88p4Rq9wiYuaKbeTxf68X3NUNeigV9
-	e7t1eW0dQeuYhEoercCQDII=
-X-Google-Smtp-Source: AGHT+IFWoRYWE5A4j9ODEYXpZWSAF31+BLlh3D5L+QwX+ENESzyPy4VwZ7njPHBaL0AOnHziTVsatw==
-X-Received: by 2002:aa7:d603:0:b0:548:636f:398 with SMTP id c3-20020aa7d603000000b00548636f0398mr1206085edr.27.1700641857596;
-        Wed, 22 Nov 2023 00:30:57 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:14bb:d13c:65e3:46bf])
-        by smtp.gmail.com with ESMTPSA id a12-20020aa7d74c000000b0054918d34fb0sm1008148eds.95.2023.11.22.00.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 00:30:57 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	libertas-dev@lists.infradead.org,
-	linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 2C183421F;
+	Wed, 22 Nov 2023 01:03:01 -0800 (PST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id CC8F86075452A;
+	Wed, 22 Nov 2023 17:02:52 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: pkshih@realtek.com,
+	kvalo@kernel.org,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	trix@redhat.com
+Cc: Su Hui <suhui@nfschina.com>,
+	lizetao1@huawei.com,
+	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] wifi: libertas: fix config name in dependency for SDIO support
-Date: Wed, 22 Nov 2023 09:30:47 +0100
-Message-Id: <20231122083047.12774-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH wireless-next 1/2] rtlwifi: rtl8821ae: phy: remove some useless code
+Date: Wed, 22 Nov 2023 17:02:10 +0800
+Message-Id: <20231122090210.951185-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Commit 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support") reworks
-the dependencies for config LIBERTAS, and adds alternative dependencies for
-USB, SDIO and SPI.
+Clang static checker warning:
+Value stored to 'v1' is never read [deadcode.DeadStores]
+Value stored to 'channel' is never read [deadcode.DeadStores]
 
-The config option SDIO however does not exist in the kernel tree. It was
-probably intended to refer to the config option MMC, which represents
-"MMC/SD/SDIO card support" and is used as dependency by various other
-drivers that use SDIO.
+Remove them to save some place.
 
-Fix the dependency to the config option MMC for declaring the requirement
-on provision of SDIO support.
-
-Fixes: 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/net/wireless/marvell/libertas/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/Kconfig b/drivers/net/wireless/marvell/libertas/Kconfig
-index 56156a021be3..36b234bc5be8 100644
---- a/drivers/net/wireless/marvell/libertas/Kconfig
-+++ b/drivers/net/wireless/marvell/libertas/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config LIBERTAS
- 	tristate "Marvell 8xxx Libertas WLAN driver support"
--	depends on USB || SDIO || SPI
-+	depends on USB || MMC || SPI
- 	depends on CFG80211
- 	select LIB80211
- 	select FW_LOADER
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+index 5323ead30db0..6df270e29e66 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+@@ -2038,15 +2038,9 @@ static bool _rtl8821ae_phy_config_bb_with_pgheaderfile(struct ieee80211_hw *hw,
+ 			 /*don't need the hw_body*/
+ 			if (!_rtl8821ae_check_condition(hw, v1)) {
+ 				i += 2; /* skip the pair of expression*/
+-				v1 = array[i];
+ 				v2 = array[i+1];
+-				v3 = array[i+2];
+-				while (v2 != 0xDEAD) {
++				while (v2 != 0xDEAD)
+ 					i += 3;
+-					v1 = array[i];
+-					v2 = array[i+1];
+-					v3 = array[i+2];
+-				}
+ 			}
+ 		}
+ 	}
+@@ -3543,7 +3537,6 @@ u8 rtl8821ae_phy_sw_chnl(struct ieee80211_hw *hw)
+ 	struct rtl_phy *rtlphy = &rtlpriv->phy;
+ 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+ 	u32 timeout = 1000, timecount = 0;
+-	u8 channel = rtlphy->current_channel;
+ 
+ 	if (rtlphy->sw_chnl_inprogress)
+ 		return 0;
+@@ -3566,8 +3559,6 @@ u8 rtl8821ae_phy_sw_chnl(struct ieee80211_hw *hw)
+ 		rtl8821ae_phy_switch_wirelessband(hw, BAND_ON_2_4G);
+ 
+ 	rtlphy->sw_chnl_inprogress = true;
+-	if (channel == 0)
+-		channel = 1;
+ 
+ 	rtl_dbg(rtlpriv, COMP_SCAN, DBG_TRACE,
+ 		"switch to channel%d, band type is %d\n",
 -- 
-2.17.1
+2.30.2
 
