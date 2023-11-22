@@ -1,162 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFo3rrRt"
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926A9BC;
-	Wed, 22 Nov 2023 05:50:07 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c887d1fb8fso33751431fa.0;
-        Wed, 22 Nov 2023 05:50:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700661006; x=1701265806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VGvo2wK/qUHrm7e4nS+FqOamAmN2Y01aRBg4wudRWCI=;
-        b=nFo3rrRtfsbe3+X6hbnd2uJJiwLwJWqkz/JmWE/HGWtroXsPBhUfnwRtgZEnf5oL/w
-         JjRZyljTXeyIpmc+ngJKrt/TtejzxmGvUbw8+6GCpoLpl24eH29XpehMYjRqh9oXdlbF
-         BF6ILc93UmA8eHIDqHAH8UcHQQTemBeEATlPLdubNojn9ZEtjJirKGr4HK6EAUWaJcla
-         yZqkuFZM4pxbr29U/6OrXaqvfJWia8SYfCF7y0+X+ND3ud3dy1/Oue/lOoQfrGVdr0Hj
-         9ZPkcHfwxQ5GS3Vyn3Mu/NwRXhex81TN9csm01Z+Rh6sEfHik6yZkA5/2/LGFD2kd11I
-         KS+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700661006; x=1701265806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VGvo2wK/qUHrm7e4nS+FqOamAmN2Y01aRBg4wudRWCI=;
-        b=LkcHq0Wc5gwKjLMPy2yjhPUkNgCy3CDBJGRbz94+BvL4No/PlNJFvnTNDsLw1W/dcJ
-         ip0iClPAw59qLsWh4GdzRjYs+A3gPPU/PrJBXLrMNBvJ6MpKx0DOVNxckXrA0pYlE9gz
-         wJ5VbKlqnfznRQZN+rop7TxTU1J9hbKXlZV2ZMVNyONW34ukxANgp6k0AvW0kwklu+4u
-         czuZX258qvVosVQDoVsI9VdhYOcou5MAYbQq7ecjIMVkYbvr/jX3f857WVv5fQ0oGGo3
-         4YmbgsJR71nmWFB3I5Pk1Ght5cZ6o0hkRxRMZCcGZ4G+RFS03lRIUAUuzoeQr5A+UJet
-         8UUQ==
-X-Gm-Message-State: AOJu0YwvHrMrs4WCG0yXv9qDJui0OauBilofsDNev16Rcbgy4RAs9g1A
-	UsNizHH63bMuvYEW8ecAPmFYrMea98YrslyeCTU=
-X-Google-Smtp-Source: AGHT+IGADla5AngdafjZj4xVSn2bMpwu94RIXGs1aggs+dTW20GqVt+KqN6QW83yuruj4ESEnG/vy5fguAMd3CGAzQY=
-X-Received: by 2002:a2e:908f:0:b0:2c8:874b:8f19 with SMTP id
- l15-20020a2e908f000000b002c8874b8f19mr1706701ljg.51.1700661005611; Wed, 22
- Nov 2023 05:50:05 -0800 (PST)
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jYI1XMDX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F9283;
+	Wed, 22 Nov 2023 06:07:29 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9850440E0258;
+	Wed, 22 Nov 2023 14:07:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NPAV8wuf1POr; Wed, 22 Nov 2023 14:07:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1700662045; bh=ig/bMqSNzXntQhFY3R6soUJmrEAX/ZR070rutZI0ReE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jYI1XMDXBDNHMr8TVN1S4BhVUZdYyPwY9Xe3w9TB5NbyQ0e6hj3JaEFt4iytEr+/t
+	 Vv+9bEYkmZjsKHHa1o/PwNPkL4LorF9yb5pP5erpcJaGVbky26QYWHhGK1KodV0j4I
+	 rKS95E5mC2eeAokwvR7yXTL89ecologBizm9mUzgwqJSp8ygD/eW+ZH6DylGWre8Vx
+	 oCmQLSNbfbXgG35x26tL0DFWz68zskUazAgyfUG+zKHVHPSxnCa8ET9N3P0yp1Hfb8
+	 r1GV7bv6pbindFpQJZPQYHaFHXt9afg99xz4B5/GDHuw1DyzPEeAHLMr1x6P3Dbrtv
+	 9mp29QZg5SIt56fvc9huZgFmxXMllnUHI3Mld/aldXJ8ONgemppQJT2TokycZDwxS2
+	 f5y0PU+HXmu5AYO7jqUHSVwGYbDzlf2f0nDsvEl4ekoU139vev01gp/0w7cpK8LSN1
+	 c8xMkF7/u1XmTUq+TxLvSuDg3qO31YUB3v6fzB62UvyeN0i7vMTkjqp9pRLStxnbHN
+	 qErmw0786bDCd7ktgHWb3SK/grjfDRg7poMstduHj+j729tuNcqAfCG0MZRMPkOvl+
+	 IMA7bMXfQhYfXwmNT20tH1ZzEpA4qKa71zjUgZxa3rohSfkFIGq+vZDgl5Pjo/t6A8
+	 U9oDF63Eg8lm0vv4MiC3XtOc=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A38D840E024E;
+	Wed, 22 Nov 2023 14:07:15 +0000 (UTC)
+Date: Wed, 22 Nov 2023 15:07:10 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
+	initramfs@vger.kernel.org
+Subject: Re: [PATCH] x86: Add a "x86" ELF note namespace
+Message-ID: <20231122140710.GDZV4LDmgF9lXtXdDZ@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
+ <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+ <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
+ <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+ <20231122132419.GBZV4BA399sG2JRFAJ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122054142.31322-1-lukas.bulwahn@gmail.com> <mku6gvd4rfkxzk2vrdjbizglte526ygyfhnwialtri44oqzikt@pq2l7mk25jgc>
-In-Reply-To: <mku6gvd4rfkxzk2vrdjbizglte526ygyfhnwialtri44oqzikt@pq2l7mk25jgc>
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 22 Nov 2023 14:49:54 +0100
-Message-ID: <CAKXUXMwGgtJVWmrFX0chpgNC++Ok54t-qXxware+aEDiyZFszw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add section MIPS BAIKAL-T1 SOC DRIVERS
-To: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Serge Semin <fancer.lancer@gmail.com>, 
-	Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231122132419.GBZV4BA399sG2JRFAJ@fat_crate.local>
 
-On Wed, Nov 22, 2023 at 2:32=E2=80=AFPM Serge Semin
-<Sergey.Semin@baikalelectronics.ru> wrote:
->
-> Hi Lukas
->
-> On Wed, Nov 22, 2023 at 06:41:42AM +0100, Lukas Bulwahn wrote:
-> > In recent years, a number of drivers for the MIPS Baikal-T1 SoC have be=
-en
-> > added to the kernel tree, but there is no dedicated MAINTAINERS section=
- for
-> > this SoC.
-> >
-> > As all of the code has been contributed by Serge Semin, let us assume h=
-e is
-> > still the active maintainer for this code rather than marking it orphan=
-.
-> >
-> > Add a new section MIPS BAIKAL-T1 SOC DRIVERS in MAINTAINERS.
->
-> Thanks for submitting this patch. I was going to send a similar change
-> in the framework of the arch-series which is hanging up in my local
-> repo and alas is still under construction. I know I shouldn't have
-> been waiting (I'm sorry about that), but I didn't expect the entire
-> work would have taken so much time. On a way to finishing it up I had
-> to switch my efforts to the EDAC and network drivers and got sucked by
-> the amount of work there. But I will definitely submit the Baikal-T1
-> SoC arch patchset when my work on another area is finally over.
->
-> Here are several comments about this patch. (Please see my last
-> comment should you be ok with accepting the patches with already fixed
-> notes.)
->
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >  MAINTAINERS | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9613c9c3cc97..820f1ab1ee80 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -14474,6 +14474,19 @@ F:   arch/mips/
-> >  F:   drivers/platform/mips/
-> >  F:   include/dt-bindings/mips/
-> >
-> > +MIPS BAIKAL-T1 SOC DRIVERS
->
-> > +M:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
->
-> It's better to change the email to
-> +M:     Serge Semin <fancer.lancer@gmail.com>
-> I quicker respond from my private inbox, than from the corporate one.
-> This will also be useful should the corporate email eventually change.
->
-> > +S:   Maintained
->
-> +F:     Documentation/devicetree/bindings/bus/baikal,bt1-*.yaml
-> +F:     Documentation/devicetree/bindings/clock/baikal,bt1-*.yaml
->
-> > +F:   Documentation/hwmon/bt1-pvt.rst
->
-> I'd prefer this and these -+ being in a separate entry (see the
-> attached patches), because | the respective device IP-cores have been
-> re-used in another SoC. So | eventually the entries will be updated to
-> reflect that.              +---------------------------------+
->                                                              |
-> > +F:   drivers/ata/ahci_dwc.c                               |
->                                                              |
-> I believe this is already listed in the MAINTAINERS file.    |
->                                                              |
-> > +F:   drivers/bus/bt1-*.c                                  |
-> > +F:   drivers/clk/baikal-t1/                               |
-> > +F:   drivers/hwmon/bt1-pvt.[ch] <-------------------------+
-> > +F:   drivers/memory/bt1-l2-ctl.c                          |
-> > +F:   drivers/mtd/maps/physmap-bt1-rom.[ch]                |
-> > +F:   drivers/pci/controller/dwc/pcie-bt1.c <--------------+
->
-> > +F:   drivers/spi/spi-dw-bt1.c
->
-> This is already marked as maintained by me in the framework of the
-> generic DW APB SSI driver (See the "SYNOPSYS DESIGNWARE APB SSI
-> DRIVER" entry in the MAINTAINERS file).
->
-> Anyway in order to save your time from editing this patch. I've
-> prepared a series which takes into account all the comments above. If
-> you are ok with it, I can submit it for review. What do you think?
->
+On Wed, Nov 22, 2023 at 02:24:43PM +0100, Borislav Petkov wrote:
+> Displaying notes found in: .notes
+>   Owner                Data size        Description
+>   ...
+>   x86                  0x00000004       Unknown note type: (0x00000000)
+>   description data: 01 00 00 00
+>   ^^^^^^^^^^^^^^
 
-Sure, go ahead and submit your series. I just wanted to have all files
-in ./drivers/bus/ have a proper maintainer and then got to look at the
-BAIKAL T1 files.
+Note to self: since this is a u32, the next version should define that
+only the 1st bit is valid and the rest are reserved. So that they can be
+used as a bitfield in case something more needs to be communicated in
+the future and we don't waste a whole u32 just for one bit of
+information...
 
-Lukas
+-- 
+Regards/Gruss,
+    Boris.
 
-> -Serge(y)
->
-> > +
-> >  MIPS BOSTON DEVELOPMENT BOARD
-> >  M:   Paul Burton <paulburton@kernel.org>
-> >  L:   linux-mips@vger.kernel.org
-> > --
-> > 2.17.1
-> >
-> >
+https://people.kernel.org/tglx/notes-about-netiquette
