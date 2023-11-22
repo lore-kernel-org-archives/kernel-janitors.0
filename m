@@ -1,97 +1,101 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iL7k/MxK"
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68C8F9
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 12:36:15 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-5409bc907edso311502a12.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 12:36:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700685374; x=1701290174; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTFW+4h4lZJz6rbXAaizRdJw1t8O20ELX/WfD27HXjM=;
-        b=iL7k/MxKz93XWTxiuAXIXhZe6aGQGrmJ1K9ihaq2M2Jwsj85MoNk1Ctw6X7/Lcd4eg
-         9WSw61PsrjB33WlFl6eOEP2jf3NfkLcO3Hdq6LjrLV68cAdjThJpxlcIV7iHaaqE8nXI
-         SCXKXqxjF+Isd0/ypOeHHZI+sq6IZe9yF9oPc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700685374; x=1701290174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MTFW+4h4lZJz6rbXAaizRdJw1t8O20ELX/WfD27HXjM=;
-        b=VAtcsZji2r8mf+a2woBmjUZmm49wk2nsndzct2cTLQJz8a5a1qM4LtP15n0lh/rrG4
-         RquHVHfSC0JMnUqNJ8RtT79r9r3G1y2xuHX8zkUMItpZcSwdO3IsKVoQR4zpKddViQJ+
-         onAZ0wzeCVungm4VUfVOKycph5mkrY671H0K0q+4pFiENGqk5ToF7RtvCap/J3PAWODF
-         hLR/0ZjzA2Sb09j5U4RnI8di4pjGH+7+fV2ii8xNvhkQsf9tQjn//W5a+svbM5rwFVNc
-         gN91ie/2QTytIKGCXJUEfe/qpfyo9IxlObFzVuROZdsHD0cQoejWkffiunpBgzNihdWQ
-         A4Pw==
-X-Gm-Message-State: AOJu0Ywj4ycy/Z75vJKp91gTjqOTz8H6R1uMk0CHJcvK0kE/vdKRUwud
-	E8f8eUeGNQ+BfZDGQOnIoLn9wJdSBG1RD6szw11Aq9Al
-X-Google-Smtp-Source: AGHT+IGIzZb8kqteTAyNmn2lBDAq++osstLS/bMwZKHvtoW3KZ7K8//vVmXbJpAErARUe8NS36y+mw==
-X-Received: by 2002:a17:907:b9ca:b0:9ff:c5c9:8d14 with SMTP id xa10-20020a170907b9ca00b009ffc5c98d14mr1256356ejc.41.1700685373930;
-        Wed, 22 Nov 2023 12:36:13 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id v10-20020a1709060b4a00b009b928eb8dd3sm181299ejg.163.2023.11.22.12.36.12
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 12:36:13 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-54553e4888bso280530a12.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 12:36:12 -0800 (PST)
-X-Received: by 2002:a05:6402:34c5:b0:548:615c:33aa with SMTP id
- w5-20020a05640234c500b00548615c33aamr2977402edc.20.1700685372660; Wed, 22 Nov
- 2023 12:36:12 -0800 (PST)
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JDX3kg53"
+Received: from mail.alien8.de (mail.alien8.de [IPv6:2a01:4f9:3051:3f93::2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 723FC1BD;
+	Wed, 22 Nov 2023 12:51:54 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6ED6A40E014B;
+	Wed, 22 Nov 2023 20:51:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id d81rvFVnWo-F; Wed, 22 Nov 2023 20:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1700686310; bh=SG2A28lgttWuxdRCaoYK+1fwtUHLkqRaLnYpgZm8oSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JDX3kg53+AEnunCD2CIsZTtUqi/Z1Z5bcAydl7DKCaSrc91hghxKBA5lj/OVlipWW
+	 xmx60EVAaC1kmqiKs5jhwo3ZeL42u6LaU3DQtNE/fFMIdYlE5H7GHF2ySa5Rb2DrLg
+	 hFNlb5ov1lm9oBTwLHWZKpBBRFkvtfeAZZ8WbfVmUPMOKJcIStEUTEb6JAK3eQzliR
+	 WU3cGxi1vM+vmngdWjRJR3NjM6eNLkytHphkbNNsLxKWDi2yNT2+eYPXNZxPPUaa4u
+	 iV+2gl7P8sIQXP9SE0REA6ZO7OPONniU5Sght53fk3z5tyUi5Zf5dnb6MhuxIlHd/x
+	 HWz67kUCYUFPFzuhq+DGdjjURl33E31JhQYkBzYpcFXM7b4LyqWfMVBd4iLRAU7ULg
+	 AJlJH9d0zxj8g6OxKqkUvVgMGJJQ0Es1h4k1PZ7hRkKzuKz+PEObEVE+CJ0sm8Zn8h
+	 +g/az0DkJl6VqzHrTXIqxrPA8a/h2NjgiFknGoWKc230x1fra7ON4u3extGGJXwJxB
+	 cVdaHSxlj2Z9UiUCt8MJ+G2nokp1ztFFCVxMucMY0FCWj57a0vrJM62QeSz6JBf1MP
+	 vBwCsfBIHu8RCwAJw8lrecUM3WfTcitUXRpZAZM+U0FaaHpALRG1Eo5q/NtUl/2a6C
+	 IGMumPJ6YlJ+YLV2YtjK4LfQ=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7687840E0259;
+	Wed, 22 Nov 2023 20:51:40 +0000 (UTC)
+Date: Wed, 22 Nov 2023 21:51:35 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+	lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [regression] microcode files missing in initramfs imgages from
+ dracut (was Re: [PATCH] x86: Clean up remaining references to
+ CONFIG_MICROCODE_AMD)
+Message-ID: <20231122205135.GGZV5p157mBi6RYUNs@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
+ <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+ <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
+ <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+ <e1ca042c-de1d-4fe3-ad69-51d147b1fe0b@leemhuis.info>
+ <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
+ <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
- <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info> <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
- <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info> <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
- <e1ca042c-de1d-4fe3-ad69-51d147b1fe0b@leemhuis.info> <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
-In-Reply-To: <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 22 Nov 2023 12:35:54 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
-Message-ID: <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
-Subject: Re: [regression] microcode files missing in initramfs imgages from
- dracut (was Re: [PATCH] x86: Clean up remaining references to CONFIG_MICROCODE_AMD)
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, lukas.bulwahn@gmail.com, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
 
-On Wed, 22 Nov 2023 at 07:58, Borislav Petkov <bp@alien8.de> wrote:
->
-> IMO, yes, we should not break userspace but dracut is special. And it
-> parses willy nilly kernel internals which are not ABI to begin with.
+On Wed, Nov 22, 2023 at 12:35:54PM -0800, Linus Torvalds wrote:
+> IOW, the whole "users are the only thing that matters" pretty much
+> means that it's a non-issue. Things continued to work, to the point
+> that I'm actually surprised anybody even noticed.
 
-I don't think the "dracut is special" is the thing that matters.
+Right, the patch which did the changes is in 6.6:
 
-The real issue is that hey, if dracut in its incompetence doesn't
-include the microcode on the initrd, that doesn't really matter much.
-It's fairly easily fixable, and at worst it will mean that we end up
-having CPU mitigations that aren't optimal. Since most of those are BS
-anyway, it really doesn't seem critical.
+e6bcfdd75d53 ("x86/microcode: Hide the config knob")
 
-Sure, it's a "regression" in that you don't get the microcode update
-included, but from a user perspective things should still continue to
-work.
+I'm still waiting for the other shoe to drop when 6.6 gets used more but
+we'll see...
 
-End result: this seems to be pretty solidly a distro issue.
+> That said, I don't think some ELF note is the fix either. I think we
+> might as well leave it at CONFIG_MICROCODE. Maybe add a note in the
+> kernel Kconfig that this thing matters for dracut.
+> 
+> Dracut also checks for CONFIG_ACPI_INITRD_TABLE_OVERRIDE. It's a
+> similar "normal users don't care".
 
-IOW, the whole "users are the only thing that matters" pretty much
-means that it's a non-issue. Things continued to work, to the point
-that I'm actually surprised anybody even noticed.
+Ok.
 
-That said, I don't think some ELF note is the fix either. I think we
-might as well leave it at CONFIG_MICROCODE. Maybe add a note in the
-kernel Kconfig that this thing matters for dracut.
+My only worry here is that we're making a precedent and basically saying
+that it is ok for tools to grep .config to figure out what is supported
+by the kernel. And then other tools might follow.
 
-Dracut also checks for CONFIG_ACPI_INITRD_TABLE_OVERRIDE. It's a
-similar "normal users don't care".
+I have no clue how many tools are actually interested in stuff enabled
+in the kernel .config though. If only dracut then sure, don't care, but
+what if it starts proliferating...
 
-              Linus
+I'm just talking with my devil's advocate hat on.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
