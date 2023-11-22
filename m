@@ -1,105 +1,85 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iYBunf1O"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88664B9;
-	Wed, 22 Nov 2023 03:17:53 -0800 (PST)
-Received: from [100.92.221.145] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="U5M+vWXI"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143A919E;
+	Wed, 22 Nov 2023 03:58:44 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D5F9F40E024B;
+	Wed, 22 Nov 2023 11:58:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9vIvwcA4Hjr5; Wed, 22 Nov 2023 11:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1700654320; bh=bUGVHjUPksg/8UpmwAaAcEYvojtJjumiv8pZ1+4lVqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U5M+vWXIZp7eojrASnpsDv1LeCHjQVagHx2EEwQLOTC4KLQDZXENy7uZbjJME7zCj
+	 5QgqPtWvPisRTKX+xleEWDnPNuwOoifB7hEXRp1hpAcA3xolGGfnE9TklEt0HnLbS7
+	 Xn8lp/RG98dHBWj4T5gzgDNcsN68gh+zXKeD1QApI4113kj+evXLcZRP91vBUYdjtQ
+	 mcsO9J8Ol8uhuGIEZeUsZXt7ogfFGl7zTBsQKtaPC4tx8001HXAmkC9FshKQrbPFOr
+	 j5tQrnOnvVqilF3+Y2hoMRPyd4SLRmRPHlwNo2sAifMqLW4I1LfIDGFll38w0qaBUj
+	 1xTlE/ErqrLFHKMZ1LA5T0dXwyp0vFQEjaEbfG27v/wpu8nSXGWWShAsJadHwcmDaC
+	 HhGm/6KSnKLRbyQnmyVM/M8rmXO3M+KwSxqLdTbJ05N8qNGtlLDnd5B9D1ccISDOyK
+	 oRPq7dZNmwAGiWukPNbLpV43bvk6o3QGVLa6j0rCxdPzd8agRZ9CgSALVENunOPI58
+	 mnlv8OVbsPV9AVh/JIi6+f6005UGjz+rjIyOrKhX9SVOXh1BrIpw5D7MXKAR35vlCg
+	 knLbdLzcEKPmDx9WQ+ief/QZTPg519eU+xgmtWEDr5WbUtUJvBw+Qtq/jjF0z/7o1i
+	 l1dCd4fpT83L2kToZwkUHDxU=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: martyn)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id 7F7206607365;
-	Wed, 22 Nov 2023 11:17:51 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1700651872;
-	bh=eAylIrMyPMpSf32D9VET8qh4NyOsF2ZU2UW6TalmiHs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iYBunf1OpYRul8oqUcK43Q7H/0GKMxXd4JWCJ9POWUxZWrfidKd6+D2Xx2DSYUSiv
-	 j04frxYbY1dzSwuyF/1iZZOM86pKMieZftOqkOAOtEPlpLubkK7zDT31JK0ZIRlp4p
-	 rhBMOfmFM1oL5hgqv7vgPp5YSaPJsGbBPArTp1lMSYCSq7ZD0MJUC1G2W/YU9bMxzG
-	 6AFNJs6p1tWO881dD5tujGDCxckUlfQZ0QK2hK+eV+gjmwo2412X5baLLfluR/gezJ
-	 7HkdYzOe7SK2cFePkNVA0AoOlpiRKUAK2iAfkDfYW3jJ6nNonTNsBSbeNmNNhpHlJL
-	 anKiuKZFAkbjg==
-Message-ID: <fe8ac0db-d6cc-41bc-b926-484b418e1720@collabora.com>
-Date: Wed, 22 Nov 2023 11:17:48 +0000
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC67A40E0032;
+	Wed, 22 Nov 2023 11:58:30 +0000 (UTC)
+Date: Wed, 22 Nov 2023 12:58:26 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [regression] microcode files missing in initramfs imgages from
+ dracut (was Re: [PATCH] x86: Clean up remaining references to
+ CONFIG_MICROCODE_AMD)
+Message-ID: <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
+ <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+ <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] MAINTAINERS: Update Martyn Welch's address
-Content-Language: en-US
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Staging Drivers <linux-staging@lists.linux.dev>,
- Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Carpenter <error27@gmail.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bruno Moreira-Guedes <codeagain@codeagain.dev>,
- Krzysztof Kozlowski <krzk@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-References: <20231122094156.30642-1-bagasdotme@gmail.com>
- <20231122094156.30642-2-bagasdotme@gmail.com>
-From: Martyn Welch <martyn.welch@collabora.com>
-In-Reply-To: <20231122094156.30642-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
 
+On Wed, Nov 22, 2023 at 10:15:42AM +0100, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [1] unless you fiddle with things obviously internal; not sure if this
+> case would qualify for him, but somehow I doubt it -- but I might be
+> wrong there.
 
-On 22/11/2023 09:41, Bagas Sanjaya wrote:
-> He is now active on the mailing lists using his Collabora
-> (@collabora.com) address. Reflect it in MAINTAINERS and also
-> add address mapping for him.
+Well, think about it - by that logic, if CONFIG_* items are an ABI, we
+will never ever be able to change any of them. Now that would be awful.
 
-Hmm, mapping yes, changing the email assigned to the VME stuff, no. This 
-is not something that I consider related to my work at Collabora. Any 
-time spent on it at this point will be personal time, hence the use of 
-my non-work email address.
+> Any progress on this?
 
-Realistically, I've lost access to hardware to test anything regarding 
-VME and it's not something that's particularly easy to acquire. With the 
-other patch in this series removing Manohar, removing me as a maintainer 
-would leave Greg, who has been amazing covering my shoddy maintenance of 
-this subsystem (what can I say, life has rather got in the way), but I 
-feel it's unfair to leave him as the sole maintainer. I wonder whether 
-I/we should admit this is basically orphaned at this point?
+We're thinking...
 
+We might need an official scheme of stating what any given kernel image
+supports for use by external tools which need it.
 
-Martyn
+> BTW: I see that this could help preventing problems like the current one
+> to happen in the far future. But how would that help the current
+> situation (e.g. users that have an old dracut and updated the kernel
+> without updating dracut)?
 
-> Cc: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Martyn, if you still had like to maintain VME subsystem, please let us know.
->
->   .mailmap    | 1 +
->   MAINTAINERS | 2 +-
->   2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index 43031441b2d922..1df03996c73bdf 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -368,6 +368,7 @@ Mark Yao <markyao0591@gmail.com> <mark.yao@rock-chips.com>
->   Martin Kepplinger <martink@posteo.de> <martin.kepplinger@ginzinger.com>
->   Martin Kepplinger <martink@posteo.de> <martin.kepplinger@puri.sm>
->   Martin Kepplinger <martink@posteo.de> <martin.kepplinger@theobroma-systems.com>
-> +Martyn Welch <martyn.welch@collabora.com> <martyn.welch@collabora.co.uk> <martyn@welchs.me.uk>
->   Martyna Szapar-Mudlaw <martyna.szapar-mudlaw@linux.intel.com> <martyna.szapar-mudlaw@intel.com>
->   Mathieu Othacehe <m.othacehe@gmail.com>
->   Mat Martineau <martineau@kernel.org> <mathew.j.martineau@linux.intel.com>
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ea790149af7951..a02aa52fabe14b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23234,7 +23234,7 @@ F:	include/linux/vmalloc.h
->   F:	mm/vmalloc.c
->   
->   VME SUBSYSTEM
-> -M:	Martyn Welch <martyn@welchs.me.uk>
-> +M:	Martyn Welch <martyn.welch@collabora.com>
->   M:	Manohar Vanga <manohar.vanga@gmail.com>
->   M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->   L:	linux-kernel@vger.kernel.org
+Update dracut too?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
