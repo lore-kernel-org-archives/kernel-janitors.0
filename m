@@ -1,111 +1,184 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3Uyz9ij"
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF41EDD;
-	Wed, 22 Nov 2023 01:42:04 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-6c33ab26dddso5706276b3a.0;
-        Wed, 22 Nov 2023 01:42:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWsJGUBb"
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67449D8;
+	Wed, 22 Nov 2023 02:40:40 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40842752c6eso33497995e9.1;
+        Wed, 22 Nov 2023 02:40:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700646124; x=1701250924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SV/osW0R7bVpYMTd62PKwIsgqxKMwJ1fiVW5wV1ilHs=;
-        b=M3Uyz9ijIcr34VP8bulaJ7VLXGAM1M6/S53I1o5CHy2xUvKlRX61g2o/qD2bTycNuW
-         RgE4dvJRaPRMA24R6in47NyI+lb3M9bk+Y4dKUJCdhcslnFBzKu7HyfAVyGVSo5KL/s7
-         rEdZE8JBivCrcTv3pCdjEHFbCMsAbQcT2wAtwDC2qdW20PmmXcS2Uq18/AQQ7smrz3Vr
-         0ZwEyC4+7WeQClsHERgZM3vDF25C3Oa35o7zMB0JCxpSwV1FBK7ToFSrY9g1fAndWTs/
-         sx3Iqec9FTUNShjYZCCtYVz+el2XCdpGjQMqJJSh0v3ujA2mZpG2r8sxOc5YQLAyZGUK
-         v/5A==
+        d=gmail.com; s=20230601; t=1700649639; x=1701254439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BWEJ4p5oF5My5H+DDjkWQZxD7K1sIs4EyPFQ443g1H4=;
+        b=VWsJGUBb8EBUm7ej/c0zQFMab/O4pQVtVTH3ZO6dBlC5zXXR27p48vhEF+dc8vdd6e
+         n7ZbG8XwSV6jKq1ez93v06NkFMq6y3rIDeXHlw5wWly7i/ugi36b7vsDj7d8/cwmF9fm
+         1etZnxnFnYAvv0vnrYcGd/Qj8seRnl8qBSTF70LrSxFwbZGWd1KNOEML4QcUCIKizwPB
+         IeHnF4MOEc/U0ZuztamO6GIsCpghJie8j50cus5HdxExkT+I0RXX9sEcDgAiKD0mRoZ0
+         amgM1nKvRejltW3X1diangbnSe3sDapVGqZ6l6Uh9qt1/pRZ0aEQxkyVI0UxJ8VH8UlG
+         rkFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700646124; x=1701250924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SV/osW0R7bVpYMTd62PKwIsgqxKMwJ1fiVW5wV1ilHs=;
-        b=eJ9hduTtwiTLTDkLcDFrPHKrSW0s+JfSgJjMk0v71B8q9ZAM4g7dsi8Brqjh6VAajc
-         5XCMR28pLGqU8rY1V1dlaVHRGMHw79Xg++ITu7Pgk/CnFA9M1z6r0+AOoNTwuwJqpiZT
-         nSbayIcIk1OWanvs5IwYTEsBicjNeDpvb9rt7WqaoAp+NXYMdcUH5/DMo35ISpCIyLlb
-         GldH4Gx2g7ObhfUrAZgPVpcuIX4d5Lm0OerqDen0meXrJEr+u01pRsrxSg3Me3TOtRlp
-         /qaW45nSzPb3xF4qby32ak1oVyZu72FhJf4ZL5+9/qom1thkkDuBjiF/HI4mWHNJS1sm
-         5JeQ==
-X-Gm-Message-State: AOJu0Yy0+W0c+W4tjDalQV2K5D0YAW3+Xp3ZwKsxE/qVXyt9P0rNDl1l
-	dyV+Mpyf1Zn/rutx9DgPE5g=
-X-Google-Smtp-Source: AGHT+IFzf3ahprBjT8RgnY9ilotsSVvN6c0RYl7tlZ7ISOBudnHGIt779Lq+6/qdV5RVMMvH2vuzGA==
-X-Received: by 2002:a05:6a21:338d:b0:187:c082:3e35 with SMTP id yy13-20020a056a21338d00b00187c0823e35mr1917336pzb.14.1700646124312;
-        Wed, 22 Nov 2023 01:42:04 -0800 (PST)
-Received: from archie.me ([103.131.18.64])
-        by smtp.gmail.com with ESMTPSA id c10-20020a631c4a000000b005b82611378bsm9144852pgm.52.2023.11.22.01.42.02
+        d=1e100.net; s=20230601; t=1700649639; x=1701254439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BWEJ4p5oF5My5H+DDjkWQZxD7K1sIs4EyPFQ443g1H4=;
+        b=YWx1OLXxT3eQvWYu9LngtdA562hDAL87BammzKZFpNVgJevoIEhRqH/XPrVCy9KH2s
+         0cmG7Y+r5Oy10bKn7/IpHHbcNqWWkj/bs5SHdVwL4xviiq3Jv0OxJqbv6QnmE43kgfHh
+         8UR50wVu94sxWGaNpHG8APkbEW0Z20xkuoRjY1mLeqClrBeVrXHHkfKogH92rCJydZQ7
+         fyyf+jecJIOqF6yWHf8Syhjrk72pXZWAsSqvu8iENygAZUhBhL8nSsh6H/NRV5fSdSHc
+         8I5P+9y2bVHx60dl9slMX+FkIacul82sRKrhfEPUeDPI0vaLiDQa2Ndd/wWHMERd+fcn
+         IeBw==
+X-Gm-Message-State: AOJu0Yx31RlObvdde5flVCXR2dtJJz34Pnd7lBq08Y/Ld6KLK3KhvnXu
+	jIY0APzRvTkxlN/48WsG2KuD5nx2DLA=
+X-Google-Smtp-Source: AGHT+IF6GNB6My6d4ckpfPXb5FpSvJHkY8U2dwMLOBnvWWoqEBHBNpcSvcG+3C2flxq0ONjc8hSHRg==
+X-Received: by 2002:a05:600c:4f44:b0:40b:2a7a:fb11 with SMTP id m4-20020a05600c4f4400b0040b2a7afb11mr1346905wmq.25.1700649638494;
+        Wed, 22 Nov 2023 02:40:38 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b004094e565e71sm1781756wmq.23.2023.11.22.02.40.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 01:42:03 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7F5CA10210555; Wed, 22 Nov 2023 16:42:00 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Staging Drivers <linux-staging@lists.linux.dev>,
-	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <error27@gmail.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Bruno Moreira-Guedes <codeagain@codeagain.dev>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Martyn Welch <martyn.welch@collabora.com>
-Subject: [PATCH 1/2] MAINTAINERS: Update Martyn Welch's address
-Date: Wed, 22 Nov 2023 16:41:55 +0700
-Message-ID: <20231122094156.30642-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20231122094156.30642-1-bagasdotme@gmail.com>
-References: <20231122094156.30642-1-bagasdotme@gmail.com>
+        Wed, 22 Nov 2023 02:40:37 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scripts/spelling.txt: add more spellings to spelling.txt
+Date: Wed, 22 Nov 2023 10:40:37 +0000
+Message-Id: <20231122104037.1770749-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1650; i=bagasdotme@gmail.com; h=from:subject; bh=v5yUaK/fxsxugJsKLcf76rnii+QRaf0Iwcy7KBtjsIQ=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDKmxpx8L/f3/7fy0JeL3Ch/eDRTgnbDttfJtIY7/JzPcS 2VU2LzmdZSyMIhxMciKKbJMSuRrOr3LSORC+1pHmDmsTCBDGLg4BWAinL4Mf+WO9N+7KXs90Z5X VHr+pozMXfemas7ifzTLUUKJ7eKtphMM/5MDjnbN/sq15BGXCXdSUtaWP61RO0XcbxiqHpZOaRB O5wMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-He is now active on the mailing lists using his Collabora
-(@collabora.com) address. Reflect it in MAINTAINERS and also
-add address mapping for him.
+Some of the more common spelling mistakes and typos that I've found while
+fixing up spelling mistakes in the kernel over the past couple of
+releases.
 
-Cc: Martyn Welch <martyn.welch@collabora.com>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Martyn, if you still had like to maintain VME subsystem, please let us know.
+ scripts/spelling.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- .mailmap    | 1 +
- MAINTAINERS | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/.mailmap b/.mailmap
-index 43031441b2d922..1df03996c73bdf 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -368,6 +368,7 @@ Mark Yao <markyao0591@gmail.com> <mark.yao@rock-chips.com>
- Martin Kepplinger <martink@posteo.de> <martin.kepplinger@ginzinger.com>
- Martin Kepplinger <martink@posteo.de> <martin.kepplinger@puri.sm>
- Martin Kepplinger <martink@posteo.de> <martin.kepplinger@theobroma-systems.com>
-+Martyn Welch <martyn.welch@collabora.com> <martyn.welch@collabora.co.uk> <martyn@welchs.me.uk>
- Martyna Szapar-Mudlaw <martyna.szapar-mudlaw@linux.intel.com> <martyna.szapar-mudlaw@intel.com>
- Mathieu Othacehe <m.othacehe@gmail.com>
- Mat Martineau <martineau@kernel.org> <mathew.j.martineau@linux.intel.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ea790149af7951..a02aa52fabe14b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23234,7 +23234,7 @@ F:	include/linux/vmalloc.h
- F:	mm/vmalloc.c
- 
- VME SUBSYSTEM
--M:	Martyn Welch <martyn@welchs.me.uk>
-+M:	Martyn Welch <martyn.welch@collabora.com>
- M:	Manohar Vanga <manohar.vanga@gmail.com>
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- L:	linux-kernel@vger.kernel.org
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 855c4863124b..edec60d39bbf 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -26,6 +26,7 @@ accelaration||acceleration
+ accelearion||acceleration
+ acceleratoin||acceleration
+ accelleration||acceleration
++accelrometer||accelerometer
+ accesing||accessing
+ accesnt||accent
+ accessable||accessible
+@@ -137,6 +138,7 @@ anniversery||anniversary
+ annoucement||announcement
+ anomolies||anomalies
+ anomoly||anomaly
++anonynous||anonymous
+ anway||anyway
+ aplication||application
+ appearence||appearance
+@@ -267,6 +269,7 @@ cadidate||candidate
+ cahces||caches
+ calender||calendar
+ calescing||coalescing
++calibraiton||calibration
+ calle||called
+ callibration||calibration
+ callled||called
+@@ -288,6 +291,7 @@ capabitilies||capabilities
+ capablity||capability
+ capatibilities||capabilities
+ capapbilities||capabilities
++captuer||capture
+ caputure||capture
+ carefuly||carefully
+ cariage||carriage
+@@ -340,6 +344,7 @@ comminucation||communication
+ commited||committed
+ commiting||committing
+ committ||commit
++commmand||command
+ commnunication||communication
+ commoditiy||commodity
+ comsume||consume
+@@ -406,6 +411,7 @@ continious||continuous
+ continous||continuous
+ continously||continuously
+ continueing||continuing
++contiuous||continuous
+ contraints||constraints
+ contruct||construct
+ contol||control
+@@ -757,6 +763,7 @@ hardward||hardware
+ havind||having
+ heirarchically||hierarchically
+ heirarchy||hierarchy
++heirachy||hierarchy
+ helpfull||helpful
+ hearbeat||heartbeat
+ heterogenous||heterogeneous
+@@ -1199,6 +1206,7 @@ priting||printing
+ privilaged||privileged
+ privilage||privilege
+ priviledge||privilege
++priviledged||privileged
+ priviledges||privileges
+ privleges||privileges
+ probaly||probably
+@@ -1251,6 +1259,7 @@ purgable||purgeable
+ pwoer||power
+ queing||queuing
+ quering||querying
++querrying||querying
+ queus||queues
+ randomally||randomly
+ raoming||roaming
+@@ -1324,6 +1333,7 @@ reseting||resetting
+ reseved||reserved
+ reseverd||reserved
+ resizeable||resizable
++resonable||reasonable
+ resotre||restore
+ resouce||resource
+ resouces||resources
+@@ -1427,6 +1437,7 @@ sliped||slipped
+ softwade||software
+ softwares||software
+ soley||solely
++soluation||solution
+ souce||source
+ speach||speech
+ specfic||specific
+@@ -1458,6 +1469,7 @@ standart||standard
+ standy||standby
+ stardard||standard
+ staticly||statically
++statisitcs||statistics
+ statuss||status
+ stoped||stopped
+ stoping||stopping
+@@ -1548,6 +1560,7 @@ threds||threads
+ threee||three
+ threshhold||threshold
+ thresold||threshold
++throtting||throttling
+ throught||through
+ tansition||transition
+ trackling||tracking
+@@ -1571,6 +1584,7 @@ tranasction||transaction
+ tranceiver||transceiver
+ tranfer||transfer
+ tranmission||transmission
++tranport||transport
+ transcevier||transceiver
+ transciever||transceiver
+ transferd||transferred
 -- 
-An old man doll... just what I always wanted! - Clara
+2.39.2
 
