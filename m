@@ -1,361 +1,125 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEUGmk8v"
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E075B1AE;
-	Thu, 23 Nov 2023 03:13:02 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-548f853fc9eso1038744a12.1;
-        Thu, 23 Nov 2023 03:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700737981; x=1701342781; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ETRJxI0jYA8eO15FtbRSONvqohxyMW+Q9fmUG4iFDY=;
-        b=IEUGmk8vbD/lXdKN7pZDE9//YQNbs5F2SBAt9gb60LD6kAQ6YUwklv9ClN1r8N/Vsl
-         qgsEFTPFvtWLWdkt9++MY6dNJczuQwpQKgO+VFNx8t4oMSLz4sL88FlsmERHG4Q2qRWT
-         zCLPJ/m2DIpzNdV5PJx9G1MyxAHxNhGJ7fA9YVsGbfrqKZih06UB0C58+Q7rlczhDP1p
-         w9eTzMIyi4zSEFGMU87O83mCCFpg4Kh+rvFOKUtoz/l94RjjiMwdmxjeSiXRLMUHMZnT
-         iTw3LsSTgb1JgvAPZIEDL7EzHJbwN57+5QEtNlBbIlRS5uZRlRzgZPIb8oiI5tb/3DaA
-         9esQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700737981; x=1701342781;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ETRJxI0jYA8eO15FtbRSONvqohxyMW+Q9fmUG4iFDY=;
-        b=HhYiNfghHpCMeroE6ONkWthZak/BdoQyI9+sJBjbboxd/h5eDfUsaZa/jhhb2qR4pB
-         Qe3ElKC581IDa4EMKJ54SwHsrqGzm4yJ9KvCg9sBfJk4bu4dwfM8eyVZleOfIk2RQEtu
-         RnL5qgLc5+XoSzWSDSaKks+KJi/fuXR10SLuLroZIYz/mFge6l6gT66cEakAIS9+h/ik
-         mhzMksUeB9t1RB/Ri91Ma6olY4hsShsphTxfqopV34XHyvgq8BDYNUs9u0gLsmQIGb6m
-         8DfRSY3kCKpfOhxM+pqZuvYSAEzi/JweM/PQP43fkRo+0TOGsPRO0aRylgzcGjO/0xqK
-         3/ag==
-X-Gm-Message-State: AOJu0Yw/c4iXDk6IlEdBLiotLKBOCpUjIkMMZMh2mkAwZBEf53DUnbPO
-	qVKy2h68m0KABla/tkvDnNU=
-X-Google-Smtp-Source: AGHT+IGDcx2v11UllY0MPwVs59OUelQ1fQzHkONutC5jBwKmQP7TQh2iBL8GZFvs8pVUkQNqXV7mWg==
-X-Received: by 2002:a17:906:340e:b0:9e5:fdd7:f521 with SMTP id c14-20020a170906340e00b009e5fdd7f521mr3755277ejb.41.1700737981121;
-        Thu, 23 Nov 2023 03:13:01 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d183:a5d9:39a9:cd13])
-        by smtp.gmail.com with ESMTPSA id kz15-20020a17090777cf00b009fd50aa6984sm646420ejc.83.2023.11.23.03.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Nov 2023 03:13:00 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@verge.net.au>,
-	Julian Anastasov <ja@ssi.bg>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	netdev@vger.kernel.org,
-	lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] net: make config lines follow common pattern
-Date: Thu, 23 Nov 2023 12:12:56 +0100
-Message-Id: <20231123111256.10757-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V5AhGmOZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7407CD8;
+	Thu, 23 Nov 2023 03:20:34 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4966F40E0258;
+	Thu, 23 Nov 2023 11:20:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4s49rXaUabG4; Thu, 23 Nov 2023 11:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1700738429; bh=lhIEeBpw7QtrxS/ZHvsdGRgwiXLx1WSEEuHReDweeEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V5AhGmOZ/lTXYVKRydg6dEJGUZD2vjCX1NRvrNqMdOJCU/0rKBtBj/NG59qDzd9GI
+	 9/Z0K/ZQE13Bodi3CsRxuFquYP28pQr1sxszcI76+SLFZJX16tOpPT9AB44wmJNkk+
+	 zRi6muT36Hdq6VWg7xjXpvhqzOg1bQoJEAtFGeDL2VpkpS6hVwPaTpEMep/o5X3joe
+	 1MANBpjtKG9o/MIJBfgOxR3RI7g/9ITC7grnaObagwgkw37BQvMxf70IIBcxwvE8Hk
+	 nkuFXv9OpON+AOrPKa4MNJDAtPKjbj/KUP7/hKJ1J1sJfzDo+f00vqGXHAgLmv5Vrp
+	 +3rihlW9neJYoZF6YFGp53Flm4zKS6VPJMUEGUhvBeRDrdhiP/UjVJXmuuXAk31LUr
+	 VE+ymsypj8eqpAN/Tllv6Ro7DRLF3UR+AhW3ZuKy4nE95xsYASIl456a3yn3wvwwf3
+	 Y4PWT/5+SJRjic84ZL81LkmEnmNrpNjwJzBgliHfSczRwGfQrYiiAERbuq3Hm/fD2z
+	 ENvEq+VhFvuXttZg4N4W54GqzZv5MNnViW9OA24ojNNy2kycZLWHugsFfQ0st6I8MA
+	 rtYdV0R2H+mVTr03DnW7YU1t/aQq3xZI4Vcv/ECzpafjQp7qJeyKamx+OrEMzetV0U
+	 LRHB/oargmhWqWWJprOKRdSI=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7C06F40E0257;
+	Thu, 23 Nov 2023 11:20:18 +0000 (UTC)
+Date: Thu, 23 Nov 2023 12:20:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+	lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [regression] microcode files missing in initramfs imgages from
+ dracut (was Re: [PATCH] x86: Clean up remaining references to
+ CONFIG_MICROCODE_AMD)
+Message-ID: <20231123112013.GAZV81bezsrS6sdJQR@fat_crate.local>
+References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
+ <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
+ <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
+ <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
+ <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
+ <e1ca042c-de1d-4fe3-ad69-51d147b1fe0b@leemhuis.info>
+ <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
+ <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
+ <20231122205135.GGZV5p157mBi6RYUNs@fat_crate.local>
+ <CAHk-=wh03jMZRAxHFTkv0h9dZ6TmiqukzcHd4RTx7ijia_prsg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh03jMZRAxHFTkv0h9dZ6TmiqukzcHd4RTx7ijia_prsg@mail.gmail.com>
 
-The Kconfig parser is quite relaxed when parsing config definition lines.
-However, there are just a few config definition lines that do not follow
-the common regular expression 'config [0-9A-Z]', i.e., there are only a few
-cases where config is not followed by exactly one whitespace.
+Adding Antonio who did that last fix to dracut:
 
-To simplify life for kernel developers that use basic regular expressions
-to find and extract kernel configs, make all config lines follow this
-common pattern.
+6c80408c8644 ("fix(dracut.sh): remove microcode check based on CONFIG_MICROCODE_[AMD|INTEL]")
 
-No functional change, just helpful stylistic clean-up.
+On Wed, Nov 22, 2023 at 01:08:41PM -0800, Linus Torvalds wrote:
+> There are dracut command lines, like "--early-microcode" and
+> "--no-early-microcode", so people who really want to save space could
+> just force it that way. Doing the CONFIG_xyz check seems broken.
+> 
+> But that's for the dracut people to worry about.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Yeah, I guess something like this below.
+
+Antonio, how about something like the totally untested thing below?
+
+dracut would simply always build in microcode - this is the majority of
+the setups anyway - and people who want to save space, do:
+
+--no-early-microcode
+
+?
+
 ---
- drivers/net/ethernet/cavium/Kconfig |  4 +--
- net/caif/Kconfig                    |  2 +-
- net/netfilter/ipvs/Kconfig          | 54 ++++++++++++++---------------
- net/unix/Kconfig                    |  2 +-
- 4 files changed, 31 insertions(+), 31 deletions(-)
+diff --git a/dracut.sh b/dracut.sh
+index 3b292910f324..c0a88b083f8e 100755
+--- a/dracut.sh
++++ b/dracut.sh
+@@ -1561,20 +1561,16 @@ fi
+ 
+ if [[ $early_microcode == yes ]]; then
+     if [[ $hostonly ]]; then
+-        if [[ $(get_cpu_vendor) == "AMD" || $(get_cpu_vendor) == "Intel" ]]; then
+-            check_kernel_config CONFIG_MICROCODE || unset early_microcode
+-        else
++        if [[ $(get_cpu_vendor) != "AMD" && $(get_cpu_vendor) != "Intel" ]]; then
+             unset early_microcode
+         fi
+-    else
+-        ! check_kernel_config CONFIG_MICROCODE \
+-            && unset early_microcode
+     fi
++
+     # Do not complain on non-x86 architectures as it makes no sense
+     case "${DRACUT_ARCH:-$(uname -m)}" in
+         x86_64 | i?86)
+             [[ $early_microcode != yes ]] \
+-                && dwarn "Disabling early microcode, because kernel does not support it. CONFIG_MICROCODE!=y"
++                && dwarn "Disabling early microcode, unsupported configuration"
+             ;;
+         *) ;;
+     esac
 
-diff --git a/drivers/net/ethernet/cavium/Kconfig b/drivers/net/ethernet/cavium/Kconfig
-index ca742cc146d7..fe4203b1bc5f 100644
---- a/drivers/net/ethernet/cavium/Kconfig
-+++ b/drivers/net/ethernet/cavium/Kconfig
-@@ -32,7 +32,7 @@ config THUNDER_NIC_VF
- 	help
- 	  This driver supports Thunder's NIC virtual function
- 
--config	THUNDER_NIC_BGX
-+config THUNDER_NIC_BGX
- 	tristate "Thunder MAC interface driver (BGX)"
- 	depends on 64BIT && PCI
- 	select PHYLIB
-@@ -42,7 +42,7 @@ config	THUNDER_NIC_BGX
- 	  This driver supports programming and controlling of MAC
- 	  interface from NIC physical function driver.
- 
--config	THUNDER_NIC_RGX
-+config THUNDER_NIC_RGX
- 	tristate "Thunder MAC interface driver (RGX)"
- 	depends on 64BIT && PCI
- 	select PHYLIB
-diff --git a/net/caif/Kconfig b/net/caif/Kconfig
-index 87205251cc25..1eb271125eb0 100644
---- a/net/caif/Kconfig
-+++ b/net/caif/Kconfig
-@@ -22,7 +22,7 @@ menuconfig CAIF
- 	See Documentation/networking/caif for a further explanation on how to
- 	use and configure CAIF.
- 
--config  CAIF_DEBUG
-+config CAIF_DEBUG
- 	bool "Enable Debug"
- 	depends on CAIF
- 	default n
-diff --git a/net/netfilter/ipvs/Kconfig b/net/netfilter/ipvs/Kconfig
-index 2a3017b9c001..db6df2ca129d 100644
---- a/net/netfilter/ipvs/Kconfig
-+++ b/net/netfilter/ipvs/Kconfig
-@@ -26,7 +26,7 @@ menuconfig IP_VS
- 
- if IP_VS
- 
--config	IP_VS_IPV6
-+config IP_VS_IPV6
- 	bool "IPv6 support for IPVS"
- 	depends on IPV6 = y || IP_VS = IPV6
- 	select NF_DEFRAG_IPV6
-@@ -35,14 +35,14 @@ config	IP_VS_IPV6
- 
- 	  Say Y if unsure.
- 
--config	IP_VS_DEBUG
-+config IP_VS_DEBUG
- 	bool "IP virtual server debugging"
- 	help
- 	  Say Y here if you want to get additional messages useful in
- 	  debugging the IP virtual server code. You can change the debug
- 	  level in /proc/sys/net/ipv4/vs/debug_level
- 
--config	IP_VS_TAB_BITS
-+config IP_VS_TAB_BITS
- 	int "IPVS connection table size (the Nth power of 2)"
- 	range 8 20 if !64BIT
- 	range 8 27 if 64BIT
-@@ -76,34 +76,34 @@ config	IP_VS_TAB_BITS
- 
- comment "IPVS transport protocol load balancing support"
- 
--config	IP_VS_PROTO_TCP
-+config IP_VS_PROTO_TCP
- 	bool "TCP load balancing support"
- 	help
- 	  This option enables support for load balancing TCP transport
- 	  protocol. Say Y if unsure.
- 
--config	IP_VS_PROTO_UDP
-+config IP_VS_PROTO_UDP
- 	bool "UDP load balancing support"
- 	help
- 	  This option enables support for load balancing UDP transport
- 	  protocol. Say Y if unsure.
- 
--config	IP_VS_PROTO_AH_ESP
-+config IP_VS_PROTO_AH_ESP
- 	def_bool IP_VS_PROTO_ESP || IP_VS_PROTO_AH
- 
--config	IP_VS_PROTO_ESP
-+config IP_VS_PROTO_ESP
- 	bool "ESP load balancing support"
- 	help
- 	  This option enables support for load balancing ESP (Encapsulation
- 	  Security Payload) transport protocol. Say Y if unsure.
- 
--config	IP_VS_PROTO_AH
-+config IP_VS_PROTO_AH
- 	bool "AH load balancing support"
- 	help
- 	  This option enables support for load balancing AH (Authentication
- 	  Header) transport protocol. Say Y if unsure.
- 
--config  IP_VS_PROTO_SCTP
-+config IP_VS_PROTO_SCTP
- 	bool "SCTP load balancing support"
- 	select LIBCRC32C
- 	help
-@@ -112,7 +112,7 @@ config  IP_VS_PROTO_SCTP
- 
- comment "IPVS scheduler"
- 
--config	IP_VS_RR
-+config IP_VS_RR
- 	tristate "round-robin scheduling"
- 	help
- 	  The robin-robin scheduling algorithm simply directs network
-@@ -121,7 +121,7 @@ config	IP_VS_RR
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
-  
--config	IP_VS_WRR
-+config IP_VS_WRR
- 	tristate "weighted round-robin scheduling"
- 	help
- 	  The weighted robin-robin scheduling algorithm directs network
-@@ -134,7 +134,7 @@ config	IP_VS_WRR
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_LC
-+config IP_VS_LC
- 	tristate "least-connection scheduling"
- 	help
- 	  The least-connection scheduling algorithm directs network
-@@ -144,7 +144,7 @@ config	IP_VS_LC
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_WLC
-+config IP_VS_WLC
- 	tristate "weighted least-connection scheduling"
- 	help
- 	  The weighted least-connection scheduling algorithm directs network
-@@ -154,8 +154,8 @@ config	IP_VS_WLC
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config  IP_VS_FO
--		tristate "weighted failover scheduling"
-+config IP_VS_FO
-+	tristate "weighted failover scheduling"
- 	help
- 	  The weighted failover scheduling algorithm directs network
- 	  connections to the server with the highest weight that is
-@@ -164,7 +164,7 @@ config  IP_VS_FO
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config  IP_VS_OVF
-+config IP_VS_OVF
- 	tristate "weighted overflow scheduling"
- 	help
- 	  The weighted overflow scheduling algorithm directs network
-@@ -175,7 +175,7 @@ config  IP_VS_OVF
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_LBLC
-+config IP_VS_LBLC
- 	tristate "locality-based least-connection scheduling"
- 	help
- 	  The locality-based least-connection scheduling algorithm is for
-@@ -189,7 +189,7 @@ config	IP_VS_LBLC
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config  IP_VS_LBLCR
-+config IP_VS_LBLCR
- 	tristate "locality-based least-connection with replication scheduling"
- 	help
- 	  The locality-based least-connection with replication scheduling
-@@ -207,7 +207,7 @@ config  IP_VS_LBLCR
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_DH
-+config IP_VS_DH
- 	tristate "destination hashing scheduling"
- 	help
- 	  The destination hashing scheduling algorithm assigns network
-@@ -217,7 +217,7 @@ config	IP_VS_DH
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_SH
-+config IP_VS_SH
- 	tristate "source hashing scheduling"
- 	help
- 	  The source hashing scheduling algorithm assigns network
-@@ -227,7 +227,7 @@ config	IP_VS_SH
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_MH
-+config IP_VS_MH
- 	tristate "maglev hashing scheduling"
- 	help
- 	  The maglev consistent hashing scheduling algorithm provides the
-@@ -246,7 +246,7 @@ config	IP_VS_MH
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_SED
-+config IP_VS_SED
- 	tristate "shortest expected delay scheduling"
- 	help
- 	  The shortest expected delay scheduling algorithm assigns network
-@@ -259,7 +259,7 @@ config	IP_VS_SED
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_NQ
-+config IP_VS_NQ
- 	tristate "never queue scheduling"
- 	help
- 	  The never queue scheduling algorithm adopts a two-speed model.
-@@ -272,7 +272,7 @@ config	IP_VS_NQ
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_TWOS
-+config IP_VS_TWOS
- 	tristate "weighted random twos choice least-connection scheduling"
- 	help
- 	  The weighted random twos choice least-connection scheduling
-@@ -318,7 +318,7 @@ config IP_VS_MH_TAB_INDEX
- 
- comment 'IPVS application helper'
- 
--config	IP_VS_FTP
-+config IP_VS_FTP
- 	tristate "FTP protocol helper"
- 	depends on IP_VS_PROTO_TCP && NF_CONNTRACK && NF_NAT && \
- 		NF_CONNTRACK_FTP
-@@ -334,7 +334,7 @@ config	IP_VS_FTP
- 	  If you want to compile it in kernel, say Y. To compile it as a
- 	  module, choose M here. If unsure, say N.
- 
--config	IP_VS_NFCT
-+config IP_VS_NFCT
- 	bool "Netfilter connection tracking"
- 	depends on NF_CONNTRACK
- 	help
-@@ -342,7 +342,7 @@ config	IP_VS_NFCT
- 	  connection state to be exported to the Netfilter framework
- 	  for filtering purposes.
- 
--config	IP_VS_PE_SIP
-+config IP_VS_PE_SIP
- 	tristate "SIP persistence engine"
- 	depends on IP_VS_PROTO_UDP
- 	depends on NF_CONNTRACK_SIP
-diff --git a/net/unix/Kconfig b/net/unix/Kconfig
-index 28b232f281ab..5f2502977042 100644
---- a/net/unix/Kconfig
-+++ b/net/unix/Kconfig
-@@ -21,7 +21,7 @@ config UNIX_SCM
- 	depends on UNIX
- 	default y
- 
--config	AF_UNIX_OOB
-+config AF_UNIX_OOB
- 	bool
- 	depends on UNIX
- 	default y
+Thx.
+
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
