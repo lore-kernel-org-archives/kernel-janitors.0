@@ -1,114 +1,141 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jss7zVHo"
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A955191
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 21:48:43 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c5b7764016so5640371fa.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Nov 2023 21:48:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7m2US17"
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7DEA3;
+	Thu, 23 Nov 2023 00:35:22 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1cf61eed213so5220715ad.2;
+        Thu, 23 Nov 2023 00:35:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700718521; x=1701323321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=90wieb6M2VCCvedLkH0yxZnXyP84LqC+5ZlCgC+WSG0=;
-        b=Jss7zVHo230Tx5BkpXEooENuwF9QVNJ3o+zFJolJB7afsa2xvK7GEQHcJSkVpxeHw/
-         aqg+e8kz2Ll4vlIkupEMvp8Hh4utYJh07oHVSRN5uBDsJfvEb15C6rQ2/3Rsa+sncZ/h
-         SDmQxEPKBpEoY97eSYno1NurQ+xiT0JU2GgfSLG5614ExqivkeIay/GoAo7xpirmp3wi
-         vuFOl6zDlKOoy8q7XUAWeyvPh9WuqeU9sWKe9vfl9i1hXGnkyKeLNnagUghWv/ovjD6A
-         XTh4+T1my9NHgzNqj0gkACEHyFiPqaR5vRKKdNoiCUYS/ucM5RxzTni7cxYz9Goy16wU
-         5pmA==
+        d=gmail.com; s=20230601; t=1700728522; x=1701333322; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P+ePl85i/Re/poRcEUXCR+kOqp02ehB66V8Z/F/iETU=;
+        b=P7m2US17Rig8Bfk+hbMHDjyKnGQpvoLezHzaVriKGs9EF2w7bzbaKrav3i0uXr5RDY
+         zbFPteErg99I/+2m0TQoDOMPfQCKPa2WcWH9OeqLzzRsk5J4rye5yFZSkPDyuHSlzhtA
+         tRvDN9i3J1KJlZA+wLpkr8JAYndKKt2R6AndjtnUka+tiCv0EntFQyc8udlESsE/gBSV
+         RsYBc+2vy1yTLqFrUIjDhlS1/zXTMYXcheqB4ltl3xgJOS6u9JvrNCGW2LvCSplwcQC4
+         GHoMeBFzfJJR/2RsQ1rmHtxeXmCBy1X46q/mIsGzAsHxEAEfkCsCUfdh8q+fLBpgzX8V
+         dWTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700718521; x=1701323321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=90wieb6M2VCCvedLkH0yxZnXyP84LqC+5ZlCgC+WSG0=;
-        b=GD+3OsJiBggN9DM5xBWevweY9BoRKLVlHqVnkf/ncDd8YLsbSwCUa3jfH1xwbTtdbZ
-         bVwNT2ZdhhbLiqja2s3/DJfRTNnl4tUj9AoRFGouUZRL5xlB8uCEUfuQIw1U5b2gXzFS
-         ZLQ/fHDCCy8PdxAcQwB2wc1vf5xPaQeodMqAZZIuMjIg4FVHcTYJLexng4MBLcpCAihG
-         eNoBwDVLsGC+KlXeqRAUWZvxAANq639kB+3A234IFLQ0/uQJCUHcRkT4YjZyKbf8Pr08
-         6m8IPQWSw1JfEQ5J9VAcySkWfIUGiefzZcAUYlXJzVcbwgkwTCZdnjF+7ItWNASXrbvo
-         lVSA==
-X-Gm-Message-State: AOJu0YyYOKvIDHM38DON05nEWuJh+Pf5Xv8U7j/RDB/SoIaDiW5/vcxr
-	m5AqdY1EV6JSXLh5YPYXy8l26A==
-X-Google-Smtp-Source: AGHT+IHybDEjVgqWWR627nXsgR1xndJTpRSJuSd2v2BEMphvSQGkt9g0NQ3OT7NrcfzcnPXWmVl/DA==
-X-Received: by 2002:a2e:9797:0:b0:2b6:df71:cff1 with SMTP id y23-20020a2e9797000000b002b6df71cff1mr1515717lji.52.1700718521202;
-        Wed, 22 Nov 2023 21:48:41 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id hg15-20020a05600c538f00b0040849ce7116sm1424154wmb.43.2023.11.22.21.48.40
+        d=1e100.net; s=20230601; t=1700728522; x=1701333322;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P+ePl85i/Re/poRcEUXCR+kOqp02ehB66V8Z/F/iETU=;
+        b=uikkyHI+ykLZAbqQqWXHYn1O2qOZjixxpXS1u0sbNCZUjeR03UgEmqShcZtpeYn/LW
+         PAVdJ1dy51ZjKAXPvKlWvAnCZPmwVAt2kCFY+gOk7zAZigd+VAvs+sy3yxnEOHMDUH+n
+         01IUlB6jy11gNHImf3iYJgUv7sBV3u6EJfjNR6TKBcC0Wglq/daaolDl8dsEUk+0aNt/
+         XlmLBO2025rS60NNatySQUWTAI/w2IER6vZjBUDHK9mzVf8+WaXVCvschMUOXetD3dhK
+         hcGvmI93Z37d7TdMneXAS6sisXCHOxiuUg3Jx115fGxgdWjYSbtrgeF8f/vDa2nzJOrn
+         Tycw==
+X-Gm-Message-State: AOJu0Yyxb4kVtLpV+xJkAXF/8sERlpktOUOWFxa+YddmnZI5LsD+FtXU
+	CNlc2tdOOJ68k+2oEXfRm2U=
+X-Google-Smtp-Source: AGHT+IFjXHU1gr/2iPKHRsm/ZJzrbEmDVs+Z83B5YqlUVCClP1Qhj6B+Mz30No3awDSJ1jZyuKkIoA==
+X-Received: by 2002:a17:902:b417:b0:1cf:6d26:9de3 with SMTP id x23-20020a170902b41700b001cf6d269de3mr5062654plr.39.1700728521988;
+        Thu, 23 Nov 2023 00:35:21 -0800 (PST)
+Received: from archie.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id g13-20020a170902c38d00b001c0a414695bsm788707plg.43.2023.11.23.00.35.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 21:48:40 -0800 (PST)
-Date: Thu, 23 Nov 2023 08:48:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: pkshih@realtek.com, kvalo@kernel.org, nathan@kernel.org,
-	ndesaulniers@google.com, trix@redhat.com, lizetao1@huawei.com,
-	linville@tuxdriver.com, Larry.Finger@lwfinger.net,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH wireless-next 2/2] rtlwifi: rtl8821ae: phy: fix an
- undefined bitwise shift behavior
-Message-ID: <caf95d1d-f893-4553-9d0a-91d16f04182d@suswa.mountain>
-References: <2ec14802-78b0-4a3f-a730-19e95ec8d359@suswa.mountain>
- <a9032c3a-8221-11fb-ed15-2c57c3933d28@nfschina.com>
+        Thu, 23 Nov 2023 00:35:21 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id F07EF1024DA1A; Thu, 23 Nov 2023 15:35:17 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Staging Drivers <linux-staging@lists.linux.dev>,
+	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Alexon Oliveira <alexondunkan@gmail.com>,
+	Matt Jan <zoo868e@gmail.com>,
+	Jonathan Bergh <bergh.jonathan@gmail.com>,
+	Dan Carpenter <error27@gmail.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Bruno Moreira-Guedes <codeagain@codeagain.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Martyn Welch <martyn.welch@collabora.com>
+Subject: [PATCH v2] MAINTAINERS: Mark VME subsystem as orphan
+Date: Thu, 23 Nov 2023 15:34:03 +0700
+Message-ID: <20231123083406.12129-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9032c3a-8221-11fb-ed15-2c57c3933d28@nfschina.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2181; i=bagasdotme@gmail.com; h=from:subject; bh=RF8BTmAc6aqA8QPnd9h43mZ5xpWxpB+c0g20PoeJqZE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDKnxvD+m9P+Y3hk5q/oUo9mztxMOFDkEHDzEJzqv50pJY 53BG56ZHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjIpgmMDEuDckT8Z2y4Zy/F zl6qFq7x7+QEkcdK1/o00qO+HGpzYWFkePHAetUP27eHWF8dMiyT33pyjTJ7YseHlfe1eebIs56 +yQoA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 23, 2023 at 09:33:06AM +0800, Su Hui wrote:
-> On 2023/11/22 21:02, Dan Carpenter wrote:
-> > On Wed, Nov 22, 2023 at 05:02:12PM +0800, Su Hui wrote:
-> > > Clang staic checker warning:
-> > > drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c:184:49:
-> > > 	The result of the left shift is undefined due to shifting by '32',
-> > > 	which is greater or equal to the width of type 'u32'.
-> > > 	[core.UndefinedBinaryOperatorResult]
-> > > 
-> > > If the value of the right operand is negative or is greater than or
-> > > equal to the width of the promoted left operand, the behavior is
-> > > undefined.[1][2]
-> > > 
-> > > For example, when using different gcc's compilation optimizaation options
-> > > (-O0 or -O2), the result of '(u32)data << 32' is different. One is 0, the
-> > > other is old value of data. Adding an u64 cast to fix this problem.
-> > > 
-> > > [1]:https://stackoverflow.com/questions/11270492/what-does-the-c-
-> > > standard-say-about-bitshifting-more-bits-than-the-width-of-type
-> > > [2]:https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
-> > > 
-> > > Fixes: 21e4b0726dc6 ("rtlwifi: rtl8821ae: Move driver from staging to regular tree")
-> > > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > > ---
-> > >   drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c | 8 ++++----
-> > >   1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> > > index 6df270e29e66..89713e0587b5 100644
-> > > --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> > > +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> > > @@ -106,7 +106,7 @@ u32 rtl8821ae_phy_query_bb_reg(struct ieee80211_hw *hw, u32 regaddr,
-> > >   		regaddr, bitmask);
-> > >   	originalvalue = rtl_read_dword(rtlpriv, regaddr);
-> > >   	bitshift = _rtl8821ae_phy_calculate_bit_shift(bitmask);
-> > > -	returnvalue = (originalvalue & bitmask) >> bitshift;
-> > > +	returnvalue = (u64)(originalvalue & bitmask) >> bitshift;
-> > This is a right shift, not a left shift. << vs >>.
-> 
-> Hi,
-> 
-> It's same for right shift and having a really weird result.
-> 
-> The result of '(u32)data >> 32' is different when using different compiler.
-> Clang: "(unsigned int)41 >> 32" = 2077469672
-> Gcc: "(unsigned int)41 >> 32" = 0
+Martyn Welch lost his access to VME hardware [1]; and Manohar Vanga has been
+MIA since early January 2014 (his last message was [2]). Martyn admitted
+that the subsystem is basically orphan, so mark it as such. As a bonus,
+add CREDITS entries for the former subsystem maintainers.
 
-Ah.  Sorry.  I had forgotten that it was undefined either way...
+Link: https://lore.kernel.org/r/fe8ac0db-d6cc-41bc-b926-484b418e1720@collabora.com/ [1]
+Link: https://lore.kernel.org/r/CAEktxaFL=3cmU4vZS2akiAR2vG-3d+9HwTZvBvf5JXuThHoOKg@mail.gmail.com/ [2]
+Cc: Martyn Welch <martyn.welch@collabora.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+Changes since v1 [3]:
 
-regards,
-dan carpenter
+ * Orphanize the subsystem (Martyn)
+ * Sort Manohar's CREDITS entry
+
+[3]: https://lore.kernel.org/linux-staging/20231122094156.30642-1-bagasdotme@gmail.com/
+
+ CREDITS     | 8 ++++++++
+ MAINTAINERS | 5 +----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index f33a33fd237170..ba6eb6274f8bed 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -3916,6 +3916,10 @@ S: 21513 Conradia Ct
+ S: Cupertino, CA 95014
+ S: USA
+ 
++N: Manohar Vanga
++E: manohar.vanga@gmail.com
++D: VME subsystem maintainer
++
+ N: Thibaut Varène
+ E: hacks+kernel@slashdirt.org
+ W: http://hacks.slashdirt.org/
+@@ -4016,6 +4020,10 @@ D: Fixes for the NE/2-driver
+ D: Miscellaneous MCA-support
+ D: Cleanup of the Config-files
+ 
++N: Martyn Welch
++E: martyn@welchs.me.uk
++D: VME subsystem maintainer
++
+ N: Matt Welsh
+ E: mdw@metalab.unc.edu
+ W: http://www.cs.berkeley.edu/~mdw
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ea790149af7951..ff083d12001489 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23234,11 +23234,8 @@ F:	include/linux/vmalloc.h
+ F:	mm/vmalloc.c
+ 
+ VME SUBSYSTEM
+-M:	Martyn Welch <martyn@welchs.me.uk>
+-M:	Manohar Vanga <manohar.vanga@gmail.com>
+-M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ L:	linux-kernel@vger.kernel.org
+-S:	Odd fixes
++S:	Orphan
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+ F:	Documentation/driver-api/vme.rst
+ F:	drivers/staging/vme_user/
+
+base-commit: 98b1cc82c4affc16f5598d4fa14b1858671b2263
+-- 
+An old man doll... just what I always wanted! - Clara
 
