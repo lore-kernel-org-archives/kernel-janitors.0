@@ -1,125 +1,92 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V5AhGmOZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7407CD8;
-	Thu, 23 Nov 2023 03:20:34 -0800 (PST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4966F40E0258;
-	Thu, 23 Nov 2023 11:20:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4s49rXaUabG4; Thu, 23 Nov 2023 11:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1700738429; bh=lhIEeBpw7QtrxS/ZHvsdGRgwiXLx1WSEEuHReDweeEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V5AhGmOZ/lTXYVKRydg6dEJGUZD2vjCX1NRvrNqMdOJCU/0rKBtBj/NG59qDzd9GI
-	 9/Z0K/ZQE13Bodi3CsRxuFquYP28pQr1sxszcI76+SLFZJX16tOpPT9AB44wmJNkk+
-	 zRi6muT36Hdq6VWg7xjXpvhqzOg1bQoJEAtFGeDL2VpkpS6hVwPaTpEMep/o5X3joe
-	 1MANBpjtKG9o/MIJBfgOxR3RI7g/9ITC7grnaObagwgkw37BQvMxf70IIBcxwvE8Hk
-	 nkuFXv9OpON+AOrPKa4MNJDAtPKjbj/KUP7/hKJ1J1sJfzDo+f00vqGXHAgLmv5Vrp
-	 +3rihlW9neJYoZF6YFGp53Flm4zKS6VPJMUEGUhvBeRDrdhiP/UjVJXmuuXAk31LUr
-	 VE+ymsypj8eqpAN/Tllv6Ro7DRLF3UR+AhW3ZuKy4nE95xsYASIl456a3yn3wvwwf3
-	 Y4PWT/5+SJRjic84ZL81LkmEnmNrpNjwJzBgliHfSczRwGfQrYiiAERbuq3Hm/fD2z
-	 ENvEq+VhFvuXttZg4N4W54GqzZv5MNnViW9OA24ojNNy2kycZLWHugsFfQ0st6I8MA
-	 rtYdV0R2H+mVTr03DnW7YU1t/aQq3xZI4Vcv/ECzpafjQp7qJeyKamx+OrEMzetV0U
-	 LRHB/oargmhWqWWJprOKRdSI=
-Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7C06F40E0257;
-	Thu, 23 Nov 2023 11:20:18 +0000 (UTC)
-Date: Thu, 23 Nov 2023 12:20:13 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
-	lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [regression] microcode files missing in initramfs imgages from
- dracut (was Re: [PATCH] x86: Clean up remaining references to
- CONFIG_MICROCODE_AMD)
-Message-ID: <20231123112013.GAZV81bezsrS6sdJQR@fat_crate.local>
-References: <20230825141226.13566-1-lukas.bulwahn@gmail.com>
- <c67bd324-cec0-4fe4-b3b1-fc1d1e4f2967@leemhuis.info>
- <20231112181036.GBZVEVHIIj/Oos1cx4@fat_crate.local>
- <0e9cbe6f-ac6c-47f2-b663-a22568799eca@leemhuis.info>
- <20231122115826.GAZV3s4krKXI002KQ0@fat_crate.local>
- <e1ca042c-de1d-4fe3-ad69-51d147b1fe0b@leemhuis.info>
- <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
- <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
- <20231122205135.GGZV5p157mBi6RYUNs@fat_crate.local>
- <CAHk-=wh03jMZRAxHFTkv0h9dZ6TmiqukzcHd4RTx7ijia_prsg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUOz08A+"
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C992719D;
+	Thu, 23 Nov 2023 03:32:53 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-543c3756521so1042399a12.2;
+        Thu, 23 Nov 2023 03:32:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700739172; x=1701343972; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FJR3101Hl0ju0T8k7A5FLhqgAt7jmzAhmxoZQCDqWNQ=;
+        b=GUOz08A+XjAbDfEUHx2VlJ2WTqaPRGbE+0wZELY6tVi4aJGILWORN0ay2fATSAuUhG
+         IVKsiGWpJZES7aDo5K2F1SR5bgAqufii0FkvkwRvx6SFIWN+VSBb30WxiVZEZsLNdaEv
+         rZ+kyf3gyZ8u4sY6erkgg7nnTOwmu/P2U3Nk8u9ZBTbLK6ZM3eqLUMOPrzpTyo28uZ/n
+         0tc/JDbCGt7YFHJUoBlYDKQp4QhQCcm2W2hGBHEU1Kkb4w3xcvwGFvTlFYEwj19pzaDN
+         DdPwXyv1o0e+zROHslFbBP4eQOSTgDue9yccuaAjfebSYe97YpCLQ9krpTmwsZaUYxnY
+         uCRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700739172; x=1701343972;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FJR3101Hl0ju0T8k7A5FLhqgAt7jmzAhmxoZQCDqWNQ=;
+        b=m1plgXXm41i+psrLsb4ffj+I1uVzIM+p6CORh3OCZws7xJKpBi9jChiWxmva6qNkmq
+         P/o3aM7vQjRtN7vC3BHkygyAP4mYYYhPxhEXYMh2JvTaynAYgk04kApbxG7woSkcukip
+         LbXifPC0E9+LcY8g96cnP7sjLHuBVkUHcuiI+38/mxd+59rtljsi7trqAR55G/8L5bF3
+         KsZLMjbzVTYOfj4M3l8XfiSrSmtxQP9jwsVLikqxjklsHa4QhXK8xy6GgI3A3a0EyCC/
+         sD9Wcd4rseaFurc/IKa3/60pZ4U70vNUM/0zFkwcBtzp5rW3OyxlOiVB6SB0VBgwhUKy
+         wkjg==
+X-Gm-Message-State: AOJu0YxbXRYTTLDX32qdHyIfca885kd+UNBTJtg0ya/9EkrJDFmcWog5
+	Zi0D36kP5o14mWxkBHSj8Nw=
+X-Google-Smtp-Source: AGHT+IF9yCBLo40X1hbdFBWCUzdwY/UWNgg06E7pt731qK1mToTbvsH/X0QsP6Uzk24cb537Bx/Ntw==
+X-Received: by 2002:a05:6402:26c7:b0:54a:9155:48e3 with SMTP id x7-20020a05640226c700b0054a915548e3mr2592158edd.1.1700739172081;
+        Thu, 23 Nov 2023 03:32:52 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d183:a5d9:39a9:cd13])
+        by smtp.gmail.com with ESMTPSA id f19-20020a056402151300b005489dbe8ed3sm557251edw.4.2023.11.23.03.32.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 03:32:51 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Lee Jones <lee@kernel.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
+Date: Thu, 23 Nov 2023 12:32:45 +0100
+Message-Id: <20231123113245.23542-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh03jMZRAxHFTkv0h9dZ6TmiqukzcHd4RTx7ijia_prsg@mail.gmail.com>
 
-Adding Antonio who did that last fix to dracut:
+Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
+and drivers") adds some file patterns for files in arch/arm/boot/dts/, but
+those patterns do not match any files in the repository. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about broken
+references. The files of interest are actually in the directory
+arch/arm/boot/dts/nxp/imx/.
 
-6c80408c8644 ("fix(dracut.sh): remove microcode check based on CONFIG_MICROCODE_[AMD|INTEL]")
+Adjust the file patterns to match the intended files.
 
-On Wed, Nov 22, 2023 at 01:08:41PM -0800, Linus Torvalds wrote:
-> There are dracut command lines, like "--early-microcode" and
-> "--no-early-microcode", so people who really want to save space could
-> just force it that way. Doing the CONFIG_xyz check seems broken.
-> 
-> But that's for the dracut people to worry about.
-
-Yeah, I guess something like this below.
-
-Antonio, how about something like the totally untested thing below?
-
-dracut would simply always build in microcode - this is the majority of
-the setups anyway - and people who want to save space, do:
-
---no-early-microcode
-
-?
-
+Fixes: 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees and drivers")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
-diff --git a/dracut.sh b/dracut.sh
-index 3b292910f324..c0a88b083f8e 100755
---- a/dracut.sh
-+++ b/dracut.sh
-@@ -1561,20 +1561,16 @@ fi
- 
- if [[ $early_microcode == yes ]]; then
-     if [[ $hostonly ]]; then
--        if [[ $(get_cpu_vendor) == "AMD" || $(get_cpu_vendor) == "Intel" ]]; then
--            check_kernel_config CONFIG_MICROCODE || unset early_microcode
--        else
-+        if [[ $(get_cpu_vendor) != "AMD" && $(get_cpu_vendor) != "Intel" ]]; then
-             unset early_microcode
-         fi
--    else
--        ! check_kernel_config CONFIG_MICROCODE \
--            && unset early_microcode
-     fi
-+
-     # Do not complain on non-x86 architectures as it makes no sense
-     case "${DRACUT_ARCH:-$(uname -m)}" in
-         x86_64 | i?86)
-             [[ $early_microcode != yes ]] \
--                && dwarn "Disabling early microcode, because kernel does not support it. CONFIG_MICROCODE!=y"
-+                && dwarn "Disabling early microcode, unsupported configuration"
-             ;;
-         *) ;;
-     esac
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thx.
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index df7a57ac864e..1e439b08d5d4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22084,9 +22084,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+ L:	linux@ew.tq-group.com
+ S:	Supported
+ W:	https://www.tq-group.com/en/products/tq-embedded/
+-F:	arch/arm/boot/dts/imx*mba*.dts*
+-F:	arch/arm/boot/dts/imx*tqma*.dts*
+-F:	arch/arm/boot/dts/mba*.dtsi
++F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
++F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
++F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+ F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+ F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+ F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
