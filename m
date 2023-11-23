@@ -1,90 +1,54 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D7225AE
+	for <kernel-janitors@vger.kernel.org>; Thu, 23 Nov 2023 10:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8UNCOjW"
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D058D44;
-	Thu, 23 Nov 2023 02:45:03 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9ffef4b2741so89085166b.3;
-        Thu, 23 Nov 2023 02:45:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700736302; x=1701341102; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h6Hvqdct8bxNPtyyQ9oB1GOQ6etl7woaugTWazlBaUY=;
-        b=N8UNCOjW7t06vZRFj1C6q8FDXhnWe1zS1fL1MEOACe8Z1QYnT2BdvDvXE4tnsKjVQb
-         qBYPgL2Ryhqo8SXEwARwXcZUTYq2PGVdGRGQypo5/y6fQ7bupWPVFkeeeXfb0FlU+m7F
-         SNvrTPiKL3GZEfOMO6wCdQFUPJmThxPUgYQMCjCLhFehlAGmz24LMAnBOeIAW46tUGka
-         3j9VoHSYoG8+IoDEmWXHKVpqap2s5TCevjgnaOS3mcOrrVhSIeUPZA9y4sQdQTsi//tT
-         MkHjaaV9PkG1nYXKxY71aLBHgHREvB0Ct57XBuADAsKxXI/x3WFY1Pm5UhDJi7F1Uues
-         LlhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700736302; x=1701341102;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h6Hvqdct8bxNPtyyQ9oB1GOQ6etl7woaugTWazlBaUY=;
-        b=phZvxomDiaHLcO+0dJNz2OKMBmZ9Grl59dnPaONiVYzbAZ4IohWGjHkdIRZNnxBICe
-         La2xYPw9l1A59KpHnxfGeQLF5ed/SXTP2ZhmxihQV+u3NJ4nbOyacfj87VpNp3AK3Zf7
-         nGMTbXUzQNN37JxILSg1aQrKe8Frs2OwSsL7n8GgPwrzHYimQ6+7q4VHp/pY/A2LVj9V
-         BksyYNZdOvEV62rW6W6aVyAoAWHoCWjIoiBmi7B7SKm07BI5P0Hs2/g0YCFrwDOgz+70
-         XfLaOhqQ4+ztNTnQRNk+wflHXqRc8nItoSYum5MwKluLZnZzK+pf/ujKzeMHRyFcGsdc
-         7lZA==
-X-Gm-Message-State: AOJu0Yxu6ts9UyWjQCXDXqJmzRYluhzhwDB3Drm02Sp8rHirGe5acKc2
-	3e0fFoVlLxz/5AQ9MWRUeDpYeddU/ig=
-X-Google-Smtp-Source: AGHT+IGiUlWLCvVUZKgKbPhov7AohPU1as4zFqqjJjOyNpm6BCPLWiZ1YP03S1NxT2INoF41F8DmkA==
-X-Received: by 2002:a17:906:530b:b0:a04:b801:66f7 with SMTP id h11-20020a170906530b00b00a04b80166f7mr2514382ejo.23.1700736301191;
-        Thu, 23 Nov 2023 02:45:01 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d183:a5d9:39a9:cd13])
-        by smtp.gmail.com with ESMTPSA id y18-20020a17090668d200b009fc95fc3dabsm617552ejr.130.2023.11.23.02.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Nov 2023 02:45:00 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm: drop an obsolete ifdef with the removed config PCI_HOST_ITE8152
-Date: Thu, 23 Nov 2023 11:44:58 +0100
-Message-Id: <20231123104458.22569-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Acfp10Yp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF343C433C7;
+	Thu, 23 Nov 2023 10:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700737057;
+	bh=1C0m0iqt2o1iTmLe2K+yT/+7q6+nm1Oz7Sg7gcJaVaM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Acfp10Yp7h+mRlKnhBlJr2fJcXXuAu96Yo6RnvYnwyzJERo0e6cLC4YSH/gXyHcI2
+	 XzruhLBNPjW5IQcWEDm5JPwciIDD0vzb4ktAxV7CuIEJqcL2JX2a4Tpao2g4QeKHvI
+	 ugzVrxtToCP72bVZ33+ze8Kbiops2IlY20snqoSp5fgqvngiX/JLiKmbZe882Le5p+
+	 7oeLpTdac7czH2EtLTXrtbb6U0q53+qNuCE5f9NPJg2qfyplznhnYzYlB6iTo3wbUa
+	 zNYwo1HsDv3ABaJjoQosoaiHqB71x2yuVVr5pIZ91QhBC2kdBY35Lq9yl4U9v//MV8
+	 j1vouhR6NbbCA==
+From: Lee Jones <lee@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <a63f3da5745187f5a9b1e2ec0492f2fe2e0b0b8d.1698854117.git.christophe.jaillet@wanadoo.fr>
+References: <a63f3da5745187f5a9b1e2ec0492f2fe2e0b0b8d.1698854117.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: (subset) [PATCH] mfd: intel-lpss: Remove usage of the
+ deprecated ida_simple_xx() API
+Message-Id: <170073705658.1241275.6336543036694475269.b4-ty@kernel.org>
+Date: Thu, 23 Nov 2023 10:57:36 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 
-Commit 6da5238fa384 ("ARM: 8993/1: remove it8152 PCI controller driver")
-removes the config PCI_HOST_ITE8152, but left a dangling obsolete ifndef
-in ./arch/arm/kernel/bios32.c.
+On Wed, 01 Nov 2023 16:55:38 +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> This is less verbose.
+> 
+> 
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+Applied, thanks!
 
-  PCI_HOST_ITE8152
-  Referencing files: arch/arm/kernel/bios32.c
+[1/1] mfd: intel-lpss: Remove usage of the deprecated ida_simple_xx() API
+      commit: 1026cd156d1099e0999f060a23af7470a8530efc
 
-Remove this obsolete ifndef.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/arm/kernel/bios32.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/kernel/bios32.c b/arch/arm/kernel/bios32.c
-index d334c7fb672b..1b7aa85d3bec 100644
---- a/arch/arm/kernel/bios32.c
-+++ b/arch/arm/kernel/bios32.c
-@@ -527,12 +527,10 @@ void pci_common_init_dev(struct device *parent, struct hw_pci *hw)
- 	}
- }
- 
--#ifndef CONFIG_PCI_HOST_ITE8152
- void pcibios_set_master(struct pci_dev *dev)
- {
- 	/* No special bus mastering setup handling */
- }
--#endif
- 
- char * __init pcibios_setup(char *str)
- {
--- 
-2.17.1
+--
+Lee Jones [李琼斯]
 
