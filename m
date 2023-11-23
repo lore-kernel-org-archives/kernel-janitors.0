@@ -1,120 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cisBLx8H"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4207ED48;
-	Thu, 23 Nov 2023 02:14:06 -0800 (PST)
-Received: from [100.92.221.145] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: martyn)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id 0C58C6607390;
-	Thu, 23 Nov 2023 10:14:03 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1700734445;
-	bh=1AzfTh3xW+R7jMoKi0iXP3NjuJBvCg9wANdNbnewW9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cisBLx8H2xJ/JQT35+N+k8CsxmBeBkHf3H7mYH9wRTBTyCxPb/Ev+fmMqupAigRZ8
-	 Zi1A0RpzrwtsFo3INoctqZDCsQ5ZnTklwIgAF038NxFSIhEy2dsgy/q0XntUkVhPbN
-	 Ad4iMHzZkJSG4xnX2q9dyF2iPPPmZqXu2jcWvAc0XPqlPDUd3RPChgNO7+MKEGAp+d
-	 j5U/pFXjbyethUNEVJSvfKr+eNDtIn/T2axJOIvIziS2oNSLo7PGHg4qc0sV3ajYz4
-	 bCPh1Q4RdG4ZAm5SHm0n/Tis1gyPslTleBBN9PebmpBFXf8KKhIhdv2GJVNixfyJc3
-	 wKG0m++8Lb2FA==
-Message-ID: <c1210724-66e1-479d-958b-3e777b1266df@collabora.com>
-Date: Thu, 23 Nov 2023 10:14:00 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BN/4y5wM"
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0B6D4E;
+	Thu, 23 Nov 2023 02:38:13 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5482df11e73so999424a12.0;
+        Thu, 23 Nov 2023 02:38:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700735892; x=1701340692; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/10f0Z5slGSAKwMhtMcE4JVOhjTmJuQd6yxBSQebl1Q=;
+        b=BN/4y5wMFp8+XUVwUz0orNEfc7B4Y9xcjHRLVhX9M2kFzhghbf+ClVdoNsqrGFtg7r
+         kIn7xC1JF38EXzJ0m5YyQ1/7M2IS+6J/PzRHxjILVxnVgMTc00jh+tOcbaQz6HZ4uegD
+         iNo7pz4eNR6MXgW4k2oaBiRfPXWgiJ1X/pLJ5/ZIRmWmWK14hBfz4F/1aGAimo+TavWX
+         m/OcmON1gCEjdfKOR84F3jLt5GqQ9L/G7P92LqILqJ0U+PPqe2OrNGRE4xyuiqFowsMS
+         c/e+5REXwGQgOF7F4pHfnFaa71AbLaNUm27EKqt9hXRGikU5NB59hxyBlpPqrsPbcjTQ
+         ARGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700735892; x=1701340692;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/10f0Z5slGSAKwMhtMcE4JVOhjTmJuQd6yxBSQebl1Q=;
+        b=hX+6eVvHcSsDriYP7IqnvUM1EV3zeSXEgP+UY2d8dpil2FkMQJXYFcEPFezQvJdb+X
+         u9WtrVfE6NTf6XpiP5f+hwAbe9hFsIIYHjMIdx4y99fE41BDAVU6xHlg4qZofCdHOA+2
+         WuvHlQeVKwAbpmQjVKZ7vGZQH3hPNr/0vuZ2/kpv++7BIvw7ltCDnc05rxyYk4/O44/c
+         XcVV9VRjSdQxtw9ETd/1CIt/EWS9FnMT+059g/Uk0VFoyKz6+bs+SnWAMyoSthfkSnk2
+         kUp5QNAuR3hxAe9uFz85JYfawT5aP/XbDYOjJccQH1dy+Z7/hI5ShlVc18UTwIEQBeLW
+         qi9A==
+X-Gm-Message-State: AOJu0YxaW/PTLxV3jW5wjRtIQo6Rt/p7I3HKgbzPsAGEamm4iBySUQqI
+	YSE2mBbgyKk0wkmR1nBQs16HD54Mwug=
+X-Google-Smtp-Source: AGHT+IHlzD3nvSyI/45B5PJ+YhvgKPsItsZOGvtSg8j3cEuomylmjSj4riDSySJf9GaOj2wfNWEA0g==
+X-Received: by 2002:a17:906:104c:b0:9fe:380e:9055 with SMTP id j12-20020a170906104c00b009fe380e9055mr3146320ejj.8.1700735891528;
+        Thu, 23 Nov 2023 02:38:11 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d183:a5d9:39a9:cd13])
+        by smtp.gmail.com with ESMTPSA id w8-20020a170906184800b009fca9484a62sm594511eje.200.2023.11.23.02.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 02:38:10 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] exynos-gsc: remove unused improper CONFIG definition
+Date: Thu, 23 Nov 2023 11:38:08 +0100
+Message-Id: <20231123103808.17848-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: Mark VME subsystem as orphan
-Content-Language: en-US
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Staging Drivers <linux-staging@lists.linux.dev>,
- Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Soumya Negi <soumya.negi97@gmail.com>,
- Alexon Oliveira <alexondunkan@gmail.com>, Matt Jan <zoo868e@gmail.com>,
- Jonathan Bergh <bergh.jonathan@gmail.com>, Dan Carpenter
- <error27@gmail.com>, Alison Schofield <alison.schofield@intel.com>,
- Bruno Moreira-Guedes <codeagain@codeagain.dev>,
- Krzysztof Kozlowski <krzk@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-References: <20231123083406.12129-2-bagasdotme@gmail.com>
-From: Martyn Welch <martyn.welch@collabora.com>
-In-Reply-To: <20231123083406.12129-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+that are introduced in a Kconfig file.
 
-On 23/11/2023 08:34, Bagas Sanjaya wrote:
-> Martyn Welch lost his access to VME hardware [1]; and Manohar Vanga has been
-> MIA since early January 2014 (his last message was [2]). Martyn admitted
-> that the subsystem is basically orphan, so mark it as such. As a bonus,
-> add CREDITS entries for the former subsystem maintainers.
+In the driver code, there is a define for CONFIG_VB2_GSC_DMA_CONTIG, but
+this is not used anywhere in the code.
 
-Acked-by: Martyn Welch <martyn@welchs.me.uk>
+Just remove this unused definition.
 
-> Link: https://lore.kernel.org/r/fe8ac0db-d6cc-41bc-b926-484b418e1720@collabora.com/ [1]
-> Link: https://lore.kernel.org/r/CAEktxaFL=3cmU4vZS2akiAR2vG-3d+9HwTZvBvf5JXuThHoOKg@mail.gmail.com/ [2]
-> Cc: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Changes since v1 [3]:
->
->   * Orphanize the subsystem (Martyn)
->   * Sort Manohar's CREDITS entry
->
-> [3]: https://lore.kernel.org/linux-staging/20231122094156.30642-1-bagasdotme@gmail.com/
->
->   CREDITS     | 8 ++++++++
->   MAINTAINERS | 5 +----
->   2 files changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/CREDITS b/CREDITS
-> index f33a33fd237170..ba6eb6274f8bed 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -3916,6 +3916,10 @@ S: 21513 Conradia Ct
->   S: Cupertino, CA 95014
->   S: USA
->   
-> +N: Manohar Vanga
-> +E: manohar.vanga@gmail.com
-> +D: VME subsystem maintainer
-> +
->   N: Thibaut Varène
->   E: hacks+kernel@slashdirt.org
->   W: http://hacks.slashdirt.org/
-> @@ -4016,6 +4020,10 @@ D: Fixes for the NE/2-driver
->   D: Miscellaneous MCA-support
->   D: Cleanup of the Config-files
->   
-> +N: Martyn Welch
-> +E: martyn@welchs.me.uk
-> +D: VME subsystem maintainer
-> +
->   N: Matt Welsh
->   E: mdw@metalab.unc.edu
->   W: http://www.cs.berkeley.edu/~mdw
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ea790149af7951..ff083d12001489 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23234,11 +23234,8 @@ F:	include/linux/vmalloc.h
->   F:	mm/vmalloc.c
->   
->   VME SUBSYSTEM
-> -M:	Martyn Welch <martyn@welchs.me.uk>
-> -M:	Manohar Vanga <manohar.vanga@gmail.com>
-> -M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->   L:	linux-kernel@vger.kernel.org
-> -S:	Odd fixes
-> +S:	Orphan
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
->   F:	Documentation/driver-api/vme.rst
->   F:	drivers/staging/vme_user/
->
-> base-commit: 98b1cc82c4affc16f5598d4fa14b1858671b2263
+No functional change.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/media/platform/samsung/exynos-gsc/gsc-core.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.h b/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
+index 1ea5fa1bf3c8..b9777e07fb6d 100644
+--- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
++++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.h
+@@ -26,7 +26,6 @@
+ 
+ #include "gsc-regs.h"
+ 
+-#define CONFIG_VB2_GSC_DMA_CONTIG	1
+ #define GSC_MODULE_NAME			"exynos-gsc"
+ 
+ #define GSC_SHUTDOWN_TIMEOUT		((100*HZ)/1000)
+-- 
+2.17.1
+
