@@ -1,53 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4R1JAUR"
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D16A1FFA;
-	Fri, 24 Nov 2023 08:41:26 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-332c46d5988so1292363f8f.1;
-        Fri, 24 Nov 2023 08:41:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700844084; x=1701448884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ni28SjVJ2Wu+8xAjSvXwvNtZzS7NfB4KdQGTVTIay/Q=;
-        b=j4R1JAUR+Y7FTDP6YmroBgnY9pcmxk5UrgGEtmqlaWeHYOUanAQ3Nt93QMmAHEfHOg
-         O/27W4YYO2MJh51ZoEflJPox1Zbrss+7yo9udqyyw5EpLQNo4linGOJMjsnyzU/eb6jt
-         CNpX+llD4D3spDMsbCdT3wHHowshI8uLzcdrn/bv8sRghczCu04JY0MlrkhCVMkk0XL6
-         4+EyaSheokUNGk1pDIS3ms35YSrrzvZHEpn8Ha2fnCQY7FO/LjKBE/Va8Jss/4/UnJEn
-         CugZKmluCvlIy+0TnkDYMEVaJBzC6cp9BdBOQXOCnaQvO8I499Ve7AoDOQzkWT44534W
-         gJ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700844084; x=1701448884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ni28SjVJ2Wu+8xAjSvXwvNtZzS7NfB4KdQGTVTIay/Q=;
-        b=KhE3HEWF+L+OM8nCRCWiD6jDnaPVVCIeQGzRRUkjWxeAFBZBoFhkorc9TRQjRaNroH
-         ozEyeUr+KLFI9H9m9mHMM1JpCvZj6RIMjDzufzAHJigJbtASrUWZ79Il+GysoHvs87uO
-         rESLfgY8CM0+AHn8olkx2bGgVMNgB5n3R+jIrvfY9Sq17Kd5yz5c/hY/zpHxqV9kL05y
-         bQCEmB2TXTjYMpyqgk9u0V1umPczGl5l0SQhDldhwCzxBxVDui9E5puwmd2TmhErj/3/
-         NdrrAF1TkYUTKKUN4DM9D+a1JKnIrYJGncvx3jRMrLpdrx1gOfb/2nEy8E9NEURg9nVw
-         Q+QA==
-X-Gm-Message-State: AOJu0YzP1QPypAknkgmphAqCR5B7ULKOoKWB/O4AQYZAkKYSq8x87cdl
-	LwPFKq/3nks99ivsL1rv4lG+UFhtJ7X+kg==
-X-Google-Smtp-Source: AGHT+IF1Q+NzbFRUNcZX11rtSRiGBfnsmXXAM+zIIUixrSW8rGMXThtOprWk/P5d0O8fxnf0ynvBlw==
-X-Received: by 2002:adf:fc52:0:b0:332:d3f7:46f7 with SMTP id e18-20020adffc52000000b00332d3f746f7mr2389461wrs.53.1700844084450;
-        Fri, 24 Nov 2023 08:41:24 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e2-20020a5d4e82000000b00323293bd023sm4720711wru.6.2023.11.24.08.41.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Nov 2023 08:41:23 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: chips-media: wave5: Fix spelling mistake "bufferur" -> "buffer"
-Date: Fri, 24 Nov 2023 16:41:23 +0000
-Message-Id: <20231124164123.300870-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bPXUtVgA"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859D826A3;
+	Fri, 24 Nov 2023 10:50:00 -0800 (PST)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3AOInp7T082303;
+	Fri, 24 Nov 2023 12:49:51 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1700851791;
+	bh=N0YVMRCXTOk7PPT1YzjO6mozGzr/3NgvaOoL5ltl/s0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=bPXUtVgA4hNKku8tewUDThBvBt2PsRfitsZk26eXj7QILUt/IJ4ZzUFeY3N5be3Lv
+	 IsO7ry5qDaQcDTbB222RGozAnp4QDlLGqgd772JQVyU5h5cYuJha587NCd3CK9UKMO
+	 KoVdpyQUClW9/eS6B1ct3Qf6I1b7xafNJ5vutRyY=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3AOInpXF078255
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 Nov 2023 12:49:51 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
+ Nov 2023 12:49:50 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 24 Nov 2023 12:49:50 -0600
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+	by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3AOInogj030861;
+	Fri, 24 Nov 2023 12:49:50 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] firmware: ti_sci: Fix an off-by-one in ti_sci_debugfs_create()
+Date: Fri, 24 Nov 2023 12:49:49 -0600
+Message-ID: <170085178298.327808.15170603677732456646.b4-ty@ti.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <7158db0a4d7b19855ddd542ec61b666973aad8dc.1698660720.git.christophe.jaillet@wanadoo.fr>
+References: <7158db0a4d7b19855ddd542ec61b666973aad8dc.1698660720.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -56,27 +48,43 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+Hi Christophe JAILLET,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 30 Oct 2023 11:12:26 +0100, Christophe JAILLET wrote:
+> The ending NULL is not taken into account by strncat(), so switch to
+> snprintf() to correctly build 'debug_name'.
+> 
+> Using snprintf() also makes the code more readable.
+> 
+> 
 
-diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-index 8b1417ece96e..ef227af72348 100644
---- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-+++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-@@ -1281,7 +1281,7 @@ static int fill_ringbuffer(struct vpu_instance *inst)
- 
- 		/* Don't write buffers passed the last one while draining. */
- 		if (v4l2_m2m_is_last_draining_src_buf(m2m_ctx, vbuf)) {
--			dev_dbg(inst->dev->dev, "last src buffer written to the ring bufferur\n");
-+			dev_dbg(inst->dev->dev, "last src buffer written to the ring buffer\n");
- 			break;
- 		}
- 	}
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
+
+[1/1] firmware: ti_sci: Fix an off-by-one in ti_sci_debugfs_create()
+      commit: 964946b88887089f447a9b6a28c39ee97dc76360
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-2.39.2
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
