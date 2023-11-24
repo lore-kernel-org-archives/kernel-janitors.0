@@ -1,110 +1,75 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B630D53;
-	Fri, 24 Nov 2023 00:53:26 -0800 (PST)
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 3AO8pJvQ53617164, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 3AO8pJvQ53617164
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Nov 2023 16:51:21 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Fri, 24 Nov 2023 16:51:20 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 24 Nov 2023 16:51:15 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::40c2:6c24:2df4:e6c7]) by
- RTEXMBS04.realtek.com.tw ([fe80::40c2:6c24:2df4:e6c7%5]) with mapi id
- 15.01.2375.007; Fri, 24 Nov 2023 16:51:15 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Su Hui <suhui@nfschina.com>,
-        "dan.carpenter@linaro.org"
-	<dan.carpenter@linaro.org>,
-        "kvalo@kernel.org" <kvalo@kernel.org>,
-        "nathan@kernel.org" <nathan@kernel.org>,
-        "ndesaulniers@google.com"
-	<ndesaulniers@google.com>,
-        "trix@redhat.com" <trix@redhat.com>
-CC: "lizetao1@huawei.com" <lizetao1@huawei.com>,
-        "linville@tuxdriver.com"
-	<linville@tuxdriver.com>,
-        "Larry.Finger@lwfinger.net"
-	<Larry.Finger@lwfinger.net>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>,
-        "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined bitwise shift behavior
-Thread-Topic: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined
- bitwise shift behavior
-Thread-Index: AQHaHnqh3ek0X9cmrkSIvDKQ0v3B9rCJKRKA
-Date: Fri, 24 Nov 2023 08:51:15 +0000
-Message-ID: <167fbc7a77db447d90f696666f6f0a9b@realtek.com>
-References: <20231124020352.1660621-1-suhui@nfschina.com>
- <20231124020352.1660621-2-suhui@nfschina.com>
-In-Reply-To: <20231124020352.1660621-2-suhui@nfschina.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXDAG01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 05156D73;
+	Fri, 24 Nov 2023 02:06:15 -0800 (PST)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 35883613FF940;
+	Fri, 24 Nov 2023 18:06:12 +0800 (CST)
+Message-ID: <cb551005-eff0-1391-92a0-d956b3d2b930@nfschina.com>
+Date: Fri, 24 Nov 2023 18:06:11 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined
+ bitwise shift behavior
+Content-Language: en-US
+To: Ping-Ke Shih <pkshih@realtek.com>,
+ "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+ "kvalo@kernel.org" <kvalo@kernel.org>, "nathan@kernel.org"
+ <nathan@kernel.org>, "ndesaulniers@google.com" <ndesaulniers@google.com>,
+ "trix@redhat.com" <trix@redhat.com>
+Cc: "lizetao1@huawei.com" <lizetao1@huawei.com>,
+ "linville@tuxdriver.com" <linville@tuxdriver.com>,
+ "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <167fbc7a77db447d90f696666f6f0a9b@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2023/11/24 16:51, Ping-Ke Shih wrote:
+> Subject: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined bitwise shift behavior
+>
+> [...]
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> index 6df270e29e66..52ab1b0761c0 100644
+>> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> @@ -31,7 +31,12 @@ static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitmask)
+>>   {
+>>          u32 i = ffs(bitmask);
+>>
+>> -       return i ? i - 1 : 32;
+>> +       if (!i) {
+>> +               WARN_ON_ONCE(1);
+>> +               return 0;
+>> +       }
+>> +
+>> +       return i - 1;
+>>   }
+> Personally, I prefer to use __ffs(), because in normal case no need additional '-1',
+> and abnormal cases should not happen.
 
+Hi,  Ping-Ke
 
-> -----Original Message-----
-> From: Su Hui <suhui@nfschina.com>
-> Sent: Friday, November 24, 2023 10:04 AM
-> To: dan.carpenter@linaro.org; Ping-Ke Shih <pkshih@realtek.com>; kvalo@ke=
-rnel.org; nathan@kernel.org;
-> ndesaulniers@google.com; trix@redhat.com
-> Cc: Su Hui <suhui@nfschina.com>; lizetao1@huawei.com; linville@tuxdriver.=
-com; Larry.Finger@lwfinger.net;
-> linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org; llvm@lists.=
-linux.dev;
-> kernel-janitors@vger.kernel.org
-> Subject: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined b=
-itwise shift behavior
->=20
+Replace _rtl8821ae_phy_calculate_bit_shift() by __ffs(bitmask) is better,
+but I'm not sure what callers should do when callers check bitmask is 0 before calling.
+Maybe this check is useless?
 
-[...]
+I can send a v3 patch if using  __ffs(bitmask) and no check for bitmask is fine.
+Or could you send this patch if you have a better idea?
+Thanks for your suggestion!
 
->=20
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> index 6df270e29e66..52ab1b0761c0 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
-> @@ -31,7 +31,12 @@ static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitm=
-ask)
->  {
->         u32 i =3D ffs(bitmask);
->=20
-> -       return i ? i - 1 : 32;
-> +       if (!i) {
-> +               WARN_ON_ONCE(1);
-> +               return 0;
-> +       }
-> +
-> +       return i - 1;
->  }
-
-Personally, I prefer to use __ffs(), because in normal case no need additio=
-nal '-1',
-and abnormal cases should not happen.=20
-
+Su Hui
 
