@@ -1,161 +1,152 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="k/taYEh+"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC5E9B
-	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 06:48:18 -0800 (PST)
-Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
-	by cmsmtp with ESMTPS
-	id 7Ao9ra1KJKOkL7GQkrHXOG; Sun, 26 Nov 2023 14:48:18 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 7GQirRzaqb8Qn7GQjrLVok; Sun, 26 Nov 2023 14:48:17 +0000
-X-Authority-Analysis: v=2.4 cv=IuQNzZzg c=1 sm=1 tr=0 ts=65635ab1
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=yGeM7+xMb5a5VK1DGQx1ew==:17
- a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
- a=IkcTkHD0fZMA:10 a=BNY50KLci1gA:10 a=wYkD_t78qR0A:10
- a=f0Whz4inhACu9W4x6ooA:9 a=QEXdDO2ut3YA:10
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Hr/7m9hoMvRnDst3lNW04H2ADFNUoGwpJyvyjtjjCiw=; b=k/taYEh+v8r6b8Ru5iAQrLIIaz
-	KR9OtTQ6TTh4jK0kiz24EHOKxXiWKkARx/ESXAF3ehFRh3egvucQn3MoNe3TGrzJgTsOCe8N9HLf+
-	PS9jtbyJMzlXtryibQbpPwZVbMD1pLbt1CZt/H6TFx3NB2hhxI7oUVq/WLenXT8tcPz/lhDA+6sKI
-	dX3S05+LaZ1ZI9qs4vELXGyoH7CiivCwLL2sCKrNwh3yFrybW80xz53X94HBCidiAQG8vkrZ+Qg8Q
-	1MA8pZNoEkncc7X2o5ePbIBGFckcsGaoe7McJ6MqseZMQrlBZisv0+MFS5Unqmxh0TPsBNDcfuK02
-	2Qy1d+Ng==;
-Received: from 187.184.157.122.cable.dyn.cableonline.com.mx ([187.184.157.122]:42256 helo=[192.168.0.9])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1r7GQi-002JlB-0q;
-	Sun, 26 Nov 2023 08:48:16 -0600
-Message-ID: <b62a458c-dd5e-4e8c-bb2f-f997ae329614@embeddedor.com>
-Date: Sun, 26 Nov 2023 08:48:14 -0600
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NxlB7LRX"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE9019B
+	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 06:49:45 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id 7GS6rtIcCmTW57GS7rbvab; Sun, 26 Nov 2023 15:49:43 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1701010183;
+	bh=iCucAYF477kNI1im5xQ/khbymwoZZ8iwxk7MzQbavyc=;
+	h=From:To:Cc:Subject:Date;
+	b=NxlB7LRXIS360L+bGzATYs/jW1KNTT9Ejfv1fOlGUtvMipDIyLZnHUiKaypxBGKjp
+	 ivYgt/TkCjScIRNrB0Y9ajojgTnXQl/Qd+cZOS2yfXU2qeiH7/+KRaVilbuFEab3Fh
+	 AY1tGJNy2fXokJw2ONntvG5YtnY2jinFx16/y9zYMF2wK6roTVf8H2Ex62muzMemIB
+	 +zQWetqIvqUJ7h7FEOdzJ3dugib0FmvNMxcB9uDgDs4X7o7tPyMXSSgytFQ2XThI/H
+	 6FFJYNk58uU2mZ7QmoYETKlKvinsKbPZVVog6vE0/Ke6BCrmDb7KSjbA7iwRp6Ln5f
+	 GIoAZm5TY767w==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 26 Nov 2023 15:49:43 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] kernfs:  reorder 'struct kernfs_node' to save some memory
+Date: Sun, 26 Nov 2023 15:49:37 +0100
+Message-Id: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mux: Turn 'mux' into a flexible array in 'struct
- mux_chip'
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Peter Rosin <peda@axentia.se>, Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <d17bd9b622dbe3f7cb2f18736ef3138a6927f86c.1700986053.git.christophe.jaillet@wanadoo.fr>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <d17bd9b622dbe3f7cb2f18736ef3138a6927f86c.1700986053.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.184.157.122
-X-Source-L: No
-X-Exim-ID: 1r7GQi-002JlB-0q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187.184.157.122.cable.dyn.cableonline.com.mx ([192.168.0.9]) [187.184.157.122]:42256
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCPXosXvBOvrhN9QSjkmjV19ssrF1LPh1uUNWu29lWdqzP4eudNM1GTKjoQZvys525XtaqHIYHgdYniDAK/nyIlce4DaHAjNz9iMYEAcQQuYMiqvUFtb
- oTXrdxNXlAabuKgIa+QsGcqf3FDyytZRTw3n6CkJW9KRaA+TpKrQVDSnbRPjAx7tlpsDyKGoakGxfky5UvojNLKX7ml8d1qOKVok6IKa5E3aUEvsOFRYshqW
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
 
+'struct kernfs_node' uses a dedicated cache, so shrinking its size is
+always a good idea.
 
+On my system, each entry is 128 bytes and their are 32 entries per pages.
+After the re-ordering, the struct is 120 bytes and 34 entries are stored
+in each page.
 
-On 11/26/23 02:08, Christophe JAILLET wrote:
-> The 'mux' array stored in 'struct mux_chip' can be changed into a flexible
-> array.
-> 
-> This saves:
->     - a pointer in the structure
->     - an indirection when accessing the array
->     - some pointer arithmetic when computing and storing the address in
->       'mux'
-> 
-> It is also now possible to use __counted_by() and struct_size() for
-> additional safety.
-> 
-> The address for the 'priv' memory is computed with mux_chip_priv(). It
-> should work as good with a flexible array.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The struct_size() goodies only work if sizeof_priv is 0. Adding an
-> additional size_add() would make it safe in all cases but would make code
-> less readable (IMHO).
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The numbers below are with a allmodconfig configuration. The delta is
+related to CONFIG_DEBUG_LOCK_ALLOC and struct lockdep_map	dep_map.
 
-Just save struct_size() in another variable, and use size_add() like this:
+When I checked on my system, it would have saved 372kb of RAM:
+  sudo less /proc/slabinfo | grep kernf
+  kernfs_node_cache  49397  49504    128   32    1 : tunables    0    0    0 : slabdata   1547   1547      0
 
-size_t size = struct_size(..);
+I have left flags close to the union, I *think* that they are related.
+I don't if having 'mode' here is logical or not.
 
-.. kzalloc(size_add(size, sizeof_priv), ...);
+Before:
+======
+struct kernfs_node {
+        atomic_t                   count;                /*     0     4 */
+        atomic_t                   active;               /*     4     4 */
+        struct lockdep_map         dep_map;              /*     8    48 */
+        struct kernfs_node *       parent;               /*    56     8 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        const char  *              name;                 /*    64     8 */
+        struct rb_node             rb __attribute__((__aligned__(8))); /*    72    24 */
+        const void  *              ns;                   /*    96     8 */
+        unsigned int               hash;                 /*   104     4 */
 
---
-Gustavo
+        /* XXX 4 bytes hole, try to pack */
 
-> ---
->   drivers/mux/core.c         | 4 +---
->   include/linux/mux/driver.h | 5 +++--
->   2 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-> index 775816112932..80b2607b083b 100644
-> --- a/drivers/mux/core.c
-> +++ b/drivers/mux/core.c
-> @@ -98,13 +98,11 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
->   	if (WARN_ON(!dev || !controllers))
->   		return ERR_PTR(-EINVAL);
->   
-> -	mux_chip = kzalloc(sizeof(*mux_chip) +
-> -			   controllers * sizeof(*mux_chip->mux) +
-> +	mux_chip = kzalloc(struct_size(mux_chip, mux, controllers) +
->   			   sizeof_priv, GFP_KERNEL);
->   	if (!mux_chip)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
->   	mux_chip->dev.class = &mux_class;
->   	mux_chip->dev.type = &mux_type;
->   	mux_chip->dev.parent = dev;
-> diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-> index 18824064f8c0..c29e9b7fb17b 100644
-> --- a/include/linux/mux/driver.h
-> +++ b/include/linux/mux/driver.h
-> @@ -56,18 +56,19 @@ struct mux_control {
->   /**
->    * struct mux_chip -	Represents a chip holding mux controllers.
->    * @controllers:	Number of mux controllers handled by the chip.
-> - * @mux:		Array of mux controllers that are handled.
->    * @dev:		Device structure.
->    * @id:			Used to identify the device internally.
->    * @ops:		Mux controller operations.
-> + * @mux:		Array of mux controllers that are handled.
->    */
->   struct mux_chip {
->   	unsigned int controllers;
-> -	struct mux_control *mux;
->   	struct device dev;
->   	int id;
->   
->   	const struct mux_control_ops *ops;
-> +
-> +	struct mux_control mux[] __counted_by(controllers);
->   };
->   
->   #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
+        union {
+                struct kernfs_elem_dir dir;              /*   112    32 */
+                struct kernfs_elem_symlink symlink;      /*   112     8 */
+                struct kernfs_elem_attr attr;            /*   112    32 */
+        };                                               /*   112    32 */
+        /* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
+        void *                     priv;                 /*   144     8 */
+        u64                        id;                   /*   152     8 */
+        short unsigned int         flags;                /*   160     2 */
+        umode_t                    mode;                 /*   162     2 */
+
+        /* XXX 4 bytes hole, try to pack */
+
+        struct kernfs_iattrs *     iattr;                /*   168     8 */
+
+        /* size: 176, cachelines: 3, members: 14 */
+        /* sum members: 168, holes: 2, sum holes: 8 */
+        /* forced alignments: 1 */
+        /* last cacheline: 48 bytes */
+} __attribute__((__aligned__(8)));
+
+After:
+=====
+struct kernfs_node {
+        atomic_t                   count;                /*     0     4 */
+        atomic_t                   active;               /*     4     4 */
+        struct lockdep_map         dep_map;              /*     8    48 */
+        struct kernfs_node *       parent;               /*    56     8 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        const char  *              name;                 /*    64     8 */
+        struct rb_node             rb __attribute__((__aligned__(8))); /*    72    24 */
+        const void  *              ns;                   /*    96     8 */
+        unsigned int               hash;                 /*   104     4 */
+        umode_t                    mode;                 /*   108     2 */
+        short unsigned int         flags;                /*   110     2 */
+        union {
+                struct kernfs_elem_dir dir;              /*   112    32 */
+                struct kernfs_elem_symlink symlink;      /*   112     8 */
+                struct kernfs_elem_attr attr;            /*   112    32 */
+        };                                               /*   112    32 */
+        /* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
+        void *                     priv;                 /*   144     8 */
+        u64                        id;                   /*   152     8 */
+        struct kernfs_iattrs *     iattr;                /*   160     8 */
+
+        /* size: 168, cachelines: 3, members: 14 */
+        /* forced alignments: 1 */
+        /* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+---
+ include/linux/kernfs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index 99aaa050ccb7..b7cd6e793286 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -206,6 +206,8 @@ struct kernfs_node {
+ 
+ 	const void		*ns;	/* namespace tag */
+ 	unsigned int		hash;	/* ns + name hash */
++	umode_t			mode;
++	unsigned short		flags;
+ 	union {
+ 		struct kernfs_elem_dir		dir;
+ 		struct kernfs_elem_symlink	symlink;
+@@ -220,8 +222,6 @@ struct kernfs_node {
+ 	 */
+ 	u64			id;
+ 
+-	unsigned short		flags;
+-	umode_t			mode;
+ 	struct kernfs_iattrs	*iattr;
+ };
+ 
+-- 
+2.34.1
+
