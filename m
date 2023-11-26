@@ -1,92 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4293FBF5;
-	Sat, 25 Nov 2023 17:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hh023ng2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37AFC433C7;
-	Sat, 25 Nov 2023 17:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700933025;
-	bh=gMkhf8RPl8pp028nV+oUvr++bgtB47tDt4Up7ve1fzQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hh023ng28djz1q4kDTHiPGNqU29wd1KvWNHRej6344yvso4XGCNTbbj3WxhlV2yZA
-	 aAknmdPsVKQHmQfjV3gGIiXVnE+yGzxEhINmn//SXR+Iy0Edgq9Nw93nYs1XEDiJq+
-	 HSGn3KMdZqaELxEvfBd+dnJX/Sk5VL0bM/mlXX2ST3My8fpXOaOIHuvb5W3kx7uzht
-	 NccDLmRJ0POfOmFbgPXkWjBo/erH7oL+yl94BSx6txwa3/4OLOIOYYpDEehZgwxCFw
-	 kp8GDQlRZn9mCZY6FNVJ9qVk1+hDkawhJCXh9YpNKZnpx/c4+o0KtO0Cxcx/90kNDV
-	 6yEpTtt3NLznw==
-Date: Sat, 25 Nov 2023 17:23:38 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Marius Cristea <marius.cristea@microchip.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: improve section MICROCHIP MCP3564 ADC
- DRIVER
-Message-ID: <20231125172338.132cee83@jic23-huawei>
-In-Reply-To: <20231122075629.21411-1-lukas.bulwahn@gmail.com>
-References: <20231122075629.21411-1-lukas.bulwahn@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gWZrLjS0"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF9FB5
+	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 00:08:27 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id 7ABkrYL9QVgeS7ABlr7RlM; Sun, 26 Nov 2023 09:08:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1700986105;
+	bh=ihzn0KPFS4a8rEWK4q4gtFzvzq2XmR8bZ6Yyi85TMNU=;
+	h=From:To:Cc:Subject:Date;
+	b=gWZrLjS0flKsH0QmD1f7N4njbnOgf7UccPGQLRy3f9e3zlocR/IjqLZbtz7/K0wl2
+	 hucwFmrV8bYzZDyRJMSVykswh7WBwyplVMjIW7dePApscUupy2JfElO1W44pWBsto+
+	 1UysEw8+ZcOuZlaTcFrNggcyWCx194nTLAnrBKD5rnKT0kAQDLOs2KUXhkS4wD5yuq
+	 Fc5WAgRwZvW9MRW+1D/SbdOm4WV43nWavlBWbDOo6fuYk+vWBwlcnupA+Y3YAJ3enm
+	 uoqQrDz8aJbNfREzIeB/Ad9YUwzAo8Pgpt9GejrE7r+XS2qAgCEAIQXczN4vGHb6IS
+	 mI0oSTRivjohw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 26 Nov 2023 09:08:25 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Peter Rosin <peda@axentia.se>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 1/2] mux: Turn 'mux' into a flexible array in 'struct mux_chip'
+Date: Sun, 26 Nov 2023 09:08:11 +0100
+Message-Id: <d17bd9b622dbe3f7cb2f18736ef3138a6927f86c.1700986053.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 Nov 2023 08:56:29 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+The 'mux' array stored in 'struct mux_chip' can be changed into a flexible
+array.
 
-> Commit 33ec3e5fc1ea ("iio: adc: adding support for MCP3564 ADC") adds a new
-> iio driver and corresponding MAINTAINERS section. It however uses spaces
-> instead of a single tab for all the entries in that MAINTAINERS section.
-> 
-> Although, the get_maintainer.pl script handles spaces instead of tabs
-> silently, the MAINTAINERS will quickly get into a messy state with
-> different indentations throughout the file. So, the checkpatch.pl script
-> complains when spaces instead of a single tab are used.
-> 
-> Fix this recently added section using tabs instead of spaces.
-> Further, add the driver's ABI documentation file to this section as well.
-> 
-> Fixes: 33ec3e5fc1ea ("iio: adc: adding support for MCP3564 ADC")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Good to cleanup, but I'm guessing no super rush to do so and this can wait for
-next merge window.
+This saves:
+   - a pointer in the structure
+   - an indirection when accessing the array
+   - some pointer arithmetic when computing and storing the address in
+     'mux'
 
-As such, applied to the togreg branch of iio.git and initially pushed out
-as testing for 0-day to ignore this one.
+It is also now possible to use __counted_by() and struct_size() for
+additional safety.
 
-Jonathan
+The address for the 'priv' memory is computed with mux_chip_priv(). It
+should work as good with a flexible array.
 
-> ---
->  MAINTAINERS | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 04c6fcbb21aa..c74ec0681aa1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14213,11 +14213,12 @@ F:	Documentation/devicetree/bindings/regulator/mcp16502-regulator.txt
->  F:	drivers/regulator/mcp16502.c
->  
->  MICROCHIP MCP3564 ADC DRIVER
-> -M:      Marius Cristea <marius.cristea@microchip.com>
-> -L:      linux-iio@vger.kernel.org
-> -S:      Supported
-> -F:      Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.yaml
-> -F:      drivers/iio/adc/mcp3564.c
-> +M:	Marius Cristea <marius.cristea@microchip.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/ABI/testing/sysfs-bus-iio-adc-mcp3564
-> +F:	Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.yaml
-> +F:	drivers/iio/adc/mcp3564.c
->  
->  MICROCHIP MCP3911 ADC DRIVER
->  M:	Marcus Folkesson <marcus.folkesson@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The struct_size() goodies only work if sizeof_priv is 0. Adding an
+additional size_add() would make it safe in all cases but would make code
+less readable (IMHO).
+---
+ drivers/mux/core.c         | 4 +---
+ include/linux/mux/driver.h | 5 +++--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+index 775816112932..80b2607b083b 100644
+--- a/drivers/mux/core.c
++++ b/drivers/mux/core.c
+@@ -98,13 +98,11 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
+ 	if (WARN_ON(!dev || !controllers))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	mux_chip = kzalloc(sizeof(*mux_chip) +
+-			   controllers * sizeof(*mux_chip->mux) +
++	mux_chip = kzalloc(struct_size(mux_chip, mux, controllers) +
+ 			   sizeof_priv, GFP_KERNEL);
+ 	if (!mux_chip)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
+ 	mux_chip->dev.class = &mux_class;
+ 	mux_chip->dev.type = &mux_type;
+ 	mux_chip->dev.parent = dev;
+diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
+index 18824064f8c0..c29e9b7fb17b 100644
+--- a/include/linux/mux/driver.h
++++ b/include/linux/mux/driver.h
+@@ -56,18 +56,19 @@ struct mux_control {
+ /**
+  * struct mux_chip -	Represents a chip holding mux controllers.
+  * @controllers:	Number of mux controllers handled by the chip.
+- * @mux:		Array of mux controllers that are handled.
+  * @dev:		Device structure.
+  * @id:			Used to identify the device internally.
+  * @ops:		Mux controller operations.
++ * @mux:		Array of mux controllers that are handled.
+  */
+ struct mux_chip {
+ 	unsigned int controllers;
+-	struct mux_control *mux;
+ 	struct device dev;
+ 	int id;
+ 
+ 	const struct mux_control_ops *ops;
++
++	struct mux_control mux[] __counted_by(controllers);
+ };
+ 
+ #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
+-- 
+2.34.1
 
