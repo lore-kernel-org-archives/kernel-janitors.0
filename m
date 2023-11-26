@@ -1,152 +1,63 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB9CCA43
+	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 15:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NxlB7LRX"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE9019B
-	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 06:49:45 -0800 (PST)
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id 7GS6rtIcCmTW57GS7rbvab; Sun, 26 Nov 2023 15:49:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1701010183;
-	bh=iCucAYF477kNI1im5xQ/khbymwoZZ8iwxk7MzQbavyc=;
-	h=From:To:Cc:Subject:Date;
-	b=NxlB7LRXIS360L+bGzATYs/jW1KNTT9Ejfv1fOlGUtvMipDIyLZnHUiKaypxBGKjp
-	 ivYgt/TkCjScIRNrB0Y9ajojgTnXQl/Qd+cZOS2yfXU2qeiH7/+KRaVilbuFEab3Fh
-	 AY1tGJNy2fXokJw2ONntvG5YtnY2jinFx16/y9zYMF2wK6roTVf8H2Ex62muzMemIB
-	 +zQWetqIvqUJ7h7FEOdzJ3dugib0FmvNMxcB9uDgDs4X7o7tPyMXSSgytFQ2XThI/H
-	 6FFJYNk58uU2mZ7QmoYETKlKvinsKbPZVVog6vE0/Ke6BCrmDb7KSjbA7iwRp6Ln5f
-	 GIoAZm5TY767w==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 Nov 2023 15:49:43 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] kernfs:  reorder 'struct kernfs_node' to save some memory
-Date: Sun, 26 Nov 2023 15:49:37 +0100
-Message-Id: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SMgQA+y+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE8D5C433C9;
+	Sun, 26 Nov 2023 15:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1701011838;
+	bh=mlKmjTq1YkDid0Jztqm64+Hd0IdQBCJuAG//PGNC4vI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SMgQA+y+63fGhGr3hSYLUWHuMxc44IydSrsbsu9Nkyz1PVjHPYYK/5XDlbMGEj8p7
+	 nwPAnZHDnzsOzTCeaDnVNv6XxqXTHEG3KeBjKqK+a/BTQ6ynlQVZ7Xwfj904hUB5B+
+	 ZeFaBXB91AzkmtMAGFujDIYHq7/4mIpCeSatTszw=
+Date: Sun, 26 Nov 2023 15:17:15 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kernfs:  reorder 'struct kernfs_node' to save some memory
+Message-ID: <2023112636-ouch-estrogen-1a5e@gregkh>
+References: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
 
-'struct kernfs_node' uses a dedicated cache, so shrinking its size is
-always a good idea.
+On Sun, Nov 26, 2023 at 03:49:37PM +0100, Christophe JAILLET wrote:
+> 'struct kernfs_node' uses a dedicated cache, so shrinking its size is
+> always a good idea.
+> 
+> On my system, each entry is 128 bytes and their are 32 entries per pages.
+> After the re-ordering, the struct is 120 bytes and 34 entries are stored
+> in each page.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> The numbers below are with a allmodconfig configuration. The delta is
+> related to CONFIG_DEBUG_LOCK_ALLOC and struct lockdep_map	dep_map.
+> 
+> When I checked on my system, it would have saved 372kb of RAM:
+>   sudo less /proc/slabinfo | grep kernf
+>   kernfs_node_cache  49397  49504    128   32    1 : tunables    0    0    0 : slabdata   1547   1547      0
+> 
+> I have left flags close to the union, I *think* that they are related.
+> I don't if having 'mode' here is logical or not.
 
-On my system, each entry is 128 bytes and their are 32 entries per pages.
-After the re-ordering, the struct is 120 bytes and 34 entries are stored
-in each page.
+I'm all for fixing up holes, but have you checked this before and after
+with lockdep disabled?  That's usually the biggest chunk, and can cause
+alignment issues, perhaps moving that to the end would make more sense?
+With that, I think everything can fit in 2 cachelines except for the
+lockdep structure?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The numbers below are with a allmodconfig configuration. The delta is
-related to CONFIG_DEBUG_LOCK_ALLOC and struct lockdep_map	dep_map.
+thanks,
 
-When I checked on my system, it would have saved 372kb of RAM:
-  sudo less /proc/slabinfo | grep kernf
-  kernfs_node_cache  49397  49504    128   32    1 : tunables    0    0    0 : slabdata   1547   1547      0
-
-I have left flags close to the union, I *think* that they are related.
-I don't if having 'mode' here is logical or not.
-
-Before:
-======
-struct kernfs_node {
-        atomic_t                   count;                /*     0     4 */
-        atomic_t                   active;               /*     4     4 */
-        struct lockdep_map         dep_map;              /*     8    48 */
-        struct kernfs_node *       parent;               /*    56     8 */
-        /* --- cacheline 1 boundary (64 bytes) --- */
-        const char  *              name;                 /*    64     8 */
-        struct rb_node             rb __attribute__((__aligned__(8))); /*    72    24 */
-        const void  *              ns;                   /*    96     8 */
-        unsigned int               hash;                 /*   104     4 */
-
-        /* XXX 4 bytes hole, try to pack */
-
-        union {
-                struct kernfs_elem_dir dir;              /*   112    32 */
-                struct kernfs_elem_symlink symlink;      /*   112     8 */
-                struct kernfs_elem_attr attr;            /*   112    32 */
-        };                                               /*   112    32 */
-        /* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
-        void *                     priv;                 /*   144     8 */
-        u64                        id;                   /*   152     8 */
-        short unsigned int         flags;                /*   160     2 */
-        umode_t                    mode;                 /*   162     2 */
-
-        /* XXX 4 bytes hole, try to pack */
-
-        struct kernfs_iattrs *     iattr;                /*   168     8 */
-
-        /* size: 176, cachelines: 3, members: 14 */
-        /* sum members: 168, holes: 2, sum holes: 8 */
-        /* forced alignments: 1 */
-        /* last cacheline: 48 bytes */
-} __attribute__((__aligned__(8)));
-
-After:
-=====
-struct kernfs_node {
-        atomic_t                   count;                /*     0     4 */
-        atomic_t                   active;               /*     4     4 */
-        struct lockdep_map         dep_map;              /*     8    48 */
-        struct kernfs_node *       parent;               /*    56     8 */
-        /* --- cacheline 1 boundary (64 bytes) --- */
-        const char  *              name;                 /*    64     8 */
-        struct rb_node             rb __attribute__((__aligned__(8))); /*    72    24 */
-        const void  *              ns;                   /*    96     8 */
-        unsigned int               hash;                 /*   104     4 */
-        umode_t                    mode;                 /*   108     2 */
-        short unsigned int         flags;                /*   110     2 */
-        union {
-                struct kernfs_elem_dir dir;              /*   112    32 */
-                struct kernfs_elem_symlink symlink;      /*   112     8 */
-                struct kernfs_elem_attr attr;            /*   112    32 */
-        };                                               /*   112    32 */
-        /* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
-        void *                     priv;                 /*   144     8 */
-        u64                        id;                   /*   152     8 */
-        struct kernfs_iattrs *     iattr;                /*   160     8 */
-
-        /* size: 168, cachelines: 3, members: 14 */
-        /* forced alignments: 1 */
-        /* last cacheline: 40 bytes */
-} __attribute__((__aligned__(8)));
----
- include/linux/kernfs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 99aaa050ccb7..b7cd6e793286 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -206,6 +206,8 @@ struct kernfs_node {
- 
- 	const void		*ns;	/* namespace tag */
- 	unsigned int		hash;	/* ns + name hash */
-+	umode_t			mode;
-+	unsigned short		flags;
- 	union {
- 		struct kernfs_elem_dir		dir;
- 		struct kernfs_elem_symlink	symlink;
-@@ -220,8 +222,6 @@ struct kernfs_node {
- 	 */
- 	u64			id;
- 
--	unsigned short		flags;
--	umode_t			mode;
- 	struct kernfs_iattrs	*iattr;
- };
- 
--- 
-2.34.1
-
+greg k-h
