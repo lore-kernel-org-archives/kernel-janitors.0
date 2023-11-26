@@ -1,63 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB9CCA43
-	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 15:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A375DDA7;
+	Sun, 26 Nov 2023 17:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SMgQA+y+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE8D5C433C9;
-	Sun, 26 Nov 2023 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1701011838;
-	bh=mlKmjTq1YkDid0Jztqm64+Hd0IdQBCJuAG//PGNC4vI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SMgQA+y+63fGhGr3hSYLUWHuMxc44IydSrsbsu9Nkyz1PVjHPYYK/5XDlbMGEj8p7
-	 nwPAnZHDnzsOzTCeaDnVNv6XxqXTHEG3KeBjKqK+a/BTQ6ynlQVZ7Xwfj904hUB5B+
-	 ZeFaBXB91AzkmtMAGFujDIYHq7/4mIpCeSatTszw=
-Date: Sun, 26 Nov 2023 15:17:15 +0000
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] kernfs:  reorder 'struct kernfs_node' to save some memory
-Message-ID: <2023112636-ouch-estrogen-1a5e@gregkh>
-References: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRTmJQ3x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A08C433C7;
+	Sun, 26 Nov 2023 17:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701018428;
+	bh=XUM7qw4H5Ny7dZR+MIodYJqjaaevZ0Fq9kn1EHutWXc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LRTmJQ3xoY1hLDtcHRx+zh0vqin88ikJAaqkKXbeQBPgdpdMb7EN9II+FYQWLCxKN
+	 x1fY/MjjzXIbFiFikjMXSjppbLfeEzTWcyLudo4O+CnVfWRx5I6KvFArjkT7qSmMpD
+	 CyapR6bScFuplZRJOSSwOFqsxWTwW11PWMlNtPZllln7CSZMpa8vk7ghopfSLZSvdY
+	 8Xp2M7TjfAI8sPpupBhPDJpOZyaSqg8v+tDmbtDRQZCkUIKAHS0Zdedjslwb7/17u0
+	 9gD++jL+iZtGHHwF6z+8xvzJsZPdcmS6EA0AHIFwxOA3LMZQrizz1hnWdOlESxu74E
+	 ma4FxdS0A3xjA==
+Date: Sun, 26 Nov 2023 17:07:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: lars@metafoo.de, jean-baptiste.maneyrol@tdk.com, chenhuiz@axis.com,
+ andy.shevchenko@gmail.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_mpu6050: return callee's error code
+ rather than -EINVAL
+Message-ID: <20231126170700.550d20e7@jic23-huawei>
+In-Reply-To: <20231030020752.67630-1-suhui@nfschina.com>
+References: <20231030020752.67630-1-suhui@nfschina.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <465890c56c6f5ad702a091a1ecd3c70bd4a3a74c.1701010150.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 26, 2023 at 03:49:37PM +0100, Christophe JAILLET wrote:
-> 'struct kernfs_node' uses a dedicated cache, so shrinking its size is
-> always a good idea.
+On Mon, 30 Oct 2023 10:07:53 +0800
+Su Hui <suhui@nfschina.com> wrote:
+
+> regmap_bulk_write()/regmap_bulk_read() return zero or negative error
+> code, return the callee's error code is better than '-EINVAL'.
+Thanks and fully agree - though one small tweak I made whilst applying is mentioned
+below.
+
+Applied to the togreg branch of iio.git and pushed out as testing for 0-day
+to see if we missed anything.
+
 > 
-> On my system, each entry is 128 bytes and their are 32 entries per pages.
-> After the re-ordering, the struct is 120 bytes and 34 entries are stored
-> in each page.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
-> The numbers below are with a allmodconfig configuration. The delta is
-> related to CONFIG_DEBUG_LOCK_ALLOC and struct lockdep_map	dep_map.
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> When I checked on my system, it would have saved 372kb of RAM:
->   sudo less /proc/slabinfo | grep kernf
->   kernfs_node_cache  49397  49504    128   32    1 : tunables    0    0    0 : slabdata   1547   1547      0
-> 
-> I have left flags close to the union, I *think* that they are related.
-> I don't if having 'mode' here is logical or not.
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> index a9a5fb266ef1..5ded0781797c 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> @@ -572,7 +572,7 @@ static int inv_mpu6050_sensor_set(struct inv_mpu6050_state  *st, int reg,
+>  	ind = (axis - IIO_MOD_X) * 2;
+>  	result = regmap_bulk_write(st->map, reg + ind, &d, sizeof(d));
+>  	if (result)
+> -		return -EINVAL;
+> +		return result;
+>  
+>  	return 0;
+I tweaked this to go further
 
-I'm all for fixing up holes, but have you checked this before and after
-with lockdep disabled?  That's usually the biggest chunk, and can cause
-alignment issues, perhaps moving that to the end would make more sense?
-With that, I think everything can fit in 2 cachelines except for the
-lockdep structure?
+	return regmap_bulk_write();
 
-thanks,
+>  }
+> @@ -586,7 +586,7 @@ static int inv_mpu6050_sensor_show(struct inv_mpu6050_state  *st, int reg,
+>  	ind = (axis - IIO_MOD_X) * 2;
+>  	result = regmap_bulk_read(st->map, reg + ind, &d, sizeof(d));
+>  	if (result)
+> -		return -EINVAL;
+> +		return result;
+>  	*val = (short)be16_to_cpup(&d);
+>  
+>  	return IIO_VAL_INT;
 
-greg k-h
