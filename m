@@ -1,36 +1,38 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pXlPEQDb"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D9C119
-	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 00:08:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YWKlXNtl"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2D6B8
+	for <kernel-janitors@vger.kernel.org>; Sun, 26 Nov 2023 00:56:37 -0800 (PST)
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id 7ABkrYL9QVgeS7ABtr7Ror; Sun, 26 Nov 2023 09:08:39 +0100
+	id 7AwKrvcZTaCTP7AwKrtQT5; Sun, 26 Nov 2023 09:56:35 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1700986119;
-	bh=lh71l96E6zVf9+1IM040Rgb2giV9A1CJHlxg8pa/sT4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pXlPEQDb8VmLZKUDWPEkg5SPAXTKe8Pw0JQXpfdEqlBz1yixrApVXYGyRNe8ZnpDF
-	 UoZuNFKpft6AVYekTzvYwyPX39x7c1y61/y+ep6xQ5LbArwjVD5iz2DWZwAJjoMch5
-	 onCEt6jb+Y0+r1KtbnWYe3My637GRNU2tyrsctscZ+bZamd2Z38JEPEIkrITexykV/
-	 6cJVhdLRh4sGpMhIfAYu53utWZ7lCChICy7ceGXGdovEDugAzgAyiNzBvDH4mpOJ3Y
-	 H6AeOYumd5NIVpddrxPODXrTPtxJSnV2f+sSMOWruquMRuvaemiEW9Qj5tUhj00Dux
-	 3Dz/L1NriyoEg==
+	s=t20230301; t=1700988995;
+	bh=0Cu5CM2BqsYcvxp2RNXUeHx0kxVf5ZmlAz2vtUx9sAM=;
+	h=From:To:Cc:Subject:Date;
+	b=YWKlXNtlHLDvJcpcip/NPVrjv6yMoQdPtBjv9svhVtaaxcf4EJ2iHpLGQUp7rFbMy
+	 ijC1S+NPPJOQ3k3Q1ljtO59wcaFaTS/CmUgHLsNqIiUU4s1Nvji0hDU2F6J5PFkBsb
+	 Sa7e3hef9h2+cADOdb7jXErYX/TLCTwGs/RJWeN1wB2l5e9DuOag5Gp7Cc5U6YmEsH
+	 p4nN5DJkr7L/s5MpjLQbcNK8pB3zqfi5jtdReQ0z0vggZBu23624RyIyWuP1HTHoon
+	 qWOEszMqlraEEixfBTIB1LUfOnvBxjy4hS4N22DAPJ4+BP0J3/BFK87YEcrxXEx/iS
+	 4QIEkvqqrcGbg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 Nov 2023 09:08:39 +0100
+X-ME-Date: Sun, 26 Nov 2023 09:56:35 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Peter Rosin <peda@axentia.se>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	longman@redhat.com,
+	boqun.feng@gmail.com
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] mux: Slightly reorder 'struct mux_chip'
-Date: Sun, 26 Nov 2023 09:08:12 +0100
-Message-Id: <90be77e27b96d47acc9f20416d8fdc01f9cb601b.1700986053.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] lockdep: slightly reorder 'struct lock_class' to save some memory
+Date: Sun, 26 Nov 2023 09:56:29 +0100
+Message-Id: <801258371fc4101f96495a5aaecef638d6cbd8d3.1700988869.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <d17bd9b622dbe3f7cb2f18736ef3138a6927f86c.1700986053.git.christophe.jaillet@wanadoo.fr>
-References: <d17bd9b622dbe3f7cb2f18736ef3138a6927f86c.1700986053.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -39,36 +41,76 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Based on pahole, 2 holes can be combined in the 'struct mux_chip'. This
+Based on pahole, 2 holes can be combined in the 'struct lock_class'. This
 saves 8 bytes in the structure on my x86_64.
+
+On a x86_64 configured with allmodconfig, this saves 64kb of memory in
+'kernel/locking/lockdep.o', certainly because of:
+  struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 102501	1912490	11531636	13546627	 ceb483	kernel/locking/lockdep.o
+
+After:
+ 102181	1912490	11466100	13480771	 cdb343	kernel/locking/lockdep.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/linux/mux/driver.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After the reorder, pahole gives:
 
-diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-index c29e9b7fb17b..09d519af521b 100644
---- a/include/linux/mux/driver.h
-+++ b/include/linux/mux/driver.h
-@@ -56,15 +56,15 @@ struct mux_control {
- /**
-  * struct mux_chip -	Represents a chip holding mux controllers.
-  * @controllers:	Number of mux controllers handled by the chip.
-- * @dev:		Device structure.
-  * @id:			Used to identify the device internally.
-+ * @dev:		Device structure.
-  * @ops:		Mux controller operations.
-  * @mux:		Array of mux controllers that are handled.
-  */
- struct mux_chip {
- 	unsigned int controllers;
--	struct device dev;
- 	int id;
-+	struct device dev;
+struct lock_class {
+        struct hlist_node          hash_entry;           /*     0    16 */
+        struct list_head           lock_entry;           /*    16    16 */
+        struct list_head           locks_after;          /*    32    16 */
+        struct list_head           locks_before;         /*    48    16 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        const struct lockdep_subclass_key  * key;        /*    64     8 */
+        lock_cmp_fn                cmp_fn;               /*    72     8 */
+        lock_print_fn              print_fn;             /*    80     8 */
+        unsigned int               subclass;             /*    88     4 */
+        unsigned int               dep_gen_id;           /*    92     4 */
+        long unsigned int          usage_mask;           /*    96     8 */
+        const struct lock_trace  * usage_traces[10];     /*   104    80 */
+        /* --- cacheline 2 boundary (128 bytes) was 56 bytes ago --- */
+        const char  *              name;                 /*   184     8 */
+        /* --- cacheline 3 boundary (192 bytes) --- */
+        int                        name_version;         /*   192     4 */
+        u8                         wait_type_inner;      /*   196     1 */
+        u8                         wait_type_outer;      /*   197     1 */
+        u8                         lock_type;            /*   198     1 */
+
+        /* XXX 1 byte hole, try to pack */
+
+        long unsigned int          contention_point[4];  /*   200    32 */
+        long unsigned int          contending_point[4];  /*   232    32 */
+
+        /* size: 264, cachelines: 5, members: 18 */
+        /* sum members: 263, holes: 1, sum holes: 1 */
+        /* last cacheline: 8 bytes */
+};
+---
+ include/linux/lockdep_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/lockdep_types.h b/include/linux/lockdep_types.h
+index 2ebc323d345a..857d785e89e6 100644
+--- a/include/linux/lockdep_types.h
++++ b/include/linux/lockdep_types.h
+@@ -127,12 +127,12 @@ struct lock_class {
+ 	unsigned long			usage_mask;
+ 	const struct lock_trace		*usage_traces[LOCK_TRACE_STATES];
  
- 	const struct mux_control_ops *ops;
++	const char			*name;
+ 	/*
+ 	 * Generation counter, when doing certain classes of graph walking,
+ 	 * to ensure that we check one node only once:
+ 	 */
+ 	int				name_version;
+-	const char			*name;
  
+ 	u8				wait_type_inner;
+ 	u8				wait_type_outer;
 -- 
 2.34.1
 
