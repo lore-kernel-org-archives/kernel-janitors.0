@@ -1,126 +1,94 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="woQXbLiY"
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980BA111
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 05:46:18 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3316d3d11e1so2384585f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 05:46:18 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nxQc9QJD"
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8A0D6
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 07:25:38 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-54b545ec229so1731460a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 07:25:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701092777; x=1701697577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YundCbgOqgxog8krRgkHDMLd3spWK5TLMe9KGeiCx18=;
-        b=woQXbLiYHFtdrljCFAFUnWZXAYojcNIYGD8GOkeqJaRniKgMT5TZPQM33mtE9vznTt
-         i0ybW8lbtZKlIg5+6YoTqAD1K9mpBFKDyO740fbbvs8cl7X45oDOS7yTd6rQ5cZQALD5
-         KZN/orQQS08ZU0hmWkUvmAyKSWPVDBbhQNs5XzZHTfgoAKqUbMFIQn+NJxuVMskbS9JS
-         7vy+YVf8OUKvLMzaf2ym1M7yW3k2hPshgnJlROBQqWRclh6VMTYAlm/npuNwEpxjxWLy
-         F90IhX+U8URawQOn7oA8i2yGotttwr+5Fld1BYyrIS316IvdEJEtX+yumNEXJ083PPBr
-         b4Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701092777; x=1701697577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1701098736; x=1701703536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YundCbgOqgxog8krRgkHDMLd3spWK5TLMe9KGeiCx18=;
-        b=qXT/qcFcJqJkqv8jQrEj4kmHVz3AJ7HSZtzzuI4ewktrvMTQYbBcCyGVLvaHUpo5Mr
-         QVar0wSqzKfsquF76ZUE3/OG25rll0q0h+TGsoGvaz78w0/z5ovd5bL/jQYwYDefnaW2
-         o1jlWvQjmarcj7CbufOlXPcgLFEvIP7+yj7VoMihi/XYFtKObOS4zn3iw2wKfL+3Z0Pb
-         lKeQW2YbNZkxbBxjshisjFWM7IflM4Msi2rErfM/vvRKHgUBkG/6kpKyCUUKa6U50atW
-         xyGYdmfQ+H8OnCrLFOJsQF7njBynl1JI8JC57Bn9vJsWVjx9MmpXpH29skCwH29IaDpD
-         Wtng==
-X-Gm-Message-State: AOJu0YyOSuZY2nXZ0cv2VYE4SHV6vJxEHiweU7ANKiHhk4hHcTDhoXhb
-	w5nf/Iu1kqB0yZ+3w8ykgwxRPQ==
-X-Google-Smtp-Source: AGHT+IHvZXohMRpWp9ljekBnVunFfdsN+Aw6FeyybD7055qlsh79kgqr97OPSx0yef3zaO71BUfszw==
-X-Received: by 2002:a5d:64e3:0:b0:333:47e:4cf4 with SMTP id g3-20020a5d64e3000000b00333047e4cf4mr1874886wri.15.1701092776947;
-        Mon, 27 Nov 2023 05:46:16 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v5-20020a5d6105000000b0032f7fab0712sm12018505wrt.52.2023.11.27.05.46.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 05:46:16 -0800 (PST)
-Date: Mon, 27 Nov 2023 16:46:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Julien Grall <jgrall@amazon.com>, Rahul Singh <rahul.singh@arm.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	David Vrabel <david.vrabel@citrix.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xen/events: fix error codes in xen_bind_pirq_msi_to_irq()
-Message-ID: <4e85c67c-7e3a-47e1-a493-4906cd79306b@suswa.mountain>
-References: <60028de8-a137-423d-91d8-00b2942bd73d@moroto.mountain>
- <6f9c8b08-3865-479f-8f32-686f778203f6@suse.com>
+        bh=GFaRky8SH2nzDL09jU7hfFgInTA8lMAJYDsp98sTKqc=;
+        b=nxQc9QJDNPT1ncUZNV/OPQmXCbjxi4E86Kf4QN8plo9rKoz9NUEZW3gAMOxv4lmST0
+         szq9i9y1BrXLaDJHTSHE7xwQ+sd2C87snINveLPgOCddACHH0XuWH+OQB6wVDK0K+hEG
+         522uUgmmlJVvCNC1NOVqP6eH7oL6j/4EUuy+Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701098736; x=1701703536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GFaRky8SH2nzDL09jU7hfFgInTA8lMAJYDsp98sTKqc=;
+        b=JKqoZ+kyVuXDaynfEnHpVJEOCnj22/EgHuCpbphwQHTCkLKbrABYtBEwK0p5OHh6b6
+         ZoDuWWCGmU98aXRKrFCCDQhw2qye+3xs14B1K7ZrbhiAQMLI88AUaKRPGUtlHt1WZ8l0
+         Ry2qPJvM7jxcNJjvdHVrSn3U3LxH26h3vEIINlDZKVvjLZL/EP9Sh0X0FgKPlS+eifL4
+         57uAzu89s6IasQ3qhHYUB9ZE2TuajAm+VMIPBBJZj6m6T0Ios9/2HBRceeFv7s2DnNAN
+         7QcryAEQSTW2n0zMn0+wwHjWWExHxIm6z92wCUO6fUUHIpJ4HcjUxMrD4PfOdsWT1KmM
+         kJ9w==
+X-Gm-Message-State: AOJu0YwP3idM8YlgD3UpsFKhdGBcHsP/Ty5VslJgqXg8hEQLkTgOCX40
+	ACdQh/nHXkXq7UUlwvhz4gGv8Q1MkaQGlQUB9C8ndw==
+X-Google-Smtp-Source: AGHT+IHDB1MI44LNfNrYRpvhJiIDsGFIZyp1wWpc3H8ZpWm0elkBAd2FZVhh5xW51MsF5Ey20sVxcw==
+X-Received: by 2002:a50:cdd6:0:b0:531:1241:3e98 with SMTP id h22-20020a50cdd6000000b0053112413e98mr8498553edj.9.1701098736473;
+        Mon, 27 Nov 2023 07:25:36 -0800 (PST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id ec1-20020a0564020d4100b0054b9721ccf4sm121373edb.70.2023.11.27.07.25.35
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Nov 2023 07:25:35 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40b422a274dso75505e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 07:25:35 -0800 (PST)
+X-Received: by 2002:a05:600c:3c83:b0:3f4:fb7:48d4 with SMTP id
+ bg3-20020a05600c3c8300b003f40fb748d4mr587134wmb.3.1701098735390; Mon, 27 Nov
+ 2023 07:25:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f9c8b08-3865-479f-8f32-686f778203f6@suse.com>
+References: <dfb1a9a26d7f974371ff1d3e29eba80ef075d465.1700913863.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <dfb1a9a26d7f974371ff1d3e29eba80ef075d465.1700913863.git.christophe.jaillet@wanadoo.fr>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 27 Nov 2023 07:25:17 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Ui9bpzkn1EP9VCWGkk5+Q2E9D7QHxPy=2x9avMuNqARg@mail.gmail.com>
+Message-ID: <CAD=FV=Ui9bpzkn1EP9VCWGkk5+Q2E9D7QHxPy=2x9avMuNqARg@mail.gmail.com>
+Subject: Re: [PATCH v2] kdb: Fix a potential buffer overflow in kdb_local()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jason Wessel <jason.wessel@windriver.com>, 
+	Daniel Thompson <daniel.thompson@linaro.org>, Martin Hicks <mort@sgi.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 27, 2023 at 02:17:05PM +0100, Juergen Gross wrote:
-> On 27.11.23 13:57, Dan Carpenter wrote:
-> > The error code needs to be set on these error paths.
-> > 
-> > Fixes: 5dd9ad32d775 ("xen/events: drop xen_allocate_irqs_dynamic()")
-> > Fixes: d2ba3166f23b ("xen/events: move drivers/xen/events.c into drivers/xen/events/")
-> 
-> Please drop the last Fixes: tag. Said patch didn't introduce any new problem.
+Hi,
 
-Yup.
+On Sat, Nov 25, 2023 at 4:05=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> When appending "[defcmd]" to 'kdb_prompt_str', the size of the string
+> already in the buffer should be taken into account.
+>
+> An option could be to switch from strncat() to strlcat() which does the
+> correct test to avoid such an overflow.
+>
+> However, this actually looks as dead code, because 'defcmd_in_progress'
+> can't be true here.
+> See a more detailed explanation at [1].
+>
+> [1]: https://lore.kernel.org/all/CAD=3DFV=3DWSh7wKN7Yp-3wWiDgX4E3isQ8uh0L=
+CzTmd1v9Cg9j+nQ@mail.gmail.com/
+>
+> Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Changes in v2:
+>    - Delete the strncat() call   [Doug Anderson]
+>
+> v1: https://lore.kernel.org/all/0b1790ca91b71e3362a6a4c2863bc5787b4d60c9.=
+1698501284.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  kernel/debug/kdb/kdb_main.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-> 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Are we going to backport these to stable?  Should I split this into two
-> > patches?
-> > 
-> >   drivers/xen/events/events_base.c | 8 ++++++--
-> >   1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-> > index f5edb9e27e3c..aae62603b461 100644
-> > --- a/drivers/xen/events/events_base.c
-> > +++ b/drivers/xen/events/events_base.c
-> > @@ -1105,13 +1105,17 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
-> >   	mutex_lock(&irq_mapping_update_lock);
-> >   	irq = irq_alloc_descs(-1, 0, nvec, -1);
-> > -	if (irq < 0)
-> > +	if (irq < 0) {
-> > +		ret = irq;
-> >   		goto out;
-> > +	}
-> 
-> Why? The return value for the out: label is in irq.
-> 
-
-This patch is full of embarrassment.  I misread this code.  I thought
-the out label was in the error handling block.
-
-> >   	for (i = 0; i < nvec; i++) {
-> >   		info = xen_irq_init(irq + i);
-> > -		if (!info)
-> > +		if (!info) {
-> > +			ret = -ENOMEM;
-> >   			goto error_irq;
-> > +		}
-> 
-> It would be easier to just preset ret with -ENOMEM when defining it.
-> 
-
-That only works if it fails on the first iteration.
-
-I'll fix this up and resend.
-
-regards,
-dan carpenter
-
-
-
-
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
