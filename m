@@ -1,55 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LpMOW/YG"
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE3C5D56
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:59:22 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40b27726369so29226425e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:59:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOWM5Y87"
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02859B
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 05:00:58 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40b34563987so23550175e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 05:00:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701089961; x=1701694761; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701090057; x=1701694857; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DRj3ngvYtPvtc5FEEk7h4ztZGX7+EQPAdDUCG9vRzv4=;
-        b=LpMOW/YG2v0DljirQFL9XPD8hAAkDfl4swmY11JCDro4b+EESzXcQLEjHbdLIVQWUW
-         YYmrLWmw5B31zLAPT8SeBf7t0qpKdfBarSoJkCjiL/cDR5GDt/wNuQeSE+02TQmv87MT
-         cT07S2LGBTxcANBewq9T15oGbkKHvNDtdBkyJCytHcHAAHHTa3yJgs53xPdzXo6SbbEb
-         0EB049zBZbfF3/cfTwC1V5e9qdhCzOycRK/ar8ooCIdnBmSf2rIDasYtPlGdKAYx+MeY
-         VbDAW2GzYzyuq2cChuLKaKfAVzxwvH+XrRvAoDP1lLH+sdZvBvhN7nJEBqh8h7lxB+5H
-         /n7A==
+        bh=WgASahz0x5Po2Cv0bwXpcZwkazchSSzp18r4ApB/m2A=;
+        b=GOWM5Y87CdZ2/2yc3aU5yHYvHpykL1gtu1iHfceER6GCjZz3+MSe8VMQnmw7gm2if5
+         q8pSxvX/bohku0KaCTPMI6/ieojS090FOh/VnwA/VswX0VbwC3hgARtN9j4xnoQIhlUw
+         rJkMhh9vgcAolH/xg3jKBBxChJ5oaP8tPeOm0NMwOVK/0Yv/0tQxcb6L4lTb1dlhfRtK
+         zl7tPey9Q9Oi16zwUHtWb+NsFGf3JZ/roW5RYqtHNzsDEre9nKRK9A8AGSzpgZ1TqE5R
+         aox3ERPMlAOkpAHL9eaLgYADI4JOqSLHwJFrUlTJ6eL2I0KXuXZYAEFqORKnO6Z6jbbT
+         bQTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701089961; x=1701694761;
+        d=1e100.net; s=20230601; t=1701090057; x=1701694857;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DRj3ngvYtPvtc5FEEk7h4ztZGX7+EQPAdDUCG9vRzv4=;
-        b=BfWQgke6mzqDveIj8oSNY7iNt16mTO5V4iX5TUo2wcsBORfGpOfR46LXmTBuVC+v7c
-         JuAuFKblGZYmCM8+rdG6MgeXugmkvIouAl2PwSkT5F9AycC0y6Wf+6lotCx/JERqpMZl
-         EE7GyEpYZcvXBYgBN2rdgm+ubgsz0Nntg20YD4P3IUov7wztwUmvwxaiNSBrqSqBltDg
-         iEhNCEqfljEqF04t+L7+1WMUJ8xNxpJGwH9gNfQhSbb2SokAMnjnEdy8baYr0zl/b3A7
-         J1kxGAspk0srjsqQwGTHEjiAkWfuT8nJ28Tzk9a3iBoeDpkCIjkli5I9h5U5PaTyGP7l
-         tZog==
-X-Gm-Message-State: AOJu0Yz5ZQsJmjpOE8FRmuQT9iupZIT3gLLAfF0KJOk8kOIjkL/zsnQ/
-	HTwpoovAMxffmeN14zI1B7kP9Q==
-X-Google-Smtp-Source: AGHT+IHJtodRZ08aYWurZAtbiXoTBbYnCPB2mvDlNqTf9TMmij8nAPXOfQYZ2vPvAtAt7uU8pnTz1Q==
-X-Received: by 2002:a5d:5234:0:b0:332:f61a:631c with SMTP id i20-20020a5d5234000000b00332f61a631cmr3952666wra.24.1701089961198;
-        Mon, 27 Nov 2023 04:59:21 -0800 (PST)
+        bh=WgASahz0x5Po2Cv0bwXpcZwkazchSSzp18r4ApB/m2A=;
+        b=xR1EpO5yOML161ecQ4fbzVdW6zTr4cW7MMXV/EuR1l47Lx3Z6JOnJTQg3KM7dPlJI0
+         gKLNKVt7Q0/fyPcT04encJ+/QiizzfxfJ0Vvqia1uMViOJKfE+TalUrY4GFY/KvpuduJ
+         fITNFE//rr1EW03riYc76scKS3dWtutaYNRU+iN6cq81j9/JpLSVTW+XHXmO9BMBWKxR
+         o9fJUnDeeXp2/ZcrORxTTVylOfNIMs+5YCEFpyDhA7VILqTfbpYdJROfuG85XEnSgWNo
+         udoMZfOvL1i2v6zVwLsi5LYi+iTOFPzOT1xPgliafjX3AamFP1ufD7KsXuq75H5eecgI
+         M9ew==
+X-Gm-Message-State: AOJu0Yx7+x+BM3wfGl3FLPMX6qLEVozUc4q/x0+ee+aPmQyFcTFgmUiR
+	ugr3BMH2Dg6+q3MlYYcuHaoKnA==
+X-Google-Smtp-Source: AGHT+IFhyPwnwrRCuQw2LDntEhS+wmv0YqUCtrD6IQ+NLOxpkYcGUcE3+zqQkK18Pal9cVoEZM9XQg==
+X-Received: by 2002:a05:600c:138d:b0:40b:2afd:1a9 with SMTP id u13-20020a05600c138d00b0040b2afd01a9mr12835439wmf.15.1701090057225;
+        Mon, 27 Nov 2023 05:00:57 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w3-20020a5d5443000000b003140f47224csm11960469wrv.15.2023.11.27.04.59.20
+        by smtp.gmail.com with ESMTPSA id je4-20020a05600c1f8400b00407460234f9sm13905925wmb.21.2023.11.27.05.00.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 04:59:20 -0800 (PST)
-Date: Mon, 27 Nov 2023 15:59:17 +0300
+        Mon, 27 Nov 2023 05:00:56 -0800 (PST)
+Date: Mon, 27 Nov 2023 16:00:53 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
+To: Rahul Rameshbabu <rrameshbabu@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Piotr Raczynski <piotr.raczynski@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] ice: fix error code in ice_eswitch_attach()
-Message-ID: <e0349ee5-76e6-4ff4-812f-4aa0d3f76ae7@moroto.mountain>
+	Dragos Tatulea <dtatulea@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net/mlx5e: Fix snprintf return check
+Message-ID: <d17868ea-cef9-4f8c-a318-9f98b8341f5b@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -60,30 +57,46 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Set the "err" variable on this error path.
+This code prints a string and then if there wasn't enough space for the
+whole string, then it prints a slightly shorter string.  However, the
+test for overflow should have been >= instead of == because snprintf()
+returns the number of bytes which *would* have been printed if there
+were enough space.
 
-Fixes: fff292b47ac1 ("ice: add VF representors one by one")
+Fixes: 41e63c2baa11 ("net/mlx5e: Check return value of snprintf writing to fw_version buffer")
+Fixes: 1b2bd0c0264f ("net/mlx5e: Check return value of snprintf writing to fw_version buffer for representors")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/intel/ice/ice_eswitch.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_eswitch.c b/drivers/net/ethernet/intel/ice/ice_eswitch.c
-index 3f80e2081e5d..ca118bc37e44 100644
---- a/drivers/net/ethernet/intel/ice/ice_eswitch.c
-+++ b/drivers/net/ethernet/intel/ice/ice_eswitch.c
-@@ -669,8 +669,10 @@ ice_eswitch_attach(struct ice_pf *pf, struct ice_vf *vf)
- 	ice_eswitch_stop_reprs(pf);
- 
- 	repr = ice_repr_add_vf(vf);
--	if (IS_ERR(repr))
-+	if (IS_ERR(repr)) {
-+		err = PTR_ERR(repr);
- 		goto err_create_repr;
-+	}
- 
- 	err = ice_eswitch_setup_repr(pf, repr);
- 	if (err)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index 792a0ea544cd..c7c1b667b105 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -49,7 +49,7 @@ void mlx5e_ethtool_get_drvinfo(struct mlx5e_priv *priv,
+ 	count = snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+ 			 "%d.%d.%04d (%.16s)", fw_rev_maj(mdev),
+ 			 fw_rev_min(mdev), fw_rev_sub(mdev), mdev->board_id);
+-	if (count == sizeof(drvinfo->fw_version))
++	if (count >= sizeof(drvinfo->fw_version))
+ 		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+ 			 "%d.%d.%04d", fw_rev_maj(mdev),
+ 			 fw_rev_min(mdev), fw_rev_sub(mdev));
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+index fe0726c7b847..a7c77a63cc29 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -78,7 +78,7 @@ static void mlx5e_rep_get_drvinfo(struct net_device *dev,
+ 	count = snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+ 			 "%d.%d.%04d (%.16s)", fw_rev_maj(mdev),
+ 			 fw_rev_min(mdev), fw_rev_sub(mdev), mdev->board_id);
+-	if (count == sizeof(drvinfo->fw_version))
++	if (count >= sizeof(drvinfo->fw_version))
+ 		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+ 			 "%d.%d.%04d", fw_rev_maj(mdev),
+ 			 fw_rev_min(mdev), fw_rev_sub(mdev));
 -- 
 2.42.0
 
