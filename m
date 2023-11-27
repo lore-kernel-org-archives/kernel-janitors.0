@@ -1,90 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91369D52B;
-	Sun, 26 Nov 2023 17:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COWYlnyu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE5DC433C8;
-	Sun, 26 Nov 2023 17:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701018584;
-	bh=S3oBnSKIVaAwos9u+x7GmQmmKapxv7I388lspEsC2bI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=COWYlnyuDob5yZ/8Wr0ZT0tTymWeBTs52UHwhZ45F7Vf49nLqkI/Zqz6Lu9snAc7K
-	 rD3LPgpyU6NjlH1idl6LlzIhSuqwTK8+T9Ai7hutimfIPITJmSY82Ta08JXAYFwiQn
-	 A0Fw/9ZjDl+4cJj3FKonCc0pZu1Sx88r0G2fmRwITZo7v/uEYIGe/n238eRE8zTIzq
-	 X0KmtkrBdYwJQ4q8MZJMjtowWZSOblsA+frByz9n3jTZhSltS0bbzaIc4obztti8Tt
-	 cQ10yzvs+unZa+dYECjn38p7l7jpd+2VK/1PonTEXXfZSVzK1DC804wU934mWZlV/b
-	 KsspJp5eQJA3w==
-Date: Sun, 26 Nov 2023 17:09:35 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: lars@metafoo.de, jean-baptiste.maneyrol@tdk.com,
- andy.shevchenko@gmail.com, chenhuiz@axis.com, mranostay@gmail.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] iio: imu: inv_mpu6050: fix an error code problem in
- inv_mpu6050_read_raw
-Message-ID: <20231126170935.3074a06e@jic23-huawei>
-In-Reply-To: <20231030020218.65728-1-suhui@nfschina.com>
-References: <20231030020218.65728-1-suhui@nfschina.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id CCC2710F;
+	Sun, 26 Nov 2023 17:14:27 -0800 (PST)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 8DFB16018B8D8;
+	Mon, 27 Nov 2023 09:13:41 +0800 (CST)
+Message-ID: <1bec6c93-aac4-eb95-f4f6-7b8fac65d967@nfschina.com>
+Date: Mon, 27 Nov 2023 09:13:09 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined
+ bitwise shift behavior
+Content-Language: en-US
+To: Ping-Ke Shih <pkshih@realtek.com>, "kvalo@kernel.org" <kvalo@kernel.org>,
+ "nathan@kernel.org" <nathan@kernel.org>,
+ "ndesaulniers@google.com" <ndesaulniers@google.com>,
+ "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+ "trix@redhat.com" <trix@redhat.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
+ "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+ "linville@tuxdriver.com" <linville@tuxdriver.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lizetao1@huawei.com" <lizetao1@huawei.com>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <02f0a505b3a02a3c5e29ac1e327acd1fc946188c.camel@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 30 Oct 2023 10:02:19 +0800
-Su Hui <suhui@nfschina.com> wrote:
-
-> inv_mpu6050_sensor_show() can return -EINVAL or IIO_VAL_INT. Return the
-> true value rather than only return IIO_VAL_INT.
-> 
-> Fixes: d5098447147c ("iio: imu: mpu6050: add calibration offset support")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-Applied to the fixes-togreg branch of iio.git.
-
-It's independent enough from the improved error reporting that they can hopefully
-got through different branches.
-
-Thanks,
-
-Jonathan
-
-> ---
-> v3:
->  - add Fixes tag
-> v2:
->  - fix the error of commit title.
-> v1: 
->  - https://lore.kernel.org/all/20231020091413.205743-2-suhui@nfschina.com/
-> 
->  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> index 29f906c884bd..a9a5fb266ef1 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> @@ -749,13 +749,13 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
->  			ret = inv_mpu6050_sensor_show(st, st->reg->gyro_offset,
->  						chan->channel2, val);
->  			mutex_unlock(&st->lock);
-> -			return IIO_VAL_INT;
-> +			return ret;
->  		case IIO_ACCEL:
->  			mutex_lock(&st->lock);
->  			ret = inv_mpu6050_sensor_show(st, st->reg->accl_offset,
->  						chan->channel2, val);
->  			mutex_unlock(&st->lock);
-> -			return IIO_VAL_INT;
-> +			return ret;
->  
->  		default:
->  			return -EINVAL;
+On 2023/11/24 19:19, Ping-Ke Shih wrote:
+> On Fri, 2023-11-24 at 18:06 +0800, Su Hui wrote:
+>> On 2023/11/24 16:51, Ping-Ke Shih wrote:
+>>> Subject: [PATCH v2 2/2] wifi: rtlwifi: rtl8821ae: phy: fix an undefined bitwise shift behavior
+>>>
+>>> [...]
+>>>> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>>>> b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>>>> index 6df270e29e66..52ab1b0761c0 100644
+>>>> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>>>> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>>>> @@ -31,7 +31,12 @@ static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitmask)
+>>>>    {
+>>>>           u32 i = ffs(bitmask);
+>>>>
+>>>> -       return i ? i - 1 : 32;
+>>>> +       if (!i) {
+>>>> +               WARN_ON_ONCE(1);
+>>>> +               return 0;
+>>>> +       }
+>>>> +
+>>>> +       return i - 1;
+>>>>    }
+>>> Personally, I prefer to use __ffs(), because in normal case no need additional '-1',
+>>> and abnormal cases should not happen.
+>> Hi,  Ping-Ke
+>>
+>> Replace _rtl8821ae_phy_calculate_bit_shift() by __ffs(bitmask) is better,
+>> but I'm not sure what callers should do when callers check bitmask is 0 before calling.
+>> Maybe this check is useless?
+>>
+>> I can send a v3 patch if using  __ffs(bitmask) and no check for bitmask is fine.
+>> Or could you send this patch if you have a better idea?
+>> Thanks for your suggestion!
+>>
+> Can this work to you?
+Looks good to me, briefer and better!
+I will send v3 soon.
+> static u32 _rtl8821ae_phy_calculate_bit_shift(u32 bitmask)
+> {
+> 	if (WARN_ON_ONCE(!bitmask))
+> 		return 0;
+>
+> 	return __ffs(bitmask);
+> }
 
