@@ -1,55 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qam/iOf5"
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194599B
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:57:42 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c87adce180so50703511fa.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:57:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sQxvQniC"
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D627B137
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:58:00 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-333030a6537so366647f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Nov 2023 04:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701089860; x=1701694660; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701089879; x=1701694679; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sjt6k/8uh3hwCXXR7YydDVs4BIzvpxlypHixoFNvEN0=;
-        b=Qam/iOf5sn2Jpz1G7HIwUCGVDKTg+tt0Anl37iGhFTkPVJnSmlWZGXli/9jseai4Vt
-         Zp0C46/RQ+GauUp+cZd+gv/dg+NNrvr9Oik5Khgdq81ghhooDYs5yfYJpn9TdW06oGd2
-         elwXCfCnGFWhAaNIOnjPcglk/BRv5PLErZevjQLN35MtL4ZPWx4hWBszhnGv99MDY8lC
-         5FeQS3TfGu6XVYpky6fb2dFNpipj87bDxt9ZDNU9dftDziTUDltcMTAhZLtgnzDUnoe8
-         2LOabckd7gI1j9hOsP4CHD9h/eTp+lsJwje0cuERWCkB0ed3FTlNmYUyei3gC2fjZ/IT
-         ENvg==
+        bh=Jw+nqW/qvzQR0YmWnaSnjwd99Rt7JQhz5XlpXkiz0js=;
+        b=sQxvQniCVVTdkhTlQ5fx9dwyK/jq9NNUD114CKuOajiigsCHCKWdWFYw9BuXqR9GSx
+         2MpBDa5yvV+X018yCOcPzOkHt+Ro9UhrwqFnEvVnNjwtiEaGxo27L1tkXqRTZKXNbrLa
+         gePing2oHRDvSKpXMqirB3Dl5p+iwW/3vWjM8FCJZTS1SiwR1QfLe9i5BnB5u6+O2630
+         2Lquro/xU+95p1nV+/kUlm3Wrd8GBeu5gI81k5WN68RCybmMCqieWa0ggayeHa3VBGmh
+         UyYw3Gh9enmjzc+NBsTJAc9fnR2t+4cWT2qu7dV71kNoYghlqObfV+X9IdpJysmYLngi
+         iS+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701089860; x=1701694660;
+        d=1e100.net; s=20230601; t=1701089879; x=1701694679;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sjt6k/8uh3hwCXXR7YydDVs4BIzvpxlypHixoFNvEN0=;
-        b=Ww94dSLas/8si/5cuXMzKBkmwXVwBvRBJCOz3okiUxbnRVVU0WQdmJ7vouRNXhx5uZ
-         qeo0uzaiDafKk8QPrEwtOv8E9UwX6tGbOilU+P6gp++AJqu6yzEDWWxxx3vmZdZa0sJ9
-         IZGwqIvJ7kF3fbBagxFoqTIrYaT8AxUfjVDFhTkYnehtJlAqwI6G7e2sGD3IWlJtjeV0
-         FAq8YsVP4D9GR4ZdlE9/WawZvl2/iIlugoX2sMtsTlA2iXNUZjUWXtRjEa5CbKE49KW0
-         YXguHesmpNeZEuYXqC5i5bTkT4OAPek3w0Vcgudb2ExSyiVv97W7+6n7vMozaduqeskS
-         7/bA==
-X-Gm-Message-State: AOJu0YzZ9URAp4thkUH+BWvx6ocaHK7JEPcMfqEs3+SUgHLrE6dDxt1S
-	TD7ts2m77Vdicunbhbqv1/JXnQ==
-X-Google-Smtp-Source: AGHT+IH4FeHkACMbF03cjzsbK+N/epx+FNdWdYPGoXzsZlA+/Oqge/c/eDLnMpx/HFxScHtGL5JStg==
-X-Received: by 2002:a2e:3207:0:b0:2c5:6cb:2e50 with SMTP id y7-20020a2e3207000000b002c506cb2e50mr7457759ljy.27.1701089860305;
-        Mon, 27 Nov 2023 04:57:40 -0800 (PST)
+        bh=Jw+nqW/qvzQR0YmWnaSnjwd99Rt7JQhz5XlpXkiz0js=;
+        b=PdHOx5h+MgrIJa4RwZXzmnSaUc9IBBj6nAAzMMDOZ9ybc7TwhhAz2r5cHWUxVtAF2S
+         gA4X9t3pzQJAf2FRy9/+tFAzVhOftI2A0wgKX06+p8isW+wO76I9/4Y38O5eYCMCH81E
+         fcFCwIx+7C7xNzDBj8YpE98+ZLf6h8LFwxNc5aEUSxtucWs3Gyw8WLCTxrS7qA437vA6
+         GimyRvyo4crxpVFPqAgGhbiIC8YdNDdFHfhrkOptgQCq99t7aL/S4E7P9LK7qInbbmeo
+         CmmrqJo86MGCX9inKWrJbWaxlCXYtHiDvPBLZXqCnH4MOb5qs+CXJk30MxN7T/TW3kky
+         9ZNg==
+X-Gm-Message-State: AOJu0YwokcI7hoCu7iG8nJVwRyVBCJS1B4uaRtTEiMBVD62xab0BAJZM
+	YXQ4bUO0XeQK85yVw1deupG3bzNknorYAHAUXq8=
+X-Google-Smtp-Source: AGHT+IHAUIFXo0Q+3U5BvgBDqA09MrLfbCpKKUPXt8McxfE3eh3EdNaruAMFcydi7N7rKbq0QAWjqQ==
+X-Received: by 2002:a5d:5390:0:b0:333:8ca:2333 with SMTP id d16-20020a5d5390000000b0033308ca2333mr175704wrv.71.1701089879466;
+        Mon, 27 Nov 2023 04:57:59 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e16-20020adffc50000000b00332cb561c8dsm11987442wrs.112.2023.11.27.04.57.39
+        by smtp.gmail.com with ESMTPSA id s11-20020adfeccb000000b00332c6c5ce82sm11984406wro.94.2023.11.27.04.57.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 04:57:39 -0800 (PST)
-Date: Mon, 27 Nov 2023 15:57:36 +0300
+        Mon, 27 Nov 2023 04:57:59 -0800 (PST)
+Date: Mon, 27 Nov 2023 15:57:54 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Julien Grall <jgrall@amazon.com>, Rahul Singh <rahul.singh@arm.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	David Vrabel <david.vrabel@citrix.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] xen/events: fix error codes in xen_bind_pirq_msi_to_irq()
-Message-ID: <60028de8-a137-423d-91d8-00b2942bd73d@moroto.mountain>
+To: radhey.shyam.pandey@amd.com
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] net: axienet: Introduce dmaengine support
+Message-ID: <b8b0ba96-9412-413c-b121-58d217d8d7c5@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,44 +50,50 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The error code needs to be set on these error paths.
+Hello Radhey Shyam Pandey,
 
-Fixes: 5dd9ad32d775 ("xen/events: drop xen_allocate_irqs_dynamic()")
-Fixes: d2ba3166f23b ("xen/events: move drivers/xen/events.c into drivers/xen/events/")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-Are we going to backport these to stable?  Should I split this into two
-patches?
+The patch 6a91b846af85: "net: axienet: Introduce dmaengine support"
+from Nov 16, 2023 (linux-next), leads to the following Smatch static
+checker warning:
 
- drivers/xen/events/events_base.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+	drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1060 axienet_dma_rx_cb()
+	error: 'app_metadata' dereferencing possible ERR_PTR()
 
-diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-index f5edb9e27e3c..aae62603b461 100644
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -1105,13 +1105,17 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
- 	mutex_lock(&irq_mapping_update_lock);
- 
- 	irq = irq_alloc_descs(-1, 0, nvec, -1);
--	if (irq < 0)
-+	if (irq < 0) {
-+		ret = irq;
- 		goto out;
-+	}
- 
- 	for (i = 0; i < nvec; i++) {
- 		info = xen_irq_init(irq + i);
--		if (!info)
-+		if (!info) {
-+			ret = -ENOMEM;
- 			goto error_irq;
-+		}
- 
- 		irq_set_chip_and_handler_name(irq + i, &xen_pirq_chip, handle_edge_irq, name);
- 
--- 
-2.42.0
+drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+    1045 static void axienet_dma_rx_cb(void *data, const struct dmaengine_result *result)
+    1046 {
+    1047         struct skbuf_dma_descriptor *skbuf_dma;
+    1048         size_t meta_len, meta_max_len, rx_len;
+    1049         struct axienet_local *lp = data;
+    1050         struct sk_buff *skb;
+    1051         u32 *app_metadata;
+    1052 
+    1053         skbuf_dma = axienet_get_rx_desc(lp, lp->rx_ring_tail++);
+    1054         skb = skbuf_dma->skb;
+    1055         app_metadata = dmaengine_desc_get_metadata_ptr(skbuf_dma->desc, &meta_len,
+    1056                                                        &meta_max_len);
 
+dmaengine_desc_get_metadata_ptr() can return error pointers
+
+    1057         dma_unmap_single(lp->dev, skbuf_dma->dma_address, lp->max_frm_size,
+    1058                          DMA_FROM_DEVICE);
+    1059         /* TODO: Derive app word index programmatically */
+--> 1060         rx_len = (app_metadata[LEN_APP] & 0xFFFF);
+                           ^^^^^^^^^^^^
+
+    1061         skb_put(skb, rx_len);
+    1062         skb->protocol = eth_type_trans(skb, lp->ndev);
+    1063         skb->ip_summed = CHECKSUM_NONE;
+    1064 
+    1065         __netif_rx(skb);
+    1066         u64_stats_update_begin(&lp->rx_stat_sync);
+    1067         u64_stats_add(&lp->rx_packets, 1);
+    1068         u64_stats_add(&lp->rx_bytes, rx_len);
+    1069         u64_stats_update_end(&lp->rx_stat_sync);
+    1070         axienet_rx_submit_desc(lp->ndev);
+    1071         dma_async_issue_pending(lp->rx_chan);
+    1072 }
+
+regards,
+dan carpenter
