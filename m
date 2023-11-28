@@ -1,84 +1,80 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KDspK1lQ"
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561BCD51
-	for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 05:13:24 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-332ca7f95e1so3801178f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 05:13:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701177203; x=1701782003; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X4lKo9bLDim6aDctAZZS9tg9Ds7n6sj9Q/UD4Yw1TdY=;
-        b=KDspK1lQGnrqXT7YQDub+p8H/owMmhXYQEyfz79Xikk6rbcvJWhbeltXH+tKdkSnWn
-         HP2igLRfNEZds7Zc+SI/I4o0nudIf5+5Dwgdg4Z01eGNCJ7IZF4dPw9XRfWgRdCJAPw5
-         uK+uOSNgMyzZYit2Mg5rydT/cihk+lwj9Xble6UAtIv7AD3W934KIh29GJhb7sFb3FAB
-         LqNnHYxwpdy9TLVDk4K6Ma2VbVfdn+kJsNOvXu6gHsHL4+wI7H4BfQprG1gZN3gToXx6
-         um6eSzAkz0PHVhW8qGAq9pfhUz3WgpJq6lotMToCTNhnZzEoo/r0MVE3oTSqoMC92PYD
-         t2yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701177203; x=1701782003;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4lKo9bLDim6aDctAZZS9tg9Ds7n6sj9Q/UD4Yw1TdY=;
-        b=Aq/h13ZGotiui/nNRP6fjPDN7/asrSkam8Yg8vaiNWC3fFNvKzpi9fhgmmA2qLwkdQ
-         /fsM9ftgeEoYEENjPW5NYk+igaHcRlpMxd+oGTY+isov9uX/jXkDt3pm7zgS7Ns/iCpS
-         COYaF0N7dUNaFpIjVcSg8m0OpHgveBWnPy2GIQ+BwcMNeWX3r01QRlDHCpOMH1FqhfwM
-         74xCIX7ihN8T5cjvsLyMuw9aPtpuyBHwsC2XOnPKGg58vhi/uV8EE/cjC16E++/cctVb
-         4QEIk4ZwpbrxzRYZJLBcQtIVd6jUD2kxydj4hVK4EobFYJEj3X9MBWZ/QMeIFgI9zbsF
-         a20g==
-X-Gm-Message-State: AOJu0YzkB1pw3Ad0pTetE/qsU/GBV7rKu6pEeZ5epMx5VC/WB/081+u8
-	TTqW6GY2BueVos/SzVvEE4a8gw==
-X-Google-Smtp-Source: AGHT+IG6ZnjMO1TgB7xr2eWRdAiProUe18u2mVdxwlRZXNoDvaF6Btqju7QeacT/L+RNroDhmltb2Q==
-X-Received: by 2002:a5d:458b:0:b0:333:73c:7850 with SMTP id p11-20020a5d458b000000b00333073c7850mr3441608wrq.34.1701177202769;
-        Tue, 28 Nov 2023 05:13:22 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h15-20020adff18f000000b00332ea526059sm12038283wro.82.2023.11.28.05.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 05:13:22 -0800 (PST)
-Date: Tue, 28 Nov 2023 16:13:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shinas Rasheed <srasheed@marvell.com>
-Cc: Veerasenareddy Burru <vburru@marvell.com>,
-	Sathesh Edara <sedara@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] octeon_ep: Fix error code in probe()
-Message-ID: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XfNeJ4RX"
+Received: from mail.alien8.de (mail.alien8.de [IPv6:2a01:4f9:3051:3f93::2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044B318F;
+	Tue, 28 Nov 2023 05:17:26 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E2CBC40E01A5;
+	Tue, 28 Nov 2023 13:17:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Tf39sVEJdPK8; Tue, 28 Nov 2023 13:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1701177443; bh=rjyEdVBSHIuNTzwadRt68ipKM5ALgcb+iNjTJnT4+fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XfNeJ4RXZHIXCt79RDyIAsY0SnzW+SdKE7Cp8+qnrJY5WnrEDIi43PbZzvV2Xw1c9
+	 QPG4XsdkHVm0NQ6n50FZHbEPr7F7ukT/TjHUbLlr/Lgev4DsHCseY1G3Bhi6YncrRW
+	 XG2bXFcKS5Mbw+epvlqripXJkJ3rjzOUdSwDYeh+fx1SWhk93gGHmv8ueH4tXMOTBg
+	 TFFt2wECmp7voiNVedBYl08qmY0O8l6Zc+zYcxIslQ9VLHDz7HVPOhIwmaRSe0nrG6
+	 V8Co3Q+KfckYevA4w1zHeLdAEeqGgs1fwcCdDe2wSk9ZcZZeO1ZtZcWmVJIr10Wj6I
+	 ghrTwKgSrbuk/99BLMLqs1t9Ef3Cd4ybO3e8KaoLD2o6ffM2cxRIElPw8/dwi9eCJ7
+	 E4fYGHZ7aDCrciLSvpi2fCnuO3hBCWGn+E/fPvQ1CtC2O2pMnxJa27V8o9PZDqnKm2
+	 qCfXvtAajkZaetBvkN7P6dtSfhTHU9DXDf6zMbRZUJ2/MbyLcJl8dATcUzmdzDGQ9v
+	 1j14SkWcE9Rv/zqzUKlk3ujuvGfwYwHQm4Bti3A9ORg6mTZ9QmRZ9rIdSVzo0FZAVL
+	 WMBIA04GRJmlr+bn4lZNSL/bQGmVr0dalLu5PN1uvI/nOCMC4wfSEj+Ywm67HJmpXM
+	 6p/I4S+s7qdZ36zs31XKTh94=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ED24E40E01B1;
+	Tue, 28 Nov 2023 13:17:11 +0000 (UTC)
+Date: Tue, 28 Nov 2023 14:17:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Antonio Feijoo <antonio.feijoo@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [regression] microcode files missing in initramfs imgages from
+ dracut (was Re: [PATCH] x86: Clean up remaining references to
+ CONFIG_MICROCODE_AMD)
+Message-ID: <20231128131707.GAZWXoU9GpoeXB8dVv@fat_crate.local>
+References: <e1ca042c-de1d-4fe3-ad69-51d147b1fe0b@leemhuis.info>
+ <20231122155758.GEZV4lBgtZyzsP5Z4V@fat_crate.local>
+ <CAHk-=wiV+NM+jLKbSj_Ej9RaXpu4akWV03G_wXyTSHZhArq1tg@mail.gmail.com>
+ <20231122205135.GGZV5p157mBi6RYUNs@fat_crate.local>
+ <CAHk-=wh03jMZRAxHFTkv0h9dZ6TmiqukzcHd4RTx7ijia_prsg@mail.gmail.com>
+ <20231123112013.GAZV81bezsrS6sdJQR@fat_crate.local>
+ <66f077cf-ff85-44dc-a76a-05d8995ea261@suse.com>
+ <20231124121500.GAZWCTxML94BSYaQf3@fat_crate.local>
+ <081ddbc7-8e3a-41c2-b361-3a03dfb3af12@suse.com>
+ <20231124133303.GBZWCmD71R5dunBLQ3@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20231124133303.GBZWCmD71R5dunBLQ3@fat_crate.local>
 
-Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code
-returns success.
+On Fri, Nov 24, 2023 at 02:33:03PM +0100, Borislav Petkov wrote:
+> Thx, lemme get cracking on fancy github workflows. :-P
 
-Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 1 +
- 1 file changed, 1 insertion(+)
+Uff:
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-index 423eec5ff3ad..f2e5c7d80398 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-@@ -1383,6 +1383,7 @@ static int octep_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (max_rx_pktlen < 0) {
- 		dev_err(&octep_dev->pdev->dev,
- 			"Failed to get max receive packet size; err = %d\n", max_rx_pktlen);
-+		err = max_rx_pktlen;
- 		goto register_dev_err;
- 	}
- 	netdev->min_mtu = OCTEP_MIN_MTU;
+https://github.com/dracutdevs/dracut/pull/2572
+
+What a pain it is to do a pull request with github. :-\
+
 -- 
-2.42.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
