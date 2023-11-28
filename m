@@ -1,89 +1,126 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A67637D22;
+	Tue, 28 Nov 2023 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ClBmQqsN"
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39873AB;
-	Tue, 28 Nov 2023 08:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=USKD47nnFtZbiC34tRZ66OhMG1E8r+dDqxL3nx7Jtro=; b=ClBmQqsND9oEWW5dgMODhFvArj
-	UB8sWpzmh2KWyrNRCd54Yvf4GQhM5QQebv5O90sjE05UcLeu5UNXf05TsovGOuzx0ctZGL94Hf3hp
-	K86Zgmv7SihcbfriF1LdZQxRCkcYjj0enbIt7NdxFybvOJkCevXvJWpkxUzzxCnzQDOhITTYbO+Tv
-	FWAAN/PT0q7ub0BdmXQKlg3Dvq2Bl2QsTvUhMdLH/V0BFiGpc6AWzL+Js3wMJvxp7ayshfWFZ72oP
-	JX3C7tEGsY5t7UXQKUEllmgFfnv0PsdMeDpMCT0IZFmLWx4BQie0lt0fnd5bet+aakJ4UfcVJ7Psh
-	JRrI1fnQ==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1r80wV-005oNE-1m;
-	Tue, 28 Nov 2023 16:28:11 +0000
-Message-ID: <c5b659bf-0163-45c5-ac88-f1ef876ab3f3@infradead.org>
-Date: Tue, 28 Nov 2023 08:28:11 -0800
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sirOE4d+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D74C433C7;
+	Tue, 28 Nov 2023 16:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1701188942;
+	bh=mXCYtJybktTvUcwZQ3lRqv8LehqnyJb7pxdRFjMyvM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sirOE4d+QSF1Xl8kCiAmMwh0c4Ifo6V/m0IMgnATnemqcHHCHPzwiQCePwNzdciEF
+	 29PQMD+MEHTQqtIMYdH3xK6n8hWEUed9XC0fQp9JS1LQXbdgfC76lAo7jSV4HVChq7
+	 m39Fy1piWhX4Rz2rp541eT1WZEgrW+Hqq8F+b5ic=
+Date: Tue, 28 Nov 2023 16:28:59 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH] EDAC/sysfs: Fix calling kobject_put() without kobj
+ initialization
+Message-ID: <2023112824-cupbearer-salvage-b064@gregkh>
+References: <20231128130952.3372794-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] x86/Kconfig: Remove obsolete config X86_32_SMP
-Content-Language: en-US
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20231128090016.29676-1-lukas.bulwahn@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20231128090016.29676-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128130952.3372794-1-harshit.m.mogalapalli@oracle.com>
 
-
-
-On 11/28/23 01:00, Lukas Bulwahn wrote:
-> Commit 0f08c3b22996 ("x86/smp: Reduce code duplication") removes the only
-> use of CONFIG_X86_32_SMP.
+On Tue, Nov 28, 2023 at 05:09:52AM -0800, Harshit Mogalapalli wrote:
+> In edac_pci_main_kobj_setup() when dev_root is NULL,
+> kobject_init_and_add() is not called.
 > 
-> Remove the obsolete config X86_32_SMP.
+>         if (err) { // err = -ENODEV;
+>                 edac_dbg(1, "Failed to register '.../edac/pci'\n");
+>                 goto kobject_init_and_add_fail; // call to kobject_put()
+>         }
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
+> This will cause a runtime warning in kobject_put() if the above happens.
+> Warning:
+> "kobject: '%s' (%p): is not initialized, yet kobject_put() is being called."
+> 
+> Fix the error handling to avoid the above possible situation.
+> 
+> Fixes: cb4a0bec0bb9 ("EDAC/sysfs: move to use bus_get_dev_root()")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 > ---
+> This is based on static analysis with Smatch and only compile tested.
+> ---
+>  drivers/edac/edac_pci_sysfs.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 > 
-> I sent this cleanup patch in March 2023 and it did not get any attention:
-> 
-> https://lore.kernel.org/lkml/20230317101621.14413-1-lukas.bulwahn@gmail.com/
-> 
-> It is just minor cleanup, but it also should not cause any issue.
-> This can be quickly checked with grep "X86_32_SMP" . -R and seeing that
-> this is only mentioned in arch/x86/Kconfig in this one definition.
-> 
-> No change here other than rebasing the original patch.
-> 
->  arch/x86/Kconfig | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 21890efbfdd8..d7d1ef3d2684 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -384,10 +384,6 @@ config HAVE_INTEL_TXT
->  	def_bool y
->  	depends on INTEL_IOMMU && ACPI
+> diff --git a/drivers/edac/edac_pci_sysfs.c b/drivers/edac/edac_pci_sysfs.c
+> index 901d4cd3ca38..71a0d4b9c2cf 100644
+> --- a/drivers/edac/edac_pci_sysfs.c
+> +++ b/drivers/edac/edac_pci_sysfs.c
+> @@ -370,12 +370,14 @@ static int edac_pci_main_kobj_setup(void)
 >  
-> -config X86_32_SMP
-> -	def_bool y
-> -	depends on X86_32 && SMP
-> -
->  config X86_64_SMP
->  	def_bool y
->  	depends on X86_64 && SMP
+>  	/* Instanstiate the pci object */
+>  	dev_root = bus_get_dev_root(edac_subsys);
+> -	if (dev_root) {
+> -		err = kobject_init_and_add(edac_pci_top_main_kobj,
+> -					   &ktype_edac_pci_main_kobj,
+> -					   &dev_root->kobj, "pci");
+> -		put_device(dev_root);
+> -	}
+> +	if (!dev_root)
+> +		goto kzalloc_fail;
+> +
+> +	err = kobject_init_and_add(edac_pci_top_main_kobj,
+> +				   &ktype_edac_pci_main_kobj,
+> +				   &dev_root->kobj, "pci");
+> +	put_device(dev_root);
+> +
+>  	if (err) {
+>  		edac_dbg(1, "Failed to register '.../edac/pci'\n");
+>  		goto kobject_init_and_add_fail;
+> -- 
+> 2.39.3
+> 
 
--- 
-~Randy
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
