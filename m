@@ -1,91 +1,89 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="waN+1Sxk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UmnB1fv2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4F4A0;
-	Tue, 28 Nov 2023 08:00:05 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FD6E21982;
-	Tue, 28 Nov 2023 16:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1701187204;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WP/XoFyHTFaJBnWFQyEgHYvMVQmUgOB2x/5RAdzmulI=;
-	b=waN+1SxkH3mS/26f0AFEWeXwKDgpGsSQSD8C6wHlOQyXWKjzQxl4PtPcHw9H7U73hCkJey
-	QwSRuO67dcku+ONBNM7HCkX5feP7qvXL6jeGv6ZZB4LVJu+HSOLv7HOQicWia4n9HR/Kuy
-	6EU2uuNfNnOkr48mNDBXvepQZUxxrlw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1701187204;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WP/XoFyHTFaJBnWFQyEgHYvMVQmUgOB2x/5RAdzmulI=;
-	b=UmnB1fv2aJPvxd4gcFAHAbKgeCflBXREiQkNV522VftNI6SWCqIwNFdpwNV9vZKXwTJlDx
-	MJJbsNYyeBAXNOCw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 3A29D133B5;
-	Tue, 28 Nov 2023 16:00:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id XMajDYQOZmUbUAAAn2gu4w
-	(envelope-from <dsterba@suse.cz>); Tue, 28 Nov 2023 16:00:04 +0000
-Date: Tue, 28 Nov 2023 16:52:51 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] btrfs: return negative -EFAULT instead of positive
-Message-ID: <20231128155251.GI18929@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <00bb6e21-484b-47d6-82fa-85c787d71a86@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ClBmQqsN"
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39873AB;
+	Tue, 28 Nov 2023 08:28:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=USKD47nnFtZbiC34tRZ66OhMG1E8r+dDqxL3nx7Jtro=; b=ClBmQqsND9oEWW5dgMODhFvArj
+	UB8sWpzmh2KWyrNRCd54Yvf4GQhM5QQebv5O90sjE05UcLeu5UNXf05TsovGOuzx0ctZGL94Hf3hp
+	K86Zgmv7SihcbfriF1LdZQxRCkcYjj0enbIt7NdxFybvOJkCevXvJWpkxUzzxCnzQDOhITTYbO+Tv
+	FWAAN/PT0q7ub0BdmXQKlg3Dvq2Bl2QsTvUhMdLH/V0BFiGpc6AWzL+Js3wMJvxp7ayshfWFZ72oP
+	JX3C7tEGsY5t7UXQKUEllmgFfnv0PsdMeDpMCT0IZFmLWx4BQie0lt0fnd5bet+aakJ4UfcVJ7Psh
+	JRrI1fnQ==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1r80wV-005oNE-1m;
+	Tue, 28 Nov 2023 16:28:11 +0000
+Message-ID: <c5b659bf-0163-45c5-ac88-f1ef876ab3f3@infradead.org>
+Date: Tue, 28 Nov 2023 08:28:11 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00bb6e21-484b-47d6-82fa-85c787d71a86@moroto.mountain>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.59 / 50.00];
-	 ARC_NA(0.00)[];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.59)[98.16%]
-X-Spam-Score: -3.59
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] x86/Kconfig: Remove obsolete config X86_32_SMP
+Content-Language: en-US
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20231128090016.29676-1-lukas.bulwahn@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20231128090016.29676-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 28, 2023 at 05:40:33PM +0300, Dan Carpenter wrote:
-> There is a typo here and the '-' character was accidentally left off.
+
+
+On 11/28/23 01:00, Lukas Bulwahn wrote:
+> Commit 0f08c3b22996 ("x86/smp: Reduce code duplication") removes the only
+> use of CONFIG_X86_32_SMP.
 > 
-> Fixes: 2dc8b96809b2 ("btrfs: allow extent buffer helpers to skip cross-page handling")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Remove the obsolete config X86_32_SMP.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Folded to the patch, thanks.
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+> 
+> I sent this cleanup patch in March 2023 and it did not get any attention:
+> 
+> https://lore.kernel.org/lkml/20230317101621.14413-1-lukas.bulwahn@gmail.com/
+> 
+> It is just minor cleanup, but it also should not cause any issue.
+> This can be quickly checked with grep "X86_32_SMP" . -R and seeing that
+> this is only mentioned in arch/x86/Kconfig in this one definition.
+> 
+> No change here other than rebasing the original patch.
+> 
+>  arch/x86/Kconfig | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 21890efbfdd8..d7d1ef3d2684 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -384,10 +384,6 @@ config HAVE_INTEL_TXT
+>  	def_bool y
+>  	depends on INTEL_IOMMU && ACPI
+>  
+> -config X86_32_SMP
+> -	def_bool y
+> -	depends on X86_32 && SMP
+> -
+>  config X86_64_SMP
+>  	def_bool y
+>  	depends on X86_64 && SMP
+
+-- 
+~Randy
