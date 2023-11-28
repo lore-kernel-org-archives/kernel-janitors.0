@@ -1,53 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3gg9VO5"
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 607F7D60
-	for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 06:40:19 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40b40423df8so21987835e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 06:40:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JWIwD9aZ"
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D262D6D
+	for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 06:40:38 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3316bb1303bso3475520f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 06:40:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701182418; x=1701787218; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701182437; x=1701787237; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oaKrElE1AMJOvXqLWag42ZjIrLYDCFvrlaWvSZAKArw=;
-        b=r3gg9VO5gCcnwDOz0pufW2ZafaiK/KADozXnqcNaxv+Agpv96S42mZj66g9d0umPKr
-         lz5sG4rJEKW7g+9znCdibcl1tNEbBsNY/z8oaUONLWxar3OUa6OALrZL373AZXtuAH6I
-         z6gRYIte5SJikACtGjR4dsNpRkwo7DvEY9jvxMYjN+VKRg6I8lrdujCXlArsX/OyykxZ
-         fkRhz2338ofvFMnaLqiQLmx9EXgioLA3R3FrDBiMnvoIGYeUPIRYzJQCmUh64bqhwOYk
-         lBt/3l31k9jlDmI7njU9gtLDaDx3VurxDLFlpy0IFakFZA9UVmmCANEfS7NsBaJp+X8A
-         50Hg==
+        bh=SzxEIZ1a0Bbur1zv6Y8NdUQtYhQOEvi3S02asmqf8qI=;
+        b=JWIwD9aZZkbBaJM3PC2cCZ5x/2cg+A3QKgvSMCX9Td55/TVXtaEdZMXLYpCU4CijYD
+         aIsOA78u0Bmp5qYLiQuuLue9jMVMRTjqLvCUnBvvMcU//v+2r5CRHid4rM/EWWb5jIWd
+         BO5fmTcjVffX0hwbZU548zKVn5dsFoLIOSOgCvUQxC/Sz/KF/8XW8rzMCK4JJnmwSPIZ
+         D9EJHRax5/Y1m1Tz/JHF92Gxxo/T7+xWfX4iA99QEspWSmN+rgfx4pmt5LbfPo27rlwa
+         xYMS7DKPeGEmY614bUOnDb2AJ+7wVeMG2DQeJq0y7xr0CYzHzSTsxv8lmm+LDUSmWMp6
+         o6rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701182418; x=1701787218;
+        d=1e100.net; s=20230601; t=1701182437; x=1701787237;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oaKrElE1AMJOvXqLWag42ZjIrLYDCFvrlaWvSZAKArw=;
-        b=QSVQzOUfrBba2/2bxGPtc4YMKsl2W4psq/VYO+JKuq8SlYAn7FV2pBPKd48cU5WdH3
-         bWqwlORQ2La5wLhz+fU367CraJa0NwNqJwLX46jSyX4ziYkW34b+ArBDYEmQXMTTOkR3
-         d85fIJWONMcTz1RwdpSy3wRogS8lSDU1SFXWzubN0Ei6DnoWneOoDi6xP+n2Pgarud4t
-         qgdu4Upg3Kpm0O559uEzooUE+DHRfabllZeDdw78OyBnY0MSQF7UAQED2inMe53raEfK
-         R68/6cEbB03qofvRO60AstFxbfIZc82KpqTSWd+woc5+3vLXpSBlIHew9uihIdKEbD4B
-         MqFg==
-X-Gm-Message-State: AOJu0YyBfHXprWpGJvgqszXNv2tZnwJcT+LIi+txr7XnDH63tFrCbSn7
-	NKBcOq1kODN6D7fsg9l/C1X6OA==
-X-Google-Smtp-Source: AGHT+IEUXsu35JfaoTse6WpNi0aat3trZZEVzz9HHjmeo+pJm7QYeZQ28Vz4IccP7yCA63IgMU75YA==
-X-Received: by 2002:a05:600c:4f82:b0:40b:2b42:a1c9 with SMTP id n2-20020a05600c4f8200b0040b2b42a1c9mr10704074wmq.23.1701182417945;
-        Tue, 28 Nov 2023 06:40:17 -0800 (PST)
+        bh=SzxEIZ1a0Bbur1zv6Y8NdUQtYhQOEvi3S02asmqf8qI=;
+        b=ozt+DSfR5IUmqZjLabk9dHeBcqRPPg4D/cnvFmcimIOtUV5qxCk9J+ryxmpabF5sMv
+         5goP2VA6q2I3qUmtkivuA7MO86s+7qTzRK/ZyrgK6/baTmrXi1YWvqGNeWB2XY9YlBiZ
+         6mTVHutVAERSK3Ze/BPdtO2EFfgRKcrjRskYWKk/gp3XUKyN+p3QKDyKW12027/GwmTf
+         C32Fh11RtpLoobkk8psQATWJ0/Ozqv7mt9C07PwpHGVoDhi7NijzjPEzZlvbhxOkU/my
+         7wUbZsN1ju6Q58KAETgbBPJ5u38UFrCa51VQb/u0g+zygOL398+XnPWe1a+ji+1g24LX
+         Pp1A==
+X-Gm-Message-State: AOJu0YzkjlKKfmyS+wyzXTzr/cRKuxHRS33egJYBXdIywNysBcKqrFse
+	6q/SYjtdkWtouDWZXpBIfZncpA==
+X-Google-Smtp-Source: AGHT+IENp0SUZKfT5lEo40Q/N3qpgq/dOSWXFTJPv+Mkdvm0u5FHqyqCm4RXLe2LodVsnCvM6YUt7g==
+X-Received: by 2002:a5d:4843:0:b0:332:fa75:a8ed with SMTP id n3-20020a5d4843000000b00332fa75a8edmr5644553wrs.24.1701182436798;
+        Tue, 28 Nov 2023 06:40:36 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t14-20020a05600c450e00b0040b37f107c4sm16321352wmo.16.2023.11.28.06.40.17
+        by smtp.gmail.com with ESMTPSA id s7-20020a5d5107000000b00332c6a52040sm15053018wrt.100.2023.11.28.06.40.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 06:40:17 -0800 (PST)
-Date: Tue, 28 Nov 2023 17:40:14 +0300
+        Tue, 28 Nov 2023 06:40:36 -0800 (PST)
+Date: Tue, 28 Nov 2023 17:40:33 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jack Zhu <jack.zhu@starfivetech.com>
-Cc: Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: staging: starfive: camss: fix off by one in
- isp_enum_mbus_code()
-Message-ID: <7d222638-2d19-466d-8dd4-9e1ceb1d46f3@moroto.mountain>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] btrfs: return negative -EFAULT instead of positive
+Message-ID: <00bb6e21-484b-47d6-82fa-85c787d71a86@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,37 +54,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-These > comparisons should be >=.  The formats->fmts[] array is either
-a pointer to isp_formats_sink[] or isp_formats_source[] respectively.
+There is a typo here and the '-' character was accidentally left off.
 
-Fixes: e57854628f58 ("media: staging: media: starfive: camss: Add ISP driver")
+Fixes: 2dc8b96809b2 ("btrfs: allow extent buffer helpers to skip cross-page handling")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/staging/media/starfive/camss/stf-isp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/extent_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/starfive/camss/stf-isp.c b/drivers/staging/media/starfive/camss/stf-isp.c
-index 893dbd8cddc8..98d61d71c31b 100644
---- a/drivers/staging/media/starfive/camss/stf-isp.c
-+++ b/drivers/staging/media/starfive/camss/stf-isp.c
-@@ -120,7 +120,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
- 	const struct stf_isp_format_table *formats;
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index f9b47f5d7e3d..62963bc6f61b 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4085,7 +4085,7 @@ int read_extent_buffer_to_user_nofault(const struct extent_buffer *eb,
  
- 	if (code->pad == STF_ISP_PAD_SINK) {
--		if (code->index > ARRAY_SIZE(isp_formats_sink))
-+		if (code->index >= ARRAY_SIZE(isp_formats_sink))
- 			return -EINVAL;
+ 	if (eb->addr) {
+ 		if (copy_to_user_nofault(dstv, eb->addr + start, len))
+-			ret = EFAULT;
++			ret = -EFAULT;
+ 		return ret;
+ 	}
  
- 		formats = &isp_dev->formats[SINK_FORMATS_INDEX];
-@@ -128,7 +128,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
- 	} else {
- 		struct v4l2_mbus_framefmt *sink_fmt;
- 
--		if (code->index > ARRAY_SIZE(isp_formats_source))
-+		if (code->index >= ARRAY_SIZE(isp_formats_source))
- 			return -EINVAL;
- 
- 		sink_fmt = v4l2_subdev_state_get_format(state,
 -- 
 2.42.0
 
