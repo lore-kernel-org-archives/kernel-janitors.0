@@ -1,55 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1927C57873
-	for <kernel-janitors@vger.kernel.org>; Tue, 28 Nov 2023 13:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7j6DxAA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28271C433C8;
-	Tue, 28 Nov 2023 13:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701176452;
-	bh=iQY4bJQiN3c6pMqgOKt7BcxpAUaqyamtlGBhvbZfDco=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=F7j6DxAAvfbSz1ShjmsAJbPvKAhHvGylm9giBbGWCDU/Xnbk/BH0+rlZmOfel/UQ7
-	 zHLA3nw1PmaOckhJnAiw5+q06b4TonZU76jkmts2JEQVCE+cboKi/F8cXnY5sH3Oe1
-	 znEWErND0IH7bv9nzn1Yg3EzdHPvFLH9KyXx2xEY3mZXZMUeEdZRuzAW3WzvGKdlUQ
-	 /HsMVUW3BIKIFDWCuiP7UGPN0tIZJlzH045j1VhpK6BZfJBp4D5WxfbSrsvXAgaD6L
-	 nR46WYDOTy0pVx4oZpVdduR4XsIcxnobfKabOLwTPpdDCp4qQu1B/gh+xAsNmE0bgG
-	 T4vW7ldjP7rjQ==
-From: Maxime Ripard <mripard@kernel.org>
-To: Frank Binns <frank.binns@imgtec.com>, 
- Donald Robson <donald.robson@imgtec.com>, 
- Matt Coster <matt.coster@imgtec.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20231124163917.300685-1-colin.i.king@gmail.com>
-References: <20231124163917.300685-1-colin.i.king@gmail.com>
-Subject: Re: (subset) [PATCH][next] drm/imagination: Fix a couple of
- spelling mistakes in literal strings
-Message-Id: <170117645007.2825698.11061509087464086760.b4-ty@kernel.org>
-Date: Tue, 28 Nov 2023 14:00:50 +0100
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bxTo9+80"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C60BD51;
+	Tue, 28 Nov 2023 05:10:16 -0800 (PST)
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASBT54N000874;
+	Tue, 28 Nov 2023 13:09:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=BzNJ9iRGfz25bP31jKWHUOIixIrbax65I5/G31Hvt9w=;
+ b=bxTo9+80AYbBVv/Kv7UPx0/iXHVVu2a993TxlSvclY+1J1j5/O3pmGUw2d7QKJc6d+On
+ lsm7lEMkO5knNkvIP4IDQGTelfq3zp9Fk2Nkn6LjnqefgcyZPsdvsPjIsIw1vgEhdj99
+ +W+VBKg3LQUSFUnxsFVfhzdlN9zVN0Wu617l3XL86ltVgIUCUXHZcvxQHfM4G+8BXjo6
+ zkWwp9DQFrNCtvE5wazZw2tPPG9/RhpZr7CNUp2Q5eMTTNScR7msIDoSspozSqs1YiT6
+ iZ72fYFZ1sfdgEDQbIgRUDmNP7xXhpCQZaYU4R8qagV9WfZhwTjO9auU/DDc8DHw5gmj CQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3uk8yd5rqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Nov 2023 13:09:58 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASD0uB9027071;
+	Tue, 28 Nov 2023 13:09:57 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uk7cd34ne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Nov 2023 13:09:57 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3ASD9vau005694;
+	Tue, 28 Nov 2023 13:09:57 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3uk7cd34m3-1;
+	Tue, 28 Nov 2023 13:09:57 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] EDAC/sysfs: Fix calling kobject_put() without kobj initialization
+Date: Tue, 28 Nov 2023 05:09:52 -0800
+Message-ID: <20231128130952.3372794-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-28_14,2023-11-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311280105
+X-Proofpoint-ORIG-GUID: OjPUr0MfaKZ5C1yf0Hi4U5w1zAH6OmQ9
+X-Proofpoint-GUID: OjPUr0MfaKZ5C1yf0Hi4U5w1zAH6OmQ9
 
-On Fri, 24 Nov 2023 16:39:17 +0000, Colin Ian King wrote:
-> There are a couple of spelling mistakes in literal strings in the
-> stid_fmts array. Fix these.
-> 
-> 
+In edac_pci_main_kobj_setup() when dev_root is NULL,
+kobject_init_and_add() is not called.
 
-Applied to drm/drm-misc (drm-misc-next).
+        if (err) { // err = -ENODEV;
+                edac_dbg(1, "Failed to register '.../edac/pci'\n");
+                goto kobject_init_and_add_fail; // call to kobject_put()
+        }
 
-Thanks!
-Maxime
+This will cause a runtime warning in kobject_put() if the above happens.
+Warning:
+"kobject: '%s' (%p): is not initialized, yet kobject_put() is being called."
+
+Fix the error handling to avoid the above possible situation.
+
+Fixes: cb4a0bec0bb9 ("EDAC/sysfs: move to use bus_get_dev_root()")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with Smatch and only compile tested.
+---
+ drivers/edac/edac_pci_sysfs.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/edac/edac_pci_sysfs.c b/drivers/edac/edac_pci_sysfs.c
+index 901d4cd3ca38..71a0d4b9c2cf 100644
+--- a/drivers/edac/edac_pci_sysfs.c
++++ b/drivers/edac/edac_pci_sysfs.c
+@@ -370,12 +370,14 @@ static int edac_pci_main_kobj_setup(void)
+ 
+ 	/* Instanstiate the pci object */
+ 	dev_root = bus_get_dev_root(edac_subsys);
+-	if (dev_root) {
+-		err = kobject_init_and_add(edac_pci_top_main_kobj,
+-					   &ktype_edac_pci_main_kobj,
+-					   &dev_root->kobj, "pci");
+-		put_device(dev_root);
+-	}
++	if (!dev_root)
++		goto kzalloc_fail;
++
++	err = kobject_init_and_add(edac_pci_top_main_kobj,
++				   &ktype_edac_pci_main_kobj,
++				   &dev_root->kobj, "pci");
++	put_device(dev_root);
++
+ 	if (err) {
+ 		edac_dbg(1, "Failed to register '.../edac/pci'\n");
+ 		goto kobject_init_and_add_fail;
+-- 
+2.39.3
 
