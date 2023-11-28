@@ -1,101 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A745C07A;
-	Tue, 28 Nov 2023 15:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEoh+vW0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A308C433C7;
-	Tue, 28 Nov 2023 15:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701184353;
-	bh=EreEuo3ByevFdxyj2xZ343mwDCOQFDjI9HUYNeB8qMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZEoh+vW0OQftZ9iSM+pSRAtdLZ0zQ9uW00oeELJA6Y7FXtS9IFsTAMfDp1e8MqDMm
-	 SrvZogELxuM10C8TdtH40z3Syt8/4hvtAqMY8M4S5hXbFUQh70GveTisFE361PR5ef
-	 9LyW9XZD3lle+hXXX2BOLP9/NdtjvmiMUgisVwbQ5xcwxMygeeHkRZ6QBM5EHwAGFv
-	 Hd034FjlzqIzlXhYzThgIT4KBpDpLWJa8fmO83/8gxrz21ctQ7XdaTFVa+00p/eZAb
-	 BsjBOgdTwEjcIpORqR+G0wtCwZ4cEzYM32eqYzeItQDoRyveZO3vfzuKK8fhrj1OBr
-	 WHHZZI5RpX61g==
-Date: Tue, 28 Nov 2023 16:12:31 +0100
-From: Maxime Ripard <mripard@kernel.org>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="waN+1Sxk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UmnB1fv2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4F4A0;
+	Tue, 28 Nov 2023 08:00:05 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FD6E21982;
+	Tue, 28 Nov 2023 16:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1701187204;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WP/XoFyHTFaJBnWFQyEgHYvMVQmUgOB2x/5RAdzmulI=;
+	b=waN+1SxkH3mS/26f0AFEWeXwKDgpGsSQSD8C6wHlOQyXWKjzQxl4PtPcHw9H7U73hCkJey
+	QwSRuO67dcku+ONBNM7HCkX5feP7qvXL6jeGv6ZZB4LVJu+HSOLv7HOQicWia4n9HR/Kuy
+	6EU2uuNfNnOkr48mNDBXvepQZUxxrlw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1701187204;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WP/XoFyHTFaJBnWFQyEgHYvMVQmUgOB2x/5RAdzmulI=;
+	b=UmnB1fv2aJPvxd4gcFAHAbKgeCflBXREiQkNV522VftNI6SWCqIwNFdpwNV9vZKXwTJlDx
+	MJJbsNYyeBAXNOCw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 3A29D133B5;
+	Tue, 28 Nov 2023 16:00:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id XMajDYQOZmUbUAAAn2gu4w
+	(envelope-from <dsterba@suse.cz>); Tue, 28 Nov 2023 16:00:04 +0000
+Date: Tue, 28 Nov 2023 16:52:51 +0100
+From: David Sterba <dsterba@suse.cz>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Kees Cook <keescook@chromium.org>, Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Arthur Grillo <arthurgrillo@riseup.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, kernel-janitors@vger.kernel.org, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, kv-team <kv-team@linaro.org>
-Subject: Re: [RFC] drm/tests: annotate intentional stack trace in
- drm_test_rect_calc_hscale()
-Message-ID: <pqaahxdy4lk3kof3z6p5balhkjb7zkcodfbvofoxpuwuspmu77@4b2zkf3odalp>
-References: <02546e59-1afe-4b08-ba81-d94f3b691c9a@moroto.mountain>
- <CA+G9fYuA643RHHpPnz9Ww7rr3zV5a0y=7_uFcybBSL=QP_sQvQ@mail.gmail.com>
- <7b58926a-a7c3-4ad0-b8a3-56baf36939ca@kadam.mountain>
- <s4blvjs4ipcqdzodmgsbvgegqh2kxgdnoerpwthvc57hpsulu5@gb2kh7vbv7nq>
- <8489c4db-6639-43f5-b6c4-8598652cdce6@suswa.mountain>
+Cc: Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] btrfs: return negative -EFAULT instead of positive
+Message-ID: <20231128155251.GI18929@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <00bb6e21-484b-47d6-82fa-85c787d71a86@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f3ytx2rrawo75fs2"
-Content-Disposition: inline
-In-Reply-To: <8489c4db-6639-43f5-b6c4-8598652cdce6@suswa.mountain>
-
-
---f3ytx2rrawo75fs2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <00bb6e21-484b-47d6-82fa-85c787d71a86@moroto.mountain>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.59 / 50.00];
+	 ARC_NA(0.00)[];
+	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 REPLYTO_ADDR_EQ_FROM(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-2.59)[98.16%]
+X-Spam-Score: -3.59
 
-Hi Dan,
+On Tue, Nov 28, 2023 at 05:40:33PM +0300, Dan Carpenter wrote:
+> There is a typo here and the '-' character was accidentally left off.
+> 
+> Fixes: 2dc8b96809b2 ("btrfs: allow extent buffer helpers to skip cross-page handling")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On Wed, Nov 15, 2023 at 05:42:17PM -0500, Dan Carpenter wrote:
-> On Mon, Nov 06, 2023 at 02:58:12PM +0100, mripard@kernel.org wrote:
-> > > But a similar thing is happening here where we have so many bogus
-> > > warnings that we missed a real bug.
-> >=20
-> > IIRC, there was a similar discussion for lockdep issues. IMO, any
-> > (unintended) warning should trigger a test failure.
-> >=20
-> > I guess that would require adding some intrumentation to __WARN somehow,
-> > and also allowing tests to check whether a warning had been generated
-> > during their execution for tests that want to trigger one.
->=20
-> I think this is a good idea.  I was looking at how lockdep prints
-> warnings (see print_circular_bug_header()).  It doesn't use WARN() it
-> prints a bunch of pr_warn() statements and then a stack trace.  We would
-> have to have a increment the counter manually in that situation.
->=20
-> I'm writing a script to parse a dmesg and collect Oopses.
-
-Do we need to? I was only expecting a boolean to be set or kunit_fail to
-be called in the WARN/lockdep warning code path if a test is running?
-
-> So now I know to look for WARN(), lockdep, and KASAN. What other bugs
-> formats do we have? Probably someone like the syzbot devs have already
-> has written a script like this?
-
-I think you got most of it covered, I can't think of any other source of
-failure right now.
-
-Maxime
-
---f3ytx2rrawo75fs2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZWYDXgAKCRDj7w1vZxhR
-xe+PAQCPKkPfBpRK1+qczjNj3c+A6ZhufldsIRpm3uIfqbui9wD+Jyk05rhSakGj
-+srHLHnrqrGTmcbIXi4CaSax0l0TDQg=
-=YA0J
------END PGP SIGNATURE-----
-
---f3ytx2rrawo75fs2--
+Folded to the patch, thanks.
