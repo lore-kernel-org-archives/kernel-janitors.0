@@ -1,79 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF557198D;
-	Tue, 28 Nov 2023 18:11:03 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by ex01.ufhost.com (Postfix) with ESMTP id 8EF8924E29A;
-	Wed, 29 Nov 2023 10:10:55 +0800 (CST)
-Received: from EXMBX162.cuchost.com (172.16.6.72) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 29 Nov
- 2023 10:10:54 +0800
-Received: from [192.168.125.107] (113.72.145.176) by EXMBX162.cuchost.com
- (172.16.6.72) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 29 Nov
- 2023 10:10:53 +0800
-Message-ID: <cc617644-029e-4671-8231-a2b01627a08f@starfivetech.com>
-Date: Wed, 29 Nov 2023 10:10:50 +0800
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451F5681;
+	Wed, 29 Nov 2023 04:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K74Boapr"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7A3DFC433C7;
+	Wed, 29 Nov 2023 04:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701231626;
+	bh=Ou+HbCwAZNtVyvKkQu4UL6dQP8XxTciGlMesA6B9BXY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=K74Boapr6wb4wUK0yCVf6kY5Y/SXbccHILIdgR70Ap/5iTb07WfmKzpldc8CtTj0r
+	 GFZ7GzIpRCBRU00qsTXg7toK6QQoDDeSGMeqRsdRF/CAbWkM5yZ/Ill1o+qIeL/uyN
+	 ZloT7qjJqRz9cBeXp1fqUiUrRUhNIwRYMoLdtNejeVq4FZIRkpRGPMZO/NDL4Q6Gcf
+	 jwgTmkhXUKQxsrCT2skD2ZqGPzzouuq9ZkGQjqKiJyOESEUUREMo5AwduAtlKLjhyW
+	 p7x9P4ztoQqoCsWB1r5CB18ORFtjLtmp8DnJCF0YBRv5mT7T0vTO6/1/+CEoIRTKxH
+	 8l0K7528PgIlg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5EDEADFAA81;
+	Wed, 29 Nov 2023 04:20:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: staging: starfive: camss: fix off by one in
- isp_enum_mbus_code()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Jack Zhu
-	<jack.zhu@starfivetech.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <7d222638-2d19-466d-8dd4-9e1ceb1d46f3@moroto.mountain>
-Content-Language: en-US
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-In-Reply-To: <7d222638-2d19-466d-8dd4-9e1ceb1d46f3@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX162.cuchost.com
- (172.16.6.72)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] ice: fix error code in ice_eswitch_attach()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <170123162638.8478.17403370132597128071.git-patchwork-notify@kernel.org>
+Date: Wed, 29 Nov 2023 04:20:26 +0000
+References: <e0349ee5-76e6-4ff4-812f-4aa0d3f76ae7@moroto.mountain>
+In-Reply-To: <e0349ee5-76e6-4ff4-812f-4aa0d3f76ae7@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: michal.swiatkowski@linux.intel.com, jesse.brandeburg@intel.com,
+ anthony.l.nguyen@intel.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, piotr.raczynski@intel.com,
+ wojciech.drewek@intel.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2023/11/28 22:40, Dan Carpenter wrote:
-> These > comparisons should be >=.  The formats->fmts[] array is either
-> a pointer to isp_formats_sink[] or isp_formats_source[] respectively.
+On Mon, 27 Nov 2023 15:59:17 +0300 you wrote:
+> Set the "err" variable on this error path.
 > 
-> Fixes: e57854628f58 ("media: staging: media: starfive: camss: Add ISP driver")
+> Fixes: fff292b47ac1 ("ice: add VF representors one by one")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-
 > ---
->  drivers/staging/media/starfive/camss/stf-isp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/starfive/camss/stf-isp.c b/drivers/staging/media/starfive/camss/stf-isp.c
-> index 893dbd8cddc8..98d61d71c31b 100644
-> --- a/drivers/staging/media/starfive/camss/stf-isp.c
-> +++ b/drivers/staging/media/starfive/camss/stf-isp.c
-> @@ -120,7 +120,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
->  	const struct stf_isp_format_table *formats;
->  
->  	if (code->pad == STF_ISP_PAD_SINK) {
-> -		if (code->index > ARRAY_SIZE(isp_formats_sink))
-> +		if (code->index >= ARRAY_SIZE(isp_formats_sink))
->  			return -EINVAL;
->  
->  		formats = &isp_dev->formats[SINK_FORMATS_INDEX];
-> @@ -128,7 +128,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
->  	} else {
->  		struct v4l2_mbus_framefmt *sink_fmt;
->  
-> -		if (code->index > ARRAY_SIZE(isp_formats_source))
-> +		if (code->index >= ARRAY_SIZE(isp_formats_source))
->  			return -EINVAL;
->  
->  		sink_fmt = v4l2_subdev_state_get_format(state,
+>  drivers/net/ethernet/intel/ice/ice_eswitch.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [net-next] ice: fix error code in ice_eswitch_attach()
+    https://git.kernel.org/netdev/net-next/c/1bc9d12e1c92
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
