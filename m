@@ -1,85 +1,73 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69FE13ADC;
+	Wed, 29 Nov 2023 18:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2xIBMS5"
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AEF4BF;
-	Wed, 29 Nov 2023 08:03:18 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-a013d22effcso935082166b.2;
-        Wed, 29 Nov 2023 08:03:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701273797; x=1701878597; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p0ai8ILE74HcwdOUqvcTpl9qjFRf+Vf4A3Z9OcifiLY=;
-        b=d2xIBMS50Dd47pj3uwPWU91qG6MkJQgowYrsyTgYmhTWzpZgQCBgvz85++iaDiR1/Q
-         RDf534I25mMPqyrzUUyl0yd5SORtKnNPk7nrvOWU/aUvtmERIKmoM902sTuvaZKfdfP2
-         0WOdxiVZ7BrQ0HliVNInZ6e1qr5bBxaM0/nNlGVa92mzq1srmoKMsqW1UNwLyBLVesw3
-         E3YWgvI6uL9woY9DtfBLo8ypfHzQWs4F4QClLRhTUlpJvRQxxQPd5TBzxXcAcXv/RqD1
-         iKnLdo6MEREN0eTCi6y0SOEn2tHHlwjzlHkTsRjMcT8l7zZFRxKLbsMZJbY22Yz3yMZG
-         UUXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701273797; x=1701878597;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p0ai8ILE74HcwdOUqvcTpl9qjFRf+Vf4A3Z9OcifiLY=;
-        b=sVeiOFA5V4VKw9wjAwM/MTJ/9C0geSltvZ6hd9wu56WtMFhvn3wZrX+Jxw73YK5RzR
-         DnpbkHHbnJ4mLROmCs6Pg6FO08Uc98R970ycyeXDHIbzirJWFwIr8CmzJvtRFL81nMUf
-         9lh2IqHPyV6NRrUaR+0YuwUWs4tvVIz3BFY4gxF811gwbaXAEULdfy6BcMAmphHh7QEY
-         toofiJjftJ8BjDB/bMMZ+foKVLov/5vxJzVBn9bu2AJL2nWYZ3BDkqwxafGVsmK2Kos/
-         dY55CMRbFcigAbRk3GWwdxp9+UjttLJ+WJMTGR+n3Jj6PqSIU3e2WyuXYYX1MIxmJLXA
-         NQyQ==
-X-Gm-Message-State: AOJu0YxRdvY3MbVY8SBLrJk6whHA+tEhSyUOQt9mapCkv7Ga6EmvqG09
-	IcIhRTx572BZck4pR2Z7KRC8y0HuvxI=
-X-Google-Smtp-Source: AGHT+IFZVdYm5uGTUWgukbhvvqVrPFRUit9xzFKUvmv5eU26LhTvANp9htEXiGH1vrlI6oIoceMNRA==
-X-Received: by 2002:a17:906:5302:b0:a0c:5bf7:c675 with SMTP id h2-20020a170906530200b00a0c5bf7c675mr8264434ejo.40.1701273796612;
-        Wed, 29 Nov 2023 08:03:16 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:2564:b975:71ee:2d88])
-        by smtp.gmail.com with ESMTPSA id oq14-20020a170906cc8e00b009fdcc65d720sm8023872ejb.72.2023.11.29.08.03.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 08:03:15 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] media: MAINTAINERS: correct file entry in WAVE5 VPU CODEC DRIVER
-Date: Wed, 29 Nov 2023 17:03:13 +0100
-Message-Id: <20231129160313.12093-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSNOqpD4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C33FC433C9;
+	Wed, 29 Nov 2023 18:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701283984;
+	bh=+VD6UkfC+iyI0rWTVDs/Yc0qsEfofTjJTPu75VnwKEo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gSNOqpD41Bn6l1qlcftUsRAsAHI080qqo8imWX7vdQMoItgb2h0kq5LgXBN51hr9Q
+	 oLtwSPXoPuTN2euP4eLtQoDRPn93Vgjbsqaw81IegJbC3HJWcZOQyJuwKkkHV3PN0h
+	 AeCjsBA09oh91XBwcHXBrpJVTIEeyoIQ6reKOA5z+3o5dBqKF9cRP9p0Azu0CQh24A
+	 bQO7uDjv3t197dENpiD5s3q4fEQHvQKtDKyob3YOUsqHl5Ew2O7vkMlu2TQj8rQNwA
+	 zEGj5OvFXQ/xISNDwK7jcyTc7liYIbGAqfYyN9AaLSkHYdVL3XSnOG+5N3pU7SSaFV
+	 gNATZovnJE6JQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20231129090958.815775-1-colin.i.king@gmail.com>
+References: <20231129090958.815775-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: core: Fix a handful of spelling mistakes.
+Message-Id: <170128398283.290371.17199524750105077840.b4-ty@kernel.org>
+Date: Wed, 29 Nov 2023 18:53:02 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-0438c
 
-Commit 26dde1beb359 ("media: chips-media: wave5: Add wave5 driver to
-maintainers file") adds the MAINTAINERS section WAVE5 VPU CODEC DRIVER
-referring to the 'cnm,wave5.yaml' media devicetree binding, but the file
-actually added in the commit de4b9f7e371a ("dt-bindings: media: wave5: add
-yaml devicetree bindings") is named 'cnm,wave521c.yaml'.
+On Wed, 29 Nov 2023 09:09:58 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message and several
+> spelling mistakes in comments. Fix them.
+> 
+> 
 
-Correct the file entry in WAVE5 VPU CODEC DRIVER.
+Applied to
 
-Fixes: 26dde1beb359 ("media: chips-media: wave5: Add wave5 driver to maintainers file")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8b108946b00d..31baa4bf525b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23485,7 +23485,7 @@ M:	Nas Chung <nas.chung@chipsnmedia.com>
- M:	Jackson Lee <jackson.lee@chipsnmedia.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/media/cnm,wave5.yaml
-+F:	Documentation/devicetree/bindings/media/cnm,wave521c.yaml
- F:	drivers/media/platform/chips-media/wave5/
- 
- WHISKEYCOVE PMIC GPIO DRIVER
--- 
-2.17.1
+Thanks!
+
+[1/1] ASoC: core: Fix a handful of spelling mistakes.
+      commit: e9a92dfc8d4fde6f7adb978fb13d0b0834567cc5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
