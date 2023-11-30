@@ -1,63 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA4A5FEED;
-	Thu, 30 Nov 2023 19:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsquDq4o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0612BC433C7;
-	Thu, 30 Nov 2023 19:22:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701372139;
-	bh=+7y/SoB0oekqe7y/gT33Bcz6gA3T+9Zo09+5P9Q1naY=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=VsquDq4ozGnJM2AsKT3V7db8lUQAoqT0ku4HmN0YvirIuLernk2g6FugwhGB31BNO
-	 RGhvSPM4wZEgJqhm44lXuMQaEY9YDmdKy5B94p2cBC5Sqqz36CQNRxfFJ37s0mcC6k
-	 eYk/07nfaZ0MahKCvz9cbGNJv66QctAShqOvhfeY1O+fCh1AlzVdRkEHiKxM2BueXN
-	 9CZiO7p1eKUseIb2B+NUaN0sHU7c5HOFjtPB/qp4pjfMrgAiS0v/5WNjlM0jfRVkm8
-	 fyubqsRUC1nO8b5v+BYyb2fD56UDZuheA0JjkIbkG7oh/hoFHGktuycO44Q37I/jSc
-	 HiTnyJSpBzIxQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KVIcu+K7"
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38D1172B
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Nov 2023 14:00:14 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-5c19a328797so1117659a12.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Nov 2023 14:00:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1701381614; x=1701986414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F3oJFeliwcGWQRUno3CXq/iefN/z87FyQUWuXF3JGq8=;
+        b=KVIcu+K7OlsXPkwye8g/BYKLJlKr8R+30mNOdPdoXYIea5Z1sRJykikZYdQfMYjaOf
+         u/iJGPPuQPCz1hMizQzgoxlG2mZuqK8MGYj2laJMa3aIOxqqeU05Fiwjl4zM0/ZkQmQi
+         hcEGgFdi224y5/1uzm9Vk3cMSiywhUOJh5UX0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701381614; x=1701986414;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F3oJFeliwcGWQRUno3CXq/iefN/z87FyQUWuXF3JGq8=;
+        b=HWeNXlKCpSYihTRss/qHrj7TOutFAX2kChv1BHehnZDNFnlcsKku6EIhKJkIheFMYg
+         bP5TfQs2MWvb1KKSIy1b97ZCVCg20kb0y6Lxs6Z+xWynuj7CKz9RK5Cu/z58aXZc2PvF
+         M6H1DKyYQmvt1fn3DOeOufbw80hfUAGigf3FET+Vn5mfUkdHymz3qaSR/7UNF5A+PMSm
+         1QI168YrYEVeWqFLNKkXOGdofTUNvtzbb7nV0/WTQvHeWgRgs3V98iTLAsdzD++WiL3o
+         fMqutWXBwVroy0IYdQPskILmqZIKwtvxXiYjwAg6qjQ6AIqPfnxzu+m45cWjb7nbJmGR
+         /kYQ==
+X-Gm-Message-State: AOJu0YyJiJcNDQ4embSG69ph+W9hiuloMwspLErwcUmbw3R8RlDi831E
+	BuTu1SoPhQoYUThxRmuDcI8wLg==
+X-Google-Smtp-Source: AGHT+IHXj/e2zptmeZA5+AQNZP+QCtXebes1TXUPHkf0woeufQzAqe9Ylzhwe1YtCnXulknD2ks53A==
+X-Received: by 2002:a05:6a20:e123:b0:18b:fde7:71ac with SMTP id kr35-20020a056a20e12300b0018bfde771acmr23958783pzb.60.1701381614459;
+        Thu, 30 Nov 2023 14:00:14 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d17-20020aa78691000000b00690ca4356f1sm1699814pfo.198.2023.11.30.14.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Nov 2023 14:00:14 -0800 (PST)
+From: Kees Cook <keescook@chromium.org>
+To: Bryan Tan <bryantan@vmware.com>,
+	Vishnu Dasa <vdasa@vmware.com>,
+	VMware PV-Drivers Reviewers <pv-drivers@vmware.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Tom Rix <trix@redhat.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] VMCI: Annotate struct vmci_handle_arr with __counted_by
+Date: Thu, 30 Nov 2023 14:00:09 -0800
+Message-Id: <170138160625.3648908.9493256732138039199.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <56bef519d982218176b59bbba64a3a308d8733d5.1696689091.git.christophe.jaillet@wanadoo.fr>
+References: <56bef519d982218176b59bbba64a3a308d8733d5.1696689091.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [wireless-next,v3,1/2] wifi: rtlwifi: rtl8821ae: phy: remove some
- useless code
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20231127013511.26694-1-suhui@nfschina.com>
-References: <20231127013511.26694-1-suhui@nfschina.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: pkshih@realtek.com, nathan@kernel.org, ndesaulniers@google.com,
- trix@redhat.com, Su Hui <suhui@nfschina.com>, lizetao1@huawei.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170137213526.1963309.2251579800524493199.kvalo@kernel.org>
-Date: Thu, 30 Nov 2023 19:22:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Su Hui <suhui@nfschina.com> wrote:
-
-> Clang static checker warns:
+On Sat, 07 Oct 2023 16:32:34 +0200, Christophe JAILLET wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
 > 
-> Value stored to 'v1' is never read [deadcode.DeadStores]
-> Value stored to 'channel' is never read [deadcode.DeadStores]
 > 
-> Remove them to save some place.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> [...]
 
-2 patches applied to wireless-next.git, thanks.
+Applied to for-next/hardening, thanks!
 
-cda37445718d wifi: rtlwifi: rtl8821ae: phy: remove some useless code
-bc8263083af6 wifi: rtlwifi: rtl8821ae: phy: fix an undefined bitwise shift behavior
+[1/1] VMCI: Annotate struct vmci_handle_arr with __counted_by
+      https://git.kernel.org/kees/c/81c643edd8bd
+
+Take care,
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20231127013511.26694-1-suhui@nfschina.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Kees Cook
 
