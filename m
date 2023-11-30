@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D25FEED;
-	Thu, 30 Nov 2023 19:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA4A5FEED;
+	Thu, 30 Nov 2023 19:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evZYHgvK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A20C433C7;
-	Thu, 30 Nov 2023 19:21:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsquDq4o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0612BC433C7;
+	Thu, 30 Nov 2023 19:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701372062;
-	bh=/nNbmxvYk4PeLj0IKIcflNHFfHDHygDe5UG7/BtZX4I=;
+	s=k20201202; t=1701372139;
+	bh=+7y/SoB0oekqe7y/gT33Bcz6gA3T+9Zo09+5P9Q1naY=;
 	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=evZYHgvKxtZnJ6tt6nMpok91Q3GDWFWPRI9wFkU6HApfzdy/66JaQUjWZeqJfa8ak
-	 qA6ariFYlPv/LzTjFU7LXv9liNM31hJmSYDZqmi5O6uXUa/le4IHlJFv5nFWS3MZcU
-	 x3okcbNxvsSjX+cA9FlYfsfnbRcADNPj6Lf9uKta6BIE4JHnGTBZOu90t4l4xlYFT0
-	 Nulb8Bzil/jIuUEKcT3HGyXVmh8Eq9s+mrYbrGUDIPjZO4Bf/A7Uhzvw+JntIbqD4h
-	 pMu7r6Xf+J1UehZeJ6JiAX7rGy5VEAWcUU3q+gHJhbgg05ChHM9lcUUvbB1/t4tXFr
-	 6RHCyJmwDwV/g==
+	b=VsquDq4ozGnJM2AsKT3V7db8lUQAoqT0ku4HmN0YvirIuLernk2g6FugwhGB31BNO
+	 RGhvSPM4wZEgJqhm44lXuMQaEY9YDmdKy5B94p2cBC5Sqqz36CQNRxfFJ37s0mcC6k
+	 eYk/07nfaZ0MahKCvz9cbGNJv66QctAShqOvhfeY1O+fCh1AlzVdRkEHiKxM2BueXN
+	 9CZiO7p1eKUseIb2B+NUaN0sHU7c5HOFjtPB/qp4pjfMrgAiS0v/5WNjlM0jfRVkm8
+	 fyubqsRUC1nO8b5v+BYyb2fD56UDZuheA0JjkIbkG7oh/hoFHGktuycO44Q37I/jSc
+	 HiTnyJSpBzIxQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -25,43 +25,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: libertas: fix config name in dependency for SDIO
- support
+Subject: Re: [wireless-next,v3,1/2] wifi: rtlwifi: rtl8821ae: phy: remove some
+ useless code
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20231122083047.12774-1-lukas.bulwahn@gmail.com>
-References: <20231122083047.12774-1-lukas.bulwahn@gmail.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, libertas-dev@lists.infradead.org,
- linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+In-Reply-To: <20231127013511.26694-1-suhui@nfschina.com>
+References: <20231127013511.26694-1-suhui@nfschina.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: pkshih@realtek.com, nathan@kernel.org, ndesaulniers@google.com,
+ trix@redhat.com, Su Hui <suhui@nfschina.com>, lizetao1@huawei.com,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170137205913.1963309.7623759233878146525.kvalo@kernel.org>
-Date: Thu, 30 Nov 2023 19:21:01 +0000 (UTC)
+Message-ID: <170137213526.1963309.2251579800524493199.kvalo@kernel.org>
+Date: Thu, 30 Nov 2023 19:22:16 +0000 (UTC)
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+Su Hui <suhui@nfschina.com> wrote:
 
-> Commit 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support") reworks
-> the dependencies for config LIBERTAS, and adds alternative dependencies for
-> USB, SDIO and SPI.
+> Clang static checker warns:
 > 
-> The config option SDIO however does not exist in the kernel tree. It was
-> probably intended to refer to the config option MMC, which represents
-> "MMC/SD/SDIO card support" and is used as dependency by various other
-> drivers that use SDIO.
+> Value stored to 'v1' is never read [deadcode.DeadStores]
+> Value stored to 'channel' is never read [deadcode.DeadStores]
 > 
-> Fix the dependency to the config option MMC for declaring the requirement
-> on provision of SDIO support.
+> Remove them to save some place.
 > 
-> Fixes: 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Patch applied to wireless-next.git, thanks.
+2 patches applied to wireless-next.git, thanks.
 
-18814f723f92 wifi: libertas: fix config name in dependency for SDIO support
+cda37445718d wifi: rtlwifi: rtl8821ae: phy: remove some useless code
+bc8263083af6 wifi: rtlwifi: rtl8821ae: phy: fix an undefined bitwise shift behavior
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20231122083047.12774-1-lukas.bulwahn@gmail.com/
+https://patchwork.kernel.org/project/linux-wireless/patch/20231127013511.26694-1-suhui@nfschina.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
