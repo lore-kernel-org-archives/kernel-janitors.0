@@ -1,110 +1,612 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pxJZU+83"
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 129A010EA
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Nov 2023 23:27:21 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c9b5e50c1fso8616351fa.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Nov 2023 23:27:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3uu/Y6l"
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2917010FF;
+	Thu, 30 Nov 2023 00:39:20 -0800 (PST)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-6cbc8199a2aso699235b3a.1;
+        Thu, 30 Nov 2023 00:39:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701329239; x=1701934039; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7WLNcsSt42LaGfjZQ98cMh59wBp+UL1asBOR9zkijns=;
-        b=pxJZU+83KLExIo4EmVxqCv8wdgHTuKTa7225bk6VrXC9IIu0WKgfUQ3gvAeWL1jqdj
-         rFWYWksY/yTgjUTaoYhuwDosGUv1IgJQR8/+FxzDHdpDpWr3uDEVmX/7xjUSeUe0jBIG
-         WPzq/STIBN81BIX6ERFOJXLFz4iIbm7NG/8kG9N2fzWNAG/jUyudqO1p9Q064ve0UJQs
-         VUUODqPWM0V9kqERyQswuNGkDOHG310OLZ2kusrCQJKlmDMjCNM/U1NJBn6R+rdytAZ3
-         5te/KyV4rbbgfhBAveiw+hBaBNa1fL2Faffj990MNBh8nDlocer0ikj1XG8haVdd/3GL
-         Lkvg==
+        d=gmail.com; s=20230601; t=1701333559; x=1701938359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=orwfrJWJ5VfdUAsO3z0ZgYwfVFofvmk7ajaKHM7YZCA=;
+        b=M3uu/Y6l6JBoLdH24eH0a3bP8rBQr+XsPYws0JqTHsp9pICqI0KdGIt7/ld5RkbN3/
+         aiyfIk5sRmF6qXheHbqF/CDdLcg6QY55VZSSQ3uO4DKNojLvXcbELDdb1Vv9ZIIG6R2f
+         4kr0nyKhjSnXpcRMGNeZnGfL85xG+R71tFcFp+9OO68BUqkrKKCp+OLSBtcHfydzrxDQ
+         b9bgOxZ0oKD6mhVh6Ykvf+LctnNOY54Oqm7UDydvt4JR0upY9YxdrqujMYgnAmpy8Gd0
+         PZJZY7Dv33sebl7FVT92yhoomC9M3KgFL640LL7jbsaWwR71Z40QrCye8WhgyM6d1Ks/
+         pUxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701329239; x=1701934039;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WLNcsSt42LaGfjZQ98cMh59wBp+UL1asBOR9zkijns=;
-        b=TbOvTxKlxYfrGaQH5RxGsFijn/kjEQUqPgY81fFCXCf9NahUBTcg8f3407LJ27Zhvd
-         JfbOC6KmOdx2n5oSnH7rV8NoWan9gPPyuLc/T8Dne9hnu2jbtOuJ+4Z7V3Tef/pV8Sty
-         7m5iHw7HgXfgLN2AAstRze+aVQcYKCQ2kIZpHSs8XYW/sqLQ2vRpMxWA6nidfcN3vgoK
-         GR94iNlGJ08zWIDO02OhqCWczi0bAk/yfW1R7rbpy1BgnKvWOeF+KDEEIyTedpSx4tZV
-         ccf9C8vHvD6w3/1BCtPmew4SqYix76gjs8lxEh5eIftnbbElNvKJ/azhf8vawomCXNOw
-         VZeg==
-X-Gm-Message-State: AOJu0Ywh58k+1wQ4Hr2M0VeNBa8oXhqAJkzVIvI8t3OwdQ83ozL2b6ya
-	o32Ipg7wmbYJP41SvTEBXTflsw==
-X-Google-Smtp-Source: AGHT+IHAz8JwF2cwklTl4K6IgQx7ErykCE5QzPE31FEM/rixp/mIlIv5wVKVj+dAewFSOm0L2zbr/g==
-X-Received: by 2002:a2e:8606:0:b0:2c9:af18:2e8c with SMTP id a6-20020a2e8606000000b002c9af182e8cmr5027808lji.10.1701329239279;
-        Wed, 29 Nov 2023 23:27:19 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n10-20020a05600c4f8a00b004053e9276easm4564118wmq.32.2023.11.29.23.27.18
+        d=1e100.net; s=20230601; t=1701333559; x=1701938359;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=orwfrJWJ5VfdUAsO3z0ZgYwfVFofvmk7ajaKHM7YZCA=;
+        b=sTTLBpfhO8YU20jjap0RdEcq1fgyHU4MhelfFY/2azjb0Pynej4CAoQZF3Uv1pbPh+
+         GDh46i0LuHbAsRzYZyVjckoVXFRuKJukWn3y6k4279WK0CXEe3U1iKF3n1IvSmDBbuWx
+         DGRlxhlVjVreiNYeENOpVkNqX2CSAaC8Tsfroin+C8vZdMJYrqbvKV89CalrURw1pKVv
+         EXw1s2r//YSKAMuMjZ3vJW+XHx5rjKfK69/gjb3qjKGq6F8a8NrYQ6+hUqFLAIcchFaf
+         nNKFs53wrAlbKyrfy1jwpqrBWFolE5vtsiqeddOYZjM0xA9/AF5lQUPZ74BM8xoafey+
+         6mug==
+X-Gm-Message-State: AOJu0Ywnw7gsHtP8MldSBLWDAbwiUoiVBheBIivXXTIcIp0Puk1OxckT
+	6eQIXlCk9LmDF4Kt61f2/Jo=
+X-Google-Smtp-Source: AGHT+IGnx4GebGczzxqLfvz4W3m7DubHdfc7yYBcNQCY0aAV12HS+QHHf13WmPH2EE+ua3EuQqNAtg==
+X-Received: by 2002:a05:6a00:891:b0:6c4:d5ee:c6 with SMTP id q17-20020a056a00089100b006c4d5ee00c6mr25555977pfj.1.1701333559360;
+        Thu, 30 Nov 2023 00:39:19 -0800 (PST)
+Received: from archie.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id du15-20020a056a002b4f00b006cbef269712sm684615pfb.9.2023.11.30.00.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 23:27:19 -0800 (PST)
-Date: Thu, 30 Nov 2023 10:27:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sarah Walker <sarah.walker@imgtec.com>
-Cc: Frank Binns <frank.binns@imgtec.com>,
-	Donald Robson <donald.robson@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/imagination: fix off by one in pvr_vm_mips_init() error
- handling
-Message-ID: <a2d3210b-290f-4397-9c3e-efdcca94d8ac@moroto.mountain>
+        Thu, 30 Nov 2023 00:39:18 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 18C5910211B8A; Thu, 30 Nov 2023 15:39:13 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Media Subsystem <linux-media@vger.kernel.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Antti Palosaari <crope@iki.fi>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] MAINTAINERS: Drop Antti Palosaari
+Date: Thu, 30 Nov 2023 15:38:48 +0700
+Message-ID: <20231130083848.5396-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+X-Developer-Signature: v=1; a=openpgp-sha256; l=16480; i=bagasdotme@gmail.com; h=from:subject; bh=vAl7V+Oy4lLHXE3AQsJJGx3hI0Xp8V1ByVt3qAse94k=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDKkZHgds9X8v3Ppp8cN0y0erWvkdu+yUOlIPB7+ZuXbem kxbtzK2jlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEyEbQvDX4nu1vyVzhor7qib t3tfclOrizvs8UtjyYJOc77176/9VWT4K/eJR9uc+YLpt6YDU00eVrD9+NEYbGxzRChGKSy9On8 OCwA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-If the call to vmap() fails the "page_nr" is one element beyond the end
-of the mips_data->pt_dma_addr[] and mips_data->pt_pages[] arrays.
+He is currently inactive (last message from him is two years ago [1]).
+His media tree [2] is also dormant (latest activity is 6 years ago),
+yet his site is still online [3].
 
-The way that this is traditionally written is that we clean up the
-partial loop iteration before the goto and then we can say
-while (--i >= 0).  At that point we know that all the elements thus
-far are initialized so we don't need to have NULL checks.
+Drop him from MAINTAINERS and add CREDITS entry for him. We thank him
+for maintaining various DVB drivers.
 
-Fixes: 927f3e0253c1 ("drm/imagination: Implement MIPS firmware processor and MMU support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+[1]: https://lore.kernel.org/all/660772b3-0597-02db-ed94-c6a9be04e8e8@iki.fi/
+[2]: https://git.linuxtv.org/anttip/media_tree.git/
+[3]: https://palosaari.fi/linux/
+
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/gpu/drm/imagination/pvr_vm_mips.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Essentially no change from RFC [1]. However, since there is no response on
+RFC (including from Antti), let's drop him so that Cc: lists can be
+a bit shorter.
 
-diff --git a/drivers/gpu/drm/imagination/pvr_vm_mips.c b/drivers/gpu/drm/imagination/pvr_vm_mips.c
-index 7268cf6e630b..2bc7181a4c3e 100644
---- a/drivers/gpu/drm/imagination/pvr_vm_mips.c
-+++ b/drivers/gpu/drm/imagination/pvr_vm_mips.c
-@@ -57,6 +57,7 @@ pvr_vm_mips_init(struct pvr_device *pvr_dev)
- 							       PAGE_SIZE, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, mips_data->pt_dma_addr[page_nr])) {
- 			err = -ENOMEM;
-+			__free_page(mips_data->pt_pages[page_nr]);
- 			goto err_free_pages;
- 		}
- 	}
-@@ -79,13 +80,11 @@ pvr_vm_mips_init(struct pvr_device *pvr_dev)
- 	return 0;
+This patch is based on media_stage tree (master branch).
+
+[1]: https://lore.kernel.org/linux-media/20231122115358.36142-1-bagasdotme@gmail.com/
+
+ CREDITS     |   8 +++
+ MAINTAINERS | 179 +++++++++++-----------------------------------------
+ 2 files changed, 45 insertions(+), 142 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index f33a33fd237170..81845c39e3cf37 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -2944,6 +2944,14 @@ D: IPX development and support
+ N: Venkatesh Pallipadi (Venki)
+ D: x86/HPET
  
- err_free_pages:
--	for (; page_nr >= 0; page_nr--) {
--		if (mips_data->pt_dma_addr[page_nr])
--			dma_unmap_page(from_pvr_device(pvr_dev)->dev,
--				       mips_data->pt_dma_addr[page_nr], PAGE_SIZE, DMA_TO_DEVICE);
-+	while (--page_nr >= 0) {
-+		dma_unmap_page(from_pvr_device(pvr_dev)->dev,
-+			       mips_data->pt_dma_addr[page_nr], PAGE_SIZE, DMA_TO_DEVICE);
++N: Antti Palosaari
++E: crope@iki.fi
++D: Various DVB drivers
++W: https://palosaari.fi/linux/
++S: Yliopistokatu 1 D 513
++S: FI-90570 Oulu
++S: FINLAND
++
+ N: Kyungmin Park
+ E: kyungmin.park@samsung.com
+ D: Samsung S5Pv210 and Exynos4210 mobile platforms
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 10a981abd6ec98..d0ff3abddd2098 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -171,13 +171,10 @@ S:	Supported
+ F:	drivers/soc/fujitsu/a64fx-diag.c
  
--		if (mips_data->pt_pages[page_nr])
--			__free_page(mips_data->pt_pages[page_nr]);
-+		__free_page(mips_data->pt_pages[page_nr]);
- 	}
+ A8293 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/a8293*
  
- 	return err;
+ AACRAID SCSI RAID DRIVER
+@@ -576,23 +573,17 @@ F:	drivers/iio/accel/adxl372_i2c.c
+ F:	drivers/iio/accel/adxl372_spi.c
+ 
+ AF9013 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/af9013*
+ 
+ AF9033 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/af9033*
+ 
+ AFFS FILE SYSTEM
+@@ -650,13 +641,10 @@ F:	fs/aio.c
+ F:	include/linux/*aio*.h
+ 
+ AIRSPY MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/airspy/
+ 
+ ALACRITECH GIGABIT ETHERNET DRIVER
+@@ -5605,13 +5593,10 @@ F:	Documentation/driver-api/media/drivers/cx88*
+ F:	drivers/media/pci/cx88/
+ 
+ CXD2820R MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/cxd2820r*
+ 
+ CXGB3 ETHERNET DRIVER (CXGB3)
+@@ -5724,13 +5709,10 @@ F:	Documentation/devicetree/bindings/input/cypress-sf.yaml
+ F:	drivers/input/keyboard/cypress-sf.c
+ 
+ CYPRESS_FIRMWARE MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/common/cypress_firmware*
+ 
+ CYTTSP TOUCHSCREEN DRIVER
+@@ -7320,53 +7302,38 @@ T:	git git://linuxtv.org/media_tree.git
+ F:	drivers/media/pci/dt3155/
+ 
+ DVB_USB_AF9015 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/af9015*
+ 
+ DVB_USB_AF9035 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/af9035*
+ 
+ DVB_USB_ANYSEE MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/anysee*
+ 
+ DVB_USB_AU6610 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/au6610*
+ 
+ DVB_USB_CE6230 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/ce6230*
+ 
+ DVB_USB_CXUSB MEDIA DRIVER
+@@ -7380,22 +7347,17 @@ T:	git git://linuxtv.org/media_tree.git
+ F:	drivers/media/usb/dvb-usb/cxusb*
+ 
+ DVB_USB_EC168 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/ec168*
+ 
+ DVB_USB_GL861 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/gl861*
+ 
+ DVB_USB_MXL111SF MEDIA DRIVER
+@@ -7409,23 +7371,18 @@ T:	git git://linuxtv.org/mkrufky/mxl111sf.git
+ F:	drivers/media/usb/dvb-usb-v2/mxl111sf*
+ 
+ DVB_USB_RTL28XXU MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/rtl28xxu*
+ 
+ DVB_USB_V2 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+ W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/dvb-usb-v2/dvb_usb*
+ F:	drivers/media/usb/dvb-usb-v2/usb_urb.c
+ 
+@@ -7467,13 +7424,10 @@ F:	Documentation/devicetree/bindings/input/e3x0-button.txt
+ F:	drivers/input/misc/e3x0-button.c
+ 
+ E4000 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/e4000*
+ 
+ EARTH_PT1 MEDIA DRIVER
+@@ -7489,13 +7443,10 @@ S:	Odd Fixes
+ F:	drivers/media/pci/pt3/
+ 
+ EC100 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/ec100*
+ 
+ ECRYPT FILE SYSTEM
+@@ -8112,13 +8063,10 @@ F:	drivers/media/tuners/fc0011.c
+ F:	drivers/media/tuners/fc0011.h
+ 
+ FC2580 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/fc2580*
+ 
+ FCOE SUBSYSTEM (libfc, libfcoe, fcoe)
+@@ -9248,13 +9196,10 @@ F:	include/trace/events/habanalabs.h
+ F:	include/uapi/drm/habanalabs_accel.h
+ 
+ HACKRF MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/hackrf/
+ 
+ HANDSHAKE UPCALL FOR TRANSPORT LAYER SECURITY
+@@ -11328,13 +11273,10 @@ F:	Documentation/hwmon/it87.rst
+ F:	drivers/hwmon/it87.c
+ 
+ IT913X MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/it913x*
+ 
+ ITE IT66121 HDMI BRIDGE DRIVER
+@@ -12687,13 +12629,10 @@ W:	http://www.tazenda.demon.co.uk/phil/linux-hp
+ F:	arch/m68k/hp300/
+ 
+ M88DS3103 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/m88ds3103*
+ 
+ M88RS2000 MEDIA DRIVER
+@@ -14589,20 +14528,16 @@ F:	include/asm-generic/tlb.h
+ F:	mm/mmu_gather.c
+ 
+ MN88472 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/dvb-frontends/mn88472*
+ 
+ MN88473 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/dvb-frontends/mn88473*
+ 
+@@ -14690,23 +14625,17 @@ S:	Orphan
+ F:	drivers/platform/x86/msi-wmi.c
+ 
+ MSI001 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/msi001*
+ 
+ MSI2500 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/usb/msi2500/
+ 
+ MSTAR INTERRUPT CONTROLLER DRIVER
+@@ -17774,13 +17703,10 @@ F:	drivers/bus/fsl-mc/
+ F:	include/uapi/linux/fsl_mc.h
+ 
+ QT1010 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/qt1010*
+ 
+ QUALCOMM ATH12K WIRELESS DRIVER
+@@ -18833,33 +18759,24 @@ S:	Maintained
+ F:	drivers/tty/rpmsg_tty.c
+ 
+ RTL2830 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/rtl2830*
+ 
+ RTL2832 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/rtl2832*
+ 
+ RTL2832_SDR MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/rtl2832_sdr*
+ 
+ RTL8180 WIRELESS DRIVER
+@@ -19669,13 +19586,10 @@ F:	drivers/media/platform/renesas/sh_vou.c
+ F:	include/media/drv-intf/sh_vou.h
+ 
+ SI2157 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/si2157*
+ 
+ SI2165 MEDIA DRIVER
+@@ -19687,13 +19601,10 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/dvb-frontends/si2165*
+ 
+ SI2168 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/si2168*
+ 
+ SI470X FM RADIO RECEIVER I2C DRIVER
+@@ -21204,33 +21115,24 @@ W:	http://tcp-lp-mod.sourceforge.net/
+ F:	net/ipv4/tcp_lp.c
+ 
+ TDA10071 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/dvb-frontends/tda10071*
+ 
+ TDA18212 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/tda18212*
+ 
+ TDA18218 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/tda18218*
+ 
+ TDA18250 MEDIA DRIVER
+@@ -22165,13 +22067,10 @@ F:	include/uapi/linux/serial_core.h
+ F:	include/uapi/linux/tty.h
+ 
+ TUA9001 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org
+-W:	http://palosaari.fi/linux/
+ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+-T:	git git://linuxtv.org/anttip/media_tree.git
+ F:	drivers/media/tuners/tua9001*
+ 
+ TULIP NETWORK DRIVERS
+@@ -24125,20 +24024,16 @@ S:	Orphan
+ F:	drivers/net/wireless/zydas/zd1211rw/
+ 
+ ZD1301 MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org/
+-W:	http://palosaari.fi/linux/
+ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/usb/dvb-usb-v2/zd1301*
+ 
+ ZD1301_DEMOD MEDIA DRIVER
+-M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	https://linuxtv.org/
+-W:	http://palosaari.fi/linux/
+ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/dvb-frontends/zd1301_demod*
+ 
+
+base-commit: 3b8551e73271fc375b15c887db54ad31686eb2ea
 -- 
-2.42.0
+An old man doll... just what I always wanted! - Clara
 
