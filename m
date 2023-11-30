@@ -1,23 +1,30 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id 09BF110E3;
-	Wed, 29 Nov 2023 18:42:04 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 09B8A10CB;
+	Wed, 29 Nov 2023 19:40:43 -0800 (PST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 09CE860DF8F3F;
-	Thu, 30 Nov 2023 10:41:48 +0800 (CST)
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 01182613F8930;
+	Thu, 30 Nov 2023 11:40:33 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-To: hare@suse.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com
+To: nathan@kernel.org,
+	ndesaulniers@google.com,
+	trix@redhat.com
 Cc: Su Hui <suhui@nfschina.com>,
-	linux-scsi@vger.kernel.org,
+	akpm@linux-foundation.org,
+	willy@infradead.org,
+	fmdefrancesco@gmail.com,
+	ira.weiny@intel.com,
+	tony.luck@intel.com,
+	jiaqiyan@google.com,
+	pcc@google.com,
 	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: aic7xxx: fix some problem of return value
-Date: Thu, 30 Nov 2023 10:41:23 +0800
-Message-Id: <20231130024122.1193324-1-suhui@nfschina.com>
+Subject: [PATCH] highmem: fix a memory copy problem in memcpy_from_folio
+Date: Thu, 30 Nov 2023 11:40:18 +0800
+Message-Id: <20231130034017.1210429-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -27,83 +34,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-aic7770_probe() should return negative error code rather than positive.
-However, aic7770_config() only return positive error code,
-ahc_linux_register_host() return both positive and negative error
-code. Make aic7770_probe() return negative if error happened and let
-ahc_linux_register_host() only return positive error code to fix this
-problem.
+Clang static checker complains that value stored to 'from' is never read.
+And memcpy_from_folio() only copy the last chunk memory from folio to
+destination.
+Using 'to += chunk' to replace 'from += chunk' to fix this typo problem.
 
-ahc_linux_pci_dev_probe() should return the value of
-ahc_linux_register_host() rather than zero.
-
+Fixes: b23d03ef7af5 ("highmem: add memcpy_to_folio() and memcpy_from_folio()")
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/scsi/aic7xxx/aic7770_osm.c     | 8 ++++----
- drivers/scsi/aic7xxx/aic7xxx_osm.c     | 2 +-
- drivers/scsi/aic7xxx/aic7xxx_osm_pci.c | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ include/linux/highmem.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7770_osm.c b/drivers/scsi/aic7xxx/aic7770_osm.c
-index bdd177e3d762..3c1aca15d956 100644
---- a/drivers/scsi/aic7xxx/aic7770_osm.c
-+++ b/drivers/scsi/aic7xxx/aic7770_osm.c
-@@ -87,23 +87,23 @@ aic7770_probe(struct device *dev)
- 	sprintf(buf, "ahc_eisa:%d", eisaBase >> 12);
- 	name = kstrdup(buf, GFP_ATOMIC);
- 	if (name == NULL)
--		return (ENOMEM);
-+		return -ENOMEM;
- 	ahc = ahc_alloc(&aic7xxx_driver_template, name);
- 	if (ahc == NULL)
--		return (ENOMEM);
-+		return -ENOMEM;
- 	ahc->dev = dev;
- 	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
- 			       eisaBase);
- 	if (error != 0) {
- 		ahc->bsh.ioport = 0;
- 		ahc_free(ahc);
--		return (error);
-+		return -error;
- 	}
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index 4cacc0e43b51..be20cff4ba73 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -454,7 +454,7 @@ static inline void memcpy_from_folio(char *to, struct folio *folio,
+ 		memcpy(to, from, chunk);
+ 		kunmap_local(from);
  
-  	dev_set_drvdata(dev, ahc);
- 
- 	error = ahc_linux_register_host(ahc, &aic7xxx_driver_template);
--	return (error);
-+	return -error;
- }
- 
- static int
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
-index 4ae0a1c4d374..158aaeca8941 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
-@@ -1117,7 +1117,7 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
- 	if (retval) {
- 		printk(KERN_WARNING "aic7xxx: scsi_add_host failed\n");
- 		scsi_host_put(host);
--		return retval;
-+		return -retval;
- 	}
- 
- 	scsi_scan_host(host);
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-index a07e94fac673..e17eb8df12c4 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-@@ -241,8 +241,8 @@ ahc_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		ahc_linux_pci_inherit_flags(ahc);
- 
- 	pci_set_drvdata(pdev, ahc);
--	ahc_linux_register_host(ahc, &aic7xxx_driver_template);
--	return (0);
-+	error = ahc_linux_register_host(ahc, &aic7xxx_driver_template);
-+	return -error;
- }
- 
- /******************************* PCI Routines *********************************/
+-		from += chunk;
++		to += chunk;
+ 		offset += chunk;
+ 		len -= chunk;
+ 	} while (len > 0);
 -- 
 2.30.2
 
