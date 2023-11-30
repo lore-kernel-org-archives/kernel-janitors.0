@@ -1,110 +1,67 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F22951002;
+	Thu, 30 Nov 2023 16:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdPUlOJi"
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70709194;
-	Thu, 30 Nov 2023 07:08:15 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50bc053a9a7so1583591e87.1;
-        Thu, 30 Nov 2023 07:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701356894; x=1701961694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ij6He2n7VfO2PU5CQDDnpNgiB61sX85VSjvJ1Sw1Bmk=;
-        b=hdPUlOJiI/Ff2s7sQMMrhjFnfQbj5BZ+RruxmYyMpECMP6pggVNjA4g3xtBjkMMfI5
-         H97EJmHixZFVuQjiuEOqrovzqxOCQ2M0fcirnOV1m/7G0CUSdCSQp8/byR5JqTn5KF+t
-         Bom9sygTG5UmY5y9NgsaKLqUhvAOZJDh+HPj8vBKZXdWBcoxq3sQFe0vS/5XOr3xkNm+
-         UztkkLbvEFtcDciFNC2Nk4LLn7iBEQnl4t/9kiN7G4KZXYdZ/6eazjVm0KYEz7CdquBa
-         7uJpj/Ur/vMTLlFwLgiUdQtT27WdE8TqQKiDRRBSthQmopvpitIYExtlaQQqEx1FZ0PY
-         XkAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701356894; x=1701961694;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ij6He2n7VfO2PU5CQDDnpNgiB61sX85VSjvJ1Sw1Bmk=;
-        b=gvDI1WOLwJIAaULjAefnsovE6NUpIevOGZT435pC48JBHmzfsAKlkUl84fm5K+3Zfk
-         p2uM72xAJDjem/Y789ht8ErkQ0lPIYgwW9Hnt5zXi6puiSun9MKdBIEFGQaZpcqMFPR7
-         NdVnVEOl5QVVJBfTd9SWZXtWMZjl9GjIVE/6FBbP28HK/bidEy2iTJF3gALzZd0K//HF
-         sB/f8suMBfcBXOPZtC89fkly81y4TDJkeeiEgbN7/79yjEbjh8B7lphgQtLR/8Hde/B2
-         d9TbY+VV0xDSYK+gS6BpoKYxPXxkPt3/0w6SJfKkyXfaAyoA6f/kHgSykBgn3+/A+nZ0
-         bi4w==
-X-Gm-Message-State: AOJu0YzKAfwBqqlWR1G1X1Exfxbs24c+rhstLSTA6mDPSgTaTrjr5kvB
-	RQzaG19vay+iFm9tAbYPf/w=
-X-Google-Smtp-Source: AGHT+IFplBfPeB/2YfUE7slWK1oJxGIpl9P3JdyoKk2opcJrfaDpOQAztlmWLQTGZeiURAfWGrLRpA==
-X-Received: by 2002:a05:6512:1386:b0:50b:c96b:5e8 with SMTP id fc6-20020a056512138600b0050bc96b05e8mr3051182lfb.25.1701356893308;
-        Thu, 30 Nov 2023 07:08:13 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o18-20020a05600c4fd200b0040b45282f88sm5865713wmq.36.2023.11.30.07.08.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Nov 2023 07:08:12 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: remove shadowed declaration of variable i in for-loops
-Date: Thu, 30 Nov 2023 15:08:11 +0000
-Message-Id: <20231130150811.2208562-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="j9fUKgwH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92729C433C7;
+	Thu, 30 Nov 2023 16:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1701361822;
+	bh=ZC5pdnxtaALPr6AWPyuqbZFGRFQlJPG/PBmeu7mFd8k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j9fUKgwHvAvpJw63f0OOVvKu178+7dLQWz79YoLP6ltAqLBv/iEYG68qz3K87fUug
+	 4pc6HKgv7hslYeC/wBGkZYsK0oRaz8DX6zzgnOcE3uxvBr9HnlieG/rCIEAESTCAJw
+	 mwQe49iP1ijKKhRO0BVXrlDfZz5dBzPSbqVJKD2Y=
+Date: Thu, 30 Nov 2023 08:30:21 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Antti Palosaari <crope@iki.fi>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Media Subsystem
+ <linux-media@vger.kernel.org>, Linux Memory Management List
+ <linux-mm@kvack.org>, Linux Kernel Janitors
+ <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Lukas
+ Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Drop Antti Palosaari
+Message-Id: <20231130083021.a99013c58318ebe66b408f2d@linux-foundation.org>
+In-Reply-To: <9da4252b-269b-c25b-c485-afdcd8207268@iki.fi>
+References: <20231130083848.5396-1-bagasdotme@gmail.com>
+	<9da4252b-269b-c25b-c485-afdcd8207268@iki.fi>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The variable i is declared at the start of function btrfs_qgroup_inherit
-however there are two for-loops that redeclare the variable using a C99
-declaration, causes name shadowing. I believe there is no need for this
-local scoping of i in the loop, so replace the declaration in the loops
-with assignments.
+On Thu, 30 Nov 2023 10:43:16 +0200 Antti Palosaari <crope@iki.fi> wrote:
 
-Cleans up clang scan build warnings:
+> Hello,
+> 
+> On 11/30/23 10:38, Bagas Sanjaya wrote:
+> > He is currently inactive (last message from him is two years ago [1]).
+> > His media tree [2] is also dormant (latest activity is 6 years ago),
+> > yet his site is still online [3].
+> > 
+> > Drop him from MAINTAINERS and add CREDITS entry for him. We thank him
+> > for maintaining various DVB drivers.
+> > 
+> > [1]: https://lore.kernel.org/all/660772b3-0597-02db-ed94-c6a9be04e8e8@iki.fi/
+> > [2]: https://git.linuxtv.org/anttip/media_tree.git/
+> > [3]: https://palosaari.fi/linux/
+> > 
+> > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > ---
+> > Essentially no change from RFC [1]. However, since there is no response on
+> > RFC (including from Antti), let's drop him so that Cc: lists can be
+> > a bit shorter.
+> 
+> Acked-by: Antti Palosaari <crope@iki.fi>
 
-fs/btrfs/qgroup.c:3194:12: warning: declaration shadows a local variable [-Wshadow]
- 3194 |                 for (int i = 0; i < inherit->num_qgroups; i++) {
-      |                          ^
-fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
- 3089 |         int i;
-      |             ^
-fs/btrfs/qgroup.c:3321:12: warning: declaration shadows a local variable [-Wshadow]
- 3321 |                 for (int i = 0; i < inherit->num_qgroups; i++)
-      |                          ^
-fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
- 3089 |         int i;
-      |             ^
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/btrfs/qgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index ce446d9d7f23..b1f93dbf468c 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -3191,7 +3191,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--		for (int i = 0; i < inherit->num_qgroups; i++) {
-+		for (i = 0; i < inherit->num_qgroups; i++) {
- 			qlist_prealloc[i] = kzalloc(sizeof(struct btrfs_qgroup_list),
- 						    GFP_NOFS);
- 			if (!qlist_prealloc[i]) {
-@@ -3318,7 +3318,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
- 	if (need_rescan)
- 		qgroup_mark_inconsistent(fs_info);
- 	if (qlist_prealloc) {
--		for (int i = 0; i < inherit->num_qgroups; i++)
-+		for (i = 0; i < inherit->num_qgroups; i++)
- 			kfree(qlist_prealloc[i]);
- 		kfree(qlist_prealloc);
- 	}
--- 
-2.39.2
-
+A shame, but thank you for all your work!
