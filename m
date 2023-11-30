@@ -1,67 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F22951002;
-	Thu, 30 Nov 2023 16:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4BE53806;
+	Thu, 30 Nov 2023 18:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="j9fUKgwH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92729C433C7;
-	Thu, 30 Nov 2023 16:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1701361822;
-	bh=ZC5pdnxtaALPr6AWPyuqbZFGRFQlJPG/PBmeu7mFd8k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j9fUKgwHvAvpJw63f0OOVvKu178+7dLQWz79YoLP6ltAqLBv/iEYG68qz3K87fUug
-	 4pc6HKgv7hslYeC/wBGkZYsK0oRaz8DX6zzgnOcE3uxvBr9HnlieG/rCIEAESTCAJw
-	 mwQe49iP1ijKKhRO0BVXrlDfZz5dBzPSbqVJKD2Y=
-Date: Thu, 30 Nov 2023 08:30:21 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Antti Palosaari <crope@iki.fi>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Media Subsystem
- <linux-media@vger.kernel.org>, Linux Memory Management List
- <linux-mm@kvack.org>, Linux Kernel Janitors
- <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Lukas
- Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Drop Antti Palosaari
-Message-Id: <20231130083021.a99013c58318ebe66b408f2d@linux-foundation.org>
-In-Reply-To: <9da4252b-269b-c25b-c485-afdcd8207268@iki.fi>
-References: <20231130083848.5396-1-bagasdotme@gmail.com>
-	<9da4252b-269b-c25b-c485-afdcd8207268@iki.fi>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzZZ8kZR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E830C433C8;
+	Thu, 30 Nov 2023 18:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701368622;
+	bh=qQlf1wlM46DStT6SsBHk1Ov4ohMfBkiHcFw/hbSHDzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FzZZ8kZRdJ6pu6uovrGlCvcsYD7x7XChrvYhQtmCH0KuYQqvn11bWG96iotfj+n7p
+	 dXhzk7H2K0gpbPETqyRcS6ISPZgn6eN27zEvbY9g8OqigiikY0TfTmeveUjN7p3AZj
+	 ZTIj+dyREsWw7HRSoo/fVNdWUnKXjScHmJe01yqK7BWZIMbnZbohkkmltCJidBGLIG
+	 kVHBqFoNIAnqmJybMFjnBDFeTWHdLBlspwKVOVZGBsd5gdmGtjCBJBNgEhw1o7PfGG
+	 Tlxlf3Ib/rtxu0Q3rdlAOswSiIGZ/kBdBDHKSkxjCfnfrZZFwmdUYhjBaYbbnweOSv
+	 rdwpPyoHj9o1A==
+Date: Thu, 30 Nov 2023 18:23:38 +0000
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Shinas Rasheed <srasheed@marvell.com>,
+	Veerasenareddy Burru <vburru@marvell.com>,
+	Sathesh Edara <sedara@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] octeon_ep: Fix error code in probe()
+Message-ID: <20231130182338.GM32077@kernel.org>
+References: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
 
-On Thu, 30 Nov 2023 10:43:16 +0200 Antti Palosaari <crope@iki.fi> wrote:
-
-> Hello,
+On Tue, Nov 28, 2023 at 04:13:19PM +0300, Dan Carpenter wrote:
+> Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code
+> returns success.
 > 
-> On 11/30/23 10:38, Bagas Sanjaya wrote:
-> > He is currently inactive (last message from him is two years ago [1]).
-> > His media tree [2] is also dormant (latest activity is 6 years ago),
-> > yet his site is still online [3].
-> > 
-> > Drop him from MAINTAINERS and add CREDITS entry for him. We thank him
-> > for maintaining various DVB drivers.
-> > 
-> > [1]: https://lore.kernel.org/all/660772b3-0597-02db-ed94-c6a9be04e8e8@iki.fi/
-> > [2]: https://git.linuxtv.org/anttip/media_tree.git/
-> > [3]: https://palosaari.fi/linux/
-> > 
-> > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> > ---
-> > Essentially no change from RFC [1]. However, since there is no response on
-> > RFC (including from Antti), let's drop him so that Cc: lists can be
-> > a bit shorter.
-> 
-> Acked-by: Antti Palosaari <crope@iki.fi>
+> Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-A shame, but thank you for all your work!
+Thanks Dan,
+
+I had noticed this one too.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
