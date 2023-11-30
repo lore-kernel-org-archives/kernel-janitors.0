@@ -1,48 +1,73 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EE216422;
+	Thu, 30 Nov 2023 04:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VcdQj8LE"
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65681A5;
-	Wed, 29 Nov 2023 20:15:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ciUUDyS6UwVOmfcKRVNErpTKeITmISSd1ZTQAam+P4Y=; b=VcdQj8LE7sb+q+PxGpYs9UlZRY
-	a11xy9N2IbqlspcfzGHIiVFK/PaZJsXVyWbxIVBfys+cXQEQ8O1aJenrL9CtmvAePK8G6EeZTCB1Y
-	Z2dC+VRv1L1/V+r07n3UsLYmmASvKt63s43YZUxJvikd8jCF7cFhh7NZHsgLuKNZ+Raanf1J6xeOj
-	lyEbROpRKnQzlvrKQk9Wye65azyjyn1CLFtzJdXEGqm8Qj/qezo+e/Vi3vNkbtDCsnnPgu8aC0a5D
-	iVO9rMulaBKZkyj/biE9tU3PMBrCqf880ZWL1NcOXPFQQbn3cyTsSrzIoAmNf2JWjB6Pa/t2IJRTJ
-	myxQHmXw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r8YSQ-00E4dE-37; Thu, 30 Nov 2023 04:15:22 +0000
-Date: Thu, 30 Nov 2023 04:15:22 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
-	akpm@linux-foundation.org, fmdefrancesco@gmail.com,
-	ira.weiny@intel.com, tony.luck@intel.com, jiaqiyan@google.com,
-	pcc@google.com, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] highmem: fix a memory copy problem in memcpy_from_folio
-Message-ID: <ZWgMWricKKnwhWPh@casper.infradead.org>
-References: <20231130034017.1210429-1-suhui@nfschina.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2gb8qah"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C4F0C433C7;
+	Thu, 30 Nov 2023 04:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701318034;
+	bh=cCbxWq0+NPkfY4QA9+yYjFe6vWIYbmPWSXdcfESV6FQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=D2gb8qahivfMLNRgtbckYeMOPP7mTefC9L6uKpLMNbV1D1lvdOaUERpG1w/S4+AFJ
+	 CxTNS+G1+4mX4wqS63rx4+u9ocP7u9zXw8jr25CXDnE8+1ifrXcABi1/D+kXcNeI8Y
+	 VQkbUpWT64i+9qNIusddSYYcToUbrtCAma68M9D2amZ6J2KwzZYIHDTdFIZFZB8C85
+	 mr10+WfXixqwtIGZEkhrccf2NTPz6nCkjiTk3ert+8q/6835CMympQhdpvlUn7Sm7M
+	 w86WVgzo4amVCarDuemfcOV7Et4hhITSMdAVxpttZBfBLdtHDqvat8+9rPibbn0bmC
+	 eRYJKbZ9G8Xng==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DEF2DC691E1;
+	Thu, 30 Nov 2023 04:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231130034017.1210429-1-suhui@nfschina.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: mana: Fix spelling mistake "enforecement" ->
+ "enforcement"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <170131803390.31156.8118713082387306465.git-patchwork-notify@kernel.org>
+Date: Thu, 30 Nov 2023 04:20:33 +0000
+References: <20231128095304.515492-1-colin.i.king@gmail.com>
+In-Reply-To: <20231128095304.515492-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ sharmaajay@microsoft.com, shradhagupta@linux.microsoft.com,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, Nov 30, 2023 at 11:40:18AM +0800, Su Hui wrote:
-> Clang static checker complains that value stored to 'from' is never read.
-> And memcpy_from_folio() only copy the last chunk memory from folio to
-> destination.
-> Using 'to += chunk' to replace 'from += chunk' to fix this typo problem.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 28 Nov 2023 09:53:04 +0000 you wrote:
+> There is a spelling mistake in struct field hc_tx_err_sqpdid_enforecement.
+> Fix it.
 > 
-> Fixes: b23d03ef7af5 ("highmem: add memcpy_to_folio() and memcpy_from_folio()")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/microsoft/mana/mana_en.c      | 2 +-
+>  drivers/net/ethernet/microsoft/mana/mana_ethtool.c | 4 ++--
+>  include/net/mana/mana.h                            | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Here is the summary with links:
+  - [next] net: mana: Fix spelling mistake "enforecement" -> "enforcement"
+    https://git.kernel.org/netdev/net-next/c/f422544118cb
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
