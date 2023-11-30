@@ -1,124 +1,110 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3KHjea1"
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA8D10F1;
-	Thu, 30 Nov 2023 01:55:21 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-a0029289b1bso92484566b.1;
-        Thu, 30 Nov 2023 01:55:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdPUlOJi"
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70709194;
+	Thu, 30 Nov 2023 07:08:15 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50bc053a9a7so1583591e87.1;
+        Thu, 30 Nov 2023 07:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701338120; x=1701942920; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dMJA5AfP0P9yxCn+eRvuLh+vUtXzzmDbdcliSqXeJ88=;
-        b=W3KHjea1Zs6fa9m28KdNeZdNzjrrIu+QW896YKa+THlaJ8ZuJFWxv0lqUMEDtP4nH3
-         1SlEzfgn4zfZ9MOOMPeV6nfaB09wAMIvuPQLhQkNr4rA6yQRsFdHmARRTV6awLGSBrAd
-         mN7lTATKEFG2YALqGnslQDi9e9NJlup15l3u6bU0mpC8Qh127wgeXcHc3L+miW+qw7P4
-         RGkLklW1rVobS3Xu5mBY9wjNZPW2tpHW7365xsXs5loyLNkMC4i715pvy1bQ8ve1z4cU
-         BNnwaHYoLMpXZKeguKPJmcsBfl1jMh1vICAoyXY+WjZgcRtzo6uJEGtIKzXbhFUZ2+x6
-         HL2g==
+        d=gmail.com; s=20230601; t=1701356894; x=1701961694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ij6He2n7VfO2PU5CQDDnpNgiB61sX85VSjvJ1Sw1Bmk=;
+        b=hdPUlOJiI/Ff2s7sQMMrhjFnfQbj5BZ+RruxmYyMpECMP6pggVNjA4g3xtBjkMMfI5
+         H97EJmHixZFVuQjiuEOqrovzqxOCQ2M0fcirnOV1m/7G0CUSdCSQp8/byR5JqTn5KF+t
+         Bom9sygTG5UmY5y9NgsaKLqUhvAOZJDh+HPj8vBKZXdWBcoxq3sQFe0vS/5XOr3xkNm+
+         UztkkLbvEFtcDciFNC2Nk4LLn7iBEQnl4t/9kiN7G4KZXYdZ/6eazjVm0KYEz7CdquBa
+         7uJpj/Ur/vMTLlFwLgiUdQtT27WdE8TqQKiDRRBSthQmopvpitIYExtlaQQqEx1FZ0PY
+         XkAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701338120; x=1701942920;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dMJA5AfP0P9yxCn+eRvuLh+vUtXzzmDbdcliSqXeJ88=;
-        b=H8jxijvqpKXsZhqhqYddSBh1RMWTtAn9kiAUEAl/mETdgARFcir15z/VGc34ycjhev
-         a+VR1kP4xq/FJyikW97aXlsaE1ugph6fbETcPcw2QQMGlM+2sawtEJym4gCXXYlUJkCG
-         CUGkfU72i6nNICgga43IXrpysFahoyA3UZSo/rcCCaRV9JBTY85dECAIh+XUnHqyNOyB
-         +osPGfIEEXIFRJbTYAJ+7jEBgkpWeEPV7w6kuOEy8zmks2DfSqXZq9Iyh3YVsFtb17Xg
-         JTq5t70XuvvIL6bdiel5n0EMiKf4kW64ptDIc2KWC98uvqhyw9fbFPvSARxai4lkQh+l
-         MNcw==
-X-Gm-Message-State: AOJu0YyrgIR4VFAuh8FiZQ6tk7OeaTkHbveeVzl5baoVoHwLWWJiPpk3
-	kja4t12om7iDXvJ5UO7WltA=
-X-Google-Smtp-Source: AGHT+IEijT5IFhagvVJj2BSYxgKTlTUs0axftnkLk/i64ubFWskQfwihXRFfFN0WF38+KIQ8nTV70A==
-X-Received: by 2002:a17:906:ca14:b0:a07:16e0:e0bc with SMTP id jt20-20020a170906ca1400b00a0716e0e0bcmr13673278ejb.76.1701338119585;
-        Thu, 30 Nov 2023 01:55:19 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:257f:2c3:4a4d:4a99])
-        by smtp.gmail.com with ESMTPSA id x24-20020a1709064a9800b00a0cd9d89a00sm485050eju.151.2023.11.30.01.55.18
+        d=1e100.net; s=20230601; t=1701356894; x=1701961694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ij6He2n7VfO2PU5CQDDnpNgiB61sX85VSjvJ1Sw1Bmk=;
+        b=gvDI1WOLwJIAaULjAefnsovE6NUpIevOGZT435pC48JBHmzfsAKlkUl84fm5K+3Zfk
+         p2uM72xAJDjem/Y789ht8ErkQ0lPIYgwW9Hnt5zXi6puiSun9MKdBIEFGQaZpcqMFPR7
+         NdVnVEOl5QVVJBfTd9SWZXtWMZjl9GjIVE/6FBbP28HK/bidEy2iTJF3gALzZd0K//HF
+         sB/f8suMBfcBXOPZtC89fkly81y4TDJkeeiEgbN7/79yjEbjh8B7lphgQtLR/8Hde/B2
+         d9TbY+VV0xDSYK+gS6BpoKYxPXxkPt3/0w6SJfKkyXfaAyoA6f/kHgSykBgn3+/A+nZ0
+         bi4w==
+X-Gm-Message-State: AOJu0YzKAfwBqqlWR1G1X1Exfxbs24c+rhstLSTA6mDPSgTaTrjr5kvB
+	RQzaG19vay+iFm9tAbYPf/w=
+X-Google-Smtp-Source: AGHT+IFplBfPeB/2YfUE7slWK1oJxGIpl9P3JdyoKk2opcJrfaDpOQAztlmWLQTGZeiURAfWGrLRpA==
+X-Received: by 2002:a05:6512:1386:b0:50b:c96b:5e8 with SMTP id fc6-20020a056512138600b0050bc96b05e8mr3051182lfb.25.1701356893308;
+        Thu, 30 Nov 2023 07:08:13 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o18-20020a05600c4fd200b0040b45282f88sm5865713wmq.36.2023.11.30.07.08.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Nov 2023 01:55:19 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
+        Thu, 30 Nov 2023 07:08:12 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] docs: admin-guide: remove obsolete advice related to SLAB allocator
-Date: Thu, 30 Nov 2023 10:55:15 +0100
-Message-Id: <20231130095515.21586-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: remove shadowed declaration of variable i in for-loops
+Date: Thu, 30 Nov 2023 15:08:11 +0000
+Message-Id: <20231130150811.2208562-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Commit 1db9d06aaa55 ("mm/slab: remove CONFIG_SLAB from all Kconfig and
-Makefile") removes the config SLAB and makes the SLUB allocator the only
-default allocator in the kernel. Hence, the advice on reducing OS jitter
-due to kworker kernel threads to build with CONFIG_SLUB instead of
-CONFIG_SLAB is obsolete.
+The variable i is declared at the start of function btrfs_qgroup_inherit
+however there are two for-loops that redeclare the variable using a C99
+declaration, causes name shadowing. I believe there is no need for this
+local scoping of i in the loop, so replace the declaration in the loops
+with assignments.
 
-Remove the obsolete advice to build with SLUB instead of SLAB.
+Cleans up clang scan build warnings:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+fs/btrfs/qgroup.c:3194:12: warning: declaration shadows a local variable [-Wshadow]
+ 3194 |                 for (int i = 0; i < inherit->num_qgroups; i++) {
+      |                          ^
+fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
+ 3089 |         int i;
+      |             ^
+fs/btrfs/qgroup.c:3321:12: warning: declaration shadows a local variable [-Wshadow]
+ 3321 |                 for (int i = 0; i < inherit->num_qgroups; i++)
+      |                          ^
+fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
+ 3089 |         int i;
+      |             ^
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- .../admin-guide/kernel-per-CPU-kthreads.rst      | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ fs/btrfs/qgroup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-index 993c2a05f5ee..b6aeae3327ce 100644
---- a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-+++ b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-@@ -243,13 +243,9 @@ To reduce its OS jitter, do any of the following:
- 3.	Do any of the following needed to avoid jitter that your
- 	application cannot tolerate:
- 
--	a.	Build your kernel with CONFIG_SLUB=y rather than
--		CONFIG_SLAB=y, thus avoiding the slab allocator's periodic
--		use of each CPU's workqueues to run its cache_reap()
--		function.
--	b.	Avoid using oprofile, thus avoiding OS jitter from
-+	a.	Avoid using oprofile, thus avoiding OS jitter from
- 		wq_sync_buffer().
--	c.	Limit your CPU frequency so that a CPU-frequency
-+	b.	Limit your CPU frequency so that a CPU-frequency
- 		governor is not required, possibly enlisting the aid of
- 		special heatsinks or other cooling technologies.  If done
- 		correctly, and if you CPU architecture permits, you should
-@@ -259,7 +255,7 @@ To reduce its OS jitter, do any of the following:
- 
- 		WARNING:  Please check your CPU specifications to
- 		make sure that this is safe on your particular system.
--	d.	As of v3.18, Christoph Lameter's on-demand vmstat workers
-+	c.	As of v3.18, Christoph Lameter's on-demand vmstat workers
- 		commit prevents OS jitter due to vmstat_update() on
- 		CONFIG_SMP=y systems.  Before v3.18, is not possible
- 		to entirely get rid of the OS jitter, but you can
-@@ -274,7 +270,7 @@ To reduce its OS jitter, do any of the following:
- 		(based on an earlier one from Gilad Ben-Yossef) that
- 		reduces or even eliminates vmstat overhead for some
- 		workloads at https://lore.kernel.org/r/00000140e9dfd6bd-40db3d4f-c1be-434f-8132-7820f81bb586-000000@email.amazonses.com.
--	e.	If running on high-end powerpc servers, build with
-+	d.	If running on high-end powerpc servers, build with
- 		CONFIG_PPC_RTAS_DAEMON=n.  This prevents the RTAS
- 		daemon from running on each CPU every second or so.
- 		(This will require editing Kconfig files and will defeat
-@@ -282,12 +278,12 @@ To reduce its OS jitter, do any of the following:
- 		due to the rtas_event_scan() function.
- 		WARNING:  Please check your CPU specifications to
- 		make sure that this is safe on your particular system.
--	f.	If running on Cell Processor, build your kernel with
-+	e.	If running on Cell Processor, build your kernel with
- 		CBE_CPUFREQ_SPU_GOVERNOR=n to avoid OS jitter from
- 		spu_gov_work().
- 		WARNING:  Please check your CPU specifications to
- 		make sure that this is safe on your particular system.
--	g.	If running on PowerMAC, build your kernel with
-+	f.	If running on PowerMAC, build your kernel with
- 		CONFIG_PMAC_RACKMETER=n to disable the CPU-meter,
- 		avoiding OS jitter from rackmeter_do_timer().
- 
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index ce446d9d7f23..b1f93dbf468c 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3191,7 +3191,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
+-		for (int i = 0; i < inherit->num_qgroups; i++) {
++		for (i = 0; i < inherit->num_qgroups; i++) {
+ 			qlist_prealloc[i] = kzalloc(sizeof(struct btrfs_qgroup_list),
+ 						    GFP_NOFS);
+ 			if (!qlist_prealloc[i]) {
+@@ -3318,7 +3318,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
+ 	if (need_rescan)
+ 		qgroup_mark_inconsistent(fs_info);
+ 	if (qlist_prealloc) {
+-		for (int i = 0; i < inherit->num_qgroups; i++)
++		for (i = 0; i < inherit->num_qgroups; i++)
+ 			kfree(qlist_prealloc[i]);
+ 		kfree(qlist_prealloc);
+ 	}
 -- 
-2.17.1
+2.39.2
 
