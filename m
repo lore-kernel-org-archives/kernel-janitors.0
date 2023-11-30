@@ -1,60 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4BE53806;
-	Thu, 30 Nov 2023 18:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D25FEED;
+	Thu, 30 Nov 2023 19:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzZZ8kZR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E830C433C8;
-	Thu, 30 Nov 2023 18:23:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evZYHgvK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A20C433C7;
+	Thu, 30 Nov 2023 19:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701368622;
-	bh=qQlf1wlM46DStT6SsBHk1Ov4ohMfBkiHcFw/hbSHDzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FzZZ8kZRdJ6pu6uovrGlCvcsYD7x7XChrvYhQtmCH0KuYQqvn11bWG96iotfj+n7p
-	 dXhzk7H2K0gpbPETqyRcS6ISPZgn6eN27zEvbY9g8OqigiikY0TfTmeveUjN7p3AZj
-	 ZTIj+dyREsWw7HRSoo/fVNdWUnKXjScHmJe01yqK7BWZIMbnZbohkkmltCJidBGLIG
-	 kVHBqFoNIAnqmJybMFjnBDFeTWHdLBlspwKVOVZGBsd5gdmGtjCBJBNgEhw1o7PfGG
-	 Tlxlf3Ib/rtxu0Q3rdlAOswSiIGZ/kBdBDHKSkxjCfnfrZZFwmdUYhjBaYbbnweOSv
-	 rdwpPyoHj9o1A==
-Date: Thu, 30 Nov 2023 18:23:38 +0000
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shinas Rasheed <srasheed@marvell.com>,
-	Veerasenareddy Burru <vburru@marvell.com>,
-	Sathesh Edara <sedara@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] octeon_ep: Fix error code in probe()
-Message-ID: <20231130182338.GM32077@kernel.org>
-References: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
+	s=k20201202; t=1701372062;
+	bh=/nNbmxvYk4PeLj0IKIcflNHFfHDHygDe5UG7/BtZX4I=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=evZYHgvKxtZnJ6tt6nMpok91Q3GDWFWPRI9wFkU6HApfzdy/66JaQUjWZeqJfa8ak
+	 qA6ariFYlPv/LzTjFU7LXv9liNM31hJmSYDZqmi5O6uXUa/le4IHlJFv5nFWS3MZcU
+	 x3okcbNxvsSjX+cA9FlYfsfnbRcADNPj6Lf9uKta6BIE4JHnGTBZOu90t4l4xlYFT0
+	 Nulb8Bzil/jIuUEKcT3HGyXVmh8Eq9s+mrYbrGUDIPjZO4Bf/A7Uhzvw+JntIbqD4h
+	 pMu7r6Xf+J1UehZeJ6JiAX7rGy5VEAWcUU3q+gHJhbgg05ChHM9lcUUvbB1/t4tXFr
+	 6RHCyJmwDwV/g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: libertas: fix config name in dependency for SDIO
+ support
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20231122083047.12774-1-lukas.bulwahn@gmail.com>
+References: <20231122083047.12774-1-lukas.bulwahn@gmail.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, libertas-dev@lists.infradead.org,
+ linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <170137205913.1963309.7623759233878146525.kvalo@kernel.org>
+Date: Thu, 30 Nov 2023 19:21:01 +0000 (UTC)
 
-On Tue, Nov 28, 2023 at 04:13:19PM +0300, Dan Carpenter wrote:
-> Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code
-> returns success.
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+
+> Commit 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support") reworks
+> the dependencies for config LIBERTAS, and adds alternative dependencies for
+> USB, SDIO and SPI.
 > 
-> Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 1 +
->  1 file changed, 1 insertion(+)
+> The config option SDIO however does not exist in the kernel tree. It was
+> probably intended to refer to the config option MMC, which represents
+> "MMC/SD/SDIO card support" and is used as dependency by various other
+> drivers that use SDIO.
+> 
+> Fix the dependency to the config option MMC for declaring the requirement
+> on provision of SDIO support.
+> 
+> Fixes: 4b478bf6bdd8 ("wifi: libertas: drop 16-bit PCMCIA support")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks Dan,
+Patch applied to wireless-next.git, thanks.
 
-I had noticed this one too.
+18814f723f92 wifi: libertas: fix config name in dependency for SDIO support
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20231122083047.12774-1-lukas.bulwahn@gmail.com/
 
-...
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
