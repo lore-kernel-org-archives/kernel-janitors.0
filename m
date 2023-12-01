@@ -1,53 +1,51 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE0059539;
+	Fri,  1 Dec 2023 07:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="CwGaHDPb"
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA64D1729;
-	Thu, 30 Nov 2023 23:06:10 -0800 (PST)
-Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id 5494060476;
-	Fri,  1 Dec 2023 07:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1701414370;
-	bh=RXpbKQwq6L7Fxm/0BkFGv54CyvhTReyPPdkffpuvbsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CwGaHDPbV2JUMhJAKfc8j7Oy8P/WEbo+xFfr15UKt2im8yKC2LOjQMJCewDqx96jE
-	 aSpg2thl/1PEa9AAgZ3zAxGK7PamGvw8cf4LGwEvS9y8pz32Pq9V7R0r8b/JvY3onO
-	 hL6fD6K/kf1NYVkvcgzntGzcqcsGH7plpBC1P0chyvE6IuaS6seg05FMm1yy7U3xVh
-	 kDAIW+LTJ/xqEvT34t5Q3LW1enGtJuC1kx9Msk2qc+/27leT2CBwMKeLItMVLfNd4I
-	 gqu3P9kcEH/z9f6T+MXXZ+3O/pNw6AFdQf0lk+BbDJBF38evhqGzPSl6ZxZSrbOAHe
-	 5hLhE3He+9HYg==
-Date: Fri, 1 Dec 2023 09:05:51 +0200
-From: Tony Lindgren <tony@atomide.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm: debug: reuse the config DEBUG_OMAP2UART{1,2} for
- OMAP{3,4,5}
-Message-ID: <20231201070551.GJ5169@atomide.com>
-References: <20231025112136.3445-1-lukas.bulwahn@gmail.com>
- <20231201070207.GI5169@atomide.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7lbX6E9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B5DC433C8;
+	Fri,  1 Dec 2023 07:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701414925;
+	bh=CNZZ/9juIG0OKqeCsO8gwDQtYKzOzJvLw6s4b85gygc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b7lbX6E9Atn0nM6nUkJOXvJ+YXnvvVQOBP2sYOjYBPcclVzf6WHHGgKnA1gq2ttWT
+	 dHrzt+cU+6aeAbyDzCORYpaRuSmUenP9+ObSY/DjxT1w0bc28kVu26xPBdONHICl1g
+	 1WercqzES8h+hy0PjTeBQug8GviZrNeMPIblM0VTIxD84kZEEP7OPPAi5pd+ISxAaY
+	 tvivvH7BVAU9LrbwMiV5j6d/+5EPWcP4NaAJ8mtt2pDbGCOawySReq84/pKuGLGj5u
+	 oAFFfXByC4nusyblyyqQADkO8p2Pp9GRPYrXDURtCj+Zasvu7lkwfnd8M/BPxzgnvb
+	 iLvePxfTOoQpw==
+Date: Thu, 30 Nov 2023 23:15:23 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Shinas Rasheed <srasheed@marvell.com>, Veerasenareddy Burru
+ <vburru@marvell.com>, Sathesh Edara <sedara@marvell.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] octeon_ep: Fix error code in probe()
+Message-ID: <20231130231523.267c08a5@kernel.org>
+In-Reply-To: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
+References: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231201070207.GI5169@atomide.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Tony Lindgren <tony@atomide.com> [231201 09:02]:
-> * Lukas Bulwahn <lukas.bulwahn@gmail.com> [231025 14:21]:
-> > Simply reuse the config DEBUG_OMAP2UART{1,2}; there is no need to define
-> > separate config symbols for OMAP{3,4,5}. So, just delete the dead
-> > references to DEBUG_OMAP{3,4,5}UART{1,2}.
+On Tue, 28 Nov 2023 16:13:19 +0300 Dan Carpenter wrote:
+> Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code
+> returns success.
 > 
-> Thanks applying into omap-for-v6.8/debug.
+> Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-It's been already applied by Arnd, no need to do anything :)
-
-Regards,
-
-Tony
+Sathesh, Veerasenareddy, please review. See:
+https://docs.kernel.org/next/maintainer/feature-and-driver-maintainers.html#reviews
+-- 
+pw-bot: needs-ack
