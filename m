@@ -1,68 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5144208A8;
-	Fri,  1 Dec 2023 11:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFIl4xpG"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A2BE5C433CA;
-	Fri,  1 Dec 2023 11:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701428425;
-	bh=lDz8O3kEJRuixW9zKX5JW7qIlAHXaOgJ6uYeYOFOs58=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jFIl4xpGaY0jY17aAExWUdyHLl1BkrPFLilm8AFqAAJSmgoFqM9dYGWkHmx+IKkVg
-	 xeNZKHTZIZiH9XiRWAPJ2rDr27WtjMF49+iRdhhJh7cRQe1hgMRw2DHrtuqfLV2wxD
-	 5WUCZXHVDAEQNvPaMUVQicMOIVemeXFRPm3dRpwSZYPU0tLE0xG8S+d16Cc5G+V7R9
-	 I4RMtOs2NSQxNJ+nUYJk6EjR2OShXspACMq4PxOLGZQsOP/S2jww91SSghLfV6d07g
-	 H3yEQ6SSod/J7+R/1JfOV+PVfv6pgTmlBlJpzYTMl6D0WBCQwfGBP+bOXXha5ruEfH
-	 Y+ksQl2GLWR6w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 83F03C59A4C;
-	Fri,  1 Dec 2023 11:00:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyT1GHMB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63355F3;
+	Fri,  1 Dec 2023 07:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701445714; x=1732981714;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S1Dd8iISz5gAjTwi1OBZoZTrthWL/j69ur54GuLmsic=;
+  b=kyT1GHMBe/n4qvhwJtshUbrgGU3WxrNNbWzBsztO5qd/5K7P2L3f82v5
+   y7b0NbZFgUHE4gukuO6EGzR2Q/xlcjJ+Mrz+WvOByX9egAEEjsyoHsz28
+   otINppgYH5osZPwCDXSQ8/+Y0v72HVIr2289NGyvvSPxT/kUR5Rm/OpQ8
+   UUW0H0E6fFpKQKZQz9MdD4wUnB9HNXMHlVoQUyg7Q37VUYb9soCDlZQGv
+   anEdzLRRKG4pG8GbzF4lc++MZB9/hHv0LN6Kk5Sp6aOu6y3hu1Mtg79uc
+   bC822ikgqseAEXiuZ2b3JcBs2rWUUKaHlGuGdtxLacPg6GcIvec4T6V8a
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10911"; a="392376910"
+X-IronPort-AV: E=Sophos;i="6.04,241,1695711600"; 
+   d="scan'208";a="392376910"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 07:48:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10911"; a="887693817"
+X-IronPort-AV: E=Sophos;i="6.04,241,1695711600"; 
+   d="scan'208";a="887693817"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 07:48:32 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1r95kk-000000011m6-1Lyg;
+	Fri, 01 Dec 2023 17:48:30 +0200
+Date: Fri, 1 Dec 2023 17:48:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] parport: Save a few bytes of memory
+Message-ID: <ZWoATrl_K-xIjzw7@smile.fi.intel.com>
+References: <0eba5f2ddd142ab0f577f67e482d1152b40ee720.1700860416.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] octeon_ep: Fix error code in probe()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170142842553.7076.7768114131648140649.git-patchwork-notify@kernel.org>
-Date: Fri, 01 Dec 2023 11:00:25 +0000
-References: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
-In-Reply-To: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: srasheed@marvell.com, vburru@marvell.com, sedara@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0eba5f2ddd142ab0f577f67e482d1152b40ee720.1700860416.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue, 28 Nov 2023 16:13:19 +0300 you wrote:
-> Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code
-> returns success.
+On Fri, Nov 24, 2023 at 10:14:36PM +0100, Christophe JAILLET wrote:
+> Most of parport_register_dev_model() callers pass a 'name' that is a
+> constant string.
 > 
-> Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 1 +
->  1 file changed, 1 insertion(+)
+> So kstrdup_const() can be used to save the duplication of this string
+> when it is not needed. This saves a few bytes of memory.
+> 
+> Use kfree_const() accordingly when this string is freed.
 
-Here is the summary with links:
-  - [net-next] octeon_ep: Fix error code in probe()
-    https://git.kernel.org/netdev/net-next/c/0cd523ee8642
+Looks good to have, hence no objection from me,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+With Best Regards,
+Andy Shevchenko
 
 
