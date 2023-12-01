@@ -1,114 +1,82 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C4E194;
-	Thu, 30 Nov 2023 14:57:52 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 767661FD11;
-	Thu, 30 Nov 2023 22:57:51 +0000 (UTC)
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FDDE138E5;
-	Thu, 30 Nov 2023 22:57:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id O5H+Em8TaWXDYAAAn2gu4w
-	(envelope-from <dsterba@suse.cz>); Thu, 30 Nov 2023 22:57:51 +0000
-Date: Thu, 30 Nov 2023 23:50:33 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: remove shadowed declaration of variable i
- in for-loops
-Message-ID: <20231130225033.GV18929@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20231130150811.2208562-1-colin.i.king@gmail.com>
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 8960A10E2;
+	Thu, 30 Nov 2023 17:27:04 -0800 (PST)
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 04889605E83EA;
+	Fri,  1 Dec 2023 09:26:44 +0800 (CST)
+Message-ID: <0247c807-333a-0e8c-d7ca-60e142ab6279@nfschina.com>
+Date: Fri, 1 Dec 2023 09:26:44 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231130150811.2208562-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Bar: +++++++++++++
-X-Spam-Score: 13.01
-X-Rspamd-Server: rspamd1
-Authentication-Results: smtp-out2.suse.de;
-	dkim=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of dsterba@suse.cz) smtp.mailfrom=dsterba@suse.cz;
-	dmarc=none
-X-Rspamd-Queue-Id: 767661FD11
-X-Spamd-Result: default: False [13.01 / 50.00];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 DMARC_NA(1.20)[suse.cz];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.18)[-0.920];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] scsi: aic7xxx: fix some problem of return value
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: hare@suse.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <1784b008-6eb2-4dc8-ae21-b0b2c18760bf@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 30, 2023 at 03:08:11PM +0000, Colin Ian King wrote:
-> The variable i is declared at the start of function btrfs_qgroup_inherit
-> however there are two for-loops that redeclare the variable using a C99
-> declaration, causes name shadowing. I believe there is no need for this
-> local scoping of i in the loop, so replace the declaration in the loops
-> with assignments.
-> 
-> Cleans up clang scan build warnings:
-> 
-> fs/btrfs/qgroup.c:3194:12: warning: declaration shadows a local variable [-Wshadow]
->  3194 |                 for (int i = 0; i < inherit->num_qgroups; i++) {
->       |                          ^
-> fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
->  3089 |         int i;
->       |             ^
-> fs/btrfs/qgroup.c:3321:12: warning: declaration shadows a local variable [-Wshadow]
->  3321 |                 for (int i = 0; i < inherit->num_qgroups; i++)
->       |                          ^
-> fs/btrfs/qgroup.c:3089:6: note: previous declaration is here
->  3089 |         int i;
->       |             ^
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  fs/btrfs/qgroup.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index ce446d9d7f23..b1f93dbf468c 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -3191,7 +3191,7 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -		for (int i = 0; i < inherit->num_qgroups; i++) {
-> +		for (i = 0; i < inherit->num_qgroups; i++) {
 
-We want to use the for(...) local definitions, so this should change the
-function scope 'i'.
+On 2023/11/30 15:21, Dan Carpenter wrote:
+> On Thu, Nov 30, 2023 at 10:41:23AM +0800, Su Hui wrote:
+>>   	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
+>>   			       eisaBase);
+>>   	if (error != 0) {
+>>   		ahc->bsh.ioport = 0;
+>>   		ahc_free(ahc);
+>> -		return (error);
+>> +		return -error;
+> aic7770_config() mostly returns positive error codes but I see it also
+> return -1 from ahc_reset().  So you'd want to do something like:
+>
+> 	return error < 0 ? error : -error;
+Oh, I missed this one. Thanks for pointing out this mistake!
+>> @@ -1117,7 +1117,7 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
+>>   	if (retval) {
+>>   		printk(KERN_WARNING "aic7xxx: scsi_add_host failed\n");
+>>   		scsi_host_put(host);
+>> -		return retval;
+>> +		return -retval;
+> Originally ahc_linux_register_host() returned a mix of positive and
+> negative error codes.  You have converted it to return only positive
+> error codes.  That's good for consistency in a way, but it's a step
+> backwards from the big picture point of view.
+Agreed, it's better to let ahc_linux_register_host() only return 
+negative error codes.
+>>   	}
+>>   
+>>   	scsi_scan_host(host);
+>> diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
+>> index a07e94fac673..e17eb8df12c4 100644
+>> --- a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
+>> +++ b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
+>> @@ -241,8 +241,8 @@ ahc_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>>   		ahc_linux_pci_inherit_flags(ahc);
+>>   
+>>   	pci_set_drvdata(pdev, ahc);
+>> -	ahc_linux_register_host(ahc, &aic7xxx_driver_template);
+>> -	return (0);
+>> +	error = ahc_linux_register_host(ahc, &aic7xxx_driver_template);
+>> +	return -error;
+> This should be done in a separate patch.
+>
+> patch 1: return negative error codes in ahc_linux_register_host()
+> patch 2: return negative error codes in aic7770_probe()
+> patch 3: add a check for errors in ahc_linux_pci_dev_probe()
+
+Got it, I will send v2 patch set soon.
+Really thanks for your suggestions!
+
+Su Hui
+
