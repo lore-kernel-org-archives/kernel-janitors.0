@@ -1,169 +1,152 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="Q/KNRqBY"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97F55D1;
-	Fri,  1 Dec 2023 00:55:23 -0800 (PST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B18A7gN013029;
-	Fri, 1 Dec 2023 00:55:10 -0800
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2100.outbound.protection.outlook.com [104.47.70.100])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3updt6ew80-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Dec 2023 00:55:09 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q5lI+8e/KynYUTuquYTke9JLqs8f23hNgGmrCXIeBSCrNDEWKTUP2vu+edHu1xz7GYMcearan1IGuImINbHDttd9L8pcVpWxTcaN5IlIli/Jxg2TU7+FOLmmrzSwEuSW3zfjbd37dPLrdUuWid6kTuhs8f1eUU3Q/pxfbV5U/49Y1cdtH4mItJqgC0ZRjTQkxUcZ9/c3EhrUmXDSkgWdacbuub1rf/od2iR/iRc/oYcEhlIpUI4NozWzCYUMztuNZlgXFDrZ8zjhwhGlE7sEFyyzYZWJWgw4h/hinxVqaGUEZV0jCamWg/ARyvfsE7DNq68BF00ECwxwIxzskAKolQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oVllYZPC+etCwXh5CSZThMJIp0eWred+tTnA0c5ATVA=;
- b=Xim2qZ8CyxHe/CYb7JYb+CRR82GNUB7dvv1HtzhPioVVlzS4f30zSbzfjsvhBEWNALf8IJWd1JvEiXj+dZ1KtUSOoKnfm9CWvWsGt5scyX11VX520bwrMtImOBshEgQktVE0Rn0O9BNs4OxwrR0TJKNB3yCRebr0hOPI5qdGY7OQPIA3uCsLVpgVD+iK/R4MGNNxdQbeeSHsjI1SnncTkflDGXKB32PHO01X1YLKzgH5rp2VlMhKfteDRuhOegEyVsWcs77XHja0NVMi1XUKyP8yPiweYSKKVb82yMgX9MIirtLdx9jbZmI7Pdf6bHMYL+sU/AhWBbBjNb5dEX8dKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oVllYZPC+etCwXh5CSZThMJIp0eWred+tTnA0c5ATVA=;
- b=Q/KNRqBYhtfQlkh7cSOn+ejLLlcARCEtRMkngOPDd2aEVikjLfExjKWBaFe1173AghEXfezUU86j96LxpUnyHsx7z+PfuWR8/1bTP9WJsDDV9z/+fpDaDE6qA5Qrhnd3qvgHd0NlyR7QLUDKTKACUI7qh4lMYT2AUis8NAV0UWk=
-Received: from MWHPR1801MB1982.namprd18.prod.outlook.com
- (2603:10b6:301:6a::30) by SJ0PR18MB5213.namprd18.prod.outlook.com
- (2603:10b6:a03:381::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.23; Fri, 1 Dec
- 2023 08:55:07 +0000
-Received: from MWHPR1801MB1982.namprd18.prod.outlook.com
- ([fe80::60ce:c263:ce56:b367]) by MWHPR1801MB1982.namprd18.prod.outlook.com
- ([fe80::60ce:c263:ce56:b367%3]) with mapi id 15.20.7025.022; Fri, 1 Dec 2023
- 08:55:06 +0000
-From: Sathesh B Edara <sedara@marvell.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Shinas Rasheed
-	<srasheed@marvell.com>
-CC: Veerasenareddy Burru <vburru@marvell.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH net-next] octeon_ep: Fix error code in probe()
-Thread-Topic: [PATCH net-next] octeon_ep: Fix error code in probe()
-Thread-Index: AQHaJDQUcOq9NXBiNEOoZYNhRs9fOg==
-Date: Fri, 1 Dec 2023 08:55:05 +0000
-Message-ID: 
- <MWHPR1801MB19828A129D67109B97458B2FD881A@MWHPR1801MB1982.namprd18.prod.outlook.com>
-References: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
-In-Reply-To: <cd2c5d69-b515-4933-9443-0a8f1b7fc599@moroto.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MWHPR1801MB1982:EE_|SJ0PR18MB5213:EE_
-x-ms-office365-filtering-correlation-id: 4ec50264-4537-4c78-6460-08dbf24b369e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 1/RGCIzs/w/DVfim2qUw/N9U4NRKCeLNvJFg372tdYofsFxodl5NQOUcKIppjoclgTkuAfOwIownSLrOEZ+nR01wSSEeNcUonuwiRbWliyhZBV8JWfSIpd7S8v2BhfLWjOZTDXU20Y50p4pJ4+yvrz8ihSz1OoSch3f6Yk165P0Hf7kqpD+r45hvwnuLGKVlz45BpUxHRPIqhxfBD/ke0n799L1qzmAhwwCBWhbiLZgr50ob1ufJ/DJEroHSrcMAxXU4hwZ8PZSYbub60lEvtXAeLT5uckXN7i14s8qokEcwM801ukYsu9ZKOO7puCdCa+JQxTJWASO5Tb8AS4QmT51KXFtvwFLpfQnDMxSjW+uWew4XYtDc+awddjci47MliRqBCFQGB8rvjOjtBXNOpb/CwpJxB9uqW+ROgMJOP62F5xKy1Xyz0JnWkcS53bKZ+gkIYBvGEjXrlc0MpQjpuCasXJL/LtOQ5tq63JDEwHqO1E32j82EgbeABjdt3MAKJPFfd/WaeER83rcQ08R9M3/fFomEaRiiJEh1BvJRFS+WOWJeDlHpf6kj8BMU9YLx2ycfrasUsRNci2cfxiV2L+iwGGambomApBwuoqtUIRLrR6+ZF/DeaJoZwX6GgmRZ
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1801MB1982.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(136003)(346002)(366004)(376002)(230922051799003)(64100799003)(1800799012)(186009)(451199024)(38100700002)(478600001)(9686003)(6506007)(26005)(53546011)(122000001)(71200400001)(7696005)(83380400001)(2906002)(5660300002)(64756008)(54906003)(66446008)(66556008)(41300700001)(66946007)(66476007)(6636002)(76116006)(110136005)(316002)(8936002)(86362001)(8676002)(52536014)(4326008)(38070700009)(33656002)(55016003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?PafG4npfRukqrqutcTgubvGbfy0GHHrW1vQ6Sh4DTukuydhDx6YljYrnJKF1?=
- =?us-ascii?Q?ib4oV8DNt14HwbB5ZGFxysyZaJn/sdsVtId6M6g/cC5fsvTMydF+K75nobSA?=
- =?us-ascii?Q?kgG+USPFrSRMOV1t8FwSlfZahoOdimL4J85tCyzRNq+e7lrZX7y4D7lYaSAY?=
- =?us-ascii?Q?WlcyWoBQludDN51lVepmtqCT6ISlvSt4Q7uczZRrVNBBt/mOqavPgVWlFboS?=
- =?us-ascii?Q?Uo2xiEUxhQ20gzUdmkhSgE6UVsr3GkGB6XZ3d1J4G1I6d5G/82f1NNa3fWoN?=
- =?us-ascii?Q?/HwDFkh5ThLtrUTae0+2t/GZy3Kkxbp04+3US7Ss3aCb8ayx8XJiTqo0XdMI?=
- =?us-ascii?Q?tTKHlfRAf6svItdwkFmR3MrSE5DQx/GSmMjHHJxm8Li4cedmZdZL94X+5R6b?=
- =?us-ascii?Q?Jjn+ZRJY28OFMmaH5FhUp2gb33WJN+r9EiOeX4cBy4V/X8u+hpHp55sYMlTM?=
- =?us-ascii?Q?Q9sffAdSWfnEmhk64lNzjBqxyf6/YxEP4B3l09VpVl7wrsi45svBMoQTSnBu?=
- =?us-ascii?Q?PIZ65zgukYfsTisLC3M8/hGyPMNAkFrGY9Xmt5GRaQsbMDnjUhfHOgFul951?=
- =?us-ascii?Q?KTGP/Y+91yzgREbtBmuTrPJmQlEymRibZoqpXdgXsRT9aAQL7T7eJXdTyFX0?=
- =?us-ascii?Q?tQLHj++B2GHjVbFAj8otyor9G1lQsR7SyLzLx4N2CP8Nz6G7kQgK0ySgDXqp?=
- =?us-ascii?Q?HFq0vLmxuM6koau4FgONw8kkBRF/Ei+ar9agdcoJuRJ2DLudU8Ah8nnk+16K?=
- =?us-ascii?Q?EJA5ScMdMMrypiOQ7hB8bW4McKuEmyzVmWSRkCcunVuF7H2lOx5QYk2bhojt?=
- =?us-ascii?Q?Os5HFQSm4hDQPI13zTUjUH1zaTmSyWcTGlcguSHAKLNVZRkr0FBryTQcEGSj?=
- =?us-ascii?Q?310pznYM/yBStxcRjQrq+2DgETFRji/z1v+YeARGfyu9X5615DtwLJV+nQMl?=
- =?us-ascii?Q?eKZsDEvpDVSXd1Q1elTam0fuAKvMSzFqL7D6yrcUJceTtyFcWg5Td+6oAKDr?=
- =?us-ascii?Q?6wRerFor1yplcG2q2Lbm2emu4nX41s6BEvZj5Wc70zF76BgK0sBMPqJC21mF?=
- =?us-ascii?Q?apQ9pKhCrtmIpZwo4J4kJQ2K31bObrTwI0IaNf7pkRotuqCHyu8FIaoZHlSC?=
- =?us-ascii?Q?OcQw0Ak63X1jy62/HKV7M/nQrDvrn//oDb+Jyo7pB1Nhy8S14AVL6GgN0yBf?=
- =?us-ascii?Q?5KBidISdnoKzz5x0GGz3nfCcl28SXQCQVlywD4+EUPoLgHdpsh7CuqlLwosB?=
- =?us-ascii?Q?AZSsAXGIN3DSH1+2exrWnib0PXXZiiaJzzpUZ9QAamL2eMC8caXC7joPMVGf?=
- =?us-ascii?Q?CXqIPifPtncbrm3IuZRmUyvOQV3b9fSCBBi5ynobFdV45vMsDDn0naBv4dbJ?=
- =?us-ascii?Q?mbeqgwdaa0iNsA9ib0A8cHoby+bZtIVsLZSYbGE1oT6J2KMyFwZqVTB+r/IL?=
- =?us-ascii?Q?dBck2r95lTInDsj02yT/SIQ1owOm8bmikhstXHh7BBJeXProIeHOnKFEydVT?=
- =?us-ascii?Q?R3xplFYcQKNReUVXAJcs7mpKkVNYl3ysQgiBCluLfLX7K7Lo6gqoc6O1wyTt?=
- =?us-ascii?Q?892hZP6cseGr8IjitYs=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E33210D8;
+	Fri,  1 Dec 2023 02:44:27 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8E28B1FD69;
+	Fri,  1 Dec 2023 10:44:24 +0000 (UTC)
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E0DA1379A;
+	Fri,  1 Dec 2023 10:44:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KFRiHgi5aWUUZwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 01 Dec 2023 10:44:24 +0000
+Message-ID: <f0353b3e-9cb3-4009-9c2e-4e0912f28dc2@suse.cz>
+Date: Fri, 1 Dec 2023 11:44:24 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1801MB1982.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ec50264-4537-4c78-6460-08dbf24b369e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2023 08:55:05.5621
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fCX6a2qljO0xZb77nNz52eKqtswY+K7jf9trSJxrTxor5G0xs9wFdGGXoTzFjTTZJ3t/MVsXDrlZq5/sA9F0Ig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR18MB5213
-X-Proofpoint-GUID: aNIip92kE6v19Q1Qny_4hM4fM77gF-Hp
-X-Proofpoint-ORIG-GUID: aNIip92kE6v19Q1Qny_4hM4fM77gF-Hp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-01_06,2023-11-30_01,2023-05-22_02
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] docs: admin-guide: remove obsolete advice related to SLAB
+ allocator
+Content-Language: en-US
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231130095515.21586-1-lukas.bulwahn@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20231130095515.21586-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Bar: +++++++++
+X-Spam-Score: 9.73
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out2.suse.de;
+	dkim=none;
+	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of vbabka@suse.cz) smtp.mailfrom=vbabka@suse.cz;
+	dmarc=none
+X-Rspamd-Queue-Id: 8E28B1FD69
+X-Spamd-Result: default: False [9.73 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 ARC_NA(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DMARC_NA(1.20)[suse.cz];
+	 R_SPF_SOFTFAIL(4.60)[~all];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 NEURAL_SPAM_SHORT(1.34)[0.448];
+	 MX_GOOD(-0.01)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
+	 FREEMAIL_TO(0.00)[gmail.com,lwn.net,vger.kernel.org];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[]
 
+On 11/30/23 10:55, Lukas Bulwahn wrote:
+> Commit 1db9d06aaa55 ("mm/slab: remove CONFIG_SLAB from all Kconfig and
 
+Note that's a -next (from slab/for-next) commit which might still change at
+this point.
 
------Original Message-----
-From: Dan Carpenter <dan.carpenter@linaro.org>=20
-Sent: Tuesday, November 28, 2023 6:43 PM
-To: Shinas Rasheed <srasheed@marvell.com>
-Cc: Veerasenareddy Burru <vburru@marvell.com>; Sathesh B Edara <sedara@marv=
-ell.com>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@goo=
-gle.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>=
-; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vge=
-r.kernel.org
-Subject: [PATCH net-next] octeon_ep: Fix error code in probe()
+> Makefile") removes the config SLAB and makes the SLUB allocator the only
+> default allocator in the kernel. Hence, the advice on reducing OS jitter
+> due to kworker kernel threads to build with CONFIG_SLUB instead of
+> CONFIG_SLAB is obsolete.
+> 
+> Remove the obsolete advice to build with SLUB instead of SLAB.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-----------------------------------------------------------------------
-Set the error code if octep_ctrl_net_get_mtu() fails.  Currently the code r=
-eturns success.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Fixes: 0a5f8534e398 ("octeon_ep: get max rx packet length from firmware")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 1 +
- 1 file changed, 1 insertion(+)
+But due to above, maybe it's best to wait after the removal goes through.
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/=
-net/ethernet/marvell/octeon_ep/octep_main.c
-index 423eec5ff3ad..f2e5c7d80398 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-@@ -1383,6 +1383,7 @@ static int octep_probe(struct pci_dev *pdev, const st=
-ruct pci_device_id *ent)
- 	if (max_rx_pktlen < 0) {
- 		dev_err(&octep_dev->pdev->dev,
- 			"Failed to get max receive packet size; err =3D %d\n", max_rx_pktlen);
-+		err =3D max_rx_pktlen;
- 		goto register_dev_err;
- 	}
- 	netdev->min_mtu =3D OCTEP_MIN_MTU;
---
-2.42.0
-Reviewed-by: Sathesh B Edara <sedara@marvell.com>
+> ---
+>  .../admin-guide/kernel-per-CPU-kthreads.rst      | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
+> index 993c2a05f5ee..b6aeae3327ce 100644
+> --- a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
+> +++ b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
+> @@ -243,13 +243,9 @@ To reduce its OS jitter, do any of the following:
+>  3.	Do any of the following needed to avoid jitter that your
+>  	application cannot tolerate:
+>  
+> -	a.	Build your kernel with CONFIG_SLUB=y rather than
+> -		CONFIG_SLAB=y, thus avoiding the slab allocator's periodic
+> -		use of each CPU's workqueues to run its cache_reap()
+> -		function.
+> -	b.	Avoid using oprofile, thus avoiding OS jitter from
+> +	a.	Avoid using oprofile, thus avoiding OS jitter from
+>  		wq_sync_buffer().
+> -	c.	Limit your CPU frequency so that a CPU-frequency
+> +	b.	Limit your CPU frequency so that a CPU-frequency
+>  		governor is not required, possibly enlisting the aid of
+>  		special heatsinks or other cooling technologies.  If done
+>  		correctly, and if you CPU architecture permits, you should
+> @@ -259,7 +255,7 @@ To reduce its OS jitter, do any of the following:
+>  
+>  		WARNING:  Please check your CPU specifications to
+>  		make sure that this is safe on your particular system.
+> -	d.	As of v3.18, Christoph Lameter's on-demand vmstat workers
+> +	c.	As of v3.18, Christoph Lameter's on-demand vmstat workers
+>  		commit prevents OS jitter due to vmstat_update() on
+>  		CONFIG_SMP=y systems.  Before v3.18, is not possible
+>  		to entirely get rid of the OS jitter, but you can
+> @@ -274,7 +270,7 @@ To reduce its OS jitter, do any of the following:
+>  		(based on an earlier one from Gilad Ben-Yossef) that
+>  		reduces or even eliminates vmstat overhead for some
+>  		workloads at https://lore.kernel.org/r/00000140e9dfd6bd-40db3d4f-c1be-434f-8132-7820f81bb586-000000@email.amazonses.com.
+> -	e.	If running on high-end powerpc servers, build with
+> +	d.	If running on high-end powerpc servers, build with
+>  		CONFIG_PPC_RTAS_DAEMON=n.  This prevents the RTAS
+>  		daemon from running on each CPU every second or so.
+>  		(This will require editing Kconfig files and will defeat
+> @@ -282,12 +278,12 @@ To reduce its OS jitter, do any of the following:
+>  		due to the rtas_event_scan() function.
+>  		WARNING:  Please check your CPU specifications to
+>  		make sure that this is safe on your particular system.
+> -	f.	If running on Cell Processor, build your kernel with
+> +	e.	If running on Cell Processor, build your kernel with
+>  		CBE_CPUFREQ_SPU_GOVERNOR=n to avoid OS jitter from
+>  		spu_gov_work().
+>  		WARNING:  Please check your CPU specifications to
+>  		make sure that this is safe on your particular system.
+> -	g.	If running on PowerMAC, build your kernel with
+> +	f.	If running on PowerMAC, build your kernel with
+>  		CONFIG_PMAC_RACKMETER=n to disable the CPU-meter,
+>  		avoiding OS jitter from rackmeter_do_timer().
+>  
 
