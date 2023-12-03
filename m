@@ -1,69 +1,92 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyT1GHMB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63355F3;
-	Fri,  1 Dec 2023 07:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701445714; x=1732981714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S1Dd8iISz5gAjTwi1OBZoZTrthWL/j69ur54GuLmsic=;
-  b=kyT1GHMBe/n4qvhwJtshUbrgGU3WxrNNbWzBsztO5qd/5K7P2L3f82v5
-   y7b0NbZFgUHE4gukuO6EGzR2Q/xlcjJ+Mrz+WvOByX9egAEEjsyoHsz28
-   otINppgYH5osZPwCDXSQ8/+Y0v72HVIr2289NGyvvSPxT/kUR5Rm/OpQ8
-   UUW0H0E6fFpKQKZQz9MdD4wUnB9HNXMHlVoQUyg7Q37VUYb9soCDlZQGv
-   anEdzLRRKG4pG8GbzF4lc++MZB9/hHv0LN6Kk5Sp6aOu6y3hu1Mtg79uc
-   bC822ikgqseAEXiuZ2b3JcBs2rWUUKaHlGuGdtxLacPg6GcIvec4T6V8a
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10911"; a="392376910"
-X-IronPort-AV: E=Sophos;i="6.04,241,1695711600"; 
-   d="scan'208";a="392376910"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 07:48:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10911"; a="887693817"
-X-IronPort-AV: E=Sophos;i="6.04,241,1695711600"; 
-   d="scan'208";a="887693817"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 07:48:32 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1r95kk-000000011m6-1Lyg;
-	Fri, 01 Dec 2023 17:48:30 +0200
-Date: Fri, 1 Dec 2023 17:48:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] parport: Save a few bytes of memory
-Message-ID: <ZWoATrl_K-xIjzw7@smile.fi.intel.com>
-References: <0eba5f2ddd142ab0f577f67e482d1152b40ee720.1700860416.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iQl/hqLb"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A1B102
+	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 02:34:24 -0800 (PST)
+Received: from [192.168.1.18] ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id 9jnnrzqJl1Jmd9jnnrQmaj; Sun, 03 Dec 2023 11:34:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1701599662;
+	bh=SpJ1CYeXnFol7k9kyFWf28kKK7//pxX9y3k8iQStw7U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=iQl/hqLb9G5a3dwXg5GPC1loCFNzjKZuTaENg+/o1uwROK63L5mBXyEUOcbj2GQqb
+	 ZvnWY5tyroWmM4F3Gzcz6rIwC+7CWbjJYMZmTF5S4btTCGZqnwc785FmRCX2ZThh2C
+	 mgrlgvCc1Z4w1R1wMsg+2ee42qCY7coH63usmo4nQPr0UOOF12gYmwi17Fussts3dh
+	 y5HYtTqi4CJV0ZvT5PyeknO5DYAltSgUjz2Dn1AfoooCJsGdrd6feSTvqsTn1zQ59A
+	 6d/SKU0kDXhspKyJNXa6BTcPGqTRmcV7iXCLT0dKngGptR++ft8yK2vyTFPZoGXJT4
+	 /6NMNvqqk2wOQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 03 Dec 2023 11:34:22 +0100
+X-ME-IP: 92.140.202.140
+Message-ID: <87d394e4-e290-41a6-aaf2-92cf6b5ad919@wanadoo.fr>
+Date: Sun, 3 Dec 2023 11:34:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0eba5f2ddd142ab0f577f67e482d1152b40ee720.1700860416.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] scsi: aic7xxx: return negative error codes in
+ aic7770_probe()
+To: Su Hui <suhui@nfschina.com>, dan.carpenter@linaro.org, hare@suse.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20231201025955.1584260-1-suhui@nfschina.com>
+ <20231201025955.1584260-4-suhui@nfschina.com>
+Content-Language: fr, en-US
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20231201025955.1584260-4-suhui@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 24, 2023 at 10:14:36PM +0100, Christophe JAILLET wrote:
-> Most of parport_register_dev_model() callers pass a 'name' that is a
-> constant string.
+Le 01/12/2023 à 03:59, Su Hui a écrit :
+> aic7770_config() returns both negative and positive error code.
+> it's better to make aic7770_probe() only return negative error codes.
 > 
-> So kstrdup_const() can be used to save the duplication of this string
-> when it is not needed. This saves a few bytes of memory.
+> And the previous patch made ahc_linux_register_host() return negative error
+> codes, which makes sure aic7770_probe() returns negative error codes.
 > 
-> Use kfree_const() accordingly when this string is freed.
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>   drivers/scsi/aic7xxx/aic7770_osm.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/aic7xxx/aic7770_osm.c b/drivers/scsi/aic7xxx/aic7770_osm.c
+> index bdd177e3d762..a19cdd87c453 100644
+> --- a/drivers/scsi/aic7xxx/aic7770_osm.c
+> +++ b/drivers/scsi/aic7xxx/aic7770_osm.c
+> @@ -87,17 +87,17 @@ aic7770_probe(struct device *dev)
+>   	sprintf(buf, "ahc_eisa:%d", eisaBase >> 12);
+>   	name = kstrdup(buf, GFP_ATOMIC);
+>   	if (name == NULL)
+> -		return (ENOMEM);
+> +		return -ENOMEM;
+>   	ahc = ahc_alloc(&aic7xxx_driver_template, name);
+>   	if (ahc == NULL)
 
-Looks good to have, hence no objection from me,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Unrelated to your fix, but 'name' is leaking here.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Also, kasprintf() could be used to avoid buf+sprintf()+kstrdup()
 
+The GFP_ATOMIC in the allocation could certainly also be just a GFP_KERNEL.
+
+CJ
+
+> -		return (ENOMEM);
+> +		return -ENOMEM;
+>   	ahc->dev = dev;
+>   	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
+>   			       eisaBase);
+>   	if (error != 0) {
+>   		ahc->bsh.ioport = 0;
+>   		ahc_free(ahc);
+> -		return (error);
+> +		return error < 0 ? error : -error;
+>   	}
+>   
+>    	dev_set_drvdata(dev, ahc);
 
