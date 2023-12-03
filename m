@@ -1,105 +1,81 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SwqzDwrM"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6F0C4
-	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 02:36:01 -0800 (PST)
-Received: from [192.168.1.18] ([92.140.202.140])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IOXgqwrk"
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D2CEB
+	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 07:24:19 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id 9jnnrzqJl1Jmd9jpQrQmqS; Sun, 03 Dec 2023 11:36:00 +0100
+	id 9oKOre2IUxHPQ9oKOrhoyc; Sun, 03 Dec 2023 16:24:17 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1701599760;
-	bh=7/7K3QF/l4pTTPUL+W/tS/1zgsUPdfiCIZI4+ljPaaU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=SwqzDwrMZsvjAF7VbnrUrv+EpGe2clYQRaJ/mJ0dI8OWVyZED+Ok9/h7ps7nCsxrL
-	 Cz+xhL48AdOoDn+Pe3Yrj1JuBoOFbCK/r1tDClbBpmYZvJEOfoJpvY7Pr9luQ4FDgI
-	 KKUVKmbxwbAg47Qmwh4JQYNZuSYF6XNicEov0YjSXJ+/g0qi6gH4n9ULrt6xV+uqwz
-	 xaC5QSgXeFzxxqKJOAkOHFmdthKMayfgo1bVFYbiEISGknPKAs6SBNuEd+n3kGW2DH
-	 aoRb4ZrCnlBBQ1afRaGzAvHN3Yrh8h3CAh78SzgYm0JBECkrXcDVnK1m0x0o7P2RQk
-	 WLo9hO32IE0fg==
-X-ME-Helo: [192.168.1.18]
+	s=t20230301; t=1701617057;
+	bh=gnbtnIix+v+CGc9OT23ytJpA1uN7CF77J/4touzfKKQ=;
+	h=From:To:Cc:Subject:Date;
+	b=IOXgqwrkOp7vaS9xb3U5gr7R2FeAR3ZWsbSp7zExv5vDAHpB52I3PnNrManjYY+LH
+	 45mg7VkT6a9FT5ZSJf/jAtqViJwdajOJH3958WLb7WB/nZicsJ0GF551yUhuDABRAF
+	 cublK6HjDKoK79HnEbEod0lWwc0OZHY39VVH3/7pzDk//OEisLXVzzTp2E7LChY06T
+	 Avm5Sl6DWWQk/opdnRfwJr2jpsst+2r4l/DecCGiT+EMhjEVP9W60alo+XP449FnZe
+	 3lDvbtfscEFsO8Y+0Zu1zuzGSdfz4Tq158efFYRvtuAe/So/vMCcjC77Dcch9snNLF
+	 OrgCzmA5bAyug==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 03 Dec 2023 11:36:00 +0100
+X-ME-Date: Sun, 03 Dec 2023 16:24:17 +0100
 X-ME-IP: 92.140.202.140
-Message-ID: <eb13fc84-d1e8-4121-8569-cf405a35e721@wanadoo.fr>
-Date: Sun, 3 Dec 2023 11:36:00 +0100
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jonas Malaco <jonas@protocubo.io>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Aleksa Savic <savicaleksa83@gmail.com>,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: nzxt: Fix some error handling path in kraken2_probe()
+Date: Sun,  3 Dec 2023 16:24:05 +0100
+Message-Id: <a768e69851a07a1f4e29f270f4e2559063f07343.1701617030.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] scsi: aic7xxx: return negative error codes in
- aic7770_probe()
-Content-Language: fr
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Su Hui <suhui@nfschina.com>, dan.carpenter@linaro.org, hare@suse.com,
- jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20231201025955.1584260-1-suhui@nfschina.com>
- <20231201025955.1584260-4-suhui@nfschina.com>
- <87d394e4-e290-41a6-aaf2-92cf6b5ad919@wanadoo.fr>
-In-Reply-To: <87d394e4-e290-41a6-aaf2-92cf6b5ad919@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+There is no point in calling hid_hw_stop() if hid_hw_start() has failed.
+There is no point in calling hid_hw_close() if hid_hw_open() has failed.
 
+Update the error handling path accordingly.
 
-Le 03/12/2023 à 11:34, Christophe JAILLET a écrit :
-> Le 01/12/2023 à 03:59, Su Hui a écrit :
->> aic7770_config() returns both negative and positive error code.
->> it's better to make aic7770_probe() only return negative error codes.
->>
->> And the previous patch made ahc_linux_register_host() return negative 
->> error
->> codes, which makes sure aic7770_probe() returns negative error codes.
->>
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   drivers/scsi/aic7xxx/aic7770_osm.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/scsi/aic7xxx/aic7770_osm.c 
->> b/drivers/scsi/aic7xxx/aic7770_osm.c
->> index bdd177e3d762..a19cdd87c453 100644
->> --- a/drivers/scsi/aic7xxx/aic7770_osm.c
->> +++ b/drivers/scsi/aic7xxx/aic7770_osm.c
->> @@ -87,17 +87,17 @@ aic7770_probe(struct device *dev)
->>       sprintf(buf, "ahc_eisa:%d", eisaBase >> 12);
->>       name = kstrdup(buf, GFP_ATOMIC);
->>       if (name == NULL)
->> -        return (ENOMEM);
->> +        return -ENOMEM;
->>       ahc = ahc_alloc(&aic7xxx_driver_template, name);
->>       if (ahc == NULL)
-> 
-> Unrelated to your fix, but 'name' is leaking here.
+Fixes: 82e3430dfa8c ("hwmon: add driver for NZXT Kraken X42/X52/X62/X72")
+Reported-by: Aleksa Savic <savicaleksa83@gmail.com>
+Closes: https://lore.kernel.org/all/121470f0-6c1f-418a-844c-7ec2e8a54b8e@gmail.com/
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Closes added to please checkpatch, not sure if relevant here.
+---
+ drivers/hwmon/nzxt-kraken2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Oups, no, ahc_alloc() handles it.
-Really strange API!
+diff --git a/drivers/hwmon/nzxt-kraken2.c b/drivers/hwmon/nzxt-kraken2.c
+index 428c77b5fce5..7caf387eb144 100644
+--- a/drivers/hwmon/nzxt-kraken2.c
++++ b/drivers/hwmon/nzxt-kraken2.c
+@@ -161,13 +161,13 @@ static int kraken2_probe(struct hid_device *hdev,
+ 	ret = hid_hw_start(hdev, HID_CONNECT_HIDRAW);
+ 	if (ret) {
+ 		hid_err(hdev, "hid hw start failed with %d\n", ret);
+-		goto fail_and_stop;
++		return ret;
+ 	}
+ 
+ 	ret = hid_hw_open(hdev);
+ 	if (ret) {
+ 		hid_err(hdev, "hid hw open failed with %d\n", ret);
+-		goto fail_and_close;
++		goto fail_and_stop;
+ 	}
+ 
+ 	priv->hwmon_dev = hwmon_device_register_with_info(&hdev->dev, "kraken2",
+-- 
+2.34.1
 
-CJ
-
-> 
-> Also, kasprintf() could be used to avoid buf+sprintf()+kstrdup()
-> 
-> The GFP_ATOMIC in the allocation could certainly also be just a GFP_KERNEL.
-> 
-> CJ
-> 
->> -        return (ENOMEM);
->> +        return -ENOMEM;
->>       ahc->dev = dev;
->>       error = aic7770_config(ahc, aic7770_ident_table + 
->> edev->id.driver_data,
->>                      eisaBase);
->>       if (error != 0) {
->>           ahc->bsh.ioport = 0;
->>           ahc_free(ahc);
->> -        return (error);
->> +        return error < 0 ? error : -error;
->>       }
->>        dev_set_drvdata(dev, ahc);
-> 
-> 
