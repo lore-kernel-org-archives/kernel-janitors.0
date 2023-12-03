@@ -1,84 +1,212 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrkCvPot"
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC092EA;
-	Sun,  3 Dec 2023 09:11:40 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6d880219f01so149605a34.0;
-        Sun, 03 Dec 2023 09:11:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701623500; x=1702228300; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R2egft6ySmqioxdZtumOqW29hb5JsXROm0aRahntdqg=;
-        b=SrkCvPot0xNiz1D6lmw2rhqMLzMFMraT8XLVOAhqN9OHByE+IHEw48YhrFJ5QmBt/5
-         RkCE4QNGwgFQRlfvFAIedjqvbNqHDQHcYmJ01ZYnM+7MokDO/oMC77KqVmkCDcKgHIUA
-         tooD8nPQsMqdLuGWwY2DDyXR0M1GJmr852gbpxvKDphc3QzK4a7Z6m2VM3GiwVjfjp5a
-         a1IfMQcZAN1MfaDutXiDLCkvtjs9oAhTIYLrV05mpWjdcfQxSljOi+Ia9bVIVjFUVOWX
-         2Wnh56SM1s24NxzjW+JamgauiWg0UYWN9xHln+9TQTfDR1VtGm83v/POZT+j3uYl6VRC
-         rcDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701623500; x=1702228300;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R2egft6ySmqioxdZtumOqW29hb5JsXROm0aRahntdqg=;
-        b=VpsnaijCefwKUtMYJJJSMaG7UlsgQqjdAKdS81+mZijK6W13r89zLdem38RWSwNVQm
-         CqybdypSAsvYLNtAt+nDKlC0n6Kz7sEbpHu+0KZngGKT9zJuD1r8JxxX3zNjkp0x+aMc
-         3KzDgw6+aKdfT0NJ+ntyhJ/XXenk9goZnTsBTsRhDoG1D7G+TQN8+p2PQpsBN/tmk2jL
-         l3un82RY0fnIgw6kGq9YotJu0GE1H6DRlSwGH5iW1dJdtY9OGSqUBlVYB3zStmcUH07d
-         uGz2qKYYiLMFIWJWjfo+IglQiJ/uBzowfovu3ljobpAXPTP1hGty/T0bM05vFl4fxzuR
-         42KA==
-X-Gm-Message-State: AOJu0Yw33PJdm4vcveuvV5aWFVTW6HgwcoeKqNlYDAy6ERxwama81fD+
-	ah4u3tDzKr93WFgfpImw5ZtYtSh/UCs=
-X-Google-Smtp-Source: AGHT+IH6L1b1nzjlZLruMja918gC8RF9wT6h86C+qDRf3PJleoNUrb+2weIQYdvYwpoFO05ngxoVbg==
-X-Received: by 2002:a05:6870:e86:b0:1fa:f177:625b with SMTP id mm6-20020a0568700e8600b001faf177625bmr1051041oab.8.1701623500073;
-        Sun, 03 Dec 2023 09:11:40 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id wc12-20020a056871a50c00b001fa3c734bc5sm2193237oab.46.2023.12.03.09.11.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Dec 2023 09:11:39 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 3 Dec 2023 09:11:37 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jonas Malaco <jonas@protocubo.io>, Jean Delvare <jdelvare@suse.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Aleksa Savic <savicaleksa83@gmail.com>, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: nzxt: Fix some error handling path in
- kraken2_probe()
-Message-ID: <18eb73c8-5fee-4b3d-8a74-54bedef487e1@roeck-us.net>
-References: <a768e69851a07a1f4e29f270f4e2559063f07343.1701617030.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MS4EngJt"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40D9B4
+	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 11:48:15 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id 9sRor2SAvaCTP9sRprMITc; Sun, 03 Dec 2023 20:48:14 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1701632894;
+	bh=TtuieOqB3d5/4LucYB7b5rnfDifiCNhm6IjslDyNUYo=;
+	h=From:To:Cc:Subject:Date;
+	b=MS4EngJtRAiKHXOhDy56XDRMvJvD38MihZwlUI9BM1bvLFwWgSWqc7ARwSYqGx4+M
+	 9aUEU2XHOXW/zTqWH9JCKxmxNHJqJOi6GyXM8jZA6tdC9Cm0RpQRZC/vKOThwNyhkc
+	 Kk4pdzOxdqhd3Z16ftNUZtK0cgW9wgUHfqwoAFiG2A6AlCS/+r0dl0Bc4h1rKonw3P
+	 83axw2HhH/MCu290ZmatMZIFnHJCOjU4SZEmumRe7klgCZ2mtKqQ1s4+9T34CmsWr7
+	 54WEOyacF3tDZjfJ25dy/AyUsd4z/ETkLBuXJ6B3tHjWfObNnjv3GCNEWKLe5t5wmg
+	 5uqzNG4j/Cthg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 03 Dec 2023 20:48:14 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Song Liu <song@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-raid@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible array
+Date: Sun,  3 Dec 2023 20:48:06 +0100
+Message-Id: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a768e69851a07a1f4e29f270f4e2559063f07343.1701617030.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 03, 2023 at 04:24:05PM +0100, Christophe JAILLET wrote:
-> There is no point in calling hid_hw_stop() if hid_hw_start() has failed.
-> There is no point in calling hid_hw_close() if hid_hw_open() has failed.
-> 
-> Update the error handling path accordingly.
-> 
-> Fixes: 82e3430dfa8c ("hwmon: add driver for NZXT Kraken X42/X52/X62/X72")
-> Reported-by: Aleksa Savic <savicaleksa83@gmail.com>
-> Closes: https://lore.kernel.org/all/121470f0-6c1f-418a-844c-7ec2e8a54b8e@gmail.com/
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Jonas Malaco <jonas@protocubo.io>
+The 'multipaths' field of 'struct mpconf' can be declared as a flexible
+array.
 
-Applied.
+The advantages are:
+   - 1 less indirection when accessing to the 'multipaths' array
+   - save 1 pointer in the structure
+   - improve memory usage
+   - give the opportunity to use __counted_by() for additional safety
 
-> ---
-> Closes added to please checkpatch, not sure if relevant here.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+On my x86_64 system, with configured with allmodconfig, I have:
 
-One of the few checkpatch warnings which may be ignored for hwmon patches.
-Sometimes there _is_ no report of a problem or, like in this case, it is
-reported in some unrelated exchange. I don't drop it if provided, but I
-don't require it either.
+Before the change:
+=================
+struct mpconf {
+	struct mddev *             mddev;                /*     0     8 */
+	struct multipath_info *    multipaths;           /*     8     8 */
+	int                        raid_disks;           /*    16     4 */
 
-Guenter
+	/* XXX 4 bytes hole, try to pack */
+
+	spinlock_t                 device_lock;          /*    24    72 */
+	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+	struct list_head           retry_list;           /*    96    16 */
+	mempool_t                  pool;                 /*   112   200 */
+
+	/* size: 312, cachelines: 5, members: 6 */
+	/* sum members: 308, holes: 1, sum holes: 4 */
+	/* last cacheline: 56 bytes */
+};
+
+struct multipath_info {
+	struct md_rdev *           rdev;                 /*     0     8 */
+
+	/* size: 8, cachelines: 1, members: 1 */
+	/* last cacheline: 8 bytes */
+};
+
+size drivers/md/md-multipath.o
+   text	   data	    bss	    dec	    hex	filename
+  12863	   1041	     16	  13920	   3660	drivers/md/md-multipath.o
+
+
+After the change:
+================
+struct mpconf {
+	struct mddev *             mddev;                /*     0     8 */
+	int                        raid_disks;           /*     8     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	spinlock_t                 device_lock;          /*    16    72 */
+	/* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
+	struct list_head           retry_list;           /*    88    16 */
+	mempool_t                  pool;                 /*   104   200 */
+	/* --- cacheline 4 boundary (256 bytes) was 48 bytes ago --- */
+	struct multipath_info      multipaths[];         /*   304     0 */
+
+	/* size: 304, cachelines: 5, members: 6 */
+	/* sum members: 300, holes: 1, sum holes: 4 */
+	/* last cacheline: 48 bytes */
+};
+
+struct multipath_info {
+	struct md_rdev *           rdev;                 /*     0     8 */
+
+	/* size: 8, cachelines: 1, members: 1 */
+	/* last cacheline: 8 bytes */
+};
+
+size drivers/md/md-multipath.o
+   text	   data	    bss	    dec	    hex	filename
+  12470	   1041	     16	  13527	   34d7	drivers/md/md-multipath.o
+
+
+So:
+  - about 400 bytes of code are saved.
+  - because of the way memory allocation works, 'struct mpconf' really
+    uses 512 bytes of memory when allocated. So the "extra" memory that is
+    allocated (512-304 = 208) can be used to store up to 26 multipaths,
+    for free.
+
+Finally, several places use pointer arithmetic to access the desired
+structure, such as:
+	for (i = 0; i < conf->raid_disks; i++) {
+		tmp = conf->multipaths + i;
+		if (tmp->rdev)
+
+Should this be rewritten as:
+	for (i = 0; i < conf->raid_disks; i++) {
+		if (tmpconf->multipaths[i]->rdev)
+in order to have the compiler be able to check boundaries defined by
+__counted_by()?
+---
+ drivers/md/md-multipath.c | 12 +++---------
+ drivers/md/md-multipath.h |  3 ++-
+ 2 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
+index d22276870283..6a23065a65f7 100644
+--- a/drivers/md/md-multipath.c
++++ b/drivers/md/md-multipath.c
+@@ -357,16 +357,13 @@ static int multipath_run (struct mddev *mddev)
+ 	 * should be freed in multipath_free()]
+ 	 */
+ 
+-	conf = kzalloc(sizeof(struct mpconf), GFP_KERNEL);
++	conf = kzalloc(struct_size(conf, multipaths, mddev->raid_disks),
++		       GFP_KERNEL);
+ 	mddev->private = conf;
+ 	if (!conf)
+ 		goto out;
+ 
+-	conf->multipaths = kcalloc(mddev->raid_disks,
+-				   sizeof(struct multipath_info),
+-				   GFP_KERNEL);
+-	if (!conf->multipaths)
+-		goto out_free_conf;
++	conf->raid_disks = mddev->raid_disks;
+ 
+ 	working_disks = 0;
+ 	rdev_for_each(rdev, mddev) {
+@@ -384,7 +381,6 @@ static int multipath_run (struct mddev *mddev)
+ 			working_disks++;
+ 	}
+ 
+-	conf->raid_disks = mddev->raid_disks;
+ 	conf->mddev = mddev;
+ 	spin_lock_init(&conf->device_lock);
+ 	INIT_LIST_HEAD(&conf->retry_list);
+@@ -421,7 +417,6 @@ static int multipath_run (struct mddev *mddev)
+ 
+ out_free_conf:
+ 	mempool_exit(&conf->pool);
+-	kfree(conf->multipaths);
+ 	kfree(conf);
+ 	mddev->private = NULL;
+ out:
+@@ -433,7 +428,6 @@ static void multipath_free(struct mddev *mddev, void *priv)
+ 	struct mpconf *conf = priv;
+ 
+ 	mempool_exit(&conf->pool);
+-	kfree(conf->multipaths);
+ 	kfree(conf);
+ }
+ 
+diff --git a/drivers/md/md-multipath.h b/drivers/md/md-multipath.h
+index b3099e5fc4d7..fb49e151ac94 100644
+--- a/drivers/md/md-multipath.h
++++ b/drivers/md/md-multipath.h
+@@ -8,12 +8,13 @@ struct multipath_info {
+ 
+ struct mpconf {
+ 	struct mddev			*mddev;
+-	struct multipath_info	*multipaths;
+ 	int			raid_disks;
+ 	spinlock_t		device_lock;
+ 	struct list_head	retry_list;
+ 
+ 	mempool_t		pool;
++
++	struct multipath_info	multipaths[] __counted_by(raid_disks);
+ };
+ 
+ /*
+-- 
+2.34.1
+
