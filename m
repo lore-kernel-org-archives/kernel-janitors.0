@@ -1,93 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R6JbpvDz"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DF583;
-	Mon,  4 Dec 2023 09:13:51 -0800 (PST)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4H3wqx012133;
-	Mon, 4 Dec 2023 17:13:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=A2PqbRe2hdgG+2bzb8Ox+aMtx/2cW4uLxpdVFW4eCcM=;
- b=R6JbpvDzaYKJVV/S5hXsde/tRW8fQu3WaVXbaWCTJRc9b3UDQ/TM+ARS6to9bbXwaSgt
- LKWf/NzZzs5ntIkNBsJvoM8y9Y6p2uRmuc75PxsloFTdeTNR0M18QhIbf0if00OyEDfn
- sDlvOGnHlBJ4JZ9UjQhXl7wYjmepLE8bHhOUcpO/QdOf+66XWnqj19MlqPb6UpLzuQiy
- Hf24Q+GmYz2hpki4RKr6GZ65ur8EmjeqLKYatkLjJxUGuh9LOxAM347HoBmNyrG1aKhm
- lkQIZjcXfDF2WWT4jHBRrHQofdUM8h0JWmDPxb8ODZz5x9uVN/cFgZE69jpfFOXuy/r5 1w== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usju700kb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 04 Dec 2023 17:13:39 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4GEgf2005371;
-	Mon, 4 Dec 2023 17:13:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu15vrfb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 04 Dec 2023 17:13:38 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B4HDYEs003824;
-	Mon, 4 Dec 2023 17:13:34 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3uqu15vr02-1;
-	Mon, 04 Dec 2023 17:13:34 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Vinod Polimera <quic_vpolimer@quicinc.com>,
-        Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH next] drm/msm/dp: add a missing unlock in dp_hpd_plug_handle()
-Date: Mon,  4 Dec 2023 09:13:14 -0800
-Message-ID: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bRBqh33+"
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7549CCE
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 11:39:07 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-db544987c79so3218784276.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 11:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701718746; x=1702323546; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTaRrGnNYWJXMSaCAkRjN5SkjpY2VkDKl0lQohgIOR8=;
+        b=bRBqh33+WEasPCrXglkOCn49BOxneLpHspnV+h1wN69C1SjEIa9ZVvF/elRuMy6SzB
+         7/FKOSfVChrx2/VN1RB6kNzBjYgFtfO8G3JsWaLrtpd8vXWDO0oYCMSQrI0zrnQsqtSt
+         IHjOkoLTg29XwYn6QFuvvseTSuMgoeKhX/y121yhRXMcs4PnBR4MpvwfWaCYyRA7+mEP
+         18NKqoLxb0F7l5ob5qN9o8PLsHfSaPLqFG8QzuMiXAzU7nay7r8qBqvCRI02+LYYC5wL
+         XHo0lJm1KOuOvyrfuHOKGJcW+/ek2Sso3fQPjkz89LUSFkiwZDwZHh2FZIhEnbZMhEw8
+         YRPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701718746; x=1702323546;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTaRrGnNYWJXMSaCAkRjN5SkjpY2VkDKl0lQohgIOR8=;
+        b=mH3pQi+QGa/w+d9tqDWM8khkw9dAcBPPg13Y9k9YnqZ4xcCfFs4BlDD6fnR4K98eR0
+         A/HCuRpmDHjBKIPPUqQ62mKNm+2sLr43mkZXCwda8RT4gh/Mt1+tERGBCLl/gXf3F86t
+         tuqdBOp1T7/zz+NF8wbrTDWC2bRU0ctA0OSRmnBKy4epDPliEmoBkMp3rfaUz1IrAUpU
+         pw+zN/Fmd0EJNt0guVGlPOON9GowYK6j4elZRFzQBudB9Z2vczOl8/dyqxfhA9VKl8uI
+         tE5wTnQYrYMKEEhnyD9JaEKfnmi87mXXJVAIBRZZmVcew0zuPdFTeTojQjDFpt+tn7Ah
+         OogA==
+X-Gm-Message-State: AOJu0YySSgvmWeq70HPE46e8m+5lT1dV1eldzm8VeoMcmRXgqnSnxnbZ
+	sqc6PA7PbHnzobmjfiDDyzlJaP/4Xl2ypezRq15DMg==
+X-Google-Smtp-Source: AGHT+IHnf+wIvLq0T+FY2Q4ycS6tDbC03pIpYzm4f+CmPYNLG73XmpwNsbHDjLnCXb2W1bDF/n+0HHpOQ1t0sBPlJMI=
+X-Received: by 2002:a25:2cd:0:b0:db5:4e94:67cd with SMTP id
+ 196-20020a2502cd000000b00db54e9467cdmr3836892ybc.58.1701718746667; Mon, 04
+ Dec 2023 11:39:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-04_16,2023-12-04_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 phishscore=0 malwarescore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2312040132
-X-Proofpoint-ORIG-GUID: HbMF7UAXWfmh0B826Bgqdyl9huvMmy4E
-X-Proofpoint-GUID: HbMF7UAXWfmh0B826Bgqdyl9huvMmy4E
+References: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 4 Dec 2023 21:38:55 +0200
+Message-ID: <CAA8EJpqdJFxM=Ervg6Gx3umV=K7HaprAa2RrtSjxtv_qv1VO7w@mail.gmail.com>
+Subject: Re: [PATCH next] drm/msm/dp: add a missing unlock in dp_hpd_plug_handle()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Vinod Polimera <quic_vpolimer@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, error27@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-When pm_runtime_resume_and_get() fails, unlock before returning.
+On Mon, 4 Dec 2023 at 19:13, Harshit Mogalapalli
+<harshit.m.mogalapalli@oracle.com> wrote:
+>
+> When pm_runtime_resume_and_get() fails, unlock before returning.
+>
+> Fixes: 5814b8bf086a ("drm/msm/dp: incorporate pm_runtime framework into DP driver")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with Smatch. Only compile tested.
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Fixes: 5814b8bf086a ("drm/msm/dp: incorporate pm_runtime framework into DP driver")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with Smatch. Only compile tested.
----
- drivers/gpu/drm/msm/dp/dp_display.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index 61b7103498a7..b57ff6c3215d 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -569,6 +569,7 @@ static int dp_hpd_plug_handle(struct dp_display_private *dp, u32 data)
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret) {
- 		DRM_ERROR("failed to pm_runtime_resume\n");
-+		mutex_unlock(&dp->event_mutex);
- 		return ret;
- 	}
- 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 -- 
-2.39.3
-
+With best wishes
+Dmitry
