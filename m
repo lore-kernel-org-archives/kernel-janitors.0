@@ -1,94 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524E334196;
-	Mon,  4 Dec 2023 20:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFG91LHh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A2FC433C8;
-	Mon,  4 Dec 2023 20:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701721656;
-	bh=3UM0vBZGSpHc/APPrPZ8DjPjv6AEs/OPlh26tPoK9O4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NFG91LHh+C4t7h5Fq9XGJmt0LMF/keh8bqC95G04byB1MAbjjZ3anlvBs+MWzaAlo
-	 OvHoYW30GSBecFq84cytmQ7NZ+KnKAxvfzGAlRT1gnyRkfVRklqaUbmCJB3sLw3VHW
-	 wn6zu08jHrL4AuSBaY4/C7TyUDMChpezO7HwtkA3X5BwdDjAG+JDUdnP4hxF2FdXxj
-	 IomaqrXfxetvJA/EsmBK7g81OYqXDZEe+rD3OeyLayYYOBcuIeByVp5T751hQ3zXq4
-	 XuC1AdVz8Fi2W2u01ckGHNLa0M1LddxWO92ANuLj/T6l6Lsjr7eq7h2Hn9mfXIWG8J
-	 v64ipQ4CRSo5g==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-	id 2338E40094; Mon,  4 Dec 2023 17:27:34 -0300 (-03)
-Date: Mon, 4 Dec 2023 17:27:34 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] perf/benchmark: Fix spelling mistake
- "synchronious" -> "synchronous"
-Message-ID: <ZW42NiB4VK7Dp7oP@kernel.org>
-References: <20230630080029.15614-1-colin.i.king@gmail.com>
- <CAM9d7ch8GcZUXVEtPGh2QW8-_aiObq7ybU_7gY7LMcjRfOFvxw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lf0Tbx4p"
+Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429AE1711
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 14:20:06 -0800 (PST)
+Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-58d4968c362so3260190eaf.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 14:20:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1701728405; x=1702333205; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c+WzlKb2MQSHfnGqBE/e5O7OA37FmS5jYCRCA/LLsH0=;
+        b=lf0Tbx4pZSpplXVE+zqYxKYOIwCE2xAIUgcZiK3fCq6WNOA8asMjsl+yN0MHxt2eDn
+         rbaiZLPUY41HHiP3/HfHTDEMuBNSsqFAfOwLCszTWL335Aat5ZHiNUr8kTLUlWLeMVgK
+         Ko4WxPKFTphxd51BX4j69weJgwWn21SSL2GP0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701728405; x=1702333205;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c+WzlKb2MQSHfnGqBE/e5O7OA37FmS5jYCRCA/LLsH0=;
+        b=jXaGsubsdqDi4mJt4okXMwElKAse5rE6N6bXee+JeqDXBvSYWRVO34X8nqWdPTiRIt
+         1XpLgtv2rfaJaaURoXpAczfkWuUZhEHht89PAiWj6z1V3+RuwPV1tAkgMLh7UzhX4O2B
+         RUyfKgm8NnNo/KsXUiYzm+6drtp4sGlULy7HNWlny8NRNCzE/dayhmTK6gX+Lj/m4hed
+         /qD7JZQiApPdmZ/sW/iJXG9hd4v6t0iIL2eGz35s+DzDhApNLuKzuz/O0cQyeWBsVRUA
+         vgmviVvDOA/f8zmmXmx1T58/EeL8Xf0lxGmVluCJnVTcjT+0ifH+jwzzP/0CCqNssOOM
+         wSig==
+X-Gm-Message-State: AOJu0YwnigPgId6kPGejvsBYw2FIK9hEp41OD2XmtIZp0ctv0KFkrZzK
+	s27aHpbZQvWPyhwrDtVCw2iSDQ==
+X-Google-Smtp-Source: AGHT+IGC7BzaBQCIfZe1vXo4mx3JRiDIzetuPnC9oVZ29pkisPeQ4hM13pxSUb9WDQN6k46hgaEL7w==
+X-Received: by 2002:a05:6358:9106:b0:170:302b:545f with SMTP id q6-20020a056358910600b00170302b545fmr2543842rwq.56.1701728405319;
+        Mon, 04 Dec 2023 14:20:05 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id ey5-20020a056a0038c500b006cde75646d3sm4718759pfb.179.2023.12.04.14.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Dec 2023 14:20:04 -0800 (PST)
+Date: Mon, 4 Dec 2023 14:20:04 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Song Liu <song@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-raid@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible
+ array
+Message-ID: <202312041419.81EF03F7B7@keescook>
+References: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7ch8GcZUXVEtPGh2QW8-_aiObq7ybU_7gY7LMcjRfOFvxw@mail.gmail.com>
-X-Url: http://acmel.wordpress.com
+In-Reply-To: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
 
-Em Sat, Jul 01, 2023 at 10:57:33AM -0700, Namhyung Kim escreveu:
-> Hello,
+On Sun, Dec 03, 2023 at 08:48:06PM +0100, Christophe JAILLET wrote:
+> The 'multipaths' field of 'struct mpconf' can be declared as a flexible
+> array.
 > 
-> On Fri, Jun 30, 2023 at 1:00 AM Colin Ian King <colin.i.king@gmail.com> wrote:
-> >
-> > There is a spelling mistake in an option description. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  tools/perf/bench/sched-seccomp-notify.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> The advantages are:
+>    - 1 less indirection when accessing to the 'multipaths' array
+>    - save 1 pointer in the structure
+>    - improve memory usage
+>    - give the opportunity to use __counted_by() for additional safety
 > 
-> Hmm.. strange.  I cannot see the bench/sched-seccomp-notify.c.
-> Which tree are you based?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-It went thru a different tree, but I got this while looking for
-Acked-by patches and finally applied it.
+This looks like a really nice conversion. I haven't run-tested this, but
+it reads correct to me.
 
-- Arnaldo
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> >
-> > diff --git a/tools/perf/bench/sched-seccomp-notify.c b/tools/perf/bench/sched-seccomp-notify.c
-> > index eac4ef60090f..2e8205c61141 100644
-> > --- a/tools/perf/bench/sched-seccomp-notify.c
-> > +++ b/tools/perf/bench/sched-seccomp-notify.c
-> > @@ -33,7 +33,7 @@ static bool sync_mode;
-> >  static const struct option options[] = {
-> >         OPT_U64('l', "loop",    &loops,         "Specify number of loops"),
-> >         OPT_BOOLEAN('s', "sync-mode", &sync_mode,
-> > -                   "Enable the synchronious mode for seccomp notifications"),
-> > +                   "Enable the synchronous mode for seccomp notifications"),
-> >         OPT_END()
-> >  };
-> >
-> > --
-> > 2.39.2
-> >
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-
-- Arnaldo
+Kees Cook
