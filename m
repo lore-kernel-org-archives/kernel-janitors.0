@@ -1,52 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RyH7+INx"
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961B390
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:29:52 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40a4848c6e1so45272245e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:29:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iidQi2oE"
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE5FE
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:30:11 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40838915cecso44692595e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:30:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701692991; x=1702297791; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701693010; x=1702297810; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aUhRTS4iAhhl+KZItDinLEHOyoi9efgW3+TWBHSVYFs=;
-        b=RyH7+INxRtH8z0JEAg/7xFaWy7zJsa2hGe0aThKpVskF7wxdyPG4Kq8WsE/rAiqS/f
-         D5mxcRCd14BwNcZ4BAlUP2hSMmYdPnSLeC1+ePH57EhyslIstmId0nNWbu90wt+abbrm
-         sk06vtUAfKVW2SAyK6skhedbsem+Zw9eFJKXFLALyUhbcYsXcRdYVUNvG6L/nV8VCepY
-         JSpa0+r/xL5MjJL28Yw2LlHUm6XFaRh+hkuDAc3z+aDq+fPPxw4QVWl3JumS6xiT/lmH
-         FSmYyYPZHp3woJuwyA6bXlLJkCIdcROD5b0qYkIQu2EXMI/fl9ermwziLtezSOX/8Ema
-         3CKA==
+        bh=HKvSKITUcl+fN4QbSnsBMTLDMl3HA5xQPt9QvlGXEbI=;
+        b=iidQi2oEZuoBshT399Uzx8Izs0wKDb026uVoEHZDKjFt7urmkr/zbOR0NCH5+jQQVI
+         HznfLEFwTl+OpY6J3gHQkQBwaSrNYChAC1mJPq59pU76aOZnnf+9XQ4jmBaBgNRuneFG
+         4EFLAEbk9qZfACPXqi/XTzLa7GmSuV5+ERaT/MDTCNOKZfvgrFO69VMLmLtqt8UXPz/7
+         wmP3e0zLK0bkG9KDDQM0Xb6A6XXXaOQkTP0VnTIOStAsV+QX8xNIOOLY5em/mssQYVBk
+         xht8L2ZfQ/2gPCCwTtG0RuokVmeVAVH0nEbB33yAPNa3BhP1kcN6Gc6JJ+tQMf0J+KSP
+         N/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701692991; x=1702297791;
+        d=1e100.net; s=20230601; t=1701693010; x=1702297810;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUhRTS4iAhhl+KZItDinLEHOyoi9efgW3+TWBHSVYFs=;
-        b=CG0+ObqfInan7rIrNpTK8ve9u4pB8bIcPyNchaDWsT2I4fdyGpWJB6wPrEXzbYFYKN
-         0t804cLZZUKcvTs314TWUwZIAywsVB+6SRfIMQXKkaZEBFYRblUMWHwhpF043YdNr+pK
-         txsdyiWkcKr+R9SdmxI8MXQ+Aoe7/Y+D7XxAM5lJC8iRtV26AyI1EgSJRICL/FZYo/vZ
-         VhcXHY5u/LQ8fbDF+oM0Ljd7slGhO+xtGJomWmMlqmO76/gohDt2KIWVLe/q9W4czdRG
-         +vOdyTsB6eleS9HdWq3hhj3mh1deQgQTt48U0SyI4xsirM1NOvZJqb6fmupbVsY6+vau
-         ZvSA==
-X-Gm-Message-State: AOJu0YxJOXljIPw0/g/lOiQO3Fmz0tgFIzgzGvXZM683ODsBRhOV4MKM
-	sJvpX77jzuLe5hHpoSmpM6hn1A==
-X-Google-Smtp-Source: AGHT+IFZs+SwwMGzwq8yZd4jM2EoPYnALJho9VVQpkJYYZPO940zD0oFiAdm0BK1wdKLgDbGBGX3HA==
-X-Received: by 2002:a7b:c405:0:b0:40c:7f6:5a67 with SMTP id k5-20020a7bc405000000b0040c07f65a67mr1327823wmi.60.1701692991052;
-        Mon, 04 Dec 2023 04:29:51 -0800 (PST)
+        bh=HKvSKITUcl+fN4QbSnsBMTLDMl3HA5xQPt9QvlGXEbI=;
+        b=IsdR4uGkPCE5k3/6UewwJkdaHhybuOymTI9jbstrqCR4VicLi3LSnSXqxdXTOG9lLf
+         PMB38o17eitKgwjIpRQ3GDDMzPkNHfKHdmkmvwi3+dbfYyH/LKYr0ZqWGQoDVZchubTa
+         cBUUg6fbSQ8TN80dgVTh1L4YSV25zjlsIpbOCVDtnBP7PQy2cRLgz8U4eK7lHQFlI2+V
+         hai5qp5CobeqgQKuvQotnN+pYor+rC40piaT2/R5NL7xn4CwHuroSD+H+57pmLqOGx8e
+         OmbMb9KR8Z4MDmdfwoy7q6BLLAA5hgMtwxOdv3gEnt/xq5lT8q2Y9dwYzAe1tiPubpd2
+         wVUg==
+X-Gm-Message-State: AOJu0YwWOI4SC2JzuekWgcjYOK0R7264LThMsqXE+rxsGAGKiaKXTZST
+	ukXITCOODrXugEUwNsyF23IXGw==
+X-Google-Smtp-Source: AGHT+IEnpV3/O9/8ri5kU9IVDoewSq6OVRcJS3PmnCJaHELXOk53y0yosvmsMWPxzvXqFzDfVsT3QA==
+X-Received: by 2002:a05:600c:3417:b0:40b:5e59:da7a with SMTP id y23-20020a05600c341700b0040b5e59da7amr2376583wmp.141.1701693009855;
+        Mon, 04 Dec 2023 04:30:09 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b004094d4292aesm14918103wmg.18.2023.12.04.04.29.50
+        by smtp.gmail.com with ESMTPSA id o18-20020a05600c511200b004064e3b94afsm18454841wms.4.2023.12.04.04.30.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 04:29:50 -0800 (PST)
-Date: Mon, 4 Dec 2023 15:29:47 +0300
+        Mon, 04 Dec 2023 04:30:09 -0800 (PST)
+Date: Mon, 4 Dec 2023 15:30:06 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shuming Fan <shumingf@realtek.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: rt5650: add a missing unlock in
- rt5645_jack_detect_work()
-Message-ID: <0d18b8b3-562f-468e-991e-d82d40451f9a@moroto.mountain>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] nfsd: remove unnecessary NULL check
+Message-ID: <0cce4257-6c22-4c0a-b769-b946990413fe@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -57,27 +55,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We recently added new locking to the rt5645_jack_detect_work() function
-but this return path was accidentally overlooked.
+We check "state" for NULL on the previous line so it can't be NULL here.
+No need to check again.
 
-Fixes: cdba4301adda ("ASoC: rt5650: add mutex to avoid the jack detection failure")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202312031425.LffZTarR-lkp@intel.com/
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/soc/codecs/rt5645.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfsd/nfs4state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
-index a0d01d71d8b5..caf922ca90f0 100644
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -3314,6 +3314,7 @@ static void rt5645_jack_detect_work(struct work_struct *work)
- 				    report, SND_JACK_HEADPHONE);
- 		snd_soc_jack_report(rt5645->mic_jack,
- 				    report, SND_JACK_MICROPHONE);
-+		mutex_unlock(&rt5645->jd_mutex);
- 		return;
- 	case 4:
- 		val = snd_soc_component_read(rt5645->component, RT5645_A_JD_CTRL1) & 0x0020;
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 40415929e2ae..fb551a3db1dc 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6639,7 +6639,7 @@ __be32 manage_cpntf_state(struct nfsd_net *nn, stateid_t *st,
+ 	spin_unlock(&nn->s2s_cp_lock);
+ 	if (!state)
+ 		return nfserr_bad_stateid;
+-	if (!clp && state)
++	if (!clp)
+ 		*cps = state;
+ 	return 0;
+ }
 -- 
 2.42.0
 
