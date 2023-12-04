@@ -1,50 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iK8gKI8q"
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A942113
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:29:34 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40c07ed92fdso15152915e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:29:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RyH7+INx"
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961B390
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:29:52 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40a4848c6e1so45272245e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701692972; x=1702297772; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701692991; x=1702297791; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5jtRzLSN1qiD5ViHrLDUVaEvxomgxXY/Nh4KNz8w1+w=;
-        b=iK8gKI8qJwQOgB/m2v6pIIxBm7uTScfF6I/99ACl6aw6x4BWPm3D1EWnRWZcEZZ+42
-         sRu0NKGbe+nIxsni0/dWewg1HJ1uEFq3nCaaoHY3G508XNzd0I1Ct3mOspnVlATGgQPq
-         yR0vk96s6R4A2jDWbXdBMEutkGkW5O2Je4hhWcJseTcPVPtudTVKwoo8bPbt3iqyt/OL
-         XbjFRKwZhejRtl9BF/7EF54buFlzuDUeGxadq/NYvb8w9t+NxKvGwgHlZc766EGRn7Wi
-         a1ebOM8O4dhwwp40Cemd5CPGCgVmnno3j2t4djArIAdFh1zEO7JHtS1hOAyqeykEXrYN
-         PX+A==
+        bh=aUhRTS4iAhhl+KZItDinLEHOyoi9efgW3+TWBHSVYFs=;
+        b=RyH7+INxRtH8z0JEAg/7xFaWy7zJsa2hGe0aThKpVskF7wxdyPG4Kq8WsE/rAiqS/f
+         D5mxcRCd14BwNcZ4BAlUP2hSMmYdPnSLeC1+ePH57EhyslIstmId0nNWbu90wt+abbrm
+         sk06vtUAfKVW2SAyK6skhedbsem+Zw9eFJKXFLALyUhbcYsXcRdYVUNvG6L/nV8VCepY
+         JSpa0+r/xL5MjJL28Yw2LlHUm6XFaRh+hkuDAc3z+aDq+fPPxw4QVWl3JumS6xiT/lmH
+         FSmYyYPZHp3woJuwyA6bXlLJkCIdcROD5b0qYkIQu2EXMI/fl9ermwziLtezSOX/8Ema
+         3CKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701692972; x=1702297772;
+        d=1e100.net; s=20230601; t=1701692991; x=1702297791;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5jtRzLSN1qiD5ViHrLDUVaEvxomgxXY/Nh4KNz8w1+w=;
-        b=v635qsSbBNowKi4UdlOB1XtygsslEWaGSx52sl6i4fbdqcZESzAvJmzkbjrClUCJ6o
-         VI5yWYYYAfp230z/64Ev/XOiVGvfEsivPbgJoNsetKLpXAz8MjYqxNA63/30VdGEi3wR
-         TvIHtxYEM9xYE/trpcoOSkgDoxQvrQvxlQnY2qg2SC6uPtEABTUOD/e6c/gS/wmO8OjE
-         RZ+GresAvgg+ruVrCURr1TEwVXyYUOJlRjUZyaCi8LICeQ3In9h/ULsZQ6IxctSBvDkA
-         EtVMK9m2uNsNJRhJXgH542eHR1yfFa90hKKwLmqcdOe3e41qlaO0GwkDRoyIeI++N/3h
-         EJ/w==
-X-Gm-Message-State: AOJu0Yxg+PhCO6mLrVgA14G8CGdey7z9tQ/a9tGh3iYySkhP67lyedMe
-	pf0PG9RWlfQuViJJQY7DI0coag==
-X-Google-Smtp-Source: AGHT+IHeQU6ukVh6qvTvC91E/9AZ9tQzE96+lLjiDnPYJUypYWxHlpietrEODuWPZuVKx1JlmTZr4g==
-X-Received: by 2002:a1c:7508:0:b0:40b:3566:e54e with SMTP id o8-20020a1c7508000000b0040b3566e54emr2517759wmc.39.1701692972469;
-        Mon, 04 Dec 2023 04:29:32 -0800 (PST)
+        bh=aUhRTS4iAhhl+KZItDinLEHOyoi9efgW3+TWBHSVYFs=;
+        b=CG0+ObqfInan7rIrNpTK8ve9u4pB8bIcPyNchaDWsT2I4fdyGpWJB6wPrEXzbYFYKN
+         0t804cLZZUKcvTs314TWUwZIAywsVB+6SRfIMQXKkaZEBFYRblUMWHwhpF043YdNr+pK
+         txsdyiWkcKr+R9SdmxI8MXQ+Aoe7/Y+D7XxAM5lJC8iRtV26AyI1EgSJRICL/FZYo/vZ
+         VhcXHY5u/LQ8fbDF+oM0Ljd7slGhO+xtGJomWmMlqmO76/gohDt2KIWVLe/q9W4czdRG
+         +vOdyTsB6eleS9HdWq3hhj3mh1deQgQTt48U0SyI4xsirM1NOvZJqb6fmupbVsY6+vau
+         ZvSA==
+X-Gm-Message-State: AOJu0YxJOXljIPw0/g/lOiQO3Fmz0tgFIzgzGvXZM683ODsBRhOV4MKM
+	sJvpX77jzuLe5hHpoSmpM6hn1A==
+X-Google-Smtp-Source: AGHT+IFZs+SwwMGzwq8yZd4jM2EoPYnALJho9VVQpkJYYZPO940zD0oFiAdm0BK1wdKLgDbGBGX3HA==
+X-Received: by 2002:a7b:c405:0:b0:40c:7f6:5a67 with SMTP id k5-20020a7bc405000000b0040c07f65a67mr1327823wmi.60.1701692991052;
+        Mon, 04 Dec 2023 04:29:51 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id cp6-20020a056000400600b003334520e49bsm3763015wrb.53.2023.12.04.04.29.31
+        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b004094d4292aesm14918103wmg.18.2023.12.04.04.29.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 04:29:32 -0800 (PST)
-Date: Mon, 4 Dec 2023 15:29:29 +0300
+        Mon, 04 Dec 2023 04:29:50 -0800 (PST)
+Date: Mon, 4 Dec 2023 15:29:47 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Shuming Fan <shumingf@realtek.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: x86-android-tablets: Fix an IS_ERR() vs NULL
- check in probe
-Message-ID: <4b1b2395-c7c5-44a4-b0b0-6d091c7f46a2@moroto.mountain>
+Subject: [PATCH] ASoC: rt5650: add a missing unlock in
+ rt5645_jack_detect_work()
+Message-ID: <0d18b8b3-562f-468e-991e-d82d40451f9a@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -55,30 +57,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The spi_new_device() function returns NULL on error, it doesn't return
-error pointers.
+We recently added new locking to the rt5645_jack_detect_work() function
+but this return path was accidentally overlooked.
 
-Fixes: 70505ea6de24 ("platform/x86: x86-android-tablets: Add support for SPI device instantiation")
+Fixes: cdba4301adda ("ASoC: rt5650: add mutex to avoid the jack detection failure")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/platform/x86/x86-android-tablets/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5645.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/x86-android-tablets/core.c b/drivers/platform/x86/x86-android-tablets/core.c
-index 6a5975ac3286..f8221a15575b 100644
---- a/drivers/platform/x86/x86-android-tablets/core.c
-+++ b/drivers/platform/x86/x86-android-tablets/core.c
-@@ -220,8 +220,8 @@ static __init int x86_instantiate_spi_dev(const struct x86_dev_info *dev_info, i
- 
- 	spi_devs[idx] = spi_new_device(controller, &board_info);
- 	put_device(&controller->dev);
--	if (IS_ERR(spi_devs[idx]))
--		return dev_err_probe(&controller->dev, PTR_ERR(spi_devs[idx]),
-+	if (!spi_devs[idx])
-+		return dev_err_probe(&controller->dev, -ENOMEM,
- 				     "creating SPI-device %d\n", idx);
- 
- 	return 0;
+diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
+index a0d01d71d8b5..caf922ca90f0 100644
+--- a/sound/soc/codecs/rt5645.c
++++ b/sound/soc/codecs/rt5645.c
+@@ -3314,6 +3314,7 @@ static void rt5645_jack_detect_work(struct work_struct *work)
+ 				    report, SND_JACK_HEADPHONE);
+ 		snd_soc_jack_report(rt5645->mic_jack,
+ 				    report, SND_JACK_MICROPHONE);
++		mutex_unlock(&rt5645->jd_mutex);
+ 		return;
+ 	case 4:
+ 		val = snd_soc_component_read(rt5645->component, RT5645_A_JD_CTRL1) & 0x0020;
 -- 
 2.42.0
 
