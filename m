@@ -1,88 +1,95 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHnr+BU6"
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F8E120
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 11:45:45 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50bfa5a6cffso1508536e87.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 11:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701719143; x=1702323943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OL0YCwWLeVAAaS8V6Q9QVlcCyCHJm88AKIY6T+RHXgI=;
-        b=wHnr+BU6XBf3H8SDWPtRcVxcqAQWgAVOcrbFqmdhTIbDK18cYtaUCDJoIlXJ8bsL4f
-         bWcVEu55vG1m94HfeU5K7GcUe49dXmWoHKp53KgKyzykz6z3/SaO6TyjFeGvBilyPTaN
-         P3953tl3wmWReWCpK99Gn6AC4ooMdy8rUPAY2Z8xXzjZcj+MPyM/P0SWDHSFXRJwbiw2
-         2/3ys0QPI35KyEJpaNWPVc5kVAywfp2VSt3IEVUsbeYPePy8x2+6S88Bs93PegagRnOU
-         x9Vp8VcJBHSqcjefGhI4gCVALMgGm3iekUrTqcUUVXt9ox8Wv0Qd2TukpF1asUErlNON
-         VHgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701719143; x=1702323943;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OL0YCwWLeVAAaS8V6Q9QVlcCyCHJm88AKIY6T+RHXgI=;
-        b=FnL3DjPkk44ikoworK2TPf79yl/NQtRGgO85aQlzs7SaIuyALF4XlQf3g98lMBc5dN
-         C0X9R7p3WltnWgYH3DIx19397AmJVMZwczc9ig6J1mxzEWtO/EEnR+R7VsGr6sc1K1mk
-         vXDg1r/BrEcf3iqLH5pOcYbzKHmWbw9wA4aHF0y5CyBiMy9gTJmd9snm8I3X88qFdXgf
-         9fRKQBScKq/sYdRWAKiLvHjVK9zZexbK0Nf6SPIN8XfbLTU8HFgXR3QmXyUDhC8IRBNN
-         na01Pgez2rvGwMb+NWsuhZ6msVUXgTlyNjBDfvlIfISmGGaonY8dcz24EaePy8iba6In
-         Tegg==
-X-Gm-Message-State: AOJu0YysWyBIMI26A9Gk/R2+A3u1e8U+H4mLlcm/T0mDk+iGpeF2Ta1G
-	DZqckMziW8Vl3xbsu34Kp47vfA==
-X-Google-Smtp-Source: AGHT+IGUU2+rL+VrrRankPr+xbpBILPjIFZNhDvGINb4xeFiR7O7TGptVO7yxax82e3WI1uhyyeE2Q==
-X-Received: by 2002:a2e:9346:0:b0:2ca:1282:d61c with SMTP id m6-20020a2e9346000000b002ca1282d61cmr116222ljh.15.1701719143192;
-        Mon, 04 Dec 2023 11:45:43 -0800 (PST)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id f1-20020a05651c02c100b002ca02e43f40sm455120ljo.74.2023.12.04.11.45.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 11:45:42 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Vinod Polimera <quic_vpolimer@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: dan.carpenter@linaro.org,
-	kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH next] drm/msm/dp: add a missing unlock in dp_hpd_plug_handle()
-Date: Mon,  4 Dec 2023 22:45:42 +0300
-Message-Id: <170171913105.1455672.8865445448285442373.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
-References: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m9woum7u"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD9CCB;
+	Mon,  4 Dec 2023 12:25:39 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4JxZT6028697;
+	Mon, 4 Dec 2023 20:25:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=VoyLD+BBBgnkOe7m+0wyGjQqsPNxrHuUW5al5xZbTeg=;
+ b=m9woum7ukhrKgy2DlbVkq2m+pO/zRkSoTjp2rBy2klcmFL8JYacLW70LiypX0MjSaxe+
+ ORDAuC/8DKWmhkalXAUKTu2SA47IkuEPd0mc2rwoUdUrVJiGJSGBUkg1oTFYtbKqPEIN
+ VeCLf4ejhodQk8ZLMYW0T1ezbKVXmSCvRqt9kP5OY+dCvBXtuMeP7JGAXvzaPst1BNY4
+ h19w4vMysFfhbAPHPvH2pMs7L63NGP6OgbkK1xVAYvmqozBrhYJtBI6RIcxk1ZFSix4O
+ N0dENhlm2jcdlu8D5N6nMqlXYevBZWAmEIi7GJPf/nvhHL0WwrM8T9hDS29ca1QPPZEF mQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3usjnqgfdc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Dec 2023 20:25:18 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B4KPHqF006340
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Dec 2023 20:25:17 GMT
+Received: from [10.71.109.77] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 4 Dec
+ 2023 12:25:17 -0800
+Message-ID: <230fd6a4-c1d6-64af-1073-2effd5d44d8c@quicinc.com>
+Date: Mon, 4 Dec 2023 12:25:16 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Freedreno] [PATCH next] drm/msm/dp: add a missing unlock in
+ dp_hpd_plug_handle()
+Content-Language: en-US
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn
+ Andersson <quic_bjorande@quicinc.com>,
+        Kuogee Hsieh
+	<quic_khsieh@quicinc.com>,
+        "Vinod Polimera" <quic_vpolimer@quicinc.com>,
+        Stephen Boyd <swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <error27@gmail.com>,
+        <dan.carpenter@linaro.org>
+References: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20231204171317.192427-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: f2EGCVjZ2PkGJvnv8FbQ_bzpg_EP3lOK
+X-Proofpoint-GUID: f2EGCVjZ2PkGJvnv8FbQ_bzpg_EP3lOK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_18,2023-12-04_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1011 mlxscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 mlxlogscore=999
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311060000 definitions=main-2312040159
 
 
-On Mon, 04 Dec 2023 09:13:14 -0800, Harshit Mogalapalli wrote:
+
+On 12/4/2023 9:13 AM, Harshit Mogalapalli wrote:
 > When pm_runtime_resume_and_get() fails, unlock before returning.
 > 
+> Fixes: 5814b8bf086a ("drm/msm/dp: incorporate pm_runtime framework into DP driver")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with Smatch. Only compile tested.
+> ---
+>   drivers/gpu/drm/msm/dp/dp_display.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
 
-Applied, thanks!
-
-[1/1] drm/msm/dp: add a missing unlock in dp_hpd_plug_handle()
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/801207c18834
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
