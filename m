@@ -1,212 +1,124 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MS4EngJt"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40D9B4
-	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 11:48:15 -0800 (PST)
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id 9sRor2SAvaCTP9sRprMITc; Sun, 03 Dec 2023 20:48:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1701632894;
-	bh=TtuieOqB3d5/4LucYB7b5rnfDifiCNhm6IjslDyNUYo=;
-	h=From:To:Cc:Subject:Date;
-	b=MS4EngJtRAiKHXOhDy56XDRMvJvD38MihZwlUI9BM1bvLFwWgSWqc7ARwSYqGx4+M
-	 9aUEU2XHOXW/zTqWH9JCKxmxNHJqJOi6GyXM8jZA6tdC9Cm0RpQRZC/vKOThwNyhkc
-	 Kk4pdzOxdqhd3Z16ftNUZtK0cgW9wgUHfqwoAFiG2A6AlCS/+r0dl0Bc4h1rKonw3P
-	 83axw2HhH/MCu290ZmatMZIFnHJCOjU4SZEmumRe7klgCZ2mtKqQ1s4+9T34CmsWr7
-	 54WEOyacF3tDZjfJ25dy/AyUsd4z/ETkLBuXJ6B3tHjWfObNnjv3GCNEWKLe5t5wmg
-	 5uqzNG4j/Cthg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 03 Dec 2023 20:48:14 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Song Liu <song@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-raid@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible array
-Date: Sun,  3 Dec 2023 20:48:06 +0100
-Message-Id: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ImfEshpV"
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7B8D7
+	for <kernel-janitors@vger.kernel.org>; Sun,  3 Dec 2023 23:37:11 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40c09d62b70so10270315e9.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 03 Dec 2023 23:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701675429; x=1702280229; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LWQaFaPURZfKo4DnByfKYjDmLXxFeENVHoNHZWRHRNk=;
+        b=ImfEshpVdq+BlLvBWqVN0dSGNp7AnyoWnjEpTEohn1QsYRpJd90+FMxxqorbPxCwkn
+         xc534z0ypoZo6MvAJRhhTBI4F3JwmsIE5eaIrd+5izXITmJCwDOrZy2LXCxnEKBCkP2X
+         1kG/8QWi3vrnkx53ppG1G1d9Y1dGOwx/v6mdl2rt9XeQerXD3ZMSLY4xvcKykzXVeGaR
+         QcnwVW2Dh5aYGohgkATcyxATlxnjz8C5Kv4bjVhFZ8Hs1ODHZKCh9w9TANYUBAhB4Ivt
+         wpRMHT+gKNf32Fy8jzkg54ncrNrFc/CViGpxa3MP6Aw+VcEUas+3LvKdhhT/dbOkj8oU
+         Omuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701675429; x=1702280229;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWQaFaPURZfKo4DnByfKYjDmLXxFeENVHoNHZWRHRNk=;
+        b=GrVZw+wIzdexgf6NQ04TZvibtwEXciCk//ZlLc/5+Xate5ZruccvlPJg7YAzLJSZF6
+         8YAWBebVnzd8jCuDBZwHbm4B84y30JUZfUIa/9wH9wydmOm9p+CPCSs5LsdNiBcsDJ9f
+         RZxc7RiVa0W6u/+esRWA4Y0o02uj0mTA5z/T76P+noscKN4WBjwXue/bEOojTKMyrcSv
+         YNLWRLEK71HNBYwpg8ErGODuv4V74P3nLTh6epzxS+ZRhLc49gKhA+gY42rchCX+O/xI
+         tUFtRh7m0DFhckl1jkzmpdURFKBpcIHLGwuSWJvKghtZsTxr6DRMN/c6Bwtz0c+xctc4
+         9C+w==
+X-Gm-Message-State: AOJu0Yx9vazZ9oLKB72OghjLwGkqLqq1mUo29xTeBDA7R8ljB3T99C4k
+	iWPmySIIDl4S8L0qroZXhIQmig==
+X-Google-Smtp-Source: AGHT+IHnVBhnjHjKG1BbFjAio5sJrfkXnGHKZuMpvorsOx9Xk4IXNJEZDSH5L6HNMB68UK21NV5XAg==
+X-Received: by 2002:a7b:c5cb:0:b0:40b:5e59:99c8 with SMTP id n11-20020a7bc5cb000000b0040b5e5999c8mr1616736wmk.232.1701675429533;
+        Sun, 03 Dec 2023 23:37:09 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id e2-20020adf9bc2000000b003332fa77a0fsm8972192wrc.21.2023.12.03.23.37.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Dec 2023 23:37:09 -0800 (PST)
+Date: Mon, 4 Dec 2023 10:37:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: graf@amazon.com
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] misc: Add Nitro Secure Module driver
+Message-ID: <84b7cffa-0ff2-4802-a9bd-f38f59a63991@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The 'multipaths' field of 'struct mpconf' can be declared as a flexible
-array.
+Hello Alexander Graf,
 
-The advantages are:
-   - 1 less indirection when accessing to the 'multipaths' array
-   - save 1 pointer in the structure
-   - improve memory usage
-   - give the opportunity to use __counted_by() for additional safety
+The patch b9873755a6c8: "misc: Add Nitro Secure Module driver" from
+Oct 11, 2023 (linux-next), leads to the following Smatch static
+checker warning:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-On my x86_64 system, with configured with allmodconfig, I have:
+	drivers/misc/nsm.c:137 cbor_object_get_array()
+	warn: duplicate check 'cbor_object_size < array_offset' (previous on line 114)
 
-Before the change:
-=================
-struct mpconf {
-	struct mddev *             mddev;                /*     0     8 */
-	struct multipath_info *    multipaths;           /*     8     8 */
-	int                        raid_disks;           /*    16     4 */
+drivers/misc/nsm.c
+    97 static int cbor_object_get_array(u8 *cbor_object, size_t cbor_object_size, u8 **cbor_array)
+    98 {
+    99         u8 cbor_short_size;
+    100         void *array_len_p;
+    101         u64 array_len;
+    102         u64 array_offset;
+    103 
+    104         if (!cbor_object_is_array(cbor_object, cbor_object_size))
+    105                 return -EFAULT;
+    106 
+    107         cbor_short_size = (cbor_object[0] & 0x1F);
+    108 
+    109         /* Decoding byte array length */
+    110         array_offset = CBOR_HEADER_SIZE_SHORT;
+    111         if (cbor_short_size >= CBOR_LONG_SIZE_U8)
+    112                 array_offset += BIT(cbor_short_size - CBOR_LONG_SIZE_U8);
+    113 
+    114         if (cbor_object_size < array_offset)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+checked here.
 
-	/* XXX 4 bytes hole, try to pack */
+    115                 return -EFAULT;
+    116 
+    117         array_len_p = &cbor_object[1];
+    118 
+    119         switch (cbor_short_size) {
+    120         case CBOR_SHORT_SIZE_MAX_VALUE: /* short encoding */
+    121                 array_len = cbor_short_size;
+    122                 break;
+    123         case CBOR_LONG_SIZE_U8:
+    124                 array_len = *(u8 *)array_len_p;
+    125                 break;
+    126         case CBOR_LONG_SIZE_U16:
+    127                 array_len = be16_to_cpup((__be16 *)array_len_p);
+    128                 break;
+    129         case CBOR_LONG_SIZE_U32:
+    130                 array_len = be32_to_cpup((__be32 *)array_len_p);
+    131                 break;
+    132         case CBOR_LONG_SIZE_U64:
+    133                 array_len = be64_to_cpup((__be64 *)array_len_p);
+    134                 break;
+    135         }
+    136 
+--> 137         if (cbor_object_size < array_offset)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Checked again.
 
-	spinlock_t                 device_lock;          /*    24    72 */
-	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
-	struct list_head           retry_list;           /*    96    16 */
-	mempool_t                  pool;                 /*   112   200 */
+    138                 return -EFAULT;
+    139 
+    140         if (cbor_object_size - array_offset < array_len)
+    141                 return -EFAULT;
+    142 
+    143         if (array_len > INT_MAX)
+    144                 return -EFAULT;
+    145 
+    146         *cbor_array = cbor_object + array_offset;
+    147         return array_len;
+    148 }
 
-	/* size: 312, cachelines: 5, members: 6 */
-	/* sum members: 308, holes: 1, sum holes: 4 */
-	/* last cacheline: 56 bytes */
-};
-
-struct multipath_info {
-	struct md_rdev *           rdev;                 /*     0     8 */
-
-	/* size: 8, cachelines: 1, members: 1 */
-	/* last cacheline: 8 bytes */
-};
-
-size drivers/md/md-multipath.o
-   text	   data	    bss	    dec	    hex	filename
-  12863	   1041	     16	  13920	   3660	drivers/md/md-multipath.o
-
-
-After the change:
-================
-struct mpconf {
-	struct mddev *             mddev;                /*     0     8 */
-	int                        raid_disks;           /*     8     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	spinlock_t                 device_lock;          /*    16    72 */
-	/* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
-	struct list_head           retry_list;           /*    88    16 */
-	mempool_t                  pool;                 /*   104   200 */
-	/* --- cacheline 4 boundary (256 bytes) was 48 bytes ago --- */
-	struct multipath_info      multipaths[];         /*   304     0 */
-
-	/* size: 304, cachelines: 5, members: 6 */
-	/* sum members: 300, holes: 1, sum holes: 4 */
-	/* last cacheline: 48 bytes */
-};
-
-struct multipath_info {
-	struct md_rdev *           rdev;                 /*     0     8 */
-
-	/* size: 8, cachelines: 1, members: 1 */
-	/* last cacheline: 8 bytes */
-};
-
-size drivers/md/md-multipath.o
-   text	   data	    bss	    dec	    hex	filename
-  12470	   1041	     16	  13527	   34d7	drivers/md/md-multipath.o
-
-
-So:
-  - about 400 bytes of code are saved.
-  - because of the way memory allocation works, 'struct mpconf' really
-    uses 512 bytes of memory when allocated. So the "extra" memory that is
-    allocated (512-304 = 208) can be used to store up to 26 multipaths,
-    for free.
-
-Finally, several places use pointer arithmetic to access the desired
-structure, such as:
-	for (i = 0; i < conf->raid_disks; i++) {
-		tmp = conf->multipaths + i;
-		if (tmp->rdev)
-
-Should this be rewritten as:
-	for (i = 0; i < conf->raid_disks; i++) {
-		if (tmpconf->multipaths[i]->rdev)
-in order to have the compiler be able to check boundaries defined by
-__counted_by()?
----
- drivers/md/md-multipath.c | 12 +++---------
- drivers/md/md-multipath.h |  3 ++-
- 2 files changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
-index d22276870283..6a23065a65f7 100644
---- a/drivers/md/md-multipath.c
-+++ b/drivers/md/md-multipath.c
-@@ -357,16 +357,13 @@ static int multipath_run (struct mddev *mddev)
- 	 * should be freed in multipath_free()]
- 	 */
- 
--	conf = kzalloc(sizeof(struct mpconf), GFP_KERNEL);
-+	conf = kzalloc(struct_size(conf, multipaths, mddev->raid_disks),
-+		       GFP_KERNEL);
- 	mddev->private = conf;
- 	if (!conf)
- 		goto out;
- 
--	conf->multipaths = kcalloc(mddev->raid_disks,
--				   sizeof(struct multipath_info),
--				   GFP_KERNEL);
--	if (!conf->multipaths)
--		goto out_free_conf;
-+	conf->raid_disks = mddev->raid_disks;
- 
- 	working_disks = 0;
- 	rdev_for_each(rdev, mddev) {
-@@ -384,7 +381,6 @@ static int multipath_run (struct mddev *mddev)
- 			working_disks++;
- 	}
- 
--	conf->raid_disks = mddev->raid_disks;
- 	conf->mddev = mddev;
- 	spin_lock_init(&conf->device_lock);
- 	INIT_LIST_HEAD(&conf->retry_list);
-@@ -421,7 +417,6 @@ static int multipath_run (struct mddev *mddev)
- 
- out_free_conf:
- 	mempool_exit(&conf->pool);
--	kfree(conf->multipaths);
- 	kfree(conf);
- 	mddev->private = NULL;
- out:
-@@ -433,7 +428,6 @@ static void multipath_free(struct mddev *mddev, void *priv)
- 	struct mpconf *conf = priv;
- 
- 	mempool_exit(&conf->pool);
--	kfree(conf->multipaths);
- 	kfree(conf);
- }
- 
-diff --git a/drivers/md/md-multipath.h b/drivers/md/md-multipath.h
-index b3099e5fc4d7..fb49e151ac94 100644
---- a/drivers/md/md-multipath.h
-+++ b/drivers/md/md-multipath.h
-@@ -8,12 +8,13 @@ struct multipath_info {
- 
- struct mpconf {
- 	struct mddev			*mddev;
--	struct multipath_info	*multipaths;
- 	int			raid_disks;
- 	spinlock_t		device_lock;
- 	struct list_head	retry_list;
- 
- 	mempool_t		pool;
-+
-+	struct multipath_info	multipaths[] __counted_by(raid_disks);
- };
- 
- /*
--- 
-2.34.1
-
+regards,
+dan carpenter
