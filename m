@@ -1,50 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iidQi2oE"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE5FE
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:30:11 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40838915cecso44692595e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:30:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YeJdh5ni"
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BC490
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:42:12 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40a4848c6e1so45413765e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:42:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701693010; x=1702297810; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701693731; x=1702298531; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HKvSKITUcl+fN4QbSnsBMTLDMl3HA5xQPt9QvlGXEbI=;
-        b=iidQi2oEZuoBshT399Uzx8Izs0wKDb026uVoEHZDKjFt7urmkr/zbOR0NCH5+jQQVI
-         HznfLEFwTl+OpY6J3gHQkQBwaSrNYChAC1mJPq59pU76aOZnnf+9XQ4jmBaBgNRuneFG
-         4EFLAEbk9qZfACPXqi/XTzLa7GmSuV5+ERaT/MDTCNOKZfvgrFO69VMLmLtqt8UXPz/7
-         wmP3e0zLK0bkG9KDDQM0Xb6A6XXXaOQkTP0VnTIOStAsV+QX8xNIOOLY5em/mssQYVBk
-         xht8L2ZfQ/2gPCCwTtG0RuokVmeVAVH0nEbB33yAPNa3BhP1kcN6Gc6JJ+tQMf0J+KSP
-         N/Vg==
+        bh=8x1dwoG6L6bxEjQMrtyUOBz/l2kp09gC7Z8V8HJ6Bn8=;
+        b=YeJdh5ninM2QKZaPuVPWZQmau+UpYLchO5pRNMvWiqah6VlX8oIkPhEmnYGu+lB2Cl
+         NEAXs2rQgLxS8nZf7dlAI2ZRbK1P68ikmj3ENClssaG4eFh23I0jgUtNkLp5yCqtIZ3B
+         QxQpBab32f5e3YX946VrLRInUmkOgzktWhAvlF+FOOgyGWxn6zYlXGRsh7tcKlrRvj/t
+         bQ3Ec6dqYSEmbNTFtavFTN5079EbMRvJl52WYyOW6H5OW3oLUcmsBhFgNbibFgVJnjyo
+         zZMYlLvomHgKZgx09JUHaIyA2Wfu1b8WgSZ5up6uqgweSZMWRT60g7V3r0wGwtwvfspR
+         1xPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701693010; x=1702297810;
+        d=1e100.net; s=20230601; t=1701693731; x=1702298531;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HKvSKITUcl+fN4QbSnsBMTLDMl3HA5xQPt9QvlGXEbI=;
-        b=IsdR4uGkPCE5k3/6UewwJkdaHhybuOymTI9jbstrqCR4VicLi3LSnSXqxdXTOG9lLf
-         PMB38o17eitKgwjIpRQ3GDDMzPkNHfKHdmkmvwi3+dbfYyH/LKYr0ZqWGQoDVZchubTa
-         cBUUg6fbSQ8TN80dgVTh1L4YSV25zjlsIpbOCVDtnBP7PQy2cRLgz8U4eK7lHQFlI2+V
-         hai5qp5CobeqgQKuvQotnN+pYor+rC40piaT2/R5NL7xn4CwHuroSD+H+57pmLqOGx8e
-         OmbMb9KR8Z4MDmdfwoy7q6BLLAA5hgMtwxOdv3gEnt/xq5lT8q2Y9dwYzAe1tiPubpd2
-         wVUg==
-X-Gm-Message-State: AOJu0YwWOI4SC2JzuekWgcjYOK0R7264LThMsqXE+rxsGAGKiaKXTZST
-	ukXITCOODrXugEUwNsyF23IXGw==
-X-Google-Smtp-Source: AGHT+IEnpV3/O9/8ri5kU9IVDoewSq6OVRcJS3PmnCJaHELXOk53y0yosvmsMWPxzvXqFzDfVsT3QA==
-X-Received: by 2002:a05:600c:3417:b0:40b:5e59:da7a with SMTP id y23-20020a05600c341700b0040b5e59da7amr2376583wmp.141.1701693009855;
-        Mon, 04 Dec 2023 04:30:09 -0800 (PST)
+        bh=8x1dwoG6L6bxEjQMrtyUOBz/l2kp09gC7Z8V8HJ6Bn8=;
+        b=CkNB7JWrQX8qhLZTZTwqmqr+CPPdJx/BOOOCGcGUJx8aYQxkRzhls2A26im+Rw6sNL
+         C5ccUKoBKAE7mNWpWkW0r+RfS5rVa1p09NJe55FSAAwS3QUMlVFTNBcLKq2jMaIf0EGa
+         cfq09KIb6nI83bJPTZZf93JppHoS95GqhQmi9ZdFPRna2r+8drlBKE0GsBhYN511FkVE
+         q8pKVq6KVTKWwHVmpQpMUEgjlqNpN/8bPQq5E6JN7npgaYUL29U89R0xYFMea+I3zEMN
+         so1tJxjyO3/pLTG2LI1cOinGiyekYqa9tnqu7VXLcJFqwGpSemFCezhndKFKTBB12nf9
+         p3Dg==
+X-Gm-Message-State: AOJu0YxC58sJ0DOh4kTmq3KVlXohEL1YO9sxl6h3hHvOGwYtSwlnu3vS
+	f8DVMnnHpR0HNwi3/3drmcnq2Q==
+X-Google-Smtp-Source: AGHT+IGJz3N4/IoxBaz0NjZihjCP4keqQKfmadAcfgA7ZWA07jRl1+KY0bF/rDdOkf8aj+mgEiOyHQ==
+X-Received: by 2002:a05:600c:450f:b0:40a:5c71:2c3e with SMTP id t15-20020a05600c450f00b0040a5c712c3emr2172252wmo.19.1701693731047;
+        Mon, 04 Dec 2023 04:42:11 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o18-20020a05600c511200b004064e3b94afsm18454841wms.4.2023.12.04.04.30.09
+        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b004094d4292aesm14959419wmg.18.2023.12.04.04.42.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 04:30:09 -0800 (PST)
-Date: Mon, 4 Dec 2023 15:30:06 +0300
+        Mon, 04 Dec 2023 04:42:10 -0800 (PST)
+Date: Mon, 4 Dec 2023 15:42:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] nfsd: remove unnecessary NULL check
-Message-ID: <0cce4257-6c22-4c0a-b769-b946990413fe@moroto.mountain>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] ASoC: audio-graph-card2: fix off by one in
+ graph_parse_node_multi_nm()
+Message-ID: <1032216f-902f-48f9-aa49-9d5ece8e87f2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -55,29 +59,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We check "state" for NULL on the previous line so it can't be NULL here.
-No need to check again.
+The > comparison should be >= to avoid writing one element beyond the end
+of the dai_link->ch_maps[] array.  The dai_link->ch_maps[] array is
+allocated in graph_parse_node_multi() and it has "nm_max" elements.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202312031425.LffZTarR-lkp@intel.com/
+Fixes: e2de6808df4a ("ASoC: audio-graph-card2: add CPU:Codec = N:M support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/nfsd/nfs4state.c | 2 +-
+In this same function I was also concerned about these conditions:
+
+if (cpu_idx > dai_link->num_cpus)
+if (codec_idx > dai_link->num_codecs)
+
+But I wasn't able to see out how those idx variables are actually
+used.
+
+ sound/soc/generic/audio-graph-card2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 40415929e2ae..fb551a3db1dc 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6639,7 +6639,7 @@ __be32 manage_cpntf_state(struct nfsd_net *nn, stateid_t *st,
- 	spin_unlock(&nn->s2s_cp_lock);
- 	if (!state)
- 		return nfserr_bad_stateid;
--	if (!clp && state)
-+	if (!clp)
- 		*cps = state;
- 	return 0;
- }
+diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/audio-graph-card2.c
+index d9e10308a508..78d9679decda 100644
+--- a/sound/soc/generic/audio-graph-card2.c
++++ b/sound/soc/generic/audio-graph-card2.c
+@@ -557,7 +557,7 @@ static int graph_parse_node_multi_nm(struct snd_soc_dai_link *dai_link,
+ 		struct device_node *mcodec_port;
+ 		int codec_idx;
+ 
+-		if (*nm_idx > nm_max)
++		if (*nm_idx >= nm_max)
+ 			break;
+ 
+ 		mcpu_ep_n = of_get_next_child(mcpu_port, mcpu_ep_n);
 -- 
 2.42.0
 
