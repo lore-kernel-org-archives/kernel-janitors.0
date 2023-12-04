@@ -1,93 +1,102 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoFuB5nU"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3086B2;
-	Mon,  4 Dec 2023 01:39:43 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40c09ba723eso11251645e9.2;
-        Mon, 04 Dec 2023 01:39:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701682782; x=1702287582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=itnvq+P/Fjh6RP+B0+dY8QHorajZulYkmu3iW5W6GwY=;
-        b=CoFuB5nU6e31ISJXpMBxyiKWE8ME0yoRZlrS8DYOEhlP14xRysT5BPQ1zaKlVJkRkh
-         RWTkyHgh2rNT35F0yWexHGP3Puk939AkBnYihRc6q5aXdbtJQ51lsnde0RYAEoj34x1L
-         Al355chhLfeKHg59nxVWtG6bZKKwwWfCTn8/S+e1fcyLFl4TSu9oywM84I9PbOGSiQ9P
-         g6jTHkVmRwzXn24IHzD/+RhyMCx+CuJFUR7TRwmil+Ubuq0oldyG3/V9Mx2pjy1di8r4
-         PBhVAnF5SWGOqGpopJxZygsCkmxHg1u6Sm2NlsQbx+TXs1SWinASfhWPMfGoRcLgukM+
-         jlYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701682782; x=1702287582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=itnvq+P/Fjh6RP+B0+dY8QHorajZulYkmu3iW5W6GwY=;
-        b=lqZhmGd5RlTi8S9CP++e9Cs89/mlhMhzAGwO25jZ4QZKEzjwpCb8JUBKHpzyUeBQxZ
-         UBh1uSxhZXm2iWHOyaiHwEzK9J/L9wBhPW5hOVyuO+9fYxHB/p5cdKohLqS3SvRuj2dj
-         sZ49m0GkqUrI3OsVUuX+On9YoDsgMWkOxX5phtSs0P1G+gjIgYylLHOJbcj/oXxIv6wY
-         G44IC7zGvTPzDlH+4fytdRQKzQFaQg2kgml9bnnvocDma/HFj8nZDFPcDTXDw5UwJzS+
-         IrzO0ZTiBOJnj09Yt/PHuSDzLnFioMCVnAmNPXekAxup5r+nc30yimP5Oxk+48U0U980
-         8mOw==
-X-Gm-Message-State: AOJu0Ywl+MvrBnkEYQgBTbL+e0kgCjSlSzPqIZPrvfeRHS31TUflC2PJ
-	x1HbEks8a29RBfIgLNJw9KQ=
-X-Google-Smtp-Source: AGHT+IEuktjrUxLdnaKY9QQMHGXtWDZAhW0oayMCNA5adoVDlXNkChDbLVtvMFBUY6gJCz8lY1y0og==
-X-Received: by 2002:a05:600c:3584:b0:408:5a1c:9de7 with SMTP id p4-20020a05600c358400b004085a1c9de7mr2136608wmq.7.1701682782129;
-        Mon, 04 Dec 2023 01:39:42 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r1-20020a5d4e41000000b0033340c678ffsm4278525wrt.96.2023.12.04.01.39.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 01:39:41 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][NEXT] selftests/bpf: Fix spelling mistake "get_signaure_size" -> "get_signature_size"
-Date: Mon,  4 Dec 2023 09:39:40 +0000
-Message-Id: <20231204093940.2611954-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ipJDJFSk"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055AAC3;
+	Mon,  4 Dec 2023 04:21:39 -0800 (PST)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4C9q80016735;
+	Mon, 4 Dec 2023 12:21:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=jIS5wAnVSsNNvK1fqn1ZGEXn0mdtAdWPjrHPs/QHSv0=;
+ b=ipJDJFSkkoQ8OSQPZhk5NGBF5GWZGXGxxoWTDFq3JcYkMP4DJvuuZu/eIYPnB/4q0Mrb
+ l10CkBMRPOR0Vi120mKOdhXeJmoF2YR8NUbfL1LIQD0ZZvYmp0MGmmWbdbIZZcR+gwAI
+ MjPpaT+niWJSaI2c7dmkvCF5OPyaNRvUL4kavB5aXNv4AG45M70K4ndvhTP4s019D2o8
+ hXCm/qVQx7W2gcEw1lAA3Uuvay76uqF4WaREhS7p0HazCbuUx+1zj5k/NKoDp5t51uzB
+ OB1HVK4NEblxEw6mQ4R+DarG/CuKMFyt8U7y3gVdkrI3YH6zkQC6kvO44SIbfQMdZ1SA uw== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usec201h9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 12:21:08 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4BaSvE014380;
+	Mon, 4 Dec 2023 12:21:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu15p761-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 12:21:06 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B4CL692015651;
+	Mon, 4 Dec 2023 12:21:06 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3uqu15p74p-1;
+	Mon, 04 Dec 2023 12:21:06 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH next] drm/v3d: Fix missing error code in v3d_submit_cpu_ioctl()
+Date: Mon,  4 Dec 2023 04:21:01 -0800
+Message-ID: <20231204122102.181298-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_11,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312040093
+X-Proofpoint-GUID: FqbDJb9ICTqnlVj5k1F4_ZyMkZQBve0e
+X-Proofpoint-ORIG-GUID: FqbDJb9ICTqnlVj5k1F4_ZyMkZQBve0e
 
-There is a spelling mistake in an ASSERT_GT message. Fix it.
+Smatch warns:
+	drivers/gpu/drm/v3d/v3d_submit.c:1222 v3d_submit_cpu_ioctl()
+	warn: missing error code 'ret'
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+When there is no job type or job is submitted with wrong number of BOs
+it is an error path, ret is zero at this point which is incorrect
+return.
+
+Fix this by changing it to -EINVAL.
+
+Fixes: aafc1a2bea67 ("drm/v3d: Add a CPU job submission")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is based on static analysis and only compile tested.
+---
+ drivers/gpu/drm/v3d/v3d_submit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-index 6c90372b772d..ab0f02faa80c 100644
---- a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-+++ b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-@@ -498,7 +498,7 @@ static void test_pkcs7_sig_fsverity(void)
- 	if (!ASSERT_OK_PTR(skel, "test_sig_in_xattr__open"))
- 		goto out;
- 	ret = get_signature_size(sig_path);
--	if (!ASSERT_GT(ret, 0, "get_signaure_size"))
-+	if (!ASSERT_GT(ret, 0, "get_signature_size"))
- 		goto out;
- 	skel->bss->sig_size = ret;
- 	skel->bss->user_keyring_serial = syscall(__NR_request_key, "keyring",
+diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
+index d7a9da2484fd..fcff41dd2315 100644
+--- a/drivers/gpu/drm/v3d/v3d_submit.c
++++ b/drivers/gpu/drm/v3d/v3d_submit.c
+@@ -1219,11 +1219,13 @@ v3d_submit_cpu_ioctl(struct drm_device *dev, void *data,
+ 	/* Every CPU job must have a CPU job user extension */
+ 	if (!cpu_job->job_type) {
+ 		DRM_DEBUG("CPU job must have a CPU job user extension.\n");
++		ret = -EINVAL;
+ 		goto fail;
+ 	}
+ 
+ 	if (args->bo_handle_count != cpu_job_bo_handle_count[cpu_job->job_type]) {
+ 		DRM_DEBUG("This CPU job was not submitted with the proper number of BOs.\n");
++		ret = -EINVAL;
+ 		goto fail;
+ 	}
+ 
 -- 
-2.39.2
+2.39.3
 
