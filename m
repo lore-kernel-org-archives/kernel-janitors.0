@@ -1,58 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZGeiMgy"
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06679C0
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:29:11 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40c09dfa03cso11879835e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:29:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iK8gKI8q"
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A942113
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 04:29:34 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40c07ed92fdso15152915e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 04:29:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701692949; x=1702297749; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701692972; x=1702297772; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MkkECO5iEe8wffVmp+N+jpk0G+DJrLKzEev9h10F0Rg=;
-        b=HZGeiMgySiUnWJmhgw+zXewpTQZsiLfX69MWrxIehWuO5AFYy+Vzi0fzJI2iS0Z74X
-         w2OeWSyXyslK6/G2dBtuSiUYNmJK33wQo3+o6xBKYzMiWvFpe5a7ZrrhCB2zMdp2LLag
-         M3HJZiGboTgpfqTUxKWMSbqLZwdiq8AIMM5oyb1qHT2pGcA0UUTNZzETY1cgV8w0HcJN
-         vvSyiKvUQJmn2OxOZN5avuc9YrzViCcAS6Mt3oC6EmDC66Xcw5Gz/gvKmfiPs2b/qVVr
-         RlZ2RcVzWBSx/UYZjosP+j/PC9mFjwZwzPsTl8EuBj8JLFR7877jic5Egv1+Yb6bmcQ5
-         +Znw==
+        bh=5jtRzLSN1qiD5ViHrLDUVaEvxomgxXY/Nh4KNz8w1+w=;
+        b=iK8gKI8qJwQOgB/m2v6pIIxBm7uTScfF6I/99ACl6aw6x4BWPm3D1EWnRWZcEZZ+42
+         sRu0NKGbe+nIxsni0/dWewg1HJ1uEFq3nCaaoHY3G508XNzd0I1Ct3mOspnVlATGgQPq
+         yR0vk96s6R4A2jDWbXdBMEutkGkW5O2Je4hhWcJseTcPVPtudTVKwoo8bPbt3iqyt/OL
+         XbjFRKwZhejRtl9BF/7EF54buFlzuDUeGxadq/NYvb8w9t+NxKvGwgHlZc766EGRn7Wi
+         a1ebOM8O4dhwwp40Cemd5CPGCgVmnno3j2t4djArIAdFh1zEO7JHtS1hOAyqeykEXrYN
+         PX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701692949; x=1702297749;
+        d=1e100.net; s=20230601; t=1701692972; x=1702297772;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MkkECO5iEe8wffVmp+N+jpk0G+DJrLKzEev9h10F0Rg=;
-        b=R1YNp3dzXf4480nnxNEwWVjGqUpFdlILY+GAImjvrhEnR6khC4werlTmAyMH8ctYSz
-         3v5NggFbBgBTJOmW7nGA2NjTBpaUkVMtYpWIEtqUQInSB6eAV1CqLIpSIIMQBYITVO3Y
-         +qT36H3lwmWUw4U3VWySiLopWhxCrM3CC7W57MkNmlgWiJhgS2lmJn/YNrFFHwTWsTwF
-         NpR7gl7PTuyh153DzK0CsZ9hJScPbMGPVGpnUOS73R3DG4LkilOids7NIt3+2jlQJ7q7
-         S9/2iAuzEHLpCD6wE+33RwAR6Fwx6J6m3zxwNfaZY4qad7bL0UEv9YY8mDlfb5S/f3hx
-         akiA==
-X-Gm-Message-State: AOJu0YwKPAkw77Sv18XTV4ZJ1JwAvcYequk+M5FOj8YfbKVm26BEDqM0
-	JW1G34aJlrf1sFIyNzFgRlz9dg==
-X-Google-Smtp-Source: AGHT+IEhBK8pDeFMWjsr+8bKrzXeC11m8+GcPR+3mHNKpiYY/iuhyUeTu2UUAAGueQ/HmM7P67v+lw==
-X-Received: by 2002:a7b:c041:0:b0:40b:42d4:3319 with SMTP id u1-20020a7bc041000000b0040b42d43319mr2561709wmc.0.1701692949452;
-        Mon, 04 Dec 2023 04:29:09 -0800 (PST)
+        bh=5jtRzLSN1qiD5ViHrLDUVaEvxomgxXY/Nh4KNz8w1+w=;
+        b=v635qsSbBNowKi4UdlOB1XtygsslEWaGSx52sl6i4fbdqcZESzAvJmzkbjrClUCJ6o
+         VI5yWYYYAfp230z/64Ev/XOiVGvfEsivPbgJoNsetKLpXAz8MjYqxNA63/30VdGEi3wR
+         TvIHtxYEM9xYE/trpcoOSkgDoxQvrQvxlQnY2qg2SC6uPtEABTUOD/e6c/gS/wmO8OjE
+         RZ+GresAvgg+ruVrCURr1TEwVXyYUOJlRjUZyaCi8LICeQ3In9h/ULsZQ6IxctSBvDkA
+         EtVMK9m2uNsNJRhJXgH542eHR1yfFa90hKKwLmqcdOe3e41qlaO0GwkDRoyIeI++N/3h
+         EJ/w==
+X-Gm-Message-State: AOJu0Yxg+PhCO6mLrVgA14G8CGdey7z9tQ/a9tGh3iYySkhP67lyedMe
+	pf0PG9RWlfQuViJJQY7DI0coag==
+X-Google-Smtp-Source: AGHT+IHeQU6ukVh6qvTvC91E/9AZ9tQzE96+lLjiDnPYJUypYWxHlpietrEODuWPZuVKx1JlmTZr4g==
+X-Received: by 2002:a1c:7508:0:b0:40b:3566:e54e with SMTP id o8-20020a1c7508000000b0040b3566e54emr2517759wmc.39.1701692972469;
+        Mon, 04 Dec 2023 04:29:32 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j11-20020a05600c190b00b0040b47c69d08sm18464512wmq.18.2023.12.04.04.29.08
+        by smtp.gmail.com with ESMTPSA id cp6-20020a056000400600b003334520e49bsm3763015wrb.53.2023.12.04.04.29.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 04:29:09 -0800 (PST)
-Date: Mon, 4 Dec 2023 15:29:00 +0300
+        Mon, 04 Dec 2023 04:29:32 -0800 (PST)
+Date: Mon, 4 Dec 2023 15:29:29 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/bridge: nxp-ptn3460: fix i2c_master_send() error checking
-Message-ID: <0cdc2dce-ca89-451a-9774-1482ab2f4762@moroto.mountain>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86: x86-android-tablets: Fix an IS_ERR() vs NULL
+ check in probe
+Message-ID: <4b1b2395-c7c5-44a4-b0b0-6d091c7f46a2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,54 +55,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The i2c_master_send/recv() functions return negative error codes or the
-number of bytes that were able to be sent/received.  This code has
-two problems.  1)  Instead of checking if all the bytes were sent or
-received, it checks that at least one byte was sent or received.
-2) If there was a partial send/receive then we should return a negative
-error code but this code returns success.
+The spi_new_device() function returns NULL on error, it doesn't return
+error pointers.
 
-Fixes: a9fe713d7d45 ("drm/bridge: Add PTN3460 bridge driver")
-Cc: stable@vger.kernel.org
+Fixes: 70505ea6de24 ("platform/x86: x86-android-tablets: Add support for SPI device instantiation")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-This is from static analysis and code review.  It's always a concern
-when you add stricter error handling that something will break.
+ drivers/platform/x86/x86-android-tablets/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/bridge/nxp-ptn3460.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-index d81920227a8a..9b7eb8c669c1 100644
---- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
-+++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-@@ -56,13 +56,13 @@ static int ptn3460_read_bytes(struct ptn3460_bridge *ptn_bridge, char addr,
- 	ret = i2c_master_send(ptn_bridge->client, &addr, 1);
- 	if (ret <= 0) {
- 		DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
--		return ret;
-+		return ret ?: -EIO;
- 	}
+diff --git a/drivers/platform/x86/x86-android-tablets/core.c b/drivers/platform/x86/x86-android-tablets/core.c
+index 6a5975ac3286..f8221a15575b 100644
+--- a/drivers/platform/x86/x86-android-tablets/core.c
++++ b/drivers/platform/x86/x86-android-tablets/core.c
+@@ -220,8 +220,8 @@ static __init int x86_instantiate_spi_dev(const struct x86_dev_info *dev_info, i
  
- 	ret = i2c_master_recv(ptn_bridge->client, buf, len);
--	if (ret <= 0) {
-+	if (ret != len) {
- 		DRM_ERROR("Failed to recv i2c data, ret=%d\n", ret);
--		return ret;
-+		return ret < 0 ? ret : -EIO;
- 	}
- 
- 	return 0;
-@@ -78,9 +78,9 @@ static int ptn3460_write_byte(struct ptn3460_bridge *ptn_bridge, char addr,
- 	buf[1] = val;
- 
- 	ret = i2c_master_send(ptn_bridge->client, buf, ARRAY_SIZE(buf));
--	if (ret <= 0) {
-+	if (ret != ARRAY_SIZE(buf)) {
- 		DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
--		return ret;
-+		return ret < 0 ? ret : -EIO;
- 	}
+ 	spi_devs[idx] = spi_new_device(controller, &board_info);
+ 	put_device(&controller->dev);
+-	if (IS_ERR(spi_devs[idx]))
+-		return dev_err_probe(&controller->dev, PTR_ERR(spi_devs[idx]),
++	if (!spi_devs[idx])
++		return dev_err_probe(&controller->dev, -ENOMEM,
+ 				     "creating SPI-device %d\n", idx);
  
  	return 0;
 -- 
