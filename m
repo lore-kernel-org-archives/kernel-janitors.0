@@ -1,102 +1,77 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7351B1EB54;
+	Mon,  4 Dec 2023 12:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ipJDJFSk"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055AAC3;
-	Mon,  4 Dec 2023 04:21:39 -0800 (PST)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4C9q80016735;
-	Mon, 4 Dec 2023 12:21:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=jIS5wAnVSsNNvK1fqn1ZGEXn0mdtAdWPjrHPs/QHSv0=;
- b=ipJDJFSkkoQ8OSQPZhk5NGBF5GWZGXGxxoWTDFq3JcYkMP4DJvuuZu/eIYPnB/4q0Mrb
- l10CkBMRPOR0Vi120mKOdhXeJmoF2YR8NUbfL1LIQD0ZZvYmp0MGmmWbdbIZZcR+gwAI
- MjPpaT+niWJSaI2c7dmkvCF5OPyaNRvUL4kavB5aXNv4AG45M70K4ndvhTP4s019D2o8
- hXCm/qVQx7W2gcEw1lAA3Uuvay76uqF4WaREhS7p0HazCbuUx+1zj5k/NKoDp5t51uzB
- OB1HVK4NEblxEw6mQ4R+DarG/CuKMFyt8U7y3gVdkrI3YH6zkQC6kvO44SIbfQMdZ1SA uw== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usec201h9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 04 Dec 2023 12:21:08 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4BaSvE014380;
-	Mon, 4 Dec 2023 12:21:06 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu15p761-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 04 Dec 2023 12:21:06 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B4CL692015651;
-	Mon, 4 Dec 2023 12:21:06 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3uqu15p74p-1;
-	Mon, 04 Dec 2023 12:21:06 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH next] drm/v3d: Fix missing error code in v3d_submit_cpu_ioctl()
-Date: Mon,  4 Dec 2023 04:21:01 -0800
-Message-ID: <20231204122102.181298-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KiIj8OFD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9F6C433C9;
+	Mon,  4 Dec 2023 12:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1701692542;
+	bh=VBhrN1iPpuRyzjKXqxjhhLRiYuFI95GVYxgoft4cV+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KiIj8OFDtFDuB6JKodOOuVAdXP362m2FJeoPh4PXXfCfZObsP6HzgR0U9xs2o9KEv
+	 OOLqGlRWqIK8+dnhNdyUJEcp6yfR/5BdPP6qIF4bZJ6ry3Z41iaGeOf66n6+HP09M3
+	 4qw6jBXbREaIeogan0AmKBRjd0tnPBrBcXKDhTdQ=
+Date: Mon, 4 Dec 2023 09:00:42 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: alexander.usyskin@intel.com, tomas.winkler@intel.com, arnd@arndb.de,
+	nathan@kernel.org, ndesaulniers@google.com, trix@redhat.com,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] misc: mei: client.c: fix problem of return
+ '-EOVERFLOW' in mei_cl_write
+Message-ID: <2023120452-stool-party-bf2b@gregkh>
+References: <20231128014507.418254-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-04_11,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2312040093
-X-Proofpoint-GUID: FqbDJb9ICTqnlVj5k1F4_ZyMkZQBve0e
-X-Proofpoint-ORIG-GUID: FqbDJb9ICTqnlVj5k1F4_ZyMkZQBve0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128014507.418254-1-suhui@nfschina.com>
 
-Smatch warns:
-	drivers/gpu/drm/v3d/v3d_submit.c:1222 v3d_submit_cpu_ioctl()
-	warn: missing error code 'ret'
+On Tue, Nov 28, 2023 at 09:45:08AM +0800, Su Hui wrote:
+> Clang static analyzer complains that value stored to 'rets' is never
+> read.Using 'goto err' to go to the error path and fix this problem.
+> 
+> Fixes: 8c8d964ce90f ("mei: move hbuf_depth from the mei device to the hw modules")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-When there is no job type or job is submitted with wrong number of BOs
-it is an error path, ret is zero at this point which is incorrect
-return.
+How was this tested?
 
-Fix this by changing it to -EINVAL.
+> ---
+> v3: 
+>  - using 'goto err' rather than 'buf_len=-EOVERFLOW'.(Thanks to Sasha)
+> 
+> v2:
+>  - split v1 patch to different patches
+> https://lore.kernel.org/all/20231120095523.178385-2-suhui@nfschina.com/
+> 
+> v1:
+> https://lore.kernel.org/all/5c98fc07-36a9-92cc-f8d6-c4efdc0c34aa@nfschina.com/
+> 
+>  drivers/misc/mei/client.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+> index 7ea80779a0e2..0489bec4fded 100644
+> --- a/drivers/misc/mei/client.c
+> +++ b/drivers/misc/mei/client.c
+> @@ -2033,7 +2033,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+>  	hbuf_slots = mei_hbuf_empty_slots(dev);
+>  	if (hbuf_slots < 0) {
+>  		rets = -EOVERFLOW;
+> -		goto out;
+> +		goto err;
 
-Fixes: aafc1a2bea67 ("drm/v3d: Add a CPU job submission")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis and only compile tested.
----
- drivers/gpu/drm/v3d/v3d_submit.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please prove that this is correct, as based on the code logic, it seems
+very wrong.  I can't take this unless the code is tested properly.
 
-diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
-index d7a9da2484fd..fcff41dd2315 100644
---- a/drivers/gpu/drm/v3d/v3d_submit.c
-+++ b/drivers/gpu/drm/v3d/v3d_submit.c
-@@ -1219,11 +1219,13 @@ v3d_submit_cpu_ioctl(struct drm_device *dev, void *data,
- 	/* Every CPU job must have a CPU job user extension */
- 	if (!cpu_job->job_type) {
- 		DRM_DEBUG("CPU job must have a CPU job user extension.\n");
-+		ret = -EINVAL;
- 		goto fail;
- 	}
- 
- 	if (args->bo_handle_count != cpu_job_bo_handle_count[cpu_job->job_type]) {
- 		DRM_DEBUG("This CPU job was not submitted with the proper number of BOs.\n");
-+		ret = -EINVAL;
- 		goto fail;
- 	}
- 
--- 
-2.39.3
+thanks,
 
+greg k-h
