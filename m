@@ -1,93 +1,69 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474652C185;
+	Mon,  4 Dec 2023 15:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="j22NLa1p"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F23DB3;
-	Mon,  4 Dec 2023 06:51:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6g6yadi8+CXH2sU93oASaWjbxQGcWTNsZoAE3ZBa6s0=; b=j22NLa1pTn3kBvy7vKnoKczEAn
-	MPU1KJIfVHjFlIbF51rexMEyRVkazkb7YxEiGsFnh8Rn77knd8ZjnqP2g/sA9YjycG7lyixTEDIOu
-	JQqF4D6SedfsWxMguFx0HhH13ZD4Uf3Sqp4iBgs62cuSH+H2b54YO39jtsajzTVlwKpIcwWsB1Bmi
-	FDnquM4RLEkYPRzu4wTuUh3m3XoWwl+ZakPeqtn9lKab7b2sNDzenXpSgFff9HMrLBwi2Z98fO31i
-	zFYsiuXouXjJ+KTGtMKhGlS2zbGdJmZTNMYeWzv7/Dej+uUfQ7oc36zCjFJCzoSkSvHS2Y/FXDRn4
-	7HD4UKYA==;
-Received: from [102.213.205.115] (helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1rAAHw-00ADH1-69; Mon, 04 Dec 2023 15:51:12 +0100
-Date: Mon, 4 Dec 2023 13:50:59 -0100
-From: Melissa Wen <mwen@igalia.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Emma Anholt <emma@anholt.net>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH next] drm/v3d: Fix missing error code in
- v3d_submit_cpu_ioctl()
-Message-ID: <20231204145059.3ewtpuhiq4xq4ifv@mail.igalia.com>
-References: <20231204122102.181298-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZ6zStno"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9ED31C433C9;
+	Mon,  4 Dec 2023 15:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701702623;
+	bh=yLuE5GhnEWx5vEyz19OFSwOiD3wwpOWWPeMlHaVekZ8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZZ6zStnoKrzr/9zxY4plsPjoBj6GwejiDm9654JafTvuius4cirVOkTAqioHdGUHe
+	 xfDGtzK/ARjtVOi7E5bhnAzMkFqAltskxxta2VwbRfPTc65mvuD7iJ/rrrm8wNnVi8
+	 4vlaH57Qq+mlHGyLTD8uBklvvVqh9Y8Igz6eFQjQUp3WERtKqVlqcgNp2VoD2+eT51
+	 dhuCBKpjFf2Zlfa/RI9mT5hbqiCFjD380gWpmuO1rlS1SPxMJuEWsFGLbObPjOo1fC
+	 IirbX1CCFpoBxXwkdUctnmjeNZT+oa7opleiWk6MqL/xshxxHP3Er4z/ZuY6TyIbXL
+	 I0QSA03yfJZ2Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 80E5EDD4EF1;
+	Mon,  4 Dec 2023 15:10:23 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231204122102.181298-1-harshit.m.mogalapalli@oracle.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][NEXT] selftests/bpf: Fix spelling mistake "get_signaure_size"
+ -> "get_signature_size"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <170170262352.16559.12056527906684806638.git-patchwork-notify@kernel.org>
+Date: Mon, 04 Dec 2023 15:10:23 +0000
+References: <20231204093940.2611954-1-colin.i.king@gmail.com>
+In-Reply-To: <20231204093940.2611954-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: andrii@kernel.org, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 12/04, Harshit Mogalapalli wrote:
-> Smatch warns:
-> 	drivers/gpu/drm/v3d/v3d_submit.c:1222 v3d_submit_cpu_ioctl()
-> 	warn: missing error code 'ret'
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Mon,  4 Dec 2023 09:39:40 +0000 you wrote:
+> There is a spelling mistake in an ASSERT_GT message. Fix it.
 > 
-> When there is no job type or job is submitted with wrong number of BOs
-> it is an error path, ret is zero at this point which is incorrect
-> return.
-> 
-> Fix this by changing it to -EINVAL.
-> 
-> Fixes: aafc1a2bea67 ("drm/v3d: Add a CPU job submission")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> This is based on static analysis and only compile tested.
-> ---
->  drivers/gpu/drm/v3d/v3d_submit.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
-> index d7a9da2484fd..fcff41dd2315 100644
-> --- a/drivers/gpu/drm/v3d/v3d_submit.c
-> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
-> @@ -1219,11 +1219,13 @@ v3d_submit_cpu_ioctl(struct drm_device *dev, void *data,
->  	/* Every CPU job must have a CPU job user extension */
->  	if (!cpu_job->job_type) {
->  		DRM_DEBUG("CPU job must have a CPU job user extension.\n");
-> +		ret = -EINVAL;
->  		goto fail;
->  	}
->  
->  	if (args->bo_handle_count != cpu_job_bo_handle_count[cpu_job->job_type]) {
->  		DRM_DEBUG("This CPU job was not submitted with the proper number of BOs.\n");
-> +		ret = -EINVAL;
+>  tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nice catch. Thanks!
+Here is the summary with links:
+  - [NEXT] selftests/bpf: Fix spelling mistake "get_signaure_size" -> "get_signature_size"
+    https://git.kernel.org/bpf/bpf-next/c/153de60e8bfb
 
-Reviewed-by: Melissa Wen <mwen@igalia.com>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I'll apply to drm-misc-next.
 
->  		goto fail;
->  	}
->  
-> -- 
-> 2.39.3
-> 
