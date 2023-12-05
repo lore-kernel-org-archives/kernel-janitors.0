@@ -1,76 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lf0Tbx4p"
-Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429AE1711
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Dec 2023 14:20:06 -0800 (PST)
-Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-58d4968c362so3260190eaf.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Dec 2023 14:20:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701728405; x=1702333205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c+WzlKb2MQSHfnGqBE/e5O7OA37FmS5jYCRCA/LLsH0=;
-        b=lf0Tbx4pZSpplXVE+zqYxKYOIwCE2xAIUgcZiK3fCq6WNOA8asMjsl+yN0MHxt2eDn
-         rbaiZLPUY41HHiP3/HfHTDEMuBNSsqFAfOwLCszTWL335Aat5ZHiNUr8kTLUlWLeMVgK
-         Ko4WxPKFTphxd51BX4j69weJgwWn21SSL2GP0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701728405; x=1702333205;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+WzlKb2MQSHfnGqBE/e5O7OA37FmS5jYCRCA/LLsH0=;
-        b=jXaGsubsdqDi4mJt4okXMwElKAse5rE6N6bXee+JeqDXBvSYWRVO34X8nqWdPTiRIt
-         1XpLgtv2rfaJaaURoXpAczfkWuUZhEHht89PAiWj6z1V3+RuwPV1tAkgMLh7UzhX4O2B
-         RUyfKgm8NnNo/KsXUiYzm+6drtp4sGlULy7HNWlny8NRNCzE/dayhmTK6gX+Lj/m4hed
-         /qD7JZQiApPdmZ/sW/iJXG9hd4v6t0iIL2eGz35s+DzDhApNLuKzuz/O0cQyeWBsVRUA
-         vgmviVvDOA/f8zmmXmx1T58/EeL8Xf0lxGmVluCJnVTcjT+0ifH+jwzzP/0CCqNssOOM
-         wSig==
-X-Gm-Message-State: AOJu0YwnigPgId6kPGejvsBYw2FIK9hEp41OD2XmtIZp0ctv0KFkrZzK
-	s27aHpbZQvWPyhwrDtVCw2iSDQ==
-X-Google-Smtp-Source: AGHT+IGC7BzaBQCIfZe1vXo4mx3JRiDIzetuPnC9oVZ29pkisPeQ4hM13pxSUb9WDQN6k46hgaEL7w==
-X-Received: by 2002:a05:6358:9106:b0:170:302b:545f with SMTP id q6-20020a056358910600b00170302b545fmr2543842rwq.56.1701728405319;
-        Mon, 04 Dec 2023 14:20:05 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id ey5-20020a056a0038c500b006cde75646d3sm4718759pfb.179.2023.12.04.14.20.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 14:20:04 -0800 (PST)
-Date: Mon, 4 Dec 2023 14:20:04 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Song Liu <song@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-raid@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible
- array
-Message-ID: <202312041419.81EF03F7B7@keescook>
-References: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 95CEAD4C;
+	Mon,  4 Dec 2023 18:30:47 -0800 (PST)
+Received: from [172.30.20.54] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id A473660598E85;
+	Tue,  5 Dec 2023 10:30:22 +0800 (CST)
+Message-ID: <098b1c0f-f303-3708-939a-28ecaf2185c3@nfschina.com>
+Date: Tue, 5 Dec 2023 10:30:22 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3] misc: mei: client.c: fix problem of return
+ '-EOVERFLOW' in mei_cl_write
+Content-Language: en-US
+To: alexander.usyskin@intel.com, Greg KH <gregkh@linuxfoundation.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: tomas.winkler@intel.com, arnd@arndb.de, nathan@kernel.org,
+ ndesaulniers@google.com, trix@redhat.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <2023120425-broaden-image-fdc9@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 03, 2023 at 08:48:06PM +0100, Christophe JAILLET wrote:
-> The 'multipaths' field of 'struct mpconf' can be declared as a flexible
-> array.
-> 
-> The advantages are:
->    - 1 less indirection when accessing to the 'multipaths' array
->    - save 1 pointer in the structure
->    - improve memory usage
->    - give the opportunity to use __counted_by() for additional safety
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This looks like a really nice conversion. I haven't run-tested this, but
-it reads correct to me.
+On 2023/12/4 21:17, Greg KH wrote:
+> On Mon, Dec 04, 2023 at 04:11:31PM +0300, Dan Carpenter wrote:
+>> On Mon, Dec 04, 2023 at 09:00:42AM +0100, Greg KH wrote:
+>>>> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+>>>> index 7ea80779a0e2..0489bec4fded 100644
+>>>> --- a/drivers/misc/mei/client.c
+>>>> +++ b/drivers/misc/mei/client.c
+>>>> @@ -2033,7 +2033,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
+>>>>   	hbuf_slots = mei_hbuf_empty_slots(dev);
+>>>>   	if (hbuf_slots < 0) {
+>>>>   		rets = -EOVERFLOW;
+>>>> -		goto out;
+>>>> +		goto err;
+>>> Please prove that this is correct, as based on the code logic, it seems
+>>> very wrong.  I can't take this unless the code is tested properly.
+>> Hi Greg,
+>>
+>> When Su Hui sent the v2 patch you sent an auto response about adding
+>> stable to the CC list.
+>> https://lore.kernel.org/all/2023112042-napped-snoring-b766@gregkh/
+>>
+>> However, it appears that you still applied the v2 patch.  It's in
+>> linux-next as commit ee6236027218 ("misc: mei: client.c: fix problem of
+>> return '-EOVERFLOW' in mei_cl_write").
+>>
+>> When I use `git am` to apply this patch, then it doesn't apply.  However,
+>> when I use cat email.txt | patch -p1 then it tries to reverse the patch
+>> and apply it to a different function.
+> Odd, I missed that I had already applied the first one, nevermind, that
+> one is correct, this one was wrong :)
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Hi,
 
--- 
-Kees Cook
+Oh, sorry...
+I'm not familiar with mei device, I send this v3 patch because of Sasha' 
+s suggestion.[1]
+Could Sasha give some advice about this ?
+Thanks a lot :)
+
+https://lore.kernel.org/all/CY5PR11MB63668F464A281A239FA12B6AEDBDA@CY5PR11MB6366.namprd11.prod.outlook.com/
+
+
