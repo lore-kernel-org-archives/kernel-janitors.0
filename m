@@ -1,11 +1,11 @@
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by lindbergh.monkeyblade.net (Postfix) with SMTP id 95CEAD4C;
-	Mon,  4 Dec 2023 18:30:47 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with SMTP id 50F4E11F;
+	Mon,  4 Dec 2023 19:33:46 -0800 (PST)
 Received: from [172.30.20.54] (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id A473660598E85;
-	Tue,  5 Dec 2023 10:30:22 +0800 (CST)
-Message-ID: <098b1c0f-f303-3708-939a-28ecaf2185c3@nfschina.com>
-Date: Tue, 5 Dec 2023 10:30:22 +0800
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 93A09605CC808;
+	Tue,  5 Dec 2023 11:33:36 +0800 (CST)
+Message-ID: <56b21cd8-7634-895e-6610-2a087ce8fc13@nfschina.com>
+Date: Tue, 5 Dec 2023 11:33:36 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -14,61 +14,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
-Subject: Re: [PATCH v3] misc: mei: client.c: fix problem of return
- '-EOVERFLOW' in mei_cl_write
+Subject: Re: [PATCH v2 0/3] scsi: aic7xxx: fix some problem of return value
 Content-Language: en-US
-To: alexander.usyskin@intel.com, Greg KH <gregkh@linuxfoundation.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: tomas.winkler@intel.com, arnd@arndb.de, nathan@kernel.org,
- ndesaulniers@google.com, trix@redhat.com, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: hare@suse.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <2023120425-broaden-image-fdc9@gregkh>
+In-Reply-To: <d37560ef-d67f-4493-a7bf-1d192ff7351d@suswa.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-On 2023/12/4 21:17, Greg KH wrote:
-> On Mon, Dec 04, 2023 at 04:11:31PM +0300, Dan Carpenter wrote:
->> On Mon, Dec 04, 2023 at 09:00:42AM +0100, Greg KH wrote:
->>>> diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
->>>> index 7ea80779a0e2..0489bec4fded 100644
->>>> --- a/drivers/misc/mei/client.c
->>>> +++ b/drivers/misc/mei/client.c
->>>> @@ -2033,7 +2033,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb, unsigned long time
->>>>   	hbuf_slots = mei_hbuf_empty_slots(dev);
->>>>   	if (hbuf_slots < 0) {
->>>>   		rets = -EOVERFLOW;
->>>> -		goto out;
->>>> +		goto err;
->>> Please prove that this is correct, as based on the code logic, it seems
->>> very wrong.  I can't take this unless the code is tested properly.
->> Hi Greg,
+On 2023/12/1 15:53, Dan Carpenter wrote:
+> On Fri, Dec 01, 2023 at 10:59:53AM +0800, Su Hui wrote:
+>> v2:
+>>   - fix some problems and split v1 patch into this patch set.(Thanks to
+>>     Dan)
 >>
->> When Su Hui sent the v2 patch you sent an auto response about adding
->> stable to the CC list.
->> https://lore.kernel.org/all/2023112042-napped-snoring-b766@gregkh/
+>> v1:
+>>   - https://lore.kernel.org/all/20231130024122.1193324-1-suhui@nfschina.com/
 >>
->> However, it appears that you still applied the v2 patch.  It's in
->> linux-next as commit ee6236027218 ("misc: mei: client.c: fix problem of
->> return '-EOVERFLOW' in mei_cl_write").
->>
->> When I use `git am` to apply this patch, then it doesn't apply.  However,
->> when I use cat email.txt | patch -p1 then it tries to reverse the patch
->> and apply it to a different function.
-> Odd, I missed that I had already applied the first one, nevermind, that
-> one is correct, this one was wrong :)
+> Would have been better with Fixes tags probably.  Otherwise, it looks
+> good to me.
 
-Hi,
+Hi, Dan
 
-Oh, sorry...
-I'm not familiar with mei device, I send this v3 patch because of Sasha' 
-s suggestion.[1]
-Could Sasha give some advice about this ?
-Thanks a lot :)
+Sorry for the late reply.
 
-https://lore.kernel.org/all/CY5PR11MB63668F464A281A239FA12B6AEDBDA@CY5PR11MB6366.namprd11.prod.outlook.com/
+I'm not sure if it's worth to add Fixes tags.
+These codes are very old which come from "Linux-2.6.12-rc2".
+It's seems like a cleanup or improvement.
+
+Umm, should I send v3 patches to add Fixes tags?
+
+Su Hui
 
 
