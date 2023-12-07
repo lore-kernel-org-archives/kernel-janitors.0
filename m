@@ -1,91 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="Pv9IcVlH"
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705D8171D
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 11:08:37 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3b9de2332e3so613771b6e.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Dec 2023 11:08:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1701976109; x=1702580909; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n8OWS2EF/jxgGIxX7cfSGEDjvCH+3JHnn1iapS5BEtE=;
-        b=Pv9IcVlHfdK9pDYkLUhP3PBrcbdsbR3yPC/C1/+sc33u3YTBBHITNJOd8Oz0501b7/
-         rx2TaHztpC0NOwpf0z3Yk7pbU905opt1KKhtZE7qJr2760BiwF15RN/fIMMgnESzHjh4
-         bcYeMDgdILbqzjEervxU1+5Hvy74g7hd9iMd+/fDwpX7TwanSdMifIh5gNrG9LmvSYqh
-         Cdk5xq1IFSzMvInQxFo8Q4ukGbZFkelHM7HCY8S9fhXXREKgoef20nXxfaQfBv0m0jz5
-         YKqqEV2spc9NLseUoMKXX9yJKwpI2IQ2l0/vxWTJucbK6KKiMOaXz9HZQLZu7J69eiYJ
-         QjsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701976109; x=1702580909;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n8OWS2EF/jxgGIxX7cfSGEDjvCH+3JHnn1iapS5BEtE=;
-        b=Zq/dflpBoTGp5aPH3TuoRTkvvd4ky8Cied/X2QD0mDTPI77OX4z6tbcGt9w7B2IwbX
-         N9kEIrcRsnWWlv/b3RsrHAqFgo6QwV4xqNGCRx2hOwaQujEXidTbaY6j9fHj905b+wbr
-         A0ZFeJM1gL28ebI184hkfC7uXWhY/vfMk9triOj4Lcvd3IXP0CGV864KUzo7BgCa9PZ4
-         T9BXXWF2vNEwXEHFWSTp5wsfwfiLV6rOcMzuuPOEt9rhQkg4LWNO1xho+vfM/iMNeJDt
-         8IoOoG2xKCs+rM72yhTSv0mTnLuOwBmcmGtpQpUVKWsIjYzh4o/ksbldKUkuv+7flQDw
-         d+Gg==
-X-Gm-Message-State: AOJu0Yw5XkIY5LrwV/Qcvk9TWMJUXpdG/0l0dew6CIkSgSs9/oPBQEtr
-	4i1WdD2eXi2EpyWV3BDZd7lVEQ==
-X-Google-Smtp-Source: AGHT+IHmlEBqMLi8p7ZsVgEMreur2OTNgRYwmLDFd4yoPSVmqEsKGnS9sX3SRUQEzGPFuG0+Bp2AOQ==
-X-Received: by 2002:a05:6808:148b:b0:3b9:e475:d5e1 with SMTP id e11-20020a056808148b00b003b9e475d5e1mr957229oiw.9.1701976108782;
-        Thu, 07 Dec 2023 11:08:28 -0800 (PST)
-Received: from nicolas-tpx395.localdomain ([2606:6d00:17:b5c::7a9])
-        by smtp.gmail.com with ESMTPSA id ot20-20020a05620a819400b0077d5d1461aesm118361qkn.31.2023.12.07.11.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 11:08:28 -0800 (PST)
-Message-ID: <81903c6258fe21696775a290e338cc2042a7ff64.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: chips-media: wave5: remove duplicate check
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Nas Chung
-	 <nas.chung@chipsnmedia.com>
-Cc: Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
-Date: Thu, 07 Dec 2023 14:08:26 -0500
-In-Reply-To: <9bdce1f1-b2f0-4b11-9dfd-16ca7048281b@moroto.mountain>
-References: <9bdce1f1-b2f0-4b11-9dfd-16ca7048281b@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VZSPcQ9Y"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6424010EF
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 12:11:03 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id BKi4rWEPVrKXzBKi4rMu75; Thu, 07 Dec 2023 21:11:01 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1701979861;
+	bh=lrqiH8yVpgT6zM5oRkE6GFJPks/LuoT9ILt/fdADS18=;
+	h=From:To:Cc:Subject:Date;
+	b=VZSPcQ9YfoGsXgnmIKwNY2isHZdBmuBhN9Bl8vEIAFMUqL1O15e1YjavF1euIk1zS
+	 4A0GXrQhsoupjVxjO8I3pyyGagDU4Ga03RrLDbc2N2mM2wYyqcQB60YFrzpOU8RTZS
+	 s5BJ0ryxAYDsANJb0IRoZzIYFX8Forzk1vnJvyLB7GIutwow89eM0hA9sC7iHIvMB6
+	 i89qbwBxrvEyL9a8k+3PtnzgKpDLf1uv1CnQM9cmnGotx3CoJTdc88CgV3L2eKAAzL
+	 0yvqEprB95WoIP2q1NJTijsBhck/lq0yc7vUBAMQ9cfA4CPiUioBfdiNcvwdhORo5L
+	 2fImSgAiB6nmA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 07 Dec 2023 21:11:01 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Antti Palosaari <crope@iki.fi>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Brad Love <brad@nextdimension.cc>,
+	Sean Young <sean@mess.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: m88ds3103: Fix an error handling path in m88ds3103_probe()
+Date: Thu,  7 Dec 2023 21:10:56 +0100
+Message-Id: <32237b89eef582a89f64c4f6213e27d99245bafd.1701979842.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Le mardi 28 novembre 2023 =C3=A0 17:39 +0300, Dan Carpenter a =C3=A9crit=C2=
-=A0:
-> We already verified that "ret" is zero a few lines earlier.  Delete this
-> duplicate check.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+If an error occurs after a successful i2c_mux_add_adapter(),
+i2c_mux_del_adapters() should be called to avoid a some leaks, as already
+done in the .remove() function.
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Add the missing call.
 
-> ---
->  drivers/media/platform/chips-media/wave5/wave5-hw.c | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-hw.c b/driver=
-s/media/platform/chips-media/wave5/wave5-hw.c
-> index 3fcb2d92add8..f1e022fb148e 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-hw.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-hw.c
-> @@ -578,9 +578,6 @@ int wave5_vpu_dec_init_seq(struct vpu_instance *inst)
->  	dev_dbg(inst->dev->dev, "%s: init seq sent (queue %u : %u)\n", __func__=
-,
->  		p_dec_info->instance_queue_count, p_dec_info->report_queue_count);
-> =20
-> -	if (ret)
-> -		return ret;
-> -
->  	return 0;
->  }
-> =20
+Fixes: e6089feca460 ("media: m88ds3103: Add support for ds3103b demod")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/dvb-frontends/m88ds3103.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
+index 26c67ef05d13..e0272054fca5 100644
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -1894,7 +1894,7 @@ static int m88ds3103_probe(struct i2c_client *client)
+ 		/* get frontend address */
+ 		ret = regmap_read(dev->regmap, 0x29, &utmp);
+ 		if (ret)
+-			goto err_kfree;
++			goto err_del_adapters;
+ 		dev->dt_addr = ((utmp & 0x80) == 0) ? 0x42 >> 1 : 0x40 >> 1;
+ 		dev_dbg(&client->dev, "dt addr is 0x%02x\n", dev->dt_addr);
+ 
+@@ -1902,11 +1902,14 @@ static int m88ds3103_probe(struct i2c_client *client)
+ 						      dev->dt_addr);
+ 		if (IS_ERR(dev->dt_client)) {
+ 			ret = PTR_ERR(dev->dt_client);
+-			goto err_kfree;
++			goto err_del_adapters;
+ 		}
+ 	}
+ 
+ 	return 0;
++
++err_del_adapters:
++	i2c_mux_del_adapters(dev->muxc);
+ err_kfree:
+ 	kfree(dev);
+ err:
+-- 
+2.34.1
 
