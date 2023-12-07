@@ -1,112 +1,71 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdIL75z8"
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D932D131;
-	Thu,  7 Dec 2023 02:54:57 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40c09dfd82aso11317585e9.0;
-        Thu, 07 Dec 2023 02:54:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dppiFzHN"
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E402610E9
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 06:28:48 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40c256ffdbcso10386225e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Dec 2023 06:28:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701946496; x=1702551296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZPaAye3nkWneLsD62Nfqghe2VakCTzAP/KB7XhFCdQ=;
-        b=GdIL75z8cyHNS94vQsPHb9q+os18lbl7ec7mxD5brRfAPlMTOewowrQMzcizyICmex
-         hHLYhvQO3DhayACMuGA+AxiLsZhzwo3Hw2NvzFbaw5dYvDr7Gd+o98o3R+QxfFQai2Ey
-         +45nmZa7D9fxkEGRCh00Y4pc79ZSjeh3v3E0Tp+Zu54ffEyoTbONGCqgF1rgfPXwPF7Z
-         tqD8lVmmR9zdk2+0mYeo03J5W7A7SKH/AQamVCUoPe7S5T5Pflm3F/2r6DGxntQNIOk/
-         RPCW+efNVOCrd8wujBEQVn3BxYKpfdWjnZ05S1j09j09412cSQS7zqOMb/L69lrFCQ1F
-         Xuzg==
+        d=linaro.org; s=google; t=1701959327; x=1702564127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=siQf2yGcuKbINax/017dn/aIzi9vyOaDmow1c81WvIo=;
+        b=dppiFzHNRvBHRoMiYi5jk2GzYB6GsoLQTdKJ8dCLkQgVj5pm/StwLPvc/nnYv0d/EL
+         w/CqYxrhNHT45sm5pI0Dm/V897m0gXFbtA5BOW79lq6gbaOprwMMNr+ZpiUlyxBA1epf
+         enfAioD9O8sUIfX93D/6n/laxLPhhvImvznstwJ4f+1iUe4+AuKA4TSAbzLq45CH40mc
+         AFX/k46CP6opKA9vGgt9DiAfkW0B/rfu3o2wffoPa1k9s8cveQczvLfzTv/zQaM3xh9u
+         4b8Ls4AmS+Ge9WEVnBz+YD2SZ7u3BHCAuzXu9aSoqCrxTNavD5Ol20q4+KgUcbvWRbIt
+         G81g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701946496; x=1702551296;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QZPaAye3nkWneLsD62Nfqghe2VakCTzAP/KB7XhFCdQ=;
-        b=bbP9yb1mLfwswRTe6u/ViZhlTvxcTqgQf4rVOeCtMlF2oQ/pNf56CVMvyUk0WGUs+Q
-         /Ji9gjgos5upSA992G/LkVsAGTavXMSQZeczMphWWyU49WBQSbbhmu41s0GvSEVNyOg0
-         mKEkO5BvsUHdB8wDV17c+Q+7Q/6ox7irV8UeT/vwrKllfSPFeIgPp8+0bxGnX/8Mco6c
-         ziOTPG4k4f/QPU11yGxLP5go0PnbHBsAcHsg9sjoECTNh+s4c0752KuhUBSyxScXowfy
-         8ypF73XrVP7/+e6OzCkedT/mj622RXO6E/ZrUIcR8NgzKbuOkgGCzpu6o9RnzChXusZe
-         pEfQ==
-X-Gm-Message-State: AOJu0YzfR6WGMvTDF6GT3aja4/GM0feFIFt6g68It1FqBD3cDOAmW6pG
-	HU58Lc0zrYZCugzi2WpQ1EM=
-X-Google-Smtp-Source: AGHT+IEikmXKg4AE8MRP27nizvNW5SUNa0ZVvzQXagahn5GdC2FJ1hW+EiTdLdRtyapIAcw+LWO1lg==
-X-Received: by 2002:a05:600c:54f1:b0:40b:5e59:ccd4 with SMTP id jb17-20020a05600c54f100b0040b5e59ccd4mr1457662wmb.181.1701946496021;
-        Thu, 07 Dec 2023 02:54:56 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e11-20020a05600c4e4b00b0040b48690c49sm1514762wmq.6.2023.12.07.02.54.55
+        d=1e100.net; s=20230601; t=1701959327; x=1702564127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=siQf2yGcuKbINax/017dn/aIzi9vyOaDmow1c81WvIo=;
+        b=gfFl4r8pLOBFmlitTnjwPZZrIB/JqBEYNe3BZ9gyzJpOONk4WYThvj/rNLD6QtKfSW
+         Jg6VoP2q5fq6UWK1lZk3qadpktjLX40NKOnWXeLweLzlOgIa6JleE0ZcnVL+tltToFvS
+         sZcEIC3oR7HD4KeaiaYdeqUsZoxkEWAVfIs0XhiD9XB6mb5kjnGyCVIDtPjBuEYBocjd
+         Y+EjbQite4cyavF0JMDza1AI49qB9CgOI+ePSMaNSaOa2MTQzQO/EdP0T61q+PobqBAe
+         2GRnWI+gtpxqJJ7GP9b1Al/OWqCluAdHALlO/yFUUj9MMuwYQac1gMgj3XxBqIM6OzQW
+         CKeg==
+X-Gm-Message-State: AOJu0Yzhyrm5ykmnxgZs84/dj6hSvN/DTTg6gYdlOJJ2K6oDMyVHsS//
+	oM9V2ypTOs5TvVMMt9WDuPIVWg==
+X-Google-Smtp-Source: AGHT+IG3fjLcVnbgN/JM62HKhQ/CpsfIghOkkqs4Bf6SrVZBPi1Z/DUH73yzVRZSk42YeYyrPH8xFg==
+X-Received: by 2002:a05:600c:a43:b0:40b:5e59:c58c with SMTP id c3-20020a05600c0a4300b0040b5e59c58cmr1686676wmq.182.1701959327359;
+        Thu, 07 Dec 2023 06:28:47 -0800 (PST)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id b16-20020a05600c4e1000b0040c310abc4bsm216659wmq.43.2023.12.07.06.28.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 02:54:55 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui.Pan@amd.com,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Charlene Liu <charlene.liu@amd.com>,
-	Sung Joon Kim <sungkim@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "SMC_MSG_AllowZstatesEntr" -> "SMC_MSG_AllowZstatesEntry"
-Date: Thu,  7 Dec 2023 10:54:54 +0000
-Message-Id: <20231207105454.3138964-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 07 Dec 2023 06:28:46 -0800 (PST)
+Date: Thu, 7 Dec 2023 14:28:44 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: lee@kernel.org, jingoohan1@gmail.com, deller@gmx.de, nathan@kernel.org,
+	ndesaulniers@google.com, trix@redhat.com,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] backlight: ili922x: add an error code check in
+ ili922x_write
+Message-ID: <20231207142844.GA151182@aspen.lan>
+References: <20231130051155.1235972-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231130051155.1235972-1-suhui@nfschina.com>
 
-There is a spelling mistake in a smu_print message. Fix it.
+On Thu, Nov 30, 2023 at 01:11:56PM +0800, Su Hui wrote:
+> Clang static analyzer complains that value stored to 'ret' is never read.
+> Return the error code when spi_sync() failed.
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_smu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_smu.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_smu.c
-index d6db9d7fced2..6d4a1ffab5ed 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_smu.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_smu.c
-@@ -361,26 +361,26 @@ void dcn35_smu_set_zstate_support(struct clk_mgr_internal *clk_mgr, enum dcn_zst
- 	case DCN_ZSTATE_SUPPORT_ALLOW:
- 		msg_id = VBIOSSMC_MSG_AllowZstatesEntry;
- 		param = (1 << 10) | (1 << 9) | (1 << 8);
--		smu_print("%s: SMC_MSG_AllowZstatesEntr msg = ALLOW, param = %d\n", __func__, param);
-+		smu_print("%s: SMC_MSG_AllowZstatesEntry msg = ALLOW, param = %d\n", __func__, param);
- 		break;
- 
- 	case DCN_ZSTATE_SUPPORT_DISALLOW:
- 		msg_id = VBIOSSMC_MSG_AllowZstatesEntry;
- 		param = 0;
--		smu_print("%s: SMC_MSG_AllowZstatesEntr msg_id = DISALLOW, param = %d\n",  __func__, param);
-+		smu_print("%s: SMC_MSG_AllowZstatesEntry msg_id = DISALLOW, param = %d\n",  __func__, param);
- 		break;
- 
- 
- 	case DCN_ZSTATE_SUPPORT_ALLOW_Z10_ONLY:
- 		msg_id = VBIOSSMC_MSG_AllowZstatesEntry;
- 		param = (1 << 10);
--		smu_print("%s: SMC_MSG_AllowZstatesEntr msg = ALLOW_Z10_ONLY, param = %d\n", __func__, param);
-+		smu_print("%s: SMC_MSG_AllowZstatesEntry msg = ALLOW_Z10_ONLY, param = %d\n", __func__, param);
- 		break;
- 
- 	case DCN_ZSTATE_SUPPORT_ALLOW_Z8_Z10_ONLY:
- 		msg_id = VBIOSSMC_MSG_AllowZstatesEntry;
- 		param = (1 << 10) | (1 << 8);
--		smu_print("%s: SMC_MSG_AllowZstatesEntr msg = ALLOW_Z8_Z10_ONLY, param = %d\n", __func__, param);
-+		smu_print("%s: SMC_MSG_AllowZstatesEntry msg = ALLOW_Z8_Z10_ONLY, param = %d\n", __func__, param);
- 		break;
- 
- 	case DCN_ZSTATE_SUPPORT_ALLOW_Z8_ONLY:
--- 
-2.39.2
 
+Daniel.
