@@ -1,91 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807EF3B7AA;
-	Fri,  8 Dec 2023 18:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8hmSMa+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147B8C433C7;
-	Fri,  8 Dec 2023 18:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702059084;
-	bh=+F+CuKHjMhjOaVmDV9U/s8l7zrO94PrksbiVe6XkcXg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I8hmSMa+C7BeWc+f7WDx935Prfc4M1k0zk4ffWscm2PljjTOt0YXZQ4pjXhyOZL+n
-	 6tMZItugZ/qeVB9J8ejMkOacIJ4C9pkdIl4+NCxC64tIjKs7WhiXuXsGVnctSrKq7y
-	 4VTihcYiZQ6e8ZDoLfJIJbWZw/vrH6aKhk9IHIxZddiNAlCLQfhIYAWL+DIhxF8Cx4
-	 GWN0G3tF5PuvHjfUr7bSmaAcoxCaFjgtQotOsypI6a2JCPqQVFJKJTwL9yh6lSmvNC
-	 FISt9wiMGW1IqTehrbAqq6iPxMFZUrigeoB2+/eQWHnM33OXIycIcYLUGJM9AHgwyE
-	 uaDSbIbhT22iA==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50bef9b7a67so2667226e87.1;
-        Fri, 08 Dec 2023 10:11:23 -0800 (PST)
-X-Gm-Message-State: AOJu0YzTtvpOekWdghHpxMcD75XJJxIWQVle6BVF3Xbik70nts38CDqE
-	o97sBDjhZ7aTvERPV0cRATziKCPY/XSQwQX5Zhw=
-X-Google-Smtp-Source: AGHT+IG6LJR5y7Arr5OwpIwgsyoV0O6bDJv5rQ3+/wPqJVZq1OA5HIuoJtYWlq5B7EYjpwpdlv5oQAchTUPCPjAGzKw=
-X-Received: by 2002:a05:6512:488d:b0:50b:e750:dd99 with SMTP id
- eq13-20020a056512488d00b0050be750dd99mr142687lfb.38.1702059082273; Fri, 08
- Dec 2023 10:11:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="t+pSJO4x"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C24F1996
+	for <kernel-janitors@vger.kernel.org>; Fri,  8 Dec 2023 12:46:20 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id BhjkrXIBfToaHBhjkr2fgx; Fri, 08 Dec 2023 21:46:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702068378;
+	bh=c7yN6XYmPkSmYh2d3ai7nF5rpx6ZA/0115qJPRMOJ2Q=;
+	h=From:To:Cc:Subject:Date;
+	b=t+pSJO4x/EZmGcAEdRrc6oukLmyBQhaRLPhPdh4WTYVNlpMHBvWHw2lwi98ggOEU0
+	 dBIjGStSWPZ8YQuDdKuJu/0uURu/swVSxKrR+f3KpGsQHeIYWpvclddjl6KLLrOOYD
+	 bhZuXSyRGC1yCgIK9DI4QxXamkJ7YilG+1phzyTYSD8Fe2ahI6H0AiM1V3Ofs8BmLM
+	 pgok+pd0j9jnzX3Zmp9go7DIpd2KIWzJ6+Y5KuZDSkTBT3c2+UmeDUFLoRkx2blMUb
+	 5TtTMEOmxS/Bx30r6zJFsmRZVzUqX5jBUqHSIEJ93n8+USicxGa33ZebtPaW8kbWsO
+	 VFTFYsXtiOc6Q==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 08 Dec 2023 21:46:18 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bryan Tan <bryantan@vmware.com>,
+	Vishnu Dasa <vdasa@vmware.com>,
+	VMware PV-Drivers Reviewers <pv-drivers@vmware.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 1/2] VMCI: Remove handle_arr_calc_size()
+Date: Fri,  8 Dec 2023 21:46:09 +0100
+Message-Id: <adf0c48a57d911be5509688614d2e00694ff57eb.1702068153.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
- <202312041419.81EF03F7B7@keescook> <CAPhsuW43g-M+xvzD0N1JsJ_zGnvZQOw2Bi1TEqoHKanPnvMHLQ@mail.gmail.com>
- <202312080926.FBF7A2DDD2@keescook>
-In-Reply-To: <202312080926.FBF7A2DDD2@keescook>
-From: Song Liu <song@kernel.org>
-Date: Fri, 8 Dec 2023 10:11:10 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5F1aRrCRW-ad5Sq=cgxHX+QgXgYZyMX17Zj4Mj=Jnhjw@mail.gmail.com>
-Message-ID: <CAPhsuW5F1aRrCRW-ad5Sq=cgxHX+QgXgYZyMX17Zj4Mj=Jnhjw@mail.gmail.com>
-Subject: Re: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible array
-To: Kees Cook <keescook@chromium.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 8, 2023 at 9:27=E2=80=AFAM Kees Cook <keescook@chromium.org> wr=
-ote:
->
-> On Thu, Dec 07, 2023 at 09:33:17PM -0800, Song Liu wrote:
-> > On Mon, Dec 4, 2023 at 2:20=E2=80=AFPM Kees Cook <keescook@chromium.org=
-> wrote:
-> > >
-> > > On Sun, Dec 03, 2023 at 08:48:06PM +0100, Christophe JAILLET wrote:
-> > > > The 'multipaths' field of 'struct mpconf' can be declared as a flex=
-ible
-> > > > array.
-> > > >
-> > > > The advantages are:
-> > > >    - 1 less indirection when accessing to the 'multipaths' array
-> > > >    - save 1 pointer in the structure
-> > > >    - improve memory usage
-> > > >    - give the opportunity to use __counted_by() for additional safe=
-ty
-> > > >
-> > > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > >
-> > > This looks like a really nice conversion. I haven't run-tested this, =
-but
-> > > it reads correct to me.
-> >
-> > Agreed this is a good optimization. However, since MD_MULTIPATH is
-> > already marked as deprecated. I don't think we should ship further
-> > changes to it.
->
-> Hm, that seems like a weird catch-22 to me. I would say we should
-> continue to improve any code in the kernel that people spend time to
-> work on, or we should remove that code entirely. Should MD_MULTIPATH be
-> removed? How long has it been deprecated? (We just had an LTS release,
-> so doing removal now is a good time...)
+Use struct_size() instead of handle_arr_calc_size().
+This is much more conventionnal.
 
-We marked it as deprecated about 2.5 years ago. But to be honest,
-I currently don't have a plan to remove it. I guess I should start thinking
-about it.
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/misc/vmw_vmci/vmci_handle_array.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Thanks,
-Song
+diff --git a/drivers/misc/vmw_vmci/vmci_handle_array.c b/drivers/misc/vmw_vmci/vmci_handle_array.c
+index de7fee7ead1b..56d48d42736b 100644
+--- a/drivers/misc/vmw_vmci/vmci_handle_array.c
++++ b/drivers/misc/vmw_vmci/vmci_handle_array.c
+@@ -8,12 +8,6 @@
+ #include <linux/slab.h>
+ #include "vmci_handle_array.h"
+ 
+-static size_t handle_arr_calc_size(u32 capacity)
+-{
+-	return VMCI_HANDLE_ARRAY_HEADER_SIZE +
+-	    capacity * sizeof(struct vmci_handle);
+-}
+-
+ struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity)
+ {
+ 	struct vmci_handle_arr *array;
+@@ -25,7 +19,7 @@ struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity)
+ 		capacity = min((u32)VMCI_HANDLE_ARRAY_DEFAULT_CAPACITY,
+ 			       max_capacity);
+ 
+-	array = kmalloc(handle_arr_calc_size(capacity), GFP_ATOMIC);
++	array = kmalloc(struct_size(array, entries, capacity), GFP_ATOMIC);
+ 	if (!array)
+ 		return NULL;
+ 
+@@ -51,8 +45,8 @@ int vmci_handle_arr_append_entry(struct vmci_handle_arr **array_ptr,
+ 		struct vmci_handle_arr *new_array;
+ 		u32 capacity_bump = min(array->max_capacity - array->capacity,
+ 					array->capacity);
+-		size_t new_size = handle_arr_calc_size(array->capacity +
+-						       capacity_bump);
++		size_t new_size = struct_size(array, entries,
++					      array->capacity + capacity_bump);
+ 
+ 		if (array->size >= array->max_capacity)
+ 			return VMCI_ERROR_NO_MEM;
+-- 
+2.34.1
+
