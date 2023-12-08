@@ -1,87 +1,73 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22164C6F;
+	Fri,  8 Dec 2023 05:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UFgbV/f0"
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6CA170F
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 17:25:21 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2cb20b965dbso3527311fa.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Dec 2023 17:25:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701998720; x=1702603520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CUBLaybwTm71uGPidtWtYcj7suB58tDThikG9Ry5Y4U=;
-        b=UFgbV/f06Uzb6gF5GLkrzYH/G+swr1ZS6mlfHH5QjXSJGTiCMgxvLd8g0Jfq+K+MX1
-         tdiPBHid+z7+Zerri4o9zBWzpQrIZ+1EqwO4GTThBhFqSjmdPXQxCZZRO6mn9KxU0pX9
-         KdEm+rSgsXH3l1eUzIC/hzngULRVCdYY+p+nzUaPnoNuT2XsXzR6/NvK5fakkgChPiV4
-         jhBcss2ZhLoo2bAli/OXl3KQneUJetSBko8ME55VOdwN029oxL4IQf+wnuRFUa0LMWpl
-         jbxUziMI1CtRtq0DX1cr7B6XzoYsH9FSOZtgMbzAT6kJDjtfO/Dop0SrpUfMOjBreBbI
-         JP1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701998720; x=1702603520;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CUBLaybwTm71uGPidtWtYcj7suB58tDThikG9Ry5Y4U=;
-        b=ABh7JoJhyOOyCsCN/VHv2XY7/rZARLCBrmo0zo78USv5rplz5+g/sut0PGE9lXfeqL
-         BGjZ4MCdn5L4OiWpq7MV5YbbkUpe+s2fdQas6kE5BALtmJLnT6OP4fZI+feHJi4X9ANc
-         d8Cs5wWNwvvIB2NEUmtU8s/dOoXwoiBBzrU/drF6RG94VblbZpEPuDXEtGMw0ShLWM1F
-         MAbIqu2vfgnWQw+Q6LHGoeEWZ84nnFM7e1vJVrOqiJqM6TMtwMZd//rDQi0TYJKwo68j
-         yr3MVKy8nKOhSBepT3xNc6tdsY1H2/xEkIINehiLEiSwWOtZPClSLMdNKDLktYdZpbi+
-         m0/w==
-X-Gm-Message-State: AOJu0Yx3i0RVBNltDZ5XsYEqn91nwdVWDywbYTS8bwr/1spJXxOI5QTS
-	ls1B5UarM7Q9yua8o/sirvvrUg==
-X-Google-Smtp-Source: AGHT+IF9bDKrRKCba9gxrOM/tv9o1YC1+NYXv7vs1r/qhP8tdOvA0jMXldtsflhEAx2LflOS1OjuMA==
-X-Received: by 2002:a05:651c:111:b0:2c9:f427:9e52 with SMTP id a17-20020a05651c011100b002c9f4279e52mr1019018ljb.134.1701998720030;
-        Thu, 07 Dec 2023 17:25:20 -0800 (PST)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id g26-20020a2ea4ba000000b002c9f58169a8sm88639ljm.120.2023.12.07.17.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 17:25:19 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Vinod Polimera <quic_vpolimer@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dp: Fix platform_get_irq() check
-Date: Fri,  8 Dec 2023 04:25:17 +0300
-Message-Id: <170199868355.3399536.717291970669174612.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <c12bb69b-d676-4345-9712-48aab48f2b48@moroto.mountain>
-References: <c12bb69b-d676-4345-9712-48aab48f2b48@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8tLFs81"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F38AC433C8;
+	Fri,  8 Dec 2023 05:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702013610;
+	bh=57Iuychu+Y6HJndFxVGj0xwfUq2O94hJGtPFq6Hs3bE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=N8tLFs818LJj90WRN8s0XJpAyMFajluMii8/dZUCGN26Sp99+yFxIluN2oqv5k1Fo
+	 0zK5XjSQFFhqDiI3yabEQaA0LC0bLYo4i5k+kPQknF+u2HeVSC3IbX4OdIKw+sn4OU
+	 eKX6+D6u+Bp5/p3tnBRM8NIHK0G0J5CmqKDlGQMOUMixsn/595AzvSSBDMVwBj+r4A
+	 QLfUgtZbDpzG8vPUfCEPJ+hEnmM6Wb3l5Xa8/2kXrWQYzLNnbDL/Epcdcyc5OakQgS
+	 id9PK+dBcukWAPJP8WLmG0F50J3sErIQQTyaMPVcpMjkws/pKM90WXMmpBqqMPvada
+	 YY4i+LlElWWDg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50be03cc8a3so2090305e87.1;
+        Thu, 07 Dec 2023 21:33:30 -0800 (PST)
+X-Gm-Message-State: AOJu0YxC7vgwggckZWPC56gyuPTxQdk6shoKUrjONZ4KV2i4/g66+EP+
+	WFeaLzMsekthuRUWIdcbghZ3VSWqSfCz4XmmMjg=
+X-Google-Smtp-Source: AGHT+IGrWYKEARpYyha5a0BZLMItMM50RLahl12IkQVgDAvW13+O6qc+CP0Wak/gkrsYjmUNkbytn6ssAaOvZubz3jo=
+X-Received: by 2002:a05:6512:12c2:b0:50c:1bc5:6a65 with SMTP id
+ p2-20020a05651212c200b0050c1bc56a65mr1563713lfg.53.1702013608490; Thu, 07 Dec
+ 2023 21:33:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <03dd7de1cecdb7084814f2fab300c9bc716aff3e.1701632867.git.christophe.jaillet@wanadoo.fr>
+ <202312041419.81EF03F7B7@keescook>
+In-Reply-To: <202312041419.81EF03F7B7@keescook>
+From: Song Liu <song@kernel.org>
+Date: Thu, 7 Dec 2023 21:33:17 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW43g-M+xvzD0N1JsJ_zGnvZQOw2Bi1TEqoHKanPnvMHLQ@mail.gmail.com>
+Message-ID: <CAPhsuW43g-M+xvzD0N1JsJ_zGnvZQOw2Bi1TEqoHKanPnvMHLQ@mail.gmail.com>
+Subject: Re: [PATCH] md/md-multipath: Convert "struct mpconf" to flexible array
+To: Kees Cook <keescook@chromium.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 4, 2023 at 2:20=E2=80=AFPM Kees Cook <keescook@chromium.org> wr=
+ote:
+>
+> On Sun, Dec 03, 2023 at 08:48:06PM +0100, Christophe JAILLET wrote:
+> > The 'multipaths' field of 'struct mpconf' can be declared as a flexible
+> > array.
+> >
+> > The advantages are:
+> >    - 1 less indirection when accessing to the 'multipaths' array
+> >    - save 1 pointer in the structure
+> >    - improve memory usage
+> >    - give the opportunity to use __counted_by() for additional safety
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> This looks like a really nice conversion. I haven't run-tested this, but
+> it reads correct to me.
 
-On Wed, 06 Dec 2023 15:02:05 +0300, Dan Carpenter wrote:
-> The platform_get_irq() function returns negative error codes.  It never
-> returns zero.  Fix the check accordingly.
-> 
-> 
+Agreed this is a good optimization. However, since MD_MULTIPATH is
+already marked as deprecated. I don't think we should ship further
+changes to it.
 
-Applied, thanks!
-
-[1/1] drm/msm/dp: Fix platform_get_irq() check
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/c4ac0c6c96f0
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks,
+Song
