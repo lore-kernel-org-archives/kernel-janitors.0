@@ -1,27 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eoU0XRzH"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8FE1716
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 13:13:55 -0800 (PST)
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id BLgtrBr3hMO0QBLgtrRMmD; Thu, 07 Dec 2023 22:13:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1701983634;
-	bh=JnltmePhGEbdAkrEgv3g36oINGYUM5lmCn8S7mA4KXk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=eoU0XRzH9tVdA0RymcgDqEHkccEylBESxl10B/20sw3t8Y3RRBfD51BTQWG3YEDGl
-	 SdGsPMgNs/9E4rdkSnpPuguZzjq6iJManwx6fUhFU9JSSYwZwIfpS0gBR7oTxbywMB
-	 kFWqH9G9pHNrcvKFIe/zJ/d/olyN2VNe8FdmRJNBTg20bLsIZaod9P+p8Aa1kPV6Mc
-	 ptkKHcDRMPn+9KUBNRyAxs0uKnOqdbjuUGZd5/vABuIf5qoCokut9xtAkQFtkGTfXz
-	 572wKuiQQyeKUCCB6TtsywSiebOWHHON8MV6sj08BFNj/z5/JH+4P9i2WEh/+1LhBi
-	 ex/hHSb/AA4ZA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 07 Dec 2023 22:13:54 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <72a89724-9dad-499a-a0ed-ad9d046d235d@wanadoo.fr>
-Date: Thu, 7 Dec 2023 22:13:51 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuF7Njc9"
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED781709
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Dec 2023 17:11:06 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c9f4bb2e5eso20683031fa.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Dec 2023 17:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701997864; x=1702602664; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cPIpR2OhS8FsOJYuELc4EcfXoYVEFO3KDU00U/AniAY=;
+        b=LuF7Njc9/olaMgMGhQBUoHypebXo/IuLosXImsBj/fW9c82Bmrt3ByXfbFvi/QG5AJ
+         iX7bO5WajAfWZ2492D/mvRUYekJQcCP/CUpodDecmS4a3QdKG9RwLeNU3dG6MIih6uND
+         g5iWJosCpPBxM4e7BOdsX9ZS0hARDdgqkNV2xRmJ5SLNQITopIXOHnUm4n4b2qJSACtC
+         49+XMtDDRS1/jFRHchndv+MHMajZvmySCMfFAXbtRsjMr3LQ6HWIC/9dq5UYk+fCAkL2
+         Kyxjp50I5tzAs7bzdWull4syDLxcec/ukTlVk/vN8fwUJJcxZXg+6Wk7gZFlbjejbalR
+         GZvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701997864; x=1702602664;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPIpR2OhS8FsOJYuELc4EcfXoYVEFO3KDU00U/AniAY=;
+        b=dS+FfPvcnUZr9DM8nqjUPO5uRyQXfHEKczdgWfAc7uyInv/B1IHZawZ6tl/1VvZx8f
+         gPOZk3gtqXtdfFCMPOulCVxtjMR8LNDfp7swdYumRbs+7oZKPYflpbCXIMKHDD2NPpOn
+         yx8I1KnVw20mQiSVYP3IkTmoUfZEkMdyQkPXWSOBBlYPu5RDfJiRTgpZzBUt0ud0Lvn7
+         pm7IAd4NMJL7mQniPZUjG3b//trB0NspyC+txnWqmiRMuSIfJTbUciYQSrziW5zaD/ot
+         zesY86XiBf6+++tqu4QYUoQYBcxnINsz2WiJ9vPbuEWg4WsP++B/8E/w+rtzEqrUS798
+         h4wA==
+X-Gm-Message-State: AOJu0YyC28pTE/s//dWGgDgCvTeL59syJXvWzqD+DXvNVpPxqNq6WkJ9
+	gcFR7VL4mtgPbtHwUDogSB4L7g==
+X-Google-Smtp-Source: AGHT+IEWZjda2fsJ0zD6R8OaPvGCIhuiY+08NdpNxfUAkKx96xvmVTnzBUfNL5Fr1v/oeWTLLPMssw==
+X-Received: by 2002:a05:651c:117:b0:2c9:fa20:89e1 with SMTP id a23-20020a05651c011700b002c9fa2089e1mr2063453ljb.9.1701997864531;
+        Thu, 07 Dec 2023 17:11:04 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a0db:1f00::227? (dzdqv0yyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::227])
+        by smtp.gmail.com with ESMTPSA id r1-20020a2e94c1000000b002c9e6cbf78esm86616ljh.19.2023.12.07.17.11.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Dec 2023 17:11:03 -0800 (PST)
+Message-ID: <22f39a38-6293-424e-898e-77edc071ef75@linaro.org>
+Date: Fri, 8 Dec 2023 03:11:03 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -29,59 +47,38 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vdpa: Fix an error handling path in eni_vdpa_probe()
-Content-Language: fr
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Wu Zongyong <wuzongyong@linux.alibaba.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- virtualization@lists.linux-foundation.org
-References: <a7b0ef1eabd081f1c7c894e9b11de01678e85dee.1666293559.git.christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a7b0ef1eabd081f1c7c894e9b11de01678e85dee.1666293559.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] drm/msm/dp: Fix platform_get_irq() check
+Content-Language: en-GB
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Kuogee Hsieh <quic_khsieh@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Vinod Polimera <quic_vpolimer@quicinc.com>,
+ Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c12bb69b-d676-4345-9712-48aab48f2b48@moroto.mountain>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <c12bb69b-d676-4345-9712-48aab48f2b48@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 20/10/2022 à 21:21, Christophe JAILLET a écrit :
-> After a successful vp_legacy_probe() call, vp_legacy_remove() should be
-> called in the error handling path, as already done in the remove function.
+On 06/12/2023 14:02, Dan Carpenter wrote:
+> The platform_get_irq() function returns negative error codes.  It never
+> returns zero.  Fix the check accordingly.
 > 
-> Add the missing call.
-> 
-> Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 82c2a5751227 ("drm/msm/dp: tie dp_display_irq_handler() with dp driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
-> index 5a09a09cca70..cce3d1837104 100644
-> --- a/drivers/vdpa/alibaba/eni_vdpa.c
-> +++ b/drivers/vdpa/alibaba/eni_vdpa.c
-> @@ -497,7 +497,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   	if (!eni_vdpa->vring) {
->   		ret = -ENOMEM;
->   		ENI_ERR(pdev, "failed to allocate virtqueues\n");
-> -		goto err;
-> +		goto err_remove_vp_legacy;
->   	}
->   
->   	for (i = 0; i < eni_vdpa->queues; i++) {
-> @@ -509,11 +509,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   	ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
->   	if (ret) {
->   		ENI_ERR(pdev, "failed to register to vdpa bus\n");
-> -		goto err;
-> +		goto err_remove_vp_legacy;
->   	}
->   
->   	return 0;
->   
-> +err_remove_vp_legacy:
-> +	vp_legacy_remove(&eni_vdpa->ldev);
->   err:
->   	put_device(&eni_vdpa->vdpa.dev);
->   	return ret;
+>   drivers/gpu/drm/msm/dp/dp_display.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
-Polite reminder on a (very) old patch.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-CJ
+-- 
+With best wishes
+Dmitry
+
