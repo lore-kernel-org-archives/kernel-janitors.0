@@ -1,24 +1,24 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oKW5DHKs"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E4610EF
-	for <kernel-janitors@vger.kernel.org>; Sat,  9 Dec 2023 04:36:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="R0ivJdUO"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF3410E6
+	for <kernel-janitors@vger.kernel.org>; Sat,  9 Dec 2023 04:36:31 -0800 (PST)
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id BwZ7rbI0E6wd8BwZ7re9vS; Sat, 09 Dec 2023 13:36:19 +0100
+	id BwZ7rbI0E6wd8BwZFre9vu; Sat, 09 Dec 2023 13:36:28 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702125379;
-	bh=bXiXUI7HOibThetI/WgePYhHkYZjFZBA7O1RkI3V6uI=;
-	h=From:To:Cc:Subject:Date;
-	b=oKW5DHKslOm34e9Qg3zWDWUgyjW5pxek3pqWPWHHPlsh8p0Jbyej5JRSHI2Zver/A
-	 RxfPEAMHE1/P/qAtqtuq8z3kkVfpxZ3dgj2EJ1Hz8DLop173gbjg1x3qYnPTBdrA4+
-	 8GyM41Z9wp1F4MaZnQ7CJ2uoKlmqIOSFjZYn+GUqNY9CB70XG7X59gcXGfH/QLQn8E
-	 pgH7t+HcjIlTGTaW3fGlBIoGyVBfbOb+NqAbWCitnOqDs4LN+KDqxZuwD7Wydx2ATQ
-	 RxgaPEH7InuWzBX8NzFtpuq2IMXwSqqpjo9Wx3usZWZlMq7EYq00CFTX0i+jjAkTUx
-	 wnv9+gv5yYlYg==
+	s=t20230301; t=1702125391;
+	bh=8H4ZD3O2zM53FOpfQ60afkiHrSEs0SVvh7G9x7C42wA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=R0ivJdUOrY6nEVb3Z2TcN+w3sallr2i/MWL/1LqnVQhXgXfiaYQPJTsEblBGh6LYw
+	 jCOhxqfxgkYyGsYcexTGlh+Gtg5aH+THs0dTjbssiif/t81aC6vuPLtzJTQWZaTB/8
+	 iiCtD/mnGj7kUxMgASTZmka7MpYUB0J8sbHopyG9Am/VRPqRQKjOHSjfL8gRKkhMgo
+	 FpPy/OpDlOZ2SLxTejJ9TVw+JYWolOCknirLcQ610e3MRTgASocZ9TeCdbNyXK8WUs
+	 49mJ1Bo5D1g8JUUyxDVY6XQDZGElEwL44q8mAghOKQibFDNB+Ry1dvd9sTv5LiV7yu
+	 PjHiT91ixwZng==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 09 Dec 2023 13:36:19 +0100
+X-ME-Date: Sat, 09 Dec 2023 13:36:28 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: Bryan Tan <bryantan@vmware.com>,
@@ -30,10 +30,12 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2 1/2] VMCI: Remove handle_arr_calc_size()
-Date: Sat,  9 Dec 2023 13:36:14 +0100
-Message-Id: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 2/2] VMCI: Remove VMCI_HANDLE_ARRAY_HEADER_SIZE and VMCI_HANDLE_ARRAY_MAX_CAPACITY
+Date: Sat,  9 Dec 2023 13:36:15 +0100
+Message-Id: <00547fe74efe329b266eb8074c41f286758a3c64.1702125347.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
+References: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,61 +44,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use struct_size() instead of handle_arr_calc_size().
-This is much more conventional.
-
-While at it, use size_add() when computing the needed size in
-vmci_handle_arr_append_entry(). This prevents from (unlikely) overflow
-when computing the new size to reallocate.
+Remove VMCI_HANDLE_ARRAY_HEADER_SIZE and VMCI_HANDLE_ARRAY_MAX_CAPACITY
+that are unused.
 
 Suggested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
 Changes in v2:
-   - use size_add() in vmci_handle_arr_append_entry()   [Kees Cook]
+   - no change in code
+   - add R-b
 
-v1: https://lore.kernel.org/all/adf0c48a57d911be5509688614d2e00694ff57eb.1702068153.git.christophe.jaillet@wanadoo.fr/
+v1: https://lore.kernel.org/all/c2a231a5ea127b28b5d8c4e86ef471dd01069d47.1702068153.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/misc/vmw_vmci/vmci_handle_array.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/misc/vmw_vmci/vmci_handle_array.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/misc/vmw_vmci/vmci_handle_array.c b/drivers/misc/vmw_vmci/vmci_handle_array.c
-index de7fee7ead1b..681b3500125a 100644
---- a/drivers/misc/vmw_vmci/vmci_handle_array.c
-+++ b/drivers/misc/vmw_vmci/vmci_handle_array.c
-@@ -8,12 +8,6 @@
- #include <linux/slab.h>
- #include "vmci_handle_array.h"
+diff --git a/drivers/misc/vmw_vmci/vmci_handle_array.h b/drivers/misc/vmw_vmci/vmci_handle_array.h
+index b0e6b1956014..27a38b97e8a8 100644
+--- a/drivers/misc/vmw_vmci/vmci_handle_array.h
++++ b/drivers/misc/vmw_vmci/vmci_handle_array.h
+@@ -20,14 +20,8 @@ struct vmci_handle_arr {
+ 	struct vmci_handle entries[] __counted_by(capacity);
+ };
  
--static size_t handle_arr_calc_size(u32 capacity)
--{
--	return VMCI_HANDLE_ARRAY_HEADER_SIZE +
--	    capacity * sizeof(struct vmci_handle);
--}
--
- struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity)
- {
- 	struct vmci_handle_arr *array;
-@@ -25,7 +19,7 @@ struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity)
- 		capacity = min((u32)VMCI_HANDLE_ARRAY_DEFAULT_CAPACITY,
- 			       max_capacity);
+-#define VMCI_HANDLE_ARRAY_HEADER_SIZE				\
+-	offsetof(struct vmci_handle_arr, entries)
+ /* Select a default capacity that results in a 64 byte sized array */
+ #define VMCI_HANDLE_ARRAY_DEFAULT_CAPACITY			6
+-/* Make sure that the max array size can be expressed by a u32 */
+-#define VMCI_HANDLE_ARRAY_MAX_CAPACITY				\
+-	((U32_MAX - VMCI_HANDLE_ARRAY_HEADER_SIZE - 1) /	\
+-	sizeof(struct vmci_handle))
  
--	array = kmalloc(handle_arr_calc_size(capacity), GFP_ATOMIC);
-+	array = kmalloc(struct_size(array, entries, capacity), GFP_ATOMIC);
- 	if (!array)
- 		return NULL;
- 
-@@ -51,8 +45,8 @@ int vmci_handle_arr_append_entry(struct vmci_handle_arr **array_ptr,
- 		struct vmci_handle_arr *new_array;
- 		u32 capacity_bump = min(array->max_capacity - array->capacity,
- 					array->capacity);
--		size_t new_size = handle_arr_calc_size(array->capacity +
--						       capacity_bump);
-+		size_t new_size = struct_size(array, entries,
-+					      size_add(array->capacity, capacity_bump));
- 
- 		if (array->size >= array->max_capacity)
- 			return VMCI_ERROR_NO_MEM;
+ struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity);
+ void vmci_handle_arr_destroy(struct vmci_handle_arr *array);
 -- 
 2.34.1
 
