@@ -1,84 +1,85 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="R0ivJdUO"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF3410E6
-	for <kernel-janitors@vger.kernel.org>; Sat,  9 Dec 2023 04:36:31 -0800 (PST)
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id BwZ7rbI0E6wd8BwZFre9vu; Sat, 09 Dec 2023 13:36:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702125391;
-	bh=8H4ZD3O2zM53FOpfQ60afkiHrSEs0SVvh7G9x7C42wA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=R0ivJdUOrY6nEVb3Z2TcN+w3sallr2i/MWL/1LqnVQhXgXfiaYQPJTsEblBGh6LYw
-	 jCOhxqfxgkYyGsYcexTGlh+Gtg5aH+THs0dTjbssiif/t81aC6vuPLtzJTQWZaTB/8
-	 iiCtD/mnGj7kUxMgASTZmka7MpYUB0J8sbHopyG9Am/VRPqRQKjOHSjfL8gRKkhMgo
-	 FpPy/OpDlOZ2SLxTejJ9TVw+JYWolOCknirLcQ610e3MRTgASocZ9TeCdbNyXK8WUs
-	 49mJ1Bo5D1g8JUUyxDVY6XQDZGElEwL44q8mAghOKQibFDNB+Ry1dvd9sTv5LiV7yu
-	 PjHiT91ixwZng==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 09 Dec 2023 13:36:28 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bryan Tan <bryantan@vmware.com>,
-	Vishnu Dasa <vdasa@vmware.com>,
-	VMware PV-Drivers Reviewers <pv-drivers@vmware.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2 2/2] VMCI: Remove VMCI_HANDLE_ARRAY_HEADER_SIZE and VMCI_HANDLE_ARRAY_MAX_CAPACITY
-Date: Sat,  9 Dec 2023 13:36:15 +0100
-Message-Id: <00547fe74efe329b266eb8074c41f286758a3c64.1702125347.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
-References: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3tpzAHz"
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E63115;
+	Sat,  9 Dec 2023 14:51:38 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3332ad5b3e3so3170159f8f.2;
+        Sat, 09 Dec 2023 14:51:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702162297; x=1702767097; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiKQMydv0yccuw3WqYLVo3Netyg+0OTtTTWArCeoSKY=;
+        b=I3tpzAHzzJPp2aZUlnspAbs+YrXXvhGV4/fWlAuJQdsGhhMA6uRo1GDLO3ujL1nhG3
+         N3mdoUf2m+GMtcPj79CaKwtveDfRTztVC4saeivZ/h1L1h7U1aRnECNHRVpenmSrF9mE
+         VmfWmkcNZBsvRCgQzFb8eWSi8uvn7LmbZoMh/4VcONYQYDHg59OGGmP5Ca6lENA0MLMp
+         AG8Kcm1+FcSRr9MeA49BsYgQ5X3xEw7Kog6QNyql6j0CIOWhNHX7vOBgQf+Pkjdbk6Bw
+         mjZzlpUObTcthoWdHCNR2TUvzxsO1ttlEXYOQM7a7up9iAE/t1EBAOcrNOlygoBsgTRw
+         x3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702162297; x=1702767097;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jiKQMydv0yccuw3WqYLVo3Netyg+0OTtTTWArCeoSKY=;
+        b=iKNVrPz6+vWFiGxVatWq39OlKxiHEidAzHiC4O/bGj4aC0zoVRYl+8v8yd+QvRta+1
+         +OhWQBki1uIlF/HSJbpM3Dr4vd7klcwouTgoEozMQnn8CGiuKkqZPeb+Z/b7NW7K/imI
+         GK8T+mDLLMrA/qFZYkJF57Ih9tj/9DzZoFx9buJtBN3/31bZ+jq5K5JN6jorJ4b5qIro
+         aM4I9IwzP0eZWHoeKJcYu0OnUt2Esrv5bCEMFrsNDUQr93BDsRgj7x1o0DYngK8W9vv3
+         mmzHm3vV3en0Pb/m4h5zbgLSeZClRLpLT2werppldSTe5prylj1xcf9EvXCFgX/KOLHr
+         hA1g==
+X-Gm-Message-State: AOJu0YxVdtMUoUQBtqqKlVa+sNm0rY87Aq5G7E705xMD7J9bNzEKRvu+
+	j23wWBgdjTsoc8GAi0b2/v8=
+X-Google-Smtp-Source: AGHT+IF5XBRzg6/xP8NjgYbvmYKrwvHLZUyBo/spRGo9BW2cjYArKW/xqCqXEeiK7aMEBoXd/nu8SQ==
+X-Received: by 2002:a05:6000:4d0:b0:332:eeba:ee8b with SMTP id h16-20020a05600004d000b00332eebaee8bmr913794wri.24.1702162296902;
+        Sat, 09 Dec 2023 14:51:36 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id w14-20020a5d608e000000b003333c2c313bsm5157467wrt.100.2023.12.09.14.51.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Dec 2023 14:51:36 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mlx4: Fix spelling mistake: "mape" -> "map"
+Date: Sat,  9 Dec 2023 22:51:35 +0000
+Message-Id: <20231209225135.4055334-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Remove VMCI_HANDLE_ARRAY_HEADER_SIZE and VMCI_HANDLE_ARRAY_MAX_CAPACITY
-that are unused.
+There is a spelling mistake in a mlx4_err error message. Fix it.
 
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Changes in v2:
-   - no change in code
-   - add R-b
+ drivers/net/ethernet/mellanox/mlx4/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/all/c2a231a5ea127b28b5d8c4e86ef471dd01069d47.1702068153.git.christophe.jaillet@wanadoo.fr/
----
- drivers/misc/vmw_vmci/vmci_handle_array.h | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/misc/vmw_vmci/vmci_handle_array.h b/drivers/misc/vmw_vmci/vmci_handle_array.h
-index b0e6b1956014..27a38b97e8a8 100644
---- a/drivers/misc/vmw_vmci/vmci_handle_array.h
-+++ b/drivers/misc/vmw_vmci/vmci_handle_array.h
-@@ -20,14 +20,8 @@ struct vmci_handle_arr {
- 	struct vmci_handle entries[] __counted_by(capacity);
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 2581226836b5..43cbe4e5d0c4 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -1508,7 +1508,7 @@ static int mlx4_port_map_set(struct mlx4_dev *dev, struct mlx4_port_map *v2p)
+ 			priv->v2p.port1 = port1;
+ 			priv->v2p.port2 = port2;
+ 		} else {
+-			mlx4_err(dev, "Failed to change port mape: %d\n", err);
++			mlx4_err(dev, "Failed to change port map: %d\n", err);
+ 		}
+ 	}
  
--#define VMCI_HANDLE_ARRAY_HEADER_SIZE				\
--	offsetof(struct vmci_handle_arr, entries)
- /* Select a default capacity that results in a 64 byte sized array */
- #define VMCI_HANDLE_ARRAY_DEFAULT_CAPACITY			6
--/* Make sure that the max array size can be expressed by a u32 */
--#define VMCI_HANDLE_ARRAY_MAX_CAPACITY				\
--	((U32_MAX - VMCI_HANDLE_ARRAY_HEADER_SIZE - 1) /	\
--	sizeof(struct vmci_handle))
- 
- struct vmci_handle_arr *vmci_handle_arr_create(u32 capacity, u32 max_capacity);
- void vmci_handle_arr_destroy(struct vmci_handle_arr *array);
 -- 
-2.34.1
+2.39.2
 
