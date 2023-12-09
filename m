@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TymjYtaP"
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1BBF9;
-	Sat,  9 Dec 2023 14:58:00 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-333536432e0so3071151f8f.3;
-        Sat, 09 Dec 2023 14:58:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhXYwaGK"
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5B3FA;
+	Sat,  9 Dec 2023 15:05:44 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3332f1512e8so3078413f8f.2;
+        Sat, 09 Dec 2023 15:05:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702162679; x=1702767479; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702163143; x=1702767943; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QAIlBevUevXrKEyLl8WmeuOwp9gUqiZZAn2K412EKIM=;
-        b=TymjYtaP++jhqMgtZ8/aBolHA0TMUs2tgfdvlV0YU410UaSpQS9BGgwsVmia82pk7h
-         U7DUZfa/Qudd/qUpt/J1d+25hERrIRfUyfzZ+UdNSW6udB7Aeaq+dCXMxY+n+hT+eQfz
-         Z3RBgsFUxAAjo2ZwJTLHelxG5f2qQVsv3UUUfnuIN8ymJV+04WrKSYAEElh4uhndr9OI
-         IHmQxU61+JYKzZKVwQaqNxCRR1Dgk/6Rrqi/LrzIH2hMbHxqVz82XbdsFqplVupUPOk+
-         FC4Yxx2a+kpi+5vIJm0F1oWyKLciHa++lSo+tiTLAwMkt6jKdf9XFNORYGzaf6GhyXlV
-         zv3A==
+        bh=duSDdrXx/MdhBGHNkwvfOFuexJ4Lp5LgT0yaxlsN+gg=;
+        b=JhXYwaGK6U482bWvb6URGDZx/KhvdxV0JfECIRJ8hmr3QIPvYq/0ucK/O5o5Or8Iuh
+         35Pn7u9naHdLvD8EHm4Dv47lp/mDFRUUlJ0oE/P6R8cmk2+fFKHukHp06PgiPLRx/VeZ
+         2+UXB/5Q2jUYPTMH9gx0XmVBvP1Q5mWv17GUTv4GUqH9PsL4af7DW4DiYptBOe/bpHWn
+         qSKlVXoo0uDcA1FUyfiJ30izNoUIkO6MVp9v+Y1X8dEy0IEzf0ImKSHZ1nVzZf1rPRe0
+         KKQWMKOlEHk29ePV/s9iSNaDXzpvJhaFWH9JbV302Be1Ek4RwbdlOBinKRBAgynSdGsm
+         l+NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702162679; x=1702767479;
+        d=1e100.net; s=20230601; t=1702163143; x=1702767943;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QAIlBevUevXrKEyLl8WmeuOwp9gUqiZZAn2K412EKIM=;
-        b=e1p6PprXuL5Z7HABD083S2NgYO++NbBAp4vexBUpgXFmaaVGAWb5tZg3STbdmYS4OT
-         Tq4tVpRcC4wm3SnNij1VKttUYxDal3MbQGp0PypYqYSvrHcCdXxQTX1K5lQQq+AnRaA2
-         jarK7SmcnyeQxLUaVzH08lufjuV5gzcmbA7NTAV7SZKVj5nBK/rc4kN3J2OVXC+fTrBO
-         ZW3QMG71mqSMNp7hP68F1B0RALY2Ju8e2UcwfgbhC5dD73zcL+uzZOYt5rGVqUWjPg1e
-         ELBEY3AZ2MmmxAsxno1h4M6MeqinGELuoGKYqEg/5BxmbJaoJL2whyYG2gh/Bc2nFi93
-         U5Cw==
-X-Gm-Message-State: AOJu0YzIS+4fWkuaNN2jaZVu3yiMfCmk7UbzsnANso+ggSVJvU9AHQOd
-	ehCddqo1hq0/cLevA79G1qQ=
-X-Google-Smtp-Source: AGHT+IFt/dBTIsv2RLCWFXFYS2R03MC1rIRuWdn7TJMPqHYH/7C4VL61To6xzKEvyIR6M/UPChvjUA==
-X-Received: by 2002:adf:e98e:0:b0:333:218b:cc88 with SMTP id h14-20020adfe98e000000b00333218bcc88mr1239905wrm.68.1702162678871;
-        Sat, 09 Dec 2023 14:57:58 -0800 (PST)
+        bh=duSDdrXx/MdhBGHNkwvfOFuexJ4Lp5LgT0yaxlsN+gg=;
+        b=v1c2U90t8EIAAuE6nM+QfxkbUVGnORqW28sLEWla7OpFxDwVb04bCr87T6LWpd5S2c
+         zrQCg2OJS44j91aylOqzwyywKixx7WX4nteedf4AEYRomUayNSVNKBAXOjISc04q3RML
+         Vk7sutknEC1Or3LaTMH3DAjnO7BDDYgrre08uoPBf79/qEjvJbQ+4xFcudTlK/KvsQO0
+         J7WRckNNUPHHlPk/C6jo3fYLX6CfZeOAWsImKKYt18tskWxV32QF+KxqAFQ01l110EXB
+         rQs36rhLnE8eAXA61oC431QVwoBWMqUTR31PjPKIB0/zqC01cSe1+9Cls+Sc7yv/j4YN
+         KuLA==
+X-Gm-Message-State: AOJu0YxQ+atgSESbi+aN2XWHf73Fb3U4LOlUTaDjJUYsp3Jz73Kfq36R
+	RdIwNa3EXYc7A1FL59CW9x4=
+X-Google-Smtp-Source: AGHT+IH8a4E5LwfBo47ptLRB1AvoIqmDkcI8a0+kqSSKA8Oi9xC6xo+U9mqjIOpVPgmdOvHFGVKh7A==
+X-Received: by 2002:a5d:5301:0:b0:333:2fd2:6f5b with SMTP id e1-20020a5d5301000000b003332fd26f5bmr969350wrv.101.1702163142765;
+        Sat, 09 Dec 2023 15:05:42 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a9-20020a5d5709000000b003332aa97101sm5179380wrv.38.2023.12.09.14.57.58
+        by smtp.gmail.com with ESMTPSA id w14-20020a5d608e000000b003333c2c313bsm5171210wrt.100.2023.12.09.15.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Dec 2023 14:57:58 -0800 (PST)
+        Sat, 09 Dec 2023 15:05:42 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
 	David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/gma500: Fix spelling mistake "patter" -> "pattern"
-Date: Sat,  9 Dec 2023 22:57:57 +0000
-Message-Id: <20231209225757.4055520-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/i915/selftests: Fix spelling mistake "initialiased" -> "initialised"
+Date: Sat,  9 Dec 2023 23:05:41 +0000
+Message-Id: <20231209230541.4055786-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -60,26 +61,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a DRM_DEBUG_KMS message. Fix it.
+There is a spelling mistake in a pr_err error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/gma500/cdv_intel_dp.c | 2 +-
+ drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
-index 8992a95076f2..2c7d0416e623 100644
---- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
-+++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
-@@ -1548,7 +1548,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
+diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
+index e57f9390076c..d684a70f2c04 100644
+--- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
++++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
+@@ -504,7 +504,7 @@ static int igt_dmabuf_export_vmap(void *arg)
  	}
  
- 	if (!clock_recovery) {
--		DRM_DEBUG_KMS("failure in DP patter 1 training, train set %x\n", intel_dp->train_set[0]);
-+		DRM_DEBUG_KMS("failure in DP pattern 1 training, train set %x\n", intel_dp->train_set[0]);
+ 	if (memchr_inv(ptr, 0, dmabuf->size)) {
+-		pr_err("Exported object not initialiased to zero!\n");
++		pr_err("Exported object not initialised to zero!\n");
+ 		err = -EINVAL;
+ 		goto out;
  	}
- 
- 	intel_dp->DP = DP;
 -- 
 2.39.2
 
