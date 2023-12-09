@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3tpzAHz"
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E63115;
-	Sat,  9 Dec 2023 14:51:38 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3332ad5b3e3so3170159f8f.2;
-        Sat, 09 Dec 2023 14:51:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TymjYtaP"
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1BBF9;
+	Sat,  9 Dec 2023 14:58:00 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-333536432e0so3071151f8f.3;
+        Sat, 09 Dec 2023 14:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702162297; x=1702767097; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702162679; x=1702767479; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiKQMydv0yccuw3WqYLVo3Netyg+0OTtTTWArCeoSKY=;
-        b=I3tpzAHzzJPp2aZUlnspAbs+YrXXvhGV4/fWlAuJQdsGhhMA6uRo1GDLO3ujL1nhG3
-         N3mdoUf2m+GMtcPj79CaKwtveDfRTztVC4saeivZ/h1L1h7U1aRnECNHRVpenmSrF9mE
-         VmfWmkcNZBsvRCgQzFb8eWSi8uvn7LmbZoMh/4VcONYQYDHg59OGGmP5Ca6lENA0MLMp
-         AG8Kcm1+FcSRr9MeA49BsYgQ5X3xEw7Kog6QNyql6j0CIOWhNHX7vOBgQf+Pkjdbk6Bw
-         mjZzlpUObTcthoWdHCNR2TUvzxsO1ttlEXYOQM7a7up9iAE/t1EBAOcrNOlygoBsgTRw
-         x3Qg==
+        bh=QAIlBevUevXrKEyLl8WmeuOwp9gUqiZZAn2K412EKIM=;
+        b=TymjYtaP++jhqMgtZ8/aBolHA0TMUs2tgfdvlV0YU410UaSpQS9BGgwsVmia82pk7h
+         U7DUZfa/Qudd/qUpt/J1d+25hERrIRfUyfzZ+UdNSW6udB7Aeaq+dCXMxY+n+hT+eQfz
+         Z3RBgsFUxAAjo2ZwJTLHelxG5f2qQVsv3UUUfnuIN8ymJV+04WrKSYAEElh4uhndr9OI
+         IHmQxU61+JYKzZKVwQaqNxCRR1Dgk/6Rrqi/LrzIH2hMbHxqVz82XbdsFqplVupUPOk+
+         FC4Yxx2a+kpi+5vIJm0F1oWyKLciHa++lSo+tiTLAwMkt6jKdf9XFNORYGzaf6GhyXlV
+         zv3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702162297; x=1702767097;
+        d=1e100.net; s=20230601; t=1702162679; x=1702767479;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jiKQMydv0yccuw3WqYLVo3Netyg+0OTtTTWArCeoSKY=;
-        b=iKNVrPz6+vWFiGxVatWq39OlKxiHEidAzHiC4O/bGj4aC0zoVRYl+8v8yd+QvRta+1
-         +OhWQBki1uIlF/HSJbpM3Dr4vd7klcwouTgoEozMQnn8CGiuKkqZPeb+Z/b7NW7K/imI
-         GK8T+mDLLMrA/qFZYkJF57Ih9tj/9DzZoFx9buJtBN3/31bZ+jq5K5JN6jorJ4b5qIro
-         aM4I9IwzP0eZWHoeKJcYu0OnUt2Esrv5bCEMFrsNDUQr93BDsRgj7x1o0DYngK8W9vv3
-         mmzHm3vV3en0Pb/m4h5zbgLSeZClRLpLT2werppldSTe5prylj1xcf9EvXCFgX/KOLHr
-         hA1g==
-X-Gm-Message-State: AOJu0YxVdtMUoUQBtqqKlVa+sNm0rY87Aq5G7E705xMD7J9bNzEKRvu+
-	j23wWBgdjTsoc8GAi0b2/v8=
-X-Google-Smtp-Source: AGHT+IF5XBRzg6/xP8NjgYbvmYKrwvHLZUyBo/spRGo9BW2cjYArKW/xqCqXEeiK7aMEBoXd/nu8SQ==
-X-Received: by 2002:a05:6000:4d0:b0:332:eeba:ee8b with SMTP id h16-20020a05600004d000b00332eebaee8bmr913794wri.24.1702162296902;
-        Sat, 09 Dec 2023 14:51:36 -0800 (PST)
+        bh=QAIlBevUevXrKEyLl8WmeuOwp9gUqiZZAn2K412EKIM=;
+        b=e1p6PprXuL5Z7HABD083S2NgYO++NbBAp4vexBUpgXFmaaVGAWb5tZg3STbdmYS4OT
+         Tq4tVpRcC4wm3SnNij1VKttUYxDal3MbQGp0PypYqYSvrHcCdXxQTX1K5lQQq+AnRaA2
+         jarK7SmcnyeQxLUaVzH08lufjuV5gzcmbA7NTAV7SZKVj5nBK/rc4kN3J2OVXC+fTrBO
+         ZW3QMG71mqSMNp7hP68F1B0RALY2Ju8e2UcwfgbhC5dD73zcL+uzZOYt5rGVqUWjPg1e
+         ELBEY3AZ2MmmxAsxno1h4M6MeqinGELuoGKYqEg/5BxmbJaoJL2whyYG2gh/Bc2nFi93
+         U5Cw==
+X-Gm-Message-State: AOJu0YzIS+4fWkuaNN2jaZVu3yiMfCmk7UbzsnANso+ggSVJvU9AHQOd
+	ehCddqo1hq0/cLevA79G1qQ=
+X-Google-Smtp-Source: AGHT+IFt/dBTIsv2RLCWFXFYS2R03MC1rIRuWdn7TJMPqHYH/7C4VL61To6xzKEvyIR6M/UPChvjUA==
+X-Received: by 2002:adf:e98e:0:b0:333:218b:cc88 with SMTP id h14-20020adfe98e000000b00333218bcc88mr1239905wrm.68.1702162678871;
+        Sat, 09 Dec 2023 14:57:58 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w14-20020a5d608e000000b003333c2c313bsm5157467wrt.100.2023.12.09.14.51.35
+        by smtp.gmail.com with ESMTPSA id a9-20020a5d5709000000b003332aa97101sm5179380wrv.38.2023.12.09.14.57.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Dec 2023 14:51:36 -0800 (PST)
+        Sat, 09 Dec 2023 14:57:58 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mlx4: Fix spelling mistake: "mape" -> "map"
-Date: Sat,  9 Dec 2023 22:51:35 +0000
-Message-Id: <20231209225135.4055334-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/gma500: Fix spelling mistake "patter" -> "pattern"
+Date: Sat,  9 Dec 2023 22:57:57 +0000
+Message-Id: <20231209225757.4055520-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -60,26 +60,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a mlx4_err error message. Fix it.
+There is a spelling mistake in a DRM_DEBUG_KMS message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlx4/main.c | 2 +-
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
-index 2581226836b5..43cbe4e5d0c4 100644
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -1508,7 +1508,7 @@ static int mlx4_port_map_set(struct mlx4_dev *dev, struct mlx4_port_map *v2p)
- 			priv->v2p.port1 = port1;
- 			priv->v2p.port2 = port2;
- 		} else {
--			mlx4_err(dev, "Failed to change port mape: %d\n", err);
-+			mlx4_err(dev, "Failed to change port map: %d\n", err);
- 		}
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index 8992a95076f2..2c7d0416e623 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1548,7 +1548,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
  	}
  
+ 	if (!clock_recovery) {
+-		DRM_DEBUG_KMS("failure in DP patter 1 training, train set %x\n", intel_dp->train_set[0]);
++		DRM_DEBUG_KMS("failure in DP pattern 1 training, train set %x\n", intel_dp->train_set[0]);
+ 	}
+ 
+ 	intel_dp->DP = DP;
 -- 
 2.39.2
 
