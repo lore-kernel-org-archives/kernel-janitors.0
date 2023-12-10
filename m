@@ -1,87 +1,212 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOYBpsJP"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE8312E;
-	Sat,  9 Dec 2023 15:12:43 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40c0fc1cf3dso35734925e9.0;
-        Sat, 09 Dec 2023 15:12:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702163561; x=1702768361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyY7xuerRfmnEXL+mjQb56JPNlX5ZA5VFzoyWh1LMIk=;
-        b=IOYBpsJPJJpKaHzIcA6RxIdtDQKYhYFNiFY0nVUhe+0LUqkW1dkbUExszHf2Dns9po
-         q5ZFQosOe3ruiXtJ2GoPZVaLcdpPPuDV11FoMo3ncNzvuJUfNH4inJ0Q+DymZr4+pZsx
-         IZO6VSM7VLv/zkQfWQ2XhM19V8Xak71ocY6lA1rEuVgTWpHqEcdvozGg+ZdXCPmhB1EN
-         +EH3m7JrHF72a9mvbPlqS84O4IHMSWLCuDwN7rzU5i5HnQfDGu1hwm4NKkxOw9IeqRxb
-         flnvuMP6IXAOrx5U1lSJfZ3vMawuGncZXkUxEmF6pc2QReGvjoolGSDLCzVZDATuleUv
-         B1nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702163561; x=1702768361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fyY7xuerRfmnEXL+mjQb56JPNlX5ZA5VFzoyWh1LMIk=;
-        b=g2iQi3lV0mDanVHHFg9om/PWn37LZqUhc8swD6cfXNRc/W7unEzTdpVtYT6y67KXMJ
-         YMvVM+UntxF09IgcTACsXjoXSIphSjtLVwDR7177u8QvFzoLebMAobAZh2ff4OeKGZd0
-         5KuSLACAOy0wYZqd3HkVWUdT/8/WaSnC5jxiK0//FwIJy2e9DlNkG3yWpjjUgbl+H4dj
-         rjoLNsSVWVnSq7c0Z7fR45JD5hFH+pGtHaKvSPW3XgSnW5ppSxK33OsyZLJ/Epq058dS
-         rE5wLDC5520CY/18ldrSFJJQyE94Q6RuKc90FFZmt9JTjMnvppuRseRiZpG1Uv+dXfpU
-         rDxQ==
-X-Gm-Message-State: AOJu0YwLYyM1h0QUTK1YEVpQj0vaZ403rvr9hpzmktJRXQcgRUCvQA6u
-	bwECiYvQssVRE6p4bcBNiNE=
-X-Google-Smtp-Source: AGHT+IFdQhHVp2q3+OtY4B0AVXmBxuggoKt0nW2hBV9K4p3VmS1uZOxsooZUrel6k9hnzvgD0bYoDg==
-X-Received: by 2002:a1c:6a16:0:b0:40c:25f6:4585 with SMTP id f22-20020a1c6a16000000b0040c25f64585mr991729wmc.73.1702163561253;
-        Sat, 09 Dec 2023 15:12:41 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w10-20020a05600c474a00b0040b2c195523sm10130953wmo.31.2023.12.09.15.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Dec 2023 15:12:40 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iommu/apple-dart: Fix spelling mistake "grups" -> "groups"
-Date: Sat,  9 Dec 2023 23:12:40 +0000
-Message-Id: <20231209231240.4056082-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ym/78Ppf"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E156FA
+	for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 09:13:18 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id CNMfrZCRcvumxCNMgrCEpi; Sun, 10 Dec 2023 18:13:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702228396;
+	bh=rcjCWYjJHAMlpZ0Yk1Euqbw2V9DTH6RMOjoIxBb+Yi8=;
+	h=From:To:Cc:Subject:Date;
+	b=Ym/78PpfeJGeur44+gRGBXxG75EXyjCRCalSoudtmzKt2SWfHwM46nXPBjSRpL9q3
+	 5pM+69VDDlCUVxdQouaYxN6MYzZyCBHUAGUSx9PXL6QAQnPLJFFlvao3J6fdGDL6un
+	 O19DKLiL8cMyalwsKr2A6aZjw8SX8oX2U9SD6vHlf9ptAZnQaUKaFexSyYUzmFdvy5
+	 y4Ed0DpGtftzHZCdLea3o+hfr9FLd27GWpTpd0y/n9zF0+MF48N33+oWHfxskexQTo
+	 tD+2YIf1nccFQmhAaNdZR4+3dHQiGtj6VDM63g3oFsgBY0kaFdauq8m+yEvtsOOat1
+	 QYjSPNk/gEMSw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 10 Dec 2023 18:13:16 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	nvdimm@lists.linux.dev
+Subject: [PATCH] nvdimm: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 10 Dec 2023 18:13:09 +0100
+Message-Id: <50719568e4108f65f3b989ba05c1563e17afba3f.1702228319.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_err message. Fix it.
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This is less verbose.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iommu/apple-dart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvdimm/btt_devs.c       | 6 +++---
+ drivers/nvdimm/bus.c            | 4 ++--
+ drivers/nvdimm/dax_devs.c       | 4 ++--
+ drivers/nvdimm/dimm_devs.c      | 4 ++--
+ drivers/nvdimm/namespace_devs.c | 7 +++----
+ drivers/nvdimm/pfn_devs.c       | 4 ++--
+ 6 files changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index 7438e9c82ba9..497a516747bd 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -911,7 +911,7 @@ static struct iommu_group *apple_dart_device_group(struct device *dev)
+diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
+index fabbb31f2c35..497fd434a6a1 100644
+--- a/drivers/nvdimm/btt_devs.c
++++ b/drivers/nvdimm/btt_devs.c
+@@ -19,7 +19,7 @@ static void nd_btt_release(struct device *dev)
  
- 		ret = apple_dart_merge_master_cfg(group_master_cfg, cfg);
- 		if (ret) {
--			dev_err(dev, "Failed to merge DART IOMMU grups.\n");
-+			dev_err(dev, "Failed to merge DART IOMMU groups.\n");
- 			iommu_group_put(group);
- 			res = ERR_PTR(ret);
- 			goto out;
+ 	dev_dbg(dev, "trace\n");
+ 	nd_detach_ndns(&nd_btt->dev, &nd_btt->ndns);
+-	ida_simple_remove(&nd_region->btt_ida, nd_btt->id);
++	ida_free(&nd_region->btt_ida, nd_btt->id);
+ 	kfree(nd_btt->uuid);
+ 	kfree(nd_btt);
+ }
+@@ -191,7 +191,7 @@ static struct device *__nd_btt_create(struct nd_region *nd_region,
+ 	if (!nd_btt)
+ 		return NULL;
+ 
+-	nd_btt->id = ida_simple_get(&nd_region->btt_ida, 0, 0, GFP_KERNEL);
++	nd_btt->id = ida_alloc(&nd_region->btt_ida, GFP_KERNEL);
+ 	if (nd_btt->id < 0)
+ 		goto out_nd_btt;
+ 
+@@ -217,7 +217,7 @@ static struct device *__nd_btt_create(struct nd_region *nd_region,
+ 	return dev;
+ 
+ out_put_id:
+-	ida_simple_remove(&nd_region->btt_ida, nd_btt->id);
++	ida_free(&nd_region->btt_ida, nd_btt->id);
+ 
+ out_nd_btt:
+ 	kfree(nd_btt);
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 5852fe290523..ef3d0f83318b 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -285,7 +285,7 @@ static void nvdimm_bus_release(struct device *dev)
+ 	struct nvdimm_bus *nvdimm_bus;
+ 
+ 	nvdimm_bus = container_of(dev, struct nvdimm_bus, dev);
+-	ida_simple_remove(&nd_ida, nvdimm_bus->id);
++	ida_free(&nd_ida, nvdimm_bus->id);
+ 	kfree(nvdimm_bus);
+ }
+ 
+@@ -342,7 +342,7 @@ struct nvdimm_bus *nvdimm_bus_register(struct device *parent,
+ 	INIT_LIST_HEAD(&nvdimm_bus->list);
+ 	INIT_LIST_HEAD(&nvdimm_bus->mapping_list);
+ 	init_waitqueue_head(&nvdimm_bus->wait);
+-	nvdimm_bus->id = ida_simple_get(&nd_ida, 0, 0, GFP_KERNEL);
++	nvdimm_bus->id = ida_alloc(&nd_ida, GFP_KERNEL);
+ 	if (nvdimm_bus->id < 0) {
+ 		kfree(nvdimm_bus);
+ 		return NULL;
+diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
+index 3bd61f245788..6b4922de3047 100644
+--- a/drivers/nvdimm/dax_devs.c
++++ b/drivers/nvdimm/dax_devs.c
+@@ -18,7 +18,7 @@ static void nd_dax_release(struct device *dev)
+ 
+ 	dev_dbg(dev, "trace\n");
+ 	nd_detach_ndns(dev, &nd_pfn->ndns);
+-	ida_simple_remove(&nd_region->dax_ida, nd_pfn->id);
++	ida_free(&nd_region->dax_ida, nd_pfn->id);
+ 	kfree(nd_pfn->uuid);
+ 	kfree(nd_dax);
+ }
+@@ -55,7 +55,7 @@ static struct nd_dax *nd_dax_alloc(struct nd_region *nd_region)
+ 		return NULL;
+ 
+ 	nd_pfn = &nd_dax->nd_pfn;
+-	nd_pfn->id = ida_simple_get(&nd_region->dax_ida, 0, 0, GFP_KERNEL);
++	nd_pfn->id = ida_alloc(&nd_region->dax_ida, GFP_KERNEL);
+ 	if (nd_pfn->id < 0) {
+ 		kfree(nd_dax);
+ 		return NULL;
+diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+index 1273873582be..3ceddae0509f 100644
+--- a/drivers/nvdimm/dimm_devs.c
++++ b/drivers/nvdimm/dimm_devs.c
+@@ -194,7 +194,7 @@ static void nvdimm_release(struct device *dev)
+ {
+ 	struct nvdimm *nvdimm = to_nvdimm(dev);
+ 
+-	ida_simple_remove(&dimm_ida, nvdimm->id);
++	ida_free(&dimm_ida, nvdimm->id);
+ 	kfree(nvdimm);
+ }
+ 
+@@ -592,7 +592,7 @@ struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus,
+ 	if (!nvdimm)
+ 		return NULL;
+ 
+-	nvdimm->id = ida_simple_get(&dimm_ida, 0, 0, GFP_KERNEL);
++	nvdimm->id = ida_alloc(&dimm_ida, GFP_KERNEL);
+ 	if (nvdimm->id < 0) {
+ 		kfree(nvdimm);
+ 		return NULL;
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 07177eadc56e..fa1202e848d9 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -27,7 +27,7 @@ static void namespace_pmem_release(struct device *dev)
+ 	struct nd_region *nd_region = to_nd_region(dev->parent);
+ 
+ 	if (nspm->id >= 0)
+-		ida_simple_remove(&nd_region->ns_ida, nspm->id);
++		ida_free(&nd_region->ns_ida, nspm->id);
+ 	kfree(nspm->alt_name);
+ 	kfree(nspm->uuid);
+ 	kfree(nspm);
+@@ -1810,7 +1810,7 @@ static struct device *nd_namespace_pmem_create(struct nd_region *nd_region)
+ 	res->name = dev_name(&nd_region->dev);
+ 	res->flags = IORESOURCE_MEM;
+ 
+-	nspm->id = ida_simple_get(&nd_region->ns_ida, 0, 0, GFP_KERNEL);
++	nspm->id = ida_alloc(&nd_region->ns_ida, GFP_KERNEL);
+ 	if (nspm->id < 0) {
+ 		kfree(nspm);
+ 		return NULL;
+@@ -2188,8 +2188,7 @@ int nd_region_register_namespaces(struct nd_region *nd_region, int *err)
+ 			struct nd_namespace_pmem *nspm;
+ 
+ 			nspm = to_nd_namespace_pmem(dev);
+-			id = ida_simple_get(&nd_region->ns_ida, 0, 0,
+-					    GFP_KERNEL);
++			id = ida_alloc(&nd_region->ns_ida, GFP_KERNEL);
+ 			nspm->id = id;
+ 		} else
+ 			id = i;
+diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+index 0d08e21a1cea..586348125b61 100644
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -22,7 +22,7 @@ static void nd_pfn_release(struct device *dev)
+ 
+ 	dev_dbg(dev, "trace\n");
+ 	nd_detach_ndns(&nd_pfn->dev, &nd_pfn->ndns);
+-	ida_simple_remove(&nd_region->pfn_ida, nd_pfn->id);
++	ida_free(&nd_region->pfn_ida, nd_pfn->id);
+ 	kfree(nd_pfn->uuid);
+ 	kfree(nd_pfn);
+ }
+@@ -326,7 +326,7 @@ static struct nd_pfn *nd_pfn_alloc(struct nd_region *nd_region)
+ 	if (!nd_pfn)
+ 		return NULL;
+ 
+-	nd_pfn->id = ida_simple_get(&nd_region->pfn_ida, 0, 0, GFP_KERNEL);
++	nd_pfn->id = ida_alloc(&nd_region->pfn_ida, GFP_KERNEL);
+ 	if (nd_pfn->id < 0) {
+ 		kfree(nd_pfn);
+ 		return NULL;
 -- 
-2.39.2
+2.34.1
 
