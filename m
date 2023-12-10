@@ -1,85 +1,103 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZaqfFfTj"
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B4EDB
-	for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 10:42:00 -0800 (PST)
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id COkVr0Jjza8POCOkVrYw1e; Sun, 10 Dec 2023 19:41:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702233719;
-	bh=I4d7pDDCyjT9L0OHzm3kZ0ExqvKGHQ3K/sxp0Y597HM=;
-	h=From:To:Cc:Subject:Date;
-	b=ZaqfFfTj5/sK1oG0y6x+Yv/Iag8x3sqCmGofmIBzxwSpdXL5Rkmt9+jSBKtxXS/OC
-	 RL1LwO2tYWJjCsLvGWHXaGzc3rnOkKg7aQ7DqsE1sqxd+n5J75fxfbULD66wDgyMWu
-	 JJHtsqNmUmuzfNBjZBO0bE/x4TDxvvh4bzj8leLCfmQWL3quTXd58nkNBMAccvTS5A
-	 VNroBNT8ctYWqSqMkOAtFoJ2/IPe0buyvA/skTk/Huyax5gBS1zLDk7XwiEVTANqTX
-	 swNoW3P5nuxiqcBk5XMFchi7yII2xudGkKetzTtlk+szG1fH0HCULfHWKZGBR2ZcdX
-	 CFOIqgV6/NMBQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 10 Dec 2023 19:41:59 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH] hwrng: virtio - Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 10 Dec 2023 19:41:51 +0100
-Message-Id: <ff9912450e608388a73bd331b5e5e5c816131071.1702233701.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mk/pk7j2"
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDF2F1
+	for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 11:46:46 -0800 (PST)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5d747dbf81eso30751727b3.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 11:46:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702237606; x=1702842406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfL3WzEuDXRtc2Yx9DpKvEpshQljhBnqTFJily+P2J4=;
+        b=mk/pk7j2XNoWRptCydmxvtQoifeIfk5lXV8i3x87X7XPcTt2Zv629mUAWoA4hCow0L
+         ZmpXSeKsB9jLwcg/cHVVVxmZv1XoolzR3ga6ZWdhX313iIsDB4GlFqEH5Ou8sH2oZGGz
+         lFbNvdlf3NuTL2Lt9Xdo0GdYQcv4AAcGYg6NHPiWm/l6aXUSifM/N++7Px6yAG8KcnZd
+         IUzc0O4VGJd1OhHxrSDXqzNGhhBelmRY3L+kmepjvh6Oi3sq4uPpqX+gwKBV3oqpRpBD
+         c34uogyu1H/Gshum5NDM58PhgY9Ns7EVvtYDquF+fiVdq+P26vIoQFAhtIE11z7LeeP+
+         Qr1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702237606; x=1702842406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zfL3WzEuDXRtc2Yx9DpKvEpshQljhBnqTFJily+P2J4=;
+        b=Ps9Bi0iw9XjTlz/hGnsrLYDRLCMsN/p64XjLw2qWwKRqMNfVEdX5jO2lMBDu18UO/F
+         W8SRBFkXTQepe7W8YnM87YKy+rgqqA8z9Zp3Xy54vlyGZZwdtECD1+pmyQTlB3xjAmSJ
+         pgVKdSZnUFheCfbmTiXseDtOgtpNcWMz09/PtOd4zVZrnxm5xm8WruRCE+6+9FVjvayi
+         63+77Hr2Hur4talV3Kn9M80eMQQCqJRNSQUtvM0gC/jh2ItnX2UCD4oC23ZHyR0r06jT
+         eR3g+aCjd47lGostbRrTgpA+2GYtaA+VnlRb0g/AgXeXMr7a+J1rhH+fXvLCKanq0B3J
+         ZIIQ==
+X-Gm-Message-State: AOJu0YwkKc9kberfkMr1SF52aoXEvItUd/YmmkqF8pgMZJGhQv1bQ+0/
+	WmSc0y250bRZMal0Iev58uQ54ZQeeLqkacKyV9iFPA==
+X-Google-Smtp-Source: AGHT+IGkSafvzKSd9XrQiQnLAXp/AYZlAzkqTQNLQinImuLSVyYAumPVpSBhPCumrQMH+fplSJPGlMdPFGDW4+HPe5g=
+X-Received: by 2002:a81:4fc7:0:b0:5d7:1941:abb with SMTP id
+ d190-20020a814fc7000000b005d719410abbmr2574429ywb.86.1702237605793; Sun, 10
+ Dec 2023 11:46:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <87dfa523-1882-417d-97b5-f606ff0099f9@moroto.mountain>
+In-Reply-To: <87dfa523-1882-417d-97b5-f606ff0099f9@moroto.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 10 Dec 2023 20:46:34 +0100
+Message-ID: <CACRpkdbu=pkACc+gmBa_nCrYOwhXi77FzHwwUfd8A0sREPaM9w@mail.gmail.com>
+Subject: Re: [PATCH] usb: fotg210-hcd: delete an incorrect bounds test
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
+Hi Dan,
 
-This is less verbose.
+thanks for your patch!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/char/hw_random/virtio-rng.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Dec 8, 2023 at 10:23=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 
-diff --git a/drivers/char/hw_random/virtio-rng.c b/drivers/char/hw_random/virtio-rng.c
-index 58d92d62ddfe..7a4b45393acb 100644
---- a/drivers/char/hw_random/virtio-rng.c
-+++ b/drivers/char/hw_random/virtio-rng.c
-@@ -135,7 +135,7 @@ static int probe_common(struct virtio_device *vdev)
- 	if (!vi)
- 		return -ENOMEM;
- 
--	vi->index = index = ida_simple_get(&rng_index_ida, 0, 0, GFP_KERNEL);
-+	vi->index = index = ida_alloc(&rng_index_ida, GFP_KERNEL);
- 	if (index < 0) {
- 		err = index;
- 		goto err_ida;
-@@ -166,7 +166,7 @@ static int probe_common(struct virtio_device *vdev)
- 	return 0;
- 
- err_find:
--	ida_simple_remove(&rng_index_ida, index);
-+	ida_free(&rng_index_ida, index);
- err_ida:
- 	kfree(vi);
- 	return err;
-@@ -184,7 +184,7 @@ static void remove_common(struct virtio_device *vdev)
- 		hwrng_unregister(&vi->hwrng);
- 	virtio_reset_device(vdev);
- 	vdev->config->del_vqs(vdev);
--	ida_simple_remove(&rng_index_ida, vi->index);
-+	ida_free(&rng_index_ida, vi->index);
- 	kfree(vi);
- }
- 
--- 
-2.34.1
+> Here "temp" is the number of characters that we have written and "size"
+> is the size of the buffer.  The intent was clearly to say that if we have
+> written to the end of the buffer then stop.
+>
+> However, for that to work the comparison should have been done on the
+> original "size" value instead of the "size -=3D temp" value.  Not only
+> will that not trigger when we want to, but there is a small chance that
+> it will trigger incorrectly before we want it to and we break from the
+> loop slightly earlier than intended.
+>
+> This code was recently changed from using snprintf() to scnprintf().  Wit=
+h
+> snprintf() we likely would have continued looping and passed a negative
+> size parameter to snprintf().  This would have triggered an annoying
+> WARN().  Now that we have converted to scnprintf() "size" will never
+> drop below 1 and there is no real need for this test.  We could change
+> the condition to "if (temp <=3D 1) goto done;" but just deleting the test
+> is cleanest.
 
+This is a great fix! Thanks for going the extra mile and fix this
+when looking at the code.
+
+> Fixes: 1dd33a9f1b95 ("usb: fotg210: Collect pieces of dual mode controlle=
+r")
+
+That's the wrong commit.
+This commit just brings stuff together from old code...
+
+I believe it should be:
+Fixes: 7d50195f6c50 ("usb: host: Faraday fotg210-hcd driver")
+
+It won't backport cleanly but it's the right commit.
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+With the right Fixes:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
