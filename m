@@ -1,92 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD58A950;
-	Mon, 11 Dec 2023 01:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enojSTRb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2004CC433C8;
-	Mon, 11 Dec 2023 01:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702259106;
-	bh=/jf3ec7E9hlGrUOPKNv/BrysUMxQfNuXUfDv4GGeYHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=enojSTRbQ2ytH0mpAXRcNTAjmXjNW8o47GiBqpr8cmGghNgi6FAB4C98bbDplpe0v
-	 /mfy8cjzUNSJFD4Ec8puzAsgN8nveFuDlGYuYuMb9XrbYNLrq+yKzrxWyw2tFvDt4C
-	 A0Ts6xN4pQnMwXOCdZY84ACaTfd1eGt/S2JmBhCNZR9NYfwheby76BcTVc7Z09W8WL
-	 ojM0ymPHGPAumZT0sp9N7cuHCleHH0Nr1yYt5SE9MoYpb0QznL1PEfP9kmydmUPRlB
-	 LIzvN9RH5x8pZMGUi3jaNwzF9+U8yDeGPt823iWxOgkbAE+vY6shxUYNqNcVozKKfC
-	 I3fFERD/cLQDQ==
-Date: Mon, 11 Dec 2023 09:44:56 +0800
-From: Peter Chen <peter.chen@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: chipidea: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <20231211014456.GA1197808@nchen-desktop>
-References: <8bf382976c0ba0986c0dbe93427266273f0776ef.1702230217.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dX5esvdb"
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADA3F4;
+	Sun, 10 Dec 2023 23:42:52 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-a1f6433bc1eso576885166b.1;
+        Sun, 10 Dec 2023 23:42:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702280570; x=1702885370; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3hmR+YxpV+LKGIsN8CLV3y72wX3HxmskMeyJnPDScB8=;
+        b=dX5esvdbuuv+oMKU0vmgCb8LMrMTawK+XjCpdY92+kCK0uny5oCd593HmvHtV28tFm
+         qc45Lnyt+m0ghTKM9r9sPNKk346hwuT70OHyP6r+QopbPka/ppMUXqiDy/6loLjXChOu
+         u6jsPeG9KZfxQbrmVGT/1utNbDO0Y9cS2dvjlY2BwGMMUyaDGezKM8ghPifL4RdYcbod
+         hboS+NiHg6LcTz3sxjERk9RKyOothtE9L8jX1mHgkSGloPvG7MMGEi0+NUxYifnLsjoZ
+         KqQ1fDWtGZN70c75QBjGEoMrbyycpCnP4Q+00vR0AZ69Dlg250HrqmKSlTGVaVKJrnS8
+         Bb6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702280570; x=1702885370;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3hmR+YxpV+LKGIsN8CLV3y72wX3HxmskMeyJnPDScB8=;
+        b=hn13W2Aag9/zMkZ4Z1m+LvtwVRzeL6d1D6IgE1O77HOF6aaefEwar/v4bnpM/dUqyb
+         VN6VY8eh+ag4qyS6Jbvq8tG1PRyfcemw/ejoGilabSVgF3/vFiGkmfB44Jwgk4N+jxlo
+         bSFjSI4cviPY9qijY4hoLzvRFJJKjU41JeQIz/nmK9WVyVMdtWinFFmqIO1/a2yuH+kX
+         qWQyNUQILhnI+QCo8dIuAyLJtjdF7Zw+K8X0w9KLYgcFOLt+jp4Ygkxm5prjt/bi+hzF
+         luJ7bRKEfCasxgKTVv/1NO9MZy8sYa8i/ogH5GF7hmP8e/9Ls/kMZhixPjS9vvahg/+S
+         OBkw==
+X-Gm-Message-State: AOJu0YyJ+9Vu2Tr74/YTT8+6SEn1PuFaktKvvzdQMHzHAzqEKKRjIeLT
+	MYgaXCzTy+fKiCGVIR+ReoU=
+X-Google-Smtp-Source: AGHT+IFQmQkfGVnNQ0m2JWE3iFtYKdq0VTzVqxVQfJ+aD/wbTSQbv4P3e2JQreA11uU/LfqYWWxIxw==
+X-Received: by 2002:a17:906:5345:b0:a1c:b707:cbd1 with SMTP id j5-20020a170906534500b00a1cb707cbd1mr3570285ejo.24.1702280570365;
+        Sun, 10 Dec 2023 23:42:50 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:187:91eb:e4d:dd96])
+        by smtp.gmail.com with ESMTPSA id tb19-20020a1709078b9300b00a1cd30d06d1sm4490224ejc.14.2023.12.10.23.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Dec 2023 23:42:49 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Alexander Graf <graf@amazon.com>,
+	aws-nitro-enclaves-devel@amazon.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] misc: nsm: remove selecting the non-existing config CBOR
+Date: Mon, 11 Dec 2023 08:42:42 +0100
+Message-Id: <20231211074242.22999-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bf382976c0ba0986c0dbe93427266273f0776ef.1702230217.git.christophe.jaillet@wanadoo.fr>
 
-On 23-12-10 18:43:56, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Commit b9873755a6c8 ("misc: Add Nitro Secure Module driver") adds Nitro
+Security Module support, which selects the non-existing config CBOR.
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+In the development of the commit, there was initially some code for CBOR
+independent of the driver, and the driver included this code with the line
+'select CBOR'. This code for CBOR was later reduced to its bare minimum of
+functionality and included into the driver itself. The select CBOR remained
+unnoticed and was left behind without having any further purpose.
 
-> ---
->  drivers/usb/chipidea/core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
-> index 7ac39a281b8c..0af9e68035fb 100644
-> --- a/drivers/usb/chipidea/core.c
-> +++ b/drivers/usb/chipidea/core.c
-> @@ -862,7 +862,7 @@ struct platform_device *ci_hdrc_add_device(struct device *dev,
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> -	id = ida_simple_get(&ci_ida, 0, 0, GFP_KERNEL);
-> +	id = ida_alloc(&ci_ida, GFP_KERNEL);
->  	if (id < 0)
->  		return ERR_PTR(id);
->  
-> @@ -892,7 +892,7 @@ struct platform_device *ci_hdrc_add_device(struct device *dev,
->  err:
->  	platform_device_put(pdev);
->  put_id:
-> -	ida_simple_remove(&ci_ida, id);
-> +	ida_free(&ci_ida, id);
->  	return ERR_PTR(ret);
->  }
->  EXPORT_SYMBOL_GPL(ci_hdrc_add_device);
-> @@ -901,7 +901,7 @@ void ci_hdrc_remove_device(struct platform_device *pdev)
->  {
->  	int id = pdev->id;
->  	platform_device_unregister(pdev);
-> -	ida_simple_remove(&ci_ida, id);
-> +	ida_free(&ci_ida, id);
->  }
->  EXPORT_SYMBOL_GPL(ci_hdrc_remove_device);
->  
-> -- 
-> 2.34.1
-> 
+Remove selecting the non-existing config CBOR.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/misc/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 8932b6cf9595..4fb291f0bf7c 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -566,7 +566,6 @@ config NSM
+ 	tristate "Nitro (Enclaves) Security Module support"
+ 	depends on VIRTIO
+ 	select HW_RANDOM
+-	select CBOR
+ 	help
+ 	  This driver provides support for the Nitro Security Module
+ 	  in AWS EC2 Nitro based Enclaves. The driver exposes a /dev/nsm
 -- 
+2.17.1
 
-Thanks,
-Peter Chen
