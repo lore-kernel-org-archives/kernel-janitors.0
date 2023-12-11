@@ -1,54 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="0+AhFQH1"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 597F19F;
-	Mon, 11 Dec 2023 06:42:36 -0800 (PST)
-Received: from 8bytes.org (p4ffe1e67.dip0.t-ipconnect.de [79.254.30.103])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 5ED261A367B;
-	Mon, 11 Dec 2023 15:42:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1702305755;
-	bh=wKD1DsQaiTgywzlVHLaJwdfwwxmFpo+Zt21eDIlz2CI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0+AhFQH1wPogqKg67e1JEaiJg745C9js2v9TdhpvbOkZXYxEBm79UkKR52gD7YDXf
-	 1td4YdH0NLUoESa1Iq2c9r9SNFfDJI1ie5bu7/bxwdFR/xkjnZrr2ogsmX8T/t9wpW
-	 NWzn3t6edKbTjoLetjerEy6Z6MP5wheSH4QuG1bVJWmags8+LYpHM7f+TVy7t6dBIu
-	 9Sey2qUVC3jy0gg0tHWh60Htv5UfvCu1CXCreAfiwlxPl068PHv8HVJkMg+o8QpzR5
-	 CBuHMlsQjApEFC9ejcrjZuooP24zMeNa6A+3xtNL5BtyTXA7Aw16QrOYFl1dQJQOIB
-	 niDT8zIVptMnw==
-Date: Mon, 11 Dec 2023 15:42:34 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iommu/apple-dart: Fix spelling mistake "grups" ->
- "groups"
-Message-ID: <ZXcf2nB9enlctvTF@8bytes.org>
-References: <20231209231240.4056082-1-colin.i.king@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FF851024;
+	Mon, 11 Dec 2023 17:51:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A085C433C9;
+	Mon, 11 Dec 2023 17:51:12 +0000 (UTC)
+Date: Mon, 11 Dec 2023 12:51:52 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, outreachy@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tracing: Update snapshot buffer on resize if it is
+ allocated
+Message-ID: <20231211125152.045f8b8a@gandalf.local.home>
+In-Reply-To: <20231211213134.bd21cf745b8c5a0892891946@kernel.org>
+References: <20231210225447.48476a6a@rorschach.local.home>
+	<20231211213134.bd21cf745b8c5a0892891946@kernel.org>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231209231240.4056082-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Dec 09, 2023 at 11:12:40PM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+On Mon, 11 Dec 2023 21:31:34 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> On Sun, 10 Dec 2023 22:54:47 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/iommu/apple-dart.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> > 
+> > The snapshot buffer is to mimic the main buffer so that when a snapshot is
+> > needed, the snapshot and main buffer are swapped. When the snapshot buffer
+> > is allocated, it is set to the minimal size that the ring buffer may be at
+> > and still functional. When it is allocated it becomes the same size as the
+> > main ring buffer, and when the main ring buffer changes in size, it should
+> > do.  
+> 
+> nit: There seems two "when the snapshot buffer is allocated" case, maybe latter
+> "it" means main buffer?
 
-Applied, thanks.
+I changed the paragraph to be:
 
+    The snapshot buffer is to mimic the main buffer so that when a snapshot is
+    needed, the snapshot and main buffer are swapped. When the snapshot buffer
+    is allocated, it is set to the minimal size that the ring buffer may be at
+    and still functional. When it is allocated it becomes the same size as the
+    main ring buffer, and when the main ring buffer changes in size, the
+    snapshot should also change in size if it is allocated.
+
+> 
+> > 
+> > Currently, the resize only updates the snapshot buffer if it's used by the
+> > current tracer (ie. the preemptirqsoff tracer). But it needs to be updated
+> > anytime it is allocated.
+> > 
+> > When changing the size of the main buffer, instead of looking to see if
+> > the current tracer is utilizing the snapshot buffer, just check if it is
+> > allocated to know if it should be updated or not.
+> > 
+> > Also fix typo in comment just above the code change.
+> >   
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> 
+> BTW, the historical naming leads this kind of issues.
+> Maybe we'd better to rename 'max_buffer' to 'snapshot_buffer'?
+
+Agreed. But that's a cleanup for another day. Hmm, maybe that too should be
+marked as "KTODO"?
+
+  https://lore.kernel.org/all/369bc919-1a1d-4f37-9cc9-742a86a41282@kadam.mountain/
+
+
+There's a lot of things that we have been discussing on these ring-buffer
+patches that could be KTODO items.
+
+-- Steve
