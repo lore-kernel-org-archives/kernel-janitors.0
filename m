@@ -1,103 +1,92 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD58A950;
+	Mon, 11 Dec 2023 01:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mk/pk7j2"
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDF2F1
-	for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 11:46:46 -0800 (PST)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5d747dbf81eso30751727b3.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 10 Dec 2023 11:46:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702237606; x=1702842406; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zfL3WzEuDXRtc2Yx9DpKvEpshQljhBnqTFJily+P2J4=;
-        b=mk/pk7j2XNoWRptCydmxvtQoifeIfk5lXV8i3x87X7XPcTt2Zv629mUAWoA4hCow0L
-         ZmpXSeKsB9jLwcg/cHVVVxmZv1XoolzR3ga6ZWdhX313iIsDB4GlFqEH5Ou8sH2oZGGz
-         lFbNvdlf3NuTL2Lt9Xdo0GdYQcv4AAcGYg6NHPiWm/l6aXUSifM/N++7Px6yAG8KcnZd
-         IUzc0O4VGJd1OhHxrSDXqzNGhhBelmRY3L+kmepjvh6Oi3sq4uPpqX+gwKBV3oqpRpBD
-         c34uogyu1H/Gshum5NDM58PhgY9Ns7EVvtYDquF+fiVdq+P26vIoQFAhtIE11z7LeeP+
-         Qr1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702237606; x=1702842406;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zfL3WzEuDXRtc2Yx9DpKvEpshQljhBnqTFJily+P2J4=;
-        b=Ps9Bi0iw9XjTlz/hGnsrLYDRLCMsN/p64XjLw2qWwKRqMNfVEdX5jO2lMBDu18UO/F
-         W8SRBFkXTQepe7W8YnM87YKy+rgqqA8z9Zp3Xy54vlyGZZwdtECD1+pmyQTlB3xjAmSJ
-         pgVKdSZnUFheCfbmTiXseDtOgtpNcWMz09/PtOd4zVZrnxm5xm8WruRCE+6+9FVjvayi
-         63+77Hr2Hur4talV3Kn9M80eMQQCqJRNSQUtvM0gC/jh2ItnX2UCD4oC23ZHyR0r06jT
-         eR3g+aCjd47lGostbRrTgpA+2GYtaA+VnlRb0g/AgXeXMr7a+J1rhH+fXvLCKanq0B3J
-         ZIIQ==
-X-Gm-Message-State: AOJu0YwkKc9kberfkMr1SF52aoXEvItUd/YmmkqF8pgMZJGhQv1bQ+0/
-	WmSc0y250bRZMal0Iev58uQ54ZQeeLqkacKyV9iFPA==
-X-Google-Smtp-Source: AGHT+IGkSafvzKSd9XrQiQnLAXp/AYZlAzkqTQNLQinImuLSVyYAumPVpSBhPCumrQMH+fplSJPGlMdPFGDW4+HPe5g=
-X-Received: by 2002:a81:4fc7:0:b0:5d7:1941:abb with SMTP id
- d190-20020a814fc7000000b005d719410abbmr2574429ywb.86.1702237605793; Sun, 10
- Dec 2023 11:46:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enojSTRb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2004CC433C8;
+	Mon, 11 Dec 2023 01:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702259106;
+	bh=/jf3ec7E9hlGrUOPKNv/BrysUMxQfNuXUfDv4GGeYHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=enojSTRbQ2ytH0mpAXRcNTAjmXjNW8o47GiBqpr8cmGghNgi6FAB4C98bbDplpe0v
+	 /mfy8cjzUNSJFD4Ec8puzAsgN8nveFuDlGYuYuMb9XrbYNLrq+yKzrxWyw2tFvDt4C
+	 A0Ts6xN4pQnMwXOCdZY84ACaTfd1eGt/S2JmBhCNZR9NYfwheby76BcTVc7Z09W8WL
+	 ojM0ymPHGPAumZT0sp9N7cuHCleHH0Nr1yYt5SE9MoYpb0QznL1PEfP9kmydmUPRlB
+	 LIzvN9RH5x8pZMGUi3jaNwzF9+U8yDeGPt823iWxOgkbAE+vY6shxUYNqNcVozKKfC
+	 I3fFERD/cLQDQ==
+Date: Mon, 11 Dec 2023 09:44:56 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: chipidea: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-ID: <20231211014456.GA1197808@nchen-desktop>
+References: <8bf382976c0ba0986c0dbe93427266273f0776ef.1702230217.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87dfa523-1882-417d-97b5-f606ff0099f9@moroto.mountain>
-In-Reply-To: <87dfa523-1882-417d-97b5-f606ff0099f9@moroto.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 10 Dec 2023 20:46:34 +0100
-Message-ID: <CACRpkdbu=pkACc+gmBa_nCrYOwhXi77FzHwwUfd8A0sREPaM9w@mail.gmail.com>
-Subject: Re: [PATCH] usb: fotg210-hcd: delete an incorrect bounds test
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8bf382976c0ba0986c0dbe93427266273f0776ef.1702230217.git.christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
+On 23-12-10 18:43:56, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> This is less verbose.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-thanks for your patch!
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-On Fri, Dec 8, 2023 at 10:23=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+> ---
+>  drivers/usb/chipidea/core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+> index 7ac39a281b8c..0af9e68035fb 100644
+> --- a/drivers/usb/chipidea/core.c
+> +++ b/drivers/usb/chipidea/core.c
+> @@ -862,7 +862,7 @@ struct platform_device *ci_hdrc_add_device(struct device *dev,
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> -	id = ida_simple_get(&ci_ida, 0, 0, GFP_KERNEL);
+> +	id = ida_alloc(&ci_ida, GFP_KERNEL);
+>  	if (id < 0)
+>  		return ERR_PTR(id);
+>  
+> @@ -892,7 +892,7 @@ struct platform_device *ci_hdrc_add_device(struct device *dev,
+>  err:
+>  	platform_device_put(pdev);
+>  put_id:
+> -	ida_simple_remove(&ci_ida, id);
+> +	ida_free(&ci_ida, id);
+>  	return ERR_PTR(ret);
+>  }
+>  EXPORT_SYMBOL_GPL(ci_hdrc_add_device);
+> @@ -901,7 +901,7 @@ void ci_hdrc_remove_device(struct platform_device *pdev)
+>  {
+>  	int id = pdev->id;
+>  	platform_device_unregister(pdev);
+> -	ida_simple_remove(&ci_ida, id);
+> +	ida_free(&ci_ida, id);
+>  }
+>  EXPORT_SYMBOL_GPL(ci_hdrc_remove_device);
+>  
+> -- 
+> 2.34.1
+> 
 
-> Here "temp" is the number of characters that we have written and "size"
-> is the size of the buffer.  The intent was clearly to say that if we have
-> written to the end of the buffer then stop.
->
-> However, for that to work the comparison should have been done on the
-> original "size" value instead of the "size -=3D temp" value.  Not only
-> will that not trigger when we want to, but there is a small chance that
-> it will trigger incorrectly before we want it to and we break from the
-> loop slightly earlier than intended.
->
-> This code was recently changed from using snprintf() to scnprintf().  Wit=
-h
-> snprintf() we likely would have continued looping and passed a negative
-> size parameter to snprintf().  This would have triggered an annoying
-> WARN().  Now that we have converted to scnprintf() "size" will never
-> drop below 1 and there is no real need for this test.  We could change
-> the condition to "if (temp <=3D 1) goto done;" but just deleting the test
-> is cleanest.
+-- 
 
-This is a great fix! Thanks for going the extra mile and fix this
-when looking at the code.
-
-> Fixes: 1dd33a9f1b95 ("usb: fotg210: Collect pieces of dual mode controlle=
-r")
-
-That's the wrong commit.
-This commit just brings stuff together from old code...
-
-I believe it should be:
-Fixes: 7d50195f6c50 ("usb: host: Faraday fotg210-hcd driver")
-
-It won't backport cleanly but it's the right commit.
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-With the right Fixes:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Thanks,
+Peter Chen
