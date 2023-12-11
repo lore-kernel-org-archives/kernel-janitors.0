@@ -1,59 +1,37 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hadUpPsk"
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B679DC3;
-	Mon, 11 Dec 2023 06:32:30 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-28aabe4a728so220606a91.3;
-        Mon, 11 Dec 2023 06:32:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702305150; x=1702909950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M4T42pMM+lOegJCe1HFIlB1ZP3arDImtXfzEjv6FDZc=;
-        b=hadUpPsk75xdo1BdTPC6mh1dbht08J5g49dL0r71RVXc0p45dy+3/Kgf8ydTXsFXcC
-         QXbml0a27k4/yc3wG1/14BxJp50XM/QrtNGJmd5MCNiqm/Ul/S2alFwk/455QTCfJ9NZ
-         m0aTUgZt92Aa/odjWU+zENx6h47xku+lJypPLxoTr2BZa+fQFIWmase/Q3bzjbB4q1hU
-         xGab5LJMmdReWkdS0plFkCkcb56ptH7h7/JVEgJx4uWDfzpqQk5kN7IKoBlXR80GC+Wh
-         I31/JB0sgHDgR37mjFOBzXn7MSzq4gcdkBTqhKYTEac+oTSqcRZaqvfd+PWnrAQvsw6Y
-         Iwhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702305150; x=1702909950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M4T42pMM+lOegJCe1HFIlB1ZP3arDImtXfzEjv6FDZc=;
-        b=SZvUtZ7VmytkmJT8gjR/uCIZoMHBSQ2cSVtlGVoXxuV+1UQsn6tXO8cA0lMkgUD4rz
-         bUw4oeMFS8idZFSvyO4YW0MB+w6qqgs4rFo4kOHPC8MwtroqhyQOlUZMvstb04rGKqY6
-         uCHoFopNGMqnMvSnGmrx2qT/DNXDJDlEvogh6KmDLutwzFpa1sXdTbTCdTdluV54pqra
-         Hy3S78r+BpSKXoc4/ZDVMStSurs9v/XTudq9fb3UyBwyREi6cwsImc9XKjoGQ+/skqZY
-         spAupVkMiQebReWxgM+vTc2CTyTWZFaD0K8pQ5Y4tRXF/2SCrxAqjDi1vOvwNZEVozV1
-         l/8Q==
-X-Gm-Message-State: AOJu0YzbON625sXbFBiqMeVA7e6HpSBz7LNw3QwSzOOK2PeBaEbSiNbk
-	mOAJkiSOHabuLYFirqr33xo=
-X-Google-Smtp-Source: AGHT+IEQkYkTZC+r8SjpiBendOi3zHCvQ4uKeqztoZtzBJofctThTRrwnsZ9xq6Ag8OLvBeGRoQaUQ==
-X-Received: by 2002:a17:90a:f487:b0:286:6cc0:884c with SMTP id bx7-20020a17090af48700b002866cc0884cmr1817096pjb.57.1702305150102;
-        Mon, 11 Dec 2023 06:32:30 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id st8-20020a17090b1fc800b0028656e226efsm7051238pjb.1.2023.12.11.06.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 06:32:29 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 11 Dec 2023 06:32:28 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-	Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] MAINTAINERS: Add maintainer for Baikal-T1 PVT hwmon
- driver
-Message-ID: <1ab63238-5411-4e31-9248-b494c29f2182@roeck-us.net>
-References: <20231122170506.27267-1-Sergey.Semin@baikalelectronics.ru>
- <20231122170506.27267-2-Sergey.Semin@baikalelectronics.ru>
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="0+AhFQH1"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 597F19F;
+	Mon, 11 Dec 2023 06:42:36 -0800 (PST)
+Received: from 8bytes.org (p4ffe1e67.dip0.t-ipconnect.de [79.254.30.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 5ED261A367B;
+	Mon, 11 Dec 2023 15:42:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1702305755;
+	bh=wKD1DsQaiTgywzlVHLaJwdfwwxmFpo+Zt21eDIlz2CI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0+AhFQH1wPogqKg67e1JEaiJg745C9js2v9TdhpvbOkZXYxEBm79UkKR52gD7YDXf
+	 1td4YdH0NLUoESa1Iq2c9r9SNFfDJI1ie5bu7/bxwdFR/xkjnZrr2ogsmX8T/t9wpW
+	 NWzn3t6edKbTjoLetjerEy6Z6MP5wheSH4QuG1bVJWmags8+LYpHM7f+TVy7t6dBIu
+	 9Sey2qUVC3jy0gg0tHWh60Htv5UfvCu1CXCreAfiwlxPl068PHv8HVJkMg+o8QpzR5
+	 CBuHMlsQjApEFC9ejcrjZuooP24zMeNa6A+3xtNL5BtyTXA7Aw16QrOYFl1dQJQOIB
+	 niDT8zIVptMnw==
+Date: Mon, 11 Dec 2023 15:42:34 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iommu/apple-dart: Fix spelling mistake "grups" ->
+ "groups"
+Message-ID: <ZXcf2nB9enlctvTF@8bytes.org>
+References: <20231209231240.4056082-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,13 +40,15 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231122170506.27267-2-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20231209231240.4056082-1-colin.i.king@gmail.com>
 
-On Wed, Nov 22, 2023 at 08:04:50PM +0300, Serge Semin wrote:
-> Add myself as a maintainer of the Baikal-T1 PVT sensors driver.
+On Sat, Dec 09, 2023 at 11:12:40PM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
 > 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/iommu/apple-dart.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+Applied, thanks.
 
-Guenter
