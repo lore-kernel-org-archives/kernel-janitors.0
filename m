@@ -1,81 +1,69 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471222080;
+	Mon, 11 Dec 2023 10:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJoMB1IA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A05CBC;
-	Mon, 11 Dec 2023 01:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702288129; x=1733824129;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ic0GPJBgQ3YvW998HxkEiapTj7oEIaYPrJU331ugKoc=;
-  b=kJoMB1IAuSxV2QBuYbp0VbXzRBG9m3eKQRr3ZnAC/5JVXso+8OKLmb41
-   fLPN/Xjfz8QhUhAu54HaQOCbKk9kT9yQvRb9jjjyzqwsAJLiuPaJz6nt4
-   sk0HnLBUa6FgtMylBie3I/eAo5pPCc/H2ytLDnYRoLZVBgb1gehIvTq2+
-   IukBlBxg+VKSqE81vDoBPnlNQTcR4KxRj3H9E1yQhTnn/8rw+0b9Uznvg
-   bC+n3CxfLEhWKx7x0xyGlcXBtUdPGLP1oNW94Ht/Gix/YjpuTG0it4ebu
-   HYeJygJttxhGA7mKHT61FSffiM/yK7AVFnBiE//z+rwVBAdfuYEHp0R/7
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10920"; a="1433429"
-X-IronPort-AV: E=Sophos;i="6.04,267,1695711600"; 
-   d="scan'208";a="1433429"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2023 01:48:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10920"; a="749220838"
-X-IronPort-AV: E=Sophos;i="6.04,267,1695711600"; 
-   d="scan'208";a="749220838"
-Received: from kbalak2x-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.63.68])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2023 01:48:44 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915/selftests: Fix spelling mistake
- "initialiased" -> "initialised"
-In-Reply-To: <20231209230541.4055786-1-colin.i.king@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20231209230541.4055786-1-colin.i.king@gmail.com>
-Date: Mon, 11 Dec 2023 11:48:41 +0200
-Message-ID: <87v895xe6e.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkXHQYdM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2532C433C8;
+	Mon, 11 Dec 2023 10:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702289207;
+	bh=ruZzyWAtms11/Ti8YUwlxFhxyYABN17MRpVZkmWtJ14=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AkXHQYdM/hj1HG/X8G5xW6JnVQTCZUGwiKI0nkgYtF/Y0xURs8khlX2qoNMhzGMFZ
+	 2Tkykt9rDpINFoHaRTQhJI3/ITkBJUz2HEK4tM+IvJXG+vCFk5ve9fZRZjA+NSM/M3
+	 cy6enkwzYaqf/hcf5PiGa+V4gLmTX/sYX58GSjmlIhdm+nCHcmS+0ag0/5Qos8PHFP
+	 s6WBeUM22HPNGeg5uJZ0OxeOV2cAut4B4LocQY/tyNMXYVSpEa7QwFNKM0flpkjWwR
+	 j7y0zUkiU9OJekpBpPCVAnay+dJnZUicXricJ+J1O6k+BUWrM6TJjBW3NFqHflZHKQ
+	 euOkJPAO1MJGw==
+From: Christian Brauner <brauner@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] eventfd: Remove usage of the deprecated ida_simple_xx() API
+Date: Mon, 11 Dec 2023 11:06:27 +0100
+Message-ID: <20231211-betanken-mengenlehre-2daa69758114@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To:  <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
+References:  <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=984; i=brauner@kernel.org; h=from:subject:message-id; bh=ruZzyWAtms11/Ti8YUwlxFhxyYABN17MRpVZkmWtJ14=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSW3Vf6/FNeYOuKzgy+PLWIfZ6xE9hL1+Yf5fo3M7O3u cKqj9muo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJH2hj+SoVdet18kOn4BLZM ++lRtruzLd3sfrE4+oa1pi+MkjI9zsjw6OXDB5lZrrNmr3nAtc1UJ1xl6pPmqcIitvX3q/ccEDf jBwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sat, 09 Dec 2023, Colin Ian King <colin.i.king@gmail.com> wrote:
-> There is a spelling mistake in a pr_err error message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Sun, 10 Dec 2023 18:32:18 +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> This is less verbose.
+> 
+> 
 
-Thanks, pushed to drm-intel-gt-next.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-BR,
-Jani.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> ---
->  drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
-> index e57f9390076c..d684a70f2c04 100644
-> --- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
-> +++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c
-> @@ -504,7 +504,7 @@ static int igt_dmabuf_export_vmap(void *arg)
->  	}
->  
->  	if (memchr_inv(ptr, 0, dmabuf->size)) {
-> -		pr_err("Exported object not initialiased to zero!\n");
-> +		pr_err("Exported object not initialised to zero!\n");
->  		err = -EINVAL;
->  		goto out;
->  	}
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
--- 
-Jani Nikula, Intel
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] eventfd: Remove usage of the deprecated ida_simple_xx() API
+      https://git.kernel.org/vfs/vfs/c/ece491e762cc
