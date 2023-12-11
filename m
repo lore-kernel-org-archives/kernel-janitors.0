@@ -1,69 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471222080;
-	Mon, 11 Dec 2023 10:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkXHQYdM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2532C433C8;
-	Mon, 11 Dec 2023 10:06:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702289207;
-	bh=ruZzyWAtms11/Ti8YUwlxFhxyYABN17MRpVZkmWtJ14=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AkXHQYdM/hj1HG/X8G5xW6JnVQTCZUGwiKI0nkgYtF/Y0xURs8khlX2qoNMhzGMFZ
-	 2Tkykt9rDpINFoHaRTQhJI3/ITkBJUz2HEK4tM+IvJXG+vCFk5ve9fZRZjA+NSM/M3
-	 cy6enkwzYaqf/hcf5PiGa+V4gLmTX/sYX58GSjmlIhdm+nCHcmS+0ag0/5Qos8PHFP
-	 s6WBeUM22HPNGeg5uJZ0OxeOV2cAut4B4LocQY/tyNMXYVSpEa7QwFNKM0flpkjWwR
-	 j7y0zUkiU9OJekpBpPCVAnay+dJnZUicXricJ+J1O6k+BUWrM6TJjBW3NFqHflZHKQ
-	 euOkJPAO1MJGw==
-From: Christian Brauner <brauner@kernel.org>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uSQ9GuT9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WlYGjskX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OOJzuaHa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6WZ11VbI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F540101;
+	Mon, 11 Dec 2023 04:30:20 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E42451FB8A;
+	Mon, 11 Dec 2023 12:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702297818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
+	b=uSQ9GuT9OV1qMWqEr5Jk27bRTbNJDxoDrmDMomPeMkSB1ToLPUvYnyC6oPxYKT54MrY2dR
+	hPbblSXwWVc0TueJtj8S5dGOqAaEO2m71ZEEdyMscQfKxTSWBwj4AMBLNWEKnNoI8Vi1X6
+	CHBJdr/ZXUsVEzPghOVVFCBYMgWUcrU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702297818;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
+	b=WlYGjskXnZHv3rmOSP3P0ZFcW4lu/7dwcr5k3rbnObRvPZIU5Lb4XIana9QVf3fzWGwk6/
+	85YuEvPNPngoazDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702297816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
+	b=OOJzuaHayNm/cjYIFgcNZ80dtLxJDbDCGQQDrBesaDeeSTf22pOlILv4AgScPwQRP4i0yl
+	vgu0k9Y8VdVmybHYQjhksmmamBKkGvu1c0qc4haS/jVBmFgWHf15FafzJdpX3Df+REzAQ4
+	BAiZzQOKK6cdGzsdaf9j+a5WliDyu7c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702297816;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
+	b=6WZ11VbIXreZyDmns+xURE6vpolRTcYuydR0ADViB4/g+Lp76JGdz0+yVfvfJXR/S6AVWU
+	DveKn1TQD9/20LAQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id D102A138FF;
+	Mon, 11 Dec 2023 12:30:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id n9WxMtgAd2XlRQAAn2gu4w
+	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 12:30:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 765A2A07E3; Mon, 11 Dec 2023 13:30:12 +0100 (CET)
+Date: Mon, 11 Dec 2023 13:30:12 +0100
+From: Jan Kara <jack@suse.cz>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] eventfd: Remove usage of the deprecated ida_simple_xx() API
-Date: Mon, 11 Dec 2023 11:06:27 +0100
-Message-ID: <20231211-betanken-mengenlehre-2daa69758114@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To:  <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
-References:  <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] eventfd: Remove usage of the deprecated ida_simple_xx()
+ API
+Message-ID: <20231211123012.mrxfakg2wxdlsthb@quack3>
+References: <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=984; i=brauner@kernel.org; h=from:subject:message-id; bh=ruZzyWAtms11/Ti8YUwlxFhxyYABN17MRpVZkmWtJ14=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSW3Vf6/FNeYOuKzgy+PLWIfZ6xE9hL1+Yf5fo3M7O3u cKqj9muo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJH2hj+SoVdet18kOn4BLZM ++lRtruzLd3sfrE4+oa1pi+MkjI9zsjw6OXDB5lZrrNmr3nAtc1UJ1xl6pPmqcIitvX3q/ccEDf jBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
+X-Spam-Level: 
+X-Spam-Score: -0.93
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -0.93
+X-Spamd-Result: default: False [-0.93 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[wanadoo.fr];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.13)[67.30%]
+X-Spam-Flag: NO
 
-On Sun, 10 Dec 2023 18:32:18 +0100, Christophe JAILLET wrote:
+On Sun 10-12-23 18:32:18, Christophe JAILLET wrote:
 > ida_alloc() and ida_free() should be preferred to the deprecated
 > ida_simple_get() and ida_simple_remove().
 > 
 > This is less verbose.
 > 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/eventfd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] eventfd: Remove usage of the deprecated ida_simple_xx() API
-      https://git.kernel.org/vfs/vfs/c/ece491e762cc
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index 16bea05a7c78..ad8186d47ba7 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -82,7 +82,7 @@ EXPORT_SYMBOL_GPL(eventfd_signal_mask);
+>  static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+>  {
+>  	if (ctx->id >= 0)
+> -		ida_simple_remove(&eventfd_ida, ctx->id);
+> +		ida_free(&eventfd_ida, ctx->id);
+>  	kfree(ctx);
+>  }
+>  
+> @@ -395,7 +395,7 @@ static int do_eventfd(unsigned int count, int flags)
+>  	init_waitqueue_head(&ctx->wqh);
+>  	ctx->count = count;
+>  	ctx->flags = flags;
+> -	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+> +	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+>  
+>  	flags &= EFD_SHARED_FCNTL_FLAGS;
+>  	flags |= O_RDWR;
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
