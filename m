@@ -1,52 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dX5esvdb"
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADA3F4;
-	Sun, 10 Dec 2023 23:42:52 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-a1f6433bc1eso576885166b.1;
-        Sun, 10 Dec 2023 23:42:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1Zzc6+i"
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEADEA;
+	Mon, 11 Dec 2023 00:30:35 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-54c9116d05fso5835759a12.3;
+        Mon, 11 Dec 2023 00:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702280570; x=1702885370; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702283433; x=1702888233; darn=vger.kernel.org;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3hmR+YxpV+LKGIsN8CLV3y72wX3HxmskMeyJnPDScB8=;
-        b=dX5esvdbuuv+oMKU0vmgCb8LMrMTawK+XjCpdY92+kCK0uny5oCd593HmvHtV28tFm
-         qc45Lnyt+m0ghTKM9r9sPNKk346hwuT70OHyP6r+QopbPka/ppMUXqiDy/6loLjXChOu
-         u6jsPeG9KZfxQbrmVGT/1utNbDO0Y9cS2dvjlY2BwGMMUyaDGezKM8ghPifL4RdYcbod
-         hboS+NiHg6LcTz3sxjERk9RKyOothtE9L8jX1mHgkSGloPvG7MMGEi0+NUxYifnLsjoZ
-         KqQ1fDWtGZN70c75QBjGEoMrbyycpCnP4Q+00vR0AZ69Dlg250HrqmKSlTGVaVKJrnS8
-         Bb6A==
+        bh=18T4h+PgamAj+KI6bp/QSD69CdQrdRYfbgvXoI1RLic=;
+        b=P1Zzc6+iFlFAKhDjRlzqpNeEN+vcdQpuMyih03w5wPLWFJ36iIrFb24Eg0vv+HdBk8
+         o5VfwLeP2ibW8Cx/5DWeWlgMfIyRjKOMTjdlJo3iztqxEC0qRq7tI6dr2JFWitznFHqa
+         8JYvC/UWzj7MsdQqcJ3opByp/AZ7ppYHcIVvquTBTyqVbyba102tBY+KNYXFH2PRZF+l
+         sQ+E8oY1gPH3tOBHmGgr0bwYZnoJkgGqJwv8fr5L5vIIjFNEaji8hYqH299DUiXyS5l1
+         6fWmvNChqw5IqNl1/aSNmvXQd6CYuK2RBEp+plNOrcTyBeWX5FVSFoMMQwGQ6yeMIFKY
+         ygNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702280570; x=1702885370;
+        d=1e100.net; s=20230601; t=1702283433; x=1702888233;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3hmR+YxpV+LKGIsN8CLV3y72wX3HxmskMeyJnPDScB8=;
-        b=hn13W2Aag9/zMkZ4Z1m+LvtwVRzeL6d1D6IgE1O77HOF6aaefEwar/v4bnpM/dUqyb
-         VN6VY8eh+ag4qyS6Jbvq8tG1PRyfcemw/ejoGilabSVgF3/vFiGkmfB44Jwgk4N+jxlo
-         bSFjSI4cviPY9qijY4hoLzvRFJJKjU41JeQIz/nmK9WVyVMdtWinFFmqIO1/a2yuH+kX
-         qWQyNUQILhnI+QCo8dIuAyLJtjdF7Zw+K8X0w9KLYgcFOLt+jp4Ygkxm5prjt/bi+hzF
-         luJ7bRKEfCasxgKTVv/1NO9MZy8sYa8i/ogH5GF7hmP8e/9Ls/kMZhixPjS9vvahg/+S
-         OBkw==
-X-Gm-Message-State: AOJu0YyJ+9Vu2Tr74/YTT8+6SEn1PuFaktKvvzdQMHzHAzqEKKRjIeLT
-	MYgaXCzTy+fKiCGVIR+ReoU=
-X-Google-Smtp-Source: AGHT+IFQmQkfGVnNQ0m2JWE3iFtYKdq0VTzVqxVQfJ+aD/wbTSQbv4P3e2JQreA11uU/LfqYWWxIxw==
-X-Received: by 2002:a17:906:5345:b0:a1c:b707:cbd1 with SMTP id j5-20020a170906534500b00a1cb707cbd1mr3570285ejo.24.1702280570365;
-        Sun, 10 Dec 2023 23:42:50 -0800 (PST)
+        bh=18T4h+PgamAj+KI6bp/QSD69CdQrdRYfbgvXoI1RLic=;
+        b=s3efvkK6XYnx4oTz/9d9scCmOMkQaKh+ok+/Y2IbKIoRrXjHem4gc3d2GsLnwyVc6C
+         y5Eh0aBqHwLiOAeBufjCG+HCJOjDfWDrPlBJK8t51JgJ9yuNe9iwMwsXHlxwHFKbjaHR
+         dpoIOpmNlMB6NihPe8knrOxXJZk9oNnm41L3zuiFmWiwoXbj4nx0X0AERlW9JF5CGZyJ
+         EvB++uy4t1Wkx8Qt0uHm5ToOuDMJRkN+Zvp7KaKbpB3d/mZJxl2TFdqQJzn5bklLerDM
+         Jy0J745/sBpVLRiGt3Rzihb9cAg0awXnhCYCk6woQN9T5ZkE/nH7V8zO7Kew5LlTtaUy
+         FlrA==
+X-Gm-Message-State: AOJu0YxI1Sydgsi9g1qr8TzZMQtreztj3UKZvdFslWYJMS7AofCxQKow
+	20g4XAZHU/l0Nw2oGxP/st4=
+X-Google-Smtp-Source: AGHT+IHwo3tENLZikbGvr+646iwwTYiz4cdrWDuYWM/443fGx/HRWeThopo660yjJ+w35HHx4n/g6A==
+X-Received: by 2002:a50:9f84:0:b0:550:e9b8:50a6 with SMTP id c4-20020a509f84000000b00550e9b850a6mr1078124edf.63.1702283432887;
+        Mon, 11 Dec 2023 00:30:32 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:187:91eb:e4d:dd96])
-        by smtp.gmail.com with ESMTPSA id tb19-20020a1709078b9300b00a1cd30d06d1sm4490224ejc.14.2023.12.10.23.42.49
+        by smtp.gmail.com with ESMTPSA id c28-20020a50f61c000000b0054c5d3486e9sm3564242edn.76.2023.12.11.00.30.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 23:42:49 -0800 (PST)
+        Mon, 11 Dec 2023 00:30:32 -0800 (PST)
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Alexander Graf <graf@amazon.com>,
-	aws-nitro-enclaves-devel@amazon.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christoph Hellwig <hch@lst.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	sparclinux@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] misc: nsm: remove selecting the non-existing config CBOR
-Date: Mon, 11 Dec 2023 08:42:42 +0100
-Message-Id: <20231211074242.22999-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH RESEND] sparc: remove obsolete config ARCH_ATU
+Date: Mon, 11 Dec 2023 09:30:29 +0100
+Message-Id: <20231211083029.22078-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,34 +53,35 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 
-Commit b9873755a6c8 ("misc: Add Nitro Secure Module driver") adds Nitro
-Security Module support, which selects the non-existing config CBOR.
+Before consolidation of commit 4965a68780c5 ("arch: define the
+ARCH_DMA_ADDR_T_64BIT config symbol in lib/Kconfig"), the config ARCH_ATU
+was used to control the state of the config ARCH_DMA_ADDR_T_64BIT. After
+this consolidation, the config ARCH_ATU has been without use and effect.
 
-In the development of the commit, there was initially some code for CBOR
-independent of the driver, and the driver included this code with the line
-'select CBOR'. This code for CBOR was later reduced to its bare minimum of
-functionality and included into the driver itself. The select CBOR remained
-unnoticed and was left behind without having any further purpose.
-
-Remove selecting the non-existing config CBOR.
+Remove this obsolete config.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/misc/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 8932b6cf9595..4fb291f0bf7c 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -566,7 +566,6 @@ config NSM
- 	tristate "Nitro (Enclaves) Security Module support"
- 	depends on VIRTIO
- 	select HW_RANDOM
--	select CBOR
- 	help
- 	  This driver provides support for the Nitro Security Module
- 	  in AWS EC2 Nitro based Enclaves. The driver exposes a /dev/nsm
+ arch/sparc/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 49849790e66d..6b4d3182baae 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -112,10 +112,6 @@ config ARCH_PROC_KCORE_TEXT
+ config CPU_BIG_ENDIAN
+ 	def_bool y
+ 
+-config ARCH_ATU
+-	bool
+-	default y if SPARC64
+-
+ config STACKTRACE_SUPPORT
+ 	bool
+ 	default y if SPARC64
 -- 
 2.17.1
 
