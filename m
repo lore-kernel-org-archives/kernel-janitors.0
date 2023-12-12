@@ -1,95 +1,70 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CaefnQSg"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26554AD
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Dec 2023 09:53:17 -0800 (PST)
-Received: from [192.168.1.18] ([92.140.202.140])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YMxVs23k"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E777FB7
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Dec 2023 12:09:32 -0800 (PST)
+Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id D6wUrQiNALMHAD6wUrlYvP; Tue, 12 Dec 2023 18:53:15 +0100
+	id D94JrCWy533VXD94JrOShy; Tue, 12 Dec 2023 21:09:31 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702403595;
-	bh=L/MbAWs2OZrOLC1rYEO04nGayLDbwyeb69eSCqKczhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=CaefnQSg6liXBIn+KC3ED6T/XyzXpAePPtyDK6t5uD2Qc3r89YqDv4DkKRbvCl3MQ
-	 bEQhMKeLxr0vQoFwbaVJ9Pqe1iH4kjC8VJViLG1iI50rs8O3+XqPG5p/szOtLmSVTg
-	 jANYxiamUO3YKTLDD/3rlm01zE/hTmHg8FKXByaiqDWFy5nDLjbaO/mHh4qvrUdqrb
-	 ZfRqXJVKzxUfBCelUHiQ5C9IPotseImhXuzte/RmfHW/IcnWg0lJK7omwCRquKQ6aF
-	 yLQcv7C+25Hfq/ft7LnPiyjthbIFsI8+3Z4D7XoAvZqgNYW1EntCN6U+Tc8qqvEAJY
-	 R6+YK17E5J+9Q==
-X-ME-Helo: [192.168.1.18]
+	s=t20230301; t=1702411771;
+	bh=TOqGi1ws2J2/YYsgiD/HwpONPM+0k7w0AaPx2uck5fE=;
+	h=From:To:Cc:Subject:Date;
+	b=YMxVs23knBY9ZnlWmH6ePcgxEIZbk2b6W/eGnh2ywnyt0fY+CbSnZ8aK7ZsUIp2u6
+	 MB01cuDRxlUS8Z/55Vbx7eVY7VB2V54SivYEoMO8mrTOzGWQL4YoiXUm3ZIS+jauuU
+	 3CtPoNDS/kmKyKv7Scp9lxnjK0mgTAkGLiTioCoJCpUWbll9YTPDhx/i1tjjGelDYI
+	 x8v0+ttV1Ggie5rb2oae18QaAV0W9B4lWmcAEX44teAhjnb1RsIdxe9rxd4AyGxuke
+	 A40mZXZDsAndWMI55axPNfK3KKDaokzcFjnGrm3Uj+jjTU/XUO7xZ37Jie+9WhG59I
+	 /x3VSArbhwxUw==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 12 Dec 2023 18:53:15 +0100
+X-ME-Date: Tue, 12 Dec 2023 21:09:31 +0100
 X-ME-IP: 92.140.202.140
-Message-ID: <94c5f197-9459-40fe-9c34-06359779a51a@wanadoo.fr>
-Date: Tue, 12 Dec 2023 18:53:13 +0100
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: hare@kernel.org,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com
+Cc: hare@suse.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/2] scsi: myrb: Fix a potential string truncation
+Date: Tue, 12 Dec 2023 21:09:09 +0100
+Message-Id: <cover.1702411083.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cdx: Unlock on error path in rescan_store()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Abhijit Gangurde <abhijit.gangurde@amd.com>
-Cc: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
- <nikhil.agarwal@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <8c79956b-bf8c-4511-97cc-a16833a0630f@moroto.mountain>
-Content-Language: fr
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8c79956b-bf8c-4511-97cc-a16833a0630f@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Le 12/12/2023 à 10:20, Dan Carpenter a écrit :
-> We added locking to this function but these two error paths were
-> accidentally overlooked.
-> 
-> Fixes: f0af81683466 ("cdx: Introduce lock to protect controller ops")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/cdx/cdx.c | 14 +++++++++-----
->   1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
-> index d84d153078d7..f4f9f0c88c09 100644
-> --- a/drivers/cdx/cdx.c
-> +++ b/drivers/cdx/cdx.c
-> @@ -572,12 +572,16 @@ static ssize_t rescan_store(const struct bus_type *bus,
->   
->   	/* Rescan all the devices */
->   	for_each_compatible_node(np, NULL, compat_node_name) {
-> -		if (!np)
-> -			return -EINVAL;
-> +		if (!np) {
-> +			count = -EINVAL;
-> +			goto unlock;
-> +		}
->   
->   		pd = of_find_device_by_node(np);
-> -		if (!pd)
-> -			return -EINVAL;
-> +		if (!pd) {
-> +			count = -EINVAL;
-> +			goto unlock;
+Patch 1/2 fixes a potential string truncation issue in rebuild_show(). It is
+intended to be minimal in order to ease potential backport.
 
-Unrelated to your patch, but should we have a of_node_put(np); here, on 
-early exit?
+Patch 2/2 is a bigger patch that turns some snprintf() usage in _show functions
+into preferred sysfs_emit() calls.
+This patch overrides the changes made in 1/2.
 
-CJ
 
-> +		}
->   
->   		cdx = platform_get_drvdata(pd);
->   		if (cdx && cdx->controller_registered && cdx->ops->scan)
-> @@ -585,7 +589,7 @@ static ssize_t rescan_store(const struct bus_type *bus,
->   
->   		put_device(&pd->dev);
->   	}
-> -
-> +unlock:
->   	mutex_unlock(&cdx_controller_lock);
->   
->   	return count;
+There is another warning when building with W=1:
+    1051 |                 "%u.%02u-%c-%02u",
+         |                 ^~~~~~~~~~~~~~~~~
+   drivers/scsi/myrb.c:1050:9: note: ‘snprintf’ output between 10 and 14 bytes into a destination of size 12
+but I think that it is a false positive because snprintf() in Linux does not
+strickly folows the standard C behavior of snprintf(). If I understand correctly
+Linux handles %02u when C ignores it.
+
+Christophe JAILLET (2):
+  scsi: myrb: Fix a potential string truncation in rebuild_show()
+  scsi: myrb: Use sysfs_emit()
+
+ drivers/scsi/myrb.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+-- 
+2.34.1
 
