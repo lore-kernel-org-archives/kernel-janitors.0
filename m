@@ -1,72 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ePJaVRCY"
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E82A7
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Dec 2023 13:34:57 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-5c67c1ad5beso5486344a12.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Dec 2023 13:34:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2YUche9"
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABF3B3;
+	Tue, 12 Dec 2023 13:55:55 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40c3f68b649so38636775e9.0;
+        Tue, 12 Dec 2023 13:55:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1702416897; x=1703021697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVaNEiqljo3E3EXGRWD9OJDtRSGtGupo/F0W9RJyA9Y=;
-        b=ePJaVRCYQkAmb4oTX3Ee5XFGGvlkk+Lj44VWmjS3GCTcZ9WsuXCwZbgjCJdksJIUo0
-         rRtHi4uC1FIQdZCZ73eAJGr1PtytVk5Jz0qsYULnSJKVWXQk7vlLX57PIgGuZOaiAi+y
-         rxrBXQ3i9wL2oyairnKxarpJ04rgvvf96kc+A=
+        d=gmail.com; s=20230601; t=1702418154; x=1703022954; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zy8FfFNpNs+NX51gAcRgfZF0RZVCxGvpcLqeDklhggA=;
+        b=F2YUche9VuF+Ei4sBTmAOiQr91telRKNJyCboEP07rYmJQTSSC3YicVd9T7lNo9g4n
+         PKuYU5TgzqB6sbg0zpCUycwbnPK1QJWi7rgHgQMS6bFfY1c8jJ+0Pw2yjnCWyWn7IBqW
+         14HUQZNCn9DiETUPWmyVKvOKf8zTWhtPeecnedHwTUZGKs77TkKnqL7X6MYSRiqS329o
+         pCc6oGjol+LEgocpjjPkQLq5JBH1aFK2M1WCqN4umBZdZ31Ck/r9L2QjJ6uiZKb/J1DJ
+         Pp+hsriCB1twStEhBy8kRVCfcGYzoE8dc/ty+wR3Ga5TCh2Rs+8xF6mnjsLbOQAlgjZh
+         8Ymg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702416897; x=1703021697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVaNEiqljo3E3EXGRWD9OJDtRSGtGupo/F0W9RJyA9Y=;
-        b=IIs5ZLMXp5ZaUiByQW/XM2jabU3aE8Y5qx+KHQ0C8TQJKfIvdst+K0kJW7+O4/Hp9C
-         PhOKZXMPBySHj3cKlRZ530BJruoqbFt7SFEwZDgD4XoL6bCMf0LWSQO7pVwhydRAo7AP
-         PJhEnfh+3iLYCABhFIvpg6TybYobNoEnh/MX/vZ9wFSvdZ1fMGLrSv95LzXEpsMsbiJH
-         yeKAvnIYU4APZo7TWl/az7B9v4FRrQkwaHVNMO32G+TXeuC9mUvEsWEySRQgJsA4kllc
-         UmWwXatmVW+UOdQ9I0f8y9aU3w0DkYW/0hxFKNOb5lpYb2ID4QDUXYVSjlUGyxABrmOl
-         5Knw==
-X-Gm-Message-State: AOJu0Yzyrtucg+tZ+XV8w7T7RnRRcbebNKzJCto9GQF8ES8Zd+xkSQJ8
-	0d7QfJFlELtag6fc3PWiC49Llw==
-X-Google-Smtp-Source: AGHT+IGrjdrYE8TdMjASxj4xkbtqabKRt1i/GLLm6pVTSOTn+15PoLIG2QekdDTvI5rmHrrxiENUQg==
-X-Received: by 2002:a05:6a20:734f:b0:17b:1f76:86ee with SMTP id v15-20020a056a20734f00b0017b1f7686eemr7870972pzc.16.1702416897330;
-        Tue, 12 Dec 2023 13:34:57 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id gx4-20020a056a001e0400b006cbb71186f7sm8557572pfb.29.2023.12.12.13.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 13:34:56 -0800 (PST)
-Date: Tue, 12 Dec 2023 13:34:56 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bryan Tan <bryantan@vmware.com>, Vishnu Dasa <vdasa@vmware.com>,
-	VMware PV-Drivers Reviewers <pv-drivers@vmware.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] VMCI: Remove handle_arr_calc_size()
-Message-ID: <202312121334.459D42A1F@keescook>
-References: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
+        d=1e100.net; s=20230601; t=1702418154; x=1703022954;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zy8FfFNpNs+NX51gAcRgfZF0RZVCxGvpcLqeDklhggA=;
+        b=aRjYVInu7DcCDaFpe8ysXoWjKBtawswnM7r6dLYGLLFhMgv/RZqrvyoL+/SOuxwIhk
+         ka66UxUhV4UXR7HW2tJODhYgL2oXUnMmEdg1uAgk9OJK/Ky1fXBSuzRHw/ZdCCjkRu12
+         FcSuP16A8XQlqvPRlY3Jp0vZSXJBQI09sXa3oeqFKsiImhEaLx7YDFX6N7FdAEXujPvc
+         ZmekZGh2c8J+FxnbxMn86/y/4mTDCgU/U14Hx+nqNVQbG9rCt2o6Zyqa5h2/uIu6WYIZ
+         asyY+UXKc6F0KcTyj87K0/l3rwz7RcqqLnJho+BdZQtj/4esy3NARsKS7qNY/X2MMy3b
+         5yjQ==
+X-Gm-Message-State: AOJu0YxIT/eVeLf9VuK5pmoxQEhyUpk9MueTOV7inLQkamqT+zK1bvNv
+	0OsSlCb7VxblO6/vGmBgmgI=
+X-Google-Smtp-Source: AGHT+IFWa9taipty31yOr6nNvJiECuCxJgZFLbRfYP89EFnIEOzxUOphJnn6CKgmt57xRKS/PY6LEw==
+X-Received: by 2002:a05:600c:3ca3:b0:40c:4dc5:b308 with SMTP id bg35-20020a05600c3ca300b0040c4dc5b308mr1028228wmb.196.1702418153566;
+        Tue, 12 Dec 2023 13:55:53 -0800 (PST)
+Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id d13-20020a05600c34cd00b0040c496c64cfsm7615484wmq.12.2023.12.12.13.55.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Dec 2023 13:55:52 -0800 (PST)
+Message-ID: <b4f22a3b-3cab-4c0d-b4b9-700c58b62826@gmail.com>
+Date: Tue, 12 Dec 2023 21:55:51 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84e7f2d8e7c4c2eab68f958307d56546978f76e3.1702125347.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] mlx4: Fix spelling mistake: "mape" -> "map"
+Content-Language: en-US
+To: Simon Horman <horms@kernel.org>
+Cc: Tariq Toukan <tariqt@nvidia.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231209225135.4055334-1-colin.i.king@gmail.com>
+ <20231212203043.GF5817@kernel.org>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <20231212203043.GF5817@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Dec 09, 2023 at 01:36:14PM +0100, Christophe JAILLET wrote:
-> Use struct_size() instead of handle_arr_calc_size().
-> This is much more conventional.
+On 12/12/2023 20:30, Simon Horman wrote:
+> On Sat, Dec 09, 2023 at 10:51:35PM +0000, Colin Ian King wrote:
+>> There is a spelling mistake in a mlx4_err error message. Fix it.
+>>
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > 
-> While at it, use size_add() when computing the needed size in
-> vmci_handle_arr_append_entry(). This prevents from (unlikely) overflow
-> when computing the new size to reallocate.
+> Hi Colin,
 > 
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> I am guessing that you are focusing on error messages and other user-facing
+> spelling errors (perhaps you told me f2f in the hallway track at Kernel
+> Recipes).  But I do wonder if you have plans to address other spelling
+> errors in this driver. codespell flags many, including 'segements' in a
+> comment in the same file.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Yes, there are so many trivial spelling mistakes and typos across the 
+kernel that I'm just focusing on user facing error messages for the moment.
 
--- 
-Kees Cook
+Colin
+
+> 
+> In any case,
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+
