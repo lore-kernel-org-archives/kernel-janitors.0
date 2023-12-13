@@ -1,43 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdTk2gEk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CA5DC;
-	Wed, 13 Dec 2023 05:36:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702474570; x=1734010570;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NEtuRYz798pOKaCZjGgcl/J6ODZ0hj92ozwgXCg6Ui0=;
-  b=XdTk2gEk9pM5AuOBhy/TaqmUbuUVM1J/QiwqV/b3E3dNK+1DvbvykoHD
-   ie+cnsiYARFD0/Re77n3pl5XqxNsk6PjH5gbjYE0nFFQ0ZHObJF3GFa5G
-   YiBEgDUOxt7n4NZ425PLnZ9NTVgz8arXIiTBQTBbsBSML/J/JIJII9GTN
-   tHRyhGo0I2kaaolzWAwRVmMwKNZpRLBzy2ZrlXK6c2JpIYSpMvoUv19ws
-   98lblFJDIfDudk8JJeeNcZYr+nXAFqSYvILWXvyCY8iJb/d8HRLh4Ac99
-   hzU5ulMYjB9YGtBGx8mhlHNSUTnza16kWgIO8gsncql7REoNyQX/JXXN1
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="8354476"
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="8354476"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 05:36:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="750108795"
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="750108795"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orsmga006.jf.intel.com with SMTP; 13 Dec 2023 05:36:06 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 13 Dec 2023 15:36:05 +0200
-Date: Wed, 13 Dec 2023 15:36:05 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <ZXmzRWDHsBwvUL7v@kuha.fi.intel.com>
-References: <c7b99c4f52649ce6405779fbf9170edc5633fdbb.1702229697.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O5o0ZPpE"
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A071114
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 06:08:23 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-333630e9e43so6767039f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 06:08:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702476501; x=1703081301; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yGQHYGvUGPNJmb4hVIhsOVrOl28DMQquary28poyEhI=;
+        b=O5o0ZPpE38r9DtTMRiad58fmRZtMLom8DhHIsAEnJoq+zymQikqvINxg2E8KqZBx8Z
+         XrRKLgwuh19odsRiWadRYQY0jrPX1wKHAN63h1HWcWdzv9QaOW0MCGeQLNm9YeY4NRNm
+         U18smnMI3TvSyZ2myQILJH0b7YGSyy7kA7iNvGFR2zD38PbpLHmg+wi5tKIrPcoK+VJH
+         7JhlGc4a3QWf0TvSUJwFt3hstbCOnarCC+27eSgojbqAtqiUWRz/NQYXLPw4H2M5kOg9
+         O+ceZrQZHgtHA7jsgNpHzg/wZ+pcXMjjw2yJF/lLAyAOSI8+2uYGknHvDef2go/b5CLr
+         khRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702476501; x=1703081301;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGQHYGvUGPNJmb4hVIhsOVrOl28DMQquary28poyEhI=;
+        b=wum+ga2O/HD+CCZn67RkRV1YrBdsQrqQ/L1DyGm97Luabx3wQCtsByu6zDibprWJHK
+         rv3q+DgJdwf74C8+4UkywkA9Rl+YIPs+WAkeFg/AQ6y6z1ktn+T7XKlN9yXbZzyQS2h+
+         VRvjaENy3BmC8jir3mC7GpiMYzDVY1rf1jxhE2jOcKAABhNApKkux2JeW0G6RYU7NIBW
+         QWZDAsGex5UDoH276jdPgypZs1o2gv7ipvkvNIxvGY1BmNnMLzy3mosi+4U5y7pfzDPD
+         WtFpJrAiWsBFgF8VV2aMplA/E5D3f9pdKUKJ8sJUayuER8bxes3uGmc/T5btkhld79ak
+         c1vQ==
+X-Gm-Message-State: AOJu0Yz9EqtmEt05jizlDaek3RFF0rZt7Mol0Iq+zyqY+FuUqyVWBGrU
+	d4omRmjVDXrioKJf2ZsnpmWld880tmZPIAXFmps=
+X-Google-Smtp-Source: AGHT+IEpPZzYdPLXcduF4nA5EE0q3P+XBry3Mlf1s1dZQZdQPkNvjIpr6Jz9Er27c37Xasi27rYwmw==
+X-Received: by 2002:adf:ecc2:0:b0:333:2fd2:3c0d with SMTP id s2-20020adfecc2000000b003332fd23c0dmr3268204wro.198.1702476501663;
+        Wed, 13 Dec 2023 06:08:21 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id h11-20020adffd4b000000b003333298eb4bsm13575958wrs.61.2023.12.13.06.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Dec 2023 06:08:21 -0800 (PST)
+Date: Wed, 13 Dec 2023 17:08:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Paul Blakey <paulb@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Oz Sholmo <ozsh@nvidia.com>, Roi Dayan <roid@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net 1/2] net/mlx5e: Fix error code in
+ mlx5e_tc_action_miss_mapping_get()
+Message-ID: <133f4081-6f34-4e3b-b4b5-bacd76961376@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,87 +57,33 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7b99c4f52649ce6405779fbf9170edc5633fdbb.1702229697.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 
-On Sun, Dec 10, 2023 at 06:36:15PM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Preserve the error code if esw_add_restore_rule() fails.  Don't return
+success.
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Fixes: 6702782845a5 ("net/mlx5e: TC, Set CT miss to the specific ct action instance")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/usb/typec/class.c | 8 ++++----
->  drivers/usb/typec/pd.c    | 4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 16a670828dde..5fe01bf795b9 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -476,7 +476,7 @@ static int altmode_id_get(struct device *dev)
->  	else
->  		ids = &to_typec_port(dev)->mode_ids;
->  
-> -	return ida_simple_get(ids, 0, 0, GFP_KERNEL);
-> +	return ida_alloc(ids, GFP_KERNEL);
->  }
->  
->  static void altmode_id_remove(struct device *dev, int id)
-> @@ -490,7 +490,7 @@ static void altmode_id_remove(struct device *dev, int id)
->  	else
->  		ids = &to_typec_port(dev)->mode_ids;
->  
-> -	ida_simple_remove(ids, id);
-> +	ida_free(ids, id);
->  }
->  
->  static void typec_altmode_release(struct device *dev)
-> @@ -1798,7 +1798,7 @@ static void typec_release(struct device *dev)
->  {
->  	struct typec_port *port = to_typec_port(dev);
->  
-> -	ida_simple_remove(&typec_index_ida, port->id);
-> +	ida_free(&typec_index_ida, port->id);
->  	ida_destroy(&port->mode_ids);
->  	typec_switch_put(port->sw);
->  	typec_mux_put(port->mux);
-> @@ -2297,7 +2297,7 @@ struct typec_port *typec_register_port(struct device *parent,
->  	if (!port)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	id = ida_simple_get(&typec_index_ida, 0, 0, GFP_KERNEL);
-> +	id = ida_alloc(&typec_index_ida, GFP_KERNEL);
->  	if (id < 0) {
->  		kfree(port);
->  		return ERR_PTR(id);
-> diff --git a/drivers/usb/typec/pd.c b/drivers/usb/typec/pd.c
-> index 85d015cdbe1f..7f3d61f220f2 100644
-> --- a/drivers/usb/typec/pd.c
-> +++ b/drivers/usb/typec/pd.c
-> @@ -571,7 +571,7 @@ static void pd_release(struct device *dev)
->  {
->  	struct usb_power_delivery *pd = to_usb_power_delivery(dev);
->  
-> -	ida_simple_remove(&pd_ida, pd->id);
-> +	ida_free(&pd_ida, pd->id);
->  	kfree(pd);
->  }
->  
-> @@ -616,7 +616,7 @@ usb_power_delivery_register(struct device *parent, struct usb_power_delivery_des
->  	if (!pd)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	ret = ida_simple_get(&pd_ida, 0, 0, GFP_KERNEL);
-> +	ret = ida_alloc(&pd_ida, GFP_KERNEL);
->  	if (ret < 0) {
->  		kfree(pd);
->  		return ERR_PTR(ret);
-> -- 
-> 2.34.1
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index 5775699e1d3e..30932c9c9a8f 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -5736,8 +5736,10 @@ int mlx5e_tc_action_miss_mapping_get(struct mlx5e_priv *priv, struct mlx5_flow_a
+ 
+ 	esw = priv->mdev->priv.eswitch;
+ 	attr->act_id_restore_rule = esw_add_restore_rule(esw, *act_miss_mapping);
+-	if (IS_ERR(attr->act_id_restore_rule))
++	if (IS_ERR(attr->act_id_restore_rule)) {
++		err = PTR_ERR(attr->act_id_restore_rule);
+ 		goto err_rule;
++	}
+ 
+ 	return 0;
+ 
 -- 
-heikki
+2.42.0
+
