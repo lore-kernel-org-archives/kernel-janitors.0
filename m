@@ -1,55 +1,42 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="raDR3LMQ"
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95173EA
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 06:09:02 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-33638e7f71aso451215f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 06:09:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702476541; x=1703081341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKQmsgK550fGD+FPkX8U9qIfMTPKfTZB/dYSgLKLhHI=;
-        b=raDR3LMQD2Yc+pWuvi6DVStJgdBYhKRHCQ0uii1O7MQSKC8Pm5qjpupa0X1KOIHl2B
-         dT1mIqsvJJ3CKmX7J59jjDSV6W7xIPmX2RoM7J6cOJ8Prs1jh+R3tNwAX1P3GI3O74tL
-         phAKfYogQbwiZ/UmxP3DRj+90EOnpgGlHjDfX70KFQWXtBiVUVnGZBzZHYjeGSL978NZ
-         AtiTI3HTN1S3PKz1yvUHkEwWeT2yc7H+qzgkq1ndk2r37KxY7WGt+BgOWl9NKfM2mF9M
-         xFy+d98N5vMuZ8ZgL3lLDFVbJQTs3nQ8U7VbaIvIsgS3AXR/1g5xlYkpoNaOwNOE5YME
-         hSqw==
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501CBB0;
+	Wed, 13 Dec 2023 11:27:02 -0800 (PST)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-28abca51775so1467053a91.1;
+        Wed, 13 Dec 2023 11:27:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702476541; x=1703081341;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aKQmsgK550fGD+FPkX8U9qIfMTPKfTZB/dYSgLKLhHI=;
-        b=gXVEWaNYi23F2W2k1oeH97KBtHJt3ZxtnoXCiKiy00zbtGLUMBS5vEiTt2J9Q5RSk8
-         H0Sxw9wcSfXqZUgItoyPy3Zz9G33W93/cDC7whYaoJaBUkyvAQK/c9F6Hvtp+V3HxElv
-         ovkIEQKtvz5JaN685FNiHVvbvwKW8JzeLDV2KmK97AmVuHRanzdDbJQaJ7dp/0cRn1J/
-         TkfCrPTohk0z2BBdXsiE5qNlnKHX9lWc2r92+wu/mG2wXJlWLJs32Uy4R4btyaPJdqdT
-         qX60LbGVN5apXurIplxi4NO5zMBZaRleIo4HNXClTIWlvvaFe8S84XChvQPMmHUHpVhI
-         ZGlA==
-X-Gm-Message-State: AOJu0YxiEczntOUCvTgSVZq3672HlEFz+lFyHu2BDt8pzEqc9YHHXCKb
-	WWQThk1qzcJId1cW/Hglx6C2WQ==
-X-Google-Smtp-Source: AGHT+IHjUazdmDWYtmZHjBl/MNYaHkCncmuiI4Qik4o/6nTaZ1Cz/zKroUpSSvwn0aRFyAT+imvrQg==
-X-Received: by 2002:a5d:6d4a:0:b0:336:1d85:a87 with SMTP id k10-20020a5d6d4a000000b003361d850a87mr2669412wri.12.1702476541132;
-        Wed, 13 Dec 2023 06:09:01 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id b18-20020adfe652000000b003333f5f5fd7sm13472171wrn.31.2023.12.13.06.09.00
+        d=1e100.net; s=20230601; t=1702495622; x=1703100422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWVW0olGcSxCBdJ2tMtPIREhrLezlbroagvUoCyknJo=;
+        b=oWrCZS60H+zZMK6XgMok6XWpCcARVCjMpj7VrGqtyGQ8J5x1PyJMUM4JPEaXm6UETc
+         waax4AC5FZ8t1DMjkrSsPe3H/RnWn3r/SFeddBL/9kToSjTewEEPmDBZq+k4MMKbOtBO
+         pKweCSgmFtv7gsdsokLuNCRRfGjn/xKS69QJ1zIP7DizDQhTIJdB1rFgXZMQHDr7vnhk
+         JGV74Td3YItqDG43HwH2Q4uHcJC7Q5P/1lf2MxDT7RMAa1pnjb9G5Sp1BfVhO+rLCK8C
+         tlQEdGvV1RSxAbzmTlCxKrCqNNQNKEe+iNGGU9MGt6/pWdy5sqleEhamiucv2LY++p2A
+         yD5A==
+X-Gm-Message-State: AOJu0YwLP88USvVLfaheXYj3nPGvyJK0h0Jf4Tj+vC5uDZTtMJlPaay+
+	ubn0J/edIV6EVsMxg3ETE5w=
+X-Google-Smtp-Source: AGHT+IGBz9BJO+fNFXblCB6zsBxw0/nmGzPc1Td742lMyz/VKcdOyC4cGNWerXKPUrqX9Z3/E/jB2A==
+X-Received: by 2002:a17:90a:fe8f:b0:28a:e30d:3043 with SMTP id co15-20020a17090afe8f00b0028ae30d3043mr640572pjb.56.1702495621720;
+        Wed, 13 Dec 2023 11:27:01 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d1-20020a17090a114100b0028b005dadb3sm275238pje.26.2023.12.13.11.27.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 06:09:00 -0800 (PST)
-Date: Wed, 13 Dec 2023 17:08:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chris Mi <cmi@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Moshe Shemesh <moshe@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-	Shay Drory <shayd@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net 2/2] net/mlx5e: Fix error codes in alloc_branch_attr()
-Message-ID: <3504e359-aed9-421b-b2f1-e0f7b4769132@moroto.mountain>
+        Wed, 13 Dec 2023 11:27:00 -0800 (PST)
+Date: Thu, 14 Dec 2023 04:26:59 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: vmd: Remove usage of the deprecated ida_simple_xx()
+ API
+Message-ID: <20231213192659.GA1123825@rocinante>
+References: <270f25cdc154f3b0309e57b2f6421776752e2170.1702230593.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,41 +45,18 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <133f4081-6f34-4e3b-b4b5-bacd76961376@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <270f25cdc154f3b0309e57b2f6421776752e2170.1702230593.git.christophe.jaillet@wanadoo.fr>
 
-Set the error code if set_branch_dest_ft() fails.
+Hello,
 
-Fixes: ccbe33003b10 ("net/mlx5e: TC, Don't offload post action rule if not supported")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> This is less verbose.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-index 85cdba226eac..5775699e1d3e 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-@@ -3778,7 +3778,8 @@ alloc_branch_attr(struct mlx5e_tc_flow *flow,
- 		break;
- 	case FLOW_ACTION_ACCEPT:
- 	case FLOW_ACTION_PIPE:
--		if (set_branch_dest_ft(flow->priv, attr))
-+		err = set_branch_dest_ft(flow->priv, attr);
-+		if (err)
- 			goto out_err;
- 		break;
- 	case FLOW_ACTION_JUMP:
-@@ -3788,7 +3789,8 @@ alloc_branch_attr(struct mlx5e_tc_flow *flow,
- 			goto out_err;
- 		}
- 		*jump_count = cond->extval;
--		if (set_branch_dest_ft(flow->priv, attr))
-+		err = set_branch_dest_ft(flow->priv, attr);
-+		if (err)
- 			goto out_err;
- 		break;
- 	default:
--- 
-2.42.0
+Applied to controller/vmd, thank you!
 
+[1/1] PCI: vmd: Remove usage of the deprecated ida_simple_xx() API
+      https://git.kernel.org/pci/pci/c/991801bc4722
+
+	Krzysztof
