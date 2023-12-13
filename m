@@ -1,62 +1,55 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501CBB0;
-	Wed, 13 Dec 2023 11:27:02 -0800 (PST)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-28abca51775so1467053a91.1;
-        Wed, 13 Dec 2023 11:27:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702495622; x=1703100422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QWVW0olGcSxCBdJ2tMtPIREhrLezlbroagvUoCyknJo=;
-        b=oWrCZS60H+zZMK6XgMok6XWpCcARVCjMpj7VrGqtyGQ8J5x1PyJMUM4JPEaXm6UETc
-         waax4AC5FZ8t1DMjkrSsPe3H/RnWn3r/SFeddBL/9kToSjTewEEPmDBZq+k4MMKbOtBO
-         pKweCSgmFtv7gsdsokLuNCRRfGjn/xKS69QJ1zIP7DizDQhTIJdB1rFgXZMQHDr7vnhk
-         JGV74Td3YItqDG43HwH2Q4uHcJC7Q5P/1lf2MxDT7RMAa1pnjb9G5Sp1BfVhO+rLCK8C
-         tlQEdGvV1RSxAbzmTlCxKrCqNNQNKEe+iNGGU9MGt6/pWdy5sqleEhamiucv2LY++p2A
-         yD5A==
-X-Gm-Message-State: AOJu0YwLP88USvVLfaheXYj3nPGvyJK0h0Jf4Tj+vC5uDZTtMJlPaay+
-	ubn0J/edIV6EVsMxg3ETE5w=
-X-Google-Smtp-Source: AGHT+IGBz9BJO+fNFXblCB6zsBxw0/nmGzPc1Td742lMyz/VKcdOyC4cGNWerXKPUrqX9Z3/E/jB2A==
-X-Received: by 2002:a17:90a:fe8f:b0:28a:e30d:3043 with SMTP id co15-20020a17090afe8f00b0028ae30d3043mr640572pjb.56.1702495621720;
-        Wed, 13 Dec 2023 11:27:01 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d1-20020a17090a114100b0028b005dadb3sm275238pje.26.2023.12.13.11.27.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 11:27:00 -0800 (PST)
-Date: Thu, 14 Dec 2023 04:26:59 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: vmd: Remove usage of the deprecated ida_simple_xx()
- API
-Message-ID: <20231213192659.GA1123825@rocinante>
-References: <270f25cdc154f3b0309e57b2f6421776752e2170.1702230593.git.christophe.jaillet@wanadoo.fr>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265F377B3E;
+	Wed, 13 Dec 2023 23:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I30m7AyQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90793C433C7;
+	Wed, 13 Dec 2023 23:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702510310;
+	bh=CYk4Vn37Odwag4wylcBdb225KIeTYI7q2wSlTu85hdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I30m7AyQlDx9+eOJ4Grr7Cv4oJvb1XEse2Ae6Rg+wgwpdflFFnXbtpzRA+jaQ5VvR
+	 2ROuq0RDMTIuiTSa3osxLKzMHhiWM2Wi99JJcG2aWJtNZo0gXns09T7WjGbqoHfnJq
+	 OM88ed89CqaBkm9FRod8k8VnDKCKUnyD/7yf5pdFqgMq7biGqQV3ZEYpPuLEcZZq8F
+	 qCeRvmsV4ifBZo4kEYT0umqWRunSZ7zcZ5qc2lfHEULA3qF7ozNHEOGyw94ZQ4L0M/
+	 9rUnrFoXYRrvZlaUhEof+jK1Ul/4IcY4YAtXhiU259z+Tf8EYW4JptZzAcgo0IkMfI
+	 HzapnnNbI4mIg==
+Date: Wed, 13 Dec 2023 15:31:49 -0800
+From: Saeed Mahameed <saeed@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paul Blakey <paulb@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Oz Sholmo <ozsh@nvidia.com>, Roi Dayan <roid@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net 1/2] net/mlx5e: Fix error code in
+ mlx5e_tc_action_miss_mapping_get()
+Message-ID: <ZXo-5VfdXg6fq-oQ@x130>
+References: <133f4081-6f34-4e3b-b4b5-bacd76961376@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <270f25cdc154f3b0309e57b2f6421776752e2170.1702230593.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <133f4081-6f34-4e3b-b4b5-bacd76961376@moroto.mountain>
 
-Hello,
+On 13 Dec 17:08, Dan Carpenter wrote:
+>Preserve the error code if esw_add_restore_rule() fails.  Don't return
+>success.
+>
+>Fixes: 6702782845a5 ("net/mlx5e: TC, Set CT miss to the specific ct action instance")
+>Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>---
 
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
+LGTM, both patches applied to net-mlx5.
+will send the PR shortly.
 
-Applied to controller/vmd, thank you!
-
-[1/1] PCI: vmd: Remove usage of the deprecated ida_simple_xx() API
-      https://git.kernel.org/pci/pci/c/991801bc4722
-
-	Krzysztof
