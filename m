@@ -1,106 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oq6YiaXY"
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE15FDB
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 05:22:48 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40c517d0de5so17494045e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Dec 2023 05:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702473767; x=1703078567; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jY13RsvR2p7nAVWn/STfQAiQyGaFoi3utwqqvjImNyk=;
-        b=Oq6YiaXYzOaamZEp7gALMU85D8UlkkbjER2evO96CvFXabDs7pnBOtC4HMvZK7JnKp
-         Ok4KU4DDUffyyGaRepYKa+gAz8W0F4WJAuH5EGKxhgFrQKKi1a3CjqENOjAAf1+J7XlP
-         MvnQG6FQgwwTXU/+YPaOVI78XfrMcmsAP5WI4WkIE5yhIa0udduEEikW7NiflFe8+sGi
-         3h5JsJApeit2VNth/gMlSUQXyuT6Q5+ugNXZe1AagCvnTFVlRC0jyCLwf/NhtqHrvcoe
-         qvUdPOesNmJlCjBn834dDD7vnjp+MIWYUJ3Aa5wAepn6lMVfy/ei2rnx2jks92FzHxXh
-         h7iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702473767; x=1703078567;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jY13RsvR2p7nAVWn/STfQAiQyGaFoi3utwqqvjImNyk=;
-        b=kAnlu9lxFzgnTjyRkdMzc7v775ZCTlgyVIOlILEn/rw61u/zcCOeLZAwJb2ZtgfIEL
-         2GEt7NUPRWsnZ8urX50QhdmeaqaLscmsxtE9oG7HtIvH0Ysd3g/1u/WbLk+1X5HpyX5n
-         vj+k/qUpZUoCe5Ab9KfviXnJ2oxfq+qpce8y+INDTIV9cBc4GZ8as9Kp8pjB6cHK7sDk
-         UnfyxXkjnTTeJzJU90K+etw8LNLxu9S2S5Y2RWLN7y2l2q9R/dxKhTOLPn7nt2SVMcRC
-         YpI8VxyZRanJGjju7I/hmzMMuIOvj61szQFrwEx9wW7LnYUOTQ3ShC9gzKcjWeqUYB+O
-         +IUw==
-X-Gm-Message-State: AOJu0YwBLzVGvYlVE4D23jhIrbeHrj8PPoc2oPsliKovBv+sgNAXpL2n
-	PN+vaCtdhVYlveevO55JE0WYXw==
-X-Google-Smtp-Source: AGHT+IFNIB8ZVVFyMT1ctnUHjs97JWr+gn9ZrulTqN7ITxPsUO3rpI/TAHzPGq9CbL5OwD8wPmSpAw==
-X-Received: by 2002:a05:600c:3556:b0:40b:4c54:3d78 with SMTP id i22-20020a05600c355600b0040b4c543d78mr3882194wmq.28.1702473767093;
-        Wed, 13 Dec 2023 05:22:47 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id s5-20020a05600c384500b0040b632f31d2sm20693616wmr.5.2023.12.13.05.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 05:22:46 -0800 (PST)
-Date: Wed, 13 Dec 2023 16:22:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] usb: fotg210-hcd: delete an incorrect bounds test
-Message-ID: <ZXmwIwHe35wGfgzu@suswa>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VSyAHxf/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB23A91;
+	Wed, 13 Dec 2023 05:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702473977; x=1734009977;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+kY9QgK8FMlrrYySDrLuoBvhnlDhlG8yb7Ov4BOpYak=;
+  b=VSyAHxf/26Hqkn6itmmPpCqxKT/qSI05IMChQYkrM30byIJOIA1hvXeQ
+   JdDj6/JYCfsuULKi97M1IkjpW5rXFd0X0vcEyYRYbUgpifNfSZ7nhsK//
+   uXRqtcr/AYs19eyabYADXxxTpl18K3A6D+W/JS2IyrUhgD6l4/Vll1S1q
+   xjiOIX05GPa0GdhDtzf6JgPmFyuiFVoQIrPrftQh9FY79ZalticR/PYPm
+   iu5Ob/M5zx9F9Oe1SnbnWD9aIlxeCUhffv9P3eDykV56HkhuKPhKxu5Xf
+   iv0ZisMojr8+4GzAq7tQkg9VdubpNKftLjMPsFj0GSx4Z6oLi/AayJ/JK
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="1818080"
+X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
+   d="scan'208";a="1818080"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 05:26:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="773949973"
+X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
+   d="scan'208";a="773949973"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.212.246]) ([10.254.212.246])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 05:26:12 -0800
+Message-ID: <9d30d670-d4ac-4af1-9177-88fde952ed3e@linux.intel.com>
+Date: Wed, 13 Dec 2023 21:26:09 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, dan.carpenter@linaro.org,
+ kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH] iommu/sva: Fix memory leak in iommu_sva_bind_device()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20231213111450.2487861-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20231213111450.2487861-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Here "temp" is the number of characters that we have written and "size"
-is the size of the buffer.  The intent was clearly to say that if we have
-written to the end of the buffer then stop.
+On 2023/12/13 19:14, Harshit Mogalapalli wrote:
+> Free the handle when the domain allocation fails before unlocking and
+> returning.
+> 
+> Fixes: 092edaddb660 ("iommu: Support mm PASID 1:n with sva domains")
+> Signed-off-by: Harshit Mogalapalli<harshit.m.mogalapalli@oracle.com>
 
-However, for that to work the comparison should have been done on the
-original "size" value instead of the "size -= temp" value.  Not only
-will that not trigger when we want to, but there is a small chance that
-it will trigger incorrectly before we want it to and we break from the
-loop slightly earlier than intended.
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-This code was recently changed from using snprintf() to scnprintf().  With
-snprintf() we likely would have continued looping and passed a negative
-size parameter to snprintf().  This would have triggered an annoying
-WARN().  Now that we have converted to scnprintf() "size" will never
-drop below 1 and there is no real need for this test.  We could change
-the condition to "if (temp <= 1) goto done;" but just deleting the test
-is cleanest.
-
-Fixes: 7d50195f6c50 ("usb: host: Faraday fotg210-hcd driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Lee Jones <lee@kernel.org>
----
-v2: Use the correct Fixes tag.  Add Reviewed-by tags.
-
- drivers/usb/fotg210/fotg210-hcd.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/usb/fotg210/fotg210-hcd.c b/drivers/usb/fotg210/fotg210-hcd.c
-index b2f8b53cc8ef..8c5aaf860635 100644
---- a/drivers/usb/fotg210/fotg210-hcd.c
-+++ b/drivers/usb/fotg210/fotg210-hcd.c
-@@ -426,8 +426,6 @@ static void qh_lines(struct fotg210_hcd *fotg210, struct fotg210_qh *qh,
- 				td->urb);
- 		size -= temp;
- 		next += temp;
--		if (temp == size)
--			goto done;
- 	}
- 
- 	temp = scnprintf(next, size, "\n");
-@@ -435,7 +433,6 @@ static void qh_lines(struct fotg210_hcd *fotg210, struct fotg210_qh *qh,
- 	size -= temp;
- 	next += temp;
- 
--done:
- 	*sizep = size;
- 	*nextp = next;
- }
--- 
-2.42.0
+Best regards,
+baolu
