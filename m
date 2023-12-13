@@ -1,88 +1,131 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2YUche9"
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABF3B3;
-	Tue, 12 Dec 2023 13:55:55 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40c3f68b649so38636775e9.0;
-        Tue, 12 Dec 2023 13:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702418154; x=1703022954; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zy8FfFNpNs+NX51gAcRgfZF0RZVCxGvpcLqeDklhggA=;
-        b=F2YUche9VuF+Ei4sBTmAOiQr91telRKNJyCboEP07rYmJQTSSC3YicVd9T7lNo9g4n
-         PKuYU5TgzqB6sbg0zpCUycwbnPK1QJWi7rgHgQMS6bFfY1c8jJ+0Pw2yjnCWyWn7IBqW
-         14HUQZNCn9DiETUPWmyVKvOKf8zTWhtPeecnedHwTUZGKs77TkKnqL7X6MYSRiqS329o
-         pCc6oGjol+LEgocpjjPkQLq5JBH1aFK2M1WCqN4umBZdZ31Ck/r9L2QjJ6uiZKb/J1DJ
-         Pp+hsriCB1twStEhBy8kRVCfcGYzoE8dc/ty+wR3Ga5TCh2Rs+8xF6mnjsLbOQAlgjZh
-         8Ymg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702418154; x=1703022954;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zy8FfFNpNs+NX51gAcRgfZF0RZVCxGvpcLqeDklhggA=;
-        b=aRjYVInu7DcCDaFpe8ysXoWjKBtawswnM7r6dLYGLLFhMgv/RZqrvyoL+/SOuxwIhk
-         ka66UxUhV4UXR7HW2tJODhYgL2oXUnMmEdg1uAgk9OJK/Ky1fXBSuzRHw/ZdCCjkRu12
-         FcSuP16A8XQlqvPRlY3Jp0vZSXJBQI09sXa3oeqFKsiImhEaLx7YDFX6N7FdAEXujPvc
-         ZmekZGh2c8J+FxnbxMn86/y/4mTDCgU/U14Hx+nqNVQbG9rCt2o6Zyqa5h2/uIu6WYIZ
-         asyY+UXKc6F0KcTyj87K0/l3rwz7RcqqLnJho+BdZQtj/4esy3NARsKS7qNY/X2MMy3b
-         5yjQ==
-X-Gm-Message-State: AOJu0YxIT/eVeLf9VuK5pmoxQEhyUpk9MueTOV7inLQkamqT+zK1bvNv
-	0OsSlCb7VxblO6/vGmBgmgI=
-X-Google-Smtp-Source: AGHT+IFWa9taipty31yOr6nNvJiECuCxJgZFLbRfYP89EFnIEOzxUOphJnn6CKgmt57xRKS/PY6LEw==
-X-Received: by 2002:a05:600c:3ca3:b0:40c:4dc5:b308 with SMTP id bg35-20020a05600c3ca300b0040c4dc5b308mr1028228wmb.196.1702418153566;
-        Tue, 12 Dec 2023 13:55:53 -0800 (PST)
-Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id d13-20020a05600c34cd00b0040c496c64cfsm7615484wmq.12.2023.12.12.13.55.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Dec 2023 13:55:52 -0800 (PST)
-Message-ID: <b4f22a3b-3cab-4c0d-b4b9-700c58b62826@gmail.com>
-Date: Tue, 12 Dec 2023 21:55:51 +0000
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2+MQ2h+O"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304A5F4;
+	Tue, 12 Dec 2023 20:22:14 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dxoQv/mdVF3ZTn2FkOYXZLH+w+Bg+kMCf1m/q0JRnNCfh/ep+W/NLgDTRkY8wMntd2JaELwbu3ZTHOF26vaGHap5rAjCIGK2iC4TAPnDrspVS/goXDeh/FteRnFXJ5t/OabPLSpxOYc1dLxdszSl4vmx+zgqOYmwxOOonqYl/aSE9gyAnLBadVLYa37h2ZYcfmxeKeuneb1OCnFg46NzG66F8VSJKAPAAT0rZ/GKQgi//pFlVheeghbURovBz5hkENEkgkh84vWWxd8C+g/SJX8eq/EefyRC6f1FXbd37DnLL+N/htPyj70tWmtXIROSYwU+IDvyj3t9/DwmqA8qrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WBKXS3YfxWDgUQLQza8GdL1yH1nu1sHn0eMMeHfbY2w=;
+ b=aUgqaZMwrUyrkqEp0GSAkDbzTCgOwOUYX6BOTZPZPVPaujnuWDlz2ml8NCujf6FHWDL/0J91sEXF3UFUDKvt0VAOi+/v9rQsHIZtyX6Y9xKgn/g29sKuS/U3XiQQC5lMBDDoKPWqmbYjDDtSbfJzCstG+8xeCrjrUg2dGUh6amYl2VLPgv3JrEBVYDEpOYf2cGVTKc7B+SE7mBxshgQgBkiWWBiX7V+acHvstbni8hpiUwp09/95EOrLK8w2/TenJhUVloHFJAcZRM0oDwneX+uf7DapuT1qILCKmCtgRxtwPDi2Kf+1lLoM88ofr5r3YouxF2hWXzRGPzaC/UUYgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WBKXS3YfxWDgUQLQza8GdL1yH1nu1sHn0eMMeHfbY2w=;
+ b=2+MQ2h+OhWt3/Rh8hoSzf6rp2sLnj/LD+dWmGao9PWmorQF/sszCnicaSWbsoTipFU6Zl84KMPi96Vybim8XzcAOa/fZmT3eHdwZkk2aObXSRVrfPd22NoFb+vGOXIVRAHv4ReGNO6MDn57sochewNZNomLngm/YltXeyc3D/LI=
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com (2603:10b6:208:31f::11)
+ by MW6PR12MB7086.namprd12.prod.outlook.com (2603:10b6:303:238::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Wed, 13 Dec
+ 2023 04:22:09 +0000
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::783c:98fc:819f:9c7d]) by BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::783c:98fc:819f:9c7d%7]) with mapi id 15.20.7091.022; Wed, 13 Dec 2023
+ 04:22:09 +0000
+From: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, "Gangurde, Abhijit"
+	<abhijit.gangurde@amd.com>
+CC: "Gupta, Nipun" <Nipun.Gupta@amd.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] cdx: Unlock on error path in rescan_store()
+Thread-Topic: [PATCH] cdx: Unlock on error path in rescan_store()
+Thread-Index: AQHaLNx23xt+wQ/Wz0q04USQgdvg0rCmnc4Q
+Date: Wed, 13 Dec 2023 04:22:09 +0000
+Message-ID:
+ <BL1PR12MB5333F431C1E6BEB13CCD9E269D8DA@BL1PR12MB5333.namprd12.prod.outlook.com>
+References: <8c79956b-bf8c-4511-97cc-a16833a0630f@moroto.mountain>
+In-Reply-To: <8c79956b-bf8c-4511-97cc-a16833a0630f@moroto.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_ActionId=47ba61a0-17a4-471c-b7de-5f69a29992ac;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_ContentBits=0;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_Enabled=true;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_Method=Privileged;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_Name=Non-Business-AIP
+ 2.0;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_SetDate=2023-12-13T04:21:18Z;MSIP_Label_64e4cbe8-b4f6-45dc-bcba-6123dfd2d8bf_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5333:EE_|MW6PR12MB7086:EE_
+x-ms-office365-filtering-correlation-id: 4d0415a7-b1ab-4292-ca9e-08dbfb931281
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ XKVbbKDkGPrNoT0fF/P1Acyzw/wg24GZn9G245vcWv6t0Zwi6ShFE7o7o8I0HWIU26Xpf4jrwvv+g+kkOm90HCvO6WaLdgnsuSY/lJU83JIuzu3XKyR3l4iG8SKUnR8GmArhFcLjTA/0ZNiPHaSWWi36nydVCqg3BFOlOwkyO7TQbYV79Yg+F57rIe0Mjj3UguoOl8UCof8m1GY75xv7zYoVCh+4Zw6+yj20RS6SqfQLJ0WWxR5kO43nhNQeZRer/5JdLZ5eJQI4mP3JKhaGfVzoNaeSq7nIO9qIo5P140iElwe55VP0bWUPs6dyxVge3DR9Ms6RzfYkdSuKxbN5M6MCg938vxRWIxWOJ4NF4cTmek2F+9uoR6oILnPKhTW0nSP4y/148/oxkOcel3MT99dgS+qNJZhF6g93wXoQDltKa1VKf5xdPk53qOeasW8N74sXOoME12bJC02LorxgjBSOkBp0N1ZzzCOsyR0YViNF2JwVb8pxWrlvk+8VRyji3f/KI98vcR9VoLKCjrfSQQbY1DZnyR810ghg8B960e+zNKCEqBCiFjziBvnkpwUuhyvcmuIeRdMyZa5i9oMz2cdfLqEDZKQOanK/YFoTYSc=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5333.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(346002)(376002)(396003)(136003)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(41300700001)(4744005)(2906002)(52536014)(5660300002)(38070700009)(26005)(83380400001)(55016003)(478600001)(7696005)(66446008)(6506007)(9686003)(33656002)(53546011)(71200400001)(86362001)(38100700002)(122000001)(66946007)(66476007)(64756008)(54906003)(110136005)(66556008)(76116006)(6636002)(8936002)(4326008)(316002)(8676002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?NkQdVowan+I5pMUTUCEgQFYSa+j0ScII/XQY7lEvjFBnGn+VB4KAyICj80+b?=
+ =?us-ascii?Q?EJFUiKG32lMBHcDWVVC37HpKet/8AKcIKmG/pnoPm55Sdr+KkPfZulEI4jwQ?=
+ =?us-ascii?Q?jSpgLvc5SjDGjnFYj9zrPYmyH8fDGcQP3H+xovtF29gEoPCaX8jyRb0xOwuj?=
+ =?us-ascii?Q?m8fMbLZ8UwETG5KaN1qa5ZBv7r9T5VylV50b+b90RjFGUYRnw3Ow9CYrCIOG?=
+ =?us-ascii?Q?3hmB/DeyCNDaq87g/+JklWCu5colEOZTSnOD70dLQ2bQcoIXFti/CQkd/LEF?=
+ =?us-ascii?Q?ylotTYGmgOyVGZbbZmPqGBGisdr6tFGBvqYKUea9dtlCZDCWMWT2TvhoB14u?=
+ =?us-ascii?Q?WGFsKQCjug0HHQacJwD6cM5JzX4uWSP03CXExKc4sjo60VI+DRZJqJmC5yb1?=
+ =?us-ascii?Q?Kj2U4JNjoZXYPcmlsz7QFBojH9v+nwPF1tVtwohVZd2kynWXZp9dmlUNCVzD?=
+ =?us-ascii?Q?XFNuKcfMCa2EDMRSfSIzuz/Pt0ElYgPrUEkzgrLwcBdyBcaxY55GRdiez8m4?=
+ =?us-ascii?Q?jXGfH3ofWERP/FTrEBGCds7WKOF11PmoxlsusSpnQtaYSDtvvGJgB7lZZuM2?=
+ =?us-ascii?Q?UrtbkA+WfetpEpXOTpcMgYMGm8Ri/kTaWIf8tHnGjqFEtX+5RlfgV0igFsZN?=
+ =?us-ascii?Q?hSPnh74NlGxCqmCOxSyd3mivbpk/zGWhT6dYJ19iDjjru43OvTr53VwZ7bPh?=
+ =?us-ascii?Q?JPBDo5aQlNU9m3pQg2Vjb2ah5o6554VzZmIelcPJBOGU7diE4xuCk/TRYJWx?=
+ =?us-ascii?Q?M5CMlWcB1QQWnf/lVpRSWUPJONZGFwjFEmpO+gmgZjmPKRBRk5k9mVMiVxiO?=
+ =?us-ascii?Q?lMdJeIXu2XvrndEqnZRJIkirNjydhgo0CIZLp6rKDIIwkU5iPKE99ssAGe2h?=
+ =?us-ascii?Q?G01YxmW+ubHdxAbBm7eGelJcwOcLYUsP1tz0+lsiDjh+B+gT+ibV22eLGE3M?=
+ =?us-ascii?Q?0dT+E7j13Bpt7OvCqe+Kqg0VgrkZsm1e4Uw31ifMKQNUQ9JPkRVe4t7ne7Hh?=
+ =?us-ascii?Q?b3VjAUwrzFnZCKUtgz+IEeYsXE+of+YaxRgZjj0Sh+CfDCPStD6SxlESCoLV?=
+ =?us-ascii?Q?senP0N+ION8lzPgbmr08Ymba0F5Q6iDEtOK0wY+bgs37qTSUZ428ZLXRYAFz?=
+ =?us-ascii?Q?RKlKyM0SNrWNtbeQj8yPTCGMahzuK0yVaPWBy6p1IzWUBmxfo5zkEvV++Fns?=
+ =?us-ascii?Q?4S8NFAAONVUwY1m9IhtDQaZ5liNYrYZ0Iub5wc4dlkJTBABbivEy0wRXMkiA?=
+ =?us-ascii?Q?sQt3Hi9+7uWgKxvf0yZ0RNUSl/OXBnvluPw16fj7AJVLTMC+XcGalcqS/ikd?=
+ =?us-ascii?Q?dDOtYuhpscaX5YuiV40iceMdIt48I/9c8KCLwSco9pAfzRxQFOEH1Kzw6ptT?=
+ =?us-ascii?Q?wWHVz4OUW9nT3p+aH7liEKwArULF4L44Y0YfmmFUwMFPDSmB6N3WFlHtxeoD?=
+ =?us-ascii?Q?n+5C/L0GSWhT5GC9aRYS2uxwk853la3wvfd/M/WHJoFtikix88dWsdGoSjEw?=
+ =?us-ascii?Q?mc77Pg8ahAE76UgWdeqduZ0xrYxtrAyonoaU3LgCQGjSh/j8eOqw6U+HkkJ3?=
+ =?us-ascii?Q?TqDJC8n4Z5WeznQkSic=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mlx4: Fix spelling mistake: "mape" -> "map"
-Content-Language: en-US
-To: Simon Horman <horms@kernel.org>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231209225135.4055334-1-colin.i.king@gmail.com>
- <20231212203043.GF5817@kernel.org>
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <20231212203043.GF5817@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5333.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d0415a7-b1ab-4292-ca9e-08dbfb931281
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2023 04:22:09.2154
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OzzeypcuqmCdfiQ4cpMMREoAdYo2WkslNHXqfbHbj2qru2bVGK1srSppQ9uiU8PJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB7086
 
-On 12/12/2023 20:30, Simon Horman wrote:
-> On Sat, Dec 09, 2023 at 10:51:35PM +0000, Colin Ian King wrote:
->> There is a spelling mistake in a mlx4_err error message. Fix it.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Hi Colin,
-> 
-> I am guessing that you are focusing on error messages and other user-facing
-> spelling errors (perhaps you told me f2f in the hallway track at Kernel
-> Recipes).  But I do wonder if you have plans to address other spelling
-> errors in this driver. codespell flags many, including 'segements' in a
-> comment in the same file.
 
-Yes, there are so many trivial spelling mistakes and typos across the 
-kernel that I'm just focusing on user facing error messages for the moment.
 
-Colin
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Tuesday, December 12, 2023 2:50 PM
+> To: Gangurde, Abhijit <abhijit.gangurde@amd.com>
+> Cc: Gupta, Nipun <Nipun.Gupta@amd.com>; Agarwal, Nikhil
+> <nikhil.agarwal@amd.com>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; linux-kernel@vger.kernel.org; kernel-
+> janitors@vger.kernel.org
+> Subject: [PATCH] cdx: Unlock on error path in rescan_store()
+>=20
+> We added locking to this function but these two error paths were accident=
+ally
+> overlooked.
+>=20
+> Fixes: f0af81683466 ("cdx: Introduce lock to protect controller ops")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> 
-> In any case,
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-
+Acked-by: Nikhil Agarwal <Nikhil.agarwal@amd.com>
