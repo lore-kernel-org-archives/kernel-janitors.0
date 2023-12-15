@@ -1,62 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA43363;
-	Fri, 15 Dec 2023 00:58:32 +0000 (UTC)
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1024312E4E;
+	Fri, 15 Dec 2023 08:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAJgrFuq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2EF8C433C7;
-	Fri, 15 Dec 2023 00:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702601912;
-	bh=q56iNOgi3CDlqut6FMHVRVsKl4pDRDcxfCKmS0z4LCg=;
-	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-	b=sAJgrFuquMte/MZ0qR0ZkZ+lMGS95RuQWoOi+dieylTdd1TPtM++RpJi/l1SB03XL
-	 ZJgfdBDOItBWes52UfJ4zGswO1imr/fwpZFToZCpokAiVlXA7SRECdTSkYCuDIyGkG
-	 +J9TsKqb4aad/CELeliVvX8xr+8f9YkVzx4O9aeeXjEMP8vk6cVYvp2H/By2K2ZNdO
-	 IZ7Rje+t5V/+tPjmNOOAkvzl0TXQOYVgGHee1cBciw+ZaynCTGx0amwbDeLPf/cRDr
-	 UhI3eZXNfSLFTSpMqNkFQPwnMX9BkejN4n2v8uv7A04x8Ci1p28wNQ9iElzTpk1+X2
-	 bYVuLZsAVX1dA==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-202ffc46e15so69627fac.1;
-        Thu, 14 Dec 2023 16:58:32 -0800 (PST)
-X-Gm-Message-State: AOJu0YxHBGoHbQG7sx9WzMI9KvgTG1DNf4gf/CngLxWHpsvDLa1Kgx5z
-	L+wAyP9zNQgPPgPqlr5RbDwS4DdwQbe+q0WKNxY=
-X-Google-Smtp-Source: AGHT+IElLcw7GHVk+pThxMVyLR3DLJO3KFmq13E+jiAW6K+c6UnopC14Z5fxnwypmim0a9tLv3P0P/hOXSZju/K/t4M=
-X-Received: by 2002:a05:6871:691:b0:203:23ff:589b with SMTP id
- l17-20020a056871069100b0020323ff589bmr2654657oao.63.1702601911967; Thu, 14
- Dec 2023 16:58:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="A4gInUKe"
+Received: from 8bytes.org (p4ffe1e67.dip0.t-ipconnect.de [79.254.30.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 121431A230B;
+	Fri, 15 Dec 2023 09:07:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1702627632;
+	bh=DoLMZzXbG/nWSjrpA3fB74d7qoBKCRr4ZyF52F0eyOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4gInUKeDrLKf9Y9tGxAqDzDUok/NETBtA5ZDULDobcM2JfCceidpXN+T8+RPivxC
+	 dNiTqxRozUciZ1RqVxu5ylyUp5nMkCXD5J8fpudZGEYIWbC/MhxmcTmELSSJDn38hO
+	 ZX19amG6Inl0vqpkCbx+24iEbyWlkq+UrxBSNIjTHVDFm0VrDQfEVWPDEpCuxqqlAE
+	 DyE9oQE/7IetE179DH8ni/Y+DtrO24AeJklIJaq8+2f7UDDBhH/N73/7BRawyzW099
+	 E8acfqEfhl4mXr2bGWjJJIdnX4DVDRz1K2545et/jltidEFKPDW8MEnHCiGQtTzIH4
+	 XJPUGmDNS0uOg==
+Date: Fri, 15 Dec 2023 09:07:10 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+	error27@gmail.com
+Subject: Re: [PATCH] iommu/sva: Fix memory leak in iommu_sva_bind_device()
+Message-ID: <ZXwJLi9EnfdLVAHA@8bytes.org>
+References: <20231213111450.2487861-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:ac9:7f88:0:b0:507:5de0:116e with HTTP; Thu, 14 Dec 2023
- 16:58:31 -0800 (PST)
-In-Reply-To: <f9d067e773f1cb3e9d4af19f18e80d7d35a71153.1702587034.git.christophe.jaillet@wanadoo.fr>
-References: <f9d067e773f1cb3e9d4af19f18e80d7d35a71153.1702587034.git.christophe.jaillet@wanadoo.fr>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 15 Dec 2023 09:58:31 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9YiYZBcJNRBJVBoCW3Ase+3zzEhYcDmuDG0mgu=smRww@mail.gmail.com>
-Message-ID: <CAKYAXd9YiYZBcJNRBJVBoCW3Ase+3zzEhYcDmuDG0mgu=smRww@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: Remove usage of the deprecated ida_simple_xx() API
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231213111450.2487861-1-harshit.m.mogalapalli@oracle.com>
 
-2023-12-15 5:50 GMT+09:00, Christophe JAILLET <christophe.jaillet@wanadoo.fr>:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
->
-> This is less verbose.
->
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. So change a 0xFFFFFFFF into a 0xFFFFFFFE in
-> order to keep the same behavior.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
-Applied it to #ksmbd-for-next-next.
-Thanks for your patch!
+On Wed, Dec 13, 2023 at 03:14:50AM -0800, Harshit Mogalapalli wrote:
+>  drivers/iommu/iommu-sva.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+Applied, thanks.
