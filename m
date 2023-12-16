@@ -1,90 +1,164 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2192224B31;
-	Fri, 15 Dec 2023 11:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F6730346
+	for <kernel-janitors@vger.kernel.org>; Sat, 16 Dec 2023 13:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECdepV4+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702640448; x=1734176448;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=PbtD99dYPA9EHTb3b9FLxpZzIQ0yDjkgxxrR4eFWJYs=;
-  b=ECdepV4+vqHfM5ol045Ydpd97ykMs6H+rf16C7KwkAKza1uXKqxbzL9h
-   j4J27Fo4/TmgUVJRUlzd19eNeMxbVTg2cuv3diQ0knMfYSHpo6JfpnPGm
-   8MxDqlsshFd4LjF0pXg0iMhpT2N5ZMrE4Z0aBVpqT7vJEgt8Ak/u1W6CP
-   BtawFQuGbagsJrMBhr0AvyueZzQ+n37CGI4WCdEtbjpPMstKoDwfVhvqX
-   8eM8jFbqLLWGJg40bNKlc4UQ68vBq4uFq7dJrdycSE1reF112mTMl5oFr
-   YMPqbG02nrhbo7CRflPc06frAGJ5rZoxNJkRFyP7WehybwkoKk6CXr2k/
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="398056158"
-X-IronPort-AV: E=Sophos;i="6.04,278,1695711600"; 
-   d="scan'208";a="398056158"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 03:40:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="898113841"
-X-IronPort-AV: E=Sophos;i="6.04,278,1695711600"; 
-   d="scan'208";a="898113841"
-Received: from plchavex-mobl.amr.corp.intel.com ([10.249.34.221])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 03:40:45 -0800
-Date: Fri, 15 Dec 2023 13:40:40 +0200 (EET)
-From: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-cc: Henry Shi <henryshi2018@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] platform/x86: silicom-platform: Fix spelling
- mistake "platfomr" -> "platform"
-In-Reply-To: <20231215112746.13752-1-colin.i.king@gmail.com>
-Message-ID: <9e1d8d9-5d59-a29a-73b6-e7e04f98a96@linux.intel.com>
-References: <20231215112746.13752-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dUmPu60U"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id EUC8rL1Hz45wtEUC8rBRUA; Sat, 16 Dec 2023 13:55:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702731305;
+	bh=Fa9yeiiOVaCIdEktKvlcN06YmNgKcMNBNVzgkivBQlM=;
+	h=From:To:Cc:Subject:Date;
+	b=dUmPu60UhSREhpVkcpZzDVQ689zSfTU3NlsfqjtfvupSWZEOVLUDCpxKto0CSkdCS
+	 5Nnz1O4jZqfqJyS7xA65N7xp1/kmUYljw3x+tt45Q+MXE5cg9EsqdE9dgDSxhtWDXR
+	 5ppLEBsLOB+DvYlZOVH7klV4W/NwDXWvYLa0by1VEYun4K9rtAN1nBgZwQPFtY2Y8Q
+	 5RExd/d6mlgz104tZhfylYj2bgUpalB5Vc4RRgn1wUZ7H3/1NZYhjrRX5EdgAR2Ejd
+	 fw1JpwvUDvlszECy2petjXjIxYPQY4hb9TJES0C/R4AbPDK6PRLg1/a0xsKLhE9R3H
+	 X/1OmkPCMQwqA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 16 Dec 2023 13:55:05 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Shaohua Li <shli@fb.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: [PATCH] blk-throttle: Fix some potential string truncation in tg_prfill_limit()
+Date: Sat, 16 Dec 2023 13:54:56 +0100
+Message-Id: <0461f1d69c84cf5a98ae57012856dace757d319e.1702731206.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1452261007-1702640447=:2400"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+When compiled with W=1, we get:
+  block/blk-throttle.c: In function ‘tg_prfill_limit’:
+  block/blk-throttle.c:1539:74: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
+   1539 |                         snprintf(idle_time, sizeof(idle_time), " idle=%lu",
+        |                                                                          ^
+  block/blk-throttle.c:1539:25: note: ‘snprintf’ output between 8 and 27 bytes into a destination of size 26
+   1539 |                         snprintf(idle_time, sizeof(idle_time), " idle=%lu",
+        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1540 |                                 tg->idletime_threshold_conf);
+        |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  block/blk-throttle.c:1546:43: error: ‘%lu’ directive output may be truncated writing between 1 and 20 bytes into a region of size 17 [-Werror=format-truncation=]
+   1546 |                                 " latency=%lu", tg->latency_target_conf);
+        |                                           ^~~
+  block/blk-throttle.c:1546:33: note: directive argument in the range [0, 18446744073709551614]
+   1546 |                                 " latency=%lu", tg->latency_target_conf);
+        |                                 ^~~~~~~~~~~~~~
+  block/blk-throttle.c:1545:25: note: ‘snprintf’ output between 11 and 30 bytes into a destination of size 26
+   1545 |                         snprintf(latency_time, sizeof(latency_time),
+        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1546 |                                 " latency=%lu", tg->latency_target_conf);
+        |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
---8323329-1452261007-1702640447=:2400
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In order to fix it, remove all the intermediate buffers and write directly
+into the 'sf' seq_file.
 
-On Fri, 15 Dec 2023, Colin Ian King wrote:
+Fixes: ada75b6e5b2a ("blk-throttle: add interface to configure idle time threshold")
+Fixes: ec80991d6fc2 ("blk-throttle: add interface for per-cgroup target latency")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ block/blk-throttle.c | 52 +++++++++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 22 deletions(-)
 
-> There is a spelling mistake in a literal string. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/platform/x86/silicom-platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
-> index 84b92b3f9f4b..6ce43ccb3112 100644
-> --- a/drivers/platform/x86/silicom-platform.c
-> +++ b/drivers/platform/x86/silicom-platform.c
-> @@ -866,7 +866,7 @@ static int silicom_fan_control_read_labels(struct device *dev,
->  {
->  	switch (type) {
->  	case hwmon_fan:
-> -		*str = "Silicom_platfomr: Fan Speed";
-> +		*str = "Silicom_platform: Fan Speed";
->  		return 0;
->  	case hwmon_temp:
->  		*str = "Silicom_platform: Thermostat Sensor";
-> 
-
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-
-
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 16f5766620a4..470a8a4ed68e 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1494,11 +1494,8 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
+ {
+ 	struct throtl_grp *tg = pd_to_tg(pd);
+ 	const char *dname = blkg_dev_name(pd->blkg);
+-	char bufs[4][21] = { "max", "max", "max", "max" };
+ 	u64 bps_dft;
+ 	unsigned int iops_dft;
+-	char idle_time[26] = "";
+-	char latency_time[26] = "";
+ 
+ 	if (!dname)
+ 		return 0;
+@@ -1520,35 +1517,46 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
+ 	      tg->latency_target_conf == DFL_LATENCY_TARGET)))
+ 		return 0;
+ 
++	seq_printf(sf, "%s", dname);
++
++	seq_puts(sf, " rbps=");
+ 	if (tg->bps_conf[READ][off] != U64_MAX)
+-		snprintf(bufs[0], sizeof(bufs[0]), "%llu",
+-			tg->bps_conf[READ][off]);
++		seq_printf(sf, "%llu", tg->bps_conf[READ][off]);
++	else
++		seq_puts(sf, "max");
++
++	seq_puts(sf, " wbps=");
+ 	if (tg->bps_conf[WRITE][off] != U64_MAX)
+-		snprintf(bufs[1], sizeof(bufs[1]), "%llu",
+-			tg->bps_conf[WRITE][off]);
++		seq_printf(sf, "%llu", tg->bps_conf[WRITE][off]);
++	else
++		seq_puts(sf, "max");
++
++	seq_puts(sf, " riops=");
+ 	if (tg->iops_conf[READ][off] != UINT_MAX)
+-		snprintf(bufs[2], sizeof(bufs[2]), "%u",
+-			tg->iops_conf[READ][off]);
++		seq_printf(sf, "%u", tg->iops_conf[READ][off]);
++	else
++		seq_puts(sf, "max");
++
++	seq_puts(sf, " wiops=");
+ 	if (tg->iops_conf[WRITE][off] != UINT_MAX)
+-		snprintf(bufs[3], sizeof(bufs[3]), "%u",
+-			tg->iops_conf[WRITE][off]);
++		seq_printf(sf, "%u", tg->iops_conf[WRITE][off]);
++	else
++		seq_puts(sf, "max");
++
+ 	if (off == LIMIT_LOW) {
+-		if (tg->idletime_threshold_conf == ULONG_MAX)
+-			strcpy(idle_time, " idle=max");
++		seq_puts(sf, " idle=");
++		if (tg->idletime_threshold_conf != ULONG_MAX)
++			seq_printf(sf, "%lu", tg->idletime_threshold_conf);
+ 		else
+-			snprintf(idle_time, sizeof(idle_time), " idle=%lu",
+-				tg->idletime_threshold_conf);
++			seq_puts(sf, "max");
+ 
+-		if (tg->latency_target_conf == ULONG_MAX)
+-			strcpy(latency_time, " latency=max");
++		seq_puts(sf, " latency=");
++		if (tg->latency_target_conf != ULONG_MAX)
++			seq_printf(sf, "%lu", tg->latency_target_conf);
+ 		else
+-			snprintf(latency_time, sizeof(latency_time),
+-				" latency=%lu", tg->latency_target_conf);
++			seq_puts(sf, "max");
+ 	}
+ 
+-	seq_printf(sf, "%s rbps=%s wbps=%s riops=%s wiops=%s%s%s\n",
+-		   dname, bufs[0], bufs[1], bufs[2], bufs[3], idle_time,
+-		   latency_time);
+ 	return 0;
+ }
+ 
 -- 
- i.
+2.34.1
 
---8323329-1452261007-1702640447=:2400--
