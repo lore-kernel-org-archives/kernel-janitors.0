@@ -1,40 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E133C15
-	for <kernel-janitors@vger.kernel.org>; Sun, 17 Dec 2023 09:32:00 +0000 (UTC)
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB3E315B6
+	for <kernel-janitors@vger.kernel.org>; Sun, 17 Dec 2023 16:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D/WZjZHR"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gFDR1Tel"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id En1qrv0j2VbkuEn1rrXCqJ; Sun, 17 Dec 2023 10:01:46 +0100
+	id EuD7r5CEpltw6EuD7r5Vo4; Sun, 17 Dec 2023 17:41:50 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702803706;
-	bh=63aio74ELKT1uUEAVdiZLSilXdr/14V0hT/e6WkdVcc=;
+	s=t20230301; t=1702831310;
+	bh=qZLyEZlQ9TBd/oPoWGgLrvvH3X2lVDoFqEcZrhT5j2A=;
 	h=From:To:Cc:Subject:Date;
-	b=D/WZjZHR/ZFs86Xjnq0fLW7hnkiyAtRJPcFacZxIwfpGg2NoABPXaTG4pWCsgrUje
-	 MS0p3aGJ8V8gxSLGVuHlUdt2XGSq1KlbWMguUDocFBGSe5ozu2LUQ7sP/5Nhl7Us/U
-	 njMX7qO7w/9lEpRmz/NkfT/vXTTRPqfb4TkYq2ThLour4plxm9lClz3JrTLzs49ET/
-	 OFSR2XrfpSYriR5JP00PBvxRetv3eFzoaoKVdOCKkcJmYXKMnvUNYZwPEv+DAevSDs
-	 yPUKLnX+9m++Qw669t0I8jFpWaFH5UlN5Brt7i6yYNOZAiq7NQ3ALzoLIyqCVwz/Ru
-	 4dMbgmVx7t98w==
+	b=gFDR1Tel9cmLkNoOvF6uv/bH4Pk7LxrArkaq3XmmGVtM15zEInb9n37wSfmPAYOQV
+	 kkXe8QLSKSs48gsIQy1BV+6nP+arP7eEaXtEoNFmP42juv51L9twrC1moOo6RUTRfs
+	 G6STODuIbU2+U/lV0bzujvYcUPLBZ3/7bqFIjZMlW0OQd+1fCQLCOPqDrThjr+CJe8
+	 l4ic3virzVzwJIzHEy8b3h8e+ljqyy45u+pJeJk4Qft5anbsDIPwRGSMXd7yzJnYPx
+	 f94s2tiH0MlPTI5suTu6qPI6TjSQEjg9pp0usjpXhcYLAbilelK2Wm4gSI9YDWtgT4
+	 rdjcyX9Ryfu3w==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Dec 2023 10:01:46 +0100
+X-ME-Date: Sun, 17 Dec 2023 17:41:50 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/callthunks: Fix some potential string truncation in callthunks_debugfs_init()
-Date: Sun, 17 Dec 2023 10:01:41 +0100
-Message-Id: <8c2b24df3c077e55b2a4d91a7ffd08fa48e28d0a.1702803679.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] iio: buffer: Use IIO_SEPARATE instead of a hard-coded 0
+Date: Sun, 17 Dec 2023 17:41:45 +0100
+Message-Id: <1d17f57423172fcb9d9797cfe7c8282f356049c2.1702831285.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -42,42 +41,51 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When compiled with W=1, we get:
-  arch/x86/kernel/callthunks.c: In function ‘callthunks_debugfs_init’:
-  arch/x86/kernel/callthunks.c:394:35: error: ‘%lu’ directive writing between 1 and 10 bytes into a region of size 7 [-Werror=format-overflow=]
-    394 |                 sprintf(name, "cpu%lu", cpu);
-        |                                   ^~~
-  arch/x86/kernel/callthunks.c:394:31: note: directive argument in the range [0, 4294967294]
-    394 |                 sprintf(name, "cpu%lu", cpu);
-        |                               ^~~~~~~~
-  arch/x86/kernel/callthunks.c:394:17: note: ‘sprintf’ output between 5 and 14 bytes into a destination of size 10
-    394 |                 sprintf(name, "cpu%lu", cpu);
-        |
+Use an explicit IIO_SEPARATE instead of 0 for the 'shared_by' parameter
+when calling __iio_add_chan_devattr().
 
-So, give some more space to 'name' to silence the warning. (and fix the
-issue should a lucky one have a config with so many CPU!)
+For some reason, commit 3704432fb1fd ("iio: refactor info mask and ext_info
+attribute creation.") updated only 1 place out of 4.
+Update the remaining ones now.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/kernel/callthunks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/industrialio-buffer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/callthunks.c b/arch/x86/kernel/callthunks.c
-index cf7e5be1b844..26182a7d12b3 100644
---- a/arch/x86/kernel/callthunks.c
-+++ b/arch/x86/kernel/callthunks.c
-@@ -388,7 +388,7 @@ static int __init callthunks_debugfs_init(void)
- 	dir = debugfs_create_dir("callthunks", NULL);
- 	for_each_possible_cpu(cpu) {
- 		void *arg = (void *)cpu;
--		char name [10];
-+		char name[14];
- 
- 		sprintf(name, "cpu%lu", cpu);
- 		debugfs_create_file(name, 0644, dir, arg, &dfs_ops);
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 09c41e9ccf87..b581a7e80566 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -616,7 +616,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+ 				     &iio_show_fixed_type,
+ 				     NULL,
+ 				     0,
+-				     0,
++				     IIO_SEPARATE,
+ 				     &indio_dev->dev,
+ 				     buffer,
+ 				     &buffer->buffer_attr_list);
+@@ -629,7 +629,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+ 					     &iio_scan_el_show,
+ 					     &iio_scan_el_store,
+ 					     chan->scan_index,
+-					     0,
++					     IIO_SEPARATE,
+ 					     &indio_dev->dev,
+ 					     buffer,
+ 					     &buffer->buffer_attr_list);
+@@ -639,7 +639,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+ 					     &iio_scan_el_ts_show,
+ 					     &iio_scan_el_ts_store,
+ 					     chan->scan_index,
+-					     0,
++					     IIO_SEPARATE,
+ 					     &indio_dev->dev,
+ 					     buffer,
+ 					     &buffer->buffer_attr_list);
 -- 
 2.34.1
 
