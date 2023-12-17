@@ -1,91 +1,60 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB3E315B6
-	for <kernel-janitors@vger.kernel.org>; Sun, 17 Dec 2023 16:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358FB46BB0;
+	Sun, 17 Dec 2023 17:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gFDR1Tel"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id EuD7r5CEpltw6EuD7r5Vo4; Sun, 17 Dec 2023 17:41:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702831310;
-	bh=qZLyEZlQ9TBd/oPoWGgLrvvH3X2lVDoFqEcZrhT5j2A=;
-	h=From:To:Cc:Subject:Date;
-	b=gFDR1Tel9cmLkNoOvF6uv/bH4Pk7LxrArkaq3XmmGVtM15zEInb9n37wSfmPAYOQV
-	 kkXe8QLSKSs48gsIQy1BV+6nP+arP7eEaXtEoNFmP42juv51L9twrC1moOo6RUTRfs
-	 G6STODuIbU2+U/lV0bzujvYcUPLBZ3/7bqFIjZMlW0OQd+1fCQLCOPqDrThjr+CJe8
-	 l4ic3virzVzwJIzHEy8b3h8e+ljqyy45u+pJeJk4Qft5anbsDIPwRGSMXd7yzJnYPx
-	 f94s2tiH0MlPTI5suTu6qPI6TjSQEjg9pp0usjpXhcYLAbilelK2Wm4gSI9YDWtgT4
-	 rdjcyX9Ryfu3w==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Dec 2023 17:41:50 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: buffer: Use IIO_SEPARATE instead of a hard-coded 0
-Date: Sun, 17 Dec 2023 17:41:45 +0100
-Message-Id: <1d17f57423172fcb9d9797cfe7c8282f356049c2.1702831285.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqUkVX3N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3FDC433CD;
+	Sun, 17 Dec 2023 17:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702833703;
+	bh=rteGT3ifN232/KdA42Tg3cP+sus0e9KBkWdPlsCRq6s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QqUkVX3N7nS81q07JwigZhD8YlesknfNZifkMt7eMqMsNmhTZGA4hgU63L+klqxEU
+	 Bd0kWP/mPs6g0nOWIX9fgqcLnEowjKPc1ResGEXHbApqhwbPxm51b6mjXxPBhGtdWh
+	 tjmAYYiU+fPbhMO+vqdCv1MuE037Drt7eRkTE/UD6nkXh+98Y85k66aSuUoQfjM8q2
+	 6PDElsc8IdJnkzLVO3lsDBTbQz6q0JmvPWTCl7kdVFzamqF44MFAXcLQG9pI60gKgl
+	 tjGdOSgHfV73HiAL3rrUqyFfcd/MtQQJzo9XSfMSI/x0RKopWwmHYtvXMGjj9nZu0a
+	 sk/NS/Bodsbig==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Prevent error pointer dereference
+Date: Sun, 17 Dec 2023 11:20:59 -0600
+Message-ID: <170283349426.66089.17091761546670182222.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
+References: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Use an explicit IIO_SEPARATE instead of 0 for the 'shared_by' parameter
-when calling __iio_add_chan_devattr().
 
-For some reason, commit 3704432fb1fd ("iio: refactor info mask and ext_info
-attribute creation.") updated only 1 place out of 4.
-Update the remaining ones now.
+On Tue, 12 Dec 2023 12:21:51 +0300, Dan Carpenter wrote:
+> If "regmap" is an error pointer then calling regmap_update_bits() will
+> crash.  We only need to call regmap_update_bits() if we had written to
+> it earlier.
+> 
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/industrialio-buffer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 09c41e9ccf87..b581a7e80566 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -616,7 +616,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
- 				     &iio_show_fixed_type,
- 				     NULL,
- 				     0,
--				     0,
-+				     IIO_SEPARATE,
- 				     &indio_dev->dev,
- 				     buffer,
- 				     &buffer->buffer_attr_list);
-@@ -629,7 +629,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
- 					     &iio_scan_el_show,
- 					     &iio_scan_el_store,
- 					     chan->scan_index,
--					     0,
-+					     IIO_SEPARATE,
- 					     &indio_dev->dev,
- 					     buffer,
- 					     &buffer->buffer_attr_list);
-@@ -639,7 +639,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
- 					     &iio_scan_el_ts_show,
- 					     &iio_scan_el_ts_store,
- 					     chan->scan_index,
--					     0,
-+					     IIO_SEPARATE,
- 					     &indio_dev->dev,
- 					     buffer,
- 					     &buffer->buffer_attr_list);
+[1/1] clk: qcom: camcc-sc8280xp: Prevent error pointer dereference
+      commit: df14d214105e29d0e734aa36445888bd2b0dde78
+
+Best regards,
 -- 
-2.34.1
-
+Bjorn Andersson <andersson@kernel.org>
