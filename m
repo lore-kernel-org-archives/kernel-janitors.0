@@ -1,66 +1,83 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05911FA1;
-	Sun, 17 Dec 2023 03:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-28aea039fb4so2267537a91.1;
-        Sat, 16 Dec 2023 19:08:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702782533; x=1703387333;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1EYrUdsjmxHgO0jc3Qc76TYV2jlq9cGuy8R/Rh9fQFg=;
-        b=OpCX7+DvelKyvrQtF85g2G59SfM7UTXW5KrU4ixF109mi7Qs/jX3vg3QPkCEXMVgr5
-         +gEcM3UNgQe+BmM5KfCrSqqmamtGhCYNMffjBtWX2qKa7pTnlbS42GaKKyPfHxNKyPBv
-         y1i0j3iZc/+T6HNM+Gog5xNflSugPO1TkP+HJBQGl3fd5rEX24qnePI7TgtjV8SvYLgk
-         TR7asVw2nRpvirhNBhY+Ya7VEzN4dm64oY8yQfzwFneks8yhUruo4HOGxL4q57P6wafA
-         f0mKhm4goa6aHQrjRnIBEk11VssE2FhRiGT3nUtzMtqPl2own6CVS2OEkbv1hLtl240n
-         ci3g==
-X-Gm-Message-State: AOJu0YxyJbO37rDagwAFYEqdIlMwJlrDnK0KGRDCK7AQJTVT7wcwXi5D
-	Uvg+EqApAy75/yq9IwdzXUA=
-X-Google-Smtp-Source: AGHT+IF5rYgpBeHDXBSQrxqJuotxyyj8yMPFVM3tC4o8PGngNr83cp2TqMW/o3kOLUZg0E6/YKvLzg==
-X-Received: by 2002:a17:90a:9318:b0:28b:70b:1939 with SMTP id p24-20020a17090a931800b0028b070b1939mr6900001pjo.6.1702782532941;
-        Sat, 16 Dec 2023 19:08:52 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id l2-20020a17090a598200b0028ad7a2867asm8158604pji.17.2023.12.16.19.08.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Dec 2023 19:08:52 -0800 (PST)
-Date: Sun, 17 Dec 2023 12:08:50 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: kirin: Use devm_kasprintf()
-Message-ID: <20231217030850.GA1150418@rocinante>
-References: <1bad6879083a7d836c8a47418a0afa22485e8f69.1700294127.git.christophe.jaillet@wanadoo.fr>
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E133C15
+	for <kernel-janitors@vger.kernel.org>; Sun, 17 Dec 2023 09:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D/WZjZHR"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id En1qrv0j2VbkuEn1rrXCqJ; Sun, 17 Dec 2023 10:01:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702803706;
+	bh=63aio74ELKT1uUEAVdiZLSilXdr/14V0hT/e6WkdVcc=;
+	h=From:To:Cc:Subject:Date;
+	b=D/WZjZHR/ZFs86Xjnq0fLW7hnkiyAtRJPcFacZxIwfpGg2NoABPXaTG4pWCsgrUje
+	 MS0p3aGJ8V8gxSLGVuHlUdt2XGSq1KlbWMguUDocFBGSe5ozu2LUQ7sP/5Nhl7Us/U
+	 njMX7qO7w/9lEpRmz/NkfT/vXTTRPqfb4TkYq2ThLour4plxm9lClz3JrTLzs49ET/
+	 OFSR2XrfpSYriR5JP00PBvxRetv3eFzoaoKVdOCKkcJmYXKMnvUNYZwPEv+DAevSDs
+	 yPUKLnX+9m++Qw669t0I8jFpWaFH5UlN5Brt7i6yYNOZAiq7NQ3ALzoLIyqCVwz/Ru
+	 4dMbgmVx7t98w==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 17 Dec 2023 10:01:46 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/callthunks: Fix some potential string truncation in callthunks_debugfs_init()
+Date: Sun, 17 Dec 2023 10:01:41 +0100
+Message-Id: <8c2b24df3c077e55b2a4d91a7ffd08fa48e28d0a.1702803679.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1bad6879083a7d836c8a47418a0afa22485e8f69.1700294127.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+When compiled with W=1, we get:
+  arch/x86/kernel/callthunks.c: In function ‘callthunks_debugfs_init’:
+  arch/x86/kernel/callthunks.c:394:35: error: ‘%lu’ directive writing between 1 and 10 bytes into a region of size 7 [-Werror=format-overflow=]
+    394 |                 sprintf(name, "cpu%lu", cpu);
+        |                                   ^~~
+  arch/x86/kernel/callthunks.c:394:31: note: directive argument in the range [0, 4294967294]
+    394 |                 sprintf(name, "cpu%lu", cpu);
+        |                               ^~~~~~~~
+  arch/x86/kernel/callthunks.c:394:17: note: ‘sprintf’ output between 5 and 14 bytes into a destination of size 10
+    394 |                 sprintf(name, "cpu%lu", cpu);
+        |
 
-> Use devm_kasprintf() instead of hand writing it.
-> This saves the need of an intermediate buffer.
-> 
-> There was also no reason to use the _const() version of devm_kstrdup().
-> The string was known be not constant.
+So, give some more space to 'name' to silence the warning. (and fix the
+issue should a lucky one have a config with so many CPU!)
 
-Applied to controller/kirin, thank you!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/x86/kernel/callthunks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] PCI: kirin: Use devm_kasprintf() to dynamically allocate clock names
-      https://git.kernel.org/pci/pci/c/9f5077ef8f81
+diff --git a/arch/x86/kernel/callthunks.c b/arch/x86/kernel/callthunks.c
+index cf7e5be1b844..26182a7d12b3 100644
+--- a/arch/x86/kernel/callthunks.c
++++ b/arch/x86/kernel/callthunks.c
+@@ -388,7 +388,7 @@ static int __init callthunks_debugfs_init(void)
+ 	dir = debugfs_create_dir("callthunks", NULL);
+ 	for_each_possible_cpu(cpu) {
+ 		void *arg = (void *)cpu;
+-		char name [10];
++		char name[14];
+ 
+ 		sprintf(name, "cpu%lu", cpu);
+ 		debugfs_create_file(name, 0644, dir, arg, &dfs_ops);
+-- 
+2.34.1
 
-	Krzysztof
