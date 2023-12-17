@@ -1,112 +1,66 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D04C30645
-	for <kernel-janitors@vger.kernel.org>; Sat, 16 Dec 2023 16:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NbZWaK33"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id EY0pryseOIOhHEY0prH1vA; Sat, 16 Dec 2023 17:59:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702745980;
-	bh=gMk6oO0NWua7+I1geY3QhXhIuX72nIXC65+3OnaHd6U=;
-	h=From:To:Cc:Subject:Date;
-	b=NbZWaK33+MieCc2Fvs6kEZTUXhQ7Hxm7bgyD9XSl4LF2QdGjMahfX5Vy7ZnGAOY9N
-	 OSjvbaIzYsS2uoQ48s65kS6iraZrGTdQLOUVksR0YFnis5FfYr4MJhNBYY30BsZ3Cm
-	 gT/1gElgjCEUpEH8UVkmhfhA6YSdtOEeDcYYt/8ZSSFsLN+WhZApYqN3PkdansG7Ge
-	 YhKmzMm44LCp7RnDzr0N1rGqSt0NayKY3pc5eEnTwCIQEmS/62PxhZR49jspOobN/S
-	 O9WBuPi2r8c6rWALwllhDlNxlPuDA62B+wWF86TyuvNGzNgtOIFFADP9x/U2sHOb56
-	 pJNQEWzlGj8ew==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 16 Dec 2023 17:59:40 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	chrome-platform@lists.linux.dev
-Subject: [PATCH] platform/chrome/wilco_ec: Remove usage of the deprecated ida_simple_xx() API
-Date: Sat, 16 Dec 2023 17:59:38 +0100
-Message-Id: <898d9aa181a84f1d17725ca047004bad532c37e9.1702745959.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05911FA1;
+	Sun, 17 Dec 2023 03:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-28aea039fb4so2267537a91.1;
+        Sat, 16 Dec 2023 19:08:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702782533; x=1703387333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1EYrUdsjmxHgO0jc3Qc76TYV2jlq9cGuy8R/Rh9fQFg=;
+        b=OpCX7+DvelKyvrQtF85g2G59SfM7UTXW5KrU4ixF109mi7Qs/jX3vg3QPkCEXMVgr5
+         +gEcM3UNgQe+BmM5KfCrSqqmamtGhCYNMffjBtWX2qKa7pTnlbS42GaKKyPfHxNKyPBv
+         y1i0j3iZc/+T6HNM+Gog5xNflSugPO1TkP+HJBQGl3fd5rEX24qnePI7TgtjV8SvYLgk
+         TR7asVw2nRpvirhNBhY+Ya7VEzN4dm64oY8yQfzwFneks8yhUruo4HOGxL4q57P6wafA
+         f0mKhm4goa6aHQrjRnIBEk11VssE2FhRiGT3nUtzMtqPl2own6CVS2OEkbv1hLtl240n
+         ci3g==
+X-Gm-Message-State: AOJu0YxyJbO37rDagwAFYEqdIlMwJlrDnK0KGRDCK7AQJTVT7wcwXi5D
+	Uvg+EqApAy75/yq9IwdzXUA=
+X-Google-Smtp-Source: AGHT+IF5rYgpBeHDXBSQrxqJuotxyyj8yMPFVM3tC4o8PGngNr83cp2TqMW/o3kOLUZg0E6/YKvLzg==
+X-Received: by 2002:a17:90a:9318:b0:28b:70b:1939 with SMTP id p24-20020a17090a931800b0028b070b1939mr6900001pjo.6.1702782532941;
+        Sat, 16 Dec 2023 19:08:52 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id l2-20020a17090a598200b0028ad7a2867asm8158604pji.17.2023.12.16.19.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Dec 2023 19:08:52 -0800 (PST)
+Date: Sun, 17 Dec 2023 12:08:50 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: kirin: Use devm_kasprintf()
+Message-ID: <20231217030850.GA1150418@rocinante>
+References: <1bad6879083a7d836c8a47418a0afa22485e8f69.1700294127.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1bad6879083a7d836c8a47418a0afa22485e8f69.1700294127.git.christophe.jaillet@wanadoo.fr>
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
+Hello,
 
-This is less verbose.
+> Use devm_kasprintf() instead of hand writing it.
+> This saves the need of an intermediate buffer.
+> 
+> There was also no reason to use the _const() version of devm_kstrdup().
+> The string was known be not constant.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/platform/chrome/wilco_ec/event.c     | 4 ++--
- drivers/platform/chrome/wilco_ec/telemetry.c | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Applied to controller/kirin, thank you!
 
-diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-index f80a7c83cfba..13291fb4214e 100644
---- a/drivers/platform/chrome/wilco_ec/event.c
-+++ b/drivers/platform/chrome/wilco_ec/event.c
-@@ -495,7 +495,7 @@ static int event_device_add(struct acpi_device *adev)
- free_dev_data:
- 	hangup_device(dev_data);
- free_minor:
--	ida_simple_remove(&event_ida, minor);
-+	ida_free(&event_ida, minor);
- 	return error;
- }
- 
-@@ -504,7 +504,7 @@ static void event_device_remove(struct acpi_device *adev)
- 	struct event_device_data *dev_data = adev->driver_data;
- 
- 	cdev_device_del(&dev_data->cdev, &dev_data->dev);
--	ida_simple_remove(&event_ida, MINOR(dev_data->dev.devt));
-+	ida_free(&event_ida, MINOR(dev_data->dev.devt));
- 	hangup_device(dev_data);
- }
- 
-diff --git a/drivers/platform/chrome/wilco_ec/telemetry.c b/drivers/platform/chrome/wilco_ec/telemetry.c
-index 253098bace63..b7c616f3d179 100644
---- a/drivers/platform/chrome/wilco_ec/telemetry.c
-+++ b/drivers/platform/chrome/wilco_ec/telemetry.c
-@@ -372,7 +372,7 @@ static int telem_device_probe(struct platform_device *pdev)
- 
- 	dev_data = kzalloc(sizeof(*dev_data), GFP_KERNEL);
- 	if (!dev_data) {
--		ida_simple_remove(&telem_ida, minor);
-+		ida_free(&telem_ida, minor);
- 		return -ENOMEM;
- 	}
- 
-@@ -393,7 +393,7 @@ static int telem_device_probe(struct platform_device *pdev)
- 	error = cdev_device_add(&dev_data->cdev, &dev_data->dev);
- 	if (error) {
- 		put_device(&dev_data->dev);
--		ida_simple_remove(&telem_ida, minor);
-+		ida_free(&telem_ida, minor);
- 		return error;
- 	}
- 
-@@ -405,7 +405,7 @@ static void telem_device_remove(struct platform_device *pdev)
- 	struct telem_device_data *dev_data = platform_get_drvdata(pdev);
- 
- 	cdev_device_del(&dev_data->cdev, &dev_data->dev);
--	ida_simple_remove(&telem_ida, MINOR(dev_data->dev.devt));
-+	ida_free(&telem_ida, MINOR(dev_data->dev.devt));
- 	put_device(&dev_data->dev);
- }
- 
--- 
-2.34.1
+[1/1] PCI: kirin: Use devm_kasprintf() to dynamically allocate clock names
+      https://git.kernel.org/pci/pci/c/9f5077ef8f81
 
+	Krzysztof
