@@ -1,60 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358FB46BB0;
-	Sun, 17 Dec 2023 17:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C3A5392;
+	Mon, 18 Dec 2023 01:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqUkVX3N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3FDC433CD;
-	Sun, 17 Dec 2023 17:21:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Djqa4ubR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F77C433C9;
+	Mon, 18 Dec 2023 01:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702833703;
-	bh=rteGT3ifN232/KdA42Tg3cP+sus0e9KBkWdPlsCRq6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QqUkVX3N7nS81q07JwigZhD8YlesknfNZifkMt7eMqMsNmhTZGA4hgU63L+klqxEU
-	 Bd0kWP/mPs6g0nOWIX9fgqcLnEowjKPc1ResGEXHbApqhwbPxm51b6mjXxPBhGtdWh
-	 tjmAYYiU+fPbhMO+vqdCv1MuE037Drt7eRkTE/UD6nkXh+98Y85k66aSuUoQfjM8q2
-	 6PDElsc8IdJnkzLVO3lsDBTbQz6q0JmvPWTCl7kdVFzamqF44MFAXcLQG9pI60gKgl
-	 tjGdOSgHfV73HiAL3rrUqyFfcd/MtQQJzo9XSfMSI/x0RKopWwmHYtvXMGjj9nZu0a
-	 sk/NS/Bodsbig==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Prevent error pointer dereference
-Date: Sun, 17 Dec 2023 11:20:59 -0600
-Message-ID: <170283349426.66089.17091761546670182222.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
-References: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
+	s=k20201202; t=1702864008;
+	bh=Ex9NugQNN6ego8hmaqk9sn4T6nhpkFc8aBfpNboPrBA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Djqa4ubRaSZfMEaO5Vhf9l0FQXamjRU+B1YxuUJW8HDJ64panAs5cLThatfEUx30j
+	 hZUtcSh0VGSBIWCDFJ532AGEfEN8dgV17g5VwyQvkTyrdsEWVQ4RDxpDWF1232kzlR
+	 MWhJWF9Ql2GVVDPW5X4UkGCQLlFtGOunlva7NE/ystB2KPSWP8RNtCkFNJmIZdBjNF
+	 oo7GB4FdmNFrEQVzFs4ZlNNNvsJCfIQtbZdkJhogoi/TlYNJcVtR6Gv+2opI+jGurL
+	 +WdsALC4ylrazhAScOLIAQrD4r/eeZXl8+ac3C5UEnvEei6gWz6eqOOWeBrnxjyg6C
+	 2zfYAWDocyzwA==
+Message-ID: <9bebc25ad3c40640faa9df3d036f2326.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231101031633.996124-1-suhui@nfschina.com>
+References: <20231101031633.996124-1-suhui@nfschina.com>
+Subject: Re: [PATCH v2] clk: si5341: fix an error code problem in si5341_output_clk_set_rate
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Su Hui <suhui@nfschina.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Su Hui <suhui@nfschina.com>, mike.looijmans@topic.nl, mturquette@baylibre.com
+Date: Sun, 17 Dec 2023 17:46:45 -0800
+User-Agent: alot/0.10
 
+Quoting Su Hui (2023-10-31 20:16:36)
+> regmap_bulk_write() return zero or negative error code, return the value
+> of regmap_bulk_write() rather than '0'.
+>=20
+> Fixes: 3044a860fd09 ("clk: Add Si5341/Si5340 driver")
+> Acked-by: Mike Looijmans <mike.looijmans@topic.nl>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
 
-On Tue, 12 Dec 2023 12:21:51 +0300, Dan Carpenter wrote:
-> If "regmap" is an error pointer then calling regmap_update_bits() will
-> crash.  We only need to call regmap_update_bits() if we had written to
-> it earlier.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] clk: qcom: camcc-sc8280xp: Prevent error pointer dereference
-      commit: df14d214105e29d0e734aa36445888bd2b0dde78
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Applied to clk-next
