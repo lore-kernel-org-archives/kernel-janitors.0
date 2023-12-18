@@ -1,117 +1,106 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bues.ch (bues.ch [80.190.117.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCD13D577;
-	Mon, 18 Dec 2023 15:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m28TP9DS"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a23566e91d5so155376266b.0;
-        Mon, 18 Dec 2023 07:04:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702911847; x=1703516647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6foNHtyZRIJvWBTng3wISgU2MfZKVaXRv3N1MNnrMQ=;
-        b=m28TP9DSddRi5til0MsICR6zvrahO27MrcAlHQ9YSGssvofIAGhz/UCiu0tiaTjg0Q
-         3xpGwLuZIALP+XnWPB1dgBMUNQ4dq5mXKN4QKjGQdIjij4pvMMvH1BiwfHqulKbAlPuK
-         Pf3D8BBGCV+zlTDS05y4EqFFU40EFtZOBEKfzsUq9MuBBb91k9ii71U1WsdGAU0tDObs
-         U7tWS5gIq2lJm45HkHR/cmCbaXxNtiI5i4g3/X3dY4vEDW58uSLCq9Z1+sL3K+/voQ+v
-         aWqCiZ2m1VjEsUxY2nQDLbCgwhsuNF1T9PBtRtUHOLSZb0iDVmYDNqZaIp96NKoTpW2P
-         U7cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702911847; x=1703516647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u6foNHtyZRIJvWBTng3wISgU2MfZKVaXRv3N1MNnrMQ=;
-        b=KsLv0ksuERdHNSvD+Bk+ZYfkE+j2cTWE+h8QIVYoSj9ev3yvpG24GWM4a7Z9WS3p55
-         Gf5BD4oa0dN1YD8M1Fpm5gPIOLpZ+R/fYNBGcR+2rOTsIrF9MLkFPtMMorQ62JSqVm8k
-         sYNNKngn9WcAqVEP4dZz2PU3XiZTRhofd+gNlYJx3IRT2EJGMBrT0zQIIrXgSdAeX9W3
-         BOq/g1/ZL4FdN+lFQKN4PLwbdQt5WuDZCTdMDKaSsiUx1kFuZfGGcWHegHxbrrms33DR
-         vbY2jpAjEnXbC8hK2ldTMKGwp1s6gul+wJ84yHQzCSnGD1mi57RtVORROIlzAVPQkDGp
-         Xc/w==
-X-Gm-Message-State: AOJu0Yw5v+JXaXtPJBLlcg+2MKA/rCF09l8Gqy8HPqwYqhDeo6o5UeJK
-	XlXhXHP/GEqVvHhwANgO94qHFeI6nAgZi4nY064=
-X-Google-Smtp-Source: AGHT+IGpphjTUnAqLE+hQAj1yH6sXJlSe/0XhogaISq5mrc01gwsmD6+HxIIpJz2iD0xeckt1xV5LbaknP1N/+M7VSo=
-X-Received: by 2002:a17:906:b203:b0:a19:a19b:424a with SMTP id
- p3-20020a170906b20300b00a19a19b424amr5114987ejz.181.1702911846667; Mon, 18
- Dec 2023 07:04:06 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756731E4AF;
+	Mon, 18 Dec 2023 16:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
+Received: by bues.ch with esmtpsa (Exim 4.96)
+	(envelope-from <m@bues.ch>)
+	id 1rFGIr-000A6d-38;
+	Mon, 18 Dec 2023 17:17:13 +0100
+Date: Mon, 18 Dec 2023 17:16:29 +0100
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg
+ <johannes@sipsolutions.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Larry Finger <Larry.Finger@lwfinger.net>, Arend van
+ Spriel <aspriel@gmail.com>, Franky Lin <franky.lin@broadcom.com>, Hante
+ Meuleman <hante.meuleman@broadcom.com>, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, b43-dev@lists.infradead.org,
+ brcm80211-dev-list.pdl@broadcom.com, SHA-cyfmac-dev-list@infineon.com,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcma,ssb: simplify dependency handling for bcma and ssb
+ drivers
+Message-ID: <20231218171629.5cf95fd3@barney>
+In-Reply-To: <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
+References: <20231218115802.15859-1-lukas.bulwahn@gmail.com>
+ <26207725d5025318b831dd5a5feca67248aaa221.camel@sipsolutions.net>
+ <87o7ensgjv.fsf@kernel.org>
+ <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231218115802.15859-1-lukas.bulwahn@gmail.com>
- <26207725d5025318b831dd5a5feca67248aaa221.camel@sipsolutions.net> <87o7ensgjv.fsf@kernel.org>
-In-Reply-To: <87o7ensgjv.fsf@kernel.org>
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 18 Dec 2023 16:03:54 +0100
-Message-ID: <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
-Subject: Re: [PATCH] bcma,ssb: simplify dependency handling for bcma and ssb drivers
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Larry Finger <Larry.Finger@lwfinger.net>, Arend van Spriel <aspriel@gmail.com>, 
-	Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, 
-	Michael Buesch <m@bues.ch>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	b43-dev@lists.infradead.org, brcm80211-dev-list.pdl@broadcom.com, 
-	SHA-cyfmac-dev-list@infineon.com, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Q7GEDofx/o0YmJSgzfmcjUH";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+
+--Sig_/Q7GEDofx/o0YmJSgzfmcjUH
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 18, 2023 at 3:59=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote=
-:
->
-> Johannes Berg <johannes@sipsolutions.net> writes:
->
-> > On Mon, 2023-12-18 at 12:58 +0100, Lukas Bulwahn wrote:
-> >
-> > Dunno, I'm not super involved with this but ...
-> >
-> >> +++ b/drivers/bcma/Kconfig
-> >> @@ -1,12 +1,7 @@
-> >>  # SPDX-License-Identifier: GPL-2.0
-> >> -config BCMA_POSSIBLE
-> >> -    bool
-> >> -    depends on HAS_IOMEM && HAS_DMA
-> >> -    default y
-> >> -
-> >>  menuconfig BCMA
-> >>      tristate "Broadcom specific AMBA"
-> >> -    depends on BCMA_POSSIBLE
-> >> +    depends on HAS_IOMEM && HAS_DMA
-> >
-> > [...]
-> >>  config BRCMSMAC
-> >>      tristate "Broadcom IEEE802.11n PCIe SoftMAC WLAN driver"
-> >> -    depends on MAC80211
-> >> -    depends on BCMA_POSSIBLE
-> >> +    depends on HAS_IOMEM && HAS_DMA && MAC80211
-> >>      select BCMA
-> >
-> > to me it kind of seems more obvious for example in this case to say
-> > "depend on BCMA_POSSIBLE and select BCMA" rather than open-coding the
-> > BCMA dependencies both here and in BCMA? Now granted, they're rather
-> > unlikely to _change_, but it still seems more obvious?
->
-> I was thinking the same. Lukas, is there a specific reason why you want
-> to change this or this just something you noticed by chance?
->
+Hi Lukas,
 
-I just noticed this by chance---well, I was wondering what these
-config symbols were doing in my kernel build configuration (they are
-actually in every config). While reading through the code, I was
-confused on what the dependencies were trying to tell me, as the
-config symbols and conditions seemed to repeat over and over in
-different places.
+thanks for your patch.
 
-I thought it was worth a clean up and this was the patch I came up
-with in the end.
+On Mon, 18 Dec 2023 16:03:54 +0100
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-Lukas
+> While reading through the code, I was
+> confused on what the dependencies were trying to tell me, as the
+> config symbols and conditions seemed to repeat over and over in
+> different places.
+
+The {SSB,BCMA}_POSSIBLE constants are defining the conditions under
+which it is possible to 'select' SSB/BCMA.
+SSB and BCMA are usually 'select'ed rather than depended on, for better
+user experience while configuring.
+
+> I thought it was worth a clean up and this was the patch I came up
+> with in the end.
+
+IMO this does not clean up or simplify the code.
+It rather makes it more complicated to maintain.
+
+The idea behind the POSSIBLE constants it to _not_ spread the
+conditions all across the drivers. That has significant advantages, if
+the condition changes.
+
+I also don't see the redundancy in the resulting dependency conditions
+as a bad thing. It's better if every option explicitly defines its
+dependencies rather than expecting something else to depend on it.
+That's fragile.
+
+NAK from me.
+
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
+
+--Sig_/Q7GEDofx/o0YmJSgzfmcjUH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmWAcF0ACgkQ9TK+HZCN
+iw5l7BAAgpdZdzT7v2hPcLw7K9DpHS31i4y/GGlvC4rtJuMzznJNJQGs1MQDH5qM
+xo1mioY+gzeH17iRop1VCJynuzBTwOkJNz0cKPq6Iia2dS1z+YNZWwaJp0jvF0aQ
+0OQO+rzX+z2ydUmiE9jSbeS1CO9l1Pk9pvKBQhp/Axg/fq1Om+MOQSdngezPdH/7
+pgJnhM7XYnEy5xyKEjB5yPzcR3LuCC5NPnq964J7/+Y4A5HfWGtQBKLO6F0+XWBF
+xeUlNl7uvmXilz6MwSsQkiIoSmkQBJKQwpYXV1uXi4VXiz7man3cY+ZuayqlyuVL
+JfgM0pbmldVPiiXTeL0ds+LuZm+1/xiXQtmoWNp4O1VxBR+XdPKoDxL2nkC4GB4W
+Okq2+TA6n1WKPIrI4WAdhASvw+skaIx8HawIoM4jhGrc4tFaX93DA80gNOQuJ1Yt
+PH752DI0wcM03qnYoPIrkcfYxrdX/h7sYEY8BCYJfetRjWwSsZT8y7CtVz47qszE
+WhwU2E1sMSLM5rHV+W8t8RXmvzZEo2AUMNDQ2V1PFtn/FALO52cQ3HvwbOee1OjE
+HZeMAJE3m2g5xxm2O/omOXSPwm8H7QE6DhPhA3JmrSSqjFv1vSVEx/3n/DuX8DmG
+JkmrPATbaZbRYQFthprmECBBXcOgnAhCa4ZDDja1+/lL3q0ArCY=
+=fqXM
+-----END PGP SIGNATURE-----
+
+--Sig_/Q7GEDofx/o0YmJSgzfmcjUH--
