@@ -1,106 +1,152 @@
-Received: from bues.ch (bues.ch [80.190.117.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756731E4AF;
-	Mon, 18 Dec 2023 16:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1rFGIr-000A6d-38;
-	Mon, 18 Dec 2023 17:17:13 +0100
-Date: Mon, 18 Dec 2023 17:16:29 +0100
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg
- <johannes@sipsolutions.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <zajec5@gmail.com>, "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Larry Finger <Larry.Finger@lwfinger.net>, Arend van
- Spriel <aspriel@gmail.com>, Franky Lin <franky.lin@broadcom.com>, Hante
- Meuleman <hante.meuleman@broadcom.com>, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, b43-dev@lists.infradead.org,
- brcm80211-dev-list.pdl@broadcom.com, SHA-cyfmac-dev-list@infineon.com,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcma,ssb: simplify dependency handling for bcma and ssb
- drivers
-Message-ID: <20231218171629.5cf95fd3@barney>
-In-Reply-To: <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
-References: <20231218115802.15859-1-lukas.bulwahn@gmail.com>
- <26207725d5025318b831dd5a5feca67248aaa221.camel@sipsolutions.net>
- <87o7ensgjv.fsf@kernel.org>
- <CAKXUXMxh3rM8da9kJG_=Sy8fQqqf7f8xXaHDHPLvpvRiYg1e5w@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C935D5D739
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Dec 2023 17:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Ybtf4nWf"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40c256ffdbcso41845935e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Dec 2023 09:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=google; t=1702921849; x=1703526649; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Occqa1d1wrIZ9JrkFxA0ptrItrzkGFf6vJHCa/yFOBc=;
+        b=Ybtf4nWfX+W36bNomyQ67b8ig1z4ey95P3ksvnYWaLtD3j/TXLYm1iUB1lqPz+ZDoq
+         aksQun5dEdQiepFHG/jsKTKZphoJYsuOLKh5gbi2dbh3sDjYZZTMGwf48hMUDIaBGCoI
+         HqgoWG++SbhAJwKhibnNQAIGTKZ73gvcbKgG0IF+LCbia43uc1nkuuBPwaz6B7V8zPmt
+         E2K8KoYGFNPO0TOgydRakwzJwKxZ5XGx7qdXSv67gF7hxWyeF979+OliAifVRBFvuzWG
+         cppN/dlOd5cDW4JhQ+bEAR8Za9/gDGGBwizFrgPu/6+wtX/2KLrDR4M1T+ycfhTTEgtu
+         FwYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702921849; x=1703526649;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Occqa1d1wrIZ9JrkFxA0ptrItrzkGFf6vJHCa/yFOBc=;
+        b=dYpeYBILv43BND0t619ngcagfBxIzwbRwACY13MpAtlkpQBkGnhf3OCd4QBhB3oDNQ
+         7xV1x0QfTOHQuU2W9G7yLgbVPrEhETpr2xA5e7hnhOgWGV3zIKuWBD0UJVIyOowtGdv9
+         JbTlgsIFLnqAOCCOCDVqyS5YN9bcLgcUI2FEcKIbgyE4Cq/rRFS79lRb0Lu70XrATZYs
+         RvpwmyrlPmZWJIWSniWgmuJVsQOzFNK7qDEB7PqY5mYBsTuEXadKaCzwuCnxTPZiOA8d
+         BvlmR1h/cjR0/AS5K5c0y48mcwugN/vbUS+3eH8fArme0LcMb86J3uCrW5Z8SWGzQHru
+         nNMQ==
+X-Gm-Message-State: AOJu0YxRBWZraDh6a7zmmNEEsNXNfwEUumeK73BjVtmFuQFHWRrLtHmk
+	0KbKF7I4wX/MjapTqqqkXjoTPQ==
+X-Google-Smtp-Source: AGHT+IEzdWkqKi1MfYmTW3wl7a4FaBZpV6heiMEnBKo7jRC4v2GKBHRpFX/j1mba8zTFSD5PlUMeJg==
+X-Received: by 2002:a05:600c:a3af:b0:40c:2c36:2a23 with SMTP id hn47-20020a05600ca3af00b0040c2c362a23mr8185591wmb.180.1702921849029;
+        Mon, 18 Dec 2023 09:50:49 -0800 (PST)
+Received: from [10.83.37.178] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id ay35-20020a05600c1e2300b0040b2b38a1fasm43508366wmb.4.2023.12.18.09.50.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Dec 2023 09:50:48 -0800 (PST)
+Message-ID: <3ff06ca1-95ef-4b94-a6a7-1731fef40d8a@arista.com>
+Date: Mon, 18 Dec 2023 17:50:49 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Q7GEDofx/o0YmJSgzfmcjUH";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] selftests/net: Fix various spelling mistakes in
+ TCP-AO tests
+Content-Language: en-US
+To: Colin Ian King <colin.i.king@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20231218133022.321069-1-colin.i.king@gmail.com>
+From: Dmitry Safonov <dima@arista.com>
+In-Reply-To: <20231218133022.321069-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi Lukas,
+On 12/18/23 13:30, Colin Ian King wrote:
+> There are a handful of spelling mistakes in test messages in the
+> TCP-AIO selftests. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-thanks for your patch.
+Thank you, Colin.
 
-On Mon, 18 Dec 2023 16:03:54 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+The patch looks good to me, my grammar and typos - not so much :-)
 
-> While reading through the code, I was
-> confused on what the dependencies were trying to tell me, as the
-> config symbols and conditions seemed to repeat over and over in
-> different places.
+Reviewed-by: Dmitry Safonov <dima@arista.com>
 
-The {SSB,BCMA}_POSSIBLE constants are defining the conditions under
-which it is possible to 'select' SSB/BCMA.
-SSB and BCMA are usually 'select'ed rather than depended on, for better
-user experience while configuring.
+> ---
+>  tools/testing/selftests/net/tcp_ao/connect-deny.c      | 2 +-
+>  tools/testing/selftests/net/tcp_ao/lib/proc.c          | 4 ++--
+>  tools/testing/selftests/net/tcp_ao/setsockopt-closed.c | 2 +-
+>  tools/testing/selftests/net/tcp_ao/unsigned-md5.c      | 2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/tcp_ao/connect-deny.c b/tools/testing/selftests/net/tcp_ao/connect-deny.c
+> index 1ca78040d8b7..185a2f6e5ff3 100644
+> --- a/tools/testing/selftests/net/tcp_ao/connect-deny.c
+> +++ b/tools/testing/selftests/net/tcp_ao/connect-deny.c
+> @@ -55,7 +55,7 @@ static void try_accept(const char *tst_name, unsigned int port, const char *pwd,
+>  	err = test_wait_fd(lsk, timeout, 0);
+>  	if (err == -ETIMEDOUT) {
+>  		if (!fault(TIMEOUT))
+> -			test_fail("timeouted for accept()");
+> +			test_fail("timed out for accept()");
+>  	} else if (err < 0) {
+>  		test_error("test_wait_fd()");
+>  	} else {
+> diff --git a/tools/testing/selftests/net/tcp_ao/lib/proc.c b/tools/testing/selftests/net/tcp_ao/lib/proc.c
+> index 2322f4d4676d..2fb6dd8adba6 100644
+> --- a/tools/testing/selftests/net/tcp_ao/lib/proc.c
+> +++ b/tools/testing/selftests/net/tcp_ao/lib/proc.c
+> @@ -227,7 +227,7 @@ void netstat_print_diff(struct netstat *nsa, struct netstat *nsb)
+>  		}
+>  
+>  		if (nsb->counters_nr < nsa->counters_nr)
+> -			test_error("Unexpected: some counters dissapeared!");
+> +			test_error("Unexpected: some counters disappeared!");
+>  
+>  		for (j = 0, i = 0; i < nsb->counters_nr; i++) {
+>  			if (strcmp(nsb->counters[i].name, nsa->counters[j].name)) {
+> @@ -244,7 +244,7 @@ void netstat_print_diff(struct netstat *nsa, struct netstat *nsb)
+>  			j++;
+>  		}
+>  		if (j != nsa->counters_nr)
+> -			test_error("Unexpected: some counters dissapeared!");
+> +			test_error("Unexpected: some counters disappeared!");
+>  
+>  		nsb = nsb->next;
+>  		nsa = nsa->next;
+> diff --git a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> index 7e4601b3f6a3..a329f42f40ce 100644
+> --- a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> +++ b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> @@ -427,7 +427,7 @@ static void test_einval_del_key(void)
+>  
+>  	sk = prepare_defs(TCP_AO_DEL_KEY, &del);
+>  	del.set_current = 1;
+> -	setsockopt_checked(sk, TCP_AO_DEL_KEY, &del, ENOENT, "set non-exising current key");
+> +	setsockopt_checked(sk, TCP_AO_DEL_KEY, &del, ENOENT, "set non-existing current key");
+>  
+>  	sk = prepare_defs(TCP_AO_DEL_KEY, &del);
+>  	del.set_rnext = 1;
+> diff --git a/tools/testing/selftests/net/tcp_ao/unsigned-md5.c b/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
+> index 7cffde02d2be..14addfd46468 100644
+> --- a/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
+> +++ b/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
+> @@ -72,7 +72,7 @@ static void try_accept(const char *tst_name, unsigned int port,
+>  	err = test_wait_fd(lsk, timeout, 0);
+>  	if (err == -ETIMEDOUT) {
+>  		if (!fault(TIMEOUT))
+> -			test_fail("timeouted for accept()");
+> +			test_fail("timed out for accept()");
+>  	} else if (err < 0) {
+>  		test_error("test_wait_fd()");
+>  	} else {
 
-> I thought it was worth a clean up and this was the patch I came up
-> with in the end.
+Thanks,
+            Dmitry
 
-IMO this does not clean up or simplify the code.
-It rather makes it more complicated to maintain.
-
-The idea behind the POSSIBLE constants it to _not_ spread the
-conditions all across the drivers. That has significant advantages, if
-the condition changes.
-
-I also don't see the redundancy in the resulting dependency conditions
-as a bad thing. It's better if every option explicitly defines its
-dependencies rather than expecting something else to depend on it.
-That's fragile.
-
-NAK from me.
-
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmWAcF0ACgkQ9TK+HZCN
-iw5l7BAAgpdZdzT7v2hPcLw7K9DpHS31i4y/GGlvC4rtJuMzznJNJQGs1MQDH5qM
-xo1mioY+gzeH17iRop1VCJynuzBTwOkJNz0cKPq6Iia2dS1z+YNZWwaJp0jvF0aQ
-0OQO+rzX+z2ydUmiE9jSbeS1CO9l1Pk9pvKBQhp/Axg/fq1Om+MOQSdngezPdH/7
-pgJnhM7XYnEy5xyKEjB5yPzcR3LuCC5NPnq964J7/+Y4A5HfWGtQBKLO6F0+XWBF
-xeUlNl7uvmXilz6MwSsQkiIoSmkQBJKQwpYXV1uXi4VXiz7man3cY+ZuayqlyuVL
-JfgM0pbmldVPiiXTeL0ds+LuZm+1/xiXQtmoWNp4O1VxBR+XdPKoDxL2nkC4GB4W
-Okq2+TA6n1WKPIrI4WAdhASvw+skaIx8HawIoM4jhGrc4tFaX93DA80gNOQuJ1Yt
-PH752DI0wcM03qnYoPIrkcfYxrdX/h7sYEY8BCYJfetRjWwSsZT8y7CtVz47qszE
-WhwU2E1sMSLM5rHV+W8t8RXmvzZEo2AUMNDQ2V1PFtn/FALO52cQ3HvwbOee1OjE
-HZeMAJE3m2g5xxm2O/omOXSPwm8H7QE6DhPhA3JmrSSqjFv1vSVEx/3n/DuX8DmG
-JkmrPATbaZbRYQFthprmECBBXcOgnAhCa4ZDDja1+/lL3q0ArCY=
-=fqXM
------END PGP SIGNATURE-----
-
---Sig_/Q7GEDofx/o0YmJSgzfmcjUH--
