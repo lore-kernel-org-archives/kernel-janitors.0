@@ -1,115 +1,142 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50E83A1B6
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Dec 2023 13:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC33137884;
+	Mon, 18 Dec 2023 14:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WULgJHAQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702907997;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Z08qTo4VHKqBvQdQYFQ7T86lFpxtYJXk00pxEYx2D4=;
-	b=WULgJHAQdSa7GYK8cIkkyJEE54fAv28Js8sxsd4/QEDCiUDG8wp8rAUO/kn6Fxe2RkHwMD
-	FaKoFUh9B7J9gkowAd5bybYZBvdi1u1LGrh2JJgQkrUSa9ohbOLB58vBKATafGQYN8Uy88
-	Jv+eP/c/9maLAWpGmiSb1w2c7dU56uU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-9v2gyJj6MjGktqJc7ntXSA-1; Mon, 18 Dec 2023 08:59:56 -0500
-X-MC-Unique: 9v2gyJj6MjGktqJc7ntXSA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-40c4a824c4bso25951015e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Dec 2023 05:59:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQ6HXPXL"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-54c7744a93fso3799186a12.2;
+        Mon, 18 Dec 2023 06:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702908084; x=1703512884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWFFTMmjudAuImn+i/lWj+bNwoNGkXfGjQfocWJc3Zg=;
+        b=kQ6HXPXLFCwFPbRh7qCWaS5qpxDVs3I6hbo6rD7Ht5dtrWP3dhYxl9MqrERDgalUCW
+         zaG1le/iZNWNTgatNEEoy5BWVyds6GV4cND+HH4ZtW9AYo8Wefw8tOa7MGrdEyNjFmWG
+         4II85lEjBpC64UntwfZDMAP5XWHq9JT62cagEyZ5YGqKHm03A0va44K+Pq85zIQ/8/Pc
+         Si94d9rijvkWP9+jzkVCz7hc6ydpp1p+ewTEXOh8wkl8VFeZcbtUvBy9wp+Hwxa9AK5z
+         iHEABs0+MnAYA3iGd1bVgV99cC3qVIcflzPyOuvnICuVwCpQzd61Jxzb/L1Wokks0d5H
+         Izng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702907995; x=1703512795;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Z08qTo4VHKqBvQdQYFQ7T86lFpxtYJXk00pxEYx2D4=;
-        b=oBhlEmX50c1FeMyFZY3aRuPKgQZ3SY8YrwckSeepuF+ueRCTgBWIQQ2GJecb7lOOCV
-         dSgJqYVeXA2WIOJQUnjernnZe6xeDdGKHobTJVAGbyHWPg2l8EaU5w9Uw3w2dR5xQ5+d
-         +KAWbSBUpl4Qm4afoH3y/kxIlb51/TYpe/yjtKetwJwoaoWYLRKSPFce2iqXk15wnX6B
-         goXf6M6SQ7En73VkE64xv641SJihUg9n4UJYMj9KLhfZVhv48xYWIYaHOA2c/OFOJYDK
-         ry6ZYjVJTgA+cpKLHC45fPgJNz4ujrpphQPkJFSKrYlXWczwd5il75KKvNaOKivhYN7H
-         hwFQ==
-X-Gm-Message-State: AOJu0Yzju75w4lYIE5KceUo9ZG4iIxhajAm8xPqTzAtmFv8V13WhXH28
-	0AT/HDus5cRe08RMGd4XfCTPGm8u8U5sqHWETGR+9aD24F5seHwb3aOmHlBK1sfj/xqal+qBZh6
-	YeMPMBh//phAZr3Y0NGIW8Wo+IeER
-X-Received: by 2002:a7b:c385:0:b0:40c:24e1:b6bb with SMTP id s5-20020a7bc385000000b0040c24e1b6bbmr8131727wmj.128.1702907995001;
-        Mon, 18 Dec 2023 05:59:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEcdBLo/fPLob8CR9UlEPNAiidKYcTuOaD1IcTPhjmqGj7oGakg4oZsc8hPpVkW4btXSQMQCQ==
-X-Received: by 2002:a7b:c385:0:b0:40c:24e1:b6bb with SMTP id s5-20020a7bc385000000b0040c24e1b6bbmr8131722wmj.128.1702907994622;
-        Mon, 18 Dec 2023 05:59:54 -0800 (PST)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id cx7-20020a170907168700b009fc576e26e6sm14059747ejd.80.2023.12.18.05.59.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Dec 2023 05:59:54 -0800 (PST)
-Message-ID: <011c6ff1-e9ce-400d-bc34-a08ce880f6e6@redhat.com>
-Date: Mon, 18 Dec 2023 14:59:53 +0100
+        d=1e100.net; s=20230601; t=1702908084; x=1703512884;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yWFFTMmjudAuImn+i/lWj+bNwoNGkXfGjQfocWJc3Zg=;
+        b=jDe11PVzelCmacJwykiTxTavkQ0a4k3ZWkBIyqY8hluNdDYR2lSQ7JfgHT2qlxjXFE
+         Wn1+EkVOcEKjmppHioFrpUWjA4e9wDNs8MXs+b/yJQlI8ATPlZD+19ykrWBZQ2334jBL
+         ULoc/nC/zDXV89OjYUHjs02yJ27mv365O89gBH4udY2cQEKYrXpMmjTHWpAWiUWbqMV6
+         NfGSnDiNwMEXz/KV7kic/GSt0w5PT1Zst48RGy2LXU3w4k7TRQgJhlOQQ7u4UtSVr05u
+         Uq9oDS8lVJoG1G/MybjnjvQGTjGAES03499XeFIf3HPWsBeadBEJZqGsli1kIaz4ZKFK
+         mllQ==
+X-Gm-Message-State: AOJu0YyZPUKXboaO5YbEcmZyBdS3FcH9brSt+ZZae+BWrfedaILEEOCF
+	tXD/B+O7Iu56giYqj+LRh2Yb6/E2VNvcag==
+X-Google-Smtp-Source: AGHT+IFS41/9c/f2zYs5b/v3+TVLnJPotcv5MgPWYGg3SuVtAzleCxrxU+fHoEEzTVwTWj8URLOIFw==
+X-Received: by 2002:adf:fa49:0:b0:336:660d:20e1 with SMTP id y9-20020adffa49000000b00336660d20e1mr1127549wrr.75.1702906223578;
+        Mon, 18 Dec 2023 05:30:23 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id b12-20020a5d45cc000000b003365422e8b9sm8990460wrs.17.2023.12.18.05.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 05:30:23 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Dmitry Safonov <0x7f454c46@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/net: Fix various spelling mistakes in TCP-AO tests
+Date: Mon, 18 Dec 2023 13:30:22 +0000
+Message-Id: <20231218133022.321069-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] platform/x86: silicom-platform: Fix spelling
- mistake "platfomr" -> "platform"
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>,
- Henry Shi <henryshi2018@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231215112746.13752-1-colin.i.king@gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20231215112746.13752-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+There are a handful of spelling mistakes in test messages in the
+TCP-AIO selftests. Fix these.
 
-On 12/15/23 12:27, Colin Ian King wrote:
-> There is a spelling mistake in a literal string. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/net/tcp_ao/connect-deny.c      | 2 +-
+ tools/testing/selftests/net/tcp_ao/lib/proc.c          | 4 ++--
+ tools/testing/selftests/net/tcp_ao/setsockopt-closed.c | 2 +-
+ tools/testing/selftests/net/tcp_ao/unsigned-md5.c      | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/platform/x86/silicom-platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
-> index 84b92b3f9f4b..6ce43ccb3112 100644
-> --- a/drivers/platform/x86/silicom-platform.c
-> +++ b/drivers/platform/x86/silicom-platform.c
-> @@ -866,7 +866,7 @@ static int silicom_fan_control_read_labels(struct device *dev,
->  {
->  	switch (type) {
->  	case hwmon_fan:
-> -		*str = "Silicom_platfomr: Fan Speed";
-> +		*str = "Silicom_platform: Fan Speed";
->  		return 0;
->  	case hwmon_temp:
->  		*str = "Silicom_platform: Thermostat Sensor";
+diff --git a/tools/testing/selftests/net/tcp_ao/connect-deny.c b/tools/testing/selftests/net/tcp_ao/connect-deny.c
+index 1ca78040d8b7..185a2f6e5ff3 100644
+--- a/tools/testing/selftests/net/tcp_ao/connect-deny.c
++++ b/tools/testing/selftests/net/tcp_ao/connect-deny.c
+@@ -55,7 +55,7 @@ static void try_accept(const char *tst_name, unsigned int port, const char *pwd,
+ 	err = test_wait_fd(lsk, timeout, 0);
+ 	if (err == -ETIMEDOUT) {
+ 		if (!fault(TIMEOUT))
+-			test_fail("timeouted for accept()");
++			test_fail("timed out for accept()");
+ 	} else if (err < 0) {
+ 		test_error("test_wait_fd()");
+ 	} else {
+diff --git a/tools/testing/selftests/net/tcp_ao/lib/proc.c b/tools/testing/selftests/net/tcp_ao/lib/proc.c
+index 2322f4d4676d..2fb6dd8adba6 100644
+--- a/tools/testing/selftests/net/tcp_ao/lib/proc.c
++++ b/tools/testing/selftests/net/tcp_ao/lib/proc.c
+@@ -227,7 +227,7 @@ void netstat_print_diff(struct netstat *nsa, struct netstat *nsb)
+ 		}
+ 
+ 		if (nsb->counters_nr < nsa->counters_nr)
+-			test_error("Unexpected: some counters dissapeared!");
++			test_error("Unexpected: some counters disappeared!");
+ 
+ 		for (j = 0, i = 0; i < nsb->counters_nr; i++) {
+ 			if (strcmp(nsb->counters[i].name, nsa->counters[j].name)) {
+@@ -244,7 +244,7 @@ void netstat_print_diff(struct netstat *nsa, struct netstat *nsb)
+ 			j++;
+ 		}
+ 		if (j != nsa->counters_nr)
+-			test_error("Unexpected: some counters dissapeared!");
++			test_error("Unexpected: some counters disappeared!");
+ 
+ 		nsb = nsb->next;
+ 		nsa = nsa->next;
+diff --git a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+index 7e4601b3f6a3..a329f42f40ce 100644
+--- a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
++++ b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+@@ -427,7 +427,7 @@ static void test_einval_del_key(void)
+ 
+ 	sk = prepare_defs(TCP_AO_DEL_KEY, &del);
+ 	del.set_current = 1;
+-	setsockopt_checked(sk, TCP_AO_DEL_KEY, &del, ENOENT, "set non-exising current key");
++	setsockopt_checked(sk, TCP_AO_DEL_KEY, &del, ENOENT, "set non-existing current key");
+ 
+ 	sk = prepare_defs(TCP_AO_DEL_KEY, &del);
+ 	del.set_rnext = 1;
+diff --git a/tools/testing/selftests/net/tcp_ao/unsigned-md5.c b/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
+index 7cffde02d2be..14addfd46468 100644
+--- a/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
++++ b/tools/testing/selftests/net/tcp_ao/unsigned-md5.c
+@@ -72,7 +72,7 @@ static void try_accept(const char *tst_name, unsigned int port,
+ 	err = test_wait_fd(lsk, timeout, 0);
+ 	if (err == -ETIMEDOUT) {
+ 		if (!fault(TIMEOUT))
+-			test_fail("timeouted for accept()");
++			test_fail("timed out for accept()");
+ 	} else if (err < 0) {
+ 		test_error("test_wait_fd()");
+ 	} else {
+-- 
+2.39.2
 
