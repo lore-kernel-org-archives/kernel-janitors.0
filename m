@@ -1,26 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3A7567F;
-	Mon, 18 Dec 2023 04:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EEA15492;
+	Mon, 18 Dec 2023 10:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qecIDD5h"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 727EAC433CC;
-	Mon, 18 Dec 2023 04:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702875101;
-	bh=/dDUerN4rD0aWnqgxV/sYr2x4DP4FC9to8aGBw8BXX0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qecIDD5hAFPBxWC7U2YN4eMy21q9AYdwpszeI70FgNXXnQ6hHnn42U9QPNBC4ywy9
-	 CNIZzrfKDyaG8f7y/kidynZAywuy+zcS8fYq2Hza89fX+RCOJLXDJ6yColgvyDueOo
-	 70HD1i/8vmAfMbYhQj4Bkp6Mx1iLqkr3K/Yj2pgh4ZXsQB2M1+5T3fT2pMOhCl4hHS
-	 NLZj/RrgbxzajeY2XlCZ0es2+Oq52hc+M8hGYaCUCA7scpZHZYqJUAxDpNxJfRD2Zv
-	 TsyzGgcC2SYzcew1yxdCWakLnM7IPblAgWtCmeARw3NIyvLAnjVwGG84480UwKGEXn
-	 LPkn+AHcxrAqQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5B387C41677;
-	Mon, 18 Dec 2023 04:51:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lU19BBON"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-336672406f0so597597f8f.2;
+        Mon, 18 Dec 2023 02:12:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702894370; x=1703499170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6WtXLxQwCFo504IjsHi0YpiharpdePiqBc5i2KE37aE=;
+        b=lU19BBONqPBO3IApsjTmA6DMufnH/A41NV5QhRlZ/2dgfG3blokJ8MMCiiFpxCdugK
+         1pSNJ+0tM/ibODQ8o6cZ86sbzn02+67S1686raH39VKjwcrxOAS6+SaIaKDmCnzUn7Pv
+         r45+1muiXFasXAE233BgpxR9jCjVtBjWe0d5eDlTVcl93XxTBqh4ShFGxB0v0u/kUN47
+         Dzueux1IzDoPURn/WeSDiEwLKvXAzN/LPNPfnU3j+QSZLOF9wILslzyeHiuHR5v+qDV6
+         odM9WQPqf+pJ2rhWEF47ioVKmOapCjYaNKKVBhERZEpCtvOxIxkuX0LN1aqXbtL15Q5t
+         iDaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702894370; x=1703499170;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6WtXLxQwCFo504IjsHi0YpiharpdePiqBc5i2KE37aE=;
+        b=D82ULtg9+AUnJBYZeBGX++jHBy/+oEYRMw3yvqFNa70OW7/3O0aPH0LpbfdZvq1HsO
+         EGlfTQnxg9PFk5Wv0StWbdpfOkV/O2pDeSf+llpRaovaKlnb5jxIgiV7JNtD4XzzXjaV
+         XgzJB3DtmegBSCJLWhvbPXaqEE0qbg6Ro8SJ3x6sS+KTI9bO3RtWMBuUNjSpaKuXIXxd
+         T1CI7Y/Jp1GkkHB96NQ16apZxjphZAHhYcuBmEBNu54Wnr+gfvjY82E2djsrejlcQ+xq
+         2SYHaeW3pIs6Qa1Yo2Uaf/xRHkUCsoK2iMBRSg1gA5ogHXzTwhsPiNWP5Z66rrUDVJsN
+         Amrw==
+X-Gm-Message-State: AOJu0Yy6Wz2wVn1o5OUQBZcnZUwqqHwfwC7Up39u2+EUkJfnrRch154c
+	E2b3k7gYNSk3ie8+rASgbYA=
+X-Google-Smtp-Source: AGHT+IEk0WnHrPvB6e5s1TX9Icl5DzhvBKsYduxD+/CToPTHJcdjQhGln4XwMYlycSfTpH6t5eUGow==
+X-Received: by 2002:a5d:670b:0:b0:336:4bc7:1d3d with SMTP id o11-20020a5d670b000000b003364bc71d3dmr3388761wru.57.1702894370453;
+        Mon, 18 Dec 2023 02:12:50 -0800 (PST)
+Received: from lukas-virtualBox.. ([208.127.103.55])
+        by smtp.gmail.com with ESMTPSA id j11-20020a5d564b000000b0033664ffaf5dsm3666051wrw.37.2023.12.18.02.12.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 02:12:49 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Peter Griffin <peter.griffin@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
+Date: Mon, 18 Dec 2023 11:12:25 +0100
+Message-Id: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -28,40 +66,36 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] platform/chrome/wilco_ec: Remove usage of the deprecated
- ida_simple_xx() API
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <170287510137.24063.216178933105392650.git-patchwork-notify@kernel.org>
-Date: Mon, 18 Dec 2023 04:51:41 +0000
-References: <898d9aa181a84f1d17725ca047004bad532c37e9.1702745959.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <898d9aa181a84f1d17725ca047004bad532c37e9.1702745959.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bleung@chromium.org, tzungbi@kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, chrome-platform@lists.linux.dev
 
-Hello:
+Commit 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
+management unit bindings") adds the file google,gs101.h in
+include/dt-bindings/clock/. However, commit 9d71df3e6eb7 ("MAINTAINERS:
+add entry for Google Tensor SoC") wrongly refers to the file
+google,clk-gs101.h in that directory.
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-On Sat, 16 Dec 2023 17:59:38 +0100 you wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Adjust the file entry to the actual file in GOOGLE TENSOR SoC SUPPORT.
 
-Here is the summary with links:
-  - platform/chrome/wilco_ec: Remove usage of the deprecated ida_simple_xx() API
-    https://git.kernel.org/chrome-platform/c/57eb6dcd32cf
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d984bd745e93..d05c81acd849 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9034,7 +9034,7 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+ F:	arch/arm64/boot/dts/exynos/google/
+ F:	drivers/clk/samsung/clk-gs101.c
+-F:	include/dt-bindings/clock/google,clk-gs101.h
++F:	include/dt-bindings/clock/google,gs101.h
+ 
+ GPD POCKET FAN DRIVER
+ M:	Hans de Goede <hdegoede@redhat.com>
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
