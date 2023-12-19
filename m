@@ -1,40 +1,38 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D75FBE7C
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 04:43:58 +0000 (UTC)
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C84C12A
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 05:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qvKgtpWO"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G7InHElt"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id FRq7rIyAdCta3FRq7rLpYg; Tue, 19 Dec 2023 05:36:20 +0100
+	id FSDkr12EOmDWRFSDkrW92Z; Tue, 19 Dec 2023 06:00:45 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702960580;
-	bh=kg/q7rumzOx8Hl24GKVNgl/RrROwUKqK72wc4kbD3sE=;
+	s=t20230301; t=1702962045;
+	bh=XY0QlJMcPU7Xxpry3VlrLRsMZ3Hy51PgSnqRo3LknqY=;
 	h=From:To:Cc:Subject:Date;
-	b=qvKgtpWOoj4dZ6kz4iXiJrNQqE7l3qQNPalzgKRK2QqVljEog23aA11MgO7OVjQ4D
-	 lV5bX8/tbcJ/oDgVc6LS+kvq0WvMWudFPLUREHVM+0pnJN/2m3TyAEwWD2mOExtGgF
-	 ZeviyBnp6Z3OXgfwMrJH77HwMlVG//CwBUHbOAIPJKPYFZXArSWbqd/WHkQzlnEaJR
-	 JBtoBYIUO49hcNIaz+uCnD5dn10f4do3kKO/bmmD1fNmopn9rtycfW7Hl+gazmAggz
-	 3WZW4OcUBMJURMzxqbPBGM66x+YPhUrmo8hup1dejIGSdFbMQeDHdUGtpuPf3n3nXu
-	 jXMgpqka5E5BQ==
+	b=G7InHEltsCFWlwRYeoWU8Ff7ExYyW/l90sclEYv0imJcncXNRAKqkM7DQ5oEBfUce
+	 NdyaglGIpq/C7lIh5Zn+7FXlIhg4Qk4EBg9SGfVUam2g4un8GBWxyA5UDwDk/vrZMi
+	 0P+t6BwpU1PVJdzolgvRLWvzIxx/gYoGzNZ+VjvSciEXSpJR0w8XbetGballZ1uLH/
+	 /ZLlq0VeQ8csvlCmxSzs9qSUfsC3maMuguhcGi5wqR1WzrwjC5XmqhLSzcyiRSF9i7
+	 8kp6o8a6Dgz+htBqpJkj/DewdYEiKccOikJbtmmfHlglDqi22UQj9pTTfJGO3mKtxE
+	 6edoP3SOTVG4g==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 05:36:20 +0100
+X-ME-Date: Tue, 19 Dec 2023 06:00:45 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Corey Minyard <minyard@acm.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: [PATCH] slimbus: qcom-ngd-ctrl: Make QMI message rules const
-Date: Tue, 19 Dec 2023 05:36:17 +0100
-Message-Id: <7d0660a356a148bb800dcb0e211eca4886785a6c.1702960557.git.christophe.jaillet@wanadoo.fr>
+	openipmi-developer@lists.sourceforge.net
+Subject: [PATCH] ipmi: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 06:00:39 +0100
+Message-Id: <b1a7a75263400742e5fda6bd7ba426772dc8ef11.1702961986.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -44,68 +42,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit ff6d365898d4 ("soc: qcom: qmi: use const for struct qmi_elem_info")
-allows QMI message encoding/decoding rules to be const, so do that here.
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Before:
-======
-$ size drivers/slimbus/qcom-ngd-ctrl.o
-   text	   data	    bss	    dec	    hex	filename
-  30354	   1993	     96	  32443	   7ebb	drivers/slimbus/qcom-ngd-ctrl.o
-
-After:
-=====
-$ size drivers/slimbus/qcom-ngd-ctrl.o
-   text	   data	    bss	    dec	    hex	filename
-  30738	   1593	     96	  32427	   7eab	drivers/slimbus/qcom-ngd-ctrl.o
-
-Compile tested only.
+This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/slimbus/qcom-ngd-ctrl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index 77aa6d26476c..efeba8275a66 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -220,7 +220,7 @@ struct slimbus_power_resp_msg_v01 {
- 	struct qmi_response_type_v01 resp;
- };
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index d6f14279684d..b0eedc4595b3 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -3053,7 +3053,7 @@ static void cleanup_bmc_work(struct work_struct *work)
+ 	int id = bmc->pdev.id; /* Unregister overwrites id */
  
--static struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
-+static const struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
- 	{
- 		.data_type  = QMI_UNSIGNED_4_BYTE,
- 		.elem_len   = 1,
-@@ -262,7 +262,7 @@ static struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
- 	},
- };
+ 	platform_device_unregister(&bmc->pdev);
+-	ida_simple_remove(&ipmi_bmc_ida, id);
++	ida_free(&ipmi_bmc_ida, id);
+ }
  
--static struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
-+static const struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
- 	{
- 		.data_type  = QMI_STRUCT,
- 		.elem_len   = 1,
-@@ -284,7 +284,7 @@ static struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
- 	},
- };
+ static void
+@@ -3169,7 +3169,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
  
--static struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
-+static const struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
- 	{
- 		.data_type  = QMI_UNSIGNED_4_BYTE,
- 		.elem_len   = 1,
-@@ -324,7 +324,7 @@ static struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
- 	},
- };
+ 		bmc->pdev.name = "ipmi_bmc";
  
--static struct qmi_elem_info slimbus_power_resp_msg_v01_ei[] = {
-+static const struct qmi_elem_info slimbus_power_resp_msg_v01_ei[] = {
- 	{
- 		.data_type  = QMI_STRUCT,
- 		.elem_len   = 1,
+-		rv = ida_simple_get(&ipmi_bmc_ida, 0, 0, GFP_KERNEL);
++		rv = ida_alloc(&ipmi_bmc_ida, GFP_KERNEL);
+ 		if (rv < 0) {
+ 			kfree(bmc);
+ 			goto out;
 -- 
 2.34.1
 
