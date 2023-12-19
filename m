@@ -1,44 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8634EC132
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 04:41:36 +0000 (UTC)
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D75FBE7C
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 04:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="n4pVtjAF"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qvKgtpWO"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id FRv4rqervb4TgFRv4rjXAp; Tue, 19 Dec 2023 05:41:28 +0100
+	id FRq7rIyAdCta3FRq7rLpYg; Tue, 19 Dec 2023 05:36:20 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702960888;
-	bh=cUzYcHCIluQtLI47YxLbQmZaKW4i/ciHI8Ppn0igCjw=;
+	s=t20230301; t=1702960580;
+	bh=kg/q7rumzOx8Hl24GKVNgl/RrROwUKqK72wc4kbD3sE=;
 	h=From:To:Cc:Subject:Date;
-	b=n4pVtjAFR1nQ9jwRE978HzDHV4WihO5oeBif9lN/ekFNsTqr8TUjJJptyXGUc+Qcg
-	 FVoGWZfceeHRzTMI2DGnzPPlyrNNdvSfmZZkyO+hWcUnIWC5JvHv5J4UNpMgKFtKGK
-	 mXA3v343MUz7R/a7sNYw96q/Q7sPinC8X/KKwQ0P6hj3bdaKyTOb2eABkReShL3vNn
-	 DOOzvCwbNLcrDM6icYrm62NMNDC7/ftidCS3bG4ZGyrQtFcIukgWdfq5q5BqktlJBW
-	 ucF9z0oNOozTE8D0tVCCA0CKI2zAOqbvlRDKcEno2cg8Otm/giED5GCRjldFDs/wen
-	 zdgLpnhYR30Og==
+	b=qvKgtpWOoj4dZ6kz4iXiJrNQqE7l3qQNPalzgKRK2QqVljEog23aA11MgO7OVjQ4D
+	 lV5bX8/tbcJ/oDgVc6LS+kvq0WvMWudFPLUREHVM+0pnJN/2m3TyAEwWD2mOExtGgF
+	 ZeviyBnp6Z3OXgfwMrJH77HwMlVG//CwBUHbOAIPJKPYFZXArSWbqd/WHkQzlnEaJR
+	 JBtoBYIUO49hcNIaz+uCnD5dn10f4do3kKO/bmmD1fNmopn9rtycfW7Hl+gazmAggz
+	 3WZW4OcUBMJURMzxqbPBGM66x+YPhUrmo8hup1dejIGSdFbMQeDHdUGtpuPf3n3nXu
+	 jXMgpqka5E5BQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 05:41:28 +0100
+X-ME-Date: Tue, 19 Dec 2023 05:36:20 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
+To: Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org
-Subject: [PATCH] ASoC: sprd: Simplify memory allocation in sprd_platform_compr_dma_config()
-Date: Tue, 19 Dec 2023 05:41:19 +0100
-Message-Id: <d16f22ae0627249a9fc658927832590cd88c544e.1702960856.git.christophe.jaillet@wanadoo.fr>
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: [PATCH] slimbus: qcom-ngd-ctrl: Make QMI message rules const
+Date: Tue, 19 Dec 2023 05:36:17 +0100
+Message-Id: <7d0660a356a148bb800dcb0e211eca4886785a6c.1702960557.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,45 +44,68 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'sg' is freed at the end sprd_platform_compr_dma_config() both in the
-normal and in the error handling path.
+Commit ff6d365898d4 ("soc: qcom: qmi: use const for struct qmi_elem_info")
+allows QMI message encoding/decoding rules to be const, so do that here.
 
-There is no need to use the devm_kcalloc()/devm_kfree(), kcalloc()/kfree()
-is enough.
+Before:
+======
+$ size drivers/slimbus/qcom-ngd-ctrl.o
+   text	   data	    bss	    dec	    hex	filename
+  30354	   1993	     96	  32443	   7ebb	drivers/slimbus/qcom-ngd-ctrl.o
+
+After:
+=====
+$ size drivers/slimbus/qcom-ngd-ctrl.o
+   text	   data	    bss	    dec	    hex	filename
+  30738	   1593	     96	  32427	   7eab	drivers/slimbus/qcom-ngd-ctrl.o
+
+Compile tested only.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/sprd/sprd-pcm-compress.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/slimbus/qcom-ngd-ctrl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
-index 6cfab8844d0f..57bd1a0728ac 100644
---- a/sound/soc/sprd/sprd-pcm-compress.c
-+++ b/sound/soc/sprd/sprd-pcm-compress.c
-@@ -160,7 +160,7 @@ static int sprd_platform_compr_dma_config(struct snd_soc_component *component,
- 		return -ENODEV;
- 	}
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index 77aa6d26476c..efeba8275a66 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -220,7 +220,7 @@ struct slimbus_power_resp_msg_v01 {
+ 	struct qmi_response_type_v01 resp;
+ };
  
--	sgt = sg = devm_kcalloc(dev, sg_num, sizeof(*sg), GFP_KERNEL);
-+	sgt = sg = kcalloc(sg_num, sizeof(*sg), GFP_KERNEL);
- 	if (!sg) {
- 		ret = -ENOMEM;
- 		goto sg_err;
-@@ -250,12 +250,12 @@ static int sprd_platform_compr_dma_config(struct snd_soc_component *component,
- 		dma->desc->callback_param = cstream;
- 	}
+-static struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
++static const struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
+ 	{
+ 		.data_type  = QMI_UNSIGNED_4_BYTE,
+ 		.elem_len   = 1,
+@@ -262,7 +262,7 @@ static struct qmi_elem_info slimbus_select_inst_req_msg_v01_ei[] = {
+ 	},
+ };
  
--	devm_kfree(dev, sg);
-+	kfree(sg);
+-static struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
++static const struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
+ 	{
+ 		.data_type  = QMI_STRUCT,
+ 		.elem_len   = 1,
+@@ -284,7 +284,7 @@ static struct qmi_elem_info slimbus_select_inst_resp_msg_v01_ei[] = {
+ 	},
+ };
  
- 	return 0;
+-static struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
++static const struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
+ 	{
+ 		.data_type  = QMI_UNSIGNED_4_BYTE,
+ 		.elem_len   = 1,
+@@ -324,7 +324,7 @@ static struct qmi_elem_info slimbus_power_req_msg_v01_ei[] = {
+ 	},
+ };
  
- config_err:
--	devm_kfree(dev, sg);
-+	kfree(sg);
- sg_err:
- 	dma_release_channel(dma->chan);
- 	return ret;
+-static struct qmi_elem_info slimbus_power_resp_msg_v01_ei[] = {
++static const struct qmi_elem_info slimbus_power_resp_msg_v01_ei[] = {
+ 	{
+ 		.data_type  = QMI_STRUCT,
+ 		.elem_len   = 1,
 -- 
 2.34.1
 
