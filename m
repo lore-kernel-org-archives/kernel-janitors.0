@@ -1,94 +1,87 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AAF39AD0
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 19:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0073B786;
+	Tue, 19 Dec 2023 21:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="URI7oMNT"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id FfqmrwJWBO9apFfqmrMy24; Tue, 19 Dec 2023 20:33:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1703014439;
-	bh=7M2CUQpwgjxF1irpAVXAbKH37iRCkSgrRaBNR4Uhpg4=;
-	h=From:To:Cc:Subject:Date;
-	b=URI7oMNTP6dtjUHuREZTiAp0OXCfjCKk/WxX8Z/5LWVRXDE6iNQ8sZd5ELg062+Ed
-	 X26VgA/780AmEnGx6WzjoWPYTAxGCH7BGp7Vc3liOwUs5ETw5dtP78U1/0uCU0DIKa
-	 nQ876NuA0/sNogK10tU83cGBjnfgqdYz2DLPDwKmY82QIZoy3hz4I/1XGDrPMOlzx4
-	 bIL4uyOzTcgX5s+eGsk9gz7c8FDA6zYn9p9E79MPdPzcuACPg0mFHeBVJALAtPX0V+
-	 9q9CwQCgqCJN0GL82AlnXvnn4N0iOYDPjunx4xtwVP7IDnPTusJvKKh1yxAj+xgBId
-	 IGu30uiXGzy4g==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 20:33:59 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dmaengine@vger.kernel.org
-Subject: [PATCH v2] dmaengine: idxd: Remove usage of the deprecated ida_simple_xx() API
-Date: Tue, 19 Dec 2023 20:33:50 +0100
-Message-Id: <ac991f5f42112fa782a881d391d447529cbc4a23.1702967302.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L4pWeTm2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=OPsDtSH0h57ggP/qkMey9XPgpDBsMSDwy2BsxZjvi+w=; b=L4pWeTm2EiAaTLELNMoKdLNe2T
+	Ti0MMjaiOL+aRrXQIbutRgZk+uCWXWGjhkWN3/7N+iGUPNBbq7iZqiSGTJYJPG0DQ3tCilpLfroc3
+	zWLa8fLa/Tut06doC0+uC/R6YMdX/QcEOpmlW1pto/aXp/vPR8S28aNNtDa4ClX/kesfK0hb4C7XE
+	I6VQim4B4+8/sj0yABV0qOKu2t6MokkhHSIATvD4YdS9shO2i9jaDuSodyNU8P1hqEH+iA0Sog2tl
+	L+Aph8pXN0u6toRjEPkJu3Lv+w8zb+lllzVaPDH+HrU/F7Edc5ghe2oNI7W195jKLhSz6PBf4M0tn
+	Z25vdYLg==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rFhzv-00FWry-24;
+	Tue, 19 Dec 2023 21:51:31 +0000
+Message-ID: <0f3bb667-a458-432e-b6bc-1ae8c4277b8e@infradead.org>
+Date: Tue, 19 Dec 2023 13:51:30 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers: video: logo: use %u format specifier for
+ unsigned int values
+Content-Language: en-US
+To: Colin Ian King <colin.i.king@gmail.com>, Helge Deller <deller@gmx.de>,
+ Nikita Romanyuk <ufh8945@gmail.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231219151436.368696-1-colin.i.king@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20231219151436.368696-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
 
-This is less verbose.
 
-Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_range() is inclusive. Sothis change allows one more device.
+On 12/19/23 07:14, Colin Ian King wrote:
+> Currently the %d format specifier is being used for unsigned int values.
+> Fix this by using the correct %u format specifier. Cleans up cppcheck
+> warnings:
+> 
+> warning: %d in format string (no. 1) requires 'int' but the argument
+> type is 'unsigned int'. [invalidPrintfArgType_sint]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-MINORMASK is ((1U << MINORBITS) - 1), so allowing MINORMASK as a maximum value
-makes sense. It is also consistent with other "ida_.*MINORMASK" and
-"ida_*MINOR()" usages.
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Changes v2:
-  - remove note about compile tested only, now tested on hw by Fenghua Yu
-  - fix some wording in the commit description   [Fenghua Yu]
-  
-v1: https://lore.kernel.org/all/a899125f42c12fa782a881d341d147519cbb4a23.1702967302.git.christophe.jaillet@wanadoo.fr/
----
- drivers/dma/idxd/cdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> ---
+>  drivers/video/logo/pnmtologo.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/logo/pnmtologo.c b/drivers/video/logo/pnmtologo.c
+> index ada5ef6e51b7..2434a25afb64 100644
+> --- a/drivers/video/logo/pnmtologo.c
+> +++ b/drivers/video/logo/pnmtologo.c
+> @@ -249,10 +249,10 @@ static void write_footer(void)
+>  	fputs("\n};\n\n", out);
+>  	fprintf(out, "const struct linux_logo %s __initconst = {\n", logoname);
+>  	fprintf(out, "\t.type\t\t= %s,\n", logo_types[logo_type]);
+> -	fprintf(out, "\t.width\t\t= %d,\n", logo_width);
+> -	fprintf(out, "\t.height\t\t= %d,\n", logo_height);
+> +	fprintf(out, "\t.width\t\t= %u,\n", logo_width);
+> +	fprintf(out, "\t.height\t\t= %u,\n", logo_height);
+>  	if (logo_type == LINUX_LOGO_CLUT224) {
+> -		fprintf(out, "\t.clutsize\t= %d,\n", logo_clutsize);
+> +		fprintf(out, "\t.clutsize\t= %u,\n", logo_clutsize);
+>  		fprintf(out, "\t.clut\t\t= %s_clut,\n", logoname);
+>  	}
+>  	fprintf(out, "\t.data\t\t= %s_data\n", logoname);
 
-diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-index 0423655f5a88..b00926abc69a 100644
---- a/drivers/dma/idxd/cdev.c
-+++ b/drivers/dma/idxd/cdev.c
-@@ -165,7 +165,7 @@ static void idxd_cdev_dev_release(struct device *dev)
- 	struct idxd_wq *wq = idxd_cdev->wq;
- 
- 	cdev_ctx = &ictx[wq->idxd->data->type];
--	ida_simple_remove(&cdev_ctx->minor_ida, idxd_cdev->minor);
-+	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
- 	kfree(idxd_cdev);
- }
- 
-@@ -463,7 +463,7 @@ int idxd_wq_add_cdev(struct idxd_wq *wq)
- 	cdev = &idxd_cdev->cdev;
- 	dev = cdev_dev(idxd_cdev);
- 	cdev_ctx = &ictx[wq->idxd->data->type];
--	minor = ida_simple_get(&cdev_ctx->minor_ida, 0, MINORMASK, GFP_KERNEL);
-+	minor = ida_alloc_max(&cdev_ctx->minor_ida, MINORMASK, GFP_KERNEL);
- 	if (minor < 0) {
- 		kfree(idxd_cdev);
- 		return minor;
 -- 
-2.34.1
-
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
