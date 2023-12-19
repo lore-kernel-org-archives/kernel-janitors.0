@@ -1,43 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C822C11C96
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 06:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF06A79EC
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 06:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sneycZ7o"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZDfe7HEj"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id FTOErgdxyaFNCFTOEr8Mcu; Tue, 19 Dec 2023 07:15:40 +0100
+	id FTaqrVHNFVfJzFTarr61IL; Tue, 19 Dec 2023 07:28:42 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702966540;
-	bh=hZ/ES4F8KlXsJDilo3/jjs0U5UzZt61FLBeAEIKEj20=;
+	s=t20230301; t=1702967322;
+	bh=ahkXp6xxCwU84PCUd14FBAK8cm1b4ujnP7B1xat+5CE=;
 	h=From:To:Cc:Subject:Date;
-	b=sneycZ7o9WnonV42dK78Ae0TmwxUy/D7s6X1rtjZ+xnrFB+Ei3pau/1gu/jJP+AnH
-	 JVMzR5+8h7QjbyAq2pPvmINJBh23C16O/yJKVswCw6XwkjieZ9ePfDS4BnAhxYYXER
-	 RGC69CTXnsGJWy4k7iBA2u9YoYbQc3StWoCklQ9fkAoiwrbIcDpDlnNWTxbNKKoFGK
-	 E/ZikTPxjPpOtGih3G20VCmgYLiqrTnMr4csN1V3uptr8isdJ2kEkOFwtbKq7wp2Nl
-	 DYMNxhmCRpHIdSegqcAJOsUNXJ/NDkzM9a7ToECEyPWZoofe4dE0WMIr8Qtj3Kp8GM
-	 HLjuiP0vsk0zw==
+	b=ZDfe7HEjjo4s8LLw37S+C8wFLEVQ2/MCiGJR3aoDQ6lVe/8b9N/djfDs9XW2g1iJb
+	 wdCO1BQb2MWjdUtINT3SWM6B0nDNevmtglL0C0j4POPXf01aBe9euv8Tz7hF91RWZ1
+	 Vxawkry5a3qQkITjZSVfCwm+Gp+IL0lPQcxCzqGFyPzM8pbEwxh8iP/vWCPPYUyZaQ
+	 Z9nUqkFDiRmSmqxjvXfst0OsKZwH8psjvv9oQbjt+JOV+4+SQnK/2ORb3XKr92tH0w
+	 qo4G7hajbyW4MHaDzTtr/x2iFQUI3RwVp047WPl0ZqfLxQCDGlJf57eNfTdpYVS79E
+	 +ge4PYT7wNl2g==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 07:15:40 +0100
+X-ME-Date: Tue, 19 Dec 2023 07:28:42 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] misc: pci_endpoint_test: Remove usage of the deprecated ida_simple_xx() API
-Date: Tue, 19 Dec 2023 07:15:37 +0100
-Message-Id: <47a30441242c4d5f0e00555cbddd7783350ff1b2.1702966523.git.christophe.jaillet@wanadoo.fr>
+	dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 07:28:39 +0100
+Message-Id: <a899125f42c12fa782a881d341d147519cbb4a23.1702967302.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,42 +49,43 @@ ida_simple_get() and ida_simple_remove().
 
 This is less verbose.
 
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_range() is inclusive. So change this change allows one more
+device.
+
+MINORMASK is	((1U << MINORBITS) - 1), so allowing MINORMASK as a maximum
+value makes sense. It is also consistent with other "ida_.*MINORMASK" and
+"ida_*MINOR()" usages.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/misc/pci_endpoint_test.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Compile tested only, review with care for the upper bound change.
+---
+ drivers/dma/idxd/cdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index af519088732d..34124bdce68c 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -860,7 +860,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+index 0423655f5a88..b00926abc69a 100644
+--- a/drivers/dma/idxd/cdev.c
++++ b/drivers/dma/idxd/cdev.c
+@@ -165,7 +165,7 @@ static void idxd_cdev_dev_release(struct device *dev)
+ 	struct idxd_wq *wq = idxd_cdev->wq;
  
- 	pci_set_drvdata(pdev, test);
+ 	cdev_ctx = &ictx[wq->idxd->data->type];
+-	ida_simple_remove(&cdev_ctx->minor_ida, idxd_cdev->minor);
++	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
+ 	kfree(idxd_cdev);
+ }
  
--	id = ida_simple_get(&pci_endpoint_test_ida, 0, 0, GFP_KERNEL);
-+	id = ida_alloc(&pci_endpoint_test_ida, GFP_KERNEL);
- 	if (id < 0) {
- 		err = id;
- 		dev_err(dev, "Unable to get id\n");
-@@ -907,7 +907,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	kfree(test->name);
- 
- err_ida_remove:
--	ida_simple_remove(&pci_endpoint_test_ida, id);
-+	ida_free(&pci_endpoint_test_ida, id);
- 
- err_iounmap:
- 	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
-@@ -943,7 +943,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- 	misc_deregister(&test->miscdev);
- 	kfree(misc_device->name);
- 	kfree(test->name);
--	ida_simple_remove(&pci_endpoint_test_ida, id);
-+	ida_free(&pci_endpoint_test_ida, id);
- 	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
- 		if (test->bar[bar])
- 			pci_iounmap(pdev, test->bar[bar]);
+@@ -463,7 +463,7 @@ int idxd_wq_add_cdev(struct idxd_wq *wq)
+ 	cdev = &idxd_cdev->cdev;
+ 	dev = cdev_dev(idxd_cdev);
+ 	cdev_ctx = &ictx[wq->idxd->data->type];
+-	minor = ida_simple_get(&cdev_ctx->minor_ida, 0, MINORMASK, GFP_KERNEL);
++	minor = ida_alloc_max(&cdev_ctx->minor_ida, MINORMASK, GFP_KERNEL);
+ 	if (minor < 0) {
+ 		kfree(idxd_cdev);
+ 		return minor;
 -- 
 2.34.1
 
