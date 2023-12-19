@@ -1,39 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992A16FAD
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 05:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B1C7472
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 05:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NrHNZz+Y"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jikoi80u"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id FSEnr9yeXuIvyFSEnrRqtn; Tue, 19 Dec 2023 06:01:51 +0100
+	id FSK1r7LYOlOIfFSK1rNq1F; Tue, 19 Dec 2023 06:07:14 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702962111;
-	bh=1HXfZutebd4IF1uNL0rih5Mj5PnxGJrPUITlr9cOY+Q=;
+	s=t20230301; t=1702962434;
+	bh=hNYuJtLt44j1feoxZtTgwq9FQXGAYBO23/GymZ86/oM=;
 	h=From:To:Cc:Subject:Date;
-	b=NrHNZz+Yny3Q/Iv0otUfEvoRtvi0dFyGFaHfyAqn+F4rQnidWt7ZI4nw46d/JwhRA
-	 mu9Iim9JSQsw/fppcAa1w6airT6gQ1nxftBwY9gBisw0P878G1h3wpteqx26Vc/7V4
-	 LGvbQmR6wdvW5WVav7v/E04tw460U5nmlht0AmsFCR4QY8Cs7cO/frZuRK6Dz3GTbI
-	 Sm3FqWHny6m+K9Lc0Ti7J6CBuE/NE6YZ4cmo/NkTrz52gBd2kYnPrIgnTcg1kldj/5
-	 L+qgP9yONmxZX4yzMl0b91HTm0B/EgqqhoYeFIer4jN59Om4FEzUdx3M66MTRFL8cN
-	 fdlMJPwO5eWHg==
+	b=jikoi80uOG58pqVrEA9fTFMioN76sSv7LCJL4SuH6vCakXTBBmWmYfkAOQWtYoHyu
+	 pEc6A7aHjbvWlA7dkVbNPKz4uqfFiNM2NzScWprWYzm+kTMVWkRKVjXsvoA1ucYThx
+	 tsqgHNq8Dwg5liFAPkI9BhslqfgEkNQMQbfeItSN+OlEqm7Y8bnFQkVPVUGKoZ6fLW
+	 M1KMltITCaUvAJp7hjqExWDcmRT4CC8xOKmRB6+/gn8PhavLF7M3ia69Pe6zPA5MBq
+	 kc5XCbKvWtdTv5C4xx+dMppMM42ECriwWhMvMnHBZ+Ljn8DWwJSKqBX0OzI9B7Slm7
+	 XrjzckzfpVRng==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 06:01:51 +0100
+X-ME-Date: Tue, 19 Dec 2023 06:07:14 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ppdev: Remove usage of the deprecated ida_simple_xx() API
-Date: Tue, 19 Dec 2023 06:01:47 +0100
-Message-Id: <ba9da12fdd5cdb2c28180b7160af5042447d803f.1702962092.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH] rtc: class: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 06:07:12 +0100
+Message-Id: <4f2c049cb09d46fed336e22445c71988b4f340d6.1702962419.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,39 +50,24 @@ This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/char/ppdev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Commit 592ff0c8d064 ("rtc: Directly use ida_alloc()/free()") missed this
+call
+---
+ drivers/rtc/class.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
-index 4c188e9e477c..ee951b265213 100644
---- a/drivers/char/ppdev.c
-+++ b/drivers/char/ppdev.c
-@@ -299,7 +299,7 @@ static int register_device(int minor, struct pp_struct *pp)
- 		goto err;
- 	}
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index edfd942f8c54..921ee1827974 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -256,7 +256,7 @@ static int rtc_device_get_id(struct device *dev)
+ 		of_id = of_alias_get_id(dev->parent->of_node, "rtc");
  
--	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
-+	index = ida_alloc(&ida_index, GFP_KERNEL);
- 	memset(&ppdev_cb, 0, sizeof(ppdev_cb));
- 	ppdev_cb.irq_func = pp_irq;
- 	ppdev_cb.flags = (pp->flags & PP_EXCL) ? PARPORT_FLAG_EXCL : 0;
-@@ -310,7 +310,7 @@ static int register_device(int minor, struct pp_struct *pp)
- 	if (!pdev) {
- 		pr_warn("%s: failed to register device!\n", name);
- 		rc = -ENXIO;
--		ida_simple_remove(&ida_index, index);
-+		ida_free(&ida_index, index);
- 		goto err;
- 	}
- 
-@@ -750,7 +750,7 @@ static int pp_release(struct inode *inode, struct file *file)
- 
- 	if (pp->pdev) {
- 		parport_unregister_device(pp->pdev);
--		ida_simple_remove(&ida_index, pp->index);
-+		ida_free(&ida_index, pp->index);
- 		pp->pdev = NULL;
- 		pr_debug(CHRDEV "%x: unregistered pardevice\n", minor);
+ 	if (of_id >= 0) {
+-		id = ida_simple_get(&rtc_ida, of_id, of_id + 1, GFP_KERNEL);
++		id = ida_alloc_range(&rtc_ida, of_id, of_id, GFP_KERNEL);
+ 		if (id < 0)
+ 			dev_warn(dev, "/aliases ID %d not available\n", of_id);
  	}
 -- 
 2.34.1
