@@ -1,38 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C84C12A
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 05:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992A16FAD
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 05:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G7InHElt"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NrHNZz+Y"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id FSDkr12EOmDWRFSDkrW92Z; Tue, 19 Dec 2023 06:00:45 +0100
+	id FSEnr9yeXuIvyFSEnrRqtn; Tue, 19 Dec 2023 06:01:51 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1702962045;
-	bh=XY0QlJMcPU7Xxpry3VlrLRsMZ3Hy51PgSnqRo3LknqY=;
+	s=t20230301; t=1702962111;
+	bh=1HXfZutebd4IF1uNL0rih5Mj5PnxGJrPUITlr9cOY+Q=;
 	h=From:To:Cc:Subject:Date;
-	b=G7InHEltsCFWlwRYeoWU8Ff7ExYyW/l90sclEYv0imJcncXNRAKqkM7DQ5oEBfUce
-	 NdyaglGIpq/C7lIh5Zn+7FXlIhg4Qk4EBg9SGfVUam2g4un8GBWxyA5UDwDk/vrZMi
-	 0P+t6BwpU1PVJdzolgvRLWvzIxx/gYoGzNZ+VjvSciEXSpJR0w8XbetGballZ1uLH/
-	 /ZLlq0VeQ8csvlCmxSzs9qSUfsC3maMuguhcGi5wqR1WzrwjC5XmqhLSzcyiRSF9i7
-	 8kp6o8a6Dgz+htBqpJkj/DewdYEiKccOikJbtmmfHlglDqi22UQj9pTTfJGO3mKtxE
-	 6edoP3SOTVG4g==
+	b=NrHNZz+Yny3Q/Iv0otUfEvoRtvi0dFyGFaHfyAqn+F4rQnidWt7ZI4nw46d/JwhRA
+	 mu9Iim9JSQsw/fppcAa1w6airT6gQ1nxftBwY9gBisw0P878G1h3wpteqx26Vc/7V4
+	 LGvbQmR6wdvW5WVav7v/E04tw460U5nmlht0AmsFCR4QY8Cs7cO/frZuRK6Dz3GTbI
+	 Sm3FqWHny6m+K9Lc0Ti7J6CBuE/NE6YZ4cmo/NkTrz52gBd2kYnPrIgnTcg1kldj/5
+	 L+qgP9yONmxZX4yzMl0b91HTm0B/EgqqhoYeFIer4jN59Om4FEzUdx3M66MTRFL8cN
+	 fdlMJPwO5eWHg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Dec 2023 06:00:45 +0100
+X-ME-Date: Tue, 19 Dec 2023 06:01:51 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Corey Minyard <minyard@acm.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	openipmi-developer@lists.sourceforge.net
-Subject: [PATCH] ipmi: Remove usage of the deprecated ida_simple_xx() API
-Date: Tue, 19 Dec 2023 06:00:39 +0100
-Message-Id: <b1a7a75263400742e5fda6bd7ba426772dc8ef11.1702961986.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ppdev: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 06:01:47 +0100
+Message-Id: <ba9da12fdd5cdb2c28180b7160af5042447d803f.1702962092.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,31 +50,40 @@ This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/ppdev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index d6f14279684d..b0eedc4595b3 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -3053,7 +3053,7 @@ static void cleanup_bmc_work(struct work_struct *work)
- 	int id = bmc->pdev.id; /* Unregister overwrites id */
+diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
+index 4c188e9e477c..ee951b265213 100644
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -299,7 +299,7 @@ static int register_device(int minor, struct pp_struct *pp)
+ 		goto err;
+ 	}
  
- 	platform_device_unregister(&bmc->pdev);
--	ida_simple_remove(&ipmi_bmc_ida, id);
-+	ida_free(&ipmi_bmc_ida, id);
- }
+-	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
++	index = ida_alloc(&ida_index, GFP_KERNEL);
+ 	memset(&ppdev_cb, 0, sizeof(ppdev_cb));
+ 	ppdev_cb.irq_func = pp_irq;
+ 	ppdev_cb.flags = (pp->flags & PP_EXCL) ? PARPORT_FLAG_EXCL : 0;
+@@ -310,7 +310,7 @@ static int register_device(int minor, struct pp_struct *pp)
+ 	if (!pdev) {
+ 		pr_warn("%s: failed to register device!\n", name);
+ 		rc = -ENXIO;
+-		ida_simple_remove(&ida_index, index);
++		ida_free(&ida_index, index);
+ 		goto err;
+ 	}
  
- static void
-@@ -3169,7 +3169,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
+@@ -750,7 +750,7 @@ static int pp_release(struct inode *inode, struct file *file)
  
- 		bmc->pdev.name = "ipmi_bmc";
- 
--		rv = ida_simple_get(&ipmi_bmc_ida, 0, 0, GFP_KERNEL);
-+		rv = ida_alloc(&ipmi_bmc_ida, GFP_KERNEL);
- 		if (rv < 0) {
- 			kfree(bmc);
- 			goto out;
+ 	if (pp->pdev) {
+ 		parport_unregister_device(pp->pdev);
+-		ida_simple_remove(&ida_index, pp->index);
++		ida_free(&ida_index, pp->index);
+ 		pp->pdev = NULL;
+ 		pr_debug(CHRDEV "%x: unregistered pardevice\n", minor);
+ 	}
 -- 
 2.34.1
 
