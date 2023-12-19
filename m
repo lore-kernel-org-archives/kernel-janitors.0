@@ -1,96 +1,94 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A1C38F80;
-	Tue, 19 Dec 2023 19:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AAF39AD0
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 19:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djO2xDfQ"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-1f5bd86ceb3so3248951fac.2;
-        Tue, 19 Dec 2023 11:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703013683; x=1703618483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ETYb4p/dYwWhsBHF1nMWqW8fNK9SRI38gyUWxBP4t0=;
-        b=djO2xDfQd85a2fpTfGKAzijr9XuJyDlw5Oxdn+TrlvwWNcGOYuHBlGpscQn0S4Yqlv
-         fv2vzfeACQqH5ld5B8TJ0MqrWuUHBLZyPFjDAgSVme3gSKHEx6bGvD5F5oH7pP81AcE8
-         QIDTChN4TlIu7XycdmdV5IOpjoHzsIFGqK4yBSAChFGDX+ORs1MjpE7H9Ee3jHAg7TTq
-         +HDkigGPUjrA8/7B/k8jCz2LN3Nw6CXg+/aXeJClT/cOetSbBIXiatXVKQr7IW3oYNZw
-         tign2j4cE/5/7KbU4aqhK5KaknIxCAzw1jzhtAJtofKB6HFtUq+m4xIIHa3fNITUj8w2
-         DzWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703013683; x=1703618483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ETYb4p/dYwWhsBHF1nMWqW8fNK9SRI38gyUWxBP4t0=;
-        b=E+5H7QBQ3pS56mn699azncOL0rnYVrgSk3ujw9BORXvRqCibbehrG1l6IJXjleK5m3
-         UouzEF2Q/vluFA9J37UI8hrg93mVw4Ksw6x99/YQSgXoPF0vIA9xcivK/MC7ERhLJ1XY
-         zLbsDKrYv0EDFG7h7yXuIqGx+7ivSiD7Lb5T/8eX1ubHIVK1VjPTWWie//pMaNsP9YlS
-         VoXFfRszzHOTlsQTO10RYZI9MWO4v+/Xymn3tlX1zgsOBl8Y38l3UCTRUJ24nlBkl49g
-         khKhM/Km81tzhWI/RYgY4v+6h9bg2TNRx9S2CYCTgIj4cMtTp7iv3Z2dm+vSAzCJ6Kl/
-         HlGA==
-X-Gm-Message-State: AOJu0Yzrc+hetWL3POdgMA4ovXMASypyepkDIFuARyHEndvKCwyGlQUh
-	hf8vajaJWyzzw9Ao3gfEWfEnsI0jWTbM0dqmKig=
-X-Google-Smtp-Source: AGHT+IEZVSzHdhnBJF3ACTt4+Byj88TFSnsLe822jMawRK5DOWRBwmTecbWpBZ7A5KtB+207zqeJFbXxzgdOA1vZWXs=
-X-Received: by 2002:a05:6870:15d5:b0:203:eb72:7594 with SMTP id
- k21-20020a05687015d500b00203eb727594mr2055316oad.19.1703013683353; Tue, 19
- Dec 2023 11:21:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="URI7oMNT"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id FfqmrwJWBO9apFfqmrMy24; Tue, 19 Dec 2023 20:33:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1703014439;
+	bh=7M2CUQpwgjxF1irpAVXAbKH37iRCkSgrRaBNR4Uhpg4=;
+	h=From:To:Cc:Subject:Date;
+	b=URI7oMNTP6dtjUHuREZTiAp0OXCfjCKk/WxX8Z/5LWVRXDE6iNQ8sZd5ELg062+Ed
+	 X26VgA/780AmEnGx6WzjoWPYTAxGCH7BGp7Vc3liOwUs5ETw5dtP78U1/0uCU0DIKa
+	 nQ876NuA0/sNogK10tU83cGBjnfgqdYz2DLPDwKmY82QIZoy3hz4I/1XGDrPMOlzx4
+	 bIL4uyOzTcgX5s+eGsk9gz7c8FDA6zYn9p9E79MPdPzcuACPg0mFHeBVJALAtPX0V+
+	 9q9CwQCgqCJN0GL82AlnXvnn4N0iOYDPjunx4xtwVP7IDnPTusJvKKh1yxAj+xgBId
+	 IGu30uiXGzy4g==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Dec 2023 20:33:59 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH v2] dmaengine: idxd: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 20:33:50 +0100
+Message-Id: <ac991f5f42112fa782a881d391d447529cbc4a23.1702967302.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231219141930.367426-1-colin.i.king@gmail.com>
-In-Reply-To: <20231219141930.367426-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 19 Dec 2023 14:21:11 -0500
-Message-ID: <CADnq5_Or8UGd1tarX9_Jvd20Lp3TcPYiGxCNicuExOJCiNUEmg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: remove redundant initialization of
- variable remainder
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-On Tue, Dec 19, 2023 at 12:40=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
-.com> wrote:
->
-> Variable remainder is being initialized with a value that is never read,
-> the assignment is redundant and can be removed. Also add a newline
-> after the declaration to clean up the coding style.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/basics/conversion.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/basics/conversion.c b/drivers=
-/gpu/drm/amd/display/dc/basics/conversion.c
-> index e295a839ab47..1090d235086a 100644
-> --- a/drivers/gpu/drm/amd/display/dc/basics/conversion.c
-> +++ b/drivers/gpu/drm/amd/display/dc/basics/conversion.c
-> @@ -103,7 +103,8 @@ void convert_float_matrix(
->
->  static uint32_t find_gcd(uint32_t a, uint32_t b)
->  {
-> -       uint32_t remainder =3D 0;
-> +       uint32_t remainder;
-> +
->         while (b !=3D 0) {
->                 remainder =3D a % b;
->                 a =3D b;
-> --
-> 2.39.2
->
+This is less verbose.
+
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_range() is inclusive. Sothis change allows one more device.
+
+MINORMASK is ((1U << MINORBITS) - 1), so allowing MINORMASK as a maximum value
+makes sense. It is also consistent with other "ida_.*MINORMASK" and
+"ida_*MINOR()" usages.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes v2:
+  - remove note about compile tested only, now tested on hw by Fenghua Yu
+  - fix some wording in the commit description   [Fenghua Yu]
+  
+v1: https://lore.kernel.org/all/a899125f42c12fa782a881d341d147519cbb4a23.1702967302.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/dma/idxd/cdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+index 0423655f5a88..b00926abc69a 100644
+--- a/drivers/dma/idxd/cdev.c
++++ b/drivers/dma/idxd/cdev.c
+@@ -165,7 +165,7 @@ static void idxd_cdev_dev_release(struct device *dev)
+ 	struct idxd_wq *wq = idxd_cdev->wq;
+ 
+ 	cdev_ctx = &ictx[wq->idxd->data->type];
+-	ida_simple_remove(&cdev_ctx->minor_ida, idxd_cdev->minor);
++	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
+ 	kfree(idxd_cdev);
+ }
+ 
+@@ -463,7 +463,7 @@ int idxd_wq_add_cdev(struct idxd_wq *wq)
+ 	cdev = &idxd_cdev->cdev;
+ 	dev = cdev_dev(idxd_cdev);
+ 	cdev_ctx = &ictx[wq->idxd->data->type];
+-	minor = ida_simple_get(&cdev_ctx->minor_ida, 0, MINORMASK, GFP_KERNEL);
++	minor = ida_alloc_max(&cdev_ctx->minor_ida, MINORMASK, GFP_KERNEL);
+ 	if (minor < 0) {
+ 		kfree(idxd_cdev);
+ 		return minor;
+-- 
+2.34.1
+
