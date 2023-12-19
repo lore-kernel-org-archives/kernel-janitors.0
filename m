@@ -1,102 +1,79 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506FA1D533;
-	Tue, 19 Dec 2023 15:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B311CA82;
+	Tue, 19 Dec 2023 15:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgV222GR"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40d13e4f7abso28742785e9.2;
-        Tue, 19 Dec 2023 07:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702999388; x=1703604188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xpNIUdgm1xKEgSk1LoKphgMBJlifkTP5txFZXlU5p74=;
-        b=XgV222GR+RIvOkm8CXNM2fTbLZM+cDQ/w5ChyrKDgm9uWGE/RTzRSFDbUaDpFaoRdK
-         LYONjznfCXWuQBDSPIrbJ/nRte62koRidv6VF84xlG8bZyMOgxZ1PkbSLaEKBBVCT+nI
-         s6YdBH9+d78BUshgPSfurWYYayzVfT+D9CeJkvohXpOsCDjs7Sim18JImqQv5/64P0pz
-         G+nR3koc0zYy8654bb1J/RVldhiI/m7zCqwKkIAQ64rhxD2DTMGhHP7umukYGYc7VRB3
-         TEMpIULtwo2xiDWyV3f571wjMIZj53EsBGUiLhSXo7PjkYlZZEDg+hOau9MFKZ/3ikgP
-         qGbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702999388; x=1703604188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xpNIUdgm1xKEgSk1LoKphgMBJlifkTP5txFZXlU5p74=;
-        b=mtXI0GMZf4+CpK0Ny1AB5znN8RWxcYbC8PxX+URNDJfwjk1nP7LSLFcNfraVTO4Kao
-         u3thFSkvn1gXZaQXrVXMmQCEAZi3Jw+VksHziAr8FVrN2+3OYQ9gHq8fsKLHMLSivjo4
-         lx8wp+m9F7hLQGPaBtrDPz7urlOpyNSb529VXAis/x9sYPxBv2x91dg6blXLi559SLXA
-         zVy0TCQF1g9jtCTNDrE3lspCQ3eHrRy6QQfhPYclzj/4tSGKD4wIeXTLOui56HauXRPG
-         4NpWcXeI1kECGjqeuW0agqg94llZlgNa7fHxGb3DvZNf3W30fOSrQjlbLIgN89NJdDGp
-         xKYQ==
-X-Gm-Message-State: AOJu0YyWVUwj4refRQ5TXe3KCdm2ZuBl17rTPOBrN0ohsJGlenWizJjd
-	9FQDazfkswv/JRwZSgw8ZkA=
-X-Google-Smtp-Source: AGHT+IHhPjly3v7Sdop+BFjikOaHSUhil1aU6xIVfY1uk6KdqVl2aWvUISAltvTjKE2rE4sIFpBacw==
-X-Received: by 2002:a05:600c:45cb:b0:40d:2522:1164 with SMTP id s11-20020a05600c45cb00b0040d25221164mr716333wmo.82.1702999388209;
-        Tue, 19 Dec 2023 07:23:08 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b3-20020adff903000000b003366aad3564sm4687202wrr.30.2023.12.19.07.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 07:23:07 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] samples/bpf: use %lu format specifier for unsigned long values
-Date: Tue, 19 Dec 2023 15:23:07 +0000
-Message-Id: <20231219152307.368921-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8rGQsvO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1702999844; x=1703604644; i=markus.elfring@web.de;
+	bh=SqIfd9piziXw3rDdw09M/Qh7y3a+TKlJcVDEhj0X7LE=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=G8rGQsvO3ka2I0WSCmF6TMOUJIdC0z1HpW7dfo6cfX3j3H5QFWWXoAN+IiA8Rt0B
+	 ZLesoWxR3eaAC5rvZUUXoe1U10oygNn8RCTQWtrkDPjqF1xvS8cmWRSBdipxPAIsE
+	 pq8XUAP83s8wqKrIZQWiPBPlG1iru+hsBCD1+X+xRS//QC/YuVu15aCos4wP6x58X
+	 9NrmH1fjM6cYhwqeKkiuh4C/EuKWRjaasrbK/73uFzIfbM4kVM4iGwHkINMJbDlZT
+	 90Qic0ppevvPCTF3sgiOdxnIQHX9yzTad0z9lAIkPe/1L0xc9IyNe8Fc8Jc2lymke
+	 iIAKxo1mA2gOrowN2w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXGK4-1roHQg0D1C-00Ynli; Tue, 19
+ Dec 2023 16:30:44 +0100
+Message-ID: <e0543d9d-a02a-4c9c-b341-36771cfb5353@web.de>
+Date: Tue, 19 Dec 2023 16:30:32 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: kernel-janitors@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/3] kobject: Adjustments for kobject_uevent_env()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jzjrw9R8tcsGtcdkiR1zTWKOG/6PCCnBcQo0xtGgnuFaxTVJnwM
+ b0hCCtkeaeVYfa0iHrKgIjXE+LmwpwWvv0TlYxGcy34jmoYkgSWhi2VInXh+DWhZM82KraS
+ txTHt24MMDToWtq2bImy7ZKfluZtWo8P1G65ykLw3n3X3RsGEv10/qvBroijVkaSqRT4LPe
+ YNVd8CaTZUyiNNeiveGtw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xVo22E71VfU=;cSt9rlzBYBXQmohzOXCHz8vONQ+
+ ZBYr6njgREwgl1/kqjB0U5HtuINaFkSYGF3++B8IDVPmoOenMQUM9+n3GulYTafevuZOYwGn3
+ fJPSjBG0ENNNbtJOVmVjcubmf2J6gCZdlhmevKuW6hcKxd3uksWulwRuYDE0zKQsa1GJndfTW
+ PQXHwCDwZ84gzQQHBLZFEiq7Oikpf6Ba1C4o06bpatE+SGpIdE+z4zq+IYBoJB6txv22oMA71
+ JE7K4o1zkFOHIMwGIWpDqOukpIQa3uPzlajjGROSIIaLUOn0Iitv6kvAe5exd2Y6+TQym4+Sj
+ Z6UyGYBfx9B+Gr9AySBRkfPeOorr66T43uMbyy9bNcOXw6Kufi7HY58sLi8zD+cFbnxAKlV4J
+ iyp2e1QgCzB3+A03aWtBYQf1P80fYUiF3WG3dMt/Ohjvqb3duQ8iukBCTxjMAlH9e63TtDiwY
+ jG9doKUNid4SJTsS1Vchzz/hwrm3iJ+s3dMGCNIDtMSmNxsLStNJOR2owVtShGZ4jnPWgkFpp
+ 8RIWYainggBw2LcSPovWDudQeELRsfF0PyfrpbVJUOnzhUTq7cAHHwZY1D0yntDEMI81LK9rv
+ LJm7XThHp3P/OVROAAWbfL1N4z8jdmK2urC611LtY3PRBNQDcR9dPI+xC36T/XnKKa3gllMzA
+ RZmnu62i9SyCz5LnPxgPe4Fz5g3+vytdEvBz2X+biSSWFsyaY9pLHux9IB0lvc6eB9smsVEdc
+ T5G4YcHEv1t5TFSy0EQTwsGwfnkEfK/lVKVdU5yfd/pA+zT4HPv+IxJeIAtIaM5FplNBWZp23
+ LStrEd62w460d223tLb+E0J6CWDAxZyub0ttoRzOSX2aupoND+sRhV6k1SnR9F87N8bQ1nncX
+ YRNNA6oGNHFuOttMiUAjnIDwXDOSno6QjJjG1x7yiruohcr7pu+5e6GrH3W/V5a93iGL+sV7c
+ e4bWyQ+b1N28VmgZj7ET1OemY4Q=
 
-Currently %ld format specifiers are being used for unsigned long
-values. Fix this by using %lu instead. Cleans up cppcheck warnings:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Dec 2023 16:22:33 +0100
 
-warning: %ld in format string (no. 1) requires 'long' but the argument
-type is 'unsigned long'. [invalidPrintfArgType_sint]
+A few update suggestions were taken into account
+from source code analysis.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- samples/bpf/cpustat_user.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Markus Elfring (3):
+  Add a jump label
+  Improve a size determination
+  Delete an unnecessary variable initialisation
 
-diff --git a/samples/bpf/cpustat_user.c b/samples/bpf/cpustat_user.c
-index ab90bb08a2b4..356f756cba0d 100644
---- a/samples/bpf/cpustat_user.c
-+++ b/samples/bpf/cpustat_user.c
-@@ -66,10 +66,10 @@ static void cpu_stat_print(void)
- 
- 		printf("CPU-%-6d ", j);
- 		for (i = 0; i < MAX_CSTATE_ENTRIES; i++)
--			printf("%-11ld ", data->cstate[i] / 1000000);
-+			printf("%-11lu ", data->cstate[i] / 1000000);
- 
- 		for (i = 0; i < MAX_PSTATE_ENTRIES; i++)
--			printf("%-11ld ", data->pstate[i] / 1000000);
-+			printf("%-11lu ", data->pstate[i] / 1000000);
- 
- 		printf("\n");
- 	}
--- 
-2.39.2
+ lib/kobject_uevent.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+=2D-
+2.43.0
 
