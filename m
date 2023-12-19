@@ -1,56 +1,64 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA33D1C68A;
-	Tue, 19 Dec 2023 15:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506FA1D533;
+	Tue, 19 Dec 2023 15:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1wJ1ein"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3366ddd1eddso1994927f8f.0;
-        Tue, 19 Dec 2023 07:14:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgV222GR"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40d13e4f7abso28742785e9.2;
+        Tue, 19 Dec 2023 07:23:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702998878; x=1703603678; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702999388; x=1703604188; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bRzX3hUbPtrAVrbHdB/NlfsXUqLfq91OinN9p1IBzVk=;
-        b=A1wJ1einY1p/eknjGE9iWj56vm+k4achQ2i604++5T9LRVTdF/6aLqVoIXgFsbp0e6
-         WXQEjzr7ukQBa7YJC6NwT6nvF89qyi/Fks66UkUNNxLDDJpVzE7Pk7stLVpcArgP9HE5
-         PYZAY4qMEdxb9hFchuDYXpi/kjcxB2VKt7sBcktcfjob3IImeZhfjH+ECmJw17EcY6NG
-         eTni7zAKIMlVfUF5c6IZyfP+dz22vDslqYgARhSNv/gnv92F+ydxh8Y1hmJXHiCLENMS
-         PYzm775WPKecsdVAtbZIZDsC6R2FE/+TCNKB/haEBuLGRB4AuqmlA/k+SuGwVJJNoC6p
-         9pSg==
+        bh=xpNIUdgm1xKEgSk1LoKphgMBJlifkTP5txFZXlU5p74=;
+        b=XgV222GR+RIvOkm8CXNM2fTbLZM+cDQ/w5ChyrKDgm9uWGE/RTzRSFDbUaDpFaoRdK
+         LYONjznfCXWuQBDSPIrbJ/nRte62koRidv6VF84xlG8bZyMOgxZ1PkbSLaEKBBVCT+nI
+         s6YdBH9+d78BUshgPSfurWYYayzVfT+D9CeJkvohXpOsCDjs7Sim18JImqQv5/64P0pz
+         G+nR3koc0zYy8654bb1J/RVldhiI/m7zCqwKkIAQ64rhxD2DTMGhHP7umukYGYc7VRB3
+         TEMpIULtwo2xiDWyV3f571wjMIZj53EsBGUiLhSXo7PjkYlZZEDg+hOau9MFKZ/3ikgP
+         qGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702998878; x=1703603678;
+        d=1e100.net; s=20230601; t=1702999388; x=1703604188;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bRzX3hUbPtrAVrbHdB/NlfsXUqLfq91OinN9p1IBzVk=;
-        b=eR9dMVJELAbMmb2Wz46ANO4enWGLW32NtZAI12wH8Z55ivR3bnRmAIdBW7SeVyodJW
-         v0KqLJHzykNXelTsPjf7+K1lR1wZggLBd3U1ySdv4yH7W1XAm06cbbouuK7zzP4aciHH
-         78eZnAY/GZG4Vi3ztyKRM8mQEtfXE+FgaA/AQs9sDgC0275KpSwzgVlsurYmz6UnnXCL
-         lMpfREYsP5koizZuQ7P4jhpPEWMWyefFZx5sBdAK/VgO4dR7lTnWTiAw8iM4DEpg8iRF
-         1jEBmrVfr0CvUFSZrheeLE35tJmLboaTe7ilFiSMaobSamdbbgtSwcPhUCxSnqo4vv47
-         VJIg==
-X-Gm-Message-State: AOJu0YyASKNuq6j9m6eGdE/85Tk0gfYzq75atuggyTVHfRP9lanwdY1J
-	zVTzO9ZQ/FeLQb5nVYc0+B8=
-X-Google-Smtp-Source: AGHT+IEgxSk4I/pZ3tdRsHVUcpmoX5T3UR/Qn+n42lmm5pkIOSmNqTF+iyUc87KbTBOBW/gp1MkJuQ==
-X-Received: by 2002:a5d:47cf:0:b0:336:3db1:1c1f with SMTP id o15-20020a5d47cf000000b003363db11c1fmr4370056wrc.235.1702998877941;
-        Tue, 19 Dec 2023 07:14:37 -0800 (PST)
+        bh=xpNIUdgm1xKEgSk1LoKphgMBJlifkTP5txFZXlU5p74=;
+        b=mtXI0GMZf4+CpK0Ny1AB5znN8RWxcYbC8PxX+URNDJfwjk1nP7LSLFcNfraVTO4Kao
+         u3thFSkvn1gXZaQXrVXMmQCEAZi3Jw+VksHziAr8FVrN2+3OYQ9gHq8fsKLHMLSivjo4
+         lx8wp+m9F7hLQGPaBtrDPz7urlOpyNSb529VXAis/x9sYPxBv2x91dg6blXLi559SLXA
+         zVy0TCQF1g9jtCTNDrE3lspCQ3eHrRy6QQfhPYclzj/4tSGKD4wIeXTLOui56HauXRPG
+         4NpWcXeI1kECGjqeuW0agqg94llZlgNa7fHxGb3DvZNf3W30fOSrQjlbLIgN89NJdDGp
+         xKYQ==
+X-Gm-Message-State: AOJu0YyWVUwj4refRQ5TXe3KCdm2ZuBl17rTPOBrN0ohsJGlenWizJjd
+	9FQDazfkswv/JRwZSgw8ZkA=
+X-Google-Smtp-Source: AGHT+IHhPjly3v7Sdop+BFjikOaHSUhil1aU6xIVfY1uk6KdqVl2aWvUISAltvTjKE2rE4sIFpBacw==
+X-Received: by 2002:a05:600c:45cb:b0:40d:2522:1164 with SMTP id s11-20020a05600c45cb00b0040d25221164mr716333wmo.82.1702999388209;
+        Tue, 19 Dec 2023 07:23:08 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v30-20020adfa1de000000b003366cb73f74sm4217956wrv.66.2023.12.19.07.14.37
+        by smtp.gmail.com with ESMTPSA id b3-20020adff903000000b003366aad3564sm4687202wrr.30.2023.12.19.07.23.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 07:14:37 -0800 (PST)
+        Tue, 19 Dec 2023 07:23:07 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Helge Deller <deller@gmx.de>,
-	Nikita Romanyuk <ufh8945@gmail.com>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: video: logo: use %u format specifier for unsigned int values
-Date: Tue, 19 Dec 2023 15:14:36 +0000
-Message-Id: <20231219151436.368696-1-colin.i.king@gmail.com>
+Subject: [PATCH] samples/bpf: use %lu format specifier for unsigned long values
+Date: Tue, 19 Dec 2023 15:23:07 +0000
+Message-Id: <20231219152307.368921-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -61,36 +69,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Currently the %d format specifier is being used for unsigned int values.
-Fix this by using the correct %u format specifier. Cleans up cppcheck
-warnings:
+Currently %ld format specifiers are being used for unsigned long
+values. Fix this by using %lu instead. Cleans up cppcheck warnings:
 
-warning: %d in format string (no. 1) requires 'int' but the argument
-type is 'unsigned int'. [invalidPrintfArgType_sint]
+warning: %ld in format string (no. 1) requires 'long' but the argument
+type is 'unsigned long'. [invalidPrintfArgType_sint]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/video/logo/pnmtologo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ samples/bpf/cpustat_user.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/logo/pnmtologo.c b/drivers/video/logo/pnmtologo.c
-index ada5ef6e51b7..2434a25afb64 100644
---- a/drivers/video/logo/pnmtologo.c
-+++ b/drivers/video/logo/pnmtologo.c
-@@ -249,10 +249,10 @@ static void write_footer(void)
- 	fputs("\n};\n\n", out);
- 	fprintf(out, "const struct linux_logo %s __initconst = {\n", logoname);
- 	fprintf(out, "\t.type\t\t= %s,\n", logo_types[logo_type]);
--	fprintf(out, "\t.width\t\t= %d,\n", logo_width);
--	fprintf(out, "\t.height\t\t= %d,\n", logo_height);
-+	fprintf(out, "\t.width\t\t= %u,\n", logo_width);
-+	fprintf(out, "\t.height\t\t= %u,\n", logo_height);
- 	if (logo_type == LINUX_LOGO_CLUT224) {
--		fprintf(out, "\t.clutsize\t= %d,\n", logo_clutsize);
-+		fprintf(out, "\t.clutsize\t= %u,\n", logo_clutsize);
- 		fprintf(out, "\t.clut\t\t= %s_clut,\n", logoname);
+diff --git a/samples/bpf/cpustat_user.c b/samples/bpf/cpustat_user.c
+index ab90bb08a2b4..356f756cba0d 100644
+--- a/samples/bpf/cpustat_user.c
++++ b/samples/bpf/cpustat_user.c
+@@ -66,10 +66,10 @@ static void cpu_stat_print(void)
+ 
+ 		printf("CPU-%-6d ", j);
+ 		for (i = 0; i < MAX_CSTATE_ENTRIES; i++)
+-			printf("%-11ld ", data->cstate[i] / 1000000);
++			printf("%-11lu ", data->cstate[i] / 1000000);
+ 
+ 		for (i = 0; i < MAX_PSTATE_ENTRIES; i++)
+-			printf("%-11ld ", data->pstate[i] / 1000000);
++			printf("%-11lu ", data->pstate[i] / 1000000);
+ 
+ 		printf("\n");
  	}
- 	fprintf(out, "\t.data\t\t= %s_data\n", logoname);
 -- 
 2.39.2
 
