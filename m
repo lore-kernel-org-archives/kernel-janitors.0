@@ -1,49 +1,90 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A85848D;
-	Tue, 19 Dec 2023 05:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2805BE7C
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 06:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sIiQdTvD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NPrfdD3xBw7hUE+IHG8/T4o5BO4Jpl9dBHXrfCMHZdM=; b=sIiQdTvDHb4clMvmBCt/PRrZDO
-	zv4fySdAjCh2XSWJqdolt1KwZFeBhq/gZdUKuoqE6nTUFlj9ZooNmLXsnexPfHc7+P8Vu/vFY9g2k
-	Yr4JrEj8RtL54FIza+pSomymYPYlNTa4XedeEsNoO57DDJ5GuMXHTCUTTjVAEb/WBIqsT5VqnLVuL
-	5BXa7BzJKHkhalzjL23k+Al2oCG2q1PvKHzjcYOWLU6AgQo3XgD+gmyYrwkar9OoRuzo0hDKeAUF1
-	xw7xntypNq0zZG4dLGImMW28vAwo0Cb/3UZ0JTKuMPF5MnCfHg6RZz7XWLrfr5YcW7DpVW6UKKPhz
-	h9skrtrQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rFSVt-000P2e-SC; Tue, 19 Dec 2023 05:19:29 +0000
-Date: Tue, 19 Dec 2023 05:19:29 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vboxsf: Remove usage of the deprecated ida_simple_xx()
- API
-Message-ID: <ZYEn4bhbIvK3SB/q@casper.infradead.org>
-References: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="l4sNEkA+"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id FTIhr2VyFBU01FTIirj4Uz; Tue, 19 Dec 2023 07:09:58 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702966198;
+	bh=KTpDymoJN4gJQumbzCdvVykjTutbaVEe/yWH87l7ENk=;
+	h=From:To:Cc:Subject:Date;
+	b=l4sNEkA+xYvOVabsBHk5M0V29A4uXKj/0Sg02aRcWKjiQPusnJVoVkEQnl31zJhC1
+	 1kuD5X4u/bdZgbo3J/2l+b2n2FIV25CUYmI2Mg7gyf3MYVUWRz/nHOlXmh16IneGE1
+	 woS7spuhSBnaRrQF1/L85iKji1QV6Ohsw//Mx3Y/TNE7s2ZCCYIEaAHmfbC4zVTBe/
+	 MpyyG9ivIqPulDzIUiAR2cL0+/2wXqUrrOxUFnbaZa75PvGxsT71I5ZIdlfS1FT4rt
+	 mXG9GWNvnUQQiX/3pmrjmTX7dItovt2Tfr95ZIKGflzxJlFEHNizqOX5BkTIuCKzlf
+	 0gaHpwJ69r0uA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Dec 2023 07:09:58 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] dw-xdata: Remove usage of the deprecated ida_simple_xx() API
+Date: Tue, 19 Dec 2023 07:09:54 +0100
+Message-Id: <cc01721cec2d416d7bdf47086943b17ef44b7286.1702966181.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 19, 2023 at 06:17:04AM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+This is less verbose.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/misc/dw-xdata-pcie.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/dw-xdata-pcie.c b/drivers/misc/dw-xdata-pcie.c
+index 257c25da5199..efd0ca8cc925 100644
+--- a/drivers/misc/dw-xdata-pcie.c
++++ b/drivers/misc/dw-xdata-pcie.c
+@@ -333,7 +333,7 @@ static int dw_xdata_pcie_probe(struct pci_dev *pdev,
+ 
+ 	dw->pdev = pdev;
+ 
+-	id = ida_simple_get(&xdata_ida, 0, 0, GFP_KERNEL);
++	id = ida_alloc(&xdata_ida, GFP_KERNEL);
+ 	if (id < 0) {
+ 		dev_err(dev, "xData: unable to get id\n");
+ 		return id;
+@@ -377,7 +377,7 @@ static int dw_xdata_pcie_probe(struct pci_dev *pdev,
+ 	kfree(dw->misc_dev.name);
+ 
+ err_ida_remove:
+-	ida_simple_remove(&xdata_ida, id);
++	ida_free(&xdata_ida, id);
+ 
+ 	return err;
+ }
+@@ -396,7 +396,7 @@ static void dw_xdata_pcie_remove(struct pci_dev *pdev)
+ 	dw_xdata_stop(dw);
+ 	misc_deregister(&dw->misc_dev);
+ 	kfree(dw->misc_dev.name);
+-	ida_simple_remove(&xdata_ida, id);
++	ida_free(&xdata_ida, id);
+ }
+ 
+ static const struct pci_device_id dw_xdata_pcie_id_table[] = {
+-- 
+2.34.1
+
