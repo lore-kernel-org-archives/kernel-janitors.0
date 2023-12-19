@@ -1,51 +1,27 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3BDC12F;
-	Tue, 19 Dec 2023 06:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YirwQ/ie"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BJ0KpYQ024067;
-	Tue, 19 Dec 2023 06:36:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=kNbP2WlWBMrLu1QgfSgeqIA5z2OMYRWHwqSpmbR+bdg=;
- b=YirwQ/ie7u9Cxw08FpLPGFW44zPI5efwqp623twqguPDS+RxGNkx00z0zU8v+jfmd/4I
- qpS1IWWPtImBOKN6y8RRkH21cDePs/yqBVaopccA0qn18JaqROFAS3oaxzgpsT6uxSys
- EdQHPAGrZnw7BxTJUBlndg86CRoDjTudg/zQELYj6k9nSJD5DOcWhv3cYq/P7/6b7osw
- qj+Mz94ouDq0y70wPp3j2chKklL6F9Y9LCBUkcStgVp5wmfcLjPEtFiaAy8olnsfxGsU
- Kr0qsKWwvxBcVdOS0+0lBerqNO4luz+ahT1NhdmfiI8YnCE8aLVXaXjwf7eJiI1J4KIs wg== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3v13sb50aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Dec 2023 06:36:43 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BJ5k2pJ028994;
-	Tue, 19 Dec 2023 06:36:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3v12b67x79-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Dec 2023 06:36:43 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BJ6agEv022292;
-	Tue, 19 Dec 2023 06:36:42 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3v12b67x6q-1;
-	Tue, 19 Dec 2023 06:36:42 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Lee Jones <lee@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, kernel test robot <lkp@intel.com>
-Subject: [PATCH] usb: yurex: Fix inconsistent locking bug in yurex_read()
-Date: Mon, 18 Dec 2023 22:36:35 -0800
-Message-ID: <20231219063639.450994-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.42.0
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E6701F9E7;
+	Tue, 19 Dec 2023 06:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 9B70460F259C3;
+	Tue, 19 Dec 2023 14:57:58 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: pkshih@realtek.com,
+	kvalo@kernel.org
+Cc: Su Hui <suhui@nfschina.com>,
+	linville@tuxdriver.com,
+	Larry.Finger@lwfinger.net,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH wireless-next 04/11] wifi: rtlwifi: rtl8192c: using calculate_bit_shift()
+Date: Tue, 19 Dec 2023 14:57:32 +0800
+Message-Id: <20231219065739.1895666-5-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20231219065739.1895666-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,43 +29,66 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-19_02,2023-12-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=915 adultscore=0
- malwarescore=0 phishscore=0 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2312190047
-X-Proofpoint-ORIG-GUID: eft87yRi825x-nhKuNnaynBwYrOUUb09
-X-Proofpoint-GUID: eft87yRi825x-nhKuNnaynBwYrOUUb09
 
-Unlock before returning on the error path.
+Using calculate_bit_shift() to replace _rtl92c_phy_calculate_bit_shift().
+And fix the undefined bitwise shift behavior problem.
 
-Fixes: 86b20af11e84 ("usb: yurex: Replace snprintf() with the safer scnprintf() variant")
-Reported-by: Dan Carpenter <error27@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202312170252.3udgrIcP-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Fixes: 4295cd254af3 ("rtlwifi: Move common parts of rtl8192ce/phy.c")
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/usb/misc/yurex.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../wireless/realtek/rtlwifi/rtl8192c/phy_common.c   | 12 ++----------
+ .../wireless/realtek/rtlwifi/rtl8192c/phy_common.h   |  1 -
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/usb/misc/yurex.c b/drivers/usb/misc/yurex.c
-index 5a13cddace0e..9a0649d23693 100644
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -414,8 +414,10 @@ static ssize_t yurex_read(struct file *file, char __user *buffer, size_t count,
- 		return -ENODEV;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.c
+index 3d29c8dbb255..144ee780e1b6 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.c
+@@ -17,7 +17,7 @@ u32 rtl92c_phy_query_bb_reg(struct ieee80211_hw *hw, u32 regaddr, u32 bitmask)
+ 	rtl_dbg(rtlpriv, COMP_RF, DBG_TRACE, "regaddr(%#x), bitmask(%#x)\n",
+ 		regaddr, bitmask);
+ 	originalvalue = rtl_read_dword(rtlpriv, regaddr);
+-	bitshift = _rtl92c_phy_calculate_bit_shift(bitmask);
++	bitshift = calculate_bit_shift(bitmask);
+ 	returnvalue = (originalvalue & bitmask) >> bitshift;
+ 
+ 	rtl_dbg(rtlpriv, COMP_RF, DBG_TRACE,
+@@ -40,7 +40,7 @@ void rtl92c_phy_set_bb_reg(struct ieee80211_hw *hw,
+ 
+ 	if (bitmask != MASKDWORD) {
+ 		originalvalue = rtl_read_dword(rtlpriv, regaddr);
+-		bitshift = _rtl92c_phy_calculate_bit_shift(bitmask);
++		bitshift = calculate_bit_shift(bitmask);
+ 		data = ((originalvalue & (~bitmask)) | (data << bitshift));
  	}
  
--	if (WARN_ON_ONCE(dev->bbu > S64_MAX || dev->bbu < S64_MIN))
-+	if (WARN_ON_ONCE(dev->bbu > S64_MAX || dev->bbu < S64_MIN)) {
-+		mutex_unlock(&dev->io_mutex);
- 		return -EIO;
-+	}
+@@ -143,14 +143,6 @@ void _rtl92c_phy_rf_serial_write(struct ieee80211_hw *hw,
+ }
+ EXPORT_SYMBOL(_rtl92c_phy_rf_serial_write);
  
- 	spin_lock_irqsave(&dev->lock, flags);
- 	scnprintf(in_buffer, MAX_S64_STRLEN, "%lld\n", dev->bbu);
+-u32 _rtl92c_phy_calculate_bit_shift(u32 bitmask)
+-{
+-	u32 i = ffs(bitmask);
+-
+-	return i ? i - 1 : 32;
+-}
+-EXPORT_SYMBOL(_rtl92c_phy_calculate_bit_shift);
+-
+ static void _rtl92c_phy_bb_config_1t(struct ieee80211_hw *hw)
+ {
+ 	rtl_set_bbreg(hw, RFPGA0_TXINFO, 0x3, 0x2);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.h b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.h
+index 75afa6253ad0..e64d377dfe9e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.h
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/phy_common.h
+@@ -196,7 +196,6 @@ bool rtl92c_phy_set_rf_power_state(struct ieee80211_hw *hw,
+ void rtl92ce_phy_set_rf_on(struct ieee80211_hw *hw);
+ void rtl92c_phy_set_io(struct ieee80211_hw *hw);
+ void rtl92c_bb_block_on(struct ieee80211_hw *hw);
+-u32 _rtl92c_phy_calculate_bit_shift(u32 bitmask);
+ long _rtl92c_phy_txpwr_idx_to_dbm(struct ieee80211_hw *hw,
+ 				  enum wireless_mode wirelessmode,
+ 				  u8 txpwridx);
 -- 
-2.42.0
+2.30.2
 
