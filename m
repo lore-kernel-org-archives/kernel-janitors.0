@@ -1,58 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0BFC123;
-	Tue, 19 Dec 2023 04:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8634EC132
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 04:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hacsjPYR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2D9C433C8;
-	Tue, 19 Dec 2023 04:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702959136;
-	bh=A0o8Cis9GBjzQ0hNF1DI0Tm54wJQapdqNKfZp687fdk=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=hacsjPYRpmQLBdQOHlxQAhBoakr18Tg1A9SQdR0eslFvVCCTZhZvnUQ+viZu4ZlxR
-	 cK2E4QSJ25vU8CaSE5T/cdC1z5kTUKLA3OHDQxIP+Q2VQwH3MTkKr7wY8MxsskA+4V
-	 VcNrOXf/P1pEU2DQ7OlVVkjZnLsAHZUlIjd518cV84s4rklM5hvvemh4lBl7/84+Q4
-	 cUT40z76A29opWk44inb+v+2bvYsqUiCMKX99PrmuD18KlmQhCj8Enl32QgcGRbUmZ
-	 Mscg/c06Ya0TKESklv9QUuqwRD+U5sHoLlpr2X0zZgKH57PUEgMAY9H/nrR5Fu9m4M
-	 rR6U8SW0+2nNA==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="n4pVtjAF"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id FRv4rqervb4TgFRv4rjXAp; Tue, 19 Dec 2023 05:41:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1702960888;
+	bh=cUzYcHCIluQtLI47YxLbQmZaKW4i/ciHI8Ppn0igCjw=;
+	h=From:To:Cc:Subject:Date;
+	b=n4pVtjAFR1nQ9jwRE978HzDHV4WihO5oeBif9lN/ekFNsTqr8TUjJJptyXGUc+Qcg
+	 FVoGWZfceeHRzTMI2DGnzPPlyrNNdvSfmZZkyO+hWcUnIWC5JvHv5J4UNpMgKFtKGK
+	 mXA3v343MUz7R/a7sNYw96q/Q7sPinC8X/KKwQ0P6hj3bdaKyTOb2eABkReShL3vNn
+	 DOOzvCwbNLcrDM6icYrm62NMNDC7/ftidCS3bG4ZGyrQtFcIukgWdfq5q5BqktlJBW
+	 ucF9z0oNOozTE8D0tVCCA0CKI2zAOqbvlRDKcEno2cg8Otm/giED5GCRjldFDs/wen
+	 zdgLpnhYR30Og==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Dec 2023 05:41:28 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: sprd: Simplify memory allocation in sprd_platform_compr_dma_config()
+Date: Tue, 19 Dec 2023 05:41:19 +0100
+Message-Id: <d16f22ae0627249a9fc658927832590cd88c544e.1702960856.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: MAINTAINERS: wifi: brcm80211: remove non-existing
- SHA-cyfmac-dev-list@infineon.com
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20231218121105.23882-1-lukas.bulwahn@gmail.com>
-References: <20231218121105.23882-1-lukas.bulwahn@gmail.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Arend van Spriel <aspriel@gmail.com>,
- Franky Lin <franky.lin@broadcom.com>,
- Hante Meuleman <hante.meuleman@broadcom.com>, linux-wireless@vger.kernel.org,
- brcm80211-dev-list.pdl@broadcom.com, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170295913267.640718.8284035097366475252.kvalo@kernel.org>
-Date: Tue, 19 Dec 2023 04:12:14 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+'sg' is freed at the end sprd_platform_compr_dma_config() both in the
+normal and in the error handling path.
 
-> When sending an email to SHA-cyfmac-dev-list@infineon.com, the server
-> responds '550 #5.1.0 Address rejected.'
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+There is no need to use the devm_kcalloc()/devm_kfree(), kcalloc()/kfree()
+is enough.
 
-Patch applied to wireless.git, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/sprd/sprd-pcm-compress.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-044879ce5406 MAINTAINERS: wifi: brcm80211: remove non-existing SHA-cyfmac-dev-list@infineon.com
-
+diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
+index 6cfab8844d0f..57bd1a0728ac 100644
+--- a/sound/soc/sprd/sprd-pcm-compress.c
++++ b/sound/soc/sprd/sprd-pcm-compress.c
+@@ -160,7 +160,7 @@ static int sprd_platform_compr_dma_config(struct snd_soc_component *component,
+ 		return -ENODEV;
+ 	}
+ 
+-	sgt = sg = devm_kcalloc(dev, sg_num, sizeof(*sg), GFP_KERNEL);
++	sgt = sg = kcalloc(sg_num, sizeof(*sg), GFP_KERNEL);
+ 	if (!sg) {
+ 		ret = -ENOMEM;
+ 		goto sg_err;
+@@ -250,12 +250,12 @@ static int sprd_platform_compr_dma_config(struct snd_soc_component *component,
+ 		dma->desc->callback_param = cstream;
+ 	}
+ 
+-	devm_kfree(dev, sg);
++	kfree(sg);
+ 
+ 	return 0;
+ 
+ config_err:
+-	devm_kfree(dev, sg);
++	kfree(sg);
+ sg_err:
+ 	dma_release_channel(dma->chan);
+ 	return ret;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20231218121105.23882-1-lukas.bulwahn@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.34.1
 
