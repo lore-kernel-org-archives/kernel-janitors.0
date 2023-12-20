@@ -1,41 +1,29 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1757546B92;
-	Wed, 20 Dec 2023 15:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9843D47A4D;
+	Wed, 20 Dec 2023 16:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xbf/l7ur"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3BKAJMxu026336;
-	Wed, 20 Dec 2023 16:52:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=dMuOAk+gwvkbeHZULHNVEMOJGqXKMt2xpT/Apfey03s=; b=xb
-	f/l7urPxvrldORWLQ24h8lgbfRitKrFHG+QvaC7BjQIJGYn+mI/s/oZnOeK2y2/t
-	qkykqrhxu9lakzQwgZwgW6kCeHouvFrv2hEBdOGxnpS0Rf8AH9T7NEgbjDvEnyGn
-	ZidlWnQXPMo8j7FfMgsMFYaJyW0dkBs9IxvT9Eemyd4iOabY8S4O1NsgHBJ8eeNf
-	D2+IXTJM50FN59SzuOZyKBgutYmYT4gagoxZAg3X+mqO05jXwhNHfPq6TBWqowMh
-	m+lHiFlQY94j3Xk+bn3XEkWrwbFradlEM6Kn73w09EIbO8sK1aYAK/1xjhv9TwWK
-	Bw52LkzGpnDNZU8r3HmQ==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3v126m2t9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 16:52:31 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 02F33100057;
-	Wed, 20 Dec 2023 16:52:31 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED5B12207AC;
-	Wed, 20 Dec 2023 16:52:30 +0100 (CET)
-Received: from [10.201.20.59] (10.201.20.59) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 20 Dec
- 2023 16:52:30 +0100
-Message-ID: <6a7ecf2f-eee9-4297-b0d6-be7e7f1d9fea@foss.st.com>
-Date: Wed, 20 Dec 2023 16:52:29 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gGK5xHD4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703088941; x=1703693741; i=markus.elfring@web.de;
+	bh=gEfLWQnd9+b0Ecm0j1dt7pp3gS7iO02w8tVpBjD0hGA=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=gGK5xHD4/upEQGDibJFhcyFDYUeaxS7Sy+Slbr4ehw7UWXNxlI04dkQg4w2O4+5K
+	 Y6fw5x+oKUEIgWQTW+yazEhZARkZ1YO/nEAZEtoJZPUmZmR00vV8VpBbwkC/AFBgO
+	 qdvv5zO2SHQPQabTe/H70OWBWULu2RRr9NhZAUgVD0Ta/02D/p102w90/lxuLoO9K
+	 +6gfFkjDOMeD/HAq4G8o1SMge8pluo/ZEB1HDQ+tWahtvWHTkoIsWb93dG/jvDbMl
+	 uDUZhUC8yk14ReHNrhzWfL40PURSizblWTDz2HbWuMdampVA6ObmK99woOIsFYw5B
+	 CZ7bwqIThlB6EVL5PQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIc7b-1rU1zE2s1l-00Eo1M; Wed, 20
+ Dec 2023 17:15:41 +0100
+Message-ID: <154454fe-2cbd-4432-ae44-634b1624504a@web.de>
+Date: Wed, 20 Dec 2023 17:15:40 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,52 +31,66 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] tools/counter: Fix spelling mistake "componend" ->
- "component"
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>,
-        William Breathitt Gray
-	<william.gray@linaro.org>,
-        <linux-iio@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20231219133015.365943-1-colin.i.king@gmail.com>
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20231219133015.365943-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-20_09,2023-12-20_01,2023-05-22_02
+To: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
+ linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Avadhut Naik <avadhut.naik@amd.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ John Allen <john.allen@amd.com>, Muralidhara M K <muralidhara.mk@amd.com>,
+ Tony Luck <tony.luck@intel.com>, William Roche <william.roche@oracle.com>
+References: <20231218190406.27479-2-yazen.ghannam@amd.com>
+Subject: Re: [PATCH v4 1/3] RAS: Introduce AMD Address Translation Library
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20231218190406.27479-2-yazen.ghannam@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VZ1CMcWpi44oruv3gX9iZVGVDcWc5QtxjyFIjGHreD07L+/rfIV
+ e/oIkM9H62fQUTX9kpMsUBYIEksNwiSEP2Q7G8Fe8+lKeSxhtuNKjIST8Xcq0H4bWnKVYmj
+ TtejieXu5dX41jRPxiO/nurB3InS5dx2ykA5RoAJfh9WpoRlTyakki8lMMJQgWZF3LfaOGc
+ KtOJpPU0EcBtMYeqNsU6w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8nxw63w+qyw=;MPZZqgrLI5/rl1ccGTBv/vdbywG
+ PrlvoohF49xOyfSN/qPmwF9Qxa/vusjBqXF2Nbq3J0fqKq2bBuyP2yfcE1SmNeea1SM/s7p0T
+ oRDjilOTOJDesenASziYr4uki4aaChWV1866DFqdpQMkCMEZPx+sYXvnKT+Zg7Jiv0Sanfk0H
+ Qqllk1hZf7L/LvrdPlckXsPNpYVuQzFxbQDtiSUSPUqsZ5mx97OQhTAlWIhOT9XwMUgczZade
+ C0IqCoa3okc+TxAFANDZarL0dYnbfXZsoX+JpRFg1YLQA7Oib/Np/4S2Cw4W5DDPeBd73gloE
+ C/zPv0FaQihkftx3GDX2sxHDaroGB8RwrzATapqbLNGcwhCHk7WD45Zvwexxu5/jWgB+nd2lb
+ S9BXDCO44DIG4WRLnarevCnWiOkbt0hNk3k0oSABmo0jSARNWbDhepY07354yNM8sUCGZ/y14
+ ZmJscarjYUTRFc0JyY2j0eeh1xNt4YXhNlUMTae6MUKkzsOPlASY34ck+KeS0E+WzmnxL1ez2
+ cAUyctoVdRsvPcRrTzTWQ5aQQZwvAtv1W/xCmnhR2Sev+3OC1cdN85wNut/UvkLy2tBCD1LdK
+ JIhReqQwK9DKuFWo102cAeqcZLUR9NnsKQBq0Qp3KzaT2Kcppa2Xpk7NfFlfLdbo0DtrLxClM
+ YdHZ+oaLjdbljzzBvvZnUBwbWo/u/I1Yr/fLyH4ZlE+W01zCVgzQyTsPy3LiJqRDUxsvw7+5j
+ +dFKL548g6nweWQNBqKlvWSgoTeAgLm2u/h3RauzsMFUErDi6eg2nHjGuVegifNnlJEfRJQ4i
+ tNb4Gz140MYsQYFZv66cibc0P8v+KhLfxswmX9DEPBslqFLzWzWq//R1ag85DR9F2m4aq/03e
+ t80D+D57SrmIsuMveu2nWQ2ttJZxbOJ89O8l5w1/yYeB6jl+pjHGXuatM3nUcM5UtcmI9WpSy
+ ytQD09phXzgP8KmiGeHgptFB3Ec=
 
-On 12/19/23 14:30, Colin Ian King wrote:
-> There are two spelling mistakes in the help text. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+=E2=80=A6
+> +++ b/drivers/ras/amd/atl/core.c
+> @@ -0,0 +1,225 @@
+=E2=80=A6
+> +unsigned long norm_to_sys_addr(u8 socket_id, u8 die_id, u8 coh_st_inst_=
+id, unsigned long addr)
+> +{
+=E2=80=A6
+> +	if (!late_hole_remove(&ctx) && add_base_and_hole(&ctx))
+> +		return -EINVAL;
+> +
+> +	if (dehash_address(&ctx))
+> +		return -EINVAL;
+> +
+> +	if (late_hole_remove(&ctx) && add_base_and_hole(&ctx))
+> +		return -EINVAL;
+=E2=80=A6
+> +	return ctx.ret_addr;
+> +}
+=E2=80=A6
 
-Hi Colin,
-Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+I wonder which condition checks should actually be used for such
+a function implementation.
 
-Thanks for your patch,
-Best Regards,
-Fabrice
-> ---
->  tools/counter/counter_watch_events.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/counter/counter_watch_events.c b/tools/counter/counter_watch_events.c
-> index 3898fe7e35ec..37d1b4b3e63d 100644
-> --- a/tools/counter/counter_watch_events.c
-> +++ b/tools/counter/counter_watch_events.c
-> @@ -120,8 +120,8 @@ static void print_usage(void)
->  		"  evt_capture                (COUNTER_EVENT_CAPTURE)\n"
->  		"\n"
->  		"  chan=<n>                   channel <n> for this watch [default: 0]\n"
-> -		"  id=<n>                     componend id <n> for this watch [default: 0]\n"
-> -		"  parent=<n>                 componend parent <n> for this watch [default: 0]\n"
-> +		"  id=<n>                     component id <n> for this watch [default: 0]\n"
-> +		"  parent=<n>                 component parent <n> for this watch [default: 0]\n"
->  		"\n"
->  		"Example with two watched events:\n\n"
->  		"counter_watch_events -d \\\n"
+How do you think about to avoid also the specification of duplicate
+return statements here?
+
+Regards,
+Markus
