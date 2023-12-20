@@ -1,29 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBE640BE8;
-	Wed, 20 Dec 2023 15:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1757546B92;
+	Wed, 20 Dec 2023 15:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FqFNtAdX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703087145; x=1703691945; i=markus.elfring@web.de;
-	bh=y9/SF/RlbFa6tJGr2SNUeo6dSgsWOw7zO6EMmsQosaY=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=FqFNtAdXBaDNocXhGLCcukoUjH6Py3e6U1axwjxwT3ekIuncVMrDQWYvXu1F7FRE
-	 sbiX6DBs5fAZhe4FCKtJ44hH/e9vPeCPIxOxT7zLAysefxYyFCz984qhj91zQ+f6H
-	 Z7ROAT8ka03gwhw51G5kftKVNctx4R2dYwT3X36lcWjfchpV0DYn6iAt5SOZFrwEm
-	 drgmoegLG/75cHsw3xBb1E7i6gq1BTDwAvy8NPcMqZ8GQ8oF3oanM1XrROSDBaF9X
-	 sanvs102YCO+0XBCH6utw+h2QrR6BtmX6Rb2buSO1hgc971XeHFlOtJyGpNHiASK4
-	 KYkCDo0KqabzRIHDcA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mho0A-1qlKun2pJw-00dyvj; Wed, 20
- Dec 2023 16:45:45 +0100
-Message-ID: <f55fa198-6a3f-4fa9-8633-e9557055d784@web.de>
-Date: Wed, 20 Dec 2023 16:45:29 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xbf/l7ur"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3BKAJMxu026336;
+	Wed, 20 Dec 2023 16:52:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=dMuOAk+gwvkbeHZULHNVEMOJGqXKMt2xpT/Apfey03s=; b=xb
+	f/l7urPxvrldORWLQ24h8lgbfRitKrFHG+QvaC7BjQIJGYn+mI/s/oZnOeK2y2/t
+	qkykqrhxu9lakzQwgZwgW6kCeHouvFrv2hEBdOGxnpS0Rf8AH9T7NEgbjDvEnyGn
+	ZidlWnQXPMo8j7FfMgsMFYaJyW0dkBs9IxvT9Eemyd4iOabY8S4O1NsgHBJ8eeNf
+	D2+IXTJM50FN59SzuOZyKBgutYmYT4gagoxZAg3X+mqO05jXwhNHfPq6TBWqowMh
+	m+lHiFlQY94j3Xk+bn3XEkWrwbFradlEM6Kn73w09EIbO8sK1aYAK/1xjhv9TwWK
+	Bw52LkzGpnDNZU8r3HmQ==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3v126m2t9r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Dec 2023 16:52:31 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 02F33100057;
+	Wed, 20 Dec 2023 16:52:31 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED5B12207AC;
+	Wed, 20 Dec 2023 16:52:30 +0100 (CET)
+Received: from [10.201.20.59] (10.201.20.59) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 20 Dec
+ 2023 16:52:30 +0100
+Message-ID: <6a7ecf2f-eee9-4297-b0d6-be7e7f1d9fea@foss.st.com>
+Date: Wed, 20 Dec 2023 16:52:29 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,52 +43,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
- linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Avadhut Naik <avadhut.naik@amd.com>,
- John Allen <john.allen@amd.com>, Muralidhara M K <muralidhara.mk@amd.com>,
- Tony Luck <tony.luck@intel.com>, William Roche <william.roche@oracle.com>
-References: <20231218190406.27479-2-yazen.ghannam@amd.com>
-Subject: Re: [PATCH v4 1/3] RAS: Introduce AMD Address Translation Library
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20231218190406.27479-2-yazen.ghannam@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:I5sQTZH+KKLnMclZnQxi8hZyHH/nG3eF43/591+yxQP4SptVF0B
- bLykw5Ge0CU30i5wHTOc6SRsUee6XUhiMZyj6UwguICE3EB1Y1XZqNNyTN6NlTK+iG8h6s/
- jWn6VpLKdULU9ec9RKVbtmJ46et8b3qPRL7tBOsK7gcxwlyMbvTBuG2+wBGaguEoO+zRkYW
- 4py+yq34vUehYUFnzKjyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0kCr/Ov+mKA=;ltTillqJmpXYVa64om7RWVan0VJ
- rJIKNy6v//3qtuDqMIL/hX1YrLQT62DkDtYHevo+cnFog7C8k2SEhWviOzEGPgurcQk2p49yM
- 0Wp4JhU5Cuf0nq1gJdIC7WUpkOUXNivQqZFEYpLL/ZDyaQK+ncxU5WFoyqbcYAsqzPBgSk+2W
- dWmvErgpyqu7PwEcFVxiiCdlNfFjWv25bH+YgKPhlKmSnY5m22GPOvs+KjoXA2yrK2pYje7mD
- fvC+ePuViv+RUfvQegpwebs0sU56808AJ32lDi7K+DRD4WzmgMiaSuQ4XHtaq3uYBpCWp9tX1
- qGIieTB1i8641N5X3j4pBopCnK/GCSCgbQCwo/IcyBMUZV1pLDPGJh3O78PhojIs2TEmJaUq7
- x3I3lvR5ZAqmAQNAO72+nbKMFBAcdD2SxcXe7LIpPukt1qy2Vkj6u2WRyjBysb6R/90Imegn7
- l62jRWCymDlXn21iv5/M6lQ8oGjWguaI92algkrbQk+R19OVLxx33lGHdx+nwYn5xEd2ArIOo
- +bljMLCwc0yBbrpLbNtFbcnjwk8CZPkrcI/2gjDuzXdVL5Wi5WYGffgTpdRxdab5AbjLwOh7z
- dBv8N2SGwtVwnMZFcvArxOWo/NUAV0NlGfSSrBFDuD8tEY0DzvgXnnaMoaIoHw7q6A3B7jtHx
- VzVAw4qa8zjfVvfdN8fpUcRSvQ9KrCV8FXfsIGLvPrRY8NlEM3r9iq+NFbByr+Di41CjvmoFB
- ubJF3QiHUVltAGO2EC1RbKHPG10pJx3jN1mOSnyM2z0FfJOIxh/dZUZe+UYIqnCl9UqINOBRC
- /sj+C5iAgl8en6w/RbKDvMyJPnrOw35Co34fLJWipuIHlrJFfc+c4QhosiWYsxVPj2S75DkOy
- /iqJH3Q5ZhW7PBzNUsL2ZX74VHLycGdz6P8w3Zv8Q4kM9zmpRaxCeaALnhEEHiyXpt9cLdrag
- Zuj/ag==
+Subject: Re: [PATCH][next] tools/counter: Fix spelling mistake "componend" ->
+ "component"
+Content-Language: en-US
+To: Colin Ian King <colin.i.king@gmail.com>,
+        William Breathitt Gray
+	<william.gray@linaro.org>,
+        <linux-iio@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20231219133015.365943-1-colin.i.king@gmail.com>
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20231219133015.365943-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-20_09,2023-12-20_01,2023-05-22_02
 
-=E2=80=A6
-> +++ b/drivers/ras/amd/atl/access.c
-> @@ -0,0 +1,106 @@
-=E2=80=A6
-> +static int __df_indirect_read(u16 node, u8 func, u16 reg, u8 instance_i=
-d, u32 *lo)
-=E2=80=A6
+On 12/19/23 14:30, Colin Ian King wrote:
+> There are two spelling mistakes in the help text. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-I suggest to reconsider the usage of double underscores for identifiers.
-How do you think about to avoid that this software depends on undefined be=
-haviour?
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
+Hi Colin,
+Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 
-Regards,
-Markus
+Thanks for your patch,
+Best Regards,
+Fabrice
+> ---
+>  tools/counter/counter_watch_events.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/counter/counter_watch_events.c b/tools/counter/counter_watch_events.c
+> index 3898fe7e35ec..37d1b4b3e63d 100644
+> --- a/tools/counter/counter_watch_events.c
+> +++ b/tools/counter/counter_watch_events.c
+> @@ -120,8 +120,8 @@ static void print_usage(void)
+>  		"  evt_capture                (COUNTER_EVENT_CAPTURE)\n"
+>  		"\n"
+>  		"  chan=<n>                   channel <n> for this watch [default: 0]\n"
+> -		"  id=<n>                     componend id <n> for this watch [default: 0]\n"
+> -		"  parent=<n>                 componend parent <n> for this watch [default: 0]\n"
+> +		"  id=<n>                     component id <n> for this watch [default: 0]\n"
+> +		"  parent=<n>                 component parent <n> for this watch [default: 0]\n"
+>  		"\n"
+>  		"Example with two watched events:\n\n"
+>  		"counter_watch_events -d \\\n"
