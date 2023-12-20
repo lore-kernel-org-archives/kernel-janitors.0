@@ -1,97 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBD01DFCD;
-	Wed, 20 Dec 2023 11:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4B38DDD;
+	Wed, 20 Dec 2023 14:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smh6+6fU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713ECC433C7;
-	Wed, 20 Dec 2023 11:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703072725;
-	bh=e3V0eBbLWUL0Jag3MGgZ63p7pyhYoE/YfY9WainlOKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=smh6+6fUXOQRA4Bkc3O4XtMXmddsTQI9Xx6mCa/miE0KLttTucJTd1cY8Tcjloh0c
-	 F7Bl8dnjSrIuDifCn5ESWO6sbvFsJkmkwnLutRnnHVrNU3x2W8TDlFyN6coK478a35
-	 BrC0SkbUQcrv5IhoJvcj1WoabuYf9RZyAwa1a3i2H24WEeRUYbYpQp43BNKKuQ2juz
-	 ULhbf9PMP9SZg4mWs0+auuZBTBz8U4xU5ZElo/22JFOvNTGHl/0VfZdlkD5HYYXiax
-	 zcyYH8v8+dvE114sJls6JG0Q5IEY2Y22SoF1f6AcFg8wqNEGn5SntqdNvhh7M+AUcI
-	 P3/dXGmGNKtsg==
-Date: Wed, 20 Dec 2023 17:15:10 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] misc: pci_endpoint_test: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <20231220114510.GD3544@thinkpad>
-References: <47a30441242c4d5f0e00555cbddd7783350ff1b2.1702966523.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvPST8UF"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3367a304091so739074f8f.3;
+        Wed, 20 Dec 2023 06:18:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703081913; x=1703686713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wtboqIOajZ+9kRzpEuYvtN45b5wd0evNFunITw7khVI=;
+        b=kvPST8UFr0/7w/lyjF61+teanbCnJhBRWVCdAwxh3v/Sm0eHr0f8b5uO+bUrqpTT8z
+         zmGMWV5xOo+dZ1CrJ8y1s72tFSAJGaryEW3Gy7jPdgESiX9eeaVdXnAJmlVdpYv4W/fa
+         ket62nCJ3wr1fpRUsctfkiAfmMQOUojvsvyZ/nT4YUB3wWa63VbrYuV/fFSIfG/xY6hf
+         xPRWDarR/HZzNHubv8SbFkLei5PODmGR56ib128zb8WCbM9Papi+6lu2mRjaSv3/yQZt
+         b0fswzmYIVN90ILKBIHAqJEzircBVrFvsL49LgjyLj2NGTJIyOwgsPEF7YtN9HENa4tO
+         W0DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703081913; x=1703686713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wtboqIOajZ+9kRzpEuYvtN45b5wd0evNFunITw7khVI=;
+        b=GuPVqLe8M4u3pKbyM4BwLZvZ05p8HVejppUTnhT2Zvu+nAtpZgBaR3Epw7FxZElzdj
+         hIcOcOtDVw+YVJjpBDye3p5bXxFDRBNvnNA9UmTK8UDYt2ZGcxab+yxa+Oq/dMp41r4g
+         gYusePCI/L1ua+bDC37cz8DYK95YcH3R9adu/839d4UogYaMCycp3c3/Utls0Q6PxEGj
+         opbt6WDcBcyMt4lrAB27otNpeDZt6w8oLxAgQM8tusYfkwbPDCGYHazobTDczJA0cMxI
+         csqzUHyGI1iWMMYttjqafRzCQzDekSsmHoKhrKoElbTmd2o0PsPsEiFeCOIAhsSXSTjV
+         v8fg==
+X-Gm-Message-State: AOJu0YyKadpb9bcnOxWorIY2WYpBB4gRAAgFNwbwod+5esuwHnP4Ucqh
+	x+voGo/zL+DibCamxDaiGRM=
+X-Google-Smtp-Source: AGHT+IEdWbD6d9z5TZVQdQB/EtJYkGf8Koa4xBUah2AE+redPoWpaaBIVcCqUqvlX3O6qFbmdBWG4Q==
+X-Received: by 2002:a05:600c:4e4b:b0:40d:35a6:af23 with SMTP id e11-20020a05600c4e4b00b0040d35a6af23mr358445wmq.26.1703081913140;
+        Wed, 20 Dec 2023 06:18:33 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j7-20020a05600c190700b0040c31bb66dcsm7466687wmq.20.2023.12.20.06.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Dec 2023 06:18:32 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtw89: mac: Fix spelling mistakes "notfify" -> "notify"
+Date: Wed, 20 Dec 2023 14:18:31 +0000
+Message-Id: <20231220141831.10063-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <47a30441242c4d5f0e00555cbddd7783350ff1b2.1702966523.git.christophe.jaillet@wanadoo.fr>
 
-On Tue, Dec 19, 2023 at 07:15:37AM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There are two spelling mistakes in rtw89_err error messages. Fix these
+and also add space between [ERR] and message text.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/mac_be.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- Mani
-
-> ---
->  drivers/misc/pci_endpoint_test.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index af519088732d..34124bdce68c 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -860,7 +860,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  
->  	pci_set_drvdata(pdev, test);
->  
-> -	id = ida_simple_get(&pci_endpoint_test_ida, 0, 0, GFP_KERNEL);
-> +	id = ida_alloc(&pci_endpoint_test_ida, GFP_KERNEL);
->  	if (id < 0) {
->  		err = id;
->  		dev_err(dev, "Unable to get id\n");
-> @@ -907,7 +907,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  	kfree(test->name);
->  
->  err_ida_remove:
-> -	ida_simple_remove(&pci_endpoint_test_ida, id);
-> +	ida_free(&pci_endpoint_test_ida, id);
->  
->  err_iounmap:
->  	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
-> @@ -943,7 +943,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
->  	misc_deregister(&test->miscdev);
->  	kfree(misc_device->name);
->  	kfree(test->name);
-> -	ida_simple_remove(&pci_endpoint_test_ida, id);
-> +	ida_free(&pci_endpoint_test_ida, id);
->  	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
->  		if (test->bar[bar])
->  			pci_iounmap(pdev, test->bar[bar]);
-> -- 
-> 2.34.1
-> 
-
+diff --git a/drivers/net/wireless/realtek/rtw89/mac_be.c b/drivers/net/wireless/realtek/rtw89/mac_be.c
+index be30c9346293..4befbe06cd15 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac_be.c
++++ b/drivers/net/wireless/realtek/rtw89/mac_be.c
+@@ -1616,7 +1616,7 @@ static int dbcc_enable_be(struct rtw89_dev *rtwdev, bool enable)
+ 		if (test_bit(RTW89_FLAG_FW_RDY, rtwdev->flags)) {
+ 			ret = rtw89_fw_h2c_notify_dbcc(rtwdev, true);
+ 			if (ret) {
+-				rtw89_err(rtwdev, "%s:[ERR]notfify dbcc1 fail %d\n",
++				rtw89_err(rtwdev, "%s:[ERR] notify dbcc1 fail %d\n",
+ 					  __func__, ret);
+ 				return ret;
+ 			}
+@@ -1625,7 +1625,7 @@ static int dbcc_enable_be(struct rtw89_dev *rtwdev, bool enable)
+ 		if (test_bit(RTW89_FLAG_FW_RDY, rtwdev->flags)) {
+ 			ret = rtw89_fw_h2c_notify_dbcc(rtwdev, false);
+ 			if (ret) {
+-				rtw89_err(rtwdev, "%s:[ERR]notfify dbcc1 fail %d\n",
++				rtw89_err(rtwdev, "%s:[ERR] notify dbcc1 fail %d\n",
+ 					  __func__, ret);
+ 				return ret;
+ 			}
 -- 
-மணிவண்ணன் சதாசிவம்
+2.39.2
+
