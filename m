@@ -1,91 +1,111 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C278A3D0A2;
-	Tue, 19 Dec 2023 22:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93188F44
+	for <kernel-janitors@vger.kernel.org>; Wed, 20 Dec 2023 03:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="En52GGV/"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=9fg+mSaYZimcw8y/Rf+e+q5+qIfmlkXuesAXEDPfX40=; b=En52GGV/ikcV6Y3pg2C96xts26
-	4JqFe2vNHEyY1jHjjOcxMJlWs7zPiiu/AXt+VDe422hQuRFpju1YhYLpC4H4OelaWUKS6KIvIDdY6
-	COGm0sGAnBEJssBqFh87cVdsSMSaYlss9F1fTMQlo7Dk/a5lanzLAzV7LclxqwEw9VRzd2FtLe6fe
-	ywFFqT+XXsrUmcB8p3FvYa54yxV7jk3Jlud41zRtVJ4qnup+ZyZKUV2bFbneu9dLuTQCYRFQw0TuU
-	zQ//Jpo7iLbNW7fU4Hs/qdSEnyjGQT61PcHfzwwjvslqmSP4rlEuiNUqBMcC27F3cQsdTLtC7/rFz
-	IAjlzbWw==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rFiAU-00FYL9-05;
-	Tue, 19 Dec 2023 22:02:26 +0000
-Message-ID: <a3fbe3a7-738a-438b-b8ff-2d0f812033d3@infradead.org>
-Date: Tue, 19 Dec 2023 14:02:25 -0800
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qbe9WYQV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1703044379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vIn5APMs5q/H2mkbVIU64Mx79XhFiyV1fy9ppFrUsQ0=;
+	b=Qbe9WYQVvKZsvb9ts2k2tf3a5aNhVgfH4JJSnmb3t+ljzR7Y7wE/GG8e0qydiuUTrO2NWz
+	pIW2Z7X8GzJeNyZ87xQflhObIAlPuEhmUBjXWZhqPmb3vrPyMmPEjF/7lh1Fn8buqPutlm
+	Io8MzpIpvAw3B8HjruIEYmdChb2pRko=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-lgTH8LwKPgqimAjDWS9jTw-1; Tue, 19 Dec 2023 22:52:57 -0500
+X-MC-Unique: lgTH8LwKPgqimAjDWS9jTw-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6d0908565f8so6335741b3a.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Dec 2023 19:52:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703044377; x=1703649177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vIn5APMs5q/H2mkbVIU64Mx79XhFiyV1fy9ppFrUsQ0=;
+        b=TEODwMroI7CEBCrGFHSIh2MNZqMn4TrVQbeHA6MzcYqdg492nFz6rynQzY8MJ6CDeo
+         a5lXTU2WEcoPU3PMqi2QufI5+7bH5CMu6mRGCZ5aEJ2ippLxC7HAbJIIs+bch5S0+ewm
+         JH0YplomFoklWTi0T4Z+iyVjO6b88Un3VWU/NeTB1RRmrt91q9JkZoxPVBYxnt+tLr8Q
+         35BglZeVkLMVHcgxxfR2us/wzQnspcdlEpaujo6duxJdhb77TTrNFTEUbqgeYpZG0/Or
+         4I8jo4tqsqxNOzvyvv8nYF+a5GztFNvS2QmYsV8mLBesmLz0gUqcliIOvDLywRuJBOyC
+         nRow==
+X-Gm-Message-State: AOJu0YzdhX56wS5MeCKGjamwcZgt7q1W7k89hsJEUwLIkL9qPEq1KjHz
+	O5LNdXQ1YjQrEXKMZwY7PJpwBSJpjZjJ9vG8QMYzMBcIWpyct3f5bniFV8TWL7RgpaTH6vhCPP2
+	mPqHxLKAWxsLWPX1o8GiK7d4ChmCtULMjhkNbjhcKm9mH
+X-Received: by 2002:a05:6a20:9225:b0:194:cb44:b0b4 with SMTP id i37-20020a056a20922500b00194cb44b0b4mr526125pzf.2.1703044376843;
+        Tue, 19 Dec 2023 19:52:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGnMr21VcQdQT+Lk5xChXSsBuDnDzHafReZLcU6LBc8taYyagaiLau7y0wRNSCh7k4SnAF95Kz+VAAjOKYBcWA=
+X-Received: by 2002:a05:6a20:9225:b0:194:cb44:b0b4 with SMTP id
+ i37-20020a056a20922500b00194cb44b0b4mr526122pzf.2.1703044376631; Tue, 19 Dec
+ 2023 19:52:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] samples/bpf: use %lu format specifier for unsigned long
- values
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231219152307.368921-1-colin.i.king@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20231219152307.368921-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <d7534cc4caf4ff9d6b072744352c1b69487779ea.1702230703.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d7534cc4caf4ff9d6b072744352c1b69487779ea.1702230703.git.christophe.jaillet@wanadoo.fr>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 20 Dec 2023 11:52:45 +0800
+Message-ID: <CACGkMEuE5a29uXXWfy1Ma+ZqSzWKhS1J1b2XHvhyC90wDFP02g@mail.gmail.com>
+Subject: Re: [PATCH] vdpa: Remove usage of the deprecated ida_simple_xx() API
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 11, 2023 at 1:52=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+>
+> This is less verbose.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-On 12/19/23 07:23, Colin Ian King wrote:
-> Currently %ld format specifiers are being used for unsigned long
-> values. Fix this by using %lu instead. Cleans up cppcheck warnings:
-> 
-> warning: %ld in format string (no. 1) requires 'long' but the argument
-> type is 'unsigned long'. [invalidPrintfArgType_sint]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
+Thanks
 
 > ---
->  samples/bpf/cpustat_user.c | 4 ++--
+>  drivers/vdpa/vdpa.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/samples/bpf/cpustat_user.c b/samples/bpf/cpustat_user.c
-> index ab90bb08a2b4..356f756cba0d 100644
-> --- a/samples/bpf/cpustat_user.c
-> +++ b/samples/bpf/cpustat_user.c
-> @@ -66,10 +66,10 @@ static void cpu_stat_print(void)
->  
->  		printf("CPU-%-6d ", j);
->  		for (i = 0; i < MAX_CSTATE_ENTRIES; i++)
-> -			printf("%-11ld ", data->cstate[i] / 1000000);
-> +			printf("%-11lu ", data->cstate[i] / 1000000);
->  
->  		for (i = 0; i < MAX_PSTATE_ENTRIES; i++)
-> -			printf("%-11ld ", data->pstate[i] / 1000000);
-> +			printf("%-11lu ", data->pstate[i] / 1000000);
->  
->  		printf("\n");
->  	}
+>
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index a7612e0783b3..d0695680b282 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -131,7 +131,7 @@ static void vdpa_release_dev(struct device *d)
+>         if (ops->free)
+>                 ops->free(vdev);
+>
+> -       ida_simple_remove(&vdpa_index_ida, vdev->index);
+> +       ida_free(&vdpa_index_ida, vdev->index);
+>         kfree(vdev->driver_override);
+>         kfree(vdev);
+>  }
+> @@ -205,7 +205,7 @@ struct vdpa_device *__vdpa_alloc_device(struct device=
+ *parent,
+>         return vdev;
+>
+>  err_name:
+> -       ida_simple_remove(&vdpa_index_ida, vdev->index);
+> +       ida_free(&vdpa_index_ida, vdev->index);
+>  err_ida:
+>         kfree(vdev);
+>  err:
+> --
+> 2.34.1
+>
 
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
