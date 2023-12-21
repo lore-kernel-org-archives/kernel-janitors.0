@@ -1,51 +1,22 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF236BB3D;
-	Thu, 21 Dec 2023 11:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458C96D1BF;
+	Thu, 21 Dec 2023 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0rqv1YD"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d3e2972f65so2766495ad.3;
-        Thu, 21 Dec 2023 03:23:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703157792; x=1703762592; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iurPx6U1Yq+NZr3UnEVxu22VONJz6nR4G9rGokJKtfI=;
-        b=c0rqv1YDPQQkIOq2WVrS0ll7SYfRhXpKkU4dq8CIGijAiL6DATbORglgiJmRMC9Sh6
-         gS7L+hF735IEUZ03YKm2jVTx2oD2w/u+eLPt6vUvx1ERFOhPFKdTBp21BEFzQN01FemJ
-         cRw1MfVokkK59mEQGT9RTXm77yX8wMpxQjwiOHDi3b1A/c8lAT3GKdPvkMyExLb9Prnp
-         L14sAnbZ42si5kXlcqYq/sjDf7gt61RxpNsAsylSg/zUkG1Tak9b1I9PgC2PbXs0oEgp
-         pdKkqFlJkd5a896iXimXL7hZ6Ac3b7BJcUDnr6ZTTyw8CDnUrauLx1DXAmyTA9YfnAyA
-         kcIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703157792; x=1703762592;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iurPx6U1Yq+NZr3UnEVxu22VONJz6nR4G9rGokJKtfI=;
-        b=ulfuYX+Dr1G+WC0pC0okK45ycZbvqMZszk7p4zkU+HJ/gYgmyHs2mxG7F8fMzA4hYn
-         yxuVR/NqXCikrqBlnEAOmimO4bwHjLGriTeeKX3gIm5GcWv7bJvqztrCQfQ7ngWJJk/a
-         kiJHzAvrUMAYg9CRnNY9o6lFnTOoeNt+q82dgyHy0tloHbKOZ0jgCv0CK2q0BugWMQ1I
-         LtevQj6XQ1SQdTuBVAZi+9is9Ap3EvK1xwvOsTGlcuiBxCvGOJzNWwiZLGpDyYAYDaID
-         SDJNUWusI719QmkjiT2w9LFtT8of6dIoTADaWa8b+byEbQv9PuOxMDsTyEENJgX9h1FK
-         fZ8A==
-X-Gm-Message-State: AOJu0YzwoDso9qiCJMf/LtwcttkqRipqOJnl3G5LxFx9X3ScV35nHL9g
-	PG+zAuzg+aSE0Y/oNoMNR0M=
-X-Google-Smtp-Source: AGHT+IExJqNXn7XmZ803oCoArKhVQWyZmpB8PHbShkKvYBOvRSlQv57Xx7zYUNX6P4EjV6J0PZjwGg==
-X-Received: by 2002:a17:902:684c:b0:1d3:f285:15a5 with SMTP id f12-20020a170902684c00b001d3f28515a5mr1727435pln.35.1703157791960;
-        Thu, 21 Dec 2023 03:23:11 -0800 (PST)
-Received: from archie.me ([103.131.18.64])
-        by smtp.gmail.com with ESMTPSA id ju22-20020a170903429600b001d1cd7e4acesm1410398plb.68.2023.12.21.03.23.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Dec 2023 03:23:11 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id E149C1026AE88; Thu, 21 Dec 2023 18:23:07 +0700 (WIB)
-Date: Thu, 21 Dec 2023 18:23:07 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YBWEViC8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F97C433C8;
+	Thu, 21 Dec 2023 11:53:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1703159618;
+	bh=9F3/qY0cutpNDstJcL0vWDIU0kGQbc9WJFFcC7ONXR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YBWEViC8peSP97B4GVtN/b9ZMnFpTFSCfSCXTvs9sDwrOkQuAXoz5R/cpgoli+vVS
+	 MEMoVVff3fFLIfpfN6vi1ZurcRLrm+w+je3b3DLGNd2yaVnwAgPxinIx9zwh+HHZEW
+	 6u06M4hZvbfT3imPqjcQVUzdMSP8vBn3qs1l47Fk=
+Date: Thu, 21 Dec 2023 12:53:36 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Networking <netdev@vger.kernel.org>,
 	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
@@ -61,93 +32,75 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Karsten Keil <keil@b1-systems.de>,
 	YouHong Li <liyouhong@kylinos.cn>
 Subject: Re: [PATCH net 1/2] MAINTAINERS: Remove Karsten Keil
-Message-ID: <ZYQgGxKOKqIe4TIL@archie.me>
+Message-ID: <2023122125-departure-squishier-95d4@gregkh>
 References: <20231221091419.11764-1-bagasdotme@gmail.com>
  <20231221091419.11764-2-bagasdotme@gmail.com>
  <2023122156-diocese-movie-3d75@gregkh>
  <ZYQYUgZrewi2Up50@archie.me>
  <2023122116-favoring-roulette-554f@gregkh>
+ <ZYQgGxKOKqIe4TIL@archie.me>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZMxuX3fRkHidytpf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2023122116-favoring-roulette-554f@gregkh>
+In-Reply-To: <ZYQgGxKOKqIe4TIL@archie.me>
 
+On Thu, Dec 21, 2023 at 06:23:07PM +0700, Bagas Sanjaya wrote:
+> On Thu, Dec 21, 2023 at 11:54:02AM +0100, Greg Kroah-Hartman wrote:
+> > On Thu, Dec 21, 2023 at 05:49:54PM +0700, Bagas Sanjaya wrote:
+> > > On Thu, Dec 21, 2023 at 10:32:09AM +0100, Greg Kroah-Hartman wrote:
+> > > > On Thu, Dec 21, 2023 at 04:14:18PM +0700, Bagas Sanjaya wrote:
+> > > > > He's no longer active maintaining ISDN/mISDN subsystem: his last message
+> > > > > on kernel mailing lists was three years ago [1] and last commit activity
+> > > > > from him was 1e1589ad8b5cb5 ("mISDN: Support DR6 indication in mISDNipac
+> > > > > driver") in 2016 when he gave Acked-by: from his @b1-systems.de address.
+> > > > > 
+> > > > > Move him to CREDITS, as netdev people should already handle ISDN/mISDN
+> > > > > patches.
+> > > > > 
+> > > > > Link: https://lore.kernel.org/r/0ee243a9-9937-ad26-0684-44b18e772662@linux-pingi.de/ [1]
+> > > > > Cc: Karsten Keil <isdn@linux-pingi.de>
+> > > > > Cc: Karsten Keil <keil@b1-systems.de>
+> > > > > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > > > 
+> > > > Are you sure he's not active?  It doesn't take much work to keep an old
+> > > > subsystem like this alive, last I remember, real changes were accepted
+> > > > just fine.
+> > > 
+> > > As for LKML messages, yes; he doesn't post any new messages since 2020.
+> > > 
+> > > > 
+> > > > Perhaps just don't send coding style cleanups to old subsystems?  :)
+> > > > 
+> > > > I would not take these unless Karsten agrees that he no longer wants to
+> > > > maintain this.
+> > > 
+> > > OK, I will send a private message to him asking for continuing maintainer
+> > > role. If there's no response from him by the new year, then it's safe to
+> > > route this through net tree instead (hence [PATCH net]).
+> > 
+> > Why are you arbritrarily saying that "no response in 2 weeks, during the
+> > time of the year almost all of Europe is on vacation, means we drop
+> > someone from the MAINTAINERS file"?
+> > 
+> 
+> Because I'm impatient.
 
---ZMxuX3fRkHidytpf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Then kernel development might not be the best thing to work on as
+patience is required here.
 
-On Thu, Dec 21, 2023 at 11:54:02AM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Dec 21, 2023 at 05:49:54PM +0700, Bagas Sanjaya wrote:
-> > On Thu, Dec 21, 2023 at 10:32:09AM +0100, Greg Kroah-Hartman wrote:
-> > > On Thu, Dec 21, 2023 at 04:14:18PM +0700, Bagas Sanjaya wrote:
-> > > > He's no longer active maintaining ISDN/mISDN subsystem: his last me=
-ssage
-> > > > on kernel mailing lists was three years ago [1] and last commit act=
-ivity
-> > > > from him was 1e1589ad8b5cb5 ("mISDN: Support DR6 indication in mISD=
-Nipac
-> > > > driver") in 2016 when he gave Acked-by: from his @b1-systems.de add=
-ress.
-> > > >=20
-> > > > Move him to CREDITS, as netdev people should already handle ISDN/mI=
-SDN
-> > > > patches.
-> > > >=20
-> > > > Link: https://lore.kernel.org/r/0ee243a9-9937-ad26-0684-44b18e77266=
-2@linux-pingi.de/ [1]
-> > > > Cc: Karsten Keil <isdn@linux-pingi.de>
-> > > > Cc: Karsten Keil <keil@b1-systems.de>
-> > > > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> > >=20
-> > > Are you sure he's not active?  It doesn't take much work to keep an o=
-ld
-> > > subsystem like this alive, last I remember, real changes were accepted
-> > > just fine.
-> >=20
-> > As for LKML messages, yes; he doesn't post any new messages since 2020.
-> >=20
-> > >=20
-> > > Perhaps just don't send coding style cleanups to old subsystems?  :)
-> > >=20
-> > > I would not take these unless Karsten agrees that he no longer wants =
-to
-> > > maintain this.
-> >=20
-> > OK, I will send a private message to him asking for continuing maintain=
-er
-> > role. If there's no response from him by the new year, then it's safe to
-> > route this through net tree instead (hence [PATCH net]).
->=20
-> Why are you arbritrarily saying that "no response in 2 weeks, during the
-> time of the year almost all of Europe is on vacation, means we drop
-> someone from the MAINTAINERS file"?
->=20
+> Maybe I can wait for right timing to reroll once
+> Karsten agrees to remove his MAINTAINERS entry.
 
-Because I'm impatient. Maybe I can wait for right timing to reroll once
-Karsten agrees to remove his MAINTAINERS entry.
+That's up to Karsten, not you.
 
-Thanks.
+Again, please relax, slow down, and perhaps work on something more
+technical, like actual kernel fixes?
 
---=20
-An old man doll... just what I always wanted! - Clara
+thanks,
 
---ZMxuX3fRkHidytpf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZYQgGwAKCRD2uYlJVVFO
-o+uUAQDfsKMoaQFtaOT6DpcRB+FMAkidQGmnQpY0Aq69jjG64gD+JIUIecWepwwo
-X4o7niyGHz992tTPL+VyT7bt9eZfIQg=
-=BYT9
------END PGP SIGNATURE-----
-
---ZMxuX3fRkHidytpf--
+greg k-h
