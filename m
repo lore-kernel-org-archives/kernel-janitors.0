@@ -1,89 +1,73 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749374F8B5;
-	Thu, 21 Dec 2023 09:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183CD2032E;
+	Thu, 21 Dec 2023 09:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJ7eYtZl"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1d045097b4cso3737425ad.0;
-        Thu, 21 Dec 2023 01:17:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703150265; x=1703755065; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zy5fYk5yDFfc5MecTU/b1uM8JTuFAaLBpt7UpnKQhPg=;
-        b=GJ7eYtZl5fkJaYKWVtAKMGTapD1PaNl1UDI61nsvPIPzwLiCcAu/pvYWc2zqShQzfk
-         fMnVHlwV0Y5n0yXyv4B2c2dyxnAIkVE0W9IfvPDZY8YFi6D/itwP92qtYCavYzd+fSPm
-         c2s3N6JJcgB4HHyxhfGloEMz3Yos5SB6p8/vORKEVMNR5PmUoTl7OcdBZdpJ2WcSyHpu
-         7edAvEqg4wNPh7jJUK+XsWHZM0WfM3TcrwhGmdbh/6rar81TblcVCBFLvAzVTVUQXJ55
-         L7OsQsja+EzVw87kFPwYrvfhO0V7KPtrnh1r/oxSghVv3fbwGwe2tpgO/rYUWdm7Aqnm
-         jj3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703150265; x=1703755065;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zy5fYk5yDFfc5MecTU/b1uM8JTuFAaLBpt7UpnKQhPg=;
-        b=hUz8rpuam1AmK7FRPEzTEeICyQ+94975fb86jMuZGz6+taIMFF3SmhIL+F9gOEOBZL
-         O5IvtJ1RSgYP9iui8MPIZmzLtxH9cwcY6oCqTbY01pFTMlEkv55ApP0U3iexgjkb6tU6
-         CZbwF4CzoU7zSP1efVNQgD7KEemGn/RXc6CUeRGcqIOCLUd30UzjOCSWoMU0h1dyOMmm
-         gRfZKi9CEhMvDnFb62rYA/IY+GnOQ+ySmhZtwLdMx/DP5Ys8SF+HMwalMZPhVsdXjaqh
-         tl26VU6TyMgG7/cQR41+8sMs8HAeozTv0vhBAb/YW521AoTz4vbqGjFYsD15FODMQp/G
-         8vJg==
-X-Gm-Message-State: AOJu0YxEI+y9XYww+3WPAje03MCVpNI5BXQ34ixHxxJ4a2cyu91veuD+
-	TpIA6JjrDqWnDq/fYrTNkMxqFAVYpbX4Pw==
-X-Google-Smtp-Source: AGHT+IGJwATCU53PsVXUBLoFjApVwkYLAw1meIU+j4poFsW15zB8XY5w9vKHGO85ifAtXUYKuACnnw==
-X-Received: by 2002:a17:902:da89:b0:1d3:c202:3d4 with SMTP id j9-20020a170902da8900b001d3c20203d4mr4807069plx.15.1703150265495;
-        Thu, 21 Dec 2023 01:17:45 -0800 (PST)
-Received: from [192.168.0.106] ([103.131.18.64])
-        by smtp.gmail.com with ESMTPSA id h15-20020a170902ac8f00b001bc930d4517sm1144692plr.42.2023.12.21.01.17.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Dec 2023 01:17:45 -0800 (PST)
-Message-ID: <ba2ac330-d977-4637-93bc-99ee953faab8@gmail.com>
-Date: Thu, 21 Dec 2023 16:17:37 +0700
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ETCEdnxS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06289C433C8;
+	Thu, 21 Dec 2023 09:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1703151131;
+	bh=Xytoklf6LoXx81tVlVAqCYpm++U0gEaAXCzQUSkVYsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ETCEdnxSx2wOci8gxeXZKXsMHTfUV7X6pMFSD18AO2PV9aXfBZeIbGiaw0qh8m0KM
+	 9u7MayesYQ7F7vRCgBXu4TT8aSsJFltRKGhc4AgjRsYf3O578UWq5NcxvslE4srRo5
+	 b2sHDh0rdfzSLOtx20BWFROgR4MFZtsZKrOHWK1c=
+Date: Thu, 21 Dec 2023 10:32:09 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>,
+	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+	Kees Cook <keescook@chromium.org>, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Karsten Keil <isdn@linux-pingi.de>,
+	Karsten Keil <keil@b1-systems.de>,
+	YouHong Li <liyouhong@kylinos.cn>
+Subject: Re: [PATCH net 1/2] MAINTAINERS: Remove Karsten Keil
+Message-ID: <2023122156-diocese-movie-3d75@gregkh>
+References: <20231221091419.11764-1-bagasdotme@gmail.com>
+ <20231221091419.11764-2-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 0/2] ISDN/mISDN maintenanceship cleanup
-Content-Language: en-US
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Networking <netdev@vger.kernel.org>,
- Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kees Cook <keescook@chromium.org>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Justin Stitt <justinstitt@google.com>, Kunwu Chan <chentao@kylinos.cn>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Nathan Chancellor <nathan@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- Karsten Keil <isdn@linux-pingi.de>, Karsten Keil <keil@b1-systems.de>,
- YouHong Li <liyouhong@kylinos.cn>
-References: <20231221091419.11764-1-bagasdotme@gmail.com>
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <20231221091419.11764-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231221091419.11764-2-bagasdotme@gmail.com>
 
-On 12/21/23 16:14, Bagas Sanjaya wrote:
-> When I'm looking at simple typofix against ISDN subsystem [1], I find
-> out more about subsystem activity. It turns out that the subsystem
-> maintainer has been inactive since 3 years ago. And also, when I test
-> sending "Lorem ipsum" message to the subsystem mailing list, it gets
-> bounced.
+On Thu, Dec 21, 2023 at 04:14:18PM +0700, Bagas Sanjaya wrote:
+> He's no longer active maintaining ISDN/mISDN subsystem: his last message
+> on kernel mailing lists was three years ago [1] and last commit activity
+> from him was 1e1589ad8b5cb5 ("mISDN: Support DR6 indication in mISDNipac
+> driver") in 2016 when he gave Acked-by: from his @b1-systems.de address.
 > 
+> Move him to CREDITS, as netdev people should already handle ISDN/mISDN
+> patches.
+> 
+> Link: https://lore.kernel.org/r/0ee243a9-9937-ad26-0684-44b18e772662@linux-pingi.de/ [1]
+> Cc: Karsten Keil <isdn@linux-pingi.de>
+> Cc: Karsten Keil <keil@b1-systems.de>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Oops, sorry not adding the link.
+Are you sure he's not active?  It doesn't take much work to keep an old
+subsystem like this alive, last I remember, real changes were accepted
+just fine.
 
-[1]: https://lore.kernel.org/lkml/20231221024758.1317603-1-liyouhong@kylinos.cn/
+Perhaps just don't send coding style cleanups to old subsystems?  :)
 
--- 
-An old man doll... just what I always wanted! - Clara
+I would not take these unless Karsten agrees that he no longer wants to
+maintain this.
 
+thanks,
+
+greg k-h
