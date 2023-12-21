@@ -1,64 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059434C62E;
-	Thu, 21 Dec 2023 09:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE4F6979B;
+	Thu, 21 Dec 2023 10:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BLJzAzGQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD97C433C8;
-	Thu, 21 Dec 2023 09:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1703151180;
-	bh=9kXYBVe4VWyKcPg64mG3ckbqdxWdTNeCpzP3dYVryAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BLJzAzGQRPwBe+PoloppF5S1uECFhHshoXmhM+VK32/qhheiowOVMir0LDmM6lr7z
-	 wtnEQJiPxEZTU2KRGcQrbUniBw8KtTRTcBW/D3zKiq5PK0cxfAYUQ6CvSet5YktSpl
-	 jMVaNdg8Sil9YxSumf3ryg1pucK0oBTEqay6YUH8=
-Date: Thu, 21 Dec 2023 10:32:58 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
-	Kees Cook <keescook@chromium.org>, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Kunwu Chan <chentao@kylinos.cn>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Nathan Chancellor <nathan@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	Karsten Keil <isdn@linux-pingi.de>,
-	Karsten Keil <keil@b1-systems.de>,
-	YouHong Li <liyouhong@kylinos.cn>
-Subject: Re: [PATCH net 0/2] ISDN/mISDN maintenanceship cleanup
-Message-ID: <2023122121-yiddish-unproven-d793@gregkh>
-References: <20231221091419.11764-1-bagasdotme@gmail.com>
- <ba2ac330-d977-4637-93bc-99ee953faab8@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnRhr4mf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C15DC433C7;
+	Thu, 21 Dec 2023 10:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703155793;
+	bh=VBUvj5yamNCjbS7Ufz44ltWWNJCZRuRqgGoz+FefXwg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jnRhr4mf7h4Bw3N/PZQ+i5o80xVfCisdmwET/pyaSalcUrpIhu0TyySt8Mw1g29V/
+	 2D2MSAE6bxaz7wldi2gCB3+g/ibg1yIGtAnSwNAvHv/fIHPOTjpVUXsSJ9mnY6A0ue
+	 21+Phn7ToZunqe6Bsw5dpiWToypWat4VMMgB5xhT3gypwwmO7dWPzfErO5I2W5dNuu
+	 R9MlJmyBMJuuqLatWd1BoALFPQBF+YauGmC4VHdLjqoPFHv5hjZNYmoTzmJKuWwWVs
+	 if++SqppcI8V2st7tUqHZSjzcwaKcsgCiFINufRsp0pkCzGooHTB3EgoXhbIg1e2eX
+	 Pqvg0OW5PSkyg==
+Date: Thu, 21 Dec 2023 10:49:40 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: buffer: Use IIO_SEPARATE instead of a hard-coded 0
+Message-ID: <20231221104940.7e9d7b0f@jic23-huawei>
+In-Reply-To: <1d17f57423172fcb9d9797cfe7c8282f356049c2.1702831285.git.christophe.jaillet@wanadoo.fr>
+References: <1d17f57423172fcb9d9797cfe7c8282f356049c2.1702831285.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba2ac330-d977-4637-93bc-99ee953faab8@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 21, 2023 at 04:17:37PM +0700, Bagas Sanjaya wrote:
-> On 12/21/23 16:14, Bagas Sanjaya wrote:
-> > When I'm looking at simple typofix against ISDN subsystem [1], I find
-> > out more about subsystem activity. It turns out that the subsystem
-> > maintainer has been inactive since 3 years ago. And also, when I test
-> > sending "Lorem ipsum" message to the subsystem mailing list, it gets
-> > bounced.
-> > 
+On Sun, 17 Dec 2023 17:41:45 +0100
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> Use an explicit IIO_SEPARATE instead of 0 for the 'shared_by' parameter
+> when calling __iio_add_chan_devattr().
 > 
-> Oops, sorry not adding the link.
+> For some reason, commit 3704432fb1fd ("iio: refactor info mask and ext_info
+> attribute creation.") updated only 1 place out of 4.
+> Update the remaining ones now.
 > 
-> [1]: https://lore.kernel.org/lkml/20231221024758.1317603-1-liyouhong@kylinos.cn/
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Makes sense
 
-I too like to ignore pointless changes like this at times.  Just because
-others do, does NOT mean that the subsystem is not being maintained.
+Applied to the togreg branch of iio.git.
 
-greg k-h
+It's fairly unlikely I'll get another pull request out unless the final
+6.7 release isn't until after the new year for some reason.
+
+As such, this is probably now 6.9 material
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/industrialio-buffer.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> index 09c41e9ccf87..b581a7e80566 100644
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -616,7 +616,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+>  				     &iio_show_fixed_type,
+>  				     NULL,
+>  				     0,
+> -				     0,
+> +				     IIO_SEPARATE,
+>  				     &indio_dev->dev,
+>  				     buffer,
+>  				     &buffer->buffer_attr_list);
+> @@ -629,7 +629,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+>  					     &iio_scan_el_show,
+>  					     &iio_scan_el_store,
+>  					     chan->scan_index,
+> -					     0,
+> +					     IIO_SEPARATE,
+>  					     &indio_dev->dev,
+>  					     buffer,
+>  					     &buffer->buffer_attr_list);
+> @@ -639,7 +639,7 @@ static int iio_buffer_add_channel_sysfs(struct iio_dev *indio_dev,
+>  					     &iio_scan_el_ts_show,
+>  					     &iio_scan_el_ts_store,
+>  					     chan->scan_index,
+> -					     0,
+> +					     IIO_SEPARATE,
+>  					     &indio_dev->dev,
+>  					     buffer,
+>  					     &buffer->buffer_attr_list);
+
