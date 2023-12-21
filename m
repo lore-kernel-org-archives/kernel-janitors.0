@@ -1,33 +1,57 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391FD5820C;
-	Thu, 21 Dec 2023 16:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D2336084;
+	Thu, 21 Dec 2023 16:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYioqI4K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B5AC433C8;
-	Thu, 21 Dec 2023 16:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703176198;
-	bh=U3RUFSniU347sPhJd99D0lKyyS41ROfCrLn86vMGlC0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=sYioqI4KzjldEdIHKQoqLYPjSktXwI7SSauGnyN6LLrgN+u9/ypayE+DtHrI7GHNw
-	 nLeC9HB4Fo4yPNIc0NcjMT7QkV9TMcwdmb8oVS3AR6Neyq6vcYxtYhysIXAEiPRUp3
-	 PL2Ak7G0Dawk2bcwmPPa3n+aurZEkpB7Ryp3HcMcmI47UGW+3cEhncfhXTGk8SbMPv
-	 +nKcniO/vylvKMieP8+06payYeCi3nIQ/YKQndRFxcygThY0LZy33td9eyPpUW+9R+
-	 GAPF1WkviVnz7di6a7DjzURD1PubwYC9VLyu6+OG76O+ILVFVbJ/fVe80Dk9dQJAZP
-	 bmylyf3gaaOjw==
-From: Vinod Koul <vkoul@kernel.org>
-To: Fenghua Yu <fenghua.yu@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- dmaengine@vger.kernel.org
-In-Reply-To: <ac991f5f42112fa782a881d391d447529cbc4a23.1702967302.git.christophe.jaillet@wanadoo.fr>
-References: <ac991f5f42112fa782a881d391d447529cbc4a23.1702967302.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] dmaengine: idxd: Remove usage of the deprecated
- ida_simple_xx() API
-Message-Id: <170317619628.683420.9023964494393917924.b4-ty@kernel.org>
-Date: Thu, 21 Dec 2023 21:59:56 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOoqmBbB"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3368ae75082so438168f8f.1;
+        Thu, 21 Dec 2023 08:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703176799; x=1703781599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQwY6XnPHId/GQPAHNHHHDHjZjYcdu/ELu7dEzkGITM=;
+        b=SOoqmBbBl4CWhJQVWc3ooc/P3Bgw0HBpDU+OVaktRV+6UUY1FAv7fKQ/QdDSSoJIFD
+         t7N/BiOa1ZMdgDwUFjzv+rgHFJHZC2Dth0A6fAbfF76f+b2gwoTTxWnhtKJzapKvNIzP
+         9ARS1qE44KiV0cfgYsSptkIOm7m1qLannxeOQGzRGPPkcUdUgESUJxP016th+4TfQF3/
+         YfgicpIt7yHLT0p6qZBEHF40k0qc8GxAYprLn+IVz9WtY1h/kvgfEal2vbZIgO/+EMaQ
+         IvpSHpVQQxdDgwE0spwE8X8x9TfTYisL+NXWMakeAlBU15H7C9THKudaSoXf5mQpSlup
+         t+bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703176799; x=1703781599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qQwY6XnPHId/GQPAHNHHHDHjZjYcdu/ELu7dEzkGITM=;
+        b=TEVV5zvMvmK50NKw1dgBz4lOHdUtOp8eVUTF2kbYTlquN3R65sWuzn4+30E+Ejp2Om
+         LDLEcjy7BEQt6UmOh88s/qnRLhEFZPul0MXzRYFlCN5XQN34h4ysJPYtIJliTEqQN3R8
+         e2lHwmdflUEU3nnc9iDT+4V7lu4+iLBOZ3XYGWxbVLauOZDrpPLQkMLU0RoLE/SzGQN1
+         xihdzCgkp34DAMaVL1fI34GUItwTusTmuklmgr9IK11hwBvPmgV0KMBdZT5FKy7Qf3Tv
+         pKPQ4lecOGnnhfEdmZK0rEWzuulnSyydExetXVOvFOr+ldA2LvaKw7ktqBWR1KdU2pvS
+         Hbhg==
+X-Gm-Message-State: AOJu0YxFJNNXzsPuI4OaOLwQ4GMzYYKqvU+5ndG94rEXHdcgm+G71wBA
+	gZ92aKiThZmsOAL3aapJikjIKKY9GAM=
+X-Google-Smtp-Source: AGHT+IE5+MF6rh1Jp/X8nhABVaLFMXHWskbRuKk0vikfXmBaV5XdNxg1TED5H+t/Vw2BreVJ7HyxpA==
+X-Received: by 2002:a05:600c:a49:b0:40c:3db4:70f2 with SMTP id c9-20020a05600c0a4900b0040c3db470f2mr732544wmq.142.1703176798709;
+        Thu, 21 Dec 2023 08:39:58 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p22-20020a05600c359600b0040d2524270asm3937020wmq.8.2023.12.21.08.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Dec 2023 08:39:58 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: v4l2-subdev: Fix spelling mistake "heigth" -> "height"
+Date: Thu, 21 Dec 2023 16:39:57 +0000
+Message-Id: <20231221163957.165030-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,28 +59,28 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 
+There is a spelling mistake in a dev_err error message. Fix it.
 
-On Tue, 19 Dec 2023 20:33:50 +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. Sothis change allows one more device.
-> 
-> [...]
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/i2c/alvium-csi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] dmaengine: idxd: Remove usage of the deprecated ida_simple_xx() API
-      commit: 1075ee66a8c19bfa375b19c236fd6a22a867f138
-
-Best regards,
+diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
+index 34ff7fad3877..389dac50fee9 100644
+--- a/drivers/media/i2c/alvium-csi2.c
++++ b/drivers/media/i2c/alvium-csi2.c
+@@ -1472,7 +1472,7 @@ static int alvium_get_hw_features_params(struct alvium_dev *alvium)
+ 
+ 	ret = alvium_get_img_height_params(alvium);
+ 	if (ret) {
+-		dev_err(dev, "Fail to read img heigth regs\n");
++		dev_err(dev, "Fail to read img height regs\n");
+ 		return ret;
+ 	}
+ 
 -- 
-~Vinod
-
+2.39.2
 
