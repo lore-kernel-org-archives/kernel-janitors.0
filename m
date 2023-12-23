@@ -1,71 +1,82 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698636FB1
-	for <kernel-janitors@vger.kernel.org>; Sat, 23 Dec 2023 07:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFA912E47;
+	Sat, 23 Dec 2023 19:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YIHZ/jTr"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id GwISrtTvHv1b4GwITr2eQM; Sat, 23 Dec 2023 08:19:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1703315987;
-	bh=7Pm9gqt1euiDI+iYLE6mnhNX+j8DK5QWPHTOt7CTwvg=;
-	h=From:To:Cc:Subject:Date;
-	b=YIHZ/jTrGUqehm8MDEfFw0WRndtqymSzBRiINMxGRKVWr9QbNO8VHzI4Y5S8bV60C
-	 TAvgc6CAS1Ra80prgXwamhKmJsVpkgcjOVk64RxPDy2NZTQkWupEYrmT03dM9RYRgC
-	 gVW1Kec2wI+JoLICcDclCcLpTkhQBOO+dseDkG7FBg7ugdK/viygLd+InP/J687Chu
-	 5ktqXqTEc0LmVM5zYhwLPJXWJlxkZFQg8cg7yJySwAjSVXzAIECnvWqpFku45J1cAg
-	 EIb8/SOC/Jt7Lg7GCd4DkboYg3C60WAjLEV/5f69M8t3xQIKaGvtO8VEbMnb1tDpKk
-	 4bjbSNqa9CVmw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 23 Dec 2023 08:19:47 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: bnx2i: Use netif_carrier_ok()
-Date: Sat, 23 Dec 2023 08:19:43 +0100
-Message-Id: <1c8dce4f385ef952a14f056d1d6a621610c586c8.1703315967.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="P1amz+2q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703358994; x=1703963794; i=markus.elfring@web.de;
+	bh=wZCbHnDCjJnEvDzsimFepIu5Oz2VW9fSNRNdT/39XCg=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=P1amz+2qHaMJlKq3fWNGX+30JNQyuwtPp04XEaigBsc5pqEBKW8UNGJgZ+XeduDY
+	 +Gvv5mnPqf620FjIKmVYx8I/tKjPbbNE4C9gdSywBOfyfjjRcLvzWsfMr+bA5gXYY
+	 BLRVJ9szsmhzhObWQTq2ob1PcvOdArYM7ckkhuItd5NN6eo4MZ87lvt1HVZ2mO0fo
+	 He2eDpQTv/uOtHe3MiDeO0Kh+RUuOhkDCPxlU4j0h8rc3sJhbc5bsJT4tvB0Q+Pm4
+	 8T96nKTe9ZcYSJJXDSpkb+C+OID1eYHVgSabMHGD3U8WUGX/PsIzg6nVZwpRm3rOv
+	 D+OcjXmxgQy7DrpuNw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MQPZd-1rctcp2beT-00MD18; Sat, 23
+ Dec 2023 20:16:34 +0100
+Message-ID: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de>
+Date: Sat, 23 Dec 2023 20:15:31 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] powerpc/powernv/vas: Adjustments for two function
+ implementations
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SSNGOMyB9De3VAUo1rhXHF89mRJ2KEVJ3ChkKr892h5SNGxCeeg
+ 6J+BiPBDqKSqZOQJSI7/6dasGH93mG6rOKPO3ScMqM8AviJ+KPiZc5PmobjTqW69T/kXuCD
+ ZniowXIJDCCGOU5569t6BzLCctJHry+HWycsWnfBuTKzd2+LjL2Khh75fYznYTx94/LLCTy
+ tmJl2Eeq6ym/8IPcW4dcw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dIsGslChmVo=;KIl2DQJ0SaaZilMKU2uek53scDv
+ SLQAJykWPeahwM0XyCndzpqtiQk2TVJp12xeYPl8r1rvzn+7ZWsmWtAoWqrOKvcGW5To1537V
+ 4zP/4iTxfr8GyAsBFKYhS6FmckbvlX3JNO/fGj3COvL3hoqFzU8m1KBZIcNp9lhpT0l9NpXzi
+ u3u+O1Cc+uN4CjIKQgZ3Fdtd5n8DqOylrREkgAXnpB4xoXdlXhmBMYZsC5oFGwvURvRcg0IbR
+ xgbDKv3Iu32RJPlY1YKIeldc2Ur8NbjqJVMODnyWaAjLz9M2tttS4s4SylDu69os3GBrCIWNK
+ /TEa8o4bbppkZF1Iy/QsKMWzeHwenT4FQEd6Q3X3BKDQi5QGaL70jwFhh4tp2xTihbV3btMLb
+ Ekrmf+S/a0Cj6kjFrjvKb0T5PCQiovrBiNFKFiNZgB+PnOt2goTgoHw5IblToHx5lNcVghXGh
+ t6glnBYvRIgssCVbSGS45MmpYkdjuxVVwljyfZY4Kybd8Nr3Crc2K14dyvVOC+Iq2JSJHIebJ
+ ShR67nqcO3MTbhikdL/q/VwHn6i8vim34hm+ngfuHzH1mQ6tn+kBqpq7VahOsYdlfl8JkWDaJ
+ WfW/tDV6N/HWh/E/hbzi5K9KcQigBdKO+Ytsuf5QRj2UBOPnaa5TViM0d3aObYQQyjB3CFNPv
+ u56kKApX1vkrymOK99vIHfNo7vOcgn83j0SZ6XykbOftSDifCpPMrQFhEi93io7qSN1jlvB//
+ +WAkhlYlnggZKPyel3wZCWTMLRrAesOmZpYGfBInzLKe+4s4irqVc33JvfdXWWJKSzwOHgByd
+ 9dYOngzIFrHLrhFtWL3nt+PF5FYskIDqIX06aOztsIWBiS1r0Et1W/tQ6hKLtuwCZA+SVd7Ni
+ 9AgUYlfL405+kC/IED6lpse0IFlz1SVHw6mK6JJjylfENGDwxtt5gJBjG4IanOqVMz2vFpVNf
+ nJbyUg==
 
-Use netif_carrier_ok() instead of hand-writing it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Dec 2023 20:02:02 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/bnx2i/bnx2i_hwi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A few update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/scsi/bnx2i/bnx2i_hwi.c b/drivers/scsi/bnx2i/bnx2i_hwi.c
-index 6c864b093ac9..813de64be827 100644
---- a/drivers/scsi/bnx2i/bnx2i_hwi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
-@@ -96,7 +96,7 @@ static void bnx2i_adjust_qp_size(struct bnx2i_hba *hba)
-  */
- static void bnx2i_get_link_state(struct bnx2i_hba *hba)
- {
--	if (test_bit(__LINK_STATE_NOCARRIER, &hba->netdev->state))
-+	if (!netif_carrier_ok(hba->netdev))
- 		set_bit(ADAPTER_STATE_LINK_DOWN, &hba->adapter_state);
- 	else
- 		clear_bit(ADAPTER_STATE_LINK_DOWN, &hba->adapter_state);
--- 
-2.34.1
+Markus Elfring (2):
+  One function call less in vas_window_alloc() after error detection
+  Return directly after a failed kasprintf() in map_paste_region()
+
+ arch/powerpc/platforms/powernv/vas-window.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+=2D-
+2.43.0
 
