@@ -1,26 +1,43 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2482F845;
-	Fri, 22 Dec 2023 22:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4475B6ABF
+	for <kernel-janitors@vger.kernel.org>; Sat, 23 Dec 2023 07:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbLa5l9z"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 33C83C433C9;
-	Fri, 22 Dec 2023 22:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703283627;
-	bh=tzLxkfky1SGZ7FukP8qhT8K/nLkHtiY58wzpEImAB/c=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lbLa5l9zrEDA60+cxbe2sUA2+T2RPSS9OVRXc5hgjhdB5TA37qZzr0QfiEKlVHROZ
-	 gJJbqTQGRoqDZyNXyIllbn8CLVVaC3DkBrl05E1DYgiElhNsY960nXBcI/oTkvy8vK
-	 wLJ98dhhWNrbgjJ1QQcLy5MdHFuwdqps7DDNhuRDsoLnc5NUeTevE1GLjguq8l3E0q
-	 zw4Q34w6lRPp39zrwVqXtYpNJet28CTyjnf1hSurc5ZUq0mPxeOIa+mXWB1S2cyI6H
-	 vQR/ZUs2Gdhv3dTglLxrD7yMpfDtEXEmRS1ooXfLbz9d0Lf3Hma5x+VQveQZdhwkPe
-	 Z6mK9qkZf6ZlQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2026FC41620;
-	Fri, 22 Dec 2023 22:20:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DvdU5XM+"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id GwGurd3vWIwxKGwGurw9QD; Sat, 23 Dec 2023 08:18:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1703315890;
+	bh=/VcQ3ywtBHiz2ekkrkufS8HtOtQjntld/yz+tR1IO94=;
+	h=From:To:Cc:Subject:Date;
+	b=DvdU5XM+20cp+xGQjO8cNsK9VuhzCs8sNKlHZZ76nuqBSMy+ntaDUv7D0eWBP/S30
+	 JdmIMYwx73qLglLB8bdBs0E0FEpbj9ObtQj8k58ejYgigqUELSQldCDmREV5FPyZ02
+	 6T1/lgJiLSn2N/XxkNeoqKV6ezyID+R+xk1oCisX4swdPf+BlEPSdNTl1EyzngOFP2
+	 q3ElUPNNOAONSvna0VcTF/4taApsZ7kS3YV/9xuRtYWcQYXSA5rPLDn4vVjmF+b0Y9
+	 439LUsBCnmLbTLkSrsvKJG5Mi76LowKWje8jcUASwnYM3YqwGcOcfrxgGs86CVH8l8
+	 /tef6wuzOAAdw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 23 Dec 2023 08:18:10 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Saurav Kashyap <skashyap@marvell.com>,
+	Javed Hasan <jhasan@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: bnx2fc: Use netif_carrier_ok()
+Date: Sat, 23 Dec 2023 08:18:04 +0100
+Message-Id: <888a8efb514cb9ed984253de147b2b212c649dce.1703315854.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -28,44 +45,27 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] selftests/net: Fix various spelling mistakes in TCP-AO
- tests
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170328362712.7428.17804520208125792515.git-patchwork-notify@kernel.org>
-Date: Fri, 22 Dec 2023 22:20:27 +0000
-References: <20231218133022.321069-1-colin.i.king@gmail.com>
-In-Reply-To: <20231218133022.321069-1-colin.i.king@gmail.com>
-To: Colin King (gmail) <colin.i.king@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, 0x7f454c46@gmail.com,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+Use netif_carrier_ok() instead of hand-writing it.
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, 18 Dec 2023 13:30:22 +0000 you wrote:
-> There are a handful of spelling mistakes in test messages in the
-> TCP-AIO selftests. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/net/tcp_ao/connect-deny.c      | 2 +-
->  tools/testing/selftests/net/tcp_ao/lib/proc.c          | 4 ++--
->  tools/testing/selftests/net/tcp_ao/setsockopt-closed.c | 2 +-
->  tools/testing/selftests/net/tcp_ao/unsigned-md5.c      | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
-
-Here is the summary with links:
-  - [next] selftests/net: Fix various spelling mistakes in TCP-AO tests
-    https://git.kernel.org/netdev/net-next/c/67f440c05dd2
-
-You are awesome, thank you!
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index 1078c20c5ef6..cf5b58798975 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -784,7 +784,7 @@ static int bnx2fc_link_ok(struct fc_lport *lport)
+  */
+ void bnx2fc_get_link_state(struct bnx2fc_hba *hba)
+ {
+-	if (test_bit(__LINK_STATE_NOCARRIER, &hba->phys_dev->state))
++	if (!netif_carrier_ok(hba->phys_dev))
+ 		set_bit(ADAPTER_STATE_LINK_DOWN, &hba->adapter_state);
+ 	else
+ 		clear_bit(ADAPTER_STATE_LINK_DOWN, &hba->adapter_state);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
