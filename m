@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BE912E5F;
-	Sat, 23 Dec 2023 20:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D915A1;
+	Sun, 24 Dec 2023 08:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kJHR+ZFF"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Fa1v4kYU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703363420; x=1703968220; i=markus.elfring@web.de;
-	bh=CkiadlJnceiWb4wDxQjgDyAYKO3sigBrvSKQufUjwtQ=;
-	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=kJHR+ZFFUvcx4ZXEZHizmsrOcZkY5mcHXI8p0rI2tz7HBYkMqUwrIRIB9MXmQ6XV
-	 QML7/ikykymwmL5EbkL00RHOffech4O1Qd2GI1pvQPya1fTxmERvBHZMpyJ2QsG0y
-	 r0VtsG/7YnT5RwuUxByv/eWydQyHlXtlwgYSleVYoNRC0L/Ps/1cH90DROk6Freiy
-	 biOx7SiOiA8lXquf6lIxSzRm+YRcEAm/zS5ScCMkiz1jYolRHy/CZxDfCOvePuxue
-	 2CpFuWsfMr+p6psAlhtvsbS3g/b+mUN7cF4qnTAhcJC+EOVv6WauuNz/lnPNs7hQJ
-	 a5hdZq+Ryy70YE31xQ==
+	t=1703407953; x=1704012753; i=markus.elfring@web.de;
+	bh=J9AFeaTjFODuXC5t8p5hISXXnz0jr5F1tAmJ6A9HIGs=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=Fa1v4kYUxSqv14A0oAQxXZCYXk6urYxYo20TODS9WM4UOtT7nT27ZLodhs8sikXh
+	 eS0Qn4v3zusco8tMXEM2Tg200p+MmErQ3ogtjQJbZVhruPJRSllytA/Lx6r0GJTUt
+	 guS9jXQTz9r0ZahW+M0vz6Vr4qj/DYaEq2HGdMoN+CibrX3FKcLVDaOEJAc7tUV0j
+	 YnJVSHT7aWtpxt3ouQ88Mp9obbSxr22yXQDfYLxw0O0dWfn3sVY11oo8AUsh/V5T2
+	 DOCMqW1oaub1IxsZOyubj4lhWqqNZ1Ho/Xt0BZ4qdm9vyqkISp2AqW6XuLBjQYu4u
+	 2FuzL3WGVSJeZ0YbEQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnX17-1qpXar1c0L-00j9SN; Sat, 23
- Dec 2023 21:30:20 +0100
-Message-ID: <5b38ce71-3c76-4efc-a688-6f2651f93b6d@web.de>
-Date: Sat, 23 Dec 2023 21:30:17 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ma0PY-1rkuIf2nqe-00WMuB; Sun, 24
+ Dec 2023 09:52:33 +0100
+Message-ID: <89708781-f34a-47af-8aab-025136507da0@web.de>
+Date: Sun, 24 Dec 2023 09:52:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,88 +30,78 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+To: linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Language: en-GB
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] perf/x86/intel/pt: Return an error code only as a constant in
- pt_pmu_hw_init()
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] clk: stm32f4: One function call less in stm32f4_rcc_init()
+ after error detection
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xPGwYXpbcPGu2+M0VdwPQ7SUF0a7M37z16ssBjvgoCPi+x9tAoO
- NvQZ1g4SjMgDz4Ava3z+cL6tjUVRgCTDRTWYi5SO6+wiAmHZX6EnbAjVGCH7dW7IHiaSj3z
- ixLweZnePPhXebrte08ntjAtgJYFTck9lLBDVlGoQyqQeDOytPBAfzQr5wchziJY2dljghN
- iSuUCfIOO6P7BP0buSvRA==
+X-Provags-ID: V03:K1:B9yYikbLk2Rc1omAIk7V1I4TYkgY3SUAvNpijGraxc4PWGwWolc
+ TDonYPQmNJkx+EONlIBJ5/9iuPRSHNUupsbJ31paWQp3ZdY25VE38Or3BDMAJSfyqmeKZvC
+ jaxSusEoTz7PAmx62x5SHyQ2eHCnhFhqNmbuCf5ROQJRglUKPwcUbyopWjXGk685cbSS+9E
+ V0xvNAC3t01QCbVdjiDjg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+SMfoYLuucE=;c/mPHW8OJcA3zTVCoyoYFJeALSM
- ZvfjHlnns9cYViZmfJpVMKTY31aF2ERQpa5xEcvlV45JG935oc58SmkfMKKfoEOgbC1ZY4IXh
- LQO16NkMeGI3PgGc5EG0LxvJYCOkTmXyYDpxVMGZlNFYdckX8gdwWjvFtGkWtyTqvskLO6aYA
- DAwQ8+fWP/4qBps6HdOXn8LoN+cDy6b1ipjdoXby3ElBvS+i2PRnqFlqLn4VSDOmyfohWgTS0
- 8ZaUF+RhAVQbtiUfSnz6B7kvTO9WlJMOkEYIhUxRm09UeBPJ/Tq5c0HYBdTvkrU7g+S4SOO8H
- EnHiihcnVCSEpNjtVd+aI00BGqip06aI2lVLW+lamYW+tUkb00gKUrwF+GFhvBOPNJIMOHHmU
- 1YFIEKC8g95QAtiEDfjGcedkQK4Gevf+jYk5owwhdtVqiOCwvp/rusG9W/oPehAUyGG10tkf0
- +FcSKqVbrTzX6WiViXoYgY1AqVTQcww/aLc+p8fQTg4VHh6KOih94YSz5jW0674dYIiaSfxEG
- n758oBn8MkCPcj2Wp64mbx3gYKY+B5bwHsmPXtYCvUcKC7LKu/EZEkLs5oZJEfd3NJEgj7lFi
- aODCc5JoltK2rrHuywY4nGKA5JgNq/JVYxjnM7wr9FV0vxPER4SCo19FOBBll8nAzge1HNmhd
- UYppXorGtr//W1AAuerUj2Hx1Ha6Lj7ECEueWLhIlxV6PU8z8AqpCxC9HtAf69G2CHSqC5ASx
- nc47PsRqx/Vza6Sj99uXUyxqr63NC6i1JaAphwL+xq1kP1V+KkozWQdpEIe/4J5CgbHEym6YN
- qpMjL/kccAFya8Ma+017jgPKT5Tk4i9rJa33XNWwwNdpNRrxooeoCAxvITQnfH586G2cCFYRq
- 1R4VNboquWKAwpxhYn2OB00+VJF3E/rYx64TTh3MSZNi1xo0Zv8Yqla8/it+3MycVEsuwx9XT
- T57zjQ==
+UI-OutboundReport: notjunk:1;M01:P0:cPzjS5EdR30=;8kzncu32jgClyJqfnSC/jFyGbPI
+ chw/MI99G76gULkuV2Sgp0TBFmIG6ucPK7HZw62RNlHS8p0GDERWe3GXDl01mncMkykxjkfDR
+ xuoMWgd+x1uIbA47j84raF36RnLtSLZ6lBT/LOUOSZVzIBOCOhck5N73mVJkA7jJFYJ15b0eA
+ IcipaI0dPXU4NJOYDTM/NCmfWfc27yK7NEewAmCPMdViZc/ts7byidJI7Bgl8l9i2TCstjpWC
+ Ew064FDTEku5YNzMvCLwvk8kREzvDt69+95Gegacaiv+aQbR68wNlSEDBwe9HhOPbnpJbvrwm
+ EZDpk95XROIP7TZ9i3gTRtIByw9VbJg7EbGwAv6+Ns3GZkEzYjyJOvc2DYKNVuBxnXuvEa4o1
+ SCGC8HYRrR+N2MHh4Joc47kAr4YzGajea56ls84e3yN2jvTSqrWUB4Ss58wdmGy50bik0p+0E
+ 1BWnjNKG85DGHET2Mq+ZS/Y3a+O1tyV+xHpsSYFZc+leMtj3w7GPJ1JFiW/Qi/stv5V6zmN7g
+ O/U30JpBaq3CGNAPBPStlsGX9tJMKn2FgNmF9EGLnYThSKFJG5G5v8gkG7f/sdUDgf/Y8yiIl
+ FjHff+Otg8P2jkKDyDcRyvPLgb134darF2BJ/O7LFOL3w15kDOwMAfNZ5DWyGLXJod7INyV+0
+ gNW/Mqvkk8xTe3YrSx8RVlmkstg2Cn7J9Ik8DfUw177MsbiQMSsjwHaGr7GNyMspGZ/0Y/dKz
+ E55S2gyJ5+KFCR6ti+3+TQ3SDJj88/0edzbk4UI7oWIE7aT/HGD/inPr6JVOhpN2fYRXjNdJJ
+ n6KzJlHj5HuySKuC4iKk3EsxCkm09Jo8rrplq+NcOkRMPSgB5LonlT/hQxKc9lYJOLsRzB5tj
+ dPDqEhcozv1b+sacdz10EzKRWo6XnK4JqC2uCeIh2QtAvQGkGf79A4LHrnZctriXqa3hjMI9K
+ GovnztI+5W68AwMDxI+eqz3hqFk=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2023 21:06:27 +0100
+Date: Sun, 24 Dec 2023 09:40:10 +0100
 
-Return an error code without storing it in an intermediate variable.
+The kfree() function was called in one case by the
+stm32f4_rcc_init() function during error handling
+even if the passed variable contained a null pointer.
+This issue was detected by using the Coccinelle software.
+
+Thus use another label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- arch/x86/events/intel/pt.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clk/clk-stm32f4.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 8e2a12235e62..24fd18e2da34 100644
-=2D-- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -190,7 +190,6 @@ static int __init pt_pmu_hw_init(void)
- 	struct attribute **attrs;
- 	size_t size;
- 	u64 reg;
--	int ret;
- 	long i;
-
- 	rdmsrl(MSR_PLATFORM_INFO, reg);
-@@ -242,11 +241,10 @@ static int __init pt_pmu_hw_init(void)
- 			    &pt_pmu.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM]);
- 	}
-
--	ret =3D -ENOMEM;
- 	size =3D sizeof(struct attribute *) * (ARRAY_SIZE(pt_caps)+1);
- 	attrs =3D kzalloc(size, GFP_KERNEL);
- 	if (!attrs)
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 07c13ebe327d..c7690a1594eb 100644
+=2D-- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -1714,7 +1714,7 @@ static void __init stm32f4_rcc_init(struct device_no=
+de *np)
+ 	clks =3D kmalloc_array(data->gates_num + stm32fx_end_primary_clk,
+ 			sizeof(*clks), GFP_KERNEL);
+ 	if (!clks)
 -		goto fail;
-+		return -ENOMEM;
++		goto unmap_io;
 
- 	size =3D sizeof(struct dev_ext_attribute) * (ARRAY_SIZE(pt_caps)+1);
- 	de_attrs =3D kzalloc(size, GFP_KERNEL);
-@@ -273,8 +271,7 @@ static int __init pt_pmu_hw_init(void)
+ 	stm32f4_gate_map =3D data->gates_map;
 
+@@ -1897,6 +1897,7 @@ static void __init stm32f4_rcc_init(struct device_no=
+de *np)
+ 	return;
  fail:
- 	kfree(attrs);
--
--	return ret;
-+	return -ENOMEM;
+ 	kfree(clks);
++unmap_io:
+ 	iounmap(base);
  }
-
- #define RTIT_CTL_CYC_PSB (RTIT_CTL_CYCLEACC	| \
+ CLK_OF_DECLARE_DRIVER(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_in=
+it);
 =2D-
 2.43.0
 
