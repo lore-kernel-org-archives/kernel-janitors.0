@@ -1,107 +1,87 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D915A1;
-	Sun, 24 Dec 2023 08:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F41568C
+	for <kernel-janitors@vger.kernel.org>; Sun, 24 Dec 2023 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Fa1v4kYU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703407953; x=1704012753; i=markus.elfring@web.de;
-	bh=J9AFeaTjFODuXC5t8p5hISXXnz0jr5F1tAmJ6A9HIGs=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=Fa1v4kYUxSqv14A0oAQxXZCYXk6urYxYo20TODS9WM4UOtT7nT27ZLodhs8sikXh
-	 eS0Qn4v3zusco8tMXEM2Tg200p+MmErQ3ogtjQJbZVhruPJRSllytA/Lx6r0GJTUt
-	 guS9jXQTz9r0ZahW+M0vz6Vr4qj/DYaEq2HGdMoN+CibrX3FKcLVDaOEJAc7tUV0j
-	 YnJVSHT7aWtpxt3ouQ88Mp9obbSxr22yXQDfYLxw0O0dWfn3sVY11oo8AUsh/V5T2
-	 DOCMqW1oaub1IxsZOyubj4lhWqqNZ1Ho/Xt0BZ4qdm9vyqkISp2AqW6XuLBjQYu4u
-	 2FuzL3WGVSJeZ0YbEQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ma0PY-1rkuIf2nqe-00WMuB; Sun, 24
- Dec 2023 09:52:33 +0100
-Message-ID: <89708781-f34a-47af-8aab-025136507da0@web.de>
-Date: Sun, 24 Dec 2023 09:52:21 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LK5l2y4U"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id HPUSr2aSJZnJmHPUSr5tZE; Sun, 24 Dec 2023 15:30:07 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1703428207;
+	bh=LCtL5kqOGRBMWH+JxDJBF0/eK646oThHjfyYVTS2Vzk=;
+	h=From:To:Cc:Subject:Date;
+	b=LK5l2y4U3Axg2/JMRLu9icqmznswmGIFSB4S0/gut7pJZcqDUZEi25IrWlcb2iMM8
+	 hBR4amRZlOOHmQ1Pabna28V77wxnIr5UOKrWZ4X6mDblPKwMfkoHuzL1xdcy09n1Ge
+	 yztFcOf8E/OebHBcKMDw1I+jKtftm1GBoRkgAxNNYAsKuIwpQzMCWywXTeXP6W31kN
+	 1cD7I89jcZSt0kYulzu8+s6ocg5CQ2y1we9yEz7hNcdgbmO7xd9IY9iwSfjfXbcqpP
+	 pR74S/khUj036xF4CXytondIlGjHxCQOozvV9YIB8K1cSEQORp+aJGUWOG7nMdUVEx
+	 6TJU2gWI/WLVg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 24 Dec 2023 15:30:07 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Dmitry Safonov <0x7f454c46@gmail.com>,
+	Daniel Stodden <dns@arista.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: switchtec: Fix an error handling path in switchtec_pci_probe()
+Date: Sun, 24 Dec 2023 15:30:01 +0100
+Message-Id: <01446d2ccb91a578239915812f2b7dfbeb2882af.1703428183.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: stm32f4: One function call less in stm32f4_rcc_init()
- after error detection
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:B9yYikbLk2Rc1omAIk7V1I4TYkgY3SUAvNpijGraxc4PWGwWolc
- TDonYPQmNJkx+EONlIBJ5/9iuPRSHNUupsbJ31paWQp3ZdY25VE38Or3BDMAJSfyqmeKZvC
- jaxSusEoTz7PAmx62x5SHyQ2eHCnhFhqNmbuCf5ROQJRglUKPwcUbyopWjXGk685cbSS+9E
- V0xvNAC3t01QCbVdjiDjg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cPzjS5EdR30=;8kzncu32jgClyJqfnSC/jFyGbPI
- chw/MI99G76gULkuV2Sgp0TBFmIG6ucPK7HZw62RNlHS8p0GDERWe3GXDl01mncMkykxjkfDR
- xuoMWgd+x1uIbA47j84raF36RnLtSLZ6lBT/LOUOSZVzIBOCOhck5N73mVJkA7jJFYJ15b0eA
- IcipaI0dPXU4NJOYDTM/NCmfWfc27yK7NEewAmCPMdViZc/ts7byidJI7Bgl8l9i2TCstjpWC
- Ew064FDTEku5YNzMvCLwvk8kREzvDt69+95Gegacaiv+aQbR68wNlSEDBwe9HhOPbnpJbvrwm
- EZDpk95XROIP7TZ9i3gTRtIByw9VbJg7EbGwAv6+Ns3GZkEzYjyJOvc2DYKNVuBxnXuvEa4o1
- SCGC8HYRrR+N2MHh4Joc47kAr4YzGajea56ls84e3yN2jvTSqrWUB4Ss58wdmGy50bik0p+0E
- 1BWnjNKG85DGHET2Mq+ZS/Y3a+O1tyV+xHpsSYFZc+leMtj3w7GPJ1JFiW/Qi/stv5V6zmN7g
- O/U30JpBaq3CGNAPBPStlsGX9tJMKn2FgNmF9EGLnYThSKFJG5G5v8gkG7f/sdUDgf/Y8yiIl
- FjHff+Otg8P2jkKDyDcRyvPLgb134darF2BJ/O7LFOL3w15kDOwMAfNZ5DWyGLXJod7INyV+0
- gNW/Mqvkk8xTe3YrSx8RVlmkstg2Cn7J9Ik8DfUw177MsbiQMSsjwHaGr7GNyMspGZ/0Y/dKz
- E55S2gyJ5+KFCR6ti+3+TQ3SDJj88/0edzbk4UI7oWIE7aT/HGD/inPr6JVOhpN2fYRXjNdJJ
- n6KzJlHj5HuySKuC4iKk3EsxCkm09Jo8rrplq+NcOkRMPSgB5LonlT/hQxKc9lYJOLsRzB5tj
- dPDqEhcozv1b+sacdz10EzKRWo6XnK4JqC2uCeIh2QtAvQGkGf79A4LHrnZctriXqa3hjMI9K
- GovnztI+5W68AwMDxI+eqz3hqFk=
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Dec 2023 09:40:10 +0100
+The commit in Fixes changed the logic on how resources are released and
+introduced a new switchtec_exit_pci() that need to be called explicitly in
+order to undo a corresponding switchtec_init_pci().
 
-The kfree() function was called in one case by the
-stm32f4_rcc_init() function during error handling
-even if the passed variable contained a null pointer.
-This issue was detected by using the Coccinelle software.
+This was done in the remove function, but not in the probe.
 
-Thus use another label.
+Fix the probe now.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Fixes: df25461119d9 ("PCI: switchtec: Fix stdev_release() crash after surprise hot remove")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/switch/switchtec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 07c13ebe327d..c7690a1594eb 100644
-=2D-- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -1714,7 +1714,7 @@ static void __init stm32f4_rcc_init(struct device_no=
-de *np)
- 	clks =3D kmalloc_array(data->gates_num + stm32fx_end_primary_clk,
- 			sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
--		goto fail;
-+		goto unmap_io;
-
- 	stm32f4_gate_map =3D data->gates_map;
-
-@@ -1897,6 +1897,7 @@ static void __init stm32f4_rcc_init(struct device_no=
-de *np)
- 	return;
- fail:
- 	kfree(clks);
-+unmap_io:
- 	iounmap(base);
- }
- CLK_OF_DECLARE_DRIVER(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_in=
-it);
-=2D-
-2.43.0
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index 1804794d0e68..5a4adf6c04cf 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -1672,7 +1672,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+ 	rc = switchtec_init_isr(stdev);
+ 	if (rc) {
+ 		dev_err(&stdev->dev, "failed to init isr.\n");
+-		goto err_put;
++		goto err_exit_pci;
+ 	}
+ 
+ 	iowrite32(SWITCHTEC_EVENT_CLEAR |
+@@ -1693,6 +1693,8 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+ 
+ err_devadd:
+ 	stdev_kill(stdev);
++err_exit_pci:
++	switchtec_exit_pci(stdev);
+ err_put:
+ 	ida_free(&switchtec_minor_ida, MINOR(stdev->dev.devt));
+ 	put_device(&stdev->dev);
+-- 
+2.34.1
 
