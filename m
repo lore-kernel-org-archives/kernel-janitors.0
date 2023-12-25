@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A69935EF3;
-	Mon, 25 Dec 2023 10:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C049D52F63;
+	Mon, 25 Dec 2023 17:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oEszm892"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bS6K7tca"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703499745; x=1704104545; i=markus.elfring@web.de;
-	bh=ehzvFIgSeJSu3nZAjymVW905vwyKajE8awgJ7Isa/V4=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=oEszm8925iw94XfHKFlwJrQA3oD8t9iCFVEqmEKTAJn/d1LpUVHuRzeCtKqRSVop
-	 IDnFqQMAvI3kAaIOoVEmlDgOQyaAmlFWJNLZeLXGI6sb7sQE+j/OExm3fpVb1ygIb
-	 rmJGL0JuqwYEE1i4bmUKtlrlrSjEPZ2Jo+n/3pu7+TkKggu0n2qWDDWPDM+yGgEo8
-	 K3dfYiV+T0Sa+s9ZA0887eMXL5SeQhF8jDos9A0bvHGW/9lk/8pywFlVdLcfHuf3/
-	 7ZlhgUL3tXfdcibkx0FY/Q025QRi3yaR8qPwVJK8ix3kO1zBKdvmnM65ZWtXVfSeQ
-	 1hbRuY2FnOyb0KmseA==
+	t=1703525537; x=1704130337; i=markus.elfring@web.de;
+	bh=Hqsf/W1zTujyJBR8uJaWWv0uhOGXacuRBqoB7Qd6iuY=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=bS6K7tcabbL26CgtnaDpAfS3aG1sywSUJKLX7j0VmMugEsBiJ27VFpZRQu2px3us
+	 iujud0mhvAJgCF3ThYWrDiK/ecr65b7t5iccSdnd5NF/ofCT515zKQsCVZv43HTf3
+	 A8K6Tz23iZrAB4+YkRXf6cgsSLRAbilk8e+ajmVRD7e/VS6sMUoOchNN1nMEpvuCn
+	 J05KCuWNe7tM28lPlru0rXffZQpS784CmmVeARuZ9zQdfG4pi+etJ+U0/EA9pjaat
+	 OlyHTdTWvZ3iZlwQ59MuZaDK+j9NfCNhmC/DAnr3Vj5ue9ZirthZXa+0g45iu71ex
+	 UOHk9h9BpZYP6HWmpw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeDQZ-1qk1702OPf-00auKj; Mon, 25
- Dec 2023 11:22:25 +0100
-Message-ID: <3184e80d-9056-4a0f-b0c0-8c1fefa62196@web.de>
-Date: Mon, 25 Dec 2023 11:22:24 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYtx4-1rmdMm4BxQ-00Uy7T; Mon, 25
+ Dec 2023 18:32:17 +0100
+Message-ID: <8c9e2c01-9ed0-4392-af40-4e8eb393cb67@web.de>
+Date: Mon, 25 Dec 2023 18:32:15 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,74 +30,58 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 3/3] dmaengine: timb_dma: One function call less in
- td_alloc_init_desc() after error detection
+To: linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
+ <rric@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-To: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
-In-Reply-To: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
+Subject: [PATCH 0/7] EDAC/amd64: Adjustments for two function implementations
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
+ Muralidhara M K <muralidhara.mk@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Rl1oMsp960JeDUAqYdAIMvOPYzMZfHe1CPjrgQS8GX9vY8IVCkF
- CO9ZPyUVlIUdzV1NfxsNHpGudjLmqX5lzPWD7LxC6H1HFeQ3L4oqImoT3Y/gWNHLFu5dyKz
- 3oYYWmS3TF5mA57xcx4hY8VEcZaVyew4VcCz1/Nu/QTUUZ3KIYkbZE4P1MywpCwQzl2BmU7
- 6wCx9mmTI5E005sLqqBXA==
+X-Provags-ID: V03:K1:R/3pPPgsW0Ytss/g9XC6guLy3I5essvBwpZaVoyDkq1UxEW0nYZ
+ Vo65W7Z92aWXWfLmG5FmImwYQFDVFxnh37MxQ/pKsrLvyomKJmS6wDznIl2v99C6jg76GB3
+ 5NZ2Zta0Blhm759eNXJGUpgh2M3/sjiKZmIbu2/06UjlKZKCjRvoMXU5eZKH6+/dcWNclMk
+ lLnDhtsj3sd8+zoPGZcoA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DM+q4z1Nt9I=;Yiy9v3GEYKJ7vkCTt0gbBFxvhr6
- QQmXDJcB9xFHFIV/evpPM9LazU4h7+QdcqGygL7EizOHIuTT1vdcmXN5tzm502oFecGQzM/hM
- 27qsHBQR0sC6JnWnYUacaNYqdAVyidi7gG9vz38XV8PdrWvhFhnwtJVTkwVj59DLenAdPcrZt
- FgbvJ1spHeU9GQwE9PW84AhL6MjzinuMmWc2awjrhIcCWscB9lN2BMgTmacJtFOrHAbydXwIR
- PsF6/hQCrpFpBbetPGX8VdiLlDL/yb7IPr4Mqn7xBkVMQLrudPY635aAOSpm4tDyw/tU6PSMM
- z8kVNLlZRjXuYAe1PVx126xa8FchFE1tHGfhwByiJY66g+HzNbBPNyAbbqc9PqUJt6b/7cBNH
- VzPHmAoPLAQSAUhEP3Ye856LSNHveP6PdzT/mstARIomDHwKl3buDlKmwfa3ZwLt5Ot8PEA6K
- IxUyXxQJ/QP4Lm1jhCYDG0ew6a6/3jVMockeFZtQO5iPAMZI2L4b5kTW25QI24+ppXdNdXXIB
- 164iSOVFSGTKFa97n5+ASz35gV+FkVtHDwnPZMn6tCvUW0DjvXqE+tscu8bKHmuql72hfFAu2
- /XWy/thQlMekjkNHpTdRhg4fqsQbkloBawkz70Hu3XivxMkbruJ63qWqYx66SPDoRFdHsQSHN
- e0QlVCxY9NmYA8rNFg7Qcf/XRdWtteakBztpRv0S+EjY9QtB9ynoXM5VJfCYVNmuUJyggfZER
- f2T2c/xAy4ptlWk6mdLAOxc3/jjZ6AjuXp12ukm6O9vrmjF0Ihc4mqTU3MTl7IAWOHPV53I77
- 3bJg7CTTQqYaKHLvK3cpDgxmVrbO0tCPEzH+9woWVn/0lAs7+9Vtpcku4G4yUUzP/XWomgsd6
- 6dBojfTz18rfvRP4+nffu5WWSMUf9eTSy9RxuxaPL+Dc/PRhupM5f99a46u9SK704wTtFDd07
- xA/PZJj6AbZw62+6YvDgBaexhdU=
+UI-OutboundReport: notjunk:1;M01:P0:du6Y8wJZnYE=;qMoTsZM+U1eao0pQGstHy7uI27M
+ Xciq9KrBPc/417A2OjPguJ12q5XIOXcbqDeFJjBZJSoVxg8izKB3tJH8e0J36rzQ75z4Py0lL
+ 4cekn23R0mQp/jgvY+cUTTpgeF0YCyzAZOE/nzOzdG26ZLGvSshtTmZus3U0E4V3qPscDNdtX
+ YTx8ozQ3JRT5PpIGuKLKcrr/nUqHz+aEJmQR6iG+3iitd9WRa7sGWuBDZQrm86ueVuxuBeI/y
+ znlGjC6QJXLQ/XQFyf2+Sv4GKyx7NULKtNyhoG6MRzY4wxjuoc+11IY/Ds/mWokxBFwYCI1Y8
+ piA26RcEOjbH3HlxvjwxMeUTEOGX99/aGeDmKtRRxRE/aBWeIhPt1xtgGv5NGlCsLcXBkUL2A
+ 095UPOK3u8HW30Z8i95tNIJY3+G2IS3RDTz3gMA6WyyINUSD1BGbk7bCGv4SnfsXb46iUCCJ7
+ GM9u7EzbN4tBDMSsmFoy5mGYLy/PbREB2KMeJIiK13egwHcbb73m+gpswBD2C981j3F8etDjJ
+ lpjivtfRlRXLIP4XHlCg/GdHLqrGWHhXwDJdfkdMz/IHEfWKpIazjzcrjmak8fsz9gwZBudBh
+ BEJW9pHcx1G6Yer2yWmWuSOYVV0Jb6C2EIgICirCOGsPstvfxLYx88gzlnw/0ZqhtWunAsfAb
+ isPaHn8I7oYm6b4cGCq/0QHc6/GbnSRJXbLbZf+uURW5gXvTkfdS6I80hv33VzvKcwsmDHdLK
+ vXipTuGQd9JZtYmpbVXmFRgdn2T8Ptt3NZkQCZ4NOyPHEKdmKMZ54z86VLNvrioGhxTyeQJ/N
+ qJ6QeCiTlYrxVby2r3sKOWJDTVR+mnqTT4G6AArwNMnuCKYsGl8nV8ads51lsxEyzLH557Lyw
+ qsMiUasBGkKPABi+nDwQvXMnIOC9atm3RBdRlfiakh2mLaOn1BDM6cdeuOubqPkesOuF7oXz9
+ tfTgIA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2023 10:55:52 +0100
+Date: Mon, 25 Dec 2023 18:19:45 +0100
 
-The kfree() function was called in one case by the
-td_alloc_init_desc() function during error handling
-even if the passed data structure member contained a null pointer.
-This issue was detected by using the Coccinelle software.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Thus use another label.
+Markus Elfring (7):
+  Improve error handling in amd64_edac_init()
+  Delete an unnecessary variable initialisation in amd64_edac_init()
+  Merge two if statements into one in amd64_edac_init()
+  Adjust error handling in probe_one_instance()
+  Improve two size determinations in probe_one_instance()
+  Delete an unnecessary variable initialisation in probe_one_instance()
+  Move an assignment for the variable =E2=80=9CF3=E2=80=9D in probe_one_in=
+stance()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/dma/timb_dma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/edac/amd64_edac.c | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index fc1f67bf9c06..831c67af0237 100644
-=2D-- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -333,7 +333,7 @@ static struct timb_dma_desc *td_alloc_init_desc(struct=
- timb_dma_chan *td_chan)
-
- 	td_desc->desc_list =3D kzalloc(td_desc->desc_list_len, GFP_KERNEL);
- 	if (!td_desc->desc_list)
--		goto err;
-+		goto free_td_desc;
-
- 	dma_async_tx_descriptor_init(&td_desc->txd, chan);
- 	td_desc->txd.tx_submit =3D td_tx_submit;
-@@ -351,4 +351,5 @@ static struct timb_dma_desc *td_alloc_init_desc(struct=
- timb_dma_chan *td_chan)
- 	return td_desc;
- err:
- 	kfree(td_desc->desc_list);
-+free_td_desc:
- 	kfree(td_desc);
 =2D-
 2.43.0
 
