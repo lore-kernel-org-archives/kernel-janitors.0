@@ -1,29 +1,49 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E94F210;
-	Tue, 26 Dec 2023 15:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED8A4F5F9
+	for <kernel-janitors@vger.kernel.org>; Tue, 26 Dec 2023 16:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FCGmIfEi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703606290; x=1704211090; i=markus.elfring@web.de;
-	bh=UsBoPuZPdqnwWrn8IhaxnLaYVK5pnPZrOKNApu8djQA=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=FCGmIfEiJPrC8OBQ9kHS5k/aWkC20OdHyG9Je0vmrj+6/Vtue12cVYPQSJYrewj6
-	 uSNOaUtB31vmAU7i7pAcLxAWh9zSGBlhGsb+zeG4pZfmPbLkz8xLM79VdVZHU6Dfp
-	 sVKvk3m56IRfESXcjbXjfwJ0hzQkwsl6Gnly8ZMT8hperGSwgyJnaHrtkvaZYjer0
-	 tuyBYiiyrXxYi1lhE0UZ0a+VVCKycuUXJ2FnWEdVBMW+U2RxFe5FAsiFNGG0HOtSt
-	 wOne3iDLl7oZd07khpKMvqJ2+rciTejn+J1SsuhW2mX445ElbY/pwHn02y05Eed10
-	 QWfPPra8AeYbAnwjpw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3Gga-1r8ZQh3d5e-0109x3; Tue, 26
- Dec 2023 16:58:09 +0100
-Message-ID: <85f8004e-f0c9-42d9-8c59-30f1b4e0b89e@web.de>
-Date: Tue, 26 Dec 2023 16:58:09 +0100
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yLETI7l4"
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7bb06f56fe9so1200939f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Dec 2023 08:27:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703608078; x=1704212878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xOMGLbsQ9RzM9b4GH1sZi3XCxnyOtKMyWm93wPrQ9NQ=;
+        b=yLETI7l4PsCDRf5Kn58dk884r6RxFXdB6JdQwSDmbPwtHCnPXR6qtJHbJlz05xStRT
+         /1aU/boBhS0nS1Oc1ZCkVH60u2Yxr4WK5b74wQChUeBbC9rxXIUaHRsOamnDFnbP0PVZ
+         I1SxokhleyqbeyKyrXcLfV1cEOToa+uT3eKMYGnKFTaW4Lg7GQin9ZJQYxhpyBldnL+I
+         uPUyK4jfNTy8ypegxFkDXDe9vWiWcs2YfgJvIrPYg+Vl/XH4FfSG2r0KJtc4oQutk39k
+         0mHK6XfHTfkcItmD/ei9SbXtvCEutER63O4etdtDociYvbeyfxeMaXx6Si86uDhHpXPb
+         BjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703608078; x=1704212878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xOMGLbsQ9RzM9b4GH1sZi3XCxnyOtKMyWm93wPrQ9NQ=;
+        b=kCIS9NoE1AP2yq7b/xrUXuVSMSvLcUb2L4LQOo7vtw9Nw1dQB9xBlPNPDK6jKXuI3F
+         43TiRuNCoNmj0v0zQxOkU8nD6oV6ijOj+7/DIO/Wi44mBjLS7NeNjaTe0sZpEOza4F4g
+         z7/xBau5yDDO9Y3JaMsxmpUiLNFMGRqdt/LVq4LW5YtNVam8+ErkSPozyEOrqbmgwWDZ
+         7kK+Rb3YRLFGhJML8BLa12Z+ANUTCs/Wl4whlz8+Djo8BYGbh7KU8sBTbm8DtnMpD+3H
+         G10qCxlAnEf0MQWIMAi7IZx6V8XoHA/BfiBzkcptZcsvga2rqN8CIZQTrmvyTRZex2DU
+         630A==
+X-Gm-Message-State: AOJu0Yz2Nn+x4RroHDvxY0iI2hSGrSjgqX7KgwWmAaV1koZlJ50Bo6/N
+	Wbl7wMJb7g1ELdJyodN6nOQobCEfhY33ITSvO51abVfFADB4Kg==
+X-Google-Smtp-Source: AGHT+IEgyg08vkH3r2LNXz77+SvWCKLe1kl8w+wmTxYI0Q2Y3xIjVmbHXTPWx58lZLUgNU4waXN8yQ==
+X-Received: by 2002:a6b:6a04:0:b0:7ba:ccbb:7515 with SMTP id x4-20020a6b6a04000000b007baccbb7515mr4749377iog.2.1703608078311;
+        Tue, 26 Dec 2023 08:27:58 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id x6-20020a056638034600b0046b6f096e3bsm3092448jap.134.2023.12.26.08.27.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Dec 2023 08:27:57 -0800 (PST)
+Message-ID: <4a9913bb-41b0-43c2-b7b7-22472e954a12@kernel.dk>
+Date: Tue, 26 Dec 2023 09:27:57 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,84 +51,24 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] drm/sched: Return an error code only as a constant in
- drm_sched_init()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Luben Tuikov <ltuikov89@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <12b3e9cb-3241-40cc-b7a4-43c45b9eedc9@web.de>
-In-Reply-To: <12b3e9cb-3241-40cc-b7a4-43c45b9eedc9@web.de>
+Subject: Re: [PATCH] block: Fix a memory leak in bdev_open_by_dev()
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <8eaec334781e695810aaa383b55de00ca4ab1352.1703439383.git.christophe.jaillet@wanadoo.fr>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8eaec334781e695810aaa383b55de00ca4ab1352.1703439383.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vj7nPubO/RtGZEW4DXmzQkH71f56f8vMzM5kuMez9/zuKsQ8EX4
- K02qYH4QSrdZS5YpEBjlzkaAL8PHX2R8OGLpKOdxwqXU02rFIWtgKSrsHhrIWCbWmX5OxWn
- zRinZwnnZ6PBinF6bxElAAgsaEk/jv7J5lcKGn+WjsPW8LsILG3Yu+opM3fcTVDUfPJCnI3
- r+eYb9cvQ5i04R94niE3A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YyuitqbQW/U=;Kfwc98S8YFQzqqgDFSOv1ipPVfx
- 2jb0vX4kV9xuSkxnHnDHhvmHuvwvJ5Uv7nPMH4SYE5edYIjosRAf2y+/a5Kdv5qbidquv8Mh6
- PCzTF2ONHNSh7jZTmpgAnsPfRhtv4YYZ1rVZzcrFr/HnMG43TUvVVFPeEeiHZ8v6h0N4hLoN3
- d5otP0tsJLWZmhQl5cNqoDp/0aAWU20oD1o8+xalenJhh7qbsKbbDFgtCKicoF4NLGRmQ88lf
- 8Bb6SpyXpd0kN5he+3YO+YEnO8UV3dmz8VWv5SVQphn60jNLIDJS1u6iROic5GptURJyvRpw1
- VPKPbIdyArJvp+Q4jlUOzLIwnTZBJILQjlBP9xalU03XP0CKJxsRMZQRMd3Aq+v9zisDPCjDc
- FisV9VDss6bicviXTra0J+moNy5WO5iMOcd3s/fXcwThXknjb0GomztuZGZbDZFy4zf0Twyon
- 5G3cQoCzKuOWeDJuR3Xt5329nYpb1xRDzUsJnJTQprtevTQJ/acvrcmshldKQ5dcHqM06gpEF
- 0j+hXqe4rvheMpLOa+LWg6b2Q1vXQSZrm7GZ/BHN44FIvGC4V+SnkdkC8r8H0e9ER58oYb89Y
- s5dtUdavEcP1qCM0+63IqmHokE+SZBK6GQeOA7d/vj0Kg+ks929O2q7gpTIwp6gf1PkDoRF/r
- 6Uor71voT+hNFQxF0RM2cMoNdu1u7Lp7imGzH7gaELzR3OGgjLx/xlpGC6EtMfTTEjKTrvPxf
- jorq+JCoOsYUG4Pt2X0uKyZvpzwCkKGLfd+Vuov5ZCd9SliTNF4NrjznvJrx+48nFlJbZYHkL
- CKKMU7o0i/JrKkvOdj4Y3y0AbT30FKXTbw6wOOP3VHs2hj5nhDb1QQefAMPByNqQ7LNddJVqt
- 2tZTB70AfK7EbM645fu8ExaSby1N6q8m/xAAEQK7eMp2cpljuKL6IbAk2TqNJdC1ZcQ2e+DcR
- cUsKFw==
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 16:37:37 +0100
+On 12/24/23 10:36 AM, Christophe JAILLET wrote:
+> If we early exit here, 'handle' needs to be freed, or some memory leaks.
 
-Return an error code without storing it in an intermediate variable.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/scheduler/sched_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+-- 
+Jens Axboe
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sche=
-duler/sched_main.c
-index b99d4e9ff109..1abbcdf38430 100644
-=2D-- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -1249,7 +1249,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
- 		   long timeout, struct workqueue_struct *timeout_wq,
- 		   atomic_t *score, const char *name, struct device *dev)
- {
--	int i, ret;
-+	int i;
-
- 	sched->ops =3D ops;
- 	sched->credit_limit =3D credit_limit;
-@@ -1285,7 +1285,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
-
- 		sched->own_submit_wq =3D true;
- 	}
--	ret =3D -ENOMEM;
-+
- 	sched->sched_rq =3D kmalloc_array(num_rqs, sizeof(*sched->sched_rq),
- 					GFP_KERNEL | __GFP_ZERO);
- 	if (!sched->sched_rq)
-@@ -1321,7 +1321,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
- 	if (sched->own_submit_wq)
- 		destroy_workqueue(sched->submit_wq);
- 	drm_err(sched, "%s: Failed to setup GPU scheduler--out of memory\n", __f=
-unc__);
--	return ret;
-+	return -ENOMEM;
- }
- EXPORT_SYMBOL(drm_sched_init);
-
-=2D-
-2.43.0
 
