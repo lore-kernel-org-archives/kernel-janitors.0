@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98141845;
-	Tue, 26 Dec 2023 19:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF6F5221;
+	Tue, 26 Dec 2023 19:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w6g8HZHE"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fBOhzl+r"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703617762; x=1704222562; i=markus.elfring@web.de;
-	bh=e+tBrgtJfsdqXLShYcAxcZWtl8ArgkpUQb9HNhch+6M=;
+	t=1703619819; x=1704224619; i=markus.elfring@web.de;
+	bh=kfUrqzz13/SvRJXYn0ERTOI/fh6ulUnX5zFEb1O64Js=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=w6g8HZHEkpbryK5BLDOeQWt+/lpBqoGxbDnbb6dN2GVLEfRNnSHi9bdFdPHFbkCa
-	 QhWK+kIgXhjLVN6WqKbTGFrLpPIRDp9BybrEMyeb0i6/3kZsyKlNwHG/j/slAIhPQ
-	 oOEJml/hef9AR9qqJv0XjqjwoPu9WUqQvIKObyp8VlnXT/LZL/TjwVkUyvgAtVer5
-	 1yIUpVS/PO54spPLEyzKhqLauqEHGrCy4sjZSSwOx2tfgKDmL3Pr5Vx95ZbnzZ+rv
-	 UnSzlSkjQt1fszmBObyacSzmqC0KiYFyHE3yN1Nui7flNR4QA1MVr5c37DwACObqn
-	 1lGohnSUrYvql7oRlw==
+	b=fBOhzl+rNglrGfAE5U6T/gr7Mcos5BQiia4AiECPLcFxE5boaMpuyvWYg3qXNQo/
+	 adlFWcdh/FSb/vR2Lg86/GKHSvAeI0wB1SMZnRyzYwEjw8mm9+EF+uoYyCG5Lofj4
+	 fSA+bPafsWBoR2IAZMCUkko4/1aIarO7bKMcqt0NauJmCDebcE2coRytaIVfESeG1
+	 KIPMJ51KyTOtB+DUwHSoA5l1uFG/JQfX8Grt5PxKx6zmONmVYO5Bnlut13dYffHsC
+	 f+syDNPaKXK/iMN/bEy473NZsaJXd12tdW08Ik3jwGaNLwkaRLg/4vf2qb49tq105
+	 q5lVTJXlS4hLCVV/rw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQ8Wg-1reI1y1bJg-00MCdT; Tue, 26
- Dec 2023 20:09:22 +0100
-Message-ID: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
-Date: Tue, 26 Dec 2023 20:09:19 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MhFlo-1qn1SL0xuM-00eWrU; Tue, 26
+ Dec 2023 20:43:39 +0100
+Message-ID: <5088a905-4f29-41d3-a96e-5b66aad551f1@web.de>
+Date: Tue, 26 Dec 2023 20:43:37 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,85 +30,68 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-hyperv@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>
+To: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Henrik Rydberg <rydberg@bitmath.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] Drivers: hv: vmbus: One function call less in
- create_gpadl_header() after error detection
+Subject: [PATCH] Input: MT - Return directly after a failed kzalloc() in
+ input_mt_init_slots()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wPOvhj5sZIFHtakgOhvLyjOxfuTw717tJTZVuzvrrqw47k7mvWx
- CyzpwGDn4gaBT1CJjpK9GVIIMWi/S+S+fIkUTwBRp1cLMH3aCcOGz/YfYnvNQb+99MMh8oI
- tB8wP2yHdAK21v+JUtEchHHOWMoILWeamZmQXeqoP4qlu2NabSKEM484Z3soOjX+jFhTJ4C
- aeh2fY1OkfpLpgsLxcGMg==
+X-Provags-ID: V03:K1:a8q13dW4fWVw2Hjfg84VQkwXU+SMTB/VfKaMZFUi+rSbfT92EII
+ 2KooLkW2Dt1N9cTE4m8DJ1HBbo4D5rqf0iDdRWR8KpJTnq59BWm8uAfCr2a/hZJHirCNjXJ
+ 4l9HsAHIOoSz2pE9twVSlBijktomx1LJ3hXmLqLS8OoA7gXYLMDQVJwWKL97573cEZNpkMW
+ RxqfNn9aqV3fQjdpHC7Cw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+GuqX/7+844=;mKtO/t28dF5Noz7+PWV5uyi6UzL
- 7/31I3cEvXRYkQWA+hVKFQmOeWLyICCOmKCGX5QtKx+VQzGz5J+xCACsIPokktvmKoVBaUNOl
- xNZkdW643wiWYJnR4le5+YS25/scz34z2OIsXOdVCh2qons627KD1GqYZ3UcvHSZWavrvPYOc
- GrsvfGdSMZaoolsz3DLBivmTL5uaL2KCwkEbR+qHp7CTuvrP1Tdfr+I59JELsF7xpusF++GQ7
- IIEuf0UQDPAGvxV48JJ6ZOvpuBOTe2Lk7sbu8Y6BeD7XNxyU9pFSpLdqEoxfSmeYKakeKgBIJ
- mLkEkLA/hHZOtmywAxIOyCmJ6sMSNjh1DuLqQl14FHXGTs3ShtVGMk+eIaXOXgjhbGFS2bYfE
- wDaQKwDlzYRvw5b6b5oz1tIMVV6eYS/R3Zxjjng3IB/05hx0w8n8Y38G56pzoMi3Ol1ccfCVj
- 7aV89aa0n6Wgq1vb2YT4QGcnFQQEY579fhcceHzZF+xl+vRGVYMWtqOUnJydIope45l1hcTjx
- Y6PKyXeU5EcnjGjqpvhSi5dr5l27OA7BYIN4/Lh0uJ6sTd5S+n923nrCs2vnVKmsoGSzMCEXb
- 5ShpvJ9SNR8aYqW6E+hyPLSCD6qxZAtgbxrjR2umD4489dOR3+hsr57JNZMIqhqzNZ8/FdDiz
- Nludh6j1qcdUdb/4EnZAt36PhVW46UAD+5SkcfvbDYGl1CJIUkW/U7GDQd9qs5485X7xqbTm3
- DAdMQaJIES6dm3aBZtoKAtKF7LaKKj8n72SiZYMGgyhZtpZLAS0UsAO5DEslJ7mkpPy8ot9n4
- APzpn7lW5qWto/xov4OzKsFlsKOGypiVfz6kco8PRYqkkKsU/OjiQZ4HvOpGkOY2frbVDvkjw
- o7Pk8FS2Wocgqn8Im/UH49p0ICEv9pS6MxMBvLzErm/elfZjIzVD7ItR0pQzksE3Dio8aWDJ9
- x2Lvmw==
+UI-OutboundReport: notjunk:1;M01:P0:8pD2t0jv3V0=;6PXCgp1FFSxhp3Tffor/temmFSg
+ 895atRLT+C3nCeMjM3n1oRHwvgFOcktzBWruWZEu5ZsGaxTbuyYtv2rGGKUslWmPgpexSpWL+
+ wXULaZMfngAAw6HlTtXgX2N5PgaFtL8hImDr+fnVQYlQ4bArZqprAJXtrpUs5COQSHWfqlIva
+ WVUP2Hlo+soijfzzP4Hxi2N6rZXmYYzQIpcHjVSuKcb//ryfLvy2dFeibU1YzAIR6OdRMWVIw
+ PScT4n1dy7v+uoIjO2a78SPpJoAkmvKE1JkEPkaqunOmP+PJ3N5SpicZt172/MbIArELY5MB3
+ Fxffx5qL8ripKt3ZHJ0NuqUlUR59TnNpeHEwW/NBIK34glXJ0KrIYPCkaxt5uvf2L0ZQXsn5B
+ Tis9pVoqRq2nCMZKCEf/zikkeGZEG5pVPgmAyel3u9zK5UTQJGzbTNqGaUM+2VrU8k5/QgAaK
+ O1veTuapZJuIYZY/J7GM1Sy3jVVDjfpp9LX9/6w8KZsxuQqgH/aSDOIVh3feJqPcm2Jse6RxD
+ hBaK3Y0igDbFy82DRMlqZ+4Bsm0Ky7c3aIQEsz9xfVnAjr1i1Xj0ZvmW21RVlExwVYfjteYln
+ DmbvanRgUBMVtAllhsVg45iKkkZDMX4EOtGd2Y3IetOoGMxxuuG7xeMCNShOEd01tWQ85vmv7
+ bWRPB9vH5o2o6rsp0q56uXa5kpUaYRPIa2HGQtR3x5Ak7M+thOfifL9PXQyhvh4OaGwh903wH
+ ePem5rBifH6vYxAzwSljTbLR/EmbhLaBPmqqdS7EG796xRTBswHFa6B07v91Q5vScFOZpOS5c
+ Efd7dLd25gd4f8vambmPhJEErXnP5NdACQ+/a9LO97qNdgNhXmmFXij6tTAuybNdxbNkIF/tM
+ XmyBK/Oln1d3IMon2CHHb9avCOFZWG7dXOIArCyAhV2ZUFTDSVXVVgiGYTF1+6ldsB3Tz7C6i
+ uPK6oA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 20:00:24 +0100
+Date: Tue, 26 Dec 2023 20:36:09 +0100
 
-The kfree() function was called in two cases by
-the create_gpadl_header() function during error handling
+The kfree() function was called in one case by
+the input_mt_init_slots() function during error handling
 even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-Thus use another label.
+Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=80=
+=9D failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/hv/channel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/input/input-mt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index 56f7e06c673e..4d1bbda895d8 100644
-=2D-- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -336,7 +336,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
-, void *kbuffer,
- 			  sizeof(struct gpa_range) + pfncount * sizeof(u64);
- 		msgheader =3D  kzalloc(msgsize, GFP_KERNEL);
- 		if (!msgheader)
--			goto nomem;
-+			goto free_body;
+diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
+index 14b53dac1253..24064447d600 100644
+=2D-- a/drivers/input/input-mt.c
++++ b/drivers/input/input-mt.c
+@@ -49,7 +49,7 @@ int input_mt_init_slots(struct input_dev *dev, unsigned =
+int num_slots,
 
- 		INIT_LIST_HEAD(&msgheader->submsglist);
- 		msgheader->msgsize =3D msgsize;
-@@ -417,7 +417,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
-, void *kbuffer,
- 			  sizeof(struct gpa_range) + pagecount * sizeof(u64);
- 		msgheader =3D kzalloc(msgsize, GFP_KERNEL);
- 		if (msgheader =3D=3D NULL)
--			goto nomem;
-+			goto free_body;
+ 	mt =3D kzalloc(struct_size(mt, slots, num_slots), GFP_KERNEL);
+ 	if (!mt)
+-		goto err_mem;
++		return -ENOMEM;
 
- 		INIT_LIST_HEAD(&msgheader->submsglist);
- 		msgheader->msgsize =3D msgsize;
-@@ -439,6 +439,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
-, void *kbuffer,
- 	return 0;
- nomem:
- 	kfree(msgheader);
-+free_body:
- 	kfree(msgbody);
- 	return -ENOMEM;
- }
+ 	mt->num_slots =3D num_slots;
+ 	mt->flags =3D flags;
 =2D-
 2.43.0
 
