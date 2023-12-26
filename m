@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F264F885;
-	Tue, 26 Dec 2023 17:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410453E39;
+	Tue, 26 Dec 2023 18:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bG5SFJ+b"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sXGNVCyp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703612004; x=1704216804; i=markus.elfring@web.de;
-	bh=AuhcszHwHjGP9Acn89BVl5MLLXrMpR0aVvDveRatoik=;
+	t=1703615055; x=1704219855; i=markus.elfring@web.de;
+	bh=f/Jl+Efb4DezWv7JjmB2u06F6X9iJ9wWuCDtqZqFeRI=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=bG5SFJ+bYfMdlpGE1cElBR5x1ijpvWLrkp6loXWkOoDmOoBXR0L53mMfHRgyu1v2
-	 RrVDJqRD9hd6SX+zDKcIjeq77aF3DPWOogjNATijcmLPRbqn8bMO8tqucz3Ndz6JK
-	 3IYE/RQgrbtSIijS9YSHaveF+38NNWHbb55wi6bgiOujYezqxmIITs3Vqh468A7mn
-	 nCfwUKWtqf4aGEJ469/wks35vDHZ1oZ9TsfMmEcRlEAR8wj1VOGSIQpRP2vfwOANe
-	 FMjGchaP6nVU2vm1F/G/kQCr3CN/Vstyf0BaFKXJVbDeP2K+cxsy5FRhzYVhmZLC8
-	 2bkjcKS04SntJZ0o1g==
+	b=sXGNVCypFGIAsK2RhOYeKeJcBXK67emWhsnUVXWiS516ZyuRkp7swYAV0uPfTp/s
+	 rf4/PxzykXj5No3yhYFHysooCljMX1Yc7znaiaz4B0eAgQGlK7rj38hdFkIiuy56J
+	 bmKQCEPGLwIO4O+mSGRvEaCkSvwqoLa3xO3uTI5l0VlB/glh8EFeN13xluHtoTXxy
+	 w0BsIZ/+mkgffR2WBfCDQA076d+IgxOtivut6fSRkSwrnCXSyZj59Ff5aoctIPUyd
+	 KMKrodkijx2nsde3PY5Kd9a2nEIEJ/zPTRCJZKpv45nmV4z4tZai4TPMTD38Gw4P+
+	 Wbu/RU5+TVUEZBtUjg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElV3-1rSOi72PWd-00GAan; Tue, 26
- Dec 2023 18:33:24 +0100
-Message-ID: <189166d6-b76a-412a-bfcf-8ba14578a317@web.de>
-Date: Tue, 26 Dec 2023 18:33:23 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvslx-1r151E32WN-00sV6f; Tue, 26
+ Dec 2023 19:24:15 +0100
+Message-ID: <3203eb44-6e69-4bda-b585-426408cb75ee@web.de>
+Date: Tue, 26 Dec 2023 19:24:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,211 +30,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+To: bpf@vger.kernel.org, linux-input@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ David Vernet <void@manifault.com>, Jiri Kosina <jikos@kernel.org>
 Content-Language: en-GB
-To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/vc4: Improve exception handling in vc4_validate_shader()
+Subject: [PATCH] HID: bpf: One function call less in
+ call_hid_bpf_rdesc_fixup() after error detection
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cqYAChBIlAwDCrpDesRT8Rcxu7TED955U2F15R9o1Lvz0JJr2FN
- uTKhH5RtR8P3nvpkDaA6FP3Z3AbzDluXJ9BYxHm7kZw+Wsl6SUnXMBcxkzReBqCZJWFYIZD
- +qKKAvP4dAuXEx9vhylypm1hlJdFyORz9GujswISk/AkMx8D9gvS82GVer/xy+zvDsQstS6
- U9M8IklMQJXMOEO59DWqA==
+X-Provags-ID: V03:K1:K8fF/UijAIywnS52YDqNMULxk3+NZg9vn/tgRlNElb24o0WwTPy
+ VrprFxvBxar+Yk/bUyDiW3oFnHnY3d9QkFy4oTSTjHa+DVPlGrkiLHcX29RQV/JRckCY7tG
+ tURb2Nx0wHr7uGfDz3PyL+uKqEFOyNqfdV4m/IyWF0bu/qPDYbW3StSulfsTU4PtarOzrSZ
+ thlRopo4UMn+BP4/reC6Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:riS9T522lis=;57fc1AQoeN3UHWwK3JukaIDA71E
- oQuOiPMRZaDTXd0YVGVRZE+jXL0z8W6Bujhd0Q9IZ5uRgiedPwsqmvoKDuW37PaceJ6sRPCpG
- D9/G21S0YOVs/dUqtHHm1uaJKuVXYwqaiDSFeiu9dkywsjC2ZLP1iSSb00Gxfj35YRtH8R1k5
- HEY3Q5yST+1Y1SkCN92+dxUsOe8FkGKOUyUBAwN4bgfanTwcVZNjHwGy4IFAP1MZeHJQl/iv7
- OXuLrgiqUBG0OW+goOGFqXiZtFnQgpbXEIBFdoMJ93uTUetUCOQJLY9AqrUrqZjQeulaAzK8U
- 4DKjLvIt908q0FbLhPffo4sOGBIMOmqvw9/ZM4W1pi6KrlqCCn69asLMstQcLwRoqcl3VcNyE
- wUIzIRa5SDAJ6/adhbIQJUu0vJLB8cYfmQFwz2XVOS8feiujbhaxruhTDUdWrQwAsibSunSWr
- EDOFHdlqumaLo0HoLHhH1fIrrmPw3gdn3q66xrqPxGMO7iT6azfn3+RgKVwOmk9Kd/2dXP5ml
- 2/a3S9zs4LF7GDVYN7U9RDmY5GsIyCzxdBjaWwc2Fvs2hCmrHT5GDVNiU1eAIUZ3uEnrSR1hT
- QBf7vNXjqE7lO2qZEg8hANyH3xR2wJpL4RuZ+w9rDLT+96EIpWdsghb99ljNFB4uSOdVYqsAB
- PQyCLQcYNadkiurQTQ6rL5QnuKTBEznJ5Qh8+vjvSaiFvMtLksunegF9uF1/8f5T2fRmAOsKK
- QegbLA3QlO62jPozlTViu3vNSxP5mlJQDFqjqQld6cN8kHgXgifllQsotBPf6JGllZ7NToWOi
- L+gghKSFDbhLQGhWd64phzNSbrkSJYhTBaFvPZV9ywHCsjQPlVtIQyyM4hB5AjZpjwApcFhpp
- o/4ct1Fi/qDO81XIE9h8bIYrfK5uvPCE5AlHoZmF9ebd/Oc+Pr6pqwZjZ+dveKVLpv5YPZdjd
- qMj77gRzkgSUok4y7iyPo6/3pQ0=
+UI-OutboundReport: notjunk:1;M01:P0:ACMj+myOfk8=;jpf3JzHWCKMdYEDE/lVe892U+x4
+ +ohp9E/66yrl6WArelsmeCzCtQLU5fI+nQz7+zbw8Rh7E4VS27xlSmLkUV5qOh2xnr6qIfy4Q
+ 3dy+CqcHiggMWvfaECy2Z6m3vxQ9Bm0Mc5dyCpzFmkQzVujDTRaSu7DIVbCNe21prKltoKpXb
+ tdocUzGGyrxAtCz8mFjQL3ZDccW8JMS8bw4ZkghMy4kpgCn2GkN2sjxSiwBbHV6nX0zRsZ0op
+ QbnDeY5zK23XqNZovTNe+OHJudY1lRWl6kHVDBtaUM3xAOHHLd7O1v98JfVSfXaYXJzgG4/pK
+ BDshva6Z4zkX+TQxn8Ft4yehcRikfPJ0NhDQW5K3HkxykkW6o09ES8fdGs/nKA5WNdgQalVG1
+ rFtwmh18kyx720dpBmhBcKqdu71ptDhEPPfdOk8mLJhlvxOvVVBH1vMBqBdDcjUY6s8J7o0Nd
+ RLXVJ+bKBzm35jVdHDvLMzCUAbVJRYz6kURg7LnIPXfyXsnwUOtujb+yPPbb+1oRa4KloCizJ
+ XFX0IGTJn2hIoSJOUnw0XGX7Ztpt0femIsvtemDdevZ0cAmIX3BvW2m3tjUX0g3TqmdILQQ2u
+ YFg6ecDBEb0LpRy+SY5iaXrE7GKrO41zkVDwI32FG0l5Q5yR6Y/ey/onqVUyjNDdR5kERT1jf
+ kt5JmgkuFbGtQt61GghABhN220XPNDtW6WjNRsoRYaqWDYcXoeim83XjKVapCm2gRt9Xyjzdn
+ KBngG0gisHHl3IVS6KTFtGXXJ+lAUGsqERTaHsanM0N5Ue0UWO3obSXYryiqe+6wUB0VTX+IU
+ t6FCx2S7nGCeseWuES59HYJybPKMQJEJVuSreQn2CvV9mIHPrQTyiORK4uLp+U/UWU0aTahmB
+ Lhv7kA4oulJjI6g0RQA0wVC0fEzAksp+9AltVkfGI0P/MnG5P8tWuMIuVCJn7swQbV4NwKM3R
+ h08qWA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 18:22:54 +0100
+Date: Tue, 26 Dec 2023 19:13:25 +0100
 
-Memory releases were triggered during error handling only over
-the label =E2=80=9Cfail=E2=80=9D.
+The kfree() function was called in one case by the
+call_hid_bpf_rdesc_fixup() function during error handling
+even if the passed data structure member contained a null pointer.
+This issue was detected by using the Coccinelle software.
 
-1. Return directly after a call of the function =E2=80=9Ckcalloc=E2=80=9D =
-failed
-   at the beginning.
-
-2. Reduce the data processing at the end to a required kfree() call order
-   also by adjusting jump targets.
-
-3. Delete an initialisation for the variable =E2=80=9Cvalidated_shader=E2=
-=80=9D
-   which became unnecessary with this refactoring.
+Thus adjust jump targets.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/gpu/drm/vc4/vc4_validate_shaders.c | 42 +++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/hid/bpf/hid_bpf_dispatch.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_validate_shaders.c b/drivers/gpu/drm/=
-vc4/vc4_validate_shaders.c
-index 9745f8810eca..d76787bb7d51 100644
-=2D-- a/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-+++ b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-@@ -783,7 +783,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 	int shader_end_ip =3D 0;
- 	uint32_t last_thread_switch_ip =3D -3;
- 	uint32_t ip;
--	struct vc4_validated_shader_info *validated_shader =3D NULL;
-+	struct vc4_validated_shader_info *validated_shader;
- 	struct vc4_shader_validation_state validation_state;
+diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_=
+dispatch.c
+index d9ef45fcaeab..c84fe55be5ed 100644
+=2D-- a/drivers/hid/bpf/hid_bpf_dispatch.c
++++ b/drivers/hid/bpf/hid_bpf_dispatch.c
+@@ -118,17 +118,17 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev=
+, u8 *rdesc, unsigned int *s
 
- 	if (WARN_ON_ONCE(vc4->is_vc5))
-@@ -799,14 +799,14 @@ vc4_validate_shader(struct drm_gem_dma_object *shade=
-r_obj)
- 		kcalloc(BITS_TO_LONGS(validation_state.max_ip),
- 			sizeof(unsigned long), GFP_KERNEL);
- 	if (!validation_state.branch_targets)
--		goto fail;
-+		return NULL;
+ 	ctx_kern.data =3D kzalloc(ctx_kern.ctx.allocated_size, GFP_KERNEL);
+ 	if (!ctx_kern.data)
+-		goto ignore_bpf;
++		goto dup_mem;
 
- 	validated_shader =3D kcalloc(1, sizeof(*validated_shader), GFP_KERNEL);
- 	if (!validated_shader)
--		goto fail;
-+		goto free_targets;
+ 	memcpy(ctx_kern.data, rdesc, min_t(unsigned int, *size, HID_MAX_DESCRIPT=
+OR_SIZE));
 
- 	if (!vc4_validate_branches(&validation_state))
--		goto fail;
-+		goto free_shader;
+ 	ret =3D hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FIXUP, &ctx_kern)=
+;
+ 	if (ret < 0)
+-		goto ignore_bpf;
++		goto free_data;
 
- 	for (ip =3D 0; ip < validation_state.max_ip; ip++) {
- 		uint64_t inst =3D validation_state.shader[ip];
-@@ -815,7 +815,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 		validation_state.ip =3D ip;
+ 	if (ret) {
+ 		if (ret > ctx_kern.ctx.allocated_size)
+-			goto ignore_bpf;
++			goto free_data;
 
- 		if (!vc4_handle_branch_target(&validation_state))
--			goto fail;
-+			goto free_offsets;
-
- 		if (ip =3D=3D last_thread_switch_ip + 3) {
- 			/* Reset r0-r3 live clamp data */
-@@ -842,12 +842,12 @@ vc4_validate_shader(struct drm_gem_dma_object *shade=
-r_obj)
- 			if (!check_instruction_writes(validated_shader,
- 						      &validation_state)) {
- 				DRM_DEBUG("Bad write at ip %d\n", ip);
--				goto fail;
-+				goto free_offsets;
- 			}
-
- 			if (!check_instruction_reads(validated_shader,
- 						     &validation_state))
--				goto fail;
-+				goto free_offsets;
-
- 			if (sig =3D=3D QPU_SIG_PROG_END) {
- 				found_shader_end =3D true;
-@@ -861,7 +861,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 				if (ip < last_thread_switch_ip + 3) {
- 					DRM_DEBUG("Thread switch too soon after "
- 						  "last switch at ip %d\n", ip);
--					goto fail;
-+					goto free_offsets;
- 				}
- 				last_thread_switch_ip =3D ip;
- 			}
-@@ -872,26 +872,26 @@ vc4_validate_shader(struct drm_gem_dma_object *shade=
-r_obj)
- 			if (!check_instruction_writes(validated_shader,
- 						      &validation_state)) {
- 				DRM_DEBUG("Bad LOAD_IMM write at ip %d\n", ip);
--				goto fail;
-+				goto free_offsets;
- 			}
- 			break;
-
- 		case QPU_SIG_BRANCH:
- 			if (!check_branch(inst, validated_shader,
- 					  &validation_state, ip))
--				goto fail;
-+				goto free_offsets;
-
- 			if (ip < last_thread_switch_ip + 3) {
- 				DRM_DEBUG("Branch in thread switch at ip %d",
- 					  ip);
--				goto fail;
-+				goto free_offsets;
- 			}
-
- 			break;
- 		default:
- 			DRM_DEBUG("Unsupported QPU signal %d at "
- 				  "instruction %d\n", sig, ip);
--			goto fail;
-+			goto free_offsets;
- 		}
-
- 		/* There are two delay slots after program end is signaled
-@@ -905,7 +905,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 		DRM_DEBUG("shader failed to terminate before "
- 			  "shader BO end at %zd\n",
- 			  shader_obj->base.size);
--		goto fail;
-+		goto free_offsets;
+ 		*size =3D ret;
  	}
+@@ -137,8 +137,9 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev, =
+u8 *rdesc, unsigned int *s
 
- 	/* Might corrupt other thread */
-@@ -913,7 +913,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 	    validation_state.all_registers_used) {
- 		DRM_DEBUG("Shader uses threading, but uses the upper "
- 			  "half of the registers, too\n");
--		goto fail;
-+		goto free_offsets;
- 	}
+ 	return rdesc;
 
- 	/* If we did a backwards branch and we haven't emitted a uniforms
-@@ -927,7 +927,7 @@ vc4_validate_shader(struct drm_gem_dma_object *shader_=
-obj)
- 	 */
- 	if (validation_state.needs_uniform_address_for_loop) {
- 		if (!require_uniform_address_uniform(validated_shader))
--			goto fail;
-+			goto free_offsets;
- 		validated_shader->uniforms_size +=3D 4;
- 	}
-
-@@ -943,12 +943,12 @@ vc4_validate_shader(struct drm_gem_dma_object *shade=
-r_obj)
-
- 	return validated_shader;
-
--fail:
-+free_offsets:
-+	kfree(validated_shader->uniform_addr_offsets);
-+	kfree(validated_shader->texture_samples);
-+free_shader:
-+	kfree(validated_shader);
-+free_targets:
- 	kfree(validation_state.branch_targets);
--	if (validated_shader) {
--		kfree(validated_shader->uniform_addr_offsets);
--		kfree(validated_shader->texture_samples);
--		kfree(validated_shader);
--	}
- 	return NULL;
+- ignore_bpf:
++free_data:
+ 	kfree(ctx_kern.data);
++dup_mem:
+ 	return kmemdup(rdesc, *size, GFP_KERNEL);
  }
+ EXPORT_SYMBOL_GPL(call_hid_bpf_rdesc_fixup);
 =2D-
 2.43.0
 
