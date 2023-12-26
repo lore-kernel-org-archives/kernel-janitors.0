@@ -1,84 +1,80 @@
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F914E611;
-	Tue, 26 Dec 2023 12:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Szv4h5Tm1z1R6Hw;
-	Tue, 26 Dec 2023 20:20:52 +0800 (CST)
-Received: from kwepemi500024.china.huawei.com (unknown [7.221.188.100])
-	by mail.maildlp.com (Postfix) with ESMTPS id F10C21402DE;
-	Tue, 26 Dec 2023 20:22:11 +0800 (CST)
-Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
- kwepemi500024.china.huawei.com (7.221.188.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 26 Dec 2023 20:22:11 +0800
-Received: from dggpemm500006.china.huawei.com ([7.185.36.236]) by
- dggpemm500006.china.huawei.com ([7.185.36.236]) with mapi id 15.01.2507.035;
- Tue, 26 Dec 2023 20:22:11 +0800
-From: "Gonglei (Arei)" <arei.gonglei@huawei.com>
-To: Markus Elfring <Markus.Elfring@web.de>, kernel test robot <lkp@intel.com>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>,
-	Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
-	"Xuan Zhuo" <xuanzhuo@linux.alibaba.com>
-CC: "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, "cocci@inria.fr" <cocci@inria.fr>
-Subject: RE: [PATCH v2] crypto: virtio - Less function calls in
- __virtio_crypto_akcipher_do_req() after error detection
-Thread-Topic: [PATCH v2] crypto: virtio - Less function calls in
- __virtio_crypto_akcipher_do_req() after error detection
-Thread-Index: AQHaN+QUjZOxb6ORnEG4ZWEqtSGvn7C7fD+A
-Date: Tue, 26 Dec 2023 12:22:11 +0000
-Message-ID: <deb25ea00a57448d94496db1c46af693@huawei.com>
-References: <2413f22f-f0c3-45e0-9f6b-a551bdf0f54c@web.de>
- <202312260852.0ge5O8IL-lkp@intel.com>
- <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
-In-Reply-To: <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A091B4F210;
+	Tue, 26 Dec 2023 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jyuaWvs7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703606055; x=1704210855; i=markus.elfring@web.de;
+	bh=CqUJd5RIIJKCSzBgNfve9F6+tVJsVgjVa3IJQgjQIYk=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=jyuaWvs7kl/orRAaXmBavd7ZWEUjrUPiBzRAdNzOi5+kkIRPBXCzLa8TtpmuKqHW
+	 pWSfHVy79UJzhdQKuo8i2By1NbjO5yzN23R6otgCU03zUqeH+0Ajlb6HTchMsLn6A
+	 rNl46ekm1pQ/TX5oTQ4J8yHVn1swNC9pmZ2o5DJFyRIQnV2oULl8+QaTpYqQOzfB+
+	 9nokJX6oGLny6FP4Ix7qhmffC6CA39oSX8+2NKVw02jjsd29Aw4lJvHidUF89/vkS
+	 KDAsgZxkVXfZgdB+RRAp/knjAO2rR7qjmklOqF+8DnyZm0P9/aJAXrifYKpZvuB6A
+	 RjyX5BjX7dFGrseejg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMGuC-1raEL32Nvi-00JQqP; Tue, 26
+ Dec 2023 16:54:15 +0100
+Message-ID: <12b3e9cb-3241-40cc-b7a4-43c45b9eedc9@web.de>
+Date: Tue, 26 Dec 2023 16:54:13 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Luben Tuikov <ltuikov89@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] drm/sched: Adjustments for drm_sched_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5jqictNmemXsoho2KQ9xaqACp/mEdtmanumDIspEEQZ3A8n+v6X
+ 7UCTt+Xz3y5vOIU1kzIsUBK/jllN/W6VuXUAcF9kZLoLBppfIM9hN4qtH9FbGaZovPePNt9
+ SblB9leG8gRs1OhXqk/dtAClQz/8l2KRC8VpSnmC6YGaqL7DZsdtZctYFcRJyH9MgckFtcu
+ udWUBOnzVHqdfhotq0xDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IyoyNYxZGRw=;EspgbdmU/SfrRwagWhiRYJrGEOv
+ jf+aUEPc30EgVxnjKOYnLC1VUxI/IR1zGnvj5UsOs9NmpzfB6PUNiDniUDoLNDVbu1qovC7nm
+ Ktr809LRCrOciwqQlOwnlvE78V57jA3a9lu0ilFXe9QZ0b1eeHQldfeBMaLiECmK9INVDQ1k8
+ FRicbVKt/anbPfXglt68+XRDQ2eUVb7FwVqla1qcQY92bqGLRq2NfbzZxvnBF5O6uMeg5+T3V
+ pvqg0vPF0g3p8wmmmLc3NDug7wDu3IisNr1FDqrkqI95gmyJNZoNQmyVxdhFqVgkTcreGRd9r
+ cYpRy+DkAJ35lBHiCm0D0UQB9/d6pCll3VlGDLo/cyrSWaVZVWfUPS+3FbfiJra79t9yedgI5
+ LfWNSePf5Yon8+3RyKCxOmzdoLP3IedxMlGsX2JVXk/7XkHl7534r3rMKi6brCB3OJgKt/Nft
+ oOPA7UPCEc8pbf9zfztCovL1Pi/MPDs9IaWNvUEej8uez/yJQALMtSRutW8zUoy8RpXbCu2tS
+ 5QfxVB8VSfevn6Wtb38W03fgv6sXa/5WjgWKj7YUvUG1tEn19FVUjsi/gko1P5Bqtz+ogZ5cs
+ 3Gwlxp1KcbRpBR3dice4xC7TUchhcV6fbS/10SpIopOS9maKu5BhRS426wU4UaTbMecNPNzEE
+ 4C7kHLHx7SPt9lapNSA9pbqU6iRrNjpsZTvns0YTS5cWBDEyE3M2zU3jn6M+/OKrOmYX2l05N
+ 37EPeoTFJupAvk/bRIGWoqnt+KA1LmMOWIYownOadD/n9sfrcZUCFAX5uzhqTDuvD89RorQPn
+ ksD1V5sYaqQfP2oHdZlz5Uf9Y9CwGiPmzSS3lqzRbiLMdq1Bt9RGQeYJ5PcLczbnx8XmcZbzg
+ 4mSOuiH3MNj2wcKWQjux7UkRdn5OmzrHcLHiiXCVjJ6DPE3aPmhDi4VJtX8srx97GqS4aicHr
+ 9o6rMA==
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFya3VzIEVsZnJpbmcg
-W21haWx0bzpNYXJrdXMuRWxmcmluZ0B3ZWIuZGVdDQo+IFNlbnQ6IFR1ZXNkYXksIERlY2VtYmVy
-IDI2LCAyMDIzIDY6MTIgUE0NCj4gVG86IGtlcm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29t
-PjsgdmlydHVhbGl6YXRpb25AbGlzdHMubGludXguZGV2Ow0KPiBsaW51eC1jcnlwdG9Admdlci5r
-ZXJuZWwub3JnOyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBEYXZpZCBTLiBNaWxs
-ZXINCj4gPGRhdmVtQGRhdmVtbG9mdC5uZXQ+OyBHb25nbGVpIChBcmVpKSA8YXJlaS5nb25nbGVp
-QGh1YXdlaS5jb20+OyBIZXJiZXJ0DQo+IFh1IDxoZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+
-OyBKYXNvbiBXYW5nIDxqYXNvd2FuZ0ByZWRoYXQuY29tPjsNCj4gTWljaGFlbCBTLiBUc2lya2lu
-IDxtc3RAcmVkaGF0LmNvbT47IFh1YW4gWmh1bw0KPiA8eHVhbnpodW9AbGludXguYWxpYmFiYS5j
-b20+DQo+IENjOiBsbHZtQGxpc3RzLmxpbnV4LmRldjsgb2Uta2J1aWxkLWFsbEBsaXN0cy5saW51
-eC5kZXY7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7DQo+IExLTUwgPGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc+OyBjb2NjaUBpbnJpYS5mcg0KPiBTdWJqZWN0OiBbUEFUQ0ggdjJdIGNyeXB0
-bzogdmlydGlvIC0gTGVzcyBmdW5jdGlvbiBjYWxscyBpbg0KPiBfX3ZpcnRpb19jcnlwdG9fYWtj
-aXBoZXJfZG9fcmVxKCkgYWZ0ZXIgZXJyb3IgZGV0ZWN0aW9uDQo+IA0KPiBGcm9tOiBNYXJrdXMg
-RWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFR1ZSwgMjYg
-RGVjIDIwMjMgMTE6MDA6MjAgKzAxMDANCj4gDQo+IFRoZSBrZnJlZSgpIGZ1bmN0aW9uIHdhcyBj
-YWxsZWQgaW4gdXAgdG8gdHdvIGNhc2VzIGJ5IHRoZQ0KPiBfX3ZpcnRpb19jcnlwdG9fYWtjaXBo
-ZXJfZG9fcmVxKCkgZnVuY3Rpb24gZHVyaW5nIGVycm9yIGhhbmRsaW5nIGV2ZW4gaWYgdGhlDQo+
-IHBhc3NlZCB2YXJpYWJsZSBjb250YWluZWQgYSBudWxsIHBvaW50ZXIuDQo+IFRoaXMgaXNzdWUg
-d2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLg0KPiANCj4gKiBB
-ZGp1c3QganVtcCB0YXJnZXRzLg0KPiANCj4gKiBEZWxldGUgdHdvIGluaXRpYWxpc2F0aW9ucyB3
-aGljaCBiZWNhbWUgdW5uZWNlc3NhcnkNCj4gICB3aXRoIHRoaXMgcmVmYWN0b3JpbmcuDQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3Jn
-ZS5uZXQ+DQo+IC0tLQ0KPiANCj4gdjI6DQo+IEEgdHlwbyB3YXMgZml4ZWQgZm9yIHRoZSBkZWxp
-bWl0ZXIgb2YgYSBsYWJlbC4NCj4gDQo+ICBkcml2ZXJzL2NyeXB0by92aXJ0aW8vdmlydGlvX2Ny
-eXB0b19ha2NpcGhlcl9hbGdzLmMgfCAxMiArKysrKystLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+IA0KDQpSZXZpZXdlZC1ieTogR29u
-Z2xlaSA8YXJlaS5nb25nbGVpQGh1YXdlaS5jb20+DQoNCg0KUmVnYXJkcywNCi1Hb25nbGVpDQo=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Dec 2023 16:48:48 +0100
+
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  One function call less after error detection
+  Return an error code only as a constant
+
+ drivers/gpu/drm/scheduler/sched_main.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+=2D-
+2.43.0
+
