@@ -1,28 +1,28 @@
 Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410453E39;
-	Tue, 26 Dec 2023 18:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98141845;
+	Tue, 26 Dec 2023 19:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sXGNVCyp"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w6g8HZHE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703615055; x=1704219855; i=markus.elfring@web.de;
-	bh=f/Jl+Efb4DezWv7JjmB2u06F6X9iJ9wWuCDtqZqFeRI=;
+	t=1703617762; x=1704222562; i=markus.elfring@web.de;
+	bh=e+tBrgtJfsdqXLShYcAxcZWtl8ArgkpUQb9HNhch+6M=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=sXGNVCypFGIAsK2RhOYeKeJcBXK67emWhsnUVXWiS516ZyuRkp7swYAV0uPfTp/s
-	 rf4/PxzykXj5No3yhYFHysooCljMX1Yc7znaiaz4B0eAgQGlK7rj38hdFkIiuy56J
-	 bmKQCEPGLwIO4O+mSGRvEaCkSvwqoLa3xO3uTI5l0VlB/glh8EFeN13xluHtoTXxy
-	 w0BsIZ/+mkgffR2WBfCDQA076d+IgxOtivut6fSRkSwrnCXSyZj59Ff5aoctIPUyd
-	 KMKrodkijx2nsde3PY5Kd9a2nEIEJ/zPTRCJZKpv45nmV4z4tZai4TPMTD38Gw4P+
-	 Wbu/RU5+TVUEZBtUjg==
+	b=w6g8HZHEkpbryK5BLDOeQWt+/lpBqoGxbDnbb6dN2GVLEfRNnSHi9bdFdPHFbkCa
+	 QhWK+kIgXhjLVN6WqKbTGFrLpPIRDp9BybrEMyeb0i6/3kZsyKlNwHG/j/slAIhPQ
+	 oOEJml/hef9AR9qqJv0XjqjwoPu9WUqQvIKObyp8VlnXT/LZL/TjwVkUyvgAtVer5
+	 1yIUpVS/PO54spPLEyzKhqLauqEHGrCy4sjZSSwOx2tfgKDmL3Pr5Vx95ZbnzZ+rv
+	 UnSzlSkjQt1fszmBObyacSzmqC0KiYFyHE3yN1Nui7flNR4QA1MVr5c37DwACObqn
+	 1lGohnSUrYvql7oRlw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvslx-1r151E32WN-00sV6f; Tue, 26
- Dec 2023 19:24:15 +0100
-Message-ID: <3203eb44-6e69-4bda-b585-426408cb75ee@web.de>
-Date: Tue, 26 Dec 2023 19:24:14 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQ8Wg-1reI1y1bJg-00MCdT; Tue, 26
+ Dec 2023 20:09:22 +0100
+Message-ID: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
+Date: Tue, 26 Dec 2023 20:09:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,94 +30,85 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: bpf@vger.kernel.org, linux-input@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- David Vernet <void@manifault.com>, Jiri Kosina <jikos@kernel.org>
+To: linux-hyperv@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] HID: bpf: One function call less in
- call_hid_bpf_rdesc_fixup() after error detection
+Subject: [PATCH] Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:K8fF/UijAIywnS52YDqNMULxk3+NZg9vn/tgRlNElb24o0WwTPy
- VrprFxvBxar+Yk/bUyDiW3oFnHnY3d9QkFy4oTSTjHa+DVPlGrkiLHcX29RQV/JRckCY7tG
- tURb2Nx0wHr7uGfDz3PyL+uKqEFOyNqfdV4m/IyWF0bu/qPDYbW3StSulfsTU4PtarOzrSZ
- thlRopo4UMn+BP4/reC6Q==
+X-Provags-ID: V03:K1:wPOvhj5sZIFHtakgOhvLyjOxfuTw717tJTZVuzvrrqw47k7mvWx
+ CyzpwGDn4gaBT1CJjpK9GVIIMWi/S+S+fIkUTwBRp1cLMH3aCcOGz/YfYnvNQb+99MMh8oI
+ tB8wP2yHdAK21v+JUtEchHHOWMoILWeamZmQXeqoP4qlu2NabSKEM484Z3soOjX+jFhTJ4C
+ aeh2fY1OkfpLpgsLxcGMg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ACMj+myOfk8=;jpf3JzHWCKMdYEDE/lVe892U+x4
- +ohp9E/66yrl6WArelsmeCzCtQLU5fI+nQz7+zbw8Rh7E4VS27xlSmLkUV5qOh2xnr6qIfy4Q
- 3dy+CqcHiggMWvfaECy2Z6m3vxQ9Bm0Mc5dyCpzFmkQzVujDTRaSu7DIVbCNe21prKltoKpXb
- tdocUzGGyrxAtCz8mFjQL3ZDccW8JMS8bw4ZkghMy4kpgCn2GkN2sjxSiwBbHV6nX0zRsZ0op
- QbnDeY5zK23XqNZovTNe+OHJudY1lRWl6kHVDBtaUM3xAOHHLd7O1v98JfVSfXaYXJzgG4/pK
- BDshva6Z4zkX+TQxn8Ft4yehcRikfPJ0NhDQW5K3HkxykkW6o09ES8fdGs/nKA5WNdgQalVG1
- rFtwmh18kyx720dpBmhBcKqdu71ptDhEPPfdOk8mLJhlvxOvVVBH1vMBqBdDcjUY6s8J7o0Nd
- RLXVJ+bKBzm35jVdHDvLMzCUAbVJRYz6kURg7LnIPXfyXsnwUOtujb+yPPbb+1oRa4KloCizJ
- XFX0IGTJn2hIoSJOUnw0XGX7Ztpt0femIsvtemDdevZ0cAmIX3BvW2m3tjUX0g3TqmdILQQ2u
- YFg6ecDBEb0LpRy+SY5iaXrE7GKrO41zkVDwI32FG0l5Q5yR6Y/ey/onqVUyjNDdR5kERT1jf
- kt5JmgkuFbGtQt61GghABhN220XPNDtW6WjNRsoRYaqWDYcXoeim83XjKVapCm2gRt9Xyjzdn
- KBngG0gisHHl3IVS6KTFtGXXJ+lAUGsqERTaHsanM0N5Ue0UWO3obSXYryiqe+6wUB0VTX+IU
- t6FCx2S7nGCeseWuES59HYJybPKMQJEJVuSreQn2CvV9mIHPrQTyiORK4uLp+U/UWU0aTahmB
- Lhv7kA4oulJjI6g0RQA0wVC0fEzAksp+9AltVkfGI0P/MnG5P8tWuMIuVCJn7swQbV4NwKM3R
- h08qWA==
+UI-OutboundReport: notjunk:1;M01:P0:+GuqX/7+844=;mKtO/t28dF5Noz7+PWV5uyi6UzL
+ 7/31I3cEvXRYkQWA+hVKFQmOeWLyICCOmKCGX5QtKx+VQzGz5J+xCACsIPokktvmKoVBaUNOl
+ xNZkdW643wiWYJnR4le5+YS25/scz34z2OIsXOdVCh2qons627KD1GqYZ3UcvHSZWavrvPYOc
+ GrsvfGdSMZaoolsz3DLBivmTL5uaL2KCwkEbR+qHp7CTuvrP1Tdfr+I59JELsF7xpusF++GQ7
+ IIEuf0UQDPAGvxV48JJ6ZOvpuBOTe2Lk7sbu8Y6BeD7XNxyU9pFSpLdqEoxfSmeYKakeKgBIJ
+ mLkEkLA/hHZOtmywAxIOyCmJ6sMSNjh1DuLqQl14FHXGTs3ShtVGMk+eIaXOXgjhbGFS2bYfE
+ wDaQKwDlzYRvw5b6b5oz1tIMVV6eYS/R3Zxjjng3IB/05hx0w8n8Y38G56pzoMi3Ol1ccfCVj
+ 7aV89aa0n6Wgq1vb2YT4QGcnFQQEY579fhcceHzZF+xl+vRGVYMWtqOUnJydIope45l1hcTjx
+ Y6PKyXeU5EcnjGjqpvhSi5dr5l27OA7BYIN4/Lh0uJ6sTd5S+n923nrCs2vnVKmsoGSzMCEXb
+ 5ShpvJ9SNR8aYqW6E+hyPLSCD6qxZAtgbxrjR2umD4489dOR3+hsr57JNZMIqhqzNZ8/FdDiz
+ Nludh6j1qcdUdb/4EnZAt36PhVW46UAD+5SkcfvbDYGl1CJIUkW/U7GDQd9qs5485X7xqbTm3
+ DAdMQaJIES6dm3aBZtoKAtKF7LaKKj8n72SiZYMGgyhZtpZLAS0UsAO5DEslJ7mkpPy8ot9n4
+ APzpn7lW5qWto/xov4OzKsFlsKOGypiVfz6kco8PRYqkkKsU/OjiQZ4HvOpGkOY2frbVDvkjw
+ o7Pk8FS2Wocgqn8Im/UH49p0ICEv9pS6MxMBvLzErm/elfZjIzVD7ItR0pQzksE3Dio8aWDJ9
+ x2Lvmw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 19:13:25 +0100
+Date: Tue, 26 Dec 2023 20:00:24 +0100
 
-The kfree() function was called in one case by the
-call_hid_bpf_rdesc_fixup() function during error handling
-even if the passed data structure member contained a null pointer.
+The kfree() function was called in two cases by
+the create_gpadl_header() function during error handling
+even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-Thus adjust jump targets.
+Thus use another label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/hid/bpf/hid_bpf_dispatch.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/hv/channel.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_=
-dispatch.c
-index d9ef45fcaeab..c84fe55be5ed 100644
-=2D-- a/drivers/hid/bpf/hid_bpf_dispatch.c
-+++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-@@ -118,17 +118,17 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev=
-, u8 *rdesc, unsigned int *s
+diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+index 56f7e06c673e..4d1bbda895d8 100644
+=2D-- a/drivers/hv/channel.c
++++ b/drivers/hv/channel.c
+@@ -336,7 +336,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
+, void *kbuffer,
+ 			  sizeof(struct gpa_range) + pfncount * sizeof(u64);
+ 		msgheader =3D  kzalloc(msgsize, GFP_KERNEL);
+ 		if (!msgheader)
+-			goto nomem;
++			goto free_body;
 
- 	ctx_kern.data =3D kzalloc(ctx_kern.ctx.allocated_size, GFP_KERNEL);
- 	if (!ctx_kern.data)
--		goto ignore_bpf;
-+		goto dup_mem;
+ 		INIT_LIST_HEAD(&msgheader->submsglist);
+ 		msgheader->msgsize =3D msgsize;
+@@ -417,7 +417,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
+, void *kbuffer,
+ 			  sizeof(struct gpa_range) + pagecount * sizeof(u64);
+ 		msgheader =3D kzalloc(msgsize, GFP_KERNEL);
+ 		if (msgheader =3D=3D NULL)
+-			goto nomem;
++			goto free_body;
 
- 	memcpy(ctx_kern.data, rdesc, min_t(unsigned int, *size, HID_MAX_DESCRIPT=
-OR_SIZE));
-
- 	ret =3D hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FIXUP, &ctx_kern)=
-;
- 	if (ret < 0)
--		goto ignore_bpf;
-+		goto free_data;
-
- 	if (ret) {
- 		if (ret > ctx_kern.ctx.allocated_size)
--			goto ignore_bpf;
-+			goto free_data;
-
- 		*size =3D ret;
- 	}
-@@ -137,8 +137,9 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev, =
-u8 *rdesc, unsigned int *s
-
- 	return rdesc;
-
-- ignore_bpf:
-+free_data:
- 	kfree(ctx_kern.data);
-+dup_mem:
- 	return kmemdup(rdesc, *size, GFP_KERNEL);
+ 		INIT_LIST_HEAD(&msgheader->submsglist);
+ 		msgheader->msgsize =3D msgsize;
+@@ -439,6 +439,7 @@ static int create_gpadl_header(enum hv_gpadl_type type=
+, void *kbuffer,
+ 	return 0;
+ nomem:
+ 	kfree(msgheader);
++free_body:
+ 	kfree(msgbody);
+ 	return -ENOMEM;
  }
- EXPORT_SYMBOL_GPL(call_hid_bpf_rdesc_fixup);
 =2D-
 2.43.0
 
