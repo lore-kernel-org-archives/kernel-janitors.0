@@ -1,28 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFC64D581;
-	Tue, 26 Dec 2023 09:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A44D10D;
+	Tue, 26 Dec 2023 09:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RKGJQpAK"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Wy+H4r4G"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703583379; x=1704188179; i=markus.elfring@web.de;
-	bh=7s7Czem3g9WjULia5nQz77gt2Cg/2yiGOV1liYLC2qQ=;
-	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=RKGJQpAKm5ThzCXd5Czxs97SHfHgJy6K1Fykn06cIGR/3Pg+EU1Wko9eBf8kX3Ac
-	 hHHAvx7MUOmqxeXvI8PiLIQEGgpmHqXUdFH8iSYw1OkCvbJzTtsHe2EiTJcuW85Zt
-	 Rkjt78lwpJPItp3tPq89lfUZBqc1crSuVKsxtuIHrHv4ppkd9EIg+npdyFUE4Bbj7
-	 q7JtpSEgqWxw293DsBBjY+MDVfkfT3KSscm3nN60ZdyLX0M7NwMJrl1zFiWExf1CX
-	 Ny1zjOTckSOmTXPsoJQ8YakpWQKR2MhIgcbHwYYdInPdkMi6DzHgXj50wfZmllFT0
-	 F4WXAmaDTrMRKBNNxQ==
+	t=1703583504; x=1704188304; i=markus.elfring@web.de;
+	bh=qqBCvkgxbSr3g6FTVllb7hWAQXmgVICHt5PVFl7CIWM=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=Wy+H4r4Gnaa7y8tBPP7pvGH9Vec+3s9dvNs1B7LVWc/iT6edD5t8cI3E4DBpOLTV
+	 qhyV+uMBT/XL3i89SdIhhxywBBUObocgZ32fJHx9VfYhBhdp5yNS5dwXdSMFAju51
+	 FcIFnh4TBrEVloMrstRrQ2/XCqA8qfcN212+mEoUdDxvp1CsyWlkJ24VJns08R+lh
+	 eLZLEVJCnAStJAZ4UJ1byJUSaAEswW143Fk+ACvx1j0ZuXz/UZXhG/NhPlsm8VO9n
+	 bfT17tpHgSLnT96f0myHggbY8uY9a4EIfb+Y5BpxzEdSRzLJJDGr4QcXvzoZCoP/G
+	 BoYy0kHI3wnHNkMbuA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1qs6RZ3Cy6-00jyS5; Tue, 26
- Dec 2023 10:36:19 +0100
-Message-ID: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
-Date: Tue, 26 Dec 2023 10:36:18 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MC0LH-1rQ3aP0NaP-00CKaS; Tue, 26
+ Dec 2023 10:38:24 +0100
+Message-ID: <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
+Date: Tue, 26 Dec 2023 10:38:22 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,52 +31,80 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/3] drm: property: One function call less in
+ drm_property_create() after error detection
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
 To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
  Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/3] drm: property: Adjustments for three function
- implementations
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+References: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
+In-Reply-To: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DcL70u3CW7ium0TLeQa8v3pqMAuHd3U3ffavREKGtKtoIotqohU
- vVm/sRhXjJKwXOYQ9pFWJucZSe+994yhW2o0ijsxi6iHZ/Q0zgliCRzPJonYzGsCVBbzBz/
- 0zNekbaZqRGP3FS8eocU6giczTt17vn0lz2CUyuIihbAwCRdssrlhFRRrdRUfkOPsL5/oRF
- eZxsilcj30qz1vpdWDsDg==
+X-Provags-ID: V03:K1:iDixZmNvylQDuMt0skzUFKjo8Mh89iiU1EhN0o+/2elM/jOlggR
+ 6muOk7JjgmGLlXj3ITzr5rhHM9PHeCLjkWxFXiVhflFrt6iRboOIWS7Dl5KJDHi1vkOUj71
+ pvU/i0C+PKKkNZ+eU5BzCX/eLI33iBrs+IvDwscaU8Vvv/c0iWdWouXu1c0vmuzAwXne416
+ rBGEr9tTaR33LkfrfkioA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:O70ZNeseb0w=;E0IpgcOt3k0QKhIiPQyi/vzDRWf
- mJZZOh16XhhSfBHeGgCmmmSiX18pqy5Y6qilWjUOu6W+eeB9zc0h1HrD/pj+eLl+ZJtzGZo8u
- X2N60+S+57ZGtHEAj8m7jwQ4fJhydvSb4UOkfcy+1phgWNSCvg8QD1zdOas7hKjEcn+/ak49D
- EFtFNq/8G/V5y/hLLfc6qlCOHcj+iin08EsToosg8uhKfbYZh4UqOy0pN+1ewI7cPHzN+Rq3i
- XU1ZYQnUJjR0Ht7/enF2mFPy0b3pZmlED3I0oqwPbX6Y3xjPH0qgP1MfcjipvcRMhrLIFQaAs
- 9ry03jYhcLfmHUpWJ9Am6ihqpODTvlwL93ssMk8UNPj0SAOhE31mCi0MTHhbY1hfyilozzkKr
- tM7K0+oBzCKRoIRU/oajPIKE85DLpOOP1lpYnjYb+waX+WliBfIBDYe830X3Aico/KAZOWqHc
- KZt36PIdoXSLYqBH7QSabTDUTJPT4a/mzNNZ8kyssSEIJh14S3MSXuSRTa+SNQW1Lpqd8q+qv
- LtGEwnyhJXdDA5tLZytgBuiitLXw8CB7MDxP8xFkK+BeBniJy0XtV6ryxwpLtsgaoT6EY+DCw
- 24OtmHsVgtC0U/iQGZW2hUVoLgHMi8lozuzrRQe9sOfp02PS3Y4TR+rs2ZTdS7bzvVdiurtAz
- P+WV4tjbtPXAtwS/iaSJjdxXy8ghymm25A8RlXDOjqN8PPOOx208Jexa+5cgrOXvU/y8JgCmb
- hvsoY8HvqmgIIFOaOwaSNVpYBWGrXguJUcCWy6H7NbAPqG2/GDkN0YywnnMeaVD0QLrG8RMaA
- GUWsH/0wFqaxoe0ml3fqEcLm4g1OQb+8kmrjTu+2eEWuUWe03rdNEHjCWxQABxmJb1NkZITbg
- AlWnI89SchtGPGkdwUnbbWeOXWlxUF+5DSGdz35lxgCvVmnZxQkFnkJL4Rn6x+n/PtGrovMtw
- n5Ur+A==
+UI-OutboundReport: notjunk:1;M01:P0:d/X1dljrE+A=;DqE9o4o4RjEHkhdE3U4ZQnuaFTY
+ X7BtY+Blaevtp8Ogi98aTZqmzApKK5NoowuUnky/rLGUjzcuMNPkp3opQGYwAZCAaW+sUVGew
+ x3QvEl96i7st7xV4gRQ7zLiGuqjBArZOkF7UBpLEnnPbPCH7Nea3zu9TstckRmC00FKy+G4W2
+ ENEbw+k1nTIADPLkzT3JBEDXFE5Va4fMIAAvo8KWdMhZAHbQ1C+S9rXgfVFpB45bj7ZlEiKJV
+ S4TgV/IOkq0grOPVdAJvFmBPENGwPltYqeh70ZIa3A2Y2GGaQvglcni30hejMmGsJBezMEDqX
+ crP+A5P18C9tiXaEHBUkwOhhp06LRvodzsoSVgt50mJm4xIrQM/3xochjkNmcITtL3P7pDB5O
+ UUuIz6X43Trn1F6NVDAgNNlOSkN+69CkQeVwoZpc6Hq3DZihvs5EMifC4iIvvDFZYDl4hOxVG
+ inDeWb1NdllB5EVpTDf5SUmsxPQrCPdb/LmVjSItrUDx7yp+F9hgxWP95aM7FCUZBc/56VAAc
+ O2YQ3P3Ia+EDZJXJSw8EdqW9s0UMfP29uEjUvTjnB4UaPJhFn44xT5/BjkqM9zMc+o+9hMcGv
+ KniLAhWq8b+ElonJTBF9sdYf0iD7xSLj7QYBgML8UqoBjulyCGylO7hkSQNFI7aJPIDU69p43
+ 805KlV3/znVyiISBn9VkzwvaRpmCJhTVBeCOAkaIXdjz6kdSk5ApPWguqT3vFdIW4AhFAAvOy
+ 3CCVqHLBjR4ChxO09YO13+z0JKyXk4QlEvry+VpBGoSqMnTCGG2GrjfI7ZGYrdrAIlvCMGTyK
+ RWdH0HK1XOe5WjBF+7Hmgg2UpTWMMyZzdRTgDXvpCeEpUAezdkXKUL85RxmpXgVc9Gx9+eVug
+ jym4+HsekxTWq/nCXtVazhUnSqOXK2Q0lvGjIS/YgjpnwPodLBrITXzXpeOxjY0FLJZ1JRJpz
+ eaNQEQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 10:26:36 +0100
+Date: Tue, 26 Dec 2023 08:44:37 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+The kfree() function was called in one case by the
+drm_property_create() function during error handling
+even if the passed data structure member contained a null pointer.
+This issue was detected by using the Coccinelle software.
 
-Markus Elfring (3):
-  One function call less in drm_property_create() after error detection
-  Delete an unnecessary initialisation in drm_property_create()
-  Improve four size determinations
+Thus use another label.
 
- drivers/gpu/drm/drm_property.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/drm_property.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property=
+.c
+index 596272149a35..3440f4560e6e 100644
+=2D-- a/drivers/gpu/drm/drm_property.c
++++ b/drivers/gpu/drm/drm_property.c
+@@ -117,7 +117,7 @@ struct drm_property *drm_property_create(struct drm_de=
+vice *dev,
+ 		property->values =3D kcalloc(num_values, sizeof(uint64_t),
+ 					   GFP_KERNEL);
+ 		if (!property->values)
+-			goto fail;
++			goto free_property;
+ 	}
+
+ 	ret =3D drm_mode_object_add(dev, &property->base, DRM_MODE_OBJECT_PROPER=
+TY);
+@@ -135,6 +135,7 @@ struct drm_property *drm_property_create(struct drm_de=
+vice *dev,
+ 	return property;
+ fail:
+ 	kfree(property->values);
++free_property:
+ 	kfree(property);
+ 	return NULL;
+ }
 =2D-
 2.43.0
 
