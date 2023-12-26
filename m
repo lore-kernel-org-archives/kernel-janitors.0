@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A270F23A8;
-	Tue, 26 Dec 2023 20:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E8C4C6D;
+	Tue, 26 Dec 2023 20:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oAnD7QSq"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wSZwN0u9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703621295; x=1704226095; i=markus.elfring@web.de;
-	bh=Qxkpdv8Qkq7jvs02pZx5pg9wtvajRnmTTkS9S609hRY=;
+	t=1703623343; x=1704228143; i=markus.elfring@web.de;
+	bh=T6cDnr5hFtFbP2etPVzAZk5zoBQrCmisolCMkj0IYRQ=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=oAnD7QSqNbRJ4I8z3LJyvZ6S0Oj9GiR6kiseN5OKvZiLGdVlKFg8weWgeZpFBu5Y
-	 8KidLKMKxKJtsu8v5vE7olre7V+pdOIDdyvx6GbiqHwuglLMlCM5OjPzoVZtLOqtM
-	 25TGKBdi+lnXBZeYFhuoGx6lCRcbFj0fjQZI5n9t3LzL6AYaOqkjAckyiyrugJCzR
-	 wxGl3QZYWDl3up9uG6mFuegfs3IqOw8jB1nB7B7pVY/jxFy3FmbnabTR6XIDyh2T6
-	 iBcto0SecHQ2kdMiI4VeblOVo4XaEg0tpVLvH+EvNyXy15kg3g4duHndpMWe/OvyY
-	 4ZvD61lLPMIcYPE2gQ==
+	b=wSZwN0u9XxH3EuhHZr1KPy3ie4ZT3Qn0DIysbF/Sa9XZGwNtKE1rs3T3+MG6NzuK
+	 N2Al1s1JXw04IVBYIhznOBCZyCl21qKgRzbT6vc0EEftw8kFHSo3JfZ6y/fFgcJQz
+	 Jk0TxvJvgVgWmAx9+fS+dId4OuA/GowQE+FJKUgZU46Rjt7dA8sVLMBw6QNCuyKz/
+	 wf3lSwD3ws2wrdxHcPPGsC3kmOt8ii1TXKVA3hrpXMO0xM5hVVbfqOcVwMMfkZaY+
+	 NFz/Meask2Zjv22UKBytb9JBNOvlTatOTLtxb7ZbMQzZqGwFtcm6cMb/t/tyL/Va5
+	 u1AFXvk6qyDj1wic/A==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXXRF-1rl7fE0BHr-00Z51x; Tue, 26
- Dec 2023 21:08:15 +0100
-Message-ID: <9365c845-baa1-44d1-add9-ec8ca4d365eb@web.de>
-Date: Tue, 26 Dec 2023 21:08:12 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjPPs-1qpAkn1qvK-00kp31; Tue, 26
+ Dec 2023 21:42:23 +0100
+Message-ID: <71aebecb-ab59-4835-9320-10e849c04a5c@web.de>
+Date: Tue, 26 Dec 2023 21:42:22 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,70 +30,67 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Oliver Graute <oliver.graute@kococonnector.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- ye xingchen <ye.xingchen@zte.com.cn>
+To: linux-riscv@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Thomas Gleixner <tglx@linutronix.de>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] Input: usbtouchscreen - Return directly after a failed
- kmalloc() in nexio_init()
+Subject: [PATCH] irqchip/sifive-plic: One function call less in __plic_init()
+ after error detection
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pT5nFzusZbp8RV1rQhzaJrru2NdpxfZ9+vejlMSgbSCpEsu87nx
- IRRVzt3RH6KQhyJ1kJ/nPPRlHlFTT2Ta++KXEYWIy9T9uRBtERBq0zA++AEWbFrsgMKqMXY
- EiipTmC4elOyjytjgmsBRJaQyc1sNI4N41uplGtQ9hN65xP1k2qJ2+YVfMXlGF8SKXGPmFH
- BQqHmoA1bxqY8NmZptKQA==
+X-Provags-ID: V03:K1:PL5C36CURHSbdroEInCd+9jbMmVEKNPmO+AYoHaevTf15uMeyKZ
+ pFuMaYZ1hpPtHyJWRqw7Vpd3q78MRXTrhGpFM23XLG6kHqPYd28ngv/y4hXj6yL6C1cKnV9
+ Kg02EGUbMSdde9WK314m5C/vKNDR1/g+k6d4cgl8z4MPAN9EFiifXupWBYWn+NIykPuuSDD
+ 6tx9OomGmnXlsEZ+MhWug==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:REcKCG5gRbU=;3355Tq7aOrddSDMIBKH/phTHWM8
- w2HnWo9jfx+qPr0x1aeUuxKt3vBE4nuyjFhTm7DGFMSYYDTVCcC/5EotGZxQAW9GR1CAc1IZH
- MDbcAckohOjpcdbJqbbWa+Zkj7tryNEmm601cH7n7VVYlt2NbNVJRF8Lhg5uua+NPD3sbAZkS
- 2Srar7F0E08sfQbgz2nMrd3tiBlDbO49yLqMA74tBKGGP8LGuAVfIstqD7dKJp3F0WdT+GNKi
- B+wLOh8z6MhRNULBepKEk3a7R8Z0YrZ1aaC20IHqBxcqDJhWXm2178gqMKImDikUFPJGsfZSe
- VC1pyJ8H/CcF5iR796GX4ipoCoRoPq30it8TcAury72diFN7abWqBPYqbTwZL8A+GcyrcLOvj
- +GoE4YBCbcARZ3PIXH1VleuFpgSmnGFeqW4Vf6795eedOvBaKz6aF8A6p6NRedxslCO8//Q/p
- iPi83I+2BrqxvOa9SWkZ0XBlTVqJGh/duc7u6LLy+CAmCns6/LAFmeVUPWPa70saxsMTTqFW3
- /VYEM8WgclxSYnfK4jqlDhgty1iNPmZUTPG+AhhrAODN3LZMLUNy6L7jDk5HNZPnqKxN0d4ri
- a1VGZKgTG3CMVgbUCaed1j3GuNflKq6mco5Mayg2agV2h3w8y9rMs9W0kGjMRI4TyTwheEai6
- 8is+EAtrGuNkthwaVhI9Gl3VnIeW0NE1DmwhYQamHz+92JQxGMzk+/+VxetE+JgVc0lDx0FjP
- 3VF+D4TMhGxdomHHreaa+U4d5gM7qyeQxIsUlzshxFJp/dowsWVjglPSlUfHCewmie1qvPWeC
- hS/1nZd190r2oawVw/WpCgsGyuePuPOuVo3xlQXxQA17C7+YepouHQKgR4OQ2Fl9MMev4YJdb
- l6rAxovFhlpAxsV7ftU+tvwL9zbyn3RYZGj4tRiMvvZRbldkb3jVpvie/8YKiBGmCuz8oUcGY
- gkPO0Q==
+UI-OutboundReport: notjunk:1;M01:P0:zp7bCe/dVQE=;Kkt8nPqdlTEUtkFKrL/qlAx2nv1
+ 37s4PQyHu3QGIQuaKUwPVN3YAK9tktu9wHjxGsiLjm3A3F+KbTkjXZ4GtyyLg2nl4bvOY/fLc
+ CH1o8NMtikYMHkTjlh19DYB8VKH697WMO0zR2eh7qmAqikVFRrEjpX/7HfgcjL3zHLaQMic5Q
+ ZIL4I9ZMJj7jV+omwPi1WtcpOLTvUXs7MwISG27j/u5Y6LNR8BHz1FINNV0ZglKq14BepGsMj
+ p9gSv7zvog/1/FhnzR4DHzsqKd2dPaG3FiFeCBegh9Jmn4wejiceFYb+JloFq3RIXFZr5CT5I
+ jrpHqFIaIeui1Bb5e4Umf3VAU8oXoY9zohAhBlTqyyEXVQUFpJ8m1tKG3dYa18IKhFbUFZJ3C
+ y3ALcxHf+q+r3/90UJ/3UaubUwDokOm7xUehk8GHsrF5QKzUy8cvEbAH51a7Zd1UUIOY7ERuU
+ +COfiPrIeiuPdR4sWAF34WP+CkASRfdY973K7iemppyW724cuLeGcWfpkBHep6t7rsKFqQ72W
+ IcoAWflcJudax6UOKi0ZGWXNACZjFShr4jH84lGN0gy+6piuxjMfSS7R+najnobBr0ykLxc9H
+ Oohz2c3xQypnJ9M6ssVpKk/z2zvi18l23A+UDEQccIdlI+OBdpWHzE7TgIwfv9hPPt7uRft9E
+ 2TDxLyVDIkvsXSq7HGLoRz/GoX1JwwsWXIrRU8CBCN9Ckz2r42/kBgC5n9XMHv87yhiZSO7W9
+ boPyQ8D9XUtsi2Ry2edktzor3eevFGcdaOQAanvRlt3dZOEmxakquOECf/omKLvVlYgImqH0a
+ vc/sxzE2+Q35JzulTFtL7IXHGhT01yqr1EoqONMauNO7z+nbpYNHw+PZh6+71sUqrc/4y2EJ+
+ WViGnkKWh3swDh947xq+P3e7hcJvlqr0kCShBp/Fx86rdBcKyQ/tOfjjRdjDyIKjBGZGEvGOG
+ vpvTzQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Dec 2023 21:00:25 +0100
+Date: Tue, 26 Dec 2023 21:34:47 +0100
 
-The kfree() function was called in one case by
-the nexio_init() function during error handling
-even if the passed variable contained a null pointer.
+The kfree() function was called in one case by the
+__plic_init() function during error handling
+even if the passed data structure member contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-Thus return directly after a call of the function =E2=80=9Ckmalloc=E2=80=
-=9D failed
-at the beginning.
+Thus use an other label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/input/touchscreen/usbtouchscreen.c | 2 +-
+ drivers/irqchip/irq-sifive-plic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/usbtouchscreen.c b/drivers/input/to=
-uchscreen/usbtouchscreen.c
-index 60354ebc7242..1873c7918a78 100644
-=2D-- a/drivers/input/touchscreen/usbtouchscreen.c
-+++ b/drivers/input/touchscreen/usbtouchscreen.c
-@@ -977,7 +977,7 @@ static int nexio_init(struct usbtouch_usb *usbtouch)
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifiv=
+e-plic.c
+index 5b7bc4fd9517..e9e3ee2d6440 100644
+=2D-- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -437,7 +437,7 @@ static int __init __plic_init(struct device_node *node=
+,
 
- 	buf =3D kmalloc(NEXIO_BUFSIZE, GFP_NOIO);
- 	if (!buf)
--		goto out_buf;
-+		return ret;
+ 	priv->prio_save =3D bitmap_alloc(nr_irqs, GFP_KERNEL);
+ 	if (!priv->prio_save)
+-		goto out_free_priority_reg;
++		goto out_iounmap;
 
- 	/* two empty reads */
- 	for (i =3D 0; i < 2; i++) {
+ 	nr_contexts =3D of_irq_count(node);
+ 	if (WARN_ON(!nr_contexts))
 =2D-
 2.43.0
 
