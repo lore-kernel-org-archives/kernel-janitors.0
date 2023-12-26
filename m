@@ -1,46 +1,81 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEADC4CE18;
-	Tue, 26 Dec 2023 08:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFC64D581;
+	Tue, 26 Dec 2023 09:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WCX2dK3c"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=WCX2dK3c21ywFwIQ97bs4s4Ede
-	oaZFu97Q92Tulhra3vpDt3XVb7q/q2xfEx9Pc4od5hjmjBDjJoXGv7i/I7kVWXJiDQVNrPJdLTpRn
-	cQVGJLGlwWt1N/LE8oIOaFY29t1Jp+6EZKYjLuEstzpkcX80uOgfeswp7cgoPD5s2MQNZeByKMWq+
-	TP4jsqLuzcz8RdNUbjh2T/r7AxvRCgmmxCIKKoqm78IxJ7YcZCxeeMaZKz2RjEAorae63NnyFvXSl
-	VanR0m0B8sFtXfgLGO9NfSLLt3/waGkjV7BpTwDQfcHNdSMPdrf8QLAZXHqMy/LDfoEDrI2RU1/Gw
-	AbxZph0Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rI2z8-00Bv1f-0Q;
-	Tue, 26 Dec 2023 08:40:22 +0000
-Date: Tue, 26 Dec 2023 00:40:22 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH] block: Fix a memory leak in bdev_open_by_dev()
-Message-ID: <ZYqRdrZEnKLEB3Mu@infradead.org>
-References: <8eaec334781e695810aaa383b55de00ca4ab1352.1703439383.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RKGJQpAK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703583379; x=1704188179; i=markus.elfring@web.de;
+	bh=7s7Czem3g9WjULia5nQz77gt2Cg/2yiGOV1liYLC2qQ=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=RKGJQpAKm5ThzCXd5Czxs97SHfHgJy6K1Fykn06cIGR/3Pg+EU1Wko9eBf8kX3Ac
+	 hHHAvx7MUOmqxeXvI8PiLIQEGgpmHqXUdFH8iSYw1OkCvbJzTtsHe2EiTJcuW85Zt
+	 Rkjt78lwpJPItp3tPq89lfUZBqc1crSuVKsxtuIHrHv4ppkd9EIg+npdyFUE4Bbj7
+	 q7JtpSEgqWxw293DsBBjY+MDVfkfT3KSscm3nN60ZdyLX0M7NwMJrl1zFiWExf1CX
+	 Ny1zjOTckSOmTXPsoJQ8YakpWQKR2MhIgcbHwYYdInPdkMi6DzHgXj50wfZmllFT0
+	 F4WXAmaDTrMRKBNNxQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1qs6RZ3Cy6-00jyS5; Tue, 26
+ Dec 2023 10:36:19 +0100
+Message-ID: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
+Date: Tue, 26 Dec 2023 10:36:18 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8eaec334781e695810aaa383b55de00ca4ab1352.1703439383.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/3] drm: property: Adjustments for three function
+ implementations
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DcL70u3CW7ium0TLeQa8v3pqMAuHd3U3ffavREKGtKtoIotqohU
+ vVm/sRhXjJKwXOYQ9pFWJucZSe+994yhW2o0ijsxi6iHZ/Q0zgliCRzPJonYzGsCVBbzBz/
+ 0zNekbaZqRGP3FS8eocU6giczTt17vn0lz2CUyuIihbAwCRdssrlhFRRrdRUfkOPsL5/oRF
+ eZxsilcj30qz1vpdWDsDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:O70ZNeseb0w=;E0IpgcOt3k0QKhIiPQyi/vzDRWf
+ mJZZOh16XhhSfBHeGgCmmmSiX18pqy5Y6qilWjUOu6W+eeB9zc0h1HrD/pj+eLl+ZJtzGZo8u
+ X2N60+S+57ZGtHEAj8m7jwQ4fJhydvSb4UOkfcy+1phgWNSCvg8QD1zdOas7hKjEcn+/ak49D
+ EFtFNq/8G/V5y/hLLfc6qlCOHcj+iin08EsToosg8uhKfbYZh4UqOy0pN+1ewI7cPHzN+Rq3i
+ XU1ZYQnUJjR0Ht7/enF2mFPy0b3pZmlED3I0oqwPbX6Y3xjPH0qgP1MfcjipvcRMhrLIFQaAs
+ 9ry03jYhcLfmHUpWJ9Am6ihqpODTvlwL93ssMk8UNPj0SAOhE31mCi0MTHhbY1hfyilozzkKr
+ tM7K0+oBzCKRoIRU/oajPIKE85DLpOOP1lpYnjYb+waX+WliBfIBDYe830X3Aico/KAZOWqHc
+ KZt36PIdoXSLYqBH7QSabTDUTJPT4a/mzNNZ8kyssSEIJh14S3MSXuSRTa+SNQW1Lpqd8q+qv
+ LtGEwnyhJXdDA5tLZytgBuiitLXw8CB7MDxP8xFkK+BeBniJy0XtV6ryxwpLtsgaoT6EY+DCw
+ 24OtmHsVgtC0U/iQGZW2hUVoLgHMi8lozuzrRQe9sOfp02PS3Y4TR+rs2ZTdS7bzvVdiurtAz
+ P+WV4tjbtPXAtwS/iaSJjdxXy8ghymm25A8RlXDOjqN8PPOOx208Jexa+5cgrOXvU/y8JgCmb
+ hvsoY8HvqmgIIFOaOwaSNVpYBWGrXguJUcCWy6H7NbAPqG2/GDkN0YywnnMeaVD0QLrG8RMaA
+ GUWsH/0wFqaxoe0ml3fqEcLm4g1OQb+8kmrjTu+2eEWuUWe03rdNEHjCWxQABxmJb1NkZITbg
+ AlWnI89SchtGPGkdwUnbbWeOXWlxUF+5DSGdz35lxgCvVmnZxQkFnkJL4Rn6x+n/PtGrovMtw
+ n5Ur+A==
 
-Looks good:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Dec 2023 10:26:36 +0100
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (3):
+  One function call less in drm_property_create() after error detection
+  Delete an unnecessary initialisation in drm_property_create()
+  Improve four size determinations
+
+ drivers/gpu/drm/drm_property.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+=2D-
+2.43.0
+
