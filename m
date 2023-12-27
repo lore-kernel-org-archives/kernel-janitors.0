@@ -1,74 +1,80 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4D22062;
-	Wed, 27 Dec 2023 16:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0534F45BFE;
+	Wed, 27 Dec 2023 16:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E12Q7fwL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHNOIsH0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1703695187; x=1735231187;
+  t=1703696214; x=1735232214;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jQwOPiBl18k/nFpfaL9IxGct2oQszbXckZn45iQKbHg=;
-  b=E12Q7fwLK8SVb1w+DokvZcxTM3+/QMO9Ge1GuxD7Sr0mDeBKKg3aBAE4
-   KDjLQ9PxhzJUof/iwOqaE5oTqq02M84cNWpu8akH71lqHU3ynxMJoGVPq
-   Au6Gkas0/pmC+VPsKry7I1UJSJd2gFVbychTUoT0Q7fjueAz+zTn1lhzZ
-   ErkDPEgql+rA/aRCOqDuesIspmShtKOTIDVuScAiu4py8aWhsMyw02HVU
-   Gxiv2XEjM97c1D2DBO5Ti1d/wUgFaHOaG42hUOJdnAoqn3OhtXatiZKtu
-   UtI/fz7yqLpZLVKSKdy0KooIdj8Oq7bvfZ4/nz2WlBBg4yiKG9DEr6YwY
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="3293145"
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2yJFTx4ZE8jECzs1+U6wqnReWCpAiewcEcFY9qdNd5A=;
+  b=FHNOIsH0qG4MTaBS5PX6RzIX0sOOsqc8vrcGDqmKKOAR3LAS6FgbDTmc
+   UPQlCkEmSkJdaqhJmmjClXBd8L71q8wGU2eOWDhiRmpzmqXaBh8ftCue9
+   uCqLPtZtClP1UHocXIqf01dTnd/7SBrSn+mL1wOAnqaRgcUvJhaftK1Vy
+   GaQuz8TF885IPrBp8VXUzGm0B7IZCi6Yb6mft/p2B2L48I8Dicgzzv3/h
+   zxJrDc1D1e6NEX+eZtRD4E8iaIT7aZ9NshygwmFvR23Tc9IPWlLrKgz8k
+   zv/JhAtNOdxUXA+0XA8N7JnloRdtYddMz2HhLRDmUB4nKqzBRmc1iE0BH
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="15131643"
 X-IronPort-AV: E=Sophos;i="6.04,309,1695711600"; 
-   d="scan'208";a="3293145"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:39:45 -0800
+   d="scan'208";a="15131643"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:56:54 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="896949296"
+X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="812572900"
 X-IronPort-AV: E=Sophos;i="6.04,309,1695711600"; 
-   d="scan'208";a="896949296"
+   d="scan'208";a="812572900"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:39:42 -0800
+  by orsmga001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:56:49 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.97)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rIWwV-00000009Su6-2ShE;
-	Wed, 27 Dec 2023 18:39:39 +0200
-Date: Wed, 27 Dec 2023 18:39:39 +0200
+	id 1rIXD3-00000009T7I-33IT;
+	Wed, 27 Dec 2023 18:56:45 +0200
+Date: Wed, 27 Dec 2023 18:56:45 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>,
+Cc: linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
 	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH 00/10] clk: ti: Adjustments for eight function
- implementations
-Message-ID: <ZYxTS6Cfm_c0WgXS@smile.fi.intel.com>
-References: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
+Subject: Re: [PATCH] mmc: mmc_spi: Adjust error handling in mmc_spi_probe()
+Message-ID: <ZYxXTVpLfI-mgxF4@smile.fi.intel.com>
+References: <2aa6bd31-f3d8-41ac-abf1-9ec7cf7e064b@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2aa6bd31-f3d8-41ac-abf1-9ec7cf7e064b@web.de>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Dec 24, 2023 at 05:33:53PM +0100, Markus Elfring wrote:
+On Wed, Dec 27, 2023 at 12:50:50PM +0100, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 24 Dec 2023 17:03:21 +0100
+> Date: Wed, 27 Dec 2023 12:23:20 +0100
 > 
-> Several update suggestions were taken into account
-> from static source code analysis.
+> The kfree() function was called in one case by
+> the mmc_spi_probe() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
 
-Unneeded churn, if you want to make it better, switch the code to use
-cleanup.h.
+> * Thus return directly after a call of the function “kmalloc” failed
+>   at the beginning.
+> 
+> * Move an error code assignment into an if branch.
+
+How is this one better?
 
 -- 
 With Best Regards,
