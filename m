@@ -1,73 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826E245964;
-	Wed, 27 Dec 2023 15:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC8B4596F;
+	Wed, 27 Dec 2023 16:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OU8lD5Yc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A88AC433C8;
-	Wed, 27 Dec 2023 15:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1703692005;
-	bh=FVAzF6daxQ8ZuqevGdpKsQkUqo5vlGmUhgShjqY2IPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OU8lD5YcV1tfKJkMESk+txqJXvn3t/8JgQEc7mTFFs3PJBN4Fb8bk0tfsP7J69YST
-	 66B0F0SU7qZYkASqGaSeQWALbSlKEZn2U8NWrPF37lF8NiFMXYpsGV+rW4qQrxcicV
-	 eUbzg6CG4usuT6OujzN7Pc/RFHtb16rnr2FSe3Rw=
-Date: Wed, 27 Dec 2023 15:46:41 +0000
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Hou Tao <houtao@huaweicloud.com>, bpf@vger.kernel.org,
-	linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	David Vernet <void@manifault.com>, Jiri Kosina <jikos@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: HID: bpf: One function call less in call_hid_bpf_rdesc_fixup()
- after error detection
-Message-ID: <2023122719-stunt-duration-9504@gregkh>
-References: <3203eb44-6e69-4bda-b585-426408cb75ee@web.de>
- <618f886f-b2ff-4d50-cf74-e8478a7e8547@huaweicloud.com>
- <b75d66cc-a507-432a-af60-655950671b8a@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sqfGosFL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703692813; x=1704297613; i=markus.elfring@web.de;
+	bh=HvHevuA8OlpyyDwIVaTUzONXBPQ+x5nXY6hMxtcjTM0=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=sqfGosFLhe3P1dx7l4Bxvacu5snlCUSSYJ7ZzPC7IGCsxDtFm0YkEjtqu/OWJsuY
+	 i0Za14D/8h0v2ExfTmNX8r3pNdahuDqF2sZcbFYJgC9KXTvMQ9n3rGXeWTIVfyyOc
+	 y0F0kYJRwFYZqMCdPg6aZeGkuqxS34xdFwovAx9otLCOrl4wn9wxzD3g0t7NoaXpf
+	 kjzXrU8mABYNXxCqIkE9W72yqXPbbKaBZc+JdYehb20OB7LBJaKA1+z03uu5fEWdT
+	 CyPu1LOaxBevY/bqWzIPZ9Is+0yX4GqxZ/KNfCfgOvJJkZzy8Efd0/77c+c7DSRnv
+	 EZ6rbxup7Nen08py5Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZSFO-1rmknr2Zzq-00Wyi1; Wed, 27
+ Dec 2023 17:00:13 +0100
+Message-ID: <9a683f73-c5a2-4b80-af1b-01540834a3dd@web.de>
+Date: Wed, 27 Dec 2023 17:00:12 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b75d66cc-a507-432a-af60-655950671b8a@web.de>
+User-Agent: Mozilla Thunderbird
+To: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] nfc: mei_phy: Adjustments for two function
+ implementations
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/ZB+Xz9KfutVy44u7ATXxHfRoOlJu8VqT0njohBNmDTFTFN81VA
+ 58/ninWz2K2SQkMe/JLejpRDslxSPa5e2YPAMXXSKq4siFxsX0NOxum8dc+FtrmTr0gAgmj
+ 0l3tI0o1ZqwrQCxMA2dPbRWtxzIDhZ85XexQzqCd2wtfSwe1tTN1S3CEe3xuYBK87s9j4tL
+ dpZPTGY0SXpR1GsSizd1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:f0e9gz3eaHo=;WM8+2HVOJDENngzP+ReL8RQv+0I
+ aUXrbcBV6KciL55pCAKg+ISAW3eTFRj5nZo6LhMQVpOM3DtGgFQzBFMzFy1cy2JFEfw/CjyTI
+ bHPvWwDMBnTY0y7DD24b81M9PjlqOPg7bVIJAFIN+IBHqQeXc867FpD0DMACfJyWcxiR5fTPY
+ J6OBUi3RMcY5TB6CXA0CcQg/OEr9woQmvjvm1fqZ9IWfbXs0+Fm4Qqokt+rWv43QZndgBmboz
+ 2PShqWL6Ji6bG0HzjNiNw9lOMXCxst7jchkMgi7ORFdz2G14NXQMHfcwUVg3ON9vTDcU3NpkU
+ TBzNckgch1atGYKOebetXdtQUSx4BSbk5lAPcEynStw+An4s/Y8NbvZq1H/IuHizv+X2CKWlJ
+ GcFepiVaLkKhB/sQEmDYQ/tZcXwRTpUJHIKUBeHXnJEY6/eVX/4Tg2mR4mSWjpmCEl2p9N5l7
+ Sq5ZofrmWXIDZlvjGCS72iurOOhX0JKzBw06O6oCLBP5dzBLoh3PjJGhhAtsl8L/oSy6Bd0E7
+ D/tejmehatFg1M7Ltkl7a0a6ZxHTkXj8r7sQ2YwhpxxTeSBMLLyxWEUojcNzk+qKK0GbT7R23
+ pyDK0ny4ymBaHrsknHGXD1U5QXi/EGVnw597hoQRsfOHD5nqx9qlljXmgsXb8vc5NfPPC6lGo
+ 66BpDUWBH9aqJ1whSvuGVZME/hHT2X7vpKd8py1lwm3yhX8f1u7f4M0oJkNZJuOHL/C8Bjr6G
+ PwneqTrXwX5/dLeXb7X3a+nddtb1dXiUnDodJzwf3tW0LmmhihEK7evONJNeAhFgGK5aWNSDQ
+ MJRaAIaxCuh7Rnlvkd9vTbpytDsU4lUE6iQyPdFC0+fpy1Y82IaSDOtuduyxXKd8X8x0m/U+X
+ LJBAO43F1W0f6VspGca7tH9sFAWEua7ZfeGusg+Pwf2DN8mIR+13SCeo681OIoo4WsxFX19EA
+ agtDP2+Y0tQA3ivAsR/ymANKT+8=
 
-On Wed, Dec 27, 2023 at 09:19:27AM +0100, Markus Elfring wrote:
-> >> The kfree() function was called in one case by the
-> >> call_hid_bpf_rdesc_fixup() function during error handling
-> >> even if the passed data structure member contained a null pointer.
-> >> This issue was detected by using the Coccinelle software.
-> >
-> > It is totally OK to free a null pointer through kfree() and the ENOMEM
-> > case is an unlikely case, so I don't think the patch is necessary.
-> 
-> Would you ever like to avoid redundant data processing a bit more?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2023 16:53:21 +0100
 
+A few update suggestions were taken into account
+from static source code analysis.
 
-Hi,
+Markus Elfring (2):
+  Return directly after a failed kzalloc() in mei_nfc_send()
+  Use common code in mei_nfc_connect()
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+ drivers/nfc/mei_phy.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+=2D-
+2.43.0
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
