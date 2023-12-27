@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D5863A8;
-	Wed, 27 Dec 2023 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7CBEAEF;
+	Wed, 27 Dec 2023 10:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WNJzKeGx"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kg72yz2U"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703665181; x=1704269981; i=markus.elfring@web.de;
-	bh=sFYtgUqx5/8rcJnSIVTUvLcv4KtPODMLVzVAeiTwlds=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=WNJzKeGxXHHQRvaxrlLeNKs7d9lveaMaReCX6jcIn7YV4oec6G40Drl/LOAWvpeX
-	 uOK8eoBBrcFtGqkyebStkwLZpu1I8thiD1YOzTNhAA01+UK+5QCKshVbns3y3Bf9G
-	 3TfNDKaBJjOZPx0XFOzIO7CEImEYw8vt0vSpEnVYl8Q4NAUq7sDfXIkUwx/v0adpe
-	 Fjho5UQB3xgaMpXL9JuKJ+6dwGi8E8MIS5yoHtRf67RxSEF59D2ZeLzHMN4fyKdNX
-	 lLvI0rLB5ojEwLAtzXDKZC0VLfMBe7Yr5y6+gLZ8s7ZiXZNfsnBA1NmgtLZybVsvP
-	 VSUUdLoCZdKJ6ow3Mw==
+	t=1703671351; x=1704276151; i=markus.elfring@web.de;
+	bh=BM+3GCkN62Jm+ibbTYmurrrehvX2xjyaS6ajGuDTOCk=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=Kg72yz2UbAQyXRw33tKr4nyVDFhSIy9rh8TX3eV143f9GNTsY/yMWalt44bU9vQg
+	 c2IarJnrVEmkjFAodF6Upe5Xdykv4QD0gy/KL7nbG/3smCEYwVH9ToofXxCLsGRRR
+	 GuV2zq6zKQvhs49hhjmSt0NQ2I04A07LPtaFUDXhxhZ1Y0CsA4cqxP3bpwrQRBKYv
+	 /VqBviQo7aLXJgAMMcLc8CafwS5nTPPXRoEk2TIOYNHaLtOpVK2rAyozZ7M9Mb5At
+	 3Qwbcwk7uZ3FuqzaTrR8flGaERtf/MFKoaHHAl6T8/ShsCkgz6kDqD6YyfPzbhUHL
+	 TrML8nmaYuYdsvHs9A==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4bYo-1rIwpv0ata-0024wc; Wed, 27
- Dec 2023 09:19:41 +0100
-Message-ID: <b75d66cc-a507-432a-af60-655950671b8a@web.de>
-Date: Wed, 27 Dec 2023 09:19:27 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MQgks-1ret2P19wk-00O5AO; Wed, 27
+ Dec 2023 11:02:31 +0100
+Message-ID: <c8b0d40c-2f48-46fa-8311-258985e9eee3@web.de>
+Date: Wed, 27 Dec 2023 11:02:13 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,51 +30,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: HID: bpf: One function call less in call_hid_bpf_rdesc_fixup()
- after error detection
-To: Hou Tao <houtao@huaweicloud.com>, bpf@vger.kernel.org,
- linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- David Vernet <void@manifault.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <3203eb44-6e69-4bda-b585-426408cb75ee@web.de>
- <618f886f-b2ff-4d50-cf74-e8478a7e8547@huaweicloud.com>
+To: linux-scsi@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
+ kernel-janitors@vger.kernel.org, Sathya Prakash
+ <sathya.prakash@broadcom.com>, Sreekanth Reddy
+ <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
 Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <618f886f-b2ff-4d50-cf74-e8478a7e8547@huaweicloud.com>
+Subject: [PATCH 0/2] scsi: message: fusion: Adjustments for
+ mptsas_find_phyinfo_by_phys_disk_num()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NNpJY3Chs/fDzSODGnjQi2SuOxapzbSnV9uYQXas/LJUzP3dHWM
- ZkCkRh1p01y9VGYRQEgXS9iB1Cyu4HDqwqITh9XPhAgwxmdLqjFqiWuVgJe8DJ3Q3hryMyb
- wQL7/8yUdZSBccjulsM6UYrmbViANudJBCtQMfl+FUkIgfxqojyayCUfXKDvfKQdiNKgcil
- 6CLJnD6WnszV80CBMPTkw==
+X-Provags-ID: V03:K1:m0i11EupOqIN+RxAkfJ6j/nOGRmmUMJ3UthFLNpq+mmlXNSm6Xw
+ C3Z5xj17GW5p3r298rQb5s+1UMLPB85l6o7YKiLd/7jCgIxtTmsChw0eKnhEPsuB1a9coN6
+ RpP8SJP7ydsY5Geca6Sct7GK78fs+H47aFzlXmnk1Q4pgHLb6FQtE7YrvE23/D2T6ePUG7A
+ hTbFGT2ZFsdcVQ0T6jNhg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WkaRGhcrnBU=;d8sDLIBDrl2jkJ2jQNLzsFQzxRt
- yLPFiYbt2Mai7UAArrpAeKw1WwERVGzrztshO0YCvoD3Ar6TwsFcUra18qlFRy65tuHk1M3dF
- TQZfxAcfl5ZYGionVkIXVnZiguLLJXmUqbbdpVeviMJzenNYKdwAnqWjda5GlYZZp4NnJ6Beq
- 5LQ1gQt5VGd1wvaCEUWa6YMpRpi6/TC79P6MX3KIf8OV/tvp1ICWVk7e3OB/J6sUXwjI2O12U
- iNKRGWlw8NTt+9mcsCwQ6gIYsnYPq//PytckavXBMurAq1xG+z30z138IYakOjR5JTjJdsssb
- yAMEG1/yGxRgW18irodWsQ3PdDbBG9YQKZE1/PmJCoIi/dIB7sI9sYoMLe3vC9PBDxw61wlz1
- IWtCCAmdhy01JvL36Jv4MIpw3yPCNMiias4RR3rkc9ZnVid/BHmjeXrq4z0Xy72WpUh1Rk5n3
- CosWNhXNw2W3ZAfoUa397W3FyrH4Iriw7M8wm3jbC3QenBdxdWscxmDVDZZObi9Ju9Q8v6q9b
- 0rtjq0ewp99ReayD+Y0ROSv38giolAav6NL6FNsmLwPtXes/CuAgumSf9b56X3ZTk2Npz47oZ
- peMSbVt4/OCAO8CFCh95WRbov7Bj+EbF6OHKERKW9M9eVUmjPp5N6vSUHMj8j8aG17LiwJ0OX
- +9fsmef2G3lP2xUSxzHfyWGfFFM3quJz2r1LC1EtKiei+ZZYuXXLos6hKeBCcmBkiEXhzGPYc
- ndFEc5cfmkR5boSYuFQLJLf96erEbAKseT48RC72Xlh2PFzXc+QvXfGMHBHScVw9jA9Y55RG0
- jGd+Pphxo18wirT16aptYWR5HilJCTti+Bf3y/ciIFZDZBD2zwwbj1mjc4RVIVIsWlpb9bAT8
- uq3emOnFmtIamDo3BO7x9Pd2QNJSQHEa0Plp30OnCNd+jDMY5i612R3LKtw3M+7Q7O2OqHm1w
- XnduCuATJOAt7N0tufYTle62Eww=
+UI-OutboundReport: notjunk:1;M01:P0:WAO27yQdnLI=;Ek3jJEzNzGipfemHRUBCD1jkl29
+ OkdqveBICjeHH+HZ3g3F7m2kCv+dnlls1Bz3MMEtP3wjRkc2yeYi2NIW4Os0l634E5Z2Iq07U
+ zDMPVnYe2b0bI9bVxRH8vANJgJoF+aeyTu+baUxSKqiaU/xtubb64nchHMXs9g+/11ayvstso
+ wtQJuSSXt65h1NoR7Sr2UAFpW2+p3OKYZqHZUwjyZTDyDFyyWWeEZp9amv+FbyVF8EGJfS6kU
+ O75FlTf7Dmwd5myZtUNLe531COURnnVtwMbeB79CUX4PaxuopPkY90INsqf6ZnXMQKLCxSS3z
+ BXDcfoxWO1tjdwgb/aaKICaYitSOAwS2x8JlruMOfOmYTpltTwBuOhaFdvnS0NxtdjVAAn2DH
+ agm7A4t0RJ+SfqsPFZpVf48/r2eZModKvCJFgoVzB7SCxXWjvzs48GGfbMEHVuTqL3aKbOZbx
+ S/SC1fET4B0/wbdTEWTrbWF/VsinMoiwRIvQe6MW+iv2FeuKWQZ3sHcMz/bGH82FEXANC+aQf
+ XKmwCWj1mNpQHv3zQbv4295i/0ypIDVII2TOYRwO7El4UoqLP5HnHB45FN7IzxugNYlwMpP5S
+ 4mRoBAOcz4stzOVByspF953XYmjCoKZ4x7mzAXY3hwFMqcHC7C+6KUcOyamEe3qP/3VTKKLgL
+ z5GoZvvgCR1eeKzGjBXztHLNMK40Awr1vClzzEkdHuFJhrD1G5bxGPWHqxjVR+uaaI5w7Yy/5
+ gnmnndosF1AwXnathQae42G4b607XnV0N1AxFEhYe1QMHbEwraaffEyjlLVZ4sufnhSVjEdAF
+ 6MGgpW0Uf+kRBZSSqNp+kIdqY8C7d4n8pJauW51D+2wu4Op6uwSt63Ggk78QuwrBEoP7yTWjD
+ dPE7K6GLyNtekHB/E3BIdhNXCtdRarJRAHazpqM9LuyM/GnLsbLnJ1xqeauTwQumyN69jLxun
+ 7TDP9w==
 
->> The kfree() function was called in one case by the
->> call_hid_bpf_rdesc_fixup() function during error handling
->> even if the passed data structure member contained a null pointer.
->> This issue was detected by using the Coccinelle software.
->
-> It is totally OK to free a null pointer through kfree() and the ENOMEM
-> case is an unlikely case, so I don't think the patch is necessary.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2023 10:54:32 +0100
 
-Would you ever like to avoid redundant data processing a bit more?
+A few update suggestions were taken into account
+from static source code analysis.
 
-Regards,
-Markus
+Markus Elfring (2):
+  Improve data processing
+  Move an assignment for the variable =E2=80=9Cphy_info=E2=80=9D
+
+ drivers/message/fusion/mptsas.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+=2D-
+2.43.0
+
