@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3710780;
-	Thu, 28 Dec 2023 20:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F68107B8;
+	Thu, 28 Dec 2023 21:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Jg1UeUG4"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h1XN08sq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703793721; x=1704398521; i=markus.elfring@web.de;
-	bh=PVt/wnLfLIOxg7hwOL8VokJSMcclQsyGS28j2xPRa3s=;
-	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=Jg1UeUG4b5dA5mBxS00OhEUEFOY6PWxUmO+fqcixfAK1EKVCsawxvoeopACBcDOI
-	 jyTkiefOlZsNdjsTnypsyNIeUgR02+nAcFIP5vUg+RVm4OFj356adHfFGE/ph1Iye
-	 We1VLpzTGkuQw6FGx1hb2klLhDaYzMtGHhcn9KD4ZzOpxaiZHyyQuy0CXR1wLuY7d
-	 7iCHihahotflZJ2bIjIJIubcS7OjDZfJXtKPv8B9HBdYGwkX6hc+qG2S7Wp04+X9Z
-	 +oMgs9G17Aa8jl2lSqhQjKtcUQ15TVqpnJQQRGkQzzxrXSIMovSeQ1PjsN0nJM7si
-	 mL3cPGbEUHVDgSt4gg==
+	t=1703797333; x=1704402133; i=markus.elfring@web.de;
+	bh=zCoJyL9Lw4BVM5kJ+m1jFQlSFuHfKA5ZkN/ugCaGkpc=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=h1XN08sqdVCVFxsP7TYketpXPUaKnK1+M0EdcqABxTYqmQD1sm2wA9JXSH2zRTms
+	 z5enO3BSwZz2Dp0wjSsUFAnXSxLwUo+y6PMawu74k0aTvm8o+JlR7Oy7W/aaMMlMo
+	 ShkRlcxI+dm847VBWVxmszSwD3W+YueSu5syaciftS5w/pC0Nj8n9/hSGCeH+5lF3
+	 8TlMsyNZ0fXwu+DzltBcBEG0ebcMIfREBkiFD8DijLpPw3XGhcKAVrGuSB+kBZS0t
+	 830/0GPfL5unmeNyZpvG2GL8d5EUp07UXJgM2A7ETV8t5A/fKBDxXHWnD2Qg8cBWG
+	 R5n9WDRvAF5QoI47uA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4NDG-1r9QAY3VIc-011dqP; Thu, 28
- Dec 2023 21:02:00 +0100
-Message-ID: <7203d3fc-f1e4-4fb1-8dd3-068b0ec6c752@web.de>
-Date: Thu, 28 Dec 2023 21:01:49 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuSe-1qmwgD2V0e-00eyTS; Thu, 28
+ Dec 2023 22:02:13 +0100
+Message-ID: <70ebc121-4332-4c64-9a20-29837758aa19@web.de>
+Date: Thu, 28 Dec 2023 22:02:13 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,99 +30,166 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
- =?UTF-8?Q?Christian_Sch=C3=B6nebeck?= <linux_oss@crudebyte.com>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>
+To: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Miklos Szeredi <miklos@szeredi.hu>
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] fs/9p: Improve exception handling in v9fs_session_init()
 Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] fuse: Improve error handling in two functions
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mbz/HHyunIoY6d+awK+8Eugj0y8BJ2S9vxuYKR+g8zrXJGsu7IJ
- Q/oyt3rpR7w/Go5ntSypHJK039EFq1aglrCWAT3Ao3j0k08OpoMe+apx4tioIcXL+27sRpF
- jeIonoLK5hDRRzDyAO5M/IqD8TespeMwsAqKqk0tQoJpmF5IUc63XsRaAJ26eTqeGZid+6O
- 4E5qTVaytTCyk//uCmO6g==
+X-Provags-ID: V03:K1:sHkI+Rrr7HyBvSt5sCxNI/wtzr9ipPp2/2/6P80wlBkN3nQbGSa
+ Pw8eCfF+LdglRxo1FTd7N+ircSHEN5pTeCjCbQ4HOPx0DAspdALzJR+Vy9U3ghX/2kl/E8h
+ Ffv58CG14w3dWhInpWq7/8AF5jZF/mEfAOh2Kd4TyPy+r2K0GpOUiaCaWo9AnVD2DokyjpH
+ 2PHCtpW4IpdzwdxZQi+lw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0jWWBk4hVZo=;RRSYg94h3fJJARj0fM8mFORlhrk
- lCbDc1wENsZKRDW748d//lEXloj2bQQW0EFYtsshQuaaxz6vIxB/TIgPEUR/df2LPfBLVFjP3
- +QkmwH7q1p2ObRo4QY145HtZ0zoBCzahVL6jBDJ1ppLVlQqirVJLEusJGyHayL/KA92Mcj8RW
- mNCsJYOoo3d/GgcHkbc/agReX2KkJvb75XLiqmI2N4yOE65ge7SK/WPgZ0daUwVvPIncxvaaf
- 0Y2OWhsxyjZ1gRvtXE1jBsMpdcS0XjDGoBV610ykqv4GCqgZMu3cTjDc4B1RvGFa7k4NNNTgu
- Q/C2vwOkO0gI5dE6wWEBzWzzMNWzpYlnAOem4yi4/SmIkOcv6ZLuQw2L0XUFTF/4LWvXcYyCr
- 8P6TYmYfOBbv5qHfsGKKfFjJKpcgs4eHNrk7fSJ9m19Tab9Wjak3kDfv6b9FQRi6bskPKXuHI
- a+WZx9rg23UMOuJGMjucsY4OND5NsQQ4z3dfoZ/YANLmD6hQ6sk3HZlrSQ87+YiGaaZ76ZhHU
- pgYRAf2AhVQezbhDsNzps6M6ORS12FBYwYEjq9I2rK55ueRu3MQeQtAYupQzlpHXphY4WPkHk
- mMnELKelutd7UVx6hbicm2lGJPYswRfSlH5Gvf55O1pq3O25mIKHGd4mlGRdF7YikTPYfpgb/
- YbkbgxL6kLUvHoC4Qhcxcb0sXixB961FcKTXUWRStWqhTP/zzPQsKfDTltSKeDGfI9oRZfRm/
- YnF8ZDxzlPh4VX7PdDh0dJ39xuonDuxK2CB/nfn2AlZTURXKUoNJtRxpVbKS1aCoSC8S9CBWV
- THqVGEhLwrby/61/9Bi3VY4gUazqRU7Egh/yefnM3pCxx8f2YPYGw0ZZGN0miJn8vbsKM/+lk
- NI/qmQ+gwIpP2Mze2c3qE2F1IPX7AFQc7UW9UK5WmmNEViPclpyeknwzQHYk5EtArOoqTpI8j
- 6iHvtFCs5c9K3OOzckqSv10TxVQ=
+UI-OutboundReport: notjunk:1;M01:P0:STsuKzCbHW8=;Wxxtfx1zyOZ52rRYSBkfa/Yl100
+ dCwVvtn/F+YONzPwvQbiHmNetoF+3NOTfnHTK7AXuSM31nifq+OgH3RbZxu3EfRXwSKWGvY1D
+ 7wdBR1+CilJVvWKVkJZIFG2ZZoXqOEW6KwHqRJuXEe5DxgtpPqBRa0T5T/RSbtNt9bIGwdubw
+ MSUkdU23oU5Elc+/IDBae1dk8+ZJc0jMr6QhvPo0Ve4YrN66OE7eTwVXQdkUWyUBo6lvKJjE6
+ aF5bzsD7HzDCQckGIjsR6RrWPNlsqf9VJNFy222/B9f/INZB6yAuxoO2+b/ayrHPTertRqO3f
+ SncHB0+LWe12u7Hg4v7kgxBdkyfiHbb0wHB/R437FhAnNs/L0Sz/wUZSmtMki0DBEMKyfU/oD
+ 0Gov5iNtsY9zFAT3yiUeK4bgug0HaDFmIe3ZLc6ewZN7e7Yqeuw5Gql/dtUQipqearRe/qKZN
+ LPreTFHkU6QlazV/Huq5NHQDk4SdlNanPRpvq40wxeTnEmvYEsD8FC+iRdG1XPpi7P0YRG2Ca
+ XvMZbWdqF5JgnWftQjmltHSWuEIy/r2lF5sBlS1UkiMPeHTb5+qk0SZy4e58BFHstkk0bTVr8
+ 2Qxih6GwQ4IAKzbx4+kGq5jMqBnEBJizwUcMtB4OiPMPbgrV01qHVFznXPZ6zlwzcfigfyhlP
+ 2A2zwiGEqYKeAMfe6TRuzG5FayiL8SdzXtjeDqC+QOF0No+H0EKj47cMSO0WUAcQvvo+A01gt
+ 4awQetcFgRlbrwqln0CHdcoZnZjJ7iCZ2zb1Vl82xtUlo9ai6o7RML8jHATq+HwaGbTqtieyS
+ YMp8SJv35QX1pqlkkjHtTHQrKIh8k534EwdJ6nfQH3ZbFqFa9fbEqjnTTU1RhQRaPjwbNoPXZ
+ Y5ejcOAOsgOC0wd1vfeaX7Lkf8bCf9FULNvzh935sepOGq9oYjcnZILDLkot8pCCmno9swct0
+ INueJWRTGj84w4IkTcmFCoEGXUQ=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2023 20:47:18 +0100
+Date: Thu, 28 Dec 2023 21:57:00 +0100
 
-The kfree() function was called in up to two cases by
-the v9fs_session_init() function during error handling
+The kfree() function was called in two cases during error handling
 even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-* Thus return directly after a call of the function =E2=80=9Ckstrdup=E2=80=
-=9D failed
-  at the beginning.
+* Thus use additional labels.
 
-* Adjust jump targets.
+* Move error code assignments into if branches.
 
-* Delete an initialisation (for the variable =E2=80=9Crc=E2=80=9D)
+* Delete initialisations (for the variable =E2=80=9Cerr=E2=80=9D)
   which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- fs/9p/v9fs.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ fs/fuse/dev.c | 44 ++++++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 61dbe52bb3a3..874a36303b72 100644
-=2D-- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -392,15 +392,18 @@ struct p9_fid *v9fs_session_init(struct v9fs_session=
-_info *v9ses,
- 		  const char *dev_name, char *data)
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1a8f82f478cb..8f2975b1aed3 100644
+=2D-- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1468,29 +1468,30 @@ static int fuse_notify_inval_entry(struct fuse_con=
+n *fc, unsigned int size,
+ 				   struct fuse_copy_state *cs)
  {
- 	struct p9_fid *fid;
--	int rc =3D -ENOMEM;
-+	int rc;
+ 	struct fuse_notify_inval_entry_out outarg;
+-	int err =3D -ENOMEM;
++	int err;
+ 	char *buf;
+ 	struct qstr name;
 
- 	v9ses->uname =3D kstrdup(V9FS_DEFUSER, GFP_KERNEL);
- 	if (!v9ses->uname)
--		goto err_names;
-+		return ERR_PTR(-ENOMEM);
-
- 	v9ses->aname =3D kstrdup(V9FS_DEFANAME, GFP_KERNEL);
--	if (!v9ses->aname)
--		goto err_names;
-+	if (!v9ses->aname) {
-+		rc =3D -ENOMEM;
-+		goto free_uname;
+ 	buf =3D kzalloc(FUSE_NAME_MAX + 1, GFP_KERNEL);
+-	if (!buf)
+-		goto err;
++	if (!buf) {
++		err =3D -ENOMEM;
++		goto finish_copy;
 +	}
-+
- 	init_rwsem(&v9ses->rename_sem);
 
- 	v9ses->uid =3D INVALID_UID;
-@@ -489,8 +492,9 @@ struct p9_fid *v9fs_session_init(struct v9fs_session_i=
-nfo *v9ses,
- #endif
- 	p9_client_destroy(v9ses->clnt);
- err_names:
--	kfree(v9ses->uname);
- 	kfree(v9ses->aname);
-+free_uname:
-+	kfree(v9ses->uname);
- 	return ERR_PTR(rc);
+-	err =3D -EINVAL;
+ 	if (size < sizeof(outarg))
+-		goto err;
++		goto e_inval;
+
+ 	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+ 	if (err)
+ 		goto err;
+
+-	err =3D -ENAMETOOLONG;
+-	if (outarg.namelen > FUSE_NAME_MAX)
++	if (outarg.namelen > FUSE_NAME_MAX) {
++		err =3D -ENAMETOOLONG;
+ 		goto err;
++	}
+
+-	err =3D -EINVAL;
+ 	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
+-		goto err;
++		goto e_inval;
+
+ 	name.name =3D buf;
+ 	name.len =3D outarg.namelen;
+@@ -1506,8 +1507,11 @@ static int fuse_notify_inval_entry(struct fuse_conn=
+ *fc, unsigned int size,
+ 	kfree(buf);
+ 	return err;
+
++e_inval:
++	err =3D -EINVAL;
+ err:
+ 	kfree(buf);
++finish_copy:
+ 	fuse_copy_finish(cs);
+ 	return err;
  }
+@@ -1516,29 +1520,30 @@ static int fuse_notify_delete(struct fuse_conn *fc=
+, unsigned int size,
+ 			      struct fuse_copy_state *cs)
+ {
+ 	struct fuse_notify_delete_out outarg;
+-	int err =3D -ENOMEM;
++	int err;
+ 	char *buf;
+ 	struct qstr name;
 
+ 	buf =3D kzalloc(FUSE_NAME_MAX + 1, GFP_KERNEL);
+-	if (!buf)
+-		goto err;
++	if (!buf) {
++		err =3D -ENOMEM;
++		goto finish_copy;
++	}
+
+-	err =3D -EINVAL;
+ 	if (size < sizeof(outarg))
+-		goto err;
++		goto e_inval;
+
+ 	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
+ 	if (err)
+ 		goto err;
+
+-	err =3D -ENAMETOOLONG;
+-	if (outarg.namelen > FUSE_NAME_MAX)
++	if (outarg.namelen > FUSE_NAME_MAX) {
++		err =3D -ENAMETOOLONG;
+ 		goto err;
++	}
+
+-	err =3D -EINVAL;
+ 	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
+-		goto err;
++		goto e_inval;
+
+ 	name.name =3D buf;
+ 	name.len =3D outarg.namelen;
+@@ -1554,8 +1559,11 @@ static int fuse_notify_delete(struct fuse_conn *fc,=
+ unsigned int size,
+ 	kfree(buf);
+ 	return err;
+
++e_inval:
++	err =3D -EINVAL;
+ err:
+ 	kfree(buf);
++finish_copy:
+ 	fuse_copy_finish(cs);
+ 	return err;
+ }
 =2D-
 2.43.0
 
