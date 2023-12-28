@@ -1,28 +1,28 @@
 Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FDC5671;
-	Thu, 28 Dec 2023 08:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4EF63A8;
+	Thu, 28 Dec 2023 09:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VInzAuRr"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QcCer+ma"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703752943; x=1704357743; i=markus.elfring@web.de;
-	bh=zmkIk95uAnIs9Eha5efh2mV5ML9QPD6Kxw6Fd4L0ayI=;
-	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
-	b=VInzAuRrkOQMpps9N+++fUF5AregOalMHU4QRqu4YesKz9EvgRS8WQvsJGNmYuMo
-	 r5Sf610vgM7T1HV0kUggWIiGcKIKAKXse2nmwVt5n2GBePiNTGp6GMD3q4Ve1QlI1
-	 w/w5mnkyPJsRux8Pm2V5csAc6cbP2z5F9nIVW4tYy1wFL14GVKliz5z1Gs6E1lAuf
-	 kZeZCrO0DWFR1y8q4RnmmHRkxlePqz30AkLmuyjgKKYKysHmlRWsLxhu/j7NJSe6O
-	 APAuZGG8S1pB0DEPmN4r/6SrNR0QwYYtPgg6liX2aMPQ0bT2o2zLM+vu2pwefC2eP
-	 hJA33wVwTsEKFZ5hTQ==
+	t=1703757268; x=1704362068; i=markus.elfring@web.de;
+	bh=LdODy8f52XjIOK0lSfQyj0RXaUr08zMyR40prr4dQGA=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=QcCer+malGs0R8tHkNVZJNODF7VXQCWs1FmPeLeDnHDA4R+NSAnmkg28sSKX6bjo
+	 e1hL+41LTyF8dfz+5DrSM84/YOz7Ou0c/mpIKb+5zz5osQiJ5K4UmW2x50or73Kq6
+	 9zZIPh+7he+jlVDTsJnLXsFPpd171CTbMXTDiN30nCHPjwsn8up1DBv/oeSYD7Zxw
+	 /LOxW/pNv13hPm79dTSU2XBlyjefGToZlz8cwYUKtD990WQoLH9980X7WsSwdeGoG
+	 G/mh/cp3LcV2xgECQvevNyipV4Wl4V3TLiLBbvb1G6GQgw8+brkTq3PEzCBZ617hq
+	 TRs0Yiz1DS8o3F6i7w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MA4bA-1rPtlV0tYI-00BlBh; Thu, 28
- Dec 2023 09:42:23 +0100
-Message-ID: <362ee824-fc53-4e19-9529-8b621657635b@web.de>
-Date: Thu, 28 Dec 2023 09:42:21 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1uAl-1r7cuT2k13-0124gY; Thu, 28
+ Dec 2023 10:54:28 +0100
+Message-ID: <0d0c4876-37d7-4bee-912e-56324495454f@web.de>
+Date: Thu, 28 Dec 2023 10:54:27 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,78 +30,105 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
 To: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
  Hans de Goede <hdegoede@redhat.com>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
  Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] platform/x86/amd/pmf: Return directly after a failed
- apmf_if_call() in apmf_sbios_heartbeat_notify()
 Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] platform/x86/amd/pmf: Return a status code only as a constant
+ in two functions
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rDi8Bd+8M7STwBu7WjWgU68UfYwOYphhC9zo9TLUjNL2/gw4ycp
- J4dC2LEgVEZ0cy4oZuKBDKYc/rrlyV3gHUvEm7tx3Y8s7JwsP1rBFIBYtsc1HAKJLVinrMW
- 5GdwGEUlddGfgLCN/j6TMOPltug/QW9cSIQRzKetAXxOggTRSx0bs5VsUq6Ntph6V8Aa5iU
- wqhVApVWx09AJqMbdLo7A==
+X-Provags-ID: V03:K1:jUyWQ8RdCi/tZgmPTVI41q7ZfAnELOCp0Gr+YCtZLiTgdfgay07
+ gGXqfKbOwAOWKrG67ZvuiZlekxdBzMMLpxHD/qONJxGq5nNQqFJxdvgUxzjGgziIDoGdzvZ
+ WakR3etjiquyCRo49clUjpeSUWaBv+cd0P4nFVqOqj7m1GVJDfJL7oVmFbDBOGow9k/HVQw
+ x/f+h/Po33VoWewuIx5ag==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nkcMUES01yM=;nDLmN1ZD4ajl/27Ge923Xf1FUDM
- MP7MVJK28721tsglhTeWNgNnkqAfHa2BNDDbWRUT8eap3W58ga6tjws0Mmp/669BEFcKozGkl
- sZEuZEusG4MGTsc8/C42yFGVQXKND1zsok2rnjiqe3bwTzH+IfVkLNT3x78ONettyfbN6Ox9H
- d2ECedJZdFLF69Jy/L59MiW8hLxXQ8W6F3dEtgk38b8/2hrV8JcPXvDpuJKh91aX3ZA5icmEN
- RRh+NNW1KkFFEs0PfBZEmdksgrSgcP7Ik5zc/0zntnqR7uT614JmX9JOnh/DcIvihTA8PfB5G
- Fk8+1sS7pDLAp4PMZeWQw7z90W0IV6OZIs1Si9cvLBhCClcv0GJq6Nrg07gvT4NAtAipEW3hu
- GcnEGI5xjYgqQQX/uWDpfwKdQbjOr64zOovIlBIOMA/Zlbe3u0N3ZD2zhd9nyIzmm+d6Ql/7g
- +YHTC8AA9rr3LfMsL189/vl7AMfssb7UBj0//07wEuprvWCatqx6MgYTxEyNifTS8kgsnojio
- lkKlb5scziE3v915s6WdyWldPbMuo4XifACJxmnpVGTRegbVWf3v60ZZ6WXOdrpD5HOfTzuPo
- lf51sDc0XPAVSWMcQESKdsCLmuddMYF+ZKhELnXJ7MtyBKtWNyj5QFikjyGLReu0IitwdeBoR
- Z5wvK5STs82RUa8JTeDpJL/UCHzX3zGPeFqNWN/OUQE/XFa8WRNjeDgPqQC5SI0J02OBooV1I
- +f1NXCiD8pV40vgHLMXLJjbL98l/ykK4Jr8IuZJ/AmQ5qrMjSkW8ecU8Zumo3Y383NHjJdavr
- YGGVGfhElG/GBQaIGpUtAI4lxDpa7E/x2eySGjcRXwhb5AdV+9ZySacQDprD/4gvqZDOJykDc
- tzVJVj3oRpBJSXxDHrlBZtKBCoE4bTmfRm2vTS9WqYx6wy+ylmeQPIi/YQKPBY4vQCjCNtXMt
- rZsEJA==
+UI-OutboundReport: notjunk:1;M01:P0:TmTrwd9GXRU=;a027FqgyvmWIt3MVpkxyigPDqmP
+ acsYJhm5sPpKoXVvfh7Gf+SjuizSh9inE2myh2BEj4WtO1/1VB6AL0Q6plOUyEuwqRQ7Q7nk8
+ tU+k8UrcrwQcvUXD13RastM9QiqGPNnuOQtdveBb1mMKmiQdhnGKqnYLwmAYS0E+Epzv72761
+ htaNIx58/hCGS6akKG35Mwiv9z6U9YSK8+WrS2vSzqAjzyCRRQH3CKJnL6f09sw9KiaM4DI5x
+ 5W8GRDquBMA+zimrP3cIfOh+URtHirL0L9pYTSvNCmiwqmvApngWXgWZJ564Sx/hU7QICSMUk
+ 7SE1PpmxfFUn7uWPfLxP/ZtlI1n4+0qEqBD6VMqOwBLVOxyd8l/vraEzoloWTm2E+17hQ7RMU
+ 4UWeqxMoo885EOcoO6ohdkK7BdZw3Rl/0P//aijDOO7c4jC2OZev6pNr9Pxy/Gke7BjEJEbbf
+ 0OHUuic3iaysSYgibyt+0ZvRmZuu7G5thk0nxqRAGnS9Iq6nF4wsA4HKgCrBXLQEDRg+DPFBL
+ 3F1Pr64sa+uDVDAMD2dQ5JgBOHZ1heOskBw424rdltztdCv2tD7PsVoDCdWp3GoQS+XX087W5
+ xfBISGMIatrHdUdyX2vzMUliId+NRfXqcvfjlzmHAyYiPmikF+5uRZWEM1rWrMDZ0k3RN0QCo
+ sHTseRwbYQz3jemr5TypWn1oDTfI8EqIwPshqR+C/a6u1Tcwdd91YcgpfrZY+WgOjo93FDgza
+ jtFLeqpT53t7SomsXg+KMQsh9qynyigtgeO6FSagAgJ0Jm3zAEUib02CkzmAgFn6U+tu+Sjmn
+ 2hNnKiUcAo7wB8wJUlI6EvUbvgKdrbM2JXpUKy4npympipN4SRhLuT8g0jfBWgqjai/zBrIBH
+ 2i/+rscupe+QBnzGbJI3NlPItlwA6/0jRP3P2Awm2ihsXqAQW4vNWTcl58R6Z5q+e3RIscZT2
+ cxOvMg==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2023 09:30:54 +0100
+Date: Thu, 28 Dec 2023 10:48:16 +0100
 
-The kfree() function was called in one case by
-the apmf_sbios_heartbeat_notify() function during error handling
-even if the passed variable contained a null pointer.
-This issue was detected by using the Coccinelle software.
-
-* Thus return directly after a call of the function =E2=80=9Capmf_if_call=
-=E2=80=9D failed
-  at the beginning.
-
-* Delete the label =E2=80=9Cout=E2=80=9D which became unnecessary with thi=
-s refactoring.
+Return a status code without storing it in an intermediate variable.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/platform/x86/amd/pmf/acpi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/platform/x86/amd/pmf/acpi.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/platform/x86/amd/pmf/acpi.c b/drivers/platform/x86/am=
 d/pmf/acpi.c
-index 4ec7957eb707..eb367e38c5ab 100644
+index 4ec7957eb707..ce00dd9a5391 100644
 =2D-- a/drivers/platform/x86/amd/pmf/acpi.c
 +++ b/drivers/platform/x86/amd/pmf/acpi.c
-@@ -135,11 +135,9 @@ static void apmf_sbios_heartbeat_notify(struct work_s=
-truct *work)
- 	dev_dbg(dev->dev, "Sending heartbeat to SBIOS\n");
- 	info =3D apmf_if_call(dev, APMF_FUNC_SBIOS_HEARTBEAT, NULL);
- 	if (!info)
--		goto out;
-+		return;
+@@ -111,7 +111,6 @@ int apmf_os_power_slider_update(struct amd_pmf_dev *pd=
+ev, u8 event)
+ 	struct os_power_slider args;
+ 	struct acpi_buffer params;
+ 	union acpi_object *info;
+-	int err =3D 0;
 
- 	schedule_delayed_work(&dev->heart_beat, msecs_to_jiffies(dev->hb_interva=
-l * 1000));
--
--out:
+ 	args.size =3D sizeof(args);
+ 	args.slider_event =3D event;
+@@ -121,10 +120,10 @@ int apmf_os_power_slider_update(struct amd_pmf_dev *=
+pdev, u8 event)
+
+ 	info =3D apmf_if_call(pdev, APMF_FUNC_OS_POWER_SLIDER_UPDATE, &params);
+ 	if (!info)
+-		err =3D -EIO;
++		return -EIO;
+
  	kfree(info);
+-	return err;
++	return 0;
  }
 
+ static void apmf_sbios_heartbeat_notify(struct work_struct *work)
+@@ -148,7 +147,6 @@ int apmf_update_fan_idx(struct amd_pmf_dev *pdev, bool=
+ manual, u32 idx)
+ 	union acpi_object *info;
+ 	struct apmf_fan_idx args;
+ 	struct acpi_buffer params;
+-	int err =3D 0;
+
+ 	args.size =3D sizeof(args);
+ 	args.fan_ctl_mode =3D manual;
+@@ -158,14 +156,11 @@ int apmf_update_fan_idx(struct amd_pmf_dev *pdev, bo=
+ol manual, u32 idx)
+ 	params.pointer =3D (void *)&args;
+
+ 	info =3D apmf_if_call(pdev, APMF_FUNC_SET_FAN_IDX, &params);
+-	if (!info) {
+-		err =3D -EIO;
+-		goto out;
+-	}
++	if (!info)
++		return -EIO;
+
+-out:
+ 	kfree(info);
+-	return err;
++	return 0;
+ }
+
+ int apmf_get_auto_mode_def(struct amd_pmf_dev *pdev, struct apmf_auto_mod=
+e *data)
 =2D-
 2.43.0
 
