@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCA55666;
-	Thu, 28 Dec 2023 07:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FDC5671;
+	Thu, 28 Dec 2023 08:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ptxRr5i8"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VInzAuRr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703750200; x=1704355000; i=markus.elfring@web.de;
-	bh=q8LQkX8WL0q3ovc2/HmVfjQfSvCey/AWBJG2oLVNE7I=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=ptxRr5i80CUS53R4ILu8PrPgbo46hMHfZ/sA+iaCGr9Su33ztPyQ+z4Dpn/WzIRY
-	 kvhyiQXULXMpUnKZKXr1uFq4o0eGvRip4Wd8YCuzgFL77mswS4WhsOipzIeFU2CRt
-	 2O1FWjCpO+zHzQDVvU7hrM213LBWbR858Rc/QdDas0nM0s5k47DJ5341VaCc2qHH3
-	 tVtnskOnfrwIwEagqXZXQhGPN5PYw7c52k7jna+GFpQeZ2Hr2kxd6LajbzQ65k4/y
-	 QYqh9AT8JwqGXiDoLas5rQT1IaE3pu/LbJMXmpFQbouxxTk4wapUxttHt5FoL8LdA
-	 Gs88uK2PSl4qc+2OpA==
+	t=1703752943; x=1704357743; i=markus.elfring@web.de;
+	bh=zmkIk95uAnIs9Eha5efh2mV5ML9QPD6Kxw6Fd4L0ayI=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=VInzAuRrkOQMpps9N+++fUF5AregOalMHU4QRqu4YesKz9EvgRS8WQvsJGNmYuMo
+	 r5Sf610vgM7T1HV0kUggWIiGcKIKAKXse2nmwVt5n2GBePiNTGp6GMD3q4Ve1QlI1
+	 w/w5mnkyPJsRux8Pm2V5csAc6cbP2z5F9nIVW4tYy1wFL14GVKliz5z1Gs6E1lAuf
+	 kZeZCrO0DWFR1y8q4RnmmHRkxlePqz30AkLmuyjgKKYKysHmlRWsLxhu/j7NJSe6O
+	 APAuZGG8S1pB0DEPmN4r/6SrNR0QwYYtPgg6liX2aMPQ0bT2o2zLM+vu2pwefC2eP
+	 hJA33wVwTsEKFZ5hTQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGQGF-1rSMgn2cqT-00GzyC; Thu, 28
- Dec 2023 08:56:40 +0100
-Message-ID: <5db36d2b-afe0-4027-b22e-ded163a409be@web.de>
-Date: Thu, 28 Dec 2023 08:56:38 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MA4bA-1rPtlV0tYI-00BlBh; Thu, 28
+ Dec 2023 09:42:23 +0100
+Message-ID: <362ee824-fc53-4e19-9529-8b621657635b@web.de>
+Date: Thu, 28 Dec 2023 09:42:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,105 +30,77 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
- <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
+To: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] platform/chrome: cros_ec_i2c: Less function calls in
- cros_ec_cmd_xfer_i2c() after error detection
+Subject: [PATCH] platform/x86/amd/pmf: Return directly after a failed
+ apmf_if_call() in apmf_sbios_heartbeat_notify()
+Cc: LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i3MXYHdK2HPaWLop5uSkw24RVPcYPI6DyUco+noAgA7fgxbj0ZP
- vPWTFh4o8cLcjZkOlDl7OmmTnwkkAhL8Oey3a5GSdD9nuEccMJFBXp7RG53Jp1m66mr8LTU
- yvyYJda07b4I0Ooj+ZBt2OtGDK/rN6lNCPteRh2x2AgErC6u3VhSmCsJUDkm0UUhgB87wqq
- /vzHvHZOqrtbQT9HhNZcw==
+X-Provags-ID: V03:K1:rDi8Bd+8M7STwBu7WjWgU68UfYwOYphhC9zo9TLUjNL2/gw4ycp
+ J4dC2LEgVEZ0cy4oZuKBDKYc/rrlyV3gHUvEm7tx3Y8s7JwsP1rBFIBYtsc1HAKJLVinrMW
+ 5GdwGEUlddGfgLCN/j6TMOPltug/QW9cSIQRzKetAXxOggTRSx0bs5VsUq6Ntph6V8Aa5iU
+ wqhVApVWx09AJqMbdLo7A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mA7BOUGQ7iA=;EGuXqaI3Y1WHScJysMcyY4dztiV
- 1x9BrZAZgJ7f6W9OqI4alz5YS4wk9bqfDCL4AEgml+vEplXy9NFNLxmrKpjc6+p9DOfwEHT5S
- 2o7X9SaPf1neB5JX9DdOLGoNS4BnOhb1MSRm2PBLAexz4yoVgYK8HoLO7ROxYVorxGJMfXUid
- v8H5JCSE5tNBGNeWiRryZ6zlxCvLdnmdG0VxMyf7j7pUkaGJXbADDeJRgXLAp84OnFldTnGzC
- 7EMMAlVk8rdm4DnunYDQ23uUe7F9MybNtE713N9YoilRrb+Wvg2P3+VRMjpFyDwlkvGzJ0R8C
- FNUl8fGTGtPvxnK/buJWtPLgTmUVfz8DItiffW7PA8ucqNVeuMEL9fRFeWF9IeJwPxvduDKLg
- 6uPSPEQNei74EkzSSuJgnkYieTXAUy5yfQVejOFroYvIxydj/6p4727nF56IRL9njZzzqusoH
- jmNfzbt/hHePXqhee/K9RezM6RMtyG6sdQKtl/NOHefIYSZ4pX+TrqpXlCURn+kYufyEmO6r9
- aa+IvagxEyiYZu7NJN6m8lsPvyfyIlX0IZt5DJfUjFZ4HAwyFKup3boHZpUupuoq8WXSxAZ2p
- gh5uMz5QjUkrkeERkGLenAR7PlOaYkVguGIKaJTd7ncCTHVYlS5jCt0uxMlC9vhJhyvah+CYM
- HwJ12PZ5sQ/1avh1wEiKQc3FyDpGAa0SLLBGyXM4tZxGwHxcgrgPwrwTFczThCEkFIZ+iHTJQ
- Mlc+e8oKQ1Ksk1lGAO7J9XzQvB52hu4tI+GLVbFtkq+YdXVF4KgJKE44HrU17vpUYQedDV2o0
- mzLw4Tr+IvLUWMB3uSfm0yQ+AfQos4lKzw7UT/ogqlHfLZeKbuWA+FZ49IN1AZxJDxtAguY+7
- 4cKz9/X1WqLE3WqZAUYYoxSV71xoHjkJNX2L2J9VpMoQ6E444P7/wG5txNlIk5RU+9BEFDfSt
- HeaAetIoK2IJnjLXL7OcrTxzRIY=
+UI-OutboundReport: notjunk:1;M01:P0:nkcMUES01yM=;nDLmN1ZD4ajl/27Ge923Xf1FUDM
+ MP7MVJK28721tsglhTeWNgNnkqAfHa2BNDDbWRUT8eap3W58ga6tjws0Mmp/669BEFcKozGkl
+ sZEuZEusG4MGTsc8/C42yFGVQXKND1zsok2rnjiqe3bwTzH+IfVkLNT3x78ONettyfbN6Ox9H
+ d2ECedJZdFLF69Jy/L59MiW8hLxXQ8W6F3dEtgk38b8/2hrV8JcPXvDpuJKh91aX3ZA5icmEN
+ RRh+NNW1KkFFEs0PfBZEmdksgrSgcP7Ik5zc/0zntnqR7uT614JmX9JOnh/DcIvihTA8PfB5G
+ Fk8+1sS7pDLAp4PMZeWQw7z90W0IV6OZIs1Si9cvLBhCClcv0GJq6Nrg07gvT4NAtAipEW3hu
+ GcnEGI5xjYgqQQX/uWDpfwKdQbjOr64zOovIlBIOMA/Zlbe3u0N3ZD2zhd9nyIzmm+d6Ql/7g
+ +YHTC8AA9rr3LfMsL189/vl7AMfssb7UBj0//07wEuprvWCatqx6MgYTxEyNifTS8kgsnojio
+ lkKlb5scziE3v915s6WdyWldPbMuo4XifACJxmnpVGTRegbVWf3v60ZZ6WXOdrpD5HOfTzuPo
+ lf51sDc0XPAVSWMcQESKdsCLmuddMYF+ZKhELnXJ7MtyBKtWNyj5QFikjyGLReu0IitwdeBoR
+ Z5wvK5STs82RUa8JTeDpJL/UCHzX3zGPeFqNWN/OUQE/XFa8WRNjeDgPqQC5SI0J02OBooV1I
+ +f1NXCiD8pV40vgHLMXLJjbL98l/ykK4Jr8IuZJ/AmQ5qrMjSkW8ecU8Zumo3Y383NHjJdavr
+ YGGVGfhElG/GBQaIGpUtAI4lxDpa7E/x2eySGjcRXwhb5AdV+9ZySacQDprD/4gvqZDOJykDc
+ tzVJVj3oRpBJSXxDHrlBZtKBCoE4bTmfRm2vTS9WqYx6wy+ylmeQPIi/YQKPBY4vQCjCNtXMt
+ rZsEJA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2023 08:36:49 +0100
+Date: Thu, 28 Dec 2023 09:30:54 +0100
 
-The kfree() function was called in up to two cases by
-the cros_ec_cmd_xfer_i2c() function during error handling
+The kfree() function was called in one case by
+the apmf_sbios_heartbeat_notify() function during error handling
 even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-* Adjust jump targets.
+* Thus return directly after a call of the function =E2=80=9Capmf_if_call=
+=E2=80=9D failed
+  at the beginning.
 
-* Delete two initialisations which became unnecessary
-  with this refactoring.
+* Delete the label =E2=80=9Cout=E2=80=9D which became unnecessary with thi=
+s refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/platform/chrome/cros_ec_i2c.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/platform/x86/amd/pmf/acpi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chro=
-me/cros_ec_i2c.c
-index e29c51cbfd71..2a6ec623e352 100644
-=2D-- a/drivers/platform/chrome/cros_ec_i2c.c
-+++ b/drivers/platform/chrome/cros_ec_i2c.c
-@@ -193,8 +193,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
-*ec_dev,
- 	int i;
- 	int len;
- 	int packet_len;
--	u8 *out_buf =3D NULL;
--	u8 *in_buf =3D NULL;
-+	u8 *in_buf, *out_buf;
- 	u8 sum;
- 	struct i2c_msg i2c_msg[2];
+diff --git a/drivers/platform/x86/amd/pmf/acpi.c b/drivers/platform/x86/am=
+d/pmf/acpi.c
+index 4ec7957eb707..eb367e38c5ab 100644
+=2D-- a/drivers/platform/x86/amd/pmf/acpi.c
++++ b/drivers/platform/x86/amd/pmf/acpi.c
+@@ -135,11 +135,9 @@ static void apmf_sbios_heartbeat_notify(struct work_s=
+truct *work)
+ 	dev_dbg(dev->dev, "Sending heartbeat to SBIOS\n");
+ 	info =3D apmf_if_call(dev, APMF_FUNC_SBIOS_HEARTBEAT, NULL);
+ 	if (!info)
+-		goto out;
++		return;
 
-@@ -210,7 +209,8 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
-*ec_dev,
- 	packet_len =3D msg->insize + 3;
- 	in_buf =3D kzalloc(packet_len, GFP_KERNEL);
- 	if (!in_buf)
--		goto done;
-+		goto check_command;
-+
- 	i2c_msg[1].len =3D packet_len;
- 	i2c_msg[1].buf =3D (char *)in_buf;
-
-@@ -221,7 +221,8 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
-*ec_dev,
- 	packet_len =3D msg->outsize + 4;
- 	out_buf =3D kzalloc(packet_len, GFP_KERNEL);
- 	if (!out_buf)
--		goto done;
-+		goto free_in_buf;
-+
- 	i2c_msg[0].len =3D packet_len;
- 	i2c_msg[0].buf =3D (char *)out_buf;
-
-@@ -278,8 +279,10 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device=
- *ec_dev,
-
- 	ret =3D len;
- done:
--	kfree(in_buf);
- 	kfree(out_buf);
-+free_in_buf:
-+	kfree(in_buf);
-+check_command:
- 	if (msg->command =3D=3D EC_CMD_REBOOT_EC)
- 		msleep(EC_REBOOT_DELAY_MS);
+ 	schedule_delayed_work(&dev->heart_beat, msecs_to_jiffies(dev->hb_interva=
+l * 1000));
+-
+-out:
+ 	kfree(info);
+ }
 
 =2D-
 2.43.0
