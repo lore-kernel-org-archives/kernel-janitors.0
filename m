@@ -1,195 +1,85 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F68107B8;
-	Thu, 28 Dec 2023 21:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7217F10A09;
+	Thu, 28 Dec 2023 23:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h1XN08sq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703797333; x=1704402133; i=markus.elfring@web.de;
-	bh=zCoJyL9Lw4BVM5kJ+m1jFQlSFuHfKA5ZkN/ugCaGkpc=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=h1XN08sqdVCVFxsP7TYketpXPUaKnK1+M0EdcqABxTYqmQD1sm2wA9JXSH2zRTms
-	 z5enO3BSwZz2Dp0wjSsUFAnXSxLwUo+y6PMawu74k0aTvm8o+JlR7Oy7W/aaMMlMo
-	 ShkRlcxI+dm847VBWVxmszSwD3W+YueSu5syaciftS5w/pC0Nj8n9/hSGCeH+5lF3
-	 8TlMsyNZ0fXwu+DzltBcBEG0ebcMIfREBkiFD8DijLpPw3XGhcKAVrGuSB+kBZS0t
-	 830/0GPfL5unmeNyZpvG2GL8d5EUp07UXJgM2A7ETV8t5A/fKBDxXHWnD2Qg8cBWG
-	 R5n9WDRvAF5QoI47uA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuSe-1qmwgD2V0e-00eyTS; Thu, 28
- Dec 2023 22:02:13 +0100
-Message-ID: <70ebc121-4332-4c64-9a20-29837758aa19@web.de>
-Date: Thu, 28 Dec 2023 22:02:13 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI5YX4Wz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA423C433C7;
+	Thu, 28 Dec 2023 23:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703807788;
+	bh=Jk+86/S1r/9V2CpRQH19M/qyIpjTHBmRL8QPPZUddQ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eI5YX4WzZ1aVG3cwph4pUwkL/RRMvI1HF7KysTFE7iREGtNgyIlv1lhdrC0nJBoAy
+	 srGswpzMWHOes0FU9P14RrEaX8XGyz/y3UHtnvMr2ulXTei7qXpM3hcuwySJQhqCIY
+	 DZdUImJ6o/DHFLtQQha/Mc1eNWG74BBxciM6VuVunD58olbeT+aYjcOLZ9TKVn26Os
+	 e2Kq2zOlPxEqeRnQ5xlQsIqTOPrM9dEAv4dsxime7QbRXtBxWnZ+jG15yDy4jVzFNN
+	 KjG8RHHyBZzrRL2ARvK7USq4H/DV+EegM9znlc0iz4r7G1jdUOqIDNUuRcgS3HHsVO
+	 MXFnZTVjkIAaA==
+Date: Thu, 28 Dec 2023 17:56:26 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Daniel Stodden <dns@arista.com>
+Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Dmitry Safonov <0x7f454c46@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
+ switchtec_pci_probe()
+Message-ID: <20231228235626.GA1559849@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] fuse: Improve error handling in two functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sHkI+Rrr7HyBvSt5sCxNI/wtzr9ipPp2/2/6P80wlBkN3nQbGSa
- Pw8eCfF+LdglRxo1FTd7N+ircSHEN5pTeCjCbQ4HOPx0DAspdALzJR+Vy9U3ghX/2kl/E8h
- Ffv58CG14w3dWhInpWq7/8AF5jZF/mEfAOh2Kd4TyPy+r2K0GpOUiaCaWo9AnVD2DokyjpH
- 2PHCtpW4IpdzwdxZQi+lw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:STsuKzCbHW8=;Wxxtfx1zyOZ52rRYSBkfa/Yl100
- dCwVvtn/F+YONzPwvQbiHmNetoF+3NOTfnHTK7AXuSM31nifq+OgH3RbZxu3EfRXwSKWGvY1D
- 7wdBR1+CilJVvWKVkJZIFG2ZZoXqOEW6KwHqRJuXEe5DxgtpPqBRa0T5T/RSbtNt9bIGwdubw
- MSUkdU23oU5Elc+/IDBae1dk8+ZJc0jMr6QhvPo0Ve4YrN66OE7eTwVXQdkUWyUBo6lvKJjE6
- aF5bzsD7HzDCQckGIjsR6RrWPNlsqf9VJNFy222/B9f/INZB6yAuxoO2+b/ayrHPTertRqO3f
- SncHB0+LWe12u7Hg4v7kgxBdkyfiHbb0wHB/R437FhAnNs/L0Sz/wUZSmtMki0DBEMKyfU/oD
- 0Gov5iNtsY9zFAT3yiUeK4bgug0HaDFmIe3ZLc6ewZN7e7Yqeuw5Gql/dtUQipqearRe/qKZN
- LPreTFHkU6QlazV/Huq5NHQDk4SdlNanPRpvq40wxeTnEmvYEsD8FC+iRdG1XPpi7P0YRG2Ca
- XvMZbWdqF5JgnWftQjmltHSWuEIy/r2lF5sBlS1UkiMPeHTb5+qk0SZy4e58BFHstkk0bTVr8
- 2Qxih6GwQ4IAKzbx4+kGq5jMqBnEBJizwUcMtB4OiPMPbgrV01qHVFznXPZ6zlwzcfigfyhlP
- 2A2zwiGEqYKeAMfe6TRuzG5FayiL8SdzXtjeDqC+QOF0No+H0EKj47cMSO0WUAcQvvo+A01gt
- 4awQetcFgRlbrwqln0CHdcoZnZjJ7iCZ2zb1Vl82xtUlo9ai6o7RML8jHATq+HwaGbTqtieyS
- YMp8SJv35QX1pqlkkjHtTHQrKIh8k534EwdJ6nfQH3ZbFqFa9fbEqjnTTU1RhQRaPjwbNoPXZ
- Y5ejcOAOsgOC0wd1vfeaX7Lkf8bCf9FULNvzh935sepOGq9oYjcnZILDLkot8pCCmno9swct0
- INueJWRTGj84w4IkTcmFCoEGXUQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01446d2ccb91a578239915812f2b7dfbeb2882af.1703428183.git.christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2023 21:57:00 +0100
+[+to Daniel, can you take a look?  If you like this, I'd like to
+squash it into df25461119d9 and credit Christophe since that's not
+upstream yet]
 
-The kfree() function was called in two cases during error handling
-even if the passed variable contained a null pointer.
-This issue was detected by using the Coccinelle software.
-
-* Thus use additional labels.
-
-* Move error code assignments into if branches.
-
-* Delete initialisations (for the variable =E2=80=9Cerr=E2=80=9D)
-  which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/fuse/dev.c | 44 ++++++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 18 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 1a8f82f478cb..8f2975b1aed3 100644
-=2D-- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1468,29 +1468,30 @@ static int fuse_notify_inval_entry(struct fuse_con=
-n *fc, unsigned int size,
- 				   struct fuse_copy_state *cs)
- {
- 	struct fuse_notify_inval_entry_out outarg;
--	int err =3D -ENOMEM;
-+	int err;
- 	char *buf;
- 	struct qstr name;
-
- 	buf =3D kzalloc(FUSE_NAME_MAX + 1, GFP_KERNEL);
--	if (!buf)
--		goto err;
-+	if (!buf) {
-+		err =3D -ENOMEM;
-+		goto finish_copy;
-+	}
-
--	err =3D -EINVAL;
- 	if (size < sizeof(outarg))
--		goto err;
-+		goto e_inval;
-
- 	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
- 	if (err)
- 		goto err;
-
--	err =3D -ENAMETOOLONG;
--	if (outarg.namelen > FUSE_NAME_MAX)
-+	if (outarg.namelen > FUSE_NAME_MAX) {
-+		err =3D -ENAMETOOLONG;
- 		goto err;
-+	}
-
--	err =3D -EINVAL;
- 	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
--		goto err;
-+		goto e_inval;
-
- 	name.name =3D buf;
- 	name.len =3D outarg.namelen;
-@@ -1506,8 +1507,11 @@ static int fuse_notify_inval_entry(struct fuse_conn=
- *fc, unsigned int size,
- 	kfree(buf);
- 	return err;
-
-+e_inval:
-+	err =3D -EINVAL;
- err:
- 	kfree(buf);
-+finish_copy:
- 	fuse_copy_finish(cs);
- 	return err;
- }
-@@ -1516,29 +1520,30 @@ static int fuse_notify_delete(struct fuse_conn *fc=
-, unsigned int size,
- 			      struct fuse_copy_state *cs)
- {
- 	struct fuse_notify_delete_out outarg;
--	int err =3D -ENOMEM;
-+	int err;
- 	char *buf;
- 	struct qstr name;
-
- 	buf =3D kzalloc(FUSE_NAME_MAX + 1, GFP_KERNEL);
--	if (!buf)
--		goto err;
-+	if (!buf) {
-+		err =3D -ENOMEM;
-+		goto finish_copy;
-+	}
-
--	err =3D -EINVAL;
- 	if (size < sizeof(outarg))
--		goto err;
-+		goto e_inval;
-
- 	err =3D fuse_copy_one(cs, &outarg, sizeof(outarg));
- 	if (err)
- 		goto err;
-
--	err =3D -ENAMETOOLONG;
--	if (outarg.namelen > FUSE_NAME_MAX)
-+	if (outarg.namelen > FUSE_NAME_MAX) {
-+		err =3D -ENAMETOOLONG;
- 		goto err;
-+	}
-
--	err =3D -EINVAL;
- 	if (size !=3D sizeof(outarg) + outarg.namelen + 1)
--		goto err;
-+		goto e_inval;
-
- 	name.name =3D buf;
- 	name.len =3D outarg.namelen;
-@@ -1554,8 +1559,11 @@ static int fuse_notify_delete(struct fuse_conn *fc,=
- unsigned int size,
- 	kfree(buf);
- 	return err;
-
-+e_inval:
-+	err =3D -EINVAL;
- err:
- 	kfree(buf);
-+finish_copy:
- 	fuse_copy_finish(cs);
- 	return err;
- }
-=2D-
-2.43.0
-
+On Sun, Dec 24, 2023 at 03:30:01PM +0100, Christophe JAILLET wrote:
+> The commit in Fixes changed the logic on how resources are released and
+> introduced a new switchtec_exit_pci() that need to be called explicitly in
+> order to undo a corresponding switchtec_init_pci().
+> 
+> This was done in the remove function, but not in the probe.
+> 
+> Fix the probe now.
+> 
+> Fixes: df25461119d9 ("PCI: switchtec: Fix stdev_release() crash after surprise hot remove")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/pci/switch/switchtec.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+> index 1804794d0e68..5a4adf6c04cf 100644
+> --- a/drivers/pci/switch/switchtec.c
+> +++ b/drivers/pci/switch/switchtec.c
+> @@ -1672,7 +1672,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+>  	rc = switchtec_init_isr(stdev);
+>  	if (rc) {
+>  		dev_err(&stdev->dev, "failed to init isr.\n");
+> -		goto err_put;
+> +		goto err_exit_pci;
+>  	}
+>  
+>  	iowrite32(SWITCHTEC_EVENT_CLEAR |
+> @@ -1693,6 +1693,8 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+>  
+>  err_devadd:
+>  	stdev_kill(stdev);
+> +err_exit_pci:
+> +	switchtec_exit_pci(stdev);
+>  err_put:
+>  	ida_free(&switchtec_minor_ida, MINOR(stdev->dev.devt));
+>  	put_device(&stdev->dev);
+> -- 
+> 2.34.1
+> 
