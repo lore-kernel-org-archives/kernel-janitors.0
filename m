@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCECF51F;
-	Thu, 28 Dec 2023 17:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3710780;
+	Thu, 28 Dec 2023 20:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iN6+QnsI"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Jg1UeUG4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703784488; x=1704389288; i=markus.elfring@web.de;
-	bh=bZIUiXqM0iUtPLxaSty3O0T6RhxO0I6eQJgl62PzlfM=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=iN6+QnsIE6tetReld5k2uZNh3q6iuqTtJ0Xk4Ge5+1qaZzgkMa47VEgPFy8BIAwm
-	 vJ1WttlhVpCGpVysvCA+SLydzJ/7UaM9wp2FGLSjIluiwLLz4XvOo66VzAY5kIF/o
-	 kSTmgshI//10mM928uiCZslT79GyJB/JJlhee9dCcMo3mNE9Qi4nbUVpCeihuixOL
-	 kxGvlQebmRoV6bKDTw4b8ImuorIFmqlpPYBTH/na9KHfe4F8JCrdEQiygrRBPQ8es
-	 2DGErXjCXqEBy31OfTCgr4/J2W5wA/GbRrIL3PXVV9RQ9B2KGnQZvTc2W/UASXZi/
-	 MKVHX15fAo4O/3DE6A==
+	t=1703793721; x=1704398521; i=markus.elfring@web.de;
+	bh=PVt/wnLfLIOxg7hwOL8VokJSMcclQsyGS28j2xPRa3s=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=Jg1UeUG4b5dA5mBxS00OhEUEFOY6PWxUmO+fqcixfAK1EKVCsawxvoeopACBcDOI
+	 jyTkiefOlZsNdjsTnypsyNIeUgR02+nAcFIP5vUg+RVm4OFj356adHfFGE/ph1Iye
+	 We1VLpzTGkuQw6FGx1hb2klLhDaYzMtGHhcn9KD4ZzOpxaiZHyyQuy0CXR1wLuY7d
+	 7iCHihahotflZJ2bIjIJIubcS7OjDZfJXtKPv8B9HBdYGwkX6hc+qG2S7Wp04+X9Z
+	 +oMgs9G17Aa8jl2lSqhQjKtcUQ15TVqpnJQQRGkQzzxrXSIMovSeQ1PjsN0nJM7si
+	 mL3cPGbEUHVDgSt4gg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mm9Va-1qsKql3sG0-00i55t; Thu, 28
- Dec 2023 18:28:07 +0100
-Message-ID: <98f99041-e089-4253-9195-6a26b986658e@web.de>
-Date: Thu, 28 Dec 2023 18:28:06 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4NDG-1r9QAY3VIc-011dqP; Thu, 28
+ Dec 2023 21:02:00 +0100
+Message-ID: <7203d3fc-f1e4-4fb1-8dd3-068b0ec6c752@web.de>
+Date: Thu, 28 Dec 2023 21:01:49 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,66 +30,98 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 4/4] scsi: lpfc: Delete an unnecessary variable initialisation
- in lpfc_sli_read_link_ste()
+To: v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ =?UTF-8?Q?Christian_Sch=C3=B6nebeck?= <linux_oss@crudebyte.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- James Smart <james.smart@broadcom.com>,
- "James E. J. Bottomley" <jejb@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH] fs/9p: Improve exception handling in v9fs_session_init()
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <48a127e8-ca4f-4fc4-81b7-226080fba720@web.de>
-In-Reply-To: <48a127e8-ca4f-4fc4-81b7-226080fba720@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:STSMzfYc67LKhAslNGaZdX4bp6OTa7800mET5EYlhf7vUhCK6Lm
- Ifqyt7MS+yD6MlIY/3dNgCFbV6/dDcnWYSmWrabZ7L8YoIB9RbqaRvL5ING8Ku9Xv26bGd3
- iif/S0BKAFaf/rIl0b7wbKgm01nrQMYWHBFuMm58B/2e6WK7mMoMa/len0eorM8rua5rosz
- CgtspMAQ5PSUUaJF16AVQ==
+X-Provags-ID: V03:K1:mbz/HHyunIoY6d+awK+8Eugj0y8BJ2S9vxuYKR+g8zrXJGsu7IJ
+ Q/oyt3rpR7w/Go5ntSypHJK039EFq1aglrCWAT3Ao3j0k08OpoMe+apx4tioIcXL+27sRpF
+ jeIonoLK5hDRRzDyAO5M/IqD8TespeMwsAqKqk0tQoJpmF5IUc63XsRaAJ26eTqeGZid+6O
+ 4E5qTVaytTCyk//uCmO6g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gGJWmcBxQXs=;U1pG/0wNPXece0P+dqVanmQytTQ
- WLCrpq0mp/1yuggSzMAAQf4MCI6fPGsDYbTSoZ2Sx+HM7+52S5wOP6BGNW9/kOXaHs5K1aLhc
- c02hcybWUpDx4ejZ+BMsA7b6sWPD42BMQRQoS9cHp7vv3h8dZ5jOb3RXYGdsxjrYAX9aIJ46f
- NMD8UXU4KVdzSk01vCdv/odEJBlFB7mk75I2eljDK7vQlXyvG+j4C03aPGHKH9hi/DYgtoHED
- L0PRnODx9oSdo5XGfopg+/bNj095vs9phJGDBOvG8l1Nt3sc1dr6/1nAVArsmC/7DzRsfuSEi
- s6YQvjBwpqMfn+xF3VP0ffpPTZ+NXbKDrjzlsDjv4HmUVrSEcaFCXKXU7gHVze+m3oYR8DX+l
- cTZ/lT8OdxOv9fZY059MqdTL3IxFEOZJB2mZDQTwwcf5chnBBhFFMuUqPja7iuCBBBgt2F92m
- 8uCX7w6qyH5KuAgdUuGKA3GKIEIHrQm3vlvOV3L1EsjMHeOpytVU0oX2FuekbfX578+N7RMux
- GWEPeaz3ZiO1ubPm8GFFLSMTW5coWY7jswgi2tu5NNvPgD/zCh9CF2S66FaMi/nmJZVDANhmX
- IV0pK4sEkSCqs63DyIs1HMzp5OzpXiBxlkEta112NzC5Jp+55ATQS3LJEI/tHmyoX/7dFZW4p
- HUYGoMahxVavBFUIN5J2Ft31Lop3PwmC3FUqfvKWPDTcm0atX/kqUsIVcSI8tXMCNZiqTTgQ5
- +WkaU9VRLSA7TV9ywZ7HnaIbtx9b3xRKDhbnipJIDQNv6Z5SAXR6kOPOCJmDjuhiyqOcNO1Z0
- /LhNO6TWX+rXPjrwwSXSRa6ZrS7PW/vvn/v2ZNIbYNtHMHSE6fS+1IDVJO+/J4vfOpBqljCZz
- ByKxcSQfX8qC/Wbol1kaTDNongA6tj+B8Y1SaXCho7qwX8xtpH8EYb5YkR0ixXj9zIbXIdeNM
- CVq95abh9gFa99myyIBDpPySwUI=
+UI-OutboundReport: notjunk:1;M01:P0:0jWWBk4hVZo=;RRSYg94h3fJJARj0fM8mFORlhrk
+ lCbDc1wENsZKRDW748d//lEXloj2bQQW0EFYtsshQuaaxz6vIxB/TIgPEUR/df2LPfBLVFjP3
+ +QkmwH7q1p2ObRo4QY145HtZ0zoBCzahVL6jBDJ1ppLVlQqirVJLEusJGyHayL/KA92Mcj8RW
+ mNCsJYOoo3d/GgcHkbc/agReX2KkJvb75XLiqmI2N4yOE65ge7SK/WPgZ0daUwVvPIncxvaaf
+ 0Y2OWhsxyjZ1gRvtXE1jBsMpdcS0XjDGoBV610ykqv4GCqgZMu3cTjDc4B1RvGFa7k4NNNTgu
+ Q/C2vwOkO0gI5dE6wWEBzWzzMNWzpYlnAOem4yi4/SmIkOcv6ZLuQw2L0XUFTF/4LWvXcYyCr
+ 8P6TYmYfOBbv5qHfsGKKfFjJKpcgs4eHNrk7fSJ9m19Tab9Wjak3kDfv6b9FQRi6bskPKXuHI
+ a+WZx9rg23UMOuJGMjucsY4OND5NsQQ4z3dfoZ/YANLmD6hQ6sk3HZlrSQ87+YiGaaZ76ZhHU
+ pgYRAf2AhVQezbhDsNzps6M6ORS12FBYwYEjq9I2rK55ueRu3MQeQtAYupQzlpHXphY4WPkHk
+ mMnELKelutd7UVx6hbicm2lGJPYswRfSlH5Gvf55O1pq3O25mIKHGd4mlGRdF7YikTPYfpgb/
+ YbkbgxL6kLUvHoC4Qhcxcb0sXixB961FcKTXUWRStWqhTP/zzPQsKfDTltSKeDGfI9oRZfRm/
+ YnF8ZDxzlPh4VX7PdDh0dJ39xuonDuxK2CB/nfn2AlZTURXKUoNJtRxpVbKS1aCoSC8S9CBWV
+ THqVGEhLwrby/61/9Bi3VY4gUazqRU7Egh/yefnM3pCxx8f2YPYGw0ZZGN0miJn8vbsKM/+lk
+ NI/qmQ+gwIpP2Mze2c3qE2F1IPX7AFQc7UW9UK5WmmNEViPclpyeknwzQHYk5EtArOoqTpI8j
+ 6iHvtFCs5c9K3OOzckqSv10TxVQ=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2023 18:00:11 +0100
+Date: Thu, 28 Dec 2023 20:47:18 +0100
 
-The variable =E2=80=9Crgn23_data=E2=80=9D will be reassigned by a followin=
-g statement.
-Thus omit the explicit initialisation at the beginning.
+The kfree() function was called in up to two cases by
+the v9fs_session_init() function during error handling
+even if the passed variable contained a null pointer.
+This issue was detected by using the Coccinelle software.
+
+* Thus return directly after a call of the function =E2=80=9Ckstrdup=E2=80=
+=9D failed
+  at the beginning.
+
+* Adjust jump targets.
+
+* Delete an initialisation (for the variable =E2=80=9Crc=E2=80=9D)
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/scsi/lpfc/lpfc_sli.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/9p/v9fs.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 8de598c9e03b..1ce5671a7e07 100644
-=2D-- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -20694,7 +20694,7 @@ lpfc_sli4_get_config_region23(struct lpfc_hba *phb=
-a, char *rgn23_data)
- void
- lpfc_sli_read_link_ste(struct lpfc_hba *phba)
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 61dbe52bb3a3..874a36303b72 100644
+=2D-- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -392,15 +392,18 @@ struct p9_fid *v9fs_session_init(struct v9fs_session=
+_info *v9ses,
+ 		  const char *dev_name, char *data)
  {
--	uint8_t *rgn23_data =3D NULL;
-+	uint8_t *rgn23_data;
- 	uint32_t if_type, data_size, sub_tlv_len, tlv_offset;
- 	uint32_t offset =3D 0;
+ 	struct p9_fid *fid;
+-	int rc =3D -ENOMEM;
++	int rc;
+
+ 	v9ses->uname =3D kstrdup(V9FS_DEFUSER, GFP_KERNEL);
+ 	if (!v9ses->uname)
+-		goto err_names;
++		return ERR_PTR(-ENOMEM);
+
+ 	v9ses->aname =3D kstrdup(V9FS_DEFANAME, GFP_KERNEL);
+-	if (!v9ses->aname)
+-		goto err_names;
++	if (!v9ses->aname) {
++		rc =3D -ENOMEM;
++		goto free_uname;
++	}
++
+ 	init_rwsem(&v9ses->rename_sem);
+
+ 	v9ses->uid =3D INVALID_UID;
+@@ -489,8 +492,9 @@ struct p9_fid *v9fs_session_init(struct v9fs_session_i=
+nfo *v9ses,
+ #endif
+ 	p9_client_destroy(v9ses->clnt);
+ err_names:
+-	kfree(v9ses->uname);
+ 	kfree(v9ses->aname);
++free_uname:
++	kfree(v9ses->uname);
+ 	return ERR_PTR(rc);
+ }
 
 =2D-
 2.43.0
