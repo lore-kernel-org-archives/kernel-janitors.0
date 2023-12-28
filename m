@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6B33C0B;
-	Thu, 28 Dec 2023 06:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCA55666;
+	Thu, 28 Dec 2023 07:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MhX+D4dQ"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ptxRr5i8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703745568; x=1704350368; i=markus.elfring@web.de;
-	bh=CQ9zUoeIIRPWlBOHSTjI21uVE111Q+XjbfT31zxGskg=;
-	h=X-UI-Sender-Class:Date:From:Subject:To:Cc:References:
-	 In-Reply-To;
-	b=MhX+D4dQaTRR+Wp4MmEKg0TlR/voAK1KawY4y0Kmtt1iRjc96BYEgrsIyORIW42h
-	 BGj8vESq1+qATcYA4GPesp5Ni6H8/vmpKUXqB9nBmeWedZRgER7MDdqeEaCEKkLjT
-	 r+QAM4n8nVGpsUinTQQ7r2HyUbhd9/k/m1AwVuY4p4IU4FnB8KUdi181SvNjYrjBI
-	 6lm00WQHe7CmxrvIbSJ9bUWnnk3SMpaXg7tB2Xcz4/fwqjNCxpWNl13AO+fl17/XD
-	 Kr5TwPX/ZKlYa8QwUA44tKb3yEDveRC4nmiPmANceRQ2jqc3XaUwjRLX1545Ihkwm
-	 Q++93rc6AyyrT/kZ+g==
+	t=1703750200; x=1704355000; i=markus.elfring@web.de;
+	bh=q8LQkX8WL0q3ovc2/HmVfjQfSvCey/AWBJG2oLVNE7I=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=ptxRr5i80CUS53R4ILu8PrPgbo46hMHfZ/sA+iaCGr9Su33ztPyQ+z4Dpn/WzIRY
+	 kvhyiQXULXMpUnKZKXr1uFq4o0eGvRip4Wd8YCuzgFL77mswS4WhsOipzIeFU2CRt
+	 2O1FWjCpO+zHzQDVvU7hrM213LBWbR858Rc/QdDas0nM0s5k47DJ5341VaCc2qHH3
+	 tVtnskOnfrwIwEagqXZXQhGPN5PYw7c52k7jna+GFpQeZ2Hr2kxd6LajbzQ65k4/y
+	 QYqh9AT8JwqGXiDoLas5rQT1IaE3pu/LbJMXmpFQbouxxTk4wapUxttHt5FoL8LdA
+	 Gs88uK2PSl4qc+2OpA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3V6G-1rJIHV3Y6U-0015Fq; Thu, 28
- Dec 2023 07:39:27 +0100
-Message-ID: <a206cd2a-03ef-4c8b-8f8d-635e8a02e72a@web.de>
-Date: Thu, 28 Dec 2023 07:39:05 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGQGF-1rSMgn2cqT-00GzyC; Thu, 28
+ Dec 2023 08:56:40 +0100
+Message-ID: <5db36d2b-afe0-4027-b22e-ded163a409be@web.de>
+Date: Thu, 28 Dec 2023 08:56:38 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,65 +30,106 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [09/10] clk: ti: Less function calls in
- _ti_clkctrl_clk_register() after error detection
-To: kernel test robot <lkp@intel.com>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Tero Kristo <kristo@kernel.org>,
- Tony Lindgren <tony@atomide.com>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
-References: <b11039e4-69c6-4247-b4ba-c442b9427231@web.de>
- <202312281350.5H2Rhh67-lkp@intel.com>
+To: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
 Content-Language: en-GB
-In-Reply-To: <202312281350.5H2Rhh67-lkp@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] platform/chrome: cros_ec_i2c: Less function calls in
+ cros_ec_cmd_xfer_i2c() after error detection
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DvP9z21vMsNBbQJt43X0o5GZcDwyooJWWYTx1miGfTsjAJDm9kX
- RMebBTOHOA/Y3UiZsegNNb4nbDoTDKwVi0QdLSK6XEeeyN1oRCi9kvtfm6R64pnj8aIVPU5
- D2HKwNGODLa8Vy4H7ZZ19kK9AxkOtD1xF5e7cTM+zzDiBUND+dbS0qoh71szBUmd5kZB96I
- hw0NGGO6aEgwgeIMt86sw==
+X-Provags-ID: V03:K1:i3MXYHdK2HPaWLop5uSkw24RVPcYPI6DyUco+noAgA7fgxbj0ZP
+ vPWTFh4o8cLcjZkOlDl7OmmTnwkkAhL8Oey3a5GSdD9nuEccMJFBXp7RG53Jp1m66mr8LTU
+ yvyYJda07b4I0Ooj+ZBt2OtGDK/rN6lNCPteRh2x2AgErC6u3VhSmCsJUDkm0UUhgB87wqq
+ /vzHvHZOqrtbQT9HhNZcw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:irS8BLfZwbs=;nqFf8TNcswZcxiA74aGtBUelV4W
- wPLFUNj9Y5LCKpgjRB5FcfIW56ElQ2n8No3Mz0qJmsKp7CJTLkGYPA+OKoCoDg99e67nykupF
- KpSV+r9k/fgCBat89n4CP8H+7w79DCBYKDURZWt5zBtFidlVEjK0KKUmx4F/fxnfcEw+wAuAg
- +J/KhYxaeUUlpbKvfA8pl1fDhWNUXnpD5x8x5PyQJVJwrWmFQJQWgB6gHF5e5tJpeVyEZDse0
- R2RMejLFBPLRr9XhrjsoRoEvWUsyLHcC+qRUe7EiFbQg42T+leSxKxNL0gHU+eJYOW5n2w+DJ
- gmDXRrqW99b7KkJh7WghhGBTJfbLiAo6shHSYtBhI6aWJtdvMXHTPoSistUCaP4Jjr8JwB+Hq
- A5qwohRaRlRXjCYWTxeh5A3+NeLkfYh0hJQIUEZ5YnkgxaZn9498LoIzj+ofmKEmbAkGVgN4W
- T37J+49AylfFtk3Bcui839UNbY3dJUAloHJ+yNQoRn7q5Ru4GNQGwX1Pw/NybnUTV6lNX2bf1
- G9koHh6MOi2mqgnJabHLBw7dlIJC0rV8cx2GNt++KewuO5BJLC6aniPGq3DLzyneGvNXJPtSR
- lzaS3OeGTLBbxt01C3K5ZQdtTrj5ZIvR1cCuzcbajtnrfrG87LozgIsgdcP6pRanPGt8GM1Zn
- k/L9rJ3zWGA5Uagli3s5EDjwL9NMBXaGiJzf6KqRtsQd5np3mppA4fdlnWS66/MdHNEJpMna7
- uNKF4L1v58q+hMMzPASNSRAXz0REqmImEIA7jUQe9uoVhgB7C3DuEp3AECTy2epta5GY38U2N
- yTyWJ0nqdzueADSiiqlxcbki9v+267z4ZSnfUyxWl1VpK3tQP/wovmKSXbfhmmcCGhKJxtGE0
- PJLzpWLAJiI+aZf5MNJf2THiWO78vioh01VmY/O2xpT3RC3sEo/ZErIXn4t1c1t5zmKqBVqjG
- F4f5jg==
+UI-OutboundReport: notjunk:1;M01:P0:mA7BOUGQ7iA=;EGuXqaI3Y1WHScJysMcyY4dztiV
+ 1x9BrZAZgJ7f6W9OqI4alz5YS4wk9bqfDCL4AEgml+vEplXy9NFNLxmrKpjc6+p9DOfwEHT5S
+ 2o7X9SaPf1neB5JX9DdOLGoNS4BnOhb1MSRm2PBLAexz4yoVgYK8HoLO7ROxYVorxGJMfXUid
+ v8H5JCSE5tNBGNeWiRryZ6zlxCvLdnmdG0VxMyf7j7pUkaGJXbADDeJRgXLAp84OnFldTnGzC
+ 7EMMAlVk8rdm4DnunYDQ23uUe7F9MybNtE713N9YoilRrb+Wvg2P3+VRMjpFyDwlkvGzJ0R8C
+ FNUl8fGTGtPvxnK/buJWtPLgTmUVfz8DItiffW7PA8ucqNVeuMEL9fRFeWF9IeJwPxvduDKLg
+ 6uPSPEQNei74EkzSSuJgnkYieTXAUy5yfQVejOFroYvIxydj/6p4727nF56IRL9njZzzqusoH
+ jmNfzbt/hHePXqhee/K9RezM6RMtyG6sdQKtl/NOHefIYSZ4pX+TrqpXlCURn+kYufyEmO6r9
+ aa+IvagxEyiYZu7NJN6m8lsPvyfyIlX0IZt5DJfUjFZ4HAwyFKup3boHZpUupuoq8WXSxAZ2p
+ gh5uMz5QjUkrkeERkGLenAR7PlOaYkVguGIKaJTd7ncCTHVYlS5jCt0uxMlC9vhJhyvah+CYM
+ HwJ12PZ5sQ/1avh1wEiKQc3FyDpGAa0SLLBGyXM4tZxGwHxcgrgPwrwTFczThCEkFIZ+iHTJQ
+ Mlc+e8oKQ1Ksk1lGAO7J9XzQvB52hu4tI+GLVbFtkq+YdXVF4KgJKE44HrU17vpUYQedDV2o0
+ mzLw4Tr+IvLUWMB3uSfm0yQ+AfQos4lKzw7UT/ogqlHfLZeKbuWA+FZ49IN1AZxJDxtAguY+7
+ 4cKz9/X1WqLE3WqZAUYYoxSV71xoHjkJNX2L2J9VpMoQ6E444P7/wG5txNlIk5RU+9BEFDfSt
+ HeaAetIoK2IJnjLXL7OcrTxzRIY=
 
-=E2=80=A6
->    drivers/clk/ti/clkctrl.c: In function '_ti_clkctrl_clk_register':
->>> drivers/clk/ti/clkctrl.c:330:1: error: 'free_init_name' undeclared (fi=
-rst use in this function)
-=E2=80=A6
->    328	cleanup:
->    329		kfree(clkctrl_clk);
->  > 330	free_init_name;
->    331		kfree(init.name);
->    332		return ret;
-=E2=80=A6
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2023 08:36:49 +0100
 
-Will it become helpful to fix a typo for the delimiter of the shown label?
+The kfree() function was called in up to two cases by
+the cros_ec_cmd_xfer_i2c() function during error handling
+even if the passed variable contained a null pointer.
+This issue was detected by using the Coccinelle software.
 
-   Or:
+* Adjust jump targets.
 
-Are you looking for further adjustments according to software design optio=
-ns
-which would be supported by the file =E2=80=9Ccleanup.h=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.7-rc7/source/include/linux/cleanup.h
+* Delete two initialisations which became unnecessary
+  with this refactoring.
 
-Regards,
-Markus
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/platform/chrome/cros_ec_i2c.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chro=
+me/cros_ec_i2c.c
+index e29c51cbfd71..2a6ec623e352 100644
+=2D-- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -193,8 +193,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
+*ec_dev,
+ 	int i;
+ 	int len;
+ 	int packet_len;
+-	u8 *out_buf =3D NULL;
+-	u8 *in_buf =3D NULL;
++	u8 *in_buf, *out_buf;
+ 	u8 sum;
+ 	struct i2c_msg i2c_msg[2];
+
+@@ -210,7 +209,8 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
+*ec_dev,
+ 	packet_len =3D msg->insize + 3;
+ 	in_buf =3D kzalloc(packet_len, GFP_KERNEL);
+ 	if (!in_buf)
+-		goto done;
++		goto check_command;
++
+ 	i2c_msg[1].len =3D packet_len;
+ 	i2c_msg[1].buf =3D (char *)in_buf;
+
+@@ -221,7 +221,8 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device =
+*ec_dev,
+ 	packet_len =3D msg->outsize + 4;
+ 	out_buf =3D kzalloc(packet_len, GFP_KERNEL);
+ 	if (!out_buf)
+-		goto done;
++		goto free_in_buf;
++
+ 	i2c_msg[0].len =3D packet_len;
+ 	i2c_msg[0].buf =3D (char *)out_buf;
+
+@@ -278,8 +279,10 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device=
+ *ec_dev,
+
+ 	ret =3D len;
+ done:
+-	kfree(in_buf);
+ 	kfree(out_buf);
++free_in_buf:
++	kfree(in_buf);
++check_command:
+ 	if (msg->command =3D=3D EC_CMD_REBOOT_EC)
+ 		msleep(EC_REBOOT_DELAY_MS);
+
+=2D-
+2.43.0
+
