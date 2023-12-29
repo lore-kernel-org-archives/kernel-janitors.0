@@ -1,85 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7217F10A09;
-	Thu, 28 Dec 2023 23:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492D317D1
+	for <kernel-janitors@vger.kernel.org>; Fri, 29 Dec 2023 01:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI5YX4Wz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA423C433C7;
-	Thu, 28 Dec 2023 23:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703807788;
-	bh=Jk+86/S1r/9V2CpRQH19M/qyIpjTHBmRL8QPPZUddQ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eI5YX4WzZ1aVG3cwph4pUwkL/RRMvI1HF7KysTFE7iREGtNgyIlv1lhdrC0nJBoAy
-	 srGswpzMWHOes0FU9P14RrEaX8XGyz/y3UHtnvMr2ulXTei7qXpM3hcuwySJQhqCIY
-	 DZdUImJ6o/DHFLtQQha/Mc1eNWG74BBxciM6VuVunD58olbeT+aYjcOLZ9TKVn26Os
-	 e2Kq2zOlPxEqeRnQ5xlQsIqTOPrM9dEAv4dsxime7QbRXtBxWnZ+jG15yDy4jVzFNN
-	 KjG8RHHyBZzrRL2ARvK7USq4H/DV+EegM9znlc0iz4r7G1jdUOqIDNUuRcgS3HHsVO
-	 MXFnZTVjkIAaA==
-Date: Thu, 28 Dec 2023 17:56:26 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Daniel Stodden <dns@arista.com>
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Dmitry Safonov <0x7f454c46@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
- switchtec_pci_probe()
-Message-ID: <20231228235626.GA1559849@bhelgaas>
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="JZIN6RQL"
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3bbd1fab03cso763984b6e.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Dec 2023 17:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=google; t=1703814004; x=1704418804; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X83wfcIZjdEzwkgoaoOF5TgcwBhLow4MMDfeVCMjkfI=;
+        b=JZIN6RQLPwWPrNYejknxjeb3NsRvRn5EOS6CM4zI6ZQ0XqQneJr6Fi0UENAed7XG6I
+         YwcBno33XYUt1huylG1ibVDWNSQwuwWR8qycMDQOikLeHCM0yqUiqpZWthLGymoRc9L0
+         werbAd1WSrGY1C7RHyU6vh0y28I1L7l52d/5E2n7Temu1EMFF/xFt/gLHzgpuSlsp3Dj
+         mMHOBYCkKTAFAhaQFSprsR+DWVIJJc5mM8Goq9/1IAzgMdIZh2z7PmOgWYPtfwn1537F
+         ZFIe0dXG3y7wULB1TKVqj8GzuNpBhSZNEe4A9LbtvoiejZJPWCtz2McRomeM5DsqeUI3
+         i4RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703814004; x=1704418804;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X83wfcIZjdEzwkgoaoOF5TgcwBhLow4MMDfeVCMjkfI=;
+        b=Cb5fMGCSeeeCnzxm4Te4YU8jXox1XTNmquDkSIsc4F++bRwJGMTKAhvZckWuxlBeHe
+         yEcR9tNHt7HkNyPaYKTR4idgxM5uIxvv9VuXyMFEv6O4XLW46GOnyP2Y7ggNRN5JK9xg
+         4mJZZJ0W271hQZGx509HdsN980BGOUgoKz2kANfg/PDA5OVahJ2QGaOHwjVrkMZy/lEx
+         KtxBfbbMpUxh3eW2MKXH13vXiGkVhBn2mxTk3tT09E/hOyWVwfUAu+eeWVRrPs2hxG1B
+         6DKlaFXWhMiHTu9peRpHFtVjB6Fflku8kfvgDvq9OnooKrcFoHd/fyJ90XCMVM4vPvT4
+         zzoA==
+X-Gm-Message-State: AOJu0YwyJ4FtRzcaDqtsth2kmPclAuMnbeLFn79oRDHe6I2FG0MFxXHi
+	AeY9wt2mQGJr24SlF7qQ9Bys4BKwsKE3
+X-Google-Smtp-Source: AGHT+IGF60wU+mSoalWd6UHlhEo308YpqtgcdbGQB135dpTj1IDi5N7qX5FYXhcD2SQ93Jv2z2NSnQ==
+X-Received: by 2002:a05:6808:318d:b0:3bb:a777:e891 with SMTP id cd13-20020a056808318d00b003bba777e891mr10630353oib.104.1703814004373;
+        Thu, 28 Dec 2023 17:40:04 -0800 (PST)
+Received: from smtpclient.apple (76-10-188-40.dsl.teksavvy.com. [76.10.188.40])
+        by smtp.gmail.com with ESMTPSA id p2-20020a056a0026c200b006d99170ab87sm11391939pfw.182.2023.12.28.17.40.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Dec 2023 17:40:03 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01446d2ccb91a578239915812f2b7dfbeb2882af.1703428183.git.christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
+ switchtec_pci_probe()
+From: Daniel Stodden <dns@arista.com>
+In-Reply-To: <20231228235626.GA1559849@bhelgaas>
+Date: Thu, 28 Dec 2023 17:39:50 -0800
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+ Logan Gunthorpe <logang@deltatee.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Dmitry Safonov <0x7f454c46@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A483D7C9-07FD-40E8-93F5-5688AB6C9040@arista.com>
+References: <20231228235626.GA1559849@bhelgaas>
+To: Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: Apple Mail (2.3731.700.6)
 
-[+to Daniel, can you take a look?  If you like this, I'd like to
-squash it into df25461119d9 and credit Christophe since that's not
-upstream yet]
 
-On Sun, Dec 24, 2023 at 03:30:01PM +0100, Christophe JAILLET wrote:
-> The commit in Fixes changed the logic on how resources are released and
-> introduced a new switchtec_exit_pci() that need to be called explicitly in
-> order to undo a corresponding switchtec_init_pci().
-> 
-> This was done in the remove function, but not in the probe.
-> 
-> Fix the probe now.
-> 
-> Fixes: df25461119d9 ("PCI: switchtec: Fix stdev_release() crash after surprise hot remove")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/pci/switch/switchtec.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 1804794d0e68..5a4adf6c04cf 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -1672,7 +1672,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
->  	rc = switchtec_init_isr(stdev);
->  	if (rc) {
->  		dev_err(&stdev->dev, "failed to init isr.\n");
-> -		goto err_put;
-> +		goto err_exit_pci;
->  	}
->  
->  	iowrite32(SWITCHTEC_EVENT_CLEAR |
-> @@ -1693,6 +1693,8 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
->  
->  err_devadd:
->  	stdev_kill(stdev);
-> +err_exit_pci:
-> +	switchtec_exit_pci(stdev);
->  err_put:
->  	ida_free(&switchtec_minor_ida, MINOR(stdev->dev.devt));
->  	put_device(&stdev->dev);
-> -- 
-> 2.34.1
-> 
+
+
+> On Dec 28, 2023, at 3:56 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>=20
+> [+to Daniel, can you take a look?  If you like this, I'd like to
+> squash it into df25461119d9 and credit Christophe since that's not
+> upstream yet]
+
+Thanks very much for fixing this, Christophe.
+
+The fix looks correct to me. If it can still fold into the previous =
+change, all the better.
+
+Best,
+Daniel
+
+PS: without trying to complicate this thread, does one know idr.[ch] =
+well enough to state
+whether ida_free() could have gone into stdev_release()? The way the two =
+idr_free calls have
+been placed looks intentional. But stdev_release would look more obvious =
++ cleaner to me.
+Was only starting to wonder while reviewing the err_put side of this =
+patch.=
