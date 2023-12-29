@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D81C10A3E;
-	Fri, 29 Dec 2023 11:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E438910A24;
+	Fri, 29 Dec 2023 12:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aJPqrjSi"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cI0HlUwP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703850014; x=1704454814; i=markus.elfring@web.de;
-	bh=UHYDVlvrvWOSRegpd/VlmhDK9J+cjiRSKZxQmGzus70=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=aJPqrjSi6IOnqog50GT0ZJnWPo6T9J/P8/98PMs/aZq9AaqbnbRRFoyxlQVfP006
-	 v5MMUwNFH5OLUzpcsflmb0UvK+VxvwsFMHmVdwYpGHzYBvLI8mubGl/QdyQi9FEmd
-	 QdktHUWIERl4+M/A8klFCm8rl8NvCjxCVV66yBcIj5F7P1RyHMtSea+/010fGLrNp
-	 IIqsp7sG5x0CBBKKJsaQhT6LjbhO3AY583hbHyHRg8ussdU+SWJFl03VURkheIxaw
-	 hRNM0L+xTpiNa9s13KjMsfrj4DqMbVyamEWR6Js0+c5/tzwH/PP91pC/z3w41r2Zd
-	 TiLThe8+2Zy9dCVxMA==
+	t=1703853909; x=1704458709; i=markus.elfring@web.de;
+	bh=2doc9tGjsfe7edwhPQC4ZU47xXYbFltN+jMs52TiMR8=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=cI0HlUwPQrZ4tA+iBLetN47oW3FeYGHfoEFunTLCwjxn424cn8PudYBzWvjmn0lm
+	 77rMZLtgod9cAoRyO7nR/8B8ln+YXaye7LN04bI0vBpm1z2hj+05wRfv1czQwhZ6x
+	 KpsXPTGi9dOaaoeZSjV1yhUu7ApCkClfzzRZK+MuCy2XWRbPWCrSQrMMTNCIFKUwS
+	 jHIID4ohLGA0LR4TWv/v9GpsElevTVmjTTW4d8mmXyhW4yG50eBYbt1xxWYMYmMLz
+	 uv1I+pH4r03+k3r0Nn/gTPuFCWesBojqgLaEFsolsGFWclPXUZAt0/uFb7jG2bhsF
+	 nyQBntz+MRgoCi6qVA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuFD5-1qyVCi3oGz-00uPL1; Fri, 29
- Dec 2023 12:40:13 +0100
-Message-ID: <b109b7dc-3972-4b2e-ae4c-89bf8eecf8f2@web.de>
-Date: Fri, 29 Dec 2023 12:40:12 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1rAZHg1H2f-00zcWB; Fri, 29
+ Dec 2023 13:45:09 +0100
+Message-ID: <bbf26021-798a-41a7-840e-62c8d383bb93@web.de>
+Date: Fri, 29 Dec 2023 13:45:06 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,83 +30,66 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] hugetlbfs: Improve exception handling in
- hugetlbfs_fill_super()
+To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
- Muchun Song <muchun.song@linux.dev>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <9ce3f553-24bc-4ecd-ac5e-7ba27caeff57@web.de>
-In-Reply-To: <9ce3f553-24bc-4ecd-ac5e-7ba27caeff57@web.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] rpc_pipefs: Replace one label in bl_resolve_deviceid()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QPFYYP3aCa+simUrAouMcW9QcK5xtcbjpkdZdiHYFJ+XmWYAPxj
- MAk7mAaomOMcC7dd+4bk3MS+xC1kiLqz9IwL3wFjPXgPy+wVyiqZr1CPu6ie84PIjbVEegE
- aD2E60sZGpEVmu/s0Mm1yTJDgBP0jEAyyFvpfmDrXsbvQjDvH5dII33uoh+IEhUl7LAOb9Y
- B7aEwLeGFLrhd/rtCVCLQ==
+X-Provags-ID: V03:K1:mzRfjuPlxk5vnDVMY1zbfyGBw2FMtZ8FjuEciWqcOhd2mAzhsR3
+ 32CPXaA32iHm7eADhE55jAoL8I9LZn/zgiWIom9+T/i7xy6rZg68GVJkg9MCIJ9gUIiaTaV
+ 9JNvGUHiiDbBhjNnsubnKOCxOFFuAZrb50D3IYBCLWctSAZojveQfL6KcXsZ9dFzSVLUYYS
+ yf6EBJHqp2/QdtqzVsgeA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R9CIMRG8WIo=;I1ZtYzDfS2V0P2/oJTEFDGzc7mE
- waxeyt9HIlp9n4gvok5KWoDW1+h9mpIgpqv2Ie0cP4Vw1waLrSMVN6RObZX4jyCn3vFOF6YqP
- g6XAsPN2GrLIxb59gmwUIO3BLvHWseyR6D4hIVtKMvpLQzNyhnrl7M9hthpRy46Fb3YQoVcxf
- kgL9qQwbSKK89YEpXQ0aYTmI/a9c39lSznzGb1xVGaqDoC633AIi+BF3Cl+37DwbiIuqb54Cp
- 6y0XXzW3diz0T+w9GCf+nTGyhL7FagbzcIdIw7toB8UQ4r5TUo0TKnl+QEzyo39WdiythCO/U
- BZNzTgh8ha4XvlOC3m7W4sMAvjHkhSL5LqENUMZDxzz9L3+PEHVKY5irR4+objIaAj3n3zKIZ
- 9/aC1SjFl/yQKOWLSPZxsZoBl6KFdU0wPHCbE8+hLHjk+ylv1oaPgGtcOY65Sw8TcDsk5KKFw
- FUHVwzmu0DMshBq8eB0LZ9ti3nk8C8IVoUkZtV23Gv/VvV85WVeikZy3bjedcEKOHzA9q01AE
- whGROhfkz1oSCwb2JEkTMYL35qH9YxeUwZWKwAgjf+2aiE8fnyGmuO5JOvtX/96QbpDKPbUJZ
- IEN0D+XErBg1mOZPprVfcTWqewzsZ5Q/qloNch8itL3Y58JH+KwRrc9pcugxVj9nrG57C+CLW
- nl0sZ2rl64GoRN5nSZyKgikgyBUkYBSpp9dExGyIgaQIkI0p3m1gr1sAbUqyZLIenau0JSnZj
- En4Gy9iGOpAIcyVrtxvJmnbDXM93LVsWBoUTjoUWLphEZHshMdckGT9/EoU7T7Pj87PjYfwWs
- cESdoxfqo+UI+nRTrzkZITwVkDvqLClv4TWLigVwgXZ3Wivr6X3NwLC67NGsIOtXMRfxrheqv
- sAninmNQwYMjP/GiOE53yfyOusvU3rOUpngN44XCAZNZbgrd0U82a34bT8gNS3LVkY/ENuqi8
- AJFvoA==
+UI-OutboundReport: notjunk:1;M01:P0:Qk1wAC/EVyA=;QgxENkvTw9f67KNy9dBqhxqTxae
+ InW4/60sWTufBIVY95K8s+hZyRHwyH+CWQWq+HZz+DtZuvtT8gQZ5B/4o+G2D5oBh6es8LJR0
+ PzByYQ0oRiDHjz88YbwOJ8aq5xsQNtJ4BP/WhDmNOe14lbLsL0JgyHGNs+PJqAcvATiwyA6qO
+ kSqYH+cYTzwVnzJgKtb2OoXOHVvIbR8MI8nCL9j3jTJKvecNqFICGdUwGW1AXG+m3wcwBsfI8
+ aCTXDopKSS4armUoyJRfrEcSr2CLYXMT7SiO1TyErgS6pmrYCHljh4b9B6k3/cIkPqKnV+6pJ
+ DzG56g3il8tSmx/n5EbE6cwt0YnyeXP5qpogvSKwdM3KiN+ixGZRprTLXj3jm4vk8w7ZnLi3G
+ ewPhfKqlq/lsdbhknG1JV6NVCbzDXPstZnIF0gVB8slkXwfCGw1NOXP4ktSKpp5SenDMY0Vwe
+ 8V0GYluJDQzNSMp9eZ6j9fHBwNxAxInKIKc459IG1hZV2CYGMnMw1rgipTF8pA/F9pTZQ8TPQ
+ g7PFmuHOqouWZAnhXN1ryrjhbcsgLFwOf0Z8Gc1OEBHcBk9LGuFspjJpO+h4nE7UKGxEWPD5W
+ DPeWnnLOpDIDuRRbmTwoVKVO18yXQjXoUKTh/B9/8ajzeZluLpkSPz0MO2Z4citqgI4mab/Wi
+ 2n1+W4Dm6YiN89qpOdCMQ4pOoqwDrKxyGATPxvu3IbQbN2yzVhiS11zQdYrwYBZnbbVmnoCCc
+ OAhxrSJkg45QP/eK+EHkZQdWaOsYxK4pfiOCVHSoyjJQW2f/VK6tYupoUYNfx4qFvDmAUorcz
+ b8oSt7e+nuGUB9HlvFu+ngZiNxSedmUFK2uhcbDiDnb9j9Ywll6JO4eevAQoQ4ExqeK3Id68J
+ rkg4SHhFcNWtAggKBfkMrZKDMWIxJHVF6iDL5xPUWhqGCer9zTVO1NYo+Dw/9fHZpozA/wdgr
+ XPLEJw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2023 11:46:32 +0100
+Date: Fri, 29 Dec 2023 13:18:56 +0100
 
 The kfree() function was called in one case by
-the hugetlbfs_fill_super() function during error handling
-even if the passed variable contained a null pointer.
+the bl_resolve_deviceid() function during error handling
+even if the passed data structure member contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-Thus adjust jump targets.
+Thus use an other label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- fs/hugetlbfs/inode.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/nfs/blocklayout/rpc_pipefs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 24401a5046dd..5687ec574dc4 100644
-=2D-- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -1483,7 +1483,7 @@ hugetlbfs_fill_super(struct super_block *sb, struct =
-fs_context *fc)
- 						     ctx->max_hpages,
- 						     ctx->min_hpages);
- 		if (!sbinfo->spool)
--			goto out_free;
-+			goto free_sbinfo;
- 	}
- 	sb->s_maxbytes =3D MAX_LFS_FILESIZE;
- 	sb->s_blocksize =3D huge_page_size(ctx->hstate);
-@@ -1499,10 +1499,12 @@ hugetlbfs_fill_super(struct super_block *sb, struc=
-t fs_context *fc)
- 	sb->s_stack_depth =3D FILESYSTEM_MAX_STACK_DEPTH;
- 	sb->s_root =3D d_make_root(hugetlbfs_get_root(sb, ctx));
- 	if (!sb->s_root)
--		goto out_free;
-+		goto free_spool;
- 	return 0;
--out_free:
-+
-+free_spool:
- 	kfree(sbinfo->spool);
-+free_sbinfo:
- 	kfree(sbinfo);
- 	return -ENOMEM;
- }
+diff --git a/fs/nfs/blocklayout/rpc_pipefs.c b/fs/nfs/blocklayout/rpc_pipe=
+fs.c
+index 6c977288cc28..d8d50a88de04 100644
+=2D-- a/fs/nfs/blocklayout/rpc_pipefs.c
++++ b/fs/nfs/blocklayout/rpc_pipefs.c
+@@ -75,7 +75,7 @@ bl_resolve_deviceid(struct nfs_server *server, struct pn=
+fs_block_volume *b,
+ 	msg->len =3D sizeof(*bl_msg) + b->simple.len;
+ 	msg->data =3D kzalloc(msg->len, gfp_mask);
+ 	if (!msg->data)
+-		goto out_free_data;
++		goto out_unlock;
+
+ 	bl_msg =3D msg->data;
+ 	bl_msg->type =3D BL_DEVICE_MOUNT;
 =2D-
 2.43.0
 
