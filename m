@@ -1,39 +1,35 @@
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5989211720;
-	Fri, 29 Dec 2023 14:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D911C8B;
+	Fri, 29 Dec 2023 14:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YEA3hGyp"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O2/kZo7k"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uia/OcVw+8oMM3SlBscvdoKEOngf/xeuNs9EweFJQFM=; b=YEA3hGyp+SRej8VlBz9cGVs5YW
-	SUeiuyUAo3+t+++F/b0sMxuyZUmDKTElyd08c3NEhOjSDRB25MUOXSKBccqYWtSepYKlLO5Ky9ont
-	/jpzc0QFoLrR8j+NPcLqUX+vAQvPrkY23U5yA7KyfBbLkFcf9n/+P3MSHeR3fBS6rcYPY8ENZLViD
-	ECb/ILnN6bFBsexb0k8jI8i1sw8OihCB2TEpnRVtRwRaw7drw60f1UBDheSFlXBgmboGTffc5ol6H
-	FgLcl9+dLahzrCWPsnzu4ChsT5CZ6t67njCrYglE88v69tamcFmLhG65t4OGdrMdAa88XYoWkAKwH
-	PzTuEp6w==;
+	bh=TuPgDojPHKw6CupQJwG5ikeXW8l957Szqc5prQs1GYE=; b=O2/kZo7k8MHhbMITfFhsRHEtGN
+	SSg362JTpWehiBgATb5XQbubnuuFcdIT5HYWMYgG/JMopjWjU3j2GAyLYm0Ktxl4fIFtdJJsUeTc2
+	H56iyH8WAyeRr/Gfq8HgnK1dQOVoir4xBUeaddBW9U/Lr+Jt91O1rAKyVX/Fv+VhfC/qmwSyLW0Dj
+	MSKBoRQQqMJMRJ12NMT2Li3XHY3Qm0ljB+hZ6anHWhRIuWP0UC9W2+0ERjW3727M6fZRrWqC2nO2F
+	S/+M6rLLRc+rNz4m9UZwegWEG1DQrqE/3CXT6zE9QnFUAXo4MsvEFRkNtnKRxC+JzM8syg0KejMtL
+	6hgvC5Ig==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rJDkB-006GOp-Cc; Fri, 29 Dec 2023 14:21:47 +0000
-Date: Fri, 29 Dec 2023 14:21:47 +0000
+	id 1rJEDR-006HV8-I8; Fri, 29 Dec 2023 14:52:01 +0000
+Date: Fri, 29 Dec 2023 14:52:01 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
+Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+	Muchun Song <muchun.song@linux.dev>,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] virtiofs: Improve error handling in
- virtio_fs_get_tree()
-Message-ID: <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
-References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
- <5745d81c-3c06-4871-9785-12a469870934@web.de>
- <ZY6Iir/idOZBiREy@casper.infradead.org>
- <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+Subject: Re: [PATCH 2/2] hugetlbfs: Improve exception handling in
+ hugetlbfs_fill_super()
+Message-ID: <ZY7dEbRJb1dHkQPd@casper.infradead.org>
+References: <9ce3f553-24bc-4ecd-ac5e-7ba27caeff57@web.de>
+ <b109b7dc-3972-4b2e-ae4c-89bf8eecf8f2@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,15 +38,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+In-Reply-To: <b109b7dc-3972-4b2e-ae4c-89bf8eecf8f2@web.de>
 
-On Fri, Dec 29, 2023 at 10:10:08AM +0100, Markus Elfring wrote:
-> >> The kfree() function was called in two cases by
-> >> the virtio_fs_get_tree() function during error handling
-> >> even if the passed variable contained a null pointer.
-> >
-> > So what?  kfree(NULL) is perfectly acceptable.
-> 
-> I suggest to reconsider the usefulness of such a special function call.
+On Fri, Dec 29, 2023 at 12:40:12PM +0100, Markus Elfring wrote:
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 24401a5046dd..5687ec574dc4 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -1483,7 +1483,7 @@ hugetlbfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  						     ctx->max_hpages,
+>  						     ctx->min_hpages);
+>  		if (!sbinfo->spool)
+> -			goto out_free;
+> +			goto free_sbinfo;
+>  	}
+>  	sb->s_maxbytes = MAX_LFS_FILESIZE;
+>  	sb->s_blocksize = huge_page_size(ctx->hstate);
+> @@ -1499,10 +1499,12 @@ hugetlbfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	sb->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
+>  	sb->s_root = d_make_root(hugetlbfs_get_root(sb, ctx));
+>  	if (!sb->s_root)
+> -		goto out_free;
+> +		goto free_spool;
+>  	return 0;
+> -out_free:
+> +
+> +free_spool:
+>  	kfree(sbinfo->spool);
+> +free_sbinfo:
+>  	kfree(sbinfo);
+>  	return -ENOMEM;
+>  }
 
-Can you be more explicit in your suggestion?
+This is more complex.  NACK.
