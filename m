@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE35FC04;
-	Fri, 29 Dec 2023 09:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D110A00;
+	Fri, 29 Dec 2023 09:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l07ZjodO"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w/0Mlf1E"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703840428; x=1704445228; i=markus.elfring@web.de;
-	bh=BTlTiw3od+zRvZkdkmC/usfjKGkFNJTzefXH2qefj40=;
+	t=1703841009; x=1704445809; i=markus.elfring@web.de;
+	bh=kwp02RABdJCyZ3yl2RoylrMKne6oKDRA7rQaRstQKcg=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=l07ZjodOoyATj0Jz/jD/neCa3r83waQzBb3O6X6Ar6X/kjFiMlYTtThb+0hZs3pV
-	 KyWXSs4Gd10EoGVlObSfKi6cS7pvrjcwKpuE+UKy70ZK7i3cTxJRiCkBqP6wpyeba
-	 Ry2mM5gMrMQNlxR8GUMx6hVNuYODTJab68JQuRjZ8geowjeBzlTAcBO/stTtjOj2u
-	 gvSMa9eKT7G/Jf5bYElrjDS2QiJN+zypZDB7EZQXe3XPTenNys3EmSkkar6onobRX
-	 32Bd5MTA1QwMEMr2BX6QQFhzLOaAZzDCG2fk+2ekQhcwmGgxGxzrazmUGPGYzZgLg
-	 xD7aUEt1r64jlBhHvA==
+	b=w/0Mlf1EnYN0Ur/89VJwh68FifaYEyxE28/oywR0ACikQKiPGrV1BWoEH/X9HPS1
+	 LaspxeVbe1bPLRS4DMYi7uMRuzUc4A+GqZpnzAxTYS+9+Q6G6+NlSw4XYqsP5Y6OU
+	 kOwpyVxZCd3zjrzUd4yyu0gf2kHUc59AJXDIuZx5mAWe1gk8rEREY3b07MTn8xa5b
+	 i33jOxc/FZIQ4ThGMf48a3xmaJz6/1e4YGpsitX0jQFfBQi/poRpA4/dK1N7ZNO05
+	 CfM95utptyKXMkDDMpgzdd5gJFQs1yDcwligZTE+US9XRkTsW/fZjc7LWC/oCCdbW
+	 lkWukxTIcwOMi+f2wA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeDQZ-1qiQrj2X4R-00avGO; Fri, 29
- Dec 2023 10:00:28 +0100
-Message-ID: <df72e6dc-5d4a-4101-9366-24a9166ec9ba@web.de>
-Date: Fri, 29 Dec 2023 10:00:28 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1r7GrE367x-012vCR; Fri, 29
+ Dec 2023 10:10:09 +0100
+Message-ID: <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+Date: Fri, 29 Dec 2023 10:10:08 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,47 +31,57 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Input: MT - Return directly after a failed kzalloc() in
- input_mt_init_slots()
+Subject: Re: [PATCH 2/2] virtiofs: Improve error handling in
+ virtio_fs_get_tree()
 Content-Language: en-GB
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Henrik Rydberg <rydberg@bitmath.org>,
- LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <5088a905-4f29-41d3-a96e-5b66aad551f1@web.de>
- <ZY54hX3VLswwKgMH@google.com>
+To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
+ <5745d81c-3c06-4871-9785-12a469870934@web.de>
+ <ZY6Iir/idOZBiREy@casper.infradead.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZY54hX3VLswwKgMH@google.com>
+In-Reply-To: <ZY6Iir/idOZBiREy@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ygcekGhx0S1ZMtT/mPQnzee7NC/ULw8FHFpKluylUlAMwneyvoQ
- 5o8HMnGrlADOZSswpOTbLmvctCdDNHiRBDhdDS3I2iHQ0v1BTPCJZyIoDamFp6ebcKAR7Wy
- nOiGeAVSznZ7hjYAbm3Q03BRREJtYMDBnl+lEQWAIfqQIR/iymG8ooWQvjsSY6KwJIHPKr5
- VklaoYKooZsxs4PLYqQeA==
+X-Provags-ID: V03:K1:t8qsjc2WYogtClPaVEvIXtsNeBDm8MJDsW4YwyyK3rWmuIV3a4J
+ QlQx/LBSww/zT37OmCIC+b+h8eAVMaxvyCeDWDe1qh/JuvcJmdUXVXLRZSsXYgTylyS0tex
+ WUUn/LBa8ZwmfWwBQXUfadtxSklkmuz6ADt8brttOFiBPPT2QfwBts0LCPPzTpdXhgGQVrb
+ Yc+eibgoW9zVV2le4L4VA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:arcw1lIPLVs=;H0swndXBK/ormHQV4YcjXhL/wzf
- eW7hTc/MWZK7jSd8+Ns9BN8ysD2VbXhpWKai2/JclPXR8UGH6fTgOa42TS5Y0fjCr9lm+fPX3
- wjJWPMFrT1h1BSreFjRFYBQbafgT0GLHXeHGcX7zHz3xLMx3swPu4Fl9/tDDc+9X66ItGnVkd
- CIUJ4E/OrBPcHyAxkv5YoBDEWLhEKyIqwQ/gbiIyxOt/2YpolnZ/oUJ4dNi7Wc9QVRdwlVwG6
- yj1SSlTQPsLU9h4vtcs/wKdm2A7j6O0HJMkIy5SHdxfYNn3ONwcsyELlKD8YfJX1rdgIkBndx
- eilSOK9nmzGN7s125FzmiU6CiwUY0U4Wz3uJTrGyfD4j9ghB0rHOC+F7rpv/0Ib+UFDhzk3nO
- pbNWbowDg9994ZULfqZOMHiMl4N6WKc92oYXvWtoc86deNrQu68EKrqX2Fx2thDfNNw6BIddp
- Fh1e16E7w4of37XGOdNeSVwBlJdo1SVaTyWaGrLNx/DXSCFTdWbHD6W/l+w8MEKPUNQuzK116
- 1JUeeAredBclUWOVW3MuhVt8C+bhYUVjAvFBwxTMT2xyXWS5PpZ0+JYFXPR6RazTnt4NU9u+B
- sYlovPS9FBz3WhIATK3o0e7OdoQ/ol0NZIxogIXyguai5Msl8eEQB0CZmnv8jDCCbYS0Cm5DD
- 7+/KOYRdM5VVnz6c5CN3bgDKB0PVl5MkPgqyBc0hhLBLVaUF5RCuyN5yC5zKa1C/LHn7CWlb0
- m6sSlqd8Ba1rTOsBs1iPxrhNZ/ceZEMhN1geabTeWrLpc4nuspvz8boihZ1dbnDedgI+uASw+
- 5tr8Doyth3HpEnC/WEahnYzOPK9zPsIrw3E1YU2VTwLGxUmSzq/4mcdgci8e7P+76Q251AAHd
- jdSPzTx0tfKxxdj6DEXdgNpFSdmykqT74MMuFH7JkPa9zekYr6FlGI9fV/TyMlzOagZQ94C4m
- m5ZGSN5qCaPSByYsgUXtjkGli9A=
+UI-OutboundReport: notjunk:1;M01:P0:1dWv8dhDypk=;y5MKr3i2uBTJEttlXgbnMgeGRrY
+ 3Or+GGM6OkF/cGX0FbckdLwIJqkA+sPtuSFEv90y5II1CEPFHlsykumPWYthXiPvi6fCidWmx
+ zuk2lLqIRUmm5nDYPh36lRkmwz1D50xQvzkyx/gHMNFnKjS/DUkHNXw1TG67PBSsc6xFK8r2z
+ AHuswbhFhwdVWfk1Abq1GenYxugBb0HBguYpBNNWEiutYf6HNhieK2efueVqonuJBnBHTr3KO
+ 9R7+A28uv8IWBLECEmQb/fPN2D3Kwycwx4+lm6PBPl5EtqbSTwawM26T5wYKiE4ABMPk6hykT
+ PDvv/Q83HLYoXQeZ5r3dBNo8Rgbya37z3nmO9X9+RGDWAltocxMnLG87pKI7LtYJdy0QHxNxm
+ yrdxUDK9CNQHyorZzCzOz42857LRbJz2mcX//ffO5TIKkOkraXRUNi2N5oHLKMKhudMXjEWQo
+ YVytx2w63SUXoC6YXlWxI6SkgCO2pOkFkag5Z9BKR0zpmH3iTidyF7ZLHlWldxrTH6O1AM8vX
+ /jQGx6CN6X1OcTrJA5Y/za03MfacYrSy8cn2QX0FwgkzTfhAlnkdRErrdCD4wfq4XLItE0hwX
+ PKF4XVyLcVgzBb2RcJSdr7VCU2WrIef3Xej36/CALQGGlPqCOgthpPIqh4ZMOCS4zOp8MvM0w
+ ysPJkzHyTdfWk/q0ngJlZeVGpc6Rmh4R7ofkpCwFuQO14nrQIraKC5Wm5FnaneltZTMh9rPHD
+ mlGnQYcnQwtZz4UF/mYUQL5ywnU37jbSK1CtPPigiUtYGTAckNQ3znAVeQQHR3fTxyb2M9m5r
+ nUWLPOlRgtyIt67JIGSDvj6GT6J4ShsRy6aptNNbhyaDTjPAjGSb10tvsqsqMIp8q2nTKPOq/
+ goN+6E3Kd09NSHMF5IydgjJUhv5zGC9JiL/Vt4Te2HJZE+fFMjfLUsxWOiGrKamgNvSVgoUQc
+ /rUGAQ==
 
->> Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=
-=80=9D failed
->> at the beginning.
+>> The kfree() function was called in two cases by
+>> the virtio_fs_get_tree() function during error handling
+>> even if the passed variable contained a null pointer.
 >
-> This is not needed. The same arguments as on the patch to
-> usbtouchscreen.c.
+> So what?  kfree(NULL) is perfectly acceptable.
 
-I suggest to avoid redundant data processing a bit more.
+I suggest to reconsider the usefulness of such a special function call.
+
+
+> Are you trying to optimise an error path?
+
+I would appreciate if further improvements can be achieved.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
 Regards,
 Markus
