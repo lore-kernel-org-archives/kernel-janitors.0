@@ -1,96 +1,116 @@
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492D317D1
-	for <kernel-janitors@vger.kernel.org>; Fri, 29 Dec 2023 01:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4F57472;
+	Fri, 29 Dec 2023 07:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="JZIN6RQL"
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3bbd1fab03cso763984b6e.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Dec 2023 17:40:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrj481SG"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5947cf2a4f6so2678607eaf.2;
+        Thu, 28 Dec 2023 23:42:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1703814004; x=1704418804; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X83wfcIZjdEzwkgoaoOF5TgcwBhLow4MMDfeVCMjkfI=;
-        b=JZIN6RQLPwWPrNYejknxjeb3NsRvRn5EOS6CM4zI6ZQ0XqQneJr6Fi0UENAed7XG6I
-         YwcBno33XYUt1huylG1ibVDWNSQwuwWR8qycMDQOikLeHCM0yqUiqpZWthLGymoRc9L0
-         werbAd1WSrGY1C7RHyU6vh0y28I1L7l52d/5E2n7Temu1EMFF/xFt/gLHzgpuSlsp3Dj
-         mMHOBYCkKTAFAhaQFSprsR+DWVIJJc5mM8Goq9/1IAzgMdIZh2z7PmOgWYPtfwn1537F
-         ZFIe0dXG3y7wULB1TKVqj8GzuNpBhSZNEe4A9LbtvoiejZJPWCtz2McRomeM5DsqeUI3
-         i4RA==
+        d=gmail.com; s=20230601; t=1703835732; x=1704440532; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=belYaZw7nnlF1duW1TrklCfu9FOKWDv8WHvDDxzeUJc=;
+        b=nrj481SGXZSBjlF7AKoJ43fmiu3e73Oj6p8uXAJBXsKn8QjcRbM4psCtL9bx+qbjUA
+         XiG2l43elCb9rOOOY0khl7e485KStLjdpisbZWpbCoKgYekvwlfCn4kUV69l6Lwm8z5P
+         T4gJaN907m4dZ1ejWXEjwhDcJnOQLzaHRJCRYBVxZYOoY3JTxsgE/9LLAR0J3KSJ4IjB
+         fCZXMZJHA6PfQLXJy/sIeflLvLAgFS54xxF06YPqx8wAh1dND7Hx11b2F7H4cDLs2SzG
+         bD/et7v3zieNMHzAmGyaLyPF/bewUh8A1UBc8s7LqTWw1BU7UiO8uOEorVS6p0EPpZ1K
+         9jSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703814004; x=1704418804;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X83wfcIZjdEzwkgoaoOF5TgcwBhLow4MMDfeVCMjkfI=;
-        b=Cb5fMGCSeeeCnzxm4Te4YU8jXox1XTNmquDkSIsc4F++bRwJGMTKAhvZckWuxlBeHe
-         yEcR9tNHt7HkNyPaYKTR4idgxM5uIxvv9VuXyMFEv6O4XLW46GOnyP2Y7ggNRN5JK9xg
-         4mJZZJ0W271hQZGx509HdsN980BGOUgoKz2kANfg/PDA5OVahJ2QGaOHwjVrkMZy/lEx
-         KtxBfbbMpUxh3eW2MKXH13vXiGkVhBn2mxTk3tT09E/hOyWVwfUAu+eeWVRrPs2hxG1B
-         6DKlaFXWhMiHTu9peRpHFtVjB6Fflku8kfvgDvq9OnooKrcFoHd/fyJ90XCMVM4vPvT4
-         zzoA==
-X-Gm-Message-State: AOJu0YwyJ4FtRzcaDqtsth2kmPclAuMnbeLFn79oRDHe6I2FG0MFxXHi
-	AeY9wt2mQGJr24SlF7qQ9Bys4BKwsKE3
-X-Google-Smtp-Source: AGHT+IGF60wU+mSoalWd6UHlhEo308YpqtgcdbGQB135dpTj1IDi5N7qX5FYXhcD2SQ93Jv2z2NSnQ==
-X-Received: by 2002:a05:6808:318d:b0:3bb:a777:e891 with SMTP id cd13-20020a056808318d00b003bba777e891mr10630353oib.104.1703814004373;
-        Thu, 28 Dec 2023 17:40:04 -0800 (PST)
-Received: from smtpclient.apple (76-10-188-40.dsl.teksavvy.com. [76.10.188.40])
-        by smtp.gmail.com with ESMTPSA id p2-20020a056a0026c200b006d99170ab87sm11391939pfw.182.2023.12.28.17.40.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Dec 2023 17:40:03 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1703835732; x=1704440532;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=belYaZw7nnlF1duW1TrklCfu9FOKWDv8WHvDDxzeUJc=;
+        b=k0LMyZGHHC5+6yCYQeF14pLys/4UVHbufH3xxdbfNtSZDoie5S02AzvI/QsYleCxH1
+         ddSYAmtjSacLZQufEkNMgByNonpuyOA38OpM4HRk3XKox1hR5+YYdfrUWw419zGwZ/Et
+         qcC95bmQ8wzbQnNTaanR5JBNlL5yODXDF1/wyv5ARsFNaAzrIsINNs0rMqAGYB/6qnCo
+         vkqDlkcXVxtMspPYC/geJBUG/SNQRam514ZSwPjUqgbxS47CQ1IoX00lVza2d1qAsa4E
+         UgD4rF68sOq60qDsgRFSfl+zuhVUxFURAEjc8sFIavotecinefb7QMgN2VdrlArLzRE9
+         0YkA==
+X-Gm-Message-State: AOJu0YwhNFlyypEcX58ibwlHqspNJbX+t+aOvsFgKsvB8PDUObR9tiTP
+	4QQw4qRQG1/UHbxDtEKpPVw=
+X-Google-Smtp-Source: AGHT+IEOnqTVZ1gPw9ajScbpZJ1Avm2rUUVUMeKV1/mi5nzQdguVdREReXdaWJ4QvZ/w7zAipfoY4w==
+X-Received: by 2002:a05:6358:3419:b0:174:df41:a412 with SMTP id h25-20020a056358341900b00174df41a412mr10684026rwd.40.1703835732252;
+        Thu, 28 Dec 2023 23:42:12 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:1995:632f:ef1e:946e])
+        by smtp.gmail.com with ESMTPSA id y8-20020a17090a784800b0028be9f86701sm15080059pjl.38.2023.12.28.23.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Dec 2023 23:42:11 -0800 (PST)
+Date: Thu, 28 Dec 2023 23:42:08 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Oliver Graute <oliver.graute@kococonnector.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	ye xingchen <ye.xingchen@zte.com.cn>,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH] Input: usbtouchscreen - Return directly after a failed
+ kmalloc() in nexio_init()
+Message-ID: <ZY54UDosMHwj6D3Y@google.com>
+References: <9365c845-baa1-44d1-add9-ec8ca4d365eb@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
-Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
- switchtec_pci_probe()
-From: Daniel Stodden <dns@arista.com>
-In-Reply-To: <20231228235626.GA1559849@bhelgaas>
-Date: Thu, 28 Dec 2023 17:39:50 -0800
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
- Logan Gunthorpe <logang@deltatee.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Dmitry Safonov <0x7f454c46@gmail.com>,
- linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A483D7C9-07FD-40E8-93F5-5688AB6C9040@arista.com>
-References: <20231228235626.GA1559849@bhelgaas>
-To: Bjorn Helgaas <helgaas@kernel.org>
-X-Mailer: Apple Mail (2.3731.700.6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9365c845-baa1-44d1-add9-ec8ca4d365eb@web.de>
 
+On Tue, Dec 26, 2023 at 09:08:12PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Dec 2023 21:00:25 +0100
+> 
+> The kfree() function was called in one case by
+> the nexio_init() function during error handling
+> even if the passed variable contained a null pointer.
 
+Which is perfectly valid thing to do, like free(), kfree() accepts NULL
+argument.
 
+> This issue was detected by using the Coccinelle software.
 
-> On Dec 28, 2023, at 3:56 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
->=20
-> [+to Daniel, can you take a look?  If you like this, I'd like to
-> squash it into df25461119d9 and credit Christophe since that's not
-> upstream yet]
+This tells me precisely nothing.
 
-Thanks very much for fixing this, Christophe.
+> 
+> Thus return directly after a call of the function “kmalloc” failed
+> at the beginning.
 
-The fix looks correct to me. If it can still fold into the previous =
-change, all the better.
+This is simply a matter of preference, the original author preferred
+that style, I see no objective reason to change it.
 
-Best,
-Daniel
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/input/touchscreen/usbtouchscreen.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/touchscreen/usbtouchscreen.c b/drivers/input/touchscreen/usbtouchscreen.c
+> index 60354ebc7242..1873c7918a78 100644
+> --- a/drivers/input/touchscreen/usbtouchscreen.c
+> +++ b/drivers/input/touchscreen/usbtouchscreen.c
+> @@ -977,7 +977,7 @@ static int nexio_init(struct usbtouch_usb *usbtouch)
+> 
+>  	buf = kmalloc(NEXIO_BUFSIZE, GFP_NOIO);
+>  	if (!buf)
+> -		goto out_buf;
+> +		return ret;
+> 
+>  	/* two empty reads */
+>  	for (i = 0; i < 2; i++) {
+> --
+> 2.43.0
+> 
 
-PS: without trying to complicate this thread, does one know idr.[ch] =
-well enough to state
-whether ida_free() could have gone into stdev_release()? The way the two =
-idr_free calls have
-been placed looks intentional. But stdev_release would look more obvious =
-+ cleaner to me.
-Was only starting to wonder while reviewing the err_put side of this =
-patch.=
+Thanks.
+
+-- 
+Dmitry
