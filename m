@@ -1,84 +1,78 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC20568F;
-	Fri, 29 Dec 2023 07:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01EC7487;
+	Fri, 29 Dec 2023 08:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKV44YdX"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6d9af1f12d5so3378967b3a.3;
-        Thu, 28 Dec 2023 23:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703835784; x=1704440584; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DSZUFKqdAkWuN/kPVFG1g+yNtSLVGaxATVMRCqbLdNs=;
-        b=jKV44YdXFPx1uMBe5JyXFF5LECn8O9/QwRrDHJqhVtsKujOz/PAEaKevt7r/+YI1It
-         G8FHeROxWs4rMnmP5wjeFs2hlKNDa8pKontRu1xCNbHZmVB7IyMMR8TA6KBKIRrymt2g
-         wYVJd22+/v+GmicR1s+PRzcMv3LMimuqn9uOliuEHn1o5IuPENTLD2crXOBW06PRsmc3
-         r0Xs/5XqkJy8o2qoS3HRR7MYdoTZPYFvb7RgxNDrfYPdeZ7Y2526NE0DriLrcHYRzDW8
-         9OX5IA2O7k3x5GSKEGTgyHDIRbFeZVL0l//B7u9pS6q9HAsNKNIP/1gnyyCBRSOXff0S
-         5d7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703835784; x=1704440584;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSZUFKqdAkWuN/kPVFG1g+yNtSLVGaxATVMRCqbLdNs=;
-        b=dnGklOZDq3qkC9GwlA3d/gWkN4ot9cEAKdSjlWgKzBBTf4ckWV1WGawCvle3oeGkzi
-         DHbza0KOjkJ1XX0JQsmvzMyoVmi9HaqwIWtAz3ebjrhxTGzBANsF5BWNGVi0Pqxkd1M2
-         GqFpu7nj99QqzYJW/5W+NOfFM3NjjlE+fDRjar2d7AKcv7mXxZEOgV84tvFVhJiT7+PT
-         9B73nYRvyebOrrUaNxDrwE4NnWHA6VQ7cJkvvJCBx7/7Av7gFkAQMNx9pov65m9zDw8g
-         9rwgURvPI55QXNGtEk7hbFuWZukjoV8IW/CJ06VK/C1HCEamJvwjr+NrjA0yCfrC4ZfS
-         VhqA==
-X-Gm-Message-State: AOJu0YzXLAqARmItK12B6P+YfY9pCqFF3MV7NEb7QwdnA9lVpuZ/J7OY
-	SH2TY2Vcc4JyeVRsDjHLWgc=
-X-Google-Smtp-Source: AGHT+IFM5AhGPzADe3gnfyREyBN6MsiZZESq7UvdeK1e3fzi201YAGnN2BZOARv04MvoLPghgBh3Kg==
-X-Received: by 2002:a05:6a20:9388:b0:196:60d8:187e with SMTP id x8-20020a056a20938800b0019660d8187emr1962378pzh.57.1703835783844;
-        Thu, 28 Dec 2023 23:43:03 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:1995:632f:ef1e:946e])
-        by smtp.gmail.com with ESMTPSA id f3-20020a17090a638300b0028c8149ac6esm6148076pjj.42.2023.12.28.23.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Dec 2023 23:43:03 -0800 (PST)
-Date: Thu, 28 Dec 2023 23:43:01 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH] Input: MT - Return directly after a failed kzalloc() in
- input_mt_init_slots()
-Message-ID: <ZY54hX3VLswwKgMH@google.com>
-References: <5088a905-4f29-41d3-a96e-5b66aad551f1@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vrKqCjdE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703838883; x=1704443683; i=markus.elfring@web.de;
+	bh=Rd9blyw8YSGBTPzYlKen2IAboPPNyjav2zaAADiVhFk=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=vrKqCjdEGXXAYVio+EPvrIc9l4Eiq33ZRhQfxoqTeBsdtl3LvFQBUEEduKKk+WMN
+	 9jTMfqCitFEvet+zeW4uSR2nvbNOWecI5xFldMA46nhlAINtNI6wDwZFNQl/UqjS/
+	 XemCXdJs6fAOZDLXNQWaa0YkQgn0FJG1J3Kl59WaPoqDID2wkfThP+zcT1WeF69o/
+	 cnZkL0rocAxuZYuA3rklOt65djFY2IEdabHaDqNNF+jab6yKDv2hSREEr+n40b3F3
+	 Td5QRDug25y0iGIUT2O2O3qcIo7kyqRNl8Hje19oIdyu+NKGDIMpmi9FtqNG15bKd
+	 dtUXtbmn1bar9v1FWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCXZf-1rRhAG01fn-009alK; Fri, 29
+ Dec 2023 09:34:43 +0100
+Message-ID: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
+Date: Fri, 29 Dec 2023 09:34:32 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5088a905-4f29-41d3-a96e-5b66aad551f1@web.de>
+User-Agent: Mozilla Thunderbird
+To: virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] virtiofs: Adjustments for two function implementations
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YarFuQXl4Lg4zqIhzbNfiS9AhDDsTY/3rsdJpMImfKl/sZf9NNP
+ 4swOTI3Fx/OksKHKHA4D+uL4yfdgeAjsMEZdKOctlQBDBVcpMaPgEi3vsS1lePZ0fUOaU2z
+ hYffU8OEZFqdjUrHLGYint17QxBxIKAw5fkBKte549eb+i+1nu16QLj96rPoBYRWetzYy9j
+ Qh7c/1SI2Todq/BDFh1LQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qv+ZKPX4/fw=;QxllQUETTtbPJ5zMHoYOYVlG5J8
+ BZn/Jx2Vs89rtI/m6H+ImUxQJLvDrjU/YkHy0ZMKd9AWwS94h25GUekQJmukbgkZoWe2mx42h
+ s6G1OE5PzgxGi/MYaBtalA5jLxQ93G/5Xdyrhi86fiKbom0g50n0Kqpk75tqfABEyqg3Dy7yR
+ RJ9mwwceU3ZwNOLcXZKuKFxtLVhnYwJm3bt27iCac1Auu8RSyC4TXNiJbNB+iMcY9kC1NEnkl
+ JVJS5Es7+Icn1ptBsuGflgzpeZdKfxAy417GU4OK7+f2pC4g+hvR/G+6olkQXEce6aCgHLjDt
+ tkW1ka0ZmblN4Ankg8XiCoCejid68TseePx7rNV0w+2f9+senbVmhbwS2UtE9+XPFdIQwzrQW
+ tuCRtTKQqE7N6mBd7Kl9dyeTGVLYEePUXMNLkBik8nakiuojMvfZ3kePeA+YjsO5L4LPfg7dF
+ E5g8rxl4t5b9OLEq7Uyfkf0emgXGCDIfwX+SpSynsoLOVDFDSPjMiKBb2hws0uZbyFNlOuaET
+ rlHXHP/L4ZZGLucQAmWB1W/Vy1cPxQAKE6q8acKaIAp7rbSUPM3YR83pGV/Q244JQCYeUlo9x
+ AbWXaYaqNGzEB14BZoydKreOCvnC+/lTTrNPoX0daDsaD1y/1e8thuuV6zsVvlOggS8F2h14W
+ zqVK86SgMlp022bNxf+gjEbTyzOS6yYr6z98f8Zfd6SoK4vewBg0Ix8AA0nkgtFv4TsDq3RL5
+ mKJyl2bd+w0a3MXRkPGPX0KiTCVrVayAox9LKBnrrLaPBAi1cmyOCdnkhzRAfcNx9q1i7rVjS
+ q2hmX/qhVwygnc02kFHu+wuMtGp7IJDtGaRWhzraHZ1EeaG9tH/Kdg68Ku9IPdmrDPyL72mvI
+ yFgpxwgaPyUL67+WYQcMg8Ca45Fuk4xGeGV35LWPa6KEdmRl2BLSakpduu9RMapwCTNHpPwR6
+ QBJ+3w==
 
-On Tue, Dec 26, 2023 at 08:43:37PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Dec 2023 20:36:09 +0100
-> 
-> The kfree() function was called in one case by
-> the input_mt_init_slots() function during error handling
-> even if the passed variable contained a null pointer.
-> This issue was detected by using the Coccinelle software.
-> 
-> Thus return directly after a call of the function “kzalloc” failed
-> at the beginning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 29 Dec 2023 09:28:09 +0100
 
-This is not needed. The same arguments as on the patch to
-usbtouchscreen.c.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Thanks.
+Markus Elfring (2):
+  Improve three size determinations
+  Improve error handling in virtio_fs_get_tree()
 
--- 
-Dmitry
+ fs/fuse/virtio_fs.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+=2D-
+2.43.0
+
