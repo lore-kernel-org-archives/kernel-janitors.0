@@ -1,80 +1,126 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8809B4430;
-	Sun, 31 Dec 2023 11:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-28c0536806fso5842154a91.0;
-        Sun, 31 Dec 2023 03:21:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704021689; x=1704626489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rFsBn22TbsEIXDWM6rhjhtNrMA442HR3KGjQKwJDdfU=;
-        b=AidCzgsp9p3hd7jb4tQRAiVEo/EPBlPAQ8ycpeOZ/+EAdK5SsYtQdPKg0wZHzwaF8I
-         69R4ef6YDJBlAPcLplfakCh0HKjQrA0JYq/B7IXxaWHejwqIO6JOLQgodCwvxvT3x7yw
-         NQXPV+AIYitnTzUgNJG/KIkYt11t2+otAj/pDMvbdRnyiGIbyXEUIR8HE1H1RpShXV9G
-         IvAVSh3Up2OXiJ7IgbLJfnWiqQRyA3CPzPcOVMUrvuQjAIeK46XnHAnnpK4vdxuTNAMe
-         Qvdl4jdj/mBPntU1GpOo+O8pJ/JN4vYWAPbwxLxhesQywk83s+MacObN6gp7eMX9XOht
-         kUKg==
-X-Gm-Message-State: AOJu0Yzs/EARwPuHefoKWPpmbUwovuPAXVwZuPZ0M8o8p2aKp3FjjeAH
-	g0n6b5kFvGhyITTw+KSWXnA=
-X-Google-Smtp-Source: AGHT+IGYmh0JgEncm++5erAkP8Qzi5VZlkDn0VQqhBf7rJJGZFuNdUzkXCLK4i9c+KC522rH6/7pRQ==
-X-Received: by 2002:a17:903:26c3:b0:1d3:efda:2671 with SMTP id jg3-20020a17090326c300b001d3efda2671mr15719086plb.19.1704021688841;
-        Sun, 31 Dec 2023 03:21:28 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id jw12-20020a170903278c00b001d4b7021ff7sm448792plb.304.2023.12.31.03.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Dec 2023 03:21:28 -0800 (PST)
-Date: Sun, 31 Dec 2023 20:21:27 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: vmd: Remove usage of the deprecated ida_simple_xx()
- API
-Message-ID: <20231231112127.GC3813474@rocinante>
-References: <270f25cdc154f3b0309e57b2f6421776752e2170.1702230593.git.christophe.jaillet@wanadoo.fr>
- <20231213192659.GA1123825@rocinante>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD32D33D3;
+	Sun, 31 Dec 2023 11:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WvLW7K1U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704022236; x=1704627036; i=markus.elfring@web.de;
+	bh=nbY6QmFmNQ+E2mdJ5exz4FGfT6XhL01ROUuaUkZePiA=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=WvLW7K1U+fUm7eSlkrEmXhbDm/eJLthpAbQRMwoFBOJuc0vLSyoYpO4gB8xvsPB3
+	 84e4rm8eQxm8zX0hFTPtumwO5ACPIEFF/i8yzslprqard+YCfFB+UsO1q2/0p5/9w
+	 zZlJwDJJWnwFmHaEM8/tJAi9O/jZcqUOd++pRILvSRPDAaVDGG+PrpBuz0OnV0+l6
+	 DqtopD2D25ESuNS5gzvbLLd19NijKL9ymKb07ycedhP0/ALMCLpPxnpUd+TiMAhKA
+	 mnRjrsCk2rHd9+SI7NWev3sCfQOlRGo7Yp5pfWPl7EQ5Gzeuat22eol1N917bMsEF
+	 h0TMW4dvvVz7Zp5YyQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIyeU-1reC1u2Ozq-00KrK4; Sun, 31
+ Dec 2023 12:30:36 +0100
+Message-ID: <b9646b4a-61a2-41fb-8fea-ba63e08996f3@web.de>
+Date: Sun, 31 Dec 2023 12:30:34 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231213192659.GA1123825@rocinante>
+User-Agent: Mozilla Thunderbird
+To: tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jon Maloy <jmaloy@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ying Xue <ying.xue@windriver.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] tipc: Improve exception handling in tipc_bcast_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7eSsDxH83otSo60n2ilX+f33/N7QzAImV6PhRy6CnGPK57balpY
+ 3FgRNv746DviRyDa7CFwrqNhMjriXC8sVt57C/+aa7UEuatXbF2+CDvtO9Wl6KfXvgLLskQ
+ 5t55KLC/WozCe/xxS+ZqUFJYVXTNvLBpfet4LgoT/CpP0Lf1p6vsmrX/mriT0TgytPEyExg
+ MMhhSXRfA7wPIbnOSifTw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YTPF1jvdTGs=;zJ3xJemRZiorgjWTtMXD5gJdx2g
+ oT8ysAYylDZ4b5aGJymiTYpVJpus0zE6vTVAE/hPhx45M1uJcczl71C8o+PXAMg+ECxOJa78S
+ lnIS08Bw+6lSF2wap4PJeOIH2LqZGd0u/vcF2glXDtuzhKIG+EWUc8apkUMb8HPMouRV7q3/O
+ oIOhtM7M9NmsZP8FihiJIWF2bTyy6tnmdHpZ0xA2ZWHuDyIbBPGAYf76EP6TiGbM+ZDpym6jL
+ moIC2Zpa8LeOhiQ9pkutaD68l1RsfmxYFGosSE5IXaHQepnFozk4qt8RdW7aV9iALQSM3L/y0
+ ou3D/PYEbY02TFXweCR2cnJRUs6QK9AIjWfKWCpAcqJnq3LHTZ1lGQOgxTE5/B4OiTsQHUhUV
+ +cQByw9piIm0a5lELAuIv8Cdj8j7zAZhRrD/e4eOWEtvKV6yuQsFky9CbxLRk5c++PQBC3pzc
+ 4jJ9wzn86OB8Xeabc/0nIgVuH1x5k9uZb6Rn52hjkfyqedeq7nLGyEeWc5B9ZnGNJPEs95lKO
+ SKHagYEn8/SUz9GS3cUVkMjeEpfbkX7RKEVo106UcaX0qlhOZdw6YokZIsbNQoFVHucm5YLHS
+ rjhrnHeQ5hNV5etRAchpLtaFmz0Lx46s9Myx/C2nOxh9xOyxDzZj49KdQf42yyuQiNhkfPH0l
+ bdEWGL3cDwsQv84lyKEAZgIqHi5Pq3xGha5lUCk+y88P92Mx8HGyTfMebPsacLqi3Lw/+yvmE
+ boU0Jl4qLK8lOr7vW6mZlVrtaL5DeWJgsoUz5SCjAZdgCLkWQE6cPKKlZwgXfe+HGql9F1HB2
+ wSyG0SLjCEa2T5SZPtmfNi6JmffL3z9JpFDNX8bZZdy0jMKcC8JhuJB1+lZ4l9Xd7o+vaniZz
+ XTqblTdfi68eqDKitvoh1JRolfH6HBgNKTwFvkM3LSPJLaa4lf0XdLFgOh3TuWXMyDBhBDwkc
+ 0G/M2A==
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 31 Dec 2023 12:20:06 +0100
 
-> > ida_alloc() and ida_free() should be preferred to the deprecated
-> > ida_simple_get() and ida_simple_remove().
-> > 
-> > This is less verbose.
-> 
-> Applied to controller/vmd, thank you!
-> 
-> [1/1] PCI: vmd: Remove usage of the deprecated ida_simple_xx() API
->       https://git.kernel.org/pci/pci/c/991801bc4722
+The kfree() function was called in two cases by
+the tipc_bcast_init() function during error handling
+even if the passed variable contained a null pointer.
+This issue was detected by using the Coccinelle software.
 
-Given two other similar changes:
+* Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=80=
+=9D failed
+  at the beginning.
 
-  - https://lore.kernel.org/linux-pci/cc01721cec2d416d7bdf47086943b17ef44b7286.1702966181.git.christophe.jaillet@wanadoo.fr
-  - https://lore.kernel.org/linux-pci/47a30441242c4d5f0e00555cbddd7783350ff1b2.1702966523.git.christophe.jaillet@wanadoo.fr
+* Move one assignment for the variable =E2=80=9Ctn=E2=80=9D closer to the =
+place
+  where this pointer is used.
 
-I moved this particular change to the same branch as the above so that
-these are collected together within a single branch. And, as such:
+* Delete a redundant kfree() call.
 
-Applied to remove-old-api, thank you!
+* Omit initialisations (for the local variables)
+  which became unnecessary with this refactoring.
 
-[1/1] PCI: vmd: Remove usage of the deprecated ida_simple_*() API
-      https://git.kernel.org/pci/pci/c/0eccea7150e3
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ net/tipc/bcast.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-	Krzysztof
+diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+index 593846d25214..631aef2dde45 100644
+=2D-- a/net/tipc/bcast.c
++++ b/net/tipc/bcast.c
+@@ -688,13 +688,15 @@ int tipc_nl_bc_link_set(struct net *net, struct nlat=
+tr *attrs[])
+
+ int tipc_bcast_init(struct net *net)
+ {
+-	struct tipc_net *tn =3D tipc_net(net);
+-	struct tipc_bc_base *bb =3D NULL;
+-	struct tipc_link *l =3D NULL;
++	struct tipc_net *tn;
++	struct tipc_bc_base *bb;
++	struct tipc_link *l;
+
+ 	bb =3D kzalloc(sizeof(*bb), GFP_KERNEL);
+ 	if (!bb)
+-		goto enomem;
++		return -ENOMEM;
++
++	tn =3D tipc_net(net);
+ 	tn->bcbase =3D bb;
+ 	spin_lock_init(&tipc_net(net)->bclock);
+
+@@ -715,7 +717,6 @@ int tipc_bcast_init(struct net *net)
+ 	return 0;
+ enomem:
+ 	kfree(bb);
+-	kfree(l);
+ 	return -ENOMEM;
+ }
+
+=2D-
+2.43.0
+
