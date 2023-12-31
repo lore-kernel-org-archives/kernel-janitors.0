@@ -1,121 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C289449
-	for <kernel-janitors@vger.kernel.org>; Sun, 31 Dec 2023 18:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814B4BE47;
+	Sun, 31 Dec 2023 21:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HJY96rlU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704047357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xbKtsWantMEXThLYzEBmJn42B3DxhHaKLrOeSwrFILQ=;
-	b=HJY96rlUHnM6AyZk9hVtS4lzHMc+QQj97IpDF3TyTKtil34f1MYtC9GVVLsKMmG2mwCGEn
-	vSLX9yDPmq9julg0Sz5brOCVDBnOSe6giY9rYypnWoZVDDyqaexT1OdYBQsEiHwByBSeHN
-	Gcmj1QM673Uzowb9esuiCXURV+M1vF0=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-fUJRyvvKP9-2TzsWqTYx8g-1; Sun,
- 31 Dec 2023 13:29:11 -0500
-X-MC-Unique: fUJRyvvKP9-2TzsWqTYx8g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8E4A63806636;
-	Sun, 31 Dec 2023 18:29:10 +0000 (UTC)
-Received: from [10.22.16.25] (unknown [10.22.16.25])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0B1CC40C6EBA;
-	Sun, 31 Dec 2023 18:29:09 +0000 (UTC)
-Message-ID: <9cd1ce1d-15c7-427c-9929-f3c75b97b49c@redhat.com>
-Date: Sun, 31 Dec 2023 13:29:09 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBu98d3f"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3bb9b28acb4so5322241b6e.2;
+        Sun, 31 Dec 2023 13:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704059133; x=1704663933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RKsBy9hdrgBDv+9lbkkexRpE8/6en4orssBBHouRAoU=;
+        b=GBu98d3fQT47mJmFlOcAI+CXeckXDZSD6/6fpp7ZUYnc7MVHsJ4rbY68wM4qkunB/W
+         CtBlRUB3mfu+mw5Jlw/h5la0eISpdPZVUsXVhMzrMwhZhGGTMauwIOsTSF0vWNOm1oN/
+         gGFV7J/6vs15CMjEv+QLw6iNOffznUCPPvkQvUyqhxlRvLuPyVL5AqYBhr9uwilFisK9
+         Jp2arX4+/GbzJ3jJDvLUOPnWzvDXbws9PLywDz+A6Ny+aJRkaoB8VbIpTj/nHeLvfyIi
+         CcX9xadWqfLToM+slKGmjLJZKjfHOs+g55sJXYdcXHwLu/lsja5VOKpyZoaHlTvqQ6KT
+         3iPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704059133; x=1704663933;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RKsBy9hdrgBDv+9lbkkexRpE8/6en4orssBBHouRAoU=;
+        b=ms/1e5Jvw3Q01q9oFljyvrAEPJt4lBo4BefS/bRuQwGYrQARa8OaDYhhO4/uWth6X1
+         LMp2NNrUXNOSsazXG5huAaJBsGVha2J5SEfk5tKVjrHOKOnkyrhH0sGOyJ1UBu0nhbkt
+         LdxMQls1wsuwTkpLx8LkhPe1AoSN2dOOtG4zcb9mH2p+SLjwyLQWpDDIYo22urolHSDf
+         KTB1YkS09BSGy/anlLjhVd9JvUHKOus2kzqBgnPkg65zL1mBKMJsjyvXRM7psx9Aw+Jy
+         PJmLhyaidZ8PRW/mvSDDolpNOalQ1QFnbW+bsa+tBEtXgKKB5M71W6QzTjuI8GeMZsts
+         iFBw==
+X-Gm-Message-State: AOJu0YzPPIu7yCDoQlu6qBx+1frd5FjSLhqJqjMhWWBVKDRjhSYrlpfT
+	K8njMPPnFOiShJfGJxttI7A=
+X-Google-Smtp-Source: AGHT+IGfBgWzhPIFobt+ZRpXau9Y9HqHLyldknGnqXmMw9U0gV1smzqicW2ERGRPuFW1hCrP5sxQ+w==
+X-Received: by 2002:a05:6808:2191:b0:3b9:dd70:7660 with SMTP id be17-20020a056808219100b003b9dd707660mr17086741oib.11.1704059133558;
+        Sun, 31 Dec 2023 13:45:33 -0800 (PST)
+Received: from localhost (48.230.85.34.bc.googleusercontent.com. [34.85.230.48])
+        by smtp.gmail.com with ESMTPSA id n13-20020a0cec4d000000b0067cd5c86936sm8869073qvq.79.2023.12.31.13.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Dec 2023 13:45:32 -0800 (PST)
+Date: Sun, 31 Dec 2023 16:45:32 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>, 
+ netdev@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Message-ID: <6591e0fcb089f_21410c2946c@willemb.c.googlers.com.notmuch>
+In-Reply-To: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
+References: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
+Subject: Re: [PATCH] packet: Improve exception handling in fanout_add()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: Adjust exception handling in
- generate_sched_domains()
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, cgroups@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
- Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On 12/31/23 02:28, Markus Elfring wrote:
+Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 31 Dec 2023 08:00:31 +0100
->
-> Two resource allocation failures triggered further actions
-> over the label “done” so far.
->
-> * Jump to the statement “ndoms = 1;” in three cases directly
->    by using the label “set_ndoms” instead.
->
-> * Delete an assignment for the variable “ndoms” in one if branch.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   kernel/cgroup/cpuset.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index ba36c073304a..29ccd52eb45c 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -973,10 +973,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
->
->   	/* Special case for the 99% of systems with one, full, sched domain */
->   	if (root_load_balance && !top_cpuset.nr_subparts) {
-> -		ndoms = 1;
->   		doms = alloc_sched_domains(ndoms);
->   		if (!doms)
-> -			goto done;
-> +			goto set_ndoms;
->
->   		dattr = kmalloc(sizeof(struct sched_domain_attr), GFP_KERNEL);
->   		if (dattr) {
-> @@ -986,12 +985,12 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   		cpumask_and(doms[0], top_cpuset.effective_cpus,
->   			    housekeeping_cpumask(HK_TYPE_DOMAIN));
->
-> -		goto done;
-> +		goto set_ndoms;
->   	}
->
->   	csa = kmalloc_array(nr_cpusets(), sizeof(cp), GFP_KERNEL);
->   	if (!csa)
-> -		goto done;
-> +		goto set_ndoms;
->   	csn = 0;
->
->   	rcu_read_lock();
-> @@ -1123,6 +1122,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	 * See comments in partition_sched_domains().
->   	 */
->   	if (doms == NULL)
-> +set_ndoms:
->   		ndoms = 1;
->
->   	*domains    = doms;
-> --
-> 2.43.0
->
-Please clarify what this patch is for. Is it just a cleanup with no 
-functional changes or is there a bug that is being fixed?
+> Date: Sun, 31 Dec 2023 16:30:51 +0100
+> 
+> The kfree() function was called in some cases by the fanout_add() function
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
 
-Cheers,
-Longman
+It is fine to call kfree with a possible NULL pointer:
 
+	/**
+	 * kfree - free previously allocated memory
+	 * @object: pointer returned by kmalloc() or kmem_cache_alloc()
+	 *
+	 * If @object is NULL, no operation is performed.
+	 */
+	void kfree(const void *object)
