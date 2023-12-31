@@ -1,28 +1,28 @@
 Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD32D33D3;
-	Sun, 31 Dec 2023 11:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5124763A4;
+	Sun, 31 Dec 2023 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WvLW7K1U"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZGSSycWL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704022236; x=1704627036; i=markus.elfring@web.de;
-	bh=nbY6QmFmNQ+E2mdJ5exz4FGfT6XhL01ROUuaUkZePiA=;
+	t=1704030977; x=1704635777; i=markus.elfring@web.de;
+	bh=nEsttUe5CEeUqngGIn4dzPSKvNy9/cvmNlkaVhhQ/RI=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=WvLW7K1U+fUm7eSlkrEmXhbDm/eJLthpAbQRMwoFBOJuc0vLSyoYpO4gB8xvsPB3
-	 84e4rm8eQxm8zX0hFTPtumwO5ACPIEFF/i8yzslprqard+YCfFB+UsO1q2/0p5/9w
-	 zZlJwDJJWnwFmHaEM8/tJAi9O/jZcqUOd++pRILvSRPDAaVDGG+PrpBuz0OnV0+l6
-	 DqtopD2D25ESuNS5gzvbLLd19NijKL9ymKb07ycedhP0/ALMCLpPxnpUd+TiMAhKA
-	 mnRjrsCk2rHd9+SI7NWev3sCfQOlRGo7Yp5pfWPl7EQ5Gzeuat22eol1N917bMsEF
-	 h0TMW4dvvVz7Zp5YyQ==
+	b=ZGSSycWLpylunPskg+Jfpa5BqMEB6fl2Fmr86fzW43GthcPpO+0bGH2uuOd8E5V0
+	 o7NHzJjTIoGxkimBoFgLVhQw7sSaG4dfn9/5kXZyFXw9QTupEK0+ta7e7u8qWSmrD
+	 b8PqqjRzFFfDNUinGbokp7s9Orqr6Pn5hkWxqjfJsoLBsvXfQlPW3IlEKfliYnuZ/
+	 omg2wgpUfwmVXOnINBJSEPY2CoS4Sqsq+hVtvX6OcKlbhjw99GzALOV7b1uZPb2bT
+	 AkThayunimX4O0HvN9PcJlQDHzAhMdtWn9VaizZgFj1uEULUyl4q9bY6l+lyfKzbw
+	 +Tir+rZTsvhlvGAjfg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIyeU-1reC1u2Ozq-00KrK4; Sun, 31
- Dec 2023 12:30:36 +0100
-Message-ID: <b9646b4a-61a2-41fb-8fea-ba63e08996f3@web.de>
-Date: Sun, 31 Dec 2023 12:30:34 +0100
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3US-1r2PTt1ebo-00rCuf; Sun, 31
+ Dec 2023 14:56:17 +0100
+Message-ID: <9561c78e-49a2-430c-a611-52806c0cdf25@web.de>
+Date: Sun, 31 Dec 2023 14:56:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,97 +30,82 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Jon Maloy <jmaloy@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
- Ying Xue <ying.xue@windriver.com>
+To: linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simo Sorce <simo@redhat.com>, Tom Talpey <tom@talpey.com>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] tipc: Improve exception handling in tipc_bcast_init()
+Subject: [PATCH] sunrpc: Improve exception handling in krb5_etm_checksum()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7eSsDxH83otSo60n2ilX+f33/N7QzAImV6PhRy6CnGPK57balpY
- 3FgRNv746DviRyDa7CFwrqNhMjriXC8sVt57C/+aa7UEuatXbF2+CDvtO9Wl6KfXvgLLskQ
- 5t55KLC/WozCe/xxS+ZqUFJYVXTNvLBpfet4LgoT/CpP0Lf1p6vsmrX/mriT0TgytPEyExg
- MMhhSXRfA7wPIbnOSifTw==
+X-Provags-ID: V03:K1:o+3oZXM5aXP/oMmDGvXATTeotOUUcg2HhBC82RxxTCVtwusv7eB
+ eshDx6Ds/r1WrT4BxuV7iTY4+ztBXSrVSWl/npez0TvP14HaKWEYqJfsCNC9+l55IIk7SQo
+ mohd9UUyH+SiSKlfDAG4iCNw37UT9/bL+xedA9g5wC5XYMN4ZobjN0qJW4iW7U3xbQK0b6/
+ F4wmIoQJZl1rzSElX2uRg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YTPF1jvdTGs=;zJ3xJemRZiorgjWTtMXD5gJdx2g
- oT8ysAYylDZ4b5aGJymiTYpVJpus0zE6vTVAE/hPhx45M1uJcczl71C8o+PXAMg+ECxOJa78S
- lnIS08Bw+6lSF2wap4PJeOIH2LqZGd0u/vcF2glXDtuzhKIG+EWUc8apkUMb8HPMouRV7q3/O
- oIOhtM7M9NmsZP8FihiJIWF2bTyy6tnmdHpZ0xA2ZWHuDyIbBPGAYf76EP6TiGbM+ZDpym6jL
- moIC2Zpa8LeOhiQ9pkutaD68l1RsfmxYFGosSE5IXaHQepnFozk4qt8RdW7aV9iALQSM3L/y0
- ou3D/PYEbY02TFXweCR2cnJRUs6QK9AIjWfKWCpAcqJnq3LHTZ1lGQOgxTE5/B4OiTsQHUhUV
- +cQByw9piIm0a5lELAuIv8Cdj8j7zAZhRrD/e4eOWEtvKV6yuQsFky9CbxLRk5c++PQBC3pzc
- 4jJ9wzn86OB8Xeabc/0nIgVuH1x5k9uZb6Rn52hjkfyqedeq7nLGyEeWc5B9ZnGNJPEs95lKO
- SKHagYEn8/SUz9GS3cUVkMjeEpfbkX7RKEVo106UcaX0qlhOZdw6YokZIsbNQoFVHucm5YLHS
- rjhrnHeQ5hNV5etRAchpLtaFmz0Lx46s9Myx/C2nOxh9xOyxDzZj49KdQf42yyuQiNhkfPH0l
- bdEWGL3cDwsQv84lyKEAZgIqHi5Pq3xGha5lUCk+y88P92Mx8HGyTfMebPsacLqi3Lw/+yvmE
- boU0Jl4qLK8lOr7vW6mZlVrtaL5DeWJgsoUz5SCjAZdgCLkWQE6cPKKlZwgXfe+HGql9F1HB2
- wSyG0SLjCEa2T5SZPtmfNi6JmffL3z9JpFDNX8bZZdy0jMKcC8JhuJB1+lZ4l9Xd7o+vaniZz
- XTqblTdfi68eqDKitvoh1JRolfH6HBgNKTwFvkM3LSPJLaa4lf0XdLFgOh3TuWXMyDBhBDwkc
- 0G/M2A==
+UI-OutboundReport: notjunk:1;M01:P0:JhErPCm2gD8=;niu1kNu3Lld8W+IjwHnupI/88oo
+ TljVn9uu+ZniZOxStJvZucN2ftjtVSru+w19o9A1jkY6reneqHYApyyBZE84AhsRZ3WaJQPuv
+ z9UNN70vfNwKk4J6gxpDiMr/nRUoQqghPeM8QL25Wpi31Nk/ARkKzl7Ds9EpgDeJDYoFvpi+K
+ dXpWrmqja/Y2VQTqeM1tC1NRTlBlrdH7O+m60xkSZCJDOeq0Er3G9fbV5QVg+H7zVuAMLMaTI
+ lgnFuheBryWGXQDpQU8bA7SYbhoWR4dswhg7ln1I0wF2mGu5RAi6sHX6M9BX68M1XiRxZ0F4h
+ tu0nqJJolvEYG2JALwp7z6oM6AX63gpWnNVMLxRmNDQk8kETV3Gw6hEF2JHFY9OFTzpuMtMIn
+ uLOBipgLMJmfZcc7mKJHHerYk4c6e44RTKTu6OVgfn1oYO+xBhbzHDdt9rASuvlT6ohtcinVf
+ QsYdcKTcJ3U0bDw88hnAsUS6xOzfcajdnjvYm+pxfITL63zrSwAC8VrrFq+F/CKHndmTGknxV
+ b17NSyq6efTIKcCEYF9vbqBUEMb+xWSfsjs5evUwcjRu7kn/OsAO848sxbU+Xf21myLOpOCQ2
+ a7Pbqqyg8Aq6g1BplUrLLvhu2KVBvjOPCz6y5il921tUl02+iCaNIQ8K+GLPFQaonTyuhwfNf
+ 1ImIOa2d40U59iYTqB+3GxwIG4Y6x2lIFhGb+qJNWBJsTZo+hdxg3+vl6tfdKvmtFEK76qqNL
+ QoWag+rYgDUKOUri45VnrZ6na0wDH0uAQeT9GLDYNO8lyYWSXoodcRkU1+nngZeCR2B/uPw5m
+ SLwjXY1mwsLjOxJ9l87fTLKc5vsswWbBHSUk7tmxe0IJGFAhSYnDxkYOxGFnjjDysPa+7oHWw
+ 9FmBlj3SFAZNrsFZO01Hht+GbAkr5Bx1T7rY2MkAXz3dQ8Eydv9ihHDy5YEVBlW9Ks8YIOBcW
+ o4RNEQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2023 12:20:06 +0100
+Date: Sun, 31 Dec 2023 14:43:05 +0100
 
-The kfree() function was called in two cases by
-the tipc_bcast_init() function during error handling
+The kfree() function was called in one case by
+the krb5_etm_checksum() function during error handling
 even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-* Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=80=
-=9D failed
-  at the beginning.
-
-* Move one assignment for the variable =E2=80=9Ctn=E2=80=9D closer to the =
-place
-  where this pointer is used.
-
-* Delete a redundant kfree() call.
-
-* Omit initialisations (for the local variables)
-  which became unnecessary with this refactoring.
+Thus use another label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- net/tipc/bcast.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/sunrpc/auth_gss/gss_krb5_crypto.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
-index 593846d25214..631aef2dde45 100644
-=2D-- a/net/tipc/bcast.c
-+++ b/net/tipc/bcast.c
-@@ -688,13 +688,15 @@ int tipc_nl_bc_link_set(struct net *net, struct nlat=
-tr *attrs[])
+diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/g=
+ss_krb5_crypto.c
+index d2b02710ab07..5e2dc3eb8545 100644
+=2D-- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -942,7 +942,7 @@ u32 krb5_etm_checksum(struct crypto_sync_skcipher *cip=
+her,
+ 	/* For RPCSEC, the "initial cipher state" is always all zeroes. */
+ 	iv =3D kzalloc(ivsize, GFP_KERNEL);
+ 	if (!iv)
+-		goto out_free_mem;
++		goto out_free_checksum;
 
- int tipc_bcast_init(struct net *net)
- {
--	struct tipc_net *tn =3D tipc_net(net);
--	struct tipc_bc_base *bb =3D NULL;
--	struct tipc_link *l =3D NULL;
-+	struct tipc_net *tn;
-+	struct tipc_bc_base *bb;
-+	struct tipc_link *l;
-
- 	bb =3D kzalloc(sizeof(*bb), GFP_KERNEL);
- 	if (!bb)
--		goto enomem;
-+		return -ENOMEM;
-+
-+	tn =3D tipc_net(net);
- 	tn->bcbase =3D bb;
- 	spin_lock_init(&tipc_net(net)->bclock);
-
-@@ -715,7 +717,6 @@ int tipc_bcast_init(struct net *net)
- 	return 0;
- enomem:
- 	kfree(bb);
--	kfree(l);
- 	return -ENOMEM;
+ 	req =3D ahash_request_alloc(tfm, GFP_KERNEL);
+ 	if (!req)
+@@ -972,6 +972,7 @@ u32 krb5_etm_checksum(struct crypto_sync_skcipher *cip=
+her,
+ 	ahash_request_free(req);
+ out_free_mem:
+ 	kfree(iv);
++out_free_checksum:
+ 	kfree_sensitive(checksumdata);
+ 	return err ? GSS_S_FAILURE : GSS_S_COMPLETE;
  }
-
 =2D-
 2.43.0
 
