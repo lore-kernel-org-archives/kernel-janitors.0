@@ -1,28 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C55C17C2;
-	Sun, 31 Dec 2023 07:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285C517C7;
+	Sun, 31 Dec 2023 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ELwpUcpY"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rbjjdll8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704007702; x=1704612502; i=markus.elfring@web.de;
-	bh=PcBUvluZb/BvdgF7ktzLibEt8A6a4VGufG/N/XU2tBU=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=ELwpUcpYPoNstTo91UNCbohC7BFOMxxWrqAkEmEOqjWz3nqiDvzL2I3euvfKyNmI
-	 nPi3A5ivgBq/LZiGsIH+l6YnzuXg1opvuAi7X/4VvtW7ALscdj5B/jiaihEIzg0lz
-	 VORijwlqpsLv+KQaO2212muYJ6Cg9HbiH2txaffdryuEpvzZ7xoU0z08mFzTcL4ox
-	 fF8zl/KPXt/VQjrzzIs3E03Qxl3P27dx7FEcVQ7sRTvlHWN3wOEyREq5yBH0YydYI
-	 fbAACO6kC25hBxQ7qjDYWo1MaXkovH0U3VBByJSjb0IKAGyhK9namzw9ZeDnWb9Va
-	 LA0hLj24xtUhjcSbZQ==
+	t=1704011964; x=1704616764; i=markus.elfring@web.de;
+	bh=Nx5AiU9kG4mlRgZKJZE6QHd/i2gpSelR/eMf8alkr2U=;
+	h=X-UI-Sender-Class:Date:From:Subject:To:Cc;
+	b=rbjjdll8c1mWMOyItNH49l1U5BtNemIprbvZkuuWWG4L3b/Qe8A3NrD82y1YP7on
+	 E401AX9OYwdmQotSBCH88C+AmO3gu8+ZE/3RjnWs667osM5cTNgqEwQbo36TSDi1y
+	 820SpwHd+Fv709lLf+RP9sQlwW6nJOpPCU9zHAXOZ4fSwDyecvak2zDJg0LbV3pm9
+	 SywtldKrhlS+Wp/wnNqE9nLojhNpeWlOhdJYtTk2VDjv08YB0wc68bHVgS90dCziB
+	 JWczzMbEHLFj2ykS5pm09q2Cs5dNKZYKnBgQG/SOj0mNw3MwfWcC9yYfnoSe3MyBx
+	 JJwrISIWcJNM6u2V7w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkVwo-1qxSnY0oKE-00mBMi; Sun, 31
- Dec 2023 08:28:22 +0100
-Message-ID: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
-Date: Sun, 31 Dec 2023 08:28:08 +0100
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWi9q-1ri6K42OHA-00XQUQ; Sun, 31
+ Dec 2023 09:39:24 +0100
+Message-ID: <ebffa8ea-8d0c-4b83-805b-754e25bd4603@web.de>
+Date: Sun, 31 Dec 2023 09:39:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,97 +30,49 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: cgroups@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
- Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] cgroup/cpuset: Adjust exception handling in
- generate_sched_domains()
+Subject: [PATCH 0/3] gcov: Adjustments for two function implementations
+To: Peter Oberparleiter <oberpar@linux.ibm.com>,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pgnSzo2W+vneiGpO38IiNDAlEaIXKSMMACiIapp8BWsnXekDcdT
- PbTKnujXFwSFjr6dNhr2LWeXpGIYfELudkL0U/datOqgwQAGOG/p9DwHtGBFh/9TQQafMBx
- pd+MTC5ua7UFSk/OLfcvENKiCpoFoOWzzkxvHQ+qqoVir1t+VcPONx+YOK5gSR+1EnqEaYv
- 0Fq2o9AvO1SPmzhnL2LyA==
+X-Provags-ID: V03:K1:VYK5fVj/h+Jgh14fsFuXa5QWRNakQWSBEYW2sDP8UfsLeuTRie3
+ h0QgkSzl2ZEwG+RBCfIBPk6ifpXNcVlRtKMNdnXtKW3bVz/8gcU3dZT0ztGgqrpa+bDuOO2
+ LA/eu9CUf+91tMNLDYTq4GVDmw3Zmkes8dV6bK4r+EdyvdQTtwiFbeQSTrXMl0Tk5Av/Ncu
+ TseRNwHg2hzPkieuzmiEg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MF8NwxLMoUE=;Vth/hMGB+E6eKMV2W7MGJ4MxLZ9
- hf387lQW9S4mRbLHw+Wk1eXh7IbH+bgBJcy+74ziZppgtw0VnnxAe5jSfvj68WT4yCJJ/Nwvc
- BWJ8IKnFwUDWr2Kk70SQv2jfBC3WA6dZPSjPXCb+esuBBnLv4YTDuBhQigtyV+y0Za3A10B7A
- yxAq/Fk+Jmim1yWVSd5OBavzsMkvdSjw9V3xIz5/cVckRMsEIgheJT3wFUqxKTZNpG5t32mcD
- ggFRvYvU2FysZZp0bB6dShfetu8WG1oot+Kw62+/MVsh35d8/UKxNvZu1nmD1aQC5kPFwh19n
- TEmjEgHyRG2oPSMt5VXucXMoHBS6l+HuGcI1OUk917w28P1DWe5nXfCuhhrZHp5IFPvGXtaRe
- MPUjozzfWjDMuT5F7TKq4A/rICf6lRPeWfhSB1brZp8x72mfmQX3E4hmM0RN3SPku4Fro6kjt
- VPN8BRJJP+jg/+KqDgIYxt7OC1L9F9oHSMtJ9xALb9kv7ftI5A14kT/9u5E8m5RcZfBfUq7Ob
- 4TrJM7zUO4dImuHeG7tmPDlDeKTrH2RhgBCia8zAlLdHTh9h59+MWSXsD6QP6Frl1ZkkRnhYc
- B76CGZ6ZHAyKp31HgPvYCYw6SOoXHzKc2BWKRGFXu1gaborbduJsWr02wcmKT7wnXORtwM/Ul
- dCRVeLp1kzUfsFUq4iC8Cj2ve5zwMG+zly/IfCUpF4q7Fdu2AxS/zJsC6Kvom89eGf8twuRb6
- 4jdUSIsetjqDbx910SJ/COQuAeUSNqHW0w/6HO7YQMYmsjYE34UAxFrGOVbGAJUDrRP616MyE
- AgikrA491MEz8xjVuqhULxPJ/BrThtIt4OrEZz8nnv5YIrTf3j79DA+CKuryk/mx5MeXcEKeT
- 7z35aZi/HPSiirS9mGKOQ4ychsjertrc23Jb4ZLEVaRdgUobNWgsbRFS3Fv8APXd+S5im2PiT
- uy8gWQ==
+UI-OutboundReport: notjunk:1;M01:P0:Y/EHK/WHi0w=;hZo5ekWKvfOtJFvtF8VAI5zdG9s
+ sZLMsrBhNYn0jd1p1G5cCPrCfH9nrhUnyXbx6n02pat2MWFoZJGKihtJjFJfbJnwP3ayA42Ms
+ pHKekkgKqLbphCOXbtd3jYXZ1DmEpTNn3ayFtvkXszb4cE6VC5gmebJRPN9aaR3sDvs1FHR8a
+ SEsuTOOgdDvlO7gb3jypFjT07M6lwR9H3IGFzQzrcvw5B38AJ9uyqRnNe2ff5qmOtKEcfHDh3
+ /8l1ZWSaUDyabGtz3wWK7hPECmpL2ZOpahbG5DD98owkYLdJlgczlbZMkl+JZJhkRTmdUm7Sd
+ A8tOZrPs/LIODKVQdB1KV9c1r/FgWAqdxAsrcq6LlvSqnmx1sZAHx+slGO7e2lc4sXmE7yvFV
+ xwL90g77SXequFxGzign959dY8r459LF+14u4vCpWxftpHmTJUbjmgByr1671ctjMD2tSTxwo
+ sXS6WTQmSZ8qcMOkdcUY2XHuLm3v6bvx7yfiAmKU1l3kjwTmFOof+6bNmfORJ1XrWR55AZSOH
+ np+0l0BbNPh3VborXxs4Jz73UkcQVZlPMq4gyQcs83d21b6d4L6b6uWZku9zkpeuQHwSmL8u4
+ UH4u+L48tkZKEUg16SPJcKcnpKPyoH1vkUdi6u2l0XvNm1naoTKMO5JgE5eejHk6FOt0ZHmAJ
+ P+jq0k0KdYpu27+NREUMyjJr8exi2aAjv6m007yv96kO2FnTPqK8jfbj1avQneSAtdNs78YaV
+ 7ezWn0c3KnGYNzD6CY7dLkB/hfQVDED6Rf/Q7TvUrUFHL8Y5293pMfIyzeZJiwLX/0NuTYTK9
+ kdreasCMegdvAkTmJ7nBFkQf2kBEkgUte4pFQNfxpxjzWGhk4xKBQO+jl6PYxjrH5Hd5GyG7I
+ VGokDmrmM9XbDItxWicN2tvkcMaIZpuYHg0Fy4j55Ptritoa1WaaufH1XDW2MF7AP15smd6jF
+ 2aX29Q==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2023 08:00:31 +0100
+Date: Sun, 31 Dec 2023 09:34:56 +0100
 
-Two resource allocation failures triggered further actions
-over the label =E2=80=9Cdone=E2=80=9D so far.
+A few update suggestions were taken into account
+from static source code analysis.
 
-* Jump to the statement =E2=80=9Cndoms =3D 1;=E2=80=9D in three cases dire=
-ctly
-  by using the label =E2=80=9Cset_ndoms=E2=80=9D instead.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in new_node()
+  Return directly after a failed kzalloc() in new_node()
+  Improve exception handling in add_links()
 
-* Delete an assignment for the variable =E2=80=9Cndoms=E2=80=9D in one if =
-branch.
+ kernel/gcov/fs.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/cgroup/cpuset.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index ba36c073304a..29ccd52eb45c 100644
-=2D-- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -973,10 +973,9 @@ static int generate_sched_domains(cpumask_var_t **dom=
-ains,
-
- 	/* Special case for the 99% of systems with one, full, sched domain */
- 	if (root_load_balance && !top_cpuset.nr_subparts) {
--		ndoms =3D 1;
- 		doms =3D alloc_sched_domains(ndoms);
- 		if (!doms)
--			goto done;
-+			goto set_ndoms;
-
- 		dattr =3D kmalloc(sizeof(struct sched_domain_attr), GFP_KERNEL);
- 		if (dattr) {
-@@ -986,12 +985,12 @@ static int generate_sched_domains(cpumask_var_t **do=
-mains,
- 		cpumask_and(doms[0], top_cpuset.effective_cpus,
- 			    housekeeping_cpumask(HK_TYPE_DOMAIN));
-
--		goto done;
-+		goto set_ndoms;
- 	}
-
- 	csa =3D kmalloc_array(nr_cpusets(), sizeof(cp), GFP_KERNEL);
- 	if (!csa)
--		goto done;
-+		goto set_ndoms;
- 	csn =3D 0;
-
- 	rcu_read_lock();
-@@ -1123,6 +1122,7 @@ static int generate_sched_domains(cpumask_var_t **do=
-mains,
- 	 * See comments in partition_sched_domains().
- 	 */
- 	if (doms =3D=3D NULL)
-+set_ndoms:
- 		ndoms =3D 1;
-
- 	*domains    =3D doms;
 =2D-
 2.43.0
 
