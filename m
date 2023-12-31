@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3ABC13D;
-	Sat, 30 Dec 2023 20:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C55C17C2;
+	Sun, 31 Dec 2023 07:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GvYLS2xc"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ELwpUcpY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703967254; x=1704572054; i=markus.elfring@web.de;
-	bh=kXNvk+63Yu+KOv3cgshkVkUjGMpZfjy8lTJZ4d+G7Uc=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=GvYLS2xcMFqOVDgt4xlnovtDxtv2WddWSOgAdS/+dvOOF6ICdHIfdMBrEjlE57Mu
-	 HJCdQ9ZEmyIifeESoHyStlP3GSV3ICZq6m6Kw+hzlvvlCKhUq/0XWMFCHmrQCtwGi
-	 2Ap8/vG5GXheEaUjgXJEocEDQ1syWkhvpFnAWMIR3rnvsjt1pmFHrnMAol2ripcp8
-	 6XhKIIpXOPtGvdl5yKHj8SoB4/fj1UDb9wKGjHLBDt3cEDTQBLg4ZXcnYVEsM7joh
-	 G49qBbGnymZEf97vkCx4YuNubMlz8jovYL6C3ZkWcRnYdPgmxIU4vguYrkLfTepsv
-	 3w+q4jAawarodsC7Pg==
+	t=1704007702; x=1704612502; i=markus.elfring@web.de;
+	bh=PcBUvluZb/BvdgF7ktzLibEt8A6a4VGufG/N/XU2tBU=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=ELwpUcpYPoNstTo91UNCbohC7BFOMxxWrqAkEmEOqjWz3nqiDvzL2I3euvfKyNmI
+	 nPi3A5ivgBq/LZiGsIH+l6YnzuXg1opvuAi7X/4VvtW7ALscdj5B/jiaihEIzg0lz
+	 VORijwlqpsLv+KQaO2212muYJ6Cg9HbiH2txaffdryuEpvzZ7xoU0z08mFzTcL4ox
+	 fF8zl/KPXt/VQjrzzIs3E03Qxl3P27dx7FEcVQ7sRTvlHWN3wOEyREq5yBH0YydYI
+	 fbAACO6kC25hBxQ7qjDYWo1MaXkovH0U3VBByJSjb0IKAGyhK9namzw9ZeDnWb9Va
+	 LA0hLj24xtUhjcSbZQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2Phi-1rNW0Z3wPm-004I7J; Sat, 30
- Dec 2023 21:14:14 +0100
-Message-ID: <d6294506-75a8-4a23-aa98-65b719c1d368@web.de>
-Date: Sat, 30 Dec 2023 21:14:13 +0100
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkVwo-1qxSnY0oKE-00mBMi; Sun, 31
+ Dec 2023 08:28:22 +0100
+Message-ID: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
+Date: Sun, 31 Dec 2023 08:28:08 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,146 +30,97 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 5/5] bpf: Improve exception handling in trie_update_elem()
+To: cgroups@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+ Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: bpf@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Yonghong Song <yonghong.song@linux.dev>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <7011cdcc-4287-4e63-8bfa-f08710f670b1@web.de>
-In-Reply-To: <7011cdcc-4287-4e63-8bfa-f08710f670b1@web.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] cgroup/cpuset: Adjust exception handling in
+ generate_sched_domains()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nOmhdZE/XojShpXxlNPMot4rOnwZaU6Vbm8qG7aVBHLczhSGTff
- oFY53srdHKkx2klXiV3k5r75jE14PrauuNDQQk0A0DEiUvC0kxHEHKGSxYULfA4cAXnr8Ca
- VS0JMBi8p5FvKtCzxRECuWcWJUgstQ+HeYbnKodFbBLbrXX5YT20nECbObq69mM/nOsBx7v
- oQaZ3vJIUG/8P657HrAEw==
+X-Provags-ID: V03:K1:pgnSzo2W+vneiGpO38IiNDAlEaIXKSMMACiIapp8BWsnXekDcdT
+ PbTKnujXFwSFjr6dNhr2LWeXpGIYfELudkL0U/datOqgwQAGOG/p9DwHtGBFh/9TQQafMBx
+ pd+MTC5ua7UFSk/OLfcvENKiCpoFoOWzzkxvHQ+qqoVir1t+VcPONx+YOK5gSR+1EnqEaYv
+ 0Fq2o9AvO1SPmzhnL2LyA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JBDSu+CLZj8=;ozXJh2b3Fcm8mfSjPb/HtbG+Ahn
- D4GS/b+J0uR4HQTJ0BdEtU3MWAzWWTF7PTyvZ+9eHr9V1WUdECGLSPYwkX+GmuHNxnal0w5Kt
- pZ0PDZ7GQdyxMeQcdlKXY+YRdgLA0hRq6waIX14BJPiE28ET5dNQbbrA0rAhIJ8Yq8Hgplr8o
- TAZB3kAApCJjz+QP3hLmgAV+e/9T8JQHdNbAMj5R7mSrpfvT22rdADfb63F5qCuFmtgp/vjlt
- TGADwmvzR3ygwV0zsAAzD5R5ASISGlp4COEHGX0vuJAx4v34arHbM8V4FRS2CTf2k3/0uRcJX
- Rgu5nzu7DoiqETbUzr8O77gvlqECQV7IZ5asijUxrg4tEdB/t5r4fbng922H+CuT3FFTqWQ0i
- Ns9FaBc9JBQfGIf6LADdC5hJWax6w4/ZMLxK8l3WISQpQDLV1aU7NvDr3tgEnGwbUUCEWlkoS
- MYVDbKh6XogZZ4SuVu3TRRRvHdFH0Rtx6G+clJyTleKXqg1MZXHBI5pMNliRHknmn3Wn6PaTn
- LbpFBfHhvrabrL+DLRoURyEVarQYnvKZ7k40RslsZEVdTYVzkS2jTq4fZBbRzDwG8ku3gA8X4
- NhQiXJbGFCcHIAy5OH72hYYijt3Vb06uEKBqtygRAIqDnxJLXBDK5hMCYOl80Y9djLiojujis
- NUipm0hynEQozyn1enwGSFMdmUsIw3Qd4JG04v5V0GBOLjSZx2JwsHXCt0Bt+52S7bOdHkZLV
- yBx+WswKZebQGbJ4ubZmsSXJOPq73zkSyejUpYBLelPfn1o7o5K7Iy53mBrI73s+472kxWjoL
- W+FLnUmJBse3wG6eELOas91R7dwHk3V/KeyBpz3OqtYawGCxcTf0F4TPXBvHfKbAV8JAJ5qLK
- kf0SDsGg/WvYyd3TIr+7ZWK6nytMZMuh9ibVhqFvPjTAGusTqBFVnDUbx4xIYI4MrzFPKWMf+
- f+bj+Q==
+UI-OutboundReport: notjunk:1;M01:P0:MF8NwxLMoUE=;Vth/hMGB+E6eKMV2W7MGJ4MxLZ9
+ hf387lQW9S4mRbLHw+Wk1eXh7IbH+bgBJcy+74ziZppgtw0VnnxAe5jSfvj68WT4yCJJ/Nwvc
+ BWJ8IKnFwUDWr2Kk70SQv2jfBC3WA6dZPSjPXCb+esuBBnLv4YTDuBhQigtyV+y0Za3A10B7A
+ yxAq/Fk+Jmim1yWVSd5OBavzsMkvdSjw9V3xIz5/cVckRMsEIgheJT3wFUqxKTZNpG5t32mcD
+ ggFRvYvU2FysZZp0bB6dShfetu8WG1oot+Kw62+/MVsh35d8/UKxNvZu1nmD1aQC5kPFwh19n
+ TEmjEgHyRG2oPSMt5VXucXMoHBS6l+HuGcI1OUk917w28P1DWe5nXfCuhhrZHp5IFPvGXtaRe
+ MPUjozzfWjDMuT5F7TKq4A/rICf6lRPeWfhSB1brZp8x72mfmQX3E4hmM0RN3SPku4Fro6kjt
+ VPN8BRJJP+jg/+KqDgIYxt7OC1L9F9oHSMtJ9xALb9kv7ftI5A14kT/9u5E8m5RcZfBfUq7Ob
+ 4TrJM7zUO4dImuHeG7tmPDlDeKTrH2RhgBCia8zAlLdHTh9h59+MWSXsD6QP6Frl1ZkkRnhYc
+ B76CGZ6ZHAyKp31HgPvYCYw6SOoXHzKc2BWKRGFXu1gaborbduJsWr02wcmKT7wnXORtwM/Ul
+ dCRVeLp1kzUfsFUq4iC8Cj2ve5zwMG+zly/IfCUpF4q7Fdu2AxS/zJsC6Kvom89eGf8twuRb6
+ 4jdUSIsetjqDbx910SJ/COQuAeUSNqHW0w/6HO7YQMYmsjYE34UAxFrGOVbGAJUDrRP616MyE
+ AgikrA491MEz8xjVuqhULxPJ/BrThtIt4OrEZz8nnv5YIrTf3j79DA+CKuryk/mx5MeXcEKeT
+ 7z35aZi/HPSiirS9mGKOQ4ychsjertrc23Jb4ZLEVaRdgUobNWgsbRFS3Fv8APXd+S5im2PiT
+ uy8gWQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2023 20:28:11 +0100
+Date: Sun, 31 Dec 2023 08:00:31 +0100
 
-The kfree() function was called in some cases by
-the trie_update_elem() function during error handling
-even if the passed variable contained a null pointer.
-This issue was detected by using the Coccinelle software.
+Two resource allocation failures triggered further actions
+over the label =E2=80=9Cdone=E2=80=9D so far.
 
-* Thus adjust jump targets.
+* Jump to the statement =E2=80=9Cndoms =3D 1;=E2=80=9D in three cases dire=
+ctly
+  by using the label =E2=80=9Cset_ndoms=E2=80=9D instead.
 
-* Reorder data processing steps at the end.
-
-* Delete an initialisation (for the variable =E2=80=9Cnew_node=E2=80=9D)
-  and a repeated pointer check which became unnecessary
-  with this refactoring.
+* Delete an assignment for the variable =E2=80=9Cndoms=E2=80=9D in one if =
+branch.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- kernel/bpf/lpm_trie.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ kernel/cgroup/cpuset.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index b32be680da6c..6c372d831d0f 100644
-=2D-- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -307,7 +307,7 @@ static long trie_update_elem(struct bpf_map *map,
- 			     void *_key, void *value, u64 flags)
- {
- 	struct lpm_trie *trie =3D container_of(map, struct lpm_trie, map);
--	struct lpm_trie_node *node, *im_node =3D NULL, *new_node =3D NULL;
-+	struct lpm_trie_node *node, *im_node =3D NULL, *new_node;
- 	struct lpm_trie_node __rcu **slot;
- 	struct bpf_lpm_trie_key *key =3D _key;
- 	unsigned long irq_flags;
-@@ -327,13 +327,13 @@ static long trie_update_elem(struct bpf_map *map,
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index ba36c073304a..29ccd52eb45c 100644
+=2D-- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -973,10 +973,9 @@ static int generate_sched_domains(cpumask_var_t **dom=
+ains,
 
- 	if (trie->n_entries =3D=3D trie->map.max_entries) {
- 		ret =3D -ENOSPC;
--		goto out;
-+		goto unlock;
+ 	/* Special case for the 99% of systems with one, full, sched domain */
+ 	if (root_load_balance && !top_cpuset.nr_subparts) {
+-		ndoms =3D 1;
+ 		doms =3D alloc_sched_domains(ndoms);
+ 		if (!doms)
+-			goto done;
++			goto set_ndoms;
+
+ 		dattr =3D kmalloc(sizeof(struct sched_domain_attr), GFP_KERNEL);
+ 		if (dattr) {
+@@ -986,12 +985,12 @@ static int generate_sched_domains(cpumask_var_t **do=
+mains,
+ 		cpumask_and(doms[0], top_cpuset.effective_cpus,
+ 			    housekeeping_cpumask(HK_TYPE_DOMAIN));
+
+-		goto done;
++		goto set_ndoms;
  	}
 
- 	new_node =3D lpm_trie_node_alloc(trie, value);
- 	if (!new_node) {
- 		ret =3D -ENOMEM;
--		goto out;
-+		goto unlock;
- 	}
+ 	csa =3D kmalloc_array(nr_cpusets(), sizeof(cp), GFP_KERNEL);
+ 	if (!csa)
+-		goto done;
++		goto set_ndoms;
+ 	csn =3D 0;
 
- 	trie->n_entries++;
-@@ -368,7 +368,7 @@ static long trie_update_elem(struct bpf_map *map,
+ 	rcu_read_lock();
+@@ -1123,6 +1122,7 @@ static int generate_sched_domains(cpumask_var_t **do=
+mains,
+ 	 * See comments in partition_sched_domains().
  	 */
- 	if (!node) {
- 		rcu_assign_pointer(*slot, new_node);
--		goto out;
-+		goto decrement_counter;
- 	}
+ 	if (doms =3D=3D NULL)
++set_ndoms:
+ 		ndoms =3D 1;
 
- 	/* If the slot we picked already exists, replace it with @new_node
-@@ -384,7 +384,7 @@ static long trie_update_elem(struct bpf_map *map,
- 		rcu_assign_pointer(*slot, new_node);
- 		kfree_rcu(node, rcu);
-
--		goto out;
-+		goto decrement_counter;
- 	}
-
- 	/* If the new node matches the prefix completely, it must be inserted
-@@ -394,13 +394,13 @@ static long trie_update_elem(struct bpf_map *map,
- 		next_bit =3D extract_bit(node->data, matchlen);
- 		rcu_assign_pointer(new_node->child[next_bit], node);
- 		rcu_assign_pointer(*slot, new_node);
--		goto out;
-+		goto decrement_counter;
- 	}
-
- 	im_node =3D lpm_trie_node_alloc(trie, NULL);
- 	if (!im_node) {
- 		ret =3D -ENOMEM;
--		goto out;
-+		goto decrement_counter;
- 	}
-
- 	im_node->prefixlen =3D matchlen;
-@@ -419,15 +419,13 @@ static long trie_update_elem(struct bpf_map *map,
- 	/* Finally, assign the intermediate node to the determined slot */
- 	rcu_assign_pointer(*slot, im_node);
-
--out:
- 	if (ret) {
--		if (new_node)
--			trie->n_entries--;
--
--		kfree(new_node);
- 		kfree(im_node);
-+decrement_counter:
-+		trie->n_entries--;
-+		kfree(new_node);
- 	}
--
-+unlock:
- 	spin_unlock_irqrestore(&trie->lock, irq_flags);
-
- 	return ret;
+ 	*domains    =3D doms;
 =2D-
 2.43.0
 
