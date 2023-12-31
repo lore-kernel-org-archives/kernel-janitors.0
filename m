@@ -1,28 +1,55 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8924422;
-	Sun, 31 Dec 2023 09:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C365686
+	for <kernel-janitors@vger.kernel.org>; Sun, 31 Dec 2023 09:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DGCaUnSB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704015497; x=1704620297; i=markus.elfring@web.de;
-	bh=fX8AFaR7x87HsTh6nIC//eueVMeAPcdOmrlfPLHQHUk=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=DGCaUnSBuKr1f/ptwqcfa98KzB413qTy5ZtchiNllEkyNg+Th1qJ2MpgXNkbg7+D
-	 YD5DBi+LRQwodlm/1GeofcagKa64JRKOxCaHwJ+gKD+FvBKGpCXqQ581+/a68e1ly
-	 RXDAh2Gm5/UC5GcikoQ5I/BlSujKmTTXyMHvYSPzDi/J+9xmH5qBtBGO7D7CY+ZQ7
-	 qg9yrjicY34WYLHFQrpp37hXOxfPs5TY+VIMGE4gU0puFRswSQFseofUkGCNnr2Sn
-	 IMmeUvxpHKKq1h9i7EldaVOSfy2AoMUKe/1/ecs3Cb+/ojXEhjRa018Pr2RfNegdq
-	 BCkikoh8sfsJCD5+ZQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdfCH-1qkXWK2Gx7-00ZGR5; Sun, 31
- Dec 2023 10:38:17 +0100
-Message-ID: <ef8b36bf-d9d7-46a4-9648-7cc8aaa8a980@web.de>
-Date: Sun, 31 Dec 2023 10:38:10 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ph9j5pKr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704015571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2M8envGKjHlB+rbsNvUg7dTUJ+CJggG85VpaK06plHQ=;
+	b=Ph9j5pKr2Q6L6EVr7ul+DxRjNgUp6sf9nGywsmjiNTfQ92BxMUVNgbJgiT/FMqSuaMal+z
+	E7cpii+5JaYx6NmzywH+HR3kwkREEQ/rOByAyWldvLpX4HN9ndCn3ycz2ITslsLWNEASSp
+	u880p99/70llxURyxRJmS9R44qxUpTk=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-571-2z5pvKV2PBWPhk-SwpGMoA-1; Sun, 31 Dec 2023 04:39:29 -0500
+X-MC-Unique: 2z5pvKV2PBWPhk-SwpGMoA-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-55369c474e1so4495906a12.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 31 Dec 2023 01:39:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704015568; x=1704620368;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2M8envGKjHlB+rbsNvUg7dTUJ+CJggG85VpaK06plHQ=;
+        b=NInE7oV9C2Qfg8ubwqYK+6yPiL31j0TeZd6rKPD4Bk4kwhNwrI7+EZmT7m+2hjPvn1
+         mbOPuQn+ZCHZ30kvrBC8Y8r6n5c8ovHIqAGYCg6TuI4y3pDMR2AruQJ1lB8dNXp56ImA
+         xoHVynNPIvTqmSt4/T4JZd/stc1HsdPo1Ng8RDAs67DNc4uBhPNrfUtuAGBAKhlaTuOb
+         /mBk27EYcXzLSlDyIRCGmJ2MXy4qTPKrS12VzzmxnzqqKGQiJGS1f6oUaEx7I+b7tkhX
+         7PLOLMXInk5vkv5/96P8FZuAxoo5qEnQplWDz7nQuHwXw+p1N7texSUNg7hbfqWe7cez
+         IfCw==
+X-Gm-Message-State: AOJu0Yxy3VgnpA0HKKP87Z2sJ6HwAByorRSiBvuuDvPFT2i+GvhsU/Fa
+	7p5LUddOwTR9Tf86+DQJQn/fqpo2nJrwKFsBXCYW0YVPAoTzNFBgxOOP+FJRGHIAZBLL1AcLEdf
+	Q+VmpZHWt4Hi2iS3MJcWM7T79R+AFkdyhSzV9
+X-Received: by 2002:aa7:c74f:0:b0:554:dda2:dd63 with SMTP id c15-20020aa7c74f000000b00554dda2dd63mr3444205eds.157.1704015568370;
+        Sun, 31 Dec 2023 01:39:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEB6SHiQywZWugTxbIp3r3mAW8+8OP1SVppgq+gYDSvDuHO0HoVJn1ZJpVbUgKQm/N94n+/iQ==
+X-Received: by 2002:aa7:c74f:0:b0:554:dda2:dd63 with SMTP id c15-20020aa7c74f000000b00554dda2dd63mr3444194eds.157.1704015568115;
+        Sun, 31 Dec 2023 01:39:28 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id ew10-20020a056402538a00b005546ba152f4sm10900308edb.71.2023.12.31.01.39.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Dec 2023 01:39:27 -0800 (PST)
+Message-ID: <fec812d4-1d69-46cb-9ad1-9634f0062a5f@redhat.com>
+Date: Sun, 31 Dec 2023 10:39:27 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -30,79 +57,151 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org,
- =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
- Andrew Morton <akpm@linux-foundation.org>, Li kunyu <kunyu@nfschina.com>,
- Michal Hocko <mhocko@suse.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Zhang Zhengming <zhang.zhengming@h3c.com>, Zhou Kete <zhou.kete@h3c.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] kernel: relay: Improve exception handling in
- relay_create_buf()
+Subject: Re: [PATCH][next] media: atomisp: remove redundant assignments to
+ variables
+Content-Language: en-US, nl
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231219143929.367929-1-colin.i.king@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20231219143929.367929-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8cAMbnrx5PUzmWpIuZ3ENWfAXomfwk4vH6XkW65pVmmKbuBjJms
- KcHBoClLhCth389xP6fAuwM0yo+vzgXzDnU1xBseJKQXYlBjN/VGEMWwe6geP5/fYb40JER
- aZppaaFdtlZSTdUo6Xga5ACBmoRAC/UNXFkfoyrwN/Iuw0vPNPUDvv5/TNUp3WMBw0I/W0Q
- 5iKa8rdaZguM52SFxwrIw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TE4FyJwHFpY=;R4C80PLXC7bNJoaCP+76mtDrUir
- fEpQqTxyHJMHQ2IxBrS4diRWjF/UT49k7QmyZsscFMyyurPN576Jy6jI5yuw+VOJb8/UcoC4R
- 6TnARN8eRw7Lx7/P7JgfSV0/BCsKkvZhJ6Ug173NXzcWEuZYe4W5e7hk9+JKaoeA1wdxIpjwJ
- Rk3iwA0m3QGxGjAL7g7BWZDnWQNkKhUuB5UBtotAfsgZsyGZJpmmse48saakQ5S2fRua9FHD4
- jX8OC3lAJOjFGtxuOHtzZK0TJZjN2cjeOYcxRhWFE2ZQk4gBLOt3ab2l3yFvfGaCooVI6Dnt5
- irkZSoZjlQXCRIG1E3uLNfaEe2uh1YcbVsJikE7s4rR/2K/NmjRZgn9gSm/1bfFB4nbsg7fLj
- swiXAGmG+rhqe56HeIHES//KUia2EBgkEGe1kiUJN2Fi7GWNCu2mDay9lG4K99oNUhQQpAHj4
- 4PzuSgYKRG5lrS2O4u6xH1LXf0J5fUlgPgjmSlBlgDYkaRBAB5kwJjm6ALYUG3HisJtdGBot8
- sUUq5iuC9/zxo9b5QDvJJBXUOAFsUSdiByNDiLZ/Uhsz7D8pRSdkir6aPXg6+v2SzYmJJEmCk
- +AKtb/506clg487Bl404M6Ok4gni/NRnRcFjciuwNfI4CGNBUS/3EvtNDnt88xIvHSPTC1tk+
- aIYLouH2uynh3KdAavByEu1sLoGHTCzXcWpIk/AWx15StY9wM1qEOdCRcRfPGDoNc3jjsOdX7
- ITlNc6O2smWyIu3X7MMJYPZWSB4mEASyVeRoFh9q+Dhf7yS+hCJAxrCL+hESDUz0bdaS9MUjP
- uZSF8xCVgBd/+UYOftuqAYdybiLZPVIJ+/qeLVBFYNUbTiBiJSIt4WqT2sF0w4HmrGMMUKP8d
- JB3eiaxvzF45dn8BiwxraZRSETN3qopjIB2gvlYf7CaVlSB/nPoF8cC6C1PwP1Zv3v6eNRmXq
- 6s1h+QOihtOGG0yzIvNPlzt2tJ0=
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2023 10:26:25 +0100
+Hi,
 
-The kfree() function was called in one case by
-the relay_create_buf() function during error handling
-even if the passed data structure member contained a null pointer.
-This issue was detected by using the Coccinelle software.
+On 12/19/23 15:39, Colin Ian King wrote:
+> There are several variables that are being initialized with values
+> that are never read, the assignment are redundant and can be removed.
+> Cleans up cppcheck unreadVariable warnings.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Thus use another label.
+Thank you for your patch.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/relay.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I have merged this in my media-atomisp branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
 
-diff --git a/kernel/relay.c b/kernel/relay.c
-index a8e90e98bf2c..b8c06305213d 100644
-=2D-- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -161,14 +161,15 @@ static struct rchan_buf *relay_create_buf(struct rch=
-an *chan)
+And this patch will be included in my next
+pull-request to Mauro (to media subsystem maintainer)
 
- 	buf->start =3D relay_alloc_buf(buf, &chan->alloc_size);
- 	if (!buf->start)
--		goto free_buf;
-+		goto free_padding;
+Regards,
 
- 	buf->chan =3D chan;
- 	kref_get(&buf->chan->kref);
- 	return buf;
+Hans
 
--free_buf:
-+free_padding:
- 	kfree(buf->padding);
-+free_buf:
- 	kfree(buf);
- 	return NULL;
- }
-=2D-
-2.43.0
+
+> ---
+>  .../atomisp/pci/base/circbuf/src/circbuf.c     |  2 +-
+>  .../pci/runtime/pipeline/src/pipeline.c        |  4 +---
+>  .../atomisp/pci/runtime/queue/src/queue.c      | 18 +++++++++---------
+>  3 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/base/circbuf/src/circbuf.c b/drivers/staging/media/atomisp/pci/base/circbuf/src/circbuf.c
+> index d9f7c143794d..06f039236abc 100644
+> --- a/drivers/staging/media/atomisp/pci/base/circbuf/src/circbuf.c
+> +++ b/drivers/staging/media/atomisp/pci/base/circbuf/src/circbuf.c
+> @@ -207,7 +207,7 @@ bool ia_css_circbuf_increase_size(
+>  {
+>  	u8 curr_size;
+>  	u8 curr_end;
+> -	unsigned int i = 0;
+> +	unsigned int i;
+>  
+>  	if (!cb || sz_delta == 0)
+>  		return false;
+> diff --git a/drivers/staging/media/atomisp/pci/runtime/pipeline/src/pipeline.c b/drivers/staging/media/atomisp/pci/runtime/pipeline/src/pipeline.c
+> index 3d8741e7d5ca..966cb47b95d9 100644
+> --- a/drivers/staging/media/atomisp/pci/runtime/pipeline/src/pipeline.c
+> +++ b/drivers/staging/media/atomisp/pci/runtime/pipeline/src/pipeline.c
+> @@ -693,7 +691,7 @@ static void pipeline_init_defaults(
+>  static void ia_css_pipeline_set_zoom_stage(struct ia_css_pipeline *pipeline)
+>  {
+>  	struct ia_css_pipeline_stage *stage = NULL;
+> -	int err = 0;
+> +	int err;
+>  
+>  	assert(pipeline);
+>  	if (pipeline->pipe_id == IA_CSS_PIPE_ID_PREVIEW) {
+> diff --git a/drivers/staging/media/atomisp/pci/runtime/queue/src/queue.c b/drivers/staging/media/atomisp/pci/runtime/queue/src/queue.c
+> index 2f1c2df59f71..c4d4062206a2 100644
+> --- a/drivers/staging/media/atomisp/pci/runtime/queue/src/queue.c
+> +++ b/drivers/staging/media/atomisp/pci/runtime/queue/src/queue.c
+> @@ -81,7 +81,7 @@ int ia_css_queue_uninit(ia_css_queue_t *qhandle)
+>  
+>  int ia_css_queue_enqueue(ia_css_queue_t *qhandle, uint32_t item)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if (!qhandle)
+>  		return -EINVAL;
+> @@ -138,7 +138,7 @@ int ia_css_queue_enqueue(ia_css_queue_t *qhandle, uint32_t item)
+>  
+>  int ia_css_queue_dequeue(ia_css_queue_t *qhandle, uint32_t *item)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if (!qhandle || NULL == item)
+>  		return -EINVAL;
+> @@ -193,7 +193,7 @@ int ia_css_queue_dequeue(ia_css_queue_t *qhandle, uint32_t *item)
+>  
+>  int ia_css_queue_is_full(ia_css_queue_t *qhandle, bool *is_full)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!is_full))
+>  		return -EINVAL;
+> @@ -225,7 +225,7 @@ int ia_css_queue_is_full(ia_css_queue_t *qhandle, bool *is_full)
+>  
+>  int ia_css_queue_get_free_space(ia_css_queue_t *qhandle, uint32_t *size)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!size))
+>  		return -EINVAL;
+> @@ -257,7 +257,7 @@ int ia_css_queue_get_free_space(ia_css_queue_t *qhandle, uint32_t *size)
+>  
+>  int ia_css_queue_get_used_space(ia_css_queue_t *qhandle, uint32_t *size)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!size))
+>  		return -EINVAL;
+> @@ -289,8 +289,8 @@ int ia_css_queue_get_used_space(ia_css_queue_t *qhandle, uint32_t *size)
+>  
+>  int ia_css_queue_peek(ia_css_queue_t *qhandle, u32 offset, uint32_t *element)
+>  {
+> -	u32 num_elems = 0;
+> -	int error = 0;
+> +	u32 num_elems;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!element))
+>  		return -EINVAL;
+> @@ -338,7 +338,7 @@ int ia_css_queue_peek(ia_css_queue_t *qhandle, u32 offset, uint32_t *element)
+>  
+>  int ia_css_queue_is_empty(ia_css_queue_t *qhandle, bool *is_empty)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!is_empty))
+>  		return -EINVAL;
+> @@ -370,7 +370,7 @@ int ia_css_queue_is_empty(ia_css_queue_t *qhandle, bool *is_empty)
+>  
+>  int ia_css_queue_get_size(ia_css_queue_t *qhandle, uint32_t *size)
+>  {
+> -	int error = 0;
+> +	int error;
+>  
+>  	if ((!qhandle) || (!size))
+>  		return -EINVAL;
 
