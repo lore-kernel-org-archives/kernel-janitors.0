@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261EE20F0;
-	Sun, 31 Dec 2023 08:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8924422;
+	Sun, 31 Dec 2023 09:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DK3xL9UK"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DGCaUnSB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704012207; x=1704617007; i=markus.elfring@web.de;
-	bh=Y0zWZgj6Y0K0bkgqyGjCt7nG5v2aUOSugrldJ+nSJyQ=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=DK3xL9UKgS34OjC/P921kKVslC2HvqyRcPR+9BfDMbZ5Z6puwnA7xAMvOKrcZjUH
-	 +C8xuK8wMgYkQCiX+hTlnGMa112CfKxbq+gMGdxAz4Ar/lPGD41W/WbARCYsAaRUX
-	 JXNeSsPPlciZ+HF1/Ko+UCBZCbQHCpSS9BE/DQkcwns1YPgKDmZfV3CEMrvboDVwc
-	 nJNrdUqHkbjYRRSoNjPx7Z7QBHnOi8bwJYqWrJNvUj5yDtaYy5vaTrRvh8zpSFxaX
-	 5SFqRbG/Cc6K0BYEvpoi10jURm4Y97NcFxie3DoTxksquZfkwnNJqCT6vh3nGusVh
-	 aOOGU8zly6ODyX13iQ==
+	t=1704015497; x=1704620297; i=markus.elfring@web.de;
+	bh=fX8AFaR7x87HsTh6nIC//eueVMeAPcdOmrlfPLHQHUk=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=DGCaUnSBuKr1f/ptwqcfa98KzB413qTy5ZtchiNllEkyNg+Th1qJ2MpgXNkbg7+D
+	 YD5DBi+LRQwodlm/1GeofcagKa64JRKOxCaHwJ+gKD+FvBKGpCXqQ581+/a68e1ly
+	 RXDAh2Gm5/UC5GcikoQ5I/BlSujKmTTXyMHvYSPzDi/J+9xmH5qBtBGO7D7CY+ZQ7
+	 qg9yrjicY34WYLHFQrpp37hXOxfPs5TY+VIMGE4gU0puFRswSQFseofUkGCNnr2Sn
+	 IMmeUvxpHKKq1h9i7EldaVOSfy2AoMUKe/1/ecs3Cb+/ojXEhjRa018Pr2RfNegdq
+	 BCkikoh8sfsJCD5+ZQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2Phi-1rNhxp31o6-004HsL; Sun, 31
- Dec 2023 09:43:27 +0100
-Message-ID: <a1e5ed93-6396-4ffe-9f4f-adb36e89ead0@web.de>
-Date: Sun, 31 Dec 2023 09:43:27 +0100
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdfCH-1qkXWK2Gx7-00ZGR5; Sun, 31
+ Dec 2023 10:38:17 +0100
+Message-ID: <ef8b36bf-d9d7-46a4-9648-7cc8aaa8a980@web.de>
+Date: Sun, 31 Dec 2023 10:38:10 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,76 +30,79 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 3/3] gcov: Improve exception handling in add_links()
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: Peter Oberparleiter <oberpar@linux.ibm.com>,
- kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org,
+ =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
+ Andrew Morton <akpm@linux-foundation.org>, Li kunyu <kunyu@nfschina.com>,
+ Michal Hocko <mhocko@suse.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Zhang Zhengming <zhang.zhengming@h3c.com>, Zhou Kete <zhou.kete@h3c.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <ebffa8ea-8d0c-4b83-805b-754e25bd4603@web.de>
-In-Reply-To: <ebffa8ea-8d0c-4b83-805b-754e25bd4603@web.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] kernel: relay: Improve exception handling in
+ relay_create_buf()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:266UXnCFnJs1UhXDnxzgQk0WSNxoTBvL4Ectx5t/OyYBkhFpbMz
- q9d7wTo/cpcFYxdrHeust6Bsm41z8foE9EaQlGsVN0OdKWvCEc2D6+Sb7uNr345poqRd/yU
- Zmsu/snErGDNozlYGprkJoMT04N49gL92i+3n3Nu4eXdMlJTB9vACJnVBsljKbHXHdNTawu
- 88qxBY0f3/BZxoGkVFRzQ==
+X-Provags-ID: V03:K1:8cAMbnrx5PUzmWpIuZ3ENWfAXomfwk4vH6XkW65pVmmKbuBjJms
+ KcHBoClLhCth389xP6fAuwM0yo+vzgXzDnU1xBseJKQXYlBjN/VGEMWwe6geP5/fYb40JER
+ aZppaaFdtlZSTdUo6Xga5ACBmoRAC/UNXFkfoyrwN/Iuw0vPNPUDvv5/TNUp3WMBw0I/W0Q
+ 5iKa8rdaZguM52SFxwrIw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G+N9Oq2OJi8=;8Tm1thXBTbg3AdxG9He9+sInVuI
- U5TSfmRZFFYED0ouc5m+aBudgP5iqZRhx+SIMGbXP9Xfu4XTsg5WcbCjaIBBUff4ygFeRp+LT
- djCiOnSsmaDztE5Iqv4391AyrbXm/7w9w3KkUhDiEFqHtg84Eu41vBokLKFWoAk98HJFd/Iyc
- xNqySMm6/rUrkFVg56F8xLGWEgJLdNr3LA46+RNoP4BmlRKlDUNr9FVIILHxWetj9I9K6JiTP
- KKRquj0Z3VKB8m9MjI0nUFh6mADRFEFpg3grQIT8Y8NlX3F0t9ItT9rA4TLJios4qnVvxvvBJ
- bIj+o0sYi3aWphbnWFSQsgFNUsSHmO+OEEbtySseaLEQpeOFld44Ui2+nGeRBfFmy2JVBVyF3
- hs76WaXssa/bJaoVTIY+7MSa/gL8Wu42YCVti5CAT9SUSPFu8RimICqK+s3WrK4VNB+LAqJ9Y
- XgmGH9+hY3/2hUaYehPjSeKSf6U6ecJKHiBbgIDvdOLPHk5rUSZAI/aDtCmQ0Gxo5zvgypnRo
- Qz0srOtS3R8vNRJ/7HP34uurPUyWeOytmg9fSpq1aTcO/pBO4RdvT9vU2q4YiOI41FCb7bCf4
- 5EOQlqlbF+MX7rGncjLn0dNlxZ7I/B4N9BnFR+qUMotfElLPbdYcx7uzf3DiyVtXpdLFB0aWB
- Zd56tmaaD5tNlc6sWAl7GDvLE0VKohNegHgXUL1X8MDmMV+2Oy/Wfth6uBgfoNpM49yMOJgzx
- TGDCMdsjxMeKITDi+B9nKU4H7CzKmN/7riiLV3VDvlqo2NOG0sZ8QxTGIeV4gRjh2W/yVekdA
- c1FTmScOVe6h/UX/skp7VAYKaW4zjRhLpFQng+AhTpV+3jzqk7tkrlGbCEPgTQ/E33Xjwq+0p
- roef4hExnbsISdt9Qbjv1WLwl7XP0F0jCYMRyGxRPUBU2QNBNWqLiMk7U4C3nt0YuvHzd6Vba
- z1SJfw==
+UI-OutboundReport: notjunk:1;M01:P0:TE4FyJwHFpY=;R4C80PLXC7bNJoaCP+76mtDrUir
+ fEpQqTxyHJMHQ2IxBrS4diRWjF/UT49k7QmyZsscFMyyurPN576Jy6jI5yuw+VOJb8/UcoC4R
+ 6TnARN8eRw7Lx7/P7JgfSV0/BCsKkvZhJ6Ug173NXzcWEuZYe4W5e7hk9+JKaoeA1wdxIpjwJ
+ Rk3iwA0m3QGxGjAL7g7BWZDnWQNkKhUuB5UBtotAfsgZsyGZJpmmse48saakQ5S2fRua9FHD4
+ jX8OC3lAJOjFGtxuOHtzZK0TJZjN2cjeOYcxRhWFE2ZQk4gBLOt3ab2l3yFvfGaCooVI6Dnt5
+ irkZSoZjlQXCRIG1E3uLNfaEe2uh1YcbVsJikE7s4rR/2K/NmjRZgn9gSm/1bfFB4nbsg7fLj
+ swiXAGmG+rhqe56HeIHES//KUia2EBgkEGe1kiUJN2Fi7GWNCu2mDay9lG4K99oNUhQQpAHj4
+ 4PzuSgYKRG5lrS2O4u6xH1LXf0J5fUlgPgjmSlBlgDYkaRBAB5kwJjm6ALYUG3HisJtdGBot8
+ sUUq5iuC9/zxo9b5QDvJJBXUOAFsUSdiByNDiLZ/Uhsz7D8pRSdkir6aPXg6+v2SzYmJJEmCk
+ +AKtb/506clg487Bl404M6Ok4gni/NRnRcFjciuwNfI4CGNBUS/3EvtNDnt88xIvHSPTC1tk+
+ aIYLouH2uynh3KdAavByEu1sLoGHTCzXcWpIk/AWx15StY9wM1qEOdCRcRfPGDoNc3jjsOdX7
+ ITlNc6O2smWyIu3X7MMJYPZWSB4mEASyVeRoFh9q+Dhf7yS+hCJAxrCL+hESDUz0bdaS9MUjP
+ uZSF8xCVgBd/+UYOftuqAYdybiLZPVIJ+/qeLVBFYNUbTiBiJSIt4WqT2sF0w4HmrGMMUKP8d
+ JB3eiaxvzF45dn8BiwxraZRSETN3qopjIB2gvlYf7CaVlSB/nPoF8cC6C1PwP1Zv3v6eNRmXq
+ 6s1h+QOihtOGG0yzIvNPlzt2tJ0=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2023 09:23:50 +0100
+Date: Sun, 31 Dec 2023 10:26:25 +0100
 
 The kfree() function was called in one case by
-the add_links() function during error handling
-even if the passed variable contained a null pointer.
+the relay_create_buf() function during error handling
+even if the passed data structure member contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
 Thus use another label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- kernel/gcov/fs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/relay.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
-index 10916c70fad9..80c221bb7f20 100644
-=2D-- a/kernel/gcov/fs.c
-+++ b/kernel/gcov/fs.c
-@@ -490,7 +490,8 @@ static void add_links(struct gcov_node *node, struct d=
-entry *parent)
- 				gcov_info_filename(get_node_info(node)),
- 				&gcov_link[i]);
- 		if (!target)
--			goto out_err;
-+			goto remove_links;
-+
- 		basename =3D kbasename(target);
- 		if (basename =3D=3D target)
- 			goto out_err;
-@@ -502,6 +503,7 @@ static void add_links(struct gcov_node *node, struct d=
-entry *parent)
- 	return;
- out_err:
- 	kfree(target);
-+remove_links:
- 	while (i-- > 0)
- 		debugfs_remove(node->links[i]);
- 	kfree(node->links);
+diff --git a/kernel/relay.c b/kernel/relay.c
+index a8e90e98bf2c..b8c06305213d 100644
+=2D-- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -161,14 +161,15 @@ static struct rchan_buf *relay_create_buf(struct rch=
+an *chan)
+
+ 	buf->start =3D relay_alloc_buf(buf, &chan->alloc_size);
+ 	if (!buf->start)
+-		goto free_buf;
++		goto free_padding;
+
+ 	buf->chan =3D chan;
+ 	kref_get(&buf->chan->kref);
+ 	return buf;
+
+-free_buf:
++free_padding:
+ 	kfree(buf->padding);
++free_buf:
+ 	kfree(buf);
+ 	return NULL;
+ }
 =2D-
 2.43.0
 
