@@ -1,29 +1,28 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BCC8F49;
-	Sun, 31 Dec 2023 15:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C87C63A7;
+	Sun, 31 Dec 2023 15:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lAjUuHKK"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QnIxKZPM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704034824; x=1704639624; i=markus.elfring@web.de;
-	bh=/EkgIbiDfFiW79s9a4Ba4KIcoGQRr5fomhIzMuL4pkQ=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:References:Cc:
-	 In-Reply-To;
-	b=lAjUuHKKLLMTacaMrIMsZ/OOnph36OFk831BnfBHFvGXMU6lzBhtImXYS3zv606E
-	 c8NGymPNhvF51C0QZkIpcN0a5BfUPz5m/2kF9n1yIc3pDj2+HgYt/OZUl044Gc22t
-	 9V/Q+VVFcz76aP7wn7ZttOaOHEvrgSqQC1e3CiDP3paFIIizR2PecBv5iOks3sAw6
-	 awakye2XLnopEWguxPSGEkpDETMIWsOpT+LRRO73RMuPtXgx65mj+hkKKRVywEmAI
-	 nyE57tCLrAi204EQagySrf+hJ4fu3xxaXhPbQRFHYj2V9QZro4RuDEiERQGC/680K
-	 699MZbZnBVYLTEh+Fg==
+	t=1704037144; x=1704641944; i=markus.elfring@web.de;
+	bh=ZBp8NyuXlvFPMABKUXF8u5UDLChRQXub7cPUR3cIVjI=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=QnIxKZPMK9+YyKmT3slf6m6F9R2FY4N0VZWMk1DGku7qZQIgPkyQAi6NQQyKSpER
+	 gNVpQllYSFGMscovXE2hzHOQZK3ctdd4ZlQwji8zzIvwzV3aEwwxsM4q1X2k9DjOB
+	 LFaZlkwFsd6qanvmDmFDAhI8OyLx2W4zin2Z+LblMFZrCTx1K/MI+0LVeT7bmK654
+	 glFmIP2xBraApiMNmf8km9aanZgKZF49yk6UEPkUsKcituSQPBeljnqhv1FFsNODp
+	 EnlfvbA4Cx4AW/UAak0dsdy19/27IPAu3Pt9r7VB9XppyZ2gnuiSMHM+t4EJFQUuI
+	 RklHZMptE+buQDSycQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwA1A-1r3OQ81xBs-00sG9F; Sun, 31
- Dec 2023 16:00:24 +0100
-Message-ID: <5253e660-6b66-4775-ae2f-06f5a1d40be5@web.de>
-Date: Sun, 31 Dec 2023 16:00:22 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M43KW-1rJxu40kLo-000R5I; Sun, 31
+ Dec 2023 16:39:04 +0100
+Message-ID: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
+Date: Sun, 31 Dec 2023 16:39:02 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,106 +30,82 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] net/smc: Improve exception handling in
- smc_llc_cli_add_link_invite()
+To: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- "D. Wythe" <alibuda@linux.alibaba.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jan Karcher <jaka@linux.ibm.com>,
- Paolo Abeni <pabeni@redhat.com>, Tony Lu <tonylu@linux.alibaba.com>,
- Wen Gu <guwen@linux.alibaba.com>, Wenjia Zhang <wenjia@linux.ibm.com>
-References: <8ba404fd-7f41-44a9-9869-84f3af18fb46@web.de>
 Cc: LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <8ba404fd-7f41-44a9-9869-84f3af18fb46@web.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] packet: Improve exception handling in fanout_add()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oG3OmE7p+Zndch/Dj/BnQFbZ4YKWANLuDuOJVlDnyB2QnqSTIfO
- FN4K3UkD8+tYea+OsaPrlTrg2oWgGiEcCvW11H69MqsCeSl7thehurwIksrf1kwil0QGIDw
- ufE7jsBAHe0kQLj0of+zeF/MIm/8bxPktR6HnHU5qMM6gz2p/WIF3q7arKIq2QB6FVjKZHe
- oNKjkRrfxbvdfzZcUSciA==
+X-Provags-ID: V03:K1:YuiPoJK/DkWYUtBEuYaPtFkOwt5+qDZ+CpW20nQ/SsrN29Hf2MG
+ zfl4iwkrCLCOpZSKJncaR/9pFlhaLpSm6kjB0c5NiKIAXXHtYK/1bKGkQV9QMf3ap9dyVla
+ 1SrT7wDeY9K4wI7L8naBNw/aoisFycfYx+RqkwBqAT1fTRwSoJUonUm5bRRW9SwN0/fs9bn
+ yKKU0YZONZCadetKs65/A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6M1bFLtV6zc=;k7xX0Go5mPnhUg1AtvOiS4tVGyu
- sES+x3UIFXs/aJtn6JOx64gVuddsXky1mfoDSyu1RGPsHVSaUK5cHvPypQzcxp3Q0TooNHPWt
- 7Gfk8dPEHSEk4Nb+055lRygnhv+Wo5qa0TeG8fvp+YuXPnrj8Pyz0aSQGC92NUV0QdDKLF1Dp
- qSiRVjsUL/30IXQQn5TQC+VJq2SgYtZJVQ53DecR0EBGJlT09c4Z1BsNQmH8c0VJVfL8Oq0gA
- /sD9kamMNuOAUhRONYRMxnzz6jOBKF7P8tvR8liB5pUHftM29nCxnpA1tsD5fq58OofoD4DI1
- gYo/PXdvoGvtW3BQVrIfJo7/Tn8JYA4Nu9/Y5c2tCtASy1b296nO17gAQJEgoeinyQuHLBg6a
- bOO31at2WB6IJ7Z4JOqE/MKW6zsNDTGabnpFQwHxKyLf9boybLk7WRBV7jF2UdG9iyNjiby3g
- k2RdesvHAdzxKnLVyKAudjVkDqtc320aXXL6x2YdDQ0RbBBONQY740+Md1Q9evT50IAP/gn8h
- 41NKKrF+hDKHqIH8yNZ2U9vWPACVE3M2g2DrkjHCysWxApje9nugAgcqViFF410qNfa2gzEDz
- gKM9vCJ3bGP02sQZy6vuOClXKQL+2VoJCggqyLlUdmhN4oRgjn8i3iP75bTF3uOrgqWS+3Rw1
- qoXn/TC3Erf0hqJl0l0uCHoP8gT6lqTFgIWKzwKfQgZ7mT3sT3LIWjU1keydEt0ukfK/gJznK
- 5q4QLYxq9qUN4xgBU+FBLCnCweA3trW13AjRSP+cD/XSlI+OWMPGEmh8TyGZaN1XKANeab43f
- yj3Ieb18vyXBf1QDY47mXGDlt6TNm4DpsE+hnAlsfjyqt2tE+0amYXV8WY36zew6vnsfndb6X
- 9FSVQPPSNKPx6PzJu4aTUggy+B8/8WQfPD+b5ZmW6Que1IHm8LVKKFkpNxCau6Vp0imQX+Cup
- rgELGg==
+UI-OutboundReport: notjunk:1;M01:P0:PecX/maW88s=;PRkbnBeZHNnfH6i7gmhwN1xAa65
+ CEQsb2bwOI4O+ELnibNzZmCTKgR1Fx8p2S+7jEalI8stWrYWSWF+VRTqfYI2KAPocipY2SneW
+ kALaiXIjH8v/MIPsmvB89xTY6QnTJMX7ro9pcokqRfjxscUDUjsUD6Iw806XVYYcPKSmooHXs
+ 68A8xUw00Yi9mxE2b4M7grV7tYdkZsoRY1IeKztDoQnFuvZgThFWgUUtJjcBFg9wz3IOUU+Jz
+ iufdnUzdYuNCQIOam2+wBsXgHrMTR4VzSIIhkoIOGj0jcVHX3aOE6a7m9OxCCm349cC0b2XtB
+ YTREly5DBOIN17sz95wELvnGRD3ZSNJjdTTc9JxgBkK66Yyj7vwz/kSpZFeE08Ty35B4tsoYD
+ gZALL2DOaOwAnM+k6LuhLzWPJ8EYiFaiDWMMP2VWo/LKjohFArbKlYPQFcAsJivXkXMzVA+lz
+ 2v0/Tj4/Idj/ZMnpslzqzVFnC+Pv+pVa+XFHXtTLjyARn9apzLnqh6N9KNPD197gedWt2Nwbh
+ yj7xxYsenWjewWwdn/jvAc7LcggMJ135yoVpMSumYoCItSFnbPxKJOapOq6dmHvPLwOy6awOo
+ UmKFlnxUSoYq73wfctggz7ay5mFeOPK5X4exq4i8zUCulZ9udWiuUGzdoDCXFYITboImGwIXj
+ cyYrcOWt94y/VrHeSwk6dBdsU4gaRBtsNQ13oUOrxtUbH+lcZ+gkKlKPCxbBPbo8CZsssxunz
+ V7xUsslfvz21f+u8haZwKXIEN0DlK2sYbraJARBUFN/xWFzvvCCcWvJQNji2Kn5UuWjtaTSHI
+ 17+KirMbBNpK4D/3+WFj5+9fkUfx5b1ZotX3eY4cWzttAwE44pMmzNhzjLIbxLB4AAydJH2wg
+ AJzO4nWcr9dW3iD/NTkN+y22izte0wJ4xo16Vni5wVSJxHEijmhmTcIuOo3DMNbiEG/u38T4Q
+ 4l2v6HUQVU6njCwUDctC0Uhp9m8=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2023 15:42:07 +0100
+Date: Sun, 31 Dec 2023 16:30:51 +0100
 
-The kfree() function was called in some cases by
-the smc_llc_cli_add_link_invite() function during error handling
+The kfree() function was called in some cases by the fanout_add() function
 even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
 
-* Thus use another label.
-
-* Merge two if statements.
-
-* Omit an initialisation (for the variable =E2=80=9Cini=E2=80=9D)
-  which became unnecessary with this refactoring.
+Thus use another label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- net/smc/smc_llc.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ net/packet/af_packet.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/smc/smc_llc.c b/net/smc/smc_llc.c
-index 018ce8133b02..2ff24a7feb26 100644
-=2D-- a/net/smc/smc_llc.c
-+++ b/net/smc/smc_llc.c
-@@ -1163,23 +1163,21 @@ static void smc_llc_cli_add_link_invite(struct smc=
-_link *link,
- 					struct smc_llc_qentry *qentry)
- {
- 	struct smc_link_group *lgr =3D smc_get_lgr(link);
--	struct smc_init_info *ini =3D NULL;
-+	struct smc_init_info *ini;
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 5f1757a32842..0681d4f1ed85 100644
+=2D-- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1712,14 +1712,14 @@ static int fanout_add(struct sock *sk, struct fano=
+ut_args *args)
 
- 	if (lgr->smc_version =3D=3D SMC_V2) {
- 		smc_llc_send_request_add_link(link);
+ 	err =3D -EALREADY;
+ 	if (po->fanout)
 -		goto out;
-+		goto free_qentry;
- 	}
++		goto unlock_mutex;
 
- 	if (lgr->type =3D=3D SMC_LGR_SYMMETRIC ||
--	    lgr->type =3D=3D SMC_LGR_ASYMMETRIC_PEER)
--		goto out;
--
--	if (lgr->type =3D=3D SMC_LGR_SINGLE && lgr->max_links <=3D 1)
--		goto out;
-+	    lgr->type =3D=3D SMC_LGR_ASYMMETRIC_PEER ||
-+	    lgr->type =3D=3D SMC_LGR_SINGLE && lgr->max_links <=3D 1)
-+		goto free_qentry;
+ 	if (type =3D=3D PACKET_FANOUT_ROLLOVER ||
+ 	    (type_flags & PACKET_FANOUT_FLAG_ROLLOVER)) {
+ 		err =3D -ENOMEM;
+ 		rollover =3D kzalloc(sizeof(*rollover), GFP_KERNEL);
+ 		if (!rollover)
+-			goto out;
++			goto unlock_mutex;
+ 		atomic_long_set(&rollover->num, 0);
+ 		atomic_long_set(&rollover->num_huge, 0);
+ 		atomic_long_set(&rollover->num_failed, 0);
+@@ -1812,6 +1812,7 @@ static int fanout_add(struct sock *sk, struct fanout=
+_args *args)
 
- 	ini =3D kzalloc(sizeof(*ini), GFP_KERNEL);
- 	if (!ini)
--		goto out;
-+		goto free_qentry;
-
- 	ini->vlan_id =3D lgr->vlan_id;
- 	smc_pnet_find_alt_roce(lgr, ini, link->smcibdev);
-@@ -1190,6 +1188,7 @@ static void smc_llc_cli_add_link_invite(struct smc_l=
-ink *link,
- 			      ini->ib_gid, NULL, SMC_LLC_REQ);
  out:
- 	kfree(ini);
-+free_qentry:
- 	kfree(qentry);
+ 	kfree(rollover);
++unlock_mutex:
+ 	mutex_unlock(&fanout_mutex);
+ 	return err;
  }
-
 =2D-
 2.43.0
 
