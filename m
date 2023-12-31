@@ -1,86 +1,143 @@
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814B4BE47;
-	Sun, 31 Dec 2023 21:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A72BBE48;
+	Sun, 31 Dec 2023 22:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBu98d3f"
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3bb9b28acb4so5322241b6e.2;
-        Sun, 31 Dec 2023 13:45:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704059133; x=1704663933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKsBy9hdrgBDv+9lbkkexRpE8/6en4orssBBHouRAoU=;
-        b=GBu98d3fQT47mJmFlOcAI+CXeckXDZSD6/6fpp7ZUYnc7MVHsJ4rbY68wM4qkunB/W
-         CtBlRUB3mfu+mw5Jlw/h5la0eISpdPZVUsXVhMzrMwhZhGGTMauwIOsTSF0vWNOm1oN/
-         gGFV7J/6vs15CMjEv+QLw6iNOffznUCPPvkQvUyqhxlRvLuPyVL5AqYBhr9uwilFisK9
-         Jp2arX4+/GbzJ3jJDvLUOPnWzvDXbws9PLywDz+A6Ny+aJRkaoB8VbIpTj/nHeLvfyIi
-         CcX9xadWqfLToM+slKGmjLJZKjfHOs+g55sJXYdcXHwLu/lsja5VOKpyZoaHlTvqQ6KT
-         3iPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704059133; x=1704663933;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RKsBy9hdrgBDv+9lbkkexRpE8/6en4orssBBHouRAoU=;
-        b=ms/1e5Jvw3Q01q9oFljyvrAEPJt4lBo4BefS/bRuQwGYrQARa8OaDYhhO4/uWth6X1
-         LMp2NNrUXNOSsazXG5huAaJBsGVha2J5SEfk5tKVjrHOKOnkyrhH0sGOyJ1UBu0nhbkt
-         LdxMQls1wsuwTkpLx8LkhPe1AoSN2dOOtG4zcb9mH2p+SLjwyLQWpDDIYo22urolHSDf
-         KTB1YkS09BSGy/anlLjhVd9JvUHKOus2kzqBgnPkg65zL1mBKMJsjyvXRM7psx9Aw+Jy
-         PJmLhyaidZ8PRW/mvSDDolpNOalQ1QFnbW+bsa+tBEtXgKKB5M71W6QzTjuI8GeMZsts
-         iFBw==
-X-Gm-Message-State: AOJu0YzPPIu7yCDoQlu6qBx+1frd5FjSLhqJqjMhWWBVKDRjhSYrlpfT
-	K8njMPPnFOiShJfGJxttI7A=
-X-Google-Smtp-Source: AGHT+IGfBgWzhPIFobt+ZRpXau9Y9HqHLyldknGnqXmMw9U0gV1smzqicW2ERGRPuFW1hCrP5sxQ+w==
-X-Received: by 2002:a05:6808:2191:b0:3b9:dd70:7660 with SMTP id be17-20020a056808219100b003b9dd707660mr17086741oib.11.1704059133558;
-        Sun, 31 Dec 2023 13:45:33 -0800 (PST)
-Received: from localhost (48.230.85.34.bc.googleusercontent.com. [34.85.230.48])
-        by smtp.gmail.com with ESMTPSA id n13-20020a0cec4d000000b0067cd5c86936sm8869073qvq.79.2023.12.31.13.45.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Dec 2023 13:45:32 -0800 (PST)
-Date: Sun, 31 Dec 2023 16:45:32 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, 
- netdev@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-ID: <6591e0fcb089f_21410c2946c@willemb.c.googlers.com.notmuch>
-In-Reply-To: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
-References: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
-Subject: Re: [PATCH] packet: Improve exception handling in fanout_add()
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cAs6avvz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704060560; x=1735596560;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8d1J15Mon+CMCpSQt5t6iUCErEXV8Fkc4EcOwdHGg+c=;
+  b=cAs6avvzwstDeVpo1UznLzHp1Bl5ttVRCDXQA8cMNm+QWHQD+Kqk7zHZ
+   RvgzlXnkB1HQl9DiIOVMmNEbr3Ps8iGy51WEVz3IlXG3Y1Fq07royI2pH
+   02TVlTWYr1ebMdu/pybjgV8368+HN5Y4zA8wpIgPhaxi3P5Q1G6qzOH5H
+   exa0eKZEeXjp1Y3EjlhoTbRB2l5GFeyZHhB5/iS5aO6BHYGkFTts/Tv3m
+   +UYbU1RVJFYRQR3a494V7ADfUYDeQW9h8TQLWPgBSAP+RUXMXxn9uZTmc
+   d1t13YCRc3xzszxZ4w+LafGd1qvQCjpWgY74FNKLGVGlZbdQXMz53PHsX
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="395645655"
+X-IronPort-AV: E=Sophos;i="6.04,320,1695711600"; 
+   d="scan'208";a="395645655"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Dec 2023 14:09:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="1026390035"
+X-IronPort-AV: E=Sophos;i="6.04,320,1695711600"; 
+   d="scan'208";a="1026390035"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Dec 2023 14:09:14 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rK3zc-000Jlw-1V;
+	Sun, 31 Dec 2023 22:09:12 +0000
+Date: Mon, 1 Jan 2024 06:09:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Jan Karcher <jaka@linux.ibm.com>,
+	Paolo Abeni <pabeni@redhat.com>, Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] net/smc: Improve exception handling in
+ smc_llc_cli_add_link_invite()
+Message-ID: <202401010536.XhzcWDPH-lkp@intel.com>
+References: <5253e660-6b66-4775-ae2f-06f5a1d40be5@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5253e660-6b66-4775-ae2f-06f5a1d40be5@web.de>
 
-Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 31 Dec 2023 16:30:51 +0100
-> 
-> The kfree() function was called in some cases by the fanout_add() function
-> even if the passed variable contained a null pointer.
-> This issue was detected by using the Coccinelle software.
+Hi Markus,
 
-It is fine to call kfree with a possible NULL pointer:
+kernel test robot noticed the following build warnings:
 
-	/**
-	 * kfree - free previously allocated memory
-	 * @object: pointer returned by kmalloc() or kmem_cache_alloc()
-	 *
-	 * If @object is NULL, no operation is performed.
-	 */
-	void kfree(const void *object)
+[auto build test WARNING on net/main]
+[also build test WARNING on net-next/main linus/master v6.7-rc7 next-20231222]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/net-smc-Return-directly-after-a-failed-kzalloc-in-smc_fill_gid_list/20231231-231406
+base:   net/main
+patch link:    https://lore.kernel.org/r/5253e660-6b66-4775-ae2f-06f5a1d40be5%40web.de
+patch subject: [PATCH 2/2] net/smc: Improve exception handling in smc_llc_cli_add_link_invite()
+config: x86_64-randconfig-002-20231231 (https://download.01.org/0day-ci/archive/20240101/202401010536.XhzcWDPH-lkp@intel.com/config)
+compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240101/202401010536.XhzcWDPH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401010536.XhzcWDPH-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> net/smc/smc_llc.c:1175:34: warning: '&&' within '||' [-Wlogical-op-parentheses]
+    1174 |             lgr->type == SMC_LGR_ASYMMETRIC_PEER ||
+         |                                                  ~~
+    1175 |             lgr->type == SMC_LGR_SINGLE && lgr->max_links <= 1)
+         |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   net/smc/smc_llc.c:1175:34: note: place parentheses around the '&&' expression to silence this warning
+    1175 |             lgr->type == SMC_LGR_SINGLE && lgr->max_links <= 1)
+         |                                         ^                     
+         |             (                                                 )
+   1 warning generated.
+
+
+vim +1175 net/smc/smc_llc.c
+
+  1160	
+  1161	/* as an SMC client, invite server to start the add_link processing */
+  1162	static void smc_llc_cli_add_link_invite(struct smc_link *link,
+  1163						struct smc_llc_qentry *qentry)
+  1164	{
+  1165		struct smc_link_group *lgr = smc_get_lgr(link);
+  1166		struct smc_init_info *ini;
+  1167	
+  1168		if (lgr->smc_version == SMC_V2) {
+  1169			smc_llc_send_request_add_link(link);
+  1170			goto free_qentry;
+  1171		}
+  1172	
+  1173		if (lgr->type == SMC_LGR_SYMMETRIC ||
+  1174		    lgr->type == SMC_LGR_ASYMMETRIC_PEER ||
+> 1175		    lgr->type == SMC_LGR_SINGLE && lgr->max_links <= 1)
+  1176			goto free_qentry;
+  1177	
+  1178		ini = kzalloc(sizeof(*ini), GFP_KERNEL);
+  1179		if (!ini)
+  1180			goto free_qentry;
+  1181	
+  1182		ini->vlan_id = lgr->vlan_id;
+  1183		smc_pnet_find_alt_roce(lgr, ini, link->smcibdev);
+  1184		if (!ini->ib_dev)
+  1185			goto out;
+  1186	
+  1187		smc_llc_send_add_link(link, ini->ib_dev->mac[ini->ib_port - 1],
+  1188				      ini->ib_gid, NULL, SMC_LLC_REQ);
+  1189	out:
+  1190		kfree(ini);
+  1191	free_qentry:
+  1192		kfree(qentry);
+  1193	}
+  1194	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
