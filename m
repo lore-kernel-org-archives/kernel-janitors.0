@@ -1,121 +1,103 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06D3210B;
-	Mon,  1 Jan 2024 11:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD76108;
+	Mon,  1 Jan 2024 15:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WibzVTXS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704108303; x=1704713103; i=markus.elfring@web.de;
-	bh=KBCe5bAyw6ghD008K0JgVekThO7siyPaiU7l1J0vQGE=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=WibzVTXSTg+qNgBDrvuSXpIDRTZvvUPJ1JrzTsjybr5mgdqhGx1bSoOVi3ZY+9m1
-	 BqwjqL0fpscze353vP4faBGkNV67s77noGVeWL8t7wjZ2g/x31Oz4TsFXG2BC4Y8o
-	 lBXI0f5uPHoSOdQsgVmwajr7AfaorohMRyKslZS4tZBYDFcr0diC1m7LKbdPSAdQm
-	 SRmxsJEPS05RfW2GfKZVFKhmF2Bw2qFay/1j+spUANlWKoiwnISlcN/X0zljIfzEg
-	 sWaSHXopwvj421iaS+w1JnhfeAkLaz3GJXK6yzn5J3PMTBobYSIVqYQKQXKp4upqa
-	 uD0YuTAGsYX9jU4L4w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLzn1-1rcCo33Ymn-00I3sH; Mon, 01
- Jan 2024 12:25:02 +0100
-Message-ID: <4307bce9-ccbd-4bc5-aa8e-b618a1664cbe@web.de>
-Date: Mon, 1 Jan 2024 12:24:59 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0MHm4CD"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-78160ce40ceso278473585a.1;
+        Mon, 01 Jan 2024 07:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704122962; x=1704727762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dOai/QjEk7Tqo03+RAmdQPXZT0jZzm9Xucc4X/XwTic=;
+        b=S0MHm4CD52KaEEjeuvYmjsrwjjdRyG+EID0hl8vFwr68Ctf5/jH3OMdnakoxzhVAx2
+         Q/cbQvViQl7DoeFa6zcSWOUYXNUcNPMWn4As+Y8mgTEXN2sywENrZVcZdv9la79IyqdQ
+         vYSLdxtmBqJUqRz/FrLhjat+MYD/gmGK6Xr1OtXtXd3zHjdpzUeuFAumW9Me/sDk054S
+         t0FVJA+K72n3fcwT47MwxmlmRXgzVJhIbDF7JxNOWIu05WUKjjLVL4Fjb530nIU4FyBY
+         IzolDWyvUY5cZAp8sR624KW89uEz3rfQyipilvZHJkK+SY08/ncVcD40htuMx6uHqVv+
+         O5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704122962; x=1704727762;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dOai/QjEk7Tqo03+RAmdQPXZT0jZzm9Xucc4X/XwTic=;
+        b=Qfhfs1EuI/uXAJCuM6tlm82QHMioxS/zCjOIv9a3hPUIMvfBFe7BrwLtZP1g2KRsuI
+         KqYeIi/j0TSFZQHBZqzrlTJyKkECYnIQyN2CzmBYB83MG5aHqLwFw4KSN3km/Cu0g8xr
+         svMmFZD13t4NV7qTXgH6jPa3z+8dCqrk3BpP943zYm+7G+B0fFK3QbP6xxF8P8Ga0MPo
+         XX9w3aIr0mhOHWXRjB5V1afQD7pJ40evrsBTSuovPbXlBKDR32yeMNsxoa37QYJEA2/5
+         kCpT6e7ZY3VDdOh4RR8TFn3TVoGsE/qExoMSM9zqjPtX82mxkRyNwDKBTz3WzPv7Wfmn
+         pDdg==
+X-Gm-Message-State: AOJu0YwTBoIpDPgEro7VdUPmwgNim8JcHHVrkm6z+Wk9QeF1NY8X2AWF
+	tvPYMLbrCtrwm8c4oGADjGs=
+X-Google-Smtp-Source: AGHT+IEiXWhUUGuteY7oXndwbY3RQVWSKD09LycRD+xKMXWl0huVS4i4E8KI+ZYBdU+gy/EDb8ttiQ==
+X-Received: by 2002:a05:620a:111c:b0:77d:85d9:c655 with SMTP id o28-20020a05620a111c00b0077d85d9c655mr15082676qkk.14.1704122962028;
+        Mon, 01 Jan 2024 07:29:22 -0800 (PST)
+Received: from localhost (48.230.85.34.bc.googleusercontent.com. [34.85.230.48])
+        by smtp.gmail.com with ESMTPSA id bq14-20020a05620a468e00b00781d60d3597sm95985qkb.120.2024.01.01.07.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jan 2024 07:29:21 -0800 (PST)
+Date: Mon, 01 Jan 2024 10:29:21 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ netdev@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Message-ID: <6592da5178589_238b0d2943a@willemb.c.googlers.com.notmuch>
+In-Reply-To: <a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
+References: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
+ <6591e0fcb089f_21410c2946c@willemb.c.googlers.com.notmuch>
+ <a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
+Subject: Re: packet: Improve exception handling in fanout_add()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sunrpc: Improve exception handling in krb5_etm_checksum()
-Content-Language: en-GB
-To: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Anna Schumaker <anna@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
- Dai Ngo <Dai.Ngo@oracle.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Paolo Abeni <pabeni@redhat.com>,
- Simo Sorce <simo@redhat.com>, Tom Talpey <tom@talpey.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <9561c78e-49a2-430c-a611-52806c0cdf25@web.de>
- <ZZIhEJK68Sapos2t@tissot.1015granger.net>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZIhEJK68Sapos2t@tissot.1015granger.net>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Vn/HkV0Ure2YCzmNLi3xwD29bLKJb2dTQOMTnC7oLEdFVLRHM3r
- uviIFdxclVy651SOw7PMjVJJ8NXHqmDZKU9M3JrQvWvhwV0U0VdhVxd5BY4meP0iy/8vyOi
- 6OYy0JarKfUE+OS3eZMrHUzSJyWycyPrQJdqmMfsNyqVHiqnzSd79ivyma3qY0kE416y3yP
- RuSKnjlngaUQEPYhqMwww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UdF4WRWURZA=;pdsBrnNEagtfYnRIibWLfuZ6qQz
- OgKCfYYf0dvoBc/SZ9UbJEQC9Zpt/RDML186UyhsETArxUvCLaqqQqcnXn6B1cHz+LDh3JBse
- 9Zm4+/ss6A5w5oMg+UP9wbWvy5wO419D4YeeUBKKOKqfuMq97xzMNx4XQHuMTzr2MgLMP1/zx
- CHXuriei2XUOtKnCoI/uMzHIGSqVf8IXgRLiudR4J0x2wawzZYoLg5Ef8IcAx8f8sbM88LXUM
- bI4Q3gGkCzUun4ytu9G4qS74O40/MHMfDcZjMnunOJ88A2uuixxwFbwtpCdNZ3nZb1LTbA+aB
- MpFjTkku53lDMjOn68DT1lkemkFSLE8Z/PtaH4Jd1GEX2IDUBhpgjx/eA1MCey2BBTmo6IopJ
- lBeXxgX88ZnO/ESzQspj20X6qd4/yBGroWfdRB5Z4nh/UD+if7///ijVBK4XVCDiQVJeDYP/p
- KcNhA8OTnGVGhBcsqFQfbViYHZb1Fb6IjtFMrudptaLfpkwtHpqTX7Wb2eS36k97PtxmIb85q
- lnC76zIY/IKfmbAUKGQHXMbE5Vmb6qpsEpmmKIZl6seGrORsk/8XZ1yOO0eyOhypUcMwHEX/o
- utxDtkkgQm04nUBddwCodG42Ey4s4JoP0y/fWtN57x2wadJ5Q2/XFfRv91zmL2uszTVRifJi9
- l7E+Vev+J/HDzCDny9b1znh+rf10C2r8LIDyLAH1okZ9b1dnFCbyOroVB5myZ64lFqTIQ4iF8
- HROSUEp8FNuJkChDTfG7BXNnYCYojOKaFyU8VpXBZTQnvg1qybXgPzfO5J8D7px8/jkvHhBdl
- O+HCwp5ivRsBu65NGv91drq5wdKvgNViLP4CpF5NX+k6B/VqZtKJ+wp/hZXVMxan1ABQK5Tes
- 04MjYlWf3bDWlDfynN82OCl6qFElmzBgthArfeV5Eyfz2kZiZ1Op/sh6HvBS34s7cQ0SCJt7e
- LuVrEA==
 
-=E2=80=A6
->> Thus use another label.
-=E2=80=A6
->> ---
->>  net/sunrpc/auth_gss/gss_krb5_crypto.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
-=E2=80=A6
-> As has undoubtedly been pointed out in other forums, calling kfree()
-> with a NULL argument is perfectly valid.
+Markus Elfring wrote:
+> > It is fine to call kfree with a possible NULL pointer:
+> =E2=80=A6
+> > 	 * If @object is NULL, no operation is performed.
+> > 	 */
+> > 	void kfree(const void *object)
+> =
 
-The function call =E2=80=9Ckfree(NULL)=E2=80=9D is not really useful for e=
-rror/exception handling
-while it is tolerated at various source code places.
+> Such a function call triggers an input parameter validation
+> with a corresponding immediate return, doesn't it?
+> Do you find such data processing really helpful for the desired error/e=
+xception handling?
 
+It's not just personal preference. It is an established pattern to
+avoid extra NULL tests around kfree.
 
->                                          Since this small GFP_KERNEL
-> allocation almost never fails, it's unlikely this change is going to
-> make any difference except for readability.
+A quick git log to show a few recent examples of patches that expressly
+remove such branches, e.g.,
 
-I became curious if development interests can grow for the usage of
-an additional label.
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
+commit d0110443cf4a ("amd/pds_core: core: No need for Null pointer check =
+before kfree")
+commit efd9d065de67 ("drm/radeon: Remove unnecessary NULL test before kfr=
+ee in 'radeon_connector_free_edid'")
 
+An interesting older thread on the topic:
 
-> Now if we want to clean up the error flows in here to look more
-> idiomatic, how about this:
-=E2=80=A6
-> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-=E2=80=A6
-> @@ -970,8 +970,9 @@ u32 krb5_etm_checksum(struct crypto_sync_skcipher *c=
-ipher,
->
->  out_free_ahash:
->  	ahash_request_free(req);
-> -out_free_mem:
-> +out_free_iv:
->  	kfree(iv);
-> +out_free_cksumdata:
->  	kfree_sensitive(checksumdata);
-=E2=80=A6
+https://linux-kernel.vger.kernel.narkive.com/KVjlDsTo/kfree-null
 
-I find it nice that you show another possible adjustment of corresponding =
-identifiers.
-
-Regards,
-Markus
+My summary, the many branches scattered throughout the kernel likely
+are more expensive than the occasional save from seeing the rare NULL
+pointer.
