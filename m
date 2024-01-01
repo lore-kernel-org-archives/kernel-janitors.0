@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A436E17C8;
-	Mon,  1 Jan 2024 08:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B9417C9;
+	Mon,  1 Jan 2024 09:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p6AgW3xS"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KBTKypbx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704099456; x=1704704256; i=markus.elfring@web.de;
-	bh=agDsBCNizMRnAhd3ZLJbePedKBgljy4IQu9qS5vaM9U=;
+	t=1704100211; x=1704705011; i=markus.elfring@web.de;
+	bh=HLXRLltHUfyafr70c4W+KbfbTYAxtORaeKRu1+nfa4s=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=p6AgW3xSKvzw/ZSqUEwWFeRwaqeoRrV9fPVTPvrf/Q9VWTXpin/fUJX/PRTb19mf
-	 sBz/3HPobLINIBRSAWNWlomo638nrp/9XGW5L0dEimB5TvXp/+ve8Kb75U0Lf0wSO
-	 +fX9iKA1r2IhrDUcexrjJZmUEeLQevbRtLduOfAvfL9s990qvqh/3pzwxqlp14cUN
-	 p0zmltsRA1UcbA9srFfAMMLx4hdCoc07ahqRyVGTXKdToTz7J45Ybyqiqg6kkhzvC
-	 iJmnOuCE0YCkt/8ciqNNgkCIrjMCPZ1uVmJDwNQOQUxKbzm4L27Os8pzCUZVzsrlI
-	 BWH5gpNJ+uPfCO73Kg==
+	b=KBTKypbxeRI11ODKaZc/WtjDaclzDqLRQlWMw1X6jts/rU+tL7fTFAqNX5a5UEX1
+	 k7TZWuDgrL7uVJMHaoweGYN5O+ajuIGSe28M/WcOg02Or/UqVsgi3LIlJJ31u+VEX
+	 928quQA37dZsHnITuMroVbIESKtoQdZpSKL7M0wuYsnEQY7Cs7SLPKZpyz79OuXfi
+	 4nvjn0w91a7ArbGPQjV1e4h7n5/BBTC+DIvF6UqBX6+wNjseltQ4VhCYWGkxoYjSf
+	 tMhHXDEDjWpkAzMcX69Y9YhqhCt0XCC2T6oAHXmVaM9KYpvLd6bdrsNTfP107hkt6
+	 5w6yEUvlLoVyWwJb0g==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpU1w-1qsnjY1G28-00q14H; Mon, 01
- Jan 2024 09:57:36 +0100
-Message-ID: <b441f304-a3cc-4ebe-91cb-84caf55cbfe2@web.de>
-Date: Mon, 1 Jan 2024 09:56:53 +0100
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Meler-1qmH0I22Mv-00aNBr; Mon, 01
+ Jan 2024 10:10:11 +0100
+Message-ID: <dc0a1c9d-ceca-473d-9ad5-89b59e6af2e7@web.de>
+Date: Mon, 1 Jan 2024 10:10:09 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,92 +31,56 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: Adjust exception handling in
- generate_sched_domains()
-To: Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
- Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
- <9cd1ce1d-15c7-427c-9929-f3c75b97b49c@redhat.com>
+Subject: Re: [PATCH 0/5] bpf: Adjustments for four function implementations
 Content-Language: en-GB
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Yonghong Song <yonghong.song@linux.dev>, LKML <linux-kernel@vger.kernel.org>
+References: <7011cdcc-4287-4e63-8bfa-f08710f670b1@web.de>
+ <CAADnVQLq7RKV+RBJm02HwfXujaUwFXsD77BqJK6ZpLQ-BObCdA@mail.gmail.com>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9cd1ce1d-15c7-427c-9929-f3c75b97b49c@redhat.com>
+In-Reply-To: <CAADnVQLq7RKV+RBJm02HwfXujaUwFXsD77BqJK6ZpLQ-BObCdA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Nt0ajD4ZaUbOXmcwE4wMyZy7kP2gGXaGyEGiaR/J5xah78nfeRQ
- rjDvyjN+Cx71OgiCR3gTw6RTTU2EiWdEECokCntHuVmDHuXmV2D7uO+7se93HAdGIF+7r/O
- +0VDt8Jgc/7XYG7NzEY7Buau01KX3JfpmcRIvJ6/ByG1WlpI0ON6TBPKtGMDikqXxQ7/dSS
- iH12QbJ81RWT2lUZGsBiA==
+X-Provags-ID: V03:K1:su+B1C5CGpMaob4ZRA6yo2u6yjKAcFN7lO1g2bOyxgWIWNdFFfL
+ WURRaUgW4wiLT7WqBpXMVpJW4hJ4ezzhBnRQJPKhuFGoKFQ/O4aq297ByxMASkNPRSXvNLQ
+ IwKpAQnA/CZQiPuw4FC0zJBtHvZlz65PJfRIAJiWdt2CwmFbana6q4T9BrSzgzQBpqCfn1X
+ RP9SR3sageKAEnqzvj00w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FtZC8cznO5E=;7FrmcAQ4cUKIffUX75YG7eV3iWQ
- WZY/5EGwBaJO3XpDUc6+uW8XeW6l8pAgb15FjXRgRdt1LUwrJQH49FObRb4xeGhEn84zDURxg
- 4BBWALxKEmF7IbFc+KvdP9pGJNoChNH3TGh1tXD3OvWx0rwjBIevx0hC9LQqc3dHAL5EeRIbt
- esl98hUXon0HTu7EuZlK3ahwVFoSR5lQLy+54YdCiJu6RKoL/NDS9qrUH19iir11/5mNRbOyK
- nx+v8GjbtWBogBNr4Te3JLj1L9ArasTceSuCg77LUPcd9K2uylmLA+tnbiIuGJ68fbXD+xdls
- +3LurC2Vt6a1iZyZVI1Ai4ICbXTd/o29XSOQScTqzOZafttAfnVJjaLr3K9JLK0zfXsageedz
- kaXbvTICwxJRDT0XjUKO+CNpc8P1XZn1tm7zCi1hLGQZLbiRQmZxPwpvAD9/ZGGytZKeF8VxO
- Vx6MagNWO/2jdf4ovRXdpOZudsU4ErLAGmc+x3dHIdtrhrlpprAJGP0CHJM0g/iZGaeJOAMAI
- ekm7Vf4lJ+K+2MBqWx7+Ws39QxexHcdY7Azv1J0r89rCC7yrq+6q92MroKeXz0CbqtnofrPbX
- lxiYX11uksWQoLlRT6kz9CBV7jG9p14Xo5c/KJMbwUZqFY9hT7QAimQnTFFAF2Rcv6BNJFZFf
- RaGBdX1XTCRuHusXywn6h5CNgQvHgm1+c58OtXH9GxApX+jCU8KPca5qi16Xd0p9tdvETGuXI
- OooICzUxqa2q3XyooovVxEtG+KAVppVqBYUG0pJEft478DUxROzV2dnCLPhvRXiTOnZR7Eogc
- zoWalmVr9yMNvQp9fAdbFPM/Bjmcom20G59RyAxBAxQ/QUBCG0QsJfjO/HZORIwhTtLcrstdV
- 0xBllrunpqGAKDiL+dt6s3YJ3XetgV/+dRHBoCg+bA8Jq6hlrccgKzgyGEwZHEYDWk/gwVDFe
- PoJG1g==
+UI-OutboundReport: notjunk:1;M01:P0:ojwleqwWfQ4=;hBbTcOQ7Qnj/GwECcfGj226lcKA
+ qUJkD7N4+uGhRMPwGfSzxNk/HwqciJT6UO1i+HqQ2Bxh6qdn9/8RLdMNs7mrGhzAwA+0VP2h3
+ dUx6zdP4jVmsizV9mx3iTexwouRwe52/2nLxE7eET0sUTcqAccvPkWf5DpeFu63BzgX9LcD/p
+ /k1RbIVqrv7sEWMaE/jNKKw0/nIcGEEDWdhlr3n6Pw/Zk6l+APcSPzgMG1IO19T7vdul3qFMF
+ MVaoKJEhwCnakhPyE0hiDzlaDaFTIJ1Py/6Qfex09dobeF5YJY/4DVihzv5uFo5cJ4gEjXnAs
+ NuZyXfU56yaYLCcvPszCUHKPXiUp72BITuBl+irEvGfK9DLM2GAua08FvmKhvclFiChUUb8aS
+ qlaCXgYsKCAZEgkmR5dfo6WDeUzmSbLGTZkXaUrOJ1T7fqfohnMppYt95D3tDqEtC120eYlqA
+ koVtvAcU8wnR5s2sZ2gid2P7ZmbzTa8JcQ0sPFU6CIT++3PiaQG5V6rbE9CYpBPScvoqCiIWP
+ DFud369y8NYyQv3u46gBNegRiVQ1O2NRNEGcwLNW88PTsZjQM12rG2a0KF/Ccafv9J/4mdbK9
+ /34mStG1Oa5PCR+qDj1bhdQpbESOBh+bPuVn8b61jfi/kzrmeDxJXFP+ijz1QLBJ705zNeLgo
+ csIH+6+0zL2bbZA8v3919jUrm4iFNab0gxWkMoSZHJqwAjb1Qu4+yh8qH7KdEMpBFwZuOAzkJ
+ a+mK1yRHqdqi12x7I1ibNwVHdU0TzvpyQLrMHFbX0FuEPHn7XJ8XP59FpNTqlgAVOFRyhnJDz
+ 3d3nPVyF7wRfTgslXXnM7yHRAL2UXq2ec9KU6HDkVAwIhhb0By3PLcIgjqR0LH+cV7X1hqk7w
+ rqmpEEYdhi6Ga7x5VRIB6NIx2oFGuYrqc09JNcTfEOGc67CYzRZIeKBS/gxxaS7qoN6Xah6QI
+ HcgF/w==
 
->> Two resource allocation failures triggered further actions
->> over the label =E2=80=9Cdone=E2=80=9D so far.
->>
->> * Jump to the statement =E2=80=9Cndoms =3D 1;=E2=80=9D in three cases d=
-irectly
->> =C2=A0=C2=A0 by using the label =E2=80=9Cset_ndoms=E2=80=9D instead.
->>
->> * Delete an assignment for the variable =E2=80=9Cndoms=E2=80=9D in one =
-if branch.
-=E2=80=A6
->> ---
->> =C2=A0 kernel/cgroup/cpuset.c | 8 ++++----
->> =C2=A0 1 file changed, 4 insertions(+), 4 deletions(-)
-=E2=80=A6
->> @@ -973,10 +973,9 @@ static int generate_sched_domains(cpumask_var_t **=
-domains,
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Special case for the 99% of systems w=
-ith one, full, sched domain */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (root_load_balance && !top_cpuset.nr_=
-subparts) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ndoms =3D 1;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 doms =3D alloc_s=
-ched_domains(ndoms);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!doms)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
-o done;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
-o set_ndoms;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dattr =3D kmallo=
-c(sizeof(struct sched_domain_attr), GFP_KERNEL);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dattr) {
-=E2=80=A6
->> @@ -1123,6 +1122,7 @@ static int generate_sched_domains(cpumask_var_t *=
-*domains,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * See comments in partition_sched_=
-domains().
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (doms =3D=3D NULL)
->> +set_ndoms:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ndoms =3D 1;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *domains=C2=A0=C2=A0=C2=A0 =3D doms;
-=E2=80=A6
-> Please clarify what this patch is for. Is it just a cleanup with no func=
-tional changes or is there a bug that is being fixed?
+>> A few update suggestions were taken into account
+>> from static source code analysis.
+>
+> Auto Nack.
+> Pls don't send such patches. You were told multiple
+> times that such kfree usage is fine.
 
-The development opinions might vary for the presented transformation.
-I suggest to reconsider the number of relevant variable assignments here.
-Would you categorise an extra statement still as a desirable implementatio=
-n detail?
+Some implementation details are improvable.
+Can you find an update step (like the following) helpful?
+
+[PATCH 2/5] bpf: Move an assignment for the variable =E2=80=9Cst_map=E2=80=
+=9D in bpf_struct_ops_link_create()
+https://lore.kernel.org/bpf/ed2f5323-390f-4c9d-919d-df43ba1cad2b@web.de/
 
 Regards,
 Markus
