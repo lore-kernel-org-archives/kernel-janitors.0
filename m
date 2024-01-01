@@ -1,83 +1,88 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73F9BA3B
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jan 2024 18:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A406C8E4
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jan 2024 18:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="Les3QTOH"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6d9af1f52bcso1901079b3a.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 01 Jan 2024 10:12:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="2rxMKVpK"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d4ab4e65aeso7246025ad.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 01 Jan 2024 10:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1704132744; x=1704737544; darn=vger.kernel.org;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1704132831; x=1704737631; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yfcinmzu3fGAHYO60etHbYExmH51CIjL4/eAucUWHkA=;
-        b=Les3QTOHWak7mFcH9qiRuvPciyV+VyctLxpjyx9kGtuM+8bLbvLlkC0GivJdgBZ9Lw
-         p8nESOO4PTQYdNTmoXrSvxKr2xW+SCEByqzS6l3XzdD9oPZ6NXubwMGfGImwfXj3zF/v
-         MmMt8Z3Em6YmZ25EW67Cjg5cDs+1LUPNRaEc+jplMfG2SKJ/RLWBTlEEtKTYjFeqlebG
-         9KCXrQx7M6lGhB3bnqVtl5IWpsibU/7HhhwDt5u1AsdGEMKpLcG9x56XSWC5PyHgiBVJ
-         GWInuQsa9tpXTifrlkqsqvnwTR0ALXJUwV79WD1QTCiKiMg/05vTn1K2KdSauOwH1eAl
-         5WFQ==
+        bh=ReGf1cOAhj5IBC+Obt0k8qwdOa0dy6S3IHxPRIfLygQ=;
+        b=2rxMKVpKYJGh89+4cRUkVNguolMz98/F8BfPX7AjYTzt85ld+lTvge0nKQXFpiKMle
+         XrXeMSdy5iPYDEhg4sL7VmCW94xkMEAd5wUCxZw3aYDOLNgDvs2l/oEA0JuI0cv/3IdN
+         vz5JDguPVtYFld8j2ADnGXbEPB8OGWEDsN3PNoGAuZIgZ1FgBXuhwP1ETaw8275EncT9
+         DmPihLut3rIZHGeJgrBXVbFYWzX7TJcojxoJ8BQlk6SX1hRIUBcBL59BZ6GCmWIEHoa+
+         srSmQ7n5LpXMQEGV/W1oYfr6lhheyymsQzMYsvnTYebF0ulxH3QO2urA24XoRX2AAu6i
+         fhmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704132744; x=1704737544;
+        d=1e100.net; s=20230601; t=1704132831; x=1704737631;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yfcinmzu3fGAHYO60etHbYExmH51CIjL4/eAucUWHkA=;
-        b=JC2/sJ2y8+OsDEoCnSzy4WVOua9x/TvSQbGtZ33O0MN+k1sm7cIP+GKsqtOEMVr2cZ
-         qv1VcHXBWtNMieRib4Zg6e7LFWpBzNBFXDsoeqqxAI69lIGpwBwZGVabWGBndLzl9t2J
-         enKBgNfLC8eyXqKvXihSWxz3auR+DE3VGlUaKGixJ03iSm4RDkxeHp7wBm966P3jffpp
-         r4+9ToqEmWhO4wLGcU9aR0uGGXprwDvHCaOgS549zcHjRE6TvOhJLcbhfV8Avh98v5Xb
-         wcrVhAJP9aW+8/92SUNFsR1/8qVREDx1x81Sk90Dm82XEBWnuQ/lw1aOVcDfN6vHuXKb
-         X1Sw==
-X-Gm-Message-State: AOJu0YwUaj93XrIcFTRBRNXsSCutzSMuCLpyf6PWv3zj+Td74jWIaruB
-	2SUr0a8e+yD2ypxoyv+MXrhb+MZJhR9nHg==
-X-Google-Smtp-Source: AGHT+IHWr79IDfGUgn0Of4gsM+Z/TLPclGPF4NChQ8ZT1YIYFxNFQk6DXwGn7K/+2nGo///akLy5zw==
-X-Received: by 2002:a05:6a20:9185:b0:197:2f2d:acf1 with SMTP id v5-20020a056a20918500b001972f2dacf1mr158354pzd.10.1704132744068;
-        Mon, 01 Jan 2024 10:12:24 -0800 (PST)
+        bh=ReGf1cOAhj5IBC+Obt0k8qwdOa0dy6S3IHxPRIfLygQ=;
+        b=lgji2Xggn94/ugehBKiaNziXUaDYFtG/E+TeeZaxAijy/xrcFRg3kvcrvlH7ok1kTL
+         tsHJbvMJy08RcEsoMQa3S8l1Rvvzy/2XCGgGAtBL0VTBr5b1pz1Z3KHP7gSaXxNwXcWA
+         Gxo0h3JUl6OHBoTs6dOQYIYkE7s5NG1lg6Jn3Ds28Arcr/hvFyGdqhlV4Yg1tzIEwdFv
+         jXTRakndKuJm13HMCDSW8OJV34hkv7wV/FVHlHON0NceluK2EvML4Oin6ff0LT0psX7K
+         bhNHQtKR4E3gYFPYcUc9pLuC1K8VscNmV6IE0A/+DfPrkS3BETJVgTC0pkotrNE/VnXM
+         AYEQ==
+X-Gm-Message-State: AOJu0YzU5FJYp7eY7AqPWfZ4WjRQzkEgI02ZRahfqEMIqsa0vIj3fvxS
+	Yb+TpFr7O9FkRV5pdtD2ut1enhkSlT829g==
+X-Google-Smtp-Source: AGHT+IE1cS1k9Ungll9iPm/B/JTbPCnFxwHlQyrtzFcKGgrKDOLHBYvSnkU2Ezw4xjx0mKWQyKlUEA==
+X-Received: by 2002:a17:902:ced2:b0:1d3:f344:6b01 with SMTP id d18-20020a170902ced200b001d3f3446b01mr19617998plg.3.1704132830785;
+        Mon, 01 Jan 2024 10:13:50 -0800 (PST)
 Received: from hermes.local (204-195-123-141.wavecable.com. [204.195.123.141])
-        by smtp.gmail.com with ESMTPSA id n7-20020a170902e54700b001d0cd351baesm20338723plf.13.2024.01.01.10.12.23
+        by smtp.gmail.com with ESMTPSA id e9-20020a170902b78900b001cfb4d36eb1sm20375206pls.215.2024.01.01.10.13.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jan 2024 10:12:23 -0800 (PST)
-Date: Mon, 1 Jan 2024 10:12:21 -0800
+        Mon, 01 Jan 2024 10:13:50 -0800 (PST)
+Date: Mon, 1 Jan 2024 10:13:48 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, LKML
- <linux-kernel@vger.kernel.org>
-Subject: Re: packet: Improve exception handling in fanout_add()
-Message-ID: <20240101101221.73276d5d@hermes.local>
-In-Reply-To: <a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
-References: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
-	<6591e0fcb089f_21410c2946c@willemb.c.googlers.com.notmuch>
-	<a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Anjali Kulkarni
+ <anjali.k.kulkarni@oracle.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] netlink: Improve exception handling in
+ __netlink_kernel_create()
+Message-ID: <20240101101348.66978156@hermes.local>
+In-Reply-To: <477e5649-87e3-44d9-8226-010b9822e649@web.de>
+References: <90679f69-951c-47b3-b86f-75fd9fde3da3@web.de>
+	<477e5649-87e3-44d9-8226-010b9822e649@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 1 Jan 2024 10:46:45 +0100
+On Sun, 31 Dec 2023 18:42:30 +0100
 Markus Elfring <Markus.Elfring@web.de> wrote:
 
-> > It is fine to call kfree with a possible NULL pointer: =20
-> =E2=80=A6
-> > 	 * If @object is NULL, no operation is performed.
-> > 	 */
-> > 	void kfree(const void *object) =20
->=20
-> Such a function call triggers an input parameter validation
-> with a corresponding immediate return, doesn't it?
-> Do you find such data processing really helpful for the desired error/exc=
-eption handling?
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 31 Dec 2023 17:26:41 +0100
+> 
+> The kfree() function was called in one case by
+> the __netlink_kernel_create() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+> 
+> Thus use another label.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-If you look at the existing coccinelle script there is even one
-to remove unnecessary checks for null before calling kfree.
+
+NAK
+Please look at something else, calling kfree(NULL) is correct
+and the preferred solution.
+
+
