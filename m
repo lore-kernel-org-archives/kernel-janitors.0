@@ -1,103 +1,108 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD76108;
-	Mon,  1 Jan 2024 15:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50458F71
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jan 2024 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0MHm4CD"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-78160ce40ceso278473585a.1;
-        Mon, 01 Jan 2024 07:29:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704122962; x=1704727762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dOai/QjEk7Tqo03+RAmdQPXZT0jZzm9Xucc4X/XwTic=;
-        b=S0MHm4CD52KaEEjeuvYmjsrwjjdRyG+EID0hl8vFwr68Ctf5/jH3OMdnakoxzhVAx2
-         Q/cbQvViQl7DoeFa6zcSWOUYXNUcNPMWn4As+Y8mgTEXN2sywENrZVcZdv9la79IyqdQ
-         vYSLdxtmBqJUqRz/FrLhjat+MYD/gmGK6Xr1OtXtXd3zHjdpzUeuFAumW9Me/sDk054S
-         t0FVJA+K72n3fcwT47MwxmlmRXgzVJhIbDF7JxNOWIu05WUKjjLVL4Fjb530nIU4FyBY
-         IzolDWyvUY5cZAp8sR624KW89uEz3rfQyipilvZHJkK+SY08/ncVcD40htuMx6uHqVv+
-         O5mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704122962; x=1704727762;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dOai/QjEk7Tqo03+RAmdQPXZT0jZzm9Xucc4X/XwTic=;
-        b=Qfhfs1EuI/uXAJCuM6tlm82QHMioxS/zCjOIv9a3hPUIMvfBFe7BrwLtZP1g2KRsuI
-         KqYeIi/j0TSFZQHBZqzrlTJyKkECYnIQyN2CzmBYB83MG5aHqLwFw4KSN3km/Cu0g8xr
-         svMmFZD13t4NV7qTXgH6jPa3z+8dCqrk3BpP943zYm+7G+B0fFK3QbP6xxF8P8Ga0MPo
-         XX9w3aIr0mhOHWXRjB5V1afQD7pJ40evrsBTSuovPbXlBKDR32yeMNsxoa37QYJEA2/5
-         kCpT6e7ZY3VDdOh4RR8TFn3TVoGsE/qExoMSM9zqjPtX82mxkRyNwDKBTz3WzPv7Wfmn
-         pDdg==
-X-Gm-Message-State: AOJu0YwTBoIpDPgEro7VdUPmwgNim8JcHHVrkm6z+Wk9QeF1NY8X2AWF
-	tvPYMLbrCtrwm8c4oGADjGs=
-X-Google-Smtp-Source: AGHT+IEiXWhUUGuteY7oXndwbY3RQVWSKD09LycRD+xKMXWl0huVS4i4E8KI+ZYBdU+gy/EDb8ttiQ==
-X-Received: by 2002:a05:620a:111c:b0:77d:85d9:c655 with SMTP id o28-20020a05620a111c00b0077d85d9c655mr15082676qkk.14.1704122962028;
-        Mon, 01 Jan 2024 07:29:22 -0800 (PST)
-Received: from localhost (48.230.85.34.bc.googleusercontent.com. [34.85.230.48])
-        by smtp.gmail.com with ESMTPSA id bq14-20020a05620a468e00b00781d60d3597sm95985qkb.120.2024.01.01.07.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jan 2024 07:29:21 -0800 (PST)
-Date: Mon, 01 Jan 2024 10:29:21 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- netdev@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-ID: <6592da5178589_238b0d2943a@willemb.c.googlers.com.notmuch>
-In-Reply-To: <a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
-References: <828bb442-29d0-4bb8-b90d-f200bdd4faf6@web.de>
- <6591e0fcb089f_21410c2946c@willemb.c.googlers.com.notmuch>
- <a69fce11-68c2-446c-9da8-b959bb3ba70f@web.de>
-Subject: Re: packet: Improve exception handling in fanout_add()
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dseBywYb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704126424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHJuaOOoMITcmaF/jJKQveH0rmkD/J9cEtpvvbiUPHE=;
+	b=dseBywYbvj/Bwuom1TasWcCKhc877h0doFE/zIb7t1AtgtRIGS6x1wZWXiV3MahceedskO
+	Tgq/CUylfnubxZdQF9yWZGf3VWzA3mhp8sp0bjTOy+iCTqWTvU9OFc0BWVarhKZpKZu2xN
+	DxVZPo/fhSHoB+pR2aBsIFdXqt8TdyE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-EbaG0ZwFMgeB8Eg_Jyl7kA-1; Mon, 01 Jan 2024 11:26:59 -0500
+X-MC-Unique: EbaG0ZwFMgeB8Eg_Jyl7kA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B9E8B83FC22;
+	Mon,  1 Jan 2024 16:26:58 +0000 (UTC)
+Received: from [10.22.32.137] (unknown [10.22.32.137])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 11B96492BF0;
+	Mon,  1 Jan 2024 16:26:58 +0000 (UTC)
+Message-ID: <86fa9afa-21c0-42fb-926d-5ffc69695d30@redhat.com>
+Date: Mon, 1 Jan 2024 11:26:57 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/cpuset: Adjust exception handling in
+ generate_sched_domains()
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, cgroups@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <53be5f98-6359-48b5-955e-fd203d99d3cb@web.de>
+ <9cd1ce1d-15c7-427c-9929-f3c75b97b49c@redhat.com>
+ <b441f304-a3cc-4ebe-91cb-84caf55cbfe2@web.de>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <b441f304-a3cc-4ebe-91cb-84caf55cbfe2@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-Markus Elfring wrote:
-> > It is fine to call kfree with a possible NULL pointer:
-> =E2=80=A6
-> > 	 * If @object is NULL, no operation is performed.
-> > 	 */
-> > 	void kfree(const void *object)
-> =
+On 1/1/24 03:56, Markus Elfring wrote:
+>>> Two resource allocation failures triggered further actions
+>>> over the label “done” so far.
+>>>
+>>> * Jump to the statement “ndoms = 1;” in three cases directly
+>>>     by using the label “set_ndoms” instead.
+>>>
+>>> * Delete an assignment for the variable “ndoms” in one if branch.
+> …
+>>> ---
+>>>    kernel/cgroup/cpuset.c | 8 ++++----
+>>>    1 file changed, 4 insertions(+), 4 deletions(-)
+> …
+>>> @@ -973,10 +973,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>>>
+>>>        /* Special case for the 99% of systems with one, full, sched domain */
+>>>        if (root_load_balance && !top_cpuset.nr_subparts) {
+>>> -        ndoms = 1;
+>>>            doms = alloc_sched_domains(ndoms);
+>>>            if (!doms)
+>>> -            goto done;
+>>> +            goto set_ndoms;
+>>>
+>>>            dattr = kmalloc(sizeof(struct sched_domain_attr), GFP_KERNEL);
+>>>            if (dattr) {
+> …
+>>> @@ -1123,6 +1122,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
+>>>         * See comments in partition_sched_domains().
+>>>         */
+>>>        if (doms == NULL)
+>>> +set_ndoms:
+>>>            ndoms = 1;
+>>>
+>>>        *domains    = doms;
+> …
+>> Please clarify what this patch is for. Is it just a cleanup with no functional changes or is there a bug that is being fixed?
+> The development opinions might vary for the presented transformation.
+> I suggest to reconsider the number of relevant variable assignments here.
+> Would you categorise an extra statement still as a desirable implementation detail?
 
-> Such a function call triggers an input parameter validation
-> with a corresponding immediate return, doesn't it?
-> Do you find such data processing really helpful for the desired error/e=
-xception handling?
+My understanding of the patch is just to avoid an unnecessary call to 
+kfree() as kfree(NULL) is basically a NOP. By jumping inside the "if" 
+part of the conditional statement, however, it makes it a bit harder to 
+read. As generate_sched_domains() is not in the fast path, I would 
+rather have a patch that can simplify the logic than to make it harder 
+to understand.
 
-It's not just personal preference. It is an established pattern to
-avoid extra NULL tests around kfree.
+Cheers,
+Longman
 
-A quick git log to show a few recent examples of patches that expressly
-remove such branches, e.g.,
-
-commit d0110443cf4a ("amd/pds_core: core: No need for Null pointer check =
-before kfree")
-commit efd9d065de67 ("drm/radeon: Remove unnecessary NULL test before kfr=
-ee in 'radeon_connector_free_edid'")
-
-An interesting older thread on the topic:
-
-https://linux-kernel.vger.kernel.narkive.com/KVjlDsTo/kfree-null
-
-My summary, the many branches scattered throughout the kernel likely
-are more expensive than the occasional save from seeing the rare NULL
-pointer.
