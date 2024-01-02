@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB6FDDAD;
-	Tue,  2 Jan 2024 10:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B9CDDA8;
+	Tue,  2 Jan 2024 10:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UvbnHLHE"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AKGWWcpN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704191496; x=1704796296; i=markus.elfring@web.de;
-	bh=byLjICH9kZFXAhhR7l1uz0KXqLkgIwDGVOFiUikXwjw=;
+	t=1704192459; x=1704797259; i=markus.elfring@web.de;
+	bh=7lTu++jE80Y5lovMDkufPLLBPIN7e6g+jmCCUacF2ck=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=UvbnHLHE18UZfNoQinmJ5WClJpEmsnAxcznti26bUEb4k/E/6paOYmFB8aSKz/xG
-	 GIcohZH93ewA8ql7aafpXZG+/Q9As8dU558NPrg+Nj5Ub/Pv/EfQxF7rM43r1+pmp
-	 CaVX7o18hFfmmtuugXiXfUE8hNzYfc+pUOo5uFRmtlADn3JVqlU26PLVDuCYrb95U
-	 vDaHh2gjjc0U76o70y2YRE0Fynd6B8eFwtQMB+rCVXuW3JF1Mg2Mj1Z12aWrF6Lis
-	 +a0gyJ3xkxoKj4e7nTuln7FyT4lyLFzVApgfGhWMhzT0rRiu4ZRIcrGieY0h50IkL
-	 D/GkH1p1YzwEULNr4w==
+	b=AKGWWcpNiDEpb0arZ5Nal3G8mmlaaX3bo9gtdFy6OW3hzdrQuMDEOKrxYKXIBmrd
+	 TGXyO8WkWsyPTZyJs0d0+/o2/nTjvCY+fQjZ3YUeDE3uTpbv0yhwOZ85kl/oTHM86
+	 UDhvX2nKRYT4reA8JWdS9u0xzQAF9pdYlhFs9HItK8M7KDIzTlmZ7HAkxwRu7J6l6
+	 IRbyk/95VXrN85nBMkaPSLtOKrZIbpmzwcnkZUEsCahUVMdVhZpblbdsiRp/uYL4w
+	 foHsjSBU5GidQBfbgyvg2mKJhmLM12br5zycW6lEtIE9k+3yeWlGkE5oZmDY+KLj4
+	 VMoStzynGEgjp50w0Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3ouq-1rBZdI2IAy-00zyNb; Tue, 02
- Jan 2024 11:31:36 +0100
-Message-ID: <d2e5c263-c0aa-4297-b446-f013af7eb80f@web.de>
-Date: Tue, 2 Jan 2024 11:31:35 +0100
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6tr-1qkSPQ07MJ-00Zljr; Tue, 02
+ Jan 2024 11:47:39 +0100
+Message-ID: <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
+Date: Tue, 2 Jan 2024 11:47:38 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,110 +31,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] net/iucv: Improve unlocking in iucv_enable()
+Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
 Content-Language: en-GB
-To: Alexandra Winter <wintera@linux.ibm.com>, Suman Ghosh
- <sumang@marvell.com>, "linux-s390@vger.kernel.org"
- <linux-s390@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Wenjia Zhang <wenjia@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <cde82080-c715-473c-97ac-6ef66bba6d64@web.de>
- <81f7db31-a258-4dc8-b6e1-c1ef1844a9d2@web.de>
- <SJ0PR18MB5216C27127E46490951A1E5DDB61A@SJ0PR18MB5216.namprd18.prod.outlook.com>
- <8123a895-c7dd-4a75-94bc-6f61639621eb@web.de>
- <SJ0PR18MB52168AC4B874C0B99BD37039DB61A@SJ0PR18MB5216.namprd18.prod.outlook.com>
- <2bf1b0cb-86af-4e00-a0aa-23e3944617a2@linux.ibm.com>
+To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
+ <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
+ <5745d81c-3c06-4871-9785-12a469870934@web.de>
+ <ZY6Iir/idOZBiREy@casper.infradead.org>
+ <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+ <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
+ <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
+ <ZZPisBFGvF/qp2eB@casper.infradead.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2bf1b0cb-86af-4e00-a0aa-23e3944617a2@linux.ibm.com>
+In-Reply-To: <ZZPisBFGvF/qp2eB@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vwvz92Bt8HT7eNV3Wmw65q6wPiFzhtMoY5oZu8ovAx9ruR5aR/u
- +tP5/8TYnDV6TukFkGVK5FHlNA22DelulzoEZ4HDvAoIbdgX2BdHUXHnILdX1b5ZXqgqglj
- 2752rA2H4yNc8SQFEC8O7e6onYHBLEmIgsIptaG8+Vx2PzcLuv3KyBsmJPeRPDYWH5FIRAd
- 9TnVWIvwtsxF7m2J4alNw==
+X-Provags-ID: V03:K1:NQrjPEtu2sclqHgtnO1i2502o/Vpbe3+O2LyKYUhPOToDQSfBRU
+ DI7rOJ28yLd4ISEiJ6VGRXezMOWtTYdlCfi3HKfG6pQurU9eHidjkB+YGEo/y7tuhxed0TK
+ MAF3cmCrLZYeDdu8sMoqpeiHuINlr7Z1BtBN9gerO9LspTa045EJ4gsRJE973KOusC0izMn
+ IDcGgK5pYDpGmLri1V2Ow==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:N+sZX2iAzmM=;yViQHahgU4NVsBOTP6sDp3nZcfO
- 5oYUrWBM77Aet6jAwMVrgn81lJyL1DXbUrttOuRcVw359powYsbjEk8O1jZ+c8sfi961W2PZ8
- x9xQ+iaYA3KjEPYrvbdGmUnz1X5ffXGFVY1p9NptMTtwfCFg4Qsfmhvr1DSYLpgxXsv+jQQnz
- 2Wqi3TLx+ZszNN37nuK7ChIPOpUDYpiTUn2/j3lEifMBKjygFkCQRMde6vY6+8tdzaijEY6OR
- zcbAQYOi8YEQNUNvJEr9G5kdtoQv+3tAA3enqPjdQebe3RunU3nGwWT3slutmeI0+nQAHNIdi
- oropFxKVTPI38zpaQdofHwTFa2wtsE3nXIElxTcyZl7Lv/ZCC1vrc31lHTdmyAPNG2Gjq7cOe
- 3rj7sUQDGE9pUYc5mSczL81A2jCmI5hxeGAPqKk16aTZBCviJX1bKqQeXXKCvbLTZSNuD8GTA
- EyRwcn9GI0Z0v1PqcdMB5ZuAt+3FABNMIfhfrw/qvVqG0a4D90b2zXEhJ8k6ExtgLV80IDFUx
- vGIvEfaBSWilCrXirD+PT9kjn+J12MrSqpsVvppW93oGcw0E3ZtLQfhJPhvH5VDYSp+B5hYWi
- F9oKQ4spKIuiRKEejNNWUxEtp+e9TQXRvE5WrGa7tUOZA/7JcM9TPRVEVTviB1XB2zT1upa6Z
- jLHQlrJlzwXQH3RlFyiqpGkA06aKeYGNp0DPJK7h6ipbQl+HQjPDnDHT2uXgD2E600tS6DljB
- wDrpHoJ2p9uA1vs62VGjP0qJ3PIKl0uyytsNLNxtPnkmdoi2PhfGz3T1EOg45QIbFe8BcowOg
- KP5SEtlRrrQZKbycwwiHbGAenCBfiowz7LgFx57cBOeAceeTrJEDIXlV+G1H/icMMwMmnkXSg
- JArFpi8UAIeCs/Vtab7nAJObPhw16zi3467zLOB1/aLen15nyZpXdGqxqgf6rzrGm64bSoTUj
- ITVFcw==
+UI-OutboundReport: notjunk:1;M01:P0:058r1Zkd6zE=;lsl9C7ejOmkA9cjgumy9I5v+6DC
+ RSt/fHu53q4wobmXYl1Vk0Xj/ahyq2AmpyUp6n1WYP1wly5YCN8AeAzXFT70txPNHfCZGns13
+ LYnRyKzroh9oxMHMcrQ5DbDxq3ei7atfbpa4n20DpqpH+C5G4YyXRgT9dVp3X3rLHti7jsjNY
+ hBTsiBn5W9C1EZfYXVwqUB4v50UlsTcb9i9sNfk2alFWJzlZhuHssI81YOHkburO//smyYeOX
+ vEkUuqmOAMPnooFQGJkQyVe+4QXckuIArX1t9TaZJ/nUNdofBT1FlzKn7aMG2NW9DTmwqIbSV
+ KDSZs/l9iCRl7CxrrL0PWM079oGp+s861fPWJr0pQSRghz5/52+3OR/M/DL2QwseGdYAsdkSj
+ vEHt0ZcMe7UrVNghavaM1SznURVQOCFh6olp1JBzjeoPEvmgOuskjvV6OqILZUI9aNenNTqks
+ 6BEalOiQpLuK/8FnpruTmq4Q9ch2hjI7TYjLLGWpBMgRp71Hgqmo376AgJ7cxrcn1jRFwhRDN
+ sBiy8vt18HsnYDF9OddtKQq7twPkVMwi/G5xVE3Ph0iLl4Xx/0sU13qbp0siwGqWsyL+3U+Ce
+ LPrbMNt3Q2bt5K6oW/74uWTPwkBcNEiJM7ewOdBqNEOe3f2Q95iBjF2vpOYfRwswajPTjl8mH
+ rovEqYQiasPlkUZ6jjjzCV5qkiB7MRgHPP8pWzTJMHc3a1P/SRR8AFZ9JhMtSUmWUukl1+U3w
+ u9Cr1HpbZLU2F641+E4VYmbpxxnOxxJHAwcYw+uaaXVX/fwV790jjA6w2C04+H6ePwgckhZNq
+ DA3sOkMbgVP0T4bTVgPVL37o+wHrkAIG+dKntNCbJBUNVghTWN4hnFihiGb6JFVjTmx1Rvr7J
+ nfLavYLCGojkqZ4wr3ivvqBukyfdc3SDQsCbKA77gW6nGDZQ/wSOFjwL/haycAdppYYxYRp4Z
+ Rt3kRg==
 
-> I share Suman's concern that jumping backwards goto is confusing.
-> But I think the Coccinelle finding of freeing a null-pointer should be a=
-ddressed (see patch 2/2)
-> Thank you Markus for reporting it.
->
-> The allocation does require holding the cpus_read_lock.
+> Do you consider more clarity in your argumentation?
 
-How does this information fit to your following suggestion to adjust the l=
-ock scope?
-
-
-> For some reason Markus wants to reduce the number of cpus_read_unlock() =
-calls (why?),
-
-One cpus_read_unlock() call is required here.
-Would you like to benefit more from a smaller executable code size?
-
-
-> so what about something like this for both issues:
->
-> diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
-> index 0ed6e34d6edd..1030403b826b 100644
-> --- a/net/iucv/iucv.c
-> +++ b/net/iucv/iucv.c
-> @@ -542,24 +542,22 @@ static int iucv_enable(void)
->         size_t alloc_size;
->         int cpu, rc;
->
-> -       cpus_read_lock();
-> -       rc =3D -ENOMEM;
->         alloc_size =3D iucv_max_pathid * sizeof(struct iucv_path);
->         iucv_path_table =3D kzalloc(alloc_size, GFP_KERNEL);
->         if (!iucv_path_table)
-> -               goto out;
-> +               return -ENOMEM;
->         /* Declare per cpu buffers. */
-> -       rc =3D -EIO;
-> +       cpus_read_lock();
->         for_each_online_cpu(cpu)
->                 smp_call_function_single(cpu, iucv_declare_cpu, NULL, 1)=
-;
-> -       if (cpumask_empty(&iucv_buffer_cpumask))
-> +       if (cpumask_empty(&iucv_buffer_cpumask)) {
->                 /* No cpu could declare an iucv buffer. */
-> -               goto out;
-> -       cpus_read_unlock();
-> -       return 0;
-> -out:
-> -       kfree(iucv_path_table);
-> -       iucv_path_table =3D NULL;
-> +               kfree(iucv_path_table);
-> +               iucv_path_table =3D NULL;
-> +               rc =3D -EIO;
-> +       } else {
-> +               rc =3D 0;
-> +       }
->         cpus_read_unlock();
->         return rc;
->  }
-
-
-I suggest to reconsider patch squashing a bit more.
+It is probably clear that the function call =E2=80=9Ckfree(NULL)=E2=80=9D =
+does not perform
+data processing which is really useful for the caller.
+Such a call is kept in some cases because programmers did not like to inve=
+st
+development resources for its avoidance.
 
 Regards,
 Markus
