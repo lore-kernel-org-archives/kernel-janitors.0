@@ -1,98 +1,70 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7833EAD6;
-	Tue,  2 Jan 2024 11:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E609F4E2
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jan 2024 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nhQYPxq8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704196212; x=1704801012; i=markus.elfring@web.de;
-	bh=c4TSuFiFOOo9FkY+Aknv57saIRU7nXw1AKJdpOYp6bU=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=nhQYPxq8uh/DsiJfbSD/ZPWYUxY5BYviPSL00BaXEsbLfe7JvmJMOMkj9OcILX15
-	 817sRbxkylDOgrszH8R0ws/p6HMkxVdnjGaV/bOVB1m/JLMoNVI31OPkzay9QX+Oh
-	 o19QLFZWeE7/QckgWesRsXK7stwrom1UVU1LRn8MJGSFNIeafjFfzfJYmCTSYvi1O
-	 svgQpGrWYdJ9mz01AEJOLQ8zCvbDIkpHRT++oJQ7jiSCjVc3oS3mii7tTjfbI5VEm
-	 4jKjLPYOor5vOfHWmmZnX7k7B8ZBh1pngSrguVXGpIDDrmu8KNPTdZ3cuU7s6qNBq
-	 7sEFUbkO1Irof+6Tkg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbCE0-1qnUOS0Qfo-00bkVR; Tue, 02
- Jan 2024 12:50:12 +0100
-Message-ID: <96b9d2b8-3f44-4880-a33d-dc281ca70161@web.de>
-Date: Tue, 2 Jan 2024 12:50:10 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CQUGF7Kl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704198780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZHxpMl7RDbETrERTXnhnaCC4nYMHBRO8LgTCdUl7ypU=;
+	b=CQUGF7KlclpXzeXkZPtSJV6Ta2f4Wy1DtINyV4cErM83DU8oBPzRKbG8ZCFU8hwA24j0dS
+	RbTyDEH4zZfkiG9Sus/fbmc/zcydiymtVb/1lJqgWkZFnCjGsc2iPJ2bMadqcd7qJEWkfw
+	SnT49x1CF2BwWAGEeflmkrFwKjyf/3Q=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-364-2JJY42rrOWKMMqv9dgT_qw-1; Tue, 02 Jan 2024 07:32:57 -0500
+X-MC-Unique: 2JJY42rrOWKMMqv9dgT_qw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AC21A85A58F;
+	Tue,  2 Jan 2024 12:32:56 +0000 (UTC)
+Received: from [100.85.132.103] (ovpn-0-5.rdu2.redhat.com [10.22.0.5])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 89A6B51D5;
+	Tue,  2 Jan 2024 12:32:55 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rpc_pipefs: Replace one label in bl_resolve_deviceid()
+Date: Tue, 02 Jan 2024 07:32:54 -0500
+Message-ID: <8032551C-BB6C-43AE-B9A3-125B9E5D6D36@redhat.com>
+In-Reply-To: <bbf26021-798a-41a7-840e-62c8d383bb93@web.de>
+References: <bbf26021-798a-41a7-840e-62c8d383bb93@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [0/2] net/smc: Adjustments for two function implementations
-Content-Language: en-GB
-To: Wen Gu <guwen@linux.alibaba.com>, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, "D. Wythe"
- <alibuda@linux.alibaba.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jan Karcher <jaka@linux.ibm.com>,
- Paolo Abeni <pabeni@redhat.com>, Tony Lu <tonylu@linux.alibaba.com>,
- Wenjia Zhang <wenjia@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <8ba404fd-7f41-44a9-9869-84f3af18fb46@web.de>
- <93033352-4b9c-bf52-1920-6ccf07926a21@linux.alibaba.com>
- <46fe66f7-dc3b-4863-96e8-7a855316e8bd@web.de>
- <b2ee4680-72e9-56a1-e0dd-9cbbe64a7dac@linux.alibaba.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <b2ee4680-72e9-56a1-e0dd-9cbbe64a7dac@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:fL22ir/94IlqNcjBk73dNW87D7iDSGg7z9ik73BWj7mqMtrTvxh
- j+V9tmvjN/oBHQTcXKjyUlbz3eVckEpzjzWYSCgCStu4IH79TjDwOhFqMshus/jKKTSgGIY
- rqXC07CnQD7oPULw0+ZLswbR+d/b/VBPwTupByi9JreZXuUA3i3T0dGgOyA8KXB+bawOhJ4
- RrrxHyhx+OYjJU0q/VPqQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Bon9xkLkqc8=;BnGmEViRLyUtFIXl3mCxKGATLqw
- pg2MakC/MQKfjCQ+3t0bzwv7sHnRbqUIiozRqCB8o86tq4YWYnIgcWMcpyk15T0OBMDVrlZ2w
- llH6+NCrXeDIIE/GdpEcPZKnFL3zW8EfGWLhDB202qTStn3fb5IyThYL0pUkurRXSwceT4gzl
- K2I6YaCW1L/ydJCsYcSHFUbMIrTIlemhKQyJR9pD0PX///iXL92dE8g0Wxu3pZhzdzfcURp7q
- MZ53REf/aWHcI5jlyk8qoPseJBR9x3Ayp9zl+ptbHBKLJR2uYq4HmroOW+dYBX62RGlOp656t
- W+P8ZadbS1FViPLO/hw/vOcYQShrMo/meWOLTk689yhtzOq2LcRe2YzsIRnMNM/uXm46BGjIU
- 5DjzCqTcElqHEeTNBKLrVmp/7W44TuBW8iheLNgMyCeY3cxfrCGhAC0a+Z+a9tLm8c40dNjn2
- +n14/PePywSVpsEhKAef0Pfu9kwnizTnTlPVklgnbQePWpMjO5wNMfdN9NqZcOKG+KUOw6GF0
- rE7ps+C0dKhKjbePgohzTtTbL9A369WIvUaVRCIQ2v9xDO/aoHVaG8Zm1PWTCRNiDhibr1td2
- Z+Kc/pfIqKUdH0tIr5SRnZaqjpqLwMEplazIJfjAlpwKWTUfFR79mhD1XmSXS/W56+ZTbLP8s
- jg6O3r/TT41is4GxocTX1xL/SadkD9Ty063dQX8yZBE7rHYtG0HR82t5Ht+9V6W8Scpu2QdYK
- BEDmZbaUZy1OrFJvjvojzS91W9cPfVj3bLOlFJ9CxnLwBYSdpz596XdttJdO5fezssb5UL0nY
- ckjjslAnhdvWJDRy5DG+Y0gh3kcyZUN/eC5h5+HuZOK0wAAWSTf/tpXM1nKx3ctaHuSvCmiUG
- 39J0FlLtvb75LZm9jRRhrMCQLPeNh/gsg2crET3gd7RJXKoBf9hkFGpKW1eZhMJKHWeAeneAu
- jbHFQIvsIoCsgrAWxOMBCZ+1u88=
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-> But it is not very attractive to me since the calls occur on low-frequency paths
-> or unlikely condition, resulting in limited performance loss and the current
-> kfree() usage is fine and common.
+On 29 Dec 2023, at 7:45, Markus Elfring wrote:
 
-The prioritisation of development activities influences progress in related areas.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 29 Dec 2023 13:18:56 +0100
+>
+> The kfree() function was called in one case by
+> the bl_resolve_deviceid() function during error handling
+> even if the passed data structure member contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+>
+> Thus use an other label.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
-> So what is the benfit?
+Ben
 
-* Source code clarity
-
-* Nicer run time characteristics
-
-
-See also:
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources
-
-
-> I noticed that some other discussions are on-going. It seems like you are trying
-> to change other similiar places.
-
-I would appreciate if improvements can be achieved also for similarly affected
-software components.
-
-Regards,
-Markus
