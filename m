@@ -1,108 +1,65 @@
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFD4A38;
-	Tue,  2 Jan 2024 02:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=tonylu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0Vzj5iao_1704161982;
-Received: from localhost(mailfrom:tonylu@linux.alibaba.com fp:SMTPD_---0Vzj5iao_1704161982)
-          by smtp.aliyun-inc.com;
-          Tue, 02 Jan 2024 10:19:43 +0800
-Date: Tue, 2 Jan 2024 10:19:41 +0800
-From: Tony Lu <tonylu@linux.alibaba.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Karcher <jaka@linux.ibm.com>,
-	Paolo Abeni <pabeni@redhat.com>, Wen Gu <guwen@linux.alibaba.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] net/smc: Improve exception handling in
- smc_llc_cli_add_link_invite()
-Message-ID: <ZZNyvTdnTz2Usd4j@TONYMAC-ALIBABA.local>
-Reply-To: Tony Lu <tonylu@linux.alibaba.com>
-References: <8ba404fd-7f41-44a9-9869-84f3af18fb46@web.de>
- <5253e660-6b66-4775-ae2f-06f5a1d40be5@web.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32996EC0;
+	Tue,  2 Jan 2024 02:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t/NecNlM"
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1704164292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xQEpAwQnp/lG2slbdqN+vK4WuYoQ19RZhFnMHyiN9HI=;
+	b=t/NecNlM1PdCZfaI2cAh+Jw4k6cM8fegwver6OA2PvMCslCj3XoOQvX1NB5JkSfIPcj9Cn
+	Tbck3yucAharJPX4ryOS17WlbpKenZtwqWeWkcJuuAuQY4XbjBMbbiLsbYQUc6dj20aZes
+	nGF9l8h9wMsdDNC8pUdyXW9ieu0umi0=
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5253e660-6b66-4775-ae2f-06f5a1d40be5@web.de>
+Mime-Version: 1.0
+Subject: Re: [PATCH 1/2] hugetlbfs: Improve a size determination in two
+ functions
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <8c9488b0-4d91-48ac-bee7-6454e3045a9f@web.de>
+Date: Tue, 2 Jan 2024 10:57:28 +0800
+Cc: Linux-MM <linux-mm@kvack.org>,
+ kernel-janitors@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A772D968-B074-4354-BD04-A58255366D9A@linux.dev>
+References: <9ce3f553-24bc-4ecd-ac5e-7ba27caeff57@web.de>
+ <8c9488b0-4d91-48ac-bee7-6454e3045a9f@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Dec 31, 2023 at 04:00:22PM +0100, Markus Elfring wrote:
+
+
+> On Dec 29, 2023, at 19:37, Markus Elfring <Markus.Elfring@web.de> =
+wrote:
+>=20
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 31 Dec 2023 15:42:07 +0100
-> 
-> The kfree() function was called in some cases by
-> the smc_llc_cli_add_link_invite() function during error handling
-> even if the passed variable contained a null pointer.
+> Date: Fri, 29 Dec 2023 11:32:07 +0100
+>=20
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator =E2=80=9Csizeof=E2=80=9D to make the =
+corresponding size
+> determination a bit safer according to the Linux coding style =
+convention.
+>=20
 > This issue was detected by using the Coccinelle software.
-> 
-> * Thus use another label.
-> 
-> * Merge two if statements.
-> 
-> * Omit an initialisation (for the variable "ini")
->   which became unnecessary with this refactoring.
-> 
+>=20
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thank you, LGTM. Also net and Fixes tags are needed.
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 
-Reviewed-by: Tony Lu <tonylu@linux.alibaba.com>
-> ---
->  net/smc/smc_llc.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/net/smc/smc_llc.c b/net/smc/smc_llc.c
-> index 018ce8133b02..2ff24a7feb26 100644
-> --- a/net/smc/smc_llc.c
-> +++ b/net/smc/smc_llc.c
-> @@ -1163,23 +1163,21 @@ static void smc_llc_cli_add_link_invite(struct smc_link *link,
->  					struct smc_llc_qentry *qentry)
->  {
->  	struct smc_link_group *lgr = smc_get_lgr(link);
-> -	struct smc_init_info *ini = NULL;
-> +	struct smc_init_info *ini;
-> 
->  	if (lgr->smc_version == SMC_V2) {
->  		smc_llc_send_request_add_link(link);
-> -		goto out;
-> +		goto free_qentry;
->  	}
-> 
->  	if (lgr->type == SMC_LGR_SYMMETRIC ||
-> -	    lgr->type == SMC_LGR_ASYMMETRIC_PEER)
-> -		goto out;
-> -
-> -	if (lgr->type == SMC_LGR_SINGLE && lgr->max_links <= 1)
-> -		goto out;
-> +	    lgr->type == SMC_LGR_ASYMMETRIC_PEER ||
-> +	    lgr->type == SMC_LGR_SINGLE && lgr->max_links <= 1)
-> +		goto free_qentry;
-> 
->  	ini = kzalloc(sizeof(*ini), GFP_KERNEL);
->  	if (!ini)
-> -		goto out;
-> +		goto free_qentry;
-> 
->  	ini->vlan_id = lgr->vlan_id;
->  	smc_pnet_find_alt_roce(lgr, ini, link->smcibdev);
-> @@ -1190,6 +1188,7 @@ static void smc_llc_cli_add_link_invite(struct smc_link *link,
->  			      ini->ib_gid, NULL, SMC_LLC_REQ);
->  out:
->  	kfree(ini);
-> +free_qentry:
->  	kfree(qentry);
->  }
-> 
-> --
-> 2.43.0
+Thanks.
+
