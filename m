@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422EDF5D;
-	Tue,  2 Jan 2024 09:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10ED2E4;
+	Tue,  2 Jan 2024 09:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VgRSL4Cz"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Udm2tBP4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704187576; x=1704792376; i=markus.elfring@web.de;
-	bh=hm9XvsB8Hc+GdCwiF3RHaf2+W9Sx9+rzWWOPBtlg8U0=;
+	t=1704188118; x=1704792918; i=markus.elfring@web.de;
+	bh=tSNyrdvOrmxmScfoESQeoGJjZVGUwhPYL8i1sd6cwWM=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=VgRSL4Czpr9uuX6BZvWm6E0gbIKeKF81KU2N7arwbRFR5No28HHwxGXvX3eL0/xX
-	 ADPm6qFgZ+PJjFjBABOeiQq/yOmmzoq1UjKm44h7B86l+W5O/BJrpgAXE9Bp7tOzk
-	 xkmSrYbwevpo0ANCoT5mOcvTi6xDfDAn/fwDvE+3qtKiFiQjJDPbD6mwVQBuiEPi7
-	 fCrjUwMhDHmUKSDAJEtzdmjHevc8Y3Xm3tWr2JLFBF0dSZ4NbpAl1s0DCJhosWR4L
-	 QdoWKZ2iRFuS2nozEF2jHLBumDA+/BPsb29VkO/d7FRJu++S3khtFR8kzBqlAWvO5
-	 8eukZlFUxjOAWTODNA==
+	b=Udm2tBP4J/pdhzcrUlquYZ/Ml4NaW2Z5Hka8bruypnqytiTwG7Nf8eqcwNJXe8lZ
+	 iz8dMSFTjAJpZEHCPH5Nd18iA2dYcFkq15GFaE7M2DhnXI9epg5/IfxH6hQCkAr/o
+	 5f8BS6DQrr3yCjozlTMN7EyROVMS8KoJeU3Nmu+CrcQS2ErLfRggjGW0Yf/rFjBgp
+	 bSbeN+UC/GgBQYTSdGvyDXYYvjUy0sxPN0hkOvwOt7woeBaZzwk06qPZREErcazLL
+	 swGkqMY+Ev/Bb3Y6jxBq8pVzApGH57IDcfxbXTXq7IS47mkQkz3J/wZ9ZO/uzkTmu
+	 OWqODwJ6knAT0NBCzw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1qzTBD0WHs-00wanB; Tue, 02
- Jan 2024 10:26:15 +0100
-Message-ID: <f96d8343-e7b3-491d-b191-f2ddb4ba5269@web.de>
-Date: Tue, 2 Jan 2024 10:26:12 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIc7N-1rPqVf0ZZl-00EZ1s; Tue, 02
+ Jan 2024 10:35:18 +0100
+Message-ID: <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
+Date: Tue, 2 Jan 2024 10:35:17 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,66 +31,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sunrpc: Improve exception handling in krb5_etm_checksum()
+Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
 Content-Language: en-GB
-To: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Anna Schumaker <anna@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
- Dai Ngo <Dai.Ngo@oracle.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Paolo Abeni <pabeni@redhat.com>,
- Simo Sorce <simo@redhat.com>, Tom Talpey <tom@talpey.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
+To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
+ <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
  LKML <linux-kernel@vger.kernel.org>
-References: <9561c78e-49a2-430c-a611-52806c0cdf25@web.de>
- <ZZIhEJK68Sapos2t@tissot.1015granger.net>
- <4307bce9-ccbd-4bc5-aa8e-b618a1664cbe@web.de>
- <ZZLuaRwSZI16EKdP@tissot.1015granger.net>
+References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
+ <5745d81c-3c06-4871-9785-12a469870934@web.de>
+ <ZY6Iir/idOZBiREy@casper.infradead.org>
+ <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+ <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZLuaRwSZI16EKdP@tissot.1015granger.net>
+In-Reply-To: <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fHraEXCZs9bFHLtOOPd8xSkwRa+bWUmDA46Cp6Cx+X+wgYf5Du9
- kWjIIkrOvlTarY4rBGy9eMpWqFRSmflO8KGY2pJiVlfFYYnbRCXVMXZR4G79TElPx1ek8yi
- 0ZPOUb32uwUl3TE2JjWkw99MUtTGbQtMol7sDX7byJhEsqJE+3Y8UPaerVS1DdeV2c/N8Xb
- G7kAL10sJ7zGV86fLOdSQ==
+X-Provags-ID: V03:K1:WoH4l/kfnG/D1YD+yV/7PtW8vygvEXgrYZtTCzrEtR8rGb9nxd1
+ d2KCgCErE3OUiwfidxwk5zEYEyBK3fQnMJclRQNSL2tLRTtVqBWurw9IKowTgr/wKU18Lgz
+ Pyq6fdyUTgT9bnpQKXz+EtFKA1pGV1KS1Gbm91FBfLm4hyYpmn5IWu3PZt7uPZgfNin6AJF
+ 4KZy3HwzXsjySVAtkDofA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fOO4Nl2obn4=;zj++G77n+wQ4X6DGe67n4Af16x/
- BnxbsJbuio2eixsTb/MVEc0LnPGtsEU0hDvLoOhNCfqMd7Dd13yjijAJ8kxPmLJNwKLmbU+9g
- GTolCHXPMbY/Fb1mF5CbvSORa/KRBEaHJWhfb/4WMwRJuQwOoOWYeXR1TpZSbbzKzk7LewqFN
- 7kteIP6AgATwYi17wcLWY1vD5T9gPjz3X+iAXtRdZ0yDP64EzpYXzm6LXVsz92xpbVcKqLzzv
- Hvtn/gxVx39NSfMEIp6r3L2V3ZWwSwkl+4OEj5VAiHBbZ+yH53hqwyOCkfmSKcgEz8RviyJ1V
- 5jQN984jOSpSA2gGVZS9cj6t04UvaG0wyD56HlFkzqtMMr6MVPTj66Rd7mb1fD20vsZVixyVR
- 8fgs5YqgdPyan4BxcLC6QJ4WRNMYoPq9rd76GF5kkaKZ7Ku+KQusyxUCoD+8wfObSpAERXFbY
- AGQaJPGz4xsdieT3b7tU0hlZlRLfUelGl/lXlpo7ByhI9sBpXS2RTaP7nfU45mREQjoLeNUt9
- 8m39WxYJ/yqV3TZe5ya/sIAX7zJYXOaHJe0y7u/6webrFvce621s/Wts162oEq6jPgTwx0lgU
- hds8POQUd39R+xuQqijLrIX9uV1L3peqvWQ0ewkULKfYaAGzn5ICa+JOp46cuBKeFggicAB7C
- maQcifEoTsdkGlPVgMN+MQoedwh2aq3FjAL4TuvpXXPRFtJHKuwzVnuoAoFWUkL4CJEf6EO2Q
- CVda/bE9wfp3N1S68w8ZirbZhP0DZM1oCJjI7sd3oV6aH3kbagluVHtvRnIjm5uwKMEeM6KQ/
- qUOSCegDKHcIqxgQnkbePreeh4ehreXnLvBRHjgrdnTae7B7m/5p6mZLqPpcI7M/xzD5NQpOq
- JF+JiTG4++QKzdjT/h7YW1G1qrD6hndR32dUK4msLr/io/C8guszxK/7TMZ+0BodcrdZC7N59
- 7Y3h44frkfzqJfKJrthHeA8l8BM=
+UI-OutboundReport: notjunk:1;M01:P0:Cbq+ZiV+SZY=;Jt3xakHM8aRBkoWFImzl9NKcJMc
+ Jt61HqtLCDFYLCp0v/8MdPdAs8HNbzVdui4BKaK/9i9/8NwiMp2ciQ/uDrdLcxs4QL5AjfjaV
+ Sogs1IW0o69j9NWQPFZ5XkJfGL0oC5Pq2vWOmMFU34GT77pMbtKSKwKmrZCDOrC20ueIWJsvc
+ +GS1UM/dYfPgMCLMu+f3G2pWvYRfT+0mxEMSl4elkSydgQ3MAbcHt0Sq5i1qFb94PrFgVsNC3
+ jsd9iTcKEe02bfabtUrT2uQR+en9ZTamWsEJdCBZb3OtfruBvuFaL3C/sAQK2y3WkjPc+8gwB
+ Mb2s0xrA0gDA0BAiDij6xeTCgGDUFLe1HxkouFj5xoMlYjqEctBDMtc8JyiZCSXOJWtPqZcqr
+ 4JlwO7FPw8n/lnrLZygREIQx/ODLs3mIN75vvgFX/aXXkHEc5d2/B5wPt4envf2PVuL4O1rU7
+ P7E+EyrWBK4NXmXc6rVyVJq+0+SPRSIKqX4u4pK6+oMTtxT2sLawUlXJrYvHJwC9BAH/S1r3j
+ b/l/DSSdMzoeQ9bfnsUeqm8ab4BZKIPcRLtQIasrG5lsl/LiS0wKH21Avgi5+RpSQSna48Pq/
+ q2Rmn6anSCzcn0QohSbUXP1mmakNf8z0kTmhqPQfl4wyqoTa+u+SHZqooywxt8+IXRxCPXntL
+ ZMurQ2W5DVhHha4v+0+d7HNcLd3T507P6MNE18vEeD75hJd25FCby1WwNlzhnPLxd5d9krc1I
+ HDKHNKtvK+B6pTrsEw/pRwJ2ESrqFvL31Wlf2XZ8K7335Fe5775Hs3NVW2Rp8XAbmrkBmTF1w
+ TmaZYDZL5hAqrJt7W/X6wJBHr7faUIZBhBE2IDYnyUs/6RS3+4CjGlRhN9DhlpvB9MeeTwfvS
+ SHrnQrz3Hdo3EyW5yNYP/IBs6cIBNlM8ExDxkIZLaqkTwUZaBenMFAOr+l2c1S1AAGAj+t8HN
+ YkO4Bg==
 
-=E2=80=A6
-> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-=E2=80=A6
-> @@ -970,8 +969,7 @@ u32 krb5_etm_checksum(struct crypto_sync_skcipher *c=
-ipher,
+>>> So what?  kfree(NULL) is perfectly acceptable.
+>>
+>> I suggest to reconsider the usefulness of such a special function call.
 >
->  out_free_ahash:
->  	ahash_request_free(req);
-> -out_free_mem:
-> -	kfree(iv);
-> +out_free_cksumdata:
->  	kfree_sensitive(checksumdata);
->  	return err ? GSS_S_FAILURE : GSS_S_COMPLETE;
->  }
-=E2=80=A6
+> Can you be more explicit in your suggestion?
 
-How do you think about to use the identifier =E2=80=9Cout_free_checksumdat=
-a=E2=80=9D?
+I hope that the change acceptance can grow for the presented transformatio=
+n.
+Are you looking for an improved patch description?
 
 Regards,
 Markus
