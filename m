@@ -1,102 +1,79 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF95914F8A;
-	Tue,  2 Jan 2024 16:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20515499;
+	Tue,  2 Jan 2024 17:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cxt/tmu0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704214232; x=1704819032; i=markus.elfring@web.de;
-	bh=YzuA4S6nhHOojFNtxACZ01ivp0AQ+vZQh6tXXT3uSYg=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=cxt/tmu0gTkOeM16FCwRmi7vy74xROcj1smMkUn7BfUYHfasx3s23jnp0w9/YRxj
-	 vttktd3Eeb2W1tTJjcRBanEnGBNjz3VTPtpMq/ur7cFF4OUCuWO87Y+UpAPvRI0zH
-	 z10qgCXBpzHnPXGit13+kHf3ZCGDhqC9f0rInjtQ0Op9JOI7QPK1OnhNANZJATRjg
-	 mZ8rZ/EyJHT4m7j/7db1nA45YJGHeMgsEJkTxLQMyM0rk8CojFMTGScN3zIV5podX
-	 u5IxtTmOymadbnPwHaPEubNqWy3FitxHqA/bSzmIChB6Ywicj024T1mEaYvXQRQvU
-	 mQFz07bJJoL+Pm2swA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIyeU-1rf7AY2eug-00KrZK; Tue, 02
- Jan 2024 17:50:32 +0100
-Message-ID: <a08b7922-c28d-4667-b7f3-a4064ff7d6b3@web.de>
-Date: Tue, 2 Jan 2024 17:50:31 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzoXn5+c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE0DC433CC;
+	Tue,  2 Jan 2024 17:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704216338;
+	bh=Yk2WvWStKrh59dnz6K0iqdbE5KuKw/M+bXYxLDQ6XNA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MzoXn5+czOwiwpIP4OmHi77HXaHlRjgNOzeyvMucJ8/29jK5+1Ylh64F4BqlVHSzE
+	 0ToF+JcH3nlS0UH4M8Cja0L264d3WmHtxLSp716tXdFaTK9+mriccMiy7ZfWCnsNG3
+	 lC0tG1kymlIXGHAVG09REvbrhwbNs1axKiNMcJ2jg+XISphn80bpqz03Htqblm2brN
+	 G8Js3Jv3DgJm5QoFq6fcr3ZWUAnM5FboGXuk8WTnwq3yAet/KIHYHBzCVLvoVM5nZn
+	 ItC+BWokeKYSGaY91jUiD5MrceBbydVgEgeW8VBTMju318sQQxr45mv+XvgUQajXz8
+	 2DjysgDc61CAQ==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2cce6c719caso44780761fa.2;
+        Tue, 02 Jan 2024 09:25:37 -0800 (PST)
+X-Gm-Message-State: AOJu0YzsP8jxtgTc+iMytXFDWdlRvPpv4tKHaO6fS6ZueY2zcYAR/s5/
+	nwuSpOIqKMA1ndE7PY3jcATPnNwzpM079U01fRU=
+X-Google-Smtp-Source: AGHT+IHfuPNVzd2ZDem2x58G2jeY3n6dgOHiGPMnVZyOqMge6oBAw/znigjup7FlcLmpGOW4aKT0WazvluZ3+xcqBh8=
+X-Received: by 2002:a05:6512:3d01:b0:50e:76e0:a51f with SMTP id
+ d1-20020a0565123d0100b0050e76e0a51fmr8185878lfv.100.1704216336217; Tue, 02
+ Jan 2024 09:25:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
- <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
- <5745d81c-3c06-4871-9785-12a469870934@web.de>
- <ZY6Iir/idOZBiREy@casper.infradead.org>
- <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
- <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
- <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
- <ZZPisBFGvF/qp2eB@casper.infradead.org>
- <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
- <ZZQ5vKRcq9kkQxSD@casper.infradead.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZQ5vKRcq9kkQxSD@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+References: <7011cdcc-4287-4e63-8bfa-f08710f670b1@web.de> <CAADnVQLq7RKV+RBJm02HwfXujaUwFXsD77BqJK6ZpLQ-BObCdA@mail.gmail.com>
+ <dc0a1c9d-ceca-473d-9ad5-89b59e6af2e7@web.de>
+In-Reply-To: <dc0a1c9d-ceca-473d-9ad5-89b59e6af2e7@web.de>
+From: Song Liu <song@kernel.org>
+Date: Tue, 2 Jan 2024 09:25:24 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4J1+ZijLQ5d9+ZnNUHLCAG+0nwwcLkmGb9df-ioac7Nw@mail.gmail.com>
+Message-ID: <CAPhsuW4J1+ZijLQ5d9+ZnNUHLCAG+0nwwcLkmGb9df-ioac7Nw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] bpf: Adjustments for four function implementations
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@google.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Fgny9c5f2W3jpLqzVc7i9FuUiueq2RLS53d72LSSK3RKZc3zftm
- SsP1AV7t8VO8xthakUAB6NvI3QaBLyBbnq4mrGqVN/LvkJogBg0W80X8H/yrMhFi1YsU4xv
- C2vSlapjMi+j6VketDeCrzsqKvWK1UecJmULvqMgwHTKNURCdcFTpHJVBoWNsEavBDM4uu7
- DM9zSY0XWfHQMyfaA8ALA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:INHlZ34bTrY=;zJ6eL3Bj8LtupwNNsZ/tNpt+E2E
- rhyAK3+huAVszX+0JbpGi64wipqZXXquvT4FmqAX7pGXUkHtAEoOHZIokacWsiAyrws3VQQeg
- DIXuuLYzp0aIuiVIkLmUmqRsavOE26MAy5tZdoMkNJMu7znwwSxof//lHLJHqspM7G04K+1CB
- lgysUAozHm8yIUawO6/9T0gSrzzF3TXmYjwKDkCpGct18rREpOAfzaO6oY5QVX++Bd9W4CHC+
- NbE6zpqSx/pi/ylp/zDkcYgF07rRsGZHbP2E9yASNv43STyAIK3V2W/A7tStBaWWfle82L5XR
- bNWST7bzpauZtH3bauwe0HWUvoMQvjV0qbllMqX8INYz5x4NR87GRSm+VnS6UwEeWSm0v3fRJ
- +iBHgX0EX3lWuJoBp/eu6Tf5ua9nLns/mUzPDtxetGhdLz9LdfLdYX3bv4W7/1IuLOOWuZ/Ap
- py6IlmAMef9Pd1cL9RM1twOr90kLwBsxQbKM/1TqV9AlEh5BGM1tEZHLTouOTfEmA7JdU7tSH
- RWJj9NRY82jXBs2s2ZomWUoqPdjLvmww41zM80qegF4RQrmASVMjj3DFJJJ6JTcTZ4MXDgJK7
- y7GPQ0WHvENX0DUd7xdEHlrViDvcbHjaoEnbiedprJ0iYRZB2RmynuzyeNSTJGtcP0xakIsFD
- Nhyv/faX+I0RWr8Aiz2KX3susJR7RPm4y8nN4i40T4KSJITTgmtrYsTvpuEl9lzcaQdD7Rdfk
- +BjKi+dBPasvlXNEp4iIxEAWpnqdPu/AJp5iJ3UJaC+GEpPZQ1rUNgu/BGtqaQddSiCMLuOXr
- r0CEC5MpHK2gxv/aBAyEJWHVaQMwQGYDXQaR3zVstjx2w1G+f2VFo7fR7HG+hpV6INVeI4flw
- 0rkTsIFFgwiL75v4U80TKk11B71DGoSjAR1Cg0V2UtZTsoLK8hSh4YWuF83pWInQeZHeSUoIB
- eLOjiw==
 
->> It is probably clear that the function call =E2=80=9Ckfree(NULL)=E2=80=
-=9D does not perform
->> data processing which is really useful for the caller.
->> Such a call is kept in some cases because programmers did not like to i=
-nvest
->> development resources for its avoidance.
+On Mon, Jan 1, 2024 at 1:10=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
 >
-> on the contrary, it is extremely useful for callers to not have to perfo=
-rm
-> the NULL check themselves.
+> >> A few update suggestions were taken into account
+> >> from static source code analysis.
+> >
+> > Auto Nack.
+> > Pls don't send such patches. You were told multiple
+> > times that such kfree usage is fine.
+>
+> Some implementation details are improvable.
+> Can you find an update step (like the following) helpful?
+>
+> [PATCH 2/5] bpf: Move an assignment for the variable =E2=80=9Cst_map=E2=
+=80=9D in bpf_struct_ops_link_create()
+> https://lore.kernel.org/bpf/ed2f5323-390f-4c9d-919d-df43ba1cad2b@web.de/
 
-Some function calls indicate a resource allocation failure by a null point=
-er.
-Such pointer checks are generally performed for error detection
-so that appropriate exception handling can be chosen.
-
-
->                             It also mirrors userspace where free(NULL)
-> is valid according to ISO/ANSI C, so eases the transition for programmer=
+This change is not helpful at all. The use of "st_map" in current code as-i=
 s
-> who are coming from userspace.  It costs nothing in the implementation
-> as it is part of the check for the ZERO_PTR.
+doesn't cause any confusion, i.e., it is always struct bpf_struct_ops_map *=
+.
+OTOH, this patch will make it harder for folks who use git-blame. Therefore=
+,
+it adds negative value to the code base.
 
-How many development efforts do you dare to spend on more complete
-and efficient error/exception handling?
-
-Regards,
-Markus
+Thanks,
+Song
