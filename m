@@ -1,29 +1,57 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10ED2E4;
-	Tue,  2 Jan 2024 09:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099AD2F0;
+	Tue,  2 Jan 2024 09:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Udm2tBP4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704188118; x=1704792918; i=markus.elfring@web.de;
-	bh=tSNyrdvOrmxmScfoESQeoGJjZVGUwhPYL8i1sd6cwWM=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=Udm2tBP4J/pdhzcrUlquYZ/Ml4NaW2Z5Hka8bruypnqytiTwG7Nf8eqcwNJXe8lZ
-	 iz8dMSFTjAJpZEHCPH5Nd18iA2dYcFkq15GFaE7M2DhnXI9epg5/IfxH6hQCkAr/o
-	 5f8BS6DQrr3yCjozlTMN7EyROVMS8KoJeU3Nmu+CrcQS2ErLfRggjGW0Yf/rFjBgp
-	 bSbeN+UC/GgBQYTSdGvyDXYYvjUy0sxPN0hkOvwOt7woeBaZzwk06qPZREErcazLL
-	 swGkqMY+Ev/Bb3Y6jxBq8pVzApGH57IDcfxbXTXq7IS47mkQkz3J/wZ9ZO/uzkTmu
-	 OWqODwJ6knAT0NBCzw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIc7N-1rPqVf0ZZl-00EZ1s; Tue, 02
- Jan 2024 10:35:18 +0100
-Message-ID: <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
-Date: Tue, 2 Jan 2024 10:35:17 +0100
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A4p/GRB8"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4029CRcE032503;
+	Tue, 2 Jan 2024 09:53:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=AYCtOkc+9831jYDs1FcN1a+YAqrskx92og3tUg087YU=;
+ b=A4p/GRB8tYMsaukAXGbxqDfxjEzDvMEliKa8hYQmNs7BFfB6R65lKIZlu1ZUP6dFOAwL
+ Xxby3Udype6QMnCQuDTf3KHkKxrEAj+/DDduq3C6UaPMRgq0ugPng8y33PySPOxcgZEn
+ LomZMsH8RuEXqG8OMwVi0ul8ctQ6DWcU+1cFNKNZ31OmXhO3kQdfkOPBpGlCkoNGC9U3
+ BwfiRx5CO47Bup0tjf3gtD4dGiqSkPOgi1RX2GU669QC+BF8TjSoCY2rIWpTQ1RgT3px
+ lJ1TeRMssl4RX6wNf6Y5T++zZ1VV7N7bwLgOauzY8ahN7CAJBo5/COEe1W9W5so4wv1l wg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vcfn6rnnh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jan 2024 09:53:20 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4029Khff019456;
+	Tue, 2 Jan 2024 09:53:19 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vcfn6rnmx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jan 2024 09:53:19 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4029PIKJ024559;
+	Tue, 2 Jan 2024 09:53:18 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vb0823kb7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jan 2024 09:53:18 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4029rGAI4915940
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Jan 2024 09:53:16 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D25BB20040;
+	Tue,  2 Jan 2024 09:53:16 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 483AE20043;
+	Tue,  2 Jan 2024 09:53:16 +0000 (GMT)
+Received: from [9.171.21.141] (unknown [9.171.21.141])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  2 Jan 2024 09:53:16 +0000 (GMT)
+Message-ID: <2bf1b0cb-86af-4e00-a0aa-23e3944617a2@linux.ibm.com>
+Date: Tue, 2 Jan 2024 10:53:15 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,52 +59,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
- <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
- <5745d81c-3c06-4871-9785-12a469870934@web.de>
- <ZY6Iir/idOZBiREy@casper.infradead.org>
- <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
- <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
+Subject: Re: [EXT] Re: [PATCH 1/2] net/iucv: Improve unlocking in
+ iucv_enable()
+Content-Language: en-US
+To: Suman Ghosh <sumang@marvell.com>, Markus Elfring <Markus.Elfring@web.de>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Wenjia Zhang <wenjia@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <cde82080-c715-473c-97ac-6ef66bba6d64@web.de>
+ <81f7db31-a258-4dc8-b6e1-c1ef1844a9d2@web.de>
+ <SJ0PR18MB5216C27127E46490951A1E5DDB61A@SJ0PR18MB5216.namprd18.prod.outlook.com>
+ <8123a895-c7dd-4a75-94bc-6f61639621eb@web.de>
+ <SJ0PR18MB52168AC4B874C0B99BD37039DB61A@SJ0PR18MB5216.namprd18.prod.outlook.com>
+From: Alexandra Winter <wintera@linux.ibm.com>
+In-Reply-To: <SJ0PR18MB52168AC4B874C0B99BD37039DB61A@SJ0PR18MB5216.namprd18.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WoH4l/kfnG/D1YD+yV/7PtW8vygvEXgrYZtTCzrEtR8rGb9nxd1
- d2KCgCErE3OUiwfidxwk5zEYEyBK3fQnMJclRQNSL2tLRTtVqBWurw9IKowTgr/wKU18Lgz
- Pyq6fdyUTgT9bnpQKXz+EtFKA1pGV1KS1Gbm91FBfLm4hyYpmn5IWu3PZt7uPZgfNin6AJF
- 4KZy3HwzXsjySVAtkDofA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Cbq+ZiV+SZY=;Jt3xakHM8aRBkoWFImzl9NKcJMc
- Jt61HqtLCDFYLCp0v/8MdPdAs8HNbzVdui4BKaK/9i9/8NwiMp2ciQ/uDrdLcxs4QL5AjfjaV
- Sogs1IW0o69j9NWQPFZ5XkJfGL0oC5Pq2vWOmMFU34GT77pMbtKSKwKmrZCDOrC20ueIWJsvc
- +GS1UM/dYfPgMCLMu+f3G2pWvYRfT+0mxEMSl4elkSydgQ3MAbcHt0Sq5i1qFb94PrFgVsNC3
- jsd9iTcKEe02bfabtUrT2uQR+en9ZTamWsEJdCBZb3OtfruBvuFaL3C/sAQK2y3WkjPc+8gwB
- Mb2s0xrA0gDA0BAiDij6xeTCgGDUFLe1HxkouFj5xoMlYjqEctBDMtc8JyiZCSXOJWtPqZcqr
- 4JlwO7FPw8n/lnrLZygREIQx/ODLs3mIN75vvgFX/aXXkHEc5d2/B5wPt4envf2PVuL4O1rU7
- P7E+EyrWBK4NXmXc6rVyVJq+0+SPRSIKqX4u4pK6+oMTtxT2sLawUlXJrYvHJwC9BAH/S1r3j
- b/l/DSSdMzoeQ9bfnsUeqm8ab4BZKIPcRLtQIasrG5lsl/LiS0wKH21Avgi5+RpSQSna48Pq/
- q2Rmn6anSCzcn0QohSbUXP1mmakNf8z0kTmhqPQfl4wyqoTa+u+SHZqooywxt8+IXRxCPXntL
- ZMurQ2W5DVhHha4v+0+d7HNcLd3T507P6MNE18vEeD75hJd25FCby1WwNlzhnPLxd5d9krc1I
- HDKHNKtvK+B6pTrsEw/pRwJ2ESrqFvL31Wlf2XZ8K7335Fe5775Hs3NVW2Rp8XAbmrkBmTF1w
- TmaZYDZL5hAqrJt7W/X6wJBHr7faUIZBhBE2IDYnyUs/6RS3+4CjGlRhN9DhlpvB9MeeTwfvS
- SHrnQrz3Hdo3EyW5yNYP/IBs6cIBNlM8ExDxkIZLaqkTwUZaBenMFAOr+l2c1S1AAGAj+t8HN
- YkO4Bg==
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: C8uidfJ9Rbzq5X89ajyI9gGmOvlv4ngY
+X-Proofpoint-ORIG-GUID: F-_IGs_ztXSTS1-qI-16oqhFy018xpAq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-02_02,2024-01-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=833 clxscore=1011
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401020075
 
->>> So what?  kfree(NULL) is perfectly acceptable.
+
+
+On 02.01.24 09:27, Suman Ghosh wrote:
+>>> [Suman] This looks confusing. What is the issue with retaining the
+>> original change?
 >>
->> I suggest to reconsider the usefulness of such a special function call.
->
-> Can you be more explicit in your suggestion?
+>> I propose to reduce the number of cpus_read_unlock() calls (in the
+>> source code).
+>>
+>> Regards,
+>> Markus
+> [Suman] Then I think we should do something like this. Changing the code flow back-and-forth using "goto" does not seem correct.
 
-I hope that the change acceptance can grow for the presented transformatio=
-n.
-Are you looking for an improved patch description?
+I share Suman's concern that jumping backwards goto is confusing.
+But I think the Coccinelle finding of freeing a null-pointer should be addressed (see patch 2/2)
+Thank you Markus for reporting it.
 
-Regards,
-Markus
+The allocation does require holding the cpus_read_lock. 
+For some reason Markus wants to reduce the number of cpus_read_unlock() calls (why?),
+so what about something like this for both issues:
+
+diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
+index 0ed6e34d6edd..1030403b826b 100644
+--- a/net/iucv/iucv.c
++++ b/net/iucv/iucv.c
+@@ -542,24 +542,22 @@ static int iucv_enable(void)
+        size_t alloc_size;
+        int cpu, rc;
+
+-       cpus_read_lock();
+-       rc = -ENOMEM;
+        alloc_size = iucv_max_pathid * sizeof(struct iucv_path);
+        iucv_path_table = kzalloc(alloc_size, GFP_KERNEL);
+        if (!iucv_path_table)
+-               goto out;
++               return -ENOMEM;
+        /* Declare per cpu buffers. */
+-       rc = -EIO;
++       cpus_read_lock();
+        for_each_online_cpu(cpu)
+                smp_call_function_single(cpu, iucv_declare_cpu, NULL, 1);
+-       if (cpumask_empty(&iucv_buffer_cpumask))
++       if (cpumask_empty(&iucv_buffer_cpumask)) {
+                /* No cpu could declare an iucv buffer. */
+-               goto out;
+-       cpus_read_unlock();
+-       return 0;
+-out:
+-       kfree(iucv_path_table);
+-       iucv_path_table = NULL;
++               kfree(iucv_path_table);
++               iucv_path_table = NULL;
++               rc = -EIO;
++       } else {
++               rc = 0;
++       }
+        cpus_read_unlock();
+        return rc;
+ }
