@@ -1,79 +1,42 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22DA10940;
-	Tue,  2 Jan 2024 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8155814F6D;
+	Tue,  2 Jan 2024 16:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BBA4A21FD3;
-	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
-	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
-	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704203271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
-	fUo3jfFhB0zI2pBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
-	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
-	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704203271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
-	fUo3jfFhB0zI2pBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B054313AC6;
-	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qNP9KgcUlGWqVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 02 Jan 2024 13:47:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3D0A6A07EF; Tue,  2 Jan 2024 14:47:51 +0100 (CET)
-Date: Tue, 2 Jan 2024 14:47:51 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Su Hui <suhui@nfschina.com>, jack@suse.cz, repnop@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
-Message-ID: <20240102134751.2flliwe4lfvp3r5a@quack3>
-References: <20230808091849.505809-1-suhui@nfschina.com>
- <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AF5FmNad"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=yll9ik5nj/RKHcc0X7snHFL6YFsTYxSrnn00ighgwfI=; b=AF5FmNadQ4yqLEuhUY/zMGTyPs
+	KmYUrp2TmS7ASCybxrFRTFo/XULYv8YOqGtE+7du+cJbNb98QyqgZ/wvX7vMGwxzngrg+9PpOeuYX
+	TO6HrcMaTP+JnPLn9AJJ2sM8x1/xXQmIWbQFd+Fkqk1ShR8jehEi1jj9/AZwZRHESHNdNrK7JpV5C
+	1ilSKnKVIJ1KQJYbBe2aUd5JDdV6FT8v/msk4l2U/5pZUVmTWkql5ZATnRPEH5HEk6yED1XCHp2dQ
+	AjJWvYtkEst8W//mwWyPinKVTBmDb/KHcRqyWcj0uYJ9DBr+xW1e2Zqx4kOkrGk1Oc52l2Ql7tkCP
+	a3TRSgiA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rKhdE-00AfG7-3t; Tue, 02 Jan 2024 16:28:44 +0000
+Date: Tue, 2 Jan 2024 16:28:44 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
+Message-ID: <ZZQ5vKRcq9kkQxSD@casper.infradead.org>
+References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
+ <5745d81c-3c06-4871-9785-12a469870934@web.de>
+ <ZY6Iir/idOZBiREy@casper.infradead.org>
+ <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
+ <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
+ <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
+ <ZZPisBFGvF/qp2eB@casper.infradead.org>
+ <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -83,77 +46,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -2.12
-X-Spamd-Result: default: False [-2.12 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.32)[90.27%]
-X-Spam-Flag: NO
+In-Reply-To: <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
 
-On Thu 10-08-23 20:58:16, Amir Goldstein wrote:
-> On Tue, Aug 8, 2023 at 12:19 PM Su Hui <suhui@nfschina.com> wrote:
-> >
-> > smatch error:
-> > fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
-> > we previously assumed 'fh' could be null (see line 421)
-> >
-> > Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>'
+On Tue, Jan 02, 2024 at 11:47:38AM +0100, Markus Elfring wrote:
+> > Do you consider more clarity in your argumentation?
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> It is probably clear that the function call “kfree(NULL)” does not perform
+> data processing which is really useful for the caller.
+> Such a call is kept in some cases because programmers did not like to invest
+> development resources for its avoidance.
 
-I'm sorry but this has somehow fallen through the cracks. 
+on the contrary, it is extremely useful for callers to not have to perform
+the NULL check themselves.  It also mirrors userspace where free(NULL)
+is valid according to ISO/ANSI C, so eases the transition for programmers
+who are coming from userspace.  It costs nothing in the implementation
+as it is part of the check for the ZERO_PTR.
 
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index f69c451018e3..5a5487ae2460 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
-> >         if (WARN_ON_ONCE(len < sizeof(handle)))
-> >                 return -EFAULT;
-> >
-> > -       handle.handle_type = fh->type;
-> >         handle.handle_bytes = fh_len;
-
-Well, if passed 'fh' is NULL, we have problems later in the function
-anyway. E.g. in fanotify_fh_buf() a few lines below. So I think this needs
-a bit more work that just this small fixup...
-
-								Honza
-
-> >
-> >         /* Mangle handle_type for bad file_handle */
-> >         if (!fh_len)
-> >                 handle.handle_type = FILEID_INVALID;
-> > +       else
-> > +               handle.handle_type = fh->type;
-> >
-> >         if (copy_to_user(buf, &handle, sizeof(handle)))
-> >                 return -EFAULT;
-> > --
-> > 2.30.2
-> >
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+And from a practical point of view, we can't take it out now.  We can
+never find all the places which assume the current behaviour.  So since
+we must keep kfree(NULL) working, we should take advantage of that to
+simplify users.
