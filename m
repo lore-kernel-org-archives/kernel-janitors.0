@@ -1,92 +1,96 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497946AAB;
-	Tue,  2 Jan 2024 09:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422EDF5D;
+	Tue,  2 Jan 2024 09:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRpDWh8T"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40d87df95ddso14350475e9.0;
-        Tue, 02 Jan 2024 01:20:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704187217; x=1704792017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RiTUNZ10k6wQcCp803CcT029DnaSpcGHPPSc1r2WfXA=;
-        b=YRpDWh8TO+EGwvwor/shnHwjGmovh9vqxQiqr8qVwJHluyZn62jC81eSc85+3kxpNt
-         Y0W264auWsrTBc3E9zP94YPS4j4p1m5VYqfRH2N3nabG8I8KJNt8LWHrWlISbcqPXoGx
-         AlMwq7LSIlF7MfcDhpf5+CRnYdstUGUtKjZ1TBGJxO3iAqkOuMSktNnb3992XsrsTe9M
-         d+ygAxqOVnoel8cYeL66f+2D3BluYLZ688MPr6xQ5+7rzs1FlDwPsAeDkiK0A5uchrCH
-         kNok9yMk3jL1SNpZRYmWP8qFJu/sy8RwgXasPaP5h4sbzSQvNldj6WjsIZeZ9fY1MQgk
-         cv7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704187217; x=1704792017;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RiTUNZ10k6wQcCp803CcT029DnaSpcGHPPSc1r2WfXA=;
-        b=vg+6QTUrgTqVsaLcH+ZgRZS6E8RT2RSXBVP9is+UX3SgEPAZXlMUct/ZJufPPywUTY
-         D89yFlH3vZrsPRuhBRkv9od0eqXQCQ/8ieEcQKOyIjt8Sdz7S11iAl5nmZ2ym9MJyyfF
-         Jo9ZEn7/90r/PHgwtcgnz1zJ9Q6sz2TiLauoQ9jj04RnpI17EBZBt0jjfjSIXhywVEJK
-         /BXvMtG6nUs/tEbHi24PhVXRTIB43kC85EcSFW6w8F1Bwkqg6679n63pFaf2kHOaAh5R
-         d7EyVuF68wR4Pt8vsTH5GOF3rwe4l/xg1SDnTPCt2IfJq02B2YfLBBxZEVJIE28w+uzw
-         INtg==
-X-Gm-Message-State: AOJu0YzbK7UyijDnXKrgEQY4LFRuDC+JEiZ9jfsVsJjwCuhesBtiFucO
-	gOn2W40ORLnD/iK4+8izIXM=
-X-Google-Smtp-Source: AGHT+IGsByEPoucSmW84vcGQlZDBldsoqIytSqU80ojmxB3JqT27shPf0a4zX0slvmtrE8yDClVpeQ==
-X-Received: by 2002:a05:600c:1910:b0:40c:24b1:8d07 with SMTP id j16-20020a05600c191000b0040c24b18d07mr4674540wmq.192.1704187217232;
-        Tue, 02 Jan 2024 01:20:17 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g17-20020a05600c001100b0040d44dcf233sm38266096wmc.12.2024.01.02.01.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 01:20:16 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/xe: Fix spelling mistake "gueue" -> "queue"
-Date: Tue,  2 Jan 2024 09:20:14 +0000
-Message-Id: <20240102092014.3347566-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VgRSL4Cz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704187576; x=1704792376; i=markus.elfring@web.de;
+	bh=hm9XvsB8Hc+GdCwiF3RHaf2+W9Sx9+rzWWOPBtlg8U0=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=VgRSL4Czpr9uuX6BZvWm6E0gbIKeKF81KU2N7arwbRFR5No28HHwxGXvX3eL0/xX
+	 ADPm6qFgZ+PJjFjBABOeiQq/yOmmzoq1UjKm44h7B86l+W5O/BJrpgAXE9Bp7tOzk
+	 xkmSrYbwevpo0ANCoT5mOcvTi6xDfDAn/fwDvE+3qtKiFiQjJDPbD6mwVQBuiEPi7
+	 fCrjUwMhDHmUKSDAJEtzdmjHevc8Y3Xm3tWr2JLFBF0dSZ4NbpAl1s0DCJhosWR4L
+	 QdoWKZ2iRFuS2nozEF2jHLBumDA+/BPsb29VkO/d7FRJu++S3khtFR8kzBqlAWvO5
+	 8eukZlFUxjOAWTODNA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1qzTBD0WHs-00wanB; Tue, 02
+ Jan 2024 10:26:15 +0100
+Message-ID: <f96d8343-e7b3-491d-b191-f2ddb4ba5269@web.de>
+Date: Tue, 2 Jan 2024 10:26:12 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sunrpc: Improve exception handling in krb5_etm_checksum()
+Content-Language: en-GB
+To: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Anna Schumaker <anna@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Dai Ngo <Dai.Ngo@oracle.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Jakub Kicinski <kuba@kernel.org>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simo Sorce <simo@redhat.com>, Tom Talpey <tom@talpey.com>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <9561c78e-49a2-430c-a611-52806c0cdf25@web.de>
+ <ZZIhEJK68Sapos2t@tissot.1015granger.net>
+ <4307bce9-ccbd-4bc5-aa8e-b618a1664cbe@web.de>
+ <ZZLuaRwSZI16EKdP@tissot.1015granger.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZZLuaRwSZI16EKdP@tissot.1015granger.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fHraEXCZs9bFHLtOOPd8xSkwRa+bWUmDA46Cp6Cx+X+wgYf5Du9
+ kWjIIkrOvlTarY4rBGy9eMpWqFRSmflO8KGY2pJiVlfFYYnbRCXVMXZR4G79TElPx1ek8yi
+ 0ZPOUb32uwUl3TE2JjWkw99MUtTGbQtMol7sDX7byJhEsqJE+3Y8UPaerVS1DdeV2c/N8Xb
+ G7kAL10sJ7zGV86fLOdSQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fOO4Nl2obn4=;zj++G77n+wQ4X6DGe67n4Af16x/
+ BnxbsJbuio2eixsTb/MVEc0LnPGtsEU0hDvLoOhNCfqMd7Dd13yjijAJ8kxPmLJNwKLmbU+9g
+ GTolCHXPMbY/Fb1mF5CbvSORa/KRBEaHJWhfb/4WMwRJuQwOoOWYeXR1TpZSbbzKzk7LewqFN
+ 7kteIP6AgATwYi17wcLWY1vD5T9gPjz3X+iAXtRdZ0yDP64EzpYXzm6LXVsz92xpbVcKqLzzv
+ Hvtn/gxVx39NSfMEIp6r3L2V3ZWwSwkl+4OEj5VAiHBbZ+yH53hqwyOCkfmSKcgEz8RviyJ1V
+ 5jQN984jOSpSA2gGVZS9cj6t04UvaG0wyD56HlFkzqtMMr6MVPTj66Rd7mb1fD20vsZVixyVR
+ 8fgs5YqgdPyan4BxcLC6QJ4WRNMYoPq9rd76GF5kkaKZ7Ku+KQusyxUCoD+8wfObSpAERXFbY
+ AGQaJPGz4xsdieT3b7tU0hlZlRLfUelGl/lXlpo7ByhI9sBpXS2RTaP7nfU45mREQjoLeNUt9
+ 8m39WxYJ/yqV3TZe5ya/sIAX7zJYXOaHJe0y7u/6webrFvce621s/Wts162oEq6jPgTwx0lgU
+ hds8POQUd39R+xuQqijLrIX9uV1L3peqvWQ0ewkULKfYaAGzn5ICa+JOp46cuBKeFggicAB7C
+ maQcifEoTsdkGlPVgMN+MQoedwh2aq3FjAL4TuvpXXPRFtJHKuwzVnuoAoFWUkL4CJEf6EO2Q
+ CVda/bE9wfp3N1S68w8ZirbZhP0DZM1oCJjI7sd3oV6aH3kbagluVHtvRnIjm5uwKMEeM6KQ/
+ qUOSCegDKHcIqxgQnkbePreeh4ehreXnLvBRHjgrdnTae7B7m/5p6mZLqPpcI7M/xzD5NQpOq
+ JF+JiTG4++QKzdjT/h7YW1G1qrD6hndR32dUK4msLr/io/C8guszxK/7TMZ+0BodcrdZC7N59
+ 7Y3h44frkfzqJfKJrthHeA8l8BM=
 
-There is a spelling mistake in a drm_info message. Fix it.
+=E2=80=A6
+> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+=E2=80=A6
+> @@ -970,8 +969,7 @@ u32 krb5_etm_checksum(struct crypto_sync_skcipher *c=
+ipher,
+>
+>  out_free_ahash:
+>  	ahash_request_free(req);
+> -out_free_mem:
+> -	kfree(iv);
+> +out_free_cksumdata:
+>  	kfree_sensitive(checksumdata);
+>  	return err ? GSS_S_FAILURE : GSS_S_COMPLETE;
+>  }
+=E2=80=A6
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/xe/xe_wait_user_fence.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do you think about to use the identifier =E2=80=9Cout_free_checksumdat=
+a=E2=80=9D?
 
-diff --git a/drivers/gpu/drm/xe/xe_wait_user_fence.c b/drivers/gpu/drm/xe/xe_wait_user_fence.c
-index b0a7896f7fcb..b3ccdcf40557 100644
---- a/drivers/gpu/drm/xe/xe_wait_user_fence.c
-+++ b/drivers/gpu/drm/xe/xe_wait_user_fence.c
-@@ -147,7 +147,7 @@ int xe_wait_user_fence_ioctl(struct drm_device *dev, void *data,
- 
- 		if (q) {
- 			if (q->ops->reset_status(q)) {
--				drm_info(&xe->drm, "exec gueue reset detected\n");
-+				drm_info(&xe->drm, "exec queue reset detected\n");
- 				err = -EIO;
- 				break;
- 			}
--- 
-2.39.2
-
+Regards,
+Markus
