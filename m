@@ -1,83 +1,149 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B9CDDA8;
-	Tue,  2 Jan 2024 10:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B4BEAC0;
+	Tue,  2 Jan 2024 11:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AKGWWcpN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704192459; x=1704797259; i=markus.elfring@web.de;
-	bh=7lTu++jE80Y5lovMDkufPLLBPIN7e6g+jmCCUacF2ck=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=AKGWWcpNiDEpb0arZ5Nal3G8mmlaaX3bo9gtdFy6OW3hzdrQuMDEOKrxYKXIBmrd
-	 TGXyO8WkWsyPTZyJs0d0+/o2/nTjvCY+fQjZ3YUeDE3uTpbv0yhwOZ85kl/oTHM86
-	 UDhvX2nKRYT4reA8JWdS9u0xzQAF9pdYlhFs9HItK8M7KDIzTlmZ7HAkxwRu7J6l6
-	 IRbyk/95VXrN85nBMkaPSLtOKrZIbpmzwcnkZUEsCahUVMdVhZpblbdsiRp/uYL4w
-	 foHsjSBU5GidQBfbgyvg2mKJhmLM12br5zycW6lEtIE9k+3yeWlGkE5oZmDY+KLj4
-	 VMoStzynGEgjp50w0Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6tr-1qkSPQ07MJ-00Zljr; Tue, 02
- Jan 2024 11:47:39 +0100
-Message-ID: <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
-Date: Tue, 2 Jan 2024 11:47:38 +0100
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="eGmXqasC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1704194648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RL4p8JTgWtUMp+LSFYGDq2LgzfnsXq2WPu5q9VKoeO4=;
+	b=eGmXqasCdYtT4c3TgAwsOFFN82HooJbJOEvq++G/iC28O2BLpcbK4C+wGyfC2Uje+tvntd
+	igtbeTIfHijeeGG1K3Uvr2hCEc582bPn5wk6RwrpaV27ttveqgQ8I4h1ScyWFnXRODeP9x
+	KHo/8w0IfIJoqNIIEkj1/w8h0E/tm5Y=
+From: Sven Eckelmann <sven@narfation.org>
+To: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Antonio Quartulli <a@unstable.cc>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Marek Lindner <mareklindner@neomailbox.ch>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Wunderlich <sw@simonwunderlich.de>,
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH 2/2] batman-adv: Improve exception handling in
+ batadv_throw_uevent()
+Date: Tue, 02 Jan 2024 12:24:05 +0100
+Message-ID: <4889340.31r3eYUQgx@sven-l14>
+In-Reply-To: <d2ce9337-e1a4-4213-ad6f-926c085dc17f@web.de>
+References:
+ <8588cafe-3c61-40a6-b071-0877632a2a1e@web.de>
+ <d2ce9337-e1a4-4213-ad6f-926c085dc17f@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
- <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
- <5745d81c-3c06-4871-9785-12a469870934@web.de>
- <ZY6Iir/idOZBiREy@casper.infradead.org>
- <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
- <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
- <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
- <ZZPisBFGvF/qp2eB@casper.infradead.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZPisBFGvF/qp2eB@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NQrjPEtu2sclqHgtnO1i2502o/Vpbe3+O2LyKYUhPOToDQSfBRU
- DI7rOJ28yLd4ISEiJ6VGRXezMOWtTYdlCfi3HKfG6pQurU9eHidjkB+YGEo/y7tuhxed0TK
- MAF3cmCrLZYeDdu8sMoqpeiHuINlr7Z1BtBN9gerO9LspTa045EJ4gsRJE973KOusC0izMn
- IDcGgK5pYDpGmLri1V2Ow==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:058r1Zkd6zE=;lsl9C7ejOmkA9cjgumy9I5v+6DC
- RSt/fHu53q4wobmXYl1Vk0Xj/ahyq2AmpyUp6n1WYP1wly5YCN8AeAzXFT70txPNHfCZGns13
- LYnRyKzroh9oxMHMcrQ5DbDxq3ei7atfbpa4n20DpqpH+C5G4YyXRgT9dVp3X3rLHti7jsjNY
- hBTsiBn5W9C1EZfYXVwqUB4v50UlsTcb9i9sNfk2alFWJzlZhuHssI81YOHkburO//smyYeOX
- vEkUuqmOAMPnooFQGJkQyVe+4QXckuIArX1t9TaZJ/nUNdofBT1FlzKn7aMG2NW9DTmwqIbSV
- KDSZs/l9iCRl7CxrrL0PWM079oGp+s861fPWJr0pQSRghz5/52+3OR/M/DL2QwseGdYAsdkSj
- vEHt0ZcMe7UrVNghavaM1SznURVQOCFh6olp1JBzjeoPEvmgOuskjvV6OqILZUI9aNenNTqks
- 6BEalOiQpLuK/8FnpruTmq4Q9ch2hjI7TYjLLGWpBMgRp71Hgqmo376AgJ7cxrcn1jRFwhRDN
- sBiy8vt18HsnYDF9OddtKQq7twPkVMwi/G5xVE3Ph0iLl4Xx/0sU13qbp0siwGqWsyL+3U+Ce
- LPrbMNt3Q2bt5K6oW/74uWTPwkBcNEiJM7ewOdBqNEOe3f2Q95iBjF2vpOYfRwswajPTjl8mH
- rovEqYQiasPlkUZ6jjjzCV5qkiB7MRgHPP8pWzTJMHc3a1P/SRR8AFZ9JhMtSUmWUukl1+U3w
- u9Cr1HpbZLU2F641+E4VYmbpxxnOxxJHAwcYw+uaaXVX/fwV790jjA6w2C04+H6ePwgckhZNq
- DA3sOkMbgVP0T4bTVgPVL37o+wHrkAIG+dKntNCbJBUNVghTWN4hnFihiGb6JFVjTmx1Rvr7J
- nfLavYLCGojkqZ4wr3ivvqBukyfdc3SDQsCbKA77gW6nGDZQ/wSOFjwL/haycAdppYYxYRp4Z
- Rt3kRg==
+Content-Type: multipart/signed; boundary="nextPart4538693.LvFx2qVVIh";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-> Do you consider more clarity in your argumentation?
+--nextPart4538693.LvFx2qVVIh
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Tue, 02 Jan 2024 12:24:05 +0100
+Message-ID: <4889340.31r3eYUQgx@sven-l14>
+In-Reply-To: <d2ce9337-e1a4-4213-ad6f-926c085dc17f@web.de>
+MIME-Version: 1.0
 
-It is probably clear that the function call =E2=80=9Ckfree(NULL)=E2=80=9D =
-does not perform
-data processing which is really useful for the caller.
-Such a call is kept in some cases because programmers did not like to inve=
-st
-development resources for its avoidance.
+On Tuesday, 2 January 2024 08:12:56 CET Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 Jan 2024 07:52:21 +0100
+> 
+> The kfree() function was called in up to three cases by
+> the batadv_throw_uevent() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+> 
+> * Thus adjust jump targets.
+> 
+> * Reorder kfree() calls at the end.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Regards,
-Markus
+Acked-by: Sven Eckelmann <sven@narfation.org>
+
+> ---
+>  net/batman-adv/main.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/batman-adv/main.c b/net/batman-adv/main.c
+> index 5fc754b0b3f7..75119f1ffccc 100644
+> --- a/net/batman-adv/main.c
+> +++ b/net/batman-adv/main.c
+> @@ -691,29 +691,31 @@ int batadv_throw_uevent(struct batadv_priv *bat_priv, enum batadv_uev_type type,
+>  				  "%s%s", BATADV_UEV_TYPE_VAR,
+>  				  batadv_uev_type_str[type]);
+>  	if (!uevent_env[0])
+> -		goto out;
+> +		goto report_error;
+> 
+>  	uevent_env[1] = kasprintf(GFP_ATOMIC,
+>  				  "%s%s", BATADV_UEV_ACTION_VAR,
+>  				  batadv_uev_action_str[action]);
+>  	if (!uevent_env[1])
+> -		goto out;
+> +		goto free_first_env;
+> 
+>  	/* If the event is DEL, ignore the data field */
+>  	if (action != BATADV_UEV_DEL) {
+>  		uevent_env[2] = kasprintf(GFP_ATOMIC,
+>  					  "%s%s", BATADV_UEV_DATA_VAR, data);
+>  		if (!uevent_env[2])
+> -			goto out;
+> +			goto free_second_env;
+>  	}
+> 
+>  	ret = kobject_uevent_env(bat_kobj, KOBJ_CHANGE, uevent_env);
+> -out:
+> -	kfree(uevent_env[0]);
+> -	kfree(uevent_env[1]);
+>  	kfree(uevent_env[2]);
+> +free_second_env:
+> +	kfree(uevent_env[1]);
+> +free_first_env:
+> +	kfree(uevent_env[0]);
+> 
+>  	if (ret)
+> +report_error:
+>  		batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+>  			   "Impossible to send uevent for (%s,%s,%s) event (err: %d)\n",
+>  			   batadv_uev_type_str[type],
+> --
+> 2.43.0
+> 
+> 
+
+
+--nextPart4538693.LvFx2qVVIh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAmWT8lUACgkQXYcKB8Em
+e0ZtIA//eZtvK8xgUCk7KXnL6m/xB/Hnlsa817um4kK3xG+JO1hmlgxNsNJfu0HT
+VIP0Ca/QY7GRewIOz2fT60YCffgVQeht30bVdI3D7U6du5/nd6Q3JRzw8WaFuDxo
+MBIvVoqtNCK3YNBjKhYILq1X/lmxgvE+4J/1n94/QQWlJ9lgZthE2JWVwbMfDa+Q
+USyZI6ftogWsk9TKrt5cgWuQRrps3qtjnHUmgBNFXfWjwsRQUtjWzE960Y6au2tH
+fAqTrBW7M18RE+yDKQUjnmlpETnwBLCCcudS2cZBmx9EZL4TQEdJ4T+Ka8e9iPwV
+M37MJh/h+mwbxKIhv0vPnuvpBHZzQ+3opNCgIGTpS5YExATFMCIVXMeuN+kjVfC3
+X1iHjqRagGxcqpQtzaUcgYsZ4/elr5ODM4GH2VzH5phqb5iS0u64K+lmuWqO/Bsx
+hi7klW9+mKcrVgyeM5r83VcP9Ea+wS/3vhQBTPK4X3da71oqPq0X+2/qOYlzreBq
+LIpWu9BdpkKp5NHoAL7yyxOfm8hIjGCY1EXWUsKyb9Zs08Etqr4thHJtxxTNzhM1
+2ulCCmn8NNK/PzvguYQxIbXiJiK9U7bfzZoKbYSPRTEvd2xM2RxMrgZH94swmFYD
+SNNMTa3ccaynMy/E/KB0/uD2ktF1PHs6739YdB6ivv7VIZTKqRI=
+=sz9M
+-----END PGP SIGNATURE-----
+
+--nextPart4538693.LvFx2qVVIh--
+
+
+
