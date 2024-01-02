@@ -1,79 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20515499;
-	Tue,  2 Jan 2024 17:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDF916400;
+	Tue,  2 Jan 2024 19:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzoXn5+c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE0DC433CC;
-	Tue,  2 Jan 2024 17:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704216338;
-	bh=Yk2WvWStKrh59dnz6K0iqdbE5KuKw/M+bXYxLDQ6XNA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MzoXn5+czOwiwpIP4OmHi77HXaHlRjgNOzeyvMucJ8/29jK5+1Ylh64F4BqlVHSzE
-	 0ToF+JcH3nlS0UH4M8Cja0L264d3WmHtxLSp716tXdFaTK9+mriccMiy7ZfWCnsNG3
-	 lC0tG1kymlIXGHAVG09REvbrhwbNs1axKiNMcJ2jg+XISphn80bpqz03Htqblm2brN
-	 G8Js3Jv3DgJm5QoFq6fcr3ZWUAnM5FboGXuk8WTnwq3yAet/KIHYHBzCVLvoVM5nZn
-	 ItC+BWokeKYSGaY91jUiD5MrceBbydVgEgeW8VBTMju318sQQxr45mv+XvgUQajXz8
-	 2DjysgDc61CAQ==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2cce6c719caso44780761fa.2;
-        Tue, 02 Jan 2024 09:25:37 -0800 (PST)
-X-Gm-Message-State: AOJu0YzsP8jxtgTc+iMytXFDWdlRvPpv4tKHaO6fS6ZueY2zcYAR/s5/
-	nwuSpOIqKMA1ndE7PY3jcATPnNwzpM079U01fRU=
-X-Google-Smtp-Source: AGHT+IHfuPNVzd2ZDem2x58G2jeY3n6dgOHiGPMnVZyOqMge6oBAw/znigjup7FlcLmpGOW4aKT0WazvluZ3+xcqBh8=
-X-Received: by 2002:a05:6512:3d01:b0:50e:76e0:a51f with SMTP id
- d1-20020a0565123d0100b0050e76e0a51fmr8185878lfv.100.1704216336217; Tue, 02
- Jan 2024 09:25:36 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EPh7L4Hw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C833CC433C8;
+	Tue,  2 Jan 2024 19:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1704223878;
+	bh=PpLk4en3PtlVWanOtZnA79EAQW/E6LW7oiPi+rIhTNA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EPh7L4HwyIMY5uAmrct1hUT1x9Yd6UGYe6iZryQlAtjyyXi2g62Pxy0ZRO7vhWK7W
+	 H1aRiwc1bkii6twji3wm70/PYmDYLPnzpIGo0PebFpzhFNi1aGRkzHG5tdkCDJww+D
+	 Q99tIo5e+bBb5jlMMlJGiXI0ZF2PFttzFEdyamXw=
+Date: Tue, 2 Jan 2024 11:31:17 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Ahelenia =?UTF-8?Q?Ziemia=C5=84ska?=
+ <nabijaczleweli@nabijaczleweli.xyz>, Li kunyu <kunyu@nfschina.com>, Michal
+ Hocko <mhocko@suse.com>, Sebastian Reichel
+ <sebastian.reichel@collabora.com>, Suren Baghdasaryan <surenb@google.com>,
+ Zhang Zhengming <zhang.zhengming@h3c.com>, Zhou Kete <zhou.kete@h3c.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel: relay: Improve exception handling in
+ relay_create_buf()
+Message-Id: <20240102113117.b2b4ffa2998eb51b674b0304@linux-foundation.org>
+In-Reply-To: <ef8b36bf-d9d7-46a4-9648-7cc8aaa8a980@web.de>
+References: <ef8b36bf-d9d7-46a4-9648-7cc8aaa8a980@web.de>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <7011cdcc-4287-4e63-8bfa-f08710f670b1@web.de> <CAADnVQLq7RKV+RBJm02HwfXujaUwFXsD77BqJK6ZpLQ-BObCdA@mail.gmail.com>
- <dc0a1c9d-ceca-473d-9ad5-89b59e6af2e7@web.de>
-In-Reply-To: <dc0a1c9d-ceca-473d-9ad5-89b59e6af2e7@web.de>
-From: Song Liu <song@kernel.org>
-Date: Tue, 2 Jan 2024 09:25:24 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW4J1+ZijLQ5d9+ZnNUHLCAG+0nwwcLkmGb9df-ioac7Nw@mail.gmail.com>
-Message-ID: <CAPhsuW4J1+ZijLQ5d9+ZnNUHLCAG+0nwwcLkmGb9df-ioac7Nw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] bpf: Adjustments for four function implementations
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@google.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 1, 2024 at 1:10=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> >> A few update suggestions were taken into account
-> >> from static source code analysis.
-> >
-> > Auto Nack.
-> > Pls don't send such patches. You were told multiple
-> > times that such kfree usage is fine.
->
-> Some implementation details are improvable.
-> Can you find an update step (like the following) helpful?
->
-> [PATCH 2/5] bpf: Move an assignment for the variable =E2=80=9Cst_map=E2=
-=80=9D in bpf_struct_ops_link_create()
-> https://lore.kernel.org/bpf/ed2f5323-390f-4c9d-919d-df43ba1cad2b@web.de/
+On Sun, 31 Dec 2023 10:38:10 +0100 Markus Elfring <Markus.Elfring@web.de> wrote:
 
-This change is not helpful at all. The use of "st_map" in current code as-i=
-s
-doesn't cause any confusion, i.e., it is always struct bpf_struct_ops_map *=
-.
-OTOH, this patch will make it harder for folks who use git-blame. Therefore=
-,
-it adds negative value to the code base.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 31 Dec 2023 10:26:25 +0100
+> 
+> The kfree() function was called in one case by
+> the relay_create_buf() function during error handling
+> even if the passed data structure member contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+> 
+> Thus use another label.
+> 
+> ...
+>
+> --- a/kernel/relay.c
+> +++ b/kernel/relay.c
+> @@ -161,14 +161,15 @@ static struct rchan_buf *relay_create_buf(struct rchan *chan)
+> 
+>  	buf->start = relay_alloc_buf(buf, &chan->alloc_size);
+>  	if (!buf->start)
+> -		goto free_buf;
+> +		goto free_padding;
+> 
+>  	buf->chan = chan;
+>  	kref_get(&buf->chan->kref);
+>  	return buf;
+> 
+> -free_buf:
+> +free_padding:
+>  	kfree(buf->padding);
+> +free_buf:
+>  	kfree(buf);
+>  	return NULL;
+>  }
 
-Thanks,
-Song
+kfree(NULL) is an OK thing to do, and is a well-known pattern.  Can we
+arrange for Coccinelle to understand this?
