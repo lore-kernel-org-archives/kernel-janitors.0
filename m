@@ -1,121 +1,104 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CFD1A72E;
-	Wed,  3 Jan 2024 14:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8541A1B26C;
+	Wed,  3 Jan 2024 15:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qe8NoxK+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704291373; x=1704896173; i=markus.elfring@web.de;
-	bh=Zn3zvLXLmFb7bnZCSQaHOVJmsR2R8N7zxi5Wct5XHCk=;
-	h=X-UI-Sender-Class:Date:Subject:To:References:Cc:From:
-	 In-Reply-To;
-	b=Qe8NoxK+zIec3T5OKtK+EAj8ioPDL9qEL31kzDY2OvD9eK1/drW5oG9TP3w4y7SA
-	 e6s4XY6d9ujpVDAx62rfjS/BmGJPh5HO3Bo6rGSnByLP1DqBTe0AN01rGVh5SXMm8
-	 8ZvqdChzQvdaHSJbq85TtfGoUhPBaoMGHGeE/gZN42joQV0adsiiRVv12GGRxjCty
-	 wqRyb1Fp986hOcjfHLEJ/KmMelSqvn3wbe5lMyWqmlXyIsF5m4F/CUGKp1jzdJub2
-	 eons6mKpRzR62fTbH0C38j5/+lXtiwkGLQ2EUFVO2/4A0EI931alKWYwfGmtJzcLz
-	 1O4vZMfoqZMQa9Q3Uw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2BM4-1rDuGx0ggQ-013kOF; Wed, 03
- Jan 2024 15:16:13 +0100
-Message-ID: <3d62b430-030a-4e85-9d4d-0468d237d371@web.de>
-Date: Wed, 3 Jan 2024 15:16:11 +0100
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="gjuyWpIF"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4T4tbs0ZVNz9stN;
+	Wed,  3 Jan 2024 16:16:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1704295001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IuXh48BAQbEdwA1TrRsSkNBESpC4cFsNlnC9KrshjaA=;
+	b=gjuyWpIFQp9owXYt+yhOUAOair3NQQNvAXllOaRD0rUDOhMJr2LZjnCTp+Sb/obKXFsS4m
+	IX2sf329qhiaS/ZCZFSpC+8/SmKjXGMCi9Q67UCLSawNnVyKegbU5QjzuLQeSPxwdql6NU
+	FuV+VWzKu3njPey5FYyq7RPdYZ0XNt8EdC2NrXK/SdqZHIGQFqr4ot82BH1+SiGYqfSO0I
+	PV7trpSAwdtb0toiQtleokzH9Np0cjgS4hSsnVCz1bThYoSJSnUaTAuDNkHggfytNiK510
+	YdEbogxr4MJrxEZbFEwKC2XHQh5tHqr2NjXlRBe6wSbT6X+xlZd/cm6Vk97pCQ==
+Message-ID: <37647c33-7f9d-4763-8bf4-cfc5c9a811de@mailbox.org>
+Date: Wed, 3 Jan 2024 16:16:38 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [0/2] net/smc: Adjustments for two function implementations
-Content-Language: en-GB
-To: Wenjia Zhang <wenjia@linux.ibm.com>, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, "D. Wythe"
- <alibuda@linux.alibaba.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jan Karcher <jaka@linux.ibm.com>,
- Paolo Abeni <pabeni@redhat.com>, Tony Lu <tonylu@linux.alibaba.com>,
- Wen Gu <guwen@linux.alibaba.com>
-References: <8ba404fd-7f41-44a9-9869-84f3af18fb46@web.de>
- <41536899-3ca2-4413-b483-3d27ffe0d7f4@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <41536899-3ca2-4413-b483-3d27ffe0d7f4@linux.ibm.com>
+Subject: Re: [PATCH 1/3] drm: property: One function call less in
+ drm_property_create() after error detection
+Content-Language: en-CA
+To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+References: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
+ <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
+From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+In-Reply-To: <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qzcILoEqWzmESYCmwI5ev40sBfETqja0zwynn1iVHYwe9Lm8Tuc
- LRezkZejbT771VWPc+nQ9Dl9LV8zYkcS70XEX9PeMs73aMszk9D7ULy+og/biWIZrWAEIol
- 0YXp6icHLC6LD7nFOXi9Tpqt4in4MDl+L4oj9Egz6RzccB0wylG8CqdroYhKxUl8HsC59Fj
- A4dzZkKFxru0LoN9+qZBw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:q/blSR/UhsE=;br9DybMm/k674NvLS5wxXx+po5+
- aVwj+BcI4b0vFYlfB8FkrOPxJ7p1gxmI4O+pLWpKAbrCWF7MFso6QkUY/eLR1DZW4lwbCfvou
- R6YVtuKq8UmT4RSvzhAnrQ0FPhcDAbwcMD5wgZNqV7Soc6TEsyOIPL+xnuDvdvyadvabb+f3m
- +bzf6EycstiWdpnK2Aiz+8pzUH6tnUoaBCR1qpNwxneWPYg9T7C0HAa1bacU9Balnswch3loA
- vZo/KzEweUvIw/XfILVRG/mnB53VYow1CNqk9T54u98NHYDVe114dlvAfWFCpZroZ+Ig/4wLA
- wysBNjFnAcb4vLIUjYjfTiumiNjvbIfVLp6wc0gMB4DkfOM+vX/X59iLe/iD1J51yefC4WkRT
- vAT25qjVzqLaBw98A/0ZWPxWUkEgC/Wt/7KPfOGfsbL7RJJYi71GtSqYtiJ3S2FiK2rO6brjj
- tpb6u3Z7SVga+U2kpUjCnrO6Jp+M3R/XX2gRBsT1542aufOiPRNkbDxepv7GfGA6WQSQ8ULFT
- SSsZqSQ4ailE60sd7A7Mtbd8PvXTbRYnB/2wdI9VICTk+9gT3rZ9pv9Zm7mJNDAcTvpxSDuKf
- Y1/cbhcs4HC7S7yNPtJQdLtRVxI5Im4sAucTVQLhrsO/SsaFKZxUw5iG0g9fnkyt9sYzcA2JJ
- R5XwRoB81ec+XkmlWbzjsDs+/2Ff3wnYTHUa25zow7QooJMLxItQoHd2Ic/xKZuDaHLVaSrCV
- wvC/ggjmWbM4BewAHpNVZUSjxd9T1p6PFRF9h87YgmoOgJeniVSkgHAhcUmd1EN36CN+CkMIn
- LuoEUnUCsww/9rsRO1ZjRtQKQDGh8vt6DjEXYZCrn5AocqQV7htUIyclGEw5NysX9/tEpkoWH
- L3k1Y9r4dF45g/BAZ7isvCQU/SjRgsDh8e5QkY2o7aEFUm8gyjbqrBi4XfKdf61QGkD1ueAjE
- JIa2/CLrJFzAWUTFXLceVatJKGQ=
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: a3tith5w19ocqf5if416i7ko7o9xc9da
+X-MBO-RS-ID: 90cb4ebc5a3fddc3ff6
 
-=E2=80=A6
->> =C2=A0=C2=A0 Return directly after a failed kzalloc() in smc_fill_gid_l=
-ist()
->> =C2=A0=C2=A0 Improve exception handling in smc_llc_cli_add_link_invite(=
-)
->>
->> =C2=A0 net/smc/af_smc.c=C2=A0 |=C2=A0 2 +-
->> =C2=A0 net/smc/smc_llc.c | 15 +++++++--------
->> =C2=A0 2 files changed, 8 insertions(+), 9 deletions(-)
-=E2=80=A6
-> However, I'm on the same page with Wen Gu. I could not see the necessity=
- of the patches.
-> BTW, if you want to send fix patches,
+On 2023-12-26 10:38, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Dec 2023 08:44:37 +0100
+> 
+> The kfree() function was called in one case by the
+> drm_property_create() function during error handling
+> even if the passed data structure member contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+> 
+> Thus use another label.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/drm_property.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
+> index 596272149a35..3440f4560e6e 100644
+> --- a/drivers/gpu/drm/drm_property.c
+> +++ b/drivers/gpu/drm/drm_property.c
+> @@ -117,7 +117,7 @@ struct drm_property *drm_property_create(struct drm_device *dev,
+>  		property->values = kcalloc(num_values, sizeof(uint64_t),
+>  					   GFP_KERNEL);
+>  		if (!property->values)
+> -			goto fail;
+> +			goto free_property;
+>  	}
+> 
+>  	ret = drm_mode_object_add(dev, &property->base, DRM_MODE_OBJECT_PROPERTY);
+> @@ -135,6 +135,7 @@ struct drm_property *drm_property_create(struct drm_device *dev,
+>  	return property;
+>  fail:
+>  	kfree(property->values);
+> +free_property:
+>  	kfree(property);
+>  	return NULL;
+>  }
+> --
+> 2.43.0
+> 
 
-I obviously propose to adjust specific implementation details.
-
-
-> please provide the error messages you met,
-
-This development concern does not apply here.
-
-
-> the procedure of reproducing the issue and the correspoinding commit mes=
-sages.
-
-Would you like to extend the usage of source code analysis tools?
+This change is pointless at best, kfree(NULL) works fine.
 
 
-> If you want to send feature patches, I'd like to see a well thought-out =
-patch or patch series.
-
-I presented some thoughts for special transformation patterns
-on several software components.
+Out of curiosity, what exactly did Coccinelle report?
 
 
-> E.g. In our component, the kfree(NULL) issue doesn't only occur in the p=
-ositions where you mentioned in the patch series, also somewhere else.
+-- 
+Earthling Michel Dänzer            |                  https://redhat.com
+Libre software enthusiast          |         Mesa and Xwayland developer
 
-Does your feedback indicate that you would support the avoidance of such a=
- special function call
-at more places?
-
-
-> I would be grateful if all of them would be cleaned up, not just some pi=
-eces.
-
-Do you find my patch series too small for the mentioned Linux module at th=
-e moment?
-
-Regards,
-Markus
