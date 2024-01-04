@@ -1,96 +1,129 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EE21C683;
-	Wed,  3 Jan 2024 18:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CF01F5E7;
+	Thu,  4 Jan 2024 09:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lvgN3dZo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704305307; x=1704910107; i=markus.elfring@web.de;
-	bh=LArngLS54n1huul2SQS6WxIz/o3l5P7bbgnYECkKcyU=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=lvgN3dZoFgac2Og0zCE/HsjD4fIKJg1sLLc4GH/yoQ8LK0rk4S9JTbegNa9mS47C
-	 fIeQi5EjYzBPE8csbYYcqKqkmIZefZObenzd8UfK/3b+U9uJtZs1x0F9qIsX52LEX
-	 de29vkfuB5UAI0Erdi34tGlgGFAIsHG1S8x+rnauoTNZAxxZS8QI2JCT6OPdDWI9M
-	 bHKKvcLmJlfPeXFsfF5FSd6R7B80LLfcYpiafglDuC2woXmuZgvyP82MBFl3qKf8G
-	 p2V6CDZydTJQZfQapMcYHNa9FvGXhZTEyGWosG6bjgqStXA+FEuMSCOMqsX02/Shs
-	 YgCnFivjhS3PNIpKqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPrLN-1rYeKm0HbP-00MizZ; Wed, 03
- Jan 2024 19:08:27 +0100
-Message-ID: <93cfabee-9692-491c-8d38-dec142e90252@web.de>
-Date: Wed, 3 Jan 2024 19:08:25 +0100
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v2kO3i9o"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jHROEj2ZEDJfS2hLF03My3BsiLMookI4LkB6UFa72CRKnSo+tLzD4G0r3NOfLwIN9dL7tRD63RURYs0jNWpd3wbWd26xQ9EIG2wzivvgjWm6nSaJMDZrf2hZFE+PqpYuixR0SxgPQj3Dx9wEBgpvXEA86wmYiCf6hRoehP3AdupV7J7frWlLKpuAxbPtX9O8QWIYOyQjRJI7OHOBSusdOhe+YCLRc1bKI7WMHzh8LJpZzPqvZDPBfGAAoEuU58cOZOgBWCtcXhd4b3iJhZgU5icKXNYm05B+IQNhajwcCW/UDc0yrwIteMq4GkQn4vbv1nUYDocDPtojLG+d8S4FOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I8AOox6v1bPVQNhALIcN0F7nV/VQVRSvHt9Qx6yyRSQ=;
+ b=GcqpSHfkk3eyxuOvdM4j6CoCEzVSf03Wqau2uhsy3U5tJqD1iba4rGI/Rqz6eUwqBIgMQSIy4Y5JPqtgYEisCyqYBkk5u1nq7Mf4VsUb9roqQ35NHVz16xd6IxGLpivFD+pRgEZDtrsTsfmmT7RjyVPY7A7p/dEITrA3yM5W/5OT5LQyawNMUIg1sfuZGpvl7WnAI81BWeDJrtLcj4u9bbV7H8qaqgR8Q8gV4GPUQY4wrs+FqgqcWpeBNaGen3OIWuSbf23G1VgYHhNam4suJ6pA0xmcicy0GtR45ro/bHSGdziD0TWEL3AS/MOXP+GRmMv9VqAEGgKPryx7ElMXFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I8AOox6v1bPVQNhALIcN0F7nV/VQVRSvHt9Qx6yyRSQ=;
+ b=v2kO3i9oJCuG0eKyqiR/aDPka9NyDBtkuALCf14I10byWWiXorCAdok12n7zHArnSw7D6C4TBsQd4kzOUoM7LOtnnR4WEnTsS3zxdeIG4CTtE5BHyUvk2OhRVxonxms4ByyhAfiKmn0cB7Sm0obE7Q1MTCJ5Z8GXzO8qgRO/nxA=
+Received: from DM4PR12MB7765.namprd12.prod.outlook.com (2603:10b6:8:113::5) by
+ CH3PR12MB9079.namprd12.prod.outlook.com (2603:10b6:610:1a1::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7159.14; Thu, 4 Jan 2024 09:06:35 +0000
+Received: from DM4PR12MB7765.namprd12.prod.outlook.com
+ ([fe80::a8c9:b59c:30d6:b411]) by DM4PR12MB7765.namprd12.prod.outlook.com
+ ([fe80::a8c9:b59c:30d6:b411%4]) with mapi id 15.20.7159.013; Thu, 4 Jan 2024
+ 09:06:34 +0000
+From: "Gangurde, Abhijit" <abhijit.gangurde@amd.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: "Gupta, Nipun" <Nipun.Gupta@amd.com>, "Agarwal, Nikhil"
+	<nikhil.agarwal@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH v2 1/2] cdx: call of_node_put() on error path
+Thread-Topic: [PATCH v2 1/2] cdx: call of_node_put() on error path
+Thread-Index: AQHaPX0ODnYFq2UpVU+x50nruOIjCLDJXo1Q
+Date: Thu, 4 Jan 2024 09:06:34 +0000
+Message-ID:
+ <DM4PR12MB7765E1280F2070228FE9D8BA8F67A@DM4PR12MB7765.namprd12.prod.outlook.com>
+References: <2e66efc4-a13a-4774-8c9d-763455fe4834@moroto.mountain>
+In-Reply-To: <2e66efc4-a13a-4774-8c9d-763455fe4834@moroto.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ActionId=3c007e91-6531-45bb-85d7-59f512589895;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ContentBits=0;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Enabled=true;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Method=Standard;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Name=General;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SetDate=2024-01-04T09:02:37Z;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR12MB7765:EE_|CH3PR12MB9079:EE_
+x-ms-office365-filtering-correlation-id: e44e1ef2-0052-4c9b-bde9-08dc0d04735e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ x7lxNwDgTqoJYyIA4gaklTd9FCVJHTfNChTNd+Wwz5+uvcQKZRVKiDNiHPQFMKupwRt7aBsq8eWthApy8z2ERGTtXFvqBOEZoyaPYozigdP/CF/05ioO6h/lCP3QTxumznVNPKZMm4l260APbHZB6ZewaSwqlHMnOqR7ZT18wg9bqWyXCMu3EYkzlyKKhrlt+t9tos1Qbbf7Ua+YIWiHB67gDXt3gOiD6lvIzMhKSxrVwULIobUjG+ynk4uKbNmpcsE3XTUzJAX+t2uu1wpuEqA1IyPODUVj2mbexpSyulqMydGRzB9hEizehp/ZvUgTyWskcTLwrSNuOAJLC88rt5uYPmUF0a4q1GbfGARzdNLAb5yrH3qv8DogFmoUYtLO2BgYmUc2dzlutdv65R0AyCkj+yuzwp1zeQclogYEe94qSMnvbao+3+/mKv+2AzWoi1WNUGELmvlEx2x8DYmsp+WuTbbWFDmw7xqQ7u0OQvRsFtiM/HdWUi08UBjmHlthARNtQv9iLt9w4wVsi5trfi11jB1bpLoJ1DPUbNKAZ02LVh95NrywZPGQplBJ64pQddgUvrOK1uV9HNBLO7NEg4s96aTdssBWZgE/SEDDcQmrocM8QrhtzyDTt3d0B9rA
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7765.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(136003)(39860400002)(376002)(346002)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(5660300002)(4744005)(2906002)(4326008)(316002)(8676002)(8936002)(52536014)(9686003)(64756008)(66556008)(66476007)(55016003)(6916009)(76116006)(54906003)(66946007)(83380400001)(41300700001)(38100700002)(66446008)(122000001)(86362001)(33656002)(6506007)(7696005)(478600001)(71200400001)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?268HS4VV9pMNAiTfw6FGMArOMbNEP3ZcBl5vQA4UgPuZDFKkwjQlr1r+uODw?=
+ =?us-ascii?Q?O3t3x8ZNOoctPzUuLy6U2O/HDJTuoLsDxgpjSlyuXp0bHA/wNTXar80XZyaJ?=
+ =?us-ascii?Q?2u/KNUUJFAcfD6jmCjn9E5z/gnQafvhw4+6swIqh/TTmUCo0PDC0awNrKGFH?=
+ =?us-ascii?Q?fzhQjCRC2flQZ7cn0PopHJEHa+kg0fbt5IVpkqZtY/RKazr/NtpsQ+K+GmwP?=
+ =?us-ascii?Q?NcWAljWPdHIxac9Q2BPV8JBdYisDGveY3uzMaD7Uj+Ip5Hh3yzhJOHipzVJX?=
+ =?us-ascii?Q?0wCAJXVnDfK5EwiAFgov6TqnHV++xFaFqFng3p6gaAz00toDEbDTOHIvsa0j?=
+ =?us-ascii?Q?4FkLJKa9WWvnnUEHtcDjM3ZruyMlF3mMa2iKuC2PsGiAyYFcXsM/pKVBaDjc?=
+ =?us-ascii?Q?BucOveuj4PKEIM2QqBCtHKUcWnlcUeqAqMBurugXLMhAwHT3eECce/PeGHVB?=
+ =?us-ascii?Q?kQf5fZ4gs032aRTa6r8Ha2qLF43cPEJCrir8pl1A5HGEHTb8w4ZkETkOwN2Y?=
+ =?us-ascii?Q?daJY+uBUDooJxAF17iCW/Mo8FssFv5NwGCbSjpyyGhebemGFhb6/kqUAUC1X?=
+ =?us-ascii?Q?i9s9M8RZWix+d6/497wTwhUm11xi4m5omewkVN9npJ8Ms0KhZ6A5UHqY/voe?=
+ =?us-ascii?Q?eKNAhAAaMuozPmftHY53M/HXHVTkhxtTc5fRQW5eghusMmONsCqR5R3sqwpM?=
+ =?us-ascii?Q?ipD6L7w1IdrvGV6UnjNtA0hwINE17qYpfSOAaA/X9pupT7f4Qq/CA02DVEUK?=
+ =?us-ascii?Q?284o8uh6YjUjFV+ive9MgmihkwgVDzb+xfYr9/Wpo8ErVqUHSaSU6XGA5xbe?=
+ =?us-ascii?Q?PwjbBOFiI8hVMcnDVo56OAOuXVJcZDifnRDK9+6zgf/2kbah81S9vqaebiSU?=
+ =?us-ascii?Q?nqByzqz9ypJNVNVN+0rNIs8ctgU0LhDDZoRLKgh2NrWOREcYuS82KvjKDSDm?=
+ =?us-ascii?Q?fs1hc10jjxvq1BK4Or0yRE54MRu4+wAzuJ1y6hjCNmiZQ7/pC+c1FQIApCtm?=
+ =?us-ascii?Q?QvpxVQyTVtyU7GKNH648FpPOmmvvdnCfYpqZAnKWhxqWMDG/qVZE1MK134zc?=
+ =?us-ascii?Q?eIiY572fXQX4qXDK4Zl5898Uhze9lSUllAj1JE26EjhyNA6hwVnVHCoddMq3?=
+ =?us-ascii?Q?3UTxj1bieMI2grObfUYrU+s/BFIXGJm2yDsngw9sW+H0oNCWYEmTgnUgcqxr?=
+ =?us-ascii?Q?uIHQmRQlJKmRiRSudzA4dNGMbN+ySwKDM/57e4EX8dJEoE5f1lC6Zb9F2arx?=
+ =?us-ascii?Q?OV5WwxDBtPSbgHWtdhirmYUFNEqEuSJxZe+jYmTtiVqp1veUBJCi2lr5FoNi?=
+ =?us-ascii?Q?Cc3Z7WSM+m9VzN3xp2ZtzhmCNaDbeEFNWytn3JdG8jK5ivlsbE+H6ZVfxV3o?=
+ =?us-ascii?Q?o6YtqJZS76VL98cY5LLs9LG0L9i/UqRNd7bp3NObeF2OQHXHuC/YrW6oJO/D?=
+ =?us-ascii?Q?AjdxgmUj5Nrnsm9MoC2lZrObpFlVhdpNOvqQhXxaLtDSjt91lRRayYF1dTuP?=
+ =?us-ascii?Q?oxyEIIqWEHRtllX7B+E3TGBh99Qdq8DSDP0ha1C8r7MZumi9VAWmzgVUqI9H?=
+ =?us-ascii?Q?e8z+EVJIVlTzJOjwIRsTPceHe0MFfR13ZEYTxwTfUEJxKs5J6WulRrhoSBMV?=
+ =?us-ascii?Q?j0JcycTybOZqweuyd4JmDm4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [1/3] drm: property: One function call less in
- drm_property_create() after error detection
-Content-Language: en-GB
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
- Simon Ser <contact@emersion.fr>
-References: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
- <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
- <37647c33-7f9d-4763-8bf4-cfc5c9a811de@mailbox.org>
- <c5f1a7bf-b444-4934-a205-3c2b3a045ff7@web.de>
- <dd300771-851f-4cfb-b9a2-d87d2b4399aa@mailbox.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <dd300771-851f-4cfb-b9a2-d87d2b4399aa@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:A7UpQmI+NpIKUou/f/ZUndvRF+daTR/IPse9QtOowTPKTCot15T
- LQyU8oOcO2qacO1a+GqlMISx99VvbZkbbiI8V9zeVOSPNR7jVbSokXwKk17WsLPxyqT1eOK
- pyX9kaPB17BMfLYKwENquvIoBLFF262QML14cFBm2CHaMzr/8MbBJp16nenXUPk0t1NUHUn
- 57wnndBHm/N5t9QG6G7vg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+NqsBawroWE=;t+9FMI+RO+msEDvKFtWJHzPOShr
- X3InvC3DPjzJ6Fpq2UUDHLtWW+jUbRbCDCE+H6xwXC3CG0J6SghC10CpEi/29d8gdMRQ3xCHf
- RzWqfAzpTJZdfkNPjl8hQ+cn/nTBU5unYiFfoBWaESzRtJBMscjBIo94NfzHiYnsB2TzBRXj+
- oEkPDZ/QxyOKIciJ0yRfGqFIj5lX2xdfWLo2HWq2rx/gY/g7aJSIoZcREerqbd9GW55g7X/Y9
- v7bfsOmQh1l6m87RDipdV7YDcwzC3fFY58Z0YzlyFvlyWtrKWFm+pLKBdDwGIwAnh0Qreu7W7
- i9rcXG3fuuXvnZAMRAABMjnVoxeWfP0wPam1GL6Uj0ptZ3PSgug2yDPU1qo66rkYS9LbXKH0w
- sleGRwWVvvOP2rQ/RZb3AeuMUuuGotqXrmPQZtBxgprT3HMYHUWnBjtY5iO2qcMOqEersGX4B
- HQSdDYyoQUGEZWXEXg2CDaWPhzdVWz+L9oPstJA8BhW+4/dIZFXf9u1R79YC+o79ZynXdyLMP
- V3g32e0v1NdBHgn/3oIbs3QJH61c4FsjmJvZs/op6jZwvI+fptURnlJFl+vAZlBEp73W0mAiz
- IO7T6HEtUuYhihDrh8fsZ6CUWe3to6BVALcD7DJ0QMzrGBV8vNusm0584GgcZN7hvH4KZKoBk
- cr4/5DCUrXSpaWORUaMLAPM/81kbj+DRWqtZrV+VDGMwD8drvduFE8716ElCJLwWp3114aXu9
- t63O+CTeZ1HF5H+cMnSdwna3PMaT6d2zsMrR5wquJuAOrN6pZ+gf6ULQGFOhruWSbv8ISunho
- xweksNSh15gnJwlqASxx50KVtKMEwL/4KLj1tFe/U8DWRNsN4sSkd/R4vuBEH++WkYqBwM/qH
- Hxw//y3yCfgYuStCxPMhz6aKQl8vEXADPg089CEgnPikOIy8vnL1J5VBN9xX8VUwENDvw/qhq
- AHCufQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7765.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e44e1ef2-0052-4c9b-bde9-08dc0d04735e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2024 09:06:34.6146
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: P8qhNU74FFwJq+Pu7nWjgGMoDKarxwuSGCJ4dDvfA8bFkyU++IF/cTj+Q5Vsndq/XUdIofNZYjTS+6dxG3fj1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9079
 
->>> Out of curiosity, what exactly did Coccinelle report?
->>
->> Some SmPL scripts from my own selection tend to point questionable impl=
-ementation details out.
+[AMD Official Use Only - General]
+
+> Add a missing call to of_node_put(np) on error.
 >
-> That doesn't answer my question.
+> There was a second error path where "np" was NULL, but that situation is
+> impossible.  The for_each_compatible_node() loop iterator is always
+> non-NULL.  Just deleted that error path.
+>
+> Fixes: 54b406e10f03 ("cdx: Remove cdx controller list from cdx bus system=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+Acked-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
 
-It should.
-
-
-> Without seeing the actual Coccinelle report,
-
-There is no =E2=80=9Cofficial=E2=80=9D report according to the discussed p=
-atch which is triggered
-by known advices for the application of labels in goto chains.
-
-
-> I'll assume that it didn't actually call for this change.
-
-Software development opinions are evolving accordingly.
-
-Regards,
-Markus
+Thanks,
+Abhijit
