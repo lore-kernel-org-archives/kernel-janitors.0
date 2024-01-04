@@ -1,122 +1,165 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D0822301;
-	Thu,  4 Jan 2024 12:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F1520DE9
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jan 2024 13:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wZUB/1KU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704370908; x=1704975708; i=markus.elfring@web.de;
-	bh=CM2cef1ckyh3aeLZ3H3C8Q/8Yfvaf5jJIOf1Yk9mDyk=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=wZUB/1KU+78EYC/8EnDNvkEjklcLnvniJUTGUDD4aFzGf1N9j7iiSinLs/FYS+mu
-	 2LK3ACiE4XYGcnLDUxxRCLKcRNleq/3I9OHWK25fK/hNTmSLnzcMEauoraIeuQv0l
-	 b16Ese/qS3BCzT6FhP/ASwrlosR0NhtTOY26otnHGAM6yhaLplMwR7l7z1wTQ4Vu0
-	 whUTl+h80i1YQIaai0kU/IZxRcMpU3YXXehGVBRADu9yVSYnnE81wXKmxkGk4vIgy
-	 G9RKHN8IWrAGCmWBceNarCzHVezG2u5QECnjld6jMD+76yOb0Uk/Jp1kwwRgMpwmF
-	 EnxeJkg5zrV74ty6eQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j1q-1rIdhW330c-007bL1; Thu, 04
- Jan 2024 13:21:48 +0100
-Message-ID: <1ab4ea7c-731a-4b8d-8f6f-c9bf5f0f02e4@web.de>
-Date: Thu, 4 Jan 2024 13:21:46 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Iod9vDX/"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id LNn9rqZHtmbVqLNn9rhL4z; Thu, 04 Jan 2024 14:29:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1704374988;
+	bh=ciTbDjeP+vCKPdJby2wMqEkjO/zLT5PPfRKymuvu7Ls=;
+	h=From:To:Cc:Subject:Date;
+	b=Iod9vDX/tgK1aAj3D0pbcF1SNX2aOulCB5ziVBgXc2wj6sOGEGBmLWICLdqZHZt1x
+	 UlTjdr32do3p5szUwUxlGYJXZCS9asBZSRogiJqv6CaSbTb6kt9vprVOAq9m0B1Okf
+	 //EXruuhFxkXyxmZeYu0nHTfn0zzJkFcd3ymeIDLQzLloLnZkyaN43xELjdoI9Ys+y
+	 DIW2rbvPF+wBN8W2CB8VEm4/9Mf/bxfNzmMGqUW1d1P8S8t0mu127k442K2KggsUsv
+	 GC1Jh3+mYzZMGZXRoxl6tidDt02gehE5jJOb8Fz3axGOJPBtvHnAsMeSXwnXWhaulV
+	 N60RtHWbmS6zA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 04 Jan 2024 14:29:48 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] seq_file: Optimize seq_puts()
+Date: Thu,  4 Jan 2024 14:29:37 +0100
+Message-Id: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [1/3] drm: property: One function call less in
- drm_property_create() after error detection
-Content-Language: en-GB
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
- Simon Ser <contact@emersion.fr>
-References: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
- <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
- <37647c33-7f9d-4763-8bf4-cfc5c9a811de@mailbox.org>
- <c5f1a7bf-b444-4934-a205-3c2b3a045ff7@web.de>
- <dd300771-851f-4cfb-b9a2-d87d2b4399aa@mailbox.org>
- <93cfabee-9692-491c-8d38-dec142e90252@web.de>
- <ff58a489-105c-4fdc-9af5-59efb9d05ec0@mailbox.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ff58a489-105c-4fdc-9af5-59efb9d05ec0@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZjA7m6hOg2b8XD2dDwIjNKbIX/BJ0afrZlGsqq4t3Ue5m7p2Fa2
- V7m4gj+Xi7klUcvwxAOVrLpBSjsrWkN8GgRSJzGL1Dp0nH07N9gDbcH7v/jBCb8uJIwys+a
- hcrZLKDMOfoMe0vkZXVTjLQTE5GllV7biwODL+RNsaPAGN6tinfT3Kqw5FP5YIZzDLIlAmL
- g4TJvVzeychmg1OCQWOtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dAMZO8I92jE=;vhF3KLbYbyO37AA1WXmmtroYNT+
- /v6UKA7rNB9/QFdyhcjMEEi8gv4m32E6+zup+9VIDT+Dro24JCnFMvbdJBOy/nv2XTKhO5H9z
- 0AJeBGsyF16sZgipQ57Fk8QFNC3me/suULDgpuwvG9iRUonwTOnLfXNkykxwlKw2OY9T/0XDz
- fAj8FTvyYsCK07SsdDMGO5ga+jn+zB3pYATssmTw2RRIzbhXpwgVmc4yLk5DIXzyTevEcdQKg
- 8cX74pnZTdJrGITmHXeqcvIO3mHhRFgl4vVZfcBIjKeZZvtEkoLGtlpVfHpbo7BjnUp11O4Ln
- s0cscoxC/GNpElPFLQzSQPG+wClcWbr/j59DpNpKjeYc2Rv40W9IwsURCfQnSSc6W2lyotvuC
- QTcWIIhbxxDCB9J0h4o9xSNoO+ygSZHRwNQDPN/KPOe5h80luPrA4DhRy3TWeFoht6A7FNJHB
- LN7IDqYJ+AP8iTvlvZ81a19jR1tD6loIPukQm6Lv/BNmyscsrT2XvI+bXJEbB2uvldk1ofMTy
- OC7vEeJh4vmAQBfeYAngjQOpuMaVxBHF3MgAxcoGapTQ2c3wNeucs5+w02OiQPCBSHXRTUujQ
- fJQAme8l9kEwoojmDcMmXBE7uFSPTZf1yrXilsR+D/qNNbF9HF3oPG0IGqM16Uwt9ITnHdfIF
- FYVJoUsT4vaeb5gvz62SHlFr40GCtNQSrAR0MZuqJuTd/l9PlUkBPj7mh4txvJpN9aelP6Pk7
- UsSgTLoqg6Acpum/7vjJRaAu/jTXU8EIQ96kzx2xvPPwR4u2mzmgSIsOmlpY7HRtecbofZMaJ
- FFq/wY2wTA+PV8PXrxjyrPUSs7r0u4u9FjnsYS2G4Qrp8F/NYqLoP/wZ7k5V1cKg30wnXkLrj
- PMivYoYYNFIOvoQwwevbvVobFVWqeOZV2SLBKg/HeR284z5zugh5po5E6htW4scAJbzBTikMv
- 0mPmId4bSJLqDYcGTVZk1fVDnPeQo1CD15WnUpYGuFe8YXWaAz/GTUATl0IoNKtAaPxsPw==
+Content-Transfer-Encoding: 8bit
 
-> The commit log says:
->
->  This issue was detected by using the Coccinelle software.
->
-> Either that's inaccurate then,
+Most of seq_puts() usages are done with a string literal. In such cases,
+the length of the string car be computed at compile time in order to save
+a strlen() call at run-time. seq_write() can then be used instead.
 
-No.
+This saves a few cycles.
 
+To have an estimation of how often this optimization triggers:
+   $ git grep seq_puts.*\" | wc -l
+   3391
 
-> or you should be able to provide the corresponding output from Coccinell=
-e.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Checked by comparing the output of a few .s files.
+Here is one of these outputs:
 
-Do you find data (like the following) more helpful for the adjustment
-of affected implementation details?
+$ diff -u drivers/clk/clk.s.old drivers/clk/clk.s | grep -C6 seq_w
 
+ 	call	clk_prepare_unlock	#
+ # drivers/clk/clk.c:3320: 	seq_puts(s, "}\n");
+ 	movq	%r12, %rdi	# s,
++	movl	$2, %edx	#,
+ 	movq	$.LC66, %rsi	#,
+-	call	seq_puts	#
++	call	seq_write	#
+ 	call	__tsan_func_exit	#
+ # drivers/clk/clk.c:3322: }
+ 	xorl	%eax, %eax	#
+@@ -34520,6 +34521,7 @@
+ 	popq	%rbp	#
+ 	popq	%r12	#
+--
+ # drivers/clk/clk.c:3205: 		seq_puts(s, "-----");
+ 	call	__sanitizer_cov_trace_pc	#
++	movl	$5, %edx	#,
+ 	movq	$.LC72, %rsi	#,
+ 	movq	%r13, %rdi	# s,
+-	call	seq_puts	#
++	call	seq_write	#
+ 	jmp	.L2134	#
+ .L2144:
+ # drivers/clk/clk.c:1793: 	return clk_core_get_accuracy_no_lock(core);
+@@ -35225,20 +35228,23 @@
+ 	leaq	240(%r12), %rdi	#, tmp95
+ 	call	__tsan_read8	#
+--
+ 	movq	%r12, %rdi	# s,
++	movq	$.LC77, %rsi	#,
+ # drivers/clk/clk.c:3244: 	struct hlist_head **lists = s->private;
+ 	movq	240(%r12), %rbp	# s_9(D)->private, lists
+ # drivers/clk/clk.c:3246: 	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
+-	call	seq_puts	#
++	call	seq_write	#
+ # drivers/clk/clk.c:3247: 	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id\n");
++	movl	$142, %edx	#,
+ 	movq	$.LC78, %rsi	#,
+ 	movq	%r12, %rdi	# s,
+-	call	seq_puts	#
++	call	seq_write	#
+ # drivers/clk/clk.c:3248: 	seq_puts(s, "---------------------------------------------------------------------------------------------------------------------------------------------\n");
++	movl	$142, %edx	#,
+ 	movq	$.LC79, %rsi	#,
+ 	movq	%r12, %rdi	# s,
+-	call	seq_puts	#
++	call	seq_write	#
+ # drivers/clk/clk.c:3251: 	clk_prepare_lock();
+ 	call	clk_prepare_lock	#
+ .L2207:
+@@ -37511,7 +37517,7 @@
+ 	subq	$16, %rsp	#,
+ # drivers/clk/clk.c:3082: {
+---
+ fs/seq_file.c            |  4 ++--
+ include/linux/seq_file.h | 10 +++++++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> LANG=3DC git =
-status && spatch =E2=80=A6/Projekte/Coccinelle/janitor/show_jumps_to_kfree=
-_with_null_pointer.cocci drivers/gpu/drm/drm_property.c
-HEAD detached at next-20240104
-=E2=80=A6
-@@ -114,9 +114,6 @@ struct drm_property *drm_property_create
-        property->dev =3D dev;
-
-        if (num_values) {
--               property->values =3D kcalloc(num_values, sizeof(uint64_t),
--                                          GFP_KERNEL);
--               if (!property->values)
-                        goto fail;
-        }
-
-@@ -133,8 +130,6 @@ struct drm_property *drm_property_create
-        list_add_tail(&property->head, &dev->mode_config.property_list);
-
-        return property;
--fail:
--       kfree(property->values);
-        kfree(property);
-        return NULL;
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index f5fdaf3b1572..8ef0a07033ca 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -669,7 +669,7 @@ void seq_putc(struct seq_file *m, char c)
  }
+ EXPORT_SYMBOL(seq_putc);
+ 
+-void seq_puts(struct seq_file *m, const char *s)
++void __seq_puts(struct seq_file *m, const char *s)
+ {
+ 	int len = strlen(s);
+ 
+@@ -680,7 +680,7 @@ void seq_puts(struct seq_file *m, const char *s)
+ 	memcpy(m->buf + m->count, s, len);
+ 	m->count += len;
+ }
+-EXPORT_SYMBOL(seq_puts);
++EXPORT_SYMBOL(__seq_puts);
+ 
+ /**
+  * seq_put_decimal_ull_width - A helper routine for putting decimal numbers
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index 234bcdb1fba4..15abf45d62c5 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -118,7 +118,15 @@ void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
+ __printf(2, 3)
+ void seq_printf(struct seq_file *m, const char *fmt, ...);
+ void seq_putc(struct seq_file *m, char c);
+-void seq_puts(struct seq_file *m, const char *s);
++void __seq_puts(struct seq_file *m, const char *s);
++#define seq_puts(m, s)						\
++do {								\
++	if (__builtin_constant_p(s))				\
++		seq_write(m, s, __builtin_strlen(s));		\
++	else							\
++		__seq_puts(m, s);				\
++} while (0)
++
+ void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
+ 			       unsigned long long num, unsigned int width);
+ void seq_put_decimal_ull(struct seq_file *m, const char *delimiter,
+-- 
+2.34.1
 
-
-How do you think about to extend the application of script variants
-for the semantic patch language?
-
-Regards,
-Markus
