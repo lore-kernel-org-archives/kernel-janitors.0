@@ -1,129 +1,90 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638812421B;
-	Thu,  4 Jan 2024 14:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C656241E6
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jan 2024 15:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TPbwZSvi"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id LOa0rXuduH4TlLOa0rJH71; Thu, 04 Jan 2024 15:20:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704378016;
-	bh=Q9FqaBRUlUJ8QVrn0N9cxjxXK+HP850wiUfYJxgq3pQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=TPbwZSviMLHuvYbnXJii9RDt0jfzC+RqGtoks9U5QwVOElbSmFoctY2tATq3+SLXE
-	 +i5fSeP3I4tisKbYA1fSPj0helfmtrtH3zw7vt3Z0+el3VHhhKSIZzY3QNMrB+p25j
-	 zbWz3kHfvmatrN4qUWvTUOU0JgiW2KjjWz434AwEvzmyPd4IdEh9ZqYAmoT1g4sr+g
-	 Fd6/NlUrDvGuFSRqLQZCoHC2aWYi6TLjpTVxncyBEzxpkbjp38yHGziyUJRmnJz0Aa
-	 262/6XBCiRpQH+Z+bAJ3kQ5pXQwohp3BXpTW/eqWW8P9PgFBtqzOJ5s6VJqgW9Yhwq
-	 qZoErV2YXipkg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 04 Jan 2024 15:20:16 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <51ce6e78-023b-4914-96c0-ed1bd664d188@wanadoo.fr>
-Date: Thu, 4 Jan 2024 15:20:15 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADm76X0G"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50e7ddd999bso689325e87.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jan 2024 07:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704382002; x=1704986802; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kR6fri6zfOqsumIMPFqXw2iWj6TDkCagFBePFWGJhIk=;
+        b=ADm76X0Gi50Nx8wvtv9NF/FY6EdtLnrAE1p/7U/2afCoHYGnMWGZE8R8ihd+p8u7C7
+         Xceooq9XehBvgaFuM3R+7+WgJ0qRLda7vTGyPCUE/xPcVCH6sfYxphh1vMURrX0OQEsc
+         ltIK8tyXF5TbMGvhBbNE4Yg9nBuIuAmmoGFWmsbU0ZLyeAPl4Q1SASlud2hIOXNv9Bfw
+         q1YymnSfnOW2bUo3qiAXBDpMI7rS9lvQEz/F5C4N5TzslrDO8fjkF0Y/8PcHTjHTmHq/
+         WEzHmAX+9k9r4+m4JTDB/as40oHBaYdLm2FKtjEk5+irMcJ7IIikdZomFdyeWJZV9QWD
+         ZJ8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704382002; x=1704986802;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kR6fri6zfOqsumIMPFqXw2iWj6TDkCagFBePFWGJhIk=;
+        b=I9RIgFqsxvdPxEbCnusYLj2YCMEKHlO26OWuyJoLdXPO0vZCMpZZJ/oyrj9jDEQgf7
+         MUu68RXlrOIfAqwPCkhVNCF1jof2vPbrKtsYadhQwvhZC5KobwvOD/PYcqfTL1YhfZ8M
+         cI3agGR2ujdH8uPg3rHzpiRnzP30ZVNPXSmG/AgnEjCFWc5umAcdl27TCcUy0CPaupOQ
+         x7lrzyirNrIP/MBnceM0bqOASRbngsSoQvJadrtRQXaPClEqRiwuPZ7Sw5Vn6Q/fH/ID
+         AuyJJQTS30btCJ2kiuwHdqS1xFB3NqF8PbsbK53ocRL+VXYZO/lxoBiFknP9UvMRKQDx
+         hZNQ==
+X-Gm-Message-State: AOJu0YxB0BSMXuTapJRyZa0oWp58dvqDBhJkXEk8SI/SN9nFBSIVVMut
+	XYl4ytbosOxOMEr3KYVyfpXorsHpHVnb0Q==
+X-Google-Smtp-Source: AGHT+IENlCSAIUJOeRuY3KAhsacO67sooGmTlUINZ+Exrwrq129QzN3yc1GQd5n4NyrMGN7+x6vRLg==
+X-Received: by 2002:a19:ae1a:0:b0:50e:7f5e:59b with SMTP id f26-20020a19ae1a000000b0050e7f5e059bmr380944lfc.60.1704382002669;
+        Thu, 04 Jan 2024 07:26:42 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id d33-20020a056402402100b0055422adeb00sm18858482eda.33.2024.01.04.07.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jan 2024 07:26:42 -0800 (PST)
+Date: Thu, 4 Jan 2024 18:26:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@mailbox.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH 1/3] drm: property: One function call less in
+ drm_property_create() after error detection
+Message-ID: <b56e4902-f020-4461-abf1-563e6f8b23e6@moroto.mountain>
+References: <ff7ce5d0-59fa-470c-8dd6-68dbe65c18e5@web.de>
+ <9b1e7330-f4f6-47f8-a568-eaea1624bb6f@web.de>
+ <37647c33-7f9d-4763-8bf4-cfc5c9a811de@mailbox.org>
+ <c5f1a7bf-b444-4934-a205-3c2b3a045ff7@web.de>
+ <dd300771-851f-4cfb-b9a2-d87d2b4399aa@mailbox.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vboxsf: Remove usage of the deprecated ida_simple_xx()
- API
-Content-Language: fr, en-US
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
- <b4c96284-1ae8-498b-84ae-34a9f65e9da8@redhat.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b4c96284-1ae8-498b-84ae-34a9f65e9da8@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd300771-851f-4cfb-b9a2-d87d2b4399aa@mailbox.org>
 
-Le 19/12/2023 à 10:39, Hans de Goede a écrit :
-> Hi,
+On Wed, Jan 03, 2024 at 06:18:13PM +0100, Michel D�nzer wrote:
+> On 2024-01-03 17:24, Markus Elfring wrote:
+> > 
+> >> Out of curiosity, what exactly did Coccinelle report?
+> > 
+> > Some SmPL scripts from my own selection tend to point questionable implementation details out.
 > 
-> On 12/19/23 06:17, Christophe JAILLET wrote:
->> ida_alloc() and ida_free() should be preferred to the deprecated
->> ida_simple_get() and ida_simple_remove().
->>
->> This is less verbose.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> That doesn't answer my question.
 > 
-> Thanks, patch looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> vboxsf is not really undergoing any active development,
-> if there is a tree which is collecting other ida related
-> patches feel free to route this through that tree.
+> Without seeing the actual Coccinelle report, I'll assume that it didn't actually call for this change.
 
-There is still a bit of work to remove the remaining ida_simple_get() 
-calls, so we still have time.
+This isn't one of the Coccinelle scripts which ship with the kernel,
+it's something that Markus wrote himself.
 
-Based on another experience when phasing out an old API, I would say at 
-least 2-3 months.
-
-If this one is still around when nearly all the other calls have been 
-handled, i'll come back to it to see the best way to have is merged in a 
-tree or in another, so that the old API can be removed.
-
-CJ
-
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
-> 
-> 
-> 
->> ---
->>   fs/vboxsf/super.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
->> index 1fb8f4df60cb..cd8486bc91bd 100644
->> --- a/fs/vboxsf/super.c
->> +++ b/fs/vboxsf/super.c
->> @@ -155,7 +155,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->>   		}
->>   	}
->>   
->> -	sbi->bdi_id = ida_simple_get(&vboxsf_bdi_ida, 0, 0, GFP_KERNEL);
->> +	sbi->bdi_id = ida_alloc(&vboxsf_bdi_ida, GFP_KERNEL);
->>   	if (sbi->bdi_id < 0) {
->>   		err = sbi->bdi_id;
->>   		goto fail_free;
->> @@ -221,7 +221,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->>   	vboxsf_unmap_folder(sbi->root);
->>   fail_free:
->>   	if (sbi->bdi_id >= 0)
->> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->>   	if (sbi->nls)
->>   		unload_nls(sbi->nls);
->>   	idr_destroy(&sbi->ino_idr);
->> @@ -268,7 +268,7 @@ static void vboxsf_put_super(struct super_block *sb)
->>   
->>   	vboxsf_unmap_folder(sbi->root);
->>   	if (sbi->bdi_id >= 0)
->> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->>   	if (sbi->nls)
->>   		unload_nls(sbi->nls);
->>   
-> 
-> 
-> 
+regards,
+dan carpenter
 
