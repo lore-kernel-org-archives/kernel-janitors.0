@@ -1,70 +1,89 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945702E630;
-	Fri,  5 Jan 2024 15:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-59614694ca2so309681eaf.1;
-        Fri, 05 Jan 2024 07:48:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704469691; x=1705074491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/qrearbi2N1WOWMlmfnsHMuDJpk95L3sc3xvqWje7E=;
-        b=GZwahsYwaI/nwFmN09a+rY30UjdTJZfy7tMj2ffAmfD0OxFTeLoCekz9KRnOqd641m
-         zYjJgWpir6dG4FI/LA5SesQrjF7iTuDndQ8BoTX/lEXZmoKm8XS+wZKcaNHuVh6htwP+
-         2UnI1jeucabyp39Vxnzri5kbiq9VkgP807GdjhhixIafvXAsQltmM/t8nXeIkfyqbfDS
-         VoA6Hzs8WdUon02YEvv3ZEgJf9slnRPiWP8HY0GPYw9mG85h1ua8bKwKEJ9Bt54p99br
-         gENpP1V+0m87e0rg1t+PY2LPN9s+5s4ikiru2nmQ2VpNlSgnFe+4tqk2x2xdG7Flfewc
-         c2OA==
-X-Gm-Message-State: AOJu0YwvrTYCbe6tuTs0GULlYq1uRpTw2YD07gowC7UXvIA/rgVPJ+jV
-	C7+yM05fVGTrokTi+Jhy2GPRqUJ+E6hzxNJ1/0A=
-X-Google-Smtp-Source: AGHT+IF5cX6v51Fw/lLGxvXPKNgB8lTznqXVRKIBimBsPVIQFFHLkpDyxDN+kOwIHgvQC2kwlw37I7eq13ntSlLvE7c=
-X-Received: by 2002:a4a:da09:0:b0:596:2965:be22 with SMTP id
- e9-20020a4ada09000000b005962965be22mr3971201oou.1.1704469691528; Fri, 05 Jan
- 2024 07:48:11 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7802531A9A;
+	Fri,  5 Jan 2024 17:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w41Y8yUz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704475159; x=1705079959; i=markus.elfring@web.de;
+	bh=c9a72mh2hIDNLywI3xHSiIa41+RUwXrfonhkfw8ihFg=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=w41Y8yUzzl7L3+IINq8nygYzaZVDOQ5yRxV6AZdvboQ6r9yPwsuCJxyYgql45lrr
+	 l8iQ/Z3ZLXiDdWnwr/3zvRk6E7sjZpK27oxnj3HjupD3h0EJb1qVOjiaL96jFxB5H
+	 bcSFVj80MZVrxcxOGv1KmRjw/dBYMIaFhVLSBtmDzzLQGARw/vd8+xI3HJttZF661
+	 tQee9IGBjRkEeNE5oQl319v3sQQx5vd87k7K8k3jbAi/CL6mOnWrMCo/0QxJsvMyL
+	 8gA/Wmvt9XahNUz6rAXub44CxNXolu5x+btyt6z74FOKmYmT4IiQrkDEZ523i3ypv
+	 +uMhc/lwPWpal+sCnw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrPT-1rZsUG1vlL-00MhqL; Fri, 05
+ Jan 2024 18:19:19 +0100
+Message-ID: <ac431904-993a-4c43-a54d-c183b08b7874@web.de>
+Date: Fri, 5 Jan 2024 18:19:17 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4a3658efad8f6247ed8c477717dc2820b72319d0.1704462287.git.christophe.jaillet@wanadoo.fr>
- <CAJZ5v0hqaJ79BUj_hWDmErCVvJdBJ8o9fcHxcZDyP4+C4iDVxQ@mail.gmail.com> <a821c56b-2153-4464-8323-66ba62348f59@wanadoo.fr>
-In-Reply-To: <a821c56b-2153-4464-8323-66ba62348f59@wanadoo.fr>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Jan 2024 16:48:00 +0100
-Message-ID: <CAJZ5v0iLe9nCk0xtfAdfEYqvUiWESvDoQi_RWJ6LK1T6h4CqKg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: core: Save a few bytes of memory when
- registering a cooling device
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, alexis.lothore@bootlin.com, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH resent v2 0/2] powerpc/pseries: Fixes for exception
+ handling in pSeries_reconfig_add_node()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Moore <paul@paul-moore.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
+ <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
+ <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
+ <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
+ <08ddf274-b9a3-a702-dd1b-2c11b316ac5f@web.de>
+In-Reply-To: <08ddf274-b9a3-a702-dd1b-2c11b316ac5f@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fd0DEtRES4E/LNEVX/4GnP30EuZ7SbZmpQ0+c+lSzsJF09hqG+p
+ PogCSbXrZbPvufXCVapRZNE9wk9BJ9El0JY+t4w8HAgsTEk6+404fOWX2YDbBz0+3fT1Ozg
+ f9z2FVRsbdVL86A5PKSFOsws3EIGiRm61Qc9IQ+gKi7h0gfwbBqMmLbPTY5HAkrZ3wwwFUW
+ 3XuOttoKqOtWYLDq1er/g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2ese3NzFQnc=;JA9Oql4YFmQCNSHqtztlSaK4GAq
+ +fjthp9Vnvv9dESoVYKzh1FrY8Z/qHa3Jw2C5YmaPHUEtZbBwCyf9sR/Ll+Zm9mXGRIWQe9o/
+ /UjuKok/SyzZO7FK3X7iQtG5+QnGddNp/39DzCjJdCDHX6DxK95aN6LHMHqFG+yA8mzebV1j4
+ DDW28DBcCM6fCIu/Zl0lf2di+c+47luBKHq5Fc6UAK/cqaB7pq+x+2UvnLcXk1RQHy4D6Vj7b
+ 0VL96ug72UMDfQrs7HoWBpOyleG8AP156TnGGGlNcnfCJhnl0CnbDx67tkhKmimlLyA4vtcXL
+ Ij7TzXHpR7VugLIerNgO+BTelyt8S6qDvWn9rjebFvy7oSKyAhGxmcKvzXPZBi0rD7f7EKK20
+ AfPyroG+x86lfOLFLLKOa60lWip2/kGoYn2vM/38qRcxPYSq4M0rEHy14h4Rz5h5CU6F3DjzU
+ SPLVukFPjF85byQnZZkQRsnh1tYlQr4as0DOO2U69K31KJdFMzvknf8fNSC0BElk1jz0ud7dJ
+ 4OAgjrqcW2w6p9T5pOCCRJgyxpdbsoNov691is66TJ1tjd42/N7pWSonNYIPSrQDATRilWr40
+ CjEJRFPV3/2M90D+/tPviPmSCQJghrBW4ncWNAfqgm1IcLMnuQXRfVUx7BzFfJHuTCWSxJqje
+ zpeOYgINfnxVrtZfFh364t36ZWK8eAi2bxY81WzAaYPYzwF/bIpWS9C3H/sAeckj1YRzhFnmD
+ Ezxz7hwyVZyEFWmtk76AojgAIPDMSGo0yT3v1Z6OffUxdfotJQjwLl+YIwfHtPzBe5S4rlxiH
+ nKWJHk2X8RZ471iToxQGj4/hIesJjKmfQMdeO9wD27oK9L9lFVEoPrxq4eyFMqBhH62PqJ7e2
+ 9eRmjd3Fj50LIov224u9ZHL0TGpLqASzoT0t+THqJOZ8nF3UOHDP2NrclAQw5fF2YY7BGXPd/
+ y0UBkVBoV8GM2hlKh3H9t52bdHY=
 
-On Fri, Jan 5, 2024 at 3:55=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+> Date: Tue, 21 Mar 2023 11:26:32 +0100
 >
-> Le 05/01/2024 =C3=A0 14:50, Rafael J. Wysocki a =C3=A9crit :
-> > On Fri, Jan 5, 2024 at 2:45=E2=80=AFPM Christophe JAILLET
-> > <christophe.jaillet@wanadoo.fr> wrote:
-> >>
-> >> Some *thermal_cooling_device_register() calls pass a string literal as=
- the
-> >> 'type' parameter.
-> >>
-> >> So kstrdup_const() can be used instead of kfree() to avoid a memory
-> >
-> > I guess you mean kstrdup()?
+> A few update suggestions were taken into account
+> from static source code analysis.
 >
-> Sure.
-> Stupid cut'n'paste typo. Thx for catching it.
+> Markus Elfring (2):
+>   Do not pass an error pointer to of_node_put()
+>   Fix exception handling
 >
-> Should I resend, or can it be fixed if/when the patch is applied?
+>  arch/powerpc/platforms/pseries/reconfig.c | 26 ++++++++++++-----------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
 
-I can fix it up.
+Is this patch series still in review queues?
+
+Regards,
+Markus
