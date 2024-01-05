@@ -1,42 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9E22F13
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 09:18:24 +0000 (UTC)
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BD323758
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 09:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gISJDb2b"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OdasfErD"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id LgE0rfRMh6p30LgE0rFrb9; Fri, 05 Jan 2024 10:10:47 +0100
+	id LgU0rtez5ELO0LgU0rh95i; Fri, 05 Jan 2024 10:27:18 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704445847;
-	bh=MXdChQyNeoQudlbeZ137Nbqayn4386aGQ4NlEZhknHc=;
+	s=t20230301; t=1704446838;
+	bh=dMB8gUFnPkx15KoZlZNMHrYfHd6SUVDdalp91RepVRM=;
 	h=From:To:Cc:Subject:Date;
-	b=gISJDb2b89qzu7Z5Mnty4BKHTxd/WKra3CRJXdtiOLLIbGBs4Cr+SE7LjXVhFiEL1
-	 zSStGSq6sHbUz06VHBCrW5/gNW8cOJ7IrCr8Ri2caA1EYQcxWri5d1ax13cjTeuR5s
-	 vC9HyUY2BWkMxfTNn2uz1Np0O/QAFoQ39d9kUzyDYjpDUyA8ZjRiSDqExayAVw6VIu
-	 R1McVLOF3y/C/HqSg0Ko/02vlFXTAkoM3JQ/iQzqI/BjxChv3nmpxPhlk9vKEHKZlk
-	 Vhih/fuVyyQXztoaDiqrzCdyJc+MRa19G9zBXxzAI1D5zEawP5R5S92VM5U/466Jlr
-	 Jxz8NMRjgJHQw==
+	b=OdasfErD1G4Pz6M+uro+RT6DQXpIdxZ3j618DElt81mGeWgC2WRqO7+3V3s4rsBGf
+	 uvpUiY05LEwPux0nwRFCsce0XdMn/gcZjiQvL+gEtalEHGAV+3AG82XZBrtIx8elnQ
+	 uxiI+MGEBCZyNv4g8OafMl/ibTD9doPjoWYUeyZB5f1uxBkuMeEgjD6Hpc3TTJ8iCU
+	 PjtiqyRH+ztLOQU5DMh3xS1M0/8wCV3R3I6fTEHGQj2X3BNOGcuT4T4PisWkw3E9Ej
+	 SlwV/72Z9Qp3K6NnKKbT75ee85u0srJu4nXzKtU0gylEGj3OcYVDcAhtQfB8PejMDG
+	 wPJr1HFgol0+w==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 05 Jan 2024 10:10:47 +0100
+X-ME-Date: Fri, 05 Jan 2024 10:27:18 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Louis Peens <louis.peens@corigine.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
+To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
 Cc: alexis.lothore@bootlin.com,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	oss-drivers@corigine.com,
 	netdev@vger.kernel.org
-Subject: [PATCH net-next] nfp: flower: Remove usage of the deprecated ida_simple_xx() API
-Date: Fri,  5 Jan 2024 10:10:37 +0100
-Message-Id: <de9e2b0be80f92dead2c8c66584bb34b9c95aab0.1704445716.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2 net-next] ipvlan: Fix a typo in a comment
+Date: Fri,  5 Jan 2024 10:27:08 +0100
+Message-Id: <5adda8a3ce7af63bc980ba6b4b3fbfd6344e336b.1704446747.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -46,76 +44,26 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
-
-This is less verbose.
-
-Note that the upper bound of ida_alloc_range() is inclusive while the one
-of ida_simple_get() was exclusive.
-So NFP_FL_LAG_GROUP_MAX has been decreased by 1. It now better watch the
-comment stating that "1 to 31 are valid".
-
-The only other user of NFP_FL_LAG_GROUP_MAX has been updated accordingly in
-nfp_fl_lag_put_unprocessed().
+s/diffentiate/differentiate/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../net/ethernet/netronome/nfp/flower/lag_conf.c    | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/net/ipvlan/ipvlan_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-index 88d6d992e7d0..361d7c495e2d 100644
---- a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-@@ -76,7 +76,7 @@ struct nfp_fl_lag_group {
- /* Use this ID with zero members to ack a batch config */
- #define NFP_FL_LAG_SYNC_ID		0
- #define NFP_FL_LAG_GROUP_MIN		1 /* ID 0 reserved */
--#define NFP_FL_LAG_GROUP_MAX		32 /* IDs 1 to 31 are valid */
-+#define NFP_FL_LAG_GROUP_MAX		31 /* IDs 1 to 31 are valid */
+diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+index f28fd7b6b708..e080e4fc41e4 100644
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -601,7 +601,7 @@ int ipvlan_link_new(struct net *src_net, struct net_device *dev,
+ 		port->dev_id_start = 0x1;
  
- /* wait for more config */
- #define NFP_FL_LAG_DELAY		(msecs_to_jiffies(2))
-@@ -111,8 +111,8 @@ nfp_fl_lag_group_create(struct nfp_fl_lag *lag, struct net_device *master)
- 
- 	priv = container_of(lag, struct nfp_flower_priv, nfp_lag);
- 
--	id = ida_simple_get(&lag->ida_handle, NFP_FL_LAG_GROUP_MIN,
--			    NFP_FL_LAG_GROUP_MAX, GFP_KERNEL);
-+	id = ida_alloc_range(&lag->ida_handle, NFP_FL_LAG_GROUP_MIN,
-+			     NFP_FL_LAG_GROUP_MAX, GFP_KERNEL);
- 	if (id < 0) {
- 		nfp_flower_cmsg_warn(priv->app,
- 				     "No more bonding groups available\n");
-@@ -121,7 +121,7 @@ nfp_fl_lag_group_create(struct nfp_fl_lag *lag, struct net_device *master)
- 
- 	group = kmalloc(sizeof(*group), GFP_KERNEL);
- 	if (!group) {
--		ida_simple_remove(&lag->ida_handle, id);
-+		ida_free(&lag->ida_handle, id);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-@@ -328,8 +328,7 @@ static void nfp_fl_lag_do_work(struct work_struct *work)
- 			}
- 
- 			if (entry->to_destroy) {
--				ida_simple_remove(&lag->ida_handle,
--						  entry->group_id);
-+				ida_free(&lag->ida_handle, entry->group_id);
- 				list_del(&entry->list);
- 				kfree(entry);
- 			}
-@@ -415,7 +414,7 @@ nfp_fl_lag_put_unprocessed(struct nfp_fl_lag *lag, struct sk_buff *skb)
- 	struct nfp_flower_cmsg_lag_config *cmsg_payload;
- 
- 	cmsg_payload = nfp_flower_cmsg_get_data(skb);
--	if (be32_to_cpu(cmsg_payload->group_id) >= NFP_FL_LAG_GROUP_MAX)
-+	if (be32_to_cpu(cmsg_payload->group_id) > NFP_FL_LAG_GROUP_MAX)
- 		return -EINVAL;
- 
- 	/* Drop cmsg retrans if storage limit is exceeded to prevent
+ 	/* Since L2 address is shared among all IPvlan slaves including
+-	 * master, use unique 16 bit dev-ids to diffentiate among them.
++	 * master, use unique 16 bit dev-ids to differentiate among them.
+ 	 * Assign IDs between 0x1 and 0xFFFE (used by the master) to each
+ 	 * slave link [see addrconf_ifid_eui48()].
+ 	 */
 -- 
 2.34.1
 
