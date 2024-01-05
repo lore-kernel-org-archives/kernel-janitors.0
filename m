@@ -1,116 +1,117 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B0935F0D;
-	Fri,  5 Jan 2024 19:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1916536AF3;
+	Fri,  5 Jan 2024 19:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sFrkJbmS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704482482; x=1705087282; i=markus.elfring@web.de;
-	bh=HUSZWsUiGQOC/YkUR9iqXdqwdp4kixzaBeZcE5ri/Gw=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=sFrkJbmSup7D/LvjP3hYO2WjT4up6gCpjH2vXExnVY0ydzcCiTYkCAFKMVVWXi8j
-	 MrXtEbRtJd2hyzBqOwnWRDm2K00YIJQU1k02yHufR1EuuieO0MGBYUdln95ceBN6d
-	 V9PMtwfAOzuXP8BmFcdhoH4jjIyxG44hfqsVyVsq1fctqgKPpmAaHtsqK9lgL7HHv
-	 pAAiNwRH4wSoLAB2NxCCHdecOxrhjp0mpQA2ymo+JdSmS27AoUn2JULH8YPhGK6fk
-	 56iT0+OoXY3dqRSjAmOfAgmT3otYFV0TWrUJ1QBYNnjS678seErytdGsNWT509NEF
-	 7QJkmKbfmBdOcV3Pjg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MW9vi-1rg8aG29tK-00Y4pr; Fri, 05
- Jan 2024 20:21:22 +0100
-Message-ID: <34068514-27e5-4faf-9b82-2a25bdce9321@web.de>
-Date: Fri, 5 Jan 2024 20:21:19 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ykxk627v"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2cd17a979bcso23706651fa.0;
+        Fri, 05 Jan 2024 11:57:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704484654; x=1705089454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FRLMdfdFEFGxBekM0Ah4/mWBgPRmZGkIhZJOiMWzNJs=;
+        b=Ykxk627vZgzRP2WO+/5xilXN5k5JLb2+vKIMO4tdy6gQ2OwM2PAti0Qwjs0g0v/dU5
+         bF9BWe0jaC7X8BMnMMtaMASHBsssGk16M+8diw0rK9pkeyBrssmmG6nCUauU2VCaz+xF
+         p+H7NjbBAsVBwPgc3yLxe2uFa1V5Wp89r346Givf3TMopo8s7hXDOIwjfDhlraC8wtVy
+         4swHBD7iKgoONJxlVxHI7rxpY+WRRO11iylEQPDJfjRLRo3aazFpeJRnvLarqku9vEws
+         TfztU/hQYXCtZuHCXc5ElFMcQEXyzALb1R8gNqdGp/EBmjkyhjHZIkzaUt+vVdsBIeOw
+         v2pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704484654; x=1705089454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FRLMdfdFEFGxBekM0Ah4/mWBgPRmZGkIhZJOiMWzNJs=;
+        b=jHsYLNHJml76FwpKvWkv2b4UicjzOQhI9hMrRx/BlHaVGf28JmuA7XhLF2uAqvOgPy
+         t50RBLn/AAw8wvWSHiZ8IoS48kI0LSWv0rh273vNYNRTEael0/zh9Dwyc9PjgOmLuymb
+         a5cc0ZLSAjN3nvTDmNp4siB7HyuLRUjMWBNJ/ZdXGOJMu8O8Oq7PPBzLdQlD/L0XZI5I
+         eczciBbwU5KKfWi41tSau8/efeldfSt8739tkF3+dKZyC2QX8HHtVn/WTD83fLcKVeGa
+         DGGqkrfq4YvPfokrg9pXNdweuaT/c1CGIANd5eybW+GqaZExCt4Tc2ABlI5Vk46nDjka
+         hrwQ==
+X-Gm-Message-State: AOJu0Yw0bJC+F3MzX7jqoqil9eTvWjs7uEVbk/S6TUK9OSchPHJ8nBam
+	RPBR+RKwNsZZtKnuxQ6rbhyaL2B36UVBeDiHv3k=
+X-Google-Smtp-Source: AGHT+IHGDXHjbGA05eHZAKK9YFIY2QI6JAgCi4NVMCV+oKA8gMgpFfW2yWE82rmCIYPb4lI2ZnakHtpo7zPlCtYX4B8=
+X-Received: by 2002:a2e:a683:0:b0:2cc:6fbb:8b07 with SMTP id
+ q3-20020a2ea683000000b002cc6fbb8b07mr565252lje.98.1704484653691; Fri, 05 Jan
+ 2024 11:57:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] drm/amd: Adjustments for three function
- implementations
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alan Liu <HaoPing.Liu@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>,
- Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>,
- Bhanuprakash Modem <bhanuprakash.modem@intel.com>,
- Candice Li <candice.li@amd.com>, Charlene Liu <charlene.liu@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- David Tadokoro <davidbtadokoro@usp.br>, Eryk Brol <eryk.brol@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Harry Wentland <harry.wentland@amd.com>,
- Hawking Zhang <Hawking.Zhang@amd.com>, hersen wu <hersenxs.wu@amd.com>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Jun Lei <jun.lei@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Mikita Lipski <mikita.lipski@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Stanley Yang <Stanley.Yang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
- Tom Rix <trix@redhat.com>, Victor Zhao <Victor.Zhao@amd.com>,
- Wayne Lin <Wayne.Lin@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, YiPeng Chai <YiPeng.Chai@amd.com>,
- Zhan Liu <zhan.liu@amd.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <2258ce64-2a14-6778-8319-b342b06a1f33@web.de>
-In-Reply-To: <2258ce64-2a14-6778-8319-b342b06a1f33@web.de>
-Content-Type: text/plain; charset=UTF-8
+References: <9e415e37-a5bf-459f-8b9c-a02431e8fcfd@web.de>
+In-Reply-To: <9e415e37-a5bf-459f-8b9c-a02431e8fcfd@web.de>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 5 Jan 2024 13:57:22 -0600
+Message-ID: <CAH2r5mtDbP3XZTdrT97KB8R4ujZ1qHOkn=4RUsvzsHEcmwLxwg@mail.gmail.com>
+Subject: Re: [PATCH] smb3: Improve exception handling in allocate_mr_list()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	kernel-janitors@vger.kernel.org, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <lsahlber@redhat.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7BEoYkau02QTSNEGbr+lcjHZLdsk00FLyCbaxSUukTKrCYX15Hr
- J/M0C0rCpFuqzOWWas0eRRHRRo6pz2a0sVdU5glBU5fHOxUsaAQiiJ8oycLsVI+KmBX+V3V
- 3IgW3hUvw972A1pyu8KyvOfdI0J9j552K4rahvu9wJEQAr2Q7ivnaZsdXraHkLemcN6y7/C
- PC3hJ3gE78VaioUesvBKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6EmgwCH2oOE=;tO9aap8qByf+p7NbHIm8z1VCpLP
- VEInKE3iDL9hkz52w+6uel79EqVXEPE6JARy3lDjJQWO1SZxsEV/Hp3Ti5NBcnCuI3aYYmf9Z
- Y+cysq3iYMXzwAA5w8KlkhDtkQ4X12yfZvwL+AVCcBC+AQFKwUHUoHFIfDFQ5OAURoTxTS9+d
- jxgi+oFqgOXIBUq7flQEc+9Zt4tq+BNJrU4qzcy5q6SgS8jhSHWqbP6GnRXSY6Waa+tXvtK19
- X3ToL58H5kJdLNQW0aJCofLoHQJh2RSsE6jKaONyGpSQ3OtovztcpDG2f4Zng/hHo80knDRm7
- jkaqsXMLHcqKpssa9Yv4EHa6wKaSebq3Y8WVNFe09iR9soLXDnSXOwMP0pezWUTJEjBGntSSq
- 2Eh0PgRQS9ZuBKbjRPH1fKuYKw3LH2jp5EC036m3nCHw0YRX0FYeDjuv38JhsNB6Cf5v+KIV0
- tmBJw5SNQdfVOVdlDNlLOpsP7fElP6563rXAAsYo3AC+KO3nB8D5ziAz3rV05f7VokncFr0V5
- 1q7YzlzXUc7CNX2trDyjjUr5uvjibK6d8OycPmGbVRiKettQ2JSMDYcT9ETgIsAKCUWp5IeTt
- 9la+Ema3KZHHyrwqi0LPdP8cePtgDTD/jUWbaL0Wyl8xXM8N9iVm0uXofwURX5IU8PMNw5Mjk
- oqbk8j6mXM5ivnYepjPoVE3ibnjhPniiLWmJeo/EdY2+0kCqiNq1yilZSR/Wb9gnWrm8+5uVH
- f8k5L57VL1aQP5JJ/1ptrIKFPaQmCZcPH2VN8K9pf7BOq06Zb4zLhDuHbbSk4V73q1HAX7+2B
- aFZR8oSvWcJK+QJm6P+7uqjrmF4DYIAGGeXBayljRSBcW3OSI6umck/8z5dUjf1sbfnzFtbXh
- x/Dk4BdxeAFgZbGrh8uEsL+yg/zk9FqDxK5CRa6uawOWDZzmWfEVf3HQ5IHFxZ5CASP915Vx7
- hdhrRQ==
 
-> Date: Tue, 11 Apr 2023 14:36:36 +0200
+merged into cifs-2.6.git for-next
+
+On Sat, Dec 30, 2023 at 3:47=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
-> Some update suggestions were taken into account
-> from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 29 Dec 2023 20:43:12 +0100
 >
-> Markus Elfring (5)
->   amdgpu: Move a variable assignment behind a null pointer check in amdg=
-pu_ras_interrupt_dispatch()
->   display: Move three variable assignments behind condition checks in tr=
-igger_hotplug()
->   display: Delete three unnecessary variable initialisations in trigger_=
-hotplug()
->   display: Delete a redundant statement in trigger_hotplug()
->   display: Move an expression into a return statement in dcn201_link_enc=
-oder_create()
+> The kfree() function was called in one case by
+> the allocate_mr_list() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
 >
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c       |  3 ++-
->  .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 19 ++++++++++---------
->  .../amd/display/dc/dcn201/dcn201_resource.c   |  4 +---
->  3 files changed, 13 insertions(+), 13 deletions(-)
+> Thus use another label.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/smb/client/smbdirect.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+> index 94df9eec3d8d..d74e829de51c 100644
+> --- a/fs/smb/client/smbdirect.c
+> +++ b/fs/smb/client/smbdirect.c
+> @@ -2136,7 +2136,7 @@ static int allocate_mr_list(struct smbd_connection =
+*info)
+>         for (i =3D 0; i < info->responder_resources * 2; i++) {
+>                 smbdirect_mr =3D kzalloc(sizeof(*smbdirect_mr), GFP_KERNE=
+L);
+>                 if (!smbdirect_mr)
+> -                       goto out;
+> +                       goto cleanup_entries;
+>                 smbdirect_mr->mr =3D ib_alloc_mr(info->pd, info->mr_type,
+>                                         info->max_frmr_depth);
+>                 if (IS_ERR(smbdirect_mr->mr)) {
+> @@ -2162,7 +2162,7 @@ static int allocate_mr_list(struct smbd_connection =
+*info)
+>
+>  out:
+>         kfree(smbdirect_mr);
+> -
+> +cleanup_entries:
+>         list_for_each_entry_safe(smbdirect_mr, tmp, &info->mr_list, list)=
+ {
+>                 list_del(&smbdirect_mr->list);
+>                 ib_dereg_mr(smbdirect_mr->mr);
+> --
+> 2.43.0
+>
+>
 
-Is this patch series still in review queues?
 
-See also:
-https://lore.kernel.org/cocci/2258ce64-2a14-6778-8319-b342b06a1f33@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00034.html
+--=20
+Thanks,
 
-Regards,
-Markus
+Steve
