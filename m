@@ -1,90 +1,121 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AD4134A2
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 07:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9E22F13
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 09:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aMo8RiMg"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a26fa294e56so131252866b.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jan 2024 23:26:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704439586; x=1705044386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XXmyQ3cK0lczqAL+Dlzgj8zEo8SB1elDU46lsB3o5/s=;
-        b=aMo8RiMgkO6yIgsVD+IHycJCzOxZ086kskaxV9AEnLLmDb0ma60mr0TgVsilG+vA7O
-         lvcorUPJnRd3oHkgNsdoAEbK3pAbvZ4o0ZnmvJyMlqp/Yf7N6WkvWqgg+BnC4DUjOVhv
-         nHu9Ez1BRIF+a5sHjkNliVJ9wP//3O1qG1vb4a/LM29COc3xMPsoJJtZ0JSWnuh0qrju
-         cP7I79yjglaF4f0CJ10ucryZWs3r+Xg5hplaELMBUmH5wORF06hcu1JfX3uJyFsQ1oSX
-         TGsCODJfz2HjXRS1TGJFuCEJBwBBdrJISnxuasmrNoT8Yu+oVQQUK4yNZt+k7rq6qjxK
-         S1fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704439586; x=1705044386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XXmyQ3cK0lczqAL+Dlzgj8zEo8SB1elDU46lsB3o5/s=;
-        b=cCu6wJsEvxGJUNC2sSHU6OH60n4MqEwV0wgRZvJxTwmfIHJnIaov4VYbmx3okgO1nD
-         312LZK4DdcXwvDP/WJj53MNgRHJUt3ykYHrmBEk9NIBjTJVNMuL0BzrU1Eh5QxGIJYJP
-         mkbsY5aiNDF+JiIbj9xhWt5CLJEuM7HCd0NM2ZwGqER0dcwpo4fKNXJgZD17HEDl82I5
-         1Cnx4J2jEKGcpktrX9khXRLBbs+UKbk515rIDotjPbE32XvpdC3hDHh9ZpAoZdePI5XI
-         +ZvxNsOcK50Rf+5DTBQ+a2XaYA4aNv0zCbm+/f6gHYOYyHszmuKkHvXT+J7LL3MIc3Dg
-         v0FQ==
-X-Gm-Message-State: AOJu0YxzHSI6Ateum/Sf9TkRpfvfPe8FNJJzrtAgrnPkBIPSrEvSfAOg
-	ZuxSaIZZBWFVghHFPWT5Q0VcQOgtk4JjQQ==
-X-Google-Smtp-Source: AGHT+IEHM0HpBfr/7q3jF2d4SfDju+KfaVpClgb40z0NIsrx6Yw15SxEf8lZupq130B5vQbW8Cy2BA==
-X-Received: by 2002:a17:906:fe41:b0:a28:b0c8:1b66 with SMTP id wz1-20020a170906fe4100b00a28b0c81b66mr1023969ejb.12.1704439586215;
-        Thu, 04 Jan 2024 23:26:26 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id n15-20020a170906724f00b00a28148beabdsm547993ejk.102.2024.01.04.23.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jan 2024 23:26:25 -0800 (PST)
-Date: Fri, 5 Jan 2024 10:26:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Eric Dumazet <edumazet@google.com>, alexis.lothore@bootlin.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI/P2PDMA: Fix a sleeping issue in a RCU read section
-Message-ID: <06711233-64e7-4f24-8c37-40a90c6db1c5@moroto.mountain>
-References: <02d9ec4a10235def0e764ff1f5be881ba12e16e8.1704397858.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gISJDb2b"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id LgE0rfRMh6p30LgE0rFrb9; Fri, 05 Jan 2024 10:10:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1704445847;
+	bh=MXdChQyNeoQudlbeZ137Nbqayn4386aGQ4NlEZhknHc=;
+	h=From:To:Cc:Subject:Date;
+	b=gISJDb2b89qzu7Z5Mnty4BKHTxd/WKra3CRJXdtiOLLIbGBs4Cr+SE7LjXVhFiEL1
+	 zSStGSq6sHbUz06VHBCrW5/gNW8cOJ7IrCr8Ri2caA1EYQcxWri5d1ax13cjTeuR5s
+	 vC9HyUY2BWkMxfTNn2uz1Np0O/QAFoQ39d9kUzyDYjpDUyA8ZjRiSDqExayAVw6VIu
+	 R1McVLOF3y/C/HqSg0Ko/02vlFXTAkoM3JQ/iQzqI/BjxChv3nmpxPhlk9vKEHKZlk
+	 Vhih/fuVyyQXztoaDiqrzCdyJc+MRa19G9zBXxzAI1D5zEawP5R5S92VM5U/466Jlr
+	 Jxz8NMRjgJHQw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 05 Jan 2024 10:10:47 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Louis Peens <louis.peens@corigine.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: alexis.lothore@bootlin.com,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	oss-drivers@corigine.com,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] nfp: flower: Remove usage of the deprecated ida_simple_xx() API
+Date: Fri,  5 Jan 2024 10:10:37 +0100
+Message-Id: <de9e2b0be80f92dead2c8c66584bb34b9c95aab0.1704445716.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02d9ec4a10235def0e764ff1f5be881ba12e16e8.1704397858.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 04, 2024 at 08:52:35PM +0100, Christophe JAILLET wrote:
-> It is not allowed to sleep within a RCU read section, so use GFP_ATOMIC
-> instead of GFP_KERNEL here.
-> 
-> Fixes: ae21f835a5bd ("PCI/P2PDMA: Finish RCU conversion of pdev->p2pdma")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative.
-> It is based on a discussion related to another patch. See [1].
-> 
-> It also matches the doc, IIUC. See [2]
-> 
-> [1]: https://lore.kernel.org/all/20240104143925.194295-3-alexis.lothore@bootlin.com/
-> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/RCU/whatisRCU.rst#n161
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Looks good to me.
+This is less verbose.
 
-Smatch is supposed to catch this sort of bug but there are some issues
-with xa_store it's normally holding the the xas_lock() but if you pass
-a sleeping GFP_ then it drops the lock in __xas_nomem().  Sort of
-tricky.  So right now all xa_store() stuff triggers a false positive
-but tomorrows version of Smatch will just miss this bug.
+Note that the upper bound of ida_alloc_range() is inclusive while the one
+of ida_simple_get() was exclusive.
+So NFP_FL_LAG_GROUP_MAX has been decreased by 1. It now better watch the
+comment stating that "1 to 31 are valid".
 
-regards,
-dan carpenter
+The only other user of NFP_FL_LAG_GROUP_MAX has been updated accordingly in
+nfp_fl_lag_put_unprocessed().
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ .../net/ethernet/netronome/nfp/flower/lag_conf.c    | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
+index 88d6d992e7d0..361d7c495e2d 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
+@@ -76,7 +76,7 @@ struct nfp_fl_lag_group {
+ /* Use this ID with zero members to ack a batch config */
+ #define NFP_FL_LAG_SYNC_ID		0
+ #define NFP_FL_LAG_GROUP_MIN		1 /* ID 0 reserved */
+-#define NFP_FL_LAG_GROUP_MAX		32 /* IDs 1 to 31 are valid */
++#define NFP_FL_LAG_GROUP_MAX		31 /* IDs 1 to 31 are valid */
+ 
+ /* wait for more config */
+ #define NFP_FL_LAG_DELAY		(msecs_to_jiffies(2))
+@@ -111,8 +111,8 @@ nfp_fl_lag_group_create(struct nfp_fl_lag *lag, struct net_device *master)
+ 
+ 	priv = container_of(lag, struct nfp_flower_priv, nfp_lag);
+ 
+-	id = ida_simple_get(&lag->ida_handle, NFP_FL_LAG_GROUP_MIN,
+-			    NFP_FL_LAG_GROUP_MAX, GFP_KERNEL);
++	id = ida_alloc_range(&lag->ida_handle, NFP_FL_LAG_GROUP_MIN,
++			     NFP_FL_LAG_GROUP_MAX, GFP_KERNEL);
+ 	if (id < 0) {
+ 		nfp_flower_cmsg_warn(priv->app,
+ 				     "No more bonding groups available\n");
+@@ -121,7 +121,7 @@ nfp_fl_lag_group_create(struct nfp_fl_lag *lag, struct net_device *master)
+ 
+ 	group = kmalloc(sizeof(*group), GFP_KERNEL);
+ 	if (!group) {
+-		ida_simple_remove(&lag->ida_handle, id);
++		ida_free(&lag->ida_handle, id);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+@@ -328,8 +328,7 @@ static void nfp_fl_lag_do_work(struct work_struct *work)
+ 			}
+ 
+ 			if (entry->to_destroy) {
+-				ida_simple_remove(&lag->ida_handle,
+-						  entry->group_id);
++				ida_free(&lag->ida_handle, entry->group_id);
+ 				list_del(&entry->list);
+ 				kfree(entry);
+ 			}
+@@ -415,7 +414,7 @@ nfp_fl_lag_put_unprocessed(struct nfp_fl_lag *lag, struct sk_buff *skb)
+ 	struct nfp_flower_cmsg_lag_config *cmsg_payload;
+ 
+ 	cmsg_payload = nfp_flower_cmsg_get_data(skb);
+-	if (be32_to_cpu(cmsg_payload->group_id) >= NFP_FL_LAG_GROUP_MAX)
++	if (be32_to_cpu(cmsg_payload->group_id) > NFP_FL_LAG_GROUP_MAX)
+ 		return -EINVAL;
+ 
+ 	/* Drop cmsg retrans if storage limit is exceeded to prevent
+-- 
+2.34.1
 
