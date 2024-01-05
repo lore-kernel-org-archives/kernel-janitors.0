@@ -1,107 +1,86 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862942D78B
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 13:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5842DF72
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Jan 2024 13:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZWbulTye"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id LkVcrdK8nez8cLkVcrylHG; Fri, 05 Jan 2024 14:45:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704462314;
-	bh=grojnI9yCI7rgx9ixAnLj1H5YTl+RCfBvs/OtW0Sc/E=;
-	h=From:To:Cc:Subject:Date;
-	b=ZWbulTyezPsVPkCWp5JZV1G/eSTocoeVg+Wh+w70+gRvoYdJ4bcRUNIsep1UV86Oy
-	 4wBK6df++3OZxjEgtsMsCqDdw5U4g9tMTQqgT5d9b7PMvSzQq7ivbuuJRHIIyIfc/V
-	 skoVd/AXTtUFrnrDY/Q2eBrS/UaLT36KK9LhiHDwGdzs1RLND8JLtyFx340s8qDQ1o
-	 kzgwHqe/ul9criYdlYjC/zkhJE4+k7tuVE+iOY8/Q9bd4mrRr+We7AtbqECEjgAtqR
-	 GE3a2UPNRAWsSYEH+U04ZfCpbQmSXMiQBrYR+I2h5Jwz+tIt2EPTAxn27JsaHgNG0A
-	 aGnmwZM8hko3g==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 05 Jan 2024 14:45:14 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Cc: alexis.lothore@bootlin.com,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] thermal: core: Save a few bytes of memory when registering a cooling device
-Date: Fri,  5 Jan 2024 14:45:11 +0100
-Message-Id: <4a3658efad8f6247ed8c477717dc2820b72319d0.1704462287.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="clUa/AGF"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40d5aefcc2fso15503645e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Jan 2024 05:47:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704462478; x=1705067278; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S7scXJfb8MpiekK69yzw2lN/iDE5LBn7Yp5Zuvf3udM=;
+        b=clUa/AGFNlZ/QHvPZ6clLbGk6C7reNyAc70KJev9NiVfp/cMRUhU0sQb05osr7QSpH
+         lratOl0cobqIeaPBBk1OA00BMhSacig52R9IPYAHVcSgZO1KSedlc3sDdMQObueU1Fr2
+         5Z4h47ycVQaL1awGfzkzYwNyG3JeM0Bt8u00350pI9Zb/YN3Mw7qN5F3cZjBNmznThHb
+         TwNctx9VwF063hAMC0DMovh3YcIOoBu37nKbA24iVwTyDT+HXdzdYXs3RAhx7glNdLuu
+         8Q5FASUV6/OG5xvjPI5M1Be37TLa1g3OwIFMUs9V9djgzhSt148WZ2cQuk+g3KUXgwxH
+         QaVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704462478; x=1705067278;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7scXJfb8MpiekK69yzw2lN/iDE5LBn7Yp5Zuvf3udM=;
+        b=j7i1RrGPgmd9DOBU0NBc3WohhtfyJzJj3kLiSXOzo7rhM6siR5KOWBzlPTH7ghrWaa
+         XUCpmm9bv84jyeYDS1y703MRxg0mxjZb7m5C+CpWjRK6GpI+FC76lTsvpH4zqbS/ckmO
+         LRYme3EOYXIW3tQmg7WjUNJNPcCMSEGmEBSZ/C6gBWRuX/59jAZdqxxyhUHA6AMyhF+l
+         b5OPVPlG46vYJofOFXgMNq6En4Ug5cL3SHgy7/ZizrD6xiC87BEOmigRTBbJNq17/sXx
+         EBvHbVhHUjirPvi+0tkqc9l5LIZ8/8T1LXr0TpEO6rIFFHAJ0tlQzhtU5nP4x1C0I0pe
+         1Lgw==
+X-Gm-Message-State: AOJu0YyS1BFAU+S5nIBFiszUImu81qVxkVor8Qu5aIFPGZfWBLKh47kF
+	KbQULwQ5GRc4jAQyO451jkY6vbAX7K2o2w==
+X-Google-Smtp-Source: AGHT+IHUBJMtUA4V6WC+sNyeJ5Zc5b9FXevLeRPP8Jfb8EVe7sp13SUAwUFU+afaysyE0Q/N7ksdug==
+X-Received: by 2002:a05:600c:3b8a:b0:40c:6d5f:e88b with SMTP id n10-20020a05600c3b8a00b0040c6d5fe88bmr1212246wms.112.1704462478113;
+        Fri, 05 Jan 2024 05:47:58 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b0040d3276ba19sm1631292wmq.25.2024.01.05.05.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jan 2024 05:47:57 -0800 (PST)
+Date: Fri, 5 Jan 2024 16:47:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86: wmi: Fix wmi_dev_probe()
+Message-ID: <9c81251b-bc87-4ca3-bb86-843dc85e5145@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Some *thermal_cooling_device_register() calls pass a string literal as the
-'type' parameter.
+This has a reversed if statement so it accidentally disables the wmi
+method before returning.
 
-So kstrdup_const() can be used instead of kfree() to avoid a memory
-allocation in such cases.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 704af3a40747 ("platform/x86: wmi: Remove chardev interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/thermal/thermal_core.c | 6 +++---
- include/linux/thermal.h        | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/platform/x86/wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index fa88d8707241..d21225ddbf10 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -846,7 +846,7 @@ static void thermal_release(struct device *dev)
- 			    sizeof("cooling_device") - 1)) {
- 		cdev = to_cooling_device(dev);
- 		thermal_cooling_device_destroy_sysfs(cdev);
--		kfree(cdev->type);
-+		kfree_const(cdev->type);
- 		ida_free(&thermal_cdev_ida, cdev->id);
- 		kfree(cdev);
- 	}
-@@ -918,7 +918,7 @@ __thermal_cooling_device_register(struct device_node *np,
- 	cdev->id = ret;
- 	id = ret;
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index 157f1ce8ac0a..e6f6fa2fd080 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -868,7 +868,7 @@ static int wmi_dev_probe(struct device *dev)
+ 	if (wdriver->probe) {
+ 		ret = wdriver->probe(dev_to_wdev(dev),
+ 				find_guid_context(wblock, wdriver));
+-		if (!ret) {
++		if (ret) {
+ 			if (ACPI_FAILURE(wmi_method_enable(wblock, false)))
+ 				dev_warn(dev, "Failed to disable device\n");
  
--	cdev->type = kstrdup(type ? type : "", GFP_KERNEL);
-+	cdev->type = kstrdup_const(type ? type : "", GFP_KERNEL);
- 	if (!cdev->type) {
- 		ret = -ENOMEM;
- 		goto out_ida_remove;
-@@ -969,7 +969,7 @@ __thermal_cooling_device_register(struct device_node *np,
- out_cooling_dev:
- 	thermal_cooling_device_destroy_sysfs(cdev);
- out_cdev_type:
--	kfree(cdev->type);
-+	kfree_const(cdev->type);
- out_ida_remove:
- 	ida_free(&thermal_cdev_ida, id);
- out_kfree_cdev:
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index bf84595a4e86..052c72c0fa17 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -102,7 +102,7 @@ struct thermal_cooling_device_ops {
- 
- struct thermal_cooling_device {
- 	int id;
--	char *type;
-+	const char *type;
- 	unsigned long max_state;
- 	struct device device;
- 	struct device_node *np;
 -- 
-2.34.1
+2.42.0
 
