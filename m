@@ -1,57 +1,57 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257CFC2C7;
-	Sat,  6 Jan 2024 15:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52BE79FE;
+	Sat,  6 Jan 2024 15:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcoAXPst"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40d5a41143fso5617075e9.3;
-        Sat, 06 Jan 2024 07:32:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTW3Fo9K"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3368d1c7b23so526429f8f.0;
+        Sat, 06 Jan 2024 07:47:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704555123; x=1705159923; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1704556062; x=1705160862; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DF824uCnaiGc2FSUzvMoqf5PsqvATqJrmBhYo2JITb0=;
-        b=fcoAXPst/fZh33zUWAKmKeqmhfEaKk7uHFUa2DeH9sqD/r3FMxUouIVbqxIYLziNm4
-         V9BGAL3vJBD5KpiYgSRo6IrwxQkAbep7EdTJk6+FX9VgyYdCyDP/ON6UMdYvluCKZftw
-         wAWQwBXLoOW3R+t33TtAawvdJ43bUbaYWy3vn+tho9/iYwadpoi7cgLX7EaoJrxxGA5q
-         3tD9bxZd0FwYIvukWV6fVzh2QXyCOmII412vUl3c8d/vkyjD1WoPXe+zaiER/ySTuT01
-         Q1n60Nqyx/1uxbKIq1yW4mkYzOrqg/YfsQT/VeWV4gMvWup6FbThQGB7zvg5xm9g8C93
-         fzOQ==
+        bh=bKMLLD2ZxyA0kUaU9sIopyxyu3bVgkbt2roLK+GW/Zc=;
+        b=HTW3Fo9KieSGr41owv+U5S/YF3euDRVkKkrZO6I/7uUKRj7IE7Lxp7vdwzWhXoWS5H
+         apj6FO9RzghVMarBiXplIuPMvuC23V785JBtgJIGf/2Shvrop2A8lSXCc7VggTs6Mvhs
+         yuK4dsjHW0t7BoOjrtWbICwGZUB/ziiEr3VQ7mCtwa8imR7dJGqB3jk4A6M7DQkvA8Nf
+         AKs4QlkxSCc/o4cOx8smSILwfcoxKMouG2JWkGzo2wseLwYcnz17B+2P2qIAANpMEcjR
+         up32mgpggxvkjB8pGdAtiwMG+2qFJscnQOfM0h4ZS9cL2f4ywalLx3Cvu6Wln6+MKjBq
+         Qg+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704555123; x=1705159923;
+        d=1e100.net; s=20230601; t=1704556062; x=1705160862;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DF824uCnaiGc2FSUzvMoqf5PsqvATqJrmBhYo2JITb0=;
-        b=hnlFxU0lV4sOhP3RtJPSoZjwYNAERf5E271Gb07OjKENK1aPt+cnGsJ2g3LtHPu3Uh
-         mXFyIX7ziaGoiuRDHVygNdibhJskY4UzHqJn+4Vo9CfXzko4fBMQPu7AjRBg0MINT9rS
-         pokw498WQcJQX0MJ/vpotW7haavLk4Cgee8Tgd9DVDll1XiRzdwU4CRMqkqiuwE0IBZs
-         p0VozJlCdlyveIRRZa9kAaSs3SNcThuPJGc8kIZhPt4wtnfpYpwOyOZP+AzE+cDNoIAz
-         +pxj1jfqNPolEa+MGemKWMYoLzGLQaTX3tgOhXK0hbxMgPe+0447MYce/ONOR7cSpJtD
-         37CQ==
-X-Gm-Message-State: AOJu0Yxvw94JL8I+AKXwPET7u42Gy0hH2j5HPGSJCwbKcq3vWQZZFEue
-	Zw3R0nCsW/imZ5i5s5spx/uamQ3UT51xlA==
-X-Google-Smtp-Source: AGHT+IGVSyhZpT89vDc93D2+XViO6lhhdOuR9fXaaZlNwaNxIYg1xJ/EnTlo7jlVKu0Uv8LrWzQrdw==
-X-Received: by 2002:a05:600c:6987:b0:40e:3caa:f308 with SMTP id fp7-20020a05600c698700b0040e3caaf308mr605650wmb.56.1704555123228;
-        Sat, 06 Jan 2024 07:32:03 -0800 (PST)
+        bh=bKMLLD2ZxyA0kUaU9sIopyxyu3bVgkbt2roLK+GW/Zc=;
+        b=ezzs2y7NMDqqjw1RsMaQ6aGzCy1iWnayYi6t4/rB+/9LVMNumJwW5CKmxq+OGMw7mk
+         Dxcz/88T+o2HrS8rhDBkxZjeli3Y4FRyNinlRBNtd6LXoUUXDDiUqf2AerQhWmoq/6Wi
+         OJHjDINbt/Rn9ictm6E1DgPkPCNL7rIuxgcjC54a40AYtHAyg/hSU8abgOB78BwIg4M+
+         njaEfuwwjcgLlAnCLEpLyDNUf7InYurOtpeIsWqY6Q3F3Ztjk+Knm+kz9zyyi4jOvw0/
+         axvqvCNbCpcbttJGIVjkCEJMDtoJiSwLiXgk47WWm1IdoQYRdw+gpt425xSroM3WEMuo
+         IpdA==
+X-Gm-Message-State: AOJu0YwqnPbJYwMtGwfdJUeWWqalFjFV9OxGOHloWiR7bz9XfQ4lJl1x
+	ZyzRO/8AJ1OWoLzmJ2m4nXk=
+X-Google-Smtp-Source: AGHT+IGVlZUFr7ve40PWM95dSxWGeu3aAnifrfL2vCyVtUxia66Gh2Z9Rm5K/5YvquVm7HGYMfgF6Q==
+X-Received: by 2002:a05:6000:1971:b0:336:873b:6b21 with SMTP id da17-20020a056000197100b00336873b6b21mr629967wrb.33.1704556061797;
+        Sat, 06 Jan 2024 07:47:41 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g8-20020a05600c310800b0040e42391a12sm690204wmo.13.2024.01.06.07.32.02
+        by smtp.gmail.com with ESMTPSA id j1-20020adfe501000000b0033686e8f02dsm3585831wrm.45.2024.01.06.07.47.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jan 2024 07:32:02 -0800 (PST)
+        Sat, 06 Jan 2024 07:47:41 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-iio@vger.kernel.org
+To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: invensense: remove redundant initialization of variable period
-Date: Sat,  6 Jan 2024 15:32:02 +0000
-Message-Id: <20240106153202.54861-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] platform/x86: thinkpad_acpi: remove redundant assignment to variable i
+Date: Sat,  6 Jan 2024 15:47:40 +0000
+Message-Id: <20240106154740.55202-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,32 +62,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable period is being initialized with a value that is never
-read, it is being re-assigned a new value later on before it is read.
-The initialization is redundant and can be removed.
+The variable i is being initialized with the value 0 that is never
+read, it is being re-assigned 0 again in a for-loop statement later
+on. The initialization is redundant and can be removed.
+
+The initialization of variable n can also be deferred after the
+sanity check on pointer n and the declaration of all the int variables
+can be combined as a final code clear-up.
 
 Cleans up clang scan build warning:
-Value stored to 'period' during its initialization is never
-read [deadcode.DeadStores]
+warning: Value stored to 'i' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/thinkpad_acpi.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-index 03823ee57f59..3b0f9598a7c7 100644
---- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-+++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-@@ -126,7 +126,7 @@ void inv_sensors_timestamp_interrupt(struct inv_sensors_timestamp *ts,
- 	struct inv_sensors_timestamp_interval *it;
- 	int64_t delta, interval;
- 	const uint32_t fifo_mult = fifo_period / ts->chip.clock_period;
--	uint32_t period = ts->period;
-+	uint32_t period;
- 	bool valid = false;
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index c4895e9bc714..7bf91cfd3e51 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -6208,17 +6208,15 @@ static int thermal_get_sensor(int idx, s32 *value)
  
- 	if (fifo_nb == 0)
+ static int thermal_get_sensors(struct ibm_thermal_sensors_struct *s)
+ {
+-	int res, i;
+-	int n;
+-
+-	n = 8;
+-	i = 0;
++	int res, i, n;
+ 
+ 	if (!s)
+ 		return -EINVAL;
+ 
+ 	if (thermal_read_mode == TPACPI_THERMAL_TPEC_16)
+ 		n = 16;
++	else
++		n = 8;
+ 
+ 	for (i = 0 ; i < n; i++) {
+ 		res = thermal_get_sensor(i, &s->temp[i]);
 -- 
 2.39.2
 
