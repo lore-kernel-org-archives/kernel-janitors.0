@@ -1,60 +1,56 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6570679F1;
-	Sat,  6 Jan 2024 15:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B138D8474;
+	Sat,  6 Jan 2024 15:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUPPheLz"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40d5ac76667so4301175e9.1;
-        Sat, 06 Jan 2024 07:05:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aw7KdWLh"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40d604b4b30so7892075e9.1;
+        Sat, 06 Jan 2024 07:22:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704553499; x=1705158299; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1704554573; x=1705159373; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+jORYiUTO9PmKWOcOQPyN1v50dStgTx0NZ6TsUFmhg=;
-        b=RUPPheLzW22N2QQs5S6NQF8/yVYBaJ6A+oK0uEV65wGdWmaeXFtBinll7qDQP2y8PA
-         VhzHejNXI7R0CRQAx05M2v8s4tno0R55yQQlKjAqf5YTtb4KjPmeIlhyWPIGfz+UcQeX
-         Q5c2Jfs1VyK7v/5W5xFjE3UMyfHdp6btz+9Rh+JIcQ0kJv38JoCi3axGdpWOQG8m2Gd2
-         MbxZcoTrE+X2n3gdUD615pGPe6tMS2bxKBkizOQstHKHwh6tdHrCktSDsJk0OSoat8pX
-         cr3Gwy4QH2OV2tQgLBdZns0F8dqAW4XrnZS068iWbjezdvCzPuXPWVFSpXb7hV1nxF1c
-         yZVg==
+        bh=e3fDW402aU63JvYRAhJVsl7yZwjVojyYxUJdrbQ3u2U=;
+        b=Aw7KdWLhi3zkykGKgxKlrIUZLI0rRHHPVGV0Fg0O4QjF/YZX8NnwIljcRw3rteqo7+
+         hdvbVat5xG2mIZdcoJO2slvlI6AfxSfPRB/SpTk/HeMbduIqPc4DSGsGnrclF6sW/Q5y
+         S31M2DMLFFmSma1LNGATDnnOlYR0dBhZiE8TcWlFLc3RKzSVqID81IjriDZyn6e0AXsV
+         agVWZQ6NCL4hcWN9rBwXRMBNbn+eGHQVjIseeFOz4ggDrvBL9z7rCRbeyuZyEc0St+ag
+         /riEaYsSEqaM4zGhFrodCX3+K7tBAq0G74+a11dfaZFbmzMnVKZuF3eCWwIsGu0P7aer
+         LXJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704553499; x=1705158299;
+        d=1e100.net; s=20230601; t=1704554573; x=1705159373;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=r+jORYiUTO9PmKWOcOQPyN1v50dStgTx0NZ6TsUFmhg=;
-        b=SaWOfD6jvvsKfr65eMzNo5dWV+bzitA1i02j7qyGUACCdzXJ3P/7NUMII8iNEbUjwq
-         6BYGobtUwOvlbRDCwDewdauK6t7QoQTJZQYOF+qRyjsfi1J6IJu4AXMFCdghFm6Q8AzC
-         tDe5f2Tbn4Td0ZQgzbBV+ES1s4jVYrE6TZOtft3vL9oa2w/+al7RuR7Lo3v3eI4nccx0
-         h47q6zGU6tmKzxeyXJnL0ndwSZ54TVT/dl9GSCGvfIDVJva0g1WVctP2fLW14mSqEi4J
-         kTYF5V3Ziip0P4uDOQOr6Sw5Mzwb5vBv7dJHNWT28wkfMm35AXzxQaoH24WtfCOnSN+Z
-         OF3Q==
-X-Gm-Message-State: AOJu0YwJ3CudFtJ4wCwb9BEuKlr1xp7iNmRp4cw5b1Wb7YB3YN3Zi26K
-	ILJochjhrRRFM5n7x/vUH6M=
-X-Google-Smtp-Source: AGHT+IFBjfthUn80oHP48orVD+8I03MMj0HKnQn/QcpxmKjVJR8UyEDGbRq3D2m+XoyP5/EWszSOWg==
-X-Received: by 2002:a05:600c:45c8:b0:40e:3f9f:8f76 with SMTP id s8-20020a05600c45c800b0040e3f9f8f76mr457834wmo.23.1704553499379;
-        Sat, 06 Jan 2024 07:04:59 -0800 (PST)
+        bh=e3fDW402aU63JvYRAhJVsl7yZwjVojyYxUJdrbQ3u2U=;
+        b=Z2QBkPxqZSnA5+TBf7IaHhRuEQWqVlVaYNS1i0NrZI2kVST24CZ99q0wA2yYYuS0Ge
+         mI4IcY6QlqEgaPpA3nwQE1Ps/5AjdGf7T2y3TI9v1fSADpoyc1ai30rVab+PFCkZFYWN
+         UYK7+Y7Zdyz8WkTA10bWSZnG96XhzXsLp77Iykfbzoh8SsQMnPWWgZGYAXjlpY8dGNrm
+         Kz4QePQ91JFrloj4Pz9COF49tQhMfwrO10u32j505UaxIKYp6p4ZUtjVO808dFd7hE20
+         kfxRLkaAdQGeBSCrSI+fLGAazqsCUOS71uUJDOMHpucmLt6dqlk5EUsZD0sBaACAvXnp
+         kFKA==
+X-Gm-Message-State: AOJu0YzV1w5VUS0B5vY1yIJU4Bg5J2E3NGWM0fXDlYUaXGIg1CQzdVkZ
+	ByJXqo6Z86qdeRvpn/fUsFM=
+X-Google-Smtp-Source: AGHT+IHfBHIgmYFZp/QnQeyDYv4aaxU4VKiNAoREFpNt4fOpSFsAJ9lRnVVBi3gTZ3O35EG/PF9hsw==
+X-Received: by 2002:a05:600c:8a4:b0:40d:5b0d:cebe with SMTP id l36-20020a05600c08a400b0040d5b0dcebemr563929wmp.39.1704554572850;
+        Sat, 06 Jan 2024 07:22:52 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i1-20020a05600c354100b0040d8ff79fd8sm4942745wmq.7.2024.01.06.07.04.58
+        by smtp.gmail.com with ESMTPSA id w5-20020a05600c474500b0040e34835a58sm4948321wmo.22.2024.01.06.07.22.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jan 2024 07:04:58 -0800 (PST)
+        Sat, 06 Jan 2024 07:22:52 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Lechner <david@lechnology.com>,
+	linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] binder: remove redundant variable page_addr
-Date: Sat,  6 Jan 2024 15:04:57 +0000
-Message-Id: <20240106150457.53423-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] iio: adc: ti-ads7950: remove redundant assignment to variable ret
+Date: Sat,  6 Jan 2024 15:22:51 +0000
+Message-Id: <20240106152251.54617-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,41 +58,33 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Colin Ian King <colin.i.king@intel.com>
-
-Variable page_addr is being assigned a value that is never read. The
-variable is redundant and can be removed.
+Variable ret is being assigned a value that is never read, the variable
+is being re-assigned again a few statements later. Remove it.
 
 Cleans up clang scan build warning:
-warning: Value stored to 'page_addr' is never read [deadcode.DeadStores]
+warning: Value stored to 'ret' is never read [deadcode.DeadStores]
 
-Signed-off-by: Colin Ian King <colin.i.king@intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/android/binder_alloc.c | 2 --
+ drivers/iio/adc/ti-ads7950.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index ea5e1ba2d0d7..ed4ca6689c75 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -925,7 +925,6 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 		int i;
+diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+index 263fc3a1b87e..f975de059ba0 100644
+--- a/drivers/iio/adc/ti-ads7950.c
++++ b/drivers/iio/adc/ti-ads7950.c
+@@ -441,8 +441,6 @@ static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
+ 	if (ret)
+ 		goto out;
  
- 		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
--			unsigned long page_addr;
- 			bool on_lru;
- 
- 			if (!alloc->pages[i].page_ptr)
-@@ -933,7 +932,6 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 
- 			on_lru = list_lru_del_obj(&binder_freelist,
- 					      &alloc->pages[i].lru);
--			page_addr = alloc->buffer + i * PAGE_SIZE;
- 			binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
- 				     "%s: %d: page %d %s\n",
- 				     __func__, alloc->pid, i,
+-	ret = ((st->single_rx >> 12) & BIT(offset)) ? 1 : 0;
+-
+ 	/* Revert back to original settings */
+ 	st->cmd_settings_bitmask &= ~TI_ADS7950_CR_GPIO_DATA;
+ 	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);
 -- 
-2.43.0
+2.39.2
 
