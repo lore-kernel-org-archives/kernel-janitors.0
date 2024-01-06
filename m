@@ -1,108 +1,116 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52BE79FE;
-	Sat,  6 Jan 2024 15:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1FBC12F
+	for <kernel-janitors@vger.kernel.org>; Sat,  6 Jan 2024 16:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTW3Fo9K"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3368d1c7b23so526429f8f.0;
-        Sat, 06 Jan 2024 07:47:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="apQodEKR"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso404015a12.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 06 Jan 2024 08:29:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704556062; x=1705160862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bKMLLD2ZxyA0kUaU9sIopyxyu3bVgkbt2roLK+GW/Zc=;
-        b=HTW3Fo9KieSGr41owv+U5S/YF3euDRVkKkrZO6I/7uUKRj7IE7Lxp7vdwzWhXoWS5H
-         apj6FO9RzghVMarBiXplIuPMvuC23V785JBtgJIGf/2Shvrop2A8lSXCc7VggTs6Mvhs
-         yuK4dsjHW0t7BoOjrtWbICwGZUB/ziiEr3VQ7mCtwa8imR7dJGqB3jk4A6M7DQkvA8Nf
-         AKs4QlkxSCc/o4cOx8smSILwfcoxKMouG2JWkGzo2wseLwYcnz17B+2P2qIAANpMEcjR
-         up32mgpggxvkjB8pGdAtiwMG+2qFJscnQOfM0h4ZS9cL2f4ywalLx3Cvu6Wln6+MKjBq
-         Qg+A==
+        d=google.com; s=20230601; t=1704558591; x=1705163391; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TmYHoCjhNTaJ6RBnojFmrzyN02x16gJPksqO7MXISzo=;
+        b=apQodEKRECn2CcRLw/pmK0moFlq6b86vn5SYujFwxudq/YnssIGfKOKi5yIlj383rn
+         Oa7sPbZHXHGSW4x4mFywq5LLDYN5zX3fdTd7ZSP9BmbpgUOcM3ufPHDX4mOfJzkY0ouN
+         gZ2UYFcbiYazpOgdv76axYeCtDYrw7IkvyG5hHmsU+5Jc9FRsqoIrnmu4FkKFPG07vyW
+         UPZd20T6+0bM93K9orfmEpp3WKhkE3Vh+FAw3vy2AQQ55fOdgkpu2gxF5/nDnq5FxmgW
+         3nA820kVrjJc2QIdLiuH+KHjGu1KjYwsoE9C+GVZ/u+I4js2iFh77SE2Obe0o0sGh0JZ
+         R8sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704556062; x=1705160862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bKMLLD2ZxyA0kUaU9sIopyxyu3bVgkbt2roLK+GW/Zc=;
-        b=ezzs2y7NMDqqjw1RsMaQ6aGzCy1iWnayYi6t4/rB+/9LVMNumJwW5CKmxq+OGMw7mk
-         Dxcz/88T+o2HrS8rhDBkxZjeli3Y4FRyNinlRBNtd6LXoUUXDDiUqf2AerQhWmoq/6Wi
-         OJHjDINbt/Rn9ictm6E1DgPkPCNL7rIuxgcjC54a40AYtHAyg/hSU8abgOB78BwIg4M+
-         njaEfuwwjcgLlAnCLEpLyDNUf7InYurOtpeIsWqY6Q3F3Ztjk+Knm+kz9zyyi4jOvw0/
-         axvqvCNbCpcbttJGIVjkCEJMDtoJiSwLiXgk47WWm1IdoQYRdw+gpt425xSroM3WEMuo
-         IpdA==
-X-Gm-Message-State: AOJu0YwqnPbJYwMtGwfdJUeWWqalFjFV9OxGOHloWiR7bz9XfQ4lJl1x
-	ZyzRO/8AJ1OWoLzmJ2m4nXk=
-X-Google-Smtp-Source: AGHT+IGVlZUFr7ve40PWM95dSxWGeu3aAnifrfL2vCyVtUxia66Gh2Z9Rm5K/5YvquVm7HGYMfgF6Q==
-X-Received: by 2002:a05:6000:1971:b0:336:873b:6b21 with SMTP id da17-20020a056000197100b00336873b6b21mr629967wrb.33.1704556061797;
-        Sat, 06 Jan 2024 07:47:41 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j1-20020adfe501000000b0033686e8f02dsm3585831wrm.45.2024.01.06.07.47.40
+        d=1e100.net; s=20230601; t=1704558591; x=1705163391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TmYHoCjhNTaJ6RBnojFmrzyN02x16gJPksqO7MXISzo=;
+        b=JRiA+jiPq6+FgKKuEOMr92buCknnCfB6OlXvrqau+CV5BXPrS8ksc4A4s0vl1c9fR9
+         WUgkddMqAqd2GUzID6kgcwQAR1lrY718awGllL3JSC+OYvkka4YyEaspVUWKuOvTnCWn
+         NtEB3zdtmq4Z9EsrGIxSDOfWJKQB0ZWpk2OFl9kk9Uny6oMwizrSq6FRlc5olk1+Vzew
+         xWrg0nvufpTxEoJZNAuwf/bDpdhKuIsv/DUnxN8zjoh225quDoQ3TeCTukMqsPHX1ffu
+         SEtbp/uhcBBy6T0T5OtcSMl05zScA9q74RLPQXz5KVTwPgAg0I5ozWrjXmAgLG2dl5pl
+         f3mw==
+X-Gm-Message-State: AOJu0YxabTi32RRn6wBbXWhkCgBJLjsucP5EfkjT1QRUx+r26n/AqarZ
+	ZTBMCUVcyqwYaIqoIS87hpA9TFcsD2oc
+X-Google-Smtp-Source: AGHT+IFlCl3R3yPlY5+P1uytEVC3+XnfeSY3L/bF5U4kbBSdYfwiiMYzywdqYWqdyS0vX69QFede1g==
+X-Received: by 2002:a05:6a20:7492:b0:199:144b:35f2 with SMTP id p18-20020a056a20749200b00199144b35f2mr1210423pzd.90.1704558591212;
+        Sat, 06 Jan 2024 08:29:51 -0800 (PST)
+Received: from google.com (77.62.105.34.bc.googleusercontent.com. [34.105.62.77])
+        by smtp.gmail.com with ESMTPSA id i1-20020a056a00004100b006da0372200asm3254428pfk.184.2024.01.06.08.29.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jan 2024 07:47:41 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] platform/x86: thinkpad_acpi: remove redundant assignment to variable i
-Date: Sat,  6 Jan 2024 15:47:40 +0000
-Message-Id: <20240106154740.55202-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Sat, 06 Jan 2024 08:29:49 -0800 (PST)
+Date: Sat, 6 Jan 2024 16:29:45 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] binder: remove redundant variable page_addr
+Message-ID: <ZZl_-XGd-WJ0juz9@google.com>
+References: <20240106150457.53423-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240106150457.53423-1-colin.i.king@gmail.com>
 
-The variable i is being initialized with the value 0 that is never
-read, it is being re-assigned 0 again in a for-loop statement later
-on. The initialization is redundant and can be removed.
+On Sat, Jan 06, 2024 at 03:04:57PM +0000, Colin Ian King wrote:
+> From: Colin Ian King <colin.i.king@intel.com>
+> 
+> Variable page_addr is being assigned a value that is never read. The
+> variable is redundant and can be removed.
+> 
+> Cleans up clang scan build warning:
+> warning: Value stored to 'page_addr' is never read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@intel.com>
+> ---
+>  drivers/android/binder_alloc.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> index ea5e1ba2d0d7..ed4ca6689c75 100644
+> --- a/drivers/android/binder_alloc.c
+> +++ b/drivers/android/binder_alloc.c
+> @@ -925,7 +925,6 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
+>  		int i;
+>  
+>  		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+> -			unsigned long page_addr;
+>  			bool on_lru;
+>  
+>  			if (!alloc->pages[i].page_ptr)
+> @@ -933,7 +932,6 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
+>  
+>  			on_lru = list_lru_del_obj(&binder_freelist,
+>  					      &alloc->pages[i].lru);
+> -			page_addr = alloc->buffer + i * PAGE_SIZE;
+>  			binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
+>  				     "%s: %d: page %d %s\n",
+>  				     __func__, alloc->pid, i,
+> -- 
+> 2.43.0
+> 
 
-The initialization of variable n can also be deferred after the
-sanity check on pointer n and the declaration of all the int variables
-can be combined as a final code clear-up.
+Thanks Colin. I was waiting for this warning to hit mainline so that I
+could add the following tags to the fix:
 
-Cleans up clang scan build warning:
-warning: Value stored to 'i' is never read [deadcode.DeadStores]
+  Fixes: 162c79731448 ("binder: avoid user addresses in debug logs")
+  Reported-by: kernel test robot <lkp@intel.com>
+  Closes: https://lore.kernel.org/oe-kbuild-all/202312060851.cudv98wG-lkp@intel.com/
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/platform/x86/thinkpad_acpi.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Feel free to take them for a v2 if you'd like. Either way,
+Acked-by: Carlos Llamas <cmllamas@google.com>
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index c4895e9bc714..7bf91cfd3e51 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -6208,17 +6208,15 @@ static int thermal_get_sensor(int idx, s32 *value)
- 
- static int thermal_get_sensors(struct ibm_thermal_sensors_struct *s)
- {
--	int res, i;
--	int n;
--
--	n = 8;
--	i = 0;
-+	int res, i, n;
- 
- 	if (!s)
- 		return -EINVAL;
- 
- 	if (thermal_read_mode == TPACPI_THERMAL_TPEC_16)
- 		n = 16;
-+	else
-+		n = 8;
- 
- 	for (i = 0 ; i < n; i++) {
- 		res = thermal_get_sensor(i, &s->temp[i]);
--- 
-2.39.2
-
+--
+Carlos Llamas
