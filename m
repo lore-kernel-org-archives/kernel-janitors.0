@@ -1,79 +1,77 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5B7134B5;
-	Sun,  7 Jan 2024 15:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87BE13AC0;
+	Sun,  7 Jan 2024 16:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdVm5ub/"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-28be024282bso479790a91.3;
-        Sun, 07 Jan 2024 07:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704639857; x=1705244657; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9DFtOnYcuYLbthZu8GyH/yWr9rDVB4FldI//OpySZM=;
-        b=KdVm5ub/bDSgjo2RcTI/W5OWlEA/Uvi6NkVkWsLc9PGzw8Tee6wzXnkV2Jqsey/4pO
-         5QRZct2LwJI+GAFBH5ogkrqPbcZJAMlMAeDlR8mcJeq6UH3UE50Ej+SvJT8eMQdrt9AJ
-         mEm6jBOijbnTnzLWSsHIlORdegFTA5q+h1CRpsqNn874+W2ynxyR/G0+mIB5bSkpJXrc
-         dehmq4lqnenP+Jha/h/RajCNNM4BQBZo0igG7W9g4pTrT7Z3HdYCciMQAO2YnMYTSlZv
-         dtpfRlOROrCgUZA5Vf4FBP2et6VfPMY9Fjn4XEQrPiHTuSF/EBMGFho18yZH8KcT8Kgt
-         cpCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704639857; x=1705244657;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9DFtOnYcuYLbthZu8GyH/yWr9rDVB4FldI//OpySZM=;
-        b=sw+2ipyb9C6ygykGO8wPY967fyQjOXtU4XfzdPgHEfJbFLxVBeLPamD7vbeUTZ8Ljm
-         N+2wlW6RRT5ZixVYThqqgaohKb3mvHBAgcfYf/jIzL7wLZmrSHtxx9APjZk99o+z0uSH
-         QrUY14HTLgq2SikLZujn6J0qesmT5WT82A6A49C3geEbayDzLGOa55s4/HC/+PH6EzTG
-         p2PH+1ETIlaDi+9pcsXCXES+9OHGmfvdLF/JZf/kPIB3WASD4BUb8dnm+nQNbXzWtNbH
-         e6rt5Gobigq75nMwPQcUQDTQoUo+5XVpG43yuX7NrlX6F1UflhlTOb3YTXcBSe3oahze
-         e6rw==
-X-Gm-Message-State: AOJu0YwwyjInv6G2uwI5RgRtduohAWPlGcXBSLrEKcoN1t2YmXiG1gyr
-	mQJcQdLsjHUrFK75pwiRTTgTS8DuD13YpOvMdt0=
-X-Google-Smtp-Source: AGHT+IEL3+CQwidPkJAtFRVwwztI/bLaVkekxlNulT3EdHSdaC3VJm9hek03kju1FI52ClY9FmszrgkbqfJoTX37rNA=
-X-Received: by 2002:a17:90a:560e:b0:28c:2cd8:583a with SMTP id
- r14-20020a17090a560e00b0028c2cd8583amr526390pjf.9.1704639857278; Sun, 07 Jan
- 2024 07:04:17 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 7 Jan 2024 07:04:16 -0800
-From: Amit Dhingra <mechanicalamit@gmail.com>
-References: <CAO=gReHEWnw0fnktH0Ka-bvJdy82HHsoyAuZXyPoEzMDzNu1qQ@mail.gmail.com>
- <1d214914-9ff1-4756-a9a9-564410013681@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMEuaZSP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5A9C433C7;
+	Sun,  7 Jan 2024 16:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704643358;
+	bh=AgdzebLM5cK9tMR3KyEkXQ/+QTHVfgE2gK9SSe5ys1Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eMEuaZSPUQm0ZR1Qt5SToxGIMZcNTEbCM+QNSkJLM5gKqwcYDQaqRJos5xHdDJkkS
+	 9ByhjhHiuly2X6dS4AnADhP7hlDrfPPn3f70ljNVZSg2RitIcJaDo/01qCFmVvBLhI
+	 nieDyKA/DOgrLawIuL2kRR5FIWIjWb0Ear/TVrmqmcSNWqk14mFGOZGDbpKXSOLdon
+	 4SnceSGSywhLbqIQNci3QaS5h6w3TogY4Bx89kisbvDPMLrROGmlZekC7UWsz4Baem
+	 IAvvm0c9fByABPcmhKstgJe7J8ReQJSdLJNMoZKi9KsxzD/ETL/FzZTaMOfE/411nc
+	 iMsucXAkDnB9w==
+Date: Sun, 7 Jan 2024 16:02:32 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: adc: ti-ads7950: remove redundant assignment
+ to variable ret
+Message-ID: <20240107160232.4cdbae62@jic23-huawei>
+In-Reply-To: <e0f58f77-1dd0-4def-84ec-eded4b7d2092@lechnology.com>
+References: <20240106152251.54617-1-colin.i.king@gmail.com>
+	<e0f58f77-1dd0-4def-84ec-eded4b7d2092@lechnology.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1d214914-9ff1-4756-a9a9-564410013681@linaro.org>
-Date: Sun, 7 Jan 2024 07:04:16 -0800
-Message-ID: <CAO=gReGp+e9S6UAc+-qLkKa5W7OdwFZuT_Dkn1iVu+gNFR8kCQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS : Correct entry for da90??-watchdog in DIALOG SEMICONDUCTOR
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nik Bune <n2h9z4@gmail.com>, Steve Twiss <stwiss.opensource@diasemi.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Lee Jones <lee.jones@linaro.org>, 
-	wim@linux-watchdog.org, Support Opensource <support.opensource@diasemi.com>, 
-	kernel-janitors@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jan 07, 2024 at 01:11:52PM +0100, Krzysztof Kozlowski wrote:
-> Already sent:
-> https://lore.kernel.org/all/20231203113159.92316-2-biju.das.jz@bp.renesas.com/
->
-> and here:
->
-> https://lore.kernel.org/all/20231106095349.9564-1-lukas.bulwahn@gmail.com/
+On Sat, 6 Jan 2024 12:14:22 -0600
+David Lechner <david@lechnology.com> wrote:
 
-The more the merrier?
+> On 1/6/24 9:22 AM, Colin Ian King wrote:
+> > Variable ret is being assigned a value that is never read, the variable
+> > is being re-assigned again a few statements later. Remove it.
+> > 
+> > Cleans up clang scan build warning:
+> > warning: Value stored to 'ret' is never read [deadcode.DeadStores]
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > ---
+> >   drivers/iio/adc/ti-ads7950.c | 2 --
+> >   1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+> > index 263fc3a1b87e..f975de059ba0 100644
+> > --- a/drivers/iio/adc/ti-ads7950.c
+> > +++ b/drivers/iio/adc/ti-ads7950.c
+> > @@ -441,8 +441,6 @@ static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
+> >   	if (ret)
+> >   		goto out;
+> >   
+> > -	ret = ((st->single_rx >> 12) & BIT(offset)) ? 1 : 0;
+> > -
+> >   	/* Revert back to original settings */
+> >   	st->cmd_settings_bitmask &= ~TI_ADS7950_CR_GPIO_DATA;
+> >   	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);  
+> 
+> This does not look like the correct fix. This is the intended return value of the function in the case of no errors. So we probably need to introduce a new variable instead so that it doesn't get written over.
 
-Note to self: Search lore before working on a patch!!
+Agreed.  Needs to stash that in another local variable and return that value
+if ret == 0.
 
-- Amit
+J
 
->
-> Best regards,
-> Krzysztof
->
