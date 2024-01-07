@@ -1,84 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sxb1plwbeout02.prod.sxb1.secureserver.net (sxb1plwbeout02.prod.sxb1.secureserver.net [188.121.53.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2678E13AC7;
-	Sun,  7 Jan 2024 16:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyQLmV3f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC203C433C8;
-	Sun,  7 Jan 2024 16:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704643661;
-	bh=irwiB0glJqtkW5oESCUx2inVytpmIwtrLKY8B2VSb7U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lyQLmV3fl2YZWdk+11aDymPdtPvyIECQmIjD3cct2tyigiLrV+ZJYslhW46z6o6CM
-	 JFjSKGvnSHwCpKoO+SpWMODGqM0nLA479N9H0e4p3sfCdFfg5Gp94iqT3NuLmZHnb5
-	 z9hbf6x0ioRke7ZVI9psr5vnCtTZI5xvdKSbmrWp7VienhV1VcRbgvQ7FTNpNHLJ/d
-	 ywm/RVObu0u6tQ+KXyWuFPYzEzmUbejYwx3QOuCNHThlvU5urMO6nwgWNfkpCoX+zX
-	 oxfdzGz1XphUo2pHuVqhhS+/UALoEzHX03C7YvDQRTKsXLujGWTijFR9KN+mD2wVFg
-	 AtQt8VsXqPYYw==
-Date: Sun, 7 Jan 2024 16:07:36 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Andy Shevchenko
- <andy.shevchenko@gmail.com>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: invensense: remove redundant initialization
- of variable period
-Message-ID: <20240107160736.14f3ae1d@jic23-huawei>
-In-Reply-To: <20240106153202.54861-1-colin.i.king@gmail.com>
-References: <20240106153202.54861-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA910A31
+	for <kernel-janitors@vger.kernel.org>; Sun,  7 Jan 2024 19:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+X-MW-NODE: 
+X-CMAE-Analysis: v=2.4 cv=JNb98eGb c=1 sm=1 tr=0 ts=659af14c
+ a=xZsz1WqYln3YGRp0IohaNA==:117 a=xZsz1WqYln3YGRp0IohaNA==:17
+ a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=FP58Ms26AAAA:8 a=VwQbUJbxAAAA:8
+ a=OQEHJ-BNlmcVwaK9_LUA:9 a=QEXdDO2ut3YA:10 a=EebzJV9D4rpJJoWO5PQE:22
+ a=AjGcO6oz07-iQ99wixmX:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+X-SID: MY9KrZPrXz19A
+Date: Sun, 7 Jan 2024 18:45:30 +0000 (GMT)
+From: Phillip Lougher <phillip@squashfs.org.uk>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Message-ID: <522978349.868758.1704653130312@eu1.myprofessionalmail.com>
+In-Reply-To: <49472d26-29e6-443f-b0f5-21967a67dd4a@web.de>
+References: <49472d26-29e6-443f-b0f5-21967a67dd4a@web.de>
+Subject: Re: [PATCH] squashfs: Improve error handling in
+ squashfs_decompressor_create()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.19.35
+X-Originating-Client: open-xchange-appsuite
+X-CMAE-Envelope: MS4xfOp6H2w7Gin0kDxhYJ6f54ZB0ExIU0in4Z5vWX/LeMg+nZcHXaBIR+/2mkPHvBQmNjfBWbbKLD0XcFwfpM1/kcigFSOKoONRTeOp/6a6kDiRjsbxuXPT
+ GOVeHmhOQRkX7dsmvOB+cBFgXUZlroRfuhAk1Rpbac0Gyd0VPSBJugSMrBhBf+SKBBtPC9znBuvdznfJE8uKHiz03Bc4r7KArLn7IlR7nu5KevHVsbDxmJxu
+ i/oTUkoeXh+3TsrbdaLr/PA5zMLQUVdWsqjeonV8cW8awiAB6uoHiwAsv7GjSe2OHMkO82zJSr6LVgkNjfxhPLxKxibwyHOddwvE/Lrmcjs=
 
-On Sat,  6 Jan 2024 15:32:02 +0000
-Colin Ian King <colin.i.king@gmail.com> wrote:
+> On 30/12/2023 09:55 GMT Markus Elfring <markus.elfring@web.de> wrote:
+>=20
+> =20
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 29 Dec 2023 21:30:26 +0100
+>=20
+> The kfree() function was called in two cases by
+> the squashfs_decompressor_create() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
+>=20
+> * Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=
+=80=9D failed
+>   at the beginning.
+>=20
+> * Use another label.
+>=20
+> * Move an error code assignment into an if branch.
+>=20
+> * Delete an initialisation (for the variable =E2=80=9Cdecomp_strm=E2=80=
+=9D)
+>   which became unnecessary with this refactoring.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-> The variable period is being initialized with a value that is never
-> read, it is being re-assigned a new value later on before it is read.
-> The initialization is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> Value stored to 'period' during its initialization is never
-> read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Hi Colin,
+As mentioned in this thread (and many others)
 
-I definitely want input from someone who can test this.
-There is direct use of ts->period as well as the local
-variable that is indeed overwritten as you've noted.
-Feels like naming needs some work and perhaps reduce the scope of
-the period local variable so it's obvious it was only intended
-for more local use than it currently looks like.
+https://lore.kernel.org/all/20240104204032.GN31813@kernel.org/
 
-Thanks,
+calling Kfree with a NULL pointer is perfectly valid.
 
-Jonathan
+So like most others I'm going to ignore this patch.
 
-> ---
->  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> index 03823ee57f59..3b0f9598a7c7 100644
-> --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> @@ -126,7 +126,7 @@ void inv_sensors_timestamp_interrupt(struct inv_sensors_timestamp *ts,
->  	struct inv_sensors_timestamp_interval *it;
->  	int64_t delta, interval;
->  	const uint32_t fifo_mult = fifo_period / ts->chip.clock_period;
-> -	uint32_t period = ts->period;
-> +	uint32_t period;
->  	bool valid = false;
->  
->  	if (fifo_nb == 0)
+Cheers
 
+Phillip
