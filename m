@@ -1,72 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACE212B9F;
-	Sun,  7 Jan 2024 13:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5B7134B5;
+	Sun,  7 Jan 2024 15:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0Ldolpc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 310DBC433C9;
-	Sun,  7 Jan 2024 13:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704633023;
-	bh=D0XfO/g3q7ahcqj6C5B4bjONoZE77XKY1fDsb6zfyq0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=g0Ldolpc0zN14qjZqvf87CA61OD6GpNLbjLw9k/3U2MRh69/8ZtDBMTjOUWBS/gEh
-	 ekvMEj3FG6aF9ll6k/61FjCcc1g4mu3L3rwtvwOHkQ6VheFlgn217+LXRu7KxRKsJu
-	 It4IYTc3lpp5zdPzlAsl0o7DKjgZTVbSTKwv6X6fQZ1iCwMD8uWGwZPpnIhdTB2f9J
-	 2uqHZ1kPSOpAYP17ti95J548nL1dTSYY8GscDo9FvIwnPQfuQH1R7FymQj1/BHQFEn
-	 qcDiLWdudtzkZfqRsm6B1LIED69i7Mj9Hi65NAWSqYvRs+vNP2YcOOG6QHpIMjJyRz
-	 hTt78KFhBh6Iw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1922AC4167E;
-	Sun,  7 Jan 2024 13:10:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdVm5ub/"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-28be024282bso479790a91.3;
+        Sun, 07 Jan 2024 07:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704639857; x=1705244657; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9DFtOnYcuYLbthZu8GyH/yWr9rDVB4FldI//OpySZM=;
+        b=KdVm5ub/bDSgjo2RcTI/W5OWlEA/Uvi6NkVkWsLc9PGzw8Tee6wzXnkV2Jqsey/4pO
+         5QRZct2LwJI+GAFBH5ogkrqPbcZJAMlMAeDlR8mcJeq6UH3UE50Ej+SvJT8eMQdrt9AJ
+         mEm6jBOijbnTnzLWSsHIlORdegFTA5q+h1CRpsqNn874+W2ynxyR/G0+mIB5bSkpJXrc
+         dehmq4lqnenP+Jha/h/RajCNNM4BQBZo0igG7W9g4pTrT7Z3HdYCciMQAO2YnMYTSlZv
+         dtpfRlOROrCgUZA5Vf4FBP2et6VfPMY9Fjn4XEQrPiHTuSF/EBMGFho18yZH8KcT8Kgt
+         cpCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704639857; x=1705244657;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9DFtOnYcuYLbthZu8GyH/yWr9rDVB4FldI//OpySZM=;
+        b=sw+2ipyb9C6ygykGO8wPY967fyQjOXtU4XfzdPgHEfJbFLxVBeLPamD7vbeUTZ8Ljm
+         N+2wlW6RRT5ZixVYThqqgaohKb3mvHBAgcfYf/jIzL7wLZmrSHtxx9APjZk99o+z0uSH
+         QrUY14HTLgq2SikLZujn6J0qesmT5WT82A6A49C3geEbayDzLGOa55s4/HC/+PH6EzTG
+         p2PH+1ETIlaDi+9pcsXCXES+9OHGmfvdLF/JZf/kPIB3WASD4BUb8dnm+nQNbXzWtNbH
+         e6rt5Gobigq75nMwPQcUQDTQoUo+5XVpG43yuX7NrlX6F1UflhlTOb3YTXcBSe3oahze
+         e6rw==
+X-Gm-Message-State: AOJu0YwwyjInv6G2uwI5RgRtduohAWPlGcXBSLrEKcoN1t2YmXiG1gyr
+	mQJcQdLsjHUrFK75pwiRTTgTS8DuD13YpOvMdt0=
+X-Google-Smtp-Source: AGHT+IEL3+CQwidPkJAtFRVwwztI/bLaVkekxlNulT3EdHSdaC3VJm9hek03kju1FI52ClY9FmszrgkbqfJoTX37rNA=
+X-Received: by 2002:a17:90a:560e:b0:28c:2cd8:583a with SMTP id
+ r14-20020a17090a560e00b0028c2cd8583amr526390pjf.9.1704639857278; Sun, 07 Jan
+ 2024 07:04:17 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 7 Jan 2024 07:04:16 -0800
+From: Amit Dhingra <mechanicalamit@gmail.com>
+References: <CAO=gReHEWnw0fnktH0Ka-bvJdy82HHsoyAuZXyPoEzMDzNu1qQ@mail.gmail.com>
+ <1d214914-9ff1-4756-a9a9-564410013681@linaro.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] nfp: flower: Remove usage of the deprecated
- ida_simple_xx() API
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170463302309.18403.10179345946425795042.git-patchwork-notify@kernel.org>
-Date: Sun, 07 Jan 2024 13:10:23 +0000
-References: <de9e2b0be80f92dead2c8c66584bb34b9c95aab0.1704445716.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <de9e2b0be80f92dead2c8c66584bb34b9c95aab0.1704445716.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: louis.peens@corigine.com, kuba@kernel.org, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, alexis.lothore@bootlin.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- oss-drivers@corigine.com, netdev@vger.kernel.org
+In-Reply-To: <1d214914-9ff1-4756-a9a9-564410013681@linaro.org>
+Date: Sun, 7 Jan 2024 07:04:16 -0800
+Message-ID: <CAO=gReGp+e9S6UAc+-qLkKa5W7OdwFZuT_Dkn1iVu+gNFR8kCQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS : Correct entry for da90??-watchdog in DIALOG SEMICONDUCTOR
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Nik Bune <n2h9z4@gmail.com>, Steve Twiss <stwiss.opensource@diasemi.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Lee Jones <lee.jones@linaro.org>, 
+	wim@linux-watchdog.org, Support Opensource <support.opensource@diasemi.com>, 
+	kernel-janitors@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+On Sun, Jan 07, 2024 at 01:11:52PM +0100, Krzysztof Kozlowski wrote:
+> Already sent:
+> https://lore.kernel.org/all/20231203113159.92316-2-biju.das.jz@bp.renesas.com/
+>
+> and here:
+>
+> https://lore.kernel.org/all/20231106095349.9564-1-lukas.bulwahn@gmail.com/
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+The more the merrier?
 
-On Fri,  5 Jan 2024 10:10:37 +0100 you wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Note that the upper bound of ida_alloc_range() is inclusive while the one
-> of ida_simple_get() was exclusive.
-> So NFP_FL_LAG_GROUP_MAX has been decreased by 1. It now better watch the
-> comment stating that "1 to 31 are valid".
-> 
-> [...]
+Note to self: Search lore before working on a patch!!
 
-Here is the summary with links:
-  - [net-next] nfp: flower: Remove usage of the deprecated ida_simple_xx() API
-    https://git.kernel.org/netdev/net-next/c/363096a27f90
+- Amit
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>
+> Best regards,
+> Krzysztof
+>
