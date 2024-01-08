@@ -1,79 +1,126 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981853FE46;
-	Mon,  8 Jan 2024 12:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F385F405C6;
+	Mon,  8 Jan 2024 12:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lBOnSMzz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704716145; x=1705320945; i=markus.elfring@web.de;
-	bh=ftjai2gBCPxKGA6L3Dpqoe1qrerRfyJo5B7ew4NadGg=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=lBOnSMzzO6p7d7Xo5ePpJsEXEwS6zqWYzEMDguVbRwAoE/qCXAC2IwDkobxku46o
-	 PQ14T39Wc14/Dx1p75PfECfQpKzjL+xUBzjhBQIyJS3ybQHkSR8xdvXrSu8s2Foma
-	 DxVhvvERW538CDVBMpCAhfx/4YWDQS3as4JT+H4dVUeAczfYeSfUlLnZptqqVRUpG
-	 6v9q64vHlvhTMyX1z9uXDhOCms/NTRH1MykwJXaBxjAEP1PgBxH081EHtPcvi52an
-	 z/AEUAb5l8e29udWnSdD9t8nqrWgPP1HVOClLADDqJrh2pjwSKNwpxMzRT6ZN5fA9
-	 LfKNBcCwNL5rbjNLqQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MDe2F-1rVqYI0Te3-00AhCL; Mon, 08
- Jan 2024 13:15:45 +0100
-Message-ID: <f97521ef-0600-401a-8fdb-9648d576ea4c@web.de>
-Date: Mon, 8 Jan 2024 13:15:43 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AApAgBBn"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5572a9b3420so4648350a12.1;
+        Mon, 08 Jan 2024 04:18:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704716280; x=1705321080; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ataiuoEiZAKbJMfDTmDPqOcB+hhvmSxMEb08xxsTGtE=;
+        b=AApAgBBnwJG2FrZrk/PUT2YwNETLSLueuDsB7K5+3O6cInP/XbbkP5fROxXQk8s7sf
+         tkcufgk84WpemDTCIMjgkjALIADduZWrPtggx29cwkSaJMEpozpPbZuHx4vRnWxvTJfA
+         wAFtKQoTL6ocIjTW34M+tn2HTG1BoZkbS4RTOAkkNYB/ep3TFNCrdeKC4ZknHmFXR0I6
+         moOjlAdYoZP3PecoMXRUUl5ujFMUt3tr5Sl25ZdwGWhSf4y7imVMdn3GM6gMIQdRxNi+
+         Vv05YMRked6ICbUuDjDVVcQuQDtipbxvOCCe0ufy2mEDraTPoR7qhdkzTB8oJvpbGxvu
+         looA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704716280; x=1705321080;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ataiuoEiZAKbJMfDTmDPqOcB+hhvmSxMEb08xxsTGtE=;
+        b=bKK7D+jLpTgUKCSQcyKs38y+RZleJZt+/ULwlfHVwEHz2nhyjt9q7SQP86TWEJRdTt
+         Ldvfz+6fhrr6KfBpz+1qrOfAzjmGPn8D9M72paNohVF7BkjbIds0jURdmZSxr/j92GS9
+         Q1JbdgYk21zVzq95j3hNG+iuWnjqN2L5ezrzb3dVAIRNU2+HVwpC+wAvPws70Fj3tWih
+         I9eDGCX/8T0QmKlN6WnVETSvn+/8PWVQiOteb/6FL16AFevdhk0dVa8XdLLaAg4N5Pcd
+         ZYKy6FtDIPkpNIGYrE6sIlVZSxPmFdA6FSn9jEvj0tkzxFXpQYD0KwmBC5tT4cS9WLpA
+         jhoQ==
+X-Gm-Message-State: AOJu0YzpBDBJB02d8NEE24MT2VRJ9isFy3od5ysDiKwcITSAdyATshqI
+	uaUd3EdxYCDHYxNiYPmqijA=
+X-Google-Smtp-Source: AGHT+IGk837jJFvS+TcY7fBXJR80jcXc31znrg/A2V9l7q0ncwOgKoPeJG795sFAlbjTJcin9QtHhQ==
+X-Received: by 2002:a17:906:7743:b0:a29:d642:46ba with SMTP id o3-20020a170906774300b00a29d64246bamr3042338ejn.29.1704716279986;
+        Mon, 08 Jan 2024 04:17:59 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:a060:7056:782e:5e26])
+        by smtp.gmail.com with ESMTPSA id r17-20020a170906551100b00a2356a7eafasm3641365ejp.199.2024.01.08.04.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jan 2024 04:17:59 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] drm: Clean-up superfluously selecting VT_HW_CONSOLE_BINDING
+Date: Mon,  8 Jan 2024 13:17:57 +0100
+Message-Id: <20240108121757.14069-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fs/9p: Improve exception handling in v9fs_session_init()
-Content-Language: en-GB
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev,
- kernel-janitors@vger.kernel.org
-Cc: =?UTF-8?Q?Christian_Sch=C3=B6nebeck?= <linux_oss@crudebyte.com>,
- Latchesar Ionkov <lucho@ionkov.net>, LKML <linux-kernel@vger.kernel.org>
-References: <7203d3fc-f1e4-4fb1-8dd3-068b0ec6c752@web.de>
- <ZZvX6sQLkgm0kOTN@codewreck.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZvX6sQLkgm0kOTN@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gl0ACkqWjLQpN7DW1bz4DW6OBTXzylZArZ0ih9Y/aiilrlZgNZe
- XUmANt6EhrcgjAVHNF8zdBBCvqDIQ3YrautoPK5CSjcqYLJlaW4OlTXG0G/ixfn/LQGg5eG
- oj3t57hiuLAB3DnoPPMC09aLGkTHoAqG6O7SZZiTsDXhS8yImSIQ6hDEuB0C0+vInuMQNR4
- j5RRVo3PEA/aJJmmTV0WA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:c4zC0rRpEzg=;0HOZ/Whp5g4WVRdV8jvuDJ7cskc
- wU2huU4c5dedgcwfj/7o+YTZbN8f6xbNNRiITjBrHKxxnE6GVdTeGLL45yk2a7AIyky+ORej8
- XxOsG0Tbz9fb/Na4c7syYGLjyo4XVlIzavF58rcVg6MoiXioriaDjaiKVGfpntdeVsZCK21IP
- WjReKwsaIUXy2hAtyJDWQkMHMFiNHn70pOzwHMVEHMmmC+RxmBiy0GUV6vgnP7sTWa6NTC7TU
- NOBpKpCXxDLlLR/gOHqphasi75b+9q2jquxo+0SpOgTNsFp+wG4g3QhDydO8PT1HShQ6155+W
- w40tAd6YahtG6NQGduSTdabFE7248fptr7JJMbiZmVKaeAKf1mIB1XtYzDROmdCPMWlPnCQx8
- MJ49XgNVjWC6tWAV5wMxtcWHK6Pf5F7guEXVYMMA8fhGf0gE4U1t08erPNannjZ6bIsJDWqj8
- N7FDH3xq5gamrsO/LIZNFpHIZGdegigvnaNvEQ/famzj7Sqa58X8BT6DbDyR0JjYEwJLntHTV
- lEWoq0KKGUAHEqKek+krvDYY16VFFIv5r/d256pSNF4z3eKdyE8twHPqQtb9rGWWGcE0MFKjw
- bXJejYSfNnINiZsaonf/MbmigYwD8vmLq3LHJiD+bSjhmQD5a8j03UvtkViYwVenR35Xs0l4k
- Und6INeC0QFy4bcCqDMeaQZd0XB6WwOY0ZncPIfxz2VqaX6p08F2eybeBYhB1VYGRz5sbnBbU
- lwm8b1CY+H1qFRoSS3MAmtWZ8hA4XLCKHb2RmK/z9C13b6FC1R8tXa1S+ak/0DUqPN/Dd5nET
- OLcXvaV9iaST+E6bfEksxYINh4AjugubHZyUMtCOoI+bcucioQhAIHtY2viF1srydDiUGdNO1
- Jg/eIrj4jXprZ5y3zkSJk06lsXPmistrI5UAmaf4Y6tcJciLUuwHe3fHEsrMpAAHyLe2A5LF3
- Fa2xcw==
 
->> The kfree() function was called in up to two cases by
->> the v9fs_session_init() function during error handling
->> even if the passed variable contained a null pointer.
->
-> I don't see the problem in calling kfree on null things (especially on
-> error path).
+As config FRAMEBUFFER_CONSOLE already selects VT_HW_CONSOLE_BINDING, there
+is no need for any drm driver to repeat that rule for selecting.
 
-Will you become willing to reduce the number of redundant function calls
-for improved exception handling?
+Remove those duplications of selecting VT_HW_CONSOLE_BINDING.
 
-Regards,
-Markus
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/gpu/drm/ingenic/Kconfig | 1 -
+ drivers/gpu/drm/mcde/Kconfig    | 1 -
+ drivers/gpu/drm/pl111/Kconfig   | 1 -
+ drivers/gpu/drm/tve200/Kconfig  | 1 -
+ 4 files changed, 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/ingenic/Kconfig b/drivers/gpu/drm/ingenic/Kconfig
+index b440e0cdc057..3db117c5edd9 100644
+--- a/drivers/gpu/drm/ingenic/Kconfig
++++ b/drivers/gpu/drm/ingenic/Kconfig
+@@ -11,7 +11,6 @@ config DRM_INGENIC
+ 	select DRM_GEM_DMA_HELPER
+ 	select REGMAP
+ 	select REGMAP_MMIO
+-	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
+ 	help
+ 	  Choose this option for DRM support for the Ingenic SoCs.
+ 
+diff --git a/drivers/gpu/drm/mcde/Kconfig b/drivers/gpu/drm/mcde/Kconfig
+index 4f3d68e11bc1..907460b69d4f 100644
+--- a/drivers/gpu/drm/mcde/Kconfig
++++ b/drivers/gpu/drm/mcde/Kconfig
+@@ -11,7 +11,6 @@ config DRM_MCDE
+ 	select DRM_PANEL_BRIDGE
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_DMA_HELPER
+-	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
+ 	help
+ 	  Choose this option for DRM support for the ST-Ericsson MCDE
+ 	  Multi-Channel Display Engine.
+diff --git a/drivers/gpu/drm/pl111/Kconfig b/drivers/gpu/drm/pl111/Kconfig
+index ad24cdf1d992..20fe1d2c0aaf 100644
+--- a/drivers/gpu/drm/pl111/Kconfig
++++ b/drivers/gpu/drm/pl111/Kconfig
+@@ -9,7 +9,6 @@ config DRM_PL111
+ 	select DRM_GEM_DMA_HELPER
+ 	select DRM_BRIDGE
+ 	select DRM_PANEL_BRIDGE
+-	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
+ 	help
+ 	  Choose this option for DRM support for the PL111 CLCD controller.
+ 	  If M is selected the module will be called pl111_drm.
+diff --git a/drivers/gpu/drm/tve200/Kconfig b/drivers/gpu/drm/tve200/Kconfig
+index 11e865be81c6..5121fed571a5 100644
+--- a/drivers/gpu/drm/tve200/Kconfig
++++ b/drivers/gpu/drm/tve200/Kconfig
+@@ -9,7 +9,6 @@ config DRM_TVE200
+ 	select DRM_PANEL_BRIDGE
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_DMA_HELPER
+-	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
+ 	help
+ 	  Choose this option for DRM support for the Faraday TV Encoder
+ 	  TVE200 Controller.
+-- 
+2.17.1
+
