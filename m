@@ -1,128 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340C355E50;
-	Mon,  8 Jan 2024 20:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AC655E6C;
+	Mon,  8 Jan 2024 21:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sacmy2fi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704746815; x=1736282815;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ysxA/zp0hOOuWwajvTnchvlZ9+DORxFTUedJeEkkADQ=;
-  b=Sacmy2fivxBIZDU1UXb1e1TWl08KScxegUMq5oIk8q4BBNkmg/5yPIrt
-   UfJjVQ+nsTJ3gD9eMpv+MYBIz0iWRWS33ze9bZcbV9RAMOMA5FTmAbpnl
-   BRt77Mi7Odi5FTVDzsx3F6ypFlhslYSjbKLC/lMNblebPnlBGkOjt6pw2
-   uakQb5Wh2lMf9XlP2LrqxJzNEJbWxfg6a/VWGh12c8zz2sk4+iZP6i8o/
-   ZOdtfdkWIWqIVFelP/exXC9oVzNHBbByOYroOZNrJxFnUMaIuNKvAYS/i
-   QBXgQFd+TRvdcTzMVILIBezaLeHzgOQkD173hz2dJZjyey+ebWMRDQS8o
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="5085374"
-X-IronPort-AV: E=Sophos;i="6.04,180,1695711600"; 
-   d="scan'208";a="5085374"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 12:46:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="781543260"
-X-IronPort-AV: E=Sophos;i="6.04,180,1695711600"; 
-   d="scan'208";a="781543260"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orsmga002.jf.intel.com with ESMTP; 08 Jan 2024 12:46:50 -0800
-Received: from [10.249.149.159] (mwajdecz-MOBL.ger.corp.intel.com [10.249.149.159])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 6E90728165;
-	Mon,  8 Jan 2024 20:46:49 +0000 (GMT)
-Message-ID: <84a5c289-e2f6-4e30-a093-5a1c5b335057@intel.com>
-Date: Mon, 8 Jan 2024 21:46:47 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzNXdrUu"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d3ed1ca402so20012715ad.2;
+        Mon, 08 Jan 2024 13:15:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704748533; x=1705353333; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAJtUP64ltD9g/AOMY/RTS+amnQ4+ix5NQibCsD1n70=;
+        b=NzNXdrUuETCvXZORTsfPKMB+IhnJ6LRVs8j1R6Sx3mkbnynw/l98aQDoP8rJZd++yl
+         +0eoYb7aABzBhNtwYeWnt02WE9EvXkxT3XcBC9P3NuuF5c5BCJ+NfpHY7BGa1O6tP2qq
+         K4A6OeYWHNeuYXYhiTLTdApxA5FQXhyQexBjXAYqOnrB93QglyWKJ0/S0sHZ/CnljqKI
+         rIVfRaoOtF6welGmA8Q46mMK2bTIKGyEFjG/94QSWPk9UWptGimY30VmsMtwPKisOWi3
+         YPnMPOpavZqsFWttbrDDqJbbtdnKlES4trW/bI+AAWMnmGhjt7BzFLVJ6P8EjJZVMYYZ
+         mOKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704748533; x=1705353333;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAJtUP64ltD9g/AOMY/RTS+amnQ4+ix5NQibCsD1n70=;
+        b=HrQn61O3/rLpc5rMsL0DGC8pQuH6dbYA9TSUlCt5QpdcdmhwHoCQ5AA21Ke9weTCFs
+         2IyZzYFc6mT83nIvVv8EKoppZUqOVULW+bJK+Y0bNzSl7vz9s4I2y0UMW5CU9kk76xQU
+         nKgB6Y2lnRRRaUkov3dDn1B1sCLjVVZl5L+AzTSmiDDFbUAq3gOHSJf2RS0ZiTg5+JoS
+         bLpy0TJJZPiOavOF5IVcQ05Ol7XAoz0sGgY1DwXhfIM27V3tZTvwGK6KUQXG2dVqhc41
+         VA19ns2wseup2SS8HtDTatwwSSF0Ew3dNVns5AQwAIWR3ui0lyuZba2jreW5OAW5uhTx
+         G3hA==
+X-Gm-Message-State: AOJu0Yy74lEUjCxbK2Hm56LJprw0fdmeBpJUnkyV/Ue30oqC9PNhKqG+
+	3s670n+l90G/K7T7wj4KJpVGFhdnSQjCR4JrSDE=
+X-Google-Smtp-Source: AGHT+IGSpibIP9a0Ad9ww8Hkp5J6+DgsvieH1JdcE4dqqbW9KHb2Nk7jEx7hOqmU9E3kN4dMaUU8HVSRWI6lPvFzxjk=
+X-Received: by 2002:a17:90a:f285:b0:28c:d8d:e05d with SMTP id
+ fs5-20020a17090af28500b0028c0d8de05dmr2367247pjb.39.1704748533026; Mon, 08
+ Jan 2024 13:15:33 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 8 Jan 2024 13:15:32 -0800
+From: Amit Dhingra <mechanicalamit@gmail.com>
+References: <CAO=gReEUr4B+E2mQsSrncHf41f0A915SuoWgA522_2Ts-dZbSg@mail.gmail.com>
+ <d537ca6c-180c-4f35-8441-adea03095689@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/xe: clean up type of GUC_HXG_MSG_0_ORIGIN
-Content-Language: en-US
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-xe@lists.freedesktop.org
-References: <ec22d742-632b-426a-ac86-62641a38c907@moroto.mountain>
- <e5g3qkwvc3sjfpxcdvn43fiwbxthpblqgg2getxpbkd6g4lp5k@pgfm75tsg7wz>
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <e5g3qkwvc3sjfpxcdvn43fiwbxthpblqgg2getxpbkd6g4lp5k@pgfm75tsg7wz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d537ca6c-180c-4f35-8441-adea03095689@moroto.mountain>
+Date: Mon, 8 Jan 2024 13:15:32 -0800
+Message-ID: <CAO=gReHX0+tVzrdceeT=NVkQhRvF1xO73fup-nYjStY2T9x4BA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: correct file entry for AD7091R
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, Jan 08, 2024 at 10:56:02AM +0300, Dan Carpenter wrote:
+> Generally, patches to MAINTAINERS don't need Fixes tags.
+>
+> It doesn't matter if the patch is in mainline or not.  If it's in a tree
+> which is rebased then maintainers will fold the fix into the original
+> commit and the Fixes tag will be lost.  But that's fine.
 
+Makes sense. Thank you for the information and guidance.
+>
+> Also when you're using a Fixes tag, it should all go one one line.
+> Don't line wrap it at 75 characters.  Just go over the limit.  That's
+> the normal/correct way.
+Also seems like checkpatch does not like the Fixes line without the
+keyword Commit. So the fixes line below generates an Error.
 
-On 08.01.2024 15:07, Lucas De Marchi wrote:
-> On Mon, Jan 08, 2024 at 12:05:57PM +0300, Dan Carpenter wrote:
->> The GUC_HXG_MSG_0_ORIGIN definition should be unsigned.  Currently it is
->> defined as INT_MIN.  This doesn't cause a problem currently but it's
->> still worth cleaning up.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> it seems there are a few more places to change to follow what was done
-> in commit 962bd34bb457 ("drm/i915/uc: Fix undefined behavior due to
-> shift overflowing the constant").
-> 
-> +Michal
-> 
-> Could we eventually share these abi includes with i915 so we don't
-> keep fixing the same thing in 2 places?
+Fixes : 7564efb37346 ("MAINTAINERS: Add entry for TQ-Systems device
+trees and drivers")
 
-it should be possible and I guess we should plan for that while
-discussing all this new xe driver...
+ERROR: Please use git commit description style 'commit <12+ chars of
+sha1> ("<title line>")' - ie: 'commit 7564efb37346 ("MAINTAINERS: Add
+entry for TQ-Systems device trees and drivers")'
 
-anyway, what about creating new intel/ folder under drm/ ?
+Adding the keyword commit gives no error.
 
- - drm/intel/include/abi
-        guc_actions_abi.h
-        guc_klvs_abi.h
-        ...
+Documentation shows to use the Fixes tag without the keyword commit.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
 
-the only question would be what prefix should be used for macros:
-just GUC_ or INTEL_GUC_ or XE_GUC_ ?
-
-then we can also think of creating library with common helpers for GuC
-(for encoding/decoding HXG messages, preparing ADS, reading logs, etc)
-
-btw, we can also consider sharing register definitions:
-
- - drm/intel/include/regs
-        xe_engine_regs.h
-        xe_gt_regs.h
-        xe_regs_defs.h
-
-Michal
-
-> 
-> Lucas De Marchi
-> 
->> ---
->> drivers/gpu/drm/xe/abi/guc_messages_abi.h | 2 +-
->> 1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->> b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->> index 3d199016cf88..c04606872e48 100644
->> --- a/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->> +++ b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->> @@ -40,7 +40,7 @@
->>  */
->>
->> #define GUC_HXG_MSG_MIN_LEN            1u
->> -#define GUC_HXG_MSG_0_ORIGIN            (0x1 << 31)
->> +#define GUC_HXG_MSG_0_ORIGIN            (0x1U << 31)
->> #define   GUC_HXG_ORIGIN_HOST            0u
->> #define   GUC_HXG_ORIGIN_GUC            1u
->> #define GUC_HXG_MSG_0_TYPE            (0x7 << 28)
->> -- 
->> 2.42.0
->>
+>
+> regards,
+> dan carpenter
+>
