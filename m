@@ -1,76 +1,65 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66693537EE;
-	Mon,  8 Jan 2024 16:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Obw90bOC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704733114; x=1736269114;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=A8ikZedLxsY2xkH4LOd0AXUF915DXBEZW85jWrbwwQw=;
-  b=Obw90bOCSqHcl7zaz9YNe+y8XZM9LV4s2EhKRK1f5ConP4ir7Z2sxFxr
-   HZ1xb2TYZSIhtJrWo0dGUoT7QDb6P7bSsksCJgolMsleJWnZs8Hq7dlvx
-   FeCrblOkMGXemnnyGHkMlYq/qfj9C5IRoCpK2RIyR/qxb40hdFmUBbEzh
-   xqPOoqzgnbatpEp/iIyDi5rfqjzZIE28KkFcY0QMAyAcKwkjxVar+dp82
-   onAGjEA5+Cvz062UqaSU8ZW3J9LERPqr7CN3f3/DjIhSpAl0bJy0riems
-   46929TYaJeVcP4b8IWwnUoNKP317ad1/NU3h0ByGkNp8nOSksUNGwaZsh
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="11428566"
-X-IronPort-AV: E=Sophos;i="6.04,180,1695711600"; 
-   d="scan'208";a="11428566"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 08:58:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="784918170"
-X-IronPort-AV: E=Sophos;i="6.04,180,1695711600"; 
-   d="scan'208";a="784918170"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 08:58:32 -0800
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Oded Gabbay <ogabbay@kernel.org>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/xe: Fix spelling mistake "gueue" -> "queue"
-Date: Mon,  8 Jan 2024 08:57:58 -0800
-Message-Id: <170473304994.868225.37284185827378036.b4-ty@intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240102092014.3347566-1-colin.i.king@gmail.com>
-References: <20240102092014.3347566-1-colin.i.king@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340954BD7;
+	Mon,  8 Jan 2024 18:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d542701796so5575345ad.1;
+        Mon, 08 Jan 2024 10:27:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704738446; x=1705343246;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=foK6GojmVN5cHJkPZwe/GjKQwChqN60GolaCvetvTnQ=;
+        b=Jr08JsocOAL6GPQ0196Ery6UMVU6mC3rj/MZ+yi/LHdE0wMKv2G6UhlLBwTpOAjcSv
+         ByMVKBOsnc76YQXgogX2YnHPhP9NHlfnlrlMIhI5PUWgfSRfX7nZAoz8sBvtttDeW6Uu
+         Y9zpb5T3ToYc4V7VvVx1AasTf6ZJXxvCSJhNJHZZyJcKPDb/YfdCgqZi/khu87wal76s
+         LGkQiNAkqx76pk9WC3MIrIuMTIwU0sNs0JjPgUqQHrjZXdE39mVSORdHBiQQCpxDnOXb
+         r+ZxVQV11RguyEl/F0GZFKKkVvzJvVCokjjwvXHb5CCxQGlCZ3NgDtrOn5UCVo96dY7A
+         8VVQ==
+X-Gm-Message-State: AOJu0YyDPv8D6DM9TPCtz2egYUR99r8pUi1JmjCp+7S7Ck1aO3dkYuQz
+	oVnF0ujZ7a9oJFKXm5EtsmU=
+X-Google-Smtp-Source: AGHT+IFZvfVF9hWJMJ7E58jI4gNUXscahK/pXAC7nJ10yV9YVSmbN1dji7Yjp31xMJwqtlcp7cas1w==
+X-Received: by 2002:a17:90a:a004:b0:28c:4b9:4fcc with SMTP id q4-20020a17090aa00400b0028c04b94fccmr1345664pjp.74.1704738446622;
+        Mon, 08 Jan 2024 10:27:26 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id k13-20020a17090aaa0d00b0028d19ddb1afsm282269pjq.33.2024.01.08.10.27.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jan 2024 10:27:26 -0800 (PST)
+Date: Tue, 9 Jan 2024 03:27:24 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH next] PCI: xilinx-xdma: Fix error code in
+ xilinx_pl_dma_pcie_init_irq_domain()
+Message-ID: <20240108182724.GA2638520@rocinante>
+References: <20231030072757.3236546-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231030072757.3236546-1-harshit.m.mogalapalli@oracle.com>
 
+Hello,
 
-On Tue, 02 Jan 2024 09:20:14 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a drm_info message. Fix it.
-> 
-> 
+> Return -ENOMEM instead of zero(success) when it fails to get IRQ domain.
 
-Applied to drm-xe-next branch, thanks!
+Applied to controller/xilinx, thank you!
 
-[1/1] drm/xe: Fix spelling mistake "gueue" -> "queue"
-      commit: a3e6b7b90ce1ff725d7585cbd2c9279e6e39b914
+[1/1] PCI: xilinx-xdma: Fix error code in xilinx_pl_dma_pcie_init_irq_domain()
+      https://git.kernel.org/pci/pci/c/2324be17b5e0
 
-Best regards,
--- 
-Lucas De Marchi <lucas.demarchi@intel.com>
+	Krzysztof
