@@ -1,126 +1,173 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F385F405C6;
-	Mon,  8 Jan 2024 12:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AF84C3AE;
+	Mon,  8 Jan 2024 12:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AApAgBBn"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5572a9b3420so4648350a12.1;
-        Mon, 08 Jan 2024 04:18:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704716280; x=1705321080; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ataiuoEiZAKbJMfDTmDPqOcB+hhvmSxMEb08xxsTGtE=;
-        b=AApAgBBnwJG2FrZrk/PUT2YwNETLSLueuDsB7K5+3O6cInP/XbbkP5fROxXQk8s7sf
-         tkcufgk84WpemDTCIMjgkjALIADduZWrPtggx29cwkSaJMEpozpPbZuHx4vRnWxvTJfA
-         wAFtKQoTL6ocIjTW34M+tn2HTG1BoZkbS4RTOAkkNYB/ep3TFNCrdeKC4ZknHmFXR0I6
-         moOjlAdYoZP3PecoMXRUUl5ujFMUt3tr5Sl25ZdwGWhSf4y7imVMdn3GM6gMIQdRxNi+
-         Vv05YMRked6ICbUuDjDVVcQuQDtipbxvOCCe0ufy2mEDraTPoR7qhdkzTB8oJvpbGxvu
-         looA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704716280; x=1705321080;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ataiuoEiZAKbJMfDTmDPqOcB+hhvmSxMEb08xxsTGtE=;
-        b=bKK7D+jLpTgUKCSQcyKs38y+RZleJZt+/ULwlfHVwEHz2nhyjt9q7SQP86TWEJRdTt
-         Ldvfz+6fhrr6KfBpz+1qrOfAzjmGPn8D9M72paNohVF7BkjbIds0jURdmZSxr/j92GS9
-         Q1JbdgYk21zVzq95j3hNG+iuWnjqN2L5ezrzb3dVAIRNU2+HVwpC+wAvPws70Fj3tWih
-         I9eDGCX/8T0QmKlN6WnVETSvn+/8PWVQiOteb/6FL16AFevdhk0dVa8XdLLaAg4N5Pcd
-         ZYKy6FtDIPkpNIGYrE6sIlVZSxPmFdA6FSn9jEvj0tkzxFXpQYD0KwmBC5tT4cS9WLpA
-         jhoQ==
-X-Gm-Message-State: AOJu0YzpBDBJB02d8NEE24MT2VRJ9isFy3od5ysDiKwcITSAdyATshqI
-	uaUd3EdxYCDHYxNiYPmqijA=
-X-Google-Smtp-Source: AGHT+IGk837jJFvS+TcY7fBXJR80jcXc31znrg/A2V9l7q0ncwOgKoPeJG795sFAlbjTJcin9QtHhQ==
-X-Received: by 2002:a17:906:7743:b0:a29:d642:46ba with SMTP id o3-20020a170906774300b00a29d64246bamr3042338ejn.29.1704716279986;
-        Mon, 08 Jan 2024 04:17:59 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:a060:7056:782e:5e26])
-        by smtp.gmail.com with ESMTPSA id r17-20020a170906551100b00a2356a7eafasm3641365ejp.199.2024.01.08.04.17.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jan 2024 04:17:59 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] drm: Clean-up superfluously selecting VT_HW_CONSOLE_BINDING
-Date: Mon,  8 Jan 2024 13:17:57 +0100
-Message-Id: <20240108121757.14069-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="W9564FuO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aCa/Vwit";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Hlit9hJE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IVE0QRmk"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DF48F1F79A;
+	Mon,  8 Jan 2024 12:31:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1704717082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1twQEx1dg6gbGHsQjEqD5/fYFL160JMeqSwzbn1AABE=;
+	b=W9564FuOADlN9CzkUXh+78NK/0JIGnrLeDYn9LpKm8qegzKfQ4E+zouIlOFCa3Hq2e8T6g
+	eM+7qSFQabL+1W3gB6un6JVNV4hxTYDOth+yXim6DqSLQB7xk4kdpaLDaHWH907N6AYIdD
+	FmIJzJiL3L4Uu5h0lqi18hYykKfge2g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1704717082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1twQEx1dg6gbGHsQjEqD5/fYFL160JMeqSwzbn1AABE=;
+	b=aCa/VwitMHQT/anjckx/chIBXE7199MsE6Ne28UHUoLc8t5dZq7bYwfVmJte+UV9vTB0L2
+	pHsvL7i5PEMlnODg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1704717080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1twQEx1dg6gbGHsQjEqD5/fYFL160JMeqSwzbn1AABE=;
+	b=Hlit9hJE2ByVmL0dvuTY81X8IH8j1Ko7EZG+etguDMBmzkfzTMXarCx7fnidM1mbJfyfNC
+	IcG4hBEA1JLOGTPxaQJWRRWoAuQiqEiCs+EUhdZjw8uiU0Gls2iSHXaLpacV+LF19iWP8E
+	oRfUBEwa++h8c5IV6EO6Btt5ck6jWr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1704717080;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1twQEx1dg6gbGHsQjEqD5/fYFL160JMeqSwzbn1AABE=;
+	b=IVE0QRmkdA/TKhPdnYQmM5LAmwldU+M1i7AtdktXJie2+JOOnUVpikhw5lZj6DHBx5bXGI
+	o4rRASmLOrmqbtDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B55A41392C;
+	Mon,  8 Jan 2024 12:31:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SuOzKxjrm2V8YQAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 08 Jan 2024 12:31:20 +0000
+Message-ID: <565e1f78-b46d-4b22-8f9a-5a4bc7d23424@suse.de>
+Date: Mon, 8 Jan 2024 13:31:20 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: fcoe: Fix unsigned comparison with zero in
+ store_ctlr_mode()
+Content-Language: en-US
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com
+References: <20240102085245.600570-1-harshit.m.mogalapalli@oracle.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240102085245.600570-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Hlit9hJE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=IVE0QRmk
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,oracle.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[linaro.org,vger.kernel.org,gmail.com];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -3.50
+X-Rspamd-Queue-Id: DF48F1F79A
+X-Spam-Flag: NO
 
-As config FRAMEBUFFER_CONSOLE already selects VT_HW_CONSOLE_BINDING, there
-is no need for any drm driver to repeat that rule for selecting.
+On 1/2/24 09:52, Harshit Mogalapalli wrote:
+> ctlr->mode is of unsigned type, it is never less than zero.
+> 
+> Fix this by using an extra varibale called 'res', to store return value
+> from sysfs_match_string() and assign that to ctlr->mode on the success
+> path.
+> 
+> Fixes: edc22a7c8688 ("scsi: fcoe: Use sysfs_match_string() over fcoe_parse_mode()")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with smatch and only compile tested.
+> ---
+>   drivers/scsi/fcoe/fcoe_sysfs.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
+> index 408a806bf4c2..c64a085a7ee2 100644
+> --- a/drivers/scsi/fcoe/fcoe_sysfs.c
+> +++ b/drivers/scsi/fcoe/fcoe_sysfs.c
+> @@ -263,6 +263,7 @@ static ssize_t store_ctlr_mode(struct device *dev,
+>   			       const char *buf, size_t count)
+>   {
+>   	struct fcoe_ctlr_device *ctlr = dev_to_ctlr(dev);
+> +	int res;
+>   
+>   	if (count > FCOE_MAX_MODENAME_LEN)
+>   		return -EINVAL;
+> @@ -279,12 +280,13 @@ static ssize_t store_ctlr_mode(struct device *dev,
+>   			return -ENOTSUPP;
+>   		}
+>   
+> -		ctlr->mode = sysfs_match_string(fip_conn_type_names, buf);
+> -		if (ctlr->mode < 0 || ctlr->mode == FIP_CONN_TYPE_UNKNOWN) {
+> +		res = sysfs_match_string(fip_conn_type_names, buf);
+> +		if (res < 0 || res == FIP_CONN_TYPE_UNKNOWN) {
+>   			LIBFCOE_SYSFS_DBG(ctlr, "Unknown mode %s provided.\n",
+>   					  buf);
+>   			return -EINVAL;
+>   		}
+> +		ctlr->mode = res;
+>   
+>   		ctlr->f->set_fcoe_ctlr_mode(ctlr);
+>   		LIBFCOE_SYSFS_DBG(ctlr, "Mode changed to %s.\n", buf);
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Remove those duplications of selecting VT_HW_CONSOLE_BINDING.
+Cheers,
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/gpu/drm/ingenic/Kconfig | 1 -
- drivers/gpu/drm/mcde/Kconfig    | 1 -
- drivers/gpu/drm/pl111/Kconfig   | 1 -
- drivers/gpu/drm/tve200/Kconfig  | 1 -
- 4 files changed, 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/ingenic/Kconfig b/drivers/gpu/drm/ingenic/Kconfig
-index b440e0cdc057..3db117c5edd9 100644
---- a/drivers/gpu/drm/ingenic/Kconfig
-+++ b/drivers/gpu/drm/ingenic/Kconfig
-@@ -11,7 +11,6 @@ config DRM_INGENIC
- 	select DRM_GEM_DMA_HELPER
- 	select REGMAP
- 	select REGMAP_MMIO
--	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
- 	help
- 	  Choose this option for DRM support for the Ingenic SoCs.
- 
-diff --git a/drivers/gpu/drm/mcde/Kconfig b/drivers/gpu/drm/mcde/Kconfig
-index 4f3d68e11bc1..907460b69d4f 100644
---- a/drivers/gpu/drm/mcde/Kconfig
-+++ b/drivers/gpu/drm/mcde/Kconfig
-@@ -11,7 +11,6 @@ config DRM_MCDE
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
--	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
- 	help
- 	  Choose this option for DRM support for the ST-Ericsson MCDE
- 	  Multi-Channel Display Engine.
-diff --git a/drivers/gpu/drm/pl111/Kconfig b/drivers/gpu/drm/pl111/Kconfig
-index ad24cdf1d992..20fe1d2c0aaf 100644
---- a/drivers/gpu/drm/pl111/Kconfig
-+++ b/drivers/gpu/drm/pl111/Kconfig
-@@ -9,7 +9,6 @@ config DRM_PL111
- 	select DRM_GEM_DMA_HELPER
- 	select DRM_BRIDGE
- 	select DRM_PANEL_BRIDGE
--	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
- 	help
- 	  Choose this option for DRM support for the PL111 CLCD controller.
- 	  If M is selected the module will be called pl111_drm.
-diff --git a/drivers/gpu/drm/tve200/Kconfig b/drivers/gpu/drm/tve200/Kconfig
-index 11e865be81c6..5121fed571a5 100644
---- a/drivers/gpu/drm/tve200/Kconfig
-+++ b/drivers/gpu/drm/tve200/Kconfig
-@@ -9,7 +9,6 @@ config DRM_TVE200
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
--	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
- 	help
- 	  Choose this option for DRM support for the Faraday TV Encoder
- 	  TVE200 Controller.
--- 
-2.17.1
+Hannes
 
