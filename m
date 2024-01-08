@@ -1,67 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6245125A6;
-	Sun,  7 Jan 2024 22:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DCD4C64;
+	Mon,  8 Jan 2024 00:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKOMsWim"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2B62EC433C9;
-	Sun,  7 Jan 2024 22:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704667224;
-	bh=0vSk3rQSAM9duFLGNqP4CwiJGaYJLkCUjUP7biwcflc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AKOMsWim5MmdYlkM2F1CRJl6qo9w5NKKx4/lwb8tAA5FQUmh7D4IIQJ6mPLDjq6CS
-	 PfwkqRu4KznCFly6LePK1XxOlSDxVYNuNx646qQnfZJlRqglEtHHrx1cBp2eeYFGLz
-	 a0v+2KGQLrOdxmgElrNiC9TAPUCsrc3ivd38RfrY3x6LXX4aiSSQ0PVFz+KctDLI7Q
-	 og/mQKq7DWJQOPd5WocAtGOulUXcxmD9i4KuTfrpU7HYU5AOqO8ZvOEBP2gL8T2eXr
-	 obR/IvaU2UpH/kMp+znLnRAQD7hi/aZ8a9Pn9KK11eQDFwXHF8rl+Sr/uUlk/119W/
-	 hTDUxHvy0bu+w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 10528C41620;
-	Sun,  7 Jan 2024 22:40:24 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nrzawd0d"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C43EC240004;
+	Mon,  8 Jan 2024 00:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1704674967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/9bINBDxZTlSIxnFZAry/M5thfpfgQSmaU4fj/OySnc=;
+	b=nrzawd0dsJ366U/LK6BZs/ZAo5nBmAUjwkZvjmkZ5GlHzKjhWafujTDI7RM2eXIDC4/0qF
+	467HG4dOALDOahszKElWv9ZygiEe8df+6yz1H1Bskjhi5jbGKWPtDOhRq03NQpIqkGQX0P
+	opErY82UofBeveuzQnCrZPITesaCNu+U4OfO0/x/6ubpopE+GseFaog2+TDwoWKf0KGJ7j
+	regL+7rBMZcY5qluhJTpF5Ap/REEmNedAIXU78YHqRFFvVaCEUUbiscTiic4HxXB/djbdc
+	d8dVO1Akkdnjw4YtwpPPAKdEbiNX0lptKBwHAye+3BirrObK+aud8x6xSoo1Hg==
+Date: Mon, 8 Jan 2024 01:49:22 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] rtc: class: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-ID: <170467494525.604370.3583249646131521858.b4-ty@bootlin.com>
+References: <4f2c049cb09d46fed336e22445c71988b4f340d6.1702962419.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2 net-next] ipvlan: Fix a typo in a comment
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170466722406.3852.12395029185705591371.git-patchwork-notify@kernel.org>
-Date: Sun, 07 Jan 2024 22:40:24 +0000
-References: <5adda8a3ce7af63bc980ba6b4b3fbfd6344e336b.1704446747.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <5adda8a3ce7af63bc980ba6b4b3fbfd6344e336b.1704446747.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, alexis.lothore@bootlin.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f2c049cb09d46fed336e22445c71988b4f340d6.1702962419.git.christophe.jaillet@wanadoo.fr>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello:
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri,  5 Jan 2024 10:27:08 +0100 you wrote:
-> s/diffentiate/differentiate/
+On Tue, 19 Dec 2023 06:07:12 +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ipvlan/ipvlan_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This is less verbose.
+> 
+> 
 
-Here is the summary with links:
-  - [1/2,net-next] ipvlan: Fix a typo in a comment
-    https://git.kernel.org/netdev/net-next/c/e900274f27c3
-  - [2/2,net-next] ipvlan: Remove usage of the deprecated ida_simple_xx() API
-    https://git.kernel.org/netdev/net-next/c/3ee29a4474e3
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] rtc: class: Remove usage of the deprecated ida_simple_xx() API
+      commit: e3d3fe7e7bf08820a83c9d9a4c38c7b29a2927f1
+
+Best regards,
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
