@@ -1,54 +1,56 @@
 Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E30611715
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jan 2024 09:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6EA11C89
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jan 2024 09:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cRHCx1tb"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40d88fff7faso17892215e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jan 2024 01:07:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GmV1m/Wb"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40d41555f9dso18836735e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jan 2024 01:08:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704704826; x=1705309626; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704704883; x=1705309683; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AvlSIPhnSxsAgUZ5VOCaG02vTPapjaMyzZC3lbOeJWU=;
-        b=cRHCx1tbGGdbpx0wfS45W8o4Ix9oH6s8GjAShrv6W6Zrxh3Vv0lBERvsn561cbvdBA
-         FYPuZ46pLfNV6nNPYyuIjgx8mFmz2BRZSKXIhfKbwE7ukOanYYyAmR+ch8iw4L2ErUav
-         vgNt75p2TmTC5m171jlrt/7xEfm7y/sBsr+KIhIhPuS/irQmp/RuvDKvYDuLK5J66KLq
-         2jRMUyAR4/CBXtJK9kW0PVmv/4/mIm/f5XRMZuUmy4LfzKQ4F32ElxBH9DTUTvEvsqEo
-         2bNcjJu92hrYIUcBpVju9kHEznihl4zr+TWMfXJoEiSRdwprJJMRzwqCHoXU2ymI3Twx
-         8Ygw==
+        bh=4UdLGAH7mAUfR9yXCWKCpw7UbYKtkDbnESY38vkxFL4=;
+        b=GmV1m/WbhAuWKZBuQUCrM38Vy2EfZ+ZwlfLs6grsa7lT3HmuXwtXJE8Ahl9rxEWdC5
+         jaIEPTJRN56d74qbnpDwx4xoFJmut1Rz6Lo5P7q2q3iCMp+9309328VEG0YnRn+QLP1+
+         02buYXqbbkrtboWa6tzh0/inTqmq4ek4Emr5+bIfQycpJ53XwX+V/g2FsEsao/4eGvqv
+         5au+TdA6IrOXlbBhXgnZ/SxH0qUchIZWNq7nnbKYJBge/x3S3SlpnGJlPl0DjWY7mROP
+         8DfV43S5Pplu/Dl+XPLynpT/qJMASIrk9qrMC4TUyIkvB1w/zC36yVrYCRoZqRH1NFAi
+         bUJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704704826; x=1705309626;
+        d=1e100.net; s=20230601; t=1704704883; x=1705309683;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AvlSIPhnSxsAgUZ5VOCaG02vTPapjaMyzZC3lbOeJWU=;
-        b=kLrOMaxqUvpMLhFhSmhsMnAoJy3Cjkore/HufOLmTIAEDbAdnI5Yi4KTCcdpUX4qT9
-         ed8RanxabwUW8ZigByhBbzMLaW1DUI2/5uJXlWJNddJH6QdFbBee7FsKyKwj8RoQjfcn
-         YX3wTQZHjekna3BlFNIViAtES4cPOGH8y2BpNXEsuc2elXDaldcKxzZ0kr6+9IbEz3BR
-         Y0sRELQnCrl/4VAF9RW/Ic6WjmgPzYkgrDz8kTBTtrgen5DVOmKBo7uZsOFk1QRK0bSF
-         zeXvnckCphdlcXGjh6o1Wf7IiXaF0rJEzrQnX3psvS6t7n13h1uOoXmV2NBnQwNBUcr1
-         1umw==
-X-Gm-Message-State: AOJu0Yw5ZJvVKe8C74GxkllXYyDlB0TEF258FxhQPqgPC++SMJiwZQ/M
-	hQaRj3MywrVIOxxeNmWS41lb5q6wL9Xxzg==
-X-Google-Smtp-Source: AGHT+IEWNfg091q6tWh0kqNPnDplnj2PkfU7WHRqqW4eF4QRA44j6syz81m1KGHMf+/2yX7v+dgEfw==
-X-Received: by 2002:a05:600c:5d5:b0:40d:560e:26f3 with SMTP id p21-20020a05600c05d500b0040d560e26f3mr920797wmd.136.1704704826697;
-        Mon, 08 Jan 2024 01:07:06 -0800 (PST)
+        bh=4UdLGAH7mAUfR9yXCWKCpw7UbYKtkDbnESY38vkxFL4=;
+        b=vBlLTaXeVK/FykD+WUYBSU/SZZo0feZRXOk+X9Jz2zcyO94GttEe3khYMbt7r+btiF
+         S1KAIRCCp0xEJDL6sOLp6RTooz6s4qXuC49RJwNukMMReOQVPvqyB9xPHBunEa2Dos3O
+         AMePvUDpGjJ/TX4h3whLpbL7O08ps9PVWsVgo5q6+S59wCY4OeNt/b0zqdGC+2503O6e
+         jo9str6kmuytibmZsKtaxLP4VTffQIKqVmeCby0kcqTIK+tpjXmvcBjntTCBDPr0sGUe
+         PS/BegcMv5PKmvUJ409ojHeYJvLo4/2qJEXwnrTVBZiHZtg/+W2QK7ILS7t8yB8Nss4l
+         ltgw==
+X-Gm-Message-State: AOJu0YwpBR4Pg1QWSFmZ1dWVqFt4kTyiSLIAAurx7VJ/N5VMxP6Wqsme
+	btg3pnnubqOizjADY8QITWScSTBOfOLgpg==
+X-Google-Smtp-Source: AGHT+IGR9C1sN5I4JwnlQfEbHvH3L7omqSa/7b+RgytNY22CW/mp0f3Tji6ueqGkBmSbtXxql7dBKg==
+X-Received: by 2002:a7b:cb8f:0:b0:40e:47a3:5e1d with SMTP id m15-20020a7bcb8f000000b0040e47a35e1dmr470518wmi.156.1704704882913;
+        Mon, 08 Jan 2024 01:08:02 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id s11-20020a05600c45cb00b0040e395cd20bsm10132486wmo.7.2024.01.08.01.07.05
+        by smtp.gmail.com with ESMTPSA id l42-20020a05600c1d2a00b004030e8ff964sm10295482wms.34.2024.01.08.01.08.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jan 2024 01:07:06 -0800 (PST)
-Date: Mon, 8 Jan 2024 12:07:02 +0300
+        Mon, 08 Jan 2024 01:08:02 -0800 (PST)
+Date: Mon, 8 Jan 2024 12:07:59 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+To: Steve French <sfrench@samba.org>
+Cc: Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7091r8: Fix error code in ad7091r8_gpio_setup()
-Message-ID: <fd905ad0-6413-489c-9a3b-90c0cdb35ec9@moroto.mountain>
+Subject: [PATCH 1/3] cifs: delete unnecessary NULL checks in
+ cifs_chan_update_iface()
+Message-ID: <b628a706-d356-4629-a433-59dfda24bb94@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,28 +61,57 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a copy and paste error so it accidentally returns ->convst_gpio
-instead of ->reset_gpio.  Fix it.
+We return early if "iface" is NULL so there is no need to check here.
+Delete those checks.
 
-Fixes: 0b76ff46c463 ("iio: adc: Add support for AD7091R-8")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/iio/adc/ad7091r8.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/smb/client/sess.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7091r8.c b/drivers/iio/adc/ad7091r8.c
-index 57700f124803..700564305057 100644
---- a/drivers/iio/adc/ad7091r8.c
-+++ b/drivers/iio/adc/ad7091r8.c
-@@ -195,7 +195,7 @@ static int ad7091r8_gpio_setup(struct ad7091r_state *st)
- 	st->reset_gpio = devm_gpiod_get_optional(st->dev, "reset",
- 						 GPIOD_OUT_HIGH);
- 	if (IS_ERR(st->reset_gpio))
--		return dev_err_probe(st->dev, PTR_ERR(st->convst_gpio),
-+		return dev_err_probe(st->dev, PTR_ERR(st->reset_gpio),
- 				     "Error on requesting reset GPIO\n");
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index a16e175731eb..775c6a4a2f4b 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -467,27 +467,23 @@ cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *server)
+ 		kref_put(&old_iface->refcount, release_iface);
+ 	} else if (!chan_index) {
+ 		/* special case: update interface for primary channel */
+-		if (iface) {
+-			cifs_dbg(FYI, "referencing primary channel iface: %pIS\n",
+-				 &iface->sockaddr);
+-			iface->num_channels++;
+-			iface->weight_fulfilled++;
+-		}
++		cifs_dbg(FYI, "referencing primary channel iface: %pIS\n",
++			 &iface->sockaddr);
++		iface->num_channels++;
++		iface->weight_fulfilled++;
+ 	}
+ 	spin_unlock(&ses->iface_lock);
  
- 	if (st->reset_gpio) {
+-	if (iface) {
+-		spin_lock(&ses->chan_lock);
+-		chan_index = cifs_ses_get_chan_index(ses, server);
+-		if (chan_index == CIFS_INVAL_CHAN_INDEX) {
+-			spin_unlock(&ses->chan_lock);
+-			return 0;
+-		}
+-
+-		ses->chans[chan_index].iface = iface;
++	spin_lock(&ses->chan_lock);
++	chan_index = cifs_ses_get_chan_index(ses, server);
++	if (chan_index == CIFS_INVAL_CHAN_INDEX) {
+ 		spin_unlock(&ses->chan_lock);
++		return 0;
+ 	}
+ 
++	ses->chans[chan_index].iface = iface;
++	spin_unlock(&ses->chan_lock);
++
+ 	return rc;
+ }
+ 
 -- 
 2.42.0
 
