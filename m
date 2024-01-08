@@ -1,55 +1,62 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB6A8F54
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jan 2024 07:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0345DDAA
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jan 2024 09:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i1UDgTSn"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-336c9acec03so1562809f8f.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 07 Jan 2024 23:56:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SDz+xyLS"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40d604b4b30so14018145e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jan 2024 01:06:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704700566; x=1705305366; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJNILWAfFW1RwsyUiMbUTUb3w1uu4P5ooAtXH7+Yq+Q=;
-        b=i1UDgTSn0yq0DMf1XaGSbrrlV3k/m1a7sBNMM5EJdFdFEi2ZCRaHKUrx1BtBlGrxki
-         QboTEJBszj8RN5R5fbfjQWGxnbBiKQkcTNPIHqBW3nefGsSIaFLRZCO9Kpp5VRhVl2nd
-         WDFruFoM2AwygdvCQbBQatZT2ZC+L4xX12v0n2nZcUmJVFpgLkd/aDV1gszEFpQAWuyR
-         ueRn5Pywd/ojtlcT3UzkpksXyKa9VHSkiLY6UO+dXmVWoB74ukUJWUr7SAqIly5pNl9r
-         ZQPMEpvnZqleosiPuV6B7ib/cSs6DHJcvo+kahkPME6ebQ6XuJkexMQ2V4Q597/HPZQD
-         6CJQ==
+        d=linaro.org; s=google; t=1704704761; x=1705309561; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w2EyoLbnPqZmV+8zXuTXWwVH9AFKfyr2X73Q99Ksn7g=;
+        b=SDz+xyLSrHs8XA25VS5OX3bTq+MlRk+2QXHAsRJMDzhJjFHRjXNp6vBJVfWaKFGLAd
+         Njx6ExOG9TI/poYZndRBGndcbCh4VlG18MauJvcl+C5ldCmDtR0B8lv2zRIl58Np6a9R
+         E9qEYdfWixyrdyboHLdQPXXtoWJeYb13/hjRQAbEJdtAfgmdQSQsGCXLYgbzEgT290v+
+         Mm/lIuEo9QeI23rv2sWui2WnuuJVWnYAqbGmfPSaxjoZKDA5RZiImEEbY64oBPYT/Sq/
+         mQ7VPLa3wnmSfw3dkeADjR5Ap1fa7vIkj6AbXMo4vLUpRgYPLysv8WfEkQzxGnMvZzXF
+         IVyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704700566; x=1705305366;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJNILWAfFW1RwsyUiMbUTUb3w1uu4P5ooAtXH7+Yq+Q=;
-        b=pieCEXjFGc+UyEwu2XZq+ikff89GALHdLId5jSj+J6Z7q/LvKyDIKeNjXUAn60TTl4
-         nKzXnvbR1ndjJMogwRHVWJof2BmWIU+qs2JpNaBFci/ySE5PfJRrvNS//zdMvMsiyBcO
-         7KQvjVXwDDs5wVc3BosOXNZaC3djqV4D8RmaPwRQKz76iVP+CN+LV7l6jUWV2mI0gfVx
-         yxaS8/mpbAaOqo2QO/QdpTwwpXCtLSZs3eYCWCj+g2JWzizPS3g9QRVbJJvjg0AifpkH
-         qGHCHYza8R7G5aFVHXJPO9cStm8L87isaWwCqBcLt2DX+wzByBhT93ATQHCtpsOC7Ry0
-         RpsQ==
-X-Gm-Message-State: AOJu0YyNPYaEWoOlToodRVxHjgr3w7sCl1l0L3uN2NQTdS2nd0wmEdDX
-	qnLaqlOyK9HocKrXskKr4vv4cYbkKr11RQ==
-X-Google-Smtp-Source: AGHT+IFVZq+5aEwpT+kqCH37EVM0iXm3wHL9fyHq4kAbvJk7Xn3+K76StTQwO+n8lbmc0Ib8MlmElg==
-X-Received: by 2002:a05:6000:144d:b0:337:69e9:4554 with SMTP id v13-20020a056000144d00b0033769e94554mr536596wrx.137.1704700565838;
-        Sun, 07 Jan 2024 23:56:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704704761; x=1705309561;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2EyoLbnPqZmV+8zXuTXWwVH9AFKfyr2X73Q99Ksn7g=;
+        b=qHESf+uod+LApOA82+VoriM0porlfp1nmjg6LsPpSmsaek6yfPZW4d1lyAj7xt2GS0
+         hcm/wj7eweowDpG/x0tWdcRZbTJT+ohJmIKzIxKd8VSaRpWtb3VqodaIInowGKbwdeZk
+         mp/EfelBg5R+n5zpDg+/vya6VyWNIf2oaA61/vmTh8fP/dxeePERZDBV/2xwlFLNxuiE
+         COi50IYIOcSBqJlrNxxb8ddDwq+Zw0LTc0DkCH69O87KPwleXn7gBhRC6xS9n5RQud5i
+         /0CbkE0RHakb1ZE9GEusvhh6+Tg83gmYGmwDWbdZIm2OELiefRM5PyVBaLs5MI9WE4cF
+         vzbQ==
+X-Gm-Message-State: AOJu0YwlFfYxY+BqcvBtsQ7eKeJhzOPk2JfvvhfHodsqvluZOebvb7ko
+	yiU8WuC9AS7UL3qRyjCcehROyjMej2ok8g==
+X-Google-Smtp-Source: AGHT+IGCvzuvE9K9DjjuxaKem4GrCkze1n5YKKD7JDglZ2aL/3ZCSvPl+yXc9xU+sGZNscYNx6DS0w==
+X-Received: by 2002:a1c:7204:0:b0:40e:4aae:7e62 with SMTP id n4-20020a1c7204000000b0040e4aae7e62mr12731wmc.58.1704704760955;
+        Mon, 08 Jan 2024 01:06:00 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id e8-20020a5d5948000000b00336898daceasm7067471wri.96.2024.01.07.23.56.05
+        by smtp.gmail.com with ESMTPSA id w5-20020a05600c474500b0040e34835a58sm10219495wmo.22.2024.01.08.01.06.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jan 2024 23:56:05 -0800 (PST)
-Date: Mon, 8 Jan 2024 10:56:02 +0300
+        Mon, 08 Jan 2024 01:06:00 -0800 (PST)
+Date: Mon, 8 Jan 2024 12:05:57 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Amit Dhingra <mechanicalamit@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: correct file entry for AD7091R
-Message-ID: <d537ca6c-180c-4f35-8441-adea03095689@moroto.mountain>
-References: <CAO=gReEUr4B+E2mQsSrncHf41f0A915SuoWgA522_2Ts-dZbSg@mail.gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Oded Gabbay <ogabbay@kernel.org>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	John Harrison <John.C.Harrison@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/xe: clean up type of GUC_HXG_MSG_0_ORIGIN
+Message-ID: <ec22d742-632b-426a-ac86-62641a38c907@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,30 +65,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO=gReEUr4B+E2mQsSrncHf41f0A915SuoWgA522_2Ts-dZbSg@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
 
-On Sat, Jan 06, 2024 at 12:08:35PM -0800, Amit Dhingra wrote:
-> File entry has driver/iio/adc two times. Fix the file entry
-> 
-> Found by ./scripts/get_maintainer.pl --self-test=patterns
-> 
-> Signed-off-by: Amit Dhingra <mechanicalamit@gmail.com>
-> ---
-> Patch based on jic23/iio.git:togreg branch
-> 
-> I don't think fixes applies here since its not in the mainline yet.
-> 
+The GUC_HXG_MSG_0_ORIGIN definition should be unsigned.  Currently it is
+defined as INT_MIN.  This doesn't cause a problem currently but it's
+still worth cleaning up.
 
-Generally, patches to MAINTAINERS don't need Fixes tags.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/xe/abi/guc_messages_abi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It doesn't matter if the patch is in mainline or not.  If it's in a tree
-which is rebased then maintainers will fold the fix into the original
-commit and the Fixes tag will be lost.  But that's fine.
-
-Also when you're using a Fixes tag, it should all go one one line.
-Don't line wrap it at 75 characters.  Just go over the limit.  That's
-the normal/correct way.
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/xe/abi/guc_messages_abi.h b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
+index 3d199016cf88..c04606872e48 100644
+--- a/drivers/gpu/drm/xe/abi/guc_messages_abi.h
++++ b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
+@@ -40,7 +40,7 @@
+  */
+ 
+ #define GUC_HXG_MSG_MIN_LEN			1u
+-#define GUC_HXG_MSG_0_ORIGIN			(0x1 << 31)
++#define GUC_HXG_MSG_0_ORIGIN			(0x1U << 31)
+ #define   GUC_HXG_ORIGIN_HOST			0u
+ #define   GUC_HXG_ORIGIN_GUC			1u
+ #define GUC_HXG_MSG_0_TYPE			(0x7 << 28)
+-- 
+2.42.0
 
