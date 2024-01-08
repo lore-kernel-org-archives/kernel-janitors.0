@@ -1,64 +1,77 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C7914017;
-	Mon,  8 Jan 2024 10:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC22614A8D;
+	Mon,  8 Jan 2024 11:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Uug89SLG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704708881;
-	bh=v3YxdNrdSgkWoqnPochuFDi/fDkCFuaCUTCM/mFHb+o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Uug89SLGrs671PvYYyqHZyKC4fITITj8cRDPQbcmt7Lxsr89yS001FrIIsSmsCK7l
-	 meZoCx2urIhIUNWtLf8mAKJFvrjYoh5S2xadnIslVpRXZ138MfElyhqaUshgqNqKoH
-	 0w9xHCfDLUprJS9xXI6+lPg+RQssAGmrFWk+ZxyjHmTq56hg10QlyvlO9qY1k/a0YW
-	 4DMX3G4ay5lrfBR1NRvvnqjyUKUZc7CLHLiUIbDbD6GGnbdb9MgVXTLJxzvun9BvuO
-	 W2IYrRnP+wFLgCxx4rbJ74mtG/+4xr4jHWItWeJadzP/VtyU2uSYiXdvAbQWRc8BmR
-	 999ufQxTpZrqg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 169F93780625;
-	Mon,  8 Jan 2024 10:14:41 +0000 (UTC)
-Message-ID: <5edf0558-7d31-4ccb-9635-dee64b026cbc@collabora.com>
-Date: Mon, 8 Jan 2024 11:14:41 +0100
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="D0vpJnOO";
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="D0vpJnOO"
+Received: by nautica.notk.org (Postfix, from userid 108)
+	id A0040C01E; Mon,  8 Jan 2024 12:09:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+	t=1704712190; bh=XF5g63PxgUfcpdhZm7KbjtFAwZYlqAklUlv7vcrbkUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D0vpJnOOoJWIkhkTlf819dMpz1fgMNkafsPkwn9gfyDhdHkc57oyyKfkkCqlQMQw8
+	 pG28nVTSef3HGgED9V8kjXsBWnGsbHdFGkYZLtFjy/lEJ5mX2rDmtIESwJ8yMDF1cg
+	 QarwsgrM4OD71QJparO/1ku3EFgwtkH/u6NO/FVxKzMsFpNxcXKRw8Z5J4aaJZounp
+	 O4e/SoBKL1HlY0oBy5U4UoYkGRfbp0isksL7RyRBHO0quLRy5RZ6Zwvev4ROVzyLpH
+	 n60eL/uznVyajz4fbgk2GsBWva/s2uRYD4QMcMkaEEbuobli2g4ola31Tu8BgBFkLd
+	 557z2UT8rdDlA==
+X-Spam-Level: 
+Received: from gaia (localhost [127.0.0.1])
+	by nautica.notk.org (Postfix) with ESMTPS id 9D91DC009;
+	Mon,  8 Jan 2024 12:09:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+	t=1704712190; bh=XF5g63PxgUfcpdhZm7KbjtFAwZYlqAklUlv7vcrbkUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D0vpJnOOoJWIkhkTlf819dMpz1fgMNkafsPkwn9gfyDhdHkc57oyyKfkkCqlQMQw8
+	 pG28nVTSef3HGgED9V8kjXsBWnGsbHdFGkYZLtFjy/lEJ5mX2rDmtIESwJ8yMDF1cg
+	 QarwsgrM4OD71QJparO/1ku3EFgwtkH/u6NO/FVxKzMsFpNxcXKRw8Z5J4aaJZounp
+	 O4e/SoBKL1HlY0oBy5U4UoYkGRfbp0isksL7RyRBHO0quLRy5RZ6Zwvev4ROVzyLpH
+	 n60eL/uznVyajz4fbgk2GsBWva/s2uRYD4QMcMkaEEbuobli2g4ola31Tu8BgBFkLd
+	 557z2UT8rdDlA==
+Received: from localhost (gaia [local])
+	by gaia (OpenSMTPD) with ESMTPA id ccc77bd4;
+	Mon, 8 Jan 2024 11:09:45 +0000 (UTC)
+Date: Mon, 8 Jan 2024 20:09:30 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
+	Christian =?utf-8?Q?Sch=C3=B6nebeck?= <linux_oss@crudebyte.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fs/9p: Improve exception handling in v9fs_session_init()
+Message-ID: <ZZvX6sQLkgm0kOTN@codewreck.org>
+References: <7203d3fc-f1e4-4fb1-8dd3-068b0ec6c752@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt7622-apmixedsys: Fix an error handling
- path in clk_mt8135_apmixed_probe()
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7203d3fc-f1e4-4fb1-8dd3-068b0ec6c752@web.de>
 
-Il 07/01/24 09:29, Christophe JAILLET ha scritto:
-> 'clk_data' is allocated with mtk_devm_alloc_clk_data(). So calling
-> mtk_free_clk_data() explicitly in the remove function would lead to a
-> double-free.
-> 
-> Remove the redundant call.
-> 
-> Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Markus Elfring wrote on Thu, Dec 28, 2023 at 09:01:49PM +0100:
+> The kfree() function was called in up to two cases by
+> the v9fs_session_init() function during error handling
+> even if the passed variable contained a null pointer.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I don't see the problem in calling kfree on null things (especially on
+error path).
 
+The only bad pattern I see here is that it relies on implicit
+knowledge that aname is null before the call (which is true because
+v9fs_session_init is only called immediately after kzalloc); is that
+what your coccinelle script was checking for?
 
+Anyway, as far as I'm concerned this is more churn than it's worth, but
+I'll defer to Eric if he wants to take it.
+
+Thanks,
+-- 
+Dominique
