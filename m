@@ -1,204 +1,111 @@
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02707F;
-	Mon,  8 Jan 2024 04:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A185F9479
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jan 2024 07:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QP+fXGqn"
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-680d2ec3459so12618786d6.0;
-        Sun, 07 Jan 2024 20:17:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmD6OeXs"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3366ddd1eddso1741599f8f.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 07 Jan 2024 23:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704687432; x=1705292232; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:content-language
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=42H+8pLF3a4y4924hwnyHcgjfAQoJmqKFluj8FhzHCE=;
-        b=QP+fXGqngyVuwyWgTyoGHe3WG8mLgWdIqPve8XRnUQ1IyD8hE/CONXpzIKrNucqQVi
-         cG+1dV7bKETMD0RwwEmCexKsksAhIxnUfopvWKQDm9KKdWuasKJo7vDrwNhbpXPzorB+
-         Vc7NWF81pvA8d2FCp/SLkvLqDVkZrSpr09/gneBACZxMgN855UD5xb1a47ZccQ5EdPCo
-         7/eDXIx9nBGQX7aTs4APScGbSXRNst40JNoT70kxS3nq39WNzR0UBkxTkI1yu9DN2BMB
-         KEASGhT2gD4Q5E8CQ7lr919Ray0jBjr39SVIKXcOB3euw9yw9c612r0pUKLibD/FUbay
-         y2Sw==
+        d=linaro.org; s=google; t=1704699932; x=1705304732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4R7zFNbYw2qFYjjZ7Hhvt2bu70OTe/BkCFpVx1f7WyA=;
+        b=PmD6OeXstxb5A31LEYjo0xL+Q0E8G0rGGkkYs5U/5cP+MWz/XAxzIX5u773S3CyX0A
+         5ttEepIrM3tsH1V/Ni+NPNIQaxgNIUa6KaPjtVkOVQ6OusaYKln59Fol46TX6f6GDpYa
+         bzsDlMHXroEfRwURpcwe6OZdPzgNOk9w38thtfJBQis5uMdqa6SmRCh6V+H3wYCn210k
+         PJQu90R7VabFKeN9DK8NtOKkdY5296GufRTiVL9hua2XWl+CKu2ftEU5jpcWCdoxRhtA
+         NAcdupiUTy9OkDWiL1vP8EXO1MR8X0QK5ed/RZKrzKd60w8fNs18GnAqdmnSralmRJLf
+         q+7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704687432; x=1705292232;
-        h=in-reply-to:autocrypt:from:references:cc:to:content-language
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=42H+8pLF3a4y4924hwnyHcgjfAQoJmqKFluj8FhzHCE=;
-        b=Bv+Wm8h4kVFpvk9IBCsnjeCdrXBLXNMGlVoCi/R1pre3Jf8R1MXO0ntgqvXxenIM7X
-         K2o8MdMr4Sk84zuXTbWfPw1I5BVIqH8Hz7TFWJlrHgPlsDcCTo8b5uHjoWbYruIRT8Ju
-         GUhVmw8CKoR9YV+bRh3AL2PUuSwd+6PDrjqyTrS3XAklaUjvI/k49OnAU7eEA7vD+L56
-         j6kqED7zc0cCsP0k+zOokeuys+eF6qjvDyoSWkmJHm0OxJxZYdhr9otzMO2tL8EhB86W
-         KQrAkQ/lIAVzL9XUYapI4Qn3jsS8MKgjrf9Pda+JMADtc9R6MsOZKlpHmNzGJ3TCytoY
-         APtg==
-X-Gm-Message-State: AOJu0YyiuPClHp+Y2ooy9XSrZ68YeJH6SxnjKYtvb/szSVPqbO3b5rxo
-	5s0XmBuz3t5h5Pm3QjmrcH4=
-X-Google-Smtp-Source: AGHT+IHBJd928t26adY7ajSfvXu37/R9j/Xx9a38JOv0M14cTLYRd7BO7EIjc3WeZk0LNrkjmllgpQ==
-X-Received: by 2002:a05:6214:20aa:b0:681:962:b650 with SMTP id 10-20020a05621420aa00b006810962b650mr640676qvd.9.1704687431639;
-        Sun, 07 Jan 2024 20:17:11 -0800 (PST)
-Received: from [192.168.2.14] ([174.88.31.222])
-        by smtp.gmail.com with ESMTPSA id mx20-20020a0562142e1400b0067f802d373bsm2557852qvb.89.2024.01.07.20.17.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jan 2024 20:17:11 -0800 (PST)
-Message-ID: <3fdc015b-33e5-4c10-88b0-964e95fb22b2@gmail.com>
-Date: Sun, 7 Jan 2024 23:17:10 -0500
+        d=1e100.net; s=20230601; t=1704699932; x=1705304732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4R7zFNbYw2qFYjjZ7Hhvt2bu70OTe/BkCFpVx1f7WyA=;
+        b=j7ep2yFOs5s8/Ns2Razs0Zk266eZW0dKtQ7hUO15jVgaTTrj/5F7hk7gY3jaQVvsl8
+         yKrCcWw6EOMY16ll+lf3g9hN1dFxL9Iw0rn6jstLfgZYTrGqiIoYa5DS7vSXhFdY8iLs
+         oKBvUxeX96IqgZ4AlJtTzBJb1MkCeb2oRACQHjVAqiFRbVPiSS2HvsVDiZXNp5WYYvRZ
+         J4oYORukRMe2BfOxABxo2LZpe8EmrUrnzpkoFsKL3lTa+eo765Fi+Y61vuJUXczBmbL8
+         CfwOakOBXFc1CHri/Jx6w2B6WWMkvIycAu865koRZvIROZLasvTapY/3xdT9abvv9Crd
+         2LOQ==
+X-Gm-Message-State: AOJu0Ywj4aRO6I4dKz4XnyzNFQ2AvJOfZ7mtfeSbovZul4FO9kCjcFPC
+	K8vCghd5F9cEl+4FSjSagaEvgWVI3YA1cA==
+X-Google-Smtp-Source: AGHT+IFDv57oOOp3IpBL5sCB33qAJ6m5GSX9lNhBOkjTZxdGEYQWG+1sZpwAZ0e9wHC+AIp1WMXOFw==
+X-Received: by 2002:adf:ffce:0:b0:337:5d83:6b93 with SMTP id x14-20020adfffce000000b003375d836b93mr875129wrs.49.1704699931940;
+        Sun, 07 Jan 2024 23:45:31 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id c12-20020adfe70c000000b003373fe3d345sm6995818wrm.65.2024.01.07.23.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jan 2024 23:45:31 -0800 (PST)
+Date: Mon, 8 Jan 2024 10:45:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Justin Chen <justinpopo6@gmail.com>
+Cc: David Lechner <david@lechnology.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: adc: ti-ads7950: remove redundant assignment
+ to variable ret
+Message-ID: <8bf3f6b7-5780-42ca-bbbd-8723a75d5128@moroto.mountain>
+References: <20240106152251.54617-1-colin.i.king@gmail.com>
+ <e0f58f77-1dd0-4def-84ec-eded4b7d2092@lechnology.com>
+ <20240107160232.4cdbae62@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:115.0) Gecko/20100101
- Thunderbird/115.6.0
-Subject: Re: [PATCH 2/2] drm/sched: Return an error code only as a constant in
- drm_sched_init()
-Content-Language: en-CA, en-US
-To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <12b3e9cb-3241-40cc-b7a4-43c45b9eedc9@web.de>
- <85f8004e-f0c9-42d9-8c59-30f1b4e0b89e@web.de>
-From: Luben Tuikov <ltuikov89@gmail.com>
-Autocrypt: addr=ltuikov89@gmail.com; keydata=
- xjMEZTohOhYJKwYBBAHaRw8BAQdAWSq76k+GsENjDTMVCy9Vr4fAO9Rb57/bPT1APnbnnRHN
- Ikx1YmVuIFR1aWtvdiA8bHR1aWtvdjg5QGdtYWlsLmNvbT7CmQQTFgoAQRYhBJkj7+VmFO9b
- eaAl10wVR5QxozSvBQJlOiE6AhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheA
- AAoJEEwVR5QxozSvSm4BAOwCpX53DTQhE20FBGlTMqKCOQyJqlMcIQ9SO1qPWX1iAQCv3vfy
- JwktF7REl1yt7IU2Sye1qmQMfJxdt9JMbMNNBs44BGU6IToSCisGAQQBl1UBBQEBB0BT9wSP
- cCE8uGe7FWo8C+nTSyWPXKTx9F0gpEnlqReRBwMBCAfCfgQYFgoAJhYhBJkj7+VmFO9beaAl
- 10wVR5QxozSvBQJlOiE6AhsMBQkJZgGAAAoJEEwVR5QxozSvSsYA/2LIFjbxQ2ikbU5S0pKo
- aMDzO9eGz69uNhNWJcvIKJK6AQC9228Mqc1JeZMIyjYWr2HKYHi8S2q2/zHrSZwAWYYwDA==
-In-Reply-To: <85f8004e-f0c9-42d9-8c59-30f1b4e0b89e@web.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------0OdjEfeS27b0xQjUbLwg8LPF"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240107160232.4cdbae62@jic23-huawei>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------0OdjEfeS27b0xQjUbLwg8LPF
-Content-Type: multipart/mixed; boundary="------------6aFc9OoRicXVkSLC0wSL3l6q";
- protected-headers="v1"
-From: Luben Tuikov <ltuikov89@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Message-ID: <3fdc015b-33e5-4c10-88b0-964e95fb22b2@gmail.com>
-Subject: Re: [PATCH 2/2] drm/sched: Return an error code only as a constant in
- drm_sched_init()
-References: <12b3e9cb-3241-40cc-b7a4-43c45b9eedc9@web.de>
- <85f8004e-f0c9-42d9-8c59-30f1b4e0b89e@web.de>
-In-Reply-To: <85f8004e-f0c9-42d9-8c59-30f1b4e0b89e@web.de>
+Justin Chen should have been on the CC list...  It's a little late now
+because we've kind of figured things out already, but lets add him
+anyway.
 
---------------6aFc9OoRicXVkSLC0wSL3l6q
-Content-Type: multipart/mixed; boundary="------------ucjVn0mqx7jv0wNqHN30m4Es"
+regards,
+dan carpenter
 
---------------ucjVn0mqx7jv0wNqHN30m4Es
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 2023-12-26 10:58, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Dec 2023 16:37:37 +0100
->=20
-> Return an error code without storing it in an intermediate variable.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Thank you Markus for this patch.
-
-Reviewed-by: Luben Tuikov <ltuikov89@gmail.com>
-
-Pushed to drm-misc-next.
---=20
-Regards,
-Luben
-
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
-cheduler/sched_main.c
-> index b99d4e9ff109..1abbcdf38430 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1249,7 +1249,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sche=
-d,
->  		   long timeout, struct workqueue_struct *timeout_wq,
->  		   atomic_t *score, const char *name, struct device *dev)
->  {
-> -	int i, ret;
-> +	int i;
->=20
->  	sched->ops =3D ops;
->  	sched->credit_limit =3D credit_limit;
-> @@ -1285,7 +1285,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sche=
-d,
->=20
->  		sched->own_submit_wq =3D true;
->  	}
-> -	ret =3D -ENOMEM;
-> +
->  	sched->sched_rq =3D kmalloc_array(num_rqs, sizeof(*sched->sched_rq),
->  					GFP_KERNEL | __GFP_ZERO);
->  	if (!sched->sched_rq)
-> @@ -1321,7 +1321,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sche=
-d,
->  	if (sched->own_submit_wq)
->  		destroy_workqueue(sched->submit_wq);
->  	drm_err(sched, "%s: Failed to setup GPU scheduler--out of memory\n", =
-__func__);
-> -	return ret;
-> +	return -ENOMEM;
->  }
->  EXPORT_SYMBOL(drm_sched_init);
->=20
-> --
-> 2.43.0
->=20
-
---------------ucjVn0mqx7jv0wNqHN30m4Es
-Content-Type: application/pgp-keys; name="OpenPGP_0x4C15479431A334AF.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x4C15479431A334AF.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZTohOhYJKwYBBAHaRw8BAQdAWSq76k+GsENjDTMVCy9Vr4fAO9Rb57/bPT1A
-PnbnnRHNIkx1YmVuIFR1aWtvdiA8bHR1aWtvdjg5QGdtYWlsLmNvbT7CmQQTFgoA
-QRYhBJkj7+VmFO9beaAl10wVR5QxozSvBQJlOiE6AhsDBQkJZgGABQsJCAcCAiIC
-BhUKCQgLAgQWAgMBAh4HAheAAAoJEEwVR5QxozSvSm4BAOwCpX53DTQhE20FBGlT
-MqKCOQyJqlMcIQ9SO1qPWX1iAQCv3vfyJwktF7REl1yt7IU2Sye1qmQMfJxdt9JM
-bMNNBs44BGU6IToSCisGAQQBl1UBBQEBB0BT9wSPcCE8uGe7FWo8C+nTSyWPXKTx
-9F0gpEnlqReRBwMBCAfCfgQYFgoAJhYhBJkj7+VmFO9beaAl10wVR5QxozSvBQJl
-OiE6AhsMBQkJZgGAAAoJEEwVR5QxozSvSsYA/2LIFjbxQ2ikbU5S0pKoaMDzO9eG
-z69uNhNWJcvIKJK6AQC9228Mqc1JeZMIyjYWr2HKYHi8S2q2/zHrSZwAWYYwDA=3D=3D
-=3DqCaZ
------END PGP PUBLIC KEY BLOCK-----
-
---------------ucjVn0mqx7jv0wNqHN30m4Es--
-
---------------6aFc9OoRicXVkSLC0wSL3l6q--
-
---------------0OdjEfeS27b0xQjUbLwg8LPF
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSZI+/lZhTvW3mgJddMFUeUMaM0rwUCZZt3RgUDAAAAAAAKCRBMFUeUMaM0r1Mm
-AP9G375ycXDv/SdVEJRCDeXWTFESuUCs5KbEksQguSy8UAD+J8sH8QQOl1Ib2ADC2XrbF3RzIrqO
-xtCJaap8RPtcjgw=
-=cdoY
------END PGP SIGNATURE-----
-
---------------0OdjEfeS27b0xQjUbLwg8LPF--
+On Sun, Jan 07, 2024 at 04:02:32PM +0000, Jonathan Cameron wrote:
+> On Sat, 6 Jan 2024 12:14:22 -0600
+> David Lechner <david@lechnology.com> wrote:
+> 
+> > On 1/6/24 9:22 AM, Colin Ian King wrote:
+> > > Variable ret is being assigned a value that is never read, the variable
+> > > is being re-assigned again a few statements later. Remove it.
+> > > 
+> > > Cleans up clang scan build warning:
+> > > warning: Value stored to 'ret' is never read [deadcode.DeadStores]
+> > > 
+> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > > ---
+> > >   drivers/iio/adc/ti-ads7950.c | 2 --
+> > >   1 file changed, 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+> > > index 263fc3a1b87e..f975de059ba0 100644
+> > > --- a/drivers/iio/adc/ti-ads7950.c
+> > > +++ b/drivers/iio/adc/ti-ads7950.c
+> > > @@ -441,8 +441,6 @@ static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
+> > >   	if (ret)
+> > >   		goto out;
+> > >   
+> > > -	ret = ((st->single_rx >> 12) & BIT(offset)) ? 1 : 0;
+> > > -
+> > >   	/* Revert back to original settings */
+> > >   	st->cmd_settings_bitmask &= ~TI_ADS7950_CR_GPIO_DATA;
+> > >   	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);  
+> > 
+> > This does not look like the correct fix. This is the intended return value of the function in the case of no errors. So we probably need to introduce a new variable instead so that it doesn't get written over.
+> 
+> Agreed.  Needs to stash that in another local variable and return that value
+> if ret == 0.
+> 
+> J
+> 
