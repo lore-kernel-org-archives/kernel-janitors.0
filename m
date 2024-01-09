@@ -1,92 +1,130 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1C356443;
-	Mon,  8 Jan 2024 21:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813FC635;
+	Tue,  9 Jan 2024 00:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtHxMSPz"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-28d80eddc63so599538a91.3;
-        Mon, 08 Jan 2024 13:26:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHpUklRV"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2cd1a1c5addso28071591fa.1;
+        Mon, 08 Jan 2024 16:52:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704749190; x=1705353990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sB7u1cawCi4QdixdmpAfmjcFIxhHFQxnoht+bUbBK6g=;
-        b=YtHxMSPz1Cq4JX/sFEbDaLNVKpP4uRCp/0R2uB4j1hGfQM7CXlvhQJ+zBlY8rL6tYi
-         a7A21cB+9Nqq8siBzeHMXsToL6a4mv1OIcDXrRNpIRZ5E6oPvOLrbFpdTWbzodMnTIyM
-         bcCxgqCuyBmmr8ZRRqlUTuimXoLw88n7UxdXX3UHWp0gZQbVMrrBNwpCpOEG2OTGLAp8
-         ZOzNWHnJjh4nnJHDFqntKLwVMEPhw2j6PgZS7zC4ye9MDlJGV+mWGnwkOSrV6RvaHfC+
-         jUk+BnkjN/K2LvMRfDpMGBUcqw6kTDSufLvFCl1NIbhDjyGUY0ec6pUs/GGCj2mRsNII
-         azyw==
+        d=gmail.com; s=20230601; t=1704761577; x=1705366377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ns81+2qq5q/MiVZ1HyELxVhRwQ1AGVaFpIYsF5PcvU8=;
+        b=QHpUklRVVMotq1wCI1UKDMhYzeAEVWsL9aTe9mnSTVyDnatReUlFV8YgG82u1a75uG
+         Ued1GS3Qmx0oFdganrGFpoZ3AaR73+sfPuJ4xSzeqfGbdk5PuhXQXnPnv1tKtOa9I2bx
+         IQ+Ykda6CJDag0i4EJ1aA6etPRp+ZmuKztyuDrhfdmFSWyyJ+trLXV5hB6KQKgEGv6Yj
+         wMqz4DJi1HeDMw5RdMNP+UpOxhvknoWS9IZuEnAQUsXxQUdYf+j7tT7AZHYUxlZBLJPt
+         AyHAIm3Sw1qgHVdqMDkt4DYLXBp5nvaS4V6S01bjEAUPMZfpcGNrQ6Zl+cWwoywxJ5LG
+         YGog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704749190; x=1705353990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sB7u1cawCi4QdixdmpAfmjcFIxhHFQxnoht+bUbBK6g=;
-        b=kHzWLUcqebF1jJXdfUc3Hgq7xc1LDrxNnEho+lwi5eJpGuLtN+wQznuokDQjxj8ama
-         K+4qhYizpbAC2zkuVY/nvcoZ834rIGWMZjJNsrFDPWEeGRLSg7lFJr3dlbecl3FsC21P
-         P710eFiivt2bsd+Vwv5dnwt2xb3d5/IV+TrdCBogGpmAqMdQGiZ6MRMQasHXlvrpDYGo
-         skmgwcZ9B35Gx41IRw7YAqdbrrYS7hQOLppBa8GjsY1ChgQ2LbS3F2KDg2bltVOnaPSh
-         QyWnyO7puC+GB95PROJYFXdrKpStU8tMdT91tzUhzPGIHbFh71vYy3ooYVMcVnmVF0bw
-         iUoQ==
-X-Gm-Message-State: AOJu0Ywp8HCDui6yIF2++IPG8OK2sn6SfAZZnyJ8rs/zliCW6jeSmgiY
-	uIeSSDSXpueMUDpPYOg89Os6RMymkbwpPnvRth8VGiZO
-X-Google-Smtp-Source: AGHT+IEaLVCR11WiJXT3JAyJop1WZ8Ju2+l+RT58HS68CZXwLqD7auDJKPW/qCiEXjWdwNN7aEQ13MyW7zKnHkNN4a8=
-X-Received: by 2002:a17:90a:72c2:b0:28c:a437:5ce5 with SMTP id
- l2-20020a17090a72c200b0028ca4375ce5mr1687697pjk.50.1704749190295; Mon, 08 Jan
- 2024 13:26:30 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 8 Jan 2024 13:26:29 -0800
-From: Amit Dhingra <mechanicalamit@gmail.com>
-References: <CAO=gReEUr4B+E2mQsSrncHf41f0A915SuoWgA522_2Ts-dZbSg@mail.gmail.com>
- <d537ca6c-180c-4f35-8441-adea03095689@moroto.mountain> <CAO=gReHX0+tVzrdceeT=NVkQhRvF1xO73fup-nYjStY2T9x4BA@mail.gmail.com>
- <18d2e448-f3d4-4eb2-a54a-9dc9198b7260@wanadoo.fr>
+        d=1e100.net; s=20230601; t=1704761577; x=1705366377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ns81+2qq5q/MiVZ1HyELxVhRwQ1AGVaFpIYsF5PcvU8=;
+        b=JQfWIcZByTlPZKJNE4YYUvITTJQBJnDnHrb7deU+bWJwykoSpvFDudp8UMwU4ytpaM
+         d9Rpf1I/ITANMwHVN/14pMVYutpUFkkkl0uV/kf6izJStkPyb2z6UaDaluYnYANCKKjL
+         9vhLgTMAQWageIDx2V7StEgpXtp6kTk5dEETHHsGB/NT95MnkMbqdEJV0PZKXTCORcb8
+         FNHDMiblGoRUwqH6WeBBHuYPXgtME1InFYxTedOQ0ehmq6Fxiad6LTaTH8O8fvWULlfR
+         Mro8wS66LpJDIkO7mLh6Tjz3gPeMZd2HpBhrIfe88SPggWg8js2H8a+4Ez2LenM/7ngt
+         XJdQ==
+X-Gm-Message-State: AOJu0Yw6Sy5qght2Z0JlOsYf1+o+hcVcVP3qOnV0JA34anR1lemv9nCl
+	Wq/oZTQRPq8mVq34dY7Bhm/yL+h8Cz8qgsWU6puIWgKSit0=
+X-Google-Smtp-Source: AGHT+IEtfoapUrGx78KL3vW2i+Kbuu0w2ubd3F3CIu851yVKH9mVpx5OwEw+LbZthofdaxFixGqWX97MB7kU4P4OWz0=
+X-Received: by 2002:a2e:b8c7:0:b0:2cd:662a:ecdb with SMTP id
+ s7-20020a2eb8c7000000b002cd662aecdbmr65203ljp.62.1704761576999; Mon, 08 Jan
+ 2024 16:52:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <18d2e448-f3d4-4eb2-a54a-9dc9198b7260@wanadoo.fr>
-Date: Mon, 8 Jan 2024 13:26:29 -0800
-Message-ID: <CAO=gReFomj0ahJomapnY1q_F-2YJFjRkWadFpiwvqCoNXA2Y7A@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: correct file entry for AD7091R
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.carpenter@linaro.org, jic23@kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, 
-	marcelo.schmitt@analog.com
+References: <b628a706-d356-4629-a433-59dfda24bb94@moroto.mountain>
+In-Reply-To: <b628a706-d356-4629-a433-59dfda24bb94@moroto.mountain>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 8 Jan 2024 18:52:45 -0600
+Message-ID: <CAH2r5mtoiRwB_yK-0VH6pirWCYMBgFNOY7Mt+RzYmFPmzh4epw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] cifs: delete unnecessary NULL checks in cifs_chan_update_iface()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <lsahlber@redhat.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 08, 2024 at 10:21:51PM +0100, Christophe JAILLET wrote:
-> Le 08/01/2024 =C3=A0 22:15, Amit Dhingra a =C3=A9crit=C2=A0:
-> > On Mon, Jan 08, 2024 at 10:56:02AM +0300, Dan Carpenter wrote:
-> > > Generally, patches to MAINTAINERS don't need Fixes tags.
-> > >
-> > > It doesn't matter if the patch is in mainline or not.  If it's in a t=
-ree
-> > > which is rebased then maintainers will fold the fix into the original
-> > > commit and the Fixes tag will be lost.  But that's fine.
-> >
-> > Makes sense. Thank you for the information and guidance.
-> > >
-> > > Also when you're using a Fixes tag, it should all go one one line.
-> > > Don't line wrap it at 75 characters.  Just go over the limit.  That's
-> > > the normal/correct way.
-> > Also seems like checkpatch does not like the Fixes line without the
-> > keyword Commit. So the fixes line below generates an Error.
-> >
-> > Fixes : 7564efb37346 ("MAINTAINERS: Add entry for TQ-Systems device
->
-> Hi,
-> try to remove the space after Fixes (i.e. Fixes: 7564efb37346)
->
-> CJ
->
-That worked. Great information. Thank you.
+merged into cifs-2.6.git for-next, still reviewing the other two
 
-- Amit
+On Mon, Jan 8, 2024 at 3:08=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> We return early if "iface" is NULL so there is no need to check here.
+> Delete those checks.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  fs/smb/client/sess.c | 26 +++++++++++---------------
+>  1 file changed, 11 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+> index a16e175731eb..775c6a4a2f4b 100644
+> --- a/fs/smb/client/sess.c
+> +++ b/fs/smb/client/sess.c
+> @@ -467,27 +467,23 @@ cifs_chan_update_iface(struct cifs_ses *ses, struct=
+ TCP_Server_Info *server)
+>                 kref_put(&old_iface->refcount, release_iface);
+>         } else if (!chan_index) {
+>                 /* special case: update interface for primary channel */
+> -               if (iface) {
+> -                       cifs_dbg(FYI, "referencing primary channel iface:=
+ %pIS\n",
+> -                                &iface->sockaddr);
+> -                       iface->num_channels++;
+> -                       iface->weight_fulfilled++;
+> -               }
+> +               cifs_dbg(FYI, "referencing primary channel iface: %pIS\n"=
+,
+> +                        &iface->sockaddr);
+> +               iface->num_channels++;
+> +               iface->weight_fulfilled++;
+>         }
+>         spin_unlock(&ses->iface_lock);
+>
+> -       if (iface) {
+> -               spin_lock(&ses->chan_lock);
+> -               chan_index =3D cifs_ses_get_chan_index(ses, server);
+> -               if (chan_index =3D=3D CIFS_INVAL_CHAN_INDEX) {
+> -                       spin_unlock(&ses->chan_lock);
+> -                       return 0;
+> -               }
+> -
+> -               ses->chans[chan_index].iface =3D iface;
+> +       spin_lock(&ses->chan_lock);
+> +       chan_index =3D cifs_ses_get_chan_index(ses, server);
+> +       if (chan_index =3D=3D CIFS_INVAL_CHAN_INDEX) {
+>                 spin_unlock(&ses->chan_lock);
+> +               return 0;
+>         }
+>
+> +       ses->chans[chan_index].iface =3D iface;
+> +       spin_unlock(&ses->chan_lock);
+> +
+>         return rc;
+>  }
+>
+> --
+> 2.42.0
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
