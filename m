@@ -1,178 +1,163 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F309364B7;
-	Tue,  9 Jan 2024 16:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0BC3F8CD
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jan 2024 23:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fgLBbaMx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704818874; x=1736354874;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gaEKgeWzK9tycqPLAAm+RoBb74b0rOVzaME1Qb2Pfjw=;
-  b=fgLBbaMxEqecKZlvyoeE5A/iBhnYyS1HqD+nzBO/fe5snmQ8clhbn4Zd
-   rqo9XMjWoh0C/YNgYd1y2uCJ54JgFJ5Y7+gfWrzJdSDn6NERhLcUWsqbP
-   K24oWSV8ERKAYq7dLlJKTp2cDt8yPHPWRSBg1l4TyVQ407LKCUUq8A/0G
-   AiG9BXxo9LAYcoikHbrsAYQKWAuYCENES/o8IjbiokRRDHiTK3EpvhAI5
-   EklDY1+aRb7R4NtDM8ANEHukhpPdf3s+nPumfd4YYD1VxHP2S5kiqOAie
-   yPdZGa2uWaTOahs5oY0mJQ2oPcKxZjJz6xOFu1rSfGVCMLjJvwuxzUtQg
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="388696403"
-X-IronPort-AV: E=Sophos;i="6.04,183,1695711600"; 
-   d="scan'208";a="388696403"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2024 08:47:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="852253484"
-X-IronPort-AV: E=Sophos;i="6.04,183,1695711600"; 
-   d="scan'208";a="852253484"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Jan 2024 08:47:41 -0800
-Received: from [10.249.150.124] (mwajdecz-MOBL.ger.corp.intel.com [10.249.150.124])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id C8648C8375;
-	Tue,  9 Jan 2024 16:47:36 +0000 (GMT)
-Message-ID: <b48eb9f7-3986-4021-baef-35443c0294d4@intel.com>
-Date: Tue, 9 Jan 2024 17:47:36 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2X/fCjnp"
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3608e1d27ceso10820005ab.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jan 2024 15:42:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1704843764; x=1705448564; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIcPXVK1fYFTemMdjpiQGc+AOvdzW3M34c5/yKhDtd4=;
+        b=2X/fCjnpWleyUM89aPH0FD6rDIWGbLtUc2Mv15EvJVL5FPT0TO2L7pFdzX4GOsfqP4
+         rS18DElgEhNV9dk7NrG1b9UIO6YNdjbBNVjYcjCkpFHGhTqTnjfDzIUMBSq1AVUHRP0f
+         yOb4rReEGaiwkslthXZHh9oquvcRXfjeTNELlvIK+JsvTLj0Nmh9AbLPY30wyHZjGfXH
+         RbuDC/2hgS6QASD09oWCvr+nTnUu6tof+TYCbfEndNUAR79cj7rPD0zkS+g3if8uX55X
+         +95LXNWegkGPPnzW6K9c+/dhd0EmumJtnhedDaR42BlVkOS7Vpj8vlRzq7u+TiyiV6xe
+         +QDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704843764; x=1705448564;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QIcPXVK1fYFTemMdjpiQGc+AOvdzW3M34c5/yKhDtd4=;
+        b=KIXLQtkMDUEYq4BqP8f0SIROwzFbp8FXVZt7q7PmqR240H9UtObybqDVJ85d1EUxQv
+         jRBRFTzuAL60rf62b2GN/bTeknT7gmsJisv33GlSLQG6mPfYfcxIMT1d1y814WTYf/cQ
+         tFxYpFkKfaj7yB2jJPpDqt/SGAKTlAhEeYOCud9TmIf7MzVEACcJDjRjXFScYQDW0p0B
+         rE+/vt7uXOrDuMJlNkqOsfmToS5wpgBjemkTHVyoBEhH9FXtyf9zyKQPkmrtTBIlxv2c
+         rm3Fexncajq6boxycNn5hN/ykk3FdliOihED+9fDknvC4zmV2msCuIJ1zjIWDGTrBfXH
+         gfhQ==
+X-Gm-Message-State: AOJu0YxopVeD6wXwWazUsTMlcNBXMcjYtGcT8rPa56k1B/3aIWQ3qAXh
+	TToU4zcXuhMEDHCOKic1lpB5QeKeM//Q
+X-Google-Smtp-Source: AGHT+IFcCSzwyXxCeIeRPodhTFSjdMhuIXovQrmFwVT7Gt7z1oM7wbSewwsMzzo7BrlWgSVFYS5jcw==
+X-Received: by 2002:a05:6e02:3208:b0:360:5cd9:a73e with SMTP id cd8-20020a056e02320800b003605cd9a73emr300419ilb.6.1704843764645;
+        Tue, 09 Jan 2024 15:42:44 -0800 (PST)
+Received: from google.com (194.225.68.34.bc.googleusercontent.com. [34.68.225.194])
+        by smtp.gmail.com with ESMTPSA id em17-20020a0566384db100b0046ceccc798asm954664jab.6.2024.01.09.15.42.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jan 2024 15:42:44 -0800 (PST)
+Date: Tue, 9 Jan 2024 23:42:41 +0000
+From: Justin Stitt <justinstitt@google.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel test robot <lkp@intel.com>, virtualization@lists.linux.dev,
+	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Gonglei <arei.gonglei@huawei.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH v2] crypto: virtio - Less function calls in
+ __virtio_crypto_akcipher_do_req() after error detection
+Message-ID: <20240109234241.4q3ueqdjz5o54oan@google.com>
+References: <2413f22f-f0c3-45e0-9f6b-a551bdf0f54c@web.de>
+ <202312260852.0ge5O8IL-lkp@intel.com>
+ <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/xe: clean up type of GUC_HXG_MSG_0_ORIGIN
-Content-Language: en-US
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-xe@lists.freedesktop.org
-References: <ec22d742-632b-426a-ac86-62641a38c907@moroto.mountain>
- <e5g3qkwvc3sjfpxcdvn43fiwbxthpblqgg2getxpbkd6g4lp5k@pgfm75tsg7wz>
- <84a5c289-e2f6-4e30-a093-5a1c5b335057@intel.com>
- <7vb3ql7z5dac3kwo7nhibh5al7wemt45ibzuyk4bpyzpltzjml@go7rtyq4m6hq>
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <7vb3ql7z5dac3kwo7nhibh5al7wemt45ibzuyk4bpyzpltzjml@go7rtyq4m6hq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
 
+Hi,
 
+On Tue, Dec 26, 2023 at 11:12:23AM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Dec 2023 11:00:20 +0100
+>
+> The kfree() function was called in up to two cases by the
+> __virtio_crypto_akcipher_do_req() function during error handling
+> even if the passed variable contained a null pointer.
+> This issue was detected by using the Coccinelle software.
 
-On 08.01.2024 22:24, Lucas De Marchi wrote:
-> On Mon, Jan 08, 2024 at 09:46:47PM +0100, Michal Wajdeczko wrote:
->>
->>
->> On 08.01.2024 15:07, Lucas De Marchi wrote:
->>> On Mon, Jan 08, 2024 at 12:05:57PM +0300, Dan Carpenter wrote:
->>>> The GUC_HXG_MSG_0_ORIGIN definition should be unsigned.  Currently
->>>> it is
->>>> defined as INT_MIN.  This doesn't cause a problem currently but it's
->>>> still worth cleaning up.
->>>>
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->>>
->>> it seems there are a few more places to change to follow what was done
->>> in commit 962bd34bb457 ("drm/i915/uc: Fix undefined behavior due to
->>> shift overflowing the constant").
->>>
->>> +Michal
->>>
->>> Could we eventually share these abi includes with i915 so we don't
->>> keep fixing the same thing in 2 places?
->>
->> it should be possible and I guess we should plan for that while
->> discussing all this new xe driver...
->>
->> anyway, what about creating new intel/ folder under drm/ ?
-> 
-> include/drm/intel/?
+If the script is short and simple would you mind, in the future,
+including it below the fold -- this may help others do similar work down
+the line -- Or you could also link to a git-managed version like what
+Kees has been doing with his __counted_by patches [1].
 
-maybe, but then we will be limited to pure definitions/inlines, while I
-hope we could separate more GuC firmware specific, but still driver
-agnostic, code and place it under drivers/gpu/drm/intel/
+>
+> * Adjust jump targets.
+>
+> * Delete two initialisations which became unnecessary
+>   with this refactoring.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-drivers/gpu/drm/intel/
-   include/
-      abi/
-         guc_actions_abi.h
-         guc_errors_abi.h
-         guc_klvs_abi.h
-   guc/
-      guc_hxg_helpers.c
-      guc_log_helpers.c
+Nonetheless,
 
-note that AMD has its definitions in drm/amd/include/ not under include/
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+>
+> v2:
+> A typo was fixed for the delimiter of a label.
+>
+>  drivers/crypto/virtio/virtio_crypto_akcipher_algs.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c b/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c
+> index 2621ff8a9376..057da5bd8d30 100644
+> --- a/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c
+> +++ b/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c
+> @@ -224,11 +224,11 @@ static int __virtio_crypto_akcipher_do_req(struct virtio_crypto_akcipher_request
+>  	struct virtio_crypto *vcrypto = ctx->vcrypto;
+>  	struct virtio_crypto_op_data_req *req_data = vc_req->req_data;
+>  	struct scatterlist *sgs[4], outhdr_sg, inhdr_sg, srcdata_sg, dstdata_sg;
+> -	void *src_buf = NULL, *dst_buf = NULL;
+> +	void *src_buf, *dst_buf = NULL;
+>  	unsigned int num_out = 0, num_in = 0;
+>  	int node = dev_to_node(&vcrypto->vdev->dev);
+>  	unsigned long flags;
+> -	int ret = -ENOMEM;
+> +	int ret;
+>  	bool verify = vc_akcipher_req->opcode == VIRTIO_CRYPTO_AKCIPHER_VERIFY;
+>  	unsigned int src_len = verify ? req->src_len + req->dst_len : req->src_len;
+>
+> @@ -239,7 +239,7 @@ static int __virtio_crypto_akcipher_do_req(struct virtio_crypto_akcipher_request
+>  	/* src data */
+>  	src_buf = kcalloc_node(src_len, 1, GFP_KERNEL, node);
+>  	if (!src_buf)
+> -		goto err;
+> +		return -ENOMEM;
+>
+>  	if (verify) {
+>  		/* for verify operation, both src and dst data work as OUT direction */
+> @@ -254,7 +254,7 @@ static int __virtio_crypto_akcipher_do_req(struct virtio_crypto_akcipher_request
+>  		/* dst data */
+>  		dst_buf = kcalloc_node(req->dst_len, 1, GFP_KERNEL, node);
+>  		if (!dst_buf)
+> -			goto err;
+> +			goto free_src;
+>
+>  		sg_init_one(&dstdata_sg, dst_buf, req->dst_len);
+>  		sgs[num_out + num_in++] = &dstdata_sg;
+> @@ -277,9 +277,9 @@ static int __virtio_crypto_akcipher_do_req(struct virtio_crypto_akcipher_request
+>  	return 0;
+>
+>  err:
+> -	kfree(src_buf);
+>  	kfree(dst_buf);
+> -
+> +free_src:
+> +	kfree(src_buf);
+>  	return -ENOMEM;
+>  }
+>
+> --
+> 2.43.0
+>
 
-> 
->>
->> - drm/intel/include/abi
->>        guc_actions_abi.h
->>        guc_klvs_abi.h
->>        ...
->>
->> the only question would be what prefix should be used for macros:
->> just GUC_ or INTEL_GUC_ or XE_GUC_ ?
-> 
-> if using a intel/ dir, probably better with INTEL_ prefix
-> 
->>
->> then we can also think of creating library with common helpers for GuC
->> (for encoding/decoding HXG messages, preparing ADS, reading logs, etc)
-> 
-> with the other differences we have, I don't see much benefit,
-> particularly as it won't change for i915 wrt supported platforms.
+[1]: https://lore.kernel.org/all/20230922175023.work.239-kees@kernel.org/
 
-we are still using unified firmware versions across different platforms,
-so any newer firmware version drops could still be beneficial for the
-i915 and those legacy platforms
-
-> 
->>
->> btw, we can also consider sharing register definitions:
->>
->> - drm/intel/include/regs
->>        xe_engine_regs.h
->>        xe_gt_regs.h
->>        xe_regs_defs.h
-> 
-> same as above, I don't think it's worth it as xe will keep adding to it
-> and it doesn't care for all the previous platforms. For those files we
-> may eventually autogen them like done by mesa.
-
-autogen sounds promising, so lets wait and once this will happen we can
-abandon xe/regs
-
-> 
-> Lucas De Marchi
-> 
->>
->> Michal
->>
->>>
->>> Lucas De Marchi
->>>
->>>> ---
->>>> drivers/gpu/drm/xe/abi/guc_messages_abi.h | 2 +-
->>>> 1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->>>> b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->>>> index 3d199016cf88..c04606872e48 100644
->>>> --- a/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->>>> +++ b/drivers/gpu/drm/xe/abi/guc_messages_abi.h
->>>> @@ -40,7 +40,7 @@
->>>>  */
->>>>
->>>> #define GUC_HXG_MSG_MIN_LEN            1u
->>>> -#define GUC_HXG_MSG_0_ORIGIN            (0x1 << 31)
->>>> +#define GUC_HXG_MSG_0_ORIGIN            (0x1U << 31)
->>>> #define   GUC_HXG_ORIGIN_HOST            0u
->>>> #define   GUC_HXG_ORIGIN_GUC            1u
->>>> #define GUC_HXG_MSG_0_TYPE            (0x7 << 28)
->>>> -- 
->>>> 2.42.0
->>>>
+Thanks
+Justin
