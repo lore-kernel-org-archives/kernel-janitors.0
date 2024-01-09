@@ -1,117 +1,81 @@
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACE4381DF;
-	Tue,  9 Jan 2024 13:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2049e6d7f50so605653fac.0;
-        Tue, 09 Jan 2024 05:50:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704808237; x=1705413037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eLA556URFDb8bibPiY31DweFoe69ZdKxhfNEj7QeBLY=;
-        b=UWCAeJrAatd4SGWMWvLu8ZaAcYs7sO2AMdI3hsu11L9r2iVl+P6BPTsZtgx4UMeXDk
-         XtfdP4nZFjFHVZksAGZwakpWHwzWDH+5hg/9CgLdL8dezxv9XBSA7HwpoY1XBCVXAcPj
-         /VmjJ8tL1RZGX3rH0G+NRGmItq2AQCoz1UAuWnx4GKs/Rc4GFC2iMHVSAS3F+eCJTbsD
-         HQnx+XYdatowCKMn7Tv6iGeY8MsJ06KQlmA3/8AogcCSUQAe7Ca29S9OG5jj5vNPhOKX
-         s3NNEUG66gmfKFKxthOWvldrIG2G6TJtZrvAlETJHOTgH0jOi7Mif2q+1VA/lco1qv6K
-         1l1A==
-X-Gm-Message-State: AOJu0YzMhCIe+RJ64nfVdG5E4s97DgSrEM5EQjV52hzHPM+n8uyDcQMl
-	4v/WAbMJ5N2EtvQtzma0WeMwcuWFZLQEIoyB6hk=
-X-Google-Smtp-Source: AGHT+IH5ZW9X+DC7JsCboJONIxcpEvQdQl9F/rKQakZmNZGm9OrLswyYsBlllyjDKwZVOGxP8Wt8Y0ngDHijzm3Qnis=
-X-Received: by 2002:a05:6871:a68f:b0:204:5a14:c4d6 with SMTP id
- wh15-20020a056871a68f00b002045a14c4d6mr9331340oab.2.1704808236774; Tue, 09
- Jan 2024 05:50:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CF939AEE;
+	Tue,  9 Jan 2024 14:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJ4139m1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D1BC433F1;
+	Tue,  9 Jan 2024 14:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704811246;
+	bh=JtUnKmh82+8hl9yHpHolXJPlKOMneCk3xUxEKY3Bryo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qJ4139m1Mz2HSk++A9C0OnpR8xxIJ5Hv4D+nuIC4WdWPYWKTLRzJmLPIm8PzfR/ES
+	 vvfwGNdlyjG+Fv0yOSgbvFWQs6IeGNMNpkdX/2sTRxTN96ECzc+LkmmED6xXXg2gBa
+	 7d/oC/UGNvKLGfZqmzZ1/9KALPVhtpVf+LyMgtkMt0y9zFAVBD3aF7qdYPYYrVAW4u
+	 vUxCYGVOhwUAjTDo/aZuE5KaVfGGz4gEI6XQ5y7DnG3+/8kEwx9LgYPR5FGUnytng/
+	 Q5UqNu3f9pfG4zd0PSPj45hFn6HnoGnRsiEZFGLEOb3Z12NNEfqvpQqLgrdS8iZRIC
+	 Kw00w7LHDdL/w==
+Message-ID: <b8e02569-1bd3-4a04-857e-e7209b493d97@kernel.org>
+Date: Tue, 9 Jan 2024 16:40:41 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4a3658efad8f6247ed8c477717dc2820b72319d0.1704462287.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4a3658efad8f6247ed8c477717dc2820b72319d0.1704462287.git.christophe.jaillet@wanadoo.fr>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 9 Jan 2024 14:50:24 +0100
-Message-ID: <CAJZ5v0jcDzAX=ik_-u+j9DZkhneWkD_Sey_+GcvBhX3D0Tmskg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: core: Save a few bytes of memory when
- registering a cooling device
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, alexis.lothore@bootlin.com, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] accel/habanalabs: remove redundant assignment to
+ pointer 'input'
+To: Colin Ian King <colin.i.king@gmail.com>, Ofir Bitton <obitton@habana.ai>,
+ Benjamin Dotan <bdotan@habana.ai>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240106124213.51392-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Oded Gabbay <ogabbay@kernel.org>
+In-Reply-To: <20240106124213.51392-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 5, 2024 at 2:45=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Some *thermal_cooling_device_register() calls pass a string literal as th=
-e
-> 'type' parameter.
->
-> So kstrdup_const() can be used instead of kfree() to avoid a memory
-> allocation in such cases.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 06/01/2024 14:42, Colin Ian King wrote:
+> From: Colin Ian King <colin.i.king@intel.com>
+> 
+> The pointer input is assigned a value that is not read, it is
+> being re-assigned again later with the same value. Resolve this
+> by moving the declaration to input into the if block.
+> 
+> Cleans up clang scan build warning:
+> warning: Value stored to 'input' during its initialization is never
+> read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@intel.com>
 > ---
->  drivers/thermal/thermal_core.c | 6 +++---
->  include/linux/thermal.h        | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_cor=
-e.c
-> index fa88d8707241..d21225ddbf10 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -846,7 +846,7 @@ static void thermal_release(struct device *dev)
->                             sizeof("cooling_device") - 1)) {
->                 cdev =3D to_cooling_device(dev);
->                 thermal_cooling_device_destroy_sysfs(cdev);
-> -               kfree(cdev->type);
-> +               kfree_const(cdev->type);
->                 ida_free(&thermal_cdev_ida, cdev->id);
->                 kfree(cdev);
->         }
-> @@ -918,7 +918,7 @@ __thermal_cooling_device_register(struct device_node =
-*np,
->         cdev->id =3D ret;
->         id =3D ret;
->
-> -       cdev->type =3D kstrdup(type ? type : "", GFP_KERNEL);
-> +       cdev->type =3D kstrdup_const(type ? type : "", GFP_KERNEL);
->         if (!cdev->type) {
->                 ret =3D -ENOMEM;
->                 goto out_ida_remove;
-> @@ -969,7 +969,7 @@ __thermal_cooling_device_register(struct device_node =
-*np,
->  out_cooling_dev:
->         thermal_cooling_device_destroy_sysfs(cdev);
->  out_cdev_type:
-> -       kfree(cdev->type);
-> +       kfree_const(cdev->type);
->  out_ida_remove:
->         ida_free(&thermal_cdev_ida, id);
->  out_kfree_cdev:
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index bf84595a4e86..052c72c0fa17 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -102,7 +102,7 @@ struct thermal_cooling_device_ops {
->
->  struct thermal_cooling_device {
->         int id;
-> -       char *type;
-> +       const char *type;
->         unsigned long max_state;
->         struct device device;
->         struct device_node *np;
-> --
-
-Applied as 6.8-rc1 material under a different subject and with some
-changelog edits.
-
-Thanks!
+>   drivers/accel/habanalabs/goya/goya_coresight.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accel/habanalabs/goya/goya_coresight.c b/drivers/accel/habanalabs/goya/goya_coresight.c
+> index 41cae5fd843b..3827ea4c02f7 100644
+> --- a/drivers/accel/habanalabs/goya/goya_coresight.c
+> +++ b/drivers/accel/habanalabs/goya/goya_coresight.c
+> @@ -576,7 +576,6 @@ static int goya_config_spmu(struct hl_device *hdev,
+>   		struct hl_debug_params *params)
+>   {
+>   	u64 base_reg;
+> -	struct hl_debug_params_spmu *input = params->input;
+>   	u64 *output;
+>   	u32 output_arr_len;
+>   	u32 events_num;
+> @@ -592,7 +591,7 @@ static int goya_config_spmu(struct hl_device *hdev,
+>   	base_reg = debug_spmu_regs[params->reg_idx] - CFG_BASE;
+>   
+>   	if (params->enable) {
+> -		input = params->input;
+> +		struct hl_debug_params_spmu *input = params->input;
+>   
+>   		if (!input)
+>   			return -EINVAL;
+Thanks for the patch.
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+Applied to -next.
+Oded
