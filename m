@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75A6482C5;
-	Wed, 10 Jan 2024 12:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795B54878A;
+	Wed, 10 Jan 2024 13:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qJePEBBM"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HR+QsUTh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704891155; x=1705495955; i=markus.elfring@web.de;
-	bh=z/lBwRWBNcQYTImVtZA+5BhEFyRCnsNgZwbeW9VNd3I=;
+	t=1704891686; x=1705496486; i=markus.elfring@web.de;
+	bh=fqSFKY5Zirnw4hSO+f9JSpx6szHta+QQy+nLiPG9ozg=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=qJePEBBMfk3OLRY02rwrXtVGxNVknjMOeTm1SpPSmPPAxcCxQUyKB32OqQXI418C
-	 fpa/6WIb0IChCiliG7tnnVHUfq8kWcq7CBO6UnE/bfOvnEY9Ue7t9dbqt4qd3uRh7
-	 1VMUcGuItboxy1VNr/RyEgACwkK22rfzqTKXx6WUfOGs0CTY5GmklfSDFBaFuxxTA
-	 NDVuAq+lIqy7fNujaRGf+qPRJihR4qqI/oCgJ4bz+kpH2zycEJCrODS566YiaA66E
-	 6kgw/O98ldMZdYjAbQVTM5XAWHdMbJ0nVUhohrsZgliRSGlChpgW6+A7wFCY6vZlY
-	 CgmY7ZnxfqzmrvtiHQ==
+	b=HR+QsUTh3JMkedWITQ3E4tHVdgeuKVdUK1yjOWV+UvLTU+X/yU1G4TQ42tpBCwXu
+	 +BOpP86+ZoVzh9vdfwzENzMs8j/Gg1z/V0C+sVE68OrSQFGzjIg96C/3/h9JFAfKx
+	 tKTVXdES+YKrs/gCiI/9VDSa24gkZYTZWvUn4bEdBBJV3lV8HAlvKoX4T1BdLc8LG
+	 4C7Dv8htTMshKzV/h3Jb2Rw+6B2IYUvvurOtAfpbaXRMt5uM4dLvJf0Wev7Of1BHt
+	 wJm5XGWp/c2I6k1sSxSHDBHKOs+2X484+ftVgto6UYd2H984y/cgP66xNT14alSQ/
+	 oBo5sKm5dpJwWrRAKw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7usy-1rIZzF2aVG-005Tl7; Wed, 10
- Jan 2024 13:52:35 +0100
-Message-ID: <09c4cb2e-967b-4d0e-b5c6-f959e80290d9@web.de>
-Date: Wed, 10 Jan 2024 13:52:34 +0100
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2jaQ-1rBQEc12ey-012zo4; Wed, 10
+ Jan 2024 14:01:26 +0100
+Message-ID: <d912872a-e70a-4e5d-aabe-26f289507f44@web.de>
+Date: Wed, 10 Jan 2024 14:01:24 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,68 +31,56 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [0/2] ARM: Adjustments for init_atags_procfs()
+Subject: Re: [0/4] overlayfs: Adjustments for ovl_fill_super()
 Content-Language: en-GB
-To: Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
+To: Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, cocci@inria.fr,
+ LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>
 References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
- <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
- <7dd19987-6590-4756-a929-1ff01503ad1c@web.de>
- <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
- <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
- <ZZ6R6KSQo9ph3ARZ@shell.armlinux.org.uk>
+ <87b65f8e-abde-2aff-4da8-df6e0b464677@web.de>
+ <05d334af-1a0f-4498-b57d-36a783288f07@web.de>
+ <CAOQ4uxiRaTQyT1nxeRD7B89=VuA+KKEqi01LL1kqfJ17-qKKpw@mail.gmail.com>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZ6R6KSQo9ph3ARZ@shell.armlinux.org.uk>
+In-Reply-To: <CAOQ4uxiRaTQyT1nxeRD7B89=VuA+KKEqi01LL1kqfJ17-qKKpw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dVPKRYI/UEIH4hpwOzF6NFT7pctrhluHhlbEnIDqNss/Of0suzs
- TvAZMy8INtCv1rIGLCRa+0+mEf7BkuILXAbtD8/6npUhImkfxlXNoB9PZqWAKmNKP0DXy4E
- STeXZ5fKZUOhHcIaZvLn+Xj/yq4ODhOSnI5ERSVUG79CmcVF6ynro5R6zHIaWJULGyTFGVd
- 4cut+GmQA+l+7G40fy8Gg==
+X-Provags-ID: V03:K1:h8tCbXXw0Swhpr88lNGFvUEGFYt40i2z0RuHlDmlga9TVUJiPh4
+ JaiVj/0ZiSWg6/4bEGeMEgE+DJQpcfcPDxeGclF4igoN8nbuuCZ/KLECvsROT1ZePdxFF1S
+ XqNkNsQ02shb2lmFyeNAo1QSKj2BonPY4fkSwWuKK0YuTRmzKy4gTj4oKVqH55tgdsCaBlR
+ BzDlGVNtlRDiGW+I/E1Fw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/pQKDMW6cEU=;DvrOxllCli9naHa/NHd1YV+DYb+
- N0UleONu7EheaCF3AvxhEf7UhujzMLxMmx55wopKZb0EyEcuounzIfhLbSCymfiDj3wjrJFk5
- CdePYXFN7YLopADQVaTEirLo3VkayCaoB735OeJDQrOZvuYxzu3oqKUMffMk3WRYTCNO7tbhM
- 1DxAuBUBBUCzDkwJhlWmqsx1WIzH5OZ6zH/+tX6e9YqlWkLtJyuM5BgEc8yIHcSxN8FuEBp4i
- ZaDAJlzRv3zHEfEgS6KsckzxzCgDqwxeI7FZTDlBkcskIhYn6lyR9jGDYDYCdSpUcXL7BHKna
- flUuZXDlBYyRcDqErnggWTsWI28O6stiXktwYh4RCYudFE3BGx2vzY8V88dtZ3G76WAWMGqvE
- EanikHOvefUcoxhuQfbixdWvlHNv0weYjHhogPexZlKUA4qvNPDVqp3ShdhNzD604GECfcdf3
- Yq1li1Vzbv5pc6rXe+AHZLblpsN4ADnzJ/bMSJOXn5ZO+ArE8+34v9zZJxlRODt91NLAflL12
- 2JVj+KJlmqe5S1Is31aevbwKQQSI2nLTDTQ7TggWS/l1zwgbGGRhf6cxCqSfAjB1YcqRGpuaq
- SAoCO1yZm1SWM3UEIajo4W52skC357cmt16sqEdfWxLdhgiRgZWtPufAb8eSuiJqPf1Eu7lZ5
- 82eUhxfhaK2Bem0XFp8eJYhaAMJ4QIISeRzTY5avxt7gUh1LG6nALurUq2wrWACGXVKiCNCVx
- MKwZAIdKot9qEDA0Cq9Uo9q34EtsUmXCETWljogqctPJQRzQcYLNFz/Kt97ivoch49G017RD9
- ml/DgId9pWabcnBtURrwUy/6Bv4u+99wu8HG5RTfMhxzDrnTf7Cn+yjc1KgMZRIOCsFlLPpna
- ZAEYGiCNl4QfF7UBrrZ1HYm+PnfBHbXpHQFi4/4AXpiIogkeFDPAR8M4GdzRmfWxH8/sdeS0A
- iThRQg==
+UI-OutboundReport: notjunk:1;M01:P0:du3gPScwpYI=;xWLpWwsJ6b0IwbjzBfQqcOG12Ci
+ YtBsjgLTQIqOyffl58KRi4P0CfKo+Ln8fGqncCRADCO45AaIgrrFcfEa2Ss4gpoZnFzFYotzB
+ T0oukIDp+Kw4TM3fmfieBqMYRVK4W3ZI85AeI0xlMnhJOR4VbnpXmVKdlIUZoZ1zisVnNfQPn
+ E1UT8uA1U14UgyCcAPyVsoV25PunUFKBJkWtDdrGL/WPRVBoHGbQ0nK/nYoSqGA5UeaJjHXC9
+ diWQeGf13mSUdLj8tlaj1hWxYSmjUoRJVYaFBTXsVE8RDoBO8EKJ8peM4PCk6URjmvij+UEFn
+ jGI9GwrrfXylcy6TpAdSwzuXqW9N+S4bjv8PMt6g3m/1rDv+POs7iBtd8qYRcFZBUdmUArVab
+ 0Ks4vByapiiCbheNOJzShpWpIkNfpyzUudZAJEwFXpWbVh1JfqAcqKrtp1wdqXAmH3SSulcV7
+ TvlY1E4pDsyb88RsStF4M25CpsYcAXAO0O1QaLFyN6mACwrvfmhUOzWQm/pm32mM+F6p5whBa
+ n0cgaHziN8ejP70SlZUo2NYAAdOnP3ZeDG10C2vkO0jlpc6eaeFDZpyUkz3N+FfpLvADDBUA7
+ spbMoZOqCxVwlH9yykYueh3VOw0h3mqciBDP1r/9bI7hmX8VVGkf5l0vojNecQ7wUoFbXhSzx
+ iUUHRoYGnRQ+xekL5WU1+fbCx1QY/8gnHUe8/pOi9tvx2Sow2DhVIbd7PQasEBNOQetZTvady
+ eFY6h32Zdae6/F+jeOTeHwvudaclhB3g6czqi63wUZEsI7/ADB3Qzi1VHEPgzXQ6+lwrIAdtT
+ fwdVZT5oyd5D95xspSToRZ8ClHEnantDUE00C5DH8OLs7prhWGoajC0iqxlBAIg9Gc1wJJQGQ
+ iBRWUkmyrx2S9jKdEIAiq4fkKUyadPjuQIsATi60v0etJwnhPMKfgbg8BliWZ0JwTywFObNaX
+ yWl8tA==
 
->>>>> Is this patch series still in review queues?
->>>>
->>>> See also:
->>>> https://lore.kernel.org/cocci/562a6f99-3f8e-9a77-e519-b668e24dced2@we=
-b.de/
->>>> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00098.html
->>>
->>> I suspect no one looked at it, sorry.
->>
->> Special mailing list settings probably influenced this situation.
-
-Did any communication filters hinder the clarification of further developm=
-ent ideas?
-
-
->>>                                       I don't catch everything that is
->>> on the mailing list. Looks fine to me but it needs to end up in the
->>> patch system to be applied.
->>
->> Can you collaborate also with mentioned mailing list archive interfaces=
-?
+>> See also:
+>> https://lore.kernel.org/cocci/87b65f8e-abde-2aff-4da8-df6e0b464677@web.=
+de/
+>> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00115.html
 >
-> Err what? Sorry, I don't understand your comment.
+> I will queue cleanup patches 1-2,
 
-Are you going to pick any patches up from linked information sources?
+Thanks for this positive feedback.
+
+
+>                                   but I do not like patches 3/4 and 4/4.
+> I do not think that they make the code better to read or maintain.
+
+I would appreciate if the details for such change reluctance can be clarif=
+ied better.
 
 Regards,
 Markus
