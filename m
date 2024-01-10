@@ -1,14 +1,29 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11426ECE;
-	Wed, 10 Jan 2024 06:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F13091C0004;
-	Wed, 10 Jan 2024 06:38:48 +0000 (UTC)
-Message-ID: <4e0da12a-62ed-47fa-9f75-a7de10bd8dc0@ghiti.fr>
-Date: Wed, 10 Jan 2024 07:38:48 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CA533981;
+	Wed, 10 Jan 2024 07:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RDDlycAb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704872802; x=1705477602; i=markus.elfring@web.de;
+	bh=hhPaJcyeSBxTfwuEoDUTo5lm2LbnDI4Sufrw3CS2k2s=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=RDDlycAbIBjqIBZhciOaoMzfl8tat1ml5+qzKdoiHfMJreRpIHAbWIXRnPKwlnhr
+	 w0vse/ZAZ3cCwQ7mccrHYN9VDuoVlfWNQ8uIZoL8s+3TUf5O7ga+mecRtASez08rI
+	 07w8aaKfxzw/exDThF6Fkwkrpnv/ZCpWbCcynR7vWOWhUdijv5Jjt3cQq8mcyTSJI
+	 RT4OMizwoUpYzSXNWSPBgXIEHsEDQQyf5YMDWTPeDR7HY/BXT9aPGL5XZp7AaYCwy
+	 ZrYY/gILsaXbNsNlUzLE3Ss51DRCGO3dBL1NNgDiVupzBTuhoQdAYuR6EDnClKaee
+	 2l1JfThVel14fi8LUQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MC0LH-1rTH7H11Th-00CKiQ; Wed, 10
+ Jan 2024 08:46:42 +0100
+Message-ID: <0d7a06f0-7a0e-47c8-b89e-c3122b46d93e@web.de>
+Date: Wed, 10 Jan 2024 08:46:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -16,55 +31,61 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Fix an off-by-one in get_early_cmdline()
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org
-References: <9f66d2b58c8052d4055e90b8477ee55d9a0914f9.1698564026.git.christophe.jaillet@wanadoo.fr>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <9f66d2b58c8052d4055e90b8477ee55d9a0914f9.1698564026.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Subject: Re: crypto: virtio - Less function calls in
+ __virtio_crypto_akcipher_do_req() after error detection
+To: Justin Stitt <justinstitt@google.com>, virtualization@lists.linux.dev,
+ linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org, cocci@inria.fr
+Cc: kernel test robot <lkp@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Gonglei <arei.gonglei@huawei.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Jason Wang <jasowang@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, llvm@lists.linux.dev,
+ oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+References: <2413f22f-f0c3-45e0-9f6b-a551bdf0f54c@web.de>
+ <202312260852.0ge5O8IL-lkp@intel.com>
+ <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
+ <20240109234241.4q3ueqdjz5o54oan@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240109234241.4q3ueqdjz5o54oan@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uYjo0zmC9Bv8IGNYZK4OcE5zWAU90y0/cZTEhqTTR+46QfZcrke
+ tgvURLyjA9lTvet4ThfCVXnv8xkFz5vm5k/faG0SI34wHLmSeb4+ISwwXtzGVUNyei+sko3
+ imEXpQg0tfMnY2jPBNEQpi1Nej6dOCS3XWYf+0+cvT6Tzo9nqafppm62vyx/roH5eUamaVt
+ V+cwMMwdBpWwOAkMutt1A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:S0h3qRtm9JU=;wWqjC0b120yckKxNsgoQLwgkgBW
+ TANfswLwhLmaw2f/tPyZEWPKAcRWd062YgXcSl/MJ2qJRU1QKDsfT2ThjEWt9E72pzH0XbipK
+ ek+fzGIiWGzIJsPlXIujThtScJKp1023bSnfHXoawQA9pX+pihbfTuFGFlAUTWqVRcAWqrqli
+ 0nCKkRvwtVBpgQQHcOkSiZz2JlCRwk57Shx+Gvg6y5bk4L3PH3AlWQ8tO6Xp3nleW9MR0s7si
+ MSvzw7RCAFeB6LwjIZwmlOEOjjPLPbYUs521VFEI/yO6FjCahBvoh12NcXhyV06gTwrZxYSeE
+ b8pBwfLUgR/Esz4UAIkpBHYPrX/bWsRwmcnQHgEEK4xgOgGDjqsiyPzEp2Y2Efcn2/R/EF712
+ VQk246045auIbeX9HAJOCho2yLaMsyEH1f6EHNTxHg0+SqFqDWpwoGio4SkvRb3I8VuZ3pxn4
+ pKeUq4c1gFEumr07bBhEG4mi/NUQgnLyhdgW6BwDdFk4VwWYt4+ogSIr5ka7LK0XE9enEulDt
+ FYzDmGriybFkbMm6TBpDciJx5Sh6BnEUu+Et3jr/Wo5juVLgYVUD68PVkhXYCB9kXCZBCdsVV
+ ugIrdZ0ILSXTq7qyQMj80Xqu7K02gBTP9d/ghsEIPcwB8ADu4LuJO6tT7jydAQmru2Q2FVJk1
+ ivWlGskt+2ukhVot4diVbYzhRSU40RAEtZ+czNRSy7ThyCDOja3gPdwSQvyCuhQFKR8wgwG9b
+ XrqtDCFIWRfjgOes6u/gzPr5TaEA4NNxHUyub1v+1OAf9I203fen86ea5RIg7ATId3YwnrbNF
+ CPYepQfCHStuUHXi9ghJSc64B7/bq4g0XeNcJeCEkljhWyB2+P2eOjuzJeW/QqYtSYA6LzvEr
+ oZ4SBkMQ7rrO/7shvLlLjbwtqb6JDHUcnuYj1+D6YDz0o8p6Hfvl/T+rJqJzOzUkuEamvmJ98
+ B+3jVJr1HhEYCoxIDT4FjRo5reo=
 
-Hi Christophe,
-
-On 29/10/2023 08:20, Christophe JAILLET wrote:
-> The ending NULL is not taken into account by strncat(), so switch to
-> strlcat() to correctly compute the size of the available memory when
-> appending CONFIG_CMDLINE to 'early_cmdline'.
+>> The kfree() function was called in up to two cases by the
+>> __virtio_crypto_akcipher_do_req() function during error handling
+>> even if the passed variable contained a null pointer.
+>> This issue was detected by using the Coccinelle software.
 >
-> Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the command line")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   arch/riscv/kernel/pi/cmdline_early.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/kernel/pi/cmdline_early.c b/arch/riscv/kernel/pi/cmdline_early.c
-> index 68e786c84c94..f6d4dedffb84 100644
-> --- a/arch/riscv/kernel/pi/cmdline_early.c
-> +++ b/arch/riscv/kernel/pi/cmdline_early.c
-> @@ -38,8 +38,7 @@ static char *get_early_cmdline(uintptr_t dtb_pa)
->   	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
->   	    IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
->   	    fdt_cmdline_size == 0 /* CONFIG_CMDLINE_FALLBACK */) {
-> -		strncat(early_cmdline, CONFIG_CMDLINE,
-> -			COMMAND_LINE_SIZE - fdt_cmdline_size);
-> +		strlcat(early_cmdline, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
->   	}
->   
->   	return early_cmdline;
+> If the script is short and simple would you mind, in the future,
+> including it below the fold -- this may help others do similar work down
+> the line -- Or =E2=80=A6
 
-This looks good to me, you can add:
+Would you like to take another look at the clarification approach
+=E2=80=9CReconsidering kfree() calls for null pointers (with SmPL)=E2=80=
+=9D?
+https://lore.kernel.org/cocci/6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00096.html
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+Regards,
+Markus
