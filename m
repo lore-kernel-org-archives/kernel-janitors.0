@@ -1,137 +1,111 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ECD4EB42;
-	Wed, 10 Jan 2024 20:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734114F5EA
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 21:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bzsIFTLJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704919816; x=1705524616; i=markus.elfring@web.de;
-	bh=pGmRLZXbzB1/VCJ6cMwk/E3wY5qGaj+l7gvleCOR1ao=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=bzsIFTLJg3a4gPX16xErwtOIO2wv9E5rTnHinVBCPW10NGqDIeyMhb4AaLYOzMxG
-	 8ofIMFBWa35ALiVVFDtxPWxK0FNYjn8/VoIfE1ZzZHnqpUHf14Z9Ucmj+lJsGpz7p
-	 WjQqXURD28cthjszehEHFIo3+GvpJWIRjNldYTnEgDK0vBZh7mslJmHLP/KlCy+vs
-	 bH1qh1ciSeVIqcmQlhuiuu/FhyrPUgAUW5YRANfmiZM8W/h7K0m7c8ado1FwuWeSS
-	 AU5XioEAUIeexZHBRswVpZaucf4ATqQzv/hnF+TSG47OUG1CG9HzDzWN+mR2wFpyU
-	 rqJVpWAYfmWSpSwX9w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjIE-1rTDRU0WZo-00CbGQ; Wed, 10
- Jan 2024 21:50:16 +0100
-Message-ID: <49ecda98-770d-455e-acd7-12d810280fdd@web.de>
-Date: Wed, 10 Jan 2024 21:50:15 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rRDNLOzI"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e4a606183so2455e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 13:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1704921007; x=1705525807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0dBlfe0ai2/9qnOVJT7Cr9v3swK0leKtoIMht6HfIU8=;
+        b=rRDNLOzIiXSOzioXfKQkfA5eOus1qZsfOzk1snEsyTecSdZXKLKrs8N7OWu+agHFUW
+         F/VZ0HVe6SpI31YoKeZwjvy24qCcznW5REcWmhH+1LbPwWzwsoyrQUM1NT5JWhkt0SEh
+         qOU9jRd/nIfYeKYuex3CB0S0u1Kbba6Ei7Q4LeKNYMD8I34CRUk5p+jdA1ROB7JQ3ojz
+         4gMNmmEtuGk9X7oC4m3tEnKxK7b6B5u4spsz2UWTpye/BK0wng69jHCS/RJR2YGRZf6F
+         /ctBK0Qrv5m3LJeJbHB7ZIutMbGePeb41dRAeaO9fvJIxnDJw63SHHCRtKtIRPYRO5Ip
+         smQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704921007; x=1705525807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0dBlfe0ai2/9qnOVJT7Cr9v3swK0leKtoIMht6HfIU8=;
+        b=Z+uAXVZ/w1goZRp7uKUaD/Y9FBz7+7Or1t4TQ67SPfzkYR6vfTFN8irb9Q8FV6+O0h
+         CWZUAhbz6zDS5twLKZdqfnGa+KDj6EWGp/fjRTCu0hUpiVbugbaY1rDwwGOJjBmpA0QX
+         9+LTq/siShucz5TstLPcpa3EN1wIcO4hhylYqxO39uN/2ZP0MVNemUG8Sl2kRMGt7L4H
+         LHFnhJ5V3HLXZDjKWyom4w9HbSQ4c4ZjuKwu996llT4P72Czk09aIyfNuYR5QaSBaI/Q
+         q0G0lrJMaYZjxb5/SpAAemW6iQnfmHRatSsaly52iBXNB2R5fbdxbg+bRF41bVQ0Zij/
+         cF3g==
+X-Gm-Message-State: AOJu0YzUX7jnCV4j7a65agVWZY7xjqhk3eTahEx96bA/5mq/RjJ7hqYz
+	Kwr5Kli7xKYDO/RwUlvP6LdkPndSSx17coQnaHqX/Y2/mNPA6rWz5XH82lwXiGbZNSXE6BG8C1g
+	ADwGbO5o+LIMQgmEAmNYU4KbqRRj41LZIcBaC
+X-Google-Smtp-Source: AGHT+IHsAggDnwF7TsHK2T7smnyeA48DXI2a46o7MmsiupRvXAiMBgCqaHhlnBsI7Z9bP9EmbmAIt/9dbXM0bef0tPs=
+X-Received: by 2002:a05:600c:3b09:b0:40e:490c:48a9 with SMTP id
+ m9-20020a05600c3b0900b0040e490c48a9mr7775wms.3.1704921006606; Wed, 10 Jan
+ 2024 13:10:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2 2/2] io_uring: Improve exception handling in
- io_ring_ctx_alloc()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
- <878r4xnn52.fsf@mailhost.krisman.be>
- <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
-In-Reply-To: <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
-Content-Type: text/plain; charset=UTF-8
+References: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
+In-Reply-To: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
+From: Rae Moar <rmoar@google.com>
+Date: Wed, 10 Jan 2024 16:09:55 -0500
+Message-ID: <CA+GJov7P_ypZ58TrWoMSSQyt6fdoGyYTqbfEuU7v_ZHFSOczKA@mail.gmail.com>
+Subject: Re: [PATCH] kunit: device: Fix a NULL vs IS_ERR() check in init()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "davidgow@google.com" <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TuPuGGpNWoSodpshiNclXlqKXV6zUP8351xLMItjhIv/nGqTHrD
- gJLyrjtqjfNe6FhIycKYw2lTUQjDQbajnnpQA152WfhBLBFDivvSJboDK2igQCFEJqmPc3w
- a+GdrUqNpYcTolhQe9VtvrwnLJkDu/vXYDw5wMyAOLCdmelvphDukq9ugWp+CTJvqhwHniT
- F4KEjoOz5PnFpCHQI1CpQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XoI6qzTL9rY=;ywGCQc0fYI+KyH/7lb2JrqTcCZu
- bP9yWcAZkVxDHna/Oac2IV8zPfamLc4ZgA5f8kBa8HeNXRz913onQRuJjHTttKXC+Gkg5qphR
- RHCEr4n7IFP/FyKLGQC2EVGSSMwdu53hIb7NUxDqv9qUBTwrLdRK4naoymyWs2LOjoNlce73q
- m1Xy8mf+ugKgfqypu2vzqX7trcO7JlE5TDkvf8PpnzClOYWKu+CuAFO6vRTTTf68jhQLmAzKr
- 53WyidRYULEpuc3dyk58JqsztdPj6cXF0GZgBgrgiPWfGkE/WiKD/hC/uMjZaOa5ZzpcaQ2dT
- ++tGmyO4LYn6my1wKgx0iVSoZfuz2yDCPgP+sVkxohkhlUWdIzRTNtahQYD174rc/glTEyj+k
- S3xER/IfArmhRfvEr99UX5A9gHEd+dZvqTha+NFj5pGFQbWfcN2G9NZuBGYPTQp9jmMn5ljIJ
- WSTxZ5soPj3pXp0hLCW8DZvinDCHZTYqJLJEwtfXat3tnyRW6rjEpy7OIYDYHuG8lskYH94hy
- FxuInmAQbnvaGgtl8RLK5s9OODi5dDfXg3DbYnSXqLUyDSaVf1OcWmKLi0Q3bq9Mp00BPPBGR
- zlyFEmYO288RW4L4r4e/oDwMFc5O4GlVyqJByv9m88QGk3/ULP6Hcloroo2KLYHv/8De/iRW3
- dijTeCay+P2f3CzuIcSi0tc+hYfR86jr/wBmrZKjk3W3omxDLaXqgCJ/tB57cS+NNaGfPYnw5
- V/RPTvAOwdTvNUhIdS+hquLeTYPExVxS5gbsFPSyMxmzFfvqP4TrTO6Tm4eCEerHySCO+5T+8
- XxNYHEdVRocvMz213BbpXzR8PKySLLwUfUB4Pe4BOkqFHiOun24DMtxSIbbPaDvoH3MYy0gep
- MZAedsHonBD3rD5CVB7Ya1VwxbKppxWaXSdR+ayBNK2JBpejVZHsxp4L4tctm3ZNRiSWjH9ku
- 80pcJg==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2024 21:15:48 +0100
+On Wed, Jan 10, 2024 at 1:55=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The root_device_register() function does not return NULL, it returns
+> error pointers.  Fix the check to match.
+>
+> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-The label =E2=80=9Cerr=E2=80=9D was used to jump to a kfree() call despite=
- of
-the detail in the implementation of the function =E2=80=9Cio_ring_ctx_allo=
-c=E2=80=9D
-that it was determined already that a corresponding variable contained
-a null pointer because of a failed memory allocation.
+This change looks good to me! We could check for IS_ERR_OR_NULL
+instead but this change is more correct and is also how others check
+root_device_register().
 
-1. Thus use more appropriate labels instead.
+Reviewed-by: Rae Moar <rmoar@google.com>
 
-2. Reorder jump targets at the end.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-See also:
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
+Thanks!
+Rae
 
 
- io_uring/io_uring.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c9a63c39cdd0..7727cdd505ae 100644
-=2D-- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -295,12 +295,14 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(=
-struct io_uring_params *p)
- 	hash_bits =3D ilog2(p->cq_entries) - 5;
- 	hash_bits =3D clamp(hash_bits, 1, 8);
- 	if (io_alloc_hash_table(&ctx->cancel_table, hash_bits))
--		goto err;
-+		goto destroy_io_bl_xa;
-+
- 	if (io_alloc_hash_table(&ctx->cancel_table_locked, hash_bits))
--		goto err;
-+		goto free_cancel_table_hbs;
-+
- 	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
- 			    0, GFP_KERNEL))
--		goto err;
-+		goto free_cancel_table_locked_hbs;
-
- 	ctx->flags =3D p->flags;
- 	init_waitqueue_head(&ctx->sqo_sq_wait);
-@@ -341,9 +343,12 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
-truct io_uring_params *p)
- 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
- 	INIT_HLIST_HEAD(&ctx->cancelable_uring_cmd);
- 	return ctx;
--err:
--	kfree(ctx->cancel_table.hbs);
-+
-+free_cancel_table_locked_hbs:
- 	kfree(ctx->cancel_table_locked.hbs);
-+free_cancel_table_hbs:
-+	kfree(ctx->cancel_table.hbs);
-+destroy_io_bl_xa:
- 	xa_destroy(&ctx->io_bl_xa);
- 	kfree(ctx);
- 	return NULL;
-=2D-
-2.43.0
-
+> ---
+>  lib/kunit/device.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/kunit/device.c b/lib/kunit/device.c
+> index f5371287b375..074c6dd2e36a 100644
+> --- a/lib/kunit/device.c
+> +++ b/lib/kunit/device.c
+> @@ -45,8 +45,8 @@ int kunit_bus_init(void)
+>         int error;
+>
+>         kunit_bus_device =3D root_device_register("kunit");
+> -       if (!kunit_bus_device)
+> -               return -ENOMEM;
+> +       if (IS_ERR(kunit_bus_device))
+> +               return PTR_ERR(kunit_bus_device);
+>
+>         error =3D bus_register(&kunit_bus_type);
+>         if (error)
+> --
+> 2.43.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/kunit-dev/dd938a86-38d9-4d62-abd0-1df80395fbbd%40moroto.mountain.
