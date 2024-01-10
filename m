@@ -1,73 +1,66 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258541A86
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2178B4D58A
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 19:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K92IikLC"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id NdmQrcFTLELO0NdmQru0ee; Wed, 10 Jan 2024 19:58:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704913105;
-	bh=UZLX/89kS0mvMTTrsbJHGX+f4iKL5In/qByEVAfVrQU=;
-	h=From:To:Cc:Subject:Date;
-	b=K92IikLCz67DBvdTjNs3xcuUHpAYoUOA2V5gYXplrbCmcPqTHnMYDSmJ5g4Gw86vW
-	 LGS/AJqgFbbs+iC9pJmhgL/by6HUDNgfwlDBb/ZpKyf+fokA27n7VyQiWrmIJeXsds
-	 oqEsurz1Yt0bB30kgi45mGHcfbuwqvtaUuhihN7QrqvlpTs4yE5ql4tn41+u2Re5Lv
-	 ymH8zLrV8WL23sUI2GvJYleIpilN3c95kKipmLoFDCL/15CdQGZaRlOCiIcH1EgQl+
-	 3mTnGKNgVsTBXdwmkctWPc7rA6dusBc8FeIxkHbMoDNPtzIhQJ9le6wIwKdSYYxil+
-	 m5IxxQfB6TmmA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 10 Jan 2024 19:58:25 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: hisilicon: hi3519: Release the correct number of gates in hi3519_clk_unregister()
-Date: Wed, 10 Jan 2024 19:58:21 +0100
-Message-Id: <c3f1877c9a0886fa35c949c8f0ef25547f284f18.1704912510.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Po2SxdMG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704913306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pJpTNHjkrdudfIITkK7u4W2zrdtA79u2wxg+UQ854QE=;
+	b=Po2SxdMGDjgiuVJRRl88FoInPWSv991bkbL2eQKpcT47pRJLR7VxqMwDPyYjl6qEcfZucv
+	sLeHg0Wlr8+QzJZpEsv5OthxxrxOqxeLOcy5xUytEpV8x6zxUMUzlJxWEUD4YIWR0iRQF7
+	gQnYW9gVd74zbeSerTqkjYNT4Q1gZDA=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-587-GkCjAoSgOlOd9KvahLP1FQ-1; Wed,
+ 10 Jan 2024 14:01:42 -0500
+X-MC-Unique: GkCjAoSgOlOd9KvahLP1FQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 270511C060E2;
+	Wed, 10 Jan 2024 19:01:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 395822026F95;
+	Wed, 10 Jan 2024 19:01:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <9872f991-56a8-4915-b9b0-53accd6db0ef@moroto.mountain>
+References: <9872f991-56a8-4915-b9b0-53accd6db0ef@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] netfs, fscache: Prevent Oops in fscache_put_cache()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1788107.1704913300.1@warthog.procyon.org.uk>
+Date: Wed, 10 Jan 2024 19:01:40 +0000
+Message-ID: <1788108.1704913300@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-The gates are stored in 'hi3519_gate_clks', not 'hi3519_mux_clks'.
-This is also in line with how hisi_clk_register_gate() is called in the
-probe.
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Fixes: 224b3b262c52 ("clk: hisilicon: hi3519: add driver remove path and fix some issues")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/hisilicon/clk-hi3519.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  	zero = __refcount_dec_and_test(&cache->ref, &ref);
+> -	trace_fscache_cache(debug_id, ref - 1, where);
+> +	trace_fscache_cache(cache->debug_id, ref - 1, where);
 
-diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-index b871872d9960..141b727ff60d 100644
---- a/drivers/clk/hisilicon/clk-hi3519.c
-+++ b/drivers/clk/hisilicon/clk-hi3519.c
-@@ -130,7 +130,7 @@ static void hi3519_clk_unregister(struct platform_device *pdev)
- 	of_clk_del_provider(pdev->dev.of_node);
- 
- 	hisi_clk_unregister_gate(hi3519_gate_clks,
--				ARRAY_SIZE(hi3519_mux_clks),
-+				ARRAY_SIZE(hi3519_gate_clks),
- 				crg->clk_data);
- 	hisi_clk_unregister_mux(hi3519_mux_clks,
- 				ARRAY_SIZE(hi3519_mux_clks),
--- 
-2.34.1
+You can't do that if !zero.  cache may be deallocated between the two lines.
+
+David
 
