@@ -1,95 +1,89 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58047A7C
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 11:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0C547A6B;
+	Wed, 10 Jan 2024 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="loUTok8X"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40d87df95ddso41797945e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 03:29:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704886172; x=1705490972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H7YcUyivaArKNN7P3cpT7zTW5LfFylXidvbcNKW04c4=;
-        b=loUTok8XGdWBTQf8ZbLrJbAuquN+QJoEjscbGSFuda+9l8XuQCm+AyEClF+KVvvu7U
-         CL0v1SEceZMHCiP6hbKtPnoHBCTknzxVkf/C3gkX4LuvvtXPs0tcTGXHX8A2A1notEd1
-         +u0/PX9Ke96oAYAQTw6URuFBqzHsovs8aPvlvHhLqIzYpidkEm1l4HACYlBR6MH1Q8BM
-         F+OSplJJmj5Ty0P+ideAXkGGEiQSpsKz3pZW/FXS1NkChVUNDMzgnJxDV/P+4r21QOrz
-         ykEbV4SCYu3KCjNXnoxIBNLlSPoYlKlwIUdaxQ/4qTOTjgswH0NF39lgdGXT/csRWpOY
-         kf/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704886172; x=1705490972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H7YcUyivaArKNN7P3cpT7zTW5LfFylXidvbcNKW04c4=;
-        b=jIvrNVgOYUGAOZMp8l0BkHNt+4NbxoJg6No91cjRZYxQ3pJctgbReRFDW1ceBj0+9e
-         9tNdUur8nWn22z+/ZiJgwFLAaqYxaBrizQ79QYKd2b/MJF/VJU415Qa65aDghFH2yMeo
-         zwnS5nYHuAUlb2Is0i1fA0UyYPEq0/7L8N5bycfzLBaahEEC4ZaqJ+nOCWbINgk78LCN
-         vZ6lUyFOSLvXSASoN5GSW4QUecD+nrgEK8vIAYP27h4HDHBqsZ0KfgfL2I1zaoc0wSGV
-         ewu3GvQo7m49bV1i0TDdVqxBSU57tEwPn9asqD8uiBZBO9Go0MOWC+qs4ARVBYc8OLit
-         Z6aw==
-X-Gm-Message-State: AOJu0YxfBEVs2uBVTkHOwtiktv4g25Q1rrYxNt4Jsu4+kyEZqfWI6QCS
-	IpChSTERXndFgWd2e9QVoYoPYa8s4tjPZA==
-X-Google-Smtp-Source: AGHT+IF2nJ1xq0LDh1t59DRO9W33WNdLdKgnpYcZygX3CtNk5YRiVYl99gmUl7qgzZajS3alVpAKTw==
-X-Received: by 2002:a05:600c:3113:b0:40e:532c:7cb8 with SMTP id g19-20020a05600c311300b0040e532c7cb8mr249857wmo.40.1704886172500;
-        Wed, 10 Jan 2024 03:29:32 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id az10-20020a05600c600a00b0040d772030c2sm1882105wmb.44.2024.01.10.03.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 03:29:32 -0800 (PST)
-Date: Wed, 10 Jan 2024 14:29:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	"cocci@inria.fr" <cocci@inria.fr>
-Subject: Re: [PATCH] Drivers: hv: vmbus: One function call less in
- create_gpadl_header() after error detection
-Message-ID: <f3c9e97b-f348-49b0-b9fa-9b519d99d2b4@moroto.mountain>
-References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
- <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Mt803ouA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704886825; x=1705491625; i=markus.elfring@web.de;
+	bh=P0anna4JWOhnimdjUk13w2sXj1/SrIEjxwjDEaNWyfs=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=Mt803ouApvmmTNV+/x+Xs0i4q28VuBqjoQJ7NlE98lZpkFr2clisHXsXJG4L8M4f
+	 jOigLiSkpA2TeueJuBKVx2pqGOw5LAnjgkwYMEbUObx64L/QmwDbcxnrMsxXP4GHV
+	 mi4oZ7SvLjupx5VIbTj7zU2vjWVWbQfeK7IAb+Mr6BmTtrARayn5kLoTOgJdg2Z6A
+	 SuRJU+1dOXCxn5n4kq6My49R2m+UvZijQptKdtWW0ZD/aNtou2AW3A2oTXwQUygLQ
+	 UBfBUdDm145AD0jlafNkOZGcG6rszcTBXvDg4PVYOdX/w/s4Xh8Q/teEbDcV9UtBV
+	 ViTO1ONS9i9MH9pghg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZnj-1qlBWG2STd-00cvO5; Wed, 10
+ Jan 2024 12:40:25 +0100
+Message-ID: <71cd2c67-99a4-4173-8f0f-065fd864f8ba@web.de>
+Date: Wed, 10 Jan 2024 12:40:24 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] lru_cache: Adjustments for lc_create()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
+ =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ Lars Ellenberg <lars.ellenberg@linbit.com>,
+ Philipp Reisner <philipp.reisner@linbit.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <33226beb-4fe2-3da5-5d69-a33e683dec57@web.de>
+In-Reply-To: <33226beb-4fe2-3da5-5d69-a33e683dec57@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FvN7dPgcDHXfSNpzcQS0P6dIUa4iuJ1O5Ux14a/Vy6slkXstFSm
+ i2fGgA9VGN+mDIJF7soCccsr07aCTRytpI+mT+ILc4ZFWP5nL0tdRHb3Ul2KW2Zd+hfjOtH
+ IpDqfB15AUfmtd/igJQglrWxLmNEQLvnSGUJqJHzWA7Mfb24Rbio61GqZpatuYycuhXdXSA
+ XTbqo72jfhnC/+4BCZppQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7RIVCUYl0p0=;SSQc0/FUdDIxV0DAh9oktJT4ZRb
+ wuG7UNJDKzrRhXRBuRofdUk+85zgZRDDbdUxbNHU9qvML9hFZ+g0fdM4Agdv1jv96peWx3RFB
+ fA0aogvIy5WKlRiNQUuxrNLQ7Kem7jEntm6cFO10Z/rpjBWmXZW4zS6iG/SVDDA68tlMCYBeL
+ mNdkc0YF77F8v0cGwucyQ2UuLmEAOk56sIqFovavS7uvz0KrXBhHIvxzqcbFWEJ+WizjcsWGR
+ y/4xdtsxCuJ+qIYOx5SZmkmp1cKwwingGbaQJS37jVLI5atqRGObgtnSekAPDl/ZB+jpQTDIA
+ 2eWdKdFES8ThJflrdBsyE9BtrkRsoaj4Qez89N71pEEy4UadOWiFYS2FNKwvexDm6Xkff7YlV
+ V7OSQCK3D1mIcuACYjC3x+cOPDALag1/MmakhDxx7/X6aEzCgZ11YXyeXDaa+Fuf/hLNaN0tB
+ eYH9Ti9/jDU6EUzoaE2YLIavTt5Tdb6EXoDI+GejSrAEXXEJ5BE1+T+TLa885rvukHqhS9o53
+ O7jELk+A7WJyQBSaxfxj1OIJzFdQLJ83VDaG4dlPyUuX0LYetnXL6prCsQmQpwnLmGMdlEY0S
+ 80/btsDwSuy5U7eKv87SckRoiJ9rOQAcITknRmKWjVOMvWTOX2y6kimsRqiUNqFXJVGQXnm4I
+ ad/GIv3mWXfpr9YPT/Ec90boBxSnmaz0WR165C/eQIXQljuNhbVBsN2vjYciap/vuWDBYZphy
+ gDMPomTIJaXvYKmS/3KT9beixW/wVNzynPdwb5LrIKkiICxUI/XcGG6bUbk2vszzEoh+ITuh5
+ f3KcwY0BhE2rptaFGZ2wCTvkugdYNbVFojuK0GeB/cpxo68eqjUULPIbvp5U3cSMcU5nfS4tr
+ x3NaM2mj+Q8+lwI+2n52HJMALzhdkCG4g+PBPOUF6M9wBUljEXLW+QSKJfDh/Gsld4kuX2zt/
+ 4eszRg==
 
-On Wed, Jan 10, 2024 at 05:41:00AM +0000, Michael Kelley wrote:
-> From: Markus Elfring <Markus.Elfring@web.de> Sent: Tuesday, December 26, 2023 11:09 AM
-> > 
-> > The kfree() function was called in two cases by
-> > the create_gpadl_header() function during error handling
-> > even if the passed variable contained a null pointer.
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Thus use another label.
-> 
-> Interestingly, there's a third case in this function where
-> "goto nomem" is done, and in this case, msgbody is NULL.
-> Does Coccinelle not complain about that case as well?
-> 
-> As I'm sure you know, the code is correct as is, because kfree()
-> checks for a NULL argument.  So this is really an exercise in
-> making Coccinelle happy.
+> Date: Wed, 29 Mar 2023 15:30:23 +0200
+>
+> Some update suggestions were taken into account
+> from static source code analysis.
+>
+> Markus Elfring (3):
+>   Return directly after a failed kzalloc()
+>   Improve two size determinations
+>   Improve exception handling
+>
+>  lib/lru_cache.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 
-Coccinelle is a kind of tool to search code.  Markus has created his own
-search.  It's not a part of the standard Coccinelle scripts in
-scripts/coccinelle/ or a CodingStyle issue or anything.  It's just a
-matter of Markus prefering one style over another.
 
-regards,
-dan carpenter
+Is this patch series still in review queues?
 
+See also:
+https://lore.kernel.org/cocci/33226beb-4fe2-3da5-5d69-a33e683dec57@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00110.html
+
+Regards,
+Markus
