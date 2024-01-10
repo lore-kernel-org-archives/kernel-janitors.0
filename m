@@ -1,29 +1,29 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0E6482E0;
-	Wed, 10 Jan 2024 11:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3074747F40;
+	Wed, 10 Jan 2024 11:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u3oXSrGq"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JhZjCYhS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704887119; x=1705491919; i=markus.elfring@web.de;
-	bh=nO4zB4EcAAo5LoPaa+ofqegpVkTeHLcDqcmcZocT6mE=;
+	t=1704887327; x=1705492127; i=markus.elfring@web.de;
+	bh=LTkB4g/EgdPEET+xqwliNWj/wGfk6xQ9qpWM5jUj2tc=;
 	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
 	 In-Reply-To;
-	b=u3oXSrGqMkqB+Fz860SVm583IZDXAo82TtA0+q3MKm1sp7Mpsy9OFLh8bwjc+rdU
-	 vUHT7wYN/O+gZVn0C4ndzUf7VLdiM/Ix6VM9O5H9juPlV+oKS4unydvUvtMaj1b9U
-	 ZfF1tVzlhYCdvpAefQTkDBunWeu8mwX59g2tlURm8c0NC4qI+8uQ6bCZNP+vBIRSs
-	 1prbm19eGB4HkxhOl2oYlVtIcg57OZVeLLaOJiot544mB0HxiyPoSeoOBcHcoNLgr
-	 5E4zTa5pUaUxL7N7r+oHTEWK2EbQBemOWcJePTYZCRktkGiCAxCHig+NfPCJbOOtS
-	 mskQwOQuFBtMhTFz9g==
+	b=JhZjCYhSzB5Non1e7VG+S9wpK2Ggk1YkD5CAWjhOgSu+L+CnupAZVW3P465sG5Rt
+	 VCGQUs4q2+EnfC693AMDacbf0yZfoT/JrHCk4uOdD7BP9MX9uIzRvdOmBgfm8zdjf
+	 MIlP0Y75D2kzXiT6jvlk2E6OnDCxkssUEdNsRFquOmEC4+e6GkLH3e71OCHF/j4OJ
+	 7SfBWerQrp64098xO4m2SQzglS1vI1VASaH03Kay4nxQtqQZ3JmFzqJ7ERgsumKPk
+	 GRL3FD6Nk/x3bPUMpa3WsKpJJzGLBevkjbguF+1AArqS2sisRwQ7eURHj37SSjudF
+	 jw3zkM64d5dy0yeqcA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Zo6-1r0O0B1QA8-00wcIt; Wed, 10
- Jan 2024 12:45:19 +0100
-Message-ID: <30a0618f-e115-47a5-89a9-3806c75e604d@web.de>
-Date: Wed, 10 Jan 2024 12:45:14 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mfc4g-1qhck32AZ6-00gBHR; Wed, 10
+ Jan 2024 12:48:47 +0100
+Message-ID: <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
+Date: Wed, 10 Jan 2024 12:48:46 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,62 +31,55 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] perf/x86/intel/pt: Adjustments for pt_pmu_hw_init()
+Subject: Re: [PATCH 0/2] ARM: Adjustments for init_atags_procfs()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+To: kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Russell King <linux@armlinux.org.uk>
 Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <d9c673f9-2c32-282f-f261-b4d5762409bb@web.de>
-In-Reply-To: <d9c673f9-2c32-282f-f261-b4d5762409bb@web.de>
+ <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
+In-Reply-To: <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9BlZaD60AkKnVzOB54qG8EG/JliLvKzC6Ve1nFkUHR+QCcwGiDZ
- zcVrGWtqV2ap3b9QBhbk+w+quJBKOx/wP73RnVZ6RfU+Ezt/KQWnTJSlEBG6pU6qMXBEQIW
- FAcN1pdTlCdE7AzUOjIBFh18XJU2FlI5M4YXR8Cv/sY5o8VIsW/kyr3L+hmTX3YQw2tpyYK
- aQtS0ZIZxbLHWlJGvquTQ==
+X-Provags-ID: V03:K1:fu16EWDvzTMZHLAc4WQ6rkStfY9mvBZxuOny3HBgTQQDY6Gw6uq
+ JdJuHrBQm+zOJRxWN4gsCMiJhlj1jPrxu/qHhl2E1nYpT4OuhJhE61RcDTZ8+10PJ2N9jsZ
+ dXr8wE62fo84k/VdDcoXljA1Vl4CTco4PBQWzvTfpR96W8xQp23yEI4aiEqiT9dJH8UNViS
+ LmvoOj0AbxycHXmeFbpNg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:O9VFBO7l3do=;GBZDJI70NujW61S/P9XwBCmdHbu
- 2bRvmHWf0e0fDratRYKhLsLtTYSwpU8BmXRn7aw9ZbqFEbU2YwOmeOhPyrKoo7tf1gyCrQiDz
- Q2+mFaqsWflYmyAh6qx6hCr6OIfphmokWLPTgYXBrTUqQLzYzw0EgUjlJ2Wtn4EgjvmoI5xBI
- +S/PzvsvyfgTgWBI54KZjd+njBhKy4PQzM2vYwPq3fD9oCcCidLJxLB0PTOk0SfLU6dXQJHjw
- mTtWuyB6fUTUByJsWKLyNkJwOA+HfQuESpeBk6gcrH0pX3CosBYsWrRYOsqjd4y/kELaf/u1A
- nk1IXegYvWcEWxwIzJ2UeBJ1AUB4t/KE6W5B0DbWaq+A/NHcfTRzSJdsS0kR0XZC7h4Xc/fhe
- 8pwLnE6JwIRNMHaoACPvntPUSOa+x9pavCXASzqy/+1qsJqPvCG6fB74MaOh3+XNSXlRQxehK
- CQgmrrkMHRrrjdzgeBsbEbh+bqtk7FMRrbGsyR+QXz3JiaK0i/XECay8dFA07eFiR6byODpAq
- orrleJmZw0NuVd7qXdKKgseNzZASQn9RDTfehn2DNbvzcYij+W2KykM8vBAW0J/wdxYGF7iUE
- mkdpmWQwQkNyDzO1/SQ8EAjauyDABOOpqXYPHWMPnkgG0NgCtlt1S5fWWXYYlRIN6VLe5mtQ3
- XTQzWNEadVSJ496aZg51Spho7CA6zSocsD7P5LVCYG9uorJ2sKvnzoZ71aXJMLadEq52c7CHS
- 7GhN8wJcuGFAVmcgsh6ZZ/t+L6UvF09EDZxKyVoF2YnQ5yaqeljXtzpO8+Cojr//G6kZtv+Ec
- e82DgdtpvjdPolEK7jZP74n27r8S2BVZgCEzHZiju7xBDxU2H8WVPoXhWOmLcV5+8t02DPM83
- KnETeZdLHyJ9CJvgOhaSZ5msYOYy+0w5eNsEP13uYFW+SkxSxx97++UMAlvmo09eRvrwXCh0G
- WjMMnqAB7iy8HCHBUAbT/pEiFNc=
+UI-OutboundReport: notjunk:1;M01:P0:zSs1X3od1UM=;50UtiU5PEFqbpBp+t0vuIWXLgyW
+ a3mMcTu2My+XaS28YjykZmKNbHVp24MtqrnNhK+ddJ2li1Q5KNEZyEFD6f2HPOfjb86p6FguU
+ s8bo45HprpIpVyhCleOoyfsYLChl+XgSBu+3q9ZPlh9QeniUGCTGPDs0BOXx1O0PVfZEB6OWi
+ vfB/4cTAImcQWXyiiK9vayKsgcUdwUfEgN6nV91AMyqkhAdNsQ2qwMfxq7RDsDCxWCwReJQw0
+ Bed5p2d8EDWcWRvee7pxw0flHoEKcIBVd9x66ZPnO+oZK4IClEHEGHVuZ7/1LtUcnLtJp9lKS
+ tFpGDpP+t2vRnmWaTbwu9eHnzuXYqhqeibVhnRSWli5zWKvPLI2hnk389roaSsesvscmi1s5F
+ 3KhmMY6IyOyD7fSNkt6LBNNyubEoBgf1f9AsGFhPqe1hW+plsQGjhE2W2fu2vTraW83iVg5gJ
+ X1fmvC4TBsUHg1r8Bv2CkJKpQHwC00rgaSIFaVgDXd92CtFMsCpWpIS+cozdUzq5PYj2mLtCy
+ nGjv60ijz0A7NoWo9lfaiO3tgJ3KV+9dxI9FovabRXf+Ryj/NOUFyC/E5PXxpCWwty4l1WLIR
+ yavguvwZikEBC3kLONw6BXD38J2dGaHdbUh263/LnVLjL9XSpjdOvU1oLSd92C2ilqkj2b+q9
+ 2AMtItNL0DgJ4thBlvMZB2c8hgyPRfry4t7G4Hj4NVH/Ak372LCoo/9dQZkdP/nLdFtEHH9LE
+ /c7yNQCF0h+aY5t0SyXt0G2Uw63/PbQ7QnHu2kTCMVja3DWy4QftPTIyl+TgANihsqex57wTX
+ dsK27N34M+eMgIeIMFT/HpICkH5SBjJ53W7JM1MLDr56zn1o81WsJFYn3b3WiSCyrgmjTGpyW
+ lxIfcGEQLeWuGjUbSKFYC5KUsSxKkfs8tzo/cTUIMGmlak0ZxF6nW2AXqIKPPHci5Cw0dukaG
+ r+nIpQ==
 
-> Date: Tue, 28 Mar 2023 20:34:32 +0200
+> Date: Tue, 28 Mar 2023 19:06:32 +0200
 >
 > A few update suggestions were taken into account
 > from static source code analysis.
 >
 > Markus Elfring (2):
->   Use -ENOMEM directly for a return statement
->   Return directly after a failed kzalloc()
+>   Delete an error message for a failed memory allocation
+>   Return directly after a failed kmalloc()
 >
->  arch/x86/events/intel/pt.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>  arch/arm/kernel/atags_proc.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
 Is this patch series still in review queues?
 
 See also:
-https://lore.kernel.org/cocci/d9c673f9-2c32-282f-f261-b4d5762409bb@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00101.html
+https://lore.kernel.org/cocci/2258ce64-2a14-6778-8319-b342b06a1f33@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00034.html
 
 Regards,
 Markus
