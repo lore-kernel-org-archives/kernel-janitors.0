@@ -1,73 +1,57 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3490481A0;
-	Wed, 10 Jan 2024 14:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911E4BA80;
+	Wed, 10 Jan 2024 14:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LRbkosC1"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wg+JdhHtLxWgbjYOBxwa3B4vfuHrxB0uyCssl4auPW4=; b=LRbkosC13u2I7bkYFIw4sqCyvh
-	9HCHCRVLUn3GBBOt52/uPG37UrgeiN1JevHWLK6glkyC15bOj0tTvERkX8qBYy/r+u2zIuRLz5b8Q
-	p2VvNr89OLMxlrg7bthZTogLljM2k4P1sYdRlA5Je/puq6WSYJ94gkjnvxUHPGO/hRbZ+AZi+JY0i
-	alIIb03exo/yAlz485/n8ggvDbYdDFYtt2MBRwiwHFau6fahmZIAeGnewD/UO8EvwFQQZFK1xuRoy
-	E9toHUJCoAM+QI4o1qIpC8uguGsnbfPBDk/GbUDFHpLfcn2/TWUh24xywA7oPSVafjAODbp57xu0b
-	xlSIayUw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39980)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1rNZF1-0005Um-34;
-	Wed, 10 Jan 2024 14:07:35 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1rNZF3-0005My-3Q; Wed, 10 Jan 2024 14:07:37 +0000
-Date: Wed, 10 Jan 2024 14:07:37 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [0/2] ARM: Adjustments for init_atags_procfs()
-Message-ID: <ZZ6kqV79ckeZ7JUj@shell.armlinux.org.uk>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
- <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
- <7dd19987-6590-4756-a929-1ff01503ad1c@web.de>
- <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
- <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
- <ZZ6R6KSQo9ph3ARZ@shell.armlinux.org.uk>
- <09c4cb2e-967b-4d0e-b5c6-f959e80290d9@web.de>
- <ZZ6gq5sOFf33GhM7@shell.armlinux.org.uk>
- <89406360-b6ee-455c-a575-031b87cf41ae@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bktM5zWa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACE5C433C7;
+	Wed, 10 Jan 2024 14:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704898316;
+	bh=JxNVaKHwkBaUWUxhyRTq5wm+F4uKwNW37fw6ZLUIqhc=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=bktM5zWaVWAE6uFFo4z3nDnaQF2iIEfL+k5MasboLTIUfd9t8wFEcGtd38vGWQBsZ
+	 GeyOf5n7Qf1TlbPf3DWRhtilL+uzsNkLA4/rQCfNd55jgKYqmPqKqQxpmrsrUvDTm9
+	 qfqmwVVzEy5MlMiHPbw7FaeguOtCzogufKZ4h4YdrJmVFV73xXF8++fccz7hcj68RY
+	 uYBvUJ7fFJwozwB8/wowQx6NzEvYyN4cti+lbffAdiRBDjpXiIqkvw2JnBpsEiwtzv
+	 DBemw9t8xtNLihcDbBXOKSMKDjpX2DixEEo23nm2T03muuYYN1FAx1aOQcmbEKe27T
+	 Z60q/IH4gWoSw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89406360-b6ee-455c-a575-031b87cf41ae@web.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: rtw89: mac: Fix spelling mistakes "notfify"
+ ->
+ "notify"
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20231220141831.10063-1-colin.i.king@gmail.com>
+References: <20231220141831.10063-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <170489831370.471554.11120935204830262187.kvalo@kernel.org>
+Date: Wed, 10 Jan 2024 14:51:55 +0000 (UTC)
 
-On Wed, Jan 10, 2024 at 03:00:11PM +0100, Markus Elfring wrote:
-> >> Are you going to pick any patches up from linked information sources?
-> >
-> > No. Did you read my first reply which told you how patches get applied
-> > to arch/arm? If you didn't, your patch won't get applied.
+Colin Ian King <colin.i.king@gmail.com> wrote:
+
+> There are two spelling mistakes in rtw89_err error messages. Fix these
+> and also add space between [ERR] and message text.
 > 
-> Do you request a resend of affected patches here?
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Welcome to my /dev/null mailbox. It has plenty of space. Feel free to
-continue sending your claptrap there. Rest assured I won't read it
-anymore.
+Patch applied to wireless-next.git, thanks.
+
+6aeaa379291b wifi: rtw89: mac: Fix spelling mistakes "notfify" -> "notify"
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+https://patchwork.kernel.org/project/linux-wireless/patch/20231220141831.10063-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
