@@ -1,56 +1,53 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F0E4CE05
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337134D580
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s3NRXKIX"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40d60c49ee7so50762515e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 10:52:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kac6Ecfx"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40e4d64a3fbso26902845e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 10:53:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704912752; x=1705517552; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704912784; x=1705517584; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4C4bIL4ANcAUBqFfK7c1D7Y+6k3toeGjRShUZaLe0dA=;
-        b=s3NRXKIXexYfgny4Sdf0KCpf5nJTzA3LFhr5p54tzXLd4IM7JuiNH3qDXg1Rtm11Zb
-         o5Cu4SkhsgCH4Hu3iW8IGcSM/lBs3JE31ffxIjZfXHwTOEB9RZT0T0ar/31hudFmhM8+
-         92Pc6u3VUzxDyS4C5h6xl9XCaP56HG6CY9pLrJqVR9lMLiJdcm4XEX9Zb+L8JoM2hWDs
-         NTeQjYZPYMAcxxHLGBDUsHkCO4lEgXQ5+pz8sZP9qnMZ1BL85orzApkkn2HHVjgSUuvq
-         lD1U0dzBI9TY/rY1ILCkN7bV5wfYLyd+6nY0I8L1vWcp7IGiWDU+DCrxQ+zrqh08wA8A
-         hasQ==
+        bh=p8Udsj305jfYXf+ANpLqSmYsA6MVtaE/P0L4mlkgDYI=;
+        b=kac6EcfxexHE+TPOY8F6yMMroPMrx4DVbQlE3xgum2G07zKztN2trWbVeDrKdvatph
+         3SxyVbGDcmn8lAZ1wFp1snw/E64/sCCxcQpr8s+q9VO4NZfC7Xssh1zFMjqaQEES2pXs
+         P7v/xNqS/hqn+EjTM3oMZmhxUL+2lHd+19QdKql/ir3H94Vu2/nNbL/s0dg+Zg5i8YJP
+         vqayqO4VhgCVd7LvTHObjXNYv5uuSiaIUFcTP0QpEixSKTNGO+ESqoZchGmf8yEWQT7l
+         uDR1k+LEHE2dgp1eVxFgfFYk0ZxYqnBIMhzxEFHXijogsLPbfzvJXZxpgl+D5+Oqp+cu
+         mXqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704912752; x=1705517552;
+        d=1e100.net; s=20230601; t=1704912784; x=1705517584;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4C4bIL4ANcAUBqFfK7c1D7Y+6k3toeGjRShUZaLe0dA=;
-        b=WrDuA30d4iGWMWTConUlsvoj1WOxOpGMQlNtg/TvDkrEgRCjFfFMNUbSJkjJORAE5M
-         Y7/Gh7UD9Km5B2LwinzWmpQlc2WGrsNtEmwGbkjxS6eKcJhuNNVeCXR9+Mbu+tDGa9kK
-         GQmuta/QR+BRPHqwnTP2cZu6JmiNRjyLaaUl+UaTo6cFt41iK4ppgyyIzp5vYZyNj/mb
-         aB79vozAPsWb8KsYabnY5wSAPxsVWRa/J0w/CK5q4HIE96O0E1NcPU825un1OjxP3Ttd
-         wRCWoALxybE+IXIGr+b/+NrvDBD1JwPXFq0hHK0IxLUm3CGcY/WTgUVfUKx1W2IwCN5q
-         QLKA==
-X-Gm-Message-State: AOJu0Yx2MGiMBaZVRWoUmjmgSl86JPVhoR5c+CRds2odImMsSmeTFSBc
-	kNOghK76VfGVbI7v5Hgj0dvzNyZ2Aiu5DA==
-X-Google-Smtp-Source: AGHT+IHWUnbSg+Ja7LmWlDIoVa6MTShKY21FoSDQF6YRwXqrxGE5OpjGUZIwe+yqnWlPY9dvQunCNA==
-X-Received: by 2002:a05:600c:19c7:b0:40e:4f80:4081 with SMTP id u7-20020a05600c19c700b0040e4f804081mr811864wmq.71.1704912752090;
-        Wed, 10 Jan 2024 10:52:32 -0800 (PST)
+        bh=p8Udsj305jfYXf+ANpLqSmYsA6MVtaE/P0L4mlkgDYI=;
+        b=Aj1B+iwa17J4VgGvk41R6ase5Sq7vvOoqQAK4NVXULJ+10ii6DWFvwkP32hCONoB1e
+         SIArTW7H40k1KglfxfLd/Zeg0yDASEPu2aBRLQOB6/a2CDW8Y1ILr+rH77HS25PDlPPy
+         RFOjHgiFcgM/YahSPJTG6fgmrhtgPezr/Zn+flsZHPwWgQt3jGY2P9YnI8NKssglJ/lD
+         wZuqWJLzGqCrY0Kxt3TVUov/3HwJla7PRonXsVow5tQ5Uu60f1n0Lr33URciY71elLhD
+         EtB9abVIg4zlTjJ1alNSh/AWnUHXGq/l/xTVHbMlOWdu2l5To1CC5RwaXUdB+oudWH0z
+         Pz/Q==
+X-Gm-Message-State: AOJu0Yy7Ju6nKrUMGprznSZYphWoQZHCTR6xhei6TRbaeWipmYTp99uZ
+	jJopNAdWyFFHjsBLrekF/MWWgNsXpRx4XEBwvW9XFB3fYsM=
+X-Google-Smtp-Source: AGHT+IFMqicPz1t0QvAqV4wJDjMeK/H8oTRRuHT1ganju3XBJ11l6ngH9PTevRnk8K+l3J6EJRTxBg==
+X-Received: by 2002:a7b:c8d8:0:b0:40e:555f:12d4 with SMTP id f24-20020a7bc8d8000000b0040e555f12d4mr806449wml.91.1704912784519;
+        Wed, 10 Jan 2024 10:53:04 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id fm25-20020a05600c0c1900b0040e54381a85sm3116358wmb.26.2024.01.10.10.52.31
+        by smtp.gmail.com with ESMTPSA id n13-20020a05600c500d00b0040e5a0515aesm1183372wmr.14.2024.01.10.10.53.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 10:52:31 -0800 (PST)
-Date: Wed, 10 Jan 2024 21:52:28 +0300
+        Wed, 10 Jan 2024 10:53:04 -0800 (PST)
+Date: Wed, 10 Jan 2024 21:53:01 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rengarajan S <rengarajan.s@microchip.com>
-Cc: Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: 8250_pci1xxxx: off by one in
- pci1xxxx_process_read_data()
-Message-ID: <59f8aa13-3f88-4174-8e20-aa4467e7adac@moroto.mountain>
+To: Hans de Goede <hdegoede@redhat.com>, Henry Shi <henryshi2018@gmail.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86: silicom-platform: clean up a check
+Message-ID: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,39 +58,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-These > comparisons should be >= to prevent writing one element beyond
-the end of the rx_buff[] array.  The buffer has RX_BUF_SIZE[] elements.
+"value" is either non-zero, or zero.  There isn't a third option.
+Delete the unnecessary code.
 
-Fixes: aba8290f368d ("8250: microchip: pci1xxxx: Add Burst mode reception support in uart driver for writing into FIFO")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-From static analysis, not testing.
+ drivers/platform/x86/silicom-platform.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/tty/serial/8250/8250_pci1xxxx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_pci1xxxx.c b/drivers/tty/serial/8250/8250_pci1xxxx.c
-index 558c4c7f3104..cd258922bd78 100644
---- a/drivers/tty/serial/8250/8250_pci1xxxx.c
-+++ b/drivers/tty/serial/8250/8250_pci1xxxx.c
-@@ -302,7 +302,7 @@ static void pci1xxxx_process_read_data(struct uart_port *port,
- 	 * to read, the data is received one byte at a time.
- 	 */
- 	while (valid_burst_count--) {
--		if (*buff_index > (RX_BUF_SIZE - UART_BURST_SIZE))
-+		if (*buff_index >= (RX_BUF_SIZE - UART_BURST_SIZE))
- 			break;
- 		burst_buf = (u32 *)&rx_buff[*buff_index];
- 		*burst_buf = readl(port->membase + UART_RX_BURST_FIFO);
-@@ -311,7 +311,7 @@ static void pci1xxxx_process_read_data(struct uart_port *port,
- 	}
+diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
+index 6ce43ccb3112..5cac698bf98d 100644
+--- a/drivers/platform/x86/silicom-platform.c
++++ b/drivers/platform/x86/silicom-platform.c
+@@ -258,10 +258,8 @@ static void silicom_gpio_set(struct gpio_chip *gc,
  
- 	while (*valid_byte_count) {
--		if (*buff_index > RX_BUF_SIZE)
-+		if (*buff_index >= RX_BUF_SIZE)
- 			break;
- 		rx_buff[*buff_index] = readb(port->membase +
- 					     UART_RX_BYTE_FIFO);
+ 	if (value)
+ 		silicom_mec_port_set(channel, 0);
+-	else if (value == 0)
+-		silicom_mec_port_set(channel, 1);
+ 	else
+-		pr_err("Wrong argument value: %d\n", value);
++		silicom_mec_port_set(channel, 1);
+ }
+ 
+ static int silicom_gpio_direction_output(struct gpio_chip *gc,
 -- 
 2.43.0
 
