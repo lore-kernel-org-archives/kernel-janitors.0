@@ -1,88 +1,73 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BC54D5B9
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258541A86
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d32j8Kd3"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e43e489e4so51075335e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 10:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704912926; x=1705517726; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lV56HHPvogh+5biZ9cxmf8UKMIbrPi47569Laf2Liq8=;
-        b=d32j8Kd3YFkahjDswf4DMAETaDnlxGXtOlejyaPPKBUtqu2q0XWewNf9D2H/5MRb/a
-         klkYHjPj/nRy1QX22AUiLglogfUHfnyY2aUS1tOl6JvTMs+HS0SzBwf0VGAwS32kZwQ5
-         NR6Ix2XhnRUnjheGeucvSjS0ubs7eYz1ixJMxZQHcqUea4ZLoxr6+Bl0Yo0ltsludW6Q
-         C4owdJftqI3js5ZP2qd2qqIarFdas77b1fhuFv+fIxkAEYMl9avmNIxsaEyrglYXPixU
-         kzr8XW4rad/ilntMP5ZgUMQ8kg/Ssp/tgfdeeMxAbXUXwnPwYe2/Fb1D/S5kUQNrgIFQ
-         n0Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704912926; x=1705517726;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lV56HHPvogh+5biZ9cxmf8UKMIbrPi47569Laf2Liq8=;
-        b=VY2+zRQ0sz2w85UWCe/jHzfVcR5vvJ9lGBFVvN3eQBY06uktcR3v8HaOBGtxAAYpzq
-         o2/utPeBWi0LY00uX5+xHDhpXnksOd9SgdJF2ao+XZkdbZPZSfIcVsN+klTurCnhtdJY
-         uI2fosCzQhUk5SHEDeJbqOvUzn9KVOkfsqd9EsgGaP9Lh3j40+kVjHTYqw4gKOY2+bVd
-         OB4+qEwRvqj+AhRR5Llv65QxevHHBbLr6MgA3+QoXrNmgtWhyvtsHRVblsH8SLtsDCFj
-         k0VVulpQavfXhxC1bXXpwf2yixmrjtj+bm9td9SGVxMiubOcjyxmkuOD9oU0qUxQ3ZFP
-         Y4iQ==
-X-Gm-Message-State: AOJu0YybFGSUPnvVVsyKlTjsomaabs0HmUQVJvjJ0tJaI3lCgUEdW+lR
-	NKtjZ+PH+aunajr4n5OSsRbuijdT6S3TLA==
-X-Google-Smtp-Source: AGHT+IEyQfEjny2UIgLvyyO/XaQhfliiz8XN1V0+gJkWSFVvUtdDc/2P7Y8p5KvXAASPa0T3jX3GCA==
-X-Received: by 2002:a05:600c:5405:b0:40b:5e59:ccdb with SMTP id he5-20020a05600c540500b0040b5e59ccdbmr981187wmb.188.1704912926681;
-        Wed, 10 Jan 2024 10:55:26 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id p16-20020a05600c469000b0040e39cbf2a4sm3131306wmo.42.2024.01.10.10.55.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 10:55:26 -0800 (PST)
-Date: Wed, 10 Jan 2024 21:55:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] kunit: Fix a NULL vs IS_ERR() bug
-Message-ID: <39b4278f-35d2-4071-a3aa-ec49705272af@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K92IikLC"
+Received: from pop-os.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id NdmQrcFTLELO0NdmQru0ee; Wed, 10 Jan 2024 19:58:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1704913105;
+	bh=UZLX/89kS0mvMTTrsbJHGX+f4iKL5In/qByEVAfVrQU=;
+	h=From:To:Cc:Subject:Date;
+	b=K92IikLCz67DBvdTjNs3xcuUHpAYoUOA2V5gYXplrbCmcPqTHnMYDSmJ5g4Gw86vW
+	 LGS/AJqgFbbs+iC9pJmhgL/by6HUDNgfwlDBb/ZpKyf+fokA27n7VyQiWrmIJeXsds
+	 oqEsurz1Yt0bB30kgi45mGHcfbuwqvtaUuhihN7QrqvlpTs4yE5ql4tn41+u2Re5Lv
+	 ymH8zLrV8WL23sUI2GvJYleIpilN3c95kKipmLoFDCL/15CdQGZaRlOCiIcH1EgQl+
+	 3mTnGKNgVsTBXdwmkctWPc7rA6dusBc8FeIxkHbMoDNPtzIhQJ9le6wIwKdSYYxil+
+	 m5IxxQfB6TmmA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 10 Jan 2024 19:58:25 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: hi3519: Release the correct number of gates in hi3519_clk_unregister()
+Date: Wed, 10 Jan 2024 19:58:21 +0100
+Message-Id: <c3f1877c9a0886fa35c949c8f0ef25547f284f18.1704912510.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-The kunit_device_register() function doesn't return NULL, it returns
-error pointers.  Change the KUNIT_ASSERT_NOT_NULL() to check for
-ERR_OR_NULL().
+The gates are stored in 'hi3519_gate_clks', not 'hi3519_mux_clks'.
+This is also in line with how hisi_clk_register_gate() is called in the
+probe.
 
-Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 224b3b262c52 ("clk: hisilicon: hi3519: add driver remove path and fix some issues")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-It's a pity that there isn't a KUNIT_ASSERT_NOT_ERR_PTR() macro...
-
- lib/kunit/kunit-test.c | 2 +-
+ drivers/clk/hisilicon/clk-hi3519.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index c4259d910356..f7980ef236a3 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -720,7 +720,7 @@ static void kunit_device_cleanup_test(struct kunit *test)
- 	long action_was_run = 0;
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+index b871872d9960..141b727ff60d 100644
+--- a/drivers/clk/hisilicon/clk-hi3519.c
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -130,7 +130,7 @@ static void hi3519_clk_unregister(struct platform_device *pdev)
+ 	of_clk_del_provider(pdev->dev.of_node);
  
- 	test_device = kunit_device_register(test, "my_device");
--	KUNIT_ASSERT_NOT_NULL(test, test_device);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_device);
- 
- 	/* Add an action to verify cleanup. */
- 	devm_add_action(test_device, test_dev_action, &action_was_run);
+ 	hisi_clk_unregister_gate(hi3519_gate_clks,
+-				ARRAY_SIZE(hi3519_mux_clks),
++				ARRAY_SIZE(hi3519_gate_clks),
+ 				crg->clk_data);
+ 	hisi_clk_unregister_mux(hi3519_mux_clks,
+ 				ARRAY_SIZE(hi3519_mux_clks),
 -- 
-2.43.0
+2.34.1
 
