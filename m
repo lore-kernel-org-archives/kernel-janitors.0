@@ -1,76 +1,94 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5347F7B;
-	Wed, 10 Jan 2024 12:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EE748CC8;
+	Wed, 10 Jan 2024 12:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Hiutukme"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kTy81ad9pKvtG9ddZ38Ph0EzVsfouY5XMECMPqCF5ZQ=; b=HiutukmeGHcFQXD7yqG1H/8syS
-	TscaDe5jgVUGUAcam3tly4Cnmr+g+DfNvWh690STzoXL+eygLzGgoSDUssm+LfAw5zVEKoowUUU0E
-	xg917ouaRSv3XyYmGggxggwLCKr5QBVKe0xnUHyOQ3CdAC8CRYJ/UePsEnI7Xfps8x28kCA+kwsXs
-	T8WZSCz29kxh3yXb/kOE9KjJ9ZF4sqF5ALi6f/BmQ9RkwcCSecf+cKoF7cwiJbdjahvTGQAM8Aekc
-	yxrixBLKL4K5+KC4RKojB7hSxifDQZVpdIvUlXrr0VRokXwymm2naFrNf2S44yV+INcDePolYuSqA
-	Y1sZXzAA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46746)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1rNXzZ-0005Pc-1Y;
-	Wed, 10 Jan 2024 12:47:33 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1rNXzc-0005Jz-8s; Wed, 10 Jan 2024 12:47:36 +0000
-Date: Wed, 10 Jan 2024 12:47:36 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [0/2] ARM: Adjustments for init_atags_procfs()
-Message-ID: <ZZ6R6KSQo9ph3ARZ@shell.armlinux.org.uk>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
- <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
- <7dd19987-6590-4756-a929-1ff01503ad1c@web.de>
- <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
- <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeUMpNzS"
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3bbebe6191bso3732058b6e.3;
+        Wed, 10 Jan 2024 04:49:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704890953; x=1705495753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REhGpdroa6cBxeVt6/ySf42exMJ/bES9CjOdzQq6zdU=;
+        b=UeUMpNzSCgb0R+9pBXfgAjxfQHSpKDdXbGSYzWtUZyBZF6ykGUbETzQaMz+wIIJ1F3
+         1QVM2cpppQEwoQjC75Iz6PM7gRTUk61AlKfBq2vB0QBoYkUT7e08+W02f8kaAi8BRcv3
+         +WWzPeIUM8hg0oYkmzbFto3f8WGhSE6UyDdh93hx1mjmK9fEUAgEB4JADf4XxoTWL4T+
+         OhOGRCRySuYtGWqoyDXyBfVllKnkaAHjmaDusbk77pmuQp6iIFYFEVbnbOl23+65h3C1
+         utErjhYpwDg/CWFn1WTirUykpTG8F2WcJXEasqX5/9EWE1k7lfjyVF5elUWTqya3C/Xv
+         yMwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704890953; x=1705495753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=REhGpdroa6cBxeVt6/ySf42exMJ/bES9CjOdzQq6zdU=;
+        b=n9FTWF7JJgZVL4vVphhbVk3F0RSdyGuohH5awL0vxIDd1ru5mTO/uCfKTJkVJ4KA/D
+         vV57eTQX4ze851Z70q7xopnLhs87/Fl2sE+z0+85+ERxPfYEMhIz1HybQUzzagSf5gzf
+         9h3rznVNLmI8oS74avt7fB53F4ygj8j2hwsDrfwUWIIdoG6lWFX3UBOiZqdmXOQ3yngx
+         0Iih8L20sOweKcwnVCTeX3H8oNQo95cTAsrJPSpFz4oiOtWuZIpmc7Hc3ErJOPvu9/MF
+         ME/nnYumiuvNwDZcOyY1aMSjyWNRZ+fzqD7OKtWZtGmpYrxEk+1R2YjL5AemC8/YNhQE
+         goPQ==
+X-Gm-Message-State: AOJu0Yy/Luk5Tky3wj5NrRWkFu72z2/an/ZPo7NyzOpH1HUJoCBKJKOI
+	rkUvT8B3jUVaejRuZsdllPRI1gj3Sob812z9WIU=
+X-Google-Smtp-Source: AGHT+IHvA530Y3zhfFAw3i/+1nMbsoG6/W9iThS7KUwM8hcmn1LZ4rYFri6JhNWTA+KPK13EjF1bQC0cpqciA99E/tE=
+X-Received: by 2002:a05:6808:f91:b0:3bd:38b9:64c3 with SMTP id
+ o17-20020a0568080f9100b003bd38b964c3mr1266243oiw.61.1704890953655; Wed, 10
+ Jan 2024 04:49:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de> <87b65f8e-abde-2aff-4da8-df6e0b464677@web.de>
+ <05d334af-1a0f-4498-b57d-36a783288f07@web.de>
+In-Reply-To: <05d334af-1a0f-4498-b57d-36a783288f07@web.de>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 10 Jan 2024 14:49:02 +0200
+Message-ID: <CAOQ4uxiRaTQyT1nxeRD7B89=VuA+KKEqi01LL1kqfJ17-qKKpw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] overlayfs: Adjustments for ovl_fill_super()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 10, 2024 at 01:44:01PM +0100, Markus Elfring wrote:
-> >>> Is this patch series still in review queues?
-> >>
-> >> See also:
-> >> https://lore.kernel.org/cocci/562a6f99-3f8e-9a77-e519-b668e24dced2@web.de/
-> >> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00098.html
+On Wed, Jan 10, 2024 at 2:25=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > Date: Thu, 30 Mar 2023 10:38:23 +0200
 > >
-> > I suspect no one looked at it, sorry.
-> 
-> Special mailing list settings probably influenced this situation.
-> 
-> >                                       I don't catch everything that is
-> > on the mailing list. Looks fine to me but it needs to end up in the
-> > patch system to be applied.
-> 
-> Can you collaborate also with mentioned mailing list archive interfaces?
+> > Some update suggestions were taken into account
+> > from static source code analysis.
+> >
+> > Markus Elfring (4):
+> >   Return directly for two checks
+> >   Improve two size determinations
+> >   Improve exception handling
+> >   Move some assignments for the variable =E2=80=9Cerr=E2=80=9D
+> >
+> >  fs/overlayfs/super.c | 72 ++++++++++++++++++++++++--------------------
+> >  1 file changed, 39 insertions(+), 33 deletions(-)
+>
+> Is this patch series still in review queues?
+>
 
-Err what? Sorry, I don't understand your comment.
+Sorry, this series was not on my radar.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> See also:
+> https://lore.kernel.org/cocci/87b65f8e-abde-2aff-4da8-df6e0b464677@web.de=
+/
+> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00115.html
+>
+
+I will queue cleanup patches 1-2, but I do not like patches 3/4 and 4/4.
+I do not think that they make the code better to read or maintain.
+
+Thanks,
+Amir.
