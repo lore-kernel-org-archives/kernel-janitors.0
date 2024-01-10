@@ -1,106 +1,103 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00494F5EA
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 20:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1561D51028;
+	Wed, 10 Jan 2024 20:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kd1d86jR"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-557bbcaa4c0so2706a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 12:47:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1704919666; x=1705524466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xvBmw5llKRqXLv2AVOUBOB+EBAoZUU0XXok8fk9QCec=;
-        b=Kd1d86jR/r8ZBfg1k3LtqHAvoignRipYYPSn6/Q9vnC45YhQd7+soq+Gu5JWbFaFCO
-         /n/lw+VgNwocPO3CeSMJg5Cu2q0O+MYqOSRSWtoNXgPGRRSa3C4lefkvL7qdNXflVa/o
-         UZWwAdu69Nm6plHafOPnJRF8pFv2ZCUEd2xClYOIj+d5a39TDRljKQwLT+HdiDTLxwip
-         +yv8n3kPQ56rkShpcuwB7vLm8x3eTgYPuq7o2P3tkdCOYCBtN6v/1YdfVj8l5qHcQDWe
-         E/jpMuxwjD/4iBx6KQyAzXNE5yn2Y9vkQQ2weYmuUEbb7U+jUKki2tL8kIw93e2wvB8c
-         gpZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704919666; x=1705524466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xvBmw5llKRqXLv2AVOUBOB+EBAoZUU0XXok8fk9QCec=;
-        b=rN9Hxvh7aO48ilR5pmKgKy3SfifXPYEEP6RZNmNxnCmhg5Q7IC268cjvZOB6bhsB5Z
-         Q1z8LgAW9M4Qmkue/+0VesPYextjgQjJqEGShfD+flCMkcgIHJxmHUj7xlRDfqPa35xf
-         JWBmVux5p2S1tnVSRZ/OdtBbCC3RqwbKXpFTkVTCqXcQ621JBwt/P3OHWpGgeTpxwiqF
-         rKZdEsGlk+DWM1a+peos1g0uIbqwE3g7FbeVhXC7dhABUzYuf/0bDbDlpJEIgICWNuAj
-         2ryeIfdukMNZgSEPSz+e81fXHWKtZB3CHNfP0awqG5y03VvZzc+svViybDXlpYY0po3S
-         r9Uw==
-X-Gm-Message-State: AOJu0Yz9y0v05krTwUsc7S/T0nqHTc1mz8r9mAhhT9QzEfPMUm1JTxhm
-	vQkhz9Xuo6uhVoEjoLx5SkFbFtQzV3/cVzM6I5Cn7pulbavCyyQiZPmPfRWuvkWumg+Bch51qcz
-	P44w7fpIMJjhxYrLcYO7idL4nd40LUasL8w+T
-X-Google-Smtp-Source: AGHT+IGtYzXbQuQsCnI/M6Q+esb1oyG+cSLNvXEfHcMNZQwzYizAo0y4rLdBTsGPj6jtJN2l+a5JBfS1TuhLD2s4xM8=
-X-Received: by 2002:a05:6402:683:b0:557:8cb9:90a1 with SMTP id
- f3-20020a056402068300b005578cb990a1mr46842edy.6.1704919665842; Wed, 10 Jan
- 2024 12:47:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sIf9EmCN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704919718; x=1705524518; i=markus.elfring@web.de;
+	bh=mjRumUd/MQiEBX/hnG0E6F4D3lIQxntbIeEL/wnSQDQ=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=sIf9EmCNdVoXDZb/cGz6fkXGBepk8yuZpzid1qfkbZm8REX52C5JFSeC8D6Ita0M
+	 E7FH7LX+CqCPfI/l/XlNfpFyBRxGcAnWcIPJ1n7DyskHpaPNAuPWK4kC/YM93laxo
+	 XXFxRgV7cz/KYo0ZiAsokd6glAzuyZrdWKp09zUNQyhZsc0FJfsG8NtHv5XysU7VM
+	 /m1r92mhvFijB8Y6M4On6yLb+krgsIVzFltDYyIMavak70bCNxQZCYd5a7wlpLQJB
+	 sN2XBdhlb9JGEV64BfiDLauOh92ujMqyxUP9B72fuBdz3W0HCPV8NBlaQSHeIa66Q
+	 xKo8DXqB+8sEJ6Z5/w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8T7K-1rJHmw2Zu4-004vkg; Wed, 10
+ Jan 2024 21:48:38 +0100
+Message-ID: <edeafe29-2ab1-4e87-853c-912b4da06ad5@web.de>
+Date: Wed, 10 Jan 2024 21:48:37 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <39b4278f-35d2-4071-a3aa-ec49705272af@moroto.mountain>
-In-Reply-To: <39b4278f-35d2-4071-a3aa-ec49705272af@moroto.mountain>
-From: Rae Moar <rmoar@google.com>
-Date: Wed, 10 Jan 2024 15:47:34 -0500
-Message-ID: <CA+GJov5jz+qSA=eGW_E7VoMpHm=eBfAkxwv4r8EsFpRYBBq0Zg@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Fix a NULL vs IS_ERR() bug
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 1/2] io_uring: Delete a redundant kfree() call in
+ io_ring_ctx_alloc()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+To: io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
+ <878r4xnn52.fsf@mailhost.krisman.be>
+ <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+In-Reply-To: <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tptgrZvV5PfMbUHwW6P4eDBBUBiG1tmbpEQj6/acmNCuSqQx27g
+ K+ga9sH7CSPTmn6XL19Wc9V+Z0s5fwVNUXYa6xwM5qpweC9uLfXSFer0olwGLBV7fQxGXAQ
+ hERce4VbaG0G4j+XcVesEU/syab3gkyaLCUsgUF1hmAOOdKYf00Lt8bIpIRVmFRy84POqSl
+ O598LlZB6lQCQZLr7Fgpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YmH1HGl/x+c=;RX8z9bvCEUZpdLFXHMwnVfQ41/8
+ Hgi5MWw62zwwMVmDQc8hAf3iwJYWmtftnrXnytC6L77ndrsVebKAT6ESKVZIfjC5nFq/DFP2B
+ bSCyn2hJrTYzW0SfP2Pw1s2xuVV10mDjdZrEf07HQDKeoavdizFGNfSmAOWx/08wxq60YYrmq
+ pq4C6voELMEb1zJ0+HrCgsRlHyjtmaBIh28doYqAg4/obeM+XVVSRcRr6uoSKl8/gB0QefgC7
+ XCmi6Y/lSKQPOL/Fbc7IuMkw0KW6dU/LlhRFevoJsVvQiqduaNr59UkHuQYyaLGUwHDCeD1t8
+ fFbFygIJRnbafDZRgqXM2I4JTWkWyfWjxZVCjY8UKdindOgUA98TVq2oTsu5Jiq7GZQtDv71g
+ mXU1ys2Q7Q7OJc9gtbPR1AcFe4Y4/SQFRzoX4qPWLFWKiktNkeVAW0QII06a5CjprPE1s6oaK
+ kaYDpIXvKAdMO4snSKF5VA+u3ZGjw8GtrPr4nMGOGMeUy1Gw+FQOeK8yx7MEHOiPQyRfp8kq1
+ QiaZ6Yg+cdZ4TM4aiD9rB4UTskM/UB2eORu2/DAS2qRQHcF/mH7rdqb2mLz/YZXqkHgeDLINN
+ NY6s4M3GUz8us5KH8gCLuWLfjnPMlJOBMOTM7CpSYeDcqUhiQSl+CliJB4/QoggyTifL44PzR
+ 0mkuCfn7dBd7qA5Dz5JYvXYSX8A+toWnoCasG/AXp52jrSEW+0DwWrCAxRtyQc88F9ToFndRF
+ Oyqlk7zaEbdSZ9M5Q81N2bx+GFShmdMSq9rQbsj3VylQNC6Yi8ILwco9+OmGT47uHlhfqwFpI
+ 8Clo9xA6O7l/diBLcX5K2UbNtdk9qM3IdP2FkpqK5IXYbrSoFtb1j/cOf7KMvpo6Yq9/E4X87
+ x7kBzqwHmalAvmTinIbXzI7IMCwNHg9jhqeh8FthnJnC3B0uneDu9cJFyhrovBIIgqvcCVjK6
+ EFsHLA==
 
-On Wed, Jan 10, 2024 at 1:55=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The kunit_device_register() function doesn't return NULL, it returns
-> error pointers.  Change the KUNIT_ASSERT_NOT_NULL() to check for
-> ERR_OR_NULL().
->
-> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2024 20:54:43 +0100
 
-This change looks good to me! Thanks!
--Rae
+Another useful pointer was not reassigned to the data structure member
+=E2=80=9Cio_bl=E2=80=9D by this function implementation.
+Thus omit a redundant call of the function =E2=80=9Ckfree=E2=80=9D at the =
+end.
 
-Reviewed-by: Rae Moar <rmoar@google.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
-> ---
-> It's a pity that there isn't a KUNIT_ASSERT_NOT_ERR_PTR() macro...
->
->  lib/kunit/kunit-test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-> index c4259d910356..f7980ef236a3 100644
-> --- a/lib/kunit/kunit-test.c
-> +++ b/lib/kunit/kunit-test.c
-> @@ -720,7 +720,7 @@ static void kunit_device_cleanup_test(struct kunit *t=
-est)
->         long action_was_run =3D 0;
->
->         test_device =3D kunit_device_register(test, "my_device");
-> -       KUNIT_ASSERT_NOT_NULL(test, test_device);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_device);
->
->         /* Add an action to verify cleanup. */
->         devm_add_action(test_device, test_dev_action, &action_was_run);
-> --
-> 2.43.0
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/kunit-dev/39b4278f-35d2-4071-a3aa-ec49705272af%40moroto.mountain.
+v2:
+A change request by Gabriel Krisman Bertazi was applied here.
+
+
+ io_uring/io_uring.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 86761ec623f9..c9a63c39cdd0 100644
+=2D-- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -344,7 +344,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(st=
+ruct io_uring_params *p)
+ err:
+ 	kfree(ctx->cancel_table.hbs);
+ 	kfree(ctx->cancel_table_locked.hbs);
+-	kfree(ctx->io_bl);
+ 	xa_destroy(&ctx->io_bl_xa);
+ 	kfree(ctx);
+ 	return NULL;
+=2D-
+2.43.0
+
