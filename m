@@ -1,111 +1,186 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2099.outbound.protection.outlook.com [40.92.22.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734114F5EA
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 21:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2E4F1E5;
+	Wed, 10 Jan 2024 22:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rRDNLOzI"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e4a606183so2455e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 13:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1704921007; x=1705525807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0dBlfe0ai2/9qnOVJT7Cr9v3swK0leKtoIMht6HfIU8=;
-        b=rRDNLOzIiXSOzioXfKQkfA5eOus1qZsfOzk1snEsyTecSdZXKLKrs8N7OWu+agHFUW
-         F/VZ0HVe6SpI31YoKeZwjvy24qCcznW5REcWmhH+1LbPwWzwsoyrQUM1NT5JWhkt0SEh
-         qOU9jRd/nIfYeKYuex3CB0S0u1Kbba6Ei7Q4LeKNYMD8I34CRUk5p+jdA1ROB7JQ3ojz
-         4gMNmmEtuGk9X7oC4m3tEnKxK7b6B5u4spsz2UWTpye/BK0wng69jHCS/RJR2YGRZf6F
-         /ctBK0Qrv5m3LJeJbHB7ZIutMbGePeb41dRAeaO9fvJIxnDJw63SHHCRtKtIRPYRO5Ip
-         smQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704921007; x=1705525807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0dBlfe0ai2/9qnOVJT7Cr9v3swK0leKtoIMht6HfIU8=;
-        b=Z+uAXVZ/w1goZRp7uKUaD/Y9FBz7+7Or1t4TQ67SPfzkYR6vfTFN8irb9Q8FV6+O0h
-         CWZUAhbz6zDS5twLKZdqfnGa+KDj6EWGp/fjRTCu0hUpiVbugbaY1rDwwGOJjBmpA0QX
-         9+LTq/siShucz5TstLPcpa3EN1wIcO4hhylYqxO39uN/2ZP0MVNemUG8Sl2kRMGt7L4H
-         LHFnhJ5V3HLXZDjKWyom4w9HbSQ4c4ZjuKwu996llT4P72Czk09aIyfNuYR5QaSBaI/Q
-         q0G0lrJMaYZjxb5/SpAAemW6iQnfmHRatSsaly52iBXNB2R5fbdxbg+bRF41bVQ0Zij/
-         cF3g==
-X-Gm-Message-State: AOJu0YzUX7jnCV4j7a65agVWZY7xjqhk3eTahEx96bA/5mq/RjJ7hqYz
-	Kwr5Kli7xKYDO/RwUlvP6LdkPndSSx17coQnaHqX/Y2/mNPA6rWz5XH82lwXiGbZNSXE6BG8C1g
-	ADwGbO5o+LIMQgmEAmNYU4KbqRRj41LZIcBaC
-X-Google-Smtp-Source: AGHT+IHsAggDnwF7TsHK2T7smnyeA48DXI2a46o7MmsiupRvXAiMBgCqaHhlnBsI7Z9bP9EmbmAIt/9dbXM0bef0tPs=
-X-Received: by 2002:a05:600c:3b09:b0:40e:490c:48a9 with SMTP id
- m9-20020a05600c3b0900b0040e490c48a9mr7775wms.3.1704921006606; Wed, 10 Jan
- 2024 13:10:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CQ3uNjL1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WdZcJ555afit3bQ0gZVOzN9i8ZBotEkSTknX4mxIxVRTNxOVav8WMqbGUIhrxG/tdcLlVaVW1kBZxfrxxcyeS8IwttxwXqoCCR9Z3PT7BjpNpKoUb1EjiOKcL96s0YSJC5i8xU5oFz5DvMSv2wId7Gi7PssoS9U4ASs+FITRP1zL6ZT1+kYOWmhW/1JjYuDhouszBAorliJhcvarQuIOiVH9KVkyH5PTsx9gfwmBxJK69Ie4euIm+S1QoJOOMarbG2fl4XETtmXhH7yiO3bSPik5fbty0frD8Cjbg1Sej66YvwJm9F151/5+QjsQib559QO7ikYQxI8mxVS33nE/KQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=46iwDve333VEzAk7mIsqsvXOMlh9AlR/MUYTnYkOn5s=;
+ b=fa03yf/Qr0n15pl7m7dJEkCOU0aIBpg9yCzpqFY1WhO23KUlebqKsZPVMuwiJsPnb6PONrW2cIgqYARfTZPvotIsn6kPcGCEDHYUjw5aDwNDQFbBhyLooNAfLwnxQl5IVnqt4zXsEU6rLjCA8saaqb/pVo6wnxDQ/x79eSLCyl7PAzGJNU12QHl2zwQM+DW+LJgoVMNnclCxAof6/OqNs8MM7Hstjwr30myppFszZKfbrFTn3f2jTORqsjSQt6lyO5YelMj/guPa0XcVNzrAuqh90/ZbLwRfuWMAazS/vGb2QrQlOf/Z9/WI83GcJnCDZPsqDGN0Us4ZnDKnckzJGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=46iwDve333VEzAk7mIsqsvXOMlh9AlR/MUYTnYkOn5s=;
+ b=CQ3uNjL1G/Lpjd0P3F0zFu2DxUoKLLCHMDqHs7082Ycq3kajq7IK7CfKQYo9jfr3FlG0elFW/vWh/mMHK0PzsmFvy0MWunjqEmCrHpgyZaQRnLK1gU9M6pwDTrLK8hl3YliB1ZLH3hkecK9wxwJbFOXMkTnrPl4WUQ24L6LhW0FQL7aW6yTuL/BfzPOjSStiEklTIeW+KU1SVLpwL9Tkv/CEuRryrDqGd0kjVoeaUAb547i3CrIQQwRqDpfjhYJxtIJMaLWnl09CzPtZuKSULiXHmforePJ2UuIANGu6TqMEgAU5burOADxZK+7pgVbZJi7X8Kp35qkTxFiYzneeSQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CO1PR02MB8619.namprd02.prod.outlook.com (2603:10b6:303:15e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Wed, 10 Jan
+ 2024 22:17:17 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::3524:e4b3:632d:d8b2]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::3524:e4b3:632d:d8b2%4]) with mapi id 15.20.7181.015; Wed, 10 Jan 2024
+ 22:17:17 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Markus Elfring <Markus.Elfring@web.de>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>, Dexuan Cui <decui@microsoft.com>, Haiyang
+ Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Wei
+ Liu <wei.liu@kernel.org>, "cocci@inria.fr" <cocci@inria.fr>, LKML
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Thread-Topic: Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Thread-Index: AQHaQ7PyvvrIb8tUYUye7rRKlkvVrLDTNj6ggAAqigCAADt1QA==
+Date: Wed, 10 Jan 2024 22:17:17 +0000
+Message-ID:
+ <SN6PR02MB415710A52835BC82B1FA1EAFD4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
+ <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <82054a0a-72e5-45b2-8808-e411a9587406@web.de>
+ <SN6PR02MB4157CA3901DD8D069C755C72D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <d3c13efc-a1a3-4f19-b0b9-f8c02cc674d5@moroto.mountain>
+In-Reply-To: <d3c13efc-a1a3-4f19-b0b9-f8c02cc674d5@moroto.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [9Bnj9+onyGg/XP3kqltg4msot4eUqsM/]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CO1PR02MB8619:EE_
+x-ms-office365-filtering-correlation-id: 21cc1c4c-ba3b-425d-8d1f-08dc1229e7d4
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ xqq9BZIkQOntMnpTxJhV1yvUk34jWlchMNgQSKd8NeKnLJt6Onzo+vh7RzERCfBRD3A2R68TtMPwJVq4R3PiGbPVvph0W9EyV1Krtnmp6Zwj/iKMoo8vTHNpz5SxPt8Ogt9bXTF58WQXfbX7CjvTZWyCXLC/BkR2ykg3kbpWXiMuXFxi8Z9ch3YNyTjqMDqlwt/mZ4WLZ8eJrrY2K5Y6iEH7fqdeAUmtQegzdiPi1V4fWeqzdrrKSAIgHWAc/tCEjx6o9qHgIZ1lnlygNn9z/e0kDyqA2prtUjIdniMz3VcIZrswLLG+AIg1OGtj8oDLQDMWDiSEo8/A5ACOctxZKOvCKEkwy+xNYP5rklNcTsSqsulq6tzmkUgQNPDOlZXF2CuxD4VhOVD5/0pyJX1FGDanEQl2TbZpmT3gFXQ2QUcgM52nELAodLmhk+qcNgGie3M1cBOg8Y7fUGsAm58szdawDs2SYZAsHUI68py5H3kg6xl5Zjr2+CmVJLV6ldfTd8PCjQc1EX3NIXppCZLYpnQM5Y64fZlDjHT9vyht457j9cF8SaZRS+j/CMlQizG7
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?owCur0JVW0jvzPDWaN0tI3QKkG2hSWDSwvgoH3imqVS2ObAbQv/hzrYVk5NC?=
+ =?us-ascii?Q?6VbuI2OjTlPY5SRX60aaNybj6hTAP6N5oGG6ldcbZJSmTp+RdJJovXu6o16M?=
+ =?us-ascii?Q?EED8WkzTG9kctPoKrULEVCxHAvPS+qQhjy//ZcIrOQe8hRC67ojswDLzrknp?=
+ =?us-ascii?Q?XDcT+6xbFTdYNq9FyvITq8Qc9mV/NC6HtC5Qu3LLA79PkFwj6sCi8NvPLugo?=
+ =?us-ascii?Q?pVFh+Jqs816rcOo3VG+VWC1fwnztyOId7oqpNVcQZlIe7AIWUhNhGxLzGdpv?=
+ =?us-ascii?Q?dDg3VQZs+jcYZwuFTOcMfFIBd/Geni2FHTj2RhzDXIdtUZvmL5nmDf3dQv3x?=
+ =?us-ascii?Q?SltdDIXR7nZj6MSbuAhMGNV9IVdSJMJGF/2AZUEnujc8HgQ1fOkhYIMt0L3H?=
+ =?us-ascii?Q?gHMBKgJb9fM0P60ZOvo/+Jrlg679eg3GBiN7+WGnD0oX22hvJrLtEJuhDTpr?=
+ =?us-ascii?Q?/AHnqt/uV98Ri/oUXoKggeMWFYzNzr+UyRVYfRaOfNyYcxZc5ct7T9+5Bxel?=
+ =?us-ascii?Q?plUYfx9Pf+R9cImpVnDT+ahfRtDUB57CCfy7rE5Fv148+GwqRoEKTRX9Fb02?=
+ =?us-ascii?Q?ueqmnmCv4Lo5OGJxrRZ2RoL7DNdMxRdCD9wWoszoJIS186proCvW/pH8iqJH?=
+ =?us-ascii?Q?R5TiReHfyalJ8FE16bSOxXEMQGKuDKRZxHn059rdJx3KI3A91AhwH2/eNEXn?=
+ =?us-ascii?Q?0FGHxBCt6ik9Y6L7tnw/UquXoh3CFDmAjpePQpzwG0CZ7HyFEbAb7aZ3eFym?=
+ =?us-ascii?Q?CdzSRpzi2Ae5BEycGG1v/lx2a4hV6+B0mbqQxBVjbB8ev8T33geS+S2Ya5x+?=
+ =?us-ascii?Q?v0WGlo9lrtR18qlvvu8bHh0/oAgd/h3Ojoq8qthG9uBYDa4ME4P1GB97S9uW?=
+ =?us-ascii?Q?J/P/2kj+Auvbkw1/n8AVl6RGR0g56PUm/L1xON+R4hYpul32xXTGy/ewiUJV?=
+ =?us-ascii?Q?k7s6KlJ3HXpVZTXa0oVwLoZFUAWnxReEO5ijFrv7OdgdmTrgBSUT4x6lXzFI?=
+ =?us-ascii?Q?ZiATV6OatYuULNIErDboP88qFNz3iP3u+GYr71ztFFH5bzJoa4XpvxXv5sFW?=
+ =?us-ascii?Q?rriUtX9GCeJiMKXxXtCgmYHYVXUEALtuFFProXzIwfi6wHIXS5NCZhqkWXIv?=
+ =?us-ascii?Q?JzJaEUTGdUEaLYGRt0nZwIMzmSkGaktNVVMxpSW/mBE54wvFoYm+UybBNjFR?=
+ =?us-ascii?Q?dzA/YL6X+609KAPdwv6CJT+yBgxnyo4FufD+Pw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
-In-Reply-To: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
-From: Rae Moar <rmoar@google.com>
-Date: Wed, 10 Jan 2024 16:09:55 -0500
-Message-ID: <CA+GJov7P_ypZ58TrWoMSSQyt6fdoGyYTqbfEuU7v_ZHFSOczKA@mail.gmail.com>
-Subject: Re: [PATCH] kunit: device: Fix a NULL vs IS_ERR() check in init()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "davidgow@google.com" <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21cc1c4c-ba3b-425d-8d1f-08dc1229e7d4
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2024 22:17:17.1966
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR02MB8619
 
-On Wed, Jan 10, 2024 at 1:55=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The root_device_register() function does not return NULL, it returns
-> error pointers.  Fix the check to match.
->
-> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+From: Dan Carpenter <dan.carpenter@linaro.org> Sent: Wednesday, January 10,=
+ 2024 10:38 AM
+>=20
+> The second half of the if statement is basically duplicated.  It doesn't
+> need to be treated as a special case.  We could do something like below.
+> I deliberately didn't delete the tabs.  Also I haven't tested it.
 
-This change looks good to me! We could check for IS_ERR_OR_NULL
-instead but this change is more correct and is also how others check
-root_device_register().
+Indeed!  I looked at the history, and this function has been
+structured with the duplication since sometime in 2010, which
+pre-dates my involvement by several years.  I don't know of
+any reason why the duplication is needed, and agree it could
+be eliminated.
 
-Reviewed-by: Rae Moar <rmoar@google.com>
+Assuming Markus is OK with my proposal on the handling of
+memory allocation failures, a single patch could simplify this
+function quite a bit.
 
-Thanks!
-Rae
+Dan -- do you want to create and submit the patch?  I'll test the
+code on Hyper-V.  Or I can create, test, and submit the patch with
+a "Suggested-by: Dan Carpenter".
 
+Michael
 
-> ---
->  lib/kunit/device.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/kunit/device.c b/lib/kunit/device.c
-> index f5371287b375..074c6dd2e36a 100644
-> --- a/lib/kunit/device.c
-> +++ b/lib/kunit/device.c
-> @@ -45,8 +45,8 @@ int kunit_bus_init(void)
->         int error;
->
->         kunit_bus_device =3D root_device_register("kunit");
-> -       if (!kunit_bus_device)
-> -               return -ENOMEM;
-> +       if (IS_ERR(kunit_bus_device))
-> +               return PTR_ERR(kunit_bus_device);
->
->         error =3D bus_register(&kunit_bus_type);
->         if (error)
-> --
-> 2.43.0
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/kunit-dev/dd938a86-38d9-4d62-abd0-1df80395fbbd%40moroto.mountain.
+>=20
+> regards,
+> dan carpenter
+>=20
+> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+> index 56f7e06c673e..2ba65f9ad3f1 100644
+> --- a/drivers/hv/channel.c
+> +++ b/drivers/hv/channel.c
+> @@ -328,9 +328,9 @@ static int create_gpadl_header(enum hv_gpadl_type typ=
+e, void *kbuffer,
+>  		  sizeof(struct gpa_range);
+>  	pfncount =3D pfnsize / sizeof(u64);
+>=20
+> -	if (pagecount > pfncount) {
+> -		/* we need a gpadl body */
+> -		/* fill in the header */
+> +	if (pagecount < pfncount)
+> +		pfncount =3D pagecount;
+> +
+>  		msgsize =3D sizeof(struct vmbus_channel_msginfo) +
+>  			  sizeof(struct vmbus_channel_gpadl_header) +
+>  			  sizeof(struct gpa_range) + pfncount * sizeof(u64);
+> @@ -410,31 +410,6 @@ static int create_gpadl_header(enum hv_gpadl_type ty=
+pe, void *kbuffer,
+>  			pfnsum +=3D pfncurr;
+>  			pfnleft -=3D pfncurr;
+>  		}
+> -	} else {
+> -		/* everything fits in a header */
+> -		msgsize =3D sizeof(struct vmbus_channel_msginfo) +
+> -			  sizeof(struct vmbus_channel_gpadl_header) +
+> -			  sizeof(struct gpa_range) + pagecount * sizeof(u64);
+> -		msgheader =3D kzalloc(msgsize, GFP_KERNEL);
+> -		if (msgheader =3D=3D NULL)
+> -			goto nomem;
+> -
+> -		INIT_LIST_HEAD(&msgheader->submsglist);
+> -		msgheader->msgsize =3D msgsize;
+> -
+> -		gpadl_header =3D (struct vmbus_channel_gpadl_header *)
+> -			msgheader->msg;
+> -		gpadl_header->rangecount =3D 1;
+> -		gpadl_header->range_buflen =3D sizeof(struct gpa_range) +
+> -					 pagecount * sizeof(u64);
+> -		gpadl_header->range[0].byte_offset =3D 0;
+> -		gpadl_header->range[0].byte_count =3D hv_gpadl_size(type, size);
+> -		for (i =3D 0; i < pagecount; i++)
+> -			gpadl_header->range[0].pfn_array[i] =3D hv_gpadl_hvpfn(
+> -				type, kbuffer, size, send_offset, i);
+> -
+> -		*msginfo =3D msgheader;
+> -	}
+>=20
+>  	return 0;
+>  nomem:
