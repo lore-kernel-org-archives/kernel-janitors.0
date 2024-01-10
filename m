@@ -1,29 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CA533981;
-	Wed, 10 Jan 2024 07:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECFE3EA9C;
+	Wed, 10 Jan 2024 09:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RDDlycAb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704872802; x=1705477602; i=markus.elfring@web.de;
-	bh=hhPaJcyeSBxTfwuEoDUTo5lm2LbnDI4Sufrw3CS2k2s=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=RDDlycAbIBjqIBZhciOaoMzfl8tat1ml5+qzKdoiHfMJreRpIHAbWIXRnPKwlnhr
-	 w0vse/ZAZ3cCwQ7mccrHYN9VDuoVlfWNQ8uIZoL8s+3TUf5O7ga+mecRtASez08rI
-	 07w8aaKfxzw/exDThF6Fkwkrpnv/ZCpWbCcynR7vWOWhUdijv5Jjt3cQq8mcyTSJI
-	 RT4OMizwoUpYzSXNWSPBgXIEHsEDQQyf5YMDWTPeDR7HY/BXT9aPGL5XZp7AaYCwy
-	 ZrYY/gILsaXbNsNlUzLE3Ss51DRCGO3dBL1NNgDiVupzBTuhoQdAYuR6EDnClKaee
-	 2l1JfThVel14fi8LUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MC0LH-1rTH7H11Th-00CKiQ; Wed, 10
- Jan 2024 08:46:42 +0100
-Message-ID: <0d7a06f0-7a0e-47c8-b89e-c3122b46d93e@web.de>
-Date: Wed, 10 Jan 2024 08:46:21 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tjiGsheS"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40A9dklx009461;
+	Wed, 10 Jan 2024 10:54:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=SMY/YRkrLa8qTKcLx39OUdusAyLog8eoCTO/ymESOn4=; b=tj
+	iGsheSbWzimarjEDpbU+QobiMrSVJmIgPKAo/DWYJhD7pxYKNE56lMoEUWTRUKO/
+	ba9JdiKknjytZ4Q9iU43t9r38h1O7AvCv12V+D0BTpMZBq3kSI6AQYk2pVCVRKZA
+	4/wkm1NewSIaeykN1KIFMWFCMl1Fqxi8CINWCZPbSaAkS24NQ3n62pDjCUIAtyBY
+	P1Nk5rDK/ONiOn36/EtndXk3vtmpZ8+B+e3AJyz2uxoXMRa7gB5eWAbfQMc8kbUT
+	BoyfMpxd0Vs/YMDua8YXPo1JegglE/O0SG8S0NVrVThbomT6bRBGzWeZhRnF0pzU
+	40eFLUw9P1Cn1zNLv2Xw==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vexmffm6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jan 2024 10:54:31 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C1DE610002A;
+	Wed, 10 Jan 2024 10:54:29 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9D812257A9B;
+	Wed, 10 Jan 2024 10:54:29 +0100 (CET)
+Received: from [10.252.22.30] (10.252.22.30) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 10 Jan
+ 2024 10:54:26 +0100
+Message-ID: <74a39554-a514-42f3-a2ab-d436d4fee474@foss.st.com>
+Date: Wed, 10 Jan 2024 10:54:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -31,61 +43,67 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: crypto: virtio - Less function calls in
- __virtio_crypto_akcipher_do_req() after error detection
-To: Justin Stitt <justinstitt@google.com>, virtualization@lists.linux.dev,
- linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org, cocci@inria.fr
-Cc: kernel test robot <lkp@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Gonglei <arei.gonglei@huawei.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Jason Wang <jasowang@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-References: <2413f22f-f0c3-45e0-9f6b-a551bdf0f54c@web.de>
- <202312260852.0ge5O8IL-lkp@intel.com>
- <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
- <20240109234241.4q3ueqdjz5o54oan@google.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240109234241.4q3ueqdjz5o54oan@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uYjo0zmC9Bv8IGNYZK4OcE5zWAU90y0/cZTEhqTTR+46QfZcrke
- tgvURLyjA9lTvet4ThfCVXnv8xkFz5vm5k/faG0SI34wHLmSeb4+ISwwXtzGVUNyei+sko3
- imEXpQg0tfMnY2jPBNEQpi1Nej6dOCS3XWYf+0+cvT6Tzo9nqafppm62vyx/roH5eUamaVt
- V+cwMMwdBpWwOAkMutt1A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:S0h3qRtm9JU=;wWqjC0b120yckKxNsgoQLwgkgBW
- TANfswLwhLmaw2f/tPyZEWPKAcRWd062YgXcSl/MJ2qJRU1QKDsfT2ThjEWt9E72pzH0XbipK
- ek+fzGIiWGzIJsPlXIujThtScJKp1023bSnfHXoawQA9pX+pihbfTuFGFlAUTWqVRcAWqrqli
- 0nCKkRvwtVBpgQQHcOkSiZz2JlCRwk57Shx+Gvg6y5bk4L3PH3AlWQ8tO6Xp3nleW9MR0s7si
- MSvzw7RCAFeB6LwjIZwmlOEOjjPLPbYUs521VFEI/yO6FjCahBvoh12NcXhyV06gTwrZxYSeE
- b8pBwfLUgR/Esz4UAIkpBHYPrX/bWsRwmcnQHgEEK4xgOgGDjqsiyPzEp2Y2Efcn2/R/EF712
- VQk246045auIbeX9HAJOCho2yLaMsyEH1f6EHNTxHg0+SqFqDWpwoGio4SkvRb3I8VuZ3pxn4
- pKeUq4c1gFEumr07bBhEG4mi/NUQgnLyhdgW6BwDdFk4VwWYt4+ogSIr5ka7LK0XE9enEulDt
- FYzDmGriybFkbMm6TBpDciJx5Sh6BnEUu+Et3jr/Wo5juVLgYVUD68PVkhXYCB9kXCZBCdsVV
- ugIrdZ0ILSXTq7qyQMj80Xqu7K02gBTP9d/ghsEIPcwB8ADu4LuJO6tT7jydAQmru2Q2FVJk1
- ivWlGskt+2ukhVot4diVbYzhRSU40RAEtZ+czNRSy7ThyCDOja3gPdwSQvyCuhQFKR8wgwG9b
- XrqtDCFIWRfjgOes6u/gzPr5TaEA4NNxHUyub1v+1OAf9I203fen86ea5RIg7ATId3YwnrbNF
- CPYepQfCHStuUHXi9ghJSc64B7/bq4g0XeNcJeCEkljhWyB2+P2eOjuzJeW/QqYtSYA6LzvEr
- oZ4SBkMQ7rrO/7shvLlLjbwtqb6JDHUcnuYj1+D6YDz0o8p6Hfvl/T+rJqJzOzUkuEamvmJ98
- B+3jVJr1HhEYCoxIDT4FjRo5reo=
+Subject: Re: [PATCH] drm/stm: Fix an error handling path in
+ stm_drm_platform_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Yannick Fertre
+	<yannick.fertre@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Eric Anholt <eric@anholt.net>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Yannick Fertre" <yannick.fertre@st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20fff7f853f20a48a96db8ff186124470ec4d976.1704560028.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20fff7f853f20a48a96db8ff186124470ec4d976.1704560028.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-05_08,2024-01-05_01,2023-05-22_02
 
->> The kfree() function was called in up to two cases by the
->> __virtio_crypto_akcipher_do_req() function during error handling
->> even if the passed variable contained a null pointer.
->> This issue was detected by using the Coccinelle software.
+Hi Christophe,
+
+On 1/6/24 17:54, Christophe JAILLET wrote:
+> If drm_dev_register() fails, a call to drv_load() must be undone, as
+> already done in the remove function.
 >
-> If the script is short and simple would you mind, in the future,
-> including it below the fold -- this may help others do similar work down
-> the line -- Or =E2=80=A6
+> Fixes: b759012c5fa7 ("drm/stm: Add STM32 LTDC driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This was already sent a few years ago in [1] but it got no response.
+> Since, there has been some activity on this driver, so I send it again.
+>
+> Note that it is untested.
+>
+> [1]: https://lore.kernel.org/all/20200501125511.132029-1-christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/gpu/drm/stm/drv.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+I tested it against stm32mp157c-dk2.dts.
 
-Would you like to take another look at the clarification approach
-=E2=80=9CReconsidering kfree() calls for null pointers (with SmPL)=E2=80=
-=9D?
-https://lore.kernel.org/cocci/6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00096.html
+Thanks for your submission.
+
+Acked-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+
 
 Regards,
-Markus
+
+Raphaël Gallais-Pou
+
