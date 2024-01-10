@@ -1,87 +1,95 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204C9481BA;
-	Wed, 10 Jan 2024 11:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58047A7C
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 11:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PUG4aQDL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704885827; x=1705490627; i=markus.elfring@web.de;
-	bh=S9pBQCz+Xugl78ZljO9c3MQi/tYY/iaK3svNXapNfd8=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=PUG4aQDLrkNgnWq5WB7Z5IZ5JZu8vJA4mXsuHI13M4/iFgMXMKNd70iwraeIuU64
-	 Nb5jFlUGo4A5YzWYP2nh3K+yTkSIRHb5PljEnH4+Azg+hOtX+laFKk0uraA5tCq+K
-	 7It6jHMcuVATNjYYCavXENWUCACKthMOEA2EcUl4euZfr0cgrey6FTAq2fV2nByyY
-	 P+BbUk+Fw4j95TfkdUGPjmByRopzvCHtfSW7IyNt5A9GUUI80Dg1OrtUB5DqGPwHU
-	 0ONz7nAkXc0LAbcWBAQ6FIXM15fxHknlIPv1BrFaUKIRWtgyKx8Mvfuj9ViTgTqPk
-	 w2w7Qo+HVjuxi3w6CA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFs1t-1rOHmf3hyZ-00HFqo; Wed, 10
- Jan 2024 12:23:46 +0100
-Message-ID: <45033ab0-0391-4422-895b-edba845ad226@web.de>
-Date: Wed, 10 Jan 2024 12:23:45 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="loUTok8X"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40d87df95ddso41797945e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 03:29:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704886172; x=1705490972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H7YcUyivaArKNN7P3cpT7zTW5LfFylXidvbcNKW04c4=;
+        b=loUTok8XGdWBTQf8ZbLrJbAuquN+QJoEjscbGSFuda+9l8XuQCm+AyEClF+KVvvu7U
+         CL0v1SEceZMHCiP6hbKtPnoHBCTknzxVkf/C3gkX4LuvvtXPs0tcTGXHX8A2A1notEd1
+         +u0/PX9Ke96oAYAQTw6URuFBqzHsovs8aPvlvHhLqIzYpidkEm1l4HACYlBR6MH1Q8BM
+         F+OSplJJmj5Ty0P+ideAXkGGEiQSpsKz3pZW/FXS1NkChVUNDMzgnJxDV/P+4r21QOrz
+         ykEbV4SCYu3KCjNXnoxIBNLlSPoYlKlwIUdaxQ/4qTOTjgswH0NF39lgdGXT/csRWpOY
+         kf/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704886172; x=1705490972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H7YcUyivaArKNN7P3cpT7zTW5LfFylXidvbcNKW04c4=;
+        b=jIvrNVgOYUGAOZMp8l0BkHNt+4NbxoJg6No91cjRZYxQ3pJctgbReRFDW1ceBj0+9e
+         9tNdUur8nWn22z+/ZiJgwFLAaqYxaBrizQ79QYKd2b/MJF/VJU415Qa65aDghFH2yMeo
+         zwnS5nYHuAUlb2Is0i1fA0UyYPEq0/7L8N5bycfzLBaahEEC4ZaqJ+nOCWbINgk78LCN
+         vZ6lUyFOSLvXSASoN5GSW4QUecD+nrgEK8vIAYP27h4HDHBqsZ0KfgfL2I1zaoc0wSGV
+         ewu3GvQo7m49bV1i0TDdVqxBSU57tEwPn9asqD8uiBZBO9Go0MOWC+qs4ARVBYc8OLit
+         Z6aw==
+X-Gm-Message-State: AOJu0YxfBEVs2uBVTkHOwtiktv4g25Q1rrYxNt4Jsu4+kyEZqfWI6QCS
+	IpChSTERXndFgWd2e9QVoYoPYa8s4tjPZA==
+X-Google-Smtp-Source: AGHT+IF2nJ1xq0LDh1t59DRO9W33WNdLdKgnpYcZygX3CtNk5YRiVYl99gmUl7qgzZajS3alVpAKTw==
+X-Received: by 2002:a05:600c:3113:b0:40e:532c:7cb8 with SMTP id g19-20020a05600c311300b0040e532c7cb8mr249857wmo.40.1704886172500;
+        Wed, 10 Jan 2024 03:29:32 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id az10-20020a05600c600a00b0040d772030c2sm1882105wmb.44.2024.01.10.03.29.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jan 2024 03:29:32 -0800 (PST)
+Date: Wed, 10 Jan 2024 14:29:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	"cocci@inria.fr" <cocci@inria.fr>
+Subject: Re: [PATCH] Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Message-ID: <f3c9e97b-f348-49b0-b9fa-9b519d99d2b4@moroto.mountain>
+References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
+ <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: io_uring: Fix exception handling in io_ring_ctx_alloc()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, io-uring@vger.kernel.org,
- Hao Xu <howeyxu@tencent.com>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
-In-Reply-To: <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5ELaC2EsXYBGmOLrTxwH3QEjU90DDHnUBkMdV1hwkkFSfmCovax
- wGdC8a44VVf2h1Pc6oxjF8q05Rmbg3RQjzKtimYjwbpYfDVxRKDPpdltEjMrodEr1V4gM5i
- THh1OhyVai1699aYIwTgTqZdVjiPrCWGBPsMwigd/cdk4QRjk1PbWGiuBe1HuEvS4ouybZt
- q40lAsmU7F55RKDHRbisg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SCzyDB61MAM=;whxBAaoTIRjG0CSRcDWjKoz3IfS
- HpnmuUrCLQsi6JVACl+mhx6Zo+R6JFxlhhHaY5+WfgUIKulRCTM/+mbTCHOS3hGuxEBmOiECs
- AE2ds7UFK8W+zjkYaezrJmc7jiOrbaNSuhE4cepUG5Zxyqfv5vizfbp/pV78N7jXqIbSmRegG
- wi9LAuN9yGUon1g56JMlkFRfbp24ojvkOfsjlanbPOLwGvxrVikTyVhtxon8Sxp9M/R893nNU
- 8AMThUt6QhTzQjDLyQs/pGkm/JiST9HR39/i3gQ0cRdMo1Q3nkNpfXsUM0/20YTuuMwe5TnLn
- qvUYS68GOBQkf5ixnvRCULtPyTce9Ed3fvaz69JWn/5EToJdgGdZXmjpeAZDoQ9t3TOi8VM8h
- CMz4QAzU9z1glBREilVSHfT+fJsQXkvlXUihJG5Or/ZN7Fqw12Xn47NDyHw1QWDiz4cJXxGuG
- QOxubeGB3derH+fKhcFAVjOAXLLNXkfyTYr6tR8g8hFTgAW4qujlAL5WUIR+V/UlhA9t8WTWv
- CgmGXJjgLxr7NRAFNA9nBA0z+Qzwz3CcnV6t9SjyNeOl/LniawzIIgMx3Nkk8b+tznZxU380z
- DEBu2VAxUFq36vI0O+Vxym+ADMnArxNd8DFapHr4USATe64T0dDsEjkPVITPT6YqGQ2bzXi06
- 8PPcZW/hizAQW754/5Oa2AsRDIPEGIV9+7WqOsPDotuQzEG6MQLanWhvXU0jbumWZ2cjL/aJ0
- qtGLVAXT5wuRuAnl0JxgBt/Ci+Kz7hlLo2RzdaLqrw4XkgxkA5kNDBMnaO66AUP8WJBtZEhie
- XHvCxtg7BMEdJYIjZnB21RSGgwxEwXcOjnL8i7nO1JroVQIzTJAE6SapBmAkFYhK2faiENGij
- F2hj5dIx5ayIlW6zwDYYPldnwUy2e+y301oaNTZeVOV4LvSfGZBLfbOSgBGMthr8oMhM6AEqz
- dndrXszsSCxQR4HYYIxA8rESMJQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-> The label =E2=80=9Cerr=E2=80=9D was used to jump to a kfree() call despi=
-te of
-> the detail in the implementation of the function =E2=80=9Cio_ring_ctx_al=
-loc=E2=80=9D
-> that it was determined already that a corresponding variable contained
-> a null pointer because of a failed memory allocation.
->
-> 1. Thus use more appropriate labels instead.
->
-> 2. Reorder jump targets at the end.
->
-> 3. Omit the statement =E2=80=9Ckfree(ctx->io_bl);=E2=80=9D.
+On Wed, Jan 10, 2024 at 05:41:00AM +0000, Michael Kelley wrote:
+> From: Markus Elfring <Markus.Elfring@web.de> Sent: Tuesday, December 26, 2023 11:09 AM
+> > 
+> > The kfree() function was called in two cases by
+> > the create_gpadl_header() function during error handling
+> > even if the passed variable contained a null pointer.
+> > This issue was detected by using the Coccinelle software.
+> > 
+> > Thus use another label.
+> 
+> Interestingly, there's a third case in this function where
+> "goto nomem" is done, and in this case, msgbody is NULL.
+> Does Coccinelle not complain about that case as well?
+> 
+> As I'm sure you know, the code is correct as is, because kfree()
+> checks for a NULL argument.  So this is really an exercise in
+> making Coccinelle happy.
 
-Is this patch still in review queues?
+Coccinelle is a kind of tool to search code.  Markus has created his own
+search.  It's not a part of the standard Coccinelle scripts in
+scripts/coccinelle/ or a CodingStyle issue or anything.  It's just a
+matter of Markus prefering one style over another.
 
-See also:
-https://lore.kernel.org/cocci/aa867594-e79d-6d08-a08e-8c9e952b4724@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00114.html
+regards,
+dan carpenter
 
-Regards,
-Markus
