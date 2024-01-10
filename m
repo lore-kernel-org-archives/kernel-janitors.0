@@ -1,104 +1,83 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0494E1C3
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 20:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA5B4A9B7;
+	Wed, 10 Jan 2024 20:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUiyZqNg"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3376555b756so2685263f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 12:19:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704917977; x=1705522777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4Y5idhJN/b2YA/7tKi246i77Vd1olII45Is7/rbOJ0=;
-        b=iUiyZqNgCnFkVto3hQiKF8VyOixXcMQPDYSayqSXXz9gCSepPHH2O9AO6sKb6iAOZH
-         gGm792ekOZKOQ+3ThkQS4eVNh5QGy8+yopc6EKkqsE2BjSXnPi1E+vxp/ErE99BW0GUa
-         k5GSUkKUEBWbt9F6C/xLO41qhzIY9NkDtRGLicIEY/3p77ZJPdX7EGsqM+wA7Azqehoj
-         DhP3fIvLdBJvaoyX0OTTXXDUuYIbgfL47vzoTDThaJPaOYjI/mzOQ4zuokneJQHFoCMa
-         xdrIlVvgRln6IOMxuX0UDHcnw8YudZvooEN6rwY/HE425OjErwJO5wwnYJkk7yxxyTKx
-         vxUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704917977; x=1705522777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v4Y5idhJN/b2YA/7tKi246i77Vd1olII45Is7/rbOJ0=;
-        b=bYlaoQmiLUykRdw6DFEQg77eIsOafXIhUAKJJBRWpCu+VKLWJ4faTyrNpgcf1kmgLX
-         zjZlvHMnLo4JrAEIr0TLFQ6TWE/Mo8Dhe3jnNZPw9xkYuZkZlv5DYKjNOU5W0Az5chvO
-         7viIsZE6aS+Hcb/dqTr9bdmzfILJt3xoeUPpNiB2+uBV6nhDMtK56eEvYTmkJHUcc2zX
-         1aPvewFjcApo1Q10kU1sF20XaKgC1Ip+TWCzQx9YosmfbUnxG6HqjFFHU+WDGr+r0EuL
-         JN5OHqZmEXU2kT6Fnnz3ZIUbUrlfxMv+7FnjRNZvB9J2+6rsICSa2p64RW/7X9MHNfw+
-         j2Rw==
-X-Gm-Message-State: AOJu0YwvOOZ7eSHjcdEKDL61JgNiYMFRNsUu3ZxPmlfWfzOwGvxZUB9o
-	r5G0VCYn1h748EXbxaz+ZQOVJt+Mjwtfzw==
-X-Google-Smtp-Source: AGHT+IG3HiAJlzmqFtXtKgjd2ICz2/cUda1a20KPRN8RDLfnmQlfE0i2/PldCAJPpMqIQtYSd6VysQ==
-X-Received: by 2002:adf:fc90:0:b0:336:9ab3:dc47 with SMTP id g16-20020adffc90000000b003369ab3dc47mr8037wrr.42.1704917976732;
-        Wed, 10 Jan 2024 12:19:36 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id g8-20020a5d46c8000000b003372befd19bsm5636334wrs.104.2024.01.10.12.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 12:19:36 -0800 (PST)
-Date: Wed, 10 Jan 2024 23:19:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: Rengarajan S <rengarajan.s@microchip.com>,
-	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_pci1xxxx: fix off by one in
- pci1xxxx_process_read_data()
-Message-ID: <05465217-174e-4888-a6ab-6251f4a9920b@moroto.mountain>
-References: <ZZ7vIfj7Jgh-pJn8@moroto>
- <20240110144605.2a8813d4bfaff1a55edb9938@hugovil.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ev9PNgg7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704919546; x=1705524346; i=markus.elfring@web.de;
+	bh=67WEwzv+/9tUhnVAYMobcuh+1b1uiqYL9AGknTMPv1A=;
+	h=X-UI-Sender-Class:Date:Subject:To:References:Cc:From:
+	 In-Reply-To;
+	b=Ev9PNgg7hVDL0F9Oa3DaRBUPbf5jji5UsoqQsmCIxDAoWLKV+buo10XZENviw+Rz
+	 2Z1mHQ82fDVhW5JzkkRmIV/XC+O9oaCzPEY2yblfNVUaC87XRmSDEMd4qLsTgNy/l
+	 OtfwwLY9tVOtdwBp+xe/8ZR/zkZWzutJbGQRP61y9EUhsJSMzcCb1QWfheX1JzwQ4
+	 apSbxelcr+VH+bitCSYncBOXxn7HLyC0InD63/cI52UdUaxhg3I7ymdP9Gaj+vMjB
+	 HK5W02EMgHPbRfIRHfUHk5oSBFML6oKhh+n3s48a6ShjcWXmgLsyu3bXU+Jb/18zy
+	 ymRJ4kyBuLL4eZt+KA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mv3Yg-1r6H3y0ULo-00quwH; Wed, 10
+ Jan 2024 21:45:46 +0100
+Message-ID: <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+Date: Wed, 10 Jan 2024 21:45:43 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240110144605.2a8813d4bfaff1a55edb9938@hugovil.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 0/2] io_uring: Adjustments for io_ring_ctx_alloc()
+Content-Language: en-GB
+To: io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
+ <878r4xnn52.fsf@mailhost.krisman.be>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <878r4xnn52.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w8zbiVzV4QX6nYncQcpShWT/W2voPMe5P7Wq/18FEP1aLfUlsa5
+ 1W+heqqaOSv74iqsgtIBdLhT/DdXeZAxqKoOD0X3a2c5E497HBDVFPW0RVFrBuuzf/ZsnD0
+ 8Fs9cY/Mj3+3u+5tqUHp+VCvEJNavPjNeH0V9KlXDBm/uH8wBkgVLQHUdCCnLnDE7CL8Irn
+ wkImzt5GMc7bRj95dOH7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nV+jhf8rftA=;6GXpVx/Fu86nZGOIj5tOyFTGS4O
+ 6u0lKWKNN/hmEpEIjnQig+hiRmFkUTCqLY79NJlOHWMfLbo8ZnOoZ8TWH8l+13tjwbCTzw+fI
+ BKYwWbpjmDYrf/DjA33PfSJn4Ig1T/kCLuDNncgK6L06Enc4jQOw+yNhOEAU35V7x04AYYvZ1
+ ui13KNAId8kHEwDXYVxIqMcIXwC6WUMQPadKx61koFyFhndx7mFKk6931MrtSW8vg4kEjY43Q
+ J6INj7BwMYt5E8ZNqN5qDid/Lz0LkPqgLdNEhT1DB8UBM10XrvWXwAu0FW3SebAT0vZk4Lz94
+ ThuYLg//OKYTCspUGlbIgDN/OVIGgm8FD+bi6YLvIcD8iB6vcWjK/ToWSLcBRaOK26CrdnKaa
+ p2kHjtXtmofvvUqMFPS/q1RQlTobH/UD6aKOLoqdAU4JTEkJxHagzBu7eyJV3d6RUkcK0hohO
+ hL7fzO3yXIkX44uURC5aOMOJgQb7/T4DSc1T8yaqTgGyNw1nC/8c90Yp1g/HsPfjJ0zEmfR4x
+ kiEjppZ1POBDGx231TI9ta4id5RXrCeWDZT3u4Iyj1TxxmuX8us1tUMoRZ+aVAhHMp0YF9T45
+ 33NtrjCh+/702vsJQjlG03iL+mAftr4N3q8oudAEMMYQ0XcAghHJSoPOz9iQzI1q9D1SqGu6r
+ J4MxxV8BLNRMKm3Wxelbr96X2zmLLlYGr/WknS40Ll6blupo8rU9IqWimSe4A8ufudbiSdWfd
+ ZmHhOxV/OlU077ewx6RwgT0f8z/0+ahHTyZ7qscUvEX2OxcsdzuFArcRu0woXRoBIsGGJFWnj
+ brGKGOmVk4iRD0QMu9muE9IvZEV9iSwEEa7kvE5GhAW/mU5aEbqi169Za703zn7aCIs0OihNy
+ zftqUsulIBu2L8xGqSaf2Zld/mJSMlwewGqiHG1r7kY5MYkQ5lLHoxjSc2tluVSDW2J8xcXip
+ bdgxbrk5oLPd157aUxmWo5M93es=
 
-On Wed, Jan 10, 2024 at 02:46:05PM -0500, Hugo Villeneuve wrote:
-> Hi,
-> it is not simply a matter of adding "fix" to the title.
-> 
-> You must explain what and why vs. how.
-> 
-> Please see:
->   https://cbea.ms/git-commit/#why-not-how
-> 
-> for some guidelines on writing a good commit message.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2024 21:38:12 +0100
 
-If you can't understand why a buffer overflow is bad then I honestly
-don't know what to say...
+A few update suggestions were taken into account
+from static source code analysis.
 
-When I was a newbie, I encountered a driver which was written in
-terrible style.  And I thought why do people allow it???  This is
-garbage and it's messing up the Linux kernel with its bad style.
+Markus Elfring (2):
+  Delete a redundant kfree() call
+  Improve exception handling
 
-But after I got older, I realized that he was the only person with that
-hardware and the only person who cared about it.   If I started fighting
-with him about style then he would leave.  He was a quirky guy with bad
-taste but he was still making useful contributions so it was better to
-tolerate him.
+ io_uring/io_uring.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-These days I'm the old quirky guy.  If you want to fight with me about
-commit messages, that's fine.  I can easily just add you to my list of
-subsystems which only receive bug reports instead of patches.  (I think
-only BPF is on the list currently because it's annoying to track the
-bpf vs bpf-next tree).
-
-Feel free to re-write this patch however you want and give me
-Reported-by credit.
-
-regards,
-dan carpenter
+=2D-
+2.43.0
 
