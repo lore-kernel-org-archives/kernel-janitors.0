@@ -1,88 +1,76 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BBC48794;
-	Wed, 10 Jan 2024 12:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5347F7B;
+	Wed, 10 Jan 2024 12:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="r6wNb2QL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704890642; x=1705495442; i=markus.elfring@web.de;
-	bh=la73kn+TFTFDaF+8Q3UYpU2TqjBC/104wbhwQuU4dVA=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=r6wNb2QLlvgzanAylRuVIUnrnIhoQHCghVrgE0np/3FuNwDKHeXAdtQy8FLFx7id
-	 RWlL1xR/Etldcu55AikeqKyJq4cXTtWAk15hIhpx0m69fkfjRur/edlcXl/biHlNn
-	 cPIlstKwno5OkxSFwkbVaZaGl+jgByLS0aYNj6qAFliaxcp2UxvDcC7JOwPCdtvbP
-	 DxJqJKsC3keKNNTzoS+2fZN0jewnuvm56CNw8yzxHNUvPpScoe4cryv3O2pB1JRRG
-	 NlU4lYTPchb2vQfvRhkinoPDPjKnWvwsitdWvhahSrqC/XckxjtaFHkFkECKpTiyZ
-	 i7M0XDdSGq/h30pHmw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1r8NZb2ynx-016YEe; Wed, 10
- Jan 2024 13:44:02 +0100
-Message-ID: <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
-Date: Wed, 10 Jan 2024 13:44:01 +0100
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Hiutukme"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kTy81ad9pKvtG9ddZ38Ph0EzVsfouY5XMECMPqCF5ZQ=; b=HiutukmeGHcFQXD7yqG1H/8syS
+	TscaDe5jgVUGUAcam3tly4Cnmr+g+DfNvWh690STzoXL+eygLzGgoSDUssm+LfAw5zVEKoowUUU0E
+	xg917ouaRSv3XyYmGggxggwLCKr5QBVKe0xnUHyOQ3CdAC8CRYJ/UePsEnI7Xfps8x28kCA+kwsXs
+	T8WZSCz29kxh3yXb/kOE9KjJ9ZF4sqF5ALi6f/BmQ9RkwcCSecf+cKoF7cwiJbdjahvTGQAM8Aekc
+	yxrixBLKL4K5+KC4RKojB7hSxifDQZVpdIvUlXrr0VRokXwymm2naFrNf2S44yV+INcDePolYuSqA
+	Y1sZXzAA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46746)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1rNXzZ-0005Pc-1Y;
+	Wed, 10 Jan 2024 12:47:33 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1rNXzc-0005Jz-8s; Wed, 10 Jan 2024 12:47:36 +0000
+Date: Wed, 10 Jan 2024 12:47:36 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [0/2] ARM: Adjustments for init_atags_procfs()
+Message-ID: <ZZ6R6KSQo9ph3ARZ@shell.armlinux.org.uk>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
+ <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
+ <7dd19987-6590-4756-a929-1ff01503ad1c@web.de>
+ <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
+ <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [0/2] ARM: Adjustments for init_atags_procfs()
-Content-Language: en-GB
-To: Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <562a6f99-3f8e-9a77-e519-b668e24dced2@web.de>
- <b3c42397-c879-4381-aa96-c7887e81c068@web.de>
- <7dd19987-6590-4756-a929-1ff01503ad1c@web.de>
- <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZ6MZl14bcIaCaQn@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CdzX4zLJRKZiTncQNCOSQvc+4e103tCDmLiHfON4OVsvsJodBn4
- Y+SFuLIXC2xvnz5QfL2UL3MBVukgf+QqUMavAu0AbyULgt/T/FIqEY/kCTz7zZGeV27Svj7
- sSc2Jxbr/q/e5kCNJvcKuY0zWpJqxed9bKExbGIxcki165O5urwF3HvrStTtBvlc4mTQGjO
- 9LbqwN09hU9l17l7QxhUw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uIIKa0+Co88=;a0o93Pace7y+DJpz4dPP0YadH7y
- kUAmPkvK54GswrVaj/QWwAYFmpKrhZaw56a8e3J3J9eGXx+/SiN69tNuFKO3V6VIcYGH42sqi
- yra5mmX+Xk5K2bYbetfYshKXYUM02QA4TPXh4JipPrlklWXq5heYcS45ngb92kV2o6k/Hp+oO
- OpdKhsfk4xHnv7RJ1P3hRujSnrqyO7WTutJIHXqXLE1BQ4/DhBE9cD/BxT6Lzigs3LklUjDyE
- poBfln4jtmJ8LK7hVe0snKplnG65nrWbJ+NTQfGs9NtwvqGaqebjPQ5e71Rq5CUzA7gzt19jQ
- FWlUKCVkZ+yg4KOyQAIUM0gMzholkrjqLHgHH9xgAy8bqIhfUCNRm5Sc0nIA7fygfU3aPakBM
- 3I7c3BW98RuMI4DlxkvuIBfpS2fn99nx9BTXCwUuSe8ZyBnX48cPwByM1dzChAViaLHBM1GqR
- ES9zie1ufpdEGX5T0k8R4Hp0Pqzv0wQyePNsnkn5PMLZRmWoRWgPsYmNow5l53fFSp0sFplWk
- sTT0wMPt3ODH3xaTOCgBSv8EB36KDVZw6JzFfz5MAXx7kX1C86UGfV2PMJQqoIQpE5ztWI4N0
- 1GtW4I/8QE2laovyTVmX40EYaf41EsWFZAd7/hUzJMIVSeCSH4TaTfbnPJBRYsVK/vKFWFE78
- vwlu045mF2Vu+Os5Svy4iGP5z+d+EAoU+qIQ9EC211AK6bfn4691MfOOsSqlXBeyzG3n9LtwA
- +LZIYY1HoVBuLZEhgudwKEj4G2fRFKZFAsG/ZiEuIgQNvNwV6xdztfY/IJnYKH5hWSLVUkG5c
- ZQTFl6KqehppMJv8yT4FSBFBtoHTHgjuYA4V1dtO1iyWlr5/81lqjvolsEK01pq1RCiZmFPcU
- ymdH8yIXvIgrXKgyT0U6Hh8h/3qFoq7d56vGUcNokjHXad2HlEVzfLMmtaqSRwC3+3QUXlOqB
- J7GFpQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c38e495-5c9c-4ff8-b453-93b882dd2c4c@web.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
->>> Is this patch series still in review queues?
->>
->> See also:
->> https://lore.kernel.org/cocci/562a6f99-3f8e-9a77-e519-b668e24dced2@web.=
-de/
->> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00098.html
->
-> I suspect no one looked at it, sorry.
+On Wed, Jan 10, 2024 at 01:44:01PM +0100, Markus Elfring wrote:
+> >>> Is this patch series still in review queues?
+> >>
+> >> See also:
+> >> https://lore.kernel.org/cocci/562a6f99-3f8e-9a77-e519-b668e24dced2@web.de/
+> >> https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00098.html
+> >
+> > I suspect no one looked at it, sorry.
+> 
+> Special mailing list settings probably influenced this situation.
+> 
+> >                                       I don't catch everything that is
+> > on the mailing list. Looks fine to me but it needs to end up in the
+> > patch system to be applied.
+> 
+> Can you collaborate also with mentioned mailing list archive interfaces?
 
-Special mailing list settings probably influenced this situation.
+Err what? Sorry, I don't understand your comment.
 
-
->                                       I don't catch everything that is
-> on the mailing list. Looks fine to me but it needs to end up in the
-> patch system to be applied.
-
-Can you collaborate also with mentioned mailing list archive interfaces?
-
-Regards,
-Markus
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
