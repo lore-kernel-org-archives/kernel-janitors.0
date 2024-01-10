@@ -1,64 +1,55 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC254D580
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE6A4D582
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 18:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B4y9m4px"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40d87df95ddso46234615e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 10:37:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lbg0e0H+"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e47dc8b0eso31830235e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 10:41:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704911866; x=1705516666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0bRmYP/rNPWw+8+5BllGhXOmL25I0DLXSeKEgWDNQLs=;
-        b=B4y9m4pxhpxRGOujWf+e9E3fjzFu5dOFOwf6HawGfDo4SP73owmvHqGT6+ep0hBuY4
-         RhU2Ca7MzBDbCnCSE0A47ldGPGAuyW6Y1qnIecRaj3u43zkfAJWb0ab9G8E52rw//fjV
-         xg8dYajX+RjVoFVP9Lbpk3hT85MqmDH4e/BzkXUjcT45ZHgtVkHlR0If7NLkvwkZVr24
-         K4Cd6BxoKiQyanYjNYrHvcnOeUFowoUl0JOyRNQqpKhZ+1TOfmVGQtbZibTsjkViDfzi
-         hJQRObKO+yDpY88g+6Wz6rmYy3NDFY7IgKHiieRrWGZLomxHaSza63XMzBJ0AOONSoF1
-         szBg==
+        d=linaro.org; s=google; t=1704912105; x=1705516905; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WFUXY3mgVSfGBpcTG7FlJdmYxdRI+GVT2C0gkL18kmE=;
+        b=Lbg0e0H+66RpqrsFiKSo8IfUkt0HeFysdZOmKfsLpRsDBVQjDS8ikN4DMoL7x8BYyn
+         896rKuUEOPUbzdZHpYrcxyittsIAKz/1pLoDpDdzXyRSDPsKaob/z6Z1nWaW4lHufCuL
+         exJ4x8e1xqzyRl8cmUaonkN2M9VD2b2xKMAL20HmazCWsuRT9Izaf0tjUuORbSABVxWb
+         7UvYm/yup+dpuoI+/dIz2U8yWKb3Ckt92rtQfw0LuAgd44iJgoPi3g5ylA6J1JyDDc7O
+         LGWae/FHySSziCpVEu7Q4cDTJ+85s1CVTivHTM+D54wbeUcOiszKATwjhobd0CwZv6K1
+         yzQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704911866; x=1705516666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0bRmYP/rNPWw+8+5BllGhXOmL25I0DLXSeKEgWDNQLs=;
-        b=uGc6vh5bFQki8PMyc1zK8OwsSqNynAAfb8/NOkydtCL1ATTexNSE+F5Vfl3jcD3fHg
-         8Gt1RfI6n+eYUP8F3i4k5lopkiog8UFldc/2lfTfPBhJ2n+jgHl1SgtL1fKiOzpTvcgP
-         X2iBTRpklQ6AqsG/UqfImmQhWcZxhTcSRzlqo2i+evBYe3UXcLcw+nSnJyChYwH9VDTe
-         PPYVNwpIEIP3WhVichmu5zt4toHvOV5zEUWNsG50Sv1lXFzpJ/iKCRLswYAUeUAbeJow
-         BrGDN2YkIy4vpREIY3HHg2hbiM+Kw+ZIXQHaq0rAxDeMhCRsrr+IgelKSxo/OnFQDkru
-         XCXg==
-X-Gm-Message-State: AOJu0YwbQ0Hy7rRT4e1GCAo7CmcRqjoP9KwMu4ayIixw4RiAB+w5+4A0
-	/s2mmY/PUEMVMLJJioC2SYKzDBG0tVu2oA==
-X-Google-Smtp-Source: AGHT+IEOYHVXjBcX1zYY8aTR9nE/xddM0bNI/sKTb4IkdC06BAEXBpFk57A1vGcVFhzX51Zgcm0+0w==
-X-Received: by 2002:a05:600c:1603:b0:40e:54f1:5d3e with SMTP id m3-20020a05600c160300b0040e54f15d3emr372091wmn.199.1704911866001;
-        Wed, 10 Jan 2024 10:37:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704912105; x=1705516905;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFUXY3mgVSfGBpcTG7FlJdmYxdRI+GVT2C0gkL18kmE=;
+        b=gPupjAZzDSGQldjXIusnFWOvoSS1BwDOULeAdvYRBj5BHBoKKzsrU2vbtN0HnzMjcX
+         fTaW9paLKR/N4oWg2F3dzjlID3hp8fb5grd9+BxLRBVaDlRCs2K9mJ9Trw9smSHiD2Mv
+         lsqs3SM0rP+Ez3M+4W6HAUbVKvmoAYjyoiTZ92RgbEXsd6NbUl3LINgXdZwBZm8cEPlN
+         Ryw9fqfgVRHwzcpZ/nUVcF3fq6qjwdizW3gRTvkATPDhyoFqbwBuW4EM66b/xLvTwBcv
+         yn150/bBLeQPf5U2G/NEFyJtqmpA/nD0DvWIcxo//tYzTHVzs2Zwl/BuW71Iu3WXwGen
+         UbCw==
+X-Gm-Message-State: AOJu0YyAkoKmD6cyoKxN4+QHuMZuG7pyk8hVfcIhYMvTQfJPbaJ40hFL
+	/M75CTdsDz+f8rkZtFzl55EVsDOeJr3FLA==
+X-Google-Smtp-Source: AGHT+IHxsvSsfYuKgjq18TXM7EAmInXRbNUHe/2iJNQR3LVZbL9ImQqfMCj6LQoBHHXesj3fGGayPA==
+X-Received: by 2002:a05:600c:4452:b0:40e:40fc:6d43 with SMTP id v18-20020a05600c445200b0040e40fc6d43mr957913wmn.98.1704912104738;
+        Wed, 10 Jan 2024 10:41:44 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id bg3-20020a05600c3c8300b0040d91fa270fsm3064239wmb.36.2024.01.10.10.37.45
+        by smtp.gmail.com with ESMTPSA id g14-20020a05600c4ece00b0040d5f3ef2a2sm3029695wmq.16.2024.01.10.10.41.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 10:37:45 -0800 (PST)
-Date: Wed, 10 Jan 2024 21:37:42 +0300
+        Wed, 10 Jan 2024 10:41:44 -0800 (PST)
+Date: Wed, 10 Jan 2024 21:41:41 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, "cocci@inria.fr" <cocci@inria.fr>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Drivers: hv: vmbus: One function call less in
- create_gpadl_header() after error detection
-Message-ID: <d3c13efc-a1a3-4f19-b0b9-f8c02cc674d5@moroto.mountain>
-References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
- <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
- <82054a0a-72e5-45b2-8808-e411a9587406@web.de>
- <SN6PR02MB4157CA3901DD8D069C755C72D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pinctrl: renesas: rzg2l: Fix double unlock in
+ rzg2l_dt_subnode_to_map()
+Message-ID: <f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,61 +58,51 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157CA3901DD8D069C755C72D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Mailer: git-send-email haha only kidding
 
-The second half of the if statement is basically duplicated.  It doesn't
-need to be treated as a special case.  We could do something like below.
-I deliberately didn't delete the tabs.  Also I haven't tested it.
+If rzg2l_map_add_config() fails then the error handling calls
+mutex_unlock(&pctrl->mutex) but we're not holding that mutex.  Move
+the unlocks to before the gotos to avoid this situation.
 
-regards,
-dan carpenter
+Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+(Not tested).
 
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index 56f7e06c673e..2ba65f9ad3f1 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -328,9 +328,9 @@ static int create_gpadl_header(enum hv_gpadl_type type, void *kbuffer,
- 		  sizeof(struct gpa_range);
- 	pfncount = pfnsize / sizeof(u64);
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 80fb5011c7bb..8bbfb0530538 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -453,7 +453,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
+ 	if (gsel < 0) {
+ 		ret = gsel;
+-		goto unlock;
++		mutex_unlock(&pctrl->mutex);
++		goto done;
+ 	}
  
--	if (pagecount > pfncount) {
--		/* we need a gpadl body */
--		/* fill in the header */
-+	if (pagecount < pfncount)
-+		pfncount = pagecount;
-+
- 		msgsize = sizeof(struct vmbus_channel_msginfo) +
- 			  sizeof(struct vmbus_channel_gpadl_header) +
- 			  sizeof(struct gpa_range) + pfncount * sizeof(u64);
-@@ -410,31 +410,6 @@ static int create_gpadl_header(enum hv_gpadl_type type, void *kbuffer,
- 			pfnsum += pfncurr;
- 			pfnleft -= pfncurr;
- 		}
--	} else {
--		/* everything fits in a header */
--		msgsize = sizeof(struct vmbus_channel_msginfo) +
--			  sizeof(struct vmbus_channel_gpadl_header) +
--			  sizeof(struct gpa_range) + pagecount * sizeof(u64);
--		msgheader = kzalloc(msgsize, GFP_KERNEL);
--		if (msgheader == NULL)
--			goto nomem;
--
--		INIT_LIST_HEAD(&msgheader->submsglist);
--		msgheader->msgsize = msgsize;
--
--		gpadl_header = (struct vmbus_channel_gpadl_header *)
--			msgheader->msg;
--		gpadl_header->rangecount = 1;
--		gpadl_header->range_buflen = sizeof(struct gpa_range) +
--					 pagecount * sizeof(u64);
--		gpadl_header->range[0].byte_offset = 0;
--		gpadl_header->range[0].byte_count = hv_gpadl_size(type, size);
--		for (i = 0; i < pagecount; i++)
--			gpadl_header->range[0].pfn_array[i] = hv_gpadl_hvpfn(
--				type, kbuffer, size, send_offset, i);
--
--		*msginfo = msgheader;
--	}
+ 	/*
+@@ -464,6 +465,7 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	fsel = pinmux_generic_add_function(pctldev, name, pin_fn, 1, psel_val);
+ 	if (fsel < 0) {
+ 		ret = fsel;
++		mutex_unlock(&pctrl->mutex);
+ 		goto remove_group;
+ 	}
  
- 	return 0;
- nomem:
+@@ -490,8 +492,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 
+ remove_group:
+ 	pinctrl_generic_remove_group(pctldev, gsel);
+-unlock:
+-	mutex_unlock(&pctrl->mutex);
+ done:
+ 	*index = idx;
+ 	kfree(configs);
+-- 
+2.43.0
+
