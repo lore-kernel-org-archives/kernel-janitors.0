@@ -1,80 +1,145 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04olkn2013.outbound.protection.outlook.com [40.92.46.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359113A8D9
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 14:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A130935890;
+	Thu, 11 Jan 2024 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vkfbozRu"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e629c5a42so1720695e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 06:16:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704982617; x=1705587417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7HNZaDiw/8JtL+WOdbC/TQ6GQKXbKUvja93oq/W0PE=;
-        b=vkfbozRugNDFIpcNpfzHeIZCjYgnTFaMzo6J/h5C+anLIsuqkYLV6lWJPxLtybrlA6
-         xrZ3ofRaT181Khw9JAwfnj1hC8oU5YNJVHW7sqTfe7LTHSOojrfRb3ZImLiRLr5nQtNM
-         uulJKizhcZScFhkUfOGqLHjpMhl3TLLOG0NBqiULUOw2HuGCfF6d7rmccRpb+T1DK5z1
-         2bT84SglewgV95Kmhq4YpEVQ3PhAQq/Z9+7vFWE+C/vXBxYvfe4BvQv3ivkqAiVF3p/o
-         pv52e2wznEGu6JaxUTlKuUIowSyzdGPOKXTWoAo3QWetSZKqQ88AyiXczuhrkGKrR+6w
-         zt+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704982617; x=1705587417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C7HNZaDiw/8JtL+WOdbC/TQ6GQKXbKUvja93oq/W0PE=;
-        b=taDj/87kWEq3JQIwA1VRJGnJIr9x28nAqbHAYHfWHqN9x+LNd19HCL8FjZWKtPpRaY
-         H7krdQAKjoZi20OLDRAmrd0/W1UPNis+GmTt0YaBdsmiHhN+Urj0Ov9VUgKvDg/X6Jvj
-         9qqTiHWHqNCNcjYpZMYi78oOyEQ+tkkS1P0XkijF8OUOpMzKC4GQwJwjyr3qjC120qXT
-         Y4PjEEsEDIcxc79OaXcR/ENemB4goZiGnhzJaPJ/FaMNmBS0C9dISfbFLt6gmrG2tLrH
-         fx6jzImKG+0wna8PRfj6p8uNAd9Jvc0t2DF5xnK8hI7+VHIf5+JrEXG1h1raWm6J48pm
-         5QFQ==
-X-Gm-Message-State: AOJu0YwxM0VRyrLMt4ueczF42nUHAy9S+TkCoSVXZnOnZi3SX28A8gjk
-	qNS6dQc+GoXdyftOYj8NMZW+k7toNj+auA==
-X-Google-Smtp-Source: AGHT+IHE7xVs3T4jps/jsae2Tnaipvhm1oyu66/to3BEj+6cPFdVQsBVa3/hqFcjkXCI6xeVBHSvsA==
-X-Received: by 2002:a05:600c:a47:b0:40e:5421:e2dc with SMTP id c7-20020a05600c0a4700b0040e5421e2dcmr444019wmq.198.1704982617490;
-        Thu, 11 Jan 2024 06:16:57 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id o8-20020a05600c4fc800b0040e549c77a1sm6035367wmq.32.2024.01.11.06.16.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jan 2024 06:16:57 -0800 (PST)
-Date: Thu, 11 Jan 2024 17:16:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian Heusel <christian@heusel.eu>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/ipoib: print symbolic error name instead of error
- code
-Message-ID: <102549f3-2169-40b7-b413-b86bc7965c4c@moroto.mountain>
-References: <20240111141311.987098-1-christian@heusel.eu>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="bpj4EKA4"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R0chT+xtMyY5t5MraqoY8zg1fwLydaYUKFokbTPuMQelZ8odT39HIB4J/8lICwHDlZRThYpBmSfBqOiHRv5qu0nKdRJ5p7Xzsi0ChbgJWqgQ5t5uP0NvrC9YvFQH1tcgk2QzuwvPap4vl/l9oI2uc+WA607FMAQO06t9M/ZCifF1dmGpfgKelfapr0gd0BknmS5rfB0g+gWNTmxLuSsgWAQP9CnMDJoii6yjsztfB5z0w9IRQ18tMLKM86w1/4CkOUExAHWhjOLY3s0URp/tzDOwjFTsJh8PZPz8c/5JneSla9BDlrr86PpBYWmL5CWFalKEryPNjAwI9vSR07z8nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s/ub8nCHesBw1DG21k+Oc7mJ7bnjJx4UVtmqSOLPHZ0=;
+ b=gd3c0DKRfRLDDvIoOqaRX3r4+pzrwk/+WOpE0ZijH0UaQi22qBtEN9wXXMu/SmctroTqnrCNr0zF8zX5kefEEoGT+p1z/4tb7YCpayuiXMJshn9KeeLTKANluBw59/iKJH2GMShT6nZ1ts1tH6JAcodCLX9emiVdeJiiNH+QEGwS1Eh2j485AhybIr1UYvuO+Lt0f+xuW7tgEQyOLsiBpPxJ38fZ6pmHg5PFNQmngm8/EcGTMR2h7ppGP30owlZnXoAGVvIWMZbyam1InVRrK9mUb2yIIAlb6VhsjDkCwb7fp0CCl7u0L7C07OK6okEFrKtBDIT6WAV7lHyVkTlvGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s/ub8nCHesBw1DG21k+Oc7mJ7bnjJx4UVtmqSOLPHZ0=;
+ b=bpj4EKA4Nkv9a3TmvdrhKvPG+4sC/ZRmXP8AF97wHZt4KzD2Sk1iuDGRpaelzMhoaSVIM1Nzzr4v1ZZSjH/gcHBuuPQ9ZW5qGMUsVD08SEjSqTWl3BFUo1W2T9iB668Nz87BSg52yVUWI75jOuy2fh9m7B/o2zyUu3mZxb15eGBVM8pbHd0DTDQpWd0/biiE5oJNvGkOOPW1aqj94Vy8cv5iG94sbFN/oNBOzREEYWTgjKrfP2dPA2l5PTTV0VaVWdNEr9dA4MA+4ttxmB7ovVCUq00Ms+WSccmHFipDvo6Ss4LwH19Ehpwkdz4rF8hxUSDFFqvDRbLw4ct+4Djsdg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by DS7PR02MB9475.namprd02.prod.outlook.com (2603:10b6:8:e0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.17; Thu, 11 Jan
+ 2024 14:35:18 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::3524:e4b3:632d:d8b2]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::3524:e4b3:632d:d8b2%4]) with mapi id 15.20.7181.015; Thu, 11 Jan 2024
+ 14:35:18 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Markus Elfring <Markus.Elfring@web.de>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>, Dexuan Cui <decui@microsoft.com>, Haiyang
+ Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Wei
+ Liu <wei.liu@kernel.org>, "cocci@inria.fr" <cocci@inria.fr>, LKML
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Thread-Topic: Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Thread-Index: AQHaQ7PyvvrIb8tUYUye7rRKlkvVrLDTNj6ggAAqigCAADt1QIAAlVWAgAB9o+A=
+Date: Thu, 11 Jan 2024 14:35:18 +0000
+Message-ID:
+ <SN6PR02MB41570E0E960C9D588B9EF96DD4682@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
+ <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <82054a0a-72e5-45b2-8808-e411a9587406@web.de>
+ <SN6PR02MB4157CA3901DD8D069C755C72D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <d3c13efc-a1a3-4f19-b0b9-f8c02cc674d5@moroto.mountain>
+ <SN6PR02MB415710A52835BC82B1FA1EAFD4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <4ba5ab3c-80ae-448f-9377-01087ec9e858@moroto.mountain>
+In-Reply-To: <4ba5ab3c-80ae-448f-9377-01087ec9e858@moroto.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [mxXJc2n0iS+lCwBV+getet8W9s+iM1dV]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS7PR02MB9475:EE_
+x-ms-office365-filtering-correlation-id: bad24b10-0c51-4995-0566-08dc12b28887
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ SsREecwkMRZYyJMT94wrx1kIdKPWUzlmWGndPWqOrz7rw7s0TFAlZNG66oCoINwmUfjkYFAW1hOmijluomfGNQx0aLMQVd+lyFM/6bH4E0YVFyYMY8EDbIihF/QR/kaS4pimHEaSIe90Merek/JLOMXIOernzALr4fshKZVyf/rxXlDaTv7voIBMCoOJ5VI3Z8EXKvtphEeGG+Fa02DOt6Mwww0LCLNoAv0iYY2lxwar482azLW6KmkTLW98jI7P38Llh6Z6lsjunSRcyj2UmN7h4iYvLyd/2SiyemY10RsAGUpoeQWzqOvfFGYbkn4Ubxe5Pv1mj8uWbBA4XthGEfS2C0QXGpcOOiPDSRb65ha8it5bMALjc6+uqL5cv489bZdKgND8h2rBQbG0NCxiHOUogKXIq80iR+SlEZ6N++fQn2xdEBMLyUV7mARKmVpaI0GU19l7k+tLiMGNkfN7GFvFMQ01jmW/Va8uitm+eXqk0bzrTdDOnGyCnIsadu2xwd2QOMp0g1nqB2yU4XWfzT1N/th1YKgwfQML9qq7KsLT9jnWqmJ/3xPfMIvbRTyd
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?tqX3OrZANY+7JmoUEjtNnu/s4wbkKjpIBJoAXWwTocLRaCm3BFixvlnS8Vtk?=
+ =?us-ascii?Q?LQl1906XuRJhxN8R0rfyzvaqT/eW6mmO6QvTsOteJws+SykD8JjGJkXQ8V6g?=
+ =?us-ascii?Q?zt1UpplxdvPPVd82atV1E9GOqEbM3iZvf27QKV2U6g4JHa6f25RH4WKeikdj?=
+ =?us-ascii?Q?Zj/+BFT878KqMgOyVHZjB6RAL+TtQWE9SMYkS7FYIKxBZRaIwEV+pl9qVrpW?=
+ =?us-ascii?Q?TFVIXC0AEvBu+56AcTOvz09p4vbjeqXPABTA3T4MtuU4IdhvtTZEgz57ZnMP?=
+ =?us-ascii?Q?ERufldgfGzaAT+0eFtwOYNc0sAmGR3kJM2s7JkL5XxPc0+oAGszMB2+c8cVU?=
+ =?us-ascii?Q?jm4wHEA8T+h4h9oBgw2ZuZuA3GRQPXFm66IiRzSj8EcXFmi7TEP+MTJMXAjy?=
+ =?us-ascii?Q?/+Q+YspmRpzw5/yVL3pivfviRtHKCjK2IDIDtLfw68SOZQ+oW7I/igrvoazw?=
+ =?us-ascii?Q?eqNg+f3IBW5XYWAXEF7jyWFNiCrU1gpizSGLVnmMOvNrj1BB5BXb0cuXipQi?=
+ =?us-ascii?Q?gECliG2sVitG8aZM7VZ2MiGA6F0KnfytsxHieM+EFIfW+j0BHnU5Vok4u71m?=
+ =?us-ascii?Q?4ZCeRWOyTOdBFEH2XDRmgo1wK1K46cVFLg/Umz+k6spUu7slGT6jC5XwQorB?=
+ =?us-ascii?Q?tJ0M/LlRl/SUYjar9U6zU+u3VKiZL9IVSvjGkmH9lfw+XePjbCr2GN8pU2E5?=
+ =?us-ascii?Q?md7ZntDzumRP04I1u/+dn9DbctabcKYiF9sqC6uFZZSWC7Ls7Nip3joKjGYb?=
+ =?us-ascii?Q?KtVC61wWNyL2mEjo3tD59uHu7cGw8bYJCae7E0vluxgxT8El04ONwMnpvxTK?=
+ =?us-ascii?Q?NAy+ksH14R8ScrpieDby+d5bf+XEA7/Uk0xIdgz7unPjjbGsmZ0Nz3EcKmYc?=
+ =?us-ascii?Q?FNqvfAhTZc4jV8rYnKwn9Sz3RAi1ng0Cqo1XJ4B/n1sspT1t/AKzPs6fjy82?=
+ =?us-ascii?Q?NrUpFZJPQ7xmU52CGmDTGNZYmHzKx4A5odnOh4ynCIou7CwpdBEgCNSFz5C4?=
+ =?us-ascii?Q?0YJO06MwedBVfxqhsZ2HfhSWguVG155pUzSxWL81YeZ3JcsauX1Ke4do354H?=
+ =?us-ascii?Q?6HlUhDPBtaZsoTP128E2r1szbdpp255Owa7nEUIQwDh7Pg1B06BVkYQZw4Me?=
+ =?us-ascii?Q?TwyK9R0EYvMF6kBt5sLSjInBpdp/CU0+yxK/GpHyxIIEQDnn1LQqVmyPXsnM?=
+ =?us-ascii?Q?Uenz2eXVJlHwlrAGB4xBts4Ynojzc2bHrcHMYQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240111141311.987098-1-christian@heusel.eu>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: bad24b10-0c51-4995-0566-08dc12b28887
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2024 14:35:18.3518
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR02MB9475
 
-On Thu, Jan 11, 2024 at 03:13:07PM +0100, Christian Heusel wrote:
-> Utilize the %pe print specifier to get the symbolic error name as a
-> string (i.e "-ENOMEM") in the log message instead of the error code to
-> increase its readablility.
-> 
-> This change was suggested in
-> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
-> 
-> Signed-off-by: Christian Heusel <christian@heusel.eu>
+From: Dan Carpenter <dan.carpenter@linaro.org> Sent: Wednesday, January 10,=
+ 2024 11:05 PM
+>=20
+> On Wed, Jan 10, 2024 at 10:17:17PM +0000, Michael Kelley wrote:
+> > From: Dan Carpenter <dan.carpenter@linaro.org> Sent: Wednesday, January
+> 10, 2024 10:38 AM
+> > >
+> > > The second half of the if statement is basically duplicated.  It does=
+n't
+> > > need to be treated as a special case.  We could do something like bel=
+ow.
+> > > I deliberately didn't delete the tabs.  Also I haven't tested it.
+> >
+> > Indeed!  I looked at the history, and this function has been
+> > structured with the duplication since sometime in 2010, which
+> > pre-dates my involvement by several years.  I don't know of
+> > any reason why the duplication is needed, and agree it could
+> > be eliminated.
+> >
+> > Assuming Markus is OK with my proposal on the handling of
+> > memory allocation failures, a single patch could simplify this
+> > function quite a bit.
+> >
+> > Dan -- do you want to create and submit the patch?  I'll test the
+> > code on Hyper-V.  Or I can create, test, and submit the patch with
+> > a "Suggested-by: Dan Carpenter".
+>=20
+> I messed up the if statement the first couple times I tried to think
+> about it so I don't trust myself here.  Could you give me the
+> Suggested-by tag?
+>=20
 
-Thanks!
+Will do.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+Michael
