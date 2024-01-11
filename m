@@ -1,118 +1,84 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BDD57870
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 23:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D3759B6E
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 23:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kzWGv1hx"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-553e36acfbaso2121a12.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 15:39:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RYhI7mDO"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-557bbcaa4c0so1826a12.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 15:43:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705016367; x=1705621167; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1705016590; x=1705621390; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eSXKljWPMHsTaDskqXnXnea+5zN60Ux6klPJgALt28=;
-        b=kzWGv1hx+N8BOtZr+QJUFwKLPcvPRSTGO1mUYzZjDNdwoV7Vu+R9GJcAd3ZWwEwn7C
-         t3roE/aI9m4jDgri8JKwIfV9DDL6OCtRIriKq4XaBq9h9TAjJHzyymoJcbBG+oqxQFGs
-         fxa+J88VwdC7HYDsL1npCGD23Z4werDX5W6MhBDhMYO+0KiT8+/bhdyJdovxm2iEvhBx
-         0APMpBcTpbiRfllqtfk7rfgEKln1RnGU+c9fu3S654snhZJnGY/kYyLG4dub2N6yWPhQ
-         /HE++OB01z0Ht5WRbxAFc6ejFZi90FcSdSY9OQlBr7de/3/Wcrh9uMboDW8r+QWIXib2
-         Q5aA==
+        bh=rxkiBgZvYVUwh5KEp0hvAPOOTXXKmw59kfx1AaJ7M/4=;
+        b=RYhI7mDOiEYNGmcsYa012JpxWr+aeQY7qFQxPzs3eckeqE0Ip1Gh+N/ynlGhIEnOyF
+         yZaURzIBViMLRlrBL7JKqX+Fg0+OEx5OvIEtzKZbJluAcCmBS/wQKzi4ic8WRGBijfsI
+         ZE7m4ZR16S0/T4KGE9JJVXgaxsygtrc4NURDfgaLJyBoVe9CLzkUQUdEzwmwq27qgNdU
+         HrN34D/Wjz8Hh7mjjQ9OJn3d3CiS+ETivj+S8K69OIKvFuKUOAcdiElcdLcXo04Kjgw9
+         ohbjwvH3tmcsW1dIyT0sEKZDuuse9c+0JaUXC8jib6k0+GoSBQ5Imh/w9LZHHbbu7kYA
+         fZ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705016367; x=1705621167;
+        d=1e100.net; s=20230601; t=1705016590; x=1705621390;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6eSXKljWPMHsTaDskqXnXnea+5zN60Ux6klPJgALt28=;
-        b=krRZByXLxz1XLRKAEyhl5buFb55YS0RXmFNU3hvxyJQBX57XXoxSjgQLECpQ3mFTDC
-         cOX5f5dYyputMESB+HlACPTJdlqSqSCEkzlEXy4YQ0Eo6rwMprw9u54YZ6bgQZI+FGvq
-         6c22gj+FmbiY9M/Sp/uxjIYCl2+PEnMi0rAaC0/faYq/CeTnFD3gHZ/Ufy0y+t1Ms80m
-         T/HXYilja1RLQiH+S/l96XCn77yHwoP+G4hznGPBdyJ5hpf/ZskQlhyT35iMC2Th4csP
-         /Ep6azsKgZXWr2KKdjtCZkFbZdTqtWV7bQhb9RQf7zH5HkfKdsTBjeCof+KUNhnly+4l
-         XYKw==
-X-Gm-Message-State: AOJu0Yw3YASanerc4GT6egxQ9HGraW7H4AtEtpmTon60joJbttYZ1cbd
-	ip5rIRioCJe+z3iJCRllatR1Q6ZVtMJbAbF1VCGVpp2EHVge
-X-Google-Smtp-Source: AGHT+IEHqAByhVT5g2KkHutWjnSZzw81yvlGwS8DeLvk0yvLrPrQwI24UxBWg5pjsj0H3bQe+C+CAeDAcVbgRRN2S8w=
-X-Received: by 2002:a05:6402:c0c:b0:557:a991:6c40 with SMTP id
- co12-20020a0564020c0c00b00557a9916c40mr198682edb.3.1705016366962; Thu, 11 Jan
- 2024 15:39:26 -0800 (PST)
+        bh=rxkiBgZvYVUwh5KEp0hvAPOOTXXKmw59kfx1AaJ7M/4=;
+        b=Hsu/xe1kw7NE3bHFxxRNxCfGG9tsVU/dd72uuhG8Z2WxBtNSe0EWYGtBAhGr+eLXsb
+         Fx0VDjVP97sbDdp7/syeYUumHVBUSQKkryt7Ks1HeVNL373GYv5NF7jCjnjkFrxcDcty
+         wRArvlkITugo/eciAuefYChNIgKZtdAYWnsCssWJ7OMRYmTe3uh+A+nGqzYqnkmswt+H
+         LFEW7+naWQYfRntymCRja4AenOe75mbk2LrPi3bMVvb5Brx0HqRnm+Sf81PQob67Gcq1
+         nophcZumZnyFGF6gYM1DRwYlm4r9sSCv99rmHiqsuhNc/tzzqEHZanAkm4pRlMEAvOeh
+         wIaQ==
+X-Gm-Message-State: AOJu0YwC2Am9L/k0KOGyyPK2WjGnj2oQ7GUKLaaleAVswtNEMq4X7mFn
+	4KlGowbZ5j571bxxay2AH1SmFpIyy1ZxWkpltfjq3kDyp/Y5
+X-Google-Smtp-Source: AGHT+IG0DffF0sjcaQi+XltCUI5iqLP69O1/BALVrJLm1Pg7XSAn7FMXCgr2WOWZDFrqthsEGBRIAq9Tg6x34IBTcbk=
+X-Received: by 2002:a05:6402:34c9:b0:558:8016:b347 with SMTP id
+ w9-20020a05640234c900b005588016b347mr226263edc.5.1705016590594; Thu, 11 Jan
+ 2024 15:43:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <39b4278f-35d2-4071-a3aa-ec49705272af@moroto.mountain>
-In-Reply-To: <39b4278f-35d2-4071-a3aa-ec49705272af@moroto.mountain>
+References: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
+In-Reply-To: <dd938a86-38d9-4d62-abd0-1df80395fbbd@moroto.mountain>
 From: David Gow <davidgow@google.com>
-Date: Fri, 12 Jan 2024 07:39:14 +0800
-Message-ID: <CABVgOSmxsfxZ9tPpnJZF+3FUymw0Lv=zsBx5UGYD+83-qnAagw@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Fix a NULL vs IS_ERR() bug
+Date: Fri, 12 Jan 2024 07:42:59 +0800
+Message-ID: <CABVgOSmjr+8Pbz+25xN2btpd3qQOnqt8HvC9TD+QGBFPG8gS9w@mail.gmail.com>
+Subject: Re: [PATCH] kunit: device: Fix a NULL vs IS_ERR() check in init()
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, linux-kselftest@vger.kernel.org, 
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kselftest@vger.kernel.org, 
 	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000e95b39060eb40e35"
+	boundary="0000000000003d6db6060eb41c6f"
 
---000000000000e95b39060eb40e35
+--0000000000003d6db6060eb41c6f
 Content-Type: text/plain; charset="UTF-8"
 
 On Thu, 11 Jan 2024 at 02:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
-> The kunit_device_register() function doesn't return NULL, it returns
-> error pointers.  Change the KUNIT_ASSERT_NOT_NULL() to check for
-> ERR_OR_NULL().
+> The root_device_register() function does not return NULL, it returns
+> error pointers.  Fix the check to match.
 >
 > Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
 
-Nice catch, thanks!
+Thanks for catching this.
 
 Reviewed-by: David Gow <davidgow@google.com>
 
-> It's a pity that there isn't a KUNIT_ASSERT_NOT_ERR_PTR() macro...
-
-I think we'll add one, but I'm not yet totally convinced that it would
-be better than using ASSERT_NOT_ERR_OR_NULL() in cases like this,
-where we're:
-1. In a test; and,
-2. using the pointer afterwards, expecting it to be valid
-(dereferencing it and/or passing it to functions which will)
-
-This is largely because it'd be nicer, if the pointer is NULL (due to
-a bug), to get a more explicit assertion failure, rather than a crash.
-It does make the test code less indicative of how the APIs are meant
-to be used elsewhere, though, and annoys the static analysis, though.
-
-Thoughts?
-
+Cheers,
 -- David
 
->  lib/kunit/kunit-test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-> index c4259d910356..f7980ef236a3 100644
-> --- a/lib/kunit/kunit-test.c
-> +++ b/lib/kunit/kunit-test.c
-> @@ -720,7 +720,7 @@ static void kunit_device_cleanup_test(struct kunit *test)
->         long action_was_run = 0;
->
->         test_device = kunit_device_register(test, "my_device");
-> -       KUNIT_ASSERT_NOT_NULL(test, test_device);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_device);
->
->         /* Add an action to verify cleanup. */
->         devm_add_action(test_device, test_dev_action, &action_was_run);
-> --
-> 2.43.0
->
-
---000000000000e95b39060eb40e35
+--0000000000003d6db6060eb41c6f
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -180,13 +146,13 @@ wlDp+1p6RAqlDpHifQJW16h5jWIIwYisvm5QyfxQEVc+XH1lt+taSzCfiBT0ZLgjB9Sg+zAo8ys6
 ITv8ZEy6ByumbU23nkHTMOzzQSxczHkT+0q10/MxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
 MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
 IFNNSU1FIENBIDIwMjACEAHS+TgZvH/tCq5FcDC0n9IwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIJqYWz9xb4ZbUZEUwpLfn0br2UviRk8zyxX2Z0ijWrJYMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDExMTIzMzkyN1owaQYJKoZIhvcNAQkPMVww
+hvcNAQkEMSIEIISRmOV8nf/m9OMm7feph3p3FgttQKQ8ZC3LWj6U47wHMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDExMTIzNDMxMFowaQYJKoZIhvcNAQkPMVww
 WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAhC3sS
-GuSvnSv8Uv/+zVjoSdLwSviKe6wHZhdLQ14fx0zVCeOAC2BH1JiZgmQQWyR53tPNx1ZNW3gg4kpa
-25IYit7F7wtyJWDyJEGaHkvqlWVXQYgAOXFvARlfauTZNZ3i/OT1U26Qur9a2+PUWapylJQeReqi
-D//jNFyULesXR3K4UWFeZYgUPbmXx76EfFuu6hK+XZsjff1Gx7pirtUvpNTPqxNgAyPsRmZZzISh
-gd0cjA7ida2qp5icPK72+ZNr9CyI/3f+Nc3jr6k7wM4nLJmHRWP9hnOFhGDakcSUexkTYnRaWOhV
-1Dle38AIxP1jAYaMzFzBA8fbJnoPUzbQ
---000000000000e95b39060eb40e35--
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC+DjNC
+3PjMzlg7EZxtE6g+bSIb+l5g4lwGbdQmemFgcxJZDRcMNSdzM88+Kwm+KflwEMT8YrWDYSProqMm
++ZgqgCm4sg7fKjWI5JRKciEXyeAbG7rl5sOkE6BWBRjsqRCUQZN0cvJFJRGrngL/w2Fple2xwL71
+HxN8DITdoi+AslzVXWczA+7VdCAP37V45jVzdvBYv51/DLsqsxCdH19wOLKqTNwU1OTJMTz4vVgz
+MS6yHbgp063DVvOj7fTwHsY3gB/klpgsv1X+8AzXjkCvw0stPOf42ahIr4uXVnaeOuPjPmWoSpmJ
+ChmNvDJQsiu06JUBok5yPCqaarjN9bgu
+--0000000000003d6db6060eb41c6f--
