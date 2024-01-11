@@ -1,105 +1,101 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5AC4F8AB;
-	Wed, 10 Jan 2024 22:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD967D2E5
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 07:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Oy0kMQ1S"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=jQkbXT4Xowi1pUvDT3eJyshgYO6r+Y/l3CsarSMIz3E=; b=Oy0kMQ1SLcT7pvbxS7wqM7uk5p
-	Qq7t8743wKI5BIdoPu/TLDlXenb/DniQt7AMa+5LjVUDE2XvXHgrPUx+5o/N4enh4YE8Lq9C8x0L+
-	m81XcR/ifiaSAWAq1fq+QtYn7ZFbMHmnR2L54W1hfvBb5e7B1GLRLe94uW2I5sMIIk6w=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:39930 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1rNhGI-0001iS-NK; Wed, 10 Jan 2024 17:41:27 -0500
-Date: Wed, 10 Jan 2024 17:41:26 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rengarajan S <rengarajan.s@microchip.com>, Kumaravel Thiagarajan
- <kumaravel.thiagarajan@microchip.com>, Tharun Kumar P
- <tharunkumar.pasumarthi@microchip.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-Id: <20240110174126.a8beefee0e871d61de363018@hugovil.com>
-In-Reply-To: <05465217-174e-4888-a6ab-6251f4a9920b@moroto.mountain>
-References: <ZZ7vIfj7Jgh-pJn8@moroto>
-	<20240110144605.2a8813d4bfaff1a55edb9938@hugovil.com>
-	<05465217-174e-4888-a6ab-6251f4a9920b@moroto.mountain>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SQ+rEmOL"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e60e135a7so1200195e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jan 2024 23:05:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704956711; x=1705561511; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c88q11mFDQYeOknv4qGIC5GF5jF3N1odbQAn/Kw8ulo=;
+        b=SQ+rEmOL/hhQGFGrC9UgmZlZLoS8F2hjsUBHJ4hzatmNfRfLhl6TBg+e+kMRJCZeMh
+         QFO5t6Y4kn2HPWgw0pl0OYr4fVHC4rWaZtKJWtRLJPCOWD/bo52B3uokLxcEgTcg/k/Y
+         aJs7u9ciJSEeCPe1wi+zwoaT/1ulRSCROFgBc7SlrpuDzdYwrft0W4y6/R8IXctCdfH7
+         yDEK+QY78wcSE8GXeYUYyuKGeJngXIUKel6IdVZK1FbW6DmxMQgeIqx0c8uWy2s+e194
+         Iopz1AUEEVmS+kIFv6/QIGF5Ki5GSe82ALCx8CeLdktMvEXqGsqo/hF8t3XRr6Q60qEN
+         BNwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704956711; x=1705561511;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c88q11mFDQYeOknv4qGIC5GF5jF3N1odbQAn/Kw8ulo=;
+        b=eYJxZne3yTVSCfxqBOrGUWBvOcYPHSxQrBCpc9ygyl3IMuigJoRU/TTfQa0q9IIIce
+         CnaDcLI9h5n4w03jyNVpXpwiwTiGkF1gaG+n8i7JDBE9Gp0WaMRNnNrQeEhsd4pbpEoc
+         XZB1PRwfq+j91eMJTs6FJkE99GvoHCgEtPyF4KjWhSgtwPSyDKa0N9n3XkbGot0FZV/s
+         nOg+dE5wmZX66wQiBOiy5djY9bi3ClEWymqFAiUI7yRL6VCsVoUOfBWFoisf8QnLRGsv
+         sf3jCOmWfHnk+cGP9dp4BJNzQ0bKKG/To2JitNvDR+mX/180ALv3xvjGLIc2jxewli22
+         GFAg==
+X-Gm-Message-State: AOJu0Yw/vkVsZ8//vFF0hLFr48aahrNMaEFzHKm8PUJrHgVieU6KNs6H
+	FEgqPjUdf+MnMvebLs0VVT+ovy6XTwQTRg==
+X-Google-Smtp-Source: AGHT+IHraH0bMQyaz+uMRCytwOtol9Gq5cxDzerj0uxebgaEpl+uNnUwWjD3VHOPJawqhaIplc/rFQ==
+X-Received: by 2002:a05:600c:3581:b0:40d:7259:4732 with SMTP id p1-20020a05600c358100b0040d72594732mr106983wmq.32.1704956711026;
+        Wed, 10 Jan 2024 23:05:11 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id m35-20020a05600c3b2300b0040e541ddcb1sm717002wms.33.2024.01.10.23.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jan 2024 23:05:10 -0800 (PST)
+Date: Thu, 11 Jan 2024 10:04:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, "cocci@inria.fr" <cocci@inria.fr>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Drivers: hv: vmbus: One function call less in
+ create_gpadl_header() after error detection
+Message-ID: <4ba5ab3c-80ae-448f-9377-01087ec9e858@moroto.mountain>
+References: <6d97cafb-ad7c-41c1-9f20-41024bb18515@web.de>
+ <SN6PR02MB4157AA51AD8AEBB24D0668B7D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <82054a0a-72e5-45b2-8808-e411a9587406@web.de>
+ <SN6PR02MB4157CA3901DD8D069C755C72D4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <d3c13efc-a1a3-4f19-b0b9-f8c02cc674d5@moroto.mountain>
+ <SN6PR02MB415710A52835BC82B1FA1EAFD4692@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	* -3.1 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v2] serial: 8250_pci1xxxx: fix off by one in
- pci1xxxx_process_read_data()
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB415710A52835BC82B1FA1EAFD4692@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Wed, 10 Jan 2024 23:19:28 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> On Wed, Jan 10, 2024 at 02:46:05PM -0500, Hugo Villeneuve wrote:
-> > Hi,
-> > it is not simply a matter of adding "fix" to the title.
+On Wed, Jan 10, 2024 at 10:17:17PM +0000, Michael Kelley wrote:
+> From: Dan Carpenter <dan.carpenter@linaro.org> Sent: Wednesday, January 10, 2024 10:38 AM
 > > 
-> > You must explain what and why vs. how.
-> > 
-> > Please see:
-> >   https://cbea.ms/git-commit/#why-not-how
-> > 
-> > for some guidelines on writing a good commit message.
-> > 
+> > The second half of the if statement is basically duplicated.  It doesn't
+> > need to be treated as a special case.  We could do something like below.
+> > I deliberately didn't delete the tabs.  Also I haven't tested it.
 > 
-> If you can't understand why a buffer overflow is bad then I honestly
-> don't know what to say...
-
-Hi Dan,
-I am also an old quirky guy, and pretty much know why a buffer overflow
-is bad :)
-
-My whole point was only related to the title of the commit
-message, not the body of the commit message, which explained well
-enough the problem and the solution, or the code fix itself.
-
-Regards,
-Hugo Villeneuve
-
-
-> When I was a newbie, I encountered a driver which was written in
-> terrible style.  And I thought why do people allow it???  This is
-> garbage and it's messing up the Linux kernel with its bad style.
+> Indeed!  I looked at the history, and this function has been
+> structured with the duplication since sometime in 2010, which
+> pre-dates my involvement by several years.  I don't know of
+> any reason why the duplication is needed, and agree it could
+> be eliminated.
 > 
-> But after I got older, I realized that he was the only person with that
-> hardware and the only person who cared about it.   If I started fighting
-> with him about style then he would leave.  He was a quirky guy with bad
-> taste but he was still making useful contributions so it was better to
-> tolerate him.
+> Assuming Markus is OK with my proposal on the handling of
+> memory allocation failures, a single patch could simplify this
+> function quite a bit.
 > 
-> These days I'm the old quirky guy.  If you want to fight with me about
-> commit messages, that's fine.  I can easily just add you to my list of
-> subsystems which only receive bug reports instead of patches.  (I think
-> only BPF is on the list currently because it's annoying to track the
-> bpf vs bpf-next tree).
-> 
-> Feel free to re-write this patch however you want and give me
-> Reported-by credit.
-> 
-> regards,
-> dan carpenter
+> Dan -- do you want to create and submit the patch?  I'll test the
+> code on Hyper-V.  Or I can create, test, and submit the patch with
+> a "Suggested-by: Dan Carpenter".
+
+I messed up the if statement the first couple times I tried to think
+about it so I don't trust myself here.  Could you give me the
+Suggested-by tag?
+
+regards,
+dan carpenter
+
