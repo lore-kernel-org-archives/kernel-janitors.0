@@ -1,89 +1,101 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810C7156C1;
-	Thu, 11 Jan 2024 12:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702215AD9
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 12:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MReblS0X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704974640; x=1705579440; i=markus.elfring@web.de;
-	bh=XPHM31/TfKCxRDz0ZIth51Z9vULocFfBJjxf1ByCGxM=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=MReblS0Xa1Lw1gy5z6IuAQWXzQ57Bwbd0y/lwQxOMULwtYZ6fg5FYZyWP3rsMc+2
-	 HVhRiawwCKRSTLIRz6aDoiGMvXBK8taczd6ZUW+o8I3HczwtAMs+ajPbZWZ0CDrbj
-	 dYUqT3VKZ3D+whh3Fb86WI94kbyhklGe1j3Y9tbC8jgACrszCd6EKb3C7yQYbiQhi
-	 ilP14+NMVzxJ6yEm1ObNKH4HfjKl4eRMPTR002cBbXLC6Pp73h+gZyxTvWeo4FSSC
-	 3SbM3Ft30XxNtCduiLMpUScr3k7p9ZsBDQaB+hFQc6NmadfpxZPSwXcR4GgzPJWsN
-	 QanFhIRW06xeKzi7hg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPaMQ-1raSrC2av4-00MgMN; Thu, 11
- Jan 2024 13:04:00 +0100
-Message-ID: <58d6b9d0-a2d6-4d8d-bc36-fe783839ca79@web.de>
-Date: Thu, 11 Jan 2024 13:03:51 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bn+zCbWs"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3374eb61cbcso4751811f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 04:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704976500; x=1705581300; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8xmwvOs8ItsKkGVZWvFz4GNk7Se6b6TGVQHJO+AsqTk=;
+        b=bn+zCbWsgf23yMWfXyTEXRL3AAidoTZ1aRgpRbwAvAoz++3JV9fFGdUByL5T+BqF6E
+         Gmg/XdmmL1ZxWQVcCYKP4zfZJ0R2QH+DIdXkqyCOVOTNsOj2ia8HJYr93UQkGtWE98Wq
+         emie7s/djz6JK99UdpwYgmo229pPL1uYyh19C31ADhG/XwGiNURHkJzprCTtzGZfvVZB
+         /2UOZblyH3STmpEjU7IyoPoSkH5xX/AREtPKSZ6OVq5Ltysjs6d5tQxN8DWysFfdh58r
+         7k9eTkTrhs7EC2jk6gAz9gCNOHwMhVjsuuDenk8H6J85Jty5y8Xy7oA956oGinSD8gT1
+         QgkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704976500; x=1705581300;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8xmwvOs8ItsKkGVZWvFz4GNk7Se6b6TGVQHJO+AsqTk=;
+        b=MtokA7Aj+pnKU4SYsVY0gmWgArExczzwydZzsz2j5HwG1oYo94neXhwru+1fofjQ6Z
+         hI1pIW79uWfC+T4hZY1wtYWGiZIUSzGAbjq5izFEye+Bx6uDL55fSE3JwfQxzbJrp52T
+         y5yD2A8CS0F6rr198h3I2025YMkA1NpkUpKCv/pxk03gU3RrKOXpBuCMWeEcLgfYwlEx
+         nxdzDL7dMlCx2va9TZZWYX4frikQaFBgUE/xllIgnpkoNsLWwT+VDWdzPz6tyRl7AyxF
+         l2CUsXBpwO+7rohdHXyLsEULsh1rkX4mlO2bPgSG02PQ8cyvoozXxjNBoSx0XhyCfU+M
+         Okow==
+X-Gm-Message-State: AOJu0Yziri2MbbElo8oxRjucN9ICaJTomAwCt+moFAnoL8eJaM6a/XSm
+	TPcnks2Ye1kkI003Pns7CwMhHmmdMhEwdg==
+X-Google-Smtp-Source: AGHT+IHBfzDEkfBMWZKwVkSyy1K+59QjsL8NoZd3Eum5W0WTjIvdXTK+Np/6VDlhb30pz9hl6XK7Dg==
+X-Received: by 2002:a5d:4211:0:b0:337:8eb4:8ebc with SMTP id n17-20020a5d4211000000b003378eb48ebcmr136839wrq.64.1704976499879;
+        Thu, 11 Jan 2024 04:34:59 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id o14-20020adfe80e000000b0033674734a58sm1136322wrm.79.2024.01.11.04.34.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jan 2024 04:34:59 -0800 (PST)
+Date: Thu, 11 Jan 2024 15:34:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Henry Shi <henryshi2018@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: silicom-platform: clean up a check
+Message-ID: <05ae147d-fcd4-4f14-b2a7-8dfc651cce82@moroto.mountain>
+References: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
+ <90c2576b-006d-36eb-1fac-c4c4a6eccb4a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: leds: trigger: oneshot: One function call less in pattern_init()
- after error detection
-Content-Language: en-GB
-To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
-References: <c73761c5-7150-4f20-9b3e-1da680400250@web.de>
- <20240111104109.GB1665043@google.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240111104109.GB1665043@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qumbmpRY/AvugoD+arzlfhgcwcM2WMYsUP+tFvej/BAbGvxkk0Z
- e8y7OICMQuzVRm8s5LQRo1FexoABXySiyHNy+QXWnLInWQUoNRaEGBLQPWpeFOOKawso4Nx
- LYmrOyL4cSHDzg+r5Y8tNV40c0u16U87YhMfqfpaBg0Cgn/th+CAubmnVYsk0l1+9nAwQD0
- bJHdPeEaL5RwzIKQ/PzgA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HUQG9nPB8vc=;kuYbAD82Z4Urm4GTFEM8Jzm2C9x
- Bvt3YOEdxzFMzVCuRkW4I83vAgEuJgmyCqOOtZiTlY2C/5cZxfSuU8ZXoBj7JTbfbgppXSeJa
- TmlOceBYybxxkFptQHGSYLjnBEZtPG4l4PRJ1qmYIEuKpEmBxneh3s426HXBex2yikHXegBVc
- aq3srAR1GTS8IEnKgiRHVofcT808PmVM3U5a0wd5D8oqgKN580E8SkQT0xtrnshNV+6vHoGVx
- Oxck1zZn/mcGuWYU4A4vsJgJjX/j7FH+RMIHjukpXmP/ezEKI9EZn3E/BiNySVEAM5b63Mc+p
- ZZ+xm4qT42XdltpLGZagpqbY0c7nDbQEBPw3M46Shj6Goe24vf1GjSI6qJIb11K5jmr8E9c5/
- yV/1AtH94uYeK8Dho7ZT4fEetj+OXnCMSsAbU2C/ioGpnxtnqCGzT2kXI7CpnCqwmvnTXWUXE
- si1pdIruNdI9cnWLQY3JHZRrTw4Ft/yiCp8rijGO5qvw4OiuwY0TYbbMuJSDUGz4UYLWuZiGM
- zmMUBdpgG/yjMo3ynhcSVoqh/DUpQsP7xancrSafgZLtW8TMv60gao8wmmDoc9+9cuXXZv97o
- C1HC6rYO9bAjGvGgtc4Zm4wzL3IOs1VO1+G2gV9fQaSboxlA/81anFma5zQECwl3Wrdl+RqoA
- ZN+uMLnbXikCmVPXnrKGbKrVRpJhYviTwgVbEhJyPvdlosF7CcFrzfv6HPTIBqPxgfvy4Bwx2
- P+He0VFCSb042PrRyNOwUYhiTwIVhbfVNzvZS/SQY6fM16LPyIrzvgueCWbbS8fvEaz20QXGE
- SlnCkVupTKyBeXhvif9cBAq1ufBYpTUvOzpBr9gnzjwKZENhIbDpuQFy1M4wXEOssbc3IGqmN
- pV/fr7iHzCdyva18wZOG5s4dBi67P1f2MkCrOs34Et34nj1xwGCnxKJuq3n4gAAVXkZSfPqLF
- KHxEcTKxb6mhV2YVdzEXjkYSQ5k=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <90c2576b-006d-36eb-1fac-c4c4a6eccb4a@linux.intel.com>
 
->> The kfree() function was called in one case by
->> the pattern_init() function during error handling
->> even if the passed variable contained a null pointer.
->
-> It's totally valid to call kfree() on a NULL pointer:
->
->   * If @object is NULL, no operation is performed.
->
-> Why do we care all that much?
+On Thu, Jan 11, 2024 at 01:56:28PM +0200, Ilpo Järvinen wrote:
+> On Wed, 10 Jan 2024, Dan Carpenter wrote:
+> 
+> > "value" is either non-zero, or zero.  There isn't a third option.
+> > Delete the unnecessary code.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/platform/x86/silicom-platform.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
+> > index 6ce43ccb3112..5cac698bf98d 100644
+> > --- a/drivers/platform/x86/silicom-platform.c
+> > +++ b/drivers/platform/x86/silicom-platform.c
+> > @@ -258,10 +258,8 @@ static void silicom_gpio_set(struct gpio_chip *gc,
+> >  
+> >  	if (value)
+> >  		silicom_mec_port_set(channel, 0);
+> > -	else if (value == 0)
+> > -		silicom_mec_port_set(channel, 1);
+> >  	else
+> > -		pr_err("Wrong argument value: %d\n", value);
+> > +		silicom_mec_port_set(channel, 1);
+> 
+> This covers both cases without if:
+> 
+> 	silicom_mec_port_set(channel, !value);
+> 
 
-Would you dare to categorise such special function calls as redundant?
+True.  Let me resend it that way.
 
-Should they be skipped in more cases?
+regards,
+dan carpenter
 
-See also:
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
-
-
-Regards,
-Markus
