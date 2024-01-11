@@ -1,43 +1,37 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FFB5788B
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 20:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828EF58AAD
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 20:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WZVfKSij"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="d5VrmVml"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id O1iWrSNLt6p30O1iXrV0h9; Thu, 11 Jan 2024 21:32:00 +0100
+	id O1l4rDaqGsg4OO1l4rAocH; Thu, 11 Jan 2024 21:34:35 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705005120;
-	bh=O2DYDashidxiDL9JfucZnb4Q1U6o1/c9c4N52fUOZ40=;
+	s=t20230301; t=1705005275;
+	bh=RLXbEOhYO7cx+Vn35fW6jbiCqUmAKgWTACteZwWafQ4=;
 	h=From:To:Cc:Subject:Date;
-	b=WZVfKSijE3zLkgf6h9UU5hqJimHJ1XnQOS4kF/Ve5HvnDkzSESmXeoKlmwJirdoi1
-	 pEiPAS8bQ1ooXJUVzgWMTKwO8oX9/7lk32+kjESqsPjveyy9jdPvAQR6Vk+SqJykZx
-	 ZA1Nusw+Keo9MNMfxDSHLolo36WneHMclOjRzW1ixeIWouWCWZe7UtdbyHV1d34zDU
-	 dksFZvIFDEAaYENIFPzQGDxkbsbkT9B6sAi0AoQa2hEq2TRU1o6z4N4DukZB01KGjC
-	 EgdcDvRc0im1eP8QmbljvFL+TuN4XJu7LHvwyrEHRbFkMlSAj68oUsMs4xF+BkB2+Q
-	 pBCv46G2m95xw==
+	b=d5VrmVmlEiqOJEh58FzdOZRSx/wdg4VuBqSAXWOAqvuNIwJuHVdtq7xH4BYplz2Cg
+	 YThE2r8GuvwLQYJOC2pz8JAVkDxXOOFdiB+94d4XumWDMafaj9vLAWQQoRNvfoXQl9
+	 nglyVv6nWT+aF3ltC331ChTlp8p6lmXcmiRl2L1qGXiEppBlACYaoF7yOQnphTlPMl
+	 BBkas+8aEgYxllVszp7E+vlcZqej5oP/LvZpWm/mHDbaudNHMcFlg6usuoD21hN1vA
+	 1ikXwPmOQjXAMQSNewQD4ffrUixxZEV/gcNadUjCJ6n5M/iPRvca5y5UhStXAdMJ3I
+	 Un5gHJ/+840QA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 11 Jan 2024 21:32:00 +0100
+X-ME-Date: Thu, 11 Jan 2024 21:34:35 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: imx: Remove usage of the deprecated ida_simple_xx() API
-Date: Thu, 11 Jan 2024 21:31:55 +0100
-Message-Id: <5807287732785d81b9c3ef9e6a25e4f3bc2e2159.1705005016.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] intel_th: Remove usage of the deprecated ida_simple_xx() API
+Date: Thu, 11 Jan 2024 21:34:32 +0100
+Message-Id: <9c092dc6db15984d98732510bb052bb00683489b.1705005258.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,40 +48,40 @@ This is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/mach-imx/mmdc.c | 6 +++---
+ drivers/hwtracing/intel_th/core.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
-index 444a7eaa320c..25893d109190 100644
---- a/arch/arm/mach-imx/mmdc.c
-+++ b/arch/arm/mach-imx/mmdc.c
-@@ -452,7 +452,7 @@ static int mmdc_pmu_init(struct mmdc_pmu *pmu_mmdc,
- 		.active_events = 0,
- 	};
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index cc7f879bb175..86c8efecd7c2 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -871,7 +871,7 @@ intel_th_alloc(struct device *dev, const struct intel_th_drvdata *drvdata,
+ 	if (!th)
+ 		return ERR_PTR(-ENOMEM);
  
--	pmu_mmdc->id = ida_simple_get(&mmdc_ida, 0, 0, GFP_KERNEL);
-+	pmu_mmdc->id = ida_alloc(&mmdc_ida, GFP_KERNEL);
+-	th->id = ida_simple_get(&intel_th_ida, 0, 0, GFP_KERNEL);
++	th->id = ida_alloc(&intel_th_ida, GFP_KERNEL);
+ 	if (th->id < 0) {
+ 		err = th->id;
+ 		goto err_alloc;
+@@ -931,7 +931,7 @@ intel_th_alloc(struct device *dev, const struct intel_th_drvdata *drvdata,
+ 			    "intel_th/output");
  
- 	return pmu_mmdc->id;
+ err_ida:
+-	ida_simple_remove(&intel_th_ida, th->id);
++	ida_free(&intel_th_ida, th->id);
+ 
+ err_alloc:
+ 	kfree(th);
+@@ -964,7 +964,7 @@ void intel_th_free(struct intel_th *th)
+ 	__unregister_chrdev(th->major, 0, TH_POSSIBLE_OUTPUTS,
+ 			    "intel_th/output");
+ 
+-	ida_simple_remove(&intel_th_ida, th->id);
++	ida_free(&intel_th_ida, th->id);
+ 
+ 	kfree(th);
  }
-@@ -461,7 +461,7 @@ static void imx_mmdc_remove(struct platform_device *pdev)
- {
- 	struct mmdc_pmu *pmu_mmdc = platform_get_drvdata(pdev);
- 
--	ida_simple_remove(&mmdc_ida, pmu_mmdc->id);
-+	ida_free(&mmdc_ida, pmu_mmdc->id);
- 	cpuhp_state_remove_instance_nocalls(cpuhp_mmdc_state, &pmu_mmdc->node);
- 	perf_pmu_unregister(&pmu_mmdc->pmu);
- 	iounmap(pmu_mmdc->mmdc_base);
-@@ -529,7 +529,7 @@ static int imx_mmdc_perf_init(struct platform_device *pdev, void __iomem *mmdc_b
- 	cpuhp_state_remove_instance_nocalls(cpuhp_mmdc_state, &pmu_mmdc->node);
- 	hrtimer_cancel(&pmu_mmdc->hrtimer);
- pmu_release_id:
--	ida_simple_remove(&mmdc_ida, pmu_mmdc->id);
-+	ida_free(&mmdc_ida, pmu_mmdc->id);
- pmu_free:
- 	kfree(pmu_mmdc);
- 	return ret;
 -- 
 2.34.1
 
