@@ -1,83 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0648B14F88;
-	Thu, 11 Jan 2024 11:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810C7156C1;
+	Thu, 11 Jan 2024 12:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUFkSZhz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704974196; x=1736510196;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=rxfB6CJ33YC73UGGmfDn7hZc0Y7X2EI0dmmGO62rrxA=;
-  b=bUFkSZhz7q/+UU1fw7vtB9c5sVycqecMoBuDw8qhVn6w1c4fl3dRIQPO
-   ccFkz29+qM4VlAl0Vh4ZK7l8h/eTMeQdIBbWgJhLF9+5Nt7Qv4ub1XsC1
-   jkSJC4vxIbfiE1WwkZLaRMO/49+NyOPpBGSUzgSli8a29vQvH3qLnAVza
-   OUrmv97CSFGrQcPtnDHnpI1gGMhD2kBRbgV2APqp1rfaMV/3eauP07evC
-   cNuWvjAUlmCm+vLDkPc/FsH/Kam5i0m5wCZLh5xggkPtrIDSKtU7VDaPT
-   a76gW4t7XJA20VRlOlp+XQ70lHpM/WI53V8jU454LWAK4BYkMIm7hhhzU
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10949"; a="389261859"
-X-IronPort-AV: E=Sophos;i="6.04,186,1695711600"; 
-   d="scan'208";a="389261859"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2024 03:56:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10949"; a="758734850"
-X-IronPort-AV: E=Sophos;i="6.04,186,1695711600"; 
-   d="scan'208";a="758734850"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.32.201])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2024 03:56:32 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 11 Jan 2024 13:56:28 +0200 (EET)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Hans de Goede <hdegoede@redhat.com>, Henry Shi <henryshi2018@gmail.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: silicom-platform: clean up a check
-In-Reply-To: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
-Message-ID: <90c2576b-006d-36eb-1fac-c4c4a6eccb4a@linux.intel.com>
-References: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MReblS0X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704974640; x=1705579440; i=markus.elfring@web.de;
+	bh=XPHM31/TfKCxRDz0ZIth51Z9vULocFfBJjxf1ByCGxM=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=MReblS0Xa1Lw1gy5z6IuAQWXzQ57Bwbd0y/lwQxOMULwtYZ6fg5FYZyWP3rsMc+2
+	 HVhRiawwCKRSTLIRz6aDoiGMvXBK8taczd6ZUW+o8I3HczwtAMs+ajPbZWZ0CDrbj
+	 dYUqT3VKZ3D+whh3Fb86WI94kbyhklGe1j3Y9tbC8jgACrszCd6EKb3C7yQYbiQhi
+	 ilP14+NMVzxJ6yEm1ObNKH4HfjKl4eRMPTR002cBbXLC6Pp73h+gZyxTvWeo4FSSC
+	 3SbM3Ft30XxNtCduiLMpUScr3k7p9ZsBDQaB+hFQc6NmadfpxZPSwXcR4GgzPJWsN
+	 QanFhIRW06xeKzi7hg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPaMQ-1raSrC2av4-00MgMN; Thu, 11
+ Jan 2024 13:04:00 +0100
+Message-ID: <58d6b9d0-a2d6-4d8d-bc36-fe783839ca79@web.de>
+Date: Thu, 11 Jan 2024 13:03:51 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: leds: trigger: oneshot: One function call less in pattern_init()
+ after error detection
+Content-Language: en-GB
+To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
+ cocci@inria.fr
+References: <c73761c5-7150-4f20-9b3e-1da680400250@web.de>
+ <20240111104109.GB1665043@google.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240111104109.GB1665043@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qumbmpRY/AvugoD+arzlfhgcwcM2WMYsUP+tFvej/BAbGvxkk0Z
+ e8y7OICMQuzVRm8s5LQRo1FexoABXySiyHNy+QXWnLInWQUoNRaEGBLQPWpeFOOKawso4Nx
+ LYmrOyL4cSHDzg+r5Y8tNV40c0u16U87YhMfqfpaBg0Cgn/th+CAubmnVYsk0l1+9nAwQD0
+ bJHdPeEaL5RwzIKQ/PzgA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HUQG9nPB8vc=;kuYbAD82Z4Urm4GTFEM8Jzm2C9x
+ Bvt3YOEdxzFMzVCuRkW4I83vAgEuJgmyCqOOtZiTlY2C/5cZxfSuU8ZXoBj7JTbfbgppXSeJa
+ TmlOceBYybxxkFptQHGSYLjnBEZtPG4l4PRJ1qmYIEuKpEmBxneh3s426HXBex2yikHXegBVc
+ aq3srAR1GTS8IEnKgiRHVofcT808PmVM3U5a0wd5D8oqgKN580E8SkQT0xtrnshNV+6vHoGVx
+ Oxck1zZn/mcGuWYU4A4vsJgJjX/j7FH+RMIHjukpXmP/ezEKI9EZn3E/BiNySVEAM5b63Mc+p
+ ZZ+xm4qT42XdltpLGZagpqbY0c7nDbQEBPw3M46Shj6Goe24vf1GjSI6qJIb11K5jmr8E9c5/
+ yV/1AtH94uYeK8Dho7ZT4fEetj+OXnCMSsAbU2C/ioGpnxtnqCGzT2kXI7CpnCqwmvnTXWUXE
+ si1pdIruNdI9cnWLQY3JHZRrTw4Ft/yiCp8rijGO5qvw4OiuwY0TYbbMuJSDUGz4UYLWuZiGM
+ zmMUBdpgG/yjMo3ynhcSVoqh/DUpQsP7xancrSafgZLtW8TMv60gao8wmmDoc9+9cuXXZv97o
+ C1HC6rYO9bAjGvGgtc4Zm4wzL3IOs1VO1+G2gV9fQaSboxlA/81anFma5zQECwl3Wrdl+RqoA
+ ZN+uMLnbXikCmVPXnrKGbKrVRpJhYviTwgVbEhJyPvdlosF7CcFrzfv6HPTIBqPxgfvy4Bwx2
+ P+He0VFCSb042PrRyNOwUYhiTwIVhbfVNzvZS/SQY6fM16LPyIrzvgueCWbbS8fvEaz20QXGE
+ SlnCkVupTKyBeXhvif9cBAq1ufBYpTUvOzpBr9gnzjwKZENhIbDpuQFy1M4wXEOssbc3IGqmN
+ pV/fr7iHzCdyva18wZOG5s4dBi67P1f2MkCrOs34Et34nj1xwGCnxKJuq3n4gAAVXkZSfPqLF
+ KHxEcTKxb6mhV2YVdzEXjkYSQ5k=
 
-On Wed, 10 Jan 2024, Dan Carpenter wrote:
+>> The kfree() function was called in one case by
+>> the pattern_init() function during error handling
+>> even if the passed variable contained a null pointer.
+>
+> It's totally valid to call kfree() on a NULL pointer:
+>
+>   * If @object is NULL, no operation is performed.
+>
+> Why do we care all that much?
 
-> "value" is either non-zero, or zero.  There isn't a third option.
-> Delete the unnecessary code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/platform/x86/silicom-platform.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
-> index 6ce43ccb3112..5cac698bf98d 100644
-> --- a/drivers/platform/x86/silicom-platform.c
-> +++ b/drivers/platform/x86/silicom-platform.c
-> @@ -258,10 +258,8 @@ static void silicom_gpio_set(struct gpio_chip *gc,
->  
->  	if (value)
->  		silicom_mec_port_set(channel, 0);
-> -	else if (value == 0)
-> -		silicom_mec_port_set(channel, 1);
->  	else
-> -		pr_err("Wrong argument value: %d\n", value);
-> +		silicom_mec_port_set(channel, 1);
+Would you dare to categorise such special function calls as redundant?
 
-This covers both cases without if:
+Should they be skipped in more cases?
 
-	silicom_mec_port_set(channel, !value);
+See also:
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
 
--- 
- i.
-
+Regards,
+Markus
