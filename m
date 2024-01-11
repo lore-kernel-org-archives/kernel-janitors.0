@@ -1,64 +1,83 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3361E156D4;
-	Thu, 11 Jan 2024 11:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1rNtbD-0005Y5-00; Thu, 11 Jan 2024 12:51:51 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 4DE01C0135; Thu, 11 Jan 2024 12:51:25 +0100 (CET)
-Date: Thu, 11 Jan 2024 12:51:25 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: vkoul@kernel.org, jiaheng.fan@nxp.com, peng.ma@nxp.com,
-	wen.he_1@nxp.com, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Alchemy: Fix an out-of-bound access in
- db1200_dev_setup()
-Message-ID: <ZZ/WPZ4e9QIqkXaC@alpha.franken.de>
-References: <ed2a1d5f41c5e83ae82fe6a16cfd40c78eeb8093.1704910022.git.christophe.jaillet@wanadoo.fr>
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0648B14F88;
+	Thu, 11 Jan 2024 11:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUFkSZhz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704974196; x=1736510196;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=rxfB6CJ33YC73UGGmfDn7hZc0Y7X2EI0dmmGO62rrxA=;
+  b=bUFkSZhz7q/+UU1fw7vtB9c5sVycqecMoBuDw8qhVn6w1c4fl3dRIQPO
+   ccFkz29+qM4VlAl0Vh4ZK7l8h/eTMeQdIBbWgJhLF9+5Nt7Qv4ub1XsC1
+   jkSJC4vxIbfiE1WwkZLaRMO/49+NyOPpBGSUzgSli8a29vQvH3qLnAVza
+   OUrmv97CSFGrQcPtnDHnpI1gGMhD2kBRbgV2APqp1rfaMV/3eauP07evC
+   cNuWvjAUlmCm+vLDkPc/FsH/Kam5i0m5wCZLh5xggkPtrIDSKtU7VDaPT
+   a76gW4t7XJA20VRlOlp+XQ70lHpM/WI53V8jU454LWAK4BYkMIm7hhhzU
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10949"; a="389261859"
+X-IronPort-AV: E=Sophos;i="6.04,186,1695711600"; 
+   d="scan'208";a="389261859"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2024 03:56:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10949"; a="758734850"
+X-IronPort-AV: E=Sophos;i="6.04,186,1695711600"; 
+   d="scan'208";a="758734850"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.32.201])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2024 03:56:32 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 11 Jan 2024 13:56:28 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Hans de Goede <hdegoede@redhat.com>, Henry Shi <henryshi2018@gmail.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: silicom-platform: clean up a check
+In-Reply-To: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
+Message-ID: <90c2576b-006d-36eb-1fac-c4c4a6eccb4a@linux.intel.com>
+References: <0402e613-446a-40d1-b676-0422f6223aa8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed2a1d5f41c5e83ae82fe6a16cfd40c78eeb8093.1704910022.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Jan 10, 2024 at 07:07:36PM +0100, Christophe JAILLET wrote:
-> When calling spi_register_board_info(), we should pass the number of
-> elements in 'db1200_spi_devs', not 'db1200_i2c_devs'.
+On Wed, 10 Jan 2024, Dan Carpenter wrote:
+
+> "value" is either non-zero, or zero.  There isn't a third option.
+> Delete the unnecessary code.
 > 
-> Fixes: 63323ec54a7e ("MIPS: Alchemy: Extended DB1200 board support.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> Compile tested only
-> ---
->  arch/mips/alchemy/devboards/db1200.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/platform/x86/silicom-platform.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/arch/mips/alchemy/devboards/db1200.c b/arch/mips/alchemy/devboards/db1200.c
-> index f521874ebb07..67f067706af2 100644
-> --- a/arch/mips/alchemy/devboards/db1200.c
-> +++ b/arch/mips/alchemy/devboards/db1200.c
-> @@ -847,7 +847,7 @@ int __init db1200_dev_setup(void)
->  	i2c_register_board_info(0, db1200_i2c_devs,
->  				ARRAY_SIZE(db1200_i2c_devs));
->  	spi_register_board_info(db1200_spi_devs,
-> -				ARRAY_SIZE(db1200_i2c_devs));
-> +				ARRAY_SIZE(db1200_spi_devs));
+> diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
+> index 6ce43ccb3112..5cac698bf98d 100644
+> --- a/drivers/platform/x86/silicom-platform.c
+> +++ b/drivers/platform/x86/silicom-platform.c
+> @@ -258,10 +258,8 @@ static void silicom_gpio_set(struct gpio_chip *gc,
 >  
->  	/* SWITCHES:	S6.8 I2C/SPI selector  (OFF=I2C	 ON=SPI)
->  	 *		S6.7 AC97/I2S selector (OFF=AC97 ON=I2S)
-> -- 
-> 2.34.1
+>  	if (value)
+>  		silicom_mec_port_set(channel, 0);
+> -	else if (value == 0)
+> -		silicom_mec_port_set(channel, 1);
+>  	else
+> -		pr_err("Wrong argument value: %d\n", value);
+> +		silicom_mec_port_set(channel, 1);
 
-applied to mips-next.
+This covers both cases without if:
 
-Thomas.
+	silicom_mec_port_set(channel, !value);
+
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+ i.
+
