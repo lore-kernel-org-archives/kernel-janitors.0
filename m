@@ -1,85 +1,105 @@
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C126DD10;
-	Fri, 12 Jan 2024 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-204458dec9cso959111fac.1;
-        Fri, 12 Jan 2024 06:56:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705071404; x=1705676204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ZpJF8ckEKzWu9JP8njFy/DUirOzmC1WDS5E6Eh5HQE=;
-        b=vpYJVkY56vJ529a8QLXr/I53SCt+UPq5RlT0wfdtCRECnJnR2F0MFJTdsQIMvCdE0k
-         iFEmPebd4S7Gls7kokLkjxrDcCssMzdMsFWm7J1yjqgPTw33n8xmtF85rWMBV0BDYd2y
-         FqVouq7kF8F8qJ8SguiQ3Lo1WzBTLCnc7ateRVeG023Xs2qi/lg0hGxn6ubVhCz5AxB4
-         Gtlozq2GzVh/fsI8JcGoOj7YIUaRQhdxp5GZ4YkM5m5A347loFCTDgs1eLwAjuhwGWyH
-         iAzTOWE9cR4K7jD46318S4RH2H5PVMAQpYoUJddLgf6yHhkRWHvV3OxyruwbWcooDqM+
-         X6Ng==
-X-Gm-Message-State: AOJu0YzYdfqU1ebItncnujeEBYQuShypn+t1A1YMdYcSaH8yBaSfTDjl
-	pf4hJBHG83bcpQIpPeYx2l3ImjfSjdS2N/dUO1g2CLHD
-X-Google-Smtp-Source: AGHT+IHqdJiMlARxTIb24YUXWd/c0ds830Sg3iyR4kvxB+qlqlYNB3iD2rCb8R1UK7EeVyED1cArKWr9rQST90WmkS0=
-X-Received: by 2002:a05:6870:c904:b0:206:b53d:474f with SMTP id
- hj4-20020a056870c90400b00206b53d474fmr2693743oab.3.1705071404641; Fri, 12 Jan
- 2024 06:56:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACCE6DD09;
+	Fri, 12 Jan 2024 15:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ocbJzJk3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705071632; x=1705676432; i=markus.elfring@web.de;
+	bh=mZfbtSP2eLg7KULWpeXHehpSY+IdUn5/j3kjnvUcs2I=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=ocbJzJk3E7Vjj0p1kohA3nFwk/dy8MbzNeqmc5vT8VkFWdJGEJa5IQXTJk6e2l5a
+	 PWXo8n7ApYh9dgzwcK6XAu4VXSbXjt55zJbXkIZHudLUM1meXRGdRN5pkZlO2072O
+	 /5UQ5uykB0Q8ApIKL9L9H1YWNBlAj44lR9tuZ+oYS0X6LeBQMH7z75+Lx1Dfw+Stm
+	 ur3acoNoyc3bQGi1XOBCOE9Qbe3bksHoX9sTrRQGXMzy93WQyHwMpFfYz/bYIp5R6
+	 Uepa2vyPvbJT46e1lxpHjlKZ7VdmIcKl9VUVA5MPW1UXkIWOqFsLfLhJ4uXdI+vVP
+	 p+qH3iFmSGoHCKr4ZQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7gXO-1r2wjF43rm-01558N; Fri, 12
+ Jan 2024 16:00:32 +0100
+Message-ID: <96e1e30a-ae2f-4dfb-9a1c-edaf6b8e1231@web.de>
+Date: Fri, 12 Jan 2024 16:00:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <efe2a897-4af0-4204-8105-1bee7d6b9380@moroto.mountain>
-In-Reply-To: <efe2a897-4af0-4204-8105-1bee7d6b9380@moroto.mountain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 12 Jan 2024 15:56:31 +0100
-Message-ID: <CAJZ5v0isUXAPq0Vh-RU0iopes_4r7KaejgqgFpzRT_zeZySDBQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal/debugfs: Unlock on error path in thermal_debug_tz_trip_up()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 2/2] io_uring: Improve exception handling in
+ io_ring_ctx_alloc()
+To: Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
+ <878r4xnn52.fsf@mailhost.krisman.be>
+ <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+ <49ecda98-770d-455e-acd7-12d810280fdd@web.de>
+ <87frz2k4jm.fsf@mailhost.krisman.be>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <87frz2k4jm.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3fcZXN079uvfIcjs2xVAhdFEtF5OObN5kLwIPmxpQDsZhhkZULL
+ NZ7w4yaCeziYpmKoLQui1CfJKn80IgEQMLQg861wIvzSC7Nb5ZxgYkMYvR6P0D8y9AYyfAB
+ kGOfFcJUP/YIIJtJS41hkuL0XRporYyhOx6l8KXpcEYxkoCy/hixa0pqdeNBJeZr4xpl5sV
+ pQWGmRAd61sq1upCB9ArQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CX07fjvmKG8=;djUVypSqjkR9zW5MJaSHacMcJBr
+ hzFLPkxRRXiuFx0Jo4+UmKQ59SuzUOobiT8AqAiyEQ9kigZaA9Mb7c1AfdenkzU/Z4KDutFQr
+ xPhZ1PUYg2BbFsm6Oz5Ebx8b4CWy+2w2ltSaZYVujiap0WFNQA7LkF/CeGU8+Yqvbri5whvau
+ 4HrACfbd5ynnK0kXbfgQMwIPLdO4yQo2vOHvAlHtmNeN1thRI8EBVFVHaWDlrA4XEWEZwrbdq
+ iTN/PbvVVG5m7la4MatvMjfNS2hJAtl+h3xxX4qgzZxq9zUYLcZPvw5DICEo1CXA8xaAKNDKj
+ yHu86QsdJFMBChktzct3RaZ2o5o0j0U3AdaicyuQQbjQR0ILF67qBT6LXvT20DqhBYmJtaJgo
+ HkF0z/40yQ3pJSNR2Qx4KwIC65sOzuZtxbtfrvPpuoFKeE3teQjgl3CskUzB8AfJspLD0C8dw
+ j1KDydvXZVgSEGI333xrEogt+wUt5iG11BtPbgOwUUSjrj8M/7RAy1OsPAOId6adwi/bVt1B9
+ uHc98O42hIGLLFusWrmJZ7lvfFFSbaKFlrX4mtiCnb0zZbP41wQq9FGFBJnMCPK8WYE7rFM51
+ +6fvvQVuEfCgBxQ6Z4PA89OPBIWR/KMWLXvQ/yEEXY7csaR913ASvA3x2YB2MT1xMlPt05M44
+ Mo2K2NkuUfiPSK07ecKcVf3FoptwHVUzc5lib4WK7q3O+kL+QAy2Fnk23rvp7wsLrzBbbhjHL
+ KS66N+JCKoZERCAPNx+jELvkYthb7wk37HufF3CqlvhDuYK7wGCDV6TgMEhuoc2uLiyMSPkIR
+ CdWw4UDY+SuAc8lF8GPLKJygTvqDPtV1GfhPY4eMf719J/HzMyMlimhoeOP8BcpP03V3EkY2N
+ MGs6OHuy21uj0sN4SuWIBcRUYGFQy6DrTlHBCpSXZOTY6fvoxkyf3uKUzWL8BvY8rnZNOyK4W
+ bqBhTQ==
 
-On Fri, Jan 12, 2024 at 3:30=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+>> The label =E2=80=9Cerr=E2=80=9D was used to jump to a kfree() call desp=
+ite of
+>> the detail in the implementation of the function =E2=80=9Cio_ring_ctx_a=
+lloc=E2=80=9D
+>> that it was determined already that a corresponding variable contained
+>> a null pointer because of a failed memory allocation.
+>>
+>> 1. Thus use more appropriate labels instead.
+>>
+>> 2. Reorder jump targets at the end.
+>>
 >
-> Add a missing mutex_unlock(&thermal_dbg->lock) to this error path.
->
-> Fixes: 4731c8f16a0e ("thermal/debugfs: Add thermal debugfs information fo=
-r mitigation episodes")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/thermal/thermal_debugfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_=
-debugfs.c
-> index a3fa09235da1..a3f06029fc54 100644
-> --- a/drivers/thermal/thermal_debugfs.c
-> +++ b/drivers/thermal/thermal_debugfs.c
-> @@ -591,7 +591,7 @@ void thermal_debug_tz_trip_up(struct thermal_zone_dev=
-ice *tz,
->         if (!tz_dbg->nr_trips) {
->                 tze =3D thermal_debugfs_tz_event_alloc(tz, now);
->                 if (!tze)
-> -                       return;
-> +                       goto unlock;
->
->                 list_add(&tze->node, &tz_dbg->tz_episodes);
->         }
-> @@ -619,6 +619,7 @@ void thermal_debug_tz_trip_up(struct thermal_zone_dev=
-ice *tz,
->                 (temperature - tze->trip_stats[trip_id].avg) /
->                 tze->trip_stats[trip_id].count;
->
-> +unlock:
->         mutex_unlock(&thermal_dbg->lock);
->  }
->
-> --
+> As I mentioned on v1, this doesn't do us any good,
 
-Applied, thanks!
+I dare to present other development views.
+
+
+> as kfree can handle NULL pointers just fine,
+
+Yes, this is the case.
+
+Would you dare to categorise such a special function calls as redundant?
+
+May it be skipped in more cases?
+
+
+> and changes like this becomes churn later when backporting or modifying =
+the code.
+
+There are usual opportunities to consider for further collateral evolution=
+.
+
+Regards,
+Markus
