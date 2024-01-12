@@ -1,74 +1,163 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B035A5EE8E
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 10:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EB96A01A
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXXBYWI0"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dbed4b84667so5920994276.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 02:25:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Lymub0Cr"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40e6275e9beso6949685e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 04:05:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705055157; x=1705659957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TrpYiiUZvW6/AnFbosBlfeKS3Uh1NSZM2E5hPQsUkps=;
-        b=rXXBYWI0vGvvTKV6ygv88oM6VN6fXHHyZjLlGKMs/s3CbH5ci8S/ZMTvCYqPcVxfOb
-         b/+PWxhNxncyKnZ2ZkHpqQOqBTe4gKaDV25oFWex16yfaOE64JSa4tp+TLnaaZsHp+gL
-         oFC2MfirbpqhGs6e4AsAZfDwo1A3MsFZA/KR/pfITivpSG7AG/wdl6SxqjWLVznZgfJV
-         ni4KSOTYAA0g7P63wJnFem26JwLAtTtDjDNoJ0WASue6Y4AJOdltlY1FMXp86bmziBQi
-         gEWZ07W7emdb6aNONrB8+e+cxwvhZfV33DKXp1PQVpdNsnb6H1EV+T85vLkz/uCKh+T9
-         A/Mw==
+        d=tuxon.dev; s=google; t=1705061119; x=1705665919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H7z3qZLN+aPCLKk/ll4OI3COVXKrUJk7WLGgQn7Z58Y=;
+        b=Lymub0CrNmmjQNF5+9mxWOdlsApdcU9VSf1+nPc5jgxDhhoOlMjx1J4UrDZ3YP5rEl
+         5al0iDr4I0+E7RiZnY1Ga4qvT5an6Sdoi96dNg6QRIYe7z5OCb34zTP/4wvH4IojKOT3
+         mYGgmXbTwet4F/lZm2iYoIrPs+j3mMnbSrDNoHDBYgnciLXj9CXkpqk5NhaRKvKQVRM0
+         mvxQN9pmjmuOg6lUCi+zE2w7AfsLt7gNpH0u/cCLq8+sNacuK9CHw5S9A/gq4pMLp5td
+         nBNju6phYrjRiPUvEZtV6ydQSaCjq1xRMibXOe8GVyyJD6JpFbnCDWv2GnVFvRTPXKo4
+         jNsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705055157; x=1705659957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TrpYiiUZvW6/AnFbosBlfeKS3Uh1NSZM2E5hPQsUkps=;
-        b=Vp2WQNNlN2Ud1OipqhrWkT6Ii/5z9nc4yfoM1HBs+4jbPtoLZNbJ/QIGn6lM2gRqi/
-         dnYlL/0/oJcycS+lRqKqtXlPBcJVPbzrdtvjVRVxGORbBd65m4hlU/X8xE6hJ5LRcB+v
-         S0DptQaKp8xpzYmPi6FtPUwOBB/TCoWfQxyH0SYFGDtHhMPAZ4fqRl4/mzQ6dOMl5ox0
-         8P8goDwdrvKAN0T/RV7aoJKEgdZP/1oGLTimpyqPHUIwV+vvdnHZuR4QPVsu8Cxa7sNY
-         GZtrZJ1jus7q3I0WolwE1aq/bKDWpQPvV5gPEclhY7xTo4pdHVgyb1JfA2tA53MedtQH
-         Gvqg==
-X-Gm-Message-State: AOJu0Ywqk9Cp+mjgnOp2I8XJE4ASIYfNF9TUAuFp5SJYFDXfCbRUyJLD
-	sOhyHoK0iloKx+KonFE/ODTyThwoCNDwSXFlFeEQcyEEPt1Czg==
-X-Google-Smtp-Source: AGHT+IFlOE1GVKUUNrtrFdTNGJR3/eHT7lHMq9rhtkAS83Jo4rY6adUw6B7dW71bpZFr994d28Nl/vfiD5zAKqQ4GOw=
-X-Received: by 2002:a25:ea44:0:b0:dbd:e651:a32f with SMTP id
- o4-20020a25ea44000000b00dbde651a32fmr439006ybe.114.1705055157730; Fri, 12 Jan
- 2024 02:25:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705061119; x=1705665919;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H7z3qZLN+aPCLKk/ll4OI3COVXKrUJk7WLGgQn7Z58Y=;
+        b=Mj83c+GNP9Nwkie7VGF6cceTjj5Wyow/z/RGnDQI3LvzM5q1mL+Jb6cQZlu1jm+TzM
+         Y7BJyiHJJM6i7w7kMgAywTpdn10sOTlL1oQuw26cNUWpYf8sdZFBOk60U3OnTCevVGRo
+         d8fuEDAXVxOHUulRkeZuFk14pBRKBthC6k7mYSGNUuAHL2Sn1CWNbvf++nxNb1qj5VVo
+         +iUxizuZEs4lirLAF5eK3NaFo16ybBq5Qav01yTx/+/b2pHlVMegJR3nGFXHGsNK3uS4
+         1AbLXHChqcQlwyN2XZggYegmzHHhFNeenzl3cKBxZM9xPNWL/eWtVlE5YD2M3e7Czjml
+         W+xg==
+X-Gm-Message-State: AOJu0YyMuGiA0eEgKWjbYOASucAmOu4VkWTyrHCup/01Pny68h6jC9WB
+	J5re1iMRCmKkm/ACQFbjGYjPChFFXx3OOg==
+X-Google-Smtp-Source: AGHT+IHRmCC++w1Zs1w8fgLWB7xpPr8zilYFO4eQQbZ5n0I7SQeBoZ2uX8cH+HmHxVUddjZdxv9mmQ==
+X-Received: by 2002:a7b:c848:0:b0:40d:94ba:cb8c with SMTP id c8-20020a7bc848000000b0040d94bacb8cmr627469wml.109.1705061118796;
+        Fri, 12 Jan 2024 04:05:18 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.5])
+        by smtp.gmail.com with ESMTPSA id fa7-20020a05600c518700b0040e6792305asm1420560wmb.16.2024.01.12.04.05.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jan 2024 04:05:18 -0800 (PST)
+Message-ID: <98067d77-bfde-45a8-af6b-9eaf4bcc3839@tuxon.dev>
+Date: Fri, 12 Jan 2024 14:05:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <46566e85-4afa-4c55-93b2-0d0b71d76b12@moroto.mountain>
-In-Reply-To: <46566e85-4afa-4c55-93b2-0d0b71d76b12@moroto.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 Jan 2024 11:25:46 +0100
-Message-ID: <CACRpkdafwsQugKzGFsAPsMNGGObSJEzJRah9qGTitah12Zf3Bg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: rtd: Fix signedness bug in probe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix double unlock in
+ rzg2l_dt_subnode_to_map()
+Content-Language: en-US
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tzuyi Chang <tychang@realtek.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain>
+ <185128ab-f229-4b40-91cd-ebdc138e11ac@tuxon.dev>
+ <300d204b-8151-45f3-9977-7ceb3a5c5eb0@moroto.mountain>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <300d204b-8151-45f3-9977-7ceb3a5c5eb0@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 12, 2024 at 7:55=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
 
-> The "data->irqs[]" array holds unsigned int so this error handling will
-> not work correctly.
->
-> Fixes: eee636bff0dc ("gpio: rtd: Add support for Realtek DHC(Digital Home=
- Center) RTD SoCs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Looks right to me!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 12.01.2024 11:53, Dan Carpenter wrote:
+> On Fri, Jan 12, 2024 at 10:55:40AM +0200, claudiu beznea wrote:
+>> Hi, Dan,
+>>
+>> Thanks for your patch!
+>>
+>> On 10.01.2024 20:41, Dan Carpenter wrote:
+>>> If rzg2l_map_add_config() fails then the error handling calls
+>>> mutex_unlock(&pctrl->mutex) but we're not holding that mutex.  Move
+>>> the unlocks to before the gotos to avoid this situation.
+>>>
+>>> Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> ---
+>>> (Not tested).
+>>
+>> I've tested it on RZ/G3S SoC and all is good.
+>>
+>> However, I think, to keep the locking scheme unchanged and simpler (FMPOV),
+>> commit d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration
+>> support for pinmux groups") should have been call rzg2l_map_add_config()
+>> just before the mutex is locked. That would be the following diff:
+>>
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> @@ -447,6 +447,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
+>> *pctldev,
+>>  		name = np->name;
+>>  	}
+>>
+>> +	if (num_configs) {
+>> +		ret = rzg2l_map_add_config(&maps[idx], name,
+>> +					   PIN_MAP_TYPE_CONFIGS_GROUP,
+>> +					   configs, num_configs);
+>> +		if (ret < 0)
+>> +			goto done;
+>> +
+>> +		idx++;
+>> +	}
+>> +
+>>  	mutex_lock(&pctrl->mutex);
+>>
+>>  	/* Register a single pin group listing all the pins we read from DT */
+>> @@ -474,16 +484,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
+>> *pctldev,
+>>  	maps[idx].data.mux.function = name;
+>>  	idx++;
+>         ^^^^^
 
-Yours,
-Linus Walleij
+This needs to be here for subsequent calls of rzg2l_dt_subnode_to_map() to
+know which entry in maps[] to be populated next time.
+
+> 
+>>
+>> -	if (num_configs) {
+>> -		ret = rzg2l_map_add_config(&maps[idx], name,
+>> -					   PIN_MAP_TYPE_CONFIGS_GROUP,
+>> -					   configs, num_configs);
+>> -		if (ret < 0)
+>> -			goto remove_group;
+>> -
+>> -		idx++;
+>> -	}
+> 
+> Does the ordering of the maps[] not matter?
+
+It doesn't matter, AFAIKT. The core code checks for map type (e.g.
+PIN_MAP_TYPE_CONFIGS_GROUP) when processes the data from maps[].
+
+> 
+>> -
+>>  	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
+>>  	ret = 0;
+>>  	goto done;
+>>
+>> Would you mind doing it like this?
+>>
+>> Please, let me know if you want me to handle it.
+> 
+> Either way is fine.  Whatever is easiest.
+
+Ok, I'll prepare a patch as I already tested it on my side on multiple
+platforms.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> regards,
+> dan carpenter
+> 
