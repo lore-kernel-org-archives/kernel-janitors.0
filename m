@@ -1,68 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7058042A84;
-	Fri, 12 Jan 2024 06:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EB71A72F
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 06:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVQtSdT5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E491FC43390;
-	Fri, 12 Jan 2024 06:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705041030;
-	bh=LbaA4ELxB4Skp90Iisn+iilsYgOn1rWzAtL0zKFTm4s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UVQtSdT5l8au0eoMDi0L7Lu1wT9wWdEhEPhjCtFo+7hd1ELxuN8fD/Yjp/x4yeBzs
-	 LQfUH9o0NG55zsOcj21PGy9fAc+0mMyi7fJrd58eGsKc5GrIHhSOn1sxv66Ye16qrM
-	 6WTO3wHbJAzb7UV4oHH/nTjtYW4kzVQjvJ20fnbOxK+q1+yVDlOzw12aVRL3zyajYp
-	 0zbLhQbKf4BqJWf/KXeNCgs9pPIiw5FeNKQ17GNPuvHRveDmBMPmHhsF3NQ5i0zM9E
-	 GwOCnS6DDWCP4WRbaXnMbYoDCAxnafIvVVrG1zKB/RSPFjq4QN/uZ6zZSodm6iZcNT
-	 Ic4gfqr9oDQeA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CDD6FD8C98B;
-	Fri, 12 Jan 2024 06:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGlzY+o2"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3368abe1093so4696647f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 22:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705042529; x=1705647329; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=63UjO/yImm96QE/+VfB7fa+RlurKaZGr2phbbenRcSU=;
+        b=GGlzY+o224Ru9J3u249etAKvOErEhzoWqH0GMAbsYHN8QY906PgEIh2/zmVgyNyAJW
+         zyVDVtEqCwdCoYxwC4yzkKOlmYe9DZQs3Vz5ncT5ZgPh5lGUNmlTJXRJZTx8bf/PS2xu
+         YF5UNHUWocLhF0wWgngvo+ab2xVBUKoeRKD8kiKmzhoVwDChW85loa5352xW2F29x3Bp
+         iJe4ST+CzHyR/hPXkZf7b/eFgoJU7RgMZ9X/roJYZAPFy1RtZMRLQKzYELHKm8sry05J
+         1HFa+fhcwEjnkijem7cx/aCqYwEs8cZ4bN7BBr2rO7nMMLw4quW4ysGHrZXD1fDAx4Oh
+         2bCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705042529; x=1705647329;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=63UjO/yImm96QE/+VfB7fa+RlurKaZGr2phbbenRcSU=;
+        b=IEZV7Gw57V5GZwmhi275gFhMUUu754xHisPa5hT4PURzVT8pEP/f6p8es2nHlXK0+6
+         VjsIHfAr2khlDK9JjRo9XDg0o/yJ3w5d5B7U9tHekGO/PqlLIGAaz2MMZPB5/Jw6TwL/
+         8OInClhUOeR4nXbzrDcqz6vuy+egO/duKZJmpNWR7VY/WU2Zu8i61fG6tvglwbesyGgQ
+         iq+oV7mJvLusUHeBRCwqbT07//8b+5AxAK4vYG7iMjzCCw9CNl4AM9EtZrkYVM7Rxomw
+         WTWwsqhEF7veIZiwNUa7QtTWgWjrol8G+w6W2ifjvi4DZLrlPilvjwEoVLhyAmcSmcK0
+         w3dQ==
+X-Gm-Message-State: AOJu0Yz/toHn0i6NQqmyfNeXlahXpirj6UJ094AoRTQsfansioHSAHuz
+	VQsRhCZDvNIz57HLpw1Q1mNYh5BmK/JSRw==
+X-Google-Smtp-Source: AGHT+IFYyXyn3K/JOwDJilFEclpAaIimSSiow+hzHZK4+0CXb3Se3RROQAPmH0iur0XUlIjkKHaeUA==
+X-Received: by 2002:a5d:590f:0:b0:337:7680:8ccf with SMTP id v15-20020a5d590f000000b0033776808ccfmr453616wrd.56.1705042529315;
+        Thu, 11 Jan 2024 22:55:29 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id d18-20020a5d6452000000b0033761b2de64sm2986699wrw.76.2024.01.11.22.55.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jan 2024 22:55:28 -0800 (PST)
+Date: Fri, 12 Jan 2024 09:55:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tzuyi Chang <tychang@realtek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] gpio: rtd: Fix signedness bug in probe
+Message-ID: <46566e85-4afa-4c55-93b2-0d0b71d76b12@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: Fix an off-by-one in get_early_cmdline()
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <170504103083.17535.2134276105681461724.git-patchwork-notify@kernel.org>
-Date: Fri, 12 Jan 2024 06:30:30 +0000
-References: <9f66d2b58c8052d4055e90b8477ee55d9a0914f9.1698564026.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <9f66d2b58c8052d4055e90b8477ee55d9a0914f9.1698564026.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alexghiti@rivosinc.com,
- bjorn@rivosinc.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, palmer@rivosinc.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello:
+The "data->irqs[]" array holds unsigned int so this error handling will
+not work correctly.
 
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+Fixes: eee636bff0dc ("gpio: rtd: Add support for Realtek DHC(Digital Home Center) RTD SoCs")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpio/gpio-rtd.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-On Sun, 29 Oct 2023 08:20:40 +0100 you wrote:
-> The ending NULL is not taken into account by strncat(), so switch to
-> strlcat() to correctly compute the size of the available memory when
-> appending CONFIG_CMDLINE to 'early_cmdline'.
-> 
-> Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the command line")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
-
-Here is the summary with links:
-  - riscv: Fix an off-by-one in get_early_cmdline()
-    https://git.kernel.org/riscv/c/adb1f95d388a
-
-You are awesome, thank you!
+diff --git a/drivers/gpio/gpio-rtd.c b/drivers/gpio/gpio-rtd.c
+index a7939bd0aa56..bf7f008f58d7 100644
+--- a/drivers/gpio/gpio-rtd.c
++++ b/drivers/gpio/gpio-rtd.c
+@@ -525,18 +525,21 @@ static int rtd_gpio_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct gpio_irq_chip *irq_chip;
+ 	struct rtd_gpio *data;
++	int ret;
+ 
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->irqs[0] = platform_get_irq(pdev, 0);
+-	if (data->irqs[0] < 0)
+-		return data->irqs[0];
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		return ret;
++	data->irqs[0] = ret;
+ 
+-	data->irqs[1] = platform_get_irq(pdev, 1);
+-	if (data->irqs[1] < 0)
+-		return data->irqs[1];
++	ret = platform_get_irq(pdev, 1);
++	if (ret < 0)
++		return ret;
++	data->irqs[1] = ret;
+ 
+ 	data->info = device_get_match_data(dev);
+ 	if (!data->info)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
