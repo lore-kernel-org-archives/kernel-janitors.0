@@ -1,151 +1,85 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D46BB53
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nvzGNpBb"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e55c885d7so34178265e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 06:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705070110; x=1705674910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y95Jfas4yPMpMpOy2M2wHIojPX+ZKuNke1Ebmh6JQsU=;
-        b=nvzGNpBb/QggawV0OZUTjf9VYCxKeVJAa+RE7Fls9OnS6P+uI1mV/o3Pr7kaSmlfhd
-         cEksUFnc5LSafqYTs1zCj8+TaC12GxoqVxNCRg/em+0URqlvaScO9UbjUQJZUSm52xZN
-         7e4A6Fuu8H98dbv+G8NmdI6psx1qHl1ObdSOP9c0k/3scSsajY1Yo3y5w33Q8/nJBmYK
-         2q+8Fd+YLkJHQn1fFE69kjZo80xW8sHs1VIGhi1/s4o1c421w1TkBh/sZx7IqiqdUFRf
-         yAhXHz02KVI6deJbztdmvP3lgqcek/arBdZ/5vs8LjhlzQ4t90GmFI4SaS0OGb+mnKaT
-         caCg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C126DD10;
+	Fri, 12 Jan 2024 14:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-204458dec9cso959111fac.1;
+        Fri, 12 Jan 2024 06:56:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705070110; x=1705674910;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y95Jfas4yPMpMpOy2M2wHIojPX+ZKuNke1Ebmh6JQsU=;
-        b=ZX3LVfGBYQYVzkpgJseF5Iljss+Wp6ifduGzE9oSZ0RphYx1WpDAiLu0VpRDngelh0
-         uu2ctaYV3UxPgs9Z+n/my9OQo88aftMqHT9c0AZZSzsJNmfxfGwpG/lIufbT6Z7vDjGL
-         ndxspBYfAchUHNG8eN1BjcjoqeICG/mLJp7KWIVWMNeX2vvrE5CSZzJ7G0FgH9acxB0P
-         mnDbJBV1/MFk9HULoa3LcGNLEOwD7JQsQhvRzBrcqHTNvnNTJZaJ4hoU43YYeCgdSHZJ
-         7fUuSZfSHcYGzGNiiRidW7wT2dPvOcgO1oNfn2gPiEyvcWHuX3zJ3MvJyUoNUvKbsgNv
-         Kj6w==
-X-Gm-Message-State: AOJu0YyjPSAJUg00TXsZ1CRpaYOSW1WuTDZQVHl8EGA0NWDex4oruLmu
-	xj7R3ilQisdLvhQ38Nzswgb3xfd2K8Gsmg==
-X-Google-Smtp-Source: AGHT+IF5Ymenj6Zi2wDPf9weDy1XyZvZJoiZKVlmUQZsJUDWY62gba1DbI8h7VfF0Hw5vd0BEhf7ZQ==
-X-Received: by 2002:a1c:7c08:0:b0:40e:55bb:a0b8 with SMTP id x8-20020a1c7c08000000b0040e55bba0b8mr787274wmc.157.1705070110611;
-        Fri, 12 Jan 2024 06:35:10 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id j28-20020a05600c1c1c00b0040e6726befcsm2090812wms.10.2024.01.12.06.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jan 2024 06:35:10 -0800 (PST)
-Date: Fri, 12 Jan 2024 17:35:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vicki Pfau <vi@endrift.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] HID: hid-steam: Fix cleanup in probe()
-Message-ID: <1fd87904-dabf-4879-bb89-72d13ebfc91e@moroto.mountain>
+        d=1e100.net; s=20230601; t=1705071404; x=1705676204;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ZpJF8ckEKzWu9JP8njFy/DUirOzmC1WDS5E6Eh5HQE=;
+        b=vpYJVkY56vJ529a8QLXr/I53SCt+UPq5RlT0wfdtCRECnJnR2F0MFJTdsQIMvCdE0k
+         iFEmPebd4S7Gls7kokLkjxrDcCssMzdMsFWm7J1yjqgPTw33n8xmtF85rWMBV0BDYd2y
+         FqVouq7kF8F8qJ8SguiQ3Lo1WzBTLCnc7ateRVeG023Xs2qi/lg0hGxn6ubVhCz5AxB4
+         Gtlozq2GzVh/fsI8JcGoOj7YIUaRQhdxp5GZ4YkM5m5A347loFCTDgs1eLwAjuhwGWyH
+         iAzTOWE9cR4K7jD46318S4RH2H5PVMAQpYoUJddLgf6yHhkRWHvV3OxyruwbWcooDqM+
+         X6Ng==
+X-Gm-Message-State: AOJu0YzYdfqU1ebItncnujeEBYQuShypn+t1A1YMdYcSaH8yBaSfTDjl
+	pf4hJBHG83bcpQIpPeYx2l3ImjfSjdS2N/dUO1g2CLHD
+X-Google-Smtp-Source: AGHT+IHqdJiMlARxTIb24YUXWd/c0ds830Sg3iyR4kvxB+qlqlYNB3iD2rCb8R1UK7EeVyED1cArKWr9rQST90WmkS0=
+X-Received: by 2002:a05:6870:c904:b0:206:b53d:474f with SMTP id
+ hj4-20020a056870c90400b00206b53d474fmr2693743oab.3.1705071404641; Fri, 12 Jan
+ 2024 06:56:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <305898fb-6bd4-4749-806c-05ec51bbeb80@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+References: <efe2a897-4af0-4204-8105-1bee7d6b9380@moroto.mountain>
+In-Reply-To: <efe2a897-4af0-4204-8105-1bee7d6b9380@moroto.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 12 Jan 2024 15:56:31 +0100
+Message-ID: <CAJZ5v0isUXAPq0Vh-RU0iopes_4r7KaejgqgFpzRT_zeZySDBQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal/debugfs: Unlock on error path in thermal_debug_tz_trip_up()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are a number of issues in this code.  First of all if
-steam_create_client_hid() fails then it leads to an error pointer
-dereference when we call hid_destroy_device(steam->client_hdev).
+On Fri, Jan 12, 2024 at 3:30=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Add a missing mutex_unlock(&thermal_dbg->lock) to this error path.
+>
+> Fixes: 4731c8f16a0e ("thermal/debugfs: Add thermal debugfs information fo=
+r mitigation episodes")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/thermal/thermal_debugfs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_=
+debugfs.c
+> index a3fa09235da1..a3f06029fc54 100644
+> --- a/drivers/thermal/thermal_debugfs.c
+> +++ b/drivers/thermal/thermal_debugfs.c
+> @@ -591,7 +591,7 @@ void thermal_debug_tz_trip_up(struct thermal_zone_dev=
+ice *tz,
+>         if (!tz_dbg->nr_trips) {
+>                 tze =3D thermal_debugfs_tz_event_alloc(tz, now);
+>                 if (!tze)
+> -                       return;
+> +                       goto unlock;
+>
+>                 list_add(&tze->node, &tz_dbg->tz_episodes);
+>         }
+> @@ -619,6 +619,7 @@ void thermal_debug_tz_trip_up(struct thermal_zone_dev=
+ice *tz,
+>                 (temperature - tze->trip_stats[trip_id].avg) /
+>                 tze->trip_stats[trip_id].count;
+>
+> +unlock:
+>         mutex_unlock(&thermal_dbg->lock);
+>  }
+>
+> --
 
-Also there are a number of leaks.  hid_hw_stop() is not called if
-hid_hw_open() fails for example.  And it doesn't call steam_unregister()
-or hid_hw_close().
-
-Fixes: 691ead124a0c ("HID: hid-steam: Clean up locking")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-This is just from static analysis and code review.  I haven't tested
-it.  I only included the fixes tag for the error pointer dereference.
-
- drivers/hid/hid-steam.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index 59df6ead7b54..b08a5ab58528 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -1128,14 +1128,14 @@ static int steam_probe(struct hid_device *hdev,
- 	 */
- 	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT & ~HID_CONNECT_HIDRAW);
- 	if (ret)
--		goto hid_hw_start_fail;
-+		goto err_cancel_work;
- 
- 	ret = hid_hw_open(hdev);
- 	if (ret) {
- 		hid_err(hdev,
- 			"%s:hid_hw_open\n",
- 			__func__);
--		goto hid_hw_open_fail;
-+		goto err_hw_stop;
- 	}
- 
- 	if (steam->quirks & STEAM_QUIRK_WIRELESS) {
-@@ -1151,33 +1151,37 @@ static int steam_probe(struct hid_device *hdev,
- 			hid_err(hdev,
- 				"%s:steam_register failed with error %d\n",
- 				__func__, ret);
--			goto input_register_fail;
-+			goto err_hw_close;
- 		}
- 	}
- 
- 	steam->client_hdev = steam_create_client_hid(hdev);
- 	if (IS_ERR(steam->client_hdev)) {
- 		ret = PTR_ERR(steam->client_hdev);
--		goto client_hdev_fail;
-+		goto err_stream_unregister;
- 	}
- 	steam->client_hdev->driver_data = steam;
- 
- 	ret = hid_add_device(steam->client_hdev);
- 	if (ret)
--		goto client_hdev_add_fail;
-+		goto err_destroy;
- 
- 	return 0;
- 
--client_hdev_add_fail:
--	hid_hw_stop(hdev);
--client_hdev_fail:
-+err_destroy:
- 	hid_destroy_device(steam->client_hdev);
--input_register_fail:
--hid_hw_open_fail:
--hid_hw_start_fail:
-+err_stream_unregister:
-+	if (steam->connected)
-+		steam_unregister(steam);
-+err_hw_close:
-+	hid_hw_close(hdev);
-+err_hw_stop:
-+	hid_hw_stop(hdev);
-+err_cancel_work:
- 	cancel_work_sync(&steam->work_connect);
- 	cancel_delayed_work_sync(&steam->mode_switch);
- 	cancel_work_sync(&steam->rumble_work);
-+
- 	return ret;
- }
- 
--- 
-2.43.0
-
+Applied, thanks!
