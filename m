@@ -1,94 +1,84 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9514E5D720
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 06:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AF85D8EC;
+	Fri, 12 Jan 2024 08:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPASxGTR"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3368d1c7b23so5288251f8f.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 22:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705042785; x=1705647585; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aMDSp2ZNZdvA1/0x96e6idKEXK9ueWlbixOmKjycJeI=;
-        b=mPASxGTRG4ee1EsbMUtyLbavfZwSNuWYoQ2tS7jA2O33T5m815dQsGECfJUq5smV5y
-         rkI/FprsHB+As5Pm82Z9NlqURdjNipW3FNw9TQd3XmeD1sdCYYm+NT6Y+NLIDkvl2fi4
-         +EshQEnELjsu+TREkJigi7yaUNAz04SjX6QL7mnoMuF/PS3EwlFvuc58N1Kp1xwDsW49
-         Tad9FzEdwdkwSlmVb5nkypHZ9khY4BLpvXME6KsUDL7sdaEKw6Pq9pi0NT45PdmtEVgl
-         i8xmhtMG6VLILGDmYiAJmeHtlxwHNVM866/U+vmQ2S7glyAQRhrgwQJ0/9RtX8YU4Qh+
-         l8ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705042785; x=1705647585;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMDSp2ZNZdvA1/0x96e6idKEXK9ueWlbixOmKjycJeI=;
-        b=KSj1gvj90opM7NCsB01jlza8rslQ13ceEhD/E3AVWOG8XoY5GBBCl7oYbk6r7ZR7xp
-         AXYs3eIM6zb6ncu0pLNQXcAkmYzxegruAFzJaJnFK9/mgaMEoOk/gzqCZQzTF0LEoDjK
-         hu5GE6YYXlKZxMLM7Ps5M8COirlaK7RIpb+PxJ1XR/M6rSGS7iMESTRBWhYp0IG/7OW1
-         9gfjG4QYteeFWCb+wqgo/ju/D/Kgnt9ZanvooZpvZgkKWbcytfUYzm9qguKd1xkJlIAX
-         yX4XfvKD8rEMrlyIbgsAvjpnjXJj+3U/JWur0qgSMqYITIsNzXd71qvJKirvMMMmPJBc
-         PAGA==
-X-Gm-Message-State: AOJu0Yz/ZizuMz8IYX6TuI6AaWn3SThzrQ97jzyD4lt22yyIWXZ0t0XB
-	4c9/ti1zCNvTZxFJ51Lql85OdpSS955vDA==
-X-Google-Smtp-Source: AGHT+IFIM8WcAUdOil9Y7u+h4e46rIteWp4Vx2BN9L2wWJb+W2y9/7uTleu8vvvEr7YShi+xUYEX6w==
-X-Received: by 2002:a05:6000:cd:b0:336:77a5:479d with SMTP id q13-20020a05600000cd00b0033677a5479dmr436727wrx.123.1705042784923;
-        Thu, 11 Jan 2024 22:59:44 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id k16-20020a5d6d50000000b00336a0c083easm2990218wri.53.2024.01.11.22.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jan 2024 22:59:44 -0800 (PST)
-Date: Fri, 12 Jan 2024 09:59:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] netfs, fscache: Prevent Oops in fscache_put_cache()
-Message-ID: <e84bc740-3502-4f16-982a-a40d5676615c@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qijx/7nz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705046793; x=1705651593; i=markus.elfring@web.de;
+	bh=iWbAIIX+icIq1JZBkElELi5uXNmg4ALYaNAZh981698=;
+	h=X-UI-Sender-Class:Date:Subject:To:References:Cc:From:
+	 In-Reply-To;
+	b=qijx/7nzPqlnT//NFyw0JGNqY28EfV7RPyyKO4yBeMogZW+8HHyYL6S/eA0agdiL
+	 IB3nAer+ItIbrIq5UTFCZ7Dk7iYdjTwScP977GZpMjkcW98nb+U/9fl13vcmeVeu1
+	 n1Iry9KMJWu3OFVr97h7S02OtzfeUiNkw+sf0Bs5vW5HOIonwC/HCMXnOsBWuH8EE
+	 mI+u+z3Ky5ZhQNfsvbm3btRnCiwKDR6GZf+LuDQlGVj4SfV4BM4AmlGdR5j7GuF9H
+	 X2ZqWamQ1lQR2wbwQH+SGfHwG5R9BPHR/5JtYWpS4Qt4lzDcsAWwnrSzUSj9poWrO
+	 TDCnvNwXcGXnXE+8uw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9cLf-1r3KAe2iov-015dSC; Fri, 12
+ Jan 2024 09:06:33 +0100
+Message-ID: <de6c23b2-aa27-494a-a0ec-fe14a4289b38@web.de>
+Date: Fri, 12 Jan 2024 09:06:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Drivers: hv: vmbus: Remove duplication and cleanup
+ code in create_gpadl_header()
+To: linux-hyperv@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Wei Liu <wei.liu@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+ kernel-janitors@vger.kernel.org
+References: <20240111165451.269418-1-mhklinux@outlook.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240111165451.269418-1-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ELgOWWzRZdGa9pAS99UTIjbdlACwEMf4d6E0mYuJ4b8U+LDcBdm
+ HUpYCbXwslfhQuVPn6Ibd9g0mHpWCcha8Z1TNbbHFYJmMd4vc0FLc4b7L8c7dey9UJvE5SB
+ KQKr7OWGscwJHrfFEqHIPJhmrRF+u0Rl8lwa5lzyD5vSQcpMuU4AIlYGiUdL79W9X7cPnYm
+ uIqKJXGcMiF6aaBe5AU0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RcoDov58Jqg=;+gDjDq73QpiL7XoIE8SQz5BMft6
+ wRAcizagoMXPjqLE1vyATncc7IVT+HkVDitM1kXhTTmMShR4t3IbsIunM7Fa98frWb9un6tfs
+ vNvuL/Ra4xnoUpp0YztkueEq6Qky/+MEpVNkOkOQXGnoaW0BLbUMrmKHjt6eIG+YFKymyOEuC
+ uWNqUpCPz+cGhGTSeNb3HG4Gh1Jrd5QUtiU1Nx8tGYKHmAQdjJ82+kkrHrQT+RSRFYc662QD5
+ EGrhg26qHNlqab/FYIxir17VsBGJ0dGkpk92BAOC+YY51ezbpPH/tib1l7YpdBkiWGSeJCdP9
+ bmZhij1W5Ph3TE2b/baUGuSK8Tu82R4rmiOCnzEEYOUI8HkULyjW20/U5cClG+h27qI9Rf1v5
+ fWKs3437f26730bjnGWMP6GUwTKd/nc1+gkeg1xto8HmEFSou8xbYAHaE2JCdj9woFkdvAtKA
+ lZGHPE2615+0+2aXRDr7k2j48XczqJTL4yaXQZ8V/kM42cjNE0T04a8YGR/lVW3YcshSw8eTu
+ f1b7PNWmDgXcXaR+j+0/QHZcvR/Wvao+NH4EfbN9hIecXV9dWqRBrTj2wjEM+Z0Nrh4HWKMEp
+ Sx7JMaj81KSGM1yhqPtUt7fwhD1FdBmPofENoOmXrjFs7iYjeGBwkqA03HEqFEE7Xe9oXcD1C
+ RM9I7p7eFtugRbT5eirhTi8yxvVWf81V6UZ3vH6ZAEz22paX0zltA1g+qlp4hxPLKUsNkDIm9
+ YrTiszCaY/Tz3/SOikI7L4KGpMyxmtpZGRnlFd95gVKBGMMR1wnAwp2tKYg1pgE7C2qM/theX
+ Kens8z5+LjqUWh5l8qZiNK2kBdLLQIYZVuiaiLENUAIi04ysPRVQdfyEVFCnRN9lTeLr1stPX
+ 7ZIesFcPncZor0DUlS4RJG25ScaFeUjFxXotZSFAVvA7IPNOBKTisDg0ijEhS+MCgdF2mGMXV
+ 4Yjy4Q==
 
-This function dereferences "cache" and then checks if it's
-IS_ERR_OR_NULL().  Check first, then dereference.
+=E2=80=A6
+> Eliminate the duplication by making minor tweaks to the logic and
+> associated comments. While here, simplify the handling of memory
+> allocation errors, and use umin() instead of open coding it.
+=E2=80=A6
 
-Fixes: 9549332df4ed ("fscache: Implement cache registration")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: My first version introduced a race and a possible use after free.
+I got the impression that the adjustment for the mentioned macro
+should be performed in a separate update step of the presented patch serie=
+s.
+https://elixir.bootlin.com/linux/v6.7/source/include/linux/minmax.h#L95
 
- fs/netfs/fscache_cache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.7#n81
 
-diff --git a/fs/netfs/fscache_cache.c b/fs/netfs/fscache_cache.c
-index d645f8b302a2..9397ed39b0b4 100644
---- a/fs/netfs/fscache_cache.c
-+++ b/fs/netfs/fscache_cache.c
-@@ -179,13 +179,14 @@ EXPORT_SYMBOL(fscache_acquire_cache);
- void fscache_put_cache(struct fscache_cache *cache,
- 		       enum fscache_cache_trace where)
- {
--	unsigned int debug_id = cache->debug_id;
-+	unsigned int debug_id;
- 	bool zero;
- 	int ref;
- 
- 	if (IS_ERR_OR_NULL(cache))
- 		return;
- 
-+	debug_id = cache->debug_id;
- 	zero = __refcount_dec_and_test(&cache->ref, &ref);
- 	trace_fscache_cache(debug_id, ref - 1, where);
- 
--- 
-2.43.0
-
+Regards,
+Markus
