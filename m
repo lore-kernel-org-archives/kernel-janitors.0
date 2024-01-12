@@ -1,154 +1,109 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D73417540;
-	Fri, 12 Jan 2024 17:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C697B2263D;
+	Fri, 12 Jan 2024 17:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pOFakgN2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3U/xrbqH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OdYJTRRS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="laykCk9x"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4ADF9222AA;
-	Fri, 12 Jan 2024 17:15:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705079752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUQhBDcgdZyOv8TeTdNa2X3hbRCyaNOdKOQw+rOND8=;
-	b=pOFakgN2novJBoIe/iFQ8vjhNShphLRBKJPRuRWmpXUvhJyS7wGTgidEnH/XjqkKnFPAZY
-	PJL0ixNtTqVZ2PJ3rvLNdRalnqrK17DQKMNtf1USpEpRZO9i3zovVA8oUiDmFKecMmIEeM
-	uSll6hLWFsbVEpzPoKdf5yigxy0vSng=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705079752;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUQhBDcgdZyOv8TeTdNa2X3hbRCyaNOdKOQw+rOND8=;
-	b=3U/xrbqHKRZ/InWwrjPbspD4/Kv+ArJ+w7Bxrg09mdVOv87XMbG4FU0RblQ4BeFKpHkG4F
-	CUs0bHVjUAMGI/DA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705079751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUQhBDcgdZyOv8TeTdNa2X3hbRCyaNOdKOQw+rOND8=;
-	b=OdYJTRRSHv8ieZ9bVkUSRU9UeI6IyPu9kAAcjqybL46StLMMPPhRm1drR2by2W08gokJai
-	eDZTeCLDKWei34xzeRb0XGk2Cessl837S9lHdhev5OfBBUCPc+Fp03tXDrz1FwnyqksKmk
-	K4ZdszJ1Kri2TkT+/19Qs+NP6yWFoLM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705079751;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUQhBDcgdZyOv8TeTdNa2X3hbRCyaNOdKOQw+rOND8=;
-	b=laykCk9xJ778xF6jpevLLuNWry5nM60KF/wXJrROdTkDO6ZKSys4SLjV/hT1epiQkmfXuc
-	xuZVFI8ZPPrM9uAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B64CF136A4;
-	Fri, 12 Jan 2024 17:15:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KcWeHsZzoWWdNgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 12 Jan 2024 17:15:50 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Markus Elfring <Markus.Elfring@web.de>,  io-uring@vger.kernel.org,
-  kernel-janitors@vger.kernel.org,  Pavel Begunkov
- <asml.silence@gmail.com>,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] io_uring: Delete a redundant kfree() call in
- io_ring_ctx_alloc()
-In-Reply-To: <c17648db-469c-4d3c-8c2e-774b88e79f07@kernel.dk> (Jens Axboe's
-	message of "Fri, 12 Jan 2024 09:18:44 -0700")
-Organization: SUSE
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
-	<aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
-	<878r4xnn52.fsf@mailhost.krisman.be>
-	<b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
-	<edeafe29-2ab1-4e87-853c-912b4da06ad5@web.de>
-	<87jzoek4r7.fsf@mailhost.krisman.be>
-	<c17648db-469c-4d3c-8c2e-774b88e79f07@kernel.dk>
-Date: Fri, 12 Jan 2024 14:15:47 -0300
-Message-ID: <87bk9qjwvw.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cG9A6iap"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F5FC433F1;
+	Fri, 12 Jan 2024 17:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705081827;
+	bh=GZ6Ouo8eQK4R+P9Tx4PS6afuH0vvh/IfABUDSekGxEc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cG9A6iaprfYQmCFxymyAp1BHAYy5u6lXTSHuuhHje9BJ7EzkKXOZjNGH38ptV2JCs
+	 IZKNF4mc/wZ6ydpJs4SfgNxoFbm4WPyiw0lN99FBG4D7j0shHoq7WitGNx3GfJ0Dm7
+	 RcKOzr9zRvU+ldZUCjmSMsjaSqk4NnsKQeP1F2YszU0k93mB657HpKUqgxkkEGSkBD
+	 8HGIUn3DJlktzGwYJQ+r8jAGayfH9glqjFUPlTqTjasTb7iQDgM0kC/zI4uuwKmdmb
+	 fl/nMZLa6zeJTqiEuaYNRr/ae22okqTfkD0VT/LT52+ymFoG8gNzpolvJlhNz1YUEp
+	 tehOsR3K/jhLA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50e7ddd999bso7484252e87.1;
+        Fri, 12 Jan 2024 09:50:26 -0800 (PST)
+X-Gm-Message-State: AOJu0YyjIshXF6pceUlYpruSe4JI9Gd6zHBW7r/EShXr+T1bBBIt4ndU
+	zqIrBF2xSZNf48GN47dTK8Frh8lWWZgd4P0/hX4=
+X-Google-Smtp-Source: AGHT+IHNMMoIG6gwTjPiDIYY4Pr1xr4YBA96xtCAZsgUidD3xh+KybavM+PwCvyZ8lUyAQMCCQE/JJOp2D5j5adNYDo=
+X-Received: by 2002:a05:6512:39ca:b0:50e:a9c0:70ad with SMTP id
+ k10-20020a05651239ca00b0050ea9c070admr1167312lfu.32.1705081824525; Fri, 12
+ Jan 2024 09:50:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OdYJTRRS;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=laykCk9x
-X-Spamd-Result: default: False [1.18 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BAYES_HAM(-0.01)[45.66%];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,kernel.dk:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[web.de,vger.kernel.org,gmail.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 1.18
-X-Rspamd-Queue-Id: 4ADF9222AA
-X-Spam-Level: *
-X-Spam-Flag: NO
-X-Spamd-Bar: +
+References: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 12 Jan 2024 18:50:13 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGj8YYQiUf07H+0=MOvytr32fwnTp9JhO7ipZf=ZOGUag@mail.gmail.com>
+Message-ID: <CAMj1kXGj8YYQiUf07H+0=MOvytr32fwnTp9JhO7ipZf=ZOGUag@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Jens Axboe <axboe@kernel.dk> writes:
-
-> On 1/12/24 7:25 AM, Gabriel Krisman Bertazi wrote:
->> Markus Elfring <Markus.Elfring@web.de> writes:
->> 
->>> From: Markus Elfring <elfring@users.sourceforge.net>
->>> Date: Wed, 10 Jan 2024 20:54:43 +0100
->>>
->>> Another useful pointer was not reassigned to the data structure member
->>> ?io_bl? by this function implementation.
->>> Thus omit a redundant call of the function ?kfree? at the end.
+On Sat, 6 Jan 2024 at 13:48, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> This is just nonsense...
+> If an error occurs after the clk_prepare_enable() call, it should be undone
+> by a corresponding clk_disable_unprepare() call, as already done in the
+> remove() function.
 >
-> On top of that, this patch is pointless, and the 2nd patch is even worse
-> in that it just makes a mess of cleanup. And for what reasoning?
-> Absolutely none.
+> As devm_clk_get() is used, we can switch to devm_clk_get_enabled() to
+> handle it automatically and fix the probe.
+>
+> Update the remove() function accordingly and remove the now useless
+> clk_disable_unprepare() call.
+>
+> Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C controller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Ah, The description is non-sense, but the change in this patch seemed
-correct to me, even if pointless, which is why I reviewed it.  patch 2
-is just garbage.
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-> There's a reason why I filter emails from this particular author
-> straight to the trash, there's a long history of this kind of thing and
-> not understanding feedback.
-
-Clearly there is background with this author that I wasn't aware, and
-just based on his responses, I can see your point. So I apologize for
-giving him space to continue the spamming.  My bad.
-
--- 
-Gabriel Krisman Bertazi
+> ---
+>  drivers/i2c/busses/i2c-synquacer.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
+> index bbea521b05dd..a73f5bb9a164 100644
+> --- a/drivers/i2c/busses/i2c-synquacer.c
+> +++ b/drivers/i2c/busses/i2c-synquacer.c
+> @@ -550,17 +550,13 @@ static int synquacer_i2c_probe(struct platform_device *pdev)
+>         device_property_read_u32(&pdev->dev, "socionext,pclk-rate",
+>                                  &i2c->pclkrate);
+>
+> -       i2c->pclk = devm_clk_get(&pdev->dev, "pclk");
+> -       if (PTR_ERR(i2c->pclk) == -EPROBE_DEFER)
+> -               return -EPROBE_DEFER;
+> -       if (!IS_ERR_OR_NULL(i2c->pclk)) {
+> -               dev_dbg(&pdev->dev, "clock source %p\n", i2c->pclk);
+> -
+> -               ret = clk_prepare_enable(i2c->pclk);
+> -               if (ret)
+> -                       return dev_err_probe(&pdev->dev, ret, "failed to enable clock\n");
+> -               i2c->pclkrate = clk_get_rate(i2c->pclk);
+> -       }
+> +       i2c->pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
+> +       if (IS_ERR(i2c->pclk))
+> +               return dev_err_probe(&pdev->dev, PTR_ERR(i2c->pclk),
+> +                                    "failed to get and enable clock\n");
+> +
+> +       dev_dbg(&pdev->dev, "clock source %p\n", i2c->pclk);
+> +       i2c->pclkrate = clk_get_rate(i2c->pclk);
+>
+>         if (i2c->pclkrate < SYNQUACER_I2C_MIN_CLK_RATE ||
+>             i2c->pclkrate > SYNQUACER_I2C_MAX_CLK_RATE)
+> @@ -615,8 +611,6 @@ static void synquacer_i2c_remove(struct platform_device *pdev)
+>         struct synquacer_i2c *i2c = platform_get_drvdata(pdev);
+>
+>         i2c_del_adapter(&i2c->adapter);
+> -       if (!IS_ERR(i2c->pclk))
+> -               clk_disable_unprepare(i2c->pclk);
+>  };
+>
+>  static const struct of_device_id synquacer_i2c_dt_ids[] __maybe_unused = {
+> --
+> 2.34.1
+>
