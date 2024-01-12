@@ -1,53 +1,53 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1EA32C62
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 06:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9514E5D720
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 06:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrjQh1wM"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33765009941so4825657f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 22:56:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPASxGTR"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3368d1c7b23so5288251f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jan 2024 22:59:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705042588; x=1705647388; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705042785; x=1705647585; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9prXoTbAmkoR0CZO9d0SNqMhaDHqa31k4/WzflBN+f4=;
-        b=IrjQh1wMctaMiqlMKDXXjr2CzSqAu3HFdYdyugt2MgNsDOmB0LNVorGBlYIFtLHqP5
-         UD+lib05Tcym45i+C6gOKXF7WYMiZGQJVOAp0zzh+hnEb1O5Oo5O/KZW6CF8y4LYDmH5
-         5M8xjEPAtIysW4FxEk/jQ2QKRXCcj26NxNX44hsuxzt6lgnc5SIbsnBvi1aUGWCDaTAx
-         IEvGwEHyYCoF4uGpln/xlvy4BmkF6UbOrr+mky2xjaa0KDY9fOL6wTN6uWsNybXXPlI/
-         A6aT8o9hihZzds2B3MfbMiIvn8P0/iQisYnaU+7Gsnmjcgr84GRiWR6lap0P4GDn+i+3
-         4Hdg==
+        bh=aMDSp2ZNZdvA1/0x96e6idKEXK9ueWlbixOmKjycJeI=;
+        b=mPASxGTRG4ee1EsbMUtyLbavfZwSNuWYoQ2tS7jA2O33T5m815dQsGECfJUq5smV5y
+         rkI/FprsHB+As5Pm82Z9NlqURdjNipW3FNw9TQd3XmeD1sdCYYm+NT6Y+NLIDkvl2fi4
+         +EshQEnELjsu+TREkJigi7yaUNAz04SjX6QL7mnoMuF/PS3EwlFvuc58N1Kp1xwDsW49
+         Tad9FzEdwdkwSlmVb5nkypHZ9khY4BLpvXME6KsUDL7sdaEKw6Pq9pi0NT45PdmtEVgl
+         i8xmhtMG6VLILGDmYiAJmeHtlxwHNVM866/U+vmQ2S7glyAQRhrgwQJ0/9RtX8YU4Qh+
+         l8ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705042588; x=1705647388;
+        d=1e100.net; s=20230601; t=1705042785; x=1705647585;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9prXoTbAmkoR0CZO9d0SNqMhaDHqa31k4/WzflBN+f4=;
-        b=CjPOhksmTkCUqhQfrJ6ANbN8tGnPuleKFlAIrZ8B2moayk3DmTSHJlDv+WTfPyG8F7
-         JyLRmipYsq2vLpx7UQd21U10RurptISvF2q8WOhPaYUcla4HruuEhR+ejOL1/iXon6lC
-         B6IWhay9ufuwv/MdMG5VA010EbHk5SNPMIyeqVGuAibrE/PG5reFCUx7O6dMpfbUsF5O
-         wLrhsCL0w0P5U1AjDibMKYefEzGxP8qxPLANCHhlwBN5+O4ElGzH+z72W7/M9MYVQWpL
-         bqaK16PqUcPEnz3qRDBBzotL6kXSr2X4M4cy7q1VtuWVnm1zhjM+Z9jwTzeLmGZkE0d5
-         7zXQ==
-X-Gm-Message-State: AOJu0Yw7pfrTFr3Ugqj5WFrV28F4fO34/lqitLkw+V9GlBijbfz+ZHuD
-	BWcwZFvkzv/NUxbv9Gugecnia6h7SkVUvQ==
-X-Google-Smtp-Source: AGHT+IH6gsHGVIynSC4gedvLtDCTO7G8G5VIZut2PGL0yCvFoPazVS5ii5HisQkORg+7Nmq9Qnuw5Q==
-X-Received: by 2002:a05:6000:141:b0:337:404b:1d67 with SMTP id r1-20020a056000014100b00337404b1d67mr447985wrx.69.1705042588682;
-        Thu, 11 Jan 2024 22:56:28 -0800 (PST)
+        bh=aMDSp2ZNZdvA1/0x96e6idKEXK9ueWlbixOmKjycJeI=;
+        b=KSj1gvj90opM7NCsB01jlza8rslQ13ceEhD/E3AVWOG8XoY5GBBCl7oYbk6r7ZR7xp
+         AXYs3eIM6zb6ncu0pLNQXcAkmYzxegruAFzJaJnFK9/mgaMEoOk/gzqCZQzTF0LEoDjK
+         hu5GE6YYXlKZxMLM7Ps5M8COirlaK7RIpb+PxJ1XR/M6rSGS7iMESTRBWhYp0IG/7OW1
+         9gfjG4QYteeFWCb+wqgo/ju/D/Kgnt9ZanvooZpvZgkKWbcytfUYzm9qguKd1xkJlIAX
+         yX4XfvKD8rEMrlyIbgsAvjpnjXJj+3U/JWur0qgSMqYITIsNzXd71qvJKirvMMMmPJBc
+         PAGA==
+X-Gm-Message-State: AOJu0Yz/ZizuMz8IYX6TuI6AaWn3SThzrQ97jzyD4lt22yyIWXZ0t0XB
+	4c9/ti1zCNvTZxFJ51Lql85OdpSS955vDA==
+X-Google-Smtp-Source: AGHT+IFIM8WcAUdOil9Y7u+h4e46rIteWp4Vx2BN9L2wWJb+W2y9/7uTleu8vvvEr7YShi+xUYEX6w==
+X-Received: by 2002:a05:6000:cd:b0:336:77a5:479d with SMTP id q13-20020a05600000cd00b0033677a5479dmr436727wrx.123.1705042784923;
+        Thu, 11 Jan 2024 22:59:44 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id a7-20020adff7c7000000b0033660f75d08sm2983461wrq.116.2024.01.11.22.56.28
+        by smtp.gmail.com with ESMTPSA id k16-20020a5d6d50000000b00336a0c083easm2990218wri.53.2024.01.11.22.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jan 2024 22:56:28 -0800 (PST)
-Date: Fri, 12 Jan 2024 09:56:25 +0300
+        Thu, 11 Jan 2024 22:59:44 -0800 (PST)
+Date: Fri, 12 Jan 2024 09:59:41 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hans de Goede <hdegoede@redhat.com>, Henry Shi <henryshi2018@gmail.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] platform/x86: silicom-platform: clean up a check
-Message-ID: <a58bffb7-0a8b-4195-b273-f65a188ace7b@moroto.mountain>
+Subject: [PATCH v2] netfs, fscache: Prevent Oops in fscache_put_cache()
+Message-ID: <e84bc740-3502-4f16-982a-a40d5676615c@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -58,33 +58,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The error message in this code can't be reached because value is either
-zero or non-zero.  There isn't a third option.  Really, it's nicer to
-write this as a one liner.
+This function dereferences "cache" and then checks if it's
+IS_ERR_OR_NULL().  Check first, then dereference.
 
+Fixes: 9549332df4ed ("fscache: Implement cache registration")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/platform/x86/silicom-platform.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+v2: My first version introduced a race and a possible use after free.
 
-diff --git a/drivers/platform/x86/silicom-platform.c b/drivers/platform/x86/silicom-platform.c
-index 6ce43ccb3112..c0910af16a3a 100644
---- a/drivers/platform/x86/silicom-platform.c
-+++ b/drivers/platform/x86/silicom-platform.c
-@@ -256,12 +256,7 @@ static void silicom_gpio_set(struct gpio_chip *gc,
- 	if (direction == GPIO_LINE_DIRECTION_IN)
+ fs/netfs/fscache_cache.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/netfs/fscache_cache.c b/fs/netfs/fscache_cache.c
+index d645f8b302a2..9397ed39b0b4 100644
+--- a/fs/netfs/fscache_cache.c
++++ b/fs/netfs/fscache_cache.c
+@@ -179,13 +179,14 @@ EXPORT_SYMBOL(fscache_acquire_cache);
+ void fscache_put_cache(struct fscache_cache *cache,
+ 		       enum fscache_cache_trace where)
+ {
+-	unsigned int debug_id = cache->debug_id;
++	unsigned int debug_id;
+ 	bool zero;
+ 	int ref;
+ 
+ 	if (IS_ERR_OR_NULL(cache))
  		return;
  
--	if (value)
--		silicom_mec_port_set(channel, 0);
--	else if (value == 0)
--		silicom_mec_port_set(channel, 1);
--	else
--		pr_err("Wrong argument value: %d\n", value);
-+	silicom_mec_port_set(channel, !value);
- }
++	debug_id = cache->debug_id;
+ 	zero = __refcount_dec_and_test(&cache->ref, &ref);
+ 	trace_fscache_cache(debug_id, ref - 1, where);
  
- static int silicom_gpio_direction_output(struct gpio_chip *gc,
 -- 
 2.43.0
 
