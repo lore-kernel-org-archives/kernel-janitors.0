@@ -1,89 +1,94 @@
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802A46EB79
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 16:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4AC745C1
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 16:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AuS64Mi0"
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7bed82030faso39144439f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 08:08:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TikfNHgX"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7bb5be6742fso78137139f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 08:18:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705075681; x=1705680481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dtoHWZ99B2ThLFNUBH+p4UtbFzDTjEFR2zCJ/MgSZl0=;
-        b=AuS64Mi0vOEeDj2TRdaZvm9FnXbENRGinn4tVajD9zJCOeNIc9hm+9jOzdWBgRrigg
-         o9uVyL24qvkP/KPlARV9uw1RBPnbB6OfDJBTc9poerP/5DsTf4VCeaKMv1fAGkADgSRj
-         SXae34TxLZ5ALunH1jLddpPDqMHAHibz+TMW/3hos7utooKfi4rsgKNvnaoXSn3psGNe
-         NmJKMS4DEPrPcCMUmQDGyKPDWyVEzV1Gqu5jF2MfrJBf+2My56pflSH9xhsimaWcQZiT
-         spK/fZTV0i60reX+pTafsYFVfBW7F1M82j2vj2o/UP37fF1Hk4AdNfb8rVviPr/ufk+i
-         uWoA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705076326; x=1705681126; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kGo5Qib9p/CMqmc2qVWW+nsxV9z3k+DvCQknh7gy4Ww=;
+        b=TikfNHgXxUFCbvfBPpEhlkO8PQD/CPuLpqY+r9fugo9iaLEktnSFF4jGJRk3Ws2DXc
+         HsCOYiLGDFBIRTG96xHJZPzdyUz/oQPUZyXLhjuM7zBTeg+4FUbM2WFsZJ9FHR3bGJMa
+         teqdxwU1ovOC2+DZb/QILZfqDqcAUKWZn0jy+LlBj7pnUD3s/Exa4/9St0h64Ll/g0KQ
+         dAf0T4qajiIljjJICcNlTzwoketYubIsrqoOOmkiAw43Ucelom4DVHrM9ZCIf25ezn/y
+         3o8h851xjLMvMHPHeI8juQA/7jyuKSaopN7Z+92PmquuikGyDkdDeyklPZAp7zGoQrjH
+         5zSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705075681; x=1705680481;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dtoHWZ99B2ThLFNUBH+p4UtbFzDTjEFR2zCJ/MgSZl0=;
-        b=DQITNO5Y7kFkGrcjhrEXOc0csF6KMbX02MzP9nZUNs7trVXBugnUjAi6S0IhFUbqyv
-         ddrDa1qCMlw1XX4z4s5V3dqpuqYXs1Dh5YS5iym3JPVfSKi9XsxfMtjvmb2/OJC7tQ5s
-         1u/EJo76Ef/qYyT5dfuTc0QlgHSzHVnl1wtYZmVzyVEHlfMdjO60ZMW9MxdVtp4AHGlG
-         oj8c6lcAaUmOeFR8glaUHtfJw/NlcSZATxwO4Ly641kevSlVnVJstBvnIfxCk747qIIX
-         hR4QSp8nA4pCIQejNZp2jBIQOXqrgmluXp32UiwLXaBFgCEIqHxbDEyEyaZznx5e7/IS
-         Xuqw==
-X-Gm-Message-State: AOJu0YyO4U94kpC5zHAiNgcGCzqALBpxzeX6ra3v0kduZ8gJHSEom04P
-	4hFEtLvaaVInJE0XG7+yorEpW/mWMraEVw==
-X-Google-Smtp-Source: AGHT+IHKR+V+EZfBu7Epg3SVvtSsdxta8fN1DAtH3/aqcp8GCRXCwg2aKC0fFrZxPD4VzBCtnXT/YA==
-X-Received: by 2002:a6b:e505:0:b0:7be:dade:b053 with SMTP id y5-20020a6be505000000b007bedadeb053mr1922686ioc.0.1705075681679;
-        Fri, 12 Jan 2024 08:08:01 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id k13-20020a5e890d000000b007bef5867ac8sm853127ioj.52.2024.01.12.08.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jan 2024 08:08:01 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Christian Brauner <brauner@kernel.org>, Min Li <min15.li@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Damien Le Moal <dlemoal@kernel.org>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Christian Heusel <christian@heusel.eu>
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240111231521.1596838-1-christian@heusel.eu>
-References: <20240111231521.1596838-1-christian@heusel.eu>
-Subject: Re: [PATCH] block: print symbolic error name instead of error code
-Message-Id: <170507568074.2252898.16058213199435982083.b4-ty@kernel.dk>
-Date: Fri, 12 Jan 2024 09:08:00 -0700
+        d=1e100.net; s=20230601; t=1705076326; x=1705681126;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGo5Qib9p/CMqmc2qVWW+nsxV9z3k+DvCQknh7gy4Ww=;
+        b=qgBv4QK40otCpu/QP79c6B5IeuRDuHP6bWgliNzvKVxJWKAq378pLDPF57nK4EuwaQ
+         ojqK8qJmLeeuaV0CCZCwsHe8l7UH1ZetU+RA6x5DYEA8lc5CRNFccmL2ptiBjQP+Dwms
+         Im5SBpp8cSJJ6SlXf4jhQQ9D5d4iL0/oEM/J1D5CBFIsIau5wNI1KLPbZqfRZ8q7G5/u
+         IrLLoive5JcZ6Kz9OLjtZNwSlHvQtyupiNiUxT65jYYFF2ilJKup40VReZgfaL4Jfpa1
+         fc5ySbRCTetmWrgePDPTAPoWUGoNiAkSttdBR3rDfHTcTkOK7O4evZUVJhIFfq6uqU7c
+         WWMg==
+X-Gm-Message-State: AOJu0YzTgKME1XdIZWqOIFmPwsJPCJ2teHr19gPLZLimq3bLbdjheGXy
+	IyyOFlYqhGDMFOq8iq5elYGXafW1Dp/ZPQ==
+X-Google-Smtp-Source: AGHT+IHOgGtZvSj8dp3Ed1gkngzNUSPm5tUfa1e4J5SEfUWYdU8tbSUFQ/gTEZJG343OrT8yf+lERw==
+X-Received: by 2002:a05:6602:14c7:b0:7be:edbc:629f with SMTP id b7-20020a05660214c700b007beedbc629fmr2513957iow.0.1705076326471;
+        Fri, 12 Jan 2024 08:18:46 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id s23-20020a02c517000000b0046d98c3cd7bsm964739jam.14.2024.01.12.08.18.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jan 2024 08:18:45 -0800 (PST)
+Message-ID: <c17648db-469c-4d3c-8c2e-774b88e79f07@kernel.dk>
+Date: Fri, 12 Jan 2024 09:18:44 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] io_uring: Delete a redundant kfree() call in
+ io_ring_ctx_alloc()
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <krisman@suse.de>,
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Pavel Begunkov <asml.silence@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+ <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
+ <878r4xnn52.fsf@mailhost.krisman.be>
+ <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+ <edeafe29-2ab1-4e87-853c-912b4da06ad5@web.de>
+ <87jzoek4r7.fsf@mailhost.krisman.be>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87jzoek4r7.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
 
-
-On Fri, 12 Jan 2024 00:15:18 +0100, Christian Heusel wrote:
-> Utilize the %pe print specifier to get the symbolic error name as a
-> string (i.e "-ENOMEM") in the log message instead of the error code to
-> increase its readablility.
+On 1/12/24 7:25 AM, Gabriel Krisman Bertazi wrote:
+> Markus Elfring <Markus.Elfring@web.de> writes:
 > 
-> This change was suggested in
-> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
-> 
-> [...]
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Wed, 10 Jan 2024 20:54:43 +0100
+>>
+>> Another useful pointer was not reassigned to the data structure member
+>> ?io_bl? by this function implementation.
+>> Thus omit a redundant call of the function ?kfree? at the end.
 
-Applied, thanks!
+This is just nonsense...
 
-[1/1] block: print symbolic error name instead of error code
-      commit: 25c1772a0493463408489b1fae65cf77fe46cac1
+On top of that, this patch is pointless, and the 2nd patch is even worse
+in that it just makes a mess of cleanup. And for what reasoning?
+Absolutely none.
 
-Best regards,
+There's a reason why I filter emails from this particular author
+straight to the trash, there's a long history of this kind of thing and
+not understanding feedback.
+
 -- 
 Jens Axboe
-
-
 
