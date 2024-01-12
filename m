@@ -1,105 +1,89 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACCE6DD09;
-	Fri, 12 Jan 2024 15:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802A46EB79
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 16:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ocbJzJk3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705071632; x=1705676432; i=markus.elfring@web.de;
-	bh=mZfbtSP2eLg7KULWpeXHehpSY+IdUn5/j3kjnvUcs2I=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=ocbJzJk3E7Vjj0p1kohA3nFwk/dy8MbzNeqmc5vT8VkFWdJGEJa5IQXTJk6e2l5a
-	 PWXo8n7ApYh9dgzwcK6XAu4VXSbXjt55zJbXkIZHudLUM1meXRGdRN5pkZlO2072O
-	 /5UQ5uykB0Q8ApIKL9L9H1YWNBlAj44lR9tuZ+oYS0X6LeBQMH7z75+Lx1Dfw+Stm
-	 ur3acoNoyc3bQGi1XOBCOE9Qbe3bksHoX9sTrRQGXMzy93WQyHwMpFfYz/bYIp5R6
-	 Uepa2vyPvbJT46e1lxpHjlKZ7VdmIcKl9VUVA5MPW1UXkIWOqFsLfLhJ4uXdI+vVP
-	 p+qH3iFmSGoHCKr4ZQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7gXO-1r2wjF43rm-01558N; Fri, 12
- Jan 2024 16:00:32 +0100
-Message-ID: <96e1e30a-ae2f-4dfb-9a1c-edaf6b8e1231@web.de>
-Date: Fri, 12 Jan 2024 16:00:21 +0100
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AuS64Mi0"
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7bed82030faso39144439f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 08:08:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705075681; x=1705680481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtoHWZ99B2ThLFNUBH+p4UtbFzDTjEFR2zCJ/MgSZl0=;
+        b=AuS64Mi0vOEeDj2TRdaZvm9FnXbENRGinn4tVajD9zJCOeNIc9hm+9jOzdWBgRrigg
+         o9uVyL24qvkP/KPlARV9uw1RBPnbB6OfDJBTc9poerP/5DsTf4VCeaKMv1fAGkADgSRj
+         SXae34TxLZ5ALunH1jLddpPDqMHAHibz+TMW/3hos7utooKfi4rsgKNvnaoXSn3psGNe
+         NmJKMS4DEPrPcCMUmQDGyKPDWyVEzV1Gqu5jF2MfrJBf+2My56pflSH9xhsimaWcQZiT
+         spK/fZTV0i60reX+pTafsYFVfBW7F1M82j2vj2o/UP37fF1Hk4AdNfb8rVviPr/ufk+i
+         uWoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705075681; x=1705680481;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtoHWZ99B2ThLFNUBH+p4UtbFzDTjEFR2zCJ/MgSZl0=;
+        b=DQITNO5Y7kFkGrcjhrEXOc0csF6KMbX02MzP9nZUNs7trVXBugnUjAi6S0IhFUbqyv
+         ddrDa1qCMlw1XX4z4s5V3dqpuqYXs1Dh5YS5iym3JPVfSKi9XsxfMtjvmb2/OJC7tQ5s
+         1u/EJo76Ef/qYyT5dfuTc0QlgHSzHVnl1wtYZmVzyVEHlfMdjO60ZMW9MxdVtp4AHGlG
+         oj8c6lcAaUmOeFR8glaUHtfJw/NlcSZATxwO4Ly641kevSlVnVJstBvnIfxCk747qIIX
+         hR4QSp8nA4pCIQejNZp2jBIQOXqrgmluXp32UiwLXaBFgCEIqHxbDEyEyaZznx5e7/IS
+         Xuqw==
+X-Gm-Message-State: AOJu0YyO4U94kpC5zHAiNgcGCzqALBpxzeX6ra3v0kduZ8gJHSEom04P
+	4hFEtLvaaVInJE0XG7+yorEpW/mWMraEVw==
+X-Google-Smtp-Source: AGHT+IHKR+V+EZfBu7Epg3SVvtSsdxta8fN1DAtH3/aqcp8GCRXCwg2aKC0fFrZxPD4VzBCtnXT/YA==
+X-Received: by 2002:a6b:e505:0:b0:7be:dade:b053 with SMTP id y5-20020a6be505000000b007bedadeb053mr1922686ioc.0.1705075681679;
+        Fri, 12 Jan 2024 08:08:01 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id k13-20020a5e890d000000b007bef5867ac8sm853127ioj.52.2024.01.12.08.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jan 2024 08:08:01 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Christian Brauner <brauner@kernel.org>, Min Li <min15.li@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Damien Le Moal <dlemoal@kernel.org>, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Christian Heusel <christian@heusel.eu>
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20240111231521.1596838-1-christian@heusel.eu>
+References: <20240111231521.1596838-1-christian@heusel.eu>
+Subject: Re: [PATCH] block: print symbolic error name instead of error code
+Message-Id: <170507568074.2252898.16058213199435982083.b4-ty@kernel.dk>
+Date: Fri, 12 Jan 2024 09:08:00 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 2/2] io_uring: Improve exception handling in
- io_ring_ctx_alloc()
-To: Gabriel Krisman Bertazi <krisman@suse.de>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
- <878r4xnn52.fsf@mailhost.krisman.be>
- <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
- <49ecda98-770d-455e-acd7-12d810280fdd@web.de>
- <87frz2k4jm.fsf@mailhost.krisman.be>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <87frz2k4jm.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3fcZXN079uvfIcjs2xVAhdFEtF5OObN5kLwIPmxpQDsZhhkZULL
- NZ7w4yaCeziYpmKoLQui1CfJKn80IgEQMLQg861wIvzSC7Nb5ZxgYkMYvR6P0D8y9AYyfAB
- kGOfFcJUP/YIIJtJS41hkuL0XRporYyhOx6l8KXpcEYxkoCy/hixa0pqdeNBJeZr4xpl5sV
- pQWGmRAd61sq1upCB9ArQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CX07fjvmKG8=;djUVypSqjkR9zW5MJaSHacMcJBr
- hzFLPkxRRXiuFx0Jo4+UmKQ59SuzUOobiT8AqAiyEQ9kigZaA9Mb7c1AfdenkzU/Z4KDutFQr
- xPhZ1PUYg2BbFsm6Oz5Ebx8b4CWy+2w2ltSaZYVujiap0WFNQA7LkF/CeGU8+Yqvbri5whvau
- 4HrACfbd5ynnK0kXbfgQMwIPLdO4yQo2vOHvAlHtmNeN1thRI8EBVFVHaWDlrA4XEWEZwrbdq
- iTN/PbvVVG5m7la4MatvMjfNS2hJAtl+h3xxX4qgzZxq9zUYLcZPvw5DICEo1CXA8xaAKNDKj
- yHu86QsdJFMBChktzct3RaZ2o5o0j0U3AdaicyuQQbjQR0ILF67qBT6LXvT20DqhBYmJtaJgo
- HkF0z/40yQ3pJSNR2Qx4KwIC65sOzuZtxbtfrvPpuoFKeE3teQjgl3CskUzB8AfJspLD0C8dw
- j1KDydvXZVgSEGI333xrEogt+wUt5iG11BtPbgOwUUSjrj8M/7RAy1OsPAOId6adwi/bVt1B9
- uHc98O42hIGLLFusWrmJZ7lvfFFSbaKFlrX4mtiCnb0zZbP41wQq9FGFBJnMCPK8WYE7rFM51
- +6fvvQVuEfCgBxQ6Z4PA89OPBIWR/KMWLXvQ/yEEXY7csaR913ASvA3x2YB2MT1xMlPt05M44
- Mo2K2NkuUfiPSK07ecKcVf3FoptwHVUzc5lib4WK7q3O+kL+QAy2Fnk23rvp7wsLrzBbbhjHL
- KS66N+JCKoZERCAPNx+jELvkYthb7wk37HufF3CqlvhDuYK7wGCDV6TgMEhuoc2uLiyMSPkIR
- CdWw4UDY+SuAc8lF8GPLKJygTvqDPtV1GfhPY4eMf719J/HzMyMlimhoeOP8BcpP03V3EkY2N
- MGs6OHuy21uj0sN4SuWIBcRUYGFQy6DrTlHBCpSXZOTY6fvoxkyf3uKUzWL8BvY8rnZNOyK4W
- bqBhTQ==
-
->> The label =E2=80=9Cerr=E2=80=9D was used to jump to a kfree() call desp=
-ite of
->> the detail in the implementation of the function =E2=80=9Cio_ring_ctx_a=
-lloc=E2=80=9D
->> that it was determined already that a corresponding variable contained
->> a null pointer because of a failed memory allocation.
->>
->> 1. Thus use more appropriate labels instead.
->>
->> 2. Reorder jump targets at the end.
->>
->
-> As I mentioned on v1, this doesn't do us any good,
-
-I dare to present other development views.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
 
-> as kfree can handle NULL pointers just fine,
+On Fri, 12 Jan 2024 00:15:18 +0100, Christian Heusel wrote:
+> Utilize the %pe print specifier to get the symbolic error name as a
+> string (i.e "-ENOMEM") in the log message instead of the error code to
+> increase its readablility.
+> 
+> This change was suggested in
+> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
+> 
+> [...]
 
-Yes, this is the case.
+Applied, thanks!
 
-Would you dare to categorise such a special function calls as redundant?
+[1/1] block: print symbolic error name instead of error code
+      commit: 25c1772a0493463408489b1fae65cf77fe46cac1
 
-May it be skipped in more cases?
+Best regards,
+-- 
+Jens Axboe
 
 
-> and changes like this becomes churn later when backporting or modifying =
-the code.
 
-There are usual opportunities to consider for further collateral evolution=
-.
-
-Regards,
-Markus
