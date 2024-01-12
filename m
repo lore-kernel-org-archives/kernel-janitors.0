@@ -1,170 +1,141 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC1353E14
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 08:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32655D910
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 09:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dGvORQPc"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e55c885d7so31174245e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 00:55:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p0lADas1"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3366ddd1eddso5196330f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jan 2024 01:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1705049745; x=1705654545; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7G5JCs2E3NA9niXnI85rqEee13vxAYA2H1uMGFDFK9g=;
-        b=dGvORQPcFwl9grBnHTQtfOgw4eX+KwEl2JNQCbbYq3Mi6eXXCmnfhoa3VkVvRxhnZ+
-         /y9VxHeruAKNc5KgmoP5BEvDoYW8ZbJakaVszj2QH5Uhq+x7KNhwCut4lKMeTCUNboul
-         HBmGVPCZ14RpLeX4ypYZD619ueDmA5izvL2xFGk2rR8/ePGrGBP+Yrrb+QniqR6opj03
-         ylUV1YIpqMgLitbzqPlGITVfXEW/xP/9RluqgRFkOXWA6ShV+DAZEhErbBQjGR41jKx6
-         D8K/sDYfZHwQeiTri+NQTbRg6Gmfr+dCFEUjRL0wrkZ384PB68e7JJYvDbIGQxFTbukj
-         csjA==
+        d=linaro.org; s=google; t=1705053194; x=1705657994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PmPRDDpe1a2Em5SXxYrA1LLppbMT+QjFBtfOB+D16p8=;
+        b=p0lADas1W8/t09EJVfCnxgY2Ynp1808wQWnoZRigkLuyrUvB+m8EEwJBwJXWvQF4MI
+         XJopB0DzaFXPWjZPMaRBXaEGAVOl/xpLdAAcGJ60J5PbnSW//aO3p8mV4dGcblQj4bvj
+         2LXVvsNSmOq/2jwl2tKTNIVxCMBKGEdAuHBNVe8ks0gEm7Rq216UmkVohSwShDV46u1M
+         qzOmQ9WvPp8fFaW/hwbBOzZzO4Isf7DKyhDPhEH1vDaJ2Y0ex1Qc3fZZOMg/sT10Eslf
+         VGKSnQIVxx8D776HUijwRrT/rHccIHcL48x5WgwLme4XewbkaEoTMh5rBkZinBfAwpGD
+         k+Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705049745; x=1705654545;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7G5JCs2E3NA9niXnI85rqEee13vxAYA2H1uMGFDFK9g=;
-        b=VnUnPZ1D3K/IXz/RFWUHUfNgTEiINdeYDuiWWKK+nj1bCq80TEGQeyaHTf55af9GWF
-         bEs8rGPlXHDF4Hdzk5dyG0wsU0vVlEmXHO0cJRLti8ytRjwjhuqU3Z6Vji4p6noMxnZV
-         jGoGKjcAH8t0sER+0fFVDr9eto6CcKn92v4XreiD6kMxXZbpf2URxPxN97IqrPngxKBl
-         yoyVtQdXh0/fajdzg+kPM29xszx6D+uQoDO3YM2f4cWkuGFab0kSuhQMb01EP5zNwHER
-         v5C5HBJwPe1VE6FWK/d1o/HPZJiZoPDBvHCWuoVFwXGOLUzLsc8ewUSL14j2BCDFuwQx
-         pW/w==
-X-Gm-Message-State: AOJu0Ywh5KsS2BTPpz5Ah2MJ6fXv63BieMzJ64o4vCU9UkR7bcyuQT0C
-	13tWZx4MaFgFgySf7ptaR23UIpfwI+d1rQ==
-X-Google-Smtp-Source: AGHT+IHvvOUrg/d5hylXJKJI/lur/delR7auHmvJguPeID2oSbkrwfKylEoPEAGZSG3DmGnGFfzyEQ==
-X-Received: by 2002:a05:600c:c8:b0:40e:5181:63e4 with SMTP id u8-20020a05600c00c800b0040e518163e4mr553137wmm.165.1705049745359;
-        Fri, 12 Jan 2024 00:55:45 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.5])
-        by smtp.gmail.com with ESMTPSA id o12-20020a5d474c000000b00336aac53e75sm3230127wrs.97.2024.01.12.00.55.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jan 2024 00:55:44 -0800 (PST)
-Message-ID: <185128ab-f229-4b40-91cd-ebdc138e11ac@tuxon.dev>
-Date: Fri, 12 Jan 2024 10:55:40 +0200
+        d=1e100.net; s=20230601; t=1705053194; x=1705657994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PmPRDDpe1a2Em5SXxYrA1LLppbMT+QjFBtfOB+D16p8=;
+        b=RME27YQW5aSZdUwRr+DHqfzA1uKJaC1ueFjzvcrFmiLf25iuEG7maqz5YA69srAjJQ
+         eD0EXqRplz6hFTUOZJhev0ygb8rb2Ar8MqMFu7USl6w58CmagC61TovX7GfiGQxEvMmD
+         wvBssnJK8GopnQDbn0Rr6KpsGPf51HcXMgsAYZmETioPO1Vsvdk0ZE0uxntMRSJBwVgw
+         Rg0dzSfRxdwQuTZeBmpqGxfq//C66mFlM/TSKZ/RajpBdraPdUX+Zy+sq9AmTZWVZyT+
+         sj1bse1WyOosUlte0GQc5pXz+m+SrKGCtvM4RCaFxWnSRegPOte2QUNN8X0rQjkiQycB
+         cilw==
+X-Gm-Message-State: AOJu0YxhZTbdDxbujZlufS7T8+QO8nhM5+bbhyrtskXfhY17GPwmTcHH
+	1tjlPqohP8oC55u3rOMa7ZGUO+QT4enu9A==
+X-Google-Smtp-Source: AGHT+IHRcRqWpb2C0sctjOIkcYeOwOLsysdMzT4MGiJc2oWytkY9z63i0pxI/Cz6nwK8Y1OE8B13Bg==
+X-Received: by 2002:adf:ed4c:0:b0:336:6af9:9f2c with SMTP id u12-20020adfed4c000000b003366af99f2cmr320437wro.65.1705053193935;
+        Fri, 12 Jan 2024 01:53:13 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id dr18-20020a5d5f92000000b0033677a4e0d6sm3428824wrb.13.2024.01.12.01.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jan 2024 01:53:13 -0800 (PST)
+Date: Fri, 12 Jan 2024 12:53:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix double unlock in
+ rzg2l_dt_subnode_to_map()
+Message-ID: <300d204b-8151-45f3-9977-7ceb3a5c5eb0@moroto.mountain>
+References: <f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain>
+ <185128ab-f229-4b40-91cd-ebdc138e11ac@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix double unlock in
- rzg2l_dt_subnode_to_map()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <185128ab-f229-4b40-91cd-ebdc138e11ac@tuxon.dev>
 
-Hi, Dan,
-
-Thanks for your patch!
-
-On 10.01.2024 20:41, Dan Carpenter wrote:
-> If rzg2l_map_add_config() fails then the error handling calls
-> mutex_unlock(&pctrl->mutex) but we're not holding that mutex.  Move
-> the unlocks to before the gotos to avoid this situation.
+On Fri, Jan 12, 2024 at 10:55:40AM +0200, claudiu beznea wrote:
+> Hi, Dan,
 > 
-> Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> (Not tested).
-
-I've tested it on RZ/G3S SoC and all is good.
-
-However, I think, to keep the locking scheme unchanged and simpler (FMPOV),
-commit d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration
-support for pinmux groups") should have been call rzg2l_map_add_config()
-just before the mutex is locked. That would be the following diff:
-
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -447,6 +447,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
-*pctldev,
- 		name = np->name;
- 	}
-
-+	if (num_configs) {
-+		ret = rzg2l_map_add_config(&maps[idx], name,
-+					   PIN_MAP_TYPE_CONFIGS_GROUP,
-+					   configs, num_configs);
-+		if (ret < 0)
-+			goto done;
-+
-+		idx++;
-+	}
-+
- 	mutex_lock(&pctrl->mutex);
-
- 	/* Register a single pin group listing all the pins we read from DT */
-@@ -474,16 +484,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
-*pctldev,
- 	maps[idx].data.mux.function = name;
- 	idx++;
-
--	if (num_configs) {
--		ret = rzg2l_map_add_config(&maps[idx], name,
--					   PIN_MAP_TYPE_CONFIGS_GROUP,
--					   configs, num_configs);
--		if (ret < 0)
--			goto remove_group;
--
--		idx++;
--	}
--
- 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
- 	ret = 0;
- 	goto done;
-
-Would you mind doing it like this?
-
-Please, let me know if you want me to handle it.
-
-Thank you,
-Claudiu Beznea
-
+> Thanks for your patch!
 > 
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> On 10.01.2024 20:41, Dan Carpenter wrote:
+> > If rzg2l_map_add_config() fails then the error handling calls
+> > mutex_unlock(&pctrl->mutex) but we're not holding that mutex.  Move
+> > the unlocks to before the gotos to avoid this situation.
+> > 
+> > Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > (Not tested).
 > 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> index 80fb5011c7bb..8bbfb0530538 100644
+> I've tested it on RZ/G3S SoC and all is good.
+> 
+> However, I think, to keep the locking scheme unchanged and simpler (FMPOV),
+> commit d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration
+> support for pinmux groups") should have been call rzg2l_map_add_config()
+> just before the mutex is locked. That would be the following diff:
+> 
 > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -453,7 +453,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->  	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
->  	if (gsel < 0) {
->  		ret = gsel;
-> -		goto unlock;
-> +		mutex_unlock(&pctrl->mutex);
-> +		goto done;
+> @@ -447,6 +447,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
+> *pctldev,
+>  		name = np->name;
 >  	}
->  
->  	/*
-> @@ -464,6 +465,7 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->  	fsel = pinmux_generic_add_function(pctldev, name, pin_fn, 1, psel_val);
->  	if (fsel < 0) {
->  		ret = fsel;
-> +		mutex_unlock(&pctrl->mutex);
->  		goto remove_group;
->  	}
->  
-> @@ -490,8 +492,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->  
->  remove_group:
->  	pinctrl_generic_remove_group(pctldev, gsel);
-> -unlock:
-> -	mutex_unlock(&pctrl->mutex);
->  done:
->  	*index = idx;
->  	kfree(configs);
+> 
+> +	if (num_configs) {
+> +		ret = rzg2l_map_add_config(&maps[idx], name,
+> +					   PIN_MAP_TYPE_CONFIGS_GROUP,
+> +					   configs, num_configs);
+> +		if (ret < 0)
+> +			goto done;
+> +
+> +		idx++;
+> +	}
+> +
+>  	mutex_lock(&pctrl->mutex);
+> 
+>  	/* Register a single pin group listing all the pins we read from DT */
+> @@ -474,16 +484,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev
+> *pctldev,
+>  	maps[idx].data.mux.function = name;
+>  	idx++;
+        ^^^^^
+
+> 
+> -	if (num_configs) {
+> -		ret = rzg2l_map_add_config(&maps[idx], name,
+> -					   PIN_MAP_TYPE_CONFIGS_GROUP,
+> -					   configs, num_configs);
+> -		if (ret < 0)
+> -			goto remove_group;
+> -
+> -		idx++;
+> -	}
+
+Does the ordering of the maps[] not matter?
+
+> -
+>  	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
+>  	ret = 0;
+>  	goto done;
+> 
+> Would you mind doing it like this?
+> 
+> Please, let me know if you want me to handle it.
+
+Either way is fine.  Whatever is easiest.
+
+regards,
+dan carpenter
+
