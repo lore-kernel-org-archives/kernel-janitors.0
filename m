@@ -1,137 +1,80 @@
-Received: from endrift.com (endrift.com [173.255.198.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B9818B15;
-	Sat, 13 Jan 2024 02:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endrift.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endrift.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94D3360
+	for <kernel-janitors@vger.kernel.org>; Sat, 13 Jan 2024 14:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endrift.com header.i=@endrift.com header.b="X3z7GvZx"
-Received: from [192.168.0.24] (71-212-26-68.tukw.qwest.net [71.212.26.68])
-	by endrift.com (Postfix) with ESMTPSA id BC5A4A114;
-	Fri, 12 Jan 2024 18:11:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=endrift.com; s=2020;
-	t=1705111864; bh=v5VXITQd0KCg/Jf8oHl/mWiFAfKUv01SrcH7y13eI5s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X3z7GvZxb5UUY8gvShzR5MYNYDzqvos9WjekT3UOSbOYC/YFPdc1GtZFGWb33yGdc
-	 reY7rTDWr9spSGTWe81rvHTe1u6LUIfy6wrRBpSPDSMPoCrtFhqVfGCBOQC566bUHf
-	 lRTuVKlDuDRBQg7FDt9ReCV2osgDY0xvMi7wnZjrpF0b0sQbZY0Yas5riIbnFe/V8j
-	 yqJAzbHOVVfu7l3BA0qO2gCi1KMYm2zBG8n9YYUVpCj14oY0E7FmBzZz91tVCk2QT2
-	 srmROlYgWZRstGR+JhqJaLpSvF+XvnBy9ZLLE43NgVnsyjDn7roQQcNFCLWsfMDxdU
-	 1Ys0QN5Hb1AOw==
-Message-ID: <5e17d884-5803-43b3-be94-063c2293f5a0@endrift.com>
-Date: Fri, 12 Jan 2024 18:11:05 -0800
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kir44wnK"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id OfSwrfydhx8edOfSxrsth3; Sat, 13 Jan 2024 15:58:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1705157912;
+	bh=JnYvDd18VWfo35gKMLVjd5/prLW9/VQp7P6Jqnl9/PA=;
+	h=From:To:Cc:Subject:Date;
+	b=kir44wnK0wf42PsE79s0lV9ZTnMfWBhvwoFSmBcMPQKDwVet/JFReH2/+/oTn5M4l
+	 E2Ycs4G9JwTur31pF2vUm6uzAKojoF9CbBF6Xki9uO/Re1MfxY2UoHdfPQ8+GmoKcG
+	 UIluLf1z2Oj2jXBZZmy6oB2JTN5udG9ehstu4mB9eOw+abQ/T3joGBhU/M0xdTYs+w
+	 lSfUI6GCu6r95412oBHX0GAnzk0XAy9+GArbQiCMYaeeEuMLHGJ6JtAeywHadOB66h
+	 XFS2EF7jAojlK7V3YlWmIpcoxTvKzMNp7GHtMfvTmU6C5M53qy7QYAGFI7z2Qe/FID
+	 m2+8cURNSRpGg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 13 Jan 2024 15:58:32 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Roman Li <roman.li@amd.com>,
+	Qingqing Zhuo <Qingqing.Zhuo@amd.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/amd/display: Fix a switch statement in populate_dml_output_cfg_from_stream_state()
+Date: Sat, 13 Jan 2024 15:58:21 +0100
+Message-ID: <e597276a8240329a5ece90762425c7cde2ddd7a2.1705157202.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] HID: hid-steam: Fix cleanup in probe()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <1fd87904-dabf-4879-bb89-72d13ebfc91e@moroto.mountain>
-From: Vicki Pfau <vi@endrift.com>
-In-Reply-To: <1fd87904-dabf-4879-bb89-72d13ebfc91e@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-I have applied this to our downstream and made sure it compiles and runs 
-without obvious issues.
+It is likely that the statement related to 'dml_edp' is misplaced. So move
+it in the correct "case SIGNAL_TYPE_EDP".
 
-Reviewed-by: Vicki Pfau <vi@endrift.com>
+Fixes: 7966f319c66d ("drm/amd/display: Introduce DML2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Vicki
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
+index fa6a93dd9629..64d01a9cd68c 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
+@@ -626,8 +626,8 @@ static void populate_dml_output_cfg_from_stream_state(struct dml_output_cfg_st *
+ 		if (is_dp2p0_output_encoder(pipe))
+ 			out->OutputEncoder[location] = dml_dp2p0;
+ 		break;
+-		out->OutputEncoder[location] = dml_edp;
+ 	case SIGNAL_TYPE_EDP:
++		out->OutputEncoder[location] = dml_edp;
+ 		break;
+ 	case SIGNAL_TYPE_HDMI_TYPE_A:
+ 	case SIGNAL_TYPE_DVI_SINGLE_LINK:
+-- 
+2.43.0
 
-On 1/12/24 06:35, Dan Carpenter wrote:
-> There are a number of issues in this code.  First of all if
-> steam_create_client_hid() fails then it leads to an error pointer
-> dereference when we call hid_destroy_device(steam->client_hdev).
-> 
-> Also there are a number of leaks.  hid_hw_stop() is not called if
-> hid_hw_open() fails for example.  And it doesn't call steam_unregister()
-> or hid_hw_close().
-> 
-> Fixes: 691ead124a0c ("HID: hid-steam: Clean up locking")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> This is just from static analysis and code review.  I haven't tested
-> it.  I only included the fixes tag for the error pointer dereference.
-> 
->   drivers/hid/hid-steam.c | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-> index 59df6ead7b54..b08a5ab58528 100644
-> --- a/drivers/hid/hid-steam.c
-> +++ b/drivers/hid/hid-steam.c
-> @@ -1128,14 +1128,14 @@ static int steam_probe(struct hid_device *hdev,
->   	 */
->   	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT & ~HID_CONNECT_HIDRAW);
->   	if (ret)
-> -		goto hid_hw_start_fail;
-> +		goto err_cancel_work;
->   
->   	ret = hid_hw_open(hdev);
->   	if (ret) {
->   		hid_err(hdev,
->   			"%s:hid_hw_open\n",
->   			__func__);
-> -		goto hid_hw_open_fail;
-> +		goto err_hw_stop;
->   	}
->   
->   	if (steam->quirks & STEAM_QUIRK_WIRELESS) {
-> @@ -1151,33 +1151,37 @@ static int steam_probe(struct hid_device *hdev,
->   			hid_err(hdev,
->   				"%s:steam_register failed with error %d\n",
->   				__func__, ret);
-> -			goto input_register_fail;
-> +			goto err_hw_close;
->   		}
->   	}
->   
->   	steam->client_hdev = steam_create_client_hid(hdev);
->   	if (IS_ERR(steam->client_hdev)) {
->   		ret = PTR_ERR(steam->client_hdev);
-> -		goto client_hdev_fail;
-> +		goto err_stream_unregister;
->   	}
->   	steam->client_hdev->driver_data = steam;
->   
->   	ret = hid_add_device(steam->client_hdev);
->   	if (ret)
-> -		goto client_hdev_add_fail;
-> +		goto err_destroy;
->   
->   	return 0;
->   
-> -client_hdev_add_fail:
-> -	hid_hw_stop(hdev);
-> -client_hdev_fail:
-> +err_destroy:
->   	hid_destroy_device(steam->client_hdev);
-> -input_register_fail:
-> -hid_hw_open_fail:
-> -hid_hw_start_fail:
-> +err_stream_unregister:
-> +	if (steam->connected)
-> +		steam_unregister(steam);
-> +err_hw_close:
-> +	hid_hw_close(hdev);
-> +err_hw_stop:
-> +	hid_hw_stop(hdev);
-> +err_cancel_work:
->   	cancel_work_sync(&steam->work_connect);
->   	cancel_delayed_work_sync(&steam->mode_switch);
->   	cancel_work_sync(&steam->rumble_work);
-> +
->   	return ret;
->   }
->   
