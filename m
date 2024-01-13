@@ -1,37 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8911C16;
-	Sat, 13 Jan 2024 15:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAB015C8;
+	Sat, 13 Jan 2024 15:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmdoQlEK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B005C433F1;
-	Sat, 13 Jan 2024 15:11:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WizAQhfL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF633C433F1;
+	Sat, 13 Jan 2024 15:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705158677;
-	bh=joL09y98Yuho3mT9jFHr5tNy5WAX/PzaUDujGrJCA8s=;
+	s=k20201202; t=1705159414;
+	bh=pKcx3wTCQYng+Kv7vvezxSHDwuPxEoWM17nLr50fmSY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QmdoQlEKM1T20vEDqhDCpJS+fPk6muzu1JhrvPGslJVrWEF8yv08sfHXz9+XbxybC
-	 1jsapgfryR6Dhl9s4rSGOgT7c+c2dd+xv0O/FENvRSfp5htUeqV4gPPX9ySeCij9c7
-	 UX/iD+Xyo7CD2yvWYTsM5X8vsxgqVJXeQJzWsw2C3+Jx9QW/51gQNn+6YKt8XMedMJ
-	 qV/YGMhrhGpPWRolUGFVwRqa0yDKlY+Tl2369ePD5qiE2SxGxbHg/JelitmZXPbOen
-	 jwsp7NbSvAIdIetW9w05u6rv2vJ+e/m5w35qfsBmUTMhKVHdtiv90cJzC6go/9+dOU
-	 ZrsAHL4d0KAbQ==
-Date: Sat, 13 Jan 2024 15:11:13 +0000
+	b=WizAQhfLBVQzV48MKcpKgYwxYuk9nvP9OGKZNwdP6CXjfkd9Jfpx0oniSilyAty9n
+	 tpiPpt3CwtrVBnFYtUtgrg7KRzQuRrZmNB8EJHoQdH+HFzA+YY+gebPyBfaO8V6amM
+	 2gO5CeFS09XYM+zKvSqLotFXjw+F4iV8li3sskKnB+lqWKPXybc8UbE5DGsHKGERna
+	 3bFH4Rwu3B1cuyMe/sYQYBhzkmyXBxBDiKL8f+ycbWHRmImFYv5lK6cr8D6xdNgiwF
+	 xH2WMYkRsLzAGNQR7PbJytyxgrq9o5GpTcK48xM2PZXa/bfFwYRkl/s2qb5O7pDgsw
+	 k5Sl6lsbqeHOQ==
+Date: Sat, 13 Jan 2024 15:23:29 +0000
 From: Jonathan Cameron <jic23@kernel.org>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] iio: invensense: remove redundant initialization
- of variable period
-Message-ID: <20240113151113.44bef633@jic23-huawei>
-In-Reply-To: <FR3P281MB17572C4F651951596882B5DACE642@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <20240106153202.54861-1-colin.i.king@gmail.com>
-	<20240107160736.14f3ae1d@jic23-huawei>
-	<FR3P281MB17572C4F651951596882B5DACE642@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Amit Dhingra <mechanicalamit@gmail.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: correct file entry for AD7091R
+Message-ID: <20240113152329.61db1b79@jic23-huawei>
+In-Reply-To: <ZaCRV6Qw1KlIFt3I@debian-BULLSEYE-live-builder-AMD64>
+References: <CAO=gReEUr4B+E2mQsSrncHf41f0A915SuoWgA522_2Ts-dZbSg@mail.gmail.com>
+	<ZaCRV6Qw1KlIFt3I@debian-BULLSEYE-live-builder-AMD64>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -39,94 +35,42 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 7 Jan 2024 20:18:03 +0000
-Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
+On Thu, 11 Jan 2024 22:09:43 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-> Hello Colin & Jonathan,
->=20
-> this is OK for me, thanks for the patch.
-> The initialization is certainly coming from first development and is not =
-needed.
->=20
-> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Applied to the togreg branch of iio.git and pushed out as testing.
-I'll be rebasing that tree on rc1 once available.
+> On 01/06, Amit Dhingra wrote:
+> > File entry has driver/iio/adc two times. Fix the file entry
+> > 
+> > Found by ./scripts/get_maintainer.pl --self-test=patterns
+> >   
+> 
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Applied to the togreg branch of iio.git.  I'm not rushing this in as
+a fix so it can wait for the next merge window.
 
 Thanks,
 
 Jonathan
-
->=20
+> 
+> > Signed-off-by: Amit Dhingra <mechanicalamit@gmail.com>
+> > ---  
+> [...]
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 35147477e8e4..ff61be50e82e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1128,7 +1128,7 @@ L:	linux-iio@vger.kernel.org
+> >  S:	Supported
+> >  W:	http://ez.analog.com/community/linux-device-drivers
+> >  F:	Documentation/devicetree/bindings/iio/adc/adi,ad7091r*
+> > -F:	drivers/iio/adc/drivers/iio/adc/ad7091r*
+> > +F:	drivers/iio/adc/ad7091r*
+> >   
+> Oops, must have accidentaly bumped the paste key at some point.
+> 
 > Thanks,
-> JB
->=20
-> From: Jonathan Cameron <jic23@kernel.org>
-> Sent: Sunday, January 7, 2024 17:07
-> To: Colin Ian King <colin.i.king@gmail.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>; Jean-Baptiste Maneyrol <Jean-Ba=
-ptiste.Maneyrol@tdk.com>; Andy Shevchenko <andy.shevchenko@gmail.com>; linu=
-x-iio@vger.kernel.org <linux-iio@vger.kernel.org>; kernel-janitors@vger.ker=
-nel.org <kernel-janitors@vger.kernel.org>; linux-kernel@vger.kernel.org <li=
-nux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH][next] iio: invensense: remove redundant initializati=
-on of variable period=20
-> =C2=A0
-> On Sat, 6 Jan 2024 15:=E2=80=8A32:=E2=80=8A02 +0000 Colin Ian King <colin=
-.=E2=80=8Ai.=E2=80=8Aking@=E2=80=8Agmail.=E2=80=8Acom> wrote: > The variabl=
-e period is being initialized with a value that is never > read, it is bein=
-g re-assigned a new value later on before it is read. >=20
-> ZjQcmQRYFpfptBannerStart
-> This Message Is From an External Sender=20
-> This message came from outside your organization.=20
-> =C2=A0
-> ZjQcmQRYFpfptBannerEnd
-> On Sat,  6 Jan 2024 15:32:02 +0000
-> Colin Ian King <colin.i.king@gmail.com> wrote:
->=20
-> > The variable period is being initialized with a value that is never
-> > read, it is being re-assigned a new value later on before it is read.
-> > The initialization is redundant and can be removed.
-> >=20
-> > Cleans up clang scan build warning:
-> > Value stored to 'period' during its initialization is never
-> > read [deadcode.DeadStores]
-> >=20
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com> =20
-> Hi Colin,
->=20
-> I definitely want input from someone who can test this.
-> There is direct use of ts->period as well as the local
-> variable that is indeed overwritten as you've noted.
-> Feels like naming needs some work and perhaps reduce the scope of
-> the period local variable so it's obvious it was only intended
-> for more local use than it currently looks like.
->=20
-> Thanks,
->=20
-> Jonathan
->=20
-> > ---
-> >  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/d=
-rivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > index 03823ee57f59..3b0f9598a7c7 100644
-> > --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > @@ -126,7 +126,7 @@ void inv_sensors_timestamp_interrupt(struct inv_sen=
-sors_timestamp *ts,
-> >  	struct inv_sensors_timestamp_interval *it;
-> >  	int64_t delta, interval;
-> >  	const uint32_t fifo_mult =3D fifo_period / ts->chip.clock_period;
-> > -	uint32_t period =3D ts->period;
-> > +	uint32_t period;
-> >  	bool valid =3D false;
-> > =20
-> >  	if (fifo_nb =3D=3D 0) =20
->=20
->=20
+> Marcelo
 
