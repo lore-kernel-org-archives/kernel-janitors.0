@@ -1,38 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1170523B9
-	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 09:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AC11C3E
+	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 09:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h4vzcQ2q"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WokYC7HL"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id OwMXrDZZKBraWOwMYrneAT; Sun, 14 Jan 2024 10:01:02 +0100
+	id OwwArzcRJMVYzOwwArhxJM; Sun, 14 Jan 2024 10:37:52 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705222862;
-	bh=y3+/aQ4vgOniKlgATVWb92D72XQcu/VbbHayVguyuRk=;
+	s=t20230301; t=1705225072;
+	bh=g/cnRG5kQoVFxCJ6XTY9uiVH37ch6zIzpDiOmb5ySos=;
 	h=From:To:Cc:Subject:Date;
-	b=h4vzcQ2qZd99EaMkQ1rmDICJKBOtuszqY2QT5GC4vUGpzqg6qv+Cy+/nlwcYrpdBL
-	 +CcRL7hQ4ZXXHwNY1Kw1lXnd+dF2W7i5LgS98cZePgCUoCREDPZzz4VF/RBnksAf7N
-	 /ZPtTqd9OBtUe+/soZJQd9Q71wQkAwkFemaH0AtolzWo3rlCl90E4eRJa9CKvjxqXc
-	 w6n1TlL/xuP3xeKN0HdXPtQIjXNPkbw4JJK3CKAUW1O1cnhyg8VN3UonBCHyPTKgNU
-	 0G6KFqNpyxNelc9xWVGRLjyg0q716Th6zehyR8XIzDrFyLOHpoWq9bUSIFSZHZNzJG
-	 YiGWsU7Ar5kqg==
+	b=WokYC7HLNqEwgZ7H2R8YxBu5WibjJ0DxLMMYUB9bZnfG2P41ogXIl4mTA+7y54B52
+	 ylcgxHcwqVwDYY9AnGN129YpqLKIFkuACkW9sKPLvhvjHR8MYU44ijqnWTr7EG/b7+
+	 sJ/6Z74m0LFlgREbLANLaZwSTVv8iNa6iaG0e303tiYObo/K1ITQ6taBkIkjnQ00Le
+	 fgl8P/Qc9bmBL9JF1q7+AeVXKOH0lao6mzr0x24yked0QQLMoJh3tExjZnivvnv+wJ
+	 lY1B7i55RTX5TaAT2fNFl5EEeLw+6L4xsrvBpHFW+U1Kic6uLsM0X/afCow5xLvNNu
+	 dgekMzAPbX/Jg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jan 2024 10:01:02 +0100
+X-ME-Date: Sun, 14 Jan 2024 10:37:52 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jens Axboe <axboe@kernel.dk>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-block@vger.kernel.org
-Subject: [PATCH] null_blk: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Jan 2024 10:00:59 +0100
-Message-ID: <bf257b1078475a415cdc3344c6a750842946e367.1705222845.git.christophe.jaillet@wanadoo.fr>
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH] rpmsg: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Jan 2024 10:37:43 +0100
+Message-ID: <c09ee5b66d451bf97d14c167048549aa0824ee06.1705225049.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -45,35 +46,99 @@ Content-Transfer-Encoding: 8bit
 ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
-This is less verbose.
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/block/null_blk/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rpmsg/rpmsg_char.c | 12 ++++++------
+ drivers/rpmsg/rpmsg_ctrl.c | 12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index b1271de64d36..293f24cc4122 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -1825,7 +1825,7 @@ static void null_del_dev(struct nullb *nullb)
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 09833ad05da7..1cb8d7474428 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -399,8 +399,8 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+ {
+ 	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
  
- 	dev = nullb->dev;
+-	ida_simple_remove(&rpmsg_ept_ida, dev->id);
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
++	ida_free(&rpmsg_ept_ida, dev->id);
++	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+ 	kfree(eptdev);
+ }
  
--	ida_simple_remove(&nullb_indexes, nullb->index);
-+	ida_free(&nullb_indexes, nullb->index);
+@@ -441,12 +441,12 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
  
- 	list_del_init(&nullb->list);
+ 	eptdev->chinfo = chinfo;
  
-@@ -2159,7 +2159,7 @@ static int null_add_dev(struct nullb_device *dev)
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
+-	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
++	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto free_eptdev;
+ 	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
  
- 	mutex_lock(&lock);
--	rv = ida_simple_get(&nullb_indexes, 0, 0, GFP_KERNEL);
-+	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
- 	if (rv < 0) {
- 		mutex_unlock(&lock);
- 		goto out_cleanup_zone;
+-	ret = ida_simple_get(&rpmsg_ept_ida, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto free_minor_ida;
+ 	dev->id = ret;
+@@ -462,9 +462,9 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+ 	return ret;
+ 
+ free_ept_ida:
+-	ida_simple_remove(&rpmsg_ept_ida, dev->id);
++	ida_free(&rpmsg_ept_ida, dev->id);
+ free_minor_ida:
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
++	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ free_eptdev:
+ 	put_device(dev);
+ 	kfree(eptdev);
+diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+index 433253835690..c312794ba4b3 100644
+--- a/drivers/rpmsg/rpmsg_ctrl.c
++++ b/drivers/rpmsg/rpmsg_ctrl.c
+@@ -130,8 +130,8 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
+ {
+ 	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+ 
+-	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
++	ida_free(&rpmsg_ctrl_ida, dev->id);
++	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ 	kfree(ctrldev);
+ }
+ 
+@@ -156,12 +156,12 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+ 	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+ 	ctrldev->cdev.owner = THIS_MODULE;
+ 
+-	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
++	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto free_ctrldev;
+ 	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+ 
+-	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&rpmsg_ctrl_ida, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto free_minor_ida;
+ 	dev->id = ret;
+@@ -179,9 +179,9 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+ 	return ret;
+ 
+ free_ctrl_ida:
+-	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
++	ida_free(&rpmsg_ctrl_ida, dev->id);
+ free_minor_ida:
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
++	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ free_ctrldev:
+ 	put_device(dev);
+ 	kfree(ctrldev);
 -- 
 2.43.0
 
