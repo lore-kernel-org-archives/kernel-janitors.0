@@ -1,38 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EB51FCC
-	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 11:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2AA20F1
+	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 12:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WEu/RUZr"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bRAx5uAs"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id Oyq5rSAEopwjUOyq5rhuvf; Sun, 14 Jan 2024 12:39:42 +0100
+	id Ozd6rsmrDIwxKOzd6rIDcl; Sun, 14 Jan 2024 13:30:22 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705232382;
-	bh=pN4Jy9EVplvAgZaMm38XN0QrbVUC0QBZSfuqvWe8FUs=;
+	s=t20230301; t=1705235422;
+	bh=wwWONP9bo1w0znM3ZxH9vYALPKyLiU5MQ76GyS8w0gU=;
 	h=From:To:Cc:Subject:Date;
-	b=WEu/RUZrX3uP2CA8YpuzxoTICzP9Wfn/YBStVVjqjxgyXzFN6fB1osZ7PfbWF6yS7
-	 sMftXX0lWCgl/MKHf8dE2FOYkX//kyh1U2rgTjQt85B5pInJ4y7Xb7uFbvGQ0YyLVa
-	 JIXPVSPaLLSzseQx1IDxbH+DNfkmql5XbQr+PVU06QpHuZvGM7xvg8GYi0H5gEZbjf
-	 ANoVYntIf4PnSmHQGVLoWgH3ZPeFLSu6m69cjV8jcgh4yNApSR7klWvi2YizlJU7ZC
-	 1XXYEBvw/OPam869FWylcrX5l7pbxD9ly73gkNv/24T95SUs5tqCsmFGFqadYdKBJh
-	 m2wuiRKbQVjOw==
+	b=bRAx5uAsbztrq6HNaUIFHM4PsD8TISoybUJuyHs7ZUlEm10ylRs6N/Rk1Hir0olqF
+	 JyNVQidn64ec884JPQI7+HSHmjzuQUxpjynqYEiKW0+AeaU0iLk5cQ5KAmxU5IkgWW
+	 MAXcRSHNeyC5p9wsQxiFE7tK69br9NvUJnqvw9Tg+3bNpWOP/j2NjdQJHyMlc9HsGT
+	 7f+umyckOa+kmUFVsyXPZNDrMlo4X7CqhBnACUtHw2l3CUM6d6Qw1hXaCaekQ5if7w
+	 mp59wq+RDHiiBLAGZ1r1YHmXIaKe4rgX6LirqXP6M8vaJOQ8+SThAubwIcPrXQiabg
+	 vhmTSgRu90t9A==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jan 2024 12:39:42 +0100
+X-ME-Date: Sun, 14 Jan 2024 13:30:22 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Coly Li <colyli@suse.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: gadget: function: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Jan 2024 12:39:37 +0100
-Message-ID: <fb14757b434ebbad82c8771f19b73dc7ef81a91b.1705232365.git.christophe.jaillet@wanadoo.fr>
+	linux-bcache@vger.kernel.org
+Subject: [PATCH] bcache: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Jan 2024 13:30:16 +0100
+Message-ID: <2f038df3860c2f44d5c7f5d06d03ca663cdbc651.1705235398.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,80 +51,44 @@ ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/gadget/function/f_hid.c     | 6 +++---
- drivers/usb/gadget/function/f_printer.c | 6 +++---
- drivers/usb/gadget/function/rndis.c     | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/md/bcache/super.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 3c8a9dd585c0..2db01e03bfbf 100644
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -1029,9 +1029,9 @@ static inline int hidg_get_minor(void)
- {
- 	int ret;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index dc3f50f69714..a2eecd1db126 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -881,8 +881,8 @@ static void bcache_device_free(struct bcache_device *d)
+ 		bcache_device_detach(d);
  
--	ret = ida_simple_get(&hidg_ida, 0, 0, GFP_KERNEL);
-+	ret = ida_alloc(&hidg_ida, GFP_KERNEL);
- 	if (ret >= HIDG_MINORS) {
--		ida_simple_remove(&hidg_ida, ret);
-+		ida_free(&hidg_ida, ret);
- 		ret = -ENODEV;
+ 	if (disk) {
+-		ida_simple_remove(&bcache_device_idx,
+-				  first_minor_to_idx(disk->first_minor));
++		ida_free(&bcache_device_idx,
++			 first_minor_to_idx(disk->first_minor));
+ 		put_disk(disk);
  	}
  
-@@ -1176,7 +1176,7 @@ static const struct config_item_type hid_func_type = {
+@@ -926,8 +926,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 	if (!d->full_dirty_stripes)
+ 		goto out_free_stripe_sectors_dirty;
  
- static inline void hidg_put_minor(int minor)
- {
--	ida_simple_remove(&hidg_ida, minor);
-+	ida_free(&hidg_ida, minor);
- }
+-	idx = ida_simple_get(&bcache_device_idx, 0,
+-				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
++	idx = ida_alloc_max(&bcache_device_idx, BCACHE_DEVICE_IDX_MAX - 1,
++			    GFP_KERNEL);
+ 	if (idx < 0)
+ 		goto out_free_full_dirty_stripes;
  
- static void hidg_free_inst(struct usb_function_instance *f)
-diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-index 076dd4c1be96..ba7d180cc9e6 100644
---- a/drivers/usb/gadget/function/f_printer.c
-+++ b/drivers/usb/gadget/function/f_printer.c
-@@ -1312,9 +1312,9 @@ static inline int gprinter_get_minor(void)
- {
- 	int ret;
- 
--	ret = ida_simple_get(&printer_ida, 0, 0, GFP_KERNEL);
-+	ret = ida_alloc(&printer_ida, GFP_KERNEL);
- 	if (ret >= PRINTER_MINORS) {
--		ida_simple_remove(&printer_ida, ret);
-+		ida_free(&printer_ida, ret);
- 		ret = -ENODEV;
- 	}
- 
-@@ -1323,7 +1323,7 @@ static inline int gprinter_get_minor(void)
- 
- static inline void gprinter_put_minor(int minor)
- {
--	ida_simple_remove(&printer_ida, minor);
-+	ida_free(&printer_ida, minor);
- }
- 
- static int gprinter_setup(int);
-diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
-index 29bf8664bf58..12c5d9cf450c 100644
---- a/drivers/usb/gadget/function/rndis.c
-+++ b/drivers/usb/gadget/function/rndis.c
-@@ -869,12 +869,12 @@ EXPORT_SYMBOL_GPL(rndis_msg_parser);
- 
- static inline int rndis_get_nr(void)
- {
--	return ida_simple_get(&rndis_ida, 0, 1000, GFP_KERNEL);
-+	return ida_alloc_max(&rndis_ida, 999, GFP_KERNEL);
- }
- 
- static inline void rndis_put_nr(int nr)
- {
--	ida_simple_remove(&rndis_ida, nr);
-+	ida_free(&rndis_ida, nr);
- }
- 
- struct rndis_params *rndis_register(void (*resp_avail)(void *v), void *v)
+@@ -980,7 +980,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ out_bioset_exit:
+ 	bioset_exit(&d->bio_split);
+ out_ida_remove:
+-	ida_simple_remove(&bcache_device_idx, idx);
++	ida_free(&bcache_device_idx, idx);
+ out_free_full_dirty_stripes:
+ 	kvfree(d->full_dirty_stripes);
+ out_free_stripe_sectors_dirty:
 -- 
 2.43.0
 
