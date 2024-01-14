@@ -1,39 +1,38 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110ED1FB4
-	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 10:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EB51FCC
+	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jan 2024 11:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LBwRvL1l"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WEu/RUZr"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id OxRbrry6VIwxKOxRbrHroW; Sun, 14 Jan 2024 11:10:21 +0100
+	id Oyq5rSAEopwjUOyq5rhuvf; Sun, 14 Jan 2024 12:39:42 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705227021;
-	bh=52Rd6d5faJ4c/W4ztruf+D+m4SC9RWyWzcn6xVRATJk=;
+	s=t20230301; t=1705232382;
+	bh=pN4Jy9EVplvAgZaMm38XN0QrbVUC0QBZSfuqvWe8FUs=;
 	h=From:To:Cc:Subject:Date;
-	b=LBwRvL1lmo0J+pYr4CMZ064bd7yJzvGgTeJOFdtg92EgWa4i4z7dxsTO5VG9H6C2j
-	 ISGyBX7ioUXQY+4pExpZy2tlMVuts4NGOtwM8nv/YY4SlZ5g+bXNcpduc2PLWcYOMJ
-	 5CCrQfag8OM1kmKnGPodNse+LY+TS+1rPJfBGC5SMbx5YH/NNrRWFvgc3h7Xpk4Mia
-	 h9BD8vwIIQDUqEJmGwef4VjnkVFi42t3xhxVUurV/83flw+OhEv33ViGVABXJh/O2C
-	 c8t2ujbqS1R/gP8Q9Xy3rEBtIFxtwStUCM80AG99exOk0IkAR1s2YXlhD19Og0DIrw
-	 zFliSMuH3cYxQ==
+	b=WEu/RUZrX3uP2CA8YpuzxoTICzP9Wfn/YBStVVjqjxgyXzFN6fB1osZ7PfbWF6yS7
+	 sMftXX0lWCgl/MKHf8dE2FOYkX//kyh1U2rgTjQt85B5pInJ4y7Xb7uFbvGQ0YyLVa
+	 JIXPVSPaLLSzseQx1IDxbH+DNfkmql5XbQr+PVU06QpHuZvGM7xvg8GYi0H5gEZbjf
+	 ANoVYntIf4PnSmHQGVLoWgH3ZPeFLSu6m69cjV8jcgh4yNApSR7klWvi2YizlJU7ZC
+	 1XXYEBvw/OPam869FWylcrX5l7pbxD9ly73gkNv/24T95SUs5tqCsmFGFqadYdKBJh
+	 m2wuiRKbQVjOw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jan 2024 11:10:21 +0100
+X-ME-Date: Sun, 14 Jan 2024 12:39:42 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sven Van Asbroeck <TheSven73@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-staging@lists.linux.dev
-Subject: [PATCH] staging: fieldbus: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Jan 2024 11:10:15 +0100
-Message-ID: <d305b97b1064ba7e026232fb8c2a0783ba1b1098.1705227001.git.christophe.jaillet@wanadoo.fr>
+	linux-usb@vger.kernel.org
+Subject: [PATCH] usb: gadget: function: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Jan 2024 12:39:37 +0100
+Message-ID: <fb14757b434ebbad82c8771f19b73dc7ef81a91b.1705232365.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,72 +50,80 @@ ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/fieldbus/anybuss/arcx-anybus.c | 6 +++---
- drivers/staging/fieldbus/dev_core.c            | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/usb/gadget/function/f_hid.c     | 6 +++---
+ drivers/usb/gadget/function/f_printer.c | 6 +++---
+ drivers/usb/gadget/function/rndis.c     | 4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/fieldbus/anybuss/arcx-anybus.c b/drivers/staging/fieldbus/anybuss/arcx-anybus.c
-index 34d18b09bedd..fcd3e3722ae0 100644
---- a/drivers/staging/fieldbus/anybuss/arcx-anybus.c
-+++ b/drivers/staging/fieldbus/anybuss/arcx-anybus.c
-@@ -285,7 +285,7 @@ static int controller_probe(struct platform_device *pdev)
- 		}
+diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
+index 3c8a9dd585c0..2db01e03bfbf 100644
+--- a/drivers/usb/gadget/function/f_hid.c
++++ b/drivers/usb/gadget/function/f_hid.c
+@@ -1029,9 +1029,9 @@ static inline int hidg_get_minor(void)
+ {
+ 	int ret;
+ 
+-	ret = ida_simple_get(&hidg_ida, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&hidg_ida, GFP_KERNEL);
+ 	if (ret >= HIDG_MINORS) {
+-		ida_simple_remove(&hidg_ida, ret);
++		ida_free(&hidg_ida, ret);
+ 		ret = -ENODEV;
  	}
  
--	id = ida_simple_get(&controller_index_ida, 0, 0, GFP_KERNEL);
-+	id = ida_alloc(&controller_index_ida, GFP_KERNEL);
- 	if (id < 0) {
- 		err = id;
- 		goto out_reset;
-@@ -318,7 +318,7 @@ static int controller_probe(struct platform_device *pdev)
- out_dev:
- 	put_device(cd->class_dev);
- out_ida:
--	ida_simple_remove(&controller_index_ida, id);
-+	ida_free(&controller_index_ida, id);
- out_reset:
- 	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
- 	return err;
-@@ -330,7 +330,7 @@ static void controller_remove(struct platform_device *pdev)
- 	int id = cd->class_dev->id;
+@@ -1176,7 +1176,7 @@ static const struct config_item_type hid_func_type = {
  
- 	device_unregister(cd->class_dev);
--	ida_simple_remove(&controller_index_ida, id);
-+	ida_free(&controller_index_ida, id);
- 	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
+ static inline void hidg_put_minor(int minor)
+ {
+-	ida_simple_remove(&hidg_ida, minor);
++	ida_free(&hidg_ida, minor);
  }
  
-diff --git a/drivers/staging/fieldbus/dev_core.c b/drivers/staging/fieldbus/dev_core.c
-index bf1812d8924f..370a229443a1 100644
---- a/drivers/staging/fieldbus/dev_core.c
-+++ b/drivers/staging/fieldbus/dev_core.c
-@@ -247,7 +247,7 @@ static void __fieldbus_dev_unregister(struct fieldbus_dev *fb)
- 		return;
- 	device_destroy(&fieldbus_class, fb->cdev.dev);
- 	cdev_del(&fb->cdev);
--	ida_simple_remove(&fieldbus_ida, fb->id);
-+	ida_free(&fieldbus_ida, fb->id);
+ static void hidg_free_inst(struct usb_function_instance *f)
+diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+index 076dd4c1be96..ba7d180cc9e6 100644
+--- a/drivers/usb/gadget/function/f_printer.c
++++ b/drivers/usb/gadget/function/f_printer.c
+@@ -1312,9 +1312,9 @@ static inline int gprinter_get_minor(void)
+ {
+ 	int ret;
+ 
+-	ret = ida_simple_get(&printer_ida, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&printer_ida, GFP_KERNEL);
+ 	if (ret >= PRINTER_MINORS) {
+-		ida_simple_remove(&printer_ida, ret);
++		ida_free(&printer_ida, ret);
+ 		ret = -ENODEV;
+ 	}
+ 
+@@ -1323,7 +1323,7 @@ static inline int gprinter_get_minor(void)
+ 
+ static inline void gprinter_put_minor(int minor)
+ {
+-	ida_simple_remove(&printer_ida, minor);
++	ida_free(&printer_ida, minor);
  }
  
- void fieldbus_dev_unregister(struct fieldbus_dev *fb)
-@@ -267,7 +267,7 @@ static int __fieldbus_dev_register(struct fieldbus_dev *fb)
- 		return -EINVAL;
- 	if (!fb->read_area || !fb->write_area || !fb->fieldbus_id_get)
- 		return -EINVAL;
--	fb->id = ida_simple_get(&fieldbus_ida, 0, MAX_FIELDBUSES, GFP_KERNEL);
-+	fb->id = ida_alloc_max(&fieldbus_ida, MAX_FIELDBUSES - 1, GFP_KERNEL);
- 	if (fb->id < 0)
- 		return fb->id;
- 	devno = MKDEV(MAJOR(fieldbus_devt), fb->id);
-@@ -290,7 +290,7 @@ static int __fieldbus_dev_register(struct fieldbus_dev *fb)
- err_dev_create:
- 	cdev_del(&fb->cdev);
- err_cdev:
--	ida_simple_remove(&fieldbus_ida, fb->id);
-+	ida_free(&fieldbus_ida, fb->id);
- 	return err;
+ static int gprinter_setup(int);
+diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+index 29bf8664bf58..12c5d9cf450c 100644
+--- a/drivers/usb/gadget/function/rndis.c
++++ b/drivers/usb/gadget/function/rndis.c
+@@ -869,12 +869,12 @@ EXPORT_SYMBOL_GPL(rndis_msg_parser);
+ 
+ static inline int rndis_get_nr(void)
+ {
+-	return ida_simple_get(&rndis_ida, 0, 1000, GFP_KERNEL);
++	return ida_alloc_max(&rndis_ida, 999, GFP_KERNEL);
  }
  
+ static inline void rndis_put_nr(int nr)
+ {
+-	ida_simple_remove(&rndis_ida, nr);
++	ida_free(&rndis_ida, nr);
+ }
+ 
+ struct rndis_params *rndis_register(void (*resp_avail)(void *v), void *v)
 -- 
 2.43.0
 
