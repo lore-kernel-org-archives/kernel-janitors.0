@@ -1,68 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD02BE74;
-	Mon, 15 Jan 2024 09:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAE5F50D
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 10:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0WLKGlP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E698C433F1;
-	Mon, 15 Jan 2024 09:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705311139;
-	bh=EUbyyrzizKWV7tZWYqLr1hFwC5pmgEDRqzEzAM8p/50=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F0WLKGlP3jvrI7bH0mxt8zNzWKCt8KBNoF196gWk/Pk9PoPpNtKP2lepDjXtd/oRC
-	 +sEj7TxTsMWN2h6tpw8DYVCVJGFLfUK5+XbUZvt47coV8rZ+Z9kayZdz/lxNDNE7fn
-	 sJD+xtKER/YM4juDGT1+MHXC+oIKwrdFNSDYTqoELuuvckUwV6wLvUTrYdMHf5foNi
-	 iEVzd4cHy7690nNKKx3D6ZJTh2W/q2m1w8lLakQHOwysTmO/KT6T0W9kM6EkWA6rYh
-	 stpcE4cq1FiX8bmk53o97HLc2auUAhSFrh/GZE8Op6xMIDxoqA6+imf1PslhyiDkBA
-	 Kmi92CEGuknRw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1rPJKK-00BjiS-UA;
-	Mon, 15 Jan 2024 09:32:17 +0000
-Date: Mon, 15 Jan 2024 09:32:15 +0000
-Message-ID: <86y1cr7xi8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] irqchip/gic-v3-its: Remove usage of the deprecated ida_simple_xx() API
-In-Reply-To: <3b472b0e7edf6e483b8b255cf8d1cb0163532adf.1705222332.git.christophe.jaillet@wanadoo.fr>
-References: <3b472b0e7edf6e483b8b255cf8d1cb0163532adf.1705222332.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BwZ5vyuh"
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4b71cdbc788so1313821e0c.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 02:08:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1705313304; x=1705918104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=efODqsh/Wl08N/goCwZasLOsqyP/O3Ymn4r3aDCKE3g=;
+        b=BwZ5vyuhFfCRgjLFHnALuvJInkFjQSaHaU2lfG0HlcK61zwCaCAjSlH0PVAPFZ2WM+
+         ObDpwfiTzIxnzBwj97H0RWvaZpX8HbQgD3o0kYddYMXVBZSHJiq1FC6Wj5prTrQxSmbB
+         h/GHvmX9lTnTNprvv0MEXB5EY3/sYJ/X9mzBBc98xBpcLqdRLRbO7Xt8qUlC7A804UlM
+         LztxhRsIDpZt9RV6AAOsToIGY+/R1i4bTkuo1m9N3NWkz7b2M0o9SpDCzRcNBl78Dpnr
+         IIgcgnGYqsxwX3uHDKBg4hQIpn2x2EpAuAvnuaT3PSDshZSVAP7YtMQhfR4ithUl4Ml8
+         q2qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705313304; x=1705918104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=efODqsh/Wl08N/goCwZasLOsqyP/O3Ymn4r3aDCKE3g=;
+        b=tvdkWs1t9WgVyPmss0goXVlPYWoi9X0mSsr1moy4N+UzLa3gwXuAWmmSosLbMKr0ai
+         4Yqg4CSsP58aFEQK8kuXSL3ZuF72R4i10D9s3Lp+Fdb/qJntrS4dMAKXiNfkecaTFRd2
+         6TyMPOrCtJv/ajqZBXxkdvHOPTdfdiPlPRlXGJyKDtmT/HN1bpi+pgTi5pjtVD7NWxFZ
+         +sgW2a/EbwkpnnYrsDWbrcVmWzoR6y17f6ubIaHehsbIzJkouiqeikHMwtEnS7TFT7zR
+         bpb+ygInk4gHgeg3HqSZ8Rk2NxXGpRBpC39tJeHm/o9CGE1J0eBtRYNDYVN0rX1e1XaB
+         i6lA==
+X-Gm-Message-State: AOJu0Yy4hAuANvv4rgZQm96sL1bPZZ76BPc0n70C0EbNSLkm5XAOAHb6
+	bf6O3nA4S/vKgP/6w//uVA/HJd0andvV/NLGVsHL1/gqQttocQ==
+X-Google-Smtp-Source: AGHT+IETlR4T5bCqb5OYA+dXN5zKz34DkovXoN/ieCB58XwGeJaG3G1kreKuWxdb7fvxB3tN+vfWOFMBughb34hu0kc=
+X-Received: by 2002:a05:6122:1988:b0:4b7:8794:17cf with SMTP id
+ bv8-20020a056122198800b004b7879417cfmr1557938vkb.18.1705313303911; Mon, 15
+ Jan 2024 02:08:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: christophe.jaillet@wanadoo.fr, tglx@linutronix.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <46566e85-4afa-4c55-93b2-0d0b71d76b12@moroto.mountain>
+In-Reply-To: <46566e85-4afa-4c55-93b2-0d0b71d76b12@moroto.mountain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 15 Jan 2024 11:08:12 +0100
+Message-ID: <CAMRc=McCVRNpWjifPC=LTW7icF9SkbaQ9jEryM=TcHFy-tQ7dQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rtd: Fix signedness bug in probe
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tzuyi Chang <tychang@realtek.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 14 Jan 2024 08:52:39 +0000,
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_max() is inclusive. So a -1 has been added when needed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Fri, Jan 12, 2024 at 7:55=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The "data->irqs[]" array holds unsigned int so this error handling will
+> not work correctly.
+>
+> Fixes: eee636bff0dc ("gpio: rtd: Add support for Realtek DHC(Digital Home=
+ Center) RTD SoCs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpio/gpio-rtd.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-rtd.c b/drivers/gpio/gpio-rtd.c
+> index a7939bd0aa56..bf7f008f58d7 100644
+> --- a/drivers/gpio/gpio-rtd.c
+> +++ b/drivers/gpio/gpio-rtd.c
+> @@ -525,18 +525,21 @@ static int rtd_gpio_probe(struct platform_device *p=
+dev)
+>         struct device *dev =3D &pdev->dev;
+>         struct gpio_irq_chip *irq_chip;
+>         struct rtd_gpio *data;
+> +       int ret;
+>
+>         data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>         if (!data)
+>                 return -ENOMEM;
+>
+> -       data->irqs[0] =3D platform_get_irq(pdev, 0);
+> -       if (data->irqs[0] < 0)
+> -               return data->irqs[0];
+> +       ret =3D platform_get_irq(pdev, 0);
+> +       if (ret < 0)
+> +               return ret;
+> +       data->irqs[0] =3D ret;
+>
+> -       data->irqs[1] =3D platform_get_irq(pdev, 1);
+> -       if (data->irqs[1] < 0)
+> -               return data->irqs[1];
+> +       ret =3D platform_get_irq(pdev, 1);
+> +       if (ret < 0)
+> +               return ret;
+> +       data->irqs[1] =3D ret;
+>
+>         data->info =3D device_get_match_data(dev);
+>         if (!data->info)
+> --
+> 2.43.0
+>
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Applied, thanks!
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Bartosz
