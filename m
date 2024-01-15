@@ -1,59 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E157171BB;
-	Mon, 15 Jan 2024 13:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4406B17596;
+	Mon, 15 Jan 2024 14:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4EpZHYE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849DBC43390;
-	Mon, 15 Jan 2024 13:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705326324;
-	bh=3CYq5m9c0Z2YmumV52JE15z62NoUEsxe7VfwOd+rpf0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=o4EpZHYE4CsLFI3cR+A1UgmZAYtPlvqTHIIyHAeZAUabjWiH3V8xJsWPLRxHWMdSJ
-	 EXLMqJ9hafmfr6zBox8Jq47WwvGfGw/f7JomKbvknyiyo1UwhARhGO2I2H4P6kgfD5
-	 yLvcLZtfgOsQns7AeGG8Dn5e3WleZ46JmMe/KE8Ky4oR1BSqDbcClbjVHMLuUBosPA
-	 SRNcnABEIpx7j4/G1dxFLJ2/6bb2a07y1ABgv3lxJBtd1h4MKq5MN1riE3dE3jv0IG
-	 1aTqcjau+tUrFAhGup4rIQutQnPL8nGdROkZSYTRRaO0/pMArFgyqZnY2fMFMv9iiK
-	 mxBX6Q1ZbswKw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <305898fb-6bd4-4749-806c-05ec51bbeb80@moroto.mountain>
-References: <305898fb-6bd4-4749-806c-05ec51bbeb80@moroto.mountain>
-Subject: Re: [PATCH 1/2] HID: hid-steam: remove pointless error message
-Message-Id: <170532632324.1146873.6182162741847699008.b4-ty@kernel.org>
-Date: Mon, 15 Jan 2024 14:45:23 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhAQmqlS"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a28bd9ca247so1049458766b.1;
+        Mon, 15 Jan 2024 06:43:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705329790; x=1705934590; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B3unoLz8qq5gzyLWgjX+DKaq8Yqof9OjzZksC+6350U=;
+        b=PhAQmqlSEaNhq82wZ4DoACN+ByC9PpZg2CJoB8CqF29+pHUZT6VAGKcIjYeKNi1exY
+         xR7VgsdzmhuU9YMeIU3yC7Q7o3Mox/K/e5cMmViLBTRd09Xxmvc1OxVOEqOLZvtsJEVj
+         K6mfJBKzevfbeWuXjbg/7WaU1MBS8o3j1sFRs9Zs+yDEMaSNYyLo/bnX1fwDF1l1K6qR
+         MN6b31gpeIl1tB0AiEFgwb3hRJFbXGgMUIkFt1XG6fa2LMb0U8JIqSf3HZ1d6FRjJ0vN
+         xMqoMAEEvfjC0zGIevXFTh6qyLDu3qd6VynHnMW3bRKoCDaPxrt5HZV6Dne9ss9Uri1B
+         jFxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705329790; x=1705934590;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B3unoLz8qq5gzyLWgjX+DKaq8Yqof9OjzZksC+6350U=;
+        b=azlaXdXOQvKuVTYG4zXSHti61sR8oZ2LPGYx4HDEOXpZwlAJwbwvkVw1vm80VS2M7R
+         yZWXu7R7PO16SQHwVcGZGTX+mPh4sEqrN6RirRUgFfvc4Qvg8oe19jib/NtyOrUB1VqP
+         +YwK8Wsu/tU/zwUoMP+0ENjw11ZgOLnNdU5nvf34SZXfuLOT4a1bquh3nr35My1dfgvy
+         GAuIogKwxJqd872oFn2f8AAouIr01HMRsIIygg9IStaRjB7skAkhAfmly0OmWhYldRW2
+         MdEzwgouMYhChVvAx0ZJqNM59JLgd2tZEvLAdg10wrmN3mONzPyWJs00hPplXouW5cs7
+         XJ2A==
+X-Gm-Message-State: AOJu0YxWzZCL04oyZNwAlYiOg6XqfM95Lru6cxDbTf9aL/EkiC4flbRU
+	Pfvr9DtQs+RSiQcjdWx3wIw=
+X-Google-Smtp-Source: AGHT+IESbfZkbhBP4aXLa6lup3Yu+AK6r90FuUDsmJEoatAKesIlHCTEasijVWlVlTz7Z0z8YaK7gg==
+X-Received: by 2002:a17:906:fe05:b0:a28:d103:dffb with SMTP id wy5-20020a170906fe0500b00a28d103dffbmr3228911ejb.78.1705329790244;
+        Mon, 15 Jan 2024 06:43:10 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d1f6:7ceb:4655:5666])
+        by smtp.gmail.com with ESMTPSA id h6-20020a170906584600b00a2aef1e0731sm5339019ejs.77.2024.01.15.06.43.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jan 2024 06:43:09 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] arm64: drop the no-effect select ARM_SMC_MBOX in config ARCH_STM32
+Date: Mon, 15 Jan 2024 15:43:07 +0100
+Message-Id: <20240115144307.27409-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
 
-On Fri, 12 Jan 2024 17:34:14 +0300, Dan Carpenter wrote:
-> This error message doesn't really add any information.  If modprobe
-> fails then the user will already know what the error code is.  In the
-> case of kmalloc() it's a style violation to print an error message for
-> that because kmalloc has it's own better error messages built in.
-> 
-> 
+Commit 9e4e24414cc6 ("arm64: introduce STM32 family on Armv8 architecture")
+adds the config ARCH_STM32, which selects the non-existing config
+ARM_SMC_MBOX. The config ARM_SMC_MBOX was once proposed on the mailing list
+(see Link), but it was never merged.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git (for-6.8/upstream-fixes), thanks!
+It seems though that this STM32 architecture works fine without this
+driver---otherwise, the users and contributor would have already noticed
+this by now.
 
-[1/2] HID: hid-steam: remove pointless error message
-      https://git.kernel.org/hid/hid/c/a96681699611
-[2/2] HID: hid-steam: Fix cleanup in probe()
-      https://git.kernel.org/hid/hid/c/a9f1da09c69f
+Drop this no-effect select ARM_SMC_MBOX in config ARCH_STM32.
 
-Cheers,
+Link: https://lore.kernel.org/lkml/1575281525-1549-1-git-send-email-peng.fan@nxp.com/
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/arm64/Kconfig.platforms | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 24335565bad5..50ace066d57b 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -302,7 +302,6 @@ config ARCH_STM32
+ 	select GPIOLIB
+ 	select PINCTRL
+ 	select PINCTRL_STM32MP257
+-	select ARM_SMC_MBOX
+ 	select ARM_SCMI_PROTOCOL
+ 	select COMMON_CLK_SCMI
+ 	help
 -- 
-Benjamin Tissoires <bentiss@kernel.org>
+2.17.1
 
