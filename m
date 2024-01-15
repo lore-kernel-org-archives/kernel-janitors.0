@@ -1,92 +1,157 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4406B17596;
-	Mon, 15 Jan 2024 14:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhAQmqlS"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a28bd9ca247so1049458766b.1;
-        Mon, 15 Jan 2024 06:43:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705329790; x=1705934590; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B3unoLz8qq5gzyLWgjX+DKaq8Yqof9OjzZksC+6350U=;
-        b=PhAQmqlSEaNhq82wZ4DoACN+ByC9PpZg2CJoB8CqF29+pHUZT6VAGKcIjYeKNi1exY
-         xR7VgsdzmhuU9YMeIU3yC7Q7o3Mox/K/e5cMmViLBTRd09Xxmvc1OxVOEqOLZvtsJEVj
-         K6mfJBKzevfbeWuXjbg/7WaU1MBS8o3j1sFRs9Zs+yDEMaSNYyLo/bnX1fwDF1l1K6qR
-         MN6b31gpeIl1tB0AiEFgwb3hRJFbXGgMUIkFt1XG6fa2LMb0U8JIqSf3HZ1d6FRjJ0vN
-         xMqoMAEEvfjC0zGIevXFTh6qyLDu3qd6VynHnMW3bRKoCDaPxrt5HZV6Dne9ss9Uri1B
-         jFxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705329790; x=1705934590;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B3unoLz8qq5gzyLWgjX+DKaq8Yqof9OjzZksC+6350U=;
-        b=azlaXdXOQvKuVTYG4zXSHti61sR8oZ2LPGYx4HDEOXpZwlAJwbwvkVw1vm80VS2M7R
-         yZWXu7R7PO16SQHwVcGZGTX+mPh4sEqrN6RirRUgFfvc4Qvg8oe19jib/NtyOrUB1VqP
-         +YwK8Wsu/tU/zwUoMP+0ENjw11ZgOLnNdU5nvf34SZXfuLOT4a1bquh3nr35My1dfgvy
-         GAuIogKwxJqd872oFn2f8AAouIr01HMRsIIygg9IStaRjB7skAkhAfmly0OmWhYldRW2
-         MdEzwgouMYhChVvAx0ZJqNM59JLgd2tZEvLAdg10wrmN3mONzPyWJs00hPplXouW5cs7
-         XJ2A==
-X-Gm-Message-State: AOJu0YxWzZCL04oyZNwAlYiOg6XqfM95Lru6cxDbTf9aL/EkiC4flbRU
-	Pfvr9DtQs+RSiQcjdWx3wIw=
-X-Google-Smtp-Source: AGHT+IESbfZkbhBP4aXLa6lup3Yu+AK6r90FuUDsmJEoatAKesIlHCTEasijVWlVlTz7Z0z8YaK7gg==
-X-Received: by 2002:a17:906:fe05:b0:a28:d103:dffb with SMTP id wy5-20020a170906fe0500b00a28d103dffbmr3228911ejb.78.1705329790244;
-        Mon, 15 Jan 2024 06:43:10 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:d1f6:7ceb:4655:5666])
-        by smtp.gmail.com with ESMTPSA id h6-20020a170906584600b00a2aef1e0731sm5339019ejs.77.2024.01.15.06.43.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jan 2024 06:43:09 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB817C70;
+	Mon, 15 Jan 2024 15:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+Received: from meterpeter.INF524.stwhd ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1N5VLY-1r6Fsk23Kc-016uBC; Mon, 15 Jan 2024 16:55:48 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: Anton Altaparmakov <anton@tuxera.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	linux-ntfs-dev@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm64: drop the no-effect select ARM_SMC_MBOX in config ARCH_STM32
-Date: Mon, 15 Jan 2024 15:43:07 +0100
-Message-Id: <20240115144307.27409-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	Christian Heusel <christian@heusel.eu>
+Subject: [PATCH] ntfs: print symbolic error name instead of error code
+Date: Mon, 15 Jan 2024 16:55:38 +0100
+Message-ID: <20240115155540.94127-1-christian@heusel.eu>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:8Cj9rg6OYmZJSHmw+KpGRyrT/3xXnK/X35tHaWFT4Z017Ota8AT
+ +UpSs8EPfJNryBWCRdJ7rI9VvFTg5c6Vc5VpE3p4Hp4ckDB1SDYl+R2QmnAQs2sS1UR11L7
+ hyQSXn72ht4wi6xeYDPjrlSgcqmCHltgg0OQ5L7f/BjZIKoYKMMQSif/AlihCZsZRY2gLH2
+ vlSHgaRvde2FmeVPkE51w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HwgHyQdHjo0=;jxlGXhDLZbiOF1B/xDBM50aA2KY
+ zWyHHrEqyatDBGIGDUEcFoGI21HDR9Q/nGqA4vb+ivICx/7fT5DRt+zDCouoOkITgv8XVUYlr
+ iRFflzvbJdkky+YkhamV43XnrC80z9R/4/TtUqOXmnBVbA6cmcPpWndPF23Z7uBQSI3aBIrFP
+ C/wiB/Gx4xerESBXA3xKVgU4vs71yIS60BkRINWc3kDI2g0V3o1gzkiD4cRKifNhm293sAtOB
+ EphknbmvEtoctkIUfjYwr1SSpw6GTayFCrzcwfSgn/p+AV/L8PA3P86zFTfNgXeLvllAPF4Ai
+ aBjFLKFKMylTvlUw1M+7dxZp41zxs38Bvk6oiV4WKv7M4W9EGYs8HYAq+eDbhhO0KB9YwFZZq
+ AZGHe5ME4hQpWnWjNI5ulSXPKPFzEcbDYGqWLhzI43S15WP6lKmSgbOneJn0IabHhGO7W135W
+ FKdZSViAEnR3yQLlkzgCJ9gG7TnREQXrl8G2U1CCld5ArdDVbKaXpZnaJhUHArvSqUiAXr+bR
+ aUIPSjZ3xy5cvYb8k3R8bt0SYZTRFuAwnQlJjn2+j93xcJu/AEPhEpajh1oJg9Ghp1vP6MQnF
+ s3L+KWUYtmAImr3EMsDD2wGu/QRKYEjJtlYZY2K2tgc0ySn6PPSXQVsvVjqIt83HRaWZwjgCX
+ tmqESg26ir8zM6T4TXRLMeL7kFazP6v4IUytGBoOXBX/G2JjlAtsIpRkETr8nID66ZCi4c4Zq
+ IqNYndy2WK5CldCQmd7TirQMG3fBaTU+q764y6ZF+uB8MGKxDPqoIYYkR+AZq6Z5K/DaMisOU
+ OhvZEiOHwzJ324eryJrxL5fgqiz5CJx3p9B8IE+CFrXwcL+EfarX1QrQ3jlevJKAffcHToKwX
+ kSk8CnZV3UnvRhA==
 
-Commit 9e4e24414cc6 ("arm64: introduce STM32 family on Armv8 architecture")
-adds the config ARCH_STM32, which selects the non-existing config
-ARM_SMC_MBOX. The config ARM_SMC_MBOX was once proposed on the mailing list
-(see Link), but it was never merged.
+Utilize the %pe print specifier in multiple log messages to get the
+symbolic error name as a string (i.e "-ENOMEM") instead of the error
+code to increase the log messages readablility.
 
-It seems though that this STM32 architecture works fine without this
-driver---otherwise, the users and contributor would have already noticed
-this by now.
+This change was suggested in
+https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
 
-Drop this no-effect select ARM_SMC_MBOX in config ARCH_STM32.
-
-Link: https://lore.kernel.org/lkml/1575281525-1549-1-git-send-email-peng.fan@nxp.com/
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Christian Heusel <christian@heusel.eu>
 ---
- arch/arm64/Kconfig.platforms | 1 -
- 1 file changed, 1 deletion(-)
+ fs/ntfs/dir.c   | 12 ++++--------
+ fs/ntfs/index.c |  6 ++----
+ fs/ntfs/mft.c   |  6 +++---
+ 3 files changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 24335565bad5..50ace066d57b 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -302,7 +302,6 @@ config ARCH_STM32
- 	select GPIOLIB
- 	select PINCTRL
- 	select PINCTRL_STM32MP257
--	select ARM_SMC_MBOX
- 	select ARM_SCMI_PROTOCOL
- 	select COMMON_CLK_SCMI
- 	help
+diff --git a/fs/ntfs/dir.c b/fs/ntfs/dir.c
+index 629723a8d712..8df4f233969d 100644
+--- a/fs/ntfs/dir.c
++++ b/fs/ntfs/dir.c
+@@ -88,8 +88,7 @@ MFT_REF ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
+ 	/* Get hold of the mft record for the directory. */
+ 	m = map_mft_record(dir_ni);
+ 	if (IS_ERR(m)) {
+-		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
+-				-PTR_ERR(m));
++		ntfs_error(sb, "map_mft_record() failed with error %pe.", m);
+ 		return ERR_MREF(PTR_ERR(m));
+ 	}
+ 	ctx = ntfs_attr_get_search_ctx(dir_ni, m);
+@@ -308,8 +307,7 @@ MFT_REF ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
+ 	page = ntfs_map_page(ia_mapping, vcn <<
+ 			dir_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
+ 	if (IS_ERR(page)) {
+-		ntfs_error(sb, "Failed to map directory index page, error %ld.",
+-				-PTR_ERR(page));
++		ntfs_error(sb, "Failed to map directory index page, error %pe.", page);
+ 		err = PTR_ERR(page);
+ 		goto err_out;
+ 	}
+@@ -639,8 +637,7 @@ u64 ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
+ 	/* Get hold of the mft record for the directory. */
+ 	m = map_mft_record(dir_ni);
+ 	if (IS_ERR(m)) {
+-		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
+-				-PTR_ERR(m));
++		ntfs_error(sb, "map_mft_record() failed with error %pe.", m);
+ 		return ERR_MREF(PTR_ERR(m));
+ 	}
+ 	ctx = ntfs_attr_get_search_ctx(dir_ni, m);
+@@ -786,8 +783,7 @@ u64 ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
+ 	page = ntfs_map_page(ia_mapping, vcn <<
+ 			dir_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
+ 	if (IS_ERR(page)) {
+-		ntfs_error(sb, "Failed to map directory index page, error %ld.",
+-				-PTR_ERR(page));
++		ntfs_error(sb, "Failed to map directory index page, error %pe.", page);
+ 		err = PTR_ERR(page);
+ 		goto err_out;
+ 	}
+diff --git a/fs/ntfs/index.c b/fs/ntfs/index.c
+index d46c2c03a032..777bbd4548ad 100644
+--- a/fs/ntfs/index.c
++++ b/fs/ntfs/index.c
+@@ -137,8 +137,7 @@ int ntfs_index_lookup(const void *key, const int key_len,
+ 	/* Get hold of the mft record for the index inode. */
+ 	m = map_mft_record(base_ni);
+ 	if (IS_ERR(m)) {
+-		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
+-				-PTR_ERR(m));
++		ntfs_error(sb, "map_mft_record() failed with code %pe.", m);
+ 		return PTR_ERR(m);
+ 	}
+ 	actx = ntfs_attr_get_search_ctx(base_ni, m);
+@@ -264,8 +263,7 @@ int ntfs_index_lookup(const void *key, const int key_len,
+ 	page = ntfs_map_page(ia_mapping, vcn <<
+ 			idx_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
+ 	if (IS_ERR(page)) {
+-		ntfs_error(sb, "Failed to map index page, error %ld.",
+-				-PTR_ERR(page));
++		ntfs_error(sb, "Failed to map index page, error %pe.", page);
+ 		err = PTR_ERR(page);
+ 		goto err_out;
+ 	}
+diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
+index 6fd1dc4b08c8..fed9abc3ff1f 100644
+--- a/fs/ntfs/mft.c
++++ b/fs/ntfs/mft.c
+@@ -159,7 +159,7 @@ MFT_RECORD *map_mft_record(ntfs_inode *ni)
+ 
+ 	mutex_unlock(&ni->mrec_lock);
+ 	atomic_dec(&ni->count);
+-	ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
++	ntfs_error(ni->vol->sb, "Failed with error %pe.", m);
+ 	return m;
+ }
+ 
+@@ -285,8 +285,8 @@ MFT_RECORD *map_extent_mft_record(ntfs_inode *base_ni, MFT_REF mref,
+ 			return ERR_PTR(-EIO);
+ 		}
+ map_err_out:
+-		ntfs_error(base_ni->vol->sb, "Failed to map extent "
+-				"mft record, error code %ld.", -PTR_ERR(m));
++		ntfs_error(base_ni->vol->sb,
++			   "Failed to map extent mft record, error %pe.", m);
+ 		return m;
+ 	}
+ 	/* Record wasn't there. Get a new ntfs inode and initialize it. */
 -- 
-2.17.1
+2.43.0
 
