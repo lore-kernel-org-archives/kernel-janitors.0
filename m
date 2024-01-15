@@ -1,157 +1,107 @@
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB817C70;
-	Mon, 15 Jan 2024 15:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-Received: from meterpeter.INF524.stwhd ([141.70.80.5]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1N5VLY-1r6Fsk23Kc-016uBC; Mon, 15 Jan 2024 16:55:48 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Anton Altaparmakov <anton@tuxera.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	linux-ntfs-dev@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	Christian Heusel <christian@heusel.eu>
-Subject: [PATCH] ntfs: print symbolic error name instead of error code
-Date: Mon, 15 Jan 2024 16:55:38 +0100
-Message-ID: <20240115155540.94127-1-christian@heusel.eu>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C5017C70;
+	Mon, 15 Jan 2024 17:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sgPKvRIr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705338964; x=1705943764; i=markus.elfring@web.de;
+	bh=/Ca96eOJyuxZcGSv7l/iefKgmthOd3AabqprAzeuaDY=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=sgPKvRIrBelWyeNzCjHkNZaM2fDhYHQ0kNneSgD1vuY6lY9XR7GqE5qdQ08EazWZ
+	 jcjnsqrZsoC+wSJDq6Jqvj6eXNElZxygAZ5lC8ysod5DEWSeqKtDmn41Zhrllf3Ko
+	 2LvpYP0x0ZV6RPaHg6TQ2nnWK7JxhudTgOY098If0ONgDJUkVNITIpdRin3o5o4ku
+	 4t18SJI6FTXAIyBiMe05+tPlQSHL6H1EuvacnlNgM/zQdiK1qoje7RmfvM6fchNtu
+	 ZfNL/r2ZEV54o8NCQeMpXrSsYm0fYAdc8ewWkqJ9YL3vlOYKjidLi4pqWZZoaoZ/3
+	 n+zjN42TImfT2rZ6gw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MEUWM-1rNkoY35Y2-00FyPF; Mon, 15
+ Jan 2024 18:16:04 +0100
+Message-ID: <f1977c1c-1c55-4194-9f72-f77120b2e4e5@web.de>
+Date: Mon, 15 Jan 2024 18:16:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:8Cj9rg6OYmZJSHmw+KpGRyrT/3xXnK/X35tHaWFT4Z017Ota8AT
- +UpSs8EPfJNryBWCRdJ7rI9VvFTg5c6Vc5VpE3p4Hp4ckDB1SDYl+R2QmnAQs2sS1UR11L7
- hyQSXn72ht4wi6xeYDPjrlSgcqmCHltgg0OQ5L7f/BjZIKoYKMMQSif/AlihCZsZRY2gLH2
- vlSHgaRvde2FmeVPkE51w==
+User-Agent: Mozilla Thunderbird
+To: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Eric Auger <eric.auger@redhat.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] vfio/platform: Use common error handling code in
+ vfio_set_trigger()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Z7qzU6jLC5cPn/dLevgbgCx8zj31z9p9BzGnlUo6qnRP8d4y1Q4
+ +LgCokwPLR5G9VadGZiu3ppi8llxC69DKuh3llJFNC6FiVQ+lswHbYdPzkGGPNUOBOlbCZz
+ WIbrZQxOwm/G0FgSVHUwZUOW9jbGaBJZxNUPCLXMpKfI6tbRbQ2/IiFYhrw0LxbcSJEXNas
+ DYbpsn2HWi/vpboCkYmlg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HwgHyQdHjo0=;jxlGXhDLZbiOF1B/xDBM50aA2KY
- zWyHHrEqyatDBGIGDUEcFoGI21HDR9Q/nGqA4vb+ivICx/7fT5DRt+zDCouoOkITgv8XVUYlr
- iRFflzvbJdkky+YkhamV43XnrC80z9R/4/TtUqOXmnBVbA6cmcPpWndPF23Z7uBQSI3aBIrFP
- C/wiB/Gx4xerESBXA3xKVgU4vs71yIS60BkRINWc3kDI2g0V3o1gzkiD4cRKifNhm293sAtOB
- EphknbmvEtoctkIUfjYwr1SSpw6GTayFCrzcwfSgn/p+AV/L8PA3P86zFTfNgXeLvllAPF4Ai
- aBjFLKFKMylTvlUw1M+7dxZp41zxs38Bvk6oiV4WKv7M4W9EGYs8HYAq+eDbhhO0KB9YwFZZq
- AZGHe5ME4hQpWnWjNI5ulSXPKPFzEcbDYGqWLhzI43S15WP6lKmSgbOneJn0IabHhGO7W135W
- FKdZSViAEnR3yQLlkzgCJ9gG7TnREQXrl8G2U1CCld5ArdDVbKaXpZnaJhUHArvSqUiAXr+bR
- aUIPSjZ3xy5cvYb8k3R8bt0SYZTRFuAwnQlJjn2+j93xcJu/AEPhEpajh1oJg9Ghp1vP6MQnF
- s3L+KWUYtmAImr3EMsDD2wGu/QRKYEjJtlYZY2K2tgc0ySn6PPSXQVsvVjqIt83HRaWZwjgCX
- tmqESg26ir8zM6T4TXRLMeL7kFazP6v4IUytGBoOXBX/G2JjlAtsIpRkETr8nID66ZCi4c4Zq
- IqNYndy2WK5CldCQmd7TirQMG3fBaTU+q764y6ZF+uB8MGKxDPqoIYYkR+AZq6Z5K/DaMisOU
- OhvZEiOHwzJ324eryJrxL5fgqiz5CJx3p9B8IE+CFrXwcL+EfarX1QrQ3jlevJKAffcHToKwX
- kSk8CnZV3UnvRhA==
+UI-OutboundReport: notjunk:1;M01:P0:RiqAqZK9y5E=;sYOKqyUlk+kJ4LlOPo3PXmIH83z
+ pLTFVm2Les9olu7Uh211G5dElkH0PLTZHc0+i6Q6sjrOb8aneyH9PTlfzJr3O2eIvDvvq6Xf6
+ qnR0o+e7TTAtFZFz3HkRly3edKY31eqbapPqVKji3GONpLBiJdF+h3XA3qoNhlRuqHMNDVkCH
+ tV7K5DvGJ9Fs94RKL+s7zPWVaJgA1u8QM1uQnls50/y6dGgHwOpCXp0mkr+USqBzLTYy+9wEq
+ r0fn9aCVUEg5/TNStg6AaOPLcu8z4KJWMS1eRx0WSMJaaMUBFEK0oOAlO4O9TYxF5NzkzFVuf
+ GoD/VqVGnXJCYJyFl5Lr9V1JUlHqL75mpw7rkl92M1h10y7rBNfMC7QTrCHWB6zNFJFpFvrR7
+ qTF1haSFmMdfAh+4P9X9cpMcTaI80gw0sQ9exKnOn/wZplLT/jd/otlpG7UUb+9gnQieSApQf
+ JJBA9tuyzM7EnvgAE/kjy2lyS4UuQ8sMQGqKQZca8ZOeyExfvYcL+SiDlQ39ZtXVLd7arf/Lb
+ SRy3UCgk6c1aO5mIcChHP+7a7FG1n5odboFiOJyUBCpfSKr2yDh115DfUfPeX8e8KaBBAs8t1
+ zJgKfnUVHvo51Jj7OCCod7dQ2eE3LDV/sbH2IAKbfsBO1X1yUV7fgIZ4xBdh2sLz08AmVbrbr
+ atd4nZ88pRufV0grZPqiSwQjBna/gmeHmLvUMmLHx93bmKIgE6Ht5cKAuXoiIkOtdaCdAXxXA
+ B0VHsc7xwFvp0nCz9R8UmxPxJw13KsqeZnw/vJbvTTfOs/OzApL/yTJDGOXzfBxGsIYaXIGkw
+ GWVewi5mfXCzNvqhp8ktmAV59SRLZ+BIzVy3ugjneh0/vNyoh2gVtUx7dcdCjWkYhbfeJWmWW
+ cfx5OH4LpTFEvCJT0wdkQe3JmtaBjNuPTscVmFzNoi2739kp55BXZNLzY8OEI9T6RfJCthJ7w
+ OAV3KA==
 
-Utilize the %pe print specifier in multiple log messages to get the
-symbolic error name as a string (i.e "-ENOMEM") instead of the error
-code to increase the log messages readablility.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2024 18:08:29 +0100
 
-This change was suggested in
-https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
+Add a jump target so that a bit of exception handling can be better reused
+in an if branch of this function.
 
-Signed-off-by: Christian Heusel <christian@heusel.eu>
----
- fs/ntfs/dir.c   | 12 ++++--------
- fs/ntfs/index.c |  6 ++----
- fs/ntfs/mft.c   |  6 +++---
- 3 files changed, 9 insertions(+), 15 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/vfio/platform/vfio_platform_irq.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ntfs/dir.c b/fs/ntfs/dir.c
-index 629723a8d712..8df4f233969d 100644
---- a/fs/ntfs/dir.c
-+++ b/fs/ntfs/dir.c
-@@ -88,8 +88,7 @@ MFT_REF ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
- 	/* Get hold of the mft record for the directory. */
- 	m = map_mft_record(dir_ni);
- 	if (IS_ERR(m)) {
--		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
--				-PTR_ERR(m));
-+		ntfs_error(sb, "map_mft_record() failed with error %pe.", m);
- 		return ERR_MREF(PTR_ERR(m));
+diff --git a/drivers/vfio/platform/vfio_platform_irq.c b/drivers/vfio/plat=
+form/vfio_platform_irq.c
+index 61a1bfb68ac7..8604ce4f3fee 100644
+=2D-- a/drivers/vfio/platform/vfio_platform_irq.c
++++ b/drivers/vfio/platform/vfio_platform_irq.c
+@@ -193,8 +193,8 @@ static int vfio_set_trigger(struct vfio_platform_devic=
+e *vdev, int index,
+
+ 	trigger =3D eventfd_ctx_fdget(fd);
+ 	if (IS_ERR(trigger)) {
+-		kfree(irq->name);
+-		return PTR_ERR(trigger);
++		ret =3D PTR_ERR(trigger);
++		goto free_name;
  	}
- 	ctx = ntfs_attr_get_search_ctx(dir_ni, m);
-@@ -308,8 +307,7 @@ MFT_REF ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
- 	page = ntfs_map_page(ia_mapping, vcn <<
- 			dir_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
- 	if (IS_ERR(page)) {
--		ntfs_error(sb, "Failed to map directory index page, error %ld.",
--				-PTR_ERR(page));
-+		ntfs_error(sb, "Failed to map directory index page, error %pe.", page);
- 		err = PTR_ERR(page);
- 		goto err_out;
+
+ 	irq->trigger =3D trigger;
+@@ -202,9 +202,10 @@ static int vfio_set_trigger(struct vfio_platform_devi=
+ce *vdev, int index,
+ 	irq_set_status_flags(irq->hwirq, IRQ_NOAUTOEN);
+ 	ret =3D request_irq(irq->hwirq, handler, 0, irq->name, irq);
+ 	if (ret) {
+-		kfree(irq->name);
+ 		eventfd_ctx_put(trigger);
+ 		irq->trigger =3D NULL;
++free_name:
++		kfree(irq->name);
+ 		return ret;
  	}
-@@ -639,8 +637,7 @@ u64 ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
- 	/* Get hold of the mft record for the directory. */
- 	m = map_mft_record(dir_ni);
- 	if (IS_ERR(m)) {
--		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
--				-PTR_ERR(m));
-+		ntfs_error(sb, "map_mft_record() failed with error %pe.", m);
- 		return ERR_MREF(PTR_ERR(m));
- 	}
- 	ctx = ntfs_attr_get_search_ctx(dir_ni, m);
-@@ -786,8 +783,7 @@ u64 ntfs_lookup_inode_by_name(ntfs_inode *dir_ni, const ntfschar *uname,
- 	page = ntfs_map_page(ia_mapping, vcn <<
- 			dir_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
- 	if (IS_ERR(page)) {
--		ntfs_error(sb, "Failed to map directory index page, error %ld.",
--				-PTR_ERR(page));
-+		ntfs_error(sb, "Failed to map directory index page, error %pe.", page);
- 		err = PTR_ERR(page);
- 		goto err_out;
- 	}
-diff --git a/fs/ntfs/index.c b/fs/ntfs/index.c
-index d46c2c03a032..777bbd4548ad 100644
---- a/fs/ntfs/index.c
-+++ b/fs/ntfs/index.c
-@@ -137,8 +137,7 @@ int ntfs_index_lookup(const void *key, const int key_len,
- 	/* Get hold of the mft record for the index inode. */
- 	m = map_mft_record(base_ni);
- 	if (IS_ERR(m)) {
--		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
--				-PTR_ERR(m));
-+		ntfs_error(sb, "map_mft_record() failed with code %pe.", m);
- 		return PTR_ERR(m);
- 	}
- 	actx = ntfs_attr_get_search_ctx(base_ni, m);
-@@ -264,8 +263,7 @@ int ntfs_index_lookup(const void *key, const int key_len,
- 	page = ntfs_map_page(ia_mapping, vcn <<
- 			idx_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
- 	if (IS_ERR(page)) {
--		ntfs_error(sb, "Failed to map index page, error %ld.",
--				-PTR_ERR(page));
-+		ntfs_error(sb, "Failed to map index page, error %pe.", page);
- 		err = PTR_ERR(page);
- 		goto err_out;
- 	}
-diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-index 6fd1dc4b08c8..fed9abc3ff1f 100644
---- a/fs/ntfs/mft.c
-+++ b/fs/ntfs/mft.c
-@@ -159,7 +159,7 @@ MFT_RECORD *map_mft_record(ntfs_inode *ni)
- 
- 	mutex_unlock(&ni->mrec_lock);
- 	atomic_dec(&ni->count);
--	ntfs_error(ni->vol->sb, "Failed with error code %lu.", -PTR_ERR(m));
-+	ntfs_error(ni->vol->sb, "Failed with error %pe.", m);
- 	return m;
- }
- 
-@@ -285,8 +285,8 @@ MFT_RECORD *map_extent_mft_record(ntfs_inode *base_ni, MFT_REF mref,
- 			return ERR_PTR(-EIO);
- 		}
- map_err_out:
--		ntfs_error(base_ni->vol->sb, "Failed to map extent "
--				"mft record, error code %ld.", -PTR_ERR(m));
-+		ntfs_error(base_ni->vol->sb,
-+			   "Failed to map extent mft record, error %pe.", m);
- 		return m;
- 	}
- 	/* Record wasn't there. Get a new ntfs inode and initialize it. */
--- 
+
+=2D-
 2.43.0
 
