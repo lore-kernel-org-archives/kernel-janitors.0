@@ -1,97 +1,161 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0528F508
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 10:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9571E864;
+	Mon, 15 Jan 2024 10:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Xo1i5YEz"
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4b7fc7642fcso1684683e0c.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 02:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1705313540; x=1705918340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zn/IBVOWpMMRpEDU1Op72zgW/plcgEu56p6VAHHMjqg=;
-        b=Xo1i5YEzqP0+3DdJ5/ASe/O2PaW2LSM2D6iYN6QiVEtmIR2S4u9/PXfg45zNaQdi2n
-         d5hKC527sw/NOJvemuSpzAyWGjaFi30VctRs5GPaMhIR1Nz0uY8luKdJeRvCsYBMoejF
-         vZMhUV/XFWbASWxbdFF8YRzGl2MTLGFPhevWwMDz29ymZNRnB7WpNN6s4fAwiMONQF7O
-         7uQsb6XeW3jeRfLQSNhMw33YFfPuoi1anWuldQ0glcp58Vpl8eGn4/+5qqChNmtW0f0f
-         gOOIhjy5w6t2Ot71uITylYGk1PqDMlou03VGjV721ZOzgUN7+jjGqhRKOzGPpBpuc6l8
-         yh8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705313540; x=1705918340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zn/IBVOWpMMRpEDU1Op72zgW/plcgEu56p6VAHHMjqg=;
-        b=qPrlnJVESOyxksZ+gnl6EZu5C/l0VM1UfgJQq1HpBczoPdTiN7CvGWqgItR6779VLZ
-         wbXj5zkE1L7Q3i7LdbibY+AX3bCR3Lm2/L3vpcIt0DACNKQ6SwoeumxGsD/oE/+8uuQa
-         DSiHulrETqO87K5Iymc9HVPWemCnfnynEOPUzKJchXNMDQzzwANPrH9L0HuWxZLZVYEJ
-         nzxcST+mAwAwoMP3MskDqczHJi4V+GpboFtUDmkfuHLnRT+Vljs2l571nFH/jWMxB+nV
-         pq72W48xguk7nwB7cmwBN6r3LsFouXIakSYp8k0xRUbJfgzfptIesIRN7rzFm0ezU46P
-         gKXg==
-X-Gm-Message-State: AOJu0YxYS9thw8U2kFA70jPSiLpdsQeUWQSzVRcOFiGqgLGEaQydKHdA
-	DTn0sivyUrkgSDlu3kfMPGp8SzkaHP3hb0l/YenHMffwMNhI6A==
-X-Google-Smtp-Source: AGHT+IG+6FfSJ/63KIfkM4DCBfQbaFiAAhpMVZ3g61Gxu6cr4QzwOSBvdT0o3Zf1lAyRS5xN53QYacrHnUdaf0bd8wM=
-X-Received: by 2002:a05:6122:4304:b0:4b7:386:e209 with SMTP id
- cp4-20020a056122430400b004b70386e209mr1919852vkb.14.1705313539903; Mon, 15
- Jan 2024 02:12:19 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ozoQk38z"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F1KKTmdmz+JdIL0doeBHVXbPHRtsr6E5ukRp3tx/DvcMhTf2OvO4kfZSrgDxDZHr/I/70N6yEUWRyluxcFsk3BA3S3lNeCa34q8uptA+txC2LBiLVbTp8IBHZF5JpaK1y0WCVxW4r/g1Fxc5F1LzHrUHC7pxBHVxBvlKquEcsvnHxR79onrMkjPBLxGQv9QNCoctATaUYf56KpeKjUeTPxRbGq1MMOW/R/oMKLR7SmdlFS13WLVdWwa8Qhfqu0P1zO9pUL51xjLy+gw/8wLKK93z0C0r5qr/T6rkYT6wUN0HZExuheU+AlHr2/GEMuLZmqIrM8NN+fxVZaxCemklvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WNfV+wIly9C8ZiIj9ep7ytPI61Mo+O46h8fiYVrEylk=;
+ b=HxBdoaI/fAJCyEZGNb3BR3KLyp8MKXAvquhItC8g8hS4GkPJduPpys8Imp3ilnHOf/ts8KyE6O970K51MORScV1qcFyBmRZQiAl8QoMHTt5fuyI4wB6IE+eihctNO62LouJp0nMDhYmhIj/E8kXCJXRPGChymaLlLKXVld4Nj7RbzFXd6sCn4KN8eopfQ7UAxAjBHeseYm5o/x3kBg6f8I2s0H6RBTtAEqoKtMaxOJ0kxAcZp2XHmC6HGPNgx3rjy5XUZShxjU6yCAVmsPYLUXcjyx8nLQpp7smkxcm6SOqcu4gDBA1KZHL+bX238NINhz0gT0Cvgp9ExWyKg/RM/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WNfV+wIly9C8ZiIj9ep7ytPI61Mo+O46h8fiYVrEylk=;
+ b=ozoQk38zItexX+YN1DiPXPLs2pj1JrrYRAGPtm5Hjo6pP9hhqxA3ykh8fL+A3iSNTSC6ORQDAeIFTrhtDERSNwtfY1w8UhvOeHN/hsdTEyoTqfeT3OfVuyRPA58dOJ4rVSUgyG6nV6WHDHU7pP6AEiCn7fReeoYF93M3Eu/M7ek=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY5PR12MB6297.namprd12.prod.outlook.com (2603:10b6:930:22::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.21; Mon, 15 Jan
+ 2024 10:18:03 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::e1fb:4123:48b1:653]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::e1fb:4123:48b1:653%4]) with mapi id 15.20.7159.020; Mon, 15 Jan 2024
+ 10:18:03 +0000
+Message-ID: <ebd2d3ef-f222-42ed-8103-c8dd61c99742@amd.com>
+Date: Mon, 15 Jan 2024 11:17:56 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdgpu: Remove usage of the deprecated
+ ida_simple_xx() API
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Alex Deucher <alexander.deucher@amd.com>, "Pan, Xinhui"
+ <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <c3b8e4bfb819d901e532e90a2ae0efa9eb661c55.1705245232.git.christophe.jaillet@wanadoo.fr>
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <c3b8e4bfb819d901e532e90a2ae0efa9eb661c55.1705245232.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR5P281CA0022.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f1::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240112042403.3940316-1-suhui@nfschina.com>
-In-Reply-To: <20240112042403.3940316-1-suhui@nfschina.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 15 Jan 2024 11:12:09 +0100
-Message-ID: <CAMRc=Mdx0OcvDN3rjjSe_K69xzEewe+JyR0639R1jOS9uhp1XA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mlxbf3: add an error code check in mlxbf3_gpio_probe
-To: Su Hui <suhui@nfschina.com>
-Cc: linus.walleij@linaro.org, nathan@kernel.org, ndesaulniers@google.com, 
-	morbo@google.com, justinstitt@google.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY5PR12MB6297:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e3c3c88-0af7-4992-a0ca-08dc15b341e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	d0gfyBIFXr8Q6nEEfK+ltXGzwLr6Bj1+Zs6bxLmqmS75ryr0Khszu31qqMfhE8t514n7kLKfwwuWzQUk+4rdI1mpznxLbfUPom4nGJ4tO4jjPBqGiOsmCO+4Ebrm8etdDPs5SpjU/nfBS+IneCt7dXv1DUAHfgQRuTWEQ/Uej7m2fGPeCB4w+EeGtEMKc1F1Ugcni8BRHoWBQbC529qA2vd1lfZt78ewZmUmhjT9Ro+IlBQUJnr8yFx/pIcUscyjH4vasIMGhlMXdywcRuyIz3GjMTYWI+XQPsu6r8kTRkmx/bKKPgYyHxH7sApEp2UIOFo2YE1kbLr15v17Wys3qePYTL5yfbCSCqzTvLRaeG7i7+pWrIPhWSOqnSFriiHBUSwFb9YMiMBk08h1S1vkhj9v1/9aIE6SFMEpXalkskmVa1QZCCpFgEcO84P7BzTalH/KhUH3vPBomgdoo185+cHa1gbUIKdOLB5ZH/OamiyErgJC8i+kYIMkpaRCTjlpIM/omPDGwBpkiV4pJZ01254j3PLCAIeO5SmpOkGxi5uh9GDep4XRkCTjxyn5K+ozXpeg78RlGxjYmpPInnwoIIweoGSmwL7KNLlo3GvHZEFKjCtx53JKfZFkICugLOvPrCuapXj31xe+HAMbyh33WA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(376002)(366004)(396003)(346002)(230922051799003)(64100799003)(1800799012)(451199024)(186009)(83380400001)(2616005)(66574015)(26005)(41300700001)(5660300002)(6486002)(31686004)(36756003)(31696002)(86362001)(316002)(6512007)(6506007)(2906002)(8676002)(66946007)(8936002)(110136005)(4326008)(66556008)(66476007)(38100700002)(6666004)(478600001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZGowTHVKYk5zVG8yQjJiV285YjdQekpEVkJwZlpmU09DdlBWUVdacThjYk1y?=
+ =?utf-8?B?K3J1Q0Z3VXB5d3JYMkcwUVBxNzRLSWUrTmxnSStPZ0hQcTdQVUF1T3kzZ1ow?=
+ =?utf-8?B?RlNWdkRKcG84TVFUYldYTWtQUmlaRUFzbjlUd1EwU2g4T3N0Mi81c2Y2UGZP?=
+ =?utf-8?B?UHU1TlY1TldJekJPNHIydXRkZkdxSER6YUFCMlJ0ZW9FQmRDMzBnTlUwZDJ2?=
+ =?utf-8?B?RmhDNDMrZ2hoUkdiMjRKM1l3OGMxcEhLNktLMFkzZmdONENKMm9xUHRlOTRp?=
+ =?utf-8?B?WmF6QVNYOFZWRnNaOXZoYjhHanlObGNTYkZvamkwcXcxQ2ZES0JkcVJ0ZGpQ?=
+ =?utf-8?B?dVN1OUhjS21VQWtTTjhEOVdQYTNvSm4vNEdnTEV1Q1FXSldsVlFKS09WLzgr?=
+ =?utf-8?B?UzREcmQ4NnZqcmxaNTNRWDNsclNuNlFmQkNPZlVtcTBid013STFhb2xoaUxV?=
+ =?utf-8?B?TmxtallQUWp4dWt0QlBiM2tES1B1K0M5YkRKcys5YXdXRlA4MzJwN3NiaEY0?=
+ =?utf-8?B?SWFwN29XNW5DNVJkVVNXaW5YYjdXa0FpY0FNcmpXSzdBL2oraGNjVFZGL2FX?=
+ =?utf-8?B?cFNjNlFnaXpONjBLMGhFWnVTdUJxWEk3T2pldVZjMHoxL2NhNWNPdjlUbTk2?=
+ =?utf-8?B?bWZZZzJmV3dyeE9KTE80MTRQZ2xVRm9veHd1ZDdLcFB3d0pVMS9JcEhVR09n?=
+ =?utf-8?B?UGxYQ0xiV0EwTlc5MkxxWVNXVzJTdmhIY0VHajNncEg4SjQ1UmVLWms3eUIw?=
+ =?utf-8?B?NGFKVk8wTHF3elJEekExaWoxRHNsVDhlcC9qV2pKSzdVMVc2cUhOU09hVHk3?=
+ =?utf-8?B?Zm0xK0FQVXdqakQ3bDU0QUxkZTBZVWwrcm5PY2tzZHhaUUVSckNpbXNxdmtj?=
+ =?utf-8?B?VmtlWWRUQ3pwRmU3UHVzTk5vNnU4VlphNk9ValNBU3JPdVFnNVVFc3RmdTcz?=
+ =?utf-8?B?N2NLVnNMNGZIUG5TQXdrWG1lQ2ZjTFdOMTlZN0RqcWt1amRoaVErbE9YNnA2?=
+ =?utf-8?B?S0tUbFRnK0dkeEdNcU1oSEwzOTVnb1J3TkV4Zi9McW9WRDNndU92YnNUbEpH?=
+ =?utf-8?B?MUROb0xBbDVBenFmM1MxbnJuZ29BaTRCTytEdWpodFJjYklSQ3JCSktKek9L?=
+ =?utf-8?B?dHVrcFZEMWZJSlF1K3lLY0dGRmExblAxQ0xDUVVJQkJaV0lMbEFLLzZ0TEps?=
+ =?utf-8?B?NmNjTHJHb2NIRXlHdUpQZmlGMTIwK2d6aXdDTWoyQUxLcTNmTmt1UlBGRE5T?=
+ =?utf-8?B?TWpXSUx5cmJMVDVCSGw3QU1vVndyYmZ3UU85MiswNHNGUFFiSFVob0MzWlpa?=
+ =?utf-8?B?TDlBVk54TVJBQlo5SFJZa05aTTZtZmhuaGtkRkNTazBoMUFxWWQwU1ppREov?=
+ =?utf-8?B?elQ4SHhzenFBNFVTcWRaWW8vSTdWNk5pMDZmN2dpV2s3TzI4VUJmU0lkQmlF?=
+ =?utf-8?B?TUkwRFE0bFZEV2tUQmx5VEpVWVF5Y3FSL3lVYTVGNDdmUUJ5UjB2RW5WSzJk?=
+ =?utf-8?B?M2UxaWZDS21mTFdwUExGL2dFdlg5TWhmUEtHc2d2ckllOHZYMXlKM0E1SE0v?=
+ =?utf-8?B?RXQvcU9MZFhoWHRraE9OZUJEeFZPcUdxUUZ0bmxRRWIzWUxkc3JOSDYxOEtQ?=
+ =?utf-8?B?TWdIVVE5WXBhZm9ua0tna0ptQ2d5SldsazhDNXp4U1UyaWNzWHRQTjJwTC9E?=
+ =?utf-8?B?bmVoQjBQcTF2bVhOVytpWVQzZng3VEVLU2pITHlzSVNSS2ZCZkR4SWVwWi9W?=
+ =?utf-8?B?dG1maGo1WGljZjZlTDhJbjdCdmUycXpCeWpZbkxSN0prL0FIbkpacXd6V3pa?=
+ =?utf-8?B?VXhrNlJ2NExhSDlzSU5MbVhwZUpUWWpJc2RxYmFmcWMvVitRalJ1Nis3Y0wv?=
+ =?utf-8?B?b1FTbVEza2ZTV09WNjR2ZVd1MWpBR1FSZ1EvdXVrRWlDVUlOekprSVVrRmJ2?=
+ =?utf-8?B?Zkh5WWV4ZmhPYXJtZ1I0NnpQYWxlZ1dCeDV5d0I3VnRkWlhYNzRXOFZnUm5k?=
+ =?utf-8?B?ZDkrUnlheFlNWEJVdVlDMEVwYVV0dStlNkszT2JwaUw3N3pybkRadW9tbUYx?=
+ =?utf-8?B?Qm5Fc01ONTZ1b0tjaTNFeWhSYXNySE43K2M5b3ppQm5NWDdLcnc1SjlBU0tB?=
+ =?utf-8?Q?zpT5JmREVSWhlBQQbKBWGt1xo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e3c3c88-0af7-4992-a0ca-08dc15b341e2
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 10:18:03.0939
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S65iTwGO4/4PBdFkhVeN8gLNEHb5szd5ky9Zu4IMsGtTZfQcWZvLKaMAYpjLpRTA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6297
 
-On Fri, Jan 12, 2024 at 5:24=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
+Am 14.01.24 um 16:14 schrieb Christophe JAILLET:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
 >
-> Clang static checker warning: Value stored to 'ret' is never read.
-> bgpio_init() returns error code if failed, it's better to add this
-> check.
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_range() is inclusive. So a -1 has been added when needed.
 >
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Christian König <christian.koenig@amd.com>
+
 > ---
->  drivers/gpio/gpio-mlxbf3.c | 2 ++
->  1 file changed, 2 insertions(+)
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
-> index 7a3e1760fc5b..d5906d419b0a 100644
-> --- a/drivers/gpio/gpio-mlxbf3.c
-> +++ b/drivers/gpio/gpio-mlxbf3.c
-> @@ -215,6 +215,8 @@ static int mlxbf3_gpio_probe(struct platform_device *=
-pdev)
->                         gs->gpio_clr_io + MLXBF_GPIO_FW_DATA_OUT_CLEAR,
->                         gs->gpio_set_io + MLXBF_GPIO_FW_OUTPUT_ENABLE_SET=
-,
->                         gs->gpio_clr_io + MLXBF_GPIO_FW_OUTPUT_ENABLE_CLE=
-AR, 0);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "%s: bgpio_init() failed",=
- __func__);
->
->         gc->request =3D gpiochip_generic_request;
->         gc->free =3D gpiochip_generic_free;
-> --
-> 2.30.2
->
->
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
+> index ddd0891da116..3d7fcdeaf8cf 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
+> @@ -62,9 +62,8 @@ int amdgpu_pasid_alloc(unsigned int bits)
+>   	int pasid = -EINVAL;
+>   
+>   	for (bits = min(bits, 31U); bits > 0; bits--) {
+> -		pasid = ida_simple_get(&amdgpu_pasid_ida,
+> -				       1U << (bits - 1), 1U << bits,
+> -				       GFP_KERNEL);
+> +		pasid = ida_alloc_range(&amdgpu_pasid_ida, 1U << (bits - 1),
+> +					(1U << bits) - 1, GFP_KERNEL);
+>   		if (pasid != -ENOSPC)
+>   			break;
+>   	}
+> @@ -82,7 +81,7 @@ int amdgpu_pasid_alloc(unsigned int bits)
+>   void amdgpu_pasid_free(u32 pasid)
+>   {
+>   	trace_amdgpu_pasid_freed(pasid);
+> -	ida_simple_remove(&amdgpu_pasid_ida, pasid);
+> +	ida_free(&amdgpu_pasid_ida, pasid);
+>   }
+>   
+>   static void amdgpu_pasid_free_cb(struct dma_fence *fence,
 
-I added the Fixes: tag and applied it.
-
-Bartosz
