@@ -1,107 +1,82 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C5017C70;
-	Mon, 15 Jan 2024 17:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283241803D
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 17:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sgPKvRIr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705338964; x=1705943764; i=markus.elfring@web.de;
-	bh=/Ca96eOJyuxZcGSv7l/iefKgmthOd3AabqprAzeuaDY=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=sgPKvRIrBelWyeNzCjHkNZaM2fDhYHQ0kNneSgD1vuY6lY9XR7GqE5qdQ08EazWZ
-	 jcjnsqrZsoC+wSJDq6Jqvj6eXNElZxygAZ5lC8ysod5DEWSeqKtDmn41Zhrllf3Ko
-	 2LvpYP0x0ZV6RPaHg6TQ2nnWK7JxhudTgOY098If0ONgDJUkVNITIpdRin3o5o4ku
-	 4t18SJI6FTXAIyBiMe05+tPlQSHL6H1EuvacnlNgM/zQdiK1qoje7RmfvM6fchNtu
-	 ZfNL/r2ZEV54o8NCQeMpXrSsYm0fYAdc8ewWkqJ9YL3vlOYKjidLi4pqWZZoaoZ/3
-	 n+zjN42TImfT2rZ6gw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MEUWM-1rNkoY35Y2-00FyPF; Mon, 15
- Jan 2024 18:16:04 +0100
-Message-ID: <f1977c1c-1c55-4194-9f72-f77120b2e4e5@web.de>
-Date: Mon, 15 Jan 2024 18:16:01 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OPEg1FsT"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id PR9Xr0TyYx8edPR9Xryrz3; Mon, 15 Jan 2024 18:53:43 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1705341223;
+	bh=YQ342wzKG8l+HvEf+kwqJXG/SRijPi9FKSwNRrk06AQ=;
+	h=From:To:Cc:Subject:Date;
+	b=OPEg1FsTJjzZGTiT1H6UWm7uJzM+eOAIJVSnhT9wY+QhMSg6uv9EFGHOW5g5EsPc2
+	 eSFbY4YFUv/zgOJyNDV6d50kRAbA1lEMr2r+QsLgYUCL6Ou3jZYmLI+OPrZtQw7emZ
+	 QG4oV1vSEFN2A5FhQsCjF+eNK/30biNwKSOevKYdI2f3IcF7UIHPrBSDVywARfopC1
+	 mJTcnV6wRiCnTrFOL9FuWhvtwq9qicA/6pqcosV80fm/4cnON4oEPzSOZ9Xom0aiWa
+	 eq2+yZENB+yQ7b+3wfVMN20bjKi0cvp5bEUScvjliGMkVgKrE8JZDLVaQzxXwVWGav
+	 IsHMoBV32/++Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 15 Jan 2024 18:53:43 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: 
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: Remove usage of the deprecated ida_simple_xx() API
+Date: Mon, 15 Jan 2024 18:53:37 +0100
+Message-ID: <f235bd25763bd530ff5508084989f63e020c3606.1705341186.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alex Williamson <alex.williamson@redhat.com>,
- Eric Auger <eric.auger@redhat.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] vfio/platform: Use common error handling code in
- vfio_set_trigger()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Z7qzU6jLC5cPn/dLevgbgCx8zj31z9p9BzGnlUo6qnRP8d4y1Q4
- +LgCokwPLR5G9VadGZiu3ppi8llxC69DKuh3llJFNC6FiVQ+lswHbYdPzkGGPNUOBOlbCZz
- WIbrZQxOwm/G0FgSVHUwZUOW9jbGaBJZxNUPCLXMpKfI6tbRbQ2/IiFYhrw0LxbcSJEXNas
- DYbpsn2HWi/vpboCkYmlg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RiqAqZK9y5E=;sYOKqyUlk+kJ4LlOPo3PXmIH83z
- pLTFVm2Les9olu7Uh211G5dElkH0PLTZHc0+i6Q6sjrOb8aneyH9PTlfzJr3O2eIvDvvq6Xf6
- qnR0o+e7TTAtFZFz3HkRly3edKY31eqbapPqVKji3GONpLBiJdF+h3XA3qoNhlRuqHMNDVkCH
- tV7K5DvGJ9Fs94RKL+s7zPWVaJgA1u8QM1uQnls50/y6dGgHwOpCXp0mkr+USqBzLTYy+9wEq
- r0fn9aCVUEg5/TNStg6AaOPLcu8z4KJWMS1eRx0WSMJaaMUBFEK0oOAlO4O9TYxF5NzkzFVuf
- GoD/VqVGnXJCYJyFl5Lr9V1JUlHqL75mpw7rkl92M1h10y7rBNfMC7QTrCHWB6zNFJFpFvrR7
- qTF1haSFmMdfAh+4P9X9cpMcTaI80gw0sQ9exKnOn/wZplLT/jd/otlpG7UUb+9gnQieSApQf
- JJBA9tuyzM7EnvgAE/kjy2lyS4UuQ8sMQGqKQZca8ZOeyExfvYcL+SiDlQ39ZtXVLd7arf/Lb
- SRy3UCgk6c1aO5mIcChHP+7a7FG1n5odboFiOJyUBCpfSKr2yDh115DfUfPeX8e8KaBBAs8t1
- zJgKfnUVHvo51Jj7OCCod7dQ2eE3LDV/sbH2IAKbfsBO1X1yUV7fgIZ4xBdh2sLz08AmVbrbr
- atd4nZ88pRufV0grZPqiSwQjBna/gmeHmLvUMmLHx93bmKIgE6Ht5cKAuXoiIkOtdaCdAXxXA
- B0VHsc7xwFvp0nCz9R8UmxPxJw13KsqeZnw/vJbvTTfOs/OzApL/yTJDGOXzfBxGsIYaXIGkw
- GWVewi5mfXCzNvqhp8ktmAV59SRLZ+BIzVy3ugjneh0/vNyoh2gVtUx7dcdCjWkYhbfeJWmWW
- cfx5OH4LpTFEvCJT0wdkQe3JmtaBjNuPTscVmFzNoi2739kp55BXZNLzY8OEI9T6RfJCthJ7w
- OAV3KA==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2024 18:08:29 +0100
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Add a jump target so that a bit of exception handling can be better reused
-in an if branch of this function.
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/vfio/platform/vfio_platform_irq.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/proc/generic.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vfio/platform/vfio_platform_irq.c b/drivers/vfio/plat=
-form/vfio_platform_irq.c
-index 61a1bfb68ac7..8604ce4f3fee 100644
-=2D-- a/drivers/vfio/platform/vfio_platform_irq.c
-+++ b/drivers/vfio/platform/vfio_platform_irq.c
-@@ -193,8 +193,8 @@ static int vfio_set_trigger(struct vfio_platform_devic=
-e *vdev, int index,
-
- 	trigger =3D eventfd_ctx_fdget(fd);
- 	if (IS_ERR(trigger)) {
--		kfree(irq->name);
--		return PTR_ERR(trigger);
-+		ret =3D PTR_ERR(trigger);
-+		goto free_name;
- 	}
-
- 	irq->trigger =3D trigger;
-@@ -202,9 +202,10 @@ static int vfio_set_trigger(struct vfio_platform_devi=
-ce *vdev, int index,
- 	irq_set_status_flags(irq->hwirq, IRQ_NOAUTOEN);
- 	ret =3D request_irq(irq->hwirq, handler, 0, irq->name, irq);
- 	if (ret) {
--		kfree(irq->name);
- 		eventfd_ctx_put(trigger);
- 		irq->trigger =3D NULL;
-+free_name:
-+		kfree(irq->name);
- 		return ret;
- 	}
-
-=2D-
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 775ce0bcf08c..c02f1e63f82d 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -202,8 +202,8 @@ int proc_alloc_inum(unsigned int *inum)
+ {
+ 	int i;
+ 
+-	i = ida_simple_get(&proc_inum_ida, 0, UINT_MAX - PROC_DYNAMIC_FIRST + 1,
+-			   GFP_KERNEL);
++	i = ida_alloc_max(&proc_inum_ida, UINT_MAX - PROC_DYNAMIC_FIRST,
++			  GFP_KERNEL);
+ 	if (i < 0)
+ 		return i;
+ 
+@@ -213,7 +213,7 @@ int proc_alloc_inum(unsigned int *inum)
+ 
+ void proc_free_inum(unsigned int inum)
+ {
+-	ida_simple_remove(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
++	ida_free(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
+ }
+ 
+ static int proc_misc_d_revalidate(struct dentry *dentry, unsigned int flags)
+-- 
 2.43.0
 
