@@ -1,40 +1,38 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AA619BCF
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 20:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AF118E10
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jan 2024 20:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Fvt/V/E3"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rvju9V8n"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id PTJsreNfxZ1tSPTJsr3DED; Mon, 15 Jan 2024 21:12:29 +0100
+	id PTQNrgwv8ZHPAPTQNrErBY; Mon, 15 Jan 2024 21:19:12 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705349550;
-	bh=Zag1tyR6DZ8o6qntEb3YzGjDPt9iK1tzSJavyfJS+3c=;
+	s=t20230301; t=1705349952;
+	bh=Nd4xsK13KUVRINMeDES9iWKoGtfPahNcjU6sjTGV0U4=;
 	h=From:To:Cc:Subject:Date;
-	b=Fvt/V/E3sZtxVJf+mQhWHRGR9UNENrZh+TtJZiiT94FKJKCLoKfIhOWzFRNOlOL6S
-	 2ANyEWnTwBUJwHzg7yqtS8/Xj28GYXpAbsuMBZ4KvDMCExUgkmLwovLs5DAyNJQEV/
-	 a1/OQUCeh+xlIvp7U8OCVkTZn45UOszSqr4K7PpP48W1IC618W+VxNlTKP/S5qw3rk
-	 kI9zZtbWY1rK3KDRybgAhVZEZp4l59LGeF3AtEKkLVHe3oT8CcURsphSxQ5v/fscFG
-	 rWyhFzmmaGJrXZ6lGL4yimXGK0QUDdGGRI5LZH8xIuWkj1kH6Hs0KMCO4rr5velLWT
-	 VD28KI6E4UjJA==
+	b=rvju9V8nVQQCGIp2vv2cWzL991buAagC5aU7ROOXh64pAksfHuPeD0XCWauy49vzQ
+	 fp3B7xbnlcpbJ/9B/i3MnzRiWpmrC3lraAigKZP4cyY2//CsKelSU90LnFGxcoZuHi
+	 9rBv0o+9KgfWfFuhxim4Nls1FBDWlXl3XpnXk77g7fOMwqJ+zx5qmmt8m7P7TBZWwr
+	 CfH57WK5vojg4fF+Bp8A6RtuOaKD/apiQc8SdoJZM00Vb3oEGgOnwHPBM3rEUlr6gj
+	 nAOCrF8rOYBpRfd+WFf2hoN//f+8R/A4XUumgJlgphbkZ+mm/ItNz1DyFtKGIBe5Ht
+	 5Cckss9s3kYtA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Jan 2024 21:12:30 +0100
+X-ME-Date: Mon, 15 Jan 2024 21:19:12 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: Remove usage of the deprecated ida_simple_xx() API
-Date: Mon, 15 Jan 2024 21:12:19 +0100
-Message-ID: <3b3523b475d0f5cadf81b3131bb1a38b7476b020.1705349526.git.christophe.jaillet@wanadoo.fr>
+	linux-input@vger.kernel.org
+Subject: [PATCH] Input: Remove usage of the deprecated ida_simple_xx() API
+Date: Mon, 15 Jan 2024 21:19:04 +0100
+Message-ID: <a885de14beead2cc3c1c946f192b8b178dac696a.1705349930.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,78 +46,48 @@ ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
 Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_max() is inclusive. So a -1 has been added when needed.
+ida_alloc_range() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I've not been able to find the rational for the HCI_MAX_ID value (i.e.
-10000) is the BT spec I've found.
+ drivers/input/input.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-Instead of having these HCI_MAX_ID-1 in the code, we could also change
-the value of HCI_MAX_ID to 9999.
-I don't know what makes the more sense.
----
- net/bluetooth/hci_core.c | 9 +++++----
- net/bluetooth/hci_sock.c | 4 ++--
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index e5cb618fa6d3..41d2d1956527 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -2639,10 +2639,11 @@ int hci_register_dev(struct hci_dev *hdev)
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index f71ea4fb173f..de7884a5be39 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -2629,17 +2629,15 @@ int input_get_new_minor(int legacy_base, unsigned int legacy_num,
+ 	 * locking is needed here.
  	 */
- 	switch (hdev->dev_type) {
- 	case HCI_PRIMARY:
--		id = ida_simple_get(&hci_index_ida, 0, HCI_MAX_ID, GFP_KERNEL);
-+		id = ida_alloc_max(&hci_index_ida, HCI_MAX_ID - 1, GFP_KERNEL);
- 		break;
- 	case HCI_AMP:
--		id = ida_simple_get(&hci_index_ida, 1, HCI_MAX_ID, GFP_KERNEL);
-+		id = ida_alloc_range(&hci_index_ida, 1, HCI_MAX_ID - 1,
-+				     GFP_KERNEL);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -2741,7 +2742,7 @@ int hci_register_dev(struct hci_dev *hdev)
- 	destroy_workqueue(hdev->workqueue);
- 	destroy_workqueue(hdev->req_workqueue);
- err:
--	ida_simple_remove(&hci_index_ida, hdev->id);
-+	ida_free(&hci_index_ida, hdev->id);
- 
- 	return error;
- }
-@@ -2824,7 +2825,7 @@ void hci_release_dev(struct hci_dev *hdev)
- 	hci_dev_unlock(hdev);
- 
- 	ida_destroy(&hdev->unset_handle_ida);
--	ida_simple_remove(&hci_index_ida, hdev->id);
-+	ida_free(&hci_index_ida, hdev->id);
- 	kfree_skb(hdev->sent_cmd);
- 	kfree_skb(hdev->recv_event);
- 	kfree(hdev);
-diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index 3e7cd330d731..4ee1b976678b 100644
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -101,7 +101,7 @@ static bool hci_sock_gen_cookie(struct sock *sk)
- 	int id = hci_pi(sk)->cookie;
- 
- 	if (!id) {
--		id = ida_simple_get(&sock_cookie_ida, 1, 0, GFP_KERNEL);
-+		id = ida_alloc_min(&sock_cookie_ida, 1, GFP_KERNEL);
- 		if (id < 0)
- 			id = 0xffffffff;
- 
-@@ -119,7 +119,7 @@ static void hci_sock_free_cookie(struct sock *sk)
- 
- 	if (id) {
- 		hci_pi(sk)->cookie = 0xffffffff;
--		ida_simple_remove(&sock_cookie_ida, id);
-+		ida_free(&sock_cookie_ida, id);
+ 	if (legacy_base >= 0) {
+-		int minor = ida_simple_get(&input_ida,
+-					   legacy_base,
+-					   legacy_base + legacy_num,
+-					   GFP_KERNEL);
++		int minor = ida_alloc_range(&input_ida, legacy_base,
++					    legacy_base + legacy_num - 1,
++					    GFP_KERNEL);
+ 		if (minor >= 0 || !allow_dynamic)
+ 			return minor;
  	}
+ 
+-	return ida_simple_get(&input_ida,
+-			      INPUT_FIRST_DYNAMIC_DEV, INPUT_MAX_CHAR_DEVICES,
+-			      GFP_KERNEL);
++	return ida_alloc_range(&input_ida, INPUT_FIRST_DYNAMIC_DEV,
++			       INPUT_MAX_CHAR_DEVICES - 1, GFP_KERNEL);
  }
+ EXPORT_SYMBOL(input_get_new_minor);
+ 
+@@ -2652,7 +2650,7 @@ EXPORT_SYMBOL(input_get_new_minor);
+  */
+ void input_free_minor(unsigned int minor)
+ {
+-	ida_simple_remove(&input_ida, minor);
++	ida_free(&input_ida, minor);
+ }
+ EXPORT_SYMBOL(input_free_minor);
  
 -- 
 2.43.0
