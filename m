@@ -1,101 +1,102 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025C21CD10;
-	Tue, 16 Jan 2024 18:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85D21CD2A
+	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 18:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705428591; cv=none; b=dI6TboCt0ZZ+2j9Chs+DTxI+YXVv3i/mTdKKvrB4dViHiqo7Tw0E1wDrdzaLATtzZEhjZ4CF+uqwl7gPwovLv6M4jhrKGn+nWhvMHiTPtGXNNangX6rMRp2FBZJeQIGYhPEdCSk96BamSQGJJ9D5bwZAwh3PDa+ks3s6EZAqlIU=
+	t=1705429995; cv=none; b=j8x0ul5jY9Ahk3EFCfGCSAc2B+hrNSV49AbHCHZKZhRSjnq2pEemVskP7FLh9/Wl/sx4eD6mEN4n+fjf25dt+eE0tvLPcJJ65KKHiTNcNCyQ1hHYKN17tMcgg8Ob0GkV5CAQwLkW6uuXdyMrxurqOB7EMtmgz26Uks6kDaIQSns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705428591; c=relaxed/simple;
-	bh=OZ6qT5H7gUGQcQ4dmXEFu6J/Unk+wv7oC3SQ7K4u91I=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
-	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=d4sUY3mF9gePV28xjPu7dwufzKPFwa9ANv0nkUUj6PDrFRfdBX7CvIHRnLBV3TSzV/NU1WHO/9RAf+Xcky0KJfaXG6ihuPdgYGrxxgft3VhMQVVFIIJKJ4PlaNz6RIHry301qVt48seFik9TGKaTGcqcrUYVpOfkQm8CHKBLBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBOWXujF; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1705429995; c=relaxed/simple;
+	bh=JwNvuHi5CpdeD9Q7CbYVbQzkcZ5+AVv/Usz1r2vNrkw=;
+	h=DKIM-Signature:Received:X-MC-Unique:Received:
+	 X-Google-DKIM-Signature:X-Gm-Message-State:X-Received:
+	 X-Google-Smtp-Source:X-Received:Received:Date:From:To:Cc:Subject:
+	 Message-ID:In-Reply-To:References:X-Mailer:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding; b=qK5xB/kkPLjOWXxYnZbjkcvgenG8LJWrUCYvok64oemlkiETscFKheRnqcjDM6jKf6UuX5010u4JRbDOe7ebFXCCj8RycpLJ5Xdhhdktdm3ncJqs7MQWO+ZDznLA4lhJwY6gYzmzK8JsJokmQsjI6m80W0bKeknQFvID48AkAbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RkiPhIMT; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBOWXujF"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e86a76c11so5695885e9.2;
-        Tue, 16 Jan 2024 10:09:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705428588; x=1706033388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=If228pjOeVfV9yZ/ZGaoDXhQ/Dz1ExXqs1+aqm8Cwjk=;
-        b=XBOWXujFFqffH9496XNeCnJQV9tdC8jnG59eco8OrTxKS/4NeEB3Vkj6gX2IjogbJG
-         iqhfXcRmxmt8LReocvJE9pt/ISJyXZ2M2SkJojFmYHmAjMfkYaul+fpGdE66tsKf1tYg
-         eIqyWETfzIk+dIE8Y0azb3TKn225xk8WxgNJT0OlEtCs7in+Xb0h18wEya+KC7vEmRPa
-         zwGGGV93nb7793Rdsc3bb72hVKVRQQhNdLBUAc3f0A1ldFUZxKbr5Pg8ct0Lyi2Vw9bT
-         y0qx405Ja6YIH6Woa6czsfv4tgb2tDzp8IG2HTF9rCeUPQ56hKk9nJq+Jl0SYwnsCNZg
-         TnqQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RkiPhIMT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705429992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FISaMlvGT4jM9D2WMtxVsmws03Og0Eq0GceC6awRLlY=;
+	b=RkiPhIMTk1WM7rn6arWhT1CDiVjvFgwoQgKByn3NAAslIJwMw3VcEgCq+8y+1bG4ZZo/E2
+	8RGAv4J5wCf/qVhyGEPHrL8vnOLjyLvFAupmFkrMXTKeFoWlkMJ6iHPaA7ghI1EiCVCINs
+	m8TKWbdMEOOINCkaYUVEu5WuxRGkQvk=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-445-Xd_EdoFXMYafNvj-pd3Ong-1; Tue, 16 Jan 2024 13:33:10 -0500
+X-MC-Unique: Xd_EdoFXMYafNvj-pd3Ong-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bf48e0f513so170371439f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 10:33:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705428588; x=1706033388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=If228pjOeVfV9yZ/ZGaoDXhQ/Dz1ExXqs1+aqm8Cwjk=;
-        b=UCDT+qkQFOPHFaKdr2MZ4H/KRuVid4PPKcyGsHCVJj3kXlwF2KHfNAIOzqfYfHM48r
-         ovrQx0f8aA/YbwUpXK096p3Bw4zStXpKoxzfBHdyM43ErcxzmMdA81X6/THINzkamzOF
-         IPsMQA0PMI2DLg8m6vsMhikKS7eAAjanTltjDFJDKJ7+lHyR6pWjyE9jXQ7XmsByOVj+
-         KQWtpFW++siZyR9k3HhramX2evjCgUs1/rDio6Ul5odFYx7hLz4fiw4adGal4dybRb9O
-         KfXmDvEU38FHIIfQ3qtPgtubSdAPgVdoaIW/roFHV1oH/C03AHK/Rov1MuUBX7QDwoBK
-         7zrQ==
-X-Gm-Message-State: AOJu0YzjxGbAxuwgvUvncH2CBw00Rujl7SlQgI/kD22ZXO+Il0Kpzh7f
-	1PkYfZNUKaylUtRnqjkw8Zo=
-X-Google-Smtp-Source: AGHT+IHy7OW1zG1UPyHvt7j7pYMKohRkWh+k4fYc/0MxPSM+XqtRXuxNR8WWuihEjVrBs/pThyN4JA==
-X-Received: by 2002:a05:600c:3793:b0:40d:5b0e:2f5c with SMTP id o19-20020a05600c379300b0040d5b0e2f5cmr2901761wmr.52.1705428587969;
-        Tue, 16 Jan 2024 10:09:47 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n18-20020a05600c3b9200b0040e4ca7fcb4sm20074528wms.37.2024.01.16.10.09.47
+        d=1e100.net; s=20230601; t=1705429990; x=1706034790;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FISaMlvGT4jM9D2WMtxVsmws03Og0Eq0GceC6awRLlY=;
+        b=AmkmJLgh2gxpUeiYOv5tDzGvzKjWFgDkdwDH82TPR+2NHhiP9kactPDb1In3eCZF5G
+         vpChERdOlBYhHnqtk/tbylTwPMtChx5xWPMLneWeSoIZ+LvQ3wSthGTvvoRYi5bE+zrJ
+         gdKOomtm4NEAjNK7zdZ0WLDPJlrEuLMACk3JGW6PIxfHi1p+P6jYINCN8IK4LUEdDJLH
+         wQeocThxEK60C+sMFaZuw4sQvrP7Ts0zErmBUh8Y7YfSStH+hx0jCA4ctiHS2ECZ9gRB
+         YHNDBqYRzCZcCFk/hKpSna4AB3rWrQPgRBqEhW3HASyeJpmAIAX0QzAHgBJiikDIXcCY
+         LtHQ==
+X-Gm-Message-State: AOJu0Yy47E8k+bRMlqKtry/u/vjlRVgl+TF5i/r0tjRjQS7h57rfPHgd
+	DbM0ZZ60RIMnQOT0ROEMJpirk5SGZJKM+oGEPG/6EuU7N3hxqc5Z6tEo4QIaKQhDYYFAdJdBJbh
+	r7/umYOW4byiB899RqniYEVKBMbcJ0C60kNc0
+X-Received: by 2002:a5d:8c9a:0:b0:7bf:4694:6c36 with SMTP id g26-20020a5d8c9a000000b007bf46946c36mr4546970ion.9.1705429990000;
+        Tue, 16 Jan 2024 10:33:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IErDazX7NWGFXtbf/P4jQZuCg4zJCLsr6AAXK6x7UHmTrzfxIKGZgBT8q7U2HRZ1DI6P7MRHA==
+X-Received: by 2002:a5d:8c9a:0:b0:7bf:4694:6c36 with SMTP id g26-20020a5d8c9a000000b007bf46946c36mr4546960ion.9.1705429989777;
+        Tue, 16 Jan 2024 10:33:09 -0800 (PST)
+Received: from redhat.com ([38.15.60.12])
+        by smtp.gmail.com with ESMTPSA id bm7-20020a05663842c700b0046e41dace9csm3020396jab.30.2024.01.16.10.33.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jan 2024 10:09:47 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hpfs: remove redundant variable r
-Date: Tue, 16 Jan 2024 18:09:46 +0000
-Message-Id: <20240116180946.2321779-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 16 Jan 2024 10:33:09 -0800 (PST)
+Date: Tue, 16 Jan 2024 11:33:08 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: vfio/platform: Use common error handling code in
+ vfio_set_trigger()
+Message-ID: <20240116113308.78935e11.alex.williamson@redhat.com>
+In-Reply-To: <ab6bcd8b-f53c-47d1-8c55-c374a36d6ee4@web.de>
+References: <f1977c1c-1c55-4194-9f72-f77120b2e4e5@web.de>
+	<20240115133756.674ae019.alex.williamson@redhat.com>
+	<ab6bcd8b-f53c-47d1-8c55-c374a36d6ee4@web.de>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The variable r is being assigned a value but it isn't being read
-afterwards. The assignment is redundant and so r can be removed.
+On Tue, 16 Jan 2024 12:32:23 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'r' is used in the enclosing
-expression, the value is never actually read from 'r'
-[deadcode.DeadStores]
+> > TBH, this doesn't seem like a worthwhile exit point consolidation.  A
+> > change like this might be justified if there were some common unlock
+> > code that could be shared, but for a simple free and return errno by
+> > jumping to a different exception block, rather than even a common exit
+> > block, I don't see the value.  
+> 
+> Can it be helpful to store the shown kfree() call only once
+> in this function implementation?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/hpfs/namei.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I don't believe it's worthwhile, it's a simple function with simple
+exit paths and consolidating those exit paths for a trivial kfree() is
+unnecessarily complex.  Thanks,
 
-diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
-index 9184b4584b01..9b546ec6e614 100644
---- a/fs/hpfs/namei.c
-+++ b/fs/hpfs/namei.c
-@@ -547,8 +547,7 @@ static int hpfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	de.hidden = new_name[0] == '.';
- 
- 	if (new_inode) {
--		int r;
--		if ((r = hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1)) != 2) {
-+		if (hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1) != 2) {
- 			if ((nde = map_dirent(new_dir, hpfs_i(new_dir)->i_dno, new_name, new_len, NULL, &qbh1))) {
- 				clear_nlink(new_inode);
- 				copy_de(nde, &de);
--- 
-2.39.2
+Alex
 
