@@ -1,58 +1,54 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0064718ED9;
-	Tue, 16 Jan 2024 10:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED811AAA6;
+	Tue, 16 Jan 2024 11:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8kYel86"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e76109cdeso21142085e9.0;
-        Tue, 16 Jan 2024 02:51:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrAkO70f"
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bed9c7d33fso251668639f.1;
+        Tue, 16 Jan 2024 03:02:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705402295; x=1706007095; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705402956; x=1706007756; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QmW3E1M++L+e6C8eJiaAiTpNXnV9f8Z6oWcF270MPX8=;
-        b=e8kYel86+UXggl7qe9PXaB+qHYnCSKK/K0eIwjs1il8+HYc6+dRo0xevRzCbSAM9pq
-         Lz2EF1+xr3gkS6UBVHpzmuVbM+k4OlDbC19TTpxAKf/MTgMICqP7981etJqxPz9nnuaP
-         YnHREKbuC/nxHqeZepGTSr37UaLXzo/vjx1RooFgXvtn736XlShVv02dznYM3vMVptAB
-         AG1MzFVinomd4MLr3XPbLa9RMID4kCa1A+Y0o0zMKkexnqTK7hYysc+NUJLnotyxXKGA
-         pYRMM3NZW7Rk/SoHoMgLPWShpnEGEqhTgmTwiRKcuWW22aLYtr9ZlshVAvtDcimt/eYG
-         eRFA==
+        bh=iqOqjkfvNIfCwRpg7jTDgB80yQS5ORpkHz9Fa7X1S9c=;
+        b=OrAkO70fjv5QRopgqk90QncS6gRcLWY3IV2qv4EVOd0sUgl4Y9zfy6I3nLwefTGuP7
+         6Rks5+5OJuItVqkEI68+DLiI4moZ7XvFmO2tahtaQf9ba2HbX03dxhG7MR5G9cBEaFti
+         sq3FzaEI1ch4fZtJCLnajAoN8I4T/jv0E26Bb9XzG+KwuPnO3UH1jNcoXotIRS5GUyoQ
+         puzK2uPtHIzn+YZFndXKduGriZcO4VFSLnRvMoyV6P+7Bcw5QGgC/tO7xToOKZXx8Y01
+         4qnYavnoGiRq4hzXEYJWCUAPX2PS4/3FkSF46p//BB1F68az7ETyoyqmdUG096obxHph
+         AQaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705402295; x=1706007095;
+        d=1e100.net; s=20230601; t=1705402956; x=1706007756;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QmW3E1M++L+e6C8eJiaAiTpNXnV9f8Z6oWcF270MPX8=;
-        b=liUDg6fWqiRtn/77f+uR5hrDzDkeA8J3Vb3doaXlJE9aZ2d5motFCN6hrwXqdBNy8J
-         yUOX8+Z6rSme7DiaO6GBegznfvAbSRKSZIGZUIP0ACTMAa1IXj6kfdNKdii34KaEk03H
-         k1TxO8VYAyUMEIQc+CKrBR8MVdm3ZhvUk2BaOoNlN/Kk1jrznXTaUcWekj+z0mi61W6U
-         QD5mVtHkHhhOiPTmVgFvMBAnyAX1RlxF6QpUAZMaiU2Wc6JOH6gOfpJd4pplKLCKs/SQ
-         FLpx4uYab71Jati3oAx9ZLkxlU+yd9mM6xtXibboYDOLV56HIkd7AZEkgyfrRjI1lgWH
-         WX5A==
-X-Gm-Message-State: AOJu0YyDJTZhGLWm++t8S5nEBnH+/eMkuvzr7C0KMki3fOZSRiVZavE2
-	VuRhKdFBruvU2UvFmUYG8H4=
-X-Google-Smtp-Source: AGHT+IGsRM2SQvZwTko+3YSCVvtjJBo13ZTflclOl7C3d7usUv8K2vrGo9hRAFWuejKivQmhjFmcnw==
-X-Received: by 2002:a05:600c:1310:b0:40e:4a58:3c1c with SMTP id j16-20020a05600c131000b0040e4a583c1cmr3706765wmf.154.1705402295001;
-        Tue, 16 Jan 2024 02:51:35 -0800 (PST)
+        bh=iqOqjkfvNIfCwRpg7jTDgB80yQS5ORpkHz9Fa7X1S9c=;
+        b=qK7kaTI0Zu5p8a+hxoaCQUhmQwfz2rfBSreO8v2dXqJ2lu7d34SozZGaFjBOExOO98
+         dt7Us9jyCdfmZpX43BTN6A1crM1CtVseiMILXrrOEiifIeHBqJx4mA3qNcA71J5R+osx
+         qehD764ZVKmR7PWWSxZ1iZD3fhoKn2vf2j4SUGfyAI19cjp49wLExzrCI9sEwZwBz5aw
+         0QCKTPW7v5NkhX8yRaKvOgXmVfo27PPLsUMY/XKZlX+Lw/ODFuvhjRJNAp2J04GdW2n+
+         9lmUJIay6OZf3cLONlMy6cR5bvgjsG+l50gdRDIO/TkcL1Qa8D9wxn25ZpmYf6zqYbeW
+         8N/A==
+X-Gm-Message-State: AOJu0YzEYwZxVq/8RLHHXptEsP9MQRT/6QI68I9T7BMYYANzVFVEAFaU
+	O62qPy4fwl31vHxnPlxP4Tw=
+X-Google-Smtp-Source: AGHT+IF38h5TsIuDvf7jRRrOoP3knyuGMZBka8shy/jppv+UyVYarH52O8H/Y20aE9ADQLOtd8MhTQ==
+X-Received: by 2002:a5d:8d16:0:b0:7bb:5d51:46c8 with SMTP id p22-20020a5d8d16000000b007bb5d5146c8mr7181165ioj.18.1705402955921;
+        Tue, 16 Jan 2024 03:02:35 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g7-20020a7bc4c7000000b0040d5c58c41dsm18400875wmk.24.2024.01.16.02.51.34
+        by smtp.gmail.com with ESMTPSA id i13-20020a6bf40d000000b007bf32234124sm1689273iog.32.2024.01.16.03.02.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jan 2024 02:51:34 -0800 (PST)
+        Tue, 16 Jan 2024 03:02:35 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
+To: Matt Porter <mporter@kernel.crashing.org>,
+	Alexandre Bounine <alex.bou9@gmail.com>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] cifs: remove redundant variable tcon_exist
-Date: Tue, 16 Jan 2024 10:51:34 +0000
-Message-Id: <20240116105134.2245640-1-colin.i.king@gmail.com>
+Subject: [PATCH] rapidio: remove redundant variable tmp
+Date: Tue, 16 Jan 2024 11:02:33 +0000
+Message-Id: <20240116110233.2247061-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -63,50 +59,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable tcon_exist is being assigned however it is never read, the
-variable is redundant and can be removed.
+The variable tmp is redundant, it is not being read after the
+assignment and hence it can be removed.
 
 Cleans up clang scan build warning:
-warning: Although the value stored to 'tcon_exist' is used in
-the enclosing expression, the value is never actually readfrom
-'tcon_exist' [deadcode.DeadStores]
+warning: Although the value stored to 'tmp' is used in the
+enclosing expression, the value is never actually read
+from 'tmp' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/smb/client/smb2pdu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/rapidio/rio-scan.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index bd25c34dc398..50f6bf16b624 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -3918,7 +3918,7 @@ void smb2_reconnect_server(struct work_struct *work)
- 	struct cifs_ses *ses, *ses2;
- 	struct cifs_tcon *tcon, *tcon2;
- 	struct list_head tmp_list, tmp_ses_list;
--	bool tcon_exist = false, ses_exist = false;
-+	bool ses_exist = false;
- 	bool tcon_selected = false;
- 	int rc;
- 	bool resched = false;
-@@ -3964,7 +3964,7 @@ void smb2_reconnect_server(struct work_struct *work)
- 			if (tcon->need_reconnect || tcon->need_reopen_files) {
- 				tcon->tc_count++;
- 				list_add_tail(&tcon->rlist, &tmp_list);
--				tcon_selected = tcon_exist = true;
-+				tcon_selected = true;
- 			}
- 		}
- 		/*
-@@ -3973,7 +3973,7 @@ void smb2_reconnect_server(struct work_struct *work)
- 		 */
- 		if (ses->tcon_ipc && ses->tcon_ipc->need_reconnect) {
- 			list_add_tail(&ses->tcon_ipc->rlist, &tmp_list);
--			tcon_selected = tcon_exist = true;
-+			tcon_selected = true;
- 			cifs_smb_ses_inc_refcount(ses);
- 		}
- 		/*
+diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
+index fdcf742b2adb..8f1bc69f7153 100644
+--- a/drivers/rapidio/rio-scan.c
++++ b/drivers/rapidio/rio-scan.c
+@@ -528,7 +528,6 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
+ {
+ 	struct rio_dev *rdev;
+ 	u32 regval;
+-	int tmp;
+ 
+ 	if (rio_mport_chk_dev_access(port,
+ 			RIO_ANY_DESTID(port->sys_size), hopcount)) {
+@@ -562,8 +561,7 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
+ 	rio_mport_write_config_32(port, RIO_ANY_DESTID(port->sys_size),
+ 				  hopcount,
+ 				  RIO_HOST_DID_LOCK_CSR, port->host_deviceid);
+-	while ((tmp = rio_get_host_deviceid_lock(port, hopcount))
+-	       < port->host_deviceid) {
++	while (rio_get_host_deviceid_lock(port, hopcount) < port->host_deviceid) {
+ 		/* Delay a bit */
+ 		mdelay(1);
+ 		/* Attempt to acquire device lock again */
 -- 
 2.39.2
 
