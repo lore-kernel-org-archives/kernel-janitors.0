@@ -1,78 +1,97 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2AE1B7F3;
-	Tue, 16 Jan 2024 11:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B401B7FA;
+	Tue, 16 Jan 2024 11:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JyKeXbNH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705404751; x=1706009551; i=markus.elfring@web.de;
-	bh=iAhuJ/qQVCBNcDA7a+DCqneotDxV2KRsYE5G4LmVFbU=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=JyKeXbNHh1YPE38KNNl4pFzENqsj94iAtCjxFl4cpg3AVhjVweCJdJorozew0HUk
-	 PLmzumEy8feCAr8TbT+MBZ1mhVmeoj83jVdPwWDPACQlDR4uzRAW5gL6bzLHgBmuU
-	 x5/uE4q7oGW3a97U56to2eqE9Rw/PM5uxjz8FbxMOdY7OBW0auQ/qqYofYNkRsy8H
-	 2UUH2QOl1IPcazulENk6DKTVDNO88RnTMezLXmiQNQlce0tkmcPlIKh+wh0UVUpFj
-	 UjoPCZFqwx/oaimbV+71yIdSWLYw4DiorsaP7SH5htwq0WUIeQ+5KgScr8jhDVIWe
-	 G+umHwAdFkWxr8yYgw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWQud-1rejZM22Z9-00Xum7; Tue, 16
- Jan 2024 12:32:31 +0100
-Message-ID: <ab6bcd8b-f53c-47d1-8c55-c374a36d6ee4@web.de>
-Date: Tue, 16 Jan 2024 12:32:23 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3Zyu9bI"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-337bcf021a4so232513f8f.0;
+        Tue, 16 Jan 2024 03:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705405226; x=1706010026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YewKcZq9ai29+XsmmSF+19VjOQg1O5xe25ZObecFqLE=;
+        b=N3Zyu9bI+zCT95Vu/LB6uD0u68yaR4P2uFFV4diciUnGkfcJB7Dp6/uxV1U4rpZfMV
+         6A2htaoXypHxOCoSv4ihRyEGGVGO/PDN9VzrV/ypQaHZu22kKed9ydFDBd0m3cWi2u3k
+         3dkL89yPN8syVeVCLOi4Upv+5MvfZMmiztFt1RP1z8sltWAS0QssQdukWPd+M46gU7B8
+         SP8mcFNpXHqTb+6pSZP3Ww5oaw/IfKsulsJXj2FavE852e/5bcLAFzWWsUEtDlTSs8xu
+         REVKh58EIzeR1wX3eN6NotWSLiUOmLV2B/ed6v+3LFDHgLzNh9bSjPhpcXbxUQcpR5fk
+         S49A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705405226; x=1706010026;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YewKcZq9ai29+XsmmSF+19VjOQg1O5xe25ZObecFqLE=;
+        b=eLNYpOyA6Yq5BNULh6LbnWqDBgN+rISnDewYK3nZw20SzCagpptCi/1iA7D6s2PoXn
+         yWSVQEaqdrcft/Xwn8j27bE+FR3g5hx/t6UCyN+fudDbKgWuF/oEagW+jwY1bCmUIwcF
+         7TvO/HQ2Gyx3NvZUsIr+Fd7l2lVIs6yDg+ChUHs0+u3clYH2gGro7fkhOXQlYQAp9Em+
+         MS75PNHSg+SOWn97DxkvOoG4nr1gvwCv5taoLLo7+JVXVujzIvCw+1G9itvbqQVJeJRt
+         ad2MzdioOI4N0nPSZDAxuE6NIZCmFXdzYRMNtYsnVSNf+d6DtN7lR6Ek+/Ap8+bp4VQ/
+         Ucbg==
+X-Gm-Message-State: AOJu0YxBuHdKxYb/DUIFkGnlvO7DSmiltYqVnXmAAhhQUlSQeZphOAsw
+	E/NOg2XkL4lcD1moR+mkwfk=
+X-Google-Smtp-Source: AGHT+IHH3ucOcfJNtDsU7uoU8keEu9FHuynpSArvy0s7B0SFF8LAXUKnsdfcHR1e5N9g2xT/ItKvhw==
+X-Received: by 2002:adf:ce0f:0:b0:337:3f58:e305 with SMTP id p15-20020adfce0f000000b003373f58e305mr4224383wrn.39.1705405226415;
+        Tue, 16 Jan 2024 03:40:26 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f1-20020a5d6641000000b0033609584b9dsm14446304wrw.74.2024.01.16.03.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jan 2024 03:40:26 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alex Elder <elder@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: ipa: remove the redundant assignment to variable trans_id
+Date: Tue, 16 Jan 2024 11:40:25 +0000
+Message-Id: <20240116114025.2264839-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: vfio/platform: Use common error handling code in
- vfio_set_trigger()
-To: Alex Williamson <alex.williamson@redhat.com>,
- Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <f1977c1c-1c55-4194-9f72-f77120b2e4e5@web.de>
- <20240115133756.674ae019.alex.williamson@redhat.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240115133756.674ae019.alex.williamson@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ePm0QBO8e1avTdTL7DQnx+zr63juMwHQUHf/MqZ58wen1wf5U7Q
- nC3rH0Y822QXoWWjh+pQEpbDg3/sfZlNbp5rzTmaueSlfOeDQMvjChS5PA1EA+f5QeXrAYB
- e+xUQZKDGO2NVaZScLr+gzBv1iRwO/Jvy96wltiWVBW9SPMZVrlzjcneICYitwJKhjV7c45
- nX3vUK8bTg9BmiqmeREfA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:l+D0pf4ENc4=;xhq2bwmffmLpT/ZH3Np3y9ADRoj
- N1+L5kyZkxluuNKM0B3HLryXKaZM4Bmw9IF71gmD/NvN1UXcaSimmSYleskDk34BmvCxiS9TR
- 66TpSQspB5GxBzlTRs08LqIlhr3ZtazmIFo+aDOj/4vsyvwoEU3LZDFtS09e2cp8FH/5/dCaD
- 2ofTW7FjWNm454s1g0YOwAOxtrh3VrvOhrCjAu4QAKd7q1XqNxnnRBJ3kPDKxpK0Ptj4DRpBH
- NuWUa4yasDkv+xadIkSmOpPv4Bffz7Xcr0naGYcd8lYVk13G/gTZbo36lmcsvsTybRAfYxBbY
- JXmiFDSXY7/VQFiVSS0EBgAWupLRkaZED1PgWePy6XbWCRmzYQAPNcQ6AZwpXk0BLXDhtzfMy
- tf/ELA4ixuI1t8LMyFCguwNiZm4vCEtLK2FVqXsGU5t0e+ZYSI+zHawXuT3Yb1qUDgrVw6SCL
- PLcMrk+MPln7inGNSpdqudNOuWGhX9xaFldslB4PJcmSfRlwUCBIJGb/m3hmz7HkcqFSo9apM
- rUK0eMourke44zu1lJWNTOPny8F1R5ewmQUzMuljl8vouB2W4fbYLSWyfS/UT8OEIFfq9kNA0
- qPcavZL6ErQm40yTY1xiNtzM1907n0Qwek8mnNT69k5EPJAm0zqd5IODeTFGviFfkwmNUL9fs
- MYbWxxYBxQiFT6UaSnfuwnjI6LgwsSYIm7eLB9DvNZdKTeTufFl6Jhu0vOwdKZgw6sOwCjgu3
- dShjq/T6s53g9+2ViAJY3i1bPI9L1aQkWO7izKuJ1acESISH3Xq4HvXvC67yAOdizA8Cwnzle
- TfM+g6Nf8G1KeCmXEUBlaIBN6su1NBFrqBdhbX28EyfGIuMKrfsFb7AEg17N/uNoIheUYfUs8
- dt/nEzFPSKmjlX7OOX9qrj4E3ttIaVZ0/fq+0cO30pBho+W+psAoBmc9174Lup6LaW7+dsY7g
- 2IS9ig==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> TBH, this doesn't seem like a worthwhile exit point consolidation.  A
-> change like this might be justified if there were some common unlock
-> code that could be shared, but for a simple free and return errno by
-> jumping to a different exception block, rather than even a common exit
-> block, I don't see the value.
+The variable trans_id is being modulo'd by channel->tre_count and
+the value is being re-assigned back to trans_id even though the
+variable is not used after this operation. The assignment is
+redundant. Remove the assignment and just replace it with the modulo
+operator.
 
-Can it be helpful to store the shown kfree() call only once
-in this function implementation?
+Cleans up clang scan build warning:
+warning: Although the value stored to 'trans_id' is used in the
+enclosing expression, the value is never actually read from
+'trans_id' [deadcode.DeadStores]
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ipa/gsi_trans.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ipa/gsi_trans.c b/drivers/net/ipa/gsi_trans.c
+index ee6fb00b71eb..f5dafc2f53ab 100644
+--- a/drivers/net/ipa/gsi_trans.c
++++ b/drivers/net/ipa/gsi_trans.c
+@@ -247,7 +247,7 @@ struct gsi_trans *gsi_channel_trans_complete(struct gsi_channel *channel)
+ 			return NULL;
+ 	}
+ 
+-	return &trans_info->trans[trans_id %= channel->tre_count];
++	return &trans_info->trans[trans_id % channel->tre_count];
+ }
+ 
+ /* Move a transaction from allocated to committed state */
+-- 
+2.39.2
+
