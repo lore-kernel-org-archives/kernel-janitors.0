@@ -1,55 +1,59 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69121A590;
-	Tue, 16 Jan 2024 11:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A101B941;
+	Tue, 16 Jan 2024 11:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzTL8GnA"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50eaabc36bcso11965667e87.2;
-        Tue, 16 Jan 2024 03:07:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpH/qViK"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e800461baso11416915e9.3;
+        Tue, 16 Jan 2024 03:16:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705403245; x=1706008045; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705403770; x=1706008570; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QVAGc4XL3xs1uMSry25G+l6Lbj7TMq/VrUzFoxhkoKU=;
-        b=lzTL8GnAmiCDdrB9X8AY46y+KtpHjUe0jjlCof1XZ//53AcBhiZwsfOT1l7LFYR7AJ
-         4oiL3uLCrugQa4P5/gpHNYYbnA4v2pcDuFgbT3iGDmMEuhsU5YXlvilPhkUYR1DkP/DO
-         6c/0XR02UZ0XXJr4HYA3SR25cUrKHGlYyBIFi0Ht5Zdn8i7Vy0ytZYrfJY3zxpD2LLry
-         2HYjOpilk0PE6rakgdXJKnSjAMnpBtGqWDX3rtsiCx9KqVDuN4y0ottbKFLj3B90BAeu
-         ALyg12sGYUP5q8NgQZfDaAk4bWwuCl3QxRaurYStHcbpMk4btO0mqC2P1TkbLH7p1Pmm
-         9Xsg==
+        bh=bV4EzhRkZw5eNG7ZovPTr2GfxWsv5MIBKsQhvD/ibb8=;
+        b=CpH/qViKI2WF0U05Ch5X5Je5Wd0ltw8HvN/j8jxJ1lFd9RHGiNHXGEyzt/JeXFheLd
+         6UHHXpd5mOIeZTH3iAWSPcXkT5SsSbKKecpxDgMjOXz8ikjh9M9nazadeCYBcfGK4Lw3
+         ImdkLXk//ZWbuulAMbU7bza5Q233BD2yzoL3R5Nftqx4xQ0q9DQnm9VRyXA6wnuJvGGC
+         mGFIROezKGQulHH/6027z8RxEvojGjqYBrf55xZ4skQpBC0va1xZXRznSfAI20JeXI1S
+         2baRgoakt696H8R9QpgK/3t5EX5i1h2/hSLphDkDQNfm3iNWl4KwBPCfAmlcthz1GZqV
+         TKXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705403245; x=1706008045;
+        d=1e100.net; s=20230601; t=1705403770; x=1706008570;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QVAGc4XL3xs1uMSry25G+l6Lbj7TMq/VrUzFoxhkoKU=;
-        b=g/zmD6x/Bc7W6XxzDo5CEqaJSHWZaySjHZefqtxJ7/PD03Fmlzt8fwUcWBo0ldJeQQ
-         5RmpGti9UPch9sQJdP/ASkd/CuYhP3KD2LKEdTAs1PVAMyC4AAvwfJkXVy9qiOf8zUPo
-         FLGG6eDKmnGRucm6D08eCHJmuUBYh2JaVpiGzEwETgftPeRM5BeZ2nbrzPbS0kXpS+JY
-         T+dHxuAynoIMEClKiteka2tT9V/qLCQqyUkAy6za3KBZliZsHxnsaJ50HEVfe/hO9QpA
-         a2KSytmNR/G0XRZ7C46aSYY0S2Tca3h5O+Lobrfx6lr3ZGsELbKKWeY75KhSn59YpKW0
-         5v4w==
-X-Gm-Message-State: AOJu0Yyg0NbSS7wIl1UKroVSNH3S/1OgrfCl0exs11nsvJYxvATTjLgk
-	Dw17lFzEX4goXPmhc/x0G8M=
-X-Google-Smtp-Source: AGHT+IE1zjgAqZDFrlJqftk3i9QAie/p3my2wHOSZKNnxYMT9k9Y+X+BZb4QNjwSDtY8aIciDcTVRA==
-X-Received: by 2002:a19:6549:0:b0:50e:abe1:1c63 with SMTP id c9-20020a196549000000b0050eabe11c63mr3434504lfj.32.1705403244776;
-        Tue, 16 Jan 2024 03:07:24 -0800 (PST)
+        bh=bV4EzhRkZw5eNG7ZovPTr2GfxWsv5MIBKsQhvD/ibb8=;
+        b=TDcY0yd/7C48oPIGaGd0xdx7P/VsDdZhz1kO2GBNMSTv35JRzHZxtXCm+YtCZdqclI
+         x7ZhsmLXS30V1wLf9QqTTUYgCP2im8grgpsAesfSO+A3toh/EnXLb7K2K27eLvWEgIEP
+         h6+N+Hm8y2ioPw+Dc0bmQyYqXsfc1qU10ducVHptn+XAid3vgApn7AQ91L3wkjw6UWw0
+         v763EumJG8HR5E71hk5mtmoXGy+WeoxZTGqKsicQqaAOmWsuMGPP3uVPoHSDSS9izJR+
+         9Y1D6pTNx4yDgwNs6zAcfhqGeAjKVX5y9N1pGxvCTMGYfzp/V+9/K/DFfICUWelG7C1L
+         inhQ==
+X-Gm-Message-State: AOJu0YyTv2r3U09FzTSRvuoa52Oe3DUN3CUF6QwVSWqHbOcfuz/uZ+fp
+	MO6jKyIAE16KImaoj4KrXfE=
+X-Google-Smtp-Source: AGHT+IHM9MvVRGvEUj/8Da942kzvMhJ/jHKDIdyczZcz2JU+V7Py2yNESnBCAoWPKM+3iTd1BzZ+GA==
+X-Received: by 2002:a05:600c:3093:b0:40e:4303:df0 with SMTP id g19-20020a05600c309300b0040e43030df0mr2089782wmn.258.1705403770493;
+        Tue, 16 Jan 2024 03:16:10 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a18-20020adffad2000000b003373ece28efsm14329359wrs.29.2024.01.16.03.07.24
+        by smtp.gmail.com with ESMTPSA id n18-20020a05600c501200b0040e77ce8768sm7102765wmr.16.2024.01.16.03.16.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jan 2024 03:07:24 -0800 (PST)
+        Tue, 16 Jan 2024 03:16:10 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Brian Foster <bfoster@redhat.com>,
-	linux-bcachefs@vger.kernel.org
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bcachefs: remove redundant variable tmp
-Date: Tue, 16 Jan 2024 11:07:23 +0000
-Message-Id: <20240116110723.2247265-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/nouveau/fifo/gk104: remove redundant variable ret
+Date: Tue, 16 Jan 2024 11:16:09 +0000
+Message-Id: <20240116111609.2258675-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -60,8 +64,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable tmp is being assigned a value but it isn't being
-read afterwards. The assignment is redundant and so tmp can be
+The variable ret is being assigned a value but it isn't being
+read afterwards. The assignment is redundant and so ret can be
 removed.
 
 Cleans up clang scan build warning:
@@ -71,31 +75,25 @@ expression, the value is never actually read from 'ret'
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/bcachefs/rebalance.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/nvif/fifo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/bcachefs/rebalance.c b/fs/bcachefs/rebalance.c
-index 95f46cb3b5bd..827316a27431 100644
---- a/fs/bcachefs/rebalance.c
-+++ b/fs/bcachefs/rebalance.c
-@@ -385,7 +385,6 @@ static int bch2_rebalance_thread(void *arg)
- 	struct bch_fs *c = arg;
- 	struct bch_fs_rebalance *r = &c->rebalance;
- 	struct moving_context ctxt;
--	int ret;
+diff --git a/drivers/gpu/drm/nouveau/nvif/fifo.c b/drivers/gpu/drm/nouveau/nvif/fifo.c
+index a463289962b2..e96de14ce87e 100644
+--- a/drivers/gpu/drm/nouveau/nvif/fifo.c
++++ b/drivers/gpu/drm/nouveau/nvif/fifo.c
+@@ -73,9 +73,9 @@ u64
+ nvif_fifo_runlist(struct nvif_device *device, u64 engine)
+ {
+ 	u64 runm = 0;
+-	int ret, i;
++	int i;
  
- 	set_freezable();
+-	if ((ret = nvif_fifo_runlists(device)))
++	if (nvif_fifo_runlists(device))
+ 		return runm;
  
-@@ -393,8 +392,7 @@ static int bch2_rebalance_thread(void *arg)
- 			      writepoint_ptr(&c->rebalance_write_point),
- 			      true);
- 
--	while (!kthread_should_stop() &&
--	       !(ret = do_rebalance(&ctxt)))
-+	while (!kthread_should_stop() && !do_rebalance(&ctxt))
- 		;
- 
- 	bch2_moving_ctxt_exit(&ctxt);
+ 	for (i = 0; i < device->runlists; i++) {
 -- 
 2.39.2
 
