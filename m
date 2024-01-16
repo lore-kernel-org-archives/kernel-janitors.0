@@ -1,123 +1,104 @@
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B8C1BC47;
-	Tue, 16 Jan 2024 13:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6CD1BDD5
+	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 13:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlJwAxPp"
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-598ee012192so1002945eaf.1;
-        Tue, 16 Jan 2024 05:30:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705411818; x=1706016618; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/gQ4JwYFgXubIxEB4f42Ft3SYuEBMzsffcySkA94liA=;
-        b=RlJwAxPpxli/kL99n9EXHUw8/eQO0JSJW60tEM1WFMd+/7x7VTEkgSoXKAEJic1awc
-         qtjTILHYfGRAlf89d85VtZp5OzyRejOLBROAmqUXyVl+Rck9kSlPdTBFEO1OEymtYzrq
-         NyDmBwBsqH05e4Q5CSj0fpy2+q3bzN1BI/bPYLEHbrYTg7DWymex39glJ9y3U5li/xjW
-         +F3l+iqbUxEUzqbOcQ+McxNCjnVtMDr5CjqwVbOCz3nea7enpTpLDZE7cQ7sfGMrCR8H
-         TMehM3DRS2moUdO9d655PJyhPF+KZ6r0Y3VxSZi9iCPKAfVK1mTi6v1KFuQXwa3LcjBP
-         sliw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705411818; x=1706016618;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/gQ4JwYFgXubIxEB4f42Ft3SYuEBMzsffcySkA94liA=;
-        b=D87fgH1M4EhDTh019ppP2OQDg7rc+dQyDKXjnR5LQeiO5maUUhJPANcApT8elVBUzF
-         eYDI2XdHVNzQhJ4uRECji18vZNuPfkaX+ekeVGnr2Jke6KRMYGNbDa/dTJCphui2ZPwE
-         eTh/GK2zovXxtpzrKyqcGVEX56ib4QhdlTzmhF2PPmdhKj97mWn2t95EaW+/q7A7hyWS
-         8mIVpv+lXm9sMhVUJ3IlwNrhwFLvDEyjSZDJf677Hzi0sKL/f3HhNtjrpOJRJTPtV63u
-         Na01ANXkth2Sq2KLwLMgFDcwft+52jC8kIonty4Gb+I8FK0TuaUhToJpTLVVajIxUt2m
-         8qkA==
-X-Gm-Message-State: AOJu0YwiMtW2S7WawXSqlsbmsjpQOieR0g07ECUANgt/B8gpBO3uxPn7
-	wD7dCILpU0JSTCUaKkSo5lLQuwT1G2tXiDcQE4I=
-X-Google-Smtp-Source: AGHT+IGeMluJJQQQbTmTrVisFZ1ZOJH86hprZHiUL/HGfMODSuCVrW2E4yCJl64xkEYmK5B4pDqOjLPSaDFbbrFMBuA=
-X-Received: by 2002:a4a:1781:0:b0:591:2de4:1fb6 with SMTP id
- 123-20020a4a1781000000b005912de41fb6mr3331538ooe.1.1705411817849; Tue, 16 Jan
- 2024 05:30:17 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aoca9hJm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705413589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FqhlVC483d/Jp5V2BSEbp0a7wISrFNvy6LiACtWbELo=;
+	b=Aoca9hJmayBGLBOdcL4qKFoE02eL5kDTFGiwApDCuAmWEf1OKg0RepvISnlbuKO3IE8UGY
+	8o1zZk1k6s5WaLHZVdvotvfPGxgWRbv+BpTt6mfPx2BKyNH98rt3t7PpcIZL7EreLwX0Jx
+	MNL59iP+Gx7+XXo3O+XnGbXfciZbDo8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-64-l80-S4AtMuiiBeFQ4oJLsg-1; Tue, 16 Jan 2024 08:59:48 -0500
+X-MC-Unique: l80-S4AtMuiiBeFQ4oJLsg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B145385CBA6;
+	Tue, 16 Jan 2024 13:59:47 +0000 (UTC)
+Received: from bfoster (unknown [10.22.8.116])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F4193C25;
+	Tue, 16 Jan 2024 13:59:47 +0000 (UTC)
+Date: Tue, 16 Jan 2024 09:01:05 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bcachefs: remove redundant variable tmp
+Message-ID: <ZaaMIYDL/4AzG758@bfoster>
+References: <20240116110723.2247265-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7d98d8d45a89fc2434dd71d573fe4c6986986513.1705351057.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7d98d8d45a89fc2434dd71d573fe4c6986986513.1705351057.git.christophe.jaillet@wanadoo.fr>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 16 Jan 2024 14:30:05 +0100
-Message-ID: <CAOi1vP-5Kp3z7+-pa2Rb_xTATKq7zN0a2eACeJNWw2zj=rr6JA@mail.gmail.com>
-Subject: Re: [PATCH] rbd: Remove usage of the deprecated ida_simple_xx() API
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240116110723.2247265-1-colin.i.king@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Mon, Jan 15, 2024 at 9:37=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
->
-> Note that the upper limit of ida_simple_get() is exclusive, buInputt the =
-one of
-> ida_alloc_max() is inclusive. So a -1 has been added when needed.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Tue, Jan 16, 2024 at 11:07:23AM +0000, Colin Ian King wrote:
+> The variable tmp is being assigned a value but it isn't being
+> read afterwards. The assignment is redundant and so tmp can be
+> removed.
+> 
+
+I assume this intends to refer to s/tmp/ret/ ...
+
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'ret' is used in the enclosing
+> expression, the value is never actually read from 'ret'
+> [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/block/rbd.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index a999b698b131..63897d0d6629 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -5326,7 +5326,7 @@ static void rbd_dev_release(struct device *dev)
->
->         if (need_put) {
->                 destroy_workqueue(rbd_dev->task_wq);
-> -               ida_simple_remove(&rbd_dev_id_ida, rbd_dev->dev_id);
-> +               ida_free(&rbd_dev_id_ida, rbd_dev->dev_id);
->         }
->
->         rbd_dev_free(rbd_dev);
-> @@ -5402,9 +5402,9 @@ static struct rbd_device *rbd_dev_create(struct rbd=
-_client *rbdc,
->                 return NULL;
->
->         /* get an id and fill in device name */
-> -       rbd_dev->dev_id =3D ida_simple_get(&rbd_dev_id_ida, 0,
-> -                                        minor_to_rbd_dev_id(1 << MINORBI=
-TS),
-> -                                        GFP_KERNEL);
-> +       rbd_dev->dev_id =3D ida_alloc_max(&rbd_dev_id_ida,
-> +                                       minor_to_rbd_dev_id(1 << MINORBIT=
-S) - 1,
-> +                                       GFP_KERNEL);
->         if (rbd_dev->dev_id < 0)
->                 goto fail_rbd_dev;
->
-> @@ -5425,7 +5425,7 @@ static struct rbd_device *rbd_dev_create(struct rbd=
-_client *rbdc,
->         return rbd_dev;
->
->  fail_dev_id:
-> -       ida_simple_remove(&rbd_dev_id_ida, rbd_dev->dev_id);
-> +       ida_free(&rbd_dev_id_ida, rbd_dev->dev_id);
->  fail_rbd_dev:
->         rbd_dev_free(rbd_dev);
->         return NULL;
-> --
-> 2.43.0
->
+>  fs/bcachefs/rebalance.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/bcachefs/rebalance.c b/fs/bcachefs/rebalance.c
+> index 95f46cb3b5bd..827316a27431 100644
+> --- a/fs/bcachefs/rebalance.c
+> +++ b/fs/bcachefs/rebalance.c
+> @@ -385,7 +385,6 @@ static int bch2_rebalance_thread(void *arg)
+>  	struct bch_fs *c = arg;
+>  	struct bch_fs_rebalance *r = &c->rebalance;
+>  	struct moving_context ctxt;
+> -	int ret;
+>  
+>  	set_freezable();
+>  
+> @@ -393,8 +392,7 @@ static int bch2_rebalance_thread(void *arg)
+>  			      writepoint_ptr(&c->rebalance_write_point),
+>  			      true);
+>  
+> -	while (!kthread_should_stop() &&
+> -	       !(ret = do_rebalance(&ctxt)))
+> +	while (!kthread_should_stop() && !do_rebalance(&ctxt))
 
-Applied.
+Part of me wonders if this was intended to return ret, as that appears
+to bubble back through kthread_stop(). That said, we don't check for
+error there either (i.e. bch2_rebalance_stop()), so this seems
+reasonable enough to me to address the warning:
 
-Thanks,
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-                Ilya
+>  		;
+>  
+>  	bch2_moving_ctxt_exit(&ctxt);
+> -- 
+> 2.39.2
+> 
+
