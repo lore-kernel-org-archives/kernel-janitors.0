@@ -1,101 +1,101 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2B71B940;
-	Tue, 16 Jan 2024 11:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2613AC3
+	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 12:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T35WWzSU"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40e760e5b49so21377245e9.1;
-        Tue, 16 Jan 2024 03:50:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSHuHUi1"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40e586a62f7so75872385e9.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 04:31:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705405803; x=1706010603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4z6djVw+xP/VmS26amoFgiFK0lAVInxd9fafDSCJQBE=;
-        b=T35WWzSU60wavteiCeLTMI6jixFkH/lL5jg64M29B2UIaKUq428bpNoPSHZU6nWxEX
-         z6cNhBnZnJVrFsqMVS4pHsvB+aESNomgiaR27aEbGyYDPfU1j44alVhg8NUNa0mDZfoN
-         k7O4X0R+o/1VfGvACOrDq+aHEOwhQoeI2bFa/3QElCbOPfOBN/B9UvN4NnM+tRTNqL1P
-         53RfirbdwYIfjPZRuk3c4vwqj+2RdxHq64S8xlPXz+sXuz7xb39Z39Yaw1iuVZTBh9p0
-         EMEdaZJoYWSiwhtc7yJmUegGv68w+ntyt8IQKIS+HghGYpsU0l9A1Gfc6aNOWf7dqxZn
-         FLRg==
+        d=linaro.org; s=google; t=1705408292; x=1706013092; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZT+z5kO7NZ0JfHwGBIqmnXCQBjLsapUuYK3PYHhWBbs=;
+        b=JSHuHUi1WRIxLVeXXtfdfW/Hxah71RjDE67142Ymip/DuBVC2LdPS9CTDqEKLcvV9m
+         awSkL4pqcv+XVP2O90ASIaIn2VaceBsfKok9bdon4bAiCPU1oZ60V0BZnigqHN7V58tD
+         QRR4L0mHiO3K7z20UF7CUgBlOyLiqWUIH/v+SmjKVycClpf4N3BGAxw80EZiB3WRQ1ZV
+         /Lf8CQDeWytc57np3dQGDQeOZezbV8+ihTwYpr3t5wOlMiauXl+cROD6IbqChJp8SMMN
+         XpQ75YfGMx1jBgob0h1V7Mnk6VCtKAkln0dtk5CHXwRIDUybFkDcZkCEc31dJhisStmx
+         ObbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705405803; x=1706010603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4z6djVw+xP/VmS26amoFgiFK0lAVInxd9fafDSCJQBE=;
-        b=GKMaSLINNUVMHcHvpaCI8H39T2RJapYwAJ67RuE6+TPb0xeZeva5OeTaVsozTny/n9
-         fRc/iJb+VODQ9IWzQVuaLUDXpMQfoeb0XS8s4V7J9fapJfM6PqwMFucWQO5vbfuSf2By
-         FAu0LfKlJuG/9jpInw3YcSsQILelBg31MrywgzpVHPO2e/uZqJncbIWBoYbrU1ri7UDF
-         ftI3V4Ib37OBnqaFGAUDl2AnNmScdkOaKu7svJhT5DfpzXiCzS7fNV83WgT3y/nQAdp6
-         KrcgDe7zAXhuDmsRn9OCbsI7yoOr/xaqPQIF8+vufSdaIO+8qg91Y6YyLuiH5HxaDPy5
-         J/tA==
-X-Gm-Message-State: AOJu0YymeigpJjtN9o6f2fZ0EBNMihL7pYVPCy1/ysh7oFYVVpR8LioC
-	xoBUj15uyBzfxuuKVWloQznifnoyZxfFcQ==
-X-Google-Smtp-Source: AGHT+IGoeyj5EJkOxRzaCrYjh/CocCEnSAHMnbd9omVCbeNrRont0wm1c2x3yQ+L8993tvqVcc6bjw==
-X-Received: by 2002:a05:600c:470f:b0:40e:6803:bcbe with SMTP id v15-20020a05600c470f00b0040e6803bcbemr2081700wmo.266.1705405803163;
-        Tue, 16 Jan 2024 03:50:03 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w4-20020a05600c474400b0040d5ae2906esm23056822wmo.30.2024.01.16.03.50.02
+        d=1e100.net; s=20230601; t=1705408292; x=1706013092;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZT+z5kO7NZ0JfHwGBIqmnXCQBjLsapUuYK3PYHhWBbs=;
+        b=igRjPnrWGcDLJvxCQZwN23yh/KYjoITwJ7woKPMT6BClDLQb3FkYcmjjJdW8+OpMQS
+         HJOmdyjFM3lZWeufBFmQGqjQ1gNesCH3XEcKeMeH8996HpHwC0mTLBp53Tzw5ghb9Hpn
+         OAtO2n1okRqbur5yYOkXkdjeRjNs1u/1HHfOfH0MvXfBo2DbJoaWXcsjVSg/TOns12yn
+         EHNKRcShdIVah6uCYb8d4Bfujwi+GOQ1eMvjQE5ibvRuzl34q09x+BJEmdvOaPXuNN+1
+         UgHU7gIUWs89MCPTgpYwo7j6XpWWvAwhqZcyLmvunLpcdy+QMuoY1B4BLFBHQxWZ6Pav
+         JPwA==
+X-Gm-Message-State: AOJu0YyTi3k8BUBZ3XYy7r6pne42b7XFYB5EO/md3U4eWYwttVapEXG3
+	0SEHmxHPEvMh79Cu/6OsYwrgGoaXXhzfdg==
+X-Google-Smtp-Source: AGHT+IEE+TByEl7XVOYopKpmNFuQHPmwYwCI1LrdzsQYzrF0eXV1Q8x8cWXCEoLTXlRQR5WPDNP8Hw==
+X-Received: by 2002:a1c:740b:0:b0:40d:8815:afff with SMTP id p11-20020a1c740b000000b0040d8815afffmr3913595wmc.39.1705408291854;
+        Tue, 16 Jan 2024 04:31:31 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id d15-20020adf9c8f000000b00336c43b366fsm14493657wre.12.2024.01.16.04.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jan 2024 03:50:02 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: dvb: remove redundant assignment to variable ret
-Date: Tue, 16 Jan 2024 11:50:02 +0000
-Message-Id: <20240116115002.2265367-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 16 Jan 2024 04:31:31 -0800 (PST)
+Date: Tue, 16 Jan 2024 15:31:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/nouveau/fifo/gk104: remove redundant variable
+ ret
+Message-ID: <aafe669f-b322-4f22-a48e-564e3eb3447f@moroto.mountain>
+References: <20240116111609.2258675-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240116111609.2258675-1-colin.i.king@gmail.com>
 
-The variable ret is being assigned a value but it isn't being
-read afterwards. The assignment is redundant and so ret can be
-removed. Also add spaces after , to clean up checkpatch warnings.
+On Tue, Jan 16, 2024 at 11:16:09AM +0000, Colin Ian King wrote:
+> The variable ret is being assigned a value but it isn't being
+> read afterwards. The assignment is redundant and so ret can be
+> removed.
+> 
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'ret' is used in the enclosing
+> expression, the value is never actually read from 'ret'
+> [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvif/fifo.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvif/fifo.c b/drivers/gpu/drm/nouveau/nvif/fifo.c
+> index a463289962b2..e96de14ce87e 100644
+> --- a/drivers/gpu/drm/nouveau/nvif/fifo.c
+> +++ b/drivers/gpu/drm/nouveau/nvif/fifo.c
+> @@ -73,9 +73,9 @@ u64
+>  nvif_fifo_runlist(struct nvif_device *device, u64 engine)
+>  {
+>  	u64 runm = 0;
+> -	int ret, i;
+> +	int i;
+>  
+> -	if ((ret = nvif_fifo_runlists(device)))
+> +	if (nvif_fifo_runlists(device))
+>  		return runm;
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'ret' is used in the
-enclosing expression, the value is never actually read from
-'ret' [deadcode.DeadStores]
+Could we return a literal zero here?  Otherwise, I'm surprised this
+doesn't trigger a static checker warning.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/dvb-frontends/bcm3510.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/bcm3510.c b/drivers/media/dvb-frontends/bcm3510.c
-index b3f5c49accaf..da201871a93c 100644
---- a/drivers/media/dvb-frontends/bcm3510.c
-+++ b/drivers/media/dvb-frontends/bcm3510.c
-@@ -797,7 +797,6 @@ struct dvb_frontend* bcm3510_attach(const struct bcm3510_config *config,
- 				   struct i2c_adapter *i2c)
- {
- 	struct bcm3510_state* state = NULL;
--	int ret;
- 	bcm3510_register_value v;
- 
- 	/* allocate memory for the internal state */
-@@ -816,7 +815,7 @@ struct dvb_frontend* bcm3510_attach(const struct bcm3510_config *config,
- 
- 	mutex_init(&state->hab_mutex);
- 
--	if ((ret = bcm3510_readB(state,0xe0,&v)) < 0)
-+	if (bcm3510_readB(state, 0xe0, &v) < 0)
- 		goto error;
- 
- 	deb_info("Revision: 0x%1x, Layer: 0x%1x.\n",v.REVID_e0.REV,v.REVID_e0.LAYER);
--- 
-2.39.2
+regards,
+dan carpenter
 
