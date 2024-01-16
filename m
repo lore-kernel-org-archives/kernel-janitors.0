@@ -1,154 +1,102 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F057C101CA;
-	Mon, 15 Jan 2024 21:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0D717587;
+	Tue, 16 Jan 2024 10:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GQGYei7z"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ges71KY6W+5GvdvPuKYLA7/kUOXKfkWQzzNb6wM36BhPxwQcNjtTl6cGlWrlrbUquStx9YSqC+oxllrdtF+9Sq0FE9/k7Ri1AkYbuvTpYuba3wRsPSGiABAq7F9PiZbYr1Ba1avryGYcmGrP9Yo1918wMUoBuzbR4gAhA7h9exa6CYNGEWFBSdYA1VeuSWKT4q4LfRiyH6MJkqjmZvk4n/+7vKia+Ghyw70zSEvuJATOjlX1FzozPcvlJuFf4Xm9JeX95qBYAvVKQiTVvAy4IHtcr/KVnKfaxjkwv+G0ATeu5/4B0wI1dvMpJXH4oAM/9gKjMZQ58pyivwb6Cg5thQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rgw0hpYCxB9uBJgai2lu9NhUigO9+5qcBMy3/d6JAbQ=;
- b=cGPPMtM/kvUIv6BsXJbstL3qMJ0Y37HPFGYAZjWS7ivHfNEjDZWqcGRIhluYcm6xS/wrtNFqvALp0Ck+VdFoSiLgokGsTuXHQBSZVjqErBCb2TBHay4wjeyd6GtM+MKIFi+TxYWF3a8HtQc0AoJS0uL84sXNypa3xTjBPp5RwaL3EpIdjltmdtYS7oZkUl6GKknQjyuegMXqRGtzNYfxbeMOLEA2bRLQUJoJLQXQtsUWhyL+8X4uXvW59QLTil8P6igRnFdjPoIsD42oJsnGGXypwJz/U/MUkd4PJ3MHdC+KI9ckQW/NIvWGQmblAUc7tKUPMPyCY9ULjNs8aumrPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rgw0hpYCxB9uBJgai2lu9NhUigO9+5qcBMy3/d6JAbQ=;
- b=GQGYei7z/Ygh1GZAhgqfjxR3Cx3No4NC0Uw7kSr41+LsE6p1PC2izeJELRNX80Gw5SaDuMLD9SORBTSgmxSj66Ma2v7mHVmIcyQycuE3yqulIvOxP5t2k2ngQgCN1clptDvWBYjIgBM2m+Sq1ZWeS/0vvj/MRTEcokTONaQai5w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com (2603:10b6:8:a2::11) by
- CH3PR12MB7665.namprd12.prod.outlook.com (2603:10b6:610:14a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.17; Mon, 15 Jan
- 2024 21:51:56 +0000
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::5358:4ba6:417e:c368]) by DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::5358:4ba6:417e:c368%6]) with mapi id 15.20.7181.022; Mon, 15 Jan 2024
- 21:51:56 +0000
-Message-ID: <d12c2a3e-2a66-4624-b5e9-9921f3359036@amd.com>
-Date: Mon, 15 Jan 2024 16:51:52 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: Fix a switch statement in
- populate_dml_output_cfg_from_stream_state()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Roman Li <roman.li@amd.com>,
- Qingqing Zhuo <Qingqing.Zhuo@amd.com>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <e597276a8240329a5ece90762425c7cde2ddd7a2.1705157202.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Hamza Mahfooz <hamza.mahfooz@amd.com>
-In-Reply-To: <e597276a8240329a5ece90762425c7cde2ddd7a2.1705157202.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0287.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:6d::13) To DM4PR12MB6280.namprd12.prod.outlook.com
- (2603:10b6:8:a2::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Myp1Ce+T"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ccb4adbffbso110309891fa.0;
+        Tue, 16 Jan 2024 02:43:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705401784; x=1706006584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rfb4RoudfQugFRmfeMeDSM2YfXd1GIbwx2udaC5gOPk=;
+        b=Myp1Ce+Tr2LgOmQf5YGHUy8fDzbwmDwl4iKT+y9gzvmhf1E3F0vLjtfY/lGK21SvlV
+         JJxEethfTO/HRsKbLujsIwGNbWFEYEKvtPQY6mXiraBHDKQyf1GCeNt2dW8SQFvEbV4w
+         60B3NlQt9xQAtbXFA8q9PIOPYwvbQ7Kp+nn3RRzn730bZCFOrtQitPdv8nocvge4t0Jb
+         DXJ6wT462nXbcbr+9Y7jKKV6CBxM2ky77eW1yLyv35EJ8DVdHv/IlJZyC2opKjDs/kSN
+         LS0w5noem3RoV9I0liObdu21BZofiP3nn6D6hPjHT4He5H+ntGSv1EAagdNtFOIBxCtm
+         G7Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705401784; x=1706006584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rfb4RoudfQugFRmfeMeDSM2YfXd1GIbwx2udaC5gOPk=;
+        b=VyCZv+h5LIzY6fnvXcv05Zb1s8L0m24lf4TdTveN3TGtWcFBn2oHQJlkSd0kA8rh9Y
+         7ZNa6Yry3MG/QFQv9SYp7/yQr8R85t1UaAMN3GIsOR1ispZCvFvUR7xaHuTprDpzAyzT
+         x7Yr65IKRFvSToSJ6XSs4u6BmKa9L/rW7+Map5bw0dLFyoV01w6RlfDOozKmZmXASyh3
+         ojlxz9LyH711fL5XUsXCotKYlUl/wNJiNisRYxmSgyxsO3FUs0xJq6qnrc0musztAHyX
+         iWZT4tKVYnIGkr+1RatYN8IUfgUYtHsb3vdGOZm8HCZcdsrjwSC7AioKhun5xPKJx95O
+         llwg==
+X-Gm-Message-State: AOJu0YxRUY8/3nDdakA/K/D/H7Ot4Kb/8WaMb2vlpyxM8IAWHJvcJICS
+	sE7aWG1a8y4hk99JwUn+65o=
+X-Google-Smtp-Source: AGHT+IHowwn5ZThXbNkBYKcVPqiC7oLj8hR9b21xtUg5ndnPAylsxeJvvpFnrfWbZk/Uk6g5kL/wwQ==
+X-Received: by 2002:a2e:8481:0:b0:2cd:7ac4:f9b5 with SMTP id b1-20020a2e8481000000b002cd7ac4f9b5mr3207747ljh.14.1705401783529;
+        Tue, 16 Jan 2024 02:43:03 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g8-20020adff408000000b00337bf461385sm79894wro.26.2024.01.16.02.43.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jan 2024 02:43:03 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: pcbc: remove redundant assignment to nbytes
+Date: Tue, 16 Jan 2024 10:43:02 +0000
+Message-Id: <20240116104302.2241325-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6280:EE_|CH3PR12MB7665:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2478011b-54b5-4aa9-544a-08dc16143143
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	7WWvo14xNw50LA/CoKUJWiXqsChm/zViNiVrmEAQdT8yHdZnkyJp9466OKYBSkTQHEub9RWv6mhj3GURlUkpnQ2/QIv04bMpQii5UF028FPNvsNFzk+NadhY0vm6m+CZ67CUbibDgwSr4aG0v6sO4olXAx9bS076MtPvss44UkDixZBcZ/upDJOoHJP5Jdn/TA8lIsQ7X8N6hj11UlUeuxtpRQTDC725mKcnsVZk9ltVb5ljFkbPp45X7A7wayPgKRXM1SU/zMR06SQzB6mu49L7Eernw606bviZkQx5zzQ7Dk7EfSS0Y3NbQDtAyFDBWxQpUWsFljUeqH3Lz+j64h22vLZHwZHWyyuLHkeNwWubwA465FubT+OOfRnPhDnsmvqLIR28YoddY8Y8FydTbSSrO4RGZP1KH/u1j1E5CCJjVKy4QiUZhQMZrlpyW3tbKP/AfC/yXx2iRquj8oo1RNiSD3rB+b81kvmhElHL0xmBV/CFKUlGPBppczRH/1sBznYwb913R+8NV+X9P0ZqCG0kK+Zq1npgBCRXsKw9hLfsWAvKedVvuzkExqgf2CcF6sEWMpJlqoZ4k7DyWOKuJxdPY4JSEVjKtGYIi4oxN1V6E3d9pxBN4YSuII8kO7ydE2QxXr/jgVa8jG/laTKrPmli7znULh5E+1AkxXy5syc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6280.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(376002)(346002)(136003)(39860400002)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(2616005)(6666004)(26005)(6506007)(6512007)(53546011)(5660300002)(83380400001)(44832011)(4326008)(8936002)(2906002)(41300700001)(8676002)(6486002)(478600001)(316002)(110136005)(66556008)(66476007)(66946007)(6636002)(921011)(36756003)(31696002)(86362001)(38100700002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?STQwcjAxTzNWQlRqRVVEL2xZVXE4WDZxbytLbDV5Q2tYbk1Ha1Z3Y3pvYlc4?=
- =?utf-8?B?UzdJUUpra0l2VUYvOFM5S3lGT2FzTk5neC9Ubk50cTR2eWJqcnNTYTEyQ3Zu?=
- =?utf-8?B?bXJTbGxjRXdlNHRGck51bmorbjQreVBqZ3paSTZDVHVnOFk2YWNVeEtXSkpM?=
- =?utf-8?B?bU9vUm1BcnVKYWNaOFhIN0M4MU9KMldjajZLUVJmMEdKOThsR2gyelR0NGN5?=
- =?utf-8?B?WVM5blVpeW9qWlVPUDdVT1g2c1ZFbldJclpCTE9DVUFRWW00dEVYcXlJMHBw?=
- =?utf-8?B?cW0xbHpvY0RmK0g4d2wrSFFQNUYxRWt1SE8wQjMrWEtrd0syclBFNkNEcGxK?=
- =?utf-8?B?cTlFdzZDUWZyWDNjVXpERi9yWDFaa2VqdnU0MzBOOHJwWEJuLzdrV0lkekdL?=
- =?utf-8?B?RUZ0N3dTbzQ4czdXRDJhYXhVMm9nY0oxNklWUFNBODVBaVJJVVU2cUtXeWxH?=
- =?utf-8?B?RFZJZVgwb3dyN3BCQU53RkorUG4rUEFNeTV1dlEzcjFZaEdmUzJMcFVHcC9s?=
- =?utf-8?B?THlXUzVPcm0wc0laaWQ3L3FuMkNQTkNQMWZJMXdFbUxQK0J0Skt3aVpRd0Fr?=
- =?utf-8?B?K2VDeFVkTGtwQ3VwajZxVlhuQzV4UGlPdFhEd01BQmVrRVIxNFBvT1B3OUwr?=
- =?utf-8?B?cHA1aE5SWllXWjJnNGlhbFFTTnVqRExTdzFXTjNHR3BpTEVwalJBdVFYZzcv?=
- =?utf-8?B?VmJ6elBObG4yT29oVG9oOGpPeiszTDM4VWZ5VVZxTHU2dEMwMzNJaEhrZEE3?=
- =?utf-8?B?TTE0VlBpeEE2OFJKNm1TK0FYOExwbTlxSGhrczRMV3ZjMGhlVGt5RC9WUlRL?=
- =?utf-8?B?R2dBcDJ2Z3BWUnk0Si9OZkY1ZktuZ3RLdm5GTWs5Z1pHSEN2OTNzUXIySlZP?=
- =?utf-8?B?OGttY1MwNlhlTmZidzFQQXhuQlVPQ0JPRXJVYTg3dVFtNmk2OHFiQXpUd096?=
- =?utf-8?B?WWhnUEFaQjlrRHhNQTNtNEJiU1VMUjdtWmczd0ZERDVLYnRrZG5aNk1XclB4?=
- =?utf-8?B?N3pScnJRQ1Rqc0xVenJ1V2lYTUlRUlFRQTY4RzZKejFYS01XRFltYWlHclA0?=
- =?utf-8?B?Y3lxYThEQWduZjNNNmRXYkdiVFhCdUVZTWFBQzgxZFBrTjZndTN1aGVLcnhJ?=
- =?utf-8?B?NktLQUwzdmozblJVbk43TFN1bTRWT3JIbW5RdnZ4K2lWaFp0RmxOYzFuYmF5?=
- =?utf-8?B?K1FTaVhwSEcvdVFzVjc5N3NmdzBDc3dyWVMxS3pEY2dhUkd3ZVBZeW1TOTFx?=
- =?utf-8?B?S0pkYkg1QnI0UlNtRU1NN0xiRXlJUmRRb0xuUDdvS2NNYU9MeDRmWVVhcHk5?=
- =?utf-8?B?c3NTYmhMakdNK0NZL0FZa0N1MVptdUxDZUtqQnlKSjllR1M1dzZ1K3FiM3lK?=
- =?utf-8?B?Z2tCYkZjYjRQOE9jeGxZTU54ZVZ0WnlMazZHUjBrVm9yTW4rRnhQaWtVSUtp?=
- =?utf-8?B?SWlodzNrRTZBUUUvcWVwaUxrZDdScGtWVWdPa0tqdWtiWUZ5OU94MmhQMjVr?=
- =?utf-8?B?amNrL2RWT25BU0t0MWE4eGgxVmU3cWdpMkpvb0doK0wveDVuSUd4OURzV0ZS?=
- =?utf-8?B?c2s1N1VETnp4a3dHYmcwZ0YzeVBnKzhlbHRRVmVKbzZZUjBNcVNlS1RpNStr?=
- =?utf-8?B?VlpLN1Y4YXVEdDZQSkV1bUlLWGF1TXFxTkJqcHBBamhlNFhlSFpQcG9XazJk?=
- =?utf-8?B?MzQyMlcwL00yZDVCL0tXRENHdjhhZVVhUGc1MVNqZ01ZKzdKRmprOUJDQUMx?=
- =?utf-8?B?WHoraHZRa25CSFRtQ1dTa2ZkdlVnS0pyOGZFUHZDOVQzaGpDMy9ObU1qbGVm?=
- =?utf-8?B?Z3BSYUo3NHNqTUx6cFpheVZ4a2ZHdUtoS0FQYkYwZ1RwZVkxTmJSaEMrd3h1?=
- =?utf-8?B?WlBJRU96UGNUTk9IbEVhRzlOSjhCNHdQVC95T2JST2xwOGNhSDZTSElwME1X?=
- =?utf-8?B?eHFPeGIxZkQ0WGwwZW9OSDVyeVhkLzA5SkZUT2lERjNYTktJS3JqZVFsQkV6?=
- =?utf-8?B?L2o2eW1xVzZFMXRNVnU2RHJlVlUrVCttc0U1dVhXdUt6SFIzZUhKelZ0RUVF?=
- =?utf-8?B?OXBOZ1lVdEQ4OG1WWkNVYWdSTkdxTVl6NHNCUnlNSjlqeWF6dkMzL3paclh5?=
- =?utf-8?Q?cKV/9c8FOOWrXpIBYQaS6Q8JS?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2478011b-54b5-4aa9-544a-08dc16143143
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6280.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 21:51:56.2727
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GoKl+UWAMNOBgh91AwoyfemAico71Uaz02/ypIQdqxpZB066bGnE7xlhfdr6DbEYxs5CC0lPy32nMOrgN8YebQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7665
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 1/13/24 09:58, Christophe JAILLET wrote:
-> It is likely that the statement related to 'dml_edp' is misplaced. So move
-> it in the correct "case SIGNAL_TYPE_EDP".
-> 
-> Fixes: 7966f319c66d ("drm/amd/display: Introduce DML2")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The assignment to nbytes is redundant, the while loop needs
+to just refer to the value in walk.nbytes and the value of
+nbytes is being re-assigned inside the loop on both paths
+of the following if-statement.  Remove redundant assignment.
 
-Nice catch! Applied, thanks!
+Cleans up clang scan build warning:
+warning: Although the value stored to 'nbytes' is used in
+the enclosing expression, the value is never actually read
+from 'nbytes' [deadcode.DeadStores]
 
-> ---
->   drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> index fa6a93dd9629..64d01a9cd68c 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> @@ -626,8 +626,8 @@ static void populate_dml_output_cfg_from_stream_state(struct dml_output_cfg_st *
->   		if (is_dp2p0_output_encoder(pipe))
->   			out->OutputEncoder[location] = dml_dp2p0;
->   		break;
-> -		out->OutputEncoder[location] = dml_edp;
->   	case SIGNAL_TYPE_EDP:
-> +		out->OutputEncoder[location] = dml_edp;
->   		break;
->   	case SIGNAL_TYPE_HDMI_TYPE_A:
->   	case SIGNAL_TYPE_DVI_SINGLE_LINK:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ crypto/pcbc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/pcbc.c b/crypto/pcbc.c
+index 7030f59e46b6..ab469ba50c13 100644
+--- a/crypto/pcbc.c
++++ b/crypto/pcbc.c
+@@ -71,7 +71,7 @@ static int crypto_pcbc_encrypt(struct skcipher_request *req)
+ 
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+-	while ((nbytes = walk.nbytes)) {
++	while (walk.nbytes) {
+ 		if (walk.src.virt.addr == walk.dst.virt.addr)
+ 			nbytes = crypto_pcbc_encrypt_inplace(req, &walk,
+ 							     cipher);
+@@ -138,7 +138,7 @@ static int crypto_pcbc_decrypt(struct skcipher_request *req)
+ 
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+-	while ((nbytes = walk.nbytes)) {
++	while (walk.nbytes) {
+ 		if (walk.src.virt.addr == walk.dst.virt.addr)
+ 			nbytes = crypto_pcbc_decrypt_inplace(req, &walk,
+ 							     cipher);
 -- 
-Hamza
+2.39.2
 
