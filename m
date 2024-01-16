@@ -1,101 +1,101 @@
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC51BC22
-	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 11:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2B71B940;
+	Tue, 16 Jan 2024 11:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="J5MWO03g"
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3608e206f27so53758635ab.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Jan 2024 03:44:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T35WWzSU"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40e760e5b49so21377245e9.1;
+        Tue, 16 Jan 2024 03:50:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1705405490; x=1706010290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=82O4LLMvvZQSOIR03ZK1ZHOCta6qzNNSpbUP83yxRKg=;
-        b=J5MWO03gkVZLZZG9GhcXLT6/CP+jCJvKGD/0XVjzUGWYUC1ub/07lT/EDFVvo0+vQk
-         NWuUMIagKr0Td5N/FbpJQbpYYZZGjMGEJoVXrVt7CO6rVWROPF/uUAEh2zb3zxPlTxXM
-         1Bo/ta1GcDGr8cykFRZM/7OSvdRpB50qv6cpE=
+        d=gmail.com; s=20230601; t=1705405803; x=1706010603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4z6djVw+xP/VmS26amoFgiFK0lAVInxd9fafDSCJQBE=;
+        b=T35WWzSU60wavteiCeLTMI6jixFkH/lL5jg64M29B2UIaKUq428bpNoPSHZU6nWxEX
+         z6cNhBnZnJVrFsqMVS4pHsvB+aESNomgiaR27aEbGyYDPfU1j44alVhg8NUNa0mDZfoN
+         k7O4X0R+o/1VfGvACOrDq+aHEOwhQoeI2bFa/3QElCbOPfOBN/B9UvN4NnM+tRTNqL1P
+         53RfirbdwYIfjPZRuk3c4vwqj+2RdxHq64S8xlPXz+sXuz7xb39Z39Yaw1iuVZTBh9p0
+         EMEdaZJoYWSiwhtc7yJmUegGv68w+ntyt8IQKIS+HghGYpsU0l9A1Gfc6aNOWf7dqxZn
+         FLRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705405490; x=1706010290;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82O4LLMvvZQSOIR03ZK1ZHOCta6qzNNSpbUP83yxRKg=;
-        b=FT7RBYMBfPTJzYioy9x/HGoUZbbIWN6TxsN+YRlO/izljI3wt2bMeeLL71eabHeMmU
-         wKWYxxhlr7049OEVCI/DaEx5b2UXgT8xvDLrQ3rQRWPSn8TrElqH0J62R1nI4VZ9Y0p3
-         kfo+vp049xWowxkTB29RdlC3xano7rRtoXwNpEAwjO8q6qnq0csO6iFEUzIms7QZIQAi
-         Er5DA7VmKg8sYTbPWpBRZpmhKI8xEaJBAr49ZH7fCVaDjb7buqsN+WPBw5cHTzijJgwU
-         bnkfQa3EmGm22TDabG+KkMVeW3NmcUmT+1H66R8+DIIao8Iain61gd61JLmqiLprixd8
-         PN/A==
-X-Gm-Message-State: AOJu0YzEAy01XSnsmIakb+M7zuxe4OlBQ/yI/RMEXM11973yZ6N8APHb
-	ws5uu5/4TBaj5L4ObxS+RyCPPhmCyLyl
-X-Google-Smtp-Source: AGHT+IExKL8eb+NEQah+KUXQe8TLYefHOat3TNlc6xHDt0chTP1l2cR0IV/yZj9etX1oe+OTovZLtQ==
-X-Received: by 2002:a92:c9c5:0:b0:360:d9d9:a8a3 with SMTP id k5-20020a92c9c5000000b00360d9d9a8a3mr3693194ilq.117.1705405490139;
-        Tue, 16 Jan 2024 03:44:50 -0800 (PST)
-Received: from [172.22.22.28] (c-98-61-227-136.hsd1.mn.comcast.net. [98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id 14-20020a92130e000000b0035fadef5006sm3504193ilt.26.2024.01.16.03.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jan 2024 03:44:49 -0800 (PST)
-Message-ID: <51e73530-7c65-4e2f-9749-7dbbe9098fde@ieee.org>
-Date: Tue, 16 Jan 2024 05:44:48 -0600
+        d=1e100.net; s=20230601; t=1705405803; x=1706010603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4z6djVw+xP/VmS26amoFgiFK0lAVInxd9fafDSCJQBE=;
+        b=GKMaSLINNUVMHcHvpaCI8H39T2RJapYwAJ67RuE6+TPb0xeZeva5OeTaVsozTny/n9
+         fRc/iJb+VODQ9IWzQVuaLUDXpMQfoeb0XS8s4V7J9fapJfM6PqwMFucWQO5vbfuSf2By
+         FAu0LfKlJuG/9jpInw3YcSsQILelBg31MrywgzpVHPO2e/uZqJncbIWBoYbrU1ri7UDF
+         ftI3V4Ib37OBnqaFGAUDl2AnNmScdkOaKu7svJhT5DfpzXiCzS7fNV83WgT3y/nQAdp6
+         KrcgDe7zAXhuDmsRn9OCbsI7yoOr/xaqPQIF8+vufSdaIO+8qg91Y6YyLuiH5HxaDPy5
+         J/tA==
+X-Gm-Message-State: AOJu0YymeigpJjtN9o6f2fZ0EBNMihL7pYVPCy1/ysh7oFYVVpR8LioC
+	xoBUj15uyBzfxuuKVWloQznifnoyZxfFcQ==
+X-Google-Smtp-Source: AGHT+IGoeyj5EJkOxRzaCrYjh/CocCEnSAHMnbd9omVCbeNrRont0wm1c2x3yQ+L8993tvqVcc6bjw==
+X-Received: by 2002:a05:600c:470f:b0:40e:6803:bcbe with SMTP id v15-20020a05600c470f00b0040e6803bcbemr2081700wmo.266.1705405803163;
+        Tue, 16 Jan 2024 03:50:03 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id w4-20020a05600c474400b0040d5ae2906esm23056822wmo.30.2024.01.16.03.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jan 2024 03:50:02 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: dvb: remove redundant assignment to variable ret
+Date: Tue, 16 Jan 2024 11:50:02 +0000
+Message-Id: <20240116115002.2265367-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net: ipa: remove the redundant assignment to
- variable trans_id
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>, Alex Elder <elder@kernel.org>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240116114025.2264839-1-colin.i.king@gmail.com>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20240116114025.2264839-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 1/16/24 5:40 AM, Colin Ian King wrote:
-> The variable trans_id is being modulo'd by channel->tre_count and
-> the value is being re-assigned back to trans_id even though the
-> variable is not used after this operation. The assignment is
-> redundant. Remove the assignment and just replace it with the modulo
-> operator.
-> 
-> Cleans up clang scan build warning:
-> warning: Although the value stored to 'trans_id' is used in the
-> enclosing expression, the value is never actually read from
-> 'trans_id' [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+The variable ret is being assigned a value but it isn't being
+read afterwards. The assignment is redundant and so ret can be
+removed. Also add spaces after , to clean up checkpatch warnings.
 
-This looks good.  I saw this before but hadn't gotten around to
-fixing it yet.  Thank you!
+Cleans up clang scan build warning:
+warning: Although the value stored to 'ret' is used in the
+enclosing expression, the value is never actually read from
+'ret' [deadcode.DeadStores]
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/dvb-frontends/bcm3510.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->   drivers/net/ipa/gsi_trans.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ipa/gsi_trans.c b/drivers/net/ipa/gsi_trans.c
-> index ee6fb00b71eb..f5dafc2f53ab 100644
-> --- a/drivers/net/ipa/gsi_trans.c
-> +++ b/drivers/net/ipa/gsi_trans.c
-> @@ -247,7 +247,7 @@ struct gsi_trans *gsi_channel_trans_complete(struct gsi_channel *channel)
->   			return NULL;
->   	}
->   
-> -	return &trans_info->trans[trans_id %= channel->tre_count];
-> +	return &trans_info->trans[trans_id % channel->tre_count];
->   }
->   
->   /* Move a transaction from allocated to committed state */
+diff --git a/drivers/media/dvb-frontends/bcm3510.c b/drivers/media/dvb-frontends/bcm3510.c
+index b3f5c49accaf..da201871a93c 100644
+--- a/drivers/media/dvb-frontends/bcm3510.c
++++ b/drivers/media/dvb-frontends/bcm3510.c
+@@ -797,7 +797,6 @@ struct dvb_frontend* bcm3510_attach(const struct bcm3510_config *config,
+ 				   struct i2c_adapter *i2c)
+ {
+ 	struct bcm3510_state* state = NULL;
+-	int ret;
+ 	bcm3510_register_value v;
+ 
+ 	/* allocate memory for the internal state */
+@@ -816,7 +815,7 @@ struct dvb_frontend* bcm3510_attach(const struct bcm3510_config *config,
+ 
+ 	mutex_init(&state->hab_mutex);
+ 
+-	if ((ret = bcm3510_readB(state,0xe0,&v)) < 0)
++	if (bcm3510_readB(state, 0xe0, &v) < 0)
+ 		goto error;
+ 
+ 	deb_info("Revision: 0x%1x, Layer: 0x%1x.\n",v.REVID_e0.REV,v.REVID_e0.LAYER);
+-- 
+2.39.2
 
