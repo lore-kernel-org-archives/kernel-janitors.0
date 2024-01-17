@@ -1,102 +1,111 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F5B24B57;
-	Wed, 17 Jan 2024 20:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3E424212;
+	Wed, 17 Jan 2024 20:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705522229; cv=none; b=bvPEGHynReJGKjm7bSZG7IZpkFFap6MQn3/3bmn4zhNps0X/s/K7BvEPIbO6BAlOJlfhnGTqueLIFh5AgT5Yx84qQfFlzoikytursmVTreqUjjBuZFebAIhGAJdWpv4OsqgmmZz15FKQOeA98onvqyxu3d8cImzEKC2DyJdxRxE=
+	t=1705523097; cv=none; b=onaAigIVE2zWJkOmDENOV1RMO8Jd6eSXJh8Dbc2K3Ymu/6WDG1vhsFzpGPNuzroGQLQXl2kVsHHbF1DoZURQlUKtN8CYnfg2i9TBkGztM8EKkQp7j1wqmnJnSQeM/oEJYz+YCdCQkV9JlqGVgTKO9RHlGQGRX278zmRV8D4Qg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705522229; c=relaxed/simple;
-	bh=4vwSLLR2Xw4dWO0MOKREjo5VSSihDzuRLLAGmh/SXv0=;
-	h=Received:DKIM-Signature:Received:Received:Received:Received:
-	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details:
-	 X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID; b=Wkoge6I1QxxMx/cxf0hf07sYe2J89rLzJnnD5TSUoJ3NJ0RIrfbBdzz7SWyaiJTHBrMdvBxeFnC70Iar3iEWCx1RNDx76PDxvTKoHSR/h2zS318O2mu8/U3y9PagUdrc+airedVn8984r/TwkWnKHD+kVkp8Y3rS84NsJ5bjYVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nYUCsjYh; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1705523097; c=relaxed/simple;
+	bh=UE38ED6EpRlZY0gaxf7iQTb5dYoGYagkTxGhMebsNqE=;
+	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:To:Content-Language:Cc:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
+	 UI-OutboundReport; b=Lq5XU7QAU0NAFiwfluLQ3/ZUDbDc3ciTxrVE/kAcVHbhUmrMgpQYWi3C9xj5MwiErpjPbfdkje2L3nqfUa4vkguduqn4d0WOfS15/PYdm/SASl34BHDs0LekwYnqZ/QO9Fut7bcdILn2l1pqJu2UL976bKmilmD2wj34mDKjw3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AGiGBV3z; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nYUCsjYh"
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40HJcrw0023582;
-	Wed, 17 Jan 2024 20:10:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-11-20;
- bh=89HxgIwBEYJaHnsk5AEcjOC5NVX2QZpUegFxl8d9R34=;
- b=nYUCsjYhAJriZebos+UlDsTkfgS/cCX77IRqGYXWKIZZIEmIEbFGuIeA41GQHwY0bhZQ
- eauiDjqZReWKWEwdkzuAHSofQHsF9jKN2dRUWhDpfOLlj44ryYbCSpi4G1Ek/ujrTMn6
- ePT3sQngXMXgwnzpe3dy+VeH8flaeoY6vTjk6V+vH8TMGmk/zdAcCge2G6ifrVthEorB
- oqunjQq4rbl0+2W42dP32VoT9K34iGOj7IujVCwY4PWQ8Dg2D7TS1az0NChxfi1HHAoA
- 8/82C4b7oixgxwIuPSnhSWZce33QDa8lnxl7X28PUs2VvNf+93UlaCo4LtriPWPhHRaV XA== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vkqce0gk2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jan 2024 20:10:20 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40HJn7fP019950;
-	Wed, 17 Jan 2024 20:10:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vkgyb1c10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jan 2024 20:10:19 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40HKAHCD030718;
-	Wed, 17 Jan 2024 20:10:19 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vkgyb1bw6-2;
-	Wed, 17 Jan 2024 20:10:19 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Hannes Reinecke <hare@suse.de>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: Re: [PATCH] scsi: fcoe: Fix unsigned comparison with zero in store_ctlr_mode()
-Date: Wed, 17 Jan 2024 15:10:06 -0500
-Message-ID: <170552035090.3348001.8757972022614438996.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20240102085245.600570-1-harshit.m.mogalapalli@oracle.com>
-References: <20240102085245.600570-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AGiGBV3z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705523060; x=1706127860; i=markus.elfring@web.de;
+	bh=UE38ED6EpRlZY0gaxf7iQTb5dYoGYagkTxGhMebsNqE=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=AGiGBV3z1AcVzDaPaFPfPt5DrKaMz2RNGife96dNBIjckShZfAuVkkLo+TEHje4i
+	 v03fQnm7PY4gCoJGCJ/3HvCScMZ0LyV5Q8RV47c9qBI1UIHWndS1ZnORiduxi6lIo
+	 teiLfz47+xFthZ2wXf4s1zAlESQVYo/5dLg5H0DdMkHo5jtuaK0nEbIKRgrl4gKUm
+	 bbDZY9qVfy4pMgua+dIE6nKgMRjRSsVDVo3NeI1NLmkdMrOd4zGWiXa8dBRmtGigj
+	 tUv4fyF4XYLSiO/cz27Lnm8lDHYAnTdKo5FfNsuL9283yvQutKeTcFLWIVbmUzpoG
+	 7C+dO2eVEYIFQ3PRrA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MALeD-1rFzqK3fND-00BzEE; Wed, 17
+ Jan 2024 21:24:19 +0100
+Message-ID: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
+Date: Wed, 17 Jan 2024 21:24:12 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-17_12,2024-01-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxlogscore=708 phishscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2401170147
-X-Proofpoint-GUID: ERi6vrtsMoa9XNku4zjdaua5uLmf24C2
-X-Proofpoint-ORIG-GUID: ERi6vrtsMoa9XNku4zjdaua5uLmf24C2
+User-Agent: Mozilla Thunderbird
+To: linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Joel Fernandes <joel@joelfernandes.org>, Kees Cook <keescook@chromium.org>,
+ Tony Luck <tony.luck@intel.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <groeck@chromium.org>, Sai Prakash Ranjan
+ <saiprakash.ranjan@codeaurora.org>, Kunwu Chan <chentao@kylinos.cn>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] pstore/ram: Return directly after a failed kasprintf() call
+ in ramoops_init_prz()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6wzOESbIb1mZ02S49ElPi5Zvo4NveBoF9p3rDTJTlzJEi0YVnI2
+ c1ZgYATqL1cTVG+KYL3CwX5YhdzThRbRFDhPMOhtw9CgcHP17D3csESEisOex7lj4FfJQHX
+ U3bZEoCEv2aA/ATG+lmudUYtw9hU54INJuho6VcirMAj5atIgPedSgxqxmBzliN+iS8SM3A
+ 0CkraKfabfS/TkCf1efQQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7a0FsOiFKps=;AujlA2bNA0FLb56dO9Arnk6Ehd/
+ H52E4uHbwT1X6t+TIPDTZM5jukyM/UEl2kRsA9PzQRREhezlkIdEz+H7TPDIoa9ZzaGkKzSsx
+ H1WSDFOWmFd+pgNgdLRoSdT1gqTSeXXUJednLL5/hK2CRaycpL7Llvqjcq6HQ7JtqiZJCFln4
+ ef/dMVE9JF+UbaHdJlk/y+mq5F4hEu7I6Fvqv+//ZCAuVJpqxjzB+2aem5ReGFLpWvxcgl7HP
+ HkQIAgt+K31oLrIPApIZX/9K6il6s6e6oSTgu1GCuZrftKQqqbBdyMjhOswZcIUIf2P2n0fUN
+ sAAIA4e/XYDK4DAH9MD8spSnrcCltumApGI1s0CEkgmFqyAY3VM6JHoC6HRqvNuGXEItIHNMW
+ Kvk215OnIUsMO2rHPiEP/GlBfWcjVSdA5gyw1oxHVbMCHM7+33TqGhVVtSfsjnBZbwlUIQHUC
+ 162ItZnfXSZNjbkYNZDdgu1U94JHF2QXY1Dcz9E9HCkv9CpPLwQAH5nKXUWvWxt2Bdzkx/40K
+ GxI9REFPSmkzKxaMQgLQxfN9IeSDg+KugdaN6IAOeSvi1Nw5uepufdSLPPzqyIct3m/ysnC9V
+ n6IEnJuzzQ3yvD/SK72NCWa32Ub2ntytgKWVVHNTJJ3cjfeNY0iqPle9qrKpIwzSCoFuNSDmj
+ GOifNyEPupeVUfVVPYj7KGRjJk/PC7n6yvGV2pGPDQlRjwxU4wRzb6q9pPQF+xjtytJmsSzMQ
+ lMg67Q3/WXEc12Bre5JN+3RZlwyaJkb1fWs7+iwA4ZTp0exTPzKcGYTYDM+VxPXMr83i+TTbt
+ 1y00b0pt71yxE6Vc6n3Ji1RpVuy/0SWaSiJazkRVwHqw+7Elh3MoKSqhdqZsz5qXRON0yaERG
+ BkAEOfbp3v2ae0ZOuS8I4VGXHg4JlH1BC7GxSeTPIv55SsP74N0oSmce8SiikCdtW5pBmqc8d
+ +c1z0XMx0X6pPuRtGnYnbjyaGuc=
 
-On Tue, 02 Jan 2024 00:52:45 -0800, Harshit Mogalapalli wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 17 Jan 2024 21:09:22 +0100
 
-> ctlr->mode is of unsigned type, it is never less than zero.
-> 
-> Fix this by using an extra varibale called 'res', to store return value
-> from sysfs_match_string() and assign that to ctlr->mode on the success
-> path.
-> 
-> 
-> [...]
+The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was pas=
+sed to
+a subsequent function call without checking for a null pointer before
+(according to a memory allocation failure).
+This issue was detected by using the Coccinelle software.
 
-Applied to 6.8/scsi-queue, thanks!
+Thus return directly after a failed kasprintf() call.
 
-[1/1] scsi: fcoe: Fix unsigned comparison with zero in store_ctlr_mode()
-      https://git.kernel.org/mkp/scsi/c/567a1e852e87
+Fixes: 1227daa43bce1 ("pstore/ram: Clarify resource reservation labels")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/pstore/ram.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 88b34fdbf759..1a673a4af17c 100644
+=2D-- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -595,6 +595,9 @@ static int ramoops_init_prz(const char *name,
+ 	}
+
+ 	label =3D kasprintf(GFP_KERNEL, "ramoops:%s", name);
++	if (!label)
++		return -ENOMEM;
++
+ 	*prz =3D persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+ 				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+ 	kfree(label);
+=2D-
+2.43.0
+
