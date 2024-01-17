@@ -1,39 +1,39 @@
 Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04521A04;
-	Wed, 17 Jan 2024 15:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8796122EE7;
+	Wed, 17 Jan 2024 17:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705506434; cv=none; b=Hh5ggD4gPT0oDQglxdKKPKVox+xE6PL8m96+9W4Bao1vF9uHkSDu/IqykMTtWZv5teofhJWcWSr+/vFBfoBnylZk8JJEkWoQWz0d5FSmpWKz4SD1fnJdRpYmvy+U79gyqvv55h3BnyQ0lJyLXwWxoeNWPS9YeW3MYPH0uyC0aF0=
+	t=1705513245; cv=none; b=uoUv3kSLhhuvt6DqsIYyLNDKPToBxqQXlabHDbjNV044veLoNxHQNMoE4Jej0l/Idg6drVo1WvTrCnxw2jkrsV9E9emVYoefkmJza/X4lL8Ca3kuhqoTp4CatjoNL/GfwpFI03x8vwGtuoaPCfAOhLu+rzlavrzFWV9ZHGofNuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705506434; c=relaxed/simple;
-	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
+	s=arc-20240116; t=1705513245; c=relaxed/simple;
+	bh=rJx1rYDQZuvD30dy0a4RC/ZegRq5ZNJx/Z0Ct+LDDC0=;
 	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
 	 MIME-Version:User-Agent:To:Content-Language:Cc:From:Subject:
 	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
-	 UI-OutboundReport; b=i8U9CK6evj8Mb112wgAdSnnu5X/1FtfHFlt1aSMBkQcutkiGmofuysPuIfMR5kh1Cab7jFtRXzFSqvGKwJDDv0P555/F4Yb+lppaJH51HT56xkAHzkFkQ1jlhykwpxc21BzwSCZR9nSyjbxgAXvCmpAu71+d275iDsaiI7/zKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kn4viGP6; arc=none smtp.client-ip=212.227.17.12
+	 UI-OutboundReport; b=ZetlOVuFI3fszMuH7dkxJtb+sE7odvX1JQYN+swCxf4nGaNFyBFKWAjjKNDwuhCRvh2E1VvGEy3lhZ1/KujjXkMZou1WJwiS0A/G9V2wbhuxRNH1Q+kKxAMGByCWSXITlRUF0uVUHyO+vksrgkqpTMPmcaqiz1em+Yn4RaB++8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dSrWPwok; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kn4viGP6"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dSrWPwok"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705506412; x=1706111212; i=markus.elfring@web.de;
-	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
+	t=1705513211; x=1706118011; i=markus.elfring@web.de;
+	bh=rJx1rYDQZuvD30dy0a4RC/ZegRq5ZNJx/Z0Ct+LDDC0=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=Kn4viGP66uEY6hxKFeNR65Oofu8m8OWNSkAVv97ZrRaL3xBmOukZq/3bam2QshtB
-	 1nrBQ3OexdBFfGQ6j3M5K4GmxcrE8VOjPgh7eSjWJNLgDBjQ7PGnRZfBWdH0UntT5
-	 o2ee8PvtfTjQMVg0goDHGDtlZfsKsUyEtLwECsiu+Z2PxwAu3e2MGQ9vhD5itao2R
-	 G0DoagToRPpXkEDCrQ5NgjmMnYnBvgEg5two8BQ2YElshGPux7N4t4UsBF4MIB+FM
-	 LyiG6HaxdZWxzOg0NcBwbO8npi0aCEO9MAikPL1yVUYaZruveWE0ilNCLV+NO8l5w
-	 6RD1dvU480Ce92AldA==
+	b=dSrWPwokwz/d+kHIINY2V96gx2bJ9l8rgsVO1K1VocUcAL7V/hjnDFuorsk5iuF5
+	 1vrNnSflKWHvSBpSuTn1Z8a3wzyuib2gEmRn1XU+jFhJp/oIYuKsLjQlaAJwSA4n4
+	 aUy7evfzRvyp/rx4FXVdm9uHiX+2KoKTD90KN0uj927IYo+Q7dKrdRXdVKZw8yYEG
+	 R+zXuXcuKoU8kaKWwicQDKtCdoeaDqjmf30Q1J+HS4McZeaVyQtPjenI2JBS/R16t
+	 Uc8T5OcnSTLKe8YBPh4ILaOXTkYpeIoHFryHgZffp6jeU8jujLKeWtoAH7yQe1eCz
+	 JH5FOheryPZBC9MJ+g==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1aDp-1rRVpv1iQN-003E2Y; Wed, 17
- Jan 2024 16:46:52 +0100
-Message-ID: <75f302b2-9fe0-4b3d-a132-85186c4d9445@web.de>
-Date: Wed, 17 Jan 2024 16:46:38 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1rDyYr3VEB-00w7rX; Wed, 17
+ Jan 2024 18:40:10 +0100
+Message-ID: <061aef8b-a41f-4346-af6e-560c7594b27b@web.de>
+Date: Wed, 17 Jan 2024 18:40:09 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,71 +42,52 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alex Helms <alexander.helms.jy@renesas.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+ linux-arm-kernel@lists.infradead.org,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Saeed Nowshadi <saeed.nowshadi@amd.com>, Kunwu Chan <chentao@kylinos.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: versaclock7: Return directly after a failed kasprintf()
- call in vc7_probe()
+Subject: [PATCH 0/2] versatile clock: Adjustments for two function
+ implementations
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NgCtdZimQ5H+nTibuBuhAhJQP71uJFO/lCYKigwy9yWfdEzQ2Ep
- 1fS3Km4lhjngeIh1jGfZzmD7eygbbm+/eEn83smX2ZnuhHRfUp52GYqiyt6L23plZVUFIyG
- 2ICbgu10T5UeGP0dUFjh2hqVETLRNOLNKuMz1OJQ1qJOmmEEQFBdUz6fk8jtQaBDjhQv/4z
- fupMtFMdwomMLhhTNlcTA==
+X-Provags-ID: V03:K1:C09BDWiDSxoh09TLNFQ2W3BnYJ/zwCfNfzWlMbur2e+atf4cd7v
+ G/NgTSAe2930o7l0OXK+oG6yKC6SzaQkKOiz0QBzoKCb2Y6Vas9L+zQ8zuHZPSLCHh+H9SA
+ FTNrJ4vRnfDfMeiwcay/eTVqY+pzq5JdWILEBNTYbcTT2uz5ZQdMJtmQxl6QswlxOkW4SIa
+ HqHan20J63G3kZIt2LEqA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+6buGsTWYV8=;2Fb2dSZsw8JVKKweUIItlQHbilk
- Wk0CGsJEH7Z2IcEqcPAq/BziG61Hr0kzofIqcQ4t7L//BagEXHq/qfmcmEM8wC/cwklC1O1EX
- EmbX0VnEV9yaRkTLv4sgoIyp7xc1SUVg1BkqX1BmkyqGVG/2Qbd9KYtT5J0GLU+1UQe86+Apq
- FobItahZnvZM8DwdeeWZB3fXfY2MTrVUAodpz0A6SOacvn7jRLx3w185+yhHLqmcdSTN06k37
- 2lLALBFw3eL4gOu3/ozkjgv0m9732FI/QjoRG3w1gxqb9ngCrKqmW86dc6A8FPBFfcvKV5XXv
- LMF+eGv5Vfn4e02SRGTXLkVrkPXXERlJMLp/yRUjixdl1jCPR5h2wcxEtk7JVBLG+Y2kPwUyJ
- aHYyP5jNbavgKPXzBl81T8UGa0k52bJNFzb54RYEe/8dDS9cB85fGjinjxZCfMq9g22HgjdHN
- rwDiby9mpW1ppymx//U8ddACOLMW7imp7sgsGfOShY/wy4L0p2A0NnO2h0vcCJYxn6nEcgwxf
- KmZr3WzbY81m98hwiFdUcQjU+baiIf+HRQNlw92qGlEVdMUXf3a1MiT11bR3ENwQ6nxbdMBU/
- YW3C97YbFGP48PpM0vgSRmS2UoBaj2mCrSmy1ZObNh6wsd5p8jhJzn0v3MAj82S7YOuroeNd4
- SXhaJ3ny/OECH9On3sL9LHyGIeVmBvSxHW7SYq4jYn5S19eFGGUb8nhNyJLUwAy/vZAL9hg0X
- zq/PjSL2b7ndsKFFHeIJnCDaw7keTVPquSnzrCBCO7kC7Hf9BuT3gDVWTc0TEzM9tyAn55qsO
- Z94sEOJMjsFRwSng7ek60b/tueZKiHjzz+fj7AuS1X1nS9FEm22gqtO0WqSG7m5UHoLdGYJN5
- h8kFUaEQD0H8SJmDhqub59248Qxm6gYC5xa6YBZHFWfi7oo2yLZoWd1KFyCVYhrlzoDAR95jo
- 481BJg==
+UI-OutboundReport: notjunk:1;M01:P0:uJu5C1X92x4=;iMJLVQLh1hzxY4RtoP8i5QPoAZK
+ S7Jk5OCfDl0Ipfkwj+/eIuRBYT/5LHWyxTDrGcJgtyweQ8DacY829mJ7lq9BX4UDhnFfXiFBn
+ tTvWcewDi03wgNME1y+dLtzvuW/x6Z8KmbN7AFIdvYmvUp0ZP2AXS85SnK8kwO+aNLcb90umC
+ azNcZYxQdu9uD2N40VV1RsW+d/OcsprqudRgqDWtKP6ejfQBz+bS5lAtXfgXIlDujlMpD8JrB
+ bP6Vj9trSrmrAu1mXACwxKF8JAk8KtUf7XrMwQG/f/AjKM1l/iWXjEzvKb+UWM2/UREwypUYx
+ qzsW5ajZdf5mm6QyD08xVLGLC0M4F8yqAn2K8JJUKuLfRRIJy2BQ9zQtG8AKXjZYlr62vUIk9
+ K25MKPhohZ5l5nGljtkExUQ92tRCq56tGjcbfnYlHZoErjqs1wsMkeKSgghiD0tS8OUi+JDHa
+ XYxlHfIBKWfHvS1fYUrsgxNboIR88fhFT6tJDmIc3X7Y4yRlne0A2Xzy6AsngIEWSZ/fHjrTA
+ w+i3W6iP6d86pkpnOVxELW0PgMSdBKgWQ83ktxebfdJOAcMl0OwzxCH3G1BG6YgsjmfMb0Bsd
+ tcV/OznMj9cpZW4M8WEUSTUBC5gFDwmqz3/T/d7BPtLw7ESdVcP7mCDANH1LgODKIxSP9bDkS
+ GpFV2CLCsAaNZa5r3oIWz37OHZEHRmhjg+71IEI2/5gg8jUdDeBDJDn3ZJg1TF8CJLBDHCfqC
+ ovAan16HA2zco9V/J1cVZ1rqkuKbWsZSGQpK77fbFIfkVoXsL0mjV+wOhFY2HlIq2oqCFa1gQ
+ SONj+wXdhx4HwrUaYNQZM9pG7to2HtIdBeQyG+KyXnGc+5ouxbghywCJk3UFaOq5fD4Kiym+d
+ hmspsjzlkkzVESp7A91NXba1+C/fraEzFH1+WAKAbilBIWJ2Rirbz1J4LSVEprQh/ZkFP96J0
+ TfxEKQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Jan 2024 14:06:13 +0100
+Date: Wed, 17 Jan 2024 18:30:08 +0100
 
-The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was pas=
-sed to
-a subsequent function call without checking for a null pointer before
-(according to a memory allocation failure).
-This issue was detected by using the Coccinelle software.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Thus return directly after a failed kasprintf() call.
+Markus Elfring (2):
+  Return directly after a failed kasprintf() call in of_syscon_icst_setup(=
+)
+  Use common error handling code in icst_clk_setup()
 
-Fixes: 48c5e98fedd9e ("clk: Renesas versaclock7 ccf device driver")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/clk-versaclock7.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/versatile/clk-icst.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index f323263e32c3..96e6b05f2aac 100644
-=2D-- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -1127,8 +1127,11 @@ static int vc7_probe(struct i2c_client *client)
- 		node_name =3D client->dev.of_node->name;
-
- 	/* Register APLL */
--	apll_rate =3D vc7_get_apll_rate(vc7);
- 	apll_name =3D kasprintf(GFP_KERNEL, "%s_apll", node_name);
-+	if (!apll_name)
-+		return -ENOMEM;
-+
-+	apll_rate =3D vc7_get_apll_rate(vc7);
- 	vc7->clk_apll.clk =3D clk_register_fixed_rate(&client->dev, apll_name,
- 						    __clk_get_name(vc7->pin_xin),
- 						    0, apll_rate);
 =2D-
 2.43.0
 
