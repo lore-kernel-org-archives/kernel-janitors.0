@@ -1,70 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44228125DE;
-	Wed, 17 Jan 2024 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5971C1DDC9;
+	Wed, 17 Jan 2024 10:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705481708; cv=none; b=ZgEPqVAYanj9QV9uWUY9ezclrWvA1A0ecqvV5VCdm1dWURwGaQh5X5HrzU52oxZyVLECcb7Vu1gelwUTCo4ayfXAjAKO+wQbFo9L126KMTUpsp111z8LWXEMb83XAbnYEETPF4AWDP1R4CNLVCpzX7v+JKKifNYxh35ahXkfYv0=
+	t=1705488078; cv=none; b=ZTRWpdX2ewlZTOozTt2NfoK7t8FrJZBLd2cdCb2DG2/T8d97vyBNYSScBRuSzmEewk1SuRYSKtCJMvLes2zWs/2v0vQTwkDTHdOBTuN7s1Wl02MGHz/pj0dzcMkmHjd8p2+ok7U5PgxrxqS41kBODa3hqssl7zNG2TgWjJyCUC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705481708; c=relaxed/simple;
-	bh=fnuaszwXIg6BRjy1CENiKmNPIyPN2c88uPBpm47pmzQ=;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:References:Date:
-	 In-Reply-To:Message-ID:User-Agent:MIME-Version:Content-Type; b=ih3FtxcNoV+ZXd44MUw82mYpQB/o8jK7yhE0+9BW+eIIEllIbIpTaCfX8MXUP0jHM7t9BmeLGMCw0VLJj1nihqQr4iuhDWfZgSggCMFIHhMdtcTRIeR56SasHBKH+rMI+x3lq8XmxwownTQTCAuAdYIdsug/F/NWXV7eo+VEJgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeAYpp0X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705488078; c=relaxed/simple;
+	bh=vJqkCYXJxdgrKwi1w2Jjol0tYLSav4W0xcsFJVVuKzs=;
+	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:To:References:Subject:Content-Language:
+	 From:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport; b=FoKHhy8BjJGAgyFTpJcv40J8qqjujhcTcwjczeW5RzK4PGuaPN5zWvxJIGZYdHg6QMOvrTi2U2ivXsTRREDQpqtFOfhbwWJETla0uSz//0PQhmMaWWTE5heeB11g1Zotsp1MPmelhleEyJuH2B2LhodJj7MTJ+42m5LdERMNYno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gCJ4kmmz; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeAYpp0X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96CDAC433A6;
-	Wed, 17 Jan 2024 08:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705481707;
-	bh=fnuaszwXIg6BRjy1CENiKmNPIyPN2c88uPBpm47pmzQ=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=JeAYpp0XQQetbSji4FFlfxqiRy8/u3gyO5HBpKkr538ICVxJ//NPsk2kRvvFNumJe
-	 s3YC5ImKUDbifbZ4ZIbyTNfjAc3r/t0BG/wVYmpX5zdLpCu1WSOyXw6wqfEBLc3nof
-	 xHtTzN73SwaKIGZrNM6mjxjIXnDaZ0FAnSL43+AJhOno23GLkj71/lY0Y2LHzK3jdY
-	 rbw4THK76lvpJOG6fQifUNbzxDEr/tK/Ro0XFN/8x5sd0mxr45D92k5uLFfympSDP+
-	 UkRCLRVH8Bi8V2bdIIldafmRbevN+OIxWFgFToJYF14T6AKDJx8mLeA33MCmi4FUOo
-	 2yqJazIErjVdw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>,  linux-wireless
- <linux-wireless@vger.kernel.org>,  kernel-janitors
- <kernel-janitors@vger.kernel.org>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: Re: Question about reference to config KERNEL_6_2
-References: <CAKXUXMyfrM6amOR7Ysim3WNQ-Ckf9HJDqRhAoYmLXujo1UV+yA@mail.gmail.com>
-	<8cce0dee8588b9f3cd0c1a3f073466b01905a703.camel@sipsolutions.net>
-Date: Wed, 17 Jan 2024 10:55:04 +0200
-In-Reply-To: <8cce0dee8588b9f3cd0c1a3f073466b01905a703.camel@sipsolutions.net>
-	(Johannes Berg's message of "Wed, 17 Jan 2024 09:47:44 +0100")
-Message-ID: <87y1co5ogn.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gCJ4kmmz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705488019; x=1706092819; i=markus.elfring@web.de;
+	bh=vJqkCYXJxdgrKwi1w2Jjol0tYLSav4W0xcsFJVVuKzs=;
+	h=X-UI-Sender-Class:Date:To:References:Subject:From:Cc:
+	 In-Reply-To;
+	b=gCJ4kmmzLFuW9q10d5VlkqRSXfsWhY1BOy4mZ1KZqwZSmsmcey/Wru0Ji7i6RCu+
+	 5RjDMXuku7/D3SoymJH0hL90nQcJVq06x7EPvwHNQpYUzsFeyLFA1t7qJ2L011T0P
+	 sttEf0pKEjfy+QlGzksncaZ5bM/qRhJ3ACU91tPjFONtt00/nrtZy4tlb/uWC6gnQ
+	 QXTNai0u1aqCLL+4hM4zTmeblB8HEur3q+2xEFrahf3mIQ1PiVeCcQC+4rOiTVX47
+	 3vjodOG6/c1AGm35XGR6Dmrqke/TMy053GHtw6K7Kff0+DDZyJuBRjvf/qktobjRV
+	 T8UjpDuvPD+ByaVPlg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MF2gW-1rNpMJ2Ney-00Fk11; Wed, 17
+ Jan 2024 11:40:19 +0100
+Message-ID: <3e0c7008-417d-4549-ae0a-7f8d26522117@web.de>
+Date: Wed, 17 Jan 2024 11:40:09 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
+ kernel-janitors@vger.kernel.org
+References: <20240117090018.152031-1-chentao@kylinos.cn>
+Subject: Re: [PATCH v2] x86/xen: Add some null pointer checking to smp.c
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+In-Reply-To: <20240117090018.152031-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JaLRwvXgJjiefll0Tuwas9XKSthWswOnaJewGiQBlyjTcPN9V2f
+ hcrT9hCDF4WMQbUTC8k8ldktcIrVPniJAn+SXNC0BsbmiJJp3ojo24Oib8U7MUU+sBdD0Yu
+ 9c2+NUGv0VOR/06RxZoAV6HYBZVNQWN89GhXqQ6KI3r7QMKbUFyIENEbq7fU76dv24P0270
+ O6iv+fKAQp+KD0B1eJeiw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YvfY7JRbdYE=;mP4N+bwOpR1xsAuYUabDW0+JE/C
+ AE3sP6atgL4o5w8kpHZI1+fNDuODzzspTSsZR7Ts2xw+W8gyXyG1AU9oeO8z2bx51b+YDZxEc
+ MbwFGMGq2pX3mvIDaFzbYKAXE/lHYKT/46vU02RCllriNMVeBdckIzK5GJnmy5BhwV9obgmBU
+ uMnG0nxdznUdK5vArhi41S8rswOBBjA+p5BXIMTwuElcMviIZDzAgwaafC7M3oRl7yOEhXGTj
+ kl387WORzaxMA5yuQk0SH089zXvB0kDj25tXAy50rOLWbGnPMeoU+UBwkwuMUrPR+fLAckcAQ
+ 5iezZjgPUvQOJrDOCGqLBm3U0KcSfDlOjBB/zGrIPGKsZ/USoc22ulDNOmT+q7G5NlWoHU2/S
+ Q2jcDKj+XSwagdZr3XoaA+ntcEd90yizsoxwOHIdbnKxrYJ2gjeGocUOh1468GgeBXSIBNGB2
+ Hc50BeWZWY+7fO7z7MBIYuWNPJTMhx/XS5uYn0x/8yLmq4WZFNc4mMRi4VkGrPHlpi42INqOj
+ Iy+FP0U7hHYRqyu5biKL3OMOaiuhvlWKO5uTYiPRinKgQW9YZbbe12zJq4A6Pt+LM1EtpfBfm
+ 2r+23QPpCOME0xqwxvqai/69Nhxpxk9+MIVgx4qcnj+YfvhNimWMcfCBBO1s1EtwBmRVEUpgO
+ SmQLEwYWfc2cV5bYz1T5thQLt2Noez5tEFErKazzhFyWhoi6R6jbgiAA7IXO3arCEQ9jxYMDF
+ W5WS9MZKEiWQ99oQBTjVxcJ1AVBiX3Z+olPFFpLww+Dn/e2q74nF6G/dUQcFSKqFEdWHgJYOe
+ ViGCTUON4npiWlzfq/oXAYoWsPa+0AnfUc7bevojJ/udgrqE89563O9spHpPWxCl8KHVFlm4Y
+ wfzUoxVF2hfAH6Siuqg7QOkBgCXbJbZKUlgqEx5fjzd8GRqpuO4HdA0YWzg7NHcsdBMym5Xz4
+ iEsT4g==
 
-Johannes Berg <johannes@sipsolutions.net> writes:
-
->> 
->> Commit ffbd0c8c1e7f ("wifi: mac80211: add an element parsing unit
->> test") and commit 730eeb17bbdd ("wifi: cfg80211: add first kunit
->> tests, for element defrag") add new configs that depend on
->> !KERNEL_6_2, but the config option KERNEL_6_2 does not exist in the
->> tree.
->> 
->> Also, Kalle Valo [1] asked during patch review about that, but did not
->> get any response on the mailing list.
+> kasprintf() returns a pointer to dynamically allocated memory
+> which can be NULL upon failure. Ensure the allocation was successful
+> by checking the pointer validity.
+=E2=80=A6
+> +++ b/arch/x86/xen/smp.c
+> @@ -61,10 +61,14 @@ void xen_smp_intr_free(unsigned int cpu)
 >
-> Oops, I probably thought I'd clean that up and forgot.
+>  int xen_smp_intr_init(unsigned int cpu)
+>  {
+> -	int rc;
+> +	int rc =3D 0;
 
-Heh, I also forgot to follow up on that :) Great Lukas that you noticed it.
+I find the indication of a successful function execution sufficient by
+the statement =E2=80=9Creturn 0;=E2=80=9D at the end.
+How do you think about to omit such an extra variable initialisation?
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+>  	char *resched_name, *callfunc_name, *debug_name;
+>
+>  	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
+> +	if (!resched_name) {
+> +		rc =3D -ENOMEM;
+> +		goto fail;
+> +	}
+>  	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
+>  	rc =3D bind_ipi_to_irqhandler(XEN_RESCHEDULE_VECTOR,
+>  				    cpu,
+
+You propose to apply the same error code in four if branches.
+I suggest to avoid the specification of duplicate assignment statements
+for this purpose.
+How do you think about to use another label like =E2=80=9Ce_nomem=E2=80=9D=
+?
+
+Regards,
+Markus
