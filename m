@@ -1,108 +1,103 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53B22F06
-	for <kernel-janitors@vger.kernel.org>; Wed, 17 Jan 2024 18:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3214322EE4;
+	Wed, 17 Jan 2024 18:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705516335; cv=none; b=W+jCG+71pjtqdvdYrykDJG4+9n+HUnpmyIpBQbNJ52iaGoeyDPpddYgeS5/u6QFlf+K0Ug9MQ5nBCIwRh3ufMCLZRy9kzCTKF7IgstkS+hWvxVQAJU0I0F9uwq94nP6IXtH2SF+mqldcNeT0l4W0FjdK1O995BcGcHMhJ1AJ6p4=
+	t=1705517468; cv=none; b=YS9K4ChnWe8TeAavCR+dIRgtnzwjK95yNCz9s58SKZzt2dnPKSpO5ngOC+AFx1Ml1nYRNja24QY1iRlZQVJ+177WpC5G+cwiBY3eXNPgvfzyOFpgzh5iv0ANogh7BZ0cBvxaw2NJcYzNhgpMfMdKh5qRTFfgFOCOdxEFuuT56BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705516335; c=relaxed/simple;
-	bh=GJoKVb2+DXUwHo6EryFUbR0bKGFrwQdlvWC+jGiPY6k=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:Date:
-	 From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:X-Mailer; b=RdbDjd8Ji37Dgb427daZy391i6jINzaZgjlF1/Xmd73hfW5+O9ES6tNjVB+YO2oM4VsqK5bxIoB3ep03717nE9rDXKStQcP+dzLqzvhGTm0L6s9ZvzLP/j5xFD5Bq4b3C3Rwcm0k6HIVlJ+2MquMb4KAxYgBmBx02kxqoEUizd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwTr7tL+; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705517468; c=relaxed/simple;
+	bh=gHbMmG9mjXr6MC8IitFnD6yZiJj8cwylv4XvI4+3y1o=;
+	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:To:Cc:References:Subject:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport; b=CCn9MC6NT09k00eOGLTZkYx8Y1JUwVxd6APWg3WpiIWwI1etNOp0w4rD9YqvL42qeOQx2dnKCr8u14olCvVz0ZnXqBDO60wT6mFH2QLN1O7kudnv/WcDqpnMWhlUEKILCkL6VzbeQfnB3NN7tUYwU+gQ1NVHvO//1P5QPi6B3O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mxCNEdNa; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwTr7tL+"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3376f71fcbbso9142448f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 Jan 2024 10:32:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705516332; x=1706121132; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dowglsIPVbYVAFa4rVjn+rlDsEzlw1XXMllVZiyv4c4=;
-        b=TwTr7tL+WDZwmHbKemDUyUDIWb4rMpnc4+pKMYXD0kBmNUhOxA2BQCrDumLI49gUkE
-         SItrJ7H+S6tadYJjJB0HhN6c7BO4OguGscHfxRnOnavEK6nTgFWY20WxemizPHzBDsI2
-         1yCI9pmUvXn41H5HhNmLIDYwGWm9MTTMOmle8NHNJPE4m8M5FVeh+h6wy63h82g4pFTk
-         hE3JYSyUOy9LMoGkudQ1dytir8o/fvxTRHzJiNkUB/ooMJ++fajbjI9Dr+fmwzwgGA5S
-         wGwcFo0FefarJ73kGoG9DNY1hiOjL/AOcI4Uq85wiJdwSXfWF6UnNs/dw8tust6D57Iy
-         ml8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705516332; x=1706121132;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dowglsIPVbYVAFa4rVjn+rlDsEzlw1XXMllVZiyv4c4=;
-        b=ZiFbBeS2LnSmgMyQraU1sznMd4tzoGV1W142IjVHvKrKcIdv36Edi3SRcjHV3T1qzO
-         IHT5KkhjarpqGT/yZulw3ABgWJ1Cgjm/oU0Z5THIjMpTr5LT0xggd4Xc/QePz0UJ9abc
-         W9lJwxsiq8XVx5rJd4RFKM9zF+1iChBpj+jEDYiN8AdNIioiP8iw8tkaFBfXoAZ8y7Q5
-         3cqdgBaHNJpDHxzITTkvtjLx1wMnl0YeaPbDuYiOTqXgMFD7IwJGqBcdMOJdn1ms/5xz
-         2q2vJdMrNJg/RMUAYjeG531fFlspJUXvjLHaN3l833fGsGfyiaFbQZhQnrg3KPKtK8LQ
-         M3+Q==
-X-Gm-Message-State: AOJu0YwABtG2lrCiV7eric39UQc8V/18EKybLO2x7vM5IF7EfCo7rYG3
-	LcIEYBM4vr1njj227ihrvGOfCqHuFsESVg==
-X-Google-Smtp-Source: AGHT+IEerS4tRmti12dAHzaJBQqQIekd1m4weeIk92C/xIkzUsjHTdaIpdo1h9j8pRaeTCy5m+p8lA==
-X-Received: by 2002:a05:600c:45ce:b0:40e:6e84:e95f with SMTP id s14-20020a05600c45ce00b0040e6e84e95fmr2723425wmo.252.1705516331931;
-        Wed, 17 Jan 2024 10:32:11 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id o8-20020a05600c4fc800b0040e549c77a1sm27223849wmq.32.2024.01.17.10.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jan 2024 10:32:11 -0800 (PST)
-Date: Wed, 17 Jan 2024 21:32:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Niklas Cassel <niklas.cassel@wdc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] PCI: dwc: Fix a 64bit bug in dw_pcie_ep_raise_msix_irq()
-Message-ID: <3f9f779c-a32f-4925-9ff9-a706861d3357@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mxCNEdNa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705517440; x=1706122240; i=markus.elfring@web.de;
+	bh=gHbMmG9mjXr6MC8IitFnD6yZiJj8cwylv4XvI4+3y1o=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=mxCNEdNa3xyU8eOUI8WnAbdqGIaQ0cD0UwcPi/M0HbzsfNe7Ls7kgnPJ07HB5vEG
+	 z4BQRbUK18o39eF/MzT381dTPv0/CiU4V6M75zCpLMv7dVmRzId5c6rBFc3/Zm1Ua
+	 imM00XT3R5/YzL3erdLGow5aI/iTtLZng/awG5FiQ0a5M5MLLiaW4rqGdSiEr+n4c
+	 yWM4zh5EMmVBTF7iOxBoQ4gXlAyvXXXw4X2Wlg/FiQG16Xv6NZoVFRrJpQIGZLIwi
+	 7YqUReNd+DXQfz6VAOPR86viIcjmHecSZ8P0dF/OJdhWkWhKWUsAwAV/YwO6lSLE8
+	 fZ0b2vHp2FT54IRo/Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwsB-1qo4sM3Elp-00nmDL; Wed, 17
+ Jan 2024 19:50:39 +0100
+Message-ID: <9e390783-05c5-47fc-a0c6-b95e249fe691@web.de>
+Date: Wed, 17 Jan 2024 19:50:36 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, freedreno@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240116032732.65262-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] drm/msm/adreno: Add a null pointer check in
+ zap_shader_load_mdt()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240116032732.65262-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:64Yp8Il+v76dSKALZwOZTLIbWnWicuHh+tqzpvHzm0141/YUBpH
+ uQkmmNuiA5pT2tJs3TAAtrvFgkgL1YzbBXndtL1dJL1KPXC9ozY6s5RMSMfVGwWMjw3zVvR
+ LEN5+Lxf9bStpvYPOYFO2LznYZK33wtfOpyixYUuvpgZ0clb62hzD0jV9nW+mJlqzbGrswS
+ A6BMYtJVPopfHBxUrGSog==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Q1U7tOoGFmc=;2qAZd1fwJ89oCNw5xB+ACGuHRN9
+ OlKyRbV/lW8xNgPDwaGaaxGOq1xyBe69U/YdbBszFpCd3SNB9TqgA/eRUInsblCqA244SAUwt
+ XPNu/4Xx5qHdunhEctjDVNdVJA/19AYCGlFXQfFiiJZXkB1z5OAXgl5Q0HfKubuhiVBWhL5A3
+ +h8/JrGtj5aC0e7GXiXugiNJb6dWDYhaQQt1sJli1cItKY+kxxTaW7ToMzAba4+Hil7A6+cfz
+ D3sYWSMde3F/uwa9X7YTHqqOFPzPzueWYJAVr3JnEd0h5yZh8QbdJemPvDxTXUUosrMuZENl1
+ c1SxV9ztyPweI/zHprQ3rmZkXe9XjmrpvBYjMXhTxmLy2C0rGqA8ZAY+SrkEGuHxX/fR3pn7a
+ Xk5QeesXmU0HgARQW7tsmJDstjvsJk2drLqeevRvX/Vx3Nrwf0Naq7rFR9CKIePee5qNVcieA
+ h0xRtXgNKoMHNDmdYMTSp1bgZ6q/u3A1qR4+Edb8+et5vnAaHJhZEYxWKhwuAIlwcPAofi1D+
+ rMkWsMW9nGd0U5Es3VGKeareSOnaM4GFHxQ/vzBsqVJUEsHEIHLKPU7K56BAnuojyUuyHCAtx
+ KudzjxGpnS7Q+DJucVZKTokP52rozOXWY5SnWzH8GvC7cX1rwL7gBwyLSALGENnk4wTIsWya/
+ cw+RG1/ZfLFYab8y+IgTWliHeMYDZfAcktCopcAUileHyE6PDJAIYYccTPxtx3r89YqLnAwrc
+ yoeasqhXoAHRUGf1/xa4LcYacHEE7Wv8A+zkleHpfMJEHanb9hkDHMx5Un8XcXtRk19iaSUhZ
+ QwERQcA7O8I2ol5pYwVRdBDhLungdrRqD3+ZNwW8iT13Nb8SWthxRRCr82wbIxrqwEZ2qlX+9
+ GwcNwQUDOQO5k5ZTZapRo02I9RttueCCWvSGF8U6XM5I5fzRFwo3aZZ9k3u4NWJus9NYgQspw
+ PABCvw==
 
-The "msg_addr" variable is u64.  However, the "tbl_offset" is an unsigned
-int.  This means that when the code does
+> kasprintf() returns a pointer to dynamically allocated memory
+> which can be NULL upon failure. Ensure the allocation was successful
+> by checking the pointer validity.
+=E2=80=A6
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -144,6 +144,10 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu,=
+ const char *fwname,
+>  		char *newname;
+>
+>  		newname =3D kasprintf(GFP_KERNEL, "qcom/%s", fwname);
+> +		if (!newname) {
+> +			ret =3D -ENOMEM;
+> +			goto out;
+> +		}
+=E2=80=A6
 
-	msg_addr &= ~aligned_offset;
+How do you think about to avoid the repetition of the pointer check
+for the variable =E2=80=9Cmem_region=E2=80=9D?
+Can the usage of other labels become more appropriate?
 
-it will unintentionally zero out the high 32 bits.  Declare "tbl_offset"
-as a u64 to address this bug.
-
-Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis (not tested).
-
- drivers/pci/controller/dwc/pcie-designware-ep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 5befed2dc02b..2b6607c23541 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -525,7 +525,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	struct dw_pcie_ep_func *ep_func;
- 	struct pci_epc *epc = ep->epc;
- 	u32 reg, msg_data, vec_ctrl;
--	unsigned int aligned_offset;
-+	u64 aligned_offset;
- 	u32 tbl_offset;
- 	u64 msg_addr;
- 	int ret;
--- 
-2.43.0
-
+Regards,
+Markus
