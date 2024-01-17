@@ -1,40 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5971C1DDC9;
-	Wed, 17 Jan 2024 10:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04521A04;
+	Wed, 17 Jan 2024 15:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705488078; cv=none; b=ZTRWpdX2ewlZTOozTt2NfoK7t8FrJZBLd2cdCb2DG2/T8d97vyBNYSScBRuSzmEewk1SuRYSKtCJMvLes2zWs/2v0vQTwkDTHdOBTuN7s1Wl02MGHz/pj0dzcMkmHjd8p2+ok7U5PgxrxqS41kBODa3hqssl7zNG2TgWjJyCUC8=
+	t=1705506434; cv=none; b=Hh5ggD4gPT0oDQglxdKKPKVox+xE6PL8m96+9W4Bao1vF9uHkSDu/IqykMTtWZv5teofhJWcWSr+/vFBfoBnylZk8JJEkWoQWz0d5FSmpWKz4SD1fnJdRpYmvy+U79gyqvv55h3BnyQ0lJyLXwWxoeNWPS9YeW3MYPH0uyC0aF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705488078; c=relaxed/simple;
-	bh=vJqkCYXJxdgrKwi1w2Jjol0tYLSav4W0xcsFJVVuKzs=;
+	s=arc-20240116; t=1705506434; c=relaxed/simple;
+	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
 	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:To:References:Subject:Content-Language:
-	 From:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport; b=FoKHhy8BjJGAgyFTpJcv40J8qqjujhcTcwjczeW5RzK4PGuaPN5zWvxJIGZYdHg6QMOvrTi2U2ivXsTRREDQpqtFOfhbwWJETla0uSz//0PQhmMaWWTE5heeB11g1Zotsp1MPmelhleEyJuH2B2LhodJj7MTJ+42m5LdERMNYno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gCJ4kmmz; arc=none smtp.client-ip=212.227.15.3
+	 MIME-Version:User-Agent:To:Content-Language:Cc:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
+	 UI-OutboundReport; b=i8U9CK6evj8Mb112wgAdSnnu5X/1FtfHFlt1aSMBkQcutkiGmofuysPuIfMR5kh1Cab7jFtRXzFSqvGKwJDDv0P555/F4Yb+lppaJH51HT56xkAHzkFkQ1jlhykwpxc21BzwSCZR9nSyjbxgAXvCmpAu71+d275iDsaiI7/zKAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kn4viGP6; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gCJ4kmmz"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kn4viGP6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705488019; x=1706092819; i=markus.elfring@web.de;
-	bh=vJqkCYXJxdgrKwi1w2Jjol0tYLSav4W0xcsFJVVuKzs=;
-	h=X-UI-Sender-Class:Date:To:References:Subject:From:Cc:
-	 In-Reply-To;
-	b=gCJ4kmmzLFuW9q10d5VlkqRSXfsWhY1BOy4mZ1KZqwZSmsmcey/Wru0Ji7i6RCu+
-	 5RjDMXuku7/D3SoymJH0hL90nQcJVq06x7EPvwHNQpYUzsFeyLFA1t7qJ2L011T0P
-	 sttEf0pKEjfy+QlGzksncaZ5bM/qRhJ3ACU91tPjFONtt00/nrtZy4tlb/uWC6gnQ
-	 QXTNai0u1aqCLL+4hM4zTmeblB8HEur3q+2xEFrahf3mIQ1PiVeCcQC+4rOiTVX47
-	 3vjodOG6/c1AGm35XGR6Dmrqke/TMy053GHtw6K7Kff0+DDZyJuBRjvf/qktobjRV
-	 T8UjpDuvPD+ByaVPlg==
+	t=1705506412; x=1706111212; i=markus.elfring@web.de;
+	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=Kn4viGP66uEY6hxKFeNR65Oofu8m8OWNSkAVv97ZrRaL3xBmOukZq/3bam2QshtB
+	 1nrBQ3OexdBFfGQ6j3M5K4GmxcrE8VOjPgh7eSjWJNLgDBjQ7PGnRZfBWdH0UntT5
+	 o2ee8PvtfTjQMVg0goDHGDtlZfsKsUyEtLwECsiu+Z2PxwAu3e2MGQ9vhD5itao2R
+	 G0DoagToRPpXkEDCrQ5NgjmMnYnBvgEg5two8BQ2YElshGPux7N4t4UsBF4MIB+FM
+	 LyiG6HaxdZWxzOg0NcBwbO8npi0aCEO9MAikPL1yVUYaZruveWE0ilNCLV+NO8l5w
+	 6RD1dvU480Ce92AldA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MF2gW-1rNpMJ2Ney-00Fk11; Wed, 17
- Jan 2024 11:40:19 +0100
-Message-ID: <3e0c7008-417d-4549-ae0a-7f8d26522117@web.de>
-Date: Wed, 17 Jan 2024 11:40:09 +0100
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1aDp-1rRVpv1iQN-003E2Y; Wed, 17
+ Jan 2024 16:46:52 +0100
+Message-ID: <75f302b2-9fe0-4b3d-a132-85186c4d9445@web.de>
+Date: Wed, 17 Jan 2024 16:46:38 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,75 +41,72 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org
-References: <20240117090018.152031-1-chentao@kylinos.cn>
-Subject: Re: [PATCH v2] x86/xen: Add some null pointer checking to smp.c
+To: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alex Helms <alexander.helms.jy@renesas.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Saeed Nowshadi <saeed.nowshadi@amd.com>, Kunwu Chan <chentao@kylinos.cn>
 From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-In-Reply-To: <20240117090018.152031-1-chentao@kylinos.cn>
+Subject: [PATCH] clk: versaclock7: Return directly after a failed kasprintf()
+ call in vc7_probe()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JaLRwvXgJjiefll0Tuwas9XKSthWswOnaJewGiQBlyjTcPN9V2f
- hcrT9hCDF4WMQbUTC8k8ldktcIrVPniJAn+SXNC0BsbmiJJp3ojo24Oib8U7MUU+sBdD0Yu
- 9c2+NUGv0VOR/06RxZoAV6HYBZVNQWN89GhXqQ6KI3r7QMKbUFyIENEbq7fU76dv24P0270
- O6iv+fKAQp+KD0B1eJeiw==
+X-Provags-ID: V03:K1:NgCtdZimQ5H+nTibuBuhAhJQP71uJFO/lCYKigwy9yWfdEzQ2Ep
+ 1fS3Km4lhjngeIh1jGfZzmD7eygbbm+/eEn83smX2ZnuhHRfUp52GYqiyt6L23plZVUFIyG
+ 2ICbgu10T5UeGP0dUFjh2hqVETLRNOLNKuMz1OJQ1qJOmmEEQFBdUz6fk8jtQaBDjhQv/4z
+ fupMtFMdwomMLhhTNlcTA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YvfY7JRbdYE=;mP4N+bwOpR1xsAuYUabDW0+JE/C
- AE3sP6atgL4o5w8kpHZI1+fNDuODzzspTSsZR7Ts2xw+W8gyXyG1AU9oeO8z2bx51b+YDZxEc
- MbwFGMGq2pX3mvIDaFzbYKAXE/lHYKT/46vU02RCllriNMVeBdckIzK5GJnmy5BhwV9obgmBU
- uMnG0nxdznUdK5vArhi41S8rswOBBjA+p5BXIMTwuElcMviIZDzAgwaafC7M3oRl7yOEhXGTj
- kl387WORzaxMA5yuQk0SH089zXvB0kDj25tXAy50rOLWbGnPMeoU+UBwkwuMUrPR+fLAckcAQ
- 5iezZjgPUvQOJrDOCGqLBm3U0KcSfDlOjBB/zGrIPGKsZ/USoc22ulDNOmT+q7G5NlWoHU2/S
- Q2jcDKj+XSwagdZr3XoaA+ntcEd90yizsoxwOHIdbnKxrYJ2gjeGocUOh1468GgeBXSIBNGB2
- Hc50BeWZWY+7fO7z7MBIYuWNPJTMhx/XS5uYn0x/8yLmq4WZFNc4mMRi4VkGrPHlpi42INqOj
- Iy+FP0U7hHYRqyu5biKL3OMOaiuhvlWKO5uTYiPRinKgQW9YZbbe12zJq4A6Pt+LM1EtpfBfm
- 2r+23QPpCOME0xqwxvqai/69Nhxpxk9+MIVgx4qcnj+YfvhNimWMcfCBBO1s1EtwBmRVEUpgO
- SmQLEwYWfc2cV5bYz1T5thQLt2Noez5tEFErKazzhFyWhoi6R6jbgiAA7IXO3arCEQ9jxYMDF
- W5WS9MZKEiWQ99oQBTjVxcJ1AVBiX3Z+olPFFpLww+Dn/e2q74nF6G/dUQcFSKqFEdWHgJYOe
- ViGCTUON4npiWlzfq/oXAYoWsPa+0AnfUc7bevojJ/udgrqE89563O9spHpPWxCl8KHVFlm4Y
- wfzUoxVF2hfAH6Siuqg7QOkBgCXbJbZKUlgqEx5fjzd8GRqpuO4HdA0YWzg7NHcsdBMym5Xz4
- iEsT4g==
+UI-OutboundReport: notjunk:1;M01:P0:+6buGsTWYV8=;2Fb2dSZsw8JVKKweUIItlQHbilk
+ Wk0CGsJEH7Z2IcEqcPAq/BziG61Hr0kzofIqcQ4t7L//BagEXHq/qfmcmEM8wC/cwklC1O1EX
+ EmbX0VnEV9yaRkTLv4sgoIyp7xc1SUVg1BkqX1BmkyqGVG/2Qbd9KYtT5J0GLU+1UQe86+Apq
+ FobItahZnvZM8DwdeeWZB3fXfY2MTrVUAodpz0A6SOacvn7jRLx3w185+yhHLqmcdSTN06k37
+ 2lLALBFw3eL4gOu3/ozkjgv0m9732FI/QjoRG3w1gxqb9ngCrKqmW86dc6A8FPBFfcvKV5XXv
+ LMF+eGv5Vfn4e02SRGTXLkVrkPXXERlJMLp/yRUjixdl1jCPR5h2wcxEtk7JVBLG+Y2kPwUyJ
+ aHYyP5jNbavgKPXzBl81T8UGa0k52bJNFzb54RYEe/8dDS9cB85fGjinjxZCfMq9g22HgjdHN
+ rwDiby9mpW1ppymx//U8ddACOLMW7imp7sgsGfOShY/wy4L0p2A0NnO2h0vcCJYxn6nEcgwxf
+ KmZr3WzbY81m98hwiFdUcQjU+baiIf+HRQNlw92qGlEVdMUXf3a1MiT11bR3ENwQ6nxbdMBU/
+ YW3C97YbFGP48PpM0vgSRmS2UoBaj2mCrSmy1ZObNh6wsd5p8jhJzn0v3MAj82S7YOuroeNd4
+ SXhaJ3ny/OECH9On3sL9LHyGIeVmBvSxHW7SYq4jYn5S19eFGGUb8nhNyJLUwAy/vZAL9hg0X
+ zq/PjSL2b7ndsKFFHeIJnCDaw7keTVPquSnzrCBCO7kC7Hf9BuT3gDVWTc0TEzM9tyAn55qsO
+ Z94sEOJMjsFRwSng7ek60b/tueZKiHjzz+fj7AuS1X1nS9FEm22gqtO0WqSG7m5UHoLdGYJN5
+ h8kFUaEQD0H8SJmDhqub59248Qxm6gYC5xa6YBZHFWfi7oo2yLZoWd1KFyCVYhrlzoDAR95jo
+ 481BJg==
 
-> kasprintf() returns a pointer to dynamically allocated memory
-> which can be NULL upon failure. Ensure the allocation was successful
-> by checking the pointer validity.
-=E2=80=A6
-> +++ b/arch/x86/xen/smp.c
-> @@ -61,10 +61,14 @@ void xen_smp_intr_free(unsigned int cpu)
->
->  int xen_smp_intr_init(unsigned int cpu)
->  {
-> -	int rc;
-> +	int rc =3D 0;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 17 Jan 2024 14:06:13 +0100
 
-I find the indication of a successful function execution sufficient by
-the statement =E2=80=9Creturn 0;=E2=80=9D at the end.
-How do you think about to omit such an extra variable initialisation?
+The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was pas=
+sed to
+a subsequent function call without checking for a null pointer before
+(according to a memory allocation failure).
+This issue was detected by using the Coccinelle software.
 
+Thus return directly after a failed kasprintf() call.
 
->  	char *resched_name, *callfunc_name, *debug_name;
->
->  	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
-> +	if (!resched_name) {
-> +		rc =3D -ENOMEM;
-> +		goto fail;
-> +	}
->  	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
->  	rc =3D bind_ipi_to_irqhandler(XEN_RESCHEDULE_VECTOR,
->  				    cpu,
+Fixes: 48c5e98fedd9e ("clk: Renesas versaclock7 ccf device driver")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/clk/clk-versaclock7.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-You propose to apply the same error code in four if branches.
-I suggest to avoid the specification of duplicate assignment statements
-for this purpose.
-How do you think about to use another label like =E2=80=9Ce_nomem=E2=80=9D=
-?
+diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
+index f323263e32c3..96e6b05f2aac 100644
+=2D-- a/drivers/clk/clk-versaclock7.c
++++ b/drivers/clk/clk-versaclock7.c
+@@ -1127,8 +1127,11 @@ static int vc7_probe(struct i2c_client *client)
+ 		node_name =3D client->dev.of_node->name;
 
-Regards,
-Markus
+ 	/* Register APLL */
+-	apll_rate =3D vc7_get_apll_rate(vc7);
+ 	apll_name =3D kasprintf(GFP_KERNEL, "%s_apll", node_name);
++	if (!apll_name)
++		return -ENOMEM;
++
++	apll_rate =3D vc7_get_apll_rate(vc7);
+ 	vc7->clk_apll.clk =3D clk_register_fixed_rate(&client->dev, apll_name,
+ 						    __clk_get_name(vc7->pin_xin),
+ 						    0, apll_rate);
+=2D-
+2.43.0
+
