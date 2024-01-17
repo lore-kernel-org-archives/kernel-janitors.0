@@ -1,74 +1,68 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id A2B4217D9;
-	Wed, 17 Jan 2024 01:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A5F1385;
+	Wed, 17 Jan 2024 01:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705454616; cv=none; b=iWrXhCoayIaelFngiU8wFdOcLh3hOjF5aPjCqz0lzES6aCCSsrK7dyCsPsDQQXVHMmupeVKrIbKxr6w/t4KtGtLz6+iuTqwW0P/H7I6Rgg433lBpZu6ReyU8jGROoX8FwWIbDjvz+PO+PxPgun3Ma97i3eThBrs6FGimt+GcqvE=
+	t=1705456410; cv=none; b=sI3BGdsvyOmG+6zsPbhgBL3EolR+C5nG/2Et/eVoUBoPwKd3x4qNSpQktynpwNx/rQTv2oQF4W75y9GLZIDNIucb8pdJPcJ6xMUk3uhWjCEW7yqFJ/8JweyNQpHilpuyZD77H9nZa/Ujo4n/RgiT371UUYQqPuuWMwzCpC96TIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705454616; c=relaxed/simple;
-	bh=Vmx397rnKN9dTE4JxoTDlJ1QfqShVG2owgUaAVsdmhs=;
-	h=Received:Message-ID:Date:MIME-Version:User-Agent:Subject:
-	 Content-Language:To:Cc:X-MD-Sfrom:X-MD-SrcIP:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding; b=E+Nl+GpLjT71YvWgKbeEXu4PFAoKbAz6MDbKPsqph1485hzr59421/soKx38Jpg3mJ3VEjqo2/+p4piJbLF3KzFXBfcHwQpMZfF4Pr3nXZGS22u3K9C9kQtavP8Dx0g6yZVLb9f8acCV2VrB48Ga1u3BBnHQo07/7R+I4D1hjWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id CA73D607F2347;
-	Wed, 17 Jan 2024 09:23:02 +0800 (CST)
-Message-ID: <1847a959-b8a1-29e9-c87e-036709586d1a@nfschina.com>
-Date: Wed, 17 Jan 2024 09:23:01 +0800
+	s=arc-20240116; t=1705456410; c=relaxed/simple;
+	bh=BElXs104GGWyneznFWlmSje+zAUEH5lxUrbFygcCijY=;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding; b=kxB2uDOC5nNDL89mPsdwDm159OX/SCgR4Eqez3zPMQ3vSJYC6rozUYia3Prd7WqRaBaN2KcFFAaGH/KiAXGht/peFZ0IZZleDXn3AZ6RYz0aIhOjTGAbWvBe7KJGvBOIPPuoRHoBRfKdl4bfr/WKvVf+RRWcXmkW+qy22etR1lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozMk7K8I; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozMk7K8I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C93C433F1;
+	Wed, 17 Jan 2024 01:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705456410;
+	bh=BElXs104GGWyneznFWlmSje+zAUEH5lxUrbFygcCijY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ozMk7K8Ian3IYofgxo4tGXyMnrSkXFAM0Imbj3BzW102RHMvznMN3OoGL9urFPbTs
+	 fZWU2v3OA3eUT5TSM7vzZVILJZrZNfjxYpJje0gpCADB1q2wiu1cP3lc33S7s9cjIm
+	 2dswo+u1SK2l91N+SOFwcVpLiqEHh081QcyvOJ8EpaN56VR9qFOjtI0F/BgWG79cUW
+	 j5VSTUlSvyr+1gweW5woWRp0NK8pS6vMl6RajE8ulfQ3fgDb6KrBxMPuxJVk6xXnX1
+	 ldKYmZerAWcZaODBLPW2tj9PoZE3S2qL4yeOeBBXue5Dqrs7PBTzxPOlS/2ZFDnAA3
+	 /vr7+NePMR5eg==
+Date: Tue, 16 Jan 2024 17:53:28 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Lars Povlsen
+ <lars.povlsen@microchip.com>, Steen Hegelund
+ <Steen.Hegelund@microchip.com>, UNGLinuxDriver@microchip.com,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: microchip: sparx5: remove redundant store to
+ variable clk_hz
+Message-ID: <20240116175328.2d6902af@kernel.org>
+In-Reply-To: <20240116161847.2317011-1-colin.i.king@gmail.com>
+References: <20240116161847.2317011-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] ocfs2: remove useless code in ocfs2_try_to_merge_extent
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
- justinstitt@google.com, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <20240116120926.3bfa87253bf5af5090bd78bd@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024/1/17 04:09, Andrew Morton wrote:
-> On Fri, 12 Jan 2024 12:26:40 +0800 Su Hui <suhui@nfschina.com> wrote:
->
->> Clang static checker warning: Value stored to 'rec' is never read.
->> Remove this useless code to silent this warning.
->>
->> --- a/fs/ocfs2/alloc.c
->> +++ b/fs/ocfs2/alloc.c
->> @@ -3743,8 +3743,6 @@ static int ocfs2_try_to_merge_extent(handle_t *handle,
->>   			goto out;
->>   		}
->>   
->> -		rec = &el->l_recs[split_index];
->> -
->>   		/*
->>   		 * Note that we don't pass split_rec here on purpose -
->>   		 * we've merged it into the rec already.
-> Then:
->
-> 		ret = ocfs2_merge_rec_left(path, handle, et, rec,
-> 					   dealloc, split_index);
->
-> and ocfs2_merge_rec_left() almost immediately dereferences `rec'.
->
-> So this looks quite wrong to me.
->
-Oh, really sorry for the noise.
-This patch is wrong.
+On Tue, 16 Jan 2024 16:18:47 +0000 Colin Ian King wrote:
+> The store to clk_hz is redundant since clk_hz goes out of scope on the
+> return. Fix this by replacing the *= operator with just * to remove
+> the store back to clk_hz.
+> 
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'clk_hz' is used in the enclosing
+> expression, the value is never actually read from 'clk_hz'
+> [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Su Hui
-
+For consistency - same story as:
+https://lore.kernel.org/all/20240116193152.GD588419@kernel.org/
+-- 
+pw-bot: defer
