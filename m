@@ -1,68 +1,65 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287EE241F5;
-	Thu, 18 Jan 2024 12:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEED1241E2;
+	Thu, 18 Jan 2024 12:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705580444; cv=none; b=oBIvmPJazWc4taZUgGKF4iAT+ma3RQU7qEB4/n25SCtzCdfk/pbdtlwmfzUVm+3+7VmksKkexjUDgurpYu12+zrdNp/ZTH4wKOVJXWX3X5MqjAjt+H9BdU0UcAzpIQO8qnTSExqyJ0GbmpBkf3qntBeMgrPOZWgQR13dQk30F2Q=
+	t=1705581406; cv=none; b=Xu6dA+EqkQ/yh0ufoVobGZ8/z2RnZ7u32uM6qu6qqJu30R7n1Olu+/FgKsGy547Q4vh57TsGriHfs+FVNdW5XtQboh6XKBj3LTXNmpzv451tI/px2iQn3rQNyinQwkylud7bsWVAA6EK+VeXQoIkbl7zKZGcSzAjeEwUW9AGbz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705580444; c=relaxed/simple;
-	bh=wKeRRvwusUw6uM5fiDp+NNumKfPCuSxZTnfq0P5ovz0=;
+	s=arc-20240116; t=1705581406; c=relaxed/simple;
+	bh=GSZCSpOqqzhMr6RwGuO1VJCCM884qyencHZG28chH8c=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
 	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=mCidjmLvqlda09fyrK2jbY2UNkBnRDs14jdbxvCUWPG01zlWrjZJ+1xsnpt4Ncn/wrlmFXC0U598UzGSaW5W4gq5DMwLUq0tHt8P9Q6dXzw244jAO7P0Un7HbPx0emSVrsY4b/vVyDt5aFzUdhDTkdgKZ0MVGCxWFp2u8y/9oFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yy14tb4L; arc=none smtp.client-ip=209.85.128.48
+	 Content-Transfer-Encoding; b=EBT01LHbZ0PLetbh9RZn3D9ORQU2HAcw98kwH1wABok7hfPYeDFfSTqVf2cqExwktn5TN0WKayeA1GPRAOn/qhcu0OZnfAdtqEMSiZyflMncMzfmxuQYRTuHuA/S5/JBOatIE8e5ecmt0wWL0aFzKHHIb0GibED8BooIXnLMnRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkXhqtgp; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yy14tb4L"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40e76109cdeso45685345e9.0;
-        Thu, 18 Jan 2024 04:20:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkXhqtgp"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-336c9acec03so9986388f8f.2;
+        Thu, 18 Jan 2024 04:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705580441; x=1706185241; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705581403; x=1706186203; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0nHhjrzFZM7Cc/aJje9RV5MSdJX0vTi3w7er5mHZ94=;
-        b=Yy14tb4LrOT9YvrkDgpRLpxOEJlwMvZj2S0lxCVHgfvhEmMW5cVUq2s/5S3jNDIqC5
-         YPA+13fPGdiuUh2Xb3a9dz1PyshhdnX1YKgCwjimxLPgqo7o7LcJgAnXYG/vHzuck0Du
-         g3333MuWL+DrTrPfoqbarFAQW9SBQpF2ntKgEn7/3kVApGD41f4f6qUhzCFpBbpbqO5A
-         NJ2udb9Vsdf0WrMgULhuV0jdyaoMiXjumdA+un6kpSDyGTTlwqgW5nAZ0iaMEQNv2wLy
-         MJllzyoMsfL83hH9YvxVqSgmtQ6rGb0XnG7E7u4cXtFH33UUEO4Su3WALPdxWrwh1IoO
-         NJHg==
+        bh=vA5DjepX8LO8HhgjcEQi+IWwObZWbeSNM5x2007oZCo=;
+        b=lkXhqtgphqWJDB2Fde4+QiEg7VNhst1hP3USufwGsHPUrHj62X3Ybs4Fmo5s7WRGyj
+         C86EekwaYn62lWAW7u2kydmMFlNZWL4r3LFErsMfcFVHrZP7YDBacZRJYaTkAQsye0j/
+         qTPCEgm2ScDAvrvn6X7soXDnKYlJTb9Hx2Eb8m0yes8RQ5r4CWlKw6ID7r0ZZzCv0EHs
+         +1/MJgEp0zfPfbHY1gTcj+yo5NW2JwusNwTFfWN04yZ4kJc/CWdqLWIgNTMDKdLuCoNw
+         0rtgSEx+DAJQAxe1N7Hu8l2PjdNkLnY4GezMRDUNX4OOGoEpuiwOdM3nh/W4KpnPWjfA
+         As+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705580441; x=1706185241;
+        d=1e100.net; s=20230601; t=1705581403; x=1706186203;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m0nHhjrzFZM7Cc/aJje9RV5MSdJX0vTi3w7er5mHZ94=;
-        b=E/MfG0IatHeRLznmBxIwPRBRY5GDmTGV/Jz+VkiPX0VEHV1T/GHc2u1vp3H9/BOYC9
-         nL49MX4BN2xW+QBHhZPEbEFOuuuWX3iw0not1/PvkQKIV6DyzJyqsyI2F/e9ZQ6oodag
-         JYAp3dXCqiV+yvnonVg2kwOozI6q/1XzH1t62ewDCJp4oiXfMtx4znd277cLmhfDyYCZ
-         zwuWaVJnMzDRQG83NaVaOffmCMYPs5Rtb2vs7fhhjSOywb4eKaFjI0dcmVYHshNoF/Vh
-         A17zmWoZ6jf4ioWYYPxksl4FtE3nA7z3/4yBnINR0b3pS2/gWtfKAAI88PKyDf9v8aEf
-         zJMQ==
-X-Gm-Message-State: AOJu0Ywa9i7aON7CsuggnQGwUw6Aa5YN/TJTVLhb7RFYSgyFdlygx/6k
-	a3K62qZ1u8qIimEU1K6AORl3ap6pNuvPujOQJVPtD821knP4X9R9
-X-Google-Smtp-Source: AGHT+IE1li7/tNfuLhhzIfuUktoc+UB/iW/Ffzt1JDUrO6Lg7Nbep8IaJTaabEGGhpnnb3Faob3EQg==
-X-Received: by 2002:a1c:7508:0:b0:40e:7734:ead2 with SMTP id o8-20020a1c7508000000b0040e7734ead2mr483857wmc.177.1705580441142;
-        Thu, 18 Jan 2024 04:20:41 -0800 (PST)
+        bh=vA5DjepX8LO8HhgjcEQi+IWwObZWbeSNM5x2007oZCo=;
+        b=hyPBoRIk5jUDI2nV2GH2j4H57qRgcLvaRIV2cWpgBdKy6A/j78zuqHqiysODae6o40
+         e93xm60uow3H0FQemVMjkMlafDbxgshuBv1TRhvhewCEh20mBwQeLOITAcYxwpIdric+
+         xIgiTxJg0uR0kVMgMPiyBknRqOiH2KFVZOguEbKMNmxXlbO24YatAjw5PNpdYEHZ4+0C
+         FStBoZb1wGc44Jiiv3rk+3+ikfiKqaI3eyBp0opC3tL2Hqx6oERsJUER3yC1hsgBDxVG
+         b/BInnm49gZ3B8AK4qbLYFt4T1KngoPIfotCGG5XccJpW5ddxggYklMCcEqq03QeKUCM
+         RsVQ==
+X-Gm-Message-State: AOJu0YzS4xl97S9dqmdukj+/3oRooj0ubAWECPFsyH7hIHjf3Crwceu8
+	Al94qeC+R0hfb5szE31/uQFNzNET3NaqMzKHQHTD7UjxfwnJvY5H
+X-Google-Smtp-Source: AGHT+IHaaeFxW7LHOmm4opdqNbFrJe66ZBuztiswDWE9W2nJuSGi1SBoZ4OebX2R7NA/FUs/dGT+vg==
+X-Received: by 2002:a5d:4051:0:b0:336:ba58:dade with SMTP id w17-20020a5d4051000000b00336ba58dademr460304wrp.62.1705581402845;
+        Thu, 18 Jan 2024 04:36:42 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v4-20020a05600c470400b0040e45799541sm29398014wmo.15.2024.01.18.04.20.40
+        by smtp.gmail.com with ESMTPSA id cp32-20020a056000402000b00337c55d9a28sm3027825wrb.93.2024.01.18.04.36.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 04:20:40 -0800 (PST)
+        Thu, 18 Jan 2024 04:36:42 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org
+To: Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: message: fusion: remove redundant pointer hd
-Date: Thu, 18 Jan 2024 12:20:39 +0000
-Message-Id: <20240118122039.2541425-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] comedi: ni_mio_common: remove redundant assignment to variable status1
+Date: Thu, 18 Jan 2024 12:36:41 +0000
+Message-Id: <20240118123641.2542208-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,41 +70,33 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The pointer hd is being assigned a value that is not being
-read later. The variable is redundant and can be removed.
+The variable status1 is being assigned a value that is never read, the
+assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-warning: Although the value stored to 'hd' is used in the enclosing
-expression, the value is never actually read from 'hd'
+warning: Although the value stored to 'status1' is used in the enclosing
+expression, the value is never actually read from 'status1'
 [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/message/fusion/mptfc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/comedi/drivers/ni_mio_common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
-index 0581f855c72e..c459f709107b 100644
---- a/drivers/message/fusion/mptfc.c
-+++ b/drivers/message/fusion/mptfc.c
-@@ -1401,7 +1401,6 @@ static struct pci_driver mptfc_driver = {
- static int
- mptfc_event_process(MPT_ADAPTER *ioc, EventNotificationReply_t *pEvReply)
- {
--	MPT_SCSI_HOST *hd;
- 	u8 event = le32_to_cpu(pEvReply->Event) & 0xFF;
- 	unsigned long flags;
- 	int rc=1;
-@@ -1412,8 +1411,7 @@ mptfc_event_process(MPT_ADAPTER *ioc, EventNotificationReply_t *pEvReply)
- 	devtverboseprintk(ioc, printk(MYIOC_s_DEBUG_FMT "MPT event (=%02Xh) routed to SCSI host driver!\n",
- 			ioc->name, event));
+diff --git a/drivers/comedi/drivers/ni_mio_common.c b/drivers/comedi/drivers/ni_mio_common.c
+index 980f309d6de7..824b026238b5 100644
+--- a/drivers/comedi/drivers/ni_mio_common.c
++++ b/drivers/comedi/drivers/ni_mio_common.c
+@@ -3798,8 +3798,7 @@ static int ni_serial_hw_readwrite8(struct comedi_device *dev,
+ 	devpriv->dio_control &= ~NISTC_DIO_CTRL_HW_SER_START;
  
--	if (ioc->sh == NULL ||
--		((hd = shost_priv(ioc->sh)) == NULL))
-+	if (ioc->sh == NULL || shost_priv(ioc->sh) == NULL)
- 		return 1;
- 
- 	switch (event) {
+ 	/* Wait until STC says we're done, but don't loop infinitely. */
+-	while ((status1 = ni_stc_readw(dev, NISTC_STATUS1_REG)) &
+-	       NISTC_STATUS1_SERIO_IN_PROG) {
++	while (ni_stc_readw(dev, NISTC_STATUS1_REG) & NISTC_STATUS1_SERIO_IN_PROG) {
+ 		/* Delay one bit per loop */
+ 		udelay((devpriv->serial_interval_ns + 999) / 1000);
+ 		if (--count < 0) {
 -- 
 2.39.2
 
