@@ -1,107 +1,121 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCC14688;
-	Thu, 18 Jan 2024 02:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA52D5686
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Jan 2024 05:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705544230; cv=none; b=RJNZbros9eI4DWn+QznziL3ZW+xUPLYwx0ney71VSG8hn2Hon4ZzIvdch6laCDDxtMfWe9YhDGm7PoP/c3R/GLaoXM0eTAAgK1+Wku4uLbJV49U1v+HUO9puVc0r1jGUSG3D4urgMiTtInK+Fc+7XooSSSw6gJPJRoFRNpQ9zyc=
+	t=1705555767; cv=none; b=F9j+eiNAQlpYq72QYcrA9g/2zuzXPmYOmLAo9i0OkIWlpoCO49y0Wg1UrCmFPqqhAPRB5wfTroO4VeN9UOxSyF1gSWWAiKpm1kBz54SX6FeMgA2HVP4WZwz8f9A3UCTFrJYtQ52rXvwYDNa2OjBKQ/Ds4x1HyYvIehZFwQ5wVfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705544230; c=relaxed/simple;
-	bh=6momQ9QB/Y9Ip/Db3KbIXMpQk/LKk7SNvyM7o6RGisk=;
-	h=X-UUID:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:X-CID-META:X-CID-BVR:
-	 X-CID-BAS:X-CID-FACTOR:X-UUID:Received:Received:X-ns-mid:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:
-	 To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding; b=rgu7TsCqdaabG4yBgPdns6tQAbMOuTsVju0H4YZ68MRVCJM+IXiUWYNOJ0kWD6tv2OTnXN+9Vco+wc4Eu/BzDnOWl6JuQ/FV5wlnKn/tkVfy/qRwaiiVDnE9tSosKNrwC98KnD1H8zfKboz6EYnyxPNWxGkoue5wRzFv6kA8XYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 43d0795174294d89904cf0b7504238dd-20240118
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.35,REQID:1c0bfad0-7b29-415b-9fa2-010a6f2d21e5,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:1
-X-CID-INFO: VERSION:1.1.35,REQID:1c0bfad0-7b29-415b-9fa2-010a6f2d21e5,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:5d391d7,CLOUDID:7c56f882-8d4f-477b-89d2-1e3bdbef96d1,B
-	ulkID:240118101702QKGYL0XV,BulkQuantity:0,Recheck:0,SF:38|24|17|19|42|74|6
-	4|66|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 43d0795174294d89904cf0b7504238dd-20240118
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1202952070; Thu, 18 Jan 2024 10:17:02 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id B3C66E000EB9;
-	Thu, 18 Jan 2024 10:17:01 +0800 (CST)
-X-ns-mid: postfix-65A88A1D-552403442
-Received: from [172.20.15.234] (unknown [172.20.15.234])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 36366E000EB9;
-	Thu, 18 Jan 2024 10:16:58 +0800 (CST)
-Message-ID: <4d4f4ae4-e5e9-4d9e-ac25-d262e7ea23fc@kylinos.cn>
-Date: Thu, 18 Jan 2024 10:16:57 +0800
+	s=arc-20240116; t=1705555767; c=relaxed/simple;
+	bh=SBVMA/CPQNcVCfcURUzuwVBCE1qUg3c5WG0zdMGFPQg=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To; b=eOfxLrYK7xptDjeoZ3+vLgdrzr9RSvWQ9d9oEco5bwpjewfH/0qTNo54xM25mumEu7tHAYu2Pr9ZPlC0GAsj+xuv0n6H9/YZ0k9uK8p9/6uZt+wSCt+yDUO7/cGwi7sZplhvzdaqfsSjXjXHFCOsXJr4xirwHg2QkXBCdQUTxpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bies4SxQ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bies4SxQ"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40e800461baso31788055e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 Jan 2024 21:29:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705555764; x=1706160564; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wWVOjE9eG7LQZ1p5rDtepmpo2WIDbMJDdYV1+1m1FBU=;
+        b=Bies4SxQOMm2y9Btq51UiXzVZwhtvjN5NVmtvQJ0eMUe5gfREJdCIWlM2FxjYkiBL3
+         viV/JtBvnRgvSaTfwEus92WDyzUb3MfLjJ5O9zlh/ZVwvyVQBv9ZeiJiF1E7DFlkoLLO
+         63j7Xl9jQkNSOsfYa7Ts9+OTe+0uab+XRsZ5WD7dEzWzmQQ+NdTwQcWCyP+4CkAEiz+r
+         ORCWpnC38A/1yZmryV8RrfSfvJ57rWs9JR8xGuX/rZYA8bP39uLvGBOE2VJtukBhe+Tc
+         C7nh4w/yN1i/HRgsTCxOEl+pkZ6R/0O2RS9YvtIv8EHNK1rY8hSfBv0GqE2qbHOeuljq
+         YHeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705555764; x=1706160564;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wWVOjE9eG7LQZ1p5rDtepmpo2WIDbMJDdYV1+1m1FBU=;
+        b=GUhGoXgUdyuZQLjA9BP90NaWV5ORHBltse2WeAksn0AfLDN4vl6zfslHO6cIJONJEO
+         xY0MJ9r47H8JfgICUXvqEgmM8prcJbslBjr3+AbzYecDrnVwE1D2h0X/I76eUFMAxiH6
+         VE3M48UtfU+d2q4axCaJjJ8smoLleeYyElt1XYiXtRzwNSSkWWVrh+q4D9E+pH8vijx6
+         QrA60rHQtULoSLj1oWmxcyxM3tgujj0DdU8sVbizf7QsbLvTQ/WWXSMsJK73oUyKtlGa
+         JUsQL2BUOVzNl/+SqMQw/Z5SpWYD+HQZJUEjNQmt6EQwS5nILiry9NZb3LOFitXGmLzf
+         dsgQ==
+X-Gm-Message-State: AOJu0YzHyGckWN2rKRVp72G5T7ogoD9CtJE99bjm7suS9VNhbkfM4OSk
+	xbfboBB+bcdz2oAgwAS2J0phaOFI31c1FosM5dPeQ4JPFKxwxsAEu88DrITOz7c=
+X-Google-Smtp-Source: AGHT+IHaCjW/5P67xwqKO0g8DnWLu4YQwaK2HHCRSW+8Wlvh81P/g9nOxJOSa7NQjI8+GNuKu6R48Q==
+X-Received: by 2002:a05:600c:880e:b0:40e:4799:8a81 with SMTP id gy14-20020a05600c880e00b0040e47998a81mr66295wmb.281.1705555764049;
+        Wed, 17 Jan 2024 21:29:24 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id o21-20020a05600c4fd500b0040e34ca648bsm24586127wmq.0.2024.01.17.21.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jan 2024 21:29:23 -0800 (PST)
+Date: Thu, 18 Jan 2024 08:29:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <groeck@chromium.org>,
+	Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: [PATCH] pstore/ram: Return directly after a failed kasprintf()
+ call in ramoops_init_prz()
+Message-ID: <26759e3b-ff74-4b04-b06f-4d68fbc5f606@moroto.mountain>
+References: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/adreno: Add a null pointer check in
- zap_shader_load_mdt()
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, freedreno@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240116032732.65262-1-chentao@kylinos.cn>
- <9e390783-05c5-47fc-a0c6-b95e249fe691@web.de>
-From: Kunwu Chan <chentao@kylinos.cn>
-In-Reply-To: <9e390783-05c5-47fc-a0c6-b95e249fe691@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
 
-On 2024/1/18 02:50, Markus Elfring wrote:
->> kasprintf() returns a pointer to dynamically allocated memory
->> which can be NULL upon failure. Ensure the allocation was successful
->> by checking the pointer validity.
-> =E2=80=A6
->> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->> @@ -144,6 +144,10 @@ static int zap_shader_load_mdt(struct msm_gpu *gp=
-u, const char *fwname,
->>   		char *newname;
->>
->>   		newname =3D kasprintf(GFP_KERNEL, "qcom/%s", fwname);
->> +		if (!newname) {
->> +			ret =3D -ENOMEM;
->> +			goto out;
->> +		}
-> =E2=80=A6
->=20
-> How do you think about to avoid the repetition of the pointer check
-> for the variable =E2=80=9Cmem_region=E2=80=9D?
-"mem_region"? Is this a clerical error, do you mean 'newname'?
+On Wed, Jan 17, 2024 at 09:24:12PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 17 Jan 2024 21:09:22 +0100
+> 
+> The result from a call of the function “kasprintf” was passed to
+> a subsequent function call without checking for a null pointer before
+> (according to a memory allocation failure).
+> This issue was detected by using the Coccinelle software.
+> 
+> Thus return directly after a failed kasprintf() call.
+> 
+> Fixes: 1227daa43bce1 ("pstore/ram: Clarify resource reservation labels")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/pstore/ram.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 88b34fdbf759..1a673a4af17c 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -595,6 +595,9 @@ static int ramoops_init_prz(const char *name,
+>  	}
+> 
+>  	label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
+> +	if (!label)
+> +		return -ENOMEM;
+> +
+>  	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+>  				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+>  	kfree(label);
 
-No check found in __qcom_mdt_load for 'newname'.
-'newname' is used for printing in '__qcom_mdt_load' in some cases, which=20
-is a bit dangerous.
-So it's necessary check it before using it.
+This patch is fine as a clean up, but I think it's useful to say that
+if you pass a NULL label to persistent_ram_new() then it will return
+an error.  It won't crash.  So this patch is a nice cleanup but it's not
+a bug fix.
 
-> Can the usage of other labels become more appropriate?
->=20
-> Regards,
-> Markus
---=20
-Thanks,
-   Kunwu
+regards,
+dan carpenter
 
