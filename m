@@ -1,111 +1,113 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A772F11716;
-	Thu, 18 Jan 2024 08:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A2E241E9;
+	Thu, 18 Jan 2024 12:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705567187; cv=none; b=ZjTo72XFW8AL9h2jBmKMkWpXW/F+Ge+KLPWxYCopIz2qwxv41i3V7PGSihnhhWUxmc2h5QAU7/btUQ7Z7OryzQ/7wCaA7wMpPrg2fzlsK9Bq14Xt8jLvxfeITNQ0C2jDw2p4cMRezw4Q830hBzF1AcNDrD4Vmf75/duWbNN6q58=
+	t=1705579670; cv=none; b=k8QYr6KDI6QYhRRVTHDrc01W7JNtNEml5id5JbYfH1b+efOb9qM+EGU8mwCOF3otcqqBFQG3z6nh2icQCYuNWhB1arYKiGMRYH7nqI/Sg7h7gyVjKpQLXkCejst296OevgQZCTphTKv5avS8SLBKB1Z8sLui+0sy9G4f+onGVjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705567187; c=relaxed/simple;
-	bh=c5NIjA7ZVExAL8yvcmRrYUcTws8SPyenufmj2QU5Fkw=;
-	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:Content-Language:To:Cc:References:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport; b=Saec4zebCRl8/0lq+Sr8SPE3oV5H8T4gjQK70Op9XPdzrqc6c/qkfa36aCiYve3MQp4aq1+ii6YuVfwD9F5NKcDb5UwqwWDO95bPpUn9ZjQD5HqSHkZTVLTBmqA3QOhuNhhrY6gWubfulU0VXOT7FVkDYQa8ybWuHyBMMmASC60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k0go9khd; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1705579670; c=relaxed/simple;
+	bh=Sfs0grAFRkw/zBunrBwd566BmWSyT4Zsgtf43ksD36A=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
+	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding; b=DYD7u/AyloGnz+F+LPNOxS7XFqOaMzlw24vzTUUc21xdoMvO0wwZMFBX+PijkkKavJzglAZ7ByAmOttd8iEzdS9w3vNKpMMrJZ+DOB2h1xDWv0FZZRRDC1fnORPSsbKoFs5XIrIFQswqmEP4N4vyMchgRk/WRxNRvbDyauASIAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9TpMPGx; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k0go9khd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705567136; x=1706171936; i=markus.elfring@web.de;
-	bh=c5NIjA7ZVExAL8yvcmRrYUcTws8SPyenufmj2QU5Fkw=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=k0go9khdcMe+WBdNDa4U+Qhm6YfsiAia1sv4LWKlM55XdS/un90eRmaVWQZlnAVy
-	 vrFLLk7gsLYHHrqfifWG3w66rxpqx8ZOZ8QXH+N+LLh6PLKyVpN8F4mjhjtcHO2/j
-	 15/gDR1fDG2G3/+iQphlkQ0cgc3lBuw9mRj0inxQ0YfbYJcQwpAMCuky0OtmHQl51
-	 xFCGzl+jcmpkmBXQ/oZdJxRt8mC6WsWBYDn2juQl0QjCLeNQqGFXltnMk38JJhEkz
-	 xMA3jSAFpbSVhzPOteKEQBJ4lvx5znKbYl0O0ZRkhbfw2O/5o2LEdC4y8HrzvuR9g
-	 rQ5wykQgaPTs0WSthA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIki-1qpxiG2irM-00cfcL; Thu, 18
- Jan 2024 09:38:56 +0100
-Message-ID: <ea4117d5-bc70-4f6d-9fe4-e70e0cc47a6c@web.de>
-Date: Thu, 18 Jan 2024 09:38:49 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9TpMPGx"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40e9101b5f9so5307365e9.3;
+        Thu, 18 Jan 2024 04:07:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705579667; x=1706184467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4sCmIQx6AGFYTpS8ooyJWTqHb26hOTFWBxgbo7T6WeI=;
+        b=b9TpMPGx/D8lYaZULgH3H/42cag8rzICRRg405HlqfdlJPP1304dZUfxLbbTHxXeor
+         saOqERPhVxUBTA/oVu4ZUv8Y9ExcsMlo77NaKGPYWuIbdMPmNVEd9wifxwMRlWEngr+P
+         j5D8MRsiiCdPB+dPYo234Ed2PikbzfZHtp8wXld/VlOdl3gEoJBabqMCE7INLP/7Aqql
+         YTwkP0bZgJbreoiTxXYkanbfVpOntCbwdGOoBSY6cpBhVcRM7CtG97230ZqrbfdAL3MY
+         kIgFHtMd6y+U+fAe9BBwytVIWLb0hpfXKd0GC+h58UmjaGuvxbWdBZSLp1e3LXrcreGk
+         0miA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705579667; x=1706184467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4sCmIQx6AGFYTpS8ooyJWTqHb26hOTFWBxgbo7T6WeI=;
+        b=xQlDqCb3veptKsnGKPFgLrsRlTJHOyUFRwQlbWiwPxhh4qrUlR5YJ30Krgy1mDuDmn
+         +AvC0q0JgR/XiKVPsUbIWJ8kVX4hibnq0XiRLQoXvrnXpFwXRFDqBj0M9muPPcuPxE1Z
+         deXPZeho39JPf0eQlck6MtUUiunq9HWOdVu9gIvUI9C/qGGi5FeC/jHSgE4xPNvAsZFL
+         Yf6dGu6+BZZEkfO9rsFKngX+Nu8gP+2hZ2Wrf60oK56tjioMZW2w5Tn7Kdzz7B5y0TfI
+         wqw0AfpUNbuIGwZo8DdjFMcWBZ1c52VBfseYk32sh/Uto5T4Enc28IYAW51jvti8WJXn
+         Db9Q==
+X-Gm-Message-State: AOJu0YwtgbCuLEL919h/FKhimInenbCHaSCuPOxVrJmEz8Pz/A1pwxEq
+	JLAJ4CKbVMsZTCkeTjRHMby+9ALLJR98SVb0E8ALHQFMank/N+VlnoOJ3X1n
+X-Google-Smtp-Source: AGHT+IFI2KpYg6ESmlPKx7B/dBNMJwuHYhi+S0sXgWlbDOeT1O2++W7P4U8MGNKxKy0yjsOLU4Cjsg==
+X-Received: by 2002:a05:600c:754:b0:40d:492d:c376 with SMTP id j20-20020a05600c075400b0040d492dc376mr449796wmn.114.1705579667210;
+        Thu, 18 Jan 2024 04:07:47 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a12-20020a5d508c000000b0033763a9ea2dsm3908725wrt.63.2024.01.18.04.07.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jan 2024 04:07:46 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: asymmetric_keys: remove redundant pointer secs
+Date: Thu, 18 Jan 2024 12:07:45 +0000
+Message-Id: <20240118120745.2519762-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pstore/ram: Return directly after a failed kasprintf()
- call in ramoops_init_prz()
-Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Joel Fernandes <joel@joelfernandes.org>, Kees Cook <keescook@chromium.org>,
- Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
- <groeck@chromium.org>, Sai Prakash Ranjan
- <saiprakash.ranjan@codeaurora.org>, Kunwu Chan <chentao@kylinos.cn>
-References: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
- <26759e3b-ff74-4b04-b06f-4d68fbc5f606@moroto.mountain>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <26759e3b-ff74-4b04-b06f-4d68fbc5f606@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nV3so7VARuPz+H3zgBtP5qFxp0QSibkDxt/9dkRReI3IdOgNMLU
- BcINV1xvzIwy4ceXKDMUQttLb3561ySWFGmUxrzME9oKpCpbjwGGdcHMq2/ti/VqoHZQZi2
- JcFEMEncuE98uc8xJvTSAwICMZlgYIoXx0znWcoaYOO4YHfiZGbHV7O3RH0pPcuP3mMahtk
- zChUGwIwdkCgNVnJeFDEg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mJ0dEA0NvLA=;dTB2kylOv6oJYX9V0c3EanhWlh8
- gHXqOviPoFcDqkCtG2CguXyQsV4A0BIYg/JSHreVhLsX/e2L2NQUrVr+0my9XK2ENWXbpGGOb
- 6x44lIAGMlJbwYCKlejIvhptLS+dHiwKt63u2uI9MmGE94u/joRE+A2NGD6WL1uUVAunozIm8
- jTKFnD704vMciTL/j7schkkLf198LVe4oHFtqDUJdF4UzNE3Cs2X/S043T7ha8HNbAGkCM8/x
- tINTZF8WoxBlgCMYp85TDtH9Osjc4gJPGmIgFFOCXU7kTMXKMa6R3gmqi5YujL/92aYz2qVue
- jZYfk8me85L+iuZxGRnZr/MwZFXzj7f2ehpGae6aCZOWkEpcv6TBuyuQKoIALWz9olVGQvnu/
- izQAqe7HvJN1pi2OsbCb5SmxjK4oq/qN+vzTr6S/wYbJnlNssX58zeKcyqaO9Rpz4xDy2XaLD
- EI7xldmGrqUXAa8KAl2r44nN/IHQ/bb9T3Li8S9jUlTVqb7w/Cn9fJDUvuddHlEATY8ypKLIQ
- Le+GSvaJEZssfPjUbD6bhgrZ6k4xNmcXq5YtGNUpi7tTRSjnvWnjqZV4nt6rKKPXfo1mqlafR
- 6oHAdvDAGLEp4MAG5OeJNis/AO1NZ5bog5fWTt0qJEuG3MwbHp3UB/5KTMyKxrWbY3YfFbZPA
- HOvvghQwygfha7Vkjcb7TVJyOkjec4xthjBB4sKGgLFwzxTsE4PqJ8ldD4Dd/lDC08aSxBbnY
- LrDFqS7rG1tKgbBI6qXfZb6tZib/eLNyYsgpCPVbUftd9C2sEEI+xkwHLeVhFcb8qF5YzZQ5r
- A4Y+CeAOP+B04/Pc80orfJ/ioqQMlTmo07gbmIkoIhwCAB+J3eJQRwGK0b3pXMwsC2+C7fjnO
- p1fUvpEWfIm1gHjNna+atKro1uWFhVXXCUOZm2jzU2250YlvdJdMxMzU3gIZUfoNELVnkJJDj
- enbmkw==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was =
-passed to
->> a subsequent function call without checking for a null pointer before
->> (according to a memory allocation failure).
->> This issue was detected by using the Coccinelle software.
-=E2=80=A6
->> +++ b/fs/pstore/ram.c
->> @@ -595,6 +595,9 @@ static int ramoops_init_prz(const char *name,
->>  	}
->>
->>  	label =3D kasprintf(GFP_KERNEL, "ramoops:%s", name);
->> +	if (!label)
->> +		return -ENOMEM;
->> +
->>  	*prz =3D persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
->>  				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
->>  	kfree(label);
->
-> This patch is fine as a clean up, but I think it's useful to say that
-> if you pass a NULL label to persistent_ram_new() then it will return
-> an error.
-=E2=80=A6
+The pointer secs is being assigned a value however secs is never
+read afterwards. The pointer secs is redundant and can be removed.
 
-Will it become helpful to annotate the corresponding function input parame=
-ter
-for null pointer tolerance anyhow?
+Cleans up clang scan build warning:
+warning: Although the value stored to 'secs' is used in the enclosing
+expression, the value is never actually read from 'secs'
+[deadcode.DeadStores]
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ crypto/asymmetric_keys/verify_pefile.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index f440767bd727..2863984b6700 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	const struct pe32plus_opt_hdr *pe64;
+ 	const struct data_directory *ddir;
+ 	const struct data_dirent *dde;
+-	const struct section_header *secs, *sec;
++	const struct section_header *sec;
+ 	size_t cursor, datalen = pelen;
+ 
+ 	kenter("");
+@@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	ctx->n_sections = pe->sections;
+ 	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
+ 		return -ELIBBAD;
+-	ctx->secs = secs = pebuf + cursor;
++	ctx->secs = pebuf + cursor;
+ 
+ 	return 0;
+ }
+-- 
+2.39.2
+
