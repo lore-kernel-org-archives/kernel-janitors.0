@@ -1,40 +1,51 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2716B2557E;
-	Wed, 17 Jan 2024 21:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBA42115;
+	Thu, 18 Jan 2024 02:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705526665; cv=none; b=rpN1WFLBa3Z/qMzHXDLWm2icTYNvkackySp4IjX4EygP8CGUP3R9Y0QUz8dGjuDg9NdvNHbML9XF66CjVNsDMDt81l65nXgMJl1NjmRTv2i+AC4Tg3K07XxMBxApnvuNmKU1EeycqYH3oQApfj+7HOFOiBDcKC08jMw8iXFlyc8=
+	t=1705543753; cv=none; b=ej4d7ElJY/M0gG2UFAYJECbPPUcRWV0Zx5fRRha12G7bZ5K65o214/aT/XKi0GENT7rC1kEQ9AMLsoj9CzYX3xzmBqVFXUS5qwiZBr+i6fXFbEipStynkGoWFtxV9bFHjkfsz6/h8DNgprMz8VpFAefrpWh+otJEGCTXPyGgJqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705526665; c=relaxed/simple;
-	bh=rr/O9OnzgwSihYNKoOt11Ezoi6TqX6d/sDWn041aOvs=;
-	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:To:Cc:References:Subject:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport; b=FkdD4ASWocptS/NXd+I++UCOThhYG9aa2go5UhowvFWqpu6P4OOJlKYzseho0lrwLV8TT+F6bIlLTH9/KoOcGIGVs/UtShhDzpnt/WMiEv+rIt9ncG1K3uf0DC1iSqVzVo92EjEVxDDTVCDiBlK44WxgvTkLAgazBHAPqXS96Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BGG+EdFE; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BGG+EdFE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705526647; x=1706131447; i=markus.elfring@web.de;
-	bh=rr/O9OnzgwSihYNKoOt11Ezoi6TqX6d/sDWn041aOvs=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=BGG+EdFEdB8o5/ex2syX84gzb69X81Shks8euCQc0X9v9MbRC1vbOpTOiaPnyuxC
-	 cZjBGrpCqia9b7VjGAGIfUFjkK9jBPv/C2I3oGBlHmPk8nB6+t8D2tP8sPiGMD92j
-	 LAlsLDfxgOiICCRVl9wFFsDY9hsmLimWFvkK3xH/TMbTDM3MSj+pts6rrCCsLOMSY
-	 hjXh+K59ayhfuXnXyw6avRCCLqg3RWLaOpjXQxQXUq+TZkuAuaqrFHPBUSw8vv//C
-	 0bHZ7Yg8Ah5P6j3+9yXE47rFzSRVKgNZsKFKPZJh/aG/vMJcKKHTgBtDG+otqtnSb
-	 6ZY2icE3bNgfh3o1ug==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8Bw1-1rVSRo2gIV-005OhR; Wed, 17
- Jan 2024 22:24:07 +0100
-Message-ID: <4934093b-86c0-4889-a5e9-0f9d63fd528c@web.de>
-Date: Wed, 17 Jan 2024 22:24:01 +0100
+	s=arc-20240116; t=1705543753; c=relaxed/simple;
+	bh=z3G3oCbHidD8qynDWfVmNenXA6fw2hQV7eZGCKnPYyE=;
+	h=X-UUID:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:X-CID-META:X-CID-BVR:
+	 X-CID-BAS:X-CID-FACTOR:X-UUID:Received:Received:X-ns-mid:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding; b=kpNAS1jXVZ/E25p6Ts3EdHPsmjzpWAEn8deAVsxM90f5HsuKXtCLlTETrJoSEzqbsltOUJ3qVymZMk0Mw1gwEunWCnLUA8WoOQrAcf5iu2OHtvSe0P36KOvKUAK3NzQE6bt5vaN8jtpYHrq0oZJIL9SC/7xGdNwRUfoDryZRTu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 96769b9c0fbc46cd8ed79cbbd996c5c5-20240118
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.35,REQID:ee66016e-655b-450a-83d8-1a213d165016,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:1
+X-CID-INFO: VERSION:1.1.35,REQID:ee66016e-655b-450a-83d8-1a213d165016,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:5d391d7,CLOUDID:1b50787f-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:240118100344LP7I44R2,BulkQuantity:0,Recheck:0,SF:66|38|24|17|19|42|7
+	4|64|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 96769b9c0fbc46cd8ed79cbbd996c5c5-20240118
+Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
+	(envelope-from <chentao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 696325700; Thu, 18 Jan 2024 10:03:42 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id D0A45E000EB9;
+	Thu, 18 Jan 2024 10:03:41 +0800 (CST)
+X-ns-mid: postfix-65A886FD-772615417
+Received: from [172.20.15.234] (unknown [172.20.15.234])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 46FA7E000EB9;
+	Thu, 18 Jan 2024 10:03:38 +0800 (CST)
+Message-ID: <e583bcd5-cae6-4299-8800-80e862a6bd8f@kylinos.cn>
+Date: Thu, 18 Jan 2024 10:03:37 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,59 +53,68 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, linux-scsi@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "James E. J. Bottomley"
- <jejb@linux.ibm.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>,
- "Matthew R. Ochs" <mrochs@linux.ibm.com>,
- Uma Krishnan <ukrishn@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
-References: <20231127025127.1545877-1-chentao@kylinos.cn>
-Subject: Re: [PATCH] scsi: cxlflash: Fix null pointer dereference in
- ocxlflash_get_fd
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20231127025127.1545877-1-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] pstore/ram: Return directly after a failed kasprintf()
+ call in ramoops_init_prz()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-hardening@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <groeck@chromium.org>, Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+References: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
+Content-Language: en-US
+From: Kunwu Chan <chentao@kylinos.cn>
+In-Reply-To: <644f44ad-7e2b-4a1a-bbd7-ccc79d479242@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iqDmz8NJdlIeTl5UAA2WHvmAFHU+jenQ98f6n/XdkUaFyhUHwsC
- 82FLB4xRI0gLxyUZOIVJvbwzbZtUe/ml/htrM4aPHr/VJ3hgKb8/Tp4b4qJLNOtyLQWKz3b
- 20kMtwa7IcmJOcYEcjxI8G0NFWkGHCyLjOeU0EmAaRw5Dj71S+U8njmuZW7Al/9sF0rgY53
- EiCBtnbiK/VfOl1+fD5rw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PBqwc8dxBqM=;FLyDzZb62/ebRUi/Ah3sVBl6gCB
- gNk1emMMlYhJdlu6UjSnn2UOrPQfVSM4HqQPqYQn2UqpHObhR+Y2UEidTb3K8WHSXfEK6JWjz
- zeJKTDjK8hlG+IVoZGBHbP1fXJXH1u/edn0U5LKlFiK8Ci2rXXUIsay3Mcwhc39gWIv5XgQjD
- JaTiyX4FXaR3dkp9R+B5cCH+GwuO//2Aunw69FURHE/jbKlpJxj0UDi6NGsqq3d/rYn0RNYcD
- v5NBH4ks6kVfEOcrpXMyjmH6MLh0I6LE3EZID/hboIkhqM8Mcwv0fQBSamLX4j9kSCuqdBC3/
- TOzvDOTuGSIxSvMS5oZmRvoA9cMK4wgWDabX/U3m6pPnzXJmpwcXwUn6VHNZWfYi/REdXGjU2
- w+mCR5LRTZ2YseYWR44FuVzxcnAiqGCaH9RoZAp6eWMAMcb7PeDQzM45dgZqBw+EhWPNmblQX
- RKipQz96zxASADZ9tnAjOHOZPm8YEGhOvjt7vILrFzovnmmgNEGjpCZyT/rlSHLyVAG4e7eq8
- 03LeiH46gF/ZhEfD6P/FJsIxk65LIOqIsxkU+aGORXUK27mWF7Iv8CIplAI9PmJrUKZWzJkd2
- aCnix+Qq0eoyl57ic3woBwRlDaKo6nxkqNrUsrzc4sPaRkFP+sAUpE1YX0T0CnPbwHQj9ZVv0
- 60SoAP59bbB58k9ohrd3j1CXA3Qn/PC4P2oxiVN/BWFoyDIGSMIIQp3g95+XWZn6G2vpfPYUZ
- JF7sTKCFUhO2AcDqYr0jZ5vDnPuc7kkfEjfYOZ3J5H9kSBlUQXyvUNW6ZfHu6Djwc8TKCdVQf
- ch1LxZd5dQWU9QjPYM0FptNYTYKvThVGWEi3mLnfZcHCMYEkROxpz+ahlx9A6APBSSrvZ7hwJ
- mO2hEafkniq95XSGJc+kE4JyV4fqc+a6On98usyFTx+9zgc8Tq8XjXkfdCR9apa+qmthYde41
- x0md6w==
 
-> kasprintf() returns a pointer to dynamically allocated memory
-> which can be NULL upon failure.
-=E2=80=A6
-> +++ b/drivers/scsi/cxlflash/ocxl_hw.c
-> @@ -1231,6 +1231,11 @@ static struct file *ocxlflash_get_fd(void *ctx_co=
-okie,
->  		fops =3D (struct file_operations *)&ocxl_afu_fops;
->
->  	name =3D kasprintf(GFP_KERNEL, "ocxlflash:%d", ctx->pe);
-> +	if (!name) {
-> +		rc =3D -ENOMEM;
-> +		dev_err(dev, "%s: kasprintf allocation failed\n", __func__);
-> +		goto err2;
-> +	}
-=E2=80=A6
+Hi Markus,
+Thanks for your patch.
 
-How do you think about to omit the extra error message?
+On 2024/1/18 04:24, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 17 Jan 2024 21:09:22 +0100
+>=20
+> The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was =
+passed to
+> a subsequent function call without checking for a null pointer before
+> (according to a memory allocation failure).
+> This issue was detected by using the Coccinelle software.
+>=20
+> Thus return directly after a failed kasprintf() call.
+>=20
+> Fixes: 1227daa43bce1 ("pstore/ram: Clarify resource reservation labels"=
+)
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   fs/pstore/ram.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>=20
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 88b34fdbf759..1a673a4af17c 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -595,6 +595,9 @@ static int ramoops_init_prz(const char *name,
+>   	}
+>=20
+>   	label =3D kasprintf(GFP_KERNEL, "ramoops:%s", name);
+> +	if (!label)
+> +		return -ENOMEM;
+> +
 
-Regards,
-Markus
+This part looks good to me.
+
+Commit 1227daa43bce1 ("pstore/ram: Clarify resource reservation labels")
+introduce another two more kasprintf in the ramoops_init_przs.
+
+Could you fix it together?
+>   	*prz =3D persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+>   				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+>   	kfree(label);
+> --
+> 2.43.0
+>=20
+--=20
+Thanks,
+   Kunwu
+
