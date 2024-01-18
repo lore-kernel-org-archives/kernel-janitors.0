@@ -1,68 +1,71 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A2E241E9;
-	Thu, 18 Jan 2024 12:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0451121A12;
+	Thu, 18 Jan 2024 12:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705579670; cv=none; b=k8QYr6KDI6QYhRRVTHDrc01W7JNtNEml5id5JbYfH1b+efOb9qM+EGU8mwCOF3otcqqBFQG3z6nh2icQCYuNWhB1arYKiGMRYH7nqI/Sg7h7gyVjKpQLXkCejst296OevgQZCTphTKv5avS8SLBKB1Z8sLui+0sy9G4f+onGVjw=
+	t=1705580086; cv=none; b=D8NCYyQfcVw4My2oiu+cuNeuug3MnGD51lW4vrfYnpO8ABHOdH5ld07Lw4ohPf2FOmAVsWJ/fSt5yiGWJyHwhRWn4ECaKVwD5/ewJp1FRiBu/TEpzx5EHhFpneXWrT5aruJ+Sw4ly10f34jSO0ISZWUdqDUQ7lA6T0Q7Nz1Tzek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705579670; c=relaxed/simple;
-	bh=Sfs0grAFRkw/zBunrBwd566BmWSyT4Zsgtf43ksD36A=;
+	s=arc-20240116; t=1705580086; c=relaxed/simple;
+	bh=djjsCtBMT3J7UQOghwFQYVRaBkgwuoLsuZnOcqi4QpI=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
 	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=DYD7u/AyloGnz+F+LPNOxS7XFqOaMzlw24vzTUUc21xdoMvO0wwZMFBX+PijkkKavJzglAZ7ByAmOttd8iEzdS9w3vNKpMMrJZ+DOB2h1xDWv0FZZRRDC1fnORPSsbKoFs5XIrIFQswqmEP4N4vyMchgRk/WRxNRvbDyauASIAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9TpMPGx; arc=none smtp.client-ip=209.85.128.50
+	 Content-Transfer-Encoding; b=H2pzjd4CAcDTvr5GrPJBwJe9byieXE/p0JDFOeorU2BtxKGSeVnw302S28nhxfnhd2oyDk0A2YvDgFMe0p+3ZpWhPd4p93ki1REJIsWgwCUIgp/mNJfozrvrvRZVpb9IFVZB1/stTVDpdfgDWImSQw0nXm5kr2/bWlQpWzH9bJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDgY2O6t; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9TpMPGx"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40e9101b5f9so5307365e9.3;
-        Thu, 18 Jan 2024 04:07:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDgY2O6t"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3376555b756so391909f8f.0;
+        Thu, 18 Jan 2024 04:14:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705579667; x=1706184467; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705580083; x=1706184883; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sCmIQx6AGFYTpS8ooyJWTqHb26hOTFWBxgbo7T6WeI=;
-        b=b9TpMPGx/D8lYaZULgH3H/42cag8rzICRRg405HlqfdlJPP1304dZUfxLbbTHxXeor
-         saOqERPhVxUBTA/oVu4ZUv8Y9ExcsMlo77NaKGPYWuIbdMPmNVEd9wifxwMRlWEngr+P
-         j5D8MRsiiCdPB+dPYo234Ed2PikbzfZHtp8wXld/VlOdl3gEoJBabqMCE7INLP/7Aqql
-         YTwkP0bZgJbreoiTxXYkanbfVpOntCbwdGOoBSY6cpBhVcRM7CtG97230ZqrbfdAL3MY
-         kIgFHtMd6y+U+fAe9BBwytVIWLb0hpfXKd0GC+h58UmjaGuvxbWdBZSLp1e3LXrcreGk
-         0miA==
+        bh=jl/QSyVeENwFqZo45P+/HN9QAR9bTLqt+HneRrWN0b4=;
+        b=VDgY2O6t8TdVP4MrzqqVuzPKVEEBTfJFaS/EjrLgrUjBWNWFlV5ZVhow/V9e3ZdKsq
+         OaCmjOFq8CRse0IBpVlW+ebWkph5zl6EO9hJFlJzvtG+IwlMYztNyLwFkn+hLsjLWrGF
+         aPvjqk72GryflMsi4F9IuPdZU4/fAPD/s9ijQUUf1YD6Wu0XiSfwhiufXBuvVojOCYIB
+         gyBuQz/zrWPE6HOj7vQB9i6vXM66v5aPt6eDnm/6JA3n65pATT5ryEm6172kuJvwjuER
+         pmuIXnaLeoEORGD5Jx7l8L1uc1VPb4bEX1s61+8x2KY/4lZsxmE3dcZNoBdJEp3F+64Q
+         msFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705579667; x=1706184467;
+        d=1e100.net; s=20230601; t=1705580083; x=1706184883;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4sCmIQx6AGFYTpS8ooyJWTqHb26hOTFWBxgbo7T6WeI=;
-        b=xQlDqCb3veptKsnGKPFgLrsRlTJHOyUFRwQlbWiwPxhh4qrUlR5YJ30Krgy1mDuDmn
-         +AvC0q0JgR/XiKVPsUbIWJ8kVX4hibnq0XiRLQoXvrnXpFwXRFDqBj0M9muPPcuPxE1Z
-         deXPZeho39JPf0eQlck6MtUUiunq9HWOdVu9gIvUI9C/qGGi5FeC/jHSgE4xPNvAsZFL
-         Yf6dGu6+BZZEkfO9rsFKngX+Nu8gP+2hZ2Wrf60oK56tjioMZW2w5Tn7Kdzz7B5y0TfI
-         wqw0AfpUNbuIGwZo8DdjFMcWBZ1c52VBfseYk32sh/Uto5T4Enc28IYAW51jvti8WJXn
-         Db9Q==
-X-Gm-Message-State: AOJu0YwtgbCuLEL919h/FKhimInenbCHaSCuPOxVrJmEz8Pz/A1pwxEq
-	JLAJ4CKbVMsZTCkeTjRHMby+9ALLJR98SVb0E8ALHQFMank/N+VlnoOJ3X1n
-X-Google-Smtp-Source: AGHT+IFI2KpYg6ESmlPKx7B/dBNMJwuHYhi+S0sXgWlbDOeT1O2++W7P4U8MGNKxKy0yjsOLU4Cjsg==
-X-Received: by 2002:a05:600c:754:b0:40d:492d:c376 with SMTP id j20-20020a05600c075400b0040d492dc376mr449796wmn.114.1705579667210;
-        Thu, 18 Jan 2024 04:07:47 -0800 (PST)
+        bh=jl/QSyVeENwFqZo45P+/HN9QAR9bTLqt+HneRrWN0b4=;
+        b=iXBx+EhzeNDDziRcRy/VzKfGKrgaJdJcsuXKCDY6jdSP+FM++OclDfVLZw3rbXmxdh
+         RQT9DWYGlXgFHSwITSaSxBteHMHUG1PfwCQcIQHIKGKK8+WxHR6IFM6GqhsSg/5UN61k
+         FUYN15AVDRMPxoDdQ5rC2d/V7H10q3o6WHwvB4bWIoIKesj+PYycgqhhw4whWm0Fm4Zm
+         PomrPT//Ddc6wZojzT2jNtoDJR8yqDo+Jkf5U+Iue1qrOgIHJY+yYY96n7Xmj7JQ31yw
+         Qu0qcZufdE37u71OsKp+YUHcovMQoWjTGgcILkS6Upj8ij8R1L/3I9QtB9JrPzqklq57
+         LFoA==
+X-Gm-Message-State: AOJu0Yy2NOqfiJkVhYkmuylid56L4RMQjBNrpeMr8QyqllHU7TL2kbCm
+	3xl7RUUsCMYi0Kl8qm317tgW+YIa1eVSKmrAbTk4bRd/dUh4sApp
+X-Google-Smtp-Source: AGHT+IFx5xTOFom6VFy3Gwjtnx2Y2dSjQF2XhfvoIBTOEE5VVzcwGfLtjHAp2ikwIViBbBEGwrVHHw==
+X-Received: by 2002:a5d:6d47:0:b0:337:6208:99df with SMTP id k7-20020a5d6d47000000b00337620899dfmr486497wri.20.1705580083143;
+        Thu, 18 Jan 2024 04:14:43 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a12-20020a5d508c000000b0033763a9ea2dsm3908725wrt.63.2024.01.18.04.07.46
+        by smtp.gmail.com with ESMTPSA id y14-20020a5d4ace000000b00337bfc796a6sm3920976wrs.87.2024.01.18.04.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 04:07:46 -0800 (PST)
+        Thu, 18 Jan 2024 04:14:42 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org
+To: Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	"James E . J . Bottomley" <jejb@linux.ibm.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] crypto: asymmetric_keys: remove redundant pointer secs
-Date: Thu, 18 Jan 2024 12:07:45 +0000
-Message-Id: <20240118120745.2519762-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] scsi: megaraid: remove redundant assignment to variable retval
+Date: Thu, 18 Jan 2024 12:14:41 +0000
+Message-Id: <20240118121441.2533620-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,41 +76,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The pointer secs is being assigned a value however secs is never
-read afterwards. The pointer secs is redundant and can be removed.
+The variable retval is being assigned a value that is not being
+read afterwards. The assignment is redundant and can be removed.
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'secs' is used in the enclosing
-expression, the value is never actually read from 'secs'
+Cleans up clang scan warning:
+Although the value stored to 'retval' is used in the enclosing
+expression, the value is never actually read from 'retval'
 [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- crypto/asymmetric_keys/verify_pefile.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/megaraid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index f440767bd727..2863984b6700 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 	const struct pe32plus_opt_hdr *pe64;
- 	const struct data_directory *ddir;
- 	const struct data_dirent *dde;
--	const struct section_header *secs, *sec;
-+	const struct section_header *sec;
- 	size_t cursor, datalen = pelen;
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 66a30a3e6cd5..38976f94453e 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -219,7 +219,7 @@ mega_query_adapter(adapter_t *adapter)
+ 	raw_mbox[3] = ENQ3_GET_SOLICITED_FULL;	/* i.e. 0x02 */
  
- 	kenter("");
-@@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 	ctx->n_sections = pe->sections;
- 	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
- 		return -ELIBBAD;
--	ctx->secs = secs = pebuf + cursor;
-+	ctx->secs = pebuf + cursor;
+ 	/* Issue a blocking command to the card */
+-	if ((retval = issue_scb_block(adapter, raw_mbox))) {
++	if (issue_scb_block(adapter, raw_mbox)) {
+ 		/* the adapter does not support 40ld */
  
- 	return 0;
- }
+ 		mraid_ext_inquiry	*ext_inq;
 -- 
 2.39.2
 
