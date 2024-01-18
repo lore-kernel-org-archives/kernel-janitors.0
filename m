@@ -1,102 +1,128 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEED1241E2;
-	Thu, 18 Jan 2024 12:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AAB28DA0;
+	Thu, 18 Jan 2024 14:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705581406; cv=none; b=Xu6dA+EqkQ/yh0ufoVobGZ8/z2RnZ7u32uM6qu6qqJu30R7n1Olu+/FgKsGy547Q4vh57TsGriHfs+FVNdW5XtQboh6XKBj3LTXNmpzv451tI/px2iQn3rQNyinQwkylud7bsWVAA6EK+VeXQoIkbl7zKZGcSzAjeEwUW9AGbz4=
+	t=1705586859; cv=none; b=nRJbj6ZtNMubqhVBf6LYF2jwb6a5jBUKNcquyi3lFPfkGeOiV/71GsCl2nMitGISW3ivXlND4btzB+/oEfPiuMGI82HHxF8XvgH3iMOMo5ScvnfSJ3iQyuQt6K5tj98Zw06PyPWGLwoVDa/W7WcKCqLC9reyub6e70ZlZBmmPNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705581406; c=relaxed/simple;
-	bh=GSZCSpOqqzhMr6RwGuO1VJCCM884qyencHZG28chH8c=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
-	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=EBT01LHbZ0PLetbh9RZn3D9ORQU2HAcw98kwH1wABok7hfPYeDFfSTqVf2cqExwktn5TN0WKayeA1GPRAOn/qhcu0OZnfAdtqEMSiZyflMncMzfmxuQYRTuHuA/S5/JBOatIE8e5ecmt0wWL0aFzKHHIb0GibED8BooIXnLMnRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkXhqtgp; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705586859; c=relaxed/simple;
+	bh=z/2Bwgab96DZ5PKg8s3ghLC/ddBRjyNUGU5ig9YwyrQ=;
+	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:To:Content-Language:Cc:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
+	 UI-OutboundReport; b=Gy8vlPDWh+kkprwJr3npdGwaamUM8LROFuD6GnXzI2Bbgeh5wMfy7KHJxvAK+h2bo5nMJRV+yR+/wTwKH0o4d9RFlNFL0U5a/aq0dsSZs2A4DA7jS3SMQWQzJkpMZ2hpRKzR4AQALRzHNRbZrXsEhEsDguqLpQPF2vcX3zE48C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XC6tRtmu; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkXhqtgp"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-336c9acec03so9986388f8f.2;
-        Thu, 18 Jan 2024 04:36:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705581403; x=1706186203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vA5DjepX8LO8HhgjcEQi+IWwObZWbeSNM5x2007oZCo=;
-        b=lkXhqtgphqWJDB2Fde4+QiEg7VNhst1hP3USufwGsHPUrHj62X3Ybs4Fmo5s7WRGyj
-         C86EekwaYn62lWAW7u2kydmMFlNZWL4r3LFErsMfcFVHrZP7YDBacZRJYaTkAQsye0j/
-         qTPCEgm2ScDAvrvn6X7soXDnKYlJTb9Hx2Eb8m0yes8RQ5r4CWlKw6ID7r0ZZzCv0EHs
-         +1/MJgEp0zfPfbHY1gTcj+yo5NW2JwusNwTFfWN04yZ4kJc/CWdqLWIgNTMDKdLuCoNw
-         0rtgSEx+DAJQAxe1N7Hu8l2PjdNkLnY4GezMRDUNX4OOGoEpuiwOdM3nh/W4KpnPWjfA
-         As+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705581403; x=1706186203;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vA5DjepX8LO8HhgjcEQi+IWwObZWbeSNM5x2007oZCo=;
-        b=hyPBoRIk5jUDI2nV2GH2j4H57qRgcLvaRIV2cWpgBdKy6A/j78zuqHqiysODae6o40
-         e93xm60uow3H0FQemVMjkMlafDbxgshuBv1TRhvhewCEh20mBwQeLOITAcYxwpIdric+
-         xIgiTxJg0uR0kVMgMPiyBknRqOiH2KFVZOguEbKMNmxXlbO24YatAjw5PNpdYEHZ4+0C
-         FStBoZb1wGc44Jiiv3rk+3+ikfiKqaI3eyBp0opC3tL2Hqx6oERsJUER3yC1hsgBDxVG
-         b/BInnm49gZ3B8AK4qbLYFt4T1KngoPIfotCGG5XccJpW5ddxggYklMCcEqq03QeKUCM
-         RsVQ==
-X-Gm-Message-State: AOJu0YzS4xl97S9dqmdukj+/3oRooj0ubAWECPFsyH7hIHjf3Crwceu8
-	Al94qeC+R0hfb5szE31/uQFNzNET3NaqMzKHQHTD7UjxfwnJvY5H
-X-Google-Smtp-Source: AGHT+IHaaeFxW7LHOmm4opdqNbFrJe66ZBuztiswDWE9W2nJuSGi1SBoZ4OebX2R7NA/FUs/dGT+vg==
-X-Received: by 2002:a5d:4051:0:b0:336:ba58:dade with SMTP id w17-20020a5d4051000000b00336ba58dademr460304wrp.62.1705581402845;
-        Thu, 18 Jan 2024 04:36:42 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id cp32-20020a056000402000b00337c55d9a28sm3027825wrb.93.2024.01.18.04.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 04:36:42 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] comedi: ni_mio_common: remove redundant assignment to variable status1
-Date: Thu, 18 Jan 2024 12:36:41 +0000
-Message-Id: <20240118123641.2542208-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XC6tRtmu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705586827; x=1706191627; i=markus.elfring@web.de;
+	bh=z/2Bwgab96DZ5PKg8s3ghLC/ddBRjyNUGU5ig9YwyrQ=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=XC6tRtmunKwtM100D+Ewfm+CP19mBGN08XuDCnaMsEymoQGu+u7vI9noGUs/48rY
+	 37lO6G0Z7s4rxiJBdFOdWpHLXgkm6MWomCvWn1LAVRJh6RTBnLjbBsp+1AaW3QKca
+	 j39hinGd9YSL8oQLtAEux1AKzZ6XzkIratnfA+VOGaeDJ3mSzq/V0QrVB03p346JB
+	 5SD9TFL8tmm5r82DQ9X3KVoFC0LUBcu/NyxZb5gklB1tOY4jsp5oUy4KkN4+UfVZG
+	 PWBL4HPpTsukMlZanE0H7VNrkc0VzEDJMNv4a86cxO6WM4nxKJYlhdm4HitY7iLQq
+	 o7iKj5i5hC7nnlrpzA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MeUXu-1qsVjz2Us8-00aRKh; Thu, 18
+ Jan 2024 15:07:07 +0100
+Message-ID: <14171fc4-8157-4919-86b8-bdec0493197d@web.de>
+Date: Thu, 18 Jan 2024 15:06:53 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] pstore/ram_core: Improve exception handling in
+ persistent_ram_new()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q1rClzpMoW580z9Pvdi2Z3ZRHk52p2E2Q6XVLqRrNKlPpyakmvP
+ WdtYc8MLDxlgfuZiuPwGEHQI/kjaJnFeixYPqtoMPMyJoqoY6e8MtQV2fEre9niN1hh7or4
+ s8Nr82P4exdDLiTP+N0qKILv0/L4zk7aThKqlkzvZRNByhS/hQzzihNIIIt0uYBXfUk1GlZ
+ L2br0gqeFgTPu1dbLfm8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:y1tJt7FpCs4=;72+dE2IeuiHLVRsnwrXAscXo/3+
+ lvUW7Cwig10uWMNkk8VoZsjoGTxhO8UkBuBLgmhNJbQQWUF4MZhVLvjFe+O45x6d8XsykU/+t
+ Zajbvk0S9m5vDTZDvONSCr+BSAbeYmZqEJijzswUGv+BNHWchFEAo7wiUULf3sCC/NBgs5u2b
+ MAq729vxCM+AA+uW3vRSEVD+epSW40GANRTa3ASQUuYI/P4ulMciw1Um5GwO7T/DLUPzQXwri
+ 3jFe6WGOiXNHrck3PozMnN2DtgFGgdHs8bUN0LN1hSBhTdPWbu7w8QE8Hpd3YSbMBVe0RIXk4
+ WJqosgBJkZlZvitPC0bbUZuwlbQ2R0P0gmx+JDjMmB8inYk/ACtrIfuv7WAEDR34/OxzcTnWh
+ xXan8ZTp3CYVvR81IFTH/2ze3HtRME4f5vZgCrf8SYacxEWMTcfudBmj4dE92NteLTFYo0UKs
+ Ydz8njlWcFwb4RhD2/wosXv5Bx6nJcp1dTO3debhxvVIROfRLYsrNOCF/DKPCW8NKCmsOzHJ5
+ HasbMgzopiHBANof97ShXv4O86FG7MgE1au11CCDvWsRRz/koRr36At3moaZwScQfYeYY2Q/l
+ ByqJXMBADHYdsAf5vE4L6yp35o5syjIQRJW5omsvy/9VqffBtOfcv+2poKy0Y/JSES9zg/2iY
+ DDhMPPsYzMFhJhc2MPGirACcfowJfOpYHuDGdrR0bSA7pcujnsOYNMOpcfsxu+kcFxRsCkjy1
+ v3xUKTfv1iD9gXNTsan/jNxruyGuh7K+WUWfxMeLa93S3oBkVuUXAmqQnSv8/A+Nf/aIDziaR
+ w4rjbwWwrDmE1EhVBvC6w/MIC1woQH2EcKIYlE2+n7fa/98AJbwa1Q/eNK1maP6+naBUZ71aq
+ 6CF8to4q7Z/arkn+R5WnPIU5ZZ4WKgKiiBkCNYwRIbkZr//5yHJra6Jw10d+9YzmtjxNzL6tU
+ EzlcPw==
 
-The variable status1 is being assigned a value that is never read, the
-assignment is redundant and can be removed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2024 14:57:21 +0100
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'status1' is used in the enclosing
-expression, the value is never actually read from 'status1'
-[deadcode.DeadStores]
+* Omit an initialisation (for the variable =E2=80=9Cret=E2=80=9D)
+  which became unnecessary with this refactoring
+  because a memory allocation failure will be directly indicated
+  by a corresponding return statement in an if branch.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/comedi/drivers/ni_mio_common.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+* Move a call of the function =E2=80=9Ckstrdup=E2=80=9D before two other s=
+tatements.
 
-diff --git a/drivers/comedi/drivers/ni_mio_common.c b/drivers/comedi/drivers/ni_mio_common.c
-index 980f309d6de7..824b026238b5 100644
---- a/drivers/comedi/drivers/ni_mio_common.c
-+++ b/drivers/comedi/drivers/ni_mio_common.c
-@@ -3798,8 +3798,7 @@ static int ni_serial_hw_readwrite8(struct comedi_device *dev,
- 	devpriv->dio_control &= ~NISTC_DIO_CTRL_HW_SER_START;
- 
- 	/* Wait until STC says we're done, but don't loop infinitely. */
--	while ((status1 = ni_stc_readw(dev, NISTC_STATUS1_REG)) &
--	       NISTC_STATUS1_SERIO_IN_PROG) {
-+	while (ni_stc_readw(dev, NISTC_STATUS1_REG) & NISTC_STATUS1_SERIO_IN_PROG) {
- 		/* Delay one bit per loop */
- 		udelay((devpriv->serial_interval_ns + 999) / 1000);
- 		if (--count < 0) {
--- 
-2.39.2
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/pstore/ram_core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index f1848cdd6d34..5047a8502e17 100644
+=2D-- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -586,21 +586,23 @@ struct persistent_ram_zone *persistent_ram_new(phys_=
+addr_t start, size_t size,
+ 			unsigned int memtype, u32 flags, char *label)
+ {
+ 	struct persistent_ram_zone *prz;
+-	int ret =3D -ENOMEM;
++	int ret;
+
+ 	prz =3D kzalloc(sizeof(struct persistent_ram_zone), GFP_KERNEL);
+ 	if (!prz) {
+ 		pr_err("failed to allocate persistent ram zone\n");
+-		goto err;
++		return ERR_PTR(-ENOMEM);
++	}
++
++	prz->label =3D kstrdup(label, GFP_KERNEL);
++	if (!prz->label) {
++		kfree(prz);
++		return ERR_PTR(-ENOMEM);
+ 	}
+
+ 	/* Initialize general buffer state. */
+ 	raw_spin_lock_init(&prz->buffer_lock);
+ 	prz->flags =3D flags;
+-	prz->label =3D kstrdup(label, GFP_KERNEL);
+-	if (!prz->label)
+-		goto err;
+-
+ 	ret =3D persistent_ram_buffer_map(start, size, prz, memtype);
+ 	if (ret)
+ 		goto err;
+=2D-
+2.43.0
 
