@@ -1,63 +1,68 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98417DDAE;
-	Fri, 19 Jan 2024 08:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDB824B34
+	for <kernel-janitors@vger.kernel.org>; Fri, 19 Jan 2024 08:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705652308; cv=none; b=OwrDcJxstp/mw/U3V3yg2NdUJTwub/3xDk8FM1vE2zGzTnp22NSku5dc2Oeb26dlcYxwaMV6YY0XIC7wB1Zlm4qbUXuLMK36/73WPrS8o+vc3P0ytNKlOT1O6FgzVGRtSuHkw2qXSgY/jnpbk1PuElvXhpIdejJjp5xwUooxV6Q=
+	t=1705652371; cv=none; b=ZMl5WNFLIhlBU+IuCJ8chLD4iKIyDA058oLov1Xmv7+Px0dWHnVp7ISv7shlhtgvoai83SLEtySv1iTloNPY1PjKxSoFQ/C6kBFPNDpVxbMAr9pYU/yFi6MesN/I+46gRb9z58LS6g14L0/bvqCvylEDsbp4pyvBpeArDXzwGEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705652308; c=relaxed/simple;
-	bh=6CTE6LAnrQB+0P2CP0p6TXSTq8etgVJFCRPwsyZxmac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2XGxUdtmxroMDqmYGo2d9pZJZwI43tHaavbj4zI6fQ1hJSL4Aoi11KY5DnL+Zwo7aNb225Ap7kKqeCy50I/RA2y6Ia/f6wOC45VOy1dL82ogAil357V7X2IwubN2YlHGb2YezjE0e/cdLh5P9N/drPogJqzqMLfFM7p7+MEKuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFFVflYW; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705652371; c=relaxed/simple;
+	bh=0NtyQhvsgw43TNew/V0z84BrT4WGsBx0U3Djf9UHZeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ap1fyWldwlZZcuaoNRCzL2FXALF4mOAWTGE6oA144MXxwZ5y1roHFR/ZKxVawlaRgZrcwkP61Z2QIrN0SJ963rl6OQ3dSS3CtABS7YxZZF9sXP4SNi7Enk1ycGKA+MjuZU05lkEZ/eeuJyZ1JiWfTwBoXMjVRP3aCy70Zlc9Igg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NU0XExYZ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFFVflYW"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d70c3c2212so3979985ad.1;
-        Fri, 19 Jan 2024 00:18:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NU0XExYZ"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-337d6d7fbd5so675847f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Jan 2024 00:19:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705652307; x=1706257107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbCRz2cw6/zLDH7CifVtlTehng6egnWg+bUjhT6zIbI=;
-        b=ZFFVflYWRWqvodh6Bb7EzVmhOu6xQAtxXL8ISdoPmq2oDKRz1JQGc7riYzbo6KIKfc
-         +GVo5ZS6In4w4zNNg6ru9yp1H74jRNX4R6wZqk0geq3DL9pUUnmhdAi8yihUjP8sSrhm
-         2gfYFABwgh4tPnOq/F4LBvkZaiPyWe60ZSpTjnuhDGFt3qoYI1BXl2wnriA/figjvR3i
-         qSKzF5DHoOqZ6DNeZ072uFHksS7G5LM3AIHkqk5X3ofgOu6u+9k+ORH2mxbhcSt7spgg
-         4izu+5tW5AKzZc2Fe3iJwUnhIS/3IvUhSOrclrmNvCdX+KkAHEJ6djS5qnLQyoG2bEEt
-         R2/A==
+        d=linaro.org; s=google; t=1705652368; x=1706257168; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i23IsiSzG9RviDZ2SKH7TkJYUYoPbm9hn5rTUny/9bs=;
+        b=NU0XExYZxVaGGz5TbGIUPBSPX7pH1AqmFTsj2u6p8rmMMcVRr9Qzhvk+n1zCaIoX+d
+         Zf7GLvrfwOlk4sKu/hXhAJRx9g5x/65GDB9nj2ojmCYOc0SuRNNZcSkP8MhK6gF0lCjo
+         BBCaApnNa04e1QFU6nIcKVHuJbM53JH8v1KzQWePso0Ffs15NZQcXsm8V3aQmCdZouQn
+         s4oHkZDzmPWYHFrirc4H3f8MlPbEvCaEoWJXKs52uL6ZHC78C4aiYsy7taGJEhYDqfcU
+         xdX/N/tsJXaw/iW7c/rvGrUUSFdJLF9diV3vocB24b3oefmWJpWwQWE7Q+JespQ2xF7+
+         G33g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705652307; x=1706257107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NbCRz2cw6/zLDH7CifVtlTehng6egnWg+bUjhT6zIbI=;
-        b=BCIfNaTcCO2TJSFXZ37wP6Da+bJYuC24TC150nzI+O6gU/0dLpy113JwH8AvYFlxIN
-         e2SLBWCUhze0K0DE4g5mfJxDuELfi6kA4u2l2/cpcJMcCVcmJ8DZjtzU0m5ZVtBAjMHf
-         7804taD0BJRqMuls7NmPvasFDcbJOoVEZSYggv1jwAnlWPS+4JWajtlFc9OyEnLMflvc
-         gHAp/Ei7OheRSkC900hVGQuGY8esFrwPhfaFqap8EC10C8aRtxCyFNEx9640fzlhcrzv
-         9jRfbcLw6TM0jZSJs9VsrNeYYEdqwsUm8Q57PIpr3h3Thn+2gKjBqYBkqdemEDR5bguY
-         0/Hg==
-X-Gm-Message-State: AOJu0YwC5P/1+rfaGTxf2rAKlXBNxDHGw4TeCrM4fR87cqgjgocwiVgs
-	rgdMWP667PXPFNIKZe/cYZbI9A+yzeEcXwKOTBfUclkXOZi0o0ufa07hA3rD
-X-Google-Smtp-Source: AGHT+IH0PK6h5IreGNnXp0U5KwwEXv/ewykeeZsJ3s7KAH+gXuCVNkGXaf22sVKIlOW/l+jlZ2ZXAA==
-X-Received: by 2002:a17:902:9309:b0:1d5:da9e:1f60 with SMTP id bc9-20020a170902930900b001d5da9e1f60mr829195plb.58.1705652306782;
-        Fri, 19 Jan 2024 00:18:26 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:f04f:73f4:b79:a70c])
-        by smtp.gmail.com with ESMTPSA id g8-20020a170902f74800b001d5f2483893sm2504936plw.270.2024.01.19.00.18.26
+        d=1e100.net; s=20230601; t=1705652368; x=1706257168;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i23IsiSzG9RviDZ2SKH7TkJYUYoPbm9hn5rTUny/9bs=;
+        b=k99BJAoThnf0y+dDuANcpRYvfKD22X27+nKDzRepLPJk/Vt9SQiKEgHgnhPHmU06b7
+         BR7SW6IeFAHibTC2guOIhxNEY68EGPeHeY+3IndA8oJLqDr4Gv4vlhbnBHhJwM0lWi1F
+         sL/1wXf5lbuLIaBbZPTbrUh4QvS0RAS95LTjXPG9ICmke4aEdLZ+ZkUM/QkZAhRjT9IF
+         CBbALYjHUnI0Y2QwOEZEBlUliqMqBa07L1q0SSgXyATkJSd1fBJIV249RBS0mL8bGQ+7
+         NvHv/WPCT1MiWUAGSK+Ud2cFhxcyUhbLixcdCo7yS14PDAaXA4i8R2g2SuAxHXByNe9X
+         KNWw==
+X-Gm-Message-State: AOJu0Yy0Q2b3w5Tw2VSxkO8q/s9I8ZUeG2L931YF9Oi61sDDPniHL6Oy
+	/U/wiUzF7FYAL51YMG5RqqdBQI4tPEM9jNxI8vxHQQgKLThhrdP2gAOq9hm9D5U=
+X-Google-Smtp-Source: AGHT+IGsWCfBXvTF9VJGT/Up5q225a2NnostHgfaeZgPBMm1e//LQwXl/AdEU0/qrgdbI686FG8o+g==
+X-Received: by 2002:a05:600c:491e:b0:40e:4807:812c with SMTP id f30-20020a05600c491e00b0040e4807812cmr299567wmp.38.1705652368574;
+        Fri, 19 Jan 2024 00:19:28 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id g6-20020a05600c4ec600b0040e6b0a1bc1sm21401815wmq.12.2024.01.19.00.19.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 00:18:26 -0800 (PST)
-Date: Fri, 19 Jan 2024 00:18:24 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: Remove usage of the deprecated ida_simple_xx() API
-Message-ID: <ZaowUOXG6zSnZXAb@google.com>
-References: <a885de14beead2cc3c1c946f192b8b178dac696a.1705349930.git.christophe.jaillet@wanadoo.fr>
+        Fri, 19 Jan 2024 00:19:28 -0800 (PST)
+Date: Fri, 19 Jan 2024 11:19:24 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Niklas Cassel <niklas.cassel@wdc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 1/2] PCI: dwc: Fix a 64bit bug in
+ dw_pcie_ep_raise_msix_irq()
+Message-ID: <c5035dc2-a379-48f0-8544-aa57d642136b@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,18 +71,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a885de14beead2cc3c1c946f192b8b178dac696a.1705349930.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Jan 15, 2024 at 09:19:04PM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. So a -1 has been added when needed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The "msg_addr" variable is u64.  However, the "aligned_offset" is an
+unsigned int.  This means that when the code does:
 
-Applied, thank you.
+        msg_addr &= ~aligned_offset;
 
+it will unintentionally zero out the high 32 bits.  Declare
+"aligned_offset" as a u64 to address this bug.
+
+Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: fix a typo in the commit message
+
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 5befed2dc02b..2b6607c23541 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -525,7 +525,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 	struct dw_pcie_ep_func *ep_func;
+ 	struct pci_epc *epc = ep->epc;
+ 	u32 reg, msg_data, vec_ctrl;
+-	unsigned int aligned_offset;
++	u64 aligned_offset;
+ 	u32 tbl_offset;
+ 	u64 msg_addr;
+ 	int ret;
 -- 
-Dmitry
+2.43.0
+
