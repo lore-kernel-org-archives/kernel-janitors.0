@@ -1,106 +1,109 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C9B4C624;
-	Fri, 19 Jan 2024 17:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50D22FE1D;
+	Fri, 19 Jan 2024 19:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705683900; cv=none; b=TpS3suaInW+SPgr0a2IY0+9u0pOT33eZh0fUjP7090mpJhOVo9HKI5Ax2Px09xDGlckkwe8pZKoJhc+XDZIOso8rBpVQJX/RAFavCGwqjH7RtSQP0bm0ISe9yrGgzKX0wGnrFUgyU6tF1PWu06IOrfJ+6xomUIQP1x1QxTsbDlA=
+	t=1705691374; cv=none; b=uAClYdx9rx67dRkI6fdjwj30n6crKJhR6RPtBtJnuhE5L2kUIfs1eB4bep+ojuh/qXLsJfEZqW0d577xvkHKR6LIH3SSNKsubDFpyMVDG5PhAwhHYYY+HbwtAjLEQnGqyr3qvCamsMxo/50TWpqVQLNa71X7RkrAlGYl5Yq42Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705683900; c=relaxed/simple;
-	bh=OQZrjxKzIhKg+foJNv2n8JT3D+7G1NjqrJIhys/Imjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L43Db3HMiWYIxApRLPSecL7KT2AJ3j+6pp5KK0qwlwv8Q0GHafNVBniTQLwE8Hn1Wpr4x5rmP1/QRokeLI5U01Wnxv49eBv/sMpD5v9sYik+Z8g9SMcItHCnvanH7BBdGkB0A3ItfPbl08QSN+tp9H8b64WO1cr/l87LZD/a63s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aAs5qV0R; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1705691374; c=relaxed/simple;
+	bh=vwEdk/w7GtA67dnByJO3IYgwwSG6lpQcGUrrPPj2qXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nQdli9s5HsdRRJcUGP2cIzTJ04T4jqua9jcjcU3x0yzeef62mz5aDOf5ftGFKhjg9QDIJrIFsDih6ywLwY68dSbDcRcxqBjMAuhbMWko7U/wGFi3vAp3Ym0ih1lrH+/sjeQ67tm7zCECN3PZDQyJoLYxjtvlPt+90JezmoU9DjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=exLbPq0g; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aAs5qV0R"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LLJKl+AAhGh5Pf+cmVaB+vB6xM+m/TjxoqlPtwqp82Y=; b=aAs5qV0R1R25DORcXY14HSEdj1
-	yyfgveXeG8pK/B7oxJxjhIL8/ufipq4KtMZLgZZVeS/ydew7vUWSjXdq+Vt2fGJXGTrGL2a50LpyL
-	1f06jFZRfy95zgVSMZSD/VDD370A4n7N54iUA+dt0ge/EHwRxvne//fbHSXQ0RHAJ5S/pX2FeqlRU
-	XRbUz+8iw/JkjoouqeQzedGdwpD/kIyhBAbfUjqpbO6dOgeGNV7v55Gl5UhDC6ow1liWD+FSr222R
-	Q36hS3jw/qp0gcifKR7Zo7vBznlQF4usXtVtdlRsrqdJCD+S7P9yo9l6Y5IVPhHvPnR5+aVzbGGkH
-	RZCtTnSA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rQsIa-00000005ofX-2S7M;
-	Fri, 19 Jan 2024 17:04:56 +0000
-Date: Fri, 19 Jan 2024 17:04:56 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] idr test suite: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <ZaqruGVz734zjxrZ@casper.infradead.org>
-References: <81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="exLbPq0g"
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40JGwLjl002726;
+	Fri, 19 Jan 2024 19:08:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=ZWLd4ama37Cyr6lzfrcDFFP9xjU4nJJ8S5Ng2lHItfs=;
+ b=exLbPq0gNzGf+z1XrhrHSyOBv+DXeCnOmGi1nSnHsPMxHwOrBJAz5FPwCkWssS0THhhy
+ rXsiBeL0d2a918qnot+bi5vq/h1EQuucaxjz1skEgtGt3Rjjqb3a0QYTzUsvNMCCahht
+ EXCsWtdvSpZON1IYTv9v9cqg2rOB6KXyLJ1eH2XXwadKnjJjCTpstcSA3E/kFcjE48di
+ 8d25VonlzNtYNlmyciWj8KPn04d9sNpBztKYyq1HfUO0YoEx5i2GxQsBoBcHelejRDHq
+ nTsJBJCtplWAP1ySXZCzp1gb0iCfMMhXC6LttWugpvcjLu1AvqIopSbCbaXwUeg22bcO vA== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vkk2ufd3s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Jan 2024 19:08:48 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40JIiXHn020046;
+	Fri, 19 Jan 2024 19:08:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vkgyfunru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Jan 2024 19:08:47 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40JJ8lNR032671;
+	Fri, 19 Jan 2024 19:08:47 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vkgyfunr8-1;
+	Fri, 19 Jan 2024 19:08:46 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] drm/rockchip: vop2: add a missing unlock in vop2_crtc_atomic_enable()
+Date: Fri, 19 Jan 2024 11:08:40 -0800
+Message-ID: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-19_12,2024-01-19_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2401190113
+X-Proofpoint-ORIG-GUID: YhbWzf0BGgzwKT-zZSFVivNqHgWwTUMY
+X-Proofpoint-GUID: YhbWzf0BGgzwKT-zZSFVivNqHgWwTUMY
 
-On Fri, Jan 19, 2024 at 05:54:44PM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range()/ida_alloc_max() is inclusive. But because of the ranges
-> used for the tests, there is no need to adjust them.
-> 
-> While at it remove some useless {}.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> It should be a question of weeks now before being able to remove the
-> ida_simple_*() API.
-> So it is time to convert the testing framework.
+Unlock before returning on the error path.
 
-Oh, that's fantastic news!  Thank you for finishing off this conversion!
+Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis. Only compile tested.
+Note: Smatch found this.
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I don't have anything pending for the IDA/IDR/XArray right now.  Either
-Andrew can grab this as a misc patch, or we can leave it for a cycle and
-I'll put it in along with the removal of the rest of the simple API.  If
-the former,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index 85b3b4871a1d..fdd768bbd487 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -1985,8 +1985,10 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
+ 		clock = vop2_set_intf_mux(vp, rkencoder->crtc_endpoint_id, polflags);
+ 	}
+ 
+-	if (!clock)
++	if (!clock) {
++		vop2_unlock(vop2);
+ 		return;
++	}
+ 
+ 	if (vcstate->output_mode == ROCKCHIP_OUT_MODE_AAAA &&
+ 	    !(vp_data->feature & VOP2_VP_FEATURE_OUTPUT_10BIT))
+-- 
+2.39.3
 
-Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-> ---
->  tools/testing/radix-tree/idr-test.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
-> index ca24f6839d50..bb41e93e2acd 100644
-> --- a/tools/testing/radix-tree/idr-test.c
-> +++ b/tools/testing/radix-tree/idr-test.c
-> @@ -503,14 +503,12 @@ void ida_simple_get_remove_test(void)
->  	DEFINE_IDA(ida);
->  	unsigned long i;
->  
-> -	for (i = 0; i < 10000; i++) {
-> -		assert(ida_simple_get(&ida, 0, 20000, GFP_KERNEL) == i);
-> -	}
-> -	assert(ida_simple_get(&ida, 5, 30, GFP_KERNEL) < 0);
-> +	for (i = 0; i < 10000; i++)
-> +		assert(ida_alloc_max(&ida, 20000, GFP_KERNEL) == i);
-> +	assert(ida_alloc_range(&ida, 5, 30, GFP_KERNEL) < 0);
->  
-> -	for (i = 0; i < 10000; i++) {
-> -		ida_simple_remove(&ida, i);
-> -	}
-> +	for (i = 0; i < 10000; i++)
-> +		ida_free(&ida, i);
->  	assert(ida_is_empty(&ida));
->  
->  	ida_destroy(&ida);
-> -- 
-> 2.43.0
-> 
