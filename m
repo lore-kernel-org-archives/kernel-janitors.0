@@ -1,48 +1,38 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F84D26AEC;
-	Fri, 19 Jan 2024 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0673C06A;
+	Fri, 19 Jan 2024 10:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705656169; cv=none; b=eOAZSc+CdXeRYJrpY5ZRVWkURy6uur2jpo88TXB2RUdEZlH/CMLBpQNrzsUR12qAJ/xnBzFn9Yx4FhuWEGDl/32XguDVPf1BYyYMOn8HFedEbl9tXbgruQWfi6sCfrsDMYgiitUXgYT58OlKmq5OwWD8UvJkAEuOhWthPrx5guM=
+	t=1705660949; cv=none; b=sbzWM0ANsjY41IRGWw+Yh6LvQ7fN0iger1/AQOQ4m0sovijh16oSWtvi5efetMyoOCFxKtKL03/4SmuRtJpcJvbTXoTBjCj56udRnkoeYNFWub1E7S8YDyE4SUtYKaG5yuRPRHFqzksYRD9p0evwnvYZM80/0680XSM1AY6Z6pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705656169; c=relaxed/simple;
-	bh=N9FUij+Gv7vcYaUX9+UtvBQrZdEYrKAc7y0cF6kUUcM=;
+	s=arc-20240116; t=1705660949; c=relaxed/simple;
+	bh=cO3V1vzVt/XdQPd4h52EbfomnaIJyRP7lYScOtdsYfA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVVAIh2P7YvlKfFxoAHEKA5musSrjIgQaFYX18CAENy70KygSOlF2KwZWD53Y5QqLC51Mz1c9hLHeaODnnUrW5TcP4IReVGsE9HtNKw7ooS0IbEE0Zw15f4tJbhuBp8/2SQS149BcnRZP2ZKJTbCFupDtSWIYy3A4PFLO0j2WRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5eb2d7502dca4681b1c1b85464ee8963-20240119
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.35,REQID:645a9bb7-9aee-47af-8dff-de50fb4a484f,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:7
-X-CID-INFO: VERSION:1.1.35,REQID:645a9bb7-9aee-47af-8dff-de50fb4a484f,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:7
-X-CID-META: VersionHash:5d391d7,CLOUDID:e3ee877f-4f93-4875-95e7-8c66ea833d57,B
-	ulkID:240119172239A7QKR7U4,BulkQuantity:0,Recheck:0,SF:17|101|24|100|38|19
-	|44|64|66|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 5eb2d7502dca4681b1c1b85464ee8963-20240119
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1484895239; Fri, 19 Jan 2024 17:22:37 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 426E3E000EB9;
-	Fri, 19 Jan 2024 17:22:35 +0800 (CST)
-X-ns-mid: postfix-65AA3F5B-1855721587
-Received: from [172.20.15.234] (unknown [172.20.15.234])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 338B4E000EB9;
-	Fri, 19 Jan 2024 17:22:26 +0800 (CST)
-Message-ID: <517fae75-c4e7-4576-81ff-6a14a3eb9cd7@kylinos.cn>
-Date: Fri, 19 Jan 2024 17:22:25 +0800
+	 In-Reply-To:Content-Type; b=uRvMyepLazMTC95RyOREfe1HucQzNnaf+fyE9y9BexWRRcggeHggE+iMxLv5MeyDwLBl075/loGRMzWXs0MNQuQQxVvKd4Ov77gnUZEL3P2kzwRn3oxuhZXTUCK73OCvetKLblRUXs5agqkWnL3c42KpF56aeChGxqXRBYLhob8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aUMfllpX; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aUMfllpX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705660854; x=1706265654; i=markus.elfring@web.de;
+	bh=cO3V1vzVt/XdQPd4h52EbfomnaIJyRP7lYScOtdsYfA=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=aUMfllpXhQp96ch+72qMDLSmcLyDdYTI95M+i9y/KrwZRGGMot0eTY+0rwXCxNP1
+	 sdtxYWf+w/xQEMObBPPZEGZ2Bxs0PACvQhN9EjN2YBb5Znd733txOgj7sZL/YpnkD
+	 vaIebkxOArHMSUG70Yz4IYTZWfVvSgEX6deyqWAcJ2IrarpPQyGXepDZvUbwXrvzn
+	 ZI15Q2evZc1Cc25/KsDRbED7Fjw6NMuzXi8CTg8S0ep7lLH+DgSK9a4Z3nmBLRa6W
+	 7eMHYqrbVE4wFqXuEypmjD7JKIxRDBwgD2pOOO4vqL9AR5brc2F6nnyPPNDz6NMhV
+	 LpQ1qPF6+/MEXWj4pg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXGK4-1rcI6C0CUA-00Z3qK; Fri, 19
+ Jan 2024 11:40:54 +0100
+Message-ID: <91af4a8c-d2e2-416f-b02e-5d69553c5998@web.de>
+Date: Fri, 19 Jan 2024 11:40:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,63 +40,80 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/xen: Add some null pointer checking to smp.c
-To: Markus Elfring <Markus.Elfring@web.de>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-References: <20240117090018.152031-1-chentao@kylinos.cn>
- <1705655941162581.825.seg@mailgw>
-Content-Language: en-US
-From: Kunwu Chan <chentao@kylinos.cn>
-In-Reply-To: <1705655941162581.825.seg@mailgw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3] x86/xen: Add some null pointer checking to smp.c
+Content-Language: en-GB
+To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
+ kernel-janitors@vger.kernel.org, Boris Ostrovsky
+ <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20240119094948.275390-1-chentao@kylinos.cn>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240119094948.275390-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ghWwRZ/xa5RiEzFG9SbB0YwItzwhscPRgB036myKdl26mgHPgKw
+ VQbfwMEIvEYjgoBwMzGbrC86u73mQWUAltu6JjfaeKhE0StOY0nu7+cgBg/EHNLAO0/X+BM
+ EBxxa3DUjgyyfYOV5m3vCuXn9YLNj9tZuWEYayV5ptyDsZtJkANo7xydQln4MmP7NONjqa4
+ EUy/959xDksIDzQKmvvUA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Jdxt2uu7/7Y=;HuDpAVrdHwPdL9vQoUbqKiGrS40
+ jrr9+Shr1pVnJD5Of/QXY9RNn0QLS8cUxdkrkEY3hPpLtU4ONu5yTqk4gf0qoqVTuGJnOD1Sn
+ 4UrF12BONo5rcPNaYyf5k0IW3lMsXl5nF472p1Jtx1Go5zQ8wxkQHDivMIkKwGG2AWoMX61ZU
+ Hi4/FpxLFYz/LiUddzOcuuxVbJiBPGiaonoQF43MXTxrNGoKyQZ7xsGD3X4KTDkUorVbhbSwZ
+ sXHkWnKRV+yASAqYr2MNrkdkuIrgCUTG8vs0YqBg1T+nivDDbNM7kt67VU8jgqMmGR3S+oITw
+ q3J23UQ7mfv84Xmg0Q2kWQfRbTDcl7VIbhnpBCsug4ijQ6BcJcxT6r77xDu/Gp19LaRutvHWq
+ ikMASjzuT7OfjYcHxu0yiz3NQK20GUuaE4ehx8Ka/Pk0uihwglrabOKlYTwTeEqP9tn+SGyY6
+ Iu/nz7+UgqBi2yurZd2IxhwOZ+BezJKN25qru5qAzKFwxuhOdUyCunv7h3r8teyCJ+t2WLjc6
+ GAbxLzJ97GbfWnuP423Zs8y/UjUP75u+nPGqSNd5Gpf3fV3/ezW04pzkB3Q7PZYMZtWHB85C2
+ HIlKfL63hLkXUDWriYv4ejxh2C4YQPKfxsEXRZDF0wFEsC98DVews10fJgSqVfyOIcyLTApZj
+ 3I8uM37B4H+d5Gerjo+2NgOB0h5sSMUhhs5syKmsoEgYRKZsVa0/Aj69GIawSRHt9uxDtDWlR
+ R2okc37C8jVAGB6hu0wheHhb/K1G8n7ct3UDPNeBm1F/Yua2vuhBObIWg9vSt6OXXWf5nBNaG
+ dpEBLuKRz4narT4kDT5Bwag9mpo6h9E2tybPq5PIodGIqJYy5QV7t297S77lifFtdLwEYnr5U
+ Ww7jgUT4o5p/aTeMKxVvbdVh+CL/k3q5PrpQ0Bpd58eTxWYJUwx3KS3VhhpciBGDK15c6dp1V
+ HIfFig==
 
-On 2024/1/17 18:40, Markus Elfring wrote:
->> kasprintf() returns a pointer to dynamically allocated memory
->> which can be NULL upon failure. Ensure the allocation was successful
->> by checking the pointer validity.
-> =E2=80=A6
->> +++ b/arch/x86/xen/smp.c
->> @@ -61,10 +61,14 @@ void xen_smp_intr_free(unsigned int cpu)
->>
->>   int xen_smp_intr_init(unsigned int cpu)
->>   {
->> -	int rc;
->> +	int rc =3D 0;
->=20
-> I find the indication of a successful function execution sufficient by
-> the statement =E2=80=9Creturn 0;=E2=80=9D at the end.
-> How do you think about to omit such an extra variable initialisation?
-Thanks, it's no need now. I'll remove it in v3.
->=20
->=20
->>   	char *resched_name, *callfunc_name, *debug_name;
->>
->>   	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
->> +	if (!resched_name) {
->> +		rc =3D -ENOMEM;
->> +		goto fail;
->> +	}
->>   	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
->>   	rc =3D bind_ipi_to_irqhandler(XEN_RESCHEDULE_VECTOR,
->>   				    cpu,
->=20
-> You propose to apply the same error code in four if branches.
-> I suggest to avoid the specification of duplicate assignment statements
-> for this purpose.
-> How do you think about to use another label like =E2=80=9Ce_nomem=E2=80=
-=9D?
-I'll add a new label to simply the code.
->=20
-> Regards,
-> Markus
---=20
-Thanks,
-   Kunwu
+> kasprintf() returns a pointer to dynamically allocated memory
+> which can be NULL upon failure. Ensure the allocation was successful
+> by checking the pointer validity.
+=E2=80=A6
+> ---
+> Changes in v3:
+>     - Remove rc initialization
+>     - Simply error paths by adding a new label 'fail_mem'
+=E2=80=A6
 
+I became curious if you would like to simplify further source code places.
+
+
+> +++ b/arch/x86/xen/smp.c
+> @@ -65,6 +65,8 @@ int xen_smp_intr_init(unsigned int cpu)
+>  	char *resched_name, *callfunc_name, *debug_name;
+>
+>  	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
+> +	if (!resched_name)
+> +		goto fail_mem;
+
+Would you like to add a blank line after such a statement?
+
+
+>  	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
+=E2=80=A6
+
+Please compare with your subsequent suggestion.
+
+=E2=80=A6
+> @@ -101,6 +108,9 @@ int xen_smp_intr_init(unsigned int cpu)
+>  	}
+>
+>  	callfunc_name =3D kasprintf(GFP_KERNEL, "callfuncsingle%d", cpu);
+> +	if (!callfunc_name)
+> +		goto fail_mem;
+> +
+>  	per_cpu(xen_callfuncsingle_irq, cpu).name =3D callfunc_name;
+=E2=80=A6
+
+Regards,
+Markus
