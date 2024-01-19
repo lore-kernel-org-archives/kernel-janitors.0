@@ -1,119 +1,108 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0673C06A;
-	Fri, 19 Jan 2024 10:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7084CB21;
+	Fri, 19 Jan 2024 11:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705660949; cv=none; b=sbzWM0ANsjY41IRGWw+Yh6LvQ7fN0iger1/AQOQ4m0sovijh16oSWtvi5efetMyoOCFxKtKL03/4SmuRtJpcJvbTXoTBjCj56udRnkoeYNFWub1E7S8YDyE4SUtYKaG5yuRPRHFqzksYRD9p0evwnvYZM80/0680XSM1AY6Z6pM=
+	t=1705663861; cv=none; b=M3AmPpWHbnPXsz4EhRdbLUhFVBckDuzzxL6VyjNJNF+gQ3jbWKDBcE3LSY0N31QD85fsgfLrdCaLdgTTfpWbo/rxTcrEYFMBAttQ/fgp4kfhPcD/+MSVcK/cIXHQRnBU85GAyub/5f6RXI3CP/aX0kNcSKW4olfIiSsyE1JgzLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705660949; c=relaxed/simple;
-	bh=cO3V1vzVt/XdQPd4h52EbfomnaIJyRP7lYScOtdsYfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRvMyepLazMTC95RyOREfe1HucQzNnaf+fyE9y9BexWRRcggeHggE+iMxLv5MeyDwLBl075/loGRMzWXs0MNQuQQxVvKd4Ov77gnUZEL3P2kzwRn3oxuhZXTUCK73OCvetKLblRUXs5agqkWnL3c42KpF56aeChGxqXRBYLhob8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aUMfllpX; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1705663861; c=relaxed/simple;
+	bh=vN3dZKhzrKwIL8dW972H6cQsJ4YfJlEDp0fFfY132YQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hebYbsPWGZTJ83/D2E90YAAO99rd3MM1q4PCSGc42JSzE/85q4WsKF8+YXulDE9UQ84tZL3oH7fC7xoxRBukDIdICs6ySsvoufRgVNiRbLqURcS0V4txIWldQYGgm6aq23r6p9jtY5BbQU2T9H4lNv/4kEytiRICBVgVJgKgHUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H+uSZWCS; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aUMfllpX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705660854; x=1706265654; i=markus.elfring@web.de;
-	bh=cO3V1vzVt/XdQPd4h52EbfomnaIJyRP7lYScOtdsYfA=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=aUMfllpXhQp96ch+72qMDLSmcLyDdYTI95M+i9y/KrwZRGGMot0eTY+0rwXCxNP1
-	 sdtxYWf+w/xQEMObBPPZEGZ2Bxs0PACvQhN9EjN2YBb5Znd733txOgj7sZL/YpnkD
-	 vaIebkxOArHMSUG70Yz4IYTZWfVvSgEX6deyqWAcJ2IrarpPQyGXepDZvUbwXrvzn
-	 ZI15Q2evZc1Cc25/KsDRbED7Fjw6NMuzXi8CTg8S0ep7lLH+DgSK9a4Z3nmBLRa6W
-	 7eMHYqrbVE4wFqXuEypmjD7JKIxRDBwgD2pOOO4vqL9AR5brc2F6nnyPPNDz6NMhV
-	 LpQ1qPF6+/MEXWj4pg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXGK4-1rcI6C0CUA-00Z3qK; Fri, 19
- Jan 2024 11:40:54 +0100
-Message-ID: <91af4a8c-d2e2-416f-b02e-5d69553c5998@web.de>
-Date: Fri, 19 Jan 2024 11:40:48 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H+uSZWCS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705663858; x=1737199858;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=vN3dZKhzrKwIL8dW972H6cQsJ4YfJlEDp0fFfY132YQ=;
+  b=H+uSZWCSglaVd6bPFVanfBP17lri8lCk4ks66KfVsbQ7RSjP6nPpBSAI
+   DWb2bGaxxkB0SHnUxWGhyUNUJ3I5a1mLVJe2emC3mxz+W/EQuGHuvUAKe
+   zkCkKQQRuDtOagHSU+0cKTg0CmOzY0uSeSf8EhakyEcKz/3Ik5vmTNNFv
+   5YSQVpgOYZXSrnpNo4BJs+jTZ7TXxGO6U8A4P60muQy+QYOirEJTrkbja
+   KYnEbwSCuxXQt5mTq9akK9wdPYI62RJb6yffvwntDATjfFvMPYLRb94Lh
+   HMRk175VEaGZ/C23WNnT0d12mzXNW7pUMIidC95faUxIT8UU9WL/mKYP0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10956"; a="621847"
+X-IronPort-AV: E=Sophos;i="6.05,204,1701158400"; 
+   d="scan'208";a="621847"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2024 03:30:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,204,1701158400"; 
+   d="scan'208";a="33371563"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.50.216])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2024 03:30:54 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 19 Jan 2024 13:30:49 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Niklas Cassel <niklas.cassel@wdc.com>, Jingoo Han <jingoohan1@gmail.com>, 
+    Gustavo Pimentel <gustavo.pimentel@synopsys.com>, 
+    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] PCI: dwc: Fix a 64bit bug in
+ dw_pcie_ep_raise_msix_irq()
+In-Reply-To: <c5035dc2-a379-48f0-8544-aa57d642136b@moroto.mountain>
+Message-ID: <d550f0b2-b2cc-3c4c-1525-3dac2e032e99@linux.intel.com>
+References: <c5035dc2-a379-48f0-8544-aa57d642136b@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/xen: Add some null pointer checking to smp.c
-Content-Language: en-GB
-To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20240119094948.275390-1-chentao@kylinos.cn>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240119094948.275390-1-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ghWwRZ/xa5RiEzFG9SbB0YwItzwhscPRgB036myKdl26mgHPgKw
- VQbfwMEIvEYjgoBwMzGbrC86u73mQWUAltu6JjfaeKhE0StOY0nu7+cgBg/EHNLAO0/X+BM
- EBxxa3DUjgyyfYOV5m3vCuXn9YLNj9tZuWEYayV5ptyDsZtJkANo7xydQln4MmP7NONjqa4
- EUy/959xDksIDzQKmvvUA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Jdxt2uu7/7Y=;HuDpAVrdHwPdL9vQoUbqKiGrS40
- jrr9+Shr1pVnJD5Of/QXY9RNn0QLS8cUxdkrkEY3hPpLtU4ONu5yTqk4gf0qoqVTuGJnOD1Sn
- 4UrF12BONo5rcPNaYyf5k0IW3lMsXl5nF472p1Jtx1Go5zQ8wxkQHDivMIkKwGG2AWoMX61ZU
- Hi4/FpxLFYz/LiUddzOcuuxVbJiBPGiaonoQF43MXTxrNGoKyQZ7xsGD3X4KTDkUorVbhbSwZ
- sXHkWnKRV+yASAqYr2MNrkdkuIrgCUTG8vs0YqBg1T+nivDDbNM7kt67VU8jgqMmGR3S+oITw
- q3J23UQ7mfv84Xmg0Q2kWQfRbTDcl7VIbhnpBCsug4ijQ6BcJcxT6r77xDu/Gp19LaRutvHWq
- ikMASjzuT7OfjYcHxu0yiz3NQK20GUuaE4ehx8Ka/Pk0uihwglrabOKlYTwTeEqP9tn+SGyY6
- Iu/nz7+UgqBi2yurZd2IxhwOZ+BezJKN25qru5qAzKFwxuhOdUyCunv7h3r8teyCJ+t2WLjc6
- GAbxLzJ97GbfWnuP423Zs8y/UjUP75u+nPGqSNd5Gpf3fV3/ezW04pzkB3Q7PZYMZtWHB85C2
- HIlKfL63hLkXUDWriYv4ejxh2C4YQPKfxsEXRZDF0wFEsC98DVews10fJgSqVfyOIcyLTApZj
- 3I8uM37B4H+d5Gerjo+2NgOB0h5sSMUhhs5syKmsoEgYRKZsVa0/Aj69GIawSRHt9uxDtDWlR
- R2okc37C8jVAGB6hu0wheHhb/K1G8n7ct3UDPNeBm1F/Yua2vuhBObIWg9vSt6OXXWf5nBNaG
- dpEBLuKRz4narT4kDT5Bwag9mpo6h9E2tybPq5PIodGIqJYy5QV7t297S77lifFtdLwEYnr5U
- Ww7jgUT4o5p/aTeMKxVvbdVh+CL/k3q5PrpQ0Bpd58eTxWYJUwx3KS3VhhpciBGDK15c6dp1V
- HIfFig==
+Content-Type: text/plain; charset=US-ASCII
 
-> kasprintf() returns a pointer to dynamically allocated memory
-> which can be NULL upon failure. Ensure the allocation was successful
-> by checking the pointer validity.
-=E2=80=A6
+On Fri, 19 Jan 2024, Dan Carpenter wrote:
+
+> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
+> unsigned int.  This means that when the code does:
+> 
+>         msg_addr &= ~aligned_offset;
+
+Wouldn't it be more obvious to replace the entire line with this:
+	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
+
++ add the #include for it. It should handle the casting to the same type 
+internally.
+
+-- 
+ i.
+
+
+> 
+> it will unintentionally zero out the high 32 bits.  Declare
+> "aligned_offset" as a u64 to address this bug.
+> 
+> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> Changes in v3:
->     - Remove rc initialization
->     - Simply error paths by adding a new label 'fail_mem'
-=E2=80=A6
-
-I became curious if you would like to simplify further source code places.
-
-
-> +++ b/arch/x86/xen/smp.c
-> @@ -65,6 +65,8 @@ int xen_smp_intr_init(unsigned int cpu)
->  	char *resched_name, *callfunc_name, *debug_name;
->
->  	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
-> +	if (!resched_name)
-> +		goto fail_mem;
-
-Would you like to add a blank line after such a statement?
-
-
->  	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
-=E2=80=A6
-
-Please compare with your subsequent suggestion.
-
-=E2=80=A6
-> @@ -101,6 +108,9 @@ int xen_smp_intr_init(unsigned int cpu)
->  	}
->
->  	callfunc_name =3D kasprintf(GFP_KERNEL, "callfuncsingle%d", cpu);
-> +	if (!callfunc_name)
-> +		goto fail_mem;
-> +
->  	per_cpu(xen_callfuncsingle_irq, cpu).name =3D callfunc_name;
-=E2=80=A6
-
-Regards,
-Markus
+> v2: fix a typo in the commit message
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 5befed2dc02b..2b6607c23541 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -525,7 +525,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	struct dw_pcie_ep_func *ep_func;
+>  	struct pci_epc *epc = ep->epc;
+>  	u32 reg, msg_data, vec_ctrl;
+> -	unsigned int aligned_offset;
+> +	u64 aligned_offset;
+>  	u32 tbl_offset;
+>  	u64 msg_addr;
+>  	int ret;
+> 
