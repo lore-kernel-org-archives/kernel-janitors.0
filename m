@@ -1,104 +1,118 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6FF1D684
-	for <kernel-janitors@vger.kernel.org>; Fri, 19 Jan 2024 08:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BF5A53;
+	Fri, 19 Jan 2024 09:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705652758; cv=none; b=sYXKUp7H0Xibgfk0aAoi0RhOKWk6xb82PBG4XwCNRJZ4DO1saizi0Xbd/p4CokeV0fquaGi8mBl7VZ0vdpGUuyAWLMEALKGVwVBtJAJBQ7e8tua2A8MPdhGz5XJu2AOO9cWueEV0SweebjfEJ+NC+IXltClGFWpnrl2bRbaKfEA=
+	t=1705655521; cv=none; b=NrdT4tlLaV3TCtr0cZS1GQn+Z3TlajFxDHMktcSGAwJHoKeXhL5z+ldO2+9I082/RIBLwi00F1+He9G/3kZNN9rCW5QJ4nVvVzpx5/Oah4OQAIOzC4EZOs59szYUS4DboYltwhwg1rynS9wwU2VdWtn7r/7cV4xi01bP3ZsO3S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705652758; c=relaxed/simple;
-	bh=CUucUSh0q5PVDhwQRi6YBW3ImttHp3BqkC0YGaXZl2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jheQiBoFHt1YvtBfYU6tqZ9m3CeKv1CG16exAmEZtX+OClzYjkYH0mAYr84U/RlPzWNf0LRxu4xI3iqpIglsDg7iAxc/KnfNl7M87wOpLpgfTpTfTxr9+Hrd3ZYuQIwLogC5YJt7EFlPhWRPvNNz6opfZnrZaB12kDYCfIDszcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hInY594r; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705655521; c=relaxed/simple;
+	bh=tXJxt9w/oJ0XNk3Nt2w4s8/VSDNpnSFcsu7XbSCZO8E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Y4QnYYf8Wa0yq4S5Fr62kqOmN+5T3AVKVbn8e75v8MV8WO4Q/UvKBmw/Z25J10xPmkp1Yv5lmWpXsPyh9Dy8oi9q09Pf2J54hPacUKmJDPnMmkj5CIKC2s+H7ZSjF7S1toUGGX5SY0kigFQoRLKmGUgB2/TMZZQgMVgcbUsKkvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EXuqvTcb; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hInY594r"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-337d32cd9c1so411944f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Jan 2024 00:25:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705652755; x=1706257555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7dcjTRyl1/vUofqEvBgKl6cVF0fqOtVtv29zRSnRI4=;
-        b=hInY594rTwpMOrimclUL2REqjZPnq75WS2MSrCd3Ad7i+de0Ltxul4bjv66f6NFjku
-         vkD5S4Xm6SiZhnOW8P040SpkqpmKhqRwKnJR17e8ur+HYTIDDiPQyd5MvtxVRyvFF4VY
-         fwC6/xt4CwBZMWAHW2Snbz5wtIzMpuwx6VYj3kIJBftJi1NaNIWDvBrbkLbU8J+JqZZb
-         ZtjtbcDd5ipIgaYZajPCfRlZJgFMXgfoKtazk5lTJBaAqz23FEmNnIX44Hs+jAJ4tDwg
-         6hh+QQ89fP28ZWLa3X3qcQkLqyvjU0+YTP6nTNCyYrf3g6QSSZEdJsHHkK8FdrRZKnrW
-         dktA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705652755; x=1706257555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7dcjTRyl1/vUofqEvBgKl6cVF0fqOtVtv29zRSnRI4=;
-        b=ZWuylcXEBUW94Wmi5X+1QY4W2n6mxYpLJ7dJOlRXMn+wgq3c3bUqZBX3IOOcEsGn4E
-         Wyhur+oETpomrxJJIfgrMbiY89KhniXdzy7UTYO9sJZn5t854Po8oDggAVibh6b47vH1
-         /Zmvm2CGxnKmi+lqOsLqSUqayw/dXUBn0sSAjJGMGkVZCH68PIexiq2KCPq4d5c0Dle2
-         hLhpO7L5NVAFVWHRiT9zW136YEDabdyOjGaPnIwPF1qEKuDhJkq+htBjHaA+HER1RZ5K
-         TLK/eLmGjKJxKMmqfEqjdgdGOReUfWzF7kdszLmeSe4jyPtXZpfi5kkOblI28ZBV8oH9
-         +wUA==
-X-Gm-Message-State: AOJu0YzJWUN5AIz2Jp86QhAz/Zkff/B9Ew/g7woiNT+CRWksNyYqLAOL
-	4B9xWNk3M95AOxFiVBCfiv3L/Tk8mGmNiS5rl9VKARQj5zbSJ5vHiCnPtCaQqvY=
-X-Google-Smtp-Source: AGHT+IHvdcKDkDD1e39ucnqrSKAPEsqRPS6GaaFM+CE5xvpcISEieX1qz3akhcLF/mGVkOAuNmiFuA==
-X-Received: by 2002:a5d:5512:0:b0:336:b8d:6531 with SMTP id b18-20020a5d5512000000b003360b8d6531mr1317167wrv.100.1705652754752;
-        Fri, 19 Jan 2024 00:25:54 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id t26-20020adfa2da000000b00337c0cacf54sm5942518wra.101.2024.01.19.00.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 00:25:54 -0800 (PST)
-Date: Fri, 19 Jan 2024 11:25:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Niklas Cassel <Niklas.Cassel@wdc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] PCI: dwc: Fix a 64bit bug in dw_pcie_ep_raise_msix_irq()
-Message-ID: <501533ad-7671-46aa-a034-91e0a6322e6c@moroto.mountain>
-References: <3f9f779c-a32f-4925-9ff9-a706861d3357@moroto.mountain>
- <ZahE455neE3wPnHA@x1-carbon>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EXuqvTcb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705655516; x=1706260316; i=markus.elfring@web.de;
+	bh=tXJxt9w/oJ0XNk3Nt2w4s8/VSDNpnSFcsu7XbSCZO8E=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=EXuqvTcbYD2Zi90s6T4Q1ox9PYgwfrpbV02TzQ5U+J24VRCAeO+kPE28tr2BImMS
+	 o/Gei0iJpLIid7iVOx64jjqKXoTFIslOXrLshxm35HyztQiAEAFco7qi83dCH83LW
+	 uItQtW9H+Vd5JgDVXq/KUyq/gnxCRw7rktoDZUHEU3ZQpY77/aIfRpL1KlnONHyc8
+	 x177psnPPbiFyttdzXKfYBjlJ2RhXC1o6o0bqVOxfga/8F81tUsWmPpfJ9F8h7DI2
+	 eo0CJ1BnnUticEI2AUMYRXw5rBWCxyWr6a+jCc3N2OxqwKv5oZYCrJ7qtjSpeHpKI
+	 kHNzlvMtWeLuUf4gkA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2xrq-1rPeMg2Pe8-003JVi; Fri, 19
+ Jan 2024 10:06:18 +0100
+Message-ID: <a5f974aa-826d-421b-bfe2-bb6c9b43ea9a@web.de>
+Date: Fri, 19 Jan 2024 10:06:02 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZahE455neE3wPnHA@x1-carbon>
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240119074635.265218-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] meson-mx-socinfo: Fix possible null-pointer dereference
+ issues in meson_mx_socinfo_init
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240119074635.265218-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hyKdlCkKgO+YTVOmB/GLcZr1wgCtUsa5eeb6696qbaPYs4p0tvm
+ Wra2BA76jeC0HAYFadK3zTM811Z1GpZWxG4iCWQ5Bk+trVGnKthKiHdAFS2TbN04JmxxTCx
+ WONU3Oho+j5ZwCDdVyNhs2AqyTtnjqq4XRtR/jwqQJatLceP9A53aOnjo5HdqunAr+ij8gY
+ 32k/iA4rAfXkBY8Sfs/ZA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UigNfyhaB4k=;UdHpO01shOQaaFwGIPHVxcK+HUZ
+ VbqH4e0fYiE5esvL3Xw20BGCS6Cwt3LUi/oLUtC+x9bio1PMIX8BV2MAmQp3BTgYMMF20OV2s
+ jqsL5x7oZ0o+ELhtDwM6es78LAWh771mbjZoRvBnaJC+CID8i5WAnCL/4zDH7p0AYLpeLy5Gv
+ FB/3CTSv6IRRYiRbs2ORvYZwPgJuFdlyZX8VIcQKygJFT1AadFSzitsqNz5DnRkihyypVIdUs
+ rDDY7k8bz1SJu7/2WKLHcuqF30COXLYj4n8Sb1B5Bh6i3X5VWChXMB9riXQn0qix6+P5f6WYb
+ Xz/sBicYnxTLFEdn+zL9OVn7nmhKEm8ea2b5Z/fFFHBMY/uTdKL4ZA62LgKhxOEemfQk28Nzq
+ 2Uhvl5cgCcMptCu7Je+FnAO9YhIU3iENkaphqjl0OF9zi5WnGnMt7/B/Dob4zlkidM3VX9VN8
+ oNNOsCvDX/0q1srFjbJw9np1RCttc88P3DJl8sjhLYHl86id10e8U6JC68qkQ59aDvXguINBP
+ EbauE4ekg6nsw57Vt4x22stfFyabslQHHx8ORWKZJgk30PB5iU0dJK56ssbDHop23VJY+WAbt
+ iQvciVgpuNf0j+CVPcUPS60b2221yJJe2ltNkZS4kOLCtRfP2dFbsDG3Huoxo1vRnONbzLglq
+ rso0SDsasPYbKcg1L8UUetmBcoVOT80Z7JWZGPlPXssPTjcqXvCNU5iv5PySJQwYz8hn1aySw
+ xxrumNfL/u3EWOwNKRPpfr1aUqNwfpTZ2wJMuUbXHu3DR3DIwtrjXoeqx+1DaNcPD2q0t7a3S
+ eppSn08LWTLSaqwodjD3PmTVi8pTRRlbdcEzoFsw6AOVha/U2VNPD7GKCBVftw79J1nwyKkwo
+ UuoIn72v07Lx5z6Q+N3yo71kFM48JGGsEqVwUYE3vhSnFS27hm3KCGmJFjtpJ9wrtKOHvEcDU
+ abogjg==
 
-On Wed, Jan 17, 2024 at 09:21:41PM +0000, Niklas Cassel wrote:
-> Hello Dan,
-> 
-> On Wed, Jan 17, 2024 at 09:32:08PM +0300, Dan Carpenter wrote:
-> > The "msg_addr" variable is u64.  However, the "tbl_offset" is an unsigned
-> 
-> Here you write tbl_offset.
-> 
-> > int.  This means that when the code does
-> > 
-> > 	msg_addr &= ~aligned_offset;
-> > 
-> > it will unintentionally zero out the high 32 bits.  Declare "tbl_offset"
-> 
-> Here you also write tbl_offset.
-> 
+> In meson_mx_socinfo_revision, kasprintf() returns a pointer
+> to dynamically allocated memory which can be NULL upon failure.
+>
+> Similarly, the kstrdup_const in the meson_mx_socinfo_soc_id
+> returns a null pointer when it fails. Ensure the allocation was successf=
+ul
+> by checking the pointer validity. Avoid null pointer dereference issues.
 
-That's so weird...  I can't imagine how that happened.  Do you think it
-could be a Welsh mice situation where forest creatures are changing my
-work when I'm away from my desk?  https://www.youtube.com/shorts/h8gkIbtaaek
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D for the completion o=
+f the error handling
+in this function implementation?
 
-Fixed in v2.  Thanks!
 
-regards,
-dan carpenter
+=E2=80=A6
+> +++ b/drivers/soc/amlogic/meson-mx-socinfo.c
+> @@ -160,6 +160,12 @@ static int __init meson_mx_socinfo_init(void)
+>  							   metal_rev);
+>  	soc_dev_attr->soc_id =3D meson_mx_socinfo_soc_id(major_ver, metal_rev)=
+;
+>
+> +	if (!soc_dev_attr->revision || !soc_dev_attr->soc_id) {
 
+I suggest to split such a check for null pointers.
+
+
+> +		kfree_const(soc_dev_attr->revision);
+> +		kfree_const(soc_dev_attr->soc_id);
+> +		kfree(soc_dev_attr);
+> +		return -ENOMEM;
+> +	}
+>  	soc_dev =3D soc_device_register(soc_dev_attr);
+>  	if (IS_ERR(soc_dev)) {
+>  		kfree_const(soc_dev_attr->revision);
+
+Please use a goto chain for better exception handling.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
+
+Regards,
+Markus
