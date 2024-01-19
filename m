@@ -1,109 +1,94 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50D22FE1D;
-	Fri, 19 Jan 2024 19:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EF857888;
+	Fri, 19 Jan 2024 21:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705691374; cv=none; b=uAClYdx9rx67dRkI6fdjwj30n6crKJhR6RPtBtJnuhE5L2kUIfs1eB4bep+ojuh/qXLsJfEZqW0d577xvkHKR6LIH3SSNKsubDFpyMVDG5PhAwhHYYY+HbwtAjLEQnGqyr3qvCamsMxo/50TWpqVQLNa71X7RkrAlGYl5Yq42Ro=
+	t=1705698782; cv=none; b=HkQxKsVlFWWu40uSUCACddfAN2Ftmtq2A4cAJGS4qI9UZgUOiKCTVSTfa83BB+9mpBdsD8cjV/3JK6eTH6xEnwOENTM+0UGfwYH2OAveeJtqASjIS+ttXKBAO439fdYc5Wqw8U0Zgn4A+Q2DmLejsvY1EAUmTPSSRuNLIwyxG7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705691374; c=relaxed/simple;
-	bh=vwEdk/w7GtA67dnByJO3IYgwwSG6lpQcGUrrPPj2qXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nQdli9s5HsdRRJcUGP2cIzTJ04T4jqua9jcjcU3x0yzeef62mz5aDOf5ftGFKhjg9QDIJrIFsDih6ywLwY68dSbDcRcxqBjMAuhbMWko7U/wGFi3vAp3Ym0ih1lrH+/sjeQ67tm7zCECN3PZDQyJoLYxjtvlPt+90JezmoU9DjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=exLbPq0g; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1705698782; c=relaxed/simple;
+	bh=K5XRA4pHgspNItWgN06atRk3dlBp3RHa7wRvvR+DpcI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BkNAGy8iGELReRS122n53hrWa3WTExiO23CVQ8fI5Wt8Ejfqkgqbb6qElVy1ms2DE4K/JIRlNcmNNihE0QGv5qKScAjvNqHFV7KnflBBDOS7djF5QHT8hw28F+x3rrd+m+p9vgF8vJMlYbNK3dhr0qrfN+0VD2szgAMbE50fd+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmmPcA50; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="exLbPq0g"
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40JGwLjl002726;
-	Fri, 19 Jan 2024 19:08:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=ZWLd4ama37Cyr6lzfrcDFFP9xjU4nJJ8S5Ng2lHItfs=;
- b=exLbPq0gNzGf+z1XrhrHSyOBv+DXeCnOmGi1nSnHsPMxHwOrBJAz5FPwCkWssS0THhhy
- rXsiBeL0d2a918qnot+bi5vq/h1EQuucaxjz1skEgtGt3Rjjqb3a0QYTzUsvNMCCahht
- EXCsWtdvSpZON1IYTv9v9cqg2rOB6KXyLJ1eH2XXwadKnjJjCTpstcSA3E/kFcjE48di
- 8d25VonlzNtYNlmyciWj8KPn04d9sNpBztKYyq1HfUO0YoEx5i2GxQsBoBcHelejRDHq
- nTsJBJCtplWAP1ySXZCzp1gb0iCfMMhXC6LttWugpvcjLu1AvqIopSbCbaXwUeg22bcO vA== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vkk2ufd3s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Jan 2024 19:08:48 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40JIiXHn020046;
-	Fri, 19 Jan 2024 19:08:47 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vkgyfunru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Jan 2024 19:08:47 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40JJ8lNR032671;
-	Fri, 19 Jan 2024 19:08:47 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vkgyfunr8-1;
-	Fri, 19 Jan 2024 19:08:46 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] drm/rockchip: vop2: add a missing unlock in vop2_crtc_atomic_enable()
-Date: Fri, 19 Jan 2024 11:08:40 -0800
-Message-ID: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmmPcA50"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A4AC433C7;
+	Fri, 19 Jan 2024 21:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705698782;
+	bh=K5XRA4pHgspNItWgN06atRk3dlBp3RHa7wRvvR+DpcI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jmmPcA50gLbqSB8r+VHjTHJbVd2EdfI8cUj6CWJcZR+McJ6OYl/pezGaDfOWzqVZT
+	 36nzUu3nIh1yAX5W74v9uT0P0SU3s8SsJbAMFf/IvlkKBaFEtvABuorRjdMDO/mTZp
+	 ffTFoD5vtDwi9KbjHz1BNBqbgQDMqwH7m9pSK9VJ30aRKFAirf5RoF+LKZPywCvjAc
+	 hRFVK8y/FK6qB4odZILqQIMTPHOZLwdfusTxCAbQ/Okwh6Dn3EMpI5AQxJDSQSLnaQ
+	 IPsiFYIW2ed4l68VMhRKjguD7WEt7rG4VGlFCqdZzVEFk7mQPyRVKwcM/BKYXxoAjd
+	 qVT17ntQRADJA==
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-19_12,2024-01-19_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2401190113
-X-Proofpoint-ORIG-GUID: YhbWzf0BGgzwKT-zZSFVivNqHgWwTUMY
-X-Proofpoint-GUID: YhbWzf0BGgzwKT-zZSFVivNqHgWwTUMY
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 19 Jan 2024 21:12:58 +0000
+Message-Id: <CYIZR55BCZ5L.1DY4I65CDCLH8@seitikki>
+Cc: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] crypto: asymmetric_keys: remove redundant pointer
+ secs
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Colin Ian King" <colin.i.king@gmail.com>, "David Howells"
+ <dhowells@redhat.com>, "Herbert Xu" <herbert@gondor.apana.org.au>, "David S
+ . Miller" <davem@davemloft.net>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>
+X-Mailer: aerc 0.15.2
+References: <20240118120745.2519762-1-colin.i.king@gmail.com>
+In-Reply-To: <20240118120745.2519762-1-colin.i.king@gmail.com>
 
-Unlock before returning on the error path.
+On Thu Jan 18, 2024 at 12:07 PM UTC, Colin Ian King wrote:
+> The pointer secs is being assigned a value however secs is never
+> read afterwards. The pointer secs is redundant and can be removed.
+>
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'secs' is used in the enclosing
+> expression, the value is never actually read from 'secs'
+> [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  crypto/asymmetric_keys/verify_pefile.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_k=
+eys/verify_pefile.c
+> index f440767bd727..2863984b6700 100644
+> --- a/crypto/asymmetric_keys/verify_pefile.c
+> +++ b/crypto/asymmetric_keys/verify_pefile.c
+> @@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsig=
+ned int pelen,
+>  	const struct pe32plus_opt_hdr *pe64;
+>  	const struct data_directory *ddir;
+>  	const struct data_dirent *dde;
+> -	const struct section_header *secs, *sec;
+> +	const struct section_header *sec;
+>  	size_t cursor, datalen =3D pelen;
+> =20
+>  	kenter("");
+> @@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, uns=
+igned int pelen,
+>  	ctx->n_sections =3D pe->sections;
+>  	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
+>  		return -ELIBBAD;
+> -	ctx->secs =3D secs =3D pebuf + cursor;
+> +	ctx->secs =3D pebuf + cursor;
+> =20
+>  	return 0;
+>  }
 
-Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis. Only compile tested.
-Note: Smatch found this.
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index 85b3b4871a1d..fdd768bbd487 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1985,8 +1985,10 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
- 		clock = vop2_set_intf_mux(vp, rkencoder->crtc_endpoint_id, polflags);
- 	}
- 
--	if (!clock)
-+	if (!clock) {
-+		vop2_unlock(vop2);
- 		return;
-+	}
- 
- 	if (vcstate->output_mode == ROCKCHIP_OUT_MODE_AAAA &&
- 	    !(vp_data->feature & VOP2_VP_FEATURE_OUTPUT_10BIT))
--- 
-2.39.3
+BR, Jarkko
 
