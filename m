@@ -1,104 +1,93 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7069BFC01;
-	Sat, 20 Jan 2024 14:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DFE10A20
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 17:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705762359; cv=none; b=n/vQEn7XWgVKhWbu/mgZtnuaFKbGiGUz3uZx6JI7uEwqo13/qtESagdmVnvMp5PwQDOhAHpCQhTvhW2WC3nm2hnkiFrVKb9DIam2JhoqCR+8g1rR8jBbr7fX5m/BT4oYtTqwq5cbc2xd1M4bAiPFL8FihOBBJBmw8QHr84vUpBk=
+	t=1705771555; cv=none; b=cvUvw61ykuygYAWlInRMK+rmKmtf7oxYSzhs2W8/cXhxRK6T+0+n2dPTFjwCGAFDnJspZwqsN26NP5LQSh+XGVI6qXxtNoPXgUf8uWGOuVl/kTT4woVA7YbaGVZMQmzfl8O5+Cx2yzzMF5oU1r94iDuhXv7AfHmu9nJWz7F4yZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705762359; c=relaxed/simple;
-	bh=7y4p5pvIngJ3aP5NdJ2PdSmbuGEVhNmS9q08S5a8BFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQV0QrOwGyF1IvLR/EwVdqRP7lCG4xwUHOC9QNUAVwseILufqpUxLIR0g+KZukIjHs914NSJAUHIWdf7C40clrieuPhVJqPXcE4xUY5HM0bS+j46kH3Ic4ZbKtE3GqCRA400ohhjIpku/Bhyky+G66onaCJ0lV8nGa9eRWii/h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=km7MGfgy; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1705771555; c=relaxed/simple;
+	bh=IHy3yKUWKTLuOD8hN3UJHVbeSR7P1m1XoNYyPhd0+ec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ft6ngUpzghX5kzWwgzkNv1AXovNbWIqeJKf6TJ5yfimk+o/Yks34GCu/6vwZb4AhcWYvMw8M34H0F7hksgSRte7qdmlIXuLIdh0aVFffnAuieDbl/lREg1eBdzT9Qb24ns5k/2YhvyF+oWNyJZboSqhyzz9ddNFawg4MjUZ2TYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=m47oR2wF; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="km7MGfgy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705762336; x=1706367136; i=markus.elfring@web.de;
-	bh=7y4p5pvIngJ3aP5NdJ2PdSmbuGEVhNmS9q08S5a8BFM=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=km7MGfgyLOfuo8lXhgVhudRr5SaQ3CDAQ8y1EpIpCIVP8w6/30UXRbXNKur8dSwT
-	 xcdzEa3RQl1nJEVOwukFygMFVrbGWJ3//tkQcSHaedc0gS14xNkbEsu4m7FL94wNT
-	 S/QlyPhKQ+76lq7g4aq/dh6uR09ZUmraTXYDMgTRBDOErLhbAASsKxXhIZBQvJwVu
-	 p61hbswhcFamQniIzCUcE2cfBRaU6kQOZ4Q7CdqOjvfs5tnuwqTbh3bvZP1L7jBBW
-	 kxNPvv5zl7CG94I/XlcYKf5Dvq8UZX7Z3Hxou3EAqPjtzKyC6Y0MdZjC/fwvlwaVr
-	 NRnFuaJvR6NJazoKUg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxYbN-1rBITt3fsv-00xdP1; Sat, 20
- Jan 2024 15:45:24 +0100
-Message-ID: <26ef811d-214c-4ce4-a9f8-4fa4cfdefe29@web.de>
-Date: Sat, 20 Jan 2024 15:45:11 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="m47oR2wF"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id RF6DrefClXxngRF6DrrUj2; Sat, 20 Jan 2024 18:25:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1705771544;
+	bh=wFri96r10IYTNO8+N94yIYZtcJHCQ7p90QlQKgXP2zQ=;
+	h=From:To:Cc:Subject:Date;
+	b=m47oR2wFqaPhS795diQSgtuX4Cry1l/u1GV8fdwbAzJKCPH2sO5yOU2uBSFK/sZw0
+	 WtqVMmILCibiJMHFb9G1XAXukYgkby0Qz0a2znFeu77RdNH3Vg2lRqIMr5q+pQNDsh
+	 4ZND9BAePxKXF0TK+RQMZwpst4WWC6lgIaSiGlBfJ0uph6p0iEcnI1jWy5CJUASCZA
+	 weMAHL4HFdfiy0tx9tJfjxAn+BwcZMSrwciEamrwCBgxJu+mRLbgBGNXXhzRzUqDS0
+	 FA+9pgNY9P8agJN9FOXVj4HcfcTcM+9hWujZkh6+00HqAIe1b320aV91k6xiDgQ+xu
+	 wx8zSB/kq4eQw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 20 Jan 2024 18:25:44 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Mark Rustad <mark.d.rustad@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Subject: [PATCH] ixgbe: Fix an error handling path in ixgbe_read_iosf_sb_reg_x550()
+Date: Sat, 20 Jan 2024 18:25:36 +0100
+Message-ID: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/xen: Add some null pointer checking to smp.c
-To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
- Ilya Dryomov <idryomov@gmail.com>, Jean Delvare <jdelvare@suse.de>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20240119094948.275390-1-chentao@kylinos.cn>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240119094948.275390-1-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:f7xX5lxSHQgJlr4n1BCo7mY8k5CxgyoVCcwDx8vDb81qa7iinjp
- ygTbFkH+h1w/S5ZoMSnj08gwbxWJGFxt9wXsJdUQHSaxAWNG5h3hUKEK/epM8rFwt3ZMsAe
- GGoA1wFozLQEI4nm9mmzNp+YSVHpveqj6S7m9BzPY8ezDb0rPR16s07u5MxZ71jjWEdHQKJ
- EXpaFRb580g4W1z9GL0AA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kvTIFKx34dg=;JrM0jCAeZHWaii5y7r7dOydzsH/
- uXaPcxEWXRFr2x7CuC9tO4Fowq8H82DgAA9WsJE7G3dF/pGzBlBdX7yg/h3FW1dvxZ7L9Bwq9
- YZqtkhcz7oiOllmFXulWXXT8TUiwbuWCOGHS9iggwoMw/g+2VnSJGIUJmgTWjS4UzANjh/x8r
- eV+3HlqoINvOWjVtUuOHipjU4GMkO2781Z9VPLzD7KVuAjRjG1GbHXRkM/V6T+ySE6IBfW4z9
- yJBjfaG/o+nVaI4+cXQp4LaSAmTJL/mcxR8a1oLSaX/20AYUZtOAFtdXkrbH/zozqQPMVgBO0
- 338sa0VkYV/U5B7/pshxyVNRbkPcVp1uLHN5CpFbRuo1VPKellG0ELlimWWqkEKK+raOwkm77
- 65R5IG0fcJI7961Jef2v0osiTeQRTAr1bjx4sOTPNRKUzpn0NC1DNTjT9kgMtaIFA5l/AwkoV
- 29NZ6m17PJdstEsfstnlaLUFQ+fWKSfE0e6No3OmLgbKXK0LKAauriHYkvhk3ewJ203myG2IU
- YJwi0gk9FezgwmACzyQT4pSCrgHf4impbKFaitG16dTeUqtdaTI8h6hEg9OkwoMivrwg+8bem
- 6+xvc0SZnrruIWxGGmMczQKyCn5YwG432j8o8B6bIlMujwOgJJIb7JpRmCDwmhIRWF0qkEgU1
- JJ17vy64v+HUOs8t7BQFXbIGnlVXzzpLzhhUptkCMiM0HxkAFCTUf2nXlxRhGnOM91PfKNaQ+
- usRxHngFEVveI06mhCDkJaYP81rbsGAuYhsNKTGOYB2nRbgfO84AC+0J3ghEHIAY+qF8iYBF8
- nX4ixznIdAaK46dT0S7yj+0kPZyD0h4nXAp+qIF7aTGuuIH7FtFCxT8mO7hK6Qbs6uBydatL8
- H6fRRzibSyunhrkNZztI73denc0+gR0SCUWmQrnIQtgMFAqoZj5rayKloIyeG+f5/XW9QgxOf
- ra398Q==
+Content-Transfer-Encoding: 8bit
 
-> kasprintf() returns a pointer to dynamically allocated memory
-> which can be NULL upon failure. Ensure the allocation was successful
-> by checking the pointer validity.
+All error handling paths, except this one, go to 'out' where
+release_swfw_sync() is called.
+This call balances the acquire_swfw_sync() call done at the beginning of
+the function.
 
-How do you think about to refer to the function name
-instead of the file name in the patch subject?
+Branch to the error handling path in order to correctly release some
+resources in case of error.
 
+Fixes: ae14a1d8e104 ("ixgbe: Fix IOSF SB access issues")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative, review with care.
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-=E2=80=A6
-> +++ b/arch/x86/xen/smp.c
-=E2=80=A6
-> @@ -114,6 +124,8 @@ int xen_smp_intr_init(unsigned int cpu)
->
->  	return 0;
->
-> + fail_mem:
-> +	rc =3D -ENOMEM;
->   fail:
->  	xen_smp_intr_free(cpu);
->  	return rc;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+index 6208923e29a2..c1adc94a5a65 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+@@ -716,7 +716,8 @@ static s32 ixgbe_read_iosf_sb_reg_x550(struct ixgbe_hw *hw, u32 reg_addr,
+ 	if ((command & IXGBE_SB_IOSF_CTRL_RESP_STAT_MASK) != 0) {
+ 		error = FIELD_GET(IXGBE_SB_IOSF_CTRL_CMPL_ERR_MASK, command);
+ 		hw_dbg(hw, "Failed to read, error %x\n", error);
+-		return -EIO;
++		ret = -EIO;
++		goto out;
+ 	}
+ 
+ 	if (!ret)
+-- 
+2.43.0
 
-Is it currently preferred to start labels in the first text column?
-
-Regards,
-Markus
