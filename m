@@ -1,88 +1,78 @@
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB25D266
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 11:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50646EAC0;
+	Sat, 20 Jan 2024 11:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705748619; cv=none; b=AG5mk1xmq4566m5scaG+yXAXZlxODl4LFB9XaNIyvehRMMlLFROW80iof6R0gQJ01G4mwAD6TE80g2o2O+9U2Zey84HDK8ydXaqnSRByC1nn1s78zrICBUMCKeM5+LgW5u4iZlh4g5B+WQLcrN0F2edBAHpseisMs6GL7+HBxKI=
+	t=1705751628; cv=none; b=BF/vXr1baSnneQv0YfzUAX7xUdXvmon4qO6jcgweh73xxed5+klA5EVdZlG7jzMa1XdY4ofYwrTRVBe0qBS/+8PrceyjiCf2D3GkSF7I8rVySJhxU3tASNIRFuj0G0ERko3Kl8MshhThZZy6aHVkoWS1KXsNppuYm0I6D7lZc4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705748619; c=relaxed/simple;
-	bh=rq05Q3CTtTgQ1urJlIhpHt7f6eCXdIHqDcVdECHIwao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tyg4Mqny4FANvbBxqdpPpZqmKdEtll/piL3iCNE3CGzPYo7Yv1USkmhLbkcrG2s0iFHQREy1c6lzUFueOZN6+Mlskn0gB7me+ht1V7EUekR/jofFfa/LuZfZkr1oFuYIvl3guSzWOtfe7mavBs3rkkW0xU2IQ+PpV6lEYwD9hdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GYpUNtW5; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1705751628; c=relaxed/simple;
+	bh=h67AGv+FNXNrQzYDfRzBnkw8TczwwZeIqb6H6msqznM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5y6QXAVqj12tGtvN8hmld82yruTfs1ngL+p/w/vllAaZZuzn2XlKVJMCrYOIafO7J+w89aCXu7tduJrJBkVX2rvyoLiRmm3XOcD3grVHp3c7mIC97FqyBk9WdMWUoT1PqYVKvskw22DsMdP85hiuGWl+yLNVWDjL9EMWud83qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVPgGS25; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GYpUNtW5"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id R98NrmVHvBejiR98NrhEeh; Sat, 20 Jan 2024 12:03:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705748612;
-	bh=GxQFw8ZsE9hz9MpyTlvTEQNDbRZXAH6gthc9NucWNh0=;
-	h=From:To:Cc:Subject:Date;
-	b=GYpUNtW5ZgVk4Q0J2G/GpD92kEHqtkXbQNsn+2OVT4l1CvJVqbtfrxPFPpn4D+IFm
-	 NFi71HNKYBRUyLvXBO52gApxR0o0YWhj/3ZaQewPxtx0cUUkJp/KejSd6OI22u59Xy
-	 6DKRvlZbxzxOPIFwqUukl6EX48AEWgmKkUvSzTG+gTlen6Iq4ZzPr//NBd9xUuRKwf
-	 r7fgS5X48SsnbO0Gu8VGY5aPV3g6WV6rrm1y3xMDvy+wno4yPBGp85Ddl3TyoNbl5O
-	 4AlX9hK4p1g0xVqTSBFUR+0A1+BUvxzVHUM7iCr+2C8NOHgnhBNy7F8j1RJ8FGu67S
-	 DxxAlI+cWtGnw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jan 2024 12:03:32 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] regulator: fixed-helper: Save a few bytes of memory when registering a 'nfc_llc' engine
-Date: Sat, 20 Jan 2024 12:03:26 +0100
-Message-ID: <3f990a7b80d72c31371735b24ed08acbb8392c80.1705748586.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVPgGS25"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C92C433C7;
+	Sat, 20 Jan 2024 11:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705751627;
+	bh=h67AGv+FNXNrQzYDfRzBnkw8TczwwZeIqb6H6msqznM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AVPgGS25GVL4+3dPNg/aFvLs9imkvzIelHcrYqNbeoah2Yzwz5G+Q57Z4oXej/d/j
+	 8F7Baf4BBHKV1qfplPfwWcYWXQKO/uB4h1RR9yzAua6y/Bo4x72L3VGudZhBohRrGC
+	 XRUukhs234I0sxuHCh/ZTAyMbEcX9zOothgSHzAp4uoEyvkB0osOCv2dyOKHxQeadO
+	 Ttk0f0K69HnTCHbDq7fLzzeCnHZ5qfTnxNBZhVq3YSD/+dGmY+18PSjdI7wH+fSlee
+	 1MjbW64BslledfDFWccKPS35ppNw7qdLnOXYvhkHolEbRN0qZ8WYQqi5zLtKHaEFa6
+	 j+TGmEA5iI9Aw==
+Date: Sat, 20 Jan 2024 11:53:42 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH net-next] xdp: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-ID: <20240120115342.GD110624@kernel.org>
+References: <8e889d18a6c881b09db4650d4b30a62d76f4fe77.1705734073.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e889d18a6c881b09db4650d4b30a62d76f4fe77.1705734073.git.christophe.jaillet@wanadoo.fr>
 
-regulator_register_always_on() calls pass a string literal as the 'name'
-parameter.
+On Sat, Jan 20, 2024 at 08:02:20AM +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_range() is inclusive. So a -1 has been added when needed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-So kstrdup_const() can be used instead of kfree() to avoid a memory
-allocation in such cases.
+## Form letter - net-next-closed
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/regulator/fixed-helper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[adapted from text by Jakub]
 
-diff --git a/drivers/regulator/fixed-helper.c b/drivers/regulator/fixed-helper.c
-index 0eb2442456f0..2d5a42b2b3d8 100644
---- a/drivers/regulator/fixed-helper.c
-+++ b/drivers/regulator/fixed-helper.c
-@@ -15,7 +15,7 @@ static void regulator_fixed_release(struct device *dev)
- {
- 	struct fixed_regulator_data *data = container_of(dev,
- 			struct fixed_regulator_data, pdev.dev);
--	kfree(data->cfg.supply_name);
-+	kfree_const(data->cfg.supply_name);
- 	kfree(data);
- }
- 
-@@ -36,7 +36,7 @@ struct platform_device *regulator_register_always_on(int id, const char *name,
- 	if (!data)
- 		return NULL;
- 
--	data->cfg.supply_name = kstrdup(name, GFP_KERNEL);
-+	data->cfg.supply_name = kstrdup_const(name, GFP_KERNEL);
- 	if (!data->cfg.supply_name) {
- 		kfree(data);
- 		return NULL;
--- 
-2.43.0
+The merge window for v6.8 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
 
+Please repost when net-next reopens on or after 22nd January.
+
+RFC patches sent for review only are obviously welcome at any time.
+
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+--
+pw-bot: defer
