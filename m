@@ -1,47 +1,50 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9DED502
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 09:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E5ACA64
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 09:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705743746; cv=none; b=t3oKlJSAD2xvZGzp4eijN5IcBJ8Cdv2IBXW/eV1KbrJx3KgTIk8urBl+L+Z7SeDv6P+7GSjsWk+Q8vyorfaWXFFDDl6X3gwlw3QbaETFmJWCi6CPcugk97N5YKg0Oz5qK+9aJ/Pd3QbECrVPNrn7IDvIjZ6dk/4yShemdWyaMyM=
+	t=1705744573; cv=none; b=UE0QQXipi8RPQ52fpwJz06TrEFjRI8U9LBzuHUevNWRtCnhC9OSDg7lOraxubAnezjTT4h3rSopW77cFrOqXIPDRHutaK8OdBBxFJ0BuiCfU+69ANJJq4Fcpr2Jw5B1hDMv0Vs8FsYArSrJdxng6/MlKQC9BmMiLSSsfCv+FxdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705743746; c=relaxed/simple;
-	bh=1+N3YmtcT/VrFLO1mZria8sCoBSPBU080hcNWd3hcB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A5Bww2i7pLKQCOkYhBlx5ZssU+RMf4KkWjGcehNK1fA8RdQpe18rRMbTr5A0UTu0ZRR5iQuND9insyJBfHs2ySgJR1owkkZABH4eBfGNBm16gWbv94c0nnUWeukb+dYjHQOOUPIidfd3usGZFBgwd81Un/d407xPAqR20MLQUQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kUTgD7yL; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1705744573; c=relaxed/simple;
+	bh=BOcX8KWEnibygk4fjeA6ev0h6FDA5vSRBlJ1zvGoVtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nT990wYiGnldQ9f2k+xvDXdwLavG8MTjfJQV7IUbthF6P9QcowvfD1/XgXFznV9dIDnoETwIzSsAjRLxTclz5S1joK3E3U78F8nApfAcYiyKvQ8eiHEwmRGFs0BmF/joP37SKmnZ4LFubo+T6zBrLekSXBoh62QCNs3RAxQn9xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dlikXYNv; arc=none smtp.client-ip=80.12.242.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kUTgD7yL"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dlikXYNv"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id R7rirLBJA6LbeR7rjrquA5; Sat, 20 Jan 2024 10:42:15 +0100
+	id R859rc6amXxngR859rqY8F; Sat, 20 Jan 2024 10:56:09 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705743735;
-	bh=jqkuByAneJ1tG1xwrZ5rETs0q0pFU+XkKF5W5mqRRsk=;
+	s=t20230301; t=1705744569;
+	bh=6/Q426ZzIQUJLm346t0hoGiEGD7EVC/MiQvvpwN1st0=;
 	h=From:To:Cc:Subject:Date;
-	b=kUTgD7yLyeXMn4n1wcBXLPiynU/tLOC2Nv9PXTX52BE35qxpILX+MwppzmzvxZDW+
-	 WZf7sAn5wNb7FHfuKvYgyEvZDAQ8lMyqX/qlRl1wu98svDV626XGe61Zk4Aajn3PKK
-	 7y+3mDMw5nlqJ2xqs+YQI+Y3Ei/Rm72tbnnni0Cjy5IbHm2kt5PRGEYDWPpnVii5EZ
-	 T/H93MbpVy+lWZrC7OSzJYFkxtzPbOIwg3ZyrEtSo/awvqmP1cb+saNd8QRLbrD6H5
-	 +xOImqeUeLjEPHnW1Lq30gZ/7WSSPRYeyU+W613E6EpgJZv/ljs5b0UxMDQZVUe9e9
-	 THA+q/8Zs8YwQ==
+	b=dlikXYNvorCGCI/zMlw+kQotCzT38LYn+0/29+wiIY+D+2X0okIBuyhrqgbaTeGCE
+	 MLiREdT44J3NpJ91NyxVIJW5JAzfiezWkZW4GDFgFi821WNWYGUbNzWWzbCRr6ufYm
+	 nGRStL1OW06bVoduZxNUjOatbL1M7gBTMsquonPrYmJ8uiWol4sU8cEu5fBOY5BxSc
+	 CnCYtDo7by24j06iVPoUz84OMhcVsDts9s9FXWA6xOikHfBwJTEDzltFQsJGbcw/OD
+	 QV3w9sOphKFjXX8Jl8b7kqp5BChAZd90U2SLDORzsqRgQMon3hYjIng0NZ/wx1IDUs
+	 gSdpIxW6k/3Dw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jan 2024 10:42:15 +0100
+X-ME-Date: Sat, 20 Jan 2024 10:56:09 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org
-Subject: [PATCH] ALSA: synth: Save a few bytes of memory when registering a 'snd_emux'
-Date: Sat, 20 Jan 2024 10:42:12 +0100
-Message-ID: <9e7b94c852a25ed4be5382e5e48a7dd77e8d4d1a.1705743706.git.christophe.jaillet@wanadoo.fr>
+	netdev@vger.kernel.org
+Subject: [PATCH] nfc: hci: Save a few bytes of memory when registering a 'nfc_llc' engine
+Date: Sat, 20 Jan 2024 10:56:06 +0100
+Message-ID: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,52 +54,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-snd_emux_register() calls pass a string literal as the 'name' parameter.
+nfc_llc_register() calls pass a string literal as the 'name' parameter.
 
 So kstrdup_const() can be used instead of kfree() to avoid a memory
 allocation in such cases.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/sound/emux_synth.h | 2 +-
- sound/synth/emux/emux.c    | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ net/nfc/hci/llc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/emux_synth.h b/include/sound/emux_synth.h
-index 1cc530434b97..3f7f365ed248 100644
---- a/include/sound/emux_synth.h
-+++ b/include/sound/emux_synth.h
-@@ -103,7 +103,7 @@ struct snd_emux {
- 	int ports[SNDRV_EMUX_MAX_PORTS];	/* The ports for this device */
- 	struct snd_emux_port *portptrs[SNDRV_EMUX_MAX_PORTS];
- 	int used;	/* use counter */
--	char *name;	/* name of the device (internal) */
-+	const char *name;	/* name of the device (internal) */
- 	struct snd_rawmidi **vmidi;
- 	struct timer_list tlist;	/* for pending note-offs */
- 	int timer_active;
-diff --git a/sound/synth/emux/emux.c b/sound/synth/emux/emux.c
-index 0006c3ddb51d..a82af9374852 100644
---- a/sound/synth/emux/emux.c
-+++ b/sound/synth/emux/emux.c
-@@ -85,7 +85,7 @@ int snd_emux_register(struct snd_emux *emu, struct snd_card *card, int index, ch
- 		return -EINVAL;
+diff --git a/net/nfc/hci/llc.c b/net/nfc/hci/llc.c
+index 2140f6724644..8c7b5a817b25 100644
+--- a/net/nfc/hci/llc.c
++++ b/net/nfc/hci/llc.c
+@@ -49,7 +49,7 @@ int nfc_llc_register(const char *name, const struct nfc_llc_ops *ops)
+ 	if (llc_engine == NULL)
+ 		return -ENOMEM;
  
- 	emu->card = card;
--	emu->name = kstrdup(name, GFP_KERNEL);
-+	emu->name = kstrdup_const(name, GFP_KERNEL);
- 	emu->voices = kcalloc(emu->max_voices, sizeof(struct snd_emux_voice),
- 			      GFP_KERNEL);
- 	if (emu->name == NULL || emu->voices == NULL)
-@@ -140,7 +140,7 @@ int snd_emux_free(struct snd_emux *emu)
- 	snd_emux_delete_hwdep(emu);
- 	snd_sf_free(emu->sflist);
- 	kfree(emu->voices);
--	kfree(emu->name);
-+	kfree_const(emu->name);
- 	kfree(emu);
- 	return 0;
+-	llc_engine->name = kstrdup(name, GFP_KERNEL);
++	llc_engine->name = kstrdup_const(name, GFP_KERNEL);
+ 	if (llc_engine->name == NULL) {
+ 		kfree(llc_engine);
+ 		return -ENOMEM;
+@@ -83,7 +83,7 @@ void nfc_llc_unregister(const char *name)
+ 		return;
+ 
+ 	list_del(&llc_engine->entry);
+-	kfree(llc_engine->name);
++	kfree_const(llc_engine->name);
+ 	kfree(llc_engine);
  }
+ 
 -- 
 2.43.0
 
