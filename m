@@ -1,74 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42F5320F;
-	Sat, 20 Jan 2024 12:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7069BFC01;
+	Sat, 20 Jan 2024 14:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705752017; cv=none; b=L4GguXBUzCcK0JkqkVMBmCZMf/Hon1CYUT30UXEqDyO6iBjhDFv07Ic4Xf4FqExmSeoIJgJ211IywJmn3E7DVRRl/QWsd+1JKLvY/evRys0aygiWi5WXD8uaZkmCbeAZo0LRUPjd0PJaCdXTtqzyjEd6gQzhEURe58yTR+q1hgM=
+	t=1705762359; cv=none; b=n/vQEn7XWgVKhWbu/mgZtnuaFKbGiGUz3uZx6JI7uEwqo13/qtESagdmVnvMp5PwQDOhAHpCQhTvhW2WC3nm2hnkiFrVKb9DIam2JhoqCR+8g1rR8jBbr7fX5m/BT4oYtTqwq5cbc2xd1M4bAiPFL8FihOBBJBmw8QHr84vUpBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705752017; c=relaxed/simple;
-	bh=PkF6YXZLhKQe2Faar9K9DRgJJuZs87C57DbxFN/Fdao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/PNGbdMnJwqq94GX6dRFqcdDOmbj+rhZm/Me4XnmB6dz3mJyy3hlnYMHDt/6t4hypsVM6BHuyaXnJWvsbh9ej753ccYeiUuRtA5X9tfVdIzYoEy89nKI7UZsW9/fr2u0jGMbH+RGckOQ2OhRj5Kk//vOxrYtSSC4pMdCbA3/EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdJlOK+e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705762359; c=relaxed/simple;
+	bh=7y4p5pvIngJ3aP5NdJ2PdSmbuGEVhNmS9q08S5a8BFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQV0QrOwGyF1IvLR/EwVdqRP7lCG4xwUHOC9QNUAVwseILufqpUxLIR0g+KZukIjHs914NSJAUHIWdf7C40clrieuPhVJqPXcE4xUY5HM0bS+j46kH3Ic4ZbKtE3GqCRA400ohhjIpku/Bhyky+G66onaCJ0lV8nGa9eRWii/h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=km7MGfgy; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdJlOK+e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A8BC433F1;
-	Sat, 20 Jan 2024 12:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705752017;
-	bh=PkF6YXZLhKQe2Faar9K9DRgJJuZs87C57DbxFN/Fdao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XdJlOK+e7nkCmuY8GEpBC71Qhb90oU70LQVNzV+NPSZrsZytGT6pG9bjC+vtn2Pu5
-	 Ihv9gnsPzTGdG1FYVLZZzC3do0sdTNtyfkEIiakLKY+M4sYO4kCD+IwODtpXcoO6i2
-	 OaPHogdjT6dSpkjnl7nV3GlTIXv+NS92gjmaH7/7+OiPoTfP4hBWipgnY7mtEZ18e0
-	 YD861k8GB9xZSmjd5ToB0LlfZ8QBp/kw1jdfXn1XOAbFHbC0Iw8THJwKuwZnno0/RY
-	 ADWTIjC7CCDGai/FnbpfXlte7ztP1yAxAB4NrGumKG4nYWUjgn22dyzZkJn30To7OK
-	 LIJpMmfCGNQfg==
-Date: Sat, 20 Jan 2024 12:00:12 +0000
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] nfc: hci: Save a few bytes of memory when registering a
- 'nfc_llc' engine
-Message-ID: <20240120120012.GA118262@kernel.org>
-References: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="km7MGfgy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705762336; x=1706367136; i=markus.elfring@web.de;
+	bh=7y4p5pvIngJ3aP5NdJ2PdSmbuGEVhNmS9q08S5a8BFM=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=km7MGfgyLOfuo8lXhgVhudRr5SaQ3CDAQ8y1EpIpCIVP8w6/30UXRbXNKur8dSwT
+	 xcdzEa3RQl1nJEVOwukFygMFVrbGWJ3//tkQcSHaedc0gS14xNkbEsu4m7FL94wNT
+	 S/QlyPhKQ+76lq7g4aq/dh6uR09ZUmraTXYDMgTRBDOErLhbAASsKxXhIZBQvJwVu
+	 p61hbswhcFamQniIzCUcE2cfBRaU6kQOZ4Q7CdqOjvfs5tnuwqTbh3bvZP1L7jBBW
+	 kxNPvv5zl7CG94I/XlcYKf5Dvq8UZX7Z3Hxou3EAqPjtzKyC6Y0MdZjC/fwvlwaVr
+	 NRnFuaJvR6NJazoKUg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxYbN-1rBITt3fsv-00xdP1; Sat, 20
+ Jan 2024 15:45:24 +0100
+Message-ID: <26ef811d-214c-4ce4-a9f8-4fa4cfdefe29@web.de>
+Date: Sat, 20 Jan 2024 15:45:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] x86/xen: Add some null pointer checking to smp.c
+To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
+ kernel-janitors@vger.kernel.org, Boris Ostrovsky
+ <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+ Ilya Dryomov <idryomov@gmail.com>, Jean Delvare <jdelvare@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <20240119094948.275390-1-chentao@kylinos.cn>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240119094948.275390-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:f7xX5lxSHQgJlr4n1BCo7mY8k5CxgyoVCcwDx8vDb81qa7iinjp
+ ygTbFkH+h1w/S5ZoMSnj08gwbxWJGFxt9wXsJdUQHSaxAWNG5h3hUKEK/epM8rFwt3ZMsAe
+ GGoA1wFozLQEI4nm9mmzNp+YSVHpveqj6S7m9BzPY8ezDb0rPR16s07u5MxZ71jjWEdHQKJ
+ EXpaFRb580g4W1z9GL0AA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kvTIFKx34dg=;JrM0jCAeZHWaii5y7r7dOydzsH/
+ uXaPcxEWXRFr2x7CuC9tO4Fowq8H82DgAA9WsJE7G3dF/pGzBlBdX7yg/h3FW1dvxZ7L9Bwq9
+ YZqtkhcz7oiOllmFXulWXXT8TUiwbuWCOGHS9iggwoMw/g+2VnSJGIUJmgTWjS4UzANjh/x8r
+ eV+3HlqoINvOWjVtUuOHipjU4GMkO2781Z9VPLzD7KVuAjRjG1GbHXRkM/V6T+ySE6IBfW4z9
+ yJBjfaG/o+nVaI4+cXQp4LaSAmTJL/mcxR8a1oLSaX/20AYUZtOAFtdXkrbH/zozqQPMVgBO0
+ 338sa0VkYV/U5B7/pshxyVNRbkPcVp1uLHN5CpFbRuo1VPKellG0ELlimWWqkEKK+raOwkm77
+ 65R5IG0fcJI7961Jef2v0osiTeQRTAr1bjx4sOTPNRKUzpn0NC1DNTjT9kgMtaIFA5l/AwkoV
+ 29NZ6m17PJdstEsfstnlaLUFQ+fWKSfE0e6No3OmLgbKXK0LKAauriHYkvhk3ewJ203myG2IU
+ YJwi0gk9FezgwmACzyQT4pSCrgHf4impbKFaitG16dTeUqtdaTI8h6hEg9OkwoMivrwg+8bem
+ 6+xvc0SZnrruIWxGGmMczQKyCn5YwG432j8o8B6bIlMujwOgJJIb7JpRmCDwmhIRWF0qkEgU1
+ JJ17vy64v+HUOs8t7BQFXbIGnlVXzzpLzhhUptkCMiM0HxkAFCTUf2nXlxRhGnOM91PfKNaQ+
+ usRxHngFEVveI06mhCDkJaYP81rbsGAuYhsNKTGOYB2nRbgfO84AC+0J3ghEHIAY+qF8iYBF8
+ nX4ixznIdAaK46dT0S7yj+0kPZyD0h4nXAp+qIF7aTGuuIH7FtFCxT8mO7hK6Qbs6uBydatL8
+ H6fRRzibSyunhrkNZztI73denc0+gR0SCUWmQrnIQtgMFAqoZj5rayKloIyeG+f5/XW9QgxOf
+ ra398Q==
 
-On Sat, Jan 20, 2024 at 10:56:06AM +0100, Christophe JAILLET wrote:
-> nfc_llc_register() calls pass a string literal as the 'name' parameter.
-> 
-> So kstrdup_const() can be used instead of kfree() to avoid a memory
-> allocation in such cases.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> kasprintf() returns a pointer to dynamically allocated memory
+> which can be NULL upon failure. Ensure the allocation was successful
+> by checking the pointer validity.
 
-## Form letter - net-next-closed
+How do you think about to refer to the function name
+instead of the file name in the patch subject?
 
-[adapted from text by Jakub]
 
-The merge window for v6.8 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations.
-We are currently accepting bug fixes only.
+=E2=80=A6
+> +++ b/arch/x86/xen/smp.c
+=E2=80=A6
+> @@ -114,6 +124,8 @@ int xen_smp_intr_init(unsigned int cpu)
+>
+>  	return 0;
+>
+> + fail_mem:
+> +	rc =3D -ENOMEM;
+>   fail:
+>  	xen_smp_intr_free(cpu);
+>  	return rc;
 
-Please repost when net-next reopens on or after 22nd January.
+Is it currently preferred to start labels in the first text column?
 
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
---
-pw-bot: defer
+Regards,
+Markus
