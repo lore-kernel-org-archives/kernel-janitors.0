@@ -1,94 +1,90 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10B1E484;
-	Fri, 19 Jan 2024 23:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C651FBC
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 06:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705706795; cv=none; b=rzlDXcJdjtajPgI3TN428+muxp1jC0tRsvG7CLkBB5pN7FAaTBdASY02YWuIuxVagoiIwTsJCtF8fp39Du1d0JvV6So9bOHaEpYSa3UkvSsgIBJ5DUARbye9edjfQwbdFBjIE1oVwGJoceljBga4ox6uFJy8+KMgH6f4qXXYxuI=
+	t=1705733945; cv=none; b=aVOd6/8QqovmhY0gbe+N+tbeAI5duLEd+hKAEL+PyVCqU3xbBJ23C0HOvqbyeJlTJgBDl8dPZ37qu8YEBLJyV+0RtsY5rv7ckd7iu54gVPnYI8OYWc5zheefkhVGNNF0lm9+JlOT9Q+MQrgd0t7FHA9pZoCKnJBw7+7LGnCoC6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705706795; c=relaxed/simple;
-	bh=/b7XbxIYbAPBG+nwiZX8T1zbq6IDXVnJIcZiWY7bUEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ajb7lK8IZsIHkAKzKbRCBaiSywvMuoXF9aiSCwlhfqm0/YkLiBlYfBnqLSc2ifkYKSR9efEUBA8MPeCwyYOd0Se9ZC54bjKmczPGXyaikw+1J2yQwZhJFDb/qQtg7n3rcqBQL26eAVSAeR7fZ7Ys/eb64z8/nMJdK7YHgNE4YGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9Mey18p; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705733945; c=relaxed/simple;
+	bh=iLUdhhWo7aaI6NNBGbzsfYLNbVys8tgyc3bVY56Gjik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BUCJMhF+TrA1Xp6I6xjuq95mMIQcw9hIKCbs9bjmHyUiyZHKjPGmNbWYf44khr3PX+ctQpREBjxXmEx3JVcE/dr1k8q/xWtJvy9SgGAJYE8Vg6LsCh6+U3Zrqbd/hynKgDIhKC1xXcHEoi2fSy9GbTYnZZl7078PpVSa9FBL4ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HSIL+65R; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9Mey18p"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e7e2e04f0so13535235e9.1;
-        Fri, 19 Jan 2024 15:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705706792; x=1706311592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1wZK+516K0XpuaX6YHVhJjzhdI9/8JfrLsvg1F0YHkg=;
-        b=m9Mey18pW+OJnEWftyltag+ZBF5dZaKjvcQlMwJeIrtb8rrs1ExJB62TxsHfRZaYkk
-         8Bhrx3DYhy91CLZ/EGyAhaoXd6mclUvhdsSWgE3oErLVEMDkdu2QzvNPpo36l9B1x+d9
-         O78feCZxUzS8g3BkHmBtBl4BcN0l78sYAOY1RMi+jVJykCcuAwlutxven7yYl69BsQyN
-         A76DYMNGZwcUxzYqH1oCunYsOGJqKJKiM/EhDIZJco5DuFaTxDC2bvJv4rsMk/3h0Uzn
-         TjUfwbVrG6xKcIGgSnmVeh/oCX0o7ORRmT9teLZugy7NbOez2vR5yKS+Ef7oiO/Rv8vp
-         zQhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705706792; x=1706311592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1wZK+516K0XpuaX6YHVhJjzhdI9/8JfrLsvg1F0YHkg=;
-        b=ldK43NepEJPnwoIx253I63JIpLUBg4unkKc2uOEq1so2S+GMKxSaZ9JOIzhEcndHOC
-         lUNlZSH2MZl94yAdxCryeiaBzuOq8OGBlMTeCm8g78w1oxY7uZS9R8cBdWELJr1O6TFl
-         6Yp8iqvQxko8oo+U/hmrp3z6/0tkOut9BBsdWpm2ZJZOV+g8eNSSTzzPCZ/mYx0jpjAh
-         iBkmzSqJMrtAQpiKar/TV6WT/8yEK6UrwdapUfgTLkhNRdGY7+J3gpv0Z0Qv+yk+Dmja
-         zvQ0NsiMQHeLBGKa4+Y4FApMbe4anD634XmBA8S+6IxoyDstHL6g4ol7AFmqE/BZAJd9
-         pHNg==
-X-Gm-Message-State: AOJu0Yyfl5dv+IX1mvNyN/+/yRhrXASkaS/k341DXSRRfvX3sJhMzRSu
-	l5+v2ER6t5w/3THH0t1o8sENwPRYxY77bleDrfBsdWSKUpmbinLL
-X-Google-Smtp-Source: AGHT+IHMKimO5Hsr9aIwhnd/9SE4aiPdxps8Eal5zD6k7O6Y+UUxyI7VM85mlOtZgV9WPD8Rgbmv2w==
-X-Received: by 2002:a05:600c:4fd3:b0:40e:5581:511a with SMTP id o19-20020a05600c4fd300b0040e5581511amr304286wmq.2.1705706791884;
-        Fri, 19 Jan 2024 15:26:31 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n4-20020adffe04000000b00339272c885csm360875wrr.87.2024.01.19.15.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 15:26:31 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] leds: aw200xx: make read-only array coeff_table static const
-Date: Fri, 19 Jan 2024 23:26:30 +0000
-Message-Id: <20240119232630.2752239-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HSIL+65R"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id R5JcrkgoYBejiR5JdrgS2l; Sat, 20 Jan 2024 07:58:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1705733933;
+	bh=swo29GFzf9xHjPXqHApVp1CpCySEKUtAyuh+ivXKxUQ=;
+	h=From:To:Cc:Subject:Date;
+	b=HSIL+65Rtj5Jv/agCYAK7LGEEezmUGxhWlpnklfHBQzQSvkYCVoQY8tEzYKv/hvN4
+	 5ZuhOgIzYgV/GlzzYRLJZUrAB/nUqZ0LydGQMlLNyBV3ei0Hyap9Zfb/27JAgrTc4c
+	 bruPR+pQJw2oiWZ8ov+4owF5XS60KWO4l+c5nysTCk4PRCv41fPFOoMfLUO5jLHzM1
+	 92j2radxR42JzL3myOoXxgtKf8I3uBaF0qv9WZHGw67b+i6lWu8yJPxgI+p1mudX76
+	 +1t2pR3x1zIj7zo8E1OnmmZpE9zcw4GoommMUUPbSrMFJoT6TnpMgDxvxYiS0Exx1f
+	 J5riGI+tz7y4Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 20 Jan 2024 07:58:53 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] platform-msi: Remove usage of the deprecated ida_simple_xx() API
+Date: Sat, 20 Jan 2024 07:58:46 +0100
+Message-ID: <fd87836efa894aee0ae43e767369c85a2ee7e1ff.1705733916.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array coeff_table on the stack at
-run time, instead make it static const.
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_max() is inclusive. So a -1 has been added when needed.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/leds-aw200xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/platform-msi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-index f584a7f98fc5..6c8c9f2c19e3 100644
---- a/drivers/leds/leds-aw200xx.c
-+++ b/drivers/leds/leds-aw200xx.c
-@@ -282,7 +282,7 @@ static int aw200xx_set_imax(const struct aw200xx *const chip,
- 			    u32 led_imax_uA)
- {
- 	u32 g_imax_uA = aw200xx_imax_to_global(chip, led_imax_uA);
--	u32 coeff_table[] = {1, 2, 3, 4, 6, 8, 12, 16};
-+	static const u32 coeff_table[] = {1, 2, 3, 4, 6, 8, 12, 16};
- 	u32 gccr_imax = UINT_MAX;
- 	u32 cur_imax = 0;
- 	int i;
+diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
+index f37ad34c80ec..ca48d1f60865 100644
+--- a/drivers/base/platform-msi.c
++++ b/drivers/base/platform-msi.c
+@@ -172,8 +172,8 @@ static int platform_msi_alloc_priv_data(struct device *dev, unsigned int nvec,
+ 	if (!datap)
+ 		return -ENOMEM;
+ 
+-	datap->devid = ida_simple_get(&platform_msi_devid_ida,
+-				      0, 1 << DEV_ID_SHIFT, GFP_KERNEL);
++	datap->devid = ida_alloc_max(&platform_msi_devid_ida,
++				     (1 << DEV_ID_SHIFT) - 1, GFP_KERNEL);
+ 	if (datap->devid < 0) {
+ 		err = datap->devid;
+ 		kfree(datap);
+@@ -191,7 +191,7 @@ static void platform_msi_free_priv_data(struct device *dev)
+ 	struct platform_msi_priv_data *data = dev->msi.data->platform_data;
+ 
+ 	dev->msi.data->platform_data = NULL;
+-	ida_simple_remove(&platform_msi_devid_ida, data->devid);
++	ida_free(&platform_msi_devid_ida, data->devid);
+ 	kfree(data);
+ }
+ 
 -- 
-2.39.2
+2.43.0
 
