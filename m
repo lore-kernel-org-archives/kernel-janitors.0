@@ -1,54 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D84A1FD2
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 07:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3513120F8
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 08:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705734149; cv=none; b=Ak3lfeuBVjDbjw1k0fQ6zWR1ExSi0VUOfz9WFpjnh7rX8SoYSVno7jOK9Js3P1U7LJGROmoY06nXTgQtdIV8JB44E08WCF3Hh1faC57hzIjQ+To/V9T3BJSSwlghDNYVJNjN8vV0WwrReYPFs+qgaUlO+2t/EI5UiVcfICVsEnw=
+	t=1705738095; cv=none; b=gb/PWqDUbs2+BPi5vHdaC+eWGmRPlcsQV5ddc5YsJYYrVNJuH5BljvnkCIJVTKOQSPcneVtngSrgDH9N1Qtq3oPC8tcOvnI8kkV9tN0eNpORHyV7Sv0jaMeatzhSKLEafJw4O+ESN4oJ3o+r0xK7yNVFpbFa2zRYUKQAksta2E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705734149; c=relaxed/simple;
-	bh=+raE6lOGseWsvkEpBBecN/MtD9iAHPDNgahekW3q5GU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=saOmkyCIoeR/J+ye3VP+FHBbViS/kStBqDhPODfRWaO+aUpqZxXmDZccjQc3gjfMUawxL3w/FYASZhaiflwh+uTmL6pemBXPe9JsmzXGgvc+nIX9Vl1i2OC0KYpGWGFu09lzDuo9rgw7UEurpqSbU931BWrOYg0Vi02TCrjz0pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YiMuukR6; arc=none smtp.client-ip=80.12.242.14
+	s=arc-20240116; t=1705738095; c=relaxed/simple;
+	bh=LxSWeL86UuZjcYrsu9ximZbggaJfpSpAduOC7mbTICc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJovOwEhkCeWI3hOWkI7hbmWX7/NYKkkNQLDjUkHB+TdCk4ihGcmOaFxuae7T6IoD3azsM7cQfMFRlCKEla1wDoqbHv/YflRYXuKTjtwTWqlhL+T7eBM4C4g/9c4dGO+PtVEn0L9SQGQgEZmMOTsU4gtmEccV+TUpTIdNsfUNMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PbJxE+Ib; arc=none smtp.client-ip=80.12.242.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YiMuukR6"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PbJxE+Ib"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id R5N0rXUqwgeksR5N0rlBX4; Sat, 20 Jan 2024 08:02:24 +0100
+	id R6OWrt72yoKAUR6OWrIak4; Sat, 20 Jan 2024 09:08:02 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705734144;
-	bh=18XLp0+EYYrAsuDVOy2pHg/nOe1su8/7QeJJlWWEvhU=;
+	s=t20230301; t=1705738082;
+	bh=FnsqDqIoO9tFCmJjjWeGB5Cxwpi97rkH+F9pmjgfNVY=;
 	h=From:To:Cc:Subject:Date;
-	b=YiMuukR6dGihg1Gp7l16Aam7/wZ7d2LC+OC01I779DK7RYfMMrugmalINYjN/lSWH
-	 hNYAqPISCeG8kZRyNAJW46GlAf0LOHCXOmvuITWTFRyC4qwHl+EI1PCyqYDWhDB0RE
-	 WMX99n5JDI8qDZgYxYPWIzP9SpphFKt3Dlnf6afAmm9i1ltQoWjgaE+SjhjB8cQVnu
-	 3h/rlrqEXkffCK3f3RWo4t34Ytk/qh07RQeDh6BOPaA43AYWKtlYvCFSkhxTcYCvEP
-	 QnBqFncfz+7iJ/RJ4NlLj9tEDNCyNdOYHE1ejbCOEOthmSwSzUahUVZc1axPngRjbh
-	 2+8MFBNdLsdWQ==
+	b=PbJxE+IbeIYXigNe41fiHMR0ZjKfpaGgpsi//rHz8TInke/fn8BDspsMyRuFcis8D
+	 WyYfit7aYiNfHDIoELBJZpXwsm74LDDXiPsFan1DwN/HRJuP7Qvhh1gijkvYzrKNxg
+	 0mfJyjWc4As5OoJT9k6CNaeJFPDrfy02yd3LqlKLfCSanEyjexgNNQZ2iHdZUvHJ7S
+	 kQsrXI4UO7KGPtsViCWzwIrExpFiXy9CV5149pVBBpZ54DdUJN8NLdtNefH3YempCg
+	 7IPG7IlgrG0UX+Bg/uGPJ3IsrgZ/AHIGv195jyrXWXzV5WqzNhwLi7EE6B9K3rPnXt
+	 ZXNQstHBJA6CA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jan 2024 08:02:24 +0100
+X-ME-Date: Sat, 20 Jan 2024 09:08:02 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
+To: Jeremy Kerr <jk@ozlabs.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Alistar Popple <alistair@popple.id.au>,
+	Eddie James <eajames@linux.ibm.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH net-next] xdp: Remove usage of the deprecated ida_simple_xx() API
-Date: Sat, 20 Jan 2024 08:02:20 +0100
-Message-ID: <8e889d18a6c881b09db4650d4b30a62d76f4fe77.1705734073.git.christophe.jaillet@wanadoo.fr>
+	linux-fsi@lists.ozlabs.org
+Subject: [PATCH] fsi: occ: Remove usage of the deprecated ida_simple_xx() API
+Date: Sat, 20 Jan 2024 09:07:54 +0100
+Message-ID: <6e17f2145ce2bbc12af6700c8bd56a8a7bdb103d.1705738045.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,44 +57,68 @@ ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
 Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_range() is inclusive. So a -1 has been added when needed.
+ida_alloc_range() is inclusive. So, this upper limit, INT_MAX, should have
+been changed to INT_MAX-1.
+
+But, it is likely that the INT_MAX 'idx' is valid that the max value passed
+to ida_simple_get() should have been 0.
+
+So, allow this INT_MAX 'idx' value now.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/core/xdp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The change related to the INT_MAX value is speculative.
+Review with care. (or I can re-submit with INT_MAX-1, to be safe :))
+---
+ drivers/fsi/fsi-occ.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/net/core/xdp.c b/net/core/xdp.c
-index 4869c1c2d8f3..27b585f3fa81 100644
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -75,7 +75,7 @@ static void __xdp_mem_allocator_rcu_free(struct rcu_head *rcu)
- 	xa = container_of(rcu, struct xdp_mem_allocator, rcu);
+diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
+index da35ca9e84a6..f7157c1d77d8 100644
+--- a/drivers/fsi/fsi-occ.c
++++ b/drivers/fsi/fsi-occ.c
+@@ -656,17 +656,16 @@ static int occ_probe(struct platform_device *pdev)
+ 		rc = of_property_read_u32(dev->of_node, "reg", &reg);
+ 		if (!rc) {
+ 			/* make sure we don't have a duplicate from dts */
+-			occ->idx = ida_simple_get(&occ_ida, reg, reg + 1,
+-						  GFP_KERNEL);
++			occ->idx = ida_alloc_range(&occ_ida, reg, reg,
++						   GFP_KERNEL);
+ 			if (occ->idx < 0)
+-				occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX,
+-							  GFP_KERNEL);
++				occ->idx = ida_alloc_min(&occ_ida, 1,
++							 GFP_KERNEL);
+ 		} else {
+-			occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX,
+-						  GFP_KERNEL);
++			occ->idx = ida_alloc_min(&occ_ida, 1, GFP_KERNEL);
+ 		}
+ 	} else {
+-		occ->idx = ida_simple_get(&occ_ida, 1, INT_MAX, GFP_KERNEL);
++		occ->idx = ida_alloc_min(&occ_ida, 1, GFP_KERNEL);
+ 	}
  
- 	/* Allow this ID to be reused */
--	ida_simple_remove(&mem_id_pool, xa->mem.id);
-+	ida_free(&mem_id_pool, xa->mem.id);
+ 	platform_set_drvdata(pdev, occ);
+@@ -680,7 +679,7 @@ static int occ_probe(struct platform_device *pdev)
+ 	rc = misc_register(&occ->mdev);
+ 	if (rc) {
+ 		dev_err(dev, "failed to register miscdevice: %d\n", rc);
+-		ida_simple_remove(&occ_ida, occ->idx);
++		ida_free(&occ_ida, occ->idx);
+ 		kvfree(occ->buffer);
+ 		return rc;
+ 	}
+@@ -719,7 +718,7 @@ static int occ_remove(struct platform_device *pdev)
+ 	else
+ 		device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
  
- 	kfree(xa);
+-	ida_simple_remove(&occ_ida, occ->idx);
++	ida_free(&occ_ida, occ->idx);
+ 
+ 	return 0;
  }
-@@ -242,7 +242,7 @@ static int __mem_id_cyclic_get(gfp_t gfp)
- 	int id;
- 
- again:
--	id = ida_simple_get(&mem_id_pool, mem_id_next, MEM_ID_MAX, gfp);
-+	id = ida_alloc_range(&mem_id_pool, mem_id_next, MEM_ID_MAX - 1, gfp);
- 	if (id < 0) {
- 		if (id == -ENOSPC) {
- 			/* Cyclic allocator, reset next id */
-@@ -317,7 +317,7 @@ static struct xdp_mem_allocator *__xdp_reg_mem_model(struct xdp_mem_info *mem,
- 	/* Insert allocator into ID lookup table */
- 	ptr = rhashtable_insert_slow(mem_id_ht, &id, &xdp_alloc->node);
- 	if (IS_ERR(ptr)) {
--		ida_simple_remove(&mem_id_pool, mem->id);
-+		ida_free(&mem_id_pool, mem->id);
- 		mem->id = 0;
- 		errno = PTR_ERR(ptr);
- 		goto err;
 -- 
 2.43.0
 
