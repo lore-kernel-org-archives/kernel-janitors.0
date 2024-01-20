@@ -1,50 +1,46 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E5ACA64
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 09:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB25D266
+	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 11:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705744573; cv=none; b=UE0QQXipi8RPQ52fpwJz06TrEFjRI8U9LBzuHUevNWRtCnhC9OSDg7lOraxubAnezjTT4h3rSopW77cFrOqXIPDRHutaK8OdBBxFJ0BuiCfU+69ANJJq4Fcpr2Jw5B1hDMv0Vs8FsYArSrJdxng6/MlKQC9BmMiLSSsfCv+FxdM=
+	t=1705748619; cv=none; b=AG5mk1xmq4566m5scaG+yXAXZlxODl4LFB9XaNIyvehRMMlLFROW80iof6R0gQJ01G4mwAD6TE80g2o2O+9U2Zey84HDK8ydXaqnSRByC1nn1s78zrICBUMCKeM5+LgW5u4iZlh4g5B+WQLcrN0F2edBAHpseisMs6GL7+HBxKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705744573; c=relaxed/simple;
-	bh=BOcX8KWEnibygk4fjeA6ev0h6FDA5vSRBlJ1zvGoVtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nT990wYiGnldQ9f2k+xvDXdwLavG8MTjfJQV7IUbthF6P9QcowvfD1/XgXFznV9dIDnoETwIzSsAjRLxTclz5S1joK3E3U78F8nApfAcYiyKvQ8eiHEwmRGFs0BmF/joP37SKmnZ4LFubo+T6zBrLekSXBoh62QCNs3RAxQn9xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dlikXYNv; arc=none smtp.client-ip=80.12.242.21
+	s=arc-20240116; t=1705748619; c=relaxed/simple;
+	bh=rq05Q3CTtTgQ1urJlIhpHt7f6eCXdIHqDcVdECHIwao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tyg4Mqny4FANvbBxqdpPpZqmKdEtll/piL3iCNE3CGzPYo7Yv1USkmhLbkcrG2s0iFHQREy1c6lzUFueOZN6+Mlskn0gB7me+ht1V7EUekR/jofFfa/LuZfZkr1oFuYIvl3guSzWOtfe7mavBs3rkkW0xU2IQ+PpV6lEYwD9hdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GYpUNtW5; arc=none smtp.client-ip=80.12.242.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dlikXYNv"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GYpUNtW5"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id R859rc6amXxngR859rqY8F; Sat, 20 Jan 2024 10:56:09 +0100
+	id R98NrmVHvBejiR98NrhEeh; Sat, 20 Jan 2024 12:03:32 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705744569;
-	bh=6/Q426ZzIQUJLm346t0hoGiEGD7EVC/MiQvvpwN1st0=;
+	s=t20230301; t=1705748612;
+	bh=GxQFw8ZsE9hz9MpyTlvTEQNDbRZXAH6gthc9NucWNh0=;
 	h=From:To:Cc:Subject:Date;
-	b=dlikXYNvorCGCI/zMlw+kQotCzT38LYn+0/29+wiIY+D+2X0okIBuyhrqgbaTeGCE
-	 MLiREdT44J3NpJ91NyxVIJW5JAzfiezWkZW4GDFgFi821WNWYGUbNzWWzbCRr6ufYm
-	 nGRStL1OW06bVoduZxNUjOatbL1M7gBTMsquonPrYmJ8uiWol4sU8cEu5fBOY5BxSc
-	 CnCYtDo7by24j06iVPoUz84OMhcVsDts9s9FXWA6xOikHfBwJTEDzltFQsJGbcw/OD
-	 QV3w9sOphKFjXX8Jl8b7kqp5BChAZd90U2SLDORzsqRgQMon3hYjIng0NZ/wx1IDUs
-	 gSdpIxW6k/3Dw==
+	b=GYpUNtW5ZgVk4Q0J2G/GpD92kEHqtkXbQNsn+2OVT4l1CvJVqbtfrxPFPpn4D+IFm
+	 NFi71HNKYBRUyLvXBO52gApxR0o0YWhj/3ZaQewPxtx0cUUkJp/KejSd6OI22u59Xy
+	 6DKRvlZbxzxOPIFwqUukl6EX48AEWgmKkUvSzTG+gTlen6Iq4ZzPr//NBd9xUuRKwf
+	 r7fgS5X48SsnbO0Gu8VGY5aPV3g6WV6rrm1y3xMDvy+wno4yPBGp85Ddl3TyoNbl5O
+	 4AlX9hK4p1g0xVqTSBFUR+0A1+BUvxzVHUM7iCr+2C8NOHgnhBNy7F8j1RJ8FGu67S
+	 DxxAlI+cWtGnw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jan 2024 10:56:09 +0100
+X-ME-Date: Sat, 20 Jan 2024 12:03:32 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH] nfc: hci: Save a few bytes of memory when registering a 'nfc_llc' engine
-Date: Sat, 20 Jan 2024 10:56:06 +0100
-Message-ID: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: fixed-helper: Save a few bytes of memory when registering a 'nfc_llc' engine
+Date: Sat, 20 Jan 2024 12:03:26 +0100
+Message-ID: <3f990a7b80d72c31371735b24ed08acbb8392c80.1705748586.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,38 +50,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-nfc_llc_register() calls pass a string literal as the 'name' parameter.
+regulator_register_always_on() calls pass a string literal as the 'name'
+parameter.
 
 So kstrdup_const() can be used instead of kfree() to avoid a memory
 allocation in such cases.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/nfc/hci/llc.c | 4 ++--
+ drivers/regulator/fixed-helper.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/nfc/hci/llc.c b/net/nfc/hci/llc.c
-index 2140f6724644..8c7b5a817b25 100644
---- a/net/nfc/hci/llc.c
-+++ b/net/nfc/hci/llc.c
-@@ -49,7 +49,7 @@ int nfc_llc_register(const char *name, const struct nfc_llc_ops *ops)
- 	if (llc_engine == NULL)
- 		return -ENOMEM;
- 
--	llc_engine->name = kstrdup(name, GFP_KERNEL);
-+	llc_engine->name = kstrdup_const(name, GFP_KERNEL);
- 	if (llc_engine->name == NULL) {
- 		kfree(llc_engine);
- 		return -ENOMEM;
-@@ -83,7 +83,7 @@ void nfc_llc_unregister(const char *name)
- 		return;
- 
- 	list_del(&llc_engine->entry);
--	kfree(llc_engine->name);
-+	kfree_const(llc_engine->name);
- 	kfree(llc_engine);
+diff --git a/drivers/regulator/fixed-helper.c b/drivers/regulator/fixed-helper.c
+index 0eb2442456f0..2d5a42b2b3d8 100644
+--- a/drivers/regulator/fixed-helper.c
++++ b/drivers/regulator/fixed-helper.c
+@@ -15,7 +15,7 @@ static void regulator_fixed_release(struct device *dev)
+ {
+ 	struct fixed_regulator_data *data = container_of(dev,
+ 			struct fixed_regulator_data, pdev.dev);
+-	kfree(data->cfg.supply_name);
++	kfree_const(data->cfg.supply_name);
+ 	kfree(data);
  }
  
+@@ -36,7 +36,7 @@ struct platform_device *regulator_register_always_on(int id, const char *name,
+ 	if (!data)
+ 		return NULL;
+ 
+-	data->cfg.supply_name = kstrdup(name, GFP_KERNEL);
++	data->cfg.supply_name = kstrdup_const(name, GFP_KERNEL);
+ 	if (!data->cfg.supply_name) {
+ 		kfree(data);
+ 		return NULL;
 -- 
 2.43.0
 
