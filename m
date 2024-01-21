@@ -1,54 +1,48 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DFE10A20
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jan 2024 17:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985BB374C9
+	for <kernel-janitors@vger.kernel.org>; Sun, 21 Jan 2024 15:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705771555; cv=none; b=cvUvw61ykuygYAWlInRMK+rmKmtf7oxYSzhs2W8/cXhxRK6T+0+n2dPTFjwCGAFDnJspZwqsN26NP5LQSh+XGVI6qXxtNoPXgUf8uWGOuVl/kTT4woVA7YbaGVZMQmzfl8O5+Cx2yzzMF5oU1r94iDuhXv7AfHmu9nJWz7F4yZQ=
+	t=1705850199; cv=none; b=bUYJ60bPkVV2c+rE6z5G0SnrxddzWmczOw2Jy7TATm5wFzGUeaCb3VsBURPjH7CeP88FGh91ZI1uKJcAj1q+Z6wiyuyo8UuGd62TTrFxw1UkQBy2VpxKl3v7yWZ612rJ3K59M528PpvskXz76CsbTOBDSPlzIzkl1KSleSiRAdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705771555; c=relaxed/simple;
-	bh=IHy3yKUWKTLuOD8hN3UJHVbeSR7P1m1XoNYyPhd0+ec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ft6ngUpzghX5kzWwgzkNv1AXovNbWIqeJKf6TJ5yfimk+o/Yks34GCu/6vwZb4AhcWYvMw8M34H0F7hksgSRte7qdmlIXuLIdh0aVFffnAuieDbl/lREg1eBdzT9Qb24ns5k/2YhvyF+oWNyJZboSqhyzz9ddNFawg4MjUZ2TYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=m47oR2wF; arc=none smtp.client-ip=80.12.242.22
+	s=arc-20240116; t=1705850199; c=relaxed/simple;
+	bh=aE5loClksuGePGR6Lbm0lCF9Z4jkrkChjspAaoHIygg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h8Eh+YjtNvlwjGZrpeMBNjHHJeQ932jwM9H7+kZ4sTrlohm5BxW/28T6/4zN6tfoB2MDvJeuHaVnKHXDaEISRar3CK+SsigLckLWEzBAfVMvnNtWrWIhZU01fFhh/cNmWFuTs4C1EeBz+SONT9L9omwm2HBAJNoN2TBHNvKFVz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VfvY2jXj; arc=none smtp.client-ip=80.12.242.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="m47oR2wF"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VfvY2jXj"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id RF6DrefClXxngRF6DrrUj2; Sat, 20 Jan 2024 18:25:44 +0100
+	id RZYgrRMmRCqsFRZYgrzab7; Sun, 21 Jan 2024 16:16:28 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705771544;
-	bh=wFri96r10IYTNO8+N94yIYZtcJHCQ7p90QlQKgXP2zQ=;
+	s=t20230301; t=1705850188;
+	bh=t7DqkZJVqfp9AUlCGJgpNPf8G7Pty9cbAs3eq1MTuT0=;
 	h=From:To:Cc:Subject:Date;
-	b=m47oR2wFqaPhS795diQSgtuX4Cry1l/u1GV8fdwbAzJKCPH2sO5yOU2uBSFK/sZw0
-	 WtqVMmILCibiJMHFb9G1XAXukYgkby0Qz0a2znFeu77RdNH3Vg2lRqIMr5q+pQNDsh
-	 4ZND9BAePxKXF0TK+RQMZwpst4WWC6lgIaSiGlBfJ0uph6p0iEcnI1jWy5CJUASCZA
-	 weMAHL4HFdfiy0tx9tJfjxAn+BwcZMSrwciEamrwCBgxJu+mRLbgBGNXXhzRzUqDS0
-	 FA+9pgNY9P8agJN9FOXVj4HcfcTcM+9hWujZkh6+00HqAIe1b320aV91k6xiDgQ+xu
-	 wx8zSB/kq4eQw==
+	b=VfvY2jXjJaHg1Jp2ixRAbC+dqFMVMOwEgvjTFWEWM67ME2KPAXY3+Fk0F6z7DnbPC
+	 zQ8IEQANQGYzfuPGUec4QZAQlWxChFdFonJTW52FN10x22HC/w45hUg2LrApv8RkXC
+	 bEd9vO9UPJZnHelrm2xZbnxLZPax4s/CWSMzHXUg8aPVIy3JaWhyu6BexbauctZzYi
+	 yVf7YkpY89qX8isuNbtMfyE2RCTwgZ312tCNav4tTMXWfgTW8d2Z02HSI6wUaigF09
+	 SAbK5kGvnnyYEd7S7iwXakdECCP0qSNrWY0rL4Zk2/7zhGAGNE2+P32esveCb4NGS6
+	 wvbN2Ge97164g==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jan 2024 18:25:44 +0100
+X-ME-Date: Sun, 21 Jan 2024 16:16:28 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-	Mark Rustad <mark.d.rustad@intel.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dongjiu Geng <gengdongjiu@huawei.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org
-Subject: [PATCH] ixgbe: Fix an error handling path in ixgbe_read_iosf_sb_reg_x550()
-Date: Sat, 20 Jan 2024 18:25:36 +0100
-Message-ID: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: hi3559a: Fix an erroneous devm_kfree()
+Date: Sun, 21 Jan 2024 16:16:24 +0100
+Message-ID: <773fc8425c3b8f5b0ca7c1d89f15b65831a85ca9.1705850155.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -58,36 +52,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All error handling paths, except this one, go to 'out' where
-release_swfw_sync() is called.
-This call balances the acquire_swfw_sync() call done at the beginning of
-the function.
+'p_clk' is an array allocated just before the for loop for all clk that
+need to be registered.
+It is incremented at each loop iteration.
 
-Branch to the error handling path in order to correctly release some
-resources in case of error.
+If a clk_register() call fails, 'p_clk' may point to something different
+from what should be freed.
 
-Fixes: ae14a1d8e104 ("ixgbe: Fix IOSF SB access issues")
+The best we can do, is to avoid this wrong release of memory.
+
+Fixes: 6c81966107dc ("clk: hisilicon: Add clock driver for hi3559A SoC")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is speculative, review with care.
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+devm_kfree() is clearly wrong (IMHO :)), but just removing it is maybe not
+the best solution.
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-index 6208923e29a2..c1adc94a5a65 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-@@ -716,7 +716,8 @@ static s32 ixgbe_read_iosf_sb_reg_x550(struct ixgbe_hw *hw, u32 reg_addr,
- 	if ((command & IXGBE_SB_IOSF_CTRL_RESP_STAT_MASK) != 0) {
- 		error = FIELD_GET(IXGBE_SB_IOSF_CTRL_CMPL_ERR_MASK, command);
- 		hw_dbg(hw, "Failed to read, error %x\n", error);
--		return -EIO;
-+		ret = -EIO;
-+		goto out;
- 	}
+Should hisi_clk_register_pll() return an error?
+Should some data->clk_data.clks[clks[i].id] be set to NULL?
+(hisi_clk_alloc() doesn't zero the allocated memory)
+Should hisi_clk_alloc() use kzalloc() when allocating clk_table?
+---
+ drivers/clk/hisilicon/clk-hi3559a.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
+index ff4ca0edce06..4623befafaec 100644
+--- a/drivers/clk/hisilicon/clk-hi3559a.c
++++ b/drivers/clk/hisilicon/clk-hi3559a.c
+@@ -491,7 +491,6 @@ static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
  
- 	if (!ret)
+ 		clk = clk_register(NULL, &p_clk->hw);
+ 		if (IS_ERR(clk)) {
+-			devm_kfree(dev, p_clk);
+ 			dev_err(dev, "%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
 -- 
 2.43.0
 
