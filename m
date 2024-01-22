@@ -1,106 +1,94 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B163A8E0;
-	Mon, 22 Jan 2024 09:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57CA3A8CD;
+	Mon, 22 Jan 2024 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705915635; cv=none; b=WDUB+d7h+9w1O+V+Omu2M3aB4FzQDF/oOSnTXK/9xO2lzIKO8zYut4E3vnwW6BczGFGweIhJeM6IOBE59UL+reyWkNujgbhjxt1+6ITUDo11OU9riHkrZNXIfLlSyslB3meEnyAp8m32J6cZVfN5ktVjXnTR0yf/sFEhJGTUpOI=
+	t=1705917099; cv=none; b=nmXtm5HR/aNx0xEEhBisvEQsddEECfZCALZ5ercQGMUJ8+E9c20l5ysODetWqPYGnchZ3N5171mF2nt9aXmKDM6SC0+WUGN1Ifc0AujqxMCbAExh1djEWb+Wfc507yQjOXlXHsTFU0bMh0Yy8ZjvthkAEDh/612TQfdvhcK6yBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705915635; c=relaxed/simple;
-	bh=c+pp3wM05kjEh1TGNSe7FIK8DIIwbLO/SK+P7CGfYCk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kpjl0Ua4m2wf7YjIiEPtKCqblcLIki4QtX4eeKo2XZoN1vAO9tjiwxyhM6XqrYxVrLNFl+NyVJNGUv8acNt+rLZqs434Z8CvuGGJl1KkEapkPqzAX4WxIGbtfycKzBj+C22IgiXSbuZOXeWw37q1g0mUuvFn3DfngeNeK3UPtEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7kE113v; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705917099; c=relaxed/simple;
+	bh=+nGU7Loi1Do4zrvl/0l3JM9LGLlkYeGwWtlVmkNopIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uF93udTBiJNZL0WmoGN7uT6/z/ceofz7pBaQQ/zFedhcv/6VBqnqsyMEoW3jYW00lzS6WPw/hUKkyDF1GD3IOoT5TY26sDxoBdFrhRTnFYHHTLFk38lqcXM9ka6J/F1aPA7wgT8SWbodphI2DToXfdTX5JI15o9y+IXLp5U7YtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VWGHCJKZ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7kE113v"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a308e6824ccso4684566b.0;
-        Mon, 22 Jan 2024 01:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705915632; x=1706520432; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MA56Trfdmas0N9KP+Qetqk6xxYzVaJwZcqc7VsxjPD4=;
-        b=c7kE113vjydtZiVWpBo5miYdkwIQduwj4wz5rUKiAKvpxQtx99bawx8kx+2Z/fUGc6
-         6v8FskV7aV7qFUdFNDe8iq3tD2fKSHZr6FA//BFgQtZkCTga6mLyuOK6z/qE8bZ+gqeA
-         6+USIXNTnZIfEUkdDcwWqAeMke7IRNu47vhT0MO+WwPgeW+wZED6PA4gv3tPn9UuCEQt
-         33hmWo5LVxK/AcrJWa8tdzI+LGIbm+OJkQEo1/nrxP8041U33eEtFIG5I/28ymMlmkyp
-         w3OaSOq3gC/++umNpEcujin+H3expe7vSJoL24by9+VL/kG0Sd5C3SLL/HxdSx5K+93O
-         Mg0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705915632; x=1706520432;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MA56Trfdmas0N9KP+Qetqk6xxYzVaJwZcqc7VsxjPD4=;
-        b=WPmqZNLjVqu+PC/Dqjsk1G8Ub4WtWsEAPDFjyL1Fg1CeYQy9Y+/do9gHCrMIixrkFG
-         L0/5mFQPCYbqVT312xqehgOqIea8eacmJh+jnKnZmwBmMg5a/r5X+SbqbpKCZNXEMTbJ
-         UrjV/6jbv4i425qK0MYri295RNsCtsuv4eHVDNlCWKbtP5FBXjd5W+IJHdjDoCBEY7SZ
-         m+WdpRaru1/RB3znnF02apJTXgFw6v4Z1TkkdqkK5yeWxe+Fg4D/hPxbT+dKufi/aNfs
-         LdAF/yGJUemzysC5SDbCUkdeYQZlljowIGr9daE3n0lwskS74t3dovMuRvjM7NePFyWn
-         X+IA==
-X-Gm-Message-State: AOJu0YwQY9CP30367N+W3HEk+Eshn1+5t0r1aogdORRO6xW25sRHT3yJ
-	6mlwftr8nXnH0mxR/k29qauRDjAD7e+5PRn1ttHLGKKroHS6FyiY
-X-Google-Smtp-Source: AGHT+IESyAopfrZSpMlLQkQBCVGtEcQY2zrHFpASJJPNAHvpg3w9AW6i0xBMHApfSFn25rSKO9LHNg==
-X-Received: by 2002:a17:907:982:b0:a2f:17c1:2abb with SMTP id bf2-20020a170907098200b00a2f17c12abbmr2426003ejc.60.1705915631745;
-        Mon, 22 Jan 2024 01:27:11 -0800 (PST)
-Received: from felia.fritz.box (ipb2191d3b.dynamic.kabel-deutschland.de. [178.25.29.59])
-        by smtp.gmail.com with ESMTPSA id i16-20020a1709061cd000b00a28825e0a2bsm13114843ejh.22.2024.01.22.01.27.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 01:27:10 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] mempolicy: clean up minor dead code in queue_pages_test_walk()
-Date: Mon, 22 Jan 2024 10:25:04 +0100
-Message-Id: <20240122092504.18377-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VWGHCJKZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705917029; x=1706521829; i=markus.elfring@web.de;
+	bh=+nGU7Loi1Do4zrvl/0l3JM9LGLlkYeGwWtlVmkNopIo=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=VWGHCJKZ5HKy2AH+oYWepCu+OuIY6blJAyg/bPpK6HLRSvSs5yxnPOamVrbshYt3
+	 uFDRo42NOZQlpWOEVUirGYt63kEPx3Jwf8edReMYZn5S2yrqwHxGCGAEqCUjJ+eGh
+	 7HmMcdbfbS7l1C8VpYrGCyqnWjEUe62hkessfmc7JGr7xXBraVh+sskyFcbuCod+/
+	 WxpA3XARTvBuVJsVhnHl2ZHDSegqGJTIkI2mg7wEArOFO76vkxglOnvP5V57CvPHj
+	 6vixEG8r7EyF0sPjk2YdlOKZdtix2xxslEHjJbPVuf564UoxRCYp60L4i1wnmz93N
+	 tWb8kf9WBed/7ntMCw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSIJA-1rYThF27UO-00Sh0e; Mon, 22
+ Jan 2024 10:50:29 +0100
+Message-ID: <6d40b95e-2ed7-4f32-895e-a2174236ee65@web.de>
+Date: Mon, 22 Jan 2024 10:50:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3] x86/xen: Add some null pointer checking to smp.c
+Content-Language: en-GB
+To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
+ kernel-janitors@vger.kernel.org, Boris Ostrovsky
+ <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+ Ilya Dryomov <idryomov@gmail.com>, Jean Delvare <jdelvare@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <20240119094948.275390-1-chentao@kylinos.cn>
+ <26ef811d-214c-4ce4-a9f8-4fa4cfdefe29@web.de>
+ <6f25f54f-eecc-4765-bdc4-248674836e77@kylinos.cn>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <6f25f54f-eecc-4765-bdc4-248674836e77@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:7PuQIQ+STP1HEpxBb1F71REntJZh+zhVfsHo3QNQ2Y97EaG7Chu
+ YZg+NMHWD7a8cWoCqPBaqIuW/1RiZ95h0IExGFidpRCIOSY9cJLbrYPImqSSO+d8zBIdfye
+ 9szF1wZYZ/itaJHlMQ6w4DJUIsyBBuQ9qZ0nDe2Vb4wVFQ4MwNGbMZ4YvY1TmWAZaA+dkWA
+ +S8b9V2h+w2RuVKyoIqlw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yEsnbDcYv3s=;ZPb2Mu+H2XGola6RbrIcyQWyz/T
+ ok93+jBiDKnY1DDXbD0Zifx5nXuoctjgIftPZMgZIr6+J0Ok/V4IQWfIX3rww8eDuhSWmqlvK
+ 9qJflq3k1x97bT/azeoHOkoWJzI8tXhkHDYdN+ev96ILzZ9EL/wY5GeaUIcQHlekUDOjpfyTR
+ OrGxEC3jyfaeGjdDH8Gn9CeDy27YGgHXSOrT+eHHQj77p6Gp0wzaPxB2+rW8TJ2ff2aRsw6aY
+ pXIS+5vkwsSPVKxG5GjojJuUvcZl5XVGkNMAQgqX6BqSFIo/GXB/kqFgNwSgNbMM/p0DNdoun
+ iaqRQcsiwb/XbIrR7D6zSTkMayqKL86oxZSEbdlX3qNfUOfYRF2wgoQhOxv0lHiPEm/itrbso
+ tB7NEyziFnGFmr93Zee7Z9dOaTLbAGuZ/IIHTnsRhvShgIoqHO1fEo4Z5FolxJahE+tmdfxP3
+ 1opwbsVgSPUTIONZ5Zmwx62rBUYhcvY/vd2w1paAXsD9dE9qBA8O4E4+TLxuUFrUVwpSf63tT
+ RKyImNKQvIJMqAmltIcOcrgQpf/85/YxZCnfNsleS1TWANHUv87awcKOhicDB+6uzzTABEHaX
+ V9ikk5FvhrtGe6B5f/8qrrzmW/rqFlbbIEk/T3zgJvWuLVL4Hm39kHppviwwcqh3hQAwRSuNW
+ Q7B6/h7M+ykbB2NgaxDQKF6DqccJHP1nGAgz4J/5dqXsHJA7/VR4g/gVk+U1eJbX+A6hhlNeH
+ h+XVBcSG7JPULvFvS99MaPwQK038pKGKeS8Fzu030ExOECSB2qT8UcQCnl3MwgRb/TWfU+pJu
+ V8GAGqQuivpqsX0lj4ceZ5RV8s9BC1V4i1m/BNBYbwiddhzLYE//O2Hp0ptm32iebTaCGkpWr
+ qBBVRgCm3h4iXgOrInS6rrAS/SDpbOsiCBz/oZkvu8TtRs9zrtkFfHsozotb0ujHHHsj9xzs1
+ GH3CTA==
 
-Commit 2cafb582173f ("mempolicy: remove confusing MPOL_MF_LAZY dead code")
-removes MPOL_MF_LAZY handling in queue_pages_test_walk(), and with that,
-there is no effective use of the local variable endvma in that function
-remaining.
+>> How do you think about to refer to the function name
+>> instead of the file name in the patch subject?
+>>
+> The main goal is to assign a errno to rc. So use 'fail_mem is good to understand.
 
-Remove the local variable endvma and its dead code. No functional change.
+You responded with information which can fit to the patch body.
 
-This issue was identified with clang-analyzer's dead stores analysis.
+How do you think about consequences for a subject variant like the following?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- mm/mempolicy.c | 4 ----
- 1 file changed, 4 deletions(-)
+x86/xen: Add some null pointer checks in xen_smp_intr_init()
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index a2b5d64b28e0..31deff75de43 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -690,7 +690,6 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
- {
- 	struct vm_area_struct *next, *vma = walk->vma;
- 	struct queue_pages *qp = walk->private;
--	unsigned long endvma = vma->vm_end;
- 	unsigned long flags = qp->flags;
- 
- 	/* range check first */
-@@ -718,9 +717,6 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
- 	    !(flags & MPOL_MF_STRICT))
- 		return 1;
- 
--	if (endvma > end)
--		endvma = end;
--
- 	/*
- 	 * Check page nodes, and queue pages to move, in the current vma.
- 	 * But if no moving, and no strict checking, the scan can be skipped.
--- 
-2.17.1
-
+Regards,
+Markus
