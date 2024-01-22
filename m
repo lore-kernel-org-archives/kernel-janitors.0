@@ -1,51 +1,47 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A233A1C3
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Jan 2024 10:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A183CF48;
+	Mon, 22 Jan 2024 11:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705919521; cv=none; b=SG2GAaDeGnSvcY66Ev49hY1p61BLnlSQuV3QtgEyBxSDC+mI9PEeKGCdFGZ6Ei+/ohwhqsZfkzj6R4troH+e+w/68Bpctaovatq4K+/LasvoygnNusBqmkK7/j5fxEaF+4b5kgCDYhirABwEGh9/FOhZC9jQO4Q+R2Zs8QoqPUg=
+	t=1705921645; cv=none; b=sKnU60iMy39aGKzswZFiuwQEZ1GUuCcfBiPLHqEotDBo9vSvGbD8oiqh52m2XtlTuHHqHtpCQgQKBxOwta00X7oDQwrgNrIjAGosoguhRhY3yMCiXbE16CbGOdK9Rb838Ws3BvSlJUyegY3WcXdmqyzkSs2Fx0X1GQjQN6uN8as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705919521; c=relaxed/simple;
-	bh=KAlfgGQ/MAfkQYeGKUwMnf4LD+P82YLtjfk03BIrXi8=;
+	s=arc-20240116; t=1705921645; c=relaxed/simple;
+	bh=5gE+Km5fi/TLlf+ZbAr7bjFoCBGdCvtbA843YDHnPdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ij/Eo+UVs+OChxaoR4W4EAgBIYsU/6eW8SknZqm9jlp5N/QxwB0csOXC8Zn2rQDvOhxjRskiDyZUcOMo0+I3uV37ypRxBdQrwO/SgLX6zrSwAVzqkkSa//G/56cGQO3yhZJDKBqgdFwrDSUQk8feANp8zWRTYCoi8BdAKx0Sgog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rRrah-0000aJ-TJ; Mon, 22 Jan 2024 11:31:43 +0100
-Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rRraf-001ZTQ-7T; Mon, 22 Jan 2024 11:31:41 +0100
-Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rRraf-001BEt-4b; Mon, 22 Jan 2024 11:31:41 +0100
-Date: Mon, 22 Jan 2024 11:31:41 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-15?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] drm/rockchip: vop2: add a missing unlock in
- vop2_crtc_atomic_enable()
-Message-ID: <20240122103141.GU4700@pengutronix.de>
-References: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OiroNK3NezJuHeUJinKpG5DBPBiVUF7JhU0RJUpGR/PkewP3d6VGyDO5lcMg7NuH69i1hQpYYqHRdXm6F92eHWHrj/txxjYKZWZuWo26xS9KVfxHlw2bv9ov4MTVCQiDJmlqsxOo0bgl29Zs6lWjpoB4AiGY+URbUdRgU89SYQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuKILk40; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuKILk40"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B4DC433F1;
+	Mon, 22 Jan 2024 11:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705921644;
+	bh=5gE+Km5fi/TLlf+ZbAr7bjFoCBGdCvtbA843YDHnPdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IuKILk40lppFwkQ3einuh+aBf9EHDFc+HzB4nd9+TtD9RD8cFXoLb9uH0b4wcO+l5
+	 ZgLolbB4kBvfbwMSNrdrt/DX6AdvlyCth5hF6iWkiIlyoyIRSFCRRp25OxYZNLH3y+
+	 hS6J8bEWWqa7aGoYc/N0uJ5A58jQBo7moXbm94fXOfi+eVUfAEAHY2Rr8blocQIcsO
+	 ajf6rqjrYgNlqJcKQ4SMOOBsFcXbNNRAsSAo+eNg6ghbMwFRi9I2q34o76bh7w4Q7n
+	 VTvdOtNITDJ0/WmwMVcBlOzG7leefF8TlyW8g72DnSu42/vcq2xUuXF7Zzg8g9L7g8
+	 KhDKkzWdD59sA==
+Date: Mon, 22 Jan 2024 11:07:19 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Mark Rustad <mark.d.rustad@intel.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] ixgbe: Fix an error handling path in
+ ixgbe_read_iosf_sb_reg_x550()
+Message-ID: <20240122110719.GC126470@kernel.org>
+References: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -54,59 +50,19 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
 
-On Fri, Jan 19, 2024 at 11:08:40AM -0800, Harshit Mogalapalli wrote:
-> Unlock before returning on the error path.
+On Sat, Jan 20, 2024 at 06:25:36PM +0100, Christophe JAILLET wrote:
+> All error handling paths, except this one, go to 'out' where
+> release_swfw_sync() is called.
+> This call balances the acquire_swfw_sync() call done at the beginning of
+> the function.
 > 
-> Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Thanks for fixing this.
-
-Sascha
-
-> ---
-> This is based on static analysis. Only compile tested.
-> Note: Smatch found this.
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Branch to the error handling path in order to correctly release some
+> resources in case of error.
 > 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> index 85b3b4871a1d..fdd768bbd487 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> @@ -1985,8 +1985,10 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
->  		clock = vop2_set_intf_mux(vp, rkencoder->crtc_endpoint_id, polflags);
->  	}
->  
-> -	if (!clock)
-> +	if (!clock) {
-> +		vop2_unlock(vop2);
->  		return;
-> +	}
->  
->  	if (vcstate->output_mode == ROCKCHIP_OUT_MODE_AAAA &&
->  	    !(vp_data->feature & VOP2_VP_FEATURE_OUTPUT_10BIT))
-> -- 
-> 2.39.3
-> 
-> 
+> Fixes: ae14a1d8e104 ("ixgbe: Fix IOSF SB access issues")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Reviewed-by: Simon Horman <horms@kernel.org>
+
