@@ -1,129 +1,101 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F323B781;
-	Mon, 22 Jan 2024 12:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FD73A1D6;
+	Mon, 22 Jan 2024 12:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705925271; cv=none; b=oDam3DRXBcg/ILZXOqEpByzjXQ2ZAgP3tod8/I2JGLDPQl2KeT8ams0gcdpHNO6m0eQrtYKWhxECCD9dm3AHnVcB9ElqSGwFafI3comfFm1MeYUbZvu1lI1lMceJjkiVy8tACbR23PT5mNZ91Pbs+uDQ7I99qSFVw0OVffRImM4=
+	t=1705925756; cv=none; b=dm+SevIE0aURJssPAXc0JDpGoyIOyoTMlTGbhHAm8Ee1d+l61fYRX/urOmmGJDbj64o30jtkburHzg63Dt0apCtgchjZ5F+qj16nvkis8F83Su+3skCO+fXoa2+fD/1Dgf4MMX2v6phJ2Wl87cPUmLUdEdSOOPpymf+VDzwpr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705925271; c=relaxed/simple;
-	bh=CixXdO6L97yTmXCmrviahH+3fGc5B5cIC/8ZuU/XwmQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YZ8sz+z83DUHA5FA8Q7y3cik77BWiK8y+xRertwps8zVhOaHbl95Wk3vNVUAfp5TXgGYsJzkrCmMCwWKHUpWEHQbLtcpaAXzxjMQZvBxTTaU+amu1m9PQSxDOjf2ZYY0hsK3PJX7d9mjp94iWAdnOSnz90EAiuAULdvwarpeffo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pciRvT6f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cg2KM1A5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pciRvT6f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cg2KM1A5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1705925756; c=relaxed/simple;
+	bh=JlI6oJ4yUpkIyWemM/YYc6/lnR2MeUov9gvivfsE8fI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cPd5ziyYn2EDRpaO1njuxSNrvNdieG5xMFBGsmpdlz5T5LjNX0Ava8zNrW3obRHiyKQ0PyB2K3ho5Dy/evMl9yLc32x367uwLuOdan+rbx87p+QWIhTgTPF8Sqi6pkWVMgKVyRLY1N7qwUM8R4dbv9ReWhTPa5eNQFmWblxOOrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aVUkt6ik; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pciRvT6f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cg2KM1A5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pciRvT6f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cg2KM1A5"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A3008222A0;
-	Mon, 22 Jan 2024 12:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705925268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
-	b=pciRvT6fNztMytFXB0YJhHDHYSoJ7JmoNmAyrzD+CbDI6h1wVFkloqnDJnC613MyOJ/Idq
-	5TOFt2lzJZ08lQCUpljlPzKjT065N/QxywhoDfoDbGJVGfH3BRPHrOlIiVRCqJhE0euaHI
-	8AO3uKjNLFdbeKVcdWQqykNI42bMwas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705925268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
-	b=Cg2KM1A53/c+vBHa0cR11fo/d341fORkHokwieuM44QhLX9aHzpdv8UlrF7vrMBEldAzG+
-	JLtSAbQi7kNr8RAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705925268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
-	b=pciRvT6fNztMytFXB0YJhHDHYSoJ7JmoNmAyrzD+CbDI6h1wVFkloqnDJnC613MyOJ/Idq
-	5TOFt2lzJZ08lQCUpljlPzKjT065N/QxywhoDfoDbGJVGfH3BRPHrOlIiVRCqJhE0euaHI
-	8AO3uKjNLFdbeKVcdWQqykNI42bMwas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705925268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
-	b=Cg2KM1A53/c+vBHa0cR11fo/d341fORkHokwieuM44QhLX9aHzpdv8UlrF7vrMBEldAzG+
-	JLtSAbQi7kNr8RAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6BA2D139B0;
-	Mon, 22 Jan 2024 12:07:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +HwAGZRarmW9JwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 22 Jan 2024 12:07:48 +0000
-Date: Mon, 22 Jan 2024 13:07:47 +0100
-Message-ID: <87a5oxy3jg.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH] ALSA: synth: Save a few bytes of memory when registering a 'snd_emux'
-In-Reply-To: <9e7b94c852a25ed4be5382e5e48a7dd77e8d4d1a.1705743706.git.christophe.jaillet@wanadoo.fr>
-References: <9e7b94c852a25ed4be5382e5e48a7dd77e8d4d1a.1705743706.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aVUkt6ik"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1705925737; x=1706530537; i=markus.elfring@web.de;
+	bh=JlI6oJ4yUpkIyWemM/YYc6/lnR2MeUov9gvivfsE8fI=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=aVUkt6ik4gUZeuYOBMXqAs+0YCD5aH6EVw3mslrH0x+3tvJ/PsyrAQT5+8upnshQ
+	 hJb2cp4LnCXrGBVTdzT+f0FnpsEoY2jrSIGL7Qu/nTSDIRFZtK0yz7Rj3kGjtA1kK
+	 +SGHis0SoZ2Z29UkTwJlmpi2nGDXXzUwpBhgB4oa6RHICpMmVFAVLhhVNBQpEdPWu
+	 AGSX5s7H8LuJkRtPO5uU6qylB5VOUCi5acGpWI5/ZRMxVrfsbg41D0wfzfz/ozdK9
+	 yhRepbikmU+7JQXN0ovoV+g+uNkyOCzzfe9YYWMwD7aoAT6VnoKZO2guKD4/ZI2Fw
+	 S5dAuqUMrO7OHqiHYA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8T7E-1rWGvw3I3c-004hJE; Mon, 22
+ Jan 2024 13:15:36 +0100
+Message-ID: <32eef8de-1e95-4e4e-85c5-9cc881b75bdf@web.de>
+Date: Mon, 22 Jan 2024 13:15:36 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.26
-X-Spamd-Result: default: False [-3.26 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 MID_CONTAINS_FROM(1.00)[];
-	 FREEMAIL_TO(0.00)[wanadoo.fr];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.96)[99.81%]
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [0/3] dmaengine: timb_dma: Adjustments for td_alloc_init_desc()
+Content-Language: en-GB
+To: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+References: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
+ <Za5SW6xdsOFylD7x@matsya>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Za5SW6xdsOFylD7x@matsya>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Mn5UYh7mrmxQ0WaeWCTZLO++m6xX+ndy1U4RL6USooOPRiI2s3o
+ YAFhZ1lMh/Qr9xsuSmfYRicdlojXl5ltelqkAnJmXeWKXZBDEV9gFE+HwQtcbBZ5pT29fQM
+ SJPixYJXtJYtcJ9MhHqq+d1yx7VuzH9oG2hyLP3iEeCmDmfiOa5GaTD0dzp+STV3Z+N23xT
+ u3kvQ6TBLC4klc35uhnmQ==
 X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:efwrYv3DkmE=;f9/ozwvaAeYDo6XGikObS3hiJJp
+ u6URE5Ns/fSKfVfLK2QcKl5c9cLYzynW1zScAJya4QcuLVCwNNCoXjcYQO3fvCWJltKn9ETbV
+ IS09zzdZY6wEFxUV1JL/d+H9XPXb0d/cGTAB8Ck3M3uilqqVJkmHDkdmwpJ6lwD1OCFMzDLfw
+ m48WsZ6y4gzaR2EbhkI1qrLGQWYl8KSsDETSXfK2N5sQ6cgi2pmDHviC3f8KTVwPpAy9VrZ+g
+ bzTgZ7aFvAuHpKq9NMprZoFqhAEcbeZE6OnTnOaL/t8ahW3wtHI8e6rTXCyUfW5aS3DuYKc3L
+ uW3EQY/STQbHbHCV2/8AL3xmxkU3iPm/vWEFCB+w1aPN+BNlMGNm6P5VUnyBRNm4reFwfTfuw
+ tLRtRnRBHRPyr7UXOziQknJ+e/6z1ivhk9MHM+KHMvROll09H/idbW3Qk2W1AkiTtqDIHqVxo
+ h0HqGhtUelAA4Cm7x/RlPLe8W+TLWff0vffJEEVH7vPDRw/EIgOW3r6eGwxCvZOfglugyh1dN
+ gThzTkXHP4trMhr3g4Olj/BuArvGAwlQuiV5bJmgDYUGGFodVVglg/xO8hwzI4CRPQpWt3uz2
+ aiGhX5Uf/mnr5RG0OBMmuPo/PUEdt1WDBP+Diocv3q8oC+WNtwawwqoNK0XGwEdJ/FKJp1qbG
+ OAjRmLwLYEULjhOMK1b0HezRLNio3NcB7NaaOBI047y+P/A/auGw3qWoQnGAjktdE1/61a39l
+ eONsPqv4kfzzI5OKPbF1/mJylHz1AqYMUbdzRncSMA7gRwWjAcH9U+s1XnBFkbUm5KqR5RYaj
+ tRMkkBsWGRLG2YkbHovTK9mda3vaYBAWUrwczM0rjJi/nlvX9Ak+F88ONR2P1jU7ojugh+8lf
+ DJzR0u/0xbaYHrLgCROMtt2+VJqc3WGAnKxdIB5FbhUnXyqK6r1VXkCYXeIn5c+Ug7buMkN1H
+ 8WEBkg==
 
-On Sat, 20 Jan 2024 10:42:12 +0100,
-Christophe JAILLET wrote:
-> 
-> snd_emux_register() calls pass a string literal as the 'name' parameter.
-> 
-> So kstrdup_const() can be used instead of kfree() to avoid a memory
-> allocation in such cases.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> A few update suggestions were taken into account
+>> from static source code analysis.
+>
+> was this anaysis done by you
 
-Thanks, applied now.
+Mostly, yes.
 
 
-Takashi
+> or some tool reported this.
+
+Some scripts for the semantic patch language (Coccinelle software) can hel=
+p
+to point places out for desirable source code transformations.
+
+
+> Frabkly I dont see much value in these patches,
+
+It is a pity that you view the presented update steps in this direction.
+
+
+> can you fix something real please
+
+You might occasionally find adjustments from my patch selection more worth=
+while.
+
+Regards,
+Markus
