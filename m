@@ -1,126 +1,125 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1B550272;
-	Mon, 22 Jan 2024 17:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E65153E2D;
+	Mon, 22 Jan 2024 18:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705946275; cv=none; b=kwSgKP2oSktTUorTPAg/G6SQYrX0Jrss1tENzC8cXRa6kH0Clwj5iK02CyXPO9T9Xxm15OYcJExMcCxjVA8oD32rscGE6ZfUY+J9PDbsbS81GnLxENwk2SNM41sGXIeKWU1f30GBx91a6ejs7htNaeLVXWydOmWIvhVMOqd6GOY=
+	t=1705946543; cv=none; b=nPIQozJccjTYOqoxa89W2EsdXF+NVKqDkUaYDS3PXqyiPMpxu2P1kTqjJqaSeo6cvYw8kD/lZqquAORFozquko6XKNPa9yurKaTVnevJQbJsBZ5B/hzgR709GImeY0AF0xErC7wwWsoRRjfFI3hvU9ppU+41sB7CbvMnuIWqCzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705946275; c=relaxed/simple;
-	bh=ormRf2c7k0RSk48YWM459e3k1OgtsTd6YXCAGOapFlM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNtiAjG8g4rVnKpZwpOT3t69anxoK4YXC+iWcEZlrb4NLsZl85G4qAUqG6I4ozR8kXgyZQh6AA+CfYmp27RsnnEfNNmbciH2BVTNvK8oz19r58rSVLTmLHGa/y9ZdTBD7yEkkjoo4dZh749zaCHqjQxWIneSZsvCQsqmxXSUNp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G6R6J2Tr; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1705946543; c=relaxed/simple;
+	bh=cvxxevqv6ny07B5cj2gMAM8FMiTwyVSwVjN/WbJrQPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wf5QtI3UATObKQhO71OsUuMabpLJ+ARGjDwDsgW23kKVqDno4bTcyM2pzSmrGM/SJ3hWAs4JXfsIi6LTSAK53gr9jakOiLRnBVz/SQ3WlbaL2F/cEzDXEGOVYzqokmjTYlcfZ+AW15NFYexh0p/wfRJbfWCPxHXeptBin4whSS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fFO79Rpq; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G6R6J2Tr"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id RyYJrZyS0CqsFRyYJr2t2P; Mon, 22 Jan 2024 18:57:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1705946265;
-	bh=CHlsOFd028+jV0LAUMT3aaajLuOQehNM5ywoohsK5ko=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=G6R6J2Tr0yjFFdDfUw8j4W+vMDSPHcYn7lhH9AsHvWwOS3b2fKv5hQSEnK+v1vEX1
-	 X340Jilt9mvYEM6pn2jHnHMMwco0kxed5Za++jbP/7XuRkzzgBDoetvw4ac7m7CbuJ
-	 v0XwmEa1DdqoP2K+4bf/vaahw7MJJhsMBCKcwXePV7MjqzwRRwAFpNTfMYivbHQc3c
-	 ZW0GAOGyMjn+JKmuzWZpGTpq4ODnItBSjzS3P2k1QvWckVZsQ+PCl6W3bViR54tViM
-	 hF3rLxCHF4Rv41RJnFyCdLaLrmgroDZjbKRkqg4G82K1FrSut3/drmRYD280/lL6vz
-	 a+zdJyvdOZX8A==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 22 Jan 2024 18:57:45 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <d11852b1-6d9c-4ced-83cb-96e753edd45d@wanadoo.fr>
-Date: Mon, 22 Jan 2024 18:57:42 +0100
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fFO79Rpq"
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40MHxkgT012119;
+	Mon, 22 Jan 2024 18:01:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=iYu1xsxt+0e5tlIQKHHWFm4zqDaVlRpfR6Mt43vuWF4=;
+ b=fFO79RpqJ3WaypfBgGKDhSwvmUhNdfKb9qQin52hTyKTxk/8wpqUgIBns0nzVYyYjFGJ
+ g7nRxRm61UeBDU6Ww63gTvp4MLgW+An1lTcKBcO33H11hLsyia7QK+EuAW6aMy5yVF8L
+ uT7hUhfn5l45MycJmk5dZTKrHZtd9u+bBrhaN7HkZ/PWF/06ZdfzTV060DoVsSTbQZ68
+ NZl0lEpX4wByMdBgPfIv2wGfikwh898klw4JlsvX1R1ayhdO9PEYl9rZhUBqbyOxU4HT
+ mSeTEAHX/r5DFpNtSBxv26IcdhX127XedLslCgztrl2OS3M34p3eKhzFuXfP70hUP2JC 1A== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vr79ncaau-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 18:01:21 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40MHwY3o033584;
+	Mon, 22 Jan 2024 18:01:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vs3701vdf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 18:01:21 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40MI1KSb015780;
+	Mon, 22 Jan 2024 18:01:20 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vs3701vct-1;
+	Mon, 22 Jan 2024 18:01:20 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+        Eric Curtin <ecurtin@redhat.com>, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] soc: apple: mailbox: fix error handling in apple_mbox_get()
+Date: Mon, 22 Jan 2024 10:01:16 -0800
+Message-ID: <20240122180117.2862027-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thunderbolt: Remove usage of the deprecated
- ida_simple_xx() API
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
-References: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
- <20240122112922.GH2543524@black.fi.intel.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240122112922.GH2543524@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-22_07,2024-01-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401220126
+X-Proofpoint-GUID: IQsJFR_A9Z8x-hezvrfttRke3Av_0RW4
+X-Proofpoint-ORIG-GUID: IQsJFR_A9Z8x-hezvrfttRke3Av_0RW4
 
-Le 22/01/2024 à 12:29, Mika Westerberg a écrit :
-> On Thu, Jan 11, 2024 at 10:10:21PM +0100, Christophe JAILLET wrote:
->> ida_alloc() and ida_free() should be preferred to the deprecated
->> ida_simple_get() and ida_simple_remove().
->>
->> Note that the upper limit of ida_simple_get() is exclusive, but the one of
->> ida_alloc_range()/ida_alloc_max() is inclusive. So a -1 has been added
->> when needed.
-> 
-> Looks tood to me but wanted to check if you tested this on a real
-> hardware or you just build tested?
-> 
-> 
+When ret is 0 and args.np is not NULL, returning zero is success
+which is incorrect.
 
-Hi,
+Also fix error codes
 
-It was compile tested only.
+Fixes: 6e1457fcad3f ("soc: apple: mailbox: Add ASC/M3 mailbox driver")
+Reported-by: Dan Carpenter <error27@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202311300228.1rvmJjdA-lkp@intel.com/
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is only compile tested.
+---
+ drivers/soc/apple/mailbox.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Transformation has been done with the help of the cocci script below.
-
-CJ
-
-
-===
-
-@@
-expression i, gfp;
-@@
--    ida_simple_get(i, 0, 0, gfp)
-+    ida_alloc(i, gfp)
-
-
-@@
-expression e1, e2, gfp;
-@@
--    ida_simple_get(e1, e2, 0, gfp)
-+    ida_alloc_min(e1, e2, gfp)
-
-
-@@
-expression e1, e2, gfp;
-@@
--    ida_simple_get(e1, 0, e2, gfp)
-+    ida_alloc_max(e1, e2 - 1, gfp)
-
-
-@@
-expression e1, e2, gfp;
-@@
--    ida_simple_get(e1, e2, e2+1, gfp)
-+    ida_alloc_range(e1, e2, e2, gfp)
-
-
-@@
-expression e1, e2, e3, gfp;
-@@
--    ida_simple_get(e1, e2, e3, gfp)
-+    ida_alloc_range(e1, e2, e3 - 1, gfp)
-
-
-@@
-expression e1, e2;
-@@
--    ida_simple_remove(e1, e2)
-+    ida_free(e1, e2)
-
+diff --git a/drivers/soc/apple/mailbox.c b/drivers/soc/apple/mailbox.c
+index 780199bf351e..8e8628182ac7 100644
+--- a/drivers/soc/apple/mailbox.c
++++ b/drivers/soc/apple/mailbox.c
+@@ -289,21 +289,23 @@ struct apple_mbox *apple_mbox_get(struct device *dev, int index)
+ 
+ 	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
+ 					 index, &args);
+-	if (ret || !args.np)
++	if (ret)
+ 		return ERR_PTR(ret);
++	if (!args.np)
++		return ERR_PTR(-EINVAL);
+ 
+ 	pdev = of_find_device_by_node(args.np);
+ 	of_node_put(args.np);
+ 
+ 	if (!pdev)
+-		return ERR_PTR(EPROBE_DEFER);
++		return ERR_PTR(-EPROBE_DEFER);
+ 
+ 	mbox = platform_get_drvdata(pdev);
+ 	if (!mbox)
+-		return ERR_PTR(EPROBE_DEFER);
++		return ERR_PTR(-EPROBE_DEFER);
+ 
+ 	if (!device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
+-		return ERR_PTR(ENODEV);
++		return ERR_PTR(-ENODEV);
+ 
+ 	return mbox;
+ }
+-- 
+2.42.0
 
