@@ -1,76 +1,72 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F040C12;
-	Mon, 22 Jan 2024 11:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B71DFF3;
+	Mon, 22 Jan 2024 11:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705922968; cv=none; b=rlGiFUcOwHEzVZoW6YnuD1sIziDgv4sIJRkqRPovo1Nztp7DsMMZ2EHbPIxm3JOAxOvfxEwu0ivWFnbKKHsmgyO9QtwS0hr7ICUz9dhcIPUj65gueIF8F3R8ndRM/Y5a+/is/Pjczc5UT6GH1UaDS8nNQLr0Es1ZJJUfj05g2ls=
+	t=1705923168; cv=none; b=s/LmjE9JzY7lqup1Q0D5PrF7NXUjjOKmnXly8VXx3nxKjdaBAvPe01K7J+gkD/eteXQmOQhe+ZM7zajJZpRk/esFRPEZDx4VqKXmqc4VMJnqIMoo9X7+2F7dLLK1YPUsATX2w15H/0J4i4DwA3hRM+fOsVrKJCCmXB2My/4f5Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705922968; c=relaxed/simple;
-	bh=zczYGq/mA49LVGnYY1sC5slAUBCyibjNUhl/7Ir7/Kg=;
+	s=arc-20240116; t=1705923168; c=relaxed/simple;
+	bh=uDy/5VBSa8J4k7spOOc9VWyfuTTwmCdLUf/HonS9y3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s64uJ1bYLOQdCcwBVUFqx452uGvYtgQzAXdPgwvRW+XhU7HjKRNwlj/i9/KXiGtNHgC57s2xwrGSXXuAYRaywdIOGscbppCBtFKSCStMndo8Vuw2vHv6TyGVXvNEbZ6A2izXHcEihY7Pg8xLyLIQl/HC3PSPyvv2Ug6AjZmbd8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ep/lV8e6; arc=none smtp.client-ip=192.55.52.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhmmARDm+pQR5n/WsaulL2MnGU3kFPsMg2lEOFIvpgAa1RNWONhpMG7mRY3PQgvLLe1qCxcN/t4L0jvuc7XLmSzRLFSkhpjxnWGe3QIoHgi0zFlI+dZBnpJjxBE9ND3SOVjMXGk9kfSZxRTziC3oR+w3h9p/BGTGnF2bCHBjqWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeZRFDWB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ep/lV8e6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705922966; x=1737458966;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zczYGq/mA49LVGnYY1sC5slAUBCyibjNUhl/7Ir7/Kg=;
-  b=Ep/lV8e60DB0U9U8G1YkvDL1byvZFqjDFWgwUzRDN8qwYb39j+qaxXRp
-   8SN8BnIlPn8EcXI7HULeik7dBHWGfVpepdCNZ17lGaHNEiPtP8gBK938a
-   eGBg0MJIyydFYmtr0dTWBbiWabPv8ceyouOjiiqVVBDUGNeU7IzcYE1gS
-   YPhSI/6YFHOPXIqM9TfEM3qXkEa0VWL1LzvXx1lGkzKnVIWf3o2cyvEVj
-   kfpdbTWmr+QxgEvjU2WEmZ7yKa+tNYVvzktpSFQHx7A77LCJQaqMR6UFB
-   k6pzi8ZETLrUkPgd+Xw18f/4h2kwOIPop8/3QHyrTLhP4yYuejXdOhaxv
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10960"; a="398335862"
-X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
-   d="scan'208";a="398335862"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2024 03:29:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10960"; a="928963490"
-X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
-   d="scan'208";a="928963490"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2024 03:29:23 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 6521024D; Mon, 22 Jan 2024 13:29:22 +0200 (EET)
-Date: Mon, 22 Jan 2024 13:29:22 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] thunderbolt: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <20240122112922.GH2543524@black.fi.intel.com>
-References: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeZRFDWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6FAC433C7;
+	Mon, 22 Jan 2024 11:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705923168;
+	bh=uDy/5VBSa8J4k7spOOc9VWyfuTTwmCdLUf/HonS9y3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LeZRFDWBtG4m+vzh0CM0FpBZgpXzK+0ecxKH/VyLqiQSj+G+Je7HBvO5vGED9OJHg
+	 9sV4xhBBF9IIS432+5yOTFnMllWWtFeRih1BT8Bs0GymuFHpuQgAhAnFUBNUFNLl6c
+	 8CUzve+N4QmRypTLWrJTu6ZqFZjfEPHOuXIlQBBEB7BrBqZ9KE84HwTWiE9NTVO3hY
+	 XloT+zFbYb02uk7LZoGvKVZ3C5+0nOhH19+8VTfojS/VOorMPLtJAJEsuxDJAtm8dd
+	 L7iJoht57ux6s3bdQEHbelQmhYzMsz4+iZ3hTx0MGsZfll9oTbkhKjem9svnbkhHQV
+	 FymWMC0lYTdgA==
+Date: Mon, 22 Jan 2024 17:02:43 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH 0/3] dmaengine: timb_dma: Adjustments for
+ td_alloc_init_desc()
+Message-ID: <Za5SW6xdsOFylD7x@matsya>
+References: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
 
-On Thu, Jan 11, 2024 at 10:10:21PM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
+On 25-12-23, 11:15, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 25 Dec 2023 11:05:45 +0100
 > 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range()/ida_alloc_max() is inclusive. So a -1 has been added
-> when needed.
+> A few update suggestions were taken into account
+> from static source code analysis.
 
-Looks tood to me but wanted to check if you tested this on a real
-hardware or you just build tested?
+was this anaysis done by you or some tool reported this.
+Frabkly I dont see much value in these patches, can you fix something
+real please
+
+> 
+> Markus Elfring (3):
+>   Return directly after a failed kzalloc()
+>   Improve a size determination
+>   One function call less after error detection
+> 
+>  drivers/dma/timb_dma.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> --
+> 2.43.0
+
+-- 
+~Vinod
