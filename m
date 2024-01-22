@@ -1,125 +1,91 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E65153E2D;
-	Mon, 22 Jan 2024 18:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56BB3B790;
+	Mon, 22 Jan 2024 20:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705946543; cv=none; b=nPIQozJccjTYOqoxa89W2EsdXF+NVKqDkUaYDS3PXqyiPMpxu2P1kTqjJqaSeo6cvYw8kD/lZqquAORFozquko6XKNPa9yurKaTVnevJQbJsBZ5B/hzgR709GImeY0AF0xErC7wwWsoRRjfFI3hvU9ppU+41sB7CbvMnuIWqCzc=
+	t=1705953637; cv=none; b=VzeJnyxEPcNmOsoI0vKun+jd2TFKZozeWdZupmZ90rQq94mzU7cHjlZbJXK3g3npBAYcs9DQIi2zJ+FMAk24qkhPmzmefkGaunU9Ff44sB4n4hPtxhTePzpMP+lcpuJXeq85f/0cj+MYvswcJYBZOSjn8EAxb8HO3QfTaZNz58E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705946543; c=relaxed/simple;
-	bh=cvxxevqv6ny07B5cj2gMAM8FMiTwyVSwVjN/WbJrQPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wf5QtI3UATObKQhO71OsUuMabpLJ+ARGjDwDsgW23kKVqDno4bTcyM2pzSmrGM/SJ3hWAs4JXfsIi6LTSAK53gr9jakOiLRnBVz/SQ3WlbaL2F/cEzDXEGOVYzqokmjTYlcfZ+AW15NFYexh0p/wfRJbfWCPxHXeptBin4whSS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fFO79Rpq; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1705953637; c=relaxed/simple;
+	bh=zSVvwnD2LANWDKYMIGKtC/aUqoKUraMfvhOhQu1rYuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ijJHLOwo9dki/MCPEulWJ+6ENx2rZ2YRP4l+g7E3mrrZVEIhQhuIlZs5clmafLaxW2hYX8g7uhrqoONJQzMDQrH3MX8tPYXoK69JWR2+ABUSjn53sXDWhegfdsmTXqV5nh90wsf8hPF2/6v6N10tcR5QRcV5v+j8zeYjBM7A6hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pl3sBx1h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fFO79Rpq"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40MHxkgT012119;
-	Mon, 22 Jan 2024 18:01:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=iYu1xsxt+0e5tlIQKHHWFm4zqDaVlRpfR6Mt43vuWF4=;
- b=fFO79RpqJ3WaypfBgGKDhSwvmUhNdfKb9qQin52hTyKTxk/8wpqUgIBns0nzVYyYjFGJ
- g7nRxRm61UeBDU6Ww63gTvp4MLgW+An1lTcKBcO33H11hLsyia7QK+EuAW6aMy5yVF8L
- uT7hUhfn5l45MycJmk5dZTKrHZtd9u+bBrhaN7HkZ/PWF/06ZdfzTV060DoVsSTbQZ68
- NZl0lEpX4wByMdBgPfIv2wGfikwh898klw4JlsvX1R1ayhdO9PEYl9rZhUBqbyOxU4HT
- mSeTEAHX/r5DFpNtSBxv26IcdhX127XedLslCgztrl2OS3M34p3eKhzFuXfP70hUP2JC 1A== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vr79ncaau-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 22 Jan 2024 18:01:21 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40MHwY3o033584;
-	Mon, 22 Jan 2024 18:01:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vs3701vdf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 22 Jan 2024 18:01:21 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40MI1KSb015780;
-	Mon, 22 Jan 2024 18:01:20 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vs3701vct-1;
-	Mon, 22 Jan 2024 18:01:20 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
-        Eric Curtin <ecurtin@redhat.com>, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] soc: apple: mailbox: fix error handling in apple_mbox_get()
-Date: Mon, 22 Jan 2024 10:01:16 -0800
-Message-ID: <20240122180117.2862027-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pl3sBx1h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F412C433F1;
+	Mon, 22 Jan 2024 20:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705953637;
+	bh=zSVvwnD2LANWDKYMIGKtC/aUqoKUraMfvhOhQu1rYuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pl3sBx1h9R7FS8xM5FOwXsZdDpNmIghy8nnHcpg50m7KRa2byb8exGgVut8a28qKt
+	 PfY/sQhqsAh7cvz3LMYL1Lct/GtxQWiaJuCpunV0jvxaKzb9hc+SMiBNDRhUsd7WU1
+	 5pBwrFsETpM9dyzLDr/c1KEWm8vypI0rFSvN8RdZ/7PidlcIMpqiU6A9+o1YZ5LI/s
+	 M81uSLpk+8Uz/Oo7GkGtUj3BOEdMTWfeceKLRBh4jbA8L99jK9DlMfQmrx1rsG1dPm
+	 +IcSM89SU8XL08xcvw04hIefSpeNmvGu18cQfVVmuzmMLmB9iFFHlWYxkxTYV/U7NA
+	 NAnbYYwK9SDFw==
+Date: Mon, 22 Jan 2024 21:00:27 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@wdc.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] PCI: dwc: Fix a 64bit bug in
+ dw_pcie_ep_raise_msix_irq()
+Message-ID: <Za7JW3ThCXI4axH+@x1-carbon>
+References: <d0d5b689-9437-43cd-8c1f-daa72aeafb2e@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-22_07,2024-01-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2401220126
-X-Proofpoint-GUID: IQsJFR_A9Z8x-hezvrfttRke3Av_0RW4
-X-Proofpoint-ORIG-GUID: IQsJFR_A9Z8x-hezvrfttRke3Av_0RW4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0d5b689-9437-43cd-8c1f-daa72aeafb2e@moroto.mountain>
 
-When ret is 0 and args.np is not NULL, returning zero is success
-which is incorrect.
+On Mon, Jan 22, 2024 at 06:19:52PM +0300, Dan Carpenter wrote:
+> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
+> unsigned int.  This means that when the code does:
+> 
+>         msg_addr &= ~aligned_offset;
+> 
+> it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
+> to do the alignment instead.
+> 
+> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: fix typo in commit message
+> v3: Use ALIGN_DOWN() instead of ANDing with ~aligned_offset (this is a
+>     style improvement).
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 5befed2dc02b..51679c6702cf 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -551,7 +551,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	}
+>  
+>  	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
+> -	msg_addr &= ~aligned_offset;
+> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
+>  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
+>  				  epc->mem->window.page_size);
+>  	if (ret)
+> -- 
+> 2.43.0
+> 
 
-Also fix error codes
-
-Fixes: 6e1457fcad3f ("soc: apple: mailbox: Add ASC/M3 mailbox driver")
-Reported-by: Dan Carpenter <error27@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202311300228.1rvmJjdA-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is only compile tested.
----
- drivers/soc/apple/mailbox.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/soc/apple/mailbox.c b/drivers/soc/apple/mailbox.c
-index 780199bf351e..8e8628182ac7 100644
---- a/drivers/soc/apple/mailbox.c
-+++ b/drivers/soc/apple/mailbox.c
-@@ -289,21 +289,23 @@ struct apple_mbox *apple_mbox_get(struct device *dev, int index)
- 
- 	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
- 					 index, &args);
--	if (ret || !args.np)
-+	if (ret)
- 		return ERR_PTR(ret);
-+	if (!args.np)
-+		return ERR_PTR(-EINVAL);
- 
- 	pdev = of_find_device_by_node(args.np);
- 	of_node_put(args.np);
- 
- 	if (!pdev)
--		return ERR_PTR(EPROBE_DEFER);
-+		return ERR_PTR(-EPROBE_DEFER);
- 
- 	mbox = platform_get_drvdata(pdev);
- 	if (!mbox)
--		return ERR_PTR(EPROBE_DEFER);
-+		return ERR_PTR(-EPROBE_DEFER);
- 
- 	if (!device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
--		return ERR_PTR(ENODEV);
-+		return ERR_PTR(-ENODEV);
- 
- 	return mbox;
- }
--- 
-2.42.0
-
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
