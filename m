@@ -1,101 +1,94 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FD73A1D6;
-	Mon, 22 Jan 2024 12:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E0E3BB4D;
+	Mon, 22 Jan 2024 13:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705925756; cv=none; b=dm+SevIE0aURJssPAXc0JDpGoyIOyoTMlTGbhHAm8Ee1d+l61fYRX/urOmmGJDbj64o30jtkburHzg63Dt0apCtgchjZ5F+qj16nvkis8F83Su+3skCO+fXoa2+fD/1Dgf4MMX2v6phJ2Wl87cPUmLUdEdSOOPpymf+VDzwpr/o=
+	t=1705928468; cv=none; b=LDDDIIVmwQ14BiiKPiZ7IsRYFHicFXM3uE6duZ0rqIZet1AH8IKNL4qVCQUYoUsP/JqSZGoks81V6cUQeIFSJshOXqn4sf3lMT32P0xHlVLSGwcYAtTneK9JV85FeMXDIO+/wkZQMsgUMQTH5pHjq/oO3OcTdd+wN+9u3yf+9Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705925756; c=relaxed/simple;
-	bh=JlI6oJ4yUpkIyWemM/YYc6/lnR2MeUov9gvivfsE8fI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cPd5ziyYn2EDRpaO1njuxSNrvNdieG5xMFBGsmpdlz5T5LjNX0Ava8zNrW3obRHiyKQ0PyB2K3ho5Dy/evMl9yLc32x367uwLuOdan+rbx87p+QWIhTgTPF8Sqi6pkWVMgKVyRLY1N7qwUM8R4dbv9ReWhTPa5eNQFmWblxOOrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aVUkt6ik; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1705928468; c=relaxed/simple;
+	bh=fl2xXnQa6YlOMJIZJL+fO94USkChOHRh2EKFrznETKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iM1xfvKrvCJlIXA9o7sSovM9AC2VLcx9lV+J0ROeUThw2nAKTac7jI6iaprh/5xgaNJH2GxgqlAcOILqRCi/j9E2i8k3rEzhInxsTX91mQpzzO69lch/5S+tVloS1VZBhZ87M/nM3sImKCutJfxch258ElTWdmrB5ZclyC7ZJGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YY3V4cLS; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aVUkt6ik"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705925737; x=1706530537; i=markus.elfring@web.de;
-	bh=JlI6oJ4yUpkIyWemM/YYc6/lnR2MeUov9gvivfsE8fI=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=aVUkt6ik4gUZeuYOBMXqAs+0YCD5aH6EVw3mslrH0x+3tvJ/PsyrAQT5+8upnshQ
-	 hJb2cp4LnCXrGBVTdzT+f0FnpsEoY2jrSIGL7Qu/nTSDIRFZtK0yz7Rj3kGjtA1kK
-	 +SGHis0SoZ2Z29UkTwJlmpi2nGDXXzUwpBhgB4oa6RHICpMmVFAVLhhVNBQpEdPWu
-	 AGSX5s7H8LuJkRtPO5uU6qylB5VOUCi5acGpWI5/ZRMxVrfsbg41D0wfzfz/ozdK9
-	 yhRepbikmU+7JQXN0ovoV+g+uNkyOCzzfe9YYWMwD7aoAT6VnoKZO2guKD4/ZI2Fw
-	 S5dAuqUMrO7OHqiHYA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8T7E-1rWGvw3I3c-004hJE; Mon, 22
- Jan 2024 13:15:36 +0100
-Message-ID: <32eef8de-1e95-4e4e-85c5-9cc881b75bdf@web.de>
-Date: Mon, 22 Jan 2024 13:15:36 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY3V4cLS"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40eb28271f8so726625e9.2;
+        Mon, 22 Jan 2024 05:01:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705928465; x=1706533265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9XAJ8FE6Irq3MVRNXBwtWFtBDH+famfj4zjNOlv+xyw=;
+        b=YY3V4cLSBgXL4uNcadaHK0VfPqm6SdEA8XbEfEgp7gRAbH//x+y5tEvY30cu17ks4f
+         h3CD4X3h9Eu13KDGHO4/RVrXu9G/7wmCBZ4IbCB+jFfWJwTdt/U1nIfc5naj89CpISDL
+         WyDTt9+16auea8k7kBiAnTb4nb00sSZ6VGDIfSv48U9sjG1VNsZfTB6F0D9JHkPiAara
+         o1u7zgyuLB8CFE53RAGoySQy0hf0v0jeDIXu2xrzCVlNuVgbtUC42OwTeUVuVyF4TzA3
+         NJ9HCHMKGWTyfvyW4elAtv2IfhCvJvhmZUDr8pphIaN6VzsZ1crXXpkoFMLkC5SMlWMo
+         senw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705928465; x=1706533265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9XAJ8FE6Irq3MVRNXBwtWFtBDH+famfj4zjNOlv+xyw=;
+        b=dIsj0WBpz25rBr+O5au4OxS1O2N64uicnor5PHlAr/vhgGiQCAYlQ5FGNuX3diiEUH
+         cPf0lsmiBhGQUfFwAQ+kGo0GzS4Gn2naTsen09wi2w1j7GI+5Gss3W4ep6HooHGiEo09
+         4JdYKtaQRV1q0zAShMUCZoFsfgP/VfULy2DLh9PA+vAgys1uIhIVljkqY77Nspdo+JGT
+         sCoNjFTWO0vkCYz5HQzImSrwMahddYqXK3l2EdZCzbpo4iYC4IIpgTuI4I+RTWRR/Oji
+         L7I/vLe+Krw6vTQg/7p/us3fTPVM4YS0rL4W970AR7Nhy3P6DyIMqbvRR02GqZX9a6hR
+         s63g==
+X-Gm-Message-State: AOJu0Yz5qUXkn/ByrpPPla7Kuudmx3B2vxcL1y+npha98Z35plFjrylH
+	MPKOYc/u3P0mNbRwiT8oIBqm+L6Npv9Vk9Of9B3lj1JEjWTJFqwoVGKWg50H
+X-Google-Smtp-Source: AGHT+IEJ4+Q+omfxhqNsxVHiZYnrsPNaBXBGnfICi2tvMPXcdUzvpTUuR5fLNAguJndAJGcQB4hc2A==
+X-Received: by 2002:a05:600c:1e85:b0:40e:8a59:c3f7 with SMTP id be5-20020a05600c1e8500b0040e8a59c3f7mr1166331wmb.194.1705928464880;
+        Mon, 22 Jan 2024 05:01:04 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g14-20020a05600c4ece00b0040e8bf3c9a9sm18369814wmq.21.2024.01.22.05.01.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jan 2024 05:01:04 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: zlib: Fix spelling mistake "infalte" -> "inflate"
+Date: Mon, 22 Jan 2024 13:01:02 +0000
+Message-Id: <20240122130102.3157773-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [0/3] dmaengine: timb_dma: Adjustments for td_alloc_init_desc()
-Content-Language: en-GB
-To: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
- <Za5SW6xdsOFylD7x@matsya>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Za5SW6xdsOFylD7x@matsya>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Mn5UYh7mrmxQ0WaeWCTZLO++m6xX+ndy1U4RL6USooOPRiI2s3o
- YAFhZ1lMh/Qr9xsuSmfYRicdlojXl5ltelqkAnJmXeWKXZBDEV9gFE+HwQtcbBZ5pT29fQM
- SJPixYJXtJYtcJ9MhHqq+d1yx7VuzH9oG2hyLP3iEeCmDmfiOa5GaTD0dzp+STV3Z+N23xT
- u3kvQ6TBLC4klc35uhnmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:efwrYv3DkmE=;f9/ozwvaAeYDo6XGikObS3hiJJp
- u6URE5Ns/fSKfVfLK2QcKl5c9cLYzynW1zScAJya4QcuLVCwNNCoXjcYQO3fvCWJltKn9ETbV
- IS09zzdZY6wEFxUV1JL/d+H9XPXb0d/cGTAB8Ck3M3uilqqVJkmHDkdmwpJ6lwD1OCFMzDLfw
- m48WsZ6y4gzaR2EbhkI1qrLGQWYl8KSsDETSXfK2N5sQ6cgi2pmDHviC3f8KTVwPpAy9VrZ+g
- bzTgZ7aFvAuHpKq9NMprZoFqhAEcbeZE6OnTnOaL/t8ahW3wtHI8e6rTXCyUfW5aS3DuYKc3L
- uW3EQY/STQbHbHCV2/8AL3xmxkU3iPm/vWEFCB+w1aPN+BNlMGNm6P5VUnyBRNm4reFwfTfuw
- tLRtRnRBHRPyr7UXOziQknJ+e/6z1ivhk9MHM+KHMvROll09H/idbW3Qk2W1AkiTtqDIHqVxo
- h0HqGhtUelAA4Cm7x/RlPLe8W+TLWff0vffJEEVH7vPDRw/EIgOW3r6eGwxCvZOfglugyh1dN
- gThzTkXHP4trMhr3g4Olj/BuArvGAwlQuiV5bJmgDYUGGFodVVglg/xO8hwzI4CRPQpWt3uz2
- aiGhX5Uf/mnr5RG0OBMmuPo/PUEdt1WDBP+Diocv3q8oC+WNtwawwqoNK0XGwEdJ/FKJp1qbG
- OAjRmLwLYEULjhOMK1b0HezRLNio3NcB7NaaOBI047y+P/A/auGw3qWoQnGAjktdE1/61a39l
- eONsPqv4kfzzI5OKPbF1/mJylHz1AqYMUbdzRncSMA7gRwWjAcH9U+s1XnBFkbUm5KqR5RYaj
- tRMkkBsWGRLG2YkbHovTK9mda3vaYBAWUrwczM0rjJi/nlvX9Ak+F88ONR2P1jU7ojugh+8lf
- DJzR0u/0xbaYHrLgCROMtt2+VJqc3WGAnKxdIB5FbhUnXyqK6r1VXkCYXeIn5c+Ug7buMkN1H
- 8WEBkg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> A few update suggestions were taken into account
->> from static source code analysis.
->
-> was this anaysis done by you
+There is a spelling mistake in a warning message. Fix it.
 
-Mostly, yes.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/zlib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+index 8da66ea699e8..e5b3f2003896 100644
+--- a/fs/btrfs/zlib.c
++++ b/fs/btrfs/zlib.c
+@@ -398,7 +398,7 @@ int zlib_decompress(struct list_head *ws, const u8 *data_in,
+ 
+ out:
+ 	if (unlikely(to_copy != destlen)) {
+-		pr_warn_ratelimited("BTRFS: infalte failed, decompressed=%lu expected=%zu\n",
++		pr_warn_ratelimited("BTRFS: inflate failed, decompressed=%lu expected=%zu\n",
+ 					to_copy, destlen);
+ 		ret = -EIO;
+ 	} else {
+-- 
+2.39.2
 
-> or some tool reported this.
-
-Some scripts for the semantic patch language (Coccinelle software) can hel=
-p
-to point places out for desirable source code transformations.
-
-
-> Frabkly I dont see much value in these patches,
-
-It is a pity that you view the presented update steps in this direction.
-
-
-> can you fix something real please
-
-You might occasionally find adjustments from my patch selection more worth=
-while.
-
-Regards,
-Markus
