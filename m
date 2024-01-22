@@ -1,72 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B71DFF3;
-	Mon, 22 Jan 2024 11:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F323B781;
+	Mon, 22 Jan 2024 12:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705923168; cv=none; b=s/LmjE9JzY7lqup1Q0D5PrF7NXUjjOKmnXly8VXx3nxKjdaBAvPe01K7J+gkD/eteXQmOQhe+ZM7zajJZpRk/esFRPEZDx4VqKXmqc4VMJnqIMoo9X7+2F7dLLK1YPUsATX2w15H/0J4i4DwA3hRM+fOsVrKJCCmXB2My/4f5Vg=
+	t=1705925271; cv=none; b=oDam3DRXBcg/ILZXOqEpByzjXQ2ZAgP3tod8/I2JGLDPQl2KeT8ams0gcdpHNO6m0eQrtYKWhxECCD9dm3AHnVcB9ElqSGwFafI3comfFm1MeYUbZvu1lI1lMceJjkiVy8tACbR23PT5mNZ91Pbs+uDQ7I99qSFVw0OVffRImM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705923168; c=relaxed/simple;
-	bh=uDy/5VBSa8J4k7spOOc9VWyfuTTwmCdLUf/HonS9y3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DhmmARDm+pQR5n/WsaulL2MnGU3kFPsMg2lEOFIvpgAa1RNWONhpMG7mRY3PQgvLLe1qCxcN/t4L0jvuc7XLmSzRLFSkhpjxnWGe3QIoHgi0zFlI+dZBnpJjxBE9ND3SOVjMXGk9kfSZxRTziC3oR+w3h9p/BGTGnF2bCHBjqWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeZRFDWB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705925271; c=relaxed/simple;
+	bh=CixXdO6L97yTmXCmrviahH+3fGc5B5cIC/8ZuU/XwmQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YZ8sz+z83DUHA5FA8Q7y3cik77BWiK8y+xRertwps8zVhOaHbl95Wk3vNVUAfp5TXgGYsJzkrCmMCwWKHUpWEHQbLtcpaAXzxjMQZvBxTTaU+amu1m9PQSxDOjf2ZYY0hsK3PJX7d9mjp94iWAdnOSnz90EAiuAULdvwarpeffo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pciRvT6f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cg2KM1A5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pciRvT6f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cg2KM1A5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeZRFDWB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6FAC433C7;
-	Mon, 22 Jan 2024 11:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705923168;
-	bh=uDy/5VBSa8J4k7spOOc9VWyfuTTwmCdLUf/HonS9y3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LeZRFDWBtG4m+vzh0CM0FpBZgpXzK+0ecxKH/VyLqiQSj+G+Je7HBvO5vGED9OJHg
-	 9sV4xhBBF9IIS432+5yOTFnMllWWtFeRih1BT8Bs0GymuFHpuQgAhAnFUBNUFNLl6c
-	 8CUzve+N4QmRypTLWrJTu6ZqFZjfEPHOuXIlQBBEB7BrBqZ9KE84HwTWiE9NTVO3hY
-	 XloT+zFbYb02uk7LZoGvKVZ3C5+0nOhH19+8VTfojS/VOorMPLtJAJEsuxDJAtm8dd
-	 L7iJoht57ux6s3bdQEHbelQmhYzMsz4+iZ3hTx0MGsZfll9oTbkhKjem9svnbkhHQV
-	 FymWMC0lYTdgA==
-Date: Mon, 22 Jan 2024 17:02:43 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH 0/3] dmaengine: timb_dma: Adjustments for
- td_alloc_init_desc()
-Message-ID: <Za5SW6xdsOFylD7x@matsya>
-References: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pciRvT6f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cg2KM1A5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pciRvT6f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cg2KM1A5"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A3008222A0;
+	Mon, 22 Jan 2024 12:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705925268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
+	b=pciRvT6fNztMytFXB0YJhHDHYSoJ7JmoNmAyrzD+CbDI6h1wVFkloqnDJnC613MyOJ/Idq
+	5TOFt2lzJZ08lQCUpljlPzKjT065N/QxywhoDfoDbGJVGfH3BRPHrOlIiVRCqJhE0euaHI
+	8AO3uKjNLFdbeKVcdWQqykNI42bMwas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705925268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
+	b=Cg2KM1A53/c+vBHa0cR11fo/d341fORkHokwieuM44QhLX9aHzpdv8UlrF7vrMBEldAzG+
+	JLtSAbQi7kNr8RAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705925268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
+	b=pciRvT6fNztMytFXB0YJhHDHYSoJ7JmoNmAyrzD+CbDI6h1wVFkloqnDJnC613MyOJ/Idq
+	5TOFt2lzJZ08lQCUpljlPzKjT065N/QxywhoDfoDbGJVGfH3BRPHrOlIiVRCqJhE0euaHI
+	8AO3uKjNLFdbeKVcdWQqykNI42bMwas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705925268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdnB6ps93L9KKLDzp3Va5cDDdlG9KAe7wrmPY1lnT9E=;
+	b=Cg2KM1A53/c+vBHa0cR11fo/d341fORkHokwieuM44QhLX9aHzpdv8UlrF7vrMBEldAzG+
+	JLtSAbQi7kNr8RAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6BA2D139B0;
+	Mon, 22 Jan 2024 12:07:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +HwAGZRarmW9JwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 22 Jan 2024 12:07:48 +0000
+Date: Mon, 22 Jan 2024 13:07:47 +0100
+Message-ID: <87a5oxy3jg.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH] ALSA: synth: Save a few bytes of memory when registering a 'snd_emux'
+In-Reply-To: <9e7b94c852a25ed4be5382e5e48a7dd77e8d4d1a.1705743706.git.christophe.jaillet@wanadoo.fr>
+References: <9e7b94c852a25ed4be5382e5e48a7dd77e8d4d1a.1705743706.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ebd531dd-60e3-4ac3-821e-aa9890960283@web.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.26
+X-Spamd-Result: default: False [-3.26 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 MID_CONTAINS_FROM(1.00)[];
+	 FREEMAIL_TO(0.00)[wanadoo.fr];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-2.96)[99.81%]
+X-Spam-Flag: NO
 
-On 25-12-23, 11:15, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 25 Dec 2023 11:05:45 +0100
+On Sat, 20 Jan 2024 10:42:12 +0100,
+Christophe JAILLET wrote:
 > 
-> A few update suggestions were taken into account
-> from static source code analysis.
+> snd_emux_register() calls pass a string literal as the 'name' parameter.
+> 
+> So kstrdup_const() can be used instead of kfree() to avoid a memory
+> allocation in such cases.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-was this anaysis done by you or some tool reported this.
-Frabkly I dont see much value in these patches, can you fix something
-real please
+Thanks, applied now.
 
-> 
-> Markus Elfring (3):
->   Return directly after a failed kzalloc()
->   Improve a size determination
->   One function call less after error detection
-> 
->  drivers/dma/timb_dma.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> --
-> 2.43.0
 
--- 
-~Vinod
+Takashi
