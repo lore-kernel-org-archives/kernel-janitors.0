@@ -1,135 +1,106 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7269C21350;
-	Mon, 22 Jan 2024 08:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B163A8E0;
+	Mon, 22 Jan 2024 09:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705912888; cv=none; b=eTF1OKKkEDr0yl8dn3JFXf4tewOa5mnLiUj+6aavWN3Fr+vIbIamIjl/Wa5dxjv9HnDR4nNVpG5rA/lsXANZtjUKLKzq0aizV5Mtsbhxj7gsebM25TIf3JNko4xZDjrNrPHyxZS0JwKSJ6GmKOfzhP9nYjRvJBtfo/1wfM2ESYg=
+	t=1705915635; cv=none; b=WDUB+d7h+9w1O+V+Omu2M3aB4FzQDF/oOSnTXK/9xO2lzIKO8zYut4E3vnwW6BczGFGweIhJeM6IOBE59UL+reyWkNujgbhjxt1+6ITUDo11OU9riHkrZNXIfLlSyslB3meEnyAp8m32J6cZVfN5ktVjXnTR0yf/sFEhJGTUpOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705912888; c=relaxed/simple;
-	bh=ctuCC6ALFN33W1D3yQUnrYtqv9x78RMPK2D2cHZUDMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TITRaHrQK6jdW9YZgfj4mgmjsGbzVFJl6u4/ccUBnpT04C9NFVieZwgVHsZevAPizEkdAAd0+5UGgm/ak7c7PY6CEVkiqEYGqQH5mehNPgkyf9tFmaHBrh23FY7hnnvbFvrzBo3OW6mq2OHE/tqbWWZLCGgtFeu7cDw2D7i6IsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d1c2b83a7e904730825e5b96ad735542-20240122
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.35,REQID:1c271f4d-649e-4a00-a195-b02e349e0fd6,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:7
-X-CID-INFO: VERSION:1.1.35,REQID:1c271f4d-649e-4a00-a195-b02e349e0fd6,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:7
-X-CID-META: VersionHash:5d391d7,CLOUDID:aa021d83-8d4f-477b-89d2-1e3bdbef96d1,B
-	ulkID:240122163022SO5X7JXR,BulkQuantity:4,Recheck:0,SF:64|66|24|100|17|19|
-	44|101|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,Bulk:40,QS:nil,BEC
-	:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: d1c2b83a7e904730825e5b96ad735542-20240122
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 292773570; Mon, 22 Jan 2024 16:41:16 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 864D4E000EB9;
-	Mon, 22 Jan 2024 16:41:16 +0800 (CST)
-X-ns-mid: postfix-65AE2A2C-464608384
-Received: from [172.20.15.234] (unknown [172.20.15.234])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 3F59DE000EB9;
-	Mon, 22 Jan 2024 16:41:14 +0800 (CST)
-Message-ID: <39c6bc5c-8c91-4c91-a694-e27fa435f082@kylinos.cn>
-Date: Mon, 22 Jan 2024 16:41:14 +0800
+	s=arc-20240116; t=1705915635; c=relaxed/simple;
+	bh=c+pp3wM05kjEh1TGNSe7FIK8DIIwbLO/SK+P7CGfYCk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=kpjl0Ua4m2wf7YjIiEPtKCqblcLIki4QtX4eeKo2XZoN1vAO9tjiwxyhM6XqrYxVrLNFl+NyVJNGUv8acNt+rLZqs434Z8CvuGGJl1KkEapkPqzAX4WxIGbtfycKzBj+C22IgiXSbuZOXeWw37q1g0mUuvFn3DfngeNeK3UPtEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7kE113v; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7kE113v"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a308e6824ccso4684566b.0;
+        Mon, 22 Jan 2024 01:27:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705915632; x=1706520432; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MA56Trfdmas0N9KP+Qetqk6xxYzVaJwZcqc7VsxjPD4=;
+        b=c7kE113vjydtZiVWpBo5miYdkwIQduwj4wz5rUKiAKvpxQtx99bawx8kx+2Z/fUGc6
+         6v8FskV7aV7qFUdFNDe8iq3tD2fKSHZr6FA//BFgQtZkCTga6mLyuOK6z/qE8bZ+gqeA
+         6+USIXNTnZIfEUkdDcwWqAeMke7IRNu47vhT0MO+WwPgeW+wZED6PA4gv3tPn9UuCEQt
+         33hmWo5LVxK/AcrJWa8tdzI+LGIbm+OJkQEo1/nrxP8041U33eEtFIG5I/28ymMlmkyp
+         w3OaSOq3gC/++umNpEcujin+H3expe7vSJoL24by9+VL/kG0Sd5C3SLL/HxdSx5K+93O
+         Mg0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705915632; x=1706520432;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MA56Trfdmas0N9KP+Qetqk6xxYzVaJwZcqc7VsxjPD4=;
+        b=WPmqZNLjVqu+PC/Dqjsk1G8Ub4WtWsEAPDFjyL1Fg1CeYQy9Y+/do9gHCrMIixrkFG
+         L0/5mFQPCYbqVT312xqehgOqIea8eacmJh+jnKnZmwBmMg5a/r5X+SbqbpKCZNXEMTbJ
+         UrjV/6jbv4i425qK0MYri295RNsCtsuv4eHVDNlCWKbtP5FBXjd5W+IJHdjDoCBEY7SZ
+         m+WdpRaru1/RB3znnF02apJTXgFw6v4Z1TkkdqkK5yeWxe+Fg4D/hPxbT+dKufi/aNfs
+         LdAF/yGJUemzysC5SDbCUkdeYQZlljowIGr9daE3n0lwskS74t3dovMuRvjM7NePFyWn
+         X+IA==
+X-Gm-Message-State: AOJu0YwQY9CP30367N+W3HEk+Eshn1+5t0r1aogdORRO6xW25sRHT3yJ
+	6mlwftr8nXnH0mxR/k29qauRDjAD7e+5PRn1ttHLGKKroHS6FyiY
+X-Google-Smtp-Source: AGHT+IESyAopfrZSpMlLQkQBCVGtEcQY2zrHFpASJJPNAHvpg3w9AW6i0xBMHApfSFn25rSKO9LHNg==
+X-Received: by 2002:a17:907:982:b0:a2f:17c1:2abb with SMTP id bf2-20020a170907098200b00a2f17c12abbmr2426003ejc.60.1705915631745;
+        Mon, 22 Jan 2024 01:27:11 -0800 (PST)
+Received: from felia.fritz.box (ipb2191d3b.dynamic.kabel-deutschland.de. [178.25.29.59])
+        by smtp.gmail.com with ESMTPSA id i16-20020a1709061cd000b00a28825e0a2bsm13114843ejh.22.2024.01.22.01.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jan 2024 01:27:10 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] mempolicy: clean up minor dead code in queue_pages_test_walk()
+Date: Mon, 22 Jan 2024 10:25:04 +0100
+Message-Id: <20240122092504.18377-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/xen: Add some null pointer checking to smp.c
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel test robot <lkp@intel.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-References: <20240117090018.152031-1-chentao@kylinos.cn>
- <1705655941162581.825.seg@mailgw>
- <517fae75-c4e7-4576-81ff-6a14a3eb9cd7@kylinos.cn>
- <dfb6de51-3ebc-41fc-a750-cf5ca2ac05aa@moroto.mountain>
-From: Kunwu Chan <chentao@kylinos.cn>
-In-Reply-To: <dfb6de51-3ebc-41fc-a750-cf5ca2ac05aa@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
 
-On 2024/1/22 16:30, Dan Carpenter wrote:
-> On Fri, Jan 19, 2024 at 05:22:25PM +0800, Kunwu Chan wrote:
->> On 2024/1/17 18:40, Markus Elfring wrote:
->>>> kasprintf() returns a pointer to dynamically allocated memory
->>>> which can be NULL upon failure. Ensure the allocation was successful
->>>> by checking the pointer validity.
->>> =E2=80=A6
->>>> +++ b/arch/x86/xen/smp.c
->>>> @@ -61,10 +61,14 @@ void xen_smp_intr_free(unsigned int cpu)
->>>>
->>>>    int xen_smp_intr_init(unsigned int cpu)
->>>>    {
->>>> -	int rc;
->>>> +	int rc =3D 0;
->>>
->>> I find the indication of a successful function execution sufficient b=
-y
->>> the statement =E2=80=9Creturn 0;=E2=80=9D at the end.
->>> How do you think about to omit such an extra variable initialisation?
->> Thanks, it's no need now. I'll remove it in v3.
->=20
-> This advice is good.  Don't do unnecessary assignments.
-Thanks for your suggestions, I'll keep it in mind.
->=20
->>>
->>>
->>>>    	char *resched_name, *callfunc_name, *debug_name;
->>>>
->>>>    	resched_name =3D kasprintf(GFP_KERNEL, "resched%d", cpu);
->>>> +	if (!resched_name) {
->>>> +		rc =3D -ENOMEM;
->>>> +		goto fail;
->>>> +	}
->>>>    	per_cpu(xen_resched_irq, cpu).name =3D resched_name;
->>>>    	rc =3D bind_ipi_to_irqhandler(XEN_RESCHEDULE_VECTOR,
->>>>    				    cpu,
->>>
->>> You propose to apply the same error code in four if branches.
->>> I suggest to avoid the specification of duplicate assignment statemen=
-ts
->>> for this purpose.
->>> How do you think about to use another label like =E2=80=9Ce_nomem=E2=80=
-=9D?
->> I'll add a new label to simply the code.
->=20
-> I'm not a Xen maintainer so I can't really comment on their style
-> choices.  However, as one of the kernel-janitors list people, I would
-> say that not everyone agrees with Markus's style preferences.  Markus
-> was banned from the list for a while, but we unbanned everyone when we
-> transitioned to the new list infrastructure.  Do a search on lore to
-> find out more.  https://lore.kernel.org/all/?q=3DElfring
->=20
-> Perhaps wait for feedback from the maintainers for how to proceed?
-OK, I'll wait for the feedback.
->=20
-> regards,
-> dan carpenter
->=20
---=20
-Thanks,
-   Kunwu
+Commit 2cafb582173f ("mempolicy: remove confusing MPOL_MF_LAZY dead code")
+removes MPOL_MF_LAZY handling in queue_pages_test_walk(), and with that,
+there is no effective use of the local variable endvma in that function
+remaining.
+
+Remove the local variable endvma and its dead code. No functional change.
+
+This issue was identified with clang-analyzer's dead stores analysis.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ mm/mempolicy.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index a2b5d64b28e0..31deff75de43 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -690,7 +690,6 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
+ {
+ 	struct vm_area_struct *next, *vma = walk->vma;
+ 	struct queue_pages *qp = walk->private;
+-	unsigned long endvma = vma->vm_end;
+ 	unsigned long flags = qp->flags;
+ 
+ 	/* range check first */
+@@ -718,9 +717,6 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
+ 	    !(flags & MPOL_MF_STRICT))
+ 		return 1;
+ 
+-	if (endvma > end)
+-		endvma = end;
+-
+ 	/*
+ 	 * Check page nodes, and queue pages to move, in the current vma.
+ 	 * But if no moving, and no strict checking, the scan can be skipped.
+-- 
+2.17.1
 
