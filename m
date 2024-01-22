@@ -1,73 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C5853818;
-	Mon, 22 Jan 2024 16:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1B550272;
+	Mon, 22 Jan 2024 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705940712; cv=none; b=P4ZmxU1dvTyaaIcsPwhYVJ7kWbmTEiTzgX5ZdG8zvuJ9QsAlmJbqFqH6I24hDUZHIjMFPikT8Wi/IHeiQl5WLlUWbbVjekqhG2rSBXnmoRFvvuuePD4unMZlcKMrrrEyIZrUMtwVfOUcwrXyGIpJbvMn94QiUYJzlHMoCk7F6T4=
+	t=1705946275; cv=none; b=kwSgKP2oSktTUorTPAg/G6SQYrX0Jrss1tENzC8cXRa6kH0Clwj5iK02CyXPO9T9Xxm15OYcJExMcCxjVA8oD32rscGE6ZfUY+J9PDbsbS81GnLxENwk2SNM41sGXIeKWU1f30GBx91a6ejs7htNaeLVXWydOmWIvhVMOqd6GOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705940712; c=relaxed/simple;
-	bh=UadFVxmctqVr/nq53Nih9EBH1XgmG/zNaIvtkD5E3aA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TdTWOR50fLK3qE8OjFvOJMob4QBS872H0hwa23tFUHG0hLip/IERm7bu7BU16IFtnoyHIgUTce2mn2kFoq5UXTvJ19jeq36v4E/COiMTk31ap4Zv0o3DXpzYHD0Eyjo/qRY5ZXtdU7wsNWH4SUv36W2XGhGQdSbde0ItLaugH/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXIy1ayH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705946275; c=relaxed/simple;
+	bh=ormRf2c7k0RSk48YWM459e3k1OgtsTd6YXCAGOapFlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNtiAjG8g4rVnKpZwpOT3t69anxoK4YXC+iWcEZlrb4NLsZl85G4qAUqG6I4ozR8kXgyZQh6AA+CfYmp27RsnnEfNNmbciH2BVTNvK8oz19r58rSVLTmLHGa/y9ZdTBD7yEkkjoo4dZh749zaCHqjQxWIneSZsvCQsqmxXSUNp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G6R6J2Tr; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXIy1ayH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 608DDC43394;
-	Mon, 22 Jan 2024 16:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705940712;
-	bh=UadFVxmctqVr/nq53Nih9EBH1XgmG/zNaIvtkD5E3aA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cXIy1ayHqvsdn7fzJhjOTxeUxgKG9Oj+t6zKISk5j5cXMuqoqDbreY+fF0QKnfjIS
-	 J6kYUhnKlMuMjdYwXZym3kxmJZVN4AdWWsgdd5J8NoE2+4j0V4/r1Wd30bcmRLL+c5
-	 b72LPZW68bu/gC4rOk9qXdywNEZMfIKsF9cpfIVne9m6WpWRk095O6PJ7mwpmyOtR6
-	 6jTFapUWvIq5S3SDbXeP5Anb0n3IoTUWtJSpNFIr3HTEdodHu/LZSQ0LOa+xGCTdVJ
-	 E2MTeml46U3whnaaTnFQdwD6X6fH6NzViZgWiA/5hRANxoiQ7fHrxGIiogeyC7zEVt
-	 mwmtzrA7oRkPg==
-From: Vinod Koul <vkoul@kernel.org>
-To: jiaheng.fan@nxp.com, peng.ma@nxp.com, wen.he_1@nxp.com, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <cover.1704621515.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1704621515.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 0/3] dmaengine: fsl-qdma: Fix some error handling paths
-Message-Id: <170594071003.297861.1425725025349258769.b4-ty@kernel.org>
-Date: Mon, 22 Jan 2024 21:55:10 +0530
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G6R6J2Tr"
+Received: from [192.168.1.18] ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id RyYJrZyS0CqsFRyYJr2t2P; Mon, 22 Jan 2024 18:57:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1705946265;
+	bh=CHlsOFd028+jV0LAUMT3aaajLuOQehNM5ywoohsK5ko=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=G6R6J2Tr0yjFFdDfUw8j4W+vMDSPHcYn7lhH9AsHvWwOS3b2fKv5hQSEnK+v1vEX1
+	 X340Jilt9mvYEM6pn2jHnHMMwco0kxed5Za++jbP/7XuRkzzgBDoetvw4ac7m7CbuJ
+	 v0XwmEa1DdqoP2K+4bf/vaahw7MJJhsMBCKcwXePV7MjqzwRRwAFpNTfMYivbHQc3c
+	 ZW0GAOGyMjn+JKmuzWZpGTpq4ODnItBSjzS3P2k1QvWckVZsQ+PCl6W3bViR54tViM
+	 hF3rLxCHF4Rv41RJnFyCdLaLrmgroDZjbKRkqg4G82K1FrSut3/drmRYD280/lL6vz
+	 a+zdJyvdOZX8A==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 Jan 2024 18:57:45 +0100
+X-ME-IP: 92.140.202.140
+Message-ID: <d11852b1-6d9c-4ced-83cb-96e753edd45d@wanadoo.fr>
+Date: Mon, 22 Jan 2024 18:57:42 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thunderbolt: Remove usage of the deprecated
+ ida_simple_xx() API
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
+References: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
+ <20240122112922.GH2543524@black.fi.intel.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240122112922.GH2543524@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Sun, 07 Jan 2024 11:02:02 +0100, Christophe JAILLET wrote:
-> The first 2 patches are bug fixes related to missing dma_free_coherent() either
-> in the remove function or in the error handling path of the probe.
+Le 22/01/2024 à 12:29, Mika Westerberg a écrit :
+> On Thu, Jan 11, 2024 at 10:10:21PM +0100, Christophe JAILLET wrote:
+>> ida_alloc() and ida_free() should be preferred to the deprecated
+>> ida_simple_get() and ida_simple_remove().
+>>
+>> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+>> ida_alloc_range()/ida_alloc_max() is inclusive. So a -1 has been added
+>> when needed.
 > 
-> They are compile tested only. So review with care.
+> Looks tood to me but wanted to check if you tested this on a real
+> hardware or you just build tested?
 > 
-> The 3rd patch is only a clean up.
 > 
-> [...]
 
-Applied, thanks!
+Hi,
 
-[1/3] dmaengine: fsl-qdma: Fix a memory leak related to the status queue DMA
-      commit: 968bc1d7203d384e72afe34124a1801b7af76514
-[2/3] dmaengine: fsl-qdma: Fix a memory leak related to the queue command DMA
-      commit: 3aa58cb51318e329d203857f7a191678e60bb714
-[3/3] dmaengine: fsl-qdma: Remove a useless devm_kfree()
-      commit: 0650006a93a2ce3b57f86e7f000347d9ae7737ef
+It was compile tested only.
 
-Best regards,
--- 
-~Vinod
+Transformation has been done with the help of the cocci script below.
+
+CJ
+
+
+===
+
+@@
+expression i, gfp;
+@@
+-    ida_simple_get(i, 0, 0, gfp)
++    ida_alloc(i, gfp)
+
+
+@@
+expression e1, e2, gfp;
+@@
+-    ida_simple_get(e1, e2, 0, gfp)
++    ida_alloc_min(e1, e2, gfp)
+
+
+@@
+expression e1, e2, gfp;
+@@
+-    ida_simple_get(e1, 0, e2, gfp)
++    ida_alloc_max(e1, e2 - 1, gfp)
+
+
+@@
+expression e1, e2, gfp;
+@@
+-    ida_simple_get(e1, e2, e2+1, gfp)
++    ida_alloc_range(e1, e2, e2, gfp)
+
+
+@@
+expression e1, e2, e3, gfp;
+@@
+-    ida_simple_get(e1, e2, e3, gfp)
++    ida_alloc_range(e1, e2, e3 - 1, gfp)
+
+
+@@
+expression e1, e2;
+@@
+-    ida_simple_remove(e1, e2)
++    ida_free(e1, e2)
 
 
