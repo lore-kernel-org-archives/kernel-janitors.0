@@ -1,68 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A183CF48;
-	Mon, 22 Jan 2024 11:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F040C12;
+	Mon, 22 Jan 2024 11:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705921645; cv=none; b=sKnU60iMy39aGKzswZFiuwQEZ1GUuCcfBiPLHqEotDBo9vSvGbD8oiqh52m2XtlTuHHqHtpCQgQKBxOwta00X7oDQwrgNrIjAGosoguhRhY3yMCiXbE16CbGOdK9Rb838Ws3BvSlJUyegY3WcXdmqyzkSs2Fx0X1GQjQN6uN8as=
+	t=1705922968; cv=none; b=rlGiFUcOwHEzVZoW6YnuD1sIziDgv4sIJRkqRPovo1Nztp7DsMMZ2EHbPIxm3JOAxOvfxEwu0ivWFnbKKHsmgyO9QtwS0hr7ICUz9dhcIPUj65gueIF8F3R8ndRM/Y5a+/is/Pjczc5UT6GH1UaDS8nNQLr0Es1ZJJUfj05g2ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705921645; c=relaxed/simple;
-	bh=5gE+Km5fi/TLlf+ZbAr7bjFoCBGdCvtbA843YDHnPdo=;
+	s=arc-20240116; t=1705922968; c=relaxed/simple;
+	bh=zczYGq/mA49LVGnYY1sC5slAUBCyibjNUhl/7Ir7/Kg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OiroNK3NezJuHeUJinKpG5DBPBiVUF7JhU0RJUpGR/PkewP3d6VGyDO5lcMg7NuH69i1hQpYYqHRdXm6F92eHWHrj/txxjYKZWZuWo26xS9KVfxHlw2bv9ov4MTVCQiDJmlqsxOo0bgl29Zs6lWjpoB4AiGY+URbUdRgU89SYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuKILk40; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=s64uJ1bYLOQdCcwBVUFqx452uGvYtgQzAXdPgwvRW+XhU7HjKRNwlj/i9/KXiGtNHgC57s2xwrGSXXuAYRaywdIOGscbppCBtFKSCStMndo8Vuw2vHv6TyGVXvNEbZ6A2izXHcEihY7Pg8xLyLIQl/HC3PSPyvv2Ug6AjZmbd8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ep/lV8e6; arc=none smtp.client-ip=192.55.52.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuKILk40"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B4DC433F1;
-	Mon, 22 Jan 2024 11:07:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705921644;
-	bh=5gE+Km5fi/TLlf+ZbAr7bjFoCBGdCvtbA843YDHnPdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IuKILk40lppFwkQ3einuh+aBf9EHDFc+HzB4nd9+TtD9RD8cFXoLb9uH0b4wcO+l5
-	 ZgLolbB4kBvfbwMSNrdrt/DX6AdvlyCth5hF6iWkiIlyoyIRSFCRRp25OxYZNLH3y+
-	 hS6J8bEWWqa7aGoYc/N0uJ5A58jQBo7moXbm94fXOfi+eVUfAEAHY2Rr8blocQIcsO
-	 ajf6rqjrYgNlqJcKQ4SMOOBsFcXbNNRAsSAo+eNg6ghbMwFRi9I2q34o76bh7w4Q7n
-	 VTvdOtNITDJ0/WmwMVcBlOzG7leefF8TlyW8g72DnSu42/vcq2xUuXF7Zzg8g9L7g8
-	 KhDKkzWdD59sA==
-Date: Mon, 22 Jan 2024 11:07:19 +0000
-From: Simon Horman <horms@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ep/lV8e6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705922966; x=1737458966;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zczYGq/mA49LVGnYY1sC5slAUBCyibjNUhl/7Ir7/Kg=;
+  b=Ep/lV8e60DB0U9U8G1YkvDL1byvZFqjDFWgwUzRDN8qwYb39j+qaxXRp
+   8SN8BnIlPn8EcXI7HULeik7dBHWGfVpepdCNZ17lGaHNEiPtP8gBK938a
+   eGBg0MJIyydFYmtr0dTWBbiWabPv8ceyouOjiiqVVBDUGNeU7IzcYE1gS
+   YPhSI/6YFHOPXIqM9TfEM3qXkEa0VWL1LzvXx1lGkzKnVIWf3o2cyvEVj
+   kfpdbTWmr+QxgEvjU2WEmZ7yKa+tNYVvzktpSFQHx7A77LCJQaqMR6UFB
+   k6pzi8ZETLrUkPgd+Xw18f/4h2kwOIPop8/3QHyrTLhP4yYuejXdOhaxv
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10960"; a="398335862"
+X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
+   d="scan'208";a="398335862"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2024 03:29:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10960"; a="928963490"
+X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
+   d="scan'208";a="928963490"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2024 03:29:23 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 6521024D; Mon, 22 Jan 2024 13:29:22 +0200 (EET)
+Date: Mon, 22 Jan 2024 13:29:22 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-	Mark Rustad <mark.d.rustad@intel.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] ixgbe: Fix an error handling path in
- ixgbe_read_iosf_sb_reg_x550()
-Message-ID: <20240122110719.GC126470@kernel.org>
-References: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] thunderbolt: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-ID: <20240122112922.GH2543524@black.fi.intel.com>
+References: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7fce4c8c4345d283dbfadd3cea60fdc49f9ca087.1705007397.git.christophe.jaillet@wanadoo.fr>
 
-On Sat, Jan 20, 2024 at 06:25:36PM +0100, Christophe JAILLET wrote:
-> All error handling paths, except this one, go to 'out' where
-> release_swfw_sync() is called.
-> This call balances the acquire_swfw_sync() call done at the beginning of
-> the function.
+On Thu, Jan 11, 2024 at 10:10:21PM +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
 > 
-> Branch to the error handling path in order to correctly release some
-> resources in case of error.
-> 
-> Fixes: ae14a1d8e104 ("ixgbe: Fix IOSF SB access issues")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_range()/ida_alloc_max() is inclusive. So a -1 has been added
+> when needed.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+Looks tood to me but wanted to check if you tested this on a real
+hardware or you just build tested?
