@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57CA3A8CD;
-	Mon, 22 Jan 2024 09:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF323A1C3;
+	Mon, 22 Jan 2024 10:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705917099; cv=none; b=nmXtm5HR/aNx0xEEhBisvEQsddEECfZCALZ5ercQGMUJ8+E9c20l5ysODetWqPYGnchZ3N5171mF2nt9aXmKDM6SC0+WUGN1Ifc0AujqxMCbAExh1djEWb+Wfc507yQjOXlXHsTFU0bMh0Yy8ZjvthkAEDh/612TQfdvhcK6yBw=
+	t=1705918098; cv=none; b=Bi0pHRAkXJEsWN3ZTJUYI9dUg5VcuBNRl8uGqTgGrAD5O8ZuyIa/P8Kb4xKjEOlh1nEhpl4A3Vqq+KoOriK0X0JjLZHf84kcifeVlzlt4XCGqMqZxyEFLXyPo1g3zWEj91VOsTAaymt/TD4lzR4/u5DDvp26GbH25zu9YMUz2IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705917099; c=relaxed/simple;
-	bh=+nGU7Loi1Do4zrvl/0l3JM9LGLlkYeGwWtlVmkNopIo=;
+	s=arc-20240116; t=1705918098; c=relaxed/simple;
+	bh=fTg1GKoElQXtI92ElzyjxQkY95Oc2Gw5CPCoF4BKwq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uF93udTBiJNZL0WmoGN7uT6/z/ceofz7pBaQQ/zFedhcv/6VBqnqsyMEoW3jYW00lzS6WPw/hUKkyDF1GD3IOoT5TY26sDxoBdFrhRTnFYHHTLFk38lqcXM9ka6J/F1aPA7wgT8SWbodphI2DToXfdTX5JI15o9y+IXLp5U7YtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VWGHCJKZ; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=GSD2bWD1a3RXa/BDZeVyixQu1+BqldzHLA5NhQFspDKA/cy8RNuhOE+6thugGiwfkRP849RUXWtFmGnoG4uKy/k3MLdm9WdXO/PCwuKxeNlwwuVwp6w7fmAzUOqT6EKK6ilsMBWO+AKeY6DsC+3tYAeT+rMaaiILFugFOlRVI7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XbLTyj35; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VWGHCJKZ"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XbLTyj35"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705917029; x=1706521829; i=markus.elfring@web.de;
-	bh=+nGU7Loi1Do4zrvl/0l3JM9LGLlkYeGwWtlVmkNopIo=;
+	t=1705918023; x=1706522823; i=markus.elfring@web.de;
+	bh=fTg1GKoElQXtI92ElzyjxQkY95Oc2Gw5CPCoF4BKwq8=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=VWGHCJKZ5HKy2AH+oYWepCu+OuIY6blJAyg/bPpK6HLRSvSs5yxnPOamVrbshYt3
-	 uFDRo42NOZQlpWOEVUirGYt63kEPx3Jwf8edReMYZn5S2yrqwHxGCGAEqCUjJ+eGh
-	 7HmMcdbfbS7l1C8VpYrGCyqnWjEUe62hkessfmc7JGr7xXBraVh+sskyFcbuCod+/
-	 WxpA3XARTvBuVJsVhnHl2ZHDSegqGJTIkI2mg7wEArOFO76vkxglOnvP5V57CvPHj
-	 6vixEG8r7EyF0sPjk2YdlOKZdtix2xxslEHjJbPVuf564UoxRCYp60L4i1wnmz93N
-	 tWb8kf9WBed/7ntMCw==
+	b=XbLTyj35Lb7jl1Yxk5KWnYotJUTzEV/OahrmTGAuvwBNAl3a+VwS5Yj6WbV0eTWT
+	 F8XF4+XunIdby/uzCcMOOXrbW1nz0ynfe+q8vz86czFsJHriEmDKJWjHye5gDjekJ
+	 3zJdBiB8SvV6FuY74cI9jSzvCGCSRC5rAZdb8vLb9G06jExBKLSY6l4PqdiFcDwB8
+	 Ce3nIBc9znPGdYrOIH8xCam1LgCpl7GlXMfteTWW3HyMt7yYNleZj0VLEuSafpBJX
+	 LdY5ZefXx197/9mhH7YnobqgSJ8w7SeTv9fyjuS3g01X41Md/kH696KNsDSTb+nmR
+	 fDZwscOeNJL4O01/SA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSIJA-1rYThF27UO-00Sh0e; Mon, 22
- Jan 2024 10:50:29 +0100
-Message-ID: <6d40b95e-2ed7-4f32-895e-a2174236ee65@web.de>
-Date: Mon, 22 Jan 2024 10:50:23 +0100
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1d7i-1qzQGl1nD6-011tRs; Mon, 22
+ Jan 2024 11:07:03 +0100
+Message-ID: <b0b1ba48-1d48-4163-afc5-ac92121ee14c@web.de>
+Date: Mon, 22 Jan 2024 11:06:57 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,55 +40,70 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] x86/xen: Add some null pointer checking to smp.c
+Subject: Re: [v2] x86/xen: Add some null pointer checking to smp.c
 Content-Language: en-GB
-To: Kunwu Chan <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc: kernel test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
- Ilya Dryomov <idryomov@gmail.com>, Jean Delvare <jdelvare@suse.de>,
+To: Dan Carpenter <dan.carpenter@linaro.org>, Kunwu Chan
+ <chentao@kylinos.cn>, xen-devel@lists.xenproject.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  Jonathan Corbet <corbet@lwn.net>
-References: <20240119094948.275390-1-chentao@kylinos.cn>
- <26ef811d-214c-4ce4-a9f8-4fa4cfdefe29@web.de>
- <6f25f54f-eecc-4765-bdc4-248674836e77@kylinos.cn>
+References: <20240117090018.152031-1-chentao@kylinos.cn>
+ <1705655941162581.825.seg@mailgw>
+ <517fae75-c4e7-4576-81ff-6a14a3eb9cd7@kylinos.cn>
+ <dfb6de51-3ebc-41fc-a750-cf5ca2ac05aa@moroto.mountain>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <6f25f54f-eecc-4765-bdc4-248674836e77@kylinos.cn>
+In-Reply-To: <dfb6de51-3ebc-41fc-a750-cf5ca2ac05aa@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:7PuQIQ+STP1HEpxBb1F71REntJZh+zhVfsHo3QNQ2Y97EaG7Chu
- YZg+NMHWD7a8cWoCqPBaqIuW/1RiZ95h0IExGFidpRCIOSY9cJLbrYPImqSSO+d8zBIdfye
- 9szF1wZYZ/itaJHlMQ6w4DJUIsyBBuQ9qZ0nDe2Vb4wVFQ4MwNGbMZ4YvY1TmWAZaA+dkWA
- +S8b9V2h+w2RuVKyoIqlw==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TVWkH58C8d+xxHWHzHB64epa3s2plijd4rtx+6kS7ddQj8Suzvv
+ naMuUTuD5EWLL2maurgo9AVz+dfWzvKtULBa/5Ve/rZFZcwKc9G46OszjBW7AP9yBR2RipX
+ lK43Pd+vVigt/FjZRtStKTTDI5ju3W3XLb/WimEdl4OICVTk1/YmHkjTr/9CBQ1xYQ94yFA
+ aDAE639lz9NSS4qWe7X9A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yEsnbDcYv3s=;ZPb2Mu+H2XGola6RbrIcyQWyz/T
- ok93+jBiDKnY1DDXbD0Zifx5nXuoctjgIftPZMgZIr6+J0Ok/V4IQWfIX3rww8eDuhSWmqlvK
- 9qJflq3k1x97bT/azeoHOkoWJzI8tXhkHDYdN+ev96ILzZ9EL/wY5GeaUIcQHlekUDOjpfyTR
- OrGxEC3jyfaeGjdDH8Gn9CeDy27YGgHXSOrT+eHHQj77p6Gp0wzaPxB2+rW8TJ2ff2aRsw6aY
- pXIS+5vkwsSPVKxG5GjojJuUvcZl5XVGkNMAQgqX6BqSFIo/GXB/kqFgNwSgNbMM/p0DNdoun
- iaqRQcsiwb/XbIrR7D6zSTkMayqKL86oxZSEbdlX3qNfUOfYRF2wgoQhOxv0lHiPEm/itrbso
- tB7NEyziFnGFmr93Zee7Z9dOaTLbAGuZ/IIHTnsRhvShgIoqHO1fEo4Z5FolxJahE+tmdfxP3
- 1opwbsVgSPUTIONZ5Zmwx62rBUYhcvY/vd2w1paAXsD9dE9qBA8O4E4+TLxuUFrUVwpSf63tT
- RKyImNKQvIJMqAmltIcOcrgQpf/85/YxZCnfNsleS1TWANHUv87awcKOhicDB+6uzzTABEHaX
- V9ikk5FvhrtGe6B5f/8qrrzmW/rqFlbbIEk/T3zgJvWuLVL4Hm39kHppviwwcqh3hQAwRSuNW
- Q7B6/h7M+ykbB2NgaxDQKF6DqccJHP1nGAgz4J/5dqXsHJA7/VR4g/gVk+U1eJbX+A6hhlNeH
- h+XVBcSG7JPULvFvS99MaPwQK038pKGKeS8Fzu030ExOECSB2qT8UcQCnl3MwgRb/TWfU+pJu
- V8GAGqQuivpqsX0lj4ceZ5RV8s9BC1V4i1m/BNBYbwiddhzLYE//O2Hp0ptm32iebTaCGkpWr
- qBBVRgCm3h4iXgOrInS6rrAS/SDpbOsiCBz/oZkvu8TtRs9zrtkFfHsozotb0ujHHHsj9xzs1
- GH3CTA==
+UI-OutboundReport: notjunk:1;M01:P0:dU6CzvMVSpk=;fSHtYB/+Ly6z8pY0YGpGVG3ymD3
+ S5R+AQd74kyXPO7x6bf/abdvDEWT2fFiA5grBn0s2z1asUGulEyqknQZVKJwf0tKu2SFstgor
+ C/k1kCa4Q1jtgtl3ehPa0kPjTNaru70z78epFuFQTTS6fKSCe3ZrV7ekGai8+G8Hk7yOgiQXU
+ FgIixZkdWM3rkJ54x8VUy6DnkxGN1mIkWIVQT87i2xg/BRetp7hS+LYad+RpxlHzxvABYaFMS
+ yTWm8/CYgyNkKb64NqBPX/4EETyRZmoh4Pg/ONAtpFP6K6RRshD3XLN+LTIsf/dt4hPZ/OO6K
+ zhJ3Jcd1jHt3rZbRkLwlP1aQTms2E3DXa/sPOTYIHuawGiZL43TXPy1nvG5Qu5XUD+uLR3UcV
+ MSUBMqfOBKib4NuW2aKzkwhtbtHAoj5OPdJkdO0KL00ZXjJYha9ar9z4FwFEyZ1uJuyeyouRP
+ /RqzuWH97IyQeevzIJ4G4ujdTPtemaWdj8C97cgBcFTGQaxF+AjXHFLnDnOeGwka7ehoySB4X
+ WEQB4wDsnXTCEppwuZwANErLkf/0Pvy94yrRC2T6DmIt6v2LaBYQMXpvj02MO/hbZgv3mS7VR
+ WC+u/TOo2Es1jI67Vg0HD/nGJCfItmhF37j4A2V3sXpaVksjIlhhi0btsiu+4OQdcvfv5633N
+ daXMmq0nbOUPsumFU3SHFodudI05p3k4JBAYBudav4Z2nhG+sPc9ZQWskqP+FkFUVkln+jFT3
+ nhXJMMD1BxRr77e5AdkLzRBhX7B63C6MBSR9TfPXbS0+4aAQs2fzLWb9SsX3rDAPwldNNrgpa
+ C3enyvAYKhgNNxSEoKwSHU0BTHyxrTSyvXXnSABRXE+7SqHuxuNl5W1vih1+iMORigNwPmFqs
+ w0CgqXRGAAG4XNsHi8qw5xoGBkcwrbwWz964mjZpoza6mVBLAMBLcTHqiNvV8IEoGtqzH/hV/
+ lNYuYA==
 
->> How do you think about to refer to the function name
->> instead of the file name in the patch subject?
->>
-> The main goal is to assign a errno to rc. So use 'fail_mem is good to understand.
+>>> How do you think about to use another label like =E2=80=9Ce_nomem=E2=
+=80=9D?
+>> I'll add a new label to simply the code.
+>
+> I'm not a Xen maintainer so I can't really comment on their style choice=
+s.
 
-You responded with information which can fit to the patch body.
+Linux contributors can discuss various implementation details.
 
-How do you think about consequences for a subject variant like the following?
 
-x86/xen: Add some null pointer checks in xen_smp_intr_init()
+> However, as one of the kernel-janitors list people, I would
+> say that not everyone agrees with Markus's style preferences.
+
+Can a corresponding document be improved accordingly?
+
+Centralized exiting of functions
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.8-rc1#n526
+
+Do you find a related information source helpful?
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
 Regards,
 Markus
