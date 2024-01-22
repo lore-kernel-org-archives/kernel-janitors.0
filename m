@@ -1,105 +1,99 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F71A405D6
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Jan 2024 15:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B5E405EF;
+	Mon, 22 Jan 2024 15:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936876; cv=none; b=CP8jEpPScc2uHCYUVDludp4Y89kIqtMWOYb9JzLByjHYKx3UaUvBQ+hgP0fed0CDVog4rQyMzRRwAdLhEZF8ymXQf5pd1GPpgjjxpg7PVGdoVBefWtWasrlpWzqfw1Q9qraoIgTM2SaavkryiASpngHnZhAYogSKTNrOF7DOCRo=
+	t=1705938613; cv=none; b=JGPyEB9+QoNNOP/6n4FxBEGTPnpYGada7vgGo9a7mFdE/6TA/LgXbOi/J52OVLhhHSQJwKpVFHn6L/MRQWZrI2xcDOF1vnnj6o2kHHdlIAnkBAdJWqf/AujbHDOWln7ZqTlJ9FF7U4XY4bgZXiTm3yCtur3tVG5lLoIpdi5z8Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936876; c=relaxed/simple;
-	bh=fUfuTS1ONtt1Sc+QMJaOn6OAPkhCtiu6J0M8A7SoJa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Mo5wUsmz9dPEvk9uqOy3lwTxP5NYNA7ElDN4WzOYflbSgqwmuoVgh4gvjXVTkUYT8X4ej9U93oYAreninYiyH1LmxSYi0G5HNlbNrQ04Ot8ZDhjti/sVbD28dSUoIpv7W2Hf9A4bQaOps5+ud4kUONxGb49SyrxSJDx4djYVGYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/yBbLD2; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705938613; c=relaxed/simple;
+	bh=PME5bbv3asP19dSw6d/TnXvufb8ShPW1A+mWkN22bCA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SsNiSRRvkAzJ9bD0sHVlMyN8adWRWMS8uVHNv7yGYb5LKel0zzdOgvGxrKr5l9w24mu0vv1mnAQ4Zl319NOTWLQM0CSOE49XSUW6SmsVXh287jHXZ3VubBy0RB0ooOFwrhRIcCV1uG6o+TZtd1GhFC8yaK1TniSBpJIGHUrAM4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SVg/5b11; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/yBbLD2"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e76109cdeso37794715e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Jan 2024 07:21:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705936873; x=1706541673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NSmP683nHsYZ+QYwFDjWG0Am9VIQRDzOaWrn4+k4gg=;
-        b=D/yBbLD2Z9NmmMarOc0g3Zy4wqpJ7mmfYz+3x6zxlNkNMqU4w/Qf3lfBsQh0cbDSpD
-         jFCtpNcZFf4yke329Grdm36+MJ9R7xTJ54V8fjPInO4xmgCln5+DRvyw2h/SnpqGOl1H
-         PH5HeLlB5Ofl/8dTQSgbzIbko5kiF0B/Pd1m7tN+PMX2U9eVLrsbB+6dvZ6yqQZWxuCu
-         MF+QTu/jcKUojmGVsCTMh2vBRwQQexgg8obr8Ys4kni+ggRa1dG4/CzAaMewQf/DME29
-         6+zodjrYx5izdXrGgwbA66xkStFN3cmzisE/dSCcu/QPflXYaC57PH7Xx7L/c6UoEJm4
-         B5Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705936873; x=1706541673;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3NSmP683nHsYZ+QYwFDjWG0Am9VIQRDzOaWrn4+k4gg=;
-        b=ARYRQfE84DUK8Xldj6oZhZlApGqhWDq3xVfzqlJUOAqXgKlbV+qbF4bP0pwp0c8c1y
-         caJJg3npwyTaVsfJ1xg4qaAWCTvF+DHwiN5alXR1qJuNR3+KRck7SEmzfrdTI1UOvq9t
-         ue+aMX6t3CPtYUtZuiBNfn0KsuawGRt/RUIG5LXDrOkcp/vjFtpBRo2MXafwjN8DWyRF
-         HHWAERhPYCafI3vadKf+KAEpvljNYy5xeheTjEW0aGmH0BQDHWc4Sg6RIxmxiaCoGlah
-         /xZh911So3zyc/SlIvcsYa0xDgsgmIjfQHhImVjxWbfTguytFRhfKauuraluMCX/BCIn
-         6+Jw==
-X-Gm-Message-State: AOJu0YwQoMewqP/PbnMT0MbVrffbQ2LWJBpLUCPtjAUzbm/iMkMo63/D
-	Up2ugAyiCWhu0Byxdoky9sLDwriEBR6MXIQ6mrKj+wgC1fm9ClCxfQ7ltP1AdbE=
-X-Google-Smtp-Source: AGHT+IEW7U1TIKg1LwteChy4/AJ3H9LLFV7lw3z54lPa8/SxA8IUIP/Cz3kDcBRnGzAbhGpHLENTEQ==
-X-Received: by 2002:a05:600c:3847:b0:40e:553c:dace with SMTP id s7-20020a05600c384700b0040e553cdacemr2272796wmr.92.1705936873221;
-        Mon, 22 Jan 2024 07:21:13 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id jb13-20020a05600c54ed00b0040e418494absm38542327wmb.46.2024.01.22.07.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 07:21:13 -0800 (PST)
-Date: Mon, 22 Jan 2024 18:21:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v3 2/2] PCI: dwc: Cleanup in dw_pcie_ep_raise_msi_irq()
-Message-ID: <c5499db2-2c25-4765-b9e0-1fa26da1cc45@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SVg/5b11"
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40MAY6eZ000913;
+	Mon, 22 Jan 2024 15:49:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=6+n08baSWoKll1alAdFlutI81OxW5WoCAt0Bwt8+8Rw=;
+ b=SVg/5b11X9hsfS0XxUeB8SDt9PCe6LmN+FawiYto8pm6zvpO0yxSQznPLCQXJlb8eDYq
+ Em1/QIZ/ZUeoi2ZwmnbGsWjT6qb7HbfB5zuzDEO+qVUCVr53HaUuFkFBMHsK6mU/+MGU
+ 6uSldCxEaaAk1Ggl3NzZPL+lCgPoncppCSPnqH6+IHnH2n5GNf2Fly9UkX7WnGrqE6g1
+ 6BV6Apw39gVnvoqS8zNoDm+kkRCnSS3fmvVyGLBNGR1QcdLdrc7E0h+61h1qbAtw8TyX
+ Mt3SoHb4i58e2EegnCCETUCYk3oURwHo15Cqz0zm7K9dW0t1B0NM4+Emzii++8qMJgvl ug== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vr7cwbukn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 15:49:57 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40MFZV2Z039341;
+	Mon, 22 Jan 2024 15:49:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vs36yun01-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 15:49:56 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40MFntnC001674;
+	Mon, 22 Jan 2024 15:49:55 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vs36yumye-1;
+	Mon, 22 Jan 2024 15:49:55 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Aleksa Savic <savicaleksa83@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] hwmon: gigabyte_waterforce: Fix locking bug in waterforce_get_status()
+Date: Mon, 22 Jan 2024 07:49:52 -0800
+Message-ID: <20240122154952.2851934-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0d5b689-9437-43cd-8c1f-daa72aeafb2e@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-22_06,2024-01-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401220107
+X-Proofpoint-ORIG-GUID: L-dIc_Sqd8wHUlpEMhIJdMzSKoQ6ulL-
+X-Proofpoint-GUID: L-dIc_Sqd8wHUlpEMhIJdMzSKoQ6ulL-
 
-I recently changed the code in dw_pcie_ep_raise_msix_irq() to use
-ALIGN_DOWN(). The code in dw_pcie_ep_raise_msi_irq() is similar so
-update it to match as well.  (No effect on runtime, just a cleanup).
+Goto 'unlock_and_return' for unlocking before returning on the error
+path.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: d5939a793693 ("hwmon: Add driver for Gigabyte AORUS Waterforce AIO coolers")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
-v2: Add this patch
-v3: Use ALIGN_DOWN() as a style improvement
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/hwmon/gigabyte_waterforce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pci/controller/dwc/pcie-designware-ep.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 51679c6702cf..1c8d2e938851 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -483,8 +483,8 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 		msg_data = dw_pcie_ep_readw_dbi(ep, func_no, reg);
- 	}
- 	aligned_offset = msg_addr_lower & (epc->mem->window.page_size - 1);
--	msg_addr = ((u64)msg_addr_upper) << 32 |
--			(msg_addr_lower & ~aligned_offset);
-+	msg_addr = ((u64)msg_addr_upper) << 32 | msg_addr_lower;
-+	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
- 	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
- 				  epc->mem->window.page_size);
- 	if (ret)
+diff --git a/drivers/hwmon/gigabyte_waterforce.c b/drivers/hwmon/gigabyte_waterforce.c
+index 1799377fc2f1..7bccfe2eaa76 100644
+--- a/drivers/hwmon/gigabyte_waterforce.c
++++ b/drivers/hwmon/gigabyte_waterforce.c
+@@ -146,7 +146,7 @@ static int waterforce_get_status(struct waterforce_data *priv)
+ 	/* Send command for getting status */
+ 	ret = waterforce_write_expanded(priv, get_status_cmd, GET_STATUS_CMD_LENGTH);
+ 	if (ret < 0)
+-		return ret;
++		goto unlock_and_return;
+ 
+ 	ret = wait_for_completion_interruptible_timeout(&priv->status_report_received,
+ 							msecs_to_jiffies(STATUS_VALIDITY));
 -- 
-2.43.0
+2.39.3
 
