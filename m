@@ -1,68 +1,61 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E05F2B9CD
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Jan 2024 08:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5372759B77
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Jan 2024 09:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706000215; cv=none; b=B15iIn9IIxcv5TwBuG52HTybt1KYR+MBA7S8iWaS2laa1zSHZX3OD0/2WfTYSdt3zKTFMY0zxKJE8TSZb+33m7Up5AlD0N8C8M3A0Nrc+R49one7OgUxdZnKn5zt3P+oC+AAWAG1PN/Z0lK8baODCI8eBhiceR8MXX+y/C7Mm+E=
+	t=1706003752; cv=none; b=nXa1eYFSLagH8sPEWV4WlkoFp+7B9vrTEzhnSl3KzX8oKDtUbPt89guI9uAfQSJcL/wqKxGMzv/uWf+gth5HjSmIUVHg5JKAyj79mcTlxdpRgJelHjVHqKn4MQo2+sAOLkwJtnw8TqmNXvrrn9D7ZcqIxwQ/L+WPq1ErfYf+64Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706000215; c=relaxed/simple;
-	bh=IfZpzISfWAZNbaikyXYCaqj+bGCHCToXByFRkBXSgDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IryBRRVmnzKdluj6S2m8uopQykj34pisNOIG9SU9HtCyE7tg8qf5j2cqvARX+ff2Bsswk2j0yc7E26buwTNkILRex5nPj9erzURAnWoCyLDqR8XtXX6SdRXBXO8MMKYXkd2d5CaCyAWmHkHEtbksTQUP4kfVJjIAfiwcJw1bA04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgRXNyiL; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1706003752; c=relaxed/simple;
+	bh=/r74GFz4NCn8ORI/7yeeQiiaGc1lvfRg8wAXKawzYW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jBB3wT7P7VfH05FSO4vxijt5AO+JFpuP7fPkOnVVnD/RM9Mi+Q99SUCLb6s30XXDQooYHF6q2mz8e4ReGgNr4QiYAyeCpUD3JnSchOCIF2E6/nng/QIt5IZUUu62LHAW7ansKjBX57T/P6a8wEgLL0D1iGLlf6wQWg9a+5tVQpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OagKnhW3; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgRXNyiL"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e490c2115so30641335e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Jan 2024 00:56:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OagKnhW3"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40eb033c1b0so17428035e9.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Jan 2024 01:55:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706000212; x=1706605012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GcK6zvLFuwSh9mo7ySciDzTNwWqWuU+gHFUQY91mYpM=;
-        b=xgRXNyiL/ZKFtO/4ezv/wb6r4TXI5dvnUEevyYHetK+1qfBvjKx3xJ5qEqijn7fKdd
-         4j9RnG4MjHXkILX6w2d2xLdWztqzDx6ApNZrDSJKAuCXSgO0Qs6QyA/RBvqyEj14eZQD
-         lHgtVwz2ecVlDiMZofVBc4HsM2jJtrv1UZ0TE6xl+G7O4FvEB7PtyyyceYW/SIRe0lyA
-         VWW21QzWHzMwEDsOUF3NkOe/7ZLRDXmMtFz2BvoU9AYNNoX4KoXeoJl5/dIl1gD/1YB7
-         Z6HqMWlclnZOPEq3R4iHcR+Zn5sUAa2ckGwg24zH4GTcYkv/Yl/+xBfhqrRBJLClqC4J
-         HpHw==
+        d=linaro.org; s=google; t=1706003749; x=1706608549; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9MrKb28kSD74KPrxA+pJ36LK4A+l6+QTAduHZ07kAgY=;
+        b=OagKnhW3GGr/ut0C0uh0y9jgAZh0PHBzWGoC69lS/jCA+Kst1sabPlJSli5pgMXdHW
+         Z9SesJ5TC6FWdlEKw4rOcRqCctPVLIHFIYMTkdZzv803JuKmLntHTrWI3T9030IZMpqi
+         IMDGc0E+UaMdmb7aWyGtDpJSU97wdrH5Pu/6Bdc9VGgFJ12X0K37WrIcvIKciDtYaypP
+         4teuTIe4s/i2/sAHGyiosFWcogjGo/8XLFJnYtuX7Zu41eA3Tv5XFgNPEvuMrjEvijwS
+         tKEo8jVr86dU28sYp097FDuRqN46+7ypHX4THE85M8DTao5EYGI8X0BZabjHXVciFjRr
+         EhvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706000212; x=1706605012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GcK6zvLFuwSh9mo7ySciDzTNwWqWuU+gHFUQY91mYpM=;
-        b=jbR2v1Vm4jVqoq3UdsrHIYdxjV4ZjmghO5TmL3dMIFEKQ+MjUO9frNRNrfsdaWUtTb
-         U/PE5IhqpCuwaqbu7QNC8xO6VjdjmPwGTkxYJaFS29RhDDjN6IcUXC6kQw8GlOI2KFp0
-         GD8lPGKX/2C15u7fSdvVwBOhYOxCFlBsXGrwnWvUTylz9cyClnAY9NLKxOHRYswQZcf6
-         Xw7dYGJbRW86EjpEiqLEemrf7g2ZkQrgPKwdiVE9SRmPkynxYAt3dN3OlHKRck3tKgoy
-         yjWcV/0jtTTZxNsOZCIk8cij1b3YWsrnRSwnmNhLmYFByQuUq+24V8zdVn33P+FQc9+C
-         xThg==
-X-Gm-Message-State: AOJu0Yw/FB3buJ3Xs6HaOypTUipo8KIIEkRIElcH/tL/ghbqKGlYTR9S
-	oHm7GFSyW4F1Di7i/+Brr76+ZqkSD0w4V9hjv5HVHGBULhftzoIOzj5PBPnFPL0=
-X-Google-Smtp-Source: AGHT+IE83CqPYcjrXGj6lFrWB/MgUBCFYVdyddu4KjguVtrvYTGjEjec+5PDM6H+aqHZoQ35inLXdg==
-X-Received: by 2002:a05:600c:1f05:b0:40d:80a1:867 with SMTP id bd5-20020a05600c1f0500b0040d80a10867mr276491wmb.146.1706000212591;
-        Tue, 23 Jan 2024 00:56:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706003749; x=1706608549;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9MrKb28kSD74KPrxA+pJ36LK4A+l6+QTAduHZ07kAgY=;
+        b=OhGj+6oT/iPQEIKYzksw/5ACCKiqatolNDmTBCaN+RJWlTAqaoNFA3f/dQWivjjboh
+         +XjfKr/1HdqXKVW/mHOeak/rhDll2uOa59CnnGJXuqNl9R0U26gC3IXr3NKfgmEg/8CP
+         ES8LLqtsTR5wlAWp1i4Qmlom/AyUmRo4yBLN3AibT74DNxUgruuvyZjxdIYignUHZMxM
+         vg20A2bGfJiML8um1n6xEqurJSDd9r+scSzk2bjJZHy38spu26Uq00OsUV98O2rbjo/a
+         H6Vg3/EFXrZW8uLGN9176L2mKrQinT55HElh86g1I+evge6wbjke3THA/4yG+/DHB+Ro
+         Jk6w==
+X-Gm-Message-State: AOJu0Yxq/kYLNogpH+CKktDl6wH0aoWJccwPzTH7GJA01dPA5BJi0GUl
+	fqMm8nLpP5GWqBpVVE1vjQ/X0m8XI+gMWANKWvvnNin9qbgvi4mwl8eTmRtmX28=
+X-Google-Smtp-Source: AGHT+IGqSgiPAKLruazT0v1ff664BwAxhwEo/Y9jRmN6XuyhJL2C+qSeB8nqtlNm+wI1EgrED57eTQ==
+X-Received: by 2002:a05:600c:428a:b0:40e:555e:ebff with SMTP id v10-20020a05600c428a00b0040e555eebffmr446386wmc.150.1706003749656;
+        Tue, 23 Jan 2024 01:55:49 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id f6-20020a05600c154600b0040e880ac6ecsm21864357wmg.35.2024.01.23.00.56.51
+        by smtp.gmail.com with ESMTPSA id w18-20020a05600c475200b0040d2d33312csm42398155wmo.2.2024.01.23.01.55.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 00:56:52 -0800 (PST)
-Date: Tue, 23 Jan 2024 11:56:49 +0300
+        Tue, 23 Jan 2024 01:55:49 -0800 (PST)
+Date: Tue, 23 Jan 2024 12:55:46 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Danilo Krummrich <dakr@redhat.com>, Felix Fietkau <nbd@nbd.name>
-Cc: Colin Ian King <colin.i.king@gmail.com>, nouveau@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH][next] drm/nouveau/fifo/gk104: remove redundant variable
- ret
-Message-ID: <fe659736-500f-4e59-a9c7-ad894155a675@moroto.mountain>
-References: <20240116111609.2258675-1-colin.i.king@gmail.com>
- <aafe669f-b322-4f22-a48e-564e3eb3447f@moroto.mountain>
- <bdc7e401-a676-4040-9138-8dc5cf35bd05@redhat.com>
- <55f0983a-300e-40bb-9142-6f4683914402@moroto.mountain>
+To: Thomas.Lendacky@amd.com
+Cc: kernel-janitors@vger.kernel.org, Raju Rangoju <Raju.Rangoju@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: [bug report] amd-xgbe: Initial AMD 10GbE platform driver
+Message-ID: <6ba0dcad-8c35-418f-a892-a8555d57e58a@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,71 +64,68 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <55f0983a-300e-40bb-9142-6f4683914402@moroto.mountain>
 
-Let's CC Felix on this one because he might know the answer.
+Hello Lendacky, Thomas,
 
-All day long I spend looking at code like this:
+The patch c5aa9e3b8156: "amd-xgbe: Initial AMD 10GbE platform driver"
+from Jun 5, 2014 (linux-next), leads to the following Smatch static
+checker warning:
 
-net/core/dev.c:724 dev_fill_forward_path() info: returning a literal zero is cleaner
-net/core/dev.c:732 dev_fill_forward_path() info: returning a literal zero is cleaner
+	drivers/net/ethernet/amd/xgbe/xgbe-drv.c:1209 xgbe_powerdown()
+	warn: sleeping in atomic context
 
-net/core/dev.c
-   696  int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
-   697                            struct net_device_path_stack *stack)
-   698  {
-   699          const struct net_device *last_dev;
-   700          struct net_device_path_ctx ctx = {
-   701                  .dev    = dev,
-   702          };
-   703          struct net_device_path *path;
-   704          int ret = 0;
-   705  
-   706          memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
-   707          stack->num_paths = 0;
-   708          while (ctx.dev && ctx.dev->netdev_ops->ndo_fill_forward_path) {
-   709                  last_dev = ctx.dev;
-   710                  path = dev_fwd_path(stack);
-   711                  if (!path)
-   712                          return -1;
-   713  
-   714                  memset(path, 0, sizeof(struct net_device_path));
-   715                  ret = ctx.dev->netdev_ops->ndo_fill_forward_path(&ctx, path);
-   716                  if (ret < 0)
+drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+    1181 int xgbe_powerdown(struct net_device *netdev, unsigned int caller)
+    1182 {
+    1183         struct xgbe_prv_data *pdata = netdev_priv(netdev);
+    1184         struct xgbe_hw_if *hw_if = &pdata->hw_if;
+    1185         unsigned long flags;
+    1186 
+    1187         DBGPR("-->xgbe_powerdown\n");
+    1188 
+    1189         if (!netif_running(netdev) ||
+    1190             (caller == XGMAC_IOCTL_CONTEXT && pdata->power_down)) {
+    1191                 netdev_alert(netdev, "Device is already powered down\n");
+    1192                 DBGPR("<--xgbe_powerdown\n");
+    1193                 return -EINVAL;
+    1194         }
+    1195 
+    1196         spin_lock_irqsave(&pdata->lock, flags);
+                 ^^^^^^^^^^^^^^^^^
+Preempt disabled.
 
-This if condition might trick you into thinking that ->ndo_fill_forward_path()
-can return non-zero positive numbers, but it can't.  It returns zero on
-success or negative error codes on failure.  Smatch is doing cross
-function analysis so we know this.
+    1197 
+    1198         if (caller == XGMAC_DRIVER_CONTEXT)
+    1199                 netif_device_detach(netdev);
+    1200 
+    1201         netif_tx_stop_all_queues(netdev);
+    1202 
+    1203         xgbe_stop_timers(pdata);
+    1204         flush_workqueue(pdata->dev_workqueue);
+    1205 
+    1206         hw_if->powerdown_tx(pdata);
+    1207         hw_if->powerdown_rx(pdata);
+    1208 
+--> 1209         xgbe_napi_disable(pdata, 0);
 
-   717                          return -1;
-   718  
-   719                  if (WARN_ON_ONCE(last_dev == ctx.dev))
-   720                          return -1;
-   721          }
-   722  
-   723          if (!ctx.dev)
-   724                  return ret;
+This warning is correct, but it only showed up because I messed up my
+devel version of Smatch last night to make it assume that we almost
+always enter into loops at least one time.
 
-Is this intentional or not?  Who knows?  If this were an obvious bug,
-I could fix it right away but ambiguous stuff like this takes way more
-time to deal with.
+The napi_disable() function cannot be called while holding a spinlock.
 
-   725  
-   726          path = dev_fwd_path(stack);
-   727          if (!path)
-   728                  return -1;
-   729          path->type = DEV_PATH_ETHERNET;
-   730          path->dev = ctx.dev;
-   731  
-   732          return ret;
+You would need to enable DEBUG_ATOMIC_SLEEP to see these warnings at
+runtime.
 
-Obviously this is intentional, but if you were tricked by the checking
-earlier then you might assume that ret is some positive value from the
-last iteration through the loop.  "return 0;" is so much clearer.
-
-   733  }
+    1210 
+    1211         pdata->power_down = 1;
+    1212 
+    1213         spin_unlock_irqrestore(&pdata->lock, flags);
+    1214 
+    1215         DBGPR("<--xgbe_powerdown\n");
+    1216 
+    1217         return 0;
+    1218 }
 
 regards,
-dan carpetner
-
+dan carpenter
