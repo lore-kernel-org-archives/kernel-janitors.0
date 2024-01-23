@@ -1,79 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C7A80036;
-	Tue, 23 Jan 2024 17:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EFB63B2;
+	Tue, 23 Jan 2024 20:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706031991; cv=none; b=OKdYVlCEjBmVEh/z/rel16DO5v1bWwAcraETZ3MMHfDP7H4YAxS+PACmNdGAWb622U0wGvG9NfUgRALhwl67pDN1dT/xJbVMDhS46gWgn0nnFRNxz64VOrFpx1XX/CWADoxGyomvrF+vdMwm8Mjby4z61IS2PRe6531o1urpUyo=
+	t=1706042817; cv=none; b=nxgeZCc4x6BtYnXr8bBzJy8RkkSu/ku70+2haqpWaIpdKH4m8VE8vaLovbBJw4lkFamaoM1POJzmJTnF5J0jY6sP4G0DXH6b9k/rNaSVSM558II7jVvYdoKQ44IcVUeW1ErzJ9MqANHy9aCS1ZLSUgzGIuBqEO1Z/xUp6BkE7S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706031991; c=relaxed/simple;
-	bh=NkHE5jAGeam0OhUX55X+rbk7tkRtqWrCjQ1f8FdelE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxPyIRA/JMmGA7zZgCwjwNltP8cUvZ95dXdKEQ7+t+yIDTfBY82Ngvt7QIXAu5KM9PoS/E7MkOWwgzKl0yv7QhQIHJRhvd+6ajDhdS+ou3zRAVpD9HPJu3QSV/T1BoslJ8RNqzItjG1DclyT8yUXqZccbi8K/4UU13IlRmNt0ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O64Q2j7k; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706042817; c=relaxed/simple;
+	bh=YZHodvUWAeuvnhi1pJmgPsoMYoy8W6KTZoyK3m9HKlY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d0drX0XGpD344KNy5p3pBiZiMCe0CQSr88a7f5nStMkrCu0eJqHbOG3JYzZ3mutrKoXLfkznRvpdzKN+pB2pTEDMwore2ZbnQ3WVHb3UxbtvCmIA8RVNr/uNlrZHdG5LY2ajp+NDIpl9YFmu47yjMnD2L/0R4FoSVg7I7HYg20U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxuaT8JX; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O64Q2j7k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E11DC433C7;
-	Tue, 23 Jan 2024 17:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706031991;
-	bh=NkHE5jAGeam0OhUX55X+rbk7tkRtqWrCjQ1f8FdelE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O64Q2j7kI6EdmKZ7mFXyWaeNIyGfxeOZHcYsgupC8JpBdUjQ4uxSzkGM7iy2OlXAI
-	 tFClav5O4lFK1QzAHICJ3RCsYSqD3vtwnLiplM30pqZG9HwAj5K7nSJXu/3b5hqOQ0
-	 O6AMpTl9P6mQr5X7RBSN+aKEThtUtQHIq1u2u8XPrRbGpahBnKi29VSmCYV273ZcwD
-	 BASyCD/EeAPIgp29JskMQW9/3YS/LWGUt1C2W82IDPNVkX3DhrpJ+kn2Na36hCstIQ
-	 xO4igiLh62T87z4Xw6Z8rRAexLfoL02cWha+ZRkjV+IXP4fzvuwLx2q+4BDCYS3vde
-	 mTOUkFOeNenWw==
-Date: Tue, 23 Jan 2024 17:46:25 +0000
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Paolo Abeni <pabeni@redhat.com>, Phil Sutter <phil@nwl.cc>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: Re: [PATCH] netfilter: nf_tables: Add a null pointer check in two
- functions
-Message-ID: <20240123174625.GO254773@kernel.org>
-References: <c49c716a-e070-4ad5-9a90-896537bcd1b5@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxuaT8JX"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40eac352733so28551265e9.0;
+        Tue, 23 Jan 2024 12:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706042813; x=1706647613; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sq0tMecm3i3zHlp+86M5Zkr7Njk4ZDjptPk+ajtPCMg=;
+        b=dxuaT8JXbV6nH4lBJJqGY0PFuBpcwtyRLLHh6u1BxUR2x8H8yKQtRndmZNXP4sh+fQ
+         Swav0Cl3RcxqLuFAwIDj1epCnM9MtlUXeT2SBHA2+CIvyrCQCB9MqyOd0CDnU7b6K5VR
+         3VEKH4pYfPcRbVHQW/UFMciDV39fVubps74TFT5ovJ6hpKSlzJ+BVZsOIZIrZEW7U3DA
+         p03lAKXtIZEO8P3oJeNLTzjPEZhwK3f93DxuLcr5mkRSvN+543ATAuJSNlB1LN9O4HzN
+         peMFWFZ8ZAsPGO9z32TK1Uwl4umHB00G87P0/yLNqNE/hs4NswFA47MWo2oX4/zdKBtm
+         tEmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706042813; x=1706647613;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sq0tMecm3i3zHlp+86M5Zkr7Njk4ZDjptPk+ajtPCMg=;
+        b=BA1FS8RbBjc/NrHafkB2w0csU6XVC78iejsNQD40FTCp2FCXUpIEtUoZzBYT4Bf8Wx
+         QllWt5qtyiw4DCmY+EcvltX+vAJFmYNjdrLa98p4ts0q/16pPvkes6eHeKJbtC+pUc+6
+         MjMaML2zKi7JiSZ1wGFKSYSQj4QAHHQiBXlN8hxuWOvuB8/7Ziv94DvTF1aHPKvk84VT
+         KKDIxp9N6tjijT50wvwpZqlfo6SfZNtAMcGujPWTt++lhpX3TEftEnCmxYNIMR3BQpml
+         jUCeEWox2Q32yd8Xn2GWZrGc/1WlYAoOTAuMV1eYUGgs28JUeU9HTHgQuzM2enl0ddTi
+         QUbQ==
+X-Gm-Message-State: AOJu0YzxVApg671TffG9xWv2AF53DD2wm9o8kVMkANyayd/sHJF/hIdX
+	jCHymR+S0G2cMu8lh/Lm6zm+6JVJPbeg8VcrXb6eUcZf/D+SNvvs
+X-Google-Smtp-Source: AGHT+IGvUC5Ht5Wo8CwoFJ6X2/sTIe8RA850NVi6zqWSjYp/joLV25WudT26G53MKdSgM2/pOUDoiQ==
+X-Received: by 2002:a05:600c:538e:b0:40e:4dc1:fbc0 with SMTP id hg14-20020a05600c538e00b0040e4dc1fbc0mr517877wmb.60.1706042813473;
+        Tue, 23 Jan 2024 12:46:53 -0800 (PST)
+Received: from [192.168.0.28] (cable-178-148-234-71.dynamic.sbb.rs. [178.148.234.71])
+        by smtp.gmail.com with ESMTPSA id l34-20020a05600c1d2200b0040e89ade84bsm23386198wms.4.2024.01.23.12.46.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 12:46:52 -0800 (PST)
+Message-ID: <9b1d7c15-16a6-478d-975c-5c375f8674fe@gmail.com>
+Date: Tue, 23 Jan 2024 21:46:51 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c49c716a-e070-4ad5-9a90-896537bcd1b5@web.de>
+User-Agent: Mozilla Thunderbird
+Cc: savicaleksa83@gmail.com, dan.carpenter@linaro.org,
+ kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH] hwmon: gigabyte_waterforce: Fix locking bug in
+ waterforce_get_status()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240122154952.2851934-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US
+From: Aleksa Savic <savicaleksa83@gmail.com>
+In-Reply-To: <20240122154952.2851934-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 23, 2024 at 02:45:12PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 23 Jan 2024 14:28:31 +0100
+On 2024-01-22 16:49:52 GMT+01:00, Harshit Mogalapalli wrote:
+> Goto 'unlock_and_return' for unlocking before returning on the error
+> path.
 > 
-> The result from a call of the function “kasprintf” was passed to
-> a subsequent function call without checking for a null pointer before
-> (according to a memory allocation failure).
-> This issue was detected by using the Coccinelle software.
+> Fixes: d5939a793693 ("hwmon: Add driver for Gigabyte AORUS Waterforce AIO coolers")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with smatch, only compile tested.
+> ---
+>  drivers/hwmon/gigabyte_waterforce.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thus add a null pointer check and a jump target in affected functions.
-> 
-> Fixes: 8877393029e76 ("netfilter: nf_tables: Open-code audit log call in nf_tables_getrule()")
-> Fixes: 0854db2aaef3f ("netfilter: nf_tables: use net_generic infra for transaction data")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> diff --git a/drivers/hwmon/gigabyte_waterforce.c b/drivers/hwmon/gigabyte_waterforce.c
+> index 1799377fc2f1..7bccfe2eaa76 100644
+> --- a/drivers/hwmon/gigabyte_waterforce.c
+> +++ b/drivers/hwmon/gigabyte_waterforce.c
+> @@ -146,7 +146,7 @@ static int waterforce_get_status(struct waterforce_data *priv)
+>  	/* Send command for getting status */
+>  	ret = waterforce_write_expanded(priv, get_status_cmd, GET_STATUS_CMD_LENGTH);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto unlock_and_return;
+>  
+>  	ret = wait_for_completion_interruptible_timeout(&priv->status_report_received,
+>  							msecs_to_jiffies(STATUS_VALIDITY));
 
-For the record:
+Reviewed-by: Aleksa Savic <savicaleksa83@gmail.com>
 
-Markus has posed patches of this nature many times over the past weeks
-and months. They are not fixing bugs - there is no user visible problem.
-And moreover they move the code away from the preferred style -
-avoiding unnecessary checks around code that can handle NULL values.
-
-Markus, please stop posting patches of this nature.
+Thanks,
+Aleksa
