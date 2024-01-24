@@ -1,64 +1,57 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E6118032;
-	Wed, 24 Jan 2024 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3D42BAE2;
+	Wed, 24 Jan 2024 11:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706089951; cv=none; b=V2TMRLrp3AH63KDlFvN2SvKv0KVqBc5EYYSL5ESoNXQkcPJ48x0DE2wVt2nXkoZnH0VAtisEpOILOqSgTj+VztA24U5OKpxfS8QAPwjgkx/hmybdtQ85bDi65WKZfORLPwfiqY78OgqzLb0j4/tljqYptUCu3mQj1JrW0bBNuUo=
+	t=1706094133; cv=none; b=OOKrF4hnLsXex6h/1o660+oDN4A31ShRvLgPaepF9keF9eHP7Ml3gBD6OZk09G3bfjAKWUjTPSAgX6PTmfli+04UunngCwdXVVdu+WZRumknimgtVxJ+T5/fNd56LhNLTndms2vmharJyxK/dSjyNytvwLuVpPLzmPRdweHDFgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706089951; c=relaxed/simple;
-	bh=s2XlWICd1+C+67plz6lWJk0zQ60c+fKd79/Gm6FZI4Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=c7lg7T5f9WZk5N7jfq9UTaIBUWaCAhxfOY9yPI0kb97IjL1brxujwlFnbMP2uLhGMKbxn4L6TYNFtpIyDDZ96PWXf7E0DfVWhtS1hHJ84jIRCQ4t932fYSQPFVtIYFeRHXgwj22hBk3CdMxUb1Ddhcssmb29m7rK+OjBiOIUxC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=doHe+Wvu; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706094133; c=relaxed/simple;
+	bh=/DEfx/ggTlSTK4fsO2AMargKWkKOetex3+rtGaqvoN0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mHh0GAy7s6nSPLM4GE5k0EkMjO6npy53Ld8PmCOvjw5tx2Tzrl65OxmclsRjQMc5wG7lcQaUMkrxTPpysq++sQcvyN2N6cPikkvSwhLQwvFLJu+0re7wXM0FMSp1VRW+AKugG7oZM4Oy48BX5vRFM8IfSIibXkKu6X85U+s5S1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bfnGWgUR; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doHe+Wvu"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e7065b692so57128695e9.3;
-        Wed, 24 Jan 2024 01:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706089948; x=1706694748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HkC2PRqd6pgF7Zz/Q26hfAQmP6D0KFqOdRxvm5B8X2g=;
-        b=doHe+WvuC7uODz+f6kPgdtQcTqo9nQSLS5cCeGNWCxAsI0BPPF1aGQloG7DIFcdkpC
-         MM3HWN6gClNYVHum9wvgRS8VrKabh9LmeodJm8zBQRxaGmaOC1tVTG/zq7oEYZsvmCDo
-         RvxS6muVRdSE61lFVX74yAQUSnlK9qs6Pe1iC3VHeCGMo1Yc9v9rpx09IgySQIIfGcmT
-         DCst1CrCdenzXoU0ld/zf+b6RPi9S+v6IV+wFjlx7ebTad9Qt6SQtCvA3k3XyUq0uzd4
-         7xpseLvb1bgRPJz5q8C+duUUmXeXVds7c96B9Z5h3D9uDpqZbQXxusd7jgHElrGgKA68
-         oqRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706089948; x=1706694748;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HkC2PRqd6pgF7Zz/Q26hfAQmP6D0KFqOdRxvm5B8X2g=;
-        b=VzsbanmA7GuA2bafxXPZt763uudyWTsUHTeEdXjUW6d2xGGLvRvSJxTZJ7N9O1wBy5
-         6TSe74UpYuQ3bX0DERpNq/kfgwxlEuqDkgKYSDb3357qb/oM2agpFUoB+BduCJczzgHj
-         7TXEG/LS+8efU8VnsDeIrOtrvDN2dMzwr/w2DTDObID1GOAqVlRZ3/oyZuORvcB67cz9
-         o9YglHGY7Dqpl21682VJdGerKGpbawYlhqwUQQItAVhXicR5NQV7O3xN57FTkXLXIB28
-         5E/E0IzyS+aYBxx1jW98o8xaeB91G+piSapZlJU1iOvcbb4HzJAv+9O6xD1QK6T1JBw3
-         nLLQ==
-X-Gm-Message-State: AOJu0YxREP9FNYI3B4FziNqKgM7vi+SdWv59NmOhmqkFpBddaF9FuVC3
-	LI4UMSMmUV4KRcxs2+Aw69e/fekYY831ksIXFVT41u+nNL4Eua0F
-X-Google-Smtp-Source: AGHT+IFyqGGODHossZnnZrv7N55tfyX0G66TbydE69PFWGQJxgAM7c7YKvMVu30vnnQqBj6wkjZrmA==
-X-Received: by 2002:a05:600c:1c06:b0:40e:6ba0:de3b with SMTP id j6-20020a05600c1c0600b0040e6ba0de3bmr969508wms.0.1706089947501;
-        Wed, 24 Jan 2024 01:52:27 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p21-20020a05600c359500b0040e3488f16dsm44769392wmq.12.2024.01.24.01.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 01:52:26 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Anton Altaparmakov <anton@tuxera.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	linux-ntfs-dev@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ntfs: Fix spelling mistake "initiailized" -> "initialized"
-Date: Wed, 24 Jan 2024 09:52:26 +0000
-Message-Id: <20240124095226.3395965-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bfnGWgUR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706094132; x=1737630132;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=/DEfx/ggTlSTK4fsO2AMargKWkKOetex3+rtGaqvoN0=;
+  b=bfnGWgURe8ygCS2Us9gERHQuYG4WBRV8E410GI1GXBbe7HvCPF4y2SUV
+   y9u3Xx71d4oKru54HyjERFtAa2oA1TOGk1HYIBRzgga5ffpncNdCI9SV7
+   ynf4zTx8xBhxNTMBKVpXoxqlCDgGi1HPoLv/RdXhwq0tz8sYuj/zmIuA6
+   x7GqPj1cp2Rexw+qXlQ+awIBAwaYIkuDA+she/AaXjbcItinohvO9ROnL
+   bjiUJHvYkISfuLROO9qxjinBNqpdBsqyKa3UupODhqSGI3J/8uYjbcUt9
+   dMxCqxpspi5XbE2DAGpc0nJYNk7R3wktM70tiGsgg9jNHxwfQ3ChkK4e9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="8464452"
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="8464452"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2024 03:02:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="786382012"
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="786382012"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.48.46])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2024 03:02:07 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+ Hans de Goede <hdegoede@redhat.com>, ibm-acpi-devel@lists.sourceforge.net, 
+ platform-driver-x86@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240106154740.55202-1-colin.i.king@gmail.com>
+References: <20240106154740.55202-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] platform/x86: thinkpad_acpi: remove redundant
+ assignment to variable i
+Message-Id: <170609412156.14220.14891875070775431708.b4-ty@linux.intel.com>
+Date: Wed, 24 Jan 2024 13:02:01 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,28 +59,31 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-There is a spelling mistake in a ntfs_debug message. Fix it.
+On Sat, 06 Jan 2024 15:47:40 +0000, Colin Ian King wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ntfs/mft.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The variable i is being initialized with the value 0 that is never
+> read, it is being re-assigned 0 again in a for-loop statement later
+> on. The initialization is redundant and can be removed.
+> 
+> The initialization of variable n can also be deferred after the
+> sanity check on pointer n and the declaration of all the int variables
+> can be combined as a final code clear-up.
+> 
+> [...]
 
-diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-index 6fd1dc4b08c8..69978329877f 100644
---- a/fs/ntfs/mft.c
-+++ b/fs/ntfs/mft.c
-@@ -1580,7 +1580,7 @@ static int ntfs_mft_bitmap_extend_initialized_nolock(ntfs_volume *vol)
- 	ATTR_RECORD *a;
- 	int ret;
- 
--	ntfs_debug("Extending mft bitmap initiailized (and data) size.");
-+	ntfs_debug("Extending mft bitmap initialized (and data) size.");
- 	mft_ni = NTFS_I(vol->mft_ino);
- 	mftbmp_vi = vol->mftbmp_ino;
- 	mftbmp_ni = NTFS_I(mftbmp_vi);
--- 
-2.39.2
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: thinkpad_acpi: remove redundant assignment to variable i
+      commit: 214509e5d61d294193b220f397418e76879f74c0
+
+--
+ i.
 
