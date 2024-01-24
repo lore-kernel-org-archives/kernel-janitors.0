@@ -1,113 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019777C087;
-	Wed, 24 Jan 2024 15:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF57B7E777;
+	Wed, 24 Jan 2024 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706110945; cv=none; b=ephc6MCXW7uRuZb2Du852efukWw1XgM5OaucGQR+PPG5N9CKkf16xgnxMdxVEejpPB2AIpvUu0UmbqanLzumKUOSZ1SAOHNnz3iakQ2hlCxsfWZZR+ctpBFoSE/4RFifmk4p4Vog5aDTf2OllXjHOrKwteicv0FkOWzqXM+FDyc=
+	t=1706115897; cv=none; b=gqV19nY2Ums5KZ7qY6fX+0rVd3dKpvYvtZDswwMuDAgYzWoSmLiTB4zKUF4maPng4UlKgbw9Gywr3b1JU5SRF7E5vseYvrDqq/16DQHck/yuTFQJAs5CgP0k+e4uAbodkj863ShZn9gJLGtnOedY+0FSatLDEDvLoPNbBr/yokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706110945; c=relaxed/simple;
-	bh=SBoWD63q8kLgyAD+GKynKP95gGumgebOok1RHetlrEc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SZ1cz2CaJsLNPzepycRGh8kQBPHVG9p2AZQfvtkTIcXxch8uX/FltLzBvEUrr7RmeFuPVc2p8dLyQnlhlrifaGgZUN+phmDK6F68iHIwdyPYYNysyxVEJN1xX0dOTM+9xppXrJb72SnwBiEICpY9QvFcy/fC70Mwmd/HZTKkBTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IMRd8K2r; arc=none smtp.client-ip=192.55.52.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1706115897; c=relaxed/simple;
+	bh=eZik0NQgHnxRTjoOGVz1jiYozSbIVj3TpK7roxu/iQA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=a6XIrilOIWNpl23bt/VGhkiNDcv/5ZbkJAa6Hxoo6WawTfdVjyL+nKo+c8qCU0pu3cHZhhdFSMIMLldK9Kf0l2a26m/KCzyVE2ATg+DbK1KUqddR9OMpn+Bt/amHhN0IOb78vG2KwjhpqY4Jatpd4SsEgwX+9snzhdNr03YJ9OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lUzNe8Zi; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IMRd8K2r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706110944; x=1737646944;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=SBoWD63q8kLgyAD+GKynKP95gGumgebOok1RHetlrEc=;
-  b=IMRd8K2r5vRPrGEedaOOiiOsYQ8B3mOcoEbjKN160vHvaaOOFgnxs33z
-   w4DUigu0CVOXZVwvLW44hDP/m0owE6NR5pApps6stgQ/kUzlEbu/B2mng
-   tfdv2Na7tTZveXCkmNlW6tBkqNyaB3m2BWecPeZISpWHV91yx2eWqLHU1
-   XLNIdluPa4r9dLL53FiVce0/Fdrt2OqYF1WxkJChl/5uLdL55GlfZW/xZ
-   qT5HF5hP9hy3C1tr5xVNdMNO0q7l1GfcyX1FzN2sjZIjpAVT3mfb2Cnm+
-   aeItDzyNJlUYH+99ZCz/bqKugmeihELV7HsurXIvszLEF7XZY11oow0/H
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="401538485"
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="401538485"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2024 07:42:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="20754382"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.48.46])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2024 07:42:19 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 24 Jan 2024 17:42:14 +0200 (EET)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Jingoo Han <jingoohan1@gmail.com>, 
-    Gustavo Pimentel <gustavo.pimentel@synopsys.com>, 
-    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] PCI: dwc: Cleanup in dw_pcie_ep_raise_msi_irq()
-In-Reply-To: <64ef42f0-5618-40fd-b715-0d412121045c@moroto.mountain>
-Message-ID: <d38e9f8f-ade9-8e77-2d19-756f76ecec76@linux.intel.com>
-References: <64ef42f0-5618-40fd-b715-0d412121045c@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lUzNe8Zi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706115865; x=1706720665; i=markus.elfring@web.de;
+	bh=eZik0NQgHnxRTjoOGVz1jiYozSbIVj3TpK7roxu/iQA=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=lUzNe8ZiAq2MtvUEprmZ7EUvfWha/ciK83fW1jtjO1KG97cq8HD7DEUVcrJ6UMY5
+	 Qs4Hwls5hj8t2jZzEw5N0WFMfg/6nUVICxOecQB7277thIoQ9UVHKnvD7SzBynOI7
+	 pCp/xfGzh9HsvjxlEvR212xtgwuwNHWwthS5fYHP+Fll0DobrSso+oc3S9k2bvc0z
+	 hGROvaEH6gI52kZci6kko+X8kJPZrqsQMAYtGN1xyAToYeyeKiZyN6R89dlfGaLDq
+	 3qa/7zQ2CO5cAmpZ/qaicC7/SGIlZTrW4cNlIvsPqhLj3flC+cUuvalspifrIBYwh
+	 VdnF1Qjam4AZ3d7NLw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwwJ-1qhJAi0Kl3-00nxrY; Wed, 24
+ Jan 2024 18:04:25 +0100
+Message-ID: <791da036-5c0d-4c96-b252-24726bc7f2f7@web.de>
+Date: Wed, 24 Jan 2024 18:04:20 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-442463817-1706110934=:1372"
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, kvm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240124093647.479176-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] KVM: PPC: code cleanup for kvmppc_book3s_irqprio_deliver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240124093647.479176-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:G0go2dhXVu0Sv5YnVpAY+1uRg0zK0HLp5MnOCn5FVZtO4VRVTPf
+ k9q/daeBYgsA02NjvmzAn4KOMTlyCurrP5801Mdn4mKysomJU90WRw7ePlw6upIqpTkv7NZ
+ hx/J7+hpeY2aNw8FtxcAp9ZkhAB5CRqbr5+4a8zmkttepfuC0gyOPkIB8mqwSrMnlOyi3gS
+ ZF2+m+O5P1khKJKI0Qlvg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1oU2Xjxbha8=;At8CAKPHdhpSpJ4OpBdIp3LKFLr
+ vOfrhGBmQDuZg4cInC8Ro6jNNr4L6V730p0jo2gsRI1198t3VOaCBw7A3/PHuI7c+R7fOGhbU
+ 1ar5VdgTdbK8i7XYXxAl5+Xh40qMGejjJFlbLMIWWSvV8q9MdQDbaIl/1OCrAyYF3WZ7raAmT
+ HTLSwwQ5HCG5oHdbcJmJxUxPvyjiGvprh0qpsu8pGzXUHpZunBZyo1oIDpJGpIXMC7h91snfu
+ FIHXwHnrsNcILE8MV2e7drcq6hemITAFrMuHn4mBMTsbnwCH3p1wEIMBw6C9c4cIjE1xlrsNQ
+ vU8l9J/G0G+p21hquVCSI17cKB3HJESWAA/2BGWVEhkgPCnQp+l83rvWBX3n2ZVBQzSehIEvR
+ IOaaNPIGX4dfLTcbsdMHkcFI6CilYiKUwO0HJVutXHKrIT3ZShB6iu6FFQHdgPWGh2cLNnJP5
+ nTW4+At2h4n/dUdG7iOTVeJbH7F5P4ZOAdYPbQBJkUfYvgJJuIJXKm5TBvbWN9ESXjaoBHM33
+ LXNCxZ54wO+26YV7ju5g4pADhA43EgL+irNEdeg7KUiGmkzG2VDuA0/VkLt1FTdkL/shD0NdW
+ CqxzWj4siqs/N07Xet8xHSUpcafqGAwRn7K5irlsLYtTd24BFquP1+lyIhHyHo4tPqHPKV4Bo
+ /BTlN4lG7oCQDET9qdcgCOieffkWSqHCu/+gBGX5zcIrIcf4WsJfI2J84Mc/Es+vT0MZEm3Qp
+ PebXQtt2Oh4GuwXRoZJGw9RAm80CyY2PqcXhbUbGJp7GXGgQNonDF+e3Y5UDVpOweJsskRiN7
+ jv7vTAOcKlT9HtMFpQCcxJskmy/kBO2CQj7OwmFflVIJ4COI6nv+Z3QEGWPdt01Y8pJwXtP+k
+ yxnEgDix+ycFKqxEgW00L7TXQIB7tjZVDCTJ4gHNNvIL5TdCkA+TwPr3HNtML7UR+e0QbTGSe
+ 2TJaAQhtU+C2QwwlhvUcOjK4qOU=
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+> If there are no plans to enable this part code in the future,
 
---8323328-442463817-1706110934=:1372
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 24 Jan 2024, Dan Carpenter wrote:
-
-> I recently changed the alignment code in dw_pcie_ep_raise_msix_irq().
-> The code in dw_pcie_ep_raise_msi_irq() is similar so update it to match
-> as well, just for consistency.  (No effect on runtime, just a cleanup).
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v4: style improvements
-> v3: use ALIGN_DOWN()
-> v2: new patch
->=20
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pc=
-i/controller/dwc/pcie-designware-ep.c
-> index 51679c6702cf..d2de41f02a77 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -482,9 +482,10 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, =
-u8 func_no,
->  =09=09reg =3D ep_func->msi_cap + PCI_MSI_DATA_32;
->  =09=09msg_data =3D dw_pcie_ep_readw_dbi(ep, func_no, reg);
->  =09}
-> -=09aligned_offset =3D msg_addr_lower & (epc->mem->window.page_size - 1);
-> -=09msg_addr =3D ((u64)msg_addr_upper) << 32 |
-> -=09=09=09(msg_addr_lower & ~aligned_offset);
-> +=09msg_addr =3D ((u64)msg_addr_upper) << 32 | msg_addr_lower;
-> +
-> +=09aligned_offset =3D msg_addr & (epc->mem->window.page_size - 1);
-> +=09msg_addr =3D ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
-
-After you've added the #include in 1/2, for both patches:
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Will the word combination =E2=80=9Ccode part=E2=80=9D become preferred for
+a subsequent change description?
 
 
---=20
- i.
+> we can remove this dead code.
 
---8323328-442463817-1706110934=:1372--
+And omit another blank line accordingly?
+
+Regards,
+Markus
