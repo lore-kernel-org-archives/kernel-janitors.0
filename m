@@ -1,128 +1,93 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1370D308;
-	Wed, 24 Jan 2024 05:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E6118032;
+	Wed, 24 Jan 2024 09:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706075813; cv=none; b=QJf+s928x74LGlkUxFmilKuPczXE0Vx1xpuvRdvL/O0sfGFHVKMXhBUUSLp1rHOB/AmPolb9/4TqtEN4VUVar+KRN5Lkg4Yw60OyPZ9VpgZPMA+aIz+GQyqjSXf9swJ/yO816aDmPU6Oxpyt0nsxwXGdlJVNYkYfSwoKXl6+yHE=
+	t=1706089951; cv=none; b=V2TMRLrp3AH63KDlFvN2SvKv0KVqBc5EYYSL5ESoNXQkcPJ48x0DE2wVt2nXkoZnH0VAtisEpOILOqSgTj+VztA24U5OKpxfS8QAPwjgkx/hmybdtQ85bDi65WKZfORLPwfiqY78OgqzLb0j4/tljqYptUCu3mQj1JrW0bBNuUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706075813; c=relaxed/simple;
-	bh=WkkVH6MZ9Ei/ds3QjmKHNo/z+L5Xn6aFoSNurUu4m4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=lAEyD1SaGLB/cyI3wJ1DT/+szB/jFJqmneIqottLoKBvUOOoT8ZOiwBVoOGoV1ao8HF8UZVGEnyab2NUEUyzAJj4tixbbswlc4opBFSyuYMz9/20eHsk+gkm3YLIbUnvj1/156UTDnLlivTZb7Y2kmg4aBNyljGILwsqu3xt/ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=In7+ica4; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1706089951; c=relaxed/simple;
+	bh=s2XlWICd1+C+67plz6lWJk0zQ60c+fKd79/Gm6FZI4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=c7lg7T5f9WZk5N7jfq9UTaIBUWaCAhxfOY9yPI0kb97IjL1brxujwlFnbMP2uLhGMKbxn4L6TYNFtpIyDDZ96PWXf7E0DfVWhtS1hHJ84jIRCQ4t932fYSQPFVtIYFeRHXgwj22hBk3CdMxUb1Ddhcssmb29m7rK+OjBiOIUxC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=doHe+Wvu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="In7+ica4"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id SWFarRZez8jVDSWFarqsnB; Wed, 24 Jan 2024 06:56:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1706075802;
-	bh=g0PHiMiElhrW6soL6QZ3bDs9/Q+9VEvAsCekTMuIHKE=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To;
-	b=In7+ica4uVuNs9ushLtua0BX9YGc5x3ELrA7TG7V1NfNWpaJS8I4emw0dhbluV5NR
-	 IOYz+3rwVI75dfhPKdiwqcnr7ADc1TvWwt08J5aiS85Tc+HXHqSp5id8eU3myridRW
-	 bYHGvyZBLpp/nyxJtoYL1jNlOHjWcE+si2MaKy94nQkW/+2AnhRClDOhf5+UKKuSA8
-	 wfmi4YaPiEpYVo5A8aZjnFqEI/uxbrEI1P87X4D2Y8O5L8ZfBVRJt9zgMm6MYhysaL
-	 eN3RMvYvO80GSRLXub9KfGyHTqi+Ig0nk9rorf8dmqszJ1LYhktkRYx0Pgbelj1TnA
-	 CrLkeBcgb9EsQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 24 Jan 2024 06:56:42 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <e2d00e0f-0211-43c6-a868-7a36655847ab@wanadoo.fr>
-Date: Wed, 24 Jan 2024 06:56:37 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doHe+Wvu"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e7065b692so57128695e9.3;
+        Wed, 24 Jan 2024 01:52:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706089948; x=1706694748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HkC2PRqd6pgF7Zz/Q26hfAQmP6D0KFqOdRxvm5B8X2g=;
+        b=doHe+WvuC7uODz+f6kPgdtQcTqo9nQSLS5cCeGNWCxAsI0BPPF1aGQloG7DIFcdkpC
+         MM3HWN6gClNYVHum9wvgRS8VrKabh9LmeodJm8zBQRxaGmaOC1tVTG/zq7oEYZsvmCDo
+         RvxS6muVRdSE61lFVX74yAQUSnlK9qs6Pe1iC3VHeCGMo1Yc9v9rpx09IgySQIIfGcmT
+         DCst1CrCdenzXoU0ld/zf+b6RPi9S+v6IV+wFjlx7ebTad9Qt6SQtCvA3k3XyUq0uzd4
+         7xpseLvb1bgRPJz5q8C+duUUmXeXVds7c96B9Z5h3D9uDpqZbQXxusd7jgHElrGgKA68
+         oqRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706089948; x=1706694748;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HkC2PRqd6pgF7Zz/Q26hfAQmP6D0KFqOdRxvm5B8X2g=;
+        b=VzsbanmA7GuA2bafxXPZt763uudyWTsUHTeEdXjUW6d2xGGLvRvSJxTZJ7N9O1wBy5
+         6TSe74UpYuQ3bX0DERpNq/kfgwxlEuqDkgKYSDb3357qb/oM2agpFUoB+BduCJczzgHj
+         7TXEG/LS+8efU8VnsDeIrOtrvDN2dMzwr/w2DTDObID1GOAqVlRZ3/oyZuORvcB67cz9
+         o9YglHGY7Dqpl21682VJdGerKGpbawYlhqwUQQItAVhXicR5NQV7O3xN57FTkXLXIB28
+         5E/E0IzyS+aYBxx1jW98o8xaeB91G+piSapZlJU1iOvcbb4HzJAv+9O6xD1QK6T1JBw3
+         nLLQ==
+X-Gm-Message-State: AOJu0YxREP9FNYI3B4FziNqKgM7vi+SdWv59NmOhmqkFpBddaF9FuVC3
+	LI4UMSMmUV4KRcxs2+Aw69e/fekYY831ksIXFVT41u+nNL4Eua0F
+X-Google-Smtp-Source: AGHT+IFyqGGODHossZnnZrv7N55tfyX0G66TbydE69PFWGQJxgAM7c7YKvMVu30vnnQqBj6wkjZrmA==
+X-Received: by 2002:a05:600c:1c06:b0:40e:6ba0:de3b with SMTP id j6-20020a05600c1c0600b0040e6ba0de3bmr969508wms.0.1706089947501;
+        Wed, 24 Jan 2024 01:52:27 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p21-20020a05600c359500b0040e3488f16dsm44769392wmq.12.2024.01.24.01.52.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 01:52:26 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Anton Altaparmakov <anton@tuxera.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	linux-ntfs-dev@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ntfs: Fix spelling mistake "initiailized" -> "initialized"
+Date: Wed, 24 Jan 2024 09:52:26 +0000
+Message-Id: <20240124095226.3395965-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH] ixgbe: Fix an error handling path in
- ixgbe_read_iosf_sb_reg_x550()
-To: "Pucha, HimasekharX Reddy" <himasekharx.reddy.pucha@intel.com>
-References: <d39bbffb8817499cc2ae636cdef3b9c1eba59618.1705771534.git.christophe.jaillet@wanadoo.fr>
- <CYYPR11MB8429776D3D1D830E140F5D64BD7B2@CYYPR11MB8429.namprd11.prod.outlook.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
- Mark Rustad <mark.d.rustad@intel.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org
-In-Reply-To: <CYYPR11MB8429776D3D1D830E140F5D64BD7B2@CYYPR11MB8429.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+There is a spelling mistake in a ntfs_debug message. Fix it.
 
-Le 24/01/2024 à 05:00, Pucha, HimasekharX Reddy a écrit :
-> Hi,
->
-> Can you share testing hints for this patch.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ntfs/mft.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi,
+diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
+index 6fd1dc4b08c8..69978329877f 100644
+--- a/fs/ntfs/mft.c
++++ b/fs/ntfs/mft.c
+@@ -1580,7 +1580,7 @@ static int ntfs_mft_bitmap_extend_initialized_nolock(ntfs_volume *vol)
+ 	ATTR_RECORD *a;
+ 	int ret;
+ 
+-	ntfs_debug("Extending mft bitmap initiailized (and data) size.");
++	ntfs_debug("Extending mft bitmap initialized (and data) size.");
+ 	mft_ni = NTFS_I(vol->mft_ino);
+ 	mftbmp_vi = vol->mftbmp_ino;
+ 	mftbmp_ni = NTFS_I(mftbmp_vi);
+-- 
+2.39.2
 
-No I can't.
-
-It was spotted by one of my cocci script that tries to find issues 
-related to direct return when a function also has an error handling path 
-+ manual review so see if it looks like a real issue.
-
-As said in the patch, "This patch is speculative, review with care.". 
-That means that it was not tested from my side.
-I don't have the hardware, and don't know how to trigger the issue.
-
-All I know is that the code looks wrong *to me*.
-
-Maybe someone at intel.com could give this hint? :)
-
-CJ
-
-
-> Regards,
-> Himasekhar Reddy.
->
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of Christophe JAILLET
-> Sent: Saturday, January 20, 2024 10:56 PM
-> To: Brandeburg, Jesse <jesse.brandeburg@intel.com>; Nguyen, Anthony L <anthony.l.nguyen@intel.com>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Jeff Kirsher <jeffrey.t.kirsher@intel.com>; Rustad, Mark D <mark.d.rustad@intel.com>
-> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; intel-wired-lan@lists.osuosl.org; kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org; netdev@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH] ixgbe: Fix an error handling path in ixgbe_read_iosf_sb_reg_x550()
->
-> All error handling paths, except this one, go to 'out' where
-> release_swfw_sync() is called.
-> This call balances the acquire_swfw_sync() call done at the beginning of
-> the function.
->
-> Branch to the error handling path in order to correctly release some
-> resources in case of error.
->
-> Fixes: ae14a1d8e104 ("ixgbe: Fix IOSF SB access issues")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative, review with care.
-> ---
->   drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-> index 6208923e29a2..c1adc94a5a65 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-> @@ -716,7 +716,8 @@ static s32 ixgbe_read_iosf_sb_reg_x550(struct ixgbe_hw *hw, u32 reg_addr,
->   	if ((command & IXGBE_SB_IOSF_CTRL_RESP_STAT_MASK) != 0) {
->   		error = FIELD_GET(IXGBE_SB_IOSF_CTRL_CMPL_ERR_MASK, command);
->   		hw_dbg(hw, "Failed to read, error %x\n", error);
-> -		return -EIO;
-> +		ret = -EIO;
-> +		goto out;
->   	}
->   
->   	if (!ret)
