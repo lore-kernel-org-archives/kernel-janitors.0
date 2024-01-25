@@ -1,93 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C6F13AC4;
-	Thu, 25 Jan 2024 07:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CA41C6A6;
+	Thu, 25 Jan 2024 09:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706169370; cv=none; b=DHiRmaVSXxbA3ywH7G0tTlD7ir46o/LDUkYDKwgz3Z9lY9sVX1CPG6NNUayAseAYmvN+8rfLcJoKTbR4XJqasAk4k+c/QpKUiEg3bszouR9uyEBPJZuQFwBA6nvcQZrR6o37d0QjFESdD53sxK0xI/vrUiO/Ey8UhvVwqosFEqE=
+	t=1706176292; cv=none; b=AXIU5kftx/XCWubKcQGg6uFFtccab1FWFYJ5gD4+0S8+FZxeswNzITlf3D8Ejad+1zPTZojEWcaJp/4t8TzexLAl0c2EL9Sg7fZq9/osMFpyOfgvit7ETSpcMktpONsiC+teg/dV3CGx8Ts7ppSwk9qe4Z3c4VZ1Rlvp0oWPNzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706169370; c=relaxed/simple;
-	bh=oGEnZLNs2ln1J2d3RRX097XSFJtdFzD/XrDgWH8hjdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvkUL8J/zJwUToOSP8Ra9SPG0UVgR6SUKZNlDg3POb8ogopRG9mRf3CPQvifTO01zldOv0jppfWCyyQI4bh4E0MRf9T9IPNawtcsnDNbHUqbSllqKzHXHOAQ7Yx9cOW4hPMpzEJv4SyuH2ZivsA1MGt3eX515LTmloBX8MnoLdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thOYhABM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706176292; c=relaxed/simple;
+	bh=hGzPC+Xq5xvy6+xs+vZ48PhfdD49wV5ssqstwwv4No0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Pd4OyR9BGy+l/IV0YFvB6rEmvgMCrW/NFYmsk0J7vWohC7CtqZd2o481SUxRffPyehX0mgF2SgEUMtymvwhKVCtrzVbf693AvwOdXs5wP8UyPAA8BHH6zgHgkNA4P5o9H53/Th0NY1gj6LQPPDVpZrsTkAbysfwRPiKJ3xhG2dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lh80SxsW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thOYhABM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38ABEC433F1;
-	Thu, 25 Jan 2024 07:56:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lh80SxsW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFD5C433C7;
+	Thu, 25 Jan 2024 09:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706169370;
-	bh=oGEnZLNs2ln1J2d3RRX097XSFJtdFzD/XrDgWH8hjdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=thOYhABMOeY+9IP7f2oUSgkMLUYNSAl+xPZqTZtkEiMlDnqabS/2mNNZKNzSpr3i4
-	 akQpx8sDx2/gkp2Fayhc0KNISBf0voNvqAy71rpYfxTYzekkPyL9yb3uyUn5e4/HwR
-	 V4LNNzDK+FxSXaejQIc5CSJTM4T9Q+Vwg/J+MpuQsKP+AOh86SE5FPAU4dtbxdsG6b
-	 bjwzxqOT/jvKofSgqp0OEHr4qMU2UAPz1HkSQPKJVtZQ/fehZfGQXoDC1YESZ4c/+p
-	 k1qOJ61RXzTMegtvSNNl3QtJ28zPkxe7kscJmBOmXfztNlVIDW1RInYCa7nk2JCbqj
-	 us+TfKVlu9ekQ==
-Date: Thu, 25 Jan 2024 08:56:01 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] PCI: dwc: Cleanup in dw_pcie_ep_raise_msi_irq()
-Message-ID: <ZbIUEaqrpH6jAMiO@x1-carbon>
-References: <888c23ff-1ee4-4795-8c24-7631c6c37da6@moroto.mountain>
- <64ef42f0-5618-40fd-b715-0d412121045c@moroto.mountain>
+	s=k20201202; t=1706176291;
+	bh=hGzPC+Xq5xvy6+xs+vZ48PhfdD49wV5ssqstwwv4No0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=lh80SxsWTQmOGpfJIknGv744VRKHLl6xMyzjYE+ZQB+/+pi059FqIqgXfr6zXi9bD
+	 s0dJMcGaDkvPMCssMWqS0QZffxjdkcsV4PTJQF3skGD036ekbKqo2jbeXhPe/V+Y+5
+	 T0utB48+C7w0vdF5IWEg/J5je1EOr703N0eIS5wvq1aHXIMSHpXuSoXVImbmLzvhQ4
+	 nhMWkm1Na2LlAWx3WsWaiBKjrDg7yfG1yQ0NOfz69FFQ/Zi3j/b3hnRNtRaKePXzwP
+	 d0jmSz8cXbek5TQGLzkVLixLlJnFB3mn1MWP+GElnXAzPAAoHqs+UQr3bVsjnMf1Yi
+	 JCMo9JaCLtnIg==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian Heusel <christian@heusel.eu>
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20240111141311.987098-1-christian@heusel.eu>
+References: <20240111141311.987098-1-christian@heusel.eu>
+Subject:
+ Re: [PATCH] RDMA/ipoib: print symbolic error name instead of error code
+Message-Id: <170617628743.631264.7207470107458007610.b4-ty@kernel.org>
+Date: Thu, 25 Jan 2024 11:51:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64ef42f0-5618-40fd-b715-0d412121045c@moroto.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-a055d
 
-On Wed, Jan 24, 2024 at 06:03:51PM +0300, Dan Carpenter wrote:
-> I recently changed the alignment code in dw_pcie_ep_raise_msix_irq().
-> The code in dw_pcie_ep_raise_msi_irq() is similar so update it to match
-> as well, just for consistency.  (No effect on runtime, just a cleanup).
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v4: style improvements
-> v3: use ALIGN_DOWN()
-> v2: new patch
-> 
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 51679c6702cf..d2de41f02a77 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -482,9 +482,10 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  		reg = ep_func->msi_cap + PCI_MSI_DATA_32;
->  		msg_data = dw_pcie_ep_readw_dbi(ep, func_no, reg);
->  	}
-> -	aligned_offset = msg_addr_lower & (epc->mem->window.page_size - 1);
-> -	msg_addr = ((u64)msg_addr_upper) << 32 |
-> -			(msg_addr_lower & ~aligned_offset);
-> +	msg_addr = ((u64)msg_addr_upper) << 32 | msg_addr_lower;
-> +
-> +	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
-> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
->  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
->  				  epc->mem->window.page_size);
->  	if (ret)
-> -- 
-> 2.43.0
-> 
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+On Thu, 11 Jan 2024 15:13:07 +0100, Christian Heusel wrote:
+> Utilize the %pe print specifier to get the symbolic error name as a
+> string (i.e "-ENOMEM") in the log message instead of the error code to
+> increase its readablility.
+> 
+> This change was suggested in
+> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
+> 
+> [...]
 
-(Feel free to keep my R-b tags even if you send out a new version with the
-#include requested by Ilpo.)
+Applied, thanks!
+
+[1/1] RDMA/ipoib: print symbolic error name instead of error code
+      https://git.kernel.org/rdma/rdma/c/64854534ff9664
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
