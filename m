@@ -1,70 +1,69 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F571CD0C
-	for <kernel-janitors@vger.kernel.org>; Fri, 26 Jan 2024 08:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5F21C2AD
+	for <kernel-janitors@vger.kernel.org>; Fri, 26 Jan 2024 08:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706258446; cv=none; b=o6dH5/jc96InDgHywGwLMI5sz+lyzML1F9tDOG10tiWpXVjED3HiYOL9QSECxOeJnAsAXx4kUdzZqTDAEkEjNwrLH7+Z9RT6VT2kk/r/rakAd6ym+LI8m3Iuugu2c3W3f1ACZ1XmIrIV5OKo4L1iKA+Uql7BYok4qx/QzjcE2UM=
+	t=1706258468; cv=none; b=p5j0SBl3H4VqK+XhHwGnHBAlPBzuQ0BC1acRNrAsEaUPM+VcG2GZfTQn8FAfUIauhwsuEfJJUX/GCl67HghHGnxmsyJoylIANcZJ5y+2lq00QIEPgcfPCrIek+CkkqPcLeJXOy8FDA3oayhZVlDjdfrumZZhBWuXPGs9iUYfars=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706258446; c=relaxed/simple;
-	bh=HdOkxYHBGdOriH1GG4cA3n+x/WczKYLs05GJtHkGUu0=;
+	s=arc-20240116; t=1706258468; c=relaxed/simple;
+	bh=xVnB7uNU2aUwkZfdKtBk3UVgE3IhZNWmluxWDjub8oA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S8ifPxzNKZ4rbnzd8HYeS/JAcZO6B+BGvgYSEi0R5I5hkZN5MpHKTOyo8h+UELI4edEtf5dZqbtCmtKehxZ0JiWXe6fgRFwxm/UH8fKJ56861QerIzxWuUGx0zVahdzTumg4YS7ybXwHVkxENaj8BkfB4a0KF9HWRVuWaF1CzHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YnwjDeMZ; arc=none smtp.client-ip=209.85.221.50
+	 Content-Disposition:In-Reply-To; b=eA2x4xTQPLUbJW2f0wtVuf9I0b6qp/IvhTE27k00pdsH02zOF6xHvQUFn3uCTeJzGqNga7T3/i8Gh7bX/KCNpVia/1AT1kG9j/RfugUn97haGvbsMsDCt2mSorNYtytZ5tFsZ0Nk9i3OfGb1nIUNEJ5Y7inpfg4G0bj3UOS2LAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CMoWsR0b; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YnwjDeMZ"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-337d99f9cdfso197139f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Jan 2024 00:40:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMoWsR0b"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e9ef9853bso9209185e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Jan 2024 00:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706258442; x=1706863242; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EM7me6hr0DgfYBqYZ1m5/5Y61fSb6nrf7rD27pa9FgQ=;
-        b=YnwjDeMZv3BaKmVcvXYhajTfyPBqBOHwdefKPMdptCwayOJ0v4G2bg5DzjglXRHd0A
-         btCfEYpP+g9HhCMC9n0oS1aMhXuQZJaiJs5QMmJAegVoaHL+KqvifGgyCgJrnMxPjUyh
-         oFC5SnSyIYGEsxdaszRRTKivYG3flJ/gKnfrODIuRwBHbJ/VuSsW7epfAH7qpvKM7Hjb
-         hxW/WVj1zBCN1fPim8YQFYCHh5GahCW+wQLEHmHhLrh2tbMLBTSTF4XqgZH7QcV3t2ed
-         /f6PHul8tuZQd6W4C9S+ogwrOFYXXY7AZCpZMT8DcyMkx5kh5ymHcRZfgyKmjdLNN9gC
-         gafw==
+        d=linaro.org; s=google; t=1706258465; x=1706863265; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XX7Apx6LKiP4Pc42nzu4TYMSpS+o60Wt9NvNj/zb+0Q=;
+        b=CMoWsR0b/WtKBU+Q3agudlT37Ebw+8U2UkdQmnfuyJT/XXNIQ29cH9ClgJ6DjDpuRS
+         +4jrONbEy5tdbNw24iFkEUfUXfZvRzVPXdrqHqhflS8+JdR8Ns06UDiUEGOt3ysto3Vx
+         j2U+QQ3qyUENudea6ZfhA5dSlyY9d2luQ7T0JUg8LiXf/eZfRqabOkSb9PxsKxpEX8MS
+         X4RN1avtTgC8DGGPrKc1RacvWYPIqNO5xK/v3SHXjZraei8T3pt6LfEm+SnIz27ZYm8H
+         sxr43J+186yG8yNvYWC/f4E5vwOuZvPX1U3ertsFRDDteK7GWfdmjSUOO+Thssu6J4Bn
+         Uzcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706258442; x=1706863242;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EM7me6hr0DgfYBqYZ1m5/5Y61fSb6nrf7rD27pa9FgQ=;
-        b=WwiLjOwfIMLKdBuwD9BIT8i4PkyYB3RC5txrumwswrL63z8Ms298Nc7u9jDJxVKvGK
-         e7qoOkEa2gKMEJcdw2q21LaDNgzYGMIbqY5LadUAdYbxIyhqwZuM7Wry3AnDZ1rqk95J
-         oCwbwCVlxChfTNXKu4qxn603K++h/JuJqvZu/FQv9sLQ/iw+C/ogua84oaON4z+mfU6O
-         EAfT6P8+JPQ8pT4fP6rrwxw74TviRnKisYaAHM8MefpzM4sDC8Lio6nz3NAsWKBzbqYQ
-         +svwnTnN2iiHGCbRAg+d8JAbKh+VSZX1iEdFiMtuYfVWTx5FetrQ0hkp11kHsF93ej6j
-         vIPQ==
-X-Gm-Message-State: AOJu0Yzf8oDLSEZVLWGLomZkM1v25SEzu1MN7vO3pkpcATFliK9xs2ye
-	Ob0as6n7Y1hH6l/Nd9aGH9KYujkPQR4er9BhpDXlJlmgqIu4fMfFid6oHTRGXOg=
-X-Google-Smtp-Source: AGHT+IGHPb2CxwM2qpL6dKONYAgUO/n/8kVqCQ5TFvAG633n4nCm8O00Evt6e+Evh/2zxBYBS61Bmw==
-X-Received: by 2002:adf:fa10:0:b0:339:2b28:32e2 with SMTP id m16-20020adffa10000000b003392b2832e2mr605254wrr.42.1706258441917;
-        Fri, 26 Jan 2024 00:40:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706258465; x=1706863265;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XX7Apx6LKiP4Pc42nzu4TYMSpS+o60Wt9NvNj/zb+0Q=;
+        b=d9ia79f2YfP5UXg7J3K68vxZEeWyv3VQeESzYKMYrfnBDibRAO73GpUOTCOoe908KR
+         Shejt/SCqUgt+UIR+PvKZKzZwyEyXunClVcBiJXE1I/XtBZhjongu0sgCIc2UZqugDmG
+         0MRc1aXbIhOwPDCfjLZ9eOf8IJcQZyH0LgyzQ32+p054bO5Hwc4dDgh6xs4UMCpn/MUP
+         /gzujD3ywwexUBjn8VPvDK8JXso90HA4JPq7qQ9RGnMV5EH1SbiJXvg/T2l3x18SYLCR
+         ozopMyor/jeFZ9lj51+qzfrOg8VZg53kNSCiUUpXpElPYLkr9k4Dq6VjGji6NuQDx8lW
+         BOuQ==
+X-Gm-Message-State: AOJu0YzYjE+duxeBVGIKaAkdwcBQzpn3U+bZpuWHn4eJFKiTlzOqJZWX
+	qgNcYpGh7MCF7DiXVGKVDlNSl2nfgNyc4701wEmgDVShUeXBRGlU95qeEzxqze+2V54mG5lmKnJ
+	fSBg=
+X-Google-Smtp-Source: AGHT+IFEq7uN14GEgOVUGh+XC+r/ZDyY6Ub0iEHePwZ1sqpDBMr1Xyrz7nwONatue8o5Dk2Kx2qp8A==
+X-Received: by 2002:a1c:721a:0:b0:40e:a555:803d with SMTP id n26-20020a1c721a000000b0040ea555803dmr303589wmc.74.1706258464813;
+        Fri, 26 Jan 2024 00:41:04 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id j11-20020a5d618b000000b003393592ef8dsm753877wru.54.2024.01.26.00.40.40
+        by smtp.gmail.com with ESMTPSA id o7-20020a5d6847000000b00339272c885csm750140wrw.87.2024.01.26.00.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 00:40:41 -0800 (PST)
-Date: Fri, 26 Jan 2024 11:40:37 +0300
+        Fri, 26 Jan 2024 00:41:04 -0800 (PST)
+Date: Fri, 26 Jan 2024 11:41:01 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Niklas Cassel <niklas.cassel@wdc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
 	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
 	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
 	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v5 1/2] PCI: dwc: Fix a 64bit bug in
- dw_pcie_ep_raise_msix_irq()
-Message-ID: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
+Subject: [PATCH v5 2/2] PCI: dwc: Cleanup in dw_pcie_ep_raise_msi_irq()
+Message-ID: <184097e0-c728-42c7-9e8a-556bd33fb612@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,48 +73,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 
-The "msg_addr" variable is u64.  However, the "aligned_offset" is an
-unsigned int.  This means that when the code does:
+I recently changed the alignment code in dw_pcie_ep_raise_msix_irq().
+The code in dw_pcie_ep_raise_msi_irq() is similar so update it to match
+as well, just for consistency.  (No effect on runtime, just a cleanup).
 
-        msg_addr &= ~aligned_offset;
-
-it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
-to do the alignment instead.
-
-Cc: stable@vger.kernel.org
-Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 Reviewed-by: Niklas Cassel <cassel@kernel.org>
 Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-v5: Add the #include.
-v4: Add stable and r-b from Niklas
-v3: Use ALIGN_DOWN()
-v2: fix typo in commit message
-
- drivers/pci/controller/dwc/pcie-designware-ep.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v5: no change to this one
+v4: style improvements
+v3: use ALIGN_DOWN()
+v2: new patch
+---
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 5befed2dc02b..d6b66597101e 100644
+index d6b66597101e..9a437cfce073 100644
 --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
 +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -6,6 +6,7 @@
-  * Author: Kishon Vijay Abraham I <kishon@ti.com>
-  */
- 
-+#include <linux/align.h>
- #include <linux/bitfield.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -551,7 +552,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+@@ -483,9 +483,10 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 		reg = ep_func->msi_cap + PCI_MSI_DATA_32;
+ 		msg_data = dw_pcie_ep_readw_dbi(ep, func_no, reg);
  	}
- 
- 	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
--	msg_addr &= ~aligned_offset;
+-	aligned_offset = msg_addr_lower & (epc->mem->window.page_size - 1);
+-	msg_addr = ((u64)msg_addr_upper) << 32 |
+-			(msg_addr_lower & ~aligned_offset);
++	msg_addr = ((u64)msg_addr_upper) << 32 | msg_addr_lower;
++
++	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
 +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
  				  epc->mem->window.page_size);
