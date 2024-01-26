@@ -1,40 +1,31 @@
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639592263C;
-	Fri, 26 Jan 2024 08:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390C05914E;
+	Fri, 26 Jan 2024 09:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706259341; cv=none; b=HWYW6Z+5ozEzh2gOcXlDWjxjVjU7K93XCGfPylDsui5Pd9O6TYBbos8r1JAAwXQB9ptRC/oXM6IV5q0GGP1vWcQ6FVjpvRc+cHIXmV8y5R6p4UDX+3lhXO39DSxKdScbGnzGjfuxz8rsL9u2ZHgyCwx6J/0LGoYeRruMdR5UnZ0=
+	t=1706259795; cv=none; b=NjxpPctKJ8KiBThSgOC1qI1TVp0Eods6R8XHdhOh/icv1EYWScftdk3npxkd+NEvE7EyfW6gFfE+3sFvMeE4IhDic+0oIYYdNaijVPSisMuoeoJVeDBF6tVlOuw1o8k43Y7/P8LFQXG8RZ0oe0g7UIQVSb4nd4NkHcT1ZhvIwEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706259341; c=relaxed/simple;
-	bh=YWuyFj1LWoUEo8gZuJhqmKZRCyglpZ4AVYuFv8OugUI=;
+	s=arc-20240116; t=1706259795; c=relaxed/simple;
+	bh=lAVrKCrBsmf631tjJel0PbdSbeF9q5q6NX1y3OhMR/4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTvnk74zF0yT3Q59xjW7DIv45RrDqFiJNLfuX1E7THS7JV8c/fa6eJNFIniGlEmBYfF0zlq0uva+uUbW1gQAE2vTvh1n14KdcmJRbN4mSGAvMc/eFWssyi2k6qPAFxJN61lDnIFeqrpyHNKK0EsrcQfc+9c5OYWMAdhXswwPc5k=
+	 Content-Type:Content-Disposition:In-Reply-To; b=PavG7STHKDpp+TTWytQSTMo6uZlLRlAIKWmWAdlMJW99jKUcOu0IbhNdaXFdxKl2kUgyzcWUmEeM53TTywD5yaFeo/q91GjIJfDL7+dncxd6IWy14ETEZhQxvcyUH9IGz471nPKzP/Lep1PgsPiigeFqRCSAuGCFtBWnE6Gmj4E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1rTHzV-006ETz-47; Fri, 26 Jan 2024 16:55:14 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 26 Jan 2024 16:55:25 +0800
-Date: Fri, 26 Jan 2024 16:55:25 +0800
+	id 1rTI7A-006Ell-Us; Fri, 26 Jan 2024 17:03:10 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 26 Jan 2024 17:03:21 +0800
+Date: Fri, 26 Jan 2024 17:03:21 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel test robot <lkp@intel.com>, virtualization@lists.linux.dev,
-	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Gonglei <arei.gonglei@huawei.com>, Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH v2] crypto: virtio - Less function calls in
- __virtio_crypto_akcipher_do_req() after error detection
-Message-ID: <ZbNzfR5wzrKarP4h@gondor.apana.org.au>
-References: <2413f22f-f0c3-45e0-9f6b-a551bdf0f54c@web.de>
- <202312260852.0ge5O8IL-lkp@intel.com>
- <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] crypto: pcbc: remove redundant assignment to nbytes
+Message-ID: <ZbN1WYSIKqJl6Zu9@gondor.apana.org.au>
+References: <20240116104302.2241325-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,30 +34,23 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7bf9a4fa-1675-45a6-88dd-82549ae2c6e0@web.de>
+In-Reply-To: <20240116104302.2241325-1-colin.i.king@gmail.com>
 
-On Tue, Dec 26, 2023 at 11:12:23AM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Dec 2023 11:00:20 +0100
+On Tue, Jan 16, 2024 at 10:43:02AM +0000, Colin Ian King wrote:
+> The assignment to nbytes is redundant, the while loop needs
+> to just refer to the value in walk.nbytes and the value of
+> nbytes is being re-assigned inside the loop on both paths
+> of the following if-statement.  Remove redundant assignment.
 > 
-> The kfree() function was called in up to two cases by the
-> __virtio_crypto_akcipher_do_req() function during error handling
-> even if the passed variable contained a null pointer.
-> This issue was detected by using the Coccinelle software.
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'nbytes' is used in
+> the enclosing expression, the value is never actually read
+> from 'nbytes' [deadcode.DeadStores]
 > 
-> * Adjust jump targets.
-> 
-> * Delete two initialisations which became unnecessary
->   with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> 
-> v2:
-> A typo was fixed for the delimiter of a label.
-> 
->  drivers/crypto/virtio/virtio_crypto_akcipher_algs.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  crypto/pcbc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Patch applied.  Thanks.
 -- 
