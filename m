@@ -1,398 +1,87 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1714208D0
-	for <kernel-janitors@vger.kernel.org>; Fri, 26 Jan 2024 17:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B232261A;
+	Fri, 26 Jan 2024 18:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706290782; cv=none; b=uOQJNOggzSzik+F3ehrfHyjqsYP3iUlkCq3DSOqIgLLgsAMUQCwl6Lefze/4b3Yrl9rJYLTMfp+RhgwYXyiVnYdxIV3V8J1ukJcf6bLgC2fYHc1Xk4lJS+m1KJ/FixwCGIKJFkPBDUCyBE7R9VdnsG94Ep9i8jD6MRJLko5emck=
+	t=1706294415; cv=none; b=I4RcYD40XixkPEMJdoJYBRNlQxic+xTfB5MSS74PkumVMu6AIaKEvxghw3YIetO+w6ZiABk2NNwrT/X4xwP5fGJgKfLRim4q6TaNtLV/Wm7lK/CrWSqVsTfOt9fqHtpCNX4fsuK6gVM0Ts1XfYaD5fWuu/a3NpvNiVVR4hgQGxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706290782; c=relaxed/simple;
-	bh=NtzCK/4hDIa/zGDxjv7HafqY3WVWwac1abbrbXKxChc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mU1SMwdTUCJUXr7JoaflCmDu2ZXb8kUnjZBG/CN8Fo09UrIe4J3wEvCk2hOfPgmP/KX0myO+xSyX2K/v0rF/lNKG0c7WK154UoxgWu1p+pAGjXIwu75nuOvPZPgA/v5Fs2jwUn2S05fYgP/kGWTO0cbhw91EXxFR2tuvJ2W+4Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pyMXfiTR; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1706294415; c=relaxed/simple;
+	bh=jLgekl3yQVxGw+Ct5lZL1+5C6JplkMps6ta53/Zk744=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lVUtDN0ANv4CY5t7+BD6lYgL8pKYi5UNDwEflLK7Ao2ktrpR/5C3I91SMsSjyuJA2mjb/GnEiYe5W8cTPlYOdetfwpStSoUkTHEWC3xHlTeQEcaslH/NBDfmIcWeu3lMB342nhpwuRTvAgxh0AjAJeAr9aWOUUNJd14dvQJ65os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpGwVar0; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pyMXfiTR"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id TQAsrSdRSP2ORTQAsrUKfL; Fri, 26 Jan 2024 18:39:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1706290772;
-	bh=TH7FdfylWPkqCfD39hxgrbVUxxZQts3LiSVUBjj2CHw=;
-	h=From:To:Cc:Subject:Date;
-	b=pyMXfiTRrkaf0oQAe0ENUYycF1gM6VQvvO8TC4rIqpM012Kh8VeIOYoNNbtzyDxbT
-	 02S58fJ8qxEaCgYn6QRMQPZjbqZHlpc3XGAeTjxO6eP1U0q1F2PIlMCeut8xye0Dvf
-	 FpY/h6xSfBynce5lJL4xedusi94CM7nYA4KKQPUQ1rotVSnC8yuOE8WSICcrsczxix
-	 mZHqfzzzOL9hb4cDHZrVKNJ9q37lL2ggFHKsSokwHMV8fjwfmS6//UuRpKYIu1qBo9
-	 0CCwh9gDRMLe8RDsmEqlKgcTWTFk2Tr4YN+j/XmFQ4pRw4cxKxAr3BxatbCNzQxMbK
-	 GepDPoTfMFCTQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 26 Jan 2024 18:39:32 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-	Mark Greer <mgreer@animalcreek.com>,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	"Bryan O'Donoghue" <pure.logic@nexus-software.ie>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Alex Elder <elder@linaro.org>,
-	greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v2] staging: greybus: Remove usage of the deprecated ida_simple_xx() API
-Date: Fri, 26 Jan 2024 18:39:05 +0100
-Message-ID: <2e7bbdaf8a49abb1253390394b51779f63283587.1705350141.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpGwVar0"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5d731b1a038so527253a12.2;
+        Fri, 26 Jan 2024 10:40:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706294411; x=1706899211; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TPCkKiNLdTqNBcOwGgsF/YyrV3PFnjUV6tr462aVDKY=;
+        b=lpGwVar0tbYRsS8Bar+H/0t6wDvT7Iw6c3w1T8jKqnA3vekdbHLQ4x8q8uMJmgUX+z
+         O3oEHt5hTj1Cr2RuOANj+lKj8IYTR+F8H3DOZ8tRqIGNFn3d2QzB/pEED8oXYWrUeNtc
+         P7WRMpopBZjd0d4rKMGQEXZrHSFX/BG66pCKo9/jx67sXZ7H5ZE7phGunE3G9A595c45
+         +oltM4MAQf0QUkI84DLSiOf+IbWwIJPxKHIst1oUkp2EX31r9LwnrMxo2mCRveE+PUhU
+         nPUZY4uHRI+cic6Y3O3tAaGDo4AN5k2jWrtRpF5cJ2qEqkmCM77LI/2G9s05dbMxvKB4
+         uC8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706294411; x=1706899211;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TPCkKiNLdTqNBcOwGgsF/YyrV3PFnjUV6tr462aVDKY=;
+        b=Tqk9FFchYxRbbboBYzcLyu77FELip/tytY/kN0f8F6pv+nu6jFwZO8vaQB5tHPvARO
+         PCXtA61i4IHtlQa2tiwvvI6B2YCrtdZacFMzOWo8HborNbSotT3UUIEnFmmjA7lRPP9j
+         hGIUwkqJcCxSpDu1mibaWUEUq2MOdTkOMplNOQRjkhHmUg7AhyXWcSAvJwx338cpQdcl
+         V6iuAxe1fSX99+94Q85Aazzjq/aXh/ZTdKPXjK+6WVvdx7v/NTtzHlh1zJXYPnrYLmCT
+         La1qTvb6HPDuMZc3w99ThCY3waBphjLDGK0x04RRAbk0lgTEgPYSeGhSXm8n9QJ7I2/M
+         T1HA==
+X-Gm-Message-State: AOJu0YyV3wupRxygAGvVmp8Q+ox+XDW41wcKIDKNXdLeAX8BM17eZHWl
+	FJBR4pQre3YV4m+cxLJBcPR/YzuN4ylLAk5xamC9rE6lvCQRElgD8ktjCRgc
+X-Google-Smtp-Source: AGHT+IHwh8KZKZ3D2S8qR5ojP0WULEKMOVaSCyCf519juZbmJ/h8mdKHMGzdtUVuEOxt8VoOIHNF6A==
+X-Received: by 2002:a05:6a20:ce83:b0:19c:8fc6:caff with SMTP id if3-20020a056a20ce8300b0019c8fc6caffmr159895pzb.60.1706294410924;
+        Fri, 26 Jan 2024 10:40:10 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l18-20020a656812000000b005d0796e779bsm1223175pgt.12.2024.01.26.10.40.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 10:40:10 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 26 Jan 2024 10:40:09 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Aleksa Savic <savicaleksa83@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH] hwmon: gigabyte_waterforce: Fix locking bug in
+ waterforce_get_status()
+Message-ID: <6fc50bf8-c213-4b0b-9fdd-70caa31b9630@roeck-us.net>
+References: <20240122154952.2851934-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240122154952.2851934-1-harshit.m.mogalapalli@oracle.com>
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
+On Mon, Jan 22, 2024 at 07:49:52AM -0800, Harshit Mogalapalli wrote:
+> Goto 'unlock_and_return' for unlocking before returning on the error
+> path.
+> 
+> Fixes: d5939a793693 ("hwmon: Add driver for Gigabyte AORUS Waterforce AIO coolers")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Reviewed-by: Aleksa Savic <savicaleksa83@gmail.com>
 
-Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_range()/ida_alloc_max() is inclusive. So a -1 has been added when
-needed.
+Applied.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Alex Elder <elder@linaro.org>
----
-Changes in v2:
-  - Fix a typo in the commit message
-  - Add R-b tag
----
- drivers/staging/greybus/audio_manager.c  |  8 ++++----
- drivers/staging/greybus/authentication.c |  6 +++---
- drivers/staging/greybus/fw-download.c    |  7 +++----
- drivers/staging/greybus/fw-management.c  | 20 +++++++++-----------
- drivers/staging/greybus/gbphy.c          |  6 +++---
- drivers/staging/greybus/loopback.c       |  6 +++---
- drivers/staging/greybus/raw.c            |  6 +++---
- drivers/staging/greybus/vibrator.c       |  6 +++---
- 8 files changed, 31 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
-index 9a3f7c034ab4..fa43d35bbcec 100644
---- a/drivers/staging/greybus/audio_manager.c
-+++ b/drivers/staging/greybus/audio_manager.c
-@@ -44,14 +44,14 @@ int gb_audio_manager_add(struct gb_audio_manager_module_descriptor *desc)
- 	int id;
- 	int err;
- 
--	id = ida_simple_get(&module_id, 0, 0, GFP_KERNEL);
-+	id = ida_alloc(&module_id, GFP_KERNEL);
- 	if (id < 0)
- 		return id;
- 
- 	err = gb_audio_manager_module_create(&module, manager_kset,
- 					     id, desc);
- 	if (err) {
--		ida_simple_remove(&module_id, id);
-+		ida_free(&module_id, id);
- 		return err;
- 	}
- 
-@@ -78,7 +78,7 @@ int gb_audio_manager_remove(int id)
- 	list_del(&module->list);
- 	kobject_put(&module->kobj);
- 	up_write(&modules_rwsem);
--	ida_simple_remove(&module_id, id);
-+	ida_free(&module_id, id);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(gb_audio_manager_remove);
-@@ -92,7 +92,7 @@ void gb_audio_manager_remove_all(void)
- 
- 	list_for_each_entry_safe(module, next, &modules_list, list) {
- 		list_del(&module->list);
--		ida_simple_remove(&module_id, module->id);
-+		ida_free(&module_id, module->id);
- 		kobject_put(&module->kobj);
- 	}
- 
-diff --git a/drivers/staging/greybus/authentication.c b/drivers/staging/greybus/authentication.c
-index b67315641d18..d53e58f92e81 100644
---- a/drivers/staging/greybus/authentication.c
-+++ b/drivers/staging/greybus/authentication.c
-@@ -324,7 +324,7 @@ int gb_cap_connection_init(struct gb_connection *connection)
- 	if (ret)
- 		goto err_list_del;
- 
--	minor = ida_simple_get(&cap_minors_map, 0, NUM_MINORS, GFP_KERNEL);
-+	minor = ida_alloc_max(&cap_minors_map, NUM_MINORS - 1, GFP_KERNEL);
- 	if (minor < 0) {
- 		ret = minor;
- 		goto err_connection_disable;
-@@ -351,7 +351,7 @@ int gb_cap_connection_init(struct gb_connection *connection)
- err_del_cdev:
- 	cdev_del(&cap->cdev);
- err_remove_ida:
--	ida_simple_remove(&cap_minors_map, minor);
-+	ida_free(&cap_minors_map, minor);
- err_connection_disable:
- 	gb_connection_disable(connection);
- err_list_del:
-@@ -375,7 +375,7 @@ void gb_cap_connection_exit(struct gb_connection *connection)
- 
- 	device_destroy(&cap_class, cap->dev_num);
- 	cdev_del(&cap->cdev);
--	ida_simple_remove(&cap_minors_map, MINOR(cap->dev_num));
-+	ida_free(&cap_minors_map, MINOR(cap->dev_num));
- 
- 	/*
- 	 * Disallow any new ioctl operations on the char device and wait for
-diff --git a/drivers/staging/greybus/fw-download.c b/drivers/staging/greybus/fw-download.c
-index 543692c567f9..2a5c6d1b049c 100644
---- a/drivers/staging/greybus/fw-download.c
-+++ b/drivers/staging/greybus/fw-download.c
-@@ -63,8 +63,7 @@ static void fw_req_release(struct kref *kref)
- 	 * just hope that it never happens.
- 	 */
- 	if (!fw_req->timedout)
--		ida_simple_remove(&fw_req->fw_download->id_map,
--				  fw_req->firmware_id);
-+		ida_free(&fw_req->fw_download->id_map, fw_req->firmware_id);
- 
- 	kfree(fw_req);
- }
-@@ -171,7 +170,7 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
- 		return ERR_PTR(-ENOMEM);
- 
- 	/* Allocate ids from 1 to 255 (u8-max), 0 is an invalid id */
--	ret = ida_simple_get(&fw_download->id_map, 1, 256, GFP_KERNEL);
-+	ret = ida_alloc_range(&fw_download->id_map, 1, 255, GFP_KERNEL);
- 	if (ret < 0) {
- 		dev_err(fw_download->parent,
- 			"failed to allocate firmware id (%d)\n", ret);
-@@ -212,7 +211,7 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
- 	return fw_req;
- 
- err_free_id:
--	ida_simple_remove(&fw_download->id_map, fw_req->firmware_id);
-+	ida_free(&fw_download->id_map, fw_req->firmware_id);
- err_free_req:
- 	kfree(fw_req);
- 
-diff --git a/drivers/staging/greybus/fw-management.c b/drivers/staging/greybus/fw-management.c
-index 93137a3c4907..3054f084d777 100644
---- a/drivers/staging/greybus/fw-management.c
-+++ b/drivers/staging/greybus/fw-management.c
-@@ -165,7 +165,7 @@ static int fw_mgmt_load_and_validate_operation(struct fw_mgmt *fw_mgmt,
- 	}
- 
- 	/* Allocate ids from 1 to 255 (u8-max), 0 is an invalid id */
--	ret = ida_simple_get(&fw_mgmt->id_map, 1, 256, GFP_KERNEL);
-+	ret = ida_alloc_range(&fw_mgmt->id_map, 1, 255, GFP_KERNEL);
- 	if (ret < 0) {
- 		dev_err(fw_mgmt->parent, "failed to allocate request id (%d)\n",
- 			ret);
-@@ -180,8 +180,7 @@ static int fw_mgmt_load_and_validate_operation(struct fw_mgmt *fw_mgmt,
- 				GB_FW_MGMT_TYPE_LOAD_AND_VALIDATE_FW, &request,
- 				sizeof(request), NULL, 0);
- 	if (ret) {
--		ida_simple_remove(&fw_mgmt->id_map,
--				  fw_mgmt->intf_fw_request_id);
-+		ida_free(&fw_mgmt->id_map, fw_mgmt->intf_fw_request_id);
- 		fw_mgmt->intf_fw_request_id = 0;
- 		dev_err(fw_mgmt->parent,
- 			"load and validate firmware request failed (%d)\n",
-@@ -220,7 +219,7 @@ static int fw_mgmt_interface_fw_loaded_operation(struct gb_operation *op)
- 		return -ENODEV;
- 	}
- 
--	ida_simple_remove(&fw_mgmt->id_map, fw_mgmt->intf_fw_request_id);
-+	ida_free(&fw_mgmt->id_map, fw_mgmt->intf_fw_request_id);
- 	fw_mgmt->intf_fw_request_id = 0;
- 	fw_mgmt->intf_fw_status = request->status;
- 	fw_mgmt->intf_fw_major = le16_to_cpu(request->major);
-@@ -316,7 +315,7 @@ static int fw_mgmt_backend_fw_update_operation(struct fw_mgmt *fw_mgmt,
- 	}
- 
- 	/* Allocate ids from 1 to 255 (u8-max), 0 is an invalid id */
--	ret = ida_simple_get(&fw_mgmt->id_map, 1, 256, GFP_KERNEL);
-+	ret = ida_alloc_range(&fw_mgmt->id_map, 1, 255, GFP_KERNEL);
- 	if (ret < 0) {
- 		dev_err(fw_mgmt->parent, "failed to allocate request id (%d)\n",
- 			ret);
-@@ -330,8 +329,7 @@ static int fw_mgmt_backend_fw_update_operation(struct fw_mgmt *fw_mgmt,
- 				GB_FW_MGMT_TYPE_BACKEND_FW_UPDATE, &request,
- 				sizeof(request), NULL, 0);
- 	if (ret) {
--		ida_simple_remove(&fw_mgmt->id_map,
--				  fw_mgmt->backend_fw_request_id);
-+		ida_free(&fw_mgmt->id_map, fw_mgmt->backend_fw_request_id);
- 		fw_mgmt->backend_fw_request_id = 0;
- 		dev_err(fw_mgmt->parent,
- 			"backend %s firmware update request failed (%d)\n", tag,
-@@ -369,7 +367,7 @@ static int fw_mgmt_backend_fw_updated_operation(struct gb_operation *op)
- 		return -ENODEV;
- 	}
- 
--	ida_simple_remove(&fw_mgmt->id_map, fw_mgmt->backend_fw_request_id);
-+	ida_free(&fw_mgmt->id_map, fw_mgmt->backend_fw_request_id);
- 	fw_mgmt->backend_fw_request_id = 0;
- 	fw_mgmt->backend_fw_status = request->status;
- 
-@@ -617,7 +615,7 @@ int gb_fw_mgmt_connection_init(struct gb_connection *connection)
- 	if (ret)
- 		goto err_list_del;
- 
--	minor = ida_simple_get(&fw_mgmt_minors_map, 0, NUM_MINORS, GFP_KERNEL);
-+	minor = ida_alloc_max(&fw_mgmt_minors_map, NUM_MINORS - 1, GFP_KERNEL);
- 	if (minor < 0) {
- 		ret = minor;
- 		goto err_connection_disable;
-@@ -645,7 +643,7 @@ int gb_fw_mgmt_connection_init(struct gb_connection *connection)
- err_del_cdev:
- 	cdev_del(&fw_mgmt->cdev);
- err_remove_ida:
--	ida_simple_remove(&fw_mgmt_minors_map, minor);
-+	ida_free(&fw_mgmt_minors_map, minor);
- err_connection_disable:
- 	gb_connection_disable(connection);
- err_list_del:
-@@ -669,7 +667,7 @@ void gb_fw_mgmt_connection_exit(struct gb_connection *connection)
- 
- 	device_destroy(&fw_mgmt_class, fw_mgmt->dev_num);
- 	cdev_del(&fw_mgmt->cdev);
--	ida_simple_remove(&fw_mgmt_minors_map, MINOR(fw_mgmt->dev_num));
-+	ida_free(&fw_mgmt_minors_map, MINOR(fw_mgmt->dev_num));
- 
- 	/*
- 	 * Disallow any new ioctl operations on the char device and wait for
-diff --git a/drivers/staging/greybus/gbphy.c b/drivers/staging/greybus/gbphy.c
-index 6a7d8cf2a1eb..93b74a236ab1 100644
---- a/drivers/staging/greybus/gbphy.c
-+++ b/drivers/staging/greybus/gbphy.c
-@@ -46,7 +46,7 @@ static void gbphy_dev_release(struct device *dev)
- {
- 	struct gbphy_device *gbphy_dev = to_gbphy_dev(dev);
- 
--	ida_simple_remove(&gbphy_id, gbphy_dev->id);
-+	ida_free(&gbphy_id, gbphy_dev->id);
- 	kfree(gbphy_dev);
- }
- 
-@@ -225,13 +225,13 @@ static struct gbphy_device *gb_gbphy_create_dev(struct gb_bundle *bundle,
- 	int retval;
- 	int id;
- 
--	id = ida_simple_get(&gbphy_id, 1, 0, GFP_KERNEL);
-+	id = ida_alloc_min(&gbphy_id, 1, GFP_KERNEL);
- 	if (id < 0)
- 		return ERR_PTR(id);
- 
- 	gbphy_dev = kzalloc(sizeof(*gbphy_dev), GFP_KERNEL);
- 	if (!gbphy_dev) {
--		ida_simple_remove(&gbphy_id, id);
-+		ida_free(&gbphy_id, id);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
-index d7b39f3bb652..bb33379b5297 100644
---- a/drivers/staging/greybus/loopback.c
-+++ b/drivers/staging/greybus/loopback.c
-@@ -1028,7 +1028,7 @@ static int gb_loopback_probe(struct gb_bundle *bundle,
- 	gb->file = debugfs_create_file(name, S_IFREG | 0444, gb_dev.root, gb,
- 				       &gb_loopback_dbgfs_latency_fops);
- 
--	gb->id = ida_simple_get(&loopback_ida, 0, 0, GFP_KERNEL);
-+	gb->id = ida_alloc(&loopback_ida, GFP_KERNEL);
- 	if (gb->id < 0) {
- 		retval = gb->id;
- 		goto out_debugfs_remove;
-@@ -1079,7 +1079,7 @@ static int gb_loopback_probe(struct gb_bundle *bundle,
- out_connection_disable:
- 	gb_connection_disable(connection);
- out_ida_remove:
--	ida_simple_remove(&loopback_ida, gb->id);
-+	ida_free(&loopback_ida, gb->id);
- out_debugfs_remove:
- 	debugfs_remove(gb->file);
- out_connection_destroy:
-@@ -1121,7 +1121,7 @@ static void gb_loopback_disconnect(struct gb_bundle *bundle)
- 	spin_unlock_irqrestore(&gb_dev.lock, flags);
- 
- 	device_unregister(gb->dev);
--	ida_simple_remove(&loopback_ida, gb->id);
-+	ida_free(&loopback_ida, gb->id);
- 
- 	gb_connection_destroy(gb->connection);
- 	kfree(gb);
-diff --git a/drivers/staging/greybus/raw.c b/drivers/staging/greybus/raw.c
-index b9c6eff7cdc1..836d35e5fa85 100644
---- a/drivers/staging/greybus/raw.c
-+++ b/drivers/staging/greybus/raw.c
-@@ -181,7 +181,7 @@ static int gb_raw_probe(struct gb_bundle *bundle,
- 	raw->connection = connection;
- 	greybus_set_drvdata(bundle, raw);
- 
--	minor = ida_simple_get(&minors, 0, 0, GFP_KERNEL);
-+	minor = ida_alloc(&minors, GFP_KERNEL);
- 	if (minor < 0) {
- 		retval = minor;
- 		goto error_connection_destroy;
-@@ -214,7 +214,7 @@ static int gb_raw_probe(struct gb_bundle *bundle,
- 	gb_connection_disable(connection);
- 
- error_remove_ida:
--	ida_simple_remove(&minors, minor);
-+	ida_free(&minors, minor);
- 
- error_connection_destroy:
- 	gb_connection_destroy(connection);
-@@ -235,7 +235,7 @@ static void gb_raw_disconnect(struct gb_bundle *bundle)
- 	device_destroy(&raw_class, raw->dev);
- 	cdev_del(&raw->cdev);
- 	gb_connection_disable(connection);
--	ida_simple_remove(&minors, MINOR(raw->dev));
-+	ida_free(&minors, MINOR(raw->dev));
- 	gb_connection_destroy(connection);
- 
- 	mutex_lock(&raw->list_lock);
-diff --git a/drivers/staging/greybus/vibrator.c b/drivers/staging/greybus/vibrator.c
-index 227e18d92a95..89bef8045549 100644
---- a/drivers/staging/greybus/vibrator.c
-+++ b/drivers/staging/greybus/vibrator.c
-@@ -153,7 +153,7 @@ static int gb_vibrator_probe(struct gb_bundle *bundle,
- 	 * there is a "real" device somewhere in the kernel for this, but I
- 	 * can't find it at the moment...
- 	 */
--	vib->minor = ida_simple_get(&minors, 0, 0, GFP_KERNEL);
-+	vib->minor = ida_alloc(&minors, GFP_KERNEL);
- 	if (vib->minor < 0) {
- 		retval = vib->minor;
- 		goto err_connection_disable;
-@@ -173,7 +173,7 @@ static int gb_vibrator_probe(struct gb_bundle *bundle,
- 	return 0;
- 
- err_ida_remove:
--	ida_simple_remove(&minors, vib->minor);
-+	ida_free(&minors, vib->minor);
- err_connection_disable:
- 	gb_connection_disable(connection);
- err_connection_destroy:
-@@ -197,7 +197,7 @@ static void gb_vibrator_disconnect(struct gb_bundle *bundle)
- 		turn_off(vib);
- 
- 	device_unregister(vib->dev);
--	ida_simple_remove(&minors, vib->minor);
-+	ida_free(&minors, vib->minor);
- 	gb_connection_disable(vib->connection);
- 	gb_connection_destroy(vib->connection);
- 	kfree(vib);
--- 
-2.43.0
-
+Thanks,
+Guenter
