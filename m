@@ -1,38 +1,36 @@
 Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A6D11CBA;
-	Sat, 27 Jan 2024 10:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851C31E4BC;
+	Sat, 27 Jan 2024 14:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706351740; cv=none; b=htL31F0p0Mkm9jDUHTp+ifAZeLucSzxt2VrSHNIZtccPi446EQ+Hs72soobEjWZSuajeEyovm8wYZqd4FM3t85bkeP3K86u4QELBrXjEQ85SMuY2Nk9yuM2ftAghuiVdSfEvSzF1pHPp9Jb9OEq4g0X+G90b1emaoR/D6Itb5Vk=
+	t=1706367351; cv=none; b=YyYP/2prn4OPr1a7KcwRzh1dO4GmkU38Otbqz0UeGZRXP8bd5yDs5TzKXApAmk+vkXrbp4FnRU8kWycgzjtexhzDQI8mEWooGNmfsP8NO6NxVUL/lg0CBKZ499AerL+INYnMKzS4F8kaZXPB6zWroJzWl1uAE4gCVV4hTNuCqlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706351740; c=relaxed/simple;
-	bh=bBw75j9IqFgnIbLcow/2PLqrMy0+1Vb6FnaPfM8nBGU=;
-	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
-	 In-Reply-To:Content-Type; b=ZEF3ETJmoUlFg7+pS4F1cHq6h0EALDtRf7aZYsTxgRiEnN9FBKq4F36nAJNPDJiYU0+OXU0A+vc/NYT5p730Sxq9Qdtoxoc4E13A5FsBLxyG55BOXzpjk6vxs/G/uwSFsHIwz8hjUSNgh908FJ2HCcJGNXXYNmtmyzVRbAcSyaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R8gHkGqw; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1706367351; c=relaxed/simple;
+	bh=5oTGBMsVoy/AmE5qx0ytIoyZm6Kw/DezMl4EgLexEVs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=K8lIguF/1240DDtx5DIzfB/lEXqJs13mgHKGuJ2QuEn9Vp4bVF2T0uIki7HKHQ/TkkRTS3hJhU+iJ0RRDpjMCjIe51vv5Y0Tmy/4uJ9s6xMlNSvJv4IOpNhPtiBKcjl9bE5GgTOAx6ECsgENqhNzhQne+yNEV++auQ9LKkROZRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IdZGCCjL; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R8gHkGqw"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IdZGCCjL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706351703; x=1706956503; i=markus.elfring@web.de;
-	bh=bBw75j9IqFgnIbLcow/2PLqrMy0+1Vb6FnaPfM8nBGU=;
-	h=X-UI-Sender-Class:Date:To:References:Subject:From:Cc:
-	 In-Reply-To;
-	b=R8gHkGqwm3Vw6BI9+PPK3bU00tIc5S/VlKUKmRx+VVchrkvx30esPB5/bcTj81z/
-	 NiVtb1w8C24Yvjn/3aHwCIZFKLxF0tstKi0I6WpW6rdWpJazIWAbXVyTmTM512dKY
-	 aluzYKK/HO5yxK4zYxrQOvr4fq5uSsfbm8hJaW6dlqhHhlc/OEMLqg3rNuzpgCw16
-	 VX/ExCsYxqGM204aGGhw7Q8nSBxDMuEOc0pdbaaOBReScXIQGmySyRcz2OSgq9aOI
-	 WTwUl0dglHzYh9fFS+iWY6ekrNAeuY86SWZTi5BhmZpw5JCrRQ939V5GnJLp2/xzB
-	 WlJ4LhV7zqhlohqn4Q==
+	t=1706367326; x=1706972126; i=markus.elfring@web.de;
+	bh=5oTGBMsVoy/AmE5qx0ytIoyZm6Kw/DezMl4EgLexEVs=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=IdZGCCjLmfazUcmtSLsqsWkQ43R2iVHyoPtZl3X0VUGbT9oOHL9/9qpsbHFvB588
+	 3OKutBw9QWhLrndD0ItJ9yy63pzyPQaEvAPBNUxD92zEOTVZn8fwBYBsOd3aHQ5gE
+	 rScWys2ILPC73S2TxWGQGymRD3NW52YhXvATOvtwjmtr00SqV/A7F7G6bvjgtfrbn
+	 Nw2CZohrwvIYqtEg5uPKj+6kCTlAg9UZxABiHxIh9s/ijwVp1C7lXuD1mCOIvGcOq
+	 EbAHyW0IKxkw3uEANTV6IvxSMCjdNJyDaE8zYUhXXHZgZnmTlmly+KuoR+FmJ229Z
+	 /Ljtvv01tD4vOih0zQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7WN-1reMC81YnH-00Uaiv; Sat, 27
- Jan 2024 11:35:03 +0100
-Message-ID: <72f6297c-99ea-4f92-b049-1a33fa864cf5@web.de>
-Date: Sat, 27 Jan 2024 11:34:59 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaS7-1rEojd1hPP-00u4CP; Sat, 27
+ Jan 2024 15:55:26 +0100
+Message-ID: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+Date: Sat, 27 Jan 2024 15:55:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,50 +38,70 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, coreteam@netfilter.org,
- netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>,
- Jakub Kicinski <kuba@kernel.org>, Jozsef Kadlecsik <kadlec@netfilter.org>,
- Pablo Neira Ayuso <pablo@netfilter.org>, Paolo Abeni <pabeni@redhat.com>
-References: <20240123024631.396631-1-chentao@kylinos.cn>
-Subject: Re: [PATCH nf-next] netfilter: nf_conncount: Use KMEM_CACHE() instead
- of kmem_cache_create()
+To: linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Luwei Kang <luwei.kang@intel.com>, Moritz Fischer <mdf@kernel.org>,
+ Tom Rix <trix@redhat.com>, Wu Hao <hao.wu@intel.com>,
+ Xu Yilun <yilun.xu@intel.com>
 Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
 From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>
-In-Reply-To: <20240123024631.396631-1-chentao@kylinos.cn>
+Subject: [PATCH] fpga: dfl: fme: Return directly after a failed
+ devm_kasprintf() call in fme_perf_pmu_register()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9pUtgJwNPHO1FUc7Q6gwWDK324oGPWcIa8GDBsiT0bDwz8Q57ch
- 48FajJ83+dQzUMagRk8tTnNdyGCXarlXje2J8EQXwCfqVTGUm5OyLfgx28Rm52yTuCwoYqR
- kOLSqYFweLsEyi1dc/8vfrncn2FIMw9Y0/XCgDJGbcrzPdPcTI8k58dgWTsqHWcJTitX7hQ
- /Q0e86go0eCnPeNBfO04A==
+X-Provags-ID: V03:K1:6vcd10ZQQqZU6BgRQxdXosyK07D6p+07N3r8mPyYUd2TY5RTWH6
+ Et773/a2KpVp/IC+I774nwVlQ1yPUO3/KFv6ueurCMi48EkAUR+eTmuPn2GEkGHod/rKqWD
+ ch7o79nE3RVJutNmad++NdSOwSVk+lk2QmlFY9FZhUE3dZGPqrMqRtPqde2V5So8rChZs4j
+ uUXDr4TjhC4xmGpDfLF+Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fbPKtf/JPZY=;sgJWmdXtWZFvN7UxGJ2XVWET5uf
- 0rjAClmMxvbIQhxLMWsgG9If2ddardVD1W5qH8kFq5elE+jt2ESUlAxd0/16LNJkahxamOpHM
- rBFOayVIBCSE7penEwQopZZIZxWAqO8uRle454OGP8G5GfEGXDAmaWtld8NDWrVA394lwe4kJ
- +goe2b3rOZ5g5HPEyt9n3bO1larbB1mAGQr1EZeZnV0tr6fArRU20tqvWy7mZ/puC9EI3YhE9
- GsJBDSNiP2hi9OCJeNSjI78UBHYYhfloZ3ndVNT1W1x2F59X0HKHivp/HtNIBq24/5ElRUvx6
- 7bXKNIiZY5Cjqnd2Kx9ylpFVV4OFCOyuE0Da2pLlevE+yawJgJfItmzCaAqECzOj92wGbetrE
- BcmqanflwVvoM5IYqkZblx2POmitvm5bbngGqvF6UqrbaNzmVq4SAzoKduXnbmbVI103Weibn
- NRLqyQXan0zsiDHR9Z26xeRUXsIoBqTDpZ1B0K2OblQwDjZkFVypsBvuiREQirP2qdL5muvjJ
- sJWdPoyExdgorIqH2ZfOmdy4I7+dYMrwS9LqvdJoYlgW8esT6qZkcmqGITZaTNRZ5A2q+UQXv
- MvhShA+G9zFEqsYMPvoCYnQVUZaAAjeDoEeMzu9j9+VBYLaBp0ucA+6+/7meIs1URUrRion69
- CAiMwOtHjZjqKbIA0vsxR5atMQqbfcofJHLYNX+ZOsvtZy+RGZ7BOE/n23Ebn0R6mq5Ogl7rm
- is6ITHQP2x4Tf1TUUJotyGCHWh3T9faJwTs0iwh6qhjOy5HL0PbVKluAd2DYWv+yGMK1ZyMZO
- j2602NkPUGPIV0IUWqMGcAmTjoH1GVt2OJnCh1a28ZhBV6MA8Q0V4MpBDec/Gln3svwYROLeK
- ApHoM467gZG/m8dR2DVChHp2F4ih4qWWIfw6GNGnLEUq/oxkkTz6LoKDg3JHahUTSLWqxbdL5
- ZdSUSw==
+UI-OutboundReport: notjunk:1;M01:P0:LAWx3IAIWPo=;JLeqcNkLoARB1EISitBbSSocVOb
+ AT+M8c+Rd7wyNZJLbjMnnCIoDPNDCeMRXVze2CuZ6JmZ/zPyVe9opsOYk//1NgOWT/oigx6OL
+ G9xVGNlsJ3IuenoEzVshoblk+3MM9uLcVhh946eYn/vFf2Ga/4+8g49QASSWhxe/jiqFjzbZu
+ P4NoVcggljqoZvMwDQOSfxuGP++ef0PifZBRQIvqVUdNIARFiaZ22BmdqvnG30MWmK/ub9vZi
+ Hb1lqVD+5jRvCWq27viTnYeZUMoc0Xrpgj5844oMUHfec8BhJvvgY6o19kbFOXGMlQk7+Wdin
+ QQoR0mMmWuUvXrAwS9xuuLz5kFFXnLxQWboL9bVZiUUAyw4xBmBUedew9s80ihz9pkIxKSM34
+ hur+WNTrsp1W2mtZwwmOip1SyqDaB4jOf5WvXGFraAVLprwnXB6AndFlhRzUNUEKEuqC7mu6R
+ KohZNBOLFqR5rVAEtedHbtveoLdULNNlMmESrUhRK6HXDNkQEM0gJQFKmiZgwslLPwSjejcJ6
+ smZTj/2fOpSZOSPwbnQ1q094y5D6H7t4YdT61Rrqq1YiLhSemM2f0DNYJpYOIG30bMXfIpXFm
+ JjLviA6rjk47/5eBlF1ZCzv6UncLcvJivZeeAMjqX/8y6y2ET3kPWsVKPRYn3dxHce0spqQGm
+ yl4+8fCY3H1XNiNJu1ot81JcXz2YczVOf3MDENKXWkXAdxwdbMSPqJS35czyxZaHnULrSOqji
+ MPfMcWEBqExH0bFlMPixXbdzaDaDnTRuGMv4TQhDhy4UoIGRSxrSB1P+Mnmo/vt69Fs+LhWBS
+ NWvK4G/QKPe7KhZF7feMsIG8odTMafNiOWUjAiRaTvF1jCZ+LO86K36I5odhDRcd+94LVwnsR
+ idnkah2Uh4Rcsq1p6l/0dzJHvPhVQ69q9eFtWDaoEy8SqaWrQDNJLQziJPRU8V4N8RBdOp5PJ
+ GfiThzazYbdcYi0mUoFYG9BlBlg=
 
-> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-> to simplify the creation of SLAB caches.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2024 15:43:42 +0100
 
-I suggest to replace the word =E2=80=9Cnew=E2=80=9D by a reference to the =
-commit 8eb8284b412906181357c2b0110d879d5af95e52
-("usercopy: Prepare for usercopy whitelisting").
+The result from a call of the function =E2=80=9Cdevm_kasprintf=E2=80=9D wa=
+s passed to
+a subsequent function call without checking for a null pointer before
+(according to a memory allocation failure).
+This issue was detected by using the Coccinelle software.
 
-See also related background information from 2017-06-10.
+Thus return directly after a failed devm_kasprintf() call.
 
-Regards,
-Markus
+Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/fpga/dfl-fme-perf.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/fpga/dfl-fme-perf.c b/drivers/fpga/dfl-fme-perf.c
+index 7422d2bc6f37..db56d52411ef 100644
+=2D-- a/drivers/fpga/dfl-fme-perf.c
++++ b/drivers/fpga/dfl-fme-perf.c
+@@ -925,6 +925,8 @@ static int fme_perf_pmu_register(struct platform_devic=
+e *pdev,
+ 				PERF_PMU_CAP_NO_EXCLUDE;
+
+ 	name =3D devm_kasprintf(priv->dev, GFP_KERNEL, "dfl_fme%d", pdev->id);
++	if (!name)
++		return -ENOMEM;
+
+ 	ret =3D perf_pmu_register(pmu, name, -1);
+ 	if (ret)
+=2D-
+2.43.0
+
