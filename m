@@ -1,100 +1,92 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38069208A4;
-	Sun, 28 Jan 2024 10:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D34A1B286
+	for <kernel-janitors@vger.kernel.org>; Sun, 28 Jan 2024 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706438752; cv=none; b=heX3mRLpSiW3eoUXId9QE5vNxmyLku9JRyehReGJzv4PvtNl4ErMuvUrdO0pmEqoWyYFFMbrzbPgl6UtvD/X65La0LS7amldxuzds2sVI9BNfTNivUU9Oy3Pl1TM4tID2rRHuftGE4WS7bsIvitoT7caKgBRQ41+cszqgkPClBE=
+	t=1706441681; cv=none; b=PKP1Wags67Ous6zLI2aC2kMG4/W6PGkYUwJkWFQEmgi43zIuNynFA0rRuwdhlInbdz+SVoYSKqGhUTysBmR8doNYboI13r6TqFfyehSIt9+v7vGh/ucRwtIqgtHmkAxUFdealIF1C/7F3oqp1Xt3i3V+4LFlbFl9bWK+iHu9JXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706438752; c=relaxed/simple;
-	bh=TGfLIz7HMLH6pmk9tTvIdpudfuLAD0Jt70AkMN1beNw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=L9w4J1i+q4zOkAQJ5c6AsUDig01zROeoDUK8Vpmwu0BlqemceePMIOm8wGEKMK5iqdx8eC6TyyR1XsL40v2Nxy7XInZSi8l5UUQhvES+jYmenKzaSJRkZO+kAimUIyYCYIT24VqGP9uH75n90Dl7n1EkZV1UC1GFrmDhfJetc2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mgKcICdk; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706441681; c=relaxed/simple;
+	bh=KIqqe6b7++tdELzI8weZpXwb9c1lX1twgOwQ23G4KaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ca0UREqq4BYYua1JRFEnKPbBuuJpm29nIEn8lxIz8OKFFhZwUP47tza0cs3+Ajbjr1RHtLHIjiVgTHQSbhUriZuO3tpnowU/hB9uVzl7FsjH6Cs7GesAbhwKm0Kiz53CtnM35nfyKPEjopd5Hgvx156zvL19g3xb5LaDo8pOty0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q8lyiM9W; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mgKcICdk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706438715; x=1707043515; i=markus.elfring@web.de;
-	bh=TGfLIz7HMLH6pmk9tTvIdpudfuLAD0Jt70AkMN1beNw=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=mgKcICdkIoZACzViS+Rag+u++ngicj1ppSBAaqqW8NUWsJevUKgnucuJSK2yKjM/
-	 Ju0bSIbmuIdNh/GRYlTVTxfmR+RCu/ZtXIwEBPgMX/IbF3BxNReLfPJY/0VvOFnd5
-	 xcikuoHz96XyuIPnSSbkNQsIihH3C65diCZMNCsdkzsw1uOrdXwYlqhcAuyOGvrMc
-	 DOEfrGZBgtZcAaUVveYV5/kJ3OebjIGijzSblCXA3w+SyEOa10HRNALnAQf1Y4Zet
-	 GEOoFSFllzFC1gNQ6UcsgUHpxwO2oGNIRaWExItXrboP/pGmEJKgpVLD7SpSs5S6d
-	 QLb0HW7hplM3nbDjdg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyO0s-1r9LVe40vk-00ybyd; Sun, 28
- Jan 2024 11:45:15 +0100
-Message-ID: <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
-Date: Sun, 28 Jan 2024 11:45:10 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q8lyiM9W"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id U3QhrO2WGJujcU3Qirni2Q; Sun, 28 Jan 2024 12:34:30 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1706441671;
+	bh=bty2xukFdRkPEFlCnTL1HrECxC57pxJIVp0ohvU2AgA=;
+	h=From:To:Cc:Subject:Date;
+	b=q8lyiM9WQo/EgvGQysdvx+kePnrw+P5IQ8+wLP2buInfRszrFigPMdnwqTLcwekay
+	 vxgYWtn0UQ+qlLLJH6llJzZRvaCGAwdSDbWvN6MzDu9zJPkJlMt2ntFi93UwdbbudT
+	 KhHTSLQ4dxRf+1xEoK3P5vX3oQwnX1hfDina0d1b4sFDov8yKJA3eUUXk6ppcwcRf8
+	 599nG14+4uqV+HixiKORto7wOAZ2vzJr3Z9XKK6lCBItSgDixxsBCp6rPYHzNRHZ8U
+	 Gt+ZlR2tLvuG91dcgdYNZABgVG238N+WPdZrts6wUkezYezM+bH9s7SjtfUkAomxjO
+	 jFHBjw2MxLgNw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 28 Jan 2024 12:34:31 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Vaibhav Jain <vaibhav@linux.ibm.com>,
+	Kautuk Consul <kconsul@linux.vnet.ibm.com>,
+	Amit Machhiwal <amachhiw@linux.vnet.ibm.com>,
+	Jordan Niethe <jniethe5@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org
+Subject: [PATCH] KVM: PPC: Book3S HV nestedv2: Fix an error handling path in gs_msg_ops_kvmhv_nestedv2_config_fill_info()
+Date: Sun, 28 Jan 2024 12:34:25 +0100
+Message-ID: <a7ed4cc12e0a0bbd97fac44fe6c222d1c393ec95.1706441651.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hans de Goede <hdegoede@redhat.com>, Cong Liu <liucong2@kylinos.cn>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
-Subject: Re: [v2] platform/x86/amd/pmf: Fix memory leak in
- amd_pmf_get_pb_data()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Q9DjKMDDGy1EUUXq9c/+KRQt8G0u6NeSVNylibowMlt24Qfsewj
- 8+MvK7pvTKmPqGkY8nMLmRZ7CrfmmsC/ejuCbFU1k+NHyZ9D2nHJBaTC15ubbMYy2vkrZtM
- qLcCUbhpSzjyId1Zwbw9dy35f4J9Fmf820n5fDMITVfEhty7zJJAUtWSri6WMzGzxAcSHEG
- T+soYN7/Gb9NFEWOr69Ew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jBxDDNaiqIA=;jHEzBPd1+9SJ8jRFyYz29Zh6blU
- tsIQtOiqjt4y5bbjq7nYca/AweVMsXT1u1d+TFCYvT2Ds6DjEaayK77hj3FY2sX90k66Iu+Ec
- 9qtz+owHX0my+E375XXDNJzi+ko2r76iSFC2mlpmQGjQ/ppooGjhgltef0DHWpgjfH4/H37lO
- 6bD+vDtACGr2vpvAB6/nMzlVGEUwSg6uogQObmqxXVSXMi158emXfrxCm2HjGG0YWg/soDeUk
- h7h8urdbU33KhheaZ+nIBsivoytfP7CnvX5/GLoIA9k/WZVpbQIv8DtOSAKp15JQX+UwNT+ex
- IVQHHZICMnbH6CUYrXjKRTUosNiQB/g7gBJw6kou/18I+NlcikdYSWQCV1C16knVFgEEzSjic
- AYgT+s0DRHjCiB1jKuznAnab6I4BE6yOup6KA8alIoQag6PpJOLrf7gaF3qWbVIunYHVlaq48
- qORyyeSQUFJ3Qvdx/I4Qvuea5DYy4gv9PU3Hhpljacyer4nZxZzv2BdmB1V73+rx/kydO4pKS
- BVciKgqDaVlj1ARr/9v3DPVyMMZf+Y8jeL/3CWg0NJkt7ztoczzWpIIm36uZ6xX2JZAsUBNAr
- lW2Y7a8ZSio+lZodVIvCVsmFFLMM8LOgL/cXsgSQWRZqxCPzGuOFIzi4sNSpjH1oo9bchHWki
- Ex0VW41s4sOKgCCmZklAZZ9znliSD3grDkjfhPJnn4fDb1p+Bpe7GauOEmj6haOIm99uDSBHR
- KFdQTBtxGEH2yxrjDg2FZrdIdu9rxJCzfNQE5He+SgKRCZfsM0ftqAZNWIK1KBcqSVy6QpupQ
- yy1PlOp1U59/nWPGyC+qoA9ZrD+XbhCeafgeuzBIjU95Amh/W5pJHLd2oR7hj1fuKUe8gfvRa
- udPnM5YYhPjuMe/kDA5c/ghGhwUzuma/X0QbMeds0W7JbG+yVCXe0ba2TV/raJVhH2XC0BlWi
- AyS9MA==
+Content-Transfer-Encoding: 8bit
 
-> Thank you for your patch/series, I've applied this patch
-> (series) to my review-hans branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x=
-86.git/log/?h=3Dreview-hans
->
-> Note it will show up in the pdx86 review-hans branch once I've
-> pushed my local branch there, which might take a while.
+The return value of kvmppc_gse_put_buff_info() is not assigned to 'rc' and
+'rc' is uninitialized at this point.
+So the error handling can not work.
 
-Will development interests grow for the application of known scripts
-also according to the semantic patch language?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/dev-tools/coccinelle.rst?h=3Dv6.8-rc1#n71
+Assign the expected value to 'rc' to fix the issue.
 
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> make COCCI=3D=
-scripts/coccinelle/api/memdup_user.cocci M=3Ddrivers/platform/x86/amd/pmf/=
- coccicheck
-=E2=80=A6
-drivers/platform/x86/amd/pmf/tee-if.c:297:18-25: WARNING opportunity for m=
-emdup_user
+Fixes: 19d31c5f1157 ("KVM: PPC: Add support for nestedv2 guests")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/powerpc/kvm/book3s_hv_nestedv2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/powerpc/kvm/book3s_hv_nestedv2.c b/arch/powerpc/kvm/book3s_hv_nestedv2.c
+index 5378eb40b162..be5f87e69637 100644
+--- a/arch/powerpc/kvm/book3s_hv_nestedv2.c
++++ b/arch/powerpc/kvm/book3s_hv_nestedv2.c
+@@ -71,8 +71,8 @@ gs_msg_ops_kvmhv_nestedv2_config_fill_info(struct kvmppc_gs_buff *gsb,
+ 	}
+ 
+ 	if (kvmppc_gsm_includes(gsm, KVMPPC_GSID_RUN_OUTPUT)) {
+-		kvmppc_gse_put_buff_info(gsb, KVMPPC_GSID_RUN_OUTPUT,
+-					 cfg->vcpu_run_output_cfg);
++		rc = kvmppc_gse_put_buff_info(gsb, KVMPPC_GSID_RUN_OUTPUT,
++					      cfg->vcpu_run_output_cfg);
+ 		if (rc < 0)
+ 			return rc;
+ 	}
+-- 
+2.43.0
 
-Regards,
-Markus
