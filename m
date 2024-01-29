@@ -1,127 +1,125 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F17446CA;
-	Mon, 29 Jan 2024 05:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1524B52F97
+	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 08:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706507056; cv=none; b=svfztWrDPw8oJOshsa4mJLK5Lqrrfe3MfunQ9/nxTJ14lQjOvQst8YD3s3ka6E0zIxUGGnnckSGzTTOjvqlaHaYQPY23cO9+d0vfYbfOcFfYdK1Vxrvx4FCeBIqgVLc+MW1I+Ggm0jPIY0EcZpDLdTxi8wrH86U/sZxYdIQ2enc=
+	t=1706518759; cv=none; b=CGzKmhZHauNunYY/HROjX+BRByEMiM4UWm9QOfosJaCAFkoELLSVlSUbTFE6ZQsUhG4HwK5uq9RQztMaEjmJePKTV3XTIVsXsiga0OafOQUTyBDIkdkgodVqVmyh2QQQ4hKmebllA+KD0UoEPCATk7pv2JMaJbq+noS73ImlBsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706507056; c=relaxed/simple;
-	bh=pyJVcpc0mV/wy4nwItJ7qfaDl9SI0Rs/Nxj67sqOE34=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lUZ0askajjPMUtBw9mOFqXLlkeWjbEK7ECtXR4lMAR1+u/4Mpyie5fHt2txqSltuYU7uHLMyVrWuEp2jDPuaXdl7yHpkNR5/ZUFk1nDGQ/xUTPph70fc+Wvin9mXzKenHWkPXhajzHeoi/k1ol4a6cs/29dampFduo4DItzWnxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dRar5eJu; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1706518759; c=relaxed/simple;
+	bh=SjgxZgEJ0zE2xG68u2eXZKUCpalABl62X6Kdteb45Og=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwB8EfonAD3J4LoCVIb9AV6kMatIexpI4kctF3kl5RyqnRVN4YoE36dztCVUdnfxhabdUdjYquOmClHm6GpvTNceAg9UpoduJqCyXsdKzdRO73J2xLwesUnoVDEFmpi3kYrSY26n55EVsNFMQX7J44Mkpn/yCCwYIHe2kgEV1ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CatMXJ9d; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dRar5eJu"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40T4TVNd000412;
-	Mon, 29 Jan 2024 05:44:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : in-reply-to : references : date : message-id : mime-version :
- content-type; s=pp1; bh=5P19J4UsCEy395Sq3OX4ZVElGZFdAvopFeOiSHWhQEY=;
- b=dRar5eJuhlhXw888NbvsP9CB2dVEj6Wg8i42MaDSFVk7trPXqFEUI25p6YQlJSnlaLmI
- 1brq5tQlJP4KoA+ApTperTjQTWq1rzxDNIpqPg8Fi3HZpfrYvN4wylBMOgeqIcZSTcVW
- 2GavLDrAxS69pxFnPcKx376+G7oPSb6MsyOz04VfIvzoZy+4KdGqhPmEK5TVf5hagiI9
- 1bjyPT+U3yhJCMVxEd5vKTA0bXWaBlEbyyTik8qBRJHJrDYDsb6hQ4UfJNjQMwN/pvJo
- rwbOJOnME6SUBlIMo7/aNSx9J6k3RVclAhHve4XqYK9q8yu+zPhYDqGXO8rIHLCXV4yQ 7A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vwtaek4v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jan 2024 05:44:01 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40T4dcZS031374;
-	Mon, 29 Jan 2024 05:44:00 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vwtaek4u9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jan 2024 05:44:00 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40T5R7UZ007964;
-	Mon, 29 Jan 2024 05:43:59 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3vwdnkp8s7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jan 2024 05:43:59 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40T5hu6s46661986
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Jan 2024 05:43:56 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F206C20043;
-	Mon, 29 Jan 2024 05:43:55 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7753A20040;
-	Mon, 29 Jan 2024 05:43:51 +0000 (GMT)
-Received: from vaibhav?linux.ibm.com (unknown [9.43.24.56])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Mon, 29 Jan 2024 05:43:51 +0000 (GMT)
-Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Mon, 29 Jan 2024 11:13:50 +0530
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Michael Ellerman
- <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe
- Leroy <christophe.leroy@csgroup.eu>,
-        "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Kautuk Consul <kconsul@linux.vnet.ibm.com>,
-        Amit Machhiwal
- <amachhiw@linux.vnet.ibm.com>,
-        Jordan Niethe <jniethe5@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Gautam Menghani
- <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: PPC: Book3S HV nestedv2: Fix an error handling
- path in gs_msg_ops_kvmhv_nestedv2_config_fill_info()
-In-Reply-To: <a7ed4cc12e0a0bbd97fac44fe6c222d1c393ec95.1706441651.git.christophe.jaillet@wanadoo.fr>
-References: <a7ed4cc12e0a0bbd97fac44fe6c222d1c393ec95.1706441651.git.christophe.jaillet@wanadoo.fr>
-Date: Mon, 29 Jan 2024 11:13:50 +0530
-Message-ID: <874jewy9rd.fsf@vajain21.in.ibm.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CatMXJ9d"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706518757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mz0NTo7T3zvbZQvTXWnrEg5YVgGabir9bR7S1JM1MOk=;
+	b=CatMXJ9dkl5cWEJMzT1lh9Bu1vWmlD2yOe6nVdZ0y12+m+v5HffH0pWo3p5gOHGOcoVqxn
+	beli+h68IirFIO+t7lcQc2K3MOf1fjMtTYa9luo27oLF2XgdHyNj2OmhkBRPfSs56dOoC5
+	YOqaPijvw9eFGP4RWG1knmXHwRPwFic=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-230-l2Y2mY5cPpyIW4ovVU49Gw-1; Mon, 29 Jan 2024 03:59:15 -0500
+X-MC-Unique: l2Y2mY5cPpyIW4ovVU49Gw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a2f71c83b7eso126301666b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 00:59:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706518754; x=1707123554;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mz0NTo7T3zvbZQvTXWnrEg5YVgGabir9bR7S1JM1MOk=;
+        b=QPweCrj6RpdxvkXpipq4+RaHOqxHDx4aLXB5mwsdkxqnPDsFbcxOf7jL6tXdbBdlBY
+         UqwQULZ7B3l1RPJQBJv7A5lx580prkRSeRBLa7xZIbOtB2KyWwEqbHIZrUJqas05ykn4
+         m5UgAojpjBW63JUl9/T07WuAvAGzwemd9UDbY5IUTA0XC+whT4j2oLz9VDrq/LNdntkt
+         UQGs55FchveLgmwqwzH9qQZ9utsok2sY3hr9FG56tuHjhX+7JC32e0h5QusJ4yyQgl7E
+         8EFk9vB7dQRXUi5fQ36kQkh4ZKEBQSD5FMf//A7MdXVlfTxLPYA42Jvj8kGws2DFIFdf
+         j2VA==
+X-Gm-Message-State: AOJu0YzTdcRClzeAtVuvInxhPo+BWXONl0P7Y/xemtCNFJcHR4It9UH3
+	wiyWMOceEXOHx6plFGo46s1PhzbJT53rPwb2lIguqmjuJbgq85zNe4WtRbXRvAXFPlmQwkCwYYk
+	N5ado+v03zUD4zQKYesThKYXceGZYt+lux0ATZXNIhK2rV7nopRb5VGeiN/UDe17g7Q==
+X-Received: by 2002:a17:906:a219:b0:a35:6601:e401 with SMTP id r25-20020a170906a21900b00a356601e401mr2937549ejy.5.1706518754372;
+        Mon, 29 Jan 2024 00:59:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHf/JYvN1cOiBBS6nmvk4erwpIf/mxbTQA/LtkKLl9FgSRVphAi5XD9/o+bV8doYWxYglG3RA==
+X-Received: by 2002:a17:906:a219:b0:a35:6601:e401 with SMTP id r25-20020a170906a21900b00a356601e401mr2937532ejy.5.1706518754117;
+        Mon, 29 Jan 2024 00:59:14 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id ub14-20020a170907c80e00b00a3109a492d4sm3647222ejc.20.2024.01.29.00.59.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jan 2024 00:59:13 -0800 (PST)
+Message-ID: <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
+Date: Mon, 29 Jan 2024 09:59:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: kpf5wIbPQbNQS9J3hKoQo_0puOIwm1mu
-X-Proofpoint-GUID: FRQApm0KkC0kJTi0jS-4tya3IfZLlrx8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-29_02,2024-01-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 spamscore=0 clxscore=1011 suspectscore=0
- lowpriorityscore=0 mlxlogscore=901 adultscore=0 phishscore=0 bulkscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2401290039
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] platform/x86/amd/pmf: Fix memory leak in
+ amd_pmf_get_pb_data()
+Content-Language: en-US, nl
+To: Markus Elfring <Markus.Elfring@web.de>, Cong Liu <liucong2@kylinos.cn>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
+ <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 1/28/24 11:45, Markus Elfring wrote:
+>> Thank you for your patch/series, I've applied this patch
+>> (series) to my review-hans branch:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+>>
+>> Note it will show up in the pdx86 review-hans branch once I've
+>> pushed my local branch there, which might take a while.
+> 
+> Will development interests grow for the application of known scripts
+> also according to the semantic patch language?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?h=v6.8-rc1#n71
+
+Markus,
+
+I'm not sure what your question here is?
+
+Is it: "Will coccinelle scripts be run as part of the regular patch
+test/merge workflow?" then the answer is that there are no plans
+that I'm aware of to do that at this moment.
+
+If such a thing were to be done, IMHO it would be best to have one
+of the existing CI systems like e.h. Intel's LKP test bot run this
+on linux-next, or on all the trees LKP already monitors.
+
+And it does sound like something interesting to do, but someone
+would need to actually setup and maintain such a CI system.
+
+If the question is: "Are patches generated by coccinelle welcome?"
+then the answer is "Yes patches generated by coccinelle are very
+much welcome".
+
+Regards,
+
+Hans
 
 
 
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-<snip>
->  	if (kvmppc_gsm_includes(gsm, KVMPPC_GSID_RUN_OUTPUT)) {
-> -		kvmppc_gse_put_buff_info(gsb, KVMPPC_GSID_RUN_OUTPUT,
-> -					 cfg->vcpu_run_output_cfg);
-> +		rc = kvmppc_gse_put_buff_info(gsb, KVMPPC_GSID_RUN_OUTPUT,
-> +					      cfg->vcpu_run_output_cfg);
->  		if (rc < 0)
->  			return rc;
->  	}
-> -- 
-Thanks for catching this and the change looks good to me.
-
-Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-
--- 
-Cheers
-~ Vaibhav
