@@ -1,174 +1,123 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F6831A82;
-	Sun, 28 Jan 2024 20:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C78F9E0;
+	Mon, 29 Jan 2024 03:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706472396; cv=none; b=KvhXzCMlhsFd1Yr/mwLd4A9OSCbWLTNaugn/fgyUy+AE58PyXIms8xbp6HXlhENH5Co28FidPwMLxcT2Vgee167BL83+PQzV+zLARFJr+APjeeOsAlOr0p8dw2Ds7DGfsMF0jb4BtXTNZv2rjbHS9wCvIsDmrp/pgkxzms021Jw=
+	t=1706499389; cv=none; b=j6kd8mCC3lKNysyvqaKpAuW13a5KqaoIUZXulXbhlPpKSfSlJl4CtvbYjbN3NptpOqByk9/Tntk3CDxld8ibaoG/tqtEeUiQuto+L87rmVcTT3Fv3oGWZixbtuVTO9Bba2DnX0+O6TLVFac50cEhVlV+I1NkQSaYQ5TOTLcGBJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706472396; c=relaxed/simple;
-	bh=NgaXvXQoHsjxe/EA1Ybr+FQWYg9KhJGN4jFPViGSQxU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=aTBflspv3NwAd/cF5Sxkjw3JGa879KNhbT7GA2+UvR0fjOS6oMQLJlyLjY3QdCLlrtshiXLyDmYnthuqg2Tf7g182n5XbQOXaWu95obFBjjFjrck8TocOs7XUEUMOBC0JJXaFzSTQTkuANSYDttcyYMPeNWkq2XtMO4NbBXuf9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vz/Q/L43; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706499389; c=relaxed/simple;
+	bh=DTK+Uv/HINzvJpySwWLfjp2M9gYLySqkKhOfo+5AGpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxjC2TL+BVb+2H6AHo2gjM+hrb8lQu5z0fdX5W/98aELxF+N2eeCsmK8rBoZ2oTh3/9QfsvYQjiC2/qWV8RBmt9NeGaq9hO4KMOaWoIai7QBF5SslaIYljXKjWfCZtFoGc8pSdjlxaMZtqQ1HJHUtLNhTpMgeDzkj1/JFy0h4jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hz5p9NOd; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vz/Q/L43"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706472371; x=1707077171; i=markus.elfring@web.de;
-	bh=NgaXvXQoHsjxe/EA1Ybr+FQWYg9KhJGN4jFPViGSQxU=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=vz/Q/L43/Tc6KJxGJGbdWl8qyaIutUMg/3lI5CrC9uehl8vYhCoWHl0V/D9yvoJI
-	 9pnI3QKHgIpLt6YTQiJS5KDX2ppq2CPESw5rhpSUOM3LQPnDBsjGiDPvAf38LM6UO
-	 RCor65Dgnvj6JeXS+4FPGFwsAQ6k731rdCL4xY3HcKkn9ex0OOQinNGSPmH8QghM+
-	 uEKcoztXp7QTOdZD9PL8QO3qDlM8Yl1298+PA3/mtgNchVmagKlaSeoF8Jjp/9zJi
-	 3muccUJZ+xxaatwaZEsDn3VjVNee/MItKlklBV4MsyoyuDUqMuPnc5OXsGirN6w0O
-	 rgvhTPAh4NsYSWt9jg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Myf3v-1r9U8U2P6L-00yX9a; Sun, 28
- Jan 2024 21:06:11 +0100
-Message-ID: <c07221ed-8eaf-490e-9672-033b1cfe7b6e@web.de>
-Date: Sun, 28 Jan 2024 21:06:05 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hz5p9NOd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706499387; x=1738035387;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=DTK+Uv/HINzvJpySwWLfjp2M9gYLySqkKhOfo+5AGpI=;
+  b=hz5p9NOdza5VM0skTy65E+sqBFhG6PrO24ISS6TNmo1x0s8hk9Jke+WX
+   kXoFbY93c66f0BEFwxVDJaaTkGPaymlQpjuDJnIrCfI6K+XkKxD0uMEO9
+   4oaQFV5+ZmrZdc9YIn9rA6ZnwiQYxKNJ0WehC9B5WF+a1i4VBsGQDnwhS
+   8L9J8g4YEXAzHuRgqu5kxcV2NcRXDfC9g94ndEqOGF8dQwtvJwz47/g65
+   2bmpZuzet5I/JuPnh+xJFEKiv7CioUS9WYOBoatXcQvmx99GnnGW0Moyr
+   6reOedTibMG91vIv9EIMjC+vMYXLFLfcn9KmgeE+GBT75izjOoq/zRmq6
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10967"; a="9952025"
+X-IronPort-AV: E=Sophos;i="6.05,226,1701158400"; 
+   d="asc'?scan'208";a="9952025"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2024 19:36:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10967"; a="737252624"
+X-IronPort-AV: E=Sophos;i="6.05,226,1701158400"; 
+   d="asc'?scan'208";a="737252624"
+Received: from debian-skl.sh.intel.com (HELO debian-skl) ([10.239.160.45])
+  by orsmga003.jf.intel.com with ESMTP; 28 Jan 2024 19:36:23 -0800
+Date: Mon, 29 Jan 2024 11:37:12 +0800
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/gvt: Fix uninitialized variable in handle_mmio()
+Message-ID: <ZbcdaBVJeKLqaKNR@debian-scheme>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <11957c20-b178-4027-9b0a-e32e9591dd7c@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Donald Robson <donald.robson@imgtec.com>,
- Frank Binns <frank.binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Matt Coster <matt.coster@imgtec.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Sarah Walker <sarah.walker@imgtec.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/imagination: Use memdup_user() rather than duplicating
- its implementation
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fFznBIJrCBlpQLxV"
+Content-Disposition: inline
+In-Reply-To: <11957c20-b178-4027-9b0a-e32e9591dd7c@moroto.mountain>
+
+
+--fFznBIJrCBlpQLxV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:koqS3eLltv+QIPN2RCW3+Is0PGswqbQ+2Rizm/ODddQBc60oNWw
- zsO7XtPEFBC/fYJPfyzbKTyXby9HwP2MYakOHwpAhdyTV+R+mxOhB7f2s1JV+tNvwmhwqpk
- /rC2b440t+5NuTYmzEOJVbrLTJXE6hgFBAxN9bAYLcyU2uuilqZ+453fERFTSqIirVuqLqe
- Ojh24tWpBrPas8DOKi8BQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:06n3TwzjoMw=;WhAmErG28I8KWN9Gnz8yyeHqEEh
- +AIQfj6wNSVkJKDyoFhoYA+2h+Mz8gNpke7q0+aS3I8Ub5Uev/yTyTXj3+vE01BbvtSbMG8+p
- 2m22BKjoTrmOzp96SzciIJS/4PbRbcGeuFf27QQmeJp5qVoySyUigpiVqQ/08tB7uElJ8sSj3
- FZEZkftcJXsmwzOoCCmHwvPHt74grQC5+rAw8vqeq9o9Hsl7N7HORizLgqpRIgOmPJ8sSIl9p
- EU1Huagt9m8rw6h1qsOhMDCWHzuwlS9Vtb7mj9sDCbTwJihK5xBd0VNHt2Nv/VrB8SzzaGSQy
- aLMJiOPhZsJeRWVLfXAZToGIVlhhV444JTlZhjlSwzRrKHpca82O/VVKZAjyAgWu7er2d6vJK
- mpr6fRRy1zyaltc9bodZlRiIZVD7Wt5M4qb+b+DrN7FvTjtIVm74dvLaUl3BlhPwRf9bS8Rjy
- aujj7LpfASJhWqpe77q3TrkSo7YHNdJxu62cJ/LTt0Hn7wQaSBKKPs4nm4OOxLxueiakmZfo/
- Hk8K0/FSsacskAms6/Uok9Bq4a5vp/hTljqydjDelXpPUs/WtuwCX/MIVo111H7tTo1cNRiRQ
- bTjpF6y4ma4vzpKTqE/LEvPF64S9eJr1vY774HtkID4cUIKwmo6JrhP6Q0DMCmdQNTtgCup0n
- hwZLtUjBs44Iq0j/0iaTiq15YTB8FM06r8tlaJ35/a4YglCiV01/+ZJgXeC0rHX3+vJJyiDZF
- 0hW7Fv4NhkqQQEA/8V4yC6ENm37+/yrrtzsb7lAHA0GPRKAJcZOKCVBHuY0laqf2eKXxs0UmW
- GjWVYMPWvafsysOD3LD+KfKPlKmVCiR/U+NCIOYM85gwdBj7BX7ZsWQriVVRwtVfWZgzdr6gA
- YWfmTBp5ZP49ielVhdZLsLvW7xG1lFjb0cu531ZMaNsXd7Ui1d3pQUukRE4/kQrQ4Mf81XMiY
- iwblTQ==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jan 2024 20:50:36 +0100
+On 2024.01.26 11:41:47 +0300, Dan Carpenter wrote:
+> This code prints the wrong variable in the warning message.  It should
+> print "i" instead of "info->offset".  On the first iteration "info" is
+> uninitialized leading to a crash and on subsequent iterations it prints
+> the previous offset instead of the current one.
+>=20
+> Fixes: e0f74ed4634d ("i915/gvt: Separate the MMIO tracking table from GVT=
+-g")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/i915/gvt/handlers.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/g=
+vt/handlers.c
+> index 90f6c1ece57d..efcb00472be2 100644
+> --- a/drivers/gpu/drm/i915/gvt/handlers.c
+> +++ b/drivers/gpu/drm/i915/gvt/handlers.c
+> @@ -2849,8 +2849,7 @@ static int handle_mmio(struct intel_gvt_mmio_table_=
+iter *iter, u32 offset,
+>  	for (i =3D start; i < end; i +=3D 4) {
+>  		p =3D intel_gvt_find_mmio_info(gvt, i);
+>  		if (p) {
+> -			WARN(1, "dup mmio definition offset %x\n",
+> -				info->offset);
+> +			WARN(1, "dup mmio definition offset %x\n", i);
+> =20
+>  			/* We return -EEXIST here to make GVT-g load fail.
+>  			 * So duplicated MMIO can be found as soon as
+> --=20
+> 2.43.0
+>
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
+Thanks for the fix.
 
-  Generated by: scripts/coccinelle/api/memdup_user.cocci
+Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-* Delete labels and statements which became unnecessary
-  with this refactoring.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/imagination/pvr_context.c | 21 +++------------------
- drivers/gpu/drm/imagination/pvr_job.c     | 15 +++------------
- 2 files changed, 6 insertions(+), 30 deletions(-)
+--fFznBIJrCBlpQLxV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/i=
-magination/pvr_context.c
-index eded5e955cc0..27814ae8a8f8 100644
-=2D-- a/drivers/gpu/drm/imagination/pvr_context.c
-+++ b/drivers/gpu/drm/imagination/pvr_context.c
-@@ -66,29 +66,14 @@ static int
- process_static_context_state(struct pvr_device *pvr_dev, const struct pvr=
-_stream_cmd_defs *cmd_defs,
- 			     u64 stream_user_ptr, u32 stream_size, void *dest)
- {
--	void *stream;
- 	int err;
-+	void *stream =3D memdup_user(u64_to_user_ptr(stream_user_ptr), stream_si=
-ze);
+-----BEGIN PGP SIGNATURE-----
 
--	stream =3D kzalloc(stream_size, GFP_KERNEL);
--	if (!stream)
--		return -ENOMEM;
--
--	if (copy_from_user(stream, u64_to_user_ptr(stream_user_ptr), stream_size=
-)) {
--		err =3D -EFAULT;
--		goto err_free;
--	}
-+	if (IS_ERR(stream))
-+		return PTR_ERR(stream);
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCZbcdZAAKCRCxBBozTXgY
+J2ggAKCd25TTBDuQLbVH3Z0bjmgfKdx2/ACdGvx9Npm4P2p4XDkYtaiqEkyy4Zk=
+=/6Nx
+-----END PGP SIGNATURE-----
 
- 	err =3D pvr_stream_process(pvr_dev, cmd_defs, stream, stream_size, dest)=
-;
--	if (err)
--		goto err_free;
--
- 	kfree(stream);
--
--	return 0;
--
--err_free:
--	kfree(stream);
--
- 	return err;
- }
-
-diff --git a/drivers/gpu/drm/imagination/pvr_job.c b/drivers/gpu/drm/imagi=
-nation/pvr_job.c
-index 78c2f3c6dce0..e17d53b93b1f 100644
-=2D-- a/drivers/gpu/drm/imagination/pvr_job.c
-+++ b/drivers/gpu/drm/imagination/pvr_job.c
-@@ -87,23 +87,14 @@ static int pvr_fw_cmd_init(struct pvr_device *pvr_dev,=
- struct pvr_job *job,
- 			   const struct pvr_stream_cmd_defs *stream_def,
- 			   u64 stream_userptr, u32 stream_len)
- {
--	void *stream;
- 	int err;
-+	void *stream =3D memdup_user(u64_to_user_ptr(stream_userptr), stream_len=
-);
-
--	stream =3D kzalloc(stream_len, GFP_KERNEL);
--	if (!stream)
--		return -ENOMEM;
--
--	if (copy_from_user(stream, u64_to_user_ptr(stream_userptr), stream_len))=
- {
--		err =3D -EFAULT;
--		goto err_free_stream;
--	}
-+	if (IS_ERR(stream))
-+		return PTR_ERR(stream);
-
- 	err =3D pvr_job_process_stream(pvr_dev, stream_def, stream, stream_len, =
-job);
--
--err_free_stream:
- 	kfree(stream);
--
- 	return err;
- }
-
-=2D-
-2.43.0
-
+--fFznBIJrCBlpQLxV--
