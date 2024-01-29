@@ -1,99 +1,119 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF6155E63;
-	Mon, 29 Jan 2024 09:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552596280D;
+	Mon, 29 Jan 2024 13:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706522008; cv=none; b=k2N2F5WLOgAjAwrpeABIEGY2ljYnpVsdCrZFmn2/sg4PR84Z5p3dSNIXvWhieHQEKKx+0S7rQjkEWoX85eSZBiruE50Dvsgp0Lq44CZ7yF1hhoL+uL5D4VgP9aE7zjV+qYV/BrXueGHHsgAWzKHkDHL+VD6vJ39w8dcA4rzVm7E=
+	t=1706534256; cv=none; b=ePpd1QAP8dVSvNXfYn6P944lwPML3OpwxWilYEg9J96NP5lpy7EjjKQashNSLX6m/3FPhC1fjcDuqDfa++FzMgnm/o2m0yyXdtmYB4TzV5C26j0CyIobKIysxxQu7j6aAw3X+HFlyU7Baa5VKGJ6oQSiMvV9fUZgcqnP+/zQAaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706522008; c=relaxed/simple;
-	bh=PXPCn+oYLrnbt+qWU2Af2frSRG+t1bYgfk7qBkMYuQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ApJE3NWo96F1/oG9qGhpOk9rpXWFiuicpyBG/YOw87HgKOnGUg5oo5GE6ztDw69B20GExa66SGMOeXNZA5dkNunUPi6NpcaKeu+EYhh/5Hq285P5rd5lZgZbHXsAK8Mj9l9mH2blg+NpS+5ZBRL0WujvQwzangkTTXxH+UsQIS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MulYlYir; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706534256; c=relaxed/simple;
+	bh=6QTPt33T5rQKL/6Gt/bIWU0jYiWt8sqi5iCPonlXgec=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=tqFDqnfr9HxRWFQMsSbvwcr5F3X0BcdoGWs8DrW386y+rVOMxg/A8bXiwaYJ38jbf2hm/6m7XypAKegYrW78mX9YaCAwAhjOVwydhu8xdRA3wQK0FmhODYB3eJze0M24Px1+W85Ln9w3OncdoIN8IMCd+KIchf1gUxg2V4SHlHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgaFvKX3; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MulYlYir"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706521984; x=1707126784; i=markus.elfring@web.de;
-	bh=PXPCn+oYLrnbt+qWU2Af2frSRG+t1bYgfk7qBkMYuQc=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=MulYlYirkI6QwlOPVvP0zj0zAR1P99IaFr92JeF9mRHJRdM8PbYjopBdLCYqJCeJ
-	 GoE40I1TyJKICLLT3AJtKTRfP+x6YcSz3vpRoT7OFlrS9Lql3yModydf3oRQ/dMdz
-	 MS7kYUWCKat8DnH8Rz55wqiUHDGKo5KWkiyW0MuMIJTK6H3jt+g2a4fC/0aSrN9MA
-	 qIGJAKGJW35tyDxgF/JIRykIIj99Wo1yu0q/rltI23bE58+cgLPB6RIJV1PDH+25i
-	 ghPXmGQP8A9A0m/yasE7xuGThZdm820nK6DzHD+qISoqHvG051zXxHe5gwJHOdG76
-	 DuASI53yA7GG9E/wzw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M59nK-1rTHrY3FWW-001IKu; Mon, 29
- Jan 2024 10:53:04 +0100
-Message-ID: <3ca56d3f-5a2b-4321-adbb-4e2c0d72b573@web.de>
-Date: Mon, 29 Jan 2024 10:52:48 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgaFvKX3"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a349ed467d9so286164666b.1;
+        Mon, 29 Jan 2024 05:17:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706534252; x=1707139052; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tMwNqcZZgOVXT/J1FjC+xI4RABs1qjk7vHn8GPhDdCA=;
+        b=PgaFvKX3hLtNIRwS3CD1g+ugBX57+JA3YHbRQ9n6tneYEWhJ3uoU6T4hzxhG/qtp0h
+         Ct64xKsJrffFcJyMxcDuXe++aYwxmYeZkwg6bm+9OmXBR8jwM3everq/e2LnCx13r87m
+         Z6mxBBBtWWl7Gs+a12ilJ9M522NinOaDo5i2FfgjW0/ZNB6yj6UWy/RaA/42By1tmrKB
+         F9oHvCyLYwUO5usWCD2kaWYsd3GQXOmUpsHnKwy7ZMa2bPIFiewRCQ/3/2AAbZnhDFv4
+         HsvTK1GiyGaw7ZnhvYHmpt7GfEVNdDgSKCgJcmmKVrXmSRAGE+VM33DjyLnMcO5XHwFy
+         uoMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706534252; x=1707139052;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tMwNqcZZgOVXT/J1FjC+xI4RABs1qjk7vHn8GPhDdCA=;
+        b=RRYpqnIjGEtw2KISnxaoPCV2y34gE+oGG+jNHDGieuIfMbq3iMq3v5AlOSDlTJ6i12
+         hh64Eh/lmXBFlFDrp8T8dTyNbMnjgqj3Lbtp/mn7zEqfq4EvgzdCSQfxLI6gJQ6gC4gk
+         +j8iNPbcwNihVAWeIydVeca8Ee3ntZj9+BMEjWlQeDKC3dcq+mHZAn+RubNKIaIDvrnO
+         eYLc5Q5Sf2fzKdGUFQQCZxPywabZug6NS6+K1g1IW7WsKIYzIl1XRacx2/4LR3Una13r
+         LmyMo5uXoQEJVLOZ8r8IkSgvK06SWAKkgkOEFeucpDrKalTelsub5DGW1ZAEyORxdDJS
+         zQVw==
+X-Gm-Message-State: AOJu0Yw4SnnPm32ru6DB+TRfh5Exje0re0294+BGmHdF+USzCAQysQqI
+	qMCU8H8tyLuvK6cDMqlyEB13g0vI4f5/9yEeczlZzJLFiX0KNDOB
+X-Google-Smtp-Source: AGHT+IF56lsLVSwWT0MpkDQTXGgYqHeVKKkqZNQrGyXnP0BOY5XivLNVLZnraDMCsPBFwK/blGmZfg==
+X-Received: by 2002:a17:906:2e94:b0:a35:fdf9:e6fc with SMTP id o20-20020a1709062e9400b00a35fdf9e6fcmr55005eji.18.1706534252237;
+        Mon, 29 Jan 2024 05:17:32 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:fddc:9ce:9e0f:3ad3])
+        by smtp.gmail.com with ESMTPSA id q15-20020a17090622cf00b00a359afad88dsm1590449eja.10.2024.01.29.05.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 05:17:31 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Danny Tsen <dtsen@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file entries after crypto vmx file movement
+Date: Mon, 29 Jan 2024 14:17:29 +0100
+Message-Id: <20240129131729.4311-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] platform/x86/amd/pmf: Fix memory leak in
- amd_pmf_get_pb_data()
-Content-Language: en-GB
-To: Hans de Goede <hdegoede@redhat.com>, Cong Liu <liucong2@kylinos.cn>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
- <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
- <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4BvwCS8lGjsVcbwXquWcqTMlULuUVkV7zZs9jcpaGdX/8hT9jj1
- QbZZ0qctnLpc1msSNIhSobmAyN7AdkMqr3kpPFNTSAMfBN/N8j7KkRJuGRUgFqcws0LtGYx
- NPAFT1GMkmdf6IGvOF+sEs0HH5qkww7ajh+Q+a3/ebCXTI+Gdjn8tEMZ0Fx/ztoC63tsOZT
- RXCbeMDZmnEBLhzRlPhDQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2RcZ5CezqYE=;72yBd+1QRh0XfBtOycVS5Uu75LT
- WVIziAJUe5Bd1HC4byJ1U8nvgFOxorN9sMx05Z+wYJOsw6MFv4kwjdaid6ICX/mjEjPk+GJsL
- 38GZVYpMH1p/oYfM926pRBMPwa2wGo/1Brz9r/bfjoo++bag1ZiRqCxhkfiPXo8KQBdmCdhgM
- arCdsPvJrjUaiYJv/7NTZZ9V38uOIRaljZFRXIbqThWY5geCEK3MyK5Co6oaCdFQJ0O7MXVGb
- rbSZ8Jyk6D0s8J5ddb7LPKr+iINYtR2xwlqaRWewxigCuhFiI7wew6JAbwYiavx36CIH6tcRv
- HKZS2yJ8etBwzGGPhEXZAHn2bB+7cV5MrH9kX07YdMJNYa/Soe70GbVrumfO9ezz6Fnez3W8l
- VDnwYPRbLD98rvWJS1jPKJJSNqZmbkJ4Au7yLbXDnQJLqr+FqJWe67vaOlhLGTRvYXqEz/MlQ
- q2j0NFdeWqOOnYJ19zZ6fdMk0vheWIV/TzemQqgT0SZMUUi+9JAU6L8ZbZ068T7kYx+B2gncg
- C1wj4IjRuCBaZuK/4qIuLAWhrK8onxNE1h/jF87jUT7D3rsUbi5KQ3WOjY7PBQhg/84KTIE5t
- 1X1vy1MmHwI3ida7nAOb6c1lGlt2pSWMW+Ff5Ko38vMa4HdGjyRHZjM7/nWYJIrcpIyddlalj
- Pb2SAqmhJiMMCqLyL2Nj8+9HHKH48SyP1tjBWCXv7scOuXE+3bP9E5OpB4F+OyWHWHIefkwbN
- 9pv5AsJyrQo4hlgpmDrlIleAbJfaoU51MOH5JfXqg7zNiB0ow1fxCTxszw+ALG4E29SKZdv2O
- 5/xpA5gu0prxR/zH0mwvWhH+BTpQBCDNNAJVUrnaN1/poTb+DmqUgHH+5JC6xUnZ9oKjicdBD
- 7sQUYjPvfyFRGY7pcxdcRHfukIn571Zg4NARTznBTXr84vQ/47u8wuvAW+GE1UXAogUNzD81O
- /VUfTQ==
 
-> If the question is: "Are patches generated by coccinelle welcome?"
-> then the answer is "Yes patches generated by coccinelle are very
-> much welcome".
+Commit 109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto") moves the
+crypto vmx files to arch/powerpc, but misses to adjust the file entries for
+IBM Power VMX Cryptographic instructions and LINUX FOR POWERPC.
 
-How do you think about to fix a questionable memory leak
-by using the function =E2=80=9Cmemdup_user=E2=80=9D instead?
-https://elixir.bootlin.com/linux/v6.8-rc1/source/mm/util.c#L185
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+broken references.
 
-Would you like to try a corresponding command out once more on source file=
-s
-of a software like =E2=80=9CLinux next-20240125=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.8-rc1/source/scripts/coccinelle/api/me=
-mdup_user.cocci#L2
+Adjust these file entries accordingly.
 
-make COCCI=3Dscripts/coccinelle/api/memdup_user.cocci M=3Ddrivers/platform=
-/x86/amd/pmf/ MODE=3Dpatch coccicheck
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Danny, please ack.
+Herbert, please pick this minor clean-up patch on your -next tree.
 
+ MAINTAINERS | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Regards,
-Markus
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2fb944964be5..15bc79e80e28 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10307,12 +10307,12 @@ M:	Nayna Jain <nayna@linux.ibm.com>
+ M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+-F:	drivers/crypto/vmx/Kconfig
+-F:	drivers/crypto/vmx/Makefile
+-F:	drivers/crypto/vmx/aes*
+-F:	drivers/crypto/vmx/ghash*
+-F:	drivers/crypto/vmx/ppc-xlate.pl
+-F:	drivers/crypto/vmx/vmx.c
++F:	arch/powerpc/crypto/Kconfig
++F:	arch/powerpc/crypto/Makefile
++F:	arch/powerpc/crypto/aes*
++F:	arch/powerpc/crypto/ghash*
++F:	arch/powerpc/crypto/ppc-xlate.pl
++F:	arch/powerpc/crypto/vmx.c
+ 
+ IBM ServeRAID RAID DRIVER
+ S:	Orphan
+@@ -12397,7 +12397,6 @@ F:	drivers/*/*/*pasemi*
+ F:	drivers/*/*pasemi*
+ F:	drivers/char/tpm/tpm_ibmvtpm*
+ F:	drivers/crypto/nx/
+-F:	drivers/crypto/vmx/
+ F:	drivers/i2c/busses/i2c-opal.c
+ F:	drivers/net/ethernet/ibm/ibmveth.*
+ F:	drivers/net/ethernet/ibm/ibmvnic.*
+-- 
+2.17.1
+
