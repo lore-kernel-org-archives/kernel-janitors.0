@@ -1,125 +1,103 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1524B52F97
-	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 08:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61774EEDB
+	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 09:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706518759; cv=none; b=CGzKmhZHauNunYY/HROjX+BRByEMiM4UWm9QOfosJaCAFkoELLSVlSUbTFE6ZQsUhG4HwK5uq9RQztMaEjmJePKTV3XTIVsXsiga0OafOQUTyBDIkdkgodVqVmyh2QQQ4hKmebllA+KD0UoEPCATk7pv2JMaJbq+noS73ImlBsY=
+	t=1706518839; cv=none; b=LeTRYCcmxfPkjuZjwFdpMrdZCezkHcepH0ZfMuXZRMxKLx0sFgADW+DPYiNXIOgomvg/tFQf5qxrpdvLwVHLfMwEHri2t1VSQInUbPt526udXBa8L9lXGlQizkBbqq5irclWhCMbB3IKW6K5EBWSy6YZF3nYzxt+RlWQ3VY8anc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706518759; c=relaxed/simple;
-	bh=SjgxZgEJ0zE2xG68u2eXZKUCpalABl62X6Kdteb45Og=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwB8EfonAD3J4LoCVIb9AV6kMatIexpI4kctF3kl5RyqnRVN4YoE36dztCVUdnfxhabdUdjYquOmClHm6GpvTNceAg9UpoduJqCyXsdKzdRO73J2xLwesUnoVDEFmpi3kYrSY26n55EVsNFMQX7J44Mkpn/yCCwYIHe2kgEV1ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CatMXJ9d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1706518839; c=relaxed/simple;
+	bh=2cK2qmeo+EBrU4InYqrn7CwsavES21X+eQBJHI7A7Qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7Hsqfysr8fkR3gvsBAOvuiYhfETyGfusTUFStaObfqROhpaCkJa+OM2rBFfv2EE2wTOqJirKetHOmuwT3Nxu1A6eWGsB4qKhyUKjdlSSFmDGaoojPf332tFcINqjUip0xlO8uxx8lBYA1gxJsLRsFrCau3E6yK5OPY64F/i8JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ibs7oX7d; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CatMXJ9d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706518757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mz0NTo7T3zvbZQvTXWnrEg5YVgGabir9bR7S1JM1MOk=;
-	b=CatMXJ9dkl5cWEJMzT1lh9Bu1vWmlD2yOe6nVdZ0y12+m+v5HffH0pWo3p5gOHGOcoVqxn
-	beli+h68IirFIO+t7lcQc2K3MOf1fjMtTYa9luo27oLF2XgdHyNj2OmhkBRPfSs56dOoC5
-	YOqaPijvw9eFGP4RWG1knmXHwRPwFic=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-l2Y2mY5cPpyIW4ovVU49Gw-1; Mon, 29 Jan 2024 03:59:15 -0500
-X-MC-Unique: l2Y2mY5cPpyIW4ovVU49Gw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a2f71c83b7eso126301666b.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 00:59:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ibs7oX7d"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33af2823edbso160691f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 01:00:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706518836; x=1707123636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxsFeVAAl1ODsuJYchH/+ny1FAnY7QnHkXGUc0KyEQ8=;
+        b=Ibs7oX7d68714E3Wspym8zqzGxcD9TCZcMVr12nVdJ2bBsBurYgo5L3WmSwk1+Lpxr
+         tgyvlLB7TJZirYv3YpYs1TBuz5CRnN52sWANRfMLtKfa2npIobptInznhstySzhOjLNU
+         uBLsZLQoDItNBswIJP3brQFgL5cRIyLjx0i0IdE6sGOQA757VSrnVOR0jksGo80fFDA1
+         6nGFnBcrjW+Gv43nwpOnW8jtJSmOKveSX6lfl6PGaPcUV4FQjQdQL5i/HXMFL52XuAeH
+         BFAFg4CNN5iJW2fIDTe3PSLZehwNJ0PqTGBuzul9s+NiZ6TpoD5O0qs5JpWVi4RXehEL
+         UqXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706518754; x=1707123554;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mz0NTo7T3zvbZQvTXWnrEg5YVgGabir9bR7S1JM1MOk=;
-        b=QPweCrj6RpdxvkXpipq4+RaHOqxHDx4aLXB5mwsdkxqnPDsFbcxOf7jL6tXdbBdlBY
-         UqwQULZ7B3l1RPJQBJv7A5lx580prkRSeRBLa7xZIbOtB2KyWwEqbHIZrUJqas05ykn4
-         m5UgAojpjBW63JUl9/T07WuAvAGzwemd9UDbY5IUTA0XC+whT4j2oLz9VDrq/LNdntkt
-         UQGs55FchveLgmwqwzH9qQZ9utsok2sY3hr9FG56tuHjhX+7JC32e0h5QusJ4yyQgl7E
-         8EFk9vB7dQRXUi5fQ36kQkh4ZKEBQSD5FMf//A7MdXVlfTxLPYA42Jvj8kGws2DFIFdf
-         j2VA==
-X-Gm-Message-State: AOJu0YzTdcRClzeAtVuvInxhPo+BWXONl0P7Y/xemtCNFJcHR4It9UH3
-	wiyWMOceEXOHx6plFGo46s1PhzbJT53rPwb2lIguqmjuJbgq85zNe4WtRbXRvAXFPlmQwkCwYYk
-	N5ado+v03zUD4zQKYesThKYXceGZYt+lux0ATZXNIhK2rV7nopRb5VGeiN/UDe17g7Q==
-X-Received: by 2002:a17:906:a219:b0:a35:6601:e401 with SMTP id r25-20020a170906a21900b00a356601e401mr2937549ejy.5.1706518754372;
-        Mon, 29 Jan 2024 00:59:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHf/JYvN1cOiBBS6nmvk4erwpIf/mxbTQA/LtkKLl9FgSRVphAi5XD9/o+bV8doYWxYglG3RA==
-X-Received: by 2002:a17:906:a219:b0:a35:6601:e401 with SMTP id r25-20020a170906a21900b00a356601e401mr2937532ejy.5.1706518754117;
-        Mon, 29 Jan 2024 00:59:14 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id ub14-20020a170907c80e00b00a3109a492d4sm3647222ejc.20.2024.01.29.00.59.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 00:59:13 -0800 (PST)
-Message-ID: <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
-Date: Mon, 29 Jan 2024 09:59:11 +0100
+        d=1e100.net; s=20230601; t=1706518836; x=1707123636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OxsFeVAAl1ODsuJYchH/+ny1FAnY7QnHkXGUc0KyEQ8=;
+        b=B67qSJRrob4ANwQJd1KqZ3HGN39vLPua6HOImw949ev65++tVuEgFL6pjRNIc1y9Tk
+         FQ4Z+yPOzVHe8B9HnEcI7MtEE7JA7uH7p6mPAMqnv1Kmg6WYcCmux9nKIlooKPQjLmnK
+         8Vxu+61koprj8wkjiT0w9ln9te6uI3ZEWAtYjW/3paEHE1UOBgXEXAZbBIF+SUdP70Oe
+         XhG42JZ/qCRq2bD9Ln9Tlh2HANwoSSQdBstIcAmK/b3GEMTuvjMGKKKkHA+uC1QwIzqn
+         dMNqXcwUpnmIWL10Jx8OnkzsNhEVO4hcWh7D1/nv2IUcrwaxLFaPcFvW2tfj17YwuOtz
+         dqmA==
+X-Gm-Message-State: AOJu0YyFS4uVontYQb4dUaPhTe9Wz9BjBlgGnPdiLFNti+dx9SmD5ZJV
+	Cd4J43yy8aF0hP8a2YJidwtzrasq6qUyc3y5G1FiGNDhQEWLvPOLI+v6H/+/nWQ=
+X-Google-Smtp-Source: AGHT+IG507HFz7+U86i8zkPDGUcrS2mTLZD+8PFBIptIPaz49wNadW49ZXJyz/aAUS8+C6vGGbhjQQ==
+X-Received: by 2002:a5d:5f48:0:b0:33a:eb59:accb with SMTP id cm8-20020a5d5f48000000b0033aeb59accbmr3032528wrb.8.1706518835727;
+        Mon, 29 Jan 2024 01:00:35 -0800 (PST)
+Received: from localhost ([102.140.209.237])
+        by smtp.gmail.com with ESMTPSA id n8-20020a056000170800b0033af26545c8sm1077404wrc.50.2024.01.29.01.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 01:00:35 -0800 (PST)
+Date: Mon, 29 Jan 2024 12:00:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Nick Spooner <nicholas.spooner@seagate.com>
+Cc: "rafal@milecki.pl" <rafal@milecki.pl>,
+	"srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
+	Evan Burgess <evan.burgess@seagate.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [RFC PATCH] nvmem: u-boot-env: improve error checking
+Message-ID: <43112f7f-b416-4c76-a636-0fb45e9f558b@moroto.mountain>
+References: <CH0PR20MB381875927236C07B9CF9A8099C792@CH0PR20MB3818.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] platform/x86/amd/pmf: Fix memory leak in
- amd_pmf_get_pb_data()
-Content-Language: en-US, nl
-To: Markus Elfring <Markus.Elfring@web.de>, Cong Liu <liucong2@kylinos.cn>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
- <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CH0PR20MB381875927236C07B9CF9A8099C792@CH0PR20MB3818.namprd20.prod.outlook.com>
 
-Hi,
+Your patch is white space damaged and doesn't apply.  Read the first
+paragraph of Documentation/process/email-clients.rst
 
-On 1/28/24 11:45, Markus Elfring wrote:
->> Thank you for your patch/series, I've applied this patch
->> (series) to my review-hans branch:
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
->>
->> Note it will show up in the pdx86 review-hans branch once I've
->> pushed my local branch there, which might take a while.
+On Fri, Jan 26, 2024 at 11:10:06PM +0000, Nick Spooner wrote:
+> Coverity scan reported CID 1575482: error handling issues; this patch
+> addresses this by adding error handling to u_boot_env_add_cells.
 > 
-> Will development interests grow for the application of known scripts
-> also according to the semantic patch language?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?h=v6.8-rc1#n71
+> I added the RFC tag to this patch since I'm not confident about the
+> logic here.
 
-Markus,
+Just put this kind of comments under the --- cut off line.  We're used
+to reviewing patches like this so it's not a big deal.
 
-I'm not sure what your question here is?
+> The check is reused from nvmem_add_cells in core.c, which
+> doesn't include an of_node_put on a device_node, whereas
+> nvmem_add_cells_from_dt does. Without much certainty, I went with the
+> less complex option and added it here. Any advice or suggested fixes to
+> this patch are welcome!
+> 
 
-Is it: "Will coccinelle scripts be run as part of the regular patch
-test/merge workflow?" then the answer is that there are no plans
-that I'm aware of to do that at this moment.
+nvmem_add_cells_from_dt() is cleaning up from:
+	addr = of_get_property(child, "reg", &len);
+so that's why it does:
+	of_node_put(child);
 
-If such a thing were to be done, IMHO it would be best to have one
-of the existing CI systems like e.h. Intel's LKP test bot run this
-on linux-next, or on all the trees LKP already monitors.
+It's not necessary in u_boot_env_add_cells().
 
-And it does sound like something interesting to do, but someone
-would need to actually setup and maintain such a CI system.
-
-If the question is: "Are patches generated by coccinelle welcome?"
-then the answer is "Yes patches generated by coccinelle are very
-much welcome".
-
-Regards,
-
-Hans
-
-
-
-
+regards,
+dan carpenter
 
