@@ -1,103 +1,99 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61774EEDB
-	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 09:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF6155E63;
+	Mon, 29 Jan 2024 09:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706518839; cv=none; b=LeTRYCcmxfPkjuZjwFdpMrdZCezkHcepH0ZfMuXZRMxKLx0sFgADW+DPYiNXIOgomvg/tFQf5qxrpdvLwVHLfMwEHri2t1VSQInUbPt526udXBa8L9lXGlQizkBbqq5irclWhCMbB3IKW6K5EBWSy6YZF3nYzxt+RlWQ3VY8anc=
+	t=1706522008; cv=none; b=k2N2F5WLOgAjAwrpeABIEGY2ljYnpVsdCrZFmn2/sg4PR84Z5p3dSNIXvWhieHQEKKx+0S7rQjkEWoX85eSZBiruE50Dvsgp0Lq44CZ7yF1hhoL+uL5D4VgP9aE7zjV+qYV/BrXueGHHsgAWzKHkDHL+VD6vJ39w8dcA4rzVm7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706518839; c=relaxed/simple;
-	bh=2cK2qmeo+EBrU4InYqrn7CwsavES21X+eQBJHI7A7Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7Hsqfysr8fkR3gvsBAOvuiYhfETyGfusTUFStaObfqROhpaCkJa+OM2rBFfv2EE2wTOqJirKetHOmuwT3Nxu1A6eWGsB4qKhyUKjdlSSFmDGaoojPf332tFcINqjUip0xlO8uxx8lBYA1gxJsLRsFrCau3E6yK5OPY64F/i8JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ibs7oX7d; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706522008; c=relaxed/simple;
+	bh=PXPCn+oYLrnbt+qWU2Af2frSRG+t1bYgfk7qBkMYuQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ApJE3NWo96F1/oG9qGhpOk9rpXWFiuicpyBG/YOw87HgKOnGUg5oo5GE6ztDw69B20GExa66SGMOeXNZA5dkNunUPi6NpcaKeu+EYhh/5Hq285P5rd5lZgZbHXsAK8Mj9l9mH2blg+NpS+5ZBRL0WujvQwzangkTTXxH+UsQIS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MulYlYir; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ibs7oX7d"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33af2823edbso160691f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jan 2024 01:00:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706518836; x=1707123636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxsFeVAAl1ODsuJYchH/+ny1FAnY7QnHkXGUc0KyEQ8=;
-        b=Ibs7oX7d68714E3Wspym8zqzGxcD9TCZcMVr12nVdJ2bBsBurYgo5L3WmSwk1+Lpxr
-         tgyvlLB7TJZirYv3YpYs1TBuz5CRnN52sWANRfMLtKfa2npIobptInznhstySzhOjLNU
-         uBLsZLQoDItNBswIJP3brQFgL5cRIyLjx0i0IdE6sGOQA757VSrnVOR0jksGo80fFDA1
-         6nGFnBcrjW+Gv43nwpOnW8jtJSmOKveSX6lfl6PGaPcUV4FQjQdQL5i/HXMFL52XuAeH
-         BFAFg4CNN5iJW2fIDTe3PSLZehwNJ0PqTGBuzul9s+NiZ6TpoD5O0qs5JpWVi4RXehEL
-         UqXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706518836; x=1707123636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OxsFeVAAl1ODsuJYchH/+ny1FAnY7QnHkXGUc0KyEQ8=;
-        b=B67qSJRrob4ANwQJd1KqZ3HGN39vLPua6HOImw949ev65++tVuEgFL6pjRNIc1y9Tk
-         FQ4Z+yPOzVHe8B9HnEcI7MtEE7JA7uH7p6mPAMqnv1Kmg6WYcCmux9nKIlooKPQjLmnK
-         8Vxu+61koprj8wkjiT0w9ln9te6uI3ZEWAtYjW/3paEHE1UOBgXEXAZbBIF+SUdP70Oe
-         XhG42JZ/qCRq2bD9Ln9Tlh2HANwoSSQdBstIcAmK/b3GEMTuvjMGKKKkHA+uC1QwIzqn
-         dMNqXcwUpnmIWL10Jx8OnkzsNhEVO4hcWh7D1/nv2IUcrwaxLFaPcFvW2tfj17YwuOtz
-         dqmA==
-X-Gm-Message-State: AOJu0YyFS4uVontYQb4dUaPhTe9Wz9BjBlgGnPdiLFNti+dx9SmD5ZJV
-	Cd4J43yy8aF0hP8a2YJidwtzrasq6qUyc3y5G1FiGNDhQEWLvPOLI+v6H/+/nWQ=
-X-Google-Smtp-Source: AGHT+IG507HFz7+U86i8zkPDGUcrS2mTLZD+8PFBIptIPaz49wNadW49ZXJyz/aAUS8+C6vGGbhjQQ==
-X-Received: by 2002:a5d:5f48:0:b0:33a:eb59:accb with SMTP id cm8-20020a5d5f48000000b0033aeb59accbmr3032528wrb.8.1706518835727;
-        Mon, 29 Jan 2024 01:00:35 -0800 (PST)
-Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id n8-20020a056000170800b0033af26545c8sm1077404wrc.50.2024.01.29.01.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 01:00:35 -0800 (PST)
-Date: Mon, 29 Jan 2024 12:00:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nick Spooner <nicholas.spooner@seagate.com>
-Cc: "rafal@milecki.pl" <rafal@milecki.pl>,
-	"srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-	Evan Burgess <evan.burgess@seagate.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [RFC PATCH] nvmem: u-boot-env: improve error checking
-Message-ID: <43112f7f-b416-4c76-a636-0fb45e9f558b@moroto.mountain>
-References: <CH0PR20MB381875927236C07B9CF9A8099C792@CH0PR20MB3818.namprd20.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MulYlYir"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706521984; x=1707126784; i=markus.elfring@web.de;
+	bh=PXPCn+oYLrnbt+qWU2Af2frSRG+t1bYgfk7qBkMYuQc=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=MulYlYirkI6QwlOPVvP0zj0zAR1P99IaFr92JeF9mRHJRdM8PbYjopBdLCYqJCeJ
+	 GoE40I1TyJKICLLT3AJtKTRfP+x6YcSz3vpRoT7OFlrS9Lql3yModydf3oRQ/dMdz
+	 MS7kYUWCKat8DnH8Rz55wqiUHDGKo5KWkiyW0MuMIJTK6H3jt+g2a4fC/0aSrN9MA
+	 qIGJAKGJW35tyDxgF/JIRykIIj99Wo1yu0q/rltI23bE58+cgLPB6RIJV1PDH+25i
+	 ghPXmGQP8A9A0m/yasE7xuGThZdm820nK6DzHD+qISoqHvG051zXxHe5gwJHOdG76
+	 DuASI53yA7GG9E/wzw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M59nK-1rTHrY3FWW-001IKu; Mon, 29
+ Jan 2024 10:53:04 +0100
+Message-ID: <3ca56d3f-5a2b-4321-adbb-4e2c0d72b573@web.de>
+Date: Mon, 29 Jan 2024 10:52:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CH0PR20MB381875927236C07B9CF9A8099C792@CH0PR20MB3818.namprd20.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] platform/x86/amd/pmf: Fix memory leak in
+ amd_pmf_get_pb_data()
+Content-Language: en-GB
+To: Hans de Goede <hdegoede@redhat.com>, Cong Liu <liucong2@kylinos.cn>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <901291c8-ca9c-47b2-8321-256b314690da@redhat.com>
+ <2b3b4754-4c20-48ef-9844-f5db6a7f527e@web.de>
+ <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <bbcf1b06-2a65-4f87-b15a-583a668dfc1e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4BvwCS8lGjsVcbwXquWcqTMlULuUVkV7zZs9jcpaGdX/8hT9jj1
+ QbZZ0qctnLpc1msSNIhSobmAyN7AdkMqr3kpPFNTSAMfBN/N8j7KkRJuGRUgFqcws0LtGYx
+ NPAFT1GMkmdf6IGvOF+sEs0HH5qkww7ajh+Q+a3/ebCXTI+Gdjn8tEMZ0Fx/ztoC63tsOZT
+ RXCbeMDZmnEBLhzRlPhDQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2RcZ5CezqYE=;72yBd+1QRh0XfBtOycVS5Uu75LT
+ WVIziAJUe5Bd1HC4byJ1U8nvgFOxorN9sMx05Z+wYJOsw6MFv4kwjdaid6ICX/mjEjPk+GJsL
+ 38GZVYpMH1p/oYfM926pRBMPwa2wGo/1Brz9r/bfjoo++bag1ZiRqCxhkfiPXo8KQBdmCdhgM
+ arCdsPvJrjUaiYJv/7NTZZ9V38uOIRaljZFRXIbqThWY5geCEK3MyK5Co6oaCdFQJ0O7MXVGb
+ rbSZ8Jyk6D0s8J5ddb7LPKr+iINYtR2xwlqaRWewxigCuhFiI7wew6JAbwYiavx36CIH6tcRv
+ HKZS2yJ8etBwzGGPhEXZAHn2bB+7cV5MrH9kX07YdMJNYa/Soe70GbVrumfO9ezz6Fnez3W8l
+ VDnwYPRbLD98rvWJS1jPKJJSNqZmbkJ4Au7yLbXDnQJLqr+FqJWe67vaOlhLGTRvYXqEz/MlQ
+ q2j0NFdeWqOOnYJ19zZ6fdMk0vheWIV/TzemQqgT0SZMUUi+9JAU6L8ZbZ068T7kYx+B2gncg
+ C1wj4IjRuCBaZuK/4qIuLAWhrK8onxNE1h/jF87jUT7D3rsUbi5KQ3WOjY7PBQhg/84KTIE5t
+ 1X1vy1MmHwI3ida7nAOb6c1lGlt2pSWMW+Ff5Ko38vMa4HdGjyRHZjM7/nWYJIrcpIyddlalj
+ Pb2SAqmhJiMMCqLyL2Nj8+9HHKH48SyP1tjBWCXv7scOuXE+3bP9E5OpB4F+OyWHWHIefkwbN
+ 9pv5AsJyrQo4hlgpmDrlIleAbJfaoU51MOH5JfXqg7zNiB0ow1fxCTxszw+ALG4E29SKZdv2O
+ 5/xpA5gu0prxR/zH0mwvWhH+BTpQBCDNNAJVUrnaN1/poTb+DmqUgHH+5JC6xUnZ9oKjicdBD
+ 7sQUYjPvfyFRGY7pcxdcRHfukIn571Zg4NARTznBTXr84vQ/47u8wuvAW+GE1UXAogUNzD81O
+ /VUfTQ==
 
-Your patch is white space damaged and doesn't apply.  Read the first
-paragraph of Documentation/process/email-clients.rst
+> If the question is: "Are patches generated by coccinelle welcome?"
+> then the answer is "Yes patches generated by coccinelle are very
+> much welcome".
 
-On Fri, Jan 26, 2024 at 11:10:06PM +0000, Nick Spooner wrote:
-> Coverity scan reported CID 1575482: error handling issues; this patch
-> addresses this by adding error handling to u_boot_env_add_cells.
-> 
-> I added the RFC tag to this patch since I'm not confident about the
-> logic here.
+How do you think about to fix a questionable memory leak
+by using the function =E2=80=9Cmemdup_user=E2=80=9D instead?
+https://elixir.bootlin.com/linux/v6.8-rc1/source/mm/util.c#L185
 
-Just put this kind of comments under the --- cut off line.  We're used
-to reviewing patches like this so it's not a big deal.
+Would you like to try a corresponding command out once more on source file=
+s
+of a software like =E2=80=9CLinux next-20240125=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.8-rc1/source/scripts/coccinelle/api/me=
+mdup_user.cocci#L2
 
-> The check is reused from nvmem_add_cells in core.c, which
-> doesn't include an of_node_put on a device_node, whereas
-> nvmem_add_cells_from_dt does. Without much certainty, I went with the
-> less complex option and added it here. Any advice or suggested fixes to
-> this patch are welcome!
-> 
+make COCCI=3Dscripts/coccinelle/api/memdup_user.cocci M=3Ddrivers/platform=
+/x86/amd/pmf/ MODE=3Dpatch coccicheck
 
-nvmem_add_cells_from_dt() is cleaning up from:
-	addr = of_get_property(child, "reg", &len);
-so that's why it does:
-	of_node_put(child);
 
-It's not necessary in u_boot_env_add_cells().
-
-regards,
-dan carpenter
-
+Regards,
+Markus
