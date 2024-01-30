@@ -1,88 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424376C6A;
-	Tue, 30 Jan 2024 17:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8661292D2;
+	Tue, 30 Jan 2024 17:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706634626; cv=none; b=XvlbItcCjRPyN9wwlpHTqCEjkhJ2k88Kg3w984RLV9a4GlhM56huZn7k6dTfxqHF/RicnsIdhV3KVoqvZatIANTF/ffm5dGOOnd+DcZBcCPgAOJl9ZhQi34+/ZvxVZeXQB0z/abMrvLk09kRGH6Z410jKidSSxrk9aoWu29y5bY=
+	t=1706634785; cv=none; b=Zt6fw7GW2XALWEGEvVDHz/j3swtTH07IXF5qO5UGa12+t5IPprfG78N47kOJEBFcdSsy9ldbVCBBmIcu4pH5EIm2euzyavtCJnIPaqYnX2/lH782BgC9O8vKaK0WdP+gRbAGmZS4qDG9m2sv9S18Y0B2Fl6kau6XWEXR394gzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706634626; c=relaxed/simple;
-	bh=og6jQJBHeHMmvk9NQZFiuw3bMyKwy04HOIksyUv5hDo=;
+	s=arc-20240116; t=1706634785; c=relaxed/simple;
+	bh=UkA0fUifhjkAamI3HED/L3EBo+j4suBV+QksQPDCgHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXMABRkv0gU1o3EuZxJcfc6ZEK2Wd67UoykuAX1wHOsIovgsJzccq9jknpCM+SO4a0zSGlH0CPwYpknSTHZXKg7X4MqUkx1IHMV04rUges+9vnotDFjqmuaj2vU6gJeNsgwion1V3qSbMYOADtdWkx5zaYnYoNfMrCtGF/gSFhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uOAoU27o; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGeqNl5GU3/vS2PPKbjljKsRictpFmEKNnUkxdvkBKtRvQHR/QZDysbkE0L1YT3MehC3uuNhBVq6467Fit9pdYsmdHuwp/bs0SLA2R7QIhzmkauxaIGM5Ra2PHND8oKQHJKIv/VSd03txrVkzbpsDT3bC/jmFWPqDnpNcbu7VJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hnXSeGa8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOAoU27o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32125C43394;
-	Tue, 30 Jan 2024 17:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706634625;
-	bh=og6jQJBHeHMmvk9NQZFiuw3bMyKwy04HOIksyUv5hDo=;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hnXSeGa8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBA5C433F1;
+	Tue, 30 Jan 2024 17:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1706634785;
+	bh=UkA0fUifhjkAamI3HED/L3EBo+j4suBV+QksQPDCgHI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uOAoU27oTREcKJoZUokKd9l4sXYb/pYwbZ4/1YTK115qFzgbJylQ55n4pbUp7XYT9
-	 vdmaHDKn3EYlB0FGXAaYhiFC0Kzt2uEig3IBzhcEVmOrl7qr7vgslyTXBJqOTDexAT
-	 0jlVNHGkr6o1a19siVrDKDFcjGHcGIs+CyuXm6uSZsXO7GmVr2/i85cvDtwzxe4xu6
-	 97dYrEAyrvPizmIs85TtGQEn/oKh2kFKH1TSw4QnuK4EgmCotTKlocmKtPQNJgDFmi
-	 BAQjXot3dAvJJzPGNUjM/A566m4pe/Chcl/im1poUwww9YOhbXN/UXeuB8hbExi/X4
-	 zq1UKVgcxA+BQ==
-Date: Tue, 30 Jan 2024 22:40:21 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Vincent Shih <vincent.sunplus@gmail.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH] phy: sunplus: Fix a memory leak in update_disc_vol()
-Message-ID: <ZbktfWM3bzuRrMok@matsya>
-References: <451016052782f18c8b52ed0f836d7ab5c69bac3d.1706431643.git.christophe.jaillet@wanadoo.fr>
+	b=hnXSeGa8ToZx0xC9bOT94rMy47dNA99eMkVM1V9u5AXpCsxyskJW2rN8Co2/KsVHm
+	 4A32ArbSZBFqQvHHL6pu+sKvUzFiKFbJEs0dM09v415WeGmbJu9XarfCM4l3onNHDW
+	 gKQ0dn46fX8Hy1Fv0DY5HmefJSh+vMF6LVLBFN6g=
+Date: Tue, 30 Jan 2024 09:13:04 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-fpga@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
+	Tom Rix <trix@redhat.com>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
+ call in fme_perf_pmu_register()
+Message-ID: <2024013044-relay-jolt-35d0@gregkh>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+ <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+ <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <451016052782f18c8b52ed0f836d7ab5c69bac3d.1706431643.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
 
-On 28-01-24, 09:47, Christophe JAILLET wrote:
-> 'otp_v', allocated by nvmem_cell_read(), is leaking.
-> It must be freed before leaving the function to avoid a leak.
+On Tue, Jan 30, 2024 at 06:09:14PM +0100, Markus Elfring wrote:
+> >> Thus return directly after a failed devm_kasprintf() call.
+> >>
+> >> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
+> >
+> > This basically doesn't affect runtime because perf_pmu_register() checks
+> > for NULL so no need for a Fixes tag.
 > 
-> Fixes: 99d9ccd97385 ("phy: usb: Add USB2.0 phy driver for Sunplus SP7021")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative and based on comparison on the usage of
-> nvmem_cell_read() in other driver.
+> I suggest to clarify this view a bit more also according to statements
+> like the following.
 > 
-> Review with care.
-> ---
->  drivers/phy/sunplus/phy-sunplus-usb2.c | 2 ++
->  1 file changed, 2 insertions(+)
+> 1. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11532
+>    perf_pmu_register:
+>    …
+> 	pmu->name = name;
+>    …
 > 
-> diff --git a/drivers/phy/sunplus/phy-sunplus-usb2.c b/drivers/phy/sunplus/phy-sunplus-usb2.c
-> index 637a5fbae6d9..50f1f91ac052 100644
-> --- a/drivers/phy/sunplus/phy-sunplus-usb2.c
-> +++ b/drivers/phy/sunplus/phy-sunplus-usb2.c
-> @@ -105,6 +105,8 @@ static int update_disc_vol(struct sp_usbphy *usbphy)
->  	val = (val & ~J_DISC) | set;
->  	writel(val, usbphy->phy_regs + CONFIG7);
->  
-> +	kfree(otp_v);
+> 2. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11472
+>    pmu_dev_alloc:
+>    …
+> 	ret = dev_set_name(pmu->dev, "%s", pmu->name);
+>    …
+> 
+> 
+> Regards,
+> Markus
 
-Looking at documentation, this should be nvmem_cell_put() see:
-Documentation/driver-api/nvmem.rst
+Hi,
 
-What do you suggest Srini?
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.43.0
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
--- 
-~Vinod
+thanks,
+
+greg k-h's patch email bot
