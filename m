@@ -1,40 +1,58 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358D856745;
-	Tue, 30 Jan 2024 08:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD7160BBF
+	for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 09:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706603778; cv=none; b=ahF3XF43pVE4L9UQIOEvihgzAUtHuyRBZgBkUIUeV2Rhu+cn2U0vy96sEw2jtMdslRjiypJCzBBE/hw+Hd/xpbJZEU7fZ8gOpwKmBRBtF637kW/+FGMW8GbzqQSR/1IZ678ZRWAnSubqaViuYvWNHHcPrVGqKGqn8HP+DgylF1E=
+	t=1706608318; cv=none; b=OoLhHntMlhZcidlisFsXExDL+RO6DD2G2f2rN0IhbY2NfKSnZa1QE+JDOFc9RkZIBNRSW/5lhXpbCjruxYSL8NDkFhKaX5GcDpcdNHaUAseq7DLZ+f2HecGGOeQL72PNHyB6KiapLNdkDmmVD9sisJHYUO0tGWXi2kjg5aXv49w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706603778; c=relaxed/simple;
-	bh=DPzX8bKF/2fviPf/M2liuaua/0lWQdiOsoNEF2zZ3Kw=;
+	s=arc-20240116; t=1706608318; c=relaxed/simple;
+	bh=sUNr3myzPwzcEzPZLydh/Sxr+xAwn5eWM0IALXoUSC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tyvR1QSRvLkFccH49Zowt5iFuJDUXQ37xT7KQj9soJZ7j8nrJ6fG95OVI4CftJ2cRsgYMhtXZ3U/c//U4LQJY9A5MN2pgtHybnTNRlWwMlHVjtTtmo+B1CdbIwQtensIjoxoVIiqNmGtEmC7Y040xWtM2gaMhACnlrdfn0VItUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QQ1m6SLd; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 In-Reply-To:Content-Type; b=LpRNgEjoaXo9rEovLzXevJNxXSR4n4Y6zFnlpPzhARG2xjXuPmLYTiBuoHC12Dw5ilMzu6dIURypTPV4vcMhe1ubeHVCsWRHcEzvk/qThmPWGL3hE6MUdlXPq1KES9eCqg6IlFRDq9QKTvWxxxs2mH/hH719s4WRwqsifYMZzeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uYnXincS; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QQ1m6SLd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1706603775;
-	bh=DPzX8bKF/2fviPf/M2liuaua/0lWQdiOsoNEF2zZ3Kw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QQ1m6SLdXWukRY/jHpuZaif7HrnumJY0OTOjXsU4HwmzLA3WaO7HtRytzJIcqztxu
-	 koxbBQ0E6kh7aVFy7PPw1ge3SKfXXR8VDKWego9QPPuQ2fKSDrCtjgPUUp1UcFG32C
-	 oA2Tockeh2++BG9SmsF/1MwNOPDLObfrl/qx9/CNaYnWDA49kvFxSU60zEqI9syhcy
-	 gGR2kQL0NT620VvFoARvoUNH0gZW87uTu1No8VUCAz5xcLq3uCFhAEMZpGZTxxqs5C
-	 kAIm8VFh1p+boVdOMCuLXq0SPgXsToceRwMLTKSLFhtfBkJhq68lGKf4d8ViFpqvuT
-	 JYnJaef/wSMug==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 885273782076;
-	Tue, 30 Jan 2024 08:36:14 +0000 (UTC)
-Message-ID: <46c05b42-dfc5-439e-9dd2-9c115199ff5f@collabora.com>
-Date: Tue, 30 Jan 2024 09:36:14 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uYnXincS"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40ef6bbb61fso16227565e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 01:51:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706608314; x=1707213114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UHvebLwHuRfKrhRhx4zUZc+osrZ3cO5ITZcXKlhy5f4=;
+        b=uYnXincSowyG+p9UEdPDnvxIzmU9GOBSzNhyzKWgWRsHxYxJsgmlN8l73pqeqMgJiH
+         W3FLzDp9V1a4NogDlV5H1k248SFmxfaAhFaGXvy+2xX1w0ghHvdHtyUoKilqpwW0kimv
+         irpXAEmjuNAD4/StG/16/I9RtqUQBH7xybZf4x+8WvJiIjR03h7Mg+Ju0ipADKFW0o6Y
+         UtGo5chTuX8tks8DceGJ2nErQ0g305MQvJkl4lTc3CXnzi2Dpd+8g0LSqtlkfRvLQBTa
+         h9yp2/x5R1D6Yus6NsAKqqqL9V7/KOfcBuEEQOWlRt+BxIoW2oB/IMNTXqdGY51W90E5
+         IVaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706608314; x=1707213114;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHvebLwHuRfKrhRhx4zUZc+osrZ3cO5ITZcXKlhy5f4=;
+        b=S1wh9HPMlaVb73Gn14MBngKIIdbEDDb1Le7KV3oq423qceBGziiynBxOVL37oC9tld
+         J5eu1ArxvB+EnjgaHuZfxx79N6WuwP+Cv8QWHnWy5tCIF48Ks+KQ7XDypGZMDgsZfO4i
+         FIO1y6myz2RcaVojZxy3cKxXkV7ccBswgcwckdq8bLegUgVLupzetnpyOQyVG6C84MdV
+         d6sBxsxE0xGIcBzGpvgRW+4tCWkuFF2yl9pzUAbR+VaICOx46q9SvArcSFj8qDf2jzYq
+         rADp9/AoyVT2qrCBJ+AAeUaf+N6Ja47YSSe5uoEQS8OQbQZhx+VgtrEI6L3a0/+Icady
+         +Dgg==
+X-Gm-Message-State: AOJu0YzpVwa+ObvG65qjaELGTllzX6HE4FVOP+4tgROc9yOncDLUsjUl
+	NFN8Acy1dbcMra6N7gPPGm4XK7Lhtw4fYwDMN3cR8oSUIVye6ZuE+4wKsDyfUxI=
+X-Google-Smtp-Source: AGHT+IF38u7/UMq2Ehe06B1hdRlnUG7cUccj6aYmXDUSxOCpUZXxCEPO+lNn+j1151l0KXe8fxwwHw==
+X-Received: by 2002:a05:600c:4d96:b0:40e:d319:4792 with SMTP id v22-20020a05600c4d9600b0040ed3194792mr6064680wmp.22.1706608314364;
+        Tue, 30 Jan 2024 01:51:54 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id u7-20020a05600c138700b0040d8ff79fd8sm12646748wmf.7.2024.01.30.01.51.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jan 2024 01:51:54 -0800 (PST)
+Message-ID: <57a5ca95-9d79-45cb-89dd-fa7a3a6ad228@linaro.org>
+Date: Tue, 30 Jan 2024 10:51:53 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,26 +64,34 @@ Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Fix a memory leak
  in an error handling path
 Content-Language: en-US
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
  Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, Balsam CHIHI <bchihi@baylibre.com>
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Balsam CHIHI <bchihi@baylibre.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
  "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 References: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 In-Reply-To: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 28/01/24 09:38, Christophe JAILLET ha scritto:
+On 28/01/2024 09:38, Christophe JAILLET wrote:
 > If devm_krealloc() fails, then 'efuse' is leaking.
 > So free it to avoid a leak.
 > 
 > Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Applied, thanks
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
