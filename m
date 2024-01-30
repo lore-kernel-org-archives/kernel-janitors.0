@@ -1,97 +1,103 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD7160BBF
-	for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 09:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F389E6089B;
+	Tue, 30 Jan 2024 10:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706608318; cv=none; b=OoLhHntMlhZcidlisFsXExDL+RO6DD2G2f2rN0IhbY2NfKSnZa1QE+JDOFc9RkZIBNRSW/5lhXpbCjruxYSL8NDkFhKaX5GcDpcdNHaUAseq7DLZ+f2HecGGOeQL72PNHyB6KiapLNdkDmmVD9sisJHYUO0tGWXi2kjg5aXv49w=
+	t=1706609202; cv=none; b=DnTZqNEOX9n242TQxmWvSO96iI7I5X12X14uj7uuuN7i2leQro6eO/HhASGzIwS5RjlRi+lADu/k0uh1S2mqEozp+NJLPf/dkTpsolsLTEi7bM9JVW+TVk2vj+8mDkq+UE0tVASVg5Z3EXL+EPH2yLyK2qrVw+MI0SHnwJbJ44I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706608318; c=relaxed/simple;
-	bh=sUNr3myzPwzcEzPZLydh/Sxr+xAwn5eWM0IALXoUSC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LpRNgEjoaXo9rEovLzXevJNxXSR4n4Y6zFnlpPzhARG2xjXuPmLYTiBuoHC12Dw5ilMzu6dIURypTPV4vcMhe1ubeHVCsWRHcEzvk/qThmPWGL3hE6MUdlXPq1KES9eCqg6IlFRDq9QKTvWxxxs2mH/hH719s4WRwqsifYMZzeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uYnXincS; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706609202; c=relaxed/simple;
+	bh=33yxRTwJsY9+vLQ1tvEYDMF6ElkJnKd+wgSpP79NvCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+jgrz++8Lzr66MZb5K/W7CYI9/IaJlCmA6TXE+AhCVxCZbGAK3OOyE5lCwrDfu0oKzxFy1ToB4c2GC7A3dhK7VG4kFrgw907vRgSQ4Xh4nZxiInUOkr5VlYubupqXgj+2LcxwSv72D9EoukKhWPrZp4Iv7hQspxbh6yLPQ9W8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fRKZFTlX; arc=none smtp.client-ip=134.134.136.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uYnXincS"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40ef6bbb61fso16227565e9.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 01:51:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706608314; x=1707213114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UHvebLwHuRfKrhRhx4zUZc+osrZ3cO5ITZcXKlhy5f4=;
-        b=uYnXincSowyG+p9UEdPDnvxIzmU9GOBSzNhyzKWgWRsHxYxJsgmlN8l73pqeqMgJiH
-         W3FLzDp9V1a4NogDlV5H1k248SFmxfaAhFaGXvy+2xX1w0ghHvdHtyUoKilqpwW0kimv
-         irpXAEmjuNAD4/StG/16/I9RtqUQBH7xybZf4x+8WvJiIjR03h7Mg+Ju0ipADKFW0o6Y
-         UtGo5chTuX8tks8DceGJ2nErQ0g305MQvJkl4lTc3CXnzi2Dpd+8g0LSqtlkfRvLQBTa
-         h9yp2/x5R1D6Yus6NsAKqqqL9V7/KOfcBuEEQOWlRt+BxIoW2oB/IMNTXqdGY51W90E5
-         IVaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706608314; x=1707213114;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHvebLwHuRfKrhRhx4zUZc+osrZ3cO5ITZcXKlhy5f4=;
-        b=S1wh9HPMlaVb73Gn14MBngKIIdbEDDb1Le7KV3oq423qceBGziiynBxOVL37oC9tld
-         J5eu1ArxvB+EnjgaHuZfxx79N6WuwP+Cv8QWHnWy5tCIF48Ks+KQ7XDypGZMDgsZfO4i
-         FIO1y6myz2RcaVojZxy3cKxXkV7ccBswgcwckdq8bLegUgVLupzetnpyOQyVG6C84MdV
-         d6sBxsxE0xGIcBzGpvgRW+4tCWkuFF2yl9pzUAbR+VaICOx46q9SvArcSFj8qDf2jzYq
-         rADp9/AoyVT2qrCBJ+AAeUaf+N6Ja47YSSe5uoEQS8OQbQZhx+VgtrEI6L3a0/+Icady
-         +Dgg==
-X-Gm-Message-State: AOJu0YzpVwa+ObvG65qjaELGTllzX6HE4FVOP+4tgROc9yOncDLUsjUl
-	NFN8Acy1dbcMra6N7gPPGm4XK7Lhtw4fYwDMN3cR8oSUIVye6ZuE+4wKsDyfUxI=
-X-Google-Smtp-Source: AGHT+IF38u7/UMq2Ehe06B1hdRlnUG7cUccj6aYmXDUSxOCpUZXxCEPO+lNn+j1151l0KXe8fxwwHw==
-X-Received: by 2002:a05:600c:4d96:b0:40e:d319:4792 with SMTP id v22-20020a05600c4d9600b0040ed3194792mr6064680wmp.22.1706608314364;
-        Tue, 30 Jan 2024 01:51:54 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id u7-20020a05600c138700b0040d8ff79fd8sm12646748wmf.7.2024.01.30.01.51.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 01:51:54 -0800 (PST)
-Message-ID: <57a5ca95-9d79-45cb-89dd-fa7a3a6ad228@linaro.org>
-Date: Tue, 30 Jan 2024 10:51:53 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fRKZFTlX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706609200; x=1738145200;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=33yxRTwJsY9+vLQ1tvEYDMF6ElkJnKd+wgSpP79NvCE=;
+  b=fRKZFTlXbPAC4KtEH7IxKJfOErLIVNCyJCnJJdk2XhYxAa76jzxfzAX4
+   7T4oQXVGMn4Ma+iDO3qObm9nl3y9o+Pi4q+Y5Gnkem176cqzd3MM3ZRlt
+   /KzFBFVwPATBTxSYaPFIWJX0Z5PY5sygJBzOE4GqBU0vPsNJMkzifRwVh
+   yJUskODaJWeTC7e66FtkakUjY9edPJ0TMpusnzKLymXk5fzTWZgJAfyKZ
+   nsI9V0VFQZNzV08iu7vhfodfSq5/qt5USGzVHAoDiBh+s5RjyUmyw/InT
+   XeFTjkjdD7LzOWOAvYIuBfZQVjX7mWxE5wZ9Zr9CiAjzWDdRLF6Xq53GX
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="467486605"
+X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
+   d="scan'208";a="467486605"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2024 02:06:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="1119213778"
+X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
+   d="scan'208";a="1119213778"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmsmga005.fm.intel.com with ESMTP; 30 Jan 2024 02:06:37 -0800
+Date: Tue, 30 Jan 2024 18:03:12 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luwei Kang <luwei.kang@intel.com>, Moritz Fischer <mdf@kernel.org>,
+	Tom Rix <trix@redhat.com>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: [PATCH] fpga: dfl: fme: Return directly after a failed
+ devm_kasprintf() call in fme_perf_pmu_register()
+Message-ID: <ZbjJYMlDifIv0WId@yilunxu-OptiPlex-7050>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Fix a memory leak
- in an error handling path
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Balsam CHIHI <bchihi@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
 
-On 28/01/2024 09:38, Christophe JAILLET wrote:
-> If devm_krealloc() fails, then 'efuse' is leaking.
-> So free it to avoid a leak.
+On Sat, Jan 27, 2024 at 03:55:19PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2024 15:43:42 +0100
 > 
-> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> The result from a call of the function “devm_kasprintf” was passed to
+> a subsequent function call without checking for a null pointer before
+> (according to a memory allocation failure).
+> This issue was detected by using the Coccinelle software.
+> 
+> Thus return directly after a failed devm_kasprintf() call.
+> 
+> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Acked-by: Xu Yilun <yilun.xu@intel.com>
+
 > ---
-
-Applied, thanks
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>  drivers/fpga/dfl-fme-perf.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/fpga/dfl-fme-perf.c b/drivers/fpga/dfl-fme-perf.c
+> index 7422d2bc6f37..db56d52411ef 100644
+> --- a/drivers/fpga/dfl-fme-perf.c
+> +++ b/drivers/fpga/dfl-fme-perf.c
+> @@ -925,6 +925,8 @@ static int fme_perf_pmu_register(struct platform_device *pdev,
+>  				PERF_PMU_CAP_NO_EXCLUDE;
+> 
+>  	name = devm_kasprintf(priv->dev, GFP_KERNEL, "dfl_fme%d", pdev->id);
+> +	if (!name)
+> +		return -ENOMEM;
+> 
+>  	ret = perf_pmu_register(pmu, name, -1);
+>  	if (ret)
+> --
+> 2.43.0
+> 
+> 
