@@ -1,99 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FE1128395;
-	Tue, 30 Jan 2024 16:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FD967A0F;
+	Tue, 30 Jan 2024 17:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706632533; cv=none; b=T/U/3a2eLNQcUqfAVcXIfMBQ0DW1xx6Mrk3eR8EEUt1ccFlb8B+u4pWrz3HHpo+oj1vzxlU2HHs1Y4Z8l60GzYshvdVi3vdI38DwUWa+OYFqhpEuJ4b0xEga74082D4uBfwpaKcAItZB+IZ2zlIa1yZs8DtqFwm90yqqC5l3kUc=
+	t=1706634626; cv=none; b=YIebvrXXZDEHyDiA6qnYqz89RCmEL8vmPsAWmxNLfnxHbZ45N/LfB118o/5a0MLYpqI2rRaFWsbg3M6wVFW5OjY6q0VqaFXBevO0U3X/qcHxdkoK22UMFp48WJ010pawYKzRQWjw7rzu+Ba15ps1p5JnMt43O/2421z1rFfW8VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706632533; c=relaxed/simple;
-	bh=zhG+8/nuWgNItbhLKSC+JpSH5oPOHh80vN9YuUa75NA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ri+iArhN6J0OpIScd7kvM9HaKpmGpHmTpyw37kQ2Vy9+0/B5g+CHqWvNECmy3UIJ4FcN/Z8zO66+qD65fyAP7VDPuCjzmo3z+2/8qLxalLZHDSpJvp4Wv5P8eWzTtAbyASZqpuFUdCe74Tl1ODl42grUZYyHxOIXA0yC6oSwDNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SoDX8xGj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706634626; c=relaxed/simple;
+	bh=QOE3n4Szn+LSvifyAKQARBkvfKb6ykLiCedZCr70OAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dG+Aih0qDVjW1iL1Bv6pIQRkW70fyrdbq6oSkKxFehIPDWy5rIUiu5/IIvRpkbg5+2m4/OIeKm0u3FetPhX+5cPwedFZetqxOOlX9PO4irqfewK7jun3swJn3QefjohsMqiPuc7vwACtGknJjIExMj1bWHRY8tcgB3uF+l/KiV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=J+6Fj07r; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SoDX8xGj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3323C433C7;
-	Tue, 30 Jan 2024 16:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1706632532;
-	bh=zhG+8/nuWgNItbhLKSC+JpSH5oPOHh80vN9YuUa75NA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SoDX8xGj0l37PBpmm/oaZpUNvBIXmLRNBGHXi3n2OPaxKxwzNhpYjynPdyJc/hpY/
-	 Wkzt3BaZvdEYjgwNtQNqIfdHYcYMm9dCWAHnknK2/496Q37oJ+kw2Ajlj+GnV/ZvrO
-	 b4OPMrETh2Xtl/p1rGOQMnuYUKbezyqbrQH8bfbk=
-Date: Tue, 30 Jan 2024 06:11:17 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-fpga@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>,
-	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: Re: [PATCH] fpga: dfl: fme: Return directly after a failed
- devm_kasprintf() call in fme_perf_pmu_register()
-Message-ID: <2024013044-proved-ligament-9555@gregkh>
-References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
- <ZbjJYMlDifIv0WId@yilunxu-OptiPlex-7050>
- <ZbjPDX1y2I9Heanq@yilunxu-OptiPlex-7050>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="J+6Fj07r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706634579; x=1707239379; i=markus.elfring@web.de;
+	bh=QOE3n4Szn+LSvifyAKQARBkvfKb6ykLiCedZCr70OAc=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=J+6Fj07r4h5QMBXDL3yWwpiIA4YuvymFHWYwCxF/fzliYafXYoOq3aQtKLmhjf0D
+	 bqX39felXEEv+IP0w3LMd51AMFBFbMm68ZYjTA4rFJ/Y+bIkojaWxHgbH0b1gsmBV
+	 4FMCqe1u0IeT84V+o0nPlPU1zn79Y0R2Aljqwqd1K0UQSbNT07Ns4FJx8G1gcVJAr
+	 ZYgrZnZAbW5LhqBB60wsFsQ3NUH2wEkJ+HXdM2l1tpoxjgPseDdcFQPDQXnwVPXNx
+	 e1YyzasYf+LFyKbvYztTq2wCkfJXpQyuUgCDqgndpNFtIJB4QQ7uilxtfgHmE+ORX
+	 1OnoxGHdYQBpRyCGHQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPrLN-1riQNs2kRX-00N4Bk; Tue, 30
+ Jan 2024 18:09:39 +0100
+Message-ID: <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
+Date: Tue, 30 Jan 2024 18:09:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZbjPDX1y2I9Heanq@yilunxu-OptiPlex-7050>
+User-Agent: Mozilla Thunderbird
+Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
+ call in fme_perf_pmu_register()
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-fpga@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+ <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:s0VR/FQjS8xqSh6FSezEsTEJZaJ+Kbc9lwjc4qySvtM5vk5B9d5
+ 1A86barTpJ5n2bgZDN5MoVCNBa80vBQkveD0xtfiR8zwKgJK17Fbiykcsn92243jpl5F1Sa
+ yKrRaZrlnO42TK+fXz8ihIQJc4X+NNA8iDTgt+nMs9/N19uQrJ2SwdTalhBVDuYNLgtKltC
+ b67oz431eomL1htQGsTZA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0Ig/6CYNJlQ=;YAvJJnUV3C50hnqV3RKw+y4p40z
+ HRPxUrOm3NJcdxxv7ApPGPAiGPdYFa0TTdcXTYuT5M6ULSPUCcAdxaqLgxfOQ0YzyOh5NVpdk
+ H7LqAPx3y9n3IUWIwhjJ5AofSXgatsrCYpUvZguDkQyhakpEtbiQJ8P1CN1KT721GpgRBs0hq
+ HbB2mElLGM9EDcKw39u9UJyF3K+pknXdh6nh67D1O7bgsk0/HlPFjvnZY9FA6FgQg0M8QhsLt
+ qPYzcvIwKOu0xzX6fcu15F3VlUK2Y2gut0MsuNGj7u2GIfgRjN056xO9sApZPoFen+T3MUgB4
+ 70YdYfnJ+dq0q1pmfNjn0Dzh9Cc6QVGav3hYGfl5PtK/3nZ4KH/LiqZNb4zXLksOCOcanfQL+
+ owOBCvM7lPv3gT7NP5cQ+DkeNoM32nRQOowc2LPzLuJjwf5lxC3zh6HnIH9oY+xhOSEwBxcIm
+ rEOrosjz/LVz1Njifyoqayk01llh8mR5eXS1J6IjCSFUM3WbhlXi9nX3hh2YVpnsOpj7Ri/tT
+ 7+ZD2L3VN8L5muWAcFWoaiS810RbMWNwtOeh7q7kR1cVb5wiFaEnhoRVBPnr18b6hoSgO+Tlm
+ 6IZn/fwhMPi9lGyAMMHJMERQWFbMZbImjOgEyrGcVvDO8S3WN8x3YMXhqewLX5SUG5TLSnht7
+ hi5fe+wCBTod7q+ft761AHmHUlO1b8Jec+vubhCQukeNunFE73Y0yS/ufAh1liv/XeoD4fjYd
+ Y2tTa26NoK7l2OhHIIUyJ1X3bvg28A1bH41xx1vGpVTLwLejIHe2rvAkN5QmicoKkAwOQZpbT
+ oL2IPYYLf9peo0nWNXD7M3Egz1Dc5i1tQkpyiKlv8AgTQutwpW0lpn5E++rrixJiiplUXNCdB
+ rR/Se+9eXfFZdcJDM9Bdg54bZ3sGtG15+AAq4Mc2WISzEJPrAceGnMgufWE6O/Zqb0adxZYPJ
+ hCOolA==
 
-On Tue, Jan 30, 2024 at 06:27:25PM +0800, Xu Yilun wrote:
-> On Tue, Jan 30, 2024 at 06:03:12PM +0800, Xu Yilun wrote:
-> > On Sat, Jan 27, 2024 at 03:55:19PM +0100, Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Sat, 27 Jan 2024 15:43:42 +0100
-> 
-> Sorry, something to fix.
-> 
-> Please shorten your shortlog to less than 75 chars.
-> Please refer to Documentation/process/submitting-patches.rst
-> 
-> > > 
-> > > The result from a call of the function “devm_kasprintf” was passed to
-> > > a subsequent function call without checking for a null pointer before
-> > > (according to a memory allocation failure).
-> > > This issue was detected by using the Coccinelle software.
-> > > 
-> > > Thus return directly after a failed devm_kasprintf() call.
-> > > 
-> > > Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
-> 
-> One more char of sha.
-> 
-> Please use checkpatch to verify.
-> 
-> Thanks,
-> Yilun
+>> Thus return directly after a failed devm_kasprintf() call.
+>>
+>> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting suppor=
+t")
+>
+> This basically doesn't affect runtime because perf_pmu_register() checks
+> for NULL so no need for a Fixes tag.
 
-Hi,
+I suggest to clarify this view a bit more also according to statements
+like the following.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+1. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L=
+11532
+   perf_pmu_register:
+   =E2=80=A6
+	pmu->name =3D name;
+   =E2=80=A6
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+2. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L=
+11472
+   pmu_dev_alloc:
+   =E2=80=A6
+	ret =3D dev_set_name(pmu->dev, "%s", pmu->name);
+   =E2=80=A6
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
 
-thanks,
-
-greg k-h's patch email bot
+Regards,
+Markus
