@@ -1,100 +1,71 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646EB364D2;
-	Tue, 30 Jan 2024 02:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358D856745;
+	Tue, 30 Jan 2024 08:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706581654; cv=none; b=jFNVZeZps+35nsxr4RJYfUb7kbYSaNrW0umDrZYFmtS1nZWhS5jbjKTfYOwfBUodQwaA6DneCFFdm7aLoOc2Va8ChVepQ9+GHpJ/kiMdeyXyWIEWweiHr55nmGrxeDGPkfPUynirruHNaGkiypManfSPUoyq+2smYwN4QlFz8ZU=
+	t=1706603778; cv=none; b=ahF3XF43pVE4L9UQIOEvihgzAUtHuyRBZgBkUIUeV2Rhu+cn2U0vy96sEw2jtMdslRjiypJCzBBE/hw+Hd/xpbJZEU7fZ8gOpwKmBRBtF637kW/+FGMW8GbzqQSR/1IZ678ZRWAnSubqaViuYvWNHHcPrVGqKGqn8HP+DgylF1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706581654; c=relaxed/simple;
-	bh=W1lbuevOg4lz80k4e+i9bIkNJZ2002FG6iFJ013m188=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4PoZE6dLUSPtPKkvAEuZuLwYwciUYgcHaqyZ1v3nrsn4LyrLLtc1whtg3EKtBb0Ybrif8Iv3vJxxUep9WB0pA98xrlVecD90MrLTFHIXeEe+4DGKjIIngsjw2a4vf9q54rWhKTL2LJa74JtC685DMjXaVNRusdLdxDqgKt339E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WB1Y19pC; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1706603778; c=relaxed/simple;
+	bh=DPzX8bKF/2fviPf/M2liuaua/0lWQdiOsoNEF2zZ3Kw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tyvR1QSRvLkFccH49Zowt5iFuJDUXQ37xT7KQj9soJZ7j8nrJ6fG95OVI4CftJ2cRsgYMhtXZ3U/c//U4LQJY9A5MN2pgtHybnTNRlWwMlHVjtTtmo+B1CdbIwQtensIjoxoVIiqNmGtEmC7Y040xWtM2gaMhACnlrdfn0VItUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QQ1m6SLd; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WB1Y19pC"
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40TJiSsY007793;
-	Tue, 30 Jan 2024 02:27:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-11-20;
- bh=M6ttjQYwKrto5D2RHLbTN3mnyU+mC7uKIL6Z00W0Jkg=;
- b=WB1Y19pCDjUKaGVaSzXEqmRNkO6oEzmKCxqCOYXOg1+bPbc3w5b9aoseJjI6XAzVPFmF
- SBATm2+5E1jdWdyPHHkaRFiBw6GYb/+T34iBtsuA1XwBgjZL81cC+42RWE3QW0NQVMZ5
- fGtO84MkTdFDhaT+AUCGpoEXUkyQslva4q+sDCV/+yvQALgo7MWNN8YDwetiA4UkIweK
- Pv1NNBAFnv4jmjy2d4Gz9UxncessXW/LbldICopirZQNgNYN7XX9g37CB93qaGlLYcVp
- fVkVWor0uHSKjt6A6vH51Jd8s/iMcseIm1yGRJyOalnGMdZO0HYI43JloWudc0/TNEiN ZA== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vvtcuwft1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Jan 2024 02:27:29 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40U1au6Y014634;
-	Tue, 30 Jan 2024 02:27:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vvr96g504-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Jan 2024 02:27:28 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40U2RPxi040916;
-	Tue, 30 Jan 2024 02:27:27 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3vvr96g4y7-3;
-	Tue, 30 Jan 2024 02:27:27 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: megaraid: remove redundant assignment to variable retval
-Date: Mon, 29 Jan 2024 21:26:59 -0500
-Message-ID: <170657812674.784857.7579326201557441300.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20240118121441.2533620-1-colin.i.king@gmail.com>
-References: <20240118121441.2533620-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QQ1m6SLd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1706603775;
+	bh=DPzX8bKF/2fviPf/M2liuaua/0lWQdiOsoNEF2zZ3Kw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QQ1m6SLdXWukRY/jHpuZaif7HrnumJY0OTOjXsU4HwmzLA3WaO7HtRytzJIcqztxu
+	 koxbBQ0E6kh7aVFy7PPw1ge3SKfXXR8VDKWego9QPPuQ2fKSDrCtjgPUUp1UcFG32C
+	 oA2Tockeh2++BG9SmsF/1MwNOPDLObfrl/qx9/CNaYnWDA49kvFxSU60zEqI9syhcy
+	 gGR2kQL0NT620VvFoARvoUNH0gZW87uTu1No8VUCAz5xcLq3uCFhAEMZpGZTxxqs5C
+	 kAIm8VFh1p+boVdOMCuLXq0SPgXsToceRwMLTKSLFhtfBkJhq68lGKf4d8ViFpqvuT
+	 JYnJaef/wSMug==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 885273782076;
+	Tue, 30 Jan 2024 08:36:14 +0000 (UTC)
+Message-ID: <46c05b42-dfc5-439e-9dd2-9c115199ff5f@collabora.com>
+Date: Tue, 30 Jan 2024 09:36:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-29_15,2024-01-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=879 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2401300015
-X-Proofpoint-ORIG-GUID: W7Nd81WSNvuI_R4H-0335ZCahUDBeS7e
-X-Proofpoint-GUID: W7Nd81WSNvuI_R4H-0335ZCahUDBeS7e
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Fix a memory leak
+ in an error handling path
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Balsam CHIHI <bchihi@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <481d345233862d58c3c305855a93d0dbc2bbae7e.1706431063.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 18 Jan 2024 12:14:41 +0000, Colin Ian King wrote:
-
-> The variable retval is being assigned a value that is not being
-> read afterwards. The assignment is redundant and can be removed.
+Il 28/01/24 09:38, Christophe JAILLET ha scritto:
+> If devm_krealloc() fails, then 'efuse' is leaking.
+> So free it to avoid a leak.
 > 
-> Cleans up clang scan warning:
-> Although the value stored to 'retval' is used in the enclosing
-> expression, the value is never actually read from 'retval'
-> [deadcode.DeadStores]
-> 
-> [...]
+> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to 6.9/scsi-queue, thanks!
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-[1/1] scsi: megaraid: remove redundant assignment to variable retval
-      https://git.kernel.org/mkp/scsi/c/9759cdc1bcb8
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
