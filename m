@@ -1,101 +1,101 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8D60249
-	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 08:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7204469DF2;
+	Wed, 31 Jan 2024 08:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706689507; cv=none; b=MtcF0SC1H7/TnlJ39T/5sP4mXNz4ncgteCaWyCMTKHdsRBe3U3VSmEBKwB8TE8pmhclWYaLAvSAFSovNvswtmGec7/eBb2qa2WT5XQZFdChQf0dH9mLSz7F8ZgJ6qhtnBzYqwUmEjequ9YOpUI/z8Ed8RpsXo4lrtB2Ci5+JAC0=
+	t=1706690999; cv=none; b=FztdIh71SNMzn3ZI+NBfLf7rI7oxnBObgSbUFH8lcCmVvh1sJGZQyV+hN2trRGdUK/AVBIRghGl9Wav03x7xOVGTBZn3snXV074EPR5VNxzZSZjCt5kkR5m+Z6MElyGFcPU8ZxeG5X44+IhtDYXdMKYbA3dpOjGCxl6IhKa4Kz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706689507; c=relaxed/simple;
-	bh=m32rvnoHeDneErJtvFKjJCT1+v1UYtt13ihilo7pDBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sJ/J1slHNNBAK9/OS4jKcHkuswiEZFqmwQgDwOpW6dwp/KIufGvTaFPcbKexhRFjhSQ7xh5IAewuqinyI3GNUct3WD1BXb/htWf5pHWHDAWsiECD1I/90RFvw9CUzC5g4DHwZbbqLuPYLD2JMaRC5SPDqxgOaata2YV1WStIB8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vtiVCS5/; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706690999; c=relaxed/simple;
+	bh=2TF0fuW0AC4plZY7IwMFNw7VYTrwAJYUdZEei7XNV7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I4HFXkKTS2fF4hkJnyvGmRYjLgrqjLzKAvhSg5A+PHvwRJu3N0XY4r9MAsf1Qu9VGo1ZanmQzBUsjx2P3NRwNwgA+kqJcbg/FLK5PInuPVl4qG8aa3YM6/wqukrnblYhdV5EJih/q+5OE0hOse6XCHOTYhP3fAlqPAlSOQiT7CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fUZ/qCtS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vtiVCS5/"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40fb3b5893eso3484465e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 00:25:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706689503; x=1707294303; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kjfr1JWWqOzBpF09vA5iofFwPy0q9GLVhIb7MB26bGk=;
-        b=vtiVCS5/9LYvIczCo1dTkKjHd8K6tFOJ7jYfICwpunCl/BidSDeH/4ByXEujRI3E9Z
-         345c3FzfjPkngk6Izs5/dIvCN4RRsZDUffL5aD5UhTGHT83RTMzI6TbfHWc5OvKgFr7z
-         zB7gTmbfOqukmAhzw3VaWCdSV1h7hd+oJa+V4Vf6LhPe8vVRgt8fx4Ai3AmxyBeCwP/E
-         m3XGHhgKq3fD+j+BN1g00cyKhi9yvH1VVJebaJ9dSY3wllWPI3Ult8TESpc1SvIqzkwM
-         QM6OHMlBerwcVGKVLz7gWOL45juG7jJX9t0f1j+xxMFXHpYhKBUmXcUnUe584bg+UaOf
-         4vLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706689503; x=1707294303;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kjfr1JWWqOzBpF09vA5iofFwPy0q9GLVhIb7MB26bGk=;
-        b=bM3p9f2J0LQ6UNsJ6wZKeNzJar6usJEVDdO15y1dGQmeNfwsN3Qxq2BOMQPBZdYkyK
-         fYLGbfNt5QqIlM3v3H+e+AWc39zM7bMP1pmjXkO0zBAu3Qze6syhONTNIpr8jP/SPk++
-         Na4mZtDlQshIaWZPFnrl67j01vhPumwgOFVIyl7ltn4Pdz2jQyLkvbJzDhau+53BDqJG
-         mclDMDjqxn9mP1wj6OgNEwGKhmq6r3Ge0Hn19db0SfECQ4hFVihxGBWKDwTDIGVEaxZW
-         uJWTdgC5VgCZCLDRb5sXwFWv4ugW+Ul38sSsIL53LF6HPZKuncxA/0PALe0ajfjk/SWU
-         q8wQ==
-X-Gm-Message-State: AOJu0Yx/hYwvFk8QnPDtBIhNBR9Qsd9cwo+RykpRuxA2nbqLQZeRHrZC
-	MYHZaLqTjur8uVcxDRuH/iYdFHfA0EMuo2FPaZ8BuAZzf+/IHQQrR7BKC8ruqecA4riFSLFOTSu
-	K
-X-Google-Smtp-Source: AGHT+IHoltuxoKIeHVVpKUMTvfTCftXaiHZYAChZuYJHWMkSt7h0Ajid41fYMtToV3jNL4hkgTJq/g==
-X-Received: by 2002:a05:6000:118f:b0:337:b9ac:97f6 with SMTP id g15-20020a056000118f00b00337b9ac97f6mr554324wrx.55.1706689503559;
-        Wed, 31 Jan 2024 00:25:03 -0800 (PST)
-Received: from localhost ([102.140.226.10])
-        by smtp.gmail.com with ESMTPSA id ch19-20020a5d5d13000000b00337b47ae539sm12799999wrb.42.2024.01.31.00.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 00:25:03 -0800 (PST)
-Date: Wed, 31 Jan 2024 11:24:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fUZ/qCtS"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4C59E40E00C5;
+	Wed, 31 Jan 2024 08:49:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SE8613EvfTI3; Wed, 31 Jan 2024 08:49:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1706690990; bh=IAFQhZRRdXVvRc2AYR35Su3cYNvuKMDgqxW1MSXcqls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fUZ/qCtSpCA+q/NPIeXhzpdGhqnotgSjjN5FONz9iNzmESA2oHshHjD+CVWp1uEe4
+	 pbN/kVJ8raofVsjAtuMtEP6sMtm1KzoU8o+KKDw7Od0n3ow6W3TgT01fBR4yAbobJJ
+	 0OH+UxBrCpalcTBkwKUBnw2OPQqdmzWkjzEMau5KKb42dKWk7/gTC4bFLwjI45ELNo
+	 rj+sUf9s08/ILJCsXPXSFZlimNUn2AUqXJkbcLrGKaLWAd+VYoxdRdr9X+7Kotmbu8
+	 2JihPHGutt3+EOAPDQevoYkFsDc5vuRmPUl6u9vDGaoFHZVz9PRFrCqMXV8wAqMZWh
+	 oyMxmohj3VX4VrJ/0sgcVUb+2jsD6emsUva5A7KHkSuVVYsPEcjP9wW+cXyMOMf6oe
+	 IIOQssHeWhgtN79oNC/Ow23mFAQxf8zCVB/7/Lrcn2PRArU3LMjmHNpCg8J8yDTcof
+	 N9QQRk4VUnx7IRm5UoD+zYt/srecMb2dVzuYaj+28k/gKFveOa16W7I97D1CCjWD2k
+	 b0kDe2IWjiCVb+v6uXIYtMMhw3wZRmVLjqiyFIw3dq746EOq1150/BRmckXLu1kXy2
+	 usH2ufssSuZjklm1ft66LJ6tE/pdh+WaqnTXCpnUme/9bxWKblPdU55YuvvcVpAfb/
+	 ccQQp0P2FQ/ekyaLeKHDYBH8=
+Received: from zn.tnic (pd953033e.dip0.t-ipconnect.de [217.83.3.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EEED440E01A2;
+	Wed, 31 Jan 2024 08:49:42 +0000 (UTC)
+Date: Wed, 31 Jan 2024 09:49:37 +0100
+From: Borislav Petkov <bp@alien8.de>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+Cc: Muralidhara M K <muralidhara.mk@amd.com>,
+	Yazen Ghannam <Yazen.Ghannam@amd.com>,
+	Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: 8250_pci1xxxx: partially revert off by one patch
-Message-ID: <bd6fb361-bbb9-427d-90e8-a5df4de76221@moroto.mountain>
+Subject: Re: [PATCH] RAS/AMD/ATL: Fix array overflow in
+ get_logical_coh_st_fabric_id_mi300()
+Message-ID: <20240131084937.GAZboJoRjQLxlANlw1@fat_crate.local>
+References: <279c8b5e-6c00-467a-9071-9c67926abea4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <279c8b5e-6c00-467a-9071-9c67926abea4@moroto.mountain>
 
-I was reviewing this code again and I realized I made a mistake here.
-It should have been > instead of >=.  The subtract ensures that we
-don't go out of bounds.  My patch meant that we don't read the last
-chunk of the buffer.
+On Wed, Jan 31, 2024 at 11:24:25AM +0300, Dan Carpenter wrote:
+> Check against ARRAY_SIZE() which is the number of elements instead of
+> sizeof() which is the number of bytes.  Otherwise we potentially read
+> beyond the end of the phy_to_log_coh_st_map_mi300[] array.
+> 
+> Fixes: 453f0ae79732 ("RAS/AMD/ATL: Add MI300 support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/ras/amd/atl/denormalize.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ras/amd/atl/denormalize.c b/drivers/ras/amd/atl/denormalize.c
+> index d5d0e1fda159..49a900e066f1 100644
+> --- a/drivers/ras/amd/atl/denormalize.c
+> +++ b/drivers/ras/amd/atl/denormalize.c
+> @@ -405,7 +405,7 @@ static const u16 phy_to_log_coh_st_map_mi300[] = {
+>  
+>  static u16 get_logical_coh_st_fabric_id_mi300(struct addr_ctx *ctx)
+>  {
+> -	if (ctx->inst_id >= sizeof(phy_to_log_coh_st_map_mi300)) {
+> +	if (ctx->inst_id >= ARRAY_SIZE(phy_to_log_coh_st_map_mi300)) {
+>  		atl_debug(ctx, "Instance ID out of range");
+>  		return ~0;
+>  	}
+> -- 
 
-Fixes: 86ee55e9bc7f ("serial: 8250_pci1xxxx: fix off by one in pci1xxxx_process_read_data()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-Sorry about that.  The other part of my fix was correct though...
+Applied, thanks.
 
- drivers/tty/serial/8250/8250_pci1xxxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_pci1xxxx.c b/drivers/tty/serial/8250/8250_pci1xxxx.c
-index 5cf0580f21cd..356972734b29 100644
---- a/drivers/tty/serial/8250/8250_pci1xxxx.c
-+++ b/drivers/tty/serial/8250/8250_pci1xxxx.c
-@@ -330,7 +330,7 @@ static void pci1xxxx_process_read_data(struct uart_port *port,
- 	 * to read, the data is received one byte at a time.
- 	 */
- 	while (valid_burst_count--) {
--		if (*buff_index >= (RX_BUF_SIZE - UART_BURST_SIZE))
-+		if (*buff_index > (RX_BUF_SIZE - UART_BURST_SIZE))
- 			break;
- 		burst_buf = (u32 *)&rx_buff[*buff_index];
- 		*burst_buf = readl(port->membase + UART_RX_BURST_FIFO);
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
