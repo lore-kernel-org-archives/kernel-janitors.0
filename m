@@ -1,92 +1,96 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32845810C;
-	Wed, 31 Jan 2024 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0195D739
+	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 08:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706687497; cv=none; b=D/hF1NpXLo7iM94YwYygPMB7v2uqhAHuvTby88AuLqrN98Pz5dQI0TKC1rH56/D+TgGcJs0R5coi09eEiwsbgcHvTZwqcQoK9grJw8+MiAmexYlC5UN6JewOxMZmbfnuKtA//sUHK/nIwrLv2H4uOIidhh2F3MQUa82l0A1Tmv8=
+	t=1706689472; cv=none; b=GJG+HqdoL0TGEp6J6LlY2cbv+Fkux9lJyW7GO8haxciSiYwD/E5r7GAe9N+SDRSdyqDqGClYopYExSrE6Ub0Ny+/2Sh4wfot9KhKb9EuBCEenm1lNGVxXGfYHYuRp/yKa/MCU4BbKe6kW23wH6yO8TUBZJmzNj48hj2SeQOtL+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706687497; c=relaxed/simple;
-	bh=RCpx2LOg9/ZmAaeB9rFYkX9ZLKhwvnqQppjV3dOKF78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=peTHoKYwLHSQr6IKSoLpQ5WJzDg/XCBbuzKjPtjtQYN5rbiMONWmWOCBTmcgo6DIG7QlJKng/UAqCKKTXs7wl3xc1oPYJehO33N19bJ5T/JhEXE9dH6yRb/ZDKetrLa79ab23QOSmzg+ybei5vyvaKE3OlNThAhZjykijptNP/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YrCcDfV/; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706689472; c=relaxed/simple;
+	bh=ZnF7iKo/ZFbGkBB2MbsvheyNsQD3je4DZX7Au09k4DA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XZDg27InLcCf64MipnlRZ2fxfCO5b+vAWqDTxrZNHVMLkJMBsLYHnS1CvqRrgI6INDGbkdo1SfWXbq0Lv0oc1lpAVMSP9Dp0QxUHvtRhmnqaINE1hY0EikjDCXqqjS1r9Og90ooPV7TkvgayNcIcN2MXtnRzLtML8kDRbObRJ6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYIjIA42; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YrCcDfV/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706687464; x=1707292264; i=markus.elfring@web.de;
-	bh=RCpx2LOg9/ZmAaeB9rFYkX9ZLKhwvnqQppjV3dOKF78=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=YrCcDfV/YvrBQAMq1T8G78gtbH3KS2AwJOZJYkHFFOnIVVTLrDczUsxGgDZgAKqv
-	 STfA2c4sAXxrLmmUaMYeg6imxW7oY+gd7rfYOvqPOpp4vETYlK0OpIcPVw7PBYtVi
-	 0kmGPHapdqh13Prk6rNx/oA5jcO65k+/B8my+PyxbJI96RjDhWvCoIKIwSSEnpf66
-	 JIvxnwFBZYKbl/iqFZwLA/cyAQ1rusJXn6d1wc7Q/l1UzfiR8Da6WcTEEKdhCBFgb
-	 HuOsB+h88m5oz85ozx9EyuMvFoJj4AInNIQC1guYL1SQ5y045tEmuhQ1vXeOE0CIQ
-	 AlUHyr7XeQTvs7y9rA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPaII-1rikLS1lly-00Munv; Wed, 31
- Jan 2024 08:51:04 +0100
-Message-ID: <35f48b58-8687-4620-a859-e16a0ef142e5@web.de>
-Date: Wed, 31 Jan 2024 08:51:02 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYIjIA42"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3392b12dd21so3281674f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 00:24:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706689469; x=1707294269; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VlKKphLBogbuT0RBIYdtdc5+J5iprMNNjA2TgZhIPr8=;
+        b=LYIjIA424ArZUH+A6k1TiLRxSqxKvN+2UragETnPzGYK0XyY/A2i7KxJtNErzRIR3q
+         obmGR+XJOmgITikXmLhtGZUIc143UjrT4xqWmBgj9+dYLCKmCTy2d3sa/lhKCbC9srPm
+         ncVoEeAtyexe4Oq12f/ufI3wv5hc5Ofh2Adfgd+KbHgmk9FhZy2bG8fWxNw6UtT8gopP
+         iunBbS+p7MHmkh+rerDWPHLWSSjeMvlAtT8z4nsn7qKKfl3puDlR9QQu8FLIV8VWXy5+
+         3HE+2HIhaza176QAbvU0pqs5DvRXu5GegkWeolkthvbrNcr9FQqFKOQ4ZEyjNctmYSEY
+         ycrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706689469; x=1707294269;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlKKphLBogbuT0RBIYdtdc5+J5iprMNNjA2TgZhIPr8=;
+        b=QwItNRImfdiXpWxeKo0waOd2gUD2Fb0Zt6i4z+Y4YfQsdhbglSrVwBtT0UNog4AaAe
+         01xt3TbgAfblm3JFLS9NyqEEdDPIujc/vBWJns2bZNTI6+BVfY5clKoWGjlLjylRUcYw
+         f7DmTrjGadfeLFIzqiQIxeCGy6XOjVH8cFnX1MABAyfE6e+gbaU3A+fJnvB9tlaPgexT
+         cdARNiLJyTBol6Ore1i2WdUUmirWht79GUTq8G0E9ZuKt1ExJ8JUw46R2fxBdYr5x38M
+         RF0b9sVQKYasA5ab3huLxxDADHPLviL8rUxo6w73vu4GhwSrize8evH9BHE7PvumtXnO
+         1OmQ==
+X-Gm-Message-State: AOJu0YyQYLA/kiriO/eCg19EX3gHzB3Msoj56It9emedTyhA3AomA2Iy
+	O3ZKRnvxylxDv2NO/plvzi4ddfbCWDQl0Ag/a7iJlxsNv5wS/uHrcnCXERkAkDA=
+X-Google-Smtp-Source: AGHT+IG/KsmeYrAxJSxpF1zN165aGnxdGMtGJFaiuGGf+pE/DxpE2WAhuz1IAOCKENhXBOFFshzNUA==
+X-Received: by 2002:a05:6000:25b:b0:33a:e52b:5a36 with SMTP id m27-20020a056000025b00b0033ae52b5a36mr470161wrz.44.1706689469111;
+        Wed, 31 Jan 2024 00:24:29 -0800 (PST)
+Received: from localhost ([102.140.226.10])
+        by smtp.gmail.com with ESMTPSA id bj26-20020a0560001e1a00b0033ae6530969sm10016575wrb.85.2024.01.31.00.24.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jan 2024 00:24:28 -0800 (PST)
+Date: Wed, 31 Jan 2024 11:24:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Muralidhara M K <muralidhara.mk@amd.com>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] RAS/AMD/ATL: Fix array overflow in
+ get_logical_coh_st_fabric_id_mi300()
+Message-ID: <279c8b5e-6c00-467a-9071-9c67926abea4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
- call in fme_perf_pmu_register()
-Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-fpga@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
- Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
-References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
- <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
- <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
- <5a3a1c80-47ae-45c7-86ca-8aa40566551b@moroto.mountain>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <5a3a1c80-47ae-45c7-86ca-8aa40566551b@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ezTFH0oi9O4DbezQPSoY98o1En7nW7T6V/09QuY+3PKrMaNo/CX
- f/ojdEBeK4DGkzVDOmK1Bl/r5M+rJFw2fjirevGhIvvjweZKnO6eEJgMyxDIfCcjBK0/2En
- vJ19HiQtGQfu7C+GTOBjyyTCmtptPPFoZ737xD6zUza44cA1Lkje+cX4hvOBUp0PvVthVzK
- OQi3+J7oM1Q/lFwBy2u+w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vPoORXPt/OI=;jr5MxVXfcURfY/GOeGuCh6k6qZW
- 7gaJYMLUtiOWDy0jdnkrTyPREOPJ0lazjBV/hWpObpx7D+YLylL5FHuMzRwdaBp6zqbcpWi4p
- S3LBzbRIGwSro+waOYYyCUe3AnjR/NMRFAW/yOU7iBVT3IDKpeOYwavnrlYzKSkNlBc+yxPbL
- k/d63Uzth8qHRpTnu7thtGhNyEgEsmldl8C+TipxEqG3CgKqQCNvnLkEZ9o6ANIXFnBBPsU/I
- PzhvTxldQAIKYvEKSK9pxhbVwaYxzWPAMJMKZmZqi2Mxvo6e4GzyzFbpRHWCPDn4KR+Pe3RZe
- lQNxJQITSPCQvzmKjHceHmW56NApZbIRUYVntDwoUD25/AHg5QKpnXCG50i0Hi+a0eOjtyFYM
- OcCHPOEsPngcW9Bv7wx+YQHsvWScL3yI5R38zdv/K3C4MHdMIZsTlkcPgDM8pXey9U5t3uwTp
- oVj6MAgbcPfWeIsjdu7OzBkyp9tUizWMHLlXd+nXYoJwFTMzDIci1JaQNKaSK88oYgIJWkeSv
- EbAA0cbx8M/kPzNJ3UYuky3xlFFlIvAZXnJp+9UNSgwOOVfkeM/BbGZpGynyQLw1NEyh2eGmd
- 8nEI0uY9reHFaPsAOExbW0BDT2vcJceT+LtI3vg0HfkrWnsS9yPfgPS/vcO4EGA9QJaYO90Nr
- p/K8d0IxvIn7usOdGAHTyWNBZe+JEs2CcP1r2w9/k0JGbl+i1laOqIP2tk4D/f1sNYIlg13sA
- qg07Cu/4XVarbG/R0yYnfY+B9DKFsD0uWMIiD32IXBd/z9GONfacApCeHS5iFI2KF8g290h6B
- PTJNOae7LEOrdqdw9a0bMNPAIf8dHkc3vHqfL+IdC5P/Ei4GCmLMi9Ya+spZAnYoMyKwumg5v
- PU1rgnbk3RRt5c46ucQw2pSNKmWysO6PtN8nOYKN2CitslON/79aY3mxYKZVdFTwmODrmgFdF
- XO76BA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-> The check is right before that on line 11527.
->
-> https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L1=
-1527
+Check against ARRAY_SIZE() which is the number of elements instead of
+sizeof() which is the number of bytes.  Otherwise we potentially read
+beyond the end of the phy_to_log_coh_st_map_mi300[] array.
 
-Do you find a warning message like =E2=80=9CCan not register anonymous pmu=
-.=E2=80=9D acceptable
-in addition to eventual other indications for memory allocation failures s=
-o far?
+Fixes: 453f0ae79732 ("RAS/AMD/ATL: Add MI300 support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/ras/amd/atl/denormalize.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/ras/amd/atl/denormalize.c b/drivers/ras/amd/atl/denormalize.c
+index d5d0e1fda159..49a900e066f1 100644
+--- a/drivers/ras/amd/atl/denormalize.c
++++ b/drivers/ras/amd/atl/denormalize.c
+@@ -405,7 +405,7 @@ static const u16 phy_to_log_coh_st_map_mi300[] = {
+ 
+ static u16 get_logical_coh_st_fabric_id_mi300(struct addr_ctx *ctx)
+ {
+-	if (ctx->inst_id >= sizeof(phy_to_log_coh_st_map_mi300)) {
++	if (ctx->inst_id >= ARRAY_SIZE(phy_to_log_coh_st_map_mi300)) {
+ 		atl_debug(ctx, "Instance ID out of range");
+ 		return ~0;
+ 	}
+-- 
+2.43.0
+
