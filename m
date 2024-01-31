@@ -1,136 +1,96 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F2E54FB8
-	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 07:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75D45788C;
+	Wed, 31 Jan 2024 07:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706686711; cv=none; b=MwUFAxLWQFhytU3W1Ec8vpnfujOgW5wprY0FbgQN4hmY4OwSCPdVP4Tfv9VB2vVRQvZKijPP0F+oDeA7V3A25mJBNtuk1+hVr4H7wMH4GwxQeUgj3vaSFo+HGIDGD+1G9/cDXfnFvSWaW6ZKQHMpEdc/RLfS/p22UWMm+jiGAxY=
+	t=1706687027; cv=none; b=tev0TbaGdYh9zoNya802e+1XiN+nXwqwI49LhSiDApgRL+rYZ1b/XZHHSwwwpKl07RtVU/SrLC7qJYFwnDygsPtxSd494mMVHXWwtNu7W7kFHAEpK2jhBYmyWeDNXSyKAw8hjU4UDLDv4bGKUDHWQvKDueHwO39qhpSQD0WwdAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706686711; c=relaxed/simple;
-	bh=Oe/pC4I/GAA5FZkYwiTXdUmemMh2lYlbqeq33lyyZ0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MnySULQd397uE+f7hQKZbvGG4CgisdIlBLfo5nPwkm19qrm3YnLeguOQ++nMKVckWqcMRadSAL45jyZTAyMoRl+nxkUE3sQVCm+QZn0OHiqO79vW78OPiKSrbLne/qzEWED8/UGKsGUo1A/0NtxXhYuwYdlxszZ2VGFWd8BvV3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tNmQkhr8; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706687027; c=relaxed/simple;
+	bh=3UtEEurfF0DcUrGrZ1swp8W+Hl3SyFmpYaEjxHY/nFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6nkqe/VZBoRS65K4tHpkO6BMc1lxmxApdIOmLfGPdBCv8MA8OJuwpzo2o0xbvX6YKOmJwR9AShl62CS/Q9L0IzSHI8SP9dldFyw4QI6vk8brEKf/pPxg7WlDjhD++PgBeWfTcdSxXa0fsKEw16V+4J2kiwDHuoxcsmLB8o6na4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Hi2dSkbn; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tNmQkhr8"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33b01484cd7so384932f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 23:38:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706686707; x=1707291507; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0V7iosW1wVnxRFdauCwRgSPmfslIouLwnBCJOuKExVM=;
-        b=tNmQkhr8pDFG6l6Rv5vgs8vs1zPHmXnHLJX3LJF33XulvjOfqrho9sFCCNKxxrgfKD
-         +p5cgwfYJY60UvUNJ9QELaZ4OEC18PHRH48T+cXqzys2dCZpfkRhzJMeJQoZeyjo3gki
-         rVoEdcw5QGtIUUOHMPiwQjb9ZkzCbUOaaPdFCDZ+BajMZWTiWpG1nsZ4us7Uq8DWBqSC
-         a25F7dw1ljFa+U5qX4De0ZiPhcNtAIp7AGr8PCuqZDq4lkn6zQOexyYnsTV60pKOVENz
-         tZTAIJ35CdlGRsRIdP7w7gzntJa0zmlzbgGv1BxkJqrl5RxH90hKk8fnZWqO4OaHm+d1
-         +Pyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706686707; x=1707291507;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0V7iosW1wVnxRFdauCwRgSPmfslIouLwnBCJOuKExVM=;
-        b=KtEClEHfOjm4zhwcx9U7qM8dfS+dhK6tEEFMbVH3ylH4KHzZKq5wyk28mrLoDFLDi/
-         j3vLbtZSeyjLaicCbnwoWdcDCnyeoxUODJ7pVlOhLg+rWAYMW0FaYUK18WFuTQw96dq9
-         QRZ+ed/qYMTL0j8uh45iqTEylhDajXegOU4o5K20e7RLAJhfHdzRxwve/B620Ba3tDA/
-         Jh/xHbaFYwcieQWA79Env/b5o57uwEMP5LIzK4vJG68giZHQxQ3CR4naMnNylB8xV7iK
-         chujAUXXzvNaiyKj/Oq0PsrpQBEWEzXBzIOjY1VbGTzULF9YKcGO403LgjZvTsE0jB0I
-         YHVA==
-X-Gm-Message-State: AOJu0YwyIzriEBJf3ei6EUJR4belDiUmKOxfctghYfLyN++u45Oyvf3q
-	PqIw9NJQV05fWLFDC7HtsC5+0ADjWSombBsNJHgpoYOnHBl4X8UKHVcR8mNlNQCiDmObH64ua9X
-	h
-X-Google-Smtp-Source: AGHT+IHoBx1Gp1C86N2HCqjGu0UcwSELukvML4nZhRy8WL+/u4pzGk92zUH17ZwMTHneTE1mEbKpFw==
-X-Received: by 2002:a5d:47a2:0:b0:33a:f73b:a1b8 with SMTP id 2-20020a5d47a2000000b0033af73ba1b8mr707056wrb.48.1706686707005;
-        Tue, 30 Jan 2024 23:38:27 -0800 (PST)
-Received: from localhost ([102.140.226.10])
-        by smtp.gmail.com with ESMTPSA id n16-20020adfe790000000b0033afed6e9desm1892129wrm.98.2024.01.30.23.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 23:38:26 -0800 (PST)
-Date: Wed, 31 Jan 2024 10:38:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: min.li.xe@renesas.com
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] ptp: add FemtoClock3 Wireless as ptp hardware clock
-Message-ID: <a5bf71d8-5722-4830-8286-c36ce14c199f@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Hi2dSkbn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706686983; x=1707291783; i=markus.elfring@web.de;
+	bh=3UtEEurfF0DcUrGrZ1swp8W+Hl3SyFmpYaEjxHY/nFM=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=Hi2dSkbnv9yYiXpDMjayehX07BUp1NW/nccsYAxYCPV5mE6R4t6DmUT/6vxxz+5M
+	 pGnC1IpV0RwV4ZgkvrtWqWEMxi1Bhh643Ri3Lv+na+Xf8WyCn/bU0ccCHh8jmskR9
+	 WHfhT8QssDTM9Qg9MSn0v1eM4Oy/khfHyjJu1iTTDUe3h4qpKze9R9/337nSEU0UD
+	 V/v+lV287r7TThCeCwOzyuPiqOe94OGWfodjSEVA9SLfQL62d6i7m7QSvDemEGyAa
+	 IcXp8exYI8v48cyhbKk7zcH2s9dq+n7BhgPa2MghCNpGTg+FQ3XJuouP2PTD8vZcO
+	 PkLYx0yQnbbuy4Yw/Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6sG3-1qzCMy0ngF-01871C; Wed, 31
+ Jan 2024 08:43:03 +0100
+Message-ID: <4cabce20-b5ff-4586-8492-60d2d198a13b@web.de>
+Date: Wed, 31 Jan 2024 08:42:33 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
+ call in fme_perf_pmu_register()
+To: Xu Yilun <yilun.xu@linux.intel.com>, linux-fpga@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
+ linux-doc@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+ <ZbjJYMlDifIv0WId@yilunxu-OptiPlex-7050>
+ <ZbjPDX1y2I9Heanq@yilunxu-OptiPlex-7050>
+ <49183574-ea83-4517-8e34-5d6e87ede064@web.de>
+ <ZbkAziPCX+RDSgfP@yilunxu-OptiPlex-7050>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZbkAziPCX+RDSgfP@yilunxu-OptiPlex-7050>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:f1i1yJGnQvsaxMF3ysU2Q3MKc0v1ZqMlnGlCdOdQU92xqESrmLC
+ 32faYZJASuGhAlIO1E7rIPuiYDDHUMRwWK7t12GSAZGvlacqjnORhc7IGR3zf9OpnD8Cnok
+ owulZmVQZGYjwklX5tNvBFEOgQDgpjctV+Kc6aA8vUF8tDuv39SrlXnoyZ2DSDnBYurCaos
+ NBRHokiFOULLbfKjHuyug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ABEuiVqcTWA=;1S/Q+gJchbADRcMSwHok6Y9Hd08
+ uDJu05/UPgVsiwfgqqdlhtfugE1vcwAK550Z8CzzKwnSzVjL4wRZpj1FMnHT4nZh3NXviP2vj
+ oKTgjvTwi9f3E5qCXrz+FpXFjaDB0XkofknRjvMrAVQYZ8XdVTSsJqAhzjLpT3QsuWfyaJsQL
+ VXuH0H7SbzuW7FOHQA911Gq9nKGTuBp00AmdBe73DUi9LFOrlBc9MI0SdiKN1JZ5R2gKEW6eP
+ MuFfYx2ObubBlRc+1sDxFeKUOExjSwUqzLhrZSFFXJt+ENW/WSFqZlCQmo+b+pDy7TCNvYV6u
+ +8V6rIBPQypboe24aZOPbKpC/BGaUTZL/b8mc9GcMKv+OeEyWXUHGhbGGj08ajmUKn9mBQTgS
+ ogop3U8YgYpW0UXryh9ZyHRSJANbfEBRU5lnMrsS1HZtteXnywDNCWJBOjpICF2DNiR5rhHhi
+ z+VUu+asPEu+Kcq1M2jurGEwU+iPFu1XSuOK8w+sw+BosErPquRELXS/TSUWdSznXihZ0u32T
+ ajVFatxSX69Cn1brc6eT101YHVTBN5aILW1p4oQCadDj4JjEKgJGqbXga6DUuWA3vZ0ueOs9H
+ mFrdFa1pKZKl1K16g/0fnC2467i/LaF0X+R2arcUfruKKW2wQXHo+DQ8Fr87RRoKGThEMKbWy
+ wmbBaXh2W7t2LXW/yVOX7Hv6B0qqm5ibmayV3zaJLvFEs78XkSpy7d7r7/9+B/aRfBFzS0lpW
+ VIn2Noib8w3KRbVn0i7K4geUNIOBjdXNjlsX4GGbg2l3OhR5H1iMG7lyo/K8xP5HYZH8mbvaS
+ x9bhjxl7izXwZk69Ebu+ZtZoyiOm4oqSD3S5ACWtGGwCTE7sAlr3fco65F5aX/ZKdOPUFw+g1
+ qrdsPS5aTlU6K80eypoV152l6hqYFcq8ZJLAAqTshff366m3ahFee4RdQCot9+82q1Wp6WNVt
+ bO65kM6EyE/lb7/E/0awB/9IrZ4=
 
-Hello Min Li,
+>> There are different preferences involved.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.8-rc2#n109
+>
+> Ah, I mean you use 13 chars, but 12 chars is better. Also the doc
+> doens't seem to enforce 12 chars, but checkpatch warns on that.
 
-The patch 1ddfecafabf7: "ptp: add FemtoClock3 Wireless as ptp
-hardware clock" from Jan 24, 2024 (linux-next), leads to the
-following (unpublished) Smatch static checker warning:
+Would the specification =E2=80=9Cat least=E2=80=9D become supported at fur=
+ther places
+for such hash lengths?
 
-	drivers/ptp/ptp_fc3.c:989 idtfc3_probe()
-	warn: duplicate check 'err' (previous on line 981)
-
-drivers/ptp/ptp_fc3.c
-    947 static int idtfc3_probe(struct platform_device *pdev)
-    948 {
-    949         struct rsmu_ddata *ddata = dev_get_drvdata(pdev->dev.parent);
-    950         struct idtfc3 *idtfc3;
-    951         int err;
-    952 
-    953         idtfc3 = devm_kzalloc(&pdev->dev, sizeof(struct idtfc3), GFP_KERNEL);
-    954 
-    955         if (!idtfc3)
-    956                 return -ENOMEM;
-    957 
-    958         idtfc3->dev = &pdev->dev;
-    959         idtfc3->mfd = pdev->dev.parent;
-    960         idtfc3->lock = &ddata->lock;
-    961         idtfc3->regmap = ddata->regmap;
-    962 
-    963         mutex_lock(idtfc3->lock);
-    964 
-    965         err = idtfc3_check_device_compatibility(idtfc3);
-    966         if (err) {
-    967                 mutex_unlock(idtfc3->lock);
-    968                 return err;
-    969         }
-    970 
-    971         err = idtfc3_load_firmware(idtfc3);
-    972         if (err) {
-    973                 if (err == -ENOENT) {
-    974                         mutex_unlock(idtfc3->lock);
-    975                         return -EPROBE_DEFER;
-    976                 }
-    977                 dev_warn(idtfc3->dev, "loading firmware failed with %d", err);
-    978         }
-    979 
-    980         err = idtfc3_enable_ptp(idtfc3);
-    981         if (err) {
-    982                 dev_err(idtfc3->dev, "idtfc3_enable_ptp failed with %d", err);
-    983                 mutex_unlock(idtfc3->lock);
-    984                 return err;
-                        ^^^^^^^^^^^
-
-    985         }
-    986 
-    987         mutex_unlock(idtfc3->lock);
-    988 
---> 989         if (err) {
-
-"err" is zero at this point.
-
-    990                 ptp_clock_unregister(idtfc3->ptp_clock);
-    991                 return err;
-    992         }
-    993 
-    994         platform_set_drvdata(pdev, idtfc3);
-    995 
-    996         return 0;
-    997 }
-
-regards,
-dan carpenter
+Regards,
+Markus
