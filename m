@@ -1,103 +1,103 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EFA3D986
-	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 05:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA754F9C
+	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 07:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706679825; cv=none; b=agvYpQHjruZf4Tifm1fCWAcjnEI8xrI59uaSNlYkUfoLxPuJHYgz0P6Pl8OWjs57cXyfxKb5T24BdJZhcetcDSRP8Jd740hmpmKu4uKaE8bLuFfXusCr849q5KXrQW4nqPPvIThRQ+hhh2EUgL7UXYOOFL2uvT83X3JHOomyyrI=
+	t=1706685013; cv=none; b=bogpvyuQZlt4zId0hyMoH4ym3nOKVM8Z4RO1xyE7smjx56gzguTSRkanQ0dsfVZ1INh3+XkoWacbOa4GAzmSkCz4EdbNqiyIepXI5xsfsULgRgtULtRFWht4Sj0XEm6ZSYPMhnS78PVKTpjqKadgJmM+ipDvBH7Wgjj56kqkdUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706679825; c=relaxed/simple;
-	bh=Tcb7EvZ7CF8K0fkMJwChWAO7kgbOJfPWxzgUv0R1F0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KURNdzsjZr1CQdZI+oEsxxWyTtromiSCJ5XXmTcEIpLtnPWhIUM060q5xDJFLQt61u08LbKUCpyrs8Wlu08+BFjPtZAj6maGL6VZNKpzMLNgH2Ou5S4pLGsrnUQpytjrMqcy1EaohQV3gxAyvbbGpTQ+7Z17T34BASqevAROr8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYe3npgp; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1706685013; c=relaxed/simple;
+	bh=N7Rb76xtAihOSGgHLIxPhp8qnHuyGM9SCr1+zt+seug=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O/KeCiaC48V5/Nq0qnr8U5cecnq6qazRuufV7MQlPrWQqSikHQcgjS0J+n3s8M1X4SN0b31y7qFq8Knbz5vuMQJ4EUQrDpKtH7j8EWcCU0Sh93fwUOqapPsRAIRG0uV1liRF8PbH+l38vzgTWxsdxWXRe9HkxUORJFXzB2sHSY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4gH3AKn; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYe3npgp"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33ae3cc8a70so2721222f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 21:43:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4gH3AKn"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e72a567eeso64807795e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 23:10:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706679822; x=1707284622; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z6paO3eoxO/TfvLc58kRuFFfKLKXd3dLqXEc7Va4H4A=;
-        b=IYe3npgpVgXmB6ksEA+VPYQQ7l5eKvI18zL+FAC+c6CMpYpjF9VG42EB5k5g/E1TGI
-         fu/AfqNyCG8nmTRGyWlzqmWFPrfZOypZQMvQSRtv1+F0pBAqNUWee8ZdmasM93IG1q2o
-         Dx4/GzS74bdizvfyug/QWgwr2veSGekOo8PexFs45zBDA5wKW7as69e983JWsPu4Fd7+
-         C0jfHo95RNmye42w5nby8qsHKopYF8PJ+W0ciUlXiHR/H6PSTzTg/WEUREcvg4whsE6I
-         KPstOnY71Npe6ZtpAn1/QL2+nMj5aRcBrOpX40k5m0L2CbrXZy2nw/VgAB4xE5pVYMOO
-         D9lQ==
+        d=linaro.org; s=google; t=1706685010; x=1707289810; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KzUML6NehRjq09oGSxNuYEWmU/TVTg/6MOHGTd1ruRM=;
+        b=I4gH3AKnp82W+TeZRs7LUY7owupBFxsM5AZgX1eBBONeKyj0xCZ/B+jzIKEZvyMDbJ
+         P1h+7QvX6bQ2LJKpGJIltrdnvODq1Jq+ulP0lzfx6TIuPMbxzCMYtcg6hdYndwdYsmC2
+         o2BNeU2x55XI9Yhlmc2RHS/ZHIBAZMKhK+26esbTFA3y3qKnrOPRv8UYLUyhkySqW0oJ
+         /nrCeKbSEwlME6c5pQFnrHwAgW3Lj2fk/jvYM11YJZdOLHsjhp/1uDD/3k4DBBsspIYF
+         dC0IF2A24QNfGMs7FkXs4Ri+cGDWD0qC1ZRxWaak1X/3EEG53BKF2OOMNuMVH9VbElLy
+         AswQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706679822; x=1707284622;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1706685010; x=1707289810;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6paO3eoxO/TfvLc58kRuFFfKLKXd3dLqXEc7Va4H4A=;
-        b=WAuvKCwmW4aaQfgAnLUU0pRfVDz4D4XENGwSfT5WVpWFrghMQMNcKgcx13cghSo8hQ
-         qFBlMK29rzuzZRMnmn3rwHrUuzp0+e1909QexeuW+XExvvN7QV+d4GCKXP0mxLAfvHHt
-         0fjZD8zTClWSuFoTDHwQcDiYYAA2eh+pp3S4QVNmwsBSTaxvkDv3kp08rJ5mHSfnsqC9
-         +F51q4N99KrccHgT7oiH9T8JLCWvFfQmTt1Q6fEpflFiMyiwikhk1wuTEcPSl1eBlx2J
-         E63gaQqd1Odhv4Izv6qV0ufUyZHdQSr3ShRi1wUyA5+s7mF0v+3YXKNEPutwfZDRqe55
-         M93A==
-X-Gm-Message-State: AOJu0YxOwrhoyz49+8HTPbFib5TvQUTVTXD5+kVUKj9Dss4vPwLFXE24
-	q4TZeb0LycEwTTusPG2g8ffAim06vSfKyQokKgaF8AHinAhTG+ZAdrjAX0S9IKE=
-X-Google-Smtp-Source: AGHT+IE3FuFxpDZMN/qaH8Qvlb1Bni7EQMvftW5X6bNwAjF2dsc8Ac7zFpnPHnALypt/FgdcBNQOsA==
-X-Received: by 2002:a5d:5348:0:b0:33a:ea38:6453 with SMTP id t8-20020a5d5348000000b0033aea386453mr410173wrv.45.1706679822271;
-        Tue, 30 Jan 2024 21:43:42 -0800 (PST)
+        bh=KzUML6NehRjq09oGSxNuYEWmU/TVTg/6MOHGTd1ruRM=;
+        b=EXR7cQsuhmrcXaXj5n6rSFm6E7fXNxTzf2bJ1zN4DcYQoVoam3w38t27W1JiJ+07Ee
+         4cvwuD1HjAaBaoloTK8SFutAQ0lbQAlGO/5s+WoYJpB7DaplyxlSgM/DyrGIoCBYpc7O
+         GoxDocXjhmoJKZ0N3/4hongPf0adqQvK4f39fUzCOyMVU3Yq+3oGiwYiixZlgXbEMoeY
+         Nj/iAGbwwNZsVwSY/ErZtlT1aaw6zJ0hEJ4nF56lRPKwPUF/6FssvekO/aEmU5cvcGAQ
+         ZDRqGUxtvS0ogumeApu3UMyjp66Lz5sMTQaTsqZ8LBDk/XXkjuzhwyM0JwmrXd0kHTCZ
+         fqew==
+X-Gm-Message-State: AOJu0YxBuKrdJdEC/iWHu9ZQ73Mw4l1KsAya/hIXRbS2FqJJCs9UMllA
+	+rJPHiQhbkg375J9tbqy9Fjii6oz4YeZxVi71+KrapudiuIwn/CWm3B/zy1bCxg=
+X-Google-Smtp-Source: AGHT+IGOAuMjabgFSTRl/iF1SMdls3jHR5/paMKe+B+jUUAkMSCYfYfWIthewE8vE+w6Sj6vwl1wcg==
+X-Received: by 2002:a05:600c:45c6:b0:40e:d332:bb8f with SMTP id s6-20020a05600c45c600b0040ed332bb8fmr668333wmo.5.1706685010527;
+        Tue, 30 Jan 2024 23:10:10 -0800 (PST)
 Received: from localhost ([102.140.226.10])
-        by smtp.gmail.com with ESMTPSA id eo9-20020a056000428900b0033ae9e7f6b6sm8191928wrb.111.2024.01.30.21.43.41
+        by smtp.gmail.com with ESMTPSA id u13-20020a05600c00cd00b0040f02114906sm650532wmm.16.2024.01.30.23.10.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 21:43:41 -0800 (PST)
-Date: Wed, 31 Jan 2024 08:43:37 +0300
+        Tue, 30 Jan 2024 23:10:10 -0800 (PST)
+Date: Wed, 31 Jan 2024 10:10:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
- call in fme_perf_pmu_register()
-Message-ID: <5a3a1c80-47ae-45c7-86ca-8aa40566551b@moroto.mountain>
-References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
- <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
- <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
+To: Martin Kaistra <martin.kaistra@linutronix.de>
+Cc: Jes Sorensen <Jes.Sorensen@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+	Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: rtl8xxxu: fix error messages
+Message-ID: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Jan 30, 2024 at 06:09:14PM +0100, Markus Elfring wrote:
-> >> Thus return directly after a failed devm_kasprintf() call.
-> >>
-> >> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
-> >
-> > This basically doesn't affect runtime because perf_pmu_register() checks
-> > for NULL so no need for a Fixes tag.
-> 
-> I suggest to clarify this view a bit more also according to statements
-> like the following.
-> 
-> 1. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11532
->    perf_pmu_register:
->    …
-> 	pmu->name = name;
->    …
+The first parameter of WARN_ONCE() is a condition so this code will end
+up printing the function name instead of the proper message.
 
-The check is right before that on line 11527.
+Fixes: 3ff7a05996f9 ("wifi: rtl8xxxu: support setting bssid register for multiple interfaces")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11527
-
-regards,
-dan carpenter
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index 3b954c2fe448..bd6fd3120562 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -3593,7 +3593,7 @@ static int rtl8xxxu_set_mac(struct rtl8xxxu_priv *priv, int port_num)
+ 		reg = REG_MACID1;
+ 		break;
+ 	default:
+-		WARN_ONCE("%s: invalid port_num\n", __func__);
++		WARN_ONCE(1, "%s: invalid port_num\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -3618,7 +3618,7 @@ static int rtl8xxxu_set_bssid(struct rtl8xxxu_priv *priv, const u8 *bssid, int p
+ 		reg = REG_BSSID1;
+ 		break;
+ 	default:
+-		WARN_ONCE("%s: invalid port_num\n", __func__);
++		WARN_ONCE(1, "%s: invalid port_num\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.43.0
 
