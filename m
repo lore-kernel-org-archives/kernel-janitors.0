@@ -1,65 +1,61 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA9276C97
-	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 07:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F2E54FB8
+	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 07:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706685034; cv=none; b=U8GZaChQrUnIABULE1S9G7E5Qb91RaPAgaxZdsC5igLO4iHHEPAp0tnXFAwbh+xui+Q5ovgFETclIC7WiKPLwL+BCj/39D4tl/atime9DAdulWT2HEXMS3J7YKz24h9rkq4vUd2tWu2bF8KsGEO/G6rW9BGDmz6gKOUNf/NbCaQ=
+	t=1706686711; cv=none; b=MwUFAxLWQFhytU3W1Ec8vpnfujOgW5wprY0FbgQN4hmY4OwSCPdVP4Tfv9VB2vVRQvZKijPP0F+oDeA7V3A25mJBNtuk1+hVr4H7wMH4GwxQeUgj3vaSFo+HGIDGD+1G9/cDXfnFvSWaW6ZKQHMpEdc/RLfS/p22UWMm+jiGAxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706685034; c=relaxed/simple;
-	bh=9s6fOH0qLp1ufgO9rf8HAxDGnWALf+j204n54W87KLk=;
+	s=arc-20240116; t=1706686711; c=relaxed/simple;
+	bh=Oe/pC4I/GAA5FZkYwiTXdUmemMh2lYlbqeq33lyyZ0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kqIgWsCgqRxDLOrdZHB8y63oCpGGULRc4Cuh9Mv48po41nf1nF36rK3BJHhrdV24DaNLx7ZfK40fbHcPrTo0zxzYNbUfaerx8XMpYu2PvxfdQQBthNSYDvgn5GNFv443A3Ta746xm5wul/2jSF3ZWwjkUexRkdnT0+JoClEIDmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O6IBb2YB; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=MnySULQd397uE+f7hQKZbvGG4CgisdIlBLfo5nPwkm19qrm3YnLeguOQ++nMKVckWqcMRadSAL45jyZTAyMoRl+nxkUE3sQVCm+QZn0OHiqO79vW78OPiKSrbLne/qzEWED8/UGKsGUo1A/0NtxXhYuwYdlxszZ2VGFWd8BvV3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tNmQkhr8; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6IBb2YB"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40e913e3f03so51399765e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 23:10:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tNmQkhr8"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33b01484cd7so384932f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 23:38:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706685031; x=1707289831; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706686707; x=1707291507; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=w6SrONxAcUL+4nL4MAcXtd1azhlAyrb6XByXAS01m78=;
-        b=O6IBb2YB/PMEmbZy4aNTyIcgIvxY81GNbSWuTY/KCqu429NrsAe9Fd0scpAYXK/gBf
-         sLmR02ZcxyQERtCzVZyBn7YjqoTHKGPA/TDR0Hi7uFSmxMinrusGbXnjX4rYbBa4/qqP
-         +D3BHk66gr27a8NNkBmphT0hQ9pAB4FsMfmwbfw/jj2qSBbEjBfUAJTVGIUiA0crkoa0
-         7PcOtY2fZ+1KwXBoO6YLqYzOSq6ArDxrDfUyMFyyw9STI5UqTH7h28pr5pDKtPCFfAAB
-         +SQkmHfk5cuIP0eXyIvVAOnt2nijFX253nytdK9076qAtz1JDgHH4OP3aeqCGejIsTCw
-         zK2Q==
+        bh=0V7iosW1wVnxRFdauCwRgSPmfslIouLwnBCJOuKExVM=;
+        b=tNmQkhr8pDFG6l6Rv5vgs8vs1zPHmXnHLJX3LJF33XulvjOfqrho9sFCCNKxxrgfKD
+         +p5cgwfYJY60UvUNJ9QELaZ4OEC18PHRH48T+cXqzys2dCZpfkRhzJMeJQoZeyjo3gki
+         rVoEdcw5QGtIUUOHMPiwQjb9ZkzCbUOaaPdFCDZ+BajMZWTiWpG1nsZ4us7Uq8DWBqSC
+         a25F7dw1ljFa+U5qX4De0ZiPhcNtAIp7AGr8PCuqZDq4lkn6zQOexyYnsTV60pKOVENz
+         tZTAIJ35CdlGRsRIdP7w7gzntJa0zmlzbgGv1BxkJqrl5RxH90hKk8fnZWqO4OaHm+d1
+         +Pyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706685031; x=1707289831;
+        d=1e100.net; s=20230601; t=1706686707; x=1707291507;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w6SrONxAcUL+4nL4MAcXtd1azhlAyrb6XByXAS01m78=;
-        b=tX14V30z7eaQdB2UIo7B8AXFyEc7LT+A5Va7YDlvmaT1fji29CkPB1ldFUo26qhwFq
-         H4Kz9z1CYNLwSDUJbEc4n6rCBacd24p4aaT2mYNX7kvNTD7GCXPbRh8EeQgDwZxF7AQy
-         CLzvpLO4wSwyx5Lukma0Wzk1NSvNVltS2unek19mPeoNzHX/c4Q2VgrFQftYax7th53J
-         tV2A/BV9GPovPVSkY88EVv305/wNOuXxAZ7fYcleBxMiryjEuLmz92GxpEdNfl/K6yow
-         AyYAXwWlddOCbfnRP7Ug021/noHs1zGh3ecn5DfiX38fPUnPrWMCTmKej+lziNDeFGha
-         Mchg==
-X-Gm-Message-State: AOJu0Yy6lLZx6bCQKkoq3bOwzpYAJgQUjTxBn2G7lxghHbfjzxoDSUlE
-	QyNADcdRAHO/5oeX2ivKfkc09bej9D3AqrcTOuodPbcH5GU2x8hM0ApUX/ZOh8k=
-X-Google-Smtp-Source: AGHT+IH9mwzyOcMsdd8Foiqiw+UF7q7BTI9KXpC1XkV4ZEqBl9AZBF5r7k3NzehIqAV1c1eaRQUplw==
-X-Received: by 2002:a05:600c:4451:b0:40f:225:c607 with SMTP id v17-20020a05600c445100b0040f0225c607mr585093wmn.14.1706685030837;
-        Tue, 30 Jan 2024 23:10:30 -0800 (PST)
+        bh=0V7iosW1wVnxRFdauCwRgSPmfslIouLwnBCJOuKExVM=;
+        b=KtEClEHfOjm4zhwcx9U7qM8dfS+dhK6tEEFMbVH3ylH4KHzZKq5wyk28mrLoDFLDi/
+         j3vLbtZSeyjLaicCbnwoWdcDCnyeoxUODJ7pVlOhLg+rWAYMW0FaYUK18WFuTQw96dq9
+         QRZ+ed/qYMTL0j8uh45iqTEylhDajXegOU4o5K20e7RLAJhfHdzRxwve/B620Ba3tDA/
+         Jh/xHbaFYwcieQWA79Env/b5o57uwEMP5LIzK4vJG68giZHQxQ3CR4naMnNylB8xV7iK
+         chujAUXXzvNaiyKj/Oq0PsrpQBEWEzXBzIOjY1VbGTzULF9YKcGO403LgjZvTsE0jB0I
+         YHVA==
+X-Gm-Message-State: AOJu0YwyIzriEBJf3ei6EUJR4belDiUmKOxfctghYfLyN++u45Oyvf3q
+	PqIw9NJQV05fWLFDC7HtsC5+0ADjWSombBsNJHgpoYOnHBl4X8UKHVcR8mNlNQCiDmObH64ua9X
+	h
+X-Google-Smtp-Source: AGHT+IHoBx1Gp1C86N2HCqjGu0UcwSELukvML4nZhRy8WL+/u4pzGk92zUH17ZwMTHneTE1mEbKpFw==
+X-Received: by 2002:a5d:47a2:0:b0:33a:f73b:a1b8 with SMTP id 2-20020a5d47a2000000b0033af73ba1b8mr707056wrb.48.1706686707005;
+        Tue, 30 Jan 2024 23:38:27 -0800 (PST)
 Received: from localhost ([102.140.226.10])
-        by smtp.gmail.com with ESMTPSA id j27-20020a05600c1c1b00b0040ef622799fsm657432wms.37.2024.01.30.23.10.30
+        by smtp.gmail.com with ESMTPSA id n16-20020adfe790000000b0033afed6e9desm1892129wrm.98.2024.01.30.23.38.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 23:10:30 -0800 (PST)
-Date: Wed, 31 Jan 2024 10:10:27 +0300
+        Tue, 30 Jan 2024 23:38:26 -0800 (PST)
+Date: Wed, 31 Jan 2024 10:38:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ran Wang <ran.wang_1@nxp.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Chen <peter.chen@nxp.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: dwc3: Fix an IS_ERR() vs NULL check in
- dwc3_power_off_all_roothub_ports()
-Message-ID: <71499112-4ed3-489a-9a56-b4a8ab89cd05@moroto.mountain>
+To: min.li.xe@renesas.com
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] ptp: add FemtoClock3 Wireless as ptp hardware clock
+Message-ID: <a5bf71d8-5722-4830-8286-c36ce14c199f@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,30 +64,73 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The ioremap() function doesn't return error pointers, it returns NULL on
-error.  Update the check.
+Hello Min Li,
 
-Fixes: 2d2a3349521d ("usb: dwc3: Add workaround for host mode VBUS glitch when boot")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/usb/dwc3/host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 1ddfecafabf7: "ptp: add FemtoClock3 Wireless as ptp
+hardware clock" from Jan 24, 2024 (linux-next), leads to the
+following (unpublished) Smatch static checker warning:
 
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index ae189b7a4f8b..4e6239d3a0ac 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -35,7 +35,7 @@ static void dwc3_power_off_all_roothub_ports(struct dwc3 *dwc)
- 	/* xhci regs is not mapped yet, do it temperary here */
- 	if (dwc->xhci_resources[0].start) {
- 		xhci_regs = ioremap(dwc->xhci_resources[0].start, DWC3_XHCI_REGS_END);
--		if (IS_ERR(xhci_regs)) {
-+		if (!xhci_regs) {
- 			dev_err(dwc->dev, "Failed to ioremap xhci_regs\n");
- 			return;
- 		}
--- 
-2.43.0
+	drivers/ptp/ptp_fc3.c:989 idtfc3_probe()
+	warn: duplicate check 'err' (previous on line 981)
 
+drivers/ptp/ptp_fc3.c
+    947 static int idtfc3_probe(struct platform_device *pdev)
+    948 {
+    949         struct rsmu_ddata *ddata = dev_get_drvdata(pdev->dev.parent);
+    950         struct idtfc3 *idtfc3;
+    951         int err;
+    952 
+    953         idtfc3 = devm_kzalloc(&pdev->dev, sizeof(struct idtfc3), GFP_KERNEL);
+    954 
+    955         if (!idtfc3)
+    956                 return -ENOMEM;
+    957 
+    958         idtfc3->dev = &pdev->dev;
+    959         idtfc3->mfd = pdev->dev.parent;
+    960         idtfc3->lock = &ddata->lock;
+    961         idtfc3->regmap = ddata->regmap;
+    962 
+    963         mutex_lock(idtfc3->lock);
+    964 
+    965         err = idtfc3_check_device_compatibility(idtfc3);
+    966         if (err) {
+    967                 mutex_unlock(idtfc3->lock);
+    968                 return err;
+    969         }
+    970 
+    971         err = idtfc3_load_firmware(idtfc3);
+    972         if (err) {
+    973                 if (err == -ENOENT) {
+    974                         mutex_unlock(idtfc3->lock);
+    975                         return -EPROBE_DEFER;
+    976                 }
+    977                 dev_warn(idtfc3->dev, "loading firmware failed with %d", err);
+    978         }
+    979 
+    980         err = idtfc3_enable_ptp(idtfc3);
+    981         if (err) {
+    982                 dev_err(idtfc3->dev, "idtfc3_enable_ptp failed with %d", err);
+    983                 mutex_unlock(idtfc3->lock);
+    984                 return err;
+                        ^^^^^^^^^^^
+
+    985         }
+    986 
+    987         mutex_unlock(idtfc3->lock);
+    988 
+--> 989         if (err) {
+
+"err" is zero at this point.
+
+    990                 ptp_clock_unregister(idtfc3->ptp_clock);
+    991                 return err;
+    992         }
+    993 
+    994         platform_set_drvdata(pdev, idtfc3);
+    995 
+    996         return 0;
+    997 }
+
+regards,
+dan carpenter
