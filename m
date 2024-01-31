@@ -1,76 +1,83 @@
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC80912DD84;
-	Wed, 31 Jan 2024 17:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706721802; cv=pass; b=r2ttYtRCJoMky9DAIlAoXaF0A2ZMUgthSYJ2J/WpyIP4V8uDfvLfEwcayHLFfm5aVA+I5JuYogSJSBk+KID/iI7fBZENnSWMsou7Lc3IDlQ+gtjs/J1mhUyUpZmXyHHnjV1WffIYZOgkwL+d4k7sYKWphy+Pu8Qz5X0bisoO3ok=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706721802; c=relaxed/simple;
-	bh=OkbyR1eOud37M5OLwfX1vWYkrALqqo3FGkCmHla/MMA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=pB4xvcP5dTCnXtZRWcPk+IEU2twgSD3YLBVV3g7sJTdic7D7nr41jQOkt6bHmmDVuDvCCNwh2vcivR7BcrSstlCQfWsgkxrKt4kMQf9Yh4mUQJkMVhdZoXbzcY8Zf/S5vPeWF9DtQJCq8blyI8ui2EzoYwLXkhv0bM9DsWi+aWY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=T5SxKhAA; arc=pass smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD3F3FB39;
+	Wed, 31 Jan 2024 20:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706732452; cv=none; b=Vt6B3ueld0QRLyn8pYYehEntTb0bI5MoIxSv7WVrVfcCMeut7NaQls0Fpw5cppr+5EC3O6ZMeNVyz+3z+6A2tzZkYsnUgISGJ8HTyqBmJKATRz6NEFX21hfzqXwAc+lQRyuUCl5Lw+uVujHSGablcsMLgNGmlBUPJJosYzNdYQM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706732452; c=relaxed/simple;
+	bh=jZewVfEeg5K9SkK5UySM3h5rrkjoCak4+ZjrIOKh0cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KN7VmHDqS7RRXXP06hpsEcJRuqz3ffnxt3Z0Xh/LhIwai37jJkB2GQ4qg9xzx/jpgr1OwilpDu7/7PSH/4Sh8BiZpxv88UA/JI7OOpGjTTzuThN+QK/Blev9ZlZoPxMiX5paLN0v2JVCZ+PeAx1LfGSRDSJIBpSG7FEnKrvnKUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4hzoWcK; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="T5SxKhAA"
-Message-ID: <e0861faa7b564362e384783d4e52e38c@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1706721797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T7jJIaYqMSfxPjtLTr60DeUKvzsmBPgfKadAEZC9wwo=;
-	b=T5SxKhAAJiH0NWcSdazzl+wRI6/ATIDRkkLlsiQNj6P+XSRcZbj16uQSZC0qMDWHAm/t32
-	y3POA/YOv31Sz7HR3CLt+qJJexg5TUwkuKcp5NJTBbFLZzZnu9zaEDytRQivcziCm+AZWH
-	LMgHe6mCtAMfq17ajMJCzLrvpP5ktkIwK78qGV82ODHXyN8rT0x2zsb3tG5RiAFgCsrTzy
-	NH74VvHMxbJKrFOC0ImAbgSq1Zfq9XhmDUE/MQUqsX4418pw5a2QvC9/S7qhsFiMZ1WXUL
-	mhzMCgYV1wv98suc2P4xMB91L0BXTjcy8EBwMzcdjcoQOHF8uG6EldVD2ldU7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1706721797; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T7jJIaYqMSfxPjtLTr60DeUKvzsmBPgfKadAEZC9wwo=;
-	b=C7S5PNyeFynbMjNaJdSIVnEfbdRFQhB66SkNb1tyfxDZGujMTB0pCmkhAgVK0B/IzSCNn1
-	DAFhaayE8FIoBcoPKWW/aZ+0d9i7F7bfeTiHJ5DggJGzVECZnNjp757YOVxmGKTbFj1oc9
-	7EUdrv8LuXa8AwB/9Sak9f74/9s76JnCe15r3D0Trtna3aMjyINxdnnEbQu95upfGYiDWH
-	MiDCKRwrq3JZfXl2IuDN2jJ53NpTh6XV15v+VU1vfKKZMBuzf9p1Es70dUre7kXa3rO1Ji
-	vVf1fYcK5zOWB4CBmewCsiBV4Hg/MYs4GAkvoyAtLLbwpAZviVA4gi8fLQQGLA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1706721797; a=rsa-sha256;
-	cv=none;
-	b=o37iH5DlZhudX0g7wrQFXivWYBlZfw6KV7qoPJAOAGnneqnGleIIuyAbIJCgSkfaJercFA
-	C3wJSco9alFsazIkS88c9WTPVBCfqUiTAlYmkz2x/KW8rBkWJ9+ODTPvF3Zr4QMbyrGaAI
-	tQ1FMh0x1QNMcTKe7c9+xnOZnGfrxfdmGBxAngqv5a3U7ww6sF3xf0MW2VYeXOHpeOGHc5
-	tGudQ+zfB1Jrnx5O6JrqvOJDG9iCcS0yk0Oah8eGvnuN7xNPAUiTVqtezehrQKk6AnpWOX
-	BKHyojikbjpT6meialC9E4L4rrFOFFHt60tZVArrThILfV7IQDYxKBswH/fnwA==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Steve French <sfrench@samba.org>, Ronnie Sahlberg
- <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom
- Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] smb: client: Fix a NULL vs IS_ERR() check in
- wsl_set_xattrs()
-In-Reply-To: <571c33b3-8378-49fd-84e1-57f622ef6db5@moroto.mountain>
-References: <571c33b3-8378-49fd-84e1-57f622ef6db5@moroto.mountain>
-Date: Wed, 31 Jan 2024 14:23:13 -0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4hzoWcK"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5111e5e4e2bso183676e87.3;
+        Wed, 31 Jan 2024 12:20:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706732448; x=1707337248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeIsgl8+EFYn5S6ni1qvspvfCQnicxx3gHZ+U13Srac=;
+        b=R4hzoWcKKoyTVosqeyrKm3ShYUvpt+koT41ICXht4vNEVDg46l3YUjETZsZpOR+BIM
+         fjF3ZC/ceyDAucyBmqRYchkVLN/mgp7EaAEL/dz4S7qI4kAMbcd9VydRid9SGx7/5nis
+         A4AoIUqraeJ4X6AJFOAU0rFnc2Y/Hf/0FY+FTQKmjn0R082NY1M0H+RW3OCldbbWWyjl
+         /ly8DfLUsFrw81nkN3QrV8klBn4VdP//YVp3vA9Proy05Y+OBADBlbka9N8i9qTZ22Jp
+         hGk2iItKNfmZ86z3Zlf+qRHAaznfhz7RkiyI5uwR+87o1vyMbiF6QhHo+cskodpSXoA3
+         Xz7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706732448; x=1707337248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YeIsgl8+EFYn5S6ni1qvspvfCQnicxx3gHZ+U13Srac=;
+        b=sCuhjgzO8h/Lx2xvdOYqWDk/WlWQB1sGRBiH3om4B3gxVNEo92ZXkJ1Rz96W5fAdTe
+         XvWEH6+CUMtn9WUMC2JD5hGihTt7xLENYZTvgi68IGZcPoM1WkJn2G3EY2t5KZvsUPFT
+         J2KdDzTXRq4MIl3Tm/Kpc/ESBPsNhH+JkSvMiAJ1gm0cH5Vw9j0vmOKZxdv++gSc7Q1E
+         waFfJqpAtTG9YNMKfBEZ2bHyZO/9vcjZHsai7e8/9N5Hgd1A9lMkux7AVNkoDzsQkQJF
+         vgd98ZNmk79AxlLG6zEw5E2/NrQHRPEz0LwM6iqPINsE/zhJA+yVMdsiDlvpqvXaAdyZ
+         Oquw==
+X-Gm-Message-State: AOJu0YyoxhL0dlJRNQPof6BbT0WC9BstUpKYTPENVxvKoKZelAQ6116p
+	fSzron8OTbdhC/txuDN0O+zFUPlcDs31rME0X7iR1bS5jYONSmpmwo7pVMY8BS4Lu3t/YlG+fUo
+	62Ds61MtAbvLllHkimZ8TZ8Gqhyg=
+X-Google-Smtp-Source: AGHT+IFctTMEsBEALITPd9P9JYlZ+E6XiMU7oZunjT4jHOqSTOqn77q3mWKKZy/qhtYsP7ZUL8dO7lVf8n5NdeS5c6w=
+X-Received: by 2002:a05:6512:1394:b0:511:fb6:b1a0 with SMTP id
+ fc20-20020a056512139400b005110fb6b1a0mr207585lfb.52.1706732448077; Wed, 31
+ Jan 2024 12:20:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <571c33b3-8378-49fd-84e1-57f622ef6db5@moroto.mountain>
+In-Reply-To: <571c33b3-8378-49fd-84e1-57f622ef6db5@moroto.mountain>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 31 Jan 2024 14:20:36 -0600
+Message-ID: <CAH2r5mvFYd0bjajnNVwMzdmKwbMGwgrbxUV9+4-FOBxe5Ejx+A@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: Fix a NULL vs IS_ERR() check in wsl_set_xattrs()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paulo Alcantara <pc@manguebit.com>, Steve French <sfrench@samba.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
+Good catch.  Thx.
 
+Added Paulo's RB and added to cifs-2.6.git for-next
+
+
+On Wed, Jan 31, 2024 at 1:17=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
 > This was intended to be an IS_ERR() check.  The ea_create_context()
 > function doesn't return NULL.
 >
@@ -79,5 +86,28 @@ Dan Carpenter <dan.carpenter@linaro.org> writes:
 > ---
 >  fs/smb/client/reparse.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> index ce69d67feefa..d4d2555ebd38 100644
+> --- a/fs/smb/client/reparse.c
+> +++ b/fs/smb/client/reparse.c
+> @@ -225,7 +225,7 @@ static int wsl_set_xattrs(struct inode *inode, umode_=
+t mode,
+>         }
+>
+>         cc =3D ea_create_context(dlen, &cc_len);
+> -       if (!cc)
+> +       if (IS_ERR(cc))
+>                 return PTR_ERR(cc);
+>
+>         ea =3D &cc->ea;
+> --
+> 2.43.0
+>
+>
 
-Reviewed-by: Paulo Alcantara <pc@manguebit.com>
+
+--=20
+Thanks,
+
+Steve
