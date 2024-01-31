@@ -1,79 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3E55224;
-	Wed, 31 Jan 2024 02:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EFA3D986
+	for <kernel-janitors@vger.kernel.org>; Wed, 31 Jan 2024 05:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706666426; cv=none; b=XDLdgv53hiuxhVlZYV1r/tqXypFkW/SLSmZa2LJJ3DmT6+IlzWUYhGlVNZqlXHSE45rTfqiorlNiOYN8HBOHR/NhNx1xdcGWoRvcEukSCSlQf9xi5pv3VdDWp2AgUi+p0wtxpUZ+kV7dw40NXNWVaR16S+MSNA2O50xoOCmZfvE=
+	t=1706679825; cv=none; b=agvYpQHjruZf4Tifm1fCWAcjnEI8xrI59uaSNlYkUfoLxPuJHYgz0P6Pl8OWjs57cXyfxKb5T24BdJZhcetcDSRP8Jd740hmpmKu4uKaE8bLuFfXusCr849q5KXrQW4nqPPvIThRQ+hhh2EUgL7UXYOOFL2uvT83X3JHOomyyrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706666426; c=relaxed/simple;
-	bh=6rTbYy6Vuzy/IF/kaJV31Z4upqRE4wLblupoPCdP6j4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rx2xUkzs8ZfK+orHQ4B18RMdJ4G/62LOF7DZU3R2dtgjgL57P5RO/9xSIYpphmQ4spTGK5Czk5eyY6OfZf/YMXJul4r3U8LEGXQeiMHsJqKE0kJuRiYO9ld2EGLZpnfc2iCvkBVlDXZQa8pxiNfjYXZoyv7uQhxhUnFs6czQ6OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p355Xkdy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706679825; c=relaxed/simple;
+	bh=Tcb7EvZ7CF8K0fkMJwChWAO7kgbOJfPWxzgUv0R1F0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KURNdzsjZr1CQdZI+oEsxxWyTtromiSCJ5XXmTcEIpLtnPWhIUM060q5xDJFLQt61u08LbKUCpyrs8Wlu08+BFjPtZAj6maGL6VZNKpzMLNgH2Ou5S4pLGsrnUQpytjrMqcy1EaohQV3gxAyvbbGpTQ+7Z17T34BASqevAROr8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYe3npgp; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p355Xkdy"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3643BC43390;
-	Wed, 31 Jan 2024 02:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706666426;
-	bh=6rTbYy6Vuzy/IF/kaJV31Z4upqRE4wLblupoPCdP6j4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=p355XkdyMJfPBBBVayinoMlZayPV+Y/dSx1f+9exbH2S47S/65N2Y2novMyPmtSSa
-	 cjOKjPYlDZvR2C+EYbRO47nQipDHs83PCvkW34s1ZUyU5yvA+dJgo58AOqRLfspv9m
-	 0fs4X8+4FndustpQp8LlPGnwnix02ltpuembZjbfnHjMnWXz5klqmOoZo5Vg9cmxwj
-	 3xGGp9NIEyPxHfq3izY0bFU0s8bakdc6mrR7knAVSx6rkCJKwAFDaaPJFdXKsw5H3X
-	 Q/wA48eGaVU43hba6VvhL+LNZLfZf29FWKyqJ60cJRfuO+jG/W2BwDUjZ/1vVw9RPN
-	 spLdzaZ5exJ/A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1AB98E3237E;
-	Wed, 31 Jan 2024 02:00:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYe3npgp"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33ae3cc8a70so2721222f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Jan 2024 21:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706679822; x=1707284622; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z6paO3eoxO/TfvLc58kRuFFfKLKXd3dLqXEc7Va4H4A=;
+        b=IYe3npgpVgXmB6ksEA+VPYQQ7l5eKvI18zL+FAC+c6CMpYpjF9VG42EB5k5g/E1TGI
+         fu/AfqNyCG8nmTRGyWlzqmWFPrfZOypZQMvQSRtv1+F0pBAqNUWee8ZdmasM93IG1q2o
+         Dx4/GzS74bdizvfyug/QWgwr2veSGekOo8PexFs45zBDA5wKW7as69e983JWsPu4Fd7+
+         C0jfHo95RNmye42w5nby8qsHKopYF8PJ+W0ciUlXiHR/H6PSTzTg/WEUREcvg4whsE6I
+         KPstOnY71Npe6ZtpAn1/QL2+nMj5aRcBrOpX40k5m0L2CbrXZy2nw/VgAB4xE5pVYMOO
+         D9lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706679822; x=1707284622;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6paO3eoxO/TfvLc58kRuFFfKLKXd3dLqXEc7Va4H4A=;
+        b=WAuvKCwmW4aaQfgAnLUU0pRfVDz4D4XENGwSfT5WVpWFrghMQMNcKgcx13cghSo8hQ
+         qFBlMK29rzuzZRMnmn3rwHrUuzp0+e1909QexeuW+XExvvN7QV+d4GCKXP0mxLAfvHHt
+         0fjZD8zTClWSuFoTDHwQcDiYYAA2eh+pp3S4QVNmwsBSTaxvkDv3kp08rJ5mHSfnsqC9
+         +F51q4N99KrccHgT7oiH9T8JLCWvFfQmTt1Q6fEpflFiMyiwikhk1wuTEcPSl1eBlx2J
+         E63gaQqd1Odhv4Izv6qV0ufUyZHdQSr3ShRi1wUyA5+s7mF0v+3YXKNEPutwfZDRqe55
+         M93A==
+X-Gm-Message-State: AOJu0YxOwrhoyz49+8HTPbFib5TvQUTVTXD5+kVUKj9Dss4vPwLFXE24
+	q4TZeb0LycEwTTusPG2g8ffAim06vSfKyQokKgaF8AHinAhTG+ZAdrjAX0S9IKE=
+X-Google-Smtp-Source: AGHT+IE3FuFxpDZMN/qaH8Qvlb1Bni7EQMvftW5X6bNwAjF2dsc8Ac7zFpnPHnALypt/FgdcBNQOsA==
+X-Received: by 2002:a5d:5348:0:b0:33a:ea38:6453 with SMTP id t8-20020a5d5348000000b0033aea386453mr410173wrv.45.1706679822271;
+        Tue, 30 Jan 2024 21:43:42 -0800 (PST)
+Received: from localhost ([102.140.226.10])
+        by smtp.gmail.com with ESMTPSA id eo9-20020a056000428900b0033ae9e7f6b6sm8191928wrb.111.2024.01.30.21.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jan 2024 21:43:41 -0800 (PST)
+Date: Wed, 31 Jan 2024 08:43:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
+ call in fme_perf_pmu_register()
+Message-ID: <5a3a1c80-47ae-45c7-86ca-8aa40566551b@moroto.mountain>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+ <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+ <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] xdp: Remove usage of the deprecated ida_simple_xx()
- API
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170666642610.31142.2671848763624675681.git-patchwork-notify@kernel.org>
-Date: Wed, 31 Jan 2024 02:00:26 +0000
-References: <8e889d18a6c881b09db4650d4b30a62d76f4fe77.1705734073.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8e889d18a6c881b09db4650d4b30a62d76f4fe77.1705734073.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
- edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <e760bd1b-30bf-489f-b745-128d05397feb@web.de>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 20 Jan 2024 08:02:20 +0100 you wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
+On Tue, Jan 30, 2024 at 06:09:14PM +0100, Markus Elfring wrote:
+> >> Thus return directly after a failed devm_kasprintf() call.
+> >>
+> >> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting support")
+> >
+> > This basically doesn't affect runtime because perf_pmu_register() checks
+> > for NULL so no need for a Fixes tag.
 > 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. So a -1 has been added when needed.
+> I suggest to clarify this view a bit more also according to statements
+> like the following.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> 1. https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11532
+>    perf_pmu_register:
+>    …
+> 	pmu->name = name;
+>    …
 
-Here is the summary with links:
-  - [net-next] xdp: Remove usage of the deprecated ida_simple_xx() API
-    https://git.kernel.org/netdev/net-next/c/6a571895116e
+The check is right before that on line 11527.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L11527
 
+regards,
+dan carpenter
 
