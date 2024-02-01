@@ -1,65 +1,71 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4015DBA0
-	for <kernel-janitors@vger.kernel.org>; Thu,  1 Feb 2024 12:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E4815DBA3
+	for <kernel-janitors@vger.kernel.org>; Thu,  1 Feb 2024 12:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706789878; cv=none; b=BszXs0LWl6CKhbCCgZ/pEETuIKDWeeR9QX1B87NDE3tcyKGVCfzM65t+SCnqqCPpFHD14H+VUgAt9CV/3Th3WgwHP4l9kVM7dP+PCJmLuIxNp5fnhy3zd5jKZaKmH8XQsVL6CN+9cwoz6lUakeEmdXHyqDcgucTHg/652m9TAi8=
+	t=1706789906; cv=none; b=Mim3cNl0A/NwlGMhrEsyTyylukJN9lmeMQs974vJJfsKD6qNTIxs0SzdqySXV7fUKkwfKt4/UnlYwG5F/d5EJZ4ah006IrPDcHAeIRmUMY5XePp89ylKLjvXN9jRhaJ3UM+OBYsh7cy+0Xpd5ZWwwqGAl8v1oVmOL1q7MbLRU7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706789878; c=relaxed/simple;
-	bh=RLMFIhenr6gWEPUUklo7GqtWzySwMhiKr8msi2eBXUM=;
+	s=arc-20240116; t=1706789906; c=relaxed/simple;
+	bh=pmWxUNJ1KD2n0FwuTqq2fLlfQZHYRoMgFaaqE7HmJ7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Iy8scEY2y84O6183XiV1fzJEbovKXz0EbXm4cJOkOsjpi5Kj6XsMXumyB84a8ncffyYl5Q8KZcpp6IHBjwkxBdeCS1m08CS+X+qFulSxbP2RTRJ3J2O3SdZ+wEmBaBsYb9c/R5vEr3NEHben8oZQ+jI4FbzChXNn4VVCn0i/SHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0NF6bTK; arc=none smtp.client-ip=209.85.218.48
+	 Content-Disposition; b=CVE7pH8lOJ4sJqHVz/kV4XJW3n75npfE93USeiei7Gt/N+0a0KoBHAqu7zmgNi0y3w3UVia8azZk4twM6KSnumBgj/NDnmPL2D+L9OmWTMeemvQlLOhRY+0hVhoYZNbi4Uw5f6okj8AqZ1PnzdeeduKk8qjnXpdxXMke7SxaRR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QCw/ca8D; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0NF6bTK"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a30e445602cso431393266b.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 01 Feb 2024 04:17:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QCw/ca8D"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a26fa294e56so116071166b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 01 Feb 2024 04:18:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706789875; x=1707394675; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706789902; x=1707394702; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FaSjJ2/3IHsjyK7hdbHfYJwqnAf7t+fo26BP+dO49xw=;
-        b=G0NF6bTKJ2KVs4A/qyPUbpk19uelpRYXjotrhifaDQCjAyYr5jWUMKg9V1+5o5OWdB
-         e8k9MjL9381/jLeepp9Ycw6wIIqkdG77sbpX1RCVMKOUaP71WqS455yRVgVASS7HNREk
-         PLGR5VN2AoYw798iEXLSM1ET5Vnn3DX0gJ9C9zY1oWhg6N26JxtPL4MPd1nATGM9NjtM
-         YALs6OpWXEsaKrK9UWXBP2Nu0VzMugaiNpJmfXNXKk/nd6aqFx2Jljr4jpBgF/Jzxzbt
-         m4ucL9XYYJKbMXjfXJiLuF7+UGciHsccJMZuVxxgn3ymYp8yIG/EIUyQ8HLLMaDjK62w
-         eH9g==
+        bh=2orRofZirbGTvQ+iko65Kwmr8ByVwpBalWEASle2m+g=;
+        b=QCw/ca8DPcGrbovxb6hvCb1JMEeIzqyVuftjvJYM667wQ4cF8bCiT2tMbKL6qkoSAT
+         jcOa7ZAEfGahAV5IAlC88zr3Xqnr6gwI2VHBj243FttlUb60GNwsAO+cUDJUo2qpHtYz
+         TDbmOTcysnrW2+Hh9x7Gw+BE1kUSiuoFws5Y21dckBjdtbO+GDzgW89v8cNr64RStqWM
+         wS+G65/sxMfstbj6FnDXbxSpDRZc7ib6QgYrVNHZag4fZ5ZBo90/AaJ0/5Br6DVieSE3
+         moSFGIrdh0cwrQ/LZpIkwjTq9/00yAQ53KFV3h2T5lDdYj0ND6i8LOVVdjfuYY2fOYVQ
+         1MBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706789875; x=1707394675;
+        d=1e100.net; s=20230601; t=1706789902; x=1707394702;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FaSjJ2/3IHsjyK7hdbHfYJwqnAf7t+fo26BP+dO49xw=;
-        b=dz3HbShO+5mqKaCgVuPYgNRVTYndJ+Jotqxzk+wnRb11/XQF8jFd0XHJmWiY8OHCr7
-         x1umnMWZtjjjz3h3cIL+yZ6UWA+21aDQdq27DsdF/LRUbtZvqysiSJHD2Dvvu3tmUpgB
-         iUVe4bRYXQzQLA0VmXcpw7j4yX0zywtxnrqcMZsJTATIHXQl4gjvhv/Kk040jIfV1EGp
-         lU5y23X+uGbwSnJhKw2XZ7sf9Nf99D2xwTtNUkZ/72M1MAUGsQ2jTBarAFR+A1RQaqp8
-         3QgKDao4Yyyccm5tZoAfNTiBc6HbK8+Ll3TfuaJn1TRpso7+LxJvW1QKAyelKlOQH4gX
-         ZhWQ==
-X-Gm-Message-State: AOJu0Yxx+kHD7dhlzldW7w7+MpFxkrNyi3dDNqgU9bD+ewbma803tGtq
-	Ihiny2N0lGdXJGBl2g3hE/kBcRzKgAscrveGPiR8rJ+C8qt+Ae5m2zUdTQZw0Ek=
-X-Google-Smtp-Source: AGHT+IFRmyZYbZ8wILJI69a8R58bPmWo2as2I6NuRjJp2cSD6cmhkOsjhNJ5kFgyo6vD/sGEQPiHjQ==
-X-Received: by 2002:a17:907:8dcb:b0:a31:818c:ffe0 with SMTP id tg11-20020a1709078dcb00b00a31818cffe0mr6665139ejc.19.1706789875145;
-        Thu, 01 Feb 2024 04:17:55 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXFy8FhlJQVZMlOMcjnrSnVeSiR2+7WMqhCcakWEW5XjcH59ufArQ4j65amlYcOJQHTAZNEhIu7T4K1H3tdGrDwibXlwOkDTbMYYhCRc/A6jnZ/2cCPSYCH4k5kRVEw0vMZaNlZSCu16lq4TOncwBDc/3/qKI3tS4o3MUOc3+frl+g+nPYtRu6cpyj0EwmIUWDfuyEwhaYuvcBuVwuVlB+OcIqECD23W3N361NrR/0K9PXSHik0M6Kj2w==
+        bh=2orRofZirbGTvQ+iko65Kwmr8ByVwpBalWEASle2m+g=;
+        b=rmEindo4oQzuoyl8WWjeKR/8VeAzlwIY5B0FSYWqnuSJfpAWHEgM2TDqLXK2BQHA4X
+         g6vbxPdNQUb/7B/2p4KnHThmiqtQ/BBA7DS+JFupN5ndrlJkqlcPPNifsTnSUQ+/bQHp
+         mvPmzkpDkelVCkZymzH1bBG32CIUe351aZSN+gM605D9hHYcVclLdycfsmS/q7m3Xaqd
+         cHBf30bVTU89s8oVAeWM1+u01SkgoBgrOvrPTZOnJ05HR2RbdkKnT0yzu65WGNTGAGee
+         GRu200GGtCdBzqhxDUC0CCfeeft0IyY+zQj+KH7tbnhA6rEoLvDw7PGgAJpBQyJItuL7
+         0+Rg==
+X-Gm-Message-State: AOJu0YxfasE5wBkqLBfuyWTXUjmKRdDOhuaOJvlrWfsfdeUwA6UAE8ju
+	7igBWAA1eFiJb3g/3QX/LSMuPq/Hgl+lLIeE5KQSgbeFJBomnERlXp6cFBFh8TM=
+X-Google-Smtp-Source: AGHT+IEI0C9CnkKb2LW+p5Sm+IWjNynh3uPDi+tNE3FOxGscu5UPewiZ0qE61L40eFIimq0qURI+uw==
+X-Received: by 2002:a17:906:688d:b0:a36:72f5:af5 with SMTP id n13-20020a170906688d00b00a3672f50af5mr3691533ejr.11.1706789902360;
+        Thu, 01 Feb 2024 04:18:22 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXEMWMXmLPaVrc8bpUVhzoxSuuUr3Oj4BdXzjtgA7agaXhQP4eDTz3MW+pL+zUFM84Fxby4GOkiEtieTwdvxdKPiYQqOrXYWd5SAXddSwoN0MVVzatdTgjO4q5xKHhxQ0usT1lFZlNdjliW6kIoYuC1UHVBdF8zFntt88miAaq5PrZ7VQ0vnTlHierISQ5RvZPEMvyJTF2B2CmoQDPrRaNl2pHCpXS66IsILZbcbuCRJKQnwsXW0yiMuRdD6vE/IQB6xKuZbTEnSCFVEcswYmIMy0sFt3nEHtvCjSiSI5WOW3nxolRfv6I3E4s5XxfCHqKmFaGfWXNHqrhdbNdXUTTeDeo90Ieae4/yPb2S010iavMfkCBzbsRekClOoUNKUq+Or+lJm8+psdbLi4FGDT2oCEVc7eySRbHx0qhV0SusAn/Q7cWp5nRYUKWAfuPl+z51rsXaWmq7cv4smDA3Het5+dGrf9INovOc
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id i26-20020aa7c9da000000b005581573e251sm6761196edt.2.2024.02.01.04.17.53
+        by smtp.gmail.com with ESMTPSA id vi7-20020a170907d40700b00a369fbc95c0sm944194ejc.79.2024.02.01.04.18.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 04:17:54 -0800 (PST)
-Date: Thu, 1 Feb 2024 15:17:50 +0300
+        Thu, 01 Feb 2024 04:18:22 -0800 (PST)
+Date: Thu, 1 Feb 2024 15:18:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org,
+To: Sarah Walker <sarah.walker@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>,
+	Donald Robson <donald.robson@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] irqchip/qcom-mpm: Fix IS_ERR() vs NULL check in
- qcom_mpm_init()
-Message-ID: <22e1f4de-edce-4791-bd2d-2b2e98529492@moroto.mountain>
+Subject: [PATCH] drm/imagination: Fix an IS_ERR vs NULL bug in
+ pvr_context_create()
+Message-ID: <cde5a0bf-0d17-4fad-9c85-c7587c73a131@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,30 +76,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_ioremap() function doesn't return error pointers, it returns
-NULL on error.  Update the check accordingly.
+The pvr_vm_context_lookup() function returns NULL on error (not error
+pointers).  Update the check accordingly.
 
-Fixes: 221b110d87c2 ("irqchip/qcom-mpm: Support passing a slice of SRAM as reg space")
+Fixes: d2d79d29bb98 ("drm/imagination: Implement context creation/destruction ioctls")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/irqchip/irq-qcom-mpm.c | 4 ++--
+ drivers/gpu/drm/imagination/pvr_context.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
-index cda5838d2232..7942d8eb3d00 100644
---- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -389,8 +389,8 @@ static int qcom_mpm_init(struct device_node *np, struct device_node *parent)
- 		/* Don't use devm_ioremap_resource, as we're accessing a shared region. */
- 		priv->base = devm_ioremap(dev, res.start, resource_size(&res));
- 		of_node_put(msgram_np);
--		if (IS_ERR(priv->base))
--			return PTR_ERR(priv->base);
-+		if (!priv->base)
-+			return -ENOMEM;
- 	} else {
- 		/* Otherwise, fall back to simple MMIO. */
- 		priv->base = devm_platform_ioremap_resource(pdev, 0);
+diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/imagination/pvr_context.c
+index eded5e955cc0..e38d3578fc09 100644
+--- a/drivers/gpu/drm/imagination/pvr_context.c
++++ b/drivers/gpu/drm/imagination/pvr_context.c
+@@ -315,8 +315,8 @@ int pvr_context_create(struct pvr_file *pvr_file, struct drm_pvr_ioctl_create_co
+ 		goto err_free_ctx;
+ 
+ 	ctx->vm_ctx = pvr_vm_context_lookup(pvr_file, args->vm_context_handle);
+-	if (IS_ERR(ctx->vm_ctx)) {
+-		err = PTR_ERR(ctx->vm_ctx);
++	if (!ctx->vm_ctx) {
++		err = -EINVAL;
+ 		goto err_free_ctx;
+ 	}
+ 
 -- 
 2.43.0
 
