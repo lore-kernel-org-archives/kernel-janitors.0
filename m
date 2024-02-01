@@ -1,67 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2419A4DA06;
-	Thu,  1 Feb 2024 10:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4756615D5DD;
+	Thu,  1 Feb 2024 12:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706782876; cv=none; b=MNQ79MMmxh8WyHRpnBYRPdDIUPN2mQ03gGreHCl3a9tO7D45H/N4l3EcWs3B2CMMNSfCFrfRRWa46/VB8sV1KfNECQ7jawnfPluUtt9n8rCUaaTuNB4Fz6d+803HuRXOCARJA9wfCQzOMGdV8XHMBRztc1CLcWxbRCYbMP7MCbk=
+	t=1706789317; cv=none; b=tPj7NJxyjyuhDpKBVfSV/sFazLsakCNw2m8RG2sORbFpt3rdqBkmnrxMGF5Xg0T0/RG3j4fdBBx2vY/CCI7TuRZhu8hsJfzuUCq/xXesxulkunwh+p2p03VqplQP6EL1zWtkWGBek1qdqPXhdr0n7GLm8TLlP119NedKGbW/tio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706782876; c=relaxed/simple;
-	bh=p7kLDUFLd7rjovPMsYMtGm/nnUJKbjK4ZofGZ628x0I=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=MQbJNXTJtzCSPJ0ICGT6PfBzZV8sCf/FX4ydWvZ7C0zt3ZZ5QW6hnt1Q4UJ+SwU0UbEg2N5p97q7QyN+nWgnItV3+BwmdObrr3J+ExuNJYyMsyBmNP+b9iEhGcc4oZbeNHvqvIJxn6g6NN0o4okqK3dQB0m06Yuc+BjUq7uabW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lwq0jZUI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706789317; c=relaxed/simple;
+	bh=5YHOQ4t6yvK3SOA0EQMMmdoojJngamhIGtLZGsyLgo4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ie0SwaSOl1JFQNGeZqpavO0fit+TSLRSazBOhl9c1Evjln7d1lQk1gHYbxCbFARRD+aAy9UvpxQmI5cplAxzDOTB+OEPq/j2A9qIW/vsRHD9TcZ28EBt4TZ7E4VrsELWhaEGaWtkzNOaPYv8IWtf4X6kbS7zpcXJ4shLHI/x0/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=M3LEou8M; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lwq0jZUI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706CAC433F1;
-	Thu,  1 Feb 2024 10:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706782876;
-	bh=p7kLDUFLd7rjovPMsYMtGm/nnUJKbjK4ZofGZ628x0I=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=Lwq0jZUI+6qSM0K9t6B8VaFbzBEYKAf0CywnG68NDwn/9EZFB+Xa3pCdh54PhW3dd
-	 rofkx03iV1nGm++sTu6iazQGTtQ7npoh15RYzhkEzEnx63FSA7pp0XoROeAef74ggx
-	 nxRatuZgZWcy76gncBOF56OxJKTNd57vqiN6fsE7Bdb6dC67UX+hgMUNpOLZAs9K2i
-	 0D/c0U2gszkQ4U3nYAl/+kJjPVA1XisknsRx7AdtVrk/PEKoZjQfb9bdLnyw6T8WfQ
-	 fXxFrjEb68ZosiRNILjvnjKvN37oR6qz3LRdW1zE7zMmTFDY/PwHKOxE+4WDE67+XI
-	 bf2EX0rXdtjQg==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="M3LEou8M"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706789291; x=1707394091; i=markus.elfring@web.de;
+	bh=5YHOQ4t6yvK3SOA0EQMMmdoojJngamhIGtLZGsyLgo4=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=M3LEou8MMS9TNQvjNu/ylUsfrcTZ1OUVx30pCajQzVW/8shzoQbC+WfK/r4ARlk+
+	 vfQ7je1kym7XyDIT+KglvMYc9Zv0yW02NQS0Kj41Pb5rV6J1TwQgARHk/7uhJNCK+
+	 pByTTKceEB7hhg4qz9upH/siB0sKs8ciN40UgBrXudIKyYea46r/+FXqeJOAOZ3H9
+	 Ab7Vr6GSIq+4d/7SAJexowrmTqfw1U6GUVqwKoVEzAzEFUFI31QF45kOuW/fhjF5g
+	 Gd5+xhucxfQKrq/FsvAJCJ20M24Y1CGsePZ5pERshr+B553p+QjK0qlDo4Z+W3cA4
+	 0YepboYwYebp/R+A5A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOm0x-1rgs0y0diR-00PweK; Thu, 01
+ Feb 2024 13:08:11 +0100
+Message-ID: <dc42614d-adee-4cf9-96e4-b27604360a9b@web.de>
+Date: Thu, 1 Feb 2024 13:07:50 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: rtl8xxxu: fix error messages
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
-References: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Martin Kaistra <martin.kaistra@linutronix.de>,
- Jes Sorensen <Jes.Sorensen@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, linux-btrfs@vger.kernel.org,
  kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170678287278.2736043.14378506532887522258.kvalo@kernel.org>
-Date: Thu,  1 Feb 2024 10:21:14 +0000 (UTC)
+Cc: linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Josef Bacik <josef@toxicpanda.com>
+References: <a6ed9030-8d48-4f9c-8504-9a5308813791@kylinos.cn>
+Subject: Re: btrfs: Simplify the allocation of slab caches in
+ btrfs_delayed_inode_init
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <a6ed9030-8d48-4f9c-8504-9a5308813791@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tTR37h8N46o+RCJpvASlOfWYMAUb/RsxgvmxcFn4VqZVCNz+VOQ
+ +TOTHTfBox+SSAX1Ef7at2fUMMNHBbUN+xOXpHMPMpgj+LmeSgeQUxF0fb8G/sfCGZUKPIY
+ UJGTFWcVOfTUalTsN6ZpHzFKfPHkjihgixACFQuiY6DcyiU3bHMDAhyTz18t8qolD1V3YYw
+ 6QkSWgkylotG5Tunt/IVg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mqIb6wq4LtU=;b4G7ICZaPcoftmM5jOtpljxBMY4
+ 5GLrhfnMWHfJ6VvAcmVMCGYLumi7hV2GNCE98m8mSBXZi8WL/Ua08FGxmRin8EFt/jzMnE+jy
+ zS4S9+1wZts0+1ndt5Aun4t87+tn2mmrG9vX6PHLh/5kHfdde7YYMSVc969NjziLWJmgVYUV+
+ hYM58UnZFhD4dO1ea5jdjCggdYN/kRox4qk8eRD+LeFkEwtNnjlRwWxGZcBDW5FIr8Vdjsd/7
+ 0DHk+ZxVFVCdJMp2M51S2SQ+CYlUPZQ+PlrTlSGSSbHGTx8I6kFFyv90j3gvf2AUotCwHtdco
+ UlGlGwnSi7quqXL22Ty+JHVaANvke3496t7CYjq0NkJjl/07S+YGBA5GtVQjhQ1k5j26EJlbV
+ 9wSphFvxdpmIMHGLn1NHRD7B7BVOFkThcnkYQrsSEVtHHpVR2XyN1Spjgm41I2nA0aLfbY4HI
+ zJIXNGfZwQNVQSHHBMf3L20zfB8TrZVa+O/CvV6Orz1iGh/V+gdfvBRtvp9Iz0RjxpxinAJ1P
+ bn1M/axtSiB/HBaMJK5dXX+lz914FwX5FDv2uL76BzuYGVMKMvV3dgM9cUesbrv69lUnpVBIz
+ OvAWFwPIQieIgdfA9yJcRakODNYXgtU5ddvkTHwVdqtpfRVJBCXzJpnuEGLuhea8qNgt+Tdi3
+ 9qQx3CLm9f1Y9ogLqqBXhIbts2JveK03iIglZZYaUTbP03lE7qPsiIJJ8fGos7kTgHbTj6zTm
+ 0P4v9u8zagOHAzBk3d9GAAg61XAUCCEo6SZRgn6S3eII2bEFwkvYwKZbhy5mg0oqXGnVD0p/8
+ mME5tysoru8UP6+kMaPukDmPKzeHl8YiSoThCeD8UIPms=
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+=E2=80=A6
+> So i'll update the commit msg to this:
+>
+> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
+> to simplify the creation of SLAB caches.
+> Make the code cleaner and more readable.
+=E2=80=A6
 
-> The first parameter of WARN_ONCE() is a condition so this code will end
-> up printing the function name instead of the proper message.
-> 
-> Fixes: 3ff7a05996f9 ("wifi: rtl8xxxu: support setting bssid register for multiple interfaces")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
+* Please replace the word =E2=80=9Cnew=E2=80=9D by a reference to the comm=
+it 8eb8284b412906181357c2b0110d879d5af95e52
+  ("usercopy: Prepare for usercopy whitelisting").
 
-Patch applied to wireless-next.git, thanks.
+  See also related background information from 2017-06-10.
 
-17903a283593 wifi: rtl8xxxu: fix error messages
+* How does your response fit to the repetition of improvable change descri=
+ptions?
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain/
+  Example:
+  [PATCH] btrfs: Simplify the allocation of slab caches in btrfs_transacti=
+on_init
+  https://lore.kernel.org/lkml/20240201093554.208092-1-chentao@kylinos.cn/
+  https://lkml.org/lkml/2024/2/1/387
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+* How do you think about to group similar source code transformations
+  into patch series?
 
+
+Regards,
+Markus
