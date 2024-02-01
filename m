@@ -1,68 +1,67 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E464A80;
-	Thu,  1 Feb 2024 05:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2419A4DA06;
+	Thu,  1 Feb 2024 10:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706766716; cv=none; b=bVKVN984CVwq/fl1LS81ZCdEQVz6bqwh/tWrsxk80HTe0vi+yW4v2+apT4J0NVA6QEpyPY+YiWNGLOiXOcge85Qmy+R/303irSu1fgxHUjBScMoXxmAR4GpU8BXOn9HQuQgQ815561omHdLfVuGRbd8qulFhgXejQJgsET2lGN8=
+	t=1706782876; cv=none; b=MNQ79MMmxh8WyHRpnBYRPdDIUPN2mQ03gGreHCl3a9tO7D45H/N4l3EcWs3B2CMMNSfCFrfRRWa46/VB8sV1KfNECQ7jawnfPluUtt9n8rCUaaTuNB4Fz6d+803HuRXOCARJA9wfCQzOMGdV8XHMBRztc1CLcWxbRCYbMP7MCbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706766716; c=relaxed/simple;
-	bh=pB7E6jsVPvH8FyHd5rIlreiMws7ij1lqrILC5DieAGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gb06LFHBXT4LXBFOyTqEW8bTqgFFgy9A8lFXlZqotsA1gPxP4NSuKTJ9kL7pBE0fQDDOEb8FvvIVaaQj5wnyYF6LK709Ay8C4cy8+P20wZ3bxkYOTsSSB38fnR2oD0jgeYLh/SYp9ODXsyzyjQdFZ1UkZ42qenH/exvqFnFAXyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1rVPzD-008Ubc-Uc; Thu, 01 Feb 2024 13:51:45 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 01 Feb 2024 13:51:57 +0800
-Date: Thu, 1 Feb 2024 13:51:57 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust file entries after crypto vmx file
- movement
-Message-ID: <ZbsxfYVKqxwn5gl5@gondor.apana.org.au>
-References: <20240129131729.4311-1-lukas.bulwahn@gmail.com>
+	s=arc-20240116; t=1706782876; c=relaxed/simple;
+	bh=p7kLDUFLd7rjovPMsYMtGm/nnUJKbjK4ZofGZ628x0I=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=MQbJNXTJtzCSPJ0ICGT6PfBzZV8sCf/FX4ydWvZ7C0zt3ZZ5QW6hnt1Q4UJ+SwU0UbEg2N5p97q7QyN+nWgnItV3+BwmdObrr3J+ExuNJYyMsyBmNP+b9iEhGcc4oZbeNHvqvIJxn6g6NN0o4okqK3dQB0m06Yuc+BjUq7uabW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lwq0jZUI; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lwq0jZUI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706CAC433F1;
+	Thu,  1 Feb 2024 10:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706782876;
+	bh=p7kLDUFLd7rjovPMsYMtGm/nnUJKbjK4ZofGZ628x0I=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=Lwq0jZUI+6qSM0K9t6B8VaFbzBEYKAf0CywnG68NDwn/9EZFB+Xa3pCdh54PhW3dd
+	 rofkx03iV1nGm++sTu6iazQGTtQ7npoh15RYzhkEzEnx63FSA7pp0XoROeAef74ggx
+	 nxRatuZgZWcy76gncBOF56OxJKTNd57vqiN6fsE7Bdb6dC67UX+hgMUNpOLZAs9K2i
+	 0D/c0U2gszkQ4U3nYAl/+kJjPVA1XisknsRx7AdtVrk/PEKoZjQfb9bdLnyw6T8WfQ
+	 fXxFrjEb68ZosiRNILjvnjKvN37oR6qz3LRdW1zE7zMmTFDY/PwHKOxE+4WDE67+XI
+	 bf2EX0rXdtjQg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240129131729.4311-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: rtl8xxxu: fix error messages
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
+References: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Martin Kaistra <martin.kaistra@linutronix.de>,
+ Jes Sorensen <Jes.Sorensen@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <170678287278.2736043.14378506532887522258.kvalo@kernel.org>
+Date: Thu,  1 Feb 2024 10:21:14 +0000 (UTC)
 
-On Mon, Jan 29, 2024 at 02:17:29PM +0100, Lukas Bulwahn wrote:
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2fb944964be5..15bc79e80e28 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10307,12 +10307,12 @@ M:	Nayna Jain <nayna@linux.ibm.com>
->  M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
->  L:	linux-crypto@vger.kernel.org
->  S:	Supported
-> -F:	drivers/crypto/vmx/Kconfig
-> -F:	drivers/crypto/vmx/Makefile
-> -F:	drivers/crypto/vmx/aes*
-> -F:	drivers/crypto/vmx/ghash*
-> -F:	drivers/crypto/vmx/ppc-xlate.pl
-> -F:	drivers/crypto/vmx/vmx.c
-> +F:	arch/powerpc/crypto/Kconfig
-> +F:	arch/powerpc/crypto/Makefile
-> +F:	arch/powerpc/crypto/aes*
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Are you sure about this? There are non-vmx aes* files in that
-directory.  Perhaps something more specific is needed here?
+> The first parameter of WARN_ONCE() is a condition so this code will end
+> up printing the function name instead of the proper message.
+> 
+> Fixes: 3ff7a05996f9 ("wifi: rtl8xxxu: support setting bssid register for multiple interfaces")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Thanks,
+Patch applied to wireless-next.git, thanks.
+
+17903a283593 wifi: rtl8xxxu: fix error messages
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+https://patchwork.kernel.org/project/linux-wireless/patch/7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
