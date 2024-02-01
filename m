@@ -1,38 +1,60 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC195F489;
-	Thu,  1 Feb 2024 15:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A625D467
+	for <kernel-janitors@vger.kernel.org>; Thu,  1 Feb 2024 16:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706802008; cv=none; b=QX855JXK5TxnX9JuRB55coZlPY6qFIvzBEi3GN7/4e9yo+zespzuByYOlsaGegiOzYbi0mR6aN4cSjiXfDjsn8cN3rrMtboKTYpPnLNxJa9RvxbVKI85/c5zuvUrE4mhbBsdSSoem1umJp365rsrue8gmgrL/6J7V30aHGksQNM=
+	t=1706804718; cv=none; b=bW7LGS/BiwIYJYhwQpE55x/OEDZvdgOPgdsGJ8VpNq3r97NdlPD/0uhSOgLU28197jKHHoA+XfXx2uQ15LgUYKIkAhKgBvM9ZHL/S1/yQ0cgdilIRmR+YBbFGd3vh/wIxYJYZ6FxS1HLP+hLIXJyVWWL0li4andxPXI2P88MGho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706802008; c=relaxed/simple;
-	bh=2qcjkYA/09qzTjU0YMvalmbOHyCge4tVY/zh9Oyji4s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=bperc9YpdpYkay2mvcFCLIzkUBQzJ0161S070DPLZdFlFCJV3Hel/+NyhUJTNjQzacT/ukDQ5G/mEu/ZIVoJmbMknwSVovTBgAUw6EiNkipthZlX1Zch+aPsF0dEgzokpaAKoiVrHZE9u/Rs2HfPkwA3betM/bHCsODWFZq9htg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FeAHbqf3; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706804718; c=relaxed/simple;
+	bh=U+E/xQ4vC61LZVwp9IMPUz+1ekbJE2KKJxmpXRoWhfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dBpr6fQbp+Lpumg+xPiPbZ6R+Gh9WvSRDx3lNRgKl7fZFO53c1PR8X+jnNadJwXGTHrYrjQJXQcMcDALColDi2i5s8IPe7Qs9V9Wbc7WjzBOBtGY8/el1zJdeWrtBidsLUatzDP/8d54zQvrzdbCObrd6lutSP23tHELo3U9XV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=clM4iyz6; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FeAHbqf3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706801929; x=1707406729; i=markus.elfring@web.de;
-	bh=2qcjkYA/09qzTjU0YMvalmbOHyCge4tVY/zh9Oyji4s=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=FeAHbqf3ogXWj44u0MXNmHNOOmA3iAt4a5Qh0dmKmISUfboxx++coKrQuTkg962S
-	 PKhyKmQeQb8RBGHwXH8c08RImpHz47ZXUyZYn60xkKIt48ShQ4Nu6oJykjCSiekpp
-	 N3mc483lRibHiEvwHsPcetqNTiyxrEiFIQtu6S9vyZN/KelFwCthgRSbNm7LrkF9F
-	 lAbGZNzx7AjT1Q6R7iEZDqtaaBYQJzPxZ8ctH4fYoPBfgJ3EyImdDSwumpFcDCaEk
-	 DASud8pm3Tph05qfmlmAkutav9Y3iBK5OHensfHpI99Ne2j+UaBThDjmWa8dVmJdd
-	 lofuQo5llUOHXVHZLQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mo6Jz-1qfwax3asl-00pZSG; Thu, 01
- Feb 2024 16:38:48 +0100
-Message-ID: <078e0e4b-688e-4f98-aab1-ddd387f7db0a@web.de>
-Date: Thu, 1 Feb 2024 16:38:44 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="clM4iyz6"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a26fa294e56so157799666b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 01 Feb 2024 08:25:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706804714; x=1707409514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4zSfRUTFrq7vm4ZOzcXmaAJYP5yS5MiLP8FPnlEZbwI=;
+        b=clM4iyz6M2MDzoaXMRCW71ixUGXskNm1L8iRgKLU2PG40UAmff9RiQpVVs4jTlimSx
+         brnGA1/4iIA02zg8ArAgFWlf+IfXSfGG8zBL0S+B+fYEUEi6n4f1crDgT0qjaidS8dhI
+         Y8t1aAFXIZ+LEvJ1vkIdL9BfvWcm7aCJU0kpkkt81A4oEk7xfLWAuKUoPZffdPZhg7Gf
+         auynz7Lv7imvKEdEuK01uhZ16AGGdfCX2VmEVsu37kGEkwisOsOw2YRDAcn80UsPi8sN
+         L/bSM5Z33Ot0yIh3NC5VpYo6mN89L70wtTEP9D1NgM6p+z5RCjIzFpGb/wpIW3tmwKic
+         k/7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706804714; x=1707409514;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4zSfRUTFrq7vm4ZOzcXmaAJYP5yS5MiLP8FPnlEZbwI=;
+        b=UiPdJBxEvD6rGeAV4epyCBnmEHvY+qtpQbU48q1D4trGECM+NdVYdclxAfXuUXXBfq
+         p7okAtU4V6A1U03GeeS/AyQnkiBwTqngoAplglT+9PPLAxXH6tv1kR1fH3zvM5yRvuO3
+         Pefr+jppRx/OPZV2BQroHhP40iMAKe1iWi3uglcGNmm9+vcKj4iF/ATgmyL18eOOk7Fs
+         1nMTi9aFPWaUE5YZU/fKMRb/30zGbLlZ14nes69mGvEGDw8EsVZifslX9xbJ4lOMDNtO
+         E5PalNtvnQiHFwd0HwaD2i5NjiMNtAv+Ywe15WNF+jvqjXb02qX15tlTa6+D1/QV8nNr
+         aq4w==
+X-Gm-Message-State: AOJu0Yy/duTyo6pzfgJrWEq52p5Ar7FvgEUNB1ffTM5qN+eIYyokz7q1
+	DY/pENWgL5gNDVe0h/qJy6UERAGgibNruBpJIfxcguoMKRwqtnf+Tj2a1J2mGIwK3GfZITlAkxu
+	+
+X-Google-Smtp-Source: AGHT+IHew+Vx5htu1yyTaHiiBpXUkVcT/pWsI/Dw7dqmx2MHvRWV3p8XzntCJ9X+ndSCUsO7sZ8VWg==
+X-Received: by 2002:a17:906:bcf7:b0:a2f:46c7:4658 with SMTP id op23-20020a170906bcf700b00a2f46c74658mr3634605ejb.28.1706804714521;
+        Thu, 01 Feb 2024 08:25:14 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVLe7T8/4DSvjEnhO65Rj6fIIZN/uZP0uvKL8EisM9wWy94vhRbxx37SxVfb06mavVzTWZ0mknhgriomTZNIRflQ+2PUSIxi+U+yXSu+JKZtMsOyqxNkH8v+AelOOw2Vbln6tTHeQyv9dNr3IXrzHthAwDOo5ot0NY2yka1EVn6wF6JmZygY3ySkzskpl5QaYOPkS5nXXjt2R4NQ/1pja0=
+Received: from [192.168.159.104] (178235179129.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.129])
+        by smtp.gmail.com with ESMTPSA id sf5-20020a1709078a8500b00a3543718f5bsm6191330ejc.221.2024.02.01.08.25.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Feb 2024 08:25:13 -0800 (PST)
+Message-ID: <733a340c-c1b0-419b-b641-0f30faca7191@linaro.org>
+Date: Thu, 1 Feb 2024 17:25:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,50 +62,65 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, linux-afs@lists.infradead.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Marc Dionne <marc.dionne@auristor.com>,
- Paolo Abeni <pabeni@redhat.com>
-References: <20240201100924.210298-1-chentao@kylinos.cn>
-Subject: Re: [net-next] rxrpc: Simplify the allocation of slab caches
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240201100924.210298-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] irqchip/qcom-mpm: Fix IS_ERR() vs NULL check in
+ qcom_mpm_init()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <22e1f4de-edce-4791-bd2d-2b2e98529492@moroto.mountain>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <22e1f4de-edce-4791-bd2d-2b2e98529492@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VCDUuQeQNKj5tUf0gdRVcgdhX57d47HiTV7SNmo7l5VI23hoGOS
- XiwQQFS70ixo2jFLBXrcv2xt9Jf6Ywjs4Dy8jHU8YOC1DWsjxd8YPR23Dv8Fk4EoEsVDGnt
- WIEEu9ZhtGn+yle4rWPNC1td6Sx887gYj58uGLJx+IFaXRmvQJef7lSBxAJ72GrQLdI2bY+
- mIEB7F561+4ryJaEgdNFA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R7D/xcBganQ=;+WUL+cplBtvdlYhCP8x/4mZxQ+G
- YtR5DFgB3+/lGSU0SvO6hbdDSeUSGEtfixllX5Wy6YtJlY0Z2FQaQVj4xHcdf4JvphoFaQ5+y
- 3xo33OjUBKdzSLYGGa3KrBCBrWII15NsjC+AtjS5/8xf1DFOdUOxLHZGhuIxdId2opmVKe0tr
- 3gVyLF23IZ+WDWJ2pEGpw7RhM4pArWW5KeROC5ZBougDA5x6Nqtj6r4UdDXRQUH1kuRn9fIXW
- G27w96XF202T4cwn0o6ZRsHm4BOHxeotoFFhOVp0g2JmY5TyWQx56XZyyoeNrmMstdda2pwdk
- aACIW+B1oIJ39plELSCM7f5nGY5gUqiQgDQi3gZ27FhFYZUnrDIA7S464IzTgAqC+riOAczTo
- tpqWVjNihG6ssR0nEZZpf2nhOToB3dChRfkcCg6amZFxv9LE2NKgS7FtNXBLMpBPh7S1RfDYN
- JWr8DXAhpOwO0tOn2G7blfUcVuiN8Vvp+zX1sZNh19CSo0PLMf19d88Bpp8D4ZEEr6FG5XLxm
- Vwrkde1lpWSFVrOb3wFxvBUiE99gy8WtYpD0FXmL6gNWDhMK464D4j6gvHWQATYRKnrqhddXe
- I0FZePNAcaJtehknDB2Od5EYhMx3+YfPaCxIsgCSo9BsdGO/x0TCiwQeCM+vDEpXtkycr+lV9
- N6b0T7SWWs2y7yOb9ln/PrDrUEsfoujpJD1WiY++XBHku89/46d4tC3BOOUE2eHANaXNuusJt
- EwK/Qmce+vzsoDDoU0bWKUEIZqzSOSh30wUQpadKlVOeDvVvu0aFdoE/fbBBmNu1EAHTg8ocr
- 2wAFt6/nvbQASoLh22uBbFuP/3yfJWbtgJYyOizL7cd1s=
+Content-Transfer-Encoding: 7bit
 
-> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-> to simplify the creation of SLAB caches.
+On 1.02.2024 13:17, Dan Carpenter wrote:
+> The devm_ioremap() function doesn't return error pointers, it returns
+> NULL on error.  Update the check accordingly.
+> 
+> Fixes: 221b110d87c2 ("irqchip/qcom-mpm: Support passing a slice of SRAM as reg space")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-* Please replace the word =E2=80=9Cnew=E2=80=9D by a reference to the comm=
-it 0a31bd5f2bbb6473ef9d24f0063ca91cfa678b64
-  ("KMEM_CACHE(): simplify slab cache creation").
+Thanks!
 
-  See also related background information from 2007-05-06.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-* Would you like to take another look at possibilities to group
-  similar source code transformations into patch series?
-
-
-Regards,
-Markus
+Konrad
