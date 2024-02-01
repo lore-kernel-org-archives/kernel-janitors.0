@@ -1,103 +1,100 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D6C15DBA4
-	for <kernel-janitors@vger.kernel.org>; Thu,  1 Feb 2024 12:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA45F86658;
+	Thu,  1 Feb 2024 13:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706789939; cv=none; b=awghmch0/nwpFGgr9Q/EAfdDVxBLiZP03GfO8aPYe+x/2s9k5mW3AKnaGmYkD7cmFWqJXO608BSxPBI4ANFjDLpm72pv6bkcU+oJIO4FybKsXcGqhTKyTGlrxZizsKpr3e2frPnvJOUZJTSU4BPmzTf1sfpNtu8jAezj8eBKlHA=
+	t=1706794130; cv=none; b=TfReiM+VctDja+lBR1i7p68tk4YqyYV1GgEGrL9LK3ZSoooYt65+ovXbBuw1K5f9GHi7JmkW82Do41dS+msN8dAUcMykFBZ/wN8Ml160P7VjiZsMescMQfOEKU7M6eupLH6lyL/xurhyYSi9b+FV52MfB+cWzVtBiL9m6RRrcQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706789939; c=relaxed/simple;
-	bh=0u6CPpAAjikGWkMcjodbvpI7eJQQxDmT7SnkrkSi7S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=elpTFhlNQFtzml0q1BxXzFtOfxqtWZ1C9l28x/Rggc+OqxZLeHf+4Nl5PSXFru3ntRbY6jlw9DJkUWcyKg5ry7Za3PXF6T3+F2qAWDAR9TgI3iS/4MimsrVDohC8P8mXFIfuKtXxwCPF9y5FO7rA+RJQe2lEK2WFPgPXj0o8pzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wcuTGGCd; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706794130; c=relaxed/simple;
+	bh=SA4bfxfxzMyS4Uq6xSXql9EBB1rOpcQ3WFAI6CjVY3M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nXQ5WB7QdfZxVVPd0Q+/5D6hl5Kwma+kHI2XD3Wf0INmR9nkUC+2d7BwklbCyly2YMQvGAHozai1Z6ubLnVJYe2FhhhNfkfwF75tuSpYPoCK9imCyk6ps9oJlQpr1rOwSgCYGZQ5zUEGxdvn2ilOq/M5A3cby92jM/xoaxWE3fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jdkCDg0K; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wcuTGGCd"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a293f2280c7so110760266b.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 01 Feb 2024 04:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706789936; x=1707394736; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yxKM8B/+4uxDJuVV6uI4MZb9Fe6fGclb+oWzaAjZwbg=;
-        b=wcuTGGCd7KHQFMh15xHt52CWUf8IG/oO/bFEKZjHnFRrfnA/1KG2r6BoJHNLRa0WKb
-         dbSur/MUTkW4zyJ9wkOcPd1DyrZHEdunYokX4/Z+w0uBk/SwrVjaA6a8mAKQKSLEtDUm
-         8M0hM7DcuYQ9dBY7hsm8Z09PBcDbm79zUoX84mG7QRzvq0HcXsl0oveNlH8wj7fZvWS3
-         bhydJ1TjykGGGB+YcSA3yXLf4c/WHKq27teuZPH50Vipv/f5+2pRUANZQUoJHu6DgQNT
-         +GpWcjouTYRpLveiSitHNjIu1jPbbetsWAIc3C5wOaSsrEQyiGQuVmGlFeiTx/RlKpuZ
-         yX6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706789936; x=1707394736;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yxKM8B/+4uxDJuVV6uI4MZb9Fe6fGclb+oWzaAjZwbg=;
-        b=l6tIgtXylPzTGH/78A5HowvgFWTfQLs1aYlr/zyQeZSOtESSbvfHSDwxVag3/fv16o
-         8Z49loLsR8TgXkGjHo2b+7SSn+NUaAljd+oORRkoLe37jOgYU9DnAuQaMNtmS5c9mXh7
-         3po0K+IzMmLLckOjCBZwE5ANwTvfFcR87lTxXM6YKWg8d0YHRI8AWzntqPfP8AZiOafU
-         DxJCOjmJYBgFkV21o8j3JDcqjXG/+PB6C6hzOAdRAVupe8i9BNmy7WL4MRLVnJj9dKFG
-         92rOqawX644rzfL+1VDP1JEgtwSgAKCb7pqHzpSyDGjcAYdUAoBvXnHrqaN8m1gJ1ETr
-         ydSw==
-X-Gm-Message-State: AOJu0Yz9TdKpoi79gZWLbbXRPIFfdMdktjtq75eZ2Ktoj8Nrv9Hq0gMH
-	eRFoQiqVsWJNlnpZkbyTI8KibZr5RakuOfT2oB3aD5KP8uQGf/Yto7DXXpApAlQ=
-X-Google-Smtp-Source: AGHT+IHqio1K2v4vG6WifOFqQbnp6NNXN3nUmPKstb3Bh6hAXEkf1XIqP2kKhvVoaKMBDGuWSm9xFQ==
-X-Received: by 2002:a17:906:4ec1:b0:a30:b47:b626 with SMTP id i1-20020a1709064ec100b00a300b47b626mr3459192ejv.35.1706789935736;
-        Thu, 01 Feb 2024 04:18:55 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWhiYEyqdGIGJMv+e9C8Q6+387DAMQBjdrXrjTP7/sLkqF260wnCrmJ8XbnG53BpkG2kJSird5Evpn0AkAEcKChG9uk/BJWV0zDR2XU+RPKBew/s4iFw88ddPX2Xax3fLbBffXOyaiGaAP8COSWaQSNfOo5GpW5dYEBcLde/9Gq8vzJDIfrAz9tvQrDPgKcMLaqaG2YVIuoScE6Yi0mEcND6u+wwYd93sqB6xK7vzdq0393OHif5uTeqZDqFBpr6fR8tRLdn0fklSjFQHK8cCMF+rwdIlCdoOjIc6o6uwE8
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id wb12-20020a170907d50c00b00a369b47996esm1013203ejc.80.2024.02.01.04.18.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 04:18:55 -0800 (PST)
-Date: Thu, 1 Feb 2024 15:18:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shyam Prasad N <sprasad@microsoft.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] smb: client: Fix a double lock bug in smb2_reconnect()
-Message-ID: <bf90de00-4d6a-4440-b6a1-42ac9e358158@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jdkCDg0K"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706794100; x=1707398900; i=markus.elfring@web.de;
+	bh=SA4bfxfxzMyS4Uq6xSXql9EBB1rOpcQ3WFAI6CjVY3M=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=jdkCDg0K0jipMZSuFNQwxMeGM40WxNFcLkxyujHXg1qfgx3EduShl03BLo4bvEiU
+	 VXi9+53+GeJErlEdji6RmW9vfH/PGDEa2rAvWC8f9V3sS5Yjw4hiK/AwnvKs6ciRE
+	 OWuR3Lwtk+ihueY/xlyRZHO/5ymi0VjOXts299YB8jpz59NolUd9PAuoV3nWo0Iyn
+	 x0FFlw0MVOmTgf7i3KpOaQNtSZglf1FLFJbR0kV+F1jEetgYybWGbFETYfeocOjsl
+	 A/978FCQ+qG+qZHy4EoirDQEJmm5hbvdlfVTb+Dn2oQZe2ZzSgl+tSTO7MeK8ljIS
+	 93pEReYixkHIGvD3/w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuOW-1qssRE2Nka-00f7xJ; Thu, 01
+ Feb 2024 14:28:20 +0100
+Message-ID: <d14e1d0f-7463-45ce-a25e-2d80f7996934@web.de>
+Date: Thu, 1 Feb 2024 14:28:16 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, linux-btrfs@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Josef Bacik <josef@toxicpanda.com>
+References: <20240201084406.202446-1-chentao@kylinos.cn>
+Subject: Re: [v2] btrfs: Simplify the allocation of slab caches in
+ btrfs_delayed_inode_init
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240201084406.202446-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BqFjLRTgOa3kIpDHoOJgHrjuHTFWi9QzuakpdSBVn8oCUTV0HeJ
+ 7W5j/tsDmlcWXTmdop4L90Wb/FW2yUILcYA7gwtIg+tB+nmLVop2xUe9+oRfbkVwfRhtyYk
+ cd0HgpVkI/x8Shvq1CiiOsnVk5MHnbS1LIZJKDNwS9hz7UOhwDYcO9EKsRcdVKj8jZdFcyn
+ ediP1W0J9gUS9XquijnDw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+gGUSgueFBk=;RkE7kyyY7SlFYfo50IzofGYDHOS
+ iBMxatbrW9MQL3fPfM8oLUoULsAEQi0LArqcs7wDQvlKToT9Q1c93gpZRBFzG8xTps+al5M4g
+ E7UjqOeonej8n5w8xPBoFD3sAIbrBMkFMUO2bLgkeaCw28An9Q+jAmjz6lF6GM0YjYf/Mlx7k
+ jPe4j4TSFzyC4VAS4s2rUnP8GGXNs1r7AbpZusRDbcE2+xX4nX0Rs6lTIWWRx9m8cDR5Syl47
+ FltDcn1Kah+SodyJggiOvKLfXQYp2oi8NP1e8WhLFIJYYRV4xaJcocxTPPgqcoWL8POv6XDdZ
+ lSwOiu5ytcl3cKNOD+pBS8Cn+twtjhb/V2eoDj9RjmHHlrjSTf68g9JzxkegkVd9tNvCTm8Ef
+ XxyLmIFFBLwbL4sJaDPOaDX2hRoLPfy9nwTMYvmHWgtl9TUxc7y69ONx9cRRjQEH8Hv9tla7y
+ u4u/83PiB/j02vCoEUGdErXIw6NVcM2TZgZW+rHIE8TD7kSC9Pt2OtS3awq2IYRuIS6vVJbWF
+ HIQ7rjPdRQPtraEXB3+eWr5QjxIcnSC/+dngYiO+2o9JL2gMoNPWYkIkO0K2Aisdc/IM9qnMK
+ 9WI3Peh1OtP0lyYz98yVdbpzSGLRoUmXudr/4Ok1GgoXcPfsuMeW2deSCXBOIGFkUNkN2MgeM
+ SQg+0oDGPLwlT6ssl88NqDhCfbrFm0ywjPofAcHM4c5Xgr8OuAjSQhpEAIVMPwT4SL7aS4qPu
+ jq5WocY1md27KgLRr53TddzgerNGw2IP9JHD8NLZd5+8oMsbJ/8oF6A6gjaTvRs+2SAVmcoPc
+ yh7P79p6neplx+NpAFycz8GUV4fZv+YDe2ax3Dq2cBRCQ=
 
-This goto will try to lock spin_lock(&ses->ses_lock) twice which will
-lead to a deadlock.
+> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
+> to simplify the creation of SLAB caches.
+> Make the code cleaner and more readable.
 
-Fixes: 17525952fa83 ("cifs: make sure that channel scaling is done only once")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/smb/client/smb2pdu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+* Please replace the word =E2=80=9Cnew=E2=80=9D by a reference to the comm=
+it 8eb8284b412906181357c2b0110d879d5af95e52
+  ("usercopy: Prepare for usercopy whitelisting").
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 2837fc4465a7..dcd3f6f08c7f 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -401,7 +401,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
- 
- 	spin_lock(&ses->ses_lock);
- 	if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS)
--		goto skip_add_channels;
-+		goto skip_add_channels_locked;
- 	ses->flags |= CIFS_SES_FLAG_SCALE_CHANNELS;
- 	spin_unlock(&ses->ses_lock);
- 
-@@ -448,6 +448,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
- 
- skip_add_channels:
- 	spin_lock(&ses->ses_lock);
-+skip_add_channels_locked:
- 	ses->flags &= ~CIFS_SES_FLAG_SCALE_CHANNELS;
- 	spin_unlock(&ses->ses_lock);
- 
--- 
-2.43.0
+  See also related background information from 2017-06-10.
 
+* How does your response fit to the repetition of improvable change descri=
+ptions?
+
+  Example:
+  [PATCH] btrfs: Simplify the allocation of slab caches in btrfs_transacti=
+on_init
+  https://lore.kernel.org/lkml/20240201093554.208092-1-chentao@kylinos.cn/
+  https://lkml.org/lkml/2024/2/1/387
+
+* Would you like to group similar source code transformations
+  into patch series?
+
+
+Regards,
+Markus
