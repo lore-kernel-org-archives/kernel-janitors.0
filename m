@@ -1,84 +1,68 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EDBFBFA;
-	Thu,  1 Feb 2024 01:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E464A80;
+	Thu,  1 Feb 2024 05:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706749824; cv=none; b=I+QRV7bbp8FpnSwcApRG4f5H4XuR2NJ29FD4x9xXm140NN2jffADQLQVC/g5PohmVlM5LZF95McKQmaeuZe1agYfOvWLDdo/7ilKX+gmdZaRRshnnLRruEkC+myAqYysVurh09PNCTnrWwM6/M4z+SELAy1ROwEOS/44Zyp+s3c=
+	t=1706766716; cv=none; b=bVKVN984CVwq/fl1LS81ZCdEQVz6bqwh/tWrsxk80HTe0vi+yW4v2+apT4J0NVA6QEpyPY+YiWNGLOiXOcge85Qmy+R/303irSu1fgxHUjBScMoXxmAR4GpU8BXOn9HQuQgQ815561omHdLfVuGRbd8qulFhgXejQJgsET2lGN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706749824; c=relaxed/simple;
-	bh=oXyZ94HQjIDlcU47fwE4bXXm8+FGbxZrkGWQO9/D9rM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lEG+xnYC0LMSoH3hzcE/jAxFwY2C9QLswNV0EK3lgP63yCjz4MjSy+8Fsfu0bd/LYQK3ta8dEXRKyvv2eJ0AChqjnP77J96bs9W1G5bcHFVJHY52EsS1q6WWKhu9C7TQ91fkWMEO5pWlx3pj04mGL+oYfZ/KXqfOkQcvuiwVmbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 41119nYoA1198478, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 41119nYoA1198478
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 1 Feb 2024 09:09:49 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.32; Thu, 1 Feb 2024 09:09:50 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 1 Feb 2024 09:09:50 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::c9b7:82a9:7e98:fa7f]) by
- RTEXMBS04.realtek.com.tw ([fe80::c9b7:82a9:7e98:fa7f%7]) with mapi id
- 15.01.2507.035; Thu, 1 Feb 2024 09:09:50 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Martin Kaistra
-	<martin.kaistra@linutronix.de>
-CC: Jes Sorensen <Jes.Sorensen@gmail.com>, Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtl8xxxu: fix error messages
-Thread-Topic: [PATCH] wifi: rtl8xxxu: fix error messages
-Thread-Index: AQHaVBSKyusWX7FLnUifv/dz8Jm+y7D0rgxQ
-Date: Thu, 1 Feb 2024 01:09:49 +0000
-Message-ID: <05fc965bb66746d196c2da08a0455fdf@realtek.com>
-References: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
-In-Reply-To: <7b144531-a8da-4725-8911-9b614a525a35@moroto.mountain>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1706766716; c=relaxed/simple;
+	bh=pB7E6jsVPvH8FyHd5rIlreiMws7ij1lqrILC5DieAGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gb06LFHBXT4LXBFOyTqEW8bTqgFFgy9A8lFXlZqotsA1gPxP4NSuKTJ9kL7pBE0fQDDOEb8FvvIVaaQj5wnyYF6LK709Ay8C4cy8+P20wZ3bxkYOTsSSB38fnR2oD0jgeYLh/SYp9ODXsyzyjQdFZ1UkZ42qenH/exvqFnFAXyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+	id 1rVPzD-008Ubc-Uc; Thu, 01 Feb 2024 13:51:45 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 01 Feb 2024 13:51:57 +0800
+Date: Thu, 1 Feb 2024 13:51:57 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust file entries after crypto vmx file
+ movement
+Message-ID: <ZbsxfYVKqxwn5gl5@gondor.apana.org.au>
+References: <20240129131729.4311-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240129131729.4311-1-lukas.bulwahn@gmail.com>
 
+On Mon, Jan 29, 2024 at 02:17:29PM +0100, Lukas Bulwahn wrote:
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2fb944964be5..15bc79e80e28 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10307,12 +10307,12 @@ M:	Nayna Jain <nayna@linux.ibm.com>
+>  M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+>  L:	linux-crypto@vger.kernel.org
+>  S:	Supported
+> -F:	drivers/crypto/vmx/Kconfig
+> -F:	drivers/crypto/vmx/Makefile
+> -F:	drivers/crypto/vmx/aes*
+> -F:	drivers/crypto/vmx/ghash*
+> -F:	drivers/crypto/vmx/ppc-xlate.pl
+> -F:	drivers/crypto/vmx/vmx.c
+> +F:	arch/powerpc/crypto/Kconfig
+> +F:	arch/powerpc/crypto/Makefile
+> +F:	arch/powerpc/crypto/aes*
 
+Are you sure about this? There are non-vmx aes* files in that
+directory.  Perhaps something more specific is needed here?
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Wednesday, January 31, 2024 3:10 PM
-> To: Martin Kaistra <martin.kaistra@linutronix.de>
-> Cc: Jes Sorensen <Jes.Sorensen@gmail.com>; Kalle Valo <kvalo@kernel.org>;=
- Ping-Ke Shih
-> <pkshih@realtek.com>; linux-wireless@vger.kernel.org; linux-kernel@vger.k=
-ernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: [PATCH] wifi: rtl8xxxu: fix error messages
->=20
-> The first parameter of WARN_ONCE() is a condition so this code will end
-> up printing the function name instead of the proper message.
->=20
-> Fixes: 3ff7a05996f9 ("wifi: rtl8xxxu: support setting bssid register for =
-multiple interfaces")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
