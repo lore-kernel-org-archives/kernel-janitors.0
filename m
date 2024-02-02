@@ -1,74 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881C144609;
-	Fri,  2 Feb 2024 11:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF3B80618;
+	Fri,  2 Feb 2024 19:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706873980; cv=none; b=S/oXL8mVKS24sVjeLsDBKU2kGnL0iUEGYM2oBjWExj8AhjGZ5gnSAMzomAZuEjx6ZACdqFPKDqzlKqcYyarcvSxETnaRtvsDV9i6LJ1jdPvKeBu/oe55BmJ40dzjvw93SV3knU27u4bLw9khHQNiwiMDaiUwwgeubTHhn8aVShc=
+	t=1706901191; cv=none; b=E+2IM199/cFzR2mIksM5wjDPMi07QH7sG7uOTptsuZ9MGKKGtRtVGo46CMQE+vQ2mbSWF0txe4I177ewR2RlIl8I5QNpQ6pZDotHPVgj8QSU4x/oQ1I0Pe6+uYoELUvS27ljukdpcBcUXuTi1tpYxD1NEFxL5wZ/BJPUx+ogVjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706873980; c=relaxed/simple;
-	bh=dRBobT+WpmPRhfZpKodvcWF3fz4dYA8o9bU+A200sUg=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=Dp8ZXWnhl6CVF0GCKkNCiDgKjuVi8N9t3InvYLVweczebz98qo8768cTl56+eG2rNYATX2xRcrncSASixS2MBW5dRS/S0QAZslT+cZFFxILtYfi0TIgbtgMn8TaRc9RXsCAktSzTPx8ad/actYrWDp5Ft1w0a4wsiJ9pQvuJeKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhIbFC28; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706901191; c=relaxed/simple;
+	bh=zS2ruA8tqKW4S6ZfvZ5YkkvA9o8UBqCZlA+Oud/kXL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KzoRCAWACvtLjTA47bbezs03Lhq1LD+kzLIcaaDSJIVNgIuT6KFlMAdxyNbjtb6r1Vxo5Yepf35N2fEiXjMVhpcqkAyfMBMzLIVh+l/w9zdFprbjHkcApWxYu0PGTFtjxUhLxu6dRQySoO3z0hpyqDi7n6sc/eJuD+jdtKw8nu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IB3/3JT6; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhIbFC28"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56CBEC433F1;
-	Fri,  2 Feb 2024 11:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706873979;
-	bh=dRBobT+WpmPRhfZpKodvcWF3fz4dYA8o9bU+A200sUg=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=WhIbFC28dX/QlDe3zsQcauhfu/X/VglmFxp/cO+mN+Ek023qw6BBZ81JlxNTMFeHC
-	 pAFwtKEqVEdsCDvsxf5le/7s8Prexm8AEjlo0AkN/cyoNgYqxEU1AgLuSZegLqCwzk
-	 MmUhfMtp91iqPlGKd9HjpZdf4kPJv+ShgNKcdwtgnyhVyPccZ+9TYKphy2IMCJkOij
-	 IcftNHQfYzfDi+HMGIggGrIBOawfnQy2q3ShwCjASYKO1nKxyYr2mkB0iRgY3aPv9A
-	 iZZicaoz+lpmZ7WPXHxEw9Qb71tkm7X6nfAnshXB1r+q2Tpm7qOa9R/EN96hDKg0aj
-	 C6+klghILNm5Q==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IB3/3JT6"
+Received: from [192.168.1.18] ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id VyxArgRG8LHvUVyxBrSZHA; Fri, 02 Feb 2024 20:12:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1706901120;
+	bh=hgM+sL1lI70tjST9OWNADLTm22CNrbWKCKWuKXAi1Wc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=IB3/3JT6Z9JwTQHO8O1IuAxpknm9XSa6vRNk/mJMGNMxeIHLklWEuuRA3HZHXbKCH
+	 SIEacC8FD7VjBhbe2LtIsw/fUEespg7qsk02Is9GRLYAYHKpBAXRGGhUufgPYdDY3A
+	 2k6OMW8d6JhRk0HaKA3QKz7BX/DXExTJoTja9xyZaQMsYCSt8Qj9F21o8cGcNsMpaE
+	 773tUqCOZEgA8YEkKadnR0k0zs2o+4siRxG5vPS0l3xalOMxHQJhORRZABjtFQqugg
+	 Qn2cLA+CzmSPs01iJnYwLHNLg0ziVOB9yWJfpVkvXjn6VBNnZHiQqVsZdW4wM4DtJB
+	 T/X7JTTdd4/KQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 Feb 2024 20:12:00 +0100
+X-ME-IP: 92.140.202.140
+Message-ID: <30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
+Date: Fri, 2 Feb 2024 20:11:56 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] nfc: hci: Save a few bytes of memory when
+ registering a 'nfc_llc' engine
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+References: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
+ <20240131150803.2fec5a5c@kernel.org>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240131150803.2fec5a5c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] wifi: ath9k:  remove redundant assignment to
- variable
- ret
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240116155452.2315351-1-colin.i.king@gmail.com>
-References: <20240116155452.2315351-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
- linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <170687397628.3200018.17782967291636533113.kvalo@kernel.org>
-Date: Fri,  2 Feb 2024 11:39:38 +0000 (UTC)
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
-
-> The variable ret is being assigned a value but it isn't being
-> read afterwards. The assignment is redundant and so ret can be
-> removed.
+Le 01/02/2024 à 00:08, Jakub Kicinski a écrit :
+> On Sat, 27 Jan 2024 10:58:29 +0100 Christophe JAILLET wrote:
+>> nfc_llc_register() calls pass a string literal as the 'name' parameter.
+>>
+>> So kstrdup_const() can be used instead of kfree() to avoid a memory
+>> allocation in such cases.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> Cleans up clang scan build warning:
-> warning: Although the value stored to 'ret' is used in the
-> enclosing expression, the value is never actually read from
-> 'ret' [deadcode.DeadStores]
+> There is a kfree() call in nfc_llc_exit() that looks suspiciously
+> like it may also free the name.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> 
 
-Patch applied to ath-next branch of ath.git, thanks.
+Hi,
 
-08d82175bfbb wifi: ath9k:  remove redundant assignment to variable ret
+you are right.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240116155452.2315351-1-colin.i.king@gmail.com/
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Should we have something like:
 
+void nfc_llc_exit(void)
+{
+	struct nfc_llc_engine *llc_engine, *n;
+
+	list_for_each_entry_safe(llc_engine, n, &llc_engines, entry)
+		nfc_llc_unregister(&llc_engine->name);
+}
+
+
+It would be slower, but it would reduce code duplication as well.
+This is just an _exit() function, so it shouldn't be called that often 
+anyway, if called at all.
+
+Or, add another function with the list_del()+kfree_const()+kfree(), that 
+would be called from nfc_llc_exit() and nfc_llc_unregister(), to have 
+the best of the 2 worlds?
+
+CJ
