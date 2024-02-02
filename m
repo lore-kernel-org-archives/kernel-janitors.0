@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0848217BA8;
-	Fri,  2 Feb 2024 07:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCCD77629;
+	Fri,  2 Feb 2024 09:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706860705; cv=none; b=EjWzR3h8b68Fo1w5vFBkOHWhmoLNZ52LVAUlKornar0hvxAOAi0wnJjSJdFZUz1yzgVAcQUiC0leTqo4S+Fih/YNwycSI7owWlqIPRGwtlrPGXVz1yuFd8jrSFAQ7nq00xIGdRk1moc4ANrQIFTjhlQd5OBxmWug0A+QHv64HZA=
+	t=1706865157; cv=none; b=riQEorA23allU3PhvicUklQJtmJSiJI4G/6EQzTFo8w3dfVO3HdMD81jxcfrE6xyIZp8HOsMaGu19uclFqAG2nPc6eNxucZAQpd8g+ZGln+RTcalDIy4vyxjdoC77AFPU6TeijkbxVgmLfeGw4oDayJBnAABzxksb/H7fKouPVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706860705; c=relaxed/simple;
-	bh=WXu4/0SmNlUw9ukdfS1oTJfdOj9hOaYnoUFtTE5PiCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M0OAmfEzXY4+5Jibn4jSCHO4U9vvHrefEz8WQlIWwcweu6w3TkD/iB/U3f6HPUgHug0gVk7TRiTd0l9GyQqT9+VISRISzGTM4xe9h12snHJebJ+iXC/wfqcQGz6mk0E0FKi1zDKYQBS6Ha7Np5AsGWuViZLS6udm9vOIbXzsb34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XpQlNfzf; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1706865157; c=relaxed/simple;
+	bh=PKmuhun5hicJU/NJ+sjbWZRyKiIfaq+KU/2m4Ypz33I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iMyUStjPplLItYOrJ3sdp+6oudTZmjd7uGrpRIEvFKnJLXenOeUBjcBGPTd3AkBpDuBQAvEFpnT/LaU/37zpUpWQ9gwiX3NDCIkRthE0s6D8kr64zUABHgPxQmXzhgMLl9sjABrWHcF1hhm8BiQpuSgsAZxpuU8t9qeR20pZqVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YoZ2lFXm; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XpQlNfzf"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YoZ2lFXm"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706860685; x=1707465485; i=markus.elfring@web.de;
-	bh=WXu4/0SmNlUw9ukdfS1oTJfdOj9hOaYnoUFtTE5PiCw=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	t=1706865133; x=1707469933; i=markus.elfring@web.de;
+	bh=PKmuhun5hicJU/NJ+sjbWZRyKiIfaq+KU/2m4Ypz33I=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
 	 In-Reply-To;
-	b=XpQlNfzfNN7R/qHoN6/4ryLK6Wjb03ahHvwl/TItpslkoxaLO2w3IAvV0DZYi/Jo
-	 jNlCNfCw4EyTDJJP6nfKMR+0u4UdprCru4th+GOtDsgjcfDKN3CcX57dIEEV694mQ
-	 BZXcLTi6IETSLJAy6dUSnzKMpRCR3WwS/ZfHa88qIPKB3ZvMbXLm7M2F/8Tf/qddL
-	 uFH2CeVBXgnsJ5Ap2v9JgUZBT8AWoZ7aLbdDqhLxnGyANPvREBSNpxtT+QSC9+mOh
-	 iwy2fgtpP79h/O/x/lt059XjukifSqxZvWzBXOxNN0qNWFSC3nQKM7j1+vbOlU49U
-	 YvngotXnnrbJ7txkaQ==
+	b=YoZ2lFXmvZ2OprFlyHqNnul+Ti7iHoHITbf/Qv0+sYybFDyFPApxcYZgco1NbLrC
+	 g3G9qqdg4oXTAQSst/+WjVpfztqZ/wzP7BkvkT6NansAGe0KEVTzOqueONLAHqWbN
+	 PBMhCUwEUNV4nZQjn0JBHn4O8QCoIIRmOGD5qTCqiYywWDMXh3HYMx5rDGCQ6yFRz
+	 pY7mbX0+aKaAR5/i0JjW2wxWmlNtuYxoTyjR+CtggGB1RueVvAK5/7zN54jaQTgE6
+	 rLhBbiSgoKdGSWvYX0C7ZAjsrvlRLqMQfVIgkAwqA3uLr0r4mi+jz9SuEvhpTtizg
+	 e0CqsZELpXvnX/Tfag==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6YNJ-1rPVye0Mqf-006dAH; Fri, 02
- Feb 2024 08:58:05 +0100
-Message-ID: <0008614d-bd62-4e05-a063-b1ce6ced90d1@web.de>
-Date: Fri, 2 Feb 2024 08:57:02 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnpGw-1qhbb519uE-00pcid; Fri, 02
+ Feb 2024 10:12:13 +0100
+Message-ID: <b08603d6-cac1-4876-a56c-30c680d5dc52@web.de>
+Date: Fri, 2 Feb 2024 10:12:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,59 +40,126 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
- call in fme_perf_pmu_register()
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-fpga@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
- Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
-References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
- <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+Subject: =?UTF-8?Q?=5BPATCH_v2=5D_Coccinelle=3A_api=3A_Add_SmPL_script_?=
+ =?UTF-8?B?4oCcdXNlX0tNRU1fQ0FDSEUuY29jY2nigJ0=?=
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
+To: cocci@inria.fr, kernel-janitors@vger.kernel.org,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
+References: <8d53ac92-9693-4ff9-948c-29b7fb252b89@web.de>
+In-Reply-To: <8d53ac92-9693-4ff9-948c-29b7fb252b89@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Gd9FMzio+eEpJUmNTbX9PyQNmf38A2yTnU3187dIPcNgwsbWayg
- 3XhyF35zXqWOaNupGrh1+HQZqwf8DJnXujVs6zMb3FKwBKEvIb7Z8fU0C1lorcf7+tKTcGE
- SBCcLTctYYXZYPakUQe/a/I99h2yNQfO0NE79pq4tz5YYdnKsM5e3qHtRBWGHkhwQUVt2zo
- HRSe5bs02Cczj3RL447eg==
+X-Provags-ID: V03:K1:WNCUmyqr1pA3HJoX6TmKsz0s9lqwB4W+ZMqtYmkzCS8cyhcxsx9
+ tAQx6sZaiCBtz9m4H2Ox0OhV7tD0tcSninKyEtTVwNLfWbhGiD9JCIPpzw7DW1Q7nvpTbNV
+ uTDlfbW8ZxrlscWTyEMoFq2A18KF0AbW71Vg0B/tCYy8nxDzSc/ybeSqszx7OcwAJhzxRgd
+ vATfRD6HOZ0v6XQYh43tQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zC3BJmvRg6I=;B4Of8fxqFhJqj4E8sLHvqF/ZqIS
- 6tYr22rkX8WtAHtd4b+AKHUAT23I2xvzyQhy1eO/5NjNKcVppHb5erefO01dCn+kbUuKOSKrB
- Pknh3SQP+b+xWQ/7k908VapY3lyWp6v0nrUmvaXJIDiFbFTITq15a7xYfUmchhEL5pOjaNLf3
- Bz7BVWuc82KErFpmEkbw+kUQ02CaR7BDrA3T9VVYH0+9a7K7M4N9TNpIMK6miEjVIU4Mm1bZu
- W7bmrkWZcliQ1RATqEvKMqDtNaxkXQ5ekz2tcn1ZsXllVXhMAXOpiljY9BjpfxiLC2j6IUN45
- g1FN9IaXlNOdeLxvEMStlqLexEXUFtn46DsumT6+3YZZvI7oNXthyB9EExhfFXcMzt5BGoVz1
- cAkn06U3g4jeA/WL6wDKyNzzhxp1Bf8ZV82FGAI4ZXhATFTgZ8QFsooVt5X/R2SIvYGtWO5In
- BPQexypSymRH/yDPhRFQgy5Xe8nzdXMY8HgLbO5/dgUXLLPE+Xxmi6oP8xf0BU3NKVRSfiCPW
- Q6jO46uZahQLEHaugJWgcsrBbSR32erekNeFc9cYnIPvmiedsw+3ycaZfE0Ep8ms+JqW1uPQY
- 9KJDOzwBuwJ+HnGxmRytCgnhmrSmnujR0TRHAOgc9P1/sHIhi1aOQjMKBSz/1YmoBr/1wpHwU
- /kT+qeNIxSbUlAaJbX7fXJujLtdyQh8s7iOQ/cHe+8iLBud/AK8jEgxCjJ7ngxFDAjzhr9IP3
- D/Kapw8H1nehDYvz1EHH7BSzJqI0q6Q4uQHRbGkpbtItlw30Y4oKjP7t4ubDs/rIE27XvYoLz
- DXo12Wr7aDyzVk3qp0ucKER4H0FKaY5Fc9/SnUn7Y5Cuk=
+UI-OutboundReport: notjunk:1;M01:P0:tTVq7jzpR08=;Ye8eBRyqLIxiAqAKtJr7JfjMptl
+ S5uHgF3J4FUjCnAwNxEyn/aBm81DuYwi8W4WDjpaq9MydncgDfwEbBXkwJJZJXIeadL7ucYnb
+ oyEVtHK8jNzKUpxdk2cKc+UZSGeK1WEpyEwDQFkmTrRf91cvFK5K+5LCmrqfoixHRIcuMTFJz
+ bPq0rFrUoao+APs7wVUE0G01IZhoqYfuBkU5oQzmrf6pphelpM09gbupzrgehoXYI/hshyAAW
+ lMb+typeC4i1wowqVjWc7DVXJb9gJMxOYRiFHv/i90ZqAftI1siCJHRHQh0Ljj7mpjY9uGPlg
+ 3J+8N7Fo6hEtq+wBGyBoWR4o52h+sFarmhaqEbHW3Vr3V33HZkpUajN5dUw3y9Dd7vg6w2Wph
+ 956D0XvJJbVpf8bDxz8l4Ft2YBmd9gXQlKtyIY5HUViKPTDisvsrx6FvtIZNopfQWMQq01KC/
+ zpwUD3JKpuVlwEGtlKW+G3dsfBgm13rgj93imZaw8b2eXHrkl0xddxIhvMZGm5fjkjsIZ1Tjs
+ I0CiAQERgPGNtTU4PWRymE2o9omIqGE4fDJ8kexA21WqkVbt6bwyxy5gTMoNyuWl1WQMDL+SV
+ jbEvFxuWBeol9//5Kp6eIOh5/PpNkitzHq0nJ3rmp1sOwqMRQy2XGsheW8sUyDFkadOK2ZiGH
+ JAt0UogtvCoEfkw6zv93QELD3AoB+ZJrrj7FgCeVdBLKRzDi8qIRo66QLPEosp5gV27UCnp38
+ cPAnm2qwkYVsz6iAKs8neuRff1Q4WellYdaVot+IakM13/qggfkOu6777fjsZC4DFySQZz+zy
+ VAx7rBZAaHem7dtr/fkvyNe9ejqfl7h/N2lz6ROjPi30Q=
 
->> Thus return directly after a failed devm_kasprintf() call.
->>
->> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting suppor=
-t")
->
-> This basically doesn't affect runtime because perf_pmu_register() checks=
- for NULL
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2024 09:48:11 +0100
 
-https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L115=
-27
+A wrapper macro is available since the commit 0a31bd5f2bbb6473ef9d24f0063c=
+a91cfa678b64
+("KMEM_CACHE(): simplify slab cache creation").
+Provide design options for the adjustment of affected source code
+by the means of the semantic patch language (Coccinelle software).
 
-Do you prefer the usage of the error code =E2=80=9C-ENOMEM=E2=80=9D instea=
-d of =E2=80=9C-EINVAL=E2=80=9D
-as an indication for a failed memory allocation?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+v2:
+* The reference for the previous commit was adjusted in
+  the patch description.
+
+* A constraint was added for the metavariable =E2=80=9Ctext=E2=80=9D
+  also based on information in a hint by Julia Lawall from 2018-02-17.
+
+  [Cocci] Clarification for scripted SmPL constraints
+  https://lore.kernel.org/cocci/alpine.DEB.2.20.1802171531330.2205@hadrien=
+/
 
 
-> so no need for a Fixes tag.
 
-Does the selection of a more appropriate error code qualify for this tag?
+ scripts/coccinelle/api/use_KMEM_CACHE.cocci | 53 +++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 scripts/coccinelle/api/use_KMEM_CACHE.cocci
 
-Regards,
-Markus
+diff --git a/scripts/coccinelle/api/use_KMEM_CACHE.cocci b/scripts/coccine=
+lle/api/use_KMEM_CACHE.cocci
+new file mode 100644
+index 000000000000..e158e4c7c1d1
+=2D-- /dev/null
++++ b/scripts/coccinelle/api/use_KMEM_CACHE.cocci
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/// Simplify a function call by using a known wrapper macro.
++//
++// Keywords: wrapper macro conversion cache creation
++// Confidence: High
++// Options: --no-includes --include-headers
++
++virtual context, patch, report, org
++
++@initialize:python@
++@@
++def is_equal(text, id):
++   return True if text[1:-1] =3D=3D id else False
++
++@depends on context disable sizeof_type_expr@
++expression alignment, flags;
++identifier id;
++constant char[] text: script:python(id) { is_equal(text, id) };
++@@
++*kmem_cache_create(text, sizeof(struct id), alignment, flags, NULL)
++
++@depends on patch disable sizeof_type_expr@
++expression alignment, flags;
++identifier id;
++constant char[] text: script:python(id) { is_equal(text, id) };
++@@
++-kmem_cache_create
+++KMEM_CACHE
++ (
++-text, sizeof(struct
++ id
++-), alignment
++ , flags
++-, NULL
++ )
++
++@x depends on org || report disable sizeof_type_expr@
++expression alignment, flags;
++identifier id;
++constant char[] text: script:python(id) { is_equal(text, id) };
++position p;
++@@
++ kmem_cache_create@p(text, sizeof(struct id), alignment, flags, NULL)
++
++@script:python depends on org@
++p << x.p;
++@@
++coccilib.org.print_todo(p[0], "WARNING: opportunity for KMEM_CACHE()")
++
++@script:python depends on report@
++p << x.p;
++@@
++coccilib.report.print_report(p[0], "WARNING: opportunity for KMEM_CACHE()=
+")
+=2D-
+2.43.0
+
