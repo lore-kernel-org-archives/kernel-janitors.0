@@ -1,62 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F953D3BC;
-	Fri,  2 Feb 2024 19:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECA28062A;
+	Fri,  2 Feb 2024 20:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706902395; cv=none; b=hizcPO5sD2eBk3D/49qq5xhZiwCUNipnMOeEXVtNo53IsZ1ekhMVFLP6gYCuEb4yQfCWPCBrVdoKvKJTAibMwlA8tHXz+1DGf6bQ1bQW8FuTcRtQBroHQWbLv2SIiiHZiRu37o+qHph3plnvQVb2/l0xZWDhXWkVpBeu9+q0oGE=
+	t=1706905330; cv=none; b=lKU5dZ0TJ0vdbVDiciyr8AjkONtievE8yUtA0CAcLxkyF6/jWYjeT21K9vJKuClB2X7VVizbdSvsi/ZJm6ESqvRRUBDLiidYXFqvljgJikdM3BZihOpGjOrdHyRBzPTYroUGkVOkIS+TVhIgFK0/Ca/o50tzFsCibW7hmuF853g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706902395; c=relaxed/simple;
-	bh=5fX28k3jBg8AF6wuBErGgmwNBI5qB8oapTjKGw2klLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XZMh5TLxEWKiFFpfRqkgiCO75larLY7F9DT4zj52/8MfDjZaKyvGYA/sjd63UsEP2hyj14eTfpYSjdYgBfgVjDEHYvxeoxpkslx3H4faxa2GZHYi2rYT4Spfj8IjGz/7bCLQy2g2+e2pCstHqIpnirTxDCNYLVnECrgYftw0RIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSwZfUaY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706905330; c=relaxed/simple;
+	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iNAspKSZSc0FKEev0E921pT3RJMzJzpDoPo30Y7KF/RRoN0eTrmLVkW7i+nwYoqQBkKrLthb3uEu9dsON89WiHqQGptnRJwcfWKjBxAViXVZjhJKNz4Ng0c4+pepav0h7+mbuoFDnjUblP6wrARVBQFLnfqnvLOj5JluZz6SLqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G8C10dje; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSwZfUaY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3FE8C433C7;
-	Fri,  2 Feb 2024 19:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706902395;
-	bh=5fX28k3jBg8AF6wuBErGgmwNBI5qB8oapTjKGw2klLY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fSwZfUaYriZSw2g/i0aVBoJi+X28rETNBt7iN9Qv/JADxiikJNxTzbFABqcklfsJe
-	 Q1+tSI7YPPGRAUPS3xrzIrQPpoknlXh93bFiFP8YtfCvALE8k9gtvAE6ZInmvoYFEG
-	 BMOSXx2/isYuYYTySvQXnEs6aznflCfMOMTvlCKrUNLmqIY72xxgeoR6SXtdDtMcpK
-	 UeqsgzPKpUdiIYgFzJefEBWW6j1KaNtbXjjAZSFC2g0kN8AX+1BFEqkUpXDYCIhDxV
-	 vvKi1HXBB9mbkKn1poycMz4ZLp2rRGSr9W+g7mpwRMzfAR4BPmEZ+wfEfyBJvFAACP
-	 mHuArwCM2/F0A==
-Date: Fri, 2 Feb 2024 11:33:14 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RESEND] nfc: hci: Save a few bytes of memory when
- registering a 'nfc_llc' engine
-Message-ID: <20240202113314.4c5f09ce@kernel.org>
-In-Reply-To: <30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
-References: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
-	<20240131150803.2fec5a5c@kernel.org>
-	<30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8C10dje"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1706905298; x=1707510098; i=markus.elfring@web.de;
+	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=G8C10djeXh5lOZvU247Dn+9Cm7OL0cH/D1Bl7WRpbIO2WUKq6yMS521XEpMvH11G
+	 WRc1JCbYGrSI15XggN2RCra71OGpZkOw/2pMmYBAyRP02aCEoaMjo17NonpG7dho1
+	 yMhEmSatRaN1UzQVYk3O0LFCT0q8ylU80Dg71ThxyrJ6FmDQIZHPGmNNoF3FfSEYk
+	 isnxm9vgAhHTnXuxxAg3+TNrXnCN7Ub6cRk4KYRxDOmY6Ym36usxl903tLabYsvNv
+	 SjkoKSBKfbZoeLvoa2+xR1kYH6sc07rftcALRcZ+fYHMe5Qk4zhVfR4o1fssmy9li
+	 +yh3SSzuItAQLfhwEg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbLM-1qoioK00NG-00iZ9I; Fri, 02
+ Feb 2024 21:21:38 +0100
+Message-ID: <1a3c05b8-45f8-4205-8cb5-3b8f2d791877@web.de>
+Date: Fri, 2 Feb 2024 21:21:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: clk: imx: scu: Use common error handling code in
+ __imx_clk_gpr_scu()
+To: Abel Vesa <abel.vesa@linaro.org>, kernel@pengutronix.de,
+ linux-imx@nxp.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ cocci@inria.fr
+References: <20231210171907.3410922-1-visitorckw@gmail.com>
+ <0e906ec6-fe73-4dbd-b555-a2c03b6e1030@web.de> <Zb04UUeE/cU9HtKZ@linaro.org>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Zb04UUeE/cU9HtKZ@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CSJNiI+KQkY3wXk46J8sqBLCgeytL9YGPMpnE6bhxbHLS1ujsvH
+ WtIcKGpQpstSECuHkRUVRn7udhpV/cp9kKG3djHijk+tDqEvugBIpO3jvDiEAqjrmsEDchj
+ EB/bFJ8Rrbp+rgxqrwcoYmApEj+c4vj/lGSZtItFepLt/wAggTQ5pyAma0iq4NKvir+Oe1Q
+ K195UfBoLASAs8DyCP3XQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wMEpts7wPes=;A2mzpRYQ4imzka4vF4y/w2Bur/w
+ +FcbRBULuHCiHAEiLUmpDmxYIoiEltOqt4+UAk/GlKEpka4Jn5xgjW1J+CEP9gFrwJB3OlNFj
+ FJr4Ol1aVJgaGQ+I3MuQYaZOCVyjPu69gnwqMW8PAoBRa3z8C8bthaxs/4GvWMAmhWSpUCj4M
+ K8TumhrqIE+EdrRpNSOiUe0gCQLuB3kFtQvIvhjHiWB8O98aP8if4f1E0KD5sj7ZJC7TzYlxy
+ CjC4T1SDfC3Aiu9wwDuQbqzh0MB1vGCueyN6gBcoqrrrckDnwkUAaYEP5L/NWLM6/Kwp+mWks
+ aMlsR0gYgdFWcCZmF3y3zlGgLeHfZ5Dm+gy1Zms2zcwWokaTBClVb/NCL32Vdir/5vKhdmouv
+ PGBVxFZ77RhVflIUxRMPQiyAbfQzb/Coghset1BFN5oKKZV6GXUZP9b+DERLK9p4Bg3hS5IXf
+ WckBsAsM6SRD1eXkK3sHAfX50iFQHIEQ4MKOpHQFEZuU0H5zFP/Ku/6oEXISDQ3MVa1jNUzAB
+ F94sq+123wtyPRNE7ozcyCqYsPRU+zrmf7meIQpP5n8ALO8XSA86QlQh/YgE7o2abTUggMKfh
+ XaPy+YMek2mKIegRxReEA6k4bjJHfVsMzxccWG+3LwXzDgx0fNNASGZxHBR1M7Ko1DdnAYQeg
+ GkRwilOySYpq3y+oaBWb18XmC11HyOKkIwYkgsZ8ZexZ3B3rYcsSSpYplPZ8Hk9mjoYPZGpcJ
+ YhCslGURNYJTpxQOU5y0V+K7LV1Fv7wgpLLc0lPOj+sI/hnMnGZN/bNP4SWTuSkw/ThjnYK2R
+ 5/y3ncMmAVC/iinfzzKk+KQynOb3EdQWFAZGl/bFksZyQ=
 
-On Fri, 2 Feb 2024 20:11:56 +0100 Christophe JAILLET wrote:
-> It would be slower, but it would reduce code duplication as well.
-> This is just an _exit() function, so it shouldn't be called that often 
-> anyway, if called at all.
-> 
-> Or, add another function with the list_del()+kfree_const()+kfree(), that 
-> would be called from nfc_llc_exit() and nfc_llc_unregister(), to have 
-> the best of the 2 worlds?
+>> Use another label so that a bit of exception handling can be better reu=
+sed
+>> at the end of this function.
+>
+> Please don't send patches as reply to other(s) patches.
 
-My vote is the latter - factor out the 3 calls into a new helper, call
-it where appropriate.
+This is a general possibility to connect an information sources with
+a corresponding change idea.
+Will the acceptance grow for the presented source code transformation?
+
+Regards,
+Markus
