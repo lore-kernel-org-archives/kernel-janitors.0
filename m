@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB81F4EA;
-	Fri,  2 Feb 2024 06:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0848217BA8;
+	Fri,  2 Feb 2024 07:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706856569; cv=none; b=tIrQG2U7xAZg0OqfFXBz/O3/xVWZ+Hv/b4snhuoUys64tG4ca79BJoTeTJWXpCxAZ8B82lNCDYZA49z841LJRRmlkiBmg8O8oxW1W2IEY1qXQlcyNu0HchrWs8ZfET/KL1wYNomRrzYv3wGFNoAPwxyk9A7RdmDXlQNHuHoi39c=
+	t=1706860705; cv=none; b=EjWzR3h8b68Fo1w5vFBkOHWhmoLNZ52LVAUlKornar0hvxAOAi0wnJjSJdFZUz1yzgVAcQUiC0leTqo4S+Fih/YNwycSI7owWlqIPRGwtlrPGXVz1yuFd8jrSFAQ7nq00xIGdRk1moc4ANrQIFTjhlQd5OBxmWug0A+QHv64HZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706856569; c=relaxed/simple;
-	bh=psDefbg/kF79ASsUkMz1eS3sAKLVErIE1EEhmYhufuA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZYdWNvzqdL6za9U7CpSqhBrRw+famd8de4iPEyu0MUjVaPRRdx2s39eTwaTs1vt7M69vwbAIkrwTRCOyCAyqvvL+7PchYMy8G9h+7MnfI1wSN/lQmLPAVMhIXQRf2MmXlehbzoeZc31wqrjtnB/CKnK5ecKBmlRzw+2tG8yAoFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=t9BJDGgW; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1706860705; c=relaxed/simple;
+	bh=WXu4/0SmNlUw9ukdfS1oTJfdOj9hOaYnoUFtTE5PiCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M0OAmfEzXY4+5Jibn4jSCHO4U9vvHrefEz8WQlIWwcweu6w3TkD/iB/U3f6HPUgHug0gVk7TRiTd0l9GyQqT9+VISRISzGTM4xe9h12snHJebJ+iXC/wfqcQGz6mk0E0FKi1zDKYQBS6Ha7Np5AsGWuViZLS6udm9vOIbXzsb34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XpQlNfzf; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="t9BJDGgW"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XpQlNfzf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706856523; x=1707461323; i=markus.elfring@web.de;
-	bh=psDefbg/kF79ASsUkMz1eS3sAKLVErIE1EEhmYhufuA=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	t=1706860685; x=1707465485; i=markus.elfring@web.de;
+	bh=WXu4/0SmNlUw9ukdfS1oTJfdOj9hOaYnoUFtTE5PiCw=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=t9BJDGgWqQZpeFoMDHQfgB/19gTb7Ka7GBGci1F4B4+NY0oCAUhbFu02S9quGB5N
-	 VU56dTABaPIQQfnCpIPZ2xsAkuqmbvmbHSTnLTpTNXWSgVpHmhp/QnnS0BlfchARv
-	 UEmsAwZy8R4tZV4nx9y2NcVxPou+Idt+UdDQx9I/6VnXFYpr+5Mxacst8hQjNZlhC
-	 xOYkBeOHfPkCKtBELx5vHDtPz0dZBS4sgoLMT6l340L/rT4xByQwgRhUb8f1ytgoS
-	 LB/q9otFpW/Y5UeYEjtg23XWUnMuzlsJKseh7QNZ2Rq/FGhdDKb1Azk2VgRAogEiC
-	 3bmO5CqVGOqpNgkldg==
+	b=XpQlNfzfNN7R/qHoN6/4ryLK6Wjb03ahHvwl/TItpslkoxaLO2w3IAvV0DZYi/Jo
+	 jNlCNfCw4EyTDJJP6nfKMR+0u4UdprCru4th+GOtDsgjcfDKN3CcX57dIEEV694mQ
+	 BZXcLTi6IETSLJAy6dUSnzKMpRCR3WwS/ZfHa88qIPKB3ZvMbXLm7M2F/8Tf/qddL
+	 uFH2CeVBXgnsJ5Ap2v9JgUZBT8AWoZ7aLbdDqhLxnGyANPvREBSNpxtT+QSC9+mOh
+	 iwy2fgtpP79h/O/x/lt059XjukifSqxZvWzBXOxNN0qNWFSC3nQKM7j1+vbOlU49U
+	 YvngotXnnrbJ7txkaQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhFhe-1qsazJ31Zi-00ea4g; Fri, 02
- Feb 2024 07:48:43 +0100
-Message-ID: <daf2172a-8d54-4097-acf3-cc539fe281e5@web.de>
-Date: Fri, 2 Feb 2024 07:48:12 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6YNJ-1rPVye0Mqf-006dAH; Fri, 02
+ Feb 2024 08:58:05 +0100
+Message-ID: <0008614d-bd62-4e05-a063-b1ce6ced90d1@web.de>
+Date: Fri, 2 Feb 2024 08:57:02 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,60 +40,59 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] perf: Reconsider an error code selection in
- bpf_map__fprintf()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Christy Lee <christylee@fb.com>,
- Daniel Borkmann <daniel@iogearbox.net>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Martin KaFai Lau <kafai@fb.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
- YueHaibing <yuehaibing@huawei.com>, bpf@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de>
+Subject: Re: fpga: dfl: fme: Return directly after a failed devm_kasprintf()
+ call in fme_perf_pmu_register()
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-fpga@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <chentao@kylinos.cn>
+References: <d94376b6-12e8-45bb-a9be-4887bb316d35@web.de>
+ <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
 Content-Language: en-GB
-In-Reply-To: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <b7e2e9d1-5e3e-44b2-a4b7-327d334b776d@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:guMMD0U0owRRTK/o4x0F68hE8U9JJPElbEE4i3GuJqzHWW1R2HT
- sH0Z4EGWRndq02j10zfeOmlFsuMWcTocY01WQzj55IfTx2GEaofd0UiNkmU5Hp8wE3DRUxA
- 66EGuYd+WeO0W1n9MgablveKN3xDoAC58LZZzpDfV0+2DysblxvSm6H00vhzfZDimtVJV/z
- CwSuyAopcmm7tc3oD4wnQ==
+X-Provags-ID: V03:K1:Gd9FMzio+eEpJUmNTbX9PyQNmf38A2yTnU3187dIPcNgwsbWayg
+ 3XhyF35zXqWOaNupGrh1+HQZqwf8DJnXujVs6zMb3FKwBKEvIb7Z8fU0C1lorcf7+tKTcGE
+ SBCcLTctYYXZYPakUQe/a/I99h2yNQfO0NE79pq4tz5YYdnKsM5e3qHtRBWGHkhwQUVt2zo
+ HRSe5bs02Cczj3RL447eg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tyHFUlgJYw0=;dgrK/DspkpssIY/mInw6RaOj8L8
- zzTf2dKbygFIyNv1oeJDdblOrP8EvVmHFVb/iQ+pEefr1xabU/7uEb27OtwF4VSNs0vLi2jk8
- obLgtu7m3UCnrc9+Pluirh/Qin4j2TrTt/FlgXhWLcI0M2dmQaryGHZDcJJ59zolxXk3XTQuc
- bo1oBNAXbwcsXCjQ/RUburT/XB972gvl5v/EnKYR/mNlRc9OrQibc3bMp/CgbHKTtCx23hrs0
- E41dZKGXOjSL+RRFEVYGGe5HrWQzlzEtolFjP+aNR+1B/Zfi4kqdPENTbdJ3XHTqnSOvwpva3
- vZGUOCLhRj5wE80z2Jxhhzf6LRzDB7apmxyv+D6NphmrNUYLjPGcivWh1IlVPH1dYMsBsoBQ2
- SSO2KXlKVqKk1UEQP4wX6sU/cyKVHdapsY7Ljl71uyV4puxHx7l0nVSRJJilMkXs2iPvW89vX
- xg/r6zE2uX72n2+jmgHyrlaG2vgHfbwY8v5cytJQ2Df7TvHNgB94TRFDfp54mpkapKdEhg2ZA
- fhJ0JRzs4maXDk2sHPSNVx4by61OKVSGIRBPXA5aHTLxBCllAa2GGw5BQjEbYs6tmb4xVkGJK
- ISu3URZrlraZX+kFLKoSiovCKbEeYsSXkJNbLMkYrrFr+srhnT3IvD5ZW06zzXNQjmwctMc0t
- LoZdb9BY6Kw0C3nygGghSdp56duAB/QATwqfnxIVW9Nx7eYebs2h8pKTJnTMT+uMH8h7k11Eh
- a6Xx2JU42qVyh8Ornsp2Q13xHM0+huJJE98UY0cruVDOT/VG6RBjXVm0+IsMRSRorXAK7Wci7
- lQ7yquTHQffUVxsPE8zuRXAwbLnwE8zF0Xd44K6SiYsYg=
+UI-OutboundReport: notjunk:1;M01:P0:zC3BJmvRg6I=;B4Of8fxqFhJqj4E8sLHvqF/ZqIS
+ 6tYr22rkX8WtAHtd4b+AKHUAT23I2xvzyQhy1eO/5NjNKcVppHb5erefO01dCn+kbUuKOSKrB
+ Pknh3SQP+b+xWQ/7k908VapY3lyWp6v0nrUmvaXJIDiFbFTITq15a7xYfUmchhEL5pOjaNLf3
+ Bz7BVWuc82KErFpmEkbw+kUQ02CaR7BDrA3T9VVYH0+9a7K7M4N9TNpIMK6miEjVIU4Mm1bZu
+ W7bmrkWZcliQ1RATqEvKMqDtNaxkXQ5ekz2tcn1ZsXllVXhMAXOpiljY9BjpfxiLC2j6IUN45
+ g1FN9IaXlNOdeLxvEMStlqLexEXUFtn46DsumT6+3YZZvI7oNXthyB9EExhfFXcMzt5BGoVz1
+ cAkn06U3g4jeA/WL6wDKyNzzhxp1Bf8ZV82FGAI4ZXhATFTgZ8QFsooVt5X/R2SIvYGtWO5In
+ BPQexypSymRH/yDPhRFQgy5Xe8nzdXMY8HgLbO5/dgUXLLPE+Xxmi6oP8xf0BU3NKVRSfiCPW
+ Q6jO46uZahQLEHaugJWgcsrBbSR32erekNeFc9cYnIPvmiedsw+3ycaZfE0Ep8ms+JqW1uPQY
+ 9KJDOzwBuwJ+HnGxmRytCgnhmrSmnujR0TRHAOgc9P1/sHIhi1aOQjMKBSz/1YmoBr/1wpHwU
+ /kT+qeNIxSbUlAaJbX7fXJujLtdyQh8s7iOQ/cHe+8iLBud/AK8jEgxCjJ7ngxFDAjzhr9IP3
+ D/Kapw8H1nehDYvz1EHH7BSzJqI0q6Q4uQHRbGkpbtItlw30Y4oKjP7t4ubDs/rIE27XvYoLz
+ DXo12Wr7aDyzVk3qp0ucKER4H0FKaY5Fc9/SnUn7Y5Cuk=
 
-> A null pointer check is performed for the input parameter =E2=80=9Cmap=
-=E2=80=9D.
-> It looks suspicious that the function =E2=80=9CPTR_ERR=E2=80=9D is appli=
-ed then for
-> a corresponding return statement.
+>> Thus return directly after a failed devm_kasprintf() call.
+>>
+>> Fixes: 724142f8c42a7 ("fpga: dfl: fme: add performance reporting suppor=
+t")
+>
+> This basically doesn't affect runtime because perf_pmu_register() checks=
+ for NULL
 
-Are contributions also by YueHaibing still waiting on further development =
-considerations?
+https://elixir.bootlin.com/linux/v6.8-rc2/source/kernel/events/core.c#L115=
+27
 
-[PATCH -next] perf: Fix pass 0 to PTR_ERR
-https://lore.kernel.org/lkml/20220611040719.8160-1-yuehaibing@huawei.com/
-https://lkml.org/lkml/2022/6/11/3
+Do you prefer the usage of the error code =E2=80=9C-ENOMEM=E2=80=9D instea=
+d of =E2=80=9C-EINVAL=E2=80=9D
+as an indication for a failed memory allocation?
 
+
+> so no need for a Fixes tag.
+
+Does the selection of a more appropriate error code qualify for this tag?
 
 Regards,
 Markus
