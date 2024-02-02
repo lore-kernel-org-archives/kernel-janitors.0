@@ -1,91 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECA28062A;
-	Fri,  2 Feb 2024 20:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE518175D;
+	Fri,  2 Feb 2024 21:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706905330; cv=none; b=lKU5dZ0TJ0vdbVDiciyr8AjkONtievE8yUtA0CAcLxkyF6/jWYjeT21K9vJKuClB2X7VVizbdSvsi/ZJm6ESqvRRUBDLiidYXFqvljgJikdM3BZihOpGjOrdHyRBzPTYroUGkVOkIS+TVhIgFK0/Ca/o50tzFsCibW7hmuF853g=
+	t=1706909016; cv=none; b=A5ieWwspg45mNM5PFWnjlo03uMX6c36v0JFN56KVK+Tr2k1MPUzDRqzCvLHtpTmhkXsr1vizVaGmUCINMFcMlSQ80PTmRxQiGTmNa/NPlD64nLIQknCFlk1LjLdv8CE5ulHc+ykjNqf0yNmBL01Uppw50kjCRWIgvKPEMV6Y9jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706905330; c=relaxed/simple;
-	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iNAspKSZSc0FKEev0E921pT3RJMzJzpDoPo30Y7KF/RRoN0eTrmLVkW7i+nwYoqQBkKrLthb3uEu9dsON89WiHqQGptnRJwcfWKjBxAViXVZjhJKNz4Ng0c4+pepav0h7+mbuoFDnjUblP6wrARVBQFLnfqnvLOj5JluZz6SLqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G8C10dje; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706909016; c=relaxed/simple;
+	bh=PN0rt/SrGrPLEv+QxTAiD8tWU7CCMMQCJvdKyV+MpKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QVq4oWPga+sqJ+6K0vZZ4Nyhdtq0lzKfqJZbMLGT52NaFJCn3N+jMBA/6/lljQcHtOAsiIYS+T1VIg8CF/dadwGqLx25uPYkjIBUOpRMHvr8d+OEnziKXnIYIVCDeYetN+3ieOhPPrCOiBpzbTin0AUYAa2l6oLogg80Hf8l1G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YgoAR4A5; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8C10dje"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706905298; x=1707510098; i=markus.elfring@web.de;
-	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=G8C10djeXh5lOZvU247Dn+9Cm7OL0cH/D1Bl7WRpbIO2WUKq6yMS521XEpMvH11G
-	 WRc1JCbYGrSI15XggN2RCra71OGpZkOw/2pMmYBAyRP02aCEoaMjo17NonpG7dho1
-	 yMhEmSatRaN1UzQVYk3O0LFCT0q8ylU80Dg71ThxyrJ6FmDQIZHPGmNNoF3FfSEYk
-	 isnxm9vgAhHTnXuxxAg3+TNrXnCN7Ub6cRk4KYRxDOmY6Ym36usxl903tLabYsvNv
-	 SjkoKSBKfbZoeLvoa2+xR1kYH6sc07rftcALRcZ+fYHMe5Qk4zhVfR4o1fssmy9li
-	 +yh3SSzuItAQLfhwEg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbLM-1qoioK00NG-00iZ9I; Fri, 02
- Feb 2024 21:21:38 +0100
-Message-ID: <1a3c05b8-45f8-4205-8cb5-3b8f2d791877@web.de>
-Date: Fri, 2 Feb 2024 21:21:19 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YgoAR4A5"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id W10NrnAvE0k1mW10Ornqsa; Fri, 02 Feb 2024 22:23:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1706909004;
+	bh=gknkBxJEzqhmHTYPDuPbdM6rcQN2TQdAIGaoD5ZyO4w=;
+	h=From:To:Cc:Subject:Date;
+	b=YgoAR4A5THvusTgAiNg8KwY8Etnc1ncfqrO25s6RTtGo6epSz+oLTQA7rbUYQZsFt
+	 m6fXmOTJwj70w8j3JZ2dj3nCgtr2stskPQFrmZ+esPcZjx1ppIiGbNT+lI174WX6IL
+	 41tlYVyiI2pTIpBcA4SRyVk9NH4xMjMowq8rfQ9QiRYhyhLt6UUgxYEdtgACe0Xy5X
+	 98cCkSIaTp6eeItapQpmpFbawDyDQuTsg8LiKDwr58u/TTpm5Yq4eUJ0AubvZKU87t
+	 6D48uWyMpkJEDGnByXqPCInHuOIkmLvTXrodOQhxnw3jSlhXIB8e6Z5VOGM96Zmxy8
+	 ibym9c28XQnqQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 Feb 2024 22:23:24 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mm: Reduce dependencies on <linux/kernel.h>
+Date: Fri,  2 Feb 2024 22:23:18 +0100
+Message-ID: <adfdbe21c4d06400d7bd802868762deb85cae8b6.1706908921.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: clk: imx: scu: Use common error handling code in
- __imx_clk_gpr_scu()
-To: Abel Vesa <abel.vesa@linaro.org>, kernel@pengutronix.de,
- linux-imx@nxp.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
-References: <20231210171907.3410922-1-visitorckw@gmail.com>
- <0e906ec6-fe73-4dbd-b555-a2c03b6e1030@web.de> <Zb04UUeE/cU9HtKZ@linaro.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Zb04UUeE/cU9HtKZ@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CSJNiI+KQkY3wXk46J8sqBLCgeytL9YGPMpnE6bhxbHLS1ujsvH
- WtIcKGpQpstSECuHkRUVRn7udhpV/cp9kKG3djHijk+tDqEvugBIpO3jvDiEAqjrmsEDchj
- EB/bFJ8Rrbp+rgxqrwcoYmApEj+c4vj/lGSZtItFepLt/wAggTQ5pyAma0iq4NKvir+Oe1Q
- K195UfBoLASAs8DyCP3XQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wMEpts7wPes=;A2mzpRYQ4imzka4vF4y/w2Bur/w
- +FcbRBULuHCiHAEiLUmpDmxYIoiEltOqt4+UAk/GlKEpka4Jn5xgjW1J+CEP9gFrwJB3OlNFj
- FJr4Ol1aVJgaGQ+I3MuQYaZOCVyjPu69gnwqMW8PAoBRa3z8C8bthaxs/4GvWMAmhWSpUCj4M
- K8TumhrqIE+EdrRpNSOiUe0gCQLuB3kFtQvIvhjHiWB8O98aP8if4f1E0KD5sj7ZJC7TzYlxy
- CjC4T1SDfC3Aiu9wwDuQbqzh0MB1vGCueyN6gBcoqrrrckDnwkUAaYEP5L/NWLM6/Kwp+mWks
- aMlsR0gYgdFWcCZmF3y3zlGgLeHfZ5Dm+gy1Zms2zcwWokaTBClVb/NCL32Vdir/5vKhdmouv
- PGBVxFZ77RhVflIUxRMPQiyAbfQzb/Coghset1BFN5oKKZV6GXUZP9b+DERLK9p4Bg3hS5IXf
- WckBsAsM6SRD1eXkK3sHAfX50iFQHIEQ4MKOpHQFEZuU0H5zFP/Ku/6oEXISDQ3MVa1jNUzAB
- F94sq+123wtyPRNE7ozcyCqYsPRU+zrmf7meIQpP5n8ALO8XSA86QlQh/YgE7o2abTUggMKfh
- XaPy+YMek2mKIegRxReEA6k4bjJHfVsMzxccWG+3LwXzDgx0fNNASGZxHBR1M7Ko1DdnAYQeg
- GkRwilOySYpq3y+oaBWb18XmC11HyOKkIwYkgsZ8ZexZ3B3rYcsSSpYplPZ8Hk9mjoYPZGpcJ
- YhCslGURNYJTpxQOU5y0V+K7LV1Fv7wgpLLc0lPOj+sI/hnMnGZN/bNP4SWTuSkw/ThjnYK2R
- 5/y3ncMmAVC/iinfzzKk+KQynOb3EdQWFAZGl/bFksZyQ=
+Content-Transfer-Encoding: 8bit
 
->> Use another label so that a bit of exception handling can be better reu=
-sed
->> at the end of this function.
->
-> Please don't send patches as reply to other(s) patches.
+"page_counter.h" does not need <linux/kernel.h>. <linux/limits.h> is enough
+to get LONG_MAX.
 
-This is a general possibility to connect an information sources with
-a corresponding change idea.
-Will the acceptance grow for the presented source code transformation?
+Files that include page_counter.h are limited. They have been compile
+tested or checked.
 
-Regards,
-Markus
+$ git grep page_counter\.h
+include/linux/hugetlb_cgroup.h: struct page_counter hugepage[HUGE_MAX_HSTATE];
+	--> all files that include it have been compile tested
+
+include/linux/memcontrol.h:#include <linux/page_counter.h>
+	--> <linux/kernel.h> has been added, to be safe
+
+include/net/sock.h:#include <linux/page_counter.h>
+	--> already include <linux/kernel.h>
+
+mm/hugetlb_cgroup.c:#include <linux/page_counter.h>
+mm/memcontrol.c:#include <linux/page_counter.h>
+mm/page_counter.c:#include <linux/page_counter.h>
+	--> compile tested
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Let see if build-bots agree with me.
+---
+ include/linux/memcontrol.h   | 1 +
+ include/linux/page_counter.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 20ff87f8e001..4e4caeaea404 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -14,6 +14,7 @@
+ #include <linux/vm_event_item.h>
+ #include <linux/hardirq.h>
+ #include <linux/jump_label.h>
++#include <linux/kernel.h>
+ #include <linux/page_counter.h>
+ #include <linux/vmpressure.h>
+ #include <linux/eventfd.h>
+diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
+index c141ea9a95ef..8cd858d912c4 100644
+--- a/include/linux/page_counter.h
++++ b/include/linux/page_counter.h
+@@ -4,7 +4,7 @@
+ 
+ #include <linux/atomic.h>
+ #include <linux/cache.h>
+-#include <linux/kernel.h>
++#include <linux/limits.h>
+ #include <asm/page.h>
+ 
+ struct page_counter {
+-- 
+2.43.0
+
