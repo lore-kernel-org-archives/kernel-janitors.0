@@ -1,36 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1212FB03;
-	Thu,  1 Feb 2024 18:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB81F4EA;
+	Fri,  2 Feb 2024 06:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706811759; cv=none; b=lDFMN0ch5kYe9PJQxrGHKfEVeZRP3kGJ4qyrQXnTuQkY0U3Sg2IvLcHO2c2iAGjbgzPyb9fpPuiCBqQSwA4SMG4FbPwo8nbbJdAD/KMpzEEjUB1eRYE0FTuUAQNhW9AVJY3O7+6PHcJicreaFuzJrhKzbRqZLQgbgTLjqwDFeDs=
+	t=1706856569; cv=none; b=tIrQG2U7xAZg0OqfFXBz/O3/xVWZ+Hv/b4snhuoUys64tG4ca79BJoTeTJWXpCxAZ8B82lNCDYZA49z841LJRRmlkiBmg8O8oxW1W2IEY1qXQlcyNu0HchrWs8ZfET/KL1wYNomRrzYv3wGFNoAPwxyk9A7RdmDXlQNHuHoi39c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706811759; c=relaxed/simple;
-	bh=75P+PiyZ7hmvzVmev6Os4atfaZaMVdujAHmGyUGpB8Y=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Vfus2NmLVMhp99yqGRu9cbDBE5dKb+XXqe0PvVNnNMOsBf/kSLz8mOsvdRXIGxk+KVSGtywptDokKb9o5XWk+ivXa57BhwyL+wz/FfZ+Ur/6vgtpp2NQV2150HdNOJXYDrX5BAFVM18IJA8HM5jrn7SQHHxA6KjGF6SINxRkIGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uksK0Oo3; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1706856569; c=relaxed/simple;
+	bh=psDefbg/kF79ASsUkMz1eS3sAKLVErIE1EEhmYhufuA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZYdWNvzqdL6za9U7CpSqhBrRw+famd8de4iPEyu0MUjVaPRRdx2s39eTwaTs1vt7M69vwbAIkrwTRCOyCAyqvvL+7PchYMy8G9h+7MnfI1wSN/lQmLPAVMhIXQRf2MmXlehbzoeZc31wqrjtnB/CKnK5ecKBmlRzw+2tG8yAoFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=t9BJDGgW; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uksK0Oo3"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="t9BJDGgW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706811716; x=1707416516; i=markus.elfring@web.de;
-	bh=75P+PiyZ7hmvzVmev6Os4atfaZaMVdujAHmGyUGpB8Y=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=uksK0Oo3yuVjhH4hfyACu1PJdt+2P+7Lms9PpsWfq0leDSgF5uVVH7SuSvzLC4xi
-	 tDEGLdnV1Hizx/ksx17X4idOFueLUQp0BgSiO4p0smMMpz4RGqv5t0ipQUKJ+lxf5
-	 lYZx9NHu0mR+6BkG2k9qGuydLg0WvJ+jD8xkI75AMiiRzKV33NmedfySJaqjq6rAN
-	 MVWbKZIAG7uBUhzjvmuUtqHUEeUxSwTOe9d5mKOtQyfWxS1VkYRagg/jCTIMw5zLw
-	 5lwNeuKPj2RtFISaXCJIDsZUwCexGBlTqMb63VUss2s8b3En2BRagnLVfTeCjdPUN
-	 xlMWm2UIAIROdfq7DA==
+	t=1706856523; x=1707461323; i=markus.elfring@web.de;
+	bh=psDefbg/kF79ASsUkMz1eS3sAKLVErIE1EEhmYhufuA=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=t9BJDGgWqQZpeFoMDHQfgB/19gTb7Ka7GBGci1F4B4+NY0oCAUhbFu02S9quGB5N
+	 VU56dTABaPIQQfnCpIPZ2xsAkuqmbvmbHSTnLTpTNXWSgVpHmhp/QnnS0BlfchARv
+	 UEmsAwZy8R4tZV4nx9y2NcVxPou+Idt+UdDQx9I/6VnXFYpr+5Mxacst8hQjNZlhC
+	 xOYkBeOHfPkCKtBELx5vHDtPz0dZBS4sgoLMT6l340L/rT4xByQwgRhUb8f1ytgoS
+	 LB/q9otFpW/Y5UeYEjtg23XWUnMuzlsJKseh7QNZ2Rq/FGhdDKb1Azk2VgRAogEiC
+	 3bmO5CqVGOqpNgkldg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCGSU-1rME2o0Vdq-009f7d; Thu, 01
- Feb 2024 19:21:56 +0100
-Message-ID: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de>
-Date: Thu, 1 Feb 2024 19:21:53 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhFhe-1qsazJ31Zi-00ea4g; Fri, 02
+ Feb 2024 07:48:43 +0100
+Message-ID: <daf2172a-8d54-4097-acf3-cc539fe281e5@web.de>
+Date: Fri, 2 Feb 2024 07:48:12 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,53 +40,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] perf: Reconsider an error code selection in
+ bpf_map__fprintf()
+From: Markus Elfring <Markus.Elfring@web.de>
 To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
  Adrian Hunter <adrian.hunter@intel.com>,
  Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Christy Lee <christylee@fb.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, Ian Rogers <irogers@google.com>,
  Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Martin KaFai Lau <kafai@fb.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+ YueHaibing <yuehaibing@huawei.com>, bpf@vger.kernel.org,
+ netdev@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] perf: Reconsider an error code selection in bpf_map__fprintf()
+References: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de>
+Content-Language: en-GB
+In-Reply-To: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cmkOoJ6w0GHniCFLXbNn4qAMPHQQID28NOsh0VbKnt7oG2/4vLY
- N3LSphl5OJ7CYzzBrSPJHzxyk4TbrukdvwhAK1dO3AJRFqwxZ3BeqvE8tQzOyq1lZPzXmNu
- OLARulhDKN0GqoMS6cBGdnj3Cdpib4Dwdl4BezGOOvgUo6UPvh5T+9hsAcmIwaIPAOMIfKv
- CRLkAmBjEFdLsEKk3imOQ==
+X-Provags-ID: V03:K1:guMMD0U0owRRTK/o4x0F68hE8U9JJPElbEE4i3GuJqzHWW1R2HT
+ sH0Z4EGWRndq02j10zfeOmlFsuMWcTocY01WQzj55IfTx2GEaofd0UiNkmU5Hp8wE3DRUxA
+ 66EGuYd+WeO0W1n9MgablveKN3xDoAC58LZZzpDfV0+2DysblxvSm6H00vhzfZDimtVJV/z
+ CwSuyAopcmm7tc3oD4wnQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R/WYptCQz68=;Af7l6S2LLeGwo2+U+rjah1l8f+D
- tU7jQ/yUuY0bVzzQk/a4ndgouHE+8utWOXYL4aDt4GQplhqtqnU4nQKOiYh/5rCbacfYm4gc2
- IzDol4D9leBFHe0/tWopNyHGHcxx6vAS0HPEpPI8MZSkBIo3ZNUNVxVmi+u/jTaQBhoqLMJ+N
- sLSnVmTI3I3powb2d9GN12qnUDGuwsLnvnsQp6myEPZdrIz+AMD4X/mziPqumh1FBc0YgeS4q
- 5wSoN4mbgmab2WrmmCaskpSwQLgVY5H6/Gh+TWyqarew8jAQqDX+OeO9Td6tWyCcPXV6tsogb
- qIwqWTtPS2HfOCW4OeU1mXGOusethmW94aKnEYgS/nHwjMlvZLzvsQGR1FYrGHz4DH1j0k8FU
- L6M84isgd1WNHzH/ix7XRQildp2t0+IjRiyt4QD8ora9HockRpFtaMhLDli3PG/qQ0V/yJtz8
- Ob5I0HEe03VGoRX/EFV6SLm3KIVqkou1KIscS8iZF9Omj1ALHJykIGq+aey8CS1fKRq+WDcGf
- cGy0vqbbkPU9uIEv1jkegAXDy/AK5IffWP/xzgjnNHalTxLO9Un4PA5He5VNjC++NwO/swaFw
- paXdR4g8DRUjPROJyeau8dh/rotsfoPlHdv0V6yVzCg6mBOvqGaKJ2eGBCWfRx5rZW6kk4mWi
- zdttA/99o2u4ghPhRM8nF/OOEiHORYFr9wFb37YOCSwnvNgu4CR5NyfxtBP+6aAwt7l3sLumc
- LzFt7fjb9ddgp0XuEyeZA+Egacp8l8XuANOqH9zk1Y9lV/lPFmi7/X4W34iHrBVMjaBAXeChd
- Ne4Pm+i5ALojTKuXTVZ87vFU7u6hrzhZDgsgamlGkB6qM=
+UI-OutboundReport: notjunk:1;M01:P0:tyHFUlgJYw0=;dgrK/DspkpssIY/mInw6RaOj8L8
+ zzTf2dKbygFIyNv1oeJDdblOrP8EvVmHFVb/iQ+pEefr1xabU/7uEb27OtwF4VSNs0vLi2jk8
+ obLgtu7m3UCnrc9+Pluirh/Qin4j2TrTt/FlgXhWLcI0M2dmQaryGHZDcJJ59zolxXk3XTQuc
+ bo1oBNAXbwcsXCjQ/RUburT/XB972gvl5v/EnKYR/mNlRc9OrQibc3bMp/CgbHKTtCx23hrs0
+ E41dZKGXOjSL+RRFEVYGGe5HrWQzlzEtolFjP+aNR+1B/Zfi4kqdPENTbdJ3XHTqnSOvwpva3
+ vZGUOCLhRj5wE80z2Jxhhzf6LRzDB7apmxyv+D6NphmrNUYLjPGcivWh1IlVPH1dYMsBsoBQ2
+ SSO2KXlKVqKk1UEQP4wX6sU/cyKVHdapsY7Ljl71uyV4puxHx7l0nVSRJJilMkXs2iPvW89vX
+ xg/r6zE2uX72n2+jmgHyrlaG2vgHfbwY8v5cytJQ2Df7TvHNgB94TRFDfp54mpkapKdEhg2ZA
+ fhJ0JRzs4maXDk2sHPSNVx4by61OKVSGIRBPXA5aHTLxBCllAa2GGw5BQjEbYs6tmb4xVkGJK
+ ISu3URZrlraZX+kFLKoSiovCKbEeYsSXkJNbLMkYrrFr+srhnT3IvD5ZW06zzXNQjmwctMc0t
+ LoZdb9BY6Kw0C3nygGghSdp56duAB/QATwqfnxIVW9Nx7eYebs2h8pKTJnTMT+uMH8h7k11Eh
+ a6Xx2JU42qVyh8Ornsp2Q13xHM0+huJJE98UY0cruVDOT/VG6RBjXVm0+IsMRSRorXAK7Wci7
+ lQ7yquTHQffUVxsPE8zuRXAwbLnwE8zF0Xd44K6SiYsYg=
 
-Hello,
+> A null pointer check is performed for the input parameter =E2=80=9Cmap=
+=E2=80=9D.
+> It looks suspicious that the function =E2=80=9CPTR_ERR=E2=80=9D is appli=
+ed then for
+> a corresponding return statement.
 
-A null pointer check is performed for the input parameter =E2=80=9Cmap=E2=
-=80=9D.
-It looks suspicious that the function =E2=80=9CPTR_ERR=E2=80=9D is applied=
- then for
-a corresponding return statement.
-https://elixir.bootlin.com/linux/v6.8-rc2/source/tools/perf/util/bpf_map.c=
-#L29
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/to=
-ols/perf/util/bpf_map.c?h=3Dv6.8-rc2&id=3D41bccc98fb7931d63d03f326a746ac4d=
-429c1dd3#n29
+Are contributions also by YueHaibing still waiting on further development =
+considerations?
 
-This issue was detected by using the Coccinelle software.
+[PATCH -next] perf: Fix pass 0 to PTR_ERR
+https://lore.kernel.org/lkml/20220611040719.8160-1-yuehaibing@huawei.com/
+https://lkml.org/lkml/2022/6/11/3
 
-Would any other error code determination be more appropriate here?
 
 Regards,
 Markus
