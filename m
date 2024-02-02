@@ -1,97 +1,62 @@
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF3B80618;
-	Fri,  2 Feb 2024 19:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F953D3BC;
+	Fri,  2 Feb 2024 19:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706901191; cv=none; b=E+2IM199/cFzR2mIksM5wjDPMi07QH7sG7uOTptsuZ9MGKKGtRtVGo46CMQE+vQ2mbSWF0txe4I177ewR2RlIl8I5QNpQ6pZDotHPVgj8QSU4x/oQ1I0Pe6+uYoELUvS27ljukdpcBcUXuTi1tpYxD1NEFxL5wZ/BJPUx+ogVjg=
+	t=1706902395; cv=none; b=hizcPO5sD2eBk3D/49qq5xhZiwCUNipnMOeEXVtNo53IsZ1ekhMVFLP6gYCuEb4yQfCWPCBrVdoKvKJTAibMwlA8tHXz+1DGf6bQ1bQW8FuTcRtQBroHQWbLv2SIiiHZiRu37o+qHph3plnvQVb2/l0xZWDhXWkVpBeu9+q0oGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706901191; c=relaxed/simple;
-	bh=zS2ruA8tqKW4S6ZfvZ5YkkvA9o8UBqCZlA+Oud/kXL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KzoRCAWACvtLjTA47bbezs03Lhq1LD+kzLIcaaDSJIVNgIuT6KFlMAdxyNbjtb6r1Vxo5Yepf35N2fEiXjMVhpcqkAyfMBMzLIVh+l/w9zdFprbjHkcApWxYu0PGTFtjxUhLxu6dRQySoO3z0hpyqDi7n6sc/eJuD+jdtKw8nu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IB3/3JT6; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1706902395; c=relaxed/simple;
+	bh=5fX28k3jBg8AF6wuBErGgmwNBI5qB8oapTjKGw2klLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XZMh5TLxEWKiFFpfRqkgiCO75larLY7F9DT4zj52/8MfDjZaKyvGYA/sjd63UsEP2hyj14eTfpYSjdYgBfgVjDEHYvxeoxpkslx3H4faxa2GZHYi2rYT4Spfj8IjGz/7bCLQy2g2+e2pCstHqIpnirTxDCNYLVnECrgYftw0RIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSwZfUaY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IB3/3JT6"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id VyxArgRG8LHvUVyxBrSZHA; Fri, 02 Feb 2024 20:12:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1706901120;
-	bh=hgM+sL1lI70tjST9OWNADLTm22CNrbWKCKWuKXAi1Wc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=IB3/3JT6Z9JwTQHO8O1IuAxpknm9XSa6vRNk/mJMGNMxeIHLklWEuuRA3HZHXbKCH
-	 SIEacC8FD7VjBhbe2LtIsw/fUEespg7qsk02Is9GRLYAYHKpBAXRGGhUufgPYdDY3A
-	 2k6OMW8d6JhRk0HaKA3QKz7BX/DXExTJoTja9xyZaQMsYCSt8Qj9F21o8cGcNsMpaE
-	 773tUqCOZEgA8YEkKadnR0k0zs2o+4siRxG5vPS0l3xalOMxHQJhORRZABjtFQqugg
-	 Qn2cLA+CzmSPs01iJnYwLHNLg0ziVOB9yWJfpVkvXjn6VBNnZHiQqVsZdW4wM4DtJB
-	 T/X7JTTdd4/KQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 02 Feb 2024 20:12:00 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
-Date: Fri, 2 Feb 2024 20:11:56 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSwZfUaY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3FE8C433C7;
+	Fri,  2 Feb 2024 19:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706902395;
+	bh=5fX28k3jBg8AF6wuBErGgmwNBI5qB8oapTjKGw2klLY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fSwZfUaYriZSw2g/i0aVBoJi+X28rETNBt7iN9Qv/JADxiikJNxTzbFABqcklfsJe
+	 Q1+tSI7YPPGRAUPS3xrzIrQPpoknlXh93bFiFP8YtfCvALE8k9gtvAE6ZInmvoYFEG
+	 BMOSXx2/isYuYYTySvQXnEs6aznflCfMOMTvlCKrUNLmqIY72xxgeoR6SXtdDtMcpK
+	 UeqsgzPKpUdiIYgFzJefEBWW6j1KaNtbXjjAZSFC2g0kN8AX+1BFEqkUpXDYCIhDxV
+	 vvKi1HXBB9mbkKn1poycMz4ZLp2rRGSr9W+g7mpwRMzfAR4BPmEZ+wfEfyBJvFAACP
+	 mHuArwCM2/F0A==
+Date: Fri, 2 Feb 2024 11:33:14 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RESEND] nfc: hci: Save a few bytes of memory when
+ registering a 'nfc_llc' engine
+Message-ID: <20240202113314.4c5f09ce@kernel.org>
+In-Reply-To: <30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
+References: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
+	<20240131150803.2fec5a5c@kernel.org>
+	<30e5c9c2-b13a-4b7e-a266-1e03e654f1d3@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] nfc: hci: Save a few bytes of memory when
- registering a 'nfc_llc' engine
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-References: <6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr>
- <20240131150803.2fec5a5c@kernel.org>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240131150803.2fec5a5c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le 01/02/2024 à 00:08, Jakub Kicinski a écrit :
-> On Sat, 27 Jan 2024 10:58:29 +0100 Christophe JAILLET wrote:
->> nfc_llc_register() calls pass a string literal as the 'name' parameter.
->>
->> So kstrdup_const() can be used instead of kfree() to avoid a memory
->> allocation in such cases.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Fri, 2 Feb 2024 20:11:56 +0100 Christophe JAILLET wrote:
+> It would be slower, but it would reduce code duplication as well.
+> This is just an _exit() function, so it shouldn't be called that often 
+> anyway, if called at all.
 > 
-> There is a kfree() call in nfc_llc_exit() that looks suspiciously
-> like it may also free the name.
-> 
-> 
+> Or, add another function with the list_del()+kfree_const()+kfree(), that 
+> would be called from nfc_llc_exit() and nfc_llc_unregister(), to have 
+> the best of the 2 worlds?
 
-Hi,
-
-you are right.
-
-
-Should we have something like:
-
-void nfc_llc_exit(void)
-{
-	struct nfc_llc_engine *llc_engine, *n;
-
-	list_for_each_entry_safe(llc_engine, n, &llc_engines, entry)
-		nfc_llc_unregister(&llc_engine->name);
-}
-
-
-It would be slower, but it would reduce code duplication as well.
-This is just an _exit() function, so it shouldn't be called that often 
-anyway, if called at all.
-
-Or, add another function with the list_del()+kfree_const()+kfree(), that 
-would be called from nfc_llc_exit() and nfc_llc_unregister(), to have 
-the best of the 2 worlds?
-
-CJ
+My vote is the latter - factor out the 3 calls into a new helper, call
+it where appropriate.
