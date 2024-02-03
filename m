@@ -1,46 +1,48 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE518175D;
-	Fri,  2 Feb 2024 21:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4484018637;
+	Sat,  3 Feb 2024 07:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706909016; cv=none; b=A5ieWwspg45mNM5PFWnjlo03uMX6c36v0JFN56KVK+Tr2k1MPUzDRqzCvLHtpTmhkXsr1vizVaGmUCINMFcMlSQ80PTmRxQiGTmNa/NPlD64nLIQknCFlk1LjLdv8CE5ulHc+ykjNqf0yNmBL01Uppw50kjCRWIgvKPEMV6Y9jY=
+	t=1706946745; cv=none; b=GuXUBDUadgK7hxHYoFe/RIWZvcVYYBXQMwdAO03snXpc93oMmTGGeieLNKYQwMiIn8Nh4hnqwI0rUtdVoNhKlD0bIiPVnK/Y1sAn2Q6hdw8I4/WAC4PAhjqC+ofPYIqPuZaBip0qi2R/AvKGz5h7IG7tBto4AMZzf7gV6Oc5+X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706909016; c=relaxed/simple;
-	bh=PN0rt/SrGrPLEv+QxTAiD8tWU7CCMMQCJvdKyV+MpKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QVq4oWPga+sqJ+6K0vZZ4Nyhdtq0lzKfqJZbMLGT52NaFJCn3N+jMBA/6/lljQcHtOAsiIYS+T1VIg8CF/dadwGqLx25uPYkjIBUOpRMHvr8d+OEnziKXnIYIVCDeYetN+3ieOhPPrCOiBpzbTin0AUYAa2l6oLogg80Hf8l1G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YgoAR4A5; arc=none smtp.client-ip=80.12.242.16
+	s=arc-20240116; t=1706946745; c=relaxed/simple;
+	bh=F6ITBLQvJo2ID4GvkMI70FgRvtOxvEz87EYOHEv1yuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J6XXdUUcKVLoAQfO4/K03Ugbuhu/4dBCZ02u/AbCRr/Dn5Hs7MILdy4G5HzYVnK/zWcaRkRb2Eb98AJgu3oMmS/+rsmpaQU8KdtBw9RirveA5oAldO0aiOAi123B66Z2qqfeHBV0FTAf42b7vThMdPaMa0vI/dt1/7cpFPN5iNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ruPngsdF; arc=none smtp.client-ip=80.12.242.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YgoAR4A5"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ruPngsdF"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id W10NrnAvE0k1mW10Ornqsa; Fri, 02 Feb 2024 22:23:24 +0100
+	id WAnwrvC6Ki8tRWAnwrIHzh; Sat, 03 Feb 2024 08:51:14 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1706909004;
-	bh=gknkBxJEzqhmHTYPDuPbdM6rcQN2TQdAIGaoD5ZyO4w=;
+	s=t20230301; t=1706946674;
+	bh=OCUMJ2d4ncLXSH5gQLn7aWRhS08Qda8fr6S/AVc12+o=;
 	h=From:To:Cc:Subject:Date;
-	b=YgoAR4A5THvusTgAiNg8KwY8Etnc1ncfqrO25s6RTtGo6epSz+oLTQA7rbUYQZsFt
-	 m6fXmOTJwj70w8j3JZ2dj3nCgtr2stskPQFrmZ+esPcZjx1ppIiGbNT+lI174WX6IL
-	 41tlYVyiI2pTIpBcA4SRyVk9NH4xMjMowq8rfQ9QiRYhyhLt6UUgxYEdtgACe0Xy5X
-	 98cCkSIaTp6eeItapQpmpFbawDyDQuTsg8LiKDwr58u/TTpm5Yq4eUJ0AubvZKU87t
-	 6D48uWyMpkJEDGnByXqPCInHuOIkmLvTXrodOQhxnw3jSlhXIB8e6Z5VOGM96Zmxy8
-	 ibym9c28XQnqQ==
+	b=ruPngsdFv92lgXoOcl+hbe1MSS1gg2pZWHHh4E022SYll+kGz+kDeGvHu8ZgaliGW
+	 OwncwnjK9aWpAyBkpPltlnTwOfylTCUzC7p10RyXMOYjRt37z6Sok/kIfY4JqWArGi
+	 z8Q/mBojZI+GLjXbVvYzmcUR5DquA6/YjBcP/zcl6nDfIvZfzliJxn0s/PVMcWdcdH
+	 8Y4Rv0j8LU11pS6gAlr5IspqztuYDlup7oafaQrhqDoel5BPrjSylKkYeQSwyy8DZb
+	 5zZU4TkBuYiqXsHl6wSgpsy7rdEBMB4u/As9z70ClA2qnlCxPSBTEFZILFLPzR8nLX
+	 tmUPSpv7FMHVQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 02 Feb 2024 22:23:24 +0100
+X-ME-Date: Sat, 03 Feb 2024 08:51:14 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
+To: krzysztof.kozlowski@linaro.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mm: Reduce dependencies on <linux/kernel.h>
-Date: Fri,  2 Feb 2024 22:23:18 +0100
-Message-ID: <adfdbe21c4d06400d7bd802868762deb85cae8b6.1706908921.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/2] nfc: hci: Save a few bytes of memory when registering a 'nfc_llc' engine
+Date: Sat,  3 Feb 2024 08:51:02 +0100
+Message-ID: <cover.1706946099.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,60 +52,25 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-"page_counter.h" does not need <linux/kernel.h>. <linux/limits.h> is enough
-to get LONG_MAX.
+nfc_llc_register() calls pass a string literal as the 'name' parameter.
 
-Files that include page_counter.h are limited. They have been compile
-tested or checked.
+So kstrdup_const() can be used instead of kfree() to avoid a memory
+allocation in such cases.
 
-$ git grep page_counter\.h
-include/linux/hugetlb_cgroup.h: struct page_counter hugepage[HUGE_MAX_HSTATE];
-	--> all files that include it have been compile tested
+v2: Add a new helper function, nfc_llc_del_engine(), to reduce code
+    duplication. This is needed to address Jakub Kicinski's comment
+    about nfc_llc_exit() that was not updated in v1.
 
-include/linux/memcontrol.h:#include <linux/page_counter.h>
-	--> <linux/kernel.h> has been added, to be safe
+v1: https://lore.kernel.org/all/6d2b8c390907dcac2e4dc6e71f1b2db2ef8abef1.1705744530.git.christophe.jaillet@wanadoo.fr/
 
-include/net/sock.h:#include <linux/page_counter.h>
-	--> already include <linux/kernel.h>
+Christophe JAILLET (2):
+  nfc: hci: Introduce nfc_llc_del_engine() to reduce code duplication
+  nfc: hci: Save a few bytes of memory when registering a 'nfc_llc'
+    engine
 
-mm/hugetlb_cgroup.c:#include <linux/page_counter.h>
-mm/memcontrol.c:#include <linux/page_counter.h>
-mm/page_counter.c:#include <linux/page_counter.h>
-	--> compile tested
+ net/nfc/hci/llc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Let see if build-bots agree with me.
----
- include/linux/memcontrol.h   | 1 +
- include/linux/page_counter.h | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 20ff87f8e001..4e4caeaea404 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -14,6 +14,7 @@
- #include <linux/vm_event_item.h>
- #include <linux/hardirq.h>
- #include <linux/jump_label.h>
-+#include <linux/kernel.h>
- #include <linux/page_counter.h>
- #include <linux/vmpressure.h>
- #include <linux/eventfd.h>
-diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
-index c141ea9a95ef..8cd858d912c4 100644
---- a/include/linux/page_counter.h
-+++ b/include/linux/page_counter.h
-@@ -4,7 +4,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/cache.h>
--#include <linux/kernel.h>
-+#include <linux/limits.h>
- #include <asm/page.h>
- 
- struct page_counter {
 -- 
 2.43.0
 
