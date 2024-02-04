@@ -1,83 +1,140 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28CBF9DE;
-	Sat,  3 Feb 2024 20:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1DB18AF9;
+	Sun,  4 Feb 2024 09:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706992893; cv=none; b=OiivZl2hXNx8Mj86tay+EoRI2Fp/t52gEMRFhaGMh18JVWH8A6Z4I1KeFWSW7j5Kw6Oe6j4V5eK0zdI1kV2cyrA1MhQqRYCG9k9fj2/YnGfS6jU935LhlrSl5I8o20EBaqrwZ0arToomPV3pepOEzXlg0UP1ectQmmK/mTzEYWk=
+	t=1707038718; cv=none; b=KOU+QCl7IXAO2jbAI4U4zY3XmI+vG2CPVxsrJ5m7bNymZa+mBgjlXcNi7fsEbmjWrDnikERvlzswcTxo9X78DhP53jVZRfm0N0pMWT8D3psIa5Ob3AuYyK+GDVaJ+aU2mDdvdh5UsmJyLF2SiX2hQajpjIS2VFGOtW2NEbrvlJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706992893; c=relaxed/simple;
-	bh=G+Z8Tr/QMHEj0Lnb9zod1S1zRHM6gBHtCgLuFZk1iXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Are1hZMdAV0EkflR40vP3tKCss0w0LQGnODpi72pGyU976i7CoO2gils0JpvTlvtQZkpVwPXWYCVGIb6NAt9y+xSgAWLB1jNzQmcGQf622KVv63MnmN3bjkZgE0jjRJZkmHjtfJBvIOJc/J5LvpLorWwKym6DmIu9LlLZXFrNqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N+U6LiGc; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1707038718; c=relaxed/simple;
+	bh=L+SBHnTFrcVv7PLbgFrQDDLQa46+TpX7A+SQYuU87gY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Jd7VP3h3+5Uh3C/rJptJ5OLBt/uvgjRtuyCZBg2EGXoDHrGpHk+xXMtoTJxjLlS5/CzsZBB51SMv84wnsuiCQ7paq8JxTCrKNLrxgpMD2T3R07ya/ZgEpTSbspnveqUe+D+kJlNQGsmR5LpXkgcT44v11XLoCfMu2Xcw5PaUINY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Z945rQk3; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N+U6LiGc"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id WMpJrXSMHJaAXWMpJrBska; Sat, 03 Feb 2024 21:41:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1706992887;
-	bh=ciO9V5GhJU2uF2MVzi9ivsD5pJNMZDZsuri+PA9470I=;
-	h=From:To:Cc:Subject:Date;
-	b=N+U6LiGcCkVY2dNtmWpPacGMhsaYnmxkjNg+omS3Mz0cyFXZQlj4HPDqqFwAh7BoT
-	 VAOU3Ap018R95HGxnXVjMJxE87iZvfuRIID65Ed6RKZTlx3meDNwdo2/CQGKyPBwFz
-	 wisxoIDGsegc9EYBO7N0neLnebOg18o4EWrLn604Q21FzQObM0IUfdNPCA2dWkK2o2
-	 1GbMLBWwykKM+Dzq9K4dlcB8aOCjQfMU7gpCaeaOjAJ+BiMBzYzKPNodo42B/jqU/U
-	 Z5koaX55TKT2sINkIxVRMrr+vwWg6lyf/0g8L1QxSihm6nq+dtbTNYGDdvPq3r6D1M
-	 j+P0/71lv5gpA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 03 Feb 2024 21:41:27 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] group_cpus: Remove #include <linux/kernel.h>
-Date: Sat,  3 Feb 2024 21:41:19 +0100
-Message-ID: <ae0ffde483285da96a78ef937580aaf5023e6304.1706992837.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Z945rQk3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707038683; x=1707643483; i=markus.elfring@web.de;
+	bh=L+SBHnTFrcVv7PLbgFrQDDLQa46+TpX7A+SQYuU87gY=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=Z945rQk3E/e1VWEpucyOMf2TzdFgA4wu3v7CYyCKXhrv86by8qs41LXqKMqdHfLJ
+	 a5Y14MwXjcz5oiZcUFmnHglTgqRvLeMMmnDxzK18B0ejEqlQ0OZzOfTEWSx10Xetq
+	 NpDhRjyf5cVk87M1UiC5A30L1dYg2TKQXrJTb0RYsJgc3Mea4fE265qnFhBnnKC3E
+	 BzGwyVbFVi30Pa0EstTvAxi+jUaTBSAaMggcdHUKLFso9xknHIorHCaBDoHvNLL4d
+	 c1+MAX9fVLY8hEWIhCqkxlbdKapbcft4sNFUFVz0rbAl5W1ev0k+Jp1wopwFaWb9B
+	 r5WnjPRWgNvd9ci6Pg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnX1L-1qnLyA2ijV-00jObn; Sun, 04
+ Feb 2024 10:24:43 +0100
+Message-ID: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+Date: Sun, 4 Feb 2024 10:24:18 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ David Collins <quic_collinsd@quicinc.com>, Fei Shao <fshao@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Peng Wu <wupeng58@huawei.com>, Stephen Boyd <sboyd@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null pointer
+ checks in spmi_pmic_arb_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JIR18CQbfq2KoktASMY5o/PlBmGtDdq5i5IxWoIpfPzIu8DQsYo
+ tLYokQ6tRJRN2HwsgJW2s/gFW/asrmfiQNz3LJDZaX2ld2/Tudu0MQyNAuTA3yxK/Lr9ZmV
+ +dIeIvN9XDcGkC4ZEjQ8CtENhtCXUDIkMYv2NQX8XQzWVpIsrF0Kw7P5PmHve6VAyfk6VL+
+ DeKac0TekDEoB026/kkoA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vQncsZ5BOhQ=;t9WJT7hmIaKNMsh19fZe9gab+qf
+ 1bj5KEtNlM5jYr/VYMBeXzGe3Clz+1gBewcBuh9mIb1PdQ1RXJWcGgrg0J7fUVEkEQrQ16DID
+ CWTjIxY6Z41Z6k42ccXpDGpq81LC6mJesscSkXEU6UUgSVgGcHg0HieV4Ydotl0Gq37qzCKw8
+ 6i8FGA5mAhkG7zk6O2IRnpjyV0omdioRfWbNxJRWPwvPumJpCwHM5KpRl9mA+jZJwFvg6Xrsn
+ LCOJg4q5xMXbCgz3tQh+LV68BicXgog3kSeuJnaGQRcneIjaZNx+zACK2tay6tza0+NzsPb2l
+ MVj5uRHmAo24oj4s4MCdraU7a1+VDTYYZe99rGxYZfbsJ65xwLz9jdJ5a5JPJwPYRCoHTPBRy
+ sZhj3INglw9F8svsHFQI5pkyYkZjsA8ubIFIaPj+GQP0AD1a0JBtXMSMNqkobViGh++hHlhvc
+ FwhJnUZgHMbtRuS4SLR0iX5Zhjn+n4IZFzeEuXzZRvvwP3j5UEzlrwbIBGKcjRcAoWlGEiwHm
+ v/1zbykGKkp+ZjhOeN4AK0TDcmqkmdePk554eCT5MDA5rRSevoChrX5ITxsNZcMgmYAH25H9p
+ OiLY9crNgPOaQAuSfeYVrl5gFh9hb5ZAoXapHNKmzappsCKGAkW9aWvU29UJqMpPLoSsdYp8v
+ b+a+wbwWuwX00r4+DL5PJyloIkY9gOC+u1WWeq6RwEW9R+AsT1bBVj6pJ3UYTYPlNPLLSnM7g
+ BOLcRbP3q1e/arVTusNNSJCe7aFgrnwjpS1J9H3fWffa+gWPegBQxsk90piiy40p3oXi5yS6i
+ nAyoq2++deWVzBsJKr06XcbTTCMK0twU+WeXkaxD5NM5U=
 
-There is no need to include <linux/kernel.h> here, so remove it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Feb 2024 09:39:48 +0100
 
-All files that include <linux/group_cpus.h> also already include
-<linux/kernel.h>, so this can't break anything.
+The devm_ioremap() function does not return error pointers.
+It returns NULL on error.
+This issue was detected once more also by using the Coccinelle software.
 
-These files are:
-$ git grep group_cpus\\.h
-MAINTAINERS:F:  include/linux/group_cpus.h
-block/blk-mq-cpumap.c:#include <linux/group_cpus.h>
-drivers/virtio/virtio_vdpa.c:#include <linux/group_cpus.h>
-kernel/irq/affinity.c:#include <linux/group_cpus.h>
-lib/group_cpus.c:#include <linux/group_cpus.h>
----
- include/linux/group_cpus.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Update three checks (and corresponding error codes) for failed
+function calls accordingly.
 
-diff --git a/include/linux/group_cpus.h b/include/linux/group_cpus.h
-index e42807ec61f6..ecc4708dc468 100644
---- a/include/linux/group_cpus.h
-+++ b/include/linux/group_cpus.h
-@@ -6,7 +6,7 @@
- 
- #ifndef __LINUX_GROUP_CPUS_H
- #define __LINUX_GROUP_CPUS_H
--#include <linux/kernel.h>
-+
- #include <linux/cpu.h>
- 
- struct cpumask *group_cpus_evenly(unsigned int numgrps);
--- 
+Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
+Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+See also:
+Suggestion by Peng Wu
+[PATCH -next] spmi: pmic-arb: fix a NULL vs IS_ERR() check in spmi_pmic_ar=
+b_probe()
+https://lore.kernel.org/lkml/20221115090927.47143-1-wupeng58@huawei.com/
+https://lkml.org/lkml/2022/11/15/197
+
+
+ drivers/spmi/spmi-pmic-arb.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 9ed1180fe31f..937c15324513 100644
+=2D-- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -1462,8 +1462,8 @@ static int spmi_pmic_arb_probe(struct platform_devic=
+e *pdev)
+ 	 */
+ 	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "core");
+ 	core =3D devm_ioremap(&ctrl->dev, res->start, resource_size(res));
+-	if (IS_ERR(core))
+-		return PTR_ERR(core);
++	if (!core)
++		return -ENOMEM;
+
+ 	pmic_arb->core_size =3D resource_size(res);
+
+@@ -1495,15 +1495,15 @@ static int spmi_pmic_arb_probe(struct platform_dev=
+ice *pdev)
+ 						   "obsrvr");
+ 		pmic_arb->rd_base =3D devm_ioremap(&ctrl->dev, res->start,
+ 						 resource_size(res));
+-		if (IS_ERR(pmic_arb->rd_base))
+-			return PTR_ERR(pmic_arb->rd_base);
++		if (!pmic_arb->rd_base)
++			return -ENOMEM;
+
+ 		res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+ 						   "chnls");
+ 		pmic_arb->wr_base =3D devm_ioremap(&ctrl->dev, res->start,
+ 						 resource_size(res));
+-		if (IS_ERR(pmic_arb->wr_base))
+-			return PTR_ERR(pmic_arb->wr_base);
++		if (!pmic_arb->wr_base)
++			return -ENOMEM;
+ 	}
+
+ 	pmic_arb->max_periphs =3D PMIC_ARB_MAX_PERIPHS;
+=2D-
 2.43.0
 
