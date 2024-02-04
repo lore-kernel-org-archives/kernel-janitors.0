@@ -1,101 +1,105 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A3118AF8
-	for <kernel-janitors@vger.kernel.org>; Sun,  4 Feb 2024 09:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD7925561;
+	Sun,  4 Feb 2024 20:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707038885; cv=none; b=T2olCK8ZWhnDRHftIjN73FUV08kBULFnoIGSkGl8g18+xRndwsjThbmQzJN6DAmcFQVFYjfi8R6br4T1E4VFWVbMGLd3l01+WrFVLBr9wINAnaj+Mx6OwQAkwVct8Xds5ZJlwYZceI5q28pCOVGwyYmrCIB92Vd3rC9r+bdPa2k=
+	t=1707079012; cv=none; b=O7NhdxghAk1jO7CdQzOXO2Lzk6GSvTSbybg+XZEtGXnyyhQhj//E/vvY/1prCH4e2XkhcqbsqsDLmmrdmM4Nc3iCiL/5P6Rv8UtSB6SbxSvsnVsOwDdMpEhVzahduCFUrM5F+rs1hQA/GGA1G12cAQSJyZGIu05s3tzLpjWnQVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707038885; c=relaxed/simple;
-	bh=UuFaKeSRYDkGrMKG+Q0ICLTYQicuRK3ywZvev5g2U50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tn5u5IE5nMHuL1TWjKN1ZBbE0h8sXqsK3lSv2wkaHfg8qybKQOQLEKv14868d4vGualDTTfLFHr4kciRSz56iqvCm7QrE8flshb+t1JoSgA0GgUK6cYe81VE0fuHQTDndNmfw7dEsfccz/wFWMUlu2l87WDt9GUSR8Gc66gxkK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AOMqV9/K; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707079012; c=relaxed/simple;
+	bh=Ilx1G8+/OD6Mgc6MdHQNSpZPOaKEMorfrU+BLjJ/kSA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qS7N/PxeatRqXjR5isJrHecm/Lip+0XaxExOxOvH6T6QJIcqod3tfsb0pHkXV0bDKyMsh9sNPM3HgM8BrBmhcIaUBo+dXMeFANXhb/cIKPfGmNVmf48HxPOgl5aOaj7zVz5etyqx1hPr6my4WltptZOfgSh13u/c8vz9G0TsH3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CItx1+7B; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AOMqV9/K"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-603fdc46852so36307277b3.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 04 Feb 2024 01:28:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707038881; x=1707643681; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5sjWNa2Zbf00IkE3XpgyHgd6FEK1NqFbKWHmhVWEP0=;
-        b=AOMqV9/KnjoGzF0WNMejWggwkPdEEu0okhAvt99G2K30nN62rVipREgM+uCN/KH6jP
-         J/XqdXd2g6WHETDHRzEXJqT+jXdO8ppyuVL9WesxzgjlafqJJk7NwZm7id2rlxyoj1dP
-         Ses1PIGgB8nYRI1w/FM3AdgKRZg9FlyQWGGiCOb1uicleDVsGso309oAevUfAGjXLNXT
-         q79+PmW8GutCEsFX3SjIcJdn6ZrRFOsTZKjXu+iWm8x9X7H6QvbWS+BCE5mDBZWCjYiY
-         vDtZi58RFD3dZRtbdo6BlaRjH9yhS2HAjQfUARvsPTglSmHQzKPk2OqO6mga9LfZw7qD
-         KJKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707038881; x=1707643681;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P5sjWNa2Zbf00IkE3XpgyHgd6FEK1NqFbKWHmhVWEP0=;
-        b=nlZD41IM2YQYF2c1WtKraPC+2XD8s96iijUkI0UFy9WSu6qRc3xIAHb09GS5RRh/yb
-         AQKMXujobItxr6DF1h+Ap/cQQs5pT6JjTchSCH+P2NfVjcaBT7KAPOF5d7ceD4bp7yEi
-         Debbo8phpnQ8V9FdSVdF7rTH4RmMnwQgNLiCPy+KHJb8WuLc8yjgfJCbfIqdgLnFQlPd
-         fXldcEQx40JrKyMP9n55MV0IiKISNITLxOe9yzRmjM9kqrsN29+m5R0349dlerTD4eXQ
-         H4ghgnf0Xdqh6HBqN7IErt927VkrHHloPgBENSCvh837LpED3GM39e84lbje0DAt+gTE
-         MfUQ==
-X-Gm-Message-State: AOJu0YzBZi+xYw72GbYfY61Iy4e4InMy55e80q3+T5CsUbgy/+BDsKcJ
-	Mk4oRgECm6FusBFOo8000hdkWyAzYXZ+LiT1sQhYI/QoUXwjIIim0YPAebwDY+FuhW0aCh6Ojho
-	skk6sP9ZthkeDrQBawT9X7lCP8S5lrUcU0wb1ZfdGTaetUc6BBta3qg==
-X-Google-Smtp-Source: AGHT+IGxeuAVCwWLRLJEi0G5Qg2/frr1rMxC4V7Vrc5AkNETrdVpT0PrBSYn6iO926ISWNBNkyqrg+bgXGDhBkb3aTU=
-X-Received: by 2002:a25:8310:0:b0:dc6:db64:67a8 with SMTP id
- s16-20020a258310000000b00dc6db6467a8mr8149346ybk.43.1707038881088; Sun, 04
- Feb 2024 01:28:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CItx1+7B"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707078984; x=1707683784; i=markus.elfring@web.de;
+	bh=Ilx1G8+/OD6Mgc6MdHQNSpZPOaKEMorfrU+BLjJ/kSA=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=CItx1+7BISU5EH0Lnu29RllhpcjGS8sK9oAhJagt58XV7T/AEmuRsxZWIIntmPzm
+	 AjVapUsYjcmXZHFacOWDF2txJDLl25SwFolo6I8fPa+yPq4+d16hTMsHJtuFsb/1D
+	 Zv8tbgOjzoTwtNvHcvEonOGdTq0+MQXEDDqd+utpUDl6PQQQ+XcA5R7BsAIfCKRwb
+	 I+JoUGEbYI0bMcWPjfpbcMkucFVRCqzBhTOSxJunVqDoePM77aQImOt+HDykBFhXI
+	 mz1yzfhnrgv0K7lZQAjybRgy8ojTkm1XyIECZmxni/2vvyVTNf2gzBlAcgSsvtbi1
+	 /AdF58SAGyZGsqzD+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M76bV-1rOByp0m1X-008URa; Sun, 04
+ Feb 2024 21:36:24 +0100
+Message-ID: <4fc017e4-c695-40d3-aed4-cbf34d44e6fa@web.de>
+Date: Sun, 4 Feb 2024 21:36:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
-In-Reply-To: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 4 Feb 2024 10:27:50 +0100
-Message-ID: <CAA8EJpquHiz2r7+0ck6KFjpiQHNhgfH5D7n+MEYLKDhDXzBXGQ@mail.gmail.com>
-Subject: Re: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null
- pointer checks in spmi_pmic_arb_probe()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, David Collins <quic_collinsd@quicinc.com>, 
-	Fei Shao <fshao@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Peng Wu <wupeng58@huawei.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>, "David S. Miller"
+ <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+ Sam Ravnborg <sam@ravnborg.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] sparc: leon: grpci1: Use
+ devm_platform_get_and_ioremap_resource() in grpci1_of_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SVJMfTPCnh3g7fnuQ8pj5748MRfDUayCBVjgfFWMNrfcUW1wCCM
+ SC4GF9QzF8OSt1XLfcOQi4cj/j+jPT/dKPOii68qzna4ZUf231NjKZA7N+vCpCpxumZ8atr
+ MP1oSlp9C57o8yJu+kbMP+Jv7+OnQthGMhM6cg4Rc1lqeZHclPKQ8OT2hpWUmR6JMJVXVLu
+ xT5pI4MQb5w7vGrI6LVbg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rSHAwVOHKtU=;7buhA0WZXsvVc05bs/Ufqx9mSpL
+ EgNbzdaLQgtPBpczJWhPKsW4VA2rrycH4S03mjm6sZcOex8W0cKleKYqt0G7hPltzakaxF5bW
+ ehlAhrkWgnfTegULbGVFi7JgqPLuzk8Y3xZXYlmhAjFG0O+A1KG+llQgbShVd6u/Dy9KtSrcH
+ kyOe7Y5bhH2hwnVommde0o6oTUhWyn2JUscLLnvXiFKjaxNnvEwbV7aK63o9q75JR7qT34Lrj
+ J6oZigpUAb33ns2Op+Y3f57Da7unFmIp9myLbI/Stfa3SZlTGLbws9jh39UZaxvhCPzWYPDZa
+ SEdOweSgNHBej32QVGpeH8pU/AjM22ybKGgTj8oDJArns/W8ZOB4m/WiIXpURD2Al6NIhL5T5
+ uBKI1aguuGRLciEcSZTcsHQzWYhNh1IS9cO87g90QO8mhO4UMKUv2TR7rATC8tDkXvMdgpO8K
+ Io91P7JrM+cxXKdQ3CwjEefpdcwoNS9Vbn95r38nKQEU/IRfQKO6NGySBYNpLv6v/Z0g8eW/q
+ 0jiOinKqisl25ctvnpqcM1mEfTgL0UDwYBwyqS5Y61F4csqz2tQmagRpXwBDK83neo4izV5Ek
+ yfQBUBAD1xtQHQVhnvV5f3UZJYLXED5+J1f6owkjSNefaQiPCo3qb6+CI/24Mf1qrigfY7gZe
+ yltwGqNztXliyrrITGwg1Bknqe+wzAYSSKqjqZvgSJYIvDc+FCfRjdkgOMRvfgMWBHcGJ6F2k
+ BRtVl297tQDOrGvS/TyCIn4hCQMSxsyhB9Z82TbF5ILYZnwxvOkPKRzPIr2f9RrMAr26q+ALJ
+ ZTPWi7L3wVtHw8BjK2mF8zrIYlFt8Tj3h+sSVZFI+0Vu0=
 
-On Sun, 4 Feb 2024 at 10:24, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Feb 2024 09:39:48 +0100
->
-> The devm_ioremap() function does not return error pointers.
-> It returns NULL on error.
-> This issue was detected once more also by using the Coccinelle software.
->
-> Update three checks (and corresponding error codes) for failed
-> function calls accordingly.
->
-> Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
-> Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> See also:
-> Suggestion by Peng Wu
-> [PATCH -next] spmi: pmic-arb: fix a NULL vs IS_ERR() check in spmi_pmic_arb_probe()
-> https://lore.kernel.org/lkml/20221115090927.47143-1-wupeng58@huawei.com/
-> https://lkml.org/lkml/2022/11/15/197
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Feb 2024 21:21:31 +0100
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+A wrapper function is available since the commit 890cc39a879906b63912482df=
+c41944579df2dc6
+("drivers: provide devm_platform_get_and_ioremap_resource()").
+Thus reuse existing functionality instead of keeping duplicate source code=
+.
 
--- 
-With best wishes
-Dmitry
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ arch/sparc/kernel/leon_pci_grpci1.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/sparc/kernel/leon_pci_grpci1.c b/arch/sparc/kernel/leon_=
+pci_grpci1.c
+index 8700a0e3b0df..ed2fd7b10dfe 100644
+=2D-- a/arch/sparc/kernel/leon_pci_grpci1.c
++++ b/arch/sparc/kernel/leon_pci_grpci1.c
+@@ -537,8 +537,7 @@ static int grpci1_of_probe(struct platform_device *ofd=
+ev)
+ 	priv->dev =3D &ofdev->dev;
+
+ 	/* find device register base address */
+-	res =3D platform_get_resource(ofdev, IORESOURCE_MEM, 0);
+-	regs =3D devm_ioremap_resource(&ofdev->dev, res);
++	regs =3D devm_platform_get_and_ioremap_resource(ofdev, 0, &res);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+
+=2D-
+2.43.0
+
