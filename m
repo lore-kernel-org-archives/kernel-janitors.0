@@ -1,36 +1,25 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DA42C18E;
-	Mon,  5 Feb 2024 13:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01A628E31;
+	Mon,  5 Feb 2024 14:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707141354; cv=none; b=hY6Cn5MgMU88MJ0xr5NUOB0LjtIIqVDlLqyu/LLJKX9albzKJoTkmH3kIOybUcJXIyn9T/VQhQxsdJ+DlY/GMDfk+pRVwRcmqUbVqJHQj7WTW3ARkKGgui1CjaPZkqZKAhZ9Rl8qUT/AYU8CH3wNBrGXKXrM+KkyYuycccO2s1c=
+	t=1707141662; cv=none; b=nAAr60vZFfolU8XN8i0RQx7V+WG37YCT0zsdyTHJdeVNAsbVBJt4mYdVvjjgJSd7hw+DlsrBQnMdklhP8+EzkzdR15GVf1PNShs8YQwdMlvMjRkjP68Lq9MTBZzDh4ajVxFvrqIvpqlH4LOF7x4wTnBZtOHM0KeLSgy1xKHlA9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707141354; c=relaxed/simple;
-	bh=OCQlC6fsw7RMniTUmuvaoqgcVSnBwtdH0tkNLVCdCq8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=omj06vOZfhsorxkbTyx6LDacbwX80QISf04KGaSh7peY9gT7M22a2Tce5HoXhqV6ooWJQHWajEqnm6v5IhRwUseIAq+e4//UqQXQKmFQmZa4/qr3dTArLAmXGqvLFhWXn3E7g9XuW84nt1GSd5dq4GcumgSfCiFDTqvOJGthlzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HjTm0cjI; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HjTm0cjI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707141327; x=1707746127; i=markus.elfring@web.de;
-	bh=OCQlC6fsw7RMniTUmuvaoqgcVSnBwtdH0tkNLVCdCq8=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=HjTm0cjIhCbiMgsdEel77y7fv7NC6Nxsj7jv8GhO97SXEgb80r7lEmSsnvClOo2k
-	 VRo9narPy0zxhHgqewR5nWaWe1/RFPO8uhNXot/GYfNXg4/mfx9qGOE7ipoctl/QT
-	 7ouWHRyhDooc+FoR8S4frgEy+udQ/exFyhlmIvp4OhY7oI+cjSyUBEFxCxYvaQieB
-	 LhkMTbxEPKAPTQTLXlPgAUB5eulc/PTD6LCMHpE5o70wlqNsuYvazVxq+KOFlXygY
-	 cfCED3D1wd7mfkxSWusHEb0HtYz+uWXaizN6O6dBrhoL4x85vo3Y+nEkCkawfPi9J
-	 0yKqqnj6ySiWnpd2fg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBS71-1rjsY53cFD-00CvRd; Mon, 05
- Feb 2024 14:55:26 +0100
-Message-ID: <f87065d0-e398-4ffa-bfa4-9ff99d73f206@web.de>
-Date: Mon, 5 Feb 2024 14:55:23 +0100
+	s=arc-20240116; t=1707141662; c=relaxed/simple;
+	bh=xgowrTg+bv/6Aac3oAYid5kbpWTggKw8G0dKmP7Pfac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LlrVHymK2KDSoIatHm86Lls/uZoFdDiu4mtTlve/JELQaLjDSIJsEkrXn0ECnbNL3sX1r88+biOLlV2k01GNFUenKpqGumtMi1G7TY82bXnryp+hi9k8ttXrR5DQJFf9Q4JSa3OD3yKauS6cSpmzNIsfj24T3s5WhZGBBZgg6tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E67211FB;
+	Mon,  5 Feb 2024 06:01:41 -0800 (PST)
+Received: from [10.57.48.140] (unknown [10.57.48.140])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EB3B3F5A1;
+	Mon,  5 Feb 2024 06:00:58 -0800 (PST)
+Message-ID: <f27d7b45-89d9-4b5c-9bde-806b57bbe8e7@arm.com>
+Date: Mon, 5 Feb 2024 14:00:57 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,74 +27,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Wei Fang <wei.fang@nxp.com>
+Subject: Re: iommu/ipmmu-vmsa: Use devm_platform_get_and_ioremap_resource() in
+ ipmmu_probe()
 Content-Language: en-GB
+To: Markus Elfring <Markus.Elfring@web.de>, iommu@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] net: emaclite: Use devm_platform_get_and_ioremap_resource()
- in xemaclite_of_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HpdtEuakUvahbDKCQGbUBcJH36NhioRvkShEPpZoWqMQzGg2Udd
- /66drifHYG+/g/EHez/UbXsmBO6j0hVXMihQB7PpnVN3Kse2RaGRq1n1IJLo83c6UWHPt5s
- qikcEeE6Nn8vGJ6t1+LCL6V9QE0S+Zo0yGsJ8wCOWwtjU5U5+7xpxcjAUs2W2cQ7M0/MfYj
- x/Ow/w0rihGGsmWWtwGjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DX5qSgtT2yY=;FgO4dz25//lf7S/k9N4m/F1fSkO
- +78p+4kNPIMGJRtNflgVgoo8qWGIRjTl7v4YzqPB0omKxGZYcRQHS4noibbgO910/zBmyQ6gc
- 2mRH8lIwjH5IniM5IZf3sV2O/z4nGGmc0GoJyZlXe/gCjTs+9+aA/f1RhSlXkcobxzD5HWRyQ
- pJbNLEYl8APxI7gnybKG85B7hepN1/dXB4enZK9uRd0DpJaY4qLZeR7Ob2MLGv4qwBR4zotGK
- aDtz5wbpYvPWsmgfDoKcP4og+HBncBXPmw+zbsyWTIp2uWUZwUhJcetr6I18EfgT0pHscP9+I
- MYgXJ/RFbIVd5PUtzwEAHQ4W9hyCH6BUHC3lQjhwI6mFwpSNldW4PEZTCyDQySY+WYIJhmTsE
- 74KAAOXWXE+pW3aIy+TCbj9yiazBfFnxMf0hGhoxhpOzQXRx/RMD38+YMgKpdJRHMWcvWv2nT
- e7hjhAqw+QFlZgKLBpMl4PSddZcJdh+MQXTDuRt+Aqde2pMDtv84pJjDUH9n6bkJ8YMsQBS0S
- 7LJa0LXIPbVChJ1NiaWXZGHw+YjaT08Ok840dYMU0oKOhcKud4fes9nw8OeF/4ypEYQDFYIaF
- v/nSLHcxZ4G9Xi86aUJJKztZ0KdsmRmkkww+4C5Ii0yn6PLacy5Hlfz9jB7knZN0GnjZSYhS9
- wf1sAJc1rlqg74WElTVpPg0hj6l9HfZblAFKXiDPYmemE7EG1oNTq+LI8JVeuutSZGCKkZSvm
- KV/+6fWej+r7PuND9xJSZZBJx2rHyaL+wgT+zGftwKBCACI0cSx74W8ryUsdwGrfUdibxRzlR
- ZbImIoeCr/Io+lMei6EJiEb/cjz8qOscxadJIpCqJ3DiA=
+References: <e01cdb99-8497-4fec-b423-a0bfb483ac75@web.de>
+ <324d4e02-6a5a-4112-a3a7-d7aeb5876acc@arm.com>
+ <49fc6a59-2c07-4366-b32f-0599c2418916@web.de>
+ <51315925-21ac-427c-abea-4d652ed5280f@arm.com>
+ <0c757d69-ec60-477c-a978-a94118a571a2@web.de>
+From: Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <0c757d69-ec60-477c-a978-a94118a571a2@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2024 14:44:20 +0100
+On 2024-02-05 1:02 pm, Markus Elfring wrote:
+>>>>> Thus reuse existing functionality instead of keeping duplicate source code.
+>>>>
+>>>> Much as I detest the get_and_ioremap_resource obfuscator, it's not even appropriate here since nothing else is using "res".
+>>>
+>>> I got the impression that this local variable is needed to perform
+>>> a desired function call.
+>>
+>> Yes, the call to devm_ioremap_resource(). Which you're proposing to remove...
+> 
+> I propose to replace a specific function call combination
+> by an other single call for a known wrapper function.
+> The mentioned variable is preserved for this purpose.
 
-A wrapper function is available since the commit 890cc39a879906b63912482df=
-c41944579df2dc6
-("drivers: provide devm_platform_get_and_ioremap_resource()").
-Thus reuse existing functionality instead of keeping duplicate source code=
-.
+No. If you believe in cleaning up code, please apply your brain and 
+clean up code *meaningfully* - others seem to have managed it just fine 
+(e.g. [1][2] at random from a quick search on lore). Hell, I think even 
+the original now-deleted script could auto-generate a proper patch for 
+situations where devm_platform_ioremap_resource() was appropriate - 
+there is zero excuse for doing a *worse* job 4 years later.
 
-This issue was detected by using the Coccinelle software.
+If on the other hand your interest is not to actually clean up the code 
+for the good of the community, but to stoke your own ego as a 
+"contributor" of shitty patches that annoy people and reinforce the 
+popular impression that you are in fact an AI, please stop, or at the 
+very least please refrain from doing so in any areas I review or maintain.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/ethernet/xilinx/xilinx_emaclite.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks,
+Robin.
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/e=
-thernet/xilinx/xilinx_emaclite.c
-index 765aa516aada..940452d0a4d2 100644
-=2D-- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1114,8 +1114,7 @@ static int xemaclite_of_probe(struct platform_device=
- *ofdev)
-
- 	ndev->irq =3D rc;
-
--	res =3D platform_get_resource(ofdev, IORESOURCE_MEM, 0);
--	lp->base_addr =3D devm_ioremap_resource(&ofdev->dev, res);
-+	lp->base_addr =3D devm_platform_get_and_ioremap_resource(ofdev, 0, &res)=
-;
- 	if (IS_ERR(lp->base_addr)) {
- 		rc =3D PTR_ERR(lp->base_addr);
- 		goto error;
-=2D-
-2.43.0
-
+[1] https://lore.kernel.org/all/20191013152716.1830911-1-jic23@kernel.org/
+[2] 
+https://lore.kernel.org/all/20200412135023.3831-1-aishwaryarj100@gmail.com/
