@@ -1,36 +1,36 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AA6171A2;
-	Mon,  5 Feb 2024 10:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BAE1401D;
+	Mon,  5 Feb 2024 10:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707128666; cv=none; b=evb+LrDZ8L0JW3XsiNby2xWV8akbJnUlRIN+0c3qhCQVWaALg4k0SZsUcfvtBYDWS51hJU12m0sgh4ylYnCwirTFGhdkTVIfKKWVb0bBJQMf9whRGW72yqwJo13q6LeJqj3w5ryy2b93L/DmVVYCsL3tKuXAzL+NdDnwJdSwitI=
+	t=1707129760; cv=none; b=ZZ5nY8vOoUeRrBTYCSjaT+BsJtzQDrvJX4d7RLnMM9Bce7yPJhXVtfuRZjQNqAI2oxvhVcHsCR1T//eUF3pAwtG3AwVG7+5EHSDyFUOWdxx5JmgC3QL7nmcym9X0Tf+UpiFKkzUEU0pE0UD6e079PWQcz1ojvVMnjzwQtSCKh2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707128666; c=relaxed/simple;
-	bh=NnYE8bbILAW26+vAJtdRxYeGAAdC5YtkedHUkzckdD4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=hQ6zq9TSyFk3aBO7RCZcvNvRhf2LD8oAkUCxv9HN6WLhH6ADwqSURFYqkS/LBJiS8wlqAOt0KW8okLhyi1GQgFuSOWkyXAUsqfDPs5SB4rtttKccZpmzZ+K7NVl9GJQxsAxhPVW/MUReyqEeBtunq1wLAeUzrE+Shn5VdRYKpI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v+IqlpIG; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1707129760; c=relaxed/simple;
+	bh=/lTk+9N9Tl9ISnjaDgaHVZl0B7sj4vhWjLvyKn2MSww=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mFiUxF60VRyl3abBEiZ0sj0lZyB2AmqW5gIMqdyTYNIHAwkAdjGtA6OfpWhq57F/IAYfNKq6VyAAntYYiF6M/7IfHyRcYfmD8T7RN4arnfg6JElSTe0jcDtEMRBf/w3N7khi8m0i1jZ4zKHYeI9qe01UsZ+LcLUfI38SX0VeRJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b4Qlzh7r; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v+IqlpIG"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b4Qlzh7r"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707128635; x=1707733435; i=markus.elfring@web.de;
-	bh=NnYE8bbILAW26+vAJtdRxYeGAAdC5YtkedHUkzckdD4=;
+	t=1707129749; x=1707734549; i=markus.elfring@web.de;
+	bh=/lTk+9N9Tl9ISnjaDgaHVZl0B7sj4vhWjLvyKn2MSww=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=v+IqlpIGM8LcYdlXGr8tIgZSbkYiaspbbGkDShtupIzcT/crkwMrynT1G4KeNUF5
-	 V6WWF+r4/m6FzNZxIAVamOvWTJYUII+D7TbVmT79OTkyCDHRjpVGGoZsHhU/HRuG/
-	 OZ1u1v+hCn0j7U1t+N1AcN4oTS8IlClHY6Mtyc8wfr5KSmDgDDPGJ6+cGT+bgaJ34
-	 lyOVZQun0MeSMGUHhNo4VdGahne+YibjO2QSlHSAhsV/gucSb0PAxecU7CCp9RIfG
-	 yB3CvZCOyj+He6vtd9/yv7IzTk+RGVsn0nCkO3q/dTMWLhnc9iTPxuZNWo3wV8WKr
-	 ph+15O1kpyYaX4W+9w==
+	b=b4Qlzh7rW8etxiqQ9lFmx5NbG2L6gB43ieV6ucFBlc4PY/yoE/EAqvhDitmqxorp
+	 7xUMny9yfrpTjl3tQvFeFdzRxpP5S1pyJgDB8FFyHYutm9VfzSzdPoS/49VeBv2Ky
+	 KkLN1X9vpYetfvec1ojdNjkifo6dVdv16gA7YixdCIvklth66i+f0jdKjl5gCgPr0
+	 IBWUZlmhW43hGzzXv3v2ll6xH2qh3fi/7fhBDM1AgyfJpVwEfYo6lUyqgi7CRuNhW
+	 H55+AEHTQfB4KtRaJjgmFAtYyM9VhIEKN+x3YdHP5iOCuHptgJguwWep7W92T4yze
+	 +r1KT/g3tmYvvx8qeQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7epr-1retgl3bRN-007wSM; Mon, 05
- Feb 2024 11:23:54 +0100
-Message-ID: <e1458683-1270-4b9f-afdb-2f0112d66245@web.de>
-Date: Mon, 5 Feb 2024 11:23:46 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N5CQh-1qqDeC1oTV-01140j; Mon, 05
+ Feb 2024 11:42:29 +0100
+Message-ID: <e01cdb99-8497-4fec-b423-a0bfb483ac75@web.de>
+Date: Mon, 5 Feb 2024 11:42:28 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,39 +38,37 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Alexey Brodkin <abrodkin@synopsys.com>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+To: iommu@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+ Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/arcpgu: Use devm_platform_get_and_ioremap_resource() in
- arcpgu_load()
+Subject: [PATCH] iommu/ipmmu-vmsa: Use
+ devm_platform_get_and_ioremap_resource() in ipmmu_probe()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KVeAwmoXQTlXGed7bvDvvu5QWlrOEBIVyiLqAsV4nn+zEWWsXx0
- pb7SJ3z6qkW57aHeqg2cb394t85Soe3Lwn8qG2P0WO1yvfKf4jxgF4qT6H9aRyyWA4NBlI4
- 7DgQavedJMooj60TH7uSxE1hc8nl3oPbcjVsCfOb5/K1WYr2iNURnHOb/xxQqaPfgYRSBjf
- ekGNL8KJ7mDUFOBRV+9UA==
+X-Provags-ID: V03:K1:pFkITfov5VDizKB661GXtaC2oOZeKctSayG3VAgdcSyTzXkOzU1
+ HmdfJ8l3C9QNGlAT5M6Tn/wfC1X1Orhck5s229OEHQQ4Tco4fRQC+sZ0BxPcC64cE4yDmam
+ 5k3PdgvJ4J3X0D8JVFclnuKepZxQgvuqT0Ql8eOVdiQZlq9HFNVa8/m+SVNug+ioqidd7wP
+ ED9vCEcPL1pZUg7FLFzqw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iCCk1+Z8zWQ=;IVOtri+y3nb3aQV+8+sKiAHKG/N
- Is8V2hQrHwSRwxenxyJiwvTOKq+40YvLeHkRr2ayfMNQrZ91lWkNnUt8IIwDKNu/K0Oq64bgP
- Y3ouzPC3ohS8lG1u2n8NMhiUUThcccOztYQfWwmrIjcc0aUU/VpjmfpHXmTeA98DFoInfRaqP
- TZYn5VAkCOLXCBvI7b8LNgyGb45UEbYAyZrhG9R+WitF58vcC2wvoWxuKfXJvz7e+tlXEnUNR
- Qqd5rcDBW/7i88k939/l0z8k/vpzRkChjyoIowYJzCVezi2vRp5COE3mk02tkMr5fGIctyqTG
- TZ8e05cE7j14oMZ9UGsPZLIw9VbNhFzRGnvtLBHfCLgWHfr4iCmC+b2qov+LUY4TQGDQiMTGE
- gACAfONy3JlJg24ssdkM1Z+WiAwVPmQKb1FKMiCp3qcS2ma6+CyZbkwiTbMai0GzVlFDtUCjC
- pTeEoCQofZVgf/cgtWyYI7RSe6a/0gz3DnboFQX97Q+zn2bQd38H0565X1Lv34dcbjbH7Qo0s
- DvQ6WV34s+cWAKtP4XCWDBtn9g175m5493IGCM7e/yRQQkT5KkyMbTKqWK7W4gymWkeQpkv75
- Y/nJAzQdytijbKKFQe6K5U8+pFKHCwoBmSytxSOsx5GDstvCL4JB2RJxWhf8vJJpqjL/pss8h
- hND6b8P3aZl5/mcTTe0SkJ65FCy9V+Kfd0pojQqnaRbRocncUHpsCCxOKbTzo1xTs2ycasfC0
- 5HBNpPbXtPL/QwqkTqMvF9oQWeI4+brwutP86b0Yxnqzaf3ODrt9YlFSLujPVrL/bymvN8pWV
- ZHmXI0xbVZYlbCzrjZdZ1s1JJx2Zv+xxGW263iEekrAn4=
+UI-OutboundReport: notjunk:1;M01:P0:kEpDxHbnr7o=;w9Qz3MztgeXwbrCdkYQbthc/jXJ
+ 3U+0P71vSLLNiy5vXIgerarSjIG1qGqfTle8nC9ZRrXqyK1Q2SUA+oi1a1Za24Hk8VZ2fXRKX
+ Bq9kQrsM5rAohCyiehpShGP6KU6siFZ4vqGmTDcyiimM0sOy/32QJ0MeErDc7bXGT8Nen9Mto
+ HEP4eCSVMvO7nByKSULoHEg0Lju1KzI8+LPro93hEclqb4H+fW4tawQ2BG4XpFD0ECW7l8Ece
+ jGxm2xKPAv7rDwVx5CIFvsrJSmbLlJzxicz085EpzqMAOXYCbN3/KQKjm3yErc4PQkO16UP66
+ RiId4r+9g0jhCjfq9nlv5/5eU200aMud3FTdlGNRoWokamIetbJ7u7GQdFibdvU+w5JNfA3Ya
+ vHJ2+jVvpPL2oeUeEb5mgTLJFewZ0slAEUzGtYgZteh1ULNUhYSRrNufHWJBU4vqfhd+dl/0o
+ cjhP9uds+72TzOdAmQ2xk/LCXW4tHffvMlfGdWCqtcSQ34S/3ts6KacJovXixNeOGOaFe/U0A
+ eDDNu26zNEVaZHqmvN/wA98sT52hQGTO6lGd5xH5C/tUvsfmmM+ESSxBcYzpS5PVjS9yOSTvo
+ UyQ8IUsIl4ISkqijr/2g3XWIWlYXE8bbIjrOGAMvUdEuJGc+Oya4KMqg35jbjICgII4ayOuDE
+ bJ1XKtlzlzBt5oEZFIFyEcxykQB60VknmGpIaTgmrErDtAL4Y9aEowUMMxrUNDRO/tgyPa2Tc
+ 025Q/bYTfg9UCV5iRki0befzjPK4bYEGesA/QOT8CprNS1jrH9eP/+Blm4shnZQ7gN16oM9AT
+ G2yFLq0VfLosfLK1eaLV4uuL6thFYahOkvv3B0OxVuSlY=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2024 11:16:27 +0100
+Date: Mon, 5 Feb 2024 11:36:51 +0100
 
 A wrapper function is available since the commit 890cc39a879906b63912482df=
 c41944579df2dc6
@@ -82,23 +80,22 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/gpu/drm/tiny/arcpgu.c | 3 +--
+ drivers/iommu/ipmmu-vmsa.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
-index 4f8f3172379e..29929f093d55 100644
-=2D-- a/drivers/gpu/drm/tiny/arcpgu.c
-+++ b/drivers/gpu/drm/tiny/arcpgu.c
-@@ -268,8 +268,7 @@ static int arcpgu_load(struct arcpgu_drm_private *arcp=
-gu)
- 	drm->mode_config.max_height =3D 1080;
- 	drm->mode_config.funcs =3D &arcpgu_drm_modecfg_funcs;
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index ace1fc4bd34b..12685dd2dd31 100644
+=2D-- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -1025,8 +1025,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 		return ret;
 
+ 	/* Map I/O memory and request IRQ. */
 -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	arcpgu->regs =3D devm_ioremap_resource(&pdev->dev, res);
-+	arcpgu->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(arcpgu->regs))
- 		return PTR_ERR(arcpgu->regs);
+-	mmu->base =3D devm_ioremap_resource(&pdev->dev, res);
++	mmu->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(mmu->base))
+ 		return PTR_ERR(mmu->base);
 
 =2D-
 2.43.0
