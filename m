@@ -1,51 +1,36 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39B028DD1;
-	Mon,  5 Feb 2024 14:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CF528E09;
+	Mon,  5 Feb 2024 14:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707141705; cv=none; b=bqguUDMIsMhnAcCn04wG7RA4p3ulTrMwu1XuTW5/0e/PxOBjJ1XxCkqSQkOcR0QDSqane1B7TPPA9sWKXBsTuWaGIZHQoSjrhRQqzBFPYWZFcRawErb7FYQsdraSO4K2mMBbTbrc+bc+Tm/Oal7dY2iWVLWgX3lyWj+zyE+SiAM=
+	t=1707143025; cv=none; b=Gutw9QNlCURSPOOJHV9xhDClhJRvC3cr32OKGedl5cD35hv9ddc74GVVpN0PU7Acx99wCxGPMnn8vVL89WC90zq4ZuklwN5GSwMjR/e29v/Y0k/qflZu2F/bTUykgBGwtdzYSr07teRbx8aLU7dM9GMgPMlXL/sNIAxBrXx8L7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707141705; c=relaxed/simple;
-	bh=AQ9rJJsSMiX+vo7iSm3VkhpLNuASv5tw8v6zztJtpa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TjYTv2H38q8ZD/p7fr8O9uJyLFM9Gn53trc0Ebi8jaLeohknm6XfspzxBtp3u2WfxEI+PxmbtvAHLQelNj3WEdpwFzGKOEZUbBnxr9MfnL1dihlAP6uvTnZ6DXjTf56H452nLdostGkL1o5/G4U4oZPVCb3xWMVu4p+DuxPIJ/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=nhvuxBxD; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1707143025; c=relaxed/simple;
+	bh=dnIBfbHB8ZPlHqVXA+eJYYPip2Nlrn+++FytfzTBiTM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=a9APTmotxZnZTdknK1zj+Xr6rW/AvkP516nqGodpA4pf8BfmatBoSYtw1/ZkXuRUQuklCUyzuPgHoLake0PVMWikE5yk39Nek1hEpXtJm1RfUnadWAQ6gLE4tsVK3+i2ml5w7X3AgZyaGTRKDq88quFx4oAAu5n1Xet3T19Ae5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KLm4V0bl; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="nhvuxBxD"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4155VpcZ002122;
-	Mon, 5 Feb 2024 08:01:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	PODMain02222019; bh=KkdSVvZBpNy6UICQTjzXbhDmnHH8Se+KrDnsL2G3J/E=; b=
-	nhvuxBxD495qcJk3Dwfn+Er1TmmkZ7aJl4efkUIbbRZgzbGmi15fN6u6L0pQsS8m
-	oizA2n3YqQi918+XB4wYEvGZbCAZERLf6z7PoPWBL6CgeUn6VnT6NmDupNW9GTvT
-	1OutoakT1s0SKSbllebVm5FLZy+RPSpylL3B8goAarXiDQeLi9Yu5opBm006u0vh
-	Rin8D06cqaadWvMwBHLeKHYsAlC1Ai1/JzEvNBGygzmXFKBcMTCXDg34tPFL74JS
-	da4YSkg3HXId+hWhheJZBLCFkmgPuukxddu7ePknDbuGLoiTJSsKW9cZyuuPBjEM
-	GZ4YM+x5ksEclSEt6EyFIg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3w1ks29ybc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Feb 2024 08:01:05 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 14:01:03 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40 via Frontend Transport; Mon, 5 Feb 2024 14:01:03 +0000
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 8A88B820241;
-	Mon,  5 Feb 2024 14:01:03 +0000 (UTC)
-Message-ID: <5a2872d4-7eb3-465a-aace-c848919b1f2a@opensource.cirrus.com>
-Date: Mon, 5 Feb 2024 14:01:03 +0000
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KLm4V0bl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707143000; x=1707747800; i=markus.elfring@web.de;
+	bh=dnIBfbHB8ZPlHqVXA+eJYYPip2Nlrn+++FytfzTBiTM=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=KLm4V0blbSMIAGoBSC9mXB8FoGR1shqWQKuYJTqNaJfah9ZXy6C88xPezTwQZ7iZ
+	 o08IgUmVlAlGV7wN1RLyi+hIXUzlzlvQp35zt1qBJJQEBcNtcmHMBYgboazVK0emi
+	 dicoXgwXol3ylS9hXSZsTfwYnXp1cJjAMemJmTzsn6nUOLPYf9ageVqO//u1bg1k8
+	 qXNmlFfBe9xLHTag/LUC+J7H0nZjQ9oafUi3/ud7F8J4MrwwJG5X9VooDKviXMVEy
+	 L9NY5TYvDF5h041mtEuN0T/Wp9p0T7ItXjZAu93OzkOArdZowMiTtEnElDO+36wZQ
+	 mD6eftyehLbH38lLVw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1rjK5d3GOr-00CNRJ; Mon, 05
+ Feb 2024 15:23:20 +0100
+Message-ID: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de>
+Date: Mon, 5 Feb 2024 15:23:18 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,51 +38,71 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: cs35l56: fix reversed if statement in
- cs35l56_dspwait_asp1tx_put()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <0c254c07-d1c0-4a5c-a22b-7e135cab032c@moroto.mountain>
+To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
 Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <0c254c07-d1c0-4a5c-a22b-7e135cab032c@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 5xdR__uDpewbfPRVIWR6S2KgtvLy6a5n
-X-Proofpoint-ORIG-GUID: 5xdR__uDpewbfPRVIWR6S2KgtvLy6a5n
-X-Proofpoint-Spam-Reason: safe
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] pmdomain: mediatek: Use
+ devm_platform_get_and_ioremap_resource() in init_scp()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Qk9+8YbmEYpkEKxu5CX80yzJiKq/O07RES/6VuICIr0ippZkpn4
+ +r0wYvjgmLpZo3rV+cALSmNXrH8l2dLYM5uGCk9VINKHybD8mkHH5LUwB6ktuwG6Vkq5za9
+ aXPi+9TgrBgoot1B4GWajqZcqGIPBDYJKMX4gIoappbK/MU0JA2+BYk/eyXr6jPsioXFmDd
+ Tuaaz/TxM9fLDgzWwUqKA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:r9Z430C379U=;ilM33fD4v70mE6uWIXsWyXQKWCK
+ dsXZDH6BvRcR7mUyDjiXmJM+hkrFdUWqXEQs0b90wl7rQDuhQt3LlEcSrGTCR6BAlhQ1E9GVD
+ QEhX4KXDLu0RkEZC54ydlfMNFozgY4v5Pww5o+i3eOvabToBAR9KPl2RX9NPQNSX03JbX5MaC
+ /Ch9a1Rc29+bNhZ2YwMEM8RdjvLXC8+xvXZle598Z3gV9R/U8FF+yATT3KbbI4aiB28yuxvzl
+ 6kdlXxDSTF5uIv3XpfwTglBBLE2nQwewbptuwUoStSqUzjCOXuMsjDdRj32Y3zcEXxPWqH8pC
+ CYltKfBrndxqR8q42dvy3jBuTjjbvR8wrLVQBxb0c/BjlTS2D9IvbaYCysY0E9SHgz+fse5LC
+ Ydvv3SJ+JLmyd62OrYrS8SmTZwdKeFgqYptLQXK2IZ1Svxji7PQLePDBZc4/wIfBdyJiQ3yJC
+ irmXwRVzLw7EinjgwxuRAijiutU6m9l4uSIOLBL3peBfvUlshrv4QwnY3JfJ0eEJ8+h2InKqh
+ PEFKAft2NMmHWimsJQ192fxKgXUxc2k94s11+35g26/1e2U3q2OJaKPYK7pDy07v47AmW0l/O
+ 6eRr2l0aI+hiIxPcXKg1BTOnBt6cX4odLRItGYCreOqp1Uyqdd2cADTfYVgN/KzQ43KplSqLp
+ 6GpjXXDPmy1qN82nx3Ppz9jmdsbZwFUirV+3dJRORZzL7iKVpjXJLEhN3zhBDYMRBuaweivKt
+ px89WBWS8u6KGQ4zcLICgaZUxS/7nMh+TlXziDHtozxpHw5d7KcwpNJjffvUYiIApEaBXJ6Mt
+ 43yfxJPG/y4L1Sq0I0MepnInsU8wuAFV2EWGCnz+JVMJc=
 
-On 05/02/2024 12:44, Dan Carpenter wrote:
-> It looks like the "!" character was added accidentally.  The
-> regmap_update_bits_check() function is normally going to succeed.  This
-> means the rest of the function is unreachable and we don't handle the
-> situation where "changed" is true correctly.
-> 
-> Fixes: 07f7d6e7a124 ("ASoC: cs35l56: Fix for initializing ASP1 mixer registers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->>From static analysis and review, not tested.
-> ---
->   sound/soc/codecs/cs35l56.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-> index c23e29da4cfb..ebed5ab1245b 100644
-> --- a/sound/soc/codecs/cs35l56.c
-> +++ b/sound/soc/codecs/cs35l56.c
-> @@ -115,7 +115,7 @@ static int cs35l56_dspwait_asp1tx_put(struct snd_kcontrol *kcontrol,
->   
->   	ret = regmap_update_bits_check(cs35l56->base.regmap, addr,
->   				       CS35L56_ASP_TXn_SRC_MASK, val, &changed);
-> -	if (!ret)
-> +	if (ret)
->   		return ret;
->   
->   	if (changed)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Feb 2024 15:08:27 +0100
 
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+A wrapper function is available since the commit 890cc39a879906b63912482df=
+c41944579df2dc6
+("drivers: provide devm_platform_get_and_ioremap_resource()").
+Thus reuse existing functionality instead of keeping duplicate source code=
+.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/pmdomain/mediatek/mtk-scpsys.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pmdomain/mediatek/mtk-scpsys.c b/drivers/pmdomain/med=
+iatek/mtk-scpsys.c
+index b374d01fdac7..9e7f0771e7e4 100644
+=2D-- a/drivers/pmdomain/mediatek/mtk-scpsys.c
++++ b/drivers/pmdomain/mediatek/mtk-scpsys.c
+@@ -441,8 +441,7 @@ static struct scp *init_scp(struct platform_device *pd=
+ev,
+
+ 	scp->dev =3D &pdev->dev;
+
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	scp->base =3D devm_ioremap_resource(&pdev->dev, res);
++	scp->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(scp->base))
+ 		return ERR_CAST(scp->base);
+
+=2D-
+2.43.0
 
