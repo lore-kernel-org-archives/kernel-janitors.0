@@ -1,72 +1,105 @@
-Received: from mx10lb.world4you.com (mx10lb.world4you.com [81.19.149.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7388A55E6E;
-	Mon,  5 Feb 2024 21:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D942482DC;
+	Mon,  5 Feb 2024 21:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707168480; cv=none; b=gqpIJiSLO6+yWd0XE87hDfKoMTopqBnjuQsaKTHlmuLiVBtDmmLSpAMcSVfuNxRJaL23jxonSN3xiV9H+1Wvm4zyUR2M2CHQ97ELNRZ1OJBwG/9iiwJIm7jvPf9/mBUWUhTQ4iSC5ty9fj+GSyx1xlejBUB63ewr+gequ25mQPk=
+	t=1707169008; cv=none; b=YwLb1PhZ1BZil2l6QyEse8y/KDNTsy/X5Ipfus9f/juxqJoIQAVlIedeAUI2CTLvfdub826bttYMCUYuYfGI8uURisdUbWbewup39z1WexD0dsaoWCwFdadKA53LnJpK+YbM488My9l1N9D3NyQUM4bm52qKPxrbWe2BeSTnLQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707168480; c=relaxed/simple;
-	bh=agcKveseb9lfBVqx8d6myKsRhGARFKeegN5jrHFVRMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KDD8kFlitkMK2EU0IiirhXQKgwFNyt+a1W54+iR8py63IaXxShY2O1qqNWkG5p/ortIRdgqviR3NUttfYO8rmluBCh3/IFpgRHY0+bAbZL+TYh54tfuq18ujX/IPXPlmHb9mr8ly6+8p4OI2ZMja4/JTMMOdhraIkdushBOCRZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=RxCnstMO; arc=none smtp.client-ip=81.19.149.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+	s=arc-20240116; t=1707169008; c=relaxed/simple;
+	bh=t1Cd6TW+Agc8G9lESecqw5BVuRFyEei094Suxxq2CY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mfieNXh3z6JSdi/UV9Ji83iUDjMzm7nIcpiuivJHRJwmo2m6g752Mqv1zAFA6pL5mwMYpFr8lLEQMovlmDwsD2aEfy/rmogTpZHaXIvQNfIxOA5E8gZlzw5u+5h0EDi9AYHtetB+9UAZcQAR/LJLa1y6OKzvYrgj6KEKQHyGEyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmXJx9Z0; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="RxCnstMO"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=he8yop61Q/oM6FHfZWgijEzftDrOEirDa6XmewAxTv8=; b=RxCnstMO0/bvZ9uTkRL8FIpLcC
-	b4YwdcvpXnZC1kqpWGbWJfBU7ERIYN8hTidLVbvVfYrScp1dSfIAneTEc4l7XDR5YnDuw0nJOGxkT
-	9bDXJeqWYDc/7VdEchFDhujGfROHtcHPN+J1jBncfQfl4Kvze3X3vhOvhUETUPHq7qWI=;
-Received: from [88.117.50.204] (helo=[10.0.0.160])
-	by mx10lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1rX5ro-0001Io-26;
-	Mon, 05 Feb 2024 21:47:00 +0100
-Message-ID: <8a6c3c9a-0bff-40a0-aa0b-3032066b8d04@engleder-embedded.com>
-Date: Mon, 5 Feb 2024 21:47:00 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmXJx9Z0"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33adec41b55so3122355f8f.0;
+        Mon, 05 Feb 2024 13:36:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707169005; x=1707773805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ixOwHwlGr0QH0MfebG8nIcK05y76/V3geW0OCAmt5g=;
+        b=RmXJx9Z04YN949q4IILLVIzwCYIdLA9/CJl89HUvwUF+ltg44uTx3mJbOEaAUz2eEk
+         UvPAXqD2hzasO35/gA+ks8FjxOmJlsxBfS8/9PxxUnF0Vh5B98cAJyTChug9naFwqla0
+         TfA2PC8VUoHO9YYQs1op5lMyaA5REtRkKj37UYqJLQu4mL+yePtLqzVhlgUzqhl3q+H0
+         CGyJxD7/TJzYqtK5FzF1dwrkN727WH4XIUVFPvP+1p5VvQ3BBKlQ/fdVlTE48LRBuMlM
+         trUZOZQcVUI4DX0oKTytkBC4uZu/gu7uTZVId1+05aNOUdBFt+VihchImMf3oDgpgZFJ
+         yFjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707169005; x=1707773805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ixOwHwlGr0QH0MfebG8nIcK05y76/V3geW0OCAmt5g=;
+        b=gPLUD1Nv8WWLr/A3Td8YmJDQDSmUiEVETZY8UkV4Tc4IuFB/4duv/jbpWQDUAIifKX
+         zy+WRjGRorINNXlffBtDWaC3+/CtUAMD1XCUCPaP4hVSY+uYmq+nwqt9vIL70G8qef+P
+         7gknhhgQHUhhtjsZO6BQ+ZDH5cCFTnPsU/kdh3V3NMrw+NJ8wrxH2ygPQsq4Wp+Kf/O0
+         uDJ0Opa7OZ0zhA/F1eizBUOi7b9wx2k1Bu38YWfpAg0vMT1ceK07TxjMmpQjOVO5vi01
+         W4p/75QiA1dP9OGRK7DV4/2UKrlz5ny5ypMxkBI7M/lXaKnJq+UxuwYsTjh/c1M2Qn3Q
+         xiVw==
+X-Gm-Message-State: AOJu0YznmSmUnpqQGHCiqmTMECNHTdxCTyjR/K+ctwm7mk+jPonhLG5R
+	OgoAt1Zl1spUtuyR9PJrwpxIvktoDPTq/weTeOpjLRDmnRm0a9uh
+X-Google-Smtp-Source: AGHT+IH/5rh+UD9PCC6QbLfEbwSMpAr7bSG2HGF67ZOyjt2y9aXGfq2FH33t0Ysw8/FVB1QPYUZuow==
+X-Received: by 2002:adf:fe02:0:b0:33b:1822:4478 with SMTP id n2-20020adffe02000000b0033b18224478mr464497wrr.30.1707169005023;
+        Mon, 05 Feb 2024 13:36:45 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCV1xsFWjL/C1NJeg5+9Yg9z/PhjZ6gTHCFCXhf7Cnpmub1eVhUVtl+Itm8TaD5MUa+ZpCLLjPhwTORuqi1u+W9L8p0UqKcHgOI0QLQsEHQFabTNpM4jaWF27pgI7rxNgFrZtVHCLczZdw8OMiBMNmGq83XdmWpHsjSpkpOrDIEsPMwH+ieHHjFrqK9LjK2pJ/c444r+y4F3xqvpcoLhgjgIGfmPyLpMB8s5vj3H+vv42NzNRGyG
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id w9-20020a05600c474900b0040fde0ec31esm2466158wmo.31.2024.02.05.13.36.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Feb 2024 13:36:44 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] xirc2ps_cs: remove redundant assignment to variable okay, clean up freespace
+Date: Mon,  5 Feb 2024 21:36:43 +0000
+Message-Id: <20240205213643.1850420-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tsnep: Use devm_platform_get_and_ioremap_resource() in
- tsnep_probe()
-To: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <29e9dc0f-5597-4fee-be5c-25a5ab4fe2dc@web.de>
-Content-Language: en-US
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <29e9dc0f-5597-4fee-be5c-25a5ab4fe2dc@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 05.02.24 13:54, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 5 Feb 2024 13:43:14 +0100
-> 
-> A wrapper function is available since the commit 890cc39a879906b63912482dfc41944579df2dc6
-> ("drivers: provide devm_platform_get_and_ioremap_resource()").
-> Thus reuse existing functionality instead of keeping duplicate source code.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The variable okay is being initialized with a value that is never
+read, it is being re-assigned later on. The initialization is
+redundant and can be removed.  Also clean up assignment to
+variable freespace using an assignment and mask operation.
 
-Tested-by: Gerhard Engleder <gerhard@engleder-embedded.com>
+Cleans up clang scan build warning:
+drivers/net/ethernet/xircom/xirc2ps_cs.c:1244:5: warning: Value stored
+to 'okay' is never read [deadcode.DeadStores]
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/xircom/xirc2ps_cs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/xircom/xirc2ps_cs.c b/drivers/net/ethernet/xircom/xirc2ps_cs.c
+index 9f505cf02d96..e9bc38fd2025 100644
+--- a/drivers/net/ethernet/xircom/xirc2ps_cs.c
++++ b/drivers/net/ethernet/xircom/xirc2ps_cs.c
+@@ -1240,9 +1240,7 @@ do_start_xmit(struct sk_buff *skb, struct net_device *dev)
+     netif_stop_queue(dev);
+     SelectPage(0);
+     PutWord(XIRCREG0_TRS, (u_short)pktlen+2);
+-    freespace = GetWord(XIRCREG0_TSO);
+-    okay = freespace & 0x8000;
+-    freespace &= 0x7fff;
++    freespace = GetWord(XIRCREG0_TSO) & 0x7fff;
+     /* TRS doesn't work - (indeed it is eliminated with sil-rev 1) */
+     okay = pktlen +2 < freespace;
+     pr_debug("%s: avail. tx space=%u%s\n",
+-- 
+2.39.2
+
