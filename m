@@ -1,66 +1,64 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D942482DC;
-	Mon,  5 Feb 2024 21:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39765B67C;
+	Mon,  5 Feb 2024 21:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707169008; cv=none; b=YwLb1PhZ1BZil2l6QyEse8y/KDNTsy/X5Ipfus9f/juxqJoIQAVlIedeAUI2CTLvfdub826bttYMCUYuYfGI8uURisdUbWbewup39z1WexD0dsaoWCwFdadKA53LnJpK+YbM488My9l1N9D3NyQUM4bm52qKPxrbWe2BeSTnLQs=
+	t=1707169770; cv=none; b=DaDPKTse1oDWTjAbvOPFwBMhtsS3R7WyNfzmVLINpa9kS38+cAx2jxGrd4loVHFrh6HmlX6pWp6kAYco8+QhqqMXqifaTbwLuTppTm+yBcyLS1M8erXw8MTzOxmqWjUflL6ZrmwaqrTQkFJYv1T7YevLTQEsWpAY0BlMfTmkhe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707169008; c=relaxed/simple;
-	bh=t1Cd6TW+Agc8G9lESecqw5BVuRFyEei094Suxxq2CY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mfieNXh3z6JSdi/UV9Ji83iUDjMzm7nIcpiuivJHRJwmo2m6g752Mqv1zAFA6pL5mwMYpFr8lLEQMovlmDwsD2aEfy/rmogTpZHaXIvQNfIxOA5E8gZlzw5u+5h0EDi9AYHtetB+9UAZcQAR/LJLa1y6OKzvYrgj6KEKQHyGEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmXJx9Z0; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1707169770; c=relaxed/simple;
+	bh=nMy5k7EtAlhx2FUGhxz4Aj9a0X7Rvf6ugPK6E86NEJ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GU7H5hMIw6nBpUv/f1jYci67MR8rl8ML1vaYaQpEHv3+SL4Y9nMiAel5aj9PI1YIvay0btYWtEHZbVkpZhGfytKWzTLpuNi9jVBazFsjnP2aqES9AKmBH7qNsGFlHhMuwROqiC2r2C1RQeEAcbzyhY0Ot2/Mnyws/JmVEeDK7L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOUfYnWb; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmXJx9Z0"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33adec41b55so3122355f8f.0;
-        Mon, 05 Feb 2024 13:36:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOUfYnWb"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33b402116e5so685706f8f.1;
+        Mon, 05 Feb 2024 13:49:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707169005; x=1707773805; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707169767; x=1707774567; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ixOwHwlGr0QH0MfebG8nIcK05y76/V3geW0OCAmt5g=;
-        b=RmXJx9Z04YN949q4IILLVIzwCYIdLA9/CJl89HUvwUF+ltg44uTx3mJbOEaAUz2eEk
-         UvPAXqD2hzasO35/gA+ks8FjxOmJlsxBfS8/9PxxUnF0Vh5B98cAJyTChug9naFwqla0
-         TfA2PC8VUoHO9YYQs1op5lMyaA5REtRkKj37UYqJLQu4mL+yePtLqzVhlgUzqhl3q+H0
-         CGyJxD7/TJzYqtK5FzF1dwrkN727WH4XIUVFPvP+1p5VvQ3BBKlQ/fdVlTE48LRBuMlM
-         trUZOZQcVUI4DX0oKTytkBC4uZu/gu7uTZVId1+05aNOUdBFt+VihchImMf3oDgpgZFJ
-         yFjw==
+        bh=Z9fqRIwKVaJXAVoXSjrYm1TW9ua3bpkx5wdeoNkzRRA=;
+        b=ZOUfYnWb3uvRzSnbxUSgj+Nt7TFLMJ4RMD5apWL35znpWcgZL75okSyVo1YFZiwheS
+         RcIToap3yh0sjpkVxEnyGzC4rv/tmJ2SjBYDO+xnO46Cy0s/GbkimWv8m3mul0RO+6dc
+         Rb+mzpX8vnxYRTq8ooY4NJconyH/2HCvNU80q02Wil/FEw2Bf4MgrUheEVux+U7tjP+N
+         UmiEaRtetjIt5x9+/vuuh6pzWuDqL9vIPf9ERFmvmfpMgOaJdSn+FJzbbGOwHR+V+4r2
+         HatI7F1UO8vLHOaMoT1Uy8Wcp1mURFSk8xSHZgnitCrw5MbOibgJCgltbJEEJ7Glj/17
+         Fy2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707169005; x=1707773805;
+        d=1e100.net; s=20230601; t=1707169767; x=1707774567;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1ixOwHwlGr0QH0MfebG8nIcK05y76/V3geW0OCAmt5g=;
-        b=gPLUD1Nv8WWLr/A3Td8YmJDQDSmUiEVETZY8UkV4Tc4IuFB/4duv/jbpWQDUAIifKX
-         zy+WRjGRorINNXlffBtDWaC3+/CtUAMD1XCUCPaP4hVSY+uYmq+nwqt9vIL70G8qef+P
-         7gknhhgQHUhhtjsZO6BQ+ZDH5cCFTnPsU/kdh3V3NMrw+NJ8wrxH2ygPQsq4Wp+Kf/O0
-         uDJ0Opa7OZ0zhA/F1eizBUOi7b9wx2k1Bu38YWfpAg0vMT1ceK07TxjMmpQjOVO5vi01
-         W4p/75QiA1dP9OGRK7DV4/2UKrlz5ny5ypMxkBI7M/lXaKnJq+UxuwYsTjh/c1M2Qn3Q
-         xiVw==
-X-Gm-Message-State: AOJu0YznmSmUnpqQGHCiqmTMECNHTdxCTyjR/K+ctwm7mk+jPonhLG5R
-	OgoAt1Zl1spUtuyR9PJrwpxIvktoDPTq/weTeOpjLRDmnRm0a9uh
-X-Google-Smtp-Source: AGHT+IH/5rh+UD9PCC6QbLfEbwSMpAr7bSG2HGF67ZOyjt2y9aXGfq2FH33t0Ysw8/FVB1QPYUZuow==
-X-Received: by 2002:adf:fe02:0:b0:33b:1822:4478 with SMTP id n2-20020adffe02000000b0033b18224478mr464497wrr.30.1707169005023;
-        Mon, 05 Feb 2024 13:36:45 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCV1xsFWjL/C1NJeg5+9Yg9z/PhjZ6gTHCFCXhf7Cnpmub1eVhUVtl+Itm8TaD5MUa+ZpCLLjPhwTORuqi1u+W9L8p0UqKcHgOI0QLQsEHQFabTNpM4jaWF27pgI7rxNgFrZtVHCLczZdw8OMiBMNmGq83XdmWpHsjSpkpOrDIEsPMwH+ieHHjFrqK9LjK2pJ/c444r+y4F3xqvpcoLhgjgIGfmPyLpMB8s5vj3H+vv42NzNRGyG
+        bh=Z9fqRIwKVaJXAVoXSjrYm1TW9ua3bpkx5wdeoNkzRRA=;
+        b=IztnU2mtTmf2bibiNAqFVwAj0LxydOg624YmNW7dWEJVBfmtguSgjh/Oq/axT3iKp9
+         e8H5/s9MHv8AqnJG3pg+4cXCywP2y0SwrrJgiVrRTPBhHiJPhMLMEd2NFd74on/O7g9u
+         mXmV4zwgS9MOcP5drA29Nve5DoS/8VFXyOqoARW/58XBAJaT5iQh08HnE380byaDBxLD
+         5RCteH2voFEcKldLapRtdvsHCSNQLCFpI0dQqNiYBLJ/S07GdvRXb9q7rGKZK2chs+h/
+         hD2u4DqRPWkwSKgzuLfMS0lUp/Vqvy65XiiVssla6QmN6bQ1sj4jNUZacbqyieouR6cw
+         R5OQ==
+X-Gm-Message-State: AOJu0YxmAm3yK6ZDjm3Ve1tiuqLab133WrjTqKYCXzfJ73ErJ30ll8B2
+	zLsff59gUeC30vBjqxbNrFMslskAyKnrYQX3cavjt6NJN8+gnQVs
+X-Google-Smtp-Source: AGHT+IEgni7nHDizO51JbKho406hmlWCC2qB1nv1f26UJVs1mivST3+rWoUKq1UKTCNlQCuZ8M1SPw==
+X-Received: by 2002:adf:f749:0:b0:33a:f484:811d with SMTP id z9-20020adff749000000b0033af484811dmr468722wrp.28.1707169766612;
+        Mon, 05 Feb 2024 13:49:26 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWZD/aUvxoKek+pOOYCcBvm1swGZNUxtIgCn/RFD40DlUYZWtfBFeckaFES8AvysA7xw5hNVHKrEjwxNXZPKOjr5uNKbXX4DKABYJZVEOp9X5JH49Oq0pwSoqFiIATDIErPnj85lHlc1HxxQaZPdSyfqPwYb21gRSITMKGzzN/q/KEddX4zz9ezs+/EVBP9XHDSSwi75A==
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w9-20020a05600c474900b0040fde0ec31esm2466158wmo.31.2024.02.05.13.36.44
+        by smtp.gmail.com with ESMTPSA id w7-20020a5d4b47000000b0033ae4a3b285sm517098wrs.36.2024.02.05.13.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 13:36:44 -0800 (PST)
+        Mon, 05 Feb 2024 13:49:25 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
+To: Michael Krufky <mkrufky@linuxtv.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] xirc2ps_cs: remove redundant assignment to variable okay, clean up freespace
-Date: Mon,  5 Feb 2024 21:36:43 +0000
-Message-Id: <20240205213643.1850420-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] media: tda18271: remove redundant assignment to variable bcal
+Date: Mon,  5 Feb 2024 21:49:25 +0000
+Message-Id: <20240205214925.1850926-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,35 +69,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable okay is being initialized with a value that is never
-read, it is being re-assigned later on. The initialization is
-redundant and can be removed.  Also clean up assignment to
-variable freespace using an assignment and mask operation.
+The variable bcal is being initialized with a value that is never
+read, it is being re-assigned in both paths of an if statement near
+the end of the function. The initialization is redundant and can
+be removed.
 
 Cleans up clang scan build warning:
-drivers/net/ethernet/xircom/xirc2ps_cs.c:1244:5: warning: Value stored
-to 'okay' is never read [deadcode.DeadStores]
+drivers/media/tuners/tda18271-fe.c:473:2: warning: Value stored
+to 'bcal' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/xircom/xirc2ps_cs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/tuners/tda18271-fe.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/xircom/xirc2ps_cs.c b/drivers/net/ethernet/xircom/xirc2ps_cs.c
-index 9f505cf02d96..e9bc38fd2025 100644
---- a/drivers/net/ethernet/xircom/xirc2ps_cs.c
-+++ b/drivers/net/ethernet/xircom/xirc2ps_cs.c
-@@ -1240,9 +1240,7 @@ do_start_xmit(struct sk_buff *skb, struct net_device *dev)
-     netif_stop_queue(dev);
-     SelectPage(0);
-     PutWord(XIRCREG0_TRS, (u_short)pktlen+2);
--    freespace = GetWord(XIRCREG0_TSO);
--    okay = freespace & 0x8000;
--    freespace &= 0x7fff;
-+    freespace = GetWord(XIRCREG0_TSO) & 0x7fff;
-     /* TRS doesn't work - (indeed it is eliminated with sil-rev 1) */
-     okay = pktlen +2 < freespace;
-     pr_debug("%s: avail. tx space=%u%s\n",
+diff --git a/drivers/media/tuners/tda18271-fe.c b/drivers/media/tuners/tda18271-fe.c
+index f0371d004b36..a7e721baaa99 100644
+--- a/drivers/media/tuners/tda18271-fe.c
++++ b/drivers/media/tuners/tda18271-fe.c
+@@ -470,7 +470,6 @@ static int tda18271_powerscan(struct dvb_frontend *fe,
+ 	/* algorithm initialization */
+ 	sgn = 1;
+ 	*freq_out = *freq_in;
+-	bcal = 0;
+ 	count = 0;
+ 	wait = false;
+ 
 -- 
 2.39.2
 
