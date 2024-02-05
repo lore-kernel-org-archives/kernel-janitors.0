@@ -1,64 +1,68 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39765B67C;
-	Mon,  5 Feb 2024 21:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DC7487AB;
+	Mon,  5 Feb 2024 21:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707169770; cv=none; b=DaDPKTse1oDWTjAbvOPFwBMhtsS3R7WyNfzmVLINpa9kS38+cAx2jxGrd4loVHFrh6HmlX6pWp6kAYco8+QhqqMXqifaTbwLuTppTm+yBcyLS1M8erXw8MTzOxmqWjUflL6ZrmwaqrTQkFJYv1T7YevLTQEsWpAY0BlMfTmkhe4=
+	t=1707170135; cv=none; b=jY/PDqMwmqqHwNq2P7ZRO0ZV16LyP7UB2y+AL+n9QGJCcDWNrAdV3ztA7jzhFr6T5ZTDylh3bN6s9ESdV97Xe9X2pIwRoLe8LUiCM4k/PpuNNB/WDeLdE2MYzZnJBRt9JsUr5xe0b2p+f8nCo/OsopQl1FAVlMYDhr7ltkfG3l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707169770; c=relaxed/simple;
-	bh=nMy5k7EtAlhx2FUGhxz4Aj9a0X7Rvf6ugPK6E86NEJ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GU7H5hMIw6nBpUv/f1jYci67MR8rl8ML1vaYaQpEHv3+SL4Y9nMiAel5aj9PI1YIvay0btYWtEHZbVkpZhGfytKWzTLpuNi9jVBazFsjnP2aqES9AKmBH7qNsGFlHhMuwROqiC2r2C1RQeEAcbzyhY0Ot2/Mnyws/JmVEeDK7L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOUfYnWb; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1707170135; c=relaxed/simple;
+	bh=H0fLTAzZF9M+Hdp0/173Ijbr/B0GoqE0ZGzVwCP9LRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oh9nwuoUh5rzBxwvI9XzkGE7KuZ5n2TT6KocaTrctpgl5a/s7CKDn15ghpk5AFWNhr+EeP0BDAUATH+cpOdYuUN+wT2+t5Q5udWdTssSuy+Fz8qh3cjt6ERC2I0QoOGs+743hQSH1foAIBin2Mf5Efs7Asx0qh/TkK5vJByXC2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDz762u1; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOUfYnWb"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33b402116e5so685706f8f.1;
-        Mon, 05 Feb 2024 13:49:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDz762u1"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40efcb37373so1622515e9.2;
+        Mon, 05 Feb 2024 13:55:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707169767; x=1707774567; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707170132; x=1707774932; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9fqRIwKVaJXAVoXSjrYm1TW9ua3bpkx5wdeoNkzRRA=;
-        b=ZOUfYnWb3uvRzSnbxUSgj+Nt7TFLMJ4RMD5apWL35znpWcgZL75okSyVo1YFZiwheS
-         RcIToap3yh0sjpkVxEnyGzC4rv/tmJ2SjBYDO+xnO46Cy0s/GbkimWv8m3mul0RO+6dc
-         Rb+mzpX8vnxYRTq8ooY4NJconyH/2HCvNU80q02Wil/FEw2Bf4MgrUheEVux+U7tjP+N
-         UmiEaRtetjIt5x9+/vuuh6pzWuDqL9vIPf9ERFmvmfpMgOaJdSn+FJzbbGOwHR+V+4r2
-         HatI7F1UO8vLHOaMoT1Uy8Wcp1mURFSk8xSHZgnitCrw5MbOibgJCgltbJEEJ7Glj/17
-         Fy2Q==
+        bh=ANHA4FLKX0KPJT+zhyykPfhWKQ9mfjg93YYvGw4tTjA=;
+        b=EDz762u1hchvT2pYPBQ/lgHzpfXw8SVpmUxdQd1nUn+gkZX0y7HdQVN1PC1SY4K6bc
+         jtaCH19gVx/PnP3x84iSPaz5M6Rf2VN75kWgPn8MUQuWXED8EDWGdQIPNq6nd6CZCQzt
+         QnGakYCAU250N9PnsgeXyphBm6AL2iZtz2rG6L1CvVBGwuBeK/UnzxOzKFvlj8SF/1DZ
+         MDec3zklA6xAjGl2B8+vDtMDaxvc4Z+68hwwynI/O/3P6jd2IWApY7W1j4bH9R1EZd5t
+         gbQvPUCkExRtpy1R2VesKf36Dv4dQt1vRHgETbsLMYfgWvdbY8sEtMdYzdhP7r/h/ATm
+         BcpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707169767; x=1707774567;
+        d=1e100.net; s=20230601; t=1707170132; x=1707774932;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z9fqRIwKVaJXAVoXSjrYm1TW9ua3bpkx5wdeoNkzRRA=;
-        b=IztnU2mtTmf2bibiNAqFVwAj0LxydOg624YmNW7dWEJVBfmtguSgjh/Oq/axT3iKp9
-         e8H5/s9MHv8AqnJG3pg+4cXCywP2y0SwrrJgiVrRTPBhHiJPhMLMEd2NFd74on/O7g9u
-         mXmV4zwgS9MOcP5drA29Nve5DoS/8VFXyOqoARW/58XBAJaT5iQh08HnE380byaDBxLD
-         5RCteH2voFEcKldLapRtdvsHCSNQLCFpI0dQqNiYBLJ/S07GdvRXb9q7rGKZK2chs+h/
-         hD2u4DqRPWkwSKgzuLfMS0lUp/Vqvy65XiiVssla6QmN6bQ1sj4jNUZacbqyieouR6cw
-         R5OQ==
-X-Gm-Message-State: AOJu0YxmAm3yK6ZDjm3Ve1tiuqLab133WrjTqKYCXzfJ73ErJ30ll8B2
-	zLsff59gUeC30vBjqxbNrFMslskAyKnrYQX3cavjt6NJN8+gnQVs
-X-Google-Smtp-Source: AGHT+IEgni7nHDizO51JbKho406hmlWCC2qB1nv1f26UJVs1mivST3+rWoUKq1UKTCNlQCuZ8M1SPw==
-X-Received: by 2002:adf:f749:0:b0:33a:f484:811d with SMTP id z9-20020adff749000000b0033af484811dmr468722wrp.28.1707169766612;
-        Mon, 05 Feb 2024 13:49:26 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWZD/aUvxoKek+pOOYCcBvm1swGZNUxtIgCn/RFD40DlUYZWtfBFeckaFES8AvysA7xw5hNVHKrEjwxNXZPKOjr5uNKbXX4DKABYJZVEOp9X5JH49Oq0pwSoqFiIATDIErPnj85lHlc1HxxQaZPdSyfqPwYb21gRSITMKGzzN/q/KEddX4zz9ezs+/EVBP9XHDSSwi75A==
+        bh=ANHA4FLKX0KPJT+zhyykPfhWKQ9mfjg93YYvGw4tTjA=;
+        b=Zk7N5kMsym7o+UPYQOpisX8WMugF/mxPlJToOHeV/LM+CD/IRvywx0oSCim7efU/fb
+         6+BNIjc0ctmNIJWU9TamJyZPMKIN5bJ2SVH/IOeJa0sOEk5RL3hBqcJkYWzEu92gGDLa
+         bvPt7ErNg2QaGLNGwKLycFRRBGOyRXbpPmlzy1YFE+Dd4j1hHGNbTKXp+u2J9U9pvSyx
+         Zlm8oC6gDTiL+aoRjqLda4jVjSRz2U4E45UoNvr78UQG0rOoMpRixxBm4si/7mjyhHkg
+         zT5OpQ2XB+1D4Pr1IbVTXjR9nqp/PKYG4azOohoctONUPZo2WUF6EfRyKc2z7TCX/V3d
+         mnWg==
+X-Gm-Message-State: AOJu0YxmxdH73cpvVnoJugdrvGslcd/0414du24od2z7RBvJbELqJfDZ
+	+XK1JbQAaH6MGquXcUwUnGsRG2NP8AteicdAXnKKYK+eeRoW0suw
+X-Google-Smtp-Source: AGHT+IFSxYu+ZgDtBPP82E2MrK1rskAr9VPt+hoRkCFHBqM5WHdZ7rlG/9AC1JSSjBboHdGd+Njk/Q==
+X-Received: by 2002:a5d:4c81:0:b0:33b:3d28:ef22 with SMTP id z1-20020a5d4c81000000b0033b3d28ef22mr703885wrs.49.1707170131584;
+        Mon, 05 Feb 2024 13:55:31 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCUCAmPKnQXjGh4euXZrhV4VT8/ijih7Zdk5hW0W3uPscwlWviKbV7lOlGMpF5XW0bCZf1nZIxuM+CEQSThWP169A+8EZJuRBwbGB01txfNOEdVizMMe5jZ8uYoDLqx3wrjYWzYQx4OhZO2EwvqbRCFce7DBBFvZVEcLc+qMM/dVTuri5avHKvGrh+fmvsb8Ksl82b3FgmdyEDikRCCL/LsOq4zr9FXxV7AsfERkbXRBg7enWBcZZTxUAtltfn9ggz2dWfEiJEhnm7ZCEDy2trWrRwjHlwFeeNLbENVTonLs
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w7-20020a5d4b47000000b0033ae4a3b285sm517098wrs.36.2024.02.05.13.49.25
+        by smtp.gmail.com with ESMTPSA id h6-20020a5d5486000000b0033b421e651csm524355wrv.37.2024.02.05.13.55.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 13:49:25 -0800 (PST)
+        Mon, 05 Feb 2024 13:55:31 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Michael Krufky <mkrufky@linuxtv.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: tda18271: remove redundant assignment to variable bcal
-Date: Mon,  5 Feb 2024 21:49:25 +0000
-Message-Id: <20240205214925.1850926-1-colin.i.king@gmail.com>
+Subject: [PATCH] qed: remove duplicated assignment to variable opaque_fid
+Date: Mon,  5 Feb 2024 21:55:30 +0000
+Message-Id: <20240205215530.1851115-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,32 +73,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable bcal is being initialized with a value that is never
-read, it is being re-assigned in both paths of an if statement near
-the end of the function. The initialization is redundant and can
-be removed.
+Variable opaque_fid is being assigned twice with the same value
+in two identical statements. Remove the redundant first assignment.
 
-Cleans up clang scan build warning:
-drivers/media/tuners/tda18271-fe.c:473:2: warning: Value stored
-to 'bcal' is never read [deadcode.DeadStores]
+Cleans up clang scan build warnin:
+drivers/net/ethernet/qlogic/qed/qed_rdma.c:1796:2: warning: Value
+stored to 'opaque_fid' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/tuners/tda18271-fe.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_rdma.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/tuners/tda18271-fe.c b/drivers/media/tuners/tda18271-fe.c
-index f0371d004b36..a7e721baaa99 100644
---- a/drivers/media/tuners/tda18271-fe.c
-+++ b/drivers/media/tuners/tda18271-fe.c
-@@ -470,7 +470,6 @@ static int tda18271_powerscan(struct dvb_frontend *fe,
- 	/* algorithm initialization */
- 	sgn = 1;
- 	*freq_out = *freq_in;
--	bcal = 0;
- 	count = 0;
- 	wait = false;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.c b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
+index 5a5dbbb8d8aa..9a1660a12c57 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_rdma.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
+@@ -1793,8 +1793,6 @@ qed_rdma_create_srq(void *rdma_cxt,
+ 	if (rc)
+ 		goto err;
  
+-	opaque_fid = p_hwfn->hw_info.opaque_fid;
+-
+ 	opaque_fid = p_hwfn->hw_info.opaque_fid;
+ 	init_data.opaque_fid = opaque_fid;
+ 	init_data.comp_mode = QED_SPQ_MODE_EBLOCK;
 -- 
 2.39.2
 
