@@ -1,99 +1,129 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0E47F59;
-	Mon,  5 Feb 2024 18:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8261B952
+	for <kernel-janitors@vger.kernel.org>; Mon,  5 Feb 2024 18:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707156281; cv=none; b=C9jLrfbNh9F1ePIfHAAavCPSz62TDvl0R6df4bvRnudJ26OGlUVbGl3e18RbHN8FK6h0H80rtnGrT8+KN9cXwGRNgNwyUV8kp3SZ0PMm2w6A9rkqtgTVInenWs37RAcpQnEbfi08etWGSjZdoHBIMBR3DVwU8stLS/2EhKoODnQ=
+	t=1707156688; cv=none; b=GMEz3svRToWYThZpa3NnefwNAjkI9tBQHkc1ktUOMjQbyeGg8EXN046FbHxXI3ZtGpoEKlwzj5MxfEFvxpRx9GWdjls8GUmVmorqfpf1LRnf7PcxAbZiCgNMTUk547hT3PRJgAzjwz3fCkhoaaCkdCx3BRWsBA6AbPezNfOeJCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707156281; c=relaxed/simple;
-	bh=TMmz9ofcV3Qg3qVRtpdLWdMNQPaRCIuMqEqskELJsXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=si7N0OdLF38cGoucKGXLamit8FrkoiCevTKNImNWDsgR1ZdxJPwA8DBnXToRk16DvPkBv8s9ma4Pi+OJmwi2Msyf++xJK8sryFUtdPKZwf4NXsopFrUYoNMceqaismsrSCTWMx6FVMSt3v93nLA4jPXB+qqyn/cLx25GHf25Jrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYOlBbpI; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707156688; c=relaxed/simple;
+	bh=VwcaSmtvjRjxf/Iv6lMWF4GZNaFQ25DKb9caAPo+0mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IOWbYGZsR7gUWzFx4wDdHubH48haZSVSuEpz6U4XiVq7chz6qvjfIFPuUBTlU3l0XBavTUyGP+tcSpwN8rSBK7RiwhfpOrujkSjRAheX6gm2xQer+vOabY5WjXFIGrM6ebc0f5faeJtrpY5Ph5GeqIJ/QTNTcK13oYr6ojTGzOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SY5FVJRt; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYOlBbpI"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fb3b5893eso38703345e9.0;
-        Mon, 05 Feb 2024 10:04:39 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SY5FVJRt"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5114cd44fdbso2704701e87.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 05 Feb 2024 10:11:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707156278; x=1707761078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQK/98G9XoX645/LAft2pPXCTjN+BMBYrQ0Nd3/J0IA=;
-        b=GYOlBbpIKWSHCKPmAWC0T5QQI7v9ypjxDwjwBXXo3LtkEJKda6vIjva3QRHloDImhe
-         suGtwligIbp71TNZUgj36jVOddSTtFTZcPLgO6NnKZm8uDOnWYfRmxTv75vwQEUaSwE7
-         PADrZ8SLsJ5ym5uxFl1tUFm2OA99zmEcNFl/jIfkvz1irzQuv4y36zp1Vae5Pa7kEZ03
-         HSAR9m6/RyYrm1TqdbX5F4en3fAsnD/xIKIi7vW9nF16Ahog47liJyuUGZhNCIN/THJJ
-         VA23R/uK2lSTZPMcMLZllbTeENrPONVTMHL8gVAl33LNPWpbtrWqHrV63FvbpMVK1EmE
-         s87g==
+        d=chromium.org; s=google; t=1707156684; x=1707761484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ood9JeXOKG87bTqfPH5vVrFrWxV318p/Ke+LplXjoho=;
+        b=SY5FVJRtMxyIaBCZIYVpMJBjVm1mDsbOdLEzVMJOsPItbwjtNBL5AL3F3JEoQ+I4J/
+         VuZAm2FRPCWCHlBq/webge+BGMUoVQ/r+mfOWyRe/vlQJ6jGSd/L+fusi3tB+occoG+6
+         CpK4v5f7ucv62biL1GFSZ9b8feC8TOAvlzwlI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707156278; x=1707761078;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HQK/98G9XoX645/LAft2pPXCTjN+BMBYrQ0Nd3/J0IA=;
-        b=NIh9J9J0rUgS8XT/gqpQgS+c+HwVXT59guIltTKOgZoZwzp2fQp1zBqAhqZNTPysIW
-         cqGEAsdp3jaL7l60S4OF6DDwz4M6Ui/UH1htrwpRNHwzYmqn+0uiDS5Qs/lzINKkobl+
-         sXkA6bh0gfy3fMUxC17B+N9W3gU37C7agS2J11d3zlUChrh2Ss/pDjacvwMezjr42WXq
-         lghbLkFxdXt9dFROOtATWsZq6fbMc/QZyKZ2q/TzcGsr6hnaZfIDWngYNUnIfoA5DwgQ
-         oF02TO3sv5GEADW6XN6MsdDdXdQH6uuI9mDfdNEHtspwnAwfhFcSIQD55aEcBu+5LVLR
-         wpig==
-X-Gm-Message-State: AOJu0YyPIevo3m01jFvezX5dfk2NXARlfSxcHHP5UVkpeyaOBnx5NxY4
-	jO+DvkiphEwCalP0S9Q8IHpwjJGddkyLEVCSQrotvG82qo03XyoTOIn8jAt3
-X-Google-Smtp-Source: AGHT+IHUkqH15zC1Bm+thOKzFjaRy3hygMQRxs9HCocH2B2FpfgDEcW4liXDB57ayEwFyUWNqF56Ug==
-X-Received: by 2002:a05:600c:3d08:b0:40f:e067:d67e with SMTP id bh8-20020a05600c3d0800b0040fe067d67emr133989wmb.3.1707156277764;
-        Mon, 05 Feb 2024 10:04:37 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXO8zB4b/6jxR/B/RwwFZajC38o+8DiwDup2yUu/xCwFlxEsbK3IR8rE7DQYzHB2htR3WpfkEICsjdb2SKdPe/P0EwpFDGngsZr/qzGcmwnTHiE76fKuHfdcP4kPIV6zke88mlmMoKNDes5HkW06CqkFrGcfT3g+FR0X0ZQbX3mvnENBF8mpBA0+ePKArrETHfbpYegGmCu9GPJ9Y6Ucg==
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l18-20020a05600c1d1200b0040e541ddcb1sm549411wms.33.2024.02.05.10.04.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 10:04:37 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] comedi: remove redundant assignment to variable range
-Date: Mon,  5 Feb 2024 18:04:36 +0000
-Message-Id: <20240205180436.1841706-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1707156684; x=1707761484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ood9JeXOKG87bTqfPH5vVrFrWxV318p/Ke+LplXjoho=;
+        b=wuE6ayxWY6pc0scUgk8DkPe7Vj2b8dMG9m92DlqbadQ7ns2GZg56E3fJvhLWhMUOc/
+         FeOea3OdPQA9ffDQNUunNpKoDBzlorr6dFdg+aJapaDZSbzxVtVdeuWZ7PlR8dERcjWn
+         igHDTIiWwIGokHMn8vXWS71y0jPpfm20XjqLeYt/Dlc6/ng1/7DoF7N9id/fJwSKZMRX
+         2/4KdBp/HZOoFgxMLPhkB8h2DM5M1fH4TufbfzDptfVJObhhXoR/5QSeekR1xYI5EJV2
+         7Hmxq5yyzzFzeSSPFFOj9yhIUthuM9O/wD73XMYtd4SPwzMidkp6oE1Na6NpYKFhixnc
+         hlAQ==
+X-Gm-Message-State: AOJu0Yy+5sY4OopGcK8jzR06JbCD0DIObrByiZtmNzsyfAFVwsi6F4TJ
+	wmACQQWOZFB2SgKtAUuz6meIE7iAEV9FOTTqw452jUJxqgP9KK05z9nH7HzSDoeb3JiIM6RZZbq
+	GLa5T
+X-Google-Smtp-Source: AGHT+IEwWtK9TErs/GV86kcMDXuchYxENNy2wBKzAfY2JCz54jSMZfkiFcR4ySujT6bKN0TSULDrDA==
+X-Received: by 2002:a05:6512:39c7:b0:511:3a20:e116 with SMTP id k7-20020a05651239c700b005113a20e116mr330064lfu.11.1707156684437;
+        Mon, 05 Feb 2024 10:11:24 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCV3y6pgw7/1ExgDjvXfrRJXEtfvQKb5eRUV6Q5o8XnZyIP33tgfmg2ZpHcAIjOYs9iGCEhgmm10mVZ99Q+HQ4NLyFu0swxtey3qHCz0U6xI
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id d15-20020a194f0f000000b005114ebaf941sm23113lfb.191.2024.02.05.10.11.23
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Feb 2024 10:11:23 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5113a1f2867so365e87.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 05 Feb 2024 10:11:23 -0800 (PST)
+X-Received: by 2002:a19:5f50:0:b0:511:4a7c:51aa with SMTP id
+ a16-20020a195f50000000b005114a7c51aamr19188lfj.6.1707156683549; Mon, 05 Feb
+ 2024 10:11:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <b236236a-9953-4246-a697-19ed1b22d86a@web.de>
+In-Reply-To: <b236236a-9953-4246-a697-19ed1b22d86a@web.de>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 5 Feb 2024 10:11:06 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xsg3Fs8XQ0piBYKGSYOhuGXyKpoJ5dbtGPdP5HU+2RyQ@mail.gmail.com>
+Message-ID: <CAD=FV=Xsg3Fs8XQ0piBYKGSYOhuGXyKpoJ5dbtGPdP5HU+2RyQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/hisilicon: Use devm_platform_get_and_ioremap_resource()
+ in dsi_parse_dt()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, John Stultz <jstultz@google.com>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Tian Tao <tiantao6@hisilicon.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Xinliang Liu <xinliang.liu@linaro.org>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+	Yongqin Liu <yongqin.liu@linaro.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The variable range is being initialized with a value that is never
-read, it is being re-assigned later on. The initialization is
-redundant and can be removed.
+Hi,
 
-Cleans up clang scan build warning:
-drivers/comedi/drivers/das08.c:180:2: warning: Value stored
-to 'range' is never read [deadcode.DeadStores]
+On Mon, Feb 5, 2024 at 12:13=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 5 Feb 2024 08:58:21 +0100
+>
+> A wrapper function is available since the commit 890cc39a879906b63912482d=
+fc41944579df2dc6
+> ("drivers: provide devm_platform_get_and_ioremap_resource()").
+> Thus reuse existing functionality instead of keeping duplicate source cod=
+e.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/d=
+rm/hisilicon/kirin/dw_drm_dsi.c
+> index 566de4658719..1edf429c49d7 100644
+> --- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+> +++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+> @@ -834,8 +834,7 @@ static int dsi_parse_dt(struct platform_device *pdev,=
+ struct dw_dsi *dsi)
+>                 return PTR_ERR(ctx->pclk);
+>         }
+>
+> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       ctx->base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       ctx->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &re=
+s);
+>         if (IS_ERR(ctx->base)) {
+>                 DRM_ERROR("failed to remap dsi io region\n");
+>                 return PTR_ERR(ctx->base);
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/comedi/drivers/das08.c | 1 -
- 1 file changed, 1 deletion(-)
+This function no longer needs the local variable "res". Remove it and
+then change the function call to devm_platform_ioremap_resource().
+With that:
 
-diff --git a/drivers/comedi/drivers/das08.c b/drivers/comedi/drivers/das08.c
-index 5d5b9174f88a..49944ce1f813 100644
---- a/drivers/comedi/drivers/das08.c
-+++ b/drivers/comedi/drivers/das08.c
-@@ -177,7 +177,6 @@ static int das08_ai_insn_read(struct comedi_device *dev,
- 	int ret;
- 
- 	chan = CR_CHAN(insn->chanspec);
--	range = CR_RANGE(insn->chanspec);
- 
- 	/* clear crap */
- 	inb(dev->iobase + DAS08_AI_LSB_REG);
--- 
-2.39.2
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
