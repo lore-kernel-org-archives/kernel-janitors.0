@@ -1,36 +1,36 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C4A12B71;
-	Mon,  5 Feb 2024 09:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB91C134BE;
+	Mon,  5 Feb 2024 10:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707125556; cv=none; b=mqvNERv5ELyNx9NdQfFAIMWRVRjU2l1keR9vdfAf8CdfJH9WvlPboYCdNFtbojFyAFQt0pR9M9Ft6f54yy8gXHKVOiKnBnobXz3l+0RBP19dOWh0pKAhOrtKDSMsiaH+dU5belGpwauEHeSgGEUxhH5JzXPJC6UFg0a0R/PfOq4=
+	t=1707127281; cv=none; b=YlvS+8bh21EOB6nhvtKWVRy/D6mkl/WAZu2bicqphQ/9bBwnmYUoHQiZ+wLfFP314K94VhR7f1zhWprmCdQ/+lAs9QzPLrWOcIfnLLyKRBu9DUqbZh5S7hf/++ulG/Or8hKJKvon8Os/fFg4ap0DpZSMKPY/+7nfOjad/B4GBhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707125556; c=relaxed/simple;
-	bh=GEntBRcn/VvV5CPwy8i6X54F9AV/5jvw0rbYXd4l4oQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=M2r0rrlZn0vrh1dtKxUfuiQaW2of8iCzehxomaEj/zE4lDwi1ORrW0UxQyV4M6e/cC5aN9EUNRf5fo8fsBoudokgTsBsRdKgUJD3sMIDqfmuau/gJ9E6FcfpX4QtNmhS0/rrnWLNn084nv+z57ZPceVFYvKxf7N7K1tecw1r4Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ovux59WT; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1707127281; c=relaxed/simple;
+	bh=BP4cik0zUpqBQFebRvL7UNNHdC8t3H6I8IFcOmMDkhY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qL/REL4T8cf9jxiaDRGvCuSEvVUNV4lxd/xfotKmlFvwHh0i/7pfB3IyzDUhN66U53oVxxsKNot4UbuaO7dNy27DsIuseYcP5FHo7pzOT5saLBy7i+gePCAjWUxd51rJF5sUnvc0n1JJM3heFw0c5Mki8HIsGzM+tE/UE+U5acM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=svc3ZXBj; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ovux59WT"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="svc3ZXBj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707125533; x=1707730333; i=markus.elfring@web.de;
-	bh=GEntBRcn/VvV5CPwy8i6X54F9AV/5jvw0rbYXd4l4oQ=;
+	t=1707127262; x=1707732062; i=markus.elfring@web.de;
+	bh=BP4cik0zUpqBQFebRvL7UNNHdC8t3H6I8IFcOmMDkhY=;
 	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=ovux59WTPEtWvqN8rRPh8tPJL/y2zUri9qeSupWxr7mTWII6DPCIXoTEnUM69zib
-	 gI7LPQUVxjvCIuXqiIsbOIy0AXB0J68XnavX67heKWA7I6Cp7BPEShIPb9rfGl279
-	 7bREACCY4YqZ99V84eGeX7J4QBZAqj0zdOHEUShVERwV8/qbQkMYYyT7zY/jdV2w8
-	 qUFu5DNT8qs1WvRLlq6XTnxN2TGAthDBdnemf5aX3BWdq4ktsu/FnlZ0YGLcr5Nzo
-	 6TjEtQQzu19Q3t8LJwBRIqV6xnsgDFpJVac8wpEuxi9xKWTtyYO5Ce1KthvfSUMyn
-	 tPTdXnXAQk0B2bbbrw==
+	b=svc3ZXBjNL90pRbqGudZ5sLzXrkZVAJdqdLBHVoanakv4xWbtWBVh1YgLxA9wwQg
+	 pNanxujD3FadEe3LD3TBlZ+L++t3miTPa6BPsicradl6DVL5rD5GyXS9lKcQi2+pw
+	 VqjU1cFKDTqRSZrJ98gvv1oH7P+Wi1fwehXitFxVI7sq5y5TSe4OTuS8YStHZPX7k
+	 BQiibfFJ8qlxe7dpyywgsFACf9suZzXTnUtlUWGbWs51hplEaU87EQ9fipjWLe1bU
+	 iBdwerYdz6DixiLjzGnanvWcgrdhx3Ruj8kmyTdpENaTlOb2qul6zzyXOEgJRdOFx
+	 V992XHYUL7qV+hB6EA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW2R-1rLBlo1cqj-00NcQg; Mon, 05
- Feb 2024 10:32:13 +0100
-Message-ID: <2a4ecf78-20e7-4678-a67d-0d66956b07cc@web.de>
-Date: Mon, 5 Feb 2024 10:32:11 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m5B-1rXkzt2Jmd-0010fC; Mon, 05
+ Feb 2024 11:01:02 +0100
+Message-ID: <c2e4aaa9-731f-4a33-890e-567c466a8885@web.de>
+Date: Mon, 5 Feb 2024 11:01:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,40 +38,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
+To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/mediatek: Use devm_platform_get_and_ioremap_resource() in
- mtk_hdmi_ddc_probe()
+Subject: [PATCH] drm/tegra: dsi: Use devm_platform_get_and_ioremap_resource()
+ in tegra_dsi_probe()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WNiOKf02rYQX2wRHyD+44vgsxq4gvfzYMMnvPUEMljK8TxTVSZE
- crq19rcOVrfbBjGR4a2tr2LgwUdDKYHxZnfmOLYAwN7Q/U+6PCuurLhtYANurbla/ARGuuO
- EJRLtucvVTbdVD2WNcaEYmUGQzl8VgZJMsJ57eCz2srWUjfkWUv1JTFX6zkmehC+72rjhJc
- 1KLOLVClOJ33TGxdHXMcQ==
+X-Provags-ID: V03:K1:l3QYLItjc1kOM4lo7et/2ok0Re/VhuUd9eWBSSYWeFHhcO8vu59
+ zQKhAzcdcqnTWza4xbwztbf0ruOhhqIPbBk8Afas26E+jRmNIqrc1Xp3Vzqk0ZNftgRrYmO
+ /AGZkneQ3k7rA/A8J6voFd38wfVaT+UV4R3Whis4b4lUueunTorgmnJ01RMwZAOh9eEsrI2
+ QTwLNVCpVtLAxRxf8hhXw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WOh8rUEyD44=;2uUXQdcmdakS8l1q5N6ORN+MzQd
- PTEI2vpWHlHk1lzz5qPwlhQR30W8ymGIbUmylBV2BFLL0S9+0rcNjv7ZCziWx9bcp7FttBn9F
- 8ZqjRa3EvtkSzT8JIVQjRcg7HIXr82VbWOYyqLbzgh3xCYNYnoEqD0S//M75LE0DGP6rMvTDS
- 5efmaFuiDm4WUY5MQ7zpG2ro0E45Z5Svh5Z3OIiTH7VTrfhhKd00a2OsO5GRk84wppABZqMlX
- c6AcmKZV1qPTW/IT736+BpZRSo/yWfv3YVvKfyqDszssPNBQV9+l11Qr228pF5W8B2YC3bck3
- RscinEKcvO91A2MRNCzSNmYOkbQMkwlfepYHAZ1bNjPLepwrFcX2aqPw/HXxNwYmSyIxd8U/a
- X3y1VaXg1z/qsw1KFry5vJeplw3izdgHnQG4h4Vs0ta5bnzITl+3JspE82oNSY4mdbfiJLiFo
- haUnWxAJcXmm3nlpBKNkK0Q/9FnJK64GbT+HHTwGC33RSxmdI5nP0qjoyuFF+0c9z6mCudfDQ
- vwxYXuFXqix6/VlVKuANKkNPdN6MRhQqltrGht+T2IxqfPYoECFQNotY5xEH5s3xlwX5UI9qG
- xXiFRGtaBQXbx7XhOqd/B3Q5elC+G+8NSu0tlWVgiPmoHoDgHZUPaFkaO3SufpXUrH1x8WNy4
- qzkOnMypTqSAz/jlt9YYBLgyqh9H6E/U5ZxOALCXYNxafNxJQxA1gJ8ShrMvNh8aVBLecyTPR
- ITVGwM3ZqbrVSepwy105IemQUkZKzlcXlH4q8Iw0Za1lEAzp6rD881qoBssa6z8vJTifmgtAI
- UE0lmtKqNNkpFxPzRSxAbUSEJWT5fgCDKH+H4LCarI6fU=
+UI-OutboundReport: notjunk:1;M01:P0:W8KQR2hEAzU=;E1Kg3ilBm7X/538T0AtTOeBfTKJ
+ GVHgoCgABVGMtfnWDgXJZ0BPU93O9QxCrbl5+jWv5HcYcsT6pHHbr4+mu4HZ6EO6f3Y5TxjBs
+ FKz3/mAslNMHthAADDTodH0KdZh16nNlhuJKju61hh33VTnH6KBtjXoh2AqcBbgW8Qvhd9HhG
+ sozsLljBleUrJ5rVIakcFjhXxPOxgCUwGn+SK50uUVWPE6UzJ4FRbSV/aYJCh5MElC/0U/RZE
+ S1TZVT6hNo0AnUone/SrA/k+3OHeABFpBDvgY8M/NlDT1zrOqTa62+8pSe02nMLi4hjq5O0N8
+ 8ID5PWcstHpHjW14N3HHyTzlf+4RmDeMfuzDBcIWtKUIKc1RzJXeah6t5siF/4DmRr+wXdxoi
+ wozxGUtZ2WYlAypoQxaYGFM6Msl+IYBBXVPUmZ2STDqSntUMkj4ndf5SEECur6tfUrA89qpnt
+ duaHh5FSieU96kgc5UwE5zi7DLfWu5X82L25ZK2pACnfGuHyiiYxO6vb8Rf3hnQusRcKLOZgR
+ X85sEns/RkS/MtXgs6ph3H2P9MhIX0RaSzTMIjeG+QibqcYR8FXa9fh90nPpBMn2G2n2G0DBl
+ WEeQbGmbWwRDQSapBaduCypNeILeW7SDYd4OM3P0X/z6m5OdOoBvjfqoNdaOK2UkcQI8fF/MF
+ 3ZoMqca2vO5gPFxgo48Q2bWcIMb++dMcElrYCmPZCyhinxrYPesZpi5+cwCbeMQd5FctSlHbg
+ m55wStkfh7R4ehjz//4iS6eM3IbklS5h/LDcQHXnD5oOeO9e5g/m1pt/0hbxsfnBZGmYhGc1Y
+ d1OyebEFaVUoyGX4Qezuu8MSpkeGQJXDT/aFn2uTLjJbQ=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2024 10:18:47 +0100
+Date: Mon, 5 Feb 2024 10:51:36 +0100
 
 A wrapper function is available since the commit 890cc39a879906b63912482df=
 c41944579df2dc6
@@ -83,24 +82,23 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c | 3 +--
+ drivers/gpu/drm/tegra/dsi.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c b/drivers/gpu/drm/med=
-iatek/mtk_hdmi_ddc.c
-index 54e46e440e0f..52d55861f954 100644
-=2D-- a/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_ddc.c
-@@ -284,8 +284,7 @@ static int mtk_hdmi_ddc_probe(struct platform_device *=
-pdev)
- 		return PTR_ERR(ddc->clk);
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index fbfe92a816d4..727c3a7d8d26 100644
+=2D-- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -1624,8 +1624,7 @@ static int tegra_dsi_probe(struct platform_device *p=
+dev)
+ 		return err;
  	}
 
--	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ddc->regs =3D devm_ioremap_resource(&pdev->dev, mem);
-+	ddc->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &mem);
- 	if (IS_ERR(ddc->regs))
- 		return PTR_ERR(ddc->regs);
+-	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dsi->regs =3D devm_ioremap_resource(&pdev->dev, regs);
++	dsi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &regs);
+ 	if (IS_ERR(dsi->regs))
+ 		return PTR_ERR(dsi->regs);
 
 =2D-
 2.43.0
