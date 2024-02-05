@@ -1,119 +1,100 @@
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CDA482D1;
-	Mon,  5 Feb 2024 19:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8942A51C21;
+	Mon,  5 Feb 2024 19:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707159693; cv=none; b=mI0fv6mqv5dMK3WauNYev72mUBqgRUOJBh3JFT/TN6dZxS7m9sESL16OjY6DgKw5uGhrepVH+4NYH/yOcT6ZkxnLYx+7CIma5ud05HsSURxk6Kui1pwdRoQjOoxxLBOMeI6Rp20iS2mI76ti2GYr8o6XVJHAIYLUyHqHF3TjGEM=
+	t=1707160396; cv=none; b=TTxocLO+tAytokR2cq7MEUNIyJYmpp0zOdyP4cg8Q403pLahXdlsYvkDZBL8DSOAdo4w0Gg1uBxXnSop4GaCLiiWbQjbQDKkyeZ/zIS6mIPWqiRnB+aWPrlPhzaJpzVfRMgIVraSDSU+HRepgJR2hTcjYrHifstXME6UAKwVgko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707159693; c=relaxed/simple;
-	bh=JEt6XbTrmvG2A0mB2qlMp8TsvpF1cCNngcSPF10KDRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFg7rfFZr862OeTALtV53fiTQHGKSWrRXTOgVqlmmiI0cbzQwweq4HMFTYXlsT2T1LTWhMPqjhswyS6Pn9//bglnTeBT+Fd6Av07sGgmB5Wds+fvyqK8y3GcFkEFifi5OTAwVRygN/6EKYzeCq4ToYsg5A0iNA3NzDG98/RDX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1707160396; c=relaxed/simple;
+	bh=lU6gB73tIul6YmK9JZDPM8lDZd0vYWOPoQz8rPmFwPo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Csej/rtHoXbR58BbZfZa45SxOPR06pkl75+fjjRt4+4SWzFcylco6SVlf7kfAWNQSEJHsGQsqDelunl8TCFVxLo09l75Z5l1MoDZjmcjc+Oo4Jo6oMVsGUvIq9/ey+MYQQBYei3RUdWNKP7hBu2w94gHXruOtjxo1qX/iTFw6xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4aZGsXu; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-363c503de95so5916155ab.2;
-        Mon, 05 Feb 2024 11:01:30 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4aZGsXu"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40f033c2e30so43285435e9.0;
+        Mon, 05 Feb 2024 11:13:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707160392; x=1707765192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRol/sNFwmfGsTVDpU7W1gqtEg6dz5qSdXDBnXM1i3E=;
+        b=H4aZGsXuIeWoYcIC3zBE1IeFkyidWc0t8AapYRvnSXDY1wTpnDrHSHPLdxyk9AQGE1
+         3UPeE1X/GlHqLF7vGDJV7FA1Dd0ZvnoLL96lEhJNXFdOZgCM3X/3yLmmBz/pEkMk3RP2
+         dXWKhg7k30fL4Cpb6U9i506wxHkyU43vd+efTqNzl0V2h4UcgPkknR6neXk69Vj0vcsW
+         Hrqylc052lFpc1x7bsD2n9clPdXOfN7V4qioLro+UKeMfI1ZPJMeDDZevoSBag7wvRbK
+         jlvaEKk4W9oi+0oFdPsiRiJUtjy7gsgq+ghFrAQ6GO/SMhvqXZhTuMuFCNmR9UVaBb7P
+         cw6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707159688; x=1707764488;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SeMl68ENlhZta5JKP4MegR68EKrrxCv2fGrCfnFczms=;
-        b=TkGXElW02g1jThTfrV2OKJ1Onpk8lVHstxAYX5yPCP+YyrYxI0Vj8gbQPWEdPZ4KTJ
-         Mm6H6oq/0CW4k6SXRMxVPr42ZN4IipxdJG8PHf/pPqAi1adMlt2Vu6zlFh+Nw2lHLw4l
-         wMeVQoZsMFvomk2VrtMLzA4KRrVUKlHiL1EHaZ4IMUqxqc/fo2N1IrsI+tYjKVMPe0rc
-         1yNgS8Q3Ef1LssBhStbQsMrd7K11FFaNg/f1nCfs1t6ZeH0I3lr+kwgQQvHjxsihTI9K
-         3Il7fxhzmQjLJrVJgBSW+hY/RSQO65E+O9AXP447IlyNf2Y/tUCQfN8cUNgzoeXNI5uY
-         1GJg==
-X-Gm-Message-State: AOJu0YzHg4e/I+fN9F4R3cNhaYSxXO7osXbdHViSJubhlE9KoNdtM2QM
-	1hN5SGqdOg1RLz9bD18YitntpTcwEY6nD3GnsjiIX59YmMT0bQXFiDNetQJ6B0A=
-X-Google-Smtp-Source: AGHT+IGCSsROlSPtHzOpI86hYanv64KOK2bo5Q5Dm3PpFBE7zh7fPUM8mo3lT1twvESxHjj0Ri0I+w==
-X-Received: by 2002:a05:6e02:5b0:b0:363:74dc:8f5e with SMTP id k16-20020a056e0205b000b0036374dc8f5emr733688ils.0.1707159688577;
-        Mon, 05 Feb 2024 11:01:28 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXzucqZW6b+sCROzIo++3iRO6pl84UBCvPfJsEO4mxxgeZM88CxLvgOZUheCUJI9tiaRyePyDQ/1Hmy5BAVo2gR/qxqR9fjtHcVekPAJMDLT4PxYQMS7Swp37zkIfWR0S9uD7mY/aAHwBQbxuuedy/fkaDW61tKSxnm/XvVS/zZv8Yn/YLzgwo=
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id p193-20020a2574ca000000b00dc701e0bdbcsm95980ybc.44.2024.02.05.11.01.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Feb 2024 11:01:28 -0800 (PST)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6040d33380cso49188897b3.1;
-        Mon, 05 Feb 2024 11:01:27 -0800 (PST)
-X-Received: by 2002:a0d:e289:0:b0:604:66f1:35d2 with SMTP id
- l131-20020a0de289000000b0060466f135d2mr475419ywe.49.1707159687571; Mon, 05
- Feb 2024 11:01:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707160392; x=1707765192;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NRol/sNFwmfGsTVDpU7W1gqtEg6dz5qSdXDBnXM1i3E=;
+        b=QJBpdmvfh2PTmV70f+oi5zRgWsqgj4miDV+seev9oyPq82/dLc6+eK9/jewVXZVAoX
+         ebUIlSc7AfTttWuHXx2FbOwFLMCw43cuc7OpYz1cw/3YeDoc/OU42m612eLywXaQb9MT
+         8DmSjdVgwSvIIz9fW8WLRoKYFFhLcvQ6weVZuAaup5/LnidK1C0V12IXwazFU1KfheIN
+         9puCN661ZdJ1MShCJ1rh1Y5ajgEY2TCjdpPHEcvS4sMVq8l9bC1c+kOVmgEkjBJ3EejR
+         2V/YGn5ZzD8LmaVcdRIPNCAnIqfUagnjz681T77OAR13k2mvArHrEgJIOMgesZU22P2z
+         BTqQ==
+X-Gm-Message-State: AOJu0YzCDhcfa0rLoSC0zklIheI80NSOhWJTlQFDsTThqbvsqNmGDKI4
+	Cy020TLcG5QvZF6Mwa6UzsFXNxOpMKqKhxgj5eg+E19WY5ogdnRk
+X-Google-Smtp-Source: AGHT+IEWU+P0OgANFuC5OMyILxKQHLwAI/asDetFjqiYPgT8HIxcHu9EBRPQ6ns0MI750TnEII4Ziw==
+X-Received: by 2002:a05:600c:4f4e:b0:40f:d3b3:b6c2 with SMTP id m14-20020a05600c4f4e00b0040fd3b3b6c2mr479457wmq.36.1707160392491;
+        Mon, 05 Feb 2024 11:13:12 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWsLBC5LGSyLGHsogO/vbduU2nyomv80c3b+pcrHq4IzVSoDPqs6W5AmEoJzH1oVfysaiGYib8aDTogydQktlkvyrEs5LEkwcEhPRz7dHn3NS0FfXTi1PpVT4Ef2IPzTHJfJBlH6XarZFZ1HRU6DyTEtU/8IvMdSDlIhZnwatLAp1m16Eu2UdNds1ZGDundDpYYrZI9cp5g
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m41-20020a05600c3b2900b0040fa661ee82sm9575862wms.44.2024.02.05.11.13.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Feb 2024 11:13:12 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Pierre Ossman <pierre@ossman.eu>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: wbsd: remove redundant assignment to variable id
+Date: Mon,  5 Feb 2024 19:13:10 +0000
+Message-Id: <20240205191310.1848561-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de> <CAMuHMdUxn4Ne7kmEfONz8Uk3Why3m9r83GdM5RzTxm_4Gj_a6g@mail.gmail.com>
- <8f011126-c95a-4c71-8bc9-a6b0a5823c96@web.de>
-In-Reply-To: <8f011126-c95a-4c71-8bc9-a6b0a5823c96@web.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Feb 2024 20:01:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUQLWBQemtgnCHj64wCYAET8J2-MgbisyMChSbh0k0L7w@mail.gmail.com>
-Message-ID: <CAMuHMdUQLWBQemtgnCHj64wCYAET8J2-MgbisyMChSbh0k0L7w@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: mediatek: Use devm_platform_get_and_ioremap_resource()
- in init_scp()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Markus,
+The variable id is being initialized with a value that is never
+read, it is being re-assigned later on. The initialization is
+redundant and can be removed.
 
-On Mon, Feb 5, 2024 at 6:28=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
-> >> +++ b/drivers/pmdomain/mediatek/mtk-scpsys.c
-> >> @@ -441,8 +441,7 @@ static struct scp *init_scp(struct platform_device=
- *pdev,
-> >>
-> >>         scp->dev =3D &pdev->dev;
-> >>
-> >> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> -       scp->base =3D devm_ioremap_resource(&pdev->dev, res);
-> >> +       scp->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, =
-&res);
-> >
-> > Given res is further unused, please use devm_platform_ioremap_resource(=
-)
-> > instead, and remove the local variable res.
->
-> I got another idea after looking at the implementation of the function
-> =E2=80=9Cdevm_platform_get_and_ioremap_resource=E2=80=9D once more.
-> https://elixir.bootlin.com/linux/v6.8-rc3/source/drivers/base/platform.c#=
-L87
->
-> It seems that it is supported to pass a null pointer for the last paramet=
-er
-> (while this possibility is not mentioned in the interface description so =
-far).
-> How do you think about to benefit from such a design option any more
-> (instead of the determination of a corresponding platform device)?
+Cleans up clang scan build warning:
+drivers/mmc/host/wbsd.c:1287:4: warning: Value stored to 'id'
+is never read [deadcode.DeadStores]
 
-Yes, you can pass a NULL pointer as the last parameter.
-And as this is very common, the wrapper devm_platform_ioremap_resource()
-exists.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/mmc/host/wbsd.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
+index 001a468bc149..f0562f712d98 100644
+--- a/drivers/mmc/host/wbsd.c
++++ b/drivers/mmc/host/wbsd.c
+@@ -1284,8 +1284,6 @@ static int wbsd_scan(struct wbsd_host *host)
+ 			continue;
+ 
+ 		for (j = 0; j < ARRAY_SIZE(unlock_codes); j++) {
+-			id = 0xFFFF;
+-
+ 			host->config = config_ports[i];
+ 			host->unlock_code = unlock_codes[j];
+ 
+-- 
+2.39.2
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
