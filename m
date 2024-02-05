@@ -1,108 +1,80 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CF528E09;
-	Mon,  5 Feb 2024 14:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDBC28DD5;
+	Mon,  5 Feb 2024 14:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707143025; cv=none; b=Gutw9QNlCURSPOOJHV9xhDClhJRvC3cr32OKGedl5cD35hv9ddc74GVVpN0PU7Acx99wCxGPMnn8vVL89WC90zq4ZuklwN5GSwMjR/e29v/Y0k/qflZu2F/bTUykgBGwtdzYSr07teRbx8aLU7dM9GMgPMlXL/sNIAxBrXx8L7A=
+	t=1707144652; cv=none; b=IQYoAsZkE1YK+em0VA8ISwqfUpUl8ymENXV0jksiFgOD3gelLsy2qg1Lfbr0/xkeagbnkVBpDFuLz86kjwGMBYUFVQRmMlwuOfstV810jkEle090cGW8+Zae3aVe+lopRADWanqyEG1uS1KxnZChjhzlAh49GZeAVbTWN5WFQ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707143025; c=relaxed/simple;
-	bh=dnIBfbHB8ZPlHqVXA+eJYYPip2Nlrn+++FytfzTBiTM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=a9APTmotxZnZTdknK1zj+Xr6rW/AvkP516nqGodpA4pf8BfmatBoSYtw1/ZkXuRUQuklCUyzuPgHoLake0PVMWikE5yk39Nek1hEpXtJm1RfUnadWAQ6gLE4tsVK3+i2ml5w7X3AgZyaGTRKDq88quFx4oAAu5n1Xet3T19Ae5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KLm4V0bl; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1707144652; c=relaxed/simple;
+	bh=ROvEoQwOQyKYdc4KRkSPvTuMIGfk5rFte40p1DNnYTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Osb0r6Z1IVdLLv90Mj2xlTnqbcjiTXZE90y6zE1VIY8YEfzkuXKMnp92NomAyWLbZAvNOhyGVdFiHilyM1T8zM+K47V0t50Ba3NrMMaU+DAb2p7SbnRMN+vEkyl5hmJcQpCxOiFmcfPdz34EhNs2RqloGclcCFnunKbi96qmcw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gzrkoLuV; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KLm4V0bl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707143000; x=1707747800; i=markus.elfring@web.de;
-	bh=dnIBfbHB8ZPlHqVXA+eJYYPip2Nlrn+++FytfzTBiTM=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=KLm4V0blbSMIAGoBSC9mXB8FoGR1shqWQKuYJTqNaJfah9ZXy6C88xPezTwQZ7iZ
-	 o08IgUmVlAlGV7wN1RLyi+hIXUzlzlvQp35zt1qBJJQEBcNtcmHMBYgboazVK0emi
-	 dicoXgwXol3ylS9hXSZsTfwYnXp1cJjAMemJmTzsn6nUOLPYf9ageVqO//u1bg1k8
-	 qXNmlFfBe9xLHTag/LUC+J7H0nZjQ9oafUi3/ud7F8J4MrwwJG5X9VooDKviXMVEy
-	 L9NY5TYvDF5h041mtEuN0T/Wp9p0T7ItXjZAu93OzkOArdZowMiTtEnElDO+36wZQ
-	 mD6eftyehLbH38lLVw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1rjK5d3GOr-00CNRJ; Mon, 05
- Feb 2024 15:23:20 +0100
-Message-ID: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de>
-Date: Mon, 5 Feb 2024 15:23:18 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gzrkoLuV"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EFD2B40014;
+	Mon,  5 Feb 2024 14:50:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1707144643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xvT/GWiXuIsGbYnUVwWTujkFZCfsuu7xNTiRILQO4ho=;
+	b=gzrkoLuV+KHRXUgaI9cv0hdYXd/jbTkEyDwkuc9otKaIThRwpk9b+IQWa9DbKoza5RYUC9
+	OjpFNs3jvZM6DtHEw7e/cmXSeoV89Ef87UQlWpvmOg5Di/Fakb4YfuVLz0s2OQsLqryyop
+	RNWV4krRZ6ie6yoNAsOAzVECqfXXNqfm+JET/xx2q56Cq3c2/LhFFubYgto0cpsbXpBM1/
+	9itBgGiMtgbnl6iCu3lOJKXMByRGBwD5xB49oseXmi4DiWrRloryxGPDMO4+N25A3VfMAH
+	izaexojdnvTxQUxMNV7JYfzxtk3DuqJxyb0bPZwsUHQAsyFk8kbJ3/ONgW7ZNA==
+Date: Mon, 5 Feb 2024 15:50:41 +0100
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Richard
+ Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, LKML
+ <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH 0/3] mtd: ssfdc: Adjustments for ssfdcr_add_mtd()
+Message-ID: <20240205155041.1edfc38b@xps-13>
+In-Reply-To: <74183091-4c8d-4c92-b3f9-cebaacb41efd@web.de>
+References: <74183091-4c8d-4c92-b3f9-cebaacb41efd@web.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] pmdomain: mediatek: Use
- devm_platform_get_and_ioremap_resource() in init_scp()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Qk9+8YbmEYpkEKxu5CX80yzJiKq/O07RES/6VuICIr0ippZkpn4
- +r0wYvjgmLpZo3rV+cALSmNXrH8l2dLYM5uGCk9VINKHybD8mkHH5LUwB6ktuwG6Vkq5za9
- aXPi+9TgrBgoot1B4GWajqZcqGIPBDYJKMX4gIoappbK/MU0JA2+BYk/eyXr6jPsioXFmDd
- Tuaaz/TxM9fLDgzWwUqKA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:r9Z430C379U=;ilM33fD4v70mE6uWIXsWyXQKWCK
- dsXZDH6BvRcR7mUyDjiXmJM+hkrFdUWqXEQs0b90wl7rQDuhQt3LlEcSrGTCR6BAlhQ1E9GVD
- QEhX4KXDLu0RkEZC54ydlfMNFozgY4v5Pww5o+i3eOvabToBAR9KPl2RX9NPQNSX03JbX5MaC
- /Ch9a1Rc29+bNhZ2YwMEM8RdjvLXC8+xvXZle598Z3gV9R/U8FF+yATT3KbbI4aiB28yuxvzl
- 6kdlXxDSTF5uIv3XpfwTglBBLE2nQwewbptuwUoStSqUzjCOXuMsjDdRj32Y3zcEXxPWqH8pC
- CYltKfBrndxqR8q42dvy3jBuTjjbvR8wrLVQBxb0c/BjlTS2D9IvbaYCysY0E9SHgz+fse5LC
- Ydvv3SJ+JLmyd62OrYrS8SmTZwdKeFgqYptLQXK2IZ1Svxji7PQLePDBZc4/wIfBdyJiQ3yJC
- irmXwRVzLw7EinjgwxuRAijiutU6m9l4uSIOLBL3peBfvUlshrv4QwnY3JfJ0eEJ8+h2InKqh
- PEFKAft2NMmHWimsJQ192fxKgXUxc2k94s11+35g26/1e2U3q2OJaKPYK7pDy07v47AmW0l/O
- 6eRr2l0aI+hiIxPcXKg1BTOnBt6cX4odLRItGYCreOqp1Uyqdd2cADTfYVgN/KzQ43KplSqLp
- 6GpjXXDPmy1qN82nx3Ppz9jmdsbZwFUirV+3dJRORZzL7iKVpjXJLEhN3zhBDYMRBuaweivKt
- px89WBWS8u6KGQ4zcLICgaZUxS/7nMh+TlXziDHtozxpHw5d7KcwpNJjffvUYiIApEaBXJ6Mt
- 43yfxJPG/y4L1Sq0I0MepnInsU8wuAFV2EWGCnz+JVMJc=
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2024 15:08:27 +0100
+Hi Markus,
 
-A wrapper function is available since the commit 890cc39a879906b63912482df=
-c41944579df2dc6
-("drivers: provide devm_platform_get_and_ioremap_resource()").
-Thus reuse existing functionality instead of keeping duplicate source code=
-.
+Markus.Elfring@web.de wrote on Wed, 27 Dec 2023 15:43:06 +0100:
 
-This issue was detected by using the Coccinelle software.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Dec 2023 15:38:42 +0100
+>=20
+> A few update suggestions were taken into account
+> from static source code analysis.
+>=20
+> Markus Elfring (3):
+>   One function call less after error detection
+>   Fix indentation
+>   Improve a size determination
+>=20
+>  drivers/mtd/ssfdc.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> --
+> 2.43.0
+>=20
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/pmdomain/mediatek/mtk-scpsys.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Series applied on top of mtd/next.
 
-diff --git a/drivers/pmdomain/mediatek/mtk-scpsys.c b/drivers/pmdomain/med=
-iatek/mtk-scpsys.c
-index b374d01fdac7..9e7f0771e7e4 100644
-=2D-- a/drivers/pmdomain/mediatek/mtk-scpsys.c
-+++ b/drivers/pmdomain/mediatek/mtk-scpsys.c
-@@ -441,8 +441,7 @@ static struct scp *init_scp(struct platform_device *pd=
-ev,
-
- 	scp->dev =3D &pdev->dev;
-
--	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	scp->base =3D devm_ioremap_resource(&pdev->dev, res);
-+	scp->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(scp->base))
- 		return ERR_CAST(scp->base);
-
-=2D-
-2.43.0
-
+Thanks,
+Miqu=C3=A8l
