@@ -1,80 +1,121 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDBC28DD5;
-	Mon,  5 Feb 2024 14:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3751E3EA62;
+	Mon,  5 Feb 2024 16:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707144652; cv=none; b=IQYoAsZkE1YK+em0VA8ISwqfUpUl8ymENXV0jksiFgOD3gelLsy2qg1Lfbr0/xkeagbnkVBpDFuLz86kjwGMBYUFVQRmMlwuOfstV810jkEle090cGW8+Zae3aVe+lopRADWanqyEG1uS1KxnZChjhzlAh49GZeAVbTWN5WFQ10=
+	t=1707150703; cv=none; b=VBs40plXJb9YpxTxQnMAw99yjATa0xe2L+zSzzVziLRFAoDyrR0CZ6XBSITEnMQIM1Cb5/c8EYHGTE68+Fhl5kyEyuMPm5nOuuRqKALXj4/7XPqnP0FASRMzcPLwBQXHh9cSjPkLSBbIMou4Bf7t5vviEPeZTxK2++xAAOv173A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707144652; c=relaxed/simple;
-	bh=ROvEoQwOQyKYdc4KRkSPvTuMIGfk5rFte40p1DNnYTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Osb0r6Z1IVdLLv90Mj2xlTnqbcjiTXZE90y6zE1VIY8YEfzkuXKMnp92NomAyWLbZAvNOhyGVdFiHilyM1T8zM+K47V0t50Ba3NrMMaU+DAb2p7SbnRMN+vEkyl5hmJcQpCxOiFmcfPdz34EhNs2RqloGclcCFnunKbi96qmcw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gzrkoLuV; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gzrkoLuV"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EFD2B40014;
-	Mon,  5 Feb 2024 14:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1707144643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xvT/GWiXuIsGbYnUVwWTujkFZCfsuu7xNTiRILQO4ho=;
-	b=gzrkoLuV+KHRXUgaI9cv0hdYXd/jbTkEyDwkuc9otKaIThRwpk9b+IQWa9DbKoza5RYUC9
-	OjpFNs3jvZM6DtHEw7e/cmXSeoV89Ef87UQlWpvmOg5Di/Fakb4YfuVLz0s2OQsLqryyop
-	RNWV4krRZ6ie6yoNAsOAzVECqfXXNqfm+JET/xx2q56Cq3c2/LhFFubYgto0cpsbXpBM1/
-	9itBgGiMtgbnl6iCu3lOJKXMByRGBwD5xB49oseXmi4DiWrRloryxGPDMO4+N25A3VfMAH
-	izaexojdnvTxQUxMNV7JYfzxtk3DuqJxyb0bPZwsUHQAsyFk8kbJ3/ONgW7ZNA==
-Date: Mon, 5 Feb 2024 15:50:41 +0100
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Richard
- Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, LKML
- <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH 0/3] mtd: ssfdc: Adjustments for ssfdcr_add_mtd()
-Message-ID: <20240205155041.1edfc38b@xps-13>
-In-Reply-To: <74183091-4c8d-4c92-b3f9-cebaacb41efd@web.de>
-References: <74183091-4c8d-4c92-b3f9-cebaacb41efd@web.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1707150703; c=relaxed/simple;
+	bh=c2Xj0CWK4pM/ZbbTuzimtpxOAlDk7nzXsyyrZD7Y0WI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2xGLY5Bgp4Sv9oDGyfVImIE9EZ44p5MLWIBE8i9F5rTgnOUpt4XcX5a04X7by6ABeVD9rdwekNZp6PM3PXP6c3lhQHexVOgYQ9+t7ypo1GZmvwDJkJ27FwtxpcwguIfU++0aCfylfR0ENcd4D8qTicy54UFAKQgWYhV25nthmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-604713c4ee5so3743137b3.0;
+        Mon, 05 Feb 2024 08:31:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707150699; x=1707755499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jWR3pEGZO6v+mTFVY3DLgK4dPi2tH10vXkils1uXoOQ=;
+        b=vmro6LkE7bsBc4ql/lCSymwIa+BvfwH+PWmxRpgbgIXx9ShRoFXgXX/cv7/NIma/bR
+         AKRLewHx435MYYulxbweY35IlFLzUy0wNqvVAXwUdbQOueiBWWmXy4Dzqf2y0QWW8FNV
+         N4yw73l91MzhP46uTXmUUMRUStv0brBytZAcA3OdJcmN5/L62CIzvSVBc941Gqi5750V
+         mf3dg3BiO4BYLQ5Ylblfvfxpf3cuj/GKW80/Z6KmADFG/V+mAoraHS0QKlPVmpcqm/in
+         wzna7dNTBeMQdV0jts31+KKlx7offTLksvUTZeYZaiLor09alzEX0iBDRY1LLXGBT+PN
+         gv6w==
+X-Gm-Message-State: AOJu0YxfXSh3JyLqDp1enUwoxEqaw5HkhgYPQx1Ll55OhsJIsckI9wN8
+	iUJ8K6QlY4QhrOblNHYcyZhFqwWLjWI6ptLQvi+DtUNdmxZvua1r9abkUjXJXVs=
+X-Google-Smtp-Source: AGHT+IEeSGJonTeidlmtPDtSSITP9K46bqw0zwBsmBOADrZr1YyUdFBHXwT9/GbhB9QF6NtVEuIHRQ==
+X-Received: by 2002:a0d:cb85:0:b0:5ff:5e94:277b with SMTP id n127-20020a0dcb85000000b005ff5e94277bmr52288ywd.45.1707150699086;
+        Mon, 05 Feb 2024 08:31:39 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCUnh8y63D7VD6ktXN5CwkmSN6HIOZVTqxmHZNP8LrQXmIyG1PpxhHhSH2/bl/PJhgKV40KDGZa1na/4JmFR6dWot3aHgR8COEPk2ADbAEeQm4w+f2WN+TakLo+mvRhp//TLeBttivc9j4JlrIIJ1kHEDyKJ6O0q9T82HCN61Y/K47s0OPqGbqg=
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id gu7-20020a05690c458700b0060410ee94a7sm4451ywb.143.2024.02.05.08.31.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Feb 2024 08:31:38 -0800 (PST)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6040d33380cso47295307b3.1;
+        Mon, 05 Feb 2024 08:31:38 -0800 (PST)
+X-Received: by 2002:a81:57d0:0:b0:603:e86b:cd81 with SMTP id
+ l199-20020a8157d0000000b00603e86bcd81mr61909ywb.31.1707150698427; Mon, 05 Feb
+ 2024 08:31:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de>
+In-Reply-To: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Feb 2024 17:31:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUxn4Ne7kmEfONz8Uk3Why3m9r83GdM5RzTxm_4Gj_a6g@mail.gmail.com>
+Message-ID: <CAMuHMdUxn4Ne7kmEfONz8Uk3Why3m9r83GdM5RzTxm_4Gj_a6g@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: mediatek: Use devm_platform_get_and_ioremap_resource()
+ in init_scp()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
 Hi Markus,
 
-Markus.Elfring@web.de wrote on Wed, 27 Dec 2023 15:43:06 +0100:
-
+On Mon, Feb 5, 2024 at 3:23=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Dec 2023 15:38:42 +0100
->=20
-> A few update suggestions were taken into account
-> from static source code analysis.
->=20
-> Markus Elfring (3):
->   One function call less after error detection
->   Fix indentation
->   Improve a size determination
->=20
->  drivers/mtd/ssfdc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> --
-> 2.43.0
->=20
+> Date: Mon, 5 Feb 2024 15:08:27 +0100
+>
+> A wrapper function is available since the commit 890cc39a879906b63912482d=
+fc41944579df2dc6
+> ("drivers: provide devm_platform_get_and_ioremap_resource()").
+> Thus reuse existing functionality instead of keeping duplicate source cod=
+e.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Series applied on top of mtd/next.
+Thanks for your patch!
 
-Thanks,
-Miqu=C3=A8l
+> --- a/drivers/pmdomain/mediatek/mtk-scpsys.c
+> +++ b/drivers/pmdomain/mediatek/mtk-scpsys.c
+> @@ -441,8 +441,7 @@ static struct scp *init_scp(struct platform_device *p=
+dev,
+>
+>         scp->dev =3D &pdev->dev;
+>
+> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       scp->base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       scp->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &re=
+s);
+
+Given res is further unused, please use devm_platform_ioremap_resource()
+instead, and remove the local variable res.
+
+>         if (IS_ERR(scp->base))
+>                 return ERR_CAST(scp->base);
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
