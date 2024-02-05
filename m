@@ -1,68 +1,63 @@
 Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DC7487AB;
-	Mon,  5 Feb 2024 21:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9085FBA1;
+	Mon,  5 Feb 2024 21:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707170135; cv=none; b=jY/PDqMwmqqHwNq2P7ZRO0ZV16LyP7UB2y+AL+n9QGJCcDWNrAdV3ztA7jzhFr6T5ZTDylh3bN6s9ESdV97Xe9X2pIwRoLe8LUiCM4k/PpuNNB/WDeLdE2MYzZnJBRt9JsUr5xe0b2p+f8nCo/OsopQl1FAVlMYDhr7ltkfG3l4=
+	t=1707170384; cv=none; b=AfZ+oLAiIkHofCqT+4j1GdP/oGYGc6z2uYnWaSisrMGtp5Nof2ixX+ztfj/VoUhlRBdKBG7nOIK48deBWAuxmVRaddjLBRKubwumSaTGapmMLE457FC1pxc81oddsBJ4UrA5JN2m4khGTUjd4qThV1trq2zHoiPIJuqy0Cp/FjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707170135; c=relaxed/simple;
-	bh=H0fLTAzZF9M+Hdp0/173Ijbr/B0GoqE0ZGzVwCP9LRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oh9nwuoUh5rzBxwvI9XzkGE7KuZ5n2TT6KocaTrctpgl5a/s7CKDn15ghpk5AFWNhr+EeP0BDAUATH+cpOdYuUN+wT2+t5Q5udWdTssSuy+Fz8qh3cjt6ERC2I0QoOGs+743hQSH1foAIBin2Mf5Efs7Asx0qh/TkK5vJByXC2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDz762u1; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1707170384; c=relaxed/simple;
+	bh=+AS06WoujOeqXU4Hb3VAVxvfM0mY/e5EGItG8aTCTas=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bAWqpSWxG+D3P7CT5klEUkQwVahJMJs5cTvGL2DF3KmkTab3Qr//GNB6qhxJa37f97YSdYJ/ebbZsgfz7Tlxh7ibtD4L4mJuJs6gQaniprBSrriAVc4yb+rzq0vSqcvQZM6Fj6dDvZWA9qKRyzYUS9PnX5xIyqKT2lafZvDZpB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6oZdz4E; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDz762u1"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40efcb37373so1622515e9.2;
-        Mon, 05 Feb 2024 13:55:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6oZdz4E"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40ef64d8955so1636225e9.3;
+        Mon, 05 Feb 2024 13:59:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707170132; x=1707774932; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707170381; x=1707775181; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANHA4FLKX0KPJT+zhyykPfhWKQ9mfjg93YYvGw4tTjA=;
-        b=EDz762u1hchvT2pYPBQ/lgHzpfXw8SVpmUxdQd1nUn+gkZX0y7HdQVN1PC1SY4K6bc
-         jtaCH19gVx/PnP3x84iSPaz5M6Rf2VN75kWgPn8MUQuWXED8EDWGdQIPNq6nd6CZCQzt
-         QnGakYCAU250N9PnsgeXyphBm6AL2iZtz2rG6L1CvVBGwuBeK/UnzxOzKFvlj8SF/1DZ
-         MDec3zklA6xAjGl2B8+vDtMDaxvc4Z+68hwwynI/O/3P6jd2IWApY7W1j4bH9R1EZd5t
-         gbQvPUCkExRtpy1R2VesKf36Dv4dQt1vRHgETbsLMYfgWvdbY8sEtMdYzdhP7r/h/ATm
-         BcpA==
+        bh=7v36dUm/qfcDe5R6rUIhuYhf7AEbt4izd4LOEjbQQ90=;
+        b=k6oZdz4E9JTHmNdNPxQEnydRA8yk2EdaQoVMHXZJIWmN4i6PcMRbCt4pS3ZCFOQOgB
+         hNW5/McwMcDU5cvQvKRQQgnKNhOWQvfy5s056kqMH9zIF7v0ZpcOBvJIYDX4X7L79HPp
+         egH9VCky3Akw3uF+i1DKQwJoN37OX65lP46sSn3hWk4GVjDdonDhdmXbAUjiAMxoz7a3
+         nB2+CVOdTNh34A7Km1bbHMUXN1SPe9WqNhTvTQvXpfFbHFLp/6FiaaQKkktGs3TbnvLK
+         5NbwBou5iVyXQNcSDS3wSergTCPMQXMNXapTwNpi/RSD2ZuBVBq3AX4piYVxfyy6ySn0
+         UHJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707170132; x=1707774932;
+        d=1e100.net; s=20230601; t=1707170381; x=1707775181;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ANHA4FLKX0KPJT+zhyykPfhWKQ9mfjg93YYvGw4tTjA=;
-        b=Zk7N5kMsym7o+UPYQOpisX8WMugF/mxPlJToOHeV/LM+CD/IRvywx0oSCim7efU/fb
-         6+BNIjc0ctmNIJWU9TamJyZPMKIN5bJ2SVH/IOeJa0sOEk5RL3hBqcJkYWzEu92gGDLa
-         bvPt7ErNg2QaGLNGwKLycFRRBGOyRXbpPmlzy1YFE+Dd4j1hHGNbTKXp+u2J9U9pvSyx
-         Zlm8oC6gDTiL+aoRjqLda4jVjSRz2U4E45UoNvr78UQG0rOoMpRixxBm4si/7mjyhHkg
-         zT5OpQ2XB+1D4Pr1IbVTXjR9nqp/PKYG4azOohoctONUPZo2WUF6EfRyKc2z7TCX/V3d
-         mnWg==
-X-Gm-Message-State: AOJu0YxmxdH73cpvVnoJugdrvGslcd/0414du24od2z7RBvJbELqJfDZ
-	+XK1JbQAaH6MGquXcUwUnGsRG2NP8AteicdAXnKKYK+eeRoW0suw
-X-Google-Smtp-Source: AGHT+IFSxYu+ZgDtBPP82E2MrK1rskAr9VPt+hoRkCFHBqM5WHdZ7rlG/9AC1JSSjBboHdGd+Njk/Q==
-X-Received: by 2002:a5d:4c81:0:b0:33b:3d28:ef22 with SMTP id z1-20020a5d4c81000000b0033b3d28ef22mr703885wrs.49.1707170131584;
-        Mon, 05 Feb 2024 13:55:31 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUCAmPKnQXjGh4euXZrhV4VT8/ijih7Zdk5hW0W3uPscwlWviKbV7lOlGMpF5XW0bCZf1nZIxuM+CEQSThWP169A+8EZJuRBwbGB01txfNOEdVizMMe5jZ8uYoDLqx3wrjYWzYQx4OhZO2EwvqbRCFce7DBBFvZVEcLc+qMM/dVTuri5avHKvGrh+fmvsb8Ksl82b3FgmdyEDikRCCL/LsOq4zr9FXxV7AsfERkbXRBg7enWBcZZTxUAtltfn9ggz2dWfEiJEhnm7ZCEDy2trWrRwjHlwFeeNLbENVTonLs
+        bh=7v36dUm/qfcDe5R6rUIhuYhf7AEbt4izd4LOEjbQQ90=;
+        b=K0tAepwf/2ngvojze8VKpdA4GCbGcM9Oaw6b5HLgp42M2pFlkamPtVTHvm81lMwH/J
+         VAFTozWL7S0g1KnrH4sIEjwkkxqQSoV4EnUoblUV87/u90kuv1r2pKYzgnxP+sjZP/c7
+         NdX0T93rD94fvWt5a3rWw5vtlYCPKnmaazgpsp7YTs0HdV9EofMshyGnw2Isrgf6oF+S
+         8m3ry+iiXyVSDlXDGUz+68KBZiEyAS+4WmUKmxsge6U6Ov3NlVkBVO58YJkQ38Dw9ckT
+         JBYj9J/smI+VSE92cMmbsH1UoH1Wm6QvTGMpMBuXy7NNZ1at5q/tXADYHngALvXjKfK5
+         YPfQ==
+X-Gm-Message-State: AOJu0Yxh1U1lpUcBwDbxWCSaRfy2a8Oxk4a6ZaiKUGTZ5ham/jCXfTp1
+	oWmh7u8N3ZqsWTlBx3iTM8tYhQoH+sxtQ2p8/uLaRH1jhJ9GxZaCVrghe93Uw9k=
+X-Google-Smtp-Source: AGHT+IGZlV9OF1/ilTswL166CszINvzdpP3TzLASP+eTjpBTHUwh9tFjMQkxoBOYPGk1AgPzN0Ozrw==
+X-Received: by 2002:a05:600c:3581:b0:40f:de6a:2a27 with SMTP id p1-20020a05600c358100b0040fde6a2a27mr698032wmq.40.1707170381323;
+        Mon, 05 Feb 2024 13:59:41 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWy8BJdViKpI9NE7N7rSvNeqaStkN8WderlhTgTe1CsuSJAIo2mgM+X54TowxaYb98i8WkoeTAORncoqvB1y1CumSKzB3asdXxSs54qYlU0r7nTAJMO21Xcw54dBOi7bTBMCskqBfoiLL1jwA4h14LRjudSQtPg/6IiTKDd456Y1Jk=
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h6-20020a5d5486000000b0033b421e651csm524355wrv.37.2024.02.05.13.55.30
+        by smtp.gmail.com with ESMTPSA id fb4-20020a05600c520400b0040fdb17e66csm1081486wmb.4.2024.02.05.13.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 13:55:31 -0800 (PST)
+        Mon, 05 Feb 2024 13:59:40 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Ariel Elior <aelior@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] qed: remove duplicated assignment to variable opaque_fid
-Date: Mon,  5 Feb 2024 21:55:30 +0000
-Message-Id: <20240205215530.1851115-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] input: ti_am335x_tsc: remove redundant assignment to variable config
+Date: Mon,  5 Feb 2024 21:59:40 +0000
+Message-Id: <20240205215940.1851349-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,31 +68,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Variable opaque_fid is being assigned twice with the same value
-in two identical statements. Remove the redundant first assignment.
+The variable config is being initialized with a value that is never
+read, it is being re-assigned in the next statement. The initialization
+is redundant and can be removed.
 
-Cleans up clang scan build warnin:
-drivers/net/ethernet/qlogic/qed/qed_rdma.c:1796:2: warning: Value
-stored to 'opaque_fid' is never read [deadcode.DeadStores]
+Cleans up clang scan build warning:
+drivers/input/touchscreen/ti_am335x_tsc.c:160:2: warning: Value stored
+to 'config' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_rdma.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/input/touchscreen/ti_am335x_tsc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.c b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-index 5a5dbbb8d8aa..9a1660a12c57 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-@@ -1793,8 +1793,6 @@ qed_rdma_create_srq(void *rdma_cxt,
- 	if (rc)
- 		goto err;
+diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
+index 34324f8512ac..294b7ceded27 100644
+--- a/drivers/input/touchscreen/ti_am335x_tsc.c
++++ b/drivers/input/touchscreen/ti_am335x_tsc.c
+@@ -157,7 +157,6 @@ static void titsc_step_config(struct titsc *ts_dev)
+ 			     n++ == 0 ? STEPCONFIG_OPENDLY : 0);
+ 	}
  
--	opaque_fid = p_hwfn->hw_info.opaque_fid;
--
- 	opaque_fid = p_hwfn->hw_info.opaque_fid;
- 	init_data.opaque_fid = opaque_fid;
- 	init_data.comp_mode = QED_SPQ_MODE_EBLOCK;
+-	config = 0;
+ 	config = STEPCONFIG_MODE_HWSYNC |
+ 			STEPCONFIG_AVG_16 | ts_dev->bit_yn |
+ 			STEPCONFIG_INM_ADCREFM;
 -- 
 2.39.2
 
