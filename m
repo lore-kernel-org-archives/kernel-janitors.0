@@ -1,102 +1,120 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AC01AB7F6;
-	Mon,  5 Feb 2024 22:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566E4D9F0;
+	Mon,  5 Feb 2024 23:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707170714; cv=none; b=istdGAmgzjRopPCt+y2Pzgllo/YqqNChpD++hXiHH38Eo694uoUES2BWZrm6nFjK42A+o7IAL527FLsO6sD8o1U7lyM7sBPTcN5OIrmdrFPDYlZLg7HzNStKC+B/8Od9HAIzqj3yyRxSigrUNuqzC3HdqIn+LBqyUjZFfGEJNuU=
+	t=1707176594; cv=none; b=O2sI6RugLLjqLeKbaQyyhgx4/RMMRovdaOFplEU/L3IPsRLU6KXRu1sNUam9YrSKmIlbmbILeWxgjnWgPZy1X0a9VfnpZTUcojyjkE3PGxSmzGbJWvXd7eswoozRJkujELMFcOkKjuuaOoRpimdanYe+kZEsXlYX9KTkqFubReM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707170714; c=relaxed/simple;
-	bh=FyL3xtkXQG82Kmq8Fv2Y9NKGybm2l+eMfpJXN6+S5z8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LUO0R1tHr7kNrXSYW3/DEjpziMY88Z5UY8tShsVa0KQ8dVJD/9S4wVFpmSNDmD4lzCDjdXfC1S3Hd0dnIfo0F20aj4nS9llW7OqqBEbQPntK94pGmWqYZssi+OwlhhSvy/IAU9Ig3STsyN7RQWTN41iDDzUIzlaN/H2qgbaKsKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAGqpIne; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707176594; c=relaxed/simple;
+	bh=/j8Me4jOfxM2HK+iG5EIgQmxB68U6ITj91R98wi3LDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AbZL5Q7c7VOArNAiUVw0L14Xmrex9YmE0E/HnBYaGEZhUNIPmuTcTqNzQiiz67bMtUQlSqU3i5hUapXUk08kwdWOPJnDBuQLitLa/qLZWFWzFdfCpE+wxWARUHUTh24mWVdv83ewO1kU/oCMt3ciqZeeKCokjbYT0NUwmUv9/Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NR1zohk/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAGqpIne"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40fd2f7ef55so11770415e9.0;
-        Mon, 05 Feb 2024 14:05:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707170710; x=1707775510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sTGI0UOvdQER0iXMpVjZqKLFkuJds7ABf556kHVbzGc=;
-        b=KAGqpIneRTwat++D7e4f3AAwPgoZI31jjzM/2BCBE+NLeB7t3e9h/EYXiH25mATlHO
-         modfAHm97WRxTF+SGGKuArQGRH+QEFtM7+radn8BBRhVEO5hQIpxeh8HgKNmRloKix/C
-         5MlAFa7cZudfjoUZ1Misj3Cvueffp8RNPzRkzrlIjaFSo8Gq9pcu9ibnZkU3s/yFbVsJ
-         mytw6ZgrcHsVQ8H928vMcmLtznrF1SRrfIfDHXcC6voFVSj+AvVea+Fc1r+YNuS4Oykk
-         prFV35BSAXEyLEUyVyj6X5XQnRkA6Nm5ak7MFLilp2Up4CARqDM0o8M2Du41kNRmf5zU
-         aaYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707170710; x=1707775510;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sTGI0UOvdQER0iXMpVjZqKLFkuJds7ABf556kHVbzGc=;
-        b=ellmQSZDrHFmaqhhpW1EUOTVdfq5xZeYoZMrXr0tP4SNV/9Js/zJJGAOonqZrqMLcs
-         ZSoIUozAfqdRgrSOyAWkvJ/J3TfrBpZt85aMXzUxL2uCFPxNJCSVzREgWVUTc1lJgBsm
-         ElgXnKjiHvBOrBLZv3y7mOtCRzFCvRkdsymfhFlObsgNcu3XaMt39xwzJfMOsAZI3bY/
-         cu+uNrJS/amiMHaywRMASvlUNj2oHxSq5TwZgTqr/Ga7BwD2PTZUolL6/ONm4w9hRH0f
-         wWdHaYimKYMpXlLNsuCYhFRaQaeTojUHGRaaLh7FpoEt60k64XWHUvXmWnJJYZ12XEZx
-         In7Q==
-X-Gm-Message-State: AOJu0Ywm2S4RhEvFs2wIHu9pUoRZoboxOGEyIbhwJMT7Czmi3jnRIWw5
-	UoXYMo18E0E4e2xgym5vEBiUSX9sn9Gnba2NBEz3RKdJFlVJF7aQKkI/YqUVsoM=
-X-Google-Smtp-Source: AGHT+IGbQR1rjjufS35x9olRWmtFr/4qd/TgbArZKtOYNkI3cVsnQOq3X55ZmsYk0RxjZNuBAn+L1w==
-X-Received: by 2002:a05:600c:3b19:b0:40e:45c0:ad64 with SMTP id m25-20020a05600c3b1900b0040e45c0ad64mr737050wms.14.1707170710256;
-        Mon, 05 Feb 2024 14:05:10 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXHI52K5kg1H/CHZ3CLOaAEclxvAPTRmdA3Dpx4xpLeFAaIDRKyIv4H4KhNdpxeOjsq6+GYlXZkm/rdBzwVa0mc/nKhvDCdR8AhXMKmN332iVIPRPqUxY18MGBsXk9YjDY8S7tD7JiE51zR1C90r8AyerM1Y8LcrxLump8+qNfP/AxUE7LD5vaISYVcNUlzO2ARpWe+G/XK1ftQ1NBTdXor0F+U+XbUY0T7GcY8W/CQJhQQTnvcif4MNLALTFiNj6P3alFPgrUiINTlAdmHzOA2
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q12-20020adff78c000000b0033ae4df3cf4sm536712wrp.40.2024.02.05.14.05.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 14:05:09 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: i2c: st-vgxy61: remove redundant initialization of pointer mode
-Date: Mon,  5 Feb 2024 22:05:08 +0000
-Message-Id: <20240205220508.1851545-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NR1zohk/"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 415NXFtc028179;
+	Mon, 5 Feb 2024 23:43:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=ZUwfEox2Gmy2Mb7bQh8JJ1dI1oJWyCYJiPWEmtTM5E8=; b=NR
+	1zohk/HjsiUjRhW2p/9oyOqXieLdAbi1mapluipweZyCW12L1Qc3Y0QC4n4T/lJo
+	4kf3eapA9XW4SHpQi7AnuzxlyZ9o4Jh3kY9XCPPktIrMSMU/YLHqVvmfs6YVPJdm
+	ICl09gOyC/EQeuw03zjMoKl9y1Oc5SU6A3N+5SA9tlg2sUU6edQMvoVF+0jaH8S8
+	cGHOnfxxtrlKqixFnXAHReuZuhsLcNYF04OeTArKwl87Gp5k2H0pshu5bIIUHZfy
+	QyffJllmKWKgFwrWyB2Ty5YgtvUHsd4QXciK+TkqdIuGOMpZyfHCxIXc7seRT8GE
+	2+QMI/iSHviadfUPU01g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w2udda2p5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Feb 2024 23:43:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 415Nh0ch013530
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Feb 2024 23:43:00 GMT
+Received: from [10.47.206.1] (10.49.16.6) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
+ 2024 15:43:00 -0800
+Message-ID: <3c344e06-ac15-abe2-4fd6-5735090a1f58@quicinc.com>
+Date: Mon, 5 Feb 2024 15:42:59 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null
+ pointer checks in spmi_pmic_arb_probe()
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, <kernel-janitors@vger.kernel.org>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Bjorn
+ Andersson <andersson@kernel.org>, Fei Shao <fshao@chromium.org>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peng Wu <wupeng58@huawei.com>, Stephen Boyd <sboyd@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+References: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+From: David Collins <quic_collinsd@quicinc.com>
+In-Reply-To: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3MuUxwA4YiYlrpUe-0svT0s0Ry0JovhR
+X-Proofpoint-GUID: 3MuUxwA4YiYlrpUe-0svT0s0Ry0JovhR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-05_17,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=740 clxscore=1011
+ priorityscore=1501 mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402050177
 
-The pointer mode is being initialized with a value that is never
-read, it is being re-assigned later on. The initialization is
-redundant and can be removed.
+On 2/4/24 01:24, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 4 Feb 2024 09:39:48 +0100
+> 
+> The devm_ioremap() function does not return error pointers.
+> It returns NULL on error.
+> This issue was detected once more also by using the Coccinelle software.
+> 
+> Update three checks (and corresponding error codes) for failed
+> function calls accordingly.
+> 
+> Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
+> Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> 
+> See also:
+> Suggestion by Peng Wu
+> [PATCH -next] spmi: pmic-arb: fix a NULL vs IS_ERR() check in spmi_pmic_arb_probe()
+> https://lore.kernel.org/lkml/20221115090927.47143-1-wupeng58@huawei.com/
+> https://lkml.org/lkml/2022/11/15/197
+> 
+> 
+>  drivers/spmi/spmi-pmic-arb.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-Cleans up clang scan build warning:
-drivers/media/i2c/st-vgxy61.c:632:33: warning: Value stored to 'mode'
-during its initialization is never read [deadcode.DeadStores]
+Reviewed-by: David Collins <quic_collinsd@quicinc.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/i2c/st-vgxy61.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for making this fix.
 
-diff --git a/drivers/media/i2c/st-vgxy61.c b/drivers/media/i2c/st-vgxy61.c
-index 2d64466d7ecf..b9e7c57027b1 100644
---- a/drivers/media/i2c/st-vgxy61.c
-+++ b/drivers/media/i2c/st-vgxy61.c
-@@ -629,7 +629,7 @@ static int vgxy61_try_fmt_internal(struct v4l2_subdev *sd,
- 				   const struct vgxy61_mode_info **new_mode)
- {
- 	struct vgxy61_dev *sensor = to_vgxy61_dev(sd);
--	const struct vgxy61_mode_info *mode = sensor->sensor_modes;
-+	const struct vgxy61_mode_info *mode;
- 	unsigned int index;
- 
- 	for (index = 0; index < ARRAY_SIZE(vgxy61_supported_codes); index++) {
--- 
-2.39.2
+Take care,
+David
 
