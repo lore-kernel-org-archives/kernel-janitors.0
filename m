@@ -1,102 +1,110 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACDB2E3F0;
-	Tue,  6 Feb 2024 06:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CDD12AAD9;
+	Tue,  6 Feb 2024 08:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707202143; cv=none; b=aD45PlDi+vcMlYkq53kpjcGrhIUaA5CHGn+f9U4Ed67pJzi5CGwAqsScSIhgjdxUPF4PeFlVWPKerOOWmajQ6eaL/UvZ9H9pqUk2TOhJXDxGZCXfIdppJNPaFTJcxGfjqdf+XA8+vcdYQI28lC6T1HAIIlanu9DwgedYbZcO7PU=
+	t=1707208098; cv=none; b=cV5A/sMIkEogKw6MeLQ3oYW+JrBz4ZagqdwV3E8ydpnDdNtIUoVjHXrSYMB4uzFax9GeZYz+SiBMDiAiJ2XoVjqybVeN+pNJIPY79PN895O2Rw3919UYHxT89vH0HRMVgtcwXB/WN8W58isrsF7eYYclX7PkcESkWEPMdBdI16k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707202143; c=relaxed/simple;
-	bh=2lFZZPCNVNZhzbCa5T+MjLLbKaAPsyPoqZFZFvC6rVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qfA6hF4OGywNCVICZ45jCHnrAzgsqzlx91b7MzXl9LJMzebvPWLiK5m1cP3eetTxCLM3kmyEb6IXRmc++zioDSoHj1HL/Zcucu0oWIFyuplOTJbdondKesQRyVvuidInVz3PFwoJQLZStV6KE56WCNx5Q8EnzCMHXO8p6qupk1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iuBBtHdq; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1707208098; c=relaxed/simple;
+	bh=koRftp4MHR3PWopvdU9KfvvbZmwaKfHJJheC6bS279o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2GUc2ZGol5uUYEYT7W8iYVzZHv9oPceqdPDObOJuWgP8Nua9FmQ7BMQrPWlCH5DB1mcZPhvDLXYd4HnITdJFxsMMoMIliGG35RK0gSw5k7NC81LfBIG34KbfOsIOvFdHF+N2Q7vzXShIMPg46KgLyrj4ZbAve3u6+GZcF6FX/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM+8ouuk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iuBBtHdq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707202098; x=1707806898; i=markus.elfring@web.de;
-	bh=2lFZZPCNVNZhzbCa5T+MjLLbKaAPsyPoqZFZFvC6rVk=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=iuBBtHdqFjB2sYjgipc1iMpbV22LTAxj/3DgvdYl3uIEJWFxCcYew29Q7bHs/CmC
-	 ebgQQuQha25yh96Yogx11P2ij3Lb8McRD5dIRQK4ItDbAoGjFpa5WbPJI7DjPOg/1
-	 kNsm3eQarO7JkVjzZhvyA8wI9wFgESt0Y8aKqRGy/YVzRcEeLNPcZOMHqrKyWBjG0
-	 0YCkVCT6WtbbqkCazeJ/riTNzaUgSMQi4RYqLGQ+aWDjNToJfE6xtTzMlQxxmYBnu
-	 P6WYaRX6iRu84ODQ39o85UpHHDJ7DQabUN3opJP5eR3MpnSWzy9pzxQz2D7fCtjrT
-	 FLR68XxRgSCaWbQIpQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1qs6gh0KuD-013NaD; Tue, 06
- Feb 2024 07:48:18 +0100
-Message-ID: <8ffda85d-8fc4-4329-ac7c-1afa6c1eaa2e@web.de>
-Date: Tue, 6 Feb 2024 07:48:07 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM+8ouuk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B87C433C7;
+	Tue,  6 Feb 2024 08:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707208097;
+	bh=koRftp4MHR3PWopvdU9KfvvbZmwaKfHJJheC6bS279o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TM+8ouukUsUZLm3TN5OzwtVC43etkDvx/XBzBl8myT81EbZpPx3AMCEv+HP0mxN7X
+	 kWwSb6Ut7d4c+M2y2bTzFo8o762ullHauFEXiEXgXm0r1+ab+NeOeVyMFWUJ+VcnBc
+	 YnsPEQJqjr7bu04kV14y/askf0G9GypboFKDT+2qBOZyNPVm99WOK5W+a6wMlromea
+	 B5YGgVY2mAp5S/slHe3Th4sCt/aA4CgmEySVkPPxzo7FUeZl76Y1XD/pJbabnTtQZE
+	 64W4Hz5DXlQDs9Y71M9tYVOH6EG6e6n5EnKdTzB7Fc5QcxFngz+jdrB2LPEg1j23vf
+	 K3dCkA5JDa/6Q==
+Date: Tue, 6 Feb 2024 09:28:10 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v5 1/2] PCI: dwc: Fix a 64bit bug in
+ dw_pcie_ep_raise_msix_irq()
+Message-ID: <ZcHtmkOkvutz/DvR@x1-carbon>
+References: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pmdomain: mediatek: Use
- devm_platform_get_and_ioremap_resource() in init_scp()
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de>
- <CAMuHMdUxn4Ne7kmEfONz8Uk3Why3m9r83GdM5RzTxm_4Gj_a6g@mail.gmail.com>
- <8f011126-c95a-4c71-8bc9-a6b0a5823c96@web.de>
- <CAMuHMdUQLWBQemtgnCHj64wCYAET8J2-MgbisyMChSbh0k0L7w@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAMuHMdUQLWBQemtgnCHj64wCYAET8J2-MgbisyMChSbh0k0L7w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:o/3aMV1nQUNLqPKmjne/+7bI2APDOaggdys0QHaQrW0+OKONMkj
- sbqB6ZmxIPsUzqviRRKqYrOo3CpGDTOwnTZMY0Y6r9FAOqGGz3hMJjedOanCNM0Gn6TS2u0
- sCfXkd+jN4WNZByF3kKzfTjMGNjfMfaMHrF9rAnF/Ys0KvHM42yTwzsTcgGerrfjFN6MqDZ
- PqQMjLlgpR61ZYKxM66tg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7MxG6CeOe7w=;413LJvkTnNOJdKCs/lCykWnD2Kt
- BQT/UvQT71F5jO2KIRqATDo8w4RUIuLmDApmmtav+YMa3Ji20AeE3JMk1vJlau7eLC0kowAV4
- /8IRhk0BKXY+UmudkMp4AkAXEcO/sOCnsVJAHPlScYHgQA4fqMGlo5kKsm98BPLy8Zi+z3E00
- fFF2noJrZssdxBxxo54CTmSZ5NFukL5H1t48QwpFoYrAlfNAiiiisHPo1LwzUu4a5S73U++VC
- e3Tmv1VpghL2FEvxf5cy30cOzdTGIsHGWfieiBRd7HtnVyBEDn4F13kMK+G3SezR4vJv2X+rH
- DjhitoPaQkHncYR7tjral7yvnnVEdVyMuj7PIO19TpzsVcObV1aZg3ATqCuiup3aRzl/KxCM5
- RP8OAxbdLX3kRshzRs+D5RccfWOxbkrZUyqlHbs7cr2yDbjktuR5q8q3meiBLKOL3KsHGaaDM
- eGgo77a/UhN0Bwt2r3zcFwCIS8GVWKqUXx+ycJggwZN5uv51p9grMQpc4bTSNW6bEMjI6eH9o
- az2EmGRbt6Znsj2thyYziC7egRaYLBFKoRUKPvTHG8k+upFJUmvWWYs/87gXc34NzjfppYgV5
- NUJ5XG80ztfLvV4bP5qimen441rNJVSHLA7T06isu0DDd0KBJD6ytPxvJXDsx67STTDaT7XXL
- 0Jx5yG3N+4c8S8k/dHBwq6KxZe8ObazKVBbLHnrfFzhpyxauE/O/OxA2Rzle5Yia+MCwTrK6Z
- 1Z6tA9n4I5VcHcdWuBfuSveB8XqnHNiQSM4ovo1q1aO8lN6Bmzbx9erfx8Y2TVO0m3dWmAt/V
- HTjHOgUjvW1hi6+VUAz7ANL9DJdVtKEgZGsdeKIU7indI=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
 
-=E2=80=A6
->> I got another idea after looking at the implementation of the function
->> =E2=80=9Cdevm_platform_get_and_ioremap_resource=E2=80=9D once more.
->> https://elixir.bootlin.com/linux/v6.8-rc3/source/drivers/base/platform.=
-c#L87
-=E2=80=A6
-> Yes, you can pass a NULL pointer as the last parameter.
+On Fri, Jan 26, 2024 at 11:40:37AM +0300, Dan Carpenter wrote:
+> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
+> unsigned int.  This means that when the code does:
+> 
+>         msg_addr &= ~aligned_offset;
+> 
+> it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
+> to do the alignment instead.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> v5: Add the #include.
+> v4: Add stable and r-b from Niklas
+> v3: Use ALIGN_DOWN()
+> v2: fix typo in commit message
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 5befed2dc02b..d6b66597101e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -6,6 +6,7 @@
+>   * Author: Kishon Vijay Abraham I <kishon@ti.com>
+>   */
+>  
+> +#include <linux/align.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -551,7 +552,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	}
+>  
+>  	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
+> -	msg_addr &= ~aligned_offset;
+> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
+>  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
+>  				  epc->mem->window.page_size);
+>  	if (ret)
+> -- 
+> 2.43.0
+> 
 
-Would you like to support any approaches which can make interface descript=
-ions clearer
-for such an implementation detail?
+Ping on these two patches.
+
+Patch 1/2 is a strict fix and should go in v6.8 IMO.
 
 
-> And as this is very common, the wrapper devm_platform_ioremap_resource()=
- exists.
-
-I find further collateral evolution interesting for the involved parameter=
- reduction.
-
-Regards,
-Markus
+Kind regards,
+Niklas
