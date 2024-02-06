@@ -1,150 +1,101 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A1212F5A7;
-	Tue,  6 Feb 2024 11:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3289D58131
+	for <kernel-janitors@vger.kernel.org>; Tue,  6 Feb 2024 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707217749; cv=none; b=PgE4XQTpaQQZFkUGytM7xA1TL0zAWYnx0juu8KzzaZd24JCzrRp9XReR2K315pGdeJ9+vcak1C2xGcUHLkPCI6j+R9Fg2ea9TxVV3vOsiu0r7VKLYFlUU1uGH6x31Jd4N5PYIYXCumd+1oru1Q+/zm5XUueP3KKmyTQocyW2Sk0=
+	t=1707218332; cv=none; b=RZZoK/CeQ6whDAVDa0UX8Fu6D2AgKEuH4HMAeR+XIUuBitKDugN5kZKJ2NoD0r0JXj+UbMaWOoBX7NpYYJEcUB78y1isu/aySBDoOs35+c322DuO4Mf9IRntsuiTCZipbTGnr+f/XxCn+DIAM/feI6Pug6RZSb9lNn8XPoUGSNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707217749; c=relaxed/simple;
-	bh=JobQ2CoI/T2II61TjDEzXR1IyAwC4J3VElbAVa6K1nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oS0e1jXlLpyk9QNYHpBRQOgpdWyh1DmYJuyqQT710toJkbZfBb+Z2batJp2czDAt/soZlKBrgySFCd5KO3cg4bGF6siKZJwaXNjbh5XIOsOhJu+zDgSxx/O/qnYuXVWfnzUfOpQ7FBREmETwvMDPKAjoY/KTKcSCOQd33YUZwLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uH8brE24; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lpmpijBp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uH8brE24; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lpmpijBp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1707218332; c=relaxed/simple;
+	bh=RAUcQj04TyEXEDqfDrWDiMlYnTPZzSWd7J0PrXfQYhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q6CNX4fERPl0/GEJ5v5sceI6hgzDeAWYMW0pYtdnduJpQKE0FINYZQ3k5uEbsWQoTi1hpuXEB8ZAtYDYH/xsKbxInaPgRsibyYg6iBGn3NXm8w2jfaDzxQwQ7CsjMCm7oWJ3pdrKeTdqdYF6Vc99wQesUO55pRnxLMpUjhmLHEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y9DR9RcL; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uH8brE24";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lpmpijBp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uH8brE24";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lpmpijBp"
-Received: from lion.mk-sys.cz (unknown [10.100.225.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 66EA5220E4;
-	Tue,  6 Feb 2024 11:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707217745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6OT4WYVPWB8v21SxhnQOwkhxXC/BXklZ/lKe1YRVr9A=;
-	b=uH8brE24jrrN27ewLBBwxFEoWwm8k+2jtNJdZ3iGI5JqIoSbYyDY2tWJgBllFNX6+yNDiA
-	dVVQw32FtJ+MxF1+n3boiMNXBQpzDSiVhpLYoR6sUG9Gkikn2csf8Ig+SGbumpZMQjJ1aT
-	1jX4w/a52YA3ACPS6sC0BrpaPHYjA0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707217745;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6OT4WYVPWB8v21SxhnQOwkhxXC/BXklZ/lKe1YRVr9A=;
-	b=lpmpijBpuVV0Nb/HzsCBUOKupzpkFp5k1j6sPiWaXNYEVj0gDKQr4o9W5Dam6K9r0+o0oc
-	M3vWhxeb/NQ3h2BA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707217745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6OT4WYVPWB8v21SxhnQOwkhxXC/BXklZ/lKe1YRVr9A=;
-	b=uH8brE24jrrN27ewLBBwxFEoWwm8k+2jtNJdZ3iGI5JqIoSbYyDY2tWJgBllFNX6+yNDiA
-	dVVQw32FtJ+MxF1+n3boiMNXBQpzDSiVhpLYoR6sUG9Gkikn2csf8Ig+SGbumpZMQjJ1aT
-	1jX4w/a52YA3ACPS6sC0BrpaPHYjA0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707217745;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6OT4WYVPWB8v21SxhnQOwkhxXC/BXklZ/lKe1YRVr9A=;
-	b=lpmpijBpuVV0Nb/HzsCBUOKupzpkFp5k1j6sPiWaXNYEVj0gDKQr4o9W5Dam6K9r0+o0oc
-	M3vWhxeb/NQ3h2BA==
-Received: by lion.mk-sys.cz (Postfix, from userid 1000)
-	id 4B1C220147; Tue,  6 Feb 2024 12:09:05 +0100 (CET)
-Date: Tue, 6 Feb 2024 12:09:05 +0100
-From: Michal Kubecek <mkubecek@suse.cz>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, andrea.mattiazzo@suse.com
-Subject: Re: [PATCH net] netfilter: nf_tables: fix pointer math issue in
- nft_byteorder_eval()
-Message-ID: <20240206110905.ydxjbhiciiyuoq3m@lion.mk-sys.cz>
-References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
- <20240206104336.ctigqpkunom2ufmn@lion.mk-sys.cz>
- <032e2c72-c2a1-4b8b-96da-b0da73473648@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y9DR9RcL"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dbed0710c74so4715958276.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Feb 2024 03:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707218330; x=1707823130; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e345+swzPUmQgd41l0m3kNKJ/xmdbW17sX8/bM58R7U=;
+        b=Y9DR9RcLqQquZMzl8oG+qCFOpkWKgKCZWiikR6jOKzHT0OmKaujpl377FvtPE42WhT
+         Gj2Nb0qHAUy4L/ovHudsCz1YiH4ECaZoQ059ROUZDbUNkA7u4bw4jjieiRoPhpiezaa2
+         cKEt8jdbQXgkIUpXgOoVnSMci9XxjMC49hwiJdmE5BQNpKemXLkOwdTRxJJZ0b26VjH5
+         12pXlumv80QUZ3owU4AzbtaUGrJbfACXG0f26o5Wdl/uE6STcYMxVTpJp0S/JKUiK9Dn
+         GiR1iOU5kGEGCbyzqKhPAphO8AJY29h4NSowg/FNXAJ+1IzgzOEOKA8tIJh+XLRwRS9C
+         +ZxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707218330; x=1707823130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e345+swzPUmQgd41l0m3kNKJ/xmdbW17sX8/bM58R7U=;
+        b=TUnA2hnW0X4lrtaaeDWLuRubYlhG8dxZqgpgc8dWFEFA/UAKvDd+8arRnKArdRDFob
+         gQZGeQcqFa+xwMQ4a/3bdBTuYrhFG5WxBkWuBG5zGKXFnJH/45lWnrBDOaizqPbsbGX/
+         1nxs9XLY8c5ndIiNlp9HVAF+Klddc5HzhmT3AB9ns/hsaYS2qMh5xvt3ygLTyydxwthm
+         WYW83zP4YNy15ZakMhJKOGmzIVPsfTEjXEhqvwGfNIW8c0nE9HWsjr+/Uvkuv1NsXfB1
+         WL2lDuK9g9lbpZTwz3fQLqANiY2PjZnWI0rpfMvo51TnYwN3vl+Q4yR8hmaIhlfyHBrr
+         DOHg==
+X-Gm-Message-State: AOJu0YzegXFiuIiW/5RHjN+fC7svyDtk/75vVWmcDFq1eppFWtF6ZS/M
+	9GsCmMKlJALM9xhrFCN3Xmi0Nw5cS+S9sDwr59eYF+5+6P16bVUTnOtdJbZ6Mmrz7ZPqbwLyXkd
+	SWAj/el/mmAoWe8IsglM4syjvmBxec2no/nB4qg==
+X-Google-Smtp-Source: AGHT+IH5fKEJpfHApHOplFSXWwd53luljuax/eSuatIgasfLKxsU+SyYcCYNNtHkP+jet8LCGSrmSvjmsvLU/HM9H40=
+X-Received: by 2002:a25:840c:0:b0:dc6:e8b3:9ffd with SMTP id
+ u12-20020a25840c000000b00dc6e8b39ffdmr1292874ybk.53.1707218328670; Tue, 06
+ Feb 2024 03:18:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7ezp3d6y6tx5uysi"
-Content-Disposition: inline
-In-Reply-To: <032e2c72-c2a1-4b8b-96da-b0da73473648@moroto.mountain>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [-2.37 / 50.00];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 SIGNED_PGP(-2.00)[];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_COUNT_ZERO(0.00)[0];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:~];
-	 BAYES_HAM(-0.17)[69.99%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.37
+References: <20240205191310.1848561-1-colin.i.king@gmail.com>
+In-Reply-To: <20240205191310.1848561-1-colin.i.king@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 6 Feb 2024 12:18:12 +0100
+Message-ID: <CAPDyKFosojWAaSWATX6hGh8cJ7yU3zCxheMSiKUsMgJmB1Y-+Q@mail.gmail.com>
+Subject: Re: [PATCH] mmc: wbsd: remove redundant assignment to variable id
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Pierre Ossman <pierre@ossman.eu>, linux-mmc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 5 Feb 2024 at 20:13, Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> The variable id is being initialized with a value that is never
+> read, it is being re-assigned later on. The initialization is
+> redundant and can be removed.
+>
+> Cleans up clang scan build warning:
+> drivers/mmc/host/wbsd.c:1287:4: warning: Value stored to 'id'
+> is never read [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/mmc/host/wbsd.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
+> index 001a468bc149..f0562f712d98 100644
+> --- a/drivers/mmc/host/wbsd.c
+> +++ b/drivers/mmc/host/wbsd.c
+> @@ -1284,8 +1284,6 @@ static int wbsd_scan(struct wbsd_host *host)
+>                         continue;
+>
+>                 for (j = 0; j < ARRAY_SIZE(unlock_codes); j++) {
+> -                       id = 0xFFFF;
+> -
+>                         host->config = config_ports[i];
+>                         host->unlock_code = unlock_codes[j];
 
---7ezp3d6y6tx5uysi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A few lines down there is check "if (id != 0xFFFF)". Looks like that
+is a redundant check. Would you mind cleaning up that part too, as a
+part of the $subject patch?
 
-On Tue, Feb 06, 2024 at 02:04:10PM +0300, Dan Carpenter wrote:
-> On Tue, Feb 06, 2024 at 11:43:36AM +0100, Michal Kubecek wrote:
-> >=20
-> > I stumbled upon this when the issue got a CVE id (sigh) and I share
-> > Andrea's (Cc-ed) concern that the fix is incomplete. While the fix,
-> > commit c301f0981fdd ("netfilter: nf_tables: fix pointer math issue in
-> > nft_byteorder_eval()") now, fixes the destination side, src is still
-> > a pointer to u32, i.e. we are reading 64-bit values with relative
-> > offsets which are multiples of 32 bits.
-> >=20
-> > Shouldn't we fix this as well, e.g. like indicated below?
-> >=20
->=20
-> Yep.  You're right.  Could you send that as a patch.
-
-Thank you for checking. I'll send a patch in a moment.
-
-Michal
-
---7ezp3d6y6tx5uysi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEWN3j3bieVmp26mKO538sG/LRdpUFAmXCE00ACgkQ538sG/LR
-dpXa3Qf9EFBC4n7Zbu8vkttkV1PhDpvlxZbiBTX2d4ss2GthPDKjJhOjVXmgc0v6
-2ctb+Aglx15NnbMm4bGL9G7XWSIpS+8XkmW0jNJN2b944SdGSjEngAZTSiXRC3Ee
-QZqzbgmkimjv/ZQtFVIIEbAhOfUlxoCKcgHLog5i8SlQGnpgMLSGRzU+Fd+Ef+TE
-qTI2U5hNvxBoBki9Z7UYGcReFz6oP8IfEzQnv7Qk+l6cmQJnmVBPTRfA7/LMXJS6
-aMW/C7rkq4+0cZntN+WDM/EBHW1+ymiL+sHAflA7dmDesRHyH8FVWdlnAowW7uMw
-XXjB3y1kSE6pPnkcXCRM8hRfVRKDig==
-=iE/Q
------END PGP SIGNATURE-----
-
---7ezp3d6y6tx5uysi--
+Kind regards
+Uffe
