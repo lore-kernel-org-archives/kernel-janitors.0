@@ -1,110 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CDD12AAD9;
-	Tue,  6 Feb 2024 08:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B94612D143;
+	Tue,  6 Feb 2024 09:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707208098; cv=none; b=cV5A/sMIkEogKw6MeLQ3oYW+JrBz4ZagqdwV3E8ydpnDdNtIUoVjHXrSYMB4uzFax9GeZYz+SiBMDiAiJ2XoVjqybVeN+pNJIPY79PN895O2Rw3919UYHxT89vH0HRMVgtcwXB/WN8W58isrsF7eYYclX7PkcESkWEPMdBdI16k=
+	t=1707211284; cv=none; b=Lg/mknpggZDIqgR80spIypJTX+88RqlgdRRHf5nZrQp1dApGOW3QW0FqdTFUl6OYEzTwSg8uPgc53N0meh0q29CIPDxbsMHdMVC5M/JNOOO4Y8RZ0AE9zDPPn9RhAVz44WKaytXtyArfMwNm7hxNieGxk4f/khuDgIsj9X2kh9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707208098; c=relaxed/simple;
-	bh=koRftp4MHR3PWopvdU9KfvvbZmwaKfHJJheC6bS279o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2GUc2ZGol5uUYEYT7W8iYVzZHv9oPceqdPDObOJuWgP8Nua9FmQ7BMQrPWlCH5DB1mcZPhvDLXYd4HnITdJFxsMMoMIliGG35RK0gSw5k7NC81LfBIG34KbfOsIOvFdHF+N2Q7vzXShIMPg46KgLyrj4ZbAve3u6+GZcF6FX/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM+8ouuk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707211284; c=relaxed/simple;
+	bh=GhYT5UYlUwjUnGnJLzVb+yqrzxe5xuH4W1+Hl/X1RiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQCWviF1Q/jGogkMHJq9DyG6PhV31FpAcfx5k3BeSIIn4Em+AAmI2XEUbNV8TU1eJa480H3JT22oTifJOI/8uW2ThJmxkvO5amFrkWFM7nar0LB3EOULW4sBIr7y7h7ome1ASVgbfLUfXy9RB4oi/SYbj10qv9ywus6X/3R8O+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pXgSMjur; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM+8ouuk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B87C433C7;
-	Tue,  6 Feb 2024 08:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707208097;
-	bh=koRftp4MHR3PWopvdU9KfvvbZmwaKfHJJheC6bS279o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TM+8ouukUsUZLm3TN5OzwtVC43etkDvx/XBzBl8myT81EbZpPx3AMCEv+HP0mxN7X
-	 kWwSb6Ut7d4c+M2y2bTzFo8o762ullHauFEXiEXgXm0r1+ab+NeOeVyMFWUJ+VcnBc
-	 YnsPEQJqjr7bu04kV14y/askf0G9GypboFKDT+2qBOZyNPVm99WOK5W+a6wMlromea
-	 B5YGgVY2mAp5S/slHe3Th4sCt/aA4CgmEySVkPPxzo7FUeZl76Y1XD/pJbabnTtQZE
-	 64W4Hz5DXlQDs9Y71M9tYVOH6EG6e6n5EnKdTzB7Fc5QcxFngz+jdrB2LPEg1j23vf
-	 K3dCkA5JDa/6Q==
-Date: Tue, 6 Feb 2024 09:28:10 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v5 1/2] PCI: dwc: Fix a 64bit bug in
- dw_pcie_ep_raise_msix_irq()
-Message-ID: <ZcHtmkOkvutz/DvR@x1-carbon>
-References: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pXgSMjur"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1707211281;
+	bh=GhYT5UYlUwjUnGnJLzVb+yqrzxe5xuH4W1+Hl/X1RiU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pXgSMjurtDcRf712AK1hGeRPnaZ2p6F7eDXIU+By9gziz97HzEwFq2dt6stJnT21i
+	 ysEFrzEOLH8X4haPCHn21RwZheEaxr+as95wXW6zUpp0qL8KhcnI7UZcmXFLl5KlAQ
+	 sPV4PgspK+x0cEUkKlwDZ2eQg4XlqvPQ0itfxFXdLVZVNfeAxgtiMUqKvBeLTMfM84
+	 wtlw3v2tVEFqA6LTiBVTDnqC7+gEjrUN5kjF7X7kPXhgk9jRuWAXQBPYJ1Cj08cCet
+	 sr9CahscikPXCEAOmT5GObaJ2I96LI6cqdpD7q+VWyrNkuD87BxbbjuuCX9hQJCVQA
+	 Bfw5kj/bQl/OQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 80BC93782039;
+	Tue,  6 Feb 2024 09:21:20 +0000 (UTC)
+Message-ID: <bec4bde4-4800-4188-8b31-4e6d162cd80d@collabora.com>
+Date: Tue, 6 Feb 2024 10:21:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null
+ pointer checks in spmi_pmic_arb_probe()
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ David Collins <quic_collinsd@quicinc.com>, Fei Shao <fshao@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Peng Wu <wupeng58@huawei.com>, Stephen Boyd <sboyd@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 26, 2024 at 11:40:37AM +0300, Dan Carpenter wrote:
-> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
-> unsigned int.  This means that when the code does:
+Il 04/02/24 10:24, Markus Elfring ha scritto:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 4 Feb 2024 09:39:48 +0100
 > 
->         msg_addr &= ~aligned_offset;
+> The devm_ioremap() function does not return error pointers.
+> It returns NULL on error.
+> This issue was detected once more also by using the Coccinelle software.
 > 
-> it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
-> to do the alignment instead.
+> Update three checks (and corresponding error codes) for failed
+> function calls accordingly.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> v5: Add the #include.
-> v4: Add stable and r-b from Niklas
-> v3: Use ALIGN_DOWN()
-> v2: fix typo in commit message
-> 
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 5befed2dc02b..d6b66597101e 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -6,6 +6,7 @@
->   * Author: Kishon Vijay Abraham I <kishon@ti.com>
->   */
->  
-> +#include <linux/align.h>
->  #include <linux/bitfield.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -551,7 +552,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	}
->  
->  	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
-> -	msg_addr &= ~aligned_offset;
-> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
->  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
->  				  epc->mem->window.page_size);
->  	if (ret)
-> -- 
-> 2.43.0
-> 
+> Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
+> Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Ping on these two patches.
-
-Patch 1/2 is a strict fix and should go in v6.8 IMO.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-Kind regards,
-Niklas
