@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A6F17BC5;
-	Tue,  6 Feb 2024 19:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91C17735;
+	Tue,  6 Feb 2024 19:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707247827; cv=none; b=G5lobi1Js6tlEfyippMNgayw889S1qnsMG81qYhtSnY/h/3S52LpyDrHSOJlxpWMpmFPt6/Gki52kZlmcXLJaY8PYCPwRFDyJa6c4PapO+e0DyemuXWi/fVbF9H7kK9jm90+N4FSSi6W6WomUg4BHJ4R7XtY1aLTiR7IxelFnhM=
+	t=1707248938; cv=none; b=VKBRIlGNBoqS+tF7iOVxHQE9BmJZkxAmf9ofQGJ3zfeIhNB3z6YOUYaEhcU83kY/ffIv5MJLGv//O/FxkQLKbkaYdXm/yBQP1vVE3HoEUfJUnlTMzrO64O/bDS94eRUcl4MnWouUM8hCrHcWgbuosSqrCkI2T7xcAoF6xTuJVRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707247827; c=relaxed/simple;
-	bh=hi0BT47m6ZyBheedy6RSpVulWOf5VI5WWIZe5wNvktc=;
+	s=arc-20240116; t=1707248938; c=relaxed/simple;
+	bh=TfpesP/AZW41HCfZbpHnSRcb/C7+p2CjtMFaZ4ZZO2w=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SIsowqx7S+m99U5Liu2Vp+RACWpMFR2kKaYrMEc4ZsiSOMBa7t0uWQQtFMRr2zdR1ikY3J1wOUevqYLpeqhRi53uODl/VPwMe6dEiYXIFl9rjl4UDOvBpQbO2XwI+oUxX7kdxkzIUinbiv5oMYyvQEW1CAGciJ3vIY9jIu9aWAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AFdOzT0h; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=NVMdBhW1tOqhnvHYsdoatJi10oDPNj8z8flDFxXKI/lTK3wXL/RtqqpcuZfLVTYL/2o6A+M9HkdUUOx8nkFgG1pR+KUcOBPCIaK4OFrdWIZN0MUsdfzn+y/JkVyj3EVrFDgxjBnp7KDKdFV+1q+Wn8d/eeCiwM8A+Y2ZkSM3Agc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vCr5IEp2; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AFdOzT0h"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vCr5IEp2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707247816; x=1707852616; i=markus.elfring@web.de;
-	bh=hi0BT47m6ZyBheedy6RSpVulWOf5VI5WWIZe5wNvktc=;
+	t=1707248908; x=1707853708; i=markus.elfring@web.de;
+	bh=TfpesP/AZW41HCfZbpHnSRcb/C7+p2CjtMFaZ4ZZO2w=;
 	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
 	 In-Reply-To;
-	b=AFdOzT0h3oqTBgn00LiRwdbL/4B+PXCN6St4kmqNToB1MrhUnPK5dvBUnKiqymOb
-	 1wzbmqpWAvwjp24ju4Vqcgyor9jionuE/QOtHte9DIwfUynb5ka1NNHck9UerwCEQ
-	 63+q4xBeKju/PQ0P63PY5EsSAVj5Ju+NV/O0u/ZS7G9jgK5xiq9ktffoJzYk/iCp4
-	 pz0/6uSN2cDr6ae39vPcLqrcGRQcKLgQyjtacRslevRNhwwFIbtJvrVtici7H4DwI
-	 WT+Y3wgZ6S7x+p+/l1DVOw4C2KFXupJJJufURY12BkFNwG9rePraY1SkFhIIdv64m
-	 szZ/90HEK6dZ2YUjMw==
+	b=vCr5IEp2aw5KLecxKr0fALUu/xGboJnWBOjMxZlTf4eK5sS7XnprB+6cTbKsUFNV
+	 OFXDJkZPBjDUEjDjYutRdYwzOQHje2Q+2X3abbSdflS1zEc5BZTidYGOz7s5PXnxc
+	 9UQ2/GSZA88uoQ5vh090YLrPgfdnylHnTC1sq857T2atTcceFZa359wHXXwyD1SCI
+	 W9TFLwoTd5VJLZXrfQcu/oL1KXNhK4OqkSDBqHxbEl82sVwE0b25C6ci7Notilrp5
+	 99DJh8j4D8+XEML11gSwQOHrxb2hVPi8a/zhxBK8P8OARD/CJIFata4aMSj0dCqO2
+	 ig9GEjAp01YoIqYHMA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MHmq2-1rlFCY0P3O-00EsQQ; Tue, 06
- Feb 2024 20:30:16 +0100
-Message-ID: <2ee2acc5-dce4-4e79-8f4c-f64f806f2e40@web.de>
-Date: Tue, 6 Feb 2024 20:30:15 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7QQD-1qxO9R2FO1-017nHR; Tue, 06
+ Feb 2024 20:48:28 +0100
+Message-ID: <c9ce8ffc-47c0-4b3f-8b78-8af8dc37daa6@web.de>
+Date: Tue, 6 Feb 2024 20:48:26 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,41 +40,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] drm/tegra: dsi: Use devm_platform_ioremap_resource() in
- tegra_dsi_probe()
+Subject: [PATCH v2] drm/arcpgu: Use devm_platform_ioremap_resource() in
+ arcpgu_load()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>
+To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Alexey Brodkin <abrodkin@synopsys.com>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <c2e4aaa9-731f-4a33-890e-567c466a8885@web.de>
-In-Reply-To: <c2e4aaa9-731f-4a33-890e-567c466a8885@web.de>
+References: <e1458683-1270-4b9f-afdb-2f0112d66245@web.de>
+In-Reply-To: <e1458683-1270-4b9f-afdb-2f0112d66245@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:P0c1I0GGVWIPRIqGbF/0oVUMwLjd5lT+AEWpvtbuRHfrDaVev3s
- 9waL07qfdivt9+Kme3XYPma+E4Cbil0jtMr8m6RuEkW4T757xIKBdY7eP47OGByZswOAhgq
- kHJNDHWs2T5TPlJpvuB2RnkAAC+K+qCyIcdfHjlof+zbiGfHSE1qJAcEPrt7MoK+bpDMHQw
- MNMKjUWS+w+kBr5zV9HFw==
+X-Provags-ID: V03:K1:lH1fgfEmzWoGCBo8oKvAUzLdOlk3bd42rgskWH1LYjnIhFT+ctA
+ 2NmZ8TzLrxFv/RFpjq2cKH41YnyLjI9bdoZoep2M3zLSqBRZtAi4ExTTTuP7clK2INqdfYC
+ fCBeLdN81NYOJkTtovZmgxutx4NExjvKkn+my8gm5oonCGK2M4WgKx1dPv4Q+T5hsoKxECd
+ U99SKeqSSpPf+aPV4HwXw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AIcDvYb5rFc=;e/6xf5MXkUbbLJSuBtz57g4YovD
- 6xRXcUIUwUTbTkjvldGqX19asM26PXdTkgODzuKSRaapUS0OYYwpT1dyPq7qTNlqckMEtJXvF
- ULYGlxLSjFMpAQ461esEvH2Vrd2V20rDjDv6Fc/vxctrQVkPi2cwbg3LhIR6xDlbbZDN3J9Un
- INoXUGPTt0PBf4c1DYaZM91+feIzMuhiA1VG8m18NdffzkPmtNkYRX/5JJ8cwwOBsxKjJ00u5
- pGJTvncnF94ix7H74tz2pM+UeUTGytap4bH7mONlYo0d+mfV9clgF+g5AYXGfNec75OEpFjnb
- f8yr/AY1u5aIgQBPpjYC9fOulVNqMn9zHX6cyV7J+s+nIZLBnHIB9mPWXlmv9+I4KetLJX/pY
- 0r7DJr2l7RLByMK/Ys3MR9d4T2blss/9VrexUXa6vqdSh/7dVOwiU0x+blDdZJ1ifkKPYKbGh
- vnix+N6LZMHjsq7lFKVdiAfY+FE4vcL3bgXuW9BADtdFpo2Xr/4MrcimVePWYcRFxwbTK6GGe
- FhifFGQ6tarQCv0AgTpjevobHrGsd6HxUntumJkPv6a4D7wtfgn31ApoH2nPYgPE/yFECiG+o
- JvoMTFduECrVmuZwSK8pl+XyfCPcNGD/PunZPrkka+UjLF34ZyOaCusWt7cXHTBxwKo7rhnSN
- pl9E2D8nbWaqUX8SRce1NviWvOL1AwKowormyZJlP908HI2+//vDvkgJwwqt03Y5RHJNpWe4d
- FCcg4neLOxCNoZEKWMfpWZ3xnyITZkb0HvgN06wP86MsrQlfp81Sm+NtbP1+/apJTnz1HNQG4
- sfBEduy8Vo6329GMOdjXecTB2c/sRvm6BtmIE5sMDC5d0=
+UI-OutboundReport: notjunk:1;M01:P0:lzbU50BXG5E=;+Xk9vVmiF9Vubxr9SXxI8LyZtpk
+ JZSryKi9J+kgi+jDon9Zw4u0O30cgt4PNqtredAyp//G2ufuuB2aAl53aJvVLMjLLfnqCf4iS
+ lFjCeoLfZX0efdR8KkC2oAfTOQGK/3F02YdC8mI3aBu5Q4qEh1V9h6v6QDrOfw716Y7I04kwG
+ Ue+DzSvIXAwlLVDB/W/jTizbQhqcTn4mMS9gDcF6gqHMEgeW6nfq7vRn9UjV3wPmG/Ft7cedX
+ nyis9/wpFozvVtNNNN27Vz8/aT1DQrirSBt6yFdqDCmcXu1nkQlDuphC4h5ONZ4cBMG9YybhO
+ lKt7DJ+Lv4xElu9ylvIWYcFzbZsSuMwehIvoeC3QjZaEl2fQT17mm5frHJ4WOLWelSAtAmuSq
+ aRhliIw6+2fl9vZlX4wZRJsaknjnyBendTDT4JOJuSTJSEUWZH03yN0qZ54uoXs45sB9gHGFh
+ C3zURu9bfKR+ygxSlpur1Scnnpatk/27ne0HuPKSKigNZr96zoPORaTTf/pMNZbYkFA65+sWz
+ +pa5H9rHvTzdGJ5vct0RZtO3O7lEkG9DA51th8sHdh2FE3LSiMx79bL2kkapY+ACrKHO9F70d
+ sOX+kfX4naLBbQR/LfR5e9Az5pX1ZFxynCyUIeL2kNwmvsA4lNo8FuVRuBD/X386T3MFy6ZsJ
+ sohXX+ZRCdfEf7r3gTHtU/icBG+g0UmO64Z30eV7LK2PGiABmCDl7Ik8ZsNvwFekpAOkcYp2u
+ Z+bKuV0113tW9ECeSV2jO3zA8sh4cBifgNV1jGQElGJy/SpkDhR6mnC2qwxUPm9Ysb8goYX55
+ dV0Jk61Ef8tLg7UrVhK59rDvAlbzkl7pwEeXfJ0FPhNRs=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2024 20:22:56 +0100
+Date: Tue, 6 Feb 2024 20:43:10 +0100
 
 A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
 07f87626858ff42
@@ -101,32 +101,32 @@ Examples:
 * Robin Murphy
 
 
- drivers/gpu/drm/tegra/dsi.c | 4 +---
+ drivers/gpu/drm/tiny/arcpgu.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index fbfe92a816d4..f9b6b5428b66 100644
-=2D-- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1562,7 +1562,6 @@ static int tegra_dsi_ganged_probe(struct tegra_dsi *=
-dsi)
- static int tegra_dsi_probe(struct platform_device *pdev)
- {
- 	struct tegra_dsi *dsi;
--	struct resource *regs;
- 	int err;
+diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
+index 4f8f3172379e..231173138f5e 100644
+=2D-- a/drivers/gpu/drm/tiny/arcpgu.c
++++ b/drivers/gpu/drm/tiny/arcpgu.c
+@@ -251,7 +251,6 @@ static int arcpgu_load(struct arcpgu_drm_private *arcp=
+gu)
+ 	struct device_node *encoder_node =3D NULL, *endpoint_node =3D NULL;
+ 	struct drm_connector *connector =3D NULL;
+ 	struct drm_device *drm =3D &arcpgu->drm;
+-	struct resource *res;
+ 	int ret;
 
- 	dsi =3D devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
-@@ -1624,8 +1623,7 @@ static int tegra_dsi_probe(struct platform_device *p=
-dev)
- 		return err;
- 	}
+ 	arcpgu->clk =3D devm_clk_get(drm->dev, "pxlclk");
+@@ -268,8 +267,7 @@ static int arcpgu_load(struct arcpgu_drm_private *arcp=
+gu)
+ 	drm->mode_config.max_height =3D 1080;
+ 	drm->mode_config.funcs =3D &arcpgu_drm_modecfg_funcs;
 
--	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	dsi->regs =3D devm_ioremap_resource(&pdev->dev, regs);
-+	dsi->regs =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dsi->regs))
- 		return PTR_ERR(dsi->regs);
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	arcpgu->regs =3D devm_ioremap_resource(&pdev->dev, res);
++	arcpgu->regs =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(arcpgu->regs))
+ 		return PTR_ERR(arcpgu->regs);
 
 =2D-
 2.43.0
