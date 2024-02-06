@@ -1,101 +1,59 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3289D58131
-	for <kernel-janitors@vger.kernel.org>; Tue,  6 Feb 2024 11:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6997112B152;
+	Tue,  6 Feb 2024 11:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707218332; cv=none; b=RZZoK/CeQ6whDAVDa0UX8Fu6D2AgKEuH4HMAeR+XIUuBitKDugN5kZKJ2NoD0r0JXj+UbMaWOoBX7NpYYJEcUB78y1isu/aySBDoOs35+c322DuO4Mf9IRntsuiTCZipbTGnr+f/XxCn+DIAM/feI6Pug6RZSb9lNn8XPoUGSNY=
+	t=1707218997; cv=none; b=pOYv0m4VHFi65DAM7AYR/wiBrFK1bsqmBGdr/lRudnhXABcumRD0wLbGZTj3A7v3ph1OYrxx71Rziy2ZaLto95SbE8Pdnay032cqAFrzINOZYHmL3IfLFf4PqO8ysgsrk3vubzj36xAqOGDG9z2SZp5wSPz4T9aUAn3/wY4oebs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707218332; c=relaxed/simple;
-	bh=RAUcQj04TyEXEDqfDrWDiMlYnTPZzSWd7J0PrXfQYhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q6CNX4fERPl0/GEJ5v5sceI6hgzDeAWYMW0pYtdnduJpQKE0FINYZQ3k5uEbsWQoTi1hpuXEB8ZAtYDYH/xsKbxInaPgRsibyYg6iBGn3NXm8w2jfaDzxQwQ7CsjMCm7oWJ3pdrKeTdqdYF6Vc99wQesUO55pRnxLMpUjhmLHEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y9DR9RcL; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y9DR9RcL"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dbed0710c74so4715958276.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Feb 2024 03:18:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707218330; x=1707823130; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e345+swzPUmQgd41l0m3kNKJ/xmdbW17sX8/bM58R7U=;
-        b=Y9DR9RcLqQquZMzl8oG+qCFOpkWKgKCZWiikR6jOKzHT0OmKaujpl377FvtPE42WhT
-         Gj2Nb0qHAUy4L/ovHudsCz1YiH4ECaZoQ059ROUZDbUNkA7u4bw4jjieiRoPhpiezaa2
-         cKEt8jdbQXgkIUpXgOoVnSMci9XxjMC49hwiJdmE5BQNpKemXLkOwdTRxJJZ0b26VjH5
-         12pXlumv80QUZ3owU4AzbtaUGrJbfACXG0f26o5Wdl/uE6STcYMxVTpJp0S/JKUiK9Dn
-         GiR1iOU5kGEGCbyzqKhPAphO8AJY29h4NSowg/FNXAJ+1IzgzOEOKA8tIJh+XLRwRS9C
-         +ZxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707218330; x=1707823130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e345+swzPUmQgd41l0m3kNKJ/xmdbW17sX8/bM58R7U=;
-        b=TUnA2hnW0X4lrtaaeDWLuRubYlhG8dxZqgpgc8dWFEFA/UAKvDd+8arRnKArdRDFob
-         gQZGeQcqFa+xwMQ4a/3bdBTuYrhFG5WxBkWuBG5zGKXFnJH/45lWnrBDOaizqPbsbGX/
-         1nxs9XLY8c5ndIiNlp9HVAF+Klddc5HzhmT3AB9ns/hsaYS2qMh5xvt3ygLTyydxwthm
-         WYW83zP4YNy15ZakMhJKOGmzIVPsfTEjXEhqvwGfNIW8c0nE9HWsjr+/Uvkuv1NsXfB1
-         WL2lDuK9g9lbpZTwz3fQLqANiY2PjZnWI0rpfMvo51TnYwN3vl+Q4yR8hmaIhlfyHBrr
-         DOHg==
-X-Gm-Message-State: AOJu0YzegXFiuIiW/5RHjN+fC7svyDtk/75vVWmcDFq1eppFWtF6ZS/M
-	9GsCmMKlJALM9xhrFCN3Xmi0Nw5cS+S9sDwr59eYF+5+6P16bVUTnOtdJbZ6Mmrz7ZPqbwLyXkd
-	SWAj/el/mmAoWe8IsglM4syjvmBxec2no/nB4qg==
-X-Google-Smtp-Source: AGHT+IH5fKEJpfHApHOplFSXWwd53luljuax/eSuatIgasfLKxsU+SyYcCYNNtHkP+jet8LCGSrmSvjmsvLU/HM9H40=
-X-Received: by 2002:a25:840c:0:b0:dc6:e8b3:9ffd with SMTP id
- u12-20020a25840c000000b00dc6e8b39ffdmr1292874ybk.53.1707218328670; Tue, 06
- Feb 2024 03:18:48 -0800 (PST)
+	s=arc-20240116; t=1707218997; c=relaxed/simple;
+	bh=d8j5bVacOldPx0qHulCU26piuVSsiWVjLgm8BB62cJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyh/648J0nYbkQhQicgcoPkrrYzgwiZ2uozGcx8ef2MtBshLWDWgmgzB2Sz8LchDTlXvhU0eMCpV8yBQ2+rSSYMGAeGtcr6KfaawODTXQdZV0sHQ0u4zpdJLtoyVvO34VH4gpPIdSU+ZGB9cisC4+tAPCZshbUGTs4Sb8LplahA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1rXJM8-0001Ub-Do; Tue, 06 Feb 2024 12:11:12 +0100
+Date: Tue, 6 Feb 2024 12:11:12 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, andrea.mattiazzo@suse.com
+Subject: Re: [PATCH net] netfilter: nf_tables: fix pointer math issue in
+ nft_byteorder_eval()
+Message-ID: <20240206111112.GD17626@breakpoint.cc>
+References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
+ <20240206104336.ctigqpkunom2ufmn@lion.mk-sys.cz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205191310.1848561-1-colin.i.king@gmail.com>
-In-Reply-To: <20240205191310.1848561-1-colin.i.king@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 6 Feb 2024 12:18:12 +0100
-Message-ID: <CAPDyKFosojWAaSWATX6hGh8cJ7yU3zCxheMSiKUsMgJmB1Y-+Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: wbsd: remove redundant assignment to variable id
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Pierre Ossman <pierre@ossman.eu>, linux-mmc@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240206104336.ctigqpkunom2ufmn@lion.mk-sys.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, 5 Feb 2024 at 20:13, Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> The variable id is being initialized with a value that is never
-> read, it is being re-assigned later on. The initialization is
-> redundant and can be removed.
->
-> Cleans up clang scan build warning:
-> drivers/mmc/host/wbsd.c:1287:4: warning: Value stored to 'id'
-> is never read [deadcode.DeadStores]
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/mmc/host/wbsd.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
-> index 001a468bc149..f0562f712d98 100644
-> --- a/drivers/mmc/host/wbsd.c
-> +++ b/drivers/mmc/host/wbsd.c
-> @@ -1284,8 +1284,6 @@ static int wbsd_scan(struct wbsd_host *host)
->                         continue;
->
->                 for (j = 0; j < ARRAY_SIZE(unlock_codes); j++) {
-> -                       id = 0xFFFF;
-> -
->                         host->config = config_ports[i];
->                         host->unlock_code = unlock_codes[j];
+Michal Kubecek <mkubecek@suse.cz> wrote:
+> I stumbled upon this when the issue got a CVE id (sigh) and I share
+> Andrea's (Cc-ed) concern that the fix is incomplete. While the fix,
+> commit c301f0981fdd ("netfilter: nf_tables: fix pointer math issue in
+> nft_byteorder_eval()") now, fixes the destination side, src is still
+> a pointer to u32, i.e. we are reading 64-bit values with relative
+> offsets which are multiples of 32 bits.
+> 
+> Shouldn't we fix this as well, e.g. like indicated below?
 
-A few lines down there is check "if (id != 0xFFFF)". Looks like that
-is a redundant check. Would you mind cleaning up that part too, as a
-part of the $subject patch?
-
-Kind regards
-Uffe
+No, please remove multi-elem support instead, nothing uses this feature.
