@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31C813474D;
-	Tue,  6 Feb 2024 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1342E552;
+	Tue,  6 Feb 2024 16:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707235722; cv=none; b=jtOhnsAik4NreUMajDgGuCYn3r7q5X21zgnwGN71ItrxHTR93q/oTHlksK7Vg3d2RtItnqhvD+4Cm31Ys1bOOLHAu2yaF63QMB92TnbJv1F2uWp64JjlIdENE6wGvdtDPDfWFQeGuW96a64P72r5r1QjX5LNyAwrLMVl6RfmbnI=
+	t=1707237332; cv=none; b=Sl1aPlLkxJUBEnbrUgJQ3Mu+cNE3xKAAWihXtL9zVBZuZ9dlWGINhXvDh9blYE5eP0Rtp5RhfkvTyueKdPIosKYAX6Xu+SE8x8s/OEgWJqaWL7ZtTV1xo/UATFSVBuFTrL2E06N9Ms6LyUZmOQNu2A+MMfqkFQqB05sohZjrzKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707235722; c=relaxed/simple;
-	bh=vTxrG4v2mMuRDOPQJTUsTxo4xRJdjAEb+Gx4TOmxTdc=;
+	s=arc-20240116; t=1707237332; c=relaxed/simple;
+	bh=JM/dM6wGVgOsNpN99AnBS8S4uISuXxo9JPeocMSYoto=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NLe/rJd4+/QoWeuHLksaIW12bAKgH4h5TrJm4qHNAgHmB+Zys86Byqj7OrXBYV6ftWq+PCXA+/rQxL4xCbWSCnfgZaDU1i1j0kIe22T8dIWcy6h06vQwufLpkIwVxiNek3EapLHitd8LUKVo2xJBdmZf2Wfa1KQ6n4AhqdG+eqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qow08uAw; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=MxR1dU0V5ONRhVWkbh7oht/w5skTXHyWapXWRS663eYotNq8knsLFqwXFvbxgEMEzl7HyN9/amsVeVGw4vLKSLoXpJ/IqA8o+nv8SkwJTfss6/k1BjISby6tpZ1Ab5BQ2etsJPsdZLUkjnIiBiosALR/8oQjUMeIDqnrr4i04x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wm2GeNKk; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qow08uAw"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wm2GeNKk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707235712; x=1707840512; i=markus.elfring@web.de;
-	bh=vTxrG4v2mMuRDOPQJTUsTxo4xRJdjAEb+Gx4TOmxTdc=;
+	t=1707237302; x=1707842102; i=markus.elfring@web.de;
+	bh=JM/dM6wGVgOsNpN99AnBS8S4uISuXxo9JPeocMSYoto=;
 	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
 	 In-Reply-To;
-	b=qow08uAwuU19vDccnNrSwQm999hAa+xaJqjaRKveLz4TuaqAlPS9xDy/FntFsVhj
-	 gpHRLXkhaLsvjAl4qVEgHDGvkmfdObJD7GgrY/uuvFL0OdKVF4zA0VQwdsLjEG7l2
-	 B1ZHGXJQTyFBJn31nLWvTOGy/vwZy9zWL9xbyk6v+zqKHGT0QOmMh16Oc/lI6rvWf
-	 DTHqfPPW7/QSvf2L3nmv43pQKNtQ/ccfTg2BGJY851jjzFjIFofDeBuXzyrsb8rRg
-	 /Z9Kp3+DVmdiNh5Ipupmk0eACCTAZzT2kT1rXuf/zPOVvOIngMInviTo78oqq95L6
-	 oGao9Zg5yxoe/e5Sxw==
+	b=wm2GeNKkzOndkNz/FtcaFa4S9HHjec3kDslAkK3GraBiGHrAmC00TncNVhbeqBDk
+	 dI1i1sB69oHbVdYiHHSchrj9LrCVHAbTbNNk7nWefWQQkT2dHDB4cSNsZZLVRejnR
+	 y0TgGNQb3ZPou/oJ6mfKrKpU1cWirhDQhv4tL3qtjEMuOns6zeHCmeknH2GyPEeah
+	 qkIufCXsWWFi9+uQzCmj+a40Kba5FHwRvlbDV+NSkKCYvFwBEvn5/phnclWvdjtZb
+	 0dZt3Yd7WDZt/0zjDefOQ1i7mic/Yiyi1GzIqZ/hZcFA+tRk5EHp496fzC7c0mVa+
+	 XOVult7M7Rlgdp1nqw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MN6FV-1rH61y465N-00Ilk0; Tue, 06
- Feb 2024 17:08:32 +0100
-Message-ID: <59412fc9-396d-4b62-95a8-1aed3d61cd0c@web.de>
-Date: Tue, 6 Feb 2024 17:08:30 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbCI8-1r0WVC29Yu-00bZlD; Tue, 06
+ Feb 2024 17:35:02 +0100
+Message-ID: <6e6ce5f8-b701-4660-a71b-478b29197a21@web.de>
+Date: Tue, 6 Feb 2024 17:34:59 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,38 +40,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] bus: omap_l3_noc: Use devm_platform_ioremap_resource() in
- omap_l3_probe()
+Subject: [PATCH v2] EDAC/xgene: Use devm_platform_ioremap_resource() in
+ xgene_edac_probe()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Tony Lindgren <tony@atomide.com>
+To: linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
+ Khuong Dinh <khuong@os.amperecomputing.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
+ <rric@kernel.org>, Tony Luck <tony.luck@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <10028785-166f-4473-900a-c845cb690dc8@web.de>
-In-Reply-To: <10028785-166f-4473-900a-c845cb690dc8@web.de>
+References: <0b255d17-deab-4d6e-bf44-d950b512dc14@web.de>
+In-Reply-To: <0b255d17-deab-4d6e-bf44-d950b512dc14@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yMKkzTis1C5GrJg1MYR0yoiI0PL6rmtZvDNGLvL1U/FuGBODU6U
- YmaRourHQLmJJlI4TyOdG7Z5UkiNz0HHSeuslLd3I7C9QMjuiDBEEkOSJPxWxmJSrhvZKK1
- ubwWVK4LkcnXp7ndwro4xC5TiQn7cn/tmr7srnfRZ3FDKg9DACDjk4zBDjpVmG6KYFhtYrs
- HzKIoRUk3TXQFXJF9ip0g==
+X-Provags-ID: V03:K1:hVEeAHWZkLBabGliku9TpAcPPUlMuNPVJGnTqc1ncndDJaWdiqz
+ YkXhK1xHsPme+wPdYtE5z5VFxNbLpIa6lUSqXKzTxukevtlGSwPDKU8GaJfbE4+xK1ilUm9
+ l4QodqIrM8Pc9YiHhoVkzkywvzjFktTpCw/HSRW9OGmg24lFh70VVurOGHjPrY4UYqLmLk+
+ bgoWGL8r+og8Qow6uBrAQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CgzI+ARSy5g=;PGo8R9aGxN5wkV9x6th3wTbZxQk
- ajU59lUXBIyYEMOnll9JQJxGAkAH+2NeFRzzuLJMnXGsVxnfX6/fj6Qwmh9+oLUIV/VjVqLVI
- 5TUKr4KB1+r0eln8fVx6UXL9nIYzmfiBFyv3JF8dZiv0OvNFCQAK8bV6xNTj55JrIbBK77lPW
- MwMXdU5VLFFup8kzRvogISabQC+pAK2uUVUeHpo70tuKNGrlZu3XkQjVC5prYiRmr7VShYMdu
- llgL3FLmplraSZyKsk/5acqp4xYdS+FLbIf/Vi9Mo5cwKiDvXs0WVPBCb8sjvENIOcW71+dBN
- G7CKSPjhYrxhkZ0az7/MOP0vU7HuezBDsXXtFVsm3w6jAqHiGU/Ezwky5Ug8kp3urgQHhE6XT
- lZE4CsUXk7mGTNDEzt4nLqveOifaFWnPFH/X3zAKL9S3B+7+HbQ6Z3QTtQaMKtl8imz6k8yRn
- zwKRjpH/AXgNXV32IxzZ/MHm1rjnKjdd0+M3kICYWiBmqDagSaLMXVKGPnoRuabGevTlD36Xn
- J0t02bl5reG0V3Nbd43a/crwEvXEOnjBV+YkIWmANn9DkryvOCkm348fsub6OWID0sa7hulRW
- TmvhpjVoauEHUoarEGeAbCT+v0egoAakA1TovMyYFvX4F4CyLDEZhAJIgox+dcfZKzsC3Mva6
- IbUeuFxWu7K4k86RGTHimJi25c6F0anAfcjClQeGdUH+KUPrHNPRsTGfXe3v8YpBdKiW6YOJu
- aQ+5meeXkVfDZ2WudzVLSTFLPfu9AdWwARqrF2HdUiWbfTOxYD+rVH2DI61a5qUSbCwQblcoj
- 7CPjb41poqYz3o0bqyGi4IQqVKui2aCHfEOxrDoy7glFA=
+UI-OutboundReport: notjunk:1;M01:P0:oJf/jY8IscE=;Q+dSKDZhB+CRZBgbdhZB6FGd8+h
+ lZ4qQNrVgZ+UFYwLfo7r4KNrViFvHZE0po8IlJ5SFcT62UUivK3MYd1LPpkyY1MtsvKNfLxHi
+ yEY8GM8dJro0FmRJJW4DwmWYcLciEVnVjlhgahgKZTCTgeS1hM7J773mBZuxJtNGzPlvqnEWM
+ 8xIrbvQm+I5qJU3QPCxy/YiDlkToKOH3ZPeKPYk/9BGQ1GXUhXYD9+ODA99S+lAjj88ZD8s9O
+ 78rzvWfPPFm5EKr4NUsttFqZ3tzM2x6Og+jwMs939+OV1MEQC0+BEeCKKQJYilh42i0KfM6Gk
+ dwvqk53uqmXWcMURgq1xYrUPeeOEczS3UOwdb0i7VQE83bfFYz/OTpOQ8TuhyWmvGGjfzTxYa
+ D4fkVJTKt7oR3INknULpqlrn9lGJYcHpaqiNqh8m4Dx4SqUPVrtoQD03VXVWS6keBhs+alSC+
+ DSnn4PJ/9jyH1Cypg9DK39u9f3M9h+M1uSvWfhEqpTh4V22G3LPIcDxT1yOfG1CrDn4e5HG/+
+ hKdDw2um0ilxPMG4y+9hcLTno6kxW30c8xrtT5wl5Srd57hDagJX9HmNQTNchh1CZ4rOr3uFK
+ OImKxLGnDdR5MRaRbCxMKm4UvkNUnjL4xlQP2+3Rbe63tq+3bQZqKo6Luo5Jb3J3PCK/I2Fly
+ Pr0pNEpiR9hM7QUOwyfJC0mYx25qcqMkPJAZkwl009TIzwh1x4to/MgsFjwyEt19aaZCTKy++
+ z1HSWt3Ipakixy8V3vYm+sKPXxemyCebs56anaIa5OR13Yr90lAs/RVGSneZNPoiSgC2wfyjy
+ M9h7ere6ST0hrdNh5w2+vM9H4GRFiToE9adw0RSiXKdjs=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2024 17:01:25 +0100
+Date: Tue, 6 Feb 2024 17:30:11 +0100
 
 A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
 07f87626858ff42
@@ -98,33 +101,33 @@ Examples:
 * Robin Murphy
 
 
- drivers/bus/omap_l3_noc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/edac/xgene_edac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/bus/omap_l3_noc.c b/drivers/bus/omap_l3_noc.c
-index eb1ba6319fda..f114dee4e937 100644
-=2D-- a/drivers/bus/omap_l3_noc.c
-+++ b/drivers/bus/omap_l3_noc.c
-@@ -255,16 +255,14 @@ static int omap_l3_probe(struct platform_device *pde=
-v)
+diff --git a/drivers/edac/xgene_edac.c b/drivers/edac/xgene_edac.c
+index 1b50f8160013..59eb0e97adef 100644
+=2D-- a/drivers/edac/xgene_edac.c
++++ b/drivers/edac/xgene_edac.c
+@@ -1845,7 +1845,6 @@ static int xgene_edac_probe(struct platform_device *=
+pdev)
+ {
+ 	struct xgene_edac *edac;
+ 	struct device_node *child;
+-	struct resource *res;
+ 	int rc;
 
- 	/* Get mem resources */
- 	for (i =3D 0, res_idx =3D 0; i < l3->num_modules; i++) {
--		struct resource	*res;
--
- 		if (l3->l3_base[i] =3D=3D L3_BASE_IS_SUBMODULE) {
- 			/* First entry cannot be submodule */
- 			BUG_ON(i =3D=3D 0);
- 			l3->l3_base[i] =3D l3->l3_base[i - 1];
- 			continue;
- 		}
--		res =3D platform_get_resource(pdev, IORESOURCE_MEM, res_idx);
--		l3->l3_base[i] =3D devm_ioremap_resource(&pdev->dev, res);
-+
-+		l3->l3_base[i] =3D devm_platform_ioremap_resource(pdev, res_idx);
- 		if (IS_ERR(l3->l3_base[i])) {
- 			dev_err(l3->dev, "ioremap %d failed\n", i);
- 			return PTR_ERR(l3->l3_base[i]);
+ 	edac =3D devm_kzalloc(&pdev->dev, sizeof(*edac), GFP_KERNEL);
+@@ -1903,8 +1902,7 @@ static int xgene_edac_probe(struct platform_device *=
+pdev)
+ 		edac->rb_map =3D NULL;
+ 	}
+
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	edac->pcp_csr =3D devm_ioremap_resource(&pdev->dev, res);
++	edac->pcp_csr =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(edac->pcp_csr)) {
+ 		dev_err(&pdev->dev, "no PCP resource address\n");
+ 		rc =3D PTR_ERR(edac->pcp_csr);
 =2D-
 2.43.0
 
