@@ -1,147 +1,112 @@
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C56612F36F;
-	Tue,  6 Feb 2024 11:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B2D132485;
+	Tue,  6 Feb 2024 11:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707219066; cv=none; b=UY5Vh07zBi2vOTUwQb0YgWPTc15iZKCvsJeqdLhalitrGxBApJCZBC7AZMJs7soGVF9jyLq3t85WzgKBB7sKrni3MEORwKmYLTo/pc8iH0mfWcVU5lsAUk9TpxfHngQiDesfqtHjEeRQC9lcu4wWoLY9sA68qGuun/MKnS/1hGQ=
+	t=1707220254; cv=none; b=UBsEQIaLPT6CQg49wsrUdKEI5W6PxYBFMI1rRggeLrvxUMUDRJHveiqQ/T7qHxx3fRBDPiHaD8PxL7QHsC2/rSn76Vc9DBTQSJ2zu63ANev6gtfrJgC2S+ujXLEh/lln6Si3PnG3CQxC0G2koGnAoKgLuVxiqyaj9t3INKZB3xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707219066; c=relaxed/simple;
-	bh=+MTWjKiA01gPdqf6LJaUl2DaLuwkdSKtzW+xOsth/nE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlaDvA08wDMRitlZyqYGRqdCTDFQlRJ1s7tuI78A8G8RjnYgFLbgLjs0KBKtsyhsgAibmO66wpFlDPz6fCVsQeM51Gr494JHgXWz3iwp1KRuw2GZ0GIsngQAVfbqxrM6UooFwiU40zjXEx4gKzn2www8rLFuaoZhqML/I6myB78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.41.52] (port=57368 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1rXJfH-007LIN-HQ; Tue, 06 Feb 2024 12:31:01 +0100
-Date: Tue, 6 Feb 2024 12:30:58 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Florian Westphal <fw@strlen.de>
-Cc: Michal Kubecek <mkubecek@suse.cz>, andrea.mattiazzo@suse.com,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Eric Dumazet <edumazet@google.com>, coreteam@netfilter.org,
-	netfilter-devel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	s=arc-20240116; t=1707220254; c=relaxed/simple;
+	bh=MXy0vLxc2auHj0tkkF/yP1Sf/E3BfLaVPsdnJde3zb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qE1XQI9ILadrm//8XzMpyL5RL3H2PRmoOPHHFfQdBIvFrJVwCjMpsuJEpJxomYSR/bwz7WZbYEYOrdsTzN2zUNxr9Nw9kfANFLrJeO2Yh7xtlELCebN5qbiuYQxQ0FdhSeGD96wCw7s4tI+rhxaaF5oE0cARKJIflQR04vuyYeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gru4W1hU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gru4W1hU"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40fe2d3d5cbso4179285e9.2;
+        Tue, 06 Feb 2024 03:50:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707220251; x=1707825051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYNUifZdSRo+Yp7HFzuhxHtZjGlzamsP7EmAKufyL/M=;
+        b=Gru4W1hUDolSgdXYp7Huhx8KaacPr//YpUuNEXbUSs0Nv4IHDN3hu8CH0sl6Wkd8Xe
+         xrEHXjnVeNbRHmLSekMS5eycovbpT6lXr9iaY/NVcHK9cCbjgmaqQZfof0VjWaBqPniR
+         jDwvIfxI27uF8pjAMBiOXcIK+ygyTKJ1o4KOI+ZMdvykrH/IbpnSi7FfcHiuJq75bcf7
+         VRIF/UjFXcH9VwpQAWoLkVEMaRJfupuYsk8lqOqWwuWAawk2gFvPu7pKT1G9dnrupRZ2
+         9JSI0Kqd6KXd0jfAIdgwsI2qR+XQ2zHJ5K4EOWcdVc3dso6xudXukZvyoBwLjmmDY6DD
+         Skdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707220251; x=1707825051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iYNUifZdSRo+Yp7HFzuhxHtZjGlzamsP7EmAKufyL/M=;
+        b=E8028nREsVbK3fd/MTkgKfr8M3pGlQVM9gMV9ypn2+YiCEQWQwYtqMmTUmCJwPj/Qu
+         pWsI6hrLGUGZKRvsM5ic4bPLcnnKLyGhqF1gzjFnDgStQR98iYepTjW/5+6LTf9uD+c+
+         ebo0v8WYJqb0WuNe7zz1iD0QQsgPLv1YmQ9J7XWiJWZG/8x9M9LfVH4YmqGM+VtY7VX+
+         Cox62CuycVAf/LU8v370dqT1bETnraVKJyG+3UVP/iqKQuGWw6GWYHymJdqyPBTK1e4L
+         eR7b5c7cgr6QuoMEABju9EVeTbnVr1nDUFs7tN3KN3RjPntHN8m2WORiZfTYAaImWRcj
+         PpTQ==
+X-Gm-Message-State: AOJu0YxB77lk8J3v4uuA4SK1Nu/kw4GJSZfF3UIojEoy8PrtmvUPrM5x
+	d/2WK27Y4w3ZS8nJMEx96jXgy+tUPj2Eq6yo6hfdKwwRtyuEqwZM
+X-Google-Smtp-Source: AGHT+IGC5esrui+sG2dOYhE7Q/uegfsl5mT6asLY0QjzTpHwtRUJq3JMz9jLVlv3cOi7ZSv12hY1pw==
+X-Received: by 2002:a05:600c:1d12:b0:40e:a36e:f0b4 with SMTP id l18-20020a05600c1d1200b0040ea36ef0b4mr1883162wms.6.1707220250869;
+        Tue, 06 Feb 2024 03:50:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+lQuXEmJWPrGnLh06RNXzlAqm3JldR7mVVhTibhNS0zVit9eFqgcu/gGGuMIDTxX5GPSoi2vRxt+EsFWzjptK1OWcPSAJBe0wgmjP3Yutig4j6+MCqMsp9FpLE5GD4yRi2gJ45H0jKuwq36dsKO4BPmBqjDEgno937X9bsqXCym+48uqDjkqbI+7cPegU9CjlaOQhvrn/H0sOUWRsrWfAYwjhCGWriYrNAEeDOJFCJGoeJOAV3V6p6z4Hxr76CZNmcBffHdqBlGIgm4A/OzQmWAr3lLB5ZfJ88xVMf8LQSncewG3abUXPSXCH0CSmTXTd0MunxaVYUyaPYNg=
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id s9-20020a05600c45c900b0040fb44a9288sm1766218wmo.48.2024.02.06.03.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Feb 2024 03:50:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Manish Chopra <manishc@marvell.com>,
+	Rahul Verma <rahulv@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [netfilter-core] [PATCH net] netfilter: nf_tables: fix pointer
- math issue in nft_byteorder_eval()
-Message-ID: <ZcIYcqjcFDqjvRZ3@calendula>
-References: <15fdceb5-2de5-4453-98b3-cfa9d486e8da@moroto.mountain>
- <20240206104336.ctigqpkunom2ufmn@lion.mk-sys.cz>
- <20240206111112.GD17626@breakpoint.cc>
- <ZcIYL3Z/rx+/iJg0@calendula>
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] netxen_nic: remove redundant assignment to variable capability
+Date: Tue,  6 Feb 2024 11:50:49 +0000
+Message-Id: <20240206115049.1879389-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZcIYL3Z/rx+/iJg0@calendula>
-X-Spam-Score: -1.9 (-)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 06, 2024 at 12:29:51PM +0100, Pablo Neira Ayuso wrote:
-> On Tue, Feb 06, 2024 at 12:11:12PM +0100, Florian Westphal wrote:
-> > Michal Kubecek <mkubecek@suse.cz> wrote:
-> > > I stumbled upon this when the issue got a CVE id (sigh) and I share
-> > > Andrea's (Cc-ed) concern that the fix is incomplete. While the fix,
-> > > commit c301f0981fdd ("netfilter: nf_tables: fix pointer math issue in
-> > > nft_byteorder_eval()") now, fixes the destination side, src is still
-> > > a pointer to u32, i.e. we are reading 64-bit values with relative
-> > > offsets which are multiples of 32 bits.
-> > > 
-> > > Shouldn't we fix this as well, e.g. like indicated below?
-> > 
-> > No, please remove multi-elem support instead, nothing uses this feature.
-> 
-> See attached patch.
-> 
-> I posted this:
-> 
-> https://patchwork.ozlabs.org/project/netfilter-devel/patch/20240202120602.5122-1-pablo@netfilter.org/
-> 
-> I can replace it by the attached patch if you prefer. This can only
-> help in the future to microoptimize some set configurations, where
-> several byteorder can be coalesced into one single expression.
+The variable capability is being assigned a value that is never
+read and is being re-assigned later. The assignment is redundant and
+can be removed. Also remove empty line before assignment to capability.
 
-I have to replace those index 'i' by simply dst instead, this is
-obviosly incomplete.
+Cleans up clang scan build warning:
+drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c:1189:2: warning:
+Value stored to 'capability' is never read [deadcode.DeadStores]
 
-> diff --git a/net/netfilter/nft_byteorder.c b/net/netfilter/nft_byteorder.c
-> index 8cf91e47fd7a..af3412602869 100644
-> --- a/net/netfilter/nft_byteorder.c
-> +++ b/net/netfilter/nft_byteorder.c
-> @@ -43,18 +43,14 @@ void nft_byteorder_eval(const struct nft_expr *expr,
->  
->  		switch (priv->op) {
->  		case NFT_BYTEORDER_NTOH:
-> -			for (i = 0; i < priv->len / 8; i++) {
-> -				src64 = nft_reg_load64(&src[i]);
-> -				nft_reg_store64(&dst64[i],
-> -						be64_to_cpu((__force __be64)src64));
-> -			}
-> +			src64 = nft_reg_load64(&src[i]);
-> +			nft_reg_store64(&dst64[i],
-> +					be64_to_cpu((__force __be64)src64));
->  			break;
->  		case NFT_BYTEORDER_HTON:
-> -			for (i = 0; i < priv->len / 8; i++) {
-> -				src64 = (__force __u64)
-> -					cpu_to_be64(nft_reg_load64(&src[i]));
-> -				nft_reg_store64(&dst64[i], src64);
-> -			}
-> +			src64 = (__force __u64)
-> +				cpu_to_be64(nft_reg_load64(&src[i]));
-> +			nft_reg_store64(&dst64[i], src64);
->  			break;
->  		}
->  		break;
-> @@ -62,24 +58,20 @@ void nft_byteorder_eval(const struct nft_expr *expr,
->  	case 4:
->  		switch (priv->op) {
->  		case NFT_BYTEORDER_NTOH:
-> -			for (i = 0; i < priv->len / 4; i++)
-> -				dst[i] = ntohl((__force __be32)src[i]);
-> +			dst[i] = ntohl((__force __be32)src[i]);
->  			break;
->  		case NFT_BYTEORDER_HTON:
-> -			for (i = 0; i < priv->len / 4; i++)
-> -				dst[i] = (__force __u32)htonl(src[i]);
-> +			dst[i] = (__force __u32)htonl(src[i]);
->  			break;
->  		}
->  		break;
->  	case 2:
->  		switch (priv->op) {
->  		case NFT_BYTEORDER_NTOH:
-> -			for (i = 0; i < priv->len / 2; i++)
-> -				d16[i] = ntohs((__force __be16)s16[i]);
-> +			d16[i] = ntohs((__force __be16)s16[i]);
->  			break;
->  		case NFT_BYTEORDER_HTON:
-> -			for (i = 0; i < priv->len / 2; i++)
-> -				d16[i] = (__force __u16)htons(s16[i]);
-> +			d16[i] = (__force __u16)htons(s16[i]);
->  			break;
->  		}
->  		break;
-> @@ -137,6 +129,9 @@ static int nft_byteorder_init(const struct nft_ctx *ctx,
->  	if (err < 0)
->  		return err;
->  
-> +	if (priv->size != len)
-> +		return -EINVAL;
-> +
->  	priv->len = len;
->  
->  	if (len % size != 0)
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+index 35ec9aab3dc7..51fa880eaf6c 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+@@ -1186,7 +1186,6 @@ static int
+ netxen_p3_has_mn(struct netxen_adapter *adapter)
+ {
+ 	u32 capability, flashed_ver;
+-	capability = 0;
+ 
+ 	/* NX2031 always had MN */
+ 	if (NX_IS_REVISION_P2(adapter->ahw.revision_id))
+@@ -1197,7 +1196,6 @@ netxen_p3_has_mn(struct netxen_adapter *adapter)
+ 	flashed_ver = NETXEN_DECODE_VERSION(flashed_ver);
+ 
+ 	if (flashed_ver >= NETXEN_VERSION_CODE(4, 0, 220)) {
+-
+ 		capability = NXRD32(adapter, NX_PEG_TUNE_CAPABILITY);
+ 		if (capability & NX_PEG_TUNE_MN_PRESENT)
+ 			return 1;
+-- 
+2.39.2
 
