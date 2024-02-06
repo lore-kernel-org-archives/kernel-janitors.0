@@ -1,118 +1,142 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B2B6FAF;
-	Tue,  6 Feb 2024 17:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1467A1B94C;
+	Tue,  6 Feb 2024 19:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707239570; cv=none; b=doRQgumW99kqRMteTRXI1+ojBrnsgYqBZPxss2dz/74Vft7wG9yK3hSoP851tt7czTHrpLOvzlp4nPKqk5LW1f08MzLvZqxxv9gOJBB+Lw6rY1HBx3LXegLMo+/ff5iXLgjcxCEq9BFOtnqAf2y2kRp4oxkfgo6AlN5sNcjAJbs=
+	t=1707246223; cv=none; b=HB9mH0/HR9JytSUYPKCbel63713N+sjHcmirVDXi/IsPh+xT0d0I3BxRCZtr36Xu6+NTa90xjs1as2zE9KQY+nJUjRUGauvDgsfJsUxliNCPk9yazz/U5/5ZvwjG94WZtSUH1SA+IVwjBqvz5/uaG9nqY7sysFOVM8S6AE0hX4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707239570; c=relaxed/simple;
-	bh=ksg4WMyY8esF3lNgudgjGgk56jtQMale8LRV8KAHV5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Af4p3Lf5E9MuNvOKFx4s0UMXmtxremrtQhLmMq/G65zV30549HhwVEmdsu5O7NdSOoatnEhiVmOqxKKBW6vxgXB6MJxqAbTG420WoqScrTWCNEyWn2WjUOurydPobRqSYGPpZRn85rnKw8wUUMFhhQ99MNVVJH6BvFqPnFmgtmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmIQYJk/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707246223; c=relaxed/simple;
+	bh=FYZc1LEGrrqC1+w/ETxpgrgL8ru/UNKTc7lQka6Mvbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GJWx3GUG/p2Ds4C2kB54XBTpwtrNLi51ON8WBZLUu0hXET334+HG1KICeqPHsKSCwsFOPMFFHv8nCFfUy+CFVop6PtjMcomsY5tDBUOffon5EsA86ZHBRwIwOBE/Zhe5cKx9uf6jigWmwEp6ExH+e+4kUrBVcIk879kIVl4YJuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Snf7yBIv; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmIQYJk/"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40fe3244bc6so7266345e9.1;
-        Tue, 06 Feb 2024 09:12:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707239567; x=1707844367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqPn0nFoSPDjgsadt9DpbqXfJ4Exx8BrE7XSJYRmqgo=;
-        b=CmIQYJk/qSHdr27KKygeI+XiYW5mgNiVkiNFbsvnJIBxgMBnZ3FpMG/Oc0Rq8X2nZZ
-         +x9hBCfuCYurpheOaPMJa66KExEoE4AiGow3gXUT67XK8orj6jd1dze14PSJMtqWdh6r
-         fK9E34yiUhJRcJhpa+Yawajl1i3W5RKKqo355PmYdlm5EOABdOLTKmT3lagcOmUQ/SxG
-         BVrWCVkwC9lT1P9XHYKCI10QjhY5DKE60gLb66ijskNJVq1pATIpL1yiC774WcWL0fgX
-         6BTjGxJKL2T90L0elbZe7lKxpENnwU7IoH6NAuOyl2xjwoNQWunDespwjhZP4/huL7Rc
-         EuHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707239567; x=1707844367;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vqPn0nFoSPDjgsadt9DpbqXfJ4Exx8BrE7XSJYRmqgo=;
-        b=NiD7FxEdkdN+0SUO9SOYYWf3caCV04fdQ5kB28OvPg2J0iaQooti7mB0L6GTY5T/ej
-         C8rkrU8QCixi8xJCGFF6k1YKN+7iIK68Lq+nVI0YzVdZNNguaeMDGKz1DlZ5/P53FPni
-         ooJ5Gfa9SSkaQml9ocZOtYY6rZm8bSG0DUQo27kvnnKEqKKHWFle9vwFVF7CM/hmyzB6
-         w5ywAYIdubPv5Vk4034PTYPNPppmbdvOnDfHCPxlqVJnjRM7PhH6F+DeVBIzPhAuFyKP
-         RY3ZEVLEj4FsTCf2Y3xX9rokqt13QiauenDPlWqMEWeiI5/zXvfXXQYNs3tWGwhDLJRQ
-         L1aA==
-X-Gm-Message-State: AOJu0YzIfuOf9vUvJZ1ltwKjD3rX63yVD2BN7Y6fw1+W9J2mnNX4PLA1
-	4UImHECQ7dViYCP6f6UVuthcFiEZIg4YGST6AMismnRsgfEZBIol
-X-Google-Smtp-Source: AGHT+IFwqUOfydjRHUBeY68/xKML3nndXPNluhsgDuru1L48AbA5vdEEJbwAHx3brFHByQer0cYbLA==
-X-Received: by 2002:a05:600c:46ca:b0:40f:ddc2:7260 with SMTP id q10-20020a05600c46ca00b0040fddc27260mr2559093wmo.36.1707239566557;
-        Tue, 06 Feb 2024 09:12:46 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVqjvw+VH1irtaYPvA0qVl2i592O5s8s5OVX5eANUQJFIyOVjVkSAVzAqwqZr3lm8Q/TmR1yWnG6AceygBA2EmjKhSb5RK3Zjrne+ixss8lENlJHmXX4Hfjq+HgTkzMsM8J6Ey0+FsEtg3zdG+WeiH3iMa9XZkyU1wTMgcQ7qfRCU0FYKycTL7/D2XoYg==
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j3-20020a5d4523000000b0033b17880eacsm2546609wra.56.2024.02.06.09.12.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 09:12:46 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Pierre Ossman <pierre@ossman.eu>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Subject: [PATCH][next][V2] mmc: wbsd: remove redundant assignment to variable id and id check
-Date: Tue,  6 Feb 2024 17:12:45 +0000
-Message-Id: <20240206171245.2421538-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Snf7yBIv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707246168; x=1707850968; i=markus.elfring@web.de;
+	bh=FYZc1LEGrrqC1+w/ETxpgrgL8ru/UNKTc7lQka6Mvbg=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=Snf7yBIvBzdWtiPR583PSVgqSpFc+/OpYFMacVTjpyprUXgQ2Exz+eHxwFeQiAXE
+	 JVfFsoGq94BOjFIct7UHF7wYdeDZVrJC2BB3z6pHbnuaPtn/72Q3dR7cLDKvX+9o5
+	 KDiBR1DNVMH3iJ298Lga78mBDr0TbL5mRLz2TxpcHT7pCz3HgWpOIdAs/SA0QfS58
+	 EgacUkcYCjmvqX9JxWZ7p5gadhf48ThZb8cdQfKAionthqgr0lym69FMbwfMlFGXM
+	 447hE+UwicdCUWlJ/19kbNQx1n7pRpGZEMDhFpj3d58G+MMckj5182KuuS0LddZ3k
+	 mOmw6gmPdDL1SFdj+w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzCA3-1qkhoC3NdT-00wGTb; Tue, 06
+ Feb 2024 20:02:47 +0100
+Message-ID: <10c0148d-696d-4601-8852-ee5bfea19602@web.de>
+Date: Tue, 6 Feb 2024 20:02:44 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] drm/hisilicon: Use devm_platform_ioremap_resource() in
+ dsi_parse_dt()
+Content-Language: en-GB
+To: Douglas Anderson <dianders@chromium.org>,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ John Stultz <jstultz@google.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Tian Tao <tiantao6@hisilicon.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Xinliang Liu <xinliang.liu@linaro.org>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Yongqin Liu <yongqin.liu@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <b236236a-9953-4246-a697-19ed1b22d86a@web.de>
+ <CAD=FV=Xsg3Fs8XQ0piBYKGSYOhuGXyKpoJ5dbtGPdP5HU+2RyQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAD=FV=Xsg3Fs8XQ0piBYKGSYOhuGXyKpoJ5dbtGPdP5HU+2RyQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2kLa2ysUN9d2xVJRXxMU5jwpcPqpCNCqfK5aQK8Z8SZkAoJmwrI
+ 51MM/OnKS58cjcH+w2KlM8svznfZhdOBNIzjMDwK+K8nqwSAScyS+mLVhS6oKLmKh+VXXlc
+ 1F6sEjS7xdTg8/21QqOUqKV1QyEdUdwoFdL+s/lcAJTJzCmMxIqipPhlZnFOq799DZAX1NB
+ 9P19bitGoqHTmYyAN2Wkg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xkHi6bv8veo=;zt+BIeoCQAK8OkXMxk0kXGXRY+r
+ Rl8t1SaL8N0etUcfbX9GFRZy8E2nr1PX3ujh9LTGIK0cv38ewfHlw8lfcIoqw3LGi0f90ZjPh
+ c6DNCURdreKjJw19DEYeS9o82zVUeyTGA+Bw1gsQlRNTpY8cFzNPIbF0VT2vyUR40IHQH5FIH
+ lV6E46PmNXz9oIiWrc5fVZR2Mh3OEQEE55aQ6z3r6jrlJV1yBICrtnnjDigXV+Vfidz1MjlaW
+ 2WdU8IjpYR+HAQ+Cgs/U7u5BiHkClvJdSUBjWatzI6icJ8hmd/Oi3YKVPp9xDy7xBcVdWecj4
+ 9bOk/qAownBHf/u9ZuK3CjW6u2AZhvz+0x8i5ADLQbCR2wVjGKYU5pdTdhgpElVgMAtFYP3Qe
+ Sgya4Wfy72SyyUcJHk11TFvHO1GrVLDah39vEWGi1xOKNFZyrBqvbnB2f0no8/nqmldzVNS/Q
+ 2I3Pf7EyuYB+D+UkhB01eEKpbkUU6uRfiauH/EHO1nsu4w1hMoa9e3LdeJiSpxlH3NS3rn81I
+ Pqaxb2VRpTpVE6NW0741ZEnMSOig9lHsrPIVRsS3eqFqBFcp6yCSrXGvtC5ZmGvMgK5VFcMf8
+ Cl/Ymv1F3VYlOaWwICKtWtoMsojpj8vjspij47KuRpE3sfB9Wec+PCobopea1DFqFS8Vq7IGy
+ eFOfE6b2Tfnc6hNlh2KhWGqoQUyHr9ops39+tW0OmGYRoLkkSL9ObWW3YSNkEBTM5BwRLVkg1
+ gfwn5lEbHgWeMvstj8jjDmcWS7ehyWxVml8Vhyft0UKXe4Tw8fUpT1i5lrWPPNrKBNREdcFYL
+ BqLNDFina4Yyjn+FExNsJbbATCdsZ0XGoSSOd79j0clbo=
 
-The variable id is being initialized with a value that is never
-read, it is being re-assigned later on. The initialization is
-redundant and can be removed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2024 19:51:25 +0100
 
-As noted by Ulf Hansson the unknown hardware check id != 0xFFFF
-is also redundant and can be removed too.
+A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
+07f87626858ff42
+("drivers: provide devm_platform_ioremap_resource()").
 
-Cleans up clang scan build warning:
-drivers/mmc/host/wbsd.c:1287:4: warning: Value stored to 'id'
-is never read [deadcode.DeadStores]
+* Thus reuse existing functionality instead of keeping duplicate source co=
+de.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
-V2: As suggested by Ulf Hansson, also remove the redundant
-    hardware check for id != 0xFFFF.
----
- drivers/mmc/host/wbsd.c | 7 -------
- 1 file changed, 7 deletions(-)
+* Delete a local variable which became unnecessary with this refactoring.
 
-diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
-index 001a468bc149..4b32421d9f6d 100644
---- a/drivers/mmc/host/wbsd.c
-+++ b/drivers/mmc/host/wbsd.c
-@@ -1284,8 +1284,6 @@ static int wbsd_scan(struct wbsd_host *host)
- 			continue;
- 
- 		for (j = 0; j < ARRAY_SIZE(unlock_codes); j++) {
--			id = 0xFFFF;
--
- 			host->config = config_ports[i];
- 			host->unlock_code = unlock_codes[j];
- 
-@@ -1306,11 +1304,6 @@ static int wbsd_scan(struct wbsd_host *host)
- 					return 0;
- 				}
- 			}
--
--			if (id != 0xFFFF) {
--				DBG("Unknown hardware (id %x) found at %x\n",
--					id, config_ports[i]);
--			}
- 		}
- 
- 		release_region(config_ports[i], 2);
--- 
-2.39.2
+
+This issue was transformed by using the Coccinelle software.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+v2:
+The transformation pattern was adjusted based on advices by known contribu=
+tors.
+
+Examples:
+* Douglas Anderson
+* Geert Uytterhoeven
+* Robin Murphy
+
+
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/dr=
+m/hisilicon/kirin/dw_drm_dsi.c
+index 566de4658719..6db6f355394c 100644
+=2D-- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
++++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+@@ -826,7 +826,6 @@ static const struct component_ops dsi_ops =3D {
+ static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
+ {
+ 	struct dsi_hw_ctx *ctx =3D dsi->ctx;
+-	struct resource *res;
+
+ 	ctx->pclk =3D devm_clk_get(&pdev->dev, "pclk");
+ 	if (IS_ERR(ctx->pclk)) {
+@@ -834,8 +833,7 @@ static int dsi_parse_dt(struct platform_device *pdev, =
+struct dw_dsi *dsi)
+ 		return PTR_ERR(ctx->pclk);
+ 	}
+
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ctx->base =3D devm_ioremap_resource(&pdev->dev, res);
++	ctx->base =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->base)) {
+ 		DRM_ERROR("failed to remap dsi io region\n");
+ 		return PTR_ERR(ctx->base);
+=2D-
+2.43.0
 
