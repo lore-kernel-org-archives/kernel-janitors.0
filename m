@@ -1,133 +1,108 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1342E552;
-	Tue,  6 Feb 2024 16:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190254A3C;
+	Tue,  6 Feb 2024 16:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707237332; cv=none; b=Sl1aPlLkxJUBEnbrUgJQ3Mu+cNE3xKAAWihXtL9zVBZuZ9dlWGINhXvDh9blYE5eP0Rtp5RhfkvTyueKdPIosKYAX6Xu+SE8x8s/OEgWJqaWL7ZtTV1xo/UATFSVBuFTrL2E06N9Ms6LyUZmOQNu2A+MMfqkFQqB05sohZjrzKs=
+	t=1707238699; cv=none; b=X+vkmdBP7eT09aBDmamDuK12J2VemvBNP3aNSl1wFNRpcKr6Z3XvF+VvYfQd+7OLpYcAmHVhldw9nIWJtGGxUpEt1aybLlyyoFc9493k//Qpz48iz8l9nD9rit3rLIbY41yWIGLf7J2aigtIKD6HXDyL3fH14v+kdlgOtJEWtSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707237332; c=relaxed/simple;
-	bh=JM/dM6wGVgOsNpN99AnBS8S4uISuXxo9JPeocMSYoto=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MxR1dU0V5ONRhVWkbh7oht/w5skTXHyWapXWRS663eYotNq8knsLFqwXFvbxgEMEzl7HyN9/amsVeVGw4vLKSLoXpJ/IqA8o+nv8SkwJTfss6/k1BjISby6tpZ1Ab5BQ2etsJPsdZLUkjnIiBiosALR/8oQjUMeIDqnrr4i04x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wm2GeNKk; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1707238699; c=relaxed/simple;
+	bh=IdGQoheNjb8G5fdor0IH8nunrSsx54asoMuoAJyHVJY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ad9gYarjGxdjffhkrZ/ICkP4FKLDolNG7hQi7Yr8Xo23K0XYvASSI7hhr8hsyl487i6zmKNMbLo3MsBcaEaHqzJx49ZKergUx+nsZBO1Lgy2qIMowScLHqv+SB33jLOlKKVxcaiHuXszWQv2eu8gphJmFVmO1SbLru3iNR1ba9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMSsntPh; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wm2GeNKk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707237302; x=1707842102; i=markus.elfring@web.de;
-	bh=JM/dM6wGVgOsNpN99AnBS8S4uISuXxo9JPeocMSYoto=;
-	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
-	 In-Reply-To;
-	b=wm2GeNKkzOndkNz/FtcaFa4S9HHjec3kDslAkK3GraBiGHrAmC00TncNVhbeqBDk
-	 dI1i1sB69oHbVdYiHHSchrj9LrCVHAbTbNNk7nWefWQQkT2dHDB4cSNsZZLVRejnR
-	 y0TgGNQb3ZPou/oJ6mfKrKpU1cWirhDQhv4tL3qtjEMuOns6zeHCmeknH2GyPEeah
-	 qkIufCXsWWFi9+uQzCmj+a40Kba5FHwRvlbDV+NSkKCYvFwBEvn5/phnclWvdjtZb
-	 0dZt3Yd7WDZt/0zjDefOQ1i7mic/Yiyi1GzIqZ/hZcFA+tRk5EHp496fzC7c0mVa+
-	 XOVult7M7Rlgdp1nqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbCI8-1r0WVC29Yu-00bZlD; Tue, 06
- Feb 2024 17:35:02 +0100
-Message-ID: <6e6ce5f8-b701-4660-a71b-478b29197a21@web.de>
-Date: Tue, 6 Feb 2024 17:34:59 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMSsntPh"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40fdd65a9bdso17141345e9.2;
+        Tue, 06 Feb 2024 08:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707238696; x=1707843496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpWfVPtZyIRe4tMPnVQIwrCljpvDfI1aUeaW61DEyv8=;
+        b=mMSsntPhi1Jz/FEVFI2dOWwCIWyIAz6BLf9N1awnLj/grvyfuZpGeTZvcJr0wcFtEi
+         qzTOWhia8oXDcyoGHhXPWsudT+ZQQVpuwJWyRlEo+U9nn25en9O1OWsA1EvMY+7pl4pB
+         BPkyUsSxeCwm2ZkHr1/IbuHQWc1dqH9xKeXs0hkHbLhXwWATZ/l/VMDS5GXStDBSMGS5
+         ngCl1Zq2KW7l5Q6wxrlSPSdepjP8H6uiZ/1n5tttsfHPxYpBB1C9G+Tz1+wc9kLMyImt
+         kGEQAVgvZ88yA0t5ZGzMwVV0aXzK4e0NDOQWO5T85jI3GbHAjdlPKf+W5bmf608OPi14
+         tfqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707238696; x=1707843496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FpWfVPtZyIRe4tMPnVQIwrCljpvDfI1aUeaW61DEyv8=;
+        b=WxVJDTeh3RQkgfWTTLDoVThDcUvXDpbw8dKVhe2GXbhsNGzXRiQiIboBqX+A8g8+Oo
+         rhyLOK0SoR55QWroHZKeOIEGhiuNQSEVbNU5QFrZB7BdCANJ9aFKoxfBuhpEtQyDLdkv
+         BIXa4qjAMOp1SKbZY5XOSXOx2kw1bxKOfBuew2w5xu+Aro/09ubszY+qDFdzSVPebNjP
+         JMz9OOaEolFVbQNz5wD6tSIPv4BDfCpSPsdzw+WssMph19zKuKXngarY64Y47GeAxi/Z
+         LS4GGVpYkT6wgdI++OUn5ZMq6ykyZjkJYqnAUrKPMXlnfsvICr8UPb/8l9kLCYTJ4F3R
+         j9zQ==
+X-Gm-Message-State: AOJu0YxgLUkzf0rnv5VV3Hk1QT2ihwEvTrjZm3CMB4XkufDpL2F5Tg6x
+	mbWfPiEhMwDVOsnd6yHm8k4EOLy+B8j8iTSUTP8cmZcC2qyYS9VK
+X-Google-Smtp-Source: AGHT+IF9kib22ws/6uAifIrGPvaYpCGtMmmEiMKqfG7g/G+6gcVeyvJRcAueVwvOrA67CUo2bAXqeg==
+X-Received: by 2002:a05:600c:13d6:b0:40e:aecc:25ac with SMTP id e22-20020a05600c13d600b0040eaecc25acmr2340388wmg.30.1707238696098;
+        Tue, 06 Feb 2024 08:58:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXgUJgHjdWLMR5qWhDoQ1lfspPlTjku3N4xA800FGcdyLjfPK3/fxEcG6N3KlcY0COr7tyX2Ix6c4LIn43GTM/UqM7UfRlRWAfnTlv5XbNy6CXmJ3xb8XRRR6p4eSkR29hY9aV2FUIzX9BWf7buQ/qAuzvXBfgffow4hacUe9ZS4BPRvTVcXD5cEVNVAPMP0ZpQ42nQYpGcMyNghI/WHHKMxo4X75Sd58qxQVPeV0LUDPn5RyArXZ6tpFNvHoSaAjqtYJx3I487x2qj8dRlNPtpH5gcRF2qx4i91U1jyicTBO7gHaskeen+WvoD82WECmaizY1pDYAT
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o14-20020a05600c4fce00b0040fdd7cbc8dsm2533912wmq.47.2024.02.06.08.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Feb 2024 08:58:15 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net/mlx5: remove redundant assignment to variable object_range
+Date: Tue,  6 Feb 2024 16:58:15 +0000
+Message-Id: <20240206165815.2420951-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] EDAC/xgene: Use devm_platform_ioremap_resource() in
- xgene_edac_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
- Khuong Dinh <khuong@os.amperecomputing.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
- <rric@kernel.org>, Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <0b255d17-deab-4d6e-bf44-d950b512dc14@web.de>
-In-Reply-To: <0b255d17-deab-4d6e-bf44-d950b512dc14@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hVEeAHWZkLBabGliku9TpAcPPUlMuNPVJGnTqc1ncndDJaWdiqz
- YkXhK1xHsPme+wPdYtE5z5VFxNbLpIa6lUSqXKzTxukevtlGSwPDKU8GaJfbE4+xK1ilUm9
- l4QodqIrM8Pc9YiHhoVkzkywvzjFktTpCw/HSRW9OGmg24lFh70VVurOGHjPrY4UYqLmLk+
- bgoWGL8r+og8Qow6uBrAQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oJf/jY8IscE=;Q+dSKDZhB+CRZBgbdhZB6FGd8+h
- lZ4qQNrVgZ+UFYwLfo7r4KNrViFvHZE0po8IlJ5SFcT62UUivK3MYd1LPpkyY1MtsvKNfLxHi
- yEY8GM8dJro0FmRJJW4DwmWYcLciEVnVjlhgahgKZTCTgeS1hM7J773mBZuxJtNGzPlvqnEWM
- 8xIrbvQm+I5qJU3QPCxy/YiDlkToKOH3ZPeKPYk/9BGQ1GXUhXYD9+ODA99S+lAjj88ZD8s9O
- 78rzvWfPPFm5EKr4NUsttFqZ3tzM2x6Og+jwMs939+OV1MEQC0+BEeCKKQJYilh42i0KfM6Gk
- dwvqk53uqmXWcMURgq1xYrUPeeOEczS3UOwdb0i7VQE83bfFYz/OTpOQ8TuhyWmvGGjfzTxYa
- D4fkVJTKt7oR3INknULpqlrn9lGJYcHpaqiNqh8m4Dx4SqUPVrtoQD03VXVWS6keBhs+alSC+
- DSnn4PJ/9jyH1Cypg9DK39u9f3M9h+M1uSvWfhEqpTh4V22G3LPIcDxT1yOfG1CrDn4e5HG/+
- hKdDw2um0ilxPMG4y+9hcLTno6kxW30c8xrtT5wl5Srd57hDagJX9HmNQTNchh1CZ4rOr3uFK
- OImKxLGnDdR5MRaRbCxMKm4UvkNUnjL4xlQP2+3Rbe63tq+3bQZqKo6Luo5Jb3J3PCK/I2Fly
- Pr0pNEpiR9hM7QUOwyfJC0mYx25qcqMkPJAZkwl009TIzwh1x4to/MgsFjwyEt19aaZCTKy++
- z1HSWt3Ipakixy8V3vYm+sKPXxemyCebs56anaIa5OR13Yr90lAs/RVGSneZNPoiSgC2wfyjy
- M9h7ere6ST0hrdNh5w2+vM9H4GRFiToE9adw0RSiXKdjs=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2024 17:30:11 +0100
+The variable object_range to log_header_modify_argument_granularity
+is being assigned a value that is never read, the following statement
+assigns object_range to the max of log_header_modify_argument_granularity
+and DR_ICM_MODIFY_HDR_GRANULARITY_4K, so clearly the initial
+assignment is redundant. Remove it.
 
-A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
-07f87626858ff42
-("drivers: provide devm_platform_ioremap_resource()").
+Cleans up clang-scan build warning:
+drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c:42:2: warning:
+Value stored to 'object_range' is never read [deadcode.DeadStores]
 
-* Thus reuse existing functionality instead of keeping duplicate source co=
-de.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-* Delete a local variable which became unnecessary with this refactoring.
-
-
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-v2:
-The transformation pattern was adjusted based on advices by known contribu=
-tors.
-
-Examples:
-* Doug Anderson
-* Geert Uytterhoeven
-* Robin Murphy
-
-
- drivers/edac/xgene_edac.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/edac/xgene_edac.c b/drivers/edac/xgene_edac.c
-index 1b50f8160013..59eb0e97adef 100644
-=2D-- a/drivers/edac/xgene_edac.c
-+++ b/drivers/edac/xgene_edac.c
-@@ -1845,7 +1845,6 @@ static int xgene_edac_probe(struct platform_device *=
-pdev)
- {
- 	struct xgene_edac *edac;
- 	struct device_node *child;
--	struct resource *res;
- 	int rc;
-
- 	edac =3D devm_kzalloc(&pdev->dev, sizeof(*edac), GFP_KERNEL);
-@@ -1903,8 +1902,7 @@ static int xgene_edac_probe(struct platform_device *=
-pdev)
- 		edac->rb_map =3D NULL;
- 	}
-
--	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	edac->pcp_csr =3D devm_ioremap_resource(&pdev->dev, res);
-+	edac->pcp_csr =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(edac->pcp_csr)) {
- 		dev_err(&pdev->dev, "no PCP resource address\n");
- 		rc =3D PTR_ERR(edac->pcp_csr);
-=2D-
-2.43.0
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c
+index 01ed6442095d..c2218dc556c7 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_arg.c
+@@ -39,9 +39,6 @@ static int dr_arg_pool_alloc_objs(struct dr_arg_pool *pool)
+ 
+ 	INIT_LIST_HEAD(&cur_list);
+ 
+-	object_range =
+-		pool->dmn->info.caps.log_header_modify_argument_granularity;
+-
+ 	object_range =
+ 		max_t(u32, pool->dmn->info.caps.log_header_modify_argument_granularity,
+ 		      DR_ICM_MODIFY_HDR_GRANULARITY_4K);
+-- 
+2.39.2
 
