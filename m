@@ -1,120 +1,88 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566E4D9F0;
-	Mon,  5 Feb 2024 23:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124A456B65;
+	Tue,  6 Feb 2024 02:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707176594; cv=none; b=O2sI6RugLLjqLeKbaQyyhgx4/RMMRovdaOFplEU/L3IPsRLU6KXRu1sNUam9YrSKmIlbmbILeWxgjnWgPZy1X0a9VfnpZTUcojyjkE3PGxSmzGbJWvXd7eswoozRJkujELMFcOkKjuuaOoRpimdanYe+kZEsXlYX9KTkqFubReM=
+	t=1707185584; cv=none; b=KnGYZItBA4Xqpbfs80y0fktIZa5oytCnHkCAOoR3rNIQ4WkW6uLyYVssKjzVOWc+wl+NSRczg6MgBwulwSITOgO1epXoYOOlHQZZNC486zJTFtfaANiURQYJ8NMt3GF/tEdmAXBCaSfhvNvc4CYWTBXkTD4QK82vVNlWTjPTKKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707176594; c=relaxed/simple;
-	bh=/j8Me4jOfxM2HK+iG5EIgQmxB68U6ITj91R98wi3LDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AbZL5Q7c7VOArNAiUVw0L14Xmrex9YmE0E/HnBYaGEZhUNIPmuTcTqNzQiiz67bMtUQlSqU3i5hUapXUk08kwdWOPJnDBuQLitLa/qLZWFWzFdfCpE+wxWARUHUTh24mWVdv83ewO1kU/oCMt3ciqZeeKCokjbYT0NUwmUv9/Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NR1zohk/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NR1zohk/"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 415NXFtc028179;
-	Mon, 5 Feb 2024 23:43:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=ZUwfEox2Gmy2Mb7bQh8JJ1dI1oJWyCYJiPWEmtTM5E8=; b=NR
-	1zohk/HjsiUjRhW2p/9oyOqXieLdAbi1mapluipweZyCW12L1Qc3Y0QC4n4T/lJo
-	4kf3eapA9XW4SHpQi7AnuzxlyZ9o4Jh3kY9XCPPktIrMSMU/YLHqVvmfs6YVPJdm
-	ICl09gOyC/EQeuw03zjMoKl9y1Oc5SU6A3N+5SA9tlg2sUU6edQMvoVF+0jaH8S8
-	cGHOnfxxtrlKqixFnXAHReuZuhsLcNYF04OeTArKwl87Gp5k2H0pshu5bIIUHZfy
-	QyffJllmKWKgFwrWyB2Ty5YgtvUHsd4QXciK+TkqdIuGOMpZyfHCxIXc7seRT8GE
-	2+QMI/iSHviadfUPU01g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w2udda2p5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Feb 2024 23:43:01 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 415Nh0ch013530
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Feb 2024 23:43:00 GMT
-Received: from [10.47.206.1] (10.49.16.6) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 15:43:00 -0800
-Message-ID: <3c344e06-ac15-abe2-4fd6-5735090a1f58@quicinc.com>
-Date: Mon, 5 Feb 2024 15:42:59 -0800
+	s=arc-20240116; t=1707185584; c=relaxed/simple;
+	bh=bs/ur/xiB+EKXQSIm4/pErFIuws9bv1BgqZoNxClTT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=krhpB/feyL2G/BtRsCjVVs5QQ795vAwJkD0/Uos9Yywn5FSIthQzdLinMcSW7faa0Sc6ZSXSMeuRmivsDj5VHxs6+ciMdDNWpRxnmIHRvrEeuHI+nf9AUNOPKlaHrp8uks25cwWpgNK6BuL8Rj7qQA3P4AR+dW/n6bTW+t0XSuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5cddc5455aeso4476655a12.1;
+        Mon, 05 Feb 2024 18:13:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707185582; x=1707790382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KTAyl5iKOFA0ikqjI1lmw6AmuPGoKHG8xJSD/r8dg+4=;
+        b=lB45QgIWh0gsXfWvptPQgjq4wPGoEgC7nR3PgTO1BK45Scx2nRr5EK787Zk/ZeE2fl
+         UwBnLgK4Ilq8eO0gUoTLRSsVb75TpDg5Q1DpX5yd76EBeq2ALKNBRlCeuxQXC7DrYlgt
+         PPDwIH3UunHlpaZnHSIoBYJviZrUGkoaImxq1zEoT51i3xkLjkG5wVaq8mU/SDcju85Z
+         AL1Xh4iKJa6Q9cENPi1qND6q6Dx+CbvkdfiaZwrjBD+Na054iSPe8IMNQbgXsq7hok3C
+         /jL1RDKExNfWY88Cydfk0reNZelVcEX9PIQh0tyZmnSfunhTOOPyAcSKQ5MMPo2FFNxY
+         F+Pg==
+X-Gm-Message-State: AOJu0YyT11PiQYbwT+d92h2sdubCPa+j/TJtV0ego4e2VvD12TBdSO7B
+	jgDGDGqMiOIPlbuV1UAtqwD94N2YJgjS6xnVnZFfdXycBrckQEw76tDes9TwegESEnWVne71/z1
+	JKQf6He0wuzwpwU8MCzGVh9QpayY=
+X-Google-Smtp-Source: AGHT+IGDb6iQTUWs9BOothXuSb/aiVn8KF27r5Fivt/1qfUFGuDtcyXcnRyNdG1Al1jAcC5DU7YBRZMcb1n1Vm4pF9s=
+X-Received: by 2002:a05:6a20:1ea5:b0:19c:53e4:e67f with SMTP id
+ dl37-20020a056a201ea500b0019c53e4e67fmr280535pzb.15.1707185581779; Mon, 05
+ Feb 2024 18:13:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null
- pointer checks in spmi_pmic_arb_probe()
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, <kernel-janitors@vger.kernel.org>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Bjorn
- Andersson <andersson@kernel.org>, Fei Shao <fshao@chromium.org>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peng Wu <wupeng58@huawei.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-References: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
-From: David Collins <quic_collinsd@quicinc.com>
-In-Reply-To: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+References: <f15f0df1-92be-4bc9-82a2-1d8fa3275dd7@web.de> <daf2172a-8d54-4097-acf3-cc539fe281e5@web.de>
+In-Reply-To: <daf2172a-8d54-4097-acf3-cc539fe281e5@web.de>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 5 Feb 2024 18:12:50 -0800
+Message-ID: <CAM9d7ciHGv9s92Yz4VuFUhuN9HCHe=Bq7dMD_XSBTkg1+tYw+w@mail.gmail.com>
+Subject: Re: [RFC] perf: Reconsider an error code selection in bpf_map__fprintf()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Christy Lee <christylee@fb.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Ian Rogers <irogers@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Martin KaFai Lau <kafai@fb.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	YueHaibing <yuehaibing@huawei.com>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3MuUxwA4YiYlrpUe-0svT0s0Ry0JovhR
-X-Proofpoint-GUID: 3MuUxwA4YiYlrpUe-0svT0s0Ry0JovhR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-05_17,2024-01-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=740 clxscore=1011
- priorityscore=1501 mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402050177
+Content-Transfer-Encoding: quoted-printable
 
-On 2/4/24 01:24, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Feb 2024 09:39:48 +0100
-> 
-> The devm_ioremap() function does not return error pointers.
-> It returns NULL on error.
-> This issue was detected once more also by using the Coccinelle software.
-> 
-> Update three checks (and corresponding error codes) for failed
-> function calls accordingly.
-> 
-> Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
-> Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> See also:
-> Suggestion by Peng Wu
-> [PATCH -next] spmi: pmic-arb: fix a NULL vs IS_ERR() check in spmi_pmic_arb_probe()
-> https://lore.kernel.org/lkml/20221115090927.47143-1-wupeng58@huawei.com/
-> https://lkml.org/lkml/2022/11/15/197
-> 
-> 
->  drivers/spmi/spmi-pmic-arb.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+Hello,
 
-Reviewed-by: David Collins <quic_collinsd@quicinc.com>
+On Thu, Feb 1, 2024 at 10:49=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > A null pointer check is performed for the input parameter =E2=80=9Cmap=
+=E2=80=9D.
+> > It looks suspicious that the function =E2=80=9CPTR_ERR=E2=80=9D is appl=
+ied then for
+> > a corresponding return statement.
+>
+> Are contributions also by YueHaibing still waiting on further development=
+ considerations?
+>
+> [PATCH -next] perf: Fix pass 0 to PTR_ERR
+> https://lore.kernel.org/lkml/20220611040719.8160-1-yuehaibing@huawei.com/
+> https://lkml.org/lkml/2022/6/11/3
 
-Thanks for making this fix.
+I think we dropped the bpf-loader and it seems bpf_map.[ch] is
+leftover.  I don't see any users of bpf_map__fprintf() in the tree.
+Maybe we can drop it too.
 
-Take care,
-David
-
+Thanks,
+Namhyung
