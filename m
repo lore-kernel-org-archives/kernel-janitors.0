@@ -1,138 +1,133 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA71132C25
-	for <kernel-janitors@vger.kernel.org>; Tue,  6 Feb 2024 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82011132C1B;
+	Tue,  6 Feb 2024 15:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707231363; cv=none; b=XMdKV5ViWFCVJouXnI/YPnVwqp8cfOeEf2Nlmilw+PcM2O+Vf10zsBS4DeKIW0ITD1P1zobjRD/sLKKFCcKGmr9wBOGyb3cObMxAgvCft+AOk9UKUtc1e6fucOFcjE8Z6zfhHdyN15rbP14yGcCIKeSpIfbh0Q7UCIi7KtgxuHE=
+	t=1707234054; cv=none; b=OgXF71P9YXdLfg6bDJIrZA9J40i/hNw6OzJpE9NsljBYl9vjKQ7tJfmRNgVC/CGYEqyw7TNNukwiW2neBcBtED23KUV3YuKGmKyrZujWmCISNRecmbJaasHsmzcVdt8Er9ZK/Z/0h4pSsUt+OsCjxDcLr2AjPe51LG6vbcEdaxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707231363; c=relaxed/simple;
-	bh=hXolM7uNjrqi4kvTV1pVtTTaI60yBGc/tHdLQl6Jd68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rb8ZJscMUJKHh9kwqU4hCC56mCaP0GVSWvq4zT5aF26UO10CI5qocHOruEXq2XpuHOILUBX38tlwW1GKtLT+yaxg6rAkDKiC10V4zVlzrJ2A308fZkdi9Zk6r7mOdsscZscnfF565s2SN0T8mcYqGMEXfk8UF+Thz9jADI0jzHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SWXIoCxE; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707234054; c=relaxed/simple;
+	bh=7eaZzjz+wMCUEjnyDUB3tK901K9kXxGQ/BL0sTc923A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rKYrivgI24lk0nav2VKfUEnnlBHM9dogJKEiwVV9B76MNQ7Pl8vj+/9qahipx5njmBYs1uXqqmfJ8wD7VI5Yet6/waYX/0bLKaSSUbg1zLb9PoEzXHDJoVK3N5Cy+Zm13e580zIBGLQAwWB5t6qfo45hxc1fWZeEkgdgFc+CtBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cOQ0SDQJ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SWXIoCxE"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-59a8ee08c23so2234879eaf.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Feb 2024 06:56:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707231360; x=1707836160; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKCZke1KMPopQ9RKPdCxdFTkVP9U+Bz1cnxAljvkmYE=;
-        b=SWXIoCxEkE7gxoZcd8yCWS72shPdnhLgjxYmrAxh70zJq6Zs1JgzBCAdIkaR/biSgI
-         ywQFPM5Y6+jBqrWmro71jC/IJc+wxykVMpO3flRlJuK25WD2ommgk2PZqyXjCjnWCY1R
-         Hbf7gB6yG2liZyOIlwZiC/AModrZ2tkV8PkpzPb3/xe3chWfScZPrqCEEPCFkW5sOUjD
-         BfPvMw743aVPDaUEOaQ0opBMlZXofY2aOEymKPaSfB2im/pALYen31TL1w9yYCxN14sv
-         WW9thKxlSxszgcBlFd6Ay9OC5WWNjbGhweW1fLsIE2u2HQ7Qfbbp8k4mzEYTtIK4kUq0
-         0k0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707231360; x=1707836160;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JKCZke1KMPopQ9RKPdCxdFTkVP9U+Bz1cnxAljvkmYE=;
-        b=szc/4j0lMqroGAwIaV4QMqQ5LJCbCF8kan/JeyrNPczXlDiPLl2rQsz0bszui4yf43
-         K0rrodaO7blHAT5WcwN6Q3Mmx7C52T0ezSpfd0TY6cAAqbXvUsXyax3TrEZreYMaqoi8
-         hwUG5mtv3TerPzdsca3HanHGatfoLQ/IFqVD70dbpNYp9XbXwBHX8gnRkHLh/udgn5t3
-         kPGn/uN8nm1T9OIxHgKS1CLdTt9Z8xo0HP/yDCfOPuyH+mKW4T2WizOskyOHfwS/vIgg
-         W0wGdadsT9DcIERF5WeFp7XBDwZCSfjD5fQb3NkbZcC3FKzEjzl/W0sugk/3+kygkJIH
-         8J0g==
-X-Gm-Message-State: AOJu0Ywhqp7svEgIUa1yQo4ce6gpdjY1aAhkaAc69f2FP03ORJ/O9UnQ
-	VwattYo7L7XMEFn9QPqM4WSrzE0KTlD7dF3/FQavjWFDJ2v9qis1GCbu1K466j/01jkAHAnxWE6
-	AUtA8U+IWiXUDNyVAZmnFR3SILqRdYORg+VLVVA==
-X-Google-Smtp-Source: AGHT+IEjZNrhvqIStbF4U44ytlGPmSnzsLH2enASrVkowIdVD2zLnzSWnYbwn6i/81EJzWZPXL1iPryIbri0vd8KjCI=
-X-Received: by 2002:a05:6359:4113:b0:176:40fb:cf3a with SMTP id
- kh19-20020a056359411300b0017640fbcf3amr2357172rwc.14.1707231360167; Tue, 06
- Feb 2024 06:56:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cOQ0SDQJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707234025; x=1707838825; i=markus.elfring@web.de;
+	bh=7eaZzjz+wMCUEjnyDUB3tK901K9kXxGQ/BL0sTc923A=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=cOQ0SDQJMGw6cB+eoiYjY1HUTQgSn/XZm/c0ffcAKYO5cFpdpIRopiIc8CLezkIW
+	 7jnl73aWjDtJ/Up4KHDhjdUTlel1Dl85PpeYWTqIyLnrUs8pvGaG8R3gmGneBuiHZ
+	 5ZaWUr0xVRIePqmvbWd3JQCPaUoQ7DIWlnp+dBie9NuNjUyXXz5phD46iixCzn8gm
+	 jPO0wKzm2Ar7JEMx+Xs3KEDn9AHCkd19keNOzsfPyoceOz5803tj3dk5cV1quUmgc
+	 WQ+ZWgC+KRcC0+ATkdH4sVI57ZZLXjqWVFscTA4jddnVM3Ch9PJtDMJYHFr/qspjM
+	 SUZ8WLRLuFqCUek6uA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkElZ-1r9dVw33mL-00kNmR; Tue, 06
+ Feb 2024 16:40:25 +0100
+Message-ID: <e4585b03-3629-4bd7-a349-f5471ebd8685@web.de>
+Date: Tue, 6 Feb 2024 16:40:24 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <da6af483-5ee9-45cd-922e-d9d5364674dc@web.de> <CAMuHMdUxn4Ne7kmEfONz8Uk3Why3m9r83GdM5RzTxm_4Gj_a6g@mail.gmail.com>
- <6e397bf2-1d45-434f-8619-58a737a138e3@web.de>
-In-Reply-To: <6e397bf2-1d45-434f-8619-58a737a138e3@web.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 6 Feb 2024 15:55:24 +0100
-Message-ID: <CAPDyKFrVgHKXrps5wB3yhOK6JFdBeW8zzYHcQJC1RVs8PXJgOw@mail.gmail.com>
-Subject: Re: [PATCH v2] pmdomain: mediatek: Use devm_platform_ioremap_resource()
- in init_scp()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, 
-	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] sparc: leon: grpci1: Use devm_platform_ioremap_resource()
+ in grpci1_of_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+To: sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>, "David S. Miller"
+ <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <4fc017e4-c695-40d3-aed4-cbf34d44e6fa@web.de>
+In-Reply-To: <4fc017e4-c695-40d3-aed4-cbf34d44e6fa@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:delG0OP3p85cu5vnIQwdHsvL/LKQZkLgZh9jHMmoyj2Z2ieh6lG
+ 8/dT9mLr/M+pNYBTkNChAYflEc1ItFeq/D/kvRuf2/e7N2j4GeZPqwlb1hQwHbq4FwMjBxe
+ Zv94gYPqjexmo5puO4ySl7u3KZJt71vLMpUNFMN8eptVvmi4NbWiYtCO+yqTcQ4HqVftt2A
+ UIoUZ1FDZ8dWPhidHpnZA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cWb4CakeEFE=;GWpIyvQCZXa8OBC1L6tHGGyQvDw
+ fDypwyDhiClo+6+q47h+fOgversLTaVVeehc+0ELLDL9++VJIyKswhBM1mUGSEpWrJUubT6o/
+ WTzi+bUpwz1zEA75WEeay9M05+d4Cz8sUVVYKF3aZLhL+9CiCyw4dMD0L763LvwEc8h74efm9
+ PcjzOGDqAeqK7H8LZ3KrFOLcK45/sG+lCGaCNord8Lb7zOAGbRpqyTd+q6yte8ylOUInuuuiq
+ Se/IlSLj9GP12mbQcF3NfeBk2Z68s57jCDwGelr8JoU0X2VPa84ZZjKuJjUOulzsVm2O/IK0p
+ oBUbjHSsXYqjuV6T4qcLpLxs+XND/XSPSGuCHVLwx42z4F/8tnoMCz2DQ6QGJN8XVdXrQk6A/
+ Ex4FcP7g39r/EC+Xc92BZIm6D9kRt3cHecBVzFEmonkyu2ocTv21K9JfZgvnGASoEBm2MLR+8
+ Vgv3+iLSlrkym48EJAksrk3FCI6u/gj+rUv/RtXZZTsVaD+QONe2LRhzDcAn5SdIdenvGho1I
+ dYlp61T1r+qRLqBXXlnN7HRS3eK1bX6R9U9CAWOq3nC3ByakMQRIqh9EZgWhiDT2vhfsdNbGc
+ V4HrY0QTVd3PXO1nSlPh7biirEpMUF18thxjPLkYh5PQh0EgKEOscb14VkxYPFn6N+/D1ZOzq
+ Jg69j7PAgVvmciKwmSzUczSChUUimbmurLoqRNNa1oWlNjLPhuqUlN9AUG+kuNkJAOd5I7qsm
+ sOxlRJulUAcMShIg3BKw0nbkDJBADdYqmnZFW7V6zAW61nBcimWPiZqjH9HCZ1nPIB5ZY1Xvi
+ ecnrJtTgzansC4SlW3h/KqBRlN+l/scmcwp2JVDFUIIyo=
 
-On Tue, 6 Feb 2024 at 10:21, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 6 Feb 2024 10:05:34 +0100
-> Subject: [PATCH v2] pmdomain: mediatek: Use devm_platform_ioremap_resource() in init_scp()
->
-> A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca07f87626858ff42
-> ("drivers: provide devm_platform_ioremap_resource()").
->
-> * Thus reuse existing functionality instead of keeping duplicate source code.
->
-> * Delete a local variable which became unnecessary with this refactoring.
->
->
-> This issue was transformed by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2024 16:30:15 +0100
 
-Applied for next, thanks!
+A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
+07f87626858ff42
+("drivers: provide devm_platform_ioremap_resource()").
 
-Kind regards
-Uffe
+* Thus reuse existing functionality instead of keeping duplicate source co=
+de.
+
+* Delete a local variable which became unnecessary with this refactoring.
 
 
-> ---
->
-> v2:
-> The transformation pattern was adjusted based on advices by known contributors.
->
-> Examples:
-> * Doug Anderson
-> * Geert Uytterhoeven
-> * Robin Murphy
->
->
->  drivers/pmdomain/mediatek/mtk-scpsys.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/pmdomain/mediatek/mtk-scpsys.c b/drivers/pmdomain/mediatek/mtk-scpsys.c
-> index b374d01fdac7..59a7a8c261ed 100644
-> --- a/drivers/pmdomain/mediatek/mtk-scpsys.c
-> +++ b/drivers/pmdomain/mediatek/mtk-scpsys.c
-> @@ -425,7 +425,6 @@ static struct scp *init_scp(struct platform_device *pdev,
->                         bool bus_prot_reg_update)
->  {
->         struct genpd_onecell_data *pd_data;
-> -       struct resource *res;
->         int i, j;
->         struct scp *scp;
->         struct clk *clk[CLK_MAX];
-> @@ -441,8 +440,7 @@ static struct scp *init_scp(struct platform_device *pdev,
->
->         scp->dev = &pdev->dev;
->
-> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       scp->base = devm_ioremap_resource(&pdev->dev, res);
-> +       scp->base = devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(scp->base))
->                 return ERR_CAST(scp->base);
->
-> --
-> 2.43.0
->
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+v2:
+The transformation pattern was adjusted based on advices by known contribu=
+tors.
+
+Examples:
+* Doug Anderson
+* Geert Uytterhoeven
+* Robin Murphy
+
+
+ arch/sparc/kernel/leon_pci_grpci1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/sparc/kernel/leon_pci_grpci1.c b/arch/sparc/kernel/leon_=
+pci_grpci1.c
+index 8700a0e3b0df..a01ecee18e1e 100644
+=2D-- a/arch/sparc/kernel/leon_pci_grpci1.c
++++ b/arch/sparc/kernel/leon_pci_grpci1.c
+@@ -516,7 +516,6 @@ static int grpci1_of_probe(struct platform_device *ofd=
+ev)
+ 	int err, len;
+ 	const int *tmp;
+ 	u32 cfg, size, err_mask;
+-	struct resource *res;
+
+ 	if (grpci1priv) {
+ 		dev_err(&ofdev->dev, "only one GRPCI1 supported\n");
+@@ -537,8 +536,7 @@ static int grpci1_of_probe(struct platform_device *ofd=
+ev)
+ 	priv->dev =3D &ofdev->dev;
+
+ 	/* find device register base address */
+-	res =3D platform_get_resource(ofdev, IORESOURCE_MEM, 0);
+-	regs =3D devm_ioremap_resource(&ofdev->dev, res);
++	regs =3D devm_platform_ioremap_resource(ofdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+
+=2D-
+2.43.0
+
