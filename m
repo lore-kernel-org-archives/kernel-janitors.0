@@ -1,99 +1,131 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DB812D15B
-	for <kernel-janitors@vger.kernel.org>; Tue,  6 Feb 2024 13:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3FB131E55;
+	Tue,  6 Feb 2024 14:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707224940; cv=none; b=QLl5/5SHHN0VEs5Yv6cJ6IxFq0Al1ImxF8XkjboGtN5lgUu2C/6ZguJxXBV71LNAxJ4QM0af1+Os+vshY338wkpqyJeWNOBnfcVcoCEOyPl8Ww4S0ask16l/vRgYFd+3t54UdxPcu6Im4OPk0TO5yWUlFmxF7Tuqxld8CT/p38E=
+	t=1707228966; cv=none; b=cLzkBqZFSn5/j0a7qNbRf3fsCuJHfH4uQf6Ij5sA+5NgRwMpMxFyY+WsgbSX8a9VRWWmPKFBrb0UDEeeQVupzp08xKUbMc9Em25i74eLKBDGM22N3tS2jVmO1m2hRsGH2C2yIg87JAOG++Ca/wQPpx1Qs38Nu5nemqmPeumAxzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707224940; c=relaxed/simple;
-	bh=LMvw7ZapEqNLS9EY1kyMAKXzGH0Bt6b0N6T6aTC0hjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UAlxMj8buplWUbCtAGJS83ZiDHNKAZG3ixnKttlb4PyH8GH9AsDtTanRbcp8IP8XOIOg2+vUZH2i9pjubLk4Lt/kzlR2bBoSnC4Yjinqil1fQ0p72tbptSZcwp9qH5yz/EocIUgsd6gNs+UPuHBfV5WFMjbOqNXmf+Hv/tHdD7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GqOVmpyS; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707228966; c=relaxed/simple;
+	bh=3i1pZdvo2r3BXMaevJFKXByzHrypyI04neeHTBdO3m4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQXt3/Kvhzb1arHeRPSLyrbJbpdF1hppZRRKz8e5HkTA3Y2z3ynQMddLNKcdt1UiszY24tHTNc7yi3jXn3h03mF2424IC7y810GPQv3xz4SvjIgdOF1LAIq7YdmlNtjb37IVsuK4Oc6Gxsaj+KnrfNJFE7NEawPPxjg9tPdHWFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ykd65aBQ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GqOVmpyS"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51124d86022so8647610e87.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Feb 2024 05:08:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707224936; x=1707829736; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qpw7KIB9SDLyg6r6DS+MT6bxeqqIfgw6wlcljwHw/7Y=;
-        b=GqOVmpySBNx2/SauyhOoO08nVrWpOuaQM17SYefrxN+TBOgSI1EtW+5sSLqOlV3KdA
-         RCqAZbFFFWRamj8MFp42E3GGtQ59wLmLLPgsyaHnagOEEZnBH9UFuzFR33LiwEuaEu+s
-         f7jNBdK2VGMa+lefDAKMbN4uEurRF6K9Y4sVaRzO30t3nHBA0clTTjnl/EqSNF0MyT5m
-         ga23vBX3hlnQKJS7b/zQpoi+vIBl16CkmjTGgxCA7iEBZx7bBDXmN8gLab4/HHTGAFSu
-         SF+0bNVHdBYg3S+I946if7xAOtM9EOhZfUrAON+N2jk+HCyJIF2TzZQ64RSWqmIIoeAR
-         /TMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707224936; x=1707829736;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpw7KIB9SDLyg6r6DS+MT6bxeqqIfgw6wlcljwHw/7Y=;
-        b=J5EPRWGE3Cv3Thu6cnmtKAimlWCQChz9Olivt1KhwhoaFKMnUfs/2p0gmrAhTegDU0
-         h9ZcELZW+myfOTmJ/JqaeLoH35OXDfNuf9ZfHxC5/jEFMgyzJtpQuJg194DImRfj74uO
-         CwQg9YC/ywiZQrfF88BRgAI70r2eFCHNMXQlE74A9xnMcZ4Tzg0+w8X9oOZleRqyLEar
-         tvWYqpIrmTLdoJnJKquqY1cWS4HBJ2j/zWRCRLrQEpcNMY20pg0gGKSj5Z+ZNCs7u/4q
-         xHSCnuk+ce/daeOkxycwZymN1WxZqvm5504TN75/CEVKG2bGCE6KBxJGhTpzIsDAizZJ
-         Sh/Q==
-X-Gm-Message-State: AOJu0YwPNunVWOM0VjTBPp+SpIU1OF4tBY0f7BVBvOGEdAI2z/daEU+D
-	/pSwBNe11z05IJzGI8kdHv4yJTezBWxvA9VdLQ/KdT40ligHlQ/G5H6xKzNzMTbqethppL6Y4t2
-	T
-X-Google-Smtp-Source: AGHT+IHz+S0/hLkcdwKUkrMXvDZrGQi09oEgaIQ9CQreZOYPgmTZ+FJGvUC2VV65gSeMtESWDNTYlQ==
-X-Received: by 2002:a05:6512:49d:b0:511:5411:1144 with SMTP id v29-20020a056512049d00b0051154111144mr1522178lfq.14.1707224936479;
-        Tue, 06 Feb 2024 05:08:56 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCV1kdRpRxa7551jyeZut7+dRRqYEjtBtwSA2JsotGvkOvTm6mCBlGpnHpehfGak1mZE8mcq6/UMldKAZztANJBjUemhrvgacLFFxwSfYqBx6Y/KMPmETVR1yalhuTtKnaSVgZ/7i5M1rgVtbTCpB0B+hirV0Rqfdrgp1Qsgbkn2Q4mBtnYJYlSF//crcBlkW7qxDpLtAs4fJ28x+UclDVIsblNMk3jaPBZpgQuBvBm9IvjCxvi/ScA/YWUSQXMEMbS+SA4vqHgPFSdSvgAdD3LdffSCSma53K2/PyLdtnF7paoT4ndU387TkTqCnZ5N8+qlR4ZQxt90RL4I7ngPqTv6oeYDY3dY+Bv0uZpQGQY=
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id cu16-20020a170906ba9000b00a2a61b9c166sm1135601ejd.33.2024.02.06.05.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 05:08:56 -0800 (PST)
-Date: Tue, 6 Feb 2024 16:08:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	Gregory Greenman <gregory.greenman@intel.com>,
-	Alon Giladi <alon.giladi@intel.com>,
-	Mukesh Sisodiya <mukesh.sisodiya@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: iwlwifi: return negative -EINVAL instead of positive
- EINVAL
-Message-ID: <f0391316-ab30-4664-96ac-03445ab2aeba@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ykd65aBQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707228943; x=1707833743; i=markus.elfring@web.de;
+	bh=3i1pZdvo2r3BXMaevJFKXByzHrypyI04neeHTBdO3m4=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=Ykd65aBQh90DaRZO1x3btzWdGHH7FW88bZSoxGx3JNJVxxPkZt/OotK0KT5QVCPe
+	 n9KByG8wCtMRcit5S64oEJuhVMM8mcK8GmBywydIUdbN8K0la+pc8zHA8Mg+d0WBk
+	 JCbPObBs2E9RTvA1ZAr0NCYbLxCTV3Ax4+2EGHcT9uBfIRzple0RoL1AwEe6wO6rL
+	 4XjZfQIJUNRWAgSfPL0KE/KYLluvS3NEk/ZEy6kmBbTjF67U+y3JsNf4z0/TA/Mix
+	 oUbNxUWzGYnrv7Z2YPne5T9GKnWG2pbKj21sV/WsXW3E/aqHONEfIfgzMsU1gPxRN
+	 FDt5RKtNvtQtduXvqQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3ouw-1qpX7n2Zl2-00zq1o; Tue, 06
+ Feb 2024 15:15:43 +0100
+Message-ID: <596b3bda-3bef-4e28-b9dd-08b96da97097@web.de>
+Date: Tue, 6 Feb 2024 15:15:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] iommu/ipmmu-vmsa: Use devm_platform_ioremap_resource() in
+ ipmmu_probe()
+To: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <e01cdb99-8497-4fec-b423-a0bfb483ac75@web.de>
+ <324d4e02-6a5a-4112-a3a7-d7aeb5876acc@arm.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <324d4e02-6a5a-4112-a3a7-d7aeb5876acc@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1GavO/jqMcqRN1BtjZgAUfaF8zQP8ZZ6HX5WMwrlBEsJoGeDJVY
+ IKXoCa9LumD5e+pjiU6GG6lQSgDPGG2FoL1UZsWwoGv3DPlNtv9Pe7X/ad8kaLXP8ihE+pO
+ nnPCEo1NH32sPL24Obk2n5hjxETQSjWguVujlm8Dv52pPeA9N4TzfI1N/s3VlcVTN0PXMui
+ Uq4v54OwpuJeRL2SxK4ug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Skb7Gp/BNDw=;4qnmnNiFDllDhJDPdwsxIUfqFhS
+ a+iiDCkpzoIM6diumPEtrCekaGiHtQa0fH7Q5qXo2UwBMqMwpRHeX78I71hkgzoxf//BXoHK+
+ fTgLXm6tzovAPHkRhtuTxjH4ZCMZM41J1C87zJd63cwQhN4Va3/DI2uluhC+OvwpT2VBUMnzD
+ FpSSb9d0O0+iY1ILHEk8sObLEloKkSBmY9ujxwG7QLUIftRo3lnzBKs6W8PehsxMOFRcuP7Ge
+ sWK9TVkZw1IIA3oibgLKd6wVT4nhRKSVp2WE62HNbouV/js423TUnYH/oP8T/1gLEC431Ve0K
+ riL0IMPsP+OYegM6mJAONo9uEc0hZiEa1kCuQJxDR8t2pKvkeC0fpfvuJsro22cQJ+2mnGLwp
+ GhYv0KBI8CaxTbZOYDrFgjtqiFVY984GJm57SCWLM9hgkF5xJmXT+99RlDzuNj2r560W1Faqz
+ HoUjYhf8OOmNaz8VRJR190X6EGKo74PREYpJaJhopuaSmrmV8ylC7GfC1JJx7aHygpc5S7acr
+ 8BydEO3F3qzkIyFqCG9TdKzt1+H/zbR3T0435sYeX0XnO2bKWu9Juo4fyvG+kzYRX9O27oB+q
+ 70H4cNEhLtlKo+gzvCSoiqIVsylhEueqBODnC1HjsdR1t7ddpb09dSC3oRb+/l7RcXWLfCH63
+ +4hrY6J6zZerZYVgQ5Jgn0QFQSY1jDb2is3MO5x205su3+feRbboVTC6/hs+anh36lphAM19X
+ FBigUf9YLFyCdgux1Z6bEdrx3IUsEAb4tBbv15jDWDLz5LJVdp09PLZVrku+vFVy9VAh/Ofps
+ aX4iYownoQSS8h7HKqQ0pTgrE7xsqge38K02Mszg+vabI=
 
-The '-' character is missing in -EINVAL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2024 15:00:23 +0100
 
-Fixes: fc7214c3c986 ("wifi: iwlwifi: read DSM functions from UEFI")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/wireless/intel/iwlwifi/fw/uefi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
+07f87626858ff42
+("drivers: provide devm_platform_ioremap_resource()").
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-index fe6d0141cd5b..3c4c99eed110 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-@@ -679,7 +679,7 @@ int iwl_uefi_get_dsm(struct iwl_fw_runtime *fwrt, enum iwl_dsm_funcs func,
- 		     u32 *value)
+* Thus reuse existing functionality instead of keeping duplicate source co=
+de.
+
+* Delete a local variable which became unnecessary with this refactoring.
+
+
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+v2:
+The transformation pattern was adjusted based on advices by known contribu=
+tors.
+
+Examples:
+* Doug Anderson
+* Geert Uytterhoeven
+* Robin Murphy
+
+
+ drivers/iommu/ipmmu-vmsa.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index ace1fc4bd34b..7e28aac1e383 100644
+=2D-- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -1005,7 +1005,6 @@ static const struct of_device_id ipmmu_of_ids[] =3D =
+{
+ static int ipmmu_probe(struct platform_device *pdev)
  {
- 	struct uefi_cnv_var_general_cfg *data;
--	int ret = EINVAL;
-+	int ret = -EINVAL;
- 
- 	/* Not supported function index */
- 	if (func >= DSM_FUNC_NUM_FUNCS || func == 5)
--- 
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct resource *res;
+ 	int irq;
+ 	int ret;
+
+@@ -1025,8 +1024,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 		return ret;
+
+ 	/* Map I/O memory and request IRQ. */
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mmu->base =3D devm_ioremap_resource(&pdev->dev, res);
++	mmu->base =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mmu->base))
+ 		return PTR_ERR(mmu->base);
+
+=2D-
 2.43.0
 
