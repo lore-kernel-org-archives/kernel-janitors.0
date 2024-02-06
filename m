@@ -1,131 +1,58 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3FB131E55;
-	Tue,  6 Feb 2024 14:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D911E866;
+	Tue,  6 Feb 2024 14:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707228966; cv=none; b=cLzkBqZFSn5/j0a7qNbRf3fsCuJHfH4uQf6Ij5sA+5NgRwMpMxFyY+WsgbSX8a9VRWWmPKFBrb0UDEeeQVupzp08xKUbMc9Em25i74eLKBDGM22N3tS2jVmO1m2hRsGH2C2yIg87JAOG++Ca/wQPpx1Qs38Nu5nemqmPeumAxzg=
+	t=1707229917; cv=none; b=JtfM4KbTmr1oKB1yqqW2tLIEcjmKi0mIQtgkUiRpI6kZSpzBQo3Y7QFXvCkpibIpOgkdR/lwWM9RdxSK2DuJmBsYYNDgYM9xhnuUcmSXOB2fOLuB2cFkujnNWDfwz+Ppo1AcOidOnOOxPoErng9gqP/7iagWq6lDGyzyc4aXvNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707228966; c=relaxed/simple;
-	bh=3i1pZdvo2r3BXMaevJFKXByzHrypyI04neeHTBdO3m4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQXt3/Kvhzb1arHeRPSLyrbJbpdF1hppZRRKz8e5HkTA3Y2z3ynQMddLNKcdt1UiszY24tHTNc7yi3jXn3h03mF2424IC7y810GPQv3xz4SvjIgdOF1LAIq7YdmlNtjb37IVsuK4Oc6Gxsaj+KnrfNJFE7NEawPPxjg9tPdHWFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ykd65aBQ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1707229917; c=relaxed/simple;
+	bh=aEt/V2OZH7efYZxHVX0OSsx7A33Zpr5Q4epy53wq8hE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVD3Aq46zGCB8vUbzJC4x6JK57cdDK0d0YrOGQwjJDEQ/3r0LqqdrssrGc7ZdGXf2F28kIZGQLB0qZLRWoy4jyJ4u4jDWYMK/IhAE6BbynERDKjZLXFMGtMTq/uZ8SOr1zjvpnv3FqiEbgnembJ85DNUPYcUFrWpymMV7Ok5Xh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp0qlIpq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ykd65aBQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1707228943; x=1707833743; i=markus.elfring@web.de;
-	bh=3i1pZdvo2r3BXMaevJFKXByzHrypyI04neeHTBdO3m4=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=Ykd65aBQh90DaRZO1x3btzWdGHH7FW88bZSoxGx3JNJVxxPkZt/OotK0KT5QVCPe
-	 n9KByG8wCtMRcit5S64oEJuhVMM8mcK8GmBywydIUdbN8K0la+pc8zHA8Mg+d0WBk
-	 JCbPObBs2E9RTvA1ZAr0NCYbLxCTV3Ax4+2EGHcT9uBfIRzple0RoL1AwEe6wO6rL
-	 4XjZfQIJUNRWAgSfPL0KE/KYLluvS3NEk/ZEy6kmBbTjF67U+y3JsNf4z0/TA/Mix
-	 oUbNxUWzGYnrv7Z2YPne5T9GKnWG2pbKj21sV/WsXW3E/aqHONEfIfgzMsU1gPxRN
-	 FDt5RKtNvtQtduXvqQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3ouw-1qpX7n2Zl2-00zq1o; Tue, 06
- Feb 2024 15:15:43 +0100
-Message-ID: <596b3bda-3bef-4e28-b9dd-08b96da97097@web.de>
-Date: Tue, 6 Feb 2024 15:15:23 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp0qlIpq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6C2C433F1;
+	Tue,  6 Feb 2024 14:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707229917;
+	bh=aEt/V2OZH7efYZxHVX0OSsx7A33Zpr5Q4epy53wq8hE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hp0qlIpq1DVLQi2q+Xc/hwYGFU2DaMwn+PgQMcIZ00eR3thyNofOGvNiPlpbiGupv
+	 3kikZk8y8CiL5K3dzAYTYsnXlYE84TdSJK0F2E4sWyRMpYXXmqBxlzNoHAZsmCWUrh
+	 0k7ZISpNBVe379I4S1OFwN+1N9JWo7gM/ukIbGU0y/LF+fgFOM/2vsacBWMLO/8NbR
+	 bfMJDFJTTCzK/3GI19c3F+/voK3hFWTvZ0zJ1P1xgDWNpZFvuTMhYM6OmDEGtsMnMy
+	 qsLBbxOqs5NzF7VrBanAUdBr5PLEWBAx9aDrYcJlUdQ5ozfZQyXwf/2jzysXYYEXzo
+	 BiiEDqvchbMOQ==
+Date: Tue, 6 Feb 2024 14:30:23 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: krzysztof.kozlowski@linaro.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] nfc: hci: Introduce nfc_llc_del_engine() to
+ reduce code duplication
+Message-ID: <20240206143023.GB1104779@kernel.org>
+References: <cover.1706946099.git.christophe.jaillet@wanadoo.fr>
+ <6d9a8544b923d92defdf2ab1b9092004cc7b51f1.1706946099.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] iommu/ipmmu-vmsa: Use devm_platform_ioremap_resource() in
- ipmmu_probe()
-To: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
- kernel-janitors@vger.kernel.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <e01cdb99-8497-4fec-b423-a0bfb483ac75@web.de>
- <324d4e02-6a5a-4112-a3a7-d7aeb5876acc@arm.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <324d4e02-6a5a-4112-a3a7-d7aeb5876acc@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:1GavO/jqMcqRN1BtjZgAUfaF8zQP8ZZ6HX5WMwrlBEsJoGeDJVY
- IKXoCa9LumD5e+pjiU6GG6lQSgDPGG2FoL1UZsWwoGv3DPlNtv9Pe7X/ad8kaLXP8ihE+pO
- nnPCEo1NH32sPL24Obk2n5hjxETQSjWguVujlm8Dv52pPeA9N4TzfI1N/s3VlcVTN0PXMui
- Uq4v54OwpuJeRL2SxK4ug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Skb7Gp/BNDw=;4qnmnNiFDllDhJDPdwsxIUfqFhS
- a+iiDCkpzoIM6diumPEtrCekaGiHtQa0fH7Q5qXo2UwBMqMwpRHeX78I71hkgzoxf//BXoHK+
- fTgLXm6tzovAPHkRhtuTxjH4ZCMZM41J1C87zJd63cwQhN4Va3/DI2uluhC+OvwpT2VBUMnzD
- FpSSb9d0O0+iY1ILHEk8sObLEloKkSBmY9ujxwG7QLUIftRo3lnzBKs6W8PehsxMOFRcuP7Ge
- sWK9TVkZw1IIA3oibgLKd6wVT4nhRKSVp2WE62HNbouV/js423TUnYH/oP8T/1gLEC431Ve0K
- riL0IMPsP+OYegM6mJAONo9uEc0hZiEa1kCuQJxDR8t2pKvkeC0fpfvuJsro22cQJ+2mnGLwp
- GhYv0KBI8CaxTbZOYDrFgjtqiFVY984GJm57SCWLM9hgkF5xJmXT+99RlDzuNj2r560W1Faqz
- HoUjYhf8OOmNaz8VRJR190X6EGKo74PREYpJaJhopuaSmrmV8ylC7GfC1JJx7aHygpc5S7acr
- 8BydEO3F3qzkIyFqCG9TdKzt1+H/zbR3T0435sYeX0XnO2bKWu9Juo4fyvG+kzYRX9O27oB+q
- 70H4cNEhLtlKo+gzvCSoiqIVsylhEueqBODnC1HjsdR1t7ddpb09dSC3oRb+/l7RcXWLfCH63
- +4hrY6J6zZerZYVgQ5Jgn0QFQSY1jDb2is3MO5x205su3+feRbboVTC6/hs+anh36lphAM19X
- FBigUf9YLFyCdgux1Z6bEdrx3IUsEAb4tBbv15jDWDLz5LJVdp09PLZVrku+vFVy9VAh/Ofps
- aX4iYownoQSS8h7HKqQ0pTgrE7xsqge38K02Mszg+vabI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d9a8544b923d92defdf2ab1b9092004cc7b51f1.1706946099.git.christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2024 15:00:23 +0100
+On Sat, Feb 03, 2024 at 08:51:03AM +0100, Christophe JAILLET wrote:
+> Add a new helper to avoid code duplication between nfc_llc_exit() and
+> nfc_llc_unregister().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-A wrapper function is available since the commit 7945f929f1a77a1c8887a97ca=
-07f87626858ff42
-("drivers: provide devm_platform_ioremap_resource()").
-
-* Thus reuse existing functionality instead of keeping duplicate source co=
-de.
-
-* Delete a local variable which became unnecessary with this refactoring.
-
-
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-v2:
-The transformation pattern was adjusted based on advices by known contribu=
-tors.
-
-Examples:
-* Doug Anderson
-* Geert Uytterhoeven
-* Robin Murphy
-
-
- drivers/iommu/ipmmu-vmsa.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index ace1fc4bd34b..7e28aac1e383 100644
-=2D-- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1005,7 +1005,6 @@ static const struct of_device_id ipmmu_of_ids[] =3D =
-{
- static int ipmmu_probe(struct platform_device *pdev)
- {
- 	struct ipmmu_vmsa_device *mmu;
--	struct resource *res;
- 	int irq;
- 	int ret;
-
-@@ -1025,8 +1024,7 @@ static int ipmmu_probe(struct platform_device *pdev)
- 		return ret;
-
- 	/* Map I/O memory and request IRQ. */
--	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mmu->base =3D devm_ioremap_resource(&pdev->dev, res);
-+	mmu->base =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mmu->base))
- 		return PTR_ERR(mmu->base);
-
-=2D-
-2.43.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
