@@ -1,105 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663EE82D73;
-	Wed,  7 Feb 2024 19:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B772982D97;
+	Wed,  7 Feb 2024 19:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707333052; cv=none; b=R6rsRnmeCD0TDQlZoEB5WhoQiyYDaKEKi79IsxXz5qj0r6UGVXlI6+FSheh7zetyyQz7ZTo0MlBinVOYwHNMDw9xwWO7EQ6oI7qjs3t4q9zCgvDa286x6+Z1uo8JPQyz4bNfXHoiu6UP6xP8EbXOGxZQTXiXFP9/9+b7mrY2Jag=
+	t=1707334906; cv=none; b=J50iAYJk/+QqhNyXyjbFtzbs5FRSz8NLXsV6voD7zThK78KLcNpDa7hngQPbiiE4aEX0yVfu4yOwcVLWdbKpum+PIJ3puU0+FiKPGu13jZcWKQOt8X75G1eGpSprPkTEfR/yDe0Cxz+jLv7AWnUwl580TY9QUzoNxNCPkS/eAps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707333052; c=relaxed/simple;
-	bh=OCnvHMbEgGstPQ+6RSJ1FJWLuiwrN1X56YrscIQU1ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=I61fqL9beUI2jb1iYEN4fBfq3v7fnCuvY243JejRFfl/1lObttI/67Un0Nl7OvDsOuVLkiPTe/uAL5xM+mihMKA62H99tD0QRAIeexWvvKq+iNAPZGriED+vKqkgORvFmX45IIfZx7QFTyHAulbhr2arc3wl7sYBhzBeWCVTFC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3ymfeSd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707334906; c=relaxed/simple;
+	bh=qklZB0bLC2a5JgC1IlNtz4oyZOfriDxJVVLL7P91U0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VeZ00I7iG/drqnUcCQUUeEz1JA0elWTCqaaVcbOoD6sykmF5+c/TWNng8mSDthPdpCth1apEFlx46pTBgMt3kVWXxYUjEPFWzniTl3/34tQsU41J1FtcvdbUeEq0u+4V4D0nOWm42qhLFy8drYQE+b9uKentG8S4u7EsdNaQsYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZVMCdkl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3ymfeSd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD0FC433F1;
-	Wed,  7 Feb 2024 19:10:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZVMCdkl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6540C433F1;
+	Wed,  7 Feb 2024 19:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707333051;
-	bh=OCnvHMbEgGstPQ+6RSJ1FJWLuiwrN1X56YrscIQU1ps=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=k3ymfeSdbhT2bqIwZJS9xY+5EqNd0Bcsp4td7PM/2zlnSyoEqO6cpotVx0zrxuUNC
-	 0BaCBHHx/vV9Z/gbSlX5ZtlEZ01yzL0GgyHimwHldvTzywMRpsS1g+rCVyEeGVPjGi
-	 V6XxpTqHO+dZk803Wb91hawO+t7PUEyoly+kALzl79DrE+Az5fB9+/pYT3rLkUfjYV
-	 H8i0oRKW4YDLZhRDdhr/xv/PiY29kdcqa3+4fA5VlBNtMwc5awStF+Wtn9kpQBMeju
-	 nDiCUc+f2pf8zB/+Ce1IaU/9XnzAWhmpKFiO+MuCIuxYTvCgSWVe2yFKtoaSF/uN9E
-	 Re7Junm/vc3WA==
-Date: Wed, 7 Feb 2024 13:10:50 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Niklas Cassel <niklas.cassel@wdc.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] PCI: dwc: Fix a 64bit bug in
- dw_pcie_ep_raise_msix_irq()
-Message-ID: <20240207191050.GA912556@bhelgaas>
+	s=k20201202; t=1707334906;
+	bh=qklZB0bLC2a5JgC1IlNtz4oyZOfriDxJVVLL7P91U0s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gZVMCdklIIZ6bIHoB1raFtdfESX/bA8benswxm5LvjTcUpNxjGzZ0DBnYY6sTgbXD
+	 AauUh3g9dIjGdC6tuLeVLIBjP3bJG3MnOkqOoF84KxdEh21jjxcThIa/zRAjbY4O6m
+	 JfheDHfyNpmB8s9DKQpe+F9RQtDXFuIhAQtF6WYepIDZutFlzlDnb4Bc4YtOS/NPax
+	 cBzgg9h8ciFPFmahE/ouXKvBudAatqPOGGfEl8CTNNG33rS67h0hlwc2niesD6AX/S
+	 3Ko/JZ8lxBc+788Bu6nNRhXdnLlvxYg3g0aaR4Psmv56a1xpIR7YHm+dZQ+8lITFWX
+	 oAgKyRXNP1D1A==
+Date: Wed, 7 Feb 2024 11:41:44 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Gerhard
+ Engleder <gerhard@engleder-embedded.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tsnep: Use devm_platform_get_and_ioremap_resource() in
+ tsnep_probe()
+Message-ID: <20240207114144.25e82d30@kernel.org>
+In-Reply-To: <29e9dc0f-5597-4fee-be5c-25a5ab4fe2dc@web.de>
+References: <29e9dc0f-5597-4fee-be5c-25a5ab4fe2dc@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 26, 2024 at 11:40:37AM +0300, Dan Carpenter wrote:
-> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
-> unsigned int.  This means that when the code does:
+On Mon, 5 Feb 2024 13:54:24 +0100 Markus Elfring wrote:
+> A wrapper function is available since the commit 890cc39a879906b63912482dfc41944579df2dc6
+> ("drivers: provide devm_platform_get_and_ioremap_resource()").
+> Thus reuse existing functionality instead of keeping duplicate source code.
 > 
->         msg_addr &= ~aligned_offset;
+> This issue was detected by using the Coccinelle software.
 > 
-> it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
-> to do the alignment instead.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-I applied both of these to for-linus for v6.8, thanks!
-
-> ---
-> v5: Add the #include.
-> v4: Add stable and r-b from Niklas
-> v3: Use ALIGN_DOWN()
-> v2: fix typo in commit message
-> 
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 5befed2dc02b..d6b66597101e 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -6,6 +6,7 @@
->   * Author: Kishon Vijay Abraham I <kishon@ti.com>
->   */
->  
-> +#include <linux/align.h>
->  #include <linux/bitfield.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -551,7 +552,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	}
->  
->  	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
-> -	msg_addr &= ~aligned_offset;
-> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
->  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
->  				  epc->mem->window.page_size);
->  	if (ret)
-> -- 
-> 2.43.0
-> 
+applied, thanks!
+-- 
+pw-bot: accept
