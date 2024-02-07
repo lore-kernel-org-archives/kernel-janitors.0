@@ -1,65 +1,67 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEB577653;
-	Wed,  7 Feb 2024 13:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819A25A10F;
+	Wed,  7 Feb 2024 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707313345; cv=none; b=lLnmNMccA1u4YpICDU08ZTPriL8NuGAtEvrQvazNkWXE+FmtX2YU7omIl/UEnf4AWWjMSoRqfRyjkvpZqPtplJLawNRdkn5AnPYEYAXy7jKxZe6IB91mLzEw2JQSYGPe3PXh8yxvGz/f6xOSGOq5lknFA9NlQ0gPmXVmuTEhsAs=
+	t=1707316713; cv=none; b=biGnd/NKY8U1c+UMABqCZo1UNsOtPKKLd5ZKfcmT35jbs1xh/eqPuU5O+fm8UTQnLtGu3dVq7T6Z6X33sdy73bx3HTTFg3pQtP75bJuoTYcRRpxxFfVxl3qmR22VpK7i0c/EHrtYMVjcQFccGSXUuwWc80kjo7j3/mtF0gt6VW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707313345; c=relaxed/simple;
-	bh=Q5i1+JxAX3X37h5Opr/MnoRC2yOzxSaGQbgIbaLb9Dw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=rBrcPDr/lbkcpvAAq5+EYwHf7WDVylMw0dkaB6HhZhcunRg0g2NLNRt0C00krece53ur4CdYssv/Oon2AxwKPCMpinqzc8GFVN1pAGEYIOLsCcaOiW0/MIfgRjg8/WOF1LPMJEccEebYTNk4+8pl7VJON8bXNHarVjnGW+AkiXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+nwHWID; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1707316713; c=relaxed/simple;
+	bh=Y42qZrTeT1zrticJCI2eB78hvcGQgoC9z0KtHukNgEk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Gu5nnZwBWdaT1wE0dSkSShDAvED+04Bu880XNlVq67iB9TQ53T6xSrLa35hRvZxs6t7ACOsuHeWBguXtx/cGnX3BZ5Cd3h2CSOnJnB0oXoBZzqaQL6DF4Wim1KoNG0zWZROXNmq48Y25mRr4JyEGtIaojk2gEIqPeb57+cTMpE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fp55w1d1; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+nwHWID"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a38271c0bd5so90311066b.0;
-        Wed, 07 Feb 2024 05:42:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fp55w1d1"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2a17f3217aso86098466b.2;
+        Wed, 07 Feb 2024 06:38:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707313341; x=1707918141; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707316709; x=1707921509; darn=vger.kernel.org;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=svSDgPYX8pMwLFJxNK8qqtmJaLjednJg3y5h+ZDs4aw=;
-        b=M+nwHWIDaEhPlc2rB25V/cc1VkKH3220dsBfYjfxui0UrnnayyBufGLVRHbMxls26H
-         fhvwGA87pAjxZj6g4l4We9nO2lf5rab1Ey1wxkp62z99fKr63YlNcowwtJX8ELtgINLQ
-         8rsg+FNnV+78EkdQScYAYxBgkrQGLbSPaVUWCrb37TuinQxbU2/3nfbCwxn9YCLk3ocG
-         BHbDg5LtgbiNC8/JkdolEkYtRUF0w4h5Qxk631A2raqj1A1hLwvfRdEu0WX2QbW5DNJi
-         mvsYrXKOIsYFZRF5tDGQ0Q2rAPY3tDMQ8/DrEPshr9sTlteUT/7DYfAW21O8/U6ElaeN
-         vbDA==
+        bh=lE++2qVcHW+CEBtsbdN8eH8qiiSu+9Mbj56gyVDwMac=;
+        b=fp55w1d1f4fgJiTe5O1p1c16/pEOio2w/3miKjgdLbVEzRRklq6EOP9RjAEVtCRJC8
+         l37643r2Poab2vaNXzw5XNO8oWyOtO4mVyi8pBgxel/7KaJSEJ65r/WijN+g9h8ednzK
+         dUnwJNMjSPcDq/2C1N5bxYp0U++y8H2US/3eKQMB8l+/tCK3xEXCQc/7OvG8Gbpkzj5b
+         LHTT8gshEf0+0fhlmqRaAmmjWP7eXXqhtTo4xVy2FuzjCOJiz92kPcwMie9GXZfZlm8g
+         J/UmmkypCjXFYsf/XP7VFUY6iHrR5OdkArakTeMPs7WsKSyf6jPnB00JQtktJI/gTBNG
+         6YYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707313341; x=1707918141;
+        d=1e100.net; s=20230601; t=1707316709; x=1707921509;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=svSDgPYX8pMwLFJxNK8qqtmJaLjednJg3y5h+ZDs4aw=;
-        b=fo7fTorFs3WxSGxBIdWW04hIyj+aB/WkAXI5vy/sdqXZU9Tnar27rHSCtKGHJzpH05
-         AobVJEqFxq1NdmwjSBl9GwczBOxGpSte9yzh62zamPQSteQoSMaF9N/oC4YSOpNeUwU8
-         XtjGXwDNJkiNhZ2VtLM8ydpPIocuZKfPib4Z9GtTwiJHquU63L3yP8i+MmO+P9I8pItu
-         rWexOAVJ/pwmt5Y4LnwhEuyZfsXiYUZ7NpiT4bkvDGKwRtJHX5pfA7D9Bvr0oo2wZ+nP
-         MWrcyhbh8NKrExae5BXRcmH/yyQFDjdrWXxdVe3ptwF4/++PLcSz1lOaiRJEC9sxU98U
-         xfOg==
-X-Gm-Message-State: AOJu0YxOCXeMbjjfnZFJK6H1q5CxoPqGAPJ9LA3TV7GRIYAmJ15dSp/a
-	tel6dV9UDBDEygIbfEIN2b28u9aNOl6G+jj0RabwCGbJMKfjx/fa
-X-Google-Smtp-Source: AGHT+IHbuvGjT0Vd8LtdWDajODsTZctUdqUCO9ot6uEy57r0b1GGenN9vqs2vYUNuRPv5JZCloCWSg==
-X-Received: by 2002:a17:906:6b8a:b0:a38:5ce0:2f86 with SMTP id l10-20020a1709066b8a00b00a385ce02f86mr2068370ejr.40.1707313341068;
-        Wed, 07 Feb 2024 05:42:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQUo4LjH42nATAcFls2YkfgXjqFucrIzJNeMt2O3ck/gNRxyB9Ojr2MGAyqtKC5s7Yz50dTEybm2p/kIx8iZDASxV7O8bLBhDK4BJjgqPQdRq9IBbqqfSlNcj7Zw+WKiTjVUHu+6B5gMP3/zu18rVj+Zvt9RQssMySw0CWz2h+zj++XYSc+polmuP3vdkPFmSKZuHkn41Z2x5Oi7oGnrEnItfSXRelUGYlKxhFWJi/9QU9BuGh
+        bh=lE++2qVcHW+CEBtsbdN8eH8qiiSu+9Mbj56gyVDwMac=;
+        b=XICHjH2eccfy8c6zozplcmiQ6yTfIvG1BIIboP1yNel5ow9Y25deIhGuv8COwLyM88
+         Hzx2XPp/fY467ree5ouNhWELw7SmxXst5f7mz7WXwFj4Km1HKVYhIPNTHCJoRXmm4bm+
+         gLcRr4vimbBy8gAOEmvgklduXbBoOOJL0K7INqEf46l3MX/eD67ckY9fbQtyXUx+RLVT
+         7ooufmxSQhMulcn7079cJi7DT7wNPLTZePYJ1/kCcuFD2b2U5oKYo54a9YhrmVdbiBDi
+         2U+hTKnFmwjM+kdpDbScIuqXR2BX69RWPHwCilBFUzSepdxzsS9lXDnmkasnzBzjD+Ms
+         sarA==
+X-Gm-Message-State: AOJu0Yzh3u0s7aXM5+Gu0yFazDSenKZoNMTk/OmRmqSrBZW9Swd7nl2H
+	t84z33sPsBWKJLwC6GFZ7XlmstkOLNMOSDr+o/ZFqRXahSagn4Ug
+X-Google-Smtp-Source: AGHT+IHZ/o2nyrH1w9/WKrRaDNSV5U88ds7/ilsdYSb4FQ5tw2TG25fyjXJ5DGd3biDOaR4ubXWj8Q==
+X-Received: by 2002:a17:906:1c5:b0:a35:103e:3614 with SMTP id 5-20020a17090601c500b00a35103e3614mr3841031ejj.52.1707316708889;
+        Wed, 07 Feb 2024 06:38:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV1SGCkbFbH5np12iRMTSf3C23VaNyd1pFuBYbaAmdRdkAf7nHEAwZSaqxOWBF+hPrdUQunP/Th/RSqYO6stTgL9/XL6PoB08KvQruhpOOGgEDUM4vK/OtGz/ebYpuGnLUW4K432aGsSTX3ADljRzcFogfQUNj8mzlxV39Szh2T3A9bDoJAI1M2vAxWNRzR/JHpfnREjymvB0B/VuhOLvpEN9uB8IHL48zDAqxlFAfM4baOKxYFfMYmtnXECNQqGBNCpVgxOWeAepvc+Regj52iX2ez
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:81be:a476:88e2:db23])
-        by smtp.gmail.com with ESMTPSA id c17-20020a170906695100b00a34d0a865ecsm754770ejs.163.2024.02.07.05.42.20
+        by smtp.gmail.com with ESMTPSA id s12-20020a17090699cc00b00a35200615d7sm820909ejn.1.2024.02.07.06.38.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 05:42:20 -0800 (PST)
+        Wed, 07 Feb 2024 06:38:28 -0800 (PST)
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] Bluetooth: hci_event: Remove code to removed CONFIG_BT_HS
-Date: Wed,  7 Feb 2024 14:42:11 +0100
-Message-Id: <20240207134211.29201-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] dma-contiguous: remove debug code to removed CONFIG_CMA_DEBUG
+Date: Wed,  7 Feb 2024 15:38:25 +0100
+Message-Id: <20240207143825.986-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,197 +69,36 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 
-Commit cec9f3c5561d ("Bluetooth: Remove BT_HS") removes config BT_HS, but
-misses two "ifdef BT_HS" blocks in hci_event.c.
+Commit acc2f3e42d4a ("mm/cma: drop CONFIG_CMA_DEBUG") removes the config
+CMA_DEBUG and the debug code in cma.c, but misses debug code in
+kernel/dma/contiguous.c.
 
 Remove this dead code from this removed config option.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- net/bluetooth/hci_event.c | 163 --------------------------------------
- 1 file changed, 163 deletions(-)
+Andrew, please pick this minor clean-up patch of top of the commit above.
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index 271c00792801..07e690b7f8db 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -5676,150 +5676,6 @@ static void hci_remote_oob_data_request_evt(struct hci_dev *hdev, void *edata,
- 	hci_dev_unlock(hdev);
- }
+ kernel/dma/contiguous.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index f005c66f378c..055da410ac71 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -37,12 +37,6 @@
  
--#if IS_ENABLED(CONFIG_BT_HS)
--static void hci_chan_selected_evt(struct hci_dev *hdev, void *data,
--				  struct sk_buff *skb)
--{
--	struct hci_ev_channel_selected *ev = data;
--	struct hci_conn *hcon;
--
--	bt_dev_dbg(hdev, "handle 0x%2.2x", ev->phy_handle);
--
--	hcon = hci_conn_hash_lookup_handle(hdev, ev->phy_handle);
--	if (!hcon)
--		return;
--
--	amp_read_loc_assoc_final_data(hdev, hcon);
--}
--
--static void hci_phy_link_complete_evt(struct hci_dev *hdev, void *data,
--				      struct sk_buff *skb)
--{
--	struct hci_ev_phy_link_complete *ev = data;
--	struct hci_conn *hcon, *bredr_hcon;
--
--	bt_dev_dbg(hdev, "handle 0x%2.2x status 0x%2.2x", ev->phy_handle,
--		   ev->status);
--
--	hci_dev_lock(hdev);
--
--	hcon = hci_conn_hash_lookup_handle(hdev, ev->phy_handle);
--	if (!hcon)
--		goto unlock;
--
--	if (!hcon->amp_mgr)
--		goto unlock;
--
--	if (ev->status) {
--		hci_conn_del(hcon);
--		goto unlock;
--	}
--
--	bredr_hcon = hcon->amp_mgr->l2cap_conn->hcon;
--
--	hcon->state = BT_CONNECTED;
--	bacpy(&hcon->dst, &bredr_hcon->dst);
--
--	hci_conn_hold(hcon);
--	hcon->disc_timeout = HCI_DISCONN_TIMEOUT;
--	hci_conn_drop(hcon);
--
--	hci_debugfs_create_conn(hcon);
--	hci_conn_add_sysfs(hcon);
--
--	amp_physical_cfm(bredr_hcon, hcon);
--
--unlock:
--	hci_dev_unlock(hdev);
--}
--
--static void hci_loglink_complete_evt(struct hci_dev *hdev, void *data,
--				     struct sk_buff *skb)
--{
--	struct hci_ev_logical_link_complete *ev = data;
--	struct hci_conn *hcon;
--	struct hci_chan *hchan;
--	struct amp_mgr *mgr;
--
--	bt_dev_dbg(hdev, "log_handle 0x%4.4x phy_handle 0x%2.2x status 0x%2.2x",
--		   le16_to_cpu(ev->handle), ev->phy_handle, ev->status);
--
--	hcon = hci_conn_hash_lookup_handle(hdev, ev->phy_handle);
--	if (!hcon)
--		return;
--
--	/* Create AMP hchan */
--	hchan = hci_chan_create(hcon);
--	if (!hchan)
--		return;
--
--	hchan->handle = le16_to_cpu(ev->handle);
--	hchan->amp = true;
--
--	BT_DBG("hcon %p mgr %p hchan %p", hcon, hcon->amp_mgr, hchan);
--
--	mgr = hcon->amp_mgr;
--	if (mgr && mgr->bredr_chan) {
--		struct l2cap_chan *bredr_chan = mgr->bredr_chan;
--
--		l2cap_chan_lock(bredr_chan);
--
--		bredr_chan->conn->mtu = hdev->block_mtu;
--		l2cap_logical_cfm(bredr_chan, hchan, 0);
--		hci_conn_hold(hcon);
--
--		l2cap_chan_unlock(bredr_chan);
--	}
--}
--
--static void hci_disconn_loglink_complete_evt(struct hci_dev *hdev, void *data,
--					     struct sk_buff *skb)
--{
--	struct hci_ev_disconn_logical_link_complete *ev = data;
--	struct hci_chan *hchan;
--
--	bt_dev_dbg(hdev, "handle 0x%4.4x status 0x%2.2x",
--		   le16_to_cpu(ev->handle), ev->status);
--
--	if (ev->status)
--		return;
--
--	hci_dev_lock(hdev);
--
--	hchan = hci_chan_lookup_handle(hdev, le16_to_cpu(ev->handle));
--	if (!hchan || !hchan->amp)
--		goto unlock;
--
--	amp_destroy_logical_link(hchan, ev->reason);
--
--unlock:
--	hci_dev_unlock(hdev);
--}
--
--static void hci_disconn_phylink_complete_evt(struct hci_dev *hdev, void *data,
--					     struct sk_buff *skb)
--{
--	struct hci_ev_disconn_phy_link_complete *ev = data;
--	struct hci_conn *hcon;
--
--	bt_dev_dbg(hdev, "status 0x%2.2x", ev->status);
--
--	if (ev->status)
--		return;
--
--	hci_dev_lock(hdev);
--
--	hcon = hci_conn_hash_lookup_handle(hdev, ev->phy_handle);
--	if (hcon && hcon->type == AMP_LINK) {
--		hcon->state = BT_CLOSED;
--		hci_disconn_cfm(hcon, ev->reason);
--		hci_conn_del(hcon);
--	}
--
--	hci_dev_unlock(hdev);
--}
+ #define pr_fmt(fmt) "cma: " fmt
+ 
+-#ifdef CONFIG_CMA_DEBUG
+-#ifndef DEBUG
+-#  define DEBUG
+-#endif
 -#endif
 -
- static void le_conn_update_addr(struct hci_conn *conn, bdaddr_t *bdaddr,
- 				u8 bdaddr_type, bdaddr_t *local_rpa)
- {
-@@ -7629,25 +7485,6 @@ static const struct hci_ev {
- 	/* [0x3e = HCI_EV_LE_META] */
- 	HCI_EV_REQ_VL(HCI_EV_LE_META, hci_le_meta_evt,
- 		      sizeof(struct hci_ev_le_meta), HCI_MAX_EVENT_SIZE),
--#if IS_ENABLED(CONFIG_BT_HS)
--	/* [0x40 = HCI_EV_PHY_LINK_COMPLETE] */
--	HCI_EV(HCI_EV_PHY_LINK_COMPLETE, hci_phy_link_complete_evt,
--	       sizeof(struct hci_ev_phy_link_complete)),
--	/* [0x41 = HCI_EV_CHANNEL_SELECTED] */
--	HCI_EV(HCI_EV_CHANNEL_SELECTED, hci_chan_selected_evt,
--	       sizeof(struct hci_ev_channel_selected)),
--	/* [0x42 = HCI_EV_DISCONN_PHY_LINK_COMPLETE] */
--	HCI_EV(HCI_EV_DISCONN_LOGICAL_LINK_COMPLETE,
--	       hci_disconn_loglink_complete_evt,
--	       sizeof(struct hci_ev_disconn_logical_link_complete)),
--	/* [0x45 = HCI_EV_LOGICAL_LINK_COMPLETE] */
--	HCI_EV(HCI_EV_LOGICAL_LINK_COMPLETE, hci_loglink_complete_evt,
--	       sizeof(struct hci_ev_logical_link_complete)),
--	/* [0x46 = HCI_EV_DISCONN_LOGICAL_LINK_COMPLETE] */
--	HCI_EV(HCI_EV_DISCONN_PHY_LINK_COMPLETE,
--	       hci_disconn_phylink_complete_evt,
--	       sizeof(struct hci_ev_disconn_phy_link_complete)),
--#endif
- 	/* [0x48 = HCI_EV_NUM_COMP_BLOCKS] */
- 	HCI_EV(HCI_EV_NUM_COMP_BLOCKS, hci_num_comp_blocks_evt,
- 	       sizeof(struct hci_ev_num_comp_blocks)),
+ #include <asm/page.h>
+ 
+ #include <linux/memblock.h>
 -- 
 2.17.1
 
