@@ -1,104 +1,97 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819A25A10F;
-	Wed,  7 Feb 2024 14:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ED07E77F;
+	Wed,  7 Feb 2024 14:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707316713; cv=none; b=biGnd/NKY8U1c+UMABqCZo1UNsOtPKKLd5ZKfcmT35jbs1xh/eqPuU5O+fm8UTQnLtGu3dVq7T6Z6X33sdy73bx3HTTFg3pQtP75bJuoTYcRRpxxFfVxl3qmR22VpK7i0c/EHrtYMVjcQFccGSXUuwWc80kjo7j3/mtF0gt6VW0=
+	t=1707317637; cv=none; b=VRTPCCt8TjyDIc+apjBjw3aaR0wkbvhKjC8WL/I/bdkfWw+fG/RCRakiVjQpNzU/UDcRqkIPEuIR7fKuBFkncZAhUzxOvgFMTmIuMozm2x25uXKQsqgj6e8pIH939w0bgikVtkNbz3GLuI/PUlhDzILfComtbaLVlq7jwUK/u2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707316713; c=relaxed/simple;
-	bh=Y42qZrTeT1zrticJCI2eB78hvcGQgoC9z0KtHukNgEk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Gu5nnZwBWdaT1wE0dSkSShDAvED+04Bu880XNlVq67iB9TQ53T6xSrLa35hRvZxs6t7ACOsuHeWBguXtx/cGnX3BZ5Cd3h2CSOnJnB0oXoBZzqaQL6DF4Wim1KoNG0zWZROXNmq48Y25mRr4JyEGtIaojk2gEIqPeb57+cTMpE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fp55w1d1; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1707317637; c=relaxed/simple;
+	bh=KH4aIouyuWdasHE18nyazskEQVAdrjiFumKnKbkPI6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3xvK8aumeotOMr5Q8nE2IHyhPhj8bmOzz9WkghA7e0QTiJyzVlNghIjFoZgS6IJ/GP1Y+BMbJPHrjvhdvKLEahvv8WHxh6octziGL1LCABYeC/jbMlf16JAB5xSuu+EG3BF7kFXGJpbm7hOKY834xAp32UuVr3LhBdxpGZeABM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJ4mIGle; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fp55w1d1"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2a17f3217aso86098466b.2;
-        Wed, 07 Feb 2024 06:38:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJ4mIGle"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fe2ed8746so6134075e9.3;
+        Wed, 07 Feb 2024 06:53:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707316709; x=1707921509; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lE++2qVcHW+CEBtsbdN8eH8qiiSu+9Mbj56gyVDwMac=;
-        b=fp55w1d1f4fgJiTe5O1p1c16/pEOio2w/3miKjgdLbVEzRRklq6EOP9RjAEVtCRJC8
-         l37643r2Poab2vaNXzw5XNO8oWyOtO4mVyi8pBgxel/7KaJSEJ65r/WijN+g9h8ednzK
-         dUnwJNMjSPcDq/2C1N5bxYp0U++y8H2US/3eKQMB8l+/tCK3xEXCQc/7OvG8Gbpkzj5b
-         LHTT8gshEf0+0fhlmqRaAmmjWP7eXXqhtTo4xVy2FuzjCOJiz92kPcwMie9GXZfZlm8g
-         J/UmmkypCjXFYsf/XP7VFUY6iHrR5OdkArakTeMPs7WsKSyf6jPnB00JQtktJI/gTBNG
-         6YYQ==
+        d=gmail.com; s=20230601; t=1707317634; x=1707922434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CeaVh/lnio4gc/XMvIeYWIMuMXXG24LyCbi+Ce3p0Z4=;
+        b=OJ4mIGleaOsBeugTXqLWNKF3h/WCkgRYChieUYtyPIS8nNbjGg3II2d+aNI+rX4YHN
+         m2hGadX8KBE3yV/mdEDKTJz9bcFmLqOq92T9xyDuZ7qasLmrHf1ivyDbt1+mAWUak4qz
+         65oCHv6kKQaVfoWYFa/s2wb7Li2gCKwyBsQJ0S4WvA6vFwXhUMSllDft4Ej9NRWSb3Dl
+         U8EiT2x2mKRNdTlgCmu36QjOPxURr+XiWDQ+1Vfq271jbyjC5Ef1WL2QABbvoHVoWyQ1
+         WMl6ZJqbcsEjuUx+eljZXdT6QIT/Lnlks6kKVFBBNAVV74oIfqobNjsUhBYAu+doQt6f
+         irxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707316709; x=1707921509;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lE++2qVcHW+CEBtsbdN8eH8qiiSu+9Mbj56gyVDwMac=;
-        b=XICHjH2eccfy8c6zozplcmiQ6yTfIvG1BIIboP1yNel5ow9Y25deIhGuv8COwLyM88
-         Hzx2XPp/fY467ree5ouNhWELw7SmxXst5f7mz7WXwFj4Km1HKVYhIPNTHCJoRXmm4bm+
-         gLcRr4vimbBy8gAOEmvgklduXbBoOOJL0K7INqEf46l3MX/eD67ckY9fbQtyXUx+RLVT
-         7ooufmxSQhMulcn7079cJi7DT7wNPLTZePYJ1/kCcuFD2b2U5oKYo54a9YhrmVdbiBDi
-         2U+hTKnFmwjM+kdpDbScIuqXR2BX69RWPHwCilBFUzSepdxzsS9lXDnmkasnzBzjD+Ms
-         sarA==
-X-Gm-Message-State: AOJu0Yzh3u0s7aXM5+Gu0yFazDSenKZoNMTk/OmRmqSrBZW9Swd7nl2H
-	t84z33sPsBWKJLwC6GFZ7XlmstkOLNMOSDr+o/ZFqRXahSagn4Ug
-X-Google-Smtp-Source: AGHT+IHZ/o2nyrH1w9/WKrRaDNSV5U88ds7/ilsdYSb4FQ5tw2TG25fyjXJ5DGd3biDOaR4ubXWj8Q==
-X-Received: by 2002:a17:906:1c5:b0:a35:103e:3614 with SMTP id 5-20020a17090601c500b00a35103e3614mr3841031ejj.52.1707316708889;
-        Wed, 07 Feb 2024 06:38:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV1SGCkbFbH5np12iRMTSf3C23VaNyd1pFuBYbaAmdRdkAf7nHEAwZSaqxOWBF+hPrdUQunP/Th/RSqYO6stTgL9/XL6PoB08KvQruhpOOGgEDUM4vK/OtGz/ebYpuGnLUW4K432aGsSTX3ADljRzcFogfQUNj8mzlxV39Szh2T3A9bDoJAI1M2vAxWNRzR/JHpfnREjymvB0B/VuhOLvpEN9uB8IHL48zDAqxlFAfM4baOKxYFfMYmtnXECNQqGBNCpVgxOWeAepvc+Regj52iX2ez
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:81be:a476:88e2:db23])
-        by smtp.gmail.com with ESMTPSA id s12-20020a17090699cc00b00a35200615d7sm820909ejn.1.2024.02.07.06.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 06:38:28 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] dma-contiguous: remove debug code to removed CONFIG_CMA_DEBUG
-Date: Wed,  7 Feb 2024 15:38:25 +0100
-Message-Id: <20240207143825.986-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20230601; t=1707317634; x=1707922434;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CeaVh/lnio4gc/XMvIeYWIMuMXXG24LyCbi+Ce3p0Z4=;
+        b=rK5RMea63R2Fq6aG62fl0fmf6oybKpg5d5YFsIxzgcL8qm9bCTavgOZfs3C1HeGKb8
+         gh2jn9WU5UmR1WkB9BeSkA3wrGjsP1jwVU0ZX5kKEYP/VgEGi9xhfDVDJ69wtwfpXuoX
+         pErEl5nODLgUiQ3d7R4p06192QiBpdqHnMdHp6in3ot1/BdmYPoiHDK5IUfHM28F79PK
+         ovObbhK2x3cHn07B7IykpU2QSkSLj44RGvIuEneYREaKf+NW78fKKMwS/fsWc+QFKAYG
+         tj9Nhu5GS4bDdUq2LUHiGSdEM1iybypRIC8UYFeVr5YCPEhbuC40Mm4AH+O0btsUx0B3
+         MhyA==
+X-Gm-Message-State: AOJu0Yy9SxskviLvlJKm7vGCfGuVj1vPjwp9tptjchqwY7MPiJbdsgDa
+	rOgrJXbTjv6G0Wj1iWAuCLqY9rkXCgcvf8Qj6dywPyJ4mUDOMrid
+X-Google-Smtp-Source: AGHT+IEOQ9PUIelS9Up3Z2leC8+AjPwTxciDKQOF2tPtygDXxH5vKSWw8QMymkOzILSud2oeBvCkJQ==
+X-Received: by 2002:a5d:4750:0:b0:33b:274e:af5 with SMTP id o16-20020a5d4750000000b0033b274e0af5mr4000326wrs.60.1707317633607;
+        Wed, 07 Feb 2024 06:53:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUwEZeTZpLOUCuBBjOuuCPiaDg4fx3wo4eteNjPkY7pPmbXE257RElKiqFaWqGh19r6WiTQa3bHalYEHnoIvIiGYfD/RlDE62gzy4HyBq0t/x4K3RQpaUhnYf09YWrLx6+WybBjC7djl4Ib+nYT5ONxyYhEdYu3bOJh5et5C6WVjfJMtWAj8evl2hKsTx4BRcBc2hsWSHT5Nz3Unz4l909q6KADPQcUo9fAc/cK3cPXlODGHtbLODwrBEwyzhVChRUmlowGgB+e03KOH79Uit/1qDWiv3eEIa97//6SOtKUdeknV0whWZzJukADZYzZFz7525mcQb2gUoqtfuekjW2cRRlAv7IvIYw/RYbJ0OEdNNbwb8ftux/4GnuQm4YRZ5RKGhFE1OxioSy76oqqL1uhGH+XoI6+4MC9NZyg5x6aGuHsZAl+0MwGi6m+CxqlE+BdKOMyVBMaGF4kH09pQsCXuIS9tTx9YnXP3CmgGN1Oi4WW+1+LLQ==
+Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id d21-20020adfa415000000b0033b4fdea014sm1263624wra.92.2024.02.07.06.53.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Feb 2024 06:53:53 -0800 (PST)
+Message-ID: <13e2f96c-2434-4266-8a5e-25b267d1fb0e@gmail.com>
+Date: Wed, 7 Feb 2024 14:53:51 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] mt76: Remove redundant assignment to variable tidno
+Content-Language: en-US
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240207131113.2450297-1-colin.i.king@gmail.com>
+ <87il30h03n.fsf@kernel.org>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <87il30h03n.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit acc2f3e42d4a ("mm/cma: drop CONFIG_CMA_DEBUG") removes the config
-CMA_DEBUG and the debug code in cma.c, but misses debug code in
-kernel/dma/contiguous.c.
-
-Remove this dead code from this removed config option.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Andrew, please pick this minor clean-up patch of top of the commit above.
-
- kernel/dma/contiguous.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-index f005c66f378c..055da410ac71 100644
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -37,12 +37,6 @@
- 
- #define pr_fmt(fmt) "cma: " fmt
- 
--#ifdef CONFIG_CMA_DEBUG
--#ifndef DEBUG
--#  define DEBUG
--#endif
--#endif
--
- #include <asm/page.h>
- 
- #include <linux/memblock.h>
--- 
-2.17.1
-
+On 07/02/2024 13:31, Kalle Valo wrote:
+> Colin Ian King <colin.i.king@gmail.com> writes:
+> 
+>> The variable tidno is being assigned a value that is not being read
+>> and is being re-assigned a new value a few statements later.
+>> The assignment is redundant and can be removed.
+>>
+>> Cleans up clang scan warning:
+>> drivers/net/wireless/mediatek/mt76/agg-rx.c:125:5: warning: Value stored
+>> to 'tidno' during its initialization is never read [deadcode.DeadStores]
+>>
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> "wifi:" missing from title.
+> 
+does this require a V2?
