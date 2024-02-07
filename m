@@ -1,103 +1,100 @@
-Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE46823AD;
-	Wed,  7 Feb 2024 17:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5CD811EC;
+	Wed,  7 Feb 2024 17:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707325973; cv=none; b=PKPqh9I+SsRulYXgE+Jpq4LT1g+XNkAyeH2vYCZz1ILFe3IHj8js9qZQNvyZDIfAG615LNLNpHbpcFyCvm/YdbXHkYKYBdPsYqoSDR8y/G4iut6e1UVKNu7mtYnKXR6HpNU/blXwCpPd5c9FuaLeXlRPAPXhOsvnrOWdq+jFc7k=
+	t=1707326129; cv=none; b=rZQNtP1UJUUU4VbUpyAQDI5nWCwSIy6LZKz2vXN2WuobPEzyl+hUOwCPjpsnQn+BMY0eh9SnuJi0JmOsWHaG6l6W2TZf7xH38TEp6e3i1s4pHMjotyjYFrhQYg8Vu3FWnpEd45mDWoBfl5EUS0hOA8AghC7au3vk+myOw8mmHOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707325973; c=relaxed/simple;
-	bh=4thBBmqk5hlMpmpcQwxAA3u0nkyAH6ntKflK/ok1k2w=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=q4wfvhc6mb5JgRt89Cr1V3+1AtBjCvvhsSnRNs3yVonZPTUeAPy0ko9RqK+V/tyF69LGiYBM0rlKOBvrUOmDmMWTTVolv8zNHbzW6TcEtmzclzTl+pyfHs5Gj5TfpiaBKOkTcF3792FgcpQxHfcLUBDvzv40J4ll74U9+iCEF64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it; spf=pass smtp.mailfrom=vaga.pv.it; dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b=R5Fi9UGL; arc=none smtp.client-ip=212.103.80.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaga.pv.it
+	s=arc-20240116; t=1707326129; c=relaxed/simple;
+	bh=Wt0BEC4Lf7W05Q2Hskrgv1/2DCkqYDJbPFVmp+5b/HQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RRNJkCUlV3sO9GauAnhi4sDMdJaNypJH60ihc92r9YXLmah9uO1kGc7/1R+gN2U/E0DeM03zrMHZ/2/nG7BEADRdnuvhvkgbjIPOTE1lRCrwmV7CEwYHINJzYlN8ajkGEH4m1cC1IBOKwYbhGtkc4Cg2h5Z+CLJ+4G03enFkwrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFhfktRM; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="R5Fi9UGL"
-Received: from localhost (unknown [127.0.0.1])
-	by mx.kolabnow.com (Postfix) with ESMTP id 9AEBA2095C06;
-	Wed,  7 Feb 2024 18:06:15 +0100 (CET)
-Authentication-Results: ext-mx-out011.mykolab.com (amavis);
- dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
- header.d=kolabnow.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-	content-transfer-encoding:content-type:content-type:message-id
-	:references:in-reply-to:subject:subject:from:from:date:date
-	:mime-version:received:received:received; s=dkim20160331; t=
-	1707325573; x=1709139974; bh=aHIWuq7r2wmuzrEqiql4mNGKz5wCpRsiiSb
-	LoRj77zU=; b=R5Fi9UGL7pdTdbdeeNB5OrOOKQeYcBm9/Rzpc/6Eh6lkBI8oMia
-	Iw3+ERv1gMdlWmT6gal0kYPE/6D0biQ0b4GIjPgE/JR6PejdxaVIAM3A2rMl4AtU
-	3XSNxQqB2oW7W2VwX4lvn83SzpbJhxfpFilCoxJyzKCP6NAi9aTHDVMh+LWR5Hfm
-	yxwDVW9vlOZfqn8StEbMJaFdze7wRAbLb9E+zBJh8oy3HzV6hcR0QyFdk0i1cx+O
-	sLEa9A/PRmAGVAWkmN/kw3SXGjkA+YNURDcxQYoVdZrT2Sbn61H1wR7nnlFwSt9C
-	JkNHWbIjEcs9PD42lCieDCC/ktL6ICQM/bmjc7CNQ5kyUY92ddqxxGkROf1LQ81V
-	OqcX5uKL8KfolAyHCKkjVebeBsvddCR3z5dccMeZFhACV/bKl3hBNGy8FETNfH3/
-	WcxTJ4imITNRM2npmrVrcSulCbAfFqOLUFsZp/0sEgPSzEoYEyHzTdfMCANAnc2W
-	11QPr0+VTKDp8/DOSN2tygE/W6CYo9ksnQWMujn+LVsIiqNtzKBSwCN3zJY/8Q+A
-	3zLqEmD5FIijSRUUaOnYGLFoYIw+GTlQj85e5GMn7rfroNVNPTUdx08MJ1p6PSNI
-	tB82lO7sNh8SDt5ns4fwTSWKzaCkyWAWFOW/rS44Exg/a0rlus8Tha44=
-X-Virus-Scanned: amavis at mykolab.com
-X-Spam-Flag: NO
-X-Spam-Score: -1
-X-Spam-Level:
-Received: from mx.kolabnow.com ([127.0.0.1])
- by localhost (ext-mx-out011.mykolab.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id D36b_ffzchBX; Wed,  7 Feb 2024 18:06:13 +0100 (CET)
-Received: from int-mx011.mykolab.com (unknown [10.9.13.11])
-	by mx.kolabnow.com (Postfix) with ESMTPS id 51C8F20C81E3;
-	Wed,  7 Feb 2024 18:06:12 +0100 (CET)
-Received: from int-subm015.mykolab.com (unknown [10.9.37.15])
-	by int-mx011.mykolab.com (Postfix) with ESMTPS id 0129C30B0233;
-	Wed,  7 Feb 2024 18:06:11 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFhfktRM"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fdc63f4feso8322895e9.3;
+        Wed, 07 Feb 2024 09:15:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707326126; x=1707930926; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWZvquA1Dk+Z7JW5jATMhqgqy/TPTZMHBlvj344RDlk=;
+        b=UFhfktRMSWJ+2VmLCQeo2S0oAg1PSFmgMZP2E6/f3JdNgLf5/uzGuarm9aohbjlsLX
+         XMpuNkly554jeJ7NJ8ZfKfiyjPLZp0RwWKR+xI7tVxiLBVh6fsqCW9CHxyIOlFZCjLb3
+         X0l75KeRxqi4F+nkPwfxLR2Aw2O9I7jRDe5Bjb8lG7g9WxEycAH01Rbw6gFpFYUeoVKj
+         KL39R5XQCcxiMXTA2ssTqBnUyCa/1rVYQkTIU9AWBzeSJZeB+eHmvnGMezE+sj95DPIZ
+         GMdPY9zmDZaAAxduW/s5Y6zSvkQYEjcoDdijVeCbbQT5Ba5mLmiitMP0YepoLaYunAxI
+         YLWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707326126; x=1707930926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WWZvquA1Dk+Z7JW5jATMhqgqy/TPTZMHBlvj344RDlk=;
+        b=HPNzlfUg921PmBjaYGkFRAW/rSfGqPqLOFkP7uvnlfr9ND+jYrRxAxMDnM0aPYwVpu
+         3SO5SQril1QIbDcFDvOsYwB6h3YqJqHHaw0sSA4ZvLxjQHaGG1Pzo0ibYCv640cXhKCv
+         b9E+UYEOEpFv0YWWHX3wtYq8Wyz3+0zpUBThoQVvlwbKOoP8MA5yDpTBEJogb6a6KHTL
+         UFl3shU3DJO+RqQuGVfHTI3oc7y/gT1lW5VBbxnpuzYJhqk1Cj6txP0sKRHw+H/YvrUY
+         RDoKT/GchuRwdYkGhGa+wKUmgRblZEhV7ZdBA39zEJlsHuFeFNMt8tbHfzMunelGAC1P
+         Sxvw==
+X-Gm-Message-State: AOJu0Yx4FypbMNWPdbakOYyKoC7M5JWWXXCycQxXPfLMCtaucao4JLf1
+	ZCnWbfpViSlonF0GL/M0iRvcCQ8FqvdZrgiDBceZ+4Ylpi2PuWHR
+X-Google-Smtp-Source: AGHT+IE+kUIpbAfVVtH6EgLXV3kU7Acc8yLEjA78d2N536/9raVQGzXfLvBmgViqaP/IJ89bNqG+hg==
+X-Received: by 2002:a5d:408a:0:b0:33a:ee47:8a3e with SMTP id o10-20020a5d408a000000b0033aee478a3emr3462913wrp.58.1707326125939;
+        Wed, 07 Feb 2024 09:15:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVx/qubPCNciJqS0VfdvWt3yL8Qtc5D3GPqAaUHOfAxxDO9ddoTXqoP6C7aqAfRTlR6j69zlETWQiCbvejXkGM7SriaoqhPrmR38HxemX6LIdgkURNvtxmWx3OBPnjaZNKL8BlJSIzfLlLeI88ar1szU6G+3t965ex0LpXjWIbXDDOu1XcLYpWHjeimPDpwl1mGZbR0zRM=
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id x7-20020a5d54c7000000b0033b444a39a9sm1915060wrv.54.2024.02.07.09.15.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Feb 2024 09:15:25 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christian Lamparter <chunkeey@googlemail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] carl9170: Remove redundant assignment to pointer super
+Date: Wed,  7 Feb 2024 17:15:24 +0000
+Message-Id: <20240207171524.2458418-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Feb 2024 18:06:11 +0100
-From: Federico Vaga <federico.vaga@vaga.pv.it>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:it_IT: fix a typo in the config name in RCU torture
-In-Reply-To: <20240207150322.20238-1-lukas.bulwahn@gmail.com>
-References: <20240207150322.20238-1-lukas.bulwahn@gmail.com>
-Message-ID: <c7917018190d71e6ebecd91ce81f5f2c@vaga.pv.it>
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Thank you for the fix
+The pointer super is being assigned a value that is not being read, it
+is being re-assigned later. The assignment is redundant and can be
+removed.
 
-On 2024-02-07 16:03, Lukas Bulwahn wrote:
-> This issue was detected with the scripts/checkkconfigsymbols.py tool.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/translations/it_IT/RCU/torture.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/translations/it_IT/RCU/torture.rst
-> b/Documentation/translations/it_IT/RCU/torture.rst
-> index 79d9e6932acc..189f7c6caebc 100644
-> --- a/Documentation/translations/it_IT/RCU/torture.rst
-> +++ b/Documentation/translations/it_IT/RCU/torture.rst
-> @@ -129,7 +129,7 @@ Uso su specifici kernel
-> 
->  A volte può essere utile eseguire RCU torture su un kernel già 
-> compilato, ad
->  esempio quando lo si sta per mettere in proeduzione. In questo caso, 
-> il kernel
-> -dev'essere compilato con CONFIG_RCU_TORTUE_TEST=m, cosicché le
-> verifiche possano
-> +dev'essere compilato con CONFIG_RCU_TORTURE_TEST=m, cosicché le
-> verifiche possano
->  essere avviate usano modprobe e terminate con rmmod.
-> 
->  Per esempio, potreste usare questo script::
+Cleans up clang scan warning:
+drivers/net/wireless/ath/carl9170/tx.c:192:34: warning: Value stored to
+'super' during its initialization is never read [deadcode.DeadStores]
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/ath/carl9170/tx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/carl9170/tx.c b/drivers/net/wireless/ath/carl9170/tx.c
+index 6bb9aa2bfe65..e902ca80eba7 100644
+--- a/drivers/net/wireless/ath/carl9170/tx.c
++++ b/drivers/net/wireless/ath/carl9170/tx.c
+@@ -189,7 +189,7 @@ static void carl9170_tx_accounting_free(struct ar9170 *ar, struct sk_buff *skb)
+ 
+ static int carl9170_alloc_dev_space(struct ar9170 *ar, struct sk_buff *skb)
+ {
+-	struct _carl9170_tx_superframe *super = (void *) skb->data;
++	struct _carl9170_tx_superframe *super;
+ 	unsigned int chunks;
+ 	int cookie = -1;
+ 
 -- 
-Federico Vaga
+2.39.2
+
