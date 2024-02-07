@@ -1,64 +1,65 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423EC182A7;
-	Wed,  7 Feb 2024 10:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5355F1D524;
+	Wed,  7 Feb 2024 11:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707302982; cv=none; b=JCStCxA0S5azDfOs5wABiYFRJHHsgpOwlxm/TJn6SGSQalxd6VJectuFpjtiR8oA0Xdjv71MmKaKstvo9erIsWRvDHrZ/ZZb2aQbp+Ekmyf0NFoXS8wbHwx+XO0qhC07zBpg6TpS5ntDY/oCQiTPaJ0H5H+DWiKtM1+SYkZ7Y34=
+	t=1707304933; cv=none; b=LTdKR1uy3b7l/lnPBqkLxQZbWibdQK3d4OlnnliyjdTUnHAp2448K6GPA339MGugceJgNiGP3HetCt+hXKcEMVhoqO0r+Ivp1gtmVVjPGYHaLkQtKN1bCscUM5bOiOBSQAvYKHIm8h89u9ACoP2vYB7de8UFAnVZeBra9SLlplc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707302982; c=relaxed/simple;
-	bh=kt0zOLTcL1HWHJnw6yZryV/wCuD7xd1Hb506uXxvfuo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cyPsMinuwDQnNBT/rkBxPPRNHybdDO/lZ9rShCKn+DR6PUHhhzQdPtsr/RlVNaUc+5XgAMfing+xOAurs7bGdWTVzuJdZvRDc2PFuvGoM9jMpsyGAguQwUc4/OBcMlkXn0V447GA2dL2mwcXIQfJp8Pp8DALfxcDo3E1Ut9DOK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLDG4Fqa; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1707304933; c=relaxed/simple;
+	bh=lAFsxsdIlZPft8hnkICfi8w8bgkb6/ZUkvhhdX71gHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ktGD2/9I6B37FEa0UwkwCJH6Ax0S16ZrrrO2fdxVwIfUa+q3XceKpDsUsm1gQeykhP9w3tZLQP9UntSw9RZyYOLaRVxbMa1T6w4nC7nHCkwVUEQoCuBdGRc3L645gswMM23uhsEq173daMcs7C3DQfjNbzYERvD/dtb34NiWj1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZuIGlB2b; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLDG4Fqa"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3394bec856fso922575f8f.0;
-        Wed, 07 Feb 2024 02:49:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZuIGlB2b"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33b0e5d1e89so450309f8f.0;
+        Wed, 07 Feb 2024 03:22:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707302977; x=1707907777; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707304929; x=1707909729; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DI3W1hyqaNPdQCStHZpWr3XfLdJcYQ1oBBj7o4zZK5c=;
-        b=SLDG4Fqam5VFt6KXe+6E42+cWV/LZmj3bhH7Yqkb+i4/fcF1FOdqlweO5eOAA7fSIL
-         KGfSkSE0gl5Jn4fMz6uklqz6zvCHtaeGp1mNNLaX9B76cMtes4zLrElEPUHj2dDJGPcz
-         PSZIudf/11phJPnazlzzOWginpC1m3E5397Zjh/5J/xUZEh/GMMUw43PR8KjPVPDFxuK
-         1LfAN52rinZRNeHo9f8DHCZR5rvih/DU2ZrXWcrz8B2C2Sz6IYOEAcal5VpHIUTR99iM
-         dIe0WYFMid0EbDpgjKCQSz+PJTK0OzCSKsv8//v2LJUlswoAIqA29hisQDq3/EqRdOUB
-         KyZA==
+        bh=fe6SZmmP/zqXcfKDaAFGsJGopV6aAaohrfdr91yiNs0=;
+        b=ZuIGlB2bBkYvDbsImnw9WwowvZTdCarqxr5NOJTBiEYTewWZakWSH5MLOrJImsFIop
+         rnk/l2EilFR+INRm6/0MS8cYHVbS8PM1mvP/F2slh408aI4+IsDefpPqN7rgWha+VRBz
+         y2w7DOHPVBO73xkphkukdBS257/C0BsdPVAOpthy9QEn5NCiNGrNQSNPxFEHFWrjoWkY
+         RIIZOjc+dc0fBVS8H4ncQf2+5e1QqJCKQUXCZVnXcFzI1b3Zn6pkXfP7WEIREwrTPxJO
+         wA0mVI9IPCmYgCpy6PBPiL0IUjlUCWvo7Zn+nvWo1Z9SJ2n82HL07VVvyo4DgXnWdT6D
+         6z9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707302977; x=1707907777;
+        d=1e100.net; s=20230601; t=1707304929; x=1707909729;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DI3W1hyqaNPdQCStHZpWr3XfLdJcYQ1oBBj7o4zZK5c=;
-        b=oY1yqSop/VP2D0Wgyr0fM0L0nf/itEzS9F+l3bVyzmLs89sA7B0chpVZgW/BSZ9FHQ
-         t//4UPdRj76x8JJDoSIMhDE4M1uwEUV5O4aDeCossv2DfAXjqS4ob/YaVoDI8soAceUs
-         Husj8SD/D6Ec2QVvYzkhAwYNzNEQoYZ/4ZQxtpZug8AQpBp+J/Ea1AOrc/6gkfbUYq0l
-         +p57qIEI0EeA5c29NMofsF/HT76RZAs1Kk3+o5faz/U7/yacV1cDVkVqPoC2isaoau2C
-         CLnvx0CxdQyow63oAz0Qi8Nj1kDhBfXMpTMmd+77s2RXF2TQBAq/0EABEX+CE2gQt+jw
-         steg==
-X-Gm-Message-State: AOJu0Yx6pYQMmLthhVIQD8q77XxlqApTXiRBFFsze7ycizUGBJNjETMZ
-	UhKPdZ4L5tCeX8DTdGBC7puruGauUpQBLvm875WJ10NhwDd78OEe9bVzrP4emeY=
-X-Google-Smtp-Source: AGHT+IFBxJGUQtRyWwApXmHdgtgFEploDEBoyVbUXb2bfaM1oo+4vxt3Cr8vTBEkawOWZBKcIYEIBg==
-X-Received: by 2002:adf:ea01:0:b0:33b:26c3:4fe0 with SMTP id q1-20020adfea01000000b0033b26c34fe0mr3412621wrm.6.1707302977122;
-        Wed, 07 Feb 2024 02:49:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWChfYQ26ruVxK/0C+NL6FTtor+PbyhCshRbuHxK8X0y5jjJGNtBwOsezz1J/QSknBbupMQafAMH5HR1fwBQTR9ZKXjzkn2Stmdw2BwqlXJrqXbvMF0snzT9/NxqOPZuWESxjPQ68s/aVGtbXEJN7iSJrxQ7e5O+qSjtmK/8cSk+NxHhdJmEQVj16sBBtPgnePJ8z3di+uhYiBEPQ==
+        bh=fe6SZmmP/zqXcfKDaAFGsJGopV6aAaohrfdr91yiNs0=;
+        b=h0ThpZfnKWo50c/qESVotuzRHlWf0Ie4iTi/zi6uUpsWYWy1WaDSBbjH1y6Kyv4Vug
+         bEQ950dOn4TNMjMHUo3tcj9GH11MjpAeYWyL522toa4eGO+pxSaQnllpRlN0piuF7etu
+         WCaFVzIZjZirviCibmoQT3TdlfDaGO6zek6SJJ6wwBrR8Hf2QnCZg9gXChqIChi1JnKG
+         hpmGOUUJ/XQ4kEQWxBYtpQlDpNf4WiBJsPT8wkEvkTruAiPVWEekKmnq9bAs+/tRuHG0
+         fbFczlQVskXonkiS4QqtIRtxGxU9bhP/TBXGaX7R9X/kydK5jym1yrezfSN24jdc5QTc
+         tGsQ==
+X-Gm-Message-State: AOJu0YyYB8sHm46SGOJJPD1cY25LnUZXIqGvUI7ZdttqnES4eUBXnsLT
+	ItaKZkUC2GHFVrVEEv5i4PXOwHf+X4jDJBcDpaCRgFC5yeMpdcj5yCUzNtNbveg=
+X-Google-Smtp-Source: AGHT+IGGPHCdSSr6e5ViKiCcz9bcuOkY7ZgebIUX/gxAFauciZn4jxk+qyvNU6k4pEfYGd8snIM0JA==
+X-Received: by 2002:adf:b1c3:0:b0:33b:279a:5cb1 with SMTP id r3-20020adfb1c3000000b0033b279a5cb1mr3554011wra.11.1707304929441;
+        Wed, 07 Feb 2024 03:22:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXid5VlkYlXypa1vZv6wwgKQJzGkoy1QHIVzTTa46oCuH2O6c7JisiUYKgsz8bhDDRGkqT28h2dW3Fg0dwGB9MjN9TaTua53IUbK0si/R2FE/owq+r9yFjATTpcHyZURbFa/5ODMsGVgSUqsaMUo7j0VAKO4fzgobxEl3WkxzunRpf+XawrgN70Upk7heW5iO9wzvJGuYUBQMMUY9sMMbWrbp7x4ecFxcddeVT7xZ/JlKuQdoB5Ys6UHUAzNRtfb7Mo
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q18-20020a05600c46d200b0040ff2933959sm1689595wmo.7.2024.02.07.02.49.36
+        by smtp.gmail.com with ESMTPSA id l1-20020a5d5601000000b0033b406bc689sm1262926wrv.75.2024.02.07.03.22.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 02:49:36 -0800 (PST)
+        Wed, 07 Feb 2024 03:22:08 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Johan Hovold <johan@kernel.org>,
+To: Alan Stern <stern@rowland.harvard.edu>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] USB: serial: ftdi_sio: Remove redundant assignment to variable cflag
-Date: Wed,  7 Feb 2024 10:49:36 +0000
-Message-Id: <20240207104936.2441424-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] usb: storage: freecom: Remove redundant assignment to variable offset
+Date: Wed,  7 Feb 2024 11:22:08 +0000
+Message-Id: <20240207112208.2443237-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,31 +70,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable cflag is being assigned a value that is not being read
-afterwards, it is being re-assigned later on. The assignment is
-redundant and can be removed.
+The variable offset is being assigned a value that is not being read
+afterwards, the assignment is redundant and can be removed.
 
 Cleans up clang scan warning:
-drivers/usb/serial/ftdi_sio.c:2613:15: warning: Value stored to 'cflag'
-during its initialization is never read [deadcode.DeadStores]
+drivers/usb/storage/freecom.c:537:2: warning: Value stored to 'offset'
+is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/serial/ftdi_sio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/storage/freecom.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 13a56783830d..c634d345a652 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -2610,7 +2610,7 @@ static void ftdi_set_termios(struct tty_struct *tty,
- 	struct device *ddev = &port->dev;
- 	struct ftdi_private *priv = usb_get_serial_port_data(port);
- 	struct ktermios *termios = &tty->termios;
--	unsigned int cflag = termios->c_cflag;
-+	unsigned int cflag;
- 	u16 value, index;
- 	int ret;
+diff --git a/drivers/usb/storage/freecom.c b/drivers/usb/storage/freecom.c
+index 2b098b55c4cb..c3ce51c2dabd 100644
+--- a/drivers/usb/storage/freecom.c
++++ b/drivers/usb/storage/freecom.c
+@@ -534,7 +534,6 @@ static void pdump(struct us_data *us, void *ibuffer, int length)
+ 	}
+ 	line[offset] = 0;
+ 	usb_stor_dbg(us, "%s\n", line);
+-	offset = 0;
+ }
+ #endif
  
 -- 
 2.39.2
