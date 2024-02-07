@@ -1,91 +1,96 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FEF76C6F;
-	Wed,  7 Feb 2024 15:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9480739AEF;
+	Wed,  7 Feb 2024 15:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707318057; cv=none; b=BjREINhizClBC27ZNpb6bpoXgkoDrJMZzk0hhrdnCyUrRQYoX9qymFXTJQA+aoEhbOS48dbx8lUx/U3FZP/QEBcn7Siojsd3vD1R+pdy0TsC5TjzfvFqd4dNd8P9nDkS0xVhXGm9O0oSR9e5ZlKBfD9G0sW1Xin+d8wB+NZEiAg=
+	t=1707318210; cv=none; b=GLeBZK9+KnYW5SCIOkFIAqy2ItcgTvh9gflI05BCq6r4TO3qq01tYrUF5EYGfbEA7PlfcdB/HU2hBQcOJy19zVJmRWhz76d4ihuIk7go3jk//M/Dvg10PMHsU4J1KjIomN9rtBtM04Hn45DCqu9Y5RqNustVFtITjJwgu2lP3pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707318057; c=relaxed/simple;
-	bh=XXFDvBkeGOfbwZKGPocdQlFeqLv49I9NlaKKBdpBvqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i8eWGQlrShymc0N5OjWdRX5tge0rgivLxdYGrLcoY9XZEdD0jrPZgRceqCwp3obFyMqx/qKpV6uan+ufwgJcOus86VbtXQeuj/zhNyI9W02tc1dWSULtpVyV7sn7IyPdxfwgXxcUF7HV9bXvrIpIsaw/UOS6AfVXt9uurd1q+pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ox5b70PW; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1707318210; c=relaxed/simple;
+	bh=MZsznxOPrdsYl6/DqekPPLlTdtOJsdHCWqZe3UWz1/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lS+f7djHa2PpSDBWEhXoFMtc1/I023rHQ4B5ZR6gTP7ATv7bNHVRVdOEbDqno2x4ErJEIV4hFjPcC2p24PBkwLPA6aU5gXG1ZZMwx2fSmA9ezujogmGjBDoYN1XxMVJ5tGm18bqBmhHx4jLBpax31Z7Cy1v7YLnMT6Vqaczgre4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2p55Hkt; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ox5b70PW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1707318053;
-	bh=XXFDvBkeGOfbwZKGPocdQlFeqLv49I9NlaKKBdpBvqY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ox5b70PWQW1WjQ+6JuWbrICh02r2vS3PgbKIo6AknU+m1Z5Wpqdwr5BRPssr5ff+Q
-	 aDnC/vkmoztrwKefMm9rM240l9btCIzLDT5Bo2xunfeNemN/2WrImCHHnMlXe3li2L
-	 UvtK69YeUVcP0Pw77JSKFOEanmDPPjne/xoTVhw7k2e+koUe9qTVdB+RLFnfhYvsXH
-	 Qq7TqQ0vx32nN/y0Qhj+Z7gHd/2RC5VC6TtyZZ4o6ceIZonPBvmw71I1HV0wLiPpVB
-	 w7Ys3QiryqlGKrsoThwDskrrakbB4xpznlGcBs6bODS8FzpceySMfyaalFXGKRPTQF
-	 umMZ/cafheGYw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E0A1A3782072;
-	Wed,  7 Feb 2024 15:00:52 +0000 (UTC)
-Message-ID: <2b91bd5e-9e66-402e-87fe-c2894e5a1d5a@collabora.com>
-Date: Wed, 7 Feb 2024 16:00:52 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2p55Hkt"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-556c3f0d6c5so878877a12.2;
+        Wed, 07 Feb 2024 07:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707318207; x=1707923007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx4BeSyulnvLfMX/CaptrKTauc8MAXyxo+P2KtIiCQM=;
+        b=c2p55Hkt2gOin4hs1UXOi3pXPef9BRb8HUoBaMU6EuhRVZdbKkHS/ZFYcM2/IUZ4dj
+         fnsS/g8YKFg9Rx4/sjYZ2AFy3j3D1DB7MkA3IRuCdO8YvmjkRPZCzVDw93qxL+hflimU
+         Gtsray0VWda8kOgBkJkB30jM42q4Mdi3+JmOVquXIQVjvSR7z/31k2otyZD1yNbFp/21
+         udDAQWOuWpYhp7GKA0O804Rw2rseP4Xne0Uhdec7n4nujpaQJn/VFR9DhN9HANux0big
+         2mUdzHQ0pLW/qAkNALi2MI0gvILZMmM03UQbliQYQd4dsEv6tMc9yYJbjJ/cS7rc8Zgy
+         2JwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707318207; x=1707923007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xx4BeSyulnvLfMX/CaptrKTauc8MAXyxo+P2KtIiCQM=;
+        b=NYEFQ8JWubSfzQDXsLILfShWbbVIZ1mQTVdsdbmQOdr+Ll1kMdgHezHqJkMBq98mjC
+         KQ+40aSeoBR1ysUBQYr1+1c3yDUIYvWNlZwnbxBKhj//4wsn9PNMZ5JpcU03KESDPZ1h
+         gOaNwoOZ1kvbJtLeD1amYgf4ZkRIe0H8rNkHrNpmcbvTqqgDrDuL7jOFNc1dHDtckN1x
+         tqN6cmT0HNemwQSWC27uSjCqqJaXtU/7qYKjfio6jq8iYr998KcPI+gNcwctf9nfkiuc
+         VCI5IiIm7WOyLbwK5gKu/MubEnI92QZYIDggpYfKv3VYx82zIZVfW1ToytmG5QWgnEAs
+         zF6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6kT5ILr/yFhwcayFrKaclyQ+UlvfZNSRzfX6cz9RVWlcgCn57wFE566bWwef/L8WLwhOT8k+XtNozCC6sdQOVVUJNSqQuDlf//NyXL6gZYhY5vVDbubTdjN+HWps7C0RqzW5F82lW
+X-Gm-Message-State: AOJu0Yz6sIbAxZI296gu6rbIv5GhbLf4D25VhYGYyEB/smN6avqsnrUC
+	eTDHey8+tK3VB9NOOfwtEGNP2KfCSZ7vNYlr2EjePOIPWGoAbLew
+X-Google-Smtp-Source: AGHT+IGs2nMeY+j3CyxEcKu+uLOoreNgh5wRS00gAY/2oZtFnF2Uj/rDWRkilj3ltnrNVSSoAli+ag==
+X-Received: by 2002:aa7:c41a:0:b0:560:4e74:9cf8 with SMTP id j26-20020aa7c41a000000b005604e749cf8mr4294934edq.34.1707318206610;
+        Wed, 07 Feb 2024 07:03:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUYoPBO52sZpSP0p+CnRy0ZLb3llFXHvFWsCb58k21NC+SgvaO1jJ5fMdxlUZXDTrglt6U+TeYGyDqnEruF+I0zzylGnHXN3Isp7ZkNE1rdmH8og+LX7HHEJ0QmgBQCJjobViWVaserF7xE6wNKOOKa2+sS0wUG/aNwNfbHqUrB87zQUXwH2kWFNlae7njNV6A=
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:81be:a476:88e2:db23])
+        by smtp.gmail.com with ESMTPSA id b21-20020a0564021f1500b00560df242374sm600834edb.19.2024.02.07.07.03.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Feb 2024 07:03:26 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Federico Vaga <federico.vaga@vaga.pv.it>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] doc:it_IT: fix a typo in the config name in RCU torture
+Date: Wed,  7 Feb 2024 16:03:22 +0100
+Message-Id: <20240207150322.20238-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mt76: Remove redundant assignment to variable tidno
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240207131113.2450297-1-colin.i.king@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240207131113.2450297-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 07/02/24 14:11, Colin Ian King ha scritto:
-> The variable tidno is being assigned a value that is not being read
-> and is being re-assigned a new value a few statements later.
-> The assignment is redundant and can be removed.
-> 
-> Cleans up clang scan warning:
-> drivers/net/wireless/mediatek/mt76/agg-rx.c:125:5: warning: Value stored
-> to 'tidno' during its initialization is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This issue was detected with the scripts/checkkconfigsymbols.py tool.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ Documentation/translations/it_IT/RCU/torture.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   drivers/net/wireless/mediatek/mt76/agg-rx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/mediatek/mt76/agg-rx.c b/drivers/net/wireless/mediatek/mt76/agg-rx.c
-> index 10cbd9e560e7..07c386c7b4d0 100644
-> --- a/drivers/net/wireless/mediatek/mt76/agg-rx.c
-> +++ b/drivers/net/wireless/mediatek/mt76/agg-rx.c
-> @@ -122,7 +122,7 @@ mt76_rx_aggr_check_ctl(struct sk_buff *skb, struct sk_buff_head *frames)
->   	struct ieee80211_bar *bar = mt76_skb_get_hdr(skb);
->   	struct mt76_wcid *wcid = status->wcid;
->   	struct mt76_rx_tid *tid;
-> -	u8 tidno = status->qos_ctl & IEEE80211_QOS_CTL_TID_MASK;
-> +	u8 tidno;
->   	u16 seqno;
->   
->   	if (!ieee80211_is_ctl(bar->frame_control))
-
+diff --git a/Documentation/translations/it_IT/RCU/torture.rst b/Documentation/translations/it_IT/RCU/torture.rst
+index 79d9e6932acc..189f7c6caebc 100644
+--- a/Documentation/translations/it_IT/RCU/torture.rst
++++ b/Documentation/translations/it_IT/RCU/torture.rst
+@@ -129,7 +129,7 @@ Uso su specifici kernel
+ 
+ A volte può essere utile eseguire RCU torture su un kernel già compilato, ad
+ esempio quando lo si sta per mettere in proeduzione. In questo caso, il kernel
+-dev'essere compilato con CONFIG_RCU_TORTUE_TEST=m, cosicché le verifiche possano
++dev'essere compilato con CONFIG_RCU_TORTURE_TEST=m, cosicché le verifiche possano
+ essere avviate usano modprobe e terminate con rmmod.
+ 
+ Per esempio, potreste usare questo script::
+-- 
+2.17.1
 
