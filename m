@@ -1,64 +1,72 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2153859B54;
-	Wed,  7 Feb 2024 12:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D543D7CF14;
+	Wed,  7 Feb 2024 13:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707307404; cv=none; b=YzPkFSSjqcS4HF8Hb0eJddhE30qiOWobszqzagoGjufNLOyE4jPiPXEDi1fs1kdsQlBNNIPBX/JcNTRtSvVBm2HQW+04mBCtJOWFJ33QnpmRp1SA2DTUxChS1xiKKm9KTLWjuyqxlYXv32FC2AQq1qHMzrYt4UnjNDKS3Ob/sVs=
+	t=1707311478; cv=none; b=KkdUeA2cnRpzMzQMt22ZPHCAeJtwscA5aO++V+m8KSjmhYU/nSuGGtSWQR6Zd00BOEcD64Zlp9F4nTFp0k2Rop5dL0PKV50YbOq6lhGzpdtOKVMHNebkYaICVwJ9WOsuFLE90w8c1Rg+LiDJko8mSVSaqIFkiTdgUbNOQYsE6oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707307404; c=relaxed/simple;
-	bh=uReOIAUr3yxIpe3V/+0Z1QbKOOO0Li8w6pbjd5rWadM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=F8dKr3eSGxFLYAdLS6KFsY+8YvK97n7qupD3bvP1Cug1ChwuRRB2V+2vqq5HCn4O83n5gs/IVIt36w5k9wpRm4qaE61sgXtdIo6FVhR+vwEWQC9fryg5pg5NGVdh0i4zrsCf7M9IbeetYxbLH6fdc9iCnTJ/xpC8gimOcQhx8Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HENe6pA0; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1707311478; c=relaxed/simple;
+	bh=3GNprG9wTEH4DW6gV31U3iQPEU8BXqZEBULVqbe4ifM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XZGGYiCSQwMkwClzVhpvcSuvIUZta/+O79PEIpQCR5iM7cFpIb/cnpkC7I+HHKeLM2jJnXzeWqwy5P6nVtQxjWatNXAFLcWDFZlXwTke0nR9AjkDrNZj666qYhxuKshh7c17xjPYlS5577ZHCIeepC263KInwKqMu7x9StC652I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8SZXyG9; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HENe6pA0"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33b28aadb28so415131f8f.3;
-        Wed, 07 Feb 2024 04:03:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8SZXyG9"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3392b045e0aso391526f8f.2;
+        Wed, 07 Feb 2024 05:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707307401; x=1707912201; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707311475; x=1707916275; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQGin1dTgZWE68jPKB5i3Z1XPabW/tMTQJ4NouFdDP8=;
-        b=HENe6pA0NBpO+l+JNgQW37HbDDOvyyqe0UcVWwEeRDHVlUrGQ4WD4iTr4pMmWM0x9b
-         S9SA53S9Y7SzWucntCpRKczkN/APJNkLFA2DKvs5DpSjDQmHbRjYyuoa87vE5CfN7a8M
-         E4yLNrrhcOXfBN+BUr1nwYUEGk8dYen43KBDY8d1xBoBwVUrcEDkQwmhYZoyjzlX7Vfk
-         qGONRGIOOyM1Ca1PPcVvHkvajXPaOg2qyaVeTINS0yDjim+cu8lAlfSRaAGLepxeLTYu
-         JHMRWyw59MYikX+ptP70oVGR/qYsvAqZUSofHBXQHxUjHdwvH9llKJBJW4TP7D7AttrY
-         rBiw==
+        bh=w1RihZit+1vSgq9G8FoQ/W9gis9ZTbZPo3dwEeqShqE=;
+        b=a8SZXyG9Nk8kygk571Ar1NQu+FpT4dWv4tlsjK9BGFtfV0qGSau6wTyEqRyZRxqaY6
+         43AcE5UK6bm4psGfcm+1XeV4LmT1y1xhO1ZOZqzIdUA/0lfY3X81TXle0bGgJZyy+W92
+         nDLZ3FPXRCg3Y26vBZ60ejADlCIzK8quhOiqEJ986l7inIR8d8JXc+FzPoeHDp6IgCiw
+         2uzu8YN8ehUvXWekrCF0GzMhqHPy/bGDZx61WbNmUv91HJKgntGrxzfcJP7Pxauc69UV
+         +NbkgkD8PXiJBJm0nvBDBKQdZ0TXA1Uh3Qw2K+96KPesOZgC9S0KSU233EgShv4Ihdu0
+         fHZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707307401; x=1707912201;
+        d=1e100.net; s=20230601; t=1707311475; x=1707916275;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mQGin1dTgZWE68jPKB5i3Z1XPabW/tMTQJ4NouFdDP8=;
-        b=r7QiBkTKL8PwahOSvGBa7jpZuVmzmgqsctutrhh6AShQYEdhlFSq+QrTzl3Wwujpf3
-         gYzoRWtfzy3QpHszlfyQyerXUNRd8sMTpeo2c3tfTrEWOlEjZsTFRAYqVW8c8uDv4IPy
-         ZJkWfRT5hBe0oUaUZYUOpZhJgA7FddiJ3S+GjDgUHAuwu+08rV8KAm4DKQzV5HxMPDq2
-         nLfT8C/nGe4njReFfO53eTwufO0u3B2trxCE7AuTT7coTQs3kdIAcUvTylVmQil6ExkO
-         CMwOTxxo4l5nGGnUmYGA0G3kh6Lx76E7B9DUcbxoMNtOzUEUo/PMinkLXRPaOhZnJYpQ
-         ik1A==
-X-Gm-Message-State: AOJu0YyLS1Jt6nRTzx6A2tnFvxHwIltmJwqJEDJbiH7zHG5WMKa9bX1H
-	YdjVPSWMlXAjJhTwL7v7CZm6PHjf5bR1BDZzSkJ5++MWoIMwQEH/
-X-Google-Smtp-Source: AGHT+IGQtfZ92Xdh3R8wY/pBqwf8Y1LmilebBMiQCFtTVWT8gKQNkK8GSJng9MSP9/MbliBN+Zg+sQ==
-X-Received: by 2002:adf:f3ca:0:b0:33b:26c4:ca3 with SMTP id g10-20020adff3ca000000b0033b26c40ca3mr3185263wrp.22.1707307400899;
-        Wed, 07 Feb 2024 04:03:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXez9PNj+4Sh47lOny7j7IfJx7AlwS8BY1LUaLBPsFCyF3uFlyFO9Zm1f/x6a0eYcGtgEBaERydvsubvgcJIwrznw/4gH5ZG03ip60+Ke+aF97kwx31myaxjwy3RHQXvemBZDVjs8Ba+EDdiWIvSpZjoYLuiUf09ZJvo5aRkfT5SiYFf9JelRwjrloxqDtx9tWqAXBC0WkSEeQQFw==
+        bh=w1RihZit+1vSgq9G8FoQ/W9gis9ZTbZPo3dwEeqShqE=;
+        b=wwF62T1nsLm5Yk1h29WOpMCjnXRwP3Q3BY/tSC8IVNxJTMV/jwA4BQB23euRAL2agg
+         l9rIW1ZmVqRhLVS7FzLHW/w3MMDGWdY/WGv5d1Oe224r6CDUzbMiEiPYnwhQTsSCny6N
+         3GLrq/NlTBJfPKsvVTwftAgz2z3ntKr3PrdDImk4v9pOd7/LvLi6Qj8B+4TlBdhn52fZ
+         JRESnprfKtGEYPE1wywoijjb/KK5EOSp8il9ALR8OsO/0Z0OHKPMvPHB2s0Uv8BALDAr
+         lqkT1o3Cy5DTxdaREGv51E0KXNdFV2eeanswX5Z9pE5q0gbOxmQH4encEx4L1FmFB32P
+         X19w==
+X-Gm-Message-State: AOJu0YxnbaV8LhWXV70IBI6kTgBCGvp2cYW7ZED1srV8NOLdDVNMVPsR
+	eZTlImvYw0hYJY1fdZs0LkvWpaQNw9hKYkFxranB7DlkIRFMdP9F
+X-Google-Smtp-Source: AGHT+IHLRqhcd11KsozD0d9k4SiStaKrBqSgCjQkcM99WIB8aENFVx+5vi0yiVtlNyO+oDye/aqZRg==
+X-Received: by 2002:a5d:42ce:0:b0:33b:159d:8222 with SMTP id t14-20020a5d42ce000000b0033b159d8222mr3226920wrr.23.1707311474773;
+        Wed, 07 Feb 2024 05:11:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWxT+EHwt8qDaK324BHNX1CyyMnptoy+k5D9JtRhhA1qtfS43fAC/uTJ4azFCLjq6qUy7yHXJqptwncrq6Zz30BIraarUAAg4aCZvz8doOJrrFc5vzzMwjOj9mm50yrQ35CXxMmE+zI6uqz26O5PO4Iwgc0A14U40+jvVkCVgqgkHMS4CbNz1SOSgEAMkT1smp5i76gFJPdxvh+S9uH9/f6FaY6F//7fwAYg0UqJKzHnUBzPGYYh26PWt0iFjZTb7cXphqLsimqqMcaa/Mv0CpuAaCGmp9KwvDIx7Sx56P+aCSMSwYcGy+jKgK/Qz9FQL05rZXZto2cecoNE0g0VGzFl7aNCjiSDZQrU/5I+rdUp8xbIAYqTqxYPzLOvvkRKBMWia/ao53w/Y4WIFtUzAE41q2tlsdpV716qgD09uwXllHFl1cnfwPIqQCg+VsLxCOsOrQ0SGaFI6R2oxXwLW30rIL5/ZurvigKqxEyghfWT6K3KHcjJKafjyRsesv8YA==
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g16-20020adfa490000000b0033b50ed5f98sm626338wrb.72.2024.02.07.04.03.20
+        by smtp.gmail.com with ESMTPSA id n10-20020a5d67ca000000b0033b4b165aa0sm1525798wrw.74.2024.02.07.05.11.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 04:03:20 -0800 (PST)
+        Wed, 07 Feb 2024 05:11:14 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-wireless@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: dwc3: gadget: Remove redundant assignment to pointer trb
-Date: Wed,  7 Feb 2024 12:03:19 +0000
-Message-Id: <20240207120319.2445123-1-colin.i.king@gmail.com>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH][next] mt76: Remove redundant assignment to variable tidno
+Date: Wed,  7 Feb 2024 13:11:13 +0000
+Message-Id: <20240207131113.2450297-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,32 +77,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The pointer trb is being assigned a value that is not being
-read afterwards, it is being re-assigned later inside a for_each_sg
-loop. The assignment is redundant and can be removed.
+The variable tidno is being assigned a value that is not being read
+and is being re-assigned a new value a few statements later.
+The assignment is redundant and can be removed.
 
 Cleans up clang scan warning:
-drivers/usb/dwc3/gadget.c:3432:19: warning: Value stored to 'trb'
-during its initialization is never read [deadcode.DeadStores]
+drivers/net/wireless/mediatek/mt76/agg-rx.c:125:5: warning: Value stored
+to 'tidno' during its initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/dwc3/gadget.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/agg-rx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 564976b3e2b9..6e47259f2c4f 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -3429,7 +3429,7 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct dwc3_ep *dep,
- 		struct dwc3_request *req, const struct dwc3_event_depevt *event,
- 		int status)
- {
--	struct dwc3_trb *trb = &dep->trb_pool[dep->trb_dequeue];
-+	struct dwc3_trb *trb;
- 	struct scatterlist *sg = req->sg;
- 	struct scatterlist *s;
- 	unsigned int num_queued = req->num_queued_sgs;
+diff --git a/drivers/net/wireless/mediatek/mt76/agg-rx.c b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+index 10cbd9e560e7..07c386c7b4d0 100644
+--- a/drivers/net/wireless/mediatek/mt76/agg-rx.c
++++ b/drivers/net/wireless/mediatek/mt76/agg-rx.c
+@@ -122,7 +122,7 @@ mt76_rx_aggr_check_ctl(struct sk_buff *skb, struct sk_buff_head *frames)
+ 	struct ieee80211_bar *bar = mt76_skb_get_hdr(skb);
+ 	struct mt76_wcid *wcid = status->wcid;
+ 	struct mt76_rx_tid *tid;
+-	u8 tidno = status->qos_ctl & IEEE80211_QOS_CTL_TID_MASK;
++	u8 tidno;
+ 	u16 seqno;
+ 
+ 	if (!ieee80211_is_ctl(bar->frame_control))
 -- 
 2.39.2
 
