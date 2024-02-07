@@ -1,89 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0E183CD1;
-	Wed,  7 Feb 2024 18:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663EE82D73;
+	Wed,  7 Feb 2024 19:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707330066; cv=none; b=C5Kch3slCma4IUbd32xFw4/tUmaICiqY6EsCDe4bobnVpKMDLbtGJxaNNgxaENTCpBawar9l09sTMTTrHr5B7rYjtffo+CI0wof0X6NaB1XY1M38ShsOL50kbipCoyno7R5dEnWkZeXJsQpx6fmsmZNMHdPymYHffGIK0FjUYlU=
+	t=1707333052; cv=none; b=R6rsRnmeCD0TDQlZoEB5WhoQiyYDaKEKi79IsxXz5qj0r6UGVXlI6+FSheh7zetyyQz7ZTo0MlBinVOYwHNMDw9xwWO7EQ6oI7qjs3t4q9zCgvDa286x6+Z1uo8JPQyz4bNfXHoiu6UP6xP8EbXOGxZQTXiXFP9/9+b7mrY2Jag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707330066; c=relaxed/simple;
-	bh=fH8Upe5jFf9OWoHf882xFwqtEouPSCTWBjZq8M5jMsc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kL2iVGb/dkPqIIUwJB6Ewh36C2K/TMWZUfJ7Wi/LhSdzXNmp9yLCN7TF2RsHs10R8wtY56Fkk5k+Rio2ghlXFh5MjgrR5FSc132WdsHrn/WBh2iVe3BT0bFdwOxeeJBUAKnUIC5RKHreiziyqrrlkoL8bjq4Gz1+pQ2XedjswHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA2zfu/H; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707333052; c=relaxed/simple;
+	bh=OCnvHMbEgGstPQ+6RSJ1FJWLuiwrN1X56YrscIQU1ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=I61fqL9beUI2jb1iYEN4fBfq3v7fnCuvY243JejRFfl/1lObttI/67Un0Nl7OvDsOuVLkiPTe/uAL5xM+mihMKA62H99tD0QRAIeexWvvKq+iNAPZGriED+vKqkgORvFmX45IIfZx7QFTyHAulbhr2arc3wl7sYBhzBeWCVTFC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3ymfeSd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA2zfu/H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F73C433C7;
-	Wed,  7 Feb 2024 18:21:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3ymfeSd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD0FC433F1;
+	Wed,  7 Feb 2024 19:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707330066;
-	bh=fH8Upe5jFf9OWoHf882xFwqtEouPSCTWBjZq8M5jMsc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YA2zfu/H6y+kCz7GwvdgH8nadBxD15FhSXNHRxhDsoXXPgqAvVuns5hQqRlSEQyP6
-	 Uf9GRDgaq1082t4oph/sl7n6X/QyA5C2qtkU0uc4z6Cz0i+wWIeJ8qlOQ6rEupeQAE
-	 Ciwoqh7IlwHVLhnzaxtDIM2+H/N54OGJ0TpstJC4ahB+GP2fvxsMek/SuxbHgL8E0O
-	 nd8cLHj63ANwObnsyWALmaFabMcah8DkZwe0ApfwZ/RfPCYyNBvARGAa9dqn0KoiTF
-	 pvBbZ9OX/jSQy3gKDrKyu7RIMm2XGiJaSQ26IlxrU4xhm7ovXDDyBy95m4ovePIzIz
-	 5IXzR6+QLyNew==
-From: Mark Brown <broonie@kernel.org>
-To: Andrei Simion <andrei.simion@microchip.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240207132231.16392-1-lukas.bulwahn@gmail.com>
-References: <20240207132231.16392-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: repair entry for MICROCHIP MCP16502 PMIC
- DRIVER
-Message-Id: <170733006365.1096853.3231034830633743082.b4-ty@kernel.org>
-Date: Wed, 07 Feb 2024 18:21:03 +0000
+	s=k20201202; t=1707333051;
+	bh=OCnvHMbEgGstPQ+6RSJ1FJWLuiwrN1X56YrscIQU1ps=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=k3ymfeSdbhT2bqIwZJS9xY+5EqNd0Bcsp4td7PM/2zlnSyoEqO6cpotVx0zrxuUNC
+	 0BaCBHHx/vV9Z/gbSlX5ZtlEZ01yzL0GgyHimwHldvTzywMRpsS1g+rCVyEeGVPjGi
+	 V6XxpTqHO+dZk803Wb91hawO+t7PUEyoly+kALzl79DrE+Az5fB9+/pYT3rLkUfjYV
+	 H8i0oRKW4YDLZhRDdhr/xv/PiY29kdcqa3+4fA5VlBNtMwc5awStF+Wtn9kpQBMeju
+	 nDiCUc+f2pf8zB/+Ce1IaU/9XnzAWhmpKFiO+MuCIuxYTvCgSWVe2yFKtoaSF/uN9E
+	 Re7Junm/vc3WA==
+Date: Wed, 7 Feb 2024 13:10:50 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@wdc.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] PCI: dwc: Fix a 64bit bug in
+ dw_pcie_ep_raise_msix_irq()
+Message-ID: <20240207191050.GA912556@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <af59c7ad-ab93-40f7-ad4a-7ac0b14d37f5@moroto.mountain>
 
-On Wed, 07 Feb 2024 14:22:31 +0100, Lukas Bulwahn wrote:
-> Commit 64db3e8d7be0 ("regulator: dt-bindings: microchip,mcp16502: convert
-> to YAML") converts mcp16502-regulator.txt to microchip,mcp16502.yaml, but
-> misses to adjust its reference in MAINTAINERS.
+On Fri, Jan 26, 2024 at 11:40:37AM +0300, Dan Carpenter wrote:
+> The "msg_addr" variable is u64.  However, the "aligned_offset" is an
+> unsigned int.  This means that when the code does:
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
+>         msg_addr &= ~aligned_offset;
 > 
-> [...]
+> it will unintentionally zero out the high 32 bits.  Use ALIGN_DOWN()
+> to do the alignment instead.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 2217fffcd63f ("PCI: dwc: endpoint: Fix dw_pcie_ep_raise_msix_irq() alignment support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Applied to
+I applied both of these to for-linus for v6.8, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] MAINTAINERS: repair entry for MICROCHIP MCP16502 PMIC DRIVER
-      commit: 46d5baf046abeffcb3754321fbc2551027fe7de9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+> v5: Add the #include.
+> v4: Add stable and r-b from Niklas
+> v3: Use ALIGN_DOWN()
+> v2: fix typo in commit message
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 5befed2dc02b..d6b66597101e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -6,6 +6,7 @@
+>   * Author: Kishon Vijay Abraham I <kishon@ti.com>
+>   */
+>  
+> +#include <linux/align.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -551,7 +552,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	}
+>  
+>  	aligned_offset = msg_addr & (epc->mem->window.page_size - 1);
+> -	msg_addr &= ~aligned_offset;
+> +	msg_addr = ALIGN_DOWN(msg_addr, epc->mem->window.page_size);
+>  	ret = dw_pcie_ep_map_addr(epc, func_no, 0, ep->msi_mem_phys, msg_addr,
+>  				  epc->mem->window.page_size);
+>  	if (ret)
+> -- 
+> 2.43.0
+> 
