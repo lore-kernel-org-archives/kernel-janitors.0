@@ -1,43 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72B53C460;
-	Wed,  7 Feb 2024 09:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BE0224CC;
+	Wed,  7 Feb 2024 09:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707298755; cv=none; b=NzyMtA4w5+XSXS1S5/N2PDl2mkZWqTL3lOYLlj+SlioxdFDeQM5SiOj3qKqjShqIubbw5KRFn8KNQQlTBd7OpyDMfAwgkM+uf9O6ywnxdp+SDE1ZDZ/NZuO/HKl6+tSGe/VkG5J7m/4UfZCgNJLKUUH77xONBBRiMmDqzuXTRFg=
+	t=1707299173; cv=none; b=HyvTI10p8b5WOstY+Xrpj3Kx5LKm1OPMubIxfGC1qy5dTHDz2loPqo+e33P0lhtFXAzU7m759nRx8E5Js10/y0iWcvR8j6ffQFIri19GtdzZqg/KBDZTueJ8rYTtNXqquhKkWVBM6ojwery+4R2aBeikWbU7GPhVqJQr+piQdNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707298755; c=relaxed/simple;
-	bh=xE7Hz8F4hPX3o7n+0ziBG/3UXfOJKIOA4LqMsgXK5Ks=;
+	s=arc-20240116; t=1707299173; c=relaxed/simple;
+	bh=hkrf29qHJozatNFewJsMGAqd91LzfIcTuGK9E1t1LtI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6pSNzJck5Yge4ijnow/AwuBfL48F6X4nvHrc+tMSr0HonNPSL16/5ZDYVuDX5jQafqXOXgcgygzyEhTPtIvlw8jjkmue0wjMHg8NEZjVanRbrih1EaiSiD2+i1B77p7HkWPeY+O5Z13T7EZDWU1UbD98X2t4OhN73oq3tJb0BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fW/bou7Z; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gskgXwy990quUu91Z5VrI3qqUlzbTn5xuTWuy+sdFFGQdJdWDnA8fT0CEaTylqzgZbu+6p8bintpBu4NUc1vrVMDSMJAmELMYEd6iMhcq5HAsIUz+36E//apaSpm83Sg52MyMSENdaW7/zLxvbIjrY4uTzc+RL81Zo5I3D/d/ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+OpaAY4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fW/bou7Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4F2C433F1;
-	Wed,  7 Feb 2024 09:39:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+OpaAY4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4457CC433C7;
+	Wed,  7 Feb 2024 09:46:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707298755;
-	bh=xE7Hz8F4hPX3o7n+0ziBG/3UXfOJKIOA4LqMsgXK5Ks=;
+	s=k20201202; t=1707299173;
+	bh=hkrf29qHJozatNFewJsMGAqd91LzfIcTuGK9E1t1LtI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fW/bou7ZEYs8/2v+B73j30Rh/fwJXq1Gkak+lf3dxbe2M7BJRUXDPpRs6uUhBqSLd
-	 m+EsSQV3KKen2D7FvJb5L216olYvMe8ldV0MFV2wiMtxusVwIPcy0FpLFTZm1naOAj
-	 TgGi8VcE4/iQQrwbvxbkq93bFseruKH95e9UzwJBicgcgpd6LCeBsCMNZ9S+dn/S7q
-	 /exzuxAUsrkUpYOYoOXtcFlfUASXhqIGg7Hyy9NLSxQTYGPmihY6/3+C2VnfkDUXr/
-	 jJ1fz6VvAusHUkyzR8evvl5o0HhDCp+l38eTfc6izPCw9kdAYlQLUVth+cIRS2fPX5
-	 MLK1MUfwoDW4Q==
-Date: Wed, 7 Feb 2024 09:39:11 +0000
+	b=W+OpaAY4HT4KwIzZQl8KtgYFQiSKDgvJH5Z8iTfZHwDywdRqNtQgDAl1NRhx57Rrf
+	 wWMvDfmwVdEWa2BfaVK8o9bh9F0LPOHFxar91VFDB2oG4Vd6KePKtqdfHvDayK0L1m
+	 LFT0Hxc38QuIQmkjmjqqQe9ygWc/8BZmmdT39Yl74oi8e1JTjYfQIXcw/UBOTMrDKZ
+	 4r80d3LYaQQitMU8/E66IfRD6qTPwa3RU0rr1P2X6PEY0bYPECMv1JcZXttLgYUl+M
+	 0hh9o/H7lOzqeq0oa0XvDDbx6MOo6LPom4lhhBtFMsOegHFhiSRNajAzRVYBhHcKQq
+	 ay5kPd7s5tbJw==
+Date: Wed, 7 Feb 2024 09:46:09 +0000
 From: Simon Horman <horms@kernel.org>
 To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Ariel Elior <aelior@marvell.com>, Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
+Cc: Manish Chopra <manishc@marvell.com>, Rahul Verma <rahulv@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	"David S . Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qed: remove duplicated assignment to variable opaque_fid
-Message-ID: <20240207093911.GM1104779@kernel.org>
-References: <20240205215530.1851115-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] netxen_nic: remove redundant assignment to
+ variable capability
+Message-ID: <20240207094609.GN1104779@kernel.org>
+References: <20240206115049.1879389-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,20 +48,54 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240205215530.1851115-1-colin.i.king@gmail.com>
+In-Reply-To: <20240206115049.1879389-1-colin.i.king@gmail.com>
 
-On Mon, Feb 05, 2024 at 09:55:30PM +0000, Colin Ian King wrote:
-> Variable opaque_fid is being assigned twice with the same value
-> in two identical statements. Remove the redundant first assignment.
+On Tue, Feb 06, 2024 at 11:50:49AM +0000, Colin Ian King wrote:
+> The variable capability is being assigned a value that is never
+> read and is being re-assigned later. The assignment is redundant and
+> can be removed. Also remove empty line before assignment to capability.
 > 
-> Cleans up clang scan build warnin:
-
-warning :)
-
-> drivers/net/ethernet/qlogic/qed/qed_rdma.c:1796:2: warning: Value
-> stored to 'opaque_fid' is never read [deadcode.DeadStores]
+> Cleans up clang scan build warning:
+> drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c:1189:2: warning:
+> Value stored to 'capability' is never read [deadcode.DeadStores]
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+> index 35ec9aab3dc7..51fa880eaf6c 100644
+> --- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+> +++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+> @@ -1186,7 +1186,6 @@ static int
+>  netxen_p3_has_mn(struct netxen_adapter *adapter)
+>  {
+>  	u32 capability, flashed_ver;
+> -	capability = 0;
+
+This part looks correct :)
+
+>  
+>  	/* NX2031 always had MN */
+>  	if (NX_IS_REVISION_P2(adapter->ahw.revision_id))
+> @@ -1197,7 +1196,6 @@ netxen_p3_has_mn(struct netxen_adapter *adapter)
+>  	flashed_ver = NETXEN_DECODE_VERSION(flashed_ver);
+>  
+>  	if (flashed_ver >= NETXEN_VERSION_CODE(4, 0, 220)) {
+> -
+
+This part doesn't seem strictly related to the patch description.
+But in looking at it more closely, I wonder if it would be good
+to reduce the scope of capability to this context (and leave the bank
+line).
+
+>  		capability = NXRD32(adapter, NX_PEG_TUNE_CAPABILITY);
+>  		if (capability & NX_PEG_TUNE_MN_PRESENT)
+>  			return 1;
+
+In any case, I agree that this patch is correct, and I'm happy with
+it with or without the change I suggested above.
 
 Reviewed-by: Simon Horman <horms@kernel.org>
 
