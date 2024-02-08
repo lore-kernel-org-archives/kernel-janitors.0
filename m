@@ -1,106 +1,147 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB86A8B7;
-	Thu,  8 Feb 2024 09:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8659E6BFC7
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 Feb 2024 10:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707385649; cv=none; b=JS3wp/4lA3kz4f/ptkKOZwW8qSMBbVNrISWGrQhfvlVxRBNqQSET4zqjtQ31rDwSgDx84qFatbmo4h0E4l1GSU7UIxgj4M8t2wq6Jsj0wbYOT+qi658gyYM9nhtwSuWSKpojAWCVk/HaOccAx4inUz7OtRoFR4FZZKsnu52Eil8=
+	t=1707387433; cv=none; b=EAbNa5d9pKJgaly7JSxyPPs1VU8l/KkTHU69a51nd9HibRNkpaHPNYi1uBr+l+UDf98Ww1WXnBd2wyoCU7oPuQgtrgmJLfKiBjCDB+3J7tQlyC1RnMvMJJKP8h4nwObQQWWvjPAYXDPLmMmcd6klLA3O1wi03t6vAK5ytm/7+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707385649; c=relaxed/simple;
-	bh=NJzTYxPGog+LHw69EzTQgjJrKi3/8IWhSZCZ12TQeTc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fiued0Fezm1Lv3Spk1tpH6nmsmtNdboVsXfzqqVDUgbUOvXuJwGfy6Od9x6aeI7vl6TMnnJdOi6mwHj27HJKIM6aWAq1cd99EQ68Bf/aEumA9sngl/WBUuepCWNxvoLsrYVs/MksrDNPVWuUF6Rk9fy7g2UsocN1kr2qEQVKg7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ievev3SY; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707387433; c=relaxed/simple;
+	bh=84Kib6khEPlN8l9DaFkQuhMzge2xCeFF//MaGpJ0yqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mB1F0OzuAtj/czdTEV15UOyZYhmoUX/g5yXGrZNzd+YeLJKNW77aOARYSW9ubHUK7XhRHNxXGZSYLBMOiey1dlEd45GiHbnQ2IOfCpPyWM+GwGy5AKMELcjSkYpBKmOZhpgWJ6k208VCh93LnTilFdXZZSngHwCy4KSnNNxHKWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ohd164C6; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ievev3SY"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a388c5542e9so126905266b.1;
-        Thu, 08 Feb 2024 01:47:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ohd164C6"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a3832ef7726so196415266b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Feb 2024 02:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707385645; x=1707990445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DH3hgklJ1R75I/VpBMJ+510hVZo1X3MvgC5DTxJlxAI=;
-        b=Ievev3SYGISIljGc9L95TWHsm4aaHm2deDlQ3h7XDI3nqfV5MSR1qAZwuwI7fsgEh8
-         7UIDyiMMFJ7dV2JgYth2L3ctguRZ2ei2S1DkIsFxAMGTs3ZVq9gS81Gr0gCjJfuKYc8K
-         ROBIiryRFIsxAzRGZG8LhBd8WOkrPtYqKekD1rr0EE8Agv7x4fQhPkBu2s2UX60x+umo
-         DcUFt8kBR/5Mgbgqa223bR0nS0dmyGhxmAt2SY+x22jj/Vv7Vxz2aKVB4tX8vmUUwm55
-         krXuk5c4ka4T+D5OoIwmfMJwn+5Ns9XCUdixoINCrW6p/ae4b6i+oUM3G7rzO4o4+nsI
-         JgEQ==
+        d=linaro.org; s=google; t=1707387430; x=1707992230; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dSCzA3TtajxFSnQT41yvEgUpa+RWk4jWwMsKck/Sxug=;
+        b=Ohd164C6BH8Uaj+0a5Y2EKVdnqMdDhih2l5mC7BszLEdGIdeGXZ9QTops3R3wgC843
+         vRYNMOOl4s9Be77sSjKNwEPuPCiXUkywsXGbjvFtLHlmdYDckUjDWKr4o/UkDMqwvpu9
+         1uTQCA9DURbM9OjxVw7ExhHjwPOwv4G21HzUNmp9qqDvy9U1dhwlzYi3FcXRBbth1T4w
+         8VXzP9HFSN6DBoejpp5IIiTnRLYYrmVB7Ti4kNLaSym8mqeoboyGHQKC0y0N7k2wtNXT
+         IW8v1ARIGZZwMLOSN0JCPWS6bTM36GJ9KuAUwnsYPyHfwSxizhbKC+fARSndcfk684Eq
+         xsfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707385645; x=1707990445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DH3hgklJ1R75I/VpBMJ+510hVZo1X3MvgC5DTxJlxAI=;
-        b=STIoDIFSdtk68k6fvAAWHer+0h1o7MR7ZsrsETDXSkOLymZbWb5yUUcebsnZJrw8IS
-         PFJsckJJhGuPrdMC9vA8NsI5gJsg7w60CFnzDZHQzNubck5WD3aPpBkWwLSBAAA3/LX2
-         4dxUC/LKtMkC/s1FhE+ki0PCazcIKz/D5SGulw+9AfjX+Vwdw45VVoqTzncY1Nfry9D2
-         zeqcch7KWrQTMvTeX6i0yafnRtqLXEBRSdGwrDvv/a/Pe0OEjrDV/O9aYShDDgRVOTRz
-         T1Ib2cCWxv9rgLypMQ3ALBGSuKClEPuN4OVsqfF6qjMK3xOHFQpG+i//J3lURH+urzVx
-         quPw==
-X-Gm-Message-State: AOJu0Yzbwm3tc2GReCzTFoKW9c6BwIHNHahjXZ6qoXw4KskrFhxw4Clo
-	sJtaGIhzpu9x1VdcJYDCB79d/FCKodCbATL3ieHW2XKKA6FtmXRcAwRhzR+nfInppG0OksTh/S1
-	24TotKsFKUf/GZjJvnKafko21j9BaQ0HPe3s=
-X-Google-Smtp-Source: AGHT+IGezKKWZ25bbGDuM3CK5CVJTtXoxBQHcRsyoeEV3EpwXsWsIoYWuis+AHvCuxSKvkEOsZmGBuCOh9k6CbxtP2I=
-X-Received: by 2002:a17:906:cc92:b0:a38:65e6:b996 with SMTP id
- oq18-20020a170906cc9200b00a3865e6b996mr1979455ejb.11.1707385644965; Thu, 08
- Feb 2024 01:47:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707387430; x=1707992230;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dSCzA3TtajxFSnQT41yvEgUpa+RWk4jWwMsKck/Sxug=;
+        b=CHbemPlbSqxxnYOR+c6Mm6RQLXygLegUuDeJu17U7Axlrpo4DJEhc1JdfZ8Rgk5CS/
+         HWzldpI1M2UqjobJOnuF4gd9lbsQ0NhAbj+FoEI706FFDQcy4yayReOaebrWhP1lipJj
+         gdJNuXtM3wayRv4h65qLLIN7OA6xK5w8OJl/H4Ixb1hB9ouvebLIP0JDadygToIUxul1
+         cwwvQYKJHMiWYiBQUHTkXahE+9+nwgmOSOjBJKeU+iG/r0HuGwDMCtZXWohNymzF4RWe
+         ktpL42xv92uZb5eUsQNcgH2AYZUsqpnOnib9fm/Pibg7lHcsYO3/rwIg2rK5I9AkAIsA
+         l8LA==
+X-Gm-Message-State: AOJu0YyIcH4ftyfiDJWkasKfU69kDYyl62/C8bPhLtKBPgkaC+yoCIcu
+	htaXt3ttJUwjDF/aLXwtZk1mUpORldymWL4kFyJBC7Aq1itJ80A4mFUzm6YkjEE=
+X-Google-Smtp-Source: AGHT+IGoDK7SVa0dMNt4YRGN7S5DNOa0d7ywiVZeynjKlEfCY1x5p53xCugngv+0LbXeCiY5hquXdQ==
+X-Received: by 2002:a17:906:2111:b0:a38:406d:5dd4 with SMTP id 17-20020a170906211100b00a38406d5dd4mr4575288ejt.36.1707387429815;
+        Thu, 08 Feb 2024 02:17:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWqKVQGhK8sUJu0fES0yOgITDofk1UNiJVOH8Sce42i+S+Uy+ns0sufGciH3z7L+1Wi8Xtd4BcYg90PvaqaQ9XgN0K4DBOufSnPjP0uhvngcvJxwJhXWWAfBrouK3T7SwF3fH2ddn46GGMmXAPqJpkyJ7BBlo56i7pOu+fCawbVtltmcOVyEhcReg+dEYcZVwHqnj0YiJnBjqCKGYtLyb7BF0Z3rBGOTDe2DXu3ipoE2vUIMllvEluJXkBHivuCJFLYDV8RUNhtxO8JuooiGJftmo8p0NEkQ36ZYloZ5+VyIQle2yANRoMWWvmOPLPahmnddFAw1W+ZReF377+bC6ApoM7C1qqywfdKE9FfkFFEDu/w/5xaLeU1y9HRCNW9kgGiQvAyIPry7YhAKz/vrs5/LFnF4ApCZHd9JTzmwRc/qlA=
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id vo3-20020a170907a80300b00a381eea0e9csm1736957ejc.197.2024.02.08.02.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Feb 2024 02:17:09 -0800 (PST)
+Date: Thu, 8 Feb 2024 13:17:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luca Coelho <luciano.coelho@intel.com>
+Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	Alon Giladi <alon.giladi@intel.com>,
+	Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Daniel Gabay <daniel.gabay@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] wifi: iwlwifi: Fix some error codes
+Message-ID: <9620bb77-2d7c-4d76-b255-ad824ebf8e35@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129131729.4311-1-lukas.bulwahn@gmail.com> <ZbsxfYVKqxwn5gl5@gondor.apana.org.au>
-In-Reply-To: <ZbsxfYVKqxwn5gl5@gondor.apana.org.au>
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 8 Feb 2024 10:47:14 +0100
-Message-ID: <CAKXUXMynhktyTY8+JtDAuVHysV2g0eXy7dr09wvSqYxZ=paWUg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entries after crypto vmx file movement
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Feb 1, 2024 at 6:51=E2=80=AFAM Herbert Xu <herbert@gondor.apana.org=
-.au> wrote:
->
-> On Mon, Jan 29, 2024 at 02:17:29PM +0100, Lukas Bulwahn wrote:
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 2fb944964be5..15bc79e80e28 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -10307,12 +10307,12 @@ M:  Nayna Jain <nayna@linux.ibm.com>
-> >  M:   Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
-> >  L:   linux-crypto@vger.kernel.org
-> >  S:   Supported
-> > -F:   drivers/crypto/vmx/Kconfig
-> > -F:   drivers/crypto/vmx/Makefile
-> > -F:   drivers/crypto/vmx/aes*
-> > -F:   drivers/crypto/vmx/ghash*
-> > -F:   drivers/crypto/vmx/ppc-xlate.pl
-> > -F:   drivers/crypto/vmx/vmx.c
-> > +F:   arch/powerpc/crypto/Kconfig
-> > +F:   arch/powerpc/crypto/Makefile
-> > +F:   arch/powerpc/crypto/aes*
->
-> Are you sure about this? There are non-vmx aes* files in that
-> directory.  Perhaps something more specific is needed here?
->
+This saves the error as PTR_ERR(wifi_pkg).  The problem is that
+"wifi_pkg" is a valid pointer, not an error pointer.  Set the error code
+to -EINVAL instead.
 
-sorry for the late reply. I revisited this patch and now keep the
-match exact in my patch v2:
+Fixes: 2a8084147bff ("iwlwifi: acpi: support reading and storing WRDS revision 1 and 2")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/acpi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-https://lore.kernel.org/lkml/20240208093327.23926-1-lukas.bulwahn@gmail.com=
-/
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+index 9afb1b1d6aea..506279b95442 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+@@ -475,7 +475,7 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 2) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+@@ -491,7 +491,7 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 1) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+@@ -507,7 +507,7 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 0) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+@@ -563,7 +563,7 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 2) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+@@ -579,7 +579,7 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 1) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+@@ -595,7 +595,7 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fwrt)
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+ 		if (tbl_rev != 0) {
+-			ret = PTR_ERR(wifi_pkg);
++			ret = -EINVAL;
+ 			goto out_free;
+ 		}
+ 
+-- 
+2.43.0
 
-Herbert, I hope you are fine to pick this patch v2.
-
-Lukas
