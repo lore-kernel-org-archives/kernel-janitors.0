@@ -1,41 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C65148CC6;
-	Thu,  8 Feb 2024 21:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB5F4F1EE;
+	Thu,  8 Feb 2024 21:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707427995; cv=none; b=E5O75ee/CMwHUsdUyqPw6NbcIBm4JUIhFp7ZLIk2U7KLBrV91O37YLxDxXVUUjqTacVwSH7YeFU7Ij0/ztQF9zv2vuG6vL9dZK5XHNebPrHQ2LWDvDQmnCXEAFT+2DrgcE+f1K2F+lBAdsFcnr1MPfuy3l0IgxftGU9h1pLr7+U=
+	t=1707428204; cv=none; b=jRi72mCNLK7QGq1Ly5+PLgnn1Iff83tgBoPdHh5zwenTo9J8TKawrKNwXAwIFxul8SPOw20ERLrkWNz8H6R6DVLQmNV3Y57oFP/Eid935JxqZjQyOZmIAvZ5xKWyTUyOj/hS3QPkgrvtvpu8qffIhPpjbgUmvEBMdqKtGgB0qHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707427995; c=relaxed/simple;
-	bh=yo5vnXHyIx1FjoDcm/XP6Pmz2W7lO68ZWNXRyinSzU0=;
+	s=arc-20240116; t=1707428204; c=relaxed/simple;
+	bh=6h1r+mf5vEgW1yFwYkHTvO5I4boVb36Scu743ILzsvw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=S+WriaTXvYZQ7QV3PpCZ5TT9mAT8Fub1vM5g4zhMN5KS6NeA16W+gg+EepXNTSs/DKR6ApLwMF9apjcfdj9Q8IohBxcEzjLAvQqkZnZHkGmTmJ/sA1Lf8eF0Xnd3py1XasVZa/Vt8ErkIhl+CGN49wunZWj3yLXsDqyrSVokN50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tyu4EKQy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition:In-Reply-To; b=GqDrXP8p8GdX/Xi6ERb53INY50R5nstyLQP8zqwgaNwx/uY5lvXWjTQqgyrseMhYtgGvpnlkPhOXVrgMehD109bSrnSHjAFEsoYRSFTXNxFuoQDNhF1SkVjCqQGhUCqATzHxUYODio+LgdnIqUWQV5R5TshB+mhZnbKpf6RkiWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2OxyuUR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tyu4EKQy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA95C433C7;
-	Thu,  8 Feb 2024 21:33:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2OxyuUR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B75DC433C7;
+	Thu,  8 Feb 2024 21:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707427995;
-	bh=yo5vnXHyIx1FjoDcm/XP6Pmz2W7lO68ZWNXRyinSzU0=;
+	s=k20201202; t=1707428203;
+	bh=6h1r+mf5vEgW1yFwYkHTvO5I4boVb36Scu743ILzsvw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Tyu4EKQyJh2dKk37zRS2anU8j/iZ2zwUN7w5kpYFhTWzXsiJ6MP+JQW0L4K8ZG1wT
-	 cvGVZ++h8vKACSSugeZQQWuRVkVtah7vp2UBq2YuEMkzv51hNDaz2TOcOgEv8WFfrU
-	 CXeBCRacRwBGPCZPPP00L9xBxt9AEaW6DB0GfgIPrgwLb05lqVcoJCdyYOrNAaDlgu
-	 PrPAfauiA48Ox1EeTs+pE2Z8+RpZ0zGZX9j+RLDOXz9XA6cK1k61aec/0+dzYjhiY9
-	 eO5f8BWrvF5bm7fWS5CK2ojmoCXn2ZNGNfryDtB+xBYpl4RvRlwwuLPAlPrejVfh5f
-	 MQZO0aFZCVEKw==
-Date: Thu, 8 Feb 2024 15:33:13 -0600
+	b=u2OxyuURzWENGfTKrM94WkOqvvqSNdFVdrPiueXmUUdR6l1Hq/YCH062SRZWJrDDo
+	 joL4hhXXfzv04VyY7Iwc4bYTuNsekhglHoxF6fh+MnO0lIofGz096XGqNc5GazOwzU
+	 BRcX8aMZ8QZEfT6n0a9bY579w8doM7BBXLC+jxakVKYdATVY3itqkWY+auyDmPtne3
+	 giir9A6f/Dv5+G9ENjTCG6muTsemX1PnCvnR0nQahxfVYzrQzB0DusqrPiPHvP0PvB
+	 SNJKreXJFzqXghFfyzofY/pKw05ahxScMLBUDnipqovKyUvdAXDpHNi6HTIwb0rXSe
+	 /9gFiNShlMQTg==
+Date: Thu, 8 Feb 2024 15:36:41 -0600
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
+Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
 	Logan Gunthorpe <logang@deltatee.com>,
-	Eric Dumazet <edumazet@google.com>, alexis.lothore@bootlin.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI/P2PDMA: Fix a sleeping issue in a RCU read section
-Message-ID: <20240208213313.GA973325@bhelgaas>
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Dmitry Safonov <0x7f454c46@gmail.com>,
+	Daniel Stodden <dns@arista.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
+ switchtec_pci_probe()
+Message-ID: <20240208213641.GA973659@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -44,42 +46,48 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02d9ec4a10235def0e764ff1f5be881ba12e16e8.1704397858.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <01446d2ccb91a578239915812f2b7dfbeb2882af.1703428183.git.christophe.jaillet@wanadoo.fr>
 
-On Thu, Jan 04, 2024 at 08:52:35PM +0100, Christophe JAILLET wrote:
-> It is not allowed to sleep within a RCU read section, so use GFP_ATOMIC
-> instead of GFP_KERNEL here.
+On Sun, Dec 24, 2023 at 03:30:01PM +0100, Christophe JAILLET wrote:
+> The commit in Fixes changed the logic on how resources are released and
+> introduced a new switchtec_exit_pci() that need to be called explicitly in
+> order to undo a corresponding switchtec_init_pci().
 > 
-> Fixes: ae21f835a5bd ("PCI/P2PDMA: Finish RCU conversion of pdev->p2pdma")
+> This was done in the remove function, but not in the probe.
+> 
+> Fix the probe now.
+> 
+> Fixes: df25461119d9 ("PCI: switchtec: Fix stdev_release() crash after surprise hot remove")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied with Logan's Reviewed-by to pci/p2pdma for v6.9, thanks!
+Applied to pci/switchtec for v6.9, thanks!
 
 > ---
-> This patch is speculative.
-> It is based on a discussion related to another patch. See [1].
+>  drivers/pci/switch/switchtec.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> It also matches the doc, IIUC. See [2]
-> 
-> [1]: https://lore.kernel.org/all/20240104143925.194295-3-alexis.lothore@bootlin.com/
-> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/RCU/whatisRCU.rst#n161
-> ---
->  drivers/pci/p2pdma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 0c361561b855..4f47a13cb500 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -661,7 +661,7 @@ calc_map_type_and_dist(struct pci_dev *provider, struct pci_dev *client,
->  	p2pdma = rcu_dereference(provider->p2pdma);
->  	if (p2pdma)
->  		xa_store(&p2pdma->map_types, map_types_idx(client),
-> -			 xa_mk_value(map_type), GFP_KERNEL);
-> +			 xa_mk_value(map_type), GFP_ATOMIC);
->  	rcu_read_unlock();
->  	return map_type;
->  }
+> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+> index 1804794d0e68..5a4adf6c04cf 100644
+> --- a/drivers/pci/switch/switchtec.c
+> +++ b/drivers/pci/switch/switchtec.c
+> @@ -1672,7 +1672,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+>  	rc = switchtec_init_isr(stdev);
+>  	if (rc) {
+>  		dev_err(&stdev->dev, "failed to init isr.\n");
+> -		goto err_put;
+> +		goto err_exit_pci;
+>  	}
+>  
+>  	iowrite32(SWITCHTEC_EVENT_CLEAR |
+> @@ -1693,6 +1693,8 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
+>  
+>  err_devadd:
+>  	stdev_kill(stdev);
+> +err_exit_pci:
+> +	switchtec_exit_pci(stdev);
+>  err_put:
+>  	ida_free(&switchtec_minor_ida, MINOR(stdev->dev.devt));
+>  	put_device(&stdev->dev);
 > -- 
 > 2.34.1
 > 
