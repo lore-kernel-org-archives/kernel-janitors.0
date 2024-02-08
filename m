@@ -1,117 +1,85 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB016BB36
-	for <kernel-janitors@vger.kernel.org>; Thu,  8 Feb 2024 17:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C65148CC6;
+	Thu,  8 Feb 2024 21:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707415125; cv=none; b=uIs12Bk3qHghSq6hskkjDexZgpy3NmWVnN6FlxxzjZQBhhX1uarSdN1PuFg1+J7edNCiCqUjdGwEVz1HnrIql5UW4Unr8ecjiKhEXyL1Hu+yEQ/di0B65Ff1sM5e4Q5TkJ2o2+vKYLWad61K1wqmjkEUBDQU8YTp1FmOJ8oriMw=
+	t=1707427995; cv=none; b=E5O75ee/CMwHUsdUyqPw6NbcIBm4JUIhFp7ZLIk2U7KLBrV91O37YLxDxXVUUjqTacVwSH7YeFU7Ij0/ztQF9zv2vuG6vL9dZK5XHNebPrHQ2LWDvDQmnCXEAFT+2DrgcE+f1K2F+lBAdsFcnr1MPfuy3l0IgxftGU9h1pLr7+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707415125; c=relaxed/simple;
-	bh=tQmlYHUhEty4mHV4CMckgvDZZYA665Avgi2W87VZ5/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p3IiFTf5JxaSiAOp7crJJSvaBkC0AyL9y7oEc0Gz/usgtGcVOISqCfW5Fj5k8TXAPaBNtu62qWUmJpcHjqN+kMpWXtmOxRS92L15hStc4ptbtxICpQo89ozZhKoSEuHg0UR7mm08tNhua5yq85/QpHQdgPoLb0GKT+rByV1aAXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bt6l/+E5; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1707427995; c=relaxed/simple;
+	bh=yo5vnXHyIx1FjoDcm/XP6Pmz2W7lO68ZWNXRyinSzU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=S+WriaTXvYZQ7QV3PpCZ5TT9mAT8Fub1vM5g4zhMN5KS6NeA16W+gg+EepXNTSs/DKR6ApLwMF9apjcfdj9Q8IohBxcEzjLAvQqkZnZHkGmTmJ/sA1Lf8eF0Xnd3py1XasVZa/Vt8ErkIhl+CGN49wunZWj3yLXsDqyrSVokN50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tyu4EKQy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bt6l/+E5"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id Y8eLrzbSOF1QfY8fXrnOuI; Thu, 08 Feb 2024 18:58:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1707415122;
-	bh=c8xcuO0OsJENL1xB6fz0nq1SolddnbYqgdO4mg6NbnM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=bt6l/+E5K1gbryuBcoKxEB73waSVLWOSoUtrezPgseIBh2SG9FD1BCgovYne690r7
-	 ZjcJsKr+S4XHmMeGVzBIrnnmc0WD/5B31vIc3x19SZYqqM2UcJ50moetFoIwRuwIKX
-	 ppdSSKGbzLRCAgTCO5QINXmfZjHj1ML0DVLxjHzQPf+j3h1tBX5gSX3uoqwjc8t9Ik
-	 zT8PASzP95n3ypYTHZaBIEvOfOJKCXQod37TK8nynvhnF7RaF0Z3XICbO00h6DYreD
-	 NZReNvQY+LacQ6p9Jp/vFMJYk1lm3Bept5OZUMLu4hK4weghOXC/UR8F20BKPjrWYH
-	 5eEVD0/Nx06hA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 Feb 2024 18:58:42 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <d1a48a3c-cb2e-4dee-8fef-850296787234@wanadoo.fr>
-Date: Thu, 8 Feb 2024 18:58:39 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tyu4EKQy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA95C433C7;
+	Thu,  8 Feb 2024 21:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707427995;
+	bh=yo5vnXHyIx1FjoDcm/XP6Pmz2W7lO68ZWNXRyinSzU0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Tyu4EKQyJh2dKk37zRS2anU8j/iZ2zwUN7w5kpYFhTWzXsiJ6MP+JQW0L4K8ZG1wT
+	 cvGVZ++h8vKACSSugeZQQWuRVkVtah7vp2UBq2YuEMkzv51hNDaz2TOcOgEv8WFfrU
+	 CXeBCRacRwBGPCZPPP00L9xBxt9AEaW6DB0GfgIPrgwLb05lqVcoJCdyYOrNAaDlgu
+	 PrPAfauiA48Ox1EeTs+pE2Z8+RpZ0zGZX9j+RLDOXz9XA6cK1k61aec/0+dzYjhiY9
+	 eO5f8BWrvF5bm7fWS5CK2ojmoCXn2ZNGNfryDtB+xBYpl4RvRlwwuLPAlPrejVfh5f
+	 MQZO0aFZCVEKw==
+Date: Thu, 8 Feb 2024 15:33:13 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Eric Dumazet <edumazet@google.com>, alexis.lothore@bootlin.com,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI/P2PDMA: Fix a sleeping issue in a RCU read section
+Message-ID: <20240208213313.GA973325@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slimbus: core: Remove usage of the deprecated
- ida_simple_xx() API
-Content-Language: en-MW
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <8402a9a8a45937fe2e62617ff0c7408503692b20.1702745212.git.christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8402a9a8a45937fe2e62617ff0c7408503692b20.1702745212.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02d9ec4a10235def0e764ff1f5be881ba12e16e8.1704397858.git.christophe.jaillet@wanadoo.fr>
 
-Le 16/12/2023 à 17:47, Christophe JAILLET a écrit :
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
+On Thu, Jan 04, 2024 at 08:52:35PM +0100, Christophe JAILLET wrote:
+> It is not allowed to sleep within a RCU read section, so use GFP_ATOMIC
+> instead of GFP_KERNEL here.
 > 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. So change this change allows one more
-> device. Previously address 0xFE was never used.
-> 
-> Fixes: 46a2bb5a7f7e ("slimbus: core: Add slim controllers support")
+> Fixes: ae21f835a5bd ("PCI/P2PDMA: Finish RCU conversion of pdev->p2pdma")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied with Logan's Reviewed-by to pci/p2pdma for v6.9, thanks!
+
 > ---
-> /!\ Untested /!\
+> This patch is speculative.
+> It is based on a discussion related to another patch. See [1].
 > 
-> The change of behavior is motivated by the comment in
-> drivers/slimbus/slimbus.h stating that /* Manager's logical address is set
-> to 0xFF per spec */, so all other values, including 0xFE should be valid,
-> IMHO.
+> It also matches the doc, IIUC. See [2]
 > 
-> So considering this as a bug-fix, I added a Fixes tag.
+> [1]: https://lore.kernel.org/all/20240104143925.194295-3-alexis.lothore@bootlin.com/
+> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/RCU/whatisRCU.rst#n161
 > ---
->   drivers/slimbus/core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/pci/p2pdma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/slimbus/core.c b/drivers/slimbus/core.c
-> index d43873bb5fe6..01cbd4621981 100644
-> --- a/drivers/slimbus/core.c
-> +++ b/drivers/slimbus/core.c
-> @@ -436,8 +436,8 @@ static int slim_device_alloc_laddr(struct slim_device *sbdev,
->   		if (ret < 0)
->   			goto err;
->   	} else if (report_present) {
-> -		ret = ida_simple_get(&ctrl->laddr_ida,
-> -				     0, SLIM_LA_MANAGER - 1, GFP_KERNEL);
-> +		ret = ida_alloc_max(&ctrl->laddr_ida,
-> +				    SLIM_LA_MANAGER - 1, GFP_KERNEL);
->   		if (ret < 0)
->   			goto err;
->   
-
-Hi,
-
-gentle reminder.
-
-All patches to remove the ida_simple API have been sent.
-And Matthew Wilcox seems happy with the on going work. (see [1])
-
-Based on next-20240207
-$git grep ida_simple_get | wc -l
-38
-
-https://elixir.bootlin.com/linux/v6.8-rc3/A/ident/ida_simple_get
-50
-
-https://elixir.bootlin.com/linux/v6.7.4/A/ident/ida_simple_get
-81
-
-Thanks
-CJ
-
-[1]: https://lore.kernel.org/all/ZaqruGVz734zjxrZ@casper.infradead.org/
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 0c361561b855..4f47a13cb500 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -661,7 +661,7 @@ calc_map_type_and_dist(struct pci_dev *provider, struct pci_dev *client,
+>  	p2pdma = rcu_dereference(provider->p2pdma);
+>  	if (p2pdma)
+>  		xa_store(&p2pdma->map_types, map_types_idx(client),
+> -			 xa_mk_value(map_type), GFP_KERNEL);
+> +			 xa_mk_value(map_type), GFP_ATOMIC);
+>  	rcu_read_unlock();
+>  	return map_type;
+>  }
+> -- 
+> 2.34.1
+> 
