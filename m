@@ -1,65 +1,25 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB0F137C59;
-	Wed,  7 Feb 2024 21:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973D52E400;
+	Thu,  8 Feb 2024 04:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707341582; cv=none; b=MHKeU5aOU7DTKHIHPQZLQF0kQ2bQkCqKKWivqIO6DjS/6IH8B+e8Zr92bA/4CQGAEXx1fkrYm7k517e2eS0Qa+Gu1bCi+BAU7/x7YqYDP1Oq1VyAppyNTjs5cN3W+zqqmqP1nFRCNRlx9/YBk1aVwEPB0Hj05bcIUlGJtkIHcbw=
+	t=1707364880; cv=none; b=AoeCuTn5spZ2HZdVbt5F835wOpQiEoU0NDU3WEYbO7KcXc8truvaQZWMy5TcCxGt+cACEPkZGSS5nZLLEyz5i8pRIVLGMfDPER19znqbwA6TtOIFjoxT4hjN68TI0MGaJVewycMmCqPBsCVPwomtDavOJnu4XBYPRf15J38lE7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707341582; c=relaxed/simple;
-	bh=BgJr60RLz7YbrRe/F2VbrbzqYVEwhrQILqWUNZqI7sY=;
+	s=arc-20240116; t=1707364880; c=relaxed/simple;
+	bh=qssGJbK0ESJ7STyLMPwWaFGvgaAgAgGZ/WWghYc5FsA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PEPqoZfj6KagSS0jqcD4hPUhBVwVQfrLx+IPjUMDrYJ5rD8DgrFDQeDDTPMc3e+vm6tVs0yDvLXlKM9BzzMcqgo8capwEEayJraXwJkZEM4lmop5OOeo/b14o2jSFWmh61RuZ4QRQDGp/TGjefm8O1T3dTLCy0lcCIcUOT0K8oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjHfDvJC; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjHfDvJC"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3864258438so53158266b.0;
-        Wed, 07 Feb 2024 13:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707341578; x=1707946378; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ypOGpo3jI1ua7j3ovv/PFLVTfWwn/rZoGHLQKXG/FiQ=;
-        b=fjHfDvJC4kfQXssmpPHJmYxl0M4JHZwyec+LoWc+P+a4ZYE5tknxva7pmA2B1/9hlO
-         lNrUULONVAYQjCqfLQOQm1Li1UhMCJMxR1fuo+bq0ASvB+RhCxSzdOscS7VMy/IBU8XX
-         n+b3QnEGoywbPhK7BpnJPQSHmGns4ZqQ/PQ5tZcObRbMcYPVcm8lEfys+m4PyUIB95Ru
-         EdPTX9yEKKjB9C+E1wl337kqXZdcP6BkEuPwDjhoA/pXi+wh59OWRPyrjNmDZODLemDg
-         Kftj0Q5NmgAArQadZmsOjPy2RTHJ7yMOtQcqBKQ6QvSLnOqmt5XHPZCKqltS0f8ZIXCd
-         fn7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707341578; x=1707946378;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypOGpo3jI1ua7j3ovv/PFLVTfWwn/rZoGHLQKXG/FiQ=;
-        b=YjXOHC6mVUTKSkZ8mBohmz+7S2cXlzrDFK963DRJRx7xv1BnP0fBeechyXv4yLIIlV
-         2GCuqO9OdO9G5BcpYkLI5oHAshG25UmgQRv5jV9l4vx2DUsvx9LMz3UooavDzw+fXLbZ
-         7w4kTrV6NSQZOp3gJpNEBXbKpZ/fdbNcIVkQdbTh4m3WMbAJ/uZB7FkSzDXfr/zyBfTl
-         1CTnSNWR6DD37QIOk8sxOqGAbLYKDudtvLTQPp4o8eNf6c9jKrLfp/izFD5PI9qODr1n
-         o52n656jekVGQydEvg5GZYLlbU58vs+f98DT+C0qfPc2wmakpzEpZoeZusjiZRrmP/zN
-         y0wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEajus7FCOkWCoppCke97y9tSRFa8UOlzgIjcTvbET00oKevjb2+UUiCG77Zjsf3Qgb6QGptiL1NrskvzxZeYE5KDI9aLWd7BpBf5QJ1BPhYLQPva4HW7Qm+BQZKzDUn0aSrB5o8jyxKtRnMM=
-X-Gm-Message-State: AOJu0YzYBRFoScGl7YVKNW+k6S4YopErZ7yjpNGnPj0QLNdtocipG0CH
-	t45aFDGXAciQ559yjP93TXlQs2oFyNoVbVwNv8axiOU4sWMMysu4sYOpEVA9
-X-Google-Smtp-Source: AGHT+IHNxhZy/enIjBSkZKjiEn/FKmkhjb7XAYp9yO9ifX2+qkE7FarftEjuhu5UpkGn3mrznvlwtg==
-X-Received: by 2002:a17:906:c103:b0:a39:8df1:6c57 with SMTP id do3-20020a170906c10300b00a398df16c57mr601623ejc.28.1707341578071;
-        Wed, 07 Feb 2024 13:32:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOZ+02x45djWY7l+Cr23m+dLvPlYxPqmy4jEoc3n6zzsGK6I/O+2Tz3J/3zc6PSAn44K7lEYIuN6CWlDqIWPku4U+Dd5FbiSjXcAA92632TWzzzNRSBmaujFiFse7JyAIketiBUgrK1SbbCHD1cf4Khod4wIybhduftxghHcs=
-Received: from shift.daheim (p200300d5ff48c600aaa159fffeeb01f1.dip0.t-ipconnect.de. [2003:d5:ff48:c600:aaa1:59ff:feeb:1f1])
-        by smtp.gmail.com with ESMTPSA id w8-20020a17090633c800b00a381a3a7081sm1152618eja.156.2024.02.07.13.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 13:32:57 -0800 (PST)
-Received: from localhost.daheim ([127.0.0.1])
-	by shift.daheim with esmtp (Exim 4.97)
-	(envelope-from <chunkeey@gmail.com>)
-	id 1rXpXN-00000000436-1Zsk;
-	Wed, 07 Feb 2024 22:32:57 +0100
-Message-ID: <41ac1eca-ff9c-4a1c-be53-f37aca8aa178@gmail.com>
-Date: Wed, 7 Feb 2024 22:32:57 +0100
+	 In-Reply-To:Content-Type; b=pTp8V/Tjeu8TG7ntZtzUKQQ+GlqAUg69WvK39dezvDziqHUSQAtmEK0vApUR+8sJpRIiYjnZd4ha5LABLe4cpGyEPUvA1++zuudnjjXJ4JchjolYQFPR3ZwxVHSkvLkbD8q7WwvK2hScTwxykg3VWcRmZe0HLVtIsb4TSDCXPeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9F6D1FB;
+	Wed,  7 Feb 2024 20:01:58 -0800 (PST)
+Received: from [10.163.44.57] (unknown [10.163.44.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F3EC3F5A1;
+	Wed,  7 Feb 2024 20:01:13 -0800 (PST)
+Message-ID: <180491ea-d4b4-4d70-a615-595492175efd@arm.com>
+Date: Thu, 8 Feb 2024 09:31:11 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,45 +27,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] carl9170: Remove redundant assignment to pointer
- super
-To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- linux-wireless@vger.kernel.org
+Subject: Re: [PATCH] dma-contiguous: remove debug code to removed
+ CONFIG_CMA_DEBUG
+Content-Language: en-US
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240207171524.2458418-1-colin.i.king@gmail.com>
-Content-Language: de-DE
-From: Christian Lamparter <chunkeey@gmail.com>
-In-Reply-To: <20240207171524.2458418-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240207143825.986-1-lukas.bulwahn@gmail.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240207143825.986-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/7/24 18:15, Colin Ian King wrote:
-> The pointer super is being assigned a value that is not being read, it
-> is being re-assigned later. The assignment is redundant and can be
-> removed.
-> 
-> Cleans up clang scan warning:
-> drivers/net/wireless/ath/carl9170/tx.c:192:34: warning: Value stored to
-> 'super' during its initialization is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Acked-by: Christian Lamparter <chunkeey@gmail.com>
 
+
+On 2/7/24 20:08, Lukas Bulwahn wrote:
+> Commit acc2f3e42d4a ("mm/cma: drop CONFIG_CMA_DEBUG") removes the config
+> CMA_DEBUG and the debug code in cma.c, but misses debug code in
+> kernel/dma/contiguous.c.
+> 
+> Remove this dead code from this removed config option.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->   drivers/net/wireless/ath/carl9170/tx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Andrew, please pick this minor clean-up patch of top of the commit above.
 > 
-> diff --git a/drivers/net/wireless/ath/carl9170/tx.c b/drivers/net/wireless/ath/carl9170/tx.c
-> index 6bb9aa2bfe65..e902ca80eba7 100644
-> --- a/drivers/net/wireless/ath/carl9170/tx.c
-> +++ b/drivers/net/wireless/ath/carl9170/tx.c
-> @@ -189,7 +189,7 @@ static void carl9170_tx_accounting_free(struct ar9170 *ar, struct sk_buff *skb)
->   
->   static int carl9170_alloc_dev_space(struct ar9170 *ar, struct sk_buff *skb)
->   {
-> -	struct _carl9170_tx_superframe *super = (void *) skb->data;
-> +	struct _carl9170_tx_superframe *super;
->   	unsigned int chunks;
->   	int cookie = -1;
->   
+>  kernel/dma/contiguous.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index f005c66f378c..055da410ac71 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -37,12 +37,6 @@
+>  
+>  #define pr_fmt(fmt) "cma: " fmt
+>  
+> -#ifdef CONFIG_CMA_DEBUG
+> -#ifndef DEBUG
+> -#  define DEBUG
+> -#endif
+> -#endif
+> -
+>  #include <asm/page.h>
+>  
+>  #include <linux/memblock.h>
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
