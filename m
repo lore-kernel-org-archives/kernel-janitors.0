@@ -1,98 +1,132 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D66BFBF;
-	Thu,  8 Feb 2024 09:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7BF6BB3D;
+	Thu,  8 Feb 2024 09:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707383461; cv=none; b=f1zye2SieKH2YsuxtnDt3z5FaJsj4i3fFeMunpggFu22XVIu+nvYDB8ttRZvjDKcvezObhWlpe8H+6earKjCP6FAStpMQ9tXZvxWNMRSlNqDUHFlm3zqQthB43zCRSCTVm/AXz04LCalELBnhX1EY3vnF4xhusWWeMsOvkTODjI=
+	t=1707384814; cv=none; b=lRYhWDv1u0NYZniUGGnuWqZcmKHtxVYS345FrJTQ19CwTCfo+gVCEIK2jJUy85/Ront3x0jr63+r7Wug3+fLCIOvh1kPYenr1UFtqaf8vaVCvb/W8a6KnSPy1SRf0kS9K2hLMPoIQ2/Z1LcRdh6S0Q+C8YETmYy1Z93h7PQckuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707383461; c=relaxed/simple;
-	bh=xztAfe8NIrTxTOh+SaDpX4UWTD8vUatoOqQ8o2Ddmg4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=to+n2pTADVh14KcQLz3CPi8vhBfId1PxmqTaKi/XsMs70fe93WYUnjdaJUIOxbJ5hhsqQbgHBGvq1L9lrs8a/AcNmk1GKsUoKqPOuAQCB98K68ejenSrS2B1BEK0DE/nnHBg6m6k6+LwAymyREDma/cWGAvJcM1laLntWw9VF5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asaT2fk2; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1707384814; c=relaxed/simple;
+	bh=lhwPUoYyro9oaMp2bVStAN7YAQl8rqdb9WH7FoKshb8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WCTwrIR4e/J1OpI8+PboEb6VLDy/GpxYj2La5EAmxhUT83+TiM/yBpYDdkNpWssDm+Htwz4uNgaVfvf8ixTPLIxj8KZBj4N/raQxcxCLWMn8+9lpQYAv0iDJH0UJ5xjIxl3TxT5V8J3Gx6QnyTb5ish85EmKSagtSaGp3iiUlUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ8tcAwC; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asaT2fk2"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55f279dca99so2340172a12.3;
-        Thu, 08 Feb 2024 01:10:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ8tcAwC"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5600d950442so1836317a12.1;
+        Thu, 08 Feb 2024 01:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707383458; x=1707988258; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jf+IpQUM3GkSU331X0U1mVeh/2v5Zggac5yTBr9mH/Y=;
-        b=asaT2fk2xxJru586BZ+omuHroe8lydrgxo0As/jFX04Hth9G7aFXQACRK3TYGNeZuF
-         0aPgVTg7Cmkm9KS3JQYM8TRlAa6UCNPEV8p5VNpH5Z40Lezunkt0e1gW2bsmyhbSlOHJ
-         x5aV9usyuUQFQb6AylAQbsZ2wbpsd24Tj1K7DImI+LUzBNiezEwgFPNKuowwP+w3tIhy
-         ycfqAUfNwkO9/294KId0KITjyxRN/NgQ7F/1c8zd44FV4FGCSrG2mqBZN5N5qBq2rlAT
-         XmEPIUAtwQUnv7X82Qa0kATo41h0BzNmiJvc+Lf66Ifw9S1gssgK/pakhYEnOJ5Wq3XA
-         HQEw==
+        d=gmail.com; s=20230601; t=1707384811; x=1707989611; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ClZxZfA/V4+BWFkj7VuhiD7elrfOXLoTCprCHq1vgfU=;
+        b=YQ8tcAwClVvjy+k2Q+WJX85DK4XdAaZtvkGLnC+BiphLi8q9RW73aLrIfno6MombQ/
+         tEpwQ5RZrbLjaa6wy/SzpsfZwdVmCPIssGuWC7Bwmw8Bh6iUSbJ/D0sa/CHEFM+92/jI
+         9qgnQST6J4UB63qmdf+hv75ZrtP85Pj5EhjQlaTU2ieGHcYaoyLEKrBTwXu0tJoQ36Yj
+         pIFCqOXmvJZKbcJvUQH1rqtlPEPv+LWyc10TFfdM7pqJ6qHXn9LS6l/RNf8ZJLUfdI8q
+         w0vpuhICBMvIaNnDQlFITEDxUYIbeJ3B69iKdS0NZzCsVHN2YxExEbZAc47j1Umf/9dB
+         4IAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707383458; x=1707988258;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jf+IpQUM3GkSU331X0U1mVeh/2v5Zggac5yTBr9mH/Y=;
-        b=upfok5SaJU5zPzHyTv/FAwUdM7R04c8kXW9vRpUg2+sN3fieOVRq3JXr7ayJ41Ykmd
-         rZai7/yIbXuSGisyXMcnvUxKo/V3KHnVnERrAJen7hR/eQbw9d/5Ka6UlC8K9Wb9Rbnw
-         RvuntuTyKMime3OXLkBbnFXXFX2uY32+1uDTop6nqnEt1nu52yvG+GriVQMLTS+wHYXw
-         YNXyVVAlIEIfSK4pLiAIVuI3gdXm9gdC0cpxQVWdWPcw9XHmTXBI+XYqd9VOFJZp+ZZX
-         b2Bli2NWtT+bU6huXsnJ1pJ55RnwH19g71HmBc1rued+C5l9tjD/uM1yg1QdWgqrcDaq
-         mizQ==
-X-Gm-Message-State: AOJu0YxHYuyj45uXSeRGkveggOqdDL4UiVDuDdiM0XEAzG8GguZDV5zj
-	E9AGpdYxT20+ByL1CvJQQSShUiRJS1Tb5dN297t6xujPyoyBzrNE
-X-Google-Smtp-Source: AGHT+IHLSmXltAPAHNrVTintZ+4Trcvv/+wBCABaTPXruhUo1Rrh9Ii7BcEwfOcukmmsx9Ia6CbUnA==
-X-Received: by 2002:a17:907:778a:b0:a38:174c:c985 with SMTP id ky10-20020a170907778a00b00a38174cc985mr5328923ejc.63.1707383457589;
-        Thu, 08 Feb 2024 01:10:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMwbC3ZfT8JJu+zXu2Yw6lHz1u5DESJSr8MH8BvzWT14jYqm+iTCb0IHHAoyL2fDe/D8vqzajCtcA5zPvaWZrVjR2Ojcx4b5/r/COxIkVqAfRj+f46e+9eTvKT7hx3pDk1tNbHYc8CevniMt2d+D9GqslCKg9CgsixRpjGDdbw1SsCJxmPrRkYBYuCFxe5axO5FK5phtTHKV/f6t0g
+        d=1e100.net; s=20230601; t=1707384811; x=1707989611;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ClZxZfA/V4+BWFkj7VuhiD7elrfOXLoTCprCHq1vgfU=;
+        b=P+kGpQi2cctzGuTBHJRtBHwgti/3kxp7qybeLs09QRIzR9GWPS6SIVv/VLK4dyNYW7
+         43xcjfhlsYO0LV97AbzGrb1TqJbUsoY1xbif5knE5isb1Ct5eYhfsBMCs9+DdLPjwrlt
+         CabJt86y/2puXau9rgvp5Wh8ag8g1IbzfWnhuS6aIlja9RP/UBrtd8v0onwJV92pyAMH
+         9LdABit6aUfXgA8mpyMKFqMMnoOwXWXaPKA5yfjKkoLiTrXiN6q10Fu7JlFbZmsuERQV
+         C8jCHMceZrb/+qcLNUzVeAnOyyKS5YrYLGXborMBXoA/7ri5+UR7QDOD5nyoAR0cRp3L
+         DH5g==
+X-Gm-Message-State: AOJu0YwdyaPfqxH+FeHcrxa1dub54Qk6xJwf2/hvQmSFIMQISfsJAmT7
+	hXAN6nc4gQRXADKxF1lSnFgbFpWttlKv20d3rmiF1yKECPWFJ9eQ
+X-Google-Smtp-Source: AGHT+IEZDOgle6xEeOkEl/5TlUMHh/sDQAV3pdX3MQSmWUeItHW9uH8U0Gszb+dGZ3njJ8RK0BuGYQ==
+X-Received: by 2002:aa7:d95a:0:b0:561:1484:8cc5 with SMTP id l26-20020aa7d95a000000b0056114848cc5mr534673eds.39.1707384811049;
+        Thu, 08 Feb 2024 01:33:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWdxX+Z5XfKi+0hB9EUdd/yz/n0ff5bWnTmPCM6KditwXe7kyb9xF7fGlJmcG7Qutlb6Zwco9744h+P0R8Mh3V5IizY3BIrOoHEtGdMCAxw3iNiFEJ6ZE0Ircd68BY0c0RPoaEQ5u0hDZPGt8BBJrNNcxPmMYtPEnvrJgXSBTCJbaLJ9NC74eviKltzeqexGBn/S36ZNGaeOxF8FUNB9tCQQx9o8Lhh/k7AB+Q1wXbeFm5VCM/Ac5Ii8CyDqo+b3A==
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:f81c:5b24:d269:24d])
-        by smtp.gmail.com with ESMTPSA id k5-20020a17090646c500b00a38535c6be0sm1691887ejs.16.2024.02.08.01.10.57
+        by smtp.gmail.com with ESMTPSA id dk5-20020a0564021d8500b0055c97f940fcsm628306edb.81.2024.02.08.01.33.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 01:10:57 -0800 (PST)
+        Thu, 08 Feb 2024 01:33:30 -0800 (PST)
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Kees Cook <keescook@chromium.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
+To: Danny Tsen <dtsen@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 2/2] hardening: drop obsolete DRM_LEGACY from config fragment
-Date: Thu,  8 Feb 2024 10:10:45 +0100
-Message-Id: <20240208091045.9219-3-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: adjust file entries after crypto vmx file movement
+Date: Thu,  8 Feb 2024 10:33:27 +0100
+Message-Id: <20240208093327.23926-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240208091045.9219-1-lukas.bulwahn@gmail.com>
-References: <20240208091045.9219-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 
-Commit 94f8f319cbcb ("drm: Remove Kconfig option for legacy support
-(CONFIG_DRM_LEGACY)") removes the config DRM_LEGACY, but one reference to
-that config is left in the hardening.config fragment.
+Commit 109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto") moves the
+crypto vmx files to arch/powerpc, but misses to adjust the file entries for
+IBM Power VMX Cryptographic instructions and LINUX FOR POWERPC.
 
-As there is no drm legacy driver left, we do not need to recommend this
-attack surface reduction anymore.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+broken references.
 
-Drop this reference in hardening.config fragment.
+Adjust these file entries accordingly. To keep the matched files exact
+after the movement, spell out each file name in the new directory.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- kernel/configs/hardening.config | 3 ---
- 1 file changed, 3 deletions(-)
+v1: https://lore.kernel.org/lkml/20240129131729.4311-1-lukas.bulwahn@gmail.com/
 
-diff --git a/kernel/configs/hardening.config b/kernel/configs/hardening.config
-index 4dc0cd342ced..ed126d7b5e83 100644
---- a/kernel/configs/hardening.config
-+++ b/kernel/configs/hardening.config
-@@ -92,6 +92,3 @@ CONFIG_SYN_COOKIES=y
+v1 -> v2:
+  - address Herbert Xu's feedback:
+  keep the matched files exactly those which were in the vmx directory
+
+Danny, please ack.
+Herbert, please pick this minor clean-up patch on your -next tree.
+
+ MAINTAINERS | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 58845a852ab1..1820f661bfe1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10329,12 +10329,17 @@ M:	Nayna Jain <nayna@linux.ibm.com>
+ M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+-F:	drivers/crypto/vmx/Kconfig
+-F:	drivers/crypto/vmx/Makefile
+-F:	drivers/crypto/vmx/aes*
+-F:	drivers/crypto/vmx/ghash*
+-F:	drivers/crypto/vmx/ppc-xlate.pl
+-F:	drivers/crypto/vmx/vmx.c
++F:	arch/powerpc/crypto/Kconfig
++F:	arch/powerpc/crypto/Makefile
++F:	arch/powerpc/crypto/aes.c
++F:	arch/powerpc/crypto/aes_cbc.c
++F:	arch/powerpc/crypto/aes_ctr.c
++F:	arch/powerpc/crypto/aes_xts.c
++F:	arch/powerpc/crypto/aesp8-ppc.*
++F:	arch/powerpc/crypto/ghash.c
++F:	arch/powerpc/crypto/ghashp8-ppc.pl
++F:	arch/powerpc/crypto/ppc-xlate.pl
++F:	arch/powerpc/crypto/vmx.c
  
- # Attack surface reduction: Use the modern PTY interface (devpts) only.
- # CONFIG_LEGACY_PTYS is not set
--
--# Attack surface reduction: Use only modesetting video drivers.
--# CONFIG_DRM_LEGACY is not set
+ IBM ServeRAID RAID DRIVER
+ S:	Orphan
+@@ -12428,7 +12433,6 @@ F:	drivers/*/*/*pasemi*
+ F:	drivers/*/*pasemi*
+ F:	drivers/char/tpm/tpm_ibmvtpm*
+ F:	drivers/crypto/nx/
+-F:	drivers/crypto/vmx/
+ F:	drivers/i2c/busses/i2c-opal.c
+ F:	drivers/net/ethernet/ibm/ibmveth.*
+ F:	drivers/net/ethernet/ibm/ibmvnic.*
 -- 
 2.17.1
 
