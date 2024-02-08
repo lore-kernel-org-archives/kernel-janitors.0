@@ -1,93 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB5F4F1EE;
-	Thu,  8 Feb 2024 21:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A48F482F2;
+	Thu,  8 Feb 2024 22:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707428204; cv=none; b=jRi72mCNLK7QGq1Ly5+PLgnn1Iff83tgBoPdHh5zwenTo9J8TKawrKNwXAwIFxul8SPOw20ERLrkWNz8H6R6DVLQmNV3Y57oFP/Eid935JxqZjQyOZmIAvZ5xKWyTUyOj/hS3QPkgrvtvpu8qffIhPpjbgUmvEBMdqKtGgB0qHg=
+	t=1707432285; cv=none; b=jPZUDdAV13HSfQdvB8qFlBVDvS8cS6LR8k9oIvCW6B6PyxFeds02uRhphOKLZM6oJnAuqQiAppGHLI+/HCQeF5pgHuGQQL7GDyMaf5SzkYiqZxRqD3LGcF2J0XPZwMTOt1XcpLX0+BMbLgMNsvx1sZcpNHGBXWJ9lq/6HokpFU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707428204; c=relaxed/simple;
-	bh=6h1r+mf5vEgW1yFwYkHTvO5I4boVb36Scu743ILzsvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GqDrXP8p8GdX/Xi6ERb53INY50R5nstyLQP8zqwgaNwx/uY5lvXWjTQqgyrseMhYtgGvpnlkPhOXVrgMehD109bSrnSHjAFEsoYRSFTXNxFuoQDNhF1SkVjCqQGhUCqATzHxUYODio+LgdnIqUWQV5R5TshB+mhZnbKpf6RkiWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2OxyuUR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707432285; c=relaxed/simple;
+	bh=/B8xXcTxjdOHJVhrRcWzpHUAuYn5pfdJfz5RXSdLrBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=N1SsfEuaLAyBiwUpLsPCh2CM20l0+h/yOLM2sh/6Q/BoYIxwQ+KbvpOrcJQHEbHQ9Hq12IF62dJ7KGFeKxSOrWehNCxVKB38IAkAX0zF6+3IyRAnP6lLzpbJ3PUtKVbNr2alB+MOX8g5NcY39GN1tN37WoVNtKQZUm+szI1MBBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=B04zQJA5; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2OxyuUR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B75DC433C7;
-	Thu,  8 Feb 2024 21:36:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707428203;
-	bh=6h1r+mf5vEgW1yFwYkHTvO5I4boVb36Scu743ILzsvw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=u2OxyuURzWENGfTKrM94WkOqvvqSNdFVdrPiueXmUUdR6l1Hq/YCH062SRZWJrDDo
-	 joL4hhXXfzv04VyY7Iwc4bYTuNsekhglHoxF6fh+MnO0lIofGz096XGqNc5GazOwzU
-	 BRcX8aMZ8QZEfT6n0a9bY579w8doM7BBXLC+jxakVKYdATVY3itqkWY+auyDmPtne3
-	 giir9A6f/Dv5+G9ENjTCG6muTsemX1PnCvnR0nQahxfVYzrQzB0DusqrPiPHvP0PvB
-	 SNJKreXJFzqXghFfyzofY/pKw05ahxScMLBUDnipqovKyUvdAXDpHNi6HTIwb0rXSe
-	 /9gFiNShlMQTg==
-Date: Thu, 8 Feb 2024 15:36:41 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Dmitry Safonov <0x7f454c46@gmail.com>,
-	Daniel Stodden <dns@arista.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: switchtec: Fix an error handling path in
- switchtec_pci_probe()
-Message-ID: <20240208213641.GA973659@bhelgaas>
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="B04zQJA5"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 42A8145917
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1707432281; bh=o5yBgG2xVlqiQ0cKTX9ROwpCkBnnd2ehpKLHgSwa8P8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=B04zQJA5XC+oPtrrybtOyZZlyjzRxJqHkmzp6kkCL0uON9ES+cFHZPBL8xI6HpDAw
+	 yJSKFAtghGXSiA5OuX/n1RDn3Kqacp8KD5sx5aI6dnmQTcB58sGmJkj4wYL5HHA3qH
+	 ocQvZQ5R1uhmwwygNCaeLddnDFpa3ieJHJ5hPrNr7e+24qoYO5A9MkpsU7U94jdtU5
+	 t9pNv8/UOUO/4oKPzYWyr8TmPR82CtvD/Y0p5s47BUpa9YMRntSo9l4fVn8pK9Kzak
+	 cIw0ovKDogVav3NBTRWNZpTkMEb5Z/lSleC77FK48gCvMOskl1IDVFeKLStiIWdM21
+	 lLPyCrBY5dcnA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::646])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 42A8145917;
+	Thu,  8 Feb 2024 22:44:41 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Federico Vaga
+ <federico.vaga@vaga.pv.it>, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] doc:it_IT: fix a typo in the config name in RCU torture
+In-Reply-To: <20240207150322.20238-1-lukas.bulwahn@gmail.com>
+References: <20240207150322.20238-1-lukas.bulwahn@gmail.com>
+Date: Thu, 08 Feb 2024 15:44:40 -0700
+Message-ID: <87mssafuef.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01446d2ccb91a578239915812f2b7dfbeb2882af.1703428183.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 24, 2023 at 03:30:01PM +0100, Christophe JAILLET wrote:
-> The commit in Fixes changed the logic on how resources are released and
-> introduced a new switchtec_exit_pci() that need to be called explicitly in
-> order to undo a corresponding switchtec_init_pci().
-> 
-> This was done in the remove function, but not in the probe.
-> 
-> Fix the probe now.
-> 
-> Fixes: df25461119d9 ("PCI: switchtec: Fix stdev_release() crash after surprise hot remove")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-Applied to pci/switchtec for v6.9, thanks!
-
+> This issue was detected with the scripts/checkkconfigsymbols.py tool.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/pci/switch/switchtec.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 1804794d0e68..5a4adf6c04cf 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -1672,7 +1672,7 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
->  	rc = switchtec_init_isr(stdev);
->  	if (rc) {
->  		dev_err(&stdev->dev, "failed to init isr.\n");
-> -		goto err_put;
-> +		goto err_exit_pci;
->  	}
->  
->  	iowrite32(SWITCHTEC_EVENT_CLEAR |
-> @@ -1693,6 +1693,8 @@ static int switchtec_pci_probe(struct pci_dev *pdev,
->  
->  err_devadd:
->  	stdev_kill(stdev);
-> +err_exit_pci:
-> +	switchtec_exit_pci(stdev);
->  err_put:
->  	ida_free(&switchtec_minor_ida, MINOR(stdev->dev.devt));
->  	put_device(&stdev->dev);
-> -- 
-> 2.34.1
-> 
+>  Documentation/translations/it_IT/RCU/torture.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/translations/it_IT/RCU/torture.rst b/Documenta=
+tion/translations/it_IT/RCU/torture.rst
+> index 79d9e6932acc..189f7c6caebc 100644
+> --- a/Documentation/translations/it_IT/RCU/torture.rst
+> +++ b/Documentation/translations/it_IT/RCU/torture.rst
+> @@ -129,7 +129,7 @@ Uso su specifici kernel
+>=20=20
+>  A volte pu=C3=B2 essere utile eseguire RCU torture su un kernel gi=C3=A0=
+ compilato, ad
+>  esempio quando lo si sta per mettere in proeduzione. In questo caso, il =
+kernel
+> -dev'essere compilato con CONFIG_RCU_TORTUE_TEST=3Dm, cosicch=C3=A9 le ve=
+rifiche possano
+> +dev'essere compilato con CONFIG_RCU_TORTURE_TEST=3Dm, cosicch=C3=A9 le v=
+erifiche possano
+>  essere avviate usano modprobe e terminate con rmmod.
+
+Applied, grazie,
+
+jon
