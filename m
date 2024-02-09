@@ -1,113 +1,98 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C165A4E2;
-	Fri,  9 Feb 2024 08:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC9C28DC9;
+	Fri,  9 Feb 2024 11:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707468954; cv=none; b=L5rzrBZuAVE/uzWz/Q6ZBZ0PHRtsXNwiwXyU63LL2HmTTz0/JtRDJI97JPSbVcmIYm8vBvqAjUp53KIWpWKxw5OBLVaMIkZ1Smh3KfX75dcQVRxWLopjjFDpOBz7hXqIvVbFVpdziQzYaDNoKWSoJFM5iRs0qMOv63BQgclHlqA=
+	t=1707477510; cv=none; b=rcd0tnzTioyPUQJTj9tkzSUb0xHrmLbDBBmOcNpzc8eg/efGL1TqW5EKCIBimAZPQ1e0hNMLKAiQNooUfZzdzN69Kpp8LSlQuv+DgzpTr1q6DFeTMwTwAOlzzO3SQVkUyNYz5Ps/wf6lSK/zVEAkUG+nNjXQRZ02pGdY5YY1B90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707468954; c=relaxed/simple;
-	bh=E1U8J9iRraitj9JXUyYrMtOXpUYyeC0VxwLoad5cX3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=og2A07Yvjka3ksOSWh2QTBiHZHvsbHJ4DrF5SXu6xamCKbV7R4Rzf87i3BWjRKvCVJRO7U2sGGnTrjqfRkMh5WIoNq2PmfF1HBCaeh/mr/XcnOA8BF+I//wML9uq/wr53rko/G1ymGGBuRFFfxPMh/QvvFQtpVubDQ2z+cx2xjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AM0huqlX; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1707477510; c=relaxed/simple;
+	bh=MntDz3frSWPLI1b8XC6BskO076LR1R1lCkWAh6YNv0Q=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jcL13NV5pd8U96ykXRQsji3ax/5gXs2f6DbLGuL4IACTzLG/EoI1axeUySPEKQdPm5rF6uAkaIDcHD/cQBJRroxMBuvppunHCS9p/lhXfYyGaJi1l5mlU3ZwFUBtMpOPDnTMSUq1hQxRohyAmpl1LWG+jhM9FUd4LyH+emN9RME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=JX8PFc+H; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AM0huqlX"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4197UCZp005056;
-	Fri, 9 Feb 2024 09:55:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=fiWSzdCEFiFP0/egHuEqBDpst3ABK0/e0ifDxf6Zt2k=; b=AM
-	0huqlX8S7Ty0Q/cXX3ry7PeDLEY1OegE+hwJKzdfwMNCcQoxupOsSMZlLf02C5ON
-	G+E9y46MdgTdBRAIvXrLx+UcxSqHLAjgw/9AMul67+i1e9xFRklSMtguxhidW0e5
-	iU5ED0AlOMjhCd8sY7gG8Wtzh+UrPFpAI79t9BvbSBTM3ib/RsIlutE/ePfU+28m
-	uMXipA95OsTdRw/PQywrezjuQyIpcZLP+5PnthmvJ4yxNLcyUphYqYqwc9VJVlBN
-	F3+cwwQAJrRj5M4asSLru9IHkfuUfv+JMgpCPFvPuKWj04PU6Js2bafhj8wqSa+2
-	C6M5Lw6BdchNQskze7ag==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w1eym8018-1
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="JX8PFc+H"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4198UKwV014537;
+	Fri, 9 Feb 2024 05:18:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	from:to:cc:references:in-reply-to:subject:date:message-id
+	:mime-version:content-type:content-transfer-encoding; s=
+	PODMain02222019; bh=coVRnRrQs3z5qP4mCx2uQbZTGohzfwN2TLzDPTaxh8M=; b=
+	JX8PFc+HFV4adL6eiQsxtlZhMNnqtpYnpgdNhTK4MGVkwoU2UoJTpLR5JkWQrJMa
+	r9TLc8B4eK81Mk+NZ3/CYK4hLf8z0PvcIEQ15tY7W6X8ZUzfsJve9SHDiYmQ8IK6
+	adyoLf9U6LLTaQ9nXbVfJBriSCIdG5jeR4UYquwJIqX/FBrieu/GC2S9Q9sMTxru
+	RCZ1+vckdXA+DgUP2I0aXa0kBXbIfpmSndYDqMCGN+p3ve/EooRHKa9gKFHAxlkP
+	6cFlyj2w16zrE/fO0WWORcM/np8kUTieMlB/DJajqEwmr+mo6Q+YM46p2u72bC4K
+	/vp/d4bYey9Vpfm+VJ91Jw==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3w1ks2ftsy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Feb 2024 09:55:41 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 02A0510004F;
-	Fri,  9 Feb 2024 09:55:41 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EF7F32105B7;
-	Fri,  9 Feb 2024 09:55:40 +0100 (CET)
-Received: from [10.252.23.147] (10.252.23.147) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 9 Feb
- 2024 09:55:40 +0100
-Message-ID: <c744b760-4bed-44cf-b079-eb21f3697425@foss.st.com>
-Date: Fri, 9 Feb 2024 09:55:40 +0100
+	Fri, 09 Feb 2024 05:18:10 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 9 Feb
+ 2024 11:18:08 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40 via Frontend Transport; Fri, 9 Feb 2024 11:18:08 +0000
+Received: from EDIN6ZZ2FY3 (EDIN6ZZ2FY3.ad.cirrus.com [198.61.64.128])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CA2E3820243;
+	Fri,  9 Feb 2024 11:18:07 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: 'Lukas Bulwahn' <lukas.bulwahn@gmail.com>,
+        'Jaroslav Kysela'
+	<perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.com>,
+        'Richard Fitzgerald'
+	<rf@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240209082044.3981-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20240209082044.3981-1-lukas.bulwahn@gmail.com>
+Subject: RE: [PATCH] ALSA: hda/cs35l56: select intended config FW_CS_DSP
+Date: Fri, 9 Feb 2024 11:18:07 +0000
+Message-ID: <001801da5b49$a89be460$f9d3ad20$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] media: i2c: st-vgxy61: remove redundant
- initialization of pointer mode
-Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Sylvain Petinot
-	<sylvain.petinot@foss.st.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240205220508.1851545-1-colin.i.king@gmail.com>
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20240205220508.1851545-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-09_06,2024-02-08_01,2023-05-22_02
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-gb
+Thread-Index: AQIj8QOMXSB51XGLfZZGXWCY5rrZsLBusJ+A
+X-Proofpoint-GUID: o36hZYTiQqh1B2u0fp3WbmugxjGk6opz
+X-Proofpoint-ORIG-GUID: o36hZYTiQqh1B2u0fp3WbmugxjGk6opz
+X-Proofpoint-Spam-Reason: safe
 
-Hi Colin,
-
-Thank you for your patch.
-
-Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-
-On 2/5/24 23:05, Colin Ian King wrote:
-> The pointer mode is being initialized with a value that is never
-> read, it is being re-assigned later on. The initialization is
-> redundant and can be removed.
+> -----Original Message-----
+> From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > 
-> Cleans up clang scan build warning:
-> drivers/media/i2c/st-vgxy61.c:632:33: warning: Value stored to 'mode'
-> during its initialization is never read [deadcode.DeadStores]
+> Commit 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic
+> CS35L56 amplifier") adds configs SND_HDA_SCODEC_CS35L56_{I2C,SPI},
+> which selects the non-existing config CS_DSP. Note the renaming in
+> commit d7cfdf17cb9d ("firmware: cs_dsp: Rename KConfig symbol CS_DSP ->
+> FW_CS_DSP"), though.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/media/i2c/st-vgxy61.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Select the intended config FW_CS_DSP.
 > 
-> diff --git a/drivers/media/i2c/st-vgxy61.c b/drivers/media/i2c/st-vgxy61.c
-> index 2d64466d7ecf..b9e7c57027b1 100644
-> --- a/drivers/media/i2c/st-vgxy61.c
-> +++ b/drivers/media/i2c/st-vgxy61.c
-> @@ -629,7 +629,7 @@ static int vgxy61_try_fmt_internal(struct v4l2_subdev *sd,
->  				   const struct vgxy61_mode_info **new_mode)
->  {
->  	struct vgxy61_dev *sensor = to_vgxy61_dev(sd);
-> -	const struct vgxy61_mode_info *mode = sensor->sensor_modes;
-> +	const struct vgxy61_mode_info *mode;
->  	unsigned int index;
->  
->  	for (index = 0; index < ARRAY_SIZE(vgxy61_supported_codes); index++) {
+> This broken select command probably was not noticed as the configs also
+> select SND_HDA_CS_DSP_CONTROLS and this then selects FW_CS_DSP. So,
+> the
+> select FW_CS_DSP could actually be dropped, but we will keep this
+> redundancy in place as the author originally also intended to have this
+> redundancy of selects in place.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
--- 
-Regards,
+Thanks!
 
-Benjamin
+Reviewed-by: Simon Trimmer <simont@opensource.cirrus.com>
+
