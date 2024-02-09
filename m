@@ -1,114 +1,163 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4278A804;
-	Fri,  9 Feb 2024 08:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707466854; cv=none; b=HIsWp9nU7Ksmbd+VPstjMeWi05+8bmHjq4wgFX2+hPOK7I+g2K8TUtm9MMwmeQiBGCxyvHzYbtxw4nsZIOd3D5NNvGAbZPeIbdxx6z7vsRiHAUdyaKVBU8GOl+jH/oKHWShfDdg9OIhAcCj4WVhIESG7dYmFLTg1wuUWbkF4TL0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707466854; c=relaxed/simple;
-	bh=UGZeq7C8AXSDp6QEFpOyY2J9Cw2Ay2NUaHO+BuuL4sA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=gCC7xL+Vx5NjmqZaQoeys3AYUF5hvEKMaWBD/TLb2I1N8q+JhaY6RQpiMWhm/u9TNxCZiscKaaF14kpwmgYKZWQgXyCnZ08opszUHSw7rkBvF+ehqEdBz95nXK/SpdNrCs5npTesURbM2lyW0XEooGCxoUT0J3NMLOICNzxIusU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDjd1MW2; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76077664C1;
+	Fri,  9 Feb 2024 08:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707468811; cv=fail; b=X8pP1CT3vsnWflRvD3ywkBH1wDkX/zcPDH4IgI5WsIgUiF5BLQClq8XfeGJ7sRr9oen39YBAMRCT8it8F63ZfOqg8vGukQVyc5144o4HxZ8/Ho6XzoP1DgKTBKfzN47B3VTSvuaWwVJaCR2m3L69RQ8tzDbpHZAEU30G+PS/ctk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707468811; c=relaxed/simple;
+	bh=tCmPDsOtFhGHu3lW2ww2n1EWf70yLFnXYxLtaItPA+I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AWpNI6rwwXNyZBTp36l8e2gqj4Tt3QZIweXbanXrOQLcMclVj83Yjlw6InfB6kXVM+cmBvA4i/hIQMVl7qTYj9x7dIVaNOVWtZ0WmGhzgrHN1tDduLItjOvFMCjPJH9dN30TnDqFTOUjS1JaOd5YFifPUVYwVqt+sVswrWLh0TM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KTHuSyxM; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RU/NBt4K; arc=fail smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDjd1MW2"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3122b70439so75757066b.3;
-        Fri, 09 Feb 2024 00:20:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707466851; x=1708071651; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lOGM2ox03bKKsQ2BwwS9WHFj8/IxNhRH949PvmjrUH8=;
-        b=mDjd1MW24uQIwcN2HLfYaWOudyUdsuxVwqt704/IG+J4aFUDHAU63HornqI4cuQVMP
-         bNlvH3r/Vm/zve/BauLl1t4EVrB3Gc1Nz3VEZJNHszvx5oxXBHBa+SNiOeC0cRA1++ss
-         Haxkc5JkmRVkHplZmzgWlbvNCM/+KFeYROadZ5C2/X83k0WVpCzsci+VkE2TzhZjvVpS
-         IA5xAoDYFBXVwdoYhcfE0AOwcvWwlS5l4AOnFBllT8tnIl52NaPwe6ZRECnRe9Q0CWuh
-         867VnksYs61btWvibxqWNG7DvtJ5z0jgTJDEnsDSsqHDCfprAnn8j1AvP70CkZfMU7dP
-         EtvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707466851; x=1708071651;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lOGM2ox03bKKsQ2BwwS9WHFj8/IxNhRH949PvmjrUH8=;
-        b=TCAydemKfhbyVumhqr+Ws+JOaQLFsuiDIKwqUBQnGwWY5rbjvYFQwr1YkyIvgdDKvY
-         Z4W0mlmdZyx2g6coqApH0LRA+31NcScyohgxFGZgKDgZ0L2RZ1QyjYWAcbi20o5/++XE
-         4tIhz61fzZHYNN0imBzgllMSworA6OBDZp0PxtWsLxurkfFJQkSRWVptu2tXftulcIcS
-         ULNb6z8RV8cxsO0v1FcZNGa/E8MqtFDrCZTLCP5zvyg1vZS5BBUYrLyOIF//iJljnE8R
-         C3Wz1Yj5qQv18K7bnISMAMTaT2p8F7wTbGhb+VMD8pp1qME7lzNosNCXht86baLnRe4q
-         HYDg==
-X-Gm-Message-State: AOJu0YxN0bKrjmxKirgG/yU+TsB7NlhglkhoNC0I8nO/nLnxYN7NM2n3
-	AfOOFWMN8SzOO0bUdqB/l9IA53P6iwlQZzOE9O8YIvUwUXwMNZlZ
-X-Google-Smtp-Source: AGHT+IGxinuR90ywB1Bc/RKcrV95AXr/pJxq1Y3/6duqSH25zwQRFd/o7pNJRB+OcLkMPgCXulYRBQ==
-X-Received: by 2002:a17:906:874c:b0:a37:7f72:574c with SMTP id hj12-20020a170906874c00b00a377f72574cmr472254ejb.68.1707466851266;
-        Fri, 09 Feb 2024 00:20:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV4eR9GD9M+KuD19uCHflWV+fAiD7/NLXBZ6dyFie4GJz0WB43lazdCx6+rHPp8TGoZqYqS+SNsljDAmJSpdt2yAi43PwktlTQ+ReVwBkw5DUJcTksGPvCkflJfYXWNjgonU1N0PL0RJ8VsiyfktUGD2aUViKMNUV02kWn4IrspDlWAGEHXa5iYOUUgqEGPqVEWaHi5tBBbLp48HVrWmbwa53XpPaE209R6IIQZcq1lkXquQKfc31cl6FsSmyfQvRqFlJHZVjw5AZMI
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:cc99:64b5:3ac3:6096])
-        by smtp.gmail.com with ESMTPSA id t10-20020a170906a10a00b00a3bd7052c22sm518897ejy.60.2024.02.09.00.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Feb 2024 00:20:50 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ALSA: hda/cs35l56: select intended config FW_CS_DSP
-Date: Fri,  9 Feb 2024 09:20:44 +0100
-Message-Id: <20240209082044.3981-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KTHuSyxM";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RU/NBt4K"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1707468809; x=1739004809;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=tCmPDsOtFhGHu3lW2ww2n1EWf70yLFnXYxLtaItPA+I=;
+  b=KTHuSyxMUyrenXRiHkfDYXSivEtipvcQrDSScd7LiAM1Gf/ZfAry+L1u
+   sY+RRbSTavsxhtdSHOOcteqplZcqd1BVGuzFd0kDc942mPBhKZpt/H7uv
+   S9BtURpaqondjM/E+Wmv+L+ph18uD2V3SFAgo5m3Vs8Pg7pJILfpa8+rS
+   f94zSA7B38ceY9Dx5IN7izgsyEyBguyEgg0Npl3QAqNGlQycYAN6BPxGW
+   1A/Mf4RUlxiWTgRacfQx5yoiqLHVnpuOypYI9XHunjGNIyPAj1sfc7oNJ
+   SU8zRuGutzdw1V6xXUadD0tD74q/UaTL7/1yL9gH2Ece3SmJzNe7CgsAN
+   A==;
+X-CSE-ConnectionGUID: yck0rHmqT1Wqq8u5TBBwSA==
+X-CSE-MsgGUID: WAA5u62QR0KFQ4sFlQ4Xdw==
+X-IronPort-AV: E=Sophos;i="6.05,256,1701154800"; 
+   d="scan'208";a="183273577"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Feb 2024 01:53:27 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 9 Feb 2024 01:53:14 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Fri, 9 Feb 2024 01:53:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jsDxTfp1ka7LHQo8TaxWhtZeYFZSOYM7EFb5shIaUcoGmgm/axPlyyIo5vvyofm976K9zc9c3YxfMZwPnq55+gH4/HBthdn2rmajX48sncapTOsgjcD5dOUGsdSqXt/6FqnC5zObD4cDuAVRuMi9qZvtXshp+TLogQjde2Fm6pZA+oAbQ2A5VMgmY8d6nYepPjUUZI9FnqXIHQOk8m6Oz0DUuKg4SxydFPISyUlqrv7RMFVjXf0maZhK+4H++YQQcKcOeAaNuErOmJwlJJ2CtjA14tVUsjMBnhQRa4Fy1E5i6nP/yPgtR5LyJrUmd8Ya1UzcEi0yiQEGzBo166JGIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tCmPDsOtFhGHu3lW2ww2n1EWf70yLFnXYxLtaItPA+I=;
+ b=TJd/noHy4hTVlnx6q6q4bLKFRgo6SKxGU2Uxnn1cHFqL4AvCEIQYirC2L31IShB182BySA1f9dZJVLbX3tuu0C3zgm5OfEZ9fh568k5VqXU391UAN7FbsQBGxeyNtzk7/3JAyeVaY9BLziPs8PwcytlWlIQa9L02sX8Ef8uHUBkVaT0PTm984kwLq0q0dP66WazUcw+mr0HtZFD3rfK2yuV/hzHVpZN4jNa7wqlkD8Rrf5lRqRzmPSyJQsGDktflWwp52dNfayGSPd+UydVwfMxC9j7GjBKjc4U2s8cyjlyzFhxgDaSjBsRLnoHGhHIs3V/vL+yQcHiPu+FY/PMnfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tCmPDsOtFhGHu3lW2ww2n1EWf70yLFnXYxLtaItPA+I=;
+ b=RU/NBt4KajYUGXVGfGHa40ZNvUIPJXv+q3NMyLfqPM8qEWc33WNFCrdzNutMAl/T7IsrXYziy/+5AUUvePTI4wIIXfFvDRyRDNN3XAbp3BYNBleRHMfpkWxQOrv3aYV7RdewtUqHY8YVWPP0wpUKoCfaV6YvP4ks8a2t79L36PtW/vfql382XZetgm8nwI9pe54fe/5r1SEOYhtPjQWl2z+cvzAfBDRjf/6FzjndO4ZeBrnA9tCLbPw7k5HiCYNTmxybTdO4CHlVqUyBtA7h03CIM6ESgH70K0OmwFgvEQFzLkzxoOVYbwxAqa6n5L7dQSXyFPfr791f5Na98FpX9g==
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
+ by SA3PR11MB7653.namprd11.prod.outlook.com (2603:10b6:806:306::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Fri, 9 Feb
+ 2024 08:53:12 +0000
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::51c7:3b29:947a:9e39]) by SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::51c7:3b29:947a:9e39%4]) with mapi id 15.20.7270.025; Fri, 9 Feb 2024
+ 08:53:12 +0000
+From: <Parthiban.Veerasooran@microchip.com>
+To: <christophe.jaillet@wanadoo.fr>, <Christian.Gromm@microchip.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] most: Remove usage of the deprecated ida_simple_xx() API
+Thread-Topic: [PATCH] most: Remove usage of the deprecated ida_simple_xx() API
+Thread-Index: AQHaLHETwc2Lhwppyke8RQUcWa9qZ7ECEeQA
+Date: Fri, 9 Feb 2024 08:53:12 +0000
+Message-ID: <cd56d073-04ad-40ad-968b-7e137d10f456@microchip.com>
+References: <988c218ef3d91bffaf4c3db9b6fba0d369cbb2b2.1702326601.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <988c218ef3d91bffaf4c3db9b6fba0d369cbb2b2.1702326601.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|SA3PR11MB7653:EE_
+x-ms-office365-filtering-correlation-id: 89b9b5f1-2420-45ed-c6f7-08dc294c8c40
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EaJc8EOxShsdtJWB7NLMDPL0+0fDyJcitm9eSWmgvT/lcn4JRDlU4hYDJKrEhl9it0niALQQ9MJ/j0635n4cIVAhA+NohTaSxnWuDdWCoExdgvltDGH/HiSbwFqnVBAPjmvagXnk2HMJTf51bGwYfTUzJK1k6FTQYvOR8O4KprJ9cJUhcbV5mEHqfKEf59gTM7RhlHwBw6WUwl8txhcg3bhSVijkNU5833odB9A0Stw45gwTfUGHh2NQk0yl51LcaoeqHL+yYro88OVnhuSqHKpyDS95PWn6hJ+8zZrL7AGUFX0jjGxnFS2Kz9BiIdFPP+CYmOiD6Oia04W2v+Z/Jmul1rejLiCjT2XZ6EK6RlOdyq11mwWmlivWJ78SH+3C0zO+5PF9CezAUJg173Quy/w6PYFa8QIk/2i6eo4gXP34qTrtxVx06kDOS4zAcp03Byuee9kvdZAwQmI6ZFaGQvOKCSC3nV4KMIAXj0rvEN2dhf/59uXB833y2vK+1r8DUDFpDkBVRWsA/elBXft6g4t7/UYstmOcAoDa7cALDhMxrUiDddstt3n/uqQUHXns+7H2XesJQKgImj/b4F8iT2/oHtp9pmIOnXd/CG4u9822lxj23F0Z4ltLr9GFsGxp
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(39860400002)(376002)(136003)(346002)(230922051799003)(230273577357003)(1800799012)(186009)(451199024)(64100799003)(316002)(76116006)(6636002)(66946007)(41300700001)(86362001)(8676002)(4744005)(4326008)(2616005)(8936002)(71200400001)(5660300002)(53546011)(478600001)(36756003)(6486002)(6506007)(6512007)(54906003)(26005)(38070700009)(66556008)(66476007)(64756008)(66446008)(91956017)(110136005)(31696002)(122000001)(2906002)(31686004)(38100700002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eXl1VzB1Y1N3Y2ovL3VVWUVXYnBnd3pOU0grY0JEZWlEOUVEZXZtTWhuMnRH?=
+ =?utf-8?B?Q1JXclJUYy9xTEdhNDk4aUw0aG1oN1VudjBMS0lmOGhkdUVOdjRBYU9UME1R?=
+ =?utf-8?B?TTF0UHdERFJzQk1KdFY4YnZ0L2ZmZEhZMU1tUUVPQzFPTU5xMXZSRUtISUJv?=
+ =?utf-8?B?T0tyZG9iVkh0SUdZRUhTRHlvZlp0aG96MmZyNXMwZzU3bWhSTGJNTkJlRTc4?=
+ =?utf-8?B?L0xDYUErM2dlYnFyNXduQ1RMNW9PWGVHa29wZ1l3MXBHZ25kTkZuSE9lK2dY?=
+ =?utf-8?B?TEhZdDRCQWxqTlV0SExiblVzSHFvNzRjS3cxWURIS0ZkUmZjaFVRd3JWd1RW?=
+ =?utf-8?B?MVE0cWxXTlY3NERwYmo4RmhEamVGVVg2MkcwajR5YVZ4WGN1eWRURG03bTdJ?=
+ =?utf-8?B?OVUzYWhyalowb2VQdFE2dUlrcDZZMFdvOEo3dE5mVXYzTFlORkN0Wmp5RTd3?=
+ =?utf-8?B?ZHR6bFhYemVhSnV2ejU3UzNNMWdwUEdKWEcyUWNYN0NGZ0I3ZFBybFd5SnQz?=
+ =?utf-8?B?SFhCOFBreC9VTGU4MVcvcDh5Y1N4dVIra1E3bEkrRFRSZDVCMDBEbisvRGtq?=
+ =?utf-8?B?Ums3ekdxendTYUVGN0ZLN0VnbkltK25NdFFDZnpyQmM2dHN0U0FJbkdpZ1NW?=
+ =?utf-8?B?NG1IZE9MNUhuZlc1UUZRdWRteUpZc3B6RThDNnBENGdmM3lReCt2dUZzWVVN?=
+ =?utf-8?B?UmplNlNzdVFPRjUyejlxcGYvWk44aUFnUGV6VlZtRWtrd3hCV0kra0VMWWtL?=
+ =?utf-8?B?Nmd4S0d5L3NOZm41aU8xNU0wQzhVQXNhcXRtMTZnZXlpS2EzdnZTa20reTN1?=
+ =?utf-8?B?Q2dlUmpQV1ByZmV1Yk9zczFCZmdCQUNKeENFNnFEQXFsV2dFbjVsVmFJOERD?=
+ =?utf-8?B?S0I5dVVUak04MzhiOWt1TFlISGo4WUlXelppY1RKbWZUdnJFUXBxcjY4dVVs?=
+ =?utf-8?B?cTdLYmtIL3ExbFRFOENwKzVsZXRycFJRREd1WHE0SWhJbTVsVEF0T2RHdTYw?=
+ =?utf-8?B?YjFCSzNnTUpabW45aHdaTHduOUtON1NnbWwyWlVKOXJOT0JET1VKZ1FFTmpU?=
+ =?utf-8?B?UnNNVVhsdjZOTlF2aTNVUXJOTlpLR0JUWXh3ZjR4SWNjMGh6dGk2VUNCaGNW?=
+ =?utf-8?B?MDFQbklVWHpqMWxnTjRrUUdsT2l1SzczOGRXeGVhUzk5N05kTE9TaExIbUlD?=
+ =?utf-8?B?SUVaY05xR0pqcHp6MzVPM1E2VGY1VlkrelEwdVZIcXdxZFd2OEkzZmx0Q0NJ?=
+ =?utf-8?B?N0o1SXgzZ1Y3OVVyLzE1eGZYUHdSTkVQYS8wNWNNVjdQVEUzWVM2cUEzaDd6?=
+ =?utf-8?B?VW93VGp5QUs5QnJteVlQLy9uMENWeDdodElrQXNqRnhxTGJYTmk2bkw4SVN3?=
+ =?utf-8?B?dDRuVTFRTDhUN0wvVWxLRlpEeEtSRmwzeWNjNFZPRlZ5VzRTdEJQbitaOTZY?=
+ =?utf-8?B?Sk5xSXc3VW9IbFFmTExkcUQ2b0FkZWtIQ2dsaWIvYXlLeERaLzlFM085cmg4?=
+ =?utf-8?B?Z3BtblR5SWt5dktmd1NLN3hXM25XSmtRQ3NYbDJtdThlSmFnV2M5VU1jSHlm?=
+ =?utf-8?B?WEY4NjNvYmtGTENGQ3hCWUxVVWh2OXQwSmJzMDUzZ3FSSjlNVmU0OGlEVGg0?=
+ =?utf-8?B?a09qQThVQzZ3Q0Z2UmpRWXlxWTVnaVg0YVRyc0FFbWVXYkp1MjhrTFNrT2Z4?=
+ =?utf-8?B?V3h2VkhwNHB1RTk1SWEvaDlZcGVXdEFSSDdmYUdweHdCRzY2VlY4UExVdlJ6?=
+ =?utf-8?B?MzF2bkRISFd2SFR5QUdnMlB4VHMyVkJRbDFvQXh0NnEzaDFPVW0rUThaZlRF?=
+ =?utf-8?B?QmxjZy8yK1ZORWpkZ3IzTjNOZTJJQ29UNHNOVjVZYWxrMzk1Rk15Q285UEpP?=
+ =?utf-8?B?b2RzODZNeitnbkx5ZkFIY0IrNE9XeUFOZWhmUmdMM1pqSS9FMmRsQWN6UDgx?=
+ =?utf-8?B?d1dsU09lTTdpaE9Pci9wMFdUcUtsb0xxYlJDdzVOWVorMDF5VXBkaWpaYXZi?=
+ =?utf-8?B?L0VvaDd6Qk5aNS9FaGxLSWMvcnlrUVZUdEkrWktFTDVxNzBYNEwxYlptbFlP?=
+ =?utf-8?B?VHFnSkpYL3lpOUt2azYzZEVsZCtGQWRwdUtleHBFQ1B3dldocWltWWR3NHJv?=
+ =?utf-8?B?T0FwdjBjRkpzclN3TWVWUDArZm5sM2VsS0tlOTUrQmMwS0JhRWZvbkpucU1K?=
+ =?utf-8?B?UGc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <48C176C089C269408DF6C9BE2593418A@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89b9b5f1-2420-45ed-c6f7-08dc294c8c40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Feb 2024 08:53:12.6559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ygy5aXaKpnLNhTPN+MlSzmWB0vsUaZeB0qKmgS+iaO9CNmuw3EeG4OZFBdW/qlhXPn/TC15zYbHC5/oBVZioVfjI2dP0asLs0BTNgn5CpCnnJnKlzmB285mS4fvdfB1x
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7653
 
-Commit 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic
-CS35L56 amplifier") adds configs SND_HDA_SCODEC_CS35L56_{I2C,SPI},
-which selects the non-existing config CS_DSP. Note the renaming in
-commit d7cfdf17cb9d ("firmware: cs_dsp: Rename KConfig symbol CS_DSP ->
-FW_CS_DSP"), though.
-
-Select the intended config FW_CS_DSP.
-
-This broken select command probably was not noticed as the configs also
-select SND_HDA_CS_DSP_CONTROLS and this then selects FW_CS_DSP. So, the
-select FW_CS_DSP could actually be dropped, but we will keep this
-redundancy in place as the author originally also intended to have this
-redundancy of selects in place.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- sound/pci/hda/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index 20d757e38f94..26da739eea82 100644
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -159,7 +159,7 @@ config SND_HDA_SCODEC_CS35L56_I2C
- 	depends on I2C
- 	depends on ACPI || COMPILE_TEST
- 	depends on SND_SOC
--	select CS_DSP
-+	select FW_CS_DSP
- 	select SND_HDA_GENERIC
- 	select SND_SOC_CS35L56_SHARED
- 	select SND_HDA_SCODEC_CS35L56
-@@ -174,7 +174,7 @@ config SND_HDA_SCODEC_CS35L56_SPI
- 	depends on SPI_MASTER
- 	depends on ACPI || COMPILE_TEST
- 	depends on SND_SOC
--	select CS_DSP
-+	select FW_CS_DSP
- 	select SND_HDA_GENERIC
- 	select SND_SOC_CS35L56_SHARED
- 	select SND_HDA_SCODEC_CS35L56
--- 
-2.17.1
-
+T24gMTIvMTIvMjMgMjowMSBhbSwgQ2hyaXN0b3BoZSBKQUlMTEVUIHdyb3RlOg0KPiBFWFRFUk5B
+TCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlv
+dSBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gDQo+IGlkYV9hbGxvYygpIGFuZCBpZGFfZnJl
+ZSgpIHNob3VsZCBiZSBwcmVmZXJyZWQgdG8gdGhlIGRlcHJlY2F0ZWQNCj4gaWRhX3NpbXBsZV9n
+ZXQoKSBhbmQgaWRhX3NpbXBsZV9yZW1vdmUoKS4NCj4gDQo+IFRoaXMgaXMgbGVzcyB2ZXJib3Nl
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmph
+aWxsZXRAd2FuYWRvby5mcj4NCg0KQWNrZWQtYnk6IFBhcnRoaWJhbiBWZWVyYXNvb3JhbiA8cGFy
+dGhpYmFuLnZlZXJhc29vcmFuQG1pY3JvY2hpcC5jb20+DQoNCg==
