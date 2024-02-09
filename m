@@ -1,71 +1,73 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA660376F6
-	for <kernel-janitors@vger.kernel.org>; Fri,  9 Feb 2024 13:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77183C460
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 Feb 2024 13:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707483744; cv=none; b=Zu6gc1BopG74UY0HE2J9hdynAnoo88JJsSumY69NB4qCKUwBMhXFI3lmiMgAXjqxt4iaRq3CKnuU0+87DYRCFgs9tzVwqBm0EoNKi4tqWSy/NuBvks1YO1rKoK/2puD9btHdkbMg78WNM2eLhHxdQRBvrHg2EufTi4ohPpaKMUE=
+	t=1707483769; cv=none; b=DflJr22f/CUALnD3IDInG8j1hvGK801x6xVlFmJV3mEiCMWq9Dzoj6PTXgIUc0Rv+tjduGUC1a9+DVA6FaKLZQJiut/XtAROcXmyd2lQVF54vD63nrUTM4Eidvdl9nnMT9COz+77lIgqEJk5mTVMXQHZhrz81sNQt21rSPJ/RW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707483744; c=relaxed/simple;
-	bh=f7GZuFfz/b9JhqGQIt1IzzcdKqz5xKX7YwzzJ1JOQlI=;
+	s=arc-20240116; t=1707483769; c=relaxed/simple;
+	bh=12Q2gl1DveHT/3s9+knSL+sGOcxvkbiCnBtuOCrdZzw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CE56WspSaEh4CRLqogCP9p+1VBnxofz7I1oTzRM1Gi4fOoPqPel0Wkyp0gk2Ptstw5A0ld6UXWB2pkTODDmKDIL06jrETX1MhVzFrYO8Ly8BNcN7fOUwGbUhu5vTSgbVBOtpF8Eohi+VIcL3Snnnx2SPnAqhyxA3soviuR0hpDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w1zxl2Da; arc=none smtp.client-ip=209.85.218.52
+	 Content-Disposition; b=Nqwe3GYZNJLtMubtWCYLwTHRFaOmLnZylXxuTadHeCfUVkQ4lEBUNYY/IP25VPUL6BmTyi0HeHxlvpxXI5TIcnPIymQG7L8OhFXfrOq7s1iZTqWmWf6hhz1u5NOdExATwJyxEP9IHhyDU6wc5mNJnJV0j5+7uDth9H13s+m/Mfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JLf3eBWv; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w1zxl2Da"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a3566c0309fso107911366b.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Feb 2024 05:02:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLf3eBWv"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5600c43caddso1136733a12.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Feb 2024 05:02:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707483740; x=1708088540; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707483766; x=1708088566; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NUKtKA5PQgc2ohgTX2ul6KjbHH8/opO9tMZEq5ncFHI=;
-        b=w1zxl2Daeu+MVSdys/IkYIh3vl7eRT+PN9CSZURPiRHCoGdzfHVgUWzAEOo6c2bMRP
-         sWV0WI6FOzDkgt9WFYgB5iizAjP1LOft4GHoCIYqoCz+JpeA5F3KdJu8UgZwwtujj0Ol
-         gHGDoknYAHTgpCvd2QJDAjKj03PY4zoVpm7w0Au5KZ739tWj3cXFQSVLlMkmccuOmM0D
-         HJRpoNlb6/DGvDeLGaofritegYHypwWRBEq1ksVMEhiQ6T72ps2mCVan1BqXbbrWI6u2
-         oA8UWxgJgJYSDPC945WgJ0PRIu+uL91s9Yvd7il7f4PqqiCgHznBwji/WxakpOVvi9Hg
-         YRyA==
+        bh=30ltjS2465HeE6RDkcYZ7gz3HAH/FfBk4VubamB9xlg=;
+        b=JLf3eBWvL06pnpnbXI2CF1RXZrdQAf/PtERyfIKQgE68yAjwD42M1+ZQNAM8PvAwG7
+         wL8rQXCY5BxrOV3gkn/ISaxAw/SUc7XfaORXh3FrdyM7P1c70vOWTKrNerFqY3P3UcAy
+         dNeF2yWpvftR9a0OPUsVIak2YjtW61YNd90lMWnBB7GU9TJo9rQvH8e9bFGNfhAelS/r
+         H8QIJLFpmZ3miDdTvsCp36FYqbdhe7FUQfNbMRw8M61atlmjumkl1Z/9jfDjOR7BxJfj
+         JWHMru0KVeB8K3szTc8xaMQ46iZuUd+xAzXKJehQdLFAeC/diOeRm/oijdorCDPdAuL9
+         PZ9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707483740; x=1708088540;
+        d=1e100.net; s=20230601; t=1707483766; x=1708088566;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUKtKA5PQgc2ohgTX2ul6KjbHH8/opO9tMZEq5ncFHI=;
-        b=b/bTmNwVF5+aWYRoaIjma+3EZZovgJmBQhzLaVsW+rPOfd9m9U8/iCZCebKezODSOR
-         BL5A10T2lTwbPlIk1WsS/NNQZN6LMODUmwT5Js3DbYCAPeDLb3R8C/IOWUo78M8DG0PD
-         /Z6pmncnFNmjEvRWeICMELm/l0MFQjj1rZea377PulIKFcMZl6pNNzoFLEdpsnIxaKBN
-         YEknwrOD3CY1nug3qR5cUsg0+hOE/1OjGfR93CShiBKwUpG/Ort58TDzu1ftb5lv5m0x
-         1bNuUxxfOWZ+BU/t4fpEBds0Sx/vAs2oNwb5oSy9T/bXEsFF4TMKJAuCq3xVyDX5HVQ2
-         wLsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhiBrbhrYLrxQRF9SMADnXJGKYH7fqplDXwPnjt+fwe2d57zWgYgA179fZqQan7hOTL4bToaX76cKq4CeyKpoH9fV3ik5oGlppnV55lRRJ
-X-Gm-Message-State: AOJu0YzVZ55RMMTojKNF7nXywlIPud6JlbdPg94HqquSTak0pxbJqCmV
-	vACycDVtNYx10150T1gtbrw+JtxN7KEmhm7OMGlUhStEuALjVTFowlM75ZeUlng=
-X-Google-Smtp-Source: AGHT+IFVhkx7LhzyB7e7l1QguxXFgUlo/kYuQodTA9Wx4dGpn0Unm/Z4m0tI6DXnNy9amLuIQwAwDg==
-X-Received: by 2002:a17:906:c28f:b0:a38:3ec3:9379 with SMTP id r15-20020a170906c28f00b00a383ec39379mr1033826ejz.44.1707483739784;
-        Fri, 09 Feb 2024 05:02:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVfmM9ZYYYYAhCtOvAd02GyyM2a5rau2KzAaKyzbK+sHeXX4dGwyEmZGCbR3tEQdYmFuiJKImr+m84uY2IGqSwC2XdPT4tGDRj/UiG8xPfRBr3qSmi9t8EkeelvN5WeXcrlIhHutkJe2GSCNntNuEhlaRTmN+nUTe2F1GJFhAPIgUejYLaRwVa6YEIfS++0/T18Z91kebqOE+xPvU9TaZz6dNp31q+u7DTbfDPDDnTAdkykemR3wqxJvrsbZe2AWQR23+TU1jrGNzdQwVeTOyxG00xSRDF9iIRC46PWTexGNYn1Aj0fulduoMjBphpjFxXE/+qKVvy+ASWixuzyB6OrjnEGri3gkUj0F+PWXOP/9OITnkMGWkeN3oH33XwV1VvoAH7giyC63uLZkhUJzbqL10g0GA2gPczDwntPVPKVCsLBcXVLSUf6AItX875IBKnwSTZnjhwz5GmbrKXCGpFPmp7AGNEDGurKfB4nbdAf2Lcf5PIxOfXeM4F1o4JNCt0i5TNcnMXaSYDE7JTuKELTebYZg668FA==
+        bh=30ltjS2465HeE6RDkcYZ7gz3HAH/FfBk4VubamB9xlg=;
+        b=dZoIL+6piO2hONeK+l13vsqQd5lysE3S8EVSM+Gc8o/t89StlDHlKWon36Ehc5oXsr
+         HaHs7fK4YfzreGNuVEmm6vvjaDSHQh5gCgqJinftEoEL6LVm9on923VzXRccYP0xjoHO
+         xsOOMERCr5BDT5c7d2sTiiNjWadqsFfwha1uK0XydJB8KJVw/kNhELRjSPK1KwXc0BUT
+         lP3K6B27wWDUUesSILJDs7WXk51fHbwcyZKTKxIkwRxpeAVlmrR4UERCcXICEkqZTaff
+         wKXSmOgFhz9ioq6Kjze2y4YEPum/giN4kQOO7eiwhex03JoyTmG8PNi/O44D60w9rzVC
+         zzNw==
+X-Gm-Message-State: AOJu0YzVXXyAzsZk2ZBjI46S4XjP/HpUCkTCK3x7VPS6o+Z26y/LwlTL
+	nhW2RBm7oKOOR0+kUPSg8qJJJ5cJaK4QLBASukyDY7WNbwHaLVj4UAEGADnCOQg=
+X-Google-Smtp-Source: AGHT+IGk3Uy6387987t9ObpRRvhmYrzvpBWmjEfnryXbGtmf7Y8JaQxsRglpq2IGmZTRgLgs84PSXQ==
+X-Received: by 2002:a05:6402:12d3:b0:560:8010:b678 with SMTP id k19-20020a05640212d300b005608010b678mr1245938edx.30.1707483765418;
+        Fri, 09 Feb 2024 05:02:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXJazRu4iYiKzzQwF/gSh1UE3tl7gDgkJUAgPuN+fxfAMMbbBSuIoh8EztuiqybU5H3TAvB3rAuRntIXddfciGZ+rUYMgNDlht9JOhm2NA+3CFgl2l9oxy4aIY8wvySUkAZeB9P9FAb/HBbbnjQHmztNz3OxAMLak+cio07d1ZC0PQZO0p5LMzPTkdxzIC2ziwdv2ps4BuZTsCm45Ww8aaSimOUhpz3Yhjb73sQrezTbTmLmsAJjWKNUK7vMxAx4jBdiodphI7gxv7h0At4mxCCQFDu3SLht/9EraI+2b3syXQgPXRVCeM1G5bJFCuPcox3Hzw7YhI8e9wu2pIILG6FT2wzXkY27tOtIgiREW/Mgu8TQck8rQg/vZ/gjsBR1CMyS0/VHMMfxc4wrT221jhtRJrR+4EgafsOOI4wMwOhpqov18mn1YUtZmU14hCdb+EjYzT858gki30kdpNXnjAuoQ7bffAM7bdxxv23usQGjZjRntEaufxyQmHtkjCLFWi5khB6Lb+TdKRGy9Y2iNpNBzaUsBqPBpEDpNkuPGcbfHwAiUxYTET57A63nO6NKWJcMxQYtMXZt/zX4Xa0Iqs8DAssfIuTgiSVhLmB9O/5+8A6fL8jqM11vm7DPfpqWru2IuB3XA==
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id un8-20020a170907cb8800b00a37669280d1sm740179ejc.141.2024.02.09.05.02.18
+        by smtp.gmail.com with ESMTPSA id e16-20020a50d4d0000000b005605716e755sm806635edj.52.2024.02.09.05.02.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Feb 2024 05:02:19 -0800 (PST)
-Date: Fri, 9 Feb 2024 16:02:16 +0300
+        Fri, 09 Feb 2024 05:02:45 -0800 (PST)
+Date: Fri, 9 Feb 2024 16:02:42 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+	Anthony Koo <Anthony.Koo@amd.com>,
+	Josip Pavic <Josip.Pavic@amd.com>, Leon Huang <Leon.Huang1@amd.com>,
+	Mounika Adhuri <moadhuri@amd.com>,
+	Lewis Huang <lewis.huang@amd.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: Add some bounds checking to firmware data
-Message-ID: <5593d147-058c-4de3-a6f5-540ecb96f6f8@moroto.mountain>
+Subject: [PATCH] drm/amd/display: Fix && vs || typos
+Message-ID: <7482be2a-aca1-41dd-bb6e-d547571b9507@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,30 +78,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Smatch complains about "head->full_size - head->header_size" can
-underflow.  To some extent, we're always going to have to trust the
-firmware a bit.  However, it's easy enough to add a check for negatives,
-and let's add a upper bounds check as well.
+These ANDs should be ORs or it will lead to a NULL dereference.
 
-Fixes: d2458baa799f ("ASoC: SOF: ipc3-loader: Implement firmware parsing and loading")
+Fixes: fb5a3d037082 ("drm/amd/display: Add NULL test for 'timing generator' in 'dcn21_set_pipe()'")
+Fixes: 886571d217d7 ("drm/amd/display: Fix 'panel_cntl' could be null in 'dcn21_set_backlight_level()'")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/soc/sof/ipc3-loader.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sof/ipc3-loader.c b/sound/soc/sof/ipc3-loader.c
-index 28218766d211..6e3ef0672110 100644
---- a/sound/soc/sof/ipc3-loader.c
-+++ b/sound/soc/sof/ipc3-loader.c
-@@ -148,6 +148,8 @@ static size_t sof_ipc3_fw_parse_ext_man(struct snd_sof_dev *sdev)
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c
+index 5c7f380a84f9..7252f5f781f0 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c
+@@ -211,7 +211,7 @@ void dcn21_set_pipe(struct pipe_ctx *pipe_ctx)
+ 	struct dmcu *dmcu = pipe_ctx->stream->ctx->dc->res_pool->dmcu;
+ 	uint32_t otg_inst;
  
- 	head = (struct sof_ext_man_header *)fw->data;
- 	remaining = head->full_size - head->header_size;
-+	if (remaining < 0 || remaining > sdev->basefw.fw->size)
-+		return -EINVAL;
- 	ext_man_size = ipc3_fw_ext_man_size(sdev, fw);
+-	if (!abm && !tg && !panel_cntl)
++	if (!abm || !tg || !panel_cntl)
+ 		return;
  
- 	/* Assert firmware starts with extended manifest */
+ 	otg_inst = tg->inst;
+@@ -245,7 +245,7 @@ bool dcn21_set_backlight_level(struct pipe_ctx *pipe_ctx,
+ 	struct panel_cntl *panel_cntl = pipe_ctx->stream->link->panel_cntl;
+ 	uint32_t otg_inst;
+ 
+-	if (!abm && !tg && !panel_cntl)
++	if (!abm || !tg || !panel_cntl)
+ 		return false;
+ 
+ 	otg_inst = tg->inst;
 -- 
 2.43.0
 
