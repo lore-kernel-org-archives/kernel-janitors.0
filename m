@@ -1,95 +1,95 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00C5524A
-	for <kernel-janitors@vger.kernel.org>; Sat, 10 Feb 2024 06:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983A2AF08
+	for <kernel-janitors@vger.kernel.org>; Sat, 10 Feb 2024 10:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707546671; cv=none; b=o+/RFgGa8KPTknELdr4d9G78fbt5qAsHXNu8m7oPoOaQ/WSIo2CzqmH243ysBlucjxNLasS1wkWFsP+aNYCFoj/WvkhLteXCOuT0BH54S0AjX+xbkIXHwaVDmBL35lECqP5dd+TYw6SsnZD3Ytve3XUijzuoImCFRMrjcankxHM=
+	t=1707562426; cv=none; b=ClsuguLq0sfmHgz6kuGmi4YxwM9/GlklpqfsjXvC6gusJhPGjqgu97vVQXNPUPjqmYA6XS2RvwMb2rP6LUtIuoakLe0E39MDkv8lCmvCHbJQSJJKG0GtjomEUc3QyzGx5e0H9goTnIKGbGcnBIz7SSWq2fdHWqrueU6S4Sygv50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707546671; c=relaxed/simple;
-	bh=oEFPGDlqXEyocwhoWKRMJ4ziIc3upKjM4O5Rg/7Y5HQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jg0uzP8UoMNQIMhwV7gVFlGfcLrn+bgP7yoYJTpZbH/EGCpSKNGcK6LCSGBiNjAM0krvP/9zYGVB3swhqa0qMuf7Gt2O5G1XQwK50ZmHWBy3N0T4be8b0/kffGDcE650EGNT7H3fIAcxFCQxRBumy0/s9nGeYkMIilq7GDSGLqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jzAg3/bs; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1707562426; c=relaxed/simple;
+	bh=ZNR0Ya2GtQ55/jW9CFZk6ueuv1ZGLDunwSJubLSmEUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rpW6lMUCJAB8JWrf9b08k7KaO30cmvBO621gcV/0iuy+l5nmr+shR5w9rr7odITdcYfA6yQnnDiFiNPnHwoS/1K3eJ4op7h9OeinNfEYsuB2vffp1XyKLGwym1G8V89IvC/9lk05AK5DE1894lx1b5AL7g7dsVCBWbmzKlTGGow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UveCnvEH; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jzAg3/bs"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e08dd0fa0bso896586b3a.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Feb 2024 22:31:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707546668; x=1708151468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2xoLZGjYDgNhuH6I83/DOtjfO4FsY/e01Dj2umhInvU=;
-        b=jzAg3/bsxEdFZwBOTEDYPTRa296mXeJf8leYMbASt09CTEjWBCAgCCQY0owH40d/3Z
-         MOHcAK0MHp+SBtfPFJYGxl0Ytx7zOeSspk4V/V44Gk3PG43iCaLoLk5sL1v7Kp1JnZwm
-         5oGNK6U7RhvoGGmD8NrJ89XjzOecSM6E9LycU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707546668; x=1708151468;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2xoLZGjYDgNhuH6I83/DOtjfO4FsY/e01Dj2umhInvU=;
-        b=U89ZEeEF4QqtxVwkAmwSRPVcGNJeVGn+xybrokSbdJDCIZUQLcYgqOhSKyQ3H5dGlq
-         iJav/Ov57tIKi1Yc36pI18eJqSPy1oUpmz36/PYR5k+z9pwdYLg1Atn8+x6ff2MSxWCZ
-         NgJ+0C1IJxDB/N8jOzc2twQ5b63XzPAC6jtkrFH9ifxUM1LHtoJydWeeL6Ek2NWMpxOn
-         gjBYodJQ5mQ3AKIkYi15hDrK9jroO+1wyOWVrENUCEbG7gowHYUKtmlS8ehrJ10dTAoz
-         BijthA4cHxiawnnaPx+4gmVlPdJjU4zYtf6ISy7zq9zvcGNSLG4eoPCMgwgCgZmRksE/
-         Uthg==
-X-Gm-Message-State: AOJu0Yzrao8RUvnvRCPvE+ps4CB+v654Cgz6DcnGxCm4JVxQO6u5DSJP
-	rChTy6YGQVEJ48cS2bjUcg6w5M7TFkQihzQtIv8ad8pN9yRDsLeW/GX0YOROzg==
-X-Google-Smtp-Source: AGHT+IGIjsMjH28pAXwc+S4f0NGXsC9lvIPOn1ZKQThtlNQlz7+q0LVvVrnSA61E2r3dygZ2dIbtIg==
-X-Received: by 2002:a05:6a00:2d04:b0:6e0:4b81:907b with SMTP id fa4-20020a056a002d0400b006e04b81907bmr4279382pfb.10.1707546668009;
-        Fri, 09 Feb 2024 22:31:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVeR16fEjgRofT9DwwK4x/w7h70DzSFIY/iXLACRlUQdayJfSewmuJCc/Zyfwu4iS0RIK7MTqZ9DCo5WgFTvLgmHg8s7QMnseCkRupMh/7UQf0sM2oHIrucsVlB3TOT2EQVLQxirszeZNbEx09S7juFayaiRnl1Y8lJ2wwNNmVxHOsG0MTwbnQ3vRvQeYcAKxKiAut/9d02yoPayF23AUefe8pdwlBdcg==
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id z5-20020a62d105000000b006e08437d2c6sm1705037pfg.12.2024.02.09.22.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Feb 2024 22:31:07 -0800 (PST)
-From: Kees Cook <keescook@chromium.org>
-To: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UveCnvEH"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id YkzGrWWZFCB5QYkzGrUBap; Sat, 10 Feb 2024 11:53:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1707562416;
+	bh=7QYgDN3BJUEnPT+SJRI8j4ug6VUW8Hkqd9k+/x2jDfQ=;
+	h=From:To:Cc:Subject:Date;
+	b=UveCnvEHrvJuAAmeSuiaUhwqL3TLTowduXR5o9CGK3lhSCyJF+uEzXZgaNP3nfSWw
+	 8yTxdu8msgcHsVkmmtZfscQHT6SVI2QUJEQOCv8o24MDL/up9c8pZCqvT0ZiArXL1S
+	 tf9VC1ooyex07pt8kLEbxGSIDqv0UOxeIl1wEyywldPXmCP6Z+5sYRqrS/tgLHnkIQ
+	 ILJBl7d/07JlGnFZugaxOySNwljPdC07VNS3raJ/81DFeMlpoumlobh0haMvkBtItp
+	 oEdcNSer7Kwd4oW4uv2Mm4iE8YuxPQs7No8OXVl3y3uKRbNKNYznQLuIeWtVh95sHL
+	 dEA60srFFusVA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 10 Feb 2024 11:53:36 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Or Gerlitz <ogerlitz@mellanox.com>,
+	Eli Cohen <eli@mellanox.com>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Drop obsolete configs from hardening.config
-Date: Fri,  9 Feb 2024 22:31:04 -0800
-Message-Id: <170754666057.1708532.12818016531447895933.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240208091045.9219-1-lukas.bulwahn@gmail.com>
-References: <20240208091045.9219-1-lukas.bulwahn@gmail.com>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH net-next] net/mlx5: Use kasprintf()
+Date: Sat, 10 Feb 2024 11:53:13 +0100
+Message-ID: <9bb8d927ec172df227f84694dfa5769623f48c89.1707562340.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 08 Feb 2024 10:10:43 +0100, Lukas Bulwahn wrote:
-> here are two patches cleaning up the hardening config fragment from obsolete
-> config options.
-> 
-> Feel free to squash them if you think they should not be two separate commits.
-> 
-> Lukas
-> 
-> [...]
+Use kasprintf() instead of open-coding it.
+This saves some lines of code, avoid a hard-coded magic number and is more
+robust.
 
-Applied to for-next/hardening, thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If you consider it as a bug fix, should 'name' overflow because of the
+hard-coded limit, then:
+Fixes: ac6ea6e81a80 ("net/mlx5_core: Use private health thread for each device")
+---
+ drivers/net/ethernet/mellanox/mlx5/core/health.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-[1/2] hardening: drop obsolete UBSAN_SANITIZE_ALL from config fragment
-      https://git.kernel.org/kees/c/8ab2b5398287
-[2/2] hardening: drop obsolete DRM_LEGACY from config fragment
-      https://git.kernel.org/kees/c/8dafd56868ef
-
-Take care,
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+index 8ff6dc9bc803..3f775da15afc 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -856,12 +856,11 @@ int mlx5_health_init(struct mlx5_core_dev *dev)
+ 	mlx5_reporter_vnic_create(dev);
+ 
+ 	health = &dev->priv.health;
+-	name = kmalloc(64, GFP_KERNEL);
++	name = kasprintf(GFP_KERNEL,
++			 "mlx5_health%s", dev_name(dev->device));
+ 	if (!name)
+ 		goto out_err;
+ 
+-	strcpy(name, "mlx5_health");
+-	strcat(name, dev_name(dev->device));
+ 	health->wq = create_singlethread_workqueue(name);
+ 	kfree(name);
+ 	if (!health->wq)
 -- 
-Kees Cook
+2.43.0
 
