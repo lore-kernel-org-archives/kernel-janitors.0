@@ -1,84 +1,89 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B46A5A7A1
-	for <kernel-janitors@vger.kernel.org>; Sun, 11 Feb 2024 12:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A385D497;
+	Sun, 11 Feb 2024 18:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707654543; cv=none; b=Xw9utLXxPTL97pFy7PY9DcHxtUEid4ENAHcxNUGlK2eNsAC2Fl7Zz0vsNfUB+Idm6bw4omB8JV1lnN7aaH5oHb5pUtEKq7nYqbkKzgK5sjE2qN6LkGVp1vr1v9OohK0EQhxFJHiyOyskDDsHeVUuep3xSEcHGn04we5F8YuV2Z0=
+	t=1707676205; cv=none; b=IaKWrfo5BjMfExw3XlLTsHboDr1wSky+zIUJlSjG3TzY3Te4CMGMVR88A5lHXhF8YoOUZ3fNEnYL0IQfX8dVvDe52whGrDJ3C+CtO2JE/KMZJjw354gKlNHv3JbPos/jUGyVtDjqkEoo9UAGpW3JttNYDv0GDK1xxG5N4DryPug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707654543; c=relaxed/simple;
-	bh=VDd0p4EgHd0V78fptXuQVp76nhioQUVgvT6c7xK6XB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aCfHFpX/v4l8XvPx5HUStVURE13PYgjudvx5ENiFOvl2RrmaS8l25gse02VPrOrizb5pgQF7Abo5t1oxqKsOF3UJk6oIQ6t/FJl2BQGcrJamEwz9Zr4jAriJzNpIIcZ2mh9pC9Wp2EzeyksyLqd7SmWo5UIFwnb2rpCRcgjXx2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h3rFLLTL; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1707676205; c=relaxed/simple;
+	bh=74YHyaDhJLXssD4iP9ahFOyAatWAfcQ49coXo35cm18=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=upfB20QbcfxiVC9MGO3l/1j/lZhx7E5yIblXrJYmYusrtk8x12NjLHZ9fuYgTnhTGtQ5U4/3f4iM/gxa+4lr/LA+AJcKhaGCa9jcpRg09DRp7S2eC99TNqxMmYGHxfeVjtQQl56Ndn+y1F10HuVhL0Le3Baccl+LrosWg/DAdag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kqYKgoh0; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h3rFLLTL"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id Z8w2rS5yOymFYZ8w2rQ4zQ; Sun, 11 Feb 2024 13:27:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1707654470;
-	bh=yjTdCUQsFTSNm5Ev7xNn7axY7MBZ0FtXX9CI5fLO26M=;
-	h=From:To:Cc:Subject:Date;
-	b=h3rFLLTLkMZjqWbUjtTisjdWyfYwJt1jHDbPkmO9jBbTFmmyaeFXdFUWb20lag9vH
-	 xu/FEycccHE+QoLhTHVsj9hX2XySe2SnitNm5vpnpLspP+WIHx3PrwY7VVHYyp90WT
-	 hIn8gbrZC3WiPGFvDHj8tw5IWIgjQbTSRW5HqlljriNKdv6M+yBPDXtDnpS7Yb4ahU
-	 /xj7tWW/QQHQm66zAIEEPiZfqN3d3frQv3xDsuwutuiYokfWYDxOJT2Ro3T/HBVNwF
-	 /fVwANHFr7Vybw9gnJ0tkEt+9iN3K9WONO+r95egNghqhFwPUJICCQRXp1b64N3pK3
-	 ph1JfsJ3MSTmQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Feb 2024 13:27:50 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-staging@lists.linux.dev
-Subject: [PATCH] staging: axis-fifo: Use sysfs_emit()
-Date: Sun, 11 Feb 2024 13:27:10 +0100
-Message-ID: <588327734f374b5f5cb5c4d5725d884fdc83663e.1707654406.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kqYKgoh0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1707676174; x=1708280974; i=markus.elfring@web.de;
+	bh=74YHyaDhJLXssD4iP9ahFOyAatWAfcQ49coXo35cm18=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=kqYKgoh0Hs7D5bhjC02lOcuXQVIYV/9CxN3yWqJWhRSY/KhVvF4qLkDe2QSStatR
+	 sR/jRBgcsqErHEjCUt6f1ZYyS1C4TJrbRG8NZYR4aJ2SBCWYaLWLAn4Xvs83QicIv
+	 HOzXSRNMwQ34XwqRK0FrdnKGCbKg09/obu72qUDeegySthjghdu2HOUgbtCT5SqOc
+	 Pgxx3nDXrQ7FxcdBvf1cV06Cv483SSkeeqkN3ohLX6123iUI4Eojxe+W6OmAWZ2P3
+	 syujlUf0LAWuDY9V2UelxSXgjc6SwQaheFuALrp4zxJNTCGPSIbr2RCu8ZJcvLiGr
+	 8ZqD2OoAgweLFzG5oA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3Ya-1qie1m1ySG-00r3IB; Sun, 11
+ Feb 2024 19:29:34 +0100
+Message-ID: <bc60c33e-c268-4e7e-94f9-e573545ffe98@web.de>
+Date: Sun, 11 Feb 2024 19:29:28 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Matthew Sakai <msakai@redhat.com>, "J. corwin Coburn"
+ <corwin@hurlbutnet.net>, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+ Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <16ffd614-48a9-42b8-961d-2dc8a69c48d6@moroto.mountain>
+Subject: Re: dm vdo slab-depot: delete unnecessary check
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <16ffd614-48a9-42b8-961d-2dc8a69c48d6@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:o5C86Z9n5z4X2YsnFMlMnGSSfF15aQxmj9OgobzQ3XBKbZz+Dru
+ HJOlK4fIAoOl5ReAteu7vc6S4gzCSVPcf00uYHZ8YmUNVWdOMAq7trdjq7xUsSBgTzWb484
+ MH3YyzbNzqWjhgqpCbOlpOzIK799asb7cdj+YkEV8mP0hpqtsyCsLSnIQHEtkfT8IxBHPCQ
+ NdmoIGr5zJkfyFpPehLsQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7nZPYxQdON4=;fHrT4ZFPZ6VGtdo5GteLvoqy77w
+ fZO5DenF+Zif5rIahUiQEyTbq43jvCnLgGxcaJ/Ii6iRIc4So43poG7UQpOVAka6RTZDbgTzp
+ ZbYCIrmibi5VW+ByCvWZULwCA0bfWG+hXLqnM5XuZUDqfv0337mRJmTNoNN/dQvidK8WFVL0Q
+ uaD/YNKJvcmx76ZARUT90eFHDwTLAihBsMXPJdpe16FcIbChChU9yiYKWEqNtO9408ZP/ZrJ8
+ OR28pLGNGTlTHeIJYCMhdm0hq2WQ8rasHuOPllVuyrGcAvLuUvxsaMjHRF3RkESNgFSmy2Jzy
+ n4mcUk2b3HLoT+tLjGYT0v8EjjOi14fm5QuOwLjP7FqE4I8Y3dTQDT/IVVPGuTMgJ25iUgdty
+ UB/12EDfbZcpmsiSnrSaXlMkdoR34r3BeiGvQ4zZB7EWT+DiPkFqnd8ngxhNJv8/8dcPKCZxk
+ gwo3TP76IiCn7c51Ubu8UenDQBjmyULtmGCNs942zR3ESu57OO/9rF0x6peMShiji4XHqoDXG
+ IYJrVx5UrYT5wn1enml8YH9KB7ikskhRfwp65sJhO4z4LQKFIQykW7F5UxqJOyA+CmGCh9Jud
+ yDNESGh237ymZT4+Wdc2LKYLEw9/Sjqar6LLpDIRkXLSUquXvEsTjG57v0CgcgYalb1Gw+68e
+ Ly4JuU0SdP+TlRK7tFX8lQnJT/FcOb3d2ZvLEvTsM3665HoH7J+gSP91a7J6DaYpdGLSObrjx
+ 3YPuf5j0Ytp4tGTVi3zNvE9mMAGBw7v9JHfRPCZzm1/4oIOHSJ54JYCOKJ+kceZYYzI+IbYHN
+ 6WuxoJBpf1MkzS+zqXaaGeE0mL3bT1H2gHGZX0QkYUCFw=
 
-sysfs_read() is anly called from _show() functions declared by
-DEVICE_ATTR_RW().
+> This is a duplicate check
 
-Using sysfs_emit() is the preferred style and here, it saves a useless
-copy and a temporary buffer in the stack.
+Was this implementation detail detected with any known source code analysi=
+s tool?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/staging/axis-fifo/axis-fifo.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index 727b956aa231..c51818c56dd2 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -165,14 +165,9 @@ static ssize_t sysfs_read(struct device *dev, char *buf,
- {
- 	struct axis_fifo *fifo = dev_get_drvdata(dev);
- 	unsigned int read_val;
--	unsigned int len;
--	char tmp[32];
- 
- 	read_val = ioread32(fifo->base_addr + addr_offset);
--	len =  snprintf(tmp, sizeof(tmp), "0x%x\n", read_val);
--	memcpy(buf, tmp, len);
--
--	return len;
-+	return sysfs_emit(buf, "0x%x\n", read_val);
- }
- 
- static ssize_t isr_store(struct device *dev, struct device_attribute *attr,
--- 
-2.43.0
+> so it can't be true. =E2=80=A6
 
+I suggest to reconsider this information a bit more.
+Would you usually expect the outcome =E2=80=9Cresult =3D=3D VDO_SUCCESS=E2=
+=80=9D from a call
+of the function =E2=80=9Cuds_allocate=E2=80=9D?
+
+Regards,
+Markus
