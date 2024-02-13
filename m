@@ -1,48 +1,42 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6D860B80;
-	Tue, 13 Feb 2024 20:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B461361669;
+	Tue, 13 Feb 2024 21:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707854830; cv=none; b=ZUva/cUTeds9xWAoViGZmzd/9F0OEnL2YOMHlEfKEClDw0tzeoDeFlYN41ZoTAxo6KwaNGKRsuH8omu5jrHaXGV0QzPMeU3fr95prOp6Zfo6C7ILPYsIVNPvPHUZDgrepLrGHltAsoitBSYSN/GyIORDAxzg3jklqMYhLZHJvaM=
+	t=1707860137; cv=none; b=a8xGelF6gpmn4ytmFaBmpysVcDDBNmOcNZd4crcTS7N4nsvkBl4OCkNKQAvzbL0IPKuKMD+Lgn9pIC9eRpObN6+STe+mDKUdGgoEFK9oBv1aa/10LL+tmRAM2fg4UosY+sZuchjEJMEoeLVKXHHASTpPf0ufcu1JCORHHAbP69s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707854830; c=relaxed/simple;
-	bh=dG56+XWeHB3NZcQwYNJYcVHq+38sAlAwxo/MkuLARR0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A/EZqjAB4LcxI214Ef1EbljuGnKzU29s50Z0t0QiGSU7X/TDWWPJvaNrIsxCHJdJfoTZuXOtnB5i1Pl+lNSuKmgqpW0FS5j4OU0Dz5qjVg8N+CsmOxvLSBXrVXB8+fmdAHxp0lHHSPeUeGD9Ol3a+PFg3FGzlSlqkvKx7zgytfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rZz3M-0000G3-0B; Tue, 13 Feb 2024 21:06:52 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>,
-	Sandy Huang <hjc@rock-chips.com>,
-	linux-kernel@vger.kernel.org,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	dan.carpenter@linaro.org,
-	kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] drm/rockchip: vop2: add a missing unlock in vop2_crtc_atomic_enable()
-Date: Tue, 13 Feb 2024 21:06:49 +0100
-Message-Id: <170785480543.3398384.2668111589921036012.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
-References: <20240119190841.1619443-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1707860137; c=relaxed/simple;
+	bh=v+7iuZKyFjMWBHC+thRv8pe5Npu+QdHBNo3PGFOhzmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=p1fYAQg5bz9uf9abn2+Kl/p8Q+qNG8ukCMDw7f3RjE44tfRimlbWhAaIQLqUEtbAWWtq2vcWceK2KortNYe/mlnKHTtxozmnfFlVAiPhHlQ+XfK30wL+4Hl1PzIO3j01ryuoofigWZePcG6GJYtdC01KCaxqXKaNdhtqezxBzAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQOZs+pj; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQOZs+pj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA22C433C7;
+	Tue, 13 Feb 2024 21:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707860137;
+	bh=v+7iuZKyFjMWBHC+thRv8pe5Npu+QdHBNo3PGFOhzmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rQOZs+pjpiJ6wgYMK/mF/mh3n2al/B4er7XnuGfrsG/1xaWBTS75kKGjKwJjYzfdd
+	 Meh/Bh6qNKil5QwEqJxyf8G7l2l9u5EaQ1HqDc9ZZ/EfYcw6alzrdzEQT2n1BPwfh6
+	 9Syr6dKYLKpc3Gebi4nKWVU/ENyNzaNJ1aCnD93Cf1ymKPEnmdgfGLCpkDA/Uh8UtS
+	 wsjJ8OcgjQlckCPJZwQpqSWCglBvqp4l5t/oWKvQbyOuyt8cc94l2e0Pz7PblSVvxI
+	 UutfQg+lDBOoc01hsV368XVUvsVtRVuOaJZrXtR1kmL3gBouZQtgLMuVKxvgUPdk5Z
+	 qTRs3T1Yf44nQ==
+From: Mark Brown <broonie@kernel.org>
+To: Thangaraj Samynathan <thangaraj.s@microchip.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <efc92197-4023-4bfe-bc63-452e7ed112e8@moroto.mountain>
+References: <efc92197-4023-4bfe-bc63-452e7ed112e8@moroto.mountain>
+Subject: Re: [PATCH] spi: mchp-pci1xxxx: release resources on error in
+ probe()
+Message-Id: <170786013490.1060731.9553383767510166601.b4-ty@kernel.org>
+Date: Tue, 13 Feb 2024 21:35:34 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,18 +44,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-a684c
 
-On Fri, 19 Jan 2024 11:08:40 -0800, Harshit Mogalapalli wrote:
-> Unlock before returning on the error path.
+On Tue, 13 Feb 2024 21:07:45 +0300, Dan Carpenter wrote:
+> Call pci_release_regions(pdev) before returning on this error path.
 > 
 > 
 
-Applied, thanks!
+Applied to
 
-[1/1] drm/rockchip: vop2: add a missing unlock in vop2_crtc_atomic_enable()
-      commit: b6ddaa63f728d26c12048aed76be99c24f435c41
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Thanks!
+
+[1/1] spi: mchp-pci1xxxx: release resources on error in probe()
+      commit: df20385302eb01cb610b9edc71611a63d1683923
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
