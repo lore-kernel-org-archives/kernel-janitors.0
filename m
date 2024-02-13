@@ -1,254 +1,129 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0E6134CD;
-	Tue, 13 Feb 2024 07:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68D05FDC0
+	for <kernel-janitors@vger.kernel.org>; Tue, 13 Feb 2024 16:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707810454; cv=none; b=uv7CiaZHihPcynPtEB1Sw5ULeI+WHg/bBdvKaTSSnwOlsoDCEr/A/PF7NWsFxTn4sZ8LDOkGPDKI4RSf8on8AtqNQnry9OQSYGrgvEgoxmoz4WcUfttrYNm+gPJX5XgtGThGYAXi2FQoV6wQ7HypCnrSH0mLXAe3l7rLD5sBlx0=
+	t=1707842779; cv=none; b=PFieGPrex0VXsHDiXErlXSKR0zAqqWhxBOeO2DhWx5aLKoah8OmXN7t7aAZijoRcL/dwOHzsBMNyLYbW2dQkc7GOX9dXGWGO6sCgNBctjd2mW1NoRUuMmUO+q50rWXijKVmr7pJv65oiYKGeUrX+gs1G8s3ufwEuFktduykFwmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707810454; c=relaxed/simple;
-	bh=QfQmtk1+J1WqxyDnAU2S6IE5dzVgSPOm4JsDugmN/7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNl/zu1OXPd9/wAxCKSg4ZxRfBRvfWQfxE0GC/kBZO7i7umcOalXpMxe20X8IDiJWHnu8VS0RfvhqJkqHV9Douvdgh/4NcaV8qebERkSvO+Yh0XiYj5sQKwxQjIgapLHb+Xh0P1fIUNIXsNBftio009uzH+dMVDUGf5Yot+vQYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=EUrt/4vs; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PK8SjE6w; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1707842779; c=relaxed/simple;
+	bh=PgjTP+jAldDzZvNkkLw9p9+UZioEknqqlxV4bryGL/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kUIyYmpGh1FCgbIqdl9DsFUTY6HhidLuABtuqf6UBao17XMgWqUloteCNC9q2C+52KqHl+kj/FIlY9zThzh6gkcMzzsro+IMUweCJSKSaVtvwlQj9AO6SiDcOkBbwQfDGWJDW3QPsLpI3HlDxzD9LseUxbu0bh72Al0QhK/zOiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hKarg2Za; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="EUrt/4vs";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PK8SjE6w"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E209D218A0;
-	Tue, 13 Feb 2024 07:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1707810450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QfQmtk1+J1WqxyDnAU2S6IE5dzVgSPOm4JsDugmN/7k=;
-	b=EUrt/4vsBIAt0W6gBjxu1S3l7L2lw6m9bEBqqi9YyAh0XhY/zZUtAHEnCOiuzZRz/2Ouqu
-	n60Fw5hmP31zn1ooUwC+02pQ/KeJc6yklYH3Ppy+M9b04yrnEmKtTK1HaNz/jepaxcohq5
-	KUysepAt5l9RaWvSyiLqdC45QRSaag4=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1707810448; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QfQmtk1+J1WqxyDnAU2S6IE5dzVgSPOm4JsDugmN/7k=;
-	b=PK8SjE6w0pmdQrLk4wY3jcBWokUVl0A5gh60QWvH6eeRsnXzw5isDVNK0BdNfdLNFxrPDS
-	WxsWu6+jgR/g/G3wE4C0sB/6oocWiIXlxmUAhVydW8HeRGKPMAvst3DTrLAVJg9Gbrhrk+
-	hfZ9Z00O2XxqrW6zIBfoaVRfqxgW7Dw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A16101370C;
-	Tue, 13 Feb 2024 07:47:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4xFxJZAey2X0PgAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 13 Feb 2024 07:47:28 +0000
-Message-ID: <2fbbdd50-4861-49d3-bb1a-f6454f2c54be@suse.com>
-Date: Tue, 13 Feb 2024 08:47:27 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hKarg2Za"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-604a1581cffso42767157b3.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Feb 2024 08:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707842776; x=1708447576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l5a68IdhU93s6nayn9QvXY3x6rSta9JyyQ+kVi2H3Fg=;
+        b=hKarg2Za9Xp/vp3WsxEfqQX/pnW4lxXKUz35x26tqxB9/SsR32B64WI4YWnWiOZ6hw
+         l7ssXWVpplTopji+dyR1QsSsA2+m6t/8Dfu19oJgXRnDobijQkjozwkcpPX1cTBhc/Ov
+         d+6033F3XGtT6sBU4+xII1b7C+TwBbFMN2bcUS0gcCql6A1fp7kEB9LXdVBEd6af67aP
+         GS6LEoIcFqQRXtkL0JZTnf6in+v/eyP7ccvg7yvMZVKjX2yZEBCAVlSZYqlk1WBLTHZ8
+         S0zD7/Wm0hbzHuMM+6bikXX+usTnedygOjxX/vHDohKG/n/hhAWefFqKeL19GQkW1+dd
+         yGEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707842776; x=1708447576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l5a68IdhU93s6nayn9QvXY3x6rSta9JyyQ+kVi2H3Fg=;
+        b=TqLgZluDdHLZSJSE8PffYspwbyobSqHOqrY6KXDotlerJYfZIY+VavHmQvjifP7WFO
+         OPbKVW20TKDCD56q+dzbw8q74fbftKkvrVicAULJ1kIfooFHmebD6+hOpnxkxhl+3PR3
+         VSaChbJpM9LgzU5yYMsFVHehwMp+nlVZxBDPbD/1SRRCfRU6mytW7fG4eO+g9PXa0MSd
+         IHYhfzb82L4K3W+l5/nCueIx5hNob1pCKbkNS4PUKxwdOwvo33Wp3CPZczDxI06Kmd5p
+         U1cP+0QifVZl0tabhiYR96DtSzn+RJcUnOcWYq0+u2yWZk6EVSvMyPXQ3pMmCc3mFP/b
+         MbVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVP0Ff2N0R6zGKZG4IwU4o0jm2YIYWRFQMOpH+qVZ7aRUhAVVvo1C4GbviKI6Yea6cma0u0ZtgDODauw0TgF6UbRaYjMj7oH3FK2MhVq6p
+X-Gm-Message-State: AOJu0YxnfxRSZpVKePY+2b2YHPR34zCsv4Pv9wrxThha+tUDWzE1xumM
+	CqRDwiDcyVeVXvMumd6rOis8nYTwIprGWbN8bl/O/v3G3sWAngWCYo54w8xsPDBlJ9LtwW6e7Lk
+	YE0+nG10g4mq9/kvqAfx4jpz5Dq1cp+J8wGfUvaDbqzIcsJxa
+X-Google-Smtp-Source: AGHT+IHOHrn1g2cCcbRnoM3yYKfyAnYdbVkMUROkJT2FJJBuz1aAlLP2tXhLSaLtR3z4eZbcyAeUIZJpDoEUFz2dx9M=
+X-Received: by 2002:a81:9245:0:b0:607:87ca:ea8d with SMTP id
+ j66-20020a819245000000b0060787caea8dmr1977261ywg.23.1707842776613; Tue, 13
+ Feb 2024 08:46:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/privcmd: Use memdup_array_user() in alloc_ioreq()
-To: Markus Elfring <Markus.Elfring@web.de>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <41e333f7-1f3a-41b6-a121-a3c0ae54e36f@web.de>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <41e333f7-1f3a-41b6-a121-a3c0ae54e36f@web.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------WiQA2j8GJY9CCfJx2SJGgtC6"
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=PK8SjE6w
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.62 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 XM_UA_NO_VERSION(0.01)[];
-	 TO_DN_SOME(0.00)[];
-	 HAS_ATTACHMENT(0.00)[];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.com:+];
-	 MIME_BASE64_TEXT(0.10)[];
-	 MX_GOOD(-0.01)[];
-	 SIGNED_PGP(-2.00)[];
-	 FREEMAIL_TO(0.00)[web.de,lists.xenproject.org,vger.kernel.org,epam.com,kernel.org];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 BAYES_HAM(-1.22)[89.34%];
-	 MIME_UNKNOWN(0.10)[application/pgp-keys];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[web.de];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -4.62
-X-Rspamd-Queue-Id: E209D218A0
-X-Spam-Flag: NO
+References: <20240206171245.2421538-1-colin.i.king@gmail.com>
+In-Reply-To: <20240206171245.2421538-1-colin.i.king@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 13 Feb 2024 17:45:41 +0100
+Message-ID: <CAPDyKFr8o9n7RAN1HLoQGUg5AHXBR-5Fn1gkEz5tTTULNpv=wA@mail.gmail.com>
+Subject: Re: [PATCH][next][V2] mmc: wbsd: remove redundant assignment to
+ variable id and id check
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Pierre Ossman <pierre@ossman.eu>, Nathan Chancellor <nathan@kernel.org>, linux-mmc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------WiQA2j8GJY9CCfJx2SJGgtC6
-Content-Type: multipart/mixed; boundary="------------DmiSYnlCNvTM8sKEknfFhIWp";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Markus Elfring <Markus.Elfring@web.de>, xen-devel@lists.xenproject.org,
- kernel-janitors@vger.kernel.org,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-ID: <2fbbdd50-4861-49d3-bb1a-f6454f2c54be@suse.com>
-Subject: Re: [PATCH] xen/privcmd: Use memdup_array_user() in alloc_ioreq()
-References: <41e333f7-1f3a-41b6-a121-a3c0ae54e36f@web.de>
-In-Reply-To: <41e333f7-1f3a-41b6-a121-a3c0ae54e36f@web.de>
+On Tue, 6 Feb 2024 at 18:12, Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> The variable id is being initialized with a value that is never
+> read, it is being re-assigned later on. The initialization is
+> redundant and can be removed.
+>
+> As noted by Ulf Hansson the unknown hardware check id != 0xFFFF
+> is also redundant and can be removed too.
+>
+> Cleans up clang scan build warning:
+> drivers/mmc/host/wbsd.c:1287:4: warning: Value stored to 'id'
+> is never read [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
---------------DmiSYnlCNvTM8sKEknfFhIWp
-Content-Type: multipart/mixed; boundary="------------AP8IZ9CK0yKq2yIKKiYrhJn0"
+I had a second look and it's not entirely clear what the check  if (id
+!= 0xFFFF) is used for. Therefore, I suggest we simply keep that
+check, to be safe.
 
---------------AP8IZ9CK0yKq2yIKKiYrhJn0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+That said, I decided to pick your patch v1 for next, thanks!
 
-T24gMjguMDEuMjQgMTg6MDksIE1hcmt1cyBFbGZyaW5nIHdyb3RlOg0KPiBGcm9tOiBNYXJr
-dXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFN1
-biwgMjggSmFuIDIwMjQgMTc6NTA6NDMgKzAxMDANCj4gDQo+ICogVGhlIGZ1bmN0aW9uIOKA
-nG1lbWR1cF9hcnJheV91c2Vy4oCdIHdhcyBhZGRlZCB3aXRoIHRoZQ0KPiAgICBjb21taXQg
-MzEzZWJlNDdkNzU1NTg1MTFhYTEyMzdiNmUzNWM2NjNiNWMwZWM2ZiAoInN0cmluZy5oOiBh
-ZGQNCj4gICAgYXJyYXktd3JhcHBlcnMgZm9yICh2KW1lbWR1cF91c2VyKCkiKS4NCj4gICAg
-VGh1cyB1c2UgaXQgYWNjb3JkaW5nbHkuDQo+IA0KPiAgICBUaGlzIGlzc3VlIHdhcyBkZXRl
-Y3RlZCBieSB1c2luZyB0aGUgQ29jY2luZWxsZSBzb2Z0d2FyZS4NCj4gDQo+ICogRGVsZXRl
-IGEgbGFiZWwgd2hpY2ggYmVjYW1lIHVubmVjZXNzYXJ5IHdpdGggdGhpcyByZWZhY3Rvcmlu
-Zy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJz
-LnNvdXJjZWZvcmdlLm5ldD4NCg0KUmV2aWV3ZWQtYnk6IEp1ZXJnZW4gR3Jvc3MgPGpncm9z
-c0BzdXNlLmNvbT4NCg0KDQpKdWVyZ2VuDQoNCg==
---------------AP8IZ9CK0yKq2yIKKiYrhJn0
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Kind regards
+Uffe
 
------BEGIN PGP PUBLIC KEY BLOCK-----
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------AP8IZ9CK0yKq2yIKKiYrhJn0--
-
---------------DmiSYnlCNvTM8sKEknfFhIWp--
-
---------------WiQA2j8GJY9CCfJx2SJGgtC6
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmXLHpAFAwAAAAAACgkQsN6d1ii/Ey9+
-kAf/SK2su8rrXx43V6udWcRfoy5PTdnkmEmn5jTw4CTvbsdbfIz3Oujsf/vD9ax06Ah0HW9aSIGH
-bK7DLwg467NgD8TR19lVDVTBAtQeEg15uSNI3FEEC/jmZoEO3UueV/OmzV0spqjxvuR+AWLHJ4Xb
-cog7OnDr/hA4jNac5lixJf8c1wLiRLUxeCgRI9NwmymNodhpv8oiLZDsExZlgv1166kxcgRBWmAs
-5N0Vo2scFGvHakI6gFCLA/7JiOLiBqxkLfCdW56XvvfHO0DFuYS0qm3rehz0707z+K8XNacd6z9j
-3WVMZ/Guze0Wya8FMO2Nkt1UzE44vGaF1ffSnuykqQ==
-=tn04
------END PGP SIGNATURE-----
-
---------------WiQA2j8GJY9CCfJx2SJGgtC6--
+> ---
+> V2: As suggested by Ulf Hansson, also remove the redundant
+>     hardware check for id != 0xFFFF.
+> ---
+>  drivers/mmc/host/wbsd.c | 7 -------
+>  1 file changed, 7 deletions(-)
+>
+> diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
+> index 001a468bc149..4b32421d9f6d 100644
+> --- a/drivers/mmc/host/wbsd.c
+> +++ b/drivers/mmc/host/wbsd.c
+> @@ -1284,8 +1284,6 @@ static int wbsd_scan(struct wbsd_host *host)
+>                         continue;
+>
+>                 for (j = 0; j < ARRAY_SIZE(unlock_codes); j++) {
+> -                       id = 0xFFFF;
+> -
+>                         host->config = config_ports[i];
+>                         host->unlock_code = unlock_codes[j];
+>
+> @@ -1306,11 +1304,6 @@ static int wbsd_scan(struct wbsd_host *host)
+>                                         return 0;
+>                                 }
+>                         }
+> -
+> -                       if (id != 0xFFFF) {
+> -                               DBG("Unknown hardware (id %x) found at %x\n",
+> -                                       id, config_ports[i]);
+> -                       }
+>                 }
+>
+>                 release_region(config_ports[i], 2);
+> --
+> 2.39.2
+>
