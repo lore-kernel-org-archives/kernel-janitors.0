@@ -1,82 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B461361669;
-	Tue, 13 Feb 2024 21:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72171125A2;
+	Wed, 14 Feb 2024 08:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707860137; cv=none; b=a8xGelF6gpmn4ytmFaBmpysVcDDBNmOcNZd4crcTS7N4nsvkBl4OCkNKQAvzbL0IPKuKMD+Lgn9pIC9eRpObN6+STe+mDKUdGgoEFK9oBv1aa/10LL+tmRAM2fg4UosY+sZuchjEJMEoeLVKXHHASTpPf0ufcu1JCORHHAbP69s=
+	t=1707898579; cv=none; b=nCXWWbbGTD6m6DBETpCyOoKkPQzEl6n1XFaZH8rHjzwzkAFc7AWZBBxGqQ+36Hqek1WcSooQ3Jpcw197nakhYGVKV4JjTvWUOoklL24KNSQvXG+pzcDneUPTLNIPMpbpNts/I3/r/ASNbRYGEh6i9F4F7ZuYViCx781jY6FnHFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707860137; c=relaxed/simple;
-	bh=v+7iuZKyFjMWBHC+thRv8pe5Npu+QdHBNo3PGFOhzmM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p1fYAQg5bz9uf9abn2+Kl/p8Q+qNG8ukCMDw7f3RjE44tfRimlbWhAaIQLqUEtbAWWtq2vcWceK2KortNYe/mlnKHTtxozmnfFlVAiPhHlQ+XfK30wL+4Hl1PzIO3j01ryuoofigWZePcG6GJYtdC01KCaxqXKaNdhtqezxBzAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQOZs+pj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707898579; c=relaxed/simple;
+	bh=EQK4OqWRKFvuntJVf1ZtMiax/Oe88+7UKWuKRY4WF2k=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=CrwrmH++OXT48ups5pphI+shK4iOWY3tOV/ZGIagPs9mjoP/emJ2T0Yh7Bum+5GcTdM0Kf/rGbrIqJgwWf2bPy3iEe9kfhQPDMZk9doPvv8crKwU8TmBXc64ee5J4orw3403KU3AKhjFoZe5ls2xiCgXV5aqVhcM6pNixL4JQT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUs0nQgt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQOZs+pj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA22C433C7;
-	Tue, 13 Feb 2024 21:35:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUs0nQgt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D1CC433F1;
+	Wed, 14 Feb 2024 08:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707860137;
-	bh=v+7iuZKyFjMWBHC+thRv8pe5Npu+QdHBNo3PGFOhzmM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rQOZs+pjpiJ6wgYMK/mF/mh3n2al/B4er7XnuGfrsG/1xaWBTS75kKGjKwJjYzfdd
-	 Meh/Bh6qNKil5QwEqJxyf8G7l2l9u5EaQ1HqDc9ZZ/EfYcw6alzrdzEQT2n1BPwfh6
-	 9Syr6dKYLKpc3Gebi4nKWVU/ENyNzaNJ1aCnD93Cf1ymKPEnmdgfGLCpkDA/Uh8UtS
-	 wsjJ8OcgjQlckCPJZwQpqSWCglBvqp4l5t/oWKvQbyOuyt8cc94l2e0Pz7PblSVvxI
-	 UutfQg+lDBOoc01hsV368XVUvsVtRVuOaJZrXtR1kmL3gBouZQtgLMuVKxvgUPdk5Z
-	 qTRs3T1Yf44nQ==
-From: Mark Brown <broonie@kernel.org>
-To: Thangaraj Samynathan <thangaraj.s@microchip.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <efc92197-4023-4bfe-bc63-452e7ed112e8@moroto.mountain>
-References: <efc92197-4023-4bfe-bc63-452e7ed112e8@moroto.mountain>
-Subject: Re: [PATCH] spi: mchp-pci1xxxx: release resources on error in
- probe()
-Message-Id: <170786013490.1060731.9553383767510166601.b4-ty@kernel.org>
-Date: Tue, 13 Feb 2024 21:35:34 +0000
+	s=k20201202; t=1707898578;
+	bh=EQK4OqWRKFvuntJVf1ZtMiax/Oe88+7UKWuKRY4WF2k=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=AUs0nQgtHSN9dvY/h7QmCyO1wOB3l35YIBobYwWNo20zKPHESuG74MVzok3coHH9H
+	 1GJ3gOa+JheLNqArU2euPFa7+G8XAHR10JF5Z7TpfIObYZuTbs7QpkoQfOCnf33l8Y
+	 lIbu1Qw6wd2d05O+4ounzv87erq9AiHyMlNm8DJBbEK0g0shQxdjEPeSFjDohHAOkv
+	 +Dm2rIyPmEoLpvAzAs2uQvgqQ5BFClhBIeKwhrzVZL00OE1KwAb33eMv507zeg0ulf
+	 zexM/R25P2RPlzvf8HvJk9j2gfhRSZw7yzek+mgm9jxdyZhBCi4dL+mJMXMA/f+uhi
+	 OI0KsJGriXHzA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-a684c
+Subject: Re: [PATCH][next] carl9170: Remove redundant assignment to pointer
+ super
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240207171524.2458418-1-colin.i.king@gmail.com>
+References: <20240207171524.2458418-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Lamparter <chunkeey@googlemail.com>,
+ linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <170789857574.3088943.8807931927830576356.kvalo@kernel.org>
+Date: Wed, 14 Feb 2024 08:16:17 +0000 (UTC)
 
-On Tue, 13 Feb 2024 21:07:45 +0300, Dan Carpenter wrote:
-> Call pci_release_regions(pdev) before returning on this error path.
+Colin Ian King <colin.i.king@gmail.com> wrote:
+
+> The pointer super is being assigned a value that is not being read, it
+> is being re-assigned later. The assignment is redundant and can be
+> removed.
 > 
+> Cleans up clang scan warning:
 > 
+> drivers/net/wireless/ath/carl9170/tx.c:192:34: warning: Value stored to
+> 'super' during its initialization is never read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Acked-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Applied to
+Patch applied to ath-next branch of ath.git, thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+b53adefc884c wifi: carl9170: Remove redundant assignment to pointer super
 
-Thanks!
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240207171524.2458418-1-colin.i.king@gmail.com/
 
-[1/1] spi: mchp-pci1xxxx: release resources on error in probe()
-      commit: df20385302eb01cb610b9edc71611a63d1683923
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
