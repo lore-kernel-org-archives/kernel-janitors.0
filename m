@@ -1,68 +1,66 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2831F13DBA4;
-	Thu, 15 Feb 2024 23:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3BD1EA80;
+	Thu, 15 Feb 2024 23:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708039315; cv=none; b=iyWvNl0mpi2gc4KKnubhDLV9nvO3qBo/H37k8uaU6zO1qcqE02CZI63G+C9zR/tOtZ1LHkJZT/C9YyhGAdt4PDkOWFEG92m9OsWK1v8eC1p57IrLoPVgmOmHXFq5jIq81XkQLjrP7dG9nz0zy1XGLs7+ilDLvCp/AVFbqR/QYqs=
+	t=1708039790; cv=none; b=lcneXx6q9i5WDqSrJkgMpyreTaws91euWPptYdLrBBbxzB7pDAyq/cjkmgDK8JezBph1SHO5FoMS7DR9C4Asj578RqTMy+cKhxn/ZhSj7sEImDhkC5XUsoK8aiaNzihJdLiM04POtgIaeMCWRoAbqpd3F+ZljvdR7GjNcv8/C6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708039315; c=relaxed/simple;
-	bh=PxZ0C5029R4CmL53vNyyyaYcbdLIwRGPgflhW6LzmCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Trw4slXnMogdazZlkIXHQ5W1W2HANo+sRHaCncxSt+Np6x4g3xpwXJt3bt9sbbTKu29vKbkN6viQMhK3Y6ELNohDXHem1OM5g1CH7VdAxTthDwFpxi1kNgOPEmYa6k8ly3xxGe+J59RFSbn5+7gD9Pg2A8bfraeOP+FWQZosjJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsI4PMKX; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1708039790; c=relaxed/simple;
+	bh=/U6IZO/xhZz9Yo64LAlsJtuJI0I8mp7MDfTv/IwTguI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dr8PxQb8lZsvLBT4zO0JJfTgi19ZPfSV56yQ0k1rsqbos0mBT6KqNxih8jgj0dvPaF74cisMKYFcr4WKs0MNugmQ4Gm15Q7zKLe01sebV+H9Aeg05PqBsCy7gY5mj6J8z7q48e41UzciaKnuwl5DdunNco2XQFPhFuM4TDTTbH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f82Gd9Uv; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsI4PMKX"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-411d76c9ce3so11898565e9.3;
-        Thu, 15 Feb 2024 15:21:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f82Gd9Uv"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33b29b5ea96so711645f8f.0;
+        Thu, 15 Feb 2024 15:29:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708039312; x=1708644112; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708039787; x=1708644587; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D72u9OCvXFc6xIZabN3BHkMoZhGyXgCQr1DeQ1S8gQ=;
-        b=YsI4PMKXbnwLvPqr03H140KZU9clMCADu5IwnJYSTDzSA29mJ00XrH7KyuLm97wa3/
-         0fjat+vU1MsSUVsK5pW9UhDQ9ZYzmyeKQggyK6Cz/sTJuve1VGKrJwL6kdBsI77SQ0B7
-         5DKGHx3/RalefnZRk03HDFiWSRFndpBpbF/Nj7C24oNmJPR+qCSa/z5YSQXrvkIB7HHe
-         mVKPNz0uauWxXlNVSt9TP9U8W4qMs+BtPcXbqh0B/cAYPw/VuIQDfTYfEiwwaUhtyZof
-         lUw6/5u7JUIeIRBGcQCbXtfESIuGIoSAywKROjMkt/3J1BdmstWei6qShM8LKOF+WVUW
-         T5sw==
+        bh=j5Bj9xsaXMX+Tu65Jo5x7Ok2Dy8ft8+EqH3kfAe/1a0=;
+        b=f82Gd9UvJ3dFSvPSZRdKjB6pg06fYTvu7JQEzdG7U4BJDQ2nJxleYtX+zIeaNF4SZ7
+         h0UhAVCc9HjPaxxUPTx6Dw3lQKxXV9/l9fJparwKLJw6gzJeigu2jbDxdaeCe1J3gvZj
+         73pUboey5syyoTIiaEd2QC6rFmWpY2/QsxmseLLTwOAGYK8TT+5fVVF9SBnazAkHWbFj
+         IrVgaobxzhkX0vJ8CyDlUA9qcbhEOhBDIBkAZwNWJD3fFinlpw/5Sm0WzdIFbHPDogCP
+         aspcCadhToElOIolES/ReDLvhPUOcMPaByx/u6aE+y4gdIl+e+ZodwZeMyF/UhfZaMbl
+         ehgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708039312; x=1708644112;
+        d=1e100.net; s=20230601; t=1708039787; x=1708644587;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6D72u9OCvXFc6xIZabN3BHkMoZhGyXgCQr1DeQ1S8gQ=;
-        b=M2Zu19mnjhURIon53ooC7DswmL+zkVoa7oXeW8lsvx0uOmWY9gSWNBAp4dQccceRP4
-         h5y9ATYngf8Ks2un7aimwpjXHXga4Aa3k3la1UiHUei1+dPtehJ0LYVvC9GsG0TEeJxS
-         YaRC5uocBd2MHqzRexFvJmfvadAemIWe19r8ru9DFZpz3ZP1zHiAlZP3jmsMXRDQ8AP5
-         Q4ZDqkRQNAEA3xPVXX7WrYS0Hu1hn/iEnc3fDUchBmvh5Eu+7aUqa7uAc80udJvKiDwn
-         in2iLmTy3sx6RBStVZtgf5axEvabSh9BBPWnE7vMCfL5suVfxcZj81JDRaAl07IbOtAR
-         Uc5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUF280JdBT4HFIYN9DfiLWuLPMGFEgS7rNr/QbI+DwNMZG4czCo5MaPM+lBZoQMyQyDDqpzjQh7wHqVufjTbUd4IbEoxjSgB8pF+vEiaUivh3YtOX8J5tY87b2i9f74a8uv3ZxAD4tYbwaz9vaucWlY3oC+JT72GdcY7Fm13a7cLlfEIRs=
-X-Gm-Message-State: AOJu0YwAQ78Os5b5dfKprcZsmqZdmv/T7lNnszMlNj8f9gdg9eFtBWvy
-	872IAT3UuRriOF/jXsV0xO+R+MEzQc6t/Zbc1IusxOo0etWWu9Md
-X-Google-Smtp-Source: AGHT+IFM+Tkd6DmAKXKi//1/Ntx3dDJahu5QeiRyAdMYEH9RSkeO98alH8ZM5ZhVx6fRbAST+feLtw==
-X-Received: by 2002:a5d:5106:0:b0:33c:f574:3706 with SMTP id s6-20020a5d5106000000b0033cf5743706mr2319455wrt.63.1708039312294;
-        Thu, 15 Feb 2024 15:21:52 -0800 (PST)
+        bh=j5Bj9xsaXMX+Tu65Jo5x7Ok2Dy8ft8+EqH3kfAe/1a0=;
+        b=e7h55BkG8gSy7D/HZZjTBDaQuXCuA/Gav30Pl00d5iEdpEtnqlj3lQMoqFzyaKcE7n
+         Y7rLxPEvBhcHrv7hdELhn9PN/YzyPOmNZJ5MNKxioiHJ5oNfROQQ0eUiT4+aN+O6EySU
+         9kEsT4XKikd8vgzOri3BVjuE4Vyjg2gSH+g7hmU1n51aNKlZVnr2py0JCo0ZEo2hZLqh
+         LKoLtPkLhcORroPGKwu2KbZA1ijR8Tb7rycLVPUhoG/A8xZm77iwyTyVCDClVoOu/Sxu
+         brREk0V4T9Ty2ae4acryiRvZEz30SW13seBF+H3IEImkguDnrwUtNF/M6R79DZxYV3UD
+         liHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjxBVjUewC+yP8IZUJcnmj7koLkw0cMd9VT+e9zTmzynJ8vWyzOZ3XlEwgpD5mRA1Ck+P7jd0L9OCPBb57SBpem7Gdj0oNMFXC57djNZHgGm93mzZ8EXhyJ9qmK/nHLCb/he28B6VGPt0M
+X-Gm-Message-State: AOJu0Yw2B9L6c4cIaF5UYnWJBCrHAfxNGklHxrnEUGPsW4ubYq8nojeu
+	yMwgoTth1OBFarkmb80XCv9dd9OR67Y6BssOvg+jzF1++HvkNL9C
+X-Google-Smtp-Source: AGHT+IFClw2R/gW7b2Gk9VgkZuerndh8UZ6w1NSexmCjQ9JO9ycquNjWnTRLIHCIgXks/FEKHA6Rmg==
+X-Received: by 2002:adf:cf04:0:b0:33b:6959:c766 with SMTP id o4-20020adfcf04000000b0033b6959c766mr2630764wrj.29.1708039786517;
+        Thu, 15 Feb 2024 15:29:46 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o8-20020a05600c4fc800b00410e638357asm541891wmq.10.2024.02.15.15.21.51
+        by smtp.gmail.com with ESMTPSA id t12-20020a5d460c000000b0033b48190e5esm455092wrq.67.2024.02.15.15.29.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Feb 2024 15:21:51 -0800 (PST)
+        Thu, 15 Feb 2024 15:29:45 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: mac80211: clean up assignments to pointer cache.
-Date: Thu, 15 Feb 2024 23:21:51 +0000
-Message-Id: <20240215232151.2075483-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] serial: lpc32xx_hs: remove redundant check and assignment of hsu_rate
+Date: Thu, 15 Feb 2024 23:29:44 +0000
+Message-Id: <20240215232944.2075789-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,74 +68,35 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Colin Ian King <colin.i.king@intel.com>
+Variable hsu_rate is being checked for an upper limit and is assigned
+a value that is never read. The if statement and assignment are
+redundant and can be removed.
 
-The assignment to pointer cache in function mesh_fast_tx_gc can
-be made at the declaration time rather than a later assignment.
-There are also 3 functions where pointer cache is being initialized
-at declaration time and later re-assigned again with the same
-value, these are redundant and can be removed.
+Cleans up clang scan build warning:
+drivers/tty/serial/lpc32xx_hs.c:237:3: warning: Value stored
+to 'hsu_rate' is never read [deadcode.DeadStores]
 
-Cleans up code and three clang scan build warnings:
-warning: Value stored to 'cache' during its initialization is never
-read [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/mac80211/mesh_pathtbl.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/tty/serial/lpc32xx_hs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
-index 735edde1bd81..91b55d6a68b9 100644
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -599,13 +599,12 @@ void mesh_fast_tx_cache(struct ieee80211_sub_if_data *sdata,
+diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
+index ec20329f0603..269efc5e2d51 100644
+--- a/drivers/tty/serial/lpc32xx_hs.c
++++ b/drivers/tty/serial/lpc32xx_hs.c
+@@ -233,8 +233,6 @@ static unsigned int __serial_get_clock_div(unsigned long uartclk,
  
- void mesh_fast_tx_gc(struct ieee80211_sub_if_data *sdata)
- {
- 	unsigned long timeout = msecs_to_jiffies(MESH_FAST_TX_CACHE_TIMEOUT);
--	struct mesh_tx_cache *cache;
-+	struct mesh_tx_cache *cache = &sdata->u.mesh.tx_cache;
- 	struct ieee80211_mesh_fast_tx *entry;
- 	struct hlist_node *n;
+ 		hsu_rate++;
+ 	}
+-	if (hsu_rate > 0xFF)
+-		hsu_rate = 0xFF;
  
--	cache = &sdata->u.mesh.tx_cache;
- 	if (atomic_read(&cache->rht.nelems) < MESH_FAST_TX_CACHE_THRESHOLD_SIZE)
- 		return;
- 
- 	spin_lock_bh(&cache->walk_lock);
-@@ -621,9 +620,8 @@ void mesh_fast_tx_flush_mpath(struct mesh_path *mpath)
- 	struct mesh_tx_cache *cache = &sdata->u.mesh.tx_cache;
- 	struct ieee80211_mesh_fast_tx *entry;
- 	struct hlist_node *n;
- 
--	cache = &sdata->u.mesh.tx_cache;
- 	spin_lock_bh(&cache->walk_lock);
- 	hlist_for_each_entry_safe(entry, n, &cache->walk_head, walk_list)
- 		if (entry->mpath == mpath)
- 			mesh_fast_tx_entry_free(cache, entry);
-@@ -636,9 +634,8 @@ void mesh_fast_tx_flush_sta(struct ieee80211_sub_if_data *sdata,
- 	struct mesh_tx_cache *cache = &sdata->u.mesh.tx_cache;
- 	struct ieee80211_mesh_fast_tx *entry;
- 	struct hlist_node *n;
- 
--	cache = &sdata->u.mesh.tx_cache;
- 	spin_lock_bh(&cache->walk_lock);
- 	hlist_for_each_entry_safe(entry, n, &cache->walk_head, walk_list)
- 		if (rcu_access_pointer(entry->mpath->next_hop) == sta)
- 			mesh_fast_tx_entry_free(cache, entry);
-@@ -650,9 +647,8 @@ void mesh_fast_tx_flush_addr(struct ieee80211_sub_if_data *sdata,
- {
- 	struct mesh_tx_cache *cache = &sdata->u.mesh.tx_cache;
- 	struct ieee80211_mesh_fast_tx *entry;
- 
--	cache = &sdata->u.mesh.tx_cache;
- 	spin_lock_bh(&cache->walk_lock);
- 	entry = rhashtable_lookup_fast(&cache->rht, addr, fast_tx_rht_params);
- 	if (entry)
- 		mesh_fast_tx_entry_free(cache, entry);
+ 	return goodrate;
+ }
 -- 
-2.43.0
+2.39.2
 
