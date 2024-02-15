@@ -1,67 +1,63 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F4F55E7F;
-	Thu, 15 Feb 2024 22:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E1441A87;
+	Thu, 15 Feb 2024 22:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708036986; cv=none; b=Q23UBbrQP9i17Cwb+4/lSltUfdM4spPvStdoF+RXpJOoHURASUJUuYxo9E7O9Z17YqU3S7Q0EnHLds0G9RPs2zn17XJCGMHWD2NMLCl0LpUOm4erqaMFpM0gUDAzs2Bf+HYH/a0OmkGynIvkQgJCcvvgohDsdUAlVRU+iTG72+0=
+	t=1708037291; cv=none; b=kMi21VxkRXOCclYLqTHCL79+9t4ox8xKts0NFpaLt/5FIEPCfXWa1tlqqyCWxuERRuq13OjGiUSlmasEFKLv7nHwAgOIDnJOlantIDtU8d7LLv+PpBsqDFJHBaEmoguXRvpUY8FdcjoPNLRfmWfigAh1qcbmPF9erlPNDv4PUFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708036986; c=relaxed/simple;
-	bh=CKJU0qV348zK5ydfwu0hXi5DFvYpoWmGby9n3Xbav48=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uUIiPuXCd8coITfIgIHArte2jBgWUlWBBQVdm4wLGngzU9SP+TujXtcpHudvBRegEEZ3L7r8akJUFCFi0oJiVeQYr2XHP3uY6WzI6j8dfDYiWJt5RoFuiiFAp8251EX9lMTJT+N2fCsGZJtlyfSscb/vcLGAw210U/OqCxzrN10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcs3MblQ; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1708037291; c=relaxed/simple;
+	bh=/kWliuY+oG1YGeiKJ1UUmE2TUPvHlC+v3vpcBhn1ISg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mD6ooGTKQmK1mtFUqoZNzNI1+ec1j20iojacZBO23W3lE24TaFcSODxCof7qrOyUV4EOJ+p/oM0hzby9aRLlhfe0QJk5euSCSXZxeAnRq1MiVMaSx6Y7Pq+09R6MJhPFQvAsQjppla3l9P/OpibB4R61E0VfTPoSpGzmpUiTmMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O869b/tj; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcs3MblQ"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-411d231ea71so11008385e9.1;
-        Thu, 15 Feb 2024 14:43:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O869b/tj"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-411de7c6b3dso10958305e9.3;
+        Thu, 15 Feb 2024 14:48:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708036983; x=1708641783; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708037288; x=1708642088; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgvYXFeAtJ4eMTl/jZdy/AomuxUWsZvphnf9tLSxGTs=;
-        b=mcs3MblQW+P9CJJERAHyy+8xvJqP64RfocITHELhqgXUy3CX+GtzgIb7X98apWA3UX
-         z8BVchZCYKa5TlNeadXmgAilv9iFXOIiT4NOPB7KHd3gcFsWaXTfSU+YWloaB3R+8b9p
-         kWu7TR/Foe3f6BrChNa/8cxbEs8uiYMAc2tMte//Um7S7bxwwL366mxCWqxs3EOW37OX
-         nUhbe7jUUElnjGsS/DeoEkknTgGGDACWQU2TcIaayAVGh3BMqwA1T91RTVPGfc+G0WSs
-         X5ePihw/Tu797ZOOeucJIULlYJd2+cpK1FIHM10lDzLc+KwSpdUE6/wh/Ze9LmpfUR8p
-         gW1g==
+        bh=VxZz8dpdlBG3f4JnaEViziH04upv3BIHYbzmShbS36A=;
+        b=O869b/tjCbq72ocV+gFLIHARD3m86QP8X1cAkVmIVrXKVjec/40dXAzE4L5j6vpxGN
+         G37E0MCo+hM5vWetQgh86794+HyvZRJ7wQ/gi5//qBD/zdgdI29wBYbH0tu1E6fhr0d5
+         z+YqpI8soXl2gFK4Sor1b+9cTQLMj+9FjH+ttzgu+0p+rBLOffTNFN5Iv1/bpyqXfMW5
+         kNZoBZNhJdF9WvajH4LkjMGPMfczHwpyhNbQeUyw+5FRpuGkWlnIaTNlhH3o2z96mkqd
+         PK9csP/VDKfo10JJJmZYDK9RMzUJLL8L4q51EEuPW+7QCzIwZwB9qPHpahdrRAc7M36C
+         X0lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708036983; x=1708641783;
+        d=1e100.net; s=20230601; t=1708037288; x=1708642088;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PgvYXFeAtJ4eMTl/jZdy/AomuxUWsZvphnf9tLSxGTs=;
-        b=v7mDnxpJ3PesUZJCs6zeirsEJ6ETsk9VPJCo622Wmw9D9lb6OepFVgDLliRrWI5KL3
-         Gu/676K7CGCNxr7q6Zd9c+d1wgnv+Nm2y/z9sb14Ns7MqwP7Tkdwwl3doEt0bmVBEfzo
-         EWUJbO1cIp3V8YVz4lw4cA+eh+Kg/fPMx5gtBlowP6Ko0jr9UcdkatFVXIsyhhgJSAPg
-         Hu595Kwd4E7zq78WYg08n8tR4cmGRiPtoPjc4OWl16Ki5rhcEITTrH5EAFO5sNYOIb+E
-         ho6UHP+FvUoOkaugC+n3bm/1eY4lE3mS2R9n9xvAXVkHjieEl8QbUvVw5UJDTPcpEC72
-         MpLA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5x4CvBC5+fVLQnOy7bZu9mYjc77VNeKlU8YE2vcG8mnNIxf1JyTdqBAkv/8Li9JiEot3FHukadBcVS/Mt+OGynknffM/o3IbqdZuLFI/vNI6bPEYHQQOktX3bhiYgtEYXMYzeWxXDnTY=
-X-Gm-Message-State: AOJu0Yw114KfVhhGjCyoxNGiJ5YeNU/y/wMBwLacI4fRw5c4B1i6nYK6
-	trnlImbTWhHtPzRF061GLi1YG2xYi3m80pEyufimQIC8+yjD5qQJ
-X-Google-Smtp-Source: AGHT+IGcWuz3xcbAdY5/RWa5oBq7q97NdHSFkTnbKOefJLXg/93rMMe3WyK7u1MhDRLzQJEak9sv9Q==
-X-Received: by 2002:a05:600c:3549:b0:411:ff38:aa13 with SMTP id i9-20020a05600c354900b00411ff38aa13mr2348576wmq.27.1708036982510;
-        Thu, 15 Feb 2024 14:43:02 -0800 (PST)
+        bh=VxZz8dpdlBG3f4JnaEViziH04upv3BIHYbzmShbS36A=;
+        b=ZceB4IxEmPmtPGLaGhgHLYFVpUbKjy2f8P/YiQnIq73DD9n0xLU+iOa74fzDMOmCGy
+         6iyUuVl8xBNwzZOH8NKJcxxEhlyj0+LmKiPelOVmOoX4/8mPCEhFJejX47SyDxoqJBkX
+         bJexhjDdoQO4s0OB3tI7XFYyejP01OBp7TYiJT40rszHoPenS+/EqY0gswJSLtrMGSx/
+         hVJAtKSqT9ia0p9aCHVTovmyJk4TDeVYh5yPd4oe/glFGwJGAenUU/zoklkcwOlgmNHd
+         YOVTtt89AMqUgXTamPo1uuVsEXNhMSoXUJUOYJvebrUxI1hmXH6IHOh1MiEiffM47Naf
+         xADg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQKFolgSgY9SjwrWr0gcrS0OCfrGdyn3lrfqIn6bUkdBUvGbJspqGBxpVLDDwUzcQ0eed29pRkiwPspI5op5tJv6mumTExHLt9lbDG
+X-Gm-Message-State: AOJu0Yz1IvrGjuQzTM3Nz5EpR8aHUKFIQvzS1GDOIN3gCwY/GCX9u1VX
+	9xx6Do09big93SODVPAycsjpbKnwDBAy30sGR4XAJXvVJoBT36Wl
+X-Google-Smtp-Source: AGHT+IEHcn7vuCmdD0vbj0K6OCuGp4jwkwobudrNE34EGoVaEDBiYwLOq3sO8rU1BKDdccJHXR7NqA==
+X-Received: by 2002:a05:600c:3b28:b0:410:1d3b:3424 with SMTP id m40-20020a05600c3b2800b004101d3b3424mr2460999wms.28.1708037287695;
+        Thu, 15 Feb 2024 14:48:07 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05600c354600b004107686650esm445978wmq.36.2024.02.15.14.43.01
+        by smtp.gmail.com with ESMTPSA id l3-20020a1c7903000000b00410b98a5c77sm442936wme.32.2024.02.15.14.48.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Feb 2024 14:43:02 -0800 (PST)
+        Thu, 15 Feb 2024 14:48:07 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
+To: David Airlie <airlied@redhat.com>,
+	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] gpu: host1x: remove redundant assignment to variable space
-Date: Thu, 15 Feb 2024 22:43:01 +0000
-Message-Id: <20240215224301.2073845-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] agp/amd64: remove redundant assignment to variable i
+Date: Thu, 15 Feb 2024 22:48:06 +0000
+Message-Id: <20240215224806.2074087-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -72,33 +68,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable space is being initialized with a value that is never read,
-it is being re-assigned later on. The initialization is redundant and
-can be removed. Also merge two declaration lines together.
+The variable i is being initialized with a value that is never read,
+it is being re-assigned in the next for-loop statement. The
+initialization is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/gpu/host1x/cdma.c:628:15: warning: Value stored to 'space'
-during its initialization is never read [deadcode.DeadStores]
+drivers/char/agp/amd64-agp.c:336:2: warning: Value stored to 'i' is
+never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/host1x/cdma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/char/agp/amd64-agp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index d1336e438f4f..407ed9b9cf64 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -625,8 +625,7 @@ void host1x_cdma_push_wide(struct host1x_cdma *cdma, u32 op1, u32 op2,
- 	struct host1x_channel *channel = cdma_to_channel(cdma);
- 	struct host1x *host1x = cdma_to_host1x(cdma);
- 	struct push_buffer *pb = &cdma->push_buffer;
--	unsigned int space = cdma->slots_free;
--	unsigned int needed = 2, extra = 0;
-+	unsigned int space, needed = 2, extra = 0;
+diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+index ce8651436609..47bd3b8a54b4 100644
+--- a/drivers/char/agp/amd64-agp.c
++++ b/drivers/char/agp/amd64-agp.c
+@@ -333,7 +333,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
+ 	if (!amd_nb_has_feature(AMD_NB_GART))
+ 		return -ENODEV;
  
- 	if (host1x_debug_trace_cmdbuf)
- 		trace_host1x_cdma_push_wide(dev_name(channel->dev), op1, op2,
+-	i = 0;
+ 	for (i = 0; i < amd_nb_num(); i++) {
+ 		struct pci_dev *dev = node_to_amd_nb(i)->misc;
+ 		if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
 -- 
 2.39.2
 
