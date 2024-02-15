@@ -1,83 +1,77 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293AE12FF83;
-	Thu, 15 Feb 2024 13:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A988C12FF72;
+	Thu, 15 Feb 2024 13:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708003357; cv=none; b=qOCH4KstC4x5NtYl6d+L69GQ5ATe9mUzr6Ug/np7W4z0VTbo91EwWGzDO+nToQOHCMGbPlOJqvcjeEfZonkFbtDO/uttjx8VXEDv0CBZHJ/fCFfO2xrZrW2yZVrz16/gQ9jgiT+51FCCLzkDdb/qQBoWKxSexWsZ6rF3mNc59K0=
+	t=1708005424; cv=none; b=HH2eNRMC6ulvLl3Fh/ybmd+27pBtggyAFr1tcU3x1dtVMw1BsnXY2lWspST3E+QSH5R5lZMtnxSJs+Zqp5I+Rvt/hGiPgmtdGIe7mkHZ/4DgJLk6PON2cz/uB+H6Gn91hhZHIvz5+Wu8ZEWvmvcuDfTtadJbYplk2m1ryiUJgdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708003357; c=relaxed/simple;
-	bh=4aF+qj6JSTQ0807KgJV1vNLS92lk0xJGwBxRA6HChtI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PvfWy2S+bggjHxtuGdtfYgqRzcB3dA/jz4OczOuog1C4IE0F6bCvvD4N1N+Fo0Tz3eonblitd6ITzolElX2ezT83mi1LQjvKLEpqW/Q7FCqY2H6y79yXG/tdXVjds9/QSRtT75Ya3J8mbgeULH2GuBWIv8LI3grEjD0eihWOo9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjE6WuUj; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1708005424; c=relaxed/simple;
+	bh=fMrSiHEqH2oACTriTLR2RCLr7nCENDlRjSvlkn4SbkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaZgh7+hYZEbP5+lzzFGX9sxjyverVhPwiaX9iaI+KNfswBASvEHJKVpR3Lsw8NgJCABqeNqxibDo0a8b2z9CHE+9QVlcP/3SGY1dQN9ELaLz9iKHSZZ6/0G1H1EFFTJyhdYPEVqu8SYnA8qMUaMfZTObh2FWa9pd1SyQrhJxxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOJ2yhtT; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjE6WuUj"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41211acfcfcso5778165e9.1;
-        Thu, 15 Feb 2024 05:22:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOJ2yhtT"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2d0f7585d89so11063001fa.3;
+        Thu, 15 Feb 2024 05:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708003354; x=1708608154; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zk4/fN/6poQrSuP6ysDcE8oSR2rKxth24YP3yLSKdz8=;
-        b=AjE6WuUjX4IxGPClPwgosRsg+LnKz7UBBgmcLODk+CgOib4uFC0lfkhGiWS+M3GK5M
-         KlE8CmoCRqToOCk2LQpFhk8nDTQaEBMk/i3JxqYQbldYUUdQTfBo1vme54QlR9XV9n+3
-         J+uO7NxpkcQuNl66zLP0BoHgmptahcbFNEBx4N7awetGhyOV159DNPhBCx3lu1nc8TI2
-         jmdeF8HaQwaP6Qt19kN2C8eC/gojRDRa0FuVAX3rjmkwNr+Uvu8BiZB8fMlhgzj8/S5q
-         zAJYlN5gov/KxQ2SIjrk729MRvOPygQ+t6zRezeWZLKjcemc9UK8zIa9bXYMYZKpWwSv
-         mAWw==
+        d=gmail.com; s=20230601; t=1708005420; x=1708610220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QBttmjDDaofneeagqypVCgYFojO4GLtZsNzeW1YFvaM=;
+        b=NOJ2yhtTAhbCcArVl+niLM4aAaT5iBglGvJs7aMCYD45Xe8aThNDRytMLRBb0K210v
+         BbvR+DBlcN0R+0eAYbzqotQKcnf4F2yJT8wskrTU77cAyOs0AyZqzXFA4wXsjMebds7w
+         U0fGudc3KtecLxB05+WF3tJ5kc6OpoIca0g2PDOWYnXwTHxaAu48OL+stCrPNWPA4RKe
+         AY/XzOu2j/Xyn1iO3/jJu96Pf/eVEttTxcPpzPSp3yPWh9rZpwMMhQ1neb978yHapHy0
+         4oPbTcB76w9mGUz8YwNRLyZe5tyXYVGsRyevE8uPaUx5/Sblj9eBZlNEpze0Yf+xeBW4
+         XZRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708003354; x=1708608154;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zk4/fN/6poQrSuP6ysDcE8oSR2rKxth24YP3yLSKdz8=;
-        b=SDJcm1oC3hNnjO4/LNVcxljrjbAL7roiD++xHQl//Fhs+NqH88oLmltX7TH/gXmZJq
-         wd0D80UltXohnjv5qV+55CEdXFc0WuMGPf+8vFkRL7wmx0+QLCsA2WV7yJbezQWaYWBz
-         6txPhusVbS240Wox/vxQO8a/0x0Qsss4umcQFpFfSIfSnCqcTjv2NLIeZCSXgca94C9I
-         Elr8y7JqZG9UxSdz7r1rb4WFubkAHTr/AzknEXgSVNU749qX4WV4csx792jW+lgUjoZ7
-         H5xbYR7k3myUvLF7gd08VQv23G5UMLKoNbRQ9FjNrdmyMVXtYpR66ltGDdoRNQQszZhM
-         LTTg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6Zxb5fbaKhbByHuGVPtcNYZeS82XL1ZHhnzARmwgaExxi91S/JPxcIyJ+MvhSxsWJK7ytoazrIGelJ3atSiGl5N3mNHMt60D6N53GSmlW+KcybjV2jIaxgUY1waFrMiY9D9k8FhxW
-X-Gm-Message-State: AOJu0YzcTQK1HnmYNsWj4sFG0OOfTg5sGu/A2NM8/2ecrIVNUulEj1bO
-	RvmwnUG+WdWhvbcxazLJDsi6zAEQLtsuEbjsZyq0te6kQfcoICpM
-X-Google-Smtp-Source: AGHT+IFv3TPbz2dzqI8Cf8haH/DIkONUn8XWdSWuk1zHERmPAgW15QXkWNpUn5ANuU8S+PYkty6ubw==
-X-Received: by 2002:a5d:474b:0:b0:33d:52f:a2a8 with SMTP id o11-20020a5d474b000000b0033d052fa2a8mr1031244wrs.61.1708003354173;
-        Thu, 15 Feb 2024 05:22:34 -0800 (PST)
-Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id bx23-20020a5d5b17000000b0033cfbe7343asm1866651wrb.8.2024.02.15.05.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Feb 2024 05:22:33 -0800 (PST)
-Message-ID: <b2b1b20f-31f7-4c15-9d05-4421d890c6fe@gmail.com>
-Date: Thu, 15 Feb 2024 13:22:32 +0000
+        d=1e100.net; s=20230601; t=1708005420; x=1708610220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QBttmjDDaofneeagqypVCgYFojO4GLtZsNzeW1YFvaM=;
+        b=PXGVSwAKZoZgackcpGJTtnbBceBfqNH+I9LlMyyhbXXqI52PYqNxN73jS7DD6oePV8
+         kvJXo2S3//BrQrwu3vV7blkfC+ZT8i9ou209vP+Qvi1xpSvau2lUw2uPIqYV5yxnSf7y
+         VZZEl+k1j/a3RsA206ArXPQWiv+qlW9fMS+733sBZlSzl682oBiZbekyoh21N6LMJ9Ig
+         MaN5RdmXNUsmY+kE+8Xb218xODYT6Q/7GUgWVvxkz+yWPVa6TtsJXLGrG9ujsksrTi+w
+         502BXeqNwhUiaa4nJ/S/OgfH9JIAVg+thoPRvVAMpFLiTO8EI9eDA+X/PDB9RFNe4gKs
+         9wOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXU0UwlI7Nl9riYH+nkRyr04FRaHssXNPzXZEaTZpaiEjKne1EniCeJMZQLIFg/rnqCpO5RkR1f9YybjEvtMLbOWcg02iN1yHI1Cj/aHekABbJiuh6wuvSgnN/RkCyq4yHfDrplng+UZavDJqUja6RUvmZk4cv0ZvkqaEgkQiyMxKzwGvT6+k/j
+X-Gm-Message-State: AOJu0YyahoD0nU2jOVrGNeSr6eoa6jQa629n2ETBnLjbMaSSiJF7dPEV
+	QfUrwUQLvP62SeVItCmWujbuC8REeei98QJFFUJrLGLuy0HFrYU0sV+JyUne
+X-Google-Smtp-Source: AGHT+IF5OeM1u8aUPGMYEaWcvjmMqv+dGKbe/bDUjIRJeaIM+WBEyiWaWkzWnncJOAVRcR6xJYG14A==
+X-Received: by 2002:a2e:9995:0:b0:2d0:cff6:1141 with SMTP id w21-20020a2e9995000000b002d0cff61141mr1257466lji.49.1708005420387;
+        Thu, 15 Feb 2024 05:57:00 -0800 (PST)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id y19-20020a2e7d13000000b002d0a8143f31sm295755ljc.50.2024.02.15.05.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Feb 2024 05:57:00 -0800 (PST)
+Date: Thu, 15 Feb 2024 16:56:57 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] spi: dw: remove redundant assignment to variable
+ len
+Message-ID: <5gltmtohx4t2eubmlxjnflba7ydlnbj5wej67mh2kjjy3vdmsl@2ggv6iddskav>
+References: <20240215131603.2062332-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] spi: dw: remove redundant assignment to variable
- len
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-To: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240215131603.2062332-1-colin.i.king@gmail.com>
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240215131603.2062332-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 15/02/2024 13:16, Colin Ian King wrote:
+On Thu, Feb 15, 2024 at 01:16:03PM +0000, Colin Ian King wrote:
 > The variable id len being initialized with a value that is never read,
-
-should be "len is being.."
-
 > it is being re-assigned later on in a for-loop. The initialization is
 > redundant and can be removed.
 > 
@@ -85,23 +79,41 @@ should be "len is being.."
 > drivers/spi/spi-dw-dma.c:580:17: warning: Although the value stored
 > to 'len' is used in the enclosing expression, the value is never
 > actually read from 'len' [deadcode.DeadStores]
+
+Don't know for sure now what was my original intention of having it
+pre-initialized in the for-loop init section. Possibly what you
+suggest to drop was a leftover from some another version of the
+function implementation where the re-initialization was required. On
+the other hand rather weak but still a justification of having that
+assignment can be a maintainability so all the basic loop variables
+would be safely pre-initialized before the code block is executed. But
+in that case a more correct value would have been "xfer->len" instead
+of zero. Anyway let's keep the code simple and drop the assignment.
+Thanks for the patch.
+
+Acked-by: Serge Semin <fancer.lancer@gmail.com>
+
+-Serge(y)
+
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/spi/spi-dw-dma.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/spi/spi-dw-dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/spi/spi-dw-dma.c b/drivers/spi/spi-dw-dma.c
 > index 0ecbb6c36e23..f4c209e5f52b 100644
 > --- a/drivers/spi/spi-dw-dma.c
 > +++ b/drivers/spi/spi-dw-dma.c
 > @@ -577,7 +577,7 @@ static int dw_spi_dma_transfer_one(struct dw_spi *dws,
->   	sg_init_table(&tx_tmp, 1);
->   	sg_init_table(&rx_tmp, 1);
->   
+>  	sg_init_table(&tx_tmp, 1);
+>  	sg_init_table(&rx_tmp, 1);
+>  
 > -	for (base = 0, len = 0; base < xfer->len; base += len) {
 > +	for (base = 0; base < xfer->len; base += len) {
->   		/* Fetch next Tx DMA data chunk */
->   		if (!tx_len) {
->   			tx_sg = !tx_sg ? &xfer->tx_sg.sgl[0] : sg_next(tx_sg);
-
+>  		/* Fetch next Tx DMA data chunk */
+>  		if (!tx_len) {
+>  			tx_sg = !tx_sg ? &xfer->tx_sg.sgl[0] : sg_next(tx_sg);
+> -- 
+> 2.39.2
+> 
