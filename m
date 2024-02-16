@@ -1,105 +1,131 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06CB12CD9D;
-	Fri, 16 Feb 2024 14:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D326314830D;
+	Fri, 16 Feb 2024 15:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708093344; cv=none; b=FstLRN13t1o6KxQTJl/zEsB8Jx1x/EGY7U916JKFXxZOT7RiJBDncjgDp5T169a8lZNlzz51kPozDaXHc/AlUr/n0iHny9hu0EcCcKhxsqcuH5wUyFEEe9l5kwOpxCg3OHg0J9WDnIAITpj33RuCtRqyDJ1tr73ZHTPkTfNgO7k=
+	t=1708097464; cv=none; b=bZS3HTHJqydgvkJjS3nzLprafwyv3bDd0/4PVLYnrzrC42Spkw8FgLPSeQ4qGuDaLhyw/fZcG8O2JKMq2gkFxlgWcmuvYOJiStUZlvVhjl8ayWUzx0lvRKKu/rxH97bk9yeEwlXFMCUDPOLn6vIIIfxajF95E94nLtk3LYvVafI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708093344; c=relaxed/simple;
-	bh=Jxj3rEgbRGxw92wdoI8uuWjtJV70UO5s7O6AnHrXyAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MvJm7oTfmnwXhAeewEAsZW01QZfDO7pR5WF7q8Z8EjjTHMKNeqXAqVTvEIzqGy1m2DqbrYAFtvdKkHhm08GznEwns6jo4V2ROjZFMquL/KgjBNmcyONrWSLdC7pRX2OCQaRoDsb0/3SujiV+tnBHgO4EpayJT0f/PP6SZMRcAyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnVHDil6; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1708097464; c=relaxed/simple;
+	bh=2bBhhj/QaqwbzNPHueTQmD9VG87w9Epku43Ofb/Leug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y0OYLcVrDCwr2+E3w46v1AiI4mhm4Azo2B3oFA8DKr85Dp0Djph7H3khwXL8fJtgHot8O3D0+b2y92OwnPHh+d7rLotsWqYVvf4KfLmG6/bw7US54OaqsWEYH69HLFSEv7jj2pk9XZKJ81Wiomgb1loayS0IWAV1S+ukAoyXzVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+6Caqnp; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnVHDil6"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4124d8f9915so3440485e9.2;
-        Fri, 16 Feb 2024 06:22:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+6Caqnp"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4121b1aad00so5804065e9.1;
+        Fri, 16 Feb 2024 07:31:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708093341; x=1708698141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PkdihLM6sVisVEtGKLuR9LEB3QNDRr4gR8bv8gV+fJ8=;
-        b=JnVHDil6RzrWjiTyd/CYgEkf6v5l/ESlEtVoW1VHN74mQIUtg4KxHW/f6LkicBLrFw
-         q/Dz8pxtVYJFidByzWeph4fRxHIN9PiNXV423OB7opkRQ8lJ4RvSIqIw9HJKafb/NmA+
-         n1jfldhB6V9ocf5+/OIaDrPORGE16gQ7Sd/0gjP18kEnevsLwaAT9pVDjtgDer5lDSpa
-         oMfG/zt4dfDgcMeB/00VynKoNxn/1lhBnV+Y0Xrba76dkk/aQ7krkBT9QL12u6go82II
-         +qhjQJ/GC5ADugWjIYC9S06QSlzzhLZU/dxowZdF2wvBciX4Cpo8eAMDKKgfZ3O/q6U8
-         yu6A==
+        d=gmail.com; s=20230601; t=1708097461; x=1708702261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6JNadx/71R49yGFH6Dmy90ffsy+AmiQ1eqphcJgygK8=;
+        b=H+6Caqnpr4JKH0NM177DYXNXXuWSELz4HbabZ6CFl/SsEbmqVSQcDxSLGBIRLdPgoy
+         ldfkLN3h6DBfa5LWU7iYAHVURWXP8nGJ2quUaamTO+na/5Gk+Sh5Z1DvVu7KOAfvhPes
+         D+aIKbTm4t2lFKutlIZ7/OlPi3bsQ6ks6fqulBi6QbKM2dxclp9nFo6ilH9h5xemw24z
+         Q8yoDaYpinzd+WMj4wPf5Zasg6+fQFZWOxz65j0HEab+PY6kwtd0kyqBpu8l+EsMbHQ9
+         dauOLFIfJHBSMPlFQWQCki88mX98pDVQxYSEn/R2wzof0GdpCCHRHsxHWtKgPbrQiX7+
+         fyIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708093341; x=1708698141;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PkdihLM6sVisVEtGKLuR9LEB3QNDRr4gR8bv8gV+fJ8=;
-        b=joUR5N7rPk7gQh+4tyY/KpmJUkYgcA3KCbww3WHVFEjYd9QCFKmVePvGgjVkCkfEWA
-         u9B/en8HQqRJMgsNZwtH1xL4ZqFW4GhGuAXLRH7GSvM6pgbi9xVAlooiak2PYW3iQyvr
-         5J6cb0gB7Drkcrkv2cQLe4JpX5qoWKxw7OM+Y+pS8guz+zffgngo35+Jlc5WHoTJNeC5
-         w3VpC26NWtgRy8q4JkPJy59SHG2y2tSK9fflZ1KPbs+XxmRX8nNMoMdf2baOujq/WCaC
-         lJ2PyYyUnllk7COys2sVaqStgfhcYGNqUK47UrtAq+j+79Jy5zkJ90w4iKzE3W4yLgXt
-         sbmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk6+AR/27LWuDhvrxEbuPAx/uebBq29Lq1lVCAuFjVhiiqgIbSge7igpCvz0WeK2Q+Bq+2WROyw9WnaKgx/K45v+JpPErv4Faqz8ZFUSdO2DKnWcC44hBhGrdeS45Ao+iIeP0Z+4COOLc=
-X-Gm-Message-State: AOJu0Yx4EI61zBNYfZkM2XH51/t1hBSLRkguQi3XgYYLAT8gsMp+I4Q8
-	Vuyle6xlT8EoAIQ/MTYGt2ef98pIDtN74iGZNnZDyTQ/x1PEBlpf
-X-Google-Smtp-Source: AGHT+IHOPnOdjbMecgSAGifiPTVWd6xucSnzV0OTR3oaD+sN5wb2N9fYMluVi1eXv8uJwOW1grT2vw==
-X-Received: by 2002:a05:600c:1f81:b0:410:4a4:6cd0 with SMTP id je1-20020a05600c1f8100b0041004a46cd0mr3825241wmb.33.1708093340832;
-        Fri, 16 Feb 2024 06:22:20 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j11-20020adff54b000000b0033b43a5f53csm2312969wrp.103.2024.02.16.06.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Feb 2024 06:22:20 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: tas2781: Remove redundant initialization of pointer 'data'
-Date: Fri, 16 Feb 2024 14:22:19 +0000
-Message-Id: <20240216142219.2109050-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1708097461; x=1708702261;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6JNadx/71R49yGFH6Dmy90ffsy+AmiQ1eqphcJgygK8=;
+        b=L5Sbf3n6Pek2r7hmu6vMcc+QrxYJLVp/yxiY6t5qVjxYAeJ/vuOB/6ChxjljdSIB3D
+         MbVDy3/i1KBIPKy48drkiN08BDmj+dvpnpS0NMRXzC5r7z9JAz/+fKPzcVfLHCJzhS6a
+         oFSa2CZV/3+Zyo2PU7oXAGF2DmnOTiCrHev1fJg2tm+bna4du7hgrCLCoMLf6A4TgSO6
+         jcgZQBAmtaGI/yEWyhd+jPK3SZyG46qU1xlO4CgCOD26Gbxkd0qLUYfzS6j9RYeaLqSL
+         kS5LfASyHeVADNyfoqRDvq8lKSisx1VbsNyBMdHPM/PkYnvc57XqapNkED62AnkLuubA
+         B/5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXJO18DGbwXUjVnPbHGkYv/2oQHzoeRgH3qkQR+RqE8bC5KDKuVcWaGd9ZWn0D9pvNvfDyYrrXF+VXO/oxUVnM744ObKWZUOzlhEdxHKtaBnN00a+g05rEsNq4HJIFPUeibkrSWLn6uD28pVOgTdLUNcsa+ue8OioQhzb6FZ7bpiPYhBYFg
+X-Gm-Message-State: AOJu0Yykh4d3fb8RCwTHW2KmOm6BiktSgMwsv+H/gmq6aFrCsDcHFsZT
+	mjJPa3J1NJk0DL391xbOj4ZabSLTjPgc4JAOMqXESo+XnjR0G7Jr4JWhwSBE
+X-Google-Smtp-Source: AGHT+IFrhxmizJLaTT2UDH3EzhKGyyUFsHaJBJRaLK/lgAJlamqvdLFCtTuza/WnM3XQMaZjsZ2J7w==
+X-Received: by 2002:a5d:6350:0:b0:33d:27b6:68d1 with SMTP id b16-20020a5d6350000000b0033d27b668d1mr53556wrw.34.1708097460716;
+        Fri, 16 Feb 2024 07:31:00 -0800 (PST)
+Received: from [10.83.37.178] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id h5-20020a05600016c500b0033d200aff9asm1769437wrf.56.2024.02.16.07.30.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Feb 2024 07:31:00 -0800 (PST)
+Message-ID: <4f3bc406-1671-4f37-98e4-38e00590f487@gmail.com>
+Date: Fri, 16 Feb 2024 15:30:57 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net: tcp: Remove redundant initialization of
+ variable len
+Content-Language: en-US
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>
+References: <20240216125443.2107244-1-colin.i.king@gmail.com>
+ <CANn89iJM=fVSkzz9HRU+HXYm+R+owKqah0TT8sY-soEXf2HiNA@mail.gmail.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+In-Reply-To: <CANn89iJM=fVSkzz9HRU+HXYm+R+owKqah0TT8sY-soEXf2HiNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The pointer 'data' being initialized with a value that is never read, it
-is being re-assigned inside a while-loop. The initialization is redundant
-and can be removed.
+On 2/16/24 13:00, Eric Dumazet wrote:
+> On Fri, Feb 16, 2024 at 1:54 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>>
+>> The variable len being initialized with a value that is never read, an
+>> if statement is initializing it in both paths of the if statement.
+>> The initialization is redundant and can be removed.
+>>
+>> Cleans up clang scan build warning:
+>> net/ipv4/tcp_ao.c:512:11: warning: Value stored to 'len' during its
+>> initialization is never read [deadcode.DeadStores]
+>>
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Cleans up clang scan build warning
-sound/soc/codecs/tas2781-fmwlib.c:1534:17: warning: Value stored to
-'data' during its initialization is never read [deadcode.DeadStores]
+LGTM,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/codecs/tas2781-fmwlib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 85e14ff61769..45760fe19523 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -1531,7 +1531,7 @@ static int tasdev_load_blk(struct tasdevice_priv *tas_priv,
- 	unsigned int sleep_time;
- 	unsigned int len;
- 	unsigned int nr_cmds;
--	unsigned char *data = block->data;
-+	unsigned char *data;
- 	unsigned char crc_chksum = 0;
- 	unsigned char offset;
- 	unsigned char book;
--- 
-2.39.2
+>> ---
+>>  net/ipv4/tcp_ao.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+>> index 87db432c6bb4..3afeeb68e8a7 100644
+>> --- a/net/ipv4/tcp_ao.c
+>> +++ b/net/ipv4/tcp_ao.c
+>> @@ -509,9 +509,9 @@ static int tcp_ao_hash_header(struct tcp_sigpool *hp,
+>>                               bool exclude_options, u8 *hash,
+>>                               int hash_offset, int hash_len)
+>>  {
+>> -       int err, len = th->doff << 2;
+>>         struct scatterlist sg;
+>>         u8 *hdr = hp->scratch;
+>> +       int err, len;
+>>
+>>         /* We are not allowed to change tcphdr, make a local copy */
+>>         if (exclude_options) {
+>> --
+>> 2.39.2
+>>
+> 
+> Cc Dmitry Safonov
+> 
+> Dmitry, can you take a look ?
+
+Thanks for Cc'ing!
+
+> 
+> Thanks !
+
+Thanks,
+             Dmitry
 
