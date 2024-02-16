@@ -1,59 +1,38 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D326314830D;
-	Fri, 16 Feb 2024 15:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C0C12C809;
+	Fri, 16 Feb 2024 16:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708097464; cv=none; b=bZS3HTHJqydgvkJjS3nzLprafwyv3bDd0/4PVLYnrzrC42Spkw8FgLPSeQ4qGuDaLhyw/fZcG8O2JKMq2gkFxlgWcmuvYOJiStUZlvVhjl8ayWUzx0lvRKKu/rxH97bk9yeEwlXFMCUDPOLn6vIIIfxajF95E94nLtk3LYvVafI=
+	t=1708099881; cv=none; b=tmGLpyHxiC3vccB/Qifo6Lrgyj/HmVeh0V2fwTunNb7yyEf0e2GhsBWaCzjNvArHtt4KJYMV7tFVJcZHStRJMbNsuMIYqgjhEVI38bbnZYPbvcoftYujmgG9wmGtHyFd5l1tuc9iHv3KPfRdHZ/V5nd2Pu2Z/SZEwZifBXAfZdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708097464; c=relaxed/simple;
-	bh=2bBhhj/QaqwbzNPHueTQmD9VG87w9Epku43Ofb/Leug=;
+	s=arc-20240116; t=1708099881; c=relaxed/simple;
+	bh=LfFXnYQiTBQreCbCIUgw5DkCddIa8FMvbEkDGAEoilQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y0OYLcVrDCwr2+E3w46v1AiI4mhm4Azo2B3oFA8DKr85Dp0Djph7H3khwXL8fJtgHot8O3D0+b2y92OwnPHh+d7rLotsWqYVvf4KfLmG6/bw7US54OaqsWEYH69HLFSEv7jj2pk9XZKJ81Wiomgb1loayS0IWAV1S+ukAoyXzVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+6Caqnp; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=qmSZCrX7uYwvatHX8xVkhhC4buID4Ok0nLD5zQq1NaOq4TccUtF8VyZ/Px6vskiPxVT1+5LciTsj9Wh0j58l37gjfSULbsSBiWYJCBS4IGuKJmxJHz6jEngSl/0DeeR9DU08n3sB9vLkSA6jZ+QcCF2m29h8rQtUo3Et5YpE9dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=mMqOpFPP; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+6Caqnp"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4121b1aad00so5804065e9.1;
-        Fri, 16 Feb 2024 07:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708097461; x=1708702261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6JNadx/71R49yGFH6Dmy90ffsy+AmiQ1eqphcJgygK8=;
-        b=H+6Caqnpr4JKH0NM177DYXNXXuWSELz4HbabZ6CFl/SsEbmqVSQcDxSLGBIRLdPgoy
-         ldfkLN3h6DBfa5LWU7iYAHVURWXP8nGJ2quUaamTO+na/5Gk+Sh5Z1DvVu7KOAfvhPes
-         D+aIKbTm4t2lFKutlIZ7/OlPi3bsQ6ks6fqulBi6QbKM2dxclp9nFo6ilH9h5xemw24z
-         Q8yoDaYpinzd+WMj4wPf5Zasg6+fQFZWOxz65j0HEab+PY6kwtd0kyqBpu8l+EsMbHQ9
-         dauOLFIfJHBSMPlFQWQCki88mX98pDVQxYSEn/R2wzof0GdpCCHRHsxHWtKgPbrQiX7+
-         fyIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708097461; x=1708702261;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6JNadx/71R49yGFH6Dmy90ffsy+AmiQ1eqphcJgygK8=;
-        b=L5Sbf3n6Pek2r7hmu6vMcc+QrxYJLVp/yxiY6t5qVjxYAeJ/vuOB/6ChxjljdSIB3D
-         MbVDy3/i1KBIPKy48drkiN08BDmj+dvpnpS0NMRXzC5r7z9JAz/+fKPzcVfLHCJzhS6a
-         oFSa2CZV/3+Zyo2PU7oXAGF2DmnOTiCrHev1fJg2tm+bna4du7hgrCLCoMLf6A4TgSO6
-         jcgZQBAmtaGI/yEWyhd+jPK3SZyG46qU1xlO4CgCOD26Gbxkd0qLUYfzS6j9RYeaLqSL
-         kS5LfASyHeVADNyfoqRDvq8lKSisx1VbsNyBMdHPM/PkYnvc57XqapNkED62AnkLuubA
-         B/5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJO18DGbwXUjVnPbHGkYv/2oQHzoeRgH3qkQR+RqE8bC5KDKuVcWaGd9ZWn0D9pvNvfDyYrrXF+VXO/oxUVnM744ObKWZUOzlhEdxHKtaBnN00a+g05rEsNq4HJIFPUeibkrSWLn6uD28pVOgTdLUNcsa+ue8OioQhzb6FZ7bpiPYhBYFg
-X-Gm-Message-State: AOJu0Yykh4d3fb8RCwTHW2KmOm6BiktSgMwsv+H/gmq6aFrCsDcHFsZT
-	mjJPa3J1NJk0DL391xbOj4ZabSLTjPgc4JAOMqXESo+XnjR0G7Jr4JWhwSBE
-X-Google-Smtp-Source: AGHT+IFrhxmizJLaTT2UDH3EzhKGyyUFsHaJBJRaLK/lgAJlamqvdLFCtTuza/WnM3XQMaZjsZ2J7w==
-X-Received: by 2002:a5d:6350:0:b0:33d:27b6:68d1 with SMTP id b16-20020a5d6350000000b0033d27b668d1mr53556wrw.34.1708097460716;
-        Fri, 16 Feb 2024 07:31:00 -0800 (PST)
-Received: from [10.83.37.178] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id h5-20020a05600016c500b0033d200aff9asm1769437wrf.56.2024.02.16.07.30.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 07:31:00 -0800 (PST)
-Message-ID: <4f3bc406-1671-4f37-98e4-38e00590f487@gmail.com>
-Date: Fri, 16 Feb 2024 15:30:57 +0000
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="mMqOpFPP"
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4TbxkL6XtHz67xs;
+	Fri, 16 Feb 2024 17:11:06 +0100 (CET)
+Received: from [10.10.15.23] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4TbxkF18p1z67tH;
+	Fri, 16 Feb 2024 17:11:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1708099866;
+	bh=iq3rmFuuuB7xfOB9MLC9H3wTH6FDafTnULPqIUiclBU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=mMqOpFPPzvHKU+0qKjlWlkP9FbzfmsEjTHyy+/n6utaukdD0LUi4eDr2UJv8QYKMp
+	 FeiZWMuReqd0XTzFqfSEX4IyCP+t5jNzVk0vCiKByM82ru54jb9ZYMl0c0/Ef1G0N0
+	 rVDjXJBV9q36if8PmUK72lEHfNeefjnVyoOzrjJ0=
+Message-ID: <60ce7f04-ef19-41e5-a9ce-002ae5921541@gaisler.com>
+Date: Fri, 16 Feb 2024 17:10:59 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,71 +40,29 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net: tcp: Remove redundant initialization of
- variable len
+Subject: Re: [PATCH RESEND] sparc: remove obsolete config ARCH_ATU
 Content-Language: en-US
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>, David Ahern
- <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>
-References: <20240216125443.2107244-1-colin.i.king@gmail.com>
- <CANn89iJM=fVSkzz9HRU+HXYm+R+owKqah0TT8sY-soEXf2HiNA@mail.gmail.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-In-Reply-To: <CANn89iJM=fVSkzz9HRU+HXYm+R+owKqah0TT8sY-soEXf2HiNA@mail.gmail.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Christoph Hellwig <hch@lst.de>,
+ "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231211083029.22078-1-lukas.bulwahn@gmail.com>
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20231211083029.22078-1-lukas.bulwahn@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2/16/24 13:00, Eric Dumazet wrote:
-> On Fri, Feb 16, 2024 at 1:54 PM Colin Ian King <colin.i.king@gmail.com> wrote:
->>
->> The variable len being initialized with a value that is never read, an
->> if statement is initializing it in both paths of the if statement.
->> The initialization is redundant and can be removed.
->>
->> Cleans up clang scan build warning:
->> net/ipv4/tcp_ao.c:512:11: warning: Value stored to 'len' during its
->> initialization is never read [deadcode.DeadStores]
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-LGTM,
-
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
-
->> ---
->>  net/ipv4/tcp_ao.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
->> index 87db432c6bb4..3afeeb68e8a7 100644
->> --- a/net/ipv4/tcp_ao.c
->> +++ b/net/ipv4/tcp_ao.c
->> @@ -509,9 +509,9 @@ static int tcp_ao_hash_header(struct tcp_sigpool *hp,
->>                               bool exclude_options, u8 *hash,
->>                               int hash_offset, int hash_len)
->>  {
->> -       int err, len = th->doff << 2;
->>         struct scatterlist sg;
->>         u8 *hdr = hp->scratch;
->> +       int err, len;
->>
->>         /* We are not allowed to change tcphdr, make a local copy */
->>         if (exclude_options) {
->> --
->> 2.39.2
->>
+On 2023-12-11 09:30, Lukas Bulwahn wrote:
+> Before consolidation of commit 4965a68780c5 ("arch: define the
+> ARCH_DMA_ADDR_T_64BIT config symbol in lib/Kconfig"), the config ARCH_ATU
+> was used to control the state of the config ARCH_DMA_ADDR_T_64BIT. After
+> this consolidation, the config ARCH_ATU has been without use and effect.
 > 
-> Cc Dmitry Safonov
+> Remove this obsolete config.
 > 
-> Dmitry, can you take a look ?
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Thanks for Cc'ing!
-
-> 
-> Thanks !
+Applied to my for-next branch.
 
 Thanks,
-             Dmitry
-
+Andreas
