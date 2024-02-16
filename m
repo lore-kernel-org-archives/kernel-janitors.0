@@ -1,101 +1,425 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269991798E;
-	Fri, 16 Feb 2024 08:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26429286AD;
+	Fri, 16 Feb 2024 09:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708071564; cv=none; b=RtyYDyhegc/w2sdrTkZuJxiy50u+aCMJkNyD+kS032rT8h5uJRclVtou2YfvshiY3fN8dxOu5Qa2wQI0FgCAF0BSXxgBUguP2yxG61rEJKtAcdjcufrnYL8RUwhAErFgJ07dBBk5an0lQmgbYoVqC6vT6NwJnyfck1wtr5RlUEs=
+	t=1708077384; cv=none; b=l4mcqAfyIaeOgBeYvvaecSEmwfrk/MrwOBw14IjFetPpYpwvPv+7aUlaO8khPp2/NKV1fElmTaG9dUXKYd/OLqJur8f38ZGiJ3Jxq/I9+RMN7mcg8ohIVYNSDXk1BA16CocJF+dHU4FyQHeCMycPGD7lMaSlbo3lau/rjcKyySY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708071564; c=relaxed/simple;
-	bh=8ZH4X7IkAgYh1aAOxTz7Kvex+GWC3Fv0EXF6Y70Bd4w=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=qW2NRpCZiU3UnyP/ccvNLrA2WjSzGqTe3s+MVs5Vi1KlWNoxoNE/V/amzEN/v4pY01Yw+EZ+BAGQPHPbGrx5SWtdptYevVQ5x+2OYWCNA/rtOQCuo6ohdv2wUu3uR9aRDbv8XsKS0gB0QdkRZX/III5HAl+BGPnCzOLM4Dvat48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWpVj+lj; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708077384; c=relaxed/simple;
+	bh=j4WYdlH2C0SjARdDRBqYCOTeUj3v1ffV3fGDsF0zbRM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=XNapF43S3x151vAJrJFk25i8YCAhPgE8kMVTLICXWdE3oQCFh8aza4kf+byPhbtO0lxUbKsZmKHRDZcOVqEQNSD5qRlQBML1OstcAguoaBSoaz3mhbJaKnBbqjoGYFNC82cQ06wXOwH5IqnVQD1hPfKltm4eMataWxcAIVPcjX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iz7Ye9Sp; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWpVj+lj"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a3566c0309fso209572266b.1;
-        Fri, 16 Feb 2024 00:19:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708071561; x=1708676361; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vkcZNtVWFcpaYRh5KBkVLspCvZTJEh/dDf70Iu1sYYo=;
-        b=KWpVj+ljcvwFrQ31N3APbWWfn+AHBNhKl8xtNODtNCuqDbATzYDskiyhG9ggvxfUvo
-         lAL1YTTMlcGM/3vBlO7F24Zz2+zzD5ntSHq0vqmJykmJuToO6UevPKLIrjmtSCPoEwUW
-         QmJg/IA8kyYb14EZb/nkB8neqLC2eZ7OZm2Q8f2yWjhpMv2wwlC5HyA9GlkNJ+YAzgPD
-         lIyzWUuADnnHNjSAD8CeqkMF/npgn+2lWViJlPA51G8Gvfya63TL+uDL7+DfRulk2Rb8
-         0pwPYWiosydQSLTEMA2+yiH9LSLbVkYXlmPeoDab43yrpShfR65aSJTv1KLMgT8cz+6C
-         rDdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708071561; x=1708676361;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vkcZNtVWFcpaYRh5KBkVLspCvZTJEh/dDf70Iu1sYYo=;
-        b=LS8MNuMzEmB+KApaMuyi5vH+AiuwCtQxSJ8pDPYgKpJz8xdm/4tpEuHIC0oF/kJAg7
-         Yz3sAMLdiKVqd0Xc38Q/Z0avq6U8PNDGJ71w1s8sDUEtIuXGPbZ0MW1ttViswRoi37D/
-         uBTOdT060jsm0OYcxSNSiKZ3w0Ar1v+cmqGbZCJIkxeX92oxnYlDFQBcz41hoMDDzfb9
-         0XTKB1FlDXnEvdLbegHVHZ4cjUAR0FjZXkWD8bPpZJZgbi7gpN1Gw7fMnJUNgRUEx+Zx
-         zodgLBYVlsmixd0Lw+Pge2xEX3izdVkkZp9ZtIVlff7pmSrapnu1syoaz+zsOVlGWbNh
-         XVJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWA9TTlGlrNUO/pfW6LgpuF3CGnQ8xw+C+xHVgQGsNXyFMG9BOSB1cIwh0C5dtkU54joqp+sbaEbF+peOEqu3O5wp3IcCa56CD9AABUs6nB9+Q48PtU3Mk5LaRkOLQz0tOYXQ5zF1LQNiwx7Yk=
-X-Gm-Message-State: AOJu0YylrR+37XeuDMndBIMgf1pwf0V1JLaIKfiRMY+mpGXt1zOcXbDJ
-	H0z3ZbMhVg4mkFKHCuC7m89WoaKHuuLZE2sxuRzXPBCCeEQElv/0
-X-Google-Smtp-Source: AGHT+IFXSBfbEqhz1EqCn2tCMy8Z7/w/zHz7KZ1UE8gVdsg6Mxzu1Z26+TLjMUeJRJmfDryyxt9c1A==
-X-Received: by 2002:a17:906:261a:b0:a3d:4e12:c0c1 with SMTP id h26-20020a170906261a00b00a3d4e12c0c1mr2585282ejc.39.1708071561103;
-        Fri, 16 Feb 2024 00:19:21 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:e91e:623:d202:a9b3])
-        by smtp.gmail.com with ESMTPSA id um9-20020a170906cf8900b00a3be730d63fsm1332888ejb.13.2024.02.16.00.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Feb 2024 00:19:20 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-bcachefs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair file entries in THREAD WITH FILE
-Date: Fri, 16 Feb 2024 09:19:17 +0100
-Message-Id: <20240216081917.16302-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iz7Ye9Sp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1708077374; x=1708682174; i=markus.elfring@web.de;
+	bh=j4WYdlH2C0SjARdDRBqYCOTeUj3v1ffV3fGDsF0zbRM=;
+	h=X-UI-Sender-Class:Date:From:Subject:To:Cc;
+	b=iz7Ye9SpWpUmC8Hr0DfRZV7pfVRPEplG1eviG2cAguU9yzhnKMfeMJqYas+fgrJc
+	 YIwxsqmLKUnyLLJWLKTroau9eidgH2X53s593F1Uu8Yzp9W9jY6dqCiAuap33WCCl
+	 hCIRHZIbJY+mOf+n1ZRbYRGMCLp5+gfDO8cmN7rdWknneqmjQxxowx2WU6U4eby6K
+	 conea6e0xQRH7mI2wfx2q0lc8atcryD1tIbRprmqcKdnM0aae4BtK6L3Z1MXI7UXF
+	 YV/BHu3pC2xu2PS8pTYjNuhi5MbcEkv3DbIqNr5EzAJUcpNQbK+eku2EV5BjUDZ0c
+	 jcj1HklLGP1lWe9h8A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeDMR-1qzvHw2FUN-00bHl6; Fri, 16
+ Feb 2024 10:50:43 +0100
+Message-ID: <4b50017b-d3f6-45c8-b4a0-6943c7a7e54e@web.de>
+Date: Fri, 16 Feb 2024 10:50:27 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] iwlwifi: Use common error handling code in five functions
+To: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alon Giladi <alon.giladi@intel.com>,
+ Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zvhrmtS8gAA7vSSneY/0kkuoyoordAd2oZO5xDRTNtWRPJ9Bgst
+ FP6XSfiSD2jPijpx55JA1LIGpzQQCW9InIoK3jmo5+L/RQAofH2z06KGdfmKNFJBHJhd05t
+ JdWVS8xWuTTl3wRD39QSO3P5Bag2bSdTCceMFdey7On9C6aqNFeEj+Aw7DtjwiObXmmhE0i
+ 4Z0AaWv0J/X2b5KDFU//A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bd9dY07eXD4=;f8/5w3QpeIlF3MwRUI2u101cWY0
+ a9wLnhH7YB9ZRp7KQmHdTvH/hmiURFLnaJkPBUfjBm/qF/00JMBSCeaYJAzw8nANyt0P0g4ZI
+ bkp4pGY/RjwjH+TI3jZROIr9cIX4xyRdW/3cOukpjHtAJ+mO5XjzJAkOU+sgV8DCiIzhdvJH7
+ IDMMQBrQVHqHbI6GOA8FeykFnB/5OJE9VhpQ+DGMv+W/j7mDYWQcdzCRHhTXNP5r3lg5P7zF1
+ /Qp0V6Aiz5TukKV/NW1EryQ0hEB82RB5/cL1VANVhIARmyHMrski5HvFr8V+McKO0xTcJOGkI
+ uyw2BvRA0aoCi2psITq06gqTyPR+kuXNI5Q2QkcgNaLmYYZSu/5qdDqDj3ICEqtL1rCXJlSFH
+ SuRy9rlwO44MmRTYlK9ZxNWLZGHON4GAeUvhOgp0/+gbGVPpCy4As9B+pvaC3Gaoy+WDIy03+
+ 2yFlFVjLBGFQbaAF8gxV/d7CIFxA5MbXch1gEnX5OGTdt29RB3CW93nEE2wdWw2NEQj00B5pl
+ CwtqUraLsYctWOA6Hy7ikHNREqIuMsaCi7hnIrpV94asTO9owmAmHqSTE/vD7Ljn+cxOGTSWg
+ JELXdclpDOTz6rxHCuDOoeVSTDGCLGDRYHeuk9la347hSQAsQN3uwjIQfFhiT4cm9FwjKVG/y
+ nsVP1F2yLgBuWSY7vXB1G8E1r5Z6GXiQ1HlhI+jOB365GPRpdaI1l3XQdWufNZU4rS6JPP/pm
+ EdkYPRkC1XhzuEGtctlLSr7GlCdl40iGif3g8QtJkQcW8iFYjn5UgxeOnDj2VkKIEX6Wa02Ba
+ AyZJGJRmVswx434xE8toyJyzvNm/f40SP1B2wsvsLFIsA=
 
-Commit ead021e0fe5b ("thread_with_file: Lift from bcachefs") adds the
-section THREAD WITH FILE with file entries to the relevant header files
-thread_with_file.h and thread_with_file_types.h in include/linux/.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2024 10:22:20 +0100
 
-The commit however unintentionally refers to files with a .c extension, but
-the header files are of course with .h extension. Fortunately, the script
-'./scripts/get_maintainer.pl --self-test=patterns' notices that.
+The error code =E2=80=9C-EINVAL=E2=80=9D was set before the statement =E2=
+=80=9Cgoto out_free=E2=80=9D
+multiple times in some function implementations.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-Adjust the file entries to use the right extension.
+This issue was transformed by using the Coccinelle software.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/wireless/intel/iwlwifi/fw/acpi.c | 130 +++++++++----------
+ 1 file changed, 58 insertions(+), 72 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 37bcf01bf1d1..d881bddabf17 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22025,8 +22025,8 @@ M:	Kent Overstreet <kent.overstreet@linux.dev>
- M:	Darrick J. Wong <djwong@kernel.org>
- L:	linux-bcachefs@vger.kernel.org
- S:	Maintained
--F:	include/linux/thread_with_file.c
--F:	include/linux/thread_with_file_types.c
-+F:	include/linux/thread_with_file.h
-+F:	include/linux/thread_with_file_types.h
- F:	lib/thread_with_file.c
- 
- THUNDERBOLT DMA TRAFFIC TEST DRIVER
--- 
-2.17.1
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c b/drivers/net/wi=
+reless/intel/iwlwifi/fw/acpi.c
+index 4caf2e25a297..0d7a2f2eab07 100644
+=2D-- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+@@ -285,8 +285,7 @@ int iwl_acpi_get_tas_table(struct iwl_fw_runtime *fwrt=
+,
+ 		wifi_pkg->package.elements[1].type =3D=3D ACPI_TYPE_INTEGER) {
+ 		enabled =3D !!wifi_pkg->package.elements[1].integer.value;
+ 	} else {
+-		ret =3D -EINVAL;
+-		goto out_free;
++		goto out_e_inval;
+ 	}
+
+ 	if (!enabled) {
+@@ -301,8 +300,7 @@ int iwl_acpi_get_tas_table(struct iwl_fw_runtime *fwrt=
+,
+ 	    IWL_WTAS_BLACK_LIST_MAX) {
+ 		IWL_DEBUG_RADIO(fwrt, "TAS invalid array size %llu\n",
+ 				wifi_pkg->package.elements[2].integer.value);
+-		ret =3D -EINVAL;
+-		goto out_free;
++		goto out_e_inval;
+ 	}
+ 	block_list_size =3D wifi_pkg->package.elements[2].integer.value;
+ 	tas_data->block_list_size =3D cpu_to_le32(block_list_size);
+@@ -316,8 +314,7 @@ int iwl_acpi_get_tas_table(struct iwl_fw_runtime *fwrt=
+,
+ 		    ACPI_TYPE_INTEGER) {
+ 			IWL_DEBUG_RADIO(fwrt,
+ 					"TAS invalid array elem %d\n", 3 + i);
+-			ret =3D -EINVAL;
+-			goto out_free;
++			goto out_e_inval;
+ 		}
+
+ 		country =3D wifi_pkg->package.elements[3 + i].integer.value;
+@@ -329,6 +326,10 @@ int iwl_acpi_get_tas_table(struct iwl_fw_runtime *fwr=
+t,
+ out_free:
+ 	kfree(data);
+ 	return ret;
++
++out_e_inval:
++	ret =3D -EINVAL;
++	goto out_free;
+ }
+
+ int iwl_acpi_get_mcc(struct iwl_fw_runtime *fwrt, char *mcc)
+@@ -474,10 +475,8 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_WRDS_WIFI_DATA_SIZE_REV2,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 2) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 2)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV2;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV2;
+@@ -490,10 +489,8 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_WRDS_WIFI_DATA_SIZE_REV1,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 1) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 1)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV1;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV1;
+@@ -506,10 +503,8 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_WRDS_WIFI_DATA_SIZE_REV0,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 0) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 0)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV0;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV0;
+@@ -521,10 +516,8 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fw=
+rt)
+ 	goto out_free;
+
+ read_table:
+-	if (wifi_pkg->package.elements[1].type !=3D ACPI_TYPE_INTEGER) {
+-		ret =3D -EINVAL;
+-		goto out_free;
+-	}
++	if (wifi_pkg->package.elements[1].type !=3D ACPI_TYPE_INTEGER)
++		goto out_e_inval;
+
+ 	IWL_DEBUG_RADIO(fwrt, "Reading WRDS tbl_rev=3D%d\n", tbl_rev);
+
+@@ -543,6 +536,10 @@ int iwl_acpi_get_wrds_table(struct iwl_fw_runtime *fw=
+rt)
+ out_free:
+ 	kfree(data);
+ 	return ret;
++
++out_e_inval:
++	ret =3D -EINVAL;
++	goto out_free;
+ }
+
+ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fwrt)
+@@ -562,10 +559,8 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_EWRD_WIFI_DATA_SIZE_REV2,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 2) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 2)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV2;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV2;
+@@ -578,10 +573,8 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_EWRD_WIFI_DATA_SIZE_REV1,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 1) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 1)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV1;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV1;
+@@ -594,10 +587,8 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+ 					 ACPI_EWRD_WIFI_DATA_SIZE_REV0,
+ 					 &tbl_rev);
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 0) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 0)
++			goto out_e_inval;
+
+ 		num_chains =3D ACPI_SAR_NUM_CHAINS_REV0;
+ 		num_sub_bands =3D ACPI_SAR_NUM_SUB_BANDS_REV0;
+@@ -610,10 +601,8 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+
+ read_table:
+ 	if (wifi_pkg->package.elements[1].type !=3D ACPI_TYPE_INTEGER ||
+-	    wifi_pkg->package.elements[2].type !=3D ACPI_TYPE_INTEGER) {
+-		ret =3D -EINVAL;
+-		goto out_free;
+-	}
++	    wifi_pkg->package.elements[2].type !=3D ACPI_TYPE_INTEGER)
++		goto out_e_inval;
+
+ 	enabled =3D !!(wifi_pkg->package.elements[1].integer.value);
+ 	n_profiles =3D wifi_pkg->package.elements[2].integer.value;
+@@ -623,10 +612,8 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+ 	 * from index 1, so the maximum value allowed here is
+ 	 * ACPI_SAR_PROFILES_NUM - 1.
+ 	 */
+-	if (n_profiles >=3D BIOS_SAR_MAX_PROFILE_NUM) {
+-		ret =3D -EINVAL;
+-		goto out_free;
+-	}
++	if (n_profiles >=3D BIOS_SAR_MAX_PROFILE_NUM)
++		goto out_e_inval;
+
+ 	/* the tables start at element 3 */
+ 	pos =3D 3;
+@@ -651,6 +638,10 @@ int iwl_acpi_get_ewrd_table(struct iwl_fw_runtime *fw=
+rt)
+ out_free:
+ 	kfree(data);
+ 	return ret;
++
++out_e_inval:
++	ret =3D -EINVAL;
++	goto out_free;
+ }
+
+ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fwrt)
+@@ -724,10 +715,9 @@ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fw=
+rt)
+ 				entry =3D &wifi_pkg->package.elements[entry_idx];
+ 				entry_idx++;
+ 				if (entry->type !=3D ACPI_TYPE_INTEGER ||
+-				    entry->integer.value > num_profiles) {
+-					ret =3D -EINVAL;
+-					goto out_free;
+-				}
++				    entry->integer.value > num_profiles)
++					goto out_e_inval;
++
+ 				num_profiles =3D entry->integer.value;
+
+ 				/*
+@@ -736,10 +726,8 @@ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fw=
+rt)
+ 				 * looking up in ACPI
+ 				 */
+ 				if (wifi_pkg->package.count !=3D
+-				    hdr_size + profile_size * num_profiles) {
+-					ret =3D -EINVAL;
+-					goto out_free;
+-				}
++				    hdr_size + profile_size * num_profiles)
++					goto out_e_inval;
+ 			}
+ 			goto read_table;
+ 		}
+@@ -769,10 +757,8 @@ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fw=
+rt)
+ 				entry =3D &wifi_pkg->package.elements[entry_idx];
+ 				entry_idx++;
+ 				if (entry->type !=3D ACPI_TYPE_INTEGER ||
+-				    entry->integer.value > U8_MAX) {
+-					ret =3D -EINVAL;
+-					goto out_free;
+-				}
++				    entry->integer.value > U8_MAX)
++					goto out_e_inval;
+
+ 				fwrt->geo_profiles[i].bands[j].max =3D
+ 					entry->integer.value;
+@@ -787,10 +773,8 @@ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fw=
+rt)
+ 					entry =3D &wifi_pkg->package.elements[entry_idx];
+ 					entry_idx++;
+ 					if (entry->type !=3D ACPI_TYPE_INTEGER ||
+-					    entry->integer.value > U8_MAX) {
+-						ret =3D -EINVAL;
+-						goto out_free;
+-					}
++					    entry->integer.value > U8_MAX)
++						goto out_e_inval;
+
+ 					fwrt->geo_profiles[i].bands[j].chains[k] =3D
+ 						entry->integer.value;
+@@ -805,6 +789,10 @@ int iwl_acpi_get_wgds_table(struct iwl_fw_runtime *fw=
+rt)
+ out_free:
+ 	kfree(data);
+ 	return ret;
++
++out_e_inval:
++	ret =3D -EINVAL;
++	goto out_free;
+ }
+
+ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fwrt)
+@@ -829,8 +817,7 @@ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fwr=
+t)
+ 					tbl_rev);
+ 			goto read_table;
+ 		} else {
+-			ret =3D -EINVAL;
+-			goto out_free;
++			goto out_e_inval;
+ 		}
+ 	}
+
+@@ -839,10 +826,9 @@ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fw=
+rt)
+ 			ACPI_PPAG_WIFI_DATA_SIZE_V1, &tbl_rev);
+
+ 	if (!IS_ERR(wifi_pkg)) {
+-		if (tbl_rev !=3D 0) {
+-			ret =3D -EINVAL;
+-			goto out_free;
+-		}
++		if (tbl_rev !=3D 0)
++			goto out_e_inval;
++
+ 		num_sub_bands =3D IWL_NUM_SUB_BANDS_V1;
+ 		IWL_DEBUG_RADIO(fwrt, "Reading PPAG table v1 (tbl_rev=3D0)\n");
+ 		goto read_table;
+@@ -855,10 +841,8 @@ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fw=
+rt)
+ 	fwrt->ppag_ver =3D tbl_rev;
+ 	flags =3D &wifi_pkg->package.elements[1];
+
+-	if (flags->type !=3D ACPI_TYPE_INTEGER) {
+-		ret =3D -EINVAL;
+-		goto out_free;
+-	}
++	if (flags->type !=3D ACPI_TYPE_INTEGER)
++		goto out_e_inval;
+
+ 	fwrt->ppag_flags =3D iwl_bios_get_ppag_flags(flags->integer.value,
+ 						   fwrt->ppag_ver);
+@@ -873,10 +857,8 @@ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fw=
+rt)
+ 			union acpi_object *ent;
+
+ 			ent =3D &wifi_pkg->package.elements[idx++];
+-			if (ent->type !=3D ACPI_TYPE_INTEGER) {
+-				ret =3D -EINVAL;
+-				goto out_free;
+-			}
++			if (ent->type !=3D ACPI_TYPE_INTEGER)
++				goto out_e_inval;
+
+ 			fwrt->ppag_chains[i].subbands[j] =3D ent->integer.value;
+ 		}
+@@ -887,6 +869,10 @@ int iwl_acpi_get_ppag_table(struct iwl_fw_runtime *fw=
+rt)
+ out_free:
+ 	kfree(data);
+ 	return ret;
++
++out_e_inval:
++	ret =3D -EINVAL;
++	goto out_free;
+ }
+
+ void iwl_acpi_get_phy_filters(struct iwl_fw_runtime *fwrt,
+=2D-
+2.43.0
 
