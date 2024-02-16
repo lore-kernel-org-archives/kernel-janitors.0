@@ -1,125 +1,101 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755213ADC;
-	Fri, 16 Feb 2024 06:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269991798E;
+	Fri, 16 Feb 2024 08:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708064933; cv=none; b=N7CvBfGQwBlrou6wEJlWjrl3vw5jfvhmOWLk2tAIIJ7rAdoDiDh6Zp/kixklatq9nb0b2o/uStkVoMEaYd7I+IFQsfOgrhYdkDdSTt7454WzSKr0DcXD8hog9MxlCfP9y4zaiir55fNr2nPnbqLcn2r+bbRANHDVpbqcuMvED3Q=
+	t=1708071564; cv=none; b=RtyYDyhegc/w2sdrTkZuJxiy50u+aCMJkNyD+kS032rT8h5uJRclVtou2YfvshiY3fN8dxOu5Qa2wQI0FgCAF0BSXxgBUguP2yxG61rEJKtAcdjcufrnYL8RUwhAErFgJ07dBBk5an0lQmgbYoVqC6vT6NwJnyfck1wtr5RlUEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708064933; c=relaxed/simple;
-	bh=mo8ee+GHz6jPEyUXXrNLlFXpXh64sJy2csTQ8HmKw7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AHO6fTy5pHZMski1Qh0B3hwXKeM+HM9L9dxZamOwhes/K6lO2txxDr1/aAHS/DRuSkFIlMKlkzOTJsNguXX5dIH2/YGm3Ks5CoLutavsJqkhjV/xM/rHfhHmisG7PE/09tnuNM210mD6mb3twLBDEtz/6rfupPV4uHi5abh3uVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T2N8PVS8; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1708071564; c=relaxed/simple;
+	bh=8ZH4X7IkAgYh1aAOxTz7Kvex+GWC3Fv0EXF6Y70Bd4w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=qW2NRpCZiU3UnyP/ccvNLrA2WjSzGqTe3s+MVs5Vi1KlWNoxoNE/V/amzEN/v4pY01Yw+EZ+BAGQPHPbGrx5SWtdptYevVQ5x+2OYWCNA/rtOQCuo6ohdv2wUu3uR9aRDbv8XsKS0gB0QdkRZX/III5HAl+BGPnCzOLM4Dvat48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWpVj+lj; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T2N8PVS8"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41G4xZru032307;
-	Fri, 16 Feb 2024 06:28:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=11lhowEku9JauzXkE/wObrLIf2iNOyLR/O51AA5UCuY=;
- b=T2N8PVS86lByXQAks6rnchO2FxtwcI5Br/7b/QZMXkzC3UZT7wiOFORaIb/K3rsrLWRk
- zx6lHb4LDyFvLTSiPt9XBtlDpH80p4VGbHNC2wa7YX7mpnOUdWtupzrERO47lICHydus
- JgYCYpJ6tSPtYEzuYDOSEqp8bf91a3YWV1H1Ra3+h300GS40H8Pdsv3v57Z/Og2KlMHL
- EPymbvpIgpxDybp6yVOq4WhwD4zpVttTxVQwJ/aOsa/92dDmr0m9Ma+KAJdcfKXAOCXD
- MtGXSVdc2uGK7G+0HDUgKsxnny/hatnPFri7xe79TIeQXhkEaBNWoktZ3Zmcmc/wlLyy Dw== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w91w6vduw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Feb 2024 06:28:33 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41G5P48i024566;
-	Fri, 16 Feb 2024 06:28:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3w5ykj07sn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Feb 2024 06:28:32 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41G6P0w5021393;
-	Fri, 16 Feb 2024 06:28:31 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3w5ykj07qv-1;
-	Fri, 16 Feb 2024 06:28:31 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Alvin Lee <alvin.lee2@amd.com>, Qingqing Zhuo <Qingqing.Zhuo@amd.com>,
-        Wayne Lin <wayne.lin@amd.com>, Duncan Ma <duncan.ma@amd.com>,
-        Samson Tam <samson.tam@amd.com>, "JinZe.Xu" <jinze.xu@amd.com>,
-        Josip Pavic <Josip.Pavic@amd.com>, Cruise Hung <cruise.hung@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, dan.carpenter@linaro.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        kernel test robot <lkp@intel.com>, Dan Carpenter <error27@gmail.com>
-Subject: [PATCH] drm/amd/display: fix a possible NULL dereference bug
-Date: Thu, 15 Feb 2024 22:28:22 -0800
-Message-ID: <20240216062825.165627-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWpVj+lj"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a3566c0309fso209572266b.1;
+        Fri, 16 Feb 2024 00:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708071561; x=1708676361; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vkcZNtVWFcpaYRh5KBkVLspCvZTJEh/dDf70Iu1sYYo=;
+        b=KWpVj+ljcvwFrQ31N3APbWWfn+AHBNhKl8xtNODtNCuqDbATzYDskiyhG9ggvxfUvo
+         lAL1YTTMlcGM/3vBlO7F24Zz2+zzD5ntSHq0vqmJykmJuToO6UevPKLIrjmtSCPoEwUW
+         QmJg/IA8kyYb14EZb/nkB8neqLC2eZ7OZm2Q8f2yWjhpMv2wwlC5HyA9GlkNJ+YAzgPD
+         lIyzWUuADnnHNjSAD8CeqkMF/npgn+2lWViJlPA51G8Gvfya63TL+uDL7+DfRulk2Rb8
+         0pwPYWiosydQSLTEMA2+yiH9LSLbVkYXlmPeoDab43yrpShfR65aSJTv1KLMgT8cz+6C
+         rDdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708071561; x=1708676361;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vkcZNtVWFcpaYRh5KBkVLspCvZTJEh/dDf70Iu1sYYo=;
+        b=LS8MNuMzEmB+KApaMuyi5vH+AiuwCtQxSJ8pDPYgKpJz8xdm/4tpEuHIC0oF/kJAg7
+         Yz3sAMLdiKVqd0Xc38Q/Z0avq6U8PNDGJ71w1s8sDUEtIuXGPbZ0MW1ttViswRoi37D/
+         uBTOdT060jsm0OYcxSNSiKZ3w0Ar1v+cmqGbZCJIkxeX92oxnYlDFQBcz41hoMDDzfb9
+         0XTKB1FlDXnEvdLbegHVHZ4cjUAR0FjZXkWD8bPpZJZgbi7gpN1Gw7fMnJUNgRUEx+Zx
+         zodgLBYVlsmixd0Lw+Pge2xEX3izdVkkZp9ZtIVlff7pmSrapnu1syoaz+zsOVlGWbNh
+         XVJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA9TTlGlrNUO/pfW6LgpuF3CGnQ8xw+C+xHVgQGsNXyFMG9BOSB1cIwh0C5dtkU54joqp+sbaEbF+peOEqu3O5wp3IcCa56CD9AABUs6nB9+Q48PtU3Mk5LaRkOLQz0tOYXQ5zF1LQNiwx7Yk=
+X-Gm-Message-State: AOJu0YylrR+37XeuDMndBIMgf1pwf0V1JLaIKfiRMY+mpGXt1zOcXbDJ
+	H0z3ZbMhVg4mkFKHCuC7m89WoaKHuuLZE2sxuRzXPBCCeEQElv/0
+X-Google-Smtp-Source: AGHT+IFXSBfbEqhz1EqCn2tCMy8Z7/w/zHz7KZ1UE8gVdsg6Mxzu1Z26+TLjMUeJRJmfDryyxt9c1A==
+X-Received: by 2002:a17:906:261a:b0:a3d:4e12:c0c1 with SMTP id h26-20020a170906261a00b00a3d4e12c0c1mr2585282ejc.39.1708071561103;
+        Fri, 16 Feb 2024 00:19:21 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:e91e:623:d202:a9b3])
+        by smtp.gmail.com with ESMTPSA id um9-20020a170906cf8900b00a3be730d63fsm1332888ejb.13.2024.02.16.00.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Feb 2024 00:19:20 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-bcachefs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair file entries in THREAD WITH FILE
+Date: Fri, 16 Feb 2024 09:19:17 +0100
+Message-Id: <20240216081917.16302-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-16_05,2024-02-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402160051
-X-Proofpoint-ORIG-GUID: kc0_sxQHa_Md3hCzniJTwJnbPLO9kRu6
-X-Proofpoint-GUID: kc0_sxQHa_Md3hCzniJTwJnbPLO9kRu6
 
-Smatch warns:
-	drivers/gpu/drm/amd/amdgpu/../display/dc/dc_dmub_srv.c:136
-	dc_dmub_srv_cmd_list_queue_execute() warn: variable dereferenced
-	before check 'dc_dmub_srv' (see line 131)
+Commit ead021e0fe5b ("thread_with_file: Lift from bcachefs") adds the
+section THREAD WITH FILE with file entries to the relevant header files
+thread_with_file.h and thread_with_file_types.h in include/linux/.
 
-Fix this by moving the dereference "dc_dmub_srv->ctx" after the NULL check.
+The commit however unintentionally refers to files with a .c extension, but
+the header files are of course with .h extension. Fortunately, the script
+'./scripts/get_maintainer.pl --self-test=patterns' notices that.
 
-Fixes: 028bac583449 ("drm/amd/display: decouple dmcub execution to reduce lock granularity")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Closes: https://lore.kernel.org/r/202311141141.GoLAPxD5-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Adjust the file entries to use the right extension.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Only compile tested
----
- drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-index 0bc32537e2eb..a4bd46ec6da4 100644
---- a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-+++ b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-@@ -128,7 +128,7 @@ bool dc_dmub_srv_cmd_list_queue_execute(struct dc_dmub_srv *dc_dmub_srv,
- 		unsigned int count,
- 		union dmub_rb_cmd *cmd_list)
- {
--	struct dc_context *dc_ctx = dc_dmub_srv->ctx;
-+	struct dc_context *dc_ctx;
- 	struct dmub_srv *dmub;
- 	enum dmub_status status;
- 	int i;
-@@ -136,6 +136,7 @@ bool dc_dmub_srv_cmd_list_queue_execute(struct dc_dmub_srv *dc_dmub_srv,
- 	if (!dc_dmub_srv || !dc_dmub_srv->dmub)
- 		return false;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 37bcf01bf1d1..d881bddabf17 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22025,8 +22025,8 @@ M:	Kent Overstreet <kent.overstreet@linux.dev>
+ M:	Darrick J. Wong <djwong@kernel.org>
+ L:	linux-bcachefs@vger.kernel.org
+ S:	Maintained
+-F:	include/linux/thread_with_file.c
+-F:	include/linux/thread_with_file_types.c
++F:	include/linux/thread_with_file.h
++F:	include/linux/thread_with_file_types.h
+ F:	lib/thread_with_file.c
  
-+	dc_ctx = dc_dmub_srv->ctx;
- 	dmub = dc_dmub_srv->dmub;
- 
- 	for (i = 0 ; i < count; i++) {
+ THUNDERBOLT DMA TRAFFIC TEST DRIVER
 -- 
-2.39.3
+2.17.1
 
