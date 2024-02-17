@@ -1,70 +1,88 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3E14F70;
-	Sat, 17 Feb 2024 01:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCBC1CAB7
+	for <kernel-janitors@vger.kernel.org>; Sat, 17 Feb 2024 07:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708132462; cv=none; b=POCvPMrliWvyc9ev33xNxBR5HfAueyqlKmqDbAoPZ6BQM+p3RxFv0LGtiAy3XC5CIHo0gTLw+jngc4fMrUSF7NHQN7wPGHAf2yWQYXlAG5AT928YvYOaN1DOUaCjufcxWSjNPTGebJdW0syKEWnjzwDF9Ke6iITPg9fQWAxgALk=
+	t=1708155121; cv=none; b=bz1qZigkXItVxxelMo+aroOkkuY9clIP3n/CBVwHu4FPqE0Iffs5cOrvv0UIkEqHZCdjrQ7sSBNXeoQFQkuvAQL5LMpNPe5/usRIg0djVjxyPe3nWA4R3lap1w+OLEQbuAhWyp43Gj1iiup4lcUNPDYvONI+HWWDw7RGV4Mxylc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708132462; c=relaxed/simple;
-	bh=eLT+arJ+8yFumTvJh48qRxmwSTAY308IM4WrOYdkfK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2rnLR2mmnQ5raXXhWnjTawdCPDInvos8RLAOIDp4msq3F5xJ/c6euXQ9r7tUT9+QdN8rAwr3ejVyNidaHkXlc/En3b1KFD+U448tgZjYRq7KmrdByh0w30o4L8N8G3y3oOAdPuEjZc20gpyqFVe1xEzp5c34zanMP2MMz7i7XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1rb9HN-00EePX-0C; Sat, 17 Feb 2024 09:14:10 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Feb 2024 09:14:23 +0800
-Date: Sat, 17 Feb 2024 09:14:23 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: adjust file entries after crypto vmx
- file movement
-Message-ID: <ZdAIb0RFdY8KUp8z@gondor.apana.org.au>
-References: <20240208093327.23926-1-lukas.bulwahn@gmail.com>
+	s=arc-20240116; t=1708155121; c=relaxed/simple;
+	bh=3wE0OY454mubqM9kqU3kHG80CJKYun5q3sKzkDVg2vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=h3PxBd0AGKoDoUjcSqJlSNsGgBcjKsMeDTnO/v6xhFZs1ruR1kljpa/WE7P04X8z5UT7daIYB1aXtAormltLkawGQJJSp5dQV1smlWSMQbaLejL76jzLjbrEMadYxoMYz/qUZXzJCt8jjRB1VM/Ac19TzAGamqXYdP5maRFDKfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PuMWz8ZT; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PuMWz8ZT"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id bF9rr7RBlRhCJbF9tr0LVY; Sat, 17 Feb 2024 08:30:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1708155049;
+	bh=5vKyutSF5vbJeBYhO1altd+rC0SgjetnS/HWHgINoOs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PuMWz8ZTELKEI8vMRbQe6sW8sB9UIkS8KOjwo8ppSOudEaxa0Lgmi5UFIpWeQIVYT
+	 Hg8au41CCBRXki8wWZso2guY1wUC/4Mpf9rpSHiDTqjE6ojSzFGiVYeurLICDSeOfK
+	 E1V27m6vMF9Y8tKWjykO3djjzhW9CCLiZv23uFgbmH15+Wp+kmzYATvvcH1vDXlGt0
+	 RP2krzxKEzp5Q+T8aY0w85zPLl6bRvtFMKobcgCoPOdU7R8lTydn4Dbr63omIqg8yb
+	 b/ySRMCSRFaOeD5yl6/hYQuMj6ITg227LEOy9bZmYLlFwrQTnHW288nsF53SWkgXvd
+	 J1wZeKzEafSaA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 17 Feb 2024 08:30:49 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-bluetooth@vger.kernel.org
+Subject: [PATCH 2/2] Bluetooth: btbcm: Use devm_kstrdup()
+Date: Sat, 17 Feb 2024 08:30:42 +0100
+Message-ID: <272fb12e9392c0bc6fead23931f98ea45bf6fc69.1708154999.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <79b9c9d9f86b4c573f0d3f2dac0a6fc9e6024058.1708154999.git.christophe.jaillet@wanadoo.fr>
+References: <79b9c9d9f86b4c573f0d3f2dac0a6fc9e6024058.1708154999.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240208093327.23926-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 08, 2024 at 10:33:27AM +0100, Lukas Bulwahn wrote:
-> Commit 109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto") moves the
-> crypto vmx files to arch/powerpc, but misses to adjust the file entries for
-> IBM Power VMX Cryptographic instructions and LINUX FOR POWERPC.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> broken references.
-> 
-> Adjust these file entries accordingly. To keep the matched files exact
-> after the movement, spell out each file name in the new directory.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> v1: https://lore.kernel.org/lkml/20240129131729.4311-1-lukas.bulwahn@gmail.com/
-> 
-> v1 -> v2:
->   - address Herbert Xu's feedback:
->   keep the matched files exactly those which were in the vmx directory
-> 
-> Danny, please ack.
-> Herbert, please pick this minor clean-up patch on your -next tree.
-> 
->  MAINTAINERS | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+Use devm_kstrdup() instead of hand-writing it.
+It is less verbose.
 
-Patch applied.  Thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/bluetooth/btbcm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index 01d2343b4978..f9a7c790d7e2 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -544,7 +544,6 @@ static const char *btbcm_get_board_name(struct device *dev)
+ 	struct device_node *root;
+ 	char *board_type;
+ 	const char *tmp;
+-	int len;
+ 
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+@@ -554,9 +553,7 @@ static const char *btbcm_get_board_name(struct device *dev)
+ 		return NULL;
+ 
+ 	/* get rid of any '/' in the compatible string */
+-	len = strlen(tmp) + 1;
+-	board_type = devm_kzalloc(dev, len, GFP_KERNEL);
+-	strscpy(board_type, tmp, len);
++	board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
+ 	strreplace(board_type, '/', '-');
+ 	of_node_put(root);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.43.2
+
