@@ -1,114 +1,71 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BE66D1AB
-	for <kernel-janitors@vger.kernel.org>; Sun, 18 Feb 2024 17:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B287604D
+	for <kernel-janitors@vger.kernel.org>; Sun, 18 Feb 2024 20:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708278428; cv=none; b=VJD0lVhhk5tcvhCsWYJ0jz/ej0+iStok+n8iEGd6zWyx0MfIU9dKG0pb85KpwHcP5kd0xsdRlHr0Dk67vpucue4R7R5JhE/7H3XP+t+2qDxTl8OoF1yUy9N0fDxXKx9LnZZhwNBJwAaoD+LgzSusUr70Z2056TV0Ayf9UXxWPnY=
+	t=1708289882; cv=none; b=aNEsA90GC3DAVp+LldiVZIspqtctjVaCsbgeq+RhCxHFgaad7O9ujOTYdhEFynLvOrmNoigXfF5giimVwOCsQHGvieEdiTiJA67MvsGMVDPJGqom8suMsTivpYof2QEseLQDf47UYnjKsCtkAcD10St3fvyKkxgN+7Sfc83esDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708278428; c=relaxed/simple;
-	bh=72fk0PVXRZ8Q4JWxUxUYDfHppG9f2BAjRRu5pbDdVro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iiM6+p3ffeFXxnU8XQFXg3d2bgfouig1T3x5A13/OyvxD43KMGjramhIdLvBkHPFV/I4uqjS9RqXPLGf6oFt88gMie6hQ1WsVb1FG1w6ZM5LHSz5kBgW+mnysvq268zCO2CuF4zELyksTKBRQMXGl4mDS0FzVqhhzpPcoOQwWXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SD9wlefO; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1708289882; c=relaxed/simple;
+	bh=R3BsKSBb4VGS4GVOpXyV+CdEBnSBq1bsunScPm8BKvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrQcFVQuhY7tv0FyonG2jm5KMW4Ky873zawQHqzPH/Rb22sl/PLdZ8wTg2cwtxEc7aLjzaks4gE/odpISjf+mL8vI6GDE4fSwgQX9bil7dVpXZGU3RzJrxhdBovo65MTjE9Hd1nWytabcKFaVaRxoO7nR5uHe+j2unuMyve11AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cNSa8tXr; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SD9wlefO"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id blFbr8qYHiCLsblFer7StJ; Sun, 18 Feb 2024 18:46:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1708278417;
-	bh=y2+kKbrWEFY2/pmLK9szqs3+euOSxAcesJDdReAip00=;
-	h=From:To:Cc:Subject:Date;
-	b=SD9wlefOwXg6avVhwSrVQdg+pRLNLNGc+ZUkn8lC/1XFjrHZc30uIj2jPvkEWP5cb
-	 wiHSjYsY5V2op+Ln67qbUlLXw/7k3gDzmSapsEgNjU2FE7ZQFZeRAuDAkPHNJi0+9i
-	 3O0ClCSTsfy7DletOKheud1v1mlIm1LkH2827FumbJLNPbd7ozcZdiM34zTIQM6eIp
-	 iFy+zsBoGPfT58YXmqfV0/faepuFDWLu0whT+sljy78xCEZdC8SGTXALv3bim/xS+r
-	 z6Hjxmm8jvIpbKthLpg3OcdQEbqDKstm8BPQdu3EnvoPuV1rqWapIbUpBqLWwioruD
-	 Hs+GmnM6RYFgQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Feb 2024 18:46:57 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: gustavo@embeddedor.com,
-	keescook@chromium.org,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: [PATCH v2] udmabuf: Fix a potential (and unlikely) access to unallocated memory
-Date: Sun, 18 Feb 2024 18:46:44 +0100
-Message-ID: <f75d0426a17b57dbddacd7da345c1c62a3dbb7ce.1708278363.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cNSa8tXr"
+Date: Sun, 18 Feb 2024 15:57:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708289877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EdAwdrqq1gjopSy69bhrt8pxRsrhYgfK4y3CMVxelXU=;
+	b=cNSa8tXrIg0K67WUJsYtKYxpEgNZ6dhvowvBSBxFGSSFh47PK200tMOTvcGy6T4MDO12q4
+	lDWB/9TzyZXQSKiOAIy2981a0s/SzsT2u2XVS4/GeU/LBE3w8eYC23x5+wL18zHh2VZCUy
+	hIR9xeQWwA5Rcmuay329tja3A9bGqro=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH v2] bcachefs: Avoid a potential useless over memory
+ allocation in bch2_prt_[v]printf()
+Message-ID: <g6wbkgivnpdsxbosmptshcveplxylfnfqsgg4e2xa4xiyrhuty@bxa3aayk4scc>
+References: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
+X-Migadu-Flow: FLOW_OUT
 
-If 'list_limit' is set to a very high value, 'lsize' computation could
-overflow if 'head.count' is big enough.
+On Sun, Feb 18, 2024 at 05:12:28PM +0100, Christophe JAILLET wrote:
+> 2 issues related to incorrect available space in the output buffer
+> computation may lead to some extra memory allocation.
+> 
+> 
+> First: vsnprintf() takes the size of the buffer, *including* the space for
+> the trailing null.
+> 
+> But printbuf_remaining() returns the number of characters we can print
+> to the output buffer, *excluding* the terminating null.
+> 
+> So, use printbuf_remaining_size(), which includes the space for the
+> terminating null.
+> 
+> 
+> Second: if the return value of vsnprintf() is greater than or equal to the
+> passed size, the resulting string is truncated.
+> So, in order to see if some extra space is needed, the check needs to be
+> changed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-In such a case, udmabuf_create() would access to memory beyond 'list'.
-
-Use memdup_array_user() which checks for overflow.
-
-While at it, include <linux/string.h>.
-
-Fixes: fbb0de795078 ("Add udmabuf misc device")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: - Use memdup_array_user()   [Kees Cook]
-    - Use sizeof(*list)   [Gustavo A. R. Silva]
-    - Add include <linux/string.h>
-
-v1: https://lore.kernel.org/all/3e37f05c7593f1016f0a46de188b3357cbbd0c0b.1695060389.git.christophe.jaillet@wanadoo.fr/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/dma-buf/udmabuf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index c40645999648..5728948ea6f2 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/shmem_fs.h>
- #include <linux/slab.h>
-+#include <linux/string.h>
- #include <linux/udmabuf.h>
- #include <linux/vmalloc.h>
- #include <linux/iosys-map.h>
-@@ -314,14 +315,13 @@ static long udmabuf_ioctl_create_list(struct file *filp, unsigned long arg)
- 	struct udmabuf_create_list head;
- 	struct udmabuf_create_item *list;
- 	int ret = -EINVAL;
--	u32 lsize;
- 
- 	if (copy_from_user(&head, (void __user *)arg, sizeof(head)))
- 		return -EFAULT;
- 	if (head.count > list_limit)
- 		return -EINVAL;
--	lsize = sizeof(struct udmabuf_create_item) * head.count;
--	list = memdup_user((void __user *)(arg + sizeof(head)), lsize);
-+	list = memdup_array_user((void __user *)(arg + sizeof(head)),
-+				 sizeof(*list), head.count);
- 	if (IS_ERR(list))
- 		return PTR_ERR(list);
- 
--- 
-2.43.2
-
+Thanks, applied
