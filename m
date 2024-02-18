@@ -1,89 +1,116 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CA8149DED;
-	Sun, 18 Feb 2024 01:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BB06BB41
+	for <kernel-janitors@vger.kernel.org>; Sun, 18 Feb 2024 16:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708218836; cv=none; b=kChUMHFAgZuxD39+2QisSxJBqIOi48wHdWiPDH0IOJDTTkhLdUWztYvnfaMxC0CKM0fUvAUuLDpL1QXtOrkZiyi2m/UhcaCDoHrQy0rA6IqnPoG5G3xXTKcQs3vt4Tb7FjTYqQanyumaQN8ajyIyXLqun161gVcBkYDVEasNNLU=
+	t=1708272826; cv=none; b=WeJz2njBHbV47/KDQy553UcB3Bt943u6UTrNHnahesaWdXBl32Z6RjsbWSBQyd/eEc5D0pD/k0FA1kTspvYS7h72BwuYQuIifizmjN6Jz3Dc/To5MOYiGkP16o7WD8E5fBZ+MDhotByO6HoVPv4cWNzOCCJ3iJ0vJ+eNTM4NOCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708218836; c=relaxed/simple;
-	bh=BM5fWLHxt+nbnIcaH9/6rApX+O/g3UTPsFa3hJbgNYQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MjRzLnzvXJzzs9scfp+J4YYdIQl0YLkje2zoa6l8/woLf9J7EdzTWeJzxbklvcDjnYqnQufyOaZrbqI6zCdB2TjJeR6t7fotcE636P0NSaJj1AbosZA7WIWtM30skVdOhIr2ovIelsm9BdNYFNlK9pf+uJIjFITQYLuPwbuMDo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4TcncM4vSQz1FKTg;
-	Sun, 18 Feb 2024 09:08:51 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (unknown [7.193.23.68])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5AB314040D;
-	Sun, 18 Feb 2024 09:13:39 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 18 Feb 2024 09:13:38 +0800
-Subject: Re: [PATCH] jffs2: print symbolic error name instead of error code
-To: Christian Heusel <christian@heusel.eu>, David Woodhouse
-	<dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>
-References: <20240211003907.167891-1-christian@heusel.eu>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <e4d00360-bb36-cfe1-5c0c-8e5b1c7bebc0@huawei.com>
-Date: Sun, 18 Feb 2024 09:13:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1708272826; c=relaxed/simple;
+	bh=bbVXN7nFPxD2+8T/Qp3xY6pFsgPWqO0g3GtqcUTohS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wr4JWbRGXKoUQejQY7Arn5yl09Y4S6uAh3D47Y3raC+1axULXrcVM2OeVGBavx1/9xNLEV/zpr87VWh0hzTv+KLAeg/RzmZYHjPbE4vCryAMUINx2eRFii3dZ+cyXTL08pMxoKCaWgP1Q9aJBCVTmPx0jX8MHYox/2+C+7exWxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JHaOFZbA; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JHaOFZbA"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id bjmLrpU1LVqNHbjmLrVuBk; Sun, 18 Feb 2024 17:12:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1708272754;
+	bh=yP76YXZufoYcbf/1hIaf1uWL8S4sDWOfmF4KUI6YdvU=;
+	h=From:To:Cc:Subject:Date;
+	b=JHaOFZbAvu0zG1EvsB/x423fdxAWjYdx+Flpo+0ruoCfh8f0EnbAsRDDWzio52hMD
+	 gqImRib0PIjw31bAQaABDabNQjHimRkR1HYvo1VOtSQkqpSHWXo7t9sFmscYKOBZP5
+	 9mtdG71zMCFgwKWJEj687d9tdx4+uqqidiCAa0SCrczJ8e9oI+gVPA/zQTg9XGfU64
+	 bTOlvP3vYm3zvCE3LqOCH1LLeYL+Wh8iZXftj8dNT+YUQO36EHtMhGMGFgQeaOZ6w7
+	 MmQClqXECsTRopQXvfGmb4gNNJM5d4g8Lr4eBtD2GFzTxL9YCvMpDEcSxWfksBW3V4
+	 e7Z5HvIfNy0GQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 18 Feb 2024 17:12:34 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-bcachefs@vger.kernel.org
+Subject: [PATCH v2] bcachefs: Avoid a potential useless over memory allocation in bch2_prt_[v]printf()
+Date: Sun, 18 Feb 2024 17:12:28 +0100
+Message-ID: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240211003907.167891-1-christian@heusel.eu>
-Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600013.china.huawei.com (7.193.23.68)
 
-ÔÚ 2024/2/11 8:39, Christian Heusel Ð´µÀ:
-> Utilize the %pe print specifier to get the symbolic error name as a
-> string (i.e "-ENOMEM") in the log message instead of the error code to
-> increase its readablility.
-> 
-> This change was suggested in
-> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mountain/
-> 
-> Signed-off-by: Christian Heusel <christian@heusel.eu>
-> ---
->   fs/jffs2/background.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+2 issues related to incorrect available space in the output buffer
+computation may lead to some extra memory allocation.
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> diff --git a/fs/jffs2/background.c b/fs/jffs2/background.c
-> index 6da92ecaf66d..bb0ee1a59e71 100644
-> --- a/fs/jffs2/background.c
-> +++ b/fs/jffs2/background.c
-> @@ -44,8 +44,8 @@ int jffs2_start_garbage_collect_thread(struct jffs2_sb_info *c)
-> 
->   	tsk = kthread_run(jffs2_garbage_collect_thread, c, "jffs2_gcd_mtd%d", c->mtd->index);
->   	if (IS_ERR(tsk)) {
-> -		pr_warn("fork failed for JFFS2 garbage collect thread: %ld\n",
-> -			-PTR_ERR(tsk));
-> +		pr_warn("fork failed for JFFS2 garbage collect thread: %pe\n",
-> +			tsk);
->   		complete(&c->gc_thread_exit);
->   		ret = PTR_ERR(tsk);
->   	} else {
-> --
-> 2.43.1
-> 
-> 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-> .
-> 
+
+First: vsnprintf() takes the size of the buffer, *including* the space for
+the trailing null.
+
+But printbuf_remaining() returns the number of characters we can print
+to the output buffer, *excluding* the terminating null.
+
+So, use printbuf_remaining_size(), which includes the space for the
+terminating null.
+
+
+Second: if the return value of vsnprintf() is greater than or equal to the
+passed size, the resulting string is truncated.
+So, in order to see if some extra space is needed, the check needs to be
+changed.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-tested
+
+v2: - Use printbuf_remaining_size() instead of hand-writing it.  [Brian Foster]
+    - Reword the commit log, hoping it is clearer.
+    - Synch with -next-20240215
+
+v1: https://lore.kernel.org/all/0f40108bed3e084057223bdbe32c4b37f8500ff3.1694845203.git.christophe.jaillet@wanadoo.fr/
+---
+ fs/bcachefs/printbuf.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
+index b27d22925929..8cee9c2f88c4 100644
+--- a/fs/bcachefs/printbuf.c
++++ b/fs/bcachefs/printbuf.c
+@@ -55,9 +55,10 @@ void bch2_prt_vprintf(struct printbuf *out, const char *fmt, va_list args)
+ 		va_list args2;
+ 
+ 		va_copy(args2, args);
+-		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args2);
++		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
++				fmt, args2);
+ 		va_end(args2);
+-	} while (len + 1 >= printbuf_remaining(out) &&
++	} while (len >= printbuf_remaining_size(out) &&
+ 		 !bch2_printbuf_make_room(out, len + 1));
+ 
+ 	len = min_t(size_t, len,
+@@ -72,9 +73,10 @@ void bch2_prt_printf(struct printbuf *out, const char *fmt, ...)
+ 
+ 	do {
+ 		va_start(args, fmt);
+-		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args);
++		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
++				fmt, args);
+ 		va_end(args);
+-	} while (len + 1 >= printbuf_remaining(out) &&
++	} while (len >= printbuf_remaining_size(out) &&
+ 		 !bch2_printbuf_make_room(out, len + 1));
+ 
+ 	len = min_t(size_t, len,
+-- 
+2.43.2
 
