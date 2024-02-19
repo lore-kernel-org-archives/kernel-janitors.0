@@ -1,160 +1,174 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EC5481B2
-	for <kernel-janitors@vger.kernel.org>; Mon, 19 Feb 2024 18:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708366284; cv=none; b=LQMbXF7NhxFpKtn6EhPU20VVwCbHBrroJD0lkoYLxIGpOGzP7vPfHMI47oeZ5On+VX+1bWFxqk1wZwQbAa2T/XFb3lXd0QE5EYFq/tA5gW7uIG0qzI26t6vHhAsjVj6UD+PSrXLdFkM32DOm4Xck7gpycTX/4ZDQ74lTLlPWFC4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708366284; c=relaxed/simple;
-	bh=VMG0FUPd+kO1UMfam5hKqmeC8mpbpmgr7NCRClOWnXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ex0UaYzw5GM+PvTAr/0nqWk6iNi8AhGxo8i4C7iGJED+MJ2lb5x+Ih+PCdiUPSQuNNw/gamfyVLetGet55M2su1wceYwk8vKXF4Gyh84OHHj0KYC1RwlMgq14jYSMnFkCchhuBHcqCcXh2LCj5+KTRZX2wZLrSANzo3LvE0MILY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F6tpps14; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A784F1EA;
+	Mon, 19 Feb 2024 18:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708368174; cv=fail; b=FigDnZDZGrtgzN+hUrrEMqbBuHONaK5mymCueFO/uFnN/fH5xnccRa/iWlDNAOqjdpAGyYUPSyafLT3P0UFgN2d/oAv43kg3qCIe9izPtknaBV381A77G/eu6PibA9ZLxvvDDLVj+ysWJWCDVYawTJErxzVpVUTkOQsHT8vRq8Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708368174; c=relaxed/simple;
+	bh=3QElO1zrZDPHq1X24auvsot7zs2OPGUhtX5RNSfxi58=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DHNh+Vk3hWyoeeblPFUrt9prL2J8GmCskJ26mBZrfqK0fgy3UPTVh99dgW8UghSBfGBeYh6YPlMUj0HXwtBycC5Dmie3YatUU+Hbk6EkpteOTILiL+5ODfUSFzAfxgGVVz5GaK2a3ALyUyxErvRMeN8ZuxSB1kqAfXg3jRwSSjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mQBY47XP; arc=fail smtp.client-ip=40.107.93.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F6tpps14"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id c85irVcPB58CZc85irrhO1; Mon, 19 Feb 2024 19:10:11 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1708366211;
-	bh=tLmysCFqJCBp4TBWVrdLLgYXDPccma3RhSmnyQ0EwgI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=F6tpps144gVlrYjHGIDYz/gTXAJluqaebMaqobJjJk71MNEprsG3bMLFkMMFlswrQ
-	 O+DJDNWCgS+VL43hGZ8FUBk3SXWbNrfWsR+g7f82QU1LHMM8uSyA20YYIuWLJ0wXCH
-	 D7cYPhd54wh8HTfyiXihFZeDLMd6QY0Ci5oblWtsreh6li3xEOz2fdrNit11sBPPX+
-	 Pb5ZxP2IDZchfteFz7WwEIa1HZ2Lukc+xmOJPtd4FFSnKXgBZtvoWKfOEez0sZ5t4k
-	 qrJA2z8QHkyOs0kxKk5pO2CDk6biRxXX11dzHb05JZV0Kvg95J6lfsalRN3khLR0R/
-	 x1uI3iPoh+kQA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Feb 2024 19:10:11 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <c745c4d3-a084-440d-bc07-0ecbcfe10e37@wanadoo.fr>
-Date: Mon, 19 Feb 2024 19:10:10 +0100
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mQBY47XP"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Fa7g7S1WwAhdYqVcNhOmuzlmrYPKh5p7C+uPtswDezwctU05pmTyGIdS9SMvOIc0nW0zwc9/fB+6orVB2T3SC5lwth8JBqi6xpaScsnQ207utcLc6QRLU6Uz9RH5PAQkHwb1is6M1ccNBBPQjxaQsFd9pQv7fuF1cPNjGiKvmKEkHi2Sfp2csUZh6kGilMQ3uAmCKIqZgSqYDxvfX1NbH0LhABz/hzFaQaJGBCpdo2iLDT2454T44zJP2ZKrn3bytCE6ewu4EbOqbVWROCjZzYuZ9qJdFGOeT1PUDRqT9HCBOinLttO4WBCLvmmmezLfmqJAJIDxJfbh376BtYssYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3QElO1zrZDPHq1X24auvsot7zs2OPGUhtX5RNSfxi58=;
+ b=M9/F0gbTXJSK5bYkrDZ24mZf/0ltOkPP07HqyYtfymf0U9AsLt8jPjELTKcCfI33Jnp8ARUZoVf+tsi9apVk9gItjF2dhXz0/24ueVSjpdkoSa4W5LNVPyMzyPjNrrEOCHouumumcSt22Jg61uGJybTQGtI39a/yX3o039iQqsJUv0Uq79aIWjV3DPQ3vEd3dEC5AkcRpCGBxNQ9LF+/R9CSgMim7xOhidJUc67nrMdmccIRYcIVSnr4cvvcCSMx6Oqw36dHgmgj33cwqkd/eDMDSFOMmODBshBxSpac0BQjDCHWm/R1EKJOm7yXgCI6HzLKpPYlQ4FSWGFbEjMHRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3QElO1zrZDPHq1X24auvsot7zs2OPGUhtX5RNSfxi58=;
+ b=mQBY47XPif9w7OL1EyhYok1PdSb8IpwrTWYNR+tROlpeDfBNBAkGp7XkAFMUFr3tEwpELeYkyD13KuV/QfLcPeRx4lIyaPe74jkSBglJAHxnSdS03FYg5WL9P4Xj0U9fdmTeancTngpfsIUadnSUJy02Vc9UeO6eptkTLKKiWeQ=
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
+ by MW6PR12MB8705.namprd12.prod.outlook.com (2603:10b6:303:24c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.17; Mon, 19 Feb
+ 2024 18:42:49 +0000
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::db7e:d46d:eefd:5fc5]) by MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::db7e:d46d:eefd:5fc5%5]) with mapi id 15.20.7316.016; Mon, 19 Feb 2024
+ 18:42:49 +0000
+From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+To: Markus Elfring <Markus.Elfring@web.de>, Niklas Cassel <cassel@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Simek,
+ Michal" <michal.simek@amd.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>
+Subject: RE: [PATCH v3] ata: ahci_ceva: fix error handling for Xilinx GT PHY
+ support
+Thread-Topic: [PATCH v3] ata: ahci_ceva: fix error handling for Xilinx GT PHY
+ support
+Thread-Index: AQHaYQQd1oXE4sONC0e7cAjEQuuwLLERdsKAgABfxgCAACxGcA==
+Date: Mon, 19 Feb 2024 18:42:49 +0000
+Message-ID:
+ <MN0PR12MB59537A9F0EAEAC9E844C8DCDB7512@MN0PR12MB5953.namprd12.prod.outlook.com>
+References: <ZdMp+QBiays6fprk@x1-carbon>
+ <9427c0fd-f48a-4104-ac7e-2929be3562af@web.de>
+In-Reply-To: <9427c0fd-f48a-4104-ac7e-2929be3562af@web.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|MW6PR12MB8705:EE_
+x-ms-office365-filtering-correlation-id: 453dbd51-65ae-412a-52e3-08dc317a92a9
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ WNlad6B/V1bTUHJ9qtvNVOkVFSsZA/rr+n1+JRVv6w3JXlmhF4rKIeCfIMYnFUtEBrCOZBJ+DMbuQAYTz/fQ+5VXqBY+VGlTz5dJ58V6hLPJVaHkgNKKmQ6rLlWDY0ruhQtHnT39/FI066QSYGRsSFdrnmZDokWlK5gUwJYdbvUqndBcL4EtZKZx305H5B+/pnIEUC3RhuzbDuD3egfIUJ9uP4dYICBEOfgYN9p+YY1x9Uw8YpNO8CFb1wCWtrrTH1V5yUI4RYLUUef7t2/P2yGlzHD47/15eF+nX9Qz18JYwLOaGlj3P98kfABPwGC0WOVmDZ3SBIi6jq5ynmEbsCgrhBxu3eFfBwZhJ+UzoR92R5VmdlxNB6KaiBlrECPWVV2dRafiK8nU1ijMpp4i8wLhUjidhpdDY66iP3iZeUsAwYGa8l9biO0ZUKSOvsa/24+c9SmzArfoW/PgrfeRf9SuTtV8YH37ancRlDsuBXkNK/qoHxt+Us3c/G7AzTUSR425P/L6hZ9LVL8ooNfoANxR3KXkq6kzkTBTApcTy2cTqAMw2VLLhUuCD6GyGUbCx4ct49DWT34vL7R5FLGe/TOvUBbO9a+wAONEn+kX/y0=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YmpDQjJqOWUwOVhwUFpvNmY3NDlCZkJyQXlPNXRrclJVK3FHSCtTU20xZUFO?=
+ =?utf-8?B?eXRjcXRwNkh2ckVieldJdHMreDdkK29majIxUnZ3cTl3Ly9iWUh1UUdURE4r?=
+ =?utf-8?B?bkN6YUh4dzI0Y3pZdnFjZWRWMkdoK3R0dktCOUFqeEx4NDRMNmVlMVUyME5i?=
+ =?utf-8?B?MEwzazEwU0hNS25TelBxL2ZkLzlGclhGY0ttWU5aUWhhLzZUL1BzV2VnbnFQ?=
+ =?utf-8?B?VGo5U3l4TkRNRjBUSHgyMjEySENJVmxEWFIxQ3RLSkhNaDZnaVNHdC9QVmRR?=
+ =?utf-8?B?QUR3NjVLR2o3WVlJNkZxYnRIMGRzT2lnT3BGQnhHOHhXUFE0RHBjcnlETUg0?=
+ =?utf-8?B?TlU3NmpjMmxaeVNIRGtIQXBQM2EwM0U4c2VJOFhwMmtoUFdoQUdUSnB1WjUx?=
+ =?utf-8?B?a0JoVlpkaFZVcjFyamVKc1lRU09yNjZ3RWhuTlkrTmp3ZHFpN3BBVnVoKzdi?=
+ =?utf-8?B?dWRCRTRrUkN4YUVmKy9TcGhRbm5UZDdTU0pNbjlyMHYrVUg5UXVJSW5FUDZ3?=
+ =?utf-8?B?aGdGdy9Va3hQYmFPMU50ekNXdzVRQmFwZ3BMU2F0eUpYNE5rQ2J5Y2pvRVUw?=
+ =?utf-8?B?aUlEbld1eTVmOVYyRDBLZC8vemd5S1dVeE44N2NYYzVvZENzdGVCOWgvZ2ha?=
+ =?utf-8?B?Y3lmOFdPL1dQOVc1eTFHSjZBREkxaHBva0ZCaGtjRDE2c1l4RGFqR001REJC?=
+ =?utf-8?B?bWlubXhqMVBrWEdySEJoMHJESWFaWm03dnBPWWZ1TUpxS21pTlNmSG9nMk9L?=
+ =?utf-8?B?RUhycVczT3QzN2lCNVdzVk9WR09KN083ay9kcXQ4RnFBM1hONUE2NTUvb1pv?=
+ =?utf-8?B?OTUzcDU4eGdhZkRHOTYzUGtLeGVtMkNYV1hIeFRSRVNjZ1JSZkF0QTlVeFF2?=
+ =?utf-8?B?NDFGT1N0WnJMbVdOK2QzUnBTNkdmZ3dYZ25wa2JCY01SZ1NCVlVTUlRTc1Ji?=
+ =?utf-8?B?WFM2NVdUMXRZNEtlWFZkRGdVM0IrcElnWUM1a1NaUHV4Y05oK2lZUzNtanps?=
+ =?utf-8?B?S1NiSlM5cUlVWXMvUzNYSTJMdUJGS2VsL21teWt5eGZUL2V1aTVIVmtxR05O?=
+ =?utf-8?B?RmNXZnhZS3JnM1lxZU5tb1JMN1J0S0JOWk1ZY0xueWpmaGJMV0F5aFFBaUx5?=
+ =?utf-8?B?OUNFU3dpREV4djRtaEtxMUk1Yms3VE1VMEc0Z0x6RG5JM0ZnVkQ2MmNMNFNp?=
+ =?utf-8?B?SUNKMXl3ZDFicGM3Kyt4VlEzb24zVEZqcDRFN0M4R081NTlqUE5jMEcyK1VW?=
+ =?utf-8?B?Qjh5MWpwS3JRQXl6QStIaWpWU0hLRFVKZkc2U0NZT3J6OUZEVGswK0V2bGY2?=
+ =?utf-8?B?YmFndlFwR2duWnA3S3VndGwyLy9YV1UwekdpeXgwNTlvTkxvNHNCVnNHRHVu?=
+ =?utf-8?B?S00xeXd2MnB0ZjZJTjZUSmw1eXI4R1B1M1lmay9MbXY3eWMzRFNHUksyZzNx?=
+ =?utf-8?B?RU42Y2hBRktuOVhMaG1SRXA4N0Y2T1FDbEpheFlHaC8wbThuejZXazE5elU1?=
+ =?utf-8?B?Wlo3ZUhCVzlDdEUya1JlNlhuUzI0ZUM5ekM4bW1HTTdvd1MwY0NLaS9LZXJV?=
+ =?utf-8?B?Ukh6clNvRmRtMnRreUhGcGpCd1VKVXNoS0JQUXUxTENpU2l3Y1M4dmFJd1BH?=
+ =?utf-8?B?YUJHUHhUd3NlQ3c3SVBxNDFJV0RWZXI1ajhxUzlZK3M2RFBFaElCZFVHRmtW?=
+ =?utf-8?B?VWpkK0UzSnF6L3VmN0FrRUozRUxpK3BLUVE0OFppSTE0bDBCY1krYVBVbDVN?=
+ =?utf-8?B?SHZkK3I3R2xIMGdxazZ2eHR3aDJnc3diNjRpdVdvcGozZTkvZ0luRi9tbFBk?=
+ =?utf-8?B?MVFJNVNMUXgyWndROXdRNldBWC9MclB0TGgvSkxselZVVkVZMFBIWDZBVUN3?=
+ =?utf-8?B?b0VuWEIwUWpHUnRVUklqRHNuWnZ0R2Z4RmRSVTNFSDZQVmJuSFhsSmkzbmxo?=
+ =?utf-8?B?SmhaT1JNTkxBZzRkQ1VDekJRNmd6VWp3WTZjZm5LczYvNFN5M2doK2d1VG81?=
+ =?utf-8?B?WkNzNVgxYWwvMlJRVEd0a3VoSkcxM2dtM3lXeXo3YU9OVFZwSC8wbjRsb1NQ?=
+ =?utf-8?B?U3dsYVl4RDBkS0ZWOWprSWZ2QlVsMUdHSlczYThKVkdJeEFXdnc2b0dpZ0NU?=
+ =?utf-8?Q?9ynE=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bcachefs: Avoid a potential useless over memory
- allocation in bch2_prt_[v]printf()
-Content-Language: en-MW
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org
-References: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
- <pmyezdskyr3t2iyald4diibl6b7lttf46d6sskxfu2wq3pub7r@gmyezjb3wfeu>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <pmyezdskyr3t2iyald4diibl6b7lttf46d6sskxfu2wq3pub7r@gmyezjb3wfeu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 453dbd51-65ae-412a-52e3-08dc317a92a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2024 18:42:49.5837
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FDF8ZsS1vDGHiQ+mLNZa3YW39079w5Nlqi4p4vT//+k+uJvbnFZXlXXInwzrKEYQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8705
 
-Le 19/02/2024 à 04:39, Kent Overstreet a écrit :
-> On Sun, Feb 18, 2024 at 05:12:28PM +0100, Christophe JAILLET wrote:
->> 2 issues related to incorrect available space in the output buffer
->> computation may lead to some extra memory allocation.
->>
->>
->> First: vsnprintf() takes the size of the buffer, *including* the space for
->> the trailing null.
->>
->> But printbuf_remaining() returns the number of characters we can print
->> to the output buffer, *excluding* the terminating null.
->>
->> So, use printbuf_remaining_size(), which includes the space for the
->> terminating null.
-> 
-> nope, buggy.
-> 
-> passing printbuf_remaining_size() to snprintf() is correct, but
-> snprintf() returns the number of charecters wrote _excluding_ the null
-
-Hi,
-
-I think that the patch is correct.
-
-snprintf() returns the number of characters wrote _excluding_ the null. 
-That is why the test is: len >= size_of_the_buffer   ==>  more space is 
-needed.
-The case you describe is handled by the == part of >=.
-
-On the contrary, if len is < size_of_the_buffer, then we have at least 1 
-place for the terminating NULL. It will then eventually lead to:
-   len_of_the_string + space_for_'\0' ==  size_of_the_buffer
-So it does not overflow.
-
-
-Anyway, feel free to ignore the patch completely if it sounds too risky, 
-take only half of it (s/printbuf_remaining/printbuf_remaining_size/) if 
-you are more confident with it, or the complete patch if the explanation 
-above convinced you.
-
- From my PoV, the 3 options lead to the same run-time output, with more 
-or less memory allocated.
-
-Best regards.
-
-CJ
-
-
-> 
->>
->>
->> Second: if the return value of vsnprintf() is greater than or equal to the
->> passed size, the resulting string is truncated.
->> So, in order to see if some extra space is needed, the check needs to be
->> changed.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Un-tested
->>
->> v2: - Use printbuf_remaining_size() instead of hand-writing it.  [Brian Foster]
->>      - Reword the commit log, hoping it is clearer.
->>      - Synch with -next-20240215
->>
->> v1: https://lore.kernel.org/all/0f40108bed3e084057223bdbe32c4b37f8500ff3.1694845203.git.christophe.jaillet@wanadoo.fr/
->> ---
->>   fs/bcachefs/printbuf.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
->> index b27d22925929..8cee9c2f88c4 100644
->> --- a/fs/bcachefs/printbuf.c
->> +++ b/fs/bcachefs/printbuf.c
->> @@ -55,9 +55,10 @@ void bch2_prt_vprintf(struct printbuf *out, const char *fmt, va_list args)
->>   		va_list args2;
->>   
->>   		va_copy(args2, args);
->> -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args2);
->> +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
->> +				fmt, args2);
->>   		va_end(args2);
->> -	} while (len + 1 >= printbuf_remaining(out) &&
->> +	} while (len >= printbuf_remaining_size(out) &&
->>   		 !bch2_printbuf_make_room(out, len + 1));
->>   
->>   	len = min_t(size_t, len,
->> @@ -72,9 +73,10 @@ void bch2_prt_printf(struct printbuf *out, const char *fmt, ...)
->>   
->>   	do {
->>   		va_start(args, fmt);
->> -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args);
->> +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
->> +				fmt, args);
->>   		va_end(args);
->> -	} while (len + 1 >= printbuf_remaining(out) &&
->> +	} while (len >= printbuf_remaining_size(out) &&
->>   		 !bch2_printbuf_make_room(out, len + 1));
->>   
->>   	len = min_t(size_t, len,
->> -- 
->> 2.43.2
->>
-> 
-> 
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8TWFy
+a3VzLkVsZnJpbmdAd2ViLmRlPg0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDE5LCAyMDI0IDk6
+MjcgUE0NCj4gVG86IE5pa2xhcyBDYXNzZWwgPGNhc3NlbEBrZXJuZWwub3JnPjsgUGFuZGV5LCBS
+YWRoZXkgU2h5YW0NCj4gPHJhZGhleS5zaHlhbS5wYW5kZXlAYW1kLmNvbT47IERhbWllbiBMZSBN
+b2FsDQo+IDxkbGVtb2FsQGtlcm5lbC5vcmc+OyBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+
+OyBTaW1laywgTWljaGFsDQo+IDxtaWNoYWwuc2ltZWtAYW1kLmNvbT47IFBoaWxpcHAgWmFiZWwg
+PHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+OyBsaW51eC0NCj4gaWRlQHZnZXIua2VybmVsLm9yZzsg
+a2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0KPiBDYzogTEtNTCA8bGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZz47IGdpdCAoQU1ELVhpbGlueCkgPGdpdEBhbWQuY29tPg0KPiBTdWJq
+ZWN0OiBSZTogW1BBVENIIHYzXSBhdGE6IGFoY2lfY2V2YTogZml4IGVycm9yIGhhbmRsaW5nIGZv
+ciBYaWxpbnggR1QgUEhZDQo+IHN1cHBvcnQNCj4gDQo+ID4gPiBQbGF0Zm9ybSBjbG9jayBhbmQg
+cGh5IGVycm9yIHJlc291cmNlcyBhcmUgbm90IGNsZWFuZWQgdXAgaW4gWGlsaW54IEdUDQo+IFBI
+WQ0KPiA+ID4gZXJyb3IgcGF0aC4NCj4gPiA+DQo+ID4gPiBUbyBmaXggaW50cm9kdWNlIHRoZSBm
+dW5jdGlvbiBjZXZhX2FoY2lfcGxhdGZvcm1fZW5hYmxlX3Jlc291cmNlcygpDQo+IOKApg0KPiA+
+IEFwcGxpZWQ6DQo+ID4NCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvbGliYXRhL2xpbnV4LmdpdC9sb2cvP2g9Zm9yLQ0KPiA2LjgtZml4ZXMNCj4gDQo+
+IFRoZSBlcnJvciBjb2RlIOKAnC1FSU5WQUzigJ0gd2FzIHNldCBiZWZvcmUgdGhlIHN0YXRlbWVu
+dCDigJxnb3RvDQo+IGRpc2FibGVfcmVzb3VyY2Vz4oCdDQo+IG11bHRpcGxlIHRpbWVzIGluIHRo
+ZSBhZGp1c3RlZCBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rpb24NCj4g4oCcY2V2YV9haGNp
+X3Byb2Jl4oCdLg0KPiBJIHN1Z2dlc3QgdG8gYWRkIGEganVtcCB0YXJnZXQgc28gdGhhdCBhIGJp
+dCBvZiBleGNlcHRpb24gaGFuZGxpbmcNCj4gY2FuIGJlIGJldHRlciByZXVzZWQgYXQgdGhlIGVu
+ZCBvZiB0aGlzIGZ1bmN0aW9uLg0KPiANCj4gDQo+IEhvdyBkbyB5b3UgdGhpbmsgYWJvdXQgdG8g
+YXBwbHkgdGhlIGZvbGxvd2luZyBzY3JpcHQgZm9yIHRoZSBzZW1hbnRpYw0KPiBwYXRjaCBsYW5n
+dWFnZSAoQ29jY2luZWxsZSBzb2Z0d2FyZSkgYWNjb3JkaW5nbHk/DQo+IA0KPiANCj4gQHJlcGxh
+Y2VtZW50MUANCj4gaWRlbnRpZmllciByYzsNCj4gQEANCj4gIDwrLi4uDQo+ICBpZiAoLi4uKQ0K
+PiAgew0KPiAgICAgLi4uIHdoZW4gIT0gcmMNCj4gLSAgIHJjID0gLUVJTlZBTDsNCj4gICAgIGdv
+dG8NCj4gLSAgICAgICAgZGlzYWJsZV9yZXNvdXJjZXMNCj4gKyAgICAgICAgZV9pbnZhbA0KPiAg
+ICAgOw0KPiAgfQ0KPiAgLi4uKz4NCj4gIHJldHVybiAwOw0KPiArDQo+ICtlX2ludmFsOg0KPiAr
+cmMgPSAtRUlOVkFMOw0KPiAgZGlzYWJsZV9yZXNvdXJjZXM6DQo+ICBhaGNpX3BsYXRmb3JtX2Rp
+c2FibGVfcmVzb3VyY2VzKGhwcml2KTsNCj4gDQo+IEByZXBsYWNlbWVudDIgZGlzYWJsZSBuZWdf
+aWYsIGRyb3BfZWxzZUANCj4gaWRlbnRpZmllciByZXBsYWNlbWVudDEucmM7DQo+IHN0YXRlbWVu
+dCBpczsNCj4gQEANCj4gIGlmICguLi4pDQo+ICAgICBpcw0KPiAgZWxzZQ0KPiAgew0KPiAgICAg
+Li4uIHdoZW4gIT0gcmMNCj4gLSAgIHJjID0gLUVJTlZBTDsNCj4gICAgIGdvdG8NCj4gLSAgICAg
+ICAgZGlzYWJsZV9yZXNvdXJjZXMNCj4gKyAgICAgICAgZV9pbnZhbA0KPiAgICAgOw0KPiAgfQ0K
+PiANCj4gDQpUaGFua3MgZm9yIHRoZSBzdWdnZXN0aW9uLiBIb3dldmVyLCB0YWtpbmcgYSBsb29r
+IGF0IHRoZSBleGlzdGluZyBpbXBsZW1lbnRhdGlvbg0KaSB0aGluayB3ZSBzaG91bGQgcmV0dXJu
+IGVycm9yIGNvZGUgKmFzIGlzICogZnJvbSBvZl9wcm9wZXJ0eV9yZWFkKCkgQVBJcy4NCmFuZCBn
+ZXQgcmlkIG9mIHJjPS1FSU5WQUwgcmVhc3NpZ25tZW50IGl0c2VsZi4gDQoNCklmIGl0IHNvdW5k
+cyBvaywgSSBjYW4gYWRkIGl0IHRvIG15IHRvLWRvIGxpc3QgYW5kIHNlbmQgb3V0IGEgcGF0Y2gu
+DQoNClRoYW5rcywNClJhZGhleQ0K
