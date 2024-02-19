@@ -1,48 +1,43 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E6347F7E;
-	Mon, 19 Feb 2024 19:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417FA53E08
+	for <kernel-janitors@vger.kernel.org>; Mon, 19 Feb 2024 21:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708370095; cv=none; b=htvwsISvZ/SZokX4nrueo+9kQcbtCiJSL34lZY2bmJ2xCAuFeJXqGbaJcEo8AKFJ8pxcnMmb8hg43hfUNk6X+TzgEZ2xm6qxDnZWQqf30v5K6RAFya5JNL3X78xaXuXy8LwTtfBaCoBqc1/CkaxHs/caEn7kmjMswks65Pmrfig=
+	t=1708378577; cv=none; b=aVQUUKDEBruJmHE+tUY/7DOrCw22Pj7GLfNUkx5/e3uwjMZfv5+qDsH5m1+xQNBAi04BTL6Mji3IAa/nLYquLqYh93qlj9KbYFj+pgwCejtRsD8dRLlkVtMFC2YZeA3c8frATys06V5uVTk/DT3tVH3LYY0dkvHF0dXZK1O8HZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708370095; c=relaxed/simple;
-	bh=QTBG/aGzAOq3/rChRUOGGC1heGIPVEN2ILRn4fyBPaI=;
+	s=arc-20240116; t=1708378577; c=relaxed/simple;
+	bh=m9hU62GZDlzRYkm5TflwXBi9gQJhj+hqg7sdx9BPbQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahh79H8Fea/ne//OilgGusDP3Ci070V5LMwPdWMMAbD2i4HeFVizKL19JFQnG+AlsnLeDQyANbu54Z7Kv5wZC9e05i91NUfufuxZAGREk+y9BZ1XIDYAQ1LfaIsMNMNl8WtwPYqega7wtsXqdBv16YsVO4b7N11jmOSFQVHkXVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oom1n7lv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oN97sRcWmPbSI3IA2JrwtR2CVRLLUuXgskyGl24VRnzn1DIFR2U+HkxkHn9ekAjn51y1AGvknIQXbhxtxO/YsQ6gxBg5WtYGQ5T9r0yU/yVFTpJCbjnqKp81KZCOgYzLYjzGxwi2Uoq6tIvUTmJehjmjCdXSRZvovJbyQst9lv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CEfenD8+; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oom1n7lv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDD0C433C7;
-	Mon, 19 Feb 2024 19:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708370094;
-	bh=QTBG/aGzAOq3/rChRUOGGC1heGIPVEN2ILRn4fyBPaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oom1n7lvtXC1D4z0OR2TpVTNMA8sRzwh5TLdnrF1pWTGRKLZwxUC6KwKh5pPvnFjg
-	 ZRTzJzM44PKQaZ8NsNWzSPaeM0OJ48nCXXg03+ss3EkM1DtBnppjM+FhGK70aH7fKM
-	 yy7AlkvB7HU7ZWhzlH14GtEMlPOwIz2jeaiERCABY8hWsCxaxXKHxI6CTrhTwkTFEn
-	 bEvfp6vkLQHMYv2gyhJ0oVKxYKTR0SiefOZmRyPluDK2/E8PEPR7lg3jCYBDukPKnt
-	 Vw2Fn90Gyt7000pEsJWkrgg6aPQRGiXN6DasBn1N7WaKa04qXrl8nyMj5ZajHaKCvQ
-	 2LTU6b6bOEzEw==
-Date: Mon, 19 Feb 2024 20:14:47 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>
-Subject: Re: [PATCH v3] ata: ahci_ceva: fix error handling for Xilinx GT PHY
- support
-Message-ID: <ZdOop9IHRxtIY+Ds@x1-carbon>
-References: <ZdMp+QBiays6fprk@x1-carbon>
- <9427c0fd-f48a-4104-ac7e-2929be3562af@web.de>
- <MN0PR12MB59537A9F0EAEAC9E844C8DCDB7512@MN0PR12MB5953.namprd12.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CEfenD8+"
+Date: Mon, 19 Feb 2024 16:36:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708378573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nHWVuGms67eXElpk+GQbCw/8AGqs4biTimQboa9uwN4=;
+	b=CEfenD8+3EJDfCF8/kmLMYKXU6y35aU46WIWwSJJB356+dXfd/9gbPuyr240gOR4UaCLWG
+	D71lvlpBHmfECRSHcvmmRB9oo/r/LA4JYFB9GKvYtPeBwKAtm2Vm3vA7kRSO6M82aN3fFD
+	KiS4pObDhkHQIzhSjmNJbWzugkqSAx8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH v2] bcachefs: Avoid a potential useless over memory
+ allocation in bch2_prt_[v]printf()
+Message-ID: <csjcyhnh5lhj22emlwdzpr6v4s3mfldsw3um75hsk4ffjsmqmb@otyei3qylhdn>
+References: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
+ <pmyezdskyr3t2iyald4diibl6b7lttf46d6sskxfu2wq3pub7r@gmyezjb3wfeu>
+ <c745c4d3-a084-440d-bc07-0ecbcfe10e37@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,92 +47,111 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <MN0PR12MB59537A9F0EAEAC9E844C8DCDB7512@MN0PR12MB5953.namprd12.prod.outlook.com>
+In-Reply-To: <c745c4d3-a084-440d-bc07-0ecbcfe10e37@wanadoo.fr>
+X-Migadu-Flow: FLOW_OUT
 
-Hello Radhey, Markus,
-
-On Mon, Feb 19, 2024 at 06:42:49PM +0000, Pandey, Radhey Shyam wrote:
-> > -----Original Message-----
-> > From: Markus Elfring <Markus.Elfring@web.de>
-> > Sent: Monday, February 19, 2024 9:27 PM
-> > To: Niklas Cassel <cassel@kernel.org>; Pandey, Radhey Shyam
-> > <radhey.shyam.pandey@amd.com>; Damien Le Moal
-> > <dlemoal@kernel.org>; Jens Axboe <axboe@kernel.dk>; Simek, Michal
-> > <michal.simek@amd.com>; Philipp Zabel <p.zabel@pengutronix.de>; linux-
-> > ide@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Cc: LKML <linux-kernel@vger.kernel.org>; git (AMD-Xilinx) <git@amd.com>
-> > Subject: Re: [PATCH v3] ata: ahci_ceva: fix error handling for Xilinx GT PHY
-> > support
+On Mon, Feb 19, 2024 at 07:10:10PM +0100, Christophe JAILLET wrote:
+> Le 19/02/2024 à 04:39, Kent Overstreet a écrit :
+> > On Sun, Feb 18, 2024 at 05:12:28PM +0100, Christophe JAILLET wrote:
+> > > 2 issues related to incorrect available space in the output buffer
+> > > computation may lead to some extra memory allocation.
+> > > 
+> > > 
+> > > First: vsnprintf() takes the size of the buffer, *including* the space for
+> > > the trailing null.
+> > > 
+> > > But printbuf_remaining() returns the number of characters we can print
+> > > to the output buffer, *excluding* the terminating null.
+> > > 
+> > > So, use printbuf_remaining_size(), which includes the space for the
+> > > terminating null.
 > > 
-> > > > Platform clock and phy error resources are not cleaned up in Xilinx GT
-> > PHY
-> > > > error path.
-> > > >
-> > > > To fix introduce the function ceva_ahci_platform_enable_resources()
-> > …
-> > > Applied:
-> > >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/log/?h=for-
-> > 6.8-fixes
+> > nope, buggy.
 > > 
-> > The error code “-EINVAL” was set before the statement “goto
-> > disable_resources”
-> > multiple times in the adjusted implementation of the function
-> > “ceva_ahci_probe”.
-> > I suggest to add a jump target so that a bit of exception handling
-> > can be better reused at the end of this function.
-> > 
-> > 
-> > How do you think about to apply the following script for the semantic
-> > patch language (Coccinelle software) accordingly?
-> > 
-> > 
-> > @replacement1@
-> > identifier rc;
-> > @@
-> >  <+...
-> >  if (...)
-> >  {
-> >     ... when != rc
-> > -   rc = -EINVAL;
-> >     goto
-> > -        disable_resources
-> > +        e_inval
-> >     ;
-> >  }
-> >  ...+>
-> >  return 0;
-> > +
-> > +e_inval:
-> > +rc = -EINVAL;
-> >  disable_resources:
-> >  ahci_platform_disable_resources(hpriv);
-> > 
-> > @replacement2 disable neg_if, drop_else@
-> > identifier replacement1.rc;
-> > statement is;
-> > @@
-> >  if (...)
-> >     is
-> >  else
-> >  {
-> >     ... when != rc
-> > -   rc = -EINVAL;
-> >     goto
-> > -        disable_resources
-> > +        e_inval
-> >     ;
-> >  }
-> > 
-> > 
-> Thanks for the suggestion. However, taking a look at the existing implementation
-> i think we should return error code *as is * from of_property_read() APIs.
-> and get rid of rc=-EINVAL reassignment itself. 
+> > passing printbuf_remaining_size() to snprintf() is correct, but
+> > snprintf() returns the number of charecters wrote _excluding_ the null
 > 
-> If it sounds ok, I can add it to my to-do list and send out a patch.
+> Hi,
+> 
+> I think that the patch is correct.
 
-Sounds good to me.
+You didn't test it, I did.
 
+In the future, no more patches that you haven't tested - thanks.
 
-Kind regards,
-Niklas
+> snprintf() returns the number of characters wrote _excluding_ the null. That
+> is why the test is: len >= size_of_the_buffer   ==>  more space is needed.
+> The case you describe is handled by the == part of >=.
+> 
+> On the contrary, if len is < size_of_the_buffer, then we have at least 1
+> place for the terminating NULL. It will then eventually lead to:
+>   len_of_the_string + space_for_'\0' ==  size_of_the_buffer
+> So it does not overflow.
+> 
+> 
+> Anyway, feel free to ignore the patch completely if it sounds too risky,
+> take only half of it (s/printbuf_remaining/printbuf_remaining_size/) if you
+> are more confident with it, or the complete patch if the explanation above
+> convinced you.
+> 
+> From my PoV, the 3 options lead to the same run-time output, with more or
+> less memory allocated.
+> 
+> Best regards.
+> 
+> CJ
+> 
+> 
+> > 
+> > > 
+> > > 
+> > > Second: if the return value of vsnprintf() is greater than or equal to the
+> > > passed size, the resulting string is truncated.
+> > > So, in order to see if some extra space is needed, the check needs to be
+> > > changed.
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > Un-tested
+> > > 
+> > > v2: - Use printbuf_remaining_size() instead of hand-writing it.  [Brian Foster]
+> > >      - Reword the commit log, hoping it is clearer.
+> > >      - Synch with -next-20240215
+> > > 
+> > > v1: https://lore.kernel.org/all/0f40108bed3e084057223bdbe32c4b37f8500ff3.1694845203.git.christophe.jaillet@wanadoo.fr/
+> > > ---
+> > >   fs/bcachefs/printbuf.c | 10 ++++++----
+> > >   1 file changed, 6 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
+> > > index b27d22925929..8cee9c2f88c4 100644
+> > > --- a/fs/bcachefs/printbuf.c
+> > > +++ b/fs/bcachefs/printbuf.c
+> > > @@ -55,9 +55,10 @@ void bch2_prt_vprintf(struct printbuf *out, const char *fmt, va_list args)
+> > >   		va_list args2;
+> > >   		va_copy(args2, args);
+> > > -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args2);
+> > > +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
+> > > +				fmt, args2);
+> > >   		va_end(args2);
+> > > -	} while (len + 1 >= printbuf_remaining(out) &&
+> > > +	} while (len >= printbuf_remaining_size(out) &&
+> > >   		 !bch2_printbuf_make_room(out, len + 1));
+> > >   	len = min_t(size_t, len,
+> > > @@ -72,9 +73,10 @@ void bch2_prt_printf(struct printbuf *out, const char *fmt, ...)
+> > >   	do {
+> > >   		va_start(args, fmt);
+> > > -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args);
+> > > +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
+> > > +				fmt, args);
+> > >   		va_end(args);
+> > > -	} while (len + 1 >= printbuf_remaining(out) &&
+> > > +	} while (len >= printbuf_remaining_size(out) &&
+> > >   		 !bch2_printbuf_make_room(out, len + 1));
+> > >   	len = min_t(size_t, len,
+> > > -- 
+> > > 2.43.2
+> > > 
+> > 
+> > 
+> 
