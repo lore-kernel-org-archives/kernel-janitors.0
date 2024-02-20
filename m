@@ -1,102 +1,92 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14385D48B
-	for <kernel-janitors@vger.kernel.org>; Tue, 20 Feb 2024 09:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF064AAA;
+	Tue, 20 Feb 2024 09:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708419761; cv=none; b=CCBHBLgMxdwWbIgrnNQsV58toBnzCCUSyMg7nHuXQFMWBNBPqlus70p5FX5MwkkxH0kXAP7MFpvkXqbiul5YyW15e6oX/soJM7N9uEEb9nDG+eYNtq0YT3KMsplXAaD/X5tfrtdKOXFnJYPUPGgdlRdVAomoc+jftVitg9I5evY=
+	t=1708420259; cv=none; b=Vzdaub9W05h6D//8RBkqOQ8cYGfp2XSdH28rz9yB25K4ZFD+Fc1DNLYsZ9MxMuLtmlmMQL4o//6n0flTrLjlJv/n9lA1YymCyUuUHsNOMVYnmNI6JLsIglEkko/o2A1s7a5KOBdw/I0FBVA9Tbg1rLoqTqZBJuU9QHKsNFFXeuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708419761; c=relaxed/simple;
-	bh=SgoqViaaje+AgC+n7ivCHYAc8WaXGdnEMAxju39c9XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QfQm2lsI08U/vpIUIjSzdJuuYbYRAIoxXhNVbto4XGEWBkbs5B0D7gO2M9Lh2VxK7calgeYOfyBsR93SnKsZpMTtBwD8rDA2O/+N8NKGLQEQxSjUap5cwepgVxu+jonvYh7ljIAPJF1W49KXDjq+fuR2KbaRR+Gg52M5ZFeinGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xq1yixNs; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708420259; c=relaxed/simple;
+	bh=ByO2dT7JtpPvKkaZeVRsaOzbk+s4KDVPKrxRRc0C6tY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JllFDF4dcYcshK/SI/e96LV3HRcWGcWDYJdb+Hbkf3GtAUYKeCxlYNFbjEjsva82l0Iz7RrRvVP47pRdgBCgAAKmaL+LKcX4ySujsizEldPFmdGwpgezOG+6F6RKG1vczXcQ3xc3JR91xci/5APez5Q9/ybDuvbSagkqZQkqeMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iietwbf5; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xq1yixNs"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3e891b5e4eso203757666b.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Feb 2024 01:02:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iietwbf5"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33d375993f4so1300825f8f.1;
+        Tue, 20 Feb 2024 01:10:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708419758; x=1709024558; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c2ULPGAo97hdg1ZsQ6jr2biEBRsVNCZw09zaItnJf/I=;
-        b=Xq1yixNso7pw/x5t8IT/f4qOdwR+izJKKj3NoXGeM9aPT4+Y3NB/L0BShKiZE1YuBj
-         p7j9E6g6mQj7FcNOV+bbuuaadA+u2XHa7DQ8Ozz6H5YZW5zC21pzl+VLx9U2UWrOAZ9p
-         9Y1RM7qjagL1Xv9Zu+UhUPN870GVG/00GRrfnfVbMPGfPX/m86fhH15OmFkUdcAjCk0y
-         N+K952V2wtAez61gwBi9T476OzfOBNf+naXLOP+mJDsN7u/8oJOp3cgEmywy8k2QFlGY
-         gbonEHErW1zZIp/4loFJ7CGm8obBIU12h5OHtKeinJDtfHfdbWQ71ocPJrmlHukjutid
-         0PpQ==
+        d=gmail.com; s=20230601; t=1708420256; x=1709025056; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J1QxAfuKOwJo1Q4eMgsPlCE9Pe85TkW/2/2T6KJzfX8=;
+        b=Iietwbf5w2+j33i29E8+t5l8eeWswe13ba+NPl1DpLuMas9FyWCyZVuAhqZMGz7DIP
+         ozrmcysNqEdiBrmHz9uA0tP0A41QcuqDREKf8yH+rKcJUGsK5vyzmBZwD9P1+tnxicDz
+         7oGVZuPeNQWy3ZOWjHnHWFZq0a53SQ9GmSDF3pJsEaBLr/escTO3jkzW9cH/3m/M9mh+
+         GylOMLnlRo0wypBkCyUi1gutLYtjjI7rxr9PfQDDgpS1aho4bhIOFEul6MgS0HqjM6A1
+         GCuHdeHUiIGoMU9jGlKB2e4ikJCGsE3axr2ke3kjR1TVgXZHAyyVXG74dzkvZXwp/k2D
+         xrDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708419758; x=1709024558;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c2ULPGAo97hdg1ZsQ6jr2biEBRsVNCZw09zaItnJf/I=;
-        b=tkTTr70H1vIXNOECfVqObwW52brfESLynTWzm0WFae3amPuedMfTe8i+FQbsgsuG5V
-         Z5Gt9pKYOon4I4ZrrIcMWX0W+jv6cBlWKpSIyuxFpVJi+HZDEEXYPosFwdqDEvIt79wO
-         syHGCGeFibND+4rh2f3IqCp8Boc9HoG9uVNnHFqWVheeOFgNhDAc/lAVVTd+UOQqJS3O
-         U+TeCN7IIz5PyvKRBwXuwKjpFossiHgWV2KGo/AbB4asynC3Cn49AHuFmI7DkeI7EF2P
-         6lV5eYPCBrhNZeu0rINYMcskKmS98ucWsGSknm/m6n06reMMr1bqiSe1vbv5ICc2oyQC
-         nuOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVi2Ue6HKEg1Or3rXkGXhGoQ8SC06mQZqHLmnx+FW0Sf2BBIbVo8XZwUY/d0RLCqMX+wsbZ7RCoaOi4+cLOS40v2ljedMBsMtGyrwyK8yH7
-X-Gm-Message-State: AOJu0Yx33LDy/NRDSobd2dPFUG6oa13Naka9MyuHIgiQUbkTFju9newG
-	1k8mNPHT9jUuK92EuJv0vrGJwVB/7o3VYYRICgwWeehy4sJ8d+XFpZf5JNqXhoo=
-X-Google-Smtp-Source: AGHT+IGgsUZUBFncC+mK5wmv+K0Z3E1af7GlrV1iQKeWxOP7lFLcUK6IrhElSY60RHx27sQUgvqCKA==
-X-Received: by 2002:a17:906:e2d0:b0:a3f:14f5:2f87 with SMTP id gr16-20020a170906e2d000b00a3f14f52f87mr91187ejb.42.1708419758047;
-        Tue, 20 Feb 2024 01:02:38 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ha1-20020a170906a88100b00a381ca0e589sm3746733ejb.22.2024.02.20.01.02.37
+        d=1e100.net; s=20230601; t=1708420256; x=1709025056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J1QxAfuKOwJo1Q4eMgsPlCE9Pe85TkW/2/2T6KJzfX8=;
+        b=auMTXxgLNenaeRgvcTdNQnElfSV8JEWnkCw8lSbvTRI8NygJ2195DYfBWUOPbj3MkR
+         wBOOIle9VAjU6RNKMZHv/u0nflVDb2WlmIL5x5rEj48PJ5dzcVmcWoqh+bhNCTcrR0Uu
+         OeV7APuzEM8z3YVRmWUbiER69LIaFRYA1TdX2e+nEjtvxfRQcp+sawu/SPfW7VVSsRxc
+         6nlA7/+5znHTMV2Z1KzIAYvewKb7eUqq56lOsQoNqjrSSLKJL09Dln1AoxA6nEZsOeVk
+         SCVLIKgUugsprkpFOGXjY6K8H1sy29ToKwWAZSyPqoQ8hTSC00mGfp2KO/w+GR8rCo6M
+         3bXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSwSzUVbAWS4TO0U4K2HPMn/4fkpRRGorosXuP/HHVyY4wDmklGcHwG9ruRrtOj93k1m/qYEYB1SkSUXy5u2PzfLjaB/dPRWsAKH2a
+X-Gm-Message-State: AOJu0YyhTzU2lg/kqf4VlM0FbsSv2+ZNhrCCPk3Kh8l9+UGgzSAfUqPA
+	W6Ne8FFFvOX+ifUlqPmDJp+FW/m+Fm6bVxm7Y7HPWJk21yV6e31jEu2Cil8G
+X-Google-Smtp-Source: AGHT+IGQy/fQwxMahck/FXlqoUkhyK08LtRAagUHScMB3qr+o/gOGhrYsmy58O1bbJ56JDLuowi0gg==
+X-Received: by 2002:adf:e6c1:0:b0:33d:581c:5dc7 with SMTP id y1-20020adfe6c1000000b0033d581c5dc7mr3602418wrm.59.1708420256108;
+        Tue, 20 Feb 2024 01:10:56 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id b7-20020adfe647000000b0033b406bc689sm12928535wrn.75.2024.02.20.01.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 01:02:37 -0800 (PST)
-Date: Tue, 20 Feb 2024 12:02:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] char: xilinx_hwicap: Fix NULL vs IS_ERR() bug
-Message-ID: <ef647a9c-b1b7-4338-9bc0-28165ec2a367@moroto.mountain>
+        Tue, 20 Feb 2024 01:10:55 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] freevxfs: Fix spelling mistake "ivalid" -> "invalid"
+Date: Tue, 20 Feb 2024 09:10:55 +0000
+Message-Id: <20240220091055.2676456-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The devm_platform_ioremap_resource() function returns error pointers.
-It never returns NULL.  Update the check accordingly.
+There is a spelling mistake in a kernel message. Fix it.
 
-Fixes: 672371832193 ("char: xilinx_hwicap: Modernize driver probe")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/char/xilinx_hwicap/xilinx_hwicap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/freevxfs/vxfs_olt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-index 019cf6079cec..6d2eadefd9dc 100644
---- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-+++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-@@ -639,8 +639,8 @@ static int hwicap_setup(struct platform_device *pdev, int id,
- 	dev_set_drvdata(dev, (void *)drvdata);
+diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
+index 23f35187c289..48027a421fa3 100644
+--- a/fs/freevxfs/vxfs_olt.c
++++ b/fs/freevxfs/vxfs_olt.c
+@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
  
- 	drvdata->base_address = devm_platform_ioremap_resource(pdev, 0);
--	if (!drvdata->base_address) {
--		retval = -ENODEV;
-+	if (IS_ERR(drvdata->base_address)) {
-+		retval = PTR_ERR(drvdata->base_address);
- 		goto failed;
+ 	op = (struct vxfs_olt *)bp->b_data;
+ 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
+-		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
++		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
+ 		goto fail;
  	}
  
 -- 
-2.43.0
+2.39.2
 
