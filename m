@@ -1,129 +1,119 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AA867E66
-	for <kernel-janitors@vger.kernel.org>; Tue, 20 Feb 2024 11:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2975674E;
+	Tue, 20 Feb 2024 12:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708430154; cv=none; b=gAuA9aNAcCg2wq6y/CLM/D6+4MAG7OwpmSZo3ZrcoRX3uqK2Xr+5yzroQbG73Zg2M2lMKXRm3y8K0tpEo0dkwdjJcfk8IVznowf0+LP4tLYOn3sBGcQgAXistgtjSzX2SY8m25/ht9Ua56a2vOx98MABVxg0J/gUnlG7TNx3sjY=
+	t=1708432856; cv=none; b=FqVCoARg5mFLJZfSNxOc8Remv/vQNlmHsq6WnB9fPJbKJLMaPDNy6Z8v6rUoDYhG22M1MTSt5IK5/PIt89mnKfQhv+dvo+oy2AnBRqi8ydrFZ+h/GcQKJLqEC8+QSVUN1SQdRQ32rpzcYipRVlwld/HkMuAA5bP82tT1o8I+LRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708430154; c=relaxed/simple;
-	bh=eRbFyA1HvnTiPA/WeNSsg+LGCPcb7wlEk3IxlkbWnAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ajmMKNWEQ4xf70NGt1pf3WMUfsWqMUljZCyQ6kIHj4ObGyPqwGdK5OpPOS+7seNjrGcd+Fz2+SF1BTKkNLTyUT8txsCdHSW7ZcsH9G2H6ilS1XDdwk0ioJ9qrY0uuQdW9JRlzvVYlL/6iLlR564WAolfNyXE/tUyNvmrIJTuY8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iQUs7WiY; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708432856; c=relaxed/simple;
+	bh=ackbCV81XyEbD7DZSK1QNJr1u7ZHUTQZH151yHDIdOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pL7tv+nSwTqIg7zqWQr5kiyO41X6tvqCjXSPoS5D2KlKyWBAUGiLSlJgXfJVsa1h3I3kCdnxP6TrKaWdB24UwM8BEjXCYMZep5P7xAUohLG6iEMeMv3xT1I8QdZk7TidroNGP7K+X2zOfPKzttbZSSoBJy5OkGv/wXMQujxBqtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JOd+OAw0; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQUs7WiY"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc745927098so4735356276.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Feb 2024 03:55:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708430152; x=1709034952; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uumLRt54NCf1C2r2Jw813VJ80gZwOfopdqyWnHS9j/Y=;
-        b=iQUs7WiYRjzGkvUHMWXgnimq2PfuGVqXsXx1Wq+uIY5+jjT1HCeHKFV45dDyEn7XIB
-         n4+z4z+b00r9QuOZEi+vm+eQy/KyEt5eF1ePUbWMfn8gwY/jHy+HlPX6mM1TYoOE+tj9
-         5Ggoge+2oxr3yFaQE0hyPX+beq2WcgdOy0QEGxfQsnJ3N5DsDFHCUpSBT6RVjak5GsS9
-         wYx46u9WxPVlXbmWxMMPtpN03FwMVdzEnYzRr7wNnkDjkIsUZQPtGKGLWbM8xDHO1I7W
-         AwhAZNQaEgO09cJxGLmTeYx81DY2fLc/EaPgloi/igK70jCCp4EAB0n09SCFLFE023pY
-         vIyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708430152; x=1709034952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uumLRt54NCf1C2r2Jw813VJ80gZwOfopdqyWnHS9j/Y=;
-        b=BfT4PSVVXX9paQUsszP8mRMMn65hdTBQphjnLj96ghUJ1kBmaJrmPqSyPz5xcuyEcN
-         wbR0lhQc1fEeYALhhS02Ug9AyWm2LfJVqxmQmiv0qdSpYOMm50iWUhOZMM29ae+uNCua
-         8lh8XgstbAuwtP9h9p65dLOcBNHi/t0lOnP3ajnZs3UepqLgSlbJ2NH9pFkncc8i3HRG
-         hh1sm1ONrKl58/8zDRl0Y5tkDiHxpOfEyJME50C2S/Gdl9uvROcck6Nq+8yZjfp6lG8M
-         bRJzm9XRtRKYMrNOwMx0L/D8X63s4NGnAuZUW739AeFGYDuPfLiqLfTAX/ZQcmJAl0QQ
-         5LMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHm7zGGBoIHB8DXK9l+X16pBl7S9rMEeafkGuVbSq0HTiF2M+aKuTzq5UJcEbuWJV9SYHNZa9JNWZUqvjnDGHTs0/EytPL8molNsJvwXEm
-X-Gm-Message-State: AOJu0Yy/cZD2/ZPH067vDgCxJjN8E+fQ8xAeeCcLn8UtDxXiHUBeGiUa
-	KDptkRjr0dXBRS28CWXocymmZ5LQcaBjEsQQgzdeM4muOYD6u76D58FJlHnI4evi91KMR+h9ukH
-	TXDrS5LjlSSVUst1VTLVWg8cQet1BP7ZRdoTL8w==
-X-Google-Smtp-Source: AGHT+IExpvpD8AgXA3aIHbCHCE4RqNcFOBxn35EoCinO8Hpk+aekmgbnXIo/496q/fTFdU86koAVpAivWwXL7BwqeFo=
-X-Received: by 2002:a25:8d0d:0:b0:dcb:ef22:3869 with SMTP id
- n13-20020a258d0d000000b00dcbef223869mr12986540ybl.16.1708430151780; Tue, 20
- Feb 2024 03:55:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JOd+OAw0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1708432825; x=1709037625; i=markus.elfring@web.de;
+	bh=ackbCV81XyEbD7DZSK1QNJr1u7ZHUTQZH151yHDIdOU=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=JOd+OAw0np9qZK8WoR7hHNlYpGDTcxGvCWObU9SA4t2cVmL7AI2TrdyjeBf6lDzR
+	 WJN1gDbnHjaKOZu6G21ZbmSAan/w8kUcPkx/eC5Si65Q/RH06xYJLdrKVh3/3Ddr1
+	 BL2SyMc3/Qsnm6PZz0mInnCFyavQgiUmeuvmbi11Dm+WJVt42OxOXrc2aG7v56lUn
+	 bkvBlexEk7gYMuiirEpHIfemcqLFLLs7GES60iTe/HDkxO5L4A+TxXJZXLfJb/kds
+	 AiWpCb15g+6yIGc1gRJKVbRmXqmUIafWYiQgBNH8I9N9Mr6o4/GT3mX4lxJ7RS/A6
+	 Q4ZGYuz57TBtyxdZcQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MHmm4-1rgH1i3TOA-00EwPI; Tue, 20
+ Feb 2024 13:40:24 +0100
+Message-ID: <1bb22d53-2bfb-4fa7-9c4a-f49d979207ab@web.de>
+Date: Tue, 20 Feb 2024 13:40:20 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240217150228.5788-2-johan+linaro@kernel.org>
- <c95f5ff3-8dad-4302-9384-92a9b83f7bdc@web.de> <ZdRTx2lmHBVlcLub@hovoldconsulting.com>
- <1afc87c-2c1f-df10-a0c8-2a267d44122@inria.fr>
-In-Reply-To: <1afc87c-2c1f-df10-a0c8-2a267d44122@inria.fr>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 20 Feb 2024 13:55:40 +0200
-Message-ID: <CAA8EJppH9ey97yKFUccNLHhMKs3eUS55+rY0tXm_a6KGp9jtug@mail.gmail.com>
-Subject: Re: [PATCH 1/6] drm/bridge: aux-hpd: fix OF node leaks
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Johan Hovold <johan@kernel.org>, Markus Elfring <Markus.Elfring@web.de>, 
-	Johan Hovold <johan+linaro@kernel.org>, freedreno@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Vinod Koul <vkoul@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Rob Clark <robdclark@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [3/6] soc: qcom: pmic_glink_altmode: fix drm bridge
+ use-after-free
+Content-Language: en-GB
+To: Johan Hovold <johan@kernel.org>, freedreno@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Bjorn Andersson <andersson@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Vinod Koul <vkoul@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Rob Clark <robdclark@gmail.com>, stable@vger.kernel.org
+References: <20240217150228.5788-4-johan+linaro@kernel.org>
+ <9ff4221a-7083-4cb1-abde-1690f655da8d@web.de>
+ <ZdSMg63b4ZGYhUXO@hovoldconsulting.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZdSMg63b4ZGYhUXO@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:r+CHavyKhh73xuHY9wsEjvvyvp2FPjpfnjTyBrrjxbHa+zRr3E/
+ RiJIddQORueuMddXYwNvCYF5KhgIjz1im8dJ4PZG7yiEWHxHhVtMSsEPFLOnMsRTEeoGsKi
+ jCIVsHUoJPtUqrgmgi5k4whlTBRlG5mnoagRQKtuA6NqjfX8pOXeBLTy6jSgfZogRNfRX/k
+ cg/xF0tVkCFkH1W1ooyhg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KtuAdgiy1ik=;y4ys3n9cM6RoSSuIK93yPw73zol
+ pSyhNa3wJKuiPsj75tLL00VnROfe+KzG2al6/Rhvs4lZPTcXW6jz+ErDf4UVuWVC0sA5Y6nz+
+ pzN07m7oQsgW+/FxGSD6px1OGNBQKMfFxFdq8z+/Eol/LzEDM3VHAqr0j6ViiL2IQpcODdflP
+ On0tDmCes0Ju0RLWrvsKwaNXmbiZgnFu6N3LuqAXxbd6JGOzYuv/HJxLN97eiGUxcHXqaTpOb
+ VulkDO0u7Vh9Z2ShIImU02TNC/nIhZOJaNGjQtTCB74eH+JVb13UPhGePUZnLUWKv7UWySMIK
+ 7mwMSVZDpl2cR4mKbcZ0Njhe8hk+fxsArS2guI5gL2aYT6bvY1fLdX62jl16+aXiJyzNphrh3
+ zkRkPuTCfDcG0ZBAyL/MWkB08q0TijBJK/zmjUd0der0ZEO0thUrakZYQHeWbKnePiHqlyTEy
+ tDDw9+w26IDa1M7uR8NVNK6BmjcMX5bMs0GEhvAcwQTQY8d5q/ieLyS6PjBDl4R8vX1opftl9
+ 8RoBXj5YonoO7WuTe6XP+j1EIkEec4VoFDGcCNtaAofjPIF563IIp6irkdWRRhU5LVNcacEdc
+ yDt+lLKGdozKR5BG1JOdo32sSwYgPkSCvzvaYw2TiOP/NhID60aI10TcHXqGSw+XgAs9WLXlR
+ t/NwYz6uDXRjrVQFBecPp0omdQzV+gtMSJv64VIWfqp+5tIkMv/5ipi90aOSyF9jlQDpZiH1U
+ Emzes10uty02+3WM4bTqj5Hr9rJ/pskEz6Nb2j+B3uazjL7FdD9BIt+eD4HBJLOz9n+NStUvs
+ sSiU89ntkAXEjBi6FraSIxizVT96J8+lcnHZdWbg+W4fM=
 
-On Tue, 20 Feb 2024 at 13:52, Julia Lawall <julia.lawall@inria.fr> wrote:
+>> The function call =E2=80=9Cfwnode_handle_put(fwnode)=E2=80=9D is used i=
+n multiple if branches.
+>> https://elixir.bootlin.com/linux/v6.8-rc5/source/drivers/soc/qcom/pmic_=
+glink_altmode.c#L435
+>>
+>> I suggest to add a jump target so that a bit of exception handling
+>> can be better reused at the end of this function implementation.
 >
->
->
-> On Tue, 20 Feb 2024, Johan Hovold wrote:
->
-> > On Mon, Feb 19, 2024 at 06:48:30PM +0100, Markus Elfring wrote:
-> > > > The two device node references taken during allocation need to be
-> > > > dropped when the auxiliary device is freed.
-> > > =E2=80=A6
-> > > > +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> > > =E2=80=A6
-> > > > @@ -74,6 +75,8 @@ struct device *drm_dp_hpd_bridge_register(struct =
-device *parent,
-> > > >
-> > > >   ret =3D auxiliary_device_init(adev);
-> > > >   if (ret) {
-> > > > +         of_node_put(adev->dev.platform_data);
-> > > > +         of_node_put(adev->dev.of_node);
-> > > >           ida_free(&drm_aux_hpd_bridge_ida, adev->id);
-> > > >           kfree(adev);
-> > > >           return ERR_PTR(ret);
-> > >
-> > > The last two statements are also used in a previous if branch.
-> > > https://elixir.bootlin.com/linux/v6.8-rc5/source/drivers/gpu/drm/brid=
-ge/aux-hpd-bridge.c#L63
-> > >
-> > > How do you think about to avoid such a bit of duplicate source code
-> > > by adding a label here?
-> >
-> > No, the current code is fine and what you are suggesting is in any case
-> > unrelated to this fix.
-> >
-> > If this function ever grows a third error path like that, I too would
-> > consider it however.
->
-> I guess these of_node_puts can all go away shortly with cleanup anyway?
+> Markus, as people have told you repeatedly, just stop with these comment=
+s.
 
-I'm not sure about it. Those are long-living variables, so they are
-not a subject of cleanup.h, are they?
+How does such a response fit to advices from another known information sou=
+rces?
+
+Section =E2=80=9C7) Centralized exiting of functions=E2=80=9D
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.8-rc5#n526
 
 
---=20
-With best wishes
-Dmitry
+> You're not helping, in fact, you are actively harmful to the
+> kernel community as you are wasting people's time.
+
+The proposed source code transformation can eventually be (automatically) =
+achieved
+also with help of improved development tools.
+
+Regards,
+Markus
