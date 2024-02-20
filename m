@@ -1,96 +1,124 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632FE5A4FE;
-	Tue, 20 Feb 2024 08:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B7D53819;
+	Tue, 20 Feb 2024 08:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708416383; cv=none; b=TtyRSsZtMXpFQPZrgTbVbLNVnowkECJd92DnjlkYGG3GQorSLD4+765SBByFLdNEwZ0S5ZoIB733SaPzfaxSAYq5kzvKnLPxE3EQFrh31/pReL+7STlr3qsxTijF8ei4P3fuCpyn5Ne2FlHTcMiyGRBFQeUw9aZgGk8I9KZ/WNs=
+	t=1708417622; cv=none; b=i8p91uWHXVYlI+SRd5azJYLhbKcFiJVTB3iMVMkchWUunOrpLRvoskfA/S3p6Ygf7aV0LpVjW6ZVVYh6KBKJwIRDLUqwo+RSkNmu5+1NFkzlos01pED9ADwTq/aJz34qbz6gnOSBK3WGn78TpJg06k8LTP2pDyjLPTKwpADWm3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708416383; c=relaxed/simple;
-	bh=2AajWmjvWkFwXUAy7YnyQC6wKfOpBqV3ZyOyOZCf5vM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QVJlfdhYZkrbEy/r3oK9+ZGGGYCW2/Y+JQ17gXNiK/FFKHKn3gIRsGkpO/9pJm2E85dmXZ3BRpzONi/JSdV6mqFyH4fuiyMVFJUYnBLzgd1BjlqQRiSFv4b5WhL27cgyqT4xJ6P4SMwsYWL6AS+6h8z9UacfhjZkgQs0kNd9d7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kgg0FGuZ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708417622; c=relaxed/simple;
+	bh=FbwtcBufwoXbPOYPnUNJ/O5sjaNC9PrMa+OFLq/9LlE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=iYG/fUczTpLnQEORFmXF4eV0HQ/cZcMrrZ1khpvNhxKV4kUkhPkmX9dMgbWRfWHR5PMMiFS7uF5bFXf0YGvy4cqpg7EzqqeIjt4JxB7ze6bDJktJSMD4Tq1pLh2fpRf8BgwbBFu8PHOR6eZd+/qce8KEPjtB8LXyYSzzcUOJ7IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=e9uNO9s9; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kgg0FGuZ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4126f4863f9so1940395e9.0;
-        Tue, 20 Feb 2024 00:06:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708416380; x=1709021180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLrWaeUumJ6pHnaaEwb9+G7skI59DBlkbGeW+yJ43lU=;
-        b=Kgg0FGuZpN+IMDO3uKj67qJaVRj+mMlQ/BJFXfNgVqoohi2+36nFAUWB0ucbmNvwSr
-         zc6cn/zlX66uQ3HDVbT0jo527h5sSCCxlEq8G2gMkKneRMgPdDkwIgjUOfZtAwvuSiMA
-         MMhLZwnUeARlNPuadmIhCeS7MPTcSTBElhe20zcfSBDxIFQfDcKzNHiJNZ6uGM3yBTvv
-         sYEEVkurRnJLN+lJDwhxys93iAJkWNWOSYjXi9vNQywhZAOI2Th1eJhIG0KqdWrmSD4A
-         UVuQTF/5ao2IWJiCDLh6lLmy6eo+RoP9fPOx+CoOf5bqHsJAzLkBuTybuO7HWwNGv9VV
-         F2QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708416380; x=1709021180;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LLrWaeUumJ6pHnaaEwb9+G7skI59DBlkbGeW+yJ43lU=;
-        b=qzHuOGQrftOeX6A0hWhcwsPdr6b177rYU6j4q8+hzoB7SwblYE+HX2K782mHokbfPr
-         Qgiw+wudChG6ZO5n3Mqi5xI1QKG6EaI8yVOitnJbm1sKzpi85HLCvmlrWbIRQHDxffDT
-         R8fA+Owa+5r1ujirvau+8kqmFF5xljnCu8LjcrCvdf8AVS9CsvIdTmvKUHoSw3GiNf4F
-         7lycWusRxNWqOUwRsVIwdSoIMDRsF9V9DF0nB0JNm3Ox0PvQ24aZJeCDNiq3r4zJoW0A
-         eCozQrFp80v+mww0bGOrl0pZKSwmRIvsNJ+rp/4oaAub8x55Hoa1EObHukRNmqOma+XE
-         CcVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKO3GEhZeH2ZqZl+LQ3Gr6FZldah9aDvfgEZUFmg0f1MUyG4lMMmbFcV1oXnxX0n/fxERcXMQ7Avpodykvvoy+OtFUKgAWmNQKFEycTxgZH8OBoRNcwwyCcmHuUuHSjhG+59sKXgP1
-X-Gm-Message-State: AOJu0YyKC3oMLnyjH9xe++71YaC6Og1VYCKJ0dhSAtreeHJB0NwL3Zr6
-	qvmJbERBFvZy4I3hvO/2z0JB4LuLG/hAIl6eEqZxWRuobmCLvWZH
-X-Google-Smtp-Source: AGHT+IF8OGMQFT7NrO47/sHeKkCDlVa+uW0HmkYWTVHWnO47HZT87n/5/gS8K/R4ws2AXKWPCeKP6A==
-X-Received: by 2002:a5d:6643:0:b0:33d:26dd:8c4f with SMTP id f3-20020a5d6643000000b0033d26dd8c4fmr5602887wrw.23.1708416379405;
-        Tue, 20 Feb 2024 00:06:19 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bu7-20020a056000078700b0033d5aee2ff1sm4053257wrb.97.2024.02.20.00.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 00:06:18 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Chen <peter.chen@kernel.org>,
-	Pawel Laszczak <pawell@cadence.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: cdns3: Fix spelling mistake "supporte" -> "supported"
-Date: Tue, 20 Feb 2024 08:06:17 +0000
-Message-Id: <20240220080617.2674613-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="e9uNO9s9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1708417584; x=1709022384; i=markus.elfring@web.de;
+	bh=FbwtcBufwoXbPOYPnUNJ/O5sjaNC9PrMa+OFLq/9LlE=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=e9uNO9s9BlPlVK+KiQU0PIEORK8P37I2txeksl/zdJew63C90YrlGcWsm6Hu4Hue
+	 6ljrcEcfq9efe8BC4qP7lzSWY4/cJKmXgeh4kh2GA6Ab5pc2t4Cli6eI2aX+/LFxp
+	 eShaxJI1uQRCHSUgE/M3sDjBVhoE1PshpN9ZGPZkHhHvRA/Jh3hTsAAlJXuIIqiou
+	 /ybXYix9AEHJLFZcrGYmM8qwXF0a9IIvlTEwDgoNad3g+4s/ZKjH9MYInmI9bnlVc
+	 LySTN7kZRkolEB7j2W+DWXMcYupogIapYd+ltxsRyKb/3gdFzKFxO54FE+7JBNCSm
+	 er/rX3U/+vMS+IV7JQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4bYo-1rbnUP3YVK-001fxX; Tue, 20
+ Feb 2024 09:26:23 +0100
+Message-ID: <41ca529d-ad0c-40e7-b68c-c90297815bbc@web.de>
+Date: Tue, 20 Feb 2024 09:25:44 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan+linaro@kernel.org>, freedreno@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Bjorn Andersson <andersson@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Rob Clark <robdclark@gmail.com>, stable@vger.kernel.org
+References: <20240217150228.5788-4-johan+linaro@kernel.org>
+Subject: Re: [PATCH 3/6] soc: qcom: pmic_glink_altmode: fix drm bridge
+ use-after-free
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240217150228.5788-4-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oGPEHuM2HIdXgcEMfwBFL/voM7jpNFUkHFQ+0xcJgl7i8MgwK7X
+ JRpaE+mgDDalhXTyU2+1PFOILTsPDZpOepGGIJfCQ/2E3ldh+sgz6VTMBA01/EflCrvIeWY
+ X6YhCNZlgsWrsvUtm8o2z+5W3E7+5Yd2k54efbPAD5SQDEAsv4P7H2BQFpKQnAy0uARDOGK
+ 1wwp3iW69af1k6eyCiBoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dgtWsq+B+98=;0ssw8wp6F6jnkVukgPpAy80HpQc
+ B0VMFA61OwPAzcw1oE4HEkJI7Op8/UpgfZD/rlEvXu7wBJAltZnVnEH4QBK3bR6eoqIkHYpQ3
+ a+NQ7/veaLawT/cH0RCDP6lm/j3niZpzb0CUvZiz08gIn478ffjixzszvFQ3nwCu6Uk/2cbZw
+ 1lBdOowsMiRl5XYsrKVcTqXngRFyOQ8SaTtPmk5Ocd6GHZGSPbPWnZhxXYQrACxB3DEfP0zj+
+ OgghtCVE1xS7INrVaqaoFlTWicIfb+TO/All7DwO0jxT5TnGCvyj0xiK13IcPE4yfzG5cXk+4
+ FXCNlG8KENRG+6N/YDVgCl1h5L13SfrSfon9XMCLUbeuC0bPlYx3ESm7tmaXMx+i9vLlnu3Ij
+ cr4ajn/JugewLTyYfpvg3HGWrZDDvY0lgR18LO4Mgh2GkF0TXEwTYk6yeI8ehoClatHTPiMEQ
+ UkriLgw2lJ7hxlS4YiX8OJneDycZUdyFCCs+GHFVgXnKzA8WLTuXBF0xhxkgbnmZaLPs9eOfk
+ ld8pY8kpC0FpG1LcNjEY0PG9eOrGQfv8CNbfcmm5rf8dQiD/LdlXdJE1rbKpOW/YsnSIcGrEG
+ JMfJTj7yCiFrNZJYI+RkVnf+dnQstf10h32TAnwbBfExX/OHZUBI0TH2W5pyXCscDYnThQKHW
+ sLphBvemEcnXdJDIkba0ET40K11L5YTJuIuiZyQdVn+mtYfyfu9oBU610S+X5NC9FU2RlEEGJ
+ XKH6PwGUwmR3NkZinJ70pekoeQfe9t4woQs0KZtNZDTWe0fhh65IQ6qWmSuccCqTsLcGVsImx
+ Eesic4I3yq1Dcu9fB0rDoBFux2rfDY6Ba322mXCTCYqKQ=
 
-There is a spelling mistake in a dev_err message. Fix it.
+=E2=80=A6
+> Specifically, the dp-hpd bridge is currently registered before all
+> resources have been acquired which means that it can also be
+> deregistered on probe deferrals.
+>
+> In the meantime there is a race window where the new aux bridge driver
+> (or PHY driver previously) may have looked up the dp-hpd bridge and
+> stored a (non-reference-counted) pointer to the bridge which is about to
+> be deallocated.
+=E2=80=A6
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/usb/cdns3/drd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I got the impression that the change description can be improved another b=
+it.
 
-diff --git a/drivers/usb/cdns3/drd.c b/drivers/usb/cdns3/drd.c
-index ee917f1b091c..8b936a2e93a0 100644
---- a/drivers/usb/cdns3/drd.c
-+++ b/drivers/usb/cdns3/drd.c
-@@ -435,7 +435,7 @@ int cdns_drd_init(struct cdns *cdns)
- 			writel(1, &cdns->otg_v1_regs->simulate);
- 			cdns->version  = CDNS3_CONTROLLER_V1;
- 		} else {
--			dev_err(cdns->dev, "not supporte DID=0x%08x\n", state);
-+			dev_err(cdns->dev, "not supported DID=0x%08x\n", state);
- 			return -EINVAL;
- 		}
- 
--- 
-2.39.2
+1. Will any additional imperative wordings become helpful?
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.8-rc5#n94
 
+
+=E2=80=A6
+> +++ b/drivers/soc/qcom/pmic_glink_altmode.c
+> @@ -76,7 +76,7 @@ struct pmic_glink_altmode_port {
+>
+>  	struct work_struct work;
+>
+> -	struct device *bridge;
+> +	struct auxiliary_device *bridge;
+>
+>  	enum typec_orientation orientation;
+>  	u16 svid;
+=E2=80=A6
+
+2. How do you think about to stress such a data type adjustment?
+
+Regards,
+Markus
