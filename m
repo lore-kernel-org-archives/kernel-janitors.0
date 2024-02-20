@@ -1,93 +1,72 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093715F552;
-	Tue, 20 Feb 2024 09:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE275FEED;
+	Tue, 20 Feb 2024 09:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708421008; cv=none; b=MUtMRJktlgbfg+JfAc/Zgs3sTErjJO5UktM2C/pFETrjDvxdFAu81jVwDpKX1P6u0x7aTtQg3SzzDvTb2QvvxmJyis2UxKm01AqG7ElWcSnK7z2pXMCw2C82qAq43YHrDfvbbT9SoR4CNk3LXhbmbhjhHd2+2GIaHFtN6fCmFUk=
+	t=1708421260; cv=none; b=iAYBZejE3QCXDjiJ5iozCfdmaiv/KE7dCCc9qafkc7Unj0QjnoWPNLDqgJzGq501PFwsmGIh9txHEAV52CSAKm4vPjebWRNXi3u4m7Wiwi7Dwbqk+t7g91BY3ID+cAdjbkeY28B9DwmeVUd0vhh9fg/SIjT4NqDagWHd1ybEOHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708421008; c=relaxed/simple;
-	bh=oE9usEZm8Gkp3CztCxfanlaxoA7z8FsMATKom3DsKN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WXFW3I/7FThjbIU1v7kpi7TgIpxUY9gOpiHMAmquCtB2DST0kcaIL3KV26kzBb3eGicxj1TLjPqO0pyvKLpbdjTvKbVXROlbQ4rGTlBdjZRWB2dJ25q/GB5O3jlsjzzrxFNYFhma8WXFPynALb2r/1W8wTL4oqIgdp5g7U+GM5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ignlrRqn; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708421260; c=relaxed/simple;
+	bh=tK0P0Hc1PBVUxV0yawRjY2jZZPz5jqknAUvE8cKFy5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbLxXNeSBV/YiJXRWlTEqv1vIhXXg011If90WEiypECfP9eFEuU1E+bOO2wkB7dY+aZdX2xWnkQB7Wr5RnkkjYek49x8KOyNQj4PmsnodMHhLdRx9l1wUZOMuIAglR4IcYU4GeO3ag4dyAruSOqGneObuY0iiy2M1DSTofMID/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=TW18YElw; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ignlrRqn"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-512be87a0f3so1488256e87.3;
-        Tue, 20 Feb 2024 01:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708421005; x=1709025805; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLvk9b5FrIPa9pQNkAPaUlHUg45CZIFJBTlV1pT4Cxk=;
-        b=ignlrRqnShGwgmsxAn2R+6Ycs3urQR0z4JQ3Y6Xad/z72deg1UtRSEfOwJWeZ0Xzgk
-         XRa1KEGzvjOjliSmdDkZhNSDEsG00Z1JIOU0sqdGv8cki7XaqpGx2xahLkIrlyjPXuAb
-         rJuzKaPcHQSF8UYju5nJb00WgF7/EY9m7CTbRhh3zJJQ94wdhqTehXs1NbeIJGmW5HNf
-         pJi26+943EoVT/cbur1/6socf2c6M7CsToJQ4p96QZZo5dGilJRBV0K/pHFu1LkLAPpB
-         ONyn2UbbeFagPW6CJoFA5hBVBWb/DZvjnFL02Xi8uHZvq5DPjJgOAw3dO/cuxk7xbzbD
-         3jkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708421005; x=1709025805;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XLvk9b5FrIPa9pQNkAPaUlHUg45CZIFJBTlV1pT4Cxk=;
-        b=C/YwqVzRq2kWor/3jN11jGQwojRp3YTlHVmIx/+Rnz5VJABvW8QlcQuSJFpjAS9SyX
-         fc/9H4Ugbun8vY7ob8GBN6Lw5X6FP4vaGjOrSC/E7AIaLJk4CqaKe9XXCeDGo+YIzESQ
-         ext6mWBwVUE3iBfy5c9kpaVtJKJNNK1R33t8uMQPFE1qNMtFCbP9ku0bzvq7yy3Iemwp
-         7ltULBB82+MsnuU8B8M4e9+gD45V5Hn0JlBPMOYqL6a4axNAzy+K286aR+X3tPkM1sdK
-         xpRFWyOK3LFjZTszaL3hUmDxmFk5KbyNZTWAANCIdaxPF32J67B630xcVBOkQBwshc63
-         mYVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX4dgNUdZH1HJ9hlZiyN0yktpz0xnJmHVgSTsi4qgwJ42lL/BJTElX05XoGM16aF5VL5vuGNgtrZgeCNpJUxBrffKBfP/Ijwito4NAcLlkpDZGSdkPQboAAzEfcqTVAZ7QkD52oK7sBHG/cUZu
-X-Gm-Message-State: AOJu0YyS/ZnJPoTuJumKbdiHxFccSwozZwAErWcU2lG0IIwUC0oKIbp0
-	aihcR14sCBjSnDmhYu0g7ohugGyFOpWDeXMiMfVCOOaSfbzvZLYmQ/DMO8oq+o8=
-X-Google-Smtp-Source: AGHT+IGPiNJIo/RM+pfOcyAeGRF3Prk8bkLGVYcuh9JnZgt+oXGa8pSyuAQqK8HQq04q9jCkAqILvQ==
-X-Received: by 2002:a05:6512:23a5:b0:512:ca34:6666 with SMTP id c37-20020a05651223a500b00512ca346666mr612055lfv.0.1708421004952;
-        Tue, 20 Feb 2024 01:23:24 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id s6-20020a05600c45c600b00412696bd7d9sm4094405wmo.41.2024.02.20.01.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 01:23:24 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: sched: Fix spelling mistake "hiearchy" -> "hierarchy"
-Date: Tue, 20 Feb 2024 09:23:23 +0000
-Message-Id: <20240220092323.2677156-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="TW18YElw"
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 4E6C6603CE;
+	Tue, 20 Feb 2024 09:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1708421252;
+	bh=tK0P0Hc1PBVUxV0yawRjY2jZZPz5jqknAUvE8cKFy5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TW18YElwcSz1lcRuZqF3wzTR8mxEfy7t204cpr/wybOgRqIkRjMncVAx65/OteWCS
+	 Nb3YUfjj37dmFbGddVXrcOheMsvMt08I42L6jc98fCZcYxroPPi68zoS3vyiwNU+5k
+	 En7VpWhiAQOSK/S7BVo4CV49Pc3jkfGC+G9tbVKYYSjHbs0ncsE78wm8ArOU0cSrvE
+	 dZWo5eSc7fDtCVFglCWZ+2C2s3IlQ64upxnjKzp9pjEGlzaItwe7pxPA7ORXZRRbSK
+	 bQHqkJObKZvQTyaILqsxDiqF8xF2ayCSXPrPe/4BLPTo3D1yUe/SDYKueNFQv2DFrg
+	 RYuujGwdDdDMg==
+Date: Tue, 20 Feb 2024 11:27:05 +0200
+From: Tony Lindgren <tony@atomide.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Tero Kristo <kristo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH 00/10] clk: ti: Adjustments for eight function
+ implementations
+Message-ID: <20240220092705.GU52537@atomide.com>
+References: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
+ <ZYxTS6Cfm_c0WgXS@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZYxTS6Cfm_c0WgXS@smile.fi.intel.com>
 
-There is a spelling mistake in a printed message. Fix it.
+* Andy Shevchenko <andriy.shevchenko@linux.intel.com> [231227 16:39]:
+> On Sun, Dec 24, 2023 at 05:33:53PM +0100, Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sun, 24 Dec 2023 17:03:21 +0100
+> > 
+> > Several update suggestions were taken into account
+> > from static source code analysis.
+> 
+> Unneeded churn, if you want to make it better, switch the code to use
+> cleanup.h.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes cleanup.h sounds good to me too.
 
-diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-index 7ba057154343..62fba7356af2 100644
---- a/tools/testing/selftests/sched/cs_prctl_test.c
-+++ b/tools/testing/selftests/sched/cs_prctl_test.c
-@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
- 	if (setpgid(0, 0) != 0)
- 		handle_error("process group");
- 
--	printf("\n## Create a thread/process/process group hiearchy\n");
-+	printf("\n## Create a thread/process/process group hierarchy\n");
- 	create_processes(num_processes, num_threads, procs);
- 	need_cleanup = 1;
- 	disp_processes(num_processes, procs);
--- 
-2.39.2
+Regards,
 
+Tony
