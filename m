@@ -1,62 +1,68 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF064AAA;
-	Tue, 20 Feb 2024 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6FB6026A;
+	Tue, 20 Feb 2024 09:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708420259; cv=none; b=Vzdaub9W05h6D//8RBkqOQ8cYGfp2XSdH28rz9yB25K4ZFD+Fc1DNLYsZ9MxMuLtmlmMQL4o//6n0flTrLjlJv/n9lA1YymCyUuUHsNOMVYnmNI6JLsIglEkko/o2A1s7a5KOBdw/I0FBVA9Tbg1rLoqTqZBJuU9QHKsNFFXeuc=
+	t=1708420662; cv=none; b=P48tCuD91ILpBZwp/RxB1L9511bHc8uW0/P/scxoCZzNGg4fZmuryKLo+Q4covjveFTCC3RzIHQRgPiQfQV7ReGyjzry+CrT8uOYLR0Myh2qGuuE6PgKbF2BT14A42XvaLG2JdCnfI6YIMyF2vIP8i4BzJQH50kp3vGyFdoThiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708420259; c=relaxed/simple;
-	bh=ByO2dT7JtpPvKkaZeVRsaOzbk+s4KDVPKrxRRc0C6tY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JllFDF4dcYcshK/SI/e96LV3HRcWGcWDYJdb+Hbkf3GtAUYKeCxlYNFbjEjsva82l0Iz7RrRvVP47pRdgBCgAAKmaL+LKcX4ySujsizEldPFmdGwpgezOG+6F6RKG1vczXcQ3xc3JR91xci/5APez5Q9/ybDuvbSagkqZQkqeMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iietwbf5; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1708420662; c=relaxed/simple;
+	bh=Y4+kw5fSFQQlDkOZRhwRC0+QUSv5CfeWWx9wRZnsPNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dbrUeza8ImDyirRv55eAHvzgzrpkhFOho2xx4KFbxg90TlWNYNNcWDkhn9TUx3Em3YMSFATEAnlCsbolIO+W1ZsxTrMYW5aRdgvNIMnE9M4ZgBzxnyNcgH/QUbTQ65/tiQgSGh/hiYXYQRtvlHJYJfYP8Dj13I6hIKUSukrda8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fXlFU53k; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iietwbf5"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33d375993f4so1300825f8f.1;
-        Tue, 20 Feb 2024 01:10:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fXlFU53k"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4126ac0c32eso8689645e9.1;
+        Tue, 20 Feb 2024 01:17:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708420256; x=1709025056; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708420658; x=1709025458; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J1QxAfuKOwJo1Q4eMgsPlCE9Pe85TkW/2/2T6KJzfX8=;
-        b=Iietwbf5w2+j33i29E8+t5l8eeWswe13ba+NPl1DpLuMas9FyWCyZVuAhqZMGz7DIP
-         ozrmcysNqEdiBrmHz9uA0tP0A41QcuqDREKf8yH+rKcJUGsK5vyzmBZwD9P1+tnxicDz
-         7oGVZuPeNQWy3ZOWjHnHWFZq0a53SQ9GmSDF3pJsEaBLr/escTO3jkzW9cH/3m/M9mh+
-         GylOMLnlRo0wypBkCyUi1gutLYtjjI7rxr9PfQDDgpS1aho4bhIOFEul6MgS0HqjM6A1
-         GCuHdeHUiIGoMU9jGlKB2e4ikJCGsE3axr2ke3kjR1TVgXZHAyyVXG74dzkvZXwp/k2D
-         xrDg==
+        bh=yZrwGhtv9s0VvylEijnGbReSc1OyaTC/p8gufQFjhr0=;
+        b=fXlFU53kI8ptXEVD3AlWhtLcMUkCnJnchwSfZe9zRwet872/UjdccJ6QDHTIhRUPa6
+         S4TyZqsnlsmsi85Ikdc8eAM5oDLshfKkKBQntOpnkLNPXQ4hbrALz8XpL36OGaf12yGO
+         LympI4qKW7vbB52v3OjNBF9KfBahR/c2nvxYp/OVZXHBouxCqbQg6N1IBU8ZYv3aK2Wy
+         P+1PRmJg0DFYAduZphio3drkXbnEdzZTBhEG4KAvcycmb6V9vlIEncyqa1n2+Zoj6U9f
+         gOWwgCyX4THi+WQ1AiFi3FAFKNA2eRxUMJ4OF8SfqKmqPzsp7qC9DUNedf0yX2k4aAOc
+         t6jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708420256; x=1709025056;
+        d=1e100.net; s=20230601; t=1708420658; x=1709025458;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J1QxAfuKOwJo1Q4eMgsPlCE9Pe85TkW/2/2T6KJzfX8=;
-        b=auMTXxgLNenaeRgvcTdNQnElfSV8JEWnkCw8lSbvTRI8NygJ2195DYfBWUOPbj3MkR
-         wBOOIle9VAjU6RNKMZHv/u0nflVDb2WlmIL5x5rEj48PJ5dzcVmcWoqh+bhNCTcrR0Uu
-         OeV7APuzEM8z3YVRmWUbiER69LIaFRYA1TdX2e+nEjtvxfRQcp+sawu/SPfW7VVSsRxc
-         6nlA7/+5znHTMV2Z1KzIAYvewKb7eUqq56lOsQoNqjrSSLKJL09Dln1AoxA6nEZsOeVk
-         SCVLIKgUugsprkpFOGXjY6K8H1sy29ToKwWAZSyPqoQ8hTSC00mGfp2KO/w+GR8rCo6M
-         3bXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSwSzUVbAWS4TO0U4K2HPMn/4fkpRRGorosXuP/HHVyY4wDmklGcHwG9ruRrtOj93k1m/qYEYB1SkSUXy5u2PzfLjaB/dPRWsAKH2a
-X-Gm-Message-State: AOJu0YyhTzU2lg/kqf4VlM0FbsSv2+ZNhrCCPk3Kh8l9+UGgzSAfUqPA
-	W6Ne8FFFvOX+ifUlqPmDJp+FW/m+Fm6bVxm7Y7HPWJk21yV6e31jEu2Cil8G
-X-Google-Smtp-Source: AGHT+IGQy/fQwxMahck/FXlqoUkhyK08LtRAagUHScMB3qr+o/gOGhrYsmy58O1bbJ56JDLuowi0gg==
-X-Received: by 2002:adf:e6c1:0:b0:33d:581c:5dc7 with SMTP id y1-20020adfe6c1000000b0033d581c5dc7mr3602418wrm.59.1708420256108;
-        Tue, 20 Feb 2024 01:10:56 -0800 (PST)
+        bh=yZrwGhtv9s0VvylEijnGbReSc1OyaTC/p8gufQFjhr0=;
+        b=MTpl6Gq/UjkUlziKE+tgWl4RuLYI9BvRWxzwAFwL7kvpTd1Oteh1JAMWyo9AT3IpBo
+         rMmF5H4YH0+I1gm8uMorUrkO5xhaXywwB9Qa0RMG/PZ17Z7ByNs8fDVmu2+WMhYYTQAW
+         TDYJNDvqpgjBDrHUcK71yODaORCWTsdw0vHmwZQbRyXCnIpmhr/5UQZN6dNRKTs0w2EU
+         Egds5ZzCaymICI5ebd7ZC4DyCfo4tv+EKWbg6TrxMXqwOSIS1hfv8RHsWY+1oiBt5Yzg
+         UU35NRrB55Dc7vyAWWL2jXIoC2v3PMHrAUcrs+VG57TDLnFOvnVGqRqV3WatD2gks8m0
+         eSYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTy/5MvmefyAN5ThNdC0nmCSiSisW7DSPRGtp/j7Yzb6ujDf2LWulkH9G3GWxK8IYbD92w5lM9u3KapFsCiLPkWO30O0Z70HO1aqf0LkjVA6Qq+F7D2zOhSviEzduUtaoqhnzI
+X-Gm-Message-State: AOJu0Yw0e6AIH9IfynhaFDC8SiCW1hVsxx0ISt93S4sg2mT8rlZoKKXZ
+	CfGLo3mI8f5eQHdqeIJHFUyQoxa+FM1nqcoeU19h2keqOhVo2rk/
+X-Google-Smtp-Source: AGHT+IFheKiyGbQ/0yz9kwl8fvcJsLXeq6xjON82DDfxSrN5tD+ZPojaj04MFISzpmZU5qn/ENxqRg==
+X-Received: by 2002:a05:600c:4a29:b0:412:f24:5732 with SMTP id c41-20020a05600c4a2900b004120f245732mr11426030wmp.37.1708420658575;
+        Tue, 20 Feb 2024 01:17:38 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b7-20020adfe647000000b0033b406bc689sm12928535wrn.75.2024.02.20.01.10.55
+        by smtp.gmail.com with ESMTPSA id m12-20020a5d4a0c000000b0033b60bad2fcsm12748356wrq.113.2024.02.20.01.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 01:10:55 -0800 (PST)
+        Tue, 20 Feb 2024 01:17:38 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
+To: Bryan Whitehead <bryan.whitehead@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] freevxfs: Fix spelling mistake "ivalid" -> "invalid"
-Date: Tue, 20 Feb 2024 09:10:55 +0000
-Message-Id: <20240220091055.2676456-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] net: microchip: lan743x: Fix spelling mistake "erro" -> "error"
+Date: Tue, 20 Feb 2024 09:17:37 +0000
+Message-Id: <20240220091737.2676984-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,24 +73,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a kernel message. Fix it.
+There is a spelling mistake in a netif_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/freevxfs/vxfs_olt.c | 2 +-
+ drivers/net/ethernet/microchip/lan743x_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
-index 23f35187c289..48027a421fa3 100644
---- a/fs/freevxfs/vxfs_olt.c
-+++ b/fs/freevxfs/vxfs_olt.c
-@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
- 
- 	op = (struct vxfs_olt *)bp->b_data;
- 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
--		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
-+		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
- 		goto fail;
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
+index 45e209a7d083..bd8aa83b47e5 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -1196,7 +1196,7 @@ static int lan743x_sgmii_config(struct lan743x_adapter *adapter)
+ 	ret = lan743x_is_sgmii_2_5G_mode(adapter, &status);
+ 	if (ret < 0) {
+ 		netif_err(adapter, drv, adapter->netdev,
+-			  "erro %d SGMII get mode failed\n", ret);
++			  "error %d SGMII get mode failed\n", ret);
+ 		return ret;
  	}
  
 -- 
