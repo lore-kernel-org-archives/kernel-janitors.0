@@ -1,100 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249315A799;
-	Tue, 20 Feb 2024 07:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990B75C5E3;
+	Tue, 20 Feb 2024 07:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708413899; cv=none; b=YDA7ChZsGcNkQ+zJacCDxkUWMmyNdSdXmVuN0x2HATuaxhiq1B1ucu6vUWpyg50T0o2RHXOnqVnEjx7C8PkVHy/nXG3q6LN8UQcf3/Pqt4ueWsnE6UieN+BQ8bcRbELsgj9/KlnFaiNTKr73AsqQxJtBIrlKTm8lygqUUCP4G68=
+	t=1708415840; cv=none; b=QaRUDw0pzCBu6cLKgh1S1dygJrWWkps0cAXUsBNJ6srNvy4zKs72nxAHHjKT5bu7gnhVJtni3r7rTgY8tDfA3hOTpOvqygWB6OYCEKfoaVfSiQvF0RpD5XpwYQC7jBQ/3VBFqbVRMoj6xIFGNuW2RDOMO2x5lXNA8CCkZ92DQbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708413899; c=relaxed/simple;
-	bh=Km8gZMkJB7vNwcEvKJf3Z5MjG8s2kLrFv7d6SMKvVC4=;
+	s=arc-20240116; t=1708415840; c=relaxed/simple;
+	bh=1JAH+k0oC/h1bHslHgVC/nrMngLSq2FgOoqTHYPd184=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjfVbqr6wXtMvOkl6TZdPCZBmcRRO4r5yaR138+pEB5uDBmu5iB77MdhQ06lIwO9CMqhS2c4HyBiIIbo4I0hR+EZeItdTcNmExZn0bY2EEX8o+OD122UsDvHnEu1EYr0fSTmz2MiOpiNtQvXvt6O7vPq5RAl7tLsY2s+po7H24E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6WSjOKx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hw0rMDJy9Lhmud766KwLfx6V6SWCSMQjkPLw+shEpxCPrGB/i/3LWZsFjkmjGBYEXlao8tMKR8+b1ayf8pjIl7rhON+c8bz4wLntEZ89T2vCK+MeueYMoZoBNcZ73uetoyiWRx4Sduf3/P4hs/fZbaP4A+dCBKio1sc1zrXuxQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvXRzcza; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6WSjOKx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96CECC433C7;
-	Tue, 20 Feb 2024 07:24:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvXRzcza"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7734AC433C7;
+	Tue, 20 Feb 2024 07:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708413898;
-	bh=Km8gZMkJB7vNwcEvKJf3Z5MjG8s2kLrFv7d6SMKvVC4=;
+	s=k20201202; t=1708415840;
+	bh=1JAH+k0oC/h1bHslHgVC/nrMngLSq2FgOoqTHYPd184=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y6WSjOKxHt9TBefi2fivgCw5sGg4pib4PrIDZmtoesOTgo80CtchhROVw3pw0FeqR
-	 Pc9MGfrCfAKPZbAgDQVs+NvTqOslO+bcwY0+bPdxSK2Sx7n0x9RIur2VOHGKxXS5q1
-	 ZojucTaTTOXH7nqkaDAr7oKNW9keBDciLLBBztXj3jG96Dqy7egDtQFdz8u2Q2iBJt
-	 aWy2UUb55Fmr0MdRm5gJysrUBrLO6+m7+7BBeis1O8wXCAb8JBXQ17KOHFtUMJxzgm
-	 /zoywKFK7JfGrRP4yu7ts9/D14Ft57GqR0srDYm1N84JAeD8Tp4Vli9+dIMNop2M/1
-	 B2HwmHPKoXLyg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1rcKUp-0000000024l-2ZkS;
-	Tue, 20 Feb 2024 08:24:56 +0100
-Date: Tue, 20 Feb 2024 08:24:55 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Johan Hovold <johan+linaro@kernel.org>, freedreno@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 1/6] drm/bridge: aux-hpd: fix OF node leaks
-Message-ID: <ZdRTx2lmHBVlcLub@hovoldconsulting.com>
-References: <20240217150228.5788-2-johan+linaro@kernel.org>
- <c95f5ff3-8dad-4302-9384-92a9b83f7bdc@web.de>
+	b=cvXRzczaupLox1sUg0b9gC7YiQvGh3OvZuqQwbpkRJIrwdKvvp8F6UHt6StQ+yg1N
+	 G2jcx7lJyUnCAHwHaYyJSMUH0obcu2xSs6NBay1qdrZnGa0qDZjpzXbTOCOLp3GmUg
+	 Xty4aGH1n0BLB0libaPnj4G3mG+gIJy8lO8eI8wyGU2XuF9lDjICmxDPHr00OZ++ZN
+	 0nZmDLp2NU+aDyrSPD2Ux+oB2gPNQ1psbaabu9at8v64rqBPwrA4xXLLurLkheyaIA
+	 cJoqs3FJqCK4GqVNdq8R7UV4bf9nzWYjZF4HeA2eBYFeS/JRcbML+Z7sv3XRIl0yrm
+	 K8e3mxKe63I1g==
+Date: Tue, 20 Feb 2024 07:57:15 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Or Gerlitz <ogerlitz@mellanox.com>, Eli Cohen <eli@mellanox.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next] net/mlx5: Use kasprintf()
+Message-ID: <20240220075715.GP40273@kernel.org>
+References: <9bb8d927ec172df227f84694dfa5769623f48c89.1707562340.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c95f5ff3-8dad-4302-9384-92a9b83f7bdc@web.de>
+In-Reply-To: <9bb8d927ec172df227f84694dfa5769623f48c89.1707562340.git.christophe.jaillet@wanadoo.fr>
 
-On Mon, Feb 19, 2024 at 06:48:30PM +0100, Markus Elfring wrote:
-> > The two device node references taken during allocation need to be
-> > dropped when the auxiliary device is freed.
-> …
-> > +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> …
-> > @@ -74,6 +75,8 @@ struct device *drm_dp_hpd_bridge_register(struct device *parent,
-> >
-> >  	ret = auxiliary_device_init(adev);
-> >  	if (ret) {
-> > +		of_node_put(adev->dev.platform_data);
-> > +		of_node_put(adev->dev.of_node);
-> >  		ida_free(&drm_aux_hpd_bridge_ida, adev->id);
-> >  		kfree(adev);
-> >  		return ERR_PTR(ret);
+On Sat, Feb 10, 2024 at 11:53:13AM +0100, Christophe JAILLET wrote:
+> Use kasprintf() instead of open-coding it.
+> This saves some lines of code, avoid a hard-coded magic number and is more
+> robust.
 > 
-> The last two statements are also used in a previous if branch.
-> https://elixir.bootlin.com/linux/v6.8-rc5/source/drivers/gpu/drm/bridge/aux-hpd-bridge.c#L63
-> 
-> How do you think about to avoid such a bit of duplicate source code
-> by adding a label here?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> If you consider it as a bug fix, should 'name' overflow because of the
+> hard-coded limit, then:
+> Fixes: ac6ea6e81a80 ("net/mlx5_core: Use private health thread for each device")
 
-No, the current code is fine and what you are suggesting is in any case
-unrelated to this fix.
+TBH I am entirely unsure if an overflow can occur.
+But in any case the change looks good to me.
 
-If this function ever grows a third error path like that, I too would
-consider it however.
-
-Johan
+Reviewed-by: Simon Horman <horms@kernel.org>
