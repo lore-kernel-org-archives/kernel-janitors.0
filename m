@@ -1,157 +1,109 @@
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417FA53E08
-	for <kernel-janitors@vger.kernel.org>; Mon, 19 Feb 2024 21:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6B155E56
+	for <kernel-janitors@vger.kernel.org>; Tue, 20 Feb 2024 05:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708378577; cv=none; b=aVQUUKDEBruJmHE+tUY/7DOrCw22Pj7GLfNUkx5/e3uwjMZfv5+qDsH5m1+xQNBAi04BTL6Mji3IAa/nLYquLqYh93qlj9KbYFj+pgwCejtRsD8dRLlkVtMFC2YZeA3c8frATys06V5uVTk/DT3tVH3LYY0dkvHF0dXZK1O8HZs=
+	t=1708405924; cv=none; b=uv+rExU58yNZqet2WiC5SbPCpzBKqUIEgo4mVm1ESWr1232sR9OUVFQituVuPpPCsA51HXLW5wOhYiqa77IpKL8O3c7La0dy7I3PArjW3Cq4iC3kZziS1r0Ay86lQRgRPcts3DycNU5EuVTKyma3iWnL89wUf7aVMv9IgiTI8rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708378577; c=relaxed/simple;
-	bh=m9hU62GZDlzRYkm5TflwXBi9gQJhj+hqg7sdx9BPbQs=;
+	s=arc-20240116; t=1708405924; c=relaxed/simple;
+	bh=P+/HhRLclhnIoaOWdptZq/oDYI5tJKDJu31V4vnvpRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oN97sRcWmPbSI3IA2JrwtR2CVRLLUuXgskyGl24VRnzn1DIFR2U+HkxkHn9ekAjn51y1AGvknIQXbhxtxO/YsQ6gxBg5WtYGQ5T9r0yU/yVFTpJCbjnqKp81KZCOgYzLYjzGxwi2Uoq6tIvUTmJehjmjCdXSRZvovJbyQst9lv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CEfenD8+; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAh9MYRuDcWKjQs2s/PYSfp/89rb7qBkBwROoIuCJaebxSxpvRjs9nLHl340wMWSaACHE5EsTiGSUNfFH3pa0ngItLNBr3nxdrmckkJyh/4GW/AoDZrJn3+CxRjC202C6JWnnljmdP8+pMlySNGDXyQtUeuIrb2kFcUhZIyk/BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z0nkvVgq; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CEfenD8+"
-Date: Mon, 19 Feb 2024 16:36:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708378573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nHWVuGms67eXElpk+GQbCw/8AGqs4biTimQboa9uwN4=;
-	b=CEfenD8+3EJDfCF8/kmLMYKXU6y35aU46WIWwSJJB356+dXfd/9gbPuyr240gOR4UaCLWG
-	D71lvlpBHmfECRSHcvmmRB9oo/r/LA4JYFB9GKvYtPeBwKAtm2Vm3vA7kRSO6M82aN3fFD
-	KiS4pObDhkHQIzhSjmNJbWzugkqSAx8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z0nkvVgq"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-512b84bdaf1so1874525e87.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Feb 2024 21:12:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708405921; x=1709010721; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ho97+Z9XyV0V3EKFp1nj4w01pW7dIUQTWF51opt+P0k=;
+        b=z0nkvVgqvrUlYCgPkRVoo/MkW+ZcCTslIch3mycrdlwr9/1Godr/RkDltgOCxoBcdw
+         1I3nDr4I9dQciV0dTXPQl3FJtrCqZ7CBctQdx7BW9PT/RdFUtfWs+QWOQF/f0frLqX0y
+         vgu1lCNXKfNyXIAiOY8hjUO1lKnetqc+Ln3BZzJVxzoH+moIH9Meg3D2jbInhiJEBBHd
+         hH0EPrLR0cdjcTxXTHrFfwjv8kh8Zaspgn1wKJRngK2A06Fk+O3GokIQUcPUcWOPGgzq
+         5A/e4ZCcFV7g1htR6l+/Sj3l5d9ja7ZXMRChLOtuJWvzJfQwbw/jopSmH1xqnofVdiVw
+         7Iaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708405921; x=1709010721;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ho97+Z9XyV0V3EKFp1nj4w01pW7dIUQTWF51opt+P0k=;
+        b=UHjCKZQeijC84GG4SGxHnS5OFD20ZVyv27TtzJ+gq3BxXbG6tlEC2NMMRshIxORpzr
+         bLzsX3jhVcenQ/8MjdljXCEhBeSMO3FX09BItRVn7zx4CwvTVd1QwnXLt9DQ28SF/FDd
+         gQBAYwT9oFB70/bWlZ2n8d4VBP4SfOhNPl/a6iEAupP7RTO1sJMP7+63hKS3vo3CT5Fe
+         QvX/snsBgLnpvrLy2BMeCYGh2LbLX4fx0wIW/OHfq+oOv2H/xUGyYXmsnW7fiTi8JVBy
+         3M8wnpLgWdsrNaHWWiNxyw2gUgXmC5SSZqdQV3Y5MT3wjqxfRndjYMAjcovO0UP3blje
+         z6bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXafwXWxZwm2DzTBwOgEShhGtr/kdlgxsT7XBNetJKF9ZYnftsB3WXh2d2BfaXK5pPkD7d5ZvFXY9U4L511/fyyssmW3Gj13qi0NhKSitlv
+X-Gm-Message-State: AOJu0YxJb+L2Zcr8+81VBAdewumeiMAnZASUVsNYrC8i3QTXkdhgoLLN
+	mBWNQI805aWLatZtiLDH/XDq/NGMsM3oJVey4MyueRO0DBJkW7KFIZbLCVyIlFY=
+X-Google-Smtp-Source: AGHT+IHbqUb2KIKvVKoBjpRJDXqck41PHOxDu5LU7Bz4meGHEBaEjCnZ2bAV7RwH8TMbR2gh5uA+eA==
+X-Received: by 2002:a19:f706:0:b0:511:9746:6794 with SMTP id z6-20020a19f706000000b0051197466794mr9220992lfe.60.1708405920674;
+        Mon, 19 Feb 2024 21:12:00 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id x19-20020a1709065ad300b00a3e786d8729sm2082419ejs.168.2024.02.19.21.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Feb 2024 21:12:00 -0800 (PST)
+Date: Tue, 20 Feb 2024 08:11:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v2] bcachefs: Avoid a potential useless over memory
- allocation in bch2_prt_[v]printf()
-Message-ID: <csjcyhnh5lhj22emlwdzpr6v4s3mfldsw3um75hsk4ffjsmqmb@otyei3qylhdn>
-References: <4c614db674887346ea418acaeafd6bf86502ec77.1708272713.git.christophe.jaillet@wanadoo.fr>
- <pmyezdskyr3t2iyald4diibl6b7lttf46d6sskxfu2wq3pub7r@gmyezjb3wfeu>
- <c745c4d3-a084-440d-bc07-0ecbcfe10e37@wanadoo.fr>
+Cc: gustavo@embeddedor.com, keescook@chromium.org,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v2] udmabuf: Fix a potential (and unlikely) access to
+ unallocated memory
+Message-ID: <bc59a084-73bb-46a8-b02b-0ef990020458@moroto.mountain>
+References: <f75d0426a17b57dbddacd7da345c1c62a3dbb7ce.1708278363.git.christophe.jaillet@wanadoo.fr>
+ <91d964c2-3d5a-4e96-a4db-e755455c5b5c@moroto.mountain>
+ <3fe4c327-b69b-464e-8e4e-005fa1813279@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c745c4d3-a084-440d-bc07-0ecbcfe10e37@wanadoo.fr>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <3fe4c327-b69b-464e-8e4e-005fa1813279@wanadoo.fr>
 
-On Mon, Feb 19, 2024 at 07:10:10PM +0100, Christophe JAILLET wrote:
-> Le 19/02/2024 Ã  04:39, Kent Overstreet a Ã©critÂ :
-> > On Sun, Feb 18, 2024 at 05:12:28PM +0100, Christophe JAILLET wrote:
-> > > 2 issues related to incorrect available space in the output buffer
-> > > computation may lead to some extra memory allocation.
+On Mon, Feb 19, 2024 at 06:59:02PM +0100, Christophe JAILLET wrote:
+> Le 19/02/2024 à 09:37, Dan Carpenter a écrit :
+> > On Sun, Feb 18, 2024 at 06:46:44PM +0100, Christophe JAILLET wrote:
+> > > If 'list_limit' is set to a very high value, 'lsize' computation could
+> > > overflow if 'head.count' is big enough.
 > > > 
-> > > 
-> > > First: vsnprintf() takes the size of the buffer, *including* the space for
-> > > the trailing null.
-> > > 
-> > > But printbuf_remaining() returns the number of characters we can print
-> > > to the output buffer, *excluding* the terminating null.
-> > > 
-> > > So, use printbuf_remaining_size(), which includes the space for the
-> > > terminating null.
 > > 
-> > nope, buggy.
+> > The "list_limit" is set via module parameter so if you set that high
+> > enough to lead to an integer overflow then you kind of deserve what
+> > you get.
 > > 
-> > passing printbuf_remaining_size() to snprintf() is correct, but
-> > snprintf() returns the number of charecters wrote _excluding_ the null
+> > This patch is nice for kernel hardening and making the code easier to
+> > read/audit but the real world security impact is negligible.
 > 
-> Hi,
+> Agreed.
 > 
-> I think that the patch is correct.
+> That is what I meant by "and unlikely".
+> Maybe the commit message could be more explicit if needed.
+> 
+> Let me know if ok as-is or if I should try to re-word the description.
 
-You didn't test it, I did.
+No, it's fine.  But in the future if there is an integer overflow then
+lets mention in the commit message who it affects or what the impact is.
 
-In the future, no more patches that you haven't tested - thanks.
+regards,
+dan carpenter
 
-> snprintf() returns the number of characters wrote _excluding_ the null. That
-> is why the test is: len >= size_of_the_buffer   ==>  more space is needed.
-> The case you describe is handled by the == part of >=.
-> 
-> On the contrary, if len is < size_of_the_buffer, then we have at least 1
-> place for the terminating NULL. It will then eventually lead to:
->   len_of_the_string + space_for_'\0' ==  size_of_the_buffer
-> So it does not overflow.
-> 
-> 
-> Anyway, feel free to ignore the patch completely if it sounds too risky,
-> take only half of it (s/printbuf_remaining/printbuf_remaining_size/) if you
-> are more confident with it, or the complete patch if the explanation above
-> convinced you.
-> 
-> From my PoV, the 3 options lead to the same run-time output, with more or
-> less memory allocated.
-> 
-> Best regards.
-> 
-> CJ
-> 
-> 
-> > 
-> > > 
-> > > 
-> > > Second: if the return value of vsnprintf() is greater than or equal to the
-> > > passed size, the resulting string is truncated.
-> > > So, in order to see if some extra space is needed, the check needs to be
-> > > changed.
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > Un-tested
-> > > 
-> > > v2: - Use printbuf_remaining_size() instead of hand-writing it.  [Brian Foster]
-> > >      - Reword the commit log, hoping it is clearer.
-> > >      - Synch with -next-20240215
-> > > 
-> > > v1: https://lore.kernel.org/all/0f40108bed3e084057223bdbe32c4b37f8500ff3.1694845203.git.christophe.jaillet@wanadoo.fr/
-> > > ---
-> > >   fs/bcachefs/printbuf.c | 10 ++++++----
-> > >   1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/bcachefs/printbuf.c b/fs/bcachefs/printbuf.c
-> > > index b27d22925929..8cee9c2f88c4 100644
-> > > --- a/fs/bcachefs/printbuf.c
-> > > +++ b/fs/bcachefs/printbuf.c
-> > > @@ -55,9 +55,10 @@ void bch2_prt_vprintf(struct printbuf *out, const char *fmt, va_list args)
-> > >   		va_list args2;
-> > >   		va_copy(args2, args);
-> > > -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args2);
-> > > +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
-> > > +				fmt, args2);
-> > >   		va_end(args2);
-> > > -	} while (len + 1 >= printbuf_remaining(out) &&
-> > > +	} while (len >= printbuf_remaining_size(out) &&
-> > >   		 !bch2_printbuf_make_room(out, len + 1));
-> > >   	len = min_t(size_t, len,
-> > > @@ -72,9 +73,10 @@ void bch2_prt_printf(struct printbuf *out, const char *fmt, ...)
-> > >   	do {
-> > >   		va_start(args, fmt);
-> > > -		len = vsnprintf(out->buf + out->pos, printbuf_remaining(out), fmt, args);
-> > > +		len = vsnprintf(out->buf + out->pos, printbuf_remaining_size(out),
-> > > +				fmt, args);
-> > >   		va_end(args);
-> > > -	} while (len + 1 >= printbuf_remaining(out) &&
-> > > +	} while (len >= printbuf_remaining_size(out) &&
-> > >   		 !bch2_printbuf_make_room(out, len + 1));
-> > >   	len = min_t(size_t, len,
-> > > -- 
-> > > 2.43.2
-> > > 
-> > 
-> > 
-> 
