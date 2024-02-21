@@ -1,64 +1,64 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB18481A8;
-	Wed, 21 Feb 2024 11:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBA03C493;
+	Wed, 21 Feb 2024 11:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708515494; cv=none; b=DhnhxlxBqznWkxb0grjdN9ePW+zQTR4K+7o0JfV/fozEvzxqvzmBwhKuxfe0h+01BReQPRuu/sHWxhcRRf9k1Q0zYRQg/PSAEXGkTfOB6got5ZS7FrptTBBTJhhhR/YmZuxLPVeIhPOmf40s4i3ryPo+e1AOkbYhXREVgLkpi5k=
+	t=1708516328; cv=none; b=soktZvOPEg4bmlcL2VMxxv2R1qvQvfzsgx82Z+YaBtgzzFKgAOUfSGkdnj33/25nsl06Gm63quq0f567IDiPXwhTQb+M/Ec2qij6DJ9BkJ6Wp5vql5PQ91YCJN2ZZ9en4LcBN623MfqJxQbYW2lT2iD4u18Z148TyIKvCkd+1b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708515494; c=relaxed/simple;
-	bh=EhrWngD9RDOax6weTU9Ro/qRRNM2e3wDxLZFUYJCqFk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=groxgjMrHrpRKyVnBW4pO+AYxqLqSUJdpSrVFoXa3sUk6D0nqaFP+1IpbEfmpWgkhZjOWkw1ULxVjJkWn33t1XSfe0XiuLMihc1K0iH+fqlz6YuA8rfMxaNMT5JdEYOASuQQRCNDjlJ2stk5iYdJ6HRjlJnDNbpyYBFTljanCSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrUP+WxG; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1708516328; c=relaxed/simple;
+	bh=eFsdIkXaJEgfpS4THYxhHiEbCRqYhMwSm+DSEtwMlcY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TOvh0wCeuPlpSLWuR2q5vR+vYmXt/wkM4uRzFBlJUTZM5Evhhd+N3sgSC5ZBCb4bH4kEIoWGG8i2v+WN/IF3pfonR7EoUdM6T/zVLBJI3gqrVRlAhQD2dl+6kevg6rmYxD+l0wDzAMQeM3dIp+2WRkF4U+3D4wWYEpaJy8kVqX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7mO9GIX; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrUP+WxG"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4127188dd5cso10082685e9.0;
-        Wed, 21 Feb 2024 03:38:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7mO9GIX"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d22b8801b9so7343591fa.0;
+        Wed, 21 Feb 2024 03:52:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708515491; x=1709120291; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708516325; x=1709121125; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/HFIcoSw75hDTLYVUPwa8rzXmjiPlpAtt6qgGaK/RA=;
-        b=ZrUP+WxGt8IhN8QaymqyVGVaNfa/2ay4BRlBwkzOryk3m7iloqecPpcrl4M2wyJsmn
-         pbOymW+JVS7z1JX9HVcow1H6/UHeI47By8SkX5s/ncppbNAS1F8KIMgDRISCDG8cJYJ4
-         WwdFKCC+/8FDoKjVCyoNW53NnWtvwagqyc4vK5Cy+BCnpYUpt/ar80eF6P0tvfUphws0
-         f1eP/shbMV8MHFJ7L8y2R4SRB4Yv+M24sCxS21MtJdT283/Cw5/lrWSCbA0hEUXtz75n
-         jWrF5fN158YRpvFkOzAlb1gwxElu7KK5+v2CK4Er/2AJhKcSvop6bn615Y6yAv29TJmY
-         T55Q==
+        bh=5bDsddkEN+lUWqN5ZaY3+6CrL7Csh45NI5ac4HlpkYc=;
+        b=W7mO9GIXtalsQYIs1/rtW6RdChYPVOpYHQBXlbraEHCswtMtckx81Tr1Z1clKh/cO9
+         NinwgkoJ/IMVFziDI+WVwjEdicdeGTBsQwv8+HRmWxCEjoCuqOiWGgbu7wACph5YoyqJ
+         wJlufNh1h4hgIF9S6tqRHz/AO7+d3sZi22qCEVSJPFQom2KLch3vn8iRv4ux/CHXJfvd
+         rMEreDhVERbB3A2gbB6QKeocO08d2ybPc2NPkWcwuJQZn+a8PaqnXVnbZBr4a+Lz6QOu
+         motmz3jS5nWyM6is0lwqBYfevVoY/01HRx9Qd3hsRSBDL5zdij+jXdaWMEN15jXc33u/
+         RUmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708515491; x=1709120291;
+        d=1e100.net; s=20230601; t=1708516325; x=1709121125;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C/HFIcoSw75hDTLYVUPwa8rzXmjiPlpAtt6qgGaK/RA=;
-        b=W0e81M+pA1LTQzDETxDEqUiw2wELQNeTLovUBHMnHy9+YlOkSakQYyUDIO53irrxfj
-         0oOSBrk2Uo8tU3tjdVZ5LqXSzhKbj2P0NBFLWeam8aWh/UFiTLcgOoYaJhdXY9Cl0p4b
-         fBFvVnJG4dd6Et1GcxiJDxkcebRpZ/vF4hR30P8a4nQtSsNejUCnwvaeSjt4Nkim3LTU
-         Y48t74UgrNcG8J8at93EEi0vTNnwYVSLciQzOjIA7krAZDPlTd79sEfjgJkxw9xv8HKJ
-         D5QtdKeSCiTbSqgBI9hl7N/uqlzvSpNcsc8DkNs9Wi0dz/gwrgvR03cu2GgHB8ur1hpO
-         AzfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXy91V7Qrr8ob+fR4ZwL4epuc8Tu8PWLaxh9wXK1uU+Ge9fhWfWJM9kpudoEvxYSsQUL/VgQ6z9FmhVfPP6DAmIExcusGjRhkp+tQUKcntOO6NPu9Q99A5YiwzQkUiVbhedgS5hoHtZcWk=
-X-Gm-Message-State: AOJu0Ywbv7Lg9TJqETS2Umrd4AURRR4z6gx6y2NA18H9cvq3WRoP3yhL
-	1xuraN2/sLU4PbxuqPPkA9XcFcj3VcBfn2L2Cu8H8k+wC+jOAnh5loim9brC
-X-Google-Smtp-Source: AGHT+IEdSBNCbVnHf3xsKaHEyqKW8117YV+/I23ry7Dd9181w3oMZZfnGyOO2Vg//jXHeha/rb+Otg==
-X-Received: by 2002:a5d:64e9:0:b0:33d:2833:a163 with SMTP id g9-20020a5d64e9000000b0033d2833a163mr10021781wri.29.1708515491151;
-        Wed, 21 Feb 2024 03:38:11 -0800 (PST)
+        bh=5bDsddkEN+lUWqN5ZaY3+6CrL7Csh45NI5ac4HlpkYc=;
+        b=m32VNTqxASUPVg03GG4QzGwXIXPxBctpT6QlCZKClqJ2Q5OCxUxeh3ksCQSk2wBM7N
+         aB0HUQGqSfhK/+4TJeJ19iMMfJUSib0igeaRiIwrnSREE69WqfJhdoyIGF3E7cOZV3Qd
+         7pQqUW8DBYD4mGALyN7naxYEeQWR5cO1rsYH+7ATsci/PM+UV14BJyQZpL4ZkrtqVULA
+         J2dbp3UjJDqUR4F6ia/IHJFcu4coELecjvwzdfHTdlCbSojuHw9vRm9VxtnUT3NbexEA
+         Rl+aoFhB/4UWCzAfnbxFx4m7Of3+KZ5e4NxQ8I77PNqs4pdWD0UPquLH5YDP81TuRM8V
+         KpDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUweIHa2eFNAoE5WMZ0d6ezA7BZHz24MNKjBms34XoSzOculLvfVP2nPuJkYyM5YYd5xut9KEQhB8aPI7zWLDpOQd9v6Oqy7jzdeDTjJUhep1R/xiYbxB0Y4aQd5kTnKtQH+w6xuX7lTgw6a60=
+X-Gm-Message-State: AOJu0Yy4uNUxlocPIu5UCv6gtai1vKAkEUiF5jzwAuX6RHEdyA4LTSph
+	Xei8EofhnITMcvCDHLqARlXfgoOr6YWoEqK1EICxxPip21wr4kYQ
+X-Google-Smtp-Source: AGHT+IHbxPEAHBugkO77qtNz65rcRno7FBkmRRP+NS11t1bJ2Ne90xn10OlFbQkCxqoQBNq39OysSQ==
+X-Received: by 2002:a2e:be28:0:b0:2d2:2cb4:f817 with SMTP id z40-20020a2ebe28000000b002d22cb4f817mr9080866ljq.44.1708516325144;
+        Wed, 21 Feb 2024 03:52:05 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k14-20020a5d428e000000b0033ce5b3390esm16657238wrq.38.2024.02.21.03.38.10
+        by smtp.gmail.com with ESMTPSA id bt27-20020a056000081b00b0033d1b653e4csm17353085wrb.54.2024.02.21.03.52.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 03:38:10 -0800 (PST)
+        Wed, 21 Feb 2024 03:52:04 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>,
+	linux-bcachefs@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: echoaudio: remove redundant assignment to variable clock
-Date: Wed, 21 Feb 2024 11:38:09 +0000
-Message-Id: <20240221113809.3410109-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] bcachefs: remove redundant assignment to variable ret
+Date: Wed, 21 Feb 2024 11:52:03 +0000
+Message-Id: <20240221115203.3413554-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,31 +69,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable clock is being assigned a value that is never read,
-it is being re-assigned a new value in every case in the following
-switch statement. The assignment is redundant and can be removed.
+Variable ret is being assigned a value that is never read, it is
+being re-assigned a couple of statements later on. The assignment
+is redundant and can be removed.
 
 Cleans up clang scan build warning:
-sound/pci/echoaudio/echoaudio_3g.c:277:2: warning: Value stored
-to 'clock' is never read [deadcode.DeadStores]
+fs/bcachefs/super-io.c:806:2: warning: Value stored to 'ret' is
+never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/pci/echoaudio/echoaudio_3g.c | 1 -
+ fs/bcachefs/super-io.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/sound/pci/echoaudio/echoaudio_3g.c b/sound/pci/echoaudio/echoaudio_3g.c
-index cc3c79387194..18b4d4b4d38d 100644
---- a/sound/pci/echoaudio/echoaudio_3g.c
-+++ b/sound/pci/echoaudio/echoaudio_3g.c
-@@ -274,7 +274,6 @@ static int set_sample_rate(struct echoaudio *chip, u32 rate)
- 		       chip->digital_mode == DIGITAL_MODE_ADAT))
- 		return -EINVAL;
+diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+index 110dcb0337ce..c6d590404425 100644
+--- a/fs/bcachefs/super-io.c
++++ b/fs/bcachefs/super-io.c
+@@ -804,7 +804,6 @@ static int __bch2_read_super(const char *path, struct bch_opts *opts,
+ 		goto err;
+ 	}
  
--	clock = 0;
- 	control_reg = le32_to_cpu(chip->comm_page->control_register);
- 	control_reg &= E3G_CLOCK_CLEAR_MASK;
+-	ret = 0;
+ 	sb->have_layout = true;
  
+ 	ret = bch2_sb_validate(sb, &err, READ);
 -- 
 2.39.2
 
