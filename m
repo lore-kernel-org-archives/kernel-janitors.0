@@ -1,68 +1,65 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BB139AE3
-	for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB18481A8;
+	Wed, 21 Feb 2024 11:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708511404; cv=none; b=PyVS13DBYIUgaW6hchZm3O8T7H/HqwE25duDHOO5eSVG8HViOJymwxvMeQ6oHIyHjN8qJp8PzVV77q3hkqnjD8dxtsDkF0ye3a6QUUkldUrCKVZkZ8t34NPk9d6uvw7eN9dZadxTs5KwvdEZKOm8qvwcQ+V1a1hGPP1UCP2WYZY=
+	t=1708515494; cv=none; b=DhnhxlxBqznWkxb0grjdN9ePW+zQTR4K+7o0JfV/fozEvzxqvzmBwhKuxfe0h+01BReQPRuu/sHWxhcRRf9k1Q0zYRQg/PSAEXGkTfOB6got5ZS7FrptTBBTJhhhR/YmZuxLPVeIhPOmf40s4i3ryPo+e1AOkbYhXREVgLkpi5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708511404; c=relaxed/simple;
-	bh=zN3CUjyqFa6s+ccG3j8jMp2uTOIsTEDMHBCEpbfZTso=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fWYmmZwsRVLLIn2ZL+tKazFvxdGT1hAQkQNO5EGtvgwe5Pk7loxP18n6aeuiU2svKJje3CsUgXWRSkCpr1EFAuW12ARsN4EZf5lR0ZyIkb11kKAoV1WGnoynAhJzwEsNdFtdxRGj4LrVIT0oTj9cle3Emxj1/EfgTbHNc3WrwpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j8OhAzkE; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708515494; c=relaxed/simple;
+	bh=EhrWngD9RDOax6weTU9Ro/qRRNM2e3wDxLZFUYJCqFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=groxgjMrHrpRKyVnBW4pO+AYxqLqSUJdpSrVFoXa3sUk6D0nqaFP+1IpbEfmpWgkhZjOWkw1ULxVjJkWn33t1XSfe0XiuLMihc1K0iH+fqlz6YuA8rfMxaNMT5JdEYOASuQQRCNDjlJ2stk5iYdJ6HRjlJnDNbpyYBFTljanCSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrUP+WxG; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8OhAzkE"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-512cc3ea7a5so1645424e87.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 02:30:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrUP+WxG"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4127188dd5cso10082685e9.0;
+        Wed, 21 Feb 2024 03:38:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708511401; x=1709116201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V+mM4r5l6LdT+myeKsizMxXaYG6u+Ya5ehvtYFAaVog=;
-        b=j8OhAzkECgP/tYLEZi9tFPzSxd8lh7rf8dwRqD7p8Nz1BogRGbQgqogX+OWMlgPqgB
-         6Nh0YMCD3LhcefTaXgRwnMKNwDt+FwAAc8b1kJ3+lUP5IeiIIvPKOwga19On++z7yLHN
-         YOtNDw+bBJLiU+U5UNw7P2cfgWnisIgU0KTpalgroN7BvUhpoUgBz/aioyAAa5TOCfsm
-         Bqdu8k0zlKJkpMtfSQOn37sXvm45VmJAOkWupklAknpFf1Dp+VqDi9oK1NjhuEzuyhcA
-         +zTKafZXEn34h8L4EdIAr55y05bxzY/4L4DeO1fGkJTTD00JbuaIs3rPFwcICNh6IVr0
-         6BJQ==
+        d=gmail.com; s=20230601; t=1708515491; x=1709120291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/HFIcoSw75hDTLYVUPwa8rzXmjiPlpAtt6qgGaK/RA=;
+        b=ZrUP+WxGt8IhN8QaymqyVGVaNfa/2ay4BRlBwkzOryk3m7iloqecPpcrl4M2wyJsmn
+         pbOymW+JVS7z1JX9HVcow1H6/UHeI47By8SkX5s/ncppbNAS1F8KIMgDRISCDG8cJYJ4
+         WwdFKCC+/8FDoKjVCyoNW53NnWtvwagqyc4vK5Cy+BCnpYUpt/ar80eF6P0tvfUphws0
+         f1eP/shbMV8MHFJ7L8y2R4SRB4Yv+M24sCxS21MtJdT283/Cw5/lrWSCbA0hEUXtz75n
+         jWrF5fN158YRpvFkOzAlb1gwxElu7KK5+v2CK4Er/2AJhKcSvop6bn615Y6yAv29TJmY
+         T55Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708511401; x=1709116201;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V+mM4r5l6LdT+myeKsizMxXaYG6u+Ya5ehvtYFAaVog=;
-        b=IjTE/fB0LGDLmyx+b4YbqBPplbcqGYMHPE1jVR1zMUUZt/ibUp0eC0QzaZJmmqZTEy
-         +mTDqjW2xt0/OY2iyE603T4tCJWsOO7+CMJZbmZE+Q8rUIHyYkFqf9Me/w9jkXnUveXU
-         3ahFSZAS0oDI0ZauVFb6at18bdzbumAzQs8IAZu4nDQUWw902suVhvfzQKkixxjXkX5b
-         C+2dPjqblBHddmwFIT9+9ZgSOZf2qA8NdwbUMgOxAp/9Eu3szg7QS/MFoZtwFE19Xq3v
-         TPrgkpwjkjPalgO0XDL0LkqtTGkAL7R8oH0+jQBOoerK/sn/o7oY/K3E/7p978RZDek9
-         Ty9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUC6Ek/vFNh76QS9kULWHQwPKJFXk4nTE/RlzjzaFsEG8nVtTwRqnsokqS5YJSSnh3qhix83iKvqJ1tt65OTdThyzAQ751OL8styF5HB6ip
-X-Gm-Message-State: AOJu0YyBGJArohpJ3gKtfQSywFLsgv3QvfjE/93dxb6BpGuAlhVtbBsh
-	Hca7uAX3buBbCKH+QXtHsEwyyra06YL8UwC1rG3YigGm1N+Z2GrfxOjnslRec50=
-X-Google-Smtp-Source: AGHT+IFFL+ABu8gjgfDs2IgE7A6VsxBjDJ7JgNFs6fxZ2tfP6QvuaXN9LjhLHtJOCqL0CyKELz72vA==
-X-Received: by 2002:ac2:4834:0:b0:512:bda2:7bd9 with SMTP id 20-20020ac24834000000b00512bda27bd9mr3913100lft.64.1708511401064;
-        Wed, 21 Feb 2024 02:30:01 -0800 (PST)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id o20-20020a05600c4fd400b00412590eee7csm14681095wmq.10.2024.02.21.02.30.00
+        d=1e100.net; s=20230601; t=1708515491; x=1709120291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/HFIcoSw75hDTLYVUPwa8rzXmjiPlpAtt6qgGaK/RA=;
+        b=W0e81M+pA1LTQzDETxDEqUiw2wELQNeTLovUBHMnHy9+YlOkSakQYyUDIO53irrxfj
+         0oOSBrk2Uo8tU3tjdVZ5LqXSzhKbj2P0NBFLWeam8aWh/UFiTLcgOoYaJhdXY9Cl0p4b
+         fBFvVnJG4dd6Et1GcxiJDxkcebRpZ/vF4hR30P8a4nQtSsNejUCnwvaeSjt4Nkim3LTU
+         Y48t74UgrNcG8J8at93EEi0vTNnwYVSLciQzOjIA7krAZDPlTd79sEfjgJkxw9xv8HKJ
+         D5QtdKeSCiTbSqgBI9hl7N/uqlzvSpNcsc8DkNs9Wi0dz/gwrgvR03cu2GgHB8ur1hpO
+         AzfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXy91V7Qrr8ob+fR4ZwL4epuc8Tu8PWLaxh9wXK1uU+Ge9fhWfWJM9kpudoEvxYSsQUL/VgQ6z9FmhVfPP6DAmIExcusGjRhkp+tQUKcntOO6NPu9Q99A5YiwzQkUiVbhedgS5hoHtZcWk=
+X-Gm-Message-State: AOJu0Ywbv7Lg9TJqETS2Umrd4AURRR4z6gx6y2NA18H9cvq3WRoP3yhL
+	1xuraN2/sLU4PbxuqPPkA9XcFcj3VcBfn2L2Cu8H8k+wC+jOAnh5loim9brC
+X-Google-Smtp-Source: AGHT+IEdSBNCbVnHf3xsKaHEyqKW8117YV+/I23ry7Dd9181w3oMZZfnGyOO2Vg//jXHeha/rb+Otg==
+X-Received: by 2002:a5d:64e9:0:b0:33d:2833:a163 with SMTP id g9-20020a5d64e9000000b0033d2833a163mr10021781wri.29.1708515491151;
+        Wed, 21 Feb 2024 03:38:11 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id k14-20020a5d428e000000b0033ce5b3390esm16657238wrq.38.2024.02.21.03.38.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 02:30:00 -0800 (PST)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- alsa-devel@alsa-project.org
-In-Reply-To: <8402a9a8a45937fe2e62617ff0c7408503692b20.1702745212.git.christophe.jaillet@wanadoo.fr>
-References: <8402a9a8a45937fe2e62617ff0c7408503692b20.1702745212.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] slimbus: core: Remove usage of the deprecated
- ida_simple_xx() API
-Message-Id: <170851140025.26081.6374799105426333526.b4-ty@linaro.org>
-Date: Wed, 21 Feb 2024 10:30:00 +0000
+        Wed, 21 Feb 2024 03:38:10 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ALSA: echoaudio: remove redundant assignment to variable clock
+Date: Wed, 21 Feb 2024 11:38:09 +0000
+Message-Id: <20240221113809.3410109-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,26 +67,33 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+Content-Transfer-Encoding: 8bit
 
+The variable clock is being assigned a value that is never read,
+it is being re-assigned a new value in every case in the following
+switch statement. The assignment is redundant and can be removed.
 
-On Sat, 16 Dec 2023 17:47:34 +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_range() is inclusive. So change this change allows one more
-> device. Previously address 0xFE was never used.
-> 
-> [...]
+Cleans up clang scan build warning:
+sound/pci/echoaudio/echoaudio_3g.c:277:2: warning: Value stored
+to 'clock' is never read [deadcode.DeadStores]
 
-Applied, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/pci/echoaudio/echoaudio_3g.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-[1/1] slimbus: core: Remove usage of the deprecated ida_simple_xx() API
-      commit: 6e8ba95e17eede7045e673d9e1b6b8ee1055a46c
-
-Best regards,
+diff --git a/sound/pci/echoaudio/echoaudio_3g.c b/sound/pci/echoaudio/echoaudio_3g.c
+index cc3c79387194..18b4d4b4d38d 100644
+--- a/sound/pci/echoaudio/echoaudio_3g.c
++++ b/sound/pci/echoaudio/echoaudio_3g.c
+@@ -274,7 +274,6 @@ static int set_sample_rate(struct echoaudio *chip, u32 rate)
+ 		       chip->digital_mode == DIGITAL_MODE_ADAT))
+ 		return -EINVAL;
+ 
+-	clock = 0;
+ 	control_reg = le32_to_cpu(chip->comm_page->control_register);
+ 	control_reg &= E3G_CLOCK_CLEAR_MASK;
+ 
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+2.39.2
 
