@@ -1,95 +1,112 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FA27BB00
-	for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 13:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0264D5B7;
+	Wed, 21 Feb 2024 13:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708522528; cv=none; b=pigrXeTT0CU4L5vkf/75oP7OpVuLRQDQPCvmqRuHdpFcOLySoPGDKWWuA04NVaXKjBbIAMmG/Icm7Rn7HVi7axhU1ZIyzUMEUuv3kBTp9QeNzsrMqqebK5eySQHlqK7QKIwETXP47ASTg+9DrOuVV02/zY0LFdknixGZ5Fo5/6U=
+	t=1708523289; cv=none; b=KOLrXQA0QK+DO0MjuvC8NjK9VDrjCnpUe72kMoiFk/UWDBIDtUMbQxxLliTees0p+CYAym/bb2Wc0f2bH1c5ztOQi92kP3LD69FPeECuU6fASYcr2B6gxUQHtt2mupFCrSCuS0xfZl6dK+PIyLOVngVbb8IeDWEmpCcAr1qWzqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708522528; c=relaxed/simple;
-	bh=aHbuQtkQc7j/3wUDl5g8D0p6bowESyQfshtkj1PQnKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qH7DdONoBonykRzLqid3yUk/46PLLkyqV/Od3qI/pew5wIE1UoC5nR2FKYudkRMnGEiJwPGg1LUzF7lOk7gco18ikTFrrce4lUMyDDGyw+vBqdqYlMykLBN2B7UcOwYL3mz52TKQC+rZRI8bsLOM6KTNR3K6527ShEY8KCqVlGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MAsZo3YA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1708523289; c=relaxed/simple;
+	bh=ac+wf98nfeb4OKJmSgUmAqslHEbIxNi/Hsi0N/Bh9PE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Qon371TD29Vb1rL+F0R0/G4vHWvgtYLZQjguzC+1SsJujEcmRWnHMs2QMetH9Oz7dKsyTeW+x8L93hf5Ksf7pUCaup762v1zVnL6uBJ1CCfdf1hMxJu2JmvW13APj71/oka+de/YuhX45FevI6xxr0tV0nGvEOVgEF/3qNVGwkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+FwU/6J; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MAsZo3YA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708522525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KUGTjfCB/0L8+aS9L44bC5nmdvFIq/qccvpGMI5yZOo=;
-	b=MAsZo3YAEn4I3cLVfl4XKaf0SQuPrYUMLAYLtQOiV1SSqML0rRbEfuYZn+E/MZHAQMeaxJ
-	0/Lg9YdTSfrVbQwNnbONFz+KjgOjccV0afHWIYYNP6bVbyX8QKGCi6Y+xdZcpGWvKMg5nf
-	+g9U8RrY959mtyhdIxmXRW49tC1pJ2c=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-UGqS_xFdMvmHoCUPoilQKg-1; Wed, 21 Feb 2024 08:35:24 -0500
-X-MC-Unique: UGqS_xFdMvmHoCUPoilQKg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9C838859708;
-	Wed, 21 Feb 2024 13:35:23 +0000 (UTC)
-Received: from bfoster (unknown [10.22.32.149])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 635BC40C94A7;
-	Wed, 21 Feb 2024 13:35:23 +0000 (UTC)
-Date: Wed, 21 Feb 2024 08:37:05 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+FwU/6J"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33d118a181fso3493619f8f.1;
+        Wed, 21 Feb 2024 05:48:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708523286; x=1709128086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKh8l/wR7FFRHsHkLZEao+9h2Y4w+XNM8/7IgkcvxQc=;
+        b=k+FwU/6JjmSgdWYBIFI3kCSLoWlq+AoN7/O3qqdZvhp4R7AEjLgG1JJzoH8DMMP7cP
+         J3kosJ2CnuRUhJ8pgE2884W5HAkdiDfjmjlF04wQkXWPN37+AvyDLYyMANfwO6PEBIS2
+         HYIq1yCkT2tePJhpNzFLCJfp8OLbEejqwBRgXa+xF0DYfKqj5pcErP5wm2Kt/LgxJFc9
+         AFQR/YP+zmD3mUQ2/GBfwEWY/vypSwWpZrG+HEI8kK/QOlk3TYZyHSW5tDmDE5pTS6To
+         yXXrCy5KsBq/ObeyJR0mgO69KP3B4OhCKAtws6Vx02YA18Tvr7XxdioKSjmAJHAuL3cY
+         /LvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708523286; x=1709128086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iKh8l/wR7FFRHsHkLZEao+9h2Y4w+XNM8/7IgkcvxQc=;
+        b=SC1Juvro55Sxt3QKPl4PcMyKWz4OIDnnI8wJBU7FPj/CVwPY3ugBUl5Z9nP9k6GSud
+         l+CsJLzNMVU4TZ0DRb1sXejcS4zftD9KWjKP16KRNdC26DBZIUCTKIjljVvP7L9sGEKW
+         l9U1Mbie3jXLzI4BSZx4m+Y3MmzsDc/TUP/bQ25YiHIAObAqgxQRQTE6DJAzSsiRQISw
+         0z6AkpBwyG/pUszBS/3C46Pxkv/nwlnCt3maKt57TafmqYzHgOLJtaZYUnxlcE00kkYU
+         SaMsyW/fDMhNWhkdreBhDAEhD0m82c+0POt8CB8p83B+UnrUrvbwiM9ofl4YJfH9S2T8
+         v4eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjDloImALTiU7ha6tA+RSG19sKOIle+JM8Ap3y0hBTIq95vrhAUsY/qrNGkJQqNL34SRYaneJq0WPOCRm09uLuPXZcO2QsvrXTScFvvHeXlj8iW/NcDQBeQnhyQHnfCJLiUPJgHHWWeNU=
+X-Gm-Message-State: AOJu0Yx0b7FgBKlRq4SbC3jfNbZGnsjTA8DrhjpkvdVeM0ZKUGs4mujL
+	9HmN7J484o/fjxTgaYhifzIcwBkGgIAy25vbP/hdLOX1EnSdUJK2
+X-Google-Smtp-Source: AGHT+IF4CLj+iwCbayJVWUxt0v3FY77n7cusG5cKy/J5D8iRjLv1ENQXPDQDbV3uR6yV71zBaWKskA==
+X-Received: by 2002:adf:e84f:0:b0:33d:82a8:f59e with SMTP id d15-20020adfe84f000000b0033d82a8f59emr698097wrn.47.1708523285669;
+        Wed, 21 Feb 2024 05:48:05 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p6-20020adfe606000000b0033cdbe335bcsm17062934wrm.71.2024.02.21.05.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 05:48:05 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+	Venkata Prasad Potturu <quic_potturu@quicinc.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] bcachefs: remove redundant assignment to variable
- ret
-Message-ID: <ZdX8gTpgqyM/jjvp@bfoster>
-References: <20240221115203.3413554-1-colin.i.king@gmail.com>
+Subject: [PATCH] ASoC: qcom: Fix uninitialized pointer dmactl
+Date: Wed, 21 Feb 2024 13:48:04 +0000
+Message-Id: <20240221134804.3475989-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240221115203.3413554-1-colin.i.king@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 21, 2024 at 11:52:03AM +0000, Colin Ian King wrote:
-> Variable ret is being assigned a value that is never read, it is
-> being re-assigned a couple of statements later on. The assignment
-> is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> fs/bcachefs/super-io.c:806:2: warning: Value stored to 'ret' is
-> never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+In the case where __lpass_get_dmactl_handle is called and the driver
+id dai_id is invalid the pointer dmactl is not being assigned a value,
+and dmactl contains a garbage value since it has not been initialized
+and so the null check may not work. Fix this to initialize dmactl to
+NULL. One could argue that modern compilers will set this to zero, but
+it is useful to keep this initialized as per the same way in functions
+__lpass_platform_codec_intf_init and lpass_cdc_dma_daiops_hw_params.
 
-Reviewed-by: Brian Foster <bfoster@redhat.com>
+Cleans up clang scan build warning:
+sound/soc/qcom/lpass-cdc-dma.c:275:7: warning: Branch condition
+evaluates to a garbage value [core.uninitialized.Branch]
 
->  fs/bcachefs/super-io.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
-> index 110dcb0337ce..c6d590404425 100644
-> --- a/fs/bcachefs/super-io.c
-> +++ b/fs/bcachefs/super-io.c
-> @@ -804,7 +804,6 @@ static int __bch2_read_super(const char *path, struct bch_opts *opts,
->  		goto err;
->  	}
->  
-> -	ret = 0;
->  	sb->have_layout = true;
->  
->  	ret = bch2_sb_validate(sb, &err, READ);
-> -- 
-> 2.39.2
-> 
+Fixes: b81af585ea54 ("ASoC: qcom: Add lpass CPU driver for codec dma control")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/qcom/lpass-cdc-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/qcom/lpass-cdc-dma.c b/sound/soc/qcom/lpass-cdc-dma.c
+index 48b03e60e3a3..8106c586f68a 100644
+--- a/sound/soc/qcom/lpass-cdc-dma.c
++++ b/sound/soc/qcom/lpass-cdc-dma.c
+@@ -259,7 +259,7 @@ static int lpass_cdc_dma_daiops_trigger(struct snd_pcm_substream *substream,
+ 				    int cmd, struct snd_soc_dai *dai)
+ {
+ 	struct snd_soc_pcm_runtime *soc_runtime = snd_soc_substream_to_rtd(substream);
+-	struct lpaif_dmactl *dmactl;
++	struct lpaif_dmactl *dmactl = NULL;
+ 	int ret = 0, id;
+ 
+ 	switch (cmd) {
+-- 
+2.39.2
 
