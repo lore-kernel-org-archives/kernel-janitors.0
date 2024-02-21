@@ -1,72 +1,45 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0264D5B7;
-	Wed, 21 Feb 2024 13:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B7D8565A;
+	Wed, 21 Feb 2024 16:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708523289; cv=none; b=KOLrXQA0QK+DO0MjuvC8NjK9VDrjCnpUe72kMoiFk/UWDBIDtUMbQxxLliTees0p+CYAym/bb2Wc0f2bH1c5ztOQi92kP3LD69FPeECuU6fASYcr2B6gxUQHtt2mupFCrSCuS0xfZl6dK+PIyLOVngVbb8IeDWEmpCcAr1qWzqg=
+	t=1708531377; cv=none; b=KKHZ8e259TnQbpiB5o5skHCbUvKmdp6sr0gDVoXtbok/3w8+KIPb+bw1pVJjvmfNUcFwcqSPmef4em5mgINGaa577LyLU3E0WAK4kGt9xSaamznOYPcYkx5HeBHy34fJdLwZIfD+3pYZAzfFHBMCKwJjzTtHTuq6kb/nX/0w9zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708523289; c=relaxed/simple;
-	bh=ac+wf98nfeb4OKJmSgUmAqslHEbIxNi/Hsi0N/Bh9PE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Qon371TD29Vb1rL+F0R0/G4vHWvgtYLZQjguzC+1SsJujEcmRWnHMs2QMetH9Oz7dKsyTeW+x8L93hf5Ksf7pUCaup762v1zVnL6uBJ1CCfdf1hMxJu2JmvW13APj71/oka+de/YuhX45FevI6xxr0tV0nGvEOVgEF/3qNVGwkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+FwU/6J; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708531377; c=relaxed/simple;
+	bh=9fJX9oO0DGcUweTUdjv0zxo4kkH5IB9QrIr5JPgthHM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ii5yhYcrLoLkANsT5sWNYyykmp6a5p3S1hNS65jgSEuK2By/YTQGRwnNeXt1nOPgQcf4XkkW7KYqCcDzOuVmLIQ+/mqXimZcMPZrdxBbiXFG04vuQpTBXHnM7mxJkM3AmklfClWE4cHBvaf9GYRQg0390Xo38JEZ24mjBooGED4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXKV4C4/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+FwU/6J"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33d118a181fso3493619f8f.1;
-        Wed, 21 Feb 2024 05:48:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708523286; x=1709128086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKh8l/wR7FFRHsHkLZEao+9h2Y4w+XNM8/7IgkcvxQc=;
-        b=k+FwU/6JjmSgdWYBIFI3kCSLoWlq+AoN7/O3qqdZvhp4R7AEjLgG1JJzoH8DMMP7cP
-         J3kosJ2CnuRUhJ8pgE2884W5HAkdiDfjmjlF04wQkXWPN37+AvyDLYyMANfwO6PEBIS2
-         HYIq1yCkT2tePJhpNzFLCJfp8OLbEejqwBRgXa+xF0DYfKqj5pcErP5wm2Kt/LgxJFc9
-         AFQR/YP+zmD3mUQ2/GBfwEWY/vypSwWpZrG+HEI8kK/QOlk3TYZyHSW5tDmDE5pTS6To
-         yXXrCy5KsBq/ObeyJR0mgO69KP3B4OhCKAtws6Vx02YA18Tvr7XxdioKSjmAJHAuL3cY
-         /LvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708523286; x=1709128086;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iKh8l/wR7FFRHsHkLZEao+9h2Y4w+XNM8/7IgkcvxQc=;
-        b=SC1Juvro55Sxt3QKPl4PcMyKWz4OIDnnI8wJBU7FPj/CVwPY3ugBUl5Z9nP9k6GSud
-         l+CsJLzNMVU4TZ0DRb1sXejcS4zftD9KWjKP16KRNdC26DBZIUCTKIjljVvP7L9sGEKW
-         l9U1Mbie3jXLzI4BSZx4m+Y3MmzsDc/TUP/bQ25YiHIAObAqgxQRQTE6DJAzSsiRQISw
-         0z6AkpBwyG/pUszBS/3C46Pxkv/nwlnCt3maKt57TafmqYzHgOLJtaZYUnxlcE00kkYU
-         SaMsyW/fDMhNWhkdreBhDAEhD0m82c+0POt8CB8p83B+UnrUrvbwiM9ofl4YJfH9S2T8
-         v4eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjDloImALTiU7ha6tA+RSG19sKOIle+JM8Ap3y0hBTIq95vrhAUsY/qrNGkJQqNL34SRYaneJq0WPOCRm09uLuPXZcO2QsvrXTScFvvHeXlj8iW/NcDQBeQnhyQHnfCJLiUPJgHHWWeNU=
-X-Gm-Message-State: AOJu0Yx0b7FgBKlRq4SbC3jfNbZGnsjTA8DrhjpkvdVeM0ZKUGs4mujL
-	9HmN7J484o/fjxTgaYhifzIcwBkGgIAy25vbP/hdLOX1EnSdUJK2
-X-Google-Smtp-Source: AGHT+IF4CLj+iwCbayJVWUxt0v3FY77n7cusG5cKy/J5D8iRjLv1ENQXPDQDbV3uR6yV71zBaWKskA==
-X-Received: by 2002:adf:e84f:0:b0:33d:82a8:f59e with SMTP id d15-20020adfe84f000000b0033d82a8f59emr698097wrn.47.1708523285669;
-        Wed, 21 Feb 2024 05:48:05 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p6-20020adfe606000000b0033cdbe335bcsm17062934wrm.71.2024.02.21.05.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 05:48:05 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-	Venkata Prasad Potturu <quic_potturu@quicinc.com>,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: qcom: Fix uninitialized pointer dmactl
-Date: Wed, 21 Feb 2024 13:48:04 +0000
-Message-Id: <20240221134804.3475989-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXKV4C4/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E2C8C43394;
+	Wed, 21 Feb 2024 16:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708531377;
+	bh=9fJX9oO0DGcUweTUdjv0zxo4kkH5IB9QrIr5JPgthHM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pXKV4C4/Z6bGtoSgNen3zLm43KFCgUokA3jbBRFCTHGJyzEyqu9KsXR6uIPPJS5s4
+	 7WPR+dOTn1cC57QOy9m1vVwn8jTo/NAnlIWbUdMfMZQo4LuiQ5vpOL+QzjOJf7YHHw
+	 hZKHAdgOcZzszBRFQ0utz5PybEg+dQ8PRliweOsQwV/lmJlGkiaj2dRcwDbPAY3TeO
+	 GjjhfvblX9gkBcZXa2mJCrMbojgsCnnzsKrPdH0rOu3FDlFKyzK0/fk/Ff3fj1SnKo
+	 iI+uSV44VCnWMaGhSxzl87b/yS7yZYhamNpMGLQixB9gJJzM9cbWCBhpa9n3uxYVDW
+	 6bHIOctxbhvIQ==
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>, 
+ Venkata Prasad Potturu <quic_potturu@quicinc.com>, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240221134804.3475989-1-colin.i.king@gmail.com>
+References: <20240221134804.3475989-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: qcom: Fix uninitialized pointer dmactl
+Message-Id: <170853137427.40410.4918124750403655559.b4-ty@kernel.org>
+Date: Wed, 21 Feb 2024 16:02:54 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,39 +47,45 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-a684c
 
-In the case where __lpass_get_dmactl_handle is called and the driver
-id dai_id is invalid the pointer dmactl is not being assigned a value,
-and dmactl contains a garbage value since it has not been initialized
-and so the null check may not work. Fix this to initialize dmactl to
-NULL. One could argue that modern compilers will set this to zero, but
-it is useful to keep this initialized as per the same way in functions
-__lpass_platform_codec_intf_init and lpass_cdc_dma_daiops_hw_params.
+On Wed, 21 Feb 2024 13:48:04 +0000, Colin Ian King wrote:
+> In the case where __lpass_get_dmactl_handle is called and the driver
+> id dai_id is invalid the pointer dmactl is not being assigned a value,
+> and dmactl contains a garbage value since it has not been initialized
+> and so the null check may not work. Fix this to initialize dmactl to
+> NULL. One could argue that modern compilers will set this to zero, but
+> it is useful to keep this initialized as per the same way in functions
+> __lpass_platform_codec_intf_init and lpass_cdc_dma_daiops_hw_params.
+> 
+> [...]
 
-Cleans up clang scan build warning:
-sound/soc/qcom/lpass-cdc-dma.c:275:7: warning: Branch condition
-evaluates to a garbage value [core.uninitialized.Branch]
+Applied to
 
-Fixes: b81af585ea54 ("ASoC: qcom: Add lpass CPU driver for codec dma control")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/qcom/lpass-cdc-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/sound/soc/qcom/lpass-cdc-dma.c b/sound/soc/qcom/lpass-cdc-dma.c
-index 48b03e60e3a3..8106c586f68a 100644
---- a/sound/soc/qcom/lpass-cdc-dma.c
-+++ b/sound/soc/qcom/lpass-cdc-dma.c
-@@ -259,7 +259,7 @@ static int lpass_cdc_dma_daiops_trigger(struct snd_pcm_substream *substream,
- 				    int cmd, struct snd_soc_dai *dai)
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = snd_soc_substream_to_rtd(substream);
--	struct lpaif_dmactl *dmactl;
-+	struct lpaif_dmactl *dmactl = NULL;
- 	int ret = 0, id;
- 
- 	switch (cmd) {
--- 
-2.39.2
+Thanks!
+
+[1/1] ASoC: qcom: Fix uninitialized pointer dmactl
+      commit: 1382d8b55129875b2e07c4d2a7ebc790183769ee
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
